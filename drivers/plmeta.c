@@ -1,32 +1,32 @@
-/* $Id$
- *
- *  Copyright 1991, 1992, 1993, 1994, 1995
- *  Geoffrey Furnish			furnish@dino.ph.utexas.edu
- *  Maurice LeBrun			mjl@dino.ph.utexas.edu
- *  Institute for Fusion Studies	University of Texas at Austin
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public
- *  License along with this library; if not, write to the Free
- *  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  This is a metafile writer for PLplot.
- *
- */
+// $Id$
+//
+//  Copyright 1991, 1992, 1993, 1994, 1995
+//  Geoffrey Furnish			furnish@dino.ph.utexas.edu
+//  Maurice LeBrun			mjl@dino.ph.utexas.edu
+//  Institute for Fusion Studies	University of Texas at Austin
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Library General Public
+//  License as published by the Free Software Foundation; either
+//  version 2 of the License, or (at your option) any later version.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public
+//  License along with this library; if not, write to the Free
+//  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//
+//  This is a metafile writer for PLplot.
+//
+//
 #include "plDevs.h"
 
-/*#define DEBUG*/
+//#define DEBUG
 
 #ifdef PLD_plmeta
 
@@ -36,7 +36,7 @@
 #include "metadefs.h"
 #include <string.h>
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_plmeta = "plmeta:PLplot Native Meta-File:0:plmeta:26:plm\n";
 
 
@@ -51,7 +51,7 @@ void plD_tidy_plm( PLStream * );
 void plD_state_plm( PLStream *, PLINT );
 void plD_esc_plm( PLStream *, PLINT, void * );
 
-/* Struct to hold device-specific info. */
+// Struct to hold device-specific info.
 
 typedef struct
 {
@@ -66,12 +66,12 @@ typedef struct
     int    notfirst;
 } PLmDev;
 
-/* Used for constructing error messages */
+// Used for constructing error messages
 
 #define BUFFER_LEN    256
 static char buffer[BUFFER_LEN];
 
-/* Function prototypes */
+// Function prototypes
 
 static void WriteFileHeader( PLStream *pls );
 static void UpdatePrevPagehdr( PLStream *pls );
@@ -80,7 +80,7 @@ static void UpdateIndex( PLStream *pls, FPOS_T cp_offset );
 static void plm_fill( PLStream *pls );
 static void plm_swin( PLStream *pls );
 
-/* A little function to help with debugging */
+// A little function to help with debugging
 
 #ifdef DEBUG
 #define DEBUG_PRINT_LOCATION( a )    PrintLocation( pls, a )
@@ -122,11 +122,11 @@ void plD_dispatch_init_plm( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_plm;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_plm()
- *
- * Initialize device.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_plm()
+//
+// Initialize device.
+//--------------------------------------------------------------------------
 
 void
 plD_init_plm( PLStream *pls )
@@ -136,20 +136,20 @@ plD_init_plm( PLStream *pls )
 
     dbug_enter( "plD_init_plm" );
 
-    pls->color     = 1;         /* Is a color device */
-    pls->dev_fill0 = 1;         /* Handle solid fills */
-    pls->dev_fill1 = 1;         /* Driver handles pattern fills */
+    pls->color     = 1;         // Is a color device
+    pls->dev_fill0 = 1;         // Handle solid fills
+    pls->dev_fill1 = 1;         // Driver handles pattern fills
 
-/* Initialize family file info */
+// Initialize family file info
 
     plFamInit( pls );
 
-/* Prompt for a file name if not already set */
+// Prompt for a file name if not already set
 
     plOpenFile( pls );
     pls->pdfs = pdf_finit( pls->OutFile );
 
-/* Allocate and initialize device-specific data */
+// Allocate and initialize device-specific data
 
     pls->dev = calloc( 1, (size_t) sizeof ( PLmDev ) );
     if ( pls->dev == NULL )
@@ -171,26 +171,26 @@ plD_init_plm( PLStream *pls )
     plP_setpxl( dev->pxlx, dev->pxly );
     plP_setphy( dev->xmin, dev->xmax, dev->ymin, dev->ymax );
 
-/* Write Metafile header. */
+// Write Metafile header.
 
     WriteFileHeader( pls );
 
-/* Write color map state info */
+// Write color map state info
 
     plD_state_plm( pls, PLSTATE_CMAP0 );
     plD_state_plm( pls, PLSTATE_CMAP1 );
 
-/* Write initialization command. */
+// Write initialization command.
 
     DEBUG_PRINT_LOCATION( "before init" );
     plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_line_plm()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_line_plm()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void
 plD_line_plm( PLStream *pls, short x1, short y1, short x2, short y2 )
@@ -199,9 +199,9 @@ plD_line_plm( PLStream *pls, short x1, short y1, short x2, short y2 )
     U_CHAR  c;
     U_SHORT xy[4];
 
-    /* dbug_enter("plD_line_plm"); */
+    // dbug_enter("plD_line_plm");
 
-    /* Failsafe check */
+    // Failsafe check
 
 #ifdef DEBUG
     if ( x1 < dev->xmin || x1 > dev->xmax ||
@@ -215,16 +215,16 @@ plD_line_plm( PLStream *pls, short x1, short y1, short x2, short y2 )
     }
 #endif
 
-/* If continuation of previous line send the LINETO command, which uses
- * the previous (x,y) point as it's starting location.  This results in a
- * storage reduction of not quite 50%, since the instruction length for
- * a LINETO is 5/9 of that for the LINE command, and given that most
- * graphics applications use this command heavily.
- *
- * Still not quite as efficient as tektronix format since we also send the
- * command each time (so shortest command is 25% larger), but a lot easier
- * to implement than the tek method.
- */
+// If continuation of previous line send the LINETO command, which uses
+// the previous (x,y) point as it's starting location.  This results in a
+// storage reduction of not quite 50%, since the instruction length for
+// a LINETO is 5/9 of that for the LINE command, and given that most
+// graphics applications use this command heavily.
+//
+// Still not quite as efficient as tektronix format since we also send the
+// command each time (so shortest command is 25% larger), but a lot easier
+// to implement than the tek method.
+//
     if ( x1 == dev->xold && y1 == dev->yold )
     {
         c = (U_CHAR) LINETO;
@@ -249,11 +249,11 @@ plD_line_plm( PLStream *pls, short x1, short y1, short x2, short y2 )
     dev->yold = y2;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_polyline_plm()
- *
- * Draw a polyline in the current color.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_polyline_plm()
+//
+// Draw a polyline in the current color.
+//--------------------------------------------------------------------------
 
 void
 plD_polyline_plm( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -274,11 +274,11 @@ plD_polyline_plm( PLStream *pls, short *xa, short *ya, PLINT npts )
     dev->yold = ya[npts - 1];
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_eop_plm()
- *
- * End of page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_eop_plm()
+//
+// End of page.
+//--------------------------------------------------------------------------
 
 void
 plD_eop_plm( PLStream *pls )
@@ -288,21 +288,21 @@ plD_eop_plm( PLStream *pls )
     plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_bop_plm()
- *
- * Set up for the next page.
- *
- * Page header layout as follows:
- *
- * BOP			(U_CHAR)
- * page number		(U_SHORT)
- * prev page offset	(U_LONG)
- * next page offset	(U_LONG)
- *
- * Each call after the first is responsible for updating the table of
- * contents and the next page offset from the previous page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_bop_plm()
+//
+// Set up for the next page.
+//
+// Page header layout as follows:
+//
+// BOP			(U_CHAR)
+// page number		(U_SHORT)
+// prev page offset	(U_LONG)
+// next page offset	(U_LONG)
+//
+// Each call after the first is responsible for updating the table of
+// contents and the next page offset from the previous page.
+//--------------------------------------------------------------------------
 
 void
 plD_bop_plm( PLStream *pls )
@@ -316,30 +316,30 @@ plD_bop_plm( PLStream *pls )
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
 
-/* Update previous page header */
+// Update previous page header
 
     if ( isfile )
         UpdatePrevPagehdr( pls );
 
-/* Start next family file if necessary. */
+// Start next family file if necessary.
 
     pls->bytecnt = pls->pdfs->bp;
     plGetFam( pls );
 
-/* Update page counter */
+// Update page counter
 
     pls->page++;
 
-/* Update table of contents info & write new page header. */
+// Update table of contents info & write new page header.
 
     WritePageInfo( pls, pp_offset );
 }
 
-/*--------------------------------------------------------------------------*\
- * WritePageInfo()
- *
- * Update table of contents info & write new page header.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// WritePageInfo()
+//
+// Update table of contents info & write new page header.
+//--------------------------------------------------------------------------
 
 static void
 WritePageInfo( PLStream *pls, FPOS_T pp_offset )
@@ -350,7 +350,7 @@ WritePageInfo( PLStream *pls, FPOS_T pp_offset )
     U_CHAR c;
     FPOS_T cp_offset = 0;
 
-/* Update table of contents. */
+// Update table of contents.
 
     if ( isfile )
     {
@@ -360,7 +360,7 @@ WritePageInfo( PLStream *pls, FPOS_T pp_offset )
         UpdateIndex( pls, cp_offset );
     }
 
-/* Write new page header */
+// Write new page header
 
     if ( dev->notfirst )
         c = BOP;
@@ -374,21 +374,21 @@ WritePageInfo( PLStream *pls, FPOS_T pp_offset )
     plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) pp_offset ) );
     plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) 0 ) );
 
-/* Update last page offset with current page value */
+// Update last page offset with current page value
 
     dev->lp_offset = cp_offset;
 
-/* Write some page state information just to make things nice later on */
-/* Eventually there will be more */
+// Write some page state information just to make things nice later on
+// Eventually there will be more
 
     plD_state_plm( pls, PLSTATE_COLOR0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * UpdatePrevPagehdr()
- *
- * Update previous page header.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// UpdatePrevPagehdr()
+//
+// Update previous page header.
+//--------------------------------------------------------------------------
 
 static void
 UpdatePrevPagehdr( PLStream *pls )
@@ -399,12 +399,12 @@ UpdatePrevPagehdr( PLStream *pls )
 
     fflush( file );
 
-/* Determine where we are */
+// Determine where we are
 
     if ( pl_fgetpos( file, &cp_offset ) )
         plexit( "plD_bop_plm: fgetpos call failed" );
 
-/* Seek back to previous page header. */
+// Seek back to previous page header.
 
     if ( dev->lp_offset > 0 )
     {
@@ -414,7 +414,7 @@ UpdatePrevPagehdr( PLStream *pls )
             "Location: %d, seeking to: %d\n",
             (int) cp_offset, (int) dev->lp_offset );
 
-        /* The forward byte offset is located exactly 7 bytes after the BOP */
+        // The forward byte offset is located exactly 7 bytes after the BOP
         fwbyte_offset = dev->lp_offset + 7;
         if ( pl_fsetpos( file, &fwbyte_offset ) )
         {
@@ -423,7 +423,7 @@ UpdatePrevPagehdr( PLStream *pls )
             plexit( buffer );
         }
 
-        /* DEBUG: verify current location */
+        // DEBUG: verify current location
 
 #ifdef DEBUG
         if ( pl_fgetpos( file, &fwbyte_offset ) )
@@ -434,12 +434,12 @@ UpdatePrevPagehdr( PLStream *pls )
             (int) fwbyte_offset, (int) cp_offset );
 #endif
 
-        /* Write forward byte offset into previous page header. */
+        // Write forward byte offset into previous page header.
 
         plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) cp_offset ) );
         fflush( file );
 
-        /* DEBUG: move back to before the write & read it to verify */
+        // DEBUG: move back to before the write & read it to verify
 
 #ifdef DEBUG
         if ( pl_fsetpos( file, &fwbyte_offset ) )
@@ -456,7 +456,7 @@ UpdatePrevPagehdr( PLStream *pls )
         }
 #endif
 
-        /* Return to current page offset */
+        // Return to current page offset
 
         if ( pl_fsetpos( file, &cp_offset ) )
         {
@@ -467,11 +467,11 @@ UpdatePrevPagehdr( PLStream *pls )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * UpdateIndex()
- *
- * Update file index.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// UpdateIndex()
+//
+// Update file index.
+//--------------------------------------------------------------------------
 
 static void
 UpdateIndex( PLStream *pls, FPOS_T cp_offset )
@@ -479,8 +479,8 @@ UpdateIndex( PLStream *pls, FPOS_T cp_offset )
     PLmDev *dev  = (PLmDev *) pls->dev;
     FILE   *file = pls->OutFile;
 
-/* Update file index.  Right now only number of pages. */
-/* The ordering here is critical */
+// Update file index.  Right now only number of pages.
+// The ordering here is critical
 
     if ( dev->index_offset > 0 )
     {
@@ -510,11 +510,11 @@ UpdateIndex( PLStream *pls, FPOS_T cp_offset )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_tidy_plm()
- *
- * Close graphics file
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_tidy_plm()
+//
+// Close graphics file
+//--------------------------------------------------------------------------
 
 void
 plD_tidy_plm( PLStream *pls )
@@ -528,11 +528,11 @@ plD_tidy_plm( PLStream *pls )
     free_mem( pls->dev );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_state_plm()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_state_plm()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
 
 void
 plD_state_plm( PLStream *pls, PLINT op )
@@ -592,18 +592,18 @@ plD_state_plm( PLStream *pls, PLINT op )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_esc_plm()
- *
- * Escape function.  Note that any data written must be in device
- * independent form to maintain the transportability of the metafile.
- *
- * Functions:
- *
- *	PLESC_FILL	Fill polygon
- *	PLESC_SWIN	Set window parameters
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_esc_plm()
+//
+// Escape function.  Note that any data written must be in device
+// independent form to maintain the transportability of the metafile.
+//
+// Functions:
+//
+//	PLESC_FILL	Fill polygon
+//	PLESC_SWIN	Set window parameters
+//
+//--------------------------------------------------------------------------
 
 void
 plD_esc_plm( PLStream *pls, PLINT op, void *ptr )
@@ -627,11 +627,11 @@ plD_esc_plm( PLStream *pls, PLINT op, void *ptr )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plm_fill()
- *
- * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plm_fill()
+//
+// Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+//--------------------------------------------------------------------------
 
 static void
 plm_fill( PLStream *pls )
@@ -649,13 +649,13 @@ plm_fill( PLStream *pls )
     dev->yold = PL_UNDEFINED;
 }
 
-/*--------------------------------------------------------------------------*\
- * plm_swin()
- *
- * Set window parameters.
- * Each parameter or group of parameters is tagged to make backward
- * compatibility easier.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plm_swin()
+//
+// Set window parameters.
+// Each parameter or group of parameters is tagged to make backward
+// compatibility easier.
+//--------------------------------------------------------------------------
 
 static void
 plm_swin( PLStream *pls )
@@ -663,11 +663,11 @@ plm_swin( PLStream *pls )
     dbug_enter( "plm_swin" );
 }
 
-/*--------------------------------------------------------------------------*\
- * WriteFileHeader()
- *
- * Writes Metafile header.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// WriteFileHeader()
+//
+// Writes Metafile header.
+//--------------------------------------------------------------------------
 
 static void
 WriteFileHeader( PLStream *pls )
@@ -681,8 +681,8 @@ WriteFileHeader( PLStream *pls )
     plm_wr( pdf_wr_header( pls->pdfs, PLMETA_HEADER ) );
     plm_wr( pdf_wr_header( pls->pdfs, PLMETA_VERSION ) );
 
-/* Write file index info.  Right now only number of pages. */
-/* The order here is critical */
+// Write file index info.  Right now only number of pages.
+// The order here is critical
 
     if ( isfile )
     {
@@ -693,8 +693,8 @@ WriteFileHeader( PLStream *pls )
     plm_wr( pdf_wr_header( pls->pdfs, "pages" ) );
     plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) 0 ) );
 
-/* Write initialization info.  Tag via strings to make backward
- * compatibility with old metafiles as easy as possible. */
+// Write initialization info.  Tag via strings to make backward
+// compatibility with old metafiles as easy as possible.
 
     plm_wr( pdf_wr_header( pls->pdfs, "xmin" ) );
     plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->xmin ) );
@@ -714,9 +714,9 @@ WriteFileHeader( PLStream *pls )
     plm_wr( pdf_wr_header( pls->pdfs, "pxly" ) );
     plm_wr( pdf_wr_ieeef( pls->pdfs, (float) dev->pxly ) );
 
-/* Geometry info, needed to properly transmit e.g. aspect ratio, via the
- * length params.  Not sure if the others are useful, but they're included for
- * completeness. */
+// Geometry info, needed to properly transmit e.g. aspect ratio, via the
+// length params.  Not sure if the others are useful, but they're included for
+// completeness.
 
     plm_wr( pdf_wr_header( pls->pdfs, "xdpi" ) );
     plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->xdpi ) );
@@ -746,4 +746,4 @@ pldummy_plmeta()
     return 0;
 }
 
-#endif                          /* PLD_plmeta */
+#endif                          // PLD_plmeta

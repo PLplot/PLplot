@@ -1,35 +1,35 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
-/*
- *  plplotcanvas-hacktext.c: Hacktext CanvasItem, cloned from the
- *                            gnome-print project
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public License
- *  as published by the Free Software Foundation; either version 2 of
- *  the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public
- *  License along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *  Authors:
- *    Federico Mena <federico@nuclecu.unam.mx>
- *    Raph Levien <raph@acm.org>
- *    Lauris Kaplinski <lauris@helixcode.com>
- *
- *  Copyright (C) 1998-1999 The Free Software Foundation
- *  Copyright (C) 2000-2002 Ximian Inc.
- *
- */
+// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+//
+//  plplotcanvas-hacktext.c: Hacktext CanvasItem, cloned from the
+//                            gnome-print project
+//
+//  This program is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Library General Public License
+//  as published by the Free Software Foundation; either version 2 of
+//  the License, or (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public
+//  License along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+//  Authors:
+//    Federico Mena <federico@nuclecu.unam.mx>
+//    Raph Levien <raph@acm.org>
+//    Lauris Kaplinski <lauris@helixcode.com>
+//
+//  Copyright (C) 1998-1999 The Free Software Foundation
+//  Copyright (C) 2000-2002 Ximian Inc.
+//
+//
 
-/*
- * FIXME: TODO: Clipping
- */
+//
+// FIXME: TODO: Clipping
+//
 
 #include <config.h>
 
@@ -43,9 +43,9 @@
 #include "plplotcanvas-hacktext.h"
 
 
-/*
- * Macros from gnome-print-i18n.h in gnome-print
- */
+//
+// Macros from gnome-print-i18n.h in gnome-print
+//
 
 #ifndef __GNOME_PRINT_I18N_H__
 #define __GNOME_PRINT_I18N_H__
@@ -56,12 +56,12 @@
 #    define bindtextdomain( Domain, Directory )    ( Domain )
 #    define _( String )                            ( String )
 #    define N_( String )                           ( String )
-#endif /* __GNOME_PRINT_I18N_H__ */
+#endif // __GNOME_PRINT_I18N_H__
 
 
-/*
- * Continue with hacktext code
- */
+//
+// Continue with hacktext code
+//
 
 enum
 {
@@ -105,7 +105,7 @@ struct _PlplotCanvasHacktextPriv
 
     GnomeGlyphList    * glyphlist;
     GnomePosGlyphList * pgl;
-    double            affine[6]; /* the text to world transform (NB! mirrored Y) */
+    double            affine[6]; // the text to world transform (NB! mirrored Y)
 };
 
 GType
@@ -270,18 +270,18 @@ art_drect_hacktext( ArtDRect *bbox, PlplotCanvasHacktext *hacktext )
     gnome_pgl_bbox( hacktext->priv->pgl, bbox );
 }
 
-/* Computes the bounding box of the hacktext.  Assumes that the number of points in the hacktext is
- * not zero.
- */
+// Computes the bounding box of the hacktext.  Assumes that the number of points in the hacktext is
+// not zero.
+//
 static void
 get_bounds( PlplotCanvasHacktext *hacktext, double *bx1, double *by1, double *bx2, double *by2 )
 {
     ArtDRect bbox;
 
-    /* Compute bounds of hacktext */
+    // Compute bounds of hacktext
     art_drect_hacktext( &bbox, hacktext );
 
-    /* Done */
+    // Done
 
     *bx1 = bbox.x0;
     *by1 = bbox.y0;
@@ -339,7 +339,7 @@ plplot_canvas_hacktext_set_property( GObject               *object,
             bp->priv->glyphlist = NULL;
         }
 
-        /* FIXME: should be duplicate() (Lauris) */
+        // FIXME: should be duplicate() (Lauris)
         if ( gl )
             gnome_glyphlist_ref( gl );
 
@@ -373,7 +373,7 @@ plplot_canvas_hacktext_set_property( GObject               *object,
         bp->fill_set  = TRUE;
         bp->fill_rgba = g_value_get_uint( value );
 
-        /* should probably request repaint on the fill_svp */
+        // should probably request repaint on the fill_svp
         gnome_canvas_item_request_update( item );
 
         break;

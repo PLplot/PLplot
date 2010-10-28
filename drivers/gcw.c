@@ -1,74 +1,74 @@
-/* gcw-driver - PLplot Gnome Canvas Widget device driver.
- *
- * Copyright (C) 2004, 2005  Thomas J. Duck
- * Copyright (C) 2004  Rafael Laboissiere
- * All rights reserved.
- *
- *
- * NOTICE
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
- * USA
- *
- *
- * DESCRIPTION
- *
- * This is the Gnome Canvas Widget driver, written by Thomas J. Duck
- * following the heritage of the PLplot Gnome driver by Rafael Laboissiere.
- * Like all PLplot drivers, this operates in standalone mode by default.
- * However, this driver can also be used to write to a user-supplied
- * GnomeCanvas.
- *
- * Please see the PLplot documentation for more information.
- *
- *
- * DEVELOPMENT NOTES
- *
- * Truetype text is supplied using the PLPLOT_CANVAS_HACKTEXT item,
- * which was cloned from gnome-print.  This text item was chosen because
- * it rotates and scales under a zoom correctly and easily.
- *
- * It would be better to use GNOME_CANVAS_TEXT, but currently
- * (4 March 2005) it doesn't rotate or scale under a zoom on the
- * GnomeCanvas.  GNOME_CANVAS_TEXT uses Pango, and rotations were only
- * recently implemented in the Pango API (i.e., Fall 2004).  If the
- * Pango API is used directly, the bounding box doesn't rotate with the
- * text on GnomeCanvas, which results in clipping.  It is likely that
- * GnomeCanvas is not querying the bounding box from Pango correctly,
- * and is not directing Pango to scale.  So, GnomeCanvas needs to be
- * updated to deal with Pango properly.
- *
- * Another problem is that drawing polylines on the Gnome Canvas sometimes
- * results in an 'attempt to put segment in horiz list twice' error.
- * The workaround here is to plot single line segments only, but this
- * results in a performance hit.  This problem will need to be corrected
- * in the GnomeCanvas.
- *
- *
- * KNOWN BUGS
- *
- * PLplot test suite problems:
- *
- *  1) Example x10c does not clip the text (there is no text clipping).
- *
- *  2) Example x17c, the strip chart demo, doesn't do a strip chart
- *     (try the xwin driver to see how it should work).  Strip charts
- *     are fundamentally incompatible with the tabbed window design of
- *     the GCW driver.  Use the PlplotCanvas to create animations
- *     instead.
- */
+// gcw-driver - PLplot Gnome Canvas Widget device driver.
+//
+// Copyright (C) 2004, 2005  Thomas J. Duck
+// Copyright (C) 2004  Rafael Laboissiere
+// All rights reserved.
+//
+//
+// NOTICE
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
+// USA
+//
+//
+// DESCRIPTION
+//
+// This is the Gnome Canvas Widget driver, written by Thomas J. Duck
+// following the heritage of the PLplot Gnome driver by Rafael Laboissiere.
+// Like all PLplot drivers, this operates in standalone mode by default.
+// However, this driver can also be used to write to a user-supplied
+// GnomeCanvas.
+//
+// Please see the PLplot documentation for more information.
+//
+//
+// DEVELOPMENT NOTES
+//
+// Truetype text is supplied using the PLPLOT_CANVAS_HACKTEXT item,
+// which was cloned from gnome-print.  This text item was chosen because
+// it rotates and scales under a zoom correctly and easily.
+//
+// It would be better to use GNOME_CANVAS_TEXT, but currently
+// (4 March 2005) it doesn't rotate or scale under a zoom on the
+// GnomeCanvas.  GNOME_CANVAS_TEXT uses Pango, and rotations were only
+// recently implemented in the Pango API (i.e., Fall 2004).  If the
+// Pango API is used directly, the bounding box doesn't rotate with the
+// text on GnomeCanvas, which results in clipping.  It is likely that
+// GnomeCanvas is not querying the bounding box from Pango correctly,
+// and is not directing Pango to scale.  So, GnomeCanvas needs to be
+// updated to deal with Pango properly.
+//
+// Another problem is that drawing polylines on the Gnome Canvas sometimes
+// results in an 'attempt to put segment in horiz list twice' error.
+// The workaround here is to plot single line segments only, but this
+// results in a performance hit.  This problem will need to be corrected
+// in the GnomeCanvas.
+//
+//
+// KNOWN BUGS
+//
+// PLplot test suite problems:
+//
+//  1) Example x10c does not clip the text (there is no text clipping).
+//
+//  2) Example x17c, the strip chart demo, doesn't do a strip chart
+//     (try the xwin driver to see how it should work).  Strip charts
+//     are fundamentally incompatible with the tabbed window design of
+//     the GCW driver.  Use the PlplotCanvas to create animations
+//     instead.
+//
 
 #include <sys/stat.h>
 
@@ -80,16 +80,16 @@
 #include "plfreetype.h"
 #include "plfci-truetype.h"
 
-/* Font lookup table that is constructed in plD_FreeType_init*/
+// Font lookup table that is constructed in plD_FreeType_init
 extern FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
 
-#endif /* HAVE_FREETYPE */
+#endif // HAVE_FREETYPE
 
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw\n";
 
-/* Global driver options */
+// Global driver options
 
 #ifdef HAVE_FREETYPE
 static PLINT text = 1;
@@ -109,9 +109,9 @@ static DrvOpt gcw_options[] =
 };
 
 
-/*********************
- * Utility functions *
- *********************/
+//********************
+// Utility functions *
+//*******************
 
 guint32 plcolor_to_rgba( PLColor color, guchar alpha )
 {
@@ -123,11 +123,11 @@ guint32 plcolor_to_rgba( PLColor color, guchar alpha )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_dispatch_init_gcw()
- *
- * Initializes the dispatch table.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_dispatch_init_gcw()
+//
+// Initializes the dispatch table.
+//--------------------------------------------------------------------------
 
 void plD_open_gcw( PLStream *pls );
 void plD_init_gcw( PLStream * );
@@ -166,14 +166,14 @@ void plD_dispatch_init_gcw( PLDispatchTable *pdt )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_init_gcw()
- *
- * Initializes the device.
- *
- * This routine is invoked by a call to plinit.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_gcw()
+//
+// Initializes the device.
+//
+// This routine is invoked by a call to plinit.
+//
+//--------------------------------------------------------------------------
 
 void plD_init_gcw( PLStream *pls )
 {
@@ -187,23 +187,23 @@ void plD_init_gcw( PLStream *pls )
     gcw_debug( "<plD_init_gcw>\n" );
 #endif
 
-    /* Parse the driver options */
+    // Parse the driver options
     plParseDrvOpts( gcw_options );
 
-    /* Set up the stream */
-    pls->termin      = 1;      /* Is an interactive terminal */
-    pls->dev_flush   = 1;      /* Handle our own flushes */
-    pls->plbuf_write = replot; /* Use plot buffer to replot to another device */
+    // Set up the stream
+    pls->termin      = 1;      // Is an interactive terminal
+    pls->dev_flush   = 1;      // Handle our own flushes
+    pls->plbuf_write = replot; // Use plot buffer to replot to another device
     pls->width       = 1;
-    pls->dev_clear   = 0;      /* Handle plclear() */
-    pls->dev_fill0   = 1;      /* Handle solid fills */
+    pls->dev_clear   = 0;      // Handle plclear()
+    pls->dev_fill0   = 1;      // Handle solid fills
 
-    /* Create the device */
+    // Create the device
     if ( ( dev = g_malloc( sizeof ( GcwPLdev ) ) ) == NULL )
         plexit( "GCW driver <plD_init_gcw>: Cannot create device" );
     pls->dev = dev;
 
-    /* Set text handling */
+    // Set text handling
 #ifdef HAVE_FREETYPE
     if ( text )
     {
@@ -212,7 +212,7 @@ void plD_init_gcw( PLStream *pls )
         if ( hrshsym )
             pls->dev_hrshsym = 1;
 
-        /* Initialize freetype */
+        // Initialize freetype
         plD_FreeType_init( pls );
     }
     else
@@ -225,17 +225,17 @@ void plD_init_gcw( PLStream *pls )
     pls->dev_unicode = FALSE;
 #endif
 
-    /* Set up pixmap support */
+    // Set up pixmap support
     dev->use_pixmap      = (gboolean) ( !pls->nopixmap );
     dev->pixmap_has_data = FALSE;
 
-    /* Initialize the device colors */
+    // Initialize the device colors
     dev->color         = plcolor_to_rgba( pls->cmap0[pls->icol0], 0xFF );
     dev->bgcolor.red   = (guint16) ( bgcolor.r / 255. * 65535 );
     dev->bgcolor.green = (guint16) ( bgcolor.b / 255. * 65535 );
     dev->bgcolor.blue  = (guint16) ( bgcolor.g / 255. * 65535 );
 
-    /* Set the device canvas and window pointers */
+    // Set the device canvas and window pointers
     dev->canvas     = NULL;
     dev->background = NULL;
     dev->gc         = NULL;
@@ -245,44 +245,44 @@ void plD_init_gcw( PLStream *pls )
     dev->statusbar  = NULL;
     dev->filew      = NULL;
 
-    /* Initialize the Canvas groups.  All of the plplot plotting
-     * commands are drawn to the hidden group.  When the page is finalized,
-     * the group is made visible, and the old group destroyed. The persistent
-     * group is never erased, and always plotted at the very front.
-     */
+    // Initialize the Canvas groups.  All of the plplot plotting
+    // commands are drawn to the hidden group.  When the page is finalized,
+    // the group is made visible, and the old group destroyed. The persistent
+    // group is never erased, and always plotted at the very front.
+    //
     dev->group_visible    = NULL;
     dev->group_hidden     = NULL;
     dev->group_persistent = NULL;
 
-    /* Assume that pladv should completeley refresh the page */
+    // Assume that pladv should completeley refresh the page
     dev->use_persistence = FALSE;
 
-    /* Set the initialization state monitors to FALSE */
+    // Set the initialization state monitors to FALSE
     dev->plstate_width  = FALSE;
     dev->plstate_color0 = FALSE;
     dev->plstate_color1 = FALSE;
 
-    /* Initialize gtk */
+    // Initialize gtk
     gtk_init( 0, NULL );
 
-    /* Set up the physical device in the next series of commands.  It is very
-     * important to do this properly, because many PLplot routines depend on
-     * physical coordinates (e.g., dashed lines, hatched areas, the
-     * replot mechanism, hidden line removal, etc.
-     *
-     * Note that coordinates in the driver are measured in device units,
-     * which correspond to the pixel size on a typical screen.  The coordinates
-     * reported and received from the PLplot core, however, are in virtual
-     * coordinates, which is just a scaled version of the device coordinates.
-     * This strategy is used so that the calculations in the PLplot
-     * core are performed at reasonably high resolution.
-     *
-     */
+    // Set up the physical device in the next series of commands.  It is very
+    // important to do this properly, because many PLplot routines depend on
+    // physical coordinates (e.g., dashed lines, hatched areas, the
+    // replot mechanism, hidden line removal, etc.
+    //
+    // Note that coordinates in the driver are measured in device units,
+    // which correspond to the pixel size on a typical screen.  The coordinates
+    // reported and received from the PLplot core, however, are in virtual
+    // coordinates, which is just a scaled version of the device coordinates.
+    // This strategy is used so that the calculations in the PLplot
+    // core are performed at reasonably high resolution.
+    //
+    //
     if ( pls->xlength > 0 && pls->ylength > 0 )
     {
-        /* xlength and length are the dimensions specified using -geometry
-         * on the command line, in device coordinates.
-         */
+        // xlength and length are the dimensions specified using -geometry
+        // on the command line, in device coordinates.
+        //
         width  = pls->xlength;
         height = pls->ylength;
     }
@@ -292,28 +292,28 @@ void plD_init_gcw( PLStream *pls )
         height = (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN );
     }
 
-    /* If portrait mode, apply a rotation and set freeaspect */
+    // If portrait mode, apply a rotation and set freeaspect
     if ( pls->portrait )
     {
         plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
 
-    /* Setup the page size for this device.  Very important for any driver! */
+    // Setup the page size for this device.  Very important for any driver!
     gcw_set_device_size( width, height );
 
-    /* Install a canvas... unless plsc->hack is set, which is a driver-specific
-     * hack that indicates a PLESC_DEVINIT escape call will provide us with a
-     * canvas to use.  This hack is used by the PlplotCanvas.
-     */
+    // Install a canvas... unless plsc->hack is set, which is a driver-specific
+    // hack that indicates a PLESC_DEVINIT escape call will provide us with a
+    // canvas to use.  This hack is used by the PlplotCanvas.
+    //
     if ( !pls->hack )
     {
-        dev->allow_resize = FALSE; /* The size is set an should not be changed */
+        dev->allow_resize = FALSE; // The size is set an should not be changed
         gcw_install_canvas( NULL );
     }
     else
-        dev->allow_resize = TRUE;  /* Resizing allowed for canvasses
-                                    * provided via PLESC_DEVINIT */
+        dev->allow_resize = TRUE;  // Resizing allowed for canvasses
+                                   // provided via PLESC_DEVINIT
 
 
 #ifdef DEBUG_GCW_1
@@ -322,11 +322,11 @@ void plD_init_gcw( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_polyline_gcw()
- *
- * Draw a polyline in the current color.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_polyline_gcw()
+//
+// Draw a polyline in the current color.
+//--------------------------------------------------------------------------
 
 void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
 {
@@ -357,7 +357,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
     else
         group = dev->group_hidden;
 
-    if ( dev->use_pixmap && !dev->use_persistence ) /* Write to bg pixmap */
+    if ( dev->use_pixmap && !dev->use_persistence ) // Write to bg pixmap
 
     {
         if ( ( gdkpoints = (GdkPoint*) malloc( npts * sizeof ( GdkPoint ) ) ) == NULL )
@@ -374,7 +374,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
                 gdkpoints[i].y = (gint) ( dev->height - y[i] / VSCALE );
             }
         }
-        else /* Swap x and y for portrait mode */
+        else // Swap x and y for portrait mode
         {
             for ( i = 0; i < npts; i++ )
             {
@@ -389,10 +389,10 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
 
         free( gdkpoints );
     }
-    else /* Draw Canvas lines */
+    else // Draw Canvas lines
 
     {
-        /* Put the data in a points structure */
+        // Put the data in a points structure
         if ( ( points = gnome_canvas_points_new( npts ) ) == NULL )
         {
             plabort( "GCW driver <plD_polyline_gcw>: Cannot create points" );
@@ -406,7 +406,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
                 points->coords[2 * i + 1] = (gdouble) ( -y[i] / VSCALE );
             }
         }
-        else /* Swap x and y for portrait mode */
+        else // Swap x and y for portrait mode
         {
             for ( i = 0; i < npts; i++ )
             {
@@ -415,25 +415,25 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
             }
         }
 
-        /* Get the pen width and color */
+        // Get the pen width and color
         width = pls->width;
         color = dev->color;
 
 
-        /* Workaround for the 'attempt to put segment in horiz list twice'
-         * from libgnomecanvas:
-         *
-         *   Plot a series of line segments rather than a single polyline.
-         *
-         * This slows rendering down a considerable amount.  However, it is
-         * unclear what else can be done.  Libgnomecanvas should be able to
-         * deal with all valid data; bizarre plotting errors happen along with
-         * this error.
-         *
-         * Note that instead of allocating a series of points structures,
-         * we just refer to the original one from a separate struct
-         * (GnomeCanvas does not hold a reference to the points structure).
-         */
+        // Workaround for the 'attempt to put segment in horiz list twice'
+        // from libgnomecanvas:
+        //
+        //   Plot a series of line segments rather than a single polyline.
+        //
+        // This slows rendering down a considerable amount.  However, it is
+        // unclear what else can be done.  Libgnomecanvas should be able to
+        // deal with all valid data; bizarre plotting errors happen along with
+        // this error.
+        //
+        // Note that instead of allocating a series of points structures,
+        // we just refer to the original one from a separate struct
+        // (GnomeCanvas does not hold a reference to the points structure).
+        //
 
         pts.num_points = 2;
         pts.ref_count  = 1;
@@ -458,17 +458,17 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
             }
         }
 
-        /* Free the points structure */
+        // Free the points structure
         gnome_canvas_points_free( points );
     }
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_line_gcw()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_line_gcw()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void plD_line_gcw( PLStream *pls, short x1, short y1, short x2, short y2 )
 {
@@ -488,11 +488,11 @@ void plD_line_gcw( PLStream *pls, short x1, short y1, short x2, short y2 )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_eop_gcw()
- *
- * End of page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_eop_gcw()
+//
+// End of page.
+//--------------------------------------------------------------------------
 
 void plD_eop_gcw( PLStream *pls )
 {
@@ -515,9 +515,9 @@ void plD_eop_gcw( PLStream *pls )
         plexit( "GCW driver <plD_eop_gcw>: Canvas not found" );
     canvas = dev->canvas;
 
-    /* Ignore if there is no hidden group.  This means BOP has not been
-     * called yet.
-     */
+    // Ignore if there is no hidden group.  This means BOP has not been
+    // called yet.
+    //
     if ( !GNOME_IS_CANVAS_GROUP( dev->group_hidden ) )
         return;
 
@@ -530,13 +530,13 @@ void plD_eop_gcw( PLStream *pls )
     else
         group = dev->group_hidden;
 
-    /* Retrieve the device width and height of the canvas */
+    // Retrieve the device width and height of the canvas
     width  = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
     height = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-height" );
 
     if ( dev->pixmap_has_data )
     {
-        /* Render the pixmap to a pixbuf on the canvas. */
+        // Render the pixmap to a pixbuf on the canvas.
         if ( !GDK_IS_PIXBUF( pixbuf = gdk_pixbuf_get_from_drawable( NULL,
                      dev->background,
                      dev->colormap,
@@ -546,7 +546,7 @@ void plD_eop_gcw( PLStream *pls )
         {
             plwarn( "GCW driver <plD_eop_gcw>: Can't draw pixmap into pixbuf." );
         }
-        else /* Pixbuf creation succeeded */
+        else // Pixbuf creation succeeded
 
         {
             if ( !GNOME_IS_CANVAS_ITEM(
@@ -563,13 +563,13 @@ void plD_eop_gcw( PLStream *pls )
                 plwarn( "GCW driver <plD_eop_gcw>: Canvas item not created." );
             }
 
-            /* Free the pixbuf */
+            // Free the pixbuf
             g_object_unref( pixbuf );
         }
     }
     else
     {
-        /* Use a rectangle for the background instead (faster) */
+        // Use a rectangle for the background instead (faster)
         if ( !GNOME_IS_CANVAS_ITEM(
                  item = gnome_canvas_item_new(
                      dev->group_hidden,
@@ -588,51 +588,51 @@ void plD_eop_gcw( PLStream *pls )
         }
     }
 
-    /* Move the persistent group to the front */
+    // Move the persistent group to the front
     gnome_canvas_item_raise_to_top( GNOME_CANVAS_ITEM( dev->group_persistent ) );
 
-    /* Move the background to the back */
+    // Move the background to the back
     if ( GNOME_IS_CANVAS_ITEM( item ) )
         gnome_canvas_item_lower_to_bottom( item );
 
-    /* Make the hidden group visible */
+    // Make the hidden group visible
     gnome_canvas_item_show( GNOME_CANVAS_ITEM( dev->group_hidden ) );
 
-    /* Destroy the old visible group */
+    // Destroy the old visible group
     if ( GNOME_IS_CANVAS_GROUP( dev->group_visible ) )
     {
         gtk_object_destroy( (GtkObject*) ( dev->group_visible ) );
         dev->group_visible = NULL;
     }
 
-    /* Clear the background pixmap */
+    // Clear the background pixmap
     if ( !dev->use_persistence && dev->pixmap_has_data )
         gcw_clear_background();
 
-    /* Name the hidden group as visible */
+    // Name the hidden group as visible
     dev->group_visible = dev->group_hidden;
     dev->group_hidden  = NULL;
 
-    /* Update the canvas */
+    // Update the canvas
     canvas->need_update = 1;
     gnome_canvas_update_now( canvas );
 
-    /*
-     * Copy the plot buffer for future reference, otherwise it is
-     * thrown out.
-     */
+    //
+    // Copy the plot buffer for future reference, otherwise it is
+    // thrown out.
+    //
 
     save_state = g_object_get_data( G_OBJECT( canvas ), "plotbuf" );
     save_state = (void *) plbuf_save( pls, save_state );
 
-    /* Attach the saved state to the canvas */
+    // Attach the saved state to the canvas
     g_object_set_data( G_OBJECT( canvas ), "plotbuf", (gpointer) save_state );
 
-    /* If the driver is creating its own canvasses, set dev->canvas to be
-     * NULL now in order to force creation of a new canvas when the next
-     * drawing call is made.  The new canvas will be placed in a new
-     * notebook page.
-     */
+    // If the driver is creating its own canvasses, set dev->canvas to be
+    // NULL now in order to force creation of a new canvas when the next
+    // drawing call is made.  The new canvas will be placed in a new
+    // notebook page.
+    //
     if ( dev->window != NULL )
     {
         dev->canvas           = NULL;
@@ -647,12 +647,12 @@ void plD_eop_gcw( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_bop_gcw()
- *
- * Set up for the next page.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_bop_gcw()
+//
+// Set up for the next page.
+//
+//--------------------------------------------------------------------------
 
 void plD_bop_gcw( PLStream *pls )
 {
@@ -662,7 +662,7 @@ void plD_bop_gcw( PLStream *pls )
     if ( !GNOME_IS_CANVAS( dev->canvas ) )
     {
         if ( pls->hack )
-            return;              /* Wait for a canvas via DEVINIT */
+            return;              // Wait for a canvas via DEVINIT
         else
             gcw_install_canvas( NULL );
     }
@@ -672,9 +672,9 @@ void plD_bop_gcw( PLStream *pls )
     gcw_debug( "<plD_bop_gcw>\n" );
 #endif
 
-    /* Replay escape calls that come in before PLESC_DEVINIT.  Some of them
-     * required a Canvas that didn't exist yet.
-     */
+    // Replay escape calls that come in before PLESC_DEVINIT.  Some of them
+    // required a Canvas that didn't exist yet.
+    //
     if ( dev->plstate_width )
         plD_state_gcw( pls, PLSTATE_WIDTH );
     if ( dev->plstate_color0 )
@@ -685,7 +685,7 @@ void plD_bop_gcw( PLStream *pls )
     dev->plstate_color0 = FALSE;
     dev->plstate_color1 = FALSE;
 
-    /* Creat a new hidden group; all new drawing will be to this group */
+    // Creat a new hidden group; all new drawing will be to this group
     if ( !GNOME_IS_CANVAS_ITEM(
              dev->group_hidden = GNOME_CANVAS_GROUP( gnome_canvas_item_new(
                      gnome_canvas_root( canvas ),
@@ -698,10 +698,10 @@ void plD_bop_gcw( PLStream *pls )
         plexit( "GCW driver <plD_bop_gcw>: Canvas group cannot be created" );
     }
 
-    /* Set the clip to NULL */
+    // Set the clip to NULL
     g_object_set( G_OBJECT( dev->group_hidden ), "path", NULL, NULL );
 
-    /* Hide this group until drawing is done */
+    // Hide this group until drawing is done
     gnome_canvas_item_hide( GNOME_CANVAS_ITEM( dev->group_hidden ) );
 
 #ifdef DEBUG_GCW_1
@@ -710,11 +710,11 @@ void plD_bop_gcw( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_tidy_gcw()
- *
- * Close graphics file
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_tidy_gcw()
+//
+// Close graphics file
+//--------------------------------------------------------------------------
 
 void plD_tidy_gcw( PLStream *pls )
 {
@@ -744,17 +744,17 @@ void plD_tidy_gcw( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_state_gcw()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- *
- * Note that PLplot sometimes tries to change states before the device is
- * fully initialized (i.e., via PLESC_DEVINIT).  We must keep track of
- * such attempts, and invoke the state change during the next call to
- * plD_bop_gcw.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_state_gcw()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//
+// Note that PLplot sometimes tries to change states before the device is
+// fully initialized (i.e., via PLESC_DEVINIT).  We must keep track of
+// such attempts, and invoke the state change during the next call to
+// plD_bop_gcw.
+//
+//--------------------------------------------------------------------------
 
 void plD_state_gcw( PLStream *pls, PLINT op )
 {
@@ -834,12 +834,12 @@ void plD_state_gcw( PLStream *pls, PLINT op )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * fill_polygon()
- *
- * Fills the polygon defined by the given points.  Used for shade
- * plotting.  Only solid fills are allowed.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// fill_polygon()
+//
+// Fills the polygon defined by the given points.  Used for shade
+// plotting.  Only solid fills are allowed.
+//--------------------------------------------------------------------------
 
 static void fill_polygon( PLStream* pls )
 {
@@ -868,7 +868,7 @@ static void fill_polygon( PLStream* pls )
     else
         group = dev->group_hidden;
 
-    if ( dev->use_pixmap && !dev->use_persistence ) /* Write to a pixmap */
+    if ( dev->use_pixmap && !dev->use_persistence ) // Write to a pixmap
 
     {
         if ( ( gdkpoints = (GdkPoint*) malloc( pls->dev_npts * sizeof ( GdkPoint ) ) ) == NULL )
@@ -885,7 +885,7 @@ static void fill_polygon( PLStream* pls )
                 gdkpoints[i].y = (gint) ( dev->height - pls->dev_y[i] / VSCALE );
             }
         }
-        else /* Swap x and y for portrait mode */
+        else // Swap x and y for portrait mode
         {
             for ( i = 0; i < pls->dev_npts; i++ )
             {
@@ -900,7 +900,7 @@ static void fill_polygon( PLStream* pls )
 
         free( gdkpoints );
     }
-    else /* Use Gnome Canvas polygons */
+    else // Use Gnome Canvas polygons
 
     {
         if ( ( points = gnome_canvas_points_new( pls->dev_npts ) ) == NULL )
@@ -917,7 +917,7 @@ static void fill_polygon( PLStream* pls )
                 points->coords[2 * i + 1] = (gdouble) ( -pls->dev_y[i] / VSCALE );
             }
         }
-        else /* Swap x and y for portrait mode */
+        else // Swap x and y for portrait mode
         {
             for ( i = 0; i < pls->dev_npts; i++ )
             {
@@ -931,7 +931,7 @@ static void fill_polygon( PLStream* pls )
                      GNOME_TYPE_CANVAS_POLYGON,
                      "points", points,
                      "fill-color-rgba", dev->color,
-                     /* "outline-color-rgba",dev->color, */
+                     // "outline-color-rgba",dev->color,
                      NULL )
                  ) )
         {
@@ -941,10 +941,10 @@ static void fill_polygon( PLStream* pls )
         gnome_canvas_points_free( points );
 
 
-        /* Draw a thin outline for each polygon; note that doing this
-         * using the "outline-color-rgba" property above can result in
-         * Canvas errors.
-         */
+        // Draw a thin outline for each polygon; note that doing this
+        // using the "outline-color-rgba" property above can result in
+        // Canvas errors.
+        //
         tmp        = pls->width;
         pls->width = 1;
         plD_polyline_gcw( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
@@ -953,24 +953,24 @@ static void fill_polygon( PLStream* pls )
 }
 
 #ifdef HAVE_FREETYPE
-/*--------------------------------------------------------------------------*\
- * proc_str()
- *
- * Handles call to draw text on the canvas when the HAS_TEXT escape funtion
- * case is invoked.
- *
- * This routine is unicode enabled, and requires freetype.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// proc_str()
+//
+// Handles call to draw text on the canvas when the HAS_TEXT escape funtion
+// case is invoked.
+//
+// This routine is unicode enabled, and requires freetype.
+//--------------------------------------------------------------------------
 
 static void proc_str( PLStream *pls, EscText *args )
 {
-    PLFLT           *t = args->xform; /* Transform matrix for string */
+    PLFLT           *t = args->xform; // Transform matrix for string
 
     GnomeCanvasGroup* group;
     GcwPLdev        * dev = pls->dev;
     GnomeCanvas     * canvas;
 
-    PLUNICODE       fci; /* The unicode font characterization integer */
+    PLUNICODE       fci; // The unicode font characterization integer
     guchar          *fontname = NULL;
     gint            font_size;
     GnomeFont       *font;
@@ -978,24 +978,24 @@ static void proc_str( PLStream *pls, EscText *args )
     GnomeGlyphList  *glyphlist;
     guint           Nglyphs;
 
-    gdouble         affine_baseline[6]  = { 0., 0., 0., 0., 0., 0. }; /* Affine transforms */
+    gdouble         affine_baseline[6]  = { 0., 0., 0., 0., 0., 0. }; // Affine transforms
     gdouble         affine_translate[6] = { 0., 0., 0., 0., 0., 0. };
     gdouble         affine_rotate[6]    = { 0., 0., 0., 0., 0., 0. };
     gdouble         affine_plplot[6]    = { 0., 0., 0., 0., 0., 0. };
 
-    GnomeCanvasItem * item[200];             /* List of string segments */
-    gdouble         width[200], height[200]; /* Height and width of string segment */
-    gdouble         up_list[200];            /* Indicates sub/sup position of string segment */
-    gdouble         up = 0, scale = 1;       /* Used to create superscripts and subscripts */
+    GnomeCanvasItem * item[200];             // List of string segments
+    gdouble         width[200], height[200]; // Height and width of string segment
+    gdouble         up_list[200];            // Indicates sub/sup position of string segment
+    gdouble         up = 0, scale = 1;       // Used to create superscripts and subscripts
 
-    ArtDRect        bbox;                    /* Bounding box for each segment to get width & height */
+    ArtDRect        bbox;                    // Bounding box for each segment to get width & height
 
-    const PLUNICODE *text;                   /* The text and pointers to it */
-    guint           i = 0, Ntext;            /* The text index and maximum length */
+    const PLUNICODE *text;                   // The text and pointers to it
+    guint           i = 0, Ntext;            // The text index and maximum length
 
-    char            esc;                     /* The escape character */
+    char            esc;                     // The escape character
 
-    guint           N           = 0;         /* The number of text segments */
+    guint           N           = 0;         // The number of text segments
     gdouble         total_width = 0, sum_width = 0;
 
     guint           symbol;
@@ -1014,23 +1014,23 @@ static void proc_str( PLStream *pls, EscText *args )
     else
         group = dev->group_hidden;
 
-    /* Retrieve the escape character */
+    // Retrieve the escape character
     plgesc( &esc );
 
-    /* Put the transform matrix values in the order expected by libart.
-     * Note that the plplot transform matrix only has a rotation and shear;
-     * plplot's rotation direction and shear are opposite from that expected
-     * by libart, hence the negative signs below.
-     */
-    affine_plplot[0] = t[0];  /* cos(theta) */
-    affine_plplot[1] = -t[2]; /* sin(theta) */
-    affine_plplot[2] = -t[1]; /* a cos(theta) - sin(theta) */
-    affine_plplot[3] = t[3];  /* a sin(theta) + cos(theta) */
+    // Put the transform matrix values in the order expected by libart.
+    // Note that the plplot transform matrix only has a rotation and shear;
+    // plplot's rotation direction and shear are opposite from that expected
+    // by libart, hence the negative signs below.
+    //
+    affine_plplot[0] = t[0];  // cos(theta)
+    affine_plplot[1] = -t[2]; // sin(theta)
+    affine_plplot[2] = -t[1]; // a cos(theta) - sin(theta)
+    affine_plplot[3] = t[3];  // a sin(theta) + cos(theta)
 
-    /* Font size: size is in pixels but chrht is in mm.  Why the extra factor? */
+    // Font size: size is in pixels but chrht is in mm.  Why the extra factor?
     font_size = (gint) ( pls->chrht * DEVICE_PIXELS_PER_MM * 1.5 );
 
-    /* Determine the default font */
+    // Determine the default font
     plgfci( &fci );
     fontname = plP_FCI2FontName( fci, FontLookup, N_TrueTypeLookup );
     if ( fontname == NULL )
@@ -1039,25 +1039,25 @@ static void proc_str( PLStream *pls, EscText *args )
         return;
     }
 
-    /* Retrieve the font face */
+    // Retrieve the font face
     face = gnome_font_face_find_from_filename( fontname, 0 );
 
-    /* Get the unicode string */
+    // Get the unicode string
     text  = args->unicode_array;
     Ntext = (guint) ( args->unicode_array_len );
 
-    /* Process the string: Break it into segments of constant font and size,
-     * making sure we process control characters as we come to them.  Save
-     * the extra information that will allow us to place the text on the
-     * canvas.
-     */
+    // Process the string: Break it into segments of constant font and size,
+    // making sure we process control characters as we come to them.  Save
+    // the extra information that will allow us to place the text on the
+    // canvas.
+    //
     while ( i < Ntext )
     {
-        /* Process the next character */
+        // Process the next character
 
-        if ( text[i] & PL_FCI_MARK ) /* Is it a font characterization index? */
+        if ( text[i] & PL_FCI_MARK ) // Is it a font characterization index?
 
-        {                            /* Determine the font name */
+        {                            // Determine the font name
             fontname = plP_FCI2FontName( text[i], FontLookup, N_TrueTypeLookup );
             if ( fontname == NULL )
             {
@@ -1066,18 +1066,18 @@ static void proc_str( PLStream *pls, EscText *args )
                 return;
             }
 
-            /* Retrieve the font face */
-            gnome_font_unref( face ); /* We already have a face */
+            // Retrieve the font face
+            gnome_font_unref( face ); // We already have a face
             face = gnome_font_face_find_from_filename( fontname, 0 );
 
-            i++; /* Move ahead to the next character */
+            i++; // Move ahead to the next character
         }
         else
         {
-            if ( text[i] == esc ) /* Check for escape sequences */
+            if ( text[i] == esc ) // Check for escape sequences
 
-            {                     /* Process escape sequence */
-                i++;              /* Move on to next character */
+            {                     // Process escape sequence
+                i++;              // Move on to next character
                 if ( i >= Ntext )
                 {
                     plwarn( "GCW driver <proc_str>: Invalid escape sequence "
@@ -1087,62 +1087,62 @@ static void proc_str( PLStream *pls, EscText *args )
 
                 switch ( text[i] )
                 {
-                case '#':  /* <esc><esc>; this should translate to a hash */
-                    break; /* Watch out for it later */
+                case '#':  // <esc><esc>; this should translate to a hash
+                    break; // Watch out for it later
 
-                /* Move to lower sub/sup position */
+                // Move to lower sub/sup position
                 case 'd':
                 case 'D':
                     if ( up > 0. )
-                        scale *= 1.25;            /* Subscript scaling parameter */
+                        scale *= 1.25;            // Subscript scaling parameter
                     else
-                        scale *= 0.8;             /* Subscript scaling parameter */
+                        scale *= 0.8;             // Subscript scaling parameter
                     up -= font_size / 2.;
                     break;
 
-                /* Move to higher sub/sup position */
+                // Move to higher sub/sup position
                 case 'u':
                 case 'U':
                     if ( up < 0. )
-                        scale *= 1.25;            /* Subscript scaling parameter */
+                        scale *= 1.25;            // Subscript scaling parameter
                     else
-                        scale *= 0.8;             /* Subscript scaling parameter */
+                        scale *= 0.8;             // Subscript scaling parameter
                     up += font_size / 2.;
                     break;
 
-                /* Ignore the next sequences */
+                // Ignore the next sequences
 
-                /* Overline */
+                // Overline
                 case '+':
 
-                /* Underline */
+                // Underline
                 case '-':
 
-                /* Backspace */
+                // Backspace
                 case 'b':
                 case 'B':
                     plwarn( "GCW driver <proc_str>: '+', '-', and 'b' text "
                         "escape sequences not processed." );
                     break;
-                } /* switch(text[i]) */
+                } // switch(text[i])
 
                 if ( text[i] != '#' )
-                    i++; /* Move ahead to the next character */
-            } /* if(text[i] == esc) */
-        }                /* if(text[i] & PL_FCI_MARK) */
+                    i++; // Move ahead to the next character
+            } // if(text[i] == esc)
+        }                // if(text[i] & PL_FCI_MARK)
 
 
         if ( i == Ntext )
-            continue;               /* End of string */
+            continue;               // End of string
 
-        /* Save the sub/sup position */
+        // Save the sub/sup position
         up_list[N] = up;
 
-        /* Get the font */
+        // Get the font
         font = gnome_font_face_get_font_default( face, font_size * scale );
-        /* printf("\n\nfont name = %s\n\n",gnome_font_get_name(font)); */
+        // printf("\n\nfont name = %s\n\n",gnome_font_get_name(font));
 
-        /* Create the glyphlist for this text segment */
+        // Create the glyphlist for this text segment
         glyphlist = gnome_glyphlist_new();
         gnome_glyphlist_font( glyphlist, font );
         gnome_glyphlist_color( glyphlist, dev->color );
@@ -1150,16 +1150,16 @@ static void proc_str( PLStream *pls, EscText *args )
         gnome_glyphlist_kerning( glyphlist, 0. );
         gnome_glyphlist_letterspace( glyphlist, 0. );
 
-        /* Free the font */
+        // Free the font
         gnome_font_unref( font );
 
-        /* Move along to the next escape or FCI character, stuffing
-         * everything else into the glyphlist.
-         */
+        // Move along to the next escape or FCI character, stuffing
+        // everything else into the glyphlist.
+        //
         Nglyphs = 0;
         while ( i < Ntext && !( text[i] & PL_FCI_MARK ) )
         {
-            /* Differentiate between ## and escape sequences */
+            // Differentiate between ## and escape sequences
             if ( text[i] == esc )
             {
                 if ( !( i > 0 && text[i - 1] == esc ) )
@@ -1173,17 +1173,17 @@ static void proc_str( PLStream *pls, EscText *args )
 
         if ( Nglyphs )
         {
-            /* Determine the bounding box of the text */
+            // Determine the bounding box of the text
             gnome_glyphlist_bbox( glyphlist, NULL, 0, &bbox );
             width[N]  = bbox.x1 - bbox.x0;
             height[N] = bbox.y1 - bbox.y0;
 
-            /* Keep track of the total string width so that we can justify it */
+            // Keep track of the total string width so that we can justify it
             total_width += width[N];
             if ( N != 0 )
-                total_width += 2;           /* Add a little extra space */
+                total_width += 2;           // Add a little extra space
 
-            /* Create the canvas text item */
+            // Create the canvas text item
             if ( !GNOME_IS_CANVAS_ITEM(
                      item[N] = gnome_canvas_item_new( group,
                          PLPLOT_TYPE_CANVAS_HACKTEXT,
@@ -1198,28 +1198,28 @@ static void proc_str( PLStream *pls, EscText *args )
                 return;
             }
 
-            /* Free the glyphlist */
+            // Free the glyphlist
             gnome_glyphlist_unref( glyphlist );
 
-            /* Advance to next string segment */
+            // Advance to next string segment
             N++;
-        } /* if(Nglyphs) */
+        } // if(Nglyphs)
 
 
-        /* Don't overflow buffer */
+        // Don't overflow buffer
         if ( N == 200 && i < Ntext )
         {
             plabort( "GCW driver <proc_str>: too many text segments" );
             return;
         }
-    } /* while(i<Ntext) */
+    } // while(i<Ntext)
 
-    /* We have all of the string segments.  Place each on the canvas
-     * appropriately.
-     */
+    // We have all of the string segments.  Place each on the canvas
+    // appropriately.
+    //
     for ( i = 0; i < N; i++ )
     {
-        /* Calculate and apply the affine transforms */
+        // Calculate and apply the affine transforms
         art_affine_rotate( affine_rotate, 90. * ( pls->diorot - pls->portrait ) );
         if ( !pls->portrait )
         {
@@ -1229,7 +1229,7 @@ static void proc_str( PLStream *pls, EscText *args )
             art_affine_translate( affine_translate,
                 args->x / VSCALE, -args->y / VSCALE );
         }
-        else /* Swap x and y for portrait mode */
+        else // Swap x and y for portrait mode
         {
             art_affine_translate( affine_baseline,
                 -total_width * args->just + sum_width,
@@ -1242,25 +1242,25 @@ static void proc_str( PLStream *pls, EscText *args )
         gnome_canvas_item_affine_relative( item[i], affine_plplot );
         gnome_canvas_item_affine_relative( item[i], affine_baseline );
 
-        /* Keep track of the position in the string */
+        // Keep track of the position in the string
         sum_width += width[i];
         if ( i != N - 1 )
-            sum_width += 2;               /* Add a little extra space */
+            sum_width += 2;               // Add a little extra space
     }
 
 #ifdef DEBUG_GCW_2
     gcw_debug( "</proc_str>\n" );
 #endif
 }
-#endif /*HAVE_FREETYPE */
+#endif //HAVE_FREETYPE
 
 
-/*--------------------------------------------------------------------------*\
- * plD_esc_gcw()
- *
- * Escape functions.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_esc_gcw()
+//
+// Escape functions.
+//
+//--------------------------------------------------------------------------
 
 void plD_esc_gcw( PLStream *pls, PLINT op, void *ptr )
 {
@@ -1300,7 +1300,7 @@ void plD_esc_gcw( PLStream *pls, PLINT op, void *ptr )
 
 #ifdef HAVE_FREETYPE
     case PLESC_HAS_TEXT:
-        proc_str( pls, ptr ); /* Draw the text */
+        proc_str( pls, ptr ); // Draw the text
         break;
 #endif
 

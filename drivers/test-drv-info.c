@@ -1,25 +1,25 @@
-/* Get device info from PLplot driver module
- *
- * Copyright (C) 2003  Rafael Laboissiere
- * Copyright (C) 2004  Joao Cardoso
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Library General Public License as published by the
- * Free Software Foundation; either version 2 of the License, or (at your
- * option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library
- * General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with the GNU C Library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
- * MA 02110-1301, USA.
- */
+// Get device info from PLplot driver module
+//
+// Copyright (C) 2003  Rafael Laboissiere
+// Copyright (C) 2004  Joao Cardoso
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify it under
+// the terms of the GNU Library General Public License as published by the
+// Free Software Foundation; either version 2 of the License, or (at your
+// option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library
+// General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with the GNU C Library; see the file COPYING.LIB.  If not, write to
+// the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+// MA 02110-1301, USA.
+//
 
 #include "plplotP.h"
 #ifndef LTDL_WIN32
@@ -34,7 +34,7 @@
 #define SYM_LEN        300
 #define DRVSPEC_LEN    400
 
-/* SEGV signal handler */
+// SEGV signal handler
 RETSIGTYPE
 catch_segv( int sig )
 {
@@ -51,7 +51,7 @@ main( int argc, char* argv[] )
     char        drvspec[ DRVSPEC_LEN ];
     char        ** info;
 
-    /* Establish a handler for SIGSEGV signals. */
+    // Establish a handler for SIGSEGV signals.
     signal( SIGSEGV, catch_segv );
 
     lt_dlinit();
@@ -59,7 +59,7 @@ main( int argc, char* argv[] )
     snprintf( drvspec, DRVSPEC_LEN, "%s", drvnam );
 #else
     snprintf( drvspec, DRVSPEC_LEN, "%s/%s", plGetDrvDir(), drvnam );
-#endif /* LTDL_WIN32 */
+#endif // LTDL_WIN32
     dlhand = lt_dlopenext( drvspec );
     if ( dlhand == NULL )
     {

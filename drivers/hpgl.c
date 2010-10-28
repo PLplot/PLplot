@@ -1,31 +1,31 @@
-/* $Id$
- *
- *  File:	hpgl.c
- *
- *  Descript:	hp7470, hp7580, and lj_hpgl drivers
- *
- *  Library:	---
- *
- *  Requires:	---
- *
- *  Public:	plD_init_hp7470()
- *		plD_init_hp7580()
- *		plD_init_lj_hpgl()
- *		plD_line_hpgl()
- *		plD_polyline_hpgl()
- *		plD_eop_hpgl()
- *		plD_bop_hpgl()
- *		plD_tidy_hpgl()
- *		plD_state_hpgl()
- *		plD_esc_hpgl()
- *
- *		pldummy_hpgl()
- *
- *  Private:	initialize_hpgl_pls()
- *
- *  Notes:	---
- *
- \*--------------------------------------------------------------------------*/
+// $Id$
+//
+//  File:	hpgl.c
+//
+//  Descript:	hp7470, hp7580, and lj_hpgl drivers
+//
+//  Library:	---
+//
+//  Requires:	---
+//
+//  Public:	plD_init_hp7470()
+//		plD_init_hp7580()
+//		plD_init_lj_hpgl()
+//		plD_line_hpgl()
+//		plD_polyline_hpgl()
+//		plD_eop_hpgl()
+//		plD_bop_hpgl()
+//		plD_tidy_hpgl()
+//		plD_state_hpgl()
+//		plD_esc_hpgl()
+//
+//		pldummy_hpgl()
+//
+//  Private:	initialize_hpgl_pls()
+//
+//  Notes:	---
+//
+//--------------------------------------------------------------------------
 
 #include "plDevs.h"
 
@@ -36,7 +36,7 @@
 #include <string.h>
 #include "drivers.h"
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_hpgl =
 #if defined ( PLD_hp7470 )
     "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl:34:hp7470\n"
@@ -58,9 +58,9 @@ void plD_tidy_hpgl( PLStream * );
 void plD_state_hpgl( PLStream *, PLINT );
 void plD_esc_hpgl( PLStream *, PLINT, void * );
 
-/* top level declarations */
+// top level declarations
 
-/* Plotter sizes */
+// Plotter sizes
 
 #define HP7470_XMIN    0
 #define HP7470_XMAX    10299
@@ -78,9 +78,9 @@ void plD_esc_hpgl( PLStream *, PLINT, void * );
 #define LJIII_YMAX     7700
 
 #define OF             pls->OutFile
-#define MIN_WIDTH      1                /* Minimum pen width */
-#define MAX_WIDTH      10               /* Maximum pen width */
-#define DEF_WIDTH      1                /* Default pen width */
+#define MIN_WIDTH      1                // Minimum pen width
+#define MAX_WIDTH      10               // Maximum pen width
+#define DEF_WIDTH      1                // Default pen width
 
 static void hpgl_dispatch_init_helper( PLDispatchTable *pdt,
                                        char *menustr, char *devnam,
@@ -102,22 +102,22 @@ static void hpgl_dispatch_init_helper( PLDispatchTable *pdt,
     pdt->pl_esc      = (plD_esc_fp) plD_esc_hpgl;
 }
 
-/*--------------------------------------------------------------------------*\
- * initialize_hpgl_pls()
- *
- * Initialize plot stream
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// initialize_hpgl_pls()
+//
+// Initialize plot stream
+//--------------------------------------------------------------------------
 
 static void
 initialize_hpgl_pls( PLStream *pls )
 {
     PLDev *dev = (PLDev *) pls->dev;
 
-    if ( pls->width == 0 )      /* Is 0 if uninitialized */
+    if ( pls->width == 0 )      // Is 0 if uninitialized
         pls->width = 1;
 
-    plFamInit( pls );             /* Initialize family file info */
-    plOpenFile( pls );            /* get file name if not already set */
+    plFamInit( pls );             // Initialize family file info
+    plOpenFile( pls );            // get file name if not already set
 
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
@@ -128,11 +128,11 @@ initialize_hpgl_pls( PLStream *pls )
     plP_setphy( dev->xmin, dev->xmax, dev->ymin, dev->ymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_hp7470()
- *
- * Initialize device.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_hp7470()
+//
+// Initialize device.
+//--------------------------------------------------------------------------
 
 #ifdef PLD_hp7470
 void plD_init_hp7470( PLStream * );
@@ -152,23 +152,23 @@ plD_init_hp7470( PLStream *pls )
     PLDev *dev;
 
     pls->color = 1;
-    dev        = plAllocDev( pls ); /* Allocate device-specific data */
+    dev        = plAllocDev( pls ); // Allocate device-specific data
     dev->xmin  = HP7470_XMIN;
     dev->xmax  = HP7470_XMAX;
     dev->ymin  = HP7470_YMIN;
     dev->ymax  = HP7470_YMAX;
 
-    initialize_hpgl_pls( pls );   /* initialize plot stream */
+    initialize_hpgl_pls( pls );   // initialize plot stream
 
     fputs( "\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n", OF );
 }
-#endif          /* PLD_hp7470 */
+#endif          // PLD_hp7470
 
-/*--------------------------------------------------------------------------*\
- * plD_init_hp7580()
- *
- * Initialize device.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_hp7580()
+//
+// Initialize device.
+//--------------------------------------------------------------------------
 
 #ifdef PLD_hp7580
 void plD_init_hp7580( PLStream * );
@@ -187,24 +187,24 @@ plD_init_hp7580( PLStream *pls )
     PLDev *dev;
 
     pls->color = 1;
-    dev        = plAllocDev( pls ); /* Allocate device-specific data */
+    dev        = plAllocDev( pls ); // Allocate device-specific data
     dev->xmin  = HP7580_XMIN;
     dev->xmax  = HP7580_XMAX;
     dev->ymin  = HP7580_YMIN;
     dev->ymax  = HP7580_YMAX;
 
-    initialize_hpgl_pls( pls );   /* initialize plot stream */
+    initialize_hpgl_pls( pls );   // initialize plot stream
 
     fputs( "\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n", OF );
     fputs( "RO90;IP;SP4;PA;\n", OF );
 }
-#endif  /* PLD_hp7580 */
+#endif  // PLD_hp7580
 
-/*--------------------------------------------------------------------------*\
- * plD_init_lj_hpgl()
- *
- * Initialize device.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_lj_hpgl()
+//
+// Initialize device.
+//--------------------------------------------------------------------------
 
 #ifdef PLD_lj_hpgl
 void plD_init_lj_hpgl( PLStream * );
@@ -222,28 +222,28 @@ plD_init_lj_hpgl( PLStream *pls )
 {
     PLDev *dev;
 
-    dev       = plAllocDev( pls ); /* Allocate device-specific data */
+    dev       = plAllocDev( pls ); // Allocate device-specific data
     dev->xmin = LJIII_XMIN;
     dev->xmax = LJIII_XMAX;
     dev->ymin = LJIII_YMIN;
     dev->ymax = LJIII_YMAX;
 
-    initialize_hpgl_pls( pls );   /* initialize plot stream */
+    initialize_hpgl_pls( pls );   // initialize plot stream
 
-/* HP III changes here up to .I200 puts printer in HPGL/2 emulation
- * with 300DPI printing.
- * Next line : added pw 0.2 for pen width 0.2 (of an inch ?)
- */
+// HP III changes here up to .I200 puts printer in HPGL/2 emulation
+// with 300DPI printing.
+// Next line : added pw 0.2 for pen width 0.2 (of an inch ?)
+//
     fputs( "\x1b*T300R\x1b%1B;\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n", OF );
     fputs( "RO90;IP;PW 0.2;SP 1;PA;", OF );
 }
-#endif  /* PLD_lj_hpgl */
+#endif  // PLD_lj_hpgl
 
-/*--------------------------------------------------------------------------*\
- * plD_line_hpgl()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_line_hpgl()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void
 plD_line_hpgl( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -251,12 +251,12 @@ plD_line_hpgl( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     PLDev *dev = (PLDev *) pls->dev;
     int   x1   = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
-/* Write out old path */
+// Write out old path
 
     if ( x1 != dev->xold || y1 != dev->yold )
         pls->bytecnt += fprintf( OF, "PU%d %d;", x1, y1 );
 
-/* Add new point to path */
+// Add new point to path
 
     pls->bytecnt += fprintf( OF, "PD%d %d\n", x2, y2 );
 
@@ -264,11 +264,11 @@ plD_line_hpgl( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     dev->yold = y2;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_polyline_hpgl()
- *
- * Draw a polyline in the current color.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_polyline_hpgl()
+//
+// Draw a polyline in the current color.
+//--------------------------------------------------------------------------
 
 void
 plD_polyline_hpgl( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -276,12 +276,12 @@ plD_polyline_hpgl( PLStream *pls, short *xa, short *ya, PLINT npts )
     register PLINT i;
     PLDev          *dev = (PLDev *) pls->dev;
 
-/* Write out old path */
+// Write out old path
 
     if ( xa[0] != dev->xold || ya[0] != dev->yold )
         pls->bytecnt += fprintf( OF, "PU%d %d;", xa[0], ya[0] );
 
-/* Add new point to path */
+// Add new point to path
 
     for ( i = 1; i < npts; i++ )
         pls->bytecnt += fprintf( OF, "PD%d %d\n", xa[i], ya[i] );
@@ -290,23 +290,23 @@ plD_polyline_hpgl( PLStream *pls, short *xa, short *ya, PLINT npts )
     dev->yold = ya[ npts - 1 ];
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_eop_hpgl()
- *
- * End of page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_eop_hpgl()
+//
+// End of page.
+//--------------------------------------------------------------------------
 
 void
 plD_eop_hpgl( PLStream *pls )
 {
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_bop_hpgl()
- *
- * Set up for the next page.
- * Advance to next family file if necessary (file output).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_bop_hpgl()
+//
+// Set up for the next page.
+// Advance to next family file if necessary (file output).
+//--------------------------------------------------------------------------
 
 void
 plD_bop_hpgl( PLStream *pls )
@@ -323,11 +323,11 @@ plD_bop_hpgl( PLStream *pls )
     pls->page++;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_tidy_hpgl()
- *
- * Close graphics file or otherwise clean up.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_tidy_hpgl()
+//
+// Close graphics file or otherwise clean up.
+//--------------------------------------------------------------------------
 
 void
 plD_tidy_hpgl( PLStream *pls )
@@ -336,11 +336,11 @@ plD_tidy_hpgl( PLStream *pls )
     plCloseFile( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_state_hpgl()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_state_hpgl()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
 
 void
 plD_state_hpgl( PLStream *pls, PLINT op )
@@ -365,11 +365,11 @@ plD_state_hpgl( PLStream *pls, PLINT op )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_esc_hpgl()
- *
- * Escape function.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_esc_hpgl()
+//
+// Escape function.
+//--------------------------------------------------------------------------
 
 void
 plD_esc_hpgl( PLStream *pls, PLINT op, void *ptr )
@@ -383,4 +383,4 @@ pldummy_hpgl( void )
     return 0;
 }
 
-#endif          /* PLD_hp7470 || PLD_hp7580 || PLD_lj_hpgl */
+#endif          // PLD_hp7470 || PLD_hp7580 || PLD_lj_hpgl

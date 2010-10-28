@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      PLplot Null device driver.
- */
+// $Id$
+//
+//      PLplot Null device driver.
+//
 #include "plDevs.h"
 
 #ifdef PLD_null
@@ -9,7 +9,7 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_null = "null:Null device:-1:null:42:null\n";
 
 void plD_dispatch_init_null( PLDispatchTable *pdt );
@@ -41,11 +41,11 @@ void plD_dispatch_init_null( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_null;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_null()
- *
- * Initialize device (terminal).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_null()
+//
+// Initialize device (terminal).
+//--------------------------------------------------------------------------
 
 void
 plD_init_null( PLStream *pls )
@@ -58,15 +58,15 @@ plD_init_null( PLStream *pls )
     PLFLT pxlx = (double) PIXELS_X / (double) LPAGE_X;
     PLFLT pxly = (double) PIXELS_Y / (double) LPAGE_Y;
 
-/* Set up device parameters */
+// Set up device parameters
 
     plP_setpxl( pxlx, pxly );
     plP_setphy( xmin, xmax, ymin, ymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * The remaining driver functions are all null.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// The remaining driver functions are all null.
+//--------------------------------------------------------------------------
 
 void
 plD_line_null( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -110,4 +110,4 @@ pldummy_null()
     return 0;
 }
 
-#endif                          /* PLD_nulldev */
+#endif                          // PLD_nulldev

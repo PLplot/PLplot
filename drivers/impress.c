@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      PLplot ImPress device driver.
- */
+// $Id$
+//
+//      PLplot ImPress device driver.
+//
 #include "plDevs.h"
 
 #ifdef PLD_imp
@@ -9,10 +9,10 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp\n";
 
-/* Function prototypes */
+// Function prototypes
 
 void plD_dispatch_init_imp( PLDispatchTable *pdt );
 
@@ -27,7 +27,7 @@ void plD_esc_imp( PLStream *, PLINT, void * );
 
 static void flushline( PLStream * );
 
-/* top level declarations */
+// top level declarations
 
 #define IMPX        2999
 #define IMPY        2249
@@ -35,7 +35,7 @@ static void flushline( PLStream * );
 #define BUFFPTS     50
 #define BUFFLENG    2 * BUFFPTS
 
-/* Graphics control characters. */
+// Graphics control characters.
 
 #define SET_HV_SYSTEM    0315
 #define OPBYTE1          031
@@ -76,26 +76,26 @@ void plD_dispatch_init_imp( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_imp;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_imp()
- *
- * Initialize device (terminal).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_imp()
+//
+// Initialize device (terminal).
+//--------------------------------------------------------------------------
 
 void
 plD_init_imp( PLStream *pls )
 {
     PLDev *dev;
 
-/* Initialize family file info */
+// Initialize family file info
 
     plFamInit( pls );
 
-/* Prompt for a file name if not already set */
+// Prompt for a file name if not already set
 
     plOpenFile( pls );
 
-/* Allocate and initialize device-specific data */
+// Allocate and initialize device-specific data
 
     dev = plAllocDev( pls );
 
@@ -123,11 +123,11 @@ plD_init_imp( PLStream *pls )
     fprintf( pls->OutFile, "%c%c", SET_HV_SYSTEM, OPBYTE2 );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_line_imp()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_line_imp()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void
 plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -143,7 +143,7 @@ plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
             penchange = 0;
         }
 
-        /* Add both points to path */
+        // Add both points to path
 
         count     = 0;
         FirstLine = 0;
@@ -154,21 +154,21 @@ plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     }
     else if ( ( count + 2 ) < BUFFLENG && x1 == dev->xold && y1 == dev->yold )
     {
-        /* Add new point to path */
+        // Add new point to path
 
         *( LineBuff + count++ ) = x2;
         *( LineBuff + count++ ) = y2;
     }
     else
     {
-        /* Write out old path */
+        // Write out old path
 
         count /= 2;
         fprintf( pls->OutFile, "%c%c%c", CREATE_PATH, (char) count / 256, (char) count % 256 );
         fwrite( (char *) LineBuff, sizeof ( int ), 2 * count, pls->OutFile );
         fprintf( pls->OutFile, "%c%c", DRAW_PATH, OPTYPE );
 
-        /* And start a new path */
+        // And start a new path
 
         if ( penchange )
         {
@@ -185,11 +185,11 @@ plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     dev->yold = y2;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_polyline_imp()
- *
- * Draw a polyline in the current color.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_polyline_imp()
+//
+// Draw a polyline in the current color.
+//--------------------------------------------------------------------------
 
 void
 plD_polyline_imp( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -200,11 +200,11 @@ plD_polyline_imp( PLStream *pls, short *xa, short *ya, PLINT npts )
         plD_line_imp( pls, xa[i], ya[i], xa[i + 1], ya[i + 1] );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_eop_imp()
- *
- * End of page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_eop_imp()
+//
+// End of page.
+//--------------------------------------------------------------------------
 
 void
 plD_eop_imp( PLStream *pls )
@@ -213,11 +213,11 @@ plD_eop_imp( PLStream *pls )
     fprintf( pls->OutFile, "%c", ENDPAGE );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_bop_imp()
- *
- * Set up for the next page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_bop_imp()
+//
+// Set up for the next page.
+//--------------------------------------------------------------------------
 
 void
 plD_bop_imp( PLStream *pls )
@@ -234,11 +234,11 @@ plD_bop_imp( PLStream *pls )
     pls->page++;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_tidy_imp()
- *
- * Close graphics file or otherwise clean up.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_tidy_imp()
+//
+// Close graphics file or otherwise clean up.
+//--------------------------------------------------------------------------
 
 void
 plD_tidy_imp( PLStream *pls )
@@ -247,11 +247,11 @@ plD_tidy_imp( PLStream *pls )
     plCloseFile( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_state_imp()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_state_imp()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
 
 void
 plD_state_imp( PLStream *pls, PLINT op )
@@ -274,22 +274,22 @@ plD_state_imp( PLStream *pls, PLINT op )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_esc_imp()
- *
- * Escape function.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_esc_imp()
+//
+// Escape function.
+//--------------------------------------------------------------------------
 
 void
 plD_esc_imp( PLStream *pls, PLINT op, void *ptr )
 {
 }
 
-/*--------------------------------------------------------------------------*\
- * flushline()
- *
- * Spits out the line buffer.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// flushline()
+//
+// Spits out the line buffer.
+//--------------------------------------------------------------------------
 
 static void
 flushline( PLStream *pls )
@@ -308,4 +308,4 @@ pldummy_impress()
     return 0;
 }
 
-#endif                          /* PLD_imp */
+#endif                          // PLD_imp

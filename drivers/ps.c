@@ -1,32 +1,32 @@
-/* $Id$
- *
- *      PLplot PostScript device driver.
- *
- * Copyright (C) 1992, 2001  Geoffrey Furnish
- * Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
- * Copyright (C) 2000-2010  Alan W. Irwin
- * Copyright (C) 2001, 2002  Joao Cardoso
- * Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
- * Copyright (C) 2004, 2005  Thomas J. Duck
- * Copyright (C) 2005  Andrew Ross
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      PLplot PostScript device driver.
+//
+// Copyright (C) 1992, 2001  Geoffrey Furnish
+// Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
+// Copyright (C) 2000-2010  Alan W. Irwin
+// Copyright (C) 2001, 2002  Joao Cardoso
+// Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
+// Copyright (C) 2004, 2005  Thomas J. Duck
+// Copyright (C) 2005  Andrew Ross
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plDevs.h"
 
@@ -43,18 +43,18 @@
 #include "plunicode-type1.h"
 #include "plfci-type1.h"
 
-/* Define macro to truncate small values to zero - prevents
- * printf printing -0.000 */
+// Define macro to truncate small values to zero - prevents
+// printf printing -0.000
 #define TRMFLT( a )    ( ( fabs( a ) < 5.0e-4 ) ? 0.0 : ( a ) )
 
-/* Device info */
+// Device info
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ps =
     "ps:PostScript File (monochrome):0:ps:29:psm\n"
     "psc:PostScript File (color):0:ps:30:psc\n";
 
 
-/* Prototypes for functions in this file. */
+// Prototypes for functions in this file.
 
 void plD_dispatch_init_psm( PLDispatchTable *pdt );
 void plD_dispatch_init_psc( PLDispatchTable *pdt );
@@ -84,9 +84,9 @@ plunicode2type1( const PLUNICODE index,
 static char *
 get_font( PSDev* dev, PLUNICODE fci );
 
-/* text > 0 uses some postscript tricks, namely a transformation matrix
- * that scales, rotates (with slanting) and offsets text strings.
- * It has yet some bugs for 3d plots. */
+// text > 0 uses some postscript tricks, namely a transformation matrix
+// that scales, rotates (with slanting) and offsets text strings.
+// It has yet some bugs for 3d plots.
 
 
 static void ps_dispatch_init_helper( PLDispatchTable *pdt,
@@ -125,21 +125,21 @@ void plD_dispatch_init_psc( PLDispatchTable *pdt )
         (plD_init_fp) plD_init_psc );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_ps()
- *
- * Initialize device.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_ps()
+//
+// Initialize device.
+//--------------------------------------------------------------------------
 
 void
 plD_init_psm( PLStream *pls )
 {
     color      = 0;
-    pls->color = 0;             /* Not a color device */
+    pls->color = 0;             // Not a color device
 
     plParseDrvOpts( ps_options );
     if ( color )
-        pls->color = 1;         /* But user wants color */
+        pls->color = 1;         // But user wants color
     ps_init( pls );
 }
 
@@ -147,11 +147,11 @@ void
 plD_init_psc( PLStream *pls )
 {
     color      = 1;
-    pls->color = 1;             /* Is a color device */
+    pls->color = 1;             // Is a color device
     plParseDrvOpts( ps_options );
 
     if ( !color )
-        pls->color = 0;         /* But user does not want color */
+        pls->color = 0;         // But user does not want color
     ps_init( pls );
 }
 
@@ -162,7 +162,7 @@ ps_init( PLStream *pls )
 
     PLFLT pxlx, pxly;
 
-    /* Set default values - 7.5 x 10 [inches] (72 points = 1 inch) */
+    // Set default values - 7.5 x 10 [inches] (72 points = 1 inch)
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
         pls->xlength = 540;
@@ -178,23 +178,23 @@ ps_init( PLStream *pls )
 
     if ( text )
     {
-        pls->dev_text    = 1;                /* want to draw text */
-        pls->dev_unicode = 1;                /* want unicode */
+        pls->dev_text    = 1;                // want to draw text
+        pls->dev_unicode = 1;                // want unicode
         if ( hrshsym )
-            pls->dev_hrshsym = 1;            /* want Hershey symbols */
+            pls->dev_hrshsym = 1;            // want Hershey symbols
     }
 
-    pls->dev_fill0 = 1;         /* Can do solid fills */
+    pls->dev_fill0 = 1;         // Can do solid fills
 
-/* Initialize family file info */
+// Initialize family file info
 
     plFamInit( pls );
 
-/* Prompt for a file name if not already set */
+// Prompt for a file name if not already set
 
     plOpenFile( pls );
 
-/* Allocate and initialize device-specific data */
+// Allocate and initialize device-specific data
 
     if ( pls->dev != NULL )
         free( (void *) pls->dev );
@@ -216,7 +216,7 @@ ps_init( PLStream *pls )
     dev->ury   = 0;
     dev->ptcnt = 0;
 
-/* Rotate by 90 degrees since portrait mode addressing is used */
+// Rotate by 90 degrees since portrait mode addressing is used
 
     dev->xmin = 0;
     dev->ymin = 0;
@@ -227,12 +227,12 @@ ps_init( PLStream *pls )
 
     plP_setphy( dev->xmin, dev->xmax, dev->ymin, dev->ymax );
 
-/* If portrait mode is specified, then set up an additional rotation
- * transformation with aspect ratio allowed to adjust via freeaspect.
- * Default orientation is landscape (ORIENTATION == 3 or 90 deg rotation
- * counter-clockwise from portrait).  (Legacy PLplot used seascape
- * which was equivalent to ORIENTATION == 1 or 90 deg clockwise rotation
- * from portrait.) */
+// If portrait mode is specified, then set up an additional rotation
+// transformation with aspect ratio allowed to adjust via freeaspect.
+// Default orientation is landscape (ORIENTATION == 3 or 90 deg rotation
+// counter-clockwise from portrait).  (Legacy PLplot used seascape
+// which was equivalent to ORIENTATION == 1 or 90 deg clockwise rotation
+// from portrait.)
 
     if ( pls->portrait )
     {
@@ -240,7 +240,7 @@ ps_init( PLStream *pls )
         pls->freeaspect = 1;
     }
 
-/* Header comments into PostScript file */
+// Header comments into PostScript file
 
     fprintf( OF, "%%!PS-Adobe-2.0 EPSF-2.0\n" );
     fprintf( OF, "%%%%BoundingBox:         \n" );
@@ -252,12 +252,12 @@ ps_init( PLStream *pls )
     fprintf( OF, "%%%%Pages: (atend)\n" );
     fprintf( OF, "%%%%EndComments\n\n" );
 
-/* Definitions */
-/* Save VM state */
+// Definitions
+// Save VM state
 
     fprintf( OF, "/PSSave save def\n" );
 
-/* Define a dictionary and start using it */
+// Define a dictionary and start using it
 
     fprintf( OF, "/PSDict 200 dict def\n" );
     fprintf( OF, "PSDict begin\n" );
@@ -274,21 +274,21 @@ ps_init( PLStream *pls )
     fprintf( OF, "    (                                       ) cvs print\n" );
     fprintf( OF, "   } def\n" );
 
-/* n @copies - */
+// n @copies -
 
     fprintf( OF, "/@copies\n" );
     fprintf( OF, "   {\n" );
     fprintf( OF, "    /#copies exch def\n" );
     fprintf( OF, "   } def\n" );
 
-/* - @start -  -- start everything */
+// - @start -  -- start everything
 
     fprintf( OF, "/@start\n" );
     fprintf( OF, "   {\n" );
     fprintf( OF, "    vmstatus pop /@VMused exch def pop\n" );
     fprintf( OF, "   } def\n" );
 
-/* - @end -  -- finished */
+// - @end -  -- finished
 
     fprintf( OF, "/@end\n" );
     fprintf( OF, "   {flush\n" );
@@ -296,15 +296,15 @@ ps_init( PLStream *pls )
     fprintf( OF, "    PSSave restore\n" );
     fprintf( OF, "   } def\n" );
 
-/* bop -  -- begin a new page */
-/* Only fill background if we are using color and if the bg isn't white */
+// bop -  -- begin a new page
+// Only fill background if we are using color and if the bg isn't white
 
     fprintf( OF, "/bop\n" );
     fprintf( OF, "   {\n" );
     fprintf( OF, "    /SaveImage save def\n" );
     fprintf( OF, "   } def\n" );
 
-/* - eop -  -- end a page */
+// - eop -  -- end a page
 
     fprintf( OF, "/eop\n" );
     fprintf( OF, "   {\n" );
@@ -312,7 +312,7 @@ ps_init( PLStream *pls )
     fprintf( OF, "    SaveImage restore\n" );
     fprintf( OF, "   } def\n" );
 
-/* Set line parameters */
+// Set line parameters
 
     fprintf( OF, "/@line\n" );
     fprintf( OF, "   {0 setlinecap\n" );
@@ -320,23 +320,23 @@ ps_init( PLStream *pls )
     fprintf( OF, "    1 setmiterlimit\n" );
     fprintf( OF, "   } def\n" );
 
-/* d @hsize -  horizontal clipping dimension */
+// d @hsize -  horizontal clipping dimension
 
     fprintf( OF, "/@hsize   {/hs exch def} def\n" );
     fprintf( OF, "/@vsize   {/vs exch def} def\n" );
 
-/* d @hoffset - shift for the plots */
+// d @hoffset - shift for the plots
 
     fprintf( OF, "/@hoffset {/ho exch def} def\n" );
     fprintf( OF, "/@voffset {/vo exch def} def\n" );
 
-/* Set line width */
+// Set line width
 
     fprintf( OF, "/lw %d def\n", (int) (
             ( pls->width < MIN_WIDTH ) ? DEF_WIDTH :
             ( pls->width > MAX_WIDTH ) ? MAX_WIDTH : pls->width ) );
 
-/* Setup user specified offsets, scales, sizes for clipping */
+// Setup user specified offsets, scales, sizes for clipping
 
     fprintf( OF, "/@SetPlot\n" );
     fprintf( OF, "   {\n" );
@@ -345,23 +345,23 @@ ps_init( PLStream *pls )
     fprintf( OF, "    lw setlinewidth\n" );
     fprintf( OF, "   } def\n" );
 
-/* Setup x & y scales */
+// Setup x & y scales
 
     fprintf( OF, "/XScale\n" );
     fprintf( OF, "   {hs %d div} def\n", YPSSIZE );
     fprintf( OF, "/YScale\n" );
     fprintf( OF, "   {vs %d div} def\n", XPSSIZE );
 
-/* Macro definitions of common instructions, to keep output small */
+// Macro definitions of common instructions, to keep output small
 
     fprintf( OF, "/M {moveto} def\n" );
     fprintf( OF, "/D {lineto} def\n" );
     fprintf( OF, "/A {0.5 0 360 arc} def\n" );
     fprintf( OF, "/S {stroke} def\n" );
     fprintf( OF, "/Z {stroke newpath} def\n" );
-    /* Modify to use fill and stroke for better output with
-     * anti-aliasing */
-    /*fprintf(OF, "/F {fill} def\n");*/
+    // Modify to use fill and stroke for better output with
+    // anti-aliasing
+    //fprintf(OF, "/F {fill} def\n");
     fprintf( OF, "/F {closepath gsave fill grestore stroke} def " );
     fprintf( OF, "/N {newpath} def" );
     fprintf( OF, "/C {setrgbcolor} def\n" );
@@ -374,11 +374,11 @@ ps_init( PLStream *pls )
         XMIN, YMIN, XMIN, YMAX, XMAX, YMAX, XMAX, YMIN, XMIN, YMIN );
     fprintf( OF, "/CL {newpath M D D D closepath clip} def\n" );
 
-/* End of dictionary definition */
+// End of dictionary definition
 
     fprintf( OF, "end\n\n" );
 
-/* Set up the plots */
+// Set up the plots
 
     fprintf( OF, "PSDict begin\n" );
     fprintf( OF, "@start\n" );
@@ -392,11 +392,11 @@ ps_init( PLStream *pls )
     fprintf( OF, "@SetPlot\n\n" );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_line_ps()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_line_ps()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void
 plD_line_ps( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -404,7 +404,7 @@ plD_line_ps( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     PSDev *dev = (PSDev *) pls->dev;
     PLINT x1   = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
-/* Rotate by 90 degrees */
+// Rotate by 90 degrees
 
     plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x1, &y1 );
     plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2 );
@@ -428,7 +428,7 @@ plD_line_ps( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         fprintf( OF, " Z\n" );
         pls->linepos = 0;
 
-        if ( x1 == x2 && y1 == y2 ) /* must be a single dot, draw a circle */
+        if ( x1 == x2 && y1 == y2 ) // must be a single dot, draw a circle
             snprintf( outbuf, OUTBUF_LEN, "%d %d A", x1, y1 );
         else
             snprintf( outbuf, OUTBUF_LEN, "%d %d M %d %d D", x1, y1, x2, y2 );
@@ -450,11 +450,11 @@ plD_line_ps( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     dev->yold     = y2;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_polyline_ps()
- *
- * Draw a polyline in the current color.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_polyline_ps()
+//
+// Draw a polyline in the current color.
+//--------------------------------------------------------------------------
 
 void
 plD_polyline_ps( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -465,11 +465,11 @@ plD_polyline_ps( PLStream *pls, short *xa, short *ya, PLINT npts )
         plD_line_ps( pls, xa[i], ya[i], xa[i + 1], ya[i + 1] );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_eop_ps()
- *
- * End of page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_eop_ps()
+//
+// End of page.
+//--------------------------------------------------------------------------
 
 void
 plD_eop_ps( PLStream *pls )
@@ -477,12 +477,12 @@ plD_eop_ps( PLStream *pls )
     fprintf( OF, " S\neop\n" );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_bop_ps()
- *
- * Set up for the next page.
- * Advance to next family file if necessary (file output).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_bop_ps()
+//
+// Set up for the next page.
+// Advance to next family file if necessary (file output).
+//--------------------------------------------------------------------------
 
 void
 plD_bop_ps( PLStream *pls )
@@ -519,18 +519,18 @@ plD_bop_ps( PLStream *pls )
     }
     pls->linepos = 0;
 
-/* This ensures the color and line width are set correctly at the beginning of
- * each page */
+// This ensures the color and line width are set correctly at the beginning of
+// each page
 
     plD_state_ps( pls, PLSTATE_COLOR0 );
     plD_state_ps( pls, PLSTATE_WIDTH );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_tidy_ps()
- *
- * Close graphics file or otherwise clean up.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_tidy_ps()
+//
+// Close graphics file or otherwise clean up.
+//--------------------------------------------------------------------------
 
 void
 plD_tidy_ps( PLStream *pls )
@@ -548,8 +548,8 @@ plD_tidy_ps( PLStream *pls )
     dev->urx += XOFFSET;
     dev->ury += YOFFSET;
 
-/* changed for correct Bounding boundaries Jan Thorbecke  okt 1993*/
-/* occurs from the integer truncation -- postscript uses fp arithmetic */
+// changed for correct Bounding boundaries Jan Thorbecke  okt 1993
+// occurs from the integer truncation -- postscript uses fp arithmetic
 
     dev->urx += 1;
     dev->ury += 1;
@@ -562,8 +562,8 @@ plD_tidy_ps( PLStream *pls )
     fprintf( OF, "@end\n" );
     fprintf( OF, "%%%%EOF\n" );
 
-/* Backtrack to write the BoundingBox at the beginning */
-/* Some applications don't like it atend */
+// Backtrack to write the BoundingBox at the beginning
+// Some applications don't like it atend
 
     rewind( OF );
     fprintf( OF, "%%!PS-Adobe-2.0 EPSF-2.0\n" );
@@ -572,11 +572,11 @@ plD_tidy_ps( PLStream *pls )
     plCloseFile( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_state_ps()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_state_ps()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
 
 void
 plD_state_ps( PLStream *pls, PLINT op )
@@ -602,7 +602,7 @@ plD_state_ps( PLStream *pls, PLINT op )
             fprintf( OF, " S\n%.4f G", ( pls->icol0 ? 0.0 : 1.0 ) );
             break;
         }
-    /* else fallthrough */
+    // else fallthrough
     case PLSTATE_COLOR1:
         if ( pls->color )
         {
@@ -620,7 +620,7 @@ plD_state_ps( PLStream *pls, PLINT op )
         break;
     }
 
-/* Reinitialize current point location. */
+// Reinitialize current point location.
 
     if ( dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED )
     {
@@ -628,11 +628,11 @@ plD_state_ps( PLStream *pls, PLINT op )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_esc_ps()
- *
- * Escape function.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_esc_ps()
+//
+// Escape function.
+//--------------------------------------------------------------------------
 
 void
 plD_esc_ps( PLStream *pls, PLINT op, void *ptr )
@@ -648,12 +648,12 @@ plD_esc_ps( PLStream *pls, PLINT op, void *ptr )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * fill_polygon()
- *
- * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
- * Only solid color fill supported.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// fill_polygon()
+//
+// Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+// Only solid color fill supported.
+//--------------------------------------------------------------------------
 
 static void
 fill_polygon( PLStream *pls )
@@ -669,11 +669,11 @@ fill_polygon( PLStream *pls )
         x = pls->dev_x[ix++];
         y = pls->dev_y[iy++];
 
-/* Rotate by 90 degrees */
+// Rotate by 90 degrees
 
         plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x, &y );
 
-/* First time through start with a x y moveto */
+// First time through start with a x y moveto
 
         if ( n == 0 )
         {
@@ -712,11 +712,11 @@ fill_polygon( PLStream *pls )
     fprintf( OF, " F " );
 }
 
-/*--------------------------------------------------------------------------*\
- * ps_getdate()
- *
- * Get the date and time
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// ps_getdate()
+//
+// Get the date and time
+//--------------------------------------------------------------------------
 
 static char *
 ps_getdate( void )
@@ -728,53 +728,53 @@ ps_getdate( void )
     t   = time( (time_t *) 0 );
     p   = ctime( &t );
     len = strlen( p );
-    *( p + len - 1 ) = '\0';      /* zap the newline character */
+    *( p + len - 1 ) = '\0';      // zap the newline character
     return p;
 }
 
 
-/*--------------------------------------------------------------------------*\
- * proc_str()
- *
- * Prints postscript strings.
- * N.B. Now unicode only, no string access!
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// proc_str()
+//
+// Prints postscript strings.
+// N.B. Now unicode only, no string access!
+//
+//--------------------------------------------------------------------------
 
 void
 proc_str( PLStream *pls, EscText *args )
 {
-    PLFLT *t = args->xform, tt[4];                /* Transform matrices */
-    PLFLT theta, shear, stride;                   /* Rotation angle and shear from the matrix */
-    PLFLT ft_ht, offset;                          /* Font height and offset */
+    PLFLT *t = args->xform, tt[4];                // Transform matrices
+    PLFLT theta, shear, stride;                   // Rotation angle and shear from the matrix
+    PLFLT ft_ht, offset;                          // Font height and offset
     PLFLT cs, sn, l1, l2;
     PSDev *dev = (PSDev *) pls->dev;
     char  *font, esc;
-    /* Be generous.  Used to store lots of font changes which take
-     * 3 characters per change.*/
+    // Be generous.  Used to store lots of font changes which take
+    // 3 characters per change.
   #define PROC_STR_STRING_LENGTH    1000
     unsigned char *strp, str[PROC_STR_STRING_LENGTH], *cur_strp,
                    cur_str[PROC_STR_STRING_LENGTH];
     float         font_factor = 1.4f;
-    PLINT         clxmin, clxmax, clymin, clymax; /* Clip limits */
-    PLINT         clipx[4], clipy[4];             /* Current clip limits */
+    PLINT         clxmin, clxmax, clymin, clymax; // Clip limits
+    PLINT         clipx[4], clipy[4];             // Current clip limits
 
-    PLFLT         scale = 1., up = 0.;            /* Font scaling and shifting parameters */
+    PLFLT         scale = 1., up = 0.;            // Font scaling and shifting parameters
 
-    int           i = 0;                          /* String index */
+    int           i = 0;                          // String index
 
-    /* unicode only! so test for it. */
+    // unicode only! so test for it.
     if ( args->unicode_array_len > 0 )
     {
         int       j, s, f;
         char      *fonts[PROC_STR_STRING_LENGTH];
         const PLUNICODE              *cur_text;
         PLUNICODE fci, fci_save;
-        /* translate from unicode into type 1 font index. */
-        /*
-         * Choose the font family, style, variant, and weight using
-         * the FCI (font characterization integer).
-         */
+        // translate from unicode into type 1 font index.
+        //
+        // Choose the font family, style, variant, and weight using
+        // the FCI (font characterization integer).
+        //
 
         plgesc( &esc );
         plgfci( &fci );
@@ -785,10 +785,10 @@ proc_str( PLStream *pls, EscText *args )
         {
             if ( cur_text[j] & PL_FCI_MARK )
             {
-                /* process an FCI by saving it and escaping cur_str
-                 * with an escff to make it a 2-character escape
-                 * that is not used in legacy Hershey code
-                 */
+                // process an FCI by saving it and escaping cur_str
+                // with an escff to make it a 2-character escape
+                // that is not used in legacy Hershey code
+                //
                 if ( ( f < PROC_STR_STRING_LENGTH ) && ( s + 3 < PROC_STR_STRING_LENGTH ) )
                 {
                     fci_save     = cur_text[j];
@@ -856,16 +856,16 @@ proc_str( PLStream *pls, EscText *args )
         }
         cur_str[s] = '\0';
 
-        /* finish previous polyline */
+        // finish previous polyline
 
         dev->xold = PL_UNDEFINED;
         dev->yold = PL_UNDEFINED;
 
-        /* Determine the font height */
-        ft_ht = pls->chrht * 72.0 / 25.4; /* ft_ht in points, ht is in mm */
+        // Determine the font height
+        ft_ht = pls->chrht * 72.0 / 25.4; // ft_ht in points, ht is in mm
 
 
-        /* The transform matrix has only rotations and shears; extract them */
+        // The transform matrix has only rotations and shears; extract them
         plRotationShear( t, &theta, &shear, &stride );
         cs    = cos( theta );
         sn    = sin( theta );
@@ -874,39 +874,39 @@ proc_str( PLStream *pls, EscText *args )
         tt[2] = -t[0] * sn + t[2] * cs;
         tt[3] = -t[1] * sn + t[3] * cs;
 
-        /*
-         * Reference point conventions:
-         *   If base = 0, it is aligned with the center of the text box
-         *   If base = 1, it is aligned with the baseline of the text box
-         *   If base = 2, it is aligned with the top of the text box
-         *
-         * Currently plplot only uses base=0
-         * Postscript uses base=1
-         *
-         * We must calculate the difference between the two and apply the offset.
-         */
+        //
+        // Reference point conventions:
+        //   If base = 0, it is aligned with the center of the text box
+        //   If base = 1, it is aligned with the baseline of the text box
+        //   If base = 2, it is aligned with the top of the text box
+        //
+        // Currently plplot only uses base=0
+        // Postscript uses base=1
+        //
+        // We must calculate the difference between the two and apply the offset.
+        //
 
-        if ( args->base == 2 )             /* not supported by plplot */
-            offset = ENLARGE * ft_ht / 2.; /* half font height */
+        if ( args->base == 2 )             // not supported by plplot
+            offset = ENLARGE * ft_ht / 2.; // half font height
         else if ( args->base == 1 )
             offset = 0.;
         else
             offset = -ENLARGE * ft_ht / 2.;
 
-        /* Determine the adjustment for page orientation */
+        // Determine the adjustment for page orientation
         theta   -= PI / 2. * pls->diorot;
         args->y += (PLINT) ( offset * cos( theta ) );
         args->x -= (PLINT) ( offset * sin( theta ) );
 
-        /* ps driver is rotated by default */
+        // ps driver is rotated by default
         plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
             &( args->x ), &( args->y ) );
 
-        /* Correct for the fact ps driver uses landscape by default */
+        // Correct for the fact ps driver uses landscape by default
         theta += PI / 2.;
 
-        /* Output */
-        /* Set clipping */
+        // Output
+        // Set clipping
         clipx[0] = pls->clpxmi;
         clipx[2] = pls->clpxma;
         clipy[0] = pls->clpymi;
@@ -926,24 +926,24 @@ proc_str( PLStream *pls, EscText *args )
             &clipx[3], &clipy[3] );
         fprintf( OF, " gsave %d %d %d %d %d %d %d %d CL\n", clipx[0], clipy[0], clipx[1], clipy[1], clipx[2], clipy[2], clipx[3], clipy[3] );
 
-        /* move to string reference point */
+        // move to string reference point
         fprintf( OF, " %d %d M\n", args->x, args->y );
 
-        /* Save the current position and set the string rotation */
+        // Save the current position and set the string rotation
         fprintf( OF, "gsave %.3f R\n", TRMFLT( theta * 180. / PI ) );
 
-        /* Purge escape sequences from string, so that postscript can find it's
-         * length.  The string length is computed with the current font, and can
-         * thus be wrong if there are font change escape sequences in the string
-         */
+        // Purge escape sequences from string, so that postscript can find it's
+        // length.  The string length is computed with the current font, and can
+        // thus be wrong if there are font change escape sequences in the string
+        //
 
         esc_purge( str, cur_str );
 
         fprintf( OF, "/%s %.3f SF\n", font, TRMFLT( font_factor * ENLARGE * ft_ht ) );
 
-        /* Output string, while escaping the '(', ')' and '\' characters.
-         * this string is output for measurement purposes only.
-         */
+        // Output string, while escaping the '(', ')' and '\' characters.
+        // this string is output for measurement purposes only.
+        //
         fprintf( OF, "%.3f (", TRMFLT( -args->just ) );
         while ( str[i] != '\0' )
         {
@@ -956,7 +956,7 @@ proc_str( PLStream *pls, EscText *args )
         fprintf( OF, ") SW\n" );
 
 
-        /* Parse string for PLplot escape sequences and print everything out */
+        // Parse string for PLplot escape sequences and print everything out
 
         cur_strp = cur_str;
         f        = 0;
@@ -968,7 +968,7 @@ proc_str( PLStream *pls, EscText *args )
             {
                 cur_strp++;
 
-                if ( *cur_strp == esc ) /* <esc><esc> */
+                if ( *cur_strp == esc ) // <esc><esc>
                 {
                     *strp++ = *cur_strp++;
                 }
@@ -977,8 +977,8 @@ proc_str( PLStream *pls, EscText *args )
                     cur_strp++;
                     if ( *cur_strp++ != 'f' )
                     {
-                        /* escff occurs because of logic above. But any suffix
-                         * other than "f" should never happen. */
+                        // escff occurs because of logic above. But any suffix
+                        // other than "f" should never happen.
                         plabort( "proc_str, internal PLplot logic error;"
                             "wrong escf escape sequence" );
                         return;
@@ -993,22 +993,22 @@ proc_str( PLStream *pls, EscText *args )
                     case 'd':
                     case 'D':
                         if ( up > 0. )
-                            scale *= 1.25;            /* Subscript scaling parameter */
+                            scale *= 1.25;            // Subscript scaling parameter
                         else
-                            scale *= 0.8;             /* Subscript scaling parameter */
+                            scale *= 0.8;             // Subscript scaling parameter
                         up -= font_factor * ENLARGE * ft_ht / 2.;
                         break;
 
                     case 'u':
                     case 'U':
                         if ( up < 0. )
-                            scale *= 1.25;            /* Subscript scaling parameter */
+                            scale *= 1.25;            // Subscript scaling parameter
                         else
-                            scale *= 0.8;             /* Subscript scaling parameter */
+                            scale *= 0.8;             // Subscript scaling parameter
                         up += font_factor * ENLARGE * ft_ht / 2.;
                         break;
 
-                    /* ignore the next sequences */
+                    // ignore the next sequences
 
                     case '+':
                     case '-':
@@ -1019,9 +1019,9 @@ proc_str( PLStream *pls, EscText *args )
                     }
             }
 
-            /* copy from current to next token, adding a postscript escape
-             * char '\' if necessary
-             */
+            // copy from current to next token, adding a postscript escape
+            // char '\' if necessary
+            //
             while ( *cur_strp && *cur_strp != esc )
             {
                 if ( *cur_strp == '(' || *cur_strp == ')' || *cur_strp == '\\' )
@@ -1031,9 +1031,9 @@ proc_str( PLStream *pls, EscText *args )
             *strp = '\0';
 
             if ( fabs( up ) < 0.001 )
-                up = 0.;                       /* Watch out for small differences */
+                up = 0.;                       // Watch out for small differences
 
-            /* Apply the scaling and the shear */
+            // Apply the scaling and the shear
             fprintf( OF, "/%s [%.3f %.3f %.3f %.3f 0 0] SF\n",
                 font,
                 TRMFLT( tt[0] * font_factor * ENLARGE * ft_ht * scale ),
@@ -1041,15 +1041,15 @@ proc_str( PLStream *pls, EscText *args )
                 TRMFLT( tt[1] * font_factor * ENLARGE * ft_ht * scale ),
                 TRMFLT( tt[3] * font_factor * ENLARGE * ft_ht * scale ) );
 
-            /* if up/down escape sequences, save current point and adjust baseline;
-             * take the shear into account */
+            // if up/down escape sequences, save current point and adjust baseline;
+            // take the shear into account
             if ( up != 0. )
                 fprintf( OF, "gsave %.3f %.3f rmoveto\n", TRMFLT( up * tt[1] ), TRMFLT( up * tt[3] ) );
 
-            /* print the string */
+            // print the string
             fprintf( OF, "(%s) show\n", str );
 
-            /* back to baseline */
+            // back to baseline
             if ( up != 0. )
                 fprintf( OF, "grestore (%s) stringwidth rmoveto\n", str );
         } while ( *cur_strp );
@@ -1057,21 +1057,21 @@ proc_str( PLStream *pls, EscText *args )
         fprintf( OF, "grestore\n" );
         fprintf( OF, "grestore\n" );
 
-        /*
-         * keep driver happy -- needed for background and orientation.
-         * arghhh! can't calculate it, as I only have the string reference
-         * point, not its extent!
-         * Still a hack - but at least it takes into account the string
-         * length and justification. Character width is assumed to be
-         * 0.6 * character height. Add on an extra 1.5 * character height
-         * for safety.
-         */
+        //
+        // keep driver happy -- needed for background and orientation.
+        // arghhh! can't calculate it, as I only have the string reference
+        // point, not its extent!
+        // Still a hack - but at least it takes into account the string
+        // length and justification. Character width is assumed to be
+        // 0.6 * character height. Add on an extra 1.5 * character height
+        // for safety.
+        //
         cs = cos( theta );
         sn = sin( theta );
         l1 = -i * args->just;
         l2 = i * ( 1. - args->just );
-        /* Factor of 0.6 is an empirical fudge to convert character
-         * height to average character width */
+        // Factor of 0.6 is an empirical fudge to convert character
+        // height to average character width
         l1 *= 0.6;
         l2 *= 0.6;
 
@@ -1110,26 +1110,26 @@ esc_purge( unsigned char *dstr, unsigned char *sstr )
             {
             case 'f':
                 sstr++;
-                break; /* two chars sequence */
+                break; // two chars sequence
 
             default:
-                break; /* single char escape */
+                break; // single char escape
             }
         }
     }
     *dstr = '\0';
 }
 
-/*--------------------------------------------------------------------------*\
- *  unsigned char plunicode2type1 (const PLUNICODE index,
- *       const Unicode_to_Type1_table lookup[], const int number_of_entries)
- *
- *  Function takes an input unicode index, looks through the lookup
- *  table (which must be sorted by PLUNICODE Unicode), then returns the
- *  corresponding Type1 code in the lookup table.  If the Unicode index is
- *  not present the returned value is 32 (which is normally a blank
- *  for Type 1 fonts).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  unsigned char plunicode2type1 (const PLUNICODE index,
+//       const Unicode_to_Type1_table lookup[], const int number_of_entries)
+//
+//  Function takes an input unicode index, looks through the lookup
+//  table (which must be sorted by PLUNICODE Unicode), then returns the
+//  corresponding Type1 code in the lookup table.  If the Unicode index is
+//  not present the returned value is 32 (which is normally a blank
+//  for Type 1 fonts).
+//--------------------------------------------------------------------------
 
 static unsigned char
 plunicode2type1( const PLUNICODE index,
@@ -1139,34 +1139,34 @@ plunicode2type1( const PLUNICODE index,
     int jlo = -1, jmid, jhi = nlookup;
     while ( jhi - jlo > 1 )
     {
-        /* Note that although jlo or jhi can be just outside valid
-         * range (see initialization above) because of while condition
-         * jlo < jmid < jhi and jmid must be in valid range.
-         */
+        // Note that although jlo or jhi can be just outside valid
+        // range (see initialization above) because of while condition
+        // jlo < jmid < jhi and jmid must be in valid range.
+        //
         jmid = ( jlo + jhi ) / 2;
         if ( index > lookup[jmid].Unicode )
             jlo = jmid;
         else if ( index < lookup[jmid].Unicode )
             jhi = jmid;
         else
-            /* We have found it!
-             * index == lookup[jmid].Unicode
-             */
+            // We have found it!
+            // index == lookup[jmid].Unicode
+            //
             return ( lookup[jmid].Type1 );
     }
-    /* jlo is invalid or it is valid and index > lookup[jlo].Unicode.
-     * jhi is invalid or it is valid and index < lookup[jhi].Unicode.
-     * All these conditions together imply index cannot be found in lookup.
-     * Mark with ' ' (which is normally the index for blank in type 1 fonts).
-     */
+    // jlo is invalid or it is valid and index > lookup[jlo].Unicode.
+    // jhi is invalid or it is valid and index < lookup[jhi].Unicode.
+    // All these conditions together imply index cannot be found in lookup.
+    // Mark with ' ' (which is normally the index for blank in type 1 fonts).
+    //
     return ( ' ' );
 }
 
-/***********************************************************************
- * get_font( PSDev* dev, PLUNICODE fci )
- *
- * Sets the Type1 font.
- ***********************************************************************/
+//**********************************************************************
+// get_font( PSDev* dev, PLUNICODE fci )
+//
+// Sets the Type1 font.
+//*********************************************************************
 static char *
 get_font( PSDev* dev, PLUNICODE fci )
 {
@@ -1183,7 +1183,7 @@ get_font( PSDev* dev, PLUNICODE fci )
     }
     else
     {
-        /* convert the fci to Base14/Type1 font information */
+        // convert the fci to Base14/Type1 font information
         font                = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
         dev->nlookup        = number_of_entries_in_unicode_to_standard_table;
         dev->lookup         = unicode_to_standard_lookup_table;
@@ -1200,4 +1200,4 @@ pldummy_ps()
     return 0;
 }
 
-#endif                          /* PLD_ps */
+#endif                          // PLD_ps

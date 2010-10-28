@@ -1,33 +1,33 @@
-/* $Id$
- *
- * PLplot Tk device driver.
- *
- * Copyright (C) 2004  Maurice LeBrun
- * Copyright (C) 2004  Joao Cardoso
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * This device driver is designed to be used by a PlPlotter, and in fact requires
- * the existence of an enclosing PlPlotter.
- *
- * The idea is that this should develop into a completely cross-platform driver
- * for use by the cross platform Tk system.
- *
- */
+// $Id$
+//
+// PLplot Tk device driver.
+//
+// Copyright (C) 2004  Maurice LeBrun
+// Copyright (C) 2004  Joao Cardoso
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+// This device driver is designed to be used by a PlPlotter, and in fact requires
+// the existence of an enclosing PlPlotter.
+//
+// The idea is that this should develop into a completely cross-platform driver
+// for use by the cross platform Tk system.
+//
+//
 
 #include "plDevs.h"
 
@@ -44,8 +44,8 @@
 
 #define _TCLINT
 #ifdef USE_TCL_STUBS
-/* Unfortunately, tkInt.h ends up loading Malloc.h under Windows */
-/* So we have to deal with this mess */
+// Unfortunately, tkInt.h ends up loading Malloc.h under Windows
+// So we have to deal with this mess
     #undef malloc
     #undef free
     #undef realloc
@@ -79,18 +79,18 @@
 #undef free
 #endif
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tkwin = "tkwin:New tk driver:1:tkwin:45:tkwin\n";
 
 
 void *  ckcalloc( size_t nmemb, size_t size );
 
-/*
- * We want to use the 'pure Tk' interface.  On Unix we can use
- * some direct calls to X instead of Tk, if we want, although
- * that code hasn't been tested for some time.  So this define
- * is required on Windows/MacOS and perhaps optional on Unix.
- */
+//
+// We want to use the 'pure Tk' interface.  On Unix we can use
+// some direct calls to X instead of Tk, if we want, although
+// that code hasn't been tested for some time.  So this define
+// is required on Windows/MacOS and perhaps optional on Unix.
+//
 #define USE_TK
 
 #ifdef __WIN32__
@@ -99,22 +99,22 @@ void *  ckcalloc( size_t nmemb, size_t size );
 #define XFlush( display )
 #endif
 
-/* Dummy definition of PlPlotter containing first few fields */
+// Dummy definition of PlPlotter containing first few fields
 typedef struct PlPlotter
 {
-    Tk_Window tkwin;    /* Window that embodies the frame. NULL
-                      * means that the window has been destroyed
-                      * but the data structures haven't yet been
-                      * cleaned up.
-                      */
-    Display *display;   /* Display containing widget. Used, among
-                       * other things, so that resources can be
-                       * freed even after tkwin has gone away.
-                       */
-    Tcl_Interp *interp; /* Interpreter associated with
-                         * widget. Used to delete widget
-                         * command.
-                         */
+    Tk_Window tkwin;    // Window that embodies the frame. NULL
+                     // means that the window has been destroyed
+                     // but the data structures haven't yet been
+                     // cleaned up.
+                     //
+    Display *display;   // Display containing widget. Used, among
+                      // other things, so that resources can be
+                      // freed even after tkwin has gone away.
+                      //
+    Tcl_Interp *interp; // Interpreter associated with
+                        // widget. Used to delete widget
+                        // command.
+                        //
 } PlPlotter;
 
 void CopyColour( XColor* from, XColor* to );
@@ -123,32 +123,32 @@ static int  pltk_AreWeGrayscale( PlPlotter *plf );
 void PlplotterAtEop( Tcl_Interp *interp, register PlPlotter *plPlotterPtr );
 void PlplotterAtBop( Tcl_Interp *interp, register PlPlotter *plPlotterPtr );
 
-static int synchronize = 0; /* change to 1 for synchronized operation */
-/* for debugging only */
+static int synchronize = 0; // change to 1 for synchronized operation
+// for debugging only
 
-/* Number of instructions to skip between querying the X server for events */
+// Number of instructions to skip between querying the X server for events
 
 #define MAX_INSTR    20
 
-/* Pixels/mm */
+// Pixels/mm
 
-#define PHYSICAL    0 /* Enables physical scaling.. */
+#define PHYSICAL    0 // Enables physical scaling..
 
-/* Set constants for dealing with colormap. In brief:
- *
- * ccmap  When set, turns on custom color map
- *
- * XWM_COLORS  Number of low "pixel" values to copy.
- * CMAP0_COLORS  Color map 0 entries.
- * CMAP1_COLORS  Color map 1 entries.
- * MAX_COLORS  Maximum colors period.
- *
- * See Init_CustomCmap() and Init_DefaultCmap() for more info.
- * Set ccmap at your own risk -- still under development.
- */
+// Set constants for dealing with colormap. In brief:
+//
+// ccmap  When set, turns on custom color map
+//
+// XWM_COLORS  Number of low "pixel" values to copy.
+// CMAP0_COLORS  Color map 0 entries.
+// CMAP1_COLORS  Color map 1 entries.
+// MAX_COLORS  Maximum colors period.
+//
+// See Init_CustomCmap() and Init_DefaultCmap() for more info.
+// Set ccmap at your own risk -- still under development.
+//
 
-/* plplot_tkwin_ccmap is statically defined in pltkwd.h.  Note that
- * plplotter.c also includes that header and uses that variable. */
+// plplot_tkwin_ccmap is statically defined in pltkwd.h.  Note that
+// plplotter.c also includes that header and uses that variable.
 
 #define XWM_COLORS      70
 #define CMAP0_COLORS    16
@@ -156,14 +156,14 @@ static int synchronize = 0; /* change to 1 for synchronized operation */
 #define MAX_COLORS      256
 
 #ifndef USE_TK
-/* Variables to hold RGB components of given colormap. */
-/* Used in an ugly hack to get past some X11R5 and TK limitations. */
+// Variables to hold RGB components of given colormap.
+// Used in an ugly hack to get past some X11R5 and TK limitations.
 
 static int    sxwm_colors_set;
 static XColor sxwm_colors[MAX_COLORS];
 #endif
 
-/* Keep pointers to all the displays in use */
+// Keep pointers to all the displays in use
 
 static TkwDisplay *tkwDisplay[PLTKDISPLAYS];
 
@@ -172,8 +172,8 @@ static unsigned char CreatePixmapStatus;
 static int CreatePixmapErrorHandler( Display *display, XErrorEvent *error );
 #endif
 
-/* Function prototypes */
-/* Initialization */
+// Function prototypes
+// Initialization
 
 static void Init( PLStream *pls );
 static void InitColors( PLStream *pls );
@@ -184,7 +184,7 @@ static void CreatePixmap( PLStream *pls );
 static void GetVisual( PLStream *pls );
 static void AllocBGFG( PLStream *pls );
 
-/* Escape function commands */
+// Escape function commands
 
 static void ExposeCmd( PLStream *pls, PLDisplay *ptr );
 static void RedrawCmd( PLStream *pls );
@@ -197,7 +197,7 @@ static void FillPolygonCmd( PLStream *pls );
 static void CopyCommand( PLStream *pls );
 #endif
 
-/* Miscellaneous */
+// Miscellaneous
 
 static void StoreCmap0( PLStream *pls );
 static void StoreCmap1( PLStream *pls );
@@ -233,12 +233,12 @@ void plD_dispatch_init_tkwin( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_tkwin;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_tkwin()
- *
- * Initialize device.
- * Tk-dependent stuff done in plD_open_tkwin() and Init().
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_tkwin()
+//
+// Initialize device.
+// Tk-dependent stuff done in plD_open_tkwin() and Init().
+//--------------------------------------------------------------------------
 
 void
 plD_init_tkwin( PLStream *pls )
@@ -252,12 +252,12 @@ plD_init_tkwin( PLStream *pls )
 
     dbug_enter( "plD_init_tkw" );
 
-    pls->termin      = 1; /* Is an interactive terminal */
-    pls->dev_flush   = 1; /* Handle our own flushes */
-    pls->dev_fill0   = 1; /* Handle solid fills */
-    pls->plbuf_write = 1; /* Activate plot buffer */
+    pls->termin      = 1; // Is an interactive terminal
+    pls->dev_flush   = 1; // Handle our own flushes
+    pls->dev_fill0   = 1; // Handle solid fills
+    pls->plbuf_write = 1; // Activate plot buffer
 
-    /* The real meat of the initialization done here */
+    // The real meat of the initialization done here
 
     if ( pls->dev == NULL )
         plD_open_tkwin( pls );
@@ -266,7 +266,7 @@ plD_init_tkwin( PLStream *pls )
 
     Init( pls );
 
-    /* Get ready for plotting */
+    // Get ready for plotting
 
     dev->xlen = xmax - xmin;
     dev->ylen = ymax - ymin;
@@ -289,14 +289,14 @@ plD_init_tkwin( PLStream *pls )
     plP_setphy( xmin, xmax, ymin, ymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_open_tkwin()
- *
- * Performs basic driver initialization, without actually opening or
- * modifying a window. May be called by the outside world before plinit
- * in case the caller needs early access to the driver internals (not
- * very common -- currently only used externally by plplotter).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_open_tkwin()
+//
+// Performs basic driver initialization, without actually opening or
+// modifying a window. May be called by the outside world before plinit
+// in case the caller needs early access to the driver internals (not
+// very common -- currently only used externally by plplotter).
+//--------------------------------------------------------------------------
 
 void
 plD_open_tkwin( PLStream *pls )
@@ -307,7 +307,7 @@ plD_open_tkwin( PLStream *pls )
 
     dbug_enter( "plD_open_tkw" );
 
-    /* Allocate and initialize device-specific data */
+    // Allocate and initialize device-specific data
 
     if ( pls->dev != NULL )
         plwarn( "plD_open_tkw: device pointer is already set" );
@@ -318,12 +318,12 @@ plD_open_tkwin( PLStream *pls )
 
     dev = (TkwDev *) pls->dev;
 
-    /* Variables used in querying the X server for events */
+    // Variables used in querying the X server for events
 
     dev->instr     = 0;
     dev->max_instr = MAX_INSTR;
 
-    /* See if display matches any already in use, and if so use that */
+    // See if display matches any already in use, and if so use that
 
     dev->tkwd = NULL;
     for ( i = 0; i < PLTKDISPLAYS; i++ )
@@ -348,7 +348,7 @@ plD_open_tkwin( PLStream *pls )
         }
     }
 
-    /* If no display matched, create a new one */
+    // If no display matched, create a new one
 
     if ( dev->tkwd == NULL )
     {
@@ -367,30 +367,30 @@ plD_open_tkwin( PLStream *pls )
         tkwDisplay[i]  = tkwd = (TkwDisplay *) dev->tkwd;
         tkwd->nstreams = 1;
 
-        /*
-         * If we don't have a tk widget we're being called on, then
-         * abort operations now
-         */
+        //
+        // If we don't have a tk widget we're being called on, then
+        // abort operations now
+        //
         if ( pls->plPlotterPtr == NULL )
         {
             plexit( "No tk plframe widget to connect to" );
         }
-        /* Old version for MacOS Tk8.0 */
-        /*
-         * char deflt[] = "Macintosh:0";
-         * pls->FileName = deflt;
-         * tkwd->display = (Display*) TkpOpenDisplay(pls->FileName);
-         */
+        // Old version for MacOS Tk8.0
+        //
+        // char deflt[] = "Macintosh:0";
+        // pls->FileName = deflt;
+        // tkwd->display = (Display*) TkpOpenDisplay(pls->FileName);
+        //
 
-        /* Open display */
+        // Open display
 #if defined ( MAC_TCL ) || defined ( __WIN32__ )
         if ( !pls->FileName )
         {
-            /*
-             * Need to strdup because Tk has allocated the screen name,
-             * but we will actually 'free' it later ourselves, and therefore
-             * need to own the memory.
-             */
+            //
+            // Need to strdup because Tk has allocated the screen name,
+            // but we will actually 'free' it later ourselves, and therefore
+            // need to own the memory.
+            //
             pls->FileName = strdup( TkGetDefaultScreenName( NULL, NULL ) );
         }
         tkwd->display = pls->plPlotterPtr->display;
@@ -407,16 +407,16 @@ plD_open_tkwin( PLStream *pls )
         {
             XSynchronize( tkwd->display, 1 );
         }
-        /* Get colormap and visual */
+        // Get colormap and visual
 
         tkwd->map = Tk_Colormap( pls->plPlotterPtr->tkwin );
         GetVisual( pls );
 
-        /*
-         * Figure out if we have a color display or not.
-         * Default is color IF the user hasn't specified and IF the output device is
-         * not grayscale.
-         */
+        //
+        // Figure out if we have a color display or not.
+        // Default is color IF the user hasn't specified and IF the output device is
+        // not grayscale.
+        //
 
         if ( pls->colorset )
             tkwd->color = pls->color;
@@ -426,13 +426,13 @@ plD_open_tkwin( PLStream *pls )
             tkwd->color = !pltk_AreWeGrayscale( pls->plPlotterPtr );
         }
 
-        /* Allocate & set background and foreground colors */
+        // Allocate & set background and foreground colors
 
         AllocBGFG( pls );
         pltkwin_setBGFG( pls );
     }
 
-    /* Display matched, so use existing display data */
+    // Display matched, so use existing display data
 
     else
     {
@@ -442,11 +442,11 @@ plD_open_tkwin( PLStream *pls )
     tkwd->ixwd = i;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_line_tkwin()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_line_tkwin()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void
 plD_line_tkwin( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -474,11 +474,11 @@ plD_line_tkwin( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         XDrawLine( tkwd->display, dev->pixmap, dev->gc, x1, y1, x2, y2 );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_polyline_tkwin()
- *
- * Draw a polyline in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_polyline_tkwin()
+//
+// Draw a polyline in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void
 plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -510,11 +510,11 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
             CoordModeOrigin );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_eop_tkwin()
- *
- * End of page. User must hit return (or third mouse button) to continue.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_eop_tkwin()
+//
+// End of page. User must hit return (or third mouse button) to continue.
+//--------------------------------------------------------------------------
 
 void
 plD_eop_tkwin( PLStream *pls )
@@ -534,12 +534,12 @@ plD_eop_tkwin( PLStream *pls )
         WaitForPage( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * WaitForPage()
- *
- * This routine waits for the user to advance the plot, while handling
- * all other events.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// WaitForPage()
+//
+// This routine waits for the user to advance the plot, while handling
+// all other events.
+//--------------------------------------------------------------------------
 
 static void
 WaitForPage( PLStream *pls )
@@ -570,11 +570,11 @@ WaitForPage( PLStream *pls )
     dev->flags &= 1;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_bop_tkwin()
- *
- * Set up for the next page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_bop_tkwin()
+//
+// Set up for the next page.
+//--------------------------------------------------------------------------
 
 void
 plD_bop_tkwin( PLStream *pls )
@@ -594,7 +594,7 @@ plD_bop_tkwin( PLStream *pls )
     if ( dev->write_to_window )
     {
 #ifdef MAC_TCL
-        /* MacTk only has these X calls */
+        // MacTk only has these X calls
         XSetForeground( tkwd->display, dev->gc, tkwd->cmap0[0].pixel );
         XFillRectangles( tkwd->display, dev->window, dev->gc, &xrect, 1 );
         XSetForeground( tkwd->display, dev->gc, dev->curcolor.pixel );
@@ -613,11 +613,11 @@ plD_bop_tkwin( PLStream *pls )
     PlplotterAtBop( plf->interp, plf );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_tidy_tkwin()
- *
- * Close graphics file
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_tidy_tkwin()
+//
+// Close graphics file
+//--------------------------------------------------------------------------
 
 void
 plD_tidy_tkwin( PLStream *pls )
@@ -637,22 +637,22 @@ plD_tidy_tkwin( PLStream *pls )
 #endif
         free_mem( tkwDisplay[ixwd] );
     }
-    /*
-     * Vince removed this November 1999.  It seems as if a simple
-     * 'plframe .p ; destroy .p' leaves a temporary buf file open
-     * if we clear this flag here.  It should be checked and then
-     * cleared by whoever called us.  An alternative fix would
-     * be to carry out the check/tidy here.  The plframe widget
-     * handles this stuff for us.
-     */
-    /* pls->plbuf_write = 0; */
+    //
+    // Vince removed this November 1999.  It seems as if a simple
+    // 'plframe .p ; destroy .p' leaves a temporary buf file open
+    // if we clear this flag here.  It should be checked and then
+    // cleared by whoever called us.  An alternative fix would
+    // be to carry out the check/tidy here.  The plframe widget
+    // handles this stuff for us.
+    //
+    // pls->plbuf_write = 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_state_tkwin()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_state_tkwin()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
 
 void
 plD_state_tkwin( PLStream *pls, PLINT op )
@@ -721,21 +721,21 @@ plD_state_tkwin( PLStream *pls, PLINT op )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_esc_tkwin()
- *
- * Escape function.
- *
- * Functions:
- *
- * PLESC_EH Handle pending events
- * PLESC_EXPOSE Force an expose
- * PLESC_FILL Fill polygon
- * PLESC_FLUSH Flush X event buffer
- * PLESC_GETC Get coordinates upon mouse click
- * PLESC_REDRAW Force a redraw
- * PLESC_RESIZE Force a resize
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_esc_tkwin()
+//
+// Escape function.
+//
+// Functions:
+//
+// PLESC_EH Handle pending events
+// PLESC_EXPOSE Force an expose
+// PLESC_FILL Fill polygon
+// PLESC_FLUSH Flush X event buffer
+// PLESC_GETC Get coordinates upon mouse click
+// PLESC_REDRAW Force a redraw
+// PLESC_RESIZE Force a resize
+//--------------------------------------------------------------------------
 
 void
 plD_esc_tkwin( PLStream *pls, PLINT op, void *ptr )
@@ -785,7 +785,7 @@ plD_esc_tkwin( PLStream *pls, PLINT op, void *ptr )
         ResizeCmd( pls, (PLDisplay *) ptr );
         break;
 
-/* Added by Vince, disabled by default since we want a minimal patch */
+// Added by Vince, disabled by default since we want a minimal patch
 #ifdef USING_PLESC_COPY
     case PLESC_COPY:
         CopyCommand( pls );
@@ -795,12 +795,12 @@ plD_esc_tkwin( PLStream *pls, PLINT op, void *ptr )
 }
 
 #ifdef USING_PLESC_COPY
-/*--------------------------------------------------------------------------*\
- * CopyCommand()
- *
- * Copy a rectangle to a new part of the image.
- * Points described in first 3 elements of pls->dev_x[] and pls->dev_y[].
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// CopyCommand()
+//
+// Copy a rectangle to a new part of the image.
+// Points described in first 3 elements of pls->dev_x[] and pls->dev_y[].
+//--------------------------------------------------------------------------
 
 static void
 CopyCommand( PLStream *pls )
@@ -826,12 +826,12 @@ CopyCommand( PLStream *pls )
 }
 #endif
 
-/*--------------------------------------------------------------------------*\
- * FillPolygonCmd()
- *
- * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
- * Only solid color fill supported.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// FillPolygonCmd()
+//
+// Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+// Only solid color fill supported.
+//--------------------------------------------------------------------------
 
 static void
 FillPolygonCmd( PLStream *pls )
@@ -851,7 +851,7 @@ FillPolygonCmd( PLStream *pls )
         pts[i].y = (short) ( dev->yscale * ( dev->ylen - pls->dev_y[i] ) );
     }
 
-/* Fill polygons */
+// Fill polygons
 
     if ( dev->write_to_window )
         XFillPolygon( tkwd->display, dev->window, dev->gc,
@@ -861,7 +861,7 @@ FillPolygonCmd( PLStream *pls )
         XFillPolygon( tkwd->display, dev->pixmap, dev->gc,
             pts, pls->dev_npts, Nonconvex, CoordModeOrigin );
 
-/* If in debug mode, draw outline of boxes being filled */
+// If in debug mode, draw outline of boxes being filled
 
 #ifdef DEBUG
     if ( pls->debug )
@@ -880,18 +880,18 @@ FillPolygonCmd( PLStream *pls )
 #endif
 }
 
-/*--------------------------------------------------------------------------*\
- * Init()
- *
- * Xlib initialization routine.
- *
- * Controlling routine for X window creation and/or initialization.
- * The user may customize the window in the following ways:
- *
- * display: pls->OutFile (use plsfnam() or -display option)
- * size: pls->xlength, pls->ylength (use plspage() or -geo option)
- * bg color: pls->cmap0[0] (use plscolbg() or -bg option)
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Init()
+//
+// Xlib initialization routine.
+//
+// Controlling routine for X window creation and/or initialization.
+// The user may customize the window in the following ways:
+//
+// display: pls->OutFile (use plsfnam() or -display option)
+// size: pls->xlength, pls->ylength (use plspage() or -geo option)
+// bg color: pls->cmap0[0] (use plscolbg() or -bg option)
+//--------------------------------------------------------------------------
 
 static void
 Init( PLStream *pls )
@@ -911,18 +911,18 @@ Init( PLStream *pls )
         return;
     }
 
-/* Initialize colors */
+// Initialize colors
     InitColors( pls );
 #ifndef MAC_TCL
     XSetWindowColormap( tkwd->display, dev->window, tkwd->map );
 #else
 #endif
 
-/* Set up GC for ordinary draws */
+// Set up GC for ordinary draws
     if ( !dev->gc )
         dev->gc = XCreateGC( tkwd->display, dev->window, 0, 0 );
 
-/* Set up GC for rubber-band draws */
+// Set up GC for rubber-band draws
     if ( !tkwd->gcXor )
     {
         XGCValues     gcValues;
@@ -936,7 +936,7 @@ Init( PLStream *pls )
         tkwd->gcXor = XCreateGC( tkwd->display, dev->window, mask, &gcValues );
     }
 
-/* Get initial drawing area dimensions */
+// Get initial drawing area dimensions
     dev->width  = Tk_Width( plf->tkwin );
     dev->height = Tk_Height( plf->tkwin );
     dev->border = Tk_InternalBorderWidth( plf->tkwin );
@@ -945,8 +945,8 @@ Init( PLStream *pls )
     dev->init_width  = dev->width;
     dev->init_height = dev->height;
 
-    /* Set up flags that determine what we are writing to */
-    /* If nopixmap is set, ignore db */
+    // Set up flags that determine what we are writing to
+    // If nopixmap is set, ignore db
 
     if ( pls->nopixmap )
     {
@@ -959,12 +959,12 @@ Init( PLStream *pls )
     }
     dev->write_to_window = !pls->db;
 
-    /* Create pixmap for holding plot image (for expose events). */
+    // Create pixmap for holding plot image (for expose events).
 
     if ( dev->write_to_pixmap )
         CreatePixmap( pls );
 
-    /* Set drawing color */
+    // Set drawing color
 
     plD_state_tkwin( pls, PLSTATE_COLOR0 );
 
@@ -972,12 +972,12 @@ Init( PLStream *pls )
     XSetBackground( tkwd->display, dev->gc, tkwd->cmap0[0].pixel );
 }
 
-/*--------------------------------------------------------------------------*\
- * ExposeCmd()
- *
- * Event handler routine for expose events.
- * These are "pure" exposures (no resize), so don't need to clear window.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// ExposeCmd()
+//
+// Event handler routine for expose events.
+// These are "pure" exposures (no resize), so don't need to clear window.
+//--------------------------------------------------------------------------
 
 static void
 ExposeCmd( PLStream *pls, PLDisplay *pldis )
@@ -988,7 +988,7 @@ ExposeCmd( PLStream *pls, PLDisplay *pldis )
 
     dbug_enter( "ExposeCmd" );
 
-    /* Return if plD_init_tkw hasn't been called yet */
+    // Return if plD_init_tkw hasn't been called yet
 
     if ( dev == NULL )
     {
@@ -996,7 +996,7 @@ ExposeCmd( PLStream *pls, PLDisplay *pldis )
         return;
     }
 
-    /* Exposed area. If unspecified, the entire window is used. */
+    // Exposed area. If unspecified, the entire window is used.
 
     if ( pldis == NULL )
     {
@@ -1013,8 +1013,8 @@ ExposeCmd( PLStream *pls, PLDisplay *pldis )
         height = pldis->height;
     }
 
-    /* Usual case: refresh window from pixmap */
-    /* DEBUG option: draws rectangle around refreshed region */
+    // Usual case: refresh window from pixmap
+    // DEBUG option: draws rectangle around refreshed region
 
     XSync( tkwd->display, 0 );
     if ( dev->write_to_pixmap )
@@ -1045,11 +1045,11 @@ ExposeCmd( PLStream *pls, PLDisplay *pldis )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * ResizeCmd()
- *
- * Event handler routine for resize events.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// ResizeCmd()
+//
+// Event handler routine for resize events.
+//--------------------------------------------------------------------------
 
 static void
 ResizeCmd( PLStream *pls, PLDisplay *pldis )
@@ -1060,7 +1060,7 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
 
     dbug_enter( "ResizeCmd" );
 
-    /* Return if plD_init_tkw hasn't been called yet */
+    // Return if plD_init_tkw hasn't been called yet
 
     if ( dev == NULL )
     {
@@ -1068,7 +1068,7 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
         return;
     }
 
-    /* Return if pointer to window not specified. */
+    // Return if pointer to window not specified.
 
     if ( pldis == NULL )
     {
@@ -1076,7 +1076,7 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
         return;
     }
 
-    /* Reset current window bounds */
+    // Reset current window bounds
 
     dev->width  = pldis->width;
     dev->height = pldis->height;
@@ -1095,13 +1095,13 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
     }
 #endif
 
-    /* Note: the following order MUST be obeyed -- if you instead redraw into
-     * the window and then copy it to the pixmap, off-screen parts of the window
-     * may contain garbage which is then transferred to the pixmap (and thus
-     * will not go away after an expose).
-     */
+    // Note: the following order MUST be obeyed -- if you instead redraw into
+    // the window and then copy it to the pixmap, off-screen parts of the window
+    // may contain garbage which is then transferred to the pixmap (and thus
+    // will not go away after an expose).
+    //
 
-    /* Resize pixmap using new dimensions */
+    // Resize pixmap using new dimensions
 
     if ( dev->write_to_pixmap )
     {
@@ -1109,35 +1109,35 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
 #if defined ( __WIN32__ ) || defined ( MAC_TCL )
         Tk_FreePixmap( tkwd->display, dev->pixmap );
 #else
-        /* Vince's original driver code used
-         * Tk_FreePixmap(tkwd->display, dev->pixmap);
-         *which is defined in tk-8.3 (and 8.2?) source as
-         *void
-         * Tk_FreePixmap(display, pixmap)
-         *     Display *display;
-         *     Pixmap pixmap;
-         * {
-         *    XFreePixmap(display, pixmap);
-         *    Tk_FreeXId(display, (XID) pixmap);
-         * }
-         * But that bombed under Linux and tcl/tk8.2 so now just call
-         * XFreePixmap directly.  (Not recommended as permanent solution
-         * because you eventually run out of resources according to man
-         * page if you don't call Tk_FreeXId.)  Vince is still looking into
-         * how to resolve this problem.
-         */
+        // Vince's original driver code used
+        // Tk_FreePixmap(tkwd->display, dev->pixmap);
+        //which is defined in tk-8.3 (and 8.2?) source as
+        //void
+        // Tk_FreePixmap(display, pixmap)
+        //     Display *display;
+        //     Pixmap pixmap;
+        // {
+        //    XFreePixmap(display, pixmap);
+        //    Tk_FreeXId(display, (XID) pixmap);
+        // }
+        // But that bombed under Linux and tcl/tk8.2 so now just call
+        // XFreePixmap directly.  (Not recommended as permanent solution
+        // because you eventually run out of resources according to man
+        // page if you don't call Tk_FreeXId.)  Vince is still looking into
+        // how to resolve this problem.
+        //
         XFreePixmap( tkwd->display, dev->pixmap );
 #endif
         CreatePixmap( pls );
     }
 
-    /* Initialize & redraw (to pixmap, if available). */
+    // Initialize & redraw (to pixmap, if available).
 
     plD_bop_tkwin( pls );
     plRemakePlot( pls );
     XSync( tkwd->display, 0 );
 
-    /* If pixmap available, fake an expose */
+    // If pixmap available, fake an expose
 
     if ( dev->write_to_pixmap )
     {
@@ -1148,12 +1148,12 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * RedrawCmd()
- *
- * Handles page redraw without resize (pixmap does not get reallocated).
- * Calling this makes sure all necessary housekeeping gets done.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// RedrawCmd()
+//
+// Handles page redraw without resize (pixmap does not get reallocated).
+// Calling this makes sure all necessary housekeeping gets done.
+//--------------------------------------------------------------------------
 
 static void
 RedrawCmd( PLStream *pls )
@@ -1164,7 +1164,7 @@ RedrawCmd( PLStream *pls )
 
     dbug_enter( "RedrawCmd" );
 
-    /* Return if plD_init_tkw hasn't been called yet */
+    // Return if plD_init_tkw hasn't been called yet
 
     if ( dev == NULL )
     {
@@ -1172,7 +1172,7 @@ RedrawCmd( PLStream *pls )
         return;
     }
 
-    /* Initialize & redraw (to pixmap, if available). */
+    // Initialize & redraw (to pixmap, if available).
 
     if ( dev->write_to_pixmap )
         dev->write_to_window = 0;
@@ -1183,7 +1183,7 @@ RedrawCmd( PLStream *pls )
 
     dev->write_to_window = write_to_window;
 
-    /* If pixmap available, fake an expose */
+    // If pixmap available, fake an expose
 
     if ( dev->write_to_pixmap )
     {
@@ -1193,12 +1193,12 @@ RedrawCmd( PLStream *pls )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * CreatePixmap()
- *
- * This routine creates a pixmap, doing error trapping in case there
- * isn't enough memory on the server.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// CreatePixmap()
+//
+// This routine creates a pixmap, doing error trapping in case there
+// isn't enough memory on the server.
+//--------------------------------------------------------------------------
 
 static void
 CreatePixmap( PLStream *pls )
@@ -1214,7 +1214,7 @@ CreatePixmap( PLStream *pls )
 #endif
 
 #ifdef MAC_TCL
-    /* MAC_TCL's version of XCreatePixmap doesn't like 0 by 0 maps */
+    // MAC_TCL's version of XCreatePixmap doesn't like 0 by 0 maps
     if ( dev->width == 0 )
     {
         dev->width = 10;
@@ -1227,21 +1227,21 @@ CreatePixmap( PLStream *pls )
     pldebug( "CreatePixmap",
         "creating pixmap: width = %d, height = %d, depth = %d\n",
         dev->width, dev->height, tkwd->depth );
-/*
- * dev->pixmap = Tk_GetPixmap(tkwd->display, dev->window,
- *                             dev->width, dev->height, tkwd->depth);
- */
-/*
- * Vince's original driver code used Tk_Display(tkwin) for first argument,
- * but that bombed on an Linux tcl/tk 8.2 machine.  Something was wrong
- * with that value.  Thus, we now use tkwd->display, and that works well.
- * Vince is looking into why Tk_Display(tkwin) is badly defined under 8.2.
- * old code:
- *
- *  dev->pixmap = Tk_GetPixmap(Tk_Display(tkwin), Tk_WindowId(tkwin),
- *          Tk_Width(tkwin), Tk_Height(tkwin),
- *          DefaultDepthOfScreen(Tk_Screen(tkwin)));
- */
+//
+// dev->pixmap = Tk_GetPixmap(tkwd->display, dev->window,
+//                             dev->width, dev->height, tkwd->depth);
+//
+//
+// Vince's original driver code used Tk_Display(tkwin) for first argument,
+// but that bombed on an Linux tcl/tk 8.2 machine.  Something was wrong
+// with that value.  Thus, we now use tkwd->display, and that works well.
+// Vince is looking into why Tk_Display(tkwin) is badly defined under 8.2.
+// old code:
+//
+//  dev->pixmap = Tk_GetPixmap(Tk_Display(tkwin), Tk_WindowId(tkwin),
+//          Tk_Width(tkwin), Tk_Height(tkwin),
+//          DefaultDepthOfScreen(Tk_Screen(tkwin)));
+//
     dev->pixmap = Tk_GetPixmap( tkwd->display, Tk_WindowId( tkwin ),
         Tk_Width( tkwin ), Tk_Height( tkwin ),
         DefaultDepthOfScreen( Tk_Screen( tkwin ) ) );
@@ -1261,16 +1261,16 @@ CreatePixmap( PLStream *pls )
 #endif
 }
 
-/*--------------------------------------------------------------------------*\
- * GetVisual()
- *
- * Get visual info. In order to safely use a visual other than that of
- * the parent (which hopefully is that returned by DefaultVisual), you
- * must first find (using XGetRGBColormaps) or create a colormap matching
- * this visual and then set the colormap window attribute in the
- * XCreateWindow attributes and valuemask arguments. I don't do this
- * right now, so this is turned off by default.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// GetVisual()
+//
+// Get visual info. In order to safely use a visual other than that of
+// the parent (which hopefully is that returned by DefaultVisual), you
+// must first find (using XGetRGBColormaps) or create a colormap matching
+// this visual and then set the colormap window attribute in the
+// XCreateWindow attributes and valuemask arguments. I don't do this
+// right now, so this is turned off by default.
+//--------------------------------------------------------------------------
 
 static void
 GetVisual( PLStream *pls )
@@ -1288,13 +1288,13 @@ GetVisual( PLStream *pls )
     tkwd->depth = depth;
 }
 
-/*--------------------------------------------------------------------------*\
- * AllocBGFG()
- *
- * Allocate background & foreground colors. If possible, I choose pixel
- * values such that the fg pixel is the xor of the bg pixel, to make
- * rubber-banding easy to see.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// AllocBGFG()
+//
+// Allocate background & foreground colors. If possible, I choose pixel
+// values such that the fg pixel is the xor of the bg pixel, to make
+// rubber-banding easy to see.
+//--------------------------------------------------------------------------
 
 static void
 AllocBGFG( PLStream *pls )
@@ -1309,12 +1309,12 @@ AllocBGFG( PLStream *pls )
 
     dbug_enter( "AllocBGFG" );
 
-    /* If not on a color system, just return */
+    // If not on a color system, just return
 
     if ( !tkwd->color )
         return;
 #ifndef USE_TK
-    /* Allocate r/w color cell for background */
+    // Allocate r/w color cell for background
 
     if ( XAllocColorCells( tkwd->display, tkwd->map, False,
              plane_masks, 0, pixels, 1 ) )
@@ -1326,7 +1326,7 @@ AllocBGFG( PLStream *pls )
         plexit( "couldn't allocate background color cell" );
     }
 
-    /* Allocate as many colors as we can */
+    // Allocate as many colors as we can
 
     npixels = MAX_COLORS;
     for (;; )
@@ -1339,8 +1339,8 @@ AllocBGFG( PLStream *pls )
             break;
     }
 
-    /* Find the color with pixel = xor of the bg color pixel. */
-    /* If a match isn't found, the last pixel allocated is used. */
+    // Find the color with pixel = xor of the bg color pixel.
+    // If a match isn't found, the last pixel allocated is used.
 
     for ( i = 0; i < npixels - 1; i++ )
     {
@@ -1348,7 +1348,7 @@ AllocBGFG( PLStream *pls )
             break;
     }
 
-    /* Use this color cell for our foreground color. Then free the rest. */
+    // Use this color cell for our foreground color. Then free the rest.
 
     tkwd->fgcolor.pixel = pixels[i];
     for ( j = 0; j < npixels; j++ )
@@ -1359,12 +1359,12 @@ AllocBGFG( PLStream *pls )
 #endif
 }
 
-/*--------------------------------------------------------------------------*\
- * pltkwin_setBGFG()
- *
- * Set background & foreground colors. Foreground over background should
- * have high contrast.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// pltkwin_setBGFG()
+//
+// Set background & foreground colors. Foreground over background should
+// have high contrast.
+//--------------------------------------------------------------------------
 
 void
 pltkwin_setBGFG( PLStream *pls )
@@ -1376,12 +1376,12 @@ pltkwin_setBGFG( PLStream *pls )
 
     dbug_enter( "pltkwin_setBGFG" );
 
-    /*
-     * Set background color.
-     *
-     * Background defaults to black on color screens, white on grayscale (many
-     * grayscale monitors have poor contrast, and black-on-white looks better).
-     */
+    //
+    // Set background color.
+    //
+    // Background defaults to black on color screens, white on grayscale (many
+    // grayscale monitors have poor contrast, and black-on-white looks better).
+    //
 
     if ( !tkwd->color )
     {
@@ -1393,15 +1393,15 @@ pltkwin_setBGFG( PLStream *pls )
 
     PLColor_to_TkColor( &pls->cmap0[0], &tkwd->cmap0[0] );
 
-    /*
-     * Set foreground color.
-     *
-     * Used for grayscale output, since otherwise the plots can become nearly
-     * unreadable (i.e. if colors get mapped onto grayscale values). In this
-     * case it becomes the grayscale level for all draws, and is taken to be
-     * black if the background is light, and white if the background is dark.
-     * Note that white/black allocations never fail.
-     */
+    //
+    // Set foreground color.
+    //
+    // Used for grayscale output, since otherwise the plots can become nearly
+    // unreadable (i.e. if colors get mapped onto grayscale values). In this
+    // case it becomes the grayscale level for all draws, and is taken to be
+    // black if the background is light, and white if the background is dark.
+    // Note that white/black allocations never fail.
+    //
 
     if ( gslevbg > 0x7F )
         gslevfg = 0;
@@ -1412,7 +1412,7 @@ pltkwin_setBGFG( PLStream *pls )
 
     PLColor_to_TkColor( &fgcolor, &tkwd->fgcolor );
 
-    /* Now store */
+    // Now store
 #ifndef USE_TK
     if ( tkwd->color )
     {
@@ -1430,11 +1430,11 @@ pltkwin_setBGFG( PLStream *pls )
 #endif
 }
 
-/*--------------------------------------------------------------------------*\
- * InitColors()
- *
- * Does all color initialization.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// InitColors()
+//
+// Does all color initialization.
+//--------------------------------------------------------------------------
 
 static void
 InitColors( PLStream *pls )
@@ -1444,8 +1444,8 @@ InitColors( PLStream *pls )
 
     dbug_enter( "InitColors" );
 
-    /* Allocate and initialize color maps. */
-    /* Defer cmap1 allocation until it's actually used */
+    // Allocate and initialize color maps.
+    // Defer cmap1 allocation until it's actually used
 
     if ( tkwd->color )
     {
@@ -1460,31 +1460,31 @@ InitColors( PLStream *pls )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * AllocCustomMap()
- *
- * Initializes custom color map and all the cruft that goes with it.
- *
- * Assuming all color X displays do 256 colors, the breakdown is as follows:
- *
- * XWM_COLORS Number of low "pixel" values to copy. These are typically
- *  allocated first, thus are in use by the window manager. I
- *  copy them to reduce flicker.
- *
- * CMAP0_COLORS Color map 0 entries. I allocate these both in the default
- *  colormap and the custom colormap to reduce flicker.
- *
- * CMAP1_COLORS Color map 1 entries. There should be as many as practical
- *  available for smooth shading. On the order of 50-100 is
- *  pretty reasonable. You don't really need all 256,
- *  especially if all you're going to do is to print it to
- *  postscript (which doesn't have any intrinsic limitation on
- *  the number of colors).
- *
- * It's important to leave some extra colors unallocated for Tk. In
- * particular the palette tools require a fair amount. I recommend leaving
- * at least 40 or so free.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// AllocCustomMap()
+//
+// Initializes custom color map and all the cruft that goes with it.
+//
+// Assuming all color X displays do 256 colors, the breakdown is as follows:
+//
+// XWM_COLORS Number of low "pixel" values to copy. These are typically
+//  allocated first, thus are in use by the window manager. I
+//  copy them to reduce flicker.
+//
+// CMAP0_COLORS Color map 0 entries. I allocate these both in the default
+//  colormap and the custom colormap to reduce flicker.
+//
+// CMAP1_COLORS Color map 1 entries. There should be as many as practical
+//  available for smooth shading. On the order of 50-100 is
+//  pretty reasonable. You don't really need all 256,
+//  especially if all you're going to do is to print it to
+//  postscript (which doesn't have any intrinsic limitation on
+//  the number of colors).
+//
+// It's important to leave some extra colors unallocated for Tk. In
+// particular the palette tools require a fair amount. I recommend leaving
+// at least 40 or so free.
+//--------------------------------------------------------------------------
 
 static void
 AllocCustomMap( PLStream *pls )
@@ -1501,7 +1501,7 @@ AllocCustomMap( PLStream *pls )
 
     dbug_enter( "AllocCustomMap" );
 
-    /* Determine current default colors */
+    // Determine current default colors
 
     for ( i = 0; i < MAX_COLORS; i++ )
     {
@@ -1511,20 +1511,20 @@ AllocCustomMap( PLStream *pls )
     XQueryColors( tkwd->display, tkwd->map, xwm_colors, MAX_COLORS );
 #endif
 
-    /* Allocate cmap0 colors in the default colormap.
-     * The custom cmap0 colors are later stored at the same pixel values.
-     * This is a really cool trick to reduce the flicker when changing colormaps.
-     */
+    // Allocate cmap0 colors in the default colormap.
+    // The custom cmap0 colors are later stored at the same pixel values.
+    // This is a really cool trick to reduce the flicker when changing colormaps.
+    //
 
     AllocCmap0( pls );
     XAllocColor( tkwd->display, tkwd->map, &tkwd->fgcolor );
 
-    /* Create new color map */
+    // Create new color map
 
     tkwd->map = XCreateColormap( tkwd->display, DefaultRootWindow( tkwd->display ),
         tkwd->visual, AllocNone );
 
-    /* Now allocate all colors so we can fill the ones we want to copy */
+    // Now allocate all colors so we can fill the ones we want to copy
 
 #ifndef USE_TK
     npixels = MAX_COLORS;
@@ -1538,7 +1538,7 @@ AllocCustomMap( PLStream *pls )
             plexit( "couldn't allocate any colors" );
     }
 
-    /* Fill the low colors since those are in use by the window manager */
+    // Fill the low colors since those are in use by the window manager
 
     for ( i = 0; i < XWM_COLORS; i++ )
     {
@@ -1546,7 +1546,7 @@ AllocCustomMap( PLStream *pls )
         pixels[xwm_colors[i].pixel] = 0;
     }
 
-    /* Fill the ones we will use in cmap0 */
+    // Fill the ones we will use in cmap0
 
     for ( i = 0; i < tkwd->ncol0; i++ )
     {
@@ -1554,11 +1554,11 @@ AllocCustomMap( PLStream *pls )
         pixels[tkwd->cmap0[i].pixel] = 0;
     }
 
-    /* Finally, if the colormap was saved by an external agent, see if there are
-     * any differences from the current default map and save those! A very cool
-     * (or sick, depending on how you look at it) trick to get over some X and
-     * Tk limitations.
-     */
+    // Finally, if the colormap was saved by an external agent, see if there are
+    // any differences from the current default map and save those! A very cool
+    // (or sick, depending on how you look at it) trick to get over some X and
+    // Tk limitations.
+    //
 
     if ( sxwm_colors_set )
     {
@@ -1577,7 +1577,7 @@ AllocCustomMap( PLStream *pls )
         }
     }
 
-    /* Now free the ones we're not interested in */
+    // Now free the ones we're not interested in
 
     for ( i = 0; i < npixels; i++ )
     {
@@ -1585,16 +1585,16 @@ AllocCustomMap( PLStream *pls )
             XFreeColors( tkwd->display, tkwd->map, &pixels[i], 1, 0 );
     }
 #endif
-    /* Allocate colors in cmap 1 */
+    // Allocate colors in cmap 1
 
     AllocCmap1( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * AllocCmap0()
- *
- * Allocate & initialize cmap0 entries.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// AllocCmap0()
+//
+// Allocate & initialize cmap0 entries.
+//--------------------------------------------------------------------------
 
 static void
 AllocCmap0( PLStream *pls )
@@ -1610,7 +1610,7 @@ AllocCmap0( PLStream *pls )
 
     dbug_enter( "AllocCmap0" );
 
-    /* Allocate and assign colors in cmap 0 */
+    // Allocate and assign colors in cmap 0
 
 #ifndef USE_TK
     npixels = pls->ncol0 - 1;
@@ -1630,18 +1630,18 @@ AllocCmap0( PLStream *pls )
         tkwd->cmap0[i].pixel = pixels[i];
     }
 #else
-    /* We use the Tk color scheme */
+    // We use the Tk color scheme
     tkwd->ncol0 = pls->ncol0;
 #endif
     StoreCmap0( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * AllocCmap1()
- *
- * Allocate & initialize cmap1 entries. If using the default color map,
- * must severely limit number of colors otherwise TK won't have enough.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// AllocCmap1()
+//
+// Allocate & initialize cmap1 entries. If using the default color map,
+// must severely limit number of colors otherwise TK won't have enough.
+//--------------------------------------------------------------------------
 
 static void
 AllocCmap1( PLStream *pls )
@@ -1657,7 +1657,7 @@ AllocCmap1( PLStream *pls )
 
     dbug_enter( "AllocCmap1" );
 
-    /* Allocate colors in cmap 1 */
+    // Allocate colors in cmap 1
 
     npixels = MAX( 2, MIN( CMAP1_COLORS, pls->ncol1 ) );
 #ifndef USE_TK
@@ -1685,8 +1685,8 @@ AllocCmap1( PLStream *pls )
             fprintf( stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1\n", npixels );
     }
 
-    /* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
-    /* Skipping by 2 seems to do the job best */
+    // Don't assign pixels sequentially, to avoid strange problems with xor GC's
+    // Skipping by 2 seems to do the job best
 
     for ( j = i = 0; i < tkwd->ncol1; i++ )
     {
@@ -1706,11 +1706,11 @@ AllocCmap1( PLStream *pls )
     StoreCmap1( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * StoreCmap0()
- *
- * Stores cmap 0 entries in X-server colormap.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// StoreCmap0()
+//
+// Stores cmap 0 entries in X-server colormap.
+//--------------------------------------------------------------------------
 
 static void
 StoreCmap0( PLStream *pls )
@@ -1742,11 +1742,11 @@ void CopyColour( XColor* from, XColor* to )
     to->flags = from->flags;
 }
 
-/*--------------------------------------------------------------------------*\
- * StoreCmap1()
- *
- * Stores cmap 1 entries in X-server colormap.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// StoreCmap1()
+//
+// Stores cmap 1 entries in X-server colormap.
+//--------------------------------------------------------------------------
 
 static void
 StoreCmap1( PLStream *pls )
@@ -1778,19 +1778,19 @@ void Tkw_StoreColor( PLStream* pls, TkwDisplay* tkwd, XColor* col )
 #ifndef USE_TK
     XStoreColor( tkwd->display, tkwd->map, col );
 #else
-    /* We're probably losing memory here */
+    // We're probably losing memory here
     xc = Tk_GetColorByValue( pls->plPlotterPtr->tkwin, col );
     CopyColour( xc, col );
 #endif
 }
 
-/*--------------------------------------------------------------------------*\
- * void PLColor_to_TkColor()
- *
- * Copies the supplied PLColor to an XColor, padding with bits as necessary
- * (a PLColor uses 8 bits for color storage, while an XColor uses 16 bits).
- * The argument types follow the same order as in the function name.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void PLColor_to_TkColor()
+//
+// Copies the supplied PLColor to an XColor, padding with bits as necessary
+// (a PLColor uses 8 bits for color storage, while an XColor uses 16 bits).
+// The argument types follow the same order as in the function name.
+//--------------------------------------------------------------------------
 
 #define ToXColor( a )     ( ( ( 0xFF & ( a ) ) << 8 ) | ( a ) )
 #define ToPLColor( a )    ( ( (U_LONG) a ) >> 8 )
@@ -1804,12 +1804,12 @@ PLColor_to_TkColor( PLColor *plcolor, XColor *xcolor )
     xcolor->flags = DoRed | DoGreen | DoBlue;
 }
 
-/*--------------------------------------------------------------------------*\
- * void PLColor_from_TkColor()
- *
- * Copies the supplied XColor to a PLColor, stripping off bits as
- * necessary. See the previous routine for more info.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void PLColor_from_TkColor()
+//
+// Copies the supplied XColor to a PLColor, stripping off bits as
+// necessary. See the previous routine for more info.
+//--------------------------------------------------------------------------
 
 void
 PLColor_from_TkColor( PLColor *plcolor, XColor *xcolor )
@@ -1819,14 +1819,14 @@ PLColor_from_TkColor( PLColor *plcolor, XColor *xcolor )
     plcolor->b = (unsigned char) ToPLColor( xcolor->blue );
 }
 
-/*--------------------------------------------------------------------------*\
- * void PLColor_from_TkColor_Changed()
- *
- * Copies the supplied XColor to a PLColor, stripping off bits as
- * necessary. See the previous routine for more info.
- *
- * Returns 1 if the color was different from the old one.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void PLColor_from_TkColor_Changed()
+//
+// Copies the supplied XColor to a PLColor, stripping off bits as
+// necessary. See the previous routine for more info.
+//
+// Returns 1 if the color was different from the old one.
+//--------------------------------------------------------------------------
 
 int
 PLColor_from_TkColor_Changed( PLColor *plcolor, XColor *xcolor )
@@ -1855,13 +1855,13 @@ PLColor_from_TkColor_Changed( PLColor *plcolor, XColor *xcolor )
     return changed;
 }
 
-/*--------------------------------------------------------------------------*\
- * int pltk_AreWeGrayscale(PlPlotter *plf)
- *
- * Determines if we're using a monochrome or grayscale device.
- * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland.
- * Changed July 1996 by Vince: now uses Tk to check the enclosing PlPlotter
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// int pltk_AreWeGrayscale(PlPlotter *plf)
+//
+// Determines if we're using a monochrome or grayscale device.
+// gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland.
+// Changed July 1996 by Vince: now uses Tk to check the enclosing PlPlotter
+//--------------------------------------------------------------------------
 
 static int
 pltk_AreWeGrayscale( PlPlotter *plf )
@@ -1873,22 +1873,22 @@ pltk_AreWeGrayscale( PlPlotter *plf )
 #endif
 
     Visual* visual;
-    /* get the window's Visual */
+    // get the window's Visual
     visual = Tk_Visual( plf->tkwin );
     if ( ( visual->THING != GrayScale ) && ( visual->THING != StaticGray ) )
         return ( 0 );
-    /* if we got this far, only StaticGray and GrayScale classes available */
+    // if we got this far, only StaticGray and GrayScale classes available
     return ( 1 );
 }
 
 #if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
-/*--------------------------------------------------------------------------*\
- * CreatePixmapErrorHandler()
- *
- * Error handler used in CreatePixmap() to catch errors in allocating
- * storage for pixmap. This way we can nicely substitute redraws for
- * pixmap copies if the server has insufficient memory.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// CreatePixmapErrorHandler()
+//
+// Error handler used in CreatePixmap() to catch errors in allocating
+// storage for pixmap. This way we can nicely substitute redraws for
+// pixmap copies if the server has insufficient memory.
+//--------------------------------------------------------------------------
 
 static int
 CreatePixmapErrorHandler( Display *display, XErrorEvent *error )
@@ -1914,7 +1914,7 @@ pldummy_tkwin()
     return 0;
 }
 
-#endif    /* PLD_tkwin */
+#endif    // PLD_tkwin
 
 void *  ckcalloc( size_t nmemb, size_t size )
 {

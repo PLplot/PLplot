@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      PLplot xfig device driver.
- */
+// $Id$
+//
+//      PLplot xfig device driver.
+//
 #include "plDevs.h"
 
 #ifdef PLD_xfig
@@ -9,7 +9,7 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_xfig = "xfig:Fig file:0:xfig:31:xfig\n";
 
 typedef struct
@@ -31,7 +31,7 @@ typedef struct
     int   offset, offset_inc;
 } xfig_Dev;
 
-/* Function prototypes */
+// Function prototypes
 
 void plD_dispatch_init_xfig( PLDispatchTable *pdt );
 
@@ -46,19 +46,19 @@ void plD_esc_xfig( PLStream *, PLINT, void * );
 
 static void flushbuffer( PLStream * );
 
-/* top level declarations */
+// top level declarations
 
-#define FIGX    297 /* portrait A4 mm */
+#define FIGX    297 // portrait A4 mm
 #define FIGY    210
 #define DPI     1200
 
-/* it looks like xfig-3.2.3c has a bug. A4 papersize is 297x210 mm,
- * and at 1200 dpi this gives 14031x9921 dots. In a file saved from
- * xfig, with a box of A4 size, the reported sizes are 13365x9450 */
+// it looks like xfig-3.2.3c has a bug. A4 papersize is 297x210 mm,
+// and at 1200 dpi this gives 14031x9921 dots. In a file saved from
+// xfig, with a box of A4 size, the reported sizes are 13365x9450
 
 #define BSIZE           25
-#define XFIG_COLBASE    33 /* xfig first user color, plplot colormap0[0],
-                            * the background color */
+#define XFIG_COLBASE    33 // xfig first user color, plplot colormap0[0],
+                           // the background color
 
 
 static void stcmap0( PLStream * );
@@ -88,11 +88,11 @@ void plD_dispatch_init_xfig( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_xfig;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_xfig()
- *
- * Initialize device.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_xfig()
+//
+// Initialize device.
+//--------------------------------------------------------------------------
 
 void
 plD_init_xfig( PLStream *pls )
@@ -101,17 +101,17 @@ plD_init_xfig( PLStream *pls )
 
     plParseDrvOpts( xfig_options );
     if ( text )
-        pls->dev_text = 1; /* want to draw text */
+        pls->dev_text = 1; // want to draw text
 
-/* Initialize family file info */
+// Initialize family file info
 
     plFamInit( pls );
 
-/* Prompt for a file name if not already set */
+// Prompt for a file name if not already set
 
     plOpenFile( pls );
 
-/* Allocate and initialize device-specific data */
+// Allocate and initialize device-specific data
 
     if ( pls->dev != NULL )
         free( (void *) pls->dev );
@@ -136,14 +136,14 @@ plD_init_xfig( PLStream *pls )
     dev->yscale_dev = DPI / 25.4;
     dev->offset_inc = dev->ymax * (PLINT) dev->yscale_dev;
     dev->offset     = -dev->offset_inc;
-    pls->dev_fill0  = 1;                                                                        /* Handle solid fills */
+    pls->dev_fill0  = 1;                                                                        // Handle solid fills
     if ( !pls->colorset )
-        pls->color = 1;                                                                         /* Is a color device */
+        pls->color = 1;                                                                         // Is a color device
 
-    plP_setpxl( dev->xscale_dev, dev->xscale_dev );                                             /* dpmm -- dots per mm */
-    plP_setphy( 0, (PLINT) ( FIGX * dev->xscale_dev ), 0, (PLINT) ( FIGY * dev->yscale_dev ) ); /* physical dimension in mm */
+    plP_setpxl( dev->xscale_dev, dev->xscale_dev );                                             // dpmm -- dots per mm
+    plP_setphy( 0, (PLINT) ( FIGX * dev->xscale_dev ), 0, (PLINT) ( FIGY * dev->yscale_dev ) ); // physical dimension in mm
 
-/* Write out header */
+// Write out header
 
     fprintf( pls->OutFile, "#FIG 3.2\n" );
     fprintf( pls->OutFile, "Landscape\n" );
@@ -155,13 +155,13 @@ plD_init_xfig( PLStream *pls )
     fprintf( pls->OutFile, "-2\n" );
     fprintf( pls->OutFile, "%d 2\n", DPI );
 
-    /* user defined colors, for colormap0 */
-    dev->cmap0_ncol = 2 * pls->ncol0; /* allow for a maximum of 2x the default cmap0 entries */
+    // user defined colors, for colormap0
+    dev->cmap0_ncol = 2 * pls->ncol0; // allow for a maximum of 2x the default cmap0 entries
     dev->cmap0_pos  = ftell( pls->OutFile );
     stcmap0( pls );
 
-    /* user defined colors, for colormap1 */
-    dev->cmap1_ncol = 2 * pls->ncol1; /* allow for a maximum of  2x the default cmap1 entries */
+    // user defined colors, for colormap1
+    dev->cmap1_ncol = 2 * pls->ncol1; // allow for a maximum of  2x the default cmap1 entries
     dev->cmap1_pos  = ftell( pls->OutFile );
     stcmap1( pls );
 
@@ -188,12 +188,12 @@ stcmap0( PLStream *pls )
     if ( fseek( pls->OutFile, dev->cmap0_pos, SEEK_SET ) )
         plexit( "Sorry, only file based output, no pipes.\n" );
 
-    /* fill the colormap */
+    // fill the colormap
     for ( i = 0; i < pls->ncol0; i++ )
         fprintf( pls->OutFile, "0 %d #%.2x%.2x%.2x\n", i + XFIG_COLBASE,
             pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b );
 
-    /* fill the nonspecified entries colormap */
+    // fill the nonspecified entries colormap
     for ( i = pls->ncol0; i < dev->cmap0_ncol; i++ )
         fprintf( pls->OutFile, "0 %d #000000\n", i + XFIG_COLBASE );
 
@@ -218,12 +218,12 @@ stcmap1( PLStream *pls )
     if ( fseek( pls->OutFile, dev->cmap1_pos, SEEK_SET ) )
         plexit( "Sorry, only file based output, no pipes.\n" );
 
-    /* fill the colormap */
+    // fill the colormap
     for ( i = 0; i < pls->ncol1; i++ )
         fprintf( pls->OutFile, "0 %d #%.2x%.2x%.2x\n", i + XFIG_COLBASE + dev->cmap0_ncol,
             pls->cmap1[i].r, pls->cmap1[i].g, pls->cmap1[i].b );
 
-    /* fill the nonspecified entries colormap */
+    // fill the nonspecified entries colormap
     for ( i = pls->ncol1; i < dev->cmap1_ncol; i++ )
         fprintf( pls->OutFile, "0 %d #000000\n", i + XFIG_COLBASE + dev->cmap0_ncol );
 
@@ -231,11 +231,11 @@ stcmap1( PLStream *pls )
         fseek( pls->OutFile, cur_pos, SEEK_SET );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_line_xfig()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_line_xfig()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//--------------------------------------------------------------------------
 
 void
 plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -245,9 +245,9 @@ plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     int      *tempptr;
     int      count;
 
-/* If starting point of this line is the same as the ending point of */
-/* the previous line then don't raise the pen. (This really speeds up */
-/* plotting and reduces the size of the file. */
+// If starting point of this line is the same as the ending point of
+// the previous line then don't raise the pen. (This really speeds up
+// plotting and reduces the size of the file.
 
     if ( dev->firstline )
     {
@@ -290,11 +290,11 @@ plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     dev->yold  = y2;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_polyline_xfig()
- *
- * Draw a polyline in the current color.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_polyline_xfig()
+//
+// Draw a polyline in the current color.
+//--------------------------------------------------------------------------
 
 void
 plD_polyline_xfig( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -305,11 +305,11 @@ plD_polyline_xfig( PLStream *pls, short *xa, short *ya, PLINT npts )
         plD_line_xfig( pls, xa[i], ya[i], xa[i + 1], ya[i + 1] );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_eop_xfig()
- *
- * End of page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_eop_xfig()
+//
+// End of page.
+//--------------------------------------------------------------------------
 
 void
 plD_eop_xfig( PLStream *pls )
@@ -320,12 +320,12 @@ plD_eop_xfig( PLStream *pls )
         flushbuffer( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_bop_xfig()
- *
- * Set up for the next page.
- * Advance to next family file if necessary (file output).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_bop_xfig()
+//
+// Set up for the next page.
+// Advance to next family file if necessary (file output).
+//--------------------------------------------------------------------------
 
 void
 plD_bop_xfig( PLStream *pls )
@@ -347,8 +347,8 @@ plD_bop_xfig( PLStream *pls )
     dev->offset += dev->offset_inc;
     flushbuffer( pls );
 
-    /* create background FIXME -- sync with orientation in header and pls->diorot */
-    dev->curcol = XFIG_COLBASE; /* colormap entry 0, background */
+    // create background FIXME -- sync with orientation in header and pls->diorot
+    dev->curcol = XFIG_COLBASE; // colormap entry 0, background
     fprintf( pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 -1 0 0 5\n", dev->curcol, dev->curcol );
     fprintf( pls->OutFile, "%d %d %d %d %d %d %d %d %d %d\n",
         0, dev->offset,
@@ -358,11 +358,11 @@ plD_bop_xfig( PLStream *pls )
         0, dev->offset );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_tidy_xfig()
- *
- * Close graphics file or otherwise clean up.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_tidy_xfig()
+//
+// Close graphics file or otherwise clean up.
+//--------------------------------------------------------------------------
 
 void
 plD_tidy_xfig( PLStream *pls )
@@ -374,11 +374,11 @@ plD_tidy_xfig( PLStream *pls )
     plCloseFile( pls );
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_state_xfig()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_state_xfig()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
 
 void
 plD_state_xfig( PLStream *pls, PLINT op )
@@ -413,12 +413,12 @@ plD_state_xfig( PLStream *pls, PLINT op )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_esc_xfig()
- *
- * Escape function.
- * Preliminary fill support for colormap0
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_esc_xfig()
+//
+// Escape function.
+// Preliminary fill support for colormap0
+//--------------------------------------------------------------------------
 
 void
 plD_esc_xfig( PLStream *pls, PLINT op, void *ptr )
@@ -451,9 +451,9 @@ plD_esc_xfig( PLStream *pls, PLINT op, void *ptr )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * Utility functions.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Utility functions.
+//--------------------------------------------------------------------------
 
 static void
 flushbuffer( PLStream *pls )
@@ -485,10 +485,10 @@ proc_str( PLStream *pls, EscText *args )
     PLINT    clxmin, clxmax, clymin, clymax;
     int      jst, font;
 
-    /* font height */
-    ft_ht = pls->chrht * 72.0 / 25.4; /* ft_ht in points. ht is in mm */
+    // font height
+    ft_ht = pls->chrht * 72.0 / 25.4; // ft_ht in points. ht is in mm
 
-    /* calculate baseline text angle */
+    // calculate baseline text angle
     angle = pls->diorot * 90.;
     a1    = acos( t[0] ) * 180. / PI;
     if ( t[2] > 0. )
@@ -498,66 +498,66 @@ proc_str( PLStream *pls, EscText *args )
 
     alpha = alpha * PI / 180.;
 
-    /* TODO: parse string for format (escape) characters */
-    /* parse_str(args->string, return_string);*/
+    // TODO: parse string for format (escape) characters
+    // parse_str(args->string, return_string);
 
-    /* apply transformations */
+    // apply transformations
     difilt( &args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax );
 
-    /* check clip limits. For now, only the reference point of the string is checked;
-     * but the the whole string should be checked -- using a postscript construct
-     * such as gsave/clip/grestore. This method can also be applied to the xfig and
-     * pstex drivers. Zoom side effect: the font size must be adjusted! */
+    // check clip limits. For now, only the reference point of the string is checked;
+    // but the the whole string should be checked -- using a postscript construct
+    // such as gsave/clip/grestore. This method can also be applied to the xfig and
+    // pstex drivers. Zoom side effect: the font size must be adjusted!
 
     if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax )
         return;
 
-    /*
-     * Text justification.  Left, center and right justification, which
-     *  are the more common options, are supported; variable justification is
-     *  only approximate, based on plplot computation of it's string lenght
-     */
+    //
+    // Text justification.  Left, center and right justification, which
+    //  are the more common options, are supported; variable justification is
+    //  only approximate, based on plplot computation of it's string lenght
+    //
 
     if ( args->just == 0.5 )
-        jst = 1; /* center */
+        jst = 1; // center
     else if ( args->just == 1. )
-        jst = 2; /* right */
+        jst = 2; // right
     else
     {
-        jst     = 0;          /* left */
-        args->x = args->refx; /* use hints provided by plplot */
+        jst     = 0;          // left
+        args->x = args->refx; // use hints provided by plplot
         args->y = args->refy;
     }
 
-    /*
-     * Reference point (center baseline of string, not latex character reference point).
-     *  If base = 0, it is aligned with the center of the text box
-     *  If base = 1, it is aligned with the baseline of the text box
-     *  If base = 2, it is aligned with the top of the text box
-     *  Currently plplot only uses base=0
-     *  xfig use base=1
-     */
+    //
+    // Reference point (center baseline of string, not latex character reference point).
+    //  If base = 0, it is aligned with the center of the text box
+    //  If base = 1, it is aligned with the baseline of the text box
+    //  If base = 2, it is aligned with the top of the text box
+    //  Currently plplot only uses base=0
+    //  xfig use base=1
+    //
 
-    if ( args->base == 2 )             /* not supported by plplot */
-        ref = -DPI / 72. * ft_ht / 2.; /* half font height in xfig unities (1/1200 inches) */
+    if ( args->base == 2 )             // not supported by plplot
+        ref = -DPI / 72. * ft_ht / 2.; // half font height in xfig unities (1/1200 inches)
     else if ( args->base == 1 )
         ref = 0.;
     else
         ref = DPI / 72. * ft_ht / 2.;
 
-    /* rotate point in xfig is lower left corner, compensate */
+    // rotate point in xfig is lower left corner, compensate
     args->y = (PLINT) ( dev->offset + dev->ymax * (int) dev->xscale_dev - ( args->y - ref * cos( alpha ) ) );
     args->x = (PLINT) ( args->x + ref * sin( alpha ) );
 
-    /*
-     *  font family, serie and shape. Currently not supported by plplot
-     *
-     *  Use Postscript Times
-     *  1: Normal font
-     *  2: Roman font
-     *  3: Italic font
-     *  4: sans serif
-     */
+    //
+    //  font family, serie and shape. Currently not supported by plplot
+    //
+    //  Use Postscript Times
+    //  1: Normal font
+    //  2: Roman font
+    //  3: Italic font
+    //  4: sans serif
+    //
 
     switch ( pls->cfont )
     {
@@ -579,4 +579,4 @@ pldummy_xfig()
     return 0;
 }
 
-#endif                          /* PLD_xfig */
+#endif                          // PLD_xfig

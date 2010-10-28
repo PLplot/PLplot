@@ -1,11 +1,11 @@
-/*
- * $Id$
- *
- * PLplot PBM (PPM) device driver.
- *
- * Contributed by John C. Atkinson and Zulfi Cumali.
- * Slightly modified by Geoffrey Furnish.
- */
+//
+// $Id$
+//
+// PLplot PBM (PPM) device driver.
+//
+// Contributed by John C. Atkinson and Zulfi Cumali.
+// Slightly modified by Geoffrey Furnish.
+//
 #include "plDevs.h"
 
 #ifdef PLD_pbm
@@ -13,7 +13,7 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pbm = "pbm:PDB (PPM) Driver:0:pbm:38:pbm\n";
 
 
@@ -60,18 +60,18 @@ void plD_dispatch_init_pbm( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_pbm;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_pbm()
- *
- * Initialize device (terminal).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_pbm()
+//
+// Initialize device (terminal).
+//--------------------------------------------------------------------------
 
 void
 plD_init_pbm( PLStream *pls )
 {
 #if 1
 
-/* Initialize family file info */
+// Initialize family file info
 
     plFamInit( pls );
 
@@ -79,21 +79,21 @@ plD_init_pbm( PLStream *pls )
 
 #endif
 
-    pls->color     = 1;         /* Is a color device */
-    pls->dev_fill0 = 0;         /* Handle solid fills */
-    pls->dev_fill1 = 0;         /* Use PLplot core fallback for pattern fills */
-    pls->nopause   = 1;         /* Don't pause between frames */
+    pls->color     = 1;         // Is a color device
+    pls->dev_fill0 = 0;         // Handle solid fills
+    pls->dev_fill1 = 0;         // Use PLplot core fallback for pattern fills
+    pls->nopause   = 1;         // Don't pause between frames
 
-/* Prompt for a file name if not already set */
+// Prompt for a file name if not already set
 
     plOpenFile( pls );
     pls->pdfs = pdf_finit( pls->OutFile );
 
-/* Allocate and initialize device-specific data */
+// Allocate and initialize device-specific data
 
     pls->dev = NULL;
 
-/* Set up device parameters */
+// Set up device parameters
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
@@ -110,8 +110,8 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     int    steps, i, dx, dy;
     double x_off, y_off, dx_step, dy_step;
 
-/* This algoritm is by Steven Harrington
- * From "Computer Graphics: A Proogramming Approach */
+// This algoritm is by Steven Harrington
+// From "Computer Graphics: A Proogramming Approach
 
     dx      = x2a - x1a;
     dy      = y2a - y1a;
@@ -146,7 +146,7 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
                              cmap[y - 1][x - 1][1] = ( c )->curcolor.g; \
                              cmap[y - 1][x - 1][2] = ( c )->curcolor.b; }
 
-/* Bresnham's  algorithm for line plotting on a scan lines */
+// Bresnham's  algorithm for line plotting on a scan lines
 
 void
 plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -198,7 +198,7 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
                              cmap[i + 1] = ( c )->curcolor.g;                \
                              cmap[i + 2] = ( c )->curcolor.b; }
 
-/* Modified version of the ljii routine (see ljii.c) */
+// Modified version of the ljii routine (see ljii.c)
 void
 plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
@@ -207,7 +207,7 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     PLINT x1b, y1b, x2b, y2b;
     PLFLT length, fx, fy, dx, dy;
 
-/* Take mirror image, since PCL expects (0,0) to be at top left */
+// Take mirror image, since PCL expects (0,0) to be at top left
 
     y1 = pls->ylength - ( y1 - 0 );
     y2 = pls->ylength - ( y2 - 0 );
@@ -253,15 +253,15 @@ plD_eop_pbm( PLStream *pls )
         fprintf( fp, "%s\n", "P6" );
         fprintf( fp, "%d %d\n", pls->xlength, pls->ylength );
         fprintf( fp, "%d\n", MAX_INTENSITY );
-        /*
-         *  {
-         *      int i, j, k;
-         *      for (i=0; i<PIXELS_Y; i++)
-         *          for (j=0; j<PIXELS_X; j++)
-         *              for (k=0; k<3; k++)
-         *                  fprintf(fp, "%c", cmap[i][j][k]);
-         *  }
-         */
+        //
+        //  {
+        //      int i, j, k;
+        //      for (i=0; i<PIXELS_Y; i++)
+        //          for (j=0; j<PIXELS_X; j++)
+        //              for (k=0; k<3; k++)
+        //                  fprintf(fp, "%c", cmap[i][j][k]);
+        //  }
+        //
         im_size = pls->xlength * pls->ylength * 3;
         nwrite  = fwrite( cmap, 1, im_size, fp );
         if ( nwrite != im_size )
@@ -291,19 +291,19 @@ plD_bop_pbm( PLStream *pls )
 void
 plD_tidy_pbm( PLStream *pls )
 {
-/* Nothing to do here */
+// Nothing to do here
 }
 
 void
 plD_state_pbm( PLStream *pls, PLINT op )
 {
-/* Nothing to do here */
+// Nothing to do here
 }
 
 void
 plD_esc_pbm( PLStream *pls, PLINT op, void *ptr )
 {
-/* Nothing to do here */
+// Nothing to do here
 }
 
 #else
@@ -313,6 +313,6 @@ pldummy_pbm()
     return 0;
 }
 
-#endif                          /* PLD_pbm */
+#endif                          // PLD_pbm
 
 

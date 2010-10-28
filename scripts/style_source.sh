@@ -129,12 +129,12 @@ csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |gr
 # Every subdirectory of lib.
 csource_LIST="$csource_LIST lib/*/*.[ch] lib/qsastime/qsastimeP.h.in"
 
-# temporary
-exclude_c=ON
-if [ -z "$exclude_c" ] ; then
 # C part of drivers.
 csource_LIST="$csource_LIST drivers/*.c"
 
+# temporary
+exclude_c=ON
+if [ -z "$exclude_c" ] ; then
 # C part of examples.
 csource_LIST="$csource_LIST examples/c/*.[ch] examples/tk/*.c"
 

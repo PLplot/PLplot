@@ -1,17 +1,17 @@
-/*
- * $Id$
- *
- * PLplot MEM (in user-supplied memory) device driver.
- * The idea here is that the user will specify the Y by X by RGB
- * area in which to plot using the plsmem function (added by me).
- *
- * This is a bare-bones driver which allows one to plot on an existing
- * image in memory.  This is useful if the user has an image in memory
- * that he wants to decorate with PLPLOT.
- *
- * Contributed by Doug Hunt
- * Included in PLplot by Rafael Laboissiere on Sat Feb 22 18:34:06 CET 2003
- */
+//
+// $Id$
+//
+// PLplot MEM (in user-supplied memory) device driver.
+// The idea here is that the user will specify the Y by X by RGB
+// area in which to plot using the plsmem function (added by me).
+//
+// This is a bare-bones driver which allows one to plot on an existing
+// image in memory.  This is useful if the user has an image in memory
+// that he wants to decorate with PLPLOT.
+//
+// Contributed by Doug Hunt
+// Included in PLplot by Rafael Laboissiere on Sat Feb 22 18:34:06 CET 2003
+//
 
 #include "plDevs.h"
 
@@ -20,7 +20,7 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_mem = "mem:User-supplied memory device:-1:mem:46:mem\n";
 
 void plD_dispatch_init_mem( PLDispatchTable *pdt );
@@ -59,19 +59,19 @@ void plD_dispatch_init_mem( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_mem;
 }
 
-/*--------------------------------------------------------------------------*\
- * plD_init_mem()
- *
- * Initialize device (terminal).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_mem()
+//
+// Initialize device (terminal).
+//--------------------------------------------------------------------------
 
 void
 plD_init_mem( PLStream *pls )
 {
-    /* plsmem must have already been called to set pls->dev to the
-     * user supplied plotting area.  The dimensions of the plot area
-     * have also been set by plsmem.  Verify this.
-     */
+    // plsmem must have already been called to set pls->dev to the
+    // user supplied plotting area.  The dimensions of the plot area
+    // have also been set by plsmem.  Verify this.
+    //
 
     if ( ( pls->phyxma == 0 ) || ( pls->dev == NULL ) )
     {
@@ -83,18 +83,18 @@ plD_init_mem( PLStream *pls )
         plexit( "The mem driver does not support alpha values! Use plsmem!" );
     }
 
-    plP_setpxl( (PLFLT) 4, (PLFLT) 4 ); /* rough pixels/mm on *my* screen */
+    plP_setpxl( (PLFLT) 4, (PLFLT) 4 ); // rough pixels/mm on *my* screen
 
 
-    pls->color     = 1;         /* Is a color device */
-    pls->dev_fill0 = 0;         /* Handle solid fills */
-    pls->dev_fill1 = 0;         /* Use PLplot core fallback for pattern fills */
-    pls->nopause   = 1;         /* Don't pause between frames */
+    pls->color     = 1;         // Is a color device
+    pls->dev_fill0 = 0;         // Handle solid fills
+    pls->dev_fill1 = 0;         // Use PLplot core fallback for pattern fills
+    pls->nopause   = 1;         // Don't pause between frames
 }
 
 #define sign( a )    ( ( a < 0 ) ? -1 : ( ( a == 0 ) ? 0 : 1 ) )
 
-/* Modified version of the ljii routine (see ljii.c) */
+// Modified version of the ljii routine (see ljii.c)
 void
 plD_line_mem( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
@@ -107,7 +107,7 @@ plD_line_mem( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     PLINT         xm   = pls->phyxma;
     PLINT         ym   = pls->phyyma;
 
-    /* Take mirror image, since (0,0) must be at top left */
+    // Take mirror image, since (0,0) must be at top left
 
     y1 = ym - ( y1 - 0 );
     y2 = ym - ( y2 - 0 );
@@ -153,35 +153,35 @@ plD_polyline_mem( PLStream *pls, short *xa, short *ya, PLINT npts )
 void
 plD_eop_mem( PLStream *pls )
 {
-    /* Set the 'dev' member (which holds the user supplied memory image)
-     * to NULL here so it won't be freed when PLplot is closed.
-     * (the user is responsible for freeing it when ready).
-     */
+    // Set the 'dev' member (which holds the user supplied memory image)
+    // to NULL here so it won't be freed when PLplot is closed.
+    // (the user is responsible for freeing it when ready).
+    //
     pls->dev = NULL;
 }
 
 void
 plD_bop_mem( PLStream *pls )
 {
-/* Nothing to do here */
+// Nothing to do here
 }
 
 void
 plD_tidy_mem( PLStream *pls )
 {
-/* Nothing to do here */
+// Nothing to do here
 }
 
 void
 plD_state_mem( PLStream *pls, PLINT op )
 {
-/* Nothing to do here */
+// Nothing to do here
 }
 
 void
 plD_esc_mem( PLStream *pls, PLINT op, void *ptr )
 {
-/* Nothing to do here */
+// Nothing to do here
 }
 
-#endif                          /* PLD_mem */
+#endif                          // PLD_mem

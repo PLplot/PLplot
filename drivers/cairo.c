@@ -1,31 +1,31 @@
-/* June 2, 2007
- *
- * Graphics drivers that are based on the Cairo / Pango Libraries.
- *
- * Copyright (C) 2008 Hazen Babcock
- * Copyright (C) 2009, 2010 Hezekiah M. Carty
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// June 2, 2007
+//
+// Graphics drivers that are based on the Cairo / Pango Libraries.
+//
+// Copyright (C) 2008 Hazen Babcock
+// Copyright (C) 2009, 2010 Hezekiah M. Carty
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
-/*---------------------------------------------------------------------
- * Header files
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// Header files
+// ---------------------------------------------------------------------
 
 #include <stdio.h>
 #include <string.h>
@@ -34,13 +34,13 @@
 #include <cairo.h>
 #include <pango/pangocairo.h>
 
-/* PLplot header files (must occur before driver-dependent includes) */
+// PLplot header files (must occur before driver-dependent includes)
 
 #include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
 
-/* Driver-dependent includes */
+// Driver-dependent includes
 #if defined ( PLD_xcairo )
 #include <cairo-xlib.h>
 #include <X11/X.h>
@@ -62,9 +62,9 @@
 #include <windows.h>
 #endif
 
-/*---------------------------------------------------------------------
- * Constants & global (to this file) variables
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// Constants & global (to this file) variables
+// ---------------------------------------------------------------------
 
 #define DPI                  72
 #define PLCAIRO_DEFAULT_X    720
@@ -160,10 +160,10 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_cairo =
 #endif
 ;
 
-/*
- * Structure for passing external drawables to xcairo devices via
- * the PLESC_DEVINIT escape function.
- */
+//
+// Structure for passing external drawables to xcairo devices via
+// the PLESC_DEVINIT escape function.
+//
 #if defined ( PLD_xcairo )
 typedef struct
 {
@@ -172,10 +172,10 @@ typedef struct
 } PLXcairoDrawableInfo;
 #endif
 
-/*---------------------------------------------------------------------
- * Font style and weight lookup tables (copied
- * from the psttf driver).
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// Font style and weight lookup tables (copied
+// from the psttf driver).
+// ---------------------------------------------------------------------
 
 #define NPANGOLOOKUP    5
 
@@ -212,25 +212,25 @@ const char *styleLookup[3] = {
 };
 
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is common to all the Cairo Drivers
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is common to all the Cairo Drivers
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
-/*---------------------------------------------------------------------
- * function declarations
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// function declarations
+// ---------------------------------------------------------------------
 
-/* General */
+// General
 
 PLCairo *stream_and_font_setup( PLStream *, int );
 cairo_status_t write_to_stream( void *, unsigned char *, unsigned int );
 void set_clip( PLStream *pls );
 
-/* String processing */
+// String processing
 
 static void proc_str( PLStream *, EscText * );
 static void text_begin_cairo( PLStream *pls, EscText *args );
@@ -242,7 +242,7 @@ static void open_span_tag( char *, PLUNICODE, float, int );
 static void close_span_tag( char *, int );
 static char *rise_span_tag( int, int );
 
-/* Graphics */
+// Graphics
 
 static void set_current_context( PLStream * );
 static void poly_line( PLStream *, short *, short *, PLINT );
@@ -250,13 +250,13 @@ static void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts );
 static void gradient( PLStream *pls, short *xa, short *ya, PLINT npts );
 static void arc( PLStream *, arc_struct * );
 static void rotate_cairo_surface( PLStream *, float, float, float, float, float, float, PLBOOL );
-/* Rasterization of plotted material */
+// Rasterization of plotted material
 static void start_raster( PLStream* );
 static void end_raster( PLStream* );
 
-/* PLplot interface functions */
+// PLplot interface functions
 
-/* general */
+// general
 void plD_bop_cairo( PLStream * );
 void plD_eop_cairo( PLStream * );
 void plD_state_cairo( PLStream *, PLINT );
@@ -265,11 +265,11 @@ void plD_tidy_cairo( PLStream * );
 void plD_line_cairo( PLStream *, short, short, short, short );
 void plD_polyline_cairo( PLStream *, short *, short *, PLINT );
 
-/*----------------------------------------------------------------------
- * start_raster()
- *
- * Set up off-screen rasterized rendering
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// start_raster()
+//
+// Set up off-screen rasterized rendering
+// ----------------------------------------------------------------------
 
 void start_raster( PLStream *pls )
 {
@@ -282,41 +282,41 @@ void start_raster( PLStream *pls )
     if ( aStream->closed )
         return;
 
-    /* Do not use the external surface if the user says not to */
+    // Do not use the external surface if the user says not to
     if ( !aStream->rasterize_image )
         return;
 
-    /* Create an image surface and context for the offscreen rendering */
+    // Create an image surface and context for the offscreen rendering
     aStream->cairoSurface_raster =
-        /*
-         *  cairo_surface_create_similar( aStream->cairoSurface,
-         *                                CAIRO_CONTENT_COLOR,
-         *                                pls->xlength, pls->ylength );
-         */
+        //
+        //  cairo_surface_create_similar( aStream->cairoSurface,
+        //                                CAIRO_CONTENT_COLOR,
+        //                                pls->xlength, pls->ylength );
+        //
         cairo_image_surface_create( CAIRO_FORMAT_ARGB32,
             pls->xlength, pls->ylength );
     aStream->cairoContext_raster = cairo_create( aStream->cairoSurface_raster );
 
-    /* Disable antialiasing for the raster surface.  The output seems to look
-     * better that way. */
+    // Disable antialiasing for the raster surface.  The output seems to look
+    // better that way.
     cairo_set_antialias( aStream->cairoContext_raster, CAIRO_ANTIALIAS_NONE );
 
-    /* Swap the raster and main plot surfaces and contexts */
+    // Swap the raster and main plot surfaces and contexts
     tmp_sfc               = aStream->cairoSurface;
     tmp_context           = aStream->cairoContext;
     aStream->cairoSurface = aStream->cairoSurface_raster;
     aStream->cairoContext = aStream->cairoContext_raster;
-    /* Save the main plot surface and context for when we are finished */
+    // Save the main plot surface and context for when we are finished
     aStream->cairoSurface_raster = tmp_sfc;
     aStream->cairoContext_raster = tmp_context;
 }
 
-/*----------------------------------------------------------------------
- * end_raster()
- *
- * Finish off-screen rasterized rendering and copy the result on to the
- * main plot surface.
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// end_raster()
+//
+// Finish off-screen rasterized rendering and copy the result on to the
+// main plot surface.
+// ----------------------------------------------------------------------
 
 void end_raster( PLStream *pls )
 {
@@ -329,19 +329,19 @@ void end_raster( PLStream *pls )
     if ( aStream->closed )
         return;
 
-    /* TODO FIXME: This should really only copy the used portion of the
-     * offscreen pixmap. */
+    // TODO FIXME: This should really only copy the used portion of the
+    // offscreen pixmap.
 
-    /* Do not use the external surface if the user says not to */
+    // Do not use the external surface if the user says not to
     if ( !aStream->rasterize_image )
         return;
 
-    /* Some Cairo devices support delayed device setup (eg: xcairo with
-     * external drawable and extcairo with an external context). */
+    // Some Cairo devices support delayed device setup (eg: xcairo with
+    // external drawable and extcairo with an external context).
     if ( aStream->cairoContext == NULL )
         plexit( "Can not plot to a Cairo device with no context" );
 
-    /* Restore the main plot surface and context for future plotting */
+    // Restore the main plot surface and context for future plotting
     tmp_sfc                      = aStream->cairoSurface;
     tmp_context                  = aStream->cairoContext;
     aStream->cairoSurface        = aStream->cairoSurface_raster;
@@ -349,20 +349,20 @@ void end_raster( PLStream *pls )
     aStream->cairoSurface_raster = tmp_sfc;
     aStream->cairoContext_raster = tmp_context;
 
-    /* Blit the raster surface on to the main plot */
+    // Blit the raster surface on to the main plot
     cairo_set_source_surface( aStream->cairoContext, aStream->cairoSurface_raster, 0.0, 0.0 );
     cairo_paint( aStream->cairoContext );
 
-    /* Free the now extraneous surface and context */
+    // Free the now extraneous surface and context
     cairo_destroy( aStream->cairoContext_raster );
     cairo_surface_destroy( aStream->cairoSurface_raster );
 }
 
-/*----------------------------------------------------------------------
- * plD_bop_cairo()
- *
- * Set up for the next page.
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_bop_cairo()
+//
+// Set up for the next page.
+// ----------------------------------------------------------------------
 
 void plD_bop_cairo( PLStream *pls )
 {
@@ -373,12 +373,12 @@ void plD_bop_cairo( PLStream *pls )
     if ( aStream->closed )
         return;
 
-    /* Some Cairo devices support delayed device setup (eg: xcairo with
-     * external drawable and extcairo with an external context). */
+    // Some Cairo devices support delayed device setup (eg: xcairo with
+    // external drawable and extcairo with an external context).
     if ( aStream->cairoContext == NULL )
         return;
 
-    /* Fill in the window with the background color. */
+    // Fill in the window with the background color.
     cairo_rectangle( aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength );
     if ( (double) pls->cmap0[0].a < 1.0 )
     {
@@ -393,17 +393,17 @@ void plD_bop_cairo( PLStream *pls )
     cairo_fill( aStream->cairoContext );
 }
 
-/*---------------------------------------------------------------------
- * plD_line_cairo()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_line_cairo()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+// ----------------------------------------------------------------------
 
-/*---------------------------------------------------------------------
- * (get|set)_line_properties
- *
- * (Get|Set) the current Cairo line drawing properties.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// (get|set)_line_properties
+//
+// (Get|Set) the current Cairo line drawing properties.
+// ---------------------------------------------------------------------
 void get_line_properties( PLCairo *aStream, cairo_line_join_t *join, cairo_line_cap_t *cap )
 {
     *join = cairo_get_line_join( aStream->cairoContext );
@@ -439,11 +439,11 @@ void plD_line_cairo( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     cairo_restore( aStream->cairoContext );
 }
 
-/*---------------------------------------------------------------------
- * plD_polyline_cairo()
- *
- * Draw a polyline in the current color.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_polyline_cairo()
+//
+// Draw a polyline in the current color.
+// ---------------------------------------------------------------------
 
 void plD_polyline_cairo( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
@@ -465,11 +465,11 @@ void plD_polyline_cairo( PLStream *pls, short *xa, short *ya, PLINT npts )
     cairo_restore( aStream->cairoContext );
 }
 
-/*---------------------------------------------------------------------
- * plD_eop_cairo()
- *
- * Generic end of page.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_eop_cairo()
+//
+// Generic end of page.
+// ---------------------------------------------------------------------
 
 void plD_eop_cairo( PLStream *pls )
 {
@@ -483,11 +483,11 @@ void plD_eop_cairo( PLStream *pls )
     cairo_show_page( aStream->cairoContext );
 }
 
-/*---------------------------------------------------------------------
- * plD_tidy_cairo()
- *
- * General: Close graphics file or otherwise clean up.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_tidy_cairo()
+//
+// General: Close graphics file or otherwise clean up.
+// ---------------------------------------------------------------------
 
 void plD_tidy_cairo( PLStream *pls )
 {
@@ -495,31 +495,31 @@ void plD_tidy_cairo( PLStream *pls )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Free the cairo context and surface. */
+    // Free the cairo context and surface.
     cairo_destroy( aStream->cairoContext );
     cairo_surface_destroy( aStream->cairoSurface );
 
     plCloseFile( pls );
 }
 
-/*---------------------------------------------------------------------
- * plD_state_cairo()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- *
- * Nothing is done here because these attributes are acquired from
- * PLStream for each element that is drawn.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_state_cairo()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//
+// Nothing is done here because these attributes are acquired from
+// PLStream for each element that is drawn.
+// ---------------------------------------------------------------------
 
 void plD_state_cairo( PLStream *pls, PLINT op )
 {
 }
 
-/*---------------------------------------------------------------------
- * plD_esc_cairo()
- *
- * Generic escape function.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_esc_cairo()
+//
+// Generic escape function.
+// ---------------------------------------------------------------------
 
 void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
 {
@@ -532,10 +532,10 @@ void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
 
     switch ( op )
     {
-    case PLESC_FILL:     /* filled polygon */
+    case PLESC_FILL:     // filled polygon
         filled_polygon( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
         break;
-    case PLESC_GRADIENT:     /* render a gradient within a polygon. */
+    case PLESC_GRADIENT:     // render a gradient within a polygon.
         gradient( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
         break;
     case PLESC_HAS_TEXT:
@@ -544,35 +544,35 @@ void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
             proc_str( pls, (EscText *) ptr );
         }
         break;
-    case PLESC_BEGIN_TEXT: /* get ready to get a handle a string of text */
+    case PLESC_BEGIN_TEXT: // get ready to get a handle a string of text
         text_begin_cairo( pls, (EscText *) ptr );
         break;
-    case PLESC_TEXT_CHAR: /* handle a character of text to display */
+    case PLESC_TEXT_CHAR: // handle a character of text to display
         text_char_cairo( pls, (EscText *) ptr );
         break;
-    case PLESC_CONTROL_CHAR: /* handle a control character (super/subscript of fontchange) */
+    case PLESC_CONTROL_CHAR: // handle a control character (super/subscript of fontchange)
         text_esc_cairo( pls, (EscText *) ptr );
         break;
-    case PLESC_END_TEXT: /* finish a string of text */
+    case PLESC_END_TEXT: // finish a string of text
         text_end_cairo( pls, (EscText *) ptr );
         break;
-    case PLESC_START_RASTERIZE: /* Start offscreen/rasterized rendering */
+    case PLESC_START_RASTERIZE: // Start offscreen/rasterized rendering
         start_raster( pls );
         break;
-    case PLESC_END_RASTERIZE: /* End offscreen/rasterized rendering */
+    case PLESC_END_RASTERIZE: // End offscreen/rasterized rendering
         end_raster( pls );
         break;
-    case PLESC_ARC: /* Draw an arc, either filled or outline */
+    case PLESC_ARC: // Draw an arc, either filled or outline
         arc( pls, (arc_struct *) ptr );
         break;
     }
 }
 
-/*---------------------------------------------------------------------
- * text_begin_cairo()
- *
- * Begin text.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// text_begin_cairo()
+//
+// Begin text.
+// ---------------------------------------------------------------------
 
 void text_begin_cairo( PLStream *pls, EscText *args )
 {
@@ -590,11 +590,11 @@ void text_begin_cairo( PLStream *pls, EscText *args )
     open_span_tag( aStream->pangoMarkupString, args->n_fci, aStream->fontSize, 0 );
 }
 
-/*---------------------------------------------------------------------
- * text_char_cairo()
- *
- * Add text.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// text_char_cairo()
+//
+// Add text.
+// ---------------------------------------------------------------------
 
 void text_char_cairo( PLStream *pls, EscText *args )
 {
@@ -602,7 +602,7 @@ void text_char_cairo( PLStream *pls, EscText *args )
     PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
-    /* make sure we are not too close to the end of the string */
+    // make sure we are not too close to the end of the string
     if ( strlen( aStream->pangoMarkupString ) < ( MAX_MARKUP_LEN - 50 ) )
     {
         switch ( args->n_char )
@@ -624,11 +624,11 @@ void text_char_cairo( PLStream *pls, EscText *args )
     }
 }
 
-/*---------------------------------------------------------------------
- * text_esc_cairo()
- *
- * A font change, superscript, subscript, etc...
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// text_esc_cairo()
+//
+// A font change, superscript, subscript, etc...
+// ---------------------------------------------------------------------
 
 void text_esc_cairo( PLStream *pls, EscText *args )
 {
@@ -666,11 +666,11 @@ void text_esc_cairo( PLStream *pls, EscText *args )
     }
 }
 
-/*---------------------------------------------------------------------
- * text_end_cairo()
- *
- * Draw the text and clean up.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// text_end_cairo()
+//
+// Draw the text and clean up.
+// ---------------------------------------------------------------------
 
 void text_end_cairo( PLStream *pls, EscText *args )
 {
@@ -686,22 +686,22 @@ void text_end_cairo( PLStream *pls, EscText *args )
 
     set_current_context( pls );
 
-    /* Close the last span tag. */
+    // Close the last span tag.
     close_span_tag( aStream->pangoMarkupString, aStream->upDown );
 
-    /* Create the Pango text layout so we can figure out how big it is */
+    // Create the Pango text layout so we can figure out how big it is
     layout = pango_cairo_create_layout( aStream->cairoContext );
     pango_layout_set_markup( layout, aStream->pangoMarkupString, -1 );
     pango_layout_get_pixel_size( layout, &textXExtent, &textYExtent );
 
-    /* If asked, set the string length (in mm) and return */
-    if (pls->get_string_length)
+    // If asked, set the string length (in mm) and return
+    if ( pls->get_string_length )
     {
-        pls->string_length = (PLFLT)textXExtent * 25.4 / DPI;
-	return;
+        pls->string_length = (PLFLT) textXExtent * 25.4 / DPI;
+        return;
     }
 
-    /* Set font aliasing */
+    // Set font aliasing
     context          = pango_layout_get_context( layout );
     cairoFontOptions = cairo_font_options_create();
     cairo_font_options_set_antialias( cairoFontOptions, aStream->text_anti_aliasing );
@@ -709,25 +709,25 @@ void text_end_cairo( PLStream *pls, EscText *args )
     pango_layout_context_changed( layout );
     cairo_font_options_destroy( cairoFontOptions );
 
-    /* Save current transform matrix & clipping region */
+    // Save current transform matrix & clipping region
     cairo_save( aStream->cairoContext );
 
-    /* Set up the clipping region if we are doing text clipping */
+    // Set up the clipping region if we are doing text clipping
     if ( aStream->text_clipping )
     {
         set_clip( pls );
     }
 
-    /* Move to the string reference point */
+    // Move to the string reference point
     cairo_move_to( aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y );
 
-    /* Invert the coordinate system so that the text is drawn right side up */
+    // Invert the coordinate system so that the text is drawn right side up
     cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
     cairo_matrix_init( cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
 
-    /* Extract rotation angle and shear from the PLplot tranformation matrix.
-     * Compute sines and cosines of the angles as an optimization. */
+    // Extract rotation angle and shear from the PLplot tranformation matrix.
+    // Compute sines and cosines of the angles as an optimization.
     plRotationShear( args->xform, &rotation, &shear, &stride );
     rotation -= pls->diorot * PI / 2.0;
     cos_rot   = cos( rotation );
@@ -735,7 +735,7 @@ void text_end_cairo( PLStream *pls, EscText *args )
     cos_shear = cos( shear );
     sin_shear = sin( shear );
 
-    /* Apply the transform matrix */
+    // Apply the transform matrix
     cairo_matrix_init( cairoTransformMatrix,
         cos_rot * stride,
         -sin_rot * stride,
@@ -745,27 +745,27 @@ void text_end_cairo( PLStream *pls, EscText *args )
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
     free( cairoTransformMatrix );
 
-    /* Move to the text starting point */
+    // Move to the text starting point
     cairo_rel_move_to( aStream->cairoContext,
         (double) ( -1.0 * args->just * (double) textXExtent ),
         (double) ( -0.5 * textYExtent ) );
 
-    /* Render the text */
+    // Render the text
     pango_cairo_show_layout( aStream->cairoContext, layout );
 
-    /* Restore the transform matrix to its state prior to the text transform. */
+    // Restore the transform matrix to its state prior to the text transform.
     cairo_restore( aStream->cairoContext );
 
-    /* Free the layout object and the markup string. */
+    // Free the layout object and the markup string.
     g_object_unref( layout );
     free( aStream->pangoMarkupString );
 }
 
-/*---------------------------------------------------------------------
- * proc_str()
- *
- * Processes strings for display.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// proc_str()
+//
+// Processes strings for display.
+// ---------------------------------------------------------------------
 
 void proc_str( PLStream *pls, EscText *args )
 {
@@ -783,32 +783,32 @@ void proc_str( PLStream *pls, EscText *args )
 
     set_current_context( pls );
 
-    /* Check that we got unicode, warning message and return if not */
+    // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
     {
         printf( "Non unicode string passed to a cairo driver, ignoring\n" );
         return;
     }
 
-    /* Check that unicode string isn't longer then the max we allow */
+    // Check that unicode string isn't longer then the max we allow
     if ( args->unicode_array_len >= MAX_STRING_LEN )
     {
         printf( "Sorry, the cairo drivers only handles strings of length < %d\n", MAX_STRING_LEN );
         return;
     }
 
-    /* Calculate the font size (in pixels) */
+    // Calculate the font size (in pixels)
     fontSize = pls->chrht * DPI / 25.4;
 
-    /* Convert the escape characters into the appropriate Pango markup */
+    // Convert the escape characters into the appropriate Pango markup
     textWithPangoMarkup = ucs4_to_pango_markup_format( args->unicode_array, args->unicode_array_len, fontSize );
 
-    /* Create the Pango text layout so we can figure out how big it is */
+    // Create the Pango text layout so we can figure out how big it is
     layout = pango_cairo_create_layout( aStream->cairoContext );
     pango_layout_set_markup( layout, textWithPangoMarkup, -1 );
     pango_layout_get_pixel_size( layout, &textXExtent, &textYExtent );
 
-    /* Set font aliasing */
+    // Set font aliasing
     context          = pango_layout_get_context( layout );
     cairoFontOptions = cairo_font_options_create();
     cairo_font_options_set_antialias( cairoFontOptions, aStream->text_anti_aliasing );
@@ -816,25 +816,25 @@ void proc_str( PLStream *pls, EscText *args )
     pango_layout_context_changed( layout );
     cairo_font_options_destroy( cairoFontOptions );
 
-    /* Save current transform matrix & clipping region */
+    // Save current transform matrix & clipping region
     cairo_save( aStream->cairoContext );
 
-    /* Set up the clipping region if we are doing text clipping */
+    // Set up the clipping region if we are doing text clipping
     if ( aStream->text_clipping )
     {
         set_clip( pls );
     }
 
-    /* Move to the string reference point */
+    // Move to the string reference point
     cairo_move_to( aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y );
 
-    /* Invert the coordinate system so that the text is drawn right side up */
+    // Invert the coordinate system so that the text is drawn right side up
     cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
     cairo_matrix_init( cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
 
-    /* Extract rotation angle and shear from the PLplot tranformation matrix.
-     * Compute sines and cosines of the angles as an optimization. */
+    // Extract rotation angle and shear from the PLplot tranformation matrix.
+    // Compute sines and cosines of the angles as an optimization.
     plRotationShear( args->xform, &rotation, &shear, &stride );
     rotation -= pls->diorot * PI / 2.0;
     cos_rot   = cos( rotation );
@@ -842,7 +842,7 @@ void proc_str( PLStream *pls, EscText *args )
     cos_shear = cos( shear );
     sin_shear = sin( shear );
 
-    /* Apply the transform matrix */
+    // Apply the transform matrix
     cairo_matrix_init( cairoTransformMatrix,
         cos_rot * stride,
         -sin_rot * stride,
@@ -852,30 +852,30 @@ void proc_str( PLStream *pls, EscText *args )
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
     free( cairoTransformMatrix );
 
-    /* Move to the text starting point */
+    // Move to the text starting point
     cairo_rel_move_to( aStream->cairoContext,
         (double) ( -1.0 * args->just * (double) textXExtent ),
         (double) ( -0.5 * textYExtent ) );
 
-    /* Render the text */
+    // Render the text
     pango_cairo_show_layout( aStream->cairoContext, layout );
 
-    /* Restore the transform matrix to its state prior to the text transform. */
+    // Restore the transform matrix to its state prior to the text transform.
     cairo_restore( aStream->cairoContext );
 
-    /* Free the layout object and the markup string. */
+    // Free the layout object and the markup string.
     g_object_unref( layout );
     free( textWithPangoMarkup );
 }
 
-/*---------------------------------------------------------------------
- * ucs4_to_pango_markup_format()
- *
- * Converts the plplot string (in ucs4) to a utf8 string that includes
- * pango markup.
- *
- * http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ucs4_to_pango_markup_format()
+//
+// Converts the plplot string (in ucs4) to a utf8 string that includes
+// pango markup.
+//
+// http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html
+// ---------------------------------------------------------------------
 
 char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize )
 {
@@ -886,33 +886,33 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
     char      utf8[5];
     char      *pangoMarkupString;
 
-    /* Will this be big enough? We might have lots of markup. */
+    // Will this be big enough? We might have lots of markup.
     pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
     for ( i = 0; i < MAX_MARKUP_LEN; i++ )
     {
         pangoMarkupString[i] = 0;
     }
 
-    /* Get PLplot escape character */
+    // Get PLplot escape character
     plgesc( &plplotEsc );
 
-    /* Get the curent font and open the first span tag */
+    // Get the curent font and open the first span tag
     plgfci( &fci );
     open_span_tag( pangoMarkupString, fci, fontSize, 0 );
 
-    /* Parse the string to generate the tags */
+    // Parse the string to generate the tags
     i = 0;
     while ( i < ucs4Len )
     {
-        /* Try to avoid going off the end of the string */
+        // Try to avoid going off the end of the string
         if ( strlen( pangoMarkupString ) > ( MAX_MARKUP_LEN - 50 ) )
         {
             continue;
         }
-        if ( ucs4[i] < PL_FCI_MARK )                /* not a font change */
+        if ( ucs4[i] < PL_FCI_MARK )                // not a font change
         {
-            if ( ucs4[i] != (PLUNICODE) plplotEsc ) /* a character to display */
-            {                                       /* we have to handle "<", ">" and "&" separately since they throw off the XML */
+            if ( ucs4[i] != (PLUNICODE) plplotEsc ) // a character to display
+            {                                       // we have to handle "<", ">" and "&" separately since they throw off the XML
                 switch ( ucs4[i] )
                 {
                 case 38:
@@ -933,7 +933,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                 continue;
             }
             i++;
-            if ( ucs4[i] == (PLUNICODE) plplotEsc ) /* a escape character to display */
+            if ( ucs4[i] == (PLUNICODE) plplotEsc ) // a escape character to display
             {
                 ucs4_to_utf8( ucs4[i], utf8 );
                 strncat( pangoMarkupString, utf8, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
@@ -942,7 +942,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
             }
             else
             {
-                if ( ucs4[i] == (PLUNICODE) 'u' ) /* Superscript */
+                if ( ucs4[i] == (PLUNICODE) 'u' ) // Superscript
                 {
                     if ( upDown < 0 )
                     {
@@ -954,7 +954,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                     }
                     upDown++;
                 }
-                if ( ucs4[i] == (PLUNICODE) 'd' ) /* Subscript */
+                if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {
                     if ( upDown > 0 )
                     {
@@ -969,7 +969,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                 i++;
             }
         }
-        else /* a font change */
+        else // a font change
         {
             close_span_tag( pangoMarkupString, upDown );
             open_span_tag( pangoMarkupString, ucs4[i], fontSize, upDown );
@@ -977,35 +977,35 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
         }
     }
 
-    /* Close the last span tag. */
+    // Close the last span tag.
     close_span_tag( pangoMarkupString, upDown );
 
-    /* printf("%s\n", pangoMarkupString); */
+    // printf("%s\n", pangoMarkupString);
 
     return pangoMarkupString;
 }
 
-/*---------------------------------------------------------------------
- * open_span_tag
- *
- * 1. Opens a span tag with the appropriate font description given the
- *   current fci.
- * 2. Add the appropriate number of <sub> or <sup> tags to bring us
- *   back to our current sub/super-script level.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// open_span_tag
+//
+// 1. Opens a span tag with the appropriate font description given the
+//   current fci.
+// 2. Add the appropriate number of <sub> or <sup> tags to bring us
+//   back to our current sub/super-script level.
+// ---------------------------------------------------------------------
 
 void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int upDown )
 {
     unsigned char fontFamily, fontStyle, fontWeight;
     char          openTag[TAG_LEN];
 
-    /* Generate the font info for the open tag & concatenate this
-     * onto the markup string. */
+    // Generate the font info for the open tag & concatenate this
+    // onto the markup string.
     plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
     plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
-    /* From http://library.gnome.org/devel/pango/unstable/PangoMarkupFormat.html
-     * size = font size in 1024ths of a point. */
+    // From http://library.gnome.org/devel/pango/unstable/PangoMarkupFormat.html
+    // size = font size in 1024ths of a point.
     snprintf( openTag, TAG_LEN, "<span font_desc=\"%s\" size=\"%d\" ", familyLookup[fontFamily], (int) ( fontSize * 1024. ) );
     strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
@@ -1015,7 +1015,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     snprintf( openTag, TAG_LEN, "weight=\"%s\">", weightLookup[fontWeight] );
     strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
-    /* Move to the right sub/super-script level */
+    // Move to the right sub/super-script level
     if ( upDown > 0 )
     {
         while ( upDown > 0 )
@@ -1034,11 +1034,11 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     }
 }
 
-/*---------------------------------------------------------------------
- * close_span_tag
- *
- * Close a span tag & brings us down to zero sub/super-script level.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// close_span_tag
+//
+// Close a span tag & brings us down to zero sub/super-script level.
+// ---------------------------------------------------------------------
 
 void close_span_tag( char *pangoMarkupString, int upDown )
 {
@@ -1062,11 +1062,11 @@ void close_span_tag( char *pangoMarkupString, int upDown )
     strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 }
 
-/*---------------------------------------------------------------------
- * rise_span_tag
- *
- * Create a rise span tag w/ appropriate font size & baseline offset
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// rise_span_tag
+//
+// Create a rise span tag w/ appropriate font size & baseline offset
+// ---------------------------------------------------------------------
 
 #define STEPSIZE    7500.0
 
@@ -1094,12 +1094,12 @@ char *rise_span_tag( int level, int direction )
     return ( tag );
 }
 
-/*---------------------------------------------------------------------
- * write_to_stream()
- *
- * Writes data to a open file stream. This function is passed to the
- * Cairo file IO devices.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// write_to_stream()
+//
+// Writes data to a open file stream. This function is passed to the
+// Cairo file IO devices.
+// ---------------------------------------------------------------------
 
 cairo_status_t write_to_stream( void *filePointer, unsigned char *data, unsigned int length )
 {
@@ -1116,14 +1116,14 @@ cairo_status_t write_to_stream( void *filePointer, unsigned char *data, unsigned
     }
 }
 
-/*---------------------------------------------------------------------
- * stream_and_font_setup()
- *
- * Initializes the PLStream structure for the cairo devices.
- * Initializes the font lookup table.
- * Checks for cairo specific user options.
- * Returns a new PLCairo structure.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// stream_and_font_setup()
+//
+// Initializes the PLStream structure for the cairo devices.
+// Initializes the font lookup table.
+// Checks for cairo specific user options.
+// Returns a new PLCairo structure.
+// ---------------------------------------------------------------------
 
 PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
 {
@@ -1133,28 +1133,28 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     PLFLT   downscale;
     downscale = 0.0;
 
-    /* Stream setup */
-    pls->termin       = interactive; /* Interactive device */
-    pls->dev_flush    = 1;           /* Handles flushes */
-    pls->color        = 1;           /* Supports color */
-    pls->dev_text     = 1;           /* Handles text */
-    pls->dev_unicode  = 1;           /* Wants unicode text */
-    pls->dev_clear    = 0;
-    pls->alt_unicode  = 1;           /* Wants to handle unicode character by character */
-    pls->page         = 0;
-    pls->dev_fill0    = 1;           /* Supports hardware solid fills */
-    pls->dev_gradient = 1;           /* driver renders gradient */
-    pls->dev_arc      = 1;           /* Supports driver-level arcs */
-    pls->plbuf_write  = interactive; /* Activate plot buffer */
-    pls->has_string_length = 1;      /* Driver supports string length calculations */
+    // Stream setup
+    pls->termin            = interactive; // Interactive device
+    pls->dev_flush         = 1;           // Handles flushes
+    pls->color             = 1;           // Supports color
+    pls->dev_text          = 1;           // Handles text
+    pls->dev_unicode       = 1;           // Wants unicode text
+    pls->dev_clear         = 0;
+    pls->alt_unicode       = 1;           // Wants to handle unicode character by character
+    pls->page              = 0;
+    pls->dev_fill0         = 1;           // Supports hardware solid fills
+    pls->dev_gradient      = 1;           // driver renders gradient
+    pls->dev_arc           = 1;           // Supports driver-level arcs
+    pls->plbuf_write       = interactive; // Activate plot buffer
+    pls->has_string_length = 1;           // Driver supports string length calculations
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
         pls->xlength = PLCAIRO_DEFAULT_X;
         pls->ylength = PLCAIRO_DEFAULT_Y;
     }
-    /* Calculate ratio of (smaller) external coordinates used for cairo
-     * devices to (larger) internal PLplot coordinates. */
+    // Calculate ratio of (smaller) external coordinates used for cairo
+    // devices to (larger) internal PLplot coordinates.
     if ( pls->xlength > pls->ylength )
         downscale = (double) pls->xlength / (double) ( PIXELS_X - 1 );
     else
@@ -1162,8 +1162,8 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / downscale ), (PLINT) 0, (PLINT) ( pls->ylength / downscale ) );
     plP_setpxl( DPI / 25.4 / downscale, DPI / 25.4 / downscale );
 
-    /* Initialize font table with either enviroment variables or defaults.
-     * This was copied from the psttf driver. */
+    // Initialize font table with either enviroment variables or defaults.
+    // This was copied from the psttf driver.
     for ( i = 0; i < NPANGOLOOKUP; i++ )
     {
         if ( ( a = getenv( envFamilyLookup[i] ) ) != NULL )
@@ -1178,7 +1178,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
         }
     }
 
-    /* Allocate a cairo stream structure */
+    // Allocate a cairo stream structure
     aStream = malloc( sizeof ( PLCairo ) );
 #if defined ( PLD_xcairo )
     aStream->XDisplay = NULL;
@@ -1188,44 +1188,44 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     aStream->cairoContext = NULL;
     aStream->downscale    = downscale;
 
-    /* Set text clipping on by default since it makes little difference in
-     * speed for a modern cairo stack.*/
+    // Set text clipping on by default since it makes little difference in
+    // speed for a modern cairo stack.
     aStream->text_clipping = 1;
     text_clipping          = 1;
-    text_anti_aliasing     = 0; /* use 'default' text aliasing by default */
-    graphics_anti_aliasing = 0; /* use 'default' graphics aliasing by default */
-    rasterize_image        = 1; /* Enable rasterization by default */
-    set_background         = 0; /* Default for extcairo is that PLplot not change the background */
-    image_buffering        = 1; /* Default to image-based buffered rendering */
+    text_anti_aliasing     = 0; // use 'default' text aliasing by default
+    graphics_anti_aliasing = 0; // use 'default' graphics aliasing by default
+    rasterize_image        = 1; // Enable rasterization by default
+    set_background         = 0; // Default for extcairo is that PLplot not change the background
+    image_buffering        = 1; // Default to image-based buffered rendering
 
-    /* Check for cairo specific options */
+    // Check for cairo specific options
     plParseDrvOpts( cairo_options );
 
-    /* Turn off text clipping if the user desires this */
+    // Turn off text clipping if the user desires this
     if ( !text_clipping )
     {
         aStream->text_clipping = 0;
     }
 
-    /* Record users desired text and graphics aliasing and rasterization */
+    // Record users desired text and graphics aliasing and rasterization
     aStream->text_anti_aliasing     = text_anti_aliasing;
     aStream->graphics_anti_aliasing = graphics_anti_aliasing;
     aStream->rasterize_image        = rasterize_image;
     aStream->set_background         = set_background;
     aStream->image_buffering        = image_buffering;
 
-    /* set stream as not closed. */
+    // set stream as not closed.
     aStream->closed = 0;
 
     return aStream;
 }
 
-/*---------------------------------------------------------------------
- * set_current_context()
- *
- * Updates the cairo graphics context with the current values in
- * PLStream.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// set_current_context()
+//
+// Updates the cairo graphics context with the current values in
+// PLStream.
+// ---------------------------------------------------------------------
 
 void set_current_context( PLStream *pls )
 {
@@ -1237,7 +1237,7 @@ void set_current_context( PLStream *pls )
         (double) pls->curcolor.g / 255.0,
         (double) pls->curcolor.b / 255.0,
         (double) pls->curcolor.a );
-    /* In Cairo, zero width lines are not hairlines, they are completely invisible. */
+    // In Cairo, zero width lines are not hairlines, they are completely invisible.
     if ( pls->width < 1 )
     {
         cairo_set_line_width( aStream->cairoContext, 1.0 );
@@ -1248,13 +1248,13 @@ void set_current_context( PLStream *pls )
     }
 }
 
-/*---------------------------------------------------------------------
- * poly_line()
- *
- * Draws a multi-segmented line. It is then up to the calling function
- * to decide whether to just draw the line, or fill in the area
- * enclosed by the line.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// poly_line()
+//
+// Draws a multi-segmented line. It is then up to the calling function
+// to decide whether to just draw the line, or fill in the area
+// enclosed by the line.
+// ---------------------------------------------------------------------
 
 void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
@@ -1272,11 +1272,11 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts )
     }
 }
 
-/*---------------------------------------------------------------------
- * filled_polygon()
- *
- * Draws a filled polygon.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// filled_polygon()
+//
+// Draws a filled polygon.
+// ---------------------------------------------------------------------
 
 void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
@@ -1287,7 +1287,7 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     cairo_save( aStream->cairoContext );
 
-    /* Draw the polygons */
+    // Draw the polygons
     poly_line( pls, xa, ya, npts );
 
     cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_OVER );
@@ -1315,11 +1315,11 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
     cairo_restore( aStream->cairoContext );
 }
 
-/*---------------------------------------------------------------------
- * gradient()
- *
- * Render a gradient within a polygon.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// gradient()
+//
+// Render a gradient within a polygon.
+// ---------------------------------------------------------------------
 
 void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
@@ -1329,7 +1329,7 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* These line properties make for a nicer looking polygon mesh */
+    // These line properties make for a nicer looking polygon mesh
     set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
 
     linear_gradient = cairo_pattern_create_linear(
@@ -1349,7 +1349,7 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
             (double) pls->cmap1[i].a );
     }
 
-    /* Draw the polygon using the gradient. */
+    // Draw the polygon using the gradient.
     poly_line( pls, xa, ya, npts );
 
     cairo_set_source( aStream->cairoContext, linear_gradient );
@@ -1357,13 +1357,13 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
     cairo_pattern_destroy( linear_gradient );
 }
 
-/*---------------------------------------------------------------------
- * set_clip()
- *
- * Set the clipping region to the plot window.
- * NOTE: cairo_save() and cairo_restore() should probably be called before
- * and after this, respectively.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// set_clip()
+//
+// Set the clipping region to the plot window.
+// NOTE: cairo_save() and cairo_restore() should probably be called before
+// and after this, respectively.
+// ---------------------------------------------------------------------
 
 void set_clip( PLStream *pls )
 {
@@ -1371,11 +1371,11 @@ void set_clip( PLStream *pls )
     PLCairo *aStream;
     aStream = (PLCairo *) pls->dev;
 
-    /* Use PLplot core routine to get the corners of the clipping rectangle */
+    // Use PLplot core routine to get the corners of the clipping rectangle
     difilt_clip( rcx, rcy );
 
-    /* Layout the bounds of the clipping region */
-    /* Should we convert PLINT to short and use the polyline routine? */
+    // Layout the bounds of the clipping region
+    // Should we convert PLINT to short and use the polyline routine?
     cairo_move_to( aStream->cairoContext,
         aStream->downscale * (double) rcx[0],
         aStream->downscale * (double) rcy[0] );
@@ -1392,19 +1392,19 @@ void set_clip( PLStream *pls )
         aStream->downscale * (double) rcx[0],
         aStream->downscale * (double) rcy[0] );
 
-    /* Set the clipping region */
+    // Set the clipping region
     cairo_clip( aStream->cairoContext );
 
-    /* Apparently, in some older Cairo versions, cairo_clip does not consume
-     * the current path. */
+    // Apparently, in some older Cairo versions, cairo_clip does not consume
+    // the current path.
     cairo_new_path( aStream->cairoContext );
 }
 
-/*---------------------------------------------------------------------
- * arc()
- *
- * Draws an arc, possibly filled.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// arc()
+//
+// Draws an arc, possibly filled.
+// ---------------------------------------------------------------------
 
 void arc( PLStream *pls, arc_struct *arc_info )
 {
@@ -1416,22 +1416,22 @@ void arc( PLStream *pls, arc_struct *arc_info )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Scale to the proper Cairo coordinates */
+    // Scale to the proper Cairo coordinates
     x = aStream->downscale * arc_info->x;
     y = aStream->downscale * arc_info->y;
     a = aStream->downscale * arc_info->a;
     b = aStream->downscale * arc_info->b;
 
-    /* Degrees to radians */
+    // Degrees to radians
     angle1 = arc_info->angle1 * M_PI / 180.0;
     angle2 = arc_info->angle2 * M_PI / 180.0;
 
     cairo_save( aStream->cairoContext );
 
-    /* Clip the output to the plotting window */
+    // Clip the output to the plotting window
     set_clip( pls );
 
-    /* Make sure the arc is properly shaped and oriented */
+    // Make sure the arc is properly shaped and oriented
     cairo_save( aStream->cairoContext );
     cairo_translate( aStream->cairoContext, x, y );
     cairo_scale( aStream->cairoContext, a, b );
@@ -1456,11 +1456,11 @@ void arc( PLStream *pls, arc_struct *arc_info )
     cairo_restore( aStream->cairoContext );
 }
 
-/*---------------------------------------------------------------------
- * rotate_cairo_surface()
- *
- * Rotates the cairo surface to the appropriate orientation.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// rotate_cairo_surface()
+//
+// Rotates the cairo surface to the appropriate orientation.
+// ---------------------------------------------------------------------
 
 void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float x22, float x0, float y0, PLBOOL is_xcairo )
 {
@@ -1486,21 +1486,21 @@ void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float
     free( matrix );
 }
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is common to all familying Cairo Drivers
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is common to all familying Cairo Drivers
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 #if defined ( PLD_pngcairo ) || defined ( PLD_svgcairo )
 
 void plD_bop_famcairo( PLStream * );
-/*----------------------------------------------------------------------
- * plD_bop_famcairo()
- *
- * Familying Devices: Set up for the next page.
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_bop_famcairo()
+//
+// Familying Devices: Set up for the next page.
+// ----------------------------------------------------------------------
 
 void plD_bop_famcairo( PLStream *pls )
 {
@@ -1508,12 +1508,12 @@ void plD_bop_famcairo( PLStream *pls )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
     pls->famadv = 1;
     pls->page++;
 
-    /* Fill in the window with the background color. */
+    // Fill in the window with the background color.
     cairo_rectangle( aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength );
     cairo_set_source_rgba( aStream->cairoContext,
         (double) pls->cmap0[0].r / 255.0,
@@ -1524,13 +1524,13 @@ void plD_bop_famcairo( PLStream *pls )
 }
 
 #endif
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the xcairo driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the xcairo driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_xcairo )
 
@@ -1545,11 +1545,11 @@ void plD_tidy_xcairo( PLStream * );
 void plD_esc_xcairo( PLStream *, PLINT, void * );
 static void xcairo_get_cursor( PLStream *, PLGraphicsIn * );
 
-/*---------------------------------------------------------------------
- * plD_dispatch_init_xcairo()
- *
- * xcairo dispatch table initialization.
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_dispatch_init_xcairo()
+//
+// xcairo dispatch table initialization.
+// ----------------------------------------------------------------------
 
 void plD_dispatch_init_xcairo( PLDispatchTable *pdt )
 {
@@ -1569,17 +1569,17 @@ void plD_dispatch_init_xcairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_xcairo;
 }
 
-/*---------------------------------------------------------------------
- * xcairo_init_cairo()
- *
- * Configures Cairo to use whichever X Drawable is set up in the given
- * stream.  This is called by plD_init_xcairo() in the event we are
- * drawing into a plplot-managed window, and plD_esc_xcairo() if
- * we are using an external X Drawable.
- *
- * A return value of 0 indicates success.  Currently this function only
- * returns 0.
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// xcairo_init_cairo()
+//
+// Configures Cairo to use whichever X Drawable is set up in the given
+// stream.  This is called by plD_init_xcairo() in the event we are
+// drawing into a plplot-managed window, and plD_esc_xcairo() if
+// we are using an external X Drawable.
+//
+// A return value of 0 indicates success.  Currently this function only
+// returns 0.
+// ----------------------------------------------------------------------
 
 static signed int xcairo_init_cairo( PLStream *pls )
 {
@@ -1588,13 +1588,13 @@ static signed int xcairo_init_cairo( PLStream *pls )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Create an cairo surface & context that are associated with the X window. */
+    // Create an cairo surface & context that are associated with the X window.
     defaultVisual = DefaultVisual( aStream->XDisplay, 0 );
-    /* Dimension units are pixels from cairo documentation. */
-    /* This is the X window Cairo surface. */
+    // Dimension units are pixels from cairo documentation.
+    // This is the X window Cairo surface.
     aStream->cairoSurface_X = cairo_xlib_surface_create( aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength );
     aStream->cairoContext_X = cairo_create( aStream->cairoSurface_X );
-    /* This is the Cairo surface PLplot will actually plot to. */
+    // This is the Cairo surface PLplot will actually plot to.
     if ( aStream->image_buffering == 0 )
     {
         aStream->cairoSurface = cairo_surface_create_similar( aStream->cairoSurface_X, CAIRO_CONTENT_COLOR, pls->xlength, pls->ylength );
@@ -1609,14 +1609,14 @@ static signed int xcairo_init_cairo( PLStream *pls )
         aStream->cairoContext = cairo_create( aStream->cairoSurface );
     }
 
-    /* Invert the surface so that the graphs are drawn right side up. */
+    // Invert the surface so that the graphs are drawn right side up.
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, TRUE );
 
-    /* Set graphics aliasing */
+    // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 
-    /* Fill in the X window with the background color to avoid starting out
-     * with a blank window of an unexpected color. */
+    // Fill in the X window with the background color to avoid starting out
+    // with a blank window of an unexpected color.
     cairo_rectangle( aStream->cairoContext_X, 0.0, 0.0, pls->xlength, pls->ylength );
     cairo_set_source_rgba( aStream->cairoContext_X,
         (double) pls->cmap0[0].r / 255.0,
@@ -1630,37 +1630,37 @@ static signed int xcairo_init_cairo( PLStream *pls )
     return 0;
 }
 
-/*---------------------------------------------------------------------
- * plD_init_xcairo()
- *
- * Initialize Cairo X Windows device.
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_xcairo()
+//
+// Initialize Cairo X Windows device.
+// ----------------------------------------------------------------------
 
 void plD_init_xcairo( PLStream *pls )
 {
     PLCairo *aStream;
     Atom    wmDelete;
 
-    /* Setup the PLStream and the font lookup table. */
+    // Setup the PLStream and the font lookup table.
     aStream = stream_and_font_setup( pls, 1 );
 
-    /* Save the pointer to the structure in the PLplot stream */
+    // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
 
-    /* Create a X Window if required. */
+    // Create a X Window if required.
     if ( external_drawable != 0 )
     {
         aStream->xdrawable_mode = 1;
     }
     else
     {
-        /* X Windows setup */
+        // X Windows setup
         aStream->XDisplay = NULL;
         aStream->XDisplay = XOpenDisplay( NULL );
         if ( aStream->XDisplay == NULL )
         {
             printf( "Failed to open X Windows display\n" );
-            /* some sort of error here */
+            // some sort of error here
         }
         XScreen    = DefaultScreen( aStream->XDisplay );
         rootWindow = RootWindow( aStream->XDisplay, XScreen );
@@ -1681,15 +1681,15 @@ void plD_init_xcairo( PLStream *pls )
     aStream->exit_event_loop = 0;
 }
 
-/*---------------------------------------------------------------------
- * blit_to_x()
- *
- * Blit the offscreen image to the X window.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// blit_to_x()
+//
+// Blit the offscreen image to the X window.
+// ---------------------------------------------------------------------
 
 void blit_to_x( PLCairo *aStream, double x, double y, double w, double h )
 {
-    /* Copy a portion of the surface */
+    // Copy a portion of the surface
     cairo_save( aStream->cairoContext_X );
     cairo_rectangle( aStream->cairoContext_X, x, y, w, h );
     cairo_set_operator( aStream->cairoContext_X, CAIRO_OPERATOR_SOURCE );
@@ -1699,11 +1699,11 @@ void blit_to_x( PLCairo *aStream, double x, double y, double w, double h )
     cairo_restore( aStream->cairoContext_X );
 }
 
-/*----------------------------------------------------------------------
- * plD_bop_xcairo()
- *
- * X Windows specific start of page.
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_bop_xcairo()
+//
+// X Windows specific start of page.
+// ----------------------------------------------------------------------
 
 void plD_bop_xcairo( PLStream *pls )
 {
@@ -1722,11 +1722,11 @@ void plD_bop_xcairo( PLStream *pls )
     XFlush( aStream->XDisplay );
 }
 
-/*---------------------------------------------------------------------
- * plD_eop_xcairo()
- *
- * X Windows specific end of page.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_eop_xcairo()
+//
+// X Windows specific end of page.
+// ---------------------------------------------------------------------
 
 void plD_eop_xcairo( PLStream *pls )
 {
@@ -1746,17 +1746,17 @@ void plD_eop_xcairo( PLStream *pls )
     if ( aStream->closed )
         return;
 
-    /* Blit the offscreen image to the X window. */
+    // Blit the offscreen image to the X window.
     blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
 
     if ( aStream->xdrawable_mode )
         return;
 
-    /* Only pause if nopause is unset. */
+    // Only pause if nopause is unset.
     if ( pls->nopause )
         aStream->exit_event_loop = 1;
 
-    /* Loop, handling selected events, till the user elects to close the plot. */
+    // Loop, handling selected events, till the user elects to close the plot.
     event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
     XSelectInput( aStream->XDisplay, aStream->XWindow, event_mask );
     while ( !aStream->exit_event_loop )
@@ -1783,8 +1783,8 @@ void plD_eop_xcairo( PLStream *pls )
             aStream->exit_event_loop = 1;
             break;
         case Expose:
-            /* Blit the image again after an expose event, but only for the last
-             * available event.  Otherwise multiple redraws occur needlessly. */
+            // Blit the image again after an expose event, but only for the last
+            // available event.  Otherwise multiple redraws occur needlessly.
             expose = (XExposeEvent *) &event;
             if ( expose->count == 0 )
             {
@@ -1797,11 +1797,11 @@ void plD_eop_xcairo( PLStream *pls )
     aStream->exit_event_loop = 0;
 }
 
-/*---------------------------------------------------------------------
- * plD_tidy_xcairo()
- *
- * X Windows: close graphics file or otherwise clean up.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_tidy_xcairo()
+//
+// X Windows: close graphics file or otherwise clean up.
+// ---------------------------------------------------------------------
 
 void plD_tidy_xcairo( PLStream *pls )
 {
@@ -1811,14 +1811,14 @@ void plD_tidy_xcairo( PLStream *pls )
 
     plD_tidy_cairo( pls );
 
-    /* Also free up the Cairo X surface and context */
+    // Also free up the Cairo X surface and context
     cairo_destroy( aStream->cairoContext_X );
     cairo_surface_destroy( aStream->cairoSurface_X );
 
     if ( aStream->xdrawable_mode )
         return;
 
-    /* Close the window and the display. */
+    // Close the window and the display.
     XFlush( aStream->XDisplay );
 
     XDestroyWindow( aStream->XDisplay, aStream->XWindow );
@@ -1826,11 +1826,11 @@ void plD_tidy_xcairo( PLStream *pls )
     XCloseDisplay( aStream->XDisplay );
 }
 
-/*---------------------------------------------------------------------
- * plD_esc_xcairo()
- *
- * Escape function, specialized for the xcairo driver
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_esc_xcairo()
+//
+// Escape function, specialized for the xcairo driver
+// ---------------------------------------------------------------------
 
 void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
 {
@@ -1843,16 +1843,16 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
 
     switch ( op )
     {
-    case PLESC_FLUSH:    /* forced update of the window */
+    case PLESC_FLUSH:    // forced update of the window
         blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
         XFlush( aStream->XDisplay );
         break;
-    case PLESC_GETC:     /* get cursor position */
+    case PLESC_GETC:     // get cursor position
         blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
         XFlush( aStream->XDisplay );
         xcairo_get_cursor( pls, (PLGraphicsIn*) ptr );
         break;
-    case PLESC_DEVINIT: { /* Set external drawable */
+    case PLESC_DEVINIT: { // Set external drawable
         Window               rootwin;
         PLXcairoDrawableInfo *xinfo = (PLXcairoDrawableInfo *) ptr;
         signed int           x, y;
@@ -1870,7 +1870,7 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
         aStream->XDisplay = xinfo->display;
         aStream->XWindow  = xinfo->drawable;
 
-        /* Ensure plplot knows the real dimensions of the drawable */
+        // Ensure plplot knows the real dimensions of the drawable
         XGetGeometry( aStream->XDisplay, aStream->XWindow, &rootwin,
             &x, &y, &w, &h, &b, &d );
         pls->xlength = w;
@@ -1878,10 +1878,10 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
         plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / aStream->downscale ), (PLINT) 0,
             (PLINT) ( pls->ylength / aStream->downscale ) );
 
-        /* Associate cairo with the supplied drawable */
+        // Associate cairo with the supplied drawable
         xcairo_init_cairo( pls );
 
-        /* Recalculate dimensions and the like now that the drawable is known */
+        // Recalculate dimensions and the like now that the drawable is known
         plbop();
 
         break;
@@ -1892,11 +1892,11 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
     }
 }
 
-/*---------------------------------------------------------------------
- * xcairo_get_cursor()
- *
- * X Windows: returns the location of the next mouse click or key press.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// xcairo_get_cursor()
+//
+// X Windows: returns the location of the next mouse click or key press.
+// ---------------------------------------------------------------------
 
 void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
 {
@@ -1912,19 +1912,19 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Initialize PLplot mouse event structure */
+    // Initialize PLplot mouse event structure
     plGinInit( gin );
 
-    /* Create cross hair cursor & switch to using it */
+    // Create cross hair cursor & switch to using it
     xHairCursor = XCreateFontCursor( aStream->XDisplay, XC_crosshair );
     XDefineCursor( aStream->XDisplay, aStream->XWindow, xHairCursor );
 
-    /* Get the next mouse button release or key press event */
+    // Get the next mouse button release or key press event
     XSelectInput( aStream->XDisplay, aStream->XWindow, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | ButtonMotionMask );
     XMaskEvent( aStream->XDisplay, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | ButtonMotionMask, &event );
     XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
 
-    /* Update PLplot's mouse event structure */
+    // Update PLplot's mouse event structure
     xButtonEvent = (XButtonEvent *) &event;
     gin->state   = xButtonEvent->state;
     gin->button  = xButtonEvent->button;
@@ -1933,7 +1933,7 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     gin->dX      = (PLFLT) event.xbutton.x / ( (PLFLT) ( pls->xlength ) );
     gin->dY      = (PLFLT) ( pls->ylength - event.xbutton.y ) / ( (PLFLT) ( pls->ylength ) );
 
-    /* Get key pressed (if any) */
+    // Get key pressed (if any)
     if ( event.type == KeyPress || event.type == KeyRelease )
     {
         number_chars = XLookupString( (XKeyEvent *) &event, str, 100, &keysym, NULL );
@@ -1963,7 +1963,7 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
         gin->keysym = 0x20;
     }
 
-    /* Switch back to normal cursor */
+    // Switch back to normal cursor
     XUndefineCursor( aStream->XDisplay, aStream->XWindow );
     XFlush( aStream->XDisplay );
 }
@@ -1971,26 +1971,26 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
 #endif
 
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the cairo PDF driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the cairo PDF driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_pdfcairo )
 
 void plD_dispatch_init_pdfcairo( PLDispatchTable *pdt );
 void plD_init_pdfcairo( PLStream * );
 
-/*---------------------------------------------------------------------
- * dispatch_init_init()
- *
- * Initialize device dispatch table
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+// ----------------------------------------------------------------------
 
-/* pdfcairo */
+// pdfcairo
 void plD_dispatch_init_pdfcairo( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -2009,60 +2009,60 @@ void plD_dispatch_init_pdfcairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
 }
 
-/*---------------------------------------------------------------------
- * plD_init_pdfcairo()
- *
- * Initialize Cairo PDF device
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_pdfcairo()
+//
+// Initialize Cairo PDF device
+// ----------------------------------------------------------------------
 
 void plD_init_pdfcairo( PLStream *pls )
 {
     PLCairo *aStream;
 
-    /* Setup the PLStream and the font lookup table */
+    // Setup the PLStream and the font lookup table
     aStream = stream_and_font_setup( pls, 0 );
 
-    /* Prompt for a file name if not already set. */
+    // Prompt for a file name if not already set.
     plOpenFile( pls );
 
-    /* Create an cairo surface & context for PDF file. */
-    /* Dimension units are pts = 1/72 inches from cairo documentation. */
+    // Create an cairo surface & context for PDF file.
+    // Dimension units are pts = 1/72 inches from cairo documentation.
     aStream->cairoSurface = cairo_pdf_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->xlength, (double) pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
-    /* Save the pointer to the structure in the PLplot stream */
+    // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
 
-    /* Invert the surface so that the graphs are drawn right side up. */
+    // Invert the surface so that the graphs are drawn right side up.
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
-    /* Set graphics aliasing */
+    // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 }
 
 #endif
 
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the cairo PS driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the cairo PS driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_pscairo )
 
 void plD_dispatch_init_pscairo( PLDispatchTable *pdt );
 void plD_init_pscairo( PLStream * );
 
-/*---------------------------------------------------------------------
- * dispatch_init_init()
- *
- * Initialize device dispatch table
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+// ----------------------------------------------------------------------
 
-/* pscairo */
+// pscairo
 void plD_dispatch_init_pscairo( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -2081,31 +2081,31 @@ void plD_dispatch_init_pscairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
 }
 
-/*---------------------------------------------------------------------
- * plD_init_pscairo()
- *
- * Initialize Cairo PS device
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_pscairo()
+//
+// Initialize Cairo PS device
+// ----------------------------------------------------------------------
 
 void plD_init_pscairo( PLStream *pls )
 {
     PLCairo *aStream;
 
-    /* Setup the PLStream and the font lookup table */
+    // Setup the PLStream and the font lookup table
     aStream = stream_and_font_setup( pls, 0 );
 
-    /* Prompt for a file name if not already set. */
+    // Prompt for a file name if not already set.
     plOpenFile( pls );
 
-    /* Create an cairo surface & context for PS file. */
-    /* Dimension units are pts = 1/72 inches from cairo documentation. */
+    // Create an cairo surface & context for PS file.
+    // Dimension units are pts = 1/72 inches from cairo documentation.
     aStream->cairoSurface = cairo_ps_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->ylength, (double) pls->xlength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
-    /* Save the pointer to the structure in the PLplot stream */
+    // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
 
-    /* Handle portrait or landscape */
+    // Handle portrait or landscape
     if ( pls->portrait )
     {
         plsdiori( 1 );
@@ -2118,26 +2118,26 @@ void plD_init_pscairo( PLStream *pls )
 #endif
 
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the cairo SVG driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the cairo SVG driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_svgcairo )
 
 void plD_dispatch_init_svgcairo( PLDispatchTable *pdt );
 void plD_init_svgcairo( PLStream * );
 
-/*---------------------------------------------------------------------
- * dispatch_init_init()
- *
- * Initialize device dispatch table
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+// ----------------------------------------------------------------------
 
-/* svgcairo */
+// svgcairo
 void plD_dispatch_init_svgcairo( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -2156,27 +2156,27 @@ void plD_dispatch_init_svgcairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
 }
 
-/*---------------------------------------------------------------------
- * plD_init_svgcairo()
- *
- * Initialize Cairo SVG device
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_svgcairo()
+//
+// Initialize Cairo SVG device
+// ----------------------------------------------------------------------
 
 void plD_init_svgcairo( PLStream *pls )
 {
     PLCairo *aStream;
 
-    /* Setup the PLStream and the font lookup table and allocate a cairo
-     * stream structure.
-     *
-     * NOTE: The check below is necessary since, in family mode, this function
-     *  will be called multiple times. While you might think that it is
-     *  sufficient to update what *should* be the only pointer to the contents
-     *  of pls->dev, i.e. the pointer pls->dev itself, it appears that
-     *  something else somewhere else is also pointing to pls->dev. If you
-     *  change what pls->dev points to then you will get a "bus error", from
-     *  which I infer the existence of said bad stale pointer.
-     */
+    // Setup the PLStream and the font lookup table and allocate a cairo
+    // stream structure.
+    //
+    // NOTE: The check below is necessary since, in family mode, this function
+    //  will be called multiple times. While you might think that it is
+    //  sufficient to update what *should* be the only pointer to the contents
+    //  of pls->dev, i.e. the pointer pls->dev itself, it appears that
+    //  something else somewhere else is also pointing to pls->dev. If you
+    //  change what pls->dev points to then you will get a "bus error", from
+    //  which I infer the existence of said bad stale pointer.
+    //
     if ( pls->dev == NULL )
     {
         aStream = stream_and_font_setup( pls, 0 );
@@ -2187,37 +2187,37 @@ void plD_init_svgcairo( PLStream *pls )
         aStream = pls->dev;
     }
 
-    /* Initialize family file info */
+    // Initialize family file info
     plFamInit( pls );
 
-    /* Prompt for a file name if not already set. */
+    // Prompt for a file name if not already set.
     plOpenFile( pls );
 
-    /* Save the pointer to the structure in the PLplot stream */
+    // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
 
-    /* Create an cairo surface & context for SVG file. */
-    /* Dimension units are pts = 1/72 inches from cairo documentation. */
+    // Create an cairo surface & context for SVG file.
+    // Dimension units are pts = 1/72 inches from cairo documentation.
     aStream->cairoSurface = cairo_svg_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->xlength, (double) pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
-    /* Invert the surface so that the graphs are drawn right side up. */
+    // Invert the surface so that the graphs are drawn right side up.
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
-    /* Set graphics aliasing */
+    // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 }
 
 #endif
 
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the cairo PNG driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the cairo PNG driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_pngcairo )
 
@@ -2225,13 +2225,13 @@ void plD_dispatch_init_pngcairo( PLDispatchTable *pdt );
 void plD_init_pngcairo( PLStream * );
 void plD_eop_pngcairo( PLStream * );
 
-/*---------------------------------------------------------------------
- * dispatch_init_init()
- *
- * Initialize device dispatch table
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+// ----------------------------------------------------------------------
 
-/* pngcairo */
+// pngcairo
 void plD_dispatch_init_pngcairo( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -2250,27 +2250,27 @@ void plD_dispatch_init_pngcairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
 }
 
-/*---------------------------------------------------------------------
- * plD_init_pngcairo()
- *
- * Initialize Cairo PNG device
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_pngcairo()
+//
+// Initialize Cairo PNG device
+// ----------------------------------------------------------------------
 
 void plD_init_pngcairo( PLStream *pls )
 {
     PLCairo *aStream;
 
-    /* Setup the PLStream and the font lookup table and allocate a cairo
-     * stream structure.
-     *
-     * NOTE: The check below is necessary since, in family mode, this function
-     *  will be called multiple times. While you might think that it is
-     *  sufficient to update what *should* be the only pointer to the contents
-     *  of pls->dev, i.e. the pointer pls->dev itself, it appears that
-     *  something else somewhere else is also pointing to pls->dev. If you
-     *  change what pls->dev points to then you will get a "bus error", from
-     *  which I infer the existence of said bad stale pointer.
-     */
+    // Setup the PLStream and the font lookup table and allocate a cairo
+    // stream structure.
+    //
+    // NOTE: The check below is necessary since, in family mode, this function
+    //  will be called multiple times. While you might think that it is
+    //  sufficient to update what *should* be the only pointer to the contents
+    //  of pls->dev, i.e. the pointer pls->dev itself, it appears that
+    //  something else somewhere else is also pointing to pls->dev. If you
+    //  change what pls->dev points to then you will get a "bus error", from
+    //  which I infer the existence of said bad stale pointer.
+    //
     if ( pls->dev == NULL )
     {
         aStream = stream_and_font_setup( pls, 0 );
@@ -2281,32 +2281,32 @@ void plD_init_pngcairo( PLStream *pls )
         aStream = pls->dev;
     }
 
-    /* Initialize family file info */
+    // Initialize family file info
     plFamInit( pls );
 
-    /* Prompt for a file name if not already set. */
+    // Prompt for a file name if not already set.
     plOpenFile( pls );
 
-    /* Save the pointer to the structure in the PLplot stream */
+    // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
 
-    /* Create a new cairo surface & context for PNG file. */
-    /* Dimension units are pixels from cairo documentation. */
+    // Create a new cairo surface & context for PNG file.
+    // Dimension units are pixels from cairo documentation.
     aStream->cairoSurface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, (double) pls->xlength, (double) pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
-    /* Invert the surface so that the graphs are drawn right side up. */
+    // Invert the surface so that the graphs are drawn right side up.
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
-    /* Set graphics aliasing */
+    // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 }
 
-/*---------------------------------------------------------------------
- * plD_eop_pngcairo()
- *
- * PNG: End of page.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_eop_pngcairo()
+//
+// PNG: End of page.
+// ---------------------------------------------------------------------
 
 void plD_eop_pngcairo( PLStream *pls )
 {
@@ -2319,13 +2319,13 @@ void plD_eop_pngcairo( PLStream *pls )
 #endif
 
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the cairo memory driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the cairo memory driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_memcairo )
 
@@ -2334,13 +2334,13 @@ void plD_init_memcairo( PLStream * );
 void plD_eop_memcairo( PLStream * );
 void plD_bop_memcairo( PLStream * );
 
-/*---------------------------------------------------------------------
- * dispatch_init_init()
- *
- * Initialize device dispatch table
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+// ----------------------------------------------------------------------
 
-/* memcairo */
+// memcairo
 void plD_dispatch_init_memcairo( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -2359,22 +2359,22 @@ void plD_dispatch_init_memcairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
 }
 
-/*----------------------------------------------------------------------
- * plD_bop_memcairo()
- *
- * Set up for the next page.
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_bop_memcairo()
+//
+// Set up for the next page.
+// ----------------------------------------------------------------------
 
 void plD_bop_memcairo( PLStream *pls )
 {
-    /* nothing to do here (we want to preserve the memory as it is) */
+    // nothing to do here (we want to preserve the memory as it is)
 }
 
-/*---------------------------------------------------------------------
- * plD_init_memcairo()
- *
- * Initialize Cairo memory device
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_memcairo()
+//
+// Initialize Cairo memory device
+// ----------------------------------------------------------------------
 
 void plD_init_memcairo( PLStream *pls )
 {
@@ -2383,7 +2383,7 @@ void plD_init_memcairo( PLStream *pls )
     unsigned char *cairo_mem;
     unsigned char *input_mem;
 
-    /* used for checking byte order */
+    // used for checking byte order
     union
     {
         int  testWord;
@@ -2391,55 +2391,55 @@ void plD_init_memcairo( PLStream *pls )
     } endianTest;
     endianTest.testWord = 1;
 
-    /* Set the plot size to the memory buffer size, on the off chance
-     * that they are different. */
+    // Set the plot size to the memory buffer size, on the off chance
+    // that they are different.
     pls->xlength = pls->phyxma;
     pls->ylength = pls->phyyma;
 
 
-    /* Setup the PLStream and the font lookup table */
+    // Setup the PLStream and the font lookup table
     aStream = stream_and_font_setup( pls, 0 );
 
-    /* Test byte order */
+    // Test byte order
     if ( endianTest.testByte[0] == 1 )
         aStream->bigendian = 0;
     else
         aStream->bigendian = 1;
 
-    /* Check that user supplied us with some memory to draw in */
+    // Check that user supplied us with some memory to draw in
     if ( pls->dev == NULL )
     {
         plexit( "Must call plsmem first to set user plotting area!" );
     }
 
-    /* Save a pointer to the memory. */
+    // Save a pointer to the memory.
     aStream->memory = pls->dev;
 
-    /* Create a cairo surface & context.  Copy data in from the input memory area */
+    // Create a cairo surface & context.  Copy data in from the input memory area
 
-    /* Malloc memory the way cairo likes it.  Aligned on the stride computed by cairo_format_stride_for_width
-     * and in the RGB24 format (from http://cairographics.org/manual/cairo-Image-Surfaces.html):
-     * Each pixel is a 32-bit quantity, with the upper 8 bits unused.
-     * Red, Green, and Blue are stored in the remaining 24 bits in that order */
+    // Malloc memory the way cairo likes it.  Aligned on the stride computed by cairo_format_stride_for_width
+    // and in the RGB24 format (from http://cairographics.org/manual/cairo-Image-Surfaces.html):
+    // Each pixel is a 32-bit quantity, with the upper 8 bits unused.
+    // Red, Green, and Blue are stored in the remaining 24 bits in that order
     stride = pls->xlength * 4;
-    /* stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pls->xlength);  This function missing from version 1.4 :-( */
+    // stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pls->xlength);  This function missing from version 1.4 :-(
     aStream->cairo_format_memory = (unsigned char *) calloc( stride * pls->ylength, 1 );
 
-    /* Copy the input data into the Cairo data format */
+    // Copy the input data into the Cairo data format
     cairo_mem = aStream->cairo_format_memory;
     input_mem = aStream->memory;
 
-    /* 32 bit word order
-     * cairo mem:  Big endian:  0=A, 1=R, 2=G, 3=B
-     *             Little endian:  3=A, 2=R, 1=G, 0=B */
+    // 32 bit word order
+    // cairo mem:  Big endian:  0=A, 1=R, 2=G, 3=B
+    //             Little endian:  3=A, 2=R, 1=G, 0=B
 
     if ( aStream->bigendian )
     {
         for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
         {
-            cairo_mem[1] = input_mem[0]; /* R */
-            cairo_mem[2] = input_mem[1]; /* G */
-            cairo_mem[3] = input_mem[2]; /* B */
+            cairo_mem[1] = input_mem[0]; // R
+            cairo_mem[2] = input_mem[1]; // G
+            cairo_mem[3] = input_mem[2]; // B
             if ( pls->dev_mem_alpha == 1 )
             {
                 cairo_mem[0] = input_mem[3];
@@ -2456,9 +2456,9 @@ void plD_init_memcairo( PLStream *pls )
     {
         for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
         {
-            cairo_mem[2] = input_mem[0]; /* R */
-            cairo_mem[1] = input_mem[1]; /* G */
-            cairo_mem[0] = input_mem[2]; /* B */
+            cairo_mem[2] = input_mem[0]; // R
+            cairo_mem[1] = input_mem[1]; // G
+            cairo_mem[0] = input_mem[2]; // B
             if ( pls->dev_mem_alpha == 1 )
             {
                 cairo_mem[3] = input_mem[3];
@@ -2472,30 +2472,30 @@ void plD_init_memcairo( PLStream *pls )
         }
     }
 
-    /* Create a Cairo drawing surface from the input data */
+    // Create a Cairo drawing surface from the input data
     aStream->cairoSurface =
-        /* Dimension units are width, height of buffer image from cairo
-         * documentation. */
+        // Dimension units are width, height of buffer image from cairo
+        // documentation.
         cairo_image_surface_create_for_data( aStream->cairo_format_memory, CAIRO_FORMAT_RGB24, pls->xlength, pls->ylength, stride );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
-    /* Save the pointer to the structure in the PLplot stream.
-     * Note that this wipes out the direct pointer to the memory buffer. */
+    // Save the pointer to the structure in the PLplot stream.
+    // Note that this wipes out the direct pointer to the memory buffer.
     pls->dev = aStream;
 
-    /* Invert the surface so that the graphs are drawn right side up. */
+    // Invert the surface so that the graphs are drawn right side up.
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
-    /* Set graphics aliasing */
+    // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 }
 
-/*---------------------------------------------------------------------
- * plD_eop_memcairo()
- *
- * Memory device specific end of page. This copies the contents
- * of the cairo surface into the user supplied memory buffer.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_eop_memcairo()
+//
+// Memory device specific end of page. This copies the contents
+// of the cairo surface into the user supplied memory buffer.
+// ---------------------------------------------------------------------
 
 void plD_eop_memcairo( PLStream *pls )
 {
@@ -2507,16 +2507,16 @@ void plD_eop_memcairo( PLStream *pls )
     aStream            = (PLCairo *) pls->dev;
     memory             = aStream->memory;
     cairo_surface_data = cairo_image_surface_get_data( aStream->cairoSurface );
-    /* 32 bit word order
-     * cairo mem:  Big endian:  0=A, 1=R, 2=G, 3=B
-     *             Little endian:  3=A, 2=R, 1=G, 0=B */
+    // 32 bit word order
+    // cairo mem:  Big endian:  0=A, 1=R, 2=G, 3=B
+    //             Little endian:  3=A, 2=R, 1=G, 0=B
     if ( aStream->bigendian )
     {
         for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
         {
-            memory[0] = cairo_surface_data[1];           /* R */
-            memory[1] = cairo_surface_data[2];           /* G */
-            memory[2] = cairo_surface_data[3];           /* B */
+            memory[0] = cairo_surface_data[1];           // R
+            memory[1] = cairo_surface_data[2];           // G
+            memory[2] = cairo_surface_data[3];           // B
             if ( pls->dev_mem_alpha == 1 )
             {
                 memory[3] = cairo_surface_data[0];
@@ -2533,9 +2533,9 @@ void plD_eop_memcairo( PLStream *pls )
     {
         for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
         {
-            memory[0] = cairo_surface_data[2];           /* R */
-            memory[1] = cairo_surface_data[1];           /* G */
-            memory[2] = cairo_surface_data[0];           /* B */
+            memory[0] = cairo_surface_data[2];           // R
+            memory[1] = cairo_surface_data[1];           // G
+            memory[2] = cairo_surface_data[0];           // B
             if ( pls->dev_mem_alpha == 1 )
             {
                 memory[3] = cairo_surface_data[3];
@@ -2549,19 +2549,19 @@ void plD_eop_memcairo( PLStream *pls )
         }
     }
 
-    /* Free up the temporary memory malloc'ed in plD_init_memcairo */
+    // Free up the temporary memory malloc'ed in plD_init_memcairo
     free( aStream->cairo_format_memory );
 }
 
 #endif
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the cairo external context driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the cairo external context driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_extcairo )
 
@@ -2573,11 +2573,11 @@ void plD_eop_extcairo( PLStream * );
 void plD_esc_extcairo( PLStream *, PLINT, void * );
 void plD_tidy_extcairo( PLStream * );
 
-/*---------------------------------------------------------------------
- * extcairo_setbackground()
- *
- * Set the background color for the extcairo device
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// extcairo_setbackground()
+//
+// Set the background color for the extcairo device
+// ----------------------------------------------------------------------
 
 void extcairo_setbackground( PLStream *pls )
 {
@@ -2585,7 +2585,7 @@ void extcairo_setbackground( PLStream *pls )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Fill the context with the background color if the user so desires. */
+    // Fill the context with the background color if the user so desires.
     if ( aStream->cairoContext != NULL )
     {
         cairo_rectangle( aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength );
@@ -2598,13 +2598,13 @@ void extcairo_setbackground( PLStream *pls )
     }
 }
 
-/*---------------------------------------------------------------------
- * dispatch_init_init()
- *
- * Initialize device dispatch table
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+// ----------------------------------------------------------------------
 
-/* extcairo */
+// extcairo
 void plD_dispatch_init_extcairo( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -2623,28 +2623,28 @@ void plD_dispatch_init_extcairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_extcairo;
 }
 
-/*---------------------------------------------------------------------
- * plD_init_extcairo()
- *
- * Initialize Cairo external context driver.
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_extcairo()
+//
+// Initialize Cairo external context driver.
+// ----------------------------------------------------------------------
 
 void plD_init_extcairo( PLStream *pls )
 {
     PLCairo *aStream;
 
-    /* Setup the PLStream and the font lookup table */
+    // Setup the PLStream and the font lookup table
     aStream = stream_and_font_setup( pls, 0 );
 
-    /* Save the pointer to the structure in the PLplot stream */
+    // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
 }
 
-/*----------------------------------------------------------------------
- * plD_bop_extcairo()
- *
- * Set up for the next page.
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_bop_extcairo()
+//
+// Set up for the next page.
+// ----------------------------------------------------------------------
 
 void plD_bop_extcairo( PLStream *pls )
 {
@@ -2652,31 +2652,31 @@ void plD_bop_extcairo( PLStream *pls )
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Set background if desired */
+    // Set background if desired
     if ( aStream->set_background )
     {
         extcairo_setbackground( pls );
     }
 }
 
-/*----------------------------------------------------------------------
- * plD_eop_extcairo()
- *
- * End of page.
- * ----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_eop_extcairo()
+//
+// End of page.
+// ----------------------------------------------------------------------
 
 void plD_eop_extcairo( PLStream *pls )
 {
-    /* nothing to do here, we leave it to the calling program to display
-     * (or not) the update cairo context. */
+    // nothing to do here, we leave it to the calling program to display
+    // (or not) the update cairo context.
 }
 
-/*---------------------------------------------------------------------
- * plD_esc_extcairo()
- *
- * The generic escape function, extended so that user can pass in
- * an external Cairo context to use for rendering.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_esc_extcairo()
+//
+// The generic escape function, extended so that user can pass in
+// an external Cairo context to use for rendering.
+// ---------------------------------------------------------------------
 
 void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
 {
@@ -2686,35 +2686,35 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
 
     switch ( op )
     {
-    case PLESC_DEVINIT: /* Set external context */
+    case PLESC_DEVINIT: // Set external context
         aStream->cairoContext = (cairo_t *) ptr;
-        /* Set graphics aliasing */
+        // Set graphics aliasing
         cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 
-        /* Invert the surface so that the graphs are drawn right side up. */
+        // Invert the surface so that the graphs are drawn right side up.
         rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
-        /* Should adjust plot size to fit in the given cairo context?
-         * Cairo does not provide a way to query the dimensions of a context? */
+        // Should adjust plot size to fit in the given cairo context?
+        // Cairo does not provide a way to query the dimensions of a context?
 
-        /* Set background if desired */
+        // Set background if desired
         if ( aStream->set_background )
         {
             extcairo_setbackground( pls );
         }
         break;
-    default: /* Fall back on default Cairo actions */
+    default: // Fall back on default Cairo actions
         plD_esc_cairo( pls, op, ptr );
         break;
     }
 }
 
-/*---------------------------------------------------------------------
- * plD_tidy_extcairo()
- *
- * This is nop, it is up to the calling program to clean up the Cairo
- * context, etc...
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_tidy_extcairo()
+//
+// This is nop, it is up to the calling program to clean up the Cairo
+// context, etc...
+// ---------------------------------------------------------------------
 
 void plD_tidy_extcairo( PLStream *pls )
 {
@@ -2723,16 +2723,16 @@ void plD_tidy_extcairo( PLStream *pls )
 #endif
 
 
-/*---------------------------------------------------------------------
- * ---------------------------------------------------------------------
- *
- * That which is specific to the cairo microsoft windows driver.
- *
- * Much of the Windows specific code here was lifted from the wingcc
- * driver.
- *
- * ---------------------------------------------------------------------
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//
+// That which is specific to the cairo microsoft windows driver.
+//
+// Much of the Windows specific code here was lifted from the wingcc
+// driver.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 #if defined ( PLD_wincairo )
 
@@ -2745,11 +2745,11 @@ void plD_eop_wincairo( PLStream * );
 void plD_esc_wincairo( PLStream *, PLINT, void * );
 void plD_tidy_wincairo( PLStream * );
 
-/*---------------------------------------------------------------------
- * blit_to_win()
- *
- * Blit the offscreen image to the Windows window.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// blit_to_win()
+//
+// Blit the offscreen image to the Windows window.
+// ---------------------------------------------------------------------
 
 void blit_to_win( PLCairo *aStream )
 {
@@ -2757,26 +2757,26 @@ void blit_to_win( PLCairo *aStream )
     cairo_paint( aStream->cairoContext_win );
 }
 
-/*--------------------------------------------------------------------------*\
- * This is the window function for the plot window. Whenever a message is
- * dispatched using DispatchMessage (or sent with SendMessage) this function
- * gets called with the contents of the message.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// This is the window function for the plot window. Whenever a message is
+// dispatched using DispatchMessage (or sent with SendMessage) this function
+// gets called with the contents of the message.
+//--------------------------------------------------------------------------
 
 LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lParam )
 {
     PLStream *pls = NULL;
     PLCairo  *dev = NULL;
 
-/*
- * The window carries a 32bit user defined pointer which points to the
- * plplot stream (pls). This is used for tracking the window.
- * Unfortunately, this is "attached" to the window AFTER it is created
- * so we can not initialise PLStream or wincairo "blindly" because
- * they may not yet have been initialised.
- * WM_CREATE is called before we get to initialise those variables, so
- * we wont try to set them.
- */
+//
+// The window carries a 32bit user defined pointer which points to the
+// plplot stream (pls). This is used for tracking the window.
+// Unfortunately, this is "attached" to the window AFTER it is created
+// so we can not initialise PLStream or wincairo "blindly" because
+// they may not yet have been initialised.
+// WM_CREATE is called before we get to initialise those variables, so
+// we wont try to set them.
+//
 
     if ( nMsg == WM_CREATE )
     {
@@ -2784,22 +2784,22 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
     }
     else
     {
-        pls = (PLStream *) GetWindowLong( hwnd, GWL_USERDATA ); /* Try to get the address to pls for this window */
-        if ( pls )                                              /* If we got it, then we will initialise this windows plplot private data area */
+        pls = (PLStream *) GetWindowLong( hwnd, GWL_USERDATA ); // Try to get the address to pls for this window
+        if ( pls )                                              // If we got it, then we will initialise this windows plplot private data area
         {
             dev = (PLCairo *) pls->dev;
         }
     }
 
-/*
- * Process the windows messages
- *
- * Everything except WM_CREATE is done here and it is generally hoped that
- * pls and dev are defined already by this stage.
- * That will be true MOST of the time. Some times WM_PAINT will be called
- * before we get to initialise the user data area of the window with the
- * pointer to the windows plplot stream
- */
+//
+// Process the windows messages
+//
+// Everything except WM_CREATE is done here and it is generally hoped that
+// pls and dev are defined already by this stage.
+// That will be true MOST of the time. Some times WM_PAINT will be called
+// before we get to initialise the user data area of the window with the
+// pointer to the windows plplot stream
+//
 
     switch ( nMsg )
     {
@@ -2843,16 +2843,16 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
         break;
     }
 
-    /* If we don't handle a message completely we hand it to the system
-     * provided default window function. */
+    // If we don't handle a message completely we hand it to the system
+    // provided default window function.
     return DefWindowProc( hwnd, nMsg, wParam, lParam );
 }
 
-/*---------------------------------------------------------------------
- * handle_locate()
- *
- * Handle getting the cursor location.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// handle_locate()
+//
+// Handle getting the cursor location.
+// ---------------------------------------------------------------------
 
 void
 handle_locate( PLStream *pls, PLGraphicsIn *gin )
@@ -2860,7 +2860,7 @@ handle_locate( PLStream *pls, PLGraphicsIn *gin )
     int     located  = 0;
     PLCairo *aStream = (PLCairo *) pls->dev;
 
-    /* Initialize PLplot mouse event structure */
+    // Initialize PLplot mouse event structure
     plGinInit( gin );
 
     while ( GetMessage( &aStream->msg, NULL, 0, 0 ) && !located )
@@ -2890,13 +2890,13 @@ handle_locate( PLStream *pls, PLGraphicsIn *gin )
     }
 }
 
-/*---------------------------------------------------------------------
- * dispatch_init_init()
- *
- * Initialize device dispatch table
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+// ----------------------------------------------------------------------
 
-/* extcairo */
+// extcairo
 void plD_dispatch_init_wincairo( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -2915,142 +2915,142 @@ void plD_dispatch_init_wincairo( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_wincairo;
 }
 
-/*---------------------------------------------------------------------
- * plD_init_wincairo()
- *
- * Initialize Cairo Microsoft Windows driver.
- * ----------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_init_wincairo()
+//
+// Initialize Cairo Microsoft Windows driver.
+// ----------------------------------------------------------------------
 
 void plD_init_wincairo( PLStream *pls )
 {
     PLCairo *aStream;
 
-    /* Setup the PLStream and the font lookup table */
+    // Setup the PLStream and the font lookup table
     aStream = stream_and_font_setup( pls, 1 );
 
-    /* Save the pointer to the structure in the PLplot stream */
+    // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
 
-    /* Create window */
+    // Create window
     memset( &aStream->wndclass, 0, sizeof ( WNDCLASSEX ) );
 
-    /* This class is called WinTestWin */
+    // This class is called WinTestWin
     aStream->wndclass.lpszClassName = szWndClass;
 
-    /* cbSize gives the size of the structure for extensibility. */
+    // cbSize gives the size of the structure for extensibility.
     aStream->wndclass.cbSize = sizeof ( WNDCLASSEX );
 
-    /* All windows of this class redraw when resized. */
+    // All windows of this class redraw when resized.
     aStream->wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC | CS_PARENTDC;
 
-    /* All windows of this class use the PlplotCairoWndProc window function. */
+    // All windows of this class use the PlplotCairoWndProc window function.
     aStream->wndclass.lpfnWndProc = PlplotCairoWndProc;
 
-    /* This class is used with the current program instance. */
+    // This class is used with the current program instance.
 
     aStream->wndclass.hInstance = GetModuleHandle( NULL );
 
-    /* Use standard application icon and arrow cursor provided by the OS */
+    // Use standard application icon and arrow cursor provided by the OS
     aStream->wndclass.hIcon   = LoadIcon( NULL, IDI_APPLICATION );
     aStream->wndclass.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
     aStream->wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
-    /* Color the background white */
+    // Color the background white
     aStream->wndclass.hbrBackground = NULL;
 
     aStream->wndclass.cbWndExtra = sizeof ( pls );
 
 
-    /*
-     * Now register the window class for use.
-     */
+    //
+    // Now register the window class for use.
+    //
 
     RegisterClassEx( &aStream->wndclass );
 
-    /*
-     * Create our main window using that window class.
-     */
+    //
+    // Create our main window using that window class.
+    //
     aStream->hwnd = CreateWindowEx( WS_EX_WINDOWEDGE + WS_EX_LEFT,
-        szWndClass,                                         /* Class name */
-        pls->program,                                       /* Caption */
-        WS_OVERLAPPEDWINDOW,                                /* Style */
-        pls->xoffset,                                       /* Initial x (use default) */
-        pls->yoffset,                                       /* Initial y (use default) */
-                                                            /* This is a little lame since the window border size might change. */
-        pls->xlength + 5,                                   /* Initial x size (use default) */
-        pls->ylength + 30,                                  /* Initial y size (use default) */
-        NULL,                                               /* No parent window */
-        NULL,                                               /* No menu */
-        aStream->wndclass.hInstance,                        /* This program instance */
-        NULL                                                /* Creation parameters */
+        szWndClass,                                         // Class name
+        pls->program,                                       // Caption
+        WS_OVERLAPPEDWINDOW,                                // Style
+        pls->xoffset,                                       // Initial x (use default)
+        pls->yoffset,                                       // Initial y (use default)
+                                                            // This is a little lame since the window border size might change.
+        pls->xlength + 5,                                   // Initial x size (use default)
+        pls->ylength + 30,                                  // Initial y size (use default)
+        NULL,                                               // No parent window
+        NULL,                                               // No menu
+        aStream->wndclass.hInstance,                        // This program instance
+        NULL                                                // Creation parameters
         );
 
 
-/*
- * Attach a pointer to the stream to the window's user area
- * this pointer will be used by the windows call back for
- * process this window
- */
+//
+// Attach a pointer to the stream to the window's user area
+// this pointer will be used by the windows call back for
+// process this window
+//
 
     SetWindowLong( aStream->hwnd, GWL_USERDATA, (long) pls );
     aStream->SCRN_hdc = aStream->hdc = GetDC( aStream->hwnd );
 
-/*
- *  Setup the popup menu
- */
+//
+//  Setup the popup menu
+//
 
-/*
- *  dev->PopupMenu = CreatePopupMenu();
- *  AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
- *  AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page" );
- *  AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, "Quit" );
- */
+//
+//  dev->PopupMenu = CreatePopupMenu();
+//  AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
+//  AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page" );
+//  AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, "Quit" );
+//
 
     //    plD_state_wingcc( pls, PLSTATE_COLOR0 );
-    /*
-     * Display the window which we just created (using the nShow
-     * passed by the OS, which allows for start minimized and that
-     * sort of thing).
-     */
+    //
+    // Display the window which we just created (using the nShow
+    // passed by the OS, which allows for start minimized and that
+    // sort of thing).
+    //
     ShowWindow( aStream->hwnd, SW_SHOWDEFAULT );
     SetForegroundWindow( aStream->hwnd );
 
-/*
- *  Now we have to find out, from windows, just how big our drawing area is
- *  when we specified the page size earlier on, that includes the borders,
- *  title bar etc... so now that windows has done all its initialisations,
- *  we will ask how big the drawing area is, and tell plplot
- */
+//
+//  Now we have to find out, from windows, just how big our drawing area is
+//  when we specified the page size earlier on, that includes the borders,
+//  title bar etc... so now that windows has done all its initialisations,
+//  we will ask how big the drawing area is, and tell plplot
+//
 
-/*
- *  GetClientRect( dev->hwnd, &dev->rect );
- *  dev->width  = dev->rect.right;
- *  dev->height = dev->rect.bottom;
- */
+//
+//  GetClientRect( dev->hwnd, &dev->rect );
+//  dev->width  = dev->rect.right;
+//  dev->height = dev->rect.bottom;
+//
 
-/*
- * Initialize Cairo Surface using the windows hdc.
- */
+//
+// Initialize Cairo Surface using the windows hdc.
+//
 
-    /* This is the Win32 Cairo surface. */
+    // This is the Win32 Cairo surface.
     aStream->cairoSurface_win = (cairo_surface_t *) cairo_win32_surface_create( aStream->hdc );
     aStream->cairoContext_win = cairo_create( aStream->cairoSurface_win );
 
-    /* This is the Cairo surface PLplot will actually plot to. */
+    // This is the Cairo surface PLplot will actually plot to.
     aStream->cairoSurface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, pls->xlength, pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
-    /* Invert the surface so that the graphs are drawn right side up. */
+    // Invert the surface so that the graphs are drawn right side up.
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
-    /* Set graphics aliasing */
+    // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 }
 
-/*---------------------------------------------------------------------
- * plD_eop_wincairo()
- *
- * Clean up Cairo Microsoft Windows driver.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_eop_wincairo()
+//
+// Clean up Cairo Microsoft Windows driver.
+// ---------------------------------------------------------------------
 
 void
 plD_eop_wincairo( PLStream *pls )
@@ -3081,11 +3081,11 @@ plD_eop_wincairo( PLStream *pls )
     }
 }
 
-/*---------------------------------------------------------------------
- * plD_tidy_wincairo()
- *
- * Clean up Cairo Microsoft Windows driver.
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_tidy_wincairo()
+//
+// Clean up Cairo Microsoft Windows driver.
+// ---------------------------------------------------------------------
 
 void plD_tidy_wincairo( PLStream *pls )
 {
@@ -3093,7 +3093,7 @@ void plD_tidy_wincairo( PLStream *pls )
 
     plD_tidy_cairo( pls );
 
-    /* Also free up the Cairo win32 surface and context */
+    // Also free up the Cairo win32 surface and context
     cairo_destroy( aStream->cairoContext_win );
     cairo_surface_destroy( aStream->cairoSurface_win );
 
@@ -3105,11 +3105,11 @@ void plD_tidy_wincairo( PLStream *pls )
     }
 }
 
-/*---------------------------------------------------------------------
- * plD_esc_wincairo()
- *
- * Escape function, specialized for the wincairo driver
- * ---------------------------------------------------------------------*/
+//---------------------------------------------------------------------
+// plD_esc_wincairo()
+//
+// Escape function, specialized for the wincairo driver
+// ---------------------------------------------------------------------
 
 void plD_esc_wincairo( PLStream *pls, PLINT op, void *ptr )
 {

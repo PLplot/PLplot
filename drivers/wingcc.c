@@ -1,26 +1,26 @@
-/* $Id$
- *
- *      PLplot WIN32 under GCC device driver.
- *
- * Copyright (C) 2004  Andrew Roach
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      PLplot WIN32 under GCC device driver.
+//
+// Copyright (C) 2004  Andrew Roach
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 #include "plDevs.h"
 
 #ifdef PLD_wingcc
@@ -38,22 +38,22 @@
 
 #ifdef HAVE_FREETYPE
 
-/*
- *  Freetype support has been added to the wingcc driver using the
- *  plfreetype.c module, and implemented as a driver-specific optional extra
- *  invoked via the -drvopt command line toggle. It uses the
- *  "PLESC_HAS_TEXT" command for rendering within the driver.
- *
- *  Freetype support is turned on/off at compile time by defining
- *  "HAVE_FREETYPE".
- *
- *  To give the user some level of control over the fonts that are used,
- *  environmental variables can be set to over-ride the definitions used by
- *  the five default plplot fonts.
- *
- *  Freetype rendering is used with the command line "-drvopt text".
- *  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
- */
+//
+//  Freetype support has been added to the wingcc driver using the
+//  plfreetype.c module, and implemented as a driver-specific optional extra
+//  invoked via the -drvopt command line toggle. It uses the
+//  "PLESC_HAS_TEXT" command for rendering within the driver.
+//
+//  Freetype support is turned on/off at compile time by defining
+//  "HAVE_FREETYPE".
+//
+//  To give the user some level of control over the fonts that are used,
+//  environmental variables can be set to over-ride the definitions used by
+//  the five default plplot fonts.
+//
+//  Freetype rendering is used with the command line "-drvopt text".
+//  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
+//
 
 #include "plfreetype.h"
 
@@ -64,56 +64,56 @@
 #endif
 
 
-/* Device info */
+// Device info
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc\n";
 
-/* Struct to hold device-specific info. */
+// Struct to hold device-specific info.
 
 typedef struct
 {
-    PLFLT scale;                     /* scaling factor to "blow up" to the "virtual" page in removing hidden lines*/
-    PLINT width;                     /* Window width (which can change) */
-    PLINT height;                    /* Window Height */
+    PLFLT scale;                     // scaling factor to "blow up" to the "virtual" page in removing hidden lines
+    PLINT width;                     // Window width (which can change)
+    PLINT height;                    // Window Height
 
     PLFLT PRNT_scale;
     PLINT PRNT_width;
     PLINT PRNT_height;
 
     char  FT_smooth_text;
-/*
- * WIN32 API variables
- */
+//
+// WIN32 API variables
+//
 
-    COLORREF          colour;                       /* Current Colour               */
-    COLORREF          oldcolour;                    /* Used for high-speed background erasing */
-    MSG               msg;                          /* A Win32 message structure. */
-    WNDCLASSEX        wndclass;                     /* An extended window class structure. */
-    HWND              hwnd;                         /* Handle for the main window. */
-    HPEN              pen;                          /* Windows pen used for drawing */
-    HDC               hdc;                          /* Driver Context */
-    HDC               hdc2;                         /* Driver Context II - used for Blitting */
-    HDC               SCRN_hdc;                     /* The screen's context */
-    HDC               PRNT_hdc;                     /* used for printing */
-    PAINTSTRUCT       ps;                           /* used to paint the client area of a window owned by that application */
-    RECT              rect;                         /* defines the coordinates of the upper-left and lower-right corners of a rectangle */
-    RECT              oldrect;                      /* used for re-sizing comparisons */
-    RECT              paintrect;                    /* used for painting etc... */
-    HBRUSH            fillbrush;                    /* brush used for fills */
-    HCURSOR           cursor;                       /* Current windows cursor for this window */
-    HBITMAP           bitmap;                       /* Bitmap of current display; used for fast redraws via blitting */
-    HGDIOBJ           oldobject;                    /* Used for tracking objects probably not really needed but */
+    COLORREF          colour;                       // Current Colour
+    COLORREF          oldcolour;                    // Used for high-speed background erasing
+    MSG               msg;                          // A Win32 message structure.
+    WNDCLASSEX        wndclass;                     // An extended window class structure.
+    HWND              hwnd;                         // Handle for the main window.
+    HPEN              pen;                          // Windows pen used for drawing
+    HDC               hdc;                          // Driver Context
+    HDC               hdc2;                         // Driver Context II - used for Blitting
+    HDC               SCRN_hdc;                     // The screen's context
+    HDC               PRNT_hdc;                     // used for printing
+    PAINTSTRUCT       ps;                           // used to paint the client area of a window owned by that application
+    RECT              rect;                         // defines the coordinates of the upper-left and lower-right corners of a rectangle
+    RECT              oldrect;                      // used for re-sizing comparisons
+    RECT              paintrect;                    // used for painting etc...
+    HBRUSH            fillbrush;                    // brush used for fills
+    HCURSOR           cursor;                       // Current windows cursor for this window
+    HBITMAP           bitmap;                       // Bitmap of current display; used for fast redraws via blitting
+    HGDIOBJ           oldobject;                    // Used for tracking objects probably not really needed but
     HMENU             PopupMenu;
 
     PLINT             draw_mode;
-    char              truecolour;      /* Flag to indicate 24 bit mode */
-    char              waiting;         /* Flag to indicate drawing is done, and it is waiting; */
-                                       /* we only do a windows redraw if plplot is plotting */
-    char              enterresize;     /* Used to keep track of reszing messages from windows */
-    char              already_erased;  /* Used to track first and only first backgroudn erases */
+    char              truecolour;      // Flag to indicate 24 bit mode
+    char              waiting;         // Flag to indicate drawing is done, and it is waiting;
+                                       // we only do a windows redraw if plplot is plotting
+    char              enterresize;     // Used to keep track of reszing messages from windows
+    char              already_erased;  // Used to track first and only first backgroudn erases
 
-    struct wingcc_Dev *push;           /* A copy of the entire structure used when printing */
-                                       /* We push and pop it off a virtual stack */
+    struct wingcc_Dev *push;           // A copy of the entire structure used when printing
+                                       // We push and pop it off a virtual stack
 } wingcc_Dev;
 
 
@@ -141,9 +141,9 @@ static void init_freetype_lv2( PLStream *pls );
 #endif
 
 
-/*--------------------------------------------------------------------------*\
- *  Local Function definitions and function-like defines
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  Local Function definitions and function-like defines
+//--------------------------------------------------------------------------
 
 static int GetRegValue( char *key_name, char *key_word, char *buffer, int size );
 static int SetRegValue( char *key_name, char *key_word, char *buffer, int dwType, int size );
@@ -160,9 +160,9 @@ static void UpdatePageMetrics( PLStream *pls, char flag );
 #define GetRegIntValue( a, b, c )          GetRegValue( a, b, (char *) c, 4 )
 #define GetRegBinaryValue( a, b, c, d )    GetRegValue( a, b, (char *) c, d )
 
-/*--------------------------------------------------------------------------*\
- *  Some debugging macros
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  Some debugging macros
+//--------------------------------------------------------------------------
 
 #if defined ( _MSC_VER )
   #define Debug( a )           do { if ( pls->debug ) { fprintf( stderr, ( a ) ); } } while ( 0 )
@@ -229,26 +229,26 @@ void plD_dispatch_init_wingcc( PLDispatchTable *pdt )
 static char* szWndClass = "PlplotWin";
 
 
-/*--------------------------------------------------------------------------*\
- * This is the window function for the plot window. Whenever a message is
- * dispatched using DispatchMessage (or sent with SendMessage) this function
- * gets called with the contents of the message.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// This is the window function for the plot window. Whenever a message is
+// dispatched using DispatchMessage (or sent with SendMessage) this function
+// gets called with the contents of the message.
+//--------------------------------------------------------------------------
 
 LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lParam )
 {
     PLStream   *pls = NULL;
     wingcc_Dev *dev = NULL;
 
-/*
- * The window carries a 32bit user defined pointer which points to the
- * plplot stream (pls). This is used for tracking the window.
- * Unfortunately, this is "attached" to the window AFTER it is created
- * so we can not initialise PLStream or wingcc_Dev "blindly" because
- * they may not yet have been initialised.
- * WM_CREATE is called before we get to initialise those variables, so
- * we wont try to set them.
- */
+//
+// The window carries a 32bit user defined pointer which points to the
+// plplot stream (pls). This is used for tracking the window.
+// Unfortunately, this is "attached" to the window AFTER it is created
+// so we can not initialise PLStream or wingcc_Dev "blindly" because
+// they may not yet have been initialised.
+// WM_CREATE is called before we get to initialise those variables, so
+// we wont try to set them.
+//
 
     if ( nMsg == WM_CREATE )
     {
@@ -259,22 +259,22 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 #ifndef _WIN64
 #define GetWindowLongPtr    GetWindowLong
 #endif
-        pls = (PLStream *) GetWindowLongPtr( hwnd, GWL_USERDATA ); /* Try to get the address to pls for this window */
-        if ( pls )                                                 /* If we got it, then we will initialise this windows plplot private data area */
+        pls = (PLStream *) GetWindowLongPtr( hwnd, GWL_USERDATA ); // Try to get the address to pls for this window
+        if ( pls )                                                 // If we got it, then we will initialise this windows plplot private data area
         {
             dev = (wingcc_Dev *) pls->dev;
         }
     }
 
-/*
- * Process the windows messages
- *
- * Everything except WM_CREATE is done here and it is generally hoped that
- * pls and dev are defined already by this stage.
- * That will be true MOST of the time. Some times WM_PAINT will be called
- * before we get to initialise the user data area of the window with the
- * pointer to the windows plplot stream
- */
+//
+// Process the windows messages
+//
+// Everything except WM_CREATE is done here and it is generally hoped that
+// pls and dev are defined already by this stage.
+// That will be true MOST of the time. Some times WM_PAINT will be called
+// before we get to initialise the user data area of the window with the
+// pointer to the windows plplot stream
+//
 
     switch ( nMsg )
     {
@@ -352,7 +352,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
         {
             Debug( "WM_EXITSIZEMOVE\t" );
             Resize( pls );
-            dev->enterresize = 0;     /* Reset the variables that track sizing ops */
+            dev->enterresize = 0;     // Reset the variables that track sizing ops
         }
         return ( 0 );
         break;
@@ -365,11 +365,11 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
             {
                 Debug( "WM_ERASEBKGND\t" );
 
-                /*
-                 *    This is a new "High Speed" way of filling in the background.
-                 *    supposidely this executes faster than creating a brush and
-                 *    filling a rectangle - go figure ?
-                 */
+                //
+                //    This is a new "High Speed" way of filling in the background.
+                //    supposidely this executes faster than creating a brush and
+                //    filling a rectangle - go figure ?
+                //
 
                 dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
                 ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
@@ -389,17 +389,17 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
         break;
     }
 
-    /* If we don't handle a message completely we hand it to the system
-     * provided default window function. */
+    // If we don't handle a message completely we hand it to the system
+    // provided default window function.
     return DefWindowProc( hwnd, nMsg, wParam, lParam );
 }
 
 
-/*--------------------------------------------------------------------------*\
- * plD_init_wingcc()
- *
- * Initialize device (terminal).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_wingcc()
+//
+// Initialize device (terminal).
+//--------------------------------------------------------------------------
 
 void
 plD_init_wingcc( PLStream *pls )
@@ -412,10 +412,10 @@ plD_init_wingcc( PLStream *pls )
     static int save_reg    = 0;
     FT_Data    *FT;
 
-/*
- *  Variables used for reading the registary keys
- *  might eventually add a user defined pallette here, but for now it just does freetype
- */
+//
+//  Variables used for reading the registary keys
+//  might eventually add a user defined pallette here, but for now it just does freetype
+//
     char key_name[]       = "Software\\PLplot\\wingcc";
     char Keyword_text[]   = "freetype";
     char Keyword_smooth[] = "smooth";
@@ -431,7 +431,7 @@ plD_init_wingcc( PLStream *pls )
         { NULL,     DRV_INT, NULL,         NULL                                    }
     };
 
-/* Allocate and initialize device-specific data */
+// Allocate and initialize device-specific data
 
     if ( pls->dev != NULL )
         free( (void *) pls->dev );
@@ -442,15 +442,15 @@ plD_init_wingcc( PLStream *pls )
 
     dev = (wingcc_Dev *) pls->dev;
 
-    pls->icol0 = 1;                   /* Set a fall back pen colour in case user doesn't */
+    pls->icol0 = 1;                   // Set a fall back pen colour in case user doesn't
 
-    pls->termin      = 1;             /* interactive device */
-    pls->graphx      = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
-    pls->dev_fill0   = 1;             /* driver can do solid area fills */
-    pls->dev_xor     = 1;             /* driver supports xor mode */
-    pls->dev_clear   = 0;             /* driver does not support clear - what is the proper API? */
-    pls->dev_dash    = 0;             /* driver can not do dashed lines (yet) */
-    pls->plbuf_write = 1;             /* driver uses the buffer for redraws */
+    pls->termin      = 1;             // interactive device
+    pls->graphx      = GRAPHICS_MODE; //  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination)
+    pls->dev_fill0   = 1;             // driver can do solid area fills
+    pls->dev_xor     = 1;             // driver supports xor mode
+    pls->dev_clear   = 0;             // driver does not support clear - what is the proper API?
+    pls->dev_dash    = 0;             // driver can not do dashed lines (yet)
+    pls->plbuf_write = 1;             // driver uses the buffer for redraws
 
     if ( !pls->colorset )
         pls->color = 1;
@@ -458,27 +458,27 @@ plD_init_wingcc( PLStream *pls )
 
 #ifdef HAVE_FREETYPE
 
-/*
- *  Read registry to see if the user has set up default values
- *  for text and smoothing. These will be overriden by anything that
- *  might be given on the command line, so we will load the
- *  values right into the same memory slots we pass to plParseDrvOpts
- */
+//
+//  Read registry to see if the user has set up default values
+//  for text and smoothing. These will be overriden by anything that
+//  might be given on the command line, so we will load the
+//  values right into the same memory slots we pass to plParseDrvOpts
+//
 
     GetRegIntValue( key_name, Keyword_text, &freetype );
     GetRegIntValue( key_name, Keyword_smooth, &smooth_text );
 
 #endif
 
-/* Check for and set up driver options */
+// Check for and set up driver options
 
     plParseDrvOpts( wingcc_options );
 
 #ifdef HAVE_FREETYPE
 
-/*
- *  We will now save the settings to the registary if the user wants
- */
+//
+//  We will now save the settings to the registary if the user wants
+//
 
     if ( save_reg == 1 )
     {
@@ -488,81 +488,81 @@ plD_init_wingcc( PLStream *pls )
 
 #endif
 
-/* Set up device parameters */
+// Set up device parameters
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
-        /* use default width, height of 800x600 if not specifed by -geometry option
-         * or plspage */
+        // use default width, height of 800x600 if not specifed by -geometry option
+        // or plspage
         plspage( 0., 0., 800, 600, 0, 0 );
     }
 
-    dev->width  = pls->xlength - 1;     /* should I use -1 or not??? */
+    dev->width  = pls->xlength - 1;     // should I use -1 or not???
     dev->height = pls->ylength - 1;
 
-/*
- * Begin initialising the window
- */
+//
+// Begin initialising the window
+//
 
-    /* Initialize the entire structure to zero. */
+    // Initialize the entire structure to zero.
     memset( &dev->wndclass, 0, sizeof ( WNDCLASSEX ) );
 
-    /* This class is called WinTestWin */
+    // This class is called WinTestWin
     dev->wndclass.lpszClassName = szWndClass;
 
-    /* cbSize gives the size of the structure for extensibility. */
+    // cbSize gives the size of the structure for extensibility.
     dev->wndclass.cbSize = sizeof ( WNDCLASSEX );
 
-    /* All windows of this class redraw when resized. */
+    // All windows of this class redraw when resized.
     dev->wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC | CS_PARENTDC;
 
-    /* All windows of this class use the WndProc window function. */
+    // All windows of this class use the WndProc window function.
     dev->wndclass.lpfnWndProc = PlplotWndProc;
 
-    /* This class is used with the current program instance. */
+    // This class is used with the current program instance.
 
     dev->wndclass.hInstance = GetModuleHandle( NULL );
 
-    /* Use standard application icon and arrow cursor provided by the OS */
+    // Use standard application icon and arrow cursor provided by the OS
     dev->wndclass.hIcon   = LoadIcon( NULL, IDI_APPLICATION );
     dev->wndclass.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
     dev->wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
-    /* Color the background white */
+    // Color the background white
     dev->wndclass.hbrBackground = NULL;
 
     dev->wndclass.cbWndExtra = sizeof ( pls );
 
 
-    /*
-     * Now register the window class for use.
-     */
+    //
+    // Now register the window class for use.
+    //
 
     RegisterClassEx( &dev->wndclass );
 
 
-    /*
-     * Create our main window using that window class.
-     */
+    //
+    // Create our main window using that window class.
+    //
     dev->hwnd = CreateWindowEx( WS_EX_WINDOWEDGE + WS_EX_LEFT,
-        szWndClass,                                         /* Class name */
-        pls->program,                                       /* Caption */
-        WS_OVERLAPPEDWINDOW,                                /* Style */
-        pls->xoffset,                                       /* Initial x (use default) */
-        pls->yoffset,                                       /* Initial y (use default) */
-        pls->xlength,                                       /* Initial x size (use default) */
-        pls->ylength,                                       /* Initial y size (use default) */
-        NULL,                                               /* No parent window */
-        NULL,                                               /* No menu */
-        dev->wndclass.hInstance,                            /* This program instance */
-        NULL                                                /* Creation parameters */
+        szWndClass,                                         // Class name
+        pls->program,                                       // Caption
+        WS_OVERLAPPEDWINDOW,                                // Style
+        pls->xoffset,                                       // Initial x (use default)
+        pls->yoffset,                                       // Initial y (use default)
+        pls->xlength,                                       // Initial x size (use default)
+        pls->ylength,                                       // Initial y size (use default)
+        NULL,                                               // No parent window
+        NULL,                                               // No menu
+        dev->wndclass.hInstance,                            // This program instance
+        NULL                                                // Creation parameters
         );
 
 
-/*
- * Attach a pointer to the stream to the window's user area
- * this pointer will be used by the windows call back for
- * process this window
- */
+//
+// Attach a pointer to the stream to the window's user area
+// this pointer will be used by the windows call back for
+// process this window
+//
 
 #ifdef _WIN64
     SetWindowLongPtr( dev->hwnd, GWL_USERDATA, (LONG_PTR) pls );
@@ -572,9 +572,9 @@ plD_init_wingcc( PLStream *pls )
 
     dev->SCRN_hdc = dev->hdc = GetDC( dev->hwnd );
 
-/*
- *  Setup the popup menu
- */
+//
+//  Setup the popup menu
+//
 
     dev->PopupMenu = CreatePopupMenu();
     AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
@@ -585,8 +585,8 @@ plD_init_wingcc( PLStream *pls )
 
     if ( freetype )
     {
-        pls->dev_text    = 1; /* want to draw text */
-        pls->dev_unicode = 1; /* want unicode */
+        pls->dev_text    = 1; // want to draw text
+        pls->dev_unicode = 1; // want unicode
         init_freetype_lv1( pls );
         FT = (FT_Data *) pls->FT;
         FT->want_smooth_text = smooth_text;
@@ -597,43 +597,43 @@ plD_init_wingcc( PLStream *pls )
 
 
     plD_state_wingcc( pls, PLSTATE_COLOR0 );
-    /*
-     * Display the window which we just created (using the nShow
-     * passed by the OS, which allows for start minimized and that
-     * sort of thing).
-     */
+    //
+    // Display the window which we just created (using the nShow
+    // passed by the OS, which allows for start minimized and that
+    // sort of thing).
+    //
     ShowWindow( dev->hwnd, SW_SHOWDEFAULT );
     SetForegroundWindow( dev->hwnd );
 
-    /*
-     * Set up the DPI etc...
-     */
+    //
+    // Set up the DPI etc...
+    //
 
 
-    if ( pls->xdpi <= 0 ) /* Get DPI from windows */
+    if ( pls->xdpi <= 0 ) // Get DPI from windows
     {
         plspage( GetDeviceCaps( dev->hdc, HORZRES ) / GetDeviceCaps( dev->hdc, HORZSIZE ) * 25.4,
             GetDeviceCaps( dev->hdc, VERTRES ) / GetDeviceCaps( dev->hdc, VERTSIZE ) * 25.4, 0, 0, 0, 0 );
     }
     else
     {
-        pls->ydpi = pls->xdpi;        /* Set X and Y dpi's to the same value */
+        pls->ydpi = pls->xdpi;        // Set X and Y dpi's to the same value
     }
 
 
-/*
- *  Now we have to find out, from windows, just how big our drawing area is
- *  when we specified the page size earlier on, that includes the borders,
- *  title bar etc... so now that windows has done all its initialisations,
- *  we will ask how big the drawing area is, and tell plplot
- */
+//
+//  Now we have to find out, from windows, just how big our drawing area is
+//  when we specified the page size earlier on, that includes the borders,
+//  title bar etc... so now that windows has done all its initialisations,
+//  we will ask how big the drawing area is, and tell plplot
+//
 
     GetClientRect( dev->hwnd, &dev->rect );
     dev->width  = dev->rect.right;
     dev->height = dev->rect.bottom;
 
-    if ( dev->width > dev->height )           /* Work out the scaling factor for the  */
-    {                                         /* "virtual" (oversized) page           */
+    if ( dev->width > dev->height )           // Work out the scaling factor for the
+    {                                         // "virtual" (oversized) page
         dev->scale = (PLFLT) ( PIXELS_X - 1 ) / dev->width;
     }
     else
@@ -654,11 +654,11 @@ plD_init_wingcc( PLStream *pls )
 #endif
 }
 
-/*----------------------------------------------------------------------*\
- * plD_line_wingcc()
- *
- * Draw a line in the current color from (x1,y1) to (x2,y2).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_line_wingcc()
+//
+// Draw a line in the current color from (x1,y1) to (x2,y2).
+//----------------------------------------------------------------------
 
 void
 plD_line_wingcc( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -686,11 +686,11 @@ plD_line_wingcc( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 }
 
 
-/*----------------------------------------------------------------------*\
- * plD_polyline_wingcc()
- *
- * Draw a polyline in the current color.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_polyline_wingcc()
+//
+// Draw a polyline in the current color.
+//----------------------------------------------------------------------
 
 void
 plD_polyline_wingcc( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -721,11 +721,11 @@ plD_polyline_wingcc( PLStream *pls, short *xa, short *ya, PLINT npts )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * plD_fill_polygon_wingcc()
- *
- * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_fill_polygon_wingcc()
+//
+// Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+//----------------------------------------------------------------------
 
 static void
 plD_fill_polygon_wingcc( PLStream *pls )
@@ -761,20 +761,20 @@ plD_fill_polygon_wingcc( PLStream *pls )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- *    static void CopySCRtoBMP(PLStream *pls)
- *       Function copies the screen contents into a bitmap which is
- *       later used for fast redraws of the screen (when it gets corrupted)
- *       rather than remaking the plot from the plot buffer.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//    static void CopySCRtoBMP(PLStream *pls)
+//       Function copies the screen contents into a bitmap which is
+//       later used for fast redraws of the screen (when it gets corrupted)
+//       rather than remaking the plot from the plot buffer.
+//--------------------------------------------------------------------------
 
 static void CopySCRtoBMP( PLStream *pls )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
 
-    /*
-     *   Clean up the old bitmap and DC
-     */
+    //
+    //   Clean up the old bitmap and DC
+    //
 
     if ( dev->hdc2 != NULL )
         DeleteDC( dev->hdc2 );
@@ -865,9 +865,9 @@ plD_eop_wingcc( PLStream *pls )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- *  Beginning of the new page
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  Beginning of the new page
+//--------------------------------------------------------------------------
 void
 plD_bop_wingcc( PLStream *pls )
 {
@@ -877,10 +877,10 @@ plD_bop_wingcc( PLStream *pls )
 #endif
     Debug( "Start of Page\t" );
 
-/*
- *  Turn the cursor to a busy sign, clear the page by "invalidating" it
- *  then reset the colours and pen width
- */
+//
+//  Turn the cursor to a busy sign, clear the page by "invalidating" it
+//  then reset the colours and pen width
+//
 
     BusyCursor();
     dev->already_erased = 0;
@@ -927,11 +927,11 @@ plD_tidy_wingcc( PLStream *pls )
 
 
 
-/*----------------------------------------------------------------------*\
- * plD_state_png()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// plD_state_png()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//----------------------------------------------------------------------
 
 void
 plD_state_wingcc( PLStream *pls, PLINT op )
@@ -987,26 +987,26 @@ plD_esc_wingcc( PLStream *pls, PLINT op, void *ptr )
         plD_render_freetype_text( pls, (EscText *) ptr );
         break;
 
-/*     case PLESC_LIKES_UNICODE:
- *      plD_render_freetype_sym(pls, (EscText *)ptr);
- *      break;*/
+//     case PLESC_LIKES_UNICODE:
+//      plD_render_freetype_sym(pls, (EscText *)ptr);
+//      break;
 
 #endif
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * static void Resize( PLStream *pls )
- *
- * This function calculates how to resize a window after a message has been
- * received from windows telling us the window has been changed.
- * It tries to recalculate the scale of the window so everything works out
- * just right.
- * The window is only resized if plplot has finished all of its plotting.
- * That means that if you resize while a picture is being plotted,
- * unpredictable results may result. The reason I do this is because the
- * resize function calls redraw window, which replays the whole plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// static void Resize( PLStream *pls )
+//
+// This function calculates how to resize a window after a message has been
+// received from windows telling us the window has been changed.
+// It tries to recalculate the scale of the window so everything works out
+// just right.
+// The window is only resized if plplot has finished all of its plotting.
+// That means that if you resize while a picture is being plotted,
+// unpredictable results may result. The reason I do this is because the
+// resize function calls redraw window, which replays the whole plot.
+//--------------------------------------------------------------------------
 
 static void Resize( PLStream *pls )
 {
@@ -1016,21 +1016,21 @@ static void Resize( PLStream *pls )
 #endif
     Debug( "Resizing" );
 
-    if ( dev->waiting == 1 )     /* Only resize the window IF plplot has finished with it */
+    if ( dev->waiting == 1 )     // Only resize the window IF plplot has finished with it
     {
         memcpy( &dev->oldrect, &dev->rect, sizeof ( RECT ) );
         GetClientRect( dev->hwnd, &dev->rect );
         Debug3( "[%d %d]", dev->rect.right, dev->rect.bottom );
 
-        if ( ( dev->rect.right > 0 ) && ( dev->rect.bottom > 0 ) )            /* Check to make sure it isn't just minimised (i.e. zero size) */
+        if ( ( dev->rect.right > 0 ) && ( dev->rect.bottom > 0 ) )            // Check to make sure it isn't just minimised (i.e. zero size)
         {
-            if ( memcmp( &dev->rect, &dev->oldrect, sizeof ( RECT ) ) != 0 )  /* See if the window's changed size or not */
+            if ( memcmp( &dev->rect, &dev->oldrect, sizeof ( RECT ) ) != 0 )  // See if the window's changed size or not
             {
                 dev->already_erased = 0;
                 dev->width          = dev->rect.right;
                 dev->height         = dev->rect.bottom;
-                if ( dev->width > dev->height )     /* Work out the scaling factor for the  */
-                {                                   /* "virtual" (oversized) page           */
+                if ( dev->width > dev->height )     // Work out the scaling factor for the
+                {                                   // "virtual" (oversized) page
                     dev->scale = (PLFLT) ( PIXELS_X - 1 ) / dev->width;
                 }
                 else
@@ -1050,19 +1050,19 @@ static void Resize( PLStream *pls )
         }
         else
         {
-            memcpy( &dev->rect, &dev->oldrect, sizeof ( RECT ) ); /* restore the old size to current size since the window is minimised */
+            memcpy( &dev->rect, &dev->oldrect, sizeof ( RECT ) ); // restore the old size to current size since the window is minimised
         }
     }
 }
 
 
-/*--------------------------------------------------------------------------*\
- * int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, int size)
- *
- *  Function set the registry; if registary entry does not exist, it is
- *  created. Actually, the key is created before it is set just to make sure
- *  that is is there !
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// int SetRegValue(char *key_name, char *key_word, char *buffer,int dwType, int size)
+//
+//  Function set the registry; if registary entry does not exist, it is
+//  created. Actually, the key is created before it is set just to make sure
+//  that is is there !
+//--------------------------------------------------------------------------
 
 static int SetRegValue( char *key_name, char *key_word, char *buffer, int dwType, int size )
 {
@@ -1074,13 +1074,13 @@ static int SetRegValue( char *key_name, char *key_word, char *buffer, int dwType
     j = RegCreateKeyEx(
         HKEY_CURRENT_USER,
         key_name,
-        0,                                         /* reserved */
-        NULL,                                      /* address of class string */
-        REG_OPTION_NON_VOLATILE,                   /* special options flag */
-        KEY_WRITE,                                 /* desired security access */
-        NULL,                                      /* address of key security structure */
-        &hKey,                                     /* address of buffer for opened handle */
-        &lpdwDisposition                           /* address of disposition value buffer */
+        0,                                         // reserved
+        NULL,                                      // address of class string
+        REG_OPTION_NON_VOLATILE,                   // special options flag
+        KEY_WRITE,                                 // desired security access
+        NULL,                                      // address of key security structure
+        &hKey,                                     // address of buffer for opened handle
+        &lpdwDisposition                           // address of disposition value buffer
         );
 
     if ( j == ERROR_SUCCESS )
@@ -1091,14 +1091,14 @@ static int SetRegValue( char *key_name, char *key_word, char *buffer, int dwType
     return ( j );
 }
 
-/*--------------------------------------------------------------------------*\
- * int GetRegValue(char *key_name, char *key_word, char *buffer, int size)
- *
- *  Function reads the registry and gets a string value from it
- *  buffer must be allocated by the caller, and the size is given in the size
- *  paramater.
- *  Return code is 1 for success, and 0 for failure.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// int GetRegValue(char *key_name, char *key_word, char *buffer, int size)
+//
+//  Function reads the registry and gets a string value from it
+//  buffer must be allocated by the caller, and the size is given in the size
+//  paramater.
+//  Return code is 1 for success, and 0 for failure.
+//--------------------------------------------------------------------------
 
 static int GetRegValue( char *key_name, char *key_word, char *buffer, int size )
 {
@@ -1120,12 +1120,12 @@ static int GetRegValue( char *key_name, char *key_word, char *buffer, int size )
 
 #ifdef HAVE_FREETYPE
 
-/*----------------------------------------------------------------------*\
- *  void plD_pixel_wingcc (PLStream *pls, short x, short y)
- *
- *  callback function, of type "plD_pixel_fp", which specifies how a single
- *  pixel is set in the current colour.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+//  void plD_pixel_wingcc (PLStream *pls, short x, short y)
+//
+//  callback function, of type "plD_pixel_fp", which specifies how a single
+//  pixel is set in the current colour.
+//----------------------------------------------------------------------
 
 static void plD_pixel_wingcc( PLStream *pls, short x, short y )
 {
@@ -1141,13 +1141,13 @@ static void plD_pixelV_wingcc( PLStream *pls, short x, short y )
     SetPixelV( dev->hdc, x, y, dev->colour );
 }
 
-/*----------------------------------------------------------------------*\
- *  void plD_set_pixelV_wingcc (PLStream *pls, short x, short y,PLINT colour)
- *
- *  callback function, of type "plD_set_pixel_fp", which specifies how a
- *  single pixel is set in the s[ecified colour. This colour
- *  by-passes plplot's internal table, and directly 'hits the hardware'.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+//  void plD_set_pixelV_wingcc (PLStream *pls, short x, short y,PLINT colour)
+//
+//  callback function, of type "plD_set_pixel_fp", which specifies how a
+//  single pixel is set in the s[ecified colour. This colour
+//  by-passes plplot's internal table, and directly 'hits the hardware'.
+//----------------------------------------------------------------------
 
 static void plD_set_pixel_wingcc( PLStream *pls, short x, short y, PLINT colour )
 {
@@ -1164,12 +1164,12 @@ static void plD_set_pixelV_wingcc( PLStream *pls, short x, short y, PLINT colour
 }
 
 
-/*--------------------------------------------------------------------------*\
- *  void plD_read_pixel_wingcc (PLStream *pls, short x, short y)
- *
- *  callback function, of type "plD_pixel_fp", which specifies how a single
- *  pixel is read.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void plD_read_pixel_wingcc (PLStream *pls, short x, short y)
+//
+//  callback function, of type "plD_pixel_fp", which specifies how a single
+//  pixel is read.
+//--------------------------------------------------------------------------
 static PLINT plD_read_pixel_wingcc( PLStream *pls, short x, short y )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
@@ -1178,14 +1178,14 @@ static PLINT plD_read_pixel_wingcc( PLStream *pls, short x, short y )
 }
 
 
-/*----------------------------------------------------------------------*\
- *  void init_freetype_lv1 (PLStream *pls)
- *
- *  "level 1" initialisation of the freetype library.
- *  "Level 1" initialisation calls plD_FreeType_init(pls) which allocates
- *  memory to the pls->FT structure, then sets up the pixel callback
- *  function.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+//  void init_freetype_lv1 (PLStream *pls)
+//
+//  "level 1" initialisation of the freetype library.
+//  "Level 1" initialisation calls plD_FreeType_init(pls) which allocates
+//  memory to the pls->FT structure, then sets up the pixel callback
+//  function.
+//----------------------------------------------------------------------
 
 static void init_freetype_lv1( PLStream *pls )
 {
@@ -1199,10 +1199,10 @@ static void init_freetype_lv1( PLStream *pls )
 
 
 
-/*
- *  Work out if our device support "fast" pixel setting
- *  and if so, use that instead of "slow" pixel setting
- */
+//
+//  Work out if our device support "fast" pixel setting
+//  and if so, use that instead of "slow" pixel setting
+//
 
     x = GetDeviceCaps( dev->hdc, RASTERCAPS );
 
@@ -1211,10 +1211,10 @@ static void init_freetype_lv1( PLStream *pls )
     else
         FT->pixel = (plD_pixel_fp) plD_pixel_wingcc;
 
-/*
- *  See if we have a 24 bit device (or better), in which case
- *  we can use the better antialaaising.
- */
+//
+//  See if we have a 24 bit device (or better), in which case
+//  we can use the better antialaaising.
+//
 
     if ( GetDeviceCaps( dev->hdc, BITSPIXEL ) > 24 )
     {
@@ -1228,30 +1228,30 @@ static void init_freetype_lv1( PLStream *pls )
     }
 }
 
-/*----------------------------------------------------------------------*\
- *  void init_freetype_lv2 (PLStream *pls)
- *
- *  "Level 2" initialisation of the freetype library.
- *  "Level 2" fills in a few setting that aren't public until after the
- *  graphics sub-system has been initialised.
- *  The "level 2" initialisation fills in a few things that are defined
- *  later in the initialisation process for the GD driver.
- *
- *  FT->scale is a scaling factor to convert co-ordinates. This is used by
- *  the GD and other drivers to scale back a larger virtual page and this
- *  eliminate the "hidden line removal bug". Set it to 1 if your device
- *  doesn't have scaling.
- *
- *  Some coordinate systems have zero on the bottom, others have zero on
- *  the top. Freetype does it one way, and most everything else does it the
- *  other. To make sure everything is working ok, we have to "flip" the
- *  coordinates, and to do this we need to know how big in the Y dimension
- *  the page is, and whether we have to invert the page or leave it alone.
- *
- *  FT->ymax specifies the size of the page FT->invert_y=1 tells us to
- *  invert the y-coordinates, FT->invert_y=0 will not invert the
- *  coordinates.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+//  void init_freetype_lv2 (PLStream *pls)
+//
+//  "Level 2" initialisation of the freetype library.
+//  "Level 2" fills in a few setting that aren't public until after the
+//  graphics sub-system has been initialised.
+//  The "level 2" initialisation fills in a few things that are defined
+//  later in the initialisation process for the GD driver.
+//
+//  FT->scale is a scaling factor to convert co-ordinates. This is used by
+//  the GD and other drivers to scale back a larger virtual page and this
+//  eliminate the "hidden line removal bug". Set it to 1 if your device
+//  doesn't have scaling.
+//
+//  Some coordinate systems have zero on the bottom, others have zero on
+//  the top. Freetype does it one way, and most everything else does it the
+//  other. To make sure everything is working ok, we have to "flip" the
+//  coordinates, and to do this we need to know how big in the Y dimension
+//  the page is, and whether we have to invert the page or leave it alone.
+//
+//  FT->ymax specifies the size of the page FT->invert_y=1 tells us to
+//  invert the y-coordinates, FT->invert_y=0 will not invert the
+//  coordinates.
+//----------------------------------------------------------------------
 
 static void init_freetype_lv2( PLStream *pls )
 {
@@ -1262,42 +1262,42 @@ static void init_freetype_lv2( PLStream *pls )
     FT->ymax     = dev->height;
     FT->invert_y = 1;
 
-    if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) )           /* do we want to at least *try* for smoothing ? */
+    if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) )           // do we want to at least *try* for smoothing ?
     {
-        FT->ncol0_org   = pls->ncol0;                                                   /* save a copy of the original size of ncol0 */
-        FT->ncol0_xtra  = 16777216 - ( pls->ncol1 + pls->ncol0 );                       /* work out how many free slots we have */
-        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;             /* find out how many different shades of anti-aliasing we can do */
-        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;             /* set a maximum number of shades */
-        plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ) );                  /* redefine the size of cmap0 */
-/* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
- * call in plscmap0 which (a) leads to segfaults since the GD image is
- * not defined at this point and (b) would be inefficient in any case since
- * setcmap is always called later (see plD_bop_png) to update the driver
- * color palette to be consistent with cmap0. */
+        FT->ncol0_org   = pls->ncol0;                                                   // save a copy of the original size of ncol0
+        FT->ncol0_xtra  = 16777216 - ( pls->ncol1 + pls->ncol0 );                       // work out how many free slots we have
+        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;             // find out how many different shades of anti-aliasing we can do
+        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;             // set a maximum number of shades
+        plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ) );                  // redefine the size of cmap0
+// the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
+// call in plscmap0 which (a) leads to segfaults since the GD image is
+// not defined at this point and (b) would be inefficient in any case since
+// setcmap is always called later (see plD_bop_png) to update the driver
+// color palette to be consistent with cmap0.
         {
             PLINT level_save;
             level_save = pls->level;
             pls->level = 0;
-            pl_set_extended_cmap0( pls, FT->ncol0_width, FT->ncol0_org ); /* call the function to add the extra cmap0 entries and calculate stuff */
+            pl_set_extended_cmap0( pls, FT->ncol0_width, FT->ncol0_org ); // call the function to add the extra cmap0 entries and calculate stuff
             pls->level = level_save;
         }
-        FT->smooth_text = 1;                                                       /* Yippee ! We had success setting up the extended cmap0 */
+        FT->smooth_text = 1;                                                       // Yippee ! We had success setting up the extended cmap0
     }
-    else if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 ) ) /* If we have a truecolour device, we wont even bother trying to change the palette */
+    else if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 ) ) // If we have a truecolour device, we wont even bother trying to change the palette
     {
         FT->smooth_text = 1;
     }
 }
 #endif
 
-/*--------------------------------------------------------------------------*\
- *  static void UpdatePageMetrics ( PLStream *pls, char flag )
- *
- *      UpdatePageMetrics is a simple function which simply gets new vales for
- *      a changed DC, be it swapping from printer to screen or vice-versa.
- *      The flag variable is used to tell the function if it is updating
- *      from the printer (1) or screen (0).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  static void UpdatePageMetrics ( PLStream *pls, char flag )
+//
+//      UpdatePageMetrics is a simple function which simply gets new vales for
+//      a changed DC, be it swapping from printer to screen or vice-versa.
+//      The flag variable is used to tell the function if it is updating
+//      from the printer (1) or screen (0).
+//--------------------------------------------------------------------------
 
 static void UpdatePageMetrics( PLStream *pls, char flag )
 {
@@ -1308,7 +1308,7 @@ static void UpdatePageMetrics( PLStream *pls, char flag )
 
     if ( flag == 1 )
     {
-        dev->width  = GetDeviceCaps( dev->hdc, HORZRES ); /* Get the page size from the printer */
+        dev->width  = GetDeviceCaps( dev->hdc, HORZRES ); // Get the page size from the printer
         dev->height = GetDeviceCaps( dev->hdc, VERTRES );
     }
     else
@@ -1318,8 +1318,8 @@ static void UpdatePageMetrics( PLStream *pls, char flag )
         dev->height = dev->rect.bottom;
     }
 
-    if ( dev->width > dev->height )     /* Work out the scaling factor for the  */
-    {                                   /* "virtual" (oversized) page           */
+    if ( dev->width > dev->height )     // Work out the scaling factor for the
+    {                                   // "virtual" (oversized) page
         dev->scale = (PLFLT) ( PIXELS_X - 1 ) / dev->width;
     }
     else
@@ -1328,7 +1328,7 @@ static void UpdatePageMetrics( PLStream *pls, char flag )
     }
 
   #ifdef HAVE_FREETYPE
-    if ( FT )           /* If we are using freetype, then set it up next */
+    if ( FT )           // If we are using freetype, then set it up next
     {
         FT->scale = dev->scale;
         FT->ymax  = dev->height;
@@ -1345,13 +1345,13 @@ static void UpdatePageMetrics( PLStream *pls, char flag )
     plP_setphy( 0, (PLINT) ( dev->scale * dev->width ), 0, (PLINT) ( dev->scale * dev->height ) );
 }
 
-/*--------------------------------------------------------------------------*\
- *  static void PrintPage ( PLStream *pls )
- *
- *     Function brings up a standard printer dialog and, after the user
- *     has selected a printer, replots the current page to the windows
- *     printer.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  static void PrintPage ( PLStream *pls )
+//
+//     Function brings up a standard printer dialog and, after the user
+//     has selected a printer, replots the current page to the windows
+//     printer.
+//--------------------------------------------------------------------------
 
 static void PrintPage( PLStream *pls )
 {
@@ -1362,18 +1362,18 @@ static void PrintPage( PLStream *pls )
     PRINTDLG   Printer;
     DOCINFO    docinfo;
 
-    /*
-     *    Reset the docinfo structure to 0 and set it's fields up
-     *    This structure is used to supply a name to the print queue
-     */
+    //
+    //    Reset the docinfo structure to 0 and set it's fields up
+    //    This structure is used to supply a name to the print queue
+    //
 
     ZeroMemory( &docinfo, sizeof ( docinfo ) );
     docinfo.cbSize      = sizeof ( docinfo );
     docinfo.lpszDocName = "Plplot Page";
 
-    /*
-     *   Reset out printer structure to zero and initialise it
-     */
+    //
+    //   Reset out printer structure to zero and initialise it
+    //
 
     ZeroMemory( &Printer, sizeof ( PRINTDLG ) );
     Printer.lStructSize = sizeof ( PRINTDLG );
@@ -1381,62 +1381,62 @@ static void PrintPage( PLStream *pls )
     Printer.Flags       = PD_NOPAGENUMS | PD_NOSELECTION | PD_RETURNDC;
     Printer.nCopies     = 1;
 
-    /*
-     *   Call the printer dialog function.
-     *   If the user has clicked on "Print", then we will continue
-     *   processing and print out the page.
-     */
+    //
+    //   Call the printer dialog function.
+    //   If the user has clicked on "Print", then we will continue
+    //   processing and print out the page.
+    //
 
     if ( PrintDlg( &Printer ) != 0 )
     {
-        /*
-         *  Before doing anything, we will take some backup copies
-         *  of the existing values for page size and the like, because
-         *  all we are going to do is a quick and dirty modification
-         *  of plplot's internals to match the new page size and hope
-         *  it all works out ok. After that, we will manip the values,
-         *  and when all is done, restore them.
-         */
+        //
+        //  Before doing anything, we will take some backup copies
+        //  of the existing values for page size and the like, because
+        //  all we are going to do is a quick and dirty modification
+        //  of plplot's internals to match the new page size and hope
+        //  it all works out ok. After that, we will manip the values,
+        //  and when all is done, restore them.
+        //
 
         if ( ( dev->push = GlobalAlloc( GMEM_ZEROINIT, sizeof ( wingcc_Dev ) ) ) != NULL )
         {
             BusyCursor();
             memcpy( dev->push, dev, sizeof ( wingcc_Dev ) );
 
-            dev->hdc = dev->PRNT_hdc = Printer.hDC; /* Copy the printer HDC */
+            dev->hdc = dev->PRNT_hdc = Printer.hDC; // Copy the printer HDC
 
             UpdatePageMetrics( pls, 1 );
 
           #ifdef HAVE_FREETYPE
-            if ( FT )                                  /* If we are using freetype, then set it up next */
+            if ( FT )                                  // If we are using freetype, then set it up next
             {
-                dev->FT_smooth_text = FT->smooth_text; /* When printing, we don't want smoothing */
+                dev->FT_smooth_text = FT->smooth_text; // When printing, we don't want smoothing
                 FT->smooth_text     = 0;
             }
           #endif
 
-            /*
-             *   Now the stuff that actually does the printing !!
-             */
+            //
+            //   Now the stuff that actually does the printing !!
+            //
 
             StartDoc( dev->hdc, &docinfo );
             plRemakePlot( pls );
             EndDoc( dev->hdc );
 
-            /*
-             *  Now to undo everything back to what it was for the screen
-             */
+            //
+            //  Now to undo everything back to what it was for the screen
+            //
 
-            dev->hdc = dev->SCRN_hdc;  /* Reset the screen HDC to the default */
+            dev->hdc = dev->SCRN_hdc;  // Reset the screen HDC to the default
             UpdatePageMetrics( pls, 0 );
 
           #ifdef HAVE_FREETYPE
-            if ( FT )           /* If we are using freetype, then set it up next */
+            if ( FT )           // If we are using freetype, then set it up next
             {
                 FT->smooth_text = dev->FT_smooth_text;
             }
           #endif
-            memcpy( dev, dev->push, sizeof ( wingcc_Dev ) ); /* POP our "stack" now to restore the values */
+            memcpy( dev, dev->push, sizeof ( wingcc_Dev ) ); // POP our "stack" now to restore the values
 
             GlobalFree( dev->push );
             NormalCursor();
@@ -1454,4 +1454,4 @@ pldummy_wingcc()
     return ( 0 );
 }
 
-#endif                          /* PLD_wingccdev */
+#endif                          // PLD_wingccdev

@@ -1,7 +1,7 @@
-/* $Id$
- *
- * PLplot pstex (Postscript/LaTeX) device driver.
- */
+// $Id$
+//
+// PLplot pstex (Postscript/LaTeX) device driver.
+//
 
 #include "plDevs.h"
 
@@ -11,15 +11,15 @@
 #include "drivers.h"
 #include "ps.h"
 
-/* Device info */
+// Device info
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pstex =
     "pstex:Combined Postscript/LaTeX files:0:pstex:41:pstex\n";
 
-/*--------------------------------------------------------------------------*\
- * plD_init_pstex()
- *
- * Initialize device.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plD_init_pstex()
+//
+// Initialize device.
+//--------------------------------------------------------------------------
 
 
 static void parse_str( const char *str, char *dest );
@@ -58,16 +58,16 @@ plD_init_pstex( PLStream *pls )
 
     plParseDrvOpts( pstex_options );
     if ( color )
-        plD_init_psc( pls ); /* init color postscript driver */
+        plD_init_psc( pls ); // init color postscript driver
     else
-        plD_init_psm( pls ); /* init monochrome postscript driver */
+        plD_init_psm( pls ); // init monochrome postscript driver
 
     dev = (PSDev *) pls->dev;
 
-    pls->dev_text    = 1; /* want to draw text */
-    pls->dev_unicode = 0; /* don't want unicode */
+    pls->dev_text    = 1; // want to draw text
+    pls->dev_unicode = 0; // don't want unicode
 
-    /* open latex output file */
+    // open latex output file
     len   = strlen( pls->FileName ) + 3;
     ofile = (char *) malloc( sizeof ( char ) * len );
     snprintf( ofile, len, "%s_t", pls->FileName );
@@ -78,7 +78,7 @@ plD_init_pstex( PLStream *pls )
     fprintf( fp, "\\begin{picture}(0,0)(0,0)%%\n" );
     fprintf( fp, "\\includegraphics[scale=1.,clip]{%s}%%\n", pls->FileName );
     fprintf( fp, "\\end{picture}%%\n" );
-/*  fprintf(fp,"\\setlength{\\unitlength}{%fbp}%%\n", 72./25.4/pls->xpmm); */
+//  fprintf(fp,"\\setlength{\\unitlength}{%fbp}%%\n", 72./25.4/pls->xpmm);
     fprintf( fp, "\\setlength{\\unitlength}{%fbp}%%\n", 1.0 / ENLARGE );
     fprintf( fp, "\\begingroup\\makeatletter\\ifx\\SetFigFont\\undefined%%\n" );
     fprintf( fp, "\\gdef\\SetFigFont#1#2#3#4#5{%%\n" );
@@ -147,10 +147,10 @@ proc_str( PLStream *pls, EscText *args )
 
     fp = dev->fp;
 
-    /* font height */
+    // font height
     ft_ht = 1.6 /*!*/ * pls->chrht * 72.0 / 25.4; /* ft_ht in points. ht is in mm */
 
-    /* calculate baseline text angle */
+    // calculate baseline text angle
     angle = ( (PLFLT) ( ORIENTATION - 1 ) + pls->diorot ) * 90.;
     a1    = acos( t[0] ) * 180. / PI;
     if ( t[2] > 0. )
@@ -158,29 +158,29 @@ proc_str( PLStream *pls, EscText *args )
     else
         alpha = 360. - a1 - angle - 90.;
 
-    /* parse string for format (escape) characters */
+    // parse string for format (escape) characters
     parse_str( args->string, cptr );
 
-    /*
-     * Reference point (center baseline of string, not latex character reference point).
-     *  If base = 0, it is aligned with the center of the text box
-     *  If base = 1, it is aligned with the baseline of the text box
-     *  If base = 2, it is aligned with the top of the text box
-     *  Currently plplot only uses base=0
-     */
+    //
+    // Reference point (center baseline of string, not latex character reference point).
+    //  If base = 0, it is aligned with the center of the text box
+    //  If base = 1, it is aligned with the baseline of the text box
+    //  If base = 2, it is aligned with the top of the text box
+    //  Currently plplot only uses base=0
+    //
 
-    if ( args->base == 2 ) /* not supported by plplot */
+    if ( args->base == 2 ) // not supported by plplot
         ref = 't';
     else if ( args->base == 1 )
         ref = 'b';
     else
         ref = 'c';
 
-    /*
-     * Text justification.  Left, center and right justification, which
-     *  are the more common options, are supported; variable justification is
-     *  only approximate, based on plplot computation of it's string lenght
-     */
+    //
+    // Text justification.  Left, center and right justification, which
+    //  are the more common options, are supported; variable justification is
+    //  only approximate, based on plplot computation of it's string lenght
+    //
 
     if ( args->just == 0.5 )
         jst = 'c';
@@ -189,17 +189,17 @@ proc_str( PLStream *pls, EscText *args )
     else
     {
         jst     = 'l';
-        args->x = args->refx; /* use hints provided by plplot */
+        args->x = args->refx; // use hints provided by plplot
         args->y = args->refy;
     }
 
-    /* apply transformations */
+    // apply transformations
     difilt( &args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax );
 
-    /* check clip limits. For now, only the reference point of the string is checked;
-     * but the the whole string should be checked -- using a postscript construct
-     * such as gsave/clip/grestore. This method can also be applied to the xfig and
-     * pstex drivers. Zoom side effect: the font size must be adjusted! */
+    // check clip limits. For now, only the reference point of the string is checked;
+    // but the the whole string should be checked -- using a postscript construct
+    // such as gsave/clip/grestore. This method can also be applied to the xfig and
+    // pstex drivers. Zoom side effect: the font size must be adjusted!
 
     if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax )
         return;
@@ -215,15 +215,15 @@ proc_str( PLStream *pls, EscText *args )
     fprintf( fp, "\\put(%d,%d){\\rotatebox{%.1f}{\\makebox(0,0)[%c%c]{\\SetFigFont{%.1f}{12}",
         args->x, args->y, alpha, jst, ref, ft_ht );
 
-    /*
-     *  font family, serie and shape. Currently not supported by plplot
-     *
-     *  Use current font instead:
-     *  1: Normal font (latex document default font)
-     *  2: Roman font
-     *  3: Italic font (most probably latex slanted)
-     *  4: Script font (latex sans serif)
-     */
+    //
+    //  font family, serie and shape. Currently not supported by plplot
+    //
+    //  Use current font instead:
+    //  1: Normal font (latex document default font)
+    //  2: Roman font
+    //  3: Italic font (most probably latex slanted)
+    //  4: Script font (latex sans serif)
+    //
 
     switch ( pls->cfont )
     {
@@ -236,7 +236,7 @@ proc_str( PLStream *pls, EscText *args )
 
     fprintf( fp, "{\\mddefault}{\\updefault}\n" );
 
-    /* font color. */
+    // font color.
 
     if ( color )
         fprintf( fp, "\\special{ps: %.3f %.3f %.3f setrgbcolor}{",
@@ -248,13 +248,13 @@ proc_str( PLStream *pls, EscText *args )
     fprintf( fp, "%s\n", cptr );
     fprintf( fp, "}}}}" );
 
-    /*
-     * keep ps driver happy -- needed for background and orientation.
-     * arghhh! can't calculate it, as I only have the string reference
-     * point, not its extent!
-     * Quick (and final?) *hack*, ASSUME that no more than a char height
-     * extents after/before the string reference point.
-     */
+    //
+    // keep ps driver happy -- needed for background and orientation.
+    // arghhh! can't calculate it, as I only have the string reference
+    // point, not its extent!
+    // Quick (and final?) *hack*, ASSUME that no more than a char height
+    // extents after/before the string reference point.
+    //
 
     dev->llx = MIN( dev->llx, args->x - ft_ht * 25.4 / 72. * pls->xpmm );
     dev->lly = MIN( dev->lly, args->y - ft_ht * 25.4 / 72. * pls->ypmm );
@@ -288,7 +288,7 @@ parse_str( const char *str, char *dest )
 
         switch ( *str++ )
         {
-        case 'u': /* up one level */
+        case 'u': // up one level
             if ( raised < 0 )
             {
                 *tp++ = '}';
@@ -302,7 +302,7 @@ parse_str( const char *str, char *dest )
             raised++;
             break;
 
-        case 'd': /* down one level */
+        case 'd': // down one level
             if ( raised > 0 )
             {
                 *tp++ = '}';
@@ -316,12 +316,12 @@ parse_str( const char *str, char *dest )
             raised--;
             break;
 
-        case 'b': /* backspace */
+        case 'b': // backspace
             n   = sprintf( tp, "\\hspace{-1em}" );
             tp += n;
             break;
 
-        case '+': /* toggles overline mode. Side effect, enter math mode. */
+        case '+': // toggles overline mode. Side effect, enter math mode.
             if ( overline )
             {
                 if ( --math )
@@ -343,7 +343,7 @@ parse_str( const char *str, char *dest )
             }
             break;
 
-        case '-': /* toggles underline mode. Side effect, enter math mode. */
+        case '-': // toggles underline mode. Side effect, enter math mode.
             if ( underline )
             {
                 if ( --math )
@@ -365,7 +365,7 @@ parse_str( const char *str, char *dest )
             }
             break;
 
-        case 'g': /* greek letter corresponding to roman letter x */
+        case 'g': // greek letter corresponding to roman letter x
             c = *str++;
             n = plP_strpos( greek, c );
             if ( n != -1 )
@@ -386,17 +386,17 @@ parse_str( const char *str, char *dest )
 
             break;
 
-        case '(': /* Hershey symbol number (nnn) (any number of digits) FIXME ???*/
+        case '(': // Hershey symbol number (nnn) (any number of digits) FIXME ???
             plwarn( "'g(...)' text escape sequence not processed." );
             while ( *str++ != ')' )
                 ;
             break;
 
-        case 'f': /* switch font */
+        case 'f': // switch font
 
             switch ( *str++ )
             {
-            case 'n': /* Normal */
+            case 'n': // Normal
                 while ( fontset-- )
                 {
                     *tp++ = '}';
@@ -413,7 +413,7 @@ parse_str( const char *str, char *dest )
                 tp += n;
                 break;
 
-            case 'r': /* Roman */
+            case 'r': // Roman
                 if ( math )
                     n = sprintf( tp, "\\mathrm{" );
                 else
@@ -422,7 +422,7 @@ parse_str( const char *str, char *dest )
                 tp += n; opened++; fontset++;
                 break;
 
-            case 'i': /* Italic */
+            case 'i': // Italic
                 if ( math )
                     n = sprintf( tp, "\\mathit{" );
                 else
@@ -431,7 +431,7 @@ parse_str( const char *str, char *dest )
                 tp += n; opened++; fontset++;
                 break;
 
-            case 's': /* Script. Don't, use sans serif */
+            case 's': // Script. Don't, use sans serif
                 if ( math )
                     n = sprintf( tp, "\\mathsf{" );
                 else
@@ -459,4 +459,4 @@ pldummy_pstex()
     return 0;
 }
 
-#endif            /* PLD_pstexdev */
+#endif            // PLD_pstexdev
