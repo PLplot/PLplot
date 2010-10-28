@@ -1,16 +1,6 @@
 /* $Id$
- * $Log$
- * Revision 1.10  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.9  1995/04/12 08:20:13  mjl
- * Eliminated SCHAR in favor of simply "signed char".
- *
- * Revision 1.8  1994/08/25  04:02:58  mjl
- * Cleaned up header file inclusion.
- */
-
-/*	xtndfont.c
+ *	xtndfont.c
  *
  *      Utility to generate extended font set.
  */
