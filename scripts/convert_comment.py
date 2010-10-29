@@ -46,6 +46,18 @@ for line in sys.stdin.readlines():
     if end_comment >= 0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*\*/[^"]*"', line):
         end_comment = -1
 
+    start_special = line.find("//")
+    # FIXME?
+    # Ignore all "//" instances on a line where the first one is
+    # quoted.
+    if start_special >= 0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*//[^"]*"', line):
+        start_special = -1
+    # If unquoted leading //, then ignore any old-style comments beyond.
+    if start_special >= 0 and start_special <= start_comment -1:
+        start_comment = -1
+    if start_special >= 0 and start_special <= end_comment:
+        end_comment = -1
+
     # Note trailing "\n" has not (yet) been removed from line so
     # that the next to last character is at position len(line) - 3.
     if end_comment >=0 and end_comment !=  len(line) - 3:
