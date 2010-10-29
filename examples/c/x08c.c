@@ -1,37 +1,37 @@
-/* $Id$
- *
- *      3-d plot demo.
- *
- * Copyright (C) 2004  Alan W. Irwin
- * Copyright (C) 2004  Rafael Laboissiere
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *
- */
+// $Id$
+//
+//      3-d plot demo.
+//
+// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004  Rafael Laboissiere
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
+//
 
 #include "plcdemos.h"
 
-/* plexit not declared in public header!  */
+// plexit not declared in public header!
 PLDLLIMPEXP void
 plexit( const char *errormsg );
 
-#define XPTS    35              /* Data points in x */
-#define YPTS    46              /* Data points in y */
+#define XPTS    35              // Data points in x
+#define YPTS    46              // Data points in y
 
 static PLFLT alt[] = { 60.0, 20.0 };
 static PLFLT az[] = { 30.0, 60.0 };
@@ -43,39 +43,39 @@ static char *title[] =
     "#frPLplot Example 8 - Alt=20, Az=60",
 };
 
-/*--------------------------------------------------------------------------*\
- * cmap1_init1
- *
- * Initializes color map 1 in HLS space.
- * Basic grayscale variation from half-dark (which makes more interesting
- * looking plot compared to dark) to light.
- * An interesting variation on this:
- *	s[1] = 1.0
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// cmap1_init1
+//
+// Initializes color map 1 in HLS space.
+// Basic grayscale variation from half-dark (which makes more interesting
+// looking plot compared to dark) to light.
+// An interesting variation on this:
+//	s[1] = 1.0
+//--------------------------------------------------------------------------
 
 static void
 cmap1_init( int gray )
 {
     PLFLT i[2], h[2], l[2], s[2];
 
-    i[0] = 0.0;         /* left boundary */
-    i[1] = 1.0;         /* right boundary */
+    i[0] = 0.0;         // left boundary
+    i[1] = 1.0;         // right boundary
 
     if ( gray )
     {
-        h[0] = 0.0;     /* hue -- low: red (arbitrary if s=0) */
-        h[1] = 0.0;     /* hue -- high: red (arbitrary if s=0) */
+        h[0] = 0.0;     // hue -- low: red (arbitrary if s=0)
+        h[1] = 0.0;     // hue -- high: red (arbitrary if s=0)
 
-        l[0] = 0.5;     /* lightness -- low: half-dark */
-        l[1] = 1.0;     /* lightness -- high: light */
+        l[0] = 0.5;     // lightness -- low: half-dark
+        l[1] = 1.0;     // lightness -- high: light
 
-        s[0] = 0.0;     /* minimum saturation */
-        s[1] = 0.0;     /* minimum saturation */
+        s[0] = 0.0;     // minimum saturation
+        s[1] = 0.0;     // minimum saturation
     }
     else
     {
-        h[0] = 240; /* blue -> green -> yellow -> */
-        h[1] = 0;   /* -> red */
+        h[0] = 240; // blue -> green -> yellow ->
+        h[1] = 0;   // -> red
 
         l[0] = 0.6;
         l[1] = 0.6;
@@ -88,19 +88,19 @@ cmap1_init( int gray )
     c_plscmap1l( 0, 2, i, h, l, s, NULL );
 }
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a series of 3-d plots for a given data set, with different
- * viewing options in each plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a series of 3-d plots for a given data set, with different
+// viewing options in each plot.
+//--------------------------------------------------------------------------
 
 
 static int           sombrero;
 
 static PLOptionTable options[] = {
     {
-        "sombrero",             /* Turns on use of Sombrero function */
+        "sombrero",             // Turns on use of Sombrero function
         NULL,
         NULL,
         &sombrero,
@@ -109,14 +109,14 @@ static PLOptionTable options[] = {
         "Use the \"sombrero\" function."
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 #define LEVELS    10
@@ -134,17 +134,17 @@ main( int argc, const char *argv[] )
     PLINT    nlevel = LEVELS;
     int      rosen  = 1;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plMergeOpts( options, "x08c options", NULL );
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
     if ( sombrero )
         rosen = 0;
 
-    /* Initialize plplot */
+    // Initialize plplot
 
     plinit();
 
-/* Allocate data structures */
+// Allocate data structures
 
     x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ) );
     y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
@@ -185,11 +185,11 @@ main( int argc, const char *argv[] )
             {
                 z[i][j] = pow( 1. - xx, 2. ) + 100. * pow( yy - pow( xx, 2. ), 2. );
 
-                /* The log argument may be zero for just the right grid.  */
+                // The log argument may be zero for just the right grid.
                 if ( z[i][j] > 0. )
                     z[i][j] = log( z[i][j] );
                 else
-                    z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
+                    z[i][j] = -5.; // -MAXFLOAT would mess-up up the scale
             }
             else
             {
@@ -229,22 +229,22 @@ main( int argc, const char *argv[] )
                 "bcdmnstuv", "z axis", 0.0, 0 );
             plcol0( 2 );
 
-            if ( ifshade == 0 ) /* diffuse light surface plot */
+            if ( ifshade == 0 ) // diffuse light surface plot
             {
                 cmap1_init( 1 );
                 plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, XPTS, YPTS, 0, NULL, 0 );
             }
-            else if ( ifshade == 1 ) /* magnitude colored plot */
+            else if ( ifshade == 1 ) // magnitude colored plot
             {
                 cmap1_init( 0 );
                 plfsurf3d( x, y, plf2ops_grid_c(), ( PLPointer ) & grid_c, XPTS, YPTS, MAG_COLOR, NULL, 0 );
             }
-            else if ( ifshade == 2 ) /*  magnitude colored plot with faceted squares */
+            else if ( ifshade == 2 ) //  magnitude colored plot with faceted squares
             {
                 cmap1_init( 0 );
                 plfsurf3d( x, y, plf2ops_grid_row_major(), ( PLPointer ) & grid_row_major, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
             }
-            else                  /* magnitude colored plot with contours */
+            else                  // magnitude colored plot with contours
             {
                 cmap1_init( 0 );
                 plfsurf3d( x, y, plf2ops_grid_col_major(), ( PLPointer ) & grid_col_major, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
@@ -252,7 +252,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-/* Clean up */
+// Clean up
 
     free( (void *) x );
     free( (void *) y );

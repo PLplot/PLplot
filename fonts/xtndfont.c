@@ -1,9 +1,9 @@
-/* $Id$
- *
- *	xtndfont.c
- *
- *      Utility to generate extended font set.
- */
+// $Id$
+//
+//	xtndfont.c
+//
+//      Utility to generate extended font set.
+//
 
 #include "plplotP.h"
 

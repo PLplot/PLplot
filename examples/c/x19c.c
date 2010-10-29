@@ -1,8 +1,8 @@
-/* $Id$
- *
- *      Illustrates backdrop plotting of world, US maps.
- *      Contributed by Wesley Ebisuzaki.
- */
+// $Id$
+//
+//      Illustrates backdrop plotting of world, US maps.
+//      Contributed by Wesley Ebisuzaki.
+//
 
 #include "plcdemos.h"
 
@@ -16,13 +16,13 @@ map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
     *yt    = radius * sin( x * M_PI / 180.0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * mapform19
- *
- * Defines specific coordinate transformation for example 19.
- * Not to be confused with mapform in src/plmap.c.
- * x[], y[] are the coordinates to be plotted.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// mapform19
+//
+// Defines specific coordinate transformation for example 19.
+// Not to be confused with mapform in src/plmap.c.
+// x[], y[] are the coordinates to be plotted.
+//--------------------------------------------------------------------------
 
 void
 mapform19( PLINT n, PLFLT *x, PLFLT *y )
@@ -37,8 +37,8 @@ mapform19( PLINT n, PLFLT *x, PLFLT *y )
     }
 }
 
-/* "Normalize" longitude values so that they always fall between -180.0 and
- * 180.0 */
+// "Normalize" longitude values so that they always fall between -180.0 and
+// 180.0
 PLFLT normalize_longitude( PLFLT lon )
 {
     PLFLT times;
@@ -60,7 +60,7 @@ PLFLT normalize_longitude( PLFLT lon )
     }
 }
 
-/* A custom axis labeling function for longitudes and latitudes. */
+// A custom axis labeling function for longitudes and latitudes.
 void
 geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data )
 {
@@ -101,7 +101,7 @@ geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPoint
     }
     if ( axis == PL_Y_AXIS && value == 0.0 )
     {
-        /* A special case for the equator */
+        // A special case for the equator
         snprintf( label, length, "%s", direction_label );
     }
     else
@@ -110,11 +110,11 @@ geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPoint
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Shows two views of the world map.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Shows two views of the world map.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char **argv )
@@ -122,31 +122,31 @@ main( int argc, const char **argv )
     PLFLT minx, maxx, miny, maxy;
     PLFLT x, y;
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Longitude (x) and latitude (y) */
+// Longitude (x) and latitude (y)
 
     miny = -70;
     maxy = 80;
 
     plinit();
 
-/* Cartesian plots */
-/* Most of world */
+// Cartesian plots
+// Most of world
 
     minx = 190;
     maxx = 190 + 360;
 
-    /* Setup a custom latitude and longitude-based scaling function. */
+    // Setup a custom latitude and longitude-based scaling function.
     plslabelfunc( geolocation_labeler, NULL );
 
     plcol0( 1 );
     plenv( minx, maxx, miny, maxy, 1, 70 );
     plmap( NULL, "usaglobe", minx, maxx, miny, maxy );
 
-/* The Americas */
+// The Americas
 
     minx = 190;
     maxx = 340;
@@ -155,10 +155,10 @@ main( int argc, const char **argv )
     plenv( minx, maxx, miny, maxy, 1, 70 );
     plmap( NULL, "usaglobe", minx, maxx, miny, maxy );
 
-    /* Clear the labeling function */
+    // Clear the labeling function
     plslabelfunc( NULL, NULL );
 
-/* Polar, Northern hemisphere */
+// Polar, Northern hemisphere
 
     minx = 0;
     maxx = 360;
@@ -169,7 +169,7 @@ main( int argc, const char **argv )
     pllsty( 2 );
     plmeridians( mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
 
-/* Polar, Northern hemisphere, this time with a PLplot-wide transform */
+// Polar, Northern hemisphere, this time with a PLplot-wide transform
 
     minx = 0;
     maxx = 360;
@@ -178,14 +178,14 @@ main( int argc, const char **argv )
 
     pllsty( 1 );
     plenv( -75., 75., -75., 75., 1, -1 );
-    /* No need to set the map transform here as the global transform will be
-     * used. */
+    // No need to set the map transform here as the global transform will be
+    // used.
     plmap( NULL, "globe", minx, maxx, miny, maxy );
 
     pllsty( 2 );
     plmeridians( NULL, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
 
-    /* Show Baltimore, MD on the map */
+    // Show Baltimore, MD on the map
     plcol0( 2 );
     plssym( 0.0, 2.0 );
     x = -76.6125;
@@ -194,7 +194,7 @@ main( int argc, const char **argv )
     plssym( 0.0, 1.0 );
     plptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );
 
-    /* For C, this is how the global transform is cleared */
+    // For C, this is how the global transform is cleared
     plstransform( NULL, NULL );
 
     plend();

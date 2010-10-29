@@ -1,30 +1,30 @@
-/* $Id$
- *
- *      Mesh plot demo.
- *
- * Copyright (C) 2004  Rafael Laboissiere
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Mesh plot demo.
+//
+// Copyright (C) 2004  Rafael Laboissiere
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plcdemos.h"
 
-#define XPTS      35            /* Data points in x */
-#define YPTS      46            /* Data points in y */
+#define XPTS      35            // Data points in x
+#define YPTS      46            // Data points in y
 #define LEVELS    10
 
 static int   opt[] = { DRAW_LINEXY, DRAW_LINEXY };
@@ -43,11 +43,11 @@ cmap1_init()
 {
     PLFLT i[2], h[2], l[2], s[2];
 
-    i[0] = 0.0;         /* left boundary */
-    i[1] = 1.0;         /* right boundary */
+    i[0] = 0.0;         // left boundary
+    i[1] = 1.0;         // right boundary
 
-    h[0] = 240;         /* blue -> green -> yellow -> */
-    h[1] = 0;           /* -> red */
+    h[0] = 240;         // blue -> green -> yellow ->
+    h[1] = 0;           // -> red
 
     l[0] = 0.6;
     l[1] = 0.6;
@@ -59,12 +59,12 @@ cmap1_init()
     c_plscmap1l( 0, 2, i, h, l, s, NULL );
 }
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a series of mesh plots for a given data set, with different
- * viewing options in each plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a series of mesh plots for a given data set, with different
+// viewing options in each plot.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -76,11 +76,11 @@ main( int argc, const char *argv[] )
     PLFLT clevel[LEVELS];
     PLFLT zmin, zmax, step;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
 
     plinit();
 
@@ -106,7 +106,7 @@ main( int argc, const char *argv[] )
                       10. * ( xx / 5. - pow( xx, 3. ) - pow( yy, 5. ) ) * exp( -xx * xx - yy * yy ) -
                       1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
 
-            if ( 0 ) /* Jungfraujoch/Interlaken */
+            if ( 0 ) // Jungfraujoch/Interlaken
             {
                 if ( z[i][j] < -1. )
                     z[i][j] = -1.;
@@ -135,19 +135,19 @@ main( int argc, const char *argv[] )
 
             plcol0( 2 );
 
-            /* wireframe plot */
+            // wireframe plot
             if ( i == 0 )
                 plmesh( x, y, z, XPTS, YPTS, opt[k] );
 
-            /* magnitude colored wireframe plot */
+            // magnitude colored wireframe plot
             else if ( i == 1 )
                 plmesh( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR );
 
-            /* magnitude colored wireframe plot with sides */
+            // magnitude colored wireframe plot with sides
             else if ( i == 2 )
                 plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, 1 );
 
-            /* magnitude colored wireframe plot with base contour */
+            // magnitude colored wireframe plot with base contour
             else if ( i == 3 )
                 plmeshc( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
                     clevel, nlevel );
@@ -157,7 +157,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-/* Clean up */
+// Clean up
 
     free( (void *) x );
     free( (void *) y );

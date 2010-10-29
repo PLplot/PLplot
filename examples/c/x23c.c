@@ -1,35 +1,35 @@
-/*
- *
- *  Displays Greek letters and mathematically interesting Unicode ranges
- *  Copyright (C) 2005,2008 Alan Irwin
- *  Copyright (C) 2005,2008 Andrew Ross
- *
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Library Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+//
+//
+//  Displays Greek letters and mathematically interesting Unicode ranges
+//  Copyright (C) 2005,2008 Alan Irwin
+//  Copyright (C) 2005,2008 Andrew Ross
+//
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Library Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plcdemos.h"
 
-/*
- * main
- *
- * Displays Greek letters and mathematically interesting Unicode ranges
- */
+//
+// main
+//
+// Displays Greek letters and mathematically interesting Unicode ranges
+//
 
 static char* Greek[] = {
     "#gA", "#gB", "#gG", "#gD", "#gE", "#gZ", "#gY", "#gH", "#gI", "#gK", "#gL", "#gM",
@@ -145,7 +145,7 @@ static int nycells[] = {
     8,
 };
 
-/* non-zero values Must be consistent with nxcells and nycells. */
+// non-zero values Must be consistent with nxcells and nycells.
 static int offset[] = {
     0,
     0,
@@ -160,7 +160,7 @@ static int offset[] = {
     0,
 };
 
-/* 30 possible FCI values. */
+// 30 possible FCI values.
 
 #define FCI_COMBINATIONS    30
 static PLUNICODE fci[] = {
@@ -233,7 +233,7 @@ main( int argc, const char *argv[] )
     {
         pladv( 0 );
 
-        /* Set up viewport and window */
+        // Set up viewport and window
 
         plvpor( 0.02, 0.98, 0.02, 0.90 );
         plwind( 0.0, 1.0, 0.0, 1.0 );
@@ -241,11 +241,11 @@ main( int argc, const char *argv[] )
         plschr( 0., 0.8 );
         ycharacter_scale = ( 1.0 - 0.0 ) / ( ymax - ymin );
 
-        /* Factor should be 0.5, but heuristically it turns out to be larger. */
+        // Factor should be 0.5, but heuristically it turns out to be larger.
         plgchr( &chardef, &charht );
         yoffset = 1.0 * charht * ycharacter_scale;
 
-        /* Draw the grid using plbox */
+        // Draw the grid using plbox
 
         plcol0( 2 );
         deltax = 1.0 / ( (PLFLT) nxcells[page] );
@@ -282,11 +282,11 @@ main( int argc, const char *argv[] )
         }
 
         plschr( 0., 1.0 );
-        /* Page title */
+        // Page title
         plmtex( "t", 1.5, 0.5, 0.5, title[page] );
     }
 
-    /* Demonstrate methods of getting the current fonts */
+    // Demonstrate methods of getting the current fonts
     plgfci( &fci_old );
     plgfont( &ifamily, &istyle, &iweight );
     printf( "For example 23 prior to page 12 the FCI is 0x%x\n", fci_old );
@@ -296,8 +296,8 @@ main( int argc, const char *argv[] )
     {
         PLFLT dy = 0.030;
         int   family_index, style_index, weight_index;
-        /* Must be big enough to contain the prefix strings, the font-changing
-         * commands, and the "The quick brown..." string. */
+        // Must be big enough to contain the prefix strings, the font-changing
+        // commands, and the "The quick brown..." string.
         char string[200];
 
         pladv( 0 );
@@ -403,7 +403,7 @@ main( int argc, const char *argv[] )
         plschr( 0., 1.0 );
     }
 
-    /* Restore defaults */
+    // Restore defaults
     plcol0( 1 );
 
     plend();

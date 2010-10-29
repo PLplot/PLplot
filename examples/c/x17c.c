@@ -1,7 +1,7 @@
-/* $Id$
- *
- * Plots a simple stripchart with four pens.
- */
+// $Id$
+//
+// Plots a simple stripchart with four pens.
+//
 
 #include "plcdemos.h"
 #include <stdlib.h>
@@ -15,14 +15,14 @@
 
 
 
-/* Variables for holding error return info from PLplot */
+// Variables for holding error return info from PLplot
 
 static PLINT pl_errcode;
 static char  errmsg[160];
 
-/*--------------------------------------------------------------------------*\
- * main program
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main program
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -33,70 +33,70 @@ main( int argc, const char *argv[] )
     PLINT      colbox, collab, colline[4], styline[4];
     const char *legline[4];
 
-/* plplot initialization */
-/* Parse and process command line arguments */
+// plplot initialization
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* If db is used the plot is much more smooth. However, because of the
- * async X behaviour, one does not have a real-time scripcharter.
- * This is now disabled since it does not significantly improve the
- * performance on new machines and makes it difficult to use this
- * example non-interactively since it requires an extra pleop call after
- * each call to plstripa.
- */
-    /*plsetopt("db", "");*/
-    /*plsetopt("np", "");*/
+// If db is used the plot is much more smooth. However, because of the
+// async X behaviour, one does not have a real-time scripcharter.
+// This is now disabled since it does not significantly improve the
+// performance on new machines and makes it difficult to use this
+// example non-interactively since it requires an extra pleop call after
+// each call to plstripa.
+//
+    //plsetopt("db", "");
+    //plsetopt("np", "");
 
-/* User sets up plot completely except for window and data
- * Eventually settings in place when strip chart is created will be
- * remembered so that multiple strip charts can be used simultaneously.
- */
+// User sets up plot completely except for window and data
+// Eventually settings in place when strip chart is created will be
+// remembered so that multiple strip charts can be used simultaneously.
+//
 
-/* Specify some reasonable defaults for ymin and ymax */
-/* The plot will grow automatically if needed (but not shrink) */
+// Specify some reasonable defaults for ymin and ymax
+// The plot will grow automatically if needed (but not shrink)
 
     ymin = -0.1;
     ymax = 0.1;
 
-/* Specify initial tmin and tmax -- this determines length of window. */
-/* Also specify maximum jump in t */
-/* This can accomodate adaptive timesteps */
+// Specify initial tmin and tmax -- this determines length of window.
+// Also specify maximum jump in t
+// This can accomodate adaptive timesteps
 
     tmin  = 0.;
     tmax  = 10.;
-    tjump = 0.3;        /* percentage of plot to jump */
+    tjump = 0.3;        // percentage of plot to jump
 
-/* Axes options same as plbox. */
-/* Only automatic tick generation and label placement allowed */
-/* Eventually I'll make this fancier */
+// Axes options same as plbox.
+// Only automatic tick generation and label placement allowed
+// Eventually I'll make this fancier
 
     colbox     = 1;
     collab     = 3;
-    styline[0] = colline[0] = 2;        /* pens color and line style */
+    styline[0] = colline[0] = 2;        // pens color and line style
     styline[1] = colline[1] = 3;
     styline[2] = colline[2] = 4;
     styline[3] = colline[3] = 5;
 
-    legline[0] = "sum";                         /* pens legend */
+    legline[0] = "sum";                         // pens legend
     legline[1] = "sin";
     legline[2] = "sin*noi";
     legline[3] = "sin+noi";
 
-    xlab = 0.; ylab = 0.25;     /* legend position */
+    xlab = 0.; ylab = 0.25;     // legend position
 
-    autoy = 1;                  /* autoscale y */
-    acc   = 1;                  /* don't scrip, accumulate */
+    autoy = 1;                  // autoscale y
+    acc   = 1;                  // don't scrip, accumulate
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 
     pladv( 0 );
     plvsta();
 
-/* Register our error variables with PLplot */
-/* From here on, we're handling all errors here */
+// Register our error variables with PLplot
+// From here on, we're handling all errors here
 
     plsError( &pl_errcode, errmsg );
 
@@ -114,15 +114,15 @@ main( int argc, const char *argv[] )
         exit( 1 );
     }
 
-/* Let plplot handle errors from here on */
+// Let plplot handle errors from here on
 
     plsError( NULL, NULL );
 
-    autoy = 0;  /* autoscale y */
-    acc   = 1;  /* accumulate */
+    autoy = 0;  // autoscale y
+    acc   = 1;  // accumulate
 
-/* This is to represent a loop over time */
-/* Let's try a random walk process */
+// This is to represent a loop over time
+// Let's try a random walk process
 
     y1 = y2 = y3 = y4 = 0.0;
     dt = 0.1;
@@ -130,7 +130,7 @@ main( int argc, const char *argv[] )
     for ( n = 0; n < nsteps; n++ )
     {
 #ifdef PL_HAVE_USLEEP
-        usleep( 10000 );  /* wait a little (10 ms) to simulate time elapsing */
+        usleep( 10000 );  // wait a little (10 ms) to simulate time elapsing
 #else
 # ifdef PL_HAVE_POLL
         poll( 0, 0, 10 );
@@ -147,8 +147,8 @@ main( int argc, const char *argv[] )
         y3    = y2 * noise;
         y4    = y2 + noise / 3.;
 
-        /* There is no need for all pens to have the same number of
-         * points or beeing equally time spaced. */
+        // There is no need for all pens to have the same number of
+        // points or beeing equally time spaced.
 
         if ( n % 2 )
             plstripa( id1, 0, t, y1 );
@@ -159,11 +159,11 @@ main( int argc, const char *argv[] )
         if ( n % 5 )
             plstripa( id1, 3, t, y4 );
 
-        /* needed if using double buffering (-db on command line) */
-        /*pleop();*/
+        // needed if using double buffering (-db on command line)
+        //pleop();
     }
 
-/* Destroy strip chart and it's memory */
+// Destroy strip chart and it's memory
 
     plstripd( id1 );
     plend();

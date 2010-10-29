@@ -1,38 +1,38 @@
-/*
- * A simple GTK application demonstrating the use of the X Drawable
- * functionality of plplot's xcairo driver.
- *
- * Copyright (C) 2008 Jonathan Woithe <jwoithe@physics.adelaide.edu.au>
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+//
+// A simple GTK application demonstrating the use of the X Drawable
+// functionality of plplot's xcairo driver.
+//
+// Copyright (C) 2008 Jonathan Woithe <jwoithe@physics.adelaide.edu.au>
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
-/* Set to 0 to draw direct to an X Window, 1 to draw via a pixmap */
+// Set to 0 to draw direct to an X Window, 1 to draw via a pixmap
 #define TO_PIXMAP    1
 
 #include <stdio.h>
 #include <plplot.h>
 #include <gtk/gtk.h>
 
-/* Needed for GDK_WINDOW_XID */
+// Needed for GDK_WINDOW_XID
 #include <gdk/gdkx.h>
 
-/* Main menu structure */
+// Main menu structure
 static GtkItemFactoryEntry menu_items[] = {
     { "/_File",      NULL,         NULL,          0, "<Branch>" },
     { "/File/_Quit", "<control>Q", gtk_main_quit, 0, NULL       },
@@ -50,7 +50,7 @@ typedef struct App
 
 App app;
 
-/* ======================================================================== */
+// ========================================================================
 
 void setup_plot_drawable( App *app )
 {
@@ -68,11 +68,11 @@ void setup_plot_drawable( App *app )
     plinit();
 
   #if TO_PIXMAP == 1
-    /* Here we set up to draw to a pixmap */
+    // Here we set up to draw to a pixmap
     xinfo.display  = GDK_PIXMAP_XDISPLAY( app->plotwindow_pixmap );
     xinfo.drawable = GDK_PIXMAP_XID( app->plotwindow_pixmap );
   #else
-    /* Alternatively, we can do direct to a visible X Window */
+    // Alternatively, we can do direct to a visible X Window
     xinfo.display  = GDK_WINDOW_XDISPLAY( app->plotwindow->window );
     xinfo.drawable = GDK_WINDOW_XID( app->plotwindow->window );
   #endif
@@ -83,25 +83,25 @@ void setup_plot_drawable( App *app )
     plline( 3, x, y );
     plend();
 }
-/* ======================================================================== */
+// ========================================================================
 
 static gint ev_plotwindow_conf( GtkWidget *widget, GdkEventConfigure *ev, gpointer *data )
 {
   #if TO_PIXMAP == 1
-    /* Allocate pixmap */
+    // Allocate pixmap
     if ( app.plotwindow_pixmap )
         gdk_pixmap_unref( app.plotwindow_pixmap );
     app.plotwindow_pixmap = gdk_pixmap_new( widget->window,
         widget->allocation.width, widget->allocation.height, -1 );
 
-    /* Clear the pixmap to a sensible background colour */
+    // Clear the pixmap to a sensible background colour
     gdk_draw_rectangle( app.plotwindow_pixmap,
         widget->style->black_gc, TRUE, 0, 0,
         widget->allocation.width, widget->allocation.height );
 
-    /* If drawing to a pixmap we can do a plot from the conf handler since
-     * the pixmap is now realised (the window widget isn't).
-     */
+    // If drawing to a pixmap we can do a plot from the conf handler since
+    // the pixmap is now realised (the window widget isn't).
+    //
     setup_plot_drawable( &app );
   #endif
 
@@ -111,25 +111,25 @@ static gint ev_plotwindow_conf( GtkWidget *widget, GdkEventConfigure *ev, gpoint
 static gint ev_plotwindow_expose( GtkWidget *widget, GdkEventExpose *ev, gpointer *data )
 {
   #if TO_PIXMAP == 1
-    /* Dump the cached plot (created in the conf handler) to the window from
-     * the pixmap.  We don't need to recreate the plot on each expose.
-     */
+    // Dump the cached plot (created in the conf handler) to the window from
+    // the pixmap.  We don't need to recreate the plot on each expose.
+    //
     gdk_draw_pixmap( widget->window,
         widget->style->fg_gc[GTK_WIDGET_STATE( widget )],
         app.plotwindow_pixmap, ev->area.x, ev->area.y, ev->area.x, ev->area.y,
         ev->area.width, ev->area.height );
   #else
-    /* If drawing direct to an X Window, ensure GTK's double buffering
-     * is turned off for that window or else the plot will be overridden
-     * when the buffer is dumped to the screen.
-     */
+    // If drawing direct to an X Window, ensure GTK's double buffering
+    // is turned off for that window or else the plot will be overridden
+    // when the buffer is dumped to the screen.
+    //
     setup_plot_drawable( &app );
   #endif
 
     return ( TRUE );
 }
 
-/* ======================================================================== */
+// ========================================================================
 
 void init_app( App *app )
 {
@@ -140,16 +140,16 @@ void init_app( App *app )
 
     GtkWidget      *vbox, *hbox;
 
-    /* Create the top-level root window */
+    // Create the top-level root window
     app->rootwindow = gtk_window_new( GTK_WINDOW_TOPLEVEL );
     gtk_signal_connect( GTK_OBJECT( app->rootwindow ), "delete_event", gtk_main_quit,
         NULL );
 
-    /* A toplevel box to hold things */
+    // A toplevel box to hold things
     vbox = gtk_vbox_new( FALSE, 0 );
     gtk_container_add( GTK_CONTAINER( app->rootwindow ), vbox );
 
-    /* Construct the main menu structure */
+    // Construct the main menu structure
     item_factory = gtk_item_factory_new( GTK_TYPE_MENU_BAR, "<main>", accel_group );
     gtk_item_factory_create_items( item_factory, nitems, menu_items, NULL );
     gtk_window_add_accel_group( GTK_WINDOW( app->rootwindow ), accel_group );
@@ -157,27 +157,27 @@ void init_app( App *app )
     gtk_box_pack_start( GTK_BOX( vbox ), menubar, FALSE, FALSE, 0 );
     gtk_widget_show( menubar );
 
-    /* Fiddle with boxes to effect an indent from the edges of the root window */
+    // Fiddle with boxes to effect an indent from the edges of the root window
     hbox = gtk_hbox_new( FALSE, 0 );
     gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, TRUE, 10 );
     vbox = gtk_vbox_new( FALSE, 10 );
     gtk_box_pack_start( GTK_BOX( hbox ), vbox, TRUE, TRUE, 10 );
 
-    /* Add an area to plot into */
+    // Add an area to plot into
     app->plotwindow        = gtk_drawing_area_new();
     app->plotwindow_pixmap = NULL;
 
   #if TO_PIXMAP != 1
-    /* Turn off double buffering if we are plotting direct to the plotwindow
-     * in setup_plot_drawable().
-     */
+    // Turn off double buffering if we are plotting direct to the plotwindow
+    // in setup_plot_drawable().
+    //
     GTK_WIDGET_UNSET_FLAGS( app->plotwindow, GTK_DOUBLE_BUFFERED );
   #endif
 
-    /* By experiment, 3x3 seems to be the smallest size plplot can cope with.
-     * Here we utilise the side effect that gtk_widget_set_size_request()
-     * effectively sets the minimum size of the widget.
-     */
+    // By experiment, 3x3 seems to be the smallest size plplot can cope with.
+    // Here we utilise the side effect that gtk_widget_set_size_request()
+    // effectively sets the minimum size of the widget.
+    //
     gtk_widget_set_size_request( app->plotwindow, 3, 3 );
     gtk_box_pack_start( GTK_BOX( vbox ), app->plotwindow, TRUE, TRUE, 0 );
 
@@ -191,7 +191,7 @@ void init_app( App *app )
 
     gtk_widget_show_all( app->rootwindow );
 }
-/* ======================================================================== */
+// ========================================================================
 
 int main( int argc, char *argv[] )
 {
@@ -200,4 +200,4 @@ int main( int argc, char *argv[] )
     gtk_main();
     return 0;
 }
-/* ======================================================================== */
+// ========================================================================

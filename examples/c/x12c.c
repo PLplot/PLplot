@@ -1,19 +1,19 @@
-/* $Id$
- *
- *      Bar chart demo.
- */
+// $Id$
+//
+//      Bar chart demo.
+//
 
 #include "plcdemos.h"
 
 void
 plfbox( PLFLT x0, PLFLT y0 );
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a simple bar chart, using color fill.  If color fill is
- * unavailable, pattern fill is used instead (automatic).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a simple bar chart, using color fill.  If color fill is
+// unavailable, pattern fill is used instead (automatic).
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -27,11 +27,11 @@ main( int argc, const char *argv[] )
     static PLFLT green[] = { 1.0, 0.5, 0.5, 0.5, 1.0 };
     static PLFLT blue[]  = { 1.0, 1.0, 0.5, 0.25, 0.0 };
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 
@@ -57,7 +57,7 @@ main( int argc, const char *argv[] )
 
     for ( i = 0; i < 10; i++ )
     {
-        /*plcol0(i + 1);*/
+        //plcol0(i + 1);
         plcol1( i / 9.0 );
         plpsty( 0 );
         plfbox( ( 1980. + i ), y0[i] );
@@ -67,7 +67,7 @@ main( int argc, const char *argv[] )
         plmtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, string );
     }
 
-/* Don't forget to call plend() to finish off! */
+// Don't forget to call plend() to finish off!
 
     plend();
     exit( 0 );

@@ -132,9 +132,6 @@ csource_LIST="$csource_LIST lib/*/*.[ch] lib/qsastime/qsastimeP.h.in"
 # C part of drivers.
 csource_LIST="$csource_LIST drivers/*.c"
 
-# temporary
-exclude_c=ON
-if [ -z "$exclude_c" ] ; then
 # C part of examples.
 csource_LIST="$csource_LIST examples/c/*.[ch] examples/tk/*.c"
 
@@ -144,6 +141,9 @@ csource_LIST="$csource_LIST fonts/*.c"
 # C source in utils.
 csource_LIST="$csource_LIST utils/*.c"
 
+# temporary
+exclude_c=ON
+if [ -z "$exclude_c" ] ; then
 # C source in bindings.
 csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/f95/*.c bindings/f95/plstubs.h bindings/gnome2/*/*.c bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/f77/*.c bindings/f77/plstubs.h bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch] bindings/octave/plplot_octave.h.in bindings/octave/plplot_octave_rej.h bindings/octave/massage.c"
 

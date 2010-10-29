@@ -1,15 +1,15 @@
-/* $Id$
- *
- *      Filling and clipping polygons.
- */
+// $Id$
+//
+//      Filling and clipping polygons.
+//
 
 #include "plcdemos.h"
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Test program for filling polygons and proper clipping
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Test program for filling polygons and proper clipping
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -21,11 +21,11 @@ main( int argc, const char *argv[] )
     PLFLT x0[10];
     PLFLT y0[10];
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Initialize plplot */
+// Initialize plplot
 
     plssub( 3, 3 );
     plinit();
@@ -46,7 +46,7 @@ main( int argc, const char *argv[] )
         {
             if ( j == 0 )
             {
-/* Polygon 1: a diamond */
+// Polygon 1: a diamond
                 x0[0] = 0; y0[0] = -100;
                 x0[1] = -100; y0[1] = 0;
                 x0[2] = 0; y0[2] = 100;
@@ -55,7 +55,7 @@ main( int argc, const char *argv[] )
             }
             if ( j == 1 )
             {
-/* Polygon 1: a diamond - reverse direction */
+// Polygon 1: a diamond - reverse direction
                 x0[3] = 0; y0[3] = -100;
                 x0[2] = -100; y0[2] = 0;
                 x0[1] = 0; y0[1] = 100;
@@ -64,7 +64,7 @@ main( int argc, const char *argv[] )
             }
             if ( j == 2 )
             {
-/* Polygon 2: a square with punctures */
+// Polygon 2: a square with punctures
                 x0[0] = -100; y0[0] = -100;
                 x0[1] = -100; y0[1] = -80;
                 x0[2] = 80; y0[2] = 0;
@@ -79,7 +79,7 @@ main( int argc, const char *argv[] )
             }
             if ( j == 3 )
             {
-/* Polygon 2: a square with punctures - reversed direction */
+// Polygon 2: a square with punctures - reversed direction
                 x0[9] = -100; y0[9] = -100;
                 x0[8] = -100; y0[8] = -80;
                 x0[7] = 80; y0[7] = 0;
@@ -114,7 +114,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-/* Don't forget to call plend() to finish off! */
+// Don't forget to call plend() to finish off!
 
     plend();
     exit( 0 );

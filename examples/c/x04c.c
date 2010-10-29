@@ -1,31 +1,31 @@
-/* $Id$
- *
- *      Log plot demo.
- */
+// $Id$
+//
+//      Log plot demo.
+//
 
 #include "plcdemos.h"
 
 void plot1( int type );
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Illustration of logarithmic axes, and redefinition of window.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Illustration of logarithmic axes, and redefinition of window.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
 {
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
     plfont( 2 );
 
-/* Make log plots using two different styles. */
+// Make log plots using two different styles.
 
     plot1( 0 );
     plot1( 1 );
@@ -34,11 +34,11 @@ main( int argc, const char *argv[] )
     exit( 0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * plot1
- *
- * Log-linear plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plot1
+//
+// Log-linear plot.
+//--------------------------------------------------------------------------
 
 void
 plot1( int type )
@@ -58,7 +58,7 @@ plot1( int type )
 
     pladv( 0 );
 
-/* Set up data for log plot */
+// Set up data for log plot
 
     f0 = 1.0;
     for ( i = 0; i <= 100; i++ )
@@ -72,7 +72,7 @@ plot1( int type )
     plvpor( 0.15, 0.85, 0.1, 0.9 );
     plwind( -2.0, 3.0, -80.0, 0.0 );
 
-/* Try different axis and labelling styles. */
+// Try different axis and labelling styles.
 
     plcol0( 1 );
     switch ( type )
@@ -85,14 +85,14 @@ plot1( int type )
         break;
     }
 
-/* Plot ampl vs freq */
+// Plot ampl vs freq
 
     plcol0( 2 );
     plline( 101, freql, ampl );
     plcol0( 2 );
     plptex( 1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade" );
 
-/* Put labels on */
+// Put labels on
 
     plcol0( 1 );
     plmtex( "b", 3.2, 0.5, 0.5, "Frequency" );
@@ -101,7 +101,7 @@ plot1( int type )
     plmtex( "l", 5.0, 0.5, 0.5, "Amplitude (dB)" );
     nlegend = 1;
 
-/* For the gridless case, put phase vs freq on same plot */
+// For the gridless case, put phase vs freq on same plot
 
     if ( type == 0 )
     {

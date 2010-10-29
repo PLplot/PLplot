@@ -1,39 +1,39 @@
-/* $Id$
- *
- *      Contour plot demo.
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Contour plot demo.
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plcdemos.h"
 
-#define XPTS             35     /* Data points in x */
-#define YPTS             46     /* Data points in y */
+#define XPTS             35     // Data points in x
+#define YPTS             46     // Data points in y
 
 #define XSPA             2. / ( XPTS - 1 )
 #define YSPA             2. / ( YPTS - 1 )
 
-/* polar plot data */
+// polar plot data
 #define PERIMETERPTS     100
 #define RPTS             40
 #define THETAPTS         40
 
-/* potential plot data */
+// potential plot data
 #define PPERIMETERPTS    100
 #define PRPTS            40
 #define PTHETAPTS        64
@@ -42,7 +42,7 @@
 static PLFLT clevel[11] =
 { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
 
-/* Transformation function */
+// Transformation function
 
 PLFLT tr[6] =
 { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
@@ -55,7 +55,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
 }
 
 static void polar()
-/*polar contour plot example.*/
+//polar contour plot example.
 {
     int      i, j;
     PLcGrid2 cgrid2;
@@ -67,7 +67,7 @@ static void polar()
     plenv( -1., 1., -1., 1., 0, -2 );
     plcol0( 1 );
 
-/*Perimeter*/
+//Perimeter
     for ( i = 0; i < PERIMETERPTS; i++ )
     {
         t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (double) i;
@@ -76,7 +76,7 @@ static void polar()
     }
     plline( PERIMETERPTS, px, py );
 
-/*create data to be contoured.*/
+//create data to be contoured.
     plAlloc2dGrid( &cgrid2.xg, RPTS, THETAPTS );
     plAlloc2dGrid( &cgrid2.yg, RPTS, THETAPTS );
     plAlloc2dGrid( &z, RPTS, THETAPTS );
@@ -110,11 +110,11 @@ static void polar()
     plFree2dGrid( cgrid2.yg, RPTS, THETAPTS );
 }
 
-/*--------------------------------------------------------------------------*\
- * f2mnmx
- *
- * Returns min & max of input 2d array.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// f2mnmx
+//
+// Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
 
 static void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
@@ -135,7 +135,7 @@ f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
 }
 
 static void potential()
-/*shielded potential contour plot example.*/
+//shielded potential contour plot example.
 {
     int      i, j;
     PLcGrid2 cgrid2;
@@ -150,7 +150,7 @@ static void potential()
     PLFLT    px[PPERIMETERPTS], py[PPERIMETERPTS];
     PLFLT    t, r, theta;
 
-/*create data to be contoured.*/
+//create data to be contoured.
     plAlloc2dGrid( &cgrid2.xg, PRPTS, PTHETAPTS );
     plAlloc2dGrid( &cgrid2.yg, PRPTS, PTHETAPTS );
     plAlloc2dGrid( &z, PRPTS, PTHETAPTS );
@@ -174,18 +174,18 @@ static void potential()
     x0 = ( xmin + xmax ) / 2.;
     y0 = ( ymin + ymax ) / 2.;
 
-    /* Expanded limits */
+    // Expanded limits
     peps  = 0.05;
     xpmin = xmin - fabs( xmin ) * peps;
     xpmax = xmax + fabs( xmax ) * peps;
     ypmin = ymin - fabs( ymin ) * peps;
     ypmax = ymax + fabs( ymax ) * peps;
 
-    /* Potential inside a conducting cylinder (or sphere) by method of images.
-     * Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-     * Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-     * Also put in smoothing term at small distances.
-     */
+    // Potential inside a conducting cylinder (or sphere) by method of images.
+    // Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+    // Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+    // Also put in smoothing term at small distances.
+    //
 
     eps = 2.;
 
@@ -213,12 +213,12 @@ static void potential()
         }
     }
     f2mnmx( z, PRPTS, PTHETAPTS, &zmin, &zmax );
-/*   printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
- *        q1, d1, q1i, d1i, q2, d2, q2i, d2i);
- * printf("%.15g %.15g %.15g %.15g %.15g %.15g \n",
- *        xmin, xmax, ymin, ymax, zmin, zmax); */
+//   printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
+//        q1, d1, q1i, d1i, q2, d2, q2i, d2i);
+// printf("%.15g %.15g %.15g %.15g %.15g %.15g \n",
+//        xmin, xmax, ymin, ymax, zmin, zmax);
 
-    /* Positive and negative contour levels.*/
+    // Positive and negative contour levels.
     dz        = ( zmax - zmin ) / (double) PNLEVEL;
     nlevelneg = 0;
     nlevelpos = 0;
@@ -230,12 +230,12 @@ static void potential()
         else
             clevelpos[nlevelpos++] = clevel;
     }
-    /* Colours! */
+    // Colours!
     ncollin = 11;
     ncolbox = 1;
     ncollab = 2;
 
-    /* Finally start plotting this page! */
+    // Finally start plotting this page!
     pladv( 0 );
     plcol0( ncolbox );
 
@@ -246,7 +246,7 @@ static void potential()
     plcol0( ncollin );
     if ( nlevelneg > 0 )
     {
-        /* Negative contours */
+        // Negative contours
         pllsty( 2 );
         plcont( z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
             clevelneg, nlevelneg, pltr2, (void *) &cgrid2 );
@@ -254,13 +254,13 @@ static void potential()
 
     if ( nlevelpos > 0 )
     {
-        /* Positive contours  */
+        // Positive contours
         pllsty( 1 );
         plcont( z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
             clevelpos, nlevelpos, pltr2, (void *) &cgrid2 );
     }
 
-    /* Draw outer boundary  */
+    // Draw outer boundary
     for ( i = 0; i < PPERIMETERPTS; i++ )
     {
         t     = ( 2. * M_PI / ( PPERIMETERPTS - 1 ) ) * (double) i;
@@ -280,11 +280,11 @@ static void potential()
 }
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does several contour plots using different coordinate mappings.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does several contour plots using different coordinate mappings.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -298,15 +298,15 @@ main( int argc, const char *argv[] )
     PLcGrid      cgrid1;
     PLcGrid2     cgrid2;
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 
-/* Set up function arrays */
+// Set up function arrays
 
     plAlloc2dGrid( &z, XPTS, YPTS );
     plAlloc2dGrid( &w, XPTS, YPTS );
@@ -322,7 +322,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-/* Set up grids */
+// Set up grids
 
     cgrid1.xg = xg1;
     cgrid1.yg = yg1;
@@ -352,18 +352,18 @@ main( int argc, const char *argv[] )
         }
     }
 
-/* Plot using identity transform */
-/*
- *  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
- *  plcol0(2);
- *  plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
- *  plstyl(1, &mark, &space);
- *  plcol0(3);
- *  plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
- *  plstyl(0, &mark, &space);
- *  plcol0(1);
- *  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
- */
+// Plot using identity transform
+//
+//  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+//  plcol0(2);
+//  plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
+//  plstyl(1, &mark, &space);
+//  plcol0(3);
+//  plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
+//  plstyl(0, &mark, &space);
+//  plcol0(1);
+//  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+//
     pl_setcontlabelformat( 4, 3 );
     pl_setcontlabelparam( 0.006, 0.3, 0.1, 1 );
     plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
@@ -377,7 +377,7 @@ main( int argc, const char *argv[] )
     pllab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
     pl_setcontlabelparam( 0.006, 0.3, 0.1, 0 );
 
-/* Plot using 1d coordinate transform */
+// Plot using 1d coordinate transform
 
     plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     plcol0( 2 );
@@ -391,23 +391,23 @@ main( int argc, const char *argv[] )
     plstyl( 0, &mark, &space );
     plcol0( 1 );
     pllab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
-    /*
-     * pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-     * plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-     * plcol0(2);
-     * plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *     pltr1, (void *) &cgrid1);
-     *
-     * plstyl(1, &mark, &space);
-     * plcol0(3);
-     * plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *     pltr1, (void *) &cgrid1);
-     * plstyl(0, &mark, &space);
-     * plcol0(1);
-     * pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-     * pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
-     */
-/* Plot using 2d coordinate transform */
+    //
+    // pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    // plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    // plcol0(2);
+    // plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //     pltr1, (void *) &cgrid1);
+    //
+    // plstyl(1, &mark, &space);
+    // plcol0(3);
+    // plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //     pltr1, (void *) &cgrid1);
+    // plstyl(0, &mark, &space);
+    // plcol0(1);
+    // pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    // pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+    //
+// Plot using 2d coordinate transform
 
     plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     plcol0( 2 );
@@ -421,35 +421,35 @@ main( int argc, const char *argv[] )
     plstyl( 0, &mark, &space );
     plcol0( 1 );
     pllab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
-    /*
-     * pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-     * plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-     * plcol0(2);
-     * plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *     pltr2, (void *) &cgrid2);
-     *
-     * plstyl(1, &mark, &space);
-     * plcol0(3);
-     * plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *     pltr2, (void *) &cgrid2);
-     * plstyl(0, &mark, &space);
-     * plcol0(1);
-     * pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-     */
+    //
+    // pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    // plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    // plcol0(2);
+    // plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //     pltr2, (void *) &cgrid2);
+    //
+    // plstyl(1, &mark, &space);
+    // plcol0(3);
+    // plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //     pltr2, (void *) &cgrid2);
+    // plstyl(0, &mark, &space);
+    // plcol0(1);
+    // pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    //
     pl_setcontlabelparam( 0.006, 0.3, 0.1, 0 );
     polar();
-    /*
-     * pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-     * polar();
-     */
+    //
+    // pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    // polar();
+    //
     pl_setcontlabelparam( 0.006, 0.3, 0.1, 0 );
     potential();
-    /*
-     * pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-     * potential();
-     */
+    //
+    // pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    // potential();
+    //
 
-/* Clean up */
+// Clean up
 
     plFree2dGrid( z, XPTS, YPTS );
     plFree2dGrid( w, XPTS, YPTS );

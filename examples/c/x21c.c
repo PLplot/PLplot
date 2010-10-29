@@ -1,29 +1,29 @@
-/* $Id$
- *      Grid data demo
- *
- * Copyright (C) 2004  Joao Cardoso
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//      Grid data demo
+//
+// Copyright (C) 2004  Joao Cardoso
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plcdemos.h"
 
-/* Options data structure definition. */
+// Options data structure definition.
 
 static PLINT         pts       = 500;
 static PLINT         xp        = 25;
@@ -111,14 +111,14 @@ static PLOptionTable options[] = {
     },
 
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 void create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts );
@@ -131,11 +131,11 @@ cmap1_init()
 {
     PLFLT i[2], h[2], l[2], s[2];
 
-    i[0] = 0.0;         /* left boundary */
-    i[1] = 1.0;         /* right boundary */
+    i[0] = 0.0;         // left boundary
+    i[1] = 1.0;         // right boundary
 
-    h[0] = 240;         /* blue -> green -> yellow -> */
-    h[1] = 0;           /* -> red */
+    h[0] = 240;         // blue -> green -> yellow ->
+    h[1] = 0;           // -> red
 
     l[0] = 0.6;
     l[1] = 0.6;
@@ -176,14 +176,14 @@ main( int argc, const char *argv[] )
     opt[3] = (PLFLT) knn_order;
     opt[4] = threshold;
 
-    /* Initialize plplot */
+    // Initialize plplot
 
     plinit();
 
-    /* Initialise random number generator */
+    // Initialise random number generator
     plseed( 5489 );
 
-    create_data( &x, &y, &z, pts ); /* the sampled data */
+    create_data( &x, &y, &z, pts ); // the sampled data
     zmin = z[0];
     zmax = z[0];
     for ( i = 1; i < pts; i++ )
@@ -194,11 +194,11 @@ main( int argc, const char *argv[] )
             zmin = z[i];
     }
 
-    create_grid( &xg, xp, &yg, yp ); /* grid the data at */
-    plAlloc2dGrid( &zg, xp, yp );    /* the output grided data */
+    create_grid( &xg, xp, &yg, yp ); // grid the data at
+    plAlloc2dGrid( &zg, xp, yp );    // the output grided data
     clev = (PLFLT *) malloc( nl * sizeof ( PLFLT ) );
 
-    /* printf("Npts=%d gridx=%d gridy=%d", pts, xp, yp); */
+    // printf("Npts=%d gridx=%d gridy=%d", pts, xp, yp);
     plcol0( 1 );
     plenv( xm, xM, ym, yM, 2, 0 );
     plcol0( 15 );
@@ -216,15 +216,15 @@ main( int argc, const char *argv[] )
         {
             plgriddata( x, y, z, pts, xg, xp, yg, yp, zg, alg, opt[alg - 1] );
 
-            /* - CSA can generate NaNs (only interpolates?!).
-             * - DTLI and NNI can generate NaNs for points outside the convex hull
-             *      of the data points.
-             * - NNLI can generate NaNs if a sufficiently thick triangle is not found
-             *
-             * PLplot should be NaN/Inf aware, but changing it now is quite a job...
-             * so, instead of not plotting the NaN regions, a weighted average over
-             * the neighbors is done.
-             */
+            // - CSA can generate NaNs (only interpolates?!).
+            // - DTLI and NNI can generate NaNs for points outside the convex hull
+            //      of the data points.
+            // - NNLI can generate NaNs if a sufficiently thick triangle is not found
+            //
+            // PLplot should be NaN/Inf aware, but changing it now is quite a job...
+            // so, instead of not plotting the NaN regions, a weighted average over
+            // the neighbors is done.
+            //
 
             if ( alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI )
             {
@@ -235,7 +235,7 @@ main( int argc, const char *argv[] )
                 {
                     for ( j = 0; j < yp; j++ )
                     {
-                        if ( isnan( zg[i][j] ) ) /* average (IDW) over the 8 neighbors */
+                        if ( isnan( zg[i][j] ) ) // average (IDW) over the 8 neighbors
 
                         {
                             zg[i][j] = 0.; dist = 0.;
@@ -266,8 +266,8 @@ main( int argc, const char *argv[] )
             lzm = MIN( lzm, zmin );
             lzM = MAX( lzM, zmax );
 
-            /* Increase limits slightly to prevent spurious contours
-             * due to rounding errors */
+            // Increase limits slightly to prevent spurious contours
+            // due to rounding errors
             lzm = lzm - 0.01;
             lzM = lzM + 0.01;
 
@@ -295,13 +295,13 @@ main( int argc, const char *argv[] )
                 cmap1_init();
                 plvpor( 0.0, 1.0, 0.0, 0.9 );
                 plwind( -1.1, 0.75, -0.65, 1.20 );
-                /*
-                 * For the comparison to be fair, all plots should have the
-                 * same z values, but to get the max/min of the data generated
-                 * by all algorithms would imply two passes. Keep it simple.
-                 *
-                 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
-                 */
+                //
+                // For the comparison to be fair, all plots should have the
+                // same z values, but to get the max/min of the data generated
+                // by all algorithms would imply two passes. Keep it simple.
+                //
+                // plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
+                //
 
                 plw3d( 1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -40 );
                 plbox3( "bntu", "X", 0., 0,
@@ -367,7 +367,7 @@ create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts )
             *x = xt + xm;
             *y = yt + ym;
         }
-        else /* std=1, meaning that many points are outside the plot range */
+        else // std=1, meaning that many points are outside the plot range
         {
             *x = sqrt( -2. * log( xt ) ) * cos( 2. * M_PI * yt ) + xm;
             *y = sqrt( -2. * log( xt ) ) * sin( 2. * M_PI * yt ) + ym;

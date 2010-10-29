@@ -1,9 +1,9 @@
-/* $Id$
- * $Log$
- * Revision 1.1  1992/05/20 21:33:27  furnish
- * Initial checkin of the whole PLPLOT project.
- *
- */
+// $Id$
+// $Log$
+// Revision 1.1  1992/05/20 21:33:27  furnish
+// Initial checkin of the whole PLPLOT project.
+//
+//
 
 short int subbuffer149[100] = {
     8260,   64, 8249, 8120, 8247, 8376, 8249,    0,  -16, 7116,

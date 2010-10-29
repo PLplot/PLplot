@@ -1,45 +1,45 @@
-/* $Id$
- *
- *  Simple vector plot example
- *  Copyright (C) 2004 Andrew Ross <andrewross@users.sourceforge.net>
- *  Copyright (C) 2004  Rafael Laboissiere
- *
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Library Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//  Simple vector plot example
+//  Copyright (C) 2004 Andrew Ross <andrewross@users.sourceforge.net>
+//  Copyright (C) 2004  Rafael Laboissiere
+//
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Library Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plcdemos.h"
 
-/* Pairs of points making the line segments used to plot the user defined arrow */
+// Pairs of points making the line segments used to plot the user defined arrow
 static PLFLT arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
 static PLFLT arrow_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
 static PLFLT arrow2_x[6] = { -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 };
 static PLFLT arrow2_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Generates several simple vector plots.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Generates several simple vector plots.
+//--------------------------------------------------------------------------
 
-/*
- * Vector plot of the circulation about the origin
- */
+//
+// Vector plot of the circulation about the origin
+//
 void
 circulation()
 {
@@ -67,7 +67,7 @@ circulation()
     cgrid2.nx = nx;
     cgrid2.ny = ny;
 
-    /* Create data - circulation around the origin. */
+    // Create data - circulation around the origin.
     for ( i = 0; i < nx; i++ )
     {
         x = ( i - nx / 2 + 0.5 ) * dx;
@@ -81,7 +81,7 @@ circulation()
         }
     }
 
-    /* Plot vectors with default arrows */
+    // Plot vectors with default arrows
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
     pllab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
     plcol0( 2 );
@@ -94,9 +94,9 @@ circulation()
     plFree2dGrid( v, nx, ny );
 }
 
-/*
- * Vector plot of flow through a constricted pipe
- */
+//
+// Vector plot of flow through a constricted pipe
+//
 void
 constriction()
 {
@@ -181,9 +181,9 @@ void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
     }
 }
 
-/*
- * Vector plot of the gradient of a shielded potential (see example 9)
- */
+//
+// Vector plot of the gradient of a shielded potential (see example 9)
+//
 void potential()
 {
 #if !defined ( WIN32 )
@@ -207,7 +207,7 @@ void potential()
     PLcGrid2 cgrid2;
 
 
-    /* Create data to be plotted */
+    // Create data to be plotted
     plAlloc2dGrid( &cgrid2.xg, nr, ntheta );
     plAlloc2dGrid( &cgrid2.yg, nr, ntheta );
     plAlloc2dGrid( &u, nr, ntheta );
@@ -217,11 +217,11 @@ void potential()
     cgrid2.nx = nr;
     cgrid2.ny = ntheta;
 
-    /* Potential inside a conducting cylinder (or sphere) by method of images.
-     * Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-     * Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-     * Also put in smoothing term at small distances.
-     */
+    // Potential inside a conducting cylinder (or sphere) by method of images.
+    // Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+    // Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+    // Also put in smoothing term at small distances.
+    //
 
     rmax = (double) nr;
 
@@ -267,7 +267,7 @@ void potential()
 
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
     pllab( "(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot" );
-    /* Plot contours of the potential */
+    // Plot contours of the potential
     dz = ( zmax - zmin ) / (double) nlevel;
     for ( i = 0; i < nlevel; i++ )
     {
@@ -279,12 +279,12 @@ void potential()
     pllsty( 1 );
     plcol0( 1 );
 
-    /* Plot the vectors of the gradient of the potential */
+    // Plot the vectors of the gradient of the potential
     plcol0( 2 );
     plvect( u, v, nr, ntheta, 25.0, pltr2, (void *) &cgrid2 );
     plcol0( 1 );
 
-    /* Plot the perimeter of the cylinder */
+    // Plot the perimeter of the cylinder
     for ( i = 0; i < nper; i++ )
     {
         theta = ( 2. * M_PI / ( nper - 1 ) ) * (double) i;
@@ -305,11 +305,11 @@ main( int argc, const char *argv[] )
 {
     PLINT narr, fill;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
 
     plparseopts( &argc, argv, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
 
     plinit();
 
@@ -318,13 +318,13 @@ main( int argc, const char *argv[] )
     narr = 6;
     fill = 0;
 
-    /* Set arrow style using arrow_x and arrow_y then
-     * plot using these arrows.*/
+    // Set arrow style using arrow_x and arrow_y then
+    // plot using these arrows.
     plsvect( arrow_x, arrow_y, narr, fill );
     constriction();
 
-    /* Set arrow style using arrow2_x and arrow2_y then
-     * plot using these filled arrows. */
+    // Set arrow style using arrow2_x and arrow2_y then
+    // plot using these filled arrows.
     fill = 1;
     plsvect( arrow2_x, arrow2_y, narr, fill );
     constriction();

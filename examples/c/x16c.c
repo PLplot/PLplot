@@ -1,28 +1,28 @@
-/* $Id$
- *
- *      plshade demo, using color fill.
- *
- *      Maurice LeBrun
- *      IFS, University of Texas at Austin
- *      20 Mar 1994
- */
+// $Id$
+//
+//      plshade demo, using color fill.
+//
+//      Maurice LeBrun
+//      IFS, University of Texas at Austin
+//      20 Mar 1994
+//
 
 #include "plcdemos.h"
 
-/* Fundamental settings.  See notes[] for more info. */
+// Fundamental settings.  See notes[] for more info.
 
-static int ns      = 20;        /* Default number of shade levels */
-static int nx      = 35;        /* Default number of data points in x */
-static int ny      = 46;        /* Default number of data points in y */
-static int exclude = 0;         /* By default do not plot a page illustrating
-                                 * exclusion.  API is probably going to change
-                                 * anyway, and cannot be reproduced by any
-                                 * front end other than the C one. */
+static int ns      = 20;        // Default number of shade levels
+static int nx      = 35;        // Default number of data points in x
+static int ny      = 46;        // Default number of data points in y
+static int exclude = 0;         // By default do not plot a page illustrating
+                                // exclusion.  API is probably going to change
+                                // anyway, and cannot be reproduced by any
+                                // front end other than the C one.
 
-/* polar plot data */
+// polar plot data
 #define PERIMETERPTS    100
 
-/* Transformation function */
+// Transformation function
 
 PLFLT tr[6];
 
@@ -33,16 +33,16 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-/* Function prototypes */
+// Function prototypes
 
 static void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax );
 
-/* Options data structure definition. */
+// Options data structure definition.
 
 static PLOptionTable options[] = {
     {
-        "exclude",              /* Turns on page showing exclusion */
+        "exclude",              // Turns on page showing exclusion
         NULL,
         NULL,
         &exclude,
@@ -51,7 +51,7 @@ static PLOptionTable options[] = {
         "Plot the \"exclusion\" page."
     },
     {
-        "ns",                   /* Number of shade levels */
+        "ns",                   // Number of shade levels
         NULL,
         NULL,
         &ns,
@@ -60,7 +60,7 @@ static PLOptionTable options[] = {
         "Sets number of shade levels"
     },
     {
-        "nx",                   /* Number of data points in x */
+        "nx",                   // Number of data points in x
         NULL,
         NULL,
         &nx,
@@ -69,7 +69,7 @@ static PLOptionTable options[] = {
         "Sets number of data points in x"
     },
     {
-        "ny",                   /* Number of data points in y */
+        "ny",                   // Number of data points in y
         NULL,
         NULL,
         &ny,
@@ -78,14 +78,14 @@ static PLOptionTable options[] = {
         "Sets number of data points in y"
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 static const char    *notes[] = {
@@ -105,11 +105,11 @@ zdefined( PLFLT x, PLFLT y )
 
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does several shade plots using different coordinate mappings.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does several shade plots using different coordinate mappings.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -125,21 +125,21 @@ main( int argc, const char *argv[] )
 
     PLINT    fill_width = 2, cont_color = 0, cont_width = 0;
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     plMergeOpts( options, "x16c options", notes );
     plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Load colour palettes*/
+// Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_gray.pal", 1 );
-/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+// Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 
-/* Set up transformation function */
+// Set up transformation function
 
     tr[0] = 2. / ( nx - 1 );
     tr[1] = 0.0;
@@ -148,7 +148,7 @@ main( int argc, const char *argv[] )
     tr[4] = 2. / ( ny - 1 );
     tr[5] = -1.0;
 
-/* Allocate data structures */
+// Allocate data structures
 
     clevel = (PLFLT *) calloc( ns, sizeof ( PLFLT ) );
     shedge = (PLFLT *) calloc( ns + 1, sizeof ( PLFLT ) );
@@ -158,7 +158,7 @@ main( int argc, const char *argv[] )
     plAlloc2dGrid( &z, nx, ny );
     plAlloc2dGrid( &w, nx, ny );
 
-/* Set up data array */
+// Set up data array
 
     for ( i = 0; i < nx; i++ )
     {
@@ -178,7 +178,7 @@ main( int argc, const char *argv[] )
     for ( i = 0; i < ns + 1; i++ )
         shedge[i] = zmin + ( zmax - zmin ) * (PLFLT) i / (PLFLT) ns;
 
-/* Set up coordinate grids */
+// Set up coordinate grids
 
     cgrid1.xg = xg1;
     cgrid1.yg = yg1;
@@ -208,7 +208,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-/* Plot using identity transform */
+// Plot using identity transform
 
     pladv( 0 );
     plvpor( 0.1, 0.9, 0.1, 0.9 );
@@ -224,17 +224,17 @@ main( int argc, const char *argv[] )
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     plcol0( 2 );
-/*
- *  plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, mypltr, NULL);
- */
+//
+//  plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, mypltr, NULL);
+//
     pllab( "distance", "altitude", "Bogon density" );
 
-/* Plot using 1d coordinate transform */
+// Plot using 1d coordinate transform
 
-/* Load colour palettes*/
+// Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_blue_yellow.pal", 1 );
-/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+// Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -251,17 +251,17 @@ main( int argc, const char *argv[] )
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     plcol0( 2 );
-/*
- *  plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, (void *) &cgrid1);
- */
+//
+//  plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, (void *) &cgrid1);
+//
     pllab( "distance", "altitude", "Bogon density" );
 
-/* Plot using 2d coordinate transform */
+// Plot using 2d coordinate transform
 
-/* Load colour palettes*/
+// Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_blue_red.pal", 1 );
-/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+// Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -282,12 +282,12 @@ main( int argc, const char *argv[] )
 
     pllab( "distance", "altitude", "Bogon density, with streamlines" );
 
-/* Plot using 2d coordinate transform */
+// Plot using 2d coordinate transform
 
-/* Load colour palettes*/
+// Load colour palettes
     plspal0( "" );
     plspal1( "", 1 );
-/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+// Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -304,20 +304,20 @@ main( int argc, const char *argv[] )
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     plcol0( 2 );
-/*    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);*/
+//    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
 
     pllab( "distance", "altitude", "Bogon density" );
 
-/* Note this exclusion API will probably change. */
+// Note this exclusion API will probably change.
 
-/* Plot using 2d coordinate transform and exclusion*/
+// Plot using 2d coordinate transform and exclusion
 
     if ( exclude )
     {
-/* Load colour palettes*/
+// Load colour palettes
         plspal0( "cmap0_black_on_white.pal" );
         plspal1( "cmap1_gray.pal", 1 );
-/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+// Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
         plscmap0n( 3 );
 
         pladv( 0 );
@@ -336,12 +336,12 @@ main( int argc, const char *argv[] )
 
         pllab( "distance", "altitude", "Bogon density with exclusion" );
     }
-/* Example with polar coordinates. */
+// Example with polar coordinates.
 
-/* Load colour palettes*/
+// Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_gray.pal", 1 );
-/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+// Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -351,7 +351,7 @@ main( int argc, const char *argv[] )
 
     plpsty( 0 );
 
-    /* Build new coordinate matrices. */
+    // Build new coordinate matrices.
 
     for ( i = 0; i < nx; i++ )
     {
@@ -365,20 +365,20 @@ main( int argc, const char *argv[] )
         }
     }
 
-    /* Need a new shedge to go along with the new data set. */
+    // Need a new shedge to go along with the new data set.
 
     f2mnmx( z, nx, ny, &zmin, &zmax );
 
     for ( i = 0; i < ns + 1; i++ )
         shedge[i] = zmin + ( zmax - zmin ) * (PLFLT) i / (PLFLT) ns;
 
-    /*  Now we can shade the interior region. */
+    //  Now we can shade the interior region.
     plshades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plfill, 0, pltr2, (void *) &cgrid2 );
 
-/* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) */
+// Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
     for ( i = 0; i < PERIMETERPTS; i++ )
     {
         t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (double) i;
@@ -388,13 +388,13 @@ main( int argc, const char *argv[] )
     plcol0( 1 );
     plline( PERIMETERPTS, px, py );
 
-    /* And label the plot.*/
+    // And label the plot.
 
     plcol0( 2 );
     pllab( "", "", "Tokamak Bogon Instability" );
 
 
-/* Clean up */
+// Clean up
 
     free( (void *) clevel );
     free( (void *) shedge );
@@ -410,11 +410,11 @@ main( int argc, const char *argv[] )
     exit( 0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * f2mnmx
- *
- * Returns min & max of input 2d array.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// f2mnmx
+//
+// Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
 
 static void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )

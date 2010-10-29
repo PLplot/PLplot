@@ -1,24 +1,24 @@
-/* $Id$
- *
- *      Window positioning demo.
- */
+// $Id$
+//
+//      Window positioning demo.
+//
 
 #include "plcdemos.h"
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Demonstrates absolute positioning of graphs on a page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Demonstrates absolute positioning of graphs on a page.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
 {
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 

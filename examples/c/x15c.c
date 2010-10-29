@@ -1,20 +1,20 @@
-/* $Id$
- *
- *      Shade plot demo.
- *
- *      Maurice LeBrun
- *      IFS, University of Texas at Austin
- *      31 Aug 1993
- */
+// $Id$
+//
+//      Shade plot demo.
+//
+//      Maurice LeBrun
+//      IFS, University of Texas at Austin
+//      31 Aug 1993
+//
 
 #include "plcdemos.h"
 
-#define XPTS    35              /* Data points in x */
-#define YPTS    46              /* Data points in y */
+#define XPTS    35              // Data points in x
+#define YPTS    46              // Data points in y
 
 PLFLT z[XPTS][YPTS], zmin, zmax;
 
-/* Function prototypes */
+// Function prototypes
 
 static void     plot1( void );
 static void     plot2( void );
@@ -24,11 +24,11 @@ static void     cmap1_init1( void );
 static void     cmap1_init2( void );
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a variety of shade plots.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a variety of shade plots.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -36,23 +36,23 @@ main( int argc, const char *argv[] )
     int   i, j;
     PLFLT xx, yy;
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Set up color map 0 */
-/*
- *  plscmap0n(3);
- */
-/* Set up color map 1 */
+// Set up color map 0
+//
+//  plscmap0n(3);
+//
+// Set up color map 1
 
     cmap1_init2();
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 
-/* Set up data array */
+// Set up data array
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -74,93 +74,93 @@ main( int argc, const char *argv[] )
     exit( 0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * cmap1_init1
- *
- * Initializes color map 1 in HLS space.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// cmap1_init1
+//
+// Initializes color map 1 in HLS space.
+//--------------------------------------------------------------------------
 
 static void
 cmap1_init1( void )
 {
     PLFLT i[4], h[4], l[4], s[4];
 
-    i[0] = 0;           /* left boundary */
-    i[1] = 0.45;        /* just before center */
-    i[2] = 0.55;        /* just after center */
-    i[3] = 1;           /* right boundary */
+    i[0] = 0;           // left boundary
+    i[1] = 0.45;        // just before center
+    i[2] = 0.55;        // just after center
+    i[3] = 1;           // right boundary
 
-    h[0] = 260;         /* hue -- low: blue-violet */
-    h[1] = 260;         /* only change as we go over vertex */
-    h[2] = 20;          /* hue -- high: red */
-    h[3] = 20;          /* keep fixed */
+    h[0] = 260;         // hue -- low: blue-violet
+    h[1] = 260;         // only change as we go over vertex
+    h[2] = 20;          // hue -- high: red
+    h[3] = 20;          // keep fixed
 
 #if 1
-    l[0] = 0.5;         /* lightness -- low */
-    l[1] = 0.0;         /* lightness -- center */
-    l[2] = 0.0;         /* lightness -- center */
-    l[3] = 0.5;         /* lightness -- high */
+    l[0] = 0.5;         // lightness -- low
+    l[1] = 0.0;         // lightness -- center
+    l[2] = 0.0;         // lightness -- center
+    l[3] = 0.5;         // lightness -- high
 #else
     plscolbg( 255, 255, 255 );
-    l[0] = 0.5;         /* lightness -- low */
-    l[1] = 1.0;         /* lightness -- center */
-    l[2] = 1.0;         /* lightness -- center */
-    l[3] = 0.5;         /* lightness -- high */
+    l[0] = 0.5;         // lightness -- low
+    l[1] = 1.0;         // lightness -- center
+    l[2] = 1.0;         // lightness -- center
+    l[3] = 0.5;         // lightness -- high
 #endif
-    s[0] = 1;           /* maximum saturation */
-    s[1] = 1;           /* maximum saturation */
-    s[2] = 1;           /* maximum saturation */
-    s[3] = 1;           /* maximum saturation */
+    s[0] = 1;           // maximum saturation
+    s[1] = 1;           // maximum saturation
+    s[2] = 1;           // maximum saturation
+    s[3] = 1;           // maximum saturation
 
     c_plscmap1l( 0, 4, i, h, l, s, NULL );
 }
 
-/*--------------------------------------------------------------------------*\
- * cmap1_init2
- *
- * Initializes color map 1 in HLS space.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// cmap1_init2
+//
+// Initializes color map 1 in HLS space.
+//--------------------------------------------------------------------------
 
 static void
 cmap1_init2( void )
 {
     PLFLT i[4], h[4], l[4], s[4];
 
-    i[0] = 0;           /* left boundary */
-    i[1] = 0.45;        /* just before center */
-    i[2] = 0.55;        /* just after center */
-    i[3] = 1;           /* right boundary */
+    i[0] = 0;           // left boundary
+    i[1] = 0.45;        // just before center
+    i[2] = 0.55;        // just after center
+    i[3] = 1;           // right boundary
 
-    h[0] = 260;         /* hue -- low: blue-violet */
-    h[1] = 260;         /* only change as we go over vertex */
-    h[2] = 20;          /* hue -- high: red */
-    h[3] = 20;          /* keep fixed */
+    h[0] = 260;         // hue -- low: blue-violet
+    h[1] = 260;         // only change as we go over vertex
+    h[2] = 20;          // hue -- high: red
+    h[3] = 20;          // keep fixed
 
 #if 1
-    l[0] = 0.6;         /* lightness -- low */
-    l[1] = 0.0;         /* lightness -- center */
-    l[2] = 0.0;         /* lightness -- center */
-    l[3] = 0.6;         /* lightness -- high */
+    l[0] = 0.6;         // lightness -- low
+    l[1] = 0.0;         // lightness -- center
+    l[2] = 0.0;         // lightness -- center
+    l[3] = 0.6;         // lightness -- high
 #else
     plscolbg( 255, 255, 255 );
-    l[0] = 0.5;         /* lightness -- low */
-    l[1] = 1.0;         /* lightness -- center */
-    l[2] = 1.0;         /* lightness -- center */
-    l[3] = 0.5;         /* lightness -- high */
+    l[0] = 0.5;         // lightness -- low
+    l[1] = 1.0;         // lightness -- center
+    l[2] = 1.0;         // lightness -- center
+    l[3] = 0.5;         // lightness -- high
 #endif
-    s[0] = 1;           /* saturation -- low */
-    s[1] = 0.5;         /* saturation -- center */
-    s[2] = 0.5;         /* saturation -- center */
-    s[3] = 1;           /* saturation -- high */
+    s[0] = 1;           // saturation -- low
+    s[1] = 0.5;         // saturation -- center
+    s[2] = 0.5;         // saturation -- center
+    s[3] = 1;           // saturation -- high
 
     c_plscmap1l( 0, 4, i, h, l, s, NULL );
 }
 
-/*--------------------------------------------------------------------------*\
- * plot1
- *
- * Illustrates a single shaded region.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plot1
+//
+// Illustrates a single shaded region.
+//--------------------------------------------------------------------------
 
 static void
 plot1( void )
@@ -173,7 +173,7 @@ plot1( void )
     plvpor( 0.1, 0.9, 0.1, 0.9 );
     plwind( -1.0, 1.0, -1.0, 1.0 );
 
-/* Plot using identity transform */
+// Plot using identity transform
 
     shade_min = zmin + ( zmax - zmin ) * 0.4;
     shade_max = zmin + ( zmax - zmin ) * 0.6;
@@ -197,12 +197,12 @@ plot1( void )
     pllab( "distance", "altitude", "Bogon flux" );
 }
 
-/*--------------------------------------------------------------------------*\
- * plot2
- *
- * Illustrates multiple adjacent shaded regions, using different fill
- * patterns for each region.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plot2
+//
+// Illustrates multiple adjacent shaded regions, using different fill
+// patterns for each region.
+//--------------------------------------------------------------------------
 
 static void
 plot2( void )
@@ -226,7 +226,7 @@ plot2( void )
     plvpor( 0.1, 0.9, 0.1, 0.9 );
     plwind( -1.0, 1.0, -1.0, 1.0 );
 
-/* Plot using identity transform */
+// Plot using identity transform
 
     for ( i = 0; i < 10; i++ )
     {
@@ -248,12 +248,12 @@ plot2( void )
     pllab( "distance", "altitude", "Bogon flux" );
 }
 
-/*--------------------------------------------------------------------------*\
- * plot3
- *
- * Illustrates shaded regions in 3d, using a different fill pattern for
- * each region.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plot3
+//
+// Illustrates shaded regions in 3d, using a different fill pattern for
+// each region.
+//--------------------------------------------------------------------------
 
 static void
 plot3( void )
@@ -270,7 +270,7 @@ plot3( void )
     plwind( -1.0, 1.0, -1.0, 1.0 );
     plw3d( 1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40 );
 
-/* Plot using identity transform */
+// Plot using identity transform
 
     plcol0( 1 );
     plbox3( "bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0 );
@@ -286,11 +286,11 @@ plot3( void )
     plfill3( 4, xx[1], yy[1], zz[1] );
 }
 
-/*--------------------------------------------------------------------------*\
- * f2mnmx
- *
- * Returns min & max of input 2d array.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// f2mnmx
+//
+// Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
 
 #define F( a, b )    ( f[a * ny + b] )
 

@@ -1,27 +1,27 @@
-/* $Id$
- *
- * Copyright (C) 2008 Alan W. Irwin
- * Copyright (C) 2008 Andrew Ross
- *
- * set/get tester
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+// Copyright (C) 2008 Alan W. Irwin
+// Copyright (C) 2008 Andrew Ross
+//
+// set/get tester
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plcdemos.h"
 
@@ -50,21 +50,21 @@ main( int argc, const char *argv[] )
     int   status;
     char  fnam[80];
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
 
     status = 0;
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-    /* Test setting / getting familying parameters before plinit */
-    /* Save values set by plparseopts to be restored later. */
+    // Test setting / getting familying parameters before plinit
+    // Save values set by plparseopts to be restored later.
     plgfam( &fam0, &num0, &bmax0 );
     fam1  = 0;
     num1  = 10;
     bmax1 = 1000;
     plsfam( fam1, num1, bmax1 );
 
-    /* Retrieve the same values? */
+    // Retrieve the same values?
     plgfam( &fam2, &num2, &bmax2 );
     printf( "family parameters: fam, num, bmax = %d %d %d\n", fam2, num2, bmax2 );
     if ( fam2 != fam1 || num2 != num1 || bmax2 != bmax1 )
@@ -72,11 +72,11 @@ main( int argc, const char *argv[] )
         fputs( "plgfam test failed\n", stderr );
         status = 1;
     }
-    /* Restore values set initially by plparseopts. */
+    // Restore values set initially by plparseopts.
     plsfam( fam0, num0, bmax0 );
 
-    /* Test setting / getting page parameters before plinit */
-    /* Save values set by plparseopts to be restored later. */
+    // Test setting / getting page parameters before plinit
+    // Save values set by plparseopts to be restored later.
     plgpage( &xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0 );
     xp1    = 200.;
     yp1    = 200.;
@@ -86,7 +86,7 @@ main( int argc, const char *argv[] )
     yoff1  = 20;
     plspage( xp1, yp1, xleng1, yleng1, xoff1, yoff1 );
 
-    /* Retrieve the same values? */
+    // Retrieve the same values?
     plgpage( &xp2, &yp2, &xleng2, &yleng2, &xoff2, &yoff2 );
     printf( "page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", xp2, yp2, xleng2, yleng2, xoff2, yoff2 );
     if ( xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 ||
@@ -95,18 +95,18 @@ main( int argc, const char *argv[] )
         fputs( "plgpage test failed\n", stderr );
         status = 1;
     }
-    /* Restore values set initially by plparseopts. */
+    // Restore values set initially by plparseopts.
     plspage( xp0, yp0, xleng0, yleng0, xoff0, yoff0 );
 
-    /* Test setting / getting compression parameter across plinit. */
+    // Test setting / getting compression parameter across plinit.
     compression1 = 95;
     plscompression( compression1 );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
-    /* Test if device initialization screwed around with the preset
-     * compression parameter. */
+    // Test if device initialization screwed around with the preset
+    // compression parameter.
     plgcompression( &compression2 );
     printf( "Output various PLplot parameters\n" );
     printf( "compression parameter = %d\n", compression2 );
@@ -117,8 +117,8 @@ main( int argc, const char *argv[] )
     }
 
 
-    /* Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
-     * they work without any obvious error messages. */
+    // Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
+    // they work without any obvious error messages.
     plscolor( 1 );
     plscol0( 1, 255, 0, 0 );
     plscmap1( r1, g1, b1, 2 );
@@ -153,7 +153,7 @@ main( int argc, const char *argv[] )
         status = 1;
     }
 
-    /* Get world coordinates for middle of viewport */
+    // Get world coordinates for middle of viewport
     plcalc_world( xmid, ymid, &wx, &wy, &win );
     printf( "world parameters: wx, wy, win = %f %f %d\n", wx, wy, win );
     if ( fabs( wx - 0.5 * ( xmin + xmax ) ) > 1.0E-5 || fabs( wy - 0.5 * ( ymin + ymax ) ) > 1.0E-5 )
@@ -162,9 +162,9 @@ main( int argc, const char *argv[] )
         status = 1;
     }
 
-    /* Retrieve and print the name of the output file (if any).
-     * This goes to stderr not stdout since it will vary between tests and
-     * we want stdout to be identical for compare test. */
+    // Retrieve and print the name of the output file (if any).
+    // This goes to stderr not stdout since it will vary between tests and
+    // we want stdout to be identical for compare test.
     plgfnam( fnam );
     if ( fnam[0] == '\0' )
     {
@@ -176,10 +176,10 @@ main( int argc, const char *argv[] )
     }
     fprintf( stderr, "Output file name is %s\n", fnam );
 
-    /* Set and get the number of digits used to display axis labels */
-    /* Note digits is currently ignored in pls[xyz]ax and
-     * therefore it does not make sense to test the returned
-     * value */
+    // Set and get the number of digits used to display axis labels
+    // Note digits is currently ignored in pls[xyz]ax and
+    // therefore it does not make sense to test the returned
+    // value
     plsxax( 3, 0 );
     plgxax( &digmax, &digits );
     printf( "x axis parameters: digmax, digits = %d %d\n", digmax, digits );

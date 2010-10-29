@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      Example linear transformation function for contour plotter.
- */
+// $Id$
+//
+//      Example linear transformation function for contour plotter.
+//
 
 #include "plplotP.h"
 

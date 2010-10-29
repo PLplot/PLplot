@@ -1,36 +1,36 @@
-/* $Id$
- *
- *  Copyright 1991, 1992, 1993, 1994, 1995
- *  Geoffrey Furnish			furnish@dino.ph.utexas.edu
- *  Maurice LeBrun			mjl@dino.ph.utexas.edu
- *  Institute for Fusion Studies	University of Texas at Austin
- *
- *  Copyright (C) 2004  Alan W. Irwin
- *  Copyright (C) 2004  Maurice LeBrun
- *  Copyright (C) 2004  Andrew Ross
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  This file contains the code to render a PLplot metafile, written by
- *  the metafile driver, plmeta.c.
- */
+// $Id$
+//
+//  Copyright 1991, 1992, 1993, 1994, 1995
+//  Geoffrey Furnish			furnish@dino.ph.utexas.edu
+//  Maurice LeBrun			mjl@dino.ph.utexas.edu
+//  Institute for Fusion Studies	University of Texas at Austin
+//
+//  Copyright (C) 2004  Alan W. Irwin
+//  Copyright (C) 2004  Maurice LeBrun
+//  Copyright (C) 2004  Andrew Ross
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Library General Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
+//--------------------------------------------------------------------------
+//
+//  This file contains the code to render a PLplot metafile, written by
+//  the metafile driver, plmeta.c.
+//
 
 char ident[] = "@(#) $Id$";
 
@@ -43,8 +43,8 @@ char ident[] = "@(#) $Id$";
 #include "metadefs.h"
 #include <ctype.h>
 
-/* Static function prototypes. */
-/* These handle the command loop */
+// Static function prototypes.
+// These handle the command loop
 
 static void     process_next( U_CHAR c );
 static void     plr_init( U_CHAR c );
@@ -58,7 +58,7 @@ static void     plresc_fill( void );
 static void     plresc_rgb( void );
 static void     plresc_ancol( void );
 
-/* Support functions */
+// Support functions
 
 static U_CHAR   getcommand( void );
 static void     ungetcommand( U_CHAR );
@@ -78,14 +78,14 @@ static void     doseek( FPOS_T );
 static void     PageIncr( void );
 static void     PageDecr( void );
 
-/* Initialization functions */
+// Initialization functions
 
 static void     Init( int, char ** );
 static int      ProcessFile( int, char ** );
 static int      OpenMetaFile( char ** );
 static int      ReadFileHeader( void );
 
-/* Option handlers */
+// Option handlers
 
 static int Opt_v( const char *, const char *, void * );
 static int Opt_i( const char *, const char *, void * );
@@ -93,57 +93,57 @@ static int Opt_b( const char *, const char *, void * );
 static int Opt_e( const char *, const char *, void * );
 static int Opt_p( const char *, const char *, void * );
 
-/* Global variables */
+// Global variables
 
-/* Copies of argc, argv, for use with multiple files */
+// Copies of argc, argv, for use with multiple files
 
 static int  myargc;
 static char **myargv;
 
-/* Page info */
+// Page info
 
-static PLINT  disp_beg = 1;     /* Where to start plotting */
-static PLINT  disp_end = -1;    /* Where to stop (0 to disable) */
-static PLINT  curdisp;          /* Current page number */
-static PLINT  cursub;           /* Current subpage */
-static PLINT  curpage;          /* Current plot number */
-static PLINT  nsubx;            /* subpages in x */
-static PLINT  nsuby;            /* subpages in y */
-static PLINT  target_disp;      /* Page we are seeking to */
-static PLINT  target_page;      /* Plot we are seeking to */
-static PLINT  delta;            /* Number of pages to go forward/back */
-static PLINT  pages;            /* Number of pages in file */
+static PLINT  disp_beg = 1;     // Where to start plotting
+static PLINT  disp_end = -1;    // Where to stop (0 to disable)
+static PLINT  curdisp;          // Current page number
+static PLINT  cursub;           // Current subpage
+static PLINT  curpage;          // Current plot number
+static PLINT  nsubx;            // subpages in x
+static PLINT  nsuby;            // subpages in y
+static PLINT  target_disp;      // Page we are seeking to
+static PLINT  target_page;      // Plot we are seeking to
+static PLINT  delta;            // Number of pages to go forward/back
+static PLINT  pages;            // Number of pages in file
 
-static int    no_pagelinks;     /* Set if metafile doesn't have page links */
-static int    end_of_page;      /* Set when we're at the end of a page */
-static int    seek_mode;        /* Set after a seek, before a BOP */
-static int    addeof_beg;       /* Set when we are counting back from eof */
-static int    addeof_end;       /* Set when we are counting back from eof */
-static int    first_page;       /* Set when we're on the first page in the file */
+static int    no_pagelinks;     // Set if metafile doesn't have page links
+static int    end_of_page;      // Set when we're at the end of a page
+static int    seek_mode;        // Set after a seek, before a BOP
+static int    addeof_beg;       // Set when we are counting back from eof
+static int    addeof_end;       // Set when we are counting back from eof
+static int    first_page;       // Set when we're on the first page in the file
 
-static FPOS_T prevpage_loc;     /* Byte position of previous page header */
-static FPOS_T curpage_loc;      /* Byte position of current page header */
-static FPOS_T nextpage_loc;     /* Byte position of next page header */
+static FPOS_T prevpage_loc;     // Byte position of previous page header
+static FPOS_T curpage_loc;      // Byte position of current page header
+static FPOS_T nextpage_loc;     // Byte position of next page header
 
-/* File info */
+// File info
 
-static int     input_type;       /* 0 for file, 1 for stream */
-static int     isfile;           /* shorthand -- set if file */
-static int     do_file_loop = 1; /* loop over multiple files if set */
-static PDFstrm *pdfs;            /* PDF stream handle */
-static FILE    *MetaFile;        /* Actual metafile handle, for seeks etc */
+static int     input_type;       // 0 for file, 1 for stream
+static int     isfile;           // shorthand -- set if file
+static int     do_file_loop = 1; // loop over multiple files if set
+static PDFstrm *pdfs;            // PDF stream handle
+static FILE    *MetaFile;        // Actual metafile handle, for seeks etc
 
 static char    BaseName[80] = "", FileName[90] = "";
 static PLINT   is_family, member = 1;
 static char    mf_magic[40], mf_version[40];
 
-/* Dummy vars for reading stuff that is to be thrown away */
+// Dummy vars for reading stuff that is to be thrown away
 
 static U_CHAR  dum_uchar;
 static U_SHORT dum_ushort;
 static float   dum_float;
 
-/* Plot dimensions */
+// Plot dimensions
 
 static short xmin = 0;
 static short xmax = PLMETA_X_OLD;
@@ -158,12 +158,12 @@ static PLFLT dev_xpmm, dev_ypmm;
 static PLINT dev_xmin, dev_xmax, dev_ymin, dev_ymax, dev_xlen, dev_ylen;
 static PLFLT vpxmin, vpxmax, vpxlen, vpymin, vpymax, vpylen;
 
-/* Geometry info */
+// Geometry info
 
 static float xdpi, ydpi;
 static PLINT xlength, ylength, xoffset, yoffset;
 
-/* Miscellaneous */
+// Miscellaneous
 
 static U_CHAR  c_old, c1;
 static U_SHORT npts;
@@ -173,13 +173,13 @@ static PLFLT   x[PL_MAXPOLY], y[PL_MAXPOLY];
 static char    buffer[256];
 static char    * cmdstring[256];
 
-/* Exit codes */
+// Exit codes
 
-#define EX_SUCCESS    0                 /* success! */
-#define EX_ARGSBAD    1                 /* invalid args */
-#define EX_BADFILE    2                 /* invalid filename or contents */
+#define EX_SUCCESS    0                 // success!
+#define EX_ARGSBAD    1                 // invalid args
+#define EX_BADFILE    2                 // invalid filename or contents
 
-/* A little function to help with debugging */
+// A little function to help with debugging
 
 #ifdef DEBUG
 #define DEBUG_PRINT_LOCATION( a )    PrintLocation( a )
@@ -201,13 +201,13 @@ static void PrintLocation( char *tag )
 #define DEBUG_PRINT_LOCATION( a )
 #endif
 
-/*--------------------------------------------------------------------------*\
- * Options data structure definition.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Options data structure definition.
+//--------------------------------------------------------------------------
 
 static PLOptionTable options[] = {
     {
-        "v",                    /* Version */
+        "v",                    // Version
         Opt_v,
         NULL,
         NULL,
@@ -216,7 +216,7 @@ static PLOptionTable options[] = {
         "Print out the plrender version number"
     },
     {
-        "i",                    /* Input file */
+        "i",                    // Input file
         Opt_i,
         NULL,
         NULL,
@@ -225,7 +225,7 @@ static PLOptionTable options[] = {
         "Input filename"
     },
     {
-        "b",                    /* Beginning page number */
+        "b",                    // Beginning page number
         Opt_b,
         NULL,
         NULL,
@@ -234,7 +234,7 @@ static PLOptionTable options[] = {
         "Beginning page number"
     },
     {
-        "e",                    /* End page number */
+        "e",                    // End page number
         Opt_e,
         NULL,
         NULL,
@@ -243,7 +243,7 @@ static PLOptionTable options[] = {
         "End page number"
     },
     {
-        "p",                    /* Specified page only */
+        "p",                    // Specified page only
         Opt_p,
         NULL,
         NULL,
@@ -252,14 +252,14 @@ static PLOptionTable options[] = {
         "Plot given page only"
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 static const char    *notes[] = {
@@ -269,18 +269,18 @@ static const char    *notes[] = {
     NULL
 };
 
-/*--------------------------------------------------------------------------*\
- * main()
- *
- * plrender -- render a series of PLplot metafiles.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main()
+//
+// plrender -- render a series of PLplot metafiles.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, char *argv[] )
 {
     Init( argc, argv );
 
-/* Process first file.  There must be at least one. */
+// Process first file.  There must be at least one.
 
     if ( ProcessFile( argc, argv ) )
     {
@@ -289,7 +289,7 @@ main( int argc, char *argv[] )
         exit( EX_ARGSBAD );
     }
 
-/* Process any additional files */
+// Process any additional files
 
     if ( do_file_loop )
     {
@@ -303,11 +303,11 @@ main( int argc, char *argv[] )
     exit( EX_SUCCESS );
 }
 
-/*--------------------------------------------------------------------------*\
- * Init()
- *
- * Do initialization for main().
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Init()
+//
+// Do initialization for main().
+//--------------------------------------------------------------------------
 
 static void
 Init( int argc, char **argv )
@@ -316,13 +316,13 @@ Init( int argc, char **argv )
 
     dbug_enter( "Init" );
 
-/* Set up for argv processing */
+// Set up for argv processing
 
     plSetUsage( "plrender", "\nUsage:\n        plrender [options] [files]\n" );
 
     plMergeOpts( options, "plrender options", notes );
 
-/* Save argv list for future reuse */
+// Save argv list for future reuse
 
     myargv = (char **) malloc( argc * sizeof ( char * ) );
     myargc = argc;
@@ -331,7 +331,7 @@ Init( int argc, char **argv )
         myargv[i] = argv[i];
     }
 
-/* Set up names for commands for debugging */
+// Set up names for commands for debugging
 
     for ( i = 0; i < 256; i++ )
         cmdstring[i] = "UNDEFINED";
@@ -356,11 +356,11 @@ Init( int argc, char **argv )
     cmdstring[END_OF_FIELD]    = "END_OF_FIELD";
 }
 
-/*--------------------------------------------------------------------------*\
- * ProcessFile()
- *
- * Renders a file, using given command flags.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// ProcessFile()
+//
+// Renders a file, using given command flags.
+//--------------------------------------------------------------------------
 
 static int
 ProcessFile( int argc, char **argv )
@@ -371,18 +371,18 @@ ProcessFile( int argc, char **argv )
 
     dbug_enter( "ProcessFile" );
 
-/* Do all rendering in a new plot stream to make cleanup easier. */
+// Do all rendering in a new plot stream to make cleanup easier.
 
     plsstrm( 1 );
 
-/* Process plrender and PLplot (internal) command line options */
-/* Since we aren't using full parsing, plparseopts() will stop when it hits */
-/* a non-flag item */
+// Process plrender and PLplot (internal) command line options
+// Since we aren't using full parsing, plparseopts() will stop when it hits
+// a non-flag item
 
     if ( plparseopts( &argc, (const char **) argv, 0 ) )
         exit( 1 );
 
-/* Any remaining flags are illegal. */
+// Any remaining flags are illegal.
 
     if ( argv[1] != NULL && ( argv )[1][0] == '-' )
     {
@@ -391,19 +391,19 @@ ProcessFile( int argc, char **argv )
         exit( 1 );
     }
 
-/* Try to open metafile. */
+// Try to open metafile.
 
     if ( OpenMetaFile( argv ) )
         return 1;
 
-/* Initialize file and read header */
+// Initialize file and read header
 
     pdfs = pdf_finit( MetaFile );
 
     if ( ReadFileHeader() )
         exit( EX_BADFILE );
 
-/* Read & process any state info before the INITIALIZE */
+// Read & process any state info before the INITIALIZE
 
     for (;; )
     {
@@ -418,10 +418,10 @@ ProcessFile( int argc, char **argv )
         process_next( c );
     }
 
-/*
- * Reprocess the command line options so that they supercede their possible
- * counterparts in the metafile header.
- */
+//
+// Reprocess the command line options so that they supercede their possible
+// counterparts in the metafile header.
+//
 
     argc = myargc;
     for ( i = 0; i < argc; i++ )
@@ -430,7 +430,7 @@ ProcessFile( int argc, char **argv )
     }
     (void) plparseopts( &argc, (const char **) argv, 0 );
 
-/* Miscellaneous housekeeping */
+// Miscellaneous housekeeping
 
     if ( addeof_beg )
         disp_beg += pages;
@@ -443,11 +443,11 @@ ProcessFile( int argc, char **argv )
         plSetInternalOpt( "-drvopt", "tcl_cmd=set plw_create_proc plr_create" );
     }
 
-/*
- * Read & process metafile commands.
- * If familying is turned on, the end of one member file is just treated as
- * a page break assuming the next member file exists.
- */
+//
+// Read & process metafile commands.
+// If familying is turned on, the end of one member file is just treated as
+// a page break assuming the next member file exists.
+//
 
     for (;; )
     {
@@ -468,19 +468,19 @@ ProcessFile( int argc, char **argv )
         process_next( c );
     }
 
-/* Finish up */
+// Finish up
 
     pdf_close( pdfs );
     *FileName = '\0';
 
-/* A hack for old metafiles */
+// A hack for old metafiles
 
     if ( strcmp( mf_version, "1993a" ) >= 0 )
         plspause( 0 );
 
     plend1();
 
-/* Restore the old argc/argv */
+// Restore the old argc/argv
 
     argc = myargc;
     for ( i = 0; i < argc; i++ )
@@ -491,15 +491,15 @@ ProcessFile( int argc, char **argv )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * OpenMetaFile()
- *
- * Attempts to open a metafile.  If the output file isn't already determined
- * via the -i or -f flags, we assume it's the second argument in argv[] (the
- * first should still hold the program name).  Null out the string after
- * copying it so that it doesn't appear on subsequent passes of the command
- * line.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// OpenMetaFile()
+//
+// Attempts to open a metafile.  If the output file isn't already determined
+// via the -i or -f flags, we assume it's the second argument in argv[] (the
+// first should still hold the program name).  Null out the string after
+// copying it so that it doesn't appear on subsequent passes of the command
+// line.
+//--------------------------------------------------------------------------
 
 static int
 OpenMetaFile( char **argv )
@@ -534,12 +534,12 @@ OpenMetaFile( char **argv )
             }
         }
 
-        /* Try to read named Metafile.  The following cases are checked in order:
-         *	<FileName>
-         *	<FileName>.1
-         *	<FileName>.plm
-         *	<FileName>.plm.1
-         */
+        // Try to read named Metafile.  The following cases are checked in order:
+        //	<FileName>
+        //	<FileName>.1
+        //	<FileName>.plm
+        //	<FileName>.plm.1
+        //
         pldebug( "OpenMetaFile", "Trying to open metafile %s.\n", FileName );
         strncpy( name, FileName, sizeof ( name ) - 1 );
         name[sizeof ( name ) - 1] = '\0';
@@ -579,25 +579,25 @@ OpenMetaFile( char **argv )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- *                      Process the command loop
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//                      Process the command loop
+//--------------------------------------------------------------------------
 
-/*--------------------------------------------------------------------------*\
- * process_next()
- *
- * Process a command.
- * Typically plrender issues commands to PLplot much like an application
- * program would.  This results in a more robust and flexible API.  On the
- * other hand, it is sometimes necessary to directly call low-level PLplot
- * routines to achieve certain special effects, increase performance, or
- * simplify the code.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// process_next()
+//
+// Process a command.
+// Typically plrender issues commands to PLplot much like an application
+// program would.  This results in a more robust and flexible API.  On the
+// other hand, it is sometimes necessary to directly call low-level PLplot
+// routines to achieve certain special effects, increase performance, or
+// simplify the code.
+//--------------------------------------------------------------------------
 
 static void
 process_next( U_CHAR c )
 {
-/* Specially handle line draws to contain output when debugging */
+// Specially handle line draws to contain output when debugging
 
     switch ( (int) c )
     {
@@ -610,7 +610,7 @@ process_next( U_CHAR c )
         return;
     }
 
-/* Everything else */
+// Everything else
 
     pldebug( "process_next", "processing command %s\n", cmdstring[c] );
 
@@ -637,11 +637,11 @@ process_next( U_CHAR c )
         plr_esc( c );
         return;
 
-/* These are all commands that should be absent from current metafiles but */
-/* are recognized here for backward compatibility with old metafiles */
+// These are all commands that should be absent from current metafiles but
+// are recognized here for backward compatibility with old metafiles
 
     case ADVANCE:
-        /* Note here we use plr_eop1() to avoid multiple ungetc's */
+        // Note here we use plr_eop1() to avoid multiple ungetc's
         plr_eop1( c );
         plr_bop( c );
         return;
@@ -668,11 +668,11 @@ process_next( U_CHAR c )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plr_init()
- *
- * Handle initialization.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plr_init()
+//
+// Handle initialization.
+//--------------------------------------------------------------------------
 
 static void
 plr_init( U_CHAR c )
@@ -682,20 +682,20 @@ plr_init( U_CHAR c )
 
     dbug_enter( "plr_init" );
 
-/* Register event handler */
+// Register event handler
 
     plsKeyEH( plr_KeyEH, NULL );
 
-/* Note: many drivers ignore these, needed to preserve the aspect ratio */
+// Note: many drivers ignore these, needed to preserve the aspect ratio
 
     plspage( xdpi, ydpi, xlength, ylength, xoffset, yoffset );
 
-/* Start up PLplot */
+// Start up PLplot
 
     plinit();
     plP_gsub( &nsubx, &nsuby, &cursub );
 
-/* Set aspect ratio to the natural ratio of the metafile coordinate system. */
+// Set aspect ratio to the natural ratio of the metafile coordinate system.
 
     xlen = xmax - xmin;
     ylen = ymax - ymin;
@@ -706,7 +706,7 @@ plr_init( U_CHAR c )
         printf( "xlen %d pxlx %f ylen %d pxly %f\n",
             xlen, pxlx, ylen, pxly );
 
-/* Aspect ratio of output device */
+// Aspect ratio of output device
 
     plP_gphy( &dev_xmin, &dev_xmax, &dev_ymin, &dev_ymax );
     plP_gpixmm( &dev_xpmm, &dev_ypmm );
@@ -729,7 +729,7 @@ plr_init( U_CHAR c )
         printf( "ratio %f aspect %f dev_aspect %f\n",
             ratio, aspect, dev_aspect );
 
-/* Default relative coordinate space */
+// Default relative coordinate space
 
     vpxlen = 1.0;
     vpylen = 1.0;
@@ -738,12 +738,12 @@ plr_init( U_CHAR c )
     vpxmax = vpxmin + vpxlen;
     vpymax = vpymin + vpylen;
 
-/*
- * Construct viewport that preserves the aspect ratio of the original device
- * (plmeta output file).  Thus you automatically get all physical coordinate
- * plots to come out correctly.  Note: this could also be done using the
- * driver interface function plsdimap.
- */
+//
+// Construct viewport that preserves the aspect ratio of the original device
+// (plmeta output file).  Thus you automatically get all physical coordinate
+// plots to come out correctly.  Note: this could also be done using the
+// driver interface function plsdimap.
+//
 
     if ( ratio <= 0 )
         fprintf( stderr, "Aspect ratio error: ratio = %f\n", ratio );
@@ -762,7 +762,7 @@ plr_init( U_CHAR c )
         printf( "vpxmin %f vpxmax %f vpymin %f vpymax %f\n",
             vpxmin, vpxmax, vpymin, vpymax );
 
-/* Seek to first page */
+// Seek to first page
 
     cursub = nsubx * nsuby;
     if ( disp_beg > 1 )
@@ -777,12 +777,12 @@ plr_init( U_CHAR c )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_line()
- *
- * Draw a line or polyline.
- * Multiple connected lines (i.e. LINETO's) are collapsed into a polyline.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_line()
+//
+// Draw a line or polyline.
+// Multiple connected lines (i.e. LINETO's) are collapsed into a polyline.
+//--------------------------------------------------------------------------
 
 static void
 plr_line( U_CHAR c )
@@ -824,11 +824,11 @@ plr_line( U_CHAR c )
     y[0] = y[npts - 1];
 }
 
-/*--------------------------------------------------------------------------*\
- * get_ncoords()
- *
- * Read n coordinate vectors.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// get_ncoords()
+//
+// Read n coordinate vectors.
+//--------------------------------------------------------------------------
 
 static void
 get_ncoords( PLFLT *x, PLFLT *y, PLINT n )
@@ -846,16 +846,16 @@ get_ncoords( PLFLT *x, PLFLT *y, PLINT n )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_eop()
- *
- * Handle end of page.
- *
- * Here we run into a bit of difficulty with packed pages -- at the end
- * there is no EOP operation done if the page is only partially full.
- * So I peek ahead to see if the next operation is a CLOSE, and if so,
- * push back the CLOSE and issue an EOP regardless.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_eop()
+//
+// Handle end of page.
+//
+// Here we run into a bit of difficulty with packed pages -- at the end
+// there is no EOP operation done if the page is only partially full.
+// So I peek ahead to see if the next operation is a CLOSE, and if so,
+// push back the CLOSE and issue an EOP regardless.
+//--------------------------------------------------------------------------
 
 static void
 plr_eop( U_CHAR c )
@@ -870,15 +870,15 @@ plr_eop( U_CHAR c )
     plr_eop1( c );
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_eop1()
- *
- * Handle end of page.
- *
- * This is for use with page advances where plr_eop's packed-page logic isn't
- * needed and in fact results in back-to-back ungetc's which are not
- * guaranteed to work.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_eop1()
+//
+// Handle end of page.
+//
+// This is for use with page advances where plr_eop's packed-page logic isn't
+// needed and in fact results in back-to-back ungetc's which are not
+// guaranteed to work.
+//--------------------------------------------------------------------------
 
 static void
 plr_eop1( U_CHAR c )
@@ -896,11 +896,11 @@ plr_eop1( U_CHAR c )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_bop()
- *
- * Page/subpage advancement.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_bop()
+//
+// Page/subpage advancement.
+//--------------------------------------------------------------------------
 
 static void
 plr_bop( U_CHAR c )
@@ -910,7 +910,7 @@ plr_bop( U_CHAR c )
     ungetcommand( c );
     ReadPageHeader();
 
-/* Advance and setup the page or subpage */
+// Advance and setup the page or subpage
 
     if ( end_of_page )
     {
@@ -926,11 +926,11 @@ plr_bop( U_CHAR c )
     plwind( (PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_state()
- *
- * Handle change in PLStream state (color, pen width, fill attribute, etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_state()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
 
 static void
 plr_state( U_CHAR op )
@@ -1060,11 +1060,11 @@ plr_state( U_CHAR op )
     DEBUG_PRINT_LOCATION( "end of plr_state" );
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_esc()
- *
- * Handle all escape functions.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_esc()
+//
+// Handle all escape functions.
+//--------------------------------------------------------------------------
 
 static void
 plr_esc( U_CHAR c )
@@ -1081,8 +1081,8 @@ plr_esc( U_CHAR c )
         plresc_fill();
         break;
 
-/* These are all commands that should be absent from current metafiles but */
-/* are recognized here for backward compatibility with old metafiles */
+// These are all commands that should be absent from current metafiles but
+// are recognized here for backward compatibility with old metafiles
 
     case PLESC_SET_RGB:
         plresc_rgb();
@@ -1101,11 +1101,11 @@ plr_esc( U_CHAR c )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plresc_fill()
- *
- * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plresc_fill()
+//
+// Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+//--------------------------------------------------------------------------
 
 static void
 plresc_fill( void )
@@ -1117,13 +1117,13 @@ plresc_fill( void )
     plfill( npts, x, y );
 }
 
-/*--------------------------------------------------------------------------*\
- * plresc_rgb()
- *
- * Process escape function for RGB color selection.
- * Note that RGB color selection is no longer handled this way by
- * PLplot but we must handle it here for old metafiles.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plresc_rgb()
+//
+// Process escape function for RGB color selection.
+// Note that RGB color selection is no longer handled this way by
+// PLplot but we must handle it here for old metafiles.
+//--------------------------------------------------------------------------
 
 static void
 plresc_rgb( void )
@@ -1144,12 +1144,12 @@ plresc_rgb( void )
     plrgb( red, green, blue );
 }
 
-/*--------------------------------------------------------------------------*\
- * plresc_ancol()
- *
- * Process escape function for named color table allocation.
- * OBSOLETE -- just read the info and move on.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plresc_ancol()
+//
+// Process escape function for named color table allocation.
+// OBSOLETE -- just read the info and move on.
+//--------------------------------------------------------------------------
 
 static void
 plresc_ancol( void )
@@ -1163,15 +1163,15 @@ plresc_ancol( void )
     plm_rd( pdf_rd_header( pdfs, name ) );
 }
 
-/*--------------------------------------------------------------------------*\
- *                      Support routines
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//                      Support routines
+//--------------------------------------------------------------------------
 
-/*--------------------------------------------------------------------------*\
- * NextFamilyFile()
- *
- * Start the next family if it exists.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// NextFamilyFile()
+//
+// Start the next family if it exists.
+//--------------------------------------------------------------------------
 
 static void
 NextFamilyFile( U_CHAR *c )
@@ -1194,11 +1194,11 @@ NextFamilyFile( U_CHAR *c )
     }
     pdfs->file = MetaFile;
 
-/*
- * If the family file was created correctly, the first instruction in the
- * file (after state information) MUST be an INITIALIZE.  We throw this
- * away; a BOP0 will follow immediately thereafter.
- */
+//
+// If the family file was created correctly, the first instruction in the
+// file (after state information) MUST be an INITIALIZE.  We throw this
+// away; a BOP0 will follow immediately thereafter.
+//
 
     *c = getcommand();
     while ( *c == CHANGE_STATE )
@@ -1212,7 +1212,7 @@ NextFamilyFile( U_CHAR *c )
             "First instruction in member file not an INITIALIZE!\n" );
     else
     {
-        /* Update position offset */
+        // Update position offset
 
         if ( pl_fgetpos( MetaFile, &curpage_loc ) )
             plr_exit( "plrender: fgetpos call failed" );
@@ -1227,11 +1227,11 @@ NextFamilyFile( U_CHAR *c )
     DEBUG_PRINT_LOCATION( "end of NextFamilyFile" );
 }
 
-/*--------------------------------------------------------------------------*\
- * PrevFamilyFile()
- *
- * Go back to the previous family file.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// PrevFamilyFile()
+//
+// Go back to the previous family file.
+//--------------------------------------------------------------------------
 
 static void
 PrevFamilyFile( void )
@@ -1261,11 +1261,11 @@ PrevFamilyFile( void )
     DEBUG_PRINT_LOCATION( "end of PrevFamilyFile" );
 }
 
-/*--------------------------------------------------------------------------*\
- * getcommand()
- *
- * Read & return the next command
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// getcommand()
+//
+// Read & return the next command
+//--------------------------------------------------------------------------
 
 static U_CHAR
 getcommand( void )
@@ -1279,11 +1279,11 @@ getcommand( void )
     return (U_CHAR) c;
 }
 
-/*--------------------------------------------------------------------------*\
- * ungetcommand()
- *
- * Push back the last command read.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// ungetcommand()
+//
+// Push back the last command read.
+//--------------------------------------------------------------------------
 
 static void
 ungetcommand( U_CHAR c )
@@ -1292,13 +1292,13 @@ ungetcommand( U_CHAR c )
         plr_exit( "ungetcommand: Unable to push back character" );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plr_exit()
- *
- * In case of an abort this routine is called.  Unlike plexit(), it does
- * NOT turn off pause, so that if a problem occurs you can still see what
- * output remains on the screen before the program terminates.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plr_exit()
+//
+// In case of an abort this routine is called.  Unlike plexit(), it does
+// NOT turn off pause, so that if a problem occurs you can still see what
+// output remains on the screen before the program terminates.
+//--------------------------------------------------------------------------
 
 static void
 plr_exit( char *errormsg )
@@ -1314,9 +1314,9 @@ plr_exit( char *errormsg )
 
     fprintf( stderr, "Program aborted\n" );
 
-/* For really bad debugging cases, you may want to see what the next bit of
- * metafile looked like.
- */
+// For really bad debugging cases, you may want to see what the next bit of
+// metafile looked like.
+//
 
 #ifdef DEBUG
     {
@@ -1336,32 +1336,32 @@ plr_exit( char *errormsg )
     exit( status );
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_KeyEH()
- *
- * Keyboard event handler.  For mapping keyboard sequences to commands
- * not usually supported by PLplot, such as seeking around in the
- * metafile.  Recognized commands:
- *
- * <Backspace>	|
- * <Delete>	| Back page
- * <Page up>	|
- *
- * +<num><CR>	Seek forward <num> pages.
- * -<num><CR>	Seek backward <num> pages.
- *
- * <num><CR>	Seek to page <num>.
- * --<num><CR>	Seek to <num> pages before EOF.
- *
- * Both <BS> and <DEL> are recognized for a back-page since the target
- * system may use either as its erase key.  <Page Up> is present on some
- * keyboards (different from keypad key).
- *
- * No user data is passed in this case, although a test case is
- * illustrated.
- *
- * Illegal input is ignored.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_KeyEH()
+//
+// Keyboard event handler.  For mapping keyboard sequences to commands
+// not usually supported by PLplot, such as seeking around in the
+// metafile.  Recognized commands:
+//
+// <Backspace>	|
+// <Delete>	| Back page
+// <Page up>	|
+//
+// +<num><CR>	Seek forward <num> pages.
+// -<num><CR>	Seek backward <num> pages.
+//
+// <num><CR>	Seek to page <num>.
+// --<num><CR>	Seek to <num> pages before EOF.
+//
+// Both <BS> and <DEL> are recognized for a back-page since the target
+// system may use either as its erase key.  <Page Up> is present on some
+// keyboards (different from keypad key).
+//
+// No user data is passed in this case, although a test case is
+// illustrated.
+//
+// Illegal input is ignored.
+//--------------------------------------------------------------------------
 
 static void
 plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
@@ -1371,7 +1371,7 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
 
     pldebug( "plr_KeyEH", "gin->keysym = %x\n", gin->keysym );
 
-/* TEST */
+// TEST
 
     if ( tst != NULL )
     {
@@ -1380,12 +1380,12 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
         plgra();
     }
 
-/* The rest deals with seeking only; so we return if it is disabled */
+// The rest deals with seeking only; so we return if it is disabled
 
     if ( no_pagelinks || !isfile )
         return;
 
-/* Forward (+) or backward (-) */
+// Forward (+) or backward (-)
 
     if ( gin->string[0] == '+' )
         direction_flag++;
@@ -1393,7 +1393,7 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
     else if ( gin->string[0] == '-' )
         direction_flag--;
 
-/* If a number, store into num_buffer */
+// If a number, store into num_buffer
 
     if ( isdigit( gin->string[0] ) )
     {
@@ -1401,11 +1401,11 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
         (void) strncat( num_buffer, gin->string, ( 20 - strlen( num_buffer ) ) );
     }
 
-/*
- * Seek to specified page, or page advance.
- * Not done until user hits <return>.
- * Need to check for both <LF> and <CR> for portability.
- */
+//
+// Seek to specified page, or page advance.
+// Not done until user hits <return>.
+// Need to check for both <LF> and <CR> for portability.
+//
     if ( gin->keysym == PLK_Return ||
          gin->keysym == PLK_Linefeed ||
          gin->keysym == PLK_Next )
@@ -1442,7 +1442,7 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
         }
     }
 
-/* Page backward */
+// Page backward
 
     if ( gin->keysym == PLK_BackSpace ||
          gin->keysym == PLK_Delete ||
@@ -1454,7 +1454,7 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
         dun_seek = 1;
     }
 
-/* Cleanup */
+// Cleanup
 
     if ( terminator_seen )
     {
@@ -1467,40 +1467,40 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
         *p_exit_eventloop = TRUE;
 }
 
-/*--------------------------------------------------------------------------*\
- * SeekToDisp()
- *
- * Seek to 'target_disp' displayed page.
- *
- * Several things combine to make this much harder than one would think.
- * These include: taking packed pages into account, seeking from mid-plot,
- * and multiple contiguous seek events.  All in all a disgusting mess.
- *
- * When this routine is called we are probably at the end of a page, but
- * maybe not (e.g. if the user hit <Backspace> or <Return> in the middle
- * of the screen update, and the driver immediately processes the event).
- * Also we might be at the end of the file.  So only if we are right
- * before the desired displayed page AND the end of page condition is met,
- * we are done.
- *
- * When reference is made to a displayed (i.e. possibly packed) page, I
- * will use variables with the "disp" tag.  For metafile pages, I will
- * use "page".  I could have used the word "plot" somewhere but I am
- * reserving that for future uses.
- *
- * To deal with multiple contiguous seek events (e.g. the user hits
- * <Backspace> twice before the renderer has a chance to respond) the
- * "seek_mode" variable was found to be necessary.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// SeekToDisp()
+//
+// Seek to 'target_disp' displayed page.
+//
+// Several things combine to make this much harder than one would think.
+// These include: taking packed pages into account, seeking from mid-plot,
+// and multiple contiguous seek events.  All in all a disgusting mess.
+//
+// When this routine is called we are probably at the end of a page, but
+// maybe not (e.g. if the user hit <Backspace> or <Return> in the middle
+// of the screen update, and the driver immediately processes the event).
+// Also we might be at the end of the file.  So only if we are right
+// before the desired displayed page AND the end of page condition is met,
+// we are done.
+//
+// When reference is made to a displayed (i.e. possibly packed) page, I
+// will use variables with the "disp" tag.  For metafile pages, I will
+// use "page".  I could have used the word "plot" somewhere but I am
+// reserving that for future uses.
+//
+// To deal with multiple contiguous seek events (e.g. the user hits
+// <Backspace> twice before the renderer has a chance to respond) the
+// "seek_mode" variable was found to be necessary.
+//--------------------------------------------------------------------------
 
 static void
 SeekToDisp( long target_disp )
 {
     dbug_enter( "SeekToDisp" );
 
-/* Determine target_page */
-/* Needs to be the last subpage on the preceding displayed page,  */
-/* so we subtract 1 unless the last seek is still active */
+// Determine target_page
+// Needs to be the last subpage on the preceding displayed page,
+// so we subtract 1 unless the last seek is still active
 
     if ( !seek_mode )
         --target_disp;
@@ -1509,26 +1509,26 @@ SeekToDisp( long target_disp )
     delta       = target_page - curpage;
     seek_mode   = 1;
 
-/* Handle special cases first -- none of these require seeks. */
-/* An example of how each condition might arise is given. */
+// Handle special cases first -- none of these require seeks.
+// An example of how each condition might arise is given.
 
-/* <Return> at the end of a page */
+// <Return> at the end of a page
 
     if ( ( delta == 0 ) && at_eop )
         return;
 
-/* <Return> while drawing the last page */
+// <Return> while drawing the last page
 
     if ( ( delta >= 0 ) && ( nextpage_loc == 0 ) )
         return;
 
-/* Anything else requires at least one seek */
+// Anything else requires at least one seek
 
     pldebug( "SeekToDisp",
         "Before seek: target_page = %d, curpage = %d, curdisp = %d\n",
         target_page, curpage, curdisp );
 
-/* <Return> while drawing any page but the last */
+// <Return> while drawing any page but the last
 
     if ( delta == 0 )
     {
@@ -1536,8 +1536,8 @@ SeekToDisp( long target_disp )
         goto done;
     }
 
-/* Prepare for backward seeks by seeking to the start of the current page */
-/* If on the first page, we're done */
+// Prepare for backward seeks by seeking to the start of the current page
+// If on the first page, we're done
 
     if ( delta < 0 )
     {
@@ -1546,7 +1546,7 @@ SeekToDisp( long target_disp )
             goto done;
     }
 
-/* Now seek by pages until we arrive at the target page */
+// Now seek by pages until we arrive at the target page
 
     while ( delta != 0 )
         SeekOnePage();
@@ -1560,12 +1560,12 @@ done:
     return;
 }
 
-/*--------------------------------------------------------------------------*\
- * SeekOnePage()
- *
- * Seeks one page in appropriate direction, and updates delta.
- * For out of bounds seeks, just stay on the boundary page (first or last).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// SeekOnePage()
+//
+// Seeks one page in appropriate direction, and updates delta.
+// For out of bounds seeks, just stay on the boundary page (first or last).
+//--------------------------------------------------------------------------
 
 static void
 SeekOnePage( void )
@@ -1598,13 +1598,13 @@ SeekOnePage( void )
     return;
 }
 
-/*--------------------------------------------------------------------------*\
- * SeekToCurPage()
- *
- * Seeks to beginning of current page, changing the page counters if
- * we pass a page boundary in the process.  Are you sufficiently sick
- * yet?  I know I am.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// SeekToCurPage()
+//
+// Seeks to beginning of current page, changing the page counters if
+// we pass a page boundary in the process.  Are you sufficiently sick
+// yet?  I know I am.
+//--------------------------------------------------------------------------
 
 static void
 SeekToCurPage( void )
@@ -1620,12 +1620,12 @@ SeekToCurPage( void )
     SeekTo( curpage_loc );
 }
 
-/*--------------------------------------------------------------------------*\
- * SeekToNextPage()
- *
- * Seeks to beginning of next page, changing the page counters if
- * we pass a page boundary in the process.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// SeekToNextPage()
+//
+// Seeks to beginning of next page, changing the page counters if
+// we pass a page boundary in the process.
+//--------------------------------------------------------------------------
 
 static void
 SeekToNextPage( void )
@@ -1641,13 +1641,13 @@ SeekToNextPage( void )
     SeekTo( nextpage_loc );
 }
 
-/*--------------------------------------------------------------------------*\
- * SeekToPrevPage()
- *
- * Seeks to beginning of previous page, changing page counters to
- * take into account each page header we skip over.  Getting sicker
- * all the time..
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// SeekToPrevPage()
+//
+// Seeks to beginning of previous page, changing page counters to
+// take into account each page header we skip over.  Getting sicker
+// all the time..
+//--------------------------------------------------------------------------
 
 static void
 SeekToPrevPage( void )
@@ -1669,11 +1669,11 @@ SeekToPrevPage( void )
     PageDecr();
 }
 
-/*--------------------------------------------------------------------------*\
- * SeekTo()
- *
- * Seeks to specified location, updating page links.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// SeekTo()
+//
+// Seeks to specified location, updating page links.
+//--------------------------------------------------------------------------
 
 static void
 SeekTo( FPOS_T loc )
@@ -1681,20 +1681,20 @@ SeekTo( FPOS_T loc )
     pldebug( "SeekTo", "Seeking to: %d\n", loc );
     doseek( loc );
 
-/* Update page links */
+// Update page links
 
     ReadPageHeader();
     doseek( curpage_loc );
     PageDecr();
 }
 
-/*--------------------------------------------------------------------------*\
- * Utility functions:
- *
- * doseek()	Seeks to the specified location in the file.
- * PageIncr()	Increments page counters
- * PageDecr()	Decrements page counters
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Utility functions:
+//
+// doseek()	Seeks to the specified location in the file.
+// PageIncr()	Increments page counters
+// PageDecr()	Decrements page counters
+//--------------------------------------------------------------------------
 
 static void
 doseek( FPOS_T loc )
@@ -1727,15 +1727,15 @@ PageIncr( void )
     }
 }
 
-/* Yes, finally done with the seek routines.
- *      "BELIEVE IT!" - John Walker, from "Buckaroo Bonzai" */
+// Yes, finally done with the seek routines.
+//      "BELIEVE IT!" - John Walker, from "Buckaroo Bonzai"
 
-/*--------------------------------------------------------------------------*\
- * ReadPageHeader()
- *
- * Reads the metafile, processing page header info.
- * Assumes the file pointer is positioned immediately before a BOP.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// ReadPageHeader()
+//
+// Reads the metafile, processing page header info.
+// Assumes the file pointer is positioned immediately before a BOP.
+//--------------------------------------------------------------------------
 
 static void
 ReadPageHeader( void )
@@ -1748,7 +1748,7 @@ ReadPageHeader( void )
 
     DEBUG_PRINT_LOCATION( "beginning of ReadPageHeader" );
 
-/* Read page header */
+// Read page header
 
     if ( isfile )
     {
@@ -1769,7 +1769,7 @@ file: %s, position: %d", c, FileName, (int) curpage_loc );
 
     first_page = ( c == BOP0 );
 
-/* Update page/subpage counters and update page links */
+// Update page/subpage counters and update page links
 
     PageIncr();
 
@@ -1796,11 +1796,11 @@ file: %s, position: %d", c, FileName, (int) curpage_loc );
     DEBUG_PRINT_LOCATION( "end of ReadPageHeader" );
 }
 
-/*--------------------------------------------------------------------------*\
- * ReadFileHeader()
- *
- * Checks file header.  Returns 1 if an error occured.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// ReadFileHeader()
+//
+// Checks file header.  Returns 1 if an error occured.
+//--------------------------------------------------------------------------
 
 static int
 ReadFileHeader( void )
@@ -1809,7 +1809,7 @@ ReadFileHeader( void )
 
     dbug_enter( "ReadFileHeader" );
 
-/* Read label field of header to make sure file is a PLplot metafile */
+// Read label field of header to make sure file is a PLplot metafile
 
     plm_rd( pdf_rd_header( pdfs, mf_magic ) );
     if ( strcmp( mf_magic, PLMETA_HEADER ) )
@@ -1818,8 +1818,8 @@ ReadFileHeader( void )
         return 1;
     }
 
-/* Read version field of header.  We need to check that we can read the
- * metafile, in case this is an old version of plrender. */
+// Read version field of header.  We need to check that we can read the
+// metafile, in case this is an old version of plrender.
 
     plm_rd( pdf_rd_header( pdfs, mf_version ) );
     if ( strcmp( mf_version, PLMETA_VERSION ) > 0 )
@@ -1831,20 +1831,20 @@ ReadFileHeader( void )
     }
     pldebug( "ReadFileHeader", "Metafile version %s\n", mf_version );
 
-/* Disable page seeking on versions without page links */
+// Disable page seeking on versions without page links
 
     if ( strcmp( mf_version, "1993a" ) < 0 )
         no_pagelinks = 1;
 
-/* Return if metafile older than version 1992a (no tagged info). */
+// Return if metafile older than version 1992a (no tagged info).
 
     if ( strcmp( mf_version, "1992a" ) < 0 )
     {
         return 0;
     }
 
-/* Read tagged initialization info. */
-/* This is an easy way to guarantee backward compatibility. */
+// Read tagged initialization info.
+// This is an easy way to guarantee backward compatibility.
 
     for (;; )
     {
@@ -1909,7 +1909,7 @@ ReadFileHeader( void )
             continue;
         }
 
-        /* Geometry info */
+        // Geometry info
 
         if ( !strcmp( tag, "xdpi" ) )
         {
@@ -1951,7 +1951,7 @@ ReadFileHeader( void )
             continue;
         }
 
-        /* Obsolete tags */
+        // Obsolete tags
 
         if ( !strcmp( tag, "orient" ) )
         {
@@ -1973,39 +1973,39 @@ ReadFileHeader( void )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * Input handlers
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Input handlers
+//--------------------------------------------------------------------------
 
-/*--------------------------------------------------------------------------*\
- * Opt_v()
- *
- * Performs appropriate action for option "v".
- *
- * Note: the return code of 1 and the PL_OPT_NODELETE option tag ensures
- * that processing continues after Opt_v() returns, to pick up the internal
- * -v handling.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Opt_v()
+//
+// Performs appropriate action for option "v".
+//
+// Note: the return code of 1 and the PL_OPT_NODELETE option tag ensures
+// that processing continues after Opt_v() returns, to pick up the internal
+// -v handling.
+//--------------------------------------------------------------------------
 
 static int
 Opt_v( const char *opt, const char *optarg, void *client_data )
 {
-/* Version */
+// Version
 
     fprintf( stderr, "PLplot metafile version: %s\n", PLMETA_VERSION );
     return 1;
 }
 
-/*--------------------------------------------------------------------------*\
- * Opt_i()
- *
- * Performs appropriate action for option "i".
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Opt_i()
+//
+// Performs appropriate action for option "i".
+//--------------------------------------------------------------------------
 
 static int
 Opt_i( const char *opt, const char *optarg, void *client_data )
 {
-/* Input file */
+// Input file
 
     strncpy( FileName, optarg, sizeof ( FileName ) - 1 );
     FileName[sizeof ( FileName ) - 1] = '\0';
@@ -2014,16 +2014,16 @@ Opt_i( const char *opt, const char *optarg, void *client_data )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * Opt_b()
- *
- * Performs appropriate action for option "b".
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Opt_b()
+//
+// Performs appropriate action for option "b".
+//--------------------------------------------------------------------------
 
 static int
 Opt_b( const char *opt, const char *optarg, void *client_data )
 {
-/* Beginning page */
+// Beginning page
 
     if ( *optarg == '-' )
     {
@@ -2035,16 +2035,16 @@ Opt_b( const char *opt, const char *optarg, void *client_data )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * Opt_e()
- *
- * Performs appropriate action for option "e".
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Opt_e()
+//
+// Performs appropriate action for option "e".
+//--------------------------------------------------------------------------
 
 static int
 Opt_e( const char *opt, const char *optarg, void *client_data )
 {
-/* Ending page */
+// Ending page
 
     if ( *optarg == '-' )
     {
@@ -2056,16 +2056,16 @@ Opt_e( const char *opt, const char *optarg, void *client_data )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * Opt_p()
- *
- * Performs appropriate action for option "p".
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Opt_p()
+//
+// Performs appropriate action for option "p".
+//--------------------------------------------------------------------------
 
 static int
 Opt_p( const char *opt, const char *optarg, void *client_data )
 {
-/* Specified page only */
+// Specified page only
 
     if ( *optarg == '-' )
     {

@@ -1,9 +1,9 @@
-/* $Id$
- * $Log$
- * Revision 1.1  1992/05/20 21:33:19  furnish
- * Initial checkin of the whole PLPLOT project.
- *
- */
+// $Id$
+// $Log$
+// Revision 1.1  1992/05/20 21:33:19  furnish
+// Initial checkin of the whole PLPLOT project.
+//
+//
 
 // buffer (defined by subbuffer??) contains coordinates describing the
 // Hershey glyphs; findex (defined by subindex??) indexes those glyphs
@@ -13,9 +13,9 @@
 // plotting symbols and from 32 to 126 indexes Hershey indices that
 // point to ascii printable characters.
 
-/*      short int findex[3000]    */
-/*      short int buffer[27000]   */
-/*      short int hersh[0:175,4]  */
+//      short int findex[3000]
+//      short int buffer[27000]
+//      short int hersh[0:175,4]
 
 extern short int
     subindex00[], subindex01[], subindex02[], subindex03[], subindex04[],

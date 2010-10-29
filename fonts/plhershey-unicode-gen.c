@@ -1,41 +1,41 @@
-/*  $Id$
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+//  $Id$
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
-/*
- *   Program for generating data structures used for translating
- *   between unicode and hershey
- *
- *  The program is pretty dumb, because it does no command line parsing;
- *  instead it assumes that argv[1] will be the input file, and argv[2]
- *  the output file.
- *
- */
+//
+//   Program for generating data structures used for translating
+//   between unicode and hershey
+//
+//  The program is pretty dumb, because it does no command line parsing;
+//  instead it assumes that argv[1] will be the input file, and argv[2]
+//  the output file.
+//
+//
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-/*--------------------------------------------------------------------------*\
- *   Function-like macro definitions
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//   Function-like macro definitions
+//--------------------------------------------------------------------------
 
 #define MemError1( a )    do { fprintf( stderr, "MEMORY ERROR %d\n" a "\n", __LINE__ ); exit( __LINE__ ); } while ( 0 )
 
@@ -95,18 +95,18 @@ int main( int argc, char *argv[] )
 
     if ( ( fr = fopen( argv[1], "r" ) ) != NULL )
     {
-        /*
-         *   Work out how many lines we have all up
-         */
+        //
+        //   Work out how many lines we have all up
+        //
 
         while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
         {
             ++number_of_lines;
         }
 
-        /*
-         *   Allocate memory to the arrays which will hold the data
-         */
+        //
+        //   Allocate memory to the arrays which will hold the data
+        //
 
         if ( ( Hershey = (int *) calloc( number_of_lines, (size_t) sizeof ( int ) ) ) == NULL )
             MemError1( "Allocating memory to the hershey table" );
@@ -117,11 +117,11 @@ int main( int argc, char *argv[] )
         if ( ( Font = (char *) calloc( number_of_lines, (size_t) sizeof ( char ) ) ) == NULL )
             MemError1( "Allocating memory to the font table" );
 
-        rewind( fr ); /* Go back to the start of the file */
+        rewind( fr ); // Go back to the start of the file
 
-        /*
-         *    Read in line by line, and copy the numbers into our arrays
-         */
+        //
+        //    Read in line by line, and copy the numbers into our arrays
+        //
 
         while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
         {
@@ -138,9 +138,9 @@ int main( int argc, char *argv[] )
         fclose( fr );
     }
 
-/*
- *   Write the data out to file ready to be included in our source
- */
+//
+//   Write the data out to file ready to be included in our source
+//
 
 
     if ( ( fw = fopen( argv[2], "w" ) ) != NULL )

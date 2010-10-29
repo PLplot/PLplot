@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      Pie chart demo.
- */
+// $Id$
+//
+//      Pie chart demo.
+//
 
 #include "plcdemos.h"
 
@@ -14,11 +14,11 @@ static char *text[] =
     "Vince"
 };
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a simple pie chart.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a simple pie chart.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
@@ -33,23 +33,23 @@ main( int argc, const char *argv[] )
     per[3] = 30.;
     per[4] = 16.;
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 
     pladv( 0 );
-    /* Ensure window has aspect ratio of one so circle is
-     * plotted as a circle. */
+    // Ensure window has aspect ratio of one so circle is
+    // plotted as a circle.
     plvasp( 1.0 );
     plwind( 0., 10., 0., 10. );
-    /* plenv(0., 10., 0., 10., 1, -2); */
+    // plenv(0., 10., 0., 10., 1, -2);
     plcol0( 2 );
-    /* n.b. all theta quantities scaled by 2*M_PI/500 to be integers to avoid
-     * floating point logic problems. */
+    // n.b. all theta quantities scaled by 2*M_PI/500 to be integers to avoid
+    // floating point logic problems.
     theta0 = 0;
     dthet  = 1;
     for ( i = 0; i <= 4; i++ )
@@ -57,8 +57,8 @@ main( int argc, const char *argv[] )
         j      = 0;
         x[j]   = 5.;
         y[j++] = 5.;
-        /* n.b. the theta quantities multiplied by 2*M_PI/500 afterward so
-         * in fact per is interpreted as a percentage. */
+        // n.b. the theta quantities multiplied by 2*M_PI/500 afterward so
+        // in fact per is interpreted as a percentage.
         theta1 = (int) ( theta0 + 5 * per[i] );
         if ( i == 4 )
             theta1 = 500;
@@ -87,7 +87,7 @@ main( int argc, const char *argv[] )
     plschr( 0., 1.3 );
     plptex( 5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales" );
 
-/* Don't forget to call PLEND to finish off! */
+// Don't forget to call PLEND to finish off!
 
     plend();
     exit( 0 );

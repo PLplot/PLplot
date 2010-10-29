@@ -1,40 +1,40 @@
-/* $Id$
- *
- *      plmtex3, plptex3 demo.
- *
- * Copyright (C) 2007, 2008, 2009 Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      plmtex3, plptex3 demo.
+//
+// Copyright (C) 2007, 2008, 2009 Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plcdemos.h"
-/* Choose these values to correspond to tick marks. */
+// Choose these values to correspond to tick marks.
 #define XPTS           2
 #define YPTS           2
 #define NREVOLUTION    16
 #define NROTATION      8
 #define NSHEAR         8
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Demonstrates plotting text in 3D.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Demonstrates plotting text in 3D.
+//--------------------------------------------------------------------------
 
 
 int main( int argc, const char *argv[] )
@@ -59,11 +59,11 @@ int main( int argc, const char *argv[] )
            omega, sin_omega, cos_omega, domega;
     int   i, j;
     PLFLT radius, pitch, xpos, ypos, zpos;
-    /* p1string must be exactly one character + the null termination
-     * character. */
+    // p1string must be exactly one character + the null termination
+    // character.
     char p1string[] = "O",
     *pstring        = "The future of our civilization depends on software freedom.";
-    /* Allocate and define the minimal x, y, and z to insure 3D box */
+    // Allocate and define the minimal x, y, and z to insure 3D box
     x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ) );
     y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
 
@@ -84,13 +84,13 @@ int main( int argc, const char *argv[] )
         }
     }
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
     plinit();
 
-    /* Page 1: Demonstrate inclination and shear capability pattern. */
+    // Page 1: Demonstrate inclination and shear capability pattern.
 
     pladv( 0 );
     plvpor( -0.15, 1.15, -0.05, 1.05 );
@@ -103,7 +103,7 @@ int main( int argc, const char *argv[] )
         "b", "", ymax - ymin, 0,
         "bcd", "", zmax - zmin, 0 );
 
-    /* z = zmin. */
+    // z = zmin.
     plschr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
@@ -123,7 +123,7 @@ int main( int argc, const char *argv[] )
             0.0, "  revolution" );
     }
 
-    /* x = xmax. */
+    // x = xmax.
     plschr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
@@ -143,7 +143,7 @@ int main( int argc, const char *argv[] )
             0.0, "  revolution" );
     }
 
-    /* y = ymax. */
+    // y = ymax.
     plschr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
@@ -162,10 +162,10 @@ int main( int argc, const char *argv[] )
             x_shear, y_shear, z_shear,
             0.0, "  revolution" );
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 2: Demonstrate rotation of string around its axis. */
+    // Page 2: Demonstrate rotation of string around its axis.
     pladv( 0 );
     plvpor( -0.15, 1.15, -0.05, 1.05 );
     plwind( -1.2, 1.2, -0.8, 1.5 );
@@ -177,7 +177,7 @@ int main( int argc, const char *argv[] )
         "b", "", ymax - ymin, 0,
         "bcd", "", zmax - zmin, 0 );
 
-    /* y = ymax. */
+    // y = ymax.
     plschr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -198,7 +198,7 @@ int main( int argc, const char *argv[] )
             0.5, "rotation for y = y#dmax#u" );
     }
 
-    /* x = xmax. */
+    // x = xmax.
     plschr( 0., 1.0 );
     x_inclination = 0.;
     y_inclination = -1.;
@@ -219,7 +219,7 @@ int main( int argc, const char *argv[] )
             0.5, "rotation for x = x#dmax#u" );
     }
 
-    /* z = zmin. */
+    // z = zmin.
     plschr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -239,13 +239,13 @@ int main( int argc, const char *argv[] )
             x_shear, y_shear, z_shear,
             0.5, "rotation for z = z#dmin#u" );
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 3: Demonstrate shear of string along its axis. */
-    /* Work around xcairo and pngcairo (but not pscairo) problems for
-     * shear vector too close to axis of string. (N.B. no workaround
-     * would be domega = 0.) */
+    // Page 3: Demonstrate shear of string along its axis.
+    // Work around xcairo and pngcairo (but not pscairo) problems for
+    // shear vector too close to axis of string. (N.B. no workaround
+    // would be domega = 0.)
     domega = 0.05;
     pladv( 0 );
     plvpor( -0.15, 1.15, -0.05, 1.05 );
@@ -258,7 +258,7 @@ int main( int argc, const char *argv[] )
         "b", "", ymax - ymin, 0,
         "bcd", "", zmax - zmin, 0 );
 
-    /* y = ymax. */
+    // y = ymax.
     plschr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -279,7 +279,7 @@ int main( int argc, const char *argv[] )
             0.5, "shear for y = y#dmax#u" );
     }
 
-    /* x = xmax. */
+    // x = xmax.
     plschr( 0., 1.0 );
     x_inclination = 0.;
     y_inclination = -1.;
@@ -300,7 +300,7 @@ int main( int argc, const char *argv[] )
             0.5, "shear for x = x#dmax#u" );
     }
 
-    /* z = zmin. */
+    // z = zmin.
     plschr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -320,10 +320,10 @@ int main( int argc, const char *argv[] )
             x_shear, y_shear, z_shear,
             0.5, "shear for z = z#dmin#u" );
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 4: Demonstrate drawing a string on a 3D path. */
+    // Page 4: Demonstrate drawing a string on a 3D path.
     pladv( 0 );
     plvpor( -0.15, 1.15, -0.05, 1.05 );
     plwind( -1.2, 1.2, -0.8, 1.5 );
@@ -336,12 +336,12 @@ int main( int argc, const char *argv[] )
         "bcd", "", zmax - zmin, 0 );
 
     plschr( 0., 1.2 );
-    /* domega controls the spacing between the various characters of the
-     * string and also the maximum value of omega for the given number
-     * of characters in *pstring. */
+    // domega controls the spacing between the various characters of the
+    // string and also the maximum value of omega for the given number
+    // of characters in *pstring.
     domega = 2. * M_PI / strlen( pstring );
     omega  = 0.;
-    /* 3D function is a helix of the given radius and pitch */
+    // 3D function is a helix of the given radius and pitch
     radius = 0.5;
     pitch  = 1. / ( 2. * M_PI );
     while ( *pstring )
@@ -351,14 +351,14 @@ int main( int argc, const char *argv[] )
         xpos      = xmid + radius * sin_omega;
         ypos      = ymid - radius * cos_omega;
         zpos      = zmin + pitch * omega;
-        /* In general, the inclination is proportional to the derivative of
-         * the position wrt theta. */
+        // In general, the inclination is proportional to the derivative of
+        // the position wrt theta.
         x_inclination = radius * cos_omega;;
         y_inclination = radius * sin_omega;
         z_inclination = pitch;
-        /* The shear vector should be perpendicular to the 3D line with Z
-         * component maximized, but for low pitch a good approximation is
-         * a constant vector that is parallel to the Z axis. */
+        // The shear vector should be perpendicular to the 3D line with Z
+        // component maximized, but for low pitch a good approximation is
+        // a constant vector that is parallel to the Z axis.
         x_shear   = 0.;
         y_shear   = 0.;
         z_shear   = 1.;
@@ -371,10 +371,10 @@ int main( int argc, const char *argv[] )
         pstring++;
         omega += domega;
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 5: Demonstrate plmtex3 axis labelling capability */
+    // Page 5: Demonstrate plmtex3 axis labelling capability
     pladv( 0 );
     plvpor( -0.15, 1.15, -0.05, 1.05 );
     plwind( -1.2, 1.2, -0.8, 1.5 );
@@ -399,10 +399,10 @@ int main( int argc, const char *argv[] )
     plmtex3( "zp", 3.0, 0.5, 0.5, "primary Z-axis label" );
     plmtex3( "zs", -2.5, 0.5, 0.5, "Arbitrarily displaced" );
     plmtex3( "zs", -1.0, 0.5, 0.5, "secondary Z-axis label" );
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Clean up. */
+    // Clean up.
     free( (void *) x );
     free( (void *) y );
     plFree2dGrid( z, XPTS, YPTS );

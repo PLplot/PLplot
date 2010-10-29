@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      3-d line and point plot demo.  Adapted from x08c.c.
- */
+// $Id$
+//
+//      3-d line and point plot demo.  Adapted from x08c.c.
+//
 
 #include "plcdemos.h"
 
@@ -11,12 +11,12 @@ static PLFLT az[] = { 30.0, 40.0, 50.0, 60.0 };
 
 void test_poly( int k );
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a series of 3-d plots for a given data set, with different
- * viewing options in each plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a series of 3-d plots for a given data set, with different
+// viewing options in each plot.
+//--------------------------------------------------------------------------
 
 #define NPTS    1000
 
@@ -28,11 +28,11 @@ main( int argc, const char *argv[] )
     PLFLT r;
     char  title[80];
 
-/* Parse and process command line arguments */
+// Parse and process command line arguments
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Initialize plplot */
+// Initialize plplot
 
     plinit();
 
@@ -43,15 +43,15 @@ main( int argc, const char *argv[] )
     y = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
     z = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
 
-/* From the mind of a sick and twisted physicist... */
+// From the mind of a sick and twisted physicist...
 
     for ( i = 0; i < NPTS; i++ )
     {
         z[i] = -1. + 2. * i / NPTS;
 
-/* Pick one ... */
+// Pick one ...
 
-/*	r    = 1. - ( (PLFLT) i / (PLFLT) NPTS ); */
+//	r    = 1. - ( (PLFLT) i / (PLFLT) NPTS );
         r = z[i];
 
         x[i] = r * cos( 2. * M_PI * 6. * i / NPTS );
@@ -82,7 +82,7 @@ main( int argc, const char *argv[] )
         plmtex( "t", 1.0, 0.5, 0.5, title );
     }
 
-    /* Clean up */
+    // Clean up
     free( (void *) x );
     free( (void *) y );
     free( (void *) z );
@@ -122,12 +122,12 @@ void test_poly( int k )
 #define THETA( a )    ( two_pi * ( a ) / 20. )
 #define PHI( a )      ( pi * ( a ) / 20.1 )
 
-/*
- * x = r sin(phi) cos(theta)
- * y = r sin(phi) sin(theta)
- * z = r cos(phi)
- * r = 1 :=)
- */
+//
+// x = r sin(phi) cos(theta)
+// y = r sin(phi) sin(theta)
+// z = r cos(phi)
+// r = 1 :=)
+//
 
     for ( i = 0; i < 20; i++ )
     {
@@ -160,7 +160,7 @@ void test_poly( int k )
     plcol0( 3 );
     plmtex( "t", 1.0, 0.5, 0.5, "unit radius sphere" );
 
-    /* Clean up */
+    // Clean up
     free( (void *) x );
     free( (void *) y );
     free( (void *) z );

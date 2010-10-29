@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      Utility to generate standard font set.
- */
+// $Id$
+//
+//      Utility to generate standard font set.
+//
 
 #include "plplotP.h"
 
@@ -34,11 +34,11 @@ main( int argc, char **argv )
     for ( k = 0; k < 176; k++ )
         hrshlst[ib++] = *( hersh[0] + k );
 
-/* Sort list */
+// Sort list
 
     qsort( (char *) hrshlst, ib, sizeof ( short ), compare );
 
-/* Remove duplicates */
+// Remove duplicates
 
     k = 0;
     j = 0;
@@ -52,7 +52,7 @@ main( int argc, char **argv )
 
     nstd = k + 1;
 
-/* Now reindex the fonts */
+// Now reindex the fonts
 
     for ( k = 0; k < 176; k++ )
         for ( i = 0; i < nstd; i++ )
@@ -111,8 +111,8 @@ main( int argc, char **argv )
 
     nchars = 0;
     nleng  = 1;
-    fseek( pdfs->file, 0, 2 );            /* Go to end of file */
-    fpos = ftell( pdfs->file );           /* Save current position */
+    fseek( pdfs->file, 0, 2 );            // Go to end of file
+    fpos = ftell( pdfs->file );           // Save current position
     pdf_wr_2bytes( pdfs, nleng );
 
     for ( j = 0; j < nstd; j++ )

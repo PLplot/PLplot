@@ -1,8 +1,8 @@
-/* $Id$
- *
- *      plimage demo
- *
- */
+// $Id$
+//
+//      plimage demo
+//
+//
 
 #include "plcdemos.h"
 #include "plevent.h"
@@ -29,7 +29,7 @@ struct stretch_data
 
 static PLOptionTable options[] = {
     {
-        "dbg",                  /* extra debugging plot */
+        "dbg",                  // extra debugging plot
         NULL,
         NULL,
         &dbg,
@@ -38,7 +38,7 @@ static PLOptionTable options[] = {
         "Extra debugging plot"
     },
     {
-        "nosombrero",                   /* Turns on test of xor function */
+        "nosombrero",                   // Turns on test of xor function
         NULL,
         NULL,
         &nosombrero,
@@ -47,7 +47,7 @@ static PLOptionTable options[] = {
         "No sombrero plot"
     },
     {
-        "nointeractive",                /* Turns on test of xor function */
+        "nointeractive",                // Turns on test of xor function
         NULL,
         NULL,
         &nointeractive,
@@ -56,7 +56,7 @@ static PLOptionTable options[] = {
         "No interactive selection"
     },
     {
-        "save",                 /* For saving in postscript */
+        "save",                 // For saving in postscript
         NULL,
         NULL,
         &f_name,
@@ -65,17 +65,17 @@ static PLOptionTable options[] = {
         "Save sombrero plot in color postscript `filename'"
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
-/* Transformation function */
+// Transformation function
 static void
 mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 {
@@ -101,42 +101,42 @@ main( int argc, const char *argv[] )
     PLcGrid2            cgrid2;
     PLFLT               xx, yy;
 
-    /*
-     * Bugs in plimage():
-     * -at high magnifications, the left and right edge are ragged, try
-     *    ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-     *
-     * Bugs in x20c.c:
-     * -if the window is resized after a selection is made on "lena", when
-     *  making a new selection the old one will re-appear.
-     */
+    //
+    // Bugs in plimage():
+    // -at high magnifications, the left and right edge are ragged, try
+    //    ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
+    //
+    // Bugs in x20c.c:
+    // -if the window is resized after a selection is made on "lena", when
+    //  making a new selection the old one will re-appear.
+    //
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
 
     plMergeOpts( options, "x20c options", NULL );
     plparseopts( &argc, argv, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
 
     plinit();
 
     plAlloc2dGrid( &z, XDIM, YDIM );
 
-    /* view image border pixels */
+    // view image border pixels
     if ( dbg )
     {
-        plenv( 1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 1 ); /* no plot box */
+        plenv( 1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 1 ); // no plot box
 
-        /* build a one pixel square border, for diagnostics */
+        // build a one pixel square border, for diagnostics
         for ( i = 0; i < XDIM; i++ )
-            z[i][YDIM - 1] = 1.; /* right */
+            z[i][YDIM - 1] = 1.; // right
         for ( i = 0; i < XDIM; i++ )
-            z[i][0] = 1.;        /* left */
+            z[i][0] = 1.;        // left
 
         for ( i = 0; i < YDIM; i++ )
-            z[0][i] = 1.;        /* top */
+            z[0][i] = 1.;        // top
         for ( i = 0; i < YDIM; i++ )
-            z[XDIM - 1][i] = 1.; /* botton */
+            z[XDIM - 1][i] = 1.; // botton
 
         pllab( "...around a blue square.", " ", "A red border should appear..." );
 
@@ -145,11 +145,11 @@ main( int argc, const char *argv[] )
             1., (PLFLT) XDIM, 1., (PLFLT) YDIM );
     }
 
-    /* sombrero-like demo */
+    // sombrero-like demo
     if ( !nosombrero )
     {
         plAlloc2dGrid( &r, XDIM, YDIM );
-        plcol0( 2 ); /* draw a yellow plot box, useful for diagnostics! :( */
+        plcol0( 2 ); // draw a yellow plot box, useful for diagnostics! :(
         plenv( 0., 2. * M_PI, 0, 3. * M_PI, 1, -1 );
 
         for ( i = 0; i < XDIM; i++ )
@@ -170,16 +170,16 @@ main( int argc, const char *argv[] )
             0., 2. * M_PI, 0., 3. * M_PI );
         plFree2dGrid( r, XDIM, YDIM );
 
-        /* save the plot */
+        // save the plot
         if ( f_name )
             save_plot( f_name );
     }
 
     plFree2dGrid( z, XDIM, YDIM );
 
-    /* read Lena image */
-    /* Note we try two different locations to cover the case where this
-     * examples is being run from the test_c.sh script */
+    // read Lena image
+    // Note we try two different locations to cover the case where this
+    // examples is being run from the test_c.sh script
     if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ) )
     {
         if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
@@ -190,10 +190,10 @@ main( int argc, const char *argv[] )
         }
     }
 
-    /* set gray colormap */
+    // set gray colormap
     gray_cmap( num_col );
 
-    /* display Lena */
+    // display Lena
     plenv( 1., width, 1., height, 1, -1 );
 
     if ( !nointeractive )
@@ -204,64 +204,64 @@ main( int argc, const char *argv[] )
     plimage( img_f, width, height, 1., width, 1., height, 0., 0.,
         1., width, 1., height );
 
-    /* plend();exit(0); */
+    // plend();exit(0);
 
-    /* selection/expansion demo */
+    // selection/expansion demo
     if ( !nointeractive )
     {
         xi = 200.; xe = 330.;
         yi = 280.; ye = 220.;
 
-        if ( get_clip( &xi, &xe, &yi, &ye ) ) /* get selection rectangle */
+        if ( get_clip( &xi, &xe, &yi, &ye ) ) // get selection rectangle
         {
             plend();
             exit( 0 );
         }
 
-        /*
-         * I'm unable to continue, clearing the plot and advancing to the next
-         * one, without hiting the enter key, or pressing the button... help!
-         *
-         * Forcing the xwin driver to leave locate mode and destroying the
-         * xhairs (in GetCursorCmd()) solves some problems, but I still have
-         * to press the enter key or press Button-2 to go to next plot, even
-         * if a pladv() is not present!  Using plbop() solves the problem, but
-         * it shouldn't be needed!
-         */
+        //
+        // I'm unable to continue, clearing the plot and advancing to the next
+        // one, without hiting the enter key, or pressing the button... help!
+        //
+        // Forcing the xwin driver to leave locate mode and destroying the
+        // xhairs (in GetCursorCmd()) solves some problems, but I still have
+        // to press the enter key or press Button-2 to go to next plot, even
+        // if a pladv() is not present!  Using plbop() solves the problem, but
+        // it shouldn't be needed!
+        //
 
-        /* plbop(); */
+        // plbop();
 
-        /*
-         * plspause(0), pladv(0), plspause(1), also works,
-         * but the above question remains.
-         * With this approach, the previous pause state is lost,
-         * as there is no API call to get its current state.
-         */
+        //
+        // plspause(0), pladv(0), plspause(1), also works,
+        // but the above question remains.
+        // With this approach, the previous pause state is lost,
+        // as there is no API call to get its current state.
+        //
 
         plspause( 0 );
         pladv( 0 );
 
-        /* display selection only */
+        // display selection only
         plimage( img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
 
         plspause( 1 );
 
-        /* zoom in selection */
+        // zoom in selection
         plenv( xi, xe, ye, yi, 1, -1 );
         plimage( img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
     }
 
-    /* Base the dynamic range on the image contents. */
+    // Base the dynamic range on the image contents.
     plMinMax2dGrid( img_f, width, height, &img_max, &img_min );
 
-    /* Draw a saturated version of the original image.  Only use the middle 50%
-     * of the image's full dynamic range. */
+    // Draw a saturated version of the original image.  Only use the middle 50%
+    // of the image's full dynamic range.
     plcol0( 2 );
     plenv( 0, width, 0, height, 1, -1 );
     pllab( "", "", "Reduced dynamic range image example" );
     plimagefr( img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL );
 
-    /* Draw a distorted version of the original image, showing its full dynamic range. */
+    // Draw a distorted version of the original image, showing its full dynamic range.
     plenv( 0, width, 0, height, 1, -1 );
     pllab( "", "", "Distorted image example" );
 
@@ -271,11 +271,11 @@ main( int argc, const char *argv[] )
     stretch.ymax    = height;
     stretch.stretch = 0.5;
 
-    /* In C / C++ the following would work, with plimagefr directly calling
-     * mypltr. For compatibilty with other language bindings the same effect
-     * can be achieved by generating the transformed grid first and then
-     * using pltr2. */
-    /* plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch); */
+    // In C / C++ the following would work, with plimagefr directly calling
+    // mypltr. For compatibilty with other language bindings the same effect
+    // can be achieved by generating the transformed grid first and then
+    // using pltr2.
+    // plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch);
 
     plAlloc2dGrid( &cgrid2.xg, width + 1, height + 1 );
     plAlloc2dGrid( &cgrid2.yg, width + 1, height + 1 );
@@ -302,7 +302,7 @@ main( int argc, const char *argv[] )
     exit( 0 );
 }
 
-/* read image from file in binary ppm format */
+// read image from file in binary ppm format
 int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col )
 {
     FILE          *fp;
@@ -311,18 +311,18 @@ int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col
     int           i, j, w, h;
     PLFLT         **imf;
 
-    /* naive grayscale binary ppm reading. If you know how to, improve it */
+    // naive grayscale binary ppm reading. If you know how to, improve it
     if ( ( fp = fopen( fname, "rb" ) ) == NULL )
         return 1;
 
-    if ( fscanf( fp, "%s\n", ver ) != 1 ) /* version */
+    if ( fscanf( fp, "%s\n", ver ) != 1 ) // version
     {
         fclose( fp );
         return 1;
     }
-    /* printf("version: %s\n", ver);*/
+    // printf("version: %s\n", ver);
 
-    if ( strcmp( ver, "P5" ) ) /* I only understand this! */
+    if ( strcmp( ver, "P5" ) ) // I only understand this!
     {
         fclose( fp );
         return 1;
@@ -330,21 +330,21 @@ int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col
 
     while ( ( i = fgetc( fp ) ) == '#' )
     {
-        if ( fgets( ver, 80, fp ) == NULL ) /* comments */
+        if ( fgets( ver, 80, fp ) == NULL ) // comments
         {
             fclose( fp );
             return 1;
         }
-        /* printf("%s", ver); */
+        // printf("%s", ver);
     }
     ungetc( i, fp );
 
-    if ( fscanf( fp, "%d%d%d\n", &w, &h, num_col ) != 3 ) /* width, height num colors */
+    if ( fscanf( fp, "%d%d%d\n", &w, &h, num_col ) != 3 ) // width, height num colors
     {
         fclose( fp );
         return 1;
     }
-    /* printf("width=%d height=%d num_col=%d\n", w, h, *num_col); */
+    // printf("width=%d height=%d num_col=%d\n", w, h, *num_col);
 
     img = (unsigned char *) malloc( w * h * sizeof ( char ) );
     plAlloc2dGrid( &imf, w, h );
@@ -361,7 +361,7 @@ int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col
     for ( i = 0; i < w; i++ )
         for ( j = 0; j < h; j++ )
             imf[i][j] = img[( h - 1 - j ) * w + i];
-    /* flip image up-down */
+    // flip image up-down
 
     free( img );
 
@@ -371,34 +371,34 @@ int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col
     return 0;
 }
 
-/* save plot */
+// save plot
 void save_plot( char *fname )
 {
     PLINT cur_strm, new_strm;
 
-    plgstrm( &cur_strm );    /* get current stream */
-    plmkstrm( &new_strm );   /* create a new one */
+    plgstrm( &cur_strm );    // get current stream
+    plmkstrm( &new_strm );   // create a new one
 
-    plsdev( "psc" );         /* new device type. Use a known existing driver */
-    plsfnam( fname );        /* file name */
+    plsdev( "psc" );         // new device type. Use a known existing driver
+    plsfnam( fname );        // file name
 
-    plcpstrm( cur_strm, 0 ); /* copy old stream parameters to new stream */
-    plreplot();              /* do the save */
-    plend1();                /* close new device */
+    plcpstrm( cur_strm, 0 ); // copy old stream parameters to new stream
+    plreplot();              // do the save
+    plend1();                // close new device
 
-    plsstrm( cur_strm );     /* and return to previous one */
+    plsstrm( cur_strm );     // and return to previous one
 }
 
-/*  get selection square interactively */
+//  get selection square interactively
 int get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
 {
     PLGraphicsIn gin;
     PLFLT        xxi = *xi, yyi = *yi, xxe = *xe, yye = *ye, t;
     PLINT        st, start = 0;
 
-    plxormod( 1, &st ); /* enter xor mode to draw a selection rectangle */
+    plxormod( 1, &st ); // enter xor mode to draw a selection rectangle
 
-    if ( st )           /* driver has xormod capability, continue */
+    if ( st )           // driver has xormod capability, continue
     {
         while ( 1 )
         {
@@ -412,7 +412,7 @@ int get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
             {
                 xxi = gin.wX; yyi = gin.wY;
                 if ( start )
-                    plline( 5, sx, sy ); /* clear previous rectangle */
+                    plline( 5, sx, sy ); // clear previous rectangle
 
                 start = 0;
 
@@ -424,24 +424,24 @@ int get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
             {
                 xxe = gin.wX; yye = gin.wY;
                 if ( start )
-                    plline( 5, sx, sy ); /* clear previous rectangle */
+                    plline( 5, sx, sy ); // clear previous rectangle
 
                 start = 1;
 
                 sx[2] = xxe; sy[2] = yye;
                 sx[1] = xxe; sy[1] = yyi;
                 sx[3] = xxi; sy[3] = yye;
-                plline( 5, sx, sy ); /* draw new rectangle */
+                plline( 5, sx, sy ); // draw new rectangle
             }
 
             if ( gin.button == 3 || gin.keysym == PLK_Return || gin.keysym == 'Q' )
             {
                 if ( start )
-                    plline( 5, sx, sy ); /* clear previous rectangle */
+                    plline( 5, sx, sy ); // clear previous rectangle
                 break;
             }
         }
-        plxormod( 0, &st ); /* leave xor mod */
+        plxormod( 0, &st ); // leave xor mod
 
         if ( xxe < xxi )
         {
@@ -458,11 +458,11 @@ int get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
 
         return ( gin.keysym == 'Q' );
     }
-    else /* driver has no xormod capability, just do nothing */
+    else // driver has no xormod capability, just do nothing
         return 0;
 }
 
-/* set gray colormap */
+// set gray colormap
 void gray_cmap( PLINT num_col )
 {
     PLFLT r[2], g[2], b[2], pos[2];

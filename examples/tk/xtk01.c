@@ -1,23 +1,23 @@
-/* $Id$
- *
- * Copyright (C) 2004  Joao Cardoso
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2004  Joao Cardoso
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "pltk.h"
 #include <math.h>
@@ -25,16 +25,16 @@
 static int
 AppInit( Tcl_Interp *interp );
 
-/*--------------------------------------------------------------------------*\
- * main --
- *
- * Just a stub routine to call pltkMain.  The latter is nice to have
- * when building extended wishes, since then you don't have to rely on
- * sucking the Tk main out of libtk (which doesn't work correctly on all
- * systems/compilers/linkers/etc).  Hopefully in the future Tk will
- * supply a sufficiently capable tkMain() type function that can be used
- * instead.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main --
+//
+// Just a stub routine to call pltkMain.  The latter is nice to have
+// when building extended wishes, since then you don't have to rely on
+// sucking the Tk main out of libtk (which doesn't work correctly on all
+// systems/compilers/linkers/etc).  Hopefully in the future Tk will
+// supply a sufficiently capable tkMain() type function that can be used
+// instead.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char **argv )
@@ -42,45 +42,45 @@ main( int argc, const char **argv )
     exit( pltkMain( argc, argv, NULL, AppInit ) );
 }
 
-/*
- *--------------------------------------------------------------------------
- *
- * AppInit --
- *
- *	This procedure performs application-specific initialization.
- *	Most applications, especially those that incorporate additional
- *	packages, will have their own version of this procedure.
- *
- * Results:
- *	Returns a standard Tcl completion code, and leaves an error
- *	message in interp->result if an error occurs.
- *
- * Side effects:
- *	Depends on the startup script.
- *
- * Taken from tkAppInit.c --
- *
- * Copyright (c) 1993 The Regents of the University of California.
- * All rights reserved.
- *
- * Permission is hereby granted, without written agreement and without
- * license or royalty fees, to use, copy, modify, and distribute this
- * software and its documentation for any purpose, provided that the
- * above copyright notice and the following two paragraphs appear in
- * all copies of this software.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
- * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
- * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
- * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
- * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
- * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *--------------------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// AppInit --
+//
+//	This procedure performs application-specific initialization.
+//	Most applications, especially those that incorporate additional
+//	packages, will have their own version of this procedure.
+//
+// Results:
+//	Returns a standard Tcl completion code, and leaves an error
+//	message in interp->result if an error occurs.
+//
+// Side effects:
+//	Depends on the startup script.
+//
+// Taken from tkAppInit.c --
+//
+// Copyright (c) 1993 The Regents of the University of California.
+// All rights reserved.
+//
+// Permission is hereby granted, without written agreement and without
+// license or royalty fees, to use, copy, modify, and distribute this
+// software and its documentation for any purpose, provided that the
+// above copyright notice and the following two paragraphs appear in
+// all copies of this software.
+//
+// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+// DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+// OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+// CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+// ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+// PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+//--------------------------------------------------------------------------
+//
 
 int   myplotCmd( ClientData, Tcl_Interp *, int, char ** );
 
@@ -89,26 +89,26 @@ AppInit( Tcl_Interp *interp )
 {
     Tk_Window mainWindow = Tk_MainWindow( interp );
 
-/*
- * Call the init procedures for included packages.  Each call should
- * look like this:
- *
- * if (Mod_Init(interp) == TCL_ERROR) {
- *     return TCL_ERROR;
- * }
- *
- * where "Mod" is the name of the module.
- */
+//
+// Call the init procedures for included packages.  Each call should
+// look like this:
+//
+// if (Mod_Init(interp) == TCL_ERROR) {
+//     return TCL_ERROR;
+// }
+//
+// where "Mod" is the name of the module.
+//
 
     if ( Pltk_Init( interp ) == TCL_ERROR )
     {
         return TCL_ERROR;
     }
 
-/*
- * Call Tcl_CreateCommand for application-specific commands, if
- * they weren't already created by the init procedures called above.
- */
+//
+// Call Tcl_CreateCommand for application-specific commands, if
+// they weren't already created by the init procedures called above.
+//
 
     Tcl_CreateCommand( interp, "myplot", (Tcl_CmdProc*) myplotCmd,
         (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL );
@@ -116,13 +116,13 @@ AppInit( Tcl_Interp *interp )
     return TCL_OK;
 }
 
-/* =============================================================== */
+// ===============================================================
 
-/*	Taken from:
- *      x01c.c
- *
- *      Simple line plot and multiple windows demo.
- */
+//	Taken from:
+//      x01c.c
+//
+//      Simple line plot and multiple windows demo.
+//
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
@@ -134,15 +134,15 @@ void plot3( void );
 
 void myplot1()
 {
-/* Set up the data */
-/* Original case */
+// Set up the data
+// Original case
 
     xscale = 6.;
     yscale = 1.;
     xoff   = 0.;
     yoff   = 0.;
 
-/* Do a plot */
+// Do a plot
 
     plot1();
 }
@@ -151,13 +151,13 @@ void myplot2()
 {
     PLINT digmax;
 
-/* Set up the data */
+// Set up the data
 
     xscale = 1.;
     yscale = 0.0014;
     yoff   = 0.0185;
 
-/* Do a plot */
+// Do a plot
 
     digmax = 5;
     plsyax( digmax, 0 );
@@ -174,7 +174,7 @@ void myplot4()
     plot3();
 }
 
-/* =============================================================== */
+// ===============================================================
 
 void
 plot1( void )
@@ -199,44 +199,44 @@ plot1( void )
         ys1[i] = y[i * 10 + 3];
     }
 
-/* Set up the viewport and window using PLENV. The range in X is */
-/* 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
-/* scaled separately (just = 0), and we just draw a labelled */
-/* box (axis = 0). */
+// Set up the viewport and window using PLENV. The range in X is
+// 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+// scaled separately (just = 0), and we just draw a labelled
+// box (axis = 0).
 
     plcol( 1 );
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
     plcol( 6 );
     pllab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
-/* Plot the data points */
+// Plot the data points
 
     plcol( 9 );
     plpoin( 6, xs1, ys1, 9 );
 
-/* Draw the line through the data */
+// Draw the line through the data
 
     plcol( 4 );
     plline( 60, x, y );
 }
 
-/* =============================================================== */
+// ===============================================================
 
 void
 plot2( void )
 {
     int i;
 
-/* Set up the viewport and window using PLENV. The range in X is -2.0 to
- * 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
- * (just = 0), and we draw a box with axes (axis = 1). */
+// Set up the viewport and window using PLENV. The range in X is -2.0 to
+// 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
+// (just = 0), and we draw a box with axes (axis = 1).
 
     plcol( 1 );
     plenv( (PLFLT) -2.0, (PLFLT) 10.0, (PLFLT) -0.4, (PLFLT) 1.2, 0, 1 );
     plcol( 2 );
     pllab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
 
-/* Fill up the arrays */
+// Fill up the arrays
 
     for ( i = 0; i < 100; i++ )
     {
@@ -246,37 +246,37 @@ plot2( void )
             y[i] = sin( x[i] ) / x[i];
     }
 
-/* Draw the line */
+// Draw the line
 
     plcol( 3 );
     plline( 100, x, y );
 }
 
-/* =============================================================== */
+// ===============================================================
 
 void
 plot3( void )
 {
     int i;
 
-/* For the final graph we wish to override the default tick intervals, and
- * so do not use PLENV */
+// For the final graph we wish to override the default tick intervals, and
+// so do not use PLENV
 
     pladv( 0 );
 
-/* Use standard viewport, and define X range from 0 to 360 degrees, Y range
- *     from -1.2 to 1.2. */
+// Use standard viewport, and define X range from 0 to 360 degrees, Y range
+//     from -1.2 to 1.2.
 
     plvsta();
     plwind( (PLFLT) 0.0, (PLFLT) 360.0, (PLFLT) -1.2, (PLFLT) 1.2 );
 
-/* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
+// Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
     plcol( 1 );
     plbox( "bcnst", (PLFLT) 60.0, 2, "bcnstv", (PLFLT) 0.2, 2 );
 
-/* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
- * expects a pointer!! */
+// Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
+// expects a pointer!!
 
     plstyl( 1, &mark1, &space1 );
     plcol( 2 );
@@ -296,28 +296,28 @@ plot3( void )
     plline( 101, x, y );
 }
 
-/* =============================================================== */
+// ===============================================================
 
-/*	Taken from:
- *      x16c.c
- *
- *      plshade demo, using color fill.
- *
- *      Maurice LeBrun
- *      IFS, University of Texas at Austin
- *      20 Mar 1994
- */
+//	Taken from:
+//      x16c.c
+//
+//      plshade demo, using color fill.
+//
+//      Maurice LeBrun
+//      IFS, University of Texas at Austin
+//      20 Mar 1994
+//
 
-#define NCONTR    30            /* Number of contours */
-#define XPTS      35            /* Data points in x */
-#define YPTS      46            /* Datat points in y */
+#define NCONTR    30            // Number of contours
+#define XPTS      35            // Data points in x
+#define YPTS      46            // Datat points in y
 
 #define XSPA      2. / ( XPTS - 1 )
 #define YSPA      2. / ( YPTS - 1 )
 
 static PLFLT clevel[NCONTR];
 
-/* Utility macros */
+// Utility macros
 
 #ifndef PI
 #define PI    3.1415926535897932384
@@ -329,7 +329,7 @@ static PLFLT clevel[NCONTR];
 #define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
-/* Transformation function */
+// Transformation function
 
 PLFLT tr[6] =
 { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
@@ -341,16 +341,16 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-/* Function prototypes */
+// Function prototypes
 
 static void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax );
 
-/*--------------------------------------------------------------------------*\
- * shade
- *
- * Does several shade plots using different coordinate mappings.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// shade
+//
+// Does several shade plots using different coordinate mappings.
+//--------------------------------------------------------------------------
 
 void
 shade( void )
@@ -367,12 +367,12 @@ shade( void )
     PLINT    sh_cmap   = 1, sh_width;
     PLINT    min_color = 1, min_width = 0, max_color = 0, max_width = 0;
 
-/* Set up function arrays */
+// Set up function arrays
 
     plAlloc2dGrid( &z, XPTS, YPTS );
     plAlloc2dGrid( &w, XPTS, YPTS );
 
-/* Set up data array */
+// Set up data array
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -389,7 +389,7 @@ shade( void )
     for ( i = 0; i < NCONTR; i++ )
         clevel[i] = zmin + ( zmax - zmin ) * ( i + 0.5 ) / (PLFLT) NCONTR;
 
-/* Set up coordinate grids */
+// Set up coordinate grids
 
     cgrid1.xg = xg1;
     cgrid1.yg = yg1;
@@ -419,7 +419,7 @@ shade( void )
         }
     }
 
-/* Plot using identity transform */
+// Plot using identity transform
 
     pladv( 0 );
     plvpor( 0.1, 0.9, 0.1, 0.9 );
@@ -443,12 +443,12 @@ shade( void )
     plcol( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     plcol( 2 );
-/*
- *  plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR, mypltr, NULL);
- */
+//
+//  plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR, mypltr, NULL);
+//
     pllab( "distance", "altitude", "Bogon density" );
 
-/* Clean up */
+// Clean up
 
     plFree2dGrid( z, XPTS, YPTS );
     plFree2dGrid( w, XPTS, YPTS );
@@ -456,11 +456,11 @@ shade( void )
     plFree2dGrid( cgrid2.yg, XPTS, YPTS );
 }
 
-/*--------------------------------------------------------------------------*\
- * f2mnmx
- *
- * Returns min & max of input 2d array.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// f2mnmx
+//
+// Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
 
 static void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
@@ -479,7 +479,7 @@ f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
         }
     }
 }
-/* =============================================================== */
+// ===============================================================
 
 int   myplotCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
 {

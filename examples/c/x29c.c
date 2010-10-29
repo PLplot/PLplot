@@ -1,69 +1,69 @@
-/* $Id$
- *
- *     Sample plots using date / time formatting for axes
- *
- * Copyright (C) 2007 Andrew Ross
- *
- * This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//     Sample plots using date / time formatting for axes
+//
+// Copyright (C) 2007 Andrew Ross
+//
+// This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plcdemos.h"
 
 static PLFLT x[365], y[365];
 static PLFLT xerr1[365], xerr2[365], yerr1[365], yerr2[365];
 
-/* Function prototypes */
+// Function prototypes
 
 void plot1();
 void plot2();
 void plot3();
 void plot4();
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Draws several plots which demonstrate the use of date / time formats for
- * the axis labels.
- * Time formatting is done using the strfqsas routine from the qsastime
- * library.  This is similar to strftime, but works for a broad
- * date range even on 32-bit systems.  See the
- * documentation of strfqsas for full details of the available formats.
- *
- * 1) Plotting temperature over a day (using hours / minutes)
- * 2) Plotting
- *
- * Note: We currently use the default call for plconfigtime (done in
- * plinit) which means continuous times are interpreted as seconds since
- * 1970-01-01, but that may change in future, more extended versions of
- * this example.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Draws several plots which demonstrate the use of date / time formats for
+// the axis labels.
+// Time formatting is done using the strfqsas routine from the qsastime
+// library.  This is similar to strftime, but works for a broad
+// date range even on 32-bit systems.  See the
+// documentation of strfqsas for full details of the available formats.
+//
+// 1) Plotting temperature over a day (using hours / minutes)
+// 2) Plotting
+//
+// Note: We currently use the default call for plconfigtime (done in
+// plinit) which means continuous times are interpreted as seconds since
+// 1970-01-01, but that may change in future, more extended versions of
+// this example.
+//
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char *argv[] )
 {
-    /* Parse command line arguments */
+    // Parse command line arguments
     plparseopts( &argc, argv, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
-    /* Change the escape character to a '@' instead of the default '#' */
+    // Change the escape character to a '@' instead of the default '#'
     plsesc( '@' );
 
     plot1();
@@ -74,23 +74,23 @@ main( int argc, const char *argv[] )
 
     plot4();
 
-    /* Don't forget to call plend() to finish off! */
+    // Don't forget to call plend() to finish off!
     plend();
     exit( 0 );
 }
 
-/* Plot a model diurnal cycle of temperature */
+// Plot a model diurnal cycle of temperature
 void
 plot1()
 {
     int   i, npts;
     PLFLT xmin, xmax, ymin, ymax;
 
-    /* Data points every 10 minutes for 1 day */
+    // Data points every 10 minutes for 1 day
     npts = 73;
 
     xmin = 0;
-    xmax = 60.0 * 60.0 * 24.0; /* Number of seconds in a day */
+    xmax = 60.0 * 60.0 * 24.0; // Number of seconds in a day
     ymin = 10.0;
     ymax = 20.0;
 
@@ -98,27 +98,27 @@ plot1()
     {
         x[i] = xmax * ( (PLFLT) i / (PLFLT) npts );
         y[i] = 15.0 - 5.0 * cos( 2 * M_PI * ( (PLFLT) i / (PLFLT) npts ) );
-        /* Set x error bars to +/- 5 minute */
+        // Set x error bars to +/- 5 minute
         xerr1[i] = x[i] - 60 * 5;
         xerr2[i] = x[i] + 60 * 5;
-        /* Set y error bars to +/- 0.1 deg C */
+        // Set y error bars to +/- 0.1 deg C
         yerr1[i] = y[i] - 0.1;
         yerr2[i] = y[i] + 0.1;
     }
 
     pladv( 0 );
 
-    /* Rescale major ticks marks by 0.5 */
+    // Rescale major ticks marks by 0.5
     plsmaj( 0.0, 0.5 );
-    /* Rescale minor ticks and error bar marks by 0.5 */
+    // Rescale minor ticks and error bar marks by 0.5
     plsmin( 0.0, 0.5 );
 
     plvsta();
     plwind( xmin, xmax, ymin, ymax );
 
-    /* Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y. */
+    // Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y.
     plcol0( 1 );
-    /* Set time format to be hours:minutes */
+    // Set time format to be hours:minutes
     pltimefmt( "%H:%M" );
     plbox( "bcnstd", 3.0 * 60 * 60, 3, "bcnstv", 1, 5 );
 
@@ -133,12 +133,12 @@ plot1()
     plcol0( 3 );
     plerry( npts, x, yerr1, yerr2 );
 
-    /* Rescale major / minor tick marks back to default */
+    // Rescale major / minor tick marks back to default
     plsmin( 0.0, 1.0 );
     plsmaj( 0.0, 1.0 );
 }
 
-/* Plot the number of hours of daylight as a function of day for a year */
+// Plot the number of hours of daylight as a function of day for a year
 void
 plot2()
 {
@@ -146,7 +146,7 @@ plot2()
     PLFLT xmin, xmax, ymin, ymax;
     PLFLT lat, p, d;
 
-    /* Latitude for London */
+    // Latitude for London
     lat = 51.5;
 
     npts = 365;
@@ -156,9 +156,9 @@ plot2()
     ymin = 0;
     ymax = 24;
 
-    /* Formula for hours of daylight from
-     * "A Model Comparison for Daylength as a Function of Latitude and
-     * Day of the Year", 1995, Ecological Modelling, 80, pp 87-95. */
+    // Formula for hours of daylight from
+    // "A Model Comparison for Daylength as a Function of Latitude and
+    // Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
     for ( j = 0; j < npts; j++ )
     {
         x[j] = j * 60.0 * 60.0 * 24.0;
@@ -170,7 +170,7 @@ plot2()
     }
 
     plcol0( 1 );
-    /* Set time format to be abbreviated month name followed by day of month */
+    // Set time format to be abbreviated month name followed by day of month
     pltimefmt( "%b %d" );
     plprec( 1, 1 );
     plenv( xmin, xmax, ymin, ymax, 0, 40 );
@@ -193,7 +193,7 @@ plot3()
     PLFLT xmin, xmax, ymin, ymax;
     PLFLT tstart;
 
-    /* Calculate continuous time corresponding to 2005-12-01 UTC. */
+    // Calculate continuous time corresponding to 2005-12-01 UTC.
     plctime( 2005, 11, 01, 0, 0, 0., &tstart );
     npts = 62;
 
@@ -214,9 +214,9 @@ plot3()
     plwind( xmin, xmax, ymin, ymax );
 
     plcol0( 1 );
-    /* Set time format to be ISO 8601 standard YYYY-MM-DD. */
+    // Set time format to be ISO 8601 standard YYYY-MM-DD.
     pltimefmt( "%F" );
-    /* Draw a box with ticks spaced every 14 days in X and 1 hour in Y. */
+    // Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
     plbox( "bcnstd", 14 * 24.0 * 60.0 * 60.0, 14, "bcnstv", 1, 4 );
 
     plcol0( 3 );
@@ -224,7 +224,7 @@ plot3()
 
     plcol0( 4 );
 
-    /* Rescale symbol size (used by plpoin) by 0.5 */
+    // Rescale symbol size (used by plpoin) by 0.5
     plssym( 0.0, 0.5 );
     plpoin( npts, x, y, 2 );
     plline( npts, x, y );
@@ -233,9 +233,9 @@ plot3()
 void
 plot4()
 {
-    /* TAI-UTC (seconds) as a function of time.
-     * Use Besselian epochs as the continuous time interval just to prove
-     * this does not introduce any issues. */
+    // TAI-UTC (seconds) as a function of time.
+    // Use Besselian epochs as the continuous time interval just to prove
+    // this does not introduce any issues.
 
     PLFLT scale, offset1, offset2;
     PLFLT xmin, xmax, ymin, ymax, xlabel_step;
@@ -250,12 +250,12 @@ plot4()
     PLINT utc_year, utc_month, utc_day, utc_hour, utc_min;
     PLFLT utc_sec, utc;
 
-    /* Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-     * B = 1900. + (JD -2415020.31352)/365.242198781
-     * ==> (as calculated with aid of "bc -l" command)
-     * B = (MJD + 678940.364163900)/365.242198781
-     * ==>
-     * MJD = B*365.24219878 - 678940.364163900 */
+    // Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+    // B = 1900. + (JD -2415020.31352)/365.242198781
+    // ==> (as calculated with aid of "bc -l" command)
+    // B = (MJD + 678940.364163900)/365.242198781
+    // ==>
+    // MJD = B*365.24219878 - 678940.364163900
     scale   = 365.242198781;
     offset1 = -678940.;
     offset2 = -0.3641639;
