@@ -45,7 +45,7 @@
 // #define ASSERT_GCW
 
 
-//=========================================================================
+//--------------------------------------------------------------------------
 // GcwPLdev - the PLplot device structure for the GCW driver
 
 typedef struct
@@ -89,7 +89,7 @@ typedef struct
 } GcwPLdev;
 
 
-//=========================================================================
+//--------------------------------------------------------------------------
 // Physical dimension constants used by the driver
 
 // Virtual coordinate scaling parameter, used to do calculations at
@@ -122,7 +122,7 @@ typedef struct
 #define ZOOMSTEP                 ( 1.25 )
 
 
-//=========================================================================
+//--------------------------------------------------------------------------
 // GCW "Gnome Canvas Widget" Library prototypes (see gcw-lib.c)
 
 // Public_functions
