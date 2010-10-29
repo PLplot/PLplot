@@ -8,11 +8,11 @@
 int
 main( int argc, char *argv[] )
 {
-  int c;
-  while ((c=getchar())!= EOF)
-  {
-    if(c & 0x80)
-      return c;
-  }
-  return 0;
+    int c;
+    while ( ( c = getchar() ) != EOF )
+    {
+        if ( c & 0x80 )
+            return c;
+    }
+    return 0;
 }
