@@ -641,18 +641,18 @@ int translate_parse_option( int parse_option )
 }
 
 // Copy a string array
-#define INIT_STRING_ARRAY( o ) \
-    int o##_length; \
-    o##_length = Wosize_val( o ); \
-    const char *c_##o[o##_length]; \
-    for ( i = 0; i < o##_length; i++ ) { c_##o[i] = String_val( Field( o, i ) ); }
+#define INIT_STRING_ARRAY( o )         \
+    int o ## _length;                  \
+    o ## _length = Wosize_val( o );    \
+    const char *c_ ## o[o ## _length]; \
+    for ( i = 0; i < o ## _length; i++ ) { c_ ## o[i] = String_val( Field( o, i ) ); }
 
 // Copy an int array, o, of n element to the C array c
-#define INIT_INT_ARRAY( o ) \
-    int o##_length; \
-    o##_length = Wosize_val( o ); \
-    int c_##o[o##_length]; \
-    for ( i = 0; i < (o##_length); i++ ) { (c_##o)[i] = Int_val( Field( (o), i ) ); }
+#define INIT_INT_ARRAY( o )         \
+    int o ## _length;               \
+    o ## _length = Wosize_val( o ); \
+    int c_ ## o[o ## _length];      \
+    for ( i = 0; i < ( o ## _length ); i++ ) { ( c_ ## o )[i] = Int_val( Field( ( o ), i ) ); }
 
 int lor_ml_list( value list, ML_VARIANT_FUNC variant_f )
 {
@@ -740,12 +740,12 @@ int translate_legend_option( int legend_option )
     int translated_option;
     switch ( legend_option )
     {
-    case 0: translated_option = PL_LEGEND_NONE; break;
-    case 1: translated_option = PL_LEGEND_COLOR_BOX; break;
-    case 2: translated_option = PL_LEGEND_LINE; break;
-    case 3: translated_option = PL_LEGEND_SYMBOL; break;
-    case 4: translated_option = PL_LEGEND_TEXT_LEFT; break;
-    case 5: translated_option = PL_LEGEND_BACKGROUND; break;
+    case 0: translated_option  = PL_LEGEND_NONE; break;
+    case 1: translated_option  = PL_LEGEND_COLOR_BOX; break;
+    case 2: translated_option  = PL_LEGEND_LINE; break;
+    case 3: translated_option  = PL_LEGEND_SYMBOL; break;
+    case 4: translated_option  = PL_LEGEND_TEXT_LEFT; break;
+    case 5: translated_option  = PL_LEGEND_BACKGROUND; break;
     default: translated_option = -1;
     }
     return translated_option;
@@ -762,10 +762,10 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
 {
     CAMLparam5( opt, x, y, plot_width, bg_color );
     CAMLxparam5( opt_array, text_offset, text_scale, text_spacing,
-                 text_justification );
+        text_justification );
     CAMLxparam5( text_colors, text, box_colors, box_patterns, box_scales );
     CAMLxparam5( line_colors, line_styles, line_widths, symbol_colors,
-                 symbol_scales );
+        symbol_scales );
     CAMLxparam2( symbol_numbers, symbols );
 
     // Counter
@@ -803,15 +803,15 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
     }
 
     pllegend( c_opt, Double_val( x ), Double_val( y ),
-              Double_val( plot_width ), Int_val( bg_color ), n_legend,
-              c_opt_array,
-              Double_val( text_offset ), Double_val( text_scale ),
-              Double_val( text_spacing ), Double_val( text_justification ),
-              c_text_colors, c_text,
-              c_box_colors, c_box_patterns, (double *)box_scales,
-              c_line_colors, c_line_styles, c_line_widths,
-              c_symbol_colors, (double *)symbol_scales, c_symbol_numbers,
-              c_symbols );
+        Double_val( plot_width ), Int_val( bg_color ), n_legend,
+        c_opt_array,
+        Double_val( text_offset ), Double_val( text_scale ),
+        Double_val( text_spacing ), Double_val( text_justification ),
+        c_text_colors, c_text,
+        c_box_colors, c_box_patterns, (double *) box_scales,
+        c_line_colors, c_line_styles, c_line_widths,
+        c_symbol_colors, (double *) symbol_scales, c_symbol_numbers,
+        c_symbols );
 
     CAMLreturn( Val_unit );
 }
@@ -819,10 +819,10 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
 value ml_pllegend_byte( value* argv, int argn )
 {
     return ml_pllegend( argv[0], argv[1], argv[2], argv[3], argv[4],
-                        argv[5], argv[6], argv[7], argv[8], argv[9],
-                        argv[10], argv[11], argv[12], argv[13], argv[14],
-                        argv[15], argv[16], argv[17], argv[18], argv[19],
-                        argv[20], argv[21] );
+        argv[5], argv[6], argv[7], argv[8], argv[9],
+        argv[10], argv[11], argv[12], argv[13], argv[14],
+        argv[15], argv[16], argv[17], argv[18], argv[19],
+        argv[20], argv[21] );
 }
 
 /* pltr* function implementations */

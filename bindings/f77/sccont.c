@@ -273,12 +273,12 @@ PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
            PLINT *min_color, PLINT *min_width,
            PLINT *max_color, PLINT *max_width, PLINT *lx )
 {
-    PLINT rect = 1;
+    PLINT   rect = 1;
 
     PLfGrid data;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = z;
+    data.f  = z;
     data.nx = *lx;
     data.ny = *ny;
 
@@ -323,7 +323,7 @@ PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     cgrid.yg = yg1;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = z;
+    data.f  = z;
     data.nx = *lx;
     data.ny = *ny;
 
@@ -349,9 +349,9 @@ PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
            PLINT *max_color, PLINT *max_width,
            PLFLT *xg2, PLFLT *yg2, PLINT *lx )
 {
-    PLINT    rect = 0;
-    PLfGrid  data;
-    PLcGrid  cgrid;
+    PLINT   rect = 0;
+    PLfGrid data;
+    PLcGrid cgrid;
 
 /* Fill a grid data structure to hold the coordinate arrays. */
     cgrid.nx = *lx;
@@ -360,7 +360,7 @@ PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     cgrid.yg = yg2;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = z;
+    data.f  = z;
     data.nx = *lx;
     data.ny = *ny;
 
@@ -383,11 +383,11 @@ PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
           PLINT *min_color, PLINT *min_width,
           PLINT *max_color, PLINT *max_width, PLFLT *ftr, PLINT *lx )
 {
-    PLINT rect = 1;
-    PLfGrid  data;
+    PLINT   rect = 1;
+    PLfGrid data;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = z;
+    data.f  = z;
     data.nx = *lx;
     data.ny = *ny;
 
@@ -422,7 +422,7 @@ PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLfGrid2 data;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = (PLFLT **) z;
+    data.f  = (PLFLT **) z;
     data.nx = *lx;
     data.ny = *ny;
 
@@ -447,7 +447,7 @@ PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLcGrid  cgrid;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = (PLFLT **) z;
+    data.f  = (PLFLT **) z;
     data.nx = *lx;
     data.ny = *ny;
 
@@ -478,7 +478,7 @@ PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLcGrid  cgrid;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = (PLFLT **) z;
+    data.f  = (PLFLT **) z;
     data.nx = *lx;
     data.ny = *ny;
 
@@ -507,7 +507,7 @@ PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLfGrid2 data;
 
 /* Fill a grid data structure to hold the fortran z array. */
-    data.f = (PLFLT **) z;
+    data.f  = (PLFLT **) z;
     data.nx = *lx;
     data.ny = *ny;
 
