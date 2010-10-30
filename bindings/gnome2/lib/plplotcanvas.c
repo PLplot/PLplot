@@ -171,7 +171,7 @@ void plplot_canvas_use_persistence( PlplotCanvas* self, gboolean use_persistence
  *
  *  This should be kept up-to-date with plplot.h
  *
- * /*--------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------*/
 
 /* set the format of the contour labels */
 
