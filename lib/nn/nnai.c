@@ -196,21 +196,19 @@ static double franke( double x, double y )
            - 0.2 * exp( -SQ( x - 4.0 ) - SQ( y - 7.0 ) );
 }
 
-// *INDENT-OFF*
 static void usage()
 {
     printf(
-"Usage: nn_test [-v|-V] [-n <nin> <nxout>]\n"
-"Options:\n"
-"  -a              -- use non-Sibsonian interpolation rule\n"
-"  -n <nin> <nout>:\n"
-"            <nin> -- number of input points (default = 10000)\n"
-"           <nout> -- number of output points per side (default = 64)\n"
-"  -v              -- verbose\n"
-"  -V              -- very verbose\n"
-);
+        "Usage: nn_test [-v|-V] [-n <nin> <nxout>]\n"
+        "Options:\n"
+        "  -a              -- use non-Sibsonian interpolation rule\n"
+        "  -n <nin> <nout>:\n"
+        "            <nin> -- number of input points (default = 10000)\n"
+        "           <nout> -- number of output points per side (default = 64)\n"
+        "  -v              -- verbose\n"
+        "  -V              -- very verbose\n"
+        );
 }
-// *INDENT-ON*
 
 int main( int argc, char* argv[] )
 {

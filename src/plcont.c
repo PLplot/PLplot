@@ -1458,13 +1458,11 @@ pltr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
             yrl = *( yg + ur + vl * nx );
             ylr = *( yg + ul + vr * nx );
             yrr = *( yg + ur + vr * nx );
-// INDENT OFF
             *tx = xll * ( 1 - du ) * ( 1 - dv ) + xlr * ( 1 - du ) * ( dv ) +
                   xrl * ( du ) * ( 1 - dv ) + xrr * ( du ) * ( dv );
 
             *ty = yll * ( 1 - du ) * ( 1 - dv ) + ylr * ( 1 - du ) * ( dv ) +
                   yrl * ( du ) * ( 1 - dv ) + yrr * ( du ) * ( dv );
-// INDENT ON
         }
     }
 }

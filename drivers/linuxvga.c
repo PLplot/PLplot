@@ -22,7 +22,6 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_linuxvga = "linuxvga:Linux VGA dr
 
 
 // Function prototypes
-// INDENT OFF
 
 void plD_init_vga( PLStream * );
 void plD_line_vga( PLStream *, short, short, short, short );
@@ -36,8 +35,6 @@ void plD_esc_vga( PLStream *, PLINT, void * );
 static void lxvga_text( PLStream *pls );
 static void lxvga_graph( PLStream *pls );
 static void lxvga_pause( PLStream *pls );
-
-// INDENT ON
 
 static PLINT vgax = 639;
 static PLINT vgay = 479;
