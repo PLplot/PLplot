@@ -1,9 +1,9 @@
-/* C code to create dynamically loaded library to implement plplot_widget module*/
+// C code to create dynamically loaded library to implement plplot_widget module
 
 #include <Python.h>
-/* Change this to the recommended
- * #include <Numeric/arrayobject.h>
- *  once we no longer support python1.5 */
+// Change this to the recommended
+// #include <Numeric/arrayobject.h>
+//  once we no longer support python1.5
 #include <arrayobject.h>
 #include "plplot.h"
 #include "plplotP.h"
@@ -17,11 +17,11 @@
 #ifdef ENABLE_tk
 static char doc_Pltk_init[] = "Initialize the Pltk Tcl extension.";
 
-/*--------------------------------------------------------------------------*\
- * A python module method for initializing the PLtk extension.  This method
- * must be called from python with a single argument, which is the address of
- * the Tcl interpreter into which the Pltk extension is to be injected.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// A python module method for initializing the PLtk extension.  This method
+// must be called from python with a single argument, which is the address of
+// the Tcl interpreter into which the Pltk extension is to be injected.
+//--------------------------------------------------------------------------
 
 static PyObject *pl_Pltk_init( PyObject *self, PyObject *args )
 {
@@ -55,7 +55,7 @@ static PyObject *pl_Pltk_init( PyObject *self, PyObject *args )
 
 #endif
 
-/* ##############################################################################*/
+// ##############################################################################
 
 static PyMethodDef plplot_widget_methods[] = {
 #ifdef ENABLE_tk
@@ -72,11 +72,11 @@ PLDLLIMPEXP_PLPLOT_WIDGETMODULE void initplplot_widget( void )
 
     import_array();
 
-    /* Create the module and add the functions */
+    // Create the module and add the functions
     m = Py_InitModule( "plplot_widget", plplot_widget_methods );
     d = PyModule_GetDict( m );
 
-    /* Check for errors */
+    // Check for errors
     if ( PyErr_Occurred() )
         Py_FatalError( "plplot_widget module initialization failed" );
 }

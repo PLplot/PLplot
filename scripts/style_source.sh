@@ -87,7 +87,7 @@ while test $# -gt 0; do
 done
 
 allowed_version=0.56
-version=`uncrustify --version`
+version=$(uncrustify --version)
 if [ "$version" != "uncrustify $allowed_version" ] ; then
     echo "
 Detected uncrustify version = '$version'.
@@ -124,7 +124,7 @@ csource_LIST="config.h.cmake"
 csource_LIST="$csource_LIST src/*.[ch]"
 
 # All C source (i.e., exclude qt.h) in include directory.
-csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h`" 
+csource_LIST="$csource_LIST $(ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h)" 
 
 # Every subdirectory of lib.
 csource_LIST="$csource_LIST lib/*/*.[ch] lib/qsastime/qsastimeP.h.in"
@@ -141,12 +141,11 @@ csource_LIST="$csource_LIST fonts/*.c"
 # C source in utils.
 csource_LIST="$csource_LIST utils/*.c"
 
+csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/f95/*.c bindings/f95/plstubs.h bindings/gnome2/*/*.c bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/f77/*.c bindings/f77/plstubs.h bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch] bindings/octave/plplot_octave.h.in bindings/octave/plplot_octave_rej.h bindings/octave/massage.c"
+
 # temporary
 exclude_c=ON
 if [ -z "$exclude_c" ] ; then
-# C source in bindings.
-csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/f95/*.c bindings/f95/plstubs.h bindings/gnome2/*/*.c bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/f77/*.c bindings/f77/plstubs.h bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch] bindings/octave/plplot_octave.h.in bindings/octave/plplot_octave_rej.h bindings/octave/massage.c"
-
 export cppsource_LIST
 
 # C++ part of bindings/c++

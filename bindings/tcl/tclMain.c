@@ -1,61 +1,61 @@
-/* $Id$
- *
- * Modified version of tclMain.c, from Tcl 8.3.2.
- * Maurice LeBrun
- * Jan 2 2001
- *
- * Copyright (C) 2004  Joao Cardoso
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *
- * Based on previous version of tclMain.c, from Tcl 7.3.
- * Modifications include:
- * 1. Tcl_Main() changed to pltclMain().
- * 2. Changes to work with ANSI C
- * 3. Changes to support user-installable error or output handlers.
- * 4. PLplot argument parsing routine called to handle arguments.
- * 5. Added define of _POSIX_SOURCE and eliminated include of tclInt.h.
- *
- * Original comments follow.
- */
+// $Id$
+//
+// Modified version of tclMain.c, from Tcl 8.3.2.
+// Maurice LeBrun
+// Jan 2 2001
+//
+// Copyright (C) 2004  Joao Cardoso
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
+// Based on previous version of tclMain.c, from Tcl 7.3.
+// Modifications include:
+// 1. Tcl_Main() changed to pltclMain().
+// 2. Changes to work with ANSI C
+// 3. Changes to support user-installable error or output handlers.
+// 4. PLplot argument parsing routine called to handle arguments.
+// 5. Added define of _POSIX_SOURCE and eliminated include of tclInt.h.
+//
+// Original comments follow.
+//
 
-/*
- * tclMain.c --
- *
- *	Main program for Tcl shells and other Tcl-based applications.
- *
- * Copyright (c) 1988-1994 The Regents of the University of California.
- * Copyright (c) 1994-1997 Sun Microsystems, Inc.
- *
- * See the file "license.terms" for information on usage and redistribution
- * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
- *
- * RCS: @(#) $Id$
- */
+//
+// tclMain.c --
+//
+//	Main program for Tcl shells and other Tcl-based applications.
+//
+// Copyright (c) 1988-1994 The Regents of the University of California.
+// Copyright (c) 1994-1997 Sun Microsystems, Inc.
+//
+// See the file "license.terms" for information on usage and redistribution
+// of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+//
+// RCS: @(#) $Id$
+//
 
 #include <tcl.h>
 #include "plplot.h"
 
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 5
-/* From (private) tclInt.h in tcl8.5 */
+// From (private) tclInt.h in tcl8.5
 #define TclFormatInt( buf, n )    sprintf( ( buf ), "%ld", (long) ( n ) )
 #else
-/* From (private) tclIntDecls.h in tcl8.4 and before*/
+// From (private) tclIntDecls.h in tcl8.4 and before
 EXTERN int TclFormatInt _ANSI_ARGS_( ( char * buffer, long n ) );
 #endif
 
@@ -66,43 +66,43 @@ EXTERN int TclObjCommandComplete _ANSI_ARGS_( ( Tcl_Obj * cmdPtr ) );
 # undef TCL_STORAGE_CLASS
 # define TCL_STORAGE_CLASS    DLLEXPORT
 
-/*
- * The following code ensures that tclLink.c is linked whenever
- * Tcl is linked.  Without this code there's no reference to the
- * code in that file from anywhere in Tcl, so it may not be
- * linked into the application.
- */
+//
+// The following code ensures that tclLink.c is linked whenever
+// Tcl is linked.  Without this code there's no reference to the
+// code in that file from anywhere in Tcl, so it may not be
+// linked into the application.
+//
 
 EXTERN int Tcl_LinkVar();
 int ( *tclDummyLinkVarPtr )() = Tcl_LinkVar;
 
-/*
- * Declarations for various library procedures and variables (don't want
- * to include tclPort.h here, because people might copy this file out of
- * the Tcl source directory to make their own modified versions).
- * Note:  "exit" should really be declared here, but there's no way to
- * declare it without causing conflicts with other definitions elsewher
- * on some systems, so it's better just to leave it out.
- */
+//
+// Declarations for various library procedures and variables (don't want
+// to include tclPort.h here, because people might copy this file out of
+// the Tcl source directory to make their own modified versions).
+// Note:  "exit" should really be declared here, but there's no way to
+// declare it without causing conflicts with other definitions elsewher
+// on some systems, so it's better just to leave it out.
+//
 
 extern int isatty _ANSI_ARGS_( (int fd) );
 extern char *           strcpy _ANSI_ARGS_( ( char *dst, CONST char *src ) );
 
 static const char *tclStartupScriptFileName = NULL;
 
-/* pltcl enhancements */
+// pltcl enhancements
 
 static void
 plPrepOutputHandler( Tcl_Interp *interp, int code, int tty );
 
-/* These are globally visible and can be replaced */
+// These are globally visible and can be replaced
 
 void ( *tclErrorHandler )( Tcl_Interp *interp, int code, int tty ) = NULL;
 
 void ( *tclPrepOutputHandler )( Tcl_Interp *interp, int code, int tty )
     = plPrepOutputHandler;
 
-/* Options data structure definition. */
+// Options data structure definition.
 
 static char          *tclStartupScript = NULL;
 static const char    *pltcl_notes[]    = {
@@ -114,7 +114,7 @@ static const char    *pltcl_notes[]    = {
 
 static PLOptionTable options[] = {
     {
-        "f",                    /* File to read & process */
+        "f",                    // File to read & process
         NULL,
         NULL,
         &tclStartupScriptFileName,
@@ -123,7 +123,7 @@ static PLOptionTable options[] = {
         "File from which to read commands"
     },
     {
-        "file",                 /* File to read & process (alias) */
+        "file",                 // File to read & process (alias)
         NULL,
         NULL,
         &tclStartupScriptFileName,
@@ -132,7 +132,7 @@ static PLOptionTable options[] = {
         "File from which to read commands"
     },
     {
-        "e",                    /* Script to run on startup */
+        "e",                    // Script to run on startup
         NULL,
         NULL,
         &tclStartupScript,
@@ -141,56 +141,56 @@ static PLOptionTable options[] = {
         "Script to execute on startup"
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 
-/*
- *----------------------------------------------------------------------
- *
- * TclSetStartupScriptFileName --
- *
- *	Primes the startup script file name, used to override the
- *      command line processing.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	This procedure initializes the file name of the Tcl script to
- *      run at startup.
- *
- *----------------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// TclSetStartupScriptFileName --
+//
+//	Primes the startup script file name, used to override the
+//      command line processing.
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	This procedure initializes the file name of the Tcl script to
+//      run at startup.
+//
+//--------------------------------------------------------------------------
+//
 void TclSetStartupScriptFileName( char *fileName )
 {
     tclStartupScriptFileName = fileName;
 }
 
 
-/*
- *----------------------------------------------------------------------
- *
- * TclGetStartupScriptFileName --
- *
- *	Gets the startup script file name, used to override the
- *      command line processing.
- *
- * Results:
- *	The startup script file name, NULL if none has been set.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// TclGetStartupScriptFileName --
+//
+//	Gets the startup script file name, used to override the
+//      command line processing.
+//
+// Results:
+//	The startup script file name, NULL if none has been set.
+//
+// Side effects:
+//	None.
+//
+//--------------------------------------------------------------------------
+//
 const char *TclGetStartupScriptFileName( void )
 {
     return tclStartupScriptFileName;
@@ -198,24 +198,24 @@ const char *TclGetStartupScriptFileName( void )
 
 
 
-/*
- *----------------------------------------------------------------------
- *
- * Tcl_Main --
- *
- *	Main program for tclsh and most other Tcl-based applications.
- *
- * Results:
- *	None. This procedure never returns (it exits the process when
- *	it's done.
- *
- * Side effects:
- *	This procedure initializes the Tcl world and then starts
- *	interpreting commands;  almost anything could happen, depending
- *	on the script being interpreted.
- *
- *----------------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// Tcl_Main --
+//
+//	Main program for tclsh and most other Tcl-based applications.
+//
+// Results:
+//	None. This procedure never returns (it exits the process when
+//	it's done.
+//
+// Side effects:
+//	This procedure initializes the Tcl world and then starts
+//	interpreting commands;  almost anything could happen, depending
+//	on the script being interpreted.
+//
+//--------------------------------------------------------------------------
+//
 
 int PLDLLEXPORT
 pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
@@ -238,18 +238,18 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
     Tcl_InitMemory( interp );
 #endif
 
-    /* First process plplot-specific args using the PLplot parser. */
+    // First process plplot-specific args using the PLplot parser.
 
     sprintf( usage, "\nUsage:\n        %s [filename] [options]\n", argv[0] );
     plSetUsage( NULL, usage );
     plMergeOpts( options, "pltcl options", pltcl_notes );
     (void) plparseopts( &argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
 
-    /*
-     * Make (remaining) command-line arguments available in the Tcl variables
-     * "argc" and "argv".  If the first argument doesn't start with a "-" then
-     * strip it off and use it as the name of a script file to process.
-     */
+    //
+    // Make (remaining) command-line arguments available in the Tcl variables
+    // "argc" and "argv".  If the first argument doesn't start with a "-" then
+    // strip it off and use it as the name of a script file to process.
+    //
 
     if ( tclStartupScriptFileName == NULL )
     {
@@ -280,18 +280,18 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
     Tcl_SetVar( interp, "argc", buffer, TCL_GLOBAL_ONLY );
     Tcl_SetVar( interp, "argv0", Tcl_DStringValue( &argString ), TCL_GLOBAL_ONLY );
 
-    /*
-     * Set the "tcl_interactive" variable.
-     */
+    //
+    // Set the "tcl_interactive" variable.
+    //
 
     tty = isatty( 0 );
     Tcl_SetVar( interp, "tcl_interactive",
         ( ( tclStartupScriptFileName == NULL ) && tty ) ? "1" : "0",
         TCL_GLOBAL_ONLY );
 
-    /*
-     * Invoke application-specific initialization.
-     */
+    //
+    // Invoke application-specific initialization.
+    //
 
     if ( ( *appInitProc )( interp ) != TCL_OK )
     {
@@ -305,9 +305,9 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
         }
     }
 
-    /*
-     * Process the startup script, if any.
-     */
+    //
+    // Process the startup script, if any.
+    //
 
     if ( tclStartupScript != NULL )
     {
@@ -319,10 +319,10 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
         }
     }
 
-    /*
-     * If a script file was specified then just source that file
-     * and quit.
-     */
+    //
+    // If a script file was specified then just source that file
+    // and quit.
+    //
 
     if ( tclStartupScriptFileName != NULL )
     {
@@ -332,10 +332,10 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
             errChannel = Tcl_GetStdChannel( TCL_STDERR );
             if ( errChannel )
             {
-                /*
-                 * The following statement guarantees that the errorInfo
-                 * variable is set properly.
-                 */
+                //
+                // The following statement guarantees that the errorInfo
+                // variable is set properly.
+                //
 
                 Tcl_AddErrorInfo( interp, "" );
                 Tcl_WriteObj( errChannel, Tcl_GetVar2Ex( interp, "errorInfo",
@@ -348,18 +348,18 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
     }
     Tcl_DStringFree( &argString );
 
-    /*
-     * We're running interactively.  Source a user-specific startup
-     * file if the application specified one and if the file exists.
-     */
+    //
+    // We're running interactively.  Source a user-specific startup
+    // file if the application specified one and if the file exists.
+    //
 
     Tcl_SourceRCFile( interp );
 
-    /*
-     * Process commands from stdin until there's an end-of-file.  Note
-     * that we need to fetch the standard channels again after every
-     * eval, since they may have been changed.
-     */
+    //
+    // Process commands from stdin until there's an end-of-file.  Note
+    // that we need to fetch the standard channels again after every
+    // eval, since they may have been changed.
+    //
 
     commandPtr = Tcl_NewObj();
     Tcl_IncrRefCount( commandPtr );
@@ -421,9 +421,9 @@ defaultPrompt:
             goto done;
         }
 
-        /*
-         * Add the newline removed by Tcl_GetsObj back to the string.
-         */
+        //
+        // Add the newline removed by Tcl_GetsObj back to the string.
+        //
 
         Tcl_AppendToObj( commandPtr, "\n", 1 );
         if ( !TclObjCommandComplete( commandPtr ) )
@@ -441,17 +441,17 @@ defaultPrompt:
         commandPtr = Tcl_NewObj();
         Tcl_IncrRefCount( commandPtr );
 
-        /* User defined function to deal with tcl command output */
-        /* Deprecated; for backward compatibility only */
+        // User defined function to deal with tcl command output
+        // Deprecated; for backward compatibility only
         if ( ( ( code != TCL_OK ) || tty ) && tclErrorHandler )
             ( *tclErrorHandler )( interp, code, tty );
         else
         {
-            /* User defined function to prepare for tcl output */
-            /* This is the new way */
+            // User defined function to prepare for tcl output
+            // This is the new way
             if ( ( ( code != TCL_OK ) || tty ) && tclPrepOutputHandler )
                 ( *tclPrepOutputHandler )( interp, code, tty );
-            /* Back to the stock tcl code */
+            // Back to the stock tcl code
             if ( code != TCL_OK )
             {
                 if ( errChannel )
@@ -481,11 +481,11 @@ defaultPrompt:
 #endif
     }
 
-    /*
-     * Rather than calling exit, invoke the "exit" command so that
-     * users can replace "exit" with some other command to do additional
-     * cleanup on exit.  The Tcl_Eval call should never return.
-     */
+    //
+    // Rather than calling exit, invoke the "exit" command so that
+    // users can replace "exit" with some other command to do additional
+    // cleanup on exit.  The Tcl_Eval call should never return.
+    //
 
 done:
     if ( commandPtr != NULL )
@@ -494,27 +494,27 @@ done:
     }
     sprintf( buffer, "exit %d", exitCode );
     Tcl_Eval( interp, buffer );
-    return 0;           /* to silence warnings */
+    return 0;           // to silence warnings
 }
 
-/*
- *--------------------------------------------------------------------------
- *
- * plPrepOutputHandler --
- *
- *	Prepares for output during command parsing.  We use it here to
- *	ensure we are on the text screen before issuing the error message,
- *	otherwise it may disappear.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	For some graphics devices, a switch between graphics and text modes
- *	is done.
- *
- *--------------------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// plPrepOutputHandler --
+//
+//	Prepares for output during command parsing.  We use it here to
+//	ensure we are on the text screen before issuing the error message,
+//	otherwise it may disappear.
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	For some graphics devices, a switch between graphics and text modes
+//	is done.
+//
+//--------------------------------------------------------------------------
+//
 
 static void
 plPrepOutputHandler( Tcl_Interp *interp, int code, int tty )

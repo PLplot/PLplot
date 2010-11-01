@@ -1,34 +1,34 @@
-/* -*-C++-*-
- * $Id$
- *
- *  Copyright 1994, 1995
- *  Maurice LeBrun			mjl@dino.ph.utexas.edu
- *  Institute for Fusion Studies	University of Texas at Austin
- *
- *  Copyright (C) 2004  Maurice LeBrun
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  Contains declarations for Tcl "Matrix" command.
- *  C functions that need access to the matrix data will need
- *  to include this file.
- */
+// -*-C++-*-
+// $Id$
+//
+//  Copyright 1994, 1995
+//  Maurice LeBrun			mjl@dino.ph.utexas.edu
+//  Institute for Fusion Studies	University of Texas at Austin
+//
+//  Copyright (C) 2004  Maurice LeBrun
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//--------------------------------------------------------------------------
+//
+//  Contains declarations for Tcl "Matrix" command.
+//  C functions that need access to the matrix data will need
+//  to include this file.
+//
 
 #ifndef __TCLMATRIX_H__
 #define __TCLMATRIX_H__
@@ -46,52 +46,52 @@ typedef int     Mat_int;
 
 enum { TYPE_FLOAT, TYPE_INT };
 
-/* Arrays are column dominant (normal C ordering) */
-/* Array elements are stored contiguously */
-/* Require dimension <= 3 for simplicity */
+// Arrays are column dominant (normal C ordering)
+// Array elements are stored contiguously
+// Require dimension <= 3 for simplicity
 
 #define MAX_ARRAY_DIM    3
 
-/* Useful macros for index calculations */
+// Useful macros for index calculations
 
 #define I3D( i, j, k )    k + matPtr->n[2] * ( I2D( i, j ) )
 #define I2D( i, j )       j + matPtr->n[1] * ( I1D( i ) )
 #define I1D( i )          i
 
-/* Matrix operator data */
+// Matrix operator data
 
 typedef struct
 {
-    int        type;             /* Data type */
-    int        len;              /* Total length of array */
-    int        dim;              /* Number of dimensions */
-    int        n[MAX_ARRAY_DIM]; /* Holds array length in each dimension */
-    int        tracing;          /* Set if not persistent */
+    int        type;             // Data type
+    int        len;              // Total length of array
+    int        dim;              // Number of dimensions
+    int        n[MAX_ARRAY_DIM]; // Holds array length in each dimension
+    int        tracing;          // Set if not persistent
 
-    char       *name;            /* Matrix operator name, malloc'ed */
+    char       *name;            // Matrix operator name, malloc'ed
 
-    Mat_float  *fdata;           /* Floating point data, malloc'ed */
-    Mat_int    *idata;           /* Integer data, malloc'ed */
+    Mat_float  *fdata;           // Floating point data, malloc'ed
+    Mat_int    *idata;           // Integer data, malloc'ed
 
-    Tcl_Interp *interp;          /* Interpreter where command is installed */
+    Tcl_Interp *interp;          // Interpreter where command is installed
 
-/* These do the put/get operations for each supported type */
+// These do the put/get operations for each supported type
 
     void ( *put )( ClientData clientData, Tcl_Interp* interp, int index, const char *string );
     void ( *get )( ClientData clientData, Tcl_Interp* interp, int index, char *string );
 } tclMatrix;
 
-/* Function prototypes */
+// Function prototypes
 
 #ifdef __cplusplus
-/*---------------------------------------------------------------------------//
- * // Since C++ does not generally have a per-platform ABI the way C
- * // does, we stick to a totally inline class declaration and
- * // definition.  That way you don't have to keep a separate version of
- * // libplplot*.a for each compiler you'd like to use.
- *
- * // Start by setting up some important macros.
- */
+//--------------------------------------------------------------------------
+// // Since C++ does not generally have a per-platform ABI the way C
+// // does, we stick to a totally inline class declaration and
+// // definition.  That way you don't have to keep a separate version of
+// // libplplot*.a for each compiler you'd like to use.
+//
+// // Start by setting up some important macros.
+//
 
 #include <iostream>
 
@@ -127,13 +127,13 @@ typedef struct
            << " at line " << __LINE__ << endl << flush;        \
       throw( b ); }
 
-/*---------------------------------------------------------------------------//
- * // class TclMatFloat
- *
- * // This class provides a convenient way to access the data of a
- * // tclMatrix from within compiled code.  Someone should make clones of
- * // this class for the other tclMatrix supported data types.
- * //---------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// // class TclMatFloat
+//
+// // This class provides a convenient way to access the data of a
+// // tclMatrix from within compiled code.  Someone should make clones of
+// // this class for the other tclMatrix supported data types.
+//--------------------------------------------------------------------------
 
 class TclMatFloat {
     tclMatrix *matPtr;
@@ -219,13 +219,13 @@ public:
     }
 };
 
-/*---------------------------------------------------------------------------//
- * // class TclMatInt
- *
- * // This class provides a convenient way to access the data of a
- * // tclMatrix from within compiled code.  This is just like TclMatFloat above,
- * // but for ints.
- * //---------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// // class TclMatInt
+//
+// // This class provides a convenient way to access the data of a
+// // tclMatrix from within compiled code.  This is just like TclMatFloat above,
+// // but for ints.
+//--------------------------------------------------------------------------
 
 class TclMatInt {
     tclMatrix *matPtr;
@@ -323,25 +323,25 @@ public:
 #undef tMat_Assert
 
 extern "C" {
-/*---------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
 #endif
 
-/* Tcl package initialisation function */
+// Tcl package initialisation function
 
 int PLDLLIMPEXP_TCLMAT Matrix_Init( Tcl_Interp* );
 
-/* This procedure is invoked to process the "matrix" Tcl command. */
+// This procedure is invoked to process the "matrix" Tcl command.
 
 int
 Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
                int argc, const char **argv );
 
-/* Returns a pointer to the specified matrix operator's data. */
+// Returns a pointer to the specified matrix operator's data.
 
 tclMatrix PLDLLIMPEXP_TCLMAT *
 Tcl_GetMatrixPtr( Tcl_Interp *interp, const char *matName );
 
-/* Some stuff for handling extension subcommands. */
+// Some stuff for handling extension subcommands.
 
 typedef int ( *tclMatrixXtnsnProc )( tclMatrix *pm, Tcl_Interp *interp,
                                      int argc, const char *argv[] );
@@ -359,4 +359,4 @@ int PLDLLIMPEXP_TCLMAT Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc pro
 }
 #endif
 
-#endif  /* __TCLMATRIX_H__ */
+#endif  // __TCLMATRIX_H__

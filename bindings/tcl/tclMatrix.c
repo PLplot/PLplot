@@ -1,39 +1,39 @@
-/* $Id$
- *
- *  Copyright 1994, 1995
- *  Maurice LeBrun			mjl@dino.ph.utexas.edu
- *  Institute for Fusion Studies	University of Texas at Austin
- *
- *  Copyright (C) 2004  Joao Cardoso
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Library Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  This file contains routines that implement Tcl matrices.
- *  These are operators that are used to store, return, and modify
- *  numeric data stored in binary array format.  The emphasis is
- *  on high performance and low overhead, something that Tcl lists
- *  or associative arrays aren't so good at.
- */
+// $Id$
+//
+//  Copyright 1994, 1995
+//  Maurice LeBrun			mjl@dino.ph.utexas.edu
+//  Institute for Fusion Studies	University of Texas at Austin
+//
+//  Copyright (C) 2004  Joao Cardoso
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Library Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//--------------------------------------------------------------------------
+//
+//  This file contains routines that implement Tcl matrices.
+//  These are operators that are used to store, return, and modify
+//  numeric data stored in binary array format.  The emphasis is
+//  on high performance and low overhead, something that Tcl lists
+//  or associative arrays aren't so good at.
+//
 
-/*
- #define DEBUG
- */
+//
+// #define DEBUG
+//
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +41,7 @@
 #include "pldll.h"
 #include "tclMatrix.h"
 
-/* Cool math macros */
+// Cool math macros
 
 #ifndef MAX
 #define MAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
@@ -50,7 +50,7 @@
 #define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
-/* For the truly desperate debugging task */
+// For the truly desperate debugging task
 
 #ifdef DEBUG_ENTER
 #define dbug_enter( a ) \
@@ -60,36 +60,36 @@
 #define dbug_enter( a )
 #endif
 
-/* Internal data */
+// Internal data
 
-static int           matTable_initted = 0; /* Hash table initialization flag */
-static Tcl_HashTable matTable;             /* Hash table for external access to data */
+static int           matTable_initted = 0; // Hash table initialization flag
+static Tcl_HashTable matTable;             // Hash table for external access to data
 
-/* Function prototypes */
+// Function prototypes
 
-/* Handles matrix initialization lists */
+// Handles matrix initialization lists
 
 static int
 matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
                   int dim, int offs, int nargs, const char** args );
 
-/* Invoked to process the "matrix" Tcl command. */
+// Invoked to process the "matrix" Tcl command.
 
 static int
 MatrixCmd( ClientData clientData, Tcl_Interp *interp, int argc, const char **argv );
 
-/* Causes matrix command to be deleted.  */
+// Causes matrix command to be deleted.
 
 static char *
 DeleteMatrixVar( ClientData clientData,
                  Tcl_Interp *interp, char *name1, char *name2, int flags );
 
-/* Releases all the resources allocated to the matrix command. */
+// Releases all the resources allocated to the matrix command.
 
 static void
 DeleteMatrixCmd( ClientData clientData );
 
-/* These do the put/get operations for each supported type */
+// These do the put/get operations for each supported type
 
 static void
 MatrixPut_f( ClientData clientData, Tcl_Interp* interp, int index, const char *string );
@@ -103,21 +103,21 @@ MatrixPut_i( ClientData clientData, Tcl_Interp* interp, int index, const char *s
 static void
 MatrixGet_i( ClientData clientData, Tcl_Interp* interp, int index, char *string );
 
-/*--------------------------------------------------------------------------*\
- *
- * Tcl_MatCmd --
- *
- *	Invoked to process the "matrix" Tcl command.  Creates a multiply
- *	dimensioned array (matrix) of floats or ints.  The number of
- *	arguments determines the dimensionality.
- *
- * Results:
- *	Returns the name of the new matrix.
- *
- * Side effects:
- *	A new matrix (operator) gets created.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// Tcl_MatCmd --
+//
+//	Invoked to process the "matrix" Tcl command.  Creates a multiply
+//	dimensioned array (matrix) of floats or ints.  The number of
+//	arguments determines the dimensionality.
+//
+// Results:
+//	Returns the name of the new matrix.
+//
+// Side effects:
+//	A new matrix (operator) gets created.
+//
+//--------------------------------------------------------------------------
 
 int
 Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
@@ -138,7 +138,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Create hash table on first call */
+// Create hash table on first call
 
     if ( !matTable_initted )
     {
@@ -146,14 +146,14 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         Tcl_InitHashTable( &matTable, TCL_STRING_KEYS );
     }
 
-/* Check for -persist flag */
+// Check for -persist flag
 
     for ( i = 1; i < argc; i++ )
     {
         c      = argv[i][0];
         length = strlen( argv[i] );
 
-        /* If found, set persist variable and compress argv-list */
+        // If found, set persist variable and compress argv-list
 
         if ( ( c == '-' ) && ( strncmp( argv[i], "-persist", length ) == 0 ) )
         {
@@ -165,7 +165,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         }
     }
 
-/* Create matrix data structure */
+// Create matrix data structure
 
     matPtr          = (tclMatrix *) malloc( sizeof ( tclMatrix ) );
     matPtr->fdata   = NULL;
@@ -177,8 +177,8 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     for ( i = 0; i < MAX_ARRAY_DIM; i++ )
         matPtr->n[i] = 1;
 
-/* Create name */
-/* It should be unique */
+// Create name
+// It should be unique
 
     argc--; argv++;
 
@@ -202,7 +202,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     matPtr->name = (char *) malloc( strlen( argv[0] ) + 1 );
     strcpy( matPtr->name, argv[0] );
 
-/* Initialize type */
+// Initialize type
 
     argc--; argv++;
     c      = argv[0][0];
@@ -230,12 +230,12 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Initialize dimensions */
+// Initialize dimensions
 
     argc--; argv++;
     for (; argc > 0; argc--, argv++ )
     {
-        /* Check for initializer */
+        // Check for initializer
 
         if ( strcmp( argv[0], "=" ) == 0 )
         {
@@ -244,7 +244,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             break;
         }
 
-        /* Must be a dimensional parameter.  Increment number of dimensions. */
+        // Must be a dimensional parameter.  Increment number of dimensions.
 
         matPtr->dim++;
         if ( matPtr->dim > MAX_ARRAY_DIM )
@@ -257,7 +257,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             return TCL_ERROR;
         }
 
-        /* Check to see if dimension is valid and store */
+        // Check to see if dimension is valid and store
 
         index            = matPtr->dim - 1;
         matPtr->n[index] = atoi( argv[0] );
@@ -282,7 +282,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Allocate space for data */
+// Allocate space for data
 
     switch ( matPtr->type )
     {
@@ -299,13 +299,13 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         break;
     }
 
-/* Process the initializer, if present */
+// Process the initializer, if present
 
     if ( initializer )
         matrixInitialize( interp, matPtr, 0, 0, 1, &argv[0] );
 
-/* Delete matrix when it goes out of scope unless -persist specified */
-/* Use local variable of same name as matrix and trace it for unsets */
+// Delete matrix when it goes out of scope unless -persist specified
+// Use local variable of same name as matrix and trace it for unsets
 
     if ( !persist )
     {
@@ -322,7 +322,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             (Tcl_VarTraceProc*) DeleteMatrixVar, (ClientData) matPtr );
     }
 
-/* Create matrix operator */
+// Create matrix operator
 
 #ifdef DEBUG
     fprintf( stderr, "Creating Matrix operator of name %s\n", matPtr->name );
@@ -330,13 +330,13 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_CreateCommand( interp, matPtr->name, (Tcl_CmdProc*) MatrixCmd,
         (ClientData) matPtr, (Tcl_CmdDeleteProc*) DeleteMatrixCmd );
 
-/* Store pointer to interpreter to handle bizarre uses of multiple */
-/* interpreters (e.g. as in [incr Tcl]) */
+// Store pointer to interpreter to handle bizarre uses of multiple
+// interpreters (e.g. as in [incr Tcl])
 
     matPtr->interp = interp;
 
-/* Create hash table entry for this matrix operator's data */
-/* This should never fail */
+// Create hash table entry for this matrix operator's data
+// This should never fail
 
     hPtr = Tcl_CreateHashEntry( &matTable, matPtr->name, &new );
     if ( !new )
@@ -352,19 +352,19 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- *
- * Tcl_GetMatrixPtr --
- *
- *	Returns a pointer to the specified matrix operator's data.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	None.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// Tcl_GetMatrixPtr --
+//
+//	Returns a pointer to the specified matrix operator's data.
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	None.
+//
+//--------------------------------------------------------------------------
 
 tclMatrix *
 Tcl_GetMatrixPtr( Tcl_Interp *interp, const char *matName )
@@ -388,20 +388,20 @@ Tcl_GetMatrixPtr( Tcl_Interp *interp, const char *matName )
     return (tclMatrix *) Tcl_GetHashValue( hPtr );
 }
 
-/*--------------------------------------------------------------------------*\
- *
- *  Tcl_MatrixInstallXtnsn --
- *
- *	Install a tclMatrix extension subcommand.
- *
- * Results:
- *	Should be 1.  Have to think about error results.
- *
- * Side effects:
- *	Enables you to install special purpose compiled code to handle
- *	custom operations on a tclMatrix.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+//  Tcl_MatrixInstallXtnsn --
+//
+//	Install a tclMatrix extension subcommand.
+//
+// Results:
+//	Should be 1.  Have to think about error results.
+//
+// Side effects:
+//	Enables you to install special purpose compiled code to handle
+//	custom operations on a tclMatrix.
+//
+//--------------------------------------------------------------------------
 
 static tclMatrixXtnsnDescr *head = (tclMatrixXtnsnDescr *) NULL;
 static tclMatrixXtnsnDescr *tail = (tclMatrixXtnsnDescr *) NULL;
@@ -409,13 +409,13 @@ static tclMatrixXtnsnDescr *tail = (tclMatrixXtnsnDescr *) NULL;
 int
 Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
 {
-/*
- * My goodness how I hate primitive/pathetic C.  With C++ this
- * could've been as easy as:
- *     List<TclMatrixXtnsnDescr> xtnlist;
- *     xtnlist.append( tclMatrixXtnsnDescr(cmd,proc) );
- * grrrrr.
- */
+//
+// My goodness how I hate primitive/pathetic C.  With C++ this
+// could've been as easy as:
+//     List<TclMatrixXtnsnDescr> xtnlist;
+//     xtnlist.append( tclMatrixXtnsnDescr(cmd,proc) );
+// grrrrr.
+//
 
     tclMatrixXtnsnDescr *new =
         (tclMatrixXtnsnDescr *) malloc( sizeof ( tclMatrixXtnsnDescr ) );
@@ -443,20 +443,20 @@ Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- *
- * matrixInitialize --
- *
- *	Handles matrix initialization lists.
- *	Written by Martin L. Smith.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	None.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// matrixInitialize --
+//
+//	Handles matrix initialization lists.
+//	Written by Martin L. Smith.
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	None.
+//
+//--------------------------------------------------------------------------
 
 static int matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
                              int dim, int offs, int nargs, const char** args )
@@ -488,7 +488,7 @@ static int matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
                 newoffs = 0;
 
             matrixInitialize( interp, m, dim + 1, newoffs, numnewargs, (const char **) newargs );
-            /* Must use Tcl_Free since allocated by Tcl */
+            // Must use Tcl_Free since allocated by Tcl
             Tcl_Free( (char *) newargs );
         }
         return TCL_OK;
@@ -504,21 +504,21 @@ static int matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- *
- * MatrixCmd --
- *
- *	When a Tcl matrix command is invoked, this routine is called.
- *
- * Results:
- *	A standard Tcl result value, usually TCL_OK.
- *	On matrix get commands, one or a number of matrix elements are
- *	printed.
- *
- * Side effects:
- *	Depends on the matrix command.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// MatrixCmd --
+//
+//	When a Tcl matrix command is invoked, this routine is called.
+//
+// Results:
+//	A standard Tcl result value, usually TCL_OK.
+//	On matrix get commands, one or a number of matrix elements are
+//	printed.
+//
+// Side effects:
+//	Depends on the matrix command.
+//
+//--------------------------------------------------------------------------
 
 static int
 MatrixCmd( ClientData clientData, Tcl_Interp *interp,
@@ -531,7 +531,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     int  nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
     int  i, j, k;
 
-/* Initialize */
+// Initialize
 
     if ( argc < 2 )
     {
@@ -546,14 +546,14 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         nmax[i] = matPtr->n[i] - 1;
     }
 
-/* First check for a matrix command */
+// First check for a matrix command
 
     argc--; argv++;
     c      = argv[0][0];
     length = strlen( argv[0] );
 
-/* dump -- send a nicely formatted listing of the array contents to stdout */
-/* (very helpful for debugging) */
+// dump -- send a nicely formatted listing of the array contents to stdout
+// (very helpful for debugging)
 
     if ( ( c == 'd' ) && ( strncmp( argv[0], "dump", length ) == 0 ) )
     {
@@ -576,7 +576,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* delete -- delete the array */
+// delete -- delete the array
 
     else if ( ( c == 'd' ) && ( strncmp( argv[0], "delete", length ) == 0 ) )
     {
@@ -587,8 +587,8 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* filter */
-/* Only works on 1d matrices */
+// filter
+// Only works on 1d matrices
 
     else if ( ( c == 'f' ) && ( strncmp( argv[0], "filter", length ) == 0 ) )
     {
@@ -615,7 +615,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
         for ( ifilt = 0; ifilt < nfilt; ifilt++ )
         {
-            /* Set up temporary filtering array.  Use even boundary conditions. */
+            // Set up temporary filtering array.  Use even boundary conditions.
 
             j = 0; tmp[j] = matPtr->fdata[0];
             for ( i = 0; i < matPtr->len; i++ )
@@ -624,7 +624,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             }
             j++; tmp[j] = matPtr->fdata[matPtr->len - 1];
 
-            /* Apply 3-point binomial filter */
+            // Apply 3-point binomial filter
 
             for ( i = 0; i < matPtr->len; i++ )
             {
@@ -637,7 +637,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* help */
+// help
 
     else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", length ) == 0 ) )
     {
@@ -647,14 +647,14 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* info */
+// info
 
     else if ( ( c == 'i' ) && ( strncmp( argv[0], "info", length ) == 0 ) )
     {
         for ( i = 0; i < matPtr->dim; i++ )
         {
             sprintf( tmp, "%d", matPtr->n[i] );
-            /* Must avoid trailing space. */
+            // Must avoid trailing space.
             if ( i < matPtr->dim - 1 )
                 Tcl_AppendResult( interp, tmp, " ", (char *) NULL );
             else
@@ -663,7 +663,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* max */
+// max
 
     else if ( ( c == 'm' ) && ( strncmp( argv[0], "max", length ) == 0 ) )
     {
@@ -687,7 +687,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             Mat_float max = matPtr->fdata[0];
             for ( i = 1; i < len; i++ )
                 max = MAX( max, matPtr->fdata[i] );
-            /*sprintf(tmp, "%.17g", max);*/
+            //sprintf(tmp, "%.17g", max);
             Tcl_PrintDouble( interp, max, tmp );
             Tcl_AppendResult( interp, tmp, (char *) NULL );
             break;
@@ -704,7 +704,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* min */
+// min
 
     else if ( ( c == 'm' ) && ( strncmp( argv[0], "min", length ) == 0 ) )
     {
@@ -728,7 +728,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             Mat_float min = matPtr->fdata[0];
             for ( i = 1; i < len; i++ )
                 min = MIN( min, matPtr->fdata[i] );
-            /*sprintf(tmp, "%.17g", min);*/
+            //sprintf(tmp, "%.17g", min);
             Tcl_PrintDouble( interp, min, tmp );
             Tcl_AppendResult( interp, tmp, (char *) NULL );
             break;
@@ -745,8 +745,8 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* redim */
-/* Only works on 1d matrices */
+// redim
+// Only works on 1d matrices
 
     else if ( ( c == 'r' ) && ( strncmp( argv[0], "redim", length ) == 0 ) )
     {
@@ -801,8 +801,8 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* scale */
-/* Only works on 1d matrices */
+// scale
+// Only works on 1d matrices
 
     else if ( ( c == 's' ) && ( strncmp( argv[0], "scale", length ) == 0 ) )
     {
@@ -839,7 +839,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* Not a "standard" command, check the extension commands. */
+// Not a "standard" command, check the extension commands.
 
     {
         tclMatrixXtnsnDescr *p = head;
@@ -855,7 +855,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         }
     }
 
-/* Must be a put or get.  Get array indices.  */
+// Must be a put or get.  Get array indices.
 
     if ( argc < matPtr->dim )
     {
@@ -885,7 +885,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         argc--; argv++;
     }
 
-/* If there is an "=" after indicies, it's a put.  Do error checking. */
+// If there is an "=" after indicies, it's a put.  Do error checking.
 
     if ( argc > 0 )
     {
@@ -914,8 +914,8 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         }
     }
 
-/* Do the get/put. */
-/* The loop over all elements takes care of the multi-element cases. */
+// Do the get/put.
+// The loop over all elements takes care of the multi-element cases.
 
     for ( i = nmin[0]; i <= nmax[0]; i++ )
     {
@@ -940,20 +940,20 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- *
- * Routines to handle Matrix get/put dependent on type:
- *
- * MatrixPut_f	MatrixGet_f
- * MatrixPut_i	MatrixGet_i
- *
- * A "put" converts from string format to the intrinsic type, storing into
- * the array.
- *
- * A "get" converts from the intrinsic type to string format, storing into
- * a string buffer.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// Routines to handle Matrix get/put dependent on type:
+//
+// MatrixPut_f	MatrixGet_f
+// MatrixPut_i	MatrixGet_i
+//
+// A "put" converts from string format to the intrinsic type, storing into
+// the array.
+//
+// A "get" converts from the intrinsic type to string format, storing into
+// a string buffer.
+//
+//--------------------------------------------------------------------------
 
 static void
 MatrixPut_f( ClientData clientData, Tcl_Interp* interp, int index, const char *string )
@@ -969,7 +969,7 @@ MatrixGet_f( ClientData clientData, Tcl_Interp* interp, int index, char *string 
     tclMatrix *matPtr = (tclMatrix *) clientData;
     double    value   = matPtr->fdata[index];
 
-    /*sprintf(string, "%.17g", value);*/
+    //sprintf(string, "%.17g", value);
     Tcl_PrintDouble( interp, value, string );
 }
 
@@ -994,20 +994,20 @@ MatrixGet_i( ClientData clientData, Tcl_Interp* interp, int index, char *string 
     sprintf( string, "%d", matPtr->idata[index] );
 }
 
-/*--------------------------------------------------------------------------*\
- *
- * DeleteMatrixVar --
- *
- *	Causes matrix command to be deleted.  Invoked when variable
- *	associated with matrix command is unset.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	See DeleteMatrixCmd.
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// DeleteMatrixVar --
+//
+//	Causes matrix command to be deleted.  Invoked when variable
+//	associated with matrix command is unset.
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	See DeleteMatrixCmd.
+//
+//--------------------------------------------------------------------------
 
 static char *
 DeleteMatrixVar( ClientData clientData,
@@ -1042,27 +1042,27 @@ DeleteMatrixVar( ClientData clientData,
     return (char *) NULL;
 }
 
-/*--------------------------------------------------------------------------*\
- *
- * DeleteMatrixCmd --
- *
- *	Releases all the resources allocated to the matrix command.
- *	Invoked just before a matrix command is removed from an interpreter.
- *
- *	Note: If the matrix has tracing enabled, it means the user
- *	explicitly deleted a non-persistent matrix.  Not a good idea,
- *	because eventually the local variable that was being traced will
- *	become unset and the matrix data will be referenced in
- *	DeleteMatrixVar.  So I've massaged this so that at worst it only
- *	causes a minor memory leak instead of imminent program death.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	All memory associated with the matrix operator is freed (usually).
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// DeleteMatrixCmd --
+//
+//	Releases all the resources allocated to the matrix command.
+//	Invoked just before a matrix command is removed from an interpreter.
+//
+//	Note: If the matrix has tracing enabled, it means the user
+//	explicitly deleted a non-persistent matrix.  Not a good idea,
+//	because eventually the local variable that was being traced will
+//	become unset and the matrix data will be referenced in
+//	DeleteMatrixVar.  So I've massaged this so that at worst it only
+//	causes a minor memory leak instead of imminent program death.
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	All memory associated with the matrix operator is freed (usually).
+//
+//--------------------------------------------------------------------------
 
 static void
 DeleteMatrixCmd( ClientData clientData )
@@ -1076,13 +1076,13 @@ DeleteMatrixCmd( ClientData clientData )
     fprintf( stderr, "Freeing space associated with matrix %s\n", matPtr->name );
 #endif
 
-/* Remove hash table entry */
+// Remove hash table entry
 
     hPtr = Tcl_FindHashEntry( &matTable, matPtr->name );
     if ( hPtr != NULL )
         Tcl_DeleteHashEntry( hPtr );
 
-/* Free data */
+// Free data
 
     if ( matPtr->fdata != NULL )
     {
@@ -1095,7 +1095,7 @@ DeleteMatrixCmd( ClientData clientData )
         matPtr->idata = NULL;
     }
 
-/* Attempt to turn off tracing if possible. */
+// Attempt to turn off tracing if possible.
 
     if ( matPtr->tracing )
     {
@@ -1109,7 +1109,7 @@ DeleteMatrixCmd( ClientData clientData )
         }
     }
 
-/* Free name.  */
+// Free name.
 
     if ( matPtr->name != NULL )
     {
@@ -1117,7 +1117,7 @@ DeleteMatrixCmd( ClientData clientData )
         matPtr->name = NULL;
     }
 
-/* Free tclMatrix */
+// Free tclMatrix
 
     if ( !matPtr->tracing )
         free( (void *) matPtr );

@@ -1,51 +1,51 @@
-/* $Id$
- *
- *  Copyright 1993, 1994, 1995
- *  Maurice LeBrun
- *  IFS, University of Texas at Austin
- *
- *  This software may be freely copied, modified and redistributed under the
- *  terms of the GNU Library General Public License.
- *
- *  There is no warranty or other guarantee of fitness of this software.
- *  It is provided solely "as is". The author(s) disclaim(s) all
- *  responsibility and liability with respect to this software's usage or
- *  its effect upon hardware or computer systems.
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- * Support routines to render a PLplot byte stream, interpreting the PLplot
- * metacode.
- *
- * Although this code is duplicated to some extent by plrender and the
- * plot buffer redraw code (in plbuf.c), they are all different in some
- * significant ways, namely:
- *
- *    - plrender must always retain backward compatibility code to
- *      handle old metafiles, as well as stuff to support seeking.
- *
- *    - plbuf by definition is redrawing on the same machine so no
- *      special effort is necessary to make the byte stream portable,
- *      also, only low-level graphics calls are used (grline, etc)
- *
- * The rendering code here must (by contrast to plbuf) use the high level
- * plot routines (as does plrender), to support local zooms as well as the
- * ability to dump the associated window into plot space to a file, but is
- * otherwise pretty minimal.  A portable byte stream is used since network
- * communication over a socket may be used.
- *
- \*--------------------------------------------------------------------------*/
+// $Id$
+//
+//  Copyright 1993, 1994, 1995
+//  Maurice LeBrun
+//  IFS, University of Texas at Austin
+//
+//  This software may be freely copied, modified and redistributed under the
+//  terms of the GNU Library General Public License.
+//
+//  There is no warranty or other guarantee of fitness of this software.
+//  It is provided solely "as is". The author(s) disclaim(s) all
+//  responsibility and liability with respect to this software's usage or
+//  its effect upon hardware or computer systems.
+//
+//--------------------------------------------------------------------------
+//
+// Support routines to render a PLplot byte stream, interpreting the PLplot
+// metacode.
+//
+// Although this code is duplicated to some extent by plrender and the
+// plot buffer redraw code (in plbuf.c), they are all different in some
+// significant ways, namely:
+//
+//    - plrender must always retain backward compatibility code to
+//      handle old metafiles, as well as stuff to support seeking.
+//
+//    - plbuf by definition is redrawing on the same machine so no
+//      special effort is necessary to make the byte stream portable,
+//      also, only low-level graphics calls are used (grline, etc)
+//
+// The rendering code here must (by contrast to plbuf) use the high level
+// plot routines (as does plrender), to support local zooms as well as the
+// ability to dump the associated window into plot space to a file, but is
+// otherwise pretty minimal.  A portable byte stream is used since network
+// communication over a socket may be used.
+//
+//--------------------------------------------------------------------------
 
-/*
- #define DEBUG
- #define DEBUG_ENTER
- */
+//
+// #define DEBUG
+// #define DEBUG_ENTER
+//
 
 #include "plserver.h"
 #include "plevent.h"
 #include "metadefs.h"
 
-/* Some wrapper macros to return (-1) on error */
+// Some wrapper macros to return (-1) on error
 
 #define plr_rd( code )                                                            \
     if ( code ) { fprintf( stderr,                                                \
@@ -56,13 +56,13 @@
 #define plr_cmd( code ) \
     if ( ( code ) == -1 ) return -1;
 
-/* Error termination */
+// Error termination
 
 #define barf( msg )                                               \
     { fprintf( stderr, "%s\nCommand code: %d, byte count: %ld\n", \
           msg, csave, plr->pdfs->bp ); return -1; }
 
-/* Static function prototypes. */
+// Static function prototypes.
 
 static int      plr_process1( PLRDev *plr, int c );
 static int      plr_init( PLRDev *plr );
@@ -76,18 +76,18 @@ static int      plr_unget( PLRDev *plr, U_CHAR c );
 static int      get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n );
 static int      plresc_fill( PLRDev *plr );
 
-/* variables */
+// variables
 
 static int     csave = -1;
 static U_CHAR  dum_uchar;
 static U_SHORT dum_ushort;
 static PLFLT   x[PL_MAXPOLY], y[PL_MAXPOLY];
 
-/*--------------------------------------------------------------------------*\
- * plr_start()
- *
- * Set default state parameters before anyone else has a chance to.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_start()
+//
+// Set default state parameters before anyone else has a chance to.
+//--------------------------------------------------------------------------
 
 void
 plr_start( PLRDev *plr )
@@ -103,11 +103,11 @@ plr_start( PLRDev *plr )
     plr->yold = PL_UNDEFINED;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_process()
- *
- * Read & process commands until plr->nbytes bytes have been read.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_process()
+//
+// Read & process commands until plr->nbytes bytes have been read.
+//--------------------------------------------------------------------------
 
 int
 plr_process( PLRDev *plr )
@@ -125,15 +125,15 @@ plr_process( PLRDev *plr )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_process1()
- *
- * Process a command.  Note: because of line->polyline compression, this
- * may actually process an arbitrary number of LINE or LINETO commands.
- * Since the data buffer (fifo or socket) is only flushed after a complete
- * command, there should be no danger in rushing blindly ahead to execute
- * each plot command.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_process1()
+//
+// Process a command.  Note: because of line->polyline compression, this
+// may actually process an arbitrary number of LINE or LINETO commands.
+// Since the data buffer (fifo or socket) is only flushed after a complete
+// command, there should be no danger in rushing blindly ahead to execute
+// each plot command.
+//--------------------------------------------------------------------------
 
 static int
 plr_process1( PLRDev *plr, int c )
@@ -175,11 +175,11 @@ plr_process1( PLRDev *plr, int c )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plr_init()
- *
- * Handle initialization.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plr_init()
+//
+// Handle initialization.
+//--------------------------------------------------------------------------
 
 static int
 plr_init( PLRDev *plr )
@@ -188,14 +188,14 @@ plr_init( PLRDev *plr )
 
     dbug_enter( "plr_init" );
 
-/* Read header info */
+// Read header info
 
     plr_cmd( pdf_rd_header( plr->pdfs, tk_magic ) );
     if ( strcmp( tk_magic, PLSERV_HEADER ) )
         barf( "plr_init: Invalid header" );
 
-/* Read version field of header.  We need to check that we can read the */
-/* byte stream, in case this is an old version of plserver. */
+// Read version field of header.  We need to check that we can read the
+// byte stream, in case this is an old version of plserver.
 
     plr_cmd( pdf_rd_header( plr->pdfs, tk_version ) );
     if ( strcmp( tk_version, PLSERV_VERSION ) > 0 )
@@ -205,8 +205,8 @@ plr_init( PLRDev *plr )
         barf( "plr_init: Please obtain a newer copy of plserver." );
     }
 
-/* Read tagged initialization info. */
-/* Overkill, but a no-brainer since plrender already uses this */
+// Read tagged initialization info.
+// Overkill, but a no-brainer since plrender already uses this
 
     for (;; )
     {
@@ -255,11 +255,11 @@ plr_init( PLRDev *plr )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_line()
- *
- * Draw a line or polyline.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_line()
+//
+// Draw a line or polyline.
+//--------------------------------------------------------------------------
 
 static int
 plr_line( PLRDev *plr, int c )
@@ -308,11 +308,11 @@ plr_line( PLRDev *plr, int c )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * get_ncoords()
- *
- * Read n coordinate vectors.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// get_ncoords()
+//
+// Read n coordinate vectors.
+//--------------------------------------------------------------------------
 
 #define plr_rdn( code )                                           \
     if ( code ) { fprintf( stderr,                                \
@@ -337,11 +337,11 @@ get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_eop()
- *
- * Clear screen.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_eop()
+//
+// Clear screen.
+//--------------------------------------------------------------------------
 
 static int
 plr_eop( PLRDev *plr )
@@ -352,18 +352,18 @@ plr_eop( PLRDev *plr )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_bop()
- *
- * Page advancement.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_bop()
+//
+// Page advancement.
+//--------------------------------------------------------------------------
 
 static int
 plr_bop( PLRDev *plr )
 {
     dbug_enter( "plr_bop" );
 
-/* Advance and setup the page */
+// Advance and setup the page
 
     plbop();
     plvpor( 0., 1., 0., 1. );
@@ -372,12 +372,12 @@ plr_bop( PLRDev *plr )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_state()
- *
- * Handle change in PLStream state (color, pen width, fill attribute,
- * etc).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_state()
+//
+// Handle change in PLStream state (color, pen width, fill attribute,
+// etc).
+//--------------------------------------------------------------------------
 
 static int
 plr_state( PLRDev *plr )
@@ -464,7 +464,7 @@ plr_state( PLRDev *plr )
             plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].g ) );
             plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].b ) );
         }
-        /* Get the control points */
+        // Get the control points
         plr_rd( pdf_rd_2bytes( plr->pdfs, &ncp1 ) );
         plsc->ncp1 = ncp1;
         for ( i = 0; i < plsc->ncp1; i++ )
@@ -487,14 +487,14 @@ plr_state( PLRDev *plr )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_esc()
- *
- * Handle all escape functions.
- * Only those that require additional data to be read need to be
- * explicitly handled; the others are merely passed on to the actual
- * driver.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_esc()
+//
+// Handle all escape functions.
+// Only those that require additional data to be read need to be
+// explicitly handled; the others are merely passed on to the actual
+// driver.
+//--------------------------------------------------------------------------
 
 static int
 plr_esc( PLRDev *plr )
@@ -517,11 +517,11 @@ plr_esc( PLRDev *plr )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plresc_fill()
- *
- * Fill polygon described in points plsc->dev_x[] and plsc->dev_y[].
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plresc_fill()
+//
+// Fill polygon described in points plsc->dev_x[] and plsc->dev_y[].
+//--------------------------------------------------------------------------
 
 static int
 plresc_fill( PLRDev *plr )
@@ -537,11 +537,11 @@ plresc_fill( PLRDev *plr )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_get()
- *
- * Read & return the next command
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_get()
+//
+// Read & return the next command
+//--------------------------------------------------------------------------
 
 static int
 plr_get( PLRDev *plr )
@@ -557,11 +557,11 @@ plr_get( PLRDev *plr )
     return c;
 }
 
-/*--------------------------------------------------------------------------*\
- * plr_unget()
- *
- * Push back the last command read.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plr_unget()
+//
+// Push back the last command read.
+//--------------------------------------------------------------------------
 
 static int
 plr_unget( PLRDev *plr, U_CHAR c )

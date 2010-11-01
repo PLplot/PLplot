@@ -1,82 +1,82 @@
-/* $Id$
- *
- * Maurice LeBrun
- * 6-Jan-94
- *
- * Functions to handle a variety of TPC-IP related chores, in particular
- * socket i/o for data transfer to the Tcl-DP driver.  For the latter, the
- * Tcl-DP routines were modified to use binary records; copyright follows:
- *
- * Copyright 1992 Telecom Finland
- *
- * Permission to use, copy, modify, and distribute this
- * software and its documentation for any purpose and without
- * fee is hereby granted, provided that this copyright
- * notice appears in all copies.  Telecom Finland
- * makes no representations about the suitability of this
- * software for any purpose.  It is provided "as is" without
- * express or implied warranty.
- *
- * Copyright (c) 1993 The Regents of the University of California.
- * All rights reserved.
- *
- * Permission to use, copy, modify, and distribute this software and its
- * documentation for any purpose, without fee, and without written agreement is
- * hereby granted, provided that the above copyright notice and the following
- * two paragraphs appear in all copies of this software.
- *
- * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
- * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
- * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
- * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
- * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
- * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *
- *
- * Copyright (C) 2004  Joao Cardoso
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Maurice LeBrun
+// 6-Jan-94
+//
+// Functions to handle a variety of TPC-IP related chores, in particular
+// socket i/o for data transfer to the Tcl-DP driver.  For the latter, the
+// Tcl-DP routines were modified to use binary records; copyright follows:
+//
+// Copyright 1992 Telecom Finland
+//
+// Permission to use, copy, modify, and distribute this
+// software and its documentation for any purpose and without
+// fee is hereby granted, provided that this copyright
+// notice appears in all copies.  Telecom Finland
+// makes no representations about the suitability of this
+// software for any purpose.  It is provided "as is" without
+// express or implied warranty.
+//
+// Copyright (c) 1993 The Regents of the University of California.
+// All rights reserved.
+//
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without written agreement is
+// hereby granted, provided that the above copyright notice and the following
+// two paragraphs appear in all copies of this software.
+//
+// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+// DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+// OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+// CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+// ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+// PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+//
+//
+// Copyright (C) 2004  Joao Cardoso
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
-/*
- #define DEBUG
- */
+//
+// #define DEBUG
+//
 
 #include "plDevs.h"
 #include "plConfig.h"
 
 #if defined ( PLD_tk ) || defined ( ENABLE_tk )
 
-/* This file is meant to be compiled with non-ANSI compilers ("cc").
- * The reason for doing it this way is to ensure that the full C
- * environment of the target machine is visible (at the time of writing
- * this, parts of this code are not covered by any international
- * standard).  ANSI compilers are required to omit these extra symbols,
- * and at the moment there is no way to get them back except for by
- * vendor-specific defines, e.g. _HPUX_SOURCE (HP), _ALL_SOURCE (AIX),
- * _DGUX_SOURCE (DGUX).  This is an omission in the POSIX standard more
- * than anything else, and will probably be rectified at some point.  So
- * for now, instead of relying on a hodgepodge of vendor specific symbols
- * I forego the ANSI compiler here and go with good (bad) old "cc".
- */
+// This file is meant to be compiled with non-ANSI compilers ("cc").
+// The reason for doing it this way is to ensure that the full C
+// environment of the target machine is visible (at the time of writing
+// this, parts of this code are not covered by any international
+// standard).  ANSI compilers are required to omit these extra symbols,
+// and at the moment there is no way to get them back except for by
+// vendor-specific defines, e.g. _HPUX_SOURCE (HP), _ALL_SOURCE (AIX),
+// _DGUX_SOURCE (DGUX).  This is an omission in the POSIX standard more
+// than anything else, and will probably be rectified at some point.  So
+// for now, instead of relying on a hodgepodge of vendor specific symbols
+// I forego the ANSI compiler here and go with good (bad) old "cc".
+//
 
 #ifdef _POSIX_SOURCE
 #undef _POSIX_SOURCE
@@ -114,25 +114,25 @@ extern int errno;
 #define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
-/*
- * This is a "magic number" prepended to the beginning of the packet
- * Used to help resync the packet machanism in the event of errors.
- */
+//
+// This is a "magic number" prepended to the beginning of the packet
+// Used to help resync the packet machanism in the event of errors.
+//
 #define PACKET_MAGIC    0x6feeddcc
 
-/*
- * For TCP, it's possible to get a line in pieces.  In case everything we
- * want isn't there, we need a place to store partial results when we're
- * in non-blocking mode.  The partial buffers below are created
- * dynamically to store incomplete data in these cases.
- */
+//
+// For TCP, it's possible to get a line in pieces.  In case everything we
+// want isn't there, we need a place to store partial results when we're
+// in non-blocking mode.  The partial buffers below are created
+// dynamically to store incomplete data in these cases.
+//
 
 typedef struct PartialRead
 {
-    char *buffer;               /* Buffer of characters */
-    int  bufSize;               /* Size of buffer */
-    int  offset;                /* Offset of current character within buffer */
-    struct PartialRead *next;   /* Next buffer in chain */
+    char *buffer;               // Buffer of characters
+    int  bufSize;               // Size of buffer
+    int  offset;                // Offset of current character within buffer
+    struct PartialRead *next;   // Next buffer in chain
 } PartialRead;
 
 #define MAX_OPEN_FILES    128
@@ -144,22 +144,22 @@ static void pl_Unread           PLARGS( ( int fd, char *buffer,
                                           int numBytes, int copy ) );
 static int pl_Read             PLARGS( ( int fd, char *buffer, int numReq ) );
 
-/*
- *--------------------------------------------------------------
- *
- * pl_FreeReadBuffer --
- *
- *	This function is called to free up all the memory associated
- *	with a file once the file is closed.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	Any data buffered locally will be lost.
- *
- *--------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// pl_FreeReadBuffer --
+//
+//	This function is called to free up all the memory associated
+//	with a file once the file is closed.
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	Any data buffered locally will be lost.
+//
+//--------------------------------------------------------------------------
+//
 
 static void
 pl_FreeReadBuffer( fd )
@@ -176,30 +176,30 @@ int fd;
     }
 }
 
-/*
- *--------------------------------------------------------------
- *
- * pl_Unread --
- *
- *	This function puts data back into the read chain on a
- *	file descriptor.  It's basically an extended "ungetc".
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	Subsequent calls to pl_Read on the fd will get this data.
- *
- *--------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// pl_Unread --
+//
+//	This function puts data back into the read chain on a
+//	file descriptor.  It's basically an extended "ungetc".
+//
+// Results:
+//	None.
+//
+// Side effects:
+//	Subsequent calls to pl_Read on the fd will get this data.
+//
+//--------------------------------------------------------------------------
+//
 
 static void
 pl_Unread( fd, buffer, numBytes, copy )
-int fd;                         /* File descriptor */
-char *buffer;                   /* Data to unget */
-int  numBytes;                  /* Number of bytes to unget */
-int  copy;                      /* Should we copy the data, or use this */
-                                /* buffer? */
+int fd;                         // File descriptor
+char *buffer;                   // Data to unget
+int  numBytes;                  // Number of bytes to unget
+int  copy;                      // Should we copy the data, or use this
+                                // buffer?
 {
     PartialRead *new;
 
@@ -219,29 +219,29 @@ int  copy;                      /* Should we copy the data, or use this */
     partial[fd]  = new;
 }
 
-/*
- *--------------------------------------------------------------
- *
- * pl_Read --
- *
- *	This function implements a "read"-like command, but
- *	buffers partial reads.  The semantics are the same as
- *	with read.
- *
- * Results:
- *	Number of bytes read, or -1 on error (with errno set).
- *
- * Side effects:
- *	All available data is read from the file descriptor.
- *
- *--------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// pl_Read --
+//
+//	This function implements a "read"-like command, but
+//	buffers partial reads.  The semantics are the same as
+//	with read.
+//
+// Results:
+//	Number of bytes read, or -1 on error (with errno set).
+//
+// Side effects:
+//	All available data is read from the file descriptor.
+//
+//--------------------------------------------------------------------------
+//
 
 static int
 pl_Read( fd, buffer, numReq )
-int fd;                         /* File descriptor to read from */
-char *buffer;                   /* Place to put the data */
-int  numReq;                    /* Number of bytes to get */
+int fd;                         // File descriptor to read from
+char *buffer;                   // Place to put the data
+int  numReq;                    // Number of bytes to get
 {
     PartialRead *readList;
     PartialRead *tmp;
@@ -250,10 +250,10 @@ int  numReq;                    /* Number of bytes to get */
 
     readList = partial[fd];
 
-    /*
-     * If there's no data left over from a previous read, then just do a read
-     * This is the common case.
-     */
+    //
+    // If there's no data left over from a previous read, then just do a read
+    // This is the common case.
+    //
     if ( readList == NULL )
     {
         numRead = read( fd, buffer, numReq );
@@ -269,11 +269,11 @@ int  numReq;                    /* Number of bytes to get */
         return numRead;
     }
 
-    /*
-     * There's data left over from a previous read.  Yank it in and
-     * only call read() if we didn't get enough data (this keeps the fd
-     * readable if they only request as much data as is in the buffers).
-     */
+    //
+    // There's data left over from a previous read.  Yank it in and
+    // only call read() if we didn't get enough data (this keeps the fd
+    // readable if they only request as much data as is in the buffers).
+    //
     numRead = 0;
     while ( ( readList != NULL ) && ( numRead < numReq ) )
     {
@@ -284,9 +284,9 @@ int  numReq;                    /* Number of bytes to get */
         }
         memcpy( buffer + numRead, readList->buffer + readList->offset, numToCopy );
 
-        /*
-         * Consume the data
-         */
+        //
+        // Consume the data
+        //
         tmp          = readList;
         readList     = readList->next;
         tmp->offset += numToCopy;
@@ -299,9 +299,9 @@ int  numReq;                    /* Number of bytes to get */
         numRead += numToCopy;
     }
 
-    /*
-     * Only call read if at the end of a previously incomplete packet.
-     */
+    //
+    // Only call read if at the end of a previously incomplete packet.
+    //
     if ( ( numRead < numReq ) )
     {
         numToCopy = numReq - numRead;
@@ -311,9 +311,9 @@ int  numReq;                    /* Number of bytes to get */
     return numRead;
 }
 
-/*----------------------------------------------------------------------*\
- *  This part for Tcl-DP only
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  This part for Tcl-DP only
+//--------------------------------------------------------------------------
 
 #ifdef PLD_dp
 
@@ -324,14 +324,14 @@ int  numReq;                    /* Number of bytes to get */
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-/*----------------------------------------------------------------------*\
- * plHost_ID
- *
- * Tcl command -- return the IP address for the current host.
- *
- * Derived from source code in "UNIX Network Programming" by W. Richard
- * Stevens, Prentice Hall, 1990.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plHost_ID
+//
+// Tcl command -- return the IP address for the current host.
+//
+// Derived from source code in "UNIX Network Programming" by W. Richard
+// Stevens, Prentice Hall, 1990.
+//--------------------------------------------------------------------------
 
 static char *
 get_inet( listptr, length )
@@ -377,31 +377,31 @@ char       **argv;
     return TCL_OK;
 }
 
-#endif  /* PLD_dp */
+#endif  // PLD_dp
 
-/*
- *--------------------------------------------------------------
- *
- * pl_PacketReceive --
- *
- *      This procedure is a modified version of Tdp_PacketReceive,
- *	from the Tcl-DP distribution.  It reads the socket,
- *	returning a complete packet.  If the entire packet cannot
- *	be read, the partial packet is buffered until the rest is
- *	available.  Some capabilities have been removed from the
- *	original, such as the check for a non-server TCP socket,
- *	since there's no access to the optFlags array from here,
- *	and the peek capability, since I don't need it.
- *
- * Results:
- *	Packet contents stored in pdfs->buffer and pdfs->bp set
- *	to the number of bytes read (zero if incomplete).
- *
- * Side effects:
- *	The file descriptor passed in is read.
- *
- *--------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// pl_PacketReceive --
+//
+//      This procedure is a modified version of Tdp_PacketReceive,
+//	from the Tcl-DP distribution.  It reads the socket,
+//	returning a complete packet.  If the entire packet cannot
+//	be read, the partial packet is buffered until the rest is
+//	available.  Some capabilities have been removed from the
+//	original, such as the check for a non-server TCP socket,
+//	since there's no access to the optFlags array from here,
+//	and the peek capability, since I don't need it.
+//
+// Results:
+//	Packet contents stored in pdfs->buffer and pdfs->bp set
+//	to the number of bytes read (zero if incomplete).
+//
+// Side effects:
+//	The file descriptor passed in is read.
+//
+//--------------------------------------------------------------------------
+//
 int
 pl_PacketReceive( interp, iodev, pdfs )
 Tcl_Interp * interp;
@@ -416,9 +416,9 @@ PDFstrm *pdfs;
 
     pdfs->bp = 0;
 
-    /*
-     * Read in the header (8 bytes)
-     */
+    //
+    // Read in the header (8 bytes)
+    //
     headerSize = 8;
     numRead    = pl_Read( iodev->fd, (char *) hbuf, headerSize );
 
@@ -430,9 +430,9 @@ PDFstrm *pdfs;
         goto readError;
     }
 
-    /*
-     * Check for incomplete read.  If so, put it back and return.
-     */
+    //
+    // Check for incomplete read.  If so, put it back and return.
+    //
     if ( numRead < headerSize )
     {
 #ifdef DEBUG
@@ -443,12 +443,12 @@ PDFstrm *pdfs;
         return TCL_OK;
     }
 
-    /*
-     * Convert header character stream into ints.  This works when the
-     * connecting machine has a different size int and takes care of the
-     * endian problem to boot.  It is also mostly backward compatible since
-     * network byte ordering (big endian) is used.
-     */
+    //
+    // Convert header character stream into ints.  This works when the
+    // connecting machine has a different size int and takes care of the
+    // endian problem to boot.  It is also mostly backward compatible since
+    // network byte ordering (big endian) is used.
+    //
 
     j = 0;
 
@@ -464,13 +464,13 @@ PDFstrm *pdfs;
     header[1] |= hbuf[j++] << 8;
     header[1] |= hbuf[j++];
 
-    /*
-     * Format of each packet:
-     *
-     *		First 4 bytes are PACKET_MAGIC.
-     *		Next 4 bytes are packetLen.
-     *		Next packetLen-headerSize is zero terminated string
-     */
+    //
+    // Format of each packet:
+    //
+    //		First 4 bytes are PACKET_MAGIC.
+    //		Next 4 bytes are packetLen.
+    //		Next packetLen-headerSize is zero terminated string
+    //
     if ( header[0] != PACKET_MAGIC )
     {
         fprintf( stderr, "Badly formatted packet, numRead = %d\n", numRead );
@@ -480,9 +480,9 @@ PDFstrm *pdfs;
     }
     packetLen = header[1] - headerSize;
 
-    /*
-     * Expand the size of the buffer, as needed.
-     */
+    //
+    // Expand the size of the buffer, as needed.
+    //
 
     if ( header[1] > (unsigned) pdfs->bufmax )
     {
@@ -491,13 +491,13 @@ PDFstrm *pdfs;
         pdfs->buffer = (unsigned char *) malloc( pdfs->bufmax );
     }
 
-    /*
-     * Read in the packet, and if it's not all there, put it back.
-     *
-     * We have to be careful here, because we could block if just the
-     * header came in (making the file readable at the beginning of this
-     * function) but the rest of the packet is still out on the network.
-     */
+    //
+    // Read in the packet, and if it's not all there, put it back.
+    //
+    // We have to be careful here, because we could block if just the
+    // header came in (making the file readable at the beginning of this
+    // function) but the rest of the packet is still out on the network.
+    //
 
     if ( iodev->type == 0 )
     {
@@ -550,15 +550,15 @@ PDFstrm *pdfs;
     return TCL_OK;
 
 readError:
-    /*
-     *
-     * If we're in non-blocking mode, and this would block, return.
-     * If the connection is closed (numRead == 0), don't return an
-     * error message.  Otherwise, return one.
-     *
-     * In either case, we close the file, delete the file handler, and
-     * return a null string.
-     */
+    //
+    //
+    // If we're in non-blocking mode, and this would block, return.
+    // If the connection is closed (numRead == 0), don't return an
+    // error message.  Otherwise, return one.
+    //
+    // In either case, we close the file, delete the file handler, and
+    // return a null string.
+    //
 
     if ( errno == EWOULDBLOCK || errno == EAGAIN )
     {
@@ -566,22 +566,22 @@ readError:
         return TCL_OK;
     }
 
-    /* Record the error before closing the file */
+    // Record the error before closing the file
     if ( numRead != 0 )
     {
         errMsg = (char *) Tcl_PosixError( interp );
     }
     else
     {
-        errMsg = NULL;  /* Suppresses spurious compiler warning */
+        errMsg = NULL;  // Suppresses spurious compiler warning
     }
 
-    /*
-     * Remove the file handler and close the file.
-     */
+    //
+    // Remove the file handler and close the file.
+    //
     if ( iodev->type == 0 )
     {
-/* Exclude UNIX-only feature */
+// Exclude UNIX-only feature
 #if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
         Tk_DeleteFileHandler( iodev->fd );
 #endif
@@ -602,24 +602,24 @@ readError:
     }
 }
 
-/*
- *--------------------------------------------------------------
- *
- * pl_PacketSend --
- *
- *      This procedure is a modified version of Tdp_PacketSend,
- *	from the Tcl-DP distribution.  It writes a complete packet
- *	to a socket or file-oriented device.
- *
- * Results:
- *	A standard tcl result.
- *
- * Side effects:
- *	The specified buffer is written to the file descriptor passed
- *	in.
- *
- *--------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// pl_PacketSend --
+//
+//      This procedure is a modified version of Tdp_PacketSend,
+//	from the Tcl-DP distribution.  It writes a complete packet
+//	to a socket or file-oriented device.
+//
+// Results:
+//	A standard tcl result.
+//
+// Side effects:
+//	The specified buffer is written to the file descriptor passed
+//	in.
+//
+//--------------------------------------------------------------------------
+//
 
 int
 pl_PacketSend( interp, iodev, pdfs )
@@ -633,22 +633,22 @@ PDFstrm *pdfs;
     int           len;
     char          *buffer, tmp[256];
 
-    /*
-     * Format up the packet:
-     *	  First 4 bytes are PACKET_MAGIC.
-     *	  Next 4 bytes are packetLen.
-     *	  Next packetLen-8 bytes are buffer contents.
-     */
+    //
+    // Format up the packet:
+    //	  First 4 bytes are PACKET_MAGIC.
+    //	  Next 4 bytes are packetLen.
+    //	  Next packetLen-8 bytes are buffer contents.
+    //
 
     packetLen = pdfs->bp + 8;
 
     header[0] = PACKET_MAGIC;
     header[1] = packetLen;
 
-    /*
-     * Convert header ints to character stream.
-     * Network byte ordering (big endian) is used.
-     */
+    //
+    // Convert header ints to character stream.
+    // Network byte ordering (big endian) is used.
+    //
 
     j = 0;
 
@@ -662,11 +662,11 @@ PDFstrm *pdfs;
     hbuf[j++] = ( header[1] & (unsigned long) 0x0000FF00 ) >> 8;
     hbuf[j++] = ( header[1] & (unsigned long) 0x000000FF );
 
-    /*
-     * Send it off, with error checking.
-     * Simulate writev using memcpy to put together
-     * the msg so it can go out in a single write() call.
-     */
+    //
+    // Send it off, with error checking.
+    // Simulate writev using memcpy to put together
+    // the msg so it can go out in a single write() call.
+    //
 
     len    = pdfs->bp + 8;
     buffer = (char *) malloc( len );
@@ -690,9 +690,9 @@ PDFstrm *pdfs;
     {
         if ( ( errno == 0 ) || ( errno == EWOULDBLOCK || errno == EAGAIN ) )
         {
-            /*
-             * Non-blocking I/O: return number of bytes actually sent.
-             */
+            //
+            // Non-blocking I/O: return number of bytes actually sent.
+            //
             Tcl_ResetResult( interp );
             sprintf( tmp, "%d", numSent - 8 );
             Tcl_SetResult( interp, tmp, TCL_VOLATILE );
@@ -700,10 +700,10 @@ PDFstrm *pdfs;
         }
         else if ( errno == EPIPE )
         {
-            /*
-             * Got a broken pipe signal, which means the far end closed
-             * the connection.  Close the file and return 0 bytes sent.
-             */
+            //
+            // Got a broken pipe signal, which means the far end closed
+            // the connection.  Close the file and return 0 bytes sent.
+            //
             if ( iodev->type == 0 )
             {
                 close( iodev->fd );
@@ -722,9 +722,9 @@ PDFstrm *pdfs;
         return TCL_ERROR;
     }
 
-    /*
-     * Return the number of bytes sent (minus the header).
-     */
+    //
+    // Return the number of bytes sent (minus the header).
+    //
     sprintf( tmp, "%d", numSent - 8 );
     Tcl_SetResult( interp, tmp, TCL_VOLATILE );
     return TCL_OK;
@@ -737,4 +737,4 @@ pldummy_tcpip()
     return 0;
 }
 
-#endif  /* defined(PLD_tk) || defined (ENABLE_tk)*/
+#endif  // defined(PLD_tk) || defined (ENABLE_tk)

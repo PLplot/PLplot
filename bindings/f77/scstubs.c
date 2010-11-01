@@ -1,31 +1,31 @@
-/* $Id$
- *
- *      C stub routines.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *
- *      The stubs contained here are the ones that are relatively simple,
- *      i.e. involving only a call convention change or integer-to-string
- *      conversion.  Exceptions are plparseopts and  plstripc  which have
- *      a few more complications in them.
- */
+// $Id$
+//
+//      C stub routines.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
+//      The stubs contained here are the ones that are relatively simple,
+//      i.e. involving only a call convention change or integer-to-string
+//      conversion.  Exceptions are plparseopts and  plstripc  which have
+//      a few more complications in them.
+//
 
 #include "plstubs.h"
 
@@ -34,13 +34,13 @@
 #else
 #define STDCALL
 #endif
-static void ( STDCALL *plmapform )( PLINT *, PLFLT *, PLFLT * ); /* Note: slightly different prototype than
-                                                                  * (*mapform)! */
-/* Slightly different to (*label_func) as we don't support PLPointer for
- * additional data in f77.
- * Note the hidden argument! */
+static void ( STDCALL *plmapform )( PLINT *, PLFLT *, PLFLT * ); // Note: slightly different prototype than
+                                                                 // (*mapform)!
+// Slightly different to (*label_func) as we don't support PLPointer for
+// additional data in f77.
+// Note the hidden argument!
 static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT );
-/* Slightly different to C version as we don't support PLPointer  for additional data */
+// Slightly different to C version as we don't support PLPointer  for additional data
 static void ( STDCALL *pltransform )( PLFLT *, PLFLT *, PLFLT *, PLFLT * );
 
 static void
@@ -164,7 +164,7 @@ PLCOL1( PLFLT *col )
     c_plcol1( *col );
 }
 
-/* The old way, same as plcol0 */
+// The old way, same as plcol0
 
 void
 PLCOL( PLINT *icol )
@@ -336,9 +336,9 @@ PLGFAM( PLINT *fam, PLINT *num, PLINT *bmax )
     c_plgfam( fam, num, bmax );
 }
 
-/* Note: Fortran does not distinguish between unsigned and signed integers
- * so the 32-bit PLUNICODE can be mapped to 4-byte Fortran integer outside
- * this routine. */
+// Note: Fortran does not distinguish between unsigned and signed integers
+// so the 32-bit PLUNICODE can be mapped to 4-byte Fortran integer outside
+// this routine.
 void
 PLGFCI( PLUNICODE *pfci )
 {
@@ -497,12 +497,12 @@ pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer da
 {
     int i;
 
-    /* (AM) Note the hidden argument "length" - it ensures that the string "label"
-     * is recognised to have that length
-     */
+    // (AM) Note the hidden argument "length" - it ensures that the string "label"
+    // is recognised to have that length
+    //
     ( *pllabelfunc )( &axis, &value, label, &length, length );
 
-    /* Ensure string is null terminated */
+    // Ensure string is null terminated
     i = length - 1;
     while ( ( i >= 0 ) && ( label[i] == ' ' ) )
         i--;
@@ -582,7 +582,7 @@ PLMTEX37( const char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, const char *te
 void
 PLPARSEOPTS7( int *numargs, const char *iargs, PLINT *mode, PLINT *maxindex )
 {
-/* Same as in plparseopts fortran subroutine that calls this one. */
+// Same as in plparseopts fortran subroutine that calls this one.
 #define MAXARGS    20
     if ( *numargs <= MAXARGS )
     {
@@ -591,7 +591,7 @@ PLPARSEOPTS7( int *numargs, const char *iargs, PLINT *mode, PLINT *maxindex )
         for ( i = 0; i < *numargs; i++ )
         {
             argv[i] = iargs + ( i * *maxindex );
-/*	 fprintf(stderr, "%d - %s\n", i, argv[i]); */
+//	 fprintf(stderr, "%d - %s\n", i, argv[i]);
         }
         c_plparseopts( numargs, argv, *mode );
     }
@@ -823,8 +823,8 @@ PLSESC( PLINT *esc )
     c_plsesc( (char) *esc );
 }
 
-/* Auxiliary routine - not to be used publicly
- */
+// Auxiliary routine - not to be used publicly
+//
 #define    PLSETMAPFORMC      FNAME( PLSETMAPFORMC, plsetmapformc )
 #define    PLCLEARMAPFORMC    FNAME( PLCLEARMAPFORMC, plclearmapformc )
 void
@@ -851,9 +851,9 @@ PLSFAM( PLINT *fam, PLINT *num, PLINT *bmax )
     c_plsfam( *fam, *num, *bmax );
 }
 
-/* Note: Fortran does not distinguish between unsigned and signed integers
- * so the 32-bit PLUNICODE can be mapped to 4-byte Fortran integer outside
- * this routine. */
+// Note: Fortran does not distinguish between unsigned and signed integers
+// so the 32-bit PLUNICODE can be mapped to 4-byte Fortran integer outside
+// this routine.
 void
 PLSFCI( PLUNICODE *fci )
 {
@@ -876,7 +876,7 @@ void
 PLSLABELFUNC( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ) )
 {
     pllabelfunc = labelfunc;
-    /* N.B. neglect pointer to additional data for f77 */
+    // N.B. neglect pointer to additional data for f77
     c_plslabelfunc( pllabelfuncf2c, NULL );
 }
 
@@ -977,7 +977,7 @@ void
 PLSTRANSFORM( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFLT * ) )
 {
     pltransform = transformfunc;
-    /* N.B. neglect pointer to additional data for f77 */
+    // N.B. neglect pointer to additional data for f77
     c_plstransform( pltransformf2c, NULL );
 }
 

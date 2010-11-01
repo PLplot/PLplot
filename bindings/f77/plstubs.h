@@ -1,52 +1,52 @@
-/* $Id$
- *
- * Maurice LeBrun
- * IFS, University of Texas
- *
- * Header file for plplot Fortran interface stubs.
- * THIS FILE IS NOT FOR INCLUSION BY USER CODES!!
- *
- * The contents of this file are in the public domain.
- */
+// $Id$
+//
+// Maurice LeBrun
+// IFS, University of Texas
+//
+// Header file for plplot Fortran interface stubs.
+// THIS FILE IS NOT FOR INCLUSION BY USER CODES!!
+//
+// The contents of this file are in the public domain.
+//
 
 #ifndef __PLSTUBS_H__
 #define __PLSTUBS_H__
 
 #include "plplotP.h"
 
-/*----------------------------------------------------------------------*\
- * Select name transformation based on system type.
- *
- * Define the STUB_LINKAGE flag to get proper C<->Fortran linkage on your
- * system.  This flag describes what the compiler does to Fortran routine
- * names, which we must duplicate on the C stubs so that the Fortran
- * routines may call them.  You can often set STUB_LINKAGE by the
- * construct -DSTUB_LINKAGE=<value> on the C compiler command line, but
- * it is best to either rely on the default or explicitly handle your
- * system below.
- *
- * Current choices for STUB_LINKAGE:
- *
- *      STUB_LAU	lower-case, append underscore
- *      STUB_L		lower-case
- *	STUB_U		upper-case
- *	STUB_FORTRAN	use "fortran" keyword (MS-DOS convention)
- *
- * If no choice is made, the default is set to STUB_LAU.  This should
- * handle most generic Unix boxes not already accounted for.
- *
- * ** Namespace collision **
- *
- * If you use the STUB_L option, the C & Fortran namespaces will collide
- * if the Fortran compiler does lower case folding (they usually do).
- * The problem is then that the stub names and actual function names will
- * be exactly the same, if we insist on the Fortran and C bindings to be
- * similar.  The solution is to give the externally callable C routines
- * unique names, and provide macros to turn the documented entry names in
- * to the real ones.  This is a horrible kludge, but the alternatives are
- * worse.  Fortunately it has no effect on the user program, and you can
- * forget that you ever read about it here.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Select name transformation based on system type.
+//
+// Define the STUB_LINKAGE flag to get proper C<->Fortran linkage on your
+// system.  This flag describes what the compiler does to Fortran routine
+// names, which we must duplicate on the C stubs so that the Fortran
+// routines may call them.  You can often set STUB_LINKAGE by the
+// construct -DSTUB_LINKAGE=<value> on the C compiler command line, but
+// it is best to either rely on the default or explicitly handle your
+// system below.
+//
+// Current choices for STUB_LINKAGE:
+//
+//      STUB_LAU	lower-case, append underscore
+//      STUB_L		lower-case
+//	STUB_U		upper-case
+//	STUB_FORTRAN	use "fortran" keyword (MS-DOS convention)
+//
+// If no choice is made, the default is set to STUB_LAU.  This should
+// handle most generic Unix boxes not already accounted for.
+//
+// ** Namespace collision **
+//
+// If you use the STUB_L option, the C & Fortran namespaces will collide
+// if the Fortran compiler does lower case folding (they usually do).
+// The problem is then that the stub names and actual function names will
+// be exactly the same, if we insist on the Fortran and C bindings to be
+// similar.  The solution is to give the externally callable C routines
+// unique names, and provide macros to turn the documented entry names in
+// to the real ones.  This is a horrible kludge, but the alternatives are
+// worse.  Fortunately it has no effect on the user program, and you can
+// forget that you ever read about it here.
+//--------------------------------------------------------------------------
 
 #define STUB_LAU        1
 #define STUB_L          2
@@ -58,67 +58,67 @@
 
 #ifndef STUB_LINKAGE
 
-#if defined ( SX )                         /* NEC Super-UX (SX-3) */
+#if defined ( SX )                         // NEC Super-UX (SX-3)
 #define STUB_LINKAGE    STUB_LAU
 #endif
 
-#if defined ( _IBMR2 ) && defined ( _AIX )    /* AIX */
+#if defined ( _IBMR2 ) && defined ( _AIX )    // AIX
 #define STUB_LINKAGE    STUB_L
 #endif
 
-#ifdef __hpux                           /* HP/UX */
+#ifdef __hpux                           // HP/UX
 #define STUB_LINKAGE    STUB_L
 #endif
 
-#ifdef __mips                           /* IRIX (SGI systems) */
+#ifdef __mips                           // IRIX (SGI systems)
 #define STUB_LINKAGE    STUB_LAU
 #endif
 
-#ifdef sun                              /* Suns */
+#ifdef sun                              // Suns
 #define STUB_LINKAGE    STUB_LAU
 #endif
 
-#ifdef CRAY                             /* Cray/UNICOS */
+#ifdef CRAY                             // Cray/UNICOS
 #define STUB_LINKAGE    STUB_U
 #endif
 
-#if defined ( __alpha ) && defined ( __osf__ ) /* DEC Alpha AXP/OSF */
+#if defined ( __alpha ) && defined ( __osf__ ) // DEC Alpha AXP/OSF
 #define STUB_LINKAGE    STUB_LAU
 #endif
 
-#ifdef __GO32__                         /* dos386/djgpp */
+#ifdef __GO32__                         // dos386/djgpp
 #ifdef MSDOS
 #undef MSDOS
 #endif
 #endif
 
-#if defined ( WIN32 )                               /* Windows 32-bit */
-#if defined ( IVF )                                 /* Intel Visual Fortran */
+#if defined ( WIN32 )                               // Windows 32-bit
+#if defined ( IVF )                                 // Intel Visual Fortran
 #define STUB_LINKAGE    STUB_IVF
-#elif defined ( CVF )                               /* MSVC/CVF */
+#elif defined ( CVF )                               // MSVC/CVF
 #define STUB_LINKAGE    STUB_U
-#elif defined ( MSDOS )                             /* MS-DOS based */
+#elif defined ( MSDOS )                             // MS-DOS based
 #define STUB_LINKAGE    STUB_FORTRAN
 #elif defined ( _MSC_VER )
 #define STUB_LINKAGE    STUB_STDCALL
-#elif defined ( __GNUC__ )                         /* GNU C with MinGW/Cygwin */
+#elif defined ( __GNUC__ )                         // GNU C with MinGW/Cygwin
 #define STUB_LINKAGE    STUB_MINGW
 #endif
-#elif defined ( MSDOS )                            /* MS-DOS based */
+#elif defined ( MSDOS )                            // MS-DOS based
 #define STUB_LINKAGE    STUB_FORTRAN
-#endif /* Windows 32-bit */
+#endif // Windows 32-bit
 
-#ifndef STUB_LINKAGE                    /* The default */
+#ifndef STUB_LINKAGE                    // The default
 #define STUB_LINKAGE    STUB_LAU
 #endif
 
-#endif  /* ifndef STUB_LINKAGE */
+#endif  // ifndef STUB_LINKAGE
 
-/*----------------------------------------------------------------------*\
- * Define name-translation macro.
- * To use, define with x the upper case routine name, y the lower case.
- * Should be adoptable to virtually any system.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Define name-translation macro.
+// To use, define with x the upper case routine name, y the lower case.
+// Should be adoptable to virtually any system.
+//--------------------------------------------------------------------------
 
 #if STUB_LINKAGE == STUB_LAU
 #define FNAME( x, y )     PLDLLIMPEXP_F77C y ## _
@@ -152,19 +152,19 @@
 #error "Illegal setting for STUB_LINKAGE"
 #endif
 
-/*----------------------------------------------------------------------*\
- * Now to actually define the stub names.
- * Each stub must have an entry here.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Now to actually define the stub names.
+// Each stub must have an entry here.
+//--------------------------------------------------------------------------
 
-/* N.B. By default the g77 compiler appends second underscore to name if
- * the original name contains any underscore at all.  According to info
- * g77, "This is done to ensure compatibility with code produced by many
- * UNIX Fortran compilers."  However, other fortran compilers do not have
- * this default naming scheme so to avoid trouble I have #defined two
- * variations of the embedded underscore names, one with and one without
- * the extra trailing underscore.
- */
+// N.B. By default the g77 compiler appends second underscore to name if
+// the original name contains any underscore at all.  According to info
+// g77, "This is done to ensure compatibility with code produced by many
+// UNIX Fortran compilers."  However, other fortran compilers do not have
+// this default naming scheme so to avoid trouble I have #defined two
+// variations of the embedded underscore names, one with and one without
+// the extra trailing underscore.
+//
 
 #define    PL_SETCONTLABELFORMAT     FNAME( PL_SETCONTLABELFORMAT, pl_setcontlabelformat )
 #define    PL_SETCONTLABELFORMATa    FNAME( PL_SETCONTLABELFORMAT_, pl_setcontlabelformat_ )
@@ -355,4 +355,4 @@
 #define    PLWIND                    FNAME( PLWIND, plwind )
 #define    PLXORMOD                  FNAME( PLXORMOD, plxormod )
 
-#endif  /* __PLSTUBS_H__ */
+#endif  // __PLSTUBS_H__

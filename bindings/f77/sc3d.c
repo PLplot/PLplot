@@ -1,26 +1,26 @@
-/* $Id$
- *
- *      Stub routines for 3d plots.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Stub routines for 3d plots.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plstubs.h"
 
@@ -32,7 +32,7 @@ PLOT3DC__( PLFLT *x, PLFLT *y, PLFLT *z,
     PLFLT ** a;
     int   i, j;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     for ( i = 0; i < *nx; i++ )
     {
@@ -44,7 +44,7 @@ PLOT3DC__( PLFLT *x, PLFLT *y, PLFLT *z,
 
     c_plot3dc( x, y, a, *nx, *ny, *opt, clevel, *nlevel );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
@@ -64,10 +64,10 @@ PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
     int   i, j;
     PLFLT **temp;
 
-    /* Create the vectored C matrix from the Fortran matrix */
-    /* To make things easy we save a temporary copy of the transpose of the
-     * Fortran matrix, so that the first dimension of z corresponds to the x
-     * direction. */
+    // Create the vectored C matrix from the Fortran matrix
+    // To make things easy we save a temporary copy of the transpose of the
+    // Fortran matrix, so that the first dimension of z corresponds to the x
+    // direction.
 
     if ( !( temp = (PLFLT **) malloc( (size_t) *nx * sizeof ( PLFLT * ) ) ) )
     {

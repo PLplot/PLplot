@@ -1,10 +1,10 @@
-/* $Id$
- *
- * Maurice LeBrun
- * 28-Apr-95
- *
- * Declarations for PLplot/TK utility routines.
- */
+// $Id$
+//
+// Maurice LeBrun
+// 28-Apr-95
+//
+// Declarations for PLplot/TK utility routines.
+//
 
 #ifndef __PLTK_H__
 #define __PLTK_H__
@@ -16,17 +16,17 @@
 extern "C" {
 #endif
 
-/* Generic initialization routine for extended wish'es. */
+// Generic initialization routine for extended wish'es.
 
 #ifdef BUILD_Plplot
 #undef TCL_STORAGE_CLASS
 #define TCL_STORAGE_CLASS    DLLEXPORT
-#endif /* BUILD_Vfs */
+#endif // BUILD_Vfs
 
 EXTERN PLDLLIMPEXP_TCLTK int
 Pltk_Init( Tcl_Interp *interp );
 
-/* Main program for wish, with PLplot extensions. */
+// Main program for wish, with PLplot extensions.
 
 EXTERN PLDLLIMPEXP_TCLTK int
 pltkMain( int argc, const char **argv, char *RcFileName,
@@ -36,4 +36,4 @@ pltkMain( int argc, const char **argv, char *RcFileName,
 }
 #endif
 
-#endif  /* __PLTK_H__ */
+#endif  // __PLTK_H__

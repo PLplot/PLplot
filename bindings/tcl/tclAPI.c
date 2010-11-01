@@ -1,35 +1,35 @@
-/* $Id$
- *
- *  Copyright 1994, 1995
- *  Maurice LeBrun			mjl@dino.ph.utexas.edu
- *  Institute for Fusion Studies	University of Texas at Austin
- *
- *  Copyright (C) 2004  Joao Cardoso
- *  Copyright (C) 2004  Andrew Ross
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Library Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  This module implements a Tcl command set for interpretively calling
- *  PLplot functions.  Each Tcl command is responsible for calling the
- *  appropriate underlying function in the C API.  Can be used with any
- *  driver, in principle.
- */
+// $Id$
+//
+//  Copyright 1994, 1995
+//  Maurice LeBrun			mjl@dino.ph.utexas.edu
+//  Institute for Fusion Studies	University of Texas at Austin
+//
+//  Copyright (C) 2004  Joao Cardoso
+//  Copyright (C) 2004  Andrew Ross
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Library Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//--------------------------------------------------------------------------
+//
+//  This module implements a Tcl command set for interpretively calling
+//  PLplot functions.  Each Tcl command is responsible for calling the
+//  appropriate underlying function in the C API.  Can be used with any
+//  driver, in principle.
+//
 
 #include "plplotP.h"
 #include "pltcl.h"
@@ -46,7 +46,7 @@
 
 #include "tclgen.h"
 
-/* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
+// PLplot/Tcl API handlers.  Prototypes must come before Cmds struct
 
 static int loopbackCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plcontCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -69,19 +69,19 @@ static int plimagefrCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plstripcCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plslabelfuncCmd( ClientData, Tcl_Interp *, int, const char ** );
 
-/*
- * The following structure defines all of the commands in the PLplot/Tcl
- * core, and the C procedures that execute them.
- */
+//
+// The following structure defines all of the commands in the PLplot/Tcl
+// core, and the C procedures that execute them.
+//
 
 typedef struct Command
 {
-    int ( *proc )();            /* Procedure to process command. */
-    ClientData clientData;      /* Arbitrary value to pass to proc. */
-    int        *deleteProc;     /* Procedure to invoke when deleting
-                                 * command. */
-    ClientData deleteData;      /* Arbitrary value to pass to deleteProc
-                                 * (usually the same as clientData). */
+    int ( *proc )();            // Procedure to process command.
+    ClientData clientData;      // Arbitrary value to pass to proc.
+    int        *deleteProc;     // Procedure to invoke when deleting
+                                // command.
+    ClientData deleteData;      // Arbitrary value to pass to deleteProc
+                                // (usually the same as clientData).
 } Command;
 
 typedef struct
@@ -90,7 +90,7 @@ typedef struct
     int ( *proc )( void *, struct Tcl_Interp *, int, const char ** );
 } CmdInfo;
 
-/* Built-in commands, and the procedures associated with them */
+// Built-in commands, and the procedures associated with them
 
 static CmdInfo Cmds[] = {
     { "loopback",     loopbackCmd     },
@@ -118,17 +118,17 @@ static CmdInfo Cmds[] = {
     { NULL,           NULL            }
 };
 
-/* Hash table and associated flag for directing control */
+// Hash table and associated flag for directing control
 
 static int           cmdTable_initted;
 static Tcl_HashTable cmdTable;
 
-/* Variables for holding error return info from PLplot */
+// Variables for holding error return info from PLplot
 
 static PLINT pl_errcode;
 static char  errmsg[160];
 
-/* Library initialization */
+// Library initialization
 
 #ifndef PL_LIBRARY
 #define PL_LIBRARY    ""
@@ -137,26 +137,26 @@ static char  errmsg[160];
 extern PLDLLIMPORT char * plplotLibDir;
 
 #if ( !defined ( MAC_TCL ) && !defined ( __WIN32__ ) )
-/*
- * Use an extended search for installations on Unix where we
- * have very likely installed plplot so that plplot.tcl is
- * in  /usr/local/plplot/lib/plplot5.1.0/tcl
- */
+//
+// Use an extended search for installations on Unix where we
+// have very likely installed plplot so that plplot.tcl is
+// in  /usr/local/plplot/lib/plplot5.1.0/tcl
+//
 #define PLPLOT_EXTENDED_SEARCH
 #endif
 
-/* Static functions */
+// Static functions
 
-/* Evals the specified command, aborting on an error. */
+// Evals the specified command, aborting on an error.
 
 static int
 tcl_cmd( Tcl_Interp *interp, char *cmd );
 
-/*--------------------------------------------------------------------------*\
- * Append_Cmdlist
- *
- * Generates command list from Cmds, storing into interp->result.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Append_Cmdlist
+//
+// Generates command list from Cmds, storing into interp->result.
+//--------------------------------------------------------------------------
 
 static void
 Append_Cmdlist( Tcl_Interp *interp )
@@ -172,7 +172,7 @@ Append_Cmdlist( Tcl_Interp *interp )
         for ( i = 0; i < ncmds; i++ )
             namelist[i] = Cmds[i].name;
 
-        /* Sort the list, couldn't get qsort to do it for me for some reason, grrr. */
+        // Sort the list, couldn't get qsort to do it for me for some reason, grrr.
 
         for ( i = 0; i < ncmds - 1; i++ )
             for ( j = i + 1; j < ncmds - 1; j++ )
@@ -192,14 +192,14 @@ Append_Cmdlist( Tcl_Interp *interp )
         Tcl_AppendResult( interp, " ", namelist[i], (char *) NULL );
 }
 
-/*--------------------------------------------------------------------------*\
- * plTclCmd_Init
- *
- * Sets up command hash table for use with plframe to PLplot Tcl API.
- *
- * Right now all API calls are allowed, although some of these may not
- * make much sense when used with a widget.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plTclCmd_Init
+//
+// Sets up command hash table for use with plframe to PLplot Tcl API.
+//
+// Right now all API calls are allowed, although some of these may not
+// make much sense when used with a widget.
+//--------------------------------------------------------------------------
 
 static void
 plTclCmd_Init( Tcl_Interp *interp )
@@ -207,15 +207,15 @@ plTclCmd_Init( Tcl_Interp *interp )
     register Command *cmdPtr;
     register CmdInfo *cmdInfoPtr;
 
-/* Register our error variables with PLplot */
+// Register our error variables with PLplot
 
     plsError( &pl_errcode, errmsg );
 
-/* Initialize hash table */
+// Initialize hash table
 
     Tcl_InitHashTable( &cmdTable, TCL_STRING_KEYS );
 
-/* Create the hash table entry for each command */
+// Create the hash table entry for each command
 
     for ( cmdInfoPtr = Cmds; cmdInfoPtr->name != NULL; cmdInfoPtr++ )
     {
@@ -235,26 +235,26 @@ plTclCmd_Init( Tcl_Interp *interp )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plTclCmd
- *
- * Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe).
- *
- * This command is called by the plframe widget to process subcommands
- * of the "cmd" plframe widget command.  This is the plframe's direct
- * plotting interface to the PLplot library.  This routine can be called
- * from other commands that want a similar capability.
- *
- * In a widget-based application, a PLplot "command" doesn't make much
- * sense by itself since it isn't connected to a specific widget.
- * Instead, you have widget commands.  This allows arbitrarily many
- * widgets and requires a slightly different syntax than if there were
- * only a single output device.  That is, the widget name (and in this
- * case, the "cmd" widget command, after that comes the subcommand)
- * must come first.  The plframe widget checks first for one of its
- * internal subcommands, those specifically designed for use with the
- * plframe widget.  If not found, control comes here.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plTclCmd
+//
+// Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe).
+//
+// This command is called by the plframe widget to process subcommands
+// of the "cmd" plframe widget command.  This is the plframe's direct
+// plotting interface to the PLplot library.  This routine can be called
+// from other commands that want a similar capability.
+//
+// In a widget-based application, a PLplot "command" doesn't make much
+// sense by itself since it isn't connected to a specific widget.
+// Instead, you have widget commands.  This allows arbitrarily many
+// widgets and requires a slightly different syntax than if there were
+// only a single output device.  That is, the widget name (and in this
+// case, the "cmd" widget command, after that comes the subcommand)
+// must come first.  The plframe widget checks first for one of its
+// internal subcommands, those specifically designed for use with the
+// plframe widget.  If not found, control comes here.
+//--------------------------------------------------------------------------
 
 int
 plTclCmd( char *cmdlist, Tcl_Interp *interp, int argc, const char **argv )
@@ -264,7 +264,7 @@ plTclCmd( char *cmdlist, Tcl_Interp *interp, int argc, const char **argv )
 
     pl_errcode = 0; errmsg[0] = '\0';
 
-/* Create hash table on first call */
+// Create hash table on first call
 
     if ( !cmdTable_initted )
     {
@@ -272,7 +272,7 @@ plTclCmd( char *cmdlist, Tcl_Interp *interp, int argc, const char **argv )
         plTclCmd_Init( interp );
     }
 
-/* no option -- return list of available PLplot commands */
+// no option -- return list of available PLplot commands
 
     if ( argc == 0 )
     {
@@ -281,7 +281,7 @@ plTclCmd( char *cmdlist, Tcl_Interp *interp, int argc, const char **argv )
         return TCL_OK;
     }
 
-/* Pick out the desired command */
+// Pick out the desired command
 
     hPtr = Tcl_FindHashEntry( &cmdTable, argv[0] );
     if ( hPtr == NULL )
@@ -309,19 +309,19 @@ plTclCmd( char *cmdlist, Tcl_Interp *interp, int argc, const char **argv )
     return result;
 }
 
-/*--------------------------------------------------------------------------*\
- * loopbackCmd
- *
- * Loop-back command for Tcl interpreter.  Main purpose is to enable a
- * compatible command syntax whether you are executing directly through a
- * Tcl interpreter or a plframe widget.  I.e. the syntax is:
- *
- *	<widget> cmd <PLplot command>		(widget command)
- *	loopback cmd <PLplot command>		(pltcl command)
- *
- * This routine is essentially the same as plTclCmd but without some of
- * the window dressing required by the plframe widget.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// loopbackCmd
+//
+// Loop-back command for Tcl interpreter.  Main purpose is to enable a
+// compatible command syntax whether you are executing directly through a
+// Tcl interpreter or a plframe widget.  I.e. the syntax is:
+//
+//	<widget> cmd <PLplot command>		(widget command)
+//	loopback cmd <PLplot command>		(pltcl command)
+//
+// This routine is essentially the same as plTclCmd but without some of
+// the window dressing required by the plframe widget.
+//--------------------------------------------------------------------------
 
 static int
 loopbackCmd( ClientData clientData, Tcl_Interp *interp,
@@ -339,7 +339,7 @@ loopbackCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Create hash table on first call */
+// Create hash table on first call
 
     if ( !cmdTable_initted )
     {
@@ -347,7 +347,7 @@ loopbackCmd( ClientData clientData, Tcl_Interp *interp,
         plTclCmd_Init( interp );
     }
 
-/* no option -- return list of available PLplot commands */
+// no option -- return list of available PLplot commands
 
     argc--; argv++;
     if ( argc == 0 )
@@ -356,7 +356,7 @@ loopbackCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-/* Pick out the desired command */
+// Pick out the desired command
 
     hPtr = Tcl_FindHashEntry( &cmdTable, argv[0] );
     if ( hPtr == NULL )
@@ -376,14 +376,14 @@ loopbackCmd( ClientData clientData, Tcl_Interp *interp,
     return result;
 }
 
-/*--------------------------------------------------------------------------*\
- * PlbasicInit
- *
- * Used by both Pltcl and Pltk.  Ensures we have been correctly loaded
- * into a Tcl/Tk interpreter, that the plplot.tcl startup file can be
- * found and sourced, and that the Matrix library can be found and used,
- * and that it correctly exports a stub table.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// PlbasicInit
+//
+// Used by both Pltcl and Pltk.  Ensures we have been correctly loaded
+// into a Tcl/Tk interpreter, that the plplot.tcl startup file can be
+// found and sourced, and that the Matrix library can be found and used,
+// and that it correctly exports a stub table.
+//--------------------------------------------------------------------------
 
 int
 PlbasicInit( Tcl_Interp *interp )
@@ -398,12 +398,12 @@ PlbasicInit( Tcl_Interp *interp )
 #endif
 
 #ifdef USE_TCL_STUBS
-/*
- * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
- * we really don't mind which version of Tcl, Tk we use as long as it
- * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
- * be loaded into 8.1
- */
+//
+// We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
+// we really don't mind which version of Tcl, Tk we use as long as it
+// is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
+// be loaded into 8.1
+//
     Tcl_InitStubs( interp, "8.1", 0 );
 #endif
 
@@ -416,12 +416,12 @@ PlbasicInit( Tcl_Interp *interp )
     }
 #else
 
-/*
- * This code is really designed to be used with a stubified Matrix
- * extension.  It is not well tested under a non-stubs situation
- * (which is in any case inferior).  The USE_MATRIX_STUBS define
- * is made in pltcl.h, and should be removed only with extreme caution.
- */
+//
+// This code is really designed to be used with a stubified Matrix
+// extension.  It is not well tested under a non-stubs situation
+// (which is in any case inferior).  The USE_MATRIX_STUBS define
+// is made in pltcl.h, and should be removed only with extreme caution.
+//
 #ifdef USE_MATRIX_STUBS
     if ( Matrix_InitStubs( interp, "0.1", 0 ) == NULL )
     {
@@ -436,11 +436,11 @@ PlbasicInit( Tcl_Interp *interp )
 
     Tcl_SetVar( interp, "plversion", VERSION, TCL_GLOBAL_ONLY );
 
-/* Begin search for init script */
-/* Each search begins with a test of libDir, so rearrangement is easy. */
-/* If search is successful, both libDir (C) and pllibrary (tcl) are set */
+// Begin search for init script
+// Each search begins with a test of libDir, so rearrangement is easy.
+// If search is successful, both libDir (C) and pllibrary (tcl) are set
 
-/* if we are in the build tree, search there */
+// if we are in the build tree, search there
     if ( plInBuildTree() )
     {
         if ( debug )
@@ -455,16 +455,16 @@ PlbasicInit( Tcl_Interp *interp )
         }
     }
 
-/* Tcl extension dir and/or PL_LIBRARY */
+// Tcl extension dir and/or PL_LIBRARY
     if ( libDir == NULL )
     {
         if ( debug )
             fprintf( stderr, "trying init script\n" );
         if ( Tcl_Eval( interp, initScript ) != TCL_OK )
         {
-            /* This unset is needed for Tcl < 8.4 support. */
+            // This unset is needed for Tcl < 8.4 support.
             Tcl_UnsetVar( interp, "pllibrary", TCL_GLOBAL_ONLY );
-            /* Clear the result to get rid of the error message */
+            // Clear the result to get rid of the error message
             Tcl_ResetResult( interp );
         }
         else
@@ -472,7 +472,7 @@ PlbasicInit( Tcl_Interp *interp )
     }
 
 #ifdef TCL_DIR
-/* Install directory */
+// Install directory
     if ( libDir == NULL )
     {
         if ( debug )
@@ -489,23 +489,23 @@ PlbasicInit( Tcl_Interp *interp )
 #endif
 
 #ifdef PLPLOT_EXTENDED_SEARCH
-/* Unix extension directory */
+// Unix extension directory
     if ( libDir == NULL )
     {
         if ( debug )
             fprintf( stderr, "trying extended init script\n" );
         if ( Tcl_Eval( interp, initScriptExtended ) != TCL_OK )
         {
-            /* This unset is needed for Tcl < 8.4 support. */
+            // This unset is needed for Tcl < 8.4 support.
             Tcl_UnsetVar( interp, "pllibrary", TCL_GLOBAL_ONLY );
-            /* Clear the result to get rid of the error message */
+            // Clear the result to get rid of the error message
             Tcl_ResetResult( interp );
         }
         else
             libDir = (char *) Tcl_GetVar( interp, "pllibrary", TCL_GLOBAL_ONLY );
     }
 
-/* Last chance, current directory */
+// Last chance, current directory
     if ( libDir == NULL )
     {
         Tcl_DString ds;
@@ -518,7 +518,7 @@ PlbasicInit( Tcl_Interp *interp )
             return TCL_ERROR;
         }
 
-        /* It seems to be here.  Set pllibrary & eval plplot.tcl "by hand" */
+        // It seems to be here.  Set pllibrary & eval plplot.tcl "by hand"
         libDir = Tcl_GetCwd( interp, &ds );
         if ( libDir == NULL )
         {
@@ -546,11 +546,11 @@ PlbasicInit( Tcl_Interp *interp )
         return TCL_ERROR;
     }
 
-/* Used by init code in plctrl.c */
+// Used by init code in plctrl.c
     plplotLibDir = plstrdup( libDir );
 
-/* wait_until -- waits for a specific condition to arise */
-/* Can be used with either Tcl-DP or TK */
+// wait_until -- waits for a specific condition to arise
+// Can be used with either Tcl-DP or TK
 
     Tcl_CreateCommand( interp, "wait_until", (Tcl_CmdProc *) plWait_Until,
         (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
@@ -558,19 +558,19 @@ PlbasicInit( Tcl_Interp *interp )
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * Pltcl_Init
- *
- * Initialization routine for extended tclsh's.
- * Sets up auto_path, creates the matrix command and numerous commands for
- * interfacing to PLplot.  Should not be used in a widget-based system.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Pltcl_Init
+//
+// Initialization routine for extended tclsh's.
+// Sets up auto_path, creates the matrix command and numerous commands for
+// interfacing to PLplot.  Should not be used in a widget-based system.
+//--------------------------------------------------------------------------
 
 int
 Pltcl_Init( Tcl_Interp *interp )
 {
     register CmdInfo *cmdInfoPtr;
-/* This must be before any other Tcl related calls */
+// This must be before any other Tcl related calls
     if ( PlbasicInit( interp ) != TCL_OK )
     {
         Tcl_AppendResult( interp, "Could not find plplot.tcl - please set \
@@ -580,11 +580,11 @@ environment variable PL_LIBRARY to the directory containing that file",
         return TCL_ERROR;
     }
 
-/* Register our error variables with PLplot */
+// Register our error variables with PLplot
 
     plsError( &pl_errcode, errmsg );
 
-/* PLplot API commands */
+// PLplot API commands
 
     for ( cmdInfoPtr = Cmds; cmdInfoPtr->name != NULL; cmdInfoPtr++ )
     {
@@ -592,27 +592,27 @@ environment variable PL_LIBRARY to the directory containing that file",
             (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
     }
 
-/* We really need this so the TEA based 'make install' can
- * properly determine the package we have installed */
+// We really need this so the TEA based 'make install' can
+// properly determine the package we have installed
 
     Tcl_PkgProvide( interp, "Pltcl", VERSION );
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
- * plWait_Until
- *
- * Tcl command -- wait until the specified condition is satisfied.
- * Processes all events while waiting.
- *
- * This command is more capable than tkwait, and has the added benefit
- * of working with Tcl-DP as well.  Example usage:
- *
- *  wait_until {[info exists foobar]}
- *
- * Note the [info ...] command must be protected by braces so that it
- * isn't actually evaluated until passed into this routine.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plWait_Until
+//
+// Tcl command -- wait until the specified condition is satisfied.
+// Processes all events while waiting.
+//
+// This command is more capable than tkwait, and has the added benefit
+// of working with Tcl-DP as well.  Example usage:
+//
+//  wait_until {[info exists foobar]}
+//
+// Note the [info ...] command must be protected by braces so that it
+// isn't actually evaluated until passed into this routine.
+//--------------------------------------------------------------------------
 
 int
 plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, const char **argv )
@@ -637,17 +637,17 @@ plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, const char **
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
- * pls_auto_path
- *
- * Sets up auto_path variable.
- * Directories are added to the FRONT of autopath.  Therefore, they are
- * searched in reverse order of how they are listed below.
- *
- * Note: there is no harm in adding extra directories, even if they don't
- * actually exist (aside from a slight increase in processing time when
- * the autoloaded proc is first found).
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// pls_auto_path
+//
+// Sets up auto_path variable.
+// Directories are added to the FRONT of autopath.  Therefore, they are
+// searched in reverse order of how they are listed below.
+//
+// Note: there is no harm in adding extra directories, even if they don't
+// actually exist (aside from a slight increase in processing time when
+// the autoloaded proc is first found).
+//--------------------------------------------------------------------------
 
 int
 pls_auto_path( Tcl_Interp *interp )
@@ -660,7 +660,7 @@ pls_auto_path( Tcl_Interp *interp )
 
     buf = (char *) malloc( 256 * sizeof ( char ) );
 
-/* Add TCL_DIR */
+// Add TCL_DIR
 
 #ifdef TCL_DIR
     Tcl_SetVar( interp, "dir", TCL_DIR, TCL_GLOBAL_ONLY );
@@ -676,7 +676,7 @@ pls_auto_path( Tcl_Interp *interp )
 #endif
 #endif
 
-/* Add $HOME/tcl */
+// Add $HOME/tcl
 
     if ( ( dn = getenv( "HOME" ) ) != NULL )
     {
@@ -694,7 +694,7 @@ pls_auto_path( Tcl_Interp *interp )
 #endif
     }
 
-/* Add PL_TCL_ENV = $(PL_TCL) */
+// Add PL_TCL_ENV = $(PL_TCL)
 
 #if defined ( PL_TCL_ENV )
     if ( ( dn = getenv( PL_TCL_ENV ) ) != NULL )
@@ -712,9 +712,9 @@ pls_auto_path( Tcl_Interp *interp )
         fprintf( stderr, "auto_path is %s\n", path );
 #endif
     }
-#endif  /* PL_TCL_ENV */
+#endif  // PL_TCL_ENV
 
-/* Add PL_HOME_ENV/tcl = $(PL_HOME_ENV)/tcl */
+// Add PL_HOME_ENV/tcl = $(PL_HOME_ENV)/tcl
 
 #if defined ( PL_HOME_ENV )
     if ( ( dn = getenv( PL_HOME_ENV ) ) != NULL )
@@ -732,9 +732,9 @@ pls_auto_path( Tcl_Interp *interp )
         fprintf( stderr, "auto_path is %s\n", path );
 #endif
     }
-#endif  /* PL_HOME_ENV */
+#endif  // PL_HOME_ENV
 
-/* Add cwd */
+// Add cwd
 
     if ( getcwd( buf, 256 ) == 0 )
     {
@@ -750,7 +750,7 @@ pls_auto_path( Tcl_Interp *interp )
         return_code = TCL_ERROR;
         goto finish;
     }
-    /*** see if plserver was invoked in the build tree ***/
+    //** see if plserver was invoked in the build tree **
     if ( plInBuildTree() )
     {
         Tcl_SetVar( interp, "dir", BUILD_DIR "/bindings/tk", TCL_GLOBAL_ONLY );
@@ -773,11 +773,11 @@ finish:    free_mem( buf );
     return return_code;
 }
 
-/*----------------------------------------------------------------------*\
- * tcl_cmd
- *
- * Evals the specified command, aborting on an error.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// tcl_cmd
+//
+// Evals the specified command, aborting on an error.
+//--------------------------------------------------------------------------
 
 static int
 tcl_cmd( Tcl_Interp *interp, char *cmd )
@@ -793,50 +793,50 @@ tcl_cmd( Tcl_Interp *interp, char *cmd )
     return result;
 }
 
-/*--------------------------------------------------------------------------*\
- * PLplot API Calls
- *
- * Any call that results in something actually being plotted must be
- * followed by by a call to plflush(), to make sure all output from
- * that command is finished.  Devices that have text/graphics screens
- * (e.g. Tek4xxx and emulators) implicitly switch to the graphics screen
- * before graphics commands, so a plgra() is not necessary in this case.
- * Although if you switch to the text screen via user control (instead of
- * using pltext()), the device will get confused.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// PLplot API Calls
+//
+// Any call that results in something actually being plotted must be
+// followed by by a call to plflush(), to make sure all output from
+// that command is finished.  Devices that have text/graphics screens
+// (e.g. Tek4xxx and emulators) implicitly switch to the graphics screen
+// before graphics commands, so a plgra() is not necessary in this case.
+// Although if you switch to the text screen via user control (instead of
+// using pltext()), the device will get confused.
+//--------------------------------------------------------------------------
 
 static char buf[200];
 
 #include "tclgen.c"
 
-/*--------------------------------------------------------------------------*\
- * plcontCmd
- *
- * Processes plcont Tcl command.
- *
- * The C function is:
- * void
- * c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
- *       PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
- *       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- *       PLPointer pltr_data);
- *
- * Since f will be specified by a Tcl Matrix, nx and ny are redundant, and
- * are automatically eliminated.  Same for nlevel, since clevel will be a 1-d
- * Tcl Matrix.  Since most people plot the whole data set, we will allow kx,
- * lx and ky, ly to be defaulted--either you specify all four, or none of
- * them.  We allow three ways of specifying the coordinate transforms: 1)
- * Nothing, in which case we will use the identity mapper pltr0 2) pltr1, in
- * which case the next two args must be 1-d Tcl Matricies 3) pltr2, in which
- * case the next two args must be 2-d Tcl Matricies.  Finally, a new
- * paramater is allowed at the end to specify which, if either, of the
- * coordinates wrap on themselves.  Can be 1 or x, or 2 or y.  Nothing or 0
- * specifies that neither coordinate wraps.
- *
- * So, the new call from Tcl is:
- *      plcont f [kx lx ky ly] clev [pltr x y] [wrap]
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plcontCmd
+//
+// Processes plcont Tcl command.
+//
+// The C function is:
+// void
+// c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+//       PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+//       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+//       PLPointer pltr_data);
+//
+// Since f will be specified by a Tcl Matrix, nx and ny are redundant, and
+// are automatically eliminated.  Same for nlevel, since clevel will be a 1-d
+// Tcl Matrix.  Since most people plot the whole data set, we will allow kx,
+// lx and ky, ly to be defaulted--either you specify all four, or none of
+// them.  We allow three ways of specifying the coordinate transforms: 1)
+// Nothing, in which case we will use the identity mapper pltr0 2) pltr1, in
+// which case the next two args must be 1-d Tcl Matricies 3) pltr2, in which
+// case the next two args must be 2-d Tcl Matricies.  Finally, a new
+// paramater is allowed at the end to specify which, if either, of the
+// coordinates wrap on themselves.  Can be 1 or x, or 2 or y.  Nothing or 0
+// specifies that neither coordinate wraps.
+//
+// So, the new call from Tcl is:
+//      plcont f [kx lx ky ly] clev [pltr x y] [wrap]
+//
+//--------------------------------------------------------------------------
 
 static int tclmateval_modx, tclmateval_mody;
 
@@ -847,9 +847,9 @@ PLFLT tclMatrix_feval( PLINT i, PLINT j, PLPointer p )
     i = i % tclmateval_modx;
     j = j % tclmateval_mody;
 
-/*    printf( "tclMatrix_feval: i=%d j=%d f=%f\n", i, j,
- *    matPtr->fdata[I2D(i,j)] );
- */
+//    printf( "tclMatrix_feval: i=%d j=%d f=%f\n", i, j,
+//    matPtr->fdata[I2D(i,j)] );
+//
     return matPtr->fdata[I2D( i, j )];
 }
 
@@ -894,8 +894,8 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         tclmateval_modx = nx;
         tclmateval_mody = ny;
 
-        /* convert matf to 2d-array so can use standard wrap approach
-         * from now on in this code. */
+        // convert matf to 2d-array so can use standard wrap approach
+        // from now on in this code.
         plAlloc2dGrid( &z, nx, ny );
         for ( i = 0; i < nx; i++ )
         {
@@ -906,8 +906,8 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         }
     }
 
-/* Now check the next argument.  If it is all digits, then it must be kx,
- * otherwise it is the name of clev. */
+// Now check the next argument.  If it is all digits, then it must be kx,
+// otherwise it is the name of clev.
 
     for ( i = 0; i < (int) strlen( argv[2] ) && arg3_is_kx; i++ )
         if ( !isdigit( argv[2][i] ) )
@@ -915,20 +915,20 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( arg3_is_kx )
     {
-        /* Check that there are enough args */
+        // Check that there are enough args
         if ( argc < 7 )
         {
             interp->result = "plcont, bogus syntax";
             return TCL_ERROR;
         }
 
-        /* Peel off the ones we need */
+        // Peel off the ones we need
         kx = atoi( argv[3] );
         lx = atoi( argv[4] );
         ky = atoi( argv[5] );
         ly = atoi( argv[6] );
 
-        /* adjust argc, argv to reflect our consumption */
+        // adjust argc, argv to reflect our consumption
         argc -= 6, argv += 6;
     }
     else
@@ -936,7 +936,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         argc -= 2, argv += 2;
     }
 
-/* The next argument has to be clev */
+// The next argument has to be clev
 
     if ( argc < 1 )
     {
@@ -957,11 +957,11 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     argc--, argv++;
 
-/* Now handle trailing optional parameters, if any */
+// Now handle trailing optional parameters, if any
 
     if ( argc >= 3 )
     {
-        /* There is a pltr spec, parse it. */
+        // There is a pltr spec, parse it.
         pltrname = argv[0];
         mattrx   = Tcl_GetMatrixPtr( interp, argv[1] );
         if ( mattrx == NULL )
@@ -975,16 +975,16 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc )
     {
-        /* There is a wrap spec, get it. */
+        // There is a wrap spec, get it.
         wrap = atoi( argv[0] );
 
-        /* Hmm, I said the the doc they could also say x or y, have to come back
-         * to this... */
+        // Hmm, I said the the doc they could also say x or y, have to come back
+        // to this...
 
         argc--, argv++;
     }
 
-/* There had better not be anything else on the command line by this point. */
+// There had better not be anything else on the command line by this point.
 
     if ( argc )
     {
@@ -992,14 +992,14 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Now we need to set up the data for contouring. */
+// Now we need to set up the data for contouring.
 
     if ( !strcmp( pltrname, "pltr0" ) )
     {
         pltr  = pltr0;
         zused = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -1015,7 +1015,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         cgrid1.ny = ny;
         zused     = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -1032,10 +1032,10 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( !strcmp( pltrname, "pltr2" ) )
     {
-        /* printf( "plcont, setting up for pltr2\n" ); */
+        // printf( "plcont, setting up for pltr2\n" );
         if ( !wrap )
         {
-            /* printf( "plcont, no wrapping is needed.\n" ); */
+            // printf( "plcont, no wrapping is needed.\n" );
             plAlloc2dGrid( &cgrid2.xg, nx, ny );
             plAlloc2dGrid( &cgrid2.yg, nx, ny );
             cgrid2.nx = nx;
@@ -1083,8 +1083,8 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
                 zwrapped[nx][j]  = zwrapped[0][j];
             }
 
-            /* z not used in executable path after this so free it before
-             * nx value is changed. */
+            // z not used in executable path after this so free it before
+            // nx value is changed.
             plFree2dGrid( z, nx, ny );
 
             nx++;
@@ -1120,8 +1120,8 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
                 zwrapped[i][ny]  = zwrapped[i][0];
             }
 
-            /* z not used in executable path after this so free it before
-             * ny value is changed. */
+            // z not used in executable path after this so free it before
+            // ny value is changed.
             plFree2dGrid( z, nx, ny );
 
             ny++;
@@ -1146,39 +1146,39 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     }
     if ( !arg3_is_kx )
     {
-        /* default values must be set here since nx, ny can change with wrap. */
+        // default values must be set here since nx, ny can change with wrap.
         kx = 1; lx = nx;
         ky = 1; ly = ny;
     }
 
-/*    printf( "plcont: nx=%d ny=%d kx=%d lx=%d ky=%d ly=%d\n",
- *          nx, ny, kx, lx, ky, ly );
- *  printf( "plcont: nclev=%d\n", nclev );
- */
+//    printf( "plcont: nx=%d ny=%d kx=%d lx=%d ky=%d ly=%d\n",
+//          nx, ny, kx, lx, ky, ly );
+//  printf( "plcont: nclev=%d\n", nclev );
+//
 
-/* contour the data.*/
+// contour the data.
 
     plcont( zused, nx, ny,
         kx, lx, ky, ly,
         matclev->fdata, nclev,
         pltr, pltr_data );
 
-/* Now free up any space which got allocated for our coordinate trickery. */
+// Now free up any space which got allocated for our coordinate trickery.
 
-/* zused points to either z or zwrapped.  In both cases the allocated size
- * was nx by ny.  Now free the allocated space, and note in the case
- * where zused points to zwrapped, the separate z space has been freed by
- * previous wrap logic. */
+// zused points to either z or zwrapped.  In both cases the allocated size
+// was nx by ny.  Now free the allocated space, and note in the case
+// where zused points to zwrapped, the separate z space has been freed by
+// previous wrap logic.
     plFree2dGrid( zused, nx, ny );
 
     if ( pltr == pltr1 )
     {
-        /* Hmm, actually, nothing to do here currently, since we just used the
-         * Tcl Matrix data directly, rather than allocating private space. */
+        // Hmm, actually, nothing to do here currently, since we just used the
+        // Tcl Matrix data directly, rather than allocating private space.
     }
     else if ( pltr == pltr2 )
     {
-        /* printf( "plcont, freeing space for grids used in pltr2\n" ); */
+        // printf( "plcont, freeing space for grids used in pltr2\n" );
         plFree2dGrid( cgrid2.xg, nx, ny );
         plFree2dGrid( cgrid2.yg, nx, ny );
     }
@@ -1187,9 +1187,9 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*---------------------------------------------------------------------------*\
- * plvect implementation (based on plcont above)
- \*---------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plvect implementation (based on plcont above)
+//--------------------------------------------------------------------------
 static int
 plvectCmd( ClientData clientData, Tcl_Interp *interp,
            int argc, const char *argv[] )
@@ -1232,8 +1232,8 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         tclmateval_modx = nx;
         tclmateval_mody = ny;
 
-        /* convert matu to 2d-array so can use standard wrap approach
-         * from now on in this code. */
+        // convert matu to 2d-array so can use standard wrap approach
+        // from now on in this code.
         plAlloc2dGrid( &u, nx, ny );
         for ( i = 0; i < nx; i++ )
         {
@@ -1260,8 +1260,8 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         tclmateval_modx = nx;
         tclmateval_mody = ny;
 
-        /* convert matv to 2d-array so can use standard wrap approach
-         * from now on in this code. */
+        // convert matv to 2d-array so can use standard wrap approach
+        // from now on in this code.
         plAlloc2dGrid( &v, nx, ny );
         for ( i = 0; i < nx; i++ )
         {
@@ -1274,7 +1274,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
     argc -= 3, argv += 3;
 
-/* The next argument has to be scaling */
+// The next argument has to be scaling
 
     if ( argc < 1 )
     {
@@ -1285,11 +1285,11 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
     scaling = atof( argv[0] );
     argc--, argv++;
 
-/* Now handle trailing optional parameters, if any */
+// Now handle trailing optional parameters, if any
 
     if ( argc >= 3 )
     {
-        /* There is a pltr spec, parse it. */
+        // There is a pltr spec, parse it.
         pltrname = argv[0];
         mattrx   = Tcl_GetMatrixPtr( interp, argv[1] );
         if ( mattrx == NULL )
@@ -1303,16 +1303,16 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc )
     {
-        /* There is a wrap spec, get it. */
+        // There is a wrap spec, get it.
         wrap = atoi( argv[0] );
 
-        /* Hmm, I said the the doc they could also say x or y, have to come back
-         * to this... */
+        // Hmm, I said the the doc they could also say x or y, have to come back
+        // to this...
 
         argc--, argv++;
     }
 
-/* There had better not be anything else on the command line by this point. */
+// There had better not be anything else on the command line by this point.
 
     if ( argc )
     {
@@ -1320,7 +1320,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Now we need to set up the data for contouring. */
+// Now we need to set up the data for contouring.
 
     if ( !strcmp( pltrname, "pltr0" ) )
     {
@@ -1328,7 +1328,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         uused = u;
         vused = v;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -1345,7 +1345,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         uused     = u;
         vused     = v;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -1362,10 +1362,10 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( !strcmp( pltrname, "pltr2" ) )
     {
-        /* printf( "plvect, setting up for pltr2\n" ); */
+        // printf( "plvect, setting up for pltr2\n" );
         if ( !wrap )
         {
-            /* printf( "plvect, no wrapping is needed.\n" ); */
+            // printf( "plvect, no wrapping is needed.\n" );
             plAlloc2dGrid( &cgrid2.xg, nx, ny );
             plAlloc2dGrid( &cgrid2.yg, nx, ny );
             cgrid2.nx = nx;
@@ -1422,8 +1422,8 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
                 vwrapped[nx][j]  = vwrapped[0][j];
             }
 
-            /* u and v not used in executable path after this so free it
-             * before nx value is changed. */
+            // u and v not used in executable path after this so free it
+            // before nx value is changed.
             plFree2dGrid( u, nx, ny );
             plFree2dGrid( v, nx, ny );
             nx++;
@@ -1463,8 +1463,8 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
                 vwrapped[i][ny]  = vwrapped[i][0];
             }
 
-            /* u and v not used in executable path after this so free it
-             * before ny value is changed. */
+            // u and v not used in executable path after this so free it
+            // before ny value is changed.
             plFree2dGrid( u, nx, ny );
             plFree2dGrid( v, nx, ny );
 
@@ -1490,27 +1490,27 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
     }
 
 
-/* plot the vector data.*/
+// plot the vector data.
 
     plvect( uused, vused, nx, ny,
         scaling, pltr, pltr_data );
-/* Now free up any space which got allocated for our coordinate trickery. */
+// Now free up any space which got allocated for our coordinate trickery.
 
-/* uused points to either u or uwrapped.  In both cases the allocated size
- * was nx by ny.  Now free the allocated space, and note in the case
- * where uused points to uwrapped, the separate u space has been freed by
- * previous wrap logic. */
+// uused points to either u or uwrapped.  In both cases the allocated size
+// was nx by ny.  Now free the allocated space, and note in the case
+// where uused points to uwrapped, the separate u space has been freed by
+// previous wrap logic.
     plFree2dGrid( uused, nx, ny );
     plFree2dGrid( vused, nx, ny );
 
     if ( pltr == pltr1 )
     {
-        /* Hmm, actually, nothing to do here currently, since we just used the
-         * Tcl Matrix data directly, rather than allocating private space. */
+        // Hmm, actually, nothing to do here currently, since we just used the
+        // Tcl Matrix data directly, rather than allocating private space.
     }
     else if ( pltr == pltr2 )
     {
-        /* printf( "plvect, freeing space for grids used in pltr2\n" ); */
+        // printf( "plvect, freeing space for grids used in pltr2\n" );
         plFree2dGrid( cgrid2.xg, nx, ny );
         plFree2dGrid( cgrid2.yg, nx, ny );
     }
@@ -1519,21 +1519,21 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/* ------------------------------------------------------------------------*\
- *
- * plmeshCmd
- *
- * Processes plmesh Tcl command.
- *
- * We support 3 different invocation forms:
- * 1)	plmesh x y z nx ny opt
- * 2)	plmesh x y z opt
- * 3)	plmesh z opt
- *
- * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nx and
- * ny from the input data, and in form 3 we inver nx and ny, and also take
- * the x and y arrays to just be integral spacing.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//
+// plmeshCmd
+//
+// Processes plmesh Tcl command.
+//
+// We support 3 different invocation forms:
+// 1)	plmesh x y z nx ny opt
+// 2)	plmesh x y z opt
+// 3)	plmesh z opt
+//
+// Form 1) is an exact mirror of the usual C API.  In form 2) we infer nx and
+// ny from the input data, and in form 3 we inver nx and ny, and also take
+// the x and y arrays to just be integral spacing.
+//--------------------------------------------------------------------------
 
 static int
 plmeshCmd( ClientData clientData, Tcl_Interp *interp,
@@ -1559,7 +1559,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -1597,7 +1597,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -1647,7 +1647,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
     {
         free( z );
     }
-    else                        /* argc == 3 */
+    else                        // argc == 3
     {
     }
 
@@ -1655,23 +1655,23 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plmeshcCmd
- *
- * Processes plmeshc Tcl command.
- *
- * We support 5 different invocation forms:
- * 1)	plmeshc x y z nx ny opt clevel nlevel
- * 2)	plmeshc x y z nx ny opt clevel
- * 3)	plmeshc x y z nx ny opt
- * 4)	plmeshc x y z opt
- * 5)	plmeshc z opt
- *
- * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
- * In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
- * ny from the input data, and in form 5 we infer nx and ny, and also take
- * the x and y arrays to just be integral spacing.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plmeshcCmd
+//
+// Processes plmeshc Tcl command.
+//
+// We support 5 different invocation forms:
+// 1)	plmeshc x y z nx ny opt clevel nlevel
+// 2)	plmeshc x y z nx ny opt clevel
+// 3)	plmeshc x y z nx ny opt
+// 4)	plmeshc x y z opt
+// 5)	plmeshc z opt
+//
+// Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
+// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
+// ny from the input data, and in form 5 we infer nx and ny, and also take
+// the x and y arrays to just be integral spacing.
+//--------------------------------------------------------------------------
 
 static int
 plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
@@ -1700,7 +1700,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         matlev = Tcl_GetMatrixPtr( interp, argv[7] );
         if ( matlev == NULL )
@@ -1748,7 +1748,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
         matlev = Tcl_GetMatrixPtr( interp, argv[7] );
         if ( matlev == NULL )
             return TCL_ERROR;
@@ -1797,7 +1797,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -1836,7 +1836,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -1886,7 +1886,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
     {
         free( z );
     }
-    else                        /* argc == 3 */
+    else                        // argc == 3
     {
     }
 
@@ -1894,20 +1894,20 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plot3dCmd
- *
- * Processes plot3d Tcl command.
- *
- * We support 3 different invocation forms:
- * 1)	plot3d x y z nx ny opt side
- * 2)	plot3d x y z opt side
- * 3)	plot3d z opt side
- *
- * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nx and
- * ny from the input data, and in form 3 we inver nx and ny, and also take
- * the x and y arrays to just be integral spacing.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plot3dCmd
+//
+// Processes plot3d Tcl command.
+//
+// We support 3 different invocation forms:
+// 1)	plot3d x y z nx ny opt side
+// 2)	plot3d x y z opt side
+// 3)	plot3d z opt side
+//
+// Form 1) is an exact mirror of the usual C API.  In form 2) we infer nx and
+// ny from the input data, and in form 3 we inver nx and ny, and also take
+// the x and y arrays to just be integral spacing.
+//--------------------------------------------------------------------------
 
 static int
 plot3dCmd( ClientData clientData, Tcl_Interp *interp,
@@ -1934,7 +1934,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -1973,7 +1973,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2023,7 +2023,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
     {
         free( z );
     }
-    else                        /* argc == 4 */
+    else                        // argc == 4
     {
     }
 
@@ -2031,23 +2031,23 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plot3dcCmd
- *
- * Processes plot3dc Tcl command.
- *
- * We support 5 different invocation forms:
- * 1)	plot3dc x y z nx ny opt clevel nlevel
- * 2)	plot3dc x y z nx ny opt clevel
- * 3)	plot3dc x y z nx ny opt
- * 4)	plot3dc x y z opt
- * 5)	plot3dc z opt
- *
- * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
- * In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
- * ny from the input data, and in form 5 we infer nx and ny, and also take
- * the x and y arrays to just be integral spacing.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plot3dcCmd
+//
+// Processes plot3dc Tcl command.
+//
+// We support 5 different invocation forms:
+// 1)	plot3dc x y z nx ny opt clevel nlevel
+// 2)	plot3dc x y z nx ny opt clevel
+// 3)	plot3dc x y z nx ny opt
+// 4)	plot3dc x y z opt
+// 5)	plot3dc z opt
+//
+// Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
+// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
+// ny from the input data, and in form 5 we infer nx and ny, and also take
+// the x and y arrays to just be integral spacing.
+//--------------------------------------------------------------------------
 
 static int
 plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
@@ -2076,7 +2076,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         matlev = Tcl_GetMatrixPtr( interp, argv[7] );
         if ( matlev == NULL )
@@ -2124,7 +2124,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
         matlev = Tcl_GetMatrixPtr( interp, argv[7] );
         if ( matlev == NULL )
             return TCL_ERROR;
@@ -2173,7 +2173,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2212,7 +2212,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2262,7 +2262,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
     {
         free( z );
     }
-    else                        /* argc == 3 */
+    else                        // argc == 3
     {
     }
 
@@ -2270,23 +2270,23 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plsurf3dCmd
- *
- * Processes plsurf3d Tcl command.
- *
- * We support 5 different invocation forms:
- * 1)	plsurf3d x y z nx ny opt clevel nlevel
- * 2)	plsurf3d x y z nx ny opt clevel
- * 3)	plsurf3d x y z nx ny opt
- * 4)	plsurf3d x y z opt
- * 5)	plsurf3d z opt
- *
- * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
- * In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
- * ny from the input data, and in form 5 we infer nx and ny, and also take
- * the x and y arrays to just be integral spacing.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plsurf3dCmd
+//
+// Processes plsurf3d Tcl command.
+//
+// We support 5 different invocation forms:
+// 1)	plsurf3d x y z nx ny opt clevel nlevel
+// 2)	plsurf3d x y z nx ny opt clevel
+// 3)	plsurf3d x y z nx ny opt
+// 4)	plsurf3d x y z opt
+// 5)	plsurf3d z opt
+//
+// Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
+// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
+// ny from the input data, and in form 5 we infer nx and ny, and also take
+// the x and y arrays to just be integral spacing.
+//--------------------------------------------------------------------------
 
 static int
 plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
@@ -2315,7 +2315,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         matlev = Tcl_GetMatrixPtr( interp, argv[7] );
         if ( matlev == NULL )
@@ -2363,7 +2363,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
         matlev = Tcl_GetMatrixPtr( interp, argv[7] );
         if ( matlev == NULL )
             return TCL_ERROR;
@@ -2412,7 +2412,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2451,7 +2451,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         matz = Tcl_GetMatrixPtr( interp, argv[3] );
         if ( matz == NULL )
             return TCL_ERROR;
-        matPtr = matz;          /* For dumb indexer macro, grrrr. */
+        matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2501,7 +2501,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
     {
         free( z );
     }
-    else                        /* argc == 3 */
+    else                        // argc == 3
     {
     }
 
@@ -2509,11 +2509,11 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plranddCmd
- *
- * Return a random number
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plranddCmd
+//
+// Return a random number
+//--------------------------------------------------------------------------
 
 static int
 plranddCmd( ClientData clientData, Tcl_Interp *interp,
@@ -2532,11 +2532,11 @@ plranddCmd( ClientData clientData, Tcl_Interp *interp,
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plsetoptCmd
- *
- * Processes plsetopt Tcl command.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plsetoptCmd
+//
+// Processes plsetopt Tcl command.
+//--------------------------------------------------------------------------
 
 static int
 plsetoptCmd( ClientData clientData, Tcl_Interp *interp,
@@ -2555,28 +2555,30 @@ plsetoptCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plshadeCmd
- *
- * Processes plshade Tcl command.
- * C version takes:
- *    data, nx, ny, defined,
- *    xmin, xmax, ymin, ymax,
- *    sh_min, sh_max, sh_cmap, sh_color, sh_width,
- *    min_col, min_wid, max_col, max_wid,
- *    plfill, rect, pltr, pltr_data
- *
- * We will be getting data through a 2-d Matrix, which carries along
- * nx and ny, so no need for those.  Toss defined since it's not supported
- * anyway.  Toss plfill since it is the only valid choice.  Take an optional
- * pltr spec just as for plcont or an alternative of NULL pltr, and add a
- * wrapping specifier, as in plcont.  So the new command looks like:
- *
- *      plshade z xmin xmax ymin ymax \
- *          sh_min sh_max sh_cmap sh_color sh_width \
- *          min_col min_wid max_col max_wid \
- *          rect [[pltr x y] | NULL ] [wrap]
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plshadeCmd
+//
+// Processes plshade Tcl command.
+// C version takes:
+//    data, nx, ny, defined,
+//    xmin, xmax, ymin, ymax,
+//    sh_min, sh_max, sh_cmap, sh_color, sh_width,
+//    min_col, min_wid, max_col, max_wid,
+//    plfill, rect, pltr, pltr_data
+//
+// We will be getting data through a 2-d Matrix, which carries along
+// nx and ny, so no need for those.  Toss defined since it's not supported
+// anyway.  Toss plfill since it is the only valid choice.  Take an optional
+// pltr spec just as for plcont or an alternative of NULL pltr, and add a
+// wrapping specifier, as in plcont.  So the new command looks like:
+//
+// *INDENT-OFF*
+//      plshade z xmin xmax ymin ymax \
+//          sh_min sh_max sh_cmap sh_color sh_width \
+//          min_col min_wid max_col max_wid \
+//          rect [[pltr x y] | NULL ] [wrap]
+// *INDENT-ON*
+//--------------------------------------------------------------------------
 
 static int
 plshadeCmd( ClientData clientData, Tcl_Interp *interp,
@@ -2619,8 +2621,8 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     tclmateval_modx = nx;
     tclmateval_mody = ny;
 
-    /* convert matz to 2d-array so can use standard wrap approach
-     * from now on in this code. */
+    // convert matz to 2d-array so can use standard wrap approach
+    // from now on in this code.
     plAlloc2dGrid( &z, nx, ny );
     for ( i = 0; i < nx; i++ )
     {
@@ -2677,15 +2679,15 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Figure out which coordinate transformation model is being used, and setup
- * accordingly. */
+// Figure out which coordinate transformation model is being used, and setup
+// accordingly.
 
     if ( !strcmp( pltrname, "NULL" ) )
     {
         pltr  = NULL;
         zused = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -2697,7 +2699,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         pltr  = pltr0;
         zused = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -2713,7 +2715,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         cgrid1.ny = ny;
         zused     = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -2730,10 +2732,10 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( !strcmp( pltrname, "pltr2" ) )
     {
-        /* printf( "plshade, setting up for pltr2\n" ); */
+        // printf( "plshade, setting up for pltr2\n" );
         if ( !wrap )
         {
-            /* printf( "plshade, no wrapping is needed.\n" ); */
+            // printf( "plshade, no wrapping is needed.\n" );
             plAlloc2dGrid( &cgrid2.xg, nx, ny );
             plAlloc2dGrid( &cgrid2.yg, nx, ny );
             cgrid2.nx = nx;
@@ -2781,8 +2783,8 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
                 zwrapped[nx][j]  = zwrapped[0][j];
             }
 
-            /* z not used in executable path after this so free it before
-             * nx value is changed. */
+            // z not used in executable path after this so free it before
+            // nx value is changed.
             plFree2dGrid( z, nx, ny );
 
             nx++;
@@ -2818,8 +2820,8 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
                 zwrapped[i][ny]  = zwrapped[i][0];
             }
 
-            /* z not used in executable path after this so free it before
-             * ny value is changed. */
+            // z not used in executable path after this so free it before
+            // ny value is changed.
             plFree2dGrid( z, nx, ny );
 
             ny++;
@@ -2843,7 +2845,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Now go make the plot. */
+// Now go make the plot.
 
     plshade( zused, nx, ny, NULL,
         xmin, xmax, ymin, ymax,
@@ -2851,22 +2853,22 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         min_col, min_wid, max_col, max_wid,
         plfill, rect, pltr, pltr_data );
 
-/* Now free up any space which got allocated for our coordinate trickery. */
+// Now free up any space which got allocated for our coordinate trickery.
 
-/* zused points to either z or zwrapped.  In both cases the allocated size
- * was nx by ny.  Now free the allocated space, and note in the case
- * where zused points to zwrapped, the separate z space has been freed by
- * previous wrap logic. */
+// zused points to either z or zwrapped.  In both cases the allocated size
+// was nx by ny.  Now free the allocated space, and note in the case
+// where zused points to zwrapped, the separate z space has been freed by
+// previous wrap logic.
     plFree2dGrid( zused, nx, ny );
 
     if ( pltr == pltr1 )
     {
-        /* Hmm, actually, nothing to do here currently, since we just used the
-         * Tcl Matrix data directly, rather than allocating private space. */
+        // Hmm, actually, nothing to do here currently, since we just used the
+        // Tcl Matrix data directly, rather than allocating private space.
     }
     else if ( pltr == pltr2 )
     {
-        /* printf( "plshade, freeing space for grids used in pltr2\n" ); */
+        // printf( "plshade, freeing space for grids used in pltr2\n" );
         plFree2dGrid( cgrid2.xg, nx, ny );
         plFree2dGrid( cgrid2.yg, nx, ny );
     }
@@ -2875,28 +2877,30 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plshadesCmd
- *
- * Processes plshades Tcl command.
- * C version takes:
- *    data, nx, ny, defined,
- *    xmin, xmax, ymin, ymax,
- *    clevel, nlevel, fill_width, cont_color, cont_width,
- *    plfill, rect, pltr, pltr_data
- *
- * We will be getting data through a 2-d Matrix, which carries along
- * nx and ny, so no need for those.  Toss defined since it's not supported
- * anyway.  clevel will be via a 1-d matrix, which carries along nlevel, so
- * no need for that.  Toss plfill since it is the only valid choice.
- * Take an optional pltr spec just as for plcont or an alternative of
- * NULL pltr, and add a wrapping specifier, as in plcont.
- * So the new command looks like:
- *
- *      plshades z xmin xmax ymin ymax \
- *          clevel, fill_width, cont_color, cont_width\
- *          rect [[pltr x y] | NULL] [wrap]
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plshadesCmd
+//
+// Processes plshades Tcl command.
+// C version takes:
+//    data, nx, ny, defined,
+//    xmin, xmax, ymin, ymax,
+//    clevel, nlevel, fill_width, cont_color, cont_width,
+//    plfill, rect, pltr, pltr_data
+//
+// We will be getting data through a 2-d Matrix, which carries along
+// nx and ny, so no need for those.  Toss defined since it's not supported
+// anyway.  clevel will be via a 1-d matrix, which carries along nlevel, so
+// no need for that.  Toss plfill since it is the only valid choice.
+// Take an optional pltr spec just as for plcont or an alternative of
+// NULL pltr, and add a wrapping specifier, as in plcont.
+// So the new command looks like:
+//
+// *INDENT-OFF*
+//      plshades z xmin xmax ymin ymax \
+//          clevel, fill_width, cont_color, cont_width\
+//          rect [[pltr x y] | NULL] [wrap]
+// *INDENT-ON*
+//--------------------------------------------------------------------------
 
 static int
 plshadesCmd( ClientData clientData, Tcl_Interp *interp,
@@ -2938,8 +2942,8 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     tclmateval_modx = nx;
     tclmateval_mody = ny;
 
-    /* convert matz to 2d-array so can use standard wrap approach
-     * from now on in this code. */
+    // convert matz to 2d-array so can use standard wrap approach
+    // from now on in this code.
     plAlloc2dGrid( &z, nx, ny );
     for ( i = 0; i < nx; i++ )
     {
@@ -3001,15 +3005,15 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Figure out which coordinate transformation model is being used, and setup
- * accordingly. */
+// Figure out which coordinate transformation model is being used, and setup
+// accordingly.
 
     if ( !strcmp( pltrname, "NULL" ) )
     {
         pltr  = NULL;
         zused = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -3021,7 +3025,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         pltr  = pltr0;
         zused = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -3037,7 +3041,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         cgrid1.ny = ny;
         zused     = z;
 
-        /* wrapping is only supported for pltr2. */
+        // wrapping is only supported for pltr2.
         if ( wrap )
         {
             interp->result = "Must use pltr2 if want wrapping.";
@@ -3054,10 +3058,10 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( !strcmp( pltrname, "pltr2" ) )
     {
-        /* printf( "plshades, setting up for pltr2\n" ); */
+        // printf( "plshades, setting up for pltr2\n" );
         if ( !wrap )
         {
-            /* printf( "plshades, no wrapping is needed.\n" ); */
+            // printf( "plshades, no wrapping is needed.\n" );
             plAlloc2dGrid( &cgrid2.xg, nx, ny );
             plAlloc2dGrid( &cgrid2.yg, nx, ny );
             cgrid2.nx = nx;
@@ -3105,8 +3109,8 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
                 zwrapped[nx][j]  = zwrapped[0][j];
             }
 
-            /* z not used in executable path after this so free it before
-             * nx value is changed. */
+            // z not used in executable path after this so free it before
+            // nx value is changed.
             plFree2dGrid( z, nx, ny );
 
             nx++;
@@ -3142,8 +3146,8 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
                 zwrapped[i][ny]  = zwrapped[i][0];
             }
 
-            /* z not used in executable path after this so free it before
-             * ny value is changed. */
+            // z not used in executable path after this so free it before
+            // ny value is changed.
             plFree2dGrid( z, nx, ny );
 
             ny++;
@@ -3167,29 +3171,29 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-/* Now go make the plot. */
+// Now go make the plot.
 
     plshades( zused, nx, ny, NULL,
         xmin, xmax, ymin, ymax,
         matclevel->fdata, nlevel, fill_width, cont_color, cont_width,
         plfill, rect, pltr, pltr_data );
 
-/* Now free up any space which got allocated for our coordinate trickery. */
+// Now free up any space which got allocated for our coordinate trickery.
 
-/* zused points to either z or zwrapped.  In both cases the allocated size
- * was nx by ny.  Now free the allocated space, and note in the case
- * where zused points to zwrapped, the separate z space has been freed by
- * previous wrap logic. */
+// zused points to either z or zwrapped.  In both cases the allocated size
+// was nx by ny.  Now free the allocated space, and note in the case
+// where zused points to zwrapped, the separate z space has been freed by
+// previous wrap logic.
     plFree2dGrid( zused, nx, ny );
 
     if ( pltr == pltr1 )
     {
-        /* Hmm, actually, nothing to do here currently, since we just used the
-         * Tcl Matrix data directly, rather than allocating private space. */
+        // Hmm, actually, nothing to do here currently, since we just used the
+        // Tcl Matrix data directly, rather than allocating private space.
     }
     else if ( pltr == pltr2 )
     {
-        /* printf( "plshades, freeing space for grids used in pltr2\n" ); */
+        // printf( "plshades, freeing space for grids used in pltr2\n" );
         plFree2dGrid( cgrid2.xg, nx, ny );
         plFree2dGrid( cgrid2.yg, nx, ny );
     }
@@ -3198,17 +3202,17 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * mapform
- *
- * Defines our coordinate transformation.
- * x[], y[] are the coordinates to be plotted.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// mapform
+//
+// Defines our coordinate transformation.
+// x[], y[] are the coordinates to be plotted.
+//--------------------------------------------------------------------------
 
-static const char *transform_name; /* Name of the procedure that transforms the
-                                      * coordinates */
-static Tcl_Interp *tcl_interp;     /* Pointer to the current interp */
-static int        return_code;     /* Saved return code */
+static const char *transform_name; // Name of the procedure that transforms the
+                                   // coordinates
+static Tcl_Interp *tcl_interp;     // Pointer to the current interp
+static int        return_code;     // Saved return code
 
 void
 mapform( PLINT n, PLFLT *x, PLFLT *y )
@@ -3219,7 +3223,7 @@ mapform( PLINT n, PLFLT *x, PLFLT *y )
 
     cmd = (char *) malloc( strlen( transform_name ) + 40 );
 
-    /* Build the (new) matrix commands and fill the matrices */
+    // Build the (new) matrix commands and fill the matrices
     sprintf( cmd, "matrix %cx f %d", (char) 1, n );
     if ( Tcl_Eval( tcl_interp, cmd ) != TCL_OK )
     {
@@ -3241,7 +3245,7 @@ mapform( PLINT n, PLFLT *x, PLFLT *y )
     yPtr = Tcl_GetMatrixPtr( tcl_interp, cmd );
 
     if ( xPtr == NULL || yPtr == NULL )
-        return;                                 /* Impossible, but still */
+        return;                                 // Impossible, but still
 
     for ( i = 0; i < n; i++ )
     {
@@ -3249,7 +3253,7 @@ mapform( PLINT n, PLFLT *x, PLFLT *y )
         yPtr->fdata[i] = y[i];
     }
 
-    /* Now call the Tcl procedure to do the work */
+    // Now call the Tcl procedure to do the work
     sprintf( cmd, "%s %d %cx %cy", transform_name, n, (char) 1, (char) 1 );
     return_code = Tcl_Eval( tcl_interp, cmd );
     if ( return_code != TCL_OK )
@@ -3258,32 +3262,32 @@ mapform( PLINT n, PLFLT *x, PLFLT *y )
         return;
     }
 
-    /* Don't forget to copy the results back into the original arrays
-     */
+    // Don't forget to copy the results back into the original arrays
+    //
     for ( i = 0; i < n; i++ )
     {
         x[i] = xPtr->fdata[i];
         y[i] = yPtr->fdata[i];
     }
 
-    /* Clean up, otherwise the next call will fail - [matrix] does not
-     * overwrite existing commands
-     */
+    // Clean up, otherwise the next call will fail - [matrix] does not
+    // overwrite existing commands
+    //
     sprintf( cmd, "rename %cx {}; rename %cy {}", (char) 1, (char) 1 );
     return_code = Tcl_Eval( tcl_interp, cmd );
 
     free( cmd );
 }
 
-/*--------------------------------------------------------------------------*\
- * plmapCmd
- *
- * Processes plmap Tcl command.
- * C version takes:
- *    string, minlong, maxlong, minlat, maxlat
- *
- *  e.g. .p cmd plmap globe 0 360 -90 90
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plmapCmd
+//
+// Processes plmap Tcl command.
+// C version takes:
+//    string, minlong, maxlong, minlat, maxlat
+//
+//  e.g. .p cmd plmap globe 0 360 -90 90
+//--------------------------------------------------------------------------
 
 static int
 plmapCmd( ClientData clientData, Tcl_Interp *interp,
@@ -3334,7 +3338,7 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else
     {
-        /* No transformation given */
+        // No transformation given
         plmap( NULL, argv[idxname], minlong, maxlong, minlat, maxlat );
     }
 
@@ -3342,15 +3346,15 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
     return return_code;
 }
 
-/*--------------------------------------------------------------------------*\
- * plmeridiansCmd
- *
- * Processes plmeridians Tcl command.
- * C version takes:
- *    dlong, dlat, minlong, maxlong, minlat, maxlat
- *
- *  e.g. .p cmd plmeridians 1 ...
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plmeridiansCmd
+//
+// Processes plmeridians Tcl command.
+// C version takes:
+//    dlong, dlat, minlong, maxlong, minlat, maxlat
+//
+//  e.g. .p cmd plmeridians 1 ...
+//--------------------------------------------------------------------------
 
 static int
 plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
@@ -3443,9 +3447,9 @@ Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
         "_##_y", NULL, objy, 0 );
     Tcl_DecrRefCount( objy );
 
-/*     printf( "objx=%x objy=%x\n", objx, objy ); */
+//     printf( "objx=%x objy=%x\n", objx, objy );
 
-/*     printf( "Evaluating code: %s\n", tcl_xform_code ); */
+//     printf( "Evaluating code: %s\n", tcl_xform_code );
 
 // Call identified Tcl proc.  Forget data, Tcl can use namespaces and custom
 // procs to manage transmission of the custom client data.
@@ -3476,11 +3480,11 @@ Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
     *yt = dy;
 }
 
-/*--------------------------------------------------------------------------*\
- * plstransform
- *
- * Implement Tcl-side global coordinate transformation setting/restoring API.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plstransform
+//
+// Implement Tcl-side global coordinate transformation setting/restoring API.
+//--------------------------------------------------------------------------
 
 static int
 plstransformCmd( ClientData clientData, Tcl_Interp *interp,
@@ -3516,11 +3520,11 @@ plstransformCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plgriddataCmd
- *
- * Processes plgriddata Tcl command.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plgriddataCmd
+//
+// Processes plgriddata Tcl command.
+//--------------------------------------------------------------------------
 static int
 plgriddataCmd( ClientData clientData, Tcl_Interp *interp,
                int argc, const char *argv[] )
@@ -3595,15 +3599,15 @@ two-dimensional matrix - ", argv[6], (char *) NULL );
     nx  = zvalue->n[0];
     ny  = zvalue->n[1];
 
-    /* convert zvalue to 2d-array so can use standard wrap approach
-     * from now on in this code. */
+    // convert zvalue to 2d-array so can use standard wrap approach
+    // from now on in this code.
     plAlloc2dGrid( &z, nx, ny );
 
-    /* Interpolate the data */
+    // Interpolate the data
     plgriddata( arrx->fdata, arry->fdata, arrz->fdata, pts,
         xcoord->fdata, nx, ycoord->fdata, ny, z, alg, optalg );
 
-    /* Copy the result into the matrix */
+    // Copy the result into the matrix
     for ( i = 0; i < nx; i++ )
     {
         for ( j = 0; j < ny; j++ )
@@ -3616,11 +3620,11 @@ two-dimensional matrix - ", argv[6], (char *) NULL );
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plimageCmd
- *
- * Processes plimage Tcl command.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plimageCmd
+//
+// Processes plimage Tcl command.
+//--------------------------------------------------------------------------
 static int
 plimageCmd( ClientData clientData, Tcl_Interp *interp,
             int argc, const char *argv[] )
@@ -3672,14 +3676,14 @@ two-dimensional matrix - ", argv[1], (char *) NULL );
             pidata[i][j] = zvalue->fdata[j + i * ny];
         }
     }
-    /*
-     * fprintf(stderr,"nx, ny: %d %d\n", nx, ny);
-     * fprintf(stderr,"xmin, xmax: %.17g %.17g\n", xmin, xmax);
-     * fprintf(stderr,"ymin, ymax: %.17g %.17g\n", ymin, ymax);
-     * fprintf(stderr,"zmin, zmax: %.17g %.17g\n", zmin, zmax);
-     * fprintf(stderr,"Dxmin, Dxmax: %.17g %.17g\n", Dxmin, Dxmax);
-     * fprintf(stderr,"Dymin, Dymax: %.17g %.17g\n", Dymin, Dymax);
-     */
+    //
+    // fprintf(stderr,"nx, ny: %d %d\n", nx, ny);
+    // fprintf(stderr,"xmin, xmax: %.17g %.17g\n", xmin, xmax);
+    // fprintf(stderr,"ymin, ymax: %.17g %.17g\n", ymin, ymax);
+    // fprintf(stderr,"zmin, zmax: %.17g %.17g\n", zmin, zmax);
+    // fprintf(stderr,"Dxmin, Dxmax: %.17g %.17g\n", Dxmin, Dxmax);
+    // fprintf(stderr,"Dymin, Dymax: %.17g %.17g\n", Dymin, Dymax);
+    //
 
     c_plimage( pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
         Dxmin, Dxmax, Dymin, Dymax );
@@ -3689,14 +3693,14 @@ two-dimensional matrix - ", argv[1], (char *) NULL );
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plimagefrCmd
- *
- * Processes plimagefr Tcl command.
- *
- * Note:
- * Very basic! No user-defined interpolation routines
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plimagefrCmd
+//
+// Processes plimagefr Tcl command.
+//
+// Note:
+// Very basic! No user-defined interpolation routines
+//--------------------------------------------------------------------------
 static int
 plimagefrCmd( ClientData clientData, Tcl_Interp *interp,
               int argc, const char *argv[] )
@@ -3806,11 +3810,11 @@ two-dimensional matrix - ", argv[11], (char *) NULL );
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plstripcCmd
- *
- * Processes plstripc Tcl command.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plstripcCmd
+//
+// Processes plstripc Tcl command.
+//--------------------------------------------------------------------------
 static int
 plstripcCmd( ClientData clientData, Tcl_Interp *interp,
              int argc, const char *argv[] )
@@ -3912,14 +3916,14 @@ list of at least four items - ", argv[17], (char *) NULL );
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * labelform
- *
- * Call the Tcl custom label function.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// labelform
+//
+// Call the Tcl custom label function.
+//--------------------------------------------------------------------------
 
-static Tcl_Obj *label_objs[4] = { NULL, NULL, NULL, NULL };   /* Arguments for the Tcl procedure
-                                                               * that handles the custom labels */
+static Tcl_Obj *label_objs[4] = { NULL, NULL, NULL, NULL };   // Arguments for the Tcl procedure
+                                                              // that handles the custom labels
 
 void
 labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer data )
@@ -3932,7 +3936,7 @@ labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer
     Tcl_IncrRefCount( label_objs[1] );
     Tcl_IncrRefCount( label_objs[2] );
 
-    /* Call the Tcl procedure and store the result */
+    // Call the Tcl procedure and store the result
     objc = 3;
     if ( label_objs[3] != NULL )
     {
@@ -3954,14 +3958,14 @@ labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer
     Tcl_DecrRefCount( label_objs[2] );
 }
 
-/*--------------------------------------------------------------------------*\
- * plslabelfuncCmd
- *
- * Processes plslabelfunc Tcl command.
- * C version takes:
- *    function, data
- * (data argument is optional)
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plslabelfuncCmd
+//
+// Processes plslabelfunc Tcl command.
+// C version takes:
+//    function, data
+// (data argument is optional)
+//--------------------------------------------------------------------------
 
 static int
 plslabelfuncCmd( ClientData clientData, Tcl_Interp *interp,
@@ -4000,7 +4004,7 @@ plslabelfuncCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc == 3 )
     {
-        label_objs[3] = Tcl_NewStringObj( argv[2], strlen( argv[2] ) ); /* Should change with Tcl_Obj interface */
+        label_objs[3] = Tcl_NewStringObj( argv[2], strlen( argv[2] ) ); // Should change with Tcl_Obj interface
         Tcl_IncrRefCount( label_objs[3] );
     }
     else

@@ -1,23 +1,23 @@
-/*
- * Copyright 2007, 2008, 2009  Hezekiah M. Carty
- *
- * This file is part of PLplot.
- *
- * PLplot is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
- */
+//
+// Copyright 2007, 2008, 2009  Hezekiah M. Carty
+//
+// This file is part of PLplot.
+//
+// PLplot is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
+//
 
-/* The "usual" OCaml includes */
+// The "usual" OCaml includes
 #include <caml/alloc.h>
 #include <caml/callback.h>
 #include <caml/fail.h>
@@ -48,11 +48,11 @@ typedef void ( *ML_MAPFORM_FUNC )( PLINT, PLFLT*, PLFLT* );
 typedef void ( *ML_LABEL_FUNC )( PLINT, PLFLT, char*, PLINT, PLPointer );
 typedef PLINT ( *ML_VARIANT_FUNC )( PLINT );
 
-/*
- *
- * CALLBACK WRAPPERS
- *
- */
+//
+//
+// CALLBACK WRAPPERS
+//
+//
 
 // A simple routine to wrap a properly registered OCaml callback in a form
 // usable by PLPlot routines.  If an appropriate callback is not registered
@@ -363,19 +363,19 @@ value ml_plstransform( value unit )
     CAMLreturn( Val_unit );
 }
 
-/*
- *
- * CONTOURING, SHADING and IMAGE FUNCTIONS
- *
- */
+//
+//
+// CONTOURING, SHADING and IMAGE FUNCTIONS
+//
+//
 
-/*
- * void
- * c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
- * PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
- * void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- * PLPointer pltr_data);
- */
+//
+// void
+// c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+// PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+// void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+// PLPointer pltr_data);
+//
 void ml_plcont( PLFLT **f, PLINT nx, PLINT ny,
                 PLINT kx, PLINT lx, PLINT ky, PLINT ly,
                 PLFLT *clevel, PLINT nlevel )
@@ -395,18 +395,18 @@ void ml_plcont( PLFLT **f, PLINT nx, PLINT ny,
     }
 }
 
-/*
- * void
- * c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
- * PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
- * PLFLT shade_min, PLFLT shade_max,
- * PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
- * PLINT min_color, PLINT min_width,
- * PLINT max_color, PLINT max_width,
- * void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
- * void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- * PLPointer pltr_data);
- */
+//
+// void
+// c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
+// PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+// PLFLT shade_min, PLFLT shade_max,
+// PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+// PLINT min_color, PLINT min_width,
+// PLINT max_color, PLINT max_width,
+// void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
+// void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+// PLPointer pltr_data);
+//
 void ml_plshade( PLFLT **a, PLINT nx, PLINT ny,
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
@@ -424,29 +424,29 @@ void ml_plshade( PLFLT **a, PLINT nx, PLINT ny,
         get_ml_plotter_func(), (void*) 1 );
 }
 
-/*
- * void
- * c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
- * PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
- * PLFLT shade_min, PLFLT shade_max,
- * PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
- * PLINT min_color, PLINT min_width,
- * PLINT max_color, PLINT max_width,
- * void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
- * void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- * PLPointer pltr_data);
- */
+//
+// void
+// c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
+// PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+// PLFLT shade_min, PLFLT shade_max,
+// PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+// PLINT min_color, PLINT min_width,
+// PLINT max_color, PLINT max_width,
+// void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
+// void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+// PLPointer pltr_data);
+//
 
-/*
- * void
- * c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
- * PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
- * PLFLT *clevel, PLINT nlevel, PLINT fill_width,
- * PLINT cont_color, PLINT cont_width,
- * void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
- * void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- * PLPointer pltr_data);
- */
+//
+// void
+// c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
+// PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+// PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+// PLINT cont_color, PLINT cont_width,
+// void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
+// void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+// PLPointer pltr_data);
+//
 void ml_plshades( PLFLT **a, PLINT nx, PLINT ny,
                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
@@ -463,14 +463,14 @@ void ml_plshades( PLFLT **a, PLINT nx, PLINT ny,
         (void*) 1 );
 }
 
-/*
- * void
- * c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
- *      PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
- *      PLFLT valuemin, PLFLT valuemax,
- *      void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- *      PLPointer pltr_data);
- */
+//
+// void
+// c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
+//      PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+//      PLFLT valuemin, PLFLT valuemax,
+//      void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+//      PLPointer pltr_data);
+//
 void ml_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
                    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                    PLFLT zmin, PLFLT zmax,
@@ -484,12 +484,12 @@ void ml_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
         (void*) 1 );
 }
 
-/*
- * void
- * c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
- * void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- *      PLPointer pltr_data);
- */
+//
+// void
+// c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+// void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+//      PLPointer pltr_data);
+//
 void ml_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale )
 {
     c_plvect( u, v, nx, ny, scale,
@@ -497,11 +497,11 @@ void ml_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale )
         (void*) 1 );
 }
 
-/*
- * void
- * c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
- *       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
- */
+//
+// void
+// c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
+//       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+//
 void ml_plmap( const char *type,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
@@ -509,12 +509,12 @@ void ml_plmap( const char *type,
         type, minlong, maxlong, minlat, maxlat );
 }
 
-/*
- * void
- * c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
- *             PLFLT dlong, PLFLT dlat,
- *             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
- */
+//
+// void
+// c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
+//             PLFLT dlong, PLFLT dlat,
+//             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+//
 void ml_plmeridians( PLFLT dlong, PLFLT dlat,
                      PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
@@ -522,12 +522,12 @@ void ml_plmeridians( PLFLT dlong, PLFLT dlat,
         dlong, dlat, minlong, maxlong, minlat, maxlat );
 }
 
-/*
- * void
- * c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
- *  PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
- *  PLFLT **zg, PLINT type, PLFLT data);
- */
+//
+// void
+// c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
+//  PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
+//  PLFLT **zg, PLINT type, PLFLT data);
+//
 // This one is currently wrapped by hand, as I am not sure how to get camlidl
 // to allocate zg in a way that makes plgriddata happy and doesn't require the
 // user to pre-allocate the space.
@@ -596,10 +596,10 @@ value ml_plgriddata_bytecode( value* argv, int argn )
         argv[5], argv[6] );
 }
 
-/*
- * void
- * c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc);
- */
+//
+// void
+// c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc);
+//
 // plpoly3 is wrapped by hand because draw has a length of (n - 1) and camlidl
 // does not have a way to indicate this automatically.
 void ml_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT ndraw, PLBOOL *draw, PLBOOL ifcc )
@@ -607,7 +607,7 @@ void ml_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT ndraw, PLBOOL *dra
     plpoly3( n, x, y, z, draw, ifcc );
 }
 
-/* Raise Invalid_argument if the given value is <> 0 */
+// Raise Invalid_argument if the given value is <> 0
 void plplot_check_nonzero_result( int result )
 {
     if ( result != 0 )
@@ -619,8 +619,8 @@ void plplot_check_nonzero_result( int result )
     return;
 }
 
-/* Translate the integer version of the OCaml variant to the appropriate
- * PLplot constant. */
+// Translate the integer version of the OCaml variant to the appropriate
+// PLplot constant.
 int translate_parse_option( int parse_option )
 {
     int translated_option;
@@ -825,7 +825,7 @@ value ml_pllegend_byte( value* argv, int argn )
         argv[20], argv[21] );
 }
 
-/* pltr* function implementations */
+// pltr* function implementations
 void ml_pltr0( double x, double y, double* tx, double* ty )
 {
     pltr0( x, y, tx, ty, NULL );
@@ -865,8 +865,8 @@ value ml_pltr2( value xg, value yg, value x, value y )
     double   tx;
     double   ty;
 
-    /* TODO: As of now, you will probably get a segfault of the xg and yg
-     * dimensions don't match up properly. */
+    // TODO: As of now, you will probably get a segfault of the xg and yg
+    // dimensions don't match up properly.
     // Build the grid.
     // Length of "outer" array
     length1 = Wosize_val( xg );
@@ -899,34 +899,34 @@ value ml_pltr2( value xg, value yg, value x, value y )
     CAMLreturn( tx_ty );
 }
 
-/* XXX Non-core functions follow XXX */
-/**
- * The following functions are here for (my?) convenience.  As far as I can
- * tell, they are not defined in the core PLplot library.
- */
+// XXX Non-core functions follow XXX
+//*
+// The following functions are here for (my?) convenience.  As far as I can
+// tell, they are not defined in the core PLplot library.
+//
 
-/* Get the current color map 0 color index */
+// Get the current color map 0 color index
 int plg_current_col0( void )
 {
     return plsc->icol0;
 }
 
-/* Get the current color map 1 color index */
+// Get the current color map 1 color index
 float plg_current_col1( void )
 {
     return plsc->icol1;
 }
 
-/* Get the current pen width. TODO: Remove this, as I think this information
- * can be retrieved from another proper PLplot function. */
+// Get the current pen width. TODO: Remove this, as I think this information
+// can be retrieved from another proper PLplot function.
 int plgwid( void )
 {
     return plsc->width;
 }
 
-/* Get the current character (text) height in mm.  TODO: Remove this, as I
- * think this information can be retrieved from another proper PLplot
- * function */
+// Get the current character (text) height in mm.  TODO: Remove this, as I
+// think this information can be retrieved from another proper PLplot
+// function
 float plgchrht( void )
 {
     return plsc->chrht;

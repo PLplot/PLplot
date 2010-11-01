@@ -1,36 +1,36 @@
-/* $Id$
- *
- *      Contour plotter front-ends for Fortran.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Contour plotter front-ends for Fortran.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plstubs.h"
 
-/*----------------------------------------------------------------------*\
- * pltr0f()
- *
- * Identity transformation for plots from Fortran.
- * Only difference from C-language identity function (pltr0) is that the
- * Fortran paradigm for array index is used, i.e. starting at 1.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// pltr0f()
+//
+// Identity transformation for plots from Fortran.
+// Only difference from C-language identity function (pltr0) is that the
+// Fortran paradigm for array index is used, i.e. starting at 1.
+//--------------------------------------------------------------------------
 
 void
 pltr0f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
@@ -39,20 +39,20 @@ pltr0f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
     *ty = y + 1.0;
 }
 
-/*----------------------------------------------------------------------*\
- * Contour plotter front-ends.
- * These specify the row-dominant function evaluator in the plfcont
- * argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
- *
- * - plcon0	no transformation
- * - plcon1	linear interpolation from singly dimensioned coord arrays
- * - plcon2	linear interpolation from doubly dimensioned coord arrays
- *
- * The latter two work by calling plfcont() with the appropriate grid
- * structure for input to pltr2f().
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Contour plotter front-ends.
+// These specify the row-dominant function evaluator in the plfcont
+// argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
+//
+// - plcon0	no transformation
+// - plcon1	linear interpolation from singly dimensioned coord arrays
+// - plcon2	linear interpolation from doubly dimensioned coord arrays
+//
+// The latter two work by calling plfcont() with the appropriate grid
+// structure for input to pltr2f().
+//--------------------------------------------------------------------------
 
-/* no transformation */
+// no transformation
 
 void
 PLCON07( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
@@ -69,7 +69,7 @@ PLCON07( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
         pltr0f, NULL );
 }
 
-/* 1-d transformation */
+// 1-d transformation
 
 void
 PLCON17( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
@@ -93,7 +93,7 @@ PLCON17( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
         pltr1, (void *) &cgrid );
 }
 
-/* 2-d transformation */
+// 2-d transformation
 
 void
 PLCON27( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
@@ -117,20 +117,20 @@ PLCON27( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
         pltr2f, (void *) &cgrid );
 }
 
-/*----------------------------------------------------------------------*\
- * Vector plotter front-ends.
- * These specify the row-dominant function evaluator in the plfvect
- * argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
- *
- * - plvec0	no transformation
- * - plvec1	linear interpolation from singly dimensioned coord arrays
- * - plvec2	linear interpolation from doubly dimensioned coord arrays
- *
- * The latter two work by calling plfvect() with the appropriate grid
- * structure for input to pltr2f().
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Vector plotter front-ends.
+// These specify the row-dominant function evaluator in the plfvect
+// argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
+//
+// - plvec0	no transformation
+// - plvec1	linear interpolation from singly dimensioned coord arrays
+// - plvec2	linear interpolation from doubly dimensioned coord arrays
+//
+// The latter two work by calling plfvect() with the appropriate grid
+// structure for input to pltr2f().
+//--------------------------------------------------------------------------
 
-/* no transformation */
+// no transformation
 
 void
 PLVEC07( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale )
@@ -149,7 +149,7 @@ PLVEC07( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale )
         *nx, *ny, *scale, pltr0f, NULL );
 }
 
-/* 1-d transformation */
+// 1-d transformation
 
 void
 PLVEC17( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
@@ -176,7 +176,7 @@ PLVEC17( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
         *nx, *ny, *scale, pltr1, (void *) &cgrid );
 }
 
-/* 2-d transformation */
+// 2-d transformation
 
 void
 PLVEC27( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
@@ -203,9 +203,9 @@ PLVEC27( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
         *nx, *ny, *scale, pltr2f, (void *) &cgrid );
 }
 
-/*----------------------------------------------------------------------*\
- * Here are the old contour plotters.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Here are the old contour plotters.
+//--------------------------------------------------------------------------
 
 static void
 pltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
@@ -251,19 +251,19 @@ PLVECT7( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
         pltr, (void *) ftr );
 }
 
-/*----------------------------------------------------------------------*\
- * plfshade front-ends.
- * These specify the row-dominant function evaluator in the plfshade
- * argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
- *
- * - plshade0	map indices to xmin, xmax, ymin, ymax.
- * The next two work by calling plfshade() with the appropriate grid
- * structure for input to pltr2f().
- * - plshade1	linear interpolation from singly dimensioned coord arrays
- * - plshade2	linear interpolation from doubly dimensioned coord arrays
- * - plshade    tr array transformation
- *
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plfshade front-ends.
+// These specify the row-dominant function evaluator in the plfshade
+// argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
+//
+// - plshade0	map indices to xmin, xmax, ymin, ymax.
+// The next two work by calling plfshade() with the appropriate grid
+// structure for input to pltr2f().
+// - plshade1	linear interpolation from singly dimensioned coord arrays
+// - plshade2	linear interpolation from doubly dimensioned coord arrays
+// - plshade    tr array transformation
+//
+//--------------------------------------------------------------------------
 
 void
 PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
@@ -277,7 +277,7 @@ PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLFLT ** a;
     int   i, j;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     for ( i = 0; i < *nx; i++ )
     {
@@ -294,12 +294,12 @@ PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *min_color, *min_width, *max_color, *max_width,
         c_plfill, rect, NULL, NULL );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
 
-/* 1-d transformation */
+// 1-d transformation
 
 void
 PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
@@ -315,7 +315,7 @@ PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     int     i, j;
     PLcGrid cgrid;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     for ( i = 0; i < *nx; i++ )
     {
@@ -336,11 +336,11 @@ PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *min_color, *min_width, *max_color, *max_width,
         c_plfill, rect, pltr1, ( PLPointer ) & cgrid );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
-/* 2-d transformation */
+// 2-d transformation
 
 void
 PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
@@ -356,7 +356,7 @@ PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     int      i, j;
     PLcGrid2 cgrid2;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     plAlloc2dGrid( &cgrid2.xg, *nx, *ny );
     plAlloc2dGrid( &cgrid2.yg, *nx, *ny );
@@ -379,7 +379,7 @@ PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *min_color, *min_width, *max_color, *max_width,
         c_plfill, rect, pltr2, (void *) &cgrid2 );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
     plFree2dGrid( cgrid2.xg, *nx, *ny );
     plFree2dGrid( cgrid2.yg, *nx, *ny );
@@ -397,7 +397,7 @@ PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLFLT ** a;
     int   i, j;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     for ( i = 0; i < *nx; i++ )
     {
@@ -414,19 +414,19 @@ PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *min_color, *min_width, *max_color, *max_width,
         c_plfill, rect, pltr, (void *) ftr );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
-/*----------------------------------------------------------------------*\
- * plshades front-ends.
- *
- * - plshades0	map indices to xmin, xmax, ymin, ymax
- * - plshades1	linear interpolation from singly dimensioned coord arrays
- * - plshades2	linear interpolation from doubly dimensioned coord arrays
- * - plshades   pass tr information with plplot common block (and
- *              then pass tr as last argument of PLSHADES7)
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plshades front-ends.
+//
+// - plshades0	map indices to xmin, xmax, ymin, ymax
+// - plshades1	linear interpolation from singly dimensioned coord arrays
+// - plshades2	linear interpolation from doubly dimensioned coord arrays
+// - plshades   pass tr information with plplot common block (and
+//              then pass tr as last argument of PLSHADES7)
+//--------------------------------------------------------------------------
 
 void
 PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
@@ -438,7 +438,7 @@ PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLFLT ** a;
     int   i, j;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     for ( i = 0; i < *nx; i++ )
     {
@@ -454,7 +454,7 @@ PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *cont_color, *cont_width,
         c_plfill, rect, NULL, NULL );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
@@ -470,7 +470,7 @@ PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     int     i, j;
     PLcGrid cgrid;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     for ( i = 0; i < *nx; i++ )
     {
@@ -491,7 +491,7 @@ PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *cont_color, *cont_width,
         c_plfill, rect, pltr1, ( PLPointer ) & cgrid );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
@@ -507,7 +507,7 @@ PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     int      i, j;
     PLcGrid2 cgrid2;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     plAlloc2dGrid( &cgrid2.xg, *nx, *ny );
     plAlloc2dGrid( &cgrid2.yg, *nx, *ny );
@@ -529,7 +529,7 @@ PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *cont_color, *cont_width,
         c_plfill, rect, pltr2, (void *) &cgrid2 );
 
-/* Clean up allocated memory */
+// Clean up allocated memory
     plFree2dGrid( a, *nx, *ny );
     plFree2dGrid( cgrid2.xg, *nx, *ny );
     plFree2dGrid( cgrid2.yg, *nx, *ny );
@@ -545,7 +545,7 @@ PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     PLFLT ** a;
     int   i, j;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
     for ( i = 0; i < *nx; i++ )
     {
@@ -561,7 +561,7 @@ PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *cont_color, *cont_width,
         c_plfill, rect, pltr, (void *) ftr );
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
@@ -572,7 +572,7 @@ PLGRIDDATA( PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts, PLFLT *xg,
     PLFLT ** a;
     int   i, j;
 
-/* Create a vectored a array from transpose of the fortran z array. */
+// Create a vectored a array from transpose of the fortran z array.
     plAlloc2dGrid( &a, *nx, *ny );
 
     c_plgriddata( x, y, z, *npts, xg, *nx, yg, *ny, a, *type, *data );
@@ -585,7 +585,7 @@ PLGRIDDATA( PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts, PLFLT *xg,
         }
     }
 
-/* Clean up memory allocated for a */
+// Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 

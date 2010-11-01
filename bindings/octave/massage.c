@@ -1,28 +1,28 @@
-/*
-## Copyright (C) 1998-2003 Joao Cardoso.
-##
-## This program is free software; you can redistribute it and/or modify it
-## under the terms of the GNU General Public License as published by the
-## Free Software Foundation; either version 2 of the License, or (at your
-## option) any later version.
-##
-## This program is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## This file is part of plplot_octave.
-*/
+//
+//## Copyright (C) 1998-2003 Joao Cardoso.
+//##
+//## This program is free software; you can redistribute it and/or modify it
+//## under the terms of the GNU General Public License as published by the
+//## Free Software Foundation; either version 2 of the License, or (at your
+//## option) any later version.
+//##
+//## This program is distributed in the hope that it will be useful, but
+//## WITHOUT ANY WARRANTY; without even the implied warranty of
+//## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//## General Public License for more details.
+//##
+//## This file is part of plplot_octave.
+//
 
-/*
- * Add online help to functions, parsing 'tmp_stub' and looking for
- * function definitions; for each function found, scans directory
- * 'plplot_octave_txt' for a file with the same basename as function
- * and extension '.txt'; if found, incorporates it as the function
- * online help, else, looks in 'plplot.doc' for a one-line description
- * of the function and adds it. If not even found in 'plplot.doc', ask
- * the user to write the docs! No free lunches!
- */
+//
+// Add online help to functions, parsing 'tmp_stub' and looking for
+// function definitions; for each function found, scans directory
+// 'plplot_octave_txt' for a file with the same basename as function
+// and extension '.txt'; if found, incorporates it as the function
+// online help, else, looks in 'plplot.doc' for a one-line description
+// of the function and adds it. If not even found in 'plplot.doc', ask
+// the user to write the docs! No free lunches!
+//
 
 #include "stdio.h"
 #include "string.h"
@@ -60,13 +60,13 @@ main()
 
     while ( !feof( fp ) && fgets( b, sizeof ( b ), fp ) != NULL )
     {
-        if ( ( p2 = strchr( b, '(' ) ) )   /* function ... = ...( */
+        if ( ( p2 = strchr( b, '(' ) ) )   // function ... = ...(
         {
             p1 = p2;
             while ( *p1-- != ' ' )
                 ;
             p1 += 2;
-            if ( *( p1 + 1 ) == '_' )           /* c_... */
+            if ( *( p1 + 1 ) == '_' )           // c_...
                 p1 += 2;
             strncpy( tok, p1, p2 - p1 );
             *( tok + (int) ( p2 - p1 ) ) = '\0';
@@ -76,7 +76,7 @@ main()
                 fprintf( stderr, "Error reading line\n" );
                 return 1;
             }
-            printf( "%s%%\n", b ); /* % function ... = ...(*/
+            printf( "%s%%\n", b ); // % function ... = ...(
 
             sprintf( b, "plplot_octave_txt/%s.txt", tok );
             if ( stat( b, &buf ) && errno == ENOENT )
@@ -87,7 +87,7 @@ main()
                 {
                     if ( strncmp( doc[j], tok, strlen( tok ) ) == 0 )
                     {
-                        printf( "%% %s", &doc[j][strlen( tok ) + 4] ); /* strip func --*/
+                        printf( "%% %s", &doc[j][strlen( tok ) + 4] ); // strip func --
                         break;
                     }
                 }
@@ -109,7 +109,7 @@ main()
                 }
                 fclose( fp1 );
             }
-            if ( fgets( b, sizeof ( b ), fp ) == NULL ) /* % No doc...*/
+            if ( fgets( b, sizeof ( b ), fp ) == NULL ) // % No doc...
             {
                 fprintf( stderr, "Error reading line\n" );
                 return 1;
@@ -119,13 +119,13 @@ main()
                 fprintf( stderr, "Error reading line\n" );
                 return 1;
             }
-            printf( "%s", b );  /* plplot_oct...*/
+            printf( "%s", b );  // plplot_oct...
             if ( fgets( b, sizeof ( b ), fp ) == NULL )
             {
                 fprintf( stderr, "Error reading line\n" );
                 return 1;
             }
-            printf( "%s\n", b ); /* endfunction*/
+            printf( "%s\n", b ); // endfunction
         }
     }
     fclose( fp );

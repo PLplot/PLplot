@@ -1,55 +1,55 @@
-/* $Id$
- *
- *  Copyright 1993, 1994, 1995
- *  Maurice LeBrun			mjl@dino.ph.utexas.edu
- *  Institute for Fusion Studies	University of Texas at Austin
- *
- *  Copyright (C) 2004  Joao Cardoso
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Library Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  PLplot graphics server.
- *
- *  Just a front-end to the pltkMain() function.  Structured along the
- *  preferred lines for extended wish'es.  Is typically run as a child
- *  process from the PLplot TK driver to render output.  Can use either TK
- *  send or Tcl-DP RPC for communication, depending on how it is invoked.
- *
- *  Note that plserver can be used the same way as wish or dpwish, as it
- *  contains the functionality of each of these (except the -notk Tcl-DP
- *  command-line option is not supported).
- */
+// $Id$
+//
+//  Copyright 1993, 1994, 1995
+//  Maurice LeBrun			mjl@dino.ph.utexas.edu
+//  Institute for Fusion Studies	University of Texas at Austin
+//
+//  Copyright (C) 2004  Joao Cardoso
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Library Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//--------------------------------------------------------------------------
+//
+//  PLplot graphics server.
+//
+//  Just a front-end to the pltkMain() function.  Structured along the
+//  preferred lines for extended wish'es.  Is typically run as a child
+//  process from the PLplot TK driver to render output.  Can use either TK
+//  send or Tcl-DP RPC for communication, depending on how it is invoked.
+//
+//  Note that plserver can be used the same way as wish or dpwish, as it
+//  contains the functionality of each of these (except the -notk Tcl-DP
+//  command-line option is not supported).
+//
 
 #define NEED_PLDEBUG
 #include "plserver.h"
 
-/* Application-specific command-line options */
-/* Variable declarations */
+// Application-specific command-line options
+// Variable declarations
 
-static char        *client_name; /* Name of client main window */
-static char        *auto_path;   /* addition to auto_path */
-static int         child;        /* set if child of TK driver */
+static char        *client_name; // Name of client main window
+static char        *auto_path;   // addition to auto_path
+static int         child;        // set if child of TK driver
 #ifdef PLD_dp
-static int         dp;           /* set if using Tcl-DP to communicate */
+static int         dp;           // set if using Tcl-DP to communicate
 #endif
-static char        *client_host; /* Host id for client */
-static char        *client_port; /* Communications port id for client */
+static char        *client_host; // Host id for client
+static char        *client_port; // Communications port id for client
 
 static Tk_ArgvInfo argTable[] = {
     { "-client_name", TK_ARGV_STRING,   (char *) NULL, (char *) &client_name,
@@ -66,31 +66,31 @@ static Tk_ArgvInfo argTable[] = {
       (char *) NULL }
 };
 
-/* PLplot/Tk extension command -- handle exit. */
+// PLplot/Tk extension command -- handle exit.
 
 static int
 plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv );
 
-/* Evals the specified command, aborting on an error. */
+// Evals the specified command, aborting on an error.
 
 static void
 tcl_cmd( Tcl_Interp *interp, char *cmd );
 
-/* Application-specific startup */
+// Application-specific startup
 
 static int
 AppInit( Tcl_Interp *interp );
 
-/*--------------------------------------------------------------------------*\
- * main --
- *
- * Just a stub routine to call pltkMain.  The latter is nice to have
- * when building extended wishes, since then you don't have to rely on
- * sucking the Tk main out of libtk (which doesn't work correctly on all
- * systems/compilers/linkers/etc).  Hopefully in the future Tk will
- * supply a sufficiently capable tkMain() type function that can be used
- * instead.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main --
+//
+// Just a stub routine to call pltkMain.  The latter is nice to have
+// when building extended wishes, since then you don't have to rely on
+// sucking the Tk main out of libtk (which doesn't work correctly on all
+// systems/compilers/linkers/etc).  Hopefully in the future Tk will
+// supply a sufficiently capable tkMain() type function that can be used
+// instead.
+//--------------------------------------------------------------------------
 
 int
 main( int argc, const char **argv )
@@ -109,19 +109,19 @@ main( int argc, const char **argv )
     fprintf( stderr, "\n" );
 #endif
 
-/* Create interpreter just for argument parsing */
+// Create interpreter just for argument parsing
 
     interp = Tcl_CreateInterp();
 
-/* Save arglist to get around tk_ParseArgv limitations */
+// Save arglist to get around tk_ParseArgv limitations
 
     for ( i = 0; i < argc; i++ )
     {
         myargv[i] = argv[i];
     }
 
-/* Parse args */
-/* Examine the result string to see if an error return is really an error */
+// Parse args
+// Examine the result string to see if an error return is really an error
 
     if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv,
              argTable, TK_ARGV_NO_DEFAULTS ) != TCL_OK )
@@ -134,68 +134,68 @@ PLplot/Tk driver.\n\n(wish) " );
             exit( 1 );
     }
 
-/* No longer need interpreter */
+// No longer need interpreter
 
 #if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
     Tcl_DeleteInterp( interp );
 #endif
 
-/* Call pltkMain() with original argc/argv list, to make sure -h is seen */
-/* Does not return until program exit */
+// Call pltkMain() with original argc/argv list, to make sure -h is seen
+// Does not return until program exit
 
     exit( pltkMain( myargc, myargv, NULL, AppInit ) );
 }
 
 
-/*
- *--------------------------------------------------------------------------
- *
- * AppInit --
- *
- *	This procedure performs application-specific initialization.
- *	Most applications, especially those that incorporate additional
- *	packages, will have their own version of this procedure.
- *
- * Results:
- *	Returns a standard Tcl completion code, and leaves an error
- *	message in interp->result if an error occurs.
- *
- * Side effects:
- *	Depends on the startup script.
- *
- *--------------------------------------------------------------------------
- */
+//
+//--------------------------------------------------------------------------
+//
+// AppInit --
+//
+//	This procedure performs application-specific initialization.
+//	Most applications, especially those that incorporate additional
+//	packages, will have their own version of this procedure.
+//
+// Results:
+//	Returns a standard Tcl completion code, and leaves an error
+//	message in interp->result if an error occurs.
+//
+// Side effects:
+//	Depends on the startup script.
+//
+//--------------------------------------------------------------------------
+//
 
 static int
 AppInit( Tcl_Interp *interp )
 {
     Tk_Window mainWindow = Tk_MainWindow( interp );
 
-/*
- * Call the init procedures for included packages.  Each call should
- * look like this:
- *
- * if (Mod_Init(interp) == TCL_ERROR) {
- *     return TCL_ERROR;
- * }
- *
- * where "Mod" is the name of the module.
- */
+//
+// Call the init procedures for included packages.  Each call should
+// look like this:
+//
+// if (Mod_Init(interp) == TCL_ERROR) {
+//     return TCL_ERROR;
+// }
+//
+// where "Mod" is the name of the module.
+//
     if ( Pltk_Init( interp ) == TCL_ERROR )
     {
         return TCL_ERROR;
     }
 
-/* Application-specific startup.  That means: for use in plserver ONLY. */
+// Application-specific startup.  That means: for use in plserver ONLY.
 
-/* Pass child variable to interpreter if set. */
+// Pass child variable to interpreter if set.
 
     if ( child != 0 )
         Tcl_SetVar( interp, "child", "1", 0 );
 
-/* If client_name is set, TK send is being used to communicate. */
-/* If client_port is set, Tcl-DP RPC is being used to communicate. */
-/* The "dp" variable determines which style communication is used */
+// If client_name is set, TK send is being used to communicate.
+// If client_port is set, Tcl-DP RPC is being used to communicate.
+// The "dp" variable determines which style communication is used
 
     if ( client_name != NULL )
     {
@@ -220,7 +220,7 @@ AppInit( Tcl_Interp *interp )
 #endif
     }
 
-/* Add user-specified directory(s) to auto_path */
+// Add user-specified directory(s) to auto_path
 
     if ( auto_path != NULL )
     {
@@ -228,7 +228,7 @@ AppInit( Tcl_Interp *interp )
         tcl_cmd( interp, "set auto_path [list $dir $auto_path]" );
     }
 
-/* Rename "exit" to "tkexit", and insert custom exit handler */
+// Rename "exit" to "tkexit", and insert custom exit handler
 
     tcl_cmd( interp, "rename exit tkexit" );
 
@@ -238,25 +238,25 @@ AppInit( Tcl_Interp *interp )
     return TCL_OK;
 }
 
-/*--------------------------------------------------------------------------*\
- * plExitCmd
- *
- * PLplot/Tk extension command -- handle exit.
- * The reason for overriding the normal exit command is so we can tell the
- * client to abort.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plExitCmd
+//
+// PLplot/Tk extension command -- handle exit.
+// The reason for overriding the normal exit command is so we can tell the
+// client to abort.
+//--------------------------------------------------------------------------
 
 static int
 plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
     int value = 0;
 
-/* Print error message if one given */
+// Print error message if one given
 
     if ( interp->result != NULL && interp->result[0] != '\0' )
         fprintf( stderr, "%s\n", interp->result );
 
-/* Best to check the syntax before proceeding */
+// Best to check the syntax before proceeding
 
     if ( ( argc != 1 ) && ( argc != 2 ) )
     {
@@ -271,20 +271,20 @@ plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
         return TCL_ERROR;
     }
 
-/* If client exists, tell it to self destruct */
+// If client exists, tell it to self destruct
 
     Tcl_VarEval( interp, "plserver_link_end", (char **) NULL );
 
-/* Now really exit */
+// Now really exit
 
     return Tcl_VarEval( interp, "tkexit", argv[1], (char **) NULL );
 }
 
-/*--------------------------------------------------------------------------*\
- * tcl_cmd
- *
- * Evals the specified command, aborting on an error.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// tcl_cmd
+//
+// Evals the specified command, aborting on an error.
+//--------------------------------------------------------------------------
 
 static void
 tcl_cmd( Tcl_Interp *interp, char *cmd )
