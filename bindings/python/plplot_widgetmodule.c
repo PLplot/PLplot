@@ -55,7 +55,7 @@ static PyObject *pl_Pltk_init( PyObject *self, PyObject *args )
 
 #endif
 
-// ##############################################################################
+//--------------------------------------------------------------------------
 
 static PyMethodDef plplot_widget_methods[] = {
 #ifdef ENABLE_tk

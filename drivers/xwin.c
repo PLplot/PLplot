@@ -1259,7 +1259,7 @@ WaitForPage( PLStream *pls )
     dev->exit_eventloop = FALSE;
 }
 
-//------------------------------------------------------------\*
+//--------------------------------------------------------------------------
 // events_thread()
 //
 // This function is being running continously by a tread and is
