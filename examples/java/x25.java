@@ -38,11 +38,11 @@ class x25 {
         double[] x0         = new double[1];
         double[] y0         = new double[1];
 
-        /* Parse and process command line arguments */
+        // Parse and process command line arguments
 
         pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
-        /* Initialize plplot */
+        // Initialize plplot
 
         pls.ssub( 3, 3 );
         pls.init();
@@ -63,7 +63,7 @@ class x25 {
             {
                 if ( j == 0 )
                 {
-                    /* Polygon 1: a diamond */
+                    // Polygon 1: a diamond
                     x0    = new double[4];
                     y0    = new double[4];
                     x0[0] = 0; y0[0] = -100;
@@ -73,7 +73,7 @@ class x25 {
                 }
                 if ( j == 1 )
                 {
-                    /* Polygon 1: a diamond - reverse direction */
+                    // Polygon 1: a diamond - reverse direction
                     x0    = new double[4];
                     y0    = new double[4];
                     x0[3] = 0; y0[3] = -100;
@@ -83,7 +83,7 @@ class x25 {
                 }
                 if ( j == 2 )
                 {
-                    /* Polygon 2: a square with punctures */
+                    // Polygon 2: a square with punctures
                     x0    = new double[10];
                     y0    = new double[10];
                     x0[0] = -100; y0[0] = -100;
@@ -99,7 +99,7 @@ class x25 {
                 }
                 if ( j == 3 )
                 {
-                    /* Polygon 2: a square with punctures - reversed direction */
+                    // Polygon 2: a square with punctures - reversed direction
                     x0    = new double[10];
                     y0    = new double[10];
                     x0[9] = -100; y0[9] = -100;

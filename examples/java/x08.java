@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002, 2003, 2004  Alan W. Irwin
 // Copyright (C) 2002  Maurice LeBrun
@@ -23,11 +23,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 8 in Java.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 package plplot.examples;
 
@@ -81,8 +81,8 @@ class x08 {
         }
         else
         {
-            h[0] = 240; /* blue -> green -> yellow -> */
-            h[1] = 0;   /* -> red */
+            h[0] = 240; // blue -> green -> yellow ->
+            h[1] = 0;   // -> red
 
             l[0] = 0.6;
             l[1] = 0.6;
@@ -155,11 +155,11 @@ class x08 {
                 {
                     z[i][j] = Math.pow( 1. - xx, 2. ) + 100 *
                               Math.pow( yy - Math.pow( xx, 2. ), 2. );
-                    /* The log argument may be zero for just the right grid.  */
+                    // The log argument may be zero for just the right grid.
                     if ( z[i][j] > 0. )
                         z[i][j] = Math.log( z[i][j] );
                     else
-                        z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
+                        z[i][j] = -5.; // -MAXFLOAT would mess-up up the scale
                 }
                 else
                 {
@@ -200,24 +200,24 @@ class x08 {
 
                 pls.col0( 2 );
 
-                if ( ifshade == 0 ) /* diffuse light surface plot */
+                if ( ifshade == 0 ) // diffuse light surface plot
                 {
                     cmap1_init( 1 );
                     // with new interface haven't yet made null work so have
                     // to put in specific zero-length array.
                     pls.surf3d( x, y, z, 0, clev_null );
                 }
-                else if ( ifshade == 1 )   /* magnitude colored plot */
+                else if ( ifshade == 1 )   // magnitude colored plot
                 {
                     cmap1_init( 0 );
                     pls.surf3d( x, y, z, PLStream.MAG_COLOR, clev_null );
                 }
-                else if ( ifshade == 2 )   /*  magnitude colored plot with faceted squares */
+                else if ( ifshade == 2 )   //  magnitude colored plot with faceted squares
                 {
                     cmap1_init( 0 );
                     pls.surf3d( x, y, z, PLStream.MAG_COLOR | PLStream.FACETED, clev_null );
                 }
-                else                     /* magnitude colored plot with contours */
+                else                     // magnitude colored plot with contours
                 {
                     cmap1_init( 0 );
                     pls.surf3d( x, y, z, PLStream.MAG_COLOR | PLStream.SURF_CONT | PLStream.BASE_CONT, clevel );
@@ -229,6 +229,6 @@ class x08 {
     }
 }
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x08.java
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

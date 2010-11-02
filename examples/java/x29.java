@@ -239,9 +239,9 @@ class x29 {
 
     void plot4()
     {
-        /* TAI-UTC (seconds) as a function of time.
-         * Use Besselian epochs as the continuous time interval just to prove
-         * this does not introduce any issues. */
+        // TAI-UTC (seconds) as a function of time.
+        // Use Besselian epochs as the continuous time interval just to prove
+        // this does not introduce any issues.
 
         double  scale, offset1, offset2;
         double  xmin[] = new double[1], xmax[] = new double[1];
@@ -263,12 +263,12 @@ class x29 {
                utc_min[]   = new int[1];
         double utc_sec[]   = new double[1], utc[] = new double[1];
 
-        /* Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-         * B = 1900. + (JD -2415020.31352)/365.242198781
-         * ==> (as calculated with aid of "bc -l" command)
-         * B = (MJD + 678940.364163900)/365.242198781
-         * ==>
-         * MJD = B*365.24219878 - 678940.364163900 */
+        // Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+        // B = 1900. + (JD -2415020.31352)/365.242198781
+        // ==> (as calculated with aid of "bc -l" command)
+        // B = (MJD + 678940.364163900)/365.242198781
+        // ==>
+        // MJD = B*365.24219878 - 678940.364163900
         scale   = 365.242198781;
         offset1 = -678940.;
         offset2 = -0.3641639;

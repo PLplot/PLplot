@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2001  Geoffrey Furnish
 // Copyright (C) 2001, 2002, 2003  Alan W. Irwin
 // Copyright (C) 2004  Andrew Ross
@@ -21,11 +21,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 11 in Java.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 package plplot.examples;
 
@@ -61,8 +61,8 @@ class x11 {
         i[0] = 0.0;         // left boundary
         i[1] = 1.0;         // right boundary
 
-        h[0] = 240;         /* blue -> green -> yellow -> */
-        h[1] = 0;           /* -> red */
+        h[0] = 240;         // blue -> green -> yellow ->
+        h[1] = 0;           // -> red
 
         l[0] = 0.6;
         l[1] = 0.6;
@@ -123,7 +123,7 @@ class x11 {
                 z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * Math.exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. ) ) -
                           10. * ( xx / 5. - Math.pow( xx, 3. ) - Math.pow( yy, 5. ) ) * Math.exp( -xx * xx - yy * yy ) -
                           1. / 3. * Math.exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
-                if ( false ) /* Jungfraujoch/Interlaken */
+                if ( false ) // Jungfraujoch/Interlaken
                 {
                     if ( z[i][j] < -1. )
                         z[i][j] = -1.;
@@ -157,19 +157,19 @@ class x11 {
 
                 pls.col0( 2 );
 
-                /* wireframe plot */
+                // wireframe plot
                 if ( i == 0 )
                     pls.mesh( x, y, z, opt[k] );
 
-                /* magnitude colored wireframe plot */
+                // magnitude colored wireframe plot
                 else if ( i == 1 )
                     pls.mesh( x, y, z, opt[k] | PLStream.MAG_COLOR );
 
-                /* magnitude colored wireframe plot with sides */
+                // magnitude colored wireframe plot with sides
                 else if ( i == 2 )
                     pls.plot3d( x, y, z, opt[k] | PLStream.MAG_COLOR, true );
 
-                /* magnitude colored wireframe plot with base contour */
+                // magnitude colored wireframe plot with base contour
                 else if ( i == 3 )
                     pls.meshc( x, y, z, opt[k] | PLStream.MAG_COLOR | PLStream.BASE_CONT,
                         clevel );
@@ -184,6 +184,6 @@ class x11 {
     }
 }
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x11.java
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

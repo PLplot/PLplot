@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004,2006  Andrew Ross
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 20 in Java.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 //
 // Current user defined command line options are not supported in
@@ -115,15 +115,15 @@ class x20 {
         double xg[][], yg[][];
 
 
-        /*
-         * Bugs in plimage():
-         * -at high magnifications, the left and right edge are ragged, try
-         * ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-         *
-         * Bugs in x20c.c:
-         * -if the window is resized after a selection is made on "lena", when
-         * making a new selection the old one will re-appear.
-         */
+        //
+        // Bugs in plimage():
+        // -at high magnifications, the left and right edge are ragged, try
+        // ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
+        //
+        // Bugs in x20c.c:
+        // -if the window is resized after a selection is made on "lena", when
+        // making a new selection the old one will re-appear.
+        //
 
         // plplot initialization
 
@@ -134,21 +134,21 @@ class x20 {
         // Initialize PLplot.
         pls.init();
 
-        /* view image border pixels */
+        // view image border pixels
         if ( dbg )
         {
-            pls.env( 1., (double) XDIM, 1., (double) YDIM, 1, 1 ); /* no plot box */
+            pls.env( 1., (double) XDIM, 1., (double) YDIM, 1, 1 ); // no plot box
 
-            /* build a one pixel square border, for diagnostics */
+            // build a one pixel square border, for diagnostics
             for ( i = 0; i < XDIM; i++ )
-                z[i][YDIM - 1] = 1.; /* right */
+                z[i][YDIM - 1] = 1.; // right
             for ( i = 0; i < XDIM; i++ )
-                z[i][0] = 1.;        /* left */
+                z[i][0] = 1.;        // left
 
             for ( i = 0; i < YDIM; i++ )
-                z[0][i] = 1.;        /* top */
+                z[0][i] = 1.;        // top
             for ( i = 0; i < YDIM; i++ )
-                z[XDIM - 1][i] = 1.; /* botton */
+                z[XDIM - 1][i] = 1.; // botton
 
             pls.lab( "...around a blue square.", " ", "A red border should appear..." );
 
@@ -156,11 +156,11 @@ class x20 {
                 1., (double) XDIM, 1., (double) YDIM );
         }
 
-        /* sombrero-like demo */
+        // sombrero-like demo
         if ( !nosombrero )
         {
             r = new double[XDIM][YDIM];
-            pls.col0( 2 ); /* draw a yellow plot box, useful for diagnostics! :( */
+            pls.col0( 2 ); // draw a yellow plot box, useful for diagnostics! :(
             pls.env( 0., 2. * Math.PI, 0, 3. * Math.PI, 1, -1 );
 
             for ( i = 0; i < XDIM; i++ )
@@ -180,13 +180,13 @@ class x20 {
             pls.image( z, 0., 2. * Math.PI, 0., 3. * Math.PI, 0.05, 1.,
                 0., 2. * Math.PI, 0., 3. * Math.PI );
 
-            /* save the plot */
+            // save the plot
             if ( f_name != null )
                 save_plot( f_name );
         }
 
 
-        /* read Lena image */
+        // read Lena image
         if ( ( img_f = read_img( "lena.pgm", n ) ) == null )
         {
             if ( ( img_f = read_img( "../lena.pgm", n ) ) == null )
@@ -200,10 +200,10 @@ class x20 {
         width   = img_f.length;
         height  = img_f[0].length;
 
-        /* set gray colormap */
+        // set gray colormap
         gray_cmap( num_col );
 
-        /* display Lena */
+        // display Lena
         pls.env( 1., width, 1., height, 1, -1 );
 
         if ( !nointeractive )
@@ -226,25 +226,25 @@ class x20 {
                 System.exit( 0 );
             }
 
-            /*
-             * I'm unable to continue, clearing the plot and advancing to the next
-             * one, without hiting the enter key, or pressing the button... help!
-             *
-             * Forcing the xwin driver to leave locate mode and destroying the
-             * xhairs (in GetCursorCmd()) solves some problems, but I still have
-             * to press the enter key or press Button-2 to go to next plot, even
-             * if a pladv() is not present!  Using plbop() solves the problem, but
-             * it shouldn't be needed!
-             */
+            //
+            // I'm unable to continue, clearing the plot and advancing to the next
+            // one, without hiting the enter key, or pressing the button... help!
+            //
+            // Forcing the xwin driver to leave locate mode and destroying the
+            // xhairs (in GetCursorCmd()) solves some problems, but I still have
+            // to press the enter key or press Button-2 to go to next plot, even
+            // if a pladv() is not present!  Using plbop() solves the problem, but
+            // it shouldn't be needed!
+            //
 
-            /* pls.bop(); */
+            // pls.bop();
 
-            /*
-             * spause(false), adv(0), spause(true), also works,
-             * but the above question remains.
-             * With this approach, the previous pause state is lost,
-             * as there is no API call to get its current state.
-             */
+            //
+            // spause(false), adv(0), spause(true), also works,
+            // but the above question remains.
+            // With this approach, the previous pause state is lost,
+            // as there is no API call to get its current state.
+            //
 
             pls.spause( false );
             pls.adv( 0 );
@@ -296,11 +296,11 @@ class x20 {
         dy      = 0.5 * height;
         stretch = 0.5;
 
-        /* In C / C++ the following would work, with plimagefr directly calling
-         * mypltr. For compatibilty with other language bindings the same effect
-         * can be achieved by generating the transformed grid first and then
-         * using pltr2. */
-        /* plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch); */
+        // In C / C++ the following would work, with plimagefr directly calling
+        // mypltr. For compatibilty with other language bindings the same effect
+        // can be achieved by generating the transformed grid first and then
+        // using pltr2.
+        // plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch);
 
         for ( i = 0; i <= width; i++ )
         {
@@ -326,7 +326,7 @@ class x20 {
         StringTokenizer st;
         int             i, j, w, h;
 
-        /* naive grayscale binary ppm reading. If you know how to, improve it */
+        // naive grayscale binary ppm reading. If you know how to, improve it
         try {
             in  = new BufferedReader( new FileReader( fname ) );
             in2 = new DataInputStream( new DataInputStream( new BufferedInputStream( new FileInputStream( fname ) ) ) );
@@ -339,7 +339,7 @@ class x20 {
         try {
             line = in.readLine();
 
-            if ( line.compareTo( "P5\n" ) == 0 )   /* I only understand this! */
+            if ( line.compareTo( "P5\n" ) == 0 )   // I only understand this!
             {
                 System.out.println( line );
                 System.out.println( "unknown file format " + fname );
@@ -400,9 +400,9 @@ class x20 {
         boolean      start = false;
         boolean[] st = new boolean[1];
 
-        pls.xormod( true, st ); /* enter xor mode to draw a selection rectangle */
+        pls.xormod( true, st ); // enter xor mode to draw a selection rectangle
 
-        if ( st[0] )            /* driver has xormod capability, continue */
+        if ( st[0] )            // driver has xormod capability, continue
         {
             double sx[] = new double[5];
             double sy[] = new double[5];
@@ -416,7 +416,7 @@ class x20 {
                 {
                     xxi = gin.getWX(); yyi = gin.getWY();
                     if ( start )
-                        pls.line( sx, sy ); /* clear previous rectangle */
+                        pls.line( sx, sy ); // clear previous rectangle
 
                     start = false;
 
@@ -428,24 +428,24 @@ class x20 {
                 {
                     xxe = gin.getWX(); yye = gin.getWY();
                     if ( start )
-                        pls.line( sx, sy ); /* clear previous rectangle */
+                        pls.line( sx, sy ); // clear previous rectangle
 
                     start = true;
 
                     sx[2] = xxe; sy[2] = yye;
                     sx[1] = xxe; sy[1] = yyi;
                     sx[3] = xxi; sy[3] = yye;
-                    pls.line( sx, sy ); /* draw new rectangle */
+                    pls.line( sx, sy ); // draw new rectangle
                 }
 
                 if ( gin.getButton() == 3 || gin.getKeysym() == 0x0D || gin.getKeysym() == 'Q' )
                 {
                     if ( start )
-                        pls.line( sx, sy ); /* clear previous rectangle */
+                        pls.line( sx, sy ); // clear previous rectangle
                     break;
                 }
             }
-            pls.xormod( false, st ); /* leave xor mod */
+            pls.xormod( false, st ); // leave xor mod
             if ( xxe < xxi )
             {
                 t = xxi; xxi = xxe; xxe = t;
@@ -465,7 +465,7 @@ class x20 {
         return false;
     }
 
-    /* set gray colormap */
+    // set gray colormap
     void gray_cmap( int num_col )
     {
         double r[]   = new double[2];
@@ -508,6 +508,6 @@ class x20 {
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x20.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2001, 2002  Geoffrey Furnish
 // Copyright (C) 2002, 2003  Alan W. Irwin
 // Copyright (C) 2004  Andrew Ross
@@ -21,11 +21,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 9 in Java.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 package plplot.examples;
 
@@ -88,11 +88,11 @@ class x09 {
         // Parse and process command line arguments.
 
         pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
-        /* Initialize plplot */
+        // Initialize plplot
 
         pls.init();
 
-        /* Set up function arrays */
+        // Set up function arrays
 
         for ( i = 0; i < XPTS; i++ )
         {
@@ -105,7 +105,7 @@ class x09 {
             }
         }
 
-        /* Set up grids */
+        // Set up grids
 
 
         for ( i = 0; i < XPTS; i++ )
@@ -137,17 +137,17 @@ class x09 {
 
 
         // Plot using scaled identity transform used to create xg0 and yg0
-/*	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
- *      pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
- *      pls.col0(2);
- *      pls.cont( z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
- *      pls.styl(mark, space);
- *      pls.col0(3);
- *      pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
- *      pls.styl(mark0, space0);
- *      pls.col0(1);
- *      pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
- */
+//	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
+//      pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+//      pls.col0(2);
+//      pls.cont( z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+//      pls.styl(mark, space);
+//      pls.col0(3);
+//      pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+//      pls.styl(mark0, space0);
+//      pls.col0(1);
+//      pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+//
         pls.setcontlabelformat( 4, 3 );
         pls.setcontlabelparam( 0.006, 0.3, 0.1, 1 );
         pls.env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
@@ -172,18 +172,18 @@ class x09 {
         pls.col0( 1 );
         pls.lab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
 
-/*	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
- *      pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
- *      pls.col0(2);
- *      pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
- *      pls.styl(mark, space);
- *      pls.col0(3);
- *      pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
- *      pls.styl(mark0, space0);
- *      pls.col0(1);
- *      pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
- *      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
- */
+//	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
+//      pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+//      pls.col0(2);
+//      pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+//      pls.styl(mark, space);
+//      pls.col0(3);
+//      pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+//      pls.styl(mark0, space0);
+//      pls.col0(1);
+//      pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+//      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
+//
         // Plot using 2d coordinate transform
         pls.env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
         pls.col0( 2 );
@@ -195,28 +195,28 @@ class x09 {
         pls.col0( 1 );
         pls.lab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
 
-/*	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
- *      pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
- *      pls.col0(2);
- *      pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
- *      pls.styl(mark, space);
- *      pls.col0(3);
- *      pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
- *      pls.styl(mark0, space0);
- *      pls.col0(1);
- *      pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
- *      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
- */
+//	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
+//      pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+//      pls.col0(2);
+//      pls.cont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+//      pls.styl(mark, space);
+//      pls.col0(3);
+//      pls.cont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+//      pls.styl(mark0, space0);
+//      pls.col0(1);
+//      pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+//      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
+//
         polar();
-/*        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
- *      polar();
- *      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
- */
+//        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
+//      polar();
+//      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
+//
         potential();
-/*        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
- *      potential();
- *      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
- */
+//        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
+//      potential();
+//      pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
+//
         pls.end();
     }
 
@@ -375,14 +375,14 @@ class x09 {
         zmin = fmin;
         zmax = fmax;
 
-        /*	printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
-         *  q1, d1, q1i, d1i, q2, d2, q2i, d2i);
-         *  System.out.println(xmin);
-         *  System.out.println(xmax);
-         *  System.out.println(ymin);
-         *  System.out.println(ymax);
-         *  System.out.println(zmin);
-         *  System.out.println(zmax); */
+        //	printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
+        //  q1, d1, q1i, d1i, q2, d2, q2i, d2i);
+        //  System.out.println(xmin);
+        //  System.out.println(xmax);
+        //  System.out.println(ymin);
+        //  System.out.println(ymax);
+        //  System.out.println(zmin);
+        //  System.out.println(zmax);
 
         // Positive and negative contour levels.
         dz        = ( zmax - zmin ) / (double) PNLEVEL;
@@ -448,6 +448,6 @@ class x09 {
     }
 }
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x09.java
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
