@@ -21,30 +21,17 @@
 //  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
 //
-// In Debian, run like this:
-//
-// PLPLOT_FREETYPE_SANS_FONT=/usr/share/fonts/truetype/arphic/bkai00mp.ttf \
-// PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
-// PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
-// PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
-// PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
-// ./x24 -dev png -o x24cxx.png
-//
-// Packages needed:
-//
+// For Debian, the required font packages are the following:
 // ttf-arphic-bkai00mp
 // ttf-freefont
-// ttf-indic-fonts
+// ttf-devanagari-fonts
 // ttf-unfonts
-// ttf-bangla-fonts
+// ttf-bengali-fonts
 //
 // For the latest Ubuntu systems lohit_hi.ttf has been moved to the
 // ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
 // will have to use this package instead and update the font path.
 //
-// NB strange comment style here is to work round issues with C++ comments
-// and trailing \ at the end of lines
-
 
 #include "plc++demos.h"
 
