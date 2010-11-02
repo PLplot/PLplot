@@ -160,9 +160,6 @@ cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c+
 # C++ source in bindings.
 cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wxPLplotstream.cpp bindings/wxwidgets/wxPLplotwindow.cpp bindings/wxwidgets/wxPLplotwindow.h bindings/wxwidgets/wxPLplotstream.h.in"
 
-# temporary
-exclude_c=ON
-if [ -z "$exclude_c" ] ; then
 export javasource_LIST
 
 # Java part of bindings/java
@@ -186,9 +183,6 @@ for source in $csource_LIST $cppsource_LIST $javasource_LIST $dsource_LIST ; do
 	exit 1
     fi
 done
-
-# temporary
-fi
 
 transform_source()
 {
@@ -245,5 +239,5 @@ transform_source()
 
 transform_source "$csource_LIST" C "comments"
 transform_source "$cppsource_LIST" CPP "comments"
-#transform_source "$javasource_LIST" JAVA
-#transform_source "$dsource_LIST" D
+transform_source "$javasource_LIST" JAVA "comments"
+transform_source "$dsource_LIST" D
