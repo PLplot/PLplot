@@ -53,10 +53,11 @@ for line in sys.stdin.readlines():
     # quoted.
     if start_special >= 0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*//[^"]*"', line):
         start_special = -1
-    # If unquoted leading // and not in the middle of a comment block,
-    # then ignore any comment start beyond.
+    # If unquoted // before /* and not in the middle of a comment block,
+    # then ignore both /* and */ beyond //.
     if ifsingleline and start_special >= 0 and start_special <= start_comment -1:
         start_comment = -1
+        end_comment = -1
 
     # Note trailing "\n" has not (yet) been removed from line so
     # that the next to last character is at position len(line) - 3.
@@ -72,6 +73,9 @@ for line in sys.stdin.readlines():
 
     # Note trailing "\n" has not (yet) been removed from line so
     # that the next to last character is at position len(line) - 3.
+    # print "start_comment = ", start_comment
+    # print "end_comment = ", end_comment
+    # print "start_special = ", start_special
     if ifsingleline:
         if start_comment >=0 and start_comment < end_comment and end_comment == len(line) - 3:
             # Single-line comment case.
