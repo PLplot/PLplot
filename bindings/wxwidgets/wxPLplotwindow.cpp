@@ -1,23 +1,23 @@
-/* $Id$
- *
- * Copyright (C) 2005  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2005  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include <wx/window.h>
 #include <wx/dcclient.h>
@@ -34,8 +34,8 @@ EVT_ERASE_BACKGROUND( wxPLplotwindow::OnErase )
 END_EVENT_TABLE()
 
 
-/*! Constructor allocates wxMemoryDC, a wxPLplotstream and initializes parameters.
- */
+//! Constructor allocates wxMemoryDC, a wxPLplotstream and initializes parameters.
+//
 wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& pos,
                                 const wxSize& size, long style, int pl_style ) :
     wxWindow( parent, id, pos, size, style | wxFULL_REPAINT_ON_RESIZE )
@@ -69,8 +69,8 @@ wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& 
 }
 
 
-/*! Deconstructor takes care that all is deleted in the correct order.
- */
+//! Deconstructor takes care that all is deleted in the correct order.
+//
 wxPLplotwindow::~wxPLplotwindow( void )
 {
     MemPlotDC->SelectObject( wxNullBitmap );
@@ -86,10 +86,10 @@ wxPLplotwindow::~wxPLplotwindow( void )
 }
 
 
-/*! In the OnPaint Method we check if the Windows was resized (will be moved to OnSize() sometimes
- *  later), we also implement our own double buffering here (since the PLplot wxWidgets driver draws
- *  into a wxMemoryDC)
- */
+//! In the OnPaint Method we check if the Windows was resized (will be moved to OnSize() sometimes
+//  later), we also implement our own double buffering here (since the PLplot wxWidgets driver draws
+//  into a wxMemoryDC)
+//
 void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 {
     wxPaintDC dc( this );
@@ -131,16 +131,16 @@ void wxPLplotwindow::OnSize( wxSizeEvent& WXUNUSED( event ) )
 }
 
 
-/*! Together with "SetBackgroundStyle( wxBG_STYLE_CUSTOM );" in the constructor this method
- *  is responsible that the background is not erased in order to prevent flickering.
- */
+//! Together with "SetBackgroundStyle( wxBG_STYLE_CUSTOM );" in the constructor this method
+//  is responsible that the background is not erased in order to prevent flickering.
+//
 void wxPLplotwindow::OnErase( wxEraseEvent &WXUNUSED( event ) )
 {
 }
 
 
-/*! Redo the whole plot.
- */
+//! Redo the whole plot.
+//
 void wxPLplotwindow::RenewPlot( void )
 {
     if ( m_stream )
@@ -151,8 +151,8 @@ void wxPLplotwindow::RenewPlot( void )
 }
 
 
-/*! Save plot.
- */
+//! Save plot.
+//
 bool wxPLplotwindow::SavePlot( const wxString& devname, const wxString& filename )
 {
     int  pls, pls_save;

@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 14 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -76,14 +76,14 @@ static PLFLT clevel[11] =
 
 
 
-/*--------------------------------------------------------------------------*\
- * x14()
- *
- * Plots several simple functions from other example programs.
- *
- * This version sends the output of the first 4 plots (one page) to two
- * independent streams.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// x14()
+//
+// Plots several simple functions from other example programs.
+//
+// This version sends the output of the first 4 plots (one page) to two
+// independent streams.
+//--------------------------------------------------------------------------
 x14::x14( int argc, const char ** argv )
 {
     int digmax;
@@ -205,7 +205,7 @@ x14::x14( int argc, const char ** argv )
     delete pls2;
 }
 
-/* =============================================================== */
+//--------------------------------------------------------------------------
 
 void x14::plot1( plstream *pls )
 {
@@ -229,22 +229,22 @@ void x14::plot1( plstream *pls )
         ys[i] = y[i * 10 + 3];
     }
 
-/* Set up the viewport and window using PLENV. The range in X is */
-/* 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
-/* scaled separately (just = 0), and we just draw a labelled */
-/* box (axis = 0). */
+// Set up the viewport and window using PLENV. The range in X is
+// 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+// scaled separately (just = 0), and we just draw a labelled
+// box (axis = 0).
 
     pls->col0( 1 );
     pls->env( xmin, xmax, ymin, ymax, 0, 0 );
     pls->col0( 6 );
     pls->lab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
-/* Plot the data points */
+// Plot the data points
 
     pls->col0( 9 );
     pls->poin( 6, xs, ys, 9 );
 
-/* Draw the line through the data */
+// Draw the line through the data
 
     pls->col0( 4 );
     pls->line( 60, x, y );
@@ -252,22 +252,22 @@ void x14::plot1( plstream *pls )
 }
 
 
-/* =============================================================== */
+//--------------------------------------------------------------------------
 
 void x14::plot2( plstream *pls )
 {
     int i;
 
-/* Set up the viewport and window using PLENV. The range in X is -2.0 to
- *     10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
- *     (just = 0), and we draw a box with axes (axis = 1). */
+// Set up the viewport and window using PLENV. The range in X is -2.0 to
+//     10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
+//     (just = 0), and we draw a box with axes (axis = 1).
 
     pls->col0( 1 );
     pls->env( -2.0, 10.0, -0.4, 1.2, 0, 1 );
     pls->col0( 2 );
     pls->lab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
 
-/* Fill up the arrays */
+// Fill up the arrays
 
     for ( i = 0; i < 100; i++ )
     {
@@ -277,37 +277,37 @@ void x14::plot2( plstream *pls )
             y[i] = sin( x[i] ) / x[i];
     }
 
-/* Draw the line */
+// Draw the line
 
     pls->col0( 3 );
     pls->line( 100, x, y );
     pls->flush();
 }
 
-/* =============================================================== */
+//--------------------------------------------------------------------------
 
 void x14::plot3( plstream *pls )
 {
     int i;
 
-/* For the final graph we wish to override the default tick intervals, and
- *     so do not use PLENV */
+// For the final graph we wish to override the default tick intervals, and
+//     so do not use PLENV
 
     pls->adv( 0 );
 
-/* Use standard viewport, and define X range from 0 to 360 degrees, Y range
- *     from -1.2 to 1.2. */
+// Use standard viewport, and define X range from 0 to 360 degrees, Y range
+//     from -1.2 to 1.2.
 
     pls->vsta();
     pls->wind( 0.0, 360.0, -1.2, 1.2 );
 
-    /* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
+    // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
     pls->col0( 1 );
     pls->box( "bcnst", 60.0, 2, "bcnstv", 0.2, 2 );
 
-    /* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
-     * expects a pointer!! */
+    // Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
+    // expects a pointer!!
 
     pls->styl( 1, &mark1, &space1 );
     pls->col0( 2 );
@@ -328,7 +328,7 @@ void x14::plot3( plstream *pls )
     pls->flush();
 }
 
-/* =============================================================== */
+//--------------------------------------------------------------------------
 
 void x14::plot4( plstream *pls )
 {
@@ -345,7 +345,7 @@ void x14::plot4( plstream *pls )
         y0[i] = sin( dtr * i );
     }
 
-/* Set up viewport and window, but do not draw box */
+// Set up viewport and window, but do not draw box
 
     pls->env( -1.3, 1.3, -1.3, 1.3, 1, -2 );
     for ( i = 1; i <= 10; i++ )
@@ -356,7 +356,7 @@ void x14::plot4( plstream *pls )
             y[j] = 0.1 * i * y0[j];
         }
 
-/* Draw circles for polar grid */
+// Draw circles for polar grid
 
         pls->line( 361, x, y );
     }
@@ -368,12 +368,12 @@ void x14::plot4( plstream *pls )
         dx    = cos( dtr * theta );
         dy    = sin( dtr * theta );
 
-/* Draw radial spokes for polar grid */
+// Draw radial spokes for polar grid
 
         pls->join( 0.0, 0.0, dx, dy );
         sprintf( text, "%d", (int) ROUND( theta ) );
 
-/* Write labels for angle */
+// Write labels for angle
 
 //Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
         if ( dx >= -0.00001 )
@@ -382,7 +382,7 @@ void x14::plot4( plstream *pls )
             pls->ptex( dx, dy, -dx, -dy, 1.15, text );
     }
 
-/* Draw the graph */
+// Draw the graph
 
     for ( i = 0; i <= 360; i++ )
     {
@@ -399,9 +399,9 @@ void x14::plot4( plstream *pls )
     pls->flush();
 }
 
-/* =============================================================== */
+//--------------------------------------------------------------------------
 
-/* Demonstration of contour plotting */
+// Demonstration of contour plotting
 
 void x14::plot5( plstream *pls )
 {
@@ -410,7 +410,7 @@ void x14::plot5( plstream *pls )
     PLFLT        **z, **w;
     static PLINT mark = 1500, space = 1500;
 
-/* Set up function arrays */
+// Set up function arrays
 
     pls->Alloc2dGrid( &z, xpts, ypts );
     pls->Alloc2dGrid( &w, xpts, ypts );
@@ -446,6 +446,6 @@ int main( int argc, const char ** argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x14.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

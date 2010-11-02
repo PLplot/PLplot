@@ -1,44 +1,44 @@
-/* $Id$
- *
- * Copyright (C) 2008  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2008  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
-/* TODO:
- * - let the AGG library process the text. In the moment most of the relevant code
- *   is commented out, since there are problems with the affine transformation
- */
+// TODO:
+// - let the AGG library process the text. In the moment most of the relevant code
+//   is commented out, since there are problems with the affine transformation
+//
 
-/* wxwidgets headers */
+// wxwidgets headers
 #include <wx/wx.h>
 #include <wx/strconv.h>
 
 #include "plDevs.h"
 
-/* plplot headers */
+// plplot headers
 #include "plplotP.h"
 #include "plfci-truetype.h"
 
-/* std and driver headers */
+// std and driver headers
 #include "wxwidgets.h"
 #include <wchar.h>
 
-/* helper functions */
+// helper functions
 #if !defined ( WIN32 ) || defined ( __GNUC__ )
   #include <unistd.h>
 #else
@@ -60,12 +60,12 @@ int access( char *filename, int flag )
 
 #define makeunixslash( b )    do { char *I; for ( I = b; *I != 0; *I++ ) if ( *I == '\\' ) *I = '/';} while ( 0 )
 
-/*--------------------------------------------------------------------------
- *  wxPLDevAGG::wxPLDevAGG()
- *
- *  Constructor of the AGG wxWidgets device based on the wxPLDevBase
- *  class. Initialisations of variables and objects are done.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  wxPLDevAGG::wxPLDevAGG()
+//
+//  Constructor of the AGG wxWidgets device based on the wxPLDevBase
+//  class. Initialisations of variables and objects are done.
+//--------------------------------------------------------------------------
 wxPLDevAGG::wxPLDevAGG() :
     wxPLDevBase( wxBACKEND_AGG ),
     mRenderingBuffer(),
@@ -100,74 +100,74 @@ wxPLDevAGG::wxPLDevAGG() :
     mConvStroke.line_join( agg::round_join );
     mConvStroke.line_cap( agg::round_cap );
 
-    /* determine font directory */
+    // determine font directory
 #if defined ( WIN32 )
-    /*static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
-     *                                 "symbol.ttf"};
-     * char WINDIR_PATH[255];
-     * char *b;
-     * b=getenv("WINDIR");
-     * strncpy(WINDIR_PATH,b,255);*/
+    //static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
+    //                                 "symbol.ttf"};
+    // char WINDIR_PATH[255];
+    // char *b;
+    // b=getenv("WINDIR");
+    // strncpy(WINDIR_PATH,b,255);
 
-/*
- * Work out if we have Win95+ or Win3.?... sort of.
- * Actually, this just tries to find the place where the fonts live by looking
- * for arial, which should be on all windows machines.
- * At present, it only looks in two places, on one drive. I might change this
- * soon.
- */
-    /*if (WINDIR_PATH==NULL)
-     * {
-     *  if (access("c:\\windows\\fonts\\arial.ttf", F_OK)==0) {
-     *      strcpy(font_dir,"c:/windows/fonts/");
-     *  }
-     *  else if ( access("c:\\windows\\system\\arial.ttf", F_OK)==0) {
-     *      strcpy(font_dir,"c:/windows/system/");
-     *  }
-     *  else
-     *  plwarn("Could not find font path; I sure hope you have defined fonts manually !");
-     * }
-     * else
-     * {
-     * strncat(WINDIR_PATH,"\\fonts\\arial.ttf",255);
-     * if (access(WINDIR_PATH, F_OK)==0)
-     *  {
-     *    b=strrchr(WINDIR_PATH,'\\');
-     *    b++;
-     *b=0;
-     *    makeunixslash(WINDIR_PATH);
-     *    strcpy(font_dir,WINDIR_PATH);
-     *  }
-     * else
-     *  plwarn("Could not find font path; I sure hope you have defined fonts manually !");
-     * }
-     *
-     * if (pls->debug) fprintf( stderr, "%s\n", font_dir ) ;*/
+//
+// Work out if we have Win95+ or Win3.?... sort of.
+// Actually, this just tries to find the place where the fonts live by looking
+// for arial, which should be on all windows machines.
+// At present, it only looks in two places, on one drive. I might change this
+// soon.
+//
+    //if (WINDIR_PATH==NULL)
+    // {
+    //  if (access("c:\\windows\\fonts\\arial.ttf", F_OK)==0) {
+    //      strcpy(font_dir,"c:/windows/fonts/");
+    //  }
+    //  else if ( access("c:\\windows\\system\\arial.ttf", F_OK)==0) {
+    //      strcpy(font_dir,"c:/windows/system/");
+    //  }
+    //  else
+    //  plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+    // }
+    // else
+    // {
+    // strncat(WINDIR_PATH,"\\fonts\\arial.ttf",255);
+    // if (access(WINDIR_PATH, F_OK)==0)
+    //  {
+    //    b=strrchr(WINDIR_PATH,'\\');
+    //    b++;
+    //b=0;
+    //    makeunixslash(WINDIR_PATH);
+    //    strcpy(font_dir,WINDIR_PATH);
+    //  }
+    // else
+    //  plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+    // }
+    //
+    // if (pls->debug) fprintf( stderr, "%s\n", font_dir ) ;
 #else
-    /*  For Unix systems, we will set the font path up a little differently in
-     *  that the configured PL_FREETYPE_FONT_DIR has been set as the default path,
-     *  but the user can override this by setting the environmental variable
-     *  "PLPLOT_FREETYPE_FONT_DIR" to something else.
-     *  NOTE WELL - the trailing slash must be added for now !
-     */
-    /* const char *str;
-     *
-     * fontdir.Clear();
-     * if( (str=getenv("PLPLOT_FREETYPE_FONT_DIR"))!=NULL )
-     *      fontdir.Append( wxString(str, wxConvFile) );
-     * else
-     *      fontdir.Append( wxT(PL_FREETYPE_FONT_DIR) );
-     *
-     * //printf("fontdir=%s, len=%d\n", fontdir.c_str(), fontdir.Length() ); */
+    //  For Unix systems, we will set the font path up a little differently in
+    //  that the configured PL_FREETYPE_FONT_DIR has been set as the default path,
+    //  but the user can override this by setting the environmental variable
+    //  "PLPLOT_FREETYPE_FONT_DIR" to something else.
+    //  NOTE WELL - the trailing slash must be added for now !
+    //
+    // const char *str;
+    //
+    // fontdir.Clear();
+    // if( (str=getenv("PLPLOT_FREETYPE_FONT_DIR"))!=NULL )
+    //      fontdir.Append( wxString(str, wxConvFile) );
+    // else
+    //      fontdir.Append( wxT(PL_FREETYPE_FONT_DIR) );
+    //
+    // //printf("fontdir=%s, len=%d\n", fontdir.c_str(), fontdir.Length() );
 #endif
 }
 
 
-/*--------------------------------------------------------------------------
- *  wxPLDevAGG::~wxPLDevAGG()
- *
- *  Deconstructor frees allocated buffer.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  wxPLDevAGG::~wxPLDevAGG()
+//
+//  Deconstructor frees allocated buffer.
+//--------------------------------------------------------------------------
 wxPLDevAGG::~wxPLDevAGG()
 {
     if ( ownGUI )
@@ -176,12 +176,12 @@ wxPLDevAGG::~wxPLDevAGG()
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::drawPath( drawPathFlag flag )
- *
- *  Common function which either draws a stroke along a path or a filled
- *  polygon surrounded by a stroke depending on flag.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::drawPath( drawPathFlag flag )
+//
+//  Common function which either draws a stroke along a path or a filled
+//  polygon surrounded by a stroke depending on flag.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::drawPath( drawPathFlag flag )
 {
     mRasterizer.reset();
@@ -217,11 +217,11 @@ void wxPLDevAGG::drawPath( drawPathFlag flag )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
- *
- *  Draw a line from (x1a, y1a) to (x2a, y2a).
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
+//
+//  Draw a line from (x1a, y1a) to (x2a, y2a).
+//--------------------------------------------------------------------------
 void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
     mPath.remove_all();
@@ -235,11 +235,11 @@ void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
- *
- *  Draw a poly line - coordinates are in the xa and ya arrays.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
+//
+//  Draw a poly line - coordinates are in the xa and ya arrays.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
     mPath.remove_all();
@@ -255,12 +255,12 @@ void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
- *                                    PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
- *
- *  Clear parts ((x1,y1) to (x2,y2)) of the background in color (bgr,bgg,bgb).
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
+//                                    PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
+//
+//  Clear parts ((x1,y1) to (x2,y2)) of the background in color (bgr,bgg,bgb).
+//--------------------------------------------------------------------------
 void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
     if ( x1 < 0 && y1 < 0 && x2 < 0 && y2 < 0 )
@@ -294,13 +294,13 @@ void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLI
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1,
- *                                       short x2, short y2 )
- *
- *  Adds the region (x1,y1)-(x2,y2) to the regions which needs to be
- *  updated/redrawn.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1,
+//                                       short x2, short y2 )
+//
+//  Adds the region (x1,y1)-(x2,y2) to the regions which needs to be
+//  updated/redrawn.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1, short x2, short y2 )
 {
     double x1d = x1, x2d = x2, y1d = y1, y2d = y2;
@@ -311,11 +311,11 @@ void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1, short x2, short y2 )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::FillPolygon( PLStream *pls )
- *
- *  Draw a filled polygon.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::FillPolygon( PLStream *pls )
+//
+//  Draw a filled polygon.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::FillPolygon( PLStream *pls )
 {
     short *xa = pls->dev_x;
@@ -336,12 +336,12 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::BlitRectangle( wxDC* dc, int vX, int vY,
- *                                  int vW, int vH )
- *
- *  Copy/Blit a rectangle ((vX,vY) to (vX+vW,vY+vH)) into given dc.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::BlitRectangle( wxDC* dc, int vX, int vY,
+//                                  int vW, int vH )
+//
+//  Copy/Blit a rectangle ((vX,vY) to (vX+vW,vY+vH)) into given dc.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )
 {
     if ( mBuffer )
@@ -355,16 +355,16 @@ void wxPLDevAGG::BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::CreateCanvas( void )
- *
- *  Create canvas (bitmap and dc) if the driver provides the GUI.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::CreateCanvas( void )
+//
+//  Create canvas (bitmap and dc) if the driver provides the GUI.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::CreateCanvas()
 {
     if ( ownGUI )
     {
-        /* get a new wxImage (image buffer) */
+        // get a new wxImage (image buffer)
         if ( mBuffer )
             delete mBuffer;
         mBuffer = new wxImage( bm_width, bm_height );
@@ -381,22 +381,22 @@ void wxPLDevAGG::CreateCanvas()
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::SetWidth( PLStream *pls )
- *
- *  Set the width of the drawing pen.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::SetWidth( PLStream *pls )
+//
+//  Set the width of the drawing pen.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::SetWidth( PLStream *pls )
 {
     mStrokeWidth = ( scalex + scaley ) / 2.0 * ( pls->width > 0 ? pls->width : 1 ); // TODO: why and when ist width 0???
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::SetColor0( PLStream *pls )
- *
- *  Set color from colormap 0.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::SetColor0( PLStream *pls )
+//
+//  Set color from colormap 0.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::SetColor0( PLStream *pls )
 {
     mColorRedStroke   = pls->cmap0[pls->icol0].r;
@@ -406,11 +406,11 @@ void wxPLDevAGG::SetColor0( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::SetColor1( PLStream *pls )
- *
- *  Set color from colormap 1.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::SetColor1( PLStream *pls )
+//
+//  Set color from colormap 1.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::SetColor1( PLStream *pls )
 {
     mColorRedStroke   = pls->curcolor.r;
@@ -420,15 +420,15 @@ void wxPLDevAGG::SetColor1( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::SetExternalBuffer( void* dc )
- *
- *  Adds a dc to the device. In that case, the drivers doesn't provide
- *  a GUI. A new buffer (image) will be created and set up.
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::SetExternalBuffer( void* dc )
+//
+//  Adds a dc to the device. In that case, the drivers doesn't provide
+//  a GUI. A new buffer (image) will be created and set up.
+//--------------------------------------------------------------------------
 void wxPLDevAGG::SetExternalBuffer( void* image )
 {
-    mBuffer = (wxImage*) image; /* Add the image to the device */
+    mBuffer = (wxImage*) image; // Add the image to the device
     mRenderingBuffer.attach( mBuffer->GetData(), width, height, width * 3 );
 
     mRendererBase.reset_clipping( true );
@@ -444,11 +444,11 @@ void wxPLDevAGG::SetExternalBuffer( void* image )
 
 #ifdef HAVE_FREETYPE
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
- *
- *  Draw a pixel in color color @ (x,y).
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
+//
+//  Draw a pixel in color color @ (x,y).
+//--------------------------------------------------------------------------
 void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
 {
     mBuffer->SetRGB( x, y, GetRValue( color ), GetGValue( color ), GetBValue( color ) );
@@ -456,11 +456,11 @@ void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
 }
 
 
-/*--------------------------------------------------------------------------
- *  void wxPLDevAGG::PutPixel( short x, short y )
- *
- *  Draw a pixel in current color @ (x,y).
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLDevAGG::PutPixel( short x, short y )
+//
+//  Draw a pixel in current color @ (x,y).
+//--------------------------------------------------------------------------
 void wxPLDevAGG::PutPixel( short x, short y )
 {
     mBuffer->SetRGB( x, y, mColorRedStroke, mColorGreenStroke, mColorBlueStroke );
@@ -468,11 +468,11 @@ void wxPLDevAGG::PutPixel( short x, short y )
 }
 
 
-/*--------------------------------------------------------------------------
- *  PLINT wxPLDevAGG::GetPixel( short x, short y )
- *
- *  Get color information from pixel @ (x,y).
- *--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  PLINT wxPLDevAGG::GetPixel( short x, short y )
+//
+//  Get color information from pixel @ (x,y).
+//--------------------------------------------------------------------------
 PLINT wxPLDevAGG::GetPixel( short x, short y )
 {
     return RGB( mBuffer->GetRed( x, y ), mBuffer->GetGreen( x, y ), mBuffer->GetBlue( x, y ) );
@@ -548,7 +548,7 @@ void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )
 
 void wxPLDevAGG::PSSetFont( PLUNICODE fci )
 {
-    /* convert the fci to Base14/Type1 font information */
+    // convert the fci to Base14/Type1 font information
     wxString fontname = fontdir + wxString( plP_FCI2FontName( fci, TrueTypeLookup, N_TrueTypeLookup ), *wxConvCurrent );
 
     if ( !mFontEngine.load_font( "/usr/share/fonts/truetype/freefont/FreeSans.ttf", 0, agg::glyph_ren_agg_gray8 ) )
@@ -566,24 +566,24 @@ void wxPLDevAGG::ProcessString( PLStream* pls, EscText* args )
 {
     plabort( "The AGG backend can't process the text yet own its own!" );
 
-    /* Check that we got unicode, warning message and return if not */
+    // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
     {
         printf( "Non unicode string passed to a wxWidgets driver, ignoring\n" );
         return;
     }
 
-    /* Check that unicode string isn't longer then the max we allow */
+    // Check that unicode string isn't longer then the max we allow
     if ( args->unicode_array_len >= 500 )
     {
         printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", 500 );
         return;
     }
 
-    /* Calculate the font size (in pixels) */
+    // Calculate the font size (in pixels)
     fontSize = pls->chrht * DEVICE_PIXELS_PER_MM * 1.2 * scaley;
 
-    /* calculate rotation of text */
+    // calculate rotation of text
     plRotationShear( args->xform, &rotation, &shear, &stride );
     rotation -= pls->diorot * M_PI / 2.0;
     cos_shear = cos( shear );

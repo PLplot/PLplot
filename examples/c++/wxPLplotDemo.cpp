@@ -1,24 +1,24 @@
-/* $Id$
- *
- * Copyright (C) 2005  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+// Copyright (C) 2005  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
@@ -42,16 +42,16 @@ extern "C" { void CPSEnableForegroundOperation( ProcessSerialNumber* psn ); }
 #define MAX( a, b )    ( ( a ) < ( b ) ? ( b ) : ( a ) )
 #define MIN( a, b )    ( ( a ) < ( b ) ? ( a ) : ( b ) )
 
-/* Application icon as XPM */
-/* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
+// Application icon as XPM
+// This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/
 static const char *graph[] = {
-/* columns rows colors chars-per-pixel */
+// columns rows colors chars-per-pixel
     "16 16 4 2",
     "   c black",
     ".  c #BA1825",
     "X  c gray100",
     "UX c None",
-/* pixels */
+// pixels
     "UX. . . . . . . . . . . . . . UX",
     ". . . . . . . . . . . . . . . . ",
     ". . . . . . . . . . . . . . . . ",
@@ -70,9 +70,9 @@ static const char *graph[] = {
     "UX. . . . . . . . . . . . . . UX"
 };
 
-// ----------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // private classes
-// ----------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 class MyApp : public wxApp
 {
 public:
@@ -115,15 +115,15 @@ private:
 };
 
 
-// ----------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // constants
-// ----------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 enum { wxPLplotDemo_Quit    = wxID_EXIT, wxPLplotDemo_About = wxID_ABOUT,
        wxPLplotDemo_BGColor = 10000 };
 
-// ----------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // event tables and other macros for wxWidgets
-// ----------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 BEGIN_EVENT_TABLE( MyFrame, wxFrame )
 EVT_MENU( wxPLplotDemo_Quit, MyFrame::OnQuit )
 EVT_MENU( wxPLplotDemo_About, MyFrame::OnAbout )
@@ -132,17 +132,17 @@ END_EVENT_TABLE()
 
 IMPLEMENT_APP( MyApp )
 
-// ============================================================================
+//--------------------------------------------------------------------------
 // implementation
-// ============================================================================
+//--------------------------------------------------------------------------
 
-/*! This method is called right at the beginning and opens a frame for us.
- */
+//! This method is called right at the beginning and opens a frame for us.
+//
 bool MyApp::OnInit()
 {
 #ifdef __WXMAC__
-    /* this hack enables to have a GUI on Mac OSX even if the
-     * program was called from the command line (and isn't a bundle) */
+    // this hack enables to have a GUI on Mac OSX even if the
+    // program was called from the command line (and isn't a bundle)
     ProcessSerialNumber psn;
 
     GetCurrentProcess( &psn );
@@ -179,11 +179,11 @@ void MyPlotwindow::OnChar( wxKeyEvent& event )
 }
 
 
-/*! Constructor of our custom frame, where the Menu is created and a
- *  a wxPLplotwindow is inserted into the frame. We plot some easy functions
- *  just to show how it works. wxPLplotwindow takes care of all the setup
- *  for the use of PLplot library.
- */
+//! Constructor of our custom frame, where the Menu is created and a
+//  a wxPLplotwindow is inserted into the frame. We plot some easy functions
+//  just to show how it works. wxPLplotwindow takes care of all the setup
+//  for the use of PLplot library.
+//
 MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 {
     bgcolor = false;
@@ -292,8 +292,8 @@ void MyFrame::OnBackgroundColor( wxCommandEvent& WXUNUSED( event ) )
 }
 
 
-/*! Show information if Menu entry About was choosen.
- */
+//! Show information if Menu entry About was choosen.
+//
 void MyFrame::OnAbout( wxCommandEvent& WXUNUSED( event ) )
 {
     wxMessageBox( _T( "This is the About dialog of the wxPLplot demo.\n" ), _T( "About wxPLplot" ),

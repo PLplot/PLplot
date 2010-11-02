@@ -20,7 +20,7 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -49,11 +49,11 @@ const int x28::NREVOLUTION = 16;
 const int x28::NROTATION   = 8;
 const int x28::NSHEAR      = 8;
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Demonstrates plotting text in 3D.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Demonstrates plotting text in 3D.
+//--------------------------------------------------------------------------
 
 
 x28::x28( int argc, const char *argv[] )
@@ -78,14 +78,14 @@ x28::x28( int argc, const char *argv[] )
            omega, sin_omega, cos_omega, domega;
     int   i, j;
     PLFLT radius, pitch, xpos, ypos, zpos;
-    /* p1string must be exactly one character + the null termination
-     * character. */
+    // p1string must be exactly one character + the null termination
+    // character.
     char       p1string[] = "O";
     const char *pstring   = "The future of our civilization depends on software freedom.";
 
     pls = new plstream();
 
-    /* Allocate and define the minimal x, y, and z to insure 3D box */
+    // Allocate and define the minimal x, y, and z to insure 3D box
     x = new PLFLT[ XPTS ];
     y = new PLFLT[ YPTS ];
     pls->Alloc2dGrid( &z, XPTS, YPTS );
@@ -105,13 +105,13 @@ x28::x28( int argc, const char *argv[] )
         }
     }
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
 
     pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
     pls->init();
 
-    /* Page 1: Demonstrate inclination and shear capability pattern. */
+    // Page 1: Demonstrate inclination and shear capability pattern.
 
     pls->adv( 0 );
     pls->vpor( -0.15, 1.15, -0.05, 1.05 );
@@ -124,7 +124,7 @@ x28::x28( int argc, const char *argv[] )
         "b", "", ymax - ymin, 0,
         "bcd", "", zmax - zmin, 0 );
 
-    /* z = zmin. */
+    // z = zmin.
     pls->schr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
@@ -144,7 +144,7 @@ x28::x28( int argc, const char *argv[] )
             0.0, "  revolution" );
     }
 
-    /* x = xmax. */
+    // x = xmax.
     pls->schr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
@@ -164,7 +164,7 @@ x28::x28( int argc, const char *argv[] )
             0.0, "  revolution" );
     }
 
-    /* y = ymax. */
+    // y = ymax.
     pls->schr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
@@ -183,10 +183,10 @@ x28::x28( int argc, const char *argv[] )
             x_shear, y_shear, z_shear,
             0.0, "  revolution" );
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 2: Demonstrate rotation of string around its axis. */
+    // Page 2: Demonstrate rotation of string around its axis.
     pls->adv( 0 );
     pls->vpor( -0.15, 1.15, -0.05, 1.05 );
     pls->wind( -1.2, 1.2, -0.8, 1.5 );
@@ -198,7 +198,7 @@ x28::x28( int argc, const char *argv[] )
         "b", "", ymax - ymin, 0,
         "bcd", "", zmax - zmin, 0 );
 
-    /* y = ymax. */
+    // y = ymax.
     pls->schr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -219,7 +219,7 @@ x28::x28( int argc, const char *argv[] )
             0.5, "rotation for y = y#dmax#u" );
     }
 
-    /* x = xmax. */
+    // x = xmax.
     pls->schr( 0., 1.0 );
     x_inclination = 0.;
     y_inclination = -1.;
@@ -240,7 +240,7 @@ x28::x28( int argc, const char *argv[] )
             0.5, "rotation for x = x#dmax#u" );
     }
 
-    /* z = zmin. */
+    // z = zmin.
     pls->schr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -260,13 +260,13 @@ x28::x28( int argc, const char *argv[] )
             x_shear, y_shear, z_shear,
             0.5, "rotation for z = z#dmin#u" );
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 3: Demonstrate shear of string along its axis. */
-    /* Work around xcairo and pngcairo (but not pscairo) problems for
-     * shear vector too close to axis of string. (N.B. no workaround
-     * would be domega = 0.) */
+    // Page 3: Demonstrate shear of string along its axis.
+    // Work around xcairo and pngcairo (but not pscairo) problems for
+    // shear vector too close to axis of string. (N.B. no workaround
+    // would be domega = 0.)
     domega = 0.05;
     pls->adv( 0 );
     pls->vpor( -0.15, 1.15, -0.05, 1.05 );
@@ -279,7 +279,7 @@ x28::x28( int argc, const char *argv[] )
         "b", "", ymax - ymin, 0,
         "bcd", "", zmax - zmin, 0 );
 
-    /* y = ymax. */
+    // y = ymax.
     pls->schr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -300,7 +300,7 @@ x28::x28( int argc, const char *argv[] )
             0.5, "shear for y = y#dmax#u" );
     }
 
-    /* x = xmax. */
+    // x = xmax.
     pls->schr( 0., 1.0 );
     x_inclination = 0.;
     y_inclination = -1.;
@@ -321,7 +321,7 @@ x28::x28( int argc, const char *argv[] )
             0.5, "shear for x = x#dmax#u" );
     }
 
-    /* z = zmin. */
+    // z = zmin.
     pls->schr( 0., 1.0 );
     x_inclination = 1.;
     y_inclination = 0.;
@@ -341,10 +341,10 @@ x28::x28( int argc, const char *argv[] )
             x_shear, y_shear, z_shear,
             0.5, "shear for z = z#dmin#u" );
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 4: Demonstrate drawing a string on a 3D path. */
+    // Page 4: Demonstrate drawing a string on a 3D path.
     pls->adv( 0 );
     pls->vpor( -0.15, 1.15, -0.05, 1.05 );
     pls->wind( -1.2, 1.2, -0.8, 1.5 );
@@ -357,12 +357,12 @@ x28::x28( int argc, const char *argv[] )
         "bcd", "", zmax - zmin, 0 );
 
     pls->schr( 0., 1.2 );
-    /* domega controls the spacing between the various characters of the
-     * string and also the maximum value of omega for the given number
-     * of characters in *pstring. */
+    // domega controls the spacing between the various characters of the
+    // string and also the maximum value of omega for the given number
+    // of characters in *pstring.
     domega = 2. * M_PI / strlen( pstring );
     omega  = 0.;
-    /* 3D function is a helix of the given radius and pitch */
+    // 3D function is a helix of the given radius and pitch
     radius = 0.5;
     pitch  = 1. / ( 2. * M_PI );
     while ( *pstring )
@@ -372,14 +372,14 @@ x28::x28( int argc, const char *argv[] )
         xpos      = xmid + radius * sin_omega;
         ypos      = ymid - radius * cos_omega;
         zpos      = zmin + pitch * omega;
-        /* In general, the inclination is proportional to the derivative of
-         * the position wrt theta. */
+        // In general, the inclination is proportional to the derivative of
+        // the position wrt theta.
         x_inclination = radius * cos_omega;;
         y_inclination = radius * sin_omega;
         z_inclination = pitch;
-        /* The shear vector should be perpendicular to the 3D line with Z
-         * component maximized, but for low pitch a good approximation is
-         * a constant vector that is parallel to the Z axis. */
+        // The shear vector should be perpendicular to the 3D line with Z
+        // component maximized, but for low pitch a good approximation is
+        // a constant vector that is parallel to the Z axis.
         x_shear   = 0.;
         y_shear   = 0.;
         z_shear   = 1.;
@@ -392,10 +392,10 @@ x28::x28( int argc, const char *argv[] )
         pstring++;
         omega += domega;
     }
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Page 5: Demonstrate plmtex3 axis labelling capability */
+    // Page 5: Demonstrate plmtex3 axis labelling capability
     pls->adv( 0 );
     pls->vpor( -0.15, 1.15, -0.05, 1.05 );
     pls->wind( -1.2, 1.2, -0.8, 1.5 );
@@ -420,10 +420,10 @@ x28::x28( int argc, const char *argv[] )
     pls->mtex3( "zp", 3.0, 0.5, 0.5, "primary Z-axis label" );
     pls->mtex3( "zs", -2.5, 0.5, 0.5, "Arbitrarily displaced" );
     pls->mtex3( "zs", -1.0, 0.5, 0.5, "secondary Z-axis label" );
-    /* Draw minimal 3D grid to finish defining the 3D box. */
+    // Draw minimal 3D grid to finish defining the 3D box.
     pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
-    /* Clean up. */
+    // Clean up.
     delete[] x;
     delete[] y;
     pls->Free2dGrid( z, XPTS, YPTS );

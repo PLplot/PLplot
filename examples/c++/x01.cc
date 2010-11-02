@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 1 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -48,10 +48,10 @@ static char         *f_name;
 
 static const char   *notes[] = { "Make sure you get it right!", "" };
 
-/* Options data structure definition. */
+// Options data structure definition.
 static PLOptionTable options[] = {
     {
-        "locate",               /* Turns on test of API locate function */
+        "locate",               // Turns on test of API locate function
         NULL,
         NULL,
         &locate_mode,
@@ -60,7 +60,7 @@ static PLOptionTable options[] = {
         "Turns on test of API locate function"
     },
     {
-        "xor",                  /* Turns on test of xor function */
+        "xor",                  // Turns on test of xor function
         NULL,
         NULL,
         &test_xor,
@@ -69,7 +69,7 @@ static PLOptionTable options[] = {
         "Turns on test of XOR"
     },
     {
-        "font",                 /* For switching between font set 1 & 2 */
+        "font",                 // For switching between font set 1 & 2
         NULL,
         NULL,
         &fontset,
@@ -78,7 +78,7 @@ static PLOptionTable options[] = {
         "Selects stroke font set (0 or 1, def:1)"
     },
     {
-        "save",                 /* For saving in postscript */
+        "save",                 // For saving in postscript
         NULL,
         NULL,
         &f_name,
@@ -87,14 +87,14 @@ static PLOptionTable options[] = {
         "Save plot in color postscript `file'"
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 
@@ -181,13 +181,13 @@ x01::x01( int argc, const char ** argv )
         cout << "The current plot was saved in color Postscript under the name `" << f_name << "'" << endl;
         plstream *pls2;
 
-        pls2 = new plstream();       /* create a new one */
+        pls2 = new plstream();       // create a new one
 
-        pls2->sfnam( f_name );       /* file name */
-        pls2->sdev( "psc" );         /* device type */
+        pls2->sfnam( f_name );       // file name
+        pls2->sdev( "psc" );         // device type
 
-        pls2->cpstrm( *pls, false ); /* copy old stream parameters to new stream */
-        pls2->replot();              /* do the save by replaying the plot buffer */
+        pls2->cpstrm( *pls, false ); // copy old stream parameters to new stream
+        pls2->replot();              // do the save by replaying the plot buffer
 
         delete pls2;
     }
@@ -269,24 +269,24 @@ void x01::plot1( int do_test )
     pls->col0( 3 );
     pls->line( 60, x, y );
 
-/* xor mode enable erasing a line/point/text by replotting it again */
-/* it does not work in double buffering mode, however */
+// xor mode enable erasing a line/point/text by replotting it again
+// it does not work in double buffering mode, however
 
     if ( do_test && test_xor )
     {
 #ifdef PL_HAVE_USLEEP
         bool st;
-        pls->xormod( true, &st ); /* enter xor mode */
+        pls->xormod( true, &st ); // enter xor mode
         if ( st )
         {
             for ( i = 0; i < 60; i++ )
             {
-                pls->poin( 1, x + i, y + i, 9 );   /* draw a point */
-                usleep( 50000 );                   /* wait a little */
-                pls->flush();                      /* force an update of the tk driver */
-                pls->poin( 1, x + i, y + i, 9 );   /* erase point */
+                pls->poin( 1, x + i, y + i, 9 );   // draw a point
+                usleep( 50000 );                   // wait a little
+                pls->flush();                      // force an update of the tk driver
+                pls->poin( 1, x + i, y + i, 9 );   // erase point
             }
-            pls->xormod( false, &st );             /* leave xor mode */
+            pls->xormod( false, &st );             // leave xor mode
         }
 #else
         cout << "The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen." << endl;
@@ -393,6 +393,6 @@ int main( int argc, const char ** argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x01.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

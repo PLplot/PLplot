@@ -1,56 +1,56 @@
-/*
- *
- * This software is provided under the LGPL in March 2009 by the
- * Cluster Science Centre
- * QSAS team,
- * Imperial College, London
- *
- * Copyright (C) 2009  Imperial College, London
- * Copyright (C) 2009  Alan W. Irwin
- *
- * This is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Lesser Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * To received a copy of the GNU Library General Public License
- * write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *  History:
- *
- *
- * March 2009:  v1.00
- * Initial release.
- *
- */
+//
+//
+// This software is provided under the LGPL in March 2009 by the
+// Cluster Science Centre
+// QSAS team,
+// Imperial College, London
+//
+// Copyright (C) 2009  Imperial College, London
+// Copyright (C) 2009  Alan W. Irwin
+//
+// This is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Lesser Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This software is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// To received a copy of the GNU Library General Public License
+// write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//  History:
+//
+//
+// March 2009:  v1.00
+// Initial release.
+//
+//
 
-/*
- * Interpretation of the -geometry XSIZExYSIZE option (or the third and fourth
- * parameters of plspage if those are specified by the user instead) for
- * the various devices:
- * - the raster devices (bmpqt, jpgqt, pngqt, ppmqt, tiffqt):
- * XSIZE and YSIZE define the x and y size in pixels
- * - qtwidget:
- * XSIZE and YSIZE define the default x and y size of the widget in
- * pixels, as well as its aspect ratio, which is kept when the widget is
- * resized.
- * - svgqt, epsqt, pdfqt:
- * XSIZE and YSIZE define the x and y size in points (1/72 of inches).
- * EPS and PDF files will be drawn in A4 pages for Qt versions before 4.4
- *
- * Interpretation of the -dpi DPI option (or the first parameter of
- * plspage if that is specified by the user instead).
- * DPI is ignored for all but the raster devices.  For those devices
- * DPI should be set to the DPI value of the monitor being used to view
- * the results if exact character sizes are desired.  Otherwise, DEFAULT_DPI
- * (set to an average value for modern monitors) is used instead.
- */
+//
+// Interpretation of the -geometry XSIZExYSIZE option (or the third and fourth
+// parameters of plspage if those are specified by the user instead) for
+// the various devices:
+// - the raster devices (bmpqt, jpgqt, pngqt, ppmqt, tiffqt):
+// XSIZE and YSIZE define the x and y size in pixels
+// - qtwidget:
+// XSIZE and YSIZE define the default x and y size of the widget in
+// pixels, as well as its aspect ratio, which is kept when the widget is
+// resized.
+// - svgqt, epsqt, pdfqt:
+// XSIZE and YSIZE define the x and y size in points (1/72 of inches).
+// EPS and PDF files will be drawn in A4 pages for Qt versions before 4.4
+//
+// Interpretation of the -dpi DPI option (or the first parameter of
+// plspage if that is specified by the user instead).
+// DPI is ignored for all but the raster devices.  For those devices
+// DPI should be set to the DPI value of the monitor being used to view
+// the results if exact character sizes are desired.  Otherwise, DEFAULT_DPI
+// (set to an average value for modern monitors) is used instead.
+//
 
 #ifndef QT_H
 #define QT_H
@@ -180,7 +180,7 @@ public:
         setDotsPerMeterX( (int) ( ( dotsPerInch / 25.4 ) * 1000. ) );
         setDotsPerMeterY( (int) ( ( dotsPerInch / 25.4 ) * 1000. ) );
     }
-    /* used by the memqt driver */
+    // used by the memqt driver
     unsigned char *memory;
 
 protected:

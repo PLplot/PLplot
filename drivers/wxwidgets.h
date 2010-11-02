@@ -1,31 +1,31 @@
-/* $Id$
- *
- * Copyright (C) 2008  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2008  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #ifndef __WXWIDGETS_H__
 #define __WXWIDGETS_H__
 
-/* some special wxWidgets headers */
+// some special wxWidgets headers
 #include <wx/spinctrl.h>
 
-/* freetype headers and macros */
+// freetype headers and macros
 #ifdef HAVE_FREETYPE
   #include "plfreetype.h"
 
@@ -40,55 +40,55 @@ static void init_freetype_lv2( PLStream *pls );
   #define max_number_of_grey_levels_used_in_text_smoothing    64
 #endif
 
-#define NDEV                                                  100 /* Max number of output device types in menu */
+#define NDEV                                                  100 // Max number of output device types in menu
 
-/*=========================================================================*/
-/* Physical dimension constants used by the driver */
+//--------------------------------------------------------------------------
+// Physical dimension constants used by the driver
 
-/* Virtual coordinate scaling parameter, used to do calculations at
- * higher resolution.  Chosen to be 32 for consistency with the PLplot
- * metafile (see plplotP.h).
- *
- * The trick here is to do everything in device coordinates on the driver
- * side, but report/receive everything in virtual coordinates to/from the
- * PLplot core.
- */
+// Virtual coordinate scaling parameter, used to do calculations at
+// higher resolution.  Chosen to be 32 for consistency with the PLplot
+// metafile (see plplotP.h).
+//
+// The trick here is to do everything in device coordinates on the driver
+// side, but report/receive everything in virtual coordinates to/from the
+// PLplot core.
+//
 #define VSCALE                       ( 32. )
 
-/* pixels per mm */
+// pixels per mm
 #define DEVICE_PIXELS_PER_MM         ( 3.14961 )
 #define VIRTUAL_PIXELS_PER_MM        ( DEVICE_PIXELS_PER_MM * VSCALE )
 
-/* mm per inch */
+// mm per inch
 #define MM_PER_IN                    ( 25.4 )
 
-/* pixels per inch */
+// pixels per inch
 #define DEVICE_PIXELS_PER_IN         ( DEVICE_PIXELS_PER_MM * MM_PER_IN )
 #define VIRTUAL_PIXELS_PER_IN        ( VIRTUAL_PIXELS_PER_MM * MM_PER_IN )
 
-/* Default dimensions of the canvas (in inches) */
+// Default dimensions of the canvas (in inches)
 #define CANVAS_WIDTH                 ( 10.0 )
 #define CANVAS_HEIGHT                ( 7.5 )
 
-/* size of plot in pixels on screen if not given */
+// size of plot in pixels on screen if not given
 #define PLOT_WIDTH                   ( 800 )
 #define PLOT_HEIGHT                  ( 600 )
 
-/* These need to be distinguished since the handling is slightly different. */
+// These need to be distinguished since the handling is slightly different.
 #define LOCATE_INVOKED_VIA_API       1
 #define LOCATE_INVOKED_VIA_DRIVER    2
 
-/* Available backends */
+// Available backends
 #define wxBACKEND_DC                 0
 #define wxBACKEND_AGG                1
 #define wxBACKEND_GC                 2
 
 class wxPLplotFrame;
 
-/* base device class */
+// base device class
 class wxPLDevBase
 {
-public: /* methods */
+public: // methods
     wxPLDevBase( int bcknd );
     virtual ~wxPLDevBase( void );
 
@@ -114,7 +114,7 @@ public: /* methods */
     virtual void PSDrawTextToDC( char* utf8_string, bool drawText ) = 0;
     virtual void PSSetFont( PLUNICODE fci ) = 0;
 
-public: /* variables */
+public: // variables
     const int    backend;
     bool         ready;
     bool         ownGUI;
@@ -140,29 +140,29 @@ public: /* variables */
     PLFLT        scalex;
     PLFLT        scaley;
 
-    bool         plstate_width;         /* Flags indicating change of state before */
-    bool         plstate_color0;        /* device is fully initialized */
-    bool         plstate_color1;        /* taken from gcw driver */
+    bool         plstate_width;         // Flags indicating change of state before
+    bool         plstate_color0;        // device is fully initialized
+    bool         plstate_color1;        // taken from gcw driver
 
-    PLGraphicsIn gin;                   /* Graphics input structure */
-    int          locate_mode;           /* Set while in locate mode */
-    bool         draw_xhair;            /* Set during xhair draws */
+    PLGraphicsIn gin;                   // Graphics input structure
+    int          locate_mode;           // Set while in locate mode
+    bool         draw_xhair;            // Set during xhair draws
 
-    /* clipping region */
+    // clipping region
     int  clipminx, clipmaxx;
     int  clipminy, clipmaxy;
     bool newclipregion;
 
-    /* variables for antializing */
+    // variables for antializing
     int          freetype;
     int          smooth_text;
 
-    const char   ** devDesc;    /* Descriptive names for file-oriented devices.  Malloc'ed. */
-    const char   ** devName;    /* Keyword names of file-oriented devices. Malloc'ed. */
+    const char   ** devDesc;    // Descriptive names for file-oriented devices.  Malloc'ed.
+    const char   ** devName;    // Keyword names of file-oriented devices. Malloc'ed.
     int          ndev;
     wxBitmapType bitmapType;
 
-    /* font variables */
+    // font variables
     static const int max_string_length = 500;
     wxFont           * m_font;
     bool             underlined;
@@ -179,7 +179,7 @@ public: /* variables */
 
 class wxPLDevDC : public wxPLDevBase
 {
-public: /* methods */
+public: // methods
     wxPLDevDC( void );
     ~wxPLDevDC( void );
 
@@ -202,14 +202,14 @@ public: /* methods */
     void PSDrawTextToDC( char* utf8_string, bool drawText );
     void PSSetFont( PLUNICODE fci );
 
-private: /* variables */
+private: // variables
     wxBitmap* m_bitmap;
     wxDC    * m_dc;
 };
 
 
 #ifdef HAVE_AGG
-/* antigrain headers */
+// antigrain headers
 #include "agg2/agg_basics.h"
 #include "agg2/agg_rendering_buffer.h"
 #include "agg2/agg_rasterizer_scanline_aa.h"
@@ -227,7 +227,7 @@ private: /* variables */
 
 class wxPLDevAGG : public wxPLDevBase
 {
-    /* type definitions and enums */
+    // type definitions and enums
     typedef agg::pixfmt_rgb24                                              pixFormat;
     typedef agg::renderer_base<pixFormat>                                  rendererBase;
     typedef agg::renderer_scanline_aa_solid<rendererBase>                  rendererSolid;
@@ -242,7 +242,7 @@ class wxPLDevAGG : public wxPLDevBase
 
     enum drawPathFlag { Fill, Stroke, FillAndStroke };
 
-public: /* methods */
+public: // methods
     wxPLDevAGG( void );
     ~wxPLDevAGG( void );
 
@@ -267,7 +267,7 @@ public: /* methods */
     void drawPath( drawPathFlag flag );
     void AGGAddtoClipRegion( short x1, short y1, short x2, short y2 );
 
-private: /* variables */
+private: // variables
     wxDC * mDC;
     wxImage               * mBuffer;
     agg::rendering_buffer mRenderingBuffer;
@@ -310,7 +310,7 @@ private: /* variables */
 
 class wxPLDevGC : public wxPLDevBase
 {
-public: /* methods */
+public: // methods
     wxPLDevGC( void );
     ~wxPLDevGC( void );
 
@@ -333,12 +333,12 @@ public: /* methods */
     void PSDrawTextToDC( char* utf8_string, bool drawText );
     void PSSetFont( PLUNICODE fci );
 
-private: /* variables */
+private: // variables
     wxBitmap         * m_bitmap;
     wxDC             * m_dc;
     wxGraphicsContext* m_context;
 
-    /* text colors */
+    // text colors
     unsigned char textRed, textGreen, textBlue;
 
     unsigned char mStrokeOpacity;
@@ -363,16 +363,16 @@ struct dev_entry
 
 
 
-/* after how many commands the window should be refreshed */
+// after how many commands the window should be refreshed
 #define MAX_COMCOUNT    10000
 
-/* wxwidgets application definition (if needed) */
+// wxwidgets application definition (if needed)
 WX_DEFINE_ARRAY( wxPLplotFrame *, wxArrayOfwxPLplotFrame );
 class wxPLplotApp : public wxApp
 {
 public:
     virtual bool OnInit();
-    /* virtual int OnExit(); */
+    // virtual int OnExit();
     void SetExitFlag( bool flag = true ) { exit = flag; };
     bool GetExitFlag( void ) { return exit; };
     void SetAdvanceFlag( bool flag = true ) { advance = flag; };
@@ -391,7 +391,7 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-/* definition of the actual window/frame shown */
+// definition of the actual window/frame shown
 class wxPLplotWindow : public wxWindow
 {
 public:
@@ -413,7 +413,7 @@ private:
     void DrawCrosshair();
 
     PLStream   * m_pls;
-    wxPLDevBase* m_dev; /* windows needs to know this structure */
+    wxPLDevBase* m_dev; // windows needs to know this structure
     bool       refresh;
     bool       xhair_drawn;
     int        mouse_x, mouse_y, old_mouse_x, old_mouse_y;
@@ -422,7 +422,7 @@ private:
 };
 
 
-/* declaration of the actual window/frame shown */
+// declaration of the actual window/frame shown
 class wxPLplotFrame : public wxFrame
 {
 public:
@@ -436,17 +436,17 @@ public:
 private:
     wxPanel       * m_panel;
     wxPLplotWindow* m_window;
-    wxPLDevBase   * m_dev; /* frame needs to know this structure */
+    wxPLDevBase   * m_dev; // frame needs to know this structure
 
     DECLARE_EVENT_TABLE()
 };
 
-/* menu ids */
+// menu ids
 enum { wxPL_Save = 10000, wxPL_Next = 10100, wxPL_Locate, wxPL_Orientation_0, wxPL_Orientation_90,
        wxPL_Orientation_180, wxPL_Orientation_270 };
 
 
-/* Pixel size dialog */
+// Pixel size dialog
 class wxGetSizeDialog : public wxDialog
 {
 public:
@@ -469,8 +469,8 @@ private:
 };
 
 
-/* Use this macro if you want to define your own main() or WinMain() function
- * and call wxEntry() from there. */
+// Use this macro if you want to define your own main() or WinMain() function
+// and call wxEntry() from there.
 #define IMPLEMENT_PLAPP_NO_MAIN( appname )                           \
     wxAppConsole * wxPLCreateApp()                                   \
     {                                                                \
@@ -485,21 +485,21 @@ private:
 
 #define DECLARE_PLAPP( appname )    extern appname &wxPLGetApp();
 
-/* workaround against warnings for unused variables */
+// workaround against warnings for unused variables
 static inline void Use( void * )
 {
 }
 #define WX_SUPPRESS_UNUSED_WARN( x )    Use( &x )
 
-/* private functions needed by the wxwidgets Driver */
+// private functions needed by the wxwidgets Driver
 static void install_buffer( PLStream *pls );
 static void wxRunApp( PLStream *pls, bool runonce = false );
 static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
 
 
-/*----------------------------------------------------------------------*\
- *  Declarations for the device.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  Declarations for the device.
+//--------------------------------------------------------------------------
 
 void plD_init_wxwidgets( PLStream * );
 void plD_init_wxpng( PLStream * );
@@ -518,20 +518,20 @@ void wx_set_size( PLStream* pls, int width, int height );
 int plD_errorexithandler_wxwidgets( char *errormessage );
 void plD_erroraborthandler_wxwidgets( char *errormessage );
 
-/*----------------------------------------------------------------------*\
- *  Debug functions
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  Debug functions
+//--------------------------------------------------------------------------
 
-/* define if you want debug output */
-/* #define _DEBUG //*/
-/* #define _DEBUG_VERBOSE //*/
+// define if you want debug output
+// #define _DEBUG //
+// #define _DEBUG_VERBOSE //
 void Log_Verbose( const char *fmt, ... );
 void Log_Debug( const char *fmt, ... );
 
 
-/*---------------------------------------------------------------------
- * Font style and weight lookup tables
- * ---------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Font style and weight lookup tables
+//--------------------------------------------------------------------------
 const wxFontFamily fontFamilyLookup[5] = {
     wxFONTFAMILY_SWISS,      // sans-serif
     wxFONTFAMILY_ROMAN,      // serif
@@ -551,4 +551,4 @@ const int          fontWeightLookup[2] = {
     wxFONTFLAG_BOLD         // bold
 };
 
-#endif /* __WXWIDGETS_H__ */
+#endif // __WXWIDGETS_H__

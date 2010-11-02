@@ -1,34 +1,34 @@
-/*
- *
- * This software is provided under the LGPL in March 2009 by the
- * Cluster Science Centre
- * QSAS team,
- * Imperial College, London
- *
- * Copyright (C) 2009  Imperial College, London
- * Copyright (C) 2009  Alan W. Irwin
- *
- * This is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Lesser Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * To received a copy of the GNU Library General Public License
- * write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * History:
- *
- *
- * March 2009:  v1.00
- * Initial release.
- *
- */
+//
+//
+// This software is provided under the LGPL in March 2009 by the
+// Cluster Science Centre
+// QSAS team,
+// Imperial College, London
+//
+// Copyright (C) 2009  Imperial College, London
+// Copyright (C) 2009  Alan W. Irwin
+//
+// This is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Lesser Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This software is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// To received a copy of the GNU Library General Public License
+// write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+// History:
+//
+//
+// March 2009:  v1.00
+// Initial release.
+//
+//
 
 
 #include "qt.h"
@@ -116,13 +116,13 @@ void closeQtApp()
     }
 }
 
-/*---------------------------------------------------------------------
- * qt_family_check ()
- *
- * support function to help supress more than one page if family file
- * output not specified by the user  (e.g., with the -fam command-line option).
- * Adapted directly from svg.c
- * ---------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// qt_family_check ()
+//
+// support function to help supress more than one page if family file
+// output not specified by the user  (e.g., with the -fam command-line option).
+// Adapted directly from svg.c
+//--------------------------------------------------------------------------
 static int already_warned = 0;
 static int qt_family_check( PLStream *pls )
 {
@@ -249,19 +249,19 @@ void plD_init_rasterqt( PLStream * pls )
     lines_aa  = 1;
     plParseDrvOpts( qt_options );
 
-    /* Stream setup */
+    // Stream setup
     pls->color        = 1;
     pls->plbuf_write  = 0;
     pls->dev_fill0    = 1;
     pls->dev_fill1    = 0;
-    pls->dev_gradient = 1;      /* driver renders gradient */
-    /* Let the PLplot core handle dashed lines since
-     * the driver results for this capability have a number of issues.
-     * pls->dev_dash=1; */
+    pls->dev_gradient = 1;      // driver renders gradient
+    // Let the PLplot core handle dashed lines since
+    // the driver results for this capability have a number of issues.
+    // pls->dev_dash=1;
     pls->dev_dash  = 0;
     pls->dev_flush = 1;
-    /* Driver does not have a clear capability so use (good) PLplot core
-     * fallback for that instead.  */
+    // Driver does not have a clear capability so use (good) PLplot core
+    // fallback for that instead.
     pls->dev_clear   = 0;
     pls->termin      = 0;
     pls->page        = 0;
@@ -303,7 +303,7 @@ void plD_init_rasterqt( PLStream * pls )
 
     ( (QtRasterDevice*) ( pls->dev ) )->setResolution( dpi );
 
-    /* Initialize family file info */
+    // Initialize family file info
     plFamInit( pls );
 
     plOpenFile( pls );
@@ -421,8 +421,8 @@ void plD_esc_rasterqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        /*$$ call the generic ProcessString function
-         *  ProcessString( pls, (EscText *)ptr ); */
+        //$$ call the generic ProcessString function
+        //  ProcessString( pls, (EscText *)ptr );
         widget->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
         break;
@@ -497,7 +497,7 @@ void plD_dispatch_init_bmpqt( PLDispatchTable *pdt )
 
 void plD_bop_bmpqt( PLStream *pls )
 {
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
 
     pls->famadv = 1;
@@ -532,7 +532,7 @@ void plD_dispatch_init_jpgqt( PLDispatchTable *pdt )
 
 void plD_bop_jpgqt( PLStream *pls )
 {
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
 
     pls->famadv = 1;
@@ -567,7 +567,7 @@ void plD_dispatch_init_pngqt( PLDispatchTable *pdt )
 
 void plD_bop_pngqt( PLStream *pls )
 {
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
 
     pls->famadv = 1;
@@ -602,7 +602,7 @@ void plD_dispatch_init_ppmqt( PLDispatchTable *pdt )
 
 void plD_bop_ppmqt( PLStream *pls )
 {
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
 
     pls->famadv = 1;
@@ -637,7 +637,7 @@ void plD_dispatch_init_tiffqt( PLDispatchTable *pdt )
 
 void plD_bop_tiffqt( PLStream *pls )
 {
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
 
     pls->famadv = 1;
@@ -676,19 +676,19 @@ void plD_init_svgqt( PLStream * pls )
     lines_aa  = 1;
     plParseDrvOpts( qt_options );
 
-    /* Stream setup */
+    // Stream setup
     pls->color        = 1;
     pls->plbuf_write  = 0;
     pls->dev_fill0    = 1;
     pls->dev_fill1    = 0;
-    pls->dev_gradient = 1;      /* driver renders gradient */
-    /* Let the PLplot core handle dashed lines since
-     * the driver results for this capability have a number of issues.
-     * pls->dev_dash=1; */
+    pls->dev_gradient = 1;      // driver renders gradient
+    // Let the PLplot core handle dashed lines since
+    // the driver results for this capability have a number of issues.
+    // pls->dev_dash=1;
     pls->dev_dash  = 0;
     pls->dev_flush = 1;
-    /* Driver does not have a clear capability so use (good) PLplot core
-     * fallback for that instead.  */
+    // Driver does not have a clear capability so use (good) PLplot core
+    // fallback for that instead.
     pls->dev_clear   = 0;
     pls->termin      = 0;
     pls->page        = 0;
@@ -722,7 +722,7 @@ void plD_init_svgqt( PLStream * pls )
 
     plP_setpxl( POINTS_PER_INCH / 25.4 / ( (QtSVGDevice*) ( pls->dev ) )->downscale, POINTS_PER_INCH / 25.4 / ( (QtSVGDevice*) ( pls->dev ) )->downscale );
 
-    /* Initialize family file info */
+    // Initialize family file info
     plFamInit( pls );
 
     plOpenFile( pls );
@@ -730,7 +730,7 @@ void plD_init_svgqt( PLStream * pls )
 
 void plD_bop_svgqt( PLStream *pls )
 {
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
 
     pls->famadv = 1;
@@ -858,8 +858,8 @@ void plD_esc_svgqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        /*$$ call the generic ProcessString function
-         *  ProcessString( pls, (EscText *)ptr ); */
+        //$$ call the generic ProcessString function
+        //  ProcessString( pls, (EscText *)ptr );
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
         break;
@@ -960,19 +960,19 @@ void plD_init_epspdfqt( PLStream * pls )
     lines_aa  = 1;
     plParseDrvOpts( qt_options );
 
-    /* Stream setup */
+    // Stream setup
     pls->color        = 1;
     pls->plbuf_write  = 0;
     pls->dev_fill0    = 1;
     pls->dev_fill1    = 0;
-    pls->dev_gradient = 1;      /* driver renders gradient */
-    /* Let the PLplot core handle dashed lines since
-     * the driver results for this capability have a number of issues.
-     * pls->dev_dash=1; */
+    pls->dev_gradient = 1;      // driver renders gradient
+    // Let the PLplot core handle dashed lines since
+    // the driver results for this capability have a number of issues.
+    // pls->dev_dash=1;
     pls->dev_dash  = 0;
     pls->dev_flush = 1;
-    /* Driver does not have a clear capability so use (good) PLplot core
-     * fallback for that instead.  */
+    // Driver does not have a clear capability so use (good) PLplot core
+    // fallback for that instead.
     pls->dev_clear   = 0;
     pls->termin      = 0;
     pls->page        = 0;
@@ -1007,7 +1007,7 @@ void plD_init_epspdfqt( PLStream * pls )
 
     plP_setpxl( POINTS_PER_INCH / 25.4 / ( (QtEPSDevice*) ( pls->dev ) )->downscale, POINTS_PER_INCH / 25.4 / ( (QtEPSDevice*) ( pls->dev ) )->downscale );
 
-    /* Initialize family file info */
+    // Initialize family file info
     plFamInit( pls );
 
     plOpenFile( pls );
@@ -1015,7 +1015,7 @@ void plD_init_epspdfqt( PLStream * pls )
 
 void plD_bop_epspdfqt_helper( PLStream *pls, int ifeps )
 {
-    /* Plot familying stuff. Not really understood, just copying gd.c */
+    // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
 
     pls->famadv = 1;
@@ -1146,8 +1146,8 @@ void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        /*$$ call the generic ProcessString function
-         *  ProcessString( pls, (EscText *)ptr ); */
+        //$$ call the generic ProcessString function
+        //  ProcessString( pls, (EscText *)ptr );
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
         break;
@@ -1272,18 +1272,18 @@ void plD_init_qtwidget( PLStream * pls )
 
     plP_setpxl( temp.logicalDpiX() / 25.4 / widget->downscale, temp.logicalDpiY() / 25.4 / widget->downscale );
 
-    pls->color        = 1;      /* Is a color device */
-    pls->plbuf_write  = 1;      /* Store commands to device in core buffer */
-    pls->dev_fill0    = 1;      /* Handle solid fills */
+    pls->color        = 1;      // Is a color device
+    pls->plbuf_write  = 1;      // Store commands to device in core buffer
+    pls->dev_fill0    = 1;      // Handle solid fills
     pls->dev_fill1    = 0;
-    pls->dev_gradient = 1;      /* driver renders gradient */
-    /* Let the PLplot core handle dashed lines since
-     * the driver results for this capability have a number of issues.
-     * pls->dev_dash=1; */
+    pls->dev_gradient = 1;      // driver renders gradient
+    // Let the PLplot core handle dashed lines since
+    // the driver results for this capability have a number of issues.
+    // pls->dev_dash=1;
     pls->dev_dash  = 0;
     pls->dev_flush = 1;
-    /* Driver does not have a clear capability so use (good) PLplot core
-     * fallback for that instead.  */
+    // Driver does not have a clear capability so use (good) PLplot core
+    // fallback for that instead.
     pls->dev_clear   = 0;
     pls->termin      = 1;
     pls->dev_text    = 1; // want to draw text
@@ -1497,29 +1497,29 @@ void plD_init_extqt( PLStream * pls )
 
     plP_setpxl( temp.logicalDpiX() / 25.4 / widget->downscale, temp.logicalDpiY() / 25.4 / widget->downscale );
 
-    pls->color        = 1;      /* Is a color device */
+    pls->color        = 1;      // Is a color device
     pls->plbuf_write  = 0;
-    pls->dev_fill0    = 1;      /* Handle solid fills */
+    pls->dev_fill0    = 1;      // Handle solid fills
     pls->dev_fill1    = 0;
-    pls->dev_gradient = 1;      /* driver renders gradient */
-    /* Let the PLplot core handle dashed lines since
-     * the driver results for this capability have a number of issues.
-     * pls->dev_dash=1; */
+    pls->dev_gradient = 1;      // driver renders gradient
+    // Let the PLplot core handle dashed lines since
+    // the driver results for this capability have a number of issues.
+    // pls->dev_dash=1;
     pls->dev_dash  = 0;
     pls->dev_flush = 1;
-    /* Driver does not have a clear capability so use (good) PLplot core
-     * fallback for that instead.  */
+    // Driver does not have a clear capability so use (good) PLplot core
+    // fallback for that instead.
     pls->dev_clear   = 0;
     pls->termin      = 0;
     pls->dev_text    = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
 }
 
-/*
- * These functions are separated out (instead of using dynamic_cast)
- * for the benefit of the PyQt4 bindings. C++ QtExtWidgets created
- * by PyQt4 are not properly type resolved.
- */
+//
+// These functions are separated out (instead of using dynamic_cast)
+// for the benefit of the PyQt4 bindings. C++ QtExtWidgets created
+// by PyQt4 are not properly type resolved.
+//
 
 void plD_line_extqt( PLStream * pls, short x1a, short y1a, short x2a, short y2a )
 {
@@ -1599,8 +1599,8 @@ void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        /*$$ call the generic ProcessString function
-         *  ProcessString( pls, (EscText *)ptr ); */
+        //$$ call the generic ProcessString function
+        //  ProcessString( pls, (EscText *)ptr );
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
         break;
@@ -1690,19 +1690,19 @@ void plD_init_memqt( PLStream * pls )
     lines_aa  = 1;
     plParseDrvOpts( qt_options );
 
-    /* Stream setup */
+    // Stream setup
     pls->color        = 1;
     pls->plbuf_write  = 0;
     pls->dev_fill0    = 1;
     pls->dev_fill1    = 0;
-    pls->dev_gradient = 1;      /* driver renders gradient */
-    /* Let the PLplot core handle dashed lines since
-     * the driver results for this capability have a number of issues.
-     * pls->dev_dash=1; */
+    pls->dev_gradient = 1;      // driver renders gradient
+    // Let the PLplot core handle dashed lines since
+    // the driver results for this capability have a number of issues.
+    // pls->dev_dash=1;
     pls->dev_dash  = 0;
     pls->dev_flush = 1;
-    /* Driver does not have a clear capability so use (good) PLplot core
-     * fallback for that instead.  */
+    // Driver does not have a clear capability so use (good) PLplot core
+    // fallback for that instead.
     pls->dev_clear   = 0;
     pls->termin      = 0;
     pls->page        = 0;
@@ -1717,15 +1717,15 @@ void plD_init_memqt( PLStream * pls )
     else
         dpi = pls->xdpi;
 
-    /* Set the plot size to the memory buffer size, on the off chance
-     * that they are different. */
+    // Set the plot size to the memory buffer size, on the off chance
+    // that they are different.
     pls->xlength = pls->phyxma;
     pls->ylength = pls->phyyma;
 
-    /* Save a pointer to the user supplied memory */
+    // Save a pointer to the user supplied memory
     input_mem = (unsigned char *) pls->dev;
 
-    /* Create a appropriately sized raster device */
+    // Create a appropriately sized raster device
     pls->dev = new QtRasterDevice( pls->xlength, pls->ylength );
     ( (QtRasterDevice *) pls->dev )->setPLStream( pls );
     ( (QtRasterDevice *) pls->dev )->memory = input_mem;
@@ -1742,17 +1742,17 @@ void plD_init_memqt( PLStream * pls )
 
     plP_setpxl( dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale, dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale );
 
-    /* Copy the user supplied memory into the QImage.
-       This device assumes that the format of the QImage
-       is RGB32 (or ARGB). */
+    // Copy the user supplied memory into the QImage.
+//       This device assumes that the format of the QImage
+//       is RGB32 (or ARGB).
 
     qt_mem = ( (QtRasterDevice *) pls->dev )->scanLine( 0 );
 
     for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
     {
-        qt_mem[2] = input_mem[0]; /* R */
-        qt_mem[1] = input_mem[1]; /* G */
-        qt_mem[0] = input_mem[2]; /* B */
+        qt_mem[2] = input_mem[0]; // R
+        qt_mem[1] = input_mem[1]; // G
+        qt_mem[0] = input_mem[2]; // B
         if ( pls->dev_mem_alpha == 1 )
         {
             qt_mem[3]  = input_mem[3];
@@ -1767,13 +1767,13 @@ void plD_init_memqt( PLStream * pls )
 
     ( (QtRasterDevice*) ( pls->dev ) )->setResolution( dpi );
 
-    /* This is set so the we'll always make it past the qt_family_check(). */
+    // This is set so the we'll always make it past the qt_family_check().
     pls->family = true;
 }
 
 void plD_bop_memqt( PLStream *pls )
 {
-    /* Do nothing to preserve user data */
+    // Do nothing to preserve user data
 }
 
 void plD_eop_memqt( PLStream *pls )
@@ -1787,9 +1787,9 @@ void plD_eop_memqt( PLStream *pls )
 
     for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
     {
-        memory[0] = qt_mem[2];           /* R */
-        memory[1] = qt_mem[1];           /* G */
-        memory[2] = qt_mem[0];           /* B */
+        memory[0] = qt_mem[2];           // R
+        memory[1] = qt_mem[1];           // G
+        memory[2] = qt_mem[0];           // B
         if ( pls->dev_mem_alpha == 1 )
         {
             memory[3] = qt_mem[3];

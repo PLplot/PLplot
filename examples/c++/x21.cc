@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 21 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -157,14 +157,14 @@ PLOptionTable x21::options[] = {
     },
 
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 x21::x21( int argc, const char ** argv )
@@ -203,7 +203,7 @@ x21::x21( int argc, const char ** argv )
     // Initialize PLplot.
     pls->init();
 
-    create_data( &x, &y, &z, pts ); /* the sampled data */
+    create_data( &x, &y, &z, pts ); // the sampled data
     zmin = z[0];
     zmax = z[0];
     for ( i = 1; i < pts; i++ )
@@ -214,8 +214,8 @@ x21::x21( int argc, const char ** argv )
             zmin = z[i];
     }
 
-    create_grid( &xg, xp, &yg, yp ); /* grid the data at */
-    pls->Alloc2dGrid( &zg, xp, yp ); /* the output grided data */
+    create_grid( &xg, xp, &yg, yp ); // grid the data at
+    pls->Alloc2dGrid( &zg, xp, yp ); // the output grided data
     clev = new PLFLT[nl];
 
     pls->col0( 1 );
@@ -235,15 +235,15 @@ x21::x21( int argc, const char ** argv )
         {
             pls->griddata( x, y, z, pts, xg, xp, yg, yp, zg, alg, opt[alg - 1] );
 
-            /* - CSA can generate NaNs (only interpolates?!).
-             * - DTLI and NNI can generate NaNs for points outside the convex hull
-             *      of the data points.
-             * - NNLI can generate NaNs if a sufficiently thick triangle is not found
-             *
-             * PLplot should be NaN/Inf aware, but changing it now is quite a job...
-             * so, instead of not plotting the NaN regions, a weighted average over
-             * the neighbors is done.
-             */
+            // - CSA can generate NaNs (only interpolates?!).
+            // - DTLI and NNI can generate NaNs for points outside the convex hull
+            //      of the data points.
+            // - NNLI can generate NaNs if a sufficiently thick triangle is not found
+            //
+            // PLplot should be NaN/Inf aware, but changing it now is quite a job...
+            // so, instead of not plotting the NaN regions, a weighted average over
+            // the neighbors is done.
+            //
 
             if ( alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI )
             {
@@ -254,7 +254,7 @@ x21::x21( int argc, const char ** argv )
                 {
                     for ( j = 0; j < yp; j++ )
                     {
-                        if ( isnan( zg[i][j] ) ) /* average (IDW) over the 8 neighbors */
+                        if ( isnan( zg[i][j] ) ) // average (IDW) over the 8 neighbors
 
                         {
                             zg[i][j] = 0.; dist = 0.;
@@ -311,13 +311,13 @@ x21::x21( int argc, const char ** argv )
                 cmap1_init();
                 pls->vpor( 0.0, 1.0, 0.0, 0.9 );
                 pls->wind( -1.1, 0.75, -0.65, 1.20 );
-                /*
-                 * For the comparition to be fair, all plots should have the
-                 * same z values, but to get the max/min of the data generated
-                 * by all algorithms would imply two passes. Keep it simple.
-                 *
-                 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
-                 */
+                //
+                // For the comparition to be fair, all plots should have the
+                // same z values, but to get the max/min of the data generated
+                // by all algorithms would imply two passes. Keep it simple.
+                //
+                // plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
+                //
 
                 pls->w3d( 1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30., -40. );
                 pls->box3( "bntu", "X", 0.0, 0,
@@ -342,11 +342,11 @@ void x21::cmap1_init()
 {
     PLFLT i[2], h[2], l[2], s[2];
 
-    i[0] = 0.0;         /* left boundary */
-    i[1] = 1.0;         /* right boundary */
+    i[0] = 0.0;         // left boundary
+    i[1] = 1.0;         // right boundary
 
-    h[0] = 240;         /* blue -> green -> yellow -> */
-    h[1] = 0;           /* -> red */
+    h[0] = 240;         // blue -> green -> yellow ->
+    h[1] = 0;           // -> red
 
     l[0] = 0.6;
     l[1] = 0.6;
@@ -398,7 +398,7 @@ void x21::create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts )
             *x = xt + xm;
             *y = yt + ym;
         }
-        else /* std=1, meaning that many points are outside the plot range */
+        else // std=1, meaning that many points are outside the plot range
         {
             *x = sqrt( -2. * log( xt ) ) * cos( 2. * M_PI * yt ) + xm;
             *y = sqrt( -2. * log( xt ) ) * sin( 2. * M_PI * yt ) + ym;
@@ -431,8 +431,8 @@ int main( int argc, const char ** argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x21.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 

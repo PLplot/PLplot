@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 16 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -63,11 +63,11 @@ const int x16::PERIMETERPTS = 100;
 PLFLT x16::    tr[] = { 2. / ( nx - 1 ), 0.0, -1.0, 0.0, 2. / ( ny - 1 ), -1.0 };
 
 
-/* Options data structure definition. */
+// Options data structure definition.
 
 PLOptionTable x16::options[] = {
     {
-        "exclude",              /* Turns on page showing exclusion */
+        "exclude",              // Turns on page showing exclusion
         NULL,
         NULL,
         &exclude,
@@ -76,7 +76,7 @@ PLOptionTable x16::options[] = {
         "Plot the \"exclusion\" page."
     },
     {
-        "ns",                   /* Number of shade levels */
+        "ns",                   // Number of shade levels
         NULL,
         NULL,
         &ns,
@@ -85,7 +85,7 @@ PLOptionTable x16::options[] = {
         "Sets number of shade levels"
     },
     {
-        "nx",                   /* Number of data points in x */
+        "nx",                   // Number of data points in x
         NULL,
         NULL,
         &nx,
@@ -94,7 +94,7 @@ PLOptionTable x16::options[] = {
         "Sets number of data points in x"
     },
     {
-        "ny",                   /* Number of data points in y */
+        "ny",                   // Number of data points in y
         NULL,
         NULL,
         &ny,
@@ -103,14 +103,14 @@ PLOptionTable x16::options[] = {
         "Sets number of data points in y"
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
 const char *x16::  notes[] = {
@@ -120,7 +120,7 @@ const char *x16::  notes[] = {
     NULL
 };
 
-/* Transformation function */
+// Transformation function
 
 static void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
 {
@@ -197,7 +197,7 @@ x16::x16( int argc, const char ** argv )
     for ( i = 0; i < ns + 1; i++ )
         shedge[i] = zmin + ( zmax - zmin ) * (PLFLT) i / (PLFLT) ns;
 
-/* Set up coordinate grids */
+// Set up coordinate grids
 
     cgrid1.xg = xg1;
     cgrid1.yg = yg1;
@@ -420,6 +420,6 @@ int main( int argc, const char ** argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x16.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

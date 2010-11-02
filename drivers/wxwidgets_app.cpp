@@ -1,53 +1,53 @@
-/* $Id$
- *
- * Copyright (C) 2008  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2008  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
-/* TODO:
- * - Add dialog to get width and height from user for plot size to save.
- */
+// TODO:
+// - Add dialog to get width and height from user for plot size to save.
+//
 
-/* wxwidgets headers */
+// wxwidgets headers
 #include "wx/wx.h"
 
 #include "plDevs.h"
 
 #ifdef PLD_wxwidgets
 
-/* plplot headers */
+// plplot headers
 #include "plplotP.h"
 #include "drivers.h"
 #include "plevent.h"
 
-/* std and driver headers */
+// std and driver headers
 #include "wxwidgets.h"
 
-/* Application icon as XPM */
-/* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
+// Application icon as XPM
+// This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/
 static const char *graph[] = {
-/* columns rows colors chars-per-pixel */
+// columns rows colors chars-per-pixel
     "16 16 4 2",
     "   c black",
     ".  c #BA1825",
     "X  c gray100",
     "UX c None",
-/* pixels */
+// pixels
     "UX. . . . . . . . . . . . . . UX",
     ". . . . . . . . . . . . . . . . ",
     ". . . . . . . . . . . . . . . . ",
@@ -84,23 +84,23 @@ struct dev_entry  dev_entries[] =
     { wxT( "xfig" ),     wxT( "xfig..." ),                     wxT( "Save this plot as xfig!" ),                         wxT( "fig files (*.fig)|*.fig" ),                false }
 };
 
-/* Application implementation */
+// Application implementation
 IMPLEMENT_PLAPP_NO_MAIN( wxPLplotApp )
 
-/* event table for the app */
+// event table for the app
 BEGIN_EVENT_TABLE( wxPLplotApp, wxApp )
 EVT_IDLE( wxPLplotApp::OnIdle )
 END_EVENT_TABLE()
 
-/* event table for frames */
+// event table for frames
 BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
-EVT_MENU( -1, wxPLplotFrame::OnMenu )        /* handle all menu events */
+EVT_MENU( -1, wxPLplotFrame::OnMenu )        // handle all menu events
 EVT_CLOSE( wxPLplotFrame::OnClose )
 END_EVENT_TABLE()
 
-/* event table for the plot widget */
+// event table for the plot widget
 BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
-EVT_PAINT( wxPLplotWindow::OnPaint )                 /* (re)draw the plot in window */
+EVT_PAINT( wxPLplotWindow::OnPaint )                 // (re)draw the plot in window
 EVT_CHAR( wxPLplotWindow::OnChar )
 EVT_IDLE( wxPLplotWindow::OnIdle )
 EVT_MOUSE_EVENTS( wxPLplotWindow::OnMouse )
@@ -109,15 +109,15 @@ EVT_SIZE( wxPLplotWindow::OnSize )
 EVT_MAXIMIZE( wxPLplotWindow::OnMaximize )
 END_EVENT_TABLE()
 
-/* event table for the size dialog */
+// event table for the size dialog
 BEGIN_EVENT_TABLE( wxGetSizeDialog, wxDialog )
 END_EVENT_TABLE()
 
-/*----------------------------------------------------------------------*\
- *  bool wxPLplotApp::OnInit()
- *
- *  This method is called before the applications gets control.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  bool wxPLplotApp::OnInit()
+//
+//  This method is called before the applications gets control.
+//--------------------------------------------------------------------------
 bool wxPLplotApp::OnInit()
 {
     // Log_Verbose( "wxPLplotApp::OnInit" );
@@ -145,11 +145,11 @@ bool wxPLplotApp::OnInit()
 }
 
 
-/*----------------------------------------------------------------------*\
- *  void wxPLplotApp::SetRefreshFlag( bool flag )
- *
- *  XXX - missing
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotApp::SetRefreshFlag( bool flag )
+//
+//  XXX - missing
+//--------------------------------------------------------------------------
 void wxPLplotApp::SetRefreshFlag( bool flag )
 {
     // Log_Verbose( "wxPLplotApp::SetRefreshFlag" );
@@ -159,11 +159,11 @@ void wxPLplotApp::SetRefreshFlag( bool flag )
 }
 
 
-/*----------------------------------------------------------------------*\
- *  void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED(event) )
- *
- *  XXX - missing
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED(event) )
+//
+//  XXX - missing
+//--------------------------------------------------------------------------
 void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotApp::OnIdle" );
@@ -181,12 +181,12 @@ void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 }
 
 
-/*----------------------------------------------------------------------*\
- *  wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
- *
- *  Constructor of wxPLplotFrame, where we create the menu and add the
- *  wxPLplotWindow. We need also to know the current PLStream.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
+//
+//  Constructor of wxPLplotFrame, where we create the menu and add the
+//  wxPLplotWindow. We need also to know the current PLStream.
+//--------------------------------------------------------------------------
 wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
     : wxFrame( NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
                wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION |
@@ -262,11 +262,11 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 }
 
 
-/*----------------------------------------------------------------------*\
- *  void wxPLplotFrame::OnMenu( wxCommandEvent& event )
- *
- *  Event method, which is called if user
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotFrame::OnMenu( wxCommandEvent& event )
+//
+//  Event method, which is called if user
+//--------------------------------------------------------------------------
 void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 {
     // Log_Verbose( "wxPLplotFrame::OnMenu" );
@@ -306,7 +306,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
         int  height  = 600;
         bool proceed = false;
 
-        /* ask for geometry in pixels only for image devices */
+        // ask for geometry in pixels only for image devices
         if ( dev_entries[index].pixelDevice )
         {
             wxGetSizeDialog sizeDialog( this, -1, wxT( "Size of plot" ), wxDefaultPosition, wxDefaultSize,
@@ -340,11 +340,11 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
     }
 }
 
-/*----------------------------------------------------------------------*\
- *  void wxPLplotFrame::OnClose( wxCloseEvent& event )
- *
- *  Event method, which is called if user
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotFrame::OnClose( wxCloseEvent& event )
+//
+//  Event method, which is called if user
+//--------------------------------------------------------------------------
 void wxPLplotFrame::OnClose( wxCloseEvent& event )
 {
     // Log_Verbose( "wxPLplotFrame::OnClose" );
@@ -354,14 +354,14 @@ void wxPLplotFrame::OnClose( wxCloseEvent& event )
 }
 
 
-/*----------------------------------------------------------------------*\
- *  bool wxPLplotFrame::SavePlot( const char* filename, cost char* dev, int width,
- *                                int height )
- *
- *  This function saves the current plot to a file (filename) using a
- *  device (devname) with given width and height. There is no test if
- *  the device really exists.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  bool wxPLplotFrame::SavePlot( const char* filename, cost char* dev, int width,
+//                                int height )
+//
+//  This function saves the current plot to a file (filename) using a
+//  device (devname) with given width and height. There is no test if
+//  the device really exists.
+//--------------------------------------------------------------------------
 bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int width, int height )
 {
     int pls, pls_save;
@@ -442,11 +442,11 @@ bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int wid
 }
 
 
-/*----------------------------------------------------------------------*\
- *  wxPLplotWindow::wxPLplotWindow( const wxString& title )
- *
- *  Constructor of wxPLplotFrame, where we create the menu.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  wxPLplotWindow::wxPLplotWindow( const wxString& title )
+//
+//  Constructor of wxPLplotFrame, where we create the menu.
+//--------------------------------------------------------------------------
 wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
     : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                 wxNO_BORDER | wxWANTS_CHARS | wxCLIP_CHILDREN )
@@ -464,22 +464,22 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
 }
 
 
-/*----------------------------------------------------------------------*\
- *  void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
- *
- *  Event method where the plots are actually drawn. Since the plots
- *  are already drawn into bitmaps, which just copy them into to client
- *  area. This method is also called, if (part) of the client area was
- *  invalidated and a refresh is necessary.
- \*----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
+//
+//  Event method where the plots are actually drawn. Since the plots
+//  are already drawn into bitmaps, which just copy them into to client
+//  area. This method is also called, if (part) of the client area was
+//  invalidated and a refresh is necessary.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnPaint" );
 
-    /* copy bitmap into client area */
+    // copy bitmap into client area
     wxPaintDC dc( this );
 
-    /* only update damaged regions */
+    // only update damaged regions
     int vX, vY, vW, vH;
     wxRegionIterator upd( GetUpdateRegion() );
 
@@ -519,11 +519,11 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED( event ) )
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::OnChar( wxKeyEvent& event )
- *
- *  Handle key events.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::OnChar( wxKeyEvent& event )
+//
+//  Handle key events.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::OnChar( wxKeyEvent& event )
 {
     // Log_Verbose( "wxPLplotWindow::OnChar" );
@@ -549,7 +549,7 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
 
     if ( m_dev->locate_mode )
     {
-        /* End locate mode on <Escape> */
+        // End locate mode on <Escape>
         if ( gin->keysym == PLK_Escape )
         {
             if ( m_dev->locate_mode == LOCATE_INVOKED_VIA_API )
@@ -564,8 +564,8 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
     }
     else
     {
-        /* Call user keypress event handler.  Since this is called first, the user
-         * can disable all internal event handling by setting gin.keysym to 0. */
+        // Call user keypress event handler.  Since this is called first, the user
+        // can disable all internal event handling by setting gin.keysym to 0.
         if ( m_pls->KeyEH != NULL )
         {
             int advance = 0;
@@ -600,11 +600,11 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
- *
- *  If there is no pending event, maybe the canvas needs to be refreshed.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
+//
+//  If there is no pending event, maybe the canvas needs to be refreshed.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnIdle" );
@@ -621,7 +621,7 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 #if ( wxMAJOR_VERSION <= 2 ) & ( wxMINOR_VERSION <= 5 )
             RefreshRect( rect );
 #else
-            RefreshRect( rect, false ); /* don't erase background */
+            RefreshRect( rect, false ); // don't erase background
 #endif
             m_dev->newclipregion = true;
             m_dev->clipminx      = m_dev->width;
@@ -636,23 +636,23 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED(event) )
- *
- *  Do nothing here to prevent flickering.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED(event) )
+//
+//  Do nothing here to prevent flickering.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnErase" );
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
- *
- *  Allocate a bigger bitmap if necessary and redo the plot if the
- *  window size was changed.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
+//
+//  Allocate a bigger bitmap if necessary and redo the plot if the
+//  window size was changed.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnSize" );
@@ -664,7 +664,7 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED( event ) )
     {
         if ( ( width != m_dev->width ) || ( height != m_dev->height ) )
         {
-            /* get a new bitmap if new size is bigger as bitmap size */
+            // get a new bitmap if new size is bigger as bitmap size
             if ( ( width > m_dev->bm_width ) || ( height > m_dev->bm_height ) )
             {
                 m_dev->bm_width  = m_dev->bm_width > width ? m_dev->bm_width : width;
@@ -681,11 +681,11 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED( event ) )
 }
 
 
-/*----------------------------------------------------------------------
- *  wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
- *
- *  Add a size event if the Window is maximized.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
+//
+//  Add a size event if the Window is maximized.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnMax" );
@@ -695,11 +695,11 @@ void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED( event ) )
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::OnMouse( wxMouseEvent &event )
- *
- *  Handle mouse events.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::OnMouse( wxMouseEvent &event )
+//
+//  Handle mouse events.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::OnMouse( wxMouseEvent &event )
 {
     // Log_Verbose( "wxPLplotWindow::OnMouse" );
@@ -741,8 +741,8 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
             Locate();
         else
         {
-            /* Call user event handler.  Since this is called first, the user can
-             * disable all PLplot internal event handling by setting gin->button to 0. */
+            // Call user event handler.  Since this is called first, the user can
+            // disable all PLplot internal event handling by setting gin->button to 0.
             if ( m_pls->ButtonEH != NULL )
             {
                 int advance = 0;
@@ -751,7 +751,7 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
                     wxPLGetApp().SetAdvanceFlag();
             }
 
-            /* Handle internal events */
+            // Handle internal events
             switch ( gin->button )
             {
             case 3: // on right mouse button advance
@@ -767,11 +767,11 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::Locate( void )
- *
- *  Take care of Locate mode, called by OnChar() and OnMouse().
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::Locate( void )
+//
+//  Take care of Locate mode, called by OnChar() and OnMouse().
+//--------------------------------------------------------------------------
 void wxPLplotWindow::Locate( void )
 {
     // Log_Verbose( "wxPLplotWindow::Locate" );
@@ -784,7 +784,7 @@ void wxPLplotWindow::Locate( void )
     if ( m_dev->locate_mode == LOCATE_INVOKED_VIA_API )
         wxPLGetApp().SetAdvanceFlag();
 
-    /* Call user locate mode handler if provided */
+    // Call user locate mode handler if provided
     if ( m_pls->LocateEH != NULL )
     {
         int locate_mode = m_dev->locate_mode;
@@ -799,8 +799,8 @@ void wxPLplotWindow::Locate( void )
     {
         if ( plTranslateCursor( gin ) )
         {
-            /* If invoked by the API, we're done */
-            /* Otherwise send report to stdout */
+            // If invoked by the API, we're done
+            // Otherwise send report to stdout
             if ( m_dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
                 if ( gin->keysym < 0xFF && isprint( gin->keysym ) )
                     printf( "%f %f %c\n", gin->wX, gin->wY, gin->keysym );
@@ -809,7 +809,7 @@ void wxPLplotWindow::Locate( void )
         }
         else
         {
-            /* Selected point is out of bounds, so end locate mode */
+            // Selected point is out of bounds, so end locate mode
             m_dev->locate_mode = 0;
             m_dev->draw_xhair  = false;
         }
@@ -818,14 +818,14 @@ void wxPLplotWindow::Locate( void )
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::DrawCrosshair()
- *
- *  Draw a cross hair (inverted lines).
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::DrawCrosshair()
+//
+//  Draw a cross hair (inverted lines).
+//--------------------------------------------------------------------------
 void wxPLplotWindow::DrawCrosshair()
 {
-    /* draw cross hair */
+    // draw cross hair
     wxClientDC dc( this );
     if ( m_dev->draw_xhair )
     {
@@ -855,30 +855,30 @@ void wxPLplotWindow::DrawCrosshair()
 }
 
 
-/*----------------------------------------------------------------------
- *  void wxPLplotWindow::SetOrientation( int rot )
- *
- *  Set the orientation of the plot.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wxPLplotWindow::SetOrientation( int rot )
+//
+//  Set the orientation of the plot.
+//--------------------------------------------------------------------------
 void wxPLplotWindow::SetOrientation( int rot )
 {
-    PLINT bgr, bgg, bgb; /* red, green, blue */
+    PLINT bgr, bgg, bgb; // red, green, blue
 
     //plsstrm( m_pls );
     plsdiori( rot );
     m_dev->resizing = true;
-    plgcolbg( &bgr, &bgg, &bgb ); /* get background color information */
+    plgcolbg( &bgr, &bgg, &bgb ); // get background color information
     m_dev->ClearBackground( bgr, bgg, bgb );
     plRemakePlot( m_pls );
     m_dev->resizing = false;
     Refresh();
 }
 
-/*----------------------------------------------------------------------
- *  wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, ... )
- *
- *  Constructor of GetSizeDialog.
- *----------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, ... )
+//
+//  Constructor of GetSizeDialog.
+//--------------------------------------------------------------------------
 wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, wxWindowID id, const wxString &title,
                                   const wxPoint &position, const wxSize& size, long style, int width, int height ) :
     wxDialog( parent, id, title, position, size, style )
@@ -916,4 +916,4 @@ wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, wxWindowID id, const wxStrin
     sizer->SetSizeHints( this );
 }
 
-#endif                          /* PLD_wxwidgets */
+#endif                          // PLD_wxwidgets

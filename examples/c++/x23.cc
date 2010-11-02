@@ -1,9 +1,9 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
 //    Displays Greek letters and mathematically interesting Unicode ranges
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2005,2008  Alan Irwin
 // Copyright (C) 2005,2008  Andrew Ross
 //
@@ -21,11 +21,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 23 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -54,9 +54,9 @@ private:
     static const char *weight[];
 };
 
-/*
- * Displays Greek letters and mathematically interesting Unicode ranges
- */
+//
+// Displays Greek letters and mathematically interesting Unicode ranges
+//
 
 const char* x23::Greek[] = {
     "#gA", "#gB", "#gG", "#gD", "#gE", "#gZ", "#gY", "#gH", "#gI", "#gK", "#gL", "#gM",
@@ -172,7 +172,7 @@ int x23::        nycells[] = {
     8,
 };
 
-/* non-zero values Must be consistent with nxcells and nycells. */
+// non-zero values Must be consistent with nxcells and nycells.
 int x23::offset[] = {
     0,
     0,
@@ -187,7 +187,7 @@ int x23::offset[] = {
     0,
 };
 
-/* 30 possible FCI values. */
+// 30 possible FCI values.
 
 #define FCI_COMBINATIONS    30
 PLUNICODE x23::  fci[] = {
@@ -257,7 +257,7 @@ x23::x23( int argc, const char *argv[] )
     {
         pls->adv( 0 );
 
-        /* Set up viewport and window */
+        // Set up viewport and window
 
         pls->vpor( 0.02, 0.98, 0.02, 0.90 );
         pls->wind( 0.0, 1.0, 0.0, 1.0 );
@@ -265,11 +265,11 @@ x23::x23( int argc, const char *argv[] )
         pls->schr( 0., 0.8 );
         ycharacter_scale = ( 1.0 - 0.0 ) / ( ymax - ymin );
 
-        /* Factor should be 0.5, but heuristically it turns out to be larger. */
+        // Factor should be 0.5, but heuristically it turns out to be larger.
         pls->gchr( chardef, charht );
         yoffset = 1.0 * charht * ycharacter_scale;
 
-        /* Draw the grid using plstream::box */
+        // Draw the grid using plstream::box
 
         pls->col0( 2 );
         deltax = 1.0 / ( (PLFLT) nxcells[page] );
@@ -306,11 +306,11 @@ x23::x23( int argc, const char *argv[] )
         }
 
         pls->schr( 0., 1.0 );
-        /* Page title */
+        // Page title
         pls->mtex( "t", 1.5, 0.5, 0.5, title[page] );
     }
 
-    /* Demonstrate methods of getting the current fonts */
+    // Demonstrate methods of getting the current fonts
     PLUNICODE fci_old;
     PLINT     ifamily, istyle, iweight;
 
@@ -323,8 +323,8 @@ x23::x23( int argc, const char *argv[] )
     {
         PLFLT dy = 0.030;
         int   family_index, style_index, weight_index;
-        /* Must be big enough to contain the prefix strings, the font-changing
-         * commands, and the "The quick brown..." string. */
+        // Must be big enough to contain the prefix strings, the font-changing
+        // commands, and the "The quick brown..." string.
         char string[200];
 
         pls->adv( 0 );
@@ -430,7 +430,7 @@ x23::x23( int argc, const char *argv[] )
         pls->schr( 0., 1.0 );
     }
 
-    /* Restore defaults */
+    // Restore defaults
     pls->col0( 1 );
 
     delete pls;

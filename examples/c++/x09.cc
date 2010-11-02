@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 09 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -116,7 +116,7 @@ x09::x09( int argc, const char **argv )
     // Parse and process command line arguments.
 
     pls->parseopts( &argc, argv, PL_PARSE_FULL );
-    /* Initialize plplot */
+    // Initialize plplot
 
     pls->init();
 
@@ -124,7 +124,7 @@ x09::x09( int argc, const char **argv )
     pls->Alloc2dGrid( &w, XPTS, YPTS );
 
 
-    /* Set up function arrays */
+    // Set up function arrays
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -137,7 +137,7 @@ x09::x09( int argc, const char **argv )
         }
     }
 
-    /* Set up grids */
+    // Set up grids
     cgrid1.xg = xg1;
     cgrid1.yg = yg1;
     cgrid1.nx = XPTS;
@@ -169,17 +169,17 @@ x09::x09( int argc, const char **argv )
 
 
     // Plot using scaled identity transform used to create xg0 and yg0
-    /*	pls->_setcontlabelparam(0.006, 0.3, 0.1, 0);
-     *    pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
-     *    pls->col0(2);
-     *    pls->cont( z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
-     *    pls->styl(1, &mark, &space);
-     *    pls->col0(3);
-     *    pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
-     *    pls->styl(0, &mark, &space);
-     *    pls->col0(1);
-     *    pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-     */
+    //	pls->_setcontlabelparam(0.006, 0.3, 0.1, 0);
+    //    pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    //    pls->col0(2);
+    //    pls->cont( z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    //    pls->styl(1, &mark, &space);
+    //    pls->col0(3);
+    //    pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    //    pls->styl(0, &mark, &space);
+    //    pls->col0(1);
+    //    pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    //
     pls->setcontlabelformat( 4, 3 );
     pls->setcontlabelparam( 0.006, 0.3, 0.1, 1 );
     pls->env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
@@ -206,20 +206,20 @@ x09::x09( int argc, const char **argv )
     pls->col0( 1 );
     pls->lab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
 
-    /*	pls->_setcontlabelparam(0.006, 0.3, 0.1, 1);
-     *    pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
-     *    pls->col0(2);
-     *    pls->cont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *        pltr1, (void *) &cgrid1 );
-     *    pls->styl(2, &mark, &space);
-     *    pls->col0(3);
-     *    pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *        pltr1, (void *) &cgrid1 );
-     *    pls->styl(0, &mark, &space);
-     *    pls->col0(1);
-     *    pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-     *    pls->_setcontlabelparam(0.006, 0.3, 0.1, 0);
-     */
+    //	pls->_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    //    pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    //    pls->col0(2);
+    //    pls->cont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //        pltr1, (void *) &cgrid1 );
+    //    pls->styl(2, &mark, &space);
+    //    pls->col0(3);
+    //    pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //        pltr1, (void *) &cgrid1 );
+    //    pls->styl(0, &mark, &space);
+    //    pls->col0(1);
+    //    pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    //    pls->_setcontlabelparam(0.006, 0.3, 0.1, 0);
+    //
     // Plot using 2d coordinate transform
     pls->env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     pls->col0( 2 );
@@ -233,31 +233,31 @@ x09::x09( int argc, const char **argv )
     pls->col0( 1 );
     pls->lab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
 
-    /*	pls->_setcontlabelparam(0.006, 0.3, 0.1, 1);
-     *    pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
-     *    pls->col0(2);
-     *    pls->cont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *        pltr2, (void *) &cgrid2 );
-     *    pls->styl(1, &mark, &space);
-     *    pls->col0(3);
-     *    pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-     *        pltr2, (void *) &cgrid2 );
-     *    pls->styl(1, &mark0, &space0);
-     *    pls->col0(1);
-     *    pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-     */
+    //	pls->_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    //    pls->env(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    //    pls->col0(2);
+    //    pls->cont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //        pltr2, (void *) &cgrid2 );
+    //    pls->styl(1, &mark, &space);
+    //    pls->col0(3);
+    //    pls->cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    //        pltr2, (void *) &cgrid2 );
+    //    pls->styl(1, &mark0, &space0);
+    //    pls->col0(1);
+    //    pls->lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    //
     pls->setcontlabelparam( 0.006, 0.3, 0.1, 0 );
     polar();
-    /*
-     * pls->setcontlabelparam(0.006, 0.3, 0.1, 1);
-     * polar();
-     */
+    //
+    // pls->setcontlabelparam(0.006, 0.3, 0.1, 1);
+    // polar();
+    //
     pls->setcontlabelparam( 0.006, 0.3, 0.1, 0 );
     potential();
-    /*
-     * pls->setcontlabelparam(0.006, 0.3, 0.1, 1);
-     * potential();
-     */
+    //
+    // pls->setcontlabelparam(0.006, 0.3, 0.1, 1);
+    // potential();
+    //
 
     // pls->end();
 
@@ -423,10 +423,10 @@ const void x09::potential()
 
     pls->MinMax2dGrid( z, PRPTS, PTHETAPTS, &zmax, &zmin );
 
-    /*	printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
-     *    q1, d1, q1i, d1i, q2, d2, q2i, d2i);
-     *    printf("%.15g %.15g %.15g %.15g %.15g %.15g\n",
-     *    xmin,xmax,ymin,ymax,zmin,zmax);*/
+    //	printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
+    //    q1, d1, q1i, d1i, q2, d2, q2i, d2i);
+    //    printf("%.15g %.15g %.15g %.15g %.15g %.15g\n",
+    //    xmin,xmax,ymin,ymax,zmin,zmax);
 
     // Positive and negative contour levels.
     dz        = ( zmax - zmin ) / (PLFLT) PNLEVEL;
@@ -502,6 +502,6 @@ int main( int argc, const char **argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x09.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 20 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 #include "plevent.h"
@@ -72,7 +72,7 @@ struct stretch_data
 
 PLOptionTable x20::options[] = {
     {
-        "dbg",                  /* extra debugging plot */
+        "dbg",                  // extra debugging plot
         NULL,
         NULL,
         &dbg,
@@ -81,7 +81,7 @@ PLOptionTable x20::options[] = {
         "Extra debugging plot"
     },
     {
-        "nosombrero",                   /* Turns on test of xor function */
+        "nosombrero",                   // Turns on test of xor function
         NULL,
         NULL,
         &nosombrero,
@@ -90,7 +90,7 @@ PLOptionTable x20::options[] = {
         "No sombrero plot"
     },
     {
-        "nointeractive",                /* Turns on test of xor function */
+        "nointeractive",                // Turns on test of xor function
         NULL,
         NULL,
         &nointeractive,
@@ -99,7 +99,7 @@ PLOptionTable x20::options[] = {
         "No interactive selection"
     },
     {
-        "save",                 /* For saving in postscript */
+        "save",                 // For saving in postscript
         NULL,
         NULL,
         &f_name,
@@ -108,17 +108,17 @@ PLOptionTable x20::options[] = {
         "Save sombrero plot in color postscript `filename'"
     },
     {
-        NULL,                   /* option */
-        NULL,                   /* handler */
-        NULL,                   /* client data */
-        NULL,                   /* address of variable to set */
-        0,                      /* mode flag */
-        NULL,                   /* short syntax */
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
         NULL
-    }                           /* long syntax */
+    }                           // long syntax
 };
 
-/* Transformation function */
+// Transformation function
 static void
 mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 {
@@ -145,15 +145,15 @@ x20::x20( int argc, const char ** argv )
     PLcGrid2            cgrid2;
     PLFLT               xx, yy;
 
-    /*
-     * Bugs in plimage():
-     * -at high magnifications, the left and right edge are ragged, try
-     *    ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-     *
-     * Bugs in x20c.c:
-     * -if the window is resized after a selection is made on "lena", when
-     *  making a new selection the old one will re-appear.
-     */
+    //
+    // Bugs in plimage():
+    // -at high magnifications, the left and right edge are ragged, try
+    //    ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
+    //
+    // Bugs in x20c.c:
+    // -if the window is resized after a selection is made on "lena", when
+    //  making a new selection the old one will re-appear.
+    //
 
     // plplot initialization
 
@@ -168,21 +168,21 @@ x20::x20( int argc, const char ** argv )
 
     pls->Alloc2dGrid( &z, XDIM, YDIM );
 
-    /* view image border pixels */
+    // view image border pixels
     if ( dbg )
     {
-        pls->env( 1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 1 ); /* no plot box */
+        pls->env( 1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 1 ); // no plot box
 
-        /* build a one pixel square border, for diagnostics */
+        // build a one pixel square border, for diagnostics
         for ( i = 0; i < XDIM; i++ )
-            z[i][YDIM - 1] = 1.; /* right */
+            z[i][YDIM - 1] = 1.; // right
         for ( i = 0; i < XDIM; i++ )
-            z[i][0] = 1.;        /* left */
+            z[i][0] = 1.;        // left
 
         for ( i = 0; i < YDIM; i++ )
-            z[0][i] = 1.;        /* top */
+            z[0][i] = 1.;        // top
         for ( i = 0; i < YDIM; i++ )
-            z[XDIM - 1][i] = 1.; /* botton */
+            z[XDIM - 1][i] = 1.; // botton
 
         pls->lab( "...around a blue square.", " ", "A red border should appear..." );
 
@@ -191,11 +191,11 @@ x20::x20( int argc, const char ** argv )
             1., (PLFLT) XDIM, 1., (PLFLT) YDIM );
     }
 
-    /* sombrero-like demo */
+    // sombrero-like demo
     if ( !nosombrero )
     {
         pls->Alloc2dGrid( &r, XDIM, YDIM );
-        pls->col0( 2 ); /* draw a yellow plot box, useful for diagnostics! :( */
+        pls->col0( 2 ); // draw a yellow plot box, useful for diagnostics! :(
         pls->env( 0., 2. * M_PI, 0, 3. * M_PI, 1, -1 );
 
         for ( i = 0; i < XDIM; i++ )
@@ -216,14 +216,14 @@ x20::x20( int argc, const char ** argv )
             0., 2. * M_PI, 0, 3. * M_PI );
         pls->Free2dGrid( r, XDIM, YDIM );
 
-        /* save the plot */
+        // save the plot
         if ( f_name )
             save_plot( f_name );
     }
 
     pls->Free2dGrid( z, XDIM, YDIM );
 
-    /* read Lena image */
+    // read Lena image
     if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ) )
     {
         if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
@@ -234,10 +234,10 @@ x20::x20( int argc, const char ** argv )
         }
     }
 
-    /* set gray colormap */
+    // set gray colormap
     gray_cmap( num_col );
 
-    /* display Lena */
+    // display Lena
     pls->env( 1., width, 1., height, 1, -1 );
 
     if ( !nointeractive )
@@ -260,25 +260,25 @@ x20::x20( int argc, const char ** argv )
             exit( 0 );
         }
 
-        /*
-         * I'm unable to continue, clearing the plot and advancing to the next
-         * one, without hiting the enter key, or pressing the button... help!
-         *
-         * Forcing the xwin driver to leave locate mode and destroying the
-         * xhairs (in GetCursorCmd()) solves some problems, but I still have
-         * to press the enter key or press Button-2 to go to next plot, even
-         * if a pladv() is not present!  Using plbop() solves the problem, but
-         * it shouldn't be needed!
-         */
+        //
+        // I'm unable to continue, clearing the plot and advancing to the next
+        // one, without hiting the enter key, or pressing the button... help!
+        //
+        // Forcing the xwin driver to leave locate mode and destroying the
+        // xhairs (in GetCursorCmd()) solves some problems, but I still have
+        // to press the enter key or press Button-2 to go to next plot, even
+        // if a pladv() is not present!  Using plbop() solves the problem, but
+        // it shouldn't be needed!
+        //
 
-        /* pls->bop(); */
+        // pls->bop();
 
-        /*
-         * spause(false), adv(0), spause(true), also works,
-         * but the above question remains.
-         * With this approach, the previous pause state is lost,
-         * as there is no API call to get its current state.
-         */
+        //
+        // spause(false), adv(0), spause(true), also works,
+        // but the above question remains.
+        // With this approach, the previous pause state is lost,
+        // as there is no API call to get its current state.
+        //
 
         pls->spause( false );
         pls->adv( 0 );
@@ -357,20 +357,20 @@ int x20::read_img( const char *fname, PLFLT ***img_f, int *width, int *height, i
     int           i, j, w, h;
     PLFLT         **imf;
 
-    /* naive grayscale binary ppm reading. If you know how to, improve it */
+    // naive grayscale binary ppm reading. If you know how to, improve it
     if ( !ifs.is_open() )
         return 1;
 
     ifs.getline( ver, 80 );
     //cout << "version: " << ver << endl;
 
-    if ( strcmp( ver, "P5" ) ) /* I only understand this! */
+    if ( strcmp( ver, "P5" ) ) // I only understand this!
         return 1;
 
     ifs.read( &c, 1 );
     while ( c == '#' )
     {
-        ifs.getline( ver, 80 ); /* comments */
+        ifs.getline( ver, 80 ); // comments
         //cout << ver << endl;
         ifs.read( &c, 1 );
     }
@@ -389,7 +389,7 @@ int x20::read_img( const char *fname, PLFLT ***img_f, int *width, int *height, i
     for ( i = 0; i < w; i++ )
         for ( j = 0; j < h; j++ )
             imf[i][j] = img[( h - 1 - j ) * w + i];
-    /* flip image up-down */
+    // flip image up-down
 
     delete[] img;
 
@@ -423,9 +423,9 @@ int x20::get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
     PLINT        start = 0;
     bool         st;
 
-    pls->xormod( true, &st ); /* enter xor mode to draw a selection rectangle */
+    pls->xormod( true, &st ); // enter xor mode to draw a selection rectangle
 
-    if ( st )                 /* driver has xormod capability, continue */
+    if ( st )                 // driver has xormod capability, continue
     {
         while ( 1 )
         {
@@ -439,7 +439,7 @@ int x20::get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
             {
                 xxi = gin.wX; yyi = gin.wY;
                 if ( start )
-                    pls->line( 5, sx, sy ); /* clear previous rectangle */
+                    pls->line( 5, sx, sy ); // clear previous rectangle
 
                 start = 0;
 
@@ -451,24 +451,24 @@ int x20::get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
             {
                 xxe = gin.wX; yye = gin.wY;
                 if ( start )
-                    pls->line( 5, sx, sy ); /* clear previous rectangle */
+                    pls->line( 5, sx, sy ); // clear previous rectangle
 
                 start = 1;
 
                 sx[2] = xxe; sy[2] = yye;
                 sx[1] = xxe; sy[1] = yyi;
                 sx[3] = xxi; sy[3] = yye;
-                pls->line( 5, sx, sy ); /* draw new rectangle */
+                pls->line( 5, sx, sy ); // draw new rectangle
             }
 
             if ( gin.button == 3 || gin.keysym == PLK_Return || gin.keysym == 'Q' )
             {
                 if ( start )
-                    pls->line( 5, sx, sy ); /* clear previous rectangle */
+                    pls->line( 5, sx, sy ); // clear previous rectangle
                 break;
             }
         }
-        pls->xormod( false, &st ); /* leave xor mod */
+        pls->xormod( false, &st ); // leave xor mod
 
         if ( xxe < xxi )
         {
@@ -485,11 +485,11 @@ int x20::get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
 
         return ( gin.keysym == 'Q' );
     }
-    else  /* driver has no xormod capability, just do nothing */
+    else  // driver has no xormod capability, just do nothing
         return 0;
 }
 
-/* set gray colormap */
+// set gray colormap
 void x20::gray_cmap( PLINT num_col )
 {
     PLFLT r[2], g[2], b[2], pos[2];
@@ -512,6 +512,6 @@ int main( int argc, const char ** argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x20.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

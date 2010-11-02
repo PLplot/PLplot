@@ -1,37 +1,37 @@
-/* $Id$
- *
- * Copyright (C) 2005  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2005  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
-/* wxwidgets headers */
+// wxwidgets headers
 #include "wx/wx.h"
 
-/* plplot headers */
+// plplot headers
 #include "plplotP.h"
 
 #include "wxPLplotstream.h"
 
-/*! Constructor of wxPLplotstream class which is inherited from plstream.
- *  Here we set the driver (wxwidgets :), and tell plplot in which dc to
- *  plot to and the size of the canvas. We also check and set several
- *  device style options.
- */
+//! Constructor of wxPLplotstream class which is inherited from plstream.
+//  Here we set the driver (wxwidgets :), and tell plplot in which dc to
+//  plot to and the size of the canvas. We also check and set several
+//  device style options.
+//
 wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) : plstream()
 {
     Create( dc, width, height, style );
@@ -104,26 +104,26 @@ wxPLplotstream::~wxPLplotstream()
 }
 
 
-/*! This is the overloaded set_stream() function, where we could have some
- *  code processed before every call of a plplot functions, since set_stream()
- *  is called before every plplot function. Not used in the moment.
- */
+//! This is the overloaded set_stream() function, where we could have some
+//  code processed before every call of a plplot functions, since set_stream()
+//  is called before every plplot function. Not used in the moment.
+//
 void wxPLplotstream::set_stream()
 {
     plstream::set_stream();
 }
 
 
-/*! Call this method if the size of the dc changed (because of resizing)
- *  to set the new size. You need to call RenewPlot afterwards.
- */
+//! Call this method if the size of the dc changed (because of resizing)
+//  to set the new size. You need to call RenewPlot afterwards.
+//
 void wxPLplotstream::SetSize( int width, int height )
 {
-    /* For the AGG backend it is important to set first the new image buffer
-     *       and tell the driver the new size if the buffer size increases and
-     *       the other way round if the buffer size decreases. There is no impact
-     *       for the other backends. This is kind of hacky, but I have no better
-     *       idea in the moment */
+    // For the AGG backend it is important to set first the new image buffer
+    //       and tell the driver the new size if the buffer size increases and
+    //       the other way round if the buffer size decreases. There is no impact
+    //       for the other backends. This is kind of hacky, but I have no better
+    //       idea in the moment
     if ( width * height > m_width * m_height )
     {
         if ( m_image )
@@ -152,8 +152,8 @@ void wxPLplotstream::SetSize( int width, int height )
 }
 
 
-/*! Replot everything.
- */
+//! Replot everything.
+//
 void wxPLplotstream::RenewPlot()
 {
     replot();
@@ -161,9 +161,9 @@ void wxPLplotstream::RenewPlot()
 }
 
 
-/* After calling plot commands it is not sure, that the dc
- * gets updated properly, therefore you need to call this function.
- */
+// After calling plot commands it is not sure, that the dc
+// gets updated properly, therefore you need to call this function.
+//
 void wxPLplotstream::Update()
 {
     if ( m_image )

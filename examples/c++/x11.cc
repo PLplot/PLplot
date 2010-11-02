@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 11 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -76,8 +76,8 @@ void x11::cmap1_init()
     i[0] = 0.0;       // left boundary
     i[1] = 1.0;       // right boundary
 
-    h[0] = 240;       /* blue -> green -> yellow -> */
-    h[1] = 0;         /* -> red */
+    h[0] = 240;       // blue -> green -> yellow ->
+    h[1] = 0;         // -> red
 
     l[0] = 0.6;
     l[1] = 0.6;
@@ -144,7 +144,7 @@ x11::x11( int argc, const char **argv )
             z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. ) ) -
                       10. * ( xx / 5. - pow( (double) xx, 3. ) - pow( (double) yy, 5. ) ) * exp( -xx * xx - yy * yy ) -
                       1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
-            if ( false ) /* Jungfraujoch/Interlaken */
+            if ( false ) // Jungfraujoch/Interlaken
             {
                 if ( z[i][j] < -1. )
                     z[i][j] = -1.;
@@ -178,21 +178,21 @@ x11::x11( int argc, const char **argv )
 
             pls->col0( 2 );
 
-            /* wireframe plot */
+            // wireframe plot
             if ( i == 0 )
                 pls->mesh( x, y, z, XPTS, YPTS, opt[k] );
 
-            /* magnitude colored wireframe plot */
+            // magnitude colored wireframe plot
             else if ( i == 1 )
                 pls->mesh( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR );
 
-            /* magnitude colored wireframe plot with sides */
+            // magnitude colored wireframe plot with sides
             else if ( i == 2 )
             {
                 pls->plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
             }
 
-            /* magnitude colored wireframe plot with base contour */
+            // magnitude colored wireframe plot with base contour
             else if ( i == 3 )
                 pls->meshc( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
                     clevel, nlevel );
@@ -226,6 +226,6 @@ int main( int argc, const char **argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x11.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

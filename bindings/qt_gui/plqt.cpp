@@ -1,34 +1,34 @@
-/*
- *
- * This software is provided under the LGPL in March 2009 by the
- * Cluster Science Centre
- * QSAS team,
- * Imperial College, London
- *
- * Copyright (C) 2009  Imperial College, London
- * Copyright (C) 2009  Alan W. Irwin
- *
- * This is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Lesser Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * To received a copy of the GNU Library General Public License
- * write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * History:
- *
- *
- * March 2009:  v1.00
- * Initial release.
- *
- */
+//
+//
+// This software is provided under the LGPL in March 2009 by the
+// Cluster Science Centre
+// QSAS team,
+// Imperial College, London
+//
+// Copyright (C) 2009  Imperial College, London
+// Copyright (C) 2009  Alan W. Irwin
+//
+// This is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Lesser Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This software is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// To received a copy of the GNU Library General Public License
+// write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+// History:
+//
+//
+// March 2009:  v1.00
+// Initial release.
+//
+//
 
 
 #include "qt.h"
@@ -254,11 +254,11 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
                 old_fontScale = currentFontScale;
                 if ( yOffset > 0.000000000001 )    // I've already encountered precision issues here, so changed 0 into epsilon
                 {
-                    currentFontScale *= 1.25;      /* Subscript scaling parameter */
+                    currentFontScale *= 1.25;      // Subscript scaling parameter
                 }
                 else
                 {
-                    currentFontScale *= 0.8;      /* Subscript scaling parameter */
+                    currentFontScale *= 0.8;      // Subscript scaling parameter
                 }
 
                 yOffset -= currentFontSize * old_fontScale / 2.;
@@ -272,11 +272,11 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
                 currentString.clear();
                 if ( yOffset < -0.000000000001 )
                 {
-                    currentFontScale *= 1.25;      /* Subscript scaling parameter */
+                    currentFontScale *= 1.25;      // Subscript scaling parameter
                 }
                 else
                 {
-                    currentFontScale *= 0.8;      /* Subscript scaling parameter */
+                    currentFontScale *= 0.8;      // Subscript scaling parameter
                 }
 
                 yOffset += currentFontSize * currentFontScale / 2.;
@@ -330,14 +330,14 @@ void QtPLDriver::drawText( EscText* txt )
     if ( !m_painterP->isActive() )
         return;
 
-    /* Check that we got unicode, warning message and return if not */
+    // Check that we got unicode, warning message and return if not
     if ( txt->unicode_array_len == 0 )
     {
         printf( "Non unicode string passed to a Qt driver, ignoring\n" );
         return;
     }
 
-    /* Check that unicode string isn't longer then the max we allow */
+    // Check that unicode string isn't longer then the max we allow
     if ( txt->unicode_array_len >= 500 )
     {
         printf( "Sorry, the Qt drivers only handle strings of length < %d\n", 500 );

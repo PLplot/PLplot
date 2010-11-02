@@ -1,42 +1,42 @@
-/* $Id$
- *
- * Copyright (C) 2008  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2008  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 
-/* TODO:
- * - text clipping
- * - implement AddToClipRegion for text correctly
- */
+// TODO:
+// - text clipping
+// - implement AddToClipRegion for text correctly
+//
 
-/* wxwidgets headers */
+// wxwidgets headers
 #include <wx/wx.h>
 
 #include "plDevs.h"
 
-/* plplot headers */
+// plplot headers
 #include "plplotP.h"
 
-/* std and driver headers */
+// std and driver headers
 #include "wxwidgets.h"
 
-/* only compile code if wxGraphicsContext available */
+// only compile code if wxGraphicsContext available
 #if wxUSE_GRAPHICS_CONTEXT
 
 wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase( wxBACKEND_GC )
@@ -235,11 +235,11 @@ void wxPLDevGC::CreateCanvas()
         if ( !m_dc )
             m_dc = new wxMemoryDC();
 
-        ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); /* deselect bitmap */
+        ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); // deselect bitmap
         if ( m_bitmap )
             delete m_bitmap;
         m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
-        ( (wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); /* select new bitmap */
+        ( (wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
     }
 
     if ( m_dc )
@@ -295,17 +295,17 @@ void wxPLDevGC::SetColor1( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
- *  void wx_set_dc( PLStream* pls, wxDC* dc )
- *
- *  Adds a dc to the stream. The associated device is attached to the canvas
- *  as the property "dev".
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//  void wx_set_dc( PLStream* pls, wxDC* dc )
+//
+//  Adds a dc to the stream. The associated device is attached to the canvas
+//  as the property "dev".
+//--------------------------------------------------------------------------
 void wxPLDevGC::SetExternalBuffer( void* dc )
 {
     // Log_Verbose( "%s", __FUNCTION__ );
 
-    m_dc      = (wxDC*) dc; /* Add the dc to the device */
+    m_dc      = (wxDC*) dc; // Add the dc to the device
     m_context = wxGraphicsContext::Create( *( (wxMemoryDC*) m_dc ) );
     ready     = true;
     ownGUI    = false;
@@ -341,8 +341,8 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
   #ifdef __WXGTK__
     // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
     // always to the background color, since this is the case anyway 99% of the time.
-    PLINT bgr, bgg, bgb;           /* red, green, blue */
-    plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
+    PLINT bgr, bgg, bgb;           // red, green, blue
+    plgcolbg( &bgr, &bgg, &bgb );  // get background color information
     return RGB( bgr, bgg, bgb );
 #else
     wxColour col;
@@ -399,24 +399,24 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
 {
     // Log_Verbose( "%s", __FUNCTION__ );
 
-    /* Check that we got unicode, warning message and return if not */
+    // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
     {
         printf( "Non unicode string passed to a cairo driver, ignoring\n" );
         return;
     }
 
-    /* Check that unicode string isn't longer then the max we allow */
+    // Check that unicode string isn't longer then the max we allow
     if ( args->unicode_array_len >= 500 )
     {
         printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", 500 );
         return;
     }
 
-    /* Calculate the font size (in pixels) */
+    // Calculate the font size (in pixels)
     fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM / scaley * 1.3;
 
-    /* Use PLplot core routine to get the corners of the clipping rectangle */
+    // Use PLplot core routine to get the corners of the clipping rectangle
     PLINT rcx[4], rcy[4];
     difilt_clip( rcx, rcy );
 
@@ -428,12 +428,12 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
     }
     m_context->Clip( wxRegion( 4, cpoints ) );
 
-    /* text color */
+    // text color
     textRed   = pls->cmap0[pls->icol0].r;
     textGreen = pls->cmap0[pls->icol0].g;
     textBlue  = pls->cmap0[pls->icol0].b;
 
-    /* calculate rotation of text */
+    // calculate rotation of text
     plRotationShear( args->xform, &rotation, &shear, &stride );
     rotation -= pls->diorot * M_PI / 2.0;
     cos_rot   = cos( rotation );
@@ -441,10 +441,10 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
     cos_shear = cos( shear );
     sin_shear = sin( shear );
 
-    /* determine extend of text */
+    // determine extend of text
     PSDrawText( args->unicode_array, args->unicode_array_len, false );
 
-    /* actually draw text */
+    // actually draw text
     m_context->PushState();
     m_context->Translate( args->x / scalex, height - args->y / scaley );
     wxGraphicsMatrix matrix = m_context->CreateMatrix(

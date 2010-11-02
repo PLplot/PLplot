@@ -1,8 +1,8 @@
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // $Id$
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
 // Copyright (C) 2004  Alan W. Irwin
 //
@@ -20,11 +20,11 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 // Implementation of PLplot example 8 in C++.
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 
 #include "plc++demos.h"
 
@@ -64,7 +64,7 @@ const char *x08::  title[] = {
 
 PLOptionTable x08::options[] = {
     {
-        "sombrero",             /* Turns on use of Sombrero function */
+        "sombrero",             // Turns on use of Sombrero function
         NULL,
         NULL,
         &x08::sombrero,
@@ -73,14 +73,14 @@ PLOptionTable x08::options[] = {
         "Use the \"sombrero\" function."
     },
     {
-        NULL,                     /* option */
-        NULL,                     /* handler */
-        NULL,                     /* client data */
-        NULL,                     /* address of variable to set */
-        0,                        /* mode flag */
-        NULL,                     /* short syntax */
+        NULL,                     // option
+        NULL,                     // handler
+        NULL,                     // client data
+        NULL,                     // address of variable to set
+        0,                        // mode flag
+        NULL,                     // short syntax
         NULL
-    }                             /* long syntax */
+    }                             // long syntax
 };
 
 
@@ -118,8 +118,8 @@ void x08::cmap1_init( int gray )
     }
     else
     {
-        h[0] = 240; /* blue -> green -> yellow -> */
-        h[1] = 0;   /* -> red */
+        h[0] = 240; // blue -> green -> yellow ->
+        h[1] = 0;   // -> red
 
         l[0] = 0.6;
         l[1] = 0.6;
@@ -175,16 +175,16 @@ x08::x08( int argc, const char **argv )
     pls->init();
 
     pls->Alloc2dGrid( &z, XPTS, YPTS );
-    /*z = new PLFLT*[XPTS];*/
+    //z = new PLFLT*[XPTS];
 
-    /*
-     * for (i = 0; i < XPTS; i++) {
-     * z[i] = new PLFLT [YPTS];
-     * x[i] = ((double) (i - (XPTS / 2)) / (double) (XPTS / 2));
-     * if (rosen)
-     *  x[i] *=  1.5;
-     * }
-     */
+    //
+    // for (i = 0; i < XPTS; i++) {
+    // z[i] = new PLFLT [YPTS];
+    // x[i] = ((double) (i - (XPTS / 2)) / (double) (XPTS / 2));
+    // if (rosen)
+    //  x[i] *=  1.5;
+    // }
+    //
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -209,11 +209,11 @@ x08::x08( int argc, const char **argv )
             if ( rosen )
             {
                 z[i][j] = pow( (double) ( 1. - xx ), 2. ) + 100 * pow( (double) ( yy - pow( (double) xx, 2. ) ), 2. );
-                /* The log argument may be zero for just the right grid.  */
+                // The log argument may be zero for just the right grid.
                 if ( z[i][j] > 0. )
                     z[i][j] = log( z[i][j] );
                 else
-                    z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
+                    z[i][j] = -5.; // -MAXFLOAT would mess-up up the scale
             }
             else
             {
@@ -259,22 +259,22 @@ x08::x08( int argc, const char **argv )
 
             pls->col0( 2 );
 
-            if ( ifshade == 0 ) /* diffuse light surface plot */
+            if ( ifshade == 0 ) // diffuse light surface plot
             {
                 cmap1_init( 1 );
                 pls->surf3d( x, y, z, XPTS, YPTS, 0, NULL, 0 );
             }
-            else if ( ifshade == 1 )   /* magnitude colored plot */
+            else if ( ifshade == 1 )   // magnitude colored plot
             {
                 cmap1_init( 0 );
                 pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
             }
-            else if ( ifshade == 2 )   /*  magnitude colored plot with faceted squares */
+            else if ( ifshade == 2 )   //  magnitude colored plot with faceted squares
             {
                 cmap1_init( 0 );
                 pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
             }
-            else                     /* magnitude colored plot with contours */
+            else                     // magnitude colored plot with contours
             {
                 cmap1_init( 0 );
                 pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS );
@@ -299,6 +299,6 @@ int main( int argc, const char **argv )
 }
 
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------
 //                              End of x08.cc
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------

@@ -141,7 +141,7 @@ x29::plot1()
     pls->col0( 3 );
     pls->erry( npts, x, yerr1, yerr2 );
 
-    /* Rescale major / minor tick marks back to default */
+    // Rescale major / minor tick marks back to default
     pls->smin( 0.0, 1.0 );
     pls->smaj( 0.0, 1.0 );
 }
@@ -201,7 +201,7 @@ x29::plot3()
     PLFLT xmin, xmax, ymin, ymax;
     PLFLT tstart;
 
-    /* Calculate continuous time corresponding to 2005-12-01 UTC. */
+    // Calculate continuous time corresponding to 2005-12-01 UTC.
     pls->ctime( 2005, 11, 01, 0, 0, 0., tstart );
 
     npts = 62;
@@ -243,9 +243,9 @@ x29::plot3()
 void
 x29::plot4()
 {
-    /* TAI-UTC (seconds) as a function of time.
-     * Use Besselian epochs as the continuous time interval just to prove
-     * this does not introduce any issues. */
+    // TAI-UTC (seconds) as a function of time.
+    // Use Besselian epochs as the continuous time interval just to prove
+    // this does not introduce any issues.
 
     PLFLT scale, offset1, offset2;
     PLFLT xmin, xmax, ymin, ymax, xlabel_step;
@@ -260,12 +260,12 @@ x29::plot4()
     PLINT utc_year, utc_month, utc_day, utc_hour, utc_min;
     PLFLT utc_sec, utc;
 
-    /* Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-     * B = 1900. + (JD -2415020.31352)/365.242198781
-     * ==> (as calculated with aid of "bc -l" command)
-     * B = (MJD + 678940.364163900)/365.242198781
-     * ==>
-     * MJD = B*365.24219878 - 678940.364163900 */
+    // Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+    // B = 1900. + (JD -2415020.31352)/365.242198781
+    // ==> (as calculated with aid of "bc -l" command)
+    // B = (MJD + 678940.364163900)/365.242198781
+    // ==>
+    // MJD = B*365.24219878 - 678940.364163900
     scale   = 365.242198781;
     offset1 = -678940.;
     offset2 = -0.3641639;

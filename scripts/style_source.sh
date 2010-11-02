@@ -143,9 +143,6 @@ csource_LIST="$csource_LIST utils/*.c"
 
 csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/f95/*.c bindings/f95/plstubs.h bindings/gnome2/*/*.c bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/f77/*.c bindings/f77/plstubs.h bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch] bindings/octave/plplot_octave.h.in bindings/octave/plplot_octave_rej.h bindings/octave/massage.c"
 
-# temporary
-exclude_c=ON
-if [ -z "$exclude_c" ] ; then
 export cppsource_LIST
 
 # C++ part of bindings/c++
@@ -163,6 +160,9 @@ cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c+
 # C++ source in bindings.
 cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wxPLplotstream.cpp bindings/wxwidgets/wxPLplotwindow.cpp bindings/wxwidgets/wxPLplotwindow.h bindings/wxwidgets/wxPLplotstream.h.in"
 
+# temporary
+exclude_c=ON
+if [ -z "$exclude_c" ] ; then
 export javasource_LIST
 
 # Java part of bindings/java
@@ -244,6 +244,6 @@ transform_source()
 }
 
 transform_source "$csource_LIST" C "comments"
-#transform_source "$cppsource_LIST" CPP
+transform_source "$cppsource_LIST" CPP "comments"
 #transform_source "$javasource_LIST" JAVA
 #transform_source "$dsource_LIST" D

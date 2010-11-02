@@ -22,14 +22,14 @@
 //
 //
 // In Debian, run like this:
-/*
- * PLPLOT_FREETYPE_SANS_FONT=/usr/share/fonts/truetype/arphic/bkai00mp.ttf \
- * PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
- * PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
- * PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
- * PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
- * ./x24 -dev png -o x24cxx.png
- */
+//
+// PLPLOT_FREETYPE_SANS_FONT=/usr/share/fonts/truetype/arphic/bkai00mp.ttf \
+// PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
+// PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
+// PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
+// PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
+// ./x24 -dev png -o x24cxx.png
+//
 // Packages needed:
 //
 // ttf-arphic-bkai00mp
@@ -100,32 +100,32 @@ PLFLT x24::sy[] = {
 };
 
 
-/* Taken from http://www.columbia.edu/~fdc/pace/ */
+// Taken from http://www.columbia.edu/~fdc/pace/
 
 const char* x24::peace[] = {
-    /* Mandarin */
+    // Mandarin
     "#<0x00>和平",
-    /* Hindi */
+    // Hindi
     "#<0x20>शांति",
-    /* English */
+    // English
     "#<0x10>Peace",
-    /* Hebrew */
+    // Hebrew
     "#<0x10>שלום",
-    /* Russian */
+    // Russian
     "#<0x10>Мир",
-    /* German */
+    // German
     "#<0x10>Friede",
-    /* Korean */
+    // Korean
     "#<0x30>평화",
-    /* French */
+    // French
     "#<0x10>Paix",
-    /* Spanish */
+    // Spanish
     "#<0x10>Paz",
-    /* Arabic */
+    // Arabic
     "#<0x10>ﺳﻼم",
-    /* Turkish*/
+    // Turkish
     "#<0x10>Barış",
-    /* Kurdish */
+    // Kurdish
     "#<0x10>Hasîtî",
 };
 
