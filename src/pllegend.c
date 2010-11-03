@@ -164,7 +164,9 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //!
 
 void
-c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
+c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+            PLINT bg_color, PLINT bb_color, PLINT bb_style,
+            PLINT nrow, PLINT ncolumn,
             PLINT nlegend, const PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLFLT text_justification,
@@ -185,8 +187,8 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
     PLFLT text_x, text_y, text_x_world, text_y_world;
     // Character height (world coordinates)
     PLFLT character_height, character_width, symbol_width;
-    // y-position of the current legend entry
-    PLFLT ty, dty;
+    // x, y-position of the current legend entry
+    PLFLT ty, xshift, drow, dcolumn;
     // Positions of the legend entries
     PLFLT dxs, *xs, *ys, xl[2], yl[2], xbox[4], ybox[4];
     PLINT i, j;
@@ -203,10 +205,24 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
 
     PLFLT x_world_per_mm, y_world_per_mm, text_width0 = 0., text_width;
-    PLFLT total_width_border, total_width, total_height;
+    PLFLT width_border, column_separation, total_width, total_height;
 
     PLINT some_boxes         = 0, some_lines = 0, some_symbols = 0;
     PLINT max_symbol_numbers = 0;
+    PLINT irow = 0, icolumn = 0;
+
+    // Default nrow, ncolumn.
+    nrow    = MAX( nrow, 1 );
+    ncolumn = MAX( ncolumn, 1 );
+    if ( nrow * ncolumn < nlegend )
+    {
+        // Make smaller one large enough to accomodate nlegend.
+        if ( ncolumn < nrow )
+            ncolumn = ( nlegend % nrow ) ? ( nlegend / nrow ) + 1 : nlegend / nrow;
+        else
+            nrow = ( nlegend % ncolumn ) ? ( nlegend / ncolumn ) + 1 : nlegend / ncolumn;
+    }
+    // fprintf(stdout, "nrow, ncolumn = %d, %d\n", nrow, ncolumn);
 
     plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
     plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
@@ -262,9 +278,16 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
     // make small border area where only the background is plotted
     // for left and right of legend.  0.4 seems to be a reasonable factor
     // that gives a good-looking result.
-    total_width_border = 0.4 * character_width;
-    total_width        = 2. * total_width_border + text_width + ( xmax - xmin ) * plot_width;
-    total_height       = nlegend * text_spacing * character_height;
+    width_border = 0.4 * character_width;
+    // Separate columns (if any) by 2.0 * character_width.
+    column_separation = 2.0 * character_width;
+    total_width       = 2. * width_border + ( ncolumn - 1 ) * column_separation +
+                        ncolumn * ( text_width + ( xmax - xmin ) * plot_width );
+    total_height = nrow * text_spacing * character_height;
+    // dcolumn is the spacing from one column to the next and
+    // drow is the spacing from one row to the next.
+    dcolumn = column_separation + text_width + ( xmax - xmin ) * plot_width;
+    drow    = text_spacing * character_height;
 
     if ( opt & PL_LEGEND_BACKGROUND )
     {
@@ -286,6 +309,28 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
         plcol0( col0_save );
     }
 
+    if ( opt & PL_LEGEND_BOUNDING_BOX )
+    {
+        PLFLT xbb[5] = {
+            plot_x_world,
+            plot_x_world,
+            plot_x_world + total_width,
+            plot_x_world + total_width,
+            plot_x_world,
+        };
+        PLFLT ybb[5] = {
+            plot_y_world,
+            plot_y_world - total_height,
+            plot_y_world - total_height,
+            plot_y_world,
+            plot_y_world,
+        };
+        pllsty( bb_style );
+        plcol0( bb_color );
+        plline( 5, xbb, ybb );
+        plcol0( col0_save );
+    }
+
     if ( opt & PL_LEGEND_TEXT_LEFT )
     {
         // text area on left, plot area on right.
@@ -294,23 +339,9 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
         plot_x_end_world += text_width;
     }
     // adjust border after background is drawn.
-    plot_x_world     += total_width_border;
-    plot_x_end_world += total_width_border;
-    text_x_world     += total_width_border;
-
-    if ( some_boxes )
-    {
-        xbox[0] = plot_x_world;
-        xbox[1] = plot_x_world;
-        xbox[2] = plot_x_end_world;
-        xbox[3] = plot_x_end_world;
-    }
-
-    if ( some_lines )
-    {
-        xl[0] = plot_x_world;
-        xl[1] = plot_x_end_world;
-    }
+    plot_x_world     += width_border;
+    plot_x_end_world += width_border;
+    text_x_world     += width_border;
 
     if ( some_symbols )
     {
@@ -330,16 +361,15 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
                        fabs( ( xmax - xmin ) / ( ymax - ymin ) );
     }
 
-    dty = text_spacing * character_height;
-    ty  = text_y_world + 0.5 * dty;
     // Draw each legend entry
     for ( i = 0; i < nlegend; i++ )
     {
         // y position of text, lines, symbols, and/or centre of cmap0 box.
-        ty = ty - dty;
+        ty     = text_y_world - ( (double) irow + 0.5 ) * drow;
+        xshift = (double) icolumn * dcolumn;
         // Label/name for the legend
         plcol0( text_colors[i] );
-        plptex( text_x_world + text_justification * text_width0, ty, 0.1, 0.0, text_justification, text[i] );
+        plptex( text_x_world + xshift + text_justification * text_width0, ty, 0.1, 0.0, text_justification, text[i] );
 
         if ( !( opt_array[i] & PL_LEGEND_NONE ) )
         {
@@ -347,10 +377,14 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
             {
                 plcol0( box_colors[i] );
                 plpsty( box_patterns[i] );
-                ybox[0] = ty + 0.5 * dty * box_scales[i];
-                ybox[1] = ty - 0.5 * dty * box_scales[i];
-                ybox[2] = ty - 0.5 * dty * box_scales[i];
-                ybox[3] = ty + 0.5 * dty * box_scales[i];
+                xbox[0] = plot_x_world + xshift;
+                xbox[1] = xbox[0];
+                xbox[2] = plot_x_end_world + xshift;
+                xbox[3] = xbox[2];
+                ybox[0] = ty + 0.5 * drow * box_scales[i];
+                ybox[1] = ty - 0.5 * drow * box_scales[i];
+                ybox[2] = ty - 0.5 * drow * box_scales[i];
+                ybox[3] = ty + 0.5 * drow * box_scales[i];
                 plfill( 4, xbox, ybox );
             }
             if ( opt_array[i] & PL_LEGEND_LINE )
@@ -358,6 +392,8 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
                 plcol0( line_colors[i] );
                 pllsty( line_styles[i] );
                 plwid( line_widths[i] );
+                xl[0] = plot_x_world + xshift;
+                xl[1] = plot_x_end_world + xshift;
                 yl[0] = ty;
                 yl[1] = ty;
                 plline( 2, xl, yl );
@@ -372,10 +408,31 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
                 dxs = ( plot_x_end_world - plot_x_world - symbol_width ) / (double) ( MAX( symbol_numbers[i], 2 ) - 1 );
                 for ( j = 0; j < symbol_numbers[i]; j++ )
                 {
-                    xs[j] = plot_x_world + 0.5 * symbol_width + dxs * (double) j;
+                    xs[j] = plot_x_world + xshift +
+                            0.5 * symbol_width + dxs * (double) j;
                     ys[j] = ty;
                 }
                 plpoin( symbol_numbers[i], xs, ys, symbols[i] );
+            }
+        }
+
+        // Set irow, icolumn for next i value.
+        if ( opt & PL_LEGEND_ROW_MAJOR )
+        {
+            icolumn++;
+            if ( icolumn >= ncolumn )
+            {
+                icolumn = 0;
+                irow++;
+            }
+        }
+        else
+        {
+            irow++;
+            if ( irow >= nrow )
+            {
+                irow = 0;
+                icolumn++;
             }
         }
     }

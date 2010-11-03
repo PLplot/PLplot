@@ -141,7 +141,9 @@ plot1( int type )
     // to do with boxes.
 
     plscol0a( 15, 32, 32, 32, 0.90 );
-    pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
+    pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+        0.57, 0.85, 0.06, 15,
+        1, 1, 0, 0,
         nlegend, opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
