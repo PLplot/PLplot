@@ -87,12 +87,12 @@ let plot1 plot_type =
        to do with boxes *)
 
     plscol0a 15 32 32 32 0.90;
-    pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
+    (*pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
       1.0 1.0 2.0
       1.0 text_colors text
       [||] [||] [||]
       line_colors line_styles line_widths
-      symbol_colors symbol_scales symbol_numbers symbols;
+      symbol_colors symbol_scales symbol_numbers symbols; *)
     ()
   )
   else if plot_type = 1 then (
@@ -111,12 +111,12 @@ let plot1 plot_type =
        to do with boxes and symbols *)
 
     plscol0a 15 32 32 32 0.90;
-    pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
+    (*pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
       1.0 1.0 2.0
       1.0 text_colors text
       [||] [||] [||]
       line_colors line_styles line_widths
-      [||] [||] [||] [||];
+      [||] [||] [||] [||];*)
     ()
   )
 

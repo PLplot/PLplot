@@ -191,13 +191,13 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
         symbols[1]        = 3
 
     plscol0a( 15, 32, 32, 32, 0.90 )
-    pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
-              opt_array,
-              1.0, 1.0, 2.0,
-              1., text_colors, text,
-              box_colors, box_patterns, box_scales,
-              line_colors, line_styles, line_widths,
-              symbol_colors, symbol_scales, symbol_numbers, symbols )
+#    pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
+#              opt_array,
+#              1.0, 1.0, 2.0,
+#              1., text_colors, text,
+#              box_colors, box_patterns, box_scales,
+#              line_colors, line_styles, line_widths,
+#              symbol_colors, symbol_scales, symbol_numbers, symbols )
 
 
 main()

@@ -182,12 +182,12 @@ let plot1 label_type x_label y_label alty_label legend_text title_label line_lab
      to do with boxes *)
 
   plscol0a 15 32 32 32 0.90;
-  pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
+  (*pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
     1.0 1.0 2.0
     1.0 text_colors legend_text
     [||] [||] [||]
     line_colors line_styles line_widths
-    symbol_colors symbol_scales symbol_numbers symbols;
+    symbol_colors symbol_scales symbol_numbers symbols;*)
   ()
 
 (*--------------------------------------------------------------------------*\
