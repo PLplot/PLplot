@@ -35,7 +35,6 @@ __pl_opt.m
 __pl_plenv.m
 __pl_plot3.m
 __pl_plotit.m
-__pl_pltext.m
 __pl_polargrid.m
 __pl_store.m
 __plr1__.m
