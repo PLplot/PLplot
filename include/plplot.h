@@ -1206,7 +1206,7 @@ c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 PLDLLIMPEXP void
 c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
-// Routine for drawing line, symbol, cmap0, or cmap1 legends
+// Routine for drawing line, symbol, or cmap0 legends
 
 // Flags for pllegend.
 #define PL_LEGEND_NONE            1
@@ -1217,6 +1217,12 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_LEGEND_BACKGROUND      32
 #define PL_LEGEND_BOUNDING_BOX    64
 #define PL_LEGEND_ROW_MAJOR       128
+#define PL_LEGEND_RIGHT           256
+#define PL_LEGEND_LEFT            512
+#define PL_LEGEND_UPPER           1024
+#define PL_LEGEND_LOWER           2048
+#define PL_LEGEND_INSIDE          4096
+#define PL_LEGEND_OUTSIDE         8192
 
 PLDLLIMPEXP void
 c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
