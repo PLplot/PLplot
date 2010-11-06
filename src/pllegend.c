@@ -37,9 +37,13 @@
 // with the coordinate system used for x and y.
 
 static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
-                             PLFLT *x_legend_position, PLFLT *y_legend_position )
+                             PLFLT *x_legend_position, PLFLT *y_legend_position,
+                             PLFLT *xsign, PLFLT *ysign )
 {
     PLFLT xorigin, yorigin, xlegend, ylegend;
+    // By default the sign of the x and y offsets is positive.
+    *xsign = 1.;
+    *ysign = 1.;
     if ( opt & PL_LEGEND_RIGHT )
     {
         xorigin = 1.;
@@ -50,6 +54,8 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             {
                 xlegend = -legend_width;
                 ylegend = 0.;
+                *xsign  = -1.;
+                *ysign  = -1.;
             }
             else if ( opt & PL_LEGEND_OUTSIDE )
             {
@@ -68,6 +74,7 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             if ( opt & PL_LEGEND_INSIDE )
             {
                 xlegend = -legend_width;
+                *xsign  = -1.;
             }
             else if ( opt & PL_LEGEND_OUTSIDE )
             {
@@ -85,11 +92,13 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             {
                 xlegend = -legend_width;
                 ylegend = legend_height;
+                *xsign  = -1.;
             }
             else if ( opt & PL_LEGEND_OUTSIDE )
             {
                 xlegend = 0.;
                 ylegend = 0.;
+                *ysign  = -1.;
             }
             else
             {
@@ -111,6 +120,7 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             if ( opt & PL_LEGEND_INSIDE )
             {
                 ylegend = 0.;
+                *ysign  = -1.;
             }
             else if ( opt & PL_LEGEND_OUTSIDE )
             {
@@ -131,6 +141,7 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             else if ( opt & PL_LEGEND_OUTSIDE )
             {
                 ylegend = 0.;
+                *ysign  = -1.;
             }
             else
             {
@@ -152,11 +163,13 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             {
                 xlegend = 0.;
                 ylegend = 0.;
+                *ysign  = -1.;
             }
             else if ( opt & PL_LEGEND_OUTSIDE )
             {
                 xlegend = -legend_width;
                 ylegend = legend_height;
+                *xsign  = -1.;
             }
             else
             {
@@ -174,6 +187,7 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             else if ( opt & PL_LEGEND_OUTSIDE )
             {
                 xlegend = -legend_width;
+                *xsign  = -1.;
             }
             else
             {
@@ -192,6 +206,8 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             {
                 xlegend = -legend_width;
                 ylegend = 0.;
+                *xsign  = -1.;
+                *ysign  = -1.;
             }
             else
             {
@@ -408,7 +424,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
     PLFLT x_subpage_per_mm, y_subpage_per_mm, text_width0 = 0., text_width;
     PLFLT width_border, column_separation,
           total_width, total_height, total_width_vc, total_height_vc;
-    PLFLT x_legend_position, y_legend_position;
+    PLFLT x_legend_position, y_legend_position, xsign, ysign;
 
     PLINT some_boxes         = 0, some_lines = 0, some_symbols = 0;
     PLINT max_symbol_numbers = 0;
@@ -528,9 +544,9 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
               viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. );
     drow = text_spacing * character_height;
 
-    legend_position( opt, total_width_vc, total_height_vc, &x_legend_position, &y_legend_position );
-    plot_x     = x + x_legend_position;
-    plot_y     = y + y_legend_position;
+    legend_position( opt, total_width_vc, total_height_vc, &x_legend_position, &y_legend_position, &xsign, &ysign );
+    plot_x     = x * xsign + x_legend_position;
+    plot_y     = y * ysign + y_legend_position;
     plot_x_end = plot_x + plot_width;
     // Normalized subpage coordinates for legend plots
     plot_x_subpage     = viewport_to_subpage_x( plot_x );
