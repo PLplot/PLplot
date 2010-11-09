@@ -78,6 +78,26 @@ static void
 plhrsh2( PLINT ch, PLINT x, PLINT y );
 
 //--------------------------------------------------------------------------
+// void plstring()
+//
+// Prints out the same string repeatedly at the n points in world
+// coordinates given by the x and y arrays.  Supersedes plpoin and
+// plsymbol for the case where text refers to a unicode glyph either
+// directly as UTF-8 or indirectly via the standard text escape
+// sequences allowed for PLplot input strings.
+//--------------------------------------------------------------------------
+
+void
+c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string )
+{
+    PLINT i;
+    for ( i = 0; i < n; i++ )
+    {
+      c_plptex( x[i], y[i], 1., 0., 0.5, string );
+    }
+}
+
+//--------------------------------------------------------------------------
 // void plsym()
 //
 // Plots array y against x for n points using Hershey symbol "code".

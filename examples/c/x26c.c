@@ -155,8 +155,9 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
     PLINT        line_colors[2];
     PLINT        line_styles[2];
     PLINT        line_widths[2];
-    PLINT        symbol_numbers[2], symbol_colors[2], symbols[2];
+    PLINT        symbol_numbers[2], symbol_colors[2];
     PLFLT        symbol_scales[2];
+    char         *symbols[2];
 
 
     pladv( 0 );
@@ -212,7 +213,7 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( 101, freql, phase );
-        plpoin( 101, freql, phase, 3 );
+        plstring( 101, freql, phase, "*" );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
@@ -235,18 +236,18 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
     symbol_colors[1]  = 3;
     symbol_scales[1]  = 1.;
     symbol_numbers[1] = 4;
-    symbols[1]        = 3;
+    symbols[1]        = "*";
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
 
-    plscol0a( 15, 32, 32, 32, 0.90 );
+    plscol0a( 15, 32, 32, 32, 0.70 );
     pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
-        0.0, 0.0, 0.06, 15,
+        0.0, 0.0, 0.10, 15,
         1, 1, 0, 0,
         nlegend, opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, (const char **) legend_text,
         NULL, NULL, NULL,
         line_colors, line_styles, line_widths,
-        symbol_colors, symbol_scales, symbol_numbers, symbols );
+        symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 }

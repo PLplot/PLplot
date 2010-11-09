@@ -47,13 +47,13 @@ plot1( int type )
     static PLFLT freql[101], ampl[101], phase[101];
     PLFLT        f0, freq;
     PLINT        nlegend;
-    char         *text[2];
+    char         *text[2], *symbols[2];
     PLINT        opt_array[2];
     PLINT        text_colors[2];
     PLINT        line_colors[2];
     PLINT        line_styles[2];
     PLINT        line_widths[2];
-    PLINT        symbol_numbers[2], symbol_colors[2], symbols[2];
+    PLINT        symbol_numbers[2], symbol_colors[2];
     PLFLT        symbol_scales[2];
 
     pladv( 0 );
@@ -110,7 +110,7 @@ plot1( int type )
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( 101, freql, phase );
-        plpoin( 101, freql, phase, 3 );
+        plstring( 101, freql, phase, "*" );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
         nlegend = 2;
@@ -136,18 +136,18 @@ plot1( int type )
     symbol_colors[1]  = 3;
     symbol_scales[1]  = 1.;
     symbol_numbers[1] = 4;
-    symbols[1]        = 3;
+    symbols[1]        = "*";
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
 
-    plscol0a( 15, 32, 32, 32, 0.90 );
+    plscol0a( 15, 32, 32, 32, 0.70 );
     pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
-        0.0, 0.0, 0.06, 15,
+        0.0, 0.0, 0.1, 15,
         1, 1, 0, 0,
         nlegend, opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
         NULL, NULL, NULL,
         line_colors, line_styles, line_widths,
-        symbol_colors, symbol_scales, symbol_numbers, symbols );
+        symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 }

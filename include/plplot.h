@@ -764,6 +764,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plstar                   c_plstar
 #define    plstart                  c_plstart
 #define    plstransform             c_plstransform
+#define    plstring                 c_plstring
 #define    plstripa                 c_plstripa
 #define    plstripc                 c_plstripc
 #define    plstripd                 c_plstripd
@@ -1237,7 +1238,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             const PLINT *line_colors, const PLINT *line_styles,
             const PLINT *line_widths,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
-            const PLINT *symbol_numbers, const PLINT *symbols );
+            const PLINT *symbol_numbers, const char **symbols );
 
 // Sets position of the light source
 PLDLLIMPEXP void
@@ -1736,6 +1737,15 @@ c_plstart( const char *devname, PLINT nx, PLINT ny );
 
 PLDLLIMPEXP void
 c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
+
+// Prints out the same string repeatedly at the n points in world
+// coordinates given by the x and y arrays.  Supersedes plpoin and
+// plsymbol for the case where text refers to a unicode glyph either
+// directly as UTF-8 or indirectly via the standard text escape
+// sequences allowed for PLplot input strings.
+
+PLDLLIMPEXP void
+c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string );
 
 // Add a point to a stripchart.
 

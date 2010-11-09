@@ -395,7 +395,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             const PLINT *line_colors, const PLINT *line_styles,
             const PLINT *line_widths,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
-            const PLINT *symbol_numbers, const PLINT *symbols )
+            const PLINT *symbol_numbers, const char **symbols )
 
 {
     // Legend position
@@ -414,8 +414,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
           line_style_save   = plsc->line_style,
           line_width_save   = plsc->width,
           pattern_save      = plsc->patt;
-    PLFLT text_scale_save   = plsc->chrht / plsc->chrdef,
-          symbol_scale_save = plsc->symht / plsc->symdef;
+    PLFLT text_scale_save   = plsc->chrht / plsc->chrdef;
     // Saved external world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
     // Saved external normalized coordinates of viewport.
@@ -628,7 +627,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
         // AWI, no idea why must use 0.5 factor to get ends of symbol lines
         // to line up approximately correctly with plotted legend lines.
         // Factor should be unity.
-        symbol_width = 0.5 * get_character_or_symbol_height( FALSE );
+        symbol_width = 0.5 * get_character_or_symbol_height( TRUE );
     }
 
     // Draw each legend entry
@@ -674,7 +673,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             if ( opt_array[i] & PL_LEGEND_SYMBOL )
             {
                 plcol0( symbol_colors[i] );
-                plssym( 0., symbol_scales[i] );
+                plschr( 0., symbol_scales[i] );
                 dxs = ( plot_x_end_subpage - plot_x_subpage - symbol_width ) / (double) ( MAX( symbol_numbers[i], 2 ) - 1 );
                 for ( j = 0; j < symbol_numbers[i]; j++ )
                 {
@@ -682,7 +681,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
                             0.5 * symbol_width + dxs * (double) j;
                     ys[j] = ty;
                 }
-                plpoin( symbol_numbers[i], xs, ys, symbols[i] );
+                plstring( symbol_numbers[i], xs, ys, symbols[i] );
             }
         }
 
@@ -715,7 +714,6 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
     // Restore
     plcol0( col0_save );
     plschr( 0., text_scale_save );
-    plssym( 0., symbol_scale_save );
     plpsty( pattern_save );
     plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
     plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
