@@ -80,6 +80,7 @@ function plot1(type)
     pl.box("", 0, 0, "cmstv", 30, 3)
     pl.col0(3)
     pl.line(freql, phase)
+    pl.string(freql, phase, "*")
     pl.col0(3)
     pl.mtex("r", 5, 0.5, 0.5, "Phase shift (degrees)")
   end

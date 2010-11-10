@@ -995,6 +995,12 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.plstransform( coordTrans, data );
     }
 
+    public void string( double[] x, double[] y, String string )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plstring( x, y, string );
+    }
+
     public void stripa( int id, int pen, double x, double y )
     {
         if ( set_stream() == -1 ) return;

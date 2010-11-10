@@ -124,6 +124,7 @@ class x04 {
             pls.box( "", 0.0, 0, "cmstv", 30.0, 3 );
             pls.col0( 3 );
             pls.line( freql, phase );
+            pls.string( freql, phase, "*" );
             pls.col0( 3 );
             pls.mtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
         }
