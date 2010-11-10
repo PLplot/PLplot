@@ -142,7 +142,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
 	plbox("", 0.0, 0, "cmstv", 30.0, 3)
 	plcol0(3)
 	plline(freql, phase)
-	plpoin(freql, phase, 3)
+	plstring(freql, phase, "*")
 	plcol0(3)
 	plmtex("r", 5.0, 0.5, 0.5, alty_label)
         nlegend = 2
@@ -165,7 +165,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
     symbol_colors = zeros(nlegend, "int")
     symbol_scales = zeros(nlegend)
     symbol_numbers = zeros(nlegend, "int")
-    symbols = zeros(nlegend, "int")
+    symbols = zeros(nlegend, "S10")
     # Only specify legend data that are required according to the
     # value of opt_array for that entry.
 
@@ -188,16 +188,15 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
         symbol_colors[1]  = 3
         symbol_scales[1]  = 1.
         symbol_numbers[1] = 4
-        symbols[1]        = 3
+        symbols[1]        = "*"
 
-    plscol0a( 15, 32, 32, 32, 0.90 )
-#    pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
-#              opt_array,
-#              1.0, 1.0, 2.0,
-#              1., text_colors, text,
-#              box_colors, box_patterns, box_scales,
-#              line_colors, line_styles, line_widths,
-#              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    plscol0a( 15, 32, 32, 32, 0.70 )
+
+    pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0.0, 0.0,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
+              1., text_colors, text, box_colors, box_patterns,
+              box_scales, line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
 
 
 main()
