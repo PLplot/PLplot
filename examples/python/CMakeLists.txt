@@ -24,7 +24,8 @@
 # and CORE_BUILD always ON.  The installed examples build always has
 # BUILD_TEST ON and CORE_BUILD OFF.
 
-# N.B. examples 14 and 17 handled independently.
+# N.B. examples 14, 17, and 31 handled independently while 32 has
+# not yet been implemented.
 set(python_STRING_INDICES
   "01"
   "02"
@@ -54,6 +55,7 @@ set(python_STRING_INDICES
   "28"
   "29"
   "30"
+  "33"
   )
 
 set(python_SCRIPTS)
