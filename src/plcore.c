@@ -2785,7 +2785,7 @@ PLDLLIMPEXP int plInBuildTree()
                 else
                 {
                     // On Windows the first character is the drive letter - it is case-insensitive
-                    if ( strncmp( builddir+1, currdir+1, strlen( builddir+1 ) ) == 0 &&
+                    if ( strncmp( builddir + 1, currdir + 1, strlen( builddir + 1 ) ) == 0 &&
                          tolower( builddir[0] ) == tolower( currdir[0] ) )
                     {
                         inBuildTree = 1;

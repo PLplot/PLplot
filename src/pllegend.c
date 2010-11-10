@@ -411,11 +411,11 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     PLFLT dxs, *xs, *ys, xl[2], yl[2], xbox[4], ybox[4];
     PLINT i, j;
     // Active attributes to be saved and restored afterward.
-    PLINT col0_save         = plsc->icol0,
-          line_style_save   = plsc->line_style,
-          line_width_save   = plsc->width,
-          pattern_save      = plsc->patt;
-    PLFLT text_scale_save   = plsc->chrht / plsc->chrdef;
+    PLINT col0_save       = plsc->icol0,
+          line_style_save = plsc->line_style,
+          line_width_save = plsc->width,
+          pattern_save    = plsc->patt;
+    PLFLT text_scale_save = plsc->chrht / plsc->chrdef;
     // Saved external world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
     // Saved external normalized coordinates of viewport.
@@ -528,10 +528,10 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
     // Total width and height of legend area in normalized subpage coordinates.
     legend_width = 2. * width_border + ( ncolumn - 1 ) * column_separation +
-                  ncolumn * ( text_width +
-                              viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. ) );
-    legend_height = nrow * text_spacing * character_height;
-    *p_legend_width = legend_width;
+                   ncolumn * ( text_width +
+                               viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. ) );
+    legend_height    = nrow * text_spacing * character_height;
+    *p_legend_width  = legend_width;
     *p_legend_height = legend_height;
 
     // Total width and height of legend area in normalized external viewport

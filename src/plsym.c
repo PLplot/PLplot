@@ -93,7 +93,7 @@ c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string )
     PLINT i;
     for ( i = 0; i < n; i++ )
     {
-      c_plptex( x[i], y[i], 1., 0., 0.5, string );
+        c_plptex( x[i], y[i], 1., 0., 0.5, string );
     }
 }
 

@@ -158,7 +158,7 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
     PLINT        symbol_numbers[2], symbol_colors[2];
     PLFLT        symbol_scales[2];
     char         *symbols[2];
-    PLFLT legend_width, legend_height;
+    PLFLT        legend_width, legend_height;
 
 
     pladv( 0 );
