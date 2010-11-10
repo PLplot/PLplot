@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 # $Id$
-#  Copyright (C) 2006-2010 Alan W. Irwin
+#  Copyright (C) 2010 Alan W. Irwin
 
 #  Demonstrate most pllegend capability including unicode symbols.
 
@@ -54,8 +54,8 @@ def main():
     plvpor(0.25, 0.75, 0.25, 0.75)
     plwind(0.0, 1.0, 0.0, 1.0)
     plbox("bc", 0.0, 0, "bc", 0.0, 0)
-    plmtex("t", 7.5, 0.5, 0.5, "The 16 standard legend positions with")
-    plmtex("t", 6., 0.5, 0.5, "the same (0.05) offset in x and y") 
+    plmtex("t", 8.0, 0.5, 0.5, "The 16 standard legend positions with")
+    plmtex("t", 6.0, 0.5, 0.5, "the same (0.05) offset in x and y") 
 
     # Set up legend arrays with the correct size, type.
     nlegend = 1
@@ -94,7 +94,7 @@ def main():
         line_colors[0] = 1 + (k % 8)
         symbol_colors[0] = 1 + (k % 8)
 
-        pllegend( opt, 0.05, 0.05,
+        (legend_width, legend_height) = pllegend( opt, 0.05, 0.05,
                   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
                   1., text_colors, text, box_colors, box_patterns,
                   box_scales, line_colors, line_styles, line_widths,
@@ -106,7 +106,7 @@ def main():
     plvpor(0.25, 0.75, 0.25, 0.75)
     plwind(0.0, 1.0, 0.0, 1.0)
     plbox("bc", 0.0, 0, "bc", 0.0, 0)
-    plmtex("t", 7.5, 0.5, 0.5, "The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,")
+    plmtex("t", 8.0, 0.5, 0.5, "The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,")
     plmtex("t", 6.0, 0.5, 0.5, "and position for the same legend data") 
 
     # Set up legend arrays with the correct size, type.
@@ -149,7 +149,7 @@ def main():
     y = 0.1
     nrow = 1
     ncolumn = nlegend
-    pllegend( opt, x, y,
+    (legend_width, legend_height) = pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text, box_colors, box_patterns,
               box_scales, line_colors, line_styles, line_widths,
@@ -160,7 +160,7 @@ def main():
     y = 0.1
     nrow = 1
     ncolumn = nlegend
-    pllegend( opt, x, y,
+    (legend_width, legend_height) = pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text, box_colors, box_patterns,
               box_scales, line_colors, line_styles, line_widths,
@@ -171,7 +171,7 @@ def main():
     y = 0.
     nrow = nlegend
     ncolumn = 1
-    pllegend( opt, x, y,
+    (legend_width, legend_height) = pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text, box_colors, box_patterns,
               box_scales, line_colors, line_styles, line_widths,
@@ -182,7 +182,7 @@ def main():
     y = 0.
     nrow = nlegend
     ncolumn = 1
-    pllegend( opt, x, y,
+    (legend_width, legend_height) = pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text, box_colors, box_patterns,
               box_scales, line_colors, line_styles, line_widths,
@@ -193,7 +193,7 @@ def main():
     y = 0.
     nrow = 6
     ncolumn = 2
-    pllegend( opt, x, y,
+    (legend_width, legend_height) = pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text, box_colors, box_patterns,
               box_scales, line_colors, line_styles, line_widths,
@@ -204,7 +204,7 @@ def main():
     y = 0.
     nrow = 6
     ncolumn = 2
-    pllegend( opt, x, y,
+    (legend_width, legend_height) = pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text, box_colors, box_patterns,
               box_scales, line_colors, line_styles, line_widths,
@@ -215,7 +215,7 @@ def main():
     y = 0.
     nrow = 3
     ncolumn = 3
-    pllegend( opt, x, y,
+    (legend_width, legend_height) = pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text, box_colors, box_patterns,
               box_scales, line_colors, line_styles, line_widths,

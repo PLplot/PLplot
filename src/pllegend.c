@@ -383,7 +383,8 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //!
 
 void
-c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
+            PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT nlegend, const PLINT *opt_array,
@@ -422,7 +423,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
 
     PLFLT x_subpage_per_mm, y_subpage_per_mm, text_width0 = 0., text_width;
     PLFLT width_border, column_separation,
-          total_width, total_height, total_width_vc, total_height_vc;
+          legend_width, legend_height, legend_width_vc, legend_height_vc;
     PLFLT x_legend_position, y_legend_position, xsign, ysign;
 
     PLINT some_boxes         = 0, some_lines = 0, some_symbols = 0;
@@ -526,16 +527,18 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
     column_separation = 2.0 * character_width;
 
     // Total width and height of legend area in normalized subpage coordinates.
-    total_width = 2. * width_border + ( ncolumn - 1 ) * column_separation +
+    legend_width = 2. * width_border + ( ncolumn - 1 ) * column_separation +
                   ncolumn * ( text_width +
                               viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. ) );
-    total_height = nrow * text_spacing * character_height;
+    legend_height = nrow * text_spacing * character_height;
+    *p_legend_width = legend_width;
+    *p_legend_height = legend_height;
 
     // Total width and height of legend area in normalized external viewport
     // coordinates.
 
-    total_width_vc  = subpage_to_viewport_x( total_width ) - subpage_to_viewport_x( 0. );
-    total_height_vc = subpage_to_viewport_y( total_height ) - subpage_to_viewport_y( 0. );
+    legend_width_vc  = subpage_to_viewport_x( legend_width ) - subpage_to_viewport_x( 0. );
+    legend_height_vc = subpage_to_viewport_y( legend_height ) - subpage_to_viewport_y( 0. );
 
     // dcolumn is the spacing from one column to the next and
     // drow is the spacing from one row to the next.
@@ -543,7 +546,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
               viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. );
     drow = text_spacing * character_height;
 
-    legend_position( opt, total_width_vc, total_height_vc, &x_legend_position, &y_legend_position, &xsign, &ysign );
+    legend_position( opt, legend_width_vc, legend_height_vc, &x_legend_position, &y_legend_position, &xsign, &ysign );
     plot_x     = x * xsign + x_legend_position;
     plot_y     = y * ysign + y_legend_position;
     plot_x_end = plot_x + plot_width;
@@ -564,13 +567,13 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
         PLFLT xbg[4] = {
             plot_x_subpage,
             plot_x_subpage,
-            plot_x_subpage + total_width,
-            plot_x_subpage + total_width,
+            plot_x_subpage + legend_width,
+            plot_x_subpage + legend_width,
         };
         PLFLT ybg[4] = {
             plot_y_subpage,
-            plot_y_subpage - total_height,
-            plot_y_subpage - total_height,
+            plot_y_subpage - legend_height,
+            plot_y_subpage - legend_height,
             plot_y_subpage,
         };
         plpsty( 0 );
@@ -584,14 +587,14 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
         PLFLT xbb[5] = {
             plot_x_subpage,
             plot_x_subpage,
-            plot_x_subpage + total_width,
-            plot_x_subpage + total_width,
+            plot_x_subpage + legend_width,
+            plot_x_subpage + legend_width,
             plot_x_subpage,
         };
         PLFLT ybb[5] = {
             plot_y_subpage,
-            plot_y_subpage - total_height,
-            plot_y_subpage - total_height,
+            plot_y_subpage - legend_height,
+            plot_y_subpage - legend_height,
             plot_y_subpage,
             plot_y_subpage,
         };

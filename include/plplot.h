@@ -9,7 +9,7 @@
 //  affect any user programs in C as long as this file is included.
 //
 //  Copyright (C) 1992  Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-//  Copyright (C) 2004  Alan W. Irwin
+//  Copyright (C) 2004-2010  Alan W. Irwin
 //  Copyright (C) 2004  Rafael Laboissiere
 //  Copyright (C) 2004  Andrew Ross
 //
@@ -1226,7 +1226,8 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_LEGEND_OUTSIDE         8192
 
 PLDLLIMPEXP void
-c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
+            PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT nlegend, const PLINT *opt_array,

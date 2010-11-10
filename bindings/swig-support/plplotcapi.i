@@ -529,7 +529,8 @@ pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #ifdef SWIG_PYTHON
 %feature( "autodoc", "Create a discrete annotated legend using boxes, lines, and/or lines of symbols." ) pllegend;
 void
-pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
+            PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT n, const PLINT *Array,

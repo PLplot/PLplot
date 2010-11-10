@@ -158,6 +158,7 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
     PLINT        symbol_numbers[2], symbol_colors[2];
     PLFLT        symbol_scales[2];
     char         *symbols[2];
+    PLFLT legend_width, legend_height;
 
 
     pladv( 0 );
@@ -241,7 +242,8 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
     // to do with boxes.
 
     plscol0a( 15, 32, 32, 32, 0.70 );
-    pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+    pllegend( &legend_width, &legend_height,
+        PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
         0.0, 0.0, 0.10, 15,
         1, 1, 0, 0,
         nlegend, opt_array,

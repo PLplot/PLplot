@@ -55,6 +55,7 @@ plot1( int type )
     PLINT        line_widths[2];
     PLINT        symbol_numbers[2], symbol_colors[2];
     PLFLT        symbol_scales[2];
+    PLFLT legend_width, legend_height;
 
     pladv( 0 );
 
@@ -141,7 +142,8 @@ plot1( int type )
     // to do with boxes.
 
     plscol0a( 15, 32, 32, 32, 0.70 );
-    pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+    pllegend( &legend_width, &legend_height,
+              PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
         0.0, 0.0, 0.1, 15,
         1, 1, 0, 0,
         nlegend, opt_array,
