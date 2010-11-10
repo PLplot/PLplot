@@ -96,12 +96,20 @@ typedef void*  PLPointer;
 #define PL_HIST_NOEMPTY            16
 
 // Flags for pllegend.
-#define PL_LEGEND_NONE             1
-#define PL_LEGEND_COLOR_BOX        2
-#define PL_LEGEND_LINE             4
-#define PL_LEGEND_SYMBOL           8
-#define PL_LEGEND_TEXT_LEFT        16
-#define PL_LEGEND_BACKGROUND       32
+#define PL_LEGEND_NONE            1
+#define PL_LEGEND_COLOR_BOX       2
+#define PL_LEGEND_LINE            4
+#define PL_LEGEND_SYMBOL          8
+#define PL_LEGEND_TEXT_LEFT       16
+#define PL_LEGEND_BACKGROUND      32
+#define PL_LEGEND_BOUNDING_BOX    64
+#define PL_LEGEND_ROW_MAJOR       128
+#define PL_LEGEND_RIGHT           256
+#define PL_LEGEND_LEFT            512
+#define PL_LEGEND_UPPER           1024
+#define PL_LEGEND_LOWER           2048
+#define PL_LEGEND_INSIDE          4096
+#define PL_LEGEND_OUTSIDE         8192
 
 // Window parameter tags
 
@@ -518,21 +526,23 @@ pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 void
 pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
-//#ifdef SWIG_PYTHON
-#if 0
+#ifdef SWIG_PYTHON
 %feature( "autodoc", "Create a discrete annotated legend using boxes, lines, and/or lines of symbols." ) pllegend;
 void
-pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
-          PLINT n, const PLINT *Array,
-          PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-          PLFLT text_justification,
-          const PLINT *ArrayCk, const char **ArrayCk,
-          const PLINT *ArrayCk, const PLINT *ArrayCk,
-          const PLFLT *ArrayCk,
-          const PLINT *ArrayCk, const PLINT *ArrayCk,
-          const PLINT *ArrayCk,
-          const PLINT *ArrayCk, const PLFLT *ArrayCk,
-          const PLINT *ArrayCk, const PLINT *ArrayCk );
+pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+            PLINT bg_color, PLINT bb_color, PLINT bb_style,
+            PLINT nrow, PLINT ncolumn,
+            PLINT n, const PLINT *Array,
+            PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+            PLFLT text_justification,
+            const PLINT *ArrayCk, const char **ArrayCk,
+            const PLINT *ArrayCk, const PLINT *ArrayCk,
+            const PLFLT *ArrayCk,
+            const PLINT *ArrayCk, const PLINT *ArrayCk,
+            const PLINT *ArrayCk,
+            const PLINT *ArrayCk, const PLFLT *ArrayCk,
+            const PLINT *ArrayCk, const char **ArrayCk );
+
 %feature( "autodoc", "Set position of the light source." ) pllightsource;
 #endif
 
@@ -862,6 +872,10 @@ plstart( const char *devname, PLINT nx, PLINT ny );
 void
 plstransform( ct_func ctf, PLPointer data );
 #endif  // SWIG_LUA
+
+%feature( "autodoc", "Prints out the same string repeatedly at the n points in world coordinates given by the x and y arrays.  Supersedes plpoin and plsymbol for the case where text refers to a unicode glyph either directly as UTF-8 or indirectly via the standard text escape sequences allowed for PLplot input strings." ) plstring;
+void
+plstring( PLINT n, PLFLT *Array, PLFLT *ArrayCk, const char *string );
 
 %feature( "autodoc", "Add a point to a stripchart." ) plstripa;
 void
