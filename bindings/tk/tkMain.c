@@ -378,10 +378,10 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     {
         //
         // Commands will come from standard input, so set up an event
-        // handler for standard input.  If the input device is aEvaluate the
-        // .rc file, if one has been specified, set up an event handler
-        // for standard input, and print a prompt if the input
-        // device is a terminal.
+        // handler for standard input.  Evaluate the .rc file, if one
+        // has been specified, set up an event handler for standard
+        // input, and print a prompt if the input device is a
+        // terminal.
         //
 
         if ( RcFileName != NULL )
