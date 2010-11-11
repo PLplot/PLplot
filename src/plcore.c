@@ -3008,6 +3008,12 @@ plInitDispatchTable()
         seqstr  = strtok( 0, ":" );
         tag     = strtok( 0, "\n" );
 
+        if ( devnam == NULL || devdesc == NULL || devtype == NULL || driver == NULL ||
+             seqstr == NULL || tag == NULL )
+        {
+            continue; // Ill-formatted line, most probably not a valid driver information file
+        }
+
         seq = atoi( seqstr );
 
         n = npldrivers++;
@@ -3065,6 +3071,12 @@ plInitDispatchTable()
     fclose( fp_drvdb );
 
 #endif
+
+   if ( npldrivers == 0 )
+   {
+       npldynamicdevices = 0;
+       plexit( "No device drivers found - please check the environment variable PLPLOT_DRV_DIR" );
+   }
 
 // Finally, we need to sort the list into presentation order, based on the
 // sequence number in the dispatch ttable entries.
