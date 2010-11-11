@@ -287,7 +287,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <para>
     When PLplot uses dynamic devices, it first builds up a list of them, by
     examining a directory which contains files describing those devices:
-    the <filename>*.rc</filename> files. Each of these files indicates what
+    the <filename>*.driver_info</filename> files. Each of these files indicates what
     the relevant properties for the device or devices. Then when the
     device is actually needed, the corresponding shared object (or plug-in
     or DLL depending on your terminology) is dynamically loaded.

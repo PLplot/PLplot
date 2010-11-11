@@ -13,7 +13,7 @@ a device driver (which we'll call <driver>).
 
 The following PLplot source-tree files are affected:
 
-plplot/drivers/<driver>.rc.in
+plplot/drivers/<driver>.driver_info.in
 plplot/cmake/modules/drivers-init.cmake
 plplot/include/drivers.h
 plplot/include/plDevs.h.cmake
@@ -21,7 +21,7 @@ plplot/include/plcore.h
 plplot/plplot-test/plplot-test.sh.cmake
 plplot/examples/plplot_configure.cmake_installed_examples.in
 
-1. Add a line to plplot/drivers/<driver>.rc.in consisting of the following
+1. Add a line to plplot/drivers/<driver>.driver_info.in consisting of the following
 colon-separated fields:
 
 <device>:<description string>:<interactive?>:<driver>:<device number>:<device>

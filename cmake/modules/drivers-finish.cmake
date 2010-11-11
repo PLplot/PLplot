@@ -69,12 +69,12 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
     if(APPEND_DRIVER)
       if(ENABLE_DYNDRIVERS)
       	set(${DRIVER}_INFO)
-	if(EXISTS ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in)
+	if(EXISTS ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.driver_info.in)
           file(STRINGS
-  	    ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in
+  	    ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.driver_info.in
 	    ${DRIVER}_INFO
 	    )
-	endif(EXISTS ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in)
+	endif(EXISTS ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.driver_info.in)
       endif(ENABLE_DYNDRIVERS)
       list(APPEND DRIVERS_LIST ${DRIVER})
 
@@ -118,7 +118,7 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
 endforeach(DRIVERS_DEVICE)
 
 # Calculate driver information and store it in 
-# ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.rc for each driver to be compared
+# ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.driver_info for each driver to be compared
 # at run-time with the same information obtained from the actual
 # driver plug-in by test-drv-info as a check of the validity of
 # that plug-in (and consistency of the driver code with DRIVERS_DEVICE_LIST
@@ -142,7 +142,7 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
       if(DEVICE_INFO_MATCHED)
         list(REMOVE_ITEM ${DRIVER}_INFO ${DEVICE_INFO_MATCHED})
       else(DEVICE_INFO_MATCHED)
-        message(FATAL_ERROR "${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in not consistent with ${CMAKE_SOURCE_DIR}/cmake/modules/drivers-init.cmake")
+        message(FATAL_ERROR "${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.driver_info.in not consistent with ${CMAKE_SOURCE_DIR}/cmake/modules/drivers-init.cmake")
       endif(DEVICE_INFO_MATCHED)
     endif(NOT PLD_${DEVICE})
   endif(${DRIVER}_INFO)
@@ -151,9 +151,9 @@ endforeach(DRIVERS_DEVICE)
 foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   string(REGEX REPLACE "^.*:(.*):.*:.*:.*$" "\\1" DRIVER ${DRIVERS_DEVICE})
   if(${DRIVER}_INFO)
-    file(WRITE ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.rc "")
+    file(WRITE ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.driver_info "")
     foreach(DEVICE_INFO ${${DRIVER}_INFO})
-      file(APPEND ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.rc "${DEVICE_INFO}\n")
+      file(APPEND ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.driver_info "${DEVICE_INFO}\n")
     endforeach(DEVICE_INFO ${${DRIVER}_INFO})
   endif(${DRIVER}_INFO)
 endforeach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})

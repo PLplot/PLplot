@@ -186,24 +186,24 @@ if(ENABLE_DYNDRIVERS)
 	)
       add_custom_command(
 	OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	COMMAND test-drv-info
 	${SOURCE_ROOT_NAME}
-	> ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	> ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	COMMAND ${CMAKE_COMMAND} -E compare_files
-	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
-	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
+	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info
 	DEPENDS
 	${${SOURCE_ROOT_NAME}_LOCATION}
 	${test-drv-info_LOCATION}
 	)
       add_custom_target(test_${SOURCE_ROOT_NAME}_dyndriver
 	DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	)
       set_property(GLOBAL  
 	PROPERTY FILE_DEPENDS_${SOURCE_ROOT_NAME}_dyndriver
-	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	)
       add_dependencies(test_${SOURCE_ROOT_NAME}_dyndriver
 	test-drv-info
@@ -217,7 +217,7 @@ if(ENABLE_DYNDRIVERS)
       DESTINATION ${DRV_DIR}
       )
     install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info 
       DESTINATION ${DRV_DIR}
       )
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})

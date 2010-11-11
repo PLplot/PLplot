@@ -2897,13 +2897,14 @@ plInitDispatchTable()
     while ( ( entry = readdir( dp_drvdir ) ) != NULL )
     {
         char* name = entry->d_name;
-        int len    = strlen( name ) - 3;
+        // Suffix .driver_info has a length of 12 letters.
+        int len = strlen( name ) - 12;
 
         pldebug( "plInitDispatchTable",
             "Consider file %s\n", name );
 
-// Only consider entries that have the ".rc" suffix
-        if ( ( len > 0 ) && ( strcmp( name + len, ".rc" ) == 0 ) )
+// Only consider entries that have the ".driver_info" suffix
+        if ( ( len > 0 ) && ( strcmp( name + len, ".driver_info" ) == 0 ) )
         {
             char path[PLPLOT_MAX_PATH];
             FILE * fd;
@@ -2922,7 +2923,7 @@ plInitDispatchTable()
                 return;
             }
 
-// Each line in the <driver>.rc file corresponds to a specific device.
+// Each line in the <driver>.driver_info file corresponds to a specific device.
 // Write it to the drivers db file and take care of leading newline
 // character
 
@@ -3072,11 +3073,11 @@ plInitDispatchTable()
 
 #endif
 
-   if ( npldrivers == 0 )
-   {
-       npldynamicdevices = 0;
-       plexit( "No device drivers found - please check the environment variable PLPLOT_DRV_DIR" );
-   }
+    if ( npldrivers == 0 )
+    {
+        npldynamicdevices = 0;
+        plexit( "No device drivers found - please check the environment variable PLPLOT_DRV_DIR" );
+    }
 
 // Finally, we need to sort the list into presentation order, based on the
 // sequence number in the dispatch ttable entries.
