@@ -235,11 +235,19 @@ def main():
     plwind(0.0, 1.0, 0.0, 1.0)
     plmtex("t", -2.0, 0.5, 0.5, "Demonstrate legend alignment")
 
-    x = 0.
-    y = 0.
+    x = 0.1
+    y = 0.1
+    nturn = 4
+    nlegend = 0
+    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX| PL_LEGEND_UPPER
+    opt = opt_base | PL_LEGEND_LEFT
     for i in range(9):
         # Set up legend arrays with the correct size, type.
-        nlegend = i+1
+        if i <= nturn:
+            nlegend += 1
+        else:
+            nlegend -= 1
+        nlegend = max(1, nlegend)
         opt_array = zeros(nlegend, "int")
         text_colors = zeros(nlegend, "int")
         text = zeros(nlegend, "S200")
@@ -256,7 +264,6 @@ def main():
 
         # Only specify legend data that are required according to the
         # value of opt_array for that entry.
-        opt = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX| PL_LEGEND_LEFT | PL_LEGEND_UPPER
         for k in range(nlegend):
             opt_array[k] = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
             line_styles[k] = 1
@@ -269,22 +276,24 @@ def main():
             line_colors[k] = 1 + (k % 8)
             symbol_colors[k] = 1 + (k % 8)
 
-            # Use monotype fonts so that all legends are the same size.
-            plsfont(PL_FCI_MONO, -1, -1)
-            plscol0a( 15, 32, 32, 32, 0.70 ) 
+        # Use monotype fonts so that all legends are the same size.
+        plsfont(PL_FCI_MONO, -1, -1)
+        plscol0a( 15, 32, 32, 32, 0.70 ) 
 
-            nrow = 3
-            ncolumn = 0
+        nrow = min(3, nlegend)
+        ncolumn = 0
 
         (legend_width, legend_height) = \
         pllegend( opt, x, y, 0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
                   1., text_colors, text, box_colors, box_patterns,
                   box_scales, line_colors, line_styles, line_widths,
                   symbol_colors, symbol_scales, symbol_numbers, symbols )
-        if i < 4:
-            x += legend_width
+        if i == nturn:
+            opt = opt_base | PL_LEGEND_RIGHT
+            x = 1. - x
             y += legend_height
         else:
+            x += legend_width
             y += legend_height
 
 main()
