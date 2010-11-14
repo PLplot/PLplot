@@ -149,7 +149,7 @@ plot1( int type )
         nlegend, opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
-        NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL,
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 }

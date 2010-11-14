@@ -392,7 +392,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             PLFLT text_justification,
             const PLINT *text_colors, const char **text,
             const PLINT *box_colors, const PLINT *box_patterns,
-            const PLFLT *box_scales,
+            const PLFLT *box_scales, const PLINT *box_line_widths,
             const PLINT *line_colors, const PLINT *line_styles,
             const PLINT *line_widths,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
@@ -486,8 +486,6 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // viewport coordinates which are the same as normalized subpage coordinates.
     plwind( 0., 1., 0., 1. );
 
-    plschr( 0., text_scale );
-
     for ( i = 0; i < nlegend; i++ )
     {
         if ( opt_array[i] & PL_LEGEND_COLOR_BOX )
@@ -506,6 +504,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     character_width  = character_height;
 
     // Calculate maximum width of text area.
+    plschr( 0., text_scale );
     for ( i = 0; i < nlegend; i++ )
     {
         // units are mm.
@@ -530,15 +529,15 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     legend_width = 2. * width_border + ( ncolumn - 1 ) * column_separation +
                    ncolumn * ( text_width +
                                viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. ) );
-    legend_height    = nrow * text_spacing * character_height;
-    *p_legend_width  = legend_width;
-    *p_legend_height = legend_height;
+    legend_height = nrow * text_spacing * character_height;
 
     // Total width and height of legend area in normalized external viewport
     // coordinates.
 
     legend_width_vc  = subpage_to_viewport_x( legend_width ) - subpage_to_viewport_x( 0. );
     legend_height_vc = subpage_to_viewport_y( legend_height ) - subpage_to_viewport_y( 0. );
+    *p_legend_width  = legend_width_vc;
+    *p_legend_height = legend_height_vc;
 
     // dcolumn is the spacing from one column to the next and
     // drow is the spacing from one row to the next.
@@ -641,6 +640,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
         xshift = (double) icolumn * dcolumn;
         // Label/name for the legend
         plcol0( text_colors[i] );
+        plschr( 0., text_scale );
         plptex( text_x_subpage + xshift + text_justification * text_width0, ty, 0.1, 0.0, text_justification, text[i] );
 
         if ( !( opt_array[i] & PL_LEGEND_NONE ) )
@@ -649,6 +649,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             {
                 plcol0( box_colors[i] );
                 plpsty( box_patterns[i] );
+                plwid( box_line_widths[i] );
                 xbox[0] = plot_x_subpage + xshift;
                 xbox[1] = xbox[0];
                 xbox[2] = plot_x_end_subpage + xshift;
@@ -658,6 +659,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                 ybox[2] = ty - 0.5 * drow * box_scales[i];
                 ybox[3] = ty + 0.5 * drow * box_scales[i];
                 plfill( 4, xbox, ybox );
+                plwid( line_width_save );
             }
             if ( opt_array[i] & PL_LEGEND_LINE )
             {

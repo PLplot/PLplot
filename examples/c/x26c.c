@@ -249,7 +249,7 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
         nlegend, opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, (const char **) legend_text,
-        NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL,
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 }

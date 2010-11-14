@@ -48,12 +48,21 @@ PL_LEGEND_LEFT | PL_LEGEND_LOWER | PL_LEGEND_INSIDE,
 PL_LEGEND_LEFT | PL_LEGEND_INSIDE,
 ]
 
+# Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
+special_symbols = [
+"✰",
+"✴",
+"✱",
+"✽",
+"✦",
+]
 def main():
     # First page illustrating the 16 standard positions.
     pladv(0)
     plvpor(0.25, 0.75, 0.25, 0.75)
     plwind(0.0, 1.0, 0.0, 1.0)
     plbox("bc", 0.0, 0, "bc", 0.0, 0)
+    plsfont(PL_FCI_SANS, -1, -1)
     plmtex("t", 8.0, 0.5, 0.5, "The 16 standard legend positions with")
     plmtex("t", 6.0, 0.5, 0.5, "the same (0.05) offset in x and y") 
 
@@ -65,6 +74,7 @@ def main():
     box_colors = zeros(nlegend, "int")
     box_patterns = zeros(nlegend, "int")
     box_scales = zeros(nlegend)
+    box_line_widths = zeros(nlegend, "int")
     line_colors = zeros(nlegend, "int")
     line_styles = zeros(nlegend, "int")
     line_widths = zeros(nlegend, "int")
@@ -97,16 +107,18 @@ def main():
         (legend_width, legend_height) = \
         pllegend( opt, 0.05, 0.05,
                   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
-                  1., text_colors, text, box_colors, box_patterns,
-                  box_scales, line_colors, line_styles, line_widths,
+                  1., text_colors, text, 
+                  box_colors, box_patterns, box_scales, box_line_widths,
+                  line_colors, line_styles, line_widths,
                   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-    # Secong page illustrating effect of nrow, ncolumn for the same legend
+    # Second page illustrating effect of nrow, ncolumn for the same legend
     # data.
     pladv(0)
     plvpor(0.25, 0.75, 0.25, 0.75)
     plwind(0.0, 1.0, 0.0, 1.0)
     plbox("bc", 0.0, 0, "bc", 0.0, 0)
+    plsfont(PL_FCI_SANS, -1, -1)
     plmtex("t", 8.0, 0.5, 0.5, "The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,")
     plmtex("t", 6.0, 0.5, 0.5, "and position for the same legend data") 
 
@@ -118,6 +130,7 @@ def main():
     box_colors = zeros(nlegend, "int")
     box_patterns = zeros(nlegend, "int")
     box_scales = zeros(nlegend)
+    box_line_widths = zeros(nlegend, "int")
     line_colors = zeros(nlegend, "int")
     line_styles = zeros(nlegend, "int")
     line_widths = zeros(nlegend, "int")
@@ -153,8 +166,9 @@ def main():
     (legend_width, legend_height) = \
      pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, box_colors, box_patterns,
-              box_scales, line_colors, line_styles, line_widths,
+              1., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     opt = opt_base |PL_LEGEND_LOWER|PL_LEGEND_OUTSIDE
@@ -165,8 +179,9 @@ def main():
     (legend_width, legend_height) = \
     pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, box_colors, box_patterns,
-              box_scales, line_colors, line_styles, line_widths,
+              1., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     opt = opt_base |PL_LEGEND_LEFT|PL_LEGEND_OUTSIDE
@@ -177,8 +192,9 @@ def main():
     (legend_width, legend_height) = \
     pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, box_colors, box_patterns,
-              box_scales, line_colors, line_styles, line_widths,
+              1., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     opt = opt_base |PL_LEGEND_RIGHT|PL_LEGEND_OUTSIDE
@@ -189,8 +205,9 @@ def main():
     (legend_width, legend_height) = \
     pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, box_colors, box_patterns,
-              box_scales, line_colors, line_styles, line_widths,
+              1., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     opt = opt_base |PL_LEGEND_LEFT|PL_LEGEND_UPPER|PL_LEGEND_INSIDE
@@ -201,8 +218,9 @@ def main():
     (legend_width, legend_height) = \
     pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, box_colors, box_patterns,
-              box_scales, line_colors, line_styles, line_widths,
+              1., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     opt = opt_base |PL_LEGEND_RIGHT|PL_LEGEND_UPPER|PL_LEGEND_INSIDE|PL_LEGEND_ROW_MAJOR
@@ -213,8 +231,9 @@ def main():
     (legend_width, legend_height) = \
     pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, box_colors, box_patterns,
-              box_scales, line_colors, line_styles, line_widths,
+              1., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     opt = opt_base |PL_LEGEND_LOWER|PL_LEGEND_INSIDE|PL_LEGEND_ROW_MAJOR
@@ -225,14 +244,16 @@ def main():
     (legend_width, legend_height) = \
     pllegend( opt, x, y, 
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, box_colors, box_patterns,
-              box_scales, line_colors, line_styles, line_widths,
+              1., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     # Third page demonstrating legend alignment
     pladv(0)
     plvpor(0., 1., 0., 1.)
     plwind(0.0, 1.0, 0.0, 1.0)
+    plsfont(PL_FCI_SANS, -1, -1)
     plmtex("t", -2.0, 0.5, 0.5, "Demonstrate legend alignment")
 
     x = 0.1
@@ -254,6 +275,7 @@ def main():
         box_colors = zeros(nlegend, "int")
         box_patterns = zeros(nlegend, "int")
         box_scales = zeros(nlegend)
+        box_line_widths = zeros(nlegend, "int")
         line_colors = zeros(nlegend, "int")
         line_styles = zeros(nlegend, "int")
         line_widths = zeros(nlegend, "int")
@@ -284,9 +306,11 @@ def main():
         ncolumn = 0
 
         (legend_width, legend_height) = \
-        pllegend( opt, x, y, 0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
-                  1., text_colors, text, box_colors, box_patterns,
-                  box_scales, line_colors, line_styles, line_widths,
+        pllegend( opt, x, y,
+                  0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
+                  1., text_colors, text, 
+                  box_colors, box_patterns, box_scales, box_line_widths,
+                  line_colors, line_styles, line_widths,
                   symbol_colors, symbol_scales, symbol_numbers, symbols )
         if i == nturn:
             opt = opt_base | PL_LEGEND_RIGHT
@@ -295,5 +319,269 @@ def main():
         else:
             x += legend_width
             y += legend_height
+
+    # Fourth page illustrating various kinds of legends
+    max_height = 0.
+    xstart = 0.0
+    ystart = 0.1
+    x = xstart
+    y = ystart
+    text_scale = 0.90
+    pladv(0)
+    plvpor(0.0, 1., 0.0, 0.90)
+    plwind(0.0, 1.0, 0.0, 1.0)
+    # plbox("bc", 0.0, 0, "bc", 0.0, 0)
+    plsfont(PL_FCI_SANS, -1, -1)
+    plmtex("t", 2.0, 0.5, 0.5, "Demonstrate Various Kinds of Legends")
+
+    # Set up legend arrays with the correct size, type.
+    nlegend = 5
+    opt_array = zeros(nlegend, "int")
+    text_colors = zeros(nlegend, "int")
+    text = zeros(nlegend, "S200")
+    box_colors = zeros(nlegend, "int")
+    box_patterns = zeros(nlegend, "int")
+    box_scales = zeros(nlegend)
+    box_line_widths = zeros(nlegend, "int")
+    line_colors = zeros(nlegend, "int")
+    line_styles = zeros(nlegend, "int")
+    line_widths = zeros(nlegend, "int")
+    symbol_colors = zeros(nlegend, "int")
+    symbol_scales = zeros(nlegend)
+    symbol_numbers = zeros(nlegend, "int")
+    symbols = zeros(nlegend, "S100")
+
+    # Only specify legend data that are required according to the
+    # value of opt_array for that entry.
+    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX |PL_LEGEND_LEFT |PL_LEGEND_UPPER |PL_LEGEND_TEXT_LEFT
+
+    # Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
+    opt_array[0] = PL_LEGEND_NONE
+    text[0] = "None"
+    text_colors[0] = 1
+
+    opt_array[1] = PL_LEGEND_COLOR_BOX
+    text[1] = "Box"
+    text_colors[1] = 2
+    box_colors[1] = 2
+    box_patterns[1] = 0
+    box_scales[1] = 0.8
+    box_line_widths[1] = 1
+    
+    opt_array[2] = PL_LEGEND_LINE
+    text[2] = "Line"
+    text_colors[2] = 3
+    line_colors[2] = 3
+    line_styles[2] = 1
+    line_widths[2] = 1
+    
+    opt_array[3] = PL_LEGEND_SYMBOL
+    text[3] = "Symbol"
+    text_colors[3] = 4
+    symbol_colors[3] = 4
+    symbol_scales[3] = text_scale
+    symbol_numbers[3] = 4
+    symbols[3] = special_symbols[2]
+    
+    opt_array[4] = PL_LEGEND_SYMBOL | PL_LEGEND_LINE
+    text[4] = "L & S"
+    text_colors[4] = 5
+    line_colors[4] = 5
+    line_styles[4] = 1
+    line_widths[4] = 1
+    symbol_colors[4] = 5
+    symbol_scales[4] = text_scale
+    symbol_numbers[4] = 4
+    symbols[4] = special_symbols[2]
+    
+    opt = opt_base
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up symbol legend entries with various symbols.
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_SYMBOL
+        text[i] = "Symbol " + special_symbols[i]
+        text_colors[i] = i+1
+        symbol_colors[i] = i+1
+        symbol_scales[i] = text_scale
+        symbol_numbers[i] = 4
+        symbols[i] = special_symbols[i]
+
+    opt = opt_base
+    x += legend_width
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up symbol legend entries with various symbols.
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_SYMBOL
+        text[i] = "Symbol Numbers %d" % (i+2)
+        text_colors[i] = i+1
+        symbol_colors[i] = i+1
+        symbol_scales[i] = text_scale
+        symbol_numbers[i] = i+2
+        symbols[i] = special_symbols[2]
+
+    opt = opt_base
+    x += legend_width
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up box legend entries with various colours.
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_COLOR_BOX
+        text[i] = "%s %d" % ("Box Colors",i+1)  
+        text_colors[i] = i+1
+        box_colors[i] = i+1
+        box_patterns[i] = 0
+        box_scales[i] = 0.8
+        box_line_widths[i] = 1
+
+    opt = opt_base
+    # Use new origin
+    x = xstart
+    y += max_height
+    max_height = 0.
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up box legend entries with various patterns.
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_COLOR_BOX
+        text[i] = "%s %d" % ("Box Patterns",i)  
+        text_colors[i] = 2
+        box_colors[i] = 2
+        box_patterns[i] = i
+        box_scales[i] = 0.8
+        box_line_widths[i] = 1
+
+    opt = opt_base
+    x += legend_width
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up box legend entries with various box pattern line widths.
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_COLOR_BOX
+        text[i] = "%s %d" % ("Box Line Width",i+1)  
+        text_colors[i] = 2
+        box_colors[i] = 2
+        box_patterns[i] = 3
+        box_scales[i] = 0.8
+        box_line_widths[i] = i+1
+
+    opt = opt_base
+    x += legend_width
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up line legend entries with various colours.
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_LINE
+        text[i] = "%s %d" % ("Line Colors",i+1)  
+        text_colors[i] = i+1
+        line_colors[i] = i+1
+        line_styles[i] = 1
+        line_widths[i] = 1
+
+    opt = opt_base
+    # Use new origin
+    x = xstart
+    y += max_height
+    max_height = 0.
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up line legend entries with various styles
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_LINE
+        text[i] = "%s %d" % ("Line Styles",i+1)  
+        text_colors[i] = 2
+        line_colors[i] = 2
+        line_styles[i] = i+1
+        line_widths[i] = 1
+
+    opt = opt_base
+    x += legend_width
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
+
+    # Set up line legend entries with various widths.
+    for i in range(nlegend):
+        opt_array[i] = PL_LEGEND_LINE
+        text[i] = "%s %d" % ("Line Widths",i+1)  
+        text_colors[i] = 2
+        line_colors[i] = 2
+        line_styles[i] = 1
+        line_widths[i] = i+1
+
+    opt = opt_base
+    x += legend_width
+    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    (legend_width, legend_height) = \
+    pllegend( opt, x, y,
+              0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
+              0., text_colors, text, 
+              box_colors, box_patterns, box_scales, box_line_widths,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+    max_height = max(max_height, legend_height)
 
 main()
