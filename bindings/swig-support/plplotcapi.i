@@ -104,8 +104,8 @@ typedef void*  PLPointer;
 #define PL_LEGEND_BACKGROUND      32
 #define PL_LEGEND_BOUNDING_BOX    64
 #define PL_LEGEND_ROW_MAJOR       128
-#define PL_LEGEND_RIGHT           256
-#define PL_LEGEND_LEFT            512
+#define PL_LEGEND_LEFT            256
+#define PL_LEGEND_RIGHT           512
 #define PL_LEGEND_UPPER           1024
 #define PL_LEGEND_LOWER           2048
 #define PL_LEGEND_INSIDE          4096
