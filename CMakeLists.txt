@@ -173,45 +173,50 @@ if(PREBUILD_DIST)
   # the source tree (if build tree is different from source tree).
 
   # List of targets that must be (pre-)built.
-  # N.B. the plhershey-unicode.h_built target has to be pre-built only because
-  # of the needs of the old windows build at sys/win32/msdev.
-  set(
-    DIST_TARGETS
-    plhershey-unicode.h_built
-    )
+  set(DIST_TARGETS)
 
   if(ENABLE_octave)
-    set(DIST_TARGETS ${DIST_TARGETS} make_documentation)
+    list(APPEND DIST_TARGETS make_documentation)
   endif(ENABLE_octave)
 
   if(BUILD_PRINT)
-    set(DIST_TARGETS ${DIST_TARGETS} print)
+    list(APPEND DIST_TARGETS print)
   endif(BUILD_PRINT)
 
   if(BUILD_INFO)
-    set(DIST_TARGETS ${DIST_TARGETS} info)
+    list(APPEND DIST_TARGETS info)
   endif(BUILD_INFO)
 
   if(BUILD_MAN)
-    set(DIST_TARGETS ${DIST_TARGETS} man)
+    list(APPEND DIST_TARGETS man)
   endif(BUILD_MAN)
 
   if(BUILD_HTML)
-    set(DIST_TARGETS ${DIST_TARGETS} html)
+    list(APPEND DIST_TARGETS html)
   endif(BUILD_HTML)
+
+  if(BUILD_DOX_DOC)
+    list(APPEND DIST_TARGETS build_doxygen)
+  endif(BUILD_DOX_DOC)
 
   if(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
     add_custom_target(prebuild_dist)
   else(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
     # copy prebuilds back to source tree.
+    # N.B. copy_directory quietly creates an empty directory with no
+    # error condition if the source directory does not exist.
     add_custom_target(
       prebuild_dist
-      COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h
-      ${CMAKE_SOURCE_DIR}/include
+      COMMAND ${CMAKE_COMMAND} -E remove_directory
+      ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
       COMMAND ${CMAKE_COMMAND} -E copy_directory
       ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
       ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
+      COMMAND ${CMAKE_COMMAND} -E remove_directory
+      ${CMAKE_SOURCE_DIR}/doc/doxygen
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_BINARY_DIR}/doc/doxygen
+      ${CMAKE_SOURCE_DIR}/doc/doxygen
       COMMAND cp
       `cat static_built_files ${INFO_MANIFEST} ${MAN_MANIFEST} ${HTML_MANIFEST}`
       ${CMAKE_SOURCE_DIR}/doc/docbook/src
