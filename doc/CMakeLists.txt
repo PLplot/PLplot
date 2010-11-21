@@ -48,4 +48,12 @@ if(BUILD_DOX_DOC)
   add_custom_target(build_doxygen ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/doxygen
     )
+  if(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
+    add_custom_target(
+      www-install-doxygen
+      ssh ${WWW_USER}@${WWW_HOST} mkdir -p ${WWW_DIR}/htdocs/doxygen
+      COMMAND rsync -avq ${CMAKE_CURRENT_BINARY_DIR}/doxygen/ ${WWW_USER}@${WWW_HOST}:${WWW_DIR}/htdocs/doxygen
+      )
+    add_dependencies(www-install-doxygen build_doxygen) 
+  endif(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
 endif(BUILD_DOX_DOC)
