@@ -105,6 +105,9 @@
 	\n"),
 	  array(32,  1, 1, "
 	<p>Demo of how to draw box-whisker / candlestick plots using PLplot. These are commonly used for financial data.</p>
+	\n"),
+	  array(33,  4, 1, "
+	<p>Demo of legends.</p>
 	\n"));
 ?>
 
