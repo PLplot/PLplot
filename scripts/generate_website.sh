@@ -1,4 +1,18 @@
 #!/bin/bash
+
+# Find absolute PATH of script without using readlink (since readlink is
+# not available on all platforms).  Followed advice at
+# http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
+ORIGINAL_PATH="$(pwd)"
+cd "$(dirname $0)"
+# Absolute Path of the script
+SCRIPT_PATH="$(pwd)"
+cd "${ORIGINAL_PATH}"
+
+# Assumption: top-level source tree is parent directory of where script
+# is located.
+SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
+
 echo "Generate and upload all PLplot website components to a computer host that is accessible with ssh."
 echo -n "Valid login name on ssh-accessible host? "
 read USERNAME
@@ -44,9 +58,9 @@ rm -rf /tmp/plplotdoc
 mkdir -p /tmp/plplotdoc/build
 cd /tmp/plplotdoc
 echo ""
-echo "svn export PLplot trunk to local machine.  This download may take a while depending on your bandwidth...."
-svn --quiet export https://plplot.svn.sourceforge.net/svnroot/plplot/trunk \
-    plplot_source
+echo "svn export working copy (with local changes) from"
+echo "$SOURCE_TREE to /tmp/plplotdoc/plplot_source"
+svn --quiet export $SOURCE_TREE plplot_source
 echo ""
 echo "Configure and build PLplot documentation.  This may take a while depending on your cpu speed...."
 cd /tmp/plplotdoc/build
@@ -58,9 +72,10 @@ cmake \
     -DDEFAULT_NO_BINDINGS=ON -DDEFAULT_NO_DEVICES=ON \
     -DPREBUILD_DIST=ON \
     -DBUILD_DOC=ON \
+    -DBUILD_DOX_DOC=ON \
     ../plplot_source \
     >& cmake.out
-make VERBOSE=1 -j3 prebuild_dist >& make_prebuild.out
+make VERBOSE=1 -j4 prebuild_dist >& make_prebuild.out
 
 echo ""
 echo "Install the configured base part of the website to $WEBSITE_PREFIX on $HOSTNAME."
@@ -73,6 +88,7 @@ echo "Install the just-generated documentation to $WEBSITE_PREFIX/htdocs/docbook
 # so be careful how you specify the above -DWWW_DIR option.
 cd /tmp/plplotdoc/build
 make VERBOSE=1 www-install >& make_www-install.out
+make VERBOSE=1 www-install-doxygen >& make_www-install-doxygen.out
 
 echo ""
 echo "Build PLplot, PLplot examples, and screenshots of those examples.  This may take a while depending on your cpu speed...."
