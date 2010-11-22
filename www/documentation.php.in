@@ -15,6 +15,7 @@
 			<h3>PLplot Documentation</h3>
 			<ul class="arrowlist">
 	      <li> <a href="docbook-manual/@BASE_HTML@">Browse the latest on-line documentation</a> </li>
+	      <li> <a href="doxygen/html">Browse doxygen-generated documentation</a> </li>
 	      <li> <a href="docbook-manual/@BASE@.ps.gz">PostScript form of documentation (<?php $size = number_format((filesize("docbook-manual/@BASE@.ps.gz")/1024/1024),2); echo $size;?> MB)</a> </li>
 	      <li> <a href="docbook-manual/@BASE@.pdf">PDF form of documentation (<?php $size = number_format((filesize("docbook-manual/@BASE@.pdf")/1024/1024),2); echo $size;?> MB)</a> </li>
 	      <li> <a href="docbook-manual/@BASE@.dvi">DVI form of documentation (<?php $size = number_format((filesize("docbook-manual/@BASE@.dvi")/1024/1024),2); echo $size;?> MB)</a> </li>
