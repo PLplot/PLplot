@@ -48,6 +48,7 @@ if(BUILD_DOX_DOC)
   add_custom_target(build_doxygen ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/doxygen
     )
+  install(CODE "message(STATUS \"Installing: ${DOC_DIR}/doxygen tree\")\nexecute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/doxygen ${DOC_DIR}/doxygen)")
   if(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
     add_custom_target(
       www-install-doxygen
