@@ -41,6 +41,7 @@ EXPORTS
 	plspal1_
 	plstart_
 	plstrc2f_
+	plstring_
 	plstripc_
 	pltimefmt_
 	plvec0_

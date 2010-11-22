@@ -77,7 +77,8 @@
         call plwind(-2.0_plflt, 3.0_plflt, -100.0_plflt, 0.0_plflt)
         call plbox(' ', 0.0_plflt, 0, 'cmstv', 30.0_plflt, 3)
         call plcol0(3)
-        call plline(freql,phase)
+        call plline(freql, phase)
+        call plstring(freql, phase, '*')
         call plcol0(3)
         call plmtex('r', 5.0_plflt, 0.5_plflt, 0.5_plflt, &
                     'Phase shift (degrees)')

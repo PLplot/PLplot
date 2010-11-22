@@ -133,7 +133,7 @@ pltclcmd plcol1 void
 col1	PLFLT
 
 # Configure transformation between continuous and broken-down time (and
-# vice versa) for current stream. 
+# vice versa) for current stream.
 
 pltclcmd plconfigtime void
 scale	PLFLT
@@ -382,7 +382,7 @@ yoff	PLINT&
 
 pltclcmd plgra void
 
-# Draw gradient in polygon. 
+# Draw gradient in polygon.
 
 pltclcmd plgradient void
 n	PLINT
@@ -922,6 +922,14 @@ pltclcmd plstart void
 devname 	const char *
 nx		PLINT
 ny		PLINT
+
+# Plot the same string at a series of locations (x(i),y(i))
+
+pltclcmd plstring void
+n	PLINT
+x	PLFLT *
+y	PLFLT *
+string	const char *
 
 # Add data to the strip chart
 

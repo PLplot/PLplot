@@ -80,6 +80,7 @@ c      For the gridless case, put phase vs freq on same plot.
         call plbox(' ', 0.0d0, 0, 'cmstv', 30.0d0, 3)
         call plcol0(3)
         call plline(101,freql,phase)
+        call plstring(101,freql,phase,'*')
         call plcol0(3)
         call plmtex('r', 5.0d0, 0.5d0, 0.5d0,
      &              'Phase shift (degrees)')

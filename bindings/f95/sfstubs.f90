@@ -326,6 +326,26 @@
 
 !***********************************************************************
 
+      subroutine plstring(x,y,string)
+
+      implicit none
+      real(kind=plflt) x(:), y(:)
+      character(len=*) string
+
+      include 'sfstubs.h'
+
+      integer n
+
+      n = size(x)
+
+      call plstrf2c(string, string1, maxlen)
+      s1 = transfer( string1, s1 )
+      call plstring7(n,x,y,s1)
+
+      end subroutine
+
+!***********************************************************************
+
       subroutine plvectors_0(u, v, scale)
 
       implicit none

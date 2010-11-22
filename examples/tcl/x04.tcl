@@ -63,6 +63,7 @@ proc plot41 {w type} {
        $w cmd plbox "" 0.0 0 "cmstv" 30.0 3
        $w cmd plcol0 3
        $w cmd plline 101 freql phase
+       $w cmd plstring 101 freql phase "*"
        $w cmd plcol0 3
        $w cmd plmtex "r" 5.0 0.5 0.5 "Phase shift (degrees)"
     }

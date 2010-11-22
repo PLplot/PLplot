@@ -996,6 +996,12 @@ PLSTRANSFORM_NONE_( void )
 }
 
 void
+PLSTRING7( PLINT *n, PLFLT *x, PLFLT *y, const char *string )
+{
+    c_plstring( *n, x, y, string );
+}
+
+void
 PLSTRIPA( PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y )
 {
     c_plstripa( *id, *pen, *x, *y );
