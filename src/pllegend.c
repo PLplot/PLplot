@@ -1,4 +1,6 @@
-// pllegend()
+// $Id$
+// pllegend(...) (which plots a discrete plot legend) and the static
+// routines which support it.
 //
 // Copyright (C) 2010  Hezekiah M. Carty
 // Copyright (C) 2010  Alan W. Irwin
@@ -54,7 +56,6 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
                              PLFLT *x_legend_position, PLFLT *y_legend_position,
                              PLFLT *xsign, PLFLT *ysign )
 {
-    //
     // xorigin, yorigin, xlegend, and ylegend are all calculated for
     // one of the 16 standard positions specified by opt and are
     // expressed in normalized viewport coordinates.  xorigin is the X
@@ -338,7 +339,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 #define subpage_to_viewport_y( ny )    ( ( ny - ydmin_save ) / ( ( ydmax_save ) - ( ydmin_save ) ) )
 
 //--------------------------------------------------------------------------
-//! Plot discrete annotated legend using colored boxes, lines, and/or symbols.
+//! Plot discrete annotated legend using filled boxes, lines, and/or symbols.
 //!
 //! @param p_legend_width : pointer to a location which contains
 //! (after the call) the legend width in normalized viewport
@@ -427,7 +428,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param text : array of nlegend pointers to null-terminated text
 //! annotation strings.  Like other PLplot strings specified by the
 //! user, UTF-8 or its ascii subset may be used in the strings, and
-//! the strings may include the normal PLplot text escapes.
+//! the strings may include any of the PLplot text escapes.
 //! @param box_colors : array of nlegend colors (cmap0 indices) for
 //! the discrete colored boxes (PL_LEGEND_COLOR_BOX).
 //! @param box_patterns : array of nlegend patterns (plpsty indices)
@@ -452,7 +453,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! strings which represent the glyph for the symbol to be plotted
 //! (PL_LEGEND_SYMBOL).  Like other PLplot strings specified by the
 //! user, UTF-8 or its ascii subset may be used in the strings, and
-//! the strings may include the normal PLplot text escapes.
+//! the strings may include any of the PLplot text escapes.
 //!
 
 void
