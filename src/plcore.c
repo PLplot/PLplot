@@ -3242,7 +3242,7 @@ plLoadDriver( void )
 
 // Note the device tag, and the driver index. Note that a given driver could
 // supply multiple devices, each with a unique tag to distinguish the driver
-// entry points for the differnet supported devices.
+// entry points for the different supported devices.
     tag    = loadable_device_list[i].tag;
     drvidx = loadable_device_list[i].drvidx;
 
