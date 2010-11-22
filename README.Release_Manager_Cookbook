@@ -92,15 +92,22 @@ code that needs that), as well as what example plots and example thumbnails
 are generated.  The list also automatically controls what examples-related
 files are copied to the website.
 
-Update the project web page, including the examples: edit www/examples.php
-to reflect the forthcoming release number and any changes to the examples
-themselves (i.e. pages added or removed from an existing example or entirely
-new examples).
+Update the project web page, including the examples: edit
+www/examples.php to reflect the forthcoming release version number and
+any changes to the examples themselves (i.e. pages added or removed
+from an existing example or entirely new examples).
 
-svn commit the updated pages since the script below downloads directly
-from the svn repository rather than working with any local files.
+Edit PROJECT_NUMBER in doc/Doxyfile.in to reflect the release
+version number.
 
-Run (on a Linux host that is capable of building the documentation)
+The above changes may be committed now or later in the release process
+(see "Using svn, commit the above changes" below) since the
+script, scripts/generate_website.sh uses the local source
+tree where that script resides (including all local changes)
+as the source tree for generating the website.)
+
+Run (on a Linux host that is capable of building the documentation
+for the source tree that has all local changes)
 
 scripts/generate_website.sh
 
