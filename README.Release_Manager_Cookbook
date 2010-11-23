@@ -101,10 +101,10 @@ Edit PROJECT_NUMBER in doc/Doxyfile.in to reflect the release
 version number.
 
 The above changes may be committed now or later in the release process
-(see "Using svn, commit the above changes" below) since the
-script, scripts/generate_website.sh uses the local source
-tree where that script resides (including all local changes)
-as the source tree for generating the website.)
+(see "IMPORTANT: commit all local changes to the repository." below)
+since the script, scripts/generate_website.sh uses the local source
+tree where that script resides (including all local changes) as the
+source tree for generating the website.)
 
 Run (on a Linux host that is capable of building the documentation
 for the source tree that has all local changes)
@@ -189,7 +189,24 @@ Update cmake/module/plplot_version.cmake to reflect the current version. Also,
 follow the instructions in this file for updating the SOVERSION, the minor
 number and the patch number.
 
-Using svn, commit the above changes.
+IMPORTANT: commit all local changes to the repository.
+
+Prepare the ChangeLog.release file to keep track of all changes
+made for the release.  (This destroys the ChangeLog.release file
+from the previous release.)
+
+# This makes the BASE used below correct.
+svn update
+svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release
+
+where <LAST_RELEASE_REVISION> stands for the last revision number of
+the previous release which can be found, e.g., by browsing
+http://plplot.svn.sourceforge.net/viewvc/plplot/tags
+
+Check that ChangeLog.release is in the appropriate date range (i.e. only the
+changes that were made since the last release should be included) then
+(IMPORTANT) commit it so it will also be available for the tagged
+release version, the release tarball, etc.
 
 (While it is useful to have the correct time on your computer, this is no 
 longer strictly necessary).
@@ -266,9 +283,10 @@ test configure and runs "make install" after cmake, make and ctest. When the
 above command finishes executing you should go to this directory and verify
 that the examples build and that plplot_test.sh executes without errors.
 
-In the event that problems are found in PLplot during the release process, 
-corrections should be made to trunk/ and then merged into the tags/vX_Y_Z 
-branch as follows:
+In the event that problems are found in PLplot during the release
+process, corrections should be made to trunk/, the ChangeLog.release
+file recreated and committed (see instructions above).  Then merge the
+trunk version into the tags/vX_Y_Z branch as follows:
 
 cd tags/vX_Y_Z
 svn merge -r A:B /path/to/trunk
@@ -281,13 +299,6 @@ Sign the release with your plplot Release Manager gpg key:
 gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.X.X.tar.gz
 
 A list of your GPG keys can be obtained using the command "gpg --list-keys".
-
-Prepare the ChangeLog file (in the trunk/ directory):
-svn log -v > ChangeLog.release
-
-Edit ChangeLog.release to be the appropriate date range (i.e. only the
-changes that were made since the last release should be included).
-
 
 Prepare a file release:
 
@@ -323,7 +334,6 @@ Click "Submit"
   Paste in the text from the older release as the Details.
     Be sure to update the text as appropriate, particularly
     the release numbers.
-
 
 
 Immediate preparation for next release cycle
