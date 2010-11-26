@@ -64,6 +64,7 @@ INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE
 
 Each of the steps in this comprehensive test may take a while...."
 
+    PATH_SAVE=$PATH
     mkdir -p "$OUTPUT_TREE"
     rm -rf "$BUILD_TREE"
     mkdir -p "$BUILD_TREE"
@@ -84,10 +85,14 @@ Each of the steps in this comprehensive test may take a while...."
     cmake_rc=$?
     if [ "$cmake_rc" -eq 0 ] ; then
 	if [ "$do_test_build_tree" = "yes" -a  "$do_test_noninteractive" = "yes" ] ; then
+	    if [ "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" ] ; then
+		PATH=$PATH_SAVE:dll
+	    fi
 	    output="$OUTPUT_TREE"/make_noninteractive.out
 	    rm -f "$output"
 	    echo "$build_command test_noninteractive in the build tree"
 	    $build_command VERBOSE=1 test_noninteractive >& "$output"
+	    PATH=$PATH_SAVE
 	fi
 	if [ "$do_ctest" = "yes" -o \
 	    "$do_test_install_tree" = "yes" -o \
