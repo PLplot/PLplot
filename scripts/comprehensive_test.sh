@@ -65,6 +65,9 @@ INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE
 Each of the steps in this comprehensive test may take a while...."
 
     PATH_SAVE=$PATH
+    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a ( "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" ) ] ; then
+	PATH=$PATH_SAVE:$BUILD_TREE/dll
+    fi
     mkdir -p "$OUTPUT_TREE"
     rm -rf "$BUILD_TREE"
     mkdir -p "$BUILD_TREE"
@@ -85,14 +88,10 @@ Each of the steps in this comprehensive test may take a while...."
     cmake_rc=$?
     if [ "$cmake_rc" -eq 0 ] ; then
 	if [ "$do_test_build_tree" = "yes" -a  "$do_test_noninteractive" = "yes" ] ; then
-	    if [ "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" ] ; then
-		PATH=$PATH_SAVE:dll
-	    fi
 	    output="$OUTPUT_TREE"/make_noninteractive.out
 	    rm -f "$output"
 	    echo "$build_command test_noninteractive in the build tree"
 	    $build_command VERBOSE=1 test_noninteractive >& "$output"
-	    PATH=$PATH_SAVE
 	fi
 	if [ "$do_ctest" = "yes" -o \
 	    "$do_test_install_tree" = "yes" -o \
@@ -104,13 +103,13 @@ Each of the steps in this comprehensive test may take a while...."
 	    $build_command VERBOSE=1 install >& "$output"
 	    make_install_rc=$?
 	    if [ "$make_install_rc" -eq 0 ] ; then
-		PATH="$INSTALL_TREE/bin":$PATH
 		if [ "$do_ctest" = "yes" ] ; then
 		    output="$OUTPUT_TREE"/ctest.out
 		    rm -f "$output"
 		    echo "launch ctest job in the build tree"
 		    ctest --extra-verbose >& "$output" &
 		fi
+		PATH="$INSTALL_TREE/bin":$PATH_SAVE
 		if [ "$do_test_install_tree" = "yes" ] ; then
 		    rm -rf "$INSTALL_BUILD_TREE"
 		    mkdir -p "$INSTALL_BUILD_TREE"
@@ -139,6 +138,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    fi
 	fi
 
+	PATH=$PATH_SAVE
 	if [ "$do_test_interactive" = "yes" ] ; then
 	    if [ "$do_test_build_tree" = "yes" ] ; then
 		cd "$BUILD_TREE"
@@ -147,6 +147,7 @@ Each of the steps in this comprehensive test may take a while...."
 		echo "$build_command test_interactive in the build tree"
 		$build_command VERBOSE=1 test_interactive >& "$output"
 	    fi
+	    PATH="$INSTALL_TREE/bin":$PATH_SAVE
 	    if [ "$do_test_install_tree" = "yes" ] ; then
 		cd "$INSTALL_BUILD_TREE"
 		output="$OUTPUT_TREE"/installed_make_interactive.out
