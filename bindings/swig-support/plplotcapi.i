@@ -878,6 +878,10 @@ plstransform( ct_func ctf, PLPointer data );
 void
 plstring( PLINT n, PLFLT *Array, PLFLT *ArrayCk, const char *string );
 
+%feature( "autodoc", "Prints out the same string repeatedly at the n 3D points in world coordinates given by the x, y, and z arrays.  Supersedes plpoin3 for the case where text refers to a unicode glyph either directly as UTF-8 or indirectly via the standard text escape sequences allowed for PLplot input strings." ) plstring3;
+void
+plstring3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, const char *string );
+
 %feature( "autodoc", "Add a point to a stripchart." ) plstripa;
 void
 plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );

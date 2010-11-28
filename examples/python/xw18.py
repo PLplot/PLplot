@@ -1,3 +1,4 @@
+# -*- coding: utf-8; -*-
 # $Id$
 
 #  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
@@ -63,7 +64,8 @@ def main():
 		if opt[k]:
 			plline3(x, y, z)
 		else:
-			plpoin3(x, y, z, 1)
+			# U+22C5 DOT OPERATOR.
+			plstring3(x, y, z, "⋅")
 
 		plcol0(3)
 		title = "#frPLplot Example 18 - Alt=%.0f, Az=%.0f" % (alt[k],
