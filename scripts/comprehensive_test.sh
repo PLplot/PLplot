@@ -65,7 +65,7 @@ INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE
 Each of the steps in this comprehensive test may take a while...."
 
     PATH_SAVE=$PATH
-    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a ( "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" ) ] ; then
+    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a \( "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" \) ] ; then
 	PATH=$PATH_SAVE:$BUILD_TREE/dll
     fi
     mkdir -p "$OUTPUT_TREE"
