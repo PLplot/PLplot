@@ -765,6 +765,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plstart                  c_plstart
 #define    plstransform             c_plstransform
 #define    plstring                 c_plstring
+#define    plstring3                c_plstring3
 #define    plstripa                 c_plstripa
 #define    plstripc                 c_plstripc
 #define    plstripd                 c_plstripd
@@ -1747,6 +1748,15 @@ c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PL
 
 PLDLLIMPEXP void
 c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string );
+
+// Prints out the same string repeatedly at the n points in world
+// coordinates given by the x, y, and z arrays.  Supersedes plpoin3
+// for the case where text refers to a unicode glyph either directly
+// as UTF-8 or indirectly via the standard text escape sequences
+// allowed for PLplot input strings.
+
+PLDLLIMPEXP void
+c_plstring3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string );
 
 // Add a point to a stripchart.
 

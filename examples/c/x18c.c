@@ -1,3 +1,4 @@
+// -*- coding: utf-8; -*-
 // $Id$
 //
 //      3-d line and point plot demo.  Adapted from x08c.c.
@@ -72,9 +73,14 @@ main( int argc, const char *argv[] )
         plcol0( 2 );
 
         if ( opt[k] )
+        {
             plline3( NPTS, x, y, z );
+        }
         else
-            plpoin3( NPTS, x, y, z, 1 );
+        {
+            // U+22C5 DOT OPERATOR.
+            plstring3( NPTS, x, y, z, "⋅" );
+        }
 
         plcol0( 3 );
         sprintf( title, "#frPLplot Example 18 - Alt=%.0f, Az=%.0f",
