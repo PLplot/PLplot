@@ -31,7 +31,7 @@ cd "$tcldir"
 if [ "$verbose_test" ] ; then
     echo "pltcl demo of plot"
 fi
-pltcl -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
+pltcl@EXEEXT@ -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -54,7 +54,7 @@ fi
 if [ "$verbose_test" ] ; then
     echo "pltcl demo of plgrid"
 fi
-pltcl -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
+pltcl@EXEEXT@ -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plgrid.tcl
 plgrid
