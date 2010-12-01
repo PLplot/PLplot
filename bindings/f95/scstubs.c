@@ -1083,6 +1083,12 @@ PLSTRING7( PLINT *n, PLFLT *x, PLFLT *y, const char *string )
 }
 
 void
+PLSTRING37( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string )
+{
+    c_plstring3( *n, x, y, z, string );
+}
+
+void
 PLSTRIPA( PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y )
 {
     c_plstripa( *id, *pen, *x, *y );

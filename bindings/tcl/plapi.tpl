@@ -931,6 +931,15 @@ x	PLFLT *
 y	PLFLT *
 string	const char *
 
+# Plot the same string at a series of 3D locations (x(i),y(i),z(i))
+
+pltclcmd plstring3 void
+n	PLINT
+x	PLFLT *
+y	PLFLT *
+z	PLFLT *
+string	const char *
+
 # Add data to the strip chart
 
 pltclcmd plstripa void

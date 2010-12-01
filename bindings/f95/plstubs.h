@@ -342,6 +342,7 @@
 #define    PLSTRANSFORM2             FNAME( PLSTRANSFORM2, plstransform2 )
 #define    PLSTRANSFORM3             FNAME( PLSTRANSFORM3, plstransform3 )
 #define    PLSTRING7                 FNAME( PLSTRING7, plstring7 )
+#define    PLSTRING37                FNAME( PLSTRING37, plstring37 )
 #define    PLSTRIPA                  FNAME( PLSTRIPA, plstripa )
 #define    PLSTRIPC                  FNAME( PLSTRIPCF77, plstripcf77 )
 #define    PLSTRIPD                  FNAME( PLSTRIPD, plstripd )

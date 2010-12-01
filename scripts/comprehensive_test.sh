@@ -23,7 +23,7 @@ OPTIONS:
   [--do_nondynamic (yes/no, defaults to yes)]
   [--do_static (yes/no, defaults to yes)]
 
-  The next six control which of seven kinds of tests are done for 
+  The next six control which of seven kinds of tests are done for
   each kind of build.
   [--do_ctest (yes/no, defaults to yes)]
   [--do_test_noninteractive (yes/no, defaults to yes)]
@@ -353,7 +353,7 @@ cd "${ORIGINAL_PATH}"
 # Assumption: top-level source tree is parent directory of where script
 # is located.
 SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
-# This is the parent tree for the BUILD_TREE, INSTALL_TREE, 
+# This is the parent tree for the BUILD_TREE, INSTALL_TREE,
 # INSTALL_BUILD_TREE, and OUTPUT_TREE.  It is disposable.
 PARENT_TREE="${SOURCE_TREE}/comprehensive_test_disposeable"
 

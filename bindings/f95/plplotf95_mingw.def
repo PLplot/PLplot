@@ -76,6 +76,7 @@ EXPORTS
   __plplot_MOD_plscmap1la2
   __plplot_MOD_plscmap1l2
   __plplot_MOD_plstring
+  __plplot_MOD_plstring3
   __plplot_MOD_plstripc
   __plplot_MOD_plsvect
   __plplot_MOD_plsym

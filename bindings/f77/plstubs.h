@@ -330,6 +330,7 @@
 #define    PLSTRANSFORM_NONE         FNAME( PLSTRANSFORM_NONE, plstransform_none )
 #define    PLSTRANSFORM_NONE_        FNAME( PLSTRANSFORM_NONE_, plstransform_none_ )
 #define    PLSTRING7                 FNAME( PLSTRING7, plstring7 )
+#define    PLSTRING37                FNAME( PLSTRING37, plstring37 )
 #define    PLSTRIPA                  FNAME( PLSTRIPA, plstripa )
 #define    PLSTRIPC7                 FNAME( PLSTRIPC7, plstripc7 )
 #define    PLSTRIPD                  FNAME( PLSTRIPD, plstripd )
