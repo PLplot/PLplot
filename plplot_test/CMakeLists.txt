@@ -139,13 +139,18 @@ if(SH_EXECUTABLE)
   endif(ENABLE_python)
 
   if(ENABLE_tcl)
+    get_target_property(pltcl_LOC pltcl LOCATION)
     configure_file(test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh
       @ONLY
       )
-    list(APPEND SCRIPTS test_tcl.sh)
     add_test(examples_tcl
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
+      )
+    set(pltcl_LOC ${BIN_DIR}/pltcl${EXEEXT})
+    configure_file(test_tcl.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh_install
+      @ONLY
       )
   endif(ENABLE_tcl)
 
@@ -394,6 +399,14 @@ if(SH_EXECUTABLE)
     RENAME plplot-test.sh
     )
 
+  if(ENABLE_tcl)
+    install(
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh_install
+      DESTINATION ${DATA_DIR}/examples
+      PERMISSIONS ${PERM_SCRIPTS}
+      RENAME test_tcl.sh
+      )
+  endif(ENABLE_tcl)
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
     DESTINATION ${DATA_DIR}/examples

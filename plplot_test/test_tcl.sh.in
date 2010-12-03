@@ -29,9 +29,9 @@ results="`pwd`"
 export results
 cd "$tcldir"
 if [ "$verbose_test" ] ; then
-    echo "pltcl demo of plot"
+    echo "@pltcl_LOC@ demo of plot"
 fi
-pltcl@EXEEXT@ -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
+@pltcl_LOC@ -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -52,9 +52,9 @@ if [ -n "$is_error" ] ; then
     exit 1
 fi
 if [ "$verbose_test" ] ; then
-    echo "pltcl demo of plgrid"
+    echo "@pltcl_LOC@ demo of plgrid"
 fi
-pltcl@EXEEXT@ -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
+@pltcl_LOC@ -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plgrid.tcl
 plgrid
