@@ -37,7 +37,9 @@ OPTIONS:
 
   [--help] Show this message.
 "
-  exit $1
+  if [ $1 -ne 0 ]; then
+      exit $1
+  fi
 }
 
 comprehensive_test () {
@@ -185,6 +187,8 @@ do_test_traditional_install_tree=yes
 
 build_command="make -j4"
 
+usage_reported=0
+
 while test $# -gt 0; do
 
     case $1 in
@@ -304,11 +308,20 @@ while test $# -gt 0; do
             usage 0 1>&2
             ;;
         *)
-            usage 1 1>&2
+            if [ $usage_reported -eq 0 ]; then
+                usage_reported=1
+                usage 0 1>&2
+                echo " "
+            fi
+            echo "Unknown option: $1"
             ;;
     esac
     shift
 done
+
+if [ $usage_reported -eq 1 ]; then
+    exit 1
+fi
 
 echo "Summary of options used for these tests
 
