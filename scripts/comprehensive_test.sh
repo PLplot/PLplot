@@ -9,39 +9,6 @@
 # (III) CMake-based test_noninteractive and test_interactive of
 # installed examples.
 
-usage () {
-  local prog=`basename $0`
-  echo "Usage: $prog [OPTIONS]
-OPTIONS:
-  The next five control what kind of build is tested.
-  [--generator_string (defaults to 'Unix Makefiles')]
-  [--cmake_added_options (defaults to none, but can be used to specify any
-                          combination of white-space-separated cmake options
-                          to, e.g., refine what parts of the PLplot software are
-                          built and tested)]
-  [--do_shared (yes/no, defaults to yes)]
-  [--do_nondynamic (yes/no, defaults to yes)]
-  [--do_static (yes/no, defaults to yes)]
-
-  The next six control which of seven kinds of tests are done for
-  each kind of build.
-  [--do_ctest (yes/no, defaults to yes)]
-  [--do_test_noninteractive (yes/no, defaults to yes)]
-  [--do_test_interactive (yes/no, defaults to yes)]
-  [--do_test_build_tree (yes/no, defaults to yes)]
-  [--do_test_install_tree (yes/no, defaults to yes)]
-  [--do_test_traditional_install_tree (yes/no, defaults to yes)]
-
-  The next option controls what command is used for the build(s).
-  [--build_command (defaults to 'make -j4')]
-
-  [--help] Show this message.
-"
-  if [ $1 -ne 0 ]; then
-      exit $1
-  fi
-}
-
 comprehensive_test () {
     CMAKE_BUILD_TYPE_OPTION=$1
     echo "
@@ -81,61 +48,91 @@ Each of the steps in this comprehensive test may take a while...."
     fi
     output="$OUTPUT_TREE"/cmake.out
     rm -f "$output"
-    #Process $cmake_added_options into $*
+    # Process $cmake_added_options into $* to be used on the cmake command
+    # line below.
     set -- $cmake_added_options
     echo "cmake in the build tree"
+    PATH_AFTER_CMAKE=$PATH
+    if [ "$generator_string" = "MinGW Makefiles" ] ; then
+        # For this case must use PATH specified by the user 
+        # that excludes MSYS.
+	PATH=$path_excluding_msys
+    fi
     cmake "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
 	$* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
         "$SOURCE_TREE" >& "$output"
     cmake_rc=$?
+    PATH=$PATH_AFTER_CMAKE
     if [ "$cmake_rc" -eq 0 ] ; then
 	if [ "$do_test_build_tree" = "yes" -a  "$do_test_noninteractive" = "yes" ] ; then
 	    output="$OUTPUT_TREE"/make_noninteractive.out
 	    rm -f "$output"
 	    echo "$build_command test_noninteractive in the build tree"
 	    $build_command VERBOSE=1 test_noninteractive >& "$output"
+	    make_test_noninteractive_rc=$?
+	    if [ "$make_test_noninteractive_rc" -ne 0 ] ; then
+		echo "ERROR: $build_command test_noninteractive failed in the build tree"
+		exit 1
+	    fi
 	fi
 	if [ "$do_ctest" = "yes" -o \
 	    "$do_test_install_tree" = "yes" -o \
 	    "$do_test_traditional_install_tree" = "yes" ] ; then
 	    rm -rf "$INSTALL_TREE"
-	    output="$OUTPUT_TREE"/make_install.out
+	    output="$OUTPUT_TREE"/make.out
 	    rm -f "$output"
-	    echo "$build_command install in the build tree"
-	    $build_command VERBOSE=1 install >& "$output"
-	    make_install_rc=$?
-	    if [ "$make_install_rc" -eq 0 ] ; then
-		if [ "$do_ctest" = "yes" ] ; then
-		    output="$OUTPUT_TREE"/ctest.out
-		    rm -f "$output"
-		    echo "launch ctest job in the build tree"
-		    ctest --extra-verbose >& "$output" &
-		fi
-		PATH="$INSTALL_TREE/bin":$PATH_SAVE
-		if [ "$do_test_install_tree" = "yes" ] ; then
-		    rm -rf "$INSTALL_BUILD_TREE"
-		    mkdir -p "$INSTALL_BUILD_TREE"
-		    cd "$INSTALL_BUILD_TREE"
-		    output="$OUTPUT_TREE"/installed_cmake.out
-		    rm -f "$output"
-		    echo "cmake in the installed examples build tree"
-		    cmake "$INSTALL_TREE"/share/plplot?.?.?/examples >& "$output"
-		    if [ "$do_test_noninteractive" = "yes" ] ; then
-			output="$OUTPUT_TREE"/installed_make_noninteractive.out
+	    echo "$build_command in the build tree"
+	    $build_command VERBOSE=1 >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -eq 0 ] ; then
+		output="$OUTPUT_TREE"/make_install.out
+		rm -f "$output"
+		echo "$build_command install in the build tree"
+		$build_command VERBOSE=1 install >& "$output"
+		make_install_rc=$?
+		if [ "$make_install_rc" -eq 0 ] ; then
+		    if [ "$do_ctest" = "yes" ] ; then
+			output="$OUTPUT_TREE"/ctest.out
 			rm -f "$output"
-			echo "$build_command test_noninteractive in the installed examples build tree"
-			$build_command VERBOSE=1 test_noninteractive >& "$output"
+			echo "launch ctest job in the build tree"
+			ctest --extra-verbose >& "$output" &
 		    fi
-		fi
-		if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
-		    cd "$INSTALL_TREE"/share/plplot?.?.?/examples
-		    output="$OUTPUT_TREE"/traditional_make_noninteractive.out
-		    rm -f "$output"
-		    echo "Traditional $build_command test_noninteractive in the installed examples tree"
-		    $build_command test_noninteractive >& "$output"
+		    PATH="$INSTALL_TREE/bin":$PATH_SAVE
+		    if [ "$do_test_install_tree" = "yes" ] ; then
+			rm -rf "$INSTALL_BUILD_TREE"
+			mkdir -p "$INSTALL_BUILD_TREE"
+			cd "$INSTALL_BUILD_TREE"
+			output="$OUTPUT_TREE"/installed_cmake.out
+			rm -f "$output"
+			echo "cmake in the installed examples build tree"
+			PATH_AFTER_CMAKE=$PATH
+			if [ "$generator_string" = "MinGW Makefiles" ] ; then
+                            # For this case must use PATH specified by the user 
+                            # that excludes MSYS.
+			    PATH=$path_excluding_msys
+			fi
+			cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot?.?.?/examples >& "$output"
+			PATH=$PATH_AFTER_CMAKE
+			if [ "$do_test_noninteractive" = "yes" ] ; then
+			    output="$OUTPUT_TREE"/installed_make_noninteractive.out
+			    rm -f "$output"
+			    echo "$build_command test_noninteractive in the installed examples build tree"
+			    $build_command VERBOSE=1 test_noninteractive >& "$output"
+			fi
+		    fi
+		    if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
+			cd "$INSTALL_TREE"/share/plplot?.?.?/examples
+			output="$OUTPUT_TREE"/traditional_make_noninteractive.out
+			rm -f "$output"
+			echo "Traditional $build_command test_noninteractive in the installed examples tree"
+			$build_command test_noninteractive >& "$output"
+		    fi
+		else
+		    echo "ERROR: $build_command install failed in the build tree"
+		    exit 1
 		fi
 	    else
-		echo "ERROR: $build_command install failed"
+		echo "ERROR: $build_command failed in the build tree"
 		exit 1
 	    fi
 	fi
@@ -171,8 +168,70 @@ Each of the steps in this comprehensive test may take a while...."
     fi
 }
 
+usage () {
+  local prog=`basename $0`
+  echo "Usage: $prog [OPTIONS]
+OPTIONS:
+  The next option specifies the directory prefix which controls where
+  all files produced by this script are located.
+  [--prefix (defaults to the 'comprehensive_test_disposeable'
+                  subdirectory of the top-level source-tree directory)]
+
+  The next three control how the builds and tests are done.
+  [--generator_string (defaults to 'Unix Makefiles')]
+  [--path_excluding_msys (MUST be specified whenever the generator string is
+                          'MinGW Makefiles' where it is necessary to limit 
+                          the PATH for the cmake invocation to exclude MSYS.
+                          Otherwise this option is completely ignored)]
+  [--build_command (defaults to 'make -j4')]
+
+  The next four control what kind of builds and tests are done.
+  [--cmake_added_options (defaults to none, but can be used to specify any
+                          combination of white-space-separated cmake options
+                          to, e.g., refine what parts of the PLplot software are
+                          built and tested)]
+  [--do_shared (yes/no, defaults to yes)]
+  [--do_nondynamic (yes/no, defaults to yes)]
+  [--do_static (yes/no, defaults to yes)]
+
+  The next six control which of seven kinds of tests are done for
+  each kind of build.
+  [--do_ctest (yes/no, defaults to yes)]
+  [--do_test_noninteractive (yes/no, defaults to yes)]
+  [--do_test_interactive (yes/no, defaults to yes)]
+  [--do_test_build_tree (yes/no, defaults to yes)]
+  [--do_test_install_tree (yes/no, defaults to yes)]
+  [--do_test_traditional_install_tree (yes/no, defaults to yes)]
+
+  [--help] Show this message.
+"
+  if [ $1 -ne 0 ]; then
+      exit $1
+  fi
+}
+
+# Find absolute PATH of script without using readlink (since readlink is
+# not available on all platforms).  Followed advice at
+# http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
+ORIGINAL_PATH="$(pwd)"
+cd "$(dirname $0)"
+# Absolute Path of the script
+SCRIPT_PATH="$(pwd)"
+cd "${ORIGINAL_PATH}"
+
+# Assumption: top-level source tree is parent directory of where script
+# is located.
+SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
+# This is the parent tree for the BUILD_TREE, INSTALL_TREE,
+# INSTALL_BUILD_TREE, and OUTPUT_TREE.  It is disposable.
+
 # Default values for options
+prefix="${SOURCE_TREE}/comprehensive_test_disposeable"
+
 generator_string="Unix Makefiles"
+path_excluding_msys=
+build_command="make -j4"
+
 cmake_added_options=
 do_shared=yes
 do_nondynamic=yes
@@ -185,15 +244,25 @@ do_test_build_tree=yes
 do_test_install_tree=yes
 do_test_traditional_install_tree=yes
 
-build_command="make -j4"
-
 usage_reported=0
 
 while test $# -gt 0; do
 
     case $1 in
+        --prefix)
+	    prefix=$2
+	    shift
+	    ;;
         --generator_string)
 	    generator_string=$2
+	    shift
+	    ;;
+        --path_excluding_msys)
+	    path_excluding_msys=$2
+	    shift
+	    ;;
+        --build_command)
+	    build_command=$2
 	    shift
 	    ;;
         --cmake_added_options)
@@ -300,12 +369,9 @@ while test $# -gt 0; do
 		    ;;
 	    esac
 	    ;;
-        --build_command)
-	    build_command=$2
-	    shift
-	    ;;
         --help)
             usage 0 1>&2
+	    exit 0;
             ;;
         *)
             if [ $usage_reported -eq 0 ]; then
@@ -323,25 +389,33 @@ if [ $usage_reported -eq 1 ]; then
     exit 1
 fi
 
+if [ "$generator_string" = "MinGW Makefiles" -a -z "$path_excluding_msys" ] ; then
+    echo "ERROR: empty value of path_excluding_msys when generator is"
+    echo "'MinGW Makefiles'"
+    usage 1 1>&2
+fi
+
 echo "Summary of options used for these tests
 
-generator_string = $generator_string
-cmake_added_options = $cmake_added_options
+prefix = $prefix
 
+generator_string = $generator_string"
+if [ "$generator_string" = "MinGW Makefiles" ] ; then
+    echo "path_excluding_msys = $path_excluding_msys"
+fi
+echo "build_command = $build_command
+
+cmake_added_options = $cmake_added_options
 do_shared = $do_shared
 do_nondynamic = $do_nondynamic
 do_static = $do_static
 
 do_ctest = $do_ctest
-
 do_test_noninteractive = $do_test_noninteractive
 do_test_interactive = $do_test_interactive
-
 do_test_build_tree = $do_test_build_tree
 do_test_install_tree = $do_test_install_tree
 do_test_traditional_install_tree = $do_test_traditional_install_tree
-
-build_command = $build_command
 
 "
 ANSWER=
@@ -354,45 +428,29 @@ if [ "$ANSWER" = "no" ] ; then
     exit
 fi
 
-# Find absolute PATH of script without using readlink (since readlink is
-# not available on all platforms).  Followed advice at
-# http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
-ORIGINAL_PATH="$(pwd)"
-cd "$(dirname $0)"
-# Absolute Path of the script
-SCRIPT_PATH="$(pwd)"
-cd "${ORIGINAL_PATH}"
-
-# Assumption: top-level source tree is parent directory of where script
-# is located.
-SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
-# This is the parent tree for the BUILD_TREE, INSTALL_TREE,
-# INSTALL_BUILD_TREE, and OUTPUT_TREE.  It is disposable.
-PARENT_TREE="${SOURCE_TREE}/comprehensive_test_disposeable"
-
 # Shared + dynamic
 if [ "$do_shared" = "yes" ] ; then
-    OUTPUT_TREE="$PARENT_TREE/shared/output_tree"
-    BUILD_TREE="$PARENT_TREE/shared/build_tree"
-    INSTALL_TREE="$PARENT_TREE/shared/install_tree"
-    INSTALL_BUILD_TREE="$PARENT_TREE/shared/install_build_tree"
+    OUTPUT_TREE="$prefix/shared/output_tree"
+    BUILD_TREE="$prefix/shared/build_tree"
+    INSTALL_TREE="$prefix/shared/install_tree"
+    INSTALL_BUILD_TREE="$prefix/shared/install_build_tree"
     comprehensive_test "-DBUILD_SHARED_LIBS=ON"
 fi
 
 # Shared + nondynamic
 if [ "$do_nondynamic" = "yes" ] ; then
-    OUTPUT_TREE="$PARENT_TREE/nondynamic/output_tree"
-    BUILD_TREE="$PARENT_TREE/nondynamic/build_tree"
-    INSTALL_TREE="$PARENT_TREE/nondynamic/install_tree"
-    INSTALL_BUILD_TREE="$PARENT_TREE/nondynamic/install_build_tree"
+    OUTPUT_TREE="$prefix/nondynamic/output_tree"
+    BUILD_TREE="$prefix/nondynamic/build_tree"
+    INSTALL_TREE="$prefix/nondynamic/install_tree"
+    INSTALL_BUILD_TREE="$prefix/nondynamic/install_build_tree"
     comprehensive_test "-DBUILD_SHARED_LIBS=ON -DENABLE_DYNDRIVERS=OFF"
 fi
 
 if [ "$do_static" = "yes" ] ; then
 # Static + nondynamic
-    OUTPUT_TREE="$PARENT_TREE/static/output_tree"
-    BUILD_TREE="$PARENT_TREE/static/build_tree"
-    INSTALL_TREE="$PARENT_TREE/static/install_tree"
-    INSTALL_BUILD_TREE="$PARENT_TREE/static/install_build_tree"
+    OUTPUT_TREE="$prefix/static/output_tree"
+    BUILD_TREE="$prefix/static/build_tree"
+    INSTALL_TREE="$prefix/static/install_tree"
+    INSTALL_BUILD_TREE="$prefix/static/install_build_tree"
     comprehensive_test "-DBUILD_SHARED_LIBS=OFF"
 fi
