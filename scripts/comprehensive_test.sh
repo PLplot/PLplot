@@ -34,7 +34,13 @@ INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE
 Each of the steps in this comprehensive test may take a while...."
 
     PATH_SAVE=$PATH
-    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a \( "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" \) ] ; then
+    if [ "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" ] ; then
+	MINGW_OR_MSYS="true"
+    else
+	MINGW_OR_MSYS="false"
+    fi
+
+    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$MINGW_OR_MSYS" = "true" ] ; then
 	PATH=$PATH_SAVE:$BUILD_TREE/dll
     fi
     mkdir -p "$OUTPUT_TREE"
@@ -98,6 +104,14 @@ Each of the steps in this comprehensive test may take a while...."
 			ctest --extra-verbose >& "$output" &
 		    fi
 		    PATH="$INSTALL_TREE/bin":$PATH_SAVE
+		    if [ "$MINGW_OR_MSYS" = "true" ] ; then
+			# Use this logic to be as version-independent as possible.
+			current_dir=$(pwd)
+			# Wild cards must not be inside quotes.
+			cd "$INSTALL_TREE"/lib/plplot?.?.?*/drivers*
+			PATH="$(pwd):$PATH"
+			cd $current_dir
+		    fi
 		    if [ "$do_test_install_tree" = "yes" ] ; then
 			rm -rf "$INSTALL_BUILD_TREE"
 			mkdir -p "$INSTALL_BUILD_TREE"
