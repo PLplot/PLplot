@@ -13,6 +13,14 @@ if(SH_EXECUTABLE)
 
   set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
 
+  # Experience with MSYS bash shows that variables used to set a PATH
+  # component must transform the drive letter form to the "/" Unix
+  # form of the PATH component.  The case of the drive letter doesn't
+  # matter.  For example converting z:/whatever/path ==>
+  # /z/whatever/path or /Z/whatever/path works fine for MSYS bash.
+
+  string(REGEX REPLACE "^(.):" "/\\1/" PATH_FORM_BIN_DIR ${BIN_DIR})
+
   #Build-tree configuration
   set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
   configure_file(
