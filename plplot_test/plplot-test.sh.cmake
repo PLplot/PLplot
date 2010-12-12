@@ -395,7 +395,7 @@ fi
 status=0
 
 if [ "@WIN32@" = "1" ] ; then
- critical_examples="14 17"
+ critical_examples="14 17 29"
  exesuffix=".exe"
 else
  critical_examples="14 17 29"
