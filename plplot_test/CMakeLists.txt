@@ -1,3 +1,24 @@
+# plplot_test/CMakeLists.txt for PLplot
+###
+### Process this file with cmake to produce Makefile
+###
+# Copyright (C) 2006-2010 Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
 # Only set up test environment, configure test files, and install them if
 # a shell is available.
 
@@ -12,14 +33,6 @@ if(SH_EXECUTABLE)
   set(TEST_SCRIPT_DEVICE "${TEST_SCRIPT} --device=${TEST_DEVICE}")
 
   set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
-
-  # Experience with MSYS bash shows that variables used to set a PATH
-  # component must transform the drive letter form to the "/" Unix
-  # form of the PATH component.  The case of the drive letter doesn't
-  # matter.  For example converting z:/whatever/path ==>
-  # /z/whatever/path or /Z/whatever/path works fine for MSYS bash.
-
-  string(REGEX REPLACE "^(.):" "/\\1/" PATH_FORM_BIN_DIR ${BIN_DIR})
 
   #Build-tree configuration
   set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
@@ -148,6 +161,16 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_tcl)
     get_target_property(pltcl_LOC pltcl LOCATION)
+    string(REGEX REPLACE "/pltcl.*$" "" PLTCL_DIR ${pltcl_LOC})
+    # Experience with MSYS bash shows that variables used to set a
+    # PATH component must transform the drive-letter form to the
+    # leading-slash Unix form of the PATH component.  The case of the
+    # drive letter doesn't matter.  For example converting
+    # z:/whatever/path ==> /z/whatever/path or /Z/whatever/path works
+    # fine for MSYS bash.
+    string(REGEX REPLACE "^(.):" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+
+
     configure_file(test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh
       @ONLY
@@ -155,7 +178,10 @@ if(SH_EXECUTABLE)
     add_test(examples_tcl
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
       )
-    set(pltcl_LOC ${BIN_DIR}/pltcl${EXEEXT})
+    set(PLTCL_DIR ${BIN_DIR})
+    # Transform drive-letter form to leading-slash form, see comment above.
+    string(REGEX REPLACE "^(.):" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+
     configure_file(test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh_install
       @ONLY

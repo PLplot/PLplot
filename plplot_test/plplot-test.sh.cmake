@@ -266,8 +266,7 @@ octavedir=\
 "@PLPLOT_OCTAVE_DIR@"/support:\
 "@OCTAVE_M_DIR@"/PLplot:\
 "@OCTAVE_OCT_DIR@":
-PATH="$EXAMPLES_DIR"/../utils:"@PATH_FORM_BIN_DIR@":"$PATH"
-export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir PATH
+export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir
 
 fe=""
 

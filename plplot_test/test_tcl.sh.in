@@ -1,7 +1,7 @@
 #!@SH_EXECUTABLE@
 # Test suite for Tcl examples.
 #
-# Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004-2010  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 # Copyright (C) 2004  Andrew Ross
 #
@@ -23,15 +23,17 @@
 
 # This is called from plplot-test.sh with $tcldir, $device, $dsuffix,
 # $options, and possibly $verbose_test defined.
+# Put pltcl on the PATH.
+PATH=@PLTCL_DIR@:$PATH
 lang="t"
 cd "${OUTPUT_DIR}"
 results="`pwd`"
 export results
 cd "$tcldir"
 if [ "$verbose_test" ] ; then
-    echo "@pltcl_LOC@ demo of plot"
+    echo "@PLTCL_DIR@/pltcl demo of plot"
 fi
-@pltcl_LOC@ -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
+pltcl -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -52,9 +54,9 @@ if [ -n "$is_error" ] ; then
     exit 1
 fi
 if [ "$verbose_test" ] ; then
-    echo "@pltcl_LOC@ demo of plgrid"
+    echo "@PLTCL_DIR@/pltcl demo of plgrid"
 fi
-@pltcl_LOC@ -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
+pltcl -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plgrid.tcl
 plgrid
