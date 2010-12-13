@@ -227,8 +227,13 @@ if(CORE_BUILD)
 
   set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
   set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
-  set(python_location3 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
-  set(python_location4 ${CMAKE_BINARY_DIR}/bindings/gnome2/python)
+  if(WIN32 AND NOT CYGWIN)
+    set(python_location3 ${CMAKE_BINARY_DIR}/dll)
+  else(WIN32 AND NOT CYGWIN)
+    set(python_location3)
+  endif(WIN32 AND NOT CYGWIN)
+  set(python_location4 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
+  set(python_location5 ${CMAKE_BINARY_DIR}/bindings/gnome2/python)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
@@ -239,6 +244,7 @@ if(CORE_BUILD)
   set(python_location2)
   set(python_location3)
   set(python_location4)
+  set(python_location5)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
