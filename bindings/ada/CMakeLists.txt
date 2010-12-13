@@ -56,6 +56,19 @@ if(ENABLE_ada)
 
   add_library(plplotada${LIB_TAG} ${plplotada${LIB_TAG}_LIB_SRCS})
 
+  # Work around an issue in our CMake Ada language
+  # support for MinGW/Windows.  FIXME.  This issue should be fixed
+  # at the Ada language support level and not worked around here.
+  if(WIN32 AND NOT CYGWIN)
+    add_custom_command(
+      TARGET plplotada${LIB_TAG} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+      libplplotadad.dll libplplotadad.dll.a
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll
+      VERBATIM
+      )
+  endif(WIN32 AND NOT CYGWIN)
+
   target_link_libraries(plplotada${LIB_TAG}
     plplot${LIB_TAG} ${GNAT_LIB}
     )
