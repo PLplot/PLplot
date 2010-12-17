@@ -168,7 +168,7 @@ if(SH_EXECUTABLE)
     # drive letter doesn't matter.  For example converting
     # z:/whatever/path ==> /z/whatever/path or /Z/whatever/path works
     # fine for MSYS bash.
-    string(REGEX REPLACE "^(.):" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+    string(REGEX REPLACE "^(.):/" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
 
 
     configure_file(test_tcl.sh.in
