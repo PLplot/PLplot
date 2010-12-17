@@ -27,7 +27,10 @@
 PATH=@PLTCL_DIR@:$PATH
 lang="t"
 cd "${OUTPUT_DIR}"
-results="`pwd`"
+# On Windows systems the sed stanza converts from leading slash form
+# to drive-letter form.  This distinction matters for all prompted
+# filenames (e.g., example 14) but does not matter for -o options.
+results="$(pwd |sed 's?^/\(.\)/?\1:/?')"
 export results
 cd "$tcldir"
 if [ "$verbose_test" ] ; then
