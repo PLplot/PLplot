@@ -3632,15 +3632,15 @@ c_plgfnam( char *fnam )
 {
     if ( fnam == NULL )
     {
-        plabort( "filename string must be preallocated to >=256 bytes" );
+        plabort( "filename string must be preallocated to >=80 bytes" );
         return;
     }
 
     *fnam = '\0';
     if ( plsc->FileName != NULL )
     {
-        strncpy( fnam, plsc->FileName, 255 );
-        fnam[255] = '\0';
+        strncpy( fnam, plsc->FileName, 79 );
+        fnam[79] = '\0';
     }
 }
 
