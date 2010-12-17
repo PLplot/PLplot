@@ -45,7 +45,7 @@ program x31f95
   data b1 /0, 0/
   real(kind=plflt) a1(2)
   data a1 /1.0_plflt, 1.0_plflt/
-  character*80 fnam
+  character*256 fnam
   integer stderr
   integer status
   

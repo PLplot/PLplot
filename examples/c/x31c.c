@@ -48,7 +48,7 @@ main( int argc, const char *argv[] )
     PLINT b1[] = { 0, 0 };
     PLFLT a1[] = { 1.0, 1.0 };
     int   status;
-    char  fnam[80];
+    char  fnam[256];
 
     // Parse and process command line arguments
 

@@ -63,7 +63,7 @@ class x31 {
         int          g1[]   = { 255, 0 };
         int          b1[]   = { 0, 0 };
         double       a1[]   = { 1.0, 1.0 };
-        StringBuffer fnam   = new StringBuffer( 80 );
+        StringBuffer fnam   = new StringBuffer( 256 );
         int          status;
 
         // Create NumberFormat to format floating point numbers

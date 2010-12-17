@@ -64,7 +64,7 @@ x31::x31( int argc, const char *argv[] )
     PLINT b1[] = { 0, 0 };
     PLFLT a1[] = { 1.0, 1.0 };
     int   status;
-    char  fnam[80];
+    char  fnam[256];
 
     pls = new plstream();
 
