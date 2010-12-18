@@ -26,9 +26,11 @@
 lang="lua"
 # Lua examples must be run from the directory where they exist.
 cd "${OUTPUT_DIR}"
-results="`pwd`"
+# On Windows systems the sed stanza converts from leading slash form
+# to drive-letter form.  This distinction matters for all prompted
+# filenames (e.g., example 14) but does not matter for -o options.
+results="$(pwd |sed 's?^/\(.\)/?\1:/?')"
 export results
-echo "$results"
 cd "$luadir"
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31; do
     if [ "$verbose_test" ] ; then
