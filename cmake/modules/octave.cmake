@@ -69,9 +69,20 @@ endif(ENABLE_octave)
 if(ENABLE_octave)
   #OCTAVE_VERSION is the (dotted triplet) octave version.
   execute_process(
-  COMMAND ${OCTAVE} --version
-  OUTPUT_VARIABLE _OCTAVE_VERSION
-  )
+    COMMAND ${OCTAVE} --version
+    OUTPUT_VARIABLE _OCTAVE_VERSION
+    ERROR_VARIABLE OCTAVE_ERROR
+    RESULT_VARIABLE return_code
+    )
+  if(return_code)
+    message(STATUS "OCTAVE_ERROR = ${OCTAVE_ERROR}")
+    message(STATUS "WARNING: "
+    "${OCTAVE} --version generates an error (non-zero return code).  Disabling octave bindings")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+  endif(return_code)
+endif(ENABLE_octave)
+
+if(ENABLE_octave)
   string(REGEX REPLACE
   "^.*version ([0-9]\\.[0-9]\\.[0-9]*).*$" 
   "\\1"
