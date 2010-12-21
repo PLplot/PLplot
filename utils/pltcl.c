@@ -68,10 +68,13 @@ main( int argc, const char **argv )
 static int
 plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
+    char *tmp;
+
 // Print error message if one given
 
-    if ( interp->result != NULL && interp->result[0] != '\0' )
-        fprintf( stderr, "%s\n", interp->result );
+    tmp=Tcl_GetStringResult(interp);
+    if ( tmp != NULL && tmp != '\0' )
+        fprintf( stderr, "%s\n", Tcl_GetStringResult(interp));
 
     plspause( 0 );
     plend();
