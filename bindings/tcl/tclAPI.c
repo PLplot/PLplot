@@ -155,7 +155,7 @@ tcl_cmd( Tcl_Interp *interp, char *cmd );
 //--------------------------------------------------------------------------
 // Append_Cmdlist
 //
-// Generates command list from Cmds, storing into interp->result.
+// Generates command list from Cmds, storing as interps result.
 //--------------------------------------------------------------------------
 
 static void
@@ -626,7 +626,7 @@ plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, const char **
         if ( Tcl_ExprBoolean( interp, argv[1], &result ) )
         {
             fprintf( stderr, "wait_until command \"%s\" failed:\n\t %s\n",
-                argv[1], interp->result );
+                argv[1], Tcl_GetStringResult(interp) );
             break;
         }
         if ( result )
@@ -788,7 +788,7 @@ tcl_cmd( Tcl_Interp *interp, char *cmd )
     if ( result != TCL_OK )
     {
         fprintf( stderr, "TCL command \"%s\" failed:\n\t %s\n",
-            cmd, interp->result );
+            cmd, Tcl_GetStringResult(interp) );
     }
     return result;
 }
@@ -884,7 +884,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( matf->dim != 2 )
     {
-        interp->result = "Must use 2-d data.";
+        Tcl_SetResult( interp, "Must use 2-d data.", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -918,7 +918,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         // Check that there are enough args
         if ( argc < 7 )
         {
-            interp->result = "plcont, bogus syntax";
+            Tcl_SetResult( interp, "plcont, bogus syntax", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -940,7 +940,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc < 1 )
     {
-        interp->result = "plcont, bogus syntax";
+        Tcl_SetResult( interp, "plcont, bogus syntax", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -951,7 +951,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( matclev->dim != 1 )
     {
-        interp->result = "clev must be 1-d matrix.";
+        Tcl_SetResult( interp, "clev must be 1-d matrix.", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -988,7 +988,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc )
     {
-        interp->result = "plcont, bogus syntax, too many args.";
+        Tcl_SetResult( interp, "plcont, bogus syntax, too many args.", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -1002,7 +1002,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
     }
@@ -1018,13 +1018,13 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
 
         if ( mattrx->dim != 1 || mattry->dim != 1 )
         {
-            interp->result = "Must use 1-d coord arrays with pltr1.";
+            Tcl_SetResult( interp, "Must use 1-d coord arrays with pltr1.", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1128,8 +1128,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
         }
         else
         {
-            interp->result =
-                "Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
+            Tcl_SetResult( interp, "Invalid wrap specifier, must be <empty>, 0, 1, or 2.", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1222,7 +1221,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( matu->dim != 2 )
     {
-        interp->result = "Must use 2-d data.";
+        Tcl_SetResult( interp, "Must use 2-d data.", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -1250,7 +1249,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( matv->dim != 2 )
     {
-        interp->result = "Must use 2-d data.";
+        Tcl_SetResult( interp, "Must use 2-d data.", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -1278,7 +1277,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc < 1 )
     {
-        interp->result = "plvect, bogus syntax";
+        Tcl_SetResult( interp, "plvect, bogus syntax", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -1316,7 +1315,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc )
     {
-        interp->result = "plvect, bogus syntax, too many args.";
+        Tcl_SetResult( interp, "plvect, bogus syntax, too many args.", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -1331,7 +1330,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
     }
@@ -1348,13 +1347,13 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
 
         if ( mattrx->dim != 1 || mattry->dim != 1 )
         {
-            interp->result = "Must use 1-d coord arrays with pltr1.";
+            Tcl_SetResult( interp, "Must use 1-d coord arrays with pltr1.", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1472,8 +1471,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
         }
         else
         {
-            interp->result =
-                "Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
+            Tcl_SetResult( interp, "Invalid wrap specifier, must be <empty>, 0, 1, or 2.", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1565,7 +1563,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1573,7 +1571,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1603,7 +1601,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1613,7 +1611,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1626,7 +1624,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( argc == 3 )
     {
-        interp->result = "unimplemented";
+        Tcl_SetResult( interp, "unimplemented", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -1711,7 +1709,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->type != TYPE_FLOAT ||
              matlev->type != TYPE_FLOAT )
         {
-            interp->result = "x y z and clevel must all be float";
+            Tcl_SetResult( interp, "x y z and clevel must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1720,7 +1718,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
              matlev->dim != 1 || matlev->n[0] != nlev )
         {
-            interp->result = "popo Inconsistent dimensions";
+            Tcl_SetResult( interp, "popo Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1758,7 +1756,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->type != TYPE_FLOAT ||
              matlev->type != TYPE_FLOAT )
         {
-            interp->result = "x y z and clevel must all be float";
+            Tcl_SetResult( interp, "x y z and clevel must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1767,7 +1765,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
              matlev->dim != 1 || matlev->n[0] != nlev )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1803,7 +1801,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1811,7 +1809,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1842,7 +1840,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1852,7 +1850,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1865,7 +1863,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( argc == 3 )
     {
-        interp->result = "unimplemented";
+        Tcl_SetResult( interp, "unimplemented", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -1940,7 +1938,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1948,7 +1946,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1979,7 +1977,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -1989,7 +1987,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2002,7 +2000,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( argc == 4 )
     {
-        interp->result = "unimplemented";
+        Tcl_SetResult( interp, "unimplemented", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -2087,7 +2085,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->type != TYPE_FLOAT ||
              matlev->type != TYPE_FLOAT )
         {
-            interp->result = "x y z and clevel must all be float";
+            Tcl_SetResult( interp, "x y z and clevel must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2096,7 +2094,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
              matlev->dim != 1 || matlev->n[0] != nlev )
         {
-            interp->result = "popo Inconsistent dimensions";
+            Tcl_SetResult( interp, "popo Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2134,7 +2132,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->type != TYPE_FLOAT ||
              matlev->type != TYPE_FLOAT )
         {
-            interp->result = "x y z and clevel must all be float";
+            Tcl_SetResult( interp, "x y z and clevel must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2143,7 +2141,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
              matlev->dim != 1 || matlev->n[0] != nlev )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2179,7 +2177,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2187,7 +2185,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2218,7 +2216,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2228,7 +2226,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2241,7 +2239,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( argc == 3 )
     {
-        interp->result = "unimplemented";
+        Tcl_SetResult( interp, "unimplemented", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -2326,7 +2324,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              matz->type != TYPE_FLOAT ||
              matlev->type != TYPE_FLOAT )
         {
-            interp->result = "x y z and clevel must all be float";
+            Tcl_SetResult( interp, "x y z and clevel must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2335,7 +2333,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
              matlev->dim != 1 || matlev->n[0] != nlev )
         {
-            interp->result = "popo Inconsistent dimensions";
+            Tcl_SetResult( interp, "popo Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2373,7 +2371,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              matz->type != TYPE_FLOAT ||
              matlev->type != TYPE_FLOAT )
         {
-            interp->result = "x y z and clevel must all be float";
+            Tcl_SetResult( interp, "x y z and clevel must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2382,7 +2380,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
              matlev->dim != 1 || matlev->n[0] != nlev )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2418,7 +2416,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2426,7 +2424,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2457,7 +2455,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->type != TYPE_FLOAT ||
              matz->type != TYPE_FLOAT )
         {
-            interp->result = "x y and z must all be float";
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2467,7 +2465,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
         {
-            interp->result = "Inconsistent dimensions";
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2480,7 +2478,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if ( argc == 3 )
     {
-        interp->result = "unimplemented";
+        Tcl_SetResult( interp, "unimplemented", TCL_STATIC );
         return TCL_ERROR;
     }
     else
@@ -2611,7 +2609,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     if ( matz->dim != 2 )
     {
-        interp->result = "Must plot a 2-d matrix.";
+        Tcl_SetResult( interp, "Must plot a 2-d matrix.", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -2675,7 +2673,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc )
     {
-        interp->result = "plshade: bogus arg list";
+        Tcl_SetResult( interp, "plshade: bogus arg list", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -2690,7 +2688,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
     }
@@ -2702,7 +2700,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
     }
@@ -2718,13 +2716,13 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
 
         if ( mattrx->dim != 1 || mattry->dim != 1 )
         {
-            interp->result = "Must use 1-d coord arrays with pltr1.";
+            Tcl_SetResult( interp, "Must use 1-d coord arrays with pltr1.", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2828,8 +2826,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
         }
         else
         {
-            interp->result =
-                "Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
+            Tcl_SetResult( interp, "Invalid wrap specifier, must be <empty>, 0, 1, or 2.", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2932,7 +2929,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     if ( matz->dim != 2 )
     {
-        interp->result = "Must plot a 2-d matrix.";
+        Tcl_SetResult( interp, "Must plot a 2-d matrix.", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -2964,7 +2961,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     nlevel = matclevel->n[0];
     if ( matclevel->dim != 1 )
     {
-        interp->result = "clevel must be 1-d matrix.";
+        Tcl_SetResult( interp, "clevel must be 1-d matrix.", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -3001,7 +2998,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 
     if ( argc )
     {
-        interp->result = "plshades: bogus arg list";
+        Tcl_SetResult( interp, "plshades: bogus arg list", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -3016,7 +3013,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
     }
@@ -3028,7 +3025,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
     }
@@ -3044,13 +3041,13 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         // wrapping is only supported for pltr2.
         if ( wrap )
         {
-            interp->result = "Must use pltr2 if want wrapping.";
+            Tcl_SetResult( interp, "Must use pltr2 if want wrapping.", TCL_STATIC );
             return TCL_ERROR;
         }
 
         if ( mattrx->dim != 1 || mattry->dim != 1 )
         {
-            interp->result = "Must use 1-d coord arrays with pltr1.";
+            Tcl_SetResult( interp, "Must use 1-d coord arrays with pltr1.", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -3154,8 +3151,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
         }
         else
         {
-            interp->result =
-                "Invalid wrap specifier, must be <empty>, 0, 1, or 2.";
+            Tcl_SetResult( interp, "Invalid wrap specifier, must be <empty>, 0, 1, or 2.", TCL_STATIC );
             return TCL_ERROR;
         }
 
