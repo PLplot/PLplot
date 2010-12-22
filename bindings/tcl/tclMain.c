@@ -234,9 +234,7 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
 
     Tcl_FindExecutable( argv[0] );
     interp = Tcl_CreateInterp();
-#ifdef TCL_MEM_DEBUG
-    Tcl_InitMemory( interp );
-#endif
+    Tcl_InitMemory( interp ); //no-op if TCL_MEM_DEBUG undefined
 
     // First process plplot-specific args using the PLplot parser.
 
@@ -314,7 +312,7 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
         code = Tcl_VarEval( interp, tclStartupScript, (char *) NULL );
         if ( code != TCL_OK )
         {
-            fprintf( stderr, "%s\n", interp->result );
+            fprintf( stderr, "%s\n", Tcl_GetStringResult(interp) );
             exitCode = 1;
         }
     }
@@ -471,14 +469,6 @@ defaultPrompt:
                 }
             }
         }
-#ifdef TCL_MEM_DEBUG
-        if ( tclMemDumpFileName != NULL )
-        {
-            Tcl_DecrRefCount( commandPtr );
-            Tcl_DeleteInterp( interp );
-            Tcl_Exit( 0 );
-        }
-#endif
     }
 
     //
