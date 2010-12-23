@@ -137,23 +137,56 @@ if(ENABLE_octave)
     PROPERTIES GENERATED ON)
 
   # Build octave interface.
-  set(octave_interface_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${OCTAVE_INCLUDE_PATH}
-    )
-  include_directories(${octave_interface_INCLUDE_PATHS})
 
-  add_library(plplot_octave MODULE ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc)
-  target_link_libraries(
-    plplot_octave
-    plplot${LIB_TAG}
-    "${OCTAVE_LIBRARIES}"
-    "${OCTINTERP_LIBRARIES}"
-    )
+  if( ENABLE_swig_octave)
+    set(octave_interface_INCLUDE_PATHS
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/lib/qsastime
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support
+      )
+    include_directories(${octave_interface_INCLUDE_PATHS})
+    set(CMAKE_SWIG_FLAGS -DSWIG_OCTAVE)
+    set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
+
+    set_source_files_properties(plplot_octave.i 
+      PROPERTIES 
+      SWIG_MODULE_NAME plplot_octave
+      CPLUSPLUS ON
+      )
+
+    set(SWIG_MODULE_plplot_octave_EXTRA_DEPS
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
+
+    # Set up swig + c wrapper.
+    swig_add_module(plplot_octave octave plplot_octave.i)
+    swig_link_libraries(
+      plplot_octave 
+      plplot${LIB_TAG}
+      "${OCTAVE_LIBRARIES}"
+      "${OCTINTERP_LIBRARIES}"
+      )
+  else(ENABLE_swig_octave)
+    set(octave_interface_INCLUDE_PATHS
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${OCTAVE_INCLUDE_PATH}
+      )
+    include_directories(${octave_interface_INCLUDE_PATHS})
+
+    add_library(plplot_octave MODULE ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc)
+    target_link_libraries(
+      plplot_octave
+      plplot${LIB_TAG}
+      "${OCTAVE_LIBRARIES}"
+      "${OCTINTERP_LIBRARIES}"
+      )
+  endif( ENABLE_swig_octave)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)

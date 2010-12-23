@@ -868,11 +868,11 @@ plstar( PLINT nx, PLINT ny );
 void
 plstart( const char *devname, PLINT nx, PLINT ny );
 
-#ifndef SWIG_LUA
+#if !defined ( SWIG_LUA ) && !defined ( SWIG_OCTAVE )
 %feature( "autodoc", "Set the coordinate transform." ) plstransform;
 void
 plstransform( ct_func ctf, PLPointer data );
-#endif  // SWIG_LUA
+#endif
 
 %feature( "autodoc", "Prints out the same string repeatedly at the n points in world coordinates given by the x and y arrays.  Supersedes plpoin and plsymbol for the case where text refers to a unicode glyph either directly as UTF-8 or indirectly via the standard text escape sequences allowed for PLplot input strings." ) plstring;
 void

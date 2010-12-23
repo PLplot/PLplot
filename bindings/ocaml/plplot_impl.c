@@ -802,16 +802,16 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
             lor_ml_list( Field( opt_array, i ), translate_legend_option );
     }
 
-    /*    pllegend( c_opt, Double_val( x ), Double_val( y ),
-        Double_val( plot_width ), Int_val( bg_color ), n_legend,
-        c_opt_array,
-        Double_val( text_offset ), Double_val( text_scale ),
-        Double_val( text_spacing ), Double_val( text_justification ),
-        c_text_colors, c_text,
-        c_box_colors, c_box_patterns, (double *) box_scales,
-        c_line_colors, c_line_styles, c_line_widths,
-        c_symbol_colors, (double *) symbol_scales, c_symbol_numbers,
-        c_symbols ); */
+    //    pllegend( c_opt, Double_val( x ), Double_val( y ),
+//        Double_val( plot_width ), Int_val( bg_color ), n_legend,
+//        c_opt_array,
+//        Double_val( text_offset ), Double_val( text_scale ),
+//        Double_val( text_spacing ), Double_val( text_justification ),
+//        c_text_colors, c_text,
+//        c_box_colors, c_box_patterns, (double *) box_scales,
+//        c_line_colors, c_line_styles, c_line_widths,
+//        c_symbol_colors, (double *) symbol_scales, c_symbol_numbers,
+//        c_symbols );
 
     CAMLreturn( Val_unit );
 }
