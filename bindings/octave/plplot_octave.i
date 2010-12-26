@@ -68,9 +68,136 @@ Naming rules:
 /* typemaps */
 %include <typemaps.i>
 
-// No special typemaps for now just for proof of concept that attempts
-// to get simple examples without PLplot arrays such as example 10 to
-// work.
+/**********************************************************************************
+			 PLINT arrays
+**********************************************************************************/
+
+/* With preceding count */
+%typemap(in) (PLINT n, PLINT *Array) {}
+%typemap(freearg) (PLINT n, PLINT *Array) {}
+
+
+/* Trailing count and check consistency with previous */
+%typemap(in) (PLINT *ArrayCk, PLINT n) (int temp) {}
+%typemap(freearg) (PLINT *ArrayCk, PLINT n) {}
+
+
+/* No count but check consistency with previous */
+%typemap(in) PLINT *ArrayCk (int temp) {}
+%typemap(freearg) PLINT *ArrayCk {}
+
+
+/* Weird case to allow argument to be one shorter than others */
+%typemap(in) PLINT *ArrayCkMinus1 (int temp) {}
+%typemap(freearg) PLINT *ArrayCkMinus1 {}
+
+%typemap(in) PLINT *ArrayCkMinus1Null (int temp) {}
+%typemap(freearg) PLINT *ArrayCkMinus1Null {}
+%typemap(default) PLINT *ArrayCkMinus1Null {}
+
+
+/* No length but remember size to check others */
+%typemap(in) PLINT *Array (int temp) {}
+%typemap(freearg) (PLINT *Array) {}
+
+
+/******************************************************************************
+				 PLFLT Arrays 
+******************************************************************************/
+
+/* with preceding count */
+%typemap(in) (PLINT n, PLFLT *Array) {}
+%typemap(freearg) (PLINT n, PLFLT *Array) {}
+
+
+/* Trailing count and check consistency with previous */
+%typemap(in) (PLFLT *ArrayCk, PLINT n) {}
+%typemap(freearg) (PLFLT *ArrayCk, PLINT n) {}
+
+
+/* no count, but check consistency with previous */
+%typemap(in) PLFLT *ArrayCk (int temp) {}
+%typemap(freearg) PLFLT *ArrayCk {}
+
+
+/* No length but remember size to check others */
+%typemap(in) PLFLT *Array {}
+%typemap(freearg) (PLFLT *Array) {}
+
+
+/* with trailing count */
+%typemap(in) (PLFLT *Array, PLINT n) {}
+%typemap(freearg) (PLFLT *Array, PLINT n) {}
+
+
+/* check consistency with X dimension of previous */
+%typemap(in) PLFLT *ArrayCkX {}
+%typemap(freearg) PLFLT *ArrayCkX {}
+
+
+/* check consistency with Y dimension of previous */
+%typemap(in) PLFLT *ArrayCkY {}
+%typemap(freearg) PLFLT *ArrayCkY {}
+
+
+/* set X length for later consistency checking, with trailing count */
+%typemap(in) (PLFLT *ArrayX, PLINT nx) {}
+%typemap(freearg) (PLFLT *ArrayX, PLINT nx) {}
+
+
+/* set X length for later consistency checking */
+%typemap(in) PLFLT *ArrayX {}
+%typemap(freearg) PLFLT *ArrayX {}
+
+
+/* Set Y length for later consistency checking, with trailing count */
+%typemap(in) (PLFLT *ArrayY, PLINT ny) {}
+%typemap(freearg) (PLFLT *ArrayY, PLINT ny) {}
+
+
+/* set Y length for later consistency checking */
+%typemap(in) PLFLT *ArrayY {}
+%typemap(freearg) (PLFLT *ArrayY) {}
+
+/* 2D array with trailing dimensions, check consistency with previous */
+%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) (int ii) {}
+%typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {}
+
+
+/* 2D array with trailing dimensions, set the X, Y size for later checking */
+%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) (int ii) {}
+%typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {}
+
+
+/* 2D array with no dimensions, set the X, Y size for later checking */
+%typemap(in) PLFLT **Matrix (int ii) {}
+%typemap(freearg) PLFLT **Matrix {}
+
+
+/* 2D array, check for consistency */
+%typemap(in) PLFLT **MatrixCk (int ii) {}
+%typemap(freearg) PLFLT **MatrixCk {}
+
+
+/* Set Y length for later consistency checking, with trailing count */
+/* and 2D array, check for consistency input / output version */
+%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
+%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
+%typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
+
+/******************************************************************************
+				 String returning functions
+******************************************************************************/
+
+/* This currently just used for plgdev, plgfnam, and plgver which apparently
+ * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
+ * have a 1000 byte limit here. */
+%typemap(in, numinputs=0) char *OUTPUT ( char buff[1000] ) {}
+%typemap(argout) char *OUTPUT {} 
+
+%typemap(in, checkfn="lua_isstring") const char *message {}
+
+
 
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
