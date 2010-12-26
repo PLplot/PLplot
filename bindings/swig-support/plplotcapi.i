@@ -5,7 +5,7 @@
 //
 //
 //Copyright (C) 2002  Gary Bishop
-//Copyright (C) 2002, 2004  Alan W. Irwin
+//Copyright (C) 2002-2010  Alan W. Irwin
 //Copyright (C) 2004  Rafael Laboissiere
 //Copyright (C) 2004  Andrew Ross
 //
@@ -761,9 +761,12 @@ plseed( unsigned int s );
 void
 plsesc( char esc );
 
+// Octave has its own definition of plsetopt(.m)
+#if !defined ( SWIG_OCTAVE )
 %feature( "autodoc", "Process input strings, treating them as an option and argument pair. The first is for the external API, the second the work routine declared here for backward compatibility." ) plsetopt;
 PLINT
 plsetopt( const char *opt, const char *optarg );
+#endif
 
 %feature( "autodoc", "Set family file parameters." ) plsfam;
 void

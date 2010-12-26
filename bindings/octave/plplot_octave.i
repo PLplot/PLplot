@@ -216,3 +216,5 @@ typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 %}
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
+// Our Octave interfaces define plsetopt.m which relies on plSetOpt internally.
+int plSetOpt( const char *opt, const char *optarg );
