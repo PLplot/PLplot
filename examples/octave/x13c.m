@@ -17,14 +17,6 @@
 
 function x13c
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   text =[
 	 "Maurice",
 	 "Geoffrey",

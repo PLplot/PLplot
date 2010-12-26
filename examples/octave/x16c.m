@@ -31,14 +31,6 @@ endfunction
 
 function ix16c
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   global tr; global nx; global ny;
   ## Fundamental settings.  See notes[] for more info. 
 

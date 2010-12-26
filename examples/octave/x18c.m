@@ -24,14 +24,6 @@ global az = [30.0, 40.0, 50.0, 60.0];
 
 function ix18c
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   global alt;
   global az;
   global opt = [ 1, 0, 1, 0 ];

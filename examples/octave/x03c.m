@@ -19,14 +19,6 @@
 function x03c
 
   ## Initialize plplot */
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   ## Set orientation to portrait - note not all device drivers
   ## support this, in particular most interactive drivers do not */
   plsori(1);

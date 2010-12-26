@@ -20,14 +20,6 @@
 function ix02c
 
   ## Initialize plplot */
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   plinit();
 
   ## Parse and process command line arguments */

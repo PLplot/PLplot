@@ -21,14 +21,6 @@
 
 function ix15c
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   XPTS=    35;		## Data points in x */
   YPTS=    46;		## Datat points in y */
   global	tr = [2/(XPTS-1); 0.0; -1.0; 0.0; 2/(YPTS-1); -1.0];

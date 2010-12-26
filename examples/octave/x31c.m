@@ -31,14 +31,6 @@ function status = ix31c(strm)
     strm = stdout;
   endif
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   PL_NOTSET = -42.0;
 
   ## Clear status flag to begin with

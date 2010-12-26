@@ -36,14 +36,6 @@ endfunction
 
   function ix08c
 
-    if (!exist("plinit"))
-      plplot_stub
-    endif
-
-    if(isempty(sprintf("%s",plgdev')))
-      plsdev("xwin");
-    endif
-
     XPTS=35;		## Data points in x
     YPTS=46;		## Datat points in y
 

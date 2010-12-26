@@ -24,14 +24,6 @@ function ix01c(strm)
     strm = stdout;
   endif
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   ## plplot initialization */
 
   ## Parse and process command line arguments */

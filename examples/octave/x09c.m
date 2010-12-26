@@ -183,14 +183,6 @@ endfunction
 	
 function ix09c
 
-	  if (!exist("plinit"))
-	    plplot_stub
-	  endif
-
-	  if(isempty(sprintf("%s",plgdev')))
-	    plsdev("xwin");
-	  endif
-
 	  global	XPTS
 	  global	YPTS
 	  global	tr

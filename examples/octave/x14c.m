@@ -30,10 +30,6 @@ function ix14c(fname2,strm)
     strm = stdout;
   endif
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
   xleng0 = 400; yleng0 = 300; xoff0 = 200; yoff0 = 200;
   xleng1 = 400; yleng1 = 300; xoff1 = 500; yoff1 = 500;
 

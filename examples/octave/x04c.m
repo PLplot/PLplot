@@ -25,14 +25,6 @@ function ix04c
   ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   plinit();
   plfont(2);
 

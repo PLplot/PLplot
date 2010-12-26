@@ -16,14 +16,6 @@
 
 function x17c
 
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   nsteps = 1000;
 
   ## If db is used the plot is much more smooth. However, because of the

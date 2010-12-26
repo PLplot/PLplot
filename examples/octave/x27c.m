@@ -46,14 +46,6 @@ function ix27c
 	    20.0, 13.0, 20.0, 20.0;
 	    20.0,-13.0, 20.0, 20.0];
   
-  if (!exist("plinit"))
-    plplot_stub
-  endif
-
-  if(isempty(sprintf("%s",plgdev')))
-    plsdev("xwin");
-  endif
-
   ## Parse and process command line arguments
 
   ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
