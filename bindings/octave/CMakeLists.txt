@@ -119,26 +119,17 @@ if(ENABLE_octave)
     ${CMAKE_CURRENT_BINARY_DIR}/.octaverc
     @ONLY
     )
-  add_custom_command(
-    OUTPUT 
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
-    ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
-    COMMAND ${PERL_EXECUTABLE}
-    -I${MATWRAP_PATH} ${MATWRAP} 
-    -language octave -o plplot_octave.cc -stub tmp_stub
-    -cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR} 
-    -cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_rej.h
-    -cpp ${CMAKE_C_COMPILER} -D__builtin_va_list=void -E 
-    -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_BINARY_DIR} -C plplot_octave.h
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
-    )
-  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
-    PROPERTIES GENERATED ON)
-
   # Build octave interface.
 
-  if( ENABLE_swig_octave)
+  if(ENABLE_swig_octave)
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
+      COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
+      )
+    add_custom_target(tmp_stub_built
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
+      )
+
     set(octave_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_SOURCE_DIR}/lib/qsastime
@@ -168,6 +159,8 @@ if(ENABLE_octave)
       "${OCTAVE_LIBRARIES}"
       "${OCTINTERP_LIBRARIES}"
       )
+    add_dependencies(plplot_octave tmp_stub_built)
+
   else(ENABLE_swig_octave)
     set(octave_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
@@ -179,6 +172,23 @@ if(ENABLE_octave)
       )
     include_directories(${octave_interface_INCLUDE_PATHS})
 
+    add_custom_command(
+      OUTPUT 
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
+      ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
+      COMMAND ${PERL_EXECUTABLE}
+      -I${MATWRAP_PATH} ${MATWRAP} 
+      -language octave -o plplot_octave.cc -stub tmp_stub
+      -cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR} 
+      -cpp_ignore ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_rej.h
+      -cpp ${CMAKE_C_COMPILER} -D__builtin_va_list=void -E 
+      -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_BINARY_DIR} -C plplot_octave.h
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
+      )
+    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
+      PROPERTIES GENERATED ON)
+
     add_library(plplot_octave MODULE ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc)
     target_link_libraries(
       plplot_octave
@@ -186,7 +196,7 @@ if(ENABLE_octave)
       "${OCTAVE_LIBRARIES}"
       "${OCTINTERP_LIBRARIES}"
       )
-  endif( ENABLE_swig_octave)
+  endif(ENABLE_swig_octave)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
@@ -269,11 +279,16 @@ if(ENABLE_octave)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
     )
 
-  # Both these targets file-depend on custom commands which in turn
-  # file-depend on ${make_documentation_DEPENDS}.  Therefore, must
-  # serialize these custom targets so that parallel build jobs
-  # don't interfere with each other.
-  add_dependencies(plplot_stub.m_built make_documentation)
+  if( ENABLE_swig_octave)
+    # These targets have common file depends.
+    add_dependencies(plplot_stub.m_built make_documentation tmp_stub_built)
+  else( ENABLE_swig_octave)
+    # Both these targets file-depend on custom commands which in turn
+    # file-depend on ${make_documentation_DEPENDS}.  Therefore, must
+    # serialize these custom targets so that parallel build jobs
+    # don't interfere with each other.
+    add_dependencies(plplot_stub.m_built make_documentation)
+  endif( ENABLE_swig_octave)
 
   # Need access elsewhere (examples/octave) to the file depends of
   # this custom target.
