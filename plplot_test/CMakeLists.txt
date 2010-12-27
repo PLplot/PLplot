@@ -70,13 +70,6 @@ if(SH_EXECUTABLE)
     )
   list(APPEND SCRIPTS test_c_interactive.sh)
 
-  configure_file(
-    test_octave_interactive.sh.in
-    ${CMAKE_CURRENT_BINARY_DIR}/test_octave_interactive.sh
-    @ONLY
-    )
-  list(APPEND SCRIPTS test_octave_interactive.sh)
-
   add_test(examples_c
     ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
     )
@@ -130,6 +123,21 @@ if(SH_EXECUTABLE)
   endif(ENABLE_java)
 
   if(ENABLE_octave)
+    if(ENABLE_swig_octave)
+      set(swig_octave_comment)
+      set(matwrap_octave_comment "# (ignore for swig-generated case) ")
+    else(ENABLE_swig_octave)
+      set(matwrap_octave_comment)
+      set(swig_octave_comment "# (ignore for matwrap-generated case) ")
+    endif(ENABLE_swig_octave)
+
+    configure_file(
+      test_octave_interactive.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_octave_interactive.sh
+      @ONLY
+      )
+    list(APPEND SCRIPTS test_octave_interactive.sh)
+
     configure_file(
       test_octave.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_octave.sh

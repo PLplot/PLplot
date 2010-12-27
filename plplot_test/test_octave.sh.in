@@ -42,7 +42,8 @@ else
     verbose_test = 0;
 endif
 
-plplot_stub;
+@swig_octave_comment@plplot_octave;
+@matwrap_octave_comment@plplot_stub;
 t = split("$options", "-"); 
 if (t); t(1,:)=""; endif;
 for i=1:rows(t)
@@ -57,7 +58,8 @@ endfor
 
 # Remove 7, 16 until plshade1 fix is done.
 
-for i=[1:6 8 9 13 15 21] ;
+@swig_octave_comment@for i=[] ;
+@matwrap_octave_comment@for i=[1:6 8 9 13 15 21] ;
     if (verbose_test)
 	printf("p%d\n",i);
     endif
@@ -68,7 +70,10 @@ endfor
 #plot equivalent of x??c examples.  These only required octave-2.0.x
 #Example 19 is not yet implemented
 failed = [] ;
-for i=[1:18 20:31 ] ;
+# Temporarily drop everything that involves arrays or returned values
+# until typemaps for swig-generated interface are done.
+@swig_octave_comment@for i=[10] ;
+@matwrap_octave_comment@for i=[1:18 20:31 ] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
     cmd = sprintf("x%.2dc",i);
