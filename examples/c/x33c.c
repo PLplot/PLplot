@@ -60,6 +60,100 @@ static char *special_symbols[5] = {
     "✦"
 };
 
+void
+plcolorbar_example_1()
+{
+    pladv( 0 );
+    // Setup color palette 1
+    plspal1( "cmap1_blue_red.pal", 1 );
+
+    PLINT n;
+    n = 2;
+
+    PLFLT colors[n];
+    colors[0] = 0.0;
+    colors[1] = 1.0;
+    PLFLT values[n];
+    values[0] = 6.0;
+    values[1] = 13.0;
+
+    PLINT opt;
+    opt = PL_COLORBAR_LEFT | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_LEFT |
+          PL_COLORBAR_CAP_HIGH;
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                "tv", "Test label - Left, High Cap",
+                n, colors, values );
+
+    opt = PL_COLORBAR_RIGHT | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_RIGHT |
+          PL_COLORBAR_CAP_LOW;
+
+    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+                "tv", "Test label - Right, Low Cap",
+                n, colors, values );
+
+    opt = PL_COLORBAR_UPPER | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_UPPER |
+          PL_COLORBAR_CAP_HIGH;
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                "t", "Test label - Upper, High Cap",
+                n, colors, values );
+
+    opt = PL_COLORBAR_LOWER | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_LOWER |
+          PL_COLORBAR_CAP_LOW;
+
+    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+                "t", "Test label - Lower, Low Cap",
+                n, colors, values );
+}
+
+void
+plcolorbar_example_2()
+{
+    pladv( 0 );
+    // Setup color palette 1
+    plspal1( "cmap1_blue_yellow.pal", 1 );
+
+    PLINT n;
+    n = 2;
+
+    PLFLT colors[n];
+    colors[0] = 0.0;
+    colors[1] = 1.0;
+    PLFLT values[n];
+    values[0] = 6.0;
+    values[1] = 13.0;
+
+    PLINT opt;
+    opt = PL_COLORBAR_LEFT | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_LEFT |
+          PL_COLORBAR_CAP_LOW;
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                "tv", "Test label - Left, Low Cap",
+                n, colors, values );
+
+    opt = PL_COLORBAR_RIGHT | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_RIGHT |
+          PL_COLORBAR_CAP_HIGH;
+
+    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+                "tv", "Test label - Right, High Cap",
+                n, colors, values );
+
+    opt = PL_COLORBAR_UPPER | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_UPPER |
+          PL_COLORBAR_CAP_LOW;
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                "t", "Test label - Upper, Low Cap",
+                n, colors, values );
+
+    opt = PL_COLORBAR_LOWER | PL_COLORBAR_IMAGE | PL_COLORBAR_LABEL_LOWER |
+          PL_COLORBAR_CAP_HIGH;
+
+    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+                "t", "Test label - Lower, High Cap",
+                n, colors, values );
+}
+
 //--------------------------------------------------------------------------
 // main
 //
@@ -602,9 +696,14 @@ main( int argc, const char *argv[] )
         NULL, NULL, NULL, NULL );
     max_height = MAX( max_height, legend_height );
 
+    // Color bar examples
+    plcolorbar_example_1();
+    plcolorbar_example_2();
+
     // Free space that contained legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )
         free( (void *) text[k] );
     plend();
     exit( 0 );
 }
+

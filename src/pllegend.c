@@ -800,3 +800,431 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     return;
 }
 
+void
+draw_cap( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
+{
+    // Save drawing color
+    PLINT col0_save = plsc->icol0;
+
+    // Save window and viewport
+    // Saved normalized coordinates of viewport.
+    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+    // Saved world coordinates of viewport.
+    PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
+    plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
+
+    // Use the entire sub-page, and make world coordinates 0.0 -> 1.0
+    // This way the location and orientation of the cap can be easily
+    // defined by a combination of opt, x and y.
+    plvpor( 0.0, 1.0, 0.0, 1.0 );
+    plwind( 0.0, 1.0, 0.0, 1.0 );
+
+    // Points for the triangle
+    PLFLT xs[3];
+    PLFLT ys[3];
+
+    plcol1( color );
+
+    if ( opt & PL_COLORBAR_CAP_LOW )
+    {
+        if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
+        {
+            // Draw the cap on the bottom
+            if ( opt & PL_COLORBAR_LEFT )
+                xs[0] = x;
+            else if ( opt & PL_COLORBAR_RIGHT )
+                xs[0] = 1.0 - x - width;
+            ys[0] = y;
+            xs[2] = xs[0] + width;
+            ys[2] = ys[0];
+            xs[1] = (xs[0] + xs[2]) / 2.0;
+            ys[1] = ys[0] - 0.05;
+
+            plfill( 3, xs, ys );
+        }
+        else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
+        {
+            // Draw the cap on the left
+            xs[0] = x;
+            if ( opt & PL_COLORBAR_UPPER )
+                ys[0] = 1.0 - y - width;
+            else if ( opt & PL_COLORBAR_LOWER )
+                ys[0] = y;
+            xs[2] = xs[0];
+            ys[2] = ys[0] + width;
+            xs[1] = xs[0] - 0.05;
+            ys[1] = (ys[0] + ys[2]) / 2.0;
+
+            plfill( 3, xs, ys );
+        }
+    }
+    else if ( opt & PL_COLORBAR_CAP_HIGH )
+    {
+        if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
+        {
+            // Draw the cap on the top
+            if ( opt & PL_COLORBAR_LEFT )
+                xs[0] = x;
+            else if ( opt & PL_COLORBAR_RIGHT )
+                xs[0] = 1.0 - x - width;
+            ys[0] = y + length;
+            xs[2] = xs[0] + width;
+            ys[2] = ys[0];
+            xs[1] = (xs[0] + xs[2]) / 2.0;
+            ys[1] = ys[0] + 0.05;
+
+            plfill( 3, xs, ys );
+        }
+        else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
+        {
+            // Draw the cap on the right
+            xs[0] = x + length;
+            if ( opt & PL_COLORBAR_UPPER )
+                ys[0] = 1.0 - y - width;
+            else if ( opt & PL_COLORBAR_LOWER )
+                ys[0] = y;
+            xs[2] = xs[0];
+            ys[2] = ys[0] + width;
+            xs[1] = xs[0] + 0.05;
+            ys[1] = (ys[0] + ys[2]) / 2.0;
+
+            plfill( 3, xs, ys );
+        }
+    }
+
+    // Restore the drawing color
+    plcol0( col0_save );
+
+    // Draw cap outline
+    plline( 3, xs, ys );
+
+    // Restore window and viewport
+    plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
+    plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
+}
+
+void
+c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              const char *axis_opts, const char *label,
+              PLINT n_colors, PLFLT *colors, PLFLT *values )
+{
+    // Min and max values
+    // Assumes that the values array is sorted from smallest to largest
+    // OR from largest to smallest.
+    PLFLT min_value, max_value;
+    min_value = values[0];
+    max_value = values[ n_colors - 1 ];
+
+    // Saved normalized coordinates of viewport.
+    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+    // Saved world coordinates of viewport.
+    PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
+    plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
+
+    // Active attributes to be saved and restored afterward.
+    PLINT col0_save         = plsc->icol0;
+    PLFLT text_scale_save   = plsc->chrht / plsc->chrdef;
+    // Axis tick spacing
+    PLFLT maj_save          = plsc->majht / plsc->majdef;
+    PLFLT min_save          = plsc->minht / plsc->mindef;
+
+    // Position of the color bar in normalized viewport (= normalized subpage
+    // coordinates).
+    PLFLT vx_min, vx_max, vy_min, vy_max;
+    PLFLT wx_min, wx_max, wy_min, wy_max;
+    // Build the proper viewport and window dimensions
+    if ( opt & PL_COLORBAR_LEFT )
+    {
+        vx_min = x;
+        vy_min = y;
+        vx_max = vx_min + width;
+        vy_max = vy_min + length;
+        wx_min = 0.0;
+        wy_min = min_value;
+        wx_max = 1.0;
+        wy_max = max_value;
+    }
+    else if ( opt & PL_COLORBAR_RIGHT )
+    {
+        vx_min = 1.0 - x - width;
+        vy_min = y;
+        vx_max = vx_min + width;
+        vy_max = vy_min + length;
+        wx_min = 0.0;
+        wy_min = min_value;
+        wx_max = 1.0;
+        wy_max = max_value;
+    }
+    else if ( opt & PL_COLORBAR_UPPER )
+    {
+        vx_min = x;
+        vy_min = 1.0 - y - width;
+        vx_max = vx_min + length;
+        vy_max = vy_min + width;
+        wx_min = min_value;
+        wy_min = 0.0;
+        wx_max = max_value;
+        wy_max = 1.0;
+    }
+    else if ( opt & PL_COLORBAR_LOWER )
+    {
+        vx_min = x;
+        vy_min = y;
+        vx_max = vx_min + length;
+        vy_max = vy_min + width;
+        wx_min = min_value;
+        wy_min = 0.0;
+        wx_max = max_value;
+        wy_max = 1.0;
+    }
+    else
+    {
+        plabort( "plcolorbar: Invalid or missing side" );
+    }
+
+    // The window should take up the whole viewport
+    plvpor( vx_min, vx_max, vy_min, vy_max );
+    plwind( wx_min, wx_max, wy_min, wy_max );
+
+    // The data to plot
+    PLFLT **color_data;
+    // Setting up the data for display
+    PLINT i, j, ni, nj, n_steps;
+    PLFLT step_size;
+
+    // What kind of color bar are we making?
+    if ( opt & PL_COLORBAR_IMAGE )
+    {
+        // Interpolate
+        // TODO: Should this be decided with an extra opt option instead of by
+        // counting n_colors?
+        if ( n_colors == 2 )
+        {
+            // Use the same number of steps as there are steps in
+            // color palette 1.
+            // TODO: Determine a better way to specify the steps here?
+            n_steps = plsc->ncol1;
+            step_size = ( max_value - min_value ) / (PLFLT)n_steps;
+            if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
+            {
+                ni = 2;
+                nj = n_steps;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = min_value + (PLFLT)j * step_size;
+                    }
+                }
+            }
+            else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
+            {
+                ni = n_steps;
+                nj = 2;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = min_value + (PLFLT)i * step_size;
+                    }
+                }
+            }
+            else
+            {
+                plabort( "plcolorbar: Invalid side" );
+            }
+        }
+        // No interpolation - use values array as-is
+        else
+        {
+            n_steps = n_colors;
+            // Use the provided values in this case.
+            if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
+            {
+                ni = 2;
+                nj = n_steps;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = values[j];
+                    }
+                }
+            }
+            else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
+            {
+                ni = n_steps;
+                nj = 2;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = values[i];
+                    }
+                }
+            }
+            else
+            {
+                plabort( "plcolorbar: Invalid side" );
+            }
+        }
+        // Draw the color bar
+        plimage( color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
+                 min_value, max_value, wx_min, wx_max, wy_min, wy_max );
+        plFree2dGrid( color_data, ni, nj );
+    }
+    else if ( opt & PL_COLORBAR_SHADE )
+    {
+        plabort( "PL_COLORBAR_SHADE is not implemented yet" );
+    }
+    else if ( opt & PL_COLORBAR_GRADIENT )
+    {
+        plabort( "PL_COLORBAR_GRADIENT is not implemented yet" );
+    }
+
+    // Smaller text
+    plschr( 0.0, 0.75 );
+    // Small ticks on the vertical axis
+    plsmaj( 0.0, 0.5);
+    plsmin( 0.0, 0.5);
+
+    // For building axis option string
+    PLINT max_opts = 25;
+    char opt_string[max_opts];
+
+    // Draw the boxes, ticks and tick labels
+    if ( opt & PL_COLORBAR_LEFT )
+    {
+        snprintf( opt_string, max_opts, "bcn%s", axis_opts );
+        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
+    }
+    else if ( opt & PL_COLORBAR_RIGHT )
+    {
+        snprintf( opt_string, max_opts, "bcm%s", axis_opts );
+        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
+    }
+    else if ( opt & PL_COLORBAR_UPPER )
+    {
+        snprintf( opt_string, max_opts, "bcm%s", axis_opts );
+        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
+    }
+    else if ( opt & PL_COLORBAR_LOWER )
+    {
+        snprintf( opt_string, max_opts, "bcn%s", axis_opts );
+        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
+    }
+
+    // How far away from the axis should the label be drawn?
+    PLFLT label_offset;
+    label_offset = 0.0;
+
+    // Draw end-caps
+    if ( opt & PL_COLORBAR_CAP_LOW )
+    {
+        // Add an extra offset for the label so it does not bump in to the
+        // cap.
+        if ( ( ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT ) &&
+               opt & PL_COLORBAR_LABEL_LOWER ) ||
+             ( ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER ) &&
+               opt & PL_COLORBAR_LABEL_LEFT ) )
+        {
+            label_offset += 2.5;
+        }
+        // Draw a filled triangle (cap/arrow) at the low end of the scale
+        draw_cap( opt, x, y, length, width, 0.0 );
+    }
+    else if ( opt & PL_COLORBAR_CAP_HIGH )
+    {
+        // Add an extra offset for the label so it does not bump in to the
+        // cap.
+        if ( ( ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT ) &&
+               opt & PL_COLORBAR_LABEL_UPPER ) ||
+             ( ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER ) &&
+               opt & PL_COLORBAR_LABEL_RIGHT ) )
+        {
+            label_offset += 2.5;
+        }
+        // Draw a filled triangle (cap/arrow) at the high end of the scale
+        draw_cap( opt, x, y, length, width, 1.0 );
+    }
+
+    // Draw a title
+    char perp;
+    if ( opt & PL_COLORBAR_LABEL_LEFT )
+    {
+        if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
+        {
+            label_offset += 4.0;
+            perp = '\0';
+        }
+        else
+        {
+            label_offset += 1.5;
+            perp = 'v';
+        }
+        snprintf( opt_string, max_opts, "l%c", perp);
+        plmtex( opt_string, label_offset, 0.5, 0.5, label );
+    }
+    else if ( opt & PL_COLORBAR_LABEL_RIGHT )
+    {
+        if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
+        {
+            label_offset += 4.0;
+            perp = '\0';
+        }
+        else
+        {
+            label_offset += 1.5;
+            perp = 'v';
+        }
+        snprintf( opt_string, max_opts, "r%c", perp);
+        plmtex( opt_string, label_offset, 0.5, 0.5, label );
+    }
+    else if ( opt & PL_COLORBAR_LABEL_UPPER )
+    {
+        if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
+        {
+            label_offset += 1.5;
+            perp = 'v';
+        }
+        else
+        {
+            label_offset += 4.0;
+            perp = '\0';
+        }
+        snprintf( opt_string, max_opts, "t%c", perp);
+        plmtex( opt_string, label_offset, 0.5, 0.5, label );
+    }
+    else if ( opt & PL_COLORBAR_LABEL_LOWER )
+    {
+        if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
+        {
+            label_offset += 1.5;
+            perp = 'v';
+        }
+        else
+        {
+            label_offset += 4.0;
+            perp = '\0';
+        }
+        snprintf( opt_string, max_opts, "b%c", perp );
+        plmtex( opt_string, label_offset, 0.5, 0.5, label );
+    }
+
+    // Restore
+    plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
+    plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
+    plsmaj( 0.0, maj_save );
+    plsmin( 0.0, min_save );
+    plschr( 0.0, text_scale_save );
+    plcol0( col0_save );
+
+    return;
+}
+

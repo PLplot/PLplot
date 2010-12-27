@@ -633,6 +633,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plclear                  c_plclear
 #define    plcol0                   c_plcol0
 #define    plcol1                   c_plcol1
+#define    plcolorbar               c_plcolorbar
 #define    plconfigtime             c_plconfigtime
 #define    plcont                   c_plcont
 #define    plcpstrm                 c_plcpstrm
@@ -1226,6 +1227,21 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_LEGEND_INSIDE          4096
 #define PL_LEGEND_OUTSIDE         8192
 
+// Flags for plcolorbar
+#define PL_COLORBAR_LEFT            1
+#define PL_COLORBAR_RIGHT           2
+#define PL_COLORBAR_UPPER           4
+#define PL_COLORBAR_LOWER           8
+#define PL_COLORBAR_LABEL_LEFT      16
+#define PL_COLORBAR_LABEL_RIGHT     32
+#define PL_COLORBAR_LABEL_UPPER     64
+#define PL_COLORBAR_LABEL_LOWER     128
+#define PL_COLORBAR_IMAGE           256
+#define PL_COLORBAR_SHADE           512
+#define PL_COLORBAR_GRADIENT        1024
+#define PL_COLORBAR_CAP_LOW       2048
+#define PL_COLORBAR_CAP_HIGH      4096
+
 PLDLLIMPEXP void
 c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
@@ -1241,6 +1257,11 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             const PLINT *line_widths,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
             const PLINT *symbol_numbers, const char **symbols );
+
+PLDLLIMPEXP void
+c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              const char *axis_opts, const char *label,
+              PLINT n_colors, PLFLT *colors, PLFLT *values );
 
 // Sets position of the light source
 PLDLLIMPEXP void
