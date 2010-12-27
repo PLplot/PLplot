@@ -57,13 +57,13 @@ function ix18c
     pladv(0);
     plvpor(0.0, 1.0, 0.0, 0.9);
     plwind(-1.0, 1.0, -0.9, 1.1);
-    plcol(1);
+    plcol0(1);
     plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt(k+1), az(k+1));
     plbox3("bnstu", "x axis", 0.0, 0,
 	   "bnstu", "y axis", 0.0, 0,
 	   "bcdmnstuv", "z axis", 0.0, 0);
 
-    plcol(2);
+    plcol0(2);
 
     if (opt(k+1))
       plline3( x', y', z' );
@@ -71,7 +71,7 @@ function ix18c
       plpoin3( x', y', z', 1 );
     endif
 
-    plcol(3);
+    plcol0(3);
     title=sprintf("#frPLplot Example 18 - Alt=%.0f, Az=%.0f",
 		  alt(k+1), az(k+1));
     plmtex("t", 1.0, 0.5, 0.5, title);
@@ -103,13 +103,13 @@ function test_poly(k)
   pladv(0);
   plvpor(0.0, 1.0, 0.0, 0.9);
   plwind(-1.0, 1.0, -0.9, 1.1);
-  plcol(1);
+  plcol0(1);
   plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt(k+1), az(k+1));
   plbox3("bnstu", "x axis", 0.0, 0,
 	 "bnstu", "y axis", 0.0, 0,
 	 "bcdmnstuv", "z axis", 0.0, 0);
 
-  plcol(2);
+  plcol0(2);
 
 
   for i=0:19
@@ -142,7 +142,7 @@ function test_poly(k)
     endfor
   endfor
 
-  plcol(3);
+  plcol0(3);
   plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
 endfunction
 

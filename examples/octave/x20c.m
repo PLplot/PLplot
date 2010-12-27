@@ -146,7 +146,7 @@ function ix20c
   img_max = max(max(img));
   img_min = min(min(img));
       
-  plcol(2)
+  plcol0(2)
   plenv(0., width, 0., height, 1, -1)
   pllab("", "", "Reduced dynamic range image example")
   plimagefr(img, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25)

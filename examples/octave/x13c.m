@@ -44,7 +44,7 @@ function x13c
   plvasp(1.0);
   plwind(0., 10., 0., 10.);
   ##plenv(0., 10., 0., 10., 1, -2);
-  plcol(2);
+  plcol0(2);
 
   theta0 = 0.;
   dthet = 2 * pi / 500;
@@ -64,10 +64,10 @@ function x13c
       y(j+1) = 5 + 3 * sin(theta);
       j=j+1;
     endfor
-    plcol(i+1);
+    plcol0(i+1);
     plpsty(rem((i + 3), 8) + 1);
     plfill(x', y');
-    plcol(1);
+    plcol0(1);
     plline(x', y');
     just = (theta0 + theta1) / 2.;
     dx = .25 * cos(just); dy = .25 * sin(just);

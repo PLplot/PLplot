@@ -175,19 +175,19 @@ function plot1(xoff,xscale,yoff,yscale)
   ## scaled separately (just = 0), and we just draw a labelled */
   ## box (axis = 0). */
 
-  plcol(1);
+  plcol0(1);
   plenv(xmin, xmax, ymin, ymax, 0, 0);
-  plcol(6);
+  plcol0(6);
   pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
   ## Plot the data points */
 
-  plcol(9);
+  plcol0(9);
   plpoin(xs', ys', 9);
 
   ## Draw the line through the data */
 
-  plcol(4);
+  plcol0(4);
   plline(x', y');
   plflush;#pleop();
   
@@ -199,9 +199,9 @@ function plot2()
   ##       10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
   ##       (just = 0), and we draw a box with axes (axis = 1).
 
-  plcol(1);
+  plcol0(1);
   plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
-  plcol(2);
+  plcol0(2);
   pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
   ## Fill up the arrays */
@@ -216,7 +216,7 @@ function plot2()
 
   ## Draw the line */
 
-  plcol(3);
+  plcol0(3);
   plline(x', y');
   plflush;#pleop();
 endfunction
@@ -237,18 +237,18 @@ function plot3()
 
   ## Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
 
-  plcol(1);
+  plcol0(1);
   plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
   ## Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
   ##       expects a pointer!! */
 
   plstyl(mark1, space1);
-  plcol(2);
+  plcol0(2);
   plbox("g", 30.0, 0, "g", 0.2, 0);
   plstyl(mark0, space0);
 
-  plcol(3);
+  plcol0(3);
   pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
   for i = 0:100
@@ -256,7 +256,7 @@ function plot3()
     y(i+1) = sin(x(i+1) * 3.141592654 / 180.0);
   endfor
 
-  plcol(4);
+  plcol0(4);
   plline(x', y');
   plflush;#pleop();
 
@@ -284,7 +284,7 @@ function plot4()
     plline(x, y);
   endfor
   
-  plcol(2);
+  plcol0(2);
   for i = 0:11
     theta = 30.0 * i;
     dx = cos(dtr * theta);
@@ -310,10 +310,10 @@ function plot4()
   x = x0 .* r;
   y = y0 .* r;
   
-  plcol(3);
+  plcol0(3);
   plline(x, y);
 
-  plcol(4);
+  plcol0(4);
   plmtex("t", 2.0, 0.5, 0.5,
 	 "#frPLplot Example 3 - r(#gh)=sin 5#gh");
   plflush;#pleop();
@@ -354,12 +354,12 @@ function plot5()
   endfor
 
   plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-  plcol(2);
+  plcol0(2);
   plcont(z, 1, XPTS, 1, YPTS, clevel, tr, 0);
   plstyl(mark, space);
-  plcol(3);
+  plcol0(3);
   plcont(w, 1, XPTS, 1, YPTS, clevel, tr, 0);
-  plcol(1);
+  plcol0(1);
   pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
   plflush;#pleop();
 endfunction

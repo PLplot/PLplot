@@ -291,10 +291,10 @@ endif
 	  plcol0(2);
 	  plcont2(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2);
 	  plstyl(mark1, space1);
-	  plcol(3);
+	  plcol0(3);
 	  plcont2(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2);
 	  plstyl(mark0, space0);
-	  plcol(1);
+	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 if(0)
 	  pl_setcontlabelparam(0.006, 0.3, 0.1, 1);

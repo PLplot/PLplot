@@ -158,9 +158,9 @@ function plot1(z,zmin,zmax)
 	  sh_cmap, sh_color, sh_width,
 	  min_color, min_width, max_color, max_width, 1, tr);
 
-  plcol(1);
+  plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol(2);
+  plcol0(2);
   pllab("distance", "altitude", "Bogon flux");
 endfunction
 
@@ -197,9 +197,9 @@ function plot2(z,zmin,zmax)
 	    min_color, min_width, max_color, max_width,1,tr);
   endfor
 
-  plcol(1);
+  plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol(2);
+  plcol0(2);
   pllab("distance", "altitude", "Bogon flux");
 endfunction
 
