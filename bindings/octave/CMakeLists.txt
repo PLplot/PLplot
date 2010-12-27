@@ -122,14 +122,6 @@ if(ENABLE_octave)
   # Build octave interface.
 
   if(ENABLE_swig_octave)
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
-      COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
-      )
-    add_custom_target(tmp_stub_built
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
-      )
-
     set(octave_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_SOURCE_DIR}/lib/qsastime
@@ -159,7 +151,6 @@ if(ENABLE_octave)
       "${OCTAVE_LIBRARIES}"
       "${OCTINTERP_LIBRARIES}"
       )
-    add_dependencies(plplot_octave tmp_stub_built)
 
   else(ENABLE_swig_octave)
     set(octave_interface_INCLUDE_PATHS
@@ -196,6 +187,64 @@ if(ENABLE_octave)
       "${OCTAVE_LIBRARIES}"
       "${OCTINTERP_LIBRARIES}"
       )
+
+    # Build and install plplot_stub.m
+    add_executable(massage massage.c)
+    get_target_property(
+      massage_LOCATION
+      massage
+      LOCATION
+      )
+
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m_part2 
+      "# It was also massaged to add online documentation\n"
+      "# extracted from some PLplot distribution files\n"
+      "\n"
+      "1;\n"
+      "\n"
+      )
+    add_custom_command(
+      OUTPUT 
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      ${CMAKE_CURRENT_BINARY_DIR}/missing_help
+      COMMAND head -5 tmp_stub > plplot_stub.m
+      COMMAND
+      cat plplot_stub.m_part2 >> plplot_stub.m
+      COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def >> plplot_stub.m
+      COMMAND echo >> plplot_stub.m
+      COMMAND 
+      ${massage_LOCATION} >> plplot_stub.m 2> missing_help
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
+      ${massage_LOCATION}
+      ${make_documentation_DEPENDS}
+      )
+
+    add_custom_target(
+      plplot_stub.m_built ALL
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      )
+
+    # Both these targets file-depend on custom commands which in turn
+    # file-depend on ${make_documentation_DEPENDS}.  Therefore, must
+    # serialize these custom targets so that parallel build jobs
+    # don't interfere with each other.
+    add_dependencies(plplot_stub.m_built make_documentation)
+
+    # Need access elsewhere (examples/octave) to the file depends of
+    # this custom target.
+    set_property(GLOBAL PROPERTY 
+      FILES_plplot_stub.m_built
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      )
+
+    install(FILES 
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      DESTINATION ${PLPLOT_OCTAVE_DIR}
+      )
+
   endif(ENABLE_swig_octave)
 
   if(USE_RPATH)
@@ -240,65 +289,4 @@ if(ENABLE_octave)
     PERMISSIONS ${PERM_MODULES}
     )
 
-  # Build and install plplot_stub.m
-  add_executable(massage massage.c)
-  get_target_property(
-    massage_LOCATION
-    massage
-    LOCATION
-    )
-
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m_part2 
-    "# It was also massaged to add online documentation\n"
-    "# extracted from some PLplot distribution files\n"
-    "\n"
-    "1;\n"
-    "\n"
-    )
-  add_custom_command(
-    OUTPUT 
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-    ${CMAKE_CURRENT_BINARY_DIR}/missing_help
-    COMMAND head -5 tmp_stub > plplot_stub.m
-    COMMAND
-    cat plplot_stub.m_part2 >> plplot_stub.m
-    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def >> plplot_stub.m
-    COMMAND echo >> plplot_stub.m
-    COMMAND 
-    ${massage_LOCATION} >> plplot_stub.m 2> missing_help
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
-    ${massage_LOCATION}
-    ${make_documentation_DEPENDS}
-    )
-
-  add_custom_target(
-    plplot_stub.m_built ALL
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-    )
-
-  if( ENABLE_swig_octave)
-    # These targets have common file depends.
-    add_dependencies(plplot_stub.m_built make_documentation tmp_stub_built)
-  else( ENABLE_swig_octave)
-    # Both these targets file-depend on custom commands which in turn
-    # file-depend on ${make_documentation_DEPENDS}.  Therefore, must
-    # serialize these custom targets so that parallel build jobs
-    # don't interfere with each other.
-    add_dependencies(plplot_stub.m_built make_documentation)
-  endif( ENABLE_swig_octave)
-
-  # Need access elsewhere (examples/octave) to the file depends of
-  # this custom target.
-  set_property(GLOBAL PROPERTY 
-    FILES_plplot_stub.m_built
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-    )
-
-  install(FILES 
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-    DESTINATION ${PLPLOT_OCTAVE_DIR}
-    )
 endif(ENABLE_octave)
