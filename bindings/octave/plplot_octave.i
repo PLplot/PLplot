@@ -111,6 +111,55 @@ _dim(const octave_value &o_obj, int dim_idx)
     return 1;
 }
  
+//
+// The following function converts an array of doubles into some other
+// numeric type.  Arguments:
+// 1) Where to store the result.  The type is determined from the type of
+//    this pointer.
+// 2) A vector of doubles to convert.
+// 3) The number of doubles.
+//
+template <class FLOAT>
+static inline void
+_cvt_double_to(FLOAT *out_arr, double *in_arr, unsigned n_el)
+{
+  while (n_el-- > 0)
+    *out_arr++ = (FLOAT)(*in_arr++);
+}
+
+template void _cvt_double_to(int *, double *, unsigned);
+template void _cvt_double_to(unsigned *, double *, unsigned);
+template void _cvt_double_to(long *, double *, unsigned);
+template void _cvt_double_to(unsigned long *, double *, unsigned);
+template void _cvt_double_to(short *, double *, unsigned);
+template void _cvt_double_to(unsigned short *, double *, unsigned);
+template void _cvt_double_to(float *, double *, unsigned);
+                                // Instantiate our templates.  Octave uses
+                                // manual template instantiation.
+
+//
+// Convert an array of some other type into an array of doubles.  Arguments:
+// 1) The array of objects of other type.
+// 2) The output array of doubles.
+// 3) The number of elements to convert.
+//
+template <class FLOAT>
+static inline void
+_cvt_to_double(FLOAT *arr, double *d_arr, unsigned n_el)
+{
+  while (n_el-- > 0)
+    *d_arr++ = double(*arr++);
+}
+
+template void _cvt_to_double(int *, double *, unsigned);
+template void _cvt_to_double(unsigned *, double *, unsigned);
+template void _cvt_to_double(long *, double *, unsigned);
+template void _cvt_to_double(unsigned long *, double *, unsigned);
+template void _cvt_to_double(short *, double *, unsigned);
+template void _cvt_to_double(unsigned short *, double *, unsigned);
+template void _cvt_to_double(float *, double *, unsigned);
+                                // Instantiate our templates.  Octave uses
+                                // manual template instantiation.
 %}
 
 /* The following typemaps take care of marshaling values into and out of PLplot functions. The
@@ -135,35 +184,78 @@ Naming rules:
 			 PLINT arrays
 **********************************************************************************/
 
-/* With preceding count */
-%typemap(in) (PLINT n, PLINT *Array) {
-  
- }
-%typemap(freearg) (PLINT n, PLINT *Array) {}
+// With preceding count and remember size to check others
+%typemap(in) (PLINT n, PLINT *Array) (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  $1 = Alen = (PLINT)(_dim($input, 0));
+  $2 = new PLINT[Alen];
+  temp = $input.matrix_value();
+  _cvt_double_to($2, &temp(0,0), Alen);
+}
+%typemap(freearg) (PLINT n, PLINT *Array) {delete [] $2;}
 
+// With trailing count and check consistency with previous
+%typemap(in) (PLINT *ArrayCk, PLINT n) (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( _dim($input, 0) != Alen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = new PLINT[Alen];
+  _cvt_double_to($1, &temp(0,0), Alen);
+  $2 = Alen;
+}
+%typemap(freearg) (PLINT *ArrayCk, PLINT n) {delete [] $1;}
 
-/* Trailing count and check consistency with previous */
-%typemap(in) (PLINT *ArrayCk, PLINT n) (int temp) {}
-%typemap(freearg) (PLINT *ArrayCk, PLINT n) {}
+// No count but check consistency with previous
+%typemap(in) PLINT *ArrayCk (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( _dim($input, 0) != Alen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = new PLINT[Alen];
+  _cvt_double_to($1, &temp(0,0), Alen);
+}
+%typemap(freearg) PLINT *ArrayCk {delete [] $1;}
 
+// No count but remember size to check others
+%typemap(in) PLINT *Array (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  Alen = (PLINT)(_dim($input, 0));
+  temp = $input.matrix_value();
+  $1 = new PLINT[Alen];
+  _cvt_double_to($1, &temp(0,0), Alen);
+}
+%typemap(freearg) (PLINT *Array) {delete [] $1;}
 
-/* No count but check consistency with previous */
-%typemap(in) PLINT *ArrayCk (int temp) {}
-%typemap(freearg) PLINT *ArrayCk {}
+// No count but check consistency with previous
+// Variation to allow argument to be one shorter than others.
+%typemap(in) PLINT *ArrayCkMinus1 (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( ! (_dim($input, 0) == Alen || _dim($input, 0) == Alen-1) )
+      { error("argument vector must be same length or one less"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = new PLINT[Alen];
+  _cvt_double_to($1, &temp(0,0), Alen);
+}
+%typemap(freearg) PLINT *ArrayCkMinus1 {delete [] $1;}
 
-
-/* Weird case to allow argument to be one shorter than others */
-%typemap(in) PLINT *ArrayCkMinus1 (int temp) {}
-%typemap(freearg) PLINT *ArrayCkMinus1 {}
-
-%typemap(in) PLINT *ArrayCkMinus1Null (int temp) {}
-%typemap(freearg) PLINT *ArrayCkMinus1Null {}
-%typemap(default) PLINT *ArrayCkMinus1Null {}
-
-
-/* No length but remember size to check others */
-%typemap(in) PLINT *Array (int temp) {}
-%typemap(freearg) (PLINT *Array) {}
+// For octave there is no provision for dropping the last argument
+// so this typemap is identical to the previous one.
+%typemap(in) PLINT *ArrayCkMinus1Null (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( ! (_dim($input, 0) == Alen || _dim($input, 0) == Alen-1) )
+      { error("argument vector must be same length or one less"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = new PLINT[Alen];
+  _cvt_double_to($1, &temp(0,0), Alen);
+}
+%typemap(freearg) PLINT *ArrayCkMinus1Null {delete [] $1;}
 
 
 /******************************************************************************
