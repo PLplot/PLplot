@@ -148,6 +148,29 @@ if(ENABLE_octave)
 	CACHE INTERNAL ""
 	)
       endif(NOT OCTAVE_INCLUDE_PATH_TRIMMED STREQUAL "${OCTAVE_INCLUDE_PATH}")
+      # Octave has a huge number of dependencies and therefore an
+      # impossible-to-untangle set of header #includes that depend on
+      # other packages headers.  And there is no information from
+      # mkoctfile or the octave octave_config_info command about where
+      # those header directories are located.  But from experiments
+      # with both the Linux and Windows binary versions of octave, it
+      # appears that hdf5.h is one external header that is necessary,
+      # and it is never part of the octave-${OCTAVE_VERSION}/octave
+      # hierarchy so that PATH_SUFFIXES signature is dropped.
+      find_path(
+	OCTAVE_INCLUDE_PATH_EXTERNAL
+	hdf5.h
+	)
+      if(OCTAVE_INCLUDE_PATH_EXTERNAL)
+        set(OCTAVE_INCLUDE_PATH 
+	${OCTAVE_INCLUDE_PATH_EXTERNAL} ${OCTAVE_INCLUDE_PATH}
+	CACHE INTERNAL ""
+	)
+      else(OCTAVE_INCLUDE_PATH_EXTERNAL)
+	message(STATUS "WARNING: "
+	  "Required external octave header, hdf5.h, not found. Disabling octave bindings")
+	set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+      endif(OCTAVE_INCLUDE_PATH_EXTERNAL)
     else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
       message(STATUS "WARNING: "
       "octave headers and/or library not found. Disabling octave bindings")
@@ -188,6 +211,8 @@ if(ENABLE_octave)
   OUTPUT_VARIABLE OCTAVE_PREFIX
   )
   #message(STATUS "OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
+  file(TO_CMAKE_PATH ${OCTAVE_PREFIX} OCTAVE_PREFIX)
+  #message(STATUS "(CMake) OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
   
   # octave-2.1 (or higher) logic.
   #_OCTAVE_M_DIR
@@ -199,18 +224,25 @@ if(ENABLE_octave)
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   OUTPUT_VARIABLE _OCTAVE_M_DIR
   )
+  #message(STATUS "_OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")
+  file(TO_CMAKE_PATH ${_OCTAVE_M_DIR} _OCTAVE_M_DIR)
+  #message(STATUS "(CMake) _OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")
+  
   #OCTAVE_OCT_DIR
   if(NOT DEFINED OCTAVE_OCT_DIR)
-  file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-  "printf(octave_config_info(\"localoctfiledir\"));"
-  )
-  execute_process(
-  COMMAND ${OCTAVE} -q -f octave_command
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  OUTPUT_VARIABLE OCTAVE_OCT_DIR
-  )
+    file(WRITE ${CMAKE_BINARY_DIR}/octave_command
+      "printf(octave_config_info(\"localoctfiledir\"));"
+      )
+    execute_process(
+      COMMAND ${OCTAVE} -q -f octave_command
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      OUTPUT_VARIABLE OCTAVE_OCT_DIR
+      )
+    #message(STATUS "OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
+    file(TO_CMAKE_PATH ${OCTAVE_OCT_DIR} OCTAVE_OCT_DIR)
+    #message(STATUS "(CMake) OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
   endif(NOT DEFINED OCTAVE_OCT_DIR)
-
+  
   # Replace the OCTAVE_PREFIX with the PLplot prefix in OCTAVE_M_DIR
   string(REPLACE
   "${OCTAVE_PREFIX}" 
