@@ -761,12 +761,9 @@ plseed( unsigned int s );
 void
 plsesc( char esc );
 
-// Octave has its own definition of plsetopt(.m)
-#if !defined ( SWIG_OCTAVE )
 %feature( "autodoc", "Process input strings, treating them as an option and argument pair. The first is for the external API, the second the work routine declared here for backward compatibility." ) plsetopt;
 PLINT
 plsetopt( const char *opt, const char *optarg );
-#endif
 
 %feature( "autodoc", "Set family file parameters." ) plsfam;
 void

@@ -365,19 +365,23 @@ Naming rules:
 %typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
 %typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
 
-/******************************************************************************
-				 String returning functions
-******************************************************************************/
+//-----------------------------------------------------------------------------
+//				 String returning functions
+//-----------------------------------------------------------------------------
 
-/* This currently just used for plgdev, plgfnam, and plgver which apparently
- * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
- * have a 1000 byte limit here. */
-%typemap(in, numinputs=0) char *OUTPUT ( char buff[1000] ) {}
-%typemap(argout) char *OUTPUT {} 
-
-%typemap(in, checkfn="lua_isstring") const char *message {}
-
-
+// This currently just used for plgdev, plgfnam, and plgver which
+// apparently have a limit of 80 bytes.  N.B. This works, but it
+// copies what was done by Rafael for matwrap with no deep knowledge
+// of octave and uses swig internals (note the use of retval1 as the
+// return value).  Thus, it needs to be redone by somebody who knows
+// what they are doing.
+%typemap(in, numinputs=0) char *OUTPUT (octave_value_list retval){
+  retval(0) = octave_value(charMatrix(80, 1), true);
+  $1 = (char *)retval(0).char_matrix_value().data();
+}
+%typemap(argout) char *OUTPUT {
+  return retval1;
+ } 
 
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
@@ -394,7 +398,9 @@ typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 %}
+// For historical reasons our octave bindings use the name plSetOpt for
+// the PLplot function, plsetopt, and use the plsetopt name for a different
+// purpose (plsetopt.m).  We implement that here using the rename directive.
+%rename(plSetOpt) plsetopt;
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
-// Our Octave interfaces define plsetopt.m which relies on plSetOpt internally.
-int plSetOpt( const char *opt, const char *optarg );
