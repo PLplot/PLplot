@@ -128,6 +128,7 @@ if(ENABLE_octave)
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}/include
       ${CMAKE_CURRENT_BINARY_DIR}
+      ${OCTAVE_INCLUDE_PATH}
       ${CMAKE_SOURCE_DIR}/bindings/swig-support
       )
     include_directories(${octave_interface_INCLUDE_PATHS})
