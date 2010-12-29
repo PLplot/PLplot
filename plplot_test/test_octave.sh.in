@@ -28,7 +28,9 @@
 # when this script is launched from the install tree.
 lang="o"
 export lang
-TOPDIR=`pwd`/..
+# Normalize to leading-slash form of drive-letter just in case that is
+# essential for Windows platforms.
+TOPDIR="$(pwd |sed 's?^/\(.\)/?\1:/?')"/..
 echo "$TOPDIR"
 export LD_LIBRARY_PATH="$TOPDIR"/src:"$TOPDIR"/lib/csa:"$TOPDIR"/lib/nn
 
@@ -72,7 +74,7 @@ endfor
 failed = [] ;
 # Temporarily drop everything that involves arrays or returned values
 # until typemaps for swig-generated interface are done.
-@swig_octave_comment@for i=[10] ;
+@swig_octave_comment@for i=[3 4 5 06 10] ;
 @matwrap_octave_comment@for i=[1:18 20:31 ] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");

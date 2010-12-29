@@ -43,11 +43,74 @@ typedef int PLINT;
 typedef unsigned int PLUNICODE;
 typedef PLINT PLBOOL;
 
-/* I hate global variables but this is the best way I can think of to manage consistency
-   checking among function arguments. */
 %{
+// I hate global variables but this is the best way I can think of
+// to manage consistency checking among function arguments.
 static PLINT Alen = 0;
 static PLINT Xlen = 0, Ylen = 0;
+%}
+
+%{
+// Convenience functions copied from matwrap-based approach (currently
+// stored in bindings/octave/matwrap/wrap_octave.pl) to take care of the
+// tricky scalar case and also adopted so that the resulting
+// swig-generated source code will look similar to the matwrap-generated
+// source code.
+
+inline int max(int a, int b) { return a >= b ? a : b; }
+inline int min(int a, int b) { return a >= b ? a : b; }
+
+//
+// Function to get the total length (rows*columns) of an octave object of
+// arbitrary type.
+// Arguments:
+// 1) The octave object.
+//
+// If the object is a scalar, the array length is 1.
+//
+static int
+_arraylen(const octave_value &o_obj)
+{
+  return max(o_obj.rows(),1) * max(o_obj.columns(),1); // Return the size.
+                                // max is necessary because sometimes
+                                // rows() or columns() return -1 or 0 for
+                                // scalars.
+}
+
+//
+// Function to get the number of dimensions of an object.
+//
+static int
+_n_dims(const octave_value &o_obj)
+{
+  if (max(o_obj.columns(),1) > 1)
+    return 2;
+                                // max is necessary because sometimes
+                                // rows() or columns() return -1 or 0 for
+                                // scalars.
+  else if (max(o_obj.rows(),1) > 1)
+    return 1;
+  else
+    return 0;
+}
+
+//
+// Return the n'th dimension of an object.  Dimension 0 is the 1st dimension.
+//
+static inline int
+_dim(const octave_value &o_obj, int dim_idx)
+{
+  if (dim_idx == 0)
+    return max(o_obj.rows(), 0);
+                                // max is necessary because sometimes
+                                // rows() or columns() return -1 or 0 for
+                                // scalars.
+  else if (dim_idx == 1)
+    return max(o_obj.columns(), 0);
+  else
+    return 1;
+}
+ 
 %}
 
 /* The following typemaps take care of marshaling values into and out of PLplot functions. The
@@ -73,7 +136,9 @@ Naming rules:
 **********************************************************************************/
 
 /* With preceding count */
-%typemap(in) (PLINT n, PLINT *Array) {}
+%typemap(in) (PLINT n, PLINT *Array) {
+  
+ }
 %typemap(freearg) (PLINT n, PLINT *Array) {}
 
 
@@ -105,57 +170,80 @@ Naming rules:
 				 PLFLT Arrays 
 ******************************************************************************/
 
-/* with preceding count */
-%typemap(in) (PLINT n, PLFLT *Array) {}
+// With preceding count and remember size to check others
+%typemap(in) (PLINT n, PLFLT *Array) (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  $1 = Alen = (PLINT)(_dim($input, 0));
+  temp = $input.matrix_value();
+  $2 = &temp(0,0);
+}
 %typemap(freearg) (PLINT n, PLFLT *Array) {}
 
-
-/* Trailing count and check consistency with previous */
-%typemap(in) (PLFLT *ArrayCk, PLINT n) {}
+// With trailing count and check consistency with previous
+%typemap(in) (PLFLT *ArrayCk, PLINT n) (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( _dim($input, 0) != Alen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  $2 = (PLINT)(_dim($input, 0));
+}
 %typemap(freearg) (PLFLT *ArrayCk, PLINT n) {}
 
-
-/* no count, but check consistency with previous */
-%typemap(in) PLFLT *ArrayCk (int temp) {}
+// No count but check consistency with previous
+%typemap(in) PLFLT *ArrayCk (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( _dim($input, 0) != Alen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+}
 %typemap(freearg) PLFLT *ArrayCk {}
 
-
-/* No length but remember size to check others */
-%typemap(in) PLFLT *Array {}
+// No count but remember size to check others
+%typemap(in) PLFLT *Array (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  Alen = (PLINT)(_dim($input, 0));
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+}
 %typemap(freearg) (PLFLT *Array) {}
 
-
-/* with trailing count */
-%typemap(in) (PLFLT *Array, PLINT n) {}
+// With trailing count but remember size to check others
+%typemap(in) (PLFLT *Array, PLINT n) (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  $2 = Alen = (PLINT)(_dim($input, 0));
+}
 %typemap(freearg) (PLFLT *Array, PLINT n) {}
 
-
-/* check consistency with X dimension of previous */
+// No X count but check consistency with previous
 %typemap(in) PLFLT *ArrayCkX {}
 %typemap(freearg) PLFLT *ArrayCkX {}
 
-
-/* check consistency with Y dimension of previous */
+// No Y count but check consistency with previous
 %typemap(in) PLFLT *ArrayCkY {}
 %typemap(freearg) PLFLT *ArrayCkY {}
 
-
-/* set X length for later consistency checking, with trailing count */
+// With trailing X count but remember X size to check others
 %typemap(in) (PLFLT *ArrayX, PLINT nx) {}
 %typemap(freearg) (PLFLT *ArrayX, PLINT nx) {}
 
-
-/* set X length for later consistency checking */
+// No X count but remember X size to check others
 %typemap(in) PLFLT *ArrayX {}
 %typemap(freearg) PLFLT *ArrayX {}
 
-
-/* Set Y length for later consistency checking, with trailing count */
+// With trailing Y count but remember Y size to check others
 %typemap(in) (PLFLT *ArrayY, PLINT ny) {}
 %typemap(freearg) (PLFLT *ArrayY, PLINT ny) {}
 
-
-/* set Y length for later consistency checking */
+// No Y count but remember Y size to check others
 %typemap(in) PLFLT *ArrayY {}
 %typemap(freearg) (PLFLT *ArrayY) {}
 
