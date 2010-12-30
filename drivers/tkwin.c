@@ -487,13 +487,20 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
 
     PLINT      i;
-    XPoint     pts[PL_MAXPOLY];
+    XPoint    _pts[PL_MAXPOLY];
+    XPoint    *pts;
 
     if ( dev->flags & 1 )
         return;
 
     if ( npts > PL_MAXPOLY )
-        plexit( "plD_polyline_tkw: Too many points in polyline\n" );
+    {
+        pts = (XPoint *) malloc( sizeof(XPoint) * npts );
+    }
+    else
+    {
+        pts = _pts;
+    }
 
     for ( i = 0; i < npts; i++ )
     {
@@ -508,6 +515,11 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
     if ( dev->write_to_pixmap )
         XDrawLines( tkwd->display, dev->pixmap, dev->gc, pts, npts,
             CoordModeOrigin );
+
+    if ( npts > PL_MAXPOLY )
+    {
+        free( pts );
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -838,12 +850,18 @@ FillPolygonCmd( PLStream *pls )
 {
     TkwDev     *dev  = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    XPoint     pts[PL_MAXPOLY];
+    XPoint    _pts[PL_MAXPOLY];
+    XPoint    *pts;
     int        i;
 
     if ( pls->dev_npts > PL_MAXPOLY )
-        plexit( "FillPolygonCmd: Too many points in polygon\n" );
-
+    {
+        pts = (XPoint *) malloc( sizeof(XPoint) * npts );
+    }
+    else
+    {
+        pts = _pts;
+    }
 
     for ( i = 0; i < pls->dev_npts; i++ )
     {
@@ -878,6 +896,11 @@ FillPolygonCmd( PLStream *pls )
         XSetForeground( tkwd->display, dev->gc, dev->curcolor.pixel );
     }
 #endif
+
+    if ( pls->dev_npts > PL_MAXPOLY )
+    {
+        free( pts );
+    }
 }
 
 //--------------------------------------------------------------------------

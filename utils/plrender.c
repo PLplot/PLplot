@@ -833,17 +833,37 @@ plr_line( U_CHAR c )
 static void
 get_ncoords( PLFLT *x, PLFLT *y, PLINT n )
 {
-    short xs[PL_MAXPOLY], ys[PL_MAXPOLY];
     PLINT i;
+    short _xs[PL_MAXPOLY], _ys[PL_MAXPOLY];
+    short *xs, *ys;
 
-    plm_rd( pdf_rd_2nbytes( pdfs, (U_SHORT *) xs, n ) );
-    plm_rd( pdf_rd_2nbytes( pdfs, (U_SHORT *) ys, n ) );
+    if ( n > PL_MAXPOLY )
+    {
+        xs = (short *) malloc( sizeof(short) * n );
+        ys = (short *) malloc( sizeof(short) * n );
+    }
+    else
+    {
+        xs = _xs;
+        ys = _ys;
+    }
+
+    plr_rdn( pdf_rd_2nbytes( pdfs, (U_SHORT *) xs, n ) );
+    plr_rdn( pdf_rd_2nbytes( pdfs, (U_SHORT *) ys, n ) );
 
     for ( i = 0; i < n; i++ )
     {
         x[i] = xs[i];
         y[i] = ys[i];
     }
+
+    if ( n > PL_MAXPOLY )
+    {
+        free( xs );
+        free( ys );
+    }
+
+    return 0;
 }
 
 //--------------------------------------------------------------------------

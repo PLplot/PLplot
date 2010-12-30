@@ -323,8 +323,20 @@ Bytes requested: %d\n", plr->iodev->typeName, __FILE__, __LINE__, \
 static int
 get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n )
 {
-    int   i;
-    short xs[PL_MAXPOLY], ys[PL_MAXPOLY];
+    PLINT i;
+    short _xs[PL_MAXPOLY], _ys[PL_MAXPOLY];
+    short *xs, *ys;
+
+    if ( n > PL_MAXPOLY )
+    {
+        xs = (short *) malloc( sizeof(short) * n );
+        ys = (short *) malloc( sizeof(short) * n );
+    }
+    else
+    {
+        xs = _xs;
+        ys = _ys;
+    }
 
     plr_rdn( pdf_rd_2nbytes( plr->pdfs, (U_SHORT *) xs, n ) );
     plr_rdn( pdf_rd_2nbytes( plr->pdfs, (U_SHORT *) ys, n ) );
@@ -334,6 +346,13 @@ get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n )
         x[i] = xs[i];
         y[i] = ys[i];
     }
+
+    if ( n > PL_MAXPOLY )
+    {
+        free( xs );
+        free( ys );
+    }
+
     return 0;
 }
 

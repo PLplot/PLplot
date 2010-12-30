@@ -490,16 +490,40 @@ rdbuf_line( PLStream *pls )
 static void
 rdbuf_polyline( PLStream *pls )
 {
-    short xpl[PL_MAXPOLY], ypl[PL_MAXPOLY];
+    short _xpl[PL_MAXPOLY], _ypl[PL_MAXPOLY];
+    short *xpl, *ypl;
     PLINT npts;
 
     dbug_enter( "rdbuf_polyline" );
 
     rd_data( pls, &npts, sizeof ( PLINT ) );
+
+    if ( npts > PL_MAXPOLY ) {
+        xpl = (short *) malloc( ( npts + 1 ) * sizeof( PLINT ) );
+        ypl = (short *) malloc( ( npts + 1 ) * sizeof( PLINT ) );
+
+        if (( xpl == NULL ) || ( ypl == NULL ))
+        {
+            plexit( "rdbuf_polyline: Insufficient memory for large polyline" );
+        }
+    }
+    else
+    {
+        xpl = _xpl;
+        ypl = _ypl;
+    }
+
+
     rd_data( pls, xpl, sizeof ( short ) * npts );
     rd_data( pls, ypl, sizeof ( short ) * npts );
 
     plP_polyline( xpl, ypl, npts );
+
+    if ( npts > PL_MAXPOLY )
+    {
+        free(xpl);
+        free(ypl);
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -701,16 +725,39 @@ rdbuf_esc( PLStream *pls )
 static void
 rdbuf_fill( PLStream *pls )
 {
-    short xpl[PL_MAXPOLY], ypl[PL_MAXPOLY];
+    short _xpl[PL_MAXPOLY], _ypl[PL_MAXPOLY];
+    short *xpl, *ypl;
     PLINT npts;
 
     dbug_enter( "rdbuf_fill" );
 
     rd_data( pls, &npts, sizeof ( PLINT ) );
+
+    if ( npts > PL_MAXPOLY ) {
+        xpl = (short *) malloc( ( npts + 1 ) * sizeof( PLINT ) );
+        ypl = (short *) malloc( ( npts + 1 ) * sizeof( PLINT ) );
+
+        if (( xpl == NULL ) || ( ypl == NULL ))
+        {
+            plexit( "rdbuf_polyline: Insufficient memory for large polyline" );
+        }
+    }
+    else
+    {
+        xpl = _xpl;
+        ypl = _ypl;
+    }
+
     rd_data( pls, xpl, sizeof ( short ) * npts );
     rd_data( pls, ypl, sizeof ( short ) * npts );
 
     plP_fill( xpl, ypl, npts );
+
+    if ( npts > PL_MAXPOLY )
+    {
+        free(xpl);
+        free(ypl);
+    }
 }
 
 //--------------------------------------------------------------------------

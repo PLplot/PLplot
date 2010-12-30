@@ -78,13 +78,15 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     {
       #define NGRAD    2
         int   i, irot_min, irot_max;
-        PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+        PLINT _xpoly[PL_MAXPOLY], _ypoly[PL_MAXPOLY];
+        PLINT *xpoly, *ypoly;
         PLINT xgrad[NGRAD], ygrad[NGRAD], clpxmi, clpxma, clpymi, clpyma;
         PLFLT dxgrad[NGRAD], dygrad[NGRAD], xrot, xrot_min, xrot_max;
+        PLINT npts;
 
         // Find (x1, y1) and (x2, y2) corresponding to beginning and end
         // of gradient vector.
-        double cosangle = cos( PI * angle / 180. );
+        double cosangle = cos( PI * angle / 10. );
         double sinangle = sin( PI * angle / 180. );
         xrot     = x[0] * cosangle + y[0] * sinangle;
         xrot_min = xrot;
@@ -126,12 +128,23 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         plsc->ygradient = ygrad;
         plsc->ngradient = NGRAD;
 
-
+        npts = n;
         if ( n > PL_MAXPOLY - 1 )
         {
-            plwarn( "plgradient: too many points in polygon" );
-            n = PL_MAXPOLY;
+            xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+            ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+
+            if (( xpoly == NULL ) || ( ypoly == NULL ))
+            {
+                plexit( "plgradient: Insufficient memory for large polygon" );
+            }
         }
+        else
+        {
+            xpoly = _xpoly;
+            ypoly = _ypoly;
+        }
+
         for ( i = 0; i < n; i++ )
         {
             xpoly[i] = plP_wcpcx( x[i] );
@@ -139,8 +152,7 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         }
         if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
         {
-            if ( n < PL_MAXPOLY )
-                n++;
+            n++;
             xpoly[n - 1] = plP_wcpcx( x[0] );
             ypoly[n - 1] = plP_wcpcy( y[0] );
         }
@@ -149,6 +161,13 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         // Plot line corresponding to gradient to give visual
         // debugging cue.
         plline( NGRAD, dxgrad, dygrad );
+
+        // Check the original number of points
+        if ( npts > PL_MAXPOLY - 1 )
+        {
+            free(xpoly);
+            free(ypoly);
+        }
     }
 }
 
@@ -231,7 +250,8 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     // Define NEDGE shade edges (or NEDGE-1 shade levels)
     // from 0. to 1.
     if ( ( edge = (PLFLT *) malloc( NEDGE * sizeof ( PLFLT ) ) ) == NULL )
-        plexit( "plgradient_soft: Insufficient memory" );
+        plexit( "plgradient_soft: Insufficient memory for large polygon"
+);
     for ( i = 0; i < NEDGE; i++ )
         edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 

@@ -421,10 +421,17 @@ plD_polyline_xw( PLStream *pls, short *xa, short *ya, PLINT npts )
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     PLINT     i;
-    XPoint    pts[PL_MAXPOLY];
+    XPoint    _pts[PL_MAXPOLY];
+    XPoint    *pts;
 
     if ( npts > PL_MAXPOLY )
-        plexit( "plD_polyline_xw: Too many points in polyline\n" );
+    {
+        pts = (XPoint *) malloc( sizeof(XPoint) * npts );
+    }
+    else
+    {
+        pts = _pts;
+    }
 
     dbug_enter( "plD_polyline_xw" );
 
@@ -453,6 +460,11 @@ plD_polyline_xw( PLStream *pls, short *xa, short *ya, PLINT npts )
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
 #endif
+
+    if ( npts > PL_MAXPOLY )
+    {
+        free( pts );
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -830,11 +842,18 @@ FillPolygonCmd( PLStream *pls )
 {
     XwDev     *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-    XPoint    pts[PL_MAXPOLY];
+    XPoint    _pts[PL_MAXPOLY];
+    XPoint    *pts;
     int       i;
 
     if ( pls->dev_npts > PL_MAXPOLY )
-        plexit( "FillPolygonCmd: Too many points in polygon\n" );
+    {
+        pts = (XPoint *) malloc( sizeof(XPoint) * npts );
+    }
+    else
+    {
+        pts = _pts;
+    }
 
     CheckForEvents( pls );
 
@@ -871,6 +890,11 @@ FillPolygonCmd( PLStream *pls )
         XSetForeground( xwd->display, dev->gc, dev->curcolor.pixel );
     }
 #endif
+
+    if ( npts > PL_MAXPOLY )
+    {
+        free( pts );
+    }
 }
 
 //--------------------------------------------------------------------------

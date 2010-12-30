@@ -431,8 +431,6 @@ plD_esc_xfig( PLStream *pls, PLINT op, void *ptr )
     case PLESC_FILL:
 
         npts = pls->dev_npts;
-        if ( npts > PL_MAXPOLY )
-            plexit( "FillPolygonCmd: Too many points in polygon\n" );
 
         flushbuffer( pls );
         fprintf( pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 0 0 0 %d\n",

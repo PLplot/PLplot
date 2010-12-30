@@ -130,7 +130,8 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
 void
 c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 {
-    PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+    PLINT _xpoly[PL_MAXPOLY], _ypoly[PL_MAXPOLY];
+    PLINT *xpoly, *ypoly;
     PLINT i;
     PLFLT xt, yt;
 
@@ -146,9 +147,20 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
     }
     if ( n > PL_MAXPOLY - 1 )
     {
-        plwarn( "plfill: too many points in polygon" );
-        n = PL_MAXPOLY;
+        xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+        ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+
+        if (( xpoly == NULL ) || ( ypoly == NULL ))
+        {
+            plexit( "plfill: Insufficient memory for large polygon" );
+        }
     }
+    else
+    {
+        xpoly = _xpoly;
+        ypoly = _ypoly;
+    }
+
     for ( i = 0; i < n; i++ )
     {
         TRANSFORM( x[i], y[i], &xt, &yt );
@@ -158,8 +170,7 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 
     if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
     {
-        if ( n < PL_MAXPOLY )
-            n++;
+        n++;
         TRANSFORM( x[0], y[0], &xt, &yt );
         xpoly[n - 1] = plP_wcpcx( xt );
         ypoly[n - 1] = plP_wcpcy( yt );
@@ -167,6 +178,12 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
         plsc->clpymi, plsc->clpyma, plP_fill );
+
+    if ( n > PL_MAXPOLY - 1 )
+    {
+        free(xpoly);
+        free(ypoly);
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -181,10 +198,13 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 void
 c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
 {
-    PLFLT tx[PL_MAXPOLY], ty[PL_MAXPOLY], tz[PL_MAXPOLY];
+    PLFLT _tx[PL_MAXPOLY], _ty[PL_MAXPOLY], _tz[PL_MAXPOLY];
+    PLFLT *tx, *ty, *tz;
     PLFLT *V[3];
-    PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+    PLINT _xpoly[PL_MAXPOLY], _ypoly[PL_MAXPOLY];
+    PLINT *xpoly, *ypoly;
     PLINT i;
+    PLINT npts;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
 
     if ( plsc->level < 3 )
@@ -197,10 +217,29 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
         plabort( "plfill3: Not enough points in object" );
         return;
     }
+
+    npts = n;
     if ( n > PL_MAXPOLY - 1 )
     {
-        plwarn( "plfill3: too many points in polygon" );
-        n = PL_MAXPOLY;
+        tx = (PLFLT *) malloc( ( n + 1 ) * sizeof( PLFLT ) );
+        ty = (PLFLT *) malloc( ( n + 1 ) * sizeof( PLFLT ) );
+        ty = (PLFLT *) malloc( ( n + 1 ) * sizeof( PLFLT ) );
+        xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+        ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+
+        if (( tx == NULL ) || ( ty == NULL ) || ( tz == NULL ) ||
+            ( xpoly == NULL ) || ( ypoly == NULL ))
+        {
+            plexit( "plfill3: Insufficient memory for large polygon" );
+        }
+    }
+    else
+    {
+        tx = _tx;
+        ty = _ty;
+        tz = _tz;
+        xpoly = _xpoly;
+        ypoly = _ypoly;
     }
 
     plP_gdom( &xmin, &xmax, &ymin, &ymax );
@@ -213,8 +252,7 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
     }
     if ( tx[0] != tx[n - 1] || ty[0] != ty[n - 1] || tz[0] != tz[n - 1] )
     {
-        if ( n < PL_MAXPOLY )
-            n++;
+        n++;
         tx[n - 1] = tx[0]; ty[n - 1] = ty[0]; tz[n - 1] = tz[0];
     }
     V[0] = tx; V[1] = ty; V[2] = tz;
@@ -244,6 +282,16 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
 //
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
         plsc->clpymi, plsc->clpyma, plP_fill );
+
+// If the original number of points is large, then free the arrays
+    if ( npts > PL_MAXPOLY - 1 )
+    {
+        free(tx);
+        free(ty);
+        free(tz);
+        free(xpoly);
+        free(ypoly);
+    }
 }
 
 //--------------------------------------------------------------------------
