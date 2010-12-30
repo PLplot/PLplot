@@ -1081,10 +1081,17 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     }
     else if ( opt & PL_COLORBAR_SHADE )
     {
+        // Transform grid
+        PLcGrid grid;
+        PLFLT grid_axis[2] = { 0.0, 1.0 };
         n_steps = n_colors;
         // Use the provided values.
         if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
         {
+            grid.xg = grid_axis;
+            grid.yg = values;
+            grid.nx = 2;
+            grid.ny = n_steps;
             ni = 2;
             nj = n_steps;
             plAlloc2dGrid( &color_data, ni, nj );
@@ -1098,6 +1105,10 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         }
         else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
         {
+            grid.xg = values;
+            grid.yg = grid_axis;
+            grid.nx = n_steps;
+            grid.ny = 2;
             ni = n_steps;
             nj = 2;
             plAlloc2dGrid( &color_data, ni, nj );
@@ -1113,9 +1124,11 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         {
             plabort( "plcolorbar: Invalid side" );
         }
+
         // Draw the color bar
         plshades( color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
-                  values, n_colors, 0, 0, 0, plfill, TRUE, NULL, NULL );
+                  values, n_colors, 0, 0, 0, plfill, TRUE,
+                  pltr1, (void *)(&grid) );
         plFree2dGrid( color_data, ni, nj );
     }
     else if ( opt & PL_COLORBAR_GRADIENT )

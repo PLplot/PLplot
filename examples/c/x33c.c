@@ -61,22 +61,19 @@ static char *special_symbols[5] = {
 };
 
 void
-plcolorbar_example_1( PLINT bar_type, PLINT n, const char *title )
+plcolorbar_example_1( PLINT bar_type, PLINT n, PLFLT *values, const char *title )
 {
     pladv( 0 );
     // Setup color palette 1
     plspal1( "cmap1_blue_red.pal", 1 );
 
     PLFLT colors[n];
-    PLFLT values[n];
     int i;
-    PLFLT color_step, value_step;
+    PLFLT color_step;
     color_step = 1.0 / (PLFLT)(n - 1);
-    value_step = 8.0 / (PLFLT)(n - 1);
     for ( i = 0; i < n; i++ )
     {
         colors[i] = 0.0 + color_step * (PLFLT)( i );
-        values[i] = 6.0 + value_step * (PLFLT)( i );
     }
 
     PLINT opt;
@@ -114,22 +111,19 @@ plcolorbar_example_1( PLINT bar_type, PLINT n, const char *title )
 }
 
 void
-plcolorbar_example_2( PLINT bar_type, PLINT n, const char *title )
+plcolorbar_example_2( PLINT bar_type, PLINT n, PLFLT *values, const char *title )
 {
     pladv( 0 );
     // Setup color palette 1
     plspal1( "cmap1_blue_yellow.pal", 1 );
 
     PLFLT colors[n];
-    PLFLT values[n];
     int i;
-    PLFLT color_step, value_step;
+    PLFLT color_step;
     color_step = 1.0 / (PLFLT)(n - 1);
-    value_step = 8.0 / (PLFLT)(n - 1);
     for ( i = 0; i < n; i++ )
     {
         colors[i] = 0.0 + color_step * (PLFLT)( i );
-        values[i] = 6.0 + value_step * (PLFLT)( i );
     }
 
     PLINT opt;
@@ -709,12 +703,19 @@ main( int argc, const char *argv[] )
     max_height = MAX( max_height, legend_height );
 
     // Color bar examples
-    plcolorbar_example_1( PL_COLORBAR_IMAGE, 2, "Image Color Bars" );
-    plcolorbar_example_2( PL_COLORBAR_IMAGE, 2, "Image Color Bars" );
-    plcolorbar_example_1( PL_COLORBAR_SHADE, 9, "Shade Color Bars" );
-    plcolorbar_example_2( PL_COLORBAR_SHADE, 9, "Shade Color Bars" );
-    plcolorbar_example_1( PL_COLORBAR_GRADIENT, 2, "Gradient Color Bars" );
-    plcolorbar_example_2( PL_COLORBAR_GRADIENT, 2, "Gradient Color Bars" );
+    PLFLT values_small[2] = { 0.0, 1.0 };
+    PLFLT values_uneven[9] = { 0.0, 2.0, 2.5, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
+    PLFLT values_even[9] = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+    plcolorbar_example_1( PL_COLORBAR_IMAGE, 2, values_small, "Image Color Bars" );
+    plcolorbar_example_2( PL_COLORBAR_IMAGE, 2, values_small, "Image Color Bars" );
+    plcolorbar_example_1( PL_COLORBAR_SHADE, 9, values_uneven,
+                          "Shade Color Bars - Uneven Steps" );
+    plcolorbar_example_2( PL_COLORBAR_SHADE, 9, values_even,
+                          "Shade Color Bars - Even Steps" );
+    plcolorbar_example_1( PL_COLORBAR_GRADIENT, 2, values_small,
+                          "Gradient Color Bars" );
+    plcolorbar_example_2( PL_COLORBAR_GRADIENT, 2, values_small,
+                          "Gradient Color Bars" );
 
     // Free space that contained legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )
