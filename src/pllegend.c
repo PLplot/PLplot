@@ -1081,12 +1081,72 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     }
     else if ( opt & PL_COLORBAR_SHADE )
     {
-        plabort( "PL_COLORBAR_SHADE is not implemented yet" );
+        n_steps = n_colors;
+        // Use the provided values.
+        if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
+        {
+            ni = 2;
+            nj = n_steps;
+            plAlloc2dGrid( &color_data, ni, nj );
+            for ( i = 0; i < ni; i++ )
+            {
+                for ( j = 0; j < nj; j++ )
+                {
+                    color_data[i][j] = values[j];
+                }
+            }
+        }
+        else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
+        {
+            ni = n_steps;
+            nj = 2;
+            plAlloc2dGrid( &color_data, ni, nj );
+            for ( i = 0; i < ni; i++ )
+            {
+                for ( j = 0; j < nj; j++ )
+                {
+                    color_data[i][j] = values[i];
+                }
+            }
+        }
+        else
+        {
+            plabort( "plcolorbar: Invalid side" );
+        }
+        // Draw the color bar
+        plshades( color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
+                  values, n_colors, 0, 0, 0, plfill, TRUE, NULL, NULL );
+        plFree2dGrid( color_data, ni, nj );
     }
     else if ( opt & PL_COLORBAR_GRADIENT )
     {
-        plabort( "PL_COLORBAR_GRADIENT is not implemented yet" );
+        PLFLT xs[4], ys[4];
+        xs[0] = wx_min;
+        ys[0] = wy_min;
+        xs[1] = wx_max;
+        ys[1] = wy_min;
+        xs[2] = wx_max;
+        ys[2] = wy_max;
+        xs[3] = wx_min;
+        ys[3] = wy_max;
+        PLFLT angle;
+        if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
+        {
+            angle = 90.0;
+        }
+        else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
+        {
+            angle = 0.0;
+        }
+        else
+        {
+            plabort( "plcolorbar: Invalid side" );
+        }
+        plgradient( 4, xs, ys, angle );
     }
+
+    // Restore the previous drawing color to use for outlines and text
+    plcol0( col0_save );
 
     // Smaller text
     plschr( 0.0, 0.75 );
@@ -1223,7 +1283,6 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     plsmaj( 0.0, maj_save );
     plsmin( 0.0, min_save );
     plschr( 0.0, text_scale_save );
-    plcol0( col0_save );
 
     return;
 }
