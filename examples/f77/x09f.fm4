@@ -51,6 +51,14 @@ c      Process command-line arguments
       tr(5) = 2.d0/dble(nptsy-1)
       tr(6) = -1.0d0
 
+c
+c      At least one compiler (gfortran) on Windows does not
+c      unite the COMMON blocks in the main program and the
+c      shared library (DLL). The call to plsettransform
+c      is a workaround for this
+
+      call plsettransform(tr)
+
 c      Calculate the data matrices.
       do i=1,nptsx
         xx = dble(i-1-(nptsx/2))/dble (nptsx/2)
@@ -105,6 +113,7 @@ c      Plot using identity transform
 c      Plot using 1d coordinate transform
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
       call plcol0(2)
+
       call plcon1(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
       call plstyl(1,1500,1500)
       call plcol0(3)

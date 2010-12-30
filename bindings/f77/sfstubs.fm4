@@ -36,6 +36,23 @@ c  double precision or both single precision.
 c
 c***********************************************************************
 
+      subroutine plsettransform(trcoef)
+
+      implicit none
+      real*8 trcoef(*)
+
+      integer i
+cDEC$ ATTRIBUTES DLLEXPORT :: PLPLOT
+      real*8 tr(6)
+      common /plplot/ tr
+
+      do 100 i = 1,6
+          tr(i) = trcoef(i)
+  100 continue
+
+      end
+
+c***********************************************************************
       subroutine plsetopt(opt, optarg)
 
       implicit none
