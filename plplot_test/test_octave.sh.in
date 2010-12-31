@@ -44,8 +44,7 @@ else
     verbose_test = 0;
 endif
 
-@swig_octave_comment@plplot_octave;
-@matwrap_octave_comment@plplot_stub;
+plplot_stub;
 t = split("$options", "-"); 
 if (t); t(1,:)=""; endif;
 for i=1:rows(t)

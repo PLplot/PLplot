@@ -122,6 +122,23 @@ if(ENABLE_octave)
   # Build octave interface.
 
   if(ENABLE_swig_octave)
+
+    add_custom_command(
+      OUTPUT 
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
+      )
+
+    add_custom_target(
+      plplot_stub.m_built ALL
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      )
+
     set(octave_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_SOURCE_DIR}/lib/qsastime
@@ -152,6 +169,10 @@ if(ENABLE_octave)
       "${OCTAVE_LIBRARIES}"
       "${OCTINTERP_LIBRARIES}"
       )
+
+    # Make sure plplot_stub.m is copied to build tree before plplot_octave
+    # is created so can use plplot_octave in normal way.
+    add_dependencies(plplot_octave plplot_stub.m_built)
 
   else(ENABLE_swig_octave)
     set(octave_interface_INCLUDE_PATHS
@@ -234,19 +255,19 @@ if(ENABLE_octave)
     # don't interfere with each other.
     add_dependencies(plplot_stub.m_built make_documentation)
 
-    # Need access elsewhere (examples/octave) to the file depends of
-    # this custom target.
-    set_property(GLOBAL PROPERTY 
-      FILES_plplot_stub.m_built
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-      )
-
-    install(FILES 
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-      DESTINATION ${PLPLOT_OCTAVE_DIR}
-      )
-
   endif(ENABLE_swig_octave)
+
+  # Need access elsewhere (examples/octave) to the file depends of
+  # this custom target.
+  set_property(GLOBAL PROPERTY 
+    FILES_plplot_stub.m_built
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+    )
+
+  install(FILES 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+    DESTINATION ${PLPLOT_OCTAVE_DIR}
+    )
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
