@@ -369,18 +369,17 @@ Naming rules:
 //				 String returning functions
 //-----------------------------------------------------------------------------
 
-// This currently just used for plgdev, plgfnam, and plgver which
-// apparently have a limit of 80 bytes.  N.B. This works, but it
-// copies what was done by Rafael for matwrap with no deep knowledge
-// of octave and uses swig internals (note the use of retval1 as the
-// return value).  Thus, it needs to be redone by somebody who knows
-// what they are doing.
+// This currently used for character string output of less than 80
+// bytes (e.g., plgdev, plgfnam, and plgver).  N.B. This works, but it
+// was inspired by what was done by Rafael for matwrap with no deep
+// knowledge of octave, i.e., no knowledge of exactly what is meant by
+// charMatrix, etc.
 %typemap(in, numinputs=0) char *OUTPUT (octave_value_list retval){
   retval(0) = octave_value(charMatrix(80, 1), true);
   $1 = (char *)retval(0).char_matrix_value().data();
 }
 %typemap(argout) char *OUTPUT {
-  return retval1;
+  $result = SWIG_Octave_AppendOutput($result, retval$argnum(0)) ;
  } 
 
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
@@ -398,9 +397,92 @@ typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 %}
-// For historical reasons our octave bindings use the name plSetOpt for
-// the PLplot function, plsetopt, and use the plsetopt name for a different
-// purpose (plsetopt.m).  We implement that here using the rename directive.
+// The octave bindings started out as an independent project with a
+// historical API that does not match up that well with the PLplot API
+// function names and numbers and types of arguments.  So there are a
+// lot of swig contortions here to preserve that historical octave
+// bindings API.  At some point we may want to change to
+// an Octave bindings API that is a better match with the normal PLplot API.
+// This change would require less special documentation for the Octave case
+// and would require fewer swig contortions, but it has the obvious downside
+// of a massive octave bindings API breakage.
+
+// Our octave bindings use the name plSetOpt for the PLplot function,
+// plsetopt, and use the plsetopt name for a different purpose
+// (plsetopt.m).  We implement that here using the rename directive.
 %rename(plSetOpt) plsetopt;
-/* swig compatible PLplot API definitions from here on. */
+
+// Special octave form of plGetCursor.
+%ignore plGetCursor;
+%rename(plGetCursor) my_plGetCursor;
+%{
+static int my_plGetCursor( int *state, int *keysym, int *button, char *string, int *pX, int *pY, PLFLT *dX, PLFLT *dY, PLFLT *wX, PLFLT *wY, int *subwin )
+{
+    PLGraphicsIn gin;
+    int          status; status = plGetCursor( &gin );
+    *subwin = gin.subwindow; *state = gin.state; *keysym = gin.keysym; *button = gin.button;
+    strncpy( string, gin.string, PL_MAXKEY-1);
+    string[PL_MAXKEY-1] = '\0';
+    
+    *pX     = gin.pX; *pY = gin.pY; *dX = gin.dX; *dY = gin.dY; *wX = gin.wX; *wY = gin.wY;
+    return status;
+}
+%}
+
+int my_plGetCursor( int *OUTPUT, int *OUTPUT, int *OUTPUT, char *OUTPUT, int *OUTPUT, int *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, int *OUTPUT );
+
+// Special octave form of plTranslateCursor.
+// Untested by any of our octave examples but should work.
+%ignore plTranslateCursor;
+%rename(plTranslateCursor) my_plTranslateCursor;
+
+%{
+// Translates relative device coordinates to world coordinates.
+static int my_plTranslateCursor( PLFLT *x, PLFLT *y, PLFLT x_in, PLFLT y_in )
+{
+    PLGraphicsIn gin;
+    int          st;
+    gin.dX = x_in; gin.dY = y_in;
+    st     = plTranslateCursor( &gin );
+    *x     = gin.wX; *y = gin.wY;
+    return st;
+}
+%}
+
+int my_plTranslateCursor( PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT x_in, PLFLT y_in );
+
+// Special octave form of plstripc.
+%ignore plstripc;
+%rename(plstripc) my_plstripc;
+%{
+// Create 1d stripchart
+
+void my_plstripc( PLINT *id, const char *xspec, const char *yspec,
+                  PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+                  PLFLT xlpos, PLFLT ylpos,
+                  PLBOOL y_ascl, PLBOOL acc,
+                  PLINT colbox, PLINT collab,
+                  PLINT *colline, PLINT *styline,
+                  const char *legline1, const char *legline2, const char *legline3, const char *legline4,
+                  const char *labx, const char *laby, const char *labtop )
+{
+    const char *legline[4];
+    legline[0] = legline1; legline[1] = legline2;
+    legline[2] = legline3; legline[3] = legline4;
+    c_plstripc( id, xspec, yspec, xmin, xmax, xjump, ymin, ymax,
+                xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, legline,
+        labx, laby, labtop );
+}
+%}
+
+void my_plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
+                  PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+                  PLFLT xlpos, PLFLT ylpos,
+                  PLBOOL y_ascl, PLBOOL acc,
+                  PLINT colbox, PLINT collab,
+                  PLINT *Array, PLINT *ArrayCk,
+                  const char *legline1, const char *legline2, const char *legline3, const char *legline4,
+                  const char *labx, const char *laby, const char *labtop );
+
+  // swig-compatible common PLplot API definitions from here on.
 %include plplotcapi.i
