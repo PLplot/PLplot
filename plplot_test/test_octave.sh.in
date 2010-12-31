@@ -72,9 +72,13 @@ endfor
 #plot equivalent of x??c examples.  These only required octave-2.0.x
 #Example 19 is not yet implemented
 failed = [] ;
-# Temporarily drop everything that involves 2D arrays or returned values
+# Temporarily drop everything that involves 2D arrays and/or callbacks.
+# 8, 11, 21: 3D mesh plots, 
+# 9, 14: 22 contours, callbacks, 
+# 15, 16: shade plots, callbacks,
+# 20: plimage
 # until typemaps for swig-generated interface are done.
-@swig_octave_comment@for i=[3 4 5 06 07 10 12 13 18 24:27 30 ] ;
+@swig_octave_comment@for i=[1:7 10 12 13 17 18 23:27 30 31] ;
 @matwrap_octave_comment@for i=[1:18 20:31 ] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
