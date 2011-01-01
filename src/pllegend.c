@@ -1161,38 +1161,6 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     // Restore the previous drawing color to use for outlines and text
     plcol0( col0_save );
 
-    // Smaller text
-    plschr( 0.0, 0.75 );
-    // Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5);
-    plsmin( 0.0, 0.5);
-
-    // For building axis option string
-    PLINT max_opts = 25;
-    char opt_string[max_opts];
-
-    // Draw the boxes, ticks and tick labels
-    if ( opt & PL_COLORBAR_LEFT )
-    {
-        snprintf( opt_string, max_opts, "bcn%s", axis_opts );
-        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
-    }
-    else if ( opt & PL_COLORBAR_RIGHT )
-    {
-        snprintf( opt_string, max_opts, "bcm%s", axis_opts );
-        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
-    }
-    else if ( opt & PL_COLORBAR_UPPER )
-    {
-        snprintf( opt_string, max_opts, "bcm%s", axis_opts );
-        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
-    }
-    else if ( opt & PL_COLORBAR_LOWER )
-    {
-        snprintf( opt_string, max_opts, "bcn%s", axis_opts );
-        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
-    }
-
     // How far away from the axis should the label be drawn?
     PLFLT label_offset;
     label_offset = 0.0;
@@ -1226,6 +1194,40 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         draw_cap( opt, x, y, length, width, 1.0 );
     }
+
+    // Smaller text
+    plschr( 0.0, 0.75 );
+    // Small ticks on the vertical axis
+    plsmaj( 0.0, 0.5);
+    plsmin( 0.0, 0.5);
+
+    // For building axis option string
+    PLINT max_opts = 25;
+    char opt_string[max_opts];
+
+    // Draw the boxes, etc.
+    if ( opt & PL_COLORBAR_LEFT )
+    {
+        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
+    }
+    else if ( opt & PL_COLORBAR_RIGHT )
+    {
+        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
+    }
+    else if ( opt & PL_COLORBAR_UPPER )
+    {
+        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
+    }
+    else if ( opt & PL_COLORBAR_LOWER )
+    {
+        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
+    }
+
+    // TODO: Add tick mark drawing and labeling here when n_colors > 2
 
     // Draw a title
     char perp;
