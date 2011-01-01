@@ -1208,22 +1208,22 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     // Draw the boxes, etc.
     if ( opt & PL_COLORBAR_LEFT )
     {
-        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        snprintf( opt_string, max_opts, "bcn%s", axis_opts );
         plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
     }
     else if ( opt & PL_COLORBAR_RIGHT )
     {
-        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        snprintf( opt_string, max_opts, "bcm%s", axis_opts );
         plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
     }
     else if ( opt & PL_COLORBAR_UPPER )
     {
-        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        snprintf( opt_string, max_opts, "bcm%s", axis_opts );
         plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
     }
     else if ( opt & PL_COLORBAR_LOWER )
     {
-        snprintf( opt_string, max_opts, "bc%s", axis_opts );
+        snprintf( opt_string, max_opts, "bcn%s", axis_opts );
         plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
     }
 
