@@ -162,20 +162,20 @@ template void _cvt_to_double(float *, double *, unsigned);
                                 // manual template instantiation.
 %}
 
-/* The following typemaps take care of marshaling values into and out of PLplot functions. The
-Array rules are trickly because of the need for length checking. These rules manage
-some global variables (above) to handle consistency checking amoung parameters. 
+// The following typemaps take care of marshaling values into and out
+// of PLplot functions. The Array rules are trickly because of the
+// need for length checking. These rules manage some global variables
+// (above) to handle consistency checking amoung parameters. 
 
-Naming rules:
-	Array 		(sets Alen to dim[0])
-	ArrayCk 	(tests that dim[0] == Alen)
-	ArrayX 		(sets Xlen to dim[0]
-	ArrayCkX 	(tests dim[0] == Xlen)
-	ArrayY 		(sets Ylen to dim[1])
-	ArrayCkY 	(tests dim[1] == Ylen)
-	Matrix 		(sets Xlen to dim[0], Ylen to dim[1])
-	MatrixCk 	(test Xlen == dim[0] && Ylen == dim[1])
-*/
+// Naming rules:
+//      Array 	        (sets Alen to dim[0])
+//      ArrayCk         (tests that dim[0] == Alen)
+//      ArrayX 	        (sets Xlen to dim[0]
+//      ArrayCkX        (tests dim[0] == Xlen)
+//      ArrayY 	        (sets Ylen to dim[1])
+//      ArrayCkY        (tests dim[1] == Ylen)
+//      Matrix 	        (sets Xlen to dim[0], Ylen to dim[1])
+//      MatrixCk        (test Xlen == dim[0] && Ylen == dim[1])
 
 /* typemaps */
 %include <typemaps.i>
@@ -315,55 +315,132 @@ Naming rules:
 }
 %typemap(freearg) (PLFLT *Array, PLINT n) {}
 
+// The Matrix typemaps below here are a special form (with **Matrix
+// replaced by *Matrix) that is only suitable for special octave
+// wrappers that are defined later in the file while the usual
+// PLplot functions that use **Matrix are %ignored.
+
 // No X count but check consistency with previous
-%typemap(in) PLFLT *ArrayCkX {}
+%typemap(in) PLFLT *ArrayCkX (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( _dim($input, 0) != Xlen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+}
 %typemap(freearg) PLFLT *ArrayCkX {}
 
 // No Y count but check consistency with previous
-%typemap(in) PLFLT *ArrayCkY {}
+%typemap(in) PLFLT *ArrayCkY (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( _dim($input, 0) != Ylen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+}
 %typemap(freearg) PLFLT *ArrayCkY {}
 
 // With trailing X count but remember X size to check others
-%typemap(in) (PLFLT *ArrayX, PLINT nx) {}
+%typemap(in) (PLFLT *ArrayX, PLINT nx) (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  $2 = Xlen = (PLINT)(_dim($input, 0));
+}
 %typemap(freearg) (PLFLT *ArrayX, PLINT nx) {}
 
 // No X count but remember X size to check others
-%typemap(in) PLFLT *ArrayX {}
+%typemap(in) PLFLT *ArrayX (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  Xlen = (PLINT)(_dim($input, 0));
+}
 %typemap(freearg) PLFLT *ArrayX {}
 
 // With trailing Y count but remember Y size to check others
-%typemap(in) (PLFLT *ArrayY, PLINT ny) {}
+%typemap(in) (PLFLT *ArrayY, PLINT ny) (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  $2 = Ylen = (PLINT)(_dim($input, 0));
+}
 %typemap(freearg) (PLFLT *ArrayY, PLINT ny) {}
 
 // No Y count but remember Y size to check others
-%typemap(in) PLFLT *ArrayY {}
+%typemap(in) PLFLT *ArrayY (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  Ylen = (PLINT)(_dim($input, 0));
+}
 %typemap(freearg) (PLFLT *ArrayY) {}
 
-/* 2D array with trailing dimensions, check consistency with previous */
-%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) (int ii) {}
-%typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {}
+// 2D array with trailing dimensions, check consistency with previous
+%typemap(in) (PLFLT *MatrixCk, PLINT nx, PLINT ny) (Matrix temp) {
+  if ( _n_dims($input) >2 )
+      { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
+  if ( _dim($input, 0) != Xlen )
+      { error("argument matrix must have same X length as X vector"); SWIG_fail; }
+  if ( _dim($input, 1) != Ylen )
+      { error("argument matrix must have same Y length as Y vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  $2 = (PLINT)(_dim($input, 0));
+  $3 = (PLINT)(_dim($input, 1));
+}
+%typemap(freearg) (PLFLT *MatrixCk, PLINT nx, PLINT ny) {}
+
+// 2D array with trailing dimensions but set the X, Y size for later checking
+%typemap(in) (PLFLT *Matrix, PLINT nx, PLINT ny) (Matrix temp) {
+  if ( _n_dims($input) > 2 )
+      { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  $2 = Xlen = (PLINT)(_dim($input, 0));
+  $3 = Ylen = (PLINT)(_dim($input, 1));
+}
+%typemap(freearg) (PLFLT *Matrix, PLINT nx, PLINT ny) {}
 
 
-/* 2D array with trailing dimensions, set the X, Y size for later checking */
-%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) (int ii) {}
-%typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {}
+// 2D array with no count but set the X, Y size for later checking
+%typemap(in) PLFLT *Matrix (Matrix temp) {
+  if ( _n_dims($input) > 2 )
+      { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  Xlen = (PLINT)(_dim($input, 0));
+  Ylen = (PLINT)(_dim($input, 1));
+}
+%typemap(freearg) PLFLT *Matrix {}
 
 
-/* 2D array with no dimensions, set the X, Y size for later checking */
-%typemap(in) PLFLT **Matrix (int ii) {}
-%typemap(freearg) PLFLT **Matrix {}
-
-
-/* 2D array, check for consistency */
-%typemap(in) PLFLT **MatrixCk (int ii) {}
-%typemap(freearg) PLFLT **MatrixCk {}
+// 2D array with no count but check for consistency
+%typemap(in) PLFLT *MatrixCk (Matrix temp) {
+  if ( _n_dims($input) > 2 )
+      { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
+  if ( _dim($input, 0) != Xlen )
+      { error("argument matrix must have same X length as X vector"); SWIG_fail; }
+  if ( _dim($input, 1) != Ylen )
+      { error("argument matrix must have same Y length as Y vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+}
+%typemap(freearg) PLFLT *MatrixCk {}
 
 
 /* Set Y length for later consistency checking, with trailing count */
 /* and 2D array, check for consistency input / output version */
-%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
+%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) (Matrix temp) {}
 %typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
 %typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
+
 
 //-----------------------------------------------------------------------------
 //				 String returning functions
@@ -406,6 +483,20 @@ typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 // This change would require less special documentation for the Octave case
 // and would require fewer swig contortions, but it has the obvious downside
 // of a massive octave bindings API breakage.
+
+// N.B. For now we drop the vectorized form of arguments that the
+// traditional matwrap-wrapped octave bindings have for plbtime,
+// plcalc_world, plctime, plgcol0, plgcol0a, plhlsrgb, plrgbhls,
+// plxormod, and plTranslateCursor for simplicity and because the
+// unvectorized form works fine if you use explicit loops (as in the
+// standard examples).  Note, this decision means there is an octave
+// bindings API breakage with the swig-generated approach, but my
+// (AWI's) judgement is this was a little used feature since typically
+// (except for example 29) this functionality has not been used in the
+// standard examples. We may want to vectorize the arguments of these
+// octave functions at a later date or change the standard PLplot API
+// to vectors for all of these if it really is a worthwhile API
+// change.
 
 // Our octave bindings use the name plSetOpt for the PLplot function,
 // plsetopt, and use the plsetopt name for a different purpose
@@ -484,5 +575,125 @@ void my_plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
                   const char *legline1, const char *legline2, const char *legline3, const char *legline4,
                   const char *labx, const char *laby, const char *labtop );
 
-  // swig-compatible common PLplot API definitions from here on.
+// Various special wrappers for plcont.
+
+%ignore plcont;
+%rename(plcont) my_plcont;
+%rename(plcont0) my_plcont0;
+%rename(plcont1) my_plcont1;
+%rename(plcont2) my_plcont2;
+%rename(plcont2p) my_plcont2p;
+
+%{
+// One more hack. As it is not possible (and would not be desirable) to pass
+// an Octave function to plcont(), I have defined three plcont():
+//      plcont uses a defined here xform()
+//      plcont0 uses pltr0()
+//      plcont1 uses pltr1()
+//      plcont2 uses pltr2()
+//      plcont2p uses pltr2p()
+//
+// Also, as plplot expect vectorized bidimensional arrays, I provided a
+// f2c, which is a #define that does the necessary conversion.
+//
+
+void xform( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
+{
+    *tx = *( (PLFLT *) pltr_data + 0 ) * x + *( (PLFLT *) pltr_data + 1 ) * y + *( (PLFLT *) pltr_data + 2 );
+    *ty = *( (PLFLT *) pltr_data + 3 ) * x + *( (PLFLT *) pltr_data + 4 ) * y + *( (PLFLT *) pltr_data + 5 );
+}
+
+// convert from Fortran like arrays (one vector), to C like 2D arrays
+
+#define  f2c( f, ff, nx, ny )                              \
+    PLFLT * *ff;                                           \
+    ff = (PLFLT **) alloca( nx * sizeof ( PLFLT * ) );     \
+    for ( int i = 0; i < nx; i++ ) {                       \
+        ff[i] = (PLFLT *) alloca( ny * sizeof ( PLFLT ) ); \
+        for ( int j = 0; j < ny; j++ )                     \
+            *( ff[i] + j ) = *( f + nx * j + i );}
+
+// simpler plcont() for use with xform()
+
+void my_plcont( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *tr )
+{
+    f2c( f, ff, nx, ny );
+    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, xform, tr );
+}
+
+// plcont() for use with pltr0() NOT TESTED
+
+void my_plcont0( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, PLFLT *clevel, PLINT nlevel )
+{
+    f2c( f, ff, nx, ny );
+    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr0, NULL );
+}
+
+// plcont() for use with pltr1()
+
+void my_plcont1( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid grid1;
+    grid1.nx = nx;  grid1.ny = ny;
+    grid1.xg = xg;  grid1.yg = yg;
+    f2c( f, ff, nx, ny );
+    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr1, &grid1 );
+}
+
+// plcont() for use with pltr2()
+void my_plcont2( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid2 grid2;
+    f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+    grid2.nx = nx;  grid2.ny = ny;
+    grid2.xg = xgg; grid2.yg = ygg;
+    f2c( f, ff, nx, ny );
+    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr2, &grid2 );
+}
+
+// plcont() for use with pltr2p()
+
+void my_plcont2p( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                  PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid2 grid2;
+    f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+    grid2.nx = nx;  grid2.ny = ny;
+    grid2.xg = xgg; grid2.yg = ygg;
+    f2c( f, ff, nx, ny );
+    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr2, &grid2 );
+}
+%}
+
+void my_plcont( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                PLINT ly, PLFLT *Array, PLINT n, PLFLT *Array );
+void my_plcont0( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, PLFLT *Array, PLINT n );
+void my_plcont1( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, PLFLT *Array, PLINT n, PLFLT *ArrayCkX, PLFLT *ArrayCkY );
+void my_plcont2( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, PLFLT *Array, PLINT n, PLFLT *MatrixCk, PLFLT *MatrixCk );
+void my_plcont2p( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                  PLINT ly, PLFLT *Array, PLINT n, PLFLT *MatrixCk, PLFLT *MatrixCk );
+
+// Deal with these later.
+%ignore pllegend;
+%ignore plmesh;
+%ignore plmeshc;
+%ignore plot3d;
+%ignore plot3dc;
+%ignore plot3dcl;
+%ignore plsurf3d;
+%ignore plsurf3dl;
+%ignore plshade;
+%ignore plshades;
+%ignore plvect;
+%ignore plimage;
+%ignore plimagefr;
+%ignore plMinMax2dGrid;
+// swig-compatible common PLplot API definitions from here on.
 %include plplotcapi.i
