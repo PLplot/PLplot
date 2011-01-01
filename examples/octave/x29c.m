@@ -282,14 +282,19 @@ function plot4
     endif
     
     x = xmin + (0:npts-1)*(xmax-xmin)/(npts-1);
-    utc = zeros(npts,1);
     plconfigtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.);
     tai = x;
-    [tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec] = plbtime(tai);
+    for i=1:npts
+      [tai_year(i) , tai_month(i), tai_day(i), tai_hour(i), tai_min(i), tai_sec(i)] = plbtime(tai(i));
+    endfor
     plconfigtime(scale, offset1, offset2, 0x2, 0, 0, 0, 0, 0, 0, 0.);
-    [utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec] = plbtime(tai);
+    for i=1:npts
+      [utc_year(i), utc_month(i), utc_day(i), utc_hour(i), utc_min(i), utc_sec(i)] = plbtime(tai(i));
+    endfor
     plconfigtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.);
-    utc = plctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec);
+    for i=1:npts
+      utc(i) = plctime(utc_year(i), utc_month(i), utc_day(i), utc_hour(i), utc_min(i), utc_sec(i));
+    endfor
     y = (tai-utc)*scale*86400.0;
     
     pladv(0);
