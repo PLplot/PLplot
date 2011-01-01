@@ -355,10 +355,10 @@ function plot5()
 
   plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
   plcol0(2);
-  plcont(z, 1, XPTS, 1, YPTS, clevel, tr, 0);
+  plcont(z, 1, XPTS, 1, YPTS, clevel, tr);
   plstyl(mark, space);
   plcol0(3);
-  plcont(w, 1, XPTS, 1, YPTS, clevel, tr, 0);
+  plcont(w, 1, XPTS, 1, YPTS, clevel, tr);
   plcol0(1);
   pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
   plflush;#pleop();
