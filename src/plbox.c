@@ -1509,6 +1509,71 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
 }
 
 //--------------------------------------------------------------------------
+//
+// Default labeling functions for PLplot
+//
+// These are the functions which are used internally by PLplot under various
+// conditions.
+//
+// They have been separated out for use in other PLplot functions and
+// potential exposure in the PLplot API.
+//
+//--------------------------------------------------------------------------
+void plP_default_label_log( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
+{
+    // Exponential, i.e. 10^-1, 10^0, 10^1, etc
+    snprintf( string, len, "10#u%d", (int) ROUND( value ) );
+}
+
+void plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
+{
+    // Fixed point, i.e. .1, 1, 10, etc
+
+    int exponent = ROUND( value );
+
+    value = pow( 10.0, exponent );
+    if ( exponent < 0 )
+    {
+        char form[FORMAT_LEN];
+        snprintf( form, FORMAT_LEN, "%%.%df", ABS( exponent ) );
+        snprintf( string, len, form, value );
+    }
+    else
+    {
+        snprintf( string, len, "%d", (int) value );
+    }
+}
+
+void plP_default_label( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
+{
+    PLINT scale, prec;
+    PLINT  setpre, precis;
+    char   form[FORMAT_LEN], temp[TEMP_LEN];
+    double scale2;
+
+    scale = ((PLINT *)data)[0];
+    prec = ((PLINT *)data)[1];
+
+    plP_gprec( &setpre, &precis );
+
+    if ( setpre )
+        prec = precis;
+
+    if ( scale )
+        value /= pow( 10., (double) scale );
+
+    // This is necessary to prevent labels like "-0.0" on some systems
+
+    scale2 = pow( 10., prec );
+    value  = floor( ( value * scale2 ) + .5 ) / scale2;
+
+    snprintf( form, FORMAT_LEN, "%%.%df", (int) prec );
+    snprintf( temp, TEMP_LEN, form, value );
+    strncpy( string, temp, len - 1 );
+    string[len - 1] = '\0';
+}
+
+//--------------------------------------------------------------------------
 // void plform()
 //
 // Formats a PLFLT value in one of the following formats.
@@ -1556,53 +1621,19 @@ plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT le
             if ( lf )
             {
                 // Fixed point, i.e. .1, 1, 10, etc
-
-                int exponent = ROUND( value );
-
-                value = pow( 10.0, exponent );
-                if ( exponent < 0 )
-                {
-                    char form[FORMAT_LEN];
-                    snprintf( form, FORMAT_LEN, "%%.%df", ABS( exponent ) );
-                    snprintf( string, len, form, value );
-                }
-                else
-                {
-                    snprintf( string, len, "%d", (int) value );
-                }
+                plP_default_label_log_fixed( axis, value, string, len, NULL );
             }
             else
             {
                 // Exponential, i.e. 10^-1, 10^0, 10^1, etc
-
-                snprintf( string, len, "10#u%d", (int) ROUND( value ) );
+                plP_default_label_log( axis, value, string, len, NULL );
             }
         }
         else
         {
             // Linear
-
-            PLINT  setpre, precis;
-            char   form[FORMAT_LEN], temp[TEMP_LEN];
-            double scale2;
-
-            plP_gprec( &setpre, &precis );
-
-            if ( setpre )
-                prec = precis;
-
-            if ( scale )
-                value /= pow( 10., (double) scale );
-
-            // This is necessary to prevent labels like "-0.0" on some systems
-
-            scale2 = pow( 10., prec );
-            value  = floor( ( value * scale2 ) + .5 ) / scale2;
-
-            snprintf( form, FORMAT_LEN, "%%.%df", (int) prec );
-            snprintf( temp, TEMP_LEN, form, value );
-            strncpy( string, temp, len - 1 );
-            string[len - 1] = '\0';
+            PLINT scale_prec[2] = { scale, prec };
+            plP_default_label( axis, value, string, len, (void *)scale_prec );
         }
     }
 }
