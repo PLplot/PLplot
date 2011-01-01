@@ -86,7 +86,7 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
 
         // Find (x1, y1) and (x2, y2) corresponding to beginning and end
         // of gradient vector.
-        double cosangle = cos( PI * angle / 10. );
+        double cosangle = cos( PI * angle / 180. );
         double sinangle = sin( PI * angle / 180. );
         xrot     = x[0] * cosangle + y[0] * sinangle;
         xrot_min = xrot;
