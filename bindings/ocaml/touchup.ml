@@ -79,6 +79,12 @@ let manual_function_attributes =
       function_attrs = None;
       parameter_attrs = Some ["ctime", ["out"]];
     };
+    {
+      function_name = "c_plcolorbar";
+      function_attrs = None;
+      parameter_attrs = Some ["colors", ["in"; "size_is(n_colors)"];
+                              "values", ["in"; "size_is(n_colors)"]];
+    };
     (* For now, this will be wrapped by hand...
     {
       function_name = "c_plgriddata";
@@ -280,7 +286,7 @@ let parameter_attributes function_name types names =
       ["string"];
       (* Pointers to arrays of n elements *)
       true,
-      pmatch "\\*" p_type,
+      pmatch "\\*" p_type && not (pmatch "const char" p_type),
       true,
       List.mem "n" names,
       ["in"; "size_is(n)"];

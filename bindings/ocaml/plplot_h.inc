@@ -59,6 +59,7 @@
 [mlname(plinit)] void c_plinit ( void );
 [mlname(pljoin)] void c_pljoin ( double x1, double y1, double x2, double y2 );
 [mlname(pllab)] void c_pllab ( [string] const char * xlabel, [string] const char * ylabel, [string] const char * tlabel );
+[mlname(plcolorbar)] void c_plcolorbar ( plplot_colorbar_opt opt, double x, double y, double length, double width, [string] const char * axis_opts, [string] const char * label, int n_colors, [in, size_is(n_colors)] double * colors, [in, size_is(n_colors)] double * values );
 [mlname(pllightsource)] void c_pllightsource ( double x, double y, double z );
 [mlname(plline)] void c_plline ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y );
 [mlname(plline3)] void c_plline3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z );
@@ -120,6 +121,8 @@
 [mlname(plssym)] void c_plssym ( double def, double scale );
 [mlname(plstar)] void c_plstar ( int nx, int ny );
 [mlname(plstart)] void c_plstart ( [string] const char * devname, int nx, int ny );
+[mlname(plstring)] void c_plstring ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [string] const char * string );
+[mlname(plstring3)] void c_plstring3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z, [string] const char * string );
 [mlname(plstripa)] void c_plstripa ( int id, int pen, double x, double y );
 [mlname(plstripd)] void c_plstripd ( int id );
 [mlname(plimage)] void c_plimage ( [in, size_is(nx, ny)] double ** idata, int nx, int ny, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double Dxmin, double Dxmax, double Dymin, double Dymax );

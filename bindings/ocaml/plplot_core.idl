@@ -58,6 +58,41 @@ enum plplot_run_level_enum {
 };
 typedef enum plplot_run_level_enum plplot_run_level;
 
+enum plplot_legend_enum {
+    PL_LEGEND_NONE = 1,
+    PL_LEGEND_COLOR_BOX = 2,
+    PL_LEGEND_LINE = 4,
+    PL_LEGEND_SYMBOL = 8,
+    PL_LEGEND_TEXT_LEFT = 16,
+    PL_LEGEND_BACKGROUND = 32,
+    PL_LEGEND_BOUNDING_BOX = 64,
+    PL_LEGEND_ROW_MAJOR = 128,
+    PL_LEGEND_LEFT = 256,
+    PL_LEGEND_RIGHT = 512,
+    PL_LEGEND_UPPER = 1024,
+    PL_LEGEND_LOWER = 2048,
+    PL_LEGEND_INSIDE = 4096,
+    PL_LEGEND_OUTSIDE = 8192,
+};
+typedef [set] enum plplot_legend_enum plplot_legend_opt;
+
+enum plplot_colorbar_enum {
+    PL_COLORBAR_LEFT = 1,
+    PL_COLORBAR_RIGHT = 2,
+    PL_COLORBAR_UPPER = 4,
+    PL_COLORBAR_LOWER = 8,
+    PL_COLORBAR_LABEL_LEFT = 16,
+    PL_COLORBAR_LABEL_RIGHT = 32,
+    PL_COLORBAR_LABEL_UPPER = 64,
+    PL_COLORBAR_LABEL_LOWER = 128,
+    PL_COLORBAR_IMAGE = 256,
+    PL_COLORBAR_SHADE = 512,
+    PL_COLORBAR_GRADIENT = 1024,
+    PL_COLORBAR_CAP_LOW = 2048,
+    PL_COLORBAR_CAP_HIGH = 4096,
+};
+typedef [set] enum plplot_colorbar_enum plplot_colorbar_opt;
+
 // Any function which has a nonzero_error_int return type will raise
 // an Invalid_argument error if the return value is <> 0.
 typedef [errorcheck(plplot_check_nonzero_result), errorcode] int nonzero_error_int;
@@ -212,15 +247,6 @@ quote(mlmli, "type plplot_axis_type = \
                 PL_Y_AXIS | \
                 PL_Z_AXIS");
 
-// Hand-translated PL_LEGEND_* flags for use with pllegend
-quote(mlmli, "type plplot_legend_option_type = \
-                PL_LEGEND_NONE | \
-                PL_LEGEND_COLOR_BOX | \
-                PL_LEGEND_LINE | \
-                PL_LEGEND_SYMBOL | \
-                PL_LEGEND_TEXT_LEFT | \
-                PL_LEGEND_BACKGROUND");
-
 // Custom axis labeling
 quote(ml, "external ml_plslabelfunc : unit -> unit = \"ml_plslabelfunc\"");
 quote(ml,
@@ -262,5 +288,5 @@ quote(mli, "val plunset_exit : unit -> unit");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
 RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> unit = "ml_plparseopts")
-RAW_ML(external pllegend : plplot_legend_option_type list -> float -> float -> float -> int -> plplot_legend_option_type list array -> float -> float -> float -> float -> int array -> string array -> int array -> int array -> float array -> int array -> int array -> int array -> int array -> float array -> int array -> int array -> unit = "ml_pllegend_byte" "ml_pllegend")
+RAW_ML(external pllegend : plplot_legend_opt -> float -> float -> float -> int -> int -> int -> int -> int -> plplot_legend_opt array -> float -> float -> float -> float -> int array -> string array -> int array -> int array -> float array -> int array -> int array -> int array -> int array -> int array -> float array -> int array -> string array -> float * float = "ml_pllegend_byte" "ml_pllegend")
 

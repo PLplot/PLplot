@@ -158,7 +158,7 @@ let plot1 label_type x_label y_label alty_label legend_text title_label line_lab
     plbox "" 0.0 0 "cmstv" 30.0 3;
     plcol0 3;
     plline freql phase;
-    plpoin freql phase 3;
+    plstring freql phase "*";
     plcol0 3;
     plmtex "r" 5.0 0.5 0.5 alty_label;
   );
@@ -177,17 +177,22 @@ let plot1 label_type x_label y_label alty_label legend_text title_label line_lab
   let symbol_colors = [| 0; 3 |] in
   let symbol_scales = [| 0.0; 1.0 |] in
   let symbol_numbers = [| 0; 4 |] in
-  let symbols = [| 0; 3 |] in
+  let symbols = [| ""; "*" |] in
   (* from the above opt_arrays we can completely ignore everything
      to do with boxes *)
 
-  plscol0a 15 32 32 32 0.90;
-  (*pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
-    1.0 1.0 2.0
-    1.0 text_colors legend_text
-    [||] [||] [||]
-    line_colors line_styles line_widths
-    symbol_colors symbol_scales symbol_numbers symbols;*)
+  plscol0a 15 32 32 32 0.70;
+  let _, _ =
+    pllegend [PL_LEGEND_BACKGROUND; PL_LEGEND_BOUNDING_BOX]
+      0.0 0.0 0.10 15
+      1 1 0 0
+      opt_array
+      1.0 1.0 2.0
+      1.0 text_colors legend_text
+      [||] [||] [||] [||]
+      line_colors line_styles line_widths
+      symbol_colors symbol_scales symbol_numbers symbols
+  in
   ()
 
 (*--------------------------------------------------------------------------*\

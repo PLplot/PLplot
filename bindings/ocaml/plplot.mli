@@ -29,14 +29,6 @@ type plplot_axis_type =
   | PL_Y_AXIS
   | PL_Z_AXIS
 
-type plplot_legend_option_type =
-    PL_LEGEND_NONE
-  | PL_LEGEND_COLOR_BOX
-  | PL_LEGEND_LINE
-  | PL_LEGEND_SYMBOL
-  | PL_LEGEND_TEXT_LEFT
-  | PL_LEGEND_BACKGROUND
-
 (** {3 A higher-level OCaml interface to PLplot} *)
 module Plot :
   sig
@@ -557,6 +549,37 @@ and plplot_run_level_enum =
   | PL_VIEWPORT_DEFINED
   | PL_WORLD_COORDINATES_DEFINED
 and plplot_run_level = plplot_run_level_enum
+and plplot_legend_enum =
+    PL_LEGEND_NONE
+  | PL_LEGEND_COLOR_BOX
+  | PL_LEGEND_LINE
+  | PL_LEGEND_SYMBOL
+  | PL_LEGEND_TEXT_LEFT
+  | PL_LEGEND_BACKGROUND
+  | PL_LEGEND_BOUNDING_BOX
+  | PL_LEGEND_ROW_MAJOR
+  | PL_LEGEND_LEFT
+  | PL_LEGEND_RIGHT
+  | PL_LEGEND_UPPER
+  | PL_LEGEND_LOWER
+  | PL_LEGEND_INSIDE
+  | PL_LEGEND_OUTSIDE
+and plplot_legend_opt = plplot_legend_enum list
+and plplot_colorbar_enum =
+  | PL_COLORBAR_LEFT
+  | PL_COLORBAR_RIGHT
+  | PL_COLORBAR_UPPER
+  | PL_COLORBAR_LOWER
+  | PL_COLORBAR_LABEL_LEFT
+  | PL_COLORBAR_LABEL_RIGHT
+  | PL_COLORBAR_LABEL_UPPER
+  | PL_COLORBAR_LABEL_LOWER
+  | PL_COLORBAR_IMAGE
+  | PL_COLORBAR_SHADE
+  | PL_COLORBAR_GRADIENT
+  | PL_COLORBAR_CAP_LOW
+  | PL_COLORBAR_CAP_HIGH
+and plplot_colorbar_opt = plplot_colorbar_enum list
 external pl_setcontlabelformat : int -> int -> unit
   = "camlidl_plplot_core_c_pl_setcontlabelformat"
 external pl_setcontlabelparam : float -> float -> float -> int -> unit
@@ -663,11 +686,15 @@ external pljoin : float -> float -> float -> float -> unit
   = "camlidl_plplot_core_c_pljoin"
 external pllab : string -> string -> string -> unit
   = "camlidl_plplot_core_c_pllab"
-external pllegend : plplot_legend_option_type list -> float -> float ->
-  float -> int -> plplot_legend_option_type list array -> float -> float ->
+external plcolorbar : plplot_colorbar_opt -> float -> float -> float ->
+  float -> string -> string -> float array -> float array -> unit
+  = "camlidl_plplot_core_c_plcolorbar_bytecode" "camlidl_plplot_core_c_plcolorbar"
+external pllegend : plplot_legend_opt -> float -> float ->
+  float -> int -> int -> int -> int -> int ->
+  plplot_legend_opt array -> float -> float ->
   float -> float -> int array -> string array -> int array -> int array ->
   float array -> int array -> int array -> int array -> int array ->
-  float array -> int array -> int array -> unit
+  int array -> float array -> int array -> string array -> float * float
   = "ml_pllegend_byte" "ml_pllegend"
 external pllightsource : float -> float -> float -> unit
   = "camlidl_plplot_core_c_pllightsource"
@@ -788,6 +815,10 @@ external plssym : float -> float -> unit = "camlidl_plplot_core_c_plssym"
 external plstar : int -> int -> unit = "camlidl_plplot_core_c_plstar"
 external plstart : string -> int -> int -> unit
   = "camlidl_plplot_core_c_plstart"
+external plstring : float array -> float array -> string -> unit
+  = "camlidl_plplot_core_c_plstring"
+external plstring3 : float array -> float array -> float array -> string -> unit
+  = "camlidl_plplot_core_c_plstring3"
 external plstripa : int -> int -> float -> float -> unit
   = "camlidl_plplot_core_c_plstripa"
 external plstripd : int -> unit = "camlidl_plplot_core_c_plstripd"
