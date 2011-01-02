@@ -77,7 +77,7 @@ failed = [] ;
 # 15, 16: shade plots, callbacks,
 # 20: plimage
 # until typemaps for swig-generated interface are done.
-@swig_octave_comment@for i=[1:7 9 10 12 13 14 17 18 23:27 29:31] ;
+@swig_octave_comment@for i=[1:7 9 10 12 13 14 17 18 23:31] ;
 @matwrap_octave_comment@for i=[1:18 20:31 ] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");

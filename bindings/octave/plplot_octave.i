@@ -437,9 +437,9 @@ template void _cvt_to_double(float *, double *, unsigned);
 
 /* Set Y length for later consistency checking, with trailing count */
 /* and 2D array, check for consistency input / output version */
-%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) (Matrix temp) {}
-%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
-%typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {}
+%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) (Matrix temp) {}
+%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {}
+%typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {}
 
 
 //-----------------------------------------------------------------------------
@@ -680,10 +680,63 @@ void my_plcont2( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky
 void my_plcont2p( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
                   PLINT ly, PLFLT *Array, PLINT n, PLFLT *MatrixCk, PLFLT *MatrixCk );
 
+// plgriddata wrapper.
+%ignore plgriddata;
+%rename(plgriddata) my_plgriddata;
+
+%{
+void my_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+                    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+                    PLFLT *zg, int type, PLFLT data )
+{
+    f2c( zg, zgg, nptsx, nptsy );
+    plgriddata( x, y, z, npts, xg, nptsx, yg, nptsy, zgg, type, data );
+    for ( int i = 0; i < nptsx; i++ )
+        for ( int j = 0; j < nptsy; j++ )
+            *( zg + nptsx * j + i ) = zgg[i][j];
+}
+%}
+void my_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+                    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+                    PLFLT *zg, int type, PLFLT data );
+
+void
+my_plgriddata( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
+            PLFLT *ArrayX, PLINT nx, PLFLT *ArrayY, PLINT ny,
+            PLFLT *OutMatrixCk, PLINT type, PLFLT data );
+
+// plmesh-related wrappers.
+%ignore plmesh;
+%rename(plmesh) my_plmesh;
+%ignore plmeshc;
+%rename(plmeshc) my_plmeshc;
+
+%{
+// Plots a mesh representation of the function z[x][y].
+
+void my_plmesh( PLFLT *x, PLFLT *y, PLFLT *z, PLINT nx, PLINT ny, PLINT opt )
+{
+    f2c( z, zz, nx, ny );
+    c_plmesh( x, y, zz, nx, ny, opt );
+}
+
+// Plots a mesh representation of the function z[x][y] with contour
+
+void my_plmeshc( PLFLT *x, PLFLT *y, PLFLT *z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+{
+    f2c( z, zz, nx, ny );
+    c_plmeshc( x, y, zz, nx, ny, opt, clevel, nlevel );
+}
+%}
+
+void my_plmesh( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
+        PLINT nx, PLINT ny, PLINT opt );
+
+void my_plmeshc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
+         PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+
 // Deal with these later.
 %ignore pllegend;
-%ignore plmesh;
-%ignore plmeshc;
 %ignore plot3d;
 %ignore plot3dc;
 %ignore plot3dcl;
