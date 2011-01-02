@@ -982,9 +982,62 @@ void my_plshades2( PLFLT *Matrix, PLINT nx, PLINT ny,
           PLINT cont_color, PLINT cont_width,
           PLBOOL rectangular, PLFLT *Matrix, PLFLT *Matrix);
 
+// plvect-related wrappers.
+
+%ignore plvect;
+// plvect and plvect1 untested by standard examples.
+%rename(plvect) my_plvect;
+%rename(plvect1) my_plvect1;
+%rename(plvect2) my_plvect2;
+
+%{
+// Plot an array of vector arrows - uses the same function pointer
+// convention as plcont
+
+void my_plvect( PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *tr )
+{
+    f2c( u, uu, nx, ny );
+    f2c( v, vv, nx, ny );
+    c_plvect( uu, vv, nx, ny, scale, xform, tr );
+}
+
+// plvect() for use with pltr1
+void my_plvect1( PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid grid1;
+    grid1.nx = nx;  grid1.ny = ny;
+    grid1.xg = xg;  grid1.yg = yg;
+    f2c( u, uu, nx, ny );
+    f2c( v, vv, nx, ny );
+    c_plvect( uu, vv, nx, ny, scale, pltr1, &grid1 );
+}
+
+// plvect() for use with pltr2
+void my_plvect2( PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid2 grid2;
+    f2c( xg, xgg, nx, ny );  f2c( yg, ygg, nx, ny );
+    grid2.nx = nx;  grid2.ny = ny;
+    grid2.xg = xgg;  grid2.yg = ygg;
+    f2c( u, uu, nx, ny );
+    f2c( v, vv, nx, ny );
+    c_plvect( uu, vv, nx, ny, scale, pltr2, &grid2 );
+}
+%}
+
+void my_plvect( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+        PLFLT *Array );
+
+void my_plvect1( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+         PLFLT *ArrayCkX, PLFLT *ArrayCkY );
+
+void my_plvect2( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+         PLFLT *Matrix, PLFLT *Matrix);
+
+
+
 // Deal with these later.
 %ignore pllegend;
-%ignore plvect;
 %ignore plimage;
 %ignore plimagefr;
 // Probably never.
