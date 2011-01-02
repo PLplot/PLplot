@@ -791,6 +791,7 @@ void my_plsurf3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
 
 %ignore plshade;
 %rename(plshade) my_plshade;
+// plshade1 and plshade2 are untested by the standard examples.
 %rename(plshade1) my_plshade1;
 %rename(plshade2) my_plshade2;
 
@@ -880,7 +881,7 @@ void my_plshade1( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
          PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
          PLINT min_color, PLINT min_width,
          PLINT max_color, PLINT max_width,
-                  PLBOOL rectangular, PLFLT *ArrayCkX, PLFLT *ArrayCkY);
+         PLBOOL rectangular, PLFLT *ArrayCkX, PLFLT *ArrayCkY);
 
 void my_plshade2( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
@@ -890,12 +891,103 @@ void my_plshade2( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
          PLINT max_color, PLINT max_width,
          PLBOOL rectangular, PLFLT *Matrix, PLFLT *Matrix);
 
+// plshades-related wrappers.
+
+%ignore plshades;
+%rename(plshades) my_plshades;
+// plshadesx untested by examples.
+%rename(plshadesx) my_plshadesx;
+%rename(plshades1) my_plshades1;
+%rename(plshades2) my_plshades2;
+
+%{
+void my_plshades( PLFLT *a, PLINT nx, PLINT ny,
+                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                  PLINT cont_color, PLINT cont_width,
+                  PLINT rectangular )
+{
+    f2c( a, aa, nx, ny );
+    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+        clevel, nlevel, fill_width, cont_color, cont_width,
+        plfill, rectangular, NULL, NULL );
+}
+
+void my_plshadesx( PLFLT *a, PLINT nx, PLINT ny,
+                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                   PLINT cont_color, PLINT cont_width,
+                   PLINT rectangular, PLFLT *tr )
+{
+    f2c( a, aa, nx, ny );
+    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+        clevel, nlevel, fill_width, cont_color, cont_width,
+        plfill, rectangular, xform, tr );
+}
+
+void my_plshades1( PLFLT *a, PLINT nx, PLINT ny,
+                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                   PLINT cont_color, PLINT cont_width,
+                   PLINT rectangular, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid grid1;
+    grid1.nx = nx;  grid1.ny = ny;
+    grid1.xg = xg;  grid1.yg = yg;
+
+    f2c( a, aa, nx, ny );
+    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+        clevel, nlevel, fill_width, cont_color, cont_width,
+        plfill, rectangular, pltr1, &grid1 );
+}
+
+void my_plshades2( PLFLT *a, PLINT nx, PLINT ny,
+                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                   PLINT cont_color, PLINT cont_width,
+                   PLINT rectangular, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid2 grid2;
+    f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+    grid2.nx = nx;  grid2.ny = ny;
+    grid2.xg = xgg; grid2.yg = ygg;
+    f2c( a, aa, nx, ny );
+    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+        clevel, nlevel, fill_width, cont_color, cont_width,
+        plfill, rectangular, pltr2, &grid2 );
+}
+%}
+
+void my_plshades( PLFLT *Matrix, PLINT nx, PLINT ny,
+          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+          PLFLT *Array, PLINT n, PLINT fill_width,
+          PLINT cont_color, PLINT cont_width,
+          PLBOOL rectangular);
+
+void my_plshadesx( PLFLT *Matrix, PLINT nx, PLINT ny,
+          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+          PLFLT *Array, PLINT n, PLINT fill_width,
+          PLINT cont_color, PLINT cont_width,
+          PLBOOL rectangular, PLFLT *Array);
+
+void my_plshades1( PLFLT *Matrix, PLINT nx, PLINT ny,
+          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+          PLFLT *Array, PLINT n, PLINT fill_width,
+          PLINT cont_color, PLINT cont_width,
+          PLBOOL rectangular, PLFLT *ArrayCkX, PLFLT *ArrayCkY);
+
+void my_plshades2( PLFLT *Matrix, PLINT nx, PLINT ny,
+          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+          PLFLT *Array, PLINT n, PLINT fill_width,
+          PLINT cont_color, PLINT cont_width,
+          PLBOOL rectangular, PLFLT *Matrix, PLFLT *Matrix);
+
 // Deal with these later.
 %ignore pllegend;
-%ignore plshades;
 %ignore plvect;
 %ignore plimage;
 %ignore plimagefr;
+// Probably never.
 %ignore plMinMax2dGrid;
 // swig-compatible common PLplot API definitions from here on.
 %include plplotcapi.i
