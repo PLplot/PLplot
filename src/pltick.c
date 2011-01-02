@@ -24,6 +24,78 @@
 #include "plplotP.h"
 
 //--------------------------------------------------------------------------
+// void plwxtik()
+//
+// Draws a tick parallel to x, using world coordinates
+//--------------------------------------------------------------------------
+void
+plwxtik( PLFLT x, PLFLT y, PLBOOL minor, PLBOOL invert )
+{
+    PLINT length, below, above;
+    PLFLT height;
+    if ( minor )
+    {
+        // Minor tick
+        height = plsc->minht;
+    }
+    else
+    {
+        // Major tick
+        height = plsc->majht;
+    }
+    length = MAX( ROUND( height * plsc->ypmm ), 1 );
+
+    if ( invert )
+    {
+        below = 0;
+        above = length;
+    }
+    else
+    {
+        below = length;
+        above = 0;
+    }
+    // Actually draw the tick
+    plxtik( plP_wcpcx( x ), plP_wcpcy( y ), below, above );
+}
+
+//--------------------------------------------------------------------------
+// void plwytik()
+//
+// Draws a tick parallel to y, using world coordinates
+//--------------------------------------------------------------------------
+void
+plwytik( PLFLT x, PLFLT y, PLBOOL minor, PLBOOL invert )
+{
+    PLINT length, below, above;
+    PLFLT height;
+    if ( minor )
+    {
+        // Minor tick
+        height = plsc->minht;
+    }
+    else
+    {
+        // Major tick
+        height = plsc->majht;
+    }
+    length = MAX( ROUND( height * plsc->xpmm ), 1 );
+
+    if ( invert )
+    {
+        below = 0;
+        above = length;
+    }
+    else
+    {
+        below = length;
+        above = 0;
+    }
+    // Actually draw the tick
+    plytik( plP_wcpcx( x ), plP_wcpcy( y ), below, above );
+}
+
+//--------------------------------------------------------------------------
 // void plxtik()
 //
 // Draws a tick parallel to x.
