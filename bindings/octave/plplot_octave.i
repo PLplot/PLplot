@@ -769,11 +769,26 @@ void my_plot3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
 void my_plot3dc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
 
+// plsurf3d-related wrappings:
+%ignore plsurf3d;
+%rename(plsurf3d) my_plsurf3d;
+%ignore plsurf3dl;
+//unimplemented: %rename(plsurf3d) my_plsurf3d;
+
+%{
+void my_plsurf3d( PLFLT *x, PLFLT *y, PLFLT *z,
+                  PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+{
+    f2c( z, zz, nx, ny )
+    c_plsurf3d( x, y, zz, nx, ny, opt, clevel, nlevel );
+}
+%}
+
+void my_plsurf3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
+          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
 
 // Deal with these later.
 %ignore pllegend;
-%ignore plsurf3d;
-%ignore plsurf3dl;
 %ignore plshade;
 %ignore plshades;
 %ignore plvect;
