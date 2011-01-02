@@ -735,11 +735,43 @@ void my_plmesh( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
 void my_plmeshc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
 
+// plot3d-related wrappers.
+
+%ignore plot3d;
+%rename(plot3d) my_plot3d;
+%ignore plot3dc;
+%rename(plot3dc) my_plot3dc;
+%ignore plot3dcl;
+//unimplemented: %rename(plot3dcl) my_plot3dcl;
+
+%{
+// Plots a 3-d representation of the function z[x][y].
+void my_plot3d( PLFLT *x, PLFLT *y, PLFLT *z,
+                PLINT nx, PLINT ny, PLINT opt, PLINT side )
+{
+    f2c( z, zz, nx, ny )
+    c_plot3d( x, y, zz, nx, ny, opt, side );
+}
+
+// Plots a 3-d representation of the function z[x][y] with contour
+void my_plot3dc( PLFLT *x, PLFLT *y, PLFLT *z,
+                 PLINT nx, PLINT ny, PLINT opt,
+                 PLFLT *clevel, PLINT nlevel )
+{
+    f2c( z, zz, nx, ny )
+    c_plot3dc( x, y, zz, nx, ny, opt, clevel, nlevel );
+}
+%}
+
+void my_plot3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
+        PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
+
+void my_plot3dc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
+         PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+
+
 // Deal with these later.
 %ignore pllegend;
-%ignore plot3d;
-%ignore plot3dc;
-%ignore plot3dcl;
 %ignore plsurf3d;
 %ignore plsurf3dl;
 %ignore plshade;

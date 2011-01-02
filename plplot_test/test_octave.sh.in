@@ -72,12 +72,13 @@ endfor
 #Example 19 is not yet implemented
 failed = [] ;
 # Temporarily drop everything that involves 2D arrays and/or callbacks.
-# 8, 11, 21: 3D mesh plots, 
-# 9, 14: 22 contours, callbacks, 
+# 8, 11: 3D meash-related plots, 
 # 15, 16: shade plots, callbacks,
 # 20: plimage
+# 21: plgriddata and 3D plots
+# 22: plvector related wrappers.
 # until typemaps for swig-generated interface are done.
-@swig_octave_comment@for i=[1:7 9 10 12 13 14 17 18 23:31] ;
+@swig_octave_comment@for i=[1:7 9:14 17 18 23:31] ;
 @matwrap_octave_comment@for i=[1:18 20:31 ] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
