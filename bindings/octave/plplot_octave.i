@@ -787,9 +787,111 @@ void my_plsurf3d( PLFLT *x, PLFLT *y, PLFLT *z,
 void my_plsurf3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
           PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
 
+// plshade-related wrappers.
+
+%ignore plshade;
+%rename(plshade) my_plshade;
+%rename(plshade1) my_plshade1;
+%rename(plshade2) my_plshade2;
+
+%{
+// The same as in plcont. I have hardcoded the first function pointer
+// to plfill(). The second function pointer will use the same convention
+// as in plcont().
+//
+
+// the simpler plshade()
+void my_plshade( PLFLT *a, PLINT nx, PLINT ny, PLFLT *defined,
+                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                 PLFLT shade_min, PLFLT shade_max,
+                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+                 PLINT min_color, PLINT min_width,
+                 PLINT max_color, PLINT max_width,
+                 PLINT rectangular, PLFLT *tr )
+{
+    f2c( a, aa, nx, ny );
+    c_plshade( aa, nx, ny, NULL, left, right, bottom, top,
+        shade_min, shade_max, sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width,
+        plfill, rectangular, xform, tr );
+}
+
+//  plshade() for use with pltr1
+void my_plshade1( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                  PLFLT shade_min, PLFLT shade_max,
+                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+                  PLINT min_color, PLINT min_width,
+                  PLINT max_color, PLINT max_width,
+                  PLINT rectangular, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid grid1;
+    grid1.nx = nx;  grid1.ny = ny;
+    grid1.xg = xg;  grid1.yg = yg;
+    f2c( a, aa, nx, ny );
+    c_plshade( aa, nx, ny, NULL, left, right, bottom, top,
+        shade_min, shade_max, sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width,
+        plfill, rectangular, pltr1, &grid1 );
+}
+
+//  plshade() for use with pltr2
+void my_plshade2( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                  PLFLT shade_min, PLFLT shade_max,
+                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+                  PLINT min_color, PLINT min_width,
+                  PLINT max_color, PLINT max_width,
+                  PLINT rectangular, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid2 grid2;
+    f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+    grid2.nx = nx;  grid2.ny = ny;
+    grid2.xg = xgg; grid2.yg = ygg;
+    f2c( a, aa, nx, ny );
+    c_plshade( aa, nx, ny, NULL, left, right, bottom, top,
+        shade_min, shade_max, sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width,
+        plfill, rectangular, pltr2, &grid2 );
+}
+
+%}
+
+// The defined functionality is completely unused, but through
+// a historical anomaly is typed differently between my_plshade and
+// my_plshade1 (or my_plshade2) which is why we use PLFLT *Array for
+// the fourth argument of my_plshade, but const char * defined
+// for the other fourth arguments.  FIXME.  I (AWI) recommend an API break
+// with this fourth (unused) argument completely eliminated, but
+// that needs discussion.
+// my_plshade1 and my_plshade2 are completely untested by the standard examples.
+
+void my_plshade( PLFLT *Matrix, PLINT nx, PLINT ny, PLFLT *Array,
+         PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+         PLFLT shade_min, PLFLT shade_max,
+         PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+         PLINT min_color, PLINT min_width,
+         PLINT max_color, PLINT max_width,
+         PLBOOL rectangular, PLFLT *Array );
+
+void my_plshade1( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
+         PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+         PLFLT shade_min, PLFLT shade_max,
+         PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+         PLINT min_color, PLINT min_width,
+         PLINT max_color, PLINT max_width,
+                  PLBOOL rectangular, PLFLT *ArrayCkX, PLFLT *ArrayCkY);
+
+void my_plshade2( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
+         PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+         PLFLT shade_min, PLFLT shade_max,
+         PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+         PLINT min_color, PLINT min_width,
+         PLINT max_color, PLINT max_width,
+         PLBOOL rectangular, PLFLT *Matrix, PLFLT *Matrix);
+
 // Deal with these later.
 %ignore pllegend;
-%ignore plshade;
 %ignore plshades;
 %ignore plvect;
 %ignore plimage;
