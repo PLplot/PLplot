@@ -1034,13 +1034,99 @@ void my_plvect1( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale
 void my_plvect2( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
          PLFLT *Matrix, PLFLT *Matrix);
 
+// plimage-related wrappers.
+%ignore plimage;
+%rename(pplimage) my_plimage;
+%ignore plimagefr;
+%rename(plimagefr) my_plimagefr;
+%rename(plimagefrx) my_plimagefrx;
+%rename(plimagefr1) my_plimagefr1;
+%rename(plimagefr2) my_plimagefr2;
 
+%{
+// Plot an image with distortion - uses the same function pointer
+void my_plimage( PLFLT *a, PLINT nx, PLINT ny,
+                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                 PLFLT zmin, PLFLT zmax,
+                 PLFLT dxmin, PLFLT dxmax, PLFLT dymin, PLFLT dymax )
+{
+    f2c( a, aa, nx, ny );
+    plimage( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, dxmin, dxmax, dymin, dymax );
+}
+
+// Plot an image with distortion - uses the same function pointer
+// convention as plcont
+void my_plimagefr( PLFLT *a, PLINT nx, PLINT ny,
+                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                   PLFLT zmin, PLFLT zmax,
+                   PLFLT valuemin, PLFLT valuemax )
+{
+    f2c( a, aa, nx, ny );
+    plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, NULL, NULL );
+}
+
+void my_plimagefrx( PLFLT *a, PLINT nx, PLINT ny,
+                    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                    PLFLT zmin, PLFLT zmax,
+                    PLFLT valuemin, PLFLT valuemax, PLFLT *tr )
+{
+    f2c( a, aa, nx, ny );
+    plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, xform, tr );
+}
+
+// plimagefr() for use with pltr1
+void my_plimagefr1( PLFLT *a, PLINT nx, PLINT ny,
+                    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                    PLFLT zmin, PLFLT zmax,
+                    PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid grid1;
+    grid1.nx = nx + 1;  grid1.ny = ny + 1;
+    grid1.xg = xg;  grid1.yg = yg;
+    f2c( a, aa, nx, ny );
+    c_plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr1, &grid1 );
+}
+
+// plimagefr() for use with pltr2
+void my_plimagefr2( PLFLT *a, PLINT nx, PLINT ny,
+                    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                    PLFLT zmin, PLFLT zmax,
+                    PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg )
+{
+    PLcGrid2 grid2;
+    f2c( xg, xgg, ( nx + 1 ), ( ny + 1 ) );  f2c( yg, ygg, ( nx + 1 ), ( ny + 1 ) );
+    grid2.nx = nx + 1;  grid2.ny = ny + 1;
+    grid2.xg = xgg;  grid2.yg = ygg;
+    f2c( a, aa, nx, ny );
+    c_plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr2, &grid2 );
+}
+
+%}
+
+void my_plimage( PLFLT *Matrix, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+         PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
+
+void my_plimagefr( PLFLT *Matrix, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+                PLFLT valuemin, PLFLT valuemax );
+
+void my_plimagefrx( PLFLT *Matrix, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+         PLFLT valuemin, PLFLT valuemax, PLFLT *Array );
+
+void my_plimagefr1( PLFLT *Matrix, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+         PLFLT valuemin, PLFLT valuemax, PLFLT *ArrayCkX, PLFLT * ArrayCkY );
+
+void my_plimagefr2( PLFLT *Matrix, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+         PLFLT valuemin, PLFLT valuemax, PLFLT *Matrix, PLFLT *Matrix );
 
 // Deal with these later.
 %ignore pllegend;
-%ignore plimage;
-%ignore plimagefr;
-// Probably never.
+%ignore plgriddata;
+// Probably never deal with this one.
 %ignore plMinMax2dGrid;
 // swig-compatible common PLplot API definitions from here on.
 %include plplotcapi.i
