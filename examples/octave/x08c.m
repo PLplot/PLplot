@@ -120,12 +120,12 @@ endfunction
 	switch(ifshade)
 	  case 0
 	    cmap1_init(1);
-	    plsurf3d(x', y', z', 0, 0, 0);
+	    plsurf3d(x', y', z', 0, 0);
 	  case 1
 	    cmap1_init(0);
-	    plsurf3d(x', y', z', MAG_COLOR, 0, 0);
+	    plsurf3d(x', y', z', MAG_COLOR, 0);
 	  case 2
-	    plsurf3d(x', y', z', MAG_COLOR + FACETED, 0, 0);
+	    plsurf3d(x', y', z', MAG_COLOR + FACETED, 0);
 	  otherwise
 	    plsurf3d(x', y', z', MAG_COLOR + SURF_CONT + BASE_CONT, clevel);
 	endswitch
