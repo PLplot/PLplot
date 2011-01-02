@@ -906,6 +906,7 @@ draw_cap( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
 
 void
 c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
               PLINT n_colors, PLFLT *colors, PLFLT *values )
 {
@@ -1209,25 +1210,23 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     if ( opt & PL_COLORBAR_LEFT )
     {
         snprintf( opt_string, max_opts, "bcn%s", axis_opts );
-        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
+        plbox( "bc", ticks, sub_ticks, opt_string, ticks, sub_ticks );
     }
     else if ( opt & PL_COLORBAR_RIGHT )
     {
         snprintf( opt_string, max_opts, "bcm%s", axis_opts );
-        plbox( "bc", 0.0, 0, opt_string, 0.0, 0 );
+        plbox( "bc", 0.0, 0, opt_string, ticks, sub_ticks );
     }
     else if ( opt & PL_COLORBAR_UPPER )
     {
         snprintf( opt_string, max_opts, "bcm%s", axis_opts );
-        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
+        plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
     }
     else if ( opt & PL_COLORBAR_LOWER )
     {
         snprintf( opt_string, max_opts, "bcn%s", axis_opts );
-        plbox( opt_string, 0.0, 0, "bc", 0.0, 0 );
+        plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
     }
-
-    // TODO: Add tick mark drawing and labeling here when n_colors > 2
 
     // Draw a title
     char perp;
@@ -1290,6 +1289,58 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         }
         snprintf( opt_string, max_opts, "b%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
+    }
+    
+    // Draw labels and tick marks if this is a shade color bar
+    // TODO: A better way to handle this would be to update the
+    // internals of plbox to support custom tick and label positions
+    // along an axis.
+    if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
+    {
+        // Draw labels and tick marks
+        char label_string[40];
+        char *pos_string;
+        PLFLT just;
+        PLFLT label_value, label_position;
+        if ( opt & PL_COLORBAR_RIGHT )
+        {
+            pos_string = "rv";
+            just = 0.0;
+        }
+        else if ( opt & PL_COLORBAR_LEFT )
+        {
+            pos_string = "lv";
+            just = 1.0;
+        }
+        else if ( opt & PL_COLORBAR_UPPER )
+        {
+            pos_string = "t";
+            just = 0.5;
+        }
+        else if ( opt & PL_COLORBAR_LOWER )
+        {
+            pos_string = "b";
+            just = 0.5;
+        }
+        for ( i = 0; i < n_steps; i++ )
+        {
+            label_value = values[i];
+            label_position = ( label_value - min_value ) / ( max_value - min_value );
+            snprintf( label_string, 40, "%g", label_value );
+            // Label
+            plmtex( pos_string, 1.5, label_position, just, label_string );
+            // Tick mark
+            if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
+            {
+                plwytik( 0.0, label_value, FALSE, TRUE );
+                plwytik( 1.0, label_value, FALSE, FALSE );
+            }
+            else if ( opt & PL_COLORBAR_UPPER || opt & PL_COLORBAR_LOWER )
+            {
+                plwxtik( label_value, 0.0, FALSE, TRUE );
+                plwxtik( label_value, 1.0, FALSE, FALSE );
+            }
+        }
     }
 
     // Restore

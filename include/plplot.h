@@ -1241,6 +1241,7 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_COLORBAR_GRADIENT        1024
 #define PL_COLORBAR_CAP_LOW       2048
 #define PL_COLORBAR_CAP_HIGH      4096
+#define PL_COLORBAR_SHADE_LABEL   8192
 
 PLDLLIMPEXP void
 c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
@@ -1260,6 +1261,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
 PLDLLIMPEXP void
 c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
               PLINT n_colors, PLFLT *colors, PLFLT *values );
 
