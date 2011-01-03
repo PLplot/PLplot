@@ -27,7 +27,7 @@
 // Function prototypes
 
 void cycloid( void );
-void spiro( PLFLT data[] );
+void spiro( PLFLT data[], int fill );
 
 //--------------------------------------------------------------------------
 // main
@@ -54,6 +54,7 @@ main( int argc, const char *argv[] )
     };
 
     int   i;
+    int   fill;
 
 // plplot initialization
 
@@ -74,11 +75,12 @@ main( int argc, const char *argv[] )
 //
     plssub( 3, 3 ); // Three by three window
 
+    fill = 0;
     for ( i = 0; i < 9; i++ )
     {
         pladv( 0 );
         plvpor( 0.0, 1.0, 0.0, 1.0 );
-        spiro( &params[i][0] );
+        spiro( &params[i][0], fill );
     }
 
     pladv( 0 );
@@ -88,7 +90,20 @@ main( int argc, const char *argv[] )
     {
         pladv( 0 );
         plvpor( 0.0, 1.0, 0.0, 1.0 );
-        spiro( &params[i][0] );
+        spiro( &params[i][0], fill );
+    }
+
+// Fill the curves
+    fill = 1;
+
+    pladv( 0 );
+    plssub( 1, 1 ); // One window per curve
+
+    for ( i = 0; i < 9; i++ )
+    {
+        pladv( 0 );
+        plvpor( 0.0, 1.0, 0.0, 1.0 );
+        spiro( &params[i][0], fill );
     }
 
 // Don't forget to call plend() to finish off!
@@ -108,7 +123,7 @@ cycloid( void )
 //--------------------------------------------------------------------------
 
 void
-spiro( PLFLT params[] )
+spiro( PLFLT params[], int fill )
 {
 #define NPNT    20000
     static PLFLT xcoord[NPNT + 1];
@@ -170,5 +185,10 @@ spiro( PLFLT params[] )
     plwind( xmin, xmax, ymin, ymax );
 
     plcol0( 1 );
-    plline( 1 + steps * windings, xcoord, ycoord );
+    if ( fill )
+    {
+        plfill( 1 + steps * windings, xcoord, ycoord );
+    } else {
+        plline( 1 + steps * windings, xcoord, ycoord );
+    }
 }
