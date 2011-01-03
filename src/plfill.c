@@ -122,7 +122,9 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
 // void plfill()
 //
 // Pattern fills the polygon bounded by the input points.
-// If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
+// For a number of vertices greater than PL_MAXPOLY-1, memory is managed via
+// malloc/free. Otherwise statically defined arrays of length PL_MAXPOLY
+// are used.
 // The final point is explicitly added if it doesn't match up to the first,
 // to prevent clipping problems.
 //--------------------------------------------------------------------------
@@ -190,7 +192,9 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 // void plfill3()
 //
 // Pattern fills the polygon in 3d bounded by the input points.
-// If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
+// For a number of vertices greater than PL_MAXPOLY-1, memory is managed via
+// malloc/free. Otherwise statically defined arrays of length PL_MAXPOLY
+// are used.
 // The final point is explicitly added if it doesn't match up to the first,
 // to prevent clipping problems.
 //--------------------------------------------------------------------------

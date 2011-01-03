@@ -856,7 +856,7 @@ FillPolygonCmd( PLStream *pls )
 
     if ( pls->dev_npts > PL_MAXPOLY )
     {
-        pts = (XPoint *) malloc( sizeof(XPoint) * npts );
+        pts = (XPoint *) malloc( sizeof(XPoint) * pls->dev_npts );
     }
     else
     {
