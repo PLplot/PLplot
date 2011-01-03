@@ -435,10 +435,21 @@ template void _cvt_to_double(float *, double *, unsigned);
 %typemap(freearg) PLFLT *MatrixCk {}
 
 
-/* Set Y length for later consistency checking, with trailing count */
-/* and 2D array, check for consistency input / output version */
-%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) (Matrix temp) {}
-%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {}
+// Set Y length for later consistency checking, with trailing count
+// and 2D array, check for consistency input / output version
+%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) (Matrix temp, octave_value_list retval) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  $2 = Ylen = (PLINT)(_dim($input, 0));
+  retval(0)=octave_value(Matrix(Xlen, Ylen));
+  $3 = (PLFLT *)retval(0).matrix_value().data();
+
+}
+%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {
+  $result = SWIG_Octave_AppendOutput($result, retval$argnum(0));
+}
 %typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {}
 
 
@@ -696,12 +707,8 @@ void my_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
             *( zg + nptsx * j + i ) = zgg[i][j];
 }
 %}
-void my_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-                    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
-                    PLFLT *zg, int type, PLFLT data );
 
-void
-my_plgriddata( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
+void my_plgriddata( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
             PLFLT *ArrayX, PLINT nx, PLFLT *ArrayY, PLINT ny,
             PLFLT *OutMatrixCk, PLINT type, PLFLT data );
 

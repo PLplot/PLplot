@@ -78,7 +78,7 @@ failed = [] ;
 # 21: plgriddata and 3D plots
 # 22: plvector related wrappers.
 # until typemaps for swig-generated interface are done.
-@swig_octave_comment@for i=[1:18 20 22:31] ;
+@swig_octave_comment@for i=[1:18 20:31] ;
 @matwrap_octave_comment@for i=[1:18 20:31 ] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
