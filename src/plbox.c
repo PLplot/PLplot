@@ -1509,6 +1509,267 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
 }
 
 //--------------------------------------------------------------------------
+// void label_box_custom()
+//
+// Writes numeric labels on side(s) of box in custom locations
+//--------------------------------------------------------------------------
+
+void
+label_box_custom( const char *xopt, PLINT n_xticks, PLFLT *xticks, const char *yopt, PLINT n_yticks, PLFLT *yticks )
+{
+    static char string[STRING_LEN];
+    PLBOOL      ldx, lfx, lix, llx, lmx, lnx, ltx, lox;
+    PLBOOL      ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy;
+    PLFLT       vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
+    PLFLT       pos, tn, offset, height, just;
+    PLFLT       factor, tstart;
+    const char  *timefmt;
+    PLINT i;
+    PLINT xdigmax, xdigits, xdigmax_old, xdigits_old;
+    PLINT ydigmax, ydigits, ydigmax_old, ydigits_old;
+    PLINT  lxmin, lxmax, lymin, lymax;
+    PLINT  pxmin, pxmax, pymin, pymax;
+
+    // Save some parameters
+    plgxax( &xdigmax, &xdigits );
+    plgyax( &ydigmax, &ydigits );
+    xdigmax_old = xdigmax;
+    xdigits_old = xdigits;
+    ydigmax_old = ydigmax;
+    ydigits_old = ydigits;
+
+// Open the clip limits to the subpage limits
+
+    plP_gclp( &lxmin, &lxmax, &lymin, &lymax );
+    plP_gphy( &pxmin, &pxmax, &pymin, &pymax );
+    plP_sclp( pxmin, pxmax, pymin, pymax );
+
+// Set plot options from input
+
+    ldx = plP_stsearch( xopt, 'd' );
+    lfx = plP_stsearch( xopt, 'f' );
+    lix = plP_stsearch( xopt, 'i' );
+    llx = plP_stsearch( xopt, 'l' );
+    lmx = plP_stsearch( xopt, 'm' );
+    lnx = plP_stsearch( xopt, 'n' );
+    ltx = plP_stsearch( xopt, 't' );
+    lox = plP_stsearch( xopt, 'o' );
+
+    ldy = plP_stsearch( yopt, 'd' );
+    lfy = plP_stsearch( yopt, 'f' );
+    liy = plP_stsearch( yopt, 'i' );
+    lly = plP_stsearch( yopt, 'l' );
+    lmy = plP_stsearch( yopt, 'm' );
+    lny = plP_stsearch( yopt, 'n' );
+    lty = plP_stsearch( yopt, 't' );
+    lvy = plP_stsearch( yopt, 'v' );
+    loy = plP_stsearch( yopt, 'o' );
+
+    plP_xgvpw( &vpwxmin, &vpwxmax, &vpwymin, &vpwymax );
+// n.b. large change; vpwxmi always numerically less than vpwxma, and
+// similarly for vpwymi
+    vpwxmi = ( vpwxmax > vpwxmin ) ? vpwxmin : vpwxmax;
+    vpwxma = ( vpwxmax > vpwxmin ) ? vpwxmax : vpwxmin;
+    vpwymi = ( vpwymax > vpwymin ) ? vpwymin : vpwymax;
+    vpwyma = ( vpwymax > vpwymin ) ? vpwymax : vpwymin;
+
+// Write horizontal label(s)
+
+    if ( ( lmx || lnx ) && ltx )
+    {
+        PLINT xmode, xprec, xscale;
+        PLFLT x_spacing, x_spacing_tmp;
+
+        // Determine spacing between ticks
+        // Use the x-size of the window
+        x_spacing = vpwxma - vpwxmi;
+        if ( n_xticks > 1 )
+        {
+            // Use the smallest space between ticks
+            for ( i = 1; i < n_xticks; i++ )
+            {
+                x_spacing_tmp = fabs( xticks[i] - xticks[i - 1] );
+                x_spacing = MIN( x_spacing, x_spacing_tmp );
+            }
+        }
+
+        plgxax( &xdigmax, &xdigits );
+        pldprec( vpwxmi, vpwxma, x_spacing, lfx, &xmode, &xprec, xdigmax, &xscale );
+        timefmt = plP_gtimefmt();
+
+        // Loop through all of the tick marks
+        for ( i = 0; i < n_xticks; i++ )
+        {
+            tn = xticks[i];
+            if ( BETW( tn, vpwxmi, vpwxma ) )
+            {
+                if ( ldx )
+                {
+                    strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
+                }
+                else
+                {
+                    plform( PL_X_AXIS, tn, xscale, xprec, string, STRING_LEN, llx, lfx, lox );
+                }
+                height = lix ? 1.75 : 1.5;
+                pos    = ( vpwxmax > vpwxmin ) ?
+                         ( tn - vpwxmi ) / ( vpwxma - vpwxmi ) :
+                         ( vpwxma - tn ) / ( vpwxma - vpwxmi );
+                if ( lnx )
+                    plmtex( "b", height, pos, 0.5, string );
+                if ( lmx )
+                    plmtex( "t", height, pos, 0.5, string );
+                plwxtik( tn, vpwymin, FALSE, !lix );
+                plwxtik( tn, vpwymax, FALSE, lix );
+            }
+        }
+        xdigits = 2;
+        plsxax( xdigmax, xdigits );
+
+        // Write separate exponential label if mode = 1.
+
+        if ( !llx && !ldx && !lox && xmode )
+        {
+            // Assume label data is for placement of exponents if no custom
+            // label function is provided.
+            if ( plsc->label_data )
+            {
+                height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+            }
+            else
+            {
+                height = 3.2;
+                pos    = 1.0;
+                just   = 0.5;
+            }
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
+            if ( lnx )
+                plmtex( "b", height, pos, just, string );
+            if ( lmx )
+                plmtex( "t", height, pos, just, string );
+        }
+    }
+
+// Write vertical label(s)
+
+    if ( ( lmy || lny ) && lty )
+    {
+        PLINT ymode, yprec, yscale;
+        PLFLT y_spacing, y_spacing_tmp;
+
+        // Determine spacing between ticks
+        // Use the y-size of the window
+        y_spacing = vpwyma - vpwymi;
+        if ( n_yticks > 1 )
+        {
+            // Use the smallest space between ticks
+            for ( i = 1; i < n_yticks; i++ )
+            {
+                y_spacing_tmp = fabs( yticks[i] - yticks[i - 1] );
+                y_spacing = MIN( y_spacing, y_spacing_tmp );
+            }
+        }
+
+        plgyax( &ydigmax, &ydigits );
+        pldprec( vpwymi, vpwyma, y_spacing, lfy, &ymode, &yprec, ydigmax, &yscale );
+        timefmt = plP_gtimefmt();
+
+        ydigits = 0;
+        for ( i = 0; i < n_yticks; i++ )
+        {
+            tn = yticks[i];
+            if ( BETW( tn, vpwymi, vpwyma ) )
+            {
+                if ( ldy )
+                {
+                    strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
+                }
+                else
+                {
+                    plform( PL_Y_AXIS, tn, yscale, yprec, string, STRING_LEN, lly, lfy, loy );
+                }
+                pos = ( vpwymax > vpwymin ) ?
+                      ( tn - vpwymi ) / ( vpwyma - vpwymi ) :
+                      ( vpwyma - tn ) / ( vpwyma - vpwymi );
+                if ( lny )
+                {
+                    if ( lvy )
+                    {
+                        height = liy ? 1.0 : 0.5;
+                        plmtex( "lv", height, pos, 1.0, string );
+                    }
+                    else
+                    {
+                        height = liy ? 1.75 : 1.5;
+                        plmtex( "l", height, pos, 0.5, string );
+                    }
+                }
+                if ( lmy )
+                {
+                    if ( lvy )
+                    {
+                        height = liy ? 1.0 : 0.5;
+                        plmtex( "rv", height, pos, 0.0, string );
+                    }
+                    else
+                    {
+                        height = liy ? 1.75 : 1.5;
+                        plmtex( "r", height, pos, 0.5, string );
+                    }
+                }
+                ydigits = MAX( ydigits, (PLINT) strlen( string ) );
+                plwytik( vpwxmin, tn, FALSE, !liy );
+                plwytik( vpwxmax, tn, FALSE, liy );
+            }
+        }
+        if ( !lvy )
+            ydigits = 2;
+
+        plsyax( ydigmax, ydigits );
+
+        // Write separate exponential label if mode = 1.
+
+        if ( !lly && !ldy && !loy && ymode )
+        {
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
+            if ( plsc->label_data )
+            {
+                height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+            }
+            else
+            {
+                offset = 0.02;
+                height = 2.0;
+                if ( lny )
+                {
+                    pos  = 0.0 - offset;
+                    just = 1.0;
+                }
+                if ( lmy )
+                {
+                    pos  = 1.0 + offset;
+                    just = 0.0;
+                }
+            }
+            plmtex( "t", height, pos, just, string );
+        }
+    }
+
+    // Restore saved parameters
+    plsxax( xdigmax_old, xdigits_old );
+    plsyax( ydigmax_old, ydigits_old );
+
+// Restore the clip limits to viewport edge
+
+    plP_sclp( lxmin, lxmax, lymin, lymax );
+}
+
+//--------------------------------------------------------------------------
 //
 // Default labeling functions for PLplot
 //

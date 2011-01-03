@@ -81,10 +81,10 @@ plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n, PLF
           PL_COLORBAR_CAP_HIGH;
 
     const char *axis_opts_1, *axis_opts_2;
-    if ( bar_type == PL_COLORBAR_SHADE_LABEL )
+    if ( bar_type & PL_COLORBAR_SHADE_LABEL )
     {
-        axis_opts_1 = "";
-        axis_opts_2 = "";
+        axis_opts_1 = "iv";
+        axis_opts_2 = "i";
     }
     else
     {
@@ -752,7 +752,7 @@ main( int argc, const char *argv[] )
 
     // Color bar examples
     PLFLT values_small[2] = { 0.0, 1.0 };
-    PLFLT values_uneven[9] = { 0.0, 2.0, 2.5, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
+    PLFLT values_uneven[9] = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
     PLFLT values_even[9] = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
     plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
     plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
