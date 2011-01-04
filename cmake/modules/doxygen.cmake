@@ -20,7 +20,7 @@
 # Module file to decide whether to build doxygen documentation and
 # and, if so, find the necessary doxygen command.
 
-option(BUILD_DOX_DOC "Build doxygen documentation" OFF)
+option(BUILD_DOX_DOC "Build doxygen documentation" ON)
 
 if(BUILD_DOX_DOC)
   find_package(Doxygen)
