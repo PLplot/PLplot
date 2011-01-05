@@ -1130,9 +1130,55 @@ void my_plimagefr2( PLFLT *Matrix, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
          PLFLT valuemin, PLFLT valuemax, PLFLT *Matrix, PLFLT *Matrix );
 
+// This test function should be removed when we are confident of our
+// dealings with all types of octave string arrays.
+%{
+void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
+  PLINT i;
+  printf("nlegend = %d\n", nlegend);
+  for(i=0;i<nlegend;i++) {
+    printf("opt_array[%d] = %d\n", i, opt_array[i]);
+    printf("text[%d] = %s\n", i, text[i]);
+  }
+}
+%}
+
+// No count but check consistency with previous
+%typemap(in) char **ArrayCk (charMatrix temp) {
+  int i;
+  int max_length;
+  if ( _n_dims($input) > 2 )
+      { error("argument must be a scalar or vector or matrix"); SWIG_fail; }
+  if ( _dim($input, 0) != Alen )
+      { error("first dimension must be same length as previous vector"); SWIG_fail; }
+  // Allow one extra space for null termination.
+  max_length= _dim($input, 1) + 1;
+  $1 = new char*[Alen];
+  temp = $input.char_matrix_value();
+  for(i=0; i<Alen; i++) {
+    // Must copy string to "permanent" location because the string
+    // location corresponding to tmp.c_str() gets
+    // overwritten for each iteration of loop.
+    std::string tmp_cxxstring = temp.row_as_string(i);
+    $1[i] = new char[max_length];
+    strncpy( $1[i], tmp_cxxstring.c_str(), max_length-1 );
+    $1[i][max_length] = '\0';
+  }
+}
+%typemap(freearg) char **ArrayCk {
+  int i;
+  for(i=0; i<Alen; i++) {
+    delete[] $1[i];
+  }
+  delete[] $1;
+}
+
+// This test function should be removed when we are confident of our
+// dealings with all types of octave string arrays.
+void testppchar(PLINT n, const PLINT *Array, const char **ArrayCk);
+
 // Deal with these later.
 %ignore pllegend;
-%ignore plgriddata;
 // Probably never deal with this one.
 %ignore plMinMax2dGrid;
 // swig-compatible common PLplot API definitions from here on.
