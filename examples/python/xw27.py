@@ -55,7 +55,7 @@ def main():
     for i in range(9) :
         pladv(0)
         plvpor( 0.0, 1.0, 0.0, 1.0 )
-        spiro( params[i] )
+        spiro( params[i], 0 )
 
     pladv(0)
     plssub(1, 1)  # One window per curve
@@ -63,10 +63,19 @@ def main():
     for i in range(9):
         pladv(0)
         plvpor( 0.0, 1.0, 0.0, 1.0 )
-        spiro( params[i] )
+        spiro( params[i], 0 )
+
+    # Fill the curves.
+    pladv(0)
+    plssub(1, 1)  # One window per curve
+
+    for i in range(9):
+        pladv(0)
+        plvpor( 0.0, 1.0, 0.0, 1.0 )
+        spiro( params[i], 1 )
 
 
-def spiro(params):
+def spiro(params, fill):
     # Fill the coordinates
     NPNT = 20000
 
@@ -111,7 +120,9 @@ def spiro(params):
     plwind( xmin, xmax, ymin, ymax )
 
     plcol0(1)
-    plline( xcoord, ycoord )
-
+    if fill:
+        plfill( xcoord, ycoord )
+    else:
+        plline( xcoord, ycoord )
 
 main()
