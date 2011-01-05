@@ -1156,6 +1156,9 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 %rename(abort) plabort;
 %rename(MinMax2dGrid) plMinMax2dGrid;
 
+// Not implemented yet.
+%ignore pllegend;
+
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
 

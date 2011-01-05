@@ -1739,5 +1739,8 @@ bject. */
 }
 #endif
 
+// Not implemented yet.
+%ignore pllegend;
+
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
