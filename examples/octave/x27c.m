@@ -65,7 +65,7 @@ function ix27c
   for i = 1:9
     pladv(0);
     plvpor( 0.0, 1.0, 0.0, 1.0 );
-    spiro( params(i,:) );
+    spiro( params(i,:), 0 );
   endfor
 
   pladv(0);
@@ -74,7 +74,16 @@ function ix27c
   for i=1:9
     pladv(0);
     plvpor( 0.0, 1.0, 0.0, 1.0 );
-    spiro( params(i,:) );
+    spiro( params(i,:), 0 );
+  endfor
+
+  ## Fill the curves.
+  pladv( 0 );
+  plssub( 1, 1 ); ## One window per curve
+  for i=1:9
+    pladv(0);
+    plvpor( 0.0, 1.0, 0.0, 1.0 );
+    spiro( params(i,:), 1 );
   endfor
 
   ## Don't forget to call plend() to finish off!
@@ -90,7 +99,7 @@ endfunction
 
 ## ===============================================================
 
-function spiro(params)
+  function spiro(params, fill)
   
   NPNT=20000;
 
@@ -125,7 +134,11 @@ function spiro(params)
   plwind( xmin, xmax, ymin, ymax );
   
   plcol0(1);
-  plline( xcoord, ycoord );
+  if ( fill )
+    plfill( xcoord, ycoord );
+  else
+    plline( xcoord, ycoord );
+  endif
 
 endfunction
 ## Log-linear plot.

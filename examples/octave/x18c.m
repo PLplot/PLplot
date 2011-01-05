@@ -68,7 +68,8 @@ function ix18c
     if (opt(k+1))
       plline3( x', y', z' );
     else
-      plpoin3( x', y', z', 1 );
+      ## U+22C5 DOT OPERATOR.
+      plstring3( x', y', z', "⋅" );
     endif
 
     plcol0(3);
