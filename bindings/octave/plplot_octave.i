@@ -1138,6 +1138,7 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
   printf("nlegend = %d\n", nlegend);
   for(i=0;i<nlegend;i++) {
     printf("opt_array[%d] = %d\n", i, opt_array[i]);
+    printf("strlen(text[%d]) = %d\n", i, strlen(text[i]));
     printf("text[%d] = %s\n", i, text[i]);
   }
 }
@@ -1145,8 +1146,7 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
 
 // No count but check consistency with previous
 %typemap(in) char **ArrayCk (charMatrix temp) {
-  int i;
-  int max_length;
+  int i, max_length, non_blank_length;
   if ( _n_dims($input) > 2 )
       { error("argument must be a scalar or vector or matrix"); SWIG_fail; }
   if ( _dim($input, 0) != Alen )
@@ -1157,13 +1157,28 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
   temp = $input.char_matrix_value();
   for(i=0; i<Alen; i++) {
     // Must copy string to "permanent" location because the string
-    // location corresponding to tmp.c_str() gets
+    // location corresponding to tmp_cstring gets
     // overwritten for each iteration of loop.
-    std::string tmp_cxxstring = temp.row_as_string(i);
+    const char *tmp_cstring = temp.row_as_string(i).c_str();
     $1[i] = new char[max_length];
-    strncpy( $1[i], tmp_cxxstring.c_str(), max_length-1 );
-    $1[i][max_length] = '\0';
+    strncpy( $1[i], tmp_cstring, max_length-1 );
+    $1[i][max_length-1] = '\0';
+    // remove trailing-blank padding that is used by the
+    // charMatrix class to insure all strings in a given
+    // charMatrix instance have the same length.
+    // This transformation also removes legitimate trailing
+    // blanks but there is nothing we can do about that
+    // for the charMatrix class.
+
+    // Look for trailing nulls first (just in case, although that
+    // shouldn't happen if charMatrix implemented as documented)
+    // before looking for trailing blanks.
+    non_blank_length = max_length-2;
+    while(non_blank_length >= 0 && $1[i][non_blank_length--] == '\0') {}
+    while(non_blank_length >= 0 && $1[i][non_blank_length--] == ' ') {}
+    $1[i][non_blank_length+1] = '\0';
   }
+  
 }
 %typemap(freearg) char **ArrayCk {
   int i;
@@ -1177,8 +1192,6 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
 // dealings with all types of octave string arrays.
 void testppchar(PLINT n, const PLINT *Array, const char **ArrayCk);
 
-// Deal with these later.
-%ignore pllegend;
 // Probably never deal with this one.
 %ignore plMinMax2dGrid;
 // swig-compatible common PLplot API definitions from here on.
