@@ -56,6 +56,110 @@ special_symbols = [
 "✽",
 "✦",
 ]
+
+def plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title ):
+    pladv( 0 )
+    # Setup color palette 1
+    plspal1( "cmap1_blue_red.pal", 1 )
+
+    n = len(values)
+    color_step = 1.0 / float(n - 1)
+    colors = color_step*arange(n)
+
+    opt = PL_COLORBAR_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_HIGH
+
+    if bar_type & PL_COLORBAR_SHADE_LABEL:
+        axis_opts_1 = "iv"
+        axis_opts_2 = "i"
+    else:
+        if sub_ticks != 0:
+            axis_opts_1 = "stv"
+            axis_opts_2 = "st"
+        else:
+            axis_opts_1 = "tv"
+            axis_opts_2 = "t"
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_1, "Test label - Left, High Cap",
+                colors, values )
+
+    opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_LOW
+
+    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_1, "Test label - Right, Low Cap",
+                colors, values )
+
+    opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_HIGH
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_2, "Test label - Upper, High Cap",
+                colors, values )
+
+    opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_LOW
+
+    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_2, "Test label - Lower, Low Cap",
+                colors, values )
+
+    plvpor( 0.0, 1.0, 0.0, 1.0 )
+    plwind( 0.0, 1.0, 0.0, 1.0 )
+    plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title )
+
+def plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title ):
+    pladv( 0 )
+    # Setup color palette 1
+    plspal1( "cmap1_blue_yellow.pal", 1 )
+
+    n = len(values)
+    color_step = 1.0 / float(n - 1)
+    colors = color_step*arange(n)
+    opt = PL_COLORBAR_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_LOW
+
+    if bar_type == PL_COLORBAR_SHADE_LABEL:
+        axis_opts_1 = ""
+        axis_opts_2 = ""
+    else:
+        if sub_ticks != 0:
+            axis_opts_1 = "stv"
+            axis_opts_2 = "st"
+        else:
+            axis_opts_1 = "tv"
+            axis_opts_2 = "t"
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_1, "Test label - Left, Low Cap",
+                colors, values )
+
+    opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_HIGH
+
+    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_1, "Test label - Right, High Cap",
+                colors, values )
+
+    opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_LOW
+
+    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_2, "Test label - Upper, Low Cap",
+                colors, values )
+
+    opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_HIGH
+
+    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+                ticks, sub_ticks,
+                axis_opts_2, "Test label - Lower, High Cap",
+                colors, values )
+
+    plvpor( 0.0, 1.0, 0.0, 1.0 )
+    plwind( 0.0, 1.0, 0.0, 1.0 )
+    plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title )
+
 def main():
     # First page illustrating the 16 standard positions.
     pladv(0)
@@ -584,4 +688,14 @@ def main():
               symbol_colors, symbol_scales, symbol_numbers, symbols )
     max_height = max(max_height, legend_height)
 
+    # Color bar examples
+    values_small = [ 0.0, 1.0 ]
+    values_uneven = [ 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 ]
+    values_even = [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 ]
+    plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
+    plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
+    plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0.0, 0, values_uneven, "Shade Color Bars - Uneven Steps" )
+    plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0, 3, values_even, "Shade Color Bars - Even Steps" )
+    plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
+    plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
 main()
