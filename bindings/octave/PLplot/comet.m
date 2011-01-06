@@ -54,7 +54,7 @@ function comet(x, y, p)
 
   [r, g, b] = plgcol0(1);
   plscol0(1, 255, 0, 255);
-  plcol(1);
+  plcol0(1);
   pllsty(1);
 
   old_hold = ishold;

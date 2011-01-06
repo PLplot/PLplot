@@ -53,7 +53,7 @@ function __pl_meshplotit()
     __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
   endif
   
-  plcol(15);pllsty(1);
+  plcol0(15);pllsty(1);
   if (__pl.multi(strm) == 1)	# multiplot, erase current subwindow
     plclear;
   else
@@ -66,7 +66,7 @@ function __pl_meshplotit()
   plbox3("bnstu", tdeblank(__pl.xlabel(strm,:)), 0.0, 0,
 	 "bnstu", tdeblank(__pl.ylabel(strm,:)), 0.0, 0,
 	 "bcmnstuv", tdeblank(__pl.zlabel(strm,:)), 0.0, 0);
-  plcol(1)
+  plcol0(1);
 
   nlev = 10;
   st = (zM-zm)/nlev/2;
@@ -110,7 +110,7 @@ function __pl_meshplotit()
 
   endfor
   
-  plcol(15);
+  plcol0(15);
   plmtex("t", 1, 0.5,0.5, tdeblank(__pl.tlabel(strm,:)));
   plflush;
 

@@ -83,7 +83,7 @@ function fill(x, y, c)
       ## endif
       
       if (!ishold)
-	plcol(15);
+	plcol0(15);
 	__pl_plenv(xmin, xmax, ymin, ymax, 0, -1);
 	hold on;
       endif

@@ -61,7 +61,7 @@ function __pl_contour(x, y, z, n)
     __pl.pllsty(strm) = 1;	
     __pl.lab_pos(strm) = 1;
     __pl.lab_str = "";
-    plcol(15); pllsty(1);
+    plcol0(15); pllsty(1);
     __pl_plenv(xm, xM, ym, yM, 0, grid);
   else
     if (columns(__pl.axis(strm,:)) != 6)
@@ -85,7 +85,7 @@ function __pl_contour(x, y, z, n)
   endif	
 
   for i=1:n
-    plcol(__pl.plcol(strm)); pllsty(__pl.pllsty(strm));
+    plcol0(__pl.plcol(strm)); pllsty(__pl.pllsty(strm));
     plcont(z, 1, xlen, 1, ylen, clevel(i), tr);
     __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", clevel(i))];
     __pl.lab_col(strm,__pl.lab_pos(strm)) = __pl.plcol(strm);
@@ -102,7 +102,7 @@ function __pl_contour(x, y, z, n)
     __pl_draw_legend
   endif
 
-  plcol(15);
+  plcol0(15);
   pllab(tdeblank(__pl.xlabel(strm,:)),
 	tdeblank(__pl.ylabel(strm,:)),
 	tdeblank(__pl.tlabel(strm,:)));

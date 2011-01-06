@@ -58,7 +58,7 @@ function __pl_plot3(x, y, z, c)
     endif
     
     if (!ishold)
-      plcol(15);
+      plcol0(15);
       __pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
       pllab("", "", tdeblank(__pl.tlabel(strm,:)));
       plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM,...
@@ -68,7 +68,7 @@ function __pl_plot3(x, y, z, c)
 	     "bcdmnstuv", tdeblank(__pl.zlabel(strm,:)), 0.0, 0)
     endif
 
-    plcol(color)
+    plcol0(color)
 
     switch (style)
       case (1)

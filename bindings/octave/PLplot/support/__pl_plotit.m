@@ -90,7 +90,7 @@ function __pl_plotit
   endif
   
   ## set plot limits, plot box, grid and axis type  
-  plcol(15); pllsty(1);
+  plcol0(15); pllsty(1);
   if (__pl.type(strm) == -1)  # polar plot is special
     __pl_plenv(__pl_lxm, __pl_lxM, __pl_lym, __pl_lyM, 1, __pl.type(strm));
     if (__pl.grid(strm) == 1)
@@ -190,7 +190,7 @@ function __pl_plotit
 	endif
 	
 	if (lab != "") ## log plots may have a CTRL-A as the label plot
-	  plcol(__pl.plcol(strm));
+	  plcol0(__pl.plcol(strm));
 	  __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
 	  pllsty(__pl.pllsty(strm));
 	  if  (__pl.line_style(strm))
@@ -275,7 +275,7 @@ function __pl_plotit
     __pl_draw_legend
   endif
 
-  plcol(15);
+  plcol0(15);
   pllab(tdeblank(__pl.xlabel(strm,:)), tdeblank(__pl.ylabel(strm,:)), tdeblank(__pl.tlabel(strm,:)));
   plflush;
 

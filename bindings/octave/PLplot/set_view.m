@@ -61,7 +61,7 @@ function set_view (alt, az, varargin)
     xm = ym = zm = 0;
     xM = yM = zM = 1;
 
-    plcol(15);
+    plcol0(15);
 
     __pl_plenv(-1.5, 1.5, -1.5, 2.5, 0, -2);
     plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, alt, az)

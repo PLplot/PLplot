@@ -51,7 +51,7 @@ function arrow (coord, mag, rot, col)
     
     xx = (x .* t(1,1) .+ y .* t(2,1)) .* mag + coord(1);
     yy = (x .* t(1,2) .+ y .* t(2,2)) .* mag + coord(2);
-    plcol(col);plline(xx,yy);
+    plcol0(col);plline(xx,yy);
     plflush; pleop;
 
   endif	

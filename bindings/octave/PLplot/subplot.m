@@ -101,7 +101,7 @@ function subplot (rows, columns, index)
       pladv(index);
       plvpor(0,1,0,1)
       plwind(0,1,0,1)
-      plcol(0); plpsty(0)
+      plcol0(0); plpsty(0)
       plfill([0; 1; 1; 0],[0; 0; 1; 1]);
       plflush; pleop;
     else

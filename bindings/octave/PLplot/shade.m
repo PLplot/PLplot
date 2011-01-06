@@ -103,7 +103,7 @@ function shade(x, y, z, levels, cont )
     endif
     
     __pl.plcol(strm) = 1;
-    plcol(15);pllsty(1);
+    plcol0(15);pllsty(1);
     __pl_plenv(xm, xM, ym, yM, 0, -2);
   else
     if (columns(__pl.axis(strm,:)) != 6)
@@ -175,10 +175,10 @@ function shade(x, y, z, levels, cont )
   endfor
 
   if (__pl.grid(strm))		# this has to be done after shading
-    plcol(15);
+    plcol0(15);
     plbox("bcnsgt",0,0,"bcnsgtv",0,0)
   else
-    plcol(15);
+    plcol0(15);
     plbox("bcnst",0,0,"bcnstv",0,0)
   endif
 
@@ -186,7 +186,7 @@ function shade(x, y, z, levels, cont )
     __pl_draw_legend;
   endif
 
-  plcol(15);
+  plcol0(15);
   pllab(tdeblank(__pl.xlabel(strm,:)), tdeblank(__pl.ylabel(strm,:)), tdeblank(__pl.tlabel(strm,:)));
 
   plflush;

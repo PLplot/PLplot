@@ -51,7 +51,7 @@ function __pl_fill(x, y, c)
     endif
     
     if (!ishold)
-      plcol(15);
+      plcol0(15);
       __pl_plenv(min(x), max(x), min(y), max(y), 0, -1);
     endif
     
@@ -60,17 +60,17 @@ function __pl_fill(x, y, c)
       coln = ['r','g','b','c','m','y','w','k'];
       coli = [2, 4, 10, 12, 14, 3, 16, 1];
       col = coli(find(c == coln))-1;
-      plcol(col);
+      plcol0(col);
     elseif (isscalar(c))
       if (ceil(c) == c)	#integer
-	plcol(c);
+	plcol0(c);
       else
 	plcol1(c);
       endif
     elseif (isvector(c) & length(c) == 3)
       ## FIXME -- color 15 became permanently set!
       plscol0(15, c(1), c(2), c(3));
-      plcol(15);
+      plcol0(15);
     elseif (isvector(c) & length(x) == length(x))
       
       ## If C is a vector the same length as X and Y, its elements are

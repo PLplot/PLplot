@@ -159,7 +159,7 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
     yopt = strrep (yopt, "n", "");
   endif
 
-  plcol(15); pllsty(1);
+  plcol0(15); pllsty(1);
   plbox(xopt, __pl.xticks(strm,1), __pl.xticks(strm,2),
 	yopt, __pl.yticks(strm,1), __pl.yticks(strm,2));            
   

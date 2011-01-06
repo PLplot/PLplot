@@ -91,7 +91,7 @@ function plot3 (x, y, z, fmt)
       h_st = ishold;
       
       if (!ishold)
-	plcol(15);
+	plcol0(15);
 	__pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
 	pllab("", "", tdeblank(__pl.tlabel(strm,:)));
 	plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM,...

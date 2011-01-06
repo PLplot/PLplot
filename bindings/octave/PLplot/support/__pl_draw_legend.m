@@ -46,9 +46,9 @@ function __pl_draw_legend(xm, xM, ym, yM)
   yyb = (__pl.legend_ypos(strm) - ch_height * k);
 
   if (__pl.legend(strm) == 2)	# opaque
-    plcol(0);	# background color (erase lines behind legend)
+    plcol0(0);	# background color (erase lines behind legend)
     plfill([xxl;xxr;xxr;xxl], [yyb; yyb; yyt; yyt])
-    plcol(15);pllsty(1);
+    plcol0(15);pllsty(1);
     plline([xxl;xxr;xxr;xxl;xxl], [yyb; yyb; yyt; yyt;yyb])
   endif
 
@@ -71,7 +71,7 @@ function __pl_draw_legend(xm, xM, ym, yM)
 	      min_color, min_width, max_color, max_width, 1, tr);
     endfor
     endif
-    plcol(15);pllsty(1);
+    plcol0(15);pllsty(1);
     plline([xxl;xxr;xxr;xxl;xxl], [yyb; yyb; yyt; yyt;yyb]);
   endif
 
@@ -81,10 +81,10 @@ function __pl_draw_legend(xm, xM, ym, yM)
       xx = __pl.legend_xpos(strm);
       yy = (__pl.legend_ypos(strm) - ch_height * k++ );
       
-      plcol(15);
+      plcol0(15);
       plptex(xx, yy, 0, 0, __pl.legend_xpos(strm), __pl.lab_str(i,:));
       if(__pl.type(strm) != -2)
-			plcol(__pl.lab_col(strm,i)); pllsty(__pl.lab_lsty(strm,i));
+			plcol0(__pl.lab_col(strm,i)); pllsty(__pl.lab_lsty(strm,i));
 			plline([xxl; xxr],[yy-ch_height/2; yy-ch_height/2]);
 			try
 				if (__pl.lab_sym(strm,i) != 0)
