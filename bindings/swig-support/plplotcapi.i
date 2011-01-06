@@ -111,6 +111,22 @@ typedef void*  PLPointer;
 #define PL_LEGEND_INSIDE          4096
 #define PL_LEGEND_OUTSIDE         8192
 
+// Flags for plcolorbar
+#define PL_COLORBAR_LEFT            1
+#define PL_COLORBAR_RIGHT           2
+#define PL_COLORBAR_UPPER           4
+#define PL_COLORBAR_LOWER           8
+#define PL_COLORBAR_LABEL_LEFT      16
+#define PL_COLORBAR_LABEL_RIGHT     32
+#define PL_COLORBAR_LABEL_UPPER     64
+#define PL_COLORBAR_LABEL_LOWER     128
+#define PL_COLORBAR_IMAGE           256
+#define PL_COLORBAR_SHADE           512
+#define PL_COLORBAR_GRADIENT        1024
+#define PL_COLORBAR_CAP_LOW         2048
+#define PL_COLORBAR_CAP_HIGH        4096
+#define PL_COLORBAR_SHADE_LABEL     8192
+
 // Window parameter tags
 
 #define PLSWIN_DEVICE    1              // device coordinates
@@ -543,8 +559,14 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
             const PLINT *ArrayCk, const PLFLT *ArrayCk,
             const PLINT *ArrayCk, const char **ArrayCk );
 
-%feature( "autodoc", "Set position of the light source." ) pllightsource;
+%feature( "autodoc", "Create a continous colorbar using an image, shade, or gradient with an optional axis label." ) plcolorbar;
+void
+plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              PLFLT ticks, PLINT sub_ticks,
+              const char *axis_opts, const char *label,
+              PLINT n, PLFLT *Array, PLFLT *ArrayCk );
 
+%feature( "autodoc", "Set position of the light source." ) pllightsource;
 void
 pllightsource( PLFLT x, PLFLT y, PLFLT z );
 
