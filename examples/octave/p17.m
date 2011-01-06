@@ -17,6 +17,11 @@ function p17(fg)
   global pl_automatic_replot
   t = pl_automatic_replot;
   pl_automatic_replot = 0;
+ 
+  if(!exist('imread'))
+    warning('Example p17 requires imread from octave-forge');
+    return;
+  end
 
   title "Click and Drag button 1 to select";
   xlabel "Button 2 to restart and button 3 to finish";
