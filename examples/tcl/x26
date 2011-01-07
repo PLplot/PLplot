@@ -12,7 +12,32 @@
 #\
 exec pltcl -f "$0" ${1+"$@"}
 
-source x26.tcl
+#
+# This example uses UTF-8 characters, placed directly in the source code
+#
+if { [encoding system] != "utf-8" } {
+    if { [package vsatisfies [info patch] 8.5] } {
+
+        source -encoding utf-8 x26.tcl
+
+    } else {
+
+        #
+        # Pre-Tcl 8.5
+        #
+        set infile [open "x26.tcl"]
+        set contents [read $infile]
+        close $infile
+        eval [encoding convertfrom utf-8 \
+            [encoding convertto [encoding system] $contents]]
+    }
+} else {
+
+    #
+    # Plain source will do
+    #
+    source x26.tcl
+}
 
 plinit
 x26
