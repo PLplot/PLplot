@@ -1174,8 +1174,8 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
     // shouldn't happen if charMatrix implemented as documented)
     // before looking for trailing blanks.
     non_blank_length = max_length-2;
-    while(non_blank_length >= 0 && $1[i][non_blank_length--] == '\0') {}
-    while(non_blank_length >= 0 && $1[i][non_blank_length--] == ' ') {}
+    while(non_blank_length >= 0 && $1[i][non_blank_length] == '\0') {non_blank_length--;}
+    while(non_blank_length >= 0 && $1[i][non_blank_length] == ' ') {non_blank_length--;}
     $1[i][non_blank_length+1] = '\0';
   }
   
