@@ -240,6 +240,8 @@ typedef struct
 #define SWIG_OBJECT_DATA_img    OBJECT_DATA_img
 #endif
 
+%feature( "autodoc", "1" );
+
 #ifdef SWIG_PYTHON
 
 // Non-common API that are included here because they traditionally
