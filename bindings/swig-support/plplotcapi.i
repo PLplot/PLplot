@@ -249,14 +249,14 @@ typedef struct
 // Deprecated function that we no longer want to propagate to the
 // python API.
 
-%feature( "autodoc", "Plot an arrow." ) plarrows;
+%feature( "docstring", "Plot an arrow." ) plarrows;
 void
 plarrows( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
           PLFLT scale, PLFLT dx, PLFLT dy );
 
 #endif
 
-%feature( "autodoc", "Set inferior X window." ) plsxwin;
+%feature( "docstring", "Set inferior X window." ) plsxwin;
 void
 plsxwin( PLINT window_id );
 
@@ -264,73 +264,73 @@ plsxwin( PLINT window_id );
 
 // Complete list of common API (has "c_" suffix version defined in plplot.h)
 
-%feature( "autodoc", "Set the format of the contour labels." )
+%feature( "docstring", "Set the format of the contour labels." )
 pl_setcontlabelformat;
 void
 pl_setcontlabelformat( PLINT lexp, PLINT sigdig );
 
-%feature( "autodoc", "Set offset and spacing of contour labels." ) pl_setcontlabelparam;
+%feature( "docstring", "Set offset and spacing of contour labels." ) pl_setcontlabelparam;
 void
 pl_setcontlabelparam( PLFLT offset, PLFLT size, PLFLT spacing, PLINT active );
 
-%feature( "autodoc", "Advance to subpage \"page\", or to the next one if \"page\" = 0." ) pladv;
+%feature( "docstring", "Advance to subpage \"page\", or to the next one if \"page\" = 0." ) pladv;
 void
 pladv( PLINT page );
 
-%feature( "autodoc", "Plot an arc" ) plarc;
+%feature( "docstring", "Plot an arc" ) plarc;
 void
 plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
        PLBOOL fill );
 
-%feature( "autodoc", "This functions similarly to plbox() except that the origin of the axes is placed at the user-specified point (x0, y0)." ) plaxes;
+%feature( "docstring", "This functions similarly to plbox() except that the origin of the axes is placed at the user-specified point (x0, y0)." ) plaxes;
 void
 plaxes( PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
         const char *yopt, PLFLT ytick, PLINT nysub );
 
-%feature( "autodoc", "Plot a histogram using x to store data values and y to store frequencies." ) plbin;
+%feature( "docstring", "Plot a histogram using x to store data values and y to store frequencies." ) plbin;
 void
 plbin( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT center );
 
-%feature( "autodoc", "Calculate broken-down time from continuous time for current stream." ) plbtime;
+%feature( "docstring", "Calculate broken-down time from continuous time for current stream." ) plbtime;
 void
 plbtime( PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLFLT *OUTPUT, PLFLT ctime );
 
-%feature( "autodoc", "Start new page.  Should only be used with pleop()." ) plbop;
+%feature( "docstring", "Start new page.  Should only be used with pleop()." ) plbop;
 void
 plbop( void );
 
-%feature( "autodoc", "Draw a box around the current viewport." ) plbox;
+%feature( "docstring", "Draw a box around the current viewport." ) plbox;
 void
 plbox( const char *xopt, PLFLT xtick, PLINT nxsub,
        const char *yopt, PLFLT ytick, PLINT nysub );
 
-%feature( "autodoc", "This is the 3-d analogue of plbox()." ) plbox3;
+%feature( "docstring", "This is the 3-d analogue of plbox()." ) plbox3;
 void
 plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
         const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz );
 
-%feature( "autodoc", "Calculate world coordinates and subpage from relative device coordinates." ) plcalc_world;
+%feature( "docstring", "Calculate world coordinates and subpage from relative device coordinates." ) plcalc_world;
 void
 plcalc_world( PLFLT rx, PLFLT ry, PLFLT *OUTPUT, PLFLT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Clear current subpage." ) plclear;
+%feature( "docstring", "Clear current subpage." ) plclear;
 void
 plclear( void );
 
-%feature( "autodoc", "Set color, map 0.  Argument is integer between 0 and 15." ) plcol0;
+%feature( "docstring", "Set color, map 0.  Argument is integer between 0 and 15." ) plcol0;
 void
 plcol0( PLINT icol0 );
 
-%feature( "autodoc", "Set color, map 1.  Argument is a float between 0. and 1." ) plcol1;
+%feature( "docstring", "Set color, map 1.  Argument is a float between 0. and 1." ) plcol1;
 void
 plcol1( PLFLT col1 );
 
-%feature( "autodoc", "Configure transformation between continuous and broken-down time (and vice versa) for current stream." ) plconfigtime;
+%feature( "docstring", "Configure transformation between continuous and broken-down time (and vice versa) for current stream." ) plconfigtime;
 void
 plconfigtime( PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec );
 
-%feature( "autodoc", "Draw a contour plot." ) plcont;
+%feature( "docstring", "Draw a contour plot." ) plcont;
 void
 plcont( PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
         PLINT ky, PLINT ly, PLFLT *Array, PLINT n,
@@ -338,181 +338,181 @@ plcont( PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
         PLPointer SWIG_OBJECT_DATA );
 
 
-%feature( "autodoc", "Calculate continuous time from broken-down time for current stream." ) plctime;
+%feature( "docstring", "Calculate continuous time from broken-down time for current stream." ) plctime;
 void
 plctime( PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Copy state parameters from the reference stream to the current stream." ) plcpstrm;
+%feature( "docstring", "Copy state parameters from the reference stream to the current stream." ) plcpstrm;
 void
 plcpstrm( PLINT iplsr, PLBOOL flags );
 
-%feature( "autodoc", "End a plotting session for all open streams." ) plend;
+%feature( "docstring", "End a plotting session for all open streams." ) plend;
 void
 plend( void );
 
-%feature( "autodoc", "End a plotting session for the current stream only." ) plend1;
+%feature( "docstring", "End a plotting session for the current stream only." ) plend1;
 void
 plend1( void );
 
-%feature( "autodoc", "Simple interface for defining viewport and window." ) plenv;
+%feature( "docstring", "Simple interface for defining viewport and window." ) plenv;
 void
 plenv( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
        PLINT just, PLINT axis );
 
-%feature( "autodoc", "Simple interface for defining viewport and window." ) plenv0;
+%feature( "docstring", "Simple interface for defining viewport and window." ) plenv0;
 void
 plenv0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
         PLINT just, PLINT axis );
 
-%feature( "autodoc", "End current page.  Should only be used with plbop()." ) pleop;
+%feature( "docstring", "End current page.  Should only be used with plbop()." ) pleop;
 void
 pleop( void );
 
-%feature( "autodoc", "Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i))." ) plerrx;
+%feature( "docstring", "Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i))." ) plerrx;
 void
 plerrx( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
 
-%feature( "autodoc", "Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i))." ) plerry;
+%feature( "docstring", "Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i))." ) plerry;
 void
 plerry( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
 
-%feature( "autodoc", "Advance to the next family file on the next new page." ) plfamadv;
+%feature( "docstring", "Advance to the next family file on the next new page." ) plfamadv;
 void
 plfamadv( void );
 
-%feature( "autodoc", "Pattern fills the polygon bounded by the input points." ) plfill;
+%feature( "docstring", "Pattern fills the polygon bounded by the input points." ) plfill;
 void
 plfill( PLINT n, PLFLT *Array, PLFLT *ArrayCk );
 
-%feature( "autodoc", "Pattern fills the 3d polygon bounded by the input points." ) plfill3;
+%feature( "docstring", "Pattern fills the 3d polygon bounded by the input points." ) plfill3;
 void
 plfill3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
 
-%feature( "autodoc", "Renders linear gradient for the polygon bounded by the input points." ) plgradient;
+%feature( "docstring", "Renders linear gradient for the polygon bounded by the input points." ) plgradient;
 void
 plgradient( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT angle );
 
-%feature( "autodoc", "Flush the output stream.  Use sparingly, if at all." ) plflush;
+%feature( "docstring", "Flush the output stream.  Use sparingly, if at all." ) plflush;
 void
 plflush( void );
 
-%feature( "autodoc", "Set the global font flag to 'ifont'." ) plfont;
+%feature( "docstring", "Set the global font flag to 'ifont'." ) plfont;
 void
 plfont( PLINT ifont );
 
-%feature( "autodoc", "Load specified font set." ) plfontld;
+%feature( "docstring", "Load specified font set." ) plfontld;
 void
 plfontld( PLINT fnt );
 
-%feature( "autodoc", "Get character default height and current (scaled) height." ) plgchr;
+%feature( "docstring", "Get character default height and current (scaled) height." ) plgchr;
 void
 plgchr( PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get 8 bit RGB values for given color from color map 0." ) plgcol0;
+%feature( "docstring", "Get 8 bit RGB values for given color from color map 0." ) plgcol0;
 void
 plgcol0( PLINT icol0, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Get 8 bit RGB + alpha values for given color from color map 0." ) plgcol0a;
+%feature( "docstring", "Get 8 bit RGB + alpha values for given color from color map 0." ) plgcol0a;
 void
 plgcol0a( PLINT icol0, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get 8-bit RGB background color." ) plgcolbg;
+%feature( "docstring", "Get 8-bit RGB background color." ) plgcolbg;
 void
 plgcolbg( PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Get 8-bit RGB + alpha background color." ) plgcolbga;
+%feature( "docstring", "Get 8-bit RGB + alpha background color." ) plgcolbga;
 void
 plgcolbga( PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get the current compression setting." ) plgcompression;
+%feature( "docstring", "Get the current compression setting." ) plgcompression;
 void
 plgcompression( PLINT *OUTPUT );
 
-%feature( "autodoc", "Get the current device (keyword) name." ) plgdev;
+%feature( "docstring", "Get the current device (keyword) name." ) plgdev;
 void
 plgdev( char *OUTPUT );
 
-%feature( "autodoc", "Retrieve current window into device space." ) plgdidev;
+%feature( "docstring", "Retrieve current window into device space." ) plgdidev;
 void
 plgdidev( PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get plot orientation." ) plgdiori;
+%feature( "docstring", "Get plot orientation." ) plgdiori;
 void
 plgdiori( PLFLT *OUTPUT );
 
-%feature( "autodoc", "Retrieve current window into plot space." ) plgdiplt;
+%feature( "docstring", "Retrieve current window into plot space." ) plgdiplt;
 void
 plgdiplt( PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get family file parameters." ) plgfam;
+%feature( "docstring", "Get family file parameters." ) plgfam;
 void
 plgfam( PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Get FCI (font characterization integer)." ) plgfci;
+%feature( "docstring", "Get FCI (font characterization integer)." ) plgfci;
 void
 plgfci( PLUNICODE *OUTPUT );
 
-%feature( "autodoc", "Get the (current) output file name." ) plgfnam;
+%feature( "docstring", "Get the (current) output file name." ) plgfnam;
 void
 plgfnam( char *OUTPUT );
 
-%feature( "autodoc", "Get the current font family, style and weight." ) plgfont;
+%feature( "docstring", "Get the current font family, style and weight." ) plgfont;
 void
 plgfont( PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Get the (current) run level." ) plglevel;
+%feature( "docstring", "Get the (current) run level." ) plglevel;
 void
 plglevel( PLINT *OUTPUT );
 
-%feature( "autodoc", "Get output device parameters." ) plgpage;
+%feature( "docstring", "Get output device parameters." ) plgpage;
 void
 plgpage( PLFLT *OUTPUT, PLFLT *OUTPUT,
          PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Switch to graphics screen." ) plgra;
+%feature( "docstring", "Switch to graphics screen." ) plgra;
 void
 plgra( void );
 
-%feature( "autodoc", "Grid irregular sample data." ) plgriddata;
+%feature( "docstring", "Grid irregular sample data." ) plgriddata;
 void
 plgriddata( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
             PLFLT *ArrayX, PLINT nx, PLFLT *ArrayY, PLINT ny,
             PLFLT **OutMatrixCk, PLINT type, PLFLT data );
 
 
-%feature( "autodoc", "Get subpage boundaries in absolute coordinates." ) plgspa;
+%feature( "docstring", "Get subpage boundaries in absolute coordinates." ) plgspa;
 void
 plgspa( PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get current stream number." ) plgstrm;
+%feature( "docstring", "Get current stream number." ) plgstrm;
 void
 plgstrm( PLINT *OUTPUT );
 
-%feature( "autodoc", "Get current library version number." ) plgver;
+%feature( "docstring", "Get current library version number." ) plgver;
 void
 plgver( char *OUTPUT );
 
-%feature( "autodoc", "Get viewport boundaries in normalized device coordinates." ) plgvpd;
+%feature( "docstring", "Get viewport boundaries in normalized device coordinates." ) plgvpd;
 void
 plgvpd( PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get viewport boundaries in world coordinates." ) plgvpw;
+%feature( "docstring", "Get viewport boundaries in world coordinates." ) plgvpw;
 void
 plgvpw( PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Get x axis labeling parameters." ) plgxax;
+%feature( "docstring", "Get x axis labeling parameters." ) plgxax;
 void
 plgxax( PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Get y axis labeling parameters." ) plgyax;
+%feature( "docstring", "Get y axis labeling parameters." ) plgyax;
 void
 plgyax( PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Get z axis labeling parameters." ) plgzax;
+%feature( "docstring", "Get z axis labeling parameters." ) plgzax;
 void
 plgzax( PLINT *OUTPUT, PLINT *OUTPUT );
 
-%feature( "autodoc", "Draw histogram." ) plhist;
+%feature( "docstring", "Draw histogram." ) plhist;
 void
 plhist( PLINT n, PLFLT *Array, PLFLT datmin, PLFLT datmax,
         PLINT nbin, PLINT oldwin );
@@ -521,28 +521,28 @@ plhist( PLINT n, PLFLT *Array, PLFLT datmin, PLFLT datmax,
 // Deprecated function that we no longer want to propagate to the
 // python API.
 
-%feature( "autodoc", "Set current color (map 0) by hue, lightness, and saturation." ) plhls;
+%feature( "docstring", "Set current color (map 0) by hue, lightness, and saturation." ) plhls;
 void
 plhls( PLFLT h, PLFLT l, PLFLT s );
 #endif
 
-%feature( "autodoc", "Transform from HLS to RGB form of colours." ) plhlsrgb;
+%feature( "docstring", "Transform from HLS to RGB form of colours." ) plhlsrgb;
 void
 plhlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Initialize PLplot, using preset or default options." ) plinit;
+%feature( "docstring", "Initialize PLplot, using preset or default options." ) plinit;
 void
 plinit( void );
 
-%feature( "autodoc", "Draw a line segment from (x1, y1) to (x2, y2)." ) pljoin;
+%feature( "docstring", "Draw a line segment from (x1, y1) to (x2, y2)." ) pljoin;
 void
 pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 
-%feature( "autodoc", "Label graphs." ) pllab;
+%feature( "docstring", "Label graphs." ) pllab;
 void
 pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
-%feature( "autodoc", "Create a discrete annotated legend using boxes, lines, and/or lines of symbols." ) pllegend;
+%feature( "docstring", "Create a discrete annotated legend using boxes, lines, and/or lines of symbols." ) pllegend;
 void
 pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
             PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
@@ -559,249 +559,249 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
             const PLINT *ArrayCk, const PLFLT *ArrayCk,
             const PLINT *ArrayCk, const char **ArrayCk );
 
-%feature( "autodoc", "Create a continous colorbar using an image, shade, or gradient with an optional axis label." ) plcolorbar;
+%feature( "docstring", "Create a continous colorbar using an image, shade, or gradient with an optional axis label." ) plcolorbar;
 void
 plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
               PLINT n, PLFLT *Array, PLFLT *ArrayCk );
 
-%feature( "autodoc", "Set position of the light source." ) pllightsource;
+%feature( "docstring", "Set position of the light source." ) pllightsource;
 void
 pllightsource( PLFLT x, PLFLT y, PLFLT z );
 
-%feature( "autodoc", "Draw line segments connecting a series of points." ) plline;
+%feature( "docstring", "Draw line segments connecting a series of points." ) plline;
 void
 plline( PLINT n, PLFLT *Array, PLFLT *ArrayCk );
 
-%feature( "autodoc", "Draw a line in 3 space." ) plline3;
+%feature( "docstring", "Draw a line in 3 space." ) plline3;
 void
 plline3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
 
-%feature( "autodoc", "Set line style." ) pllsty;
+%feature( "docstring", "Set line style." ) pllsty;
 void
 pllsty( PLINT lin );
 
-%feature( "autodoc", "Plot a 3-d mesh representation of z[x][y]." ) plmesh;
+%feature( "docstring", "Plot a 3-d mesh representation of z[x][y]." ) plmesh;
 void
 plmesh( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
         PLINT nx, PLINT ny, PLINT opt );
 
-%feature( "autodoc", "Plot a 3-d contoured mesh representation of the function z[x][y]." ) plmeshc;
+%feature( "docstring", "Plot a 3-d contoured mesh representation of the function z[x][y]." ) plmeshc;
 void
 plmeshc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
 
-%feature( "autodoc", "Create a new stream and makes it the default." ) plmkstrm;
+%feature( "docstring", "Create a new stream and makes it the default." ) plmkstrm;
 void
 plmkstrm( PLINT *OUTPUT );
 
-%feature( "autodoc", "Print \"text\" at specified position relative to viewport." ) plmtex;
+%feature( "docstring", "Print \"text\" at specified position relative to viewport." ) plmtex;
 void
 plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         const char *text );
 
-%feature( "autodoc", "Print \"text\" at specified position relative to 3D viewport." ) plmtex3;
+%feature( "docstring", "Print \"text\" at specified position relative to 3D viewport." ) plmtex3;
 void
 plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
          const char *text );
 
-%feature( "autodoc", "Plot a 3-d representation of the function z[x][y]." ) plot3d;
+%feature( "docstring", "Plot a 3-d representation of the function z[x][y]." ) plot3d;
 void
 plot3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
         PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
 
-%feature( "autodoc", "Plot a 3-d contoured representation of the function z[x][y]." ) plot3dc;
+%feature( "docstring", "Plot a 3-d contoured representation of the function z[x][y]." ) plot3dc;
 void
 plot3dc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
 
-%feature( "autodoc", "Plot a 3-d contoured representation of the function z[x][y] with limits on the y index." ) plot3dcl;
+%feature( "docstring", "Plot a 3-d contoured representation of the function z[x][y] with limits on the y index." ) plot3dcl;
 void
 plot3dcl( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
           PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n,
           PLINT ixstart, PLINT n, PLINT *Array, PLINT *ArrayCk );
 
-%feature( "autodoc", "Plot a 3-d contoured surface representation of the function z[x][y]." ) plsurf3d;
+%feature( "docstring", "Plot a 3-d contoured surface representation of the function z[x][y]." ) plsurf3d;
 void
 plsurf3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
           PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
 
-%feature( "autodoc", "Plot a 3-d contoured surface representation of the function z[x][y] with limits on the y index." ) plsurf3dl;
+%feature( "docstring", "Plot a 3-d contoured surface representation of the function z[x][y] with limits on the y index." ) plsurf3dl;
 void
 plsurf3dl( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
            PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n,
            PLINT ixstart, PLINT n, PLINT *Array, PLINT *ArrayCk );
 
-%feature( "autodoc", "Process options list using current options info." ) plparseopts;
+%feature( "docstring", "Process options list using current options info." ) plparseopts;
 PLINT
 plparseopts( int *p_argc, const char **argv, PLINT mode );
 
-%feature( "autodoc", "Set fill pattern directly." ) plpat;
+%feature( "docstring", "Set fill pattern directly." ) plpat;
 void
 plpat( PLINT n, PLINT *Array, PLINT *ArrayCk );
 
-%feature( "autodoc", "Plot array y against x for n points using ASCII code \"code\"." ) plpoin;
+%feature( "docstring", "Plot array y against x for n points using ASCII code \"code\"." ) plpoin;
 void
 plpoin( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT code );
 
-%feature( "autodoc", "Draw a series of points in 3 space." ) plpoin3;
+%feature( "docstring", "Draw a series of points in 3 space." ) plpoin3;
 void
 plpoin3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT code );
 
-%feature( "autodoc", "Draw a polygon in 3 space." ) plpoly3;
+%feature( "docstring", "Draw a polygon in 3 space." ) plpoly3;
 void
 plpoly3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLBOOL *ArrayCkMinus1,
          PLBOOL flag );
 
-%feature( "autodoc", "Set the floating point precision (in number of places) in numeric labels." ) plprec;
+%feature( "docstring", "Set the floating point precision (in number of places) in numeric labels." ) plprec;
 void
 plprec( PLINT setp, PLINT prec );
 
-%feature( "autodoc", "Set fill pattern, using one of the predefined patterns." ) plpsty;
+%feature( "docstring", "Set fill pattern, using one of the predefined patterns." ) plpsty;
 void
 plpsty( PLINT patt );
 
-%feature( "autodoc", "Print \"text\" at world cooordinates (x,y)." ) plptex;
+%feature( "docstring", "Print \"text\" at world cooordinates (x,y)." ) plptex;
 void
 plptex( PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text );
 
-%feature( "autodoc", "Print \"text\" at world cooordinates (x,y,z)." ) plptex3;
+%feature( "docstring", "Print \"text\" at world cooordinates (x,y,z)." ) plptex3;
 void
 plptex3( PLFLT x, PLFLT y, PLFLT z, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text );
 
-%feature( "autodoc", "Return a random number in the range [0,1]." ) plrandd;
+%feature( "docstring", "Return a random number in the range [0,1]." ) plrandd;
 PLFLT
 plrandd();
 
-%feature( "autodoc", "Replay contents of plot buffer to current device/file." ) plreplot;
+%feature( "docstring", "Replay contents of plot buffer to current device/file." ) plreplot;
 void
 plreplot( void );
 
-%feature( "autodoc", "Transform from RGB to HLS form of colours." ) plrgbhls;
+%feature( "docstring", "Transform from RGB to HLS form of colours." ) plrgbhls;
 void
 plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
-%feature( "autodoc", "Set character height." ) plschr;
+%feature( "docstring", "Set character height." ) plschr;
 void
 plschr( PLFLT def, PLFLT scale );
 
-%feature( "autodoc", "Set color map 0 colors by 8 bit RGB values." ) plscmap0;
+%feature( "docstring", "Set color map 0 colors by 8 bit RGB values." ) plscmap0;
 void
 plscmap0( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n );
 
-%feature( "autodoc", "Set color map 0 colors by 8 bit RGB + alpha values." ) plscmap0a;
+%feature( "docstring", "Set color map 0 colors by 8 bit RGB + alpha values." ) plscmap0a;
 void
 plscmap0a( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLFLT *ArrayCk, PLINT n );
 
-%feature( "autodoc", "Set number of colors in cmap 0." ) plscmap0n;
+%feature( "docstring", "Set number of colors in cmap 0." ) plscmap0n;
 void
 plscmap0n( PLINT ncol0 );
 
-%feature( "autodoc", "Set color map 1 colors by 8 bit RGB values." ) plscmap1;
+%feature( "docstring", "Set color map 1 colors by 8 bit RGB values." ) plscmap1;
 void
 plscmap1( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n );
 
-%feature( "autodoc", "Set color map 1 colors by 8 bit RGB + alpha values." ) plscmap1a;
+%feature( "docstring", "Set color map 1 colors by 8 bit RGB + alpha values." ) plscmap1a;
 void
 plscmap1a( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLFLT *ArrayCk, PLINT n );
 
-%feature( "autodoc", "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or
+%feature( "docstring", "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or
 RGB color space." ) plscmap1l;
 void
 plscmap1l( PLBOOL itype, PLINT n, PLFLT *Array,
            PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
            PLBOOL *ArrayCkMinus1Null );
 
-%feature( "autodoc", "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or
+%feature( "docstring", "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or
 RGB color space + alpha value." ) plscmap1la;
 void
 plscmap1la( PLBOOL itype, PLINT n, PLFLT *Array,
             PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
             PLBOOL *ArrayCkMinus1Null );
 
-%feature( "autodoc", "Set number of colors in cmap 1." ) plscmap1n;
+%feature( "docstring", "Set number of colors in cmap 1." ) plscmap1n;
 void
 plscmap1n( PLINT ncol1 );
 
-%feature( "autodoc", "Set 8-bit RGB value in cmap 0." ) plscol0;
+%feature( "docstring", "Set 8-bit RGB value in cmap 0." ) plscol0;
 void
 plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b );
 
-%feature( "autodoc", "Set 8-bit RGB + alpha value in cmap 0." ) plscol0a;
+%feature( "docstring", "Set 8-bit RGB + alpha value in cmap 0." ) plscol0a;
 void
 plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a );
 
-%feature( "autodoc", "Set the background color using 8-bit RGB value." ) plscolbg;
+%feature( "docstring", "Set the background color using 8-bit RGB value." ) plscolbg;
 void
 plscolbg( PLINT r, PLINT g, PLINT b );
 
-%feature( "autodoc", "Set the background color using 8-bit RGB + alpha value." ) plscolbga;
+%feature( "docstring", "Set the background color using 8-bit RGB + alpha value." ) plscolbga;
 void
 plscolbga( PLINT r, PLINT g, PLINT b, PLFLT a );
 
-%feature( "autodoc", "Globally turn color output on/off." ) plscolor;
+%feature( "docstring", "Globally turn color output on/off." ) plscolor;
 void
 plscolor( PLINT color );
 
-%feature( "autodoc", "Set the compression level." ) plscompression;
+%feature( "docstring", "Set the compression level." ) plscompression;
 void
 plscompression( PLINT compression );
 
-%feature( "autodoc", "Set the device (keyword) name." ) plsdev;
+%feature( "docstring", "Set the device (keyword) name." ) plsdev;
 void
 plsdev( const char *devname );
 
-%feature( "autodoc", "Set window into device space using margin, aspect ratio, and justification." ) plsdidev;
+%feature( "docstring", "Set window into device space using margin, aspect ratio, and justification." ) plsdidev;
 void
 plsdidev( PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy );
 
-%feature( "autodoc", "Set up transformation from metafile coordinates." ) plsdimap;
+%feature( "docstring", "Set up transformation from metafile coordinates." ) plsdimap;
 void
 plsdimap( PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
           PLFLT dimxpmm, PLFLT dimypmm );
 
-%feature( "autodoc", "Set plot orientation, specifying rotation in units of pi/2." ) plsdiori;
+%feature( "docstring", "Set plot orientation, specifying rotation in units of pi/2." ) plsdiori;
 void
 plsdiori( PLFLT rot );
 
-%feature( "autodoc", "Set window into plot space." ) plsdiplt;
+%feature( "docstring", "Set window into plot space." ) plsdiplt;
 void
 plsdiplt( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax );
 
-%feature( "autodoc", "Set window into plot space incrementally (zoom)." ) plsdiplz;
+%feature( "docstring", "Set window into plot space incrementally (zoom)." ) plsdiplz;
 void
 plsdiplz( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax );
 
-%feature( "autodoc", "Seed the random number generator." ) plseed;
+%feature( "docstring", "Seed the random number generator." ) plseed;
 void
 plseed( unsigned int s );
 
-%feature( "autodoc", "Set the escape character for text strings." ) plsesc;
+%feature( "docstring", "Set the escape character for text strings." ) plsesc;
 void
 plsesc( char esc );
 
-%feature( "autodoc", "Process input strings, treating them as an option and argument pair. The first is for the external API, the second the work routine declared here for backward compatibility." ) plsetopt;
+%feature( "docstring", "Process input strings, treating them as an option and argument pair. The first is for the external API, the second the work routine declared here for backward compatibility." ) plsetopt;
 PLINT
 plsetopt( const char *opt, const char *optarg );
 
-%feature( "autodoc", "Set family file parameters." ) plsfam;
+%feature( "docstring", "Set family file parameters." ) plsfam;
 void
 plsfam( PLINT fam, PLINT num, PLINT bmax );
 
-%feature( "autodoc", "Set FCI (font characterization integer)." ) plsfci;
+%feature( "docstring", "Set FCI (font characterization integer)." ) plsfci;
 void
 plsfci( PLUNICODE fci );
 
-%feature( "autodoc", "Set the output file name." ) plsfnam;
+%feature( "docstring", "Set the output file name." ) plsfnam;
 void
 plsfnam( const char *fnam );
 
-%feature( "autodoc", "Set the current font family, style and weight." ) plsfont;
+%feature( "docstring", "Set the current font family, style and weight." ) plsfont;
 void
 plsfont( PLINT family, PLINT style, PLINT weight );
 
-%feature( "autodoc", "Shade regions with continuous range of colours." ) plshades;
+%feature( "docstring", "Shade regions with continuous range of colours." ) plshades;
 void
 plshades( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -811,7 +811,7 @@ plshades( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
           pltr_func pltr,
           PLPointer SWIG_OBJECT_DATA );
 
-%feature( "autodoc", "Shade region with discrete colour, pattern fill." ) plshade;
+%feature( "docstring", "Shade region with discrete colour, pattern fill." ) plshade;
 void
 plshade( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
@@ -823,90 +823,90 @@ plshade( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
          pltr_func pltr,
          PLPointer SWIG_OBJECT_DATA );
 
-%feature( "autodoc", "Set up a user-provided custom labeling function" ) plslabelfunc;
+%feature( "docstring", "Set up a user-provided custom labeling function" ) plslabelfunc;
 void
 plslabelfunc( label_func lf, PLPointer data );
 
-%feature( "autodoc", "Set up lengths of major tick marks." ) plsmaj;
+%feature( "docstring", "Set up lengths of major tick marks." ) plsmaj;
 void
 plsmaj( PLFLT def, PLFLT scale );
 
 #if defined ( PYTHON_HAVE_PYBUFFER ) && defined ( SWIG_PYTHON )
 
-%feature( "autodoc", "Set the RGB memory area to be plotted (with the 'mem' or 'memcairo' drivers)." ) plsmem;
+%feature( "docstring", "Set the RGB memory area to be plotted (with the 'mem' or 'memcairo' drivers)." ) plsmem;
 void
 plsmem( PLINT maxx, PLINT maxy, void *plotmem );
 
-%feature( "autodoc", "Set the RGBA memory area to be plotted (with the 'memcairo' driver)." ) plsmema;
+%feature( "docstring", "Set the RGBA memory area to be plotted (with the 'memcairo' driver)." ) plsmema;
 void
 plsmema( PLINT maxx, PLINT maxy, void *plotmem );
 
 #endif
 
-%feature( "autodoc", "Set up lengths of minor tick marks." ) plsmin;
+%feature( "docstring", "Set up lengths of minor tick marks." ) plsmin;
 void
 plsmin( PLFLT def, PLFLT scale );
 
-%feature( "autodoc", "Set orientation.  Must be done before calling plinit." ) plsori;
+%feature( "docstring", "Set orientation.  Must be done before calling plinit." ) plsori;
 void
 plsori( PLINT ori );
 
-%feature( "autodoc", "Set output device parameters.  Usually ignored by the driver." ) plspage;
+%feature( "docstring", "Set output device parameters.  Usually ignored by the driver." ) plspage;
 void
 plspage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
          PLINT xoff, PLINT yoff );
 
-%feature( "autodoc", "Set the color map 0 colors using a cmap0 color palette file." ) plspal0;
+%feature( "docstring", "Set the color map 0 colors using a cmap0 color palette file." ) plspal0;
 void
 plspal0( const char *filename );
 
-%feature( "autodoc", "Set the color map 1 colors using a cmap1 color palette file." ) plspal1;
+%feature( "docstring", "Set the color map 1 colors using a cmap1 color palette file." ) plspal1;
 void
 plspal1( const char *filename, PLBOOL interpolate );
 
-%feature( "autodoc", "Set the pause (on end-of-page) status." ) plspause;
+%feature( "docstring", "Set the pause (on end-of-page) status." ) plspause;
 void
 plspause( PLBOOL pause );
 
-%feature( "autodoc", "Set stream number." ) plsstrm;
+%feature( "docstring", "Set stream number." ) plsstrm;
 void
 plsstrm( PLINT strm );
 
-%feature( "autodoc", "Set the number of subwindows in x and y." ) plssub;
+%feature( "docstring", "Set the number of subwindows in x and y." ) plssub;
 void
 plssub( PLINT nx, PLINT ny );
 
-%feature( "autodoc", "Set symbol height." ) plssym;
+%feature( "docstring", "Set symbol height." ) plssym;
 void
 plssym( PLFLT def, PLFLT scale );
 
-%feature( "autodoc", "Initialize PLplot, passing in the windows/page settings." ) plstar;
+%feature( "docstring", "Initialize PLplot, passing in the windows/page settings." ) plstar;
 void
 plstar( PLINT nx, PLINT ny );
 
-%feature( "autodoc", "Initialize PLplot, passing the device name and windows/page settings." ) plstart;
+%feature( "docstring", "Initialize PLplot, passing the device name and windows/page settings." ) plstart;
 void
 plstart( const char *devname, PLINT nx, PLINT ny );
 
 #if !defined ( SWIG_LUA ) && !defined ( SWIG_OCTAVE )
-%feature( "autodoc", "Set the coordinate transform." ) plstransform;
+%feature( "docstring", "Set the coordinate transform." ) plstransform;
 void
 plstransform( ct_func ctf, PLPointer data );
 #endif
 
-%feature( "autodoc", "Prints out the same string repeatedly at the n points in world coordinates given by the x and y arrays.  Supersedes plpoin and plsymbol for the case where text refers to a unicode glyph either directly as UTF-8 or indirectly via the standard text escape sequences allowed for PLplot input strings." ) plstring;
+%feature( "docstring", "Prints out the same string repeatedly at the n points in world coordinates given by the x and y arrays.  Supersedes plpoin and plsymbol for the case where text refers to a unicode glyph either directly as UTF-8 or indirectly via the standard text escape sequences allowed for PLplot input strings." ) plstring;
 void
 plstring( PLINT n, PLFLT *Array, PLFLT *ArrayCk, const char *string );
 
-%feature( "autodoc", "Prints out the same string repeatedly at the n 3D points in world coordinates given by the x, y, and z arrays.  Supersedes plpoin3 for the case where text refers to a unicode glyph either directly as UTF-8 or indirectly via the standard text escape sequences allowed for PLplot input strings." ) plstring3;
+%feature( "docstring", "Prints out the same string repeatedly at the n 3D points in world coordinates given by the x, y, and z arrays.  Supersedes plpoin3 for the case where text refers to a unicode glyph either directly as UTF-8 or indirectly via the standard text escape sequences allowed for PLplot input strings." ) plstring3;
 void
 plstring3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, const char *string );
 
-%feature( "autodoc", "Add a point to a stripchart." ) plstripa;
+%feature( "docstring", "Add a point to a stripchart." ) plstripa;
 void
 plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );
 
-%feature( "autodoc", "Create 1d stripchart." ) plstripc;
+%feature( "docstring", "Create 1d stripchart." ) plstripc;
 void
 plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
           PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
@@ -916,83 +916,83 @@ plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
           PLINT *Array, PLINT *ArrayCk, const char *legline[4],
           const char *labx, const char *laby, const char *labtop );
 
-%feature( "autodoc", "Deletes and releases memory used by a stripchart." ) plstripd;
+%feature( "docstring", "Deletes and releases memory used by a stripchart." ) plstripd;
 void
 plstripd( PLINT id );
 
-%feature( "autodoc", "Set up a new line style." ) plstyl;
+%feature( "docstring", "Set up a new line style." ) plstyl;
 void
 plstyl( PLINT n, PLINT *Array, PLINT *ArrayCk );
 
-%feature( "autodoc", "Set vector arrow style." ) plsvect;
+%feature( "docstring", "Set vector arrow style." ) plsvect;
 void
 plsvect( PLFLT *Array, PLFLT *ArrayCk, PLINT n, PLBOOL fill );
 
-%feature( "autodoc", "Set the edges of the viewport to the specified absolute coordinates." ) plsvpa;
+%feature( "docstring", "Set the edges of the viewport to the specified absolute coordinates." ) plsvpa;
 void
 plsvpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 
-%feature( "autodoc", "Set x axis labeling parameters." ) plsxax;
+%feature( "docstring", "Set x axis labeling parameters." ) plsxax;
 void
 plsxax( PLINT digmax, PLINT digits );
 
-%feature( "autodoc", "Set y axis labeling parameters." ) plsyax;
+%feature( "docstring", "Set y axis labeling parameters." ) plsyax;
 void
 plsyax( PLINT digmax, PLINT digits );
 
-%feature( "autodoc", "Plot array y against x for n points using Hershey symbol \"code\"." ) plsym;
+%feature( "docstring", "Plot array y against x for n points using Hershey symbol \"code\"." ) plsym;
 void
 plsym( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT code );
 
-%feature( "autodoc", "Set z axis labeling parameters." ) plszax;
+%feature( "docstring", "Set z axis labeling parameters." ) plszax;
 void
 plszax( PLINT digmax, PLINT digits );
 
-%feature( "autodoc", "Switch to text screen." ) pltext;
+%feature( "docstring", "Switch to text screen." ) pltext;
 void
 pltext( void );
 
-%feature( "autodoc", "Set the format for date / time labels" ) pltimefmt;
+%feature( "docstring", "Set the format for date / time labels" ) pltimefmt;
 void
 pltimefmt( const char *fmt );
 
-%feature( "autodoc", "Sets the edges of the viewport with the given aspect ratio, leaving room for labels." ) plvasp;
+%feature( "docstring", "Sets the edges of the viewport with the given aspect ratio, leaving room for labels." ) plvasp;
 void
 plvasp( PLFLT aspect );
 
-%feature( "autodoc", "Plot vectors." ) plvect;
+%feature( "docstring", "Plot vectors." ) plvect;
 void
 plvect( PLFLT **Matrix, PLFLT **MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
         pltr_func pltr,
         PLPointer SWIG_OBJECT_DATA );
 
-%feature( "autodoc", "Create the largest viewport of the specified aspect ratio that fits within the specified normalized subpage coordinates." ) plvpas;
+%feature( "docstring", "Create the largest viewport of the specified aspect ratio that fits within the specified normalized subpage coordinates." ) plvpas;
 void
 plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect );
 
-%feature( "autodoc", "Create a viewport with the specified normalized subpage coordinates." ) plvpor;
+%feature( "docstring", "Create a viewport with the specified normalized subpage coordinates." ) plvpor;
 void
 plvpor( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 
-%feature( "autodoc", "Define a \"standard\" viewport with seven character heights for the left margin and four character heights everywhere else." ) plvsta;
+%feature( "docstring", "Define a \"standard\" viewport with seven character heights for the left margin and four character heights everywhere else." ) plvsta;
 void
 plvsta( void );
 
-%feature( "autodoc", "Set up a window for three-dimensional plotting." ) plw3d;
+%feature( "docstring", "Set up a window for three-dimensional plotting." ) plw3d;
 void
 plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
        PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
        PLFLT zmax0, PLFLT alt, PLFLT az );
 
-%feature( "autodoc", "Set pen width." ) plwid;
+%feature( "docstring", "Set pen width." ) plwid;
 void
 plwid( PLINT width );
 
-%feature( "autodoc", "Set up world coordinates of the viewport boundaries (2d plots)." ) plwind;
+%feature( "docstring", "Set up world coordinates of the viewport boundaries (2d plots)." ) plwind;
 void
 plwind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 
-%feature( "autodoc", "Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device." ) plxormod;
+%feature( "docstring", "Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device." ) plxormod;
 void
 plxormod( PLBOOL mode, PLBOOL *OUTPUT );
 
@@ -1001,11 +1001,11 @@ plxormod( PLBOOL mode, PLBOOL *OUTPUT );
 // Deprecated functions that are in common API, but we don't want to
 // propagate them to the python API.
 
-%feature( "autodoc", "Set line color by red, green, blue values in range from 0. to 1." ) plrgb;
+%feature( "docstring", "Set line color by red, green, blue values in range from 0. to 1." ) plrgb;
 void
 plrgb( PLFLT r, PLFLT g, PLFLT b );
 
-%feature( "autodoc", "Set line color by 8 bit RGB values." ) plrgb1;
+%feature( "docstring", "Set line color by 8 bit RGB values." ) plrgb1;
 void
 plrgb1( PLINT r, PLINT g, PLINT b );
 
@@ -1130,7 +1130,7 @@ plsButtonEH( void ( *ButtonEH )( PLGraphicsIn *, void *, PLINT * ),
 #if 0
 // Cannot get this to work since plsError is not simply an output
 // of an internal integer and character string.
-%feature( "autodoc", "Set the variables to be used for storing error info." ) plsError;
+%feature( "docstring", "Set the variables to be used for storing error info." ) plsError;
 void
 plsError( PLINT *OUTPUT, char *OUTPUT );
 #endif
@@ -1284,7 +1284,7 @@ plMinMax2dGrid( PLFLT **Matrix, PLINT nx, PLINT ny, PLFLT *OUTPUT, PLFLT *OUTPUT
 
 // Wait for graphics input event and translate to world coordinates
 
-%feature( "autodoc", "Wait for graphics input event and translate to world coordinates." ) plGetCursor;
+%feature( "docstring", "Wait for graphics input event and translate to world coordinates." ) plGetCursor;
 PLINT
 plGetCursor( PLGraphicsIn *gin );
 
