@@ -1,28 +1,246 @@
-
-## opt valuies for plmeshc()/plot3dc/plsurf3d()
-
-global DRAW_LINEX DRAW_LINEY DRAW_LINEXY MAG_COLOR BASE_CONT
-global TOP_CONT SURF_CONT DRAW_SIDES FACETED MESH
-
-DRAW_LINEX  =   1; # draw lines parallel to the X axis  
-DRAW_LINEY  =   2; # draw lines parallel to the Y axis  
-DRAW_LINEXY =   3; # draw lines parallel to both the X and Y axis  
-MAG_COLOR   =   4; # draw the mesh with a color dependent of the magnitude  
-BASE_CONT   =   8; # draw contour plot at bottom xy plane  
-TOP_CONT    =  16; # draw contour plot at top xy plane  
-SURF_CONT   =  32; # draw contour plot at surface  
-DRAW_SIDES  =  64; # draw sides  
-FACETED     = 128; # draw outline for each square that makes up the surface  
-MESH        = 256; # draw mesh  
-
-## type values for plgriddata()
-
-global GRID_CSA GRID_DTLI GRID_NNI GRID_NNIDW GRID_NNLI GRID_NNAIDW
-
-GRID_CSA    = 1; # Bivariate Cubic Spline approximation 
-GRID_DTLI   = 2; # Delaunay Triangulation Linear Interpolation 
-GRID_NNI    = 3; # Natural Neighbors Interpolation 
-GRID_NNIDW  = 4; # Nearest Neighbors Inverse Distance Weighted 
-GRID_NNLI   = 5; # Nearest Neighbors Linear Interpolation
-GRID_NNAIDW = 6; # Nearest Neighbors Around Inverse Distance Weighted 
-
+global PLESC_SET_RGB
+PLESC_SET_RGB = 1; # obsolete
+global PLESC_ALLOC_NCOL
+PLESC_ALLOC_NCOL = 2; # obsolete
+global PLESC_SET_LPB
+PLESC_SET_LPB = 3; # obsolete
+global PLESC_EXPOSE
+PLESC_EXPOSE = 4; # handle window expose
+global PLESC_RESIZE
+PLESC_RESIZE = 5; # handle window resize
+global PLESC_REDRAW
+PLESC_REDRAW = 6; # handle window redraw
+global PLESC_TEXT
+PLESC_TEXT = 7; # switch to text screen
+global PLESC_GRAPH
+PLESC_GRAPH = 8; # switch to graphics screen
+global PLESC_FILL
+PLESC_FILL = 9; # fill polygon
+global PLESC_DI
+PLESC_DI = 10; # handle DI command
+global PLESC_FLUSH
+PLESC_FLUSH = 11; # flush output
+global PLESC_EH
+PLESC_EH = 12; # handle Window events
+global PLESC_GETC
+PLESC_GETC = 13; # get cursor position
+global PLESC_SWIN
+PLESC_SWIN = 14; # set window parameters
+global PLESC_PLFLTBUFFERING
+PLESC_PLFLTBUFFERING = 15; # configure PLFLT buffering
+global PLESC_XORMOD
+PLESC_XORMOD = 16; # set xor mode
+global PLESC_SET_COMPRESSION
+PLESC_SET_COMPRESSION = 17; # AFR: set compression
+global PLESC_CLEAR
+PLESC_CLEAR = 18; # RL: clear graphics region
+global PLESC_DASH
+PLESC_DASH = 19; # RL: draw dashed line
+global PLESC_HAS_TEXT
+PLESC_HAS_TEXT = 20; # driver draws text
+global PLESC_IMAGE
+PLESC_IMAGE = 21; # handle image
+global PLESC_IMAGEOPS
+PLESC_IMAGEOPS = 22; # plimage related operations
+global DRAW_LINEX
+DRAW_LINEX = 0x01; # draw lines parallel to the X axis
+global DRAW_LINEY
+DRAW_LINEY = 0x02; # draw lines parallel to the Y axis
+global DRAW_LINEXY
+DRAW_LINEXY = 0x03; # draw lines parallel to both the X and Y axes
+global MAG_COLOR
+MAG_COLOR = 0x04; # draw the mesh with a color dependent of the magnitude
+global BASE_CONT
+BASE_CONT = 0x08; # draw contour plot at bottom xy plane
+global TOP_CONT
+TOP_CONT = 0x10; # draw contour plot at top xy plane
+global SURF_CONT
+SURF_CONT = 0x20; # draw contour plot at surface
+global DRAW_SIDES
+DRAW_SIDES = 0x40; # draw sides
+global FACETED
+FACETED = 0x80; # draw outline for each square that makes up the surface
+global MESH
+MESH = 0x100; # draw mesh
+global PL_BIN_DEFAULT
+PL_BIN_DEFAULT = 0; 
+global PL_BIN_CENTRED
+PL_BIN_CENTRED = 1; 
+global PL_BIN_NOEXPAND
+PL_BIN_NOEXPAND = 2; 
+global PL_BIN_NOEMPTY
+PL_BIN_NOEMPTY = 4; 
+global PL_HIST_DEFAULT
+PL_HIST_DEFAULT = 0; 
+global PL_HIST_NOSCALING
+PL_HIST_NOSCALING = 1; 
+global PL_HIST_IGNORE_OUTLIERS
+PL_HIST_IGNORE_OUTLIERS = 2; 
+global PL_HIST_NOEXPAND
+PL_HIST_NOEXPAND = 8; 
+global PL_HIST_NOEMPTY
+PL_HIST_NOEMPTY = 16; 
+global PL_LEGEND_NONE
+PL_LEGEND_NONE = 1; 
+global PL_LEGEND_COLOR_BOX
+PL_LEGEND_COLOR_BOX = 2; 
+global PL_LEGEND_LINE
+PL_LEGEND_LINE = 4; 
+global PL_LEGEND_SYMBOL
+PL_LEGEND_SYMBOL = 8; 
+global PL_LEGEND_TEXT_LEFT
+PL_LEGEND_TEXT_LEFT = 16; 
+global PL_LEGEND_BACKGROUND
+PL_LEGEND_BACKGROUND = 32; 
+global PL_LEGEND_BOUNDING_BOX
+PL_LEGEND_BOUNDING_BOX = 64; 
+global PL_LEGEND_ROW_MAJOR
+PL_LEGEND_ROW_MAJOR = 128; 
+global PL_LEGEND_LEFT
+PL_LEGEND_LEFT = 256; 
+global PL_LEGEND_RIGHT
+PL_LEGEND_RIGHT = 512; 
+global PL_LEGEND_UPPER
+PL_LEGEND_UPPER = 1024; 
+global PL_LEGEND_LOWER
+PL_LEGEND_LOWER = 2048; 
+global PL_LEGEND_INSIDE
+PL_LEGEND_INSIDE = 4096; 
+global PL_LEGEND_OUTSIDE
+PL_LEGEND_OUTSIDE = 8192; 
+global PL_COLORBAR_LEFT
+PL_COLORBAR_LEFT = 1; 
+global PL_COLORBAR_RIGHT
+PL_COLORBAR_RIGHT = 2; 
+global PL_COLORBAR_UPPER
+PL_COLORBAR_UPPER = 4; 
+global PL_COLORBAR_LOWER
+PL_COLORBAR_LOWER = 8; 
+global PL_COLORBAR_LABEL_LEFT
+PL_COLORBAR_LABEL_LEFT = 16; 
+global PL_COLORBAR_LABEL_RIGHT
+PL_COLORBAR_LABEL_RIGHT = 32; 
+global PL_COLORBAR_LABEL_UPPER
+PL_COLORBAR_LABEL_UPPER = 64; 
+global PL_COLORBAR_LABEL_LOWER
+PL_COLORBAR_LABEL_LOWER = 128; 
+global PL_COLORBAR_IMAGE
+PL_COLORBAR_IMAGE = 256; 
+global PL_COLORBAR_SHADE
+PL_COLORBAR_SHADE = 512; 
+global PL_COLORBAR_GRADIENT
+PL_COLORBAR_GRADIENT = 1024; 
+global PL_COLORBAR_CAP_LOW
+PL_COLORBAR_CAP_LOW = 2048; 
+global PL_COLORBAR_CAP_HIGH
+PL_COLORBAR_CAP_HIGH = 4096; 
+global PL_COLORBAR_SHADE_LABEL
+PL_COLORBAR_SHADE_LABEL = 8192; 
+global PLSWIN_DEVICE
+PLSWIN_DEVICE = 1; # device coordinates
+global PLSWIN_WORLD
+PLSWIN_WORLD = 2; # world coordinates
+global PL_X_AXIS
+PL_X_AXIS = 1; # The x-axis
+global PL_Y_AXIS
+PL_Y_AXIS = 2; # The y-axis
+global PL_Z_AXIS
+PL_Z_AXIS = 3; # The z-axis
+global PL_OPT_ENABLED
+PL_OPT_ENABLED = 0x0001; # Obsolete
+global PL_OPT_ARG
+PL_OPT_ARG = 0x0002; # Option has an argment
+global PL_OPT_NODELETE
+PL_OPT_NODELETE = 0x0004; # Don't delete after processing
+global PL_OPT_INVISIBLE
+PL_OPT_INVISIBLE = 0x0008; # Make invisible
+global PL_OPT_DISABLED
+PL_OPT_DISABLED = 0x0010; # Processing is disabled
+global PL_OPT_FUNC
+PL_OPT_FUNC = 0x0100; # Call handler function
+global PL_OPT_BOOL
+PL_OPT_BOOL = 0x0200; # Set *var = 1
+global PL_OPT_INT
+PL_OPT_INT = 0x0400; # Set *var = atoi(optarg)
+global PL_OPT_FLOAT
+PL_OPT_FLOAT = 0x0800; # Set *var = atof(optarg)
+global PL_OPT_STRING
+PL_OPT_STRING = 0x1000; # Set var = optarg
+global PL_PARSE_PARTIAL
+PL_PARSE_PARTIAL = 0x0000; # For backward compatibility
+global PL_PARSE_FULL
+PL_PARSE_FULL = 0x0001; # Process fully & exit if error
+global PL_PARSE_QUIET
+PL_PARSE_QUIET = 0x0002; # Don't issue messages
+global PL_PARSE_NODELETE
+PL_PARSE_NODELETE = 0x0004; # Don't delete options after
+global PL_PARSE_SHOWALL
+PL_PARSE_SHOWALL = 0x0008; # Show invisible options
+global PL_PARSE_OVERRIDE
+PL_PARSE_OVERRIDE = 0x0010; # Obsolete
+global PL_PARSE_NOPROGRAM
+PL_PARSE_NOPROGRAM = 0x0020; # Program name NOT in *argv[0]..
+global PL_PARSE_NODASH
+PL_PARSE_NODASH = 0x0040; # Set if leading dash NOT required
+global PL_PARSE_SKIP
+PL_PARSE_SKIP = 0x0080; # Skip over unrecognized args
+global PL_FCI_MARK
+PL_FCI_MARK = 0x80000000; 
+global PL_FCI_IMPOSSIBLE
+PL_FCI_IMPOSSIBLE = 0x00000000; 
+global PL_FCI_HEXDIGIT_MASK
+PL_FCI_HEXDIGIT_MASK = 0xf; 
+global PL_FCI_HEXPOWER_MASK
+PL_FCI_HEXPOWER_MASK = 0x7; 
+global PL_FCI_HEXPOWER_IMPOSSIBLE
+PL_FCI_HEXPOWER_IMPOSSIBLE = 0xf; 
+global PL_FCI_FAMILY
+PL_FCI_FAMILY = 0x0; 
+global PL_FCI_STYLE
+PL_FCI_STYLE = 0x1; 
+global PL_FCI_WEIGHT
+PL_FCI_WEIGHT = 0x2; 
+global PL_FCI_SANS
+PL_FCI_SANS = 0x0; 
+global PL_FCI_SERIF
+PL_FCI_SERIF = 0x1; 
+global PL_FCI_MONO
+PL_FCI_MONO = 0x2; 
+global PL_FCI_SCRIPT
+PL_FCI_SCRIPT = 0x3; 
+global PL_FCI_SYMBOL
+PL_FCI_SYMBOL = 0x4; 
+global PL_FCI_UPRIGHT
+PL_FCI_UPRIGHT = 0x0; 
+global PL_FCI_ITALIC
+PL_FCI_ITALIC = 0x1; 
+global PL_FCI_OBLIQUE
+PL_FCI_OBLIQUE = 0x2; 
+global PL_FCI_MEDIUM
+PL_FCI_MEDIUM = 0x0; 
+global PL_FCI_BOLD
+PL_FCI_BOLD = 0x1; 
+global PL_MAXKEY
+PL_MAXKEY = 16; 
+global PL_MAXWINDOWS
+PL_MAXWINDOWS = 64; # Max number of windows/page tracked
+global PL_NOTSET
+PL_NOTSET = -42; 
+global PLESPLFLTBUFFERING_ENABLE
+PLESPLFLTBUFFERING_ENABLE = 1; 
+global PLESPLFLTBUFFERING_DISABLE
+PLESPLFLTBUFFERING_DISABLE = 2; 
+global PLESPLFLTBUFFERING_QUERY
+PLESPLFLTBUFFERING_QUERY = 3; 
+global GRID_CSA
+GRID_CSA = 1; # Bivariate Cubic Spline approximation
+global GRID_DTLI
+GRID_DTLI = 2; # Delaunay Triangulation Linear Interpolation
+global GRID_NNI
+GRID_NNI = 3; # Natural Neighbors Interpolation
+global GRID_NNIDW
+GRID_NNIDW = 4; # Nearest Neighbors Inverse Distance Weighted
+global GRID_NNLI
+GRID_NNLI = 5; # Nearest Neighbors Linear Interpolation
+global GRID_NNAIDW
+GRID_NNAIDW = 6; # Nearest Neighbors Around Inverse Distance Weighted
