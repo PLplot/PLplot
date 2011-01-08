@@ -1,3 +1,4 @@
+## -*- coding: utf-8; -*-
 ## $Id$
 ##  Copyright (C) 2010 Alan W. Irwin
 ##
@@ -196,6 +197,22 @@ function ix33c()
   ## out all other members with blanks to that length if a subsequent string
   ## assignment for an array element exceeds that length.
   nlegend = 1;
+
+  opt_array = 0;
+  text_colors = 0;
+  text = " ";
+  box_colors = 0;
+  box_patterns = 0;
+  box_scales = 0.;
+  box_line_widths = 0;
+  line_colors = 0;
+  line_styles = 0;
+  line_widths = 0;
+  symbol_colors = 0;
+  symbol_scales = 0.;
+  symbol_numbers = 0;
+  symbols = " ";
+
   opt_array(nlegend,1) = 0;
   text_colors(nlegend,1) = 0;
   text(nlegend,1:length(" ")) = " ";
@@ -582,7 +599,7 @@ function ix33c()
   symbol_colors(4) = 4;
   symbol_scales(4) = text_scale;
   symbol_numbers(4) = 4;
-  symbols(4) = special_symbols(3);
+  symbols(4,1:length(special_symbols(3,:))) = special_symbols(3,:);
 
   opt_array(5) = bitor(PL_LEGEND_SYMBOL, PL_LEGEND_LINE);
   text(5,1:length("L & S")) = "L & S";
@@ -593,7 +610,7 @@ function ix33c()
   symbol_colors(5) = 5;
   symbol_scales(5) = text_scale;
   symbol_numbers(5) = 4;
-  symbols(5) = special_symbols(3);
+  symbols(5,1:length(special_symbols(3,:))) = special_symbols(3,:);
 
   opt = opt_base;
   plscol0a( 15, 32, 32, 32, 0.70 );
@@ -607,19 +624,22 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up symbol legend entries with various symbols.
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_SYMBOL;
-    string = ["Symbol ",special_symbols(i+1)];
+    string = ["Symbol ",special_symbols(i+1,:)];
     text(i+1,1:length(string)) = string;
     text_colors(i+1) = i+1;
     symbol_colors(i+1) = i+1;
     symbol_scales(i+1) = text_scale;
     symbol_numbers(i+1) = 4;
-    symbols(i+1) = special_symbols(i+1);
+    symbols(i+1,1:length(special_symbols(i+1,:))) = special_symbols(i+1,:);
   endfor
 
   opt = opt_base;
@@ -635,10 +655,13 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up symbol legend entries with various numbers of symbols.
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_SYMBOL;
     string = sprintf("Symbol Number %d", (i+2));
@@ -647,7 +670,7 @@ function ix33c()
     symbol_colors(i+1) = i+1;
     symbol_scales(i+1) = text_scale;
     symbol_numbers(i+1) = i+2;
-    symbols(i+1) = special_symbols(3);
+    symbols(i+1,1:length(special_symbols(3,:))) = special_symbols(3,:);
   endfor
 
   opt = opt_base;
@@ -663,10 +686,13 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up box legend entries with various colours.
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_COLOR_BOX;
     string = sprintf("%s %d", "Box Color",i+1);
@@ -694,10 +720,13 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up box legend entries with various patterns.
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_COLOR_BOX;
     string = sprintf("%s %d", "Box Pattern",i);
@@ -722,10 +751,13 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up box legend entries with various box pattern line widths.
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_COLOR_BOX;
     string = sprintf("%s %d", "Box Line Width",i+1);
@@ -750,10 +782,13 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various colours.
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_LINE;
     string = sprintf("%s %d", "Line Color",i+1);
@@ -780,10 +815,13 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various styles
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_LINE;
     string = sprintf("%s %d", "Line Style",i+1);
@@ -806,10 +844,13 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various widths.
-  ## If don't reset text, it comes out the wrong length with
-  ## prior results embedded.
+  ## Reset text and symbols, because otherwise legend may come out with
+  ## the wrong length text/symbol with prior results embedded.
   text = " ";
   text(nlegend,1:length(" ")) = " ";
+  symbols = " ";
+  symbols(nlegend,1:length(" ")) = " ";
+
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_LINE;
     string = sprintf("%s %d", "Line Width",i+1);
