@@ -123,13 +123,17 @@ if(ENABLE_octave)
 
   if(ENABLE_swig_octave)
 
+    # Order matters here; plplot_oct_def (which contains all the
+    # global commands must occur first.
     add_custom_command(
       OUTPUT 
       ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+      COMMAND cat 
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
       ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      > ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
       DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
       ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
       )
 
