@@ -22,28 +22,16 @@
 ##  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 ##
 ##
-## In Debian, run like this:
-##
-## ( TTFDIR=/usr/share/fonts/truetype ; \
-##   PLPLOT_FREETYPE_SANS_FONT=$TTFDIR/arphic/bkai00mp.ttf \
-##   PLPLOT_FREETYPE_SERIF_FONT=$TTFDIR/freefont/FreeSerif.ttf \
-##   PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
-##   PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
-##   PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
-##   ./x24c -dev png -o x24c.png )
-##
-## Packages needed:
-##
+## For Debian, the required font packages are the following:
 ## ttf-arphic-bkai00mp
 ## ttf-freefont
 ## ttf-devanagari-fonts
 ## ttf-unfonts
 ## ttf-bengali-fonts
 ##
-##  For the latest Ubuntu systems lohit_hi.ttf has been moved to the
-##  ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
-##  will have to use this package instead and update the font path.
-
+## For the latest Ubuntu systems lohit_hi.ttf has been moved to the
+## ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
+## will have to use this package instead and update the font path.
 
 1;
 
