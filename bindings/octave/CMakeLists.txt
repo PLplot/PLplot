@@ -119,12 +119,28 @@ if(ENABLE_octave)
     ${CMAKE_CURRENT_BINARY_DIR}/.octaverc
     @ONLY
     )
-  # Build octave interface.
 
+  # Add (Unix) custom target to check that plplot_oct_def is up to date.
+  add_custom_target(
+    check_plplot_octave_def
+    COMMAND ${CMAKE_COMMAND} -E remove -f 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
+    COMMAND
+    sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed < 
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
+    COMMAND
+    ${CMAKE_COMMAND} -E echo Check that plplot_octave_def is up to date.
+    COMMAND
+    cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
+    )
+
+  # Build octave interface.
   if(ENABLE_swig_octave)
 
     # Order matters here; plplot_oct_def (which contains all the
-    # global commands must occur first.
+    # global commands) must occur first.
     add_custom_command(
       OUTPUT 
       ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
