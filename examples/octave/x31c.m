@@ -26,12 +26,12 @@
 
 function status = ix31c(strm)
 
+  global PL_NOTSET
   # Redirect output to file if required
   if (nargin == 0)
     strm = stdout;
   endif
 
-  PL_NOTSET = -42.0;
 
   ## Clear status flag to begin with
   status = 0;
@@ -141,7 +141,7 @@ function status = ix31c(strm)
   fprintf(strm,"plvpor: xmin, xmax, ymin, ymax = %f %f %f %f\n", xmin, xmax, ymin, ymax);
   if (xmin != 0.01 || xmax != 0.99 || ymin != 0.02 || ymax != 0.49)
     fputs(stderr,"plgvpd test failed\n");
-    status = 1; 
+    status = 1;
   endif
   xmid = 0.5*(xmin+xmax);
   ymid = 0.5*(ymin+ymax);
@@ -183,7 +183,7 @@ function status = ix31c(strm)
   fprintf(strm,"x axis parameters: digmax, digits = %d %d\n", digmax, digits);
   if (digmax != 3)
     fputs(stderr,"plgxax test failed\n");
-    status = 1; 
+    status = 1;
     return;
   endif
 
@@ -232,7 +232,7 @@ function status = ix31c(strm)
   fprintf(strm,"zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n", zxmin, zymin, zxmax, zymax);
   if ( abs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 || abs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 || abs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 || abs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 ) 
     fputs(stderr,"plsdiplz test failed\n");
-    status = 1; 
+    status = 1;
   endif
 
   plscolbg(10,20,30);
@@ -256,7 +256,7 @@ function status = ix31c(strm)
 endfunction
 
 if (exist("strm","var"))
-  ix31c(strm)
+  ix31c(strm);
 else
-  ix31c()
+  ix31c();
 endif

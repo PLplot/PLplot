@@ -36,14 +36,10 @@ endfunction
 
   function ix08c
 
+    global MAG_COLOR BASE_CONT SURF_CONT FACETED
     XPTS=35;		## Data points in x
     YPTS=46;		## Datat points in y
 
-    DRAW_LINEXY = 3;
-    MAG_COLOR = 4;
-    BASE_CONT = 8;
-    SURF_CONT = 32;
-    FACETED = 128;
 
     alt=[60.0, 20.0];
     az =[30.0, 60.0];

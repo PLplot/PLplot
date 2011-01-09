@@ -31,12 +31,10 @@ endfunction
 
 function ix11c
 
+  global DRAW_LINEXY MAG_COLOR BASE_CONT
   XPTS = 35;		## Data points in x */
   YPTS = 46;		## Datat points in y */
 
-  DRAW_LINEXY = 3;
-  MAG_COLOR = 4;
-  BASE_CONT = 8;
 
   opt = [DRAW_LINEXY,  DRAW_LINEXY ]';
   alt = [33, 17]';
