@@ -47,7 +47,7 @@ plot1( int type )
     static PLFLT freql[101], ampl[101], phase[101];
     PLFLT        f0, freq;
     PLINT        nlegend;
-    char         *text[2], *symbols[2];
+    const char   *text[2], *symbols[2];
     PLINT        opt_array[2];
     PLINT        text_colors[2];
     PLINT        line_colors[2];
