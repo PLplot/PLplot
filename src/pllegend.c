@@ -838,7 +838,7 @@ draw_cap( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
             ys[0] = y;
             xs[2] = xs[0] + width;
             ys[2] = ys[0];
-            xs[1] = (xs[0] + xs[2]) / 2.0;
+            xs[1] = ( xs[0] + xs[2] ) / 2.0;
             ys[1] = ys[0] - 0.05;
 
             plfill( 3, xs, ys );
@@ -854,7 +854,7 @@ draw_cap( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
             xs[2] = xs[0];
             ys[2] = ys[0] + width;
             xs[1] = xs[0] - 0.05;
-            ys[1] = (ys[0] + ys[2]) / 2.0;
+            ys[1] = ( ys[0] + ys[2] ) / 2.0;
 
             plfill( 3, xs, ys );
         }
@@ -871,7 +871,7 @@ draw_cap( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
             ys[0] = y + length;
             xs[2] = xs[0] + width;
             ys[2] = ys[0];
-            xs[1] = (xs[0] + xs[2]) / 2.0;
+            xs[1] = ( xs[0] + xs[2] ) / 2.0;
             ys[1] = ys[0] + 0.05;
 
             plfill( 3, xs, ys );
@@ -887,7 +887,7 @@ draw_cap( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
             xs[2] = xs[0];
             ys[2] = ys[0] + width;
             xs[1] = xs[0] + 0.05;
-            ys[1] = (ys[0] + ys[2]) / 2.0;
+            ys[1] = ( ys[0] + ys[2] ) / 2.0;
 
             plfill( 3, xs, ys );
         }
@@ -925,11 +925,11 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
 
     // Active attributes to be saved and restored afterward.
-    PLINT col0_save         = plsc->icol0;
-    PLFLT text_scale_save   = plsc->chrht / plsc->chrdef;
+    PLINT col0_save       = plsc->icol0;
+    PLFLT text_scale_save = plsc->chrht / plsc->chrdef;
     // Axis tick spacing
-    PLFLT maj_save          = plsc->majht / plsc->majdef;
-    PLFLT min_save          = plsc->minht / plsc->mindef;
+    PLFLT maj_save = plsc->majht / plsc->majdef;
+    PLFLT min_save = plsc->minht / plsc->mindef;
 
     // Position of the color bar in normalized viewport (= normalized subpage
     // coordinates).
@@ -1006,8 +1006,8 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
             // Use the same number of steps as there are steps in
             // color palette 1.
             // TODO: Determine a better way to specify the steps here?
-            n_steps = plsc->ncol1;
-            step_size = ( max_value - min_value ) / (PLFLT)n_steps;
+            n_steps   = plsc->ncol1;
+            step_size = ( max_value - min_value ) / (PLFLT) n_steps;
             if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
             {
                 ni = 2;
@@ -1017,7 +1017,7 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
                 {
                     for ( j = 0; j < nj; j++ )
                     {
-                        color_data[i][j] = min_value + (PLFLT)j * step_size;
+                        color_data[i][j] = min_value + (PLFLT) j * step_size;
                     }
                 }
             }
@@ -1030,7 +1030,7 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
                 {
                     for ( j = 0; j < nj; j++ )
                     {
-                        color_data[i][j] = min_value + (PLFLT)i * step_size;
+                        color_data[i][j] = min_value + (PLFLT) i * step_size;
                     }
                 }
             }
@@ -1077,14 +1077,14 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         }
         // Draw the color bar
         plimage( color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
-                 min_value, max_value, wx_min, wx_max, wy_min, wy_max );
+            min_value, max_value, wx_min, wx_max, wy_min, wy_max );
         plFree2dGrid( color_data, ni, nj );
     }
     else if ( opt & PL_COLORBAR_SHADE )
     {
         // Transform grid
         PLcGrid grid;
-        PLFLT grid_axis[2] = { 0.0, 1.0 };
+        PLFLT   grid_axis[2] = { 0.0, 1.0 };
         n_steps = n_colors;
         // Use the provided values.
         if ( opt & PL_COLORBAR_LEFT || opt & PL_COLORBAR_RIGHT )
@@ -1093,8 +1093,8 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
             grid.yg = values;
             grid.nx = 2;
             grid.ny = n_steps;
-            ni = 2;
-            nj = n_steps;
+            ni      = 2;
+            nj      = n_steps;
             plAlloc2dGrid( &color_data, ni, nj );
             for ( i = 0; i < ni; i++ )
             {
@@ -1110,8 +1110,8 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
             grid.yg = grid_axis;
             grid.nx = n_steps;
             grid.ny = 2;
-            ni = n_steps;
-            nj = 2;
+            ni      = n_steps;
+            nj      = 2;
             plAlloc2dGrid( &color_data, ni, nj );
             for ( i = 0; i < ni; i++ )
             {
@@ -1128,8 +1128,8 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
 
         // Draw the color bar
         plshades( color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
-                  values, n_colors, 0, 0, 0, plfill, TRUE,
-                  pltr1, (void *)(&grid) );
+            values, n_colors, 0, 0, 0, plfill, TRUE,
+            pltr1, (void *) ( &grid ) );
         plFree2dGrid( color_data, ni, nj );
     }
     else if ( opt & PL_COLORBAR_GRADIENT )
@@ -1199,12 +1199,12 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
     // Smaller text
     plschr( 0.0, 0.75 );
     // Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5);
-    plsmin( 0.0, 0.5);
+    plsmaj( 0.0, 0.5 );
+    plsmin( 0.0, 0.5 );
 
     // For building axis option string
-    PLINT max_opts = 25;
-    char opt_string[max_opts];
+    PLINT      max_opts = 25;
+    char       opt_string[max_opts];
     const char *tick_string;
 
     tick_string = "";
@@ -1216,14 +1216,14 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
         {
             label_offset += 4.0;
-            perp = '\0';
+            perp          = '\0';
         }
         else
         {
             label_offset += 1.5;
-            perp = 'v';
+            perp          = 'v';
         }
-        snprintf( opt_string, max_opts, "l%c", perp);
+        snprintf( opt_string, max_opts, "l%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
     else if ( opt & PL_COLORBAR_LABEL_RIGHT )
@@ -1231,14 +1231,14 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
         {
             label_offset += 4.0;
-            perp = '\0';
+            perp          = '\0';
         }
         else
         {
             label_offset += 1.5;
-            perp = 'v';
+            perp          = 'v';
         }
-        snprintf( opt_string, max_opts, "r%c", perp);
+        snprintf( opt_string, max_opts, "r%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
     else if ( opt & PL_COLORBAR_LABEL_UPPER )
@@ -1246,14 +1246,14 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
         {
             label_offset += 1.5;
-            perp = 'v';
+            perp          = 'v';
         }
         else
         {
             label_offset += 4.0;
-            perp = '\0';
+            perp          = '\0';
         }
-        snprintf( opt_string, max_opts, "t%c", perp);
+        snprintf( opt_string, max_opts, "t%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
     else if ( opt & PL_COLORBAR_LABEL_LOWER )
@@ -1261,17 +1261,17 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
         if ( opt & PL_COLORBAR_RIGHT || opt & PL_COLORBAR_LEFT )
         {
             label_offset += 1.5;
-            perp = 'v';
+            perp          = 'v';
         }
         else
         {
             label_offset += 4.0;
-            perp = '\0';
+            perp          = '\0';
         }
         snprintf( opt_string, max_opts, "b%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
-    
+
     // Draw labels and tick marks if this is a shade color bar
     // TODO: A better way to handle this would be to update the
     // internals of plbox to support custom tick and label positions

@@ -487,15 +487,15 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
 
     PLINT      i;
-    XPoint    _pts[PL_MAXPOLY];
-    XPoint    *pts;
+    XPoint     _pts[PL_MAXPOLY];
+    XPoint     *pts;
 
     if ( dev->flags & 1 )
         return;
 
     if ( npts > PL_MAXPOLY )
     {
-        pts = (XPoint *) malloc( sizeof(XPoint) * npts );
+        pts = (XPoint *) malloc( sizeof ( XPoint ) * npts );
     }
     else
     {
@@ -850,13 +850,13 @@ FillPolygonCmd( PLStream *pls )
 {
     TkwDev     *dev  = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    XPoint    _pts[PL_MAXPOLY];
-    XPoint    *pts;
+    XPoint     _pts[PL_MAXPOLY];
+    XPoint     *pts;
     int        i;
 
     if ( pls->dev_npts > PL_MAXPOLY )
     {
-        pts = (XPoint *) malloc( sizeof(XPoint) * pls->dev_npts );
+        pts = (XPoint *) malloc( sizeof ( XPoint ) * pls->dev_npts );
     }
     else
     {

@@ -312,7 +312,7 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
         code = Tcl_VarEval( interp, tclStartupScript, (char *) NULL );
         if ( code != TCL_OK )
         {
-            fprintf( stderr, "%s\n", Tcl_GetStringResult(interp) );
+            fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
             exitCode = 1;
         }
     }

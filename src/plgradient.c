@@ -131,10 +131,10 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         npts = n;
         if ( n > PL_MAXPOLY - 1 )
         {
-            xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
-            ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+            xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
+            ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
 
-            if (( xpoly == NULL ) || ( ypoly == NULL ))
+            if ( ( xpoly == NULL ) || ( ypoly == NULL ) )
             {
                 plexit( "plgradient: Insufficient memory for large polygon" );
             }
@@ -165,8 +165,8 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         // Check the original number of points
         if ( npts > PL_MAXPOLY - 1 )
         {
-            free(xpoly);
-            free(ypoly);
+            free( xpoly );
+            free( ypoly );
         }
     }
 }
@@ -251,7 +251,7 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     // from 0. to 1.
     if ( ( edge = (PLFLT *) malloc( NEDGE * sizeof ( PLFLT ) ) ) == NULL )
         plexit( "plgradient_soft: Insufficient memory for large polygon"
-);
+            );
     for ( i = 0; i < NEDGE; i++ )
         edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 

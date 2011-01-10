@@ -1212,36 +1212,36 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 // Routine for drawing line, symbol, or cmap0 legends
 
 // Flags for pllegend.
-#define PL_LEGEND_NONE            1
-#define PL_LEGEND_COLOR_BOX       2
-#define PL_LEGEND_LINE            4
-#define PL_LEGEND_SYMBOL          8
-#define PL_LEGEND_TEXT_LEFT       16
-#define PL_LEGEND_BACKGROUND      32
-#define PL_LEGEND_BOUNDING_BOX    64
-#define PL_LEGEND_ROW_MAJOR       128
-#define PL_LEGEND_LEFT            256
-#define PL_LEGEND_RIGHT           512
-#define PL_LEGEND_UPPER           1024
-#define PL_LEGEND_LOWER           2048
-#define PL_LEGEND_INSIDE          4096
-#define PL_LEGEND_OUTSIDE         8192
+#define PL_LEGEND_NONE             1
+#define PL_LEGEND_COLOR_BOX        2
+#define PL_LEGEND_LINE             4
+#define PL_LEGEND_SYMBOL           8
+#define PL_LEGEND_TEXT_LEFT        16
+#define PL_LEGEND_BACKGROUND       32
+#define PL_LEGEND_BOUNDING_BOX     64
+#define PL_LEGEND_ROW_MAJOR        128
+#define PL_LEGEND_LEFT             256
+#define PL_LEGEND_RIGHT            512
+#define PL_LEGEND_UPPER            1024
+#define PL_LEGEND_LOWER            2048
+#define PL_LEGEND_INSIDE           4096
+#define PL_LEGEND_OUTSIDE          8192
 
 // Flags for plcolorbar
-#define PL_COLORBAR_LEFT            1
-#define PL_COLORBAR_RIGHT           2
-#define PL_COLORBAR_UPPER           4
-#define PL_COLORBAR_LOWER           8
-#define PL_COLORBAR_LABEL_LEFT      16
-#define PL_COLORBAR_LABEL_RIGHT     32
-#define PL_COLORBAR_LABEL_UPPER     64
-#define PL_COLORBAR_LABEL_LOWER     128
-#define PL_COLORBAR_IMAGE           256
-#define PL_COLORBAR_SHADE           512
-#define PL_COLORBAR_GRADIENT        1024
-#define PL_COLORBAR_CAP_LOW       2048
-#define PL_COLORBAR_CAP_HIGH      4096
-#define PL_COLORBAR_SHADE_LABEL   8192
+#define PL_COLORBAR_LEFT           1
+#define PL_COLORBAR_RIGHT          2
+#define PL_COLORBAR_UPPER          4
+#define PL_COLORBAR_LOWER          8
+#define PL_COLORBAR_LABEL_LEFT     16
+#define PL_COLORBAR_LABEL_RIGHT    32
+#define PL_COLORBAR_LABEL_UPPER    64
+#define PL_COLORBAR_LABEL_LOWER    128
+#define PL_COLORBAR_IMAGE          256
+#define PL_COLORBAR_SHADE          512
+#define PL_COLORBAR_GRADIENT       1024
+#define PL_COLORBAR_CAP_LOW        2048
+#define PL_COLORBAR_CAP_HIGH       4096
+#define PL_COLORBAR_SHADE_LABEL    8192
 
 PLDLLIMPEXP void
 c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,

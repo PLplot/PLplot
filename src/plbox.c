@@ -1525,11 +1525,11 @@ label_box_custom( const char *xopt, PLINT n_xticks, PLFLT *xticks, const char *y
     PLFLT       pos, tn, offset, height, just;
     PLFLT       factor, tstart;
     const char  *timefmt;
-    PLINT i;
-    PLINT xdigmax, xdigits, xdigmax_old, xdigits_old;
-    PLINT ydigmax, ydigits, ydigmax_old, ydigits_old;
-    PLINT  lxmin, lxmax, lymin, lymax;
-    PLINT  pxmin, pxmax, pymin, pymax;
+    PLINT       i;
+    PLINT       xdigmax, xdigits, xdigmax_old, xdigits_old;
+    PLINT       ydigmax, ydigits, ydigmax_old, ydigits_old;
+    PLINT       lxmin, lxmax, lymin, lymax;
+    PLINT       pxmin, pxmax, pymin, pymax;
 
     // Save some parameters
     plgxax( &xdigmax, &xdigits );
@@ -1590,7 +1590,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, PLFLT *xticks, const char *y
             for ( i = 1; i < n_xticks; i++ )
             {
                 x_spacing_tmp = fabs( xticks[i] - xticks[i - 1] );
-                x_spacing = MIN( x_spacing, x_spacing_tmp );
+                x_spacing     = MIN( x_spacing, x_spacing_tmp );
             }
         }
 
@@ -1669,7 +1669,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, PLFLT *xticks, const char *y
             for ( i = 1; i < n_yticks; i++ )
             {
                 y_spacing_tmp = fabs( yticks[i] - yticks[i - 1] );
-                y_spacing = MIN( y_spacing, y_spacing_tmp );
+                y_spacing     = MIN( y_spacing, y_spacing_tmp );
             }
         }
 
@@ -1807,13 +1807,13 @@ void plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT l
 
 void plP_default_label( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
 {
-    PLINT scale, prec;
+    PLINT  scale, prec;
     PLINT  setpre, precis;
     char   form[FORMAT_LEN], temp[TEMP_LEN];
     double scale2;
 
-    scale = ((PLINT *)data)[0];
-    prec = ((PLINT *)data)[1];
+    scale = ( (PLINT *) data )[0];
+    prec  = ( (PLINT *) data )[1];
 
     plP_gprec( &setpre, &precis );
 
@@ -1894,7 +1894,7 @@ plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT le
         {
             // Linear
             PLINT scale_prec[2] = { scale, prec };
-            plP_default_label( axis, value, string, len, (void *)scale_prec );
+            plP_default_label( axis, value, string, len, (void *) scale_prec );
         }
     }
 }

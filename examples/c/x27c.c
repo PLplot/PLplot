@@ -188,7 +188,9 @@ spiro( PLFLT params[], int fill )
     if ( fill )
     {
         plfill( 1 + steps * windings, xcoord, ycoord );
-    } else {
+    }
+    else
+    {
         plline( 1 + steps * windings, xcoord, ycoord );
     }
 }

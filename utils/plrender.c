@@ -839,8 +839,8 @@ get_ncoords( PLFLT *x, PLFLT *y, PLINT n )
 
     if ( n > PL_MAXPOLY )
     {
-        xs = (short *) malloc( sizeof(short) * n );
-        ys = (short *) malloc( sizeof(short) * n );
+        xs = (short *) malloc( sizeof ( short ) * n );
+        ys = (short *) malloc( sizeof ( short ) * n );
     }
     else
     {

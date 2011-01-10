@@ -746,10 +746,10 @@ int translate_legend_option( int legend_option )
     case 3: translated_option  = PL_LEGEND_SYMBOL; break;
     case 4: translated_option  = PL_LEGEND_TEXT_LEFT; break;
     case 5: translated_option  = PL_LEGEND_BACKGROUND; break;
-    case 6: translated_option = PL_LEGEND_BOUNDING_BOX; break;
-    case 7: translated_option = PL_LEGEND_ROW_MAJOR; break;
-    case 8: translated_option = PL_LEGEND_LEFT; break;
-    case 9: translated_option = PL_LEGEND_RIGHT; break;
+    case 6: translated_option  = PL_LEGEND_BOUNDING_BOX; break;
+    case 7: translated_option  = PL_LEGEND_ROW_MAJOR; break;
+    case 8: translated_option  = PL_LEGEND_LEFT; break;
+    case 9: translated_option  = PL_LEGEND_RIGHT; break;
     case 10: translated_option = PL_LEGEND_UPPER; break;
     case 11: translated_option = PL_LEGEND_LOWER; break;
     case 12: translated_option = PL_LEGEND_INSIDE; break;
@@ -775,10 +775,10 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
     CAMLparam5( opt, x, y, plot_width, bg_color );
     CAMLxparam5( bb_color, bb_style, nrow, ncolumn, opt_array );
     CAMLxparam5( text_offset, text_scale, text_spacing, text_justification,
-                 text_colors );
+        text_colors );
     CAMLxparam5( text, box_colors, box_patterns, box_scales, box_line_widths );
     CAMLxparam5( line_colors, line_styles, line_widths, symbol_colors,
-                 symbol_scales );
+        symbol_scales );
     CAMLxparam2( symbol_numbers, symbols );
     CAMLlocal1( result );
     result = caml_alloc( 2, 0 );
@@ -822,19 +822,19 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
     PLFLT width, height;
 
     pllegend( &width, &height, c_opt, Double_val( x ), Double_val( y ),
-              Double_val( plot_width ), Int_val( bg_color ),
-              Int_val( bb_color ), Int_val( bb_style ),
-              Int_val( nrow ), Int_val( ncolumn ),
-              n_legend, c_opt_array,
-              Double_val( text_offset ), Double_val( text_scale ),
-              Double_val( text_spacing ),
-              Double_val( text_justification ),
-              c_text_colors, c_text,
-              c_box_colors, c_box_patterns, (double *) box_scales,
-              c_box_line_widths,
-              c_line_colors, c_line_styles, c_line_widths,
-              c_symbol_colors, (double *) symbol_scales, c_symbol_numbers,
-              c_symbols );
+        Double_val( plot_width ), Int_val( bg_color ),
+        Int_val( bb_color ), Int_val( bb_style ),
+        Int_val( nrow ), Int_val( ncolumn ),
+        n_legend, c_opt_array,
+        Double_val( text_offset ), Double_val( text_scale ),
+        Double_val( text_spacing ),
+        Double_val( text_justification ),
+        c_text_colors, c_text,
+        c_box_colors, c_box_patterns, (double *) box_scales,
+        c_box_line_widths,
+        c_line_colors, c_line_styles, c_line_widths,
+        c_symbol_colors, (double *) symbol_scales, c_symbol_numbers,
+        c_symbols );
 
     // Return a tuple with the legend's size
     Store_field( result, 0, caml_copy_double( width ) );

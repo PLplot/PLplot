@@ -173,16 +173,17 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
 
     if ( Ni > PL_MAXPOLY )
     {
-        in = (PLFLT *) malloc( sizeof(PLFLT) * Ni );
-        TT = (PLFLT *) malloc( 3 * sizeof(PLFLT) * Ni );
+        in = (PLFLT *) malloc( sizeof ( PLFLT ) * Ni );
+        TT = (PLFLT *) malloc( 3 * sizeof ( PLFLT ) * Ni );
 
-        if ( in == NULL || TT == NULL ) {
-            plexit("plP_clip_poly: insufficient memory for large polygon");
+        if ( in == NULL || TT == NULL )
+        {
+            plexit( "plP_clip_poly: insufficient memory for large polygon" );
         }
 
         T[0] = &TT[0];
         T[1] = &TT[Ni];
-        T[2] = &TT[2*Ni];
+        T[2] = &TT[2 * Ni];
     }
     else
     {
@@ -249,8 +250,8 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
 
     if ( Ni > PL_MAXPOLY )
     {
-        free(in);
-        free(TT);
+        free( in );
+        free( TT );
     }
 
     return No;

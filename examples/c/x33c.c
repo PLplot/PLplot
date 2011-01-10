@@ -68,12 +68,12 @@ plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n, PLF
     plspal1( "cmap1_blue_red.pal", 1 );
 
     PLFLT colors[n];
-    int i;
+    int   i;
     PLFLT color_step;
-    color_step = 1.0 / (PLFLT)(n - 1);
+    color_step = 1.0 / (PLFLT) ( n - 1 );
     for ( i = 0; i < n; i++ )
     {
-        colors[i] = 0.0 + color_step * (PLFLT)( i );
+        colors[i] = 0.0 + color_step * (PLFLT) ( i );
     }
 
     PLINT opt;
@@ -101,33 +101,33 @@ plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n, PLF
     }
 
     plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Left, High Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_1, "Test label - Left, High Cap",
+        n, colors, values );
 
     opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT |
           PL_COLORBAR_CAP_LOW;
 
     plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Right, Low Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_1, "Test label - Right, Low Cap",
+        n, colors, values );
 
     opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER |
           PL_COLORBAR_CAP_HIGH;
 
     plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Upper, High Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_2, "Test label - Upper, High Cap",
+        n, colors, values );
 
     opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER |
           PL_COLORBAR_CAP_LOW;
 
     plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Lower, Low Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_2, "Test label - Lower, Low Cap",
+        n, colors, values );
 
     plvpor( 0.0, 1.0, 0.0, 1.0 );
     plwind( 0.0, 1.0, 0.0, 1.0 );
@@ -142,12 +142,12 @@ plcolorbar_example_2( PLINT bar_type, PLFLT ticks, PLFLT sub_ticks, PLINT n, PLF
     plspal1( "cmap1_blue_yellow.pal", 1 );
 
     PLFLT colors[n];
-    int i;
+    int   i;
     PLFLT color_step;
-    color_step = 1.0 / (PLFLT)(n - 1);
+    color_step = 1.0 / (PLFLT) ( n - 1 );
     for ( i = 0; i < n; i++ )
     {
-        colors[i] = 0.0 + color_step * (PLFLT)( i );
+        colors[i] = 0.0 + color_step * (PLFLT) ( i );
     }
 
     PLINT opt;
@@ -175,33 +175,33 @@ plcolorbar_example_2( PLINT bar_type, PLFLT ticks, PLFLT sub_ticks, PLINT n, PLF
     }
 
     plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Left, Low Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_1, "Test label - Left, Low Cap",
+        n, colors, values );
 
     opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT |
           PL_COLORBAR_CAP_HIGH;
 
     plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Right, High Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_1, "Test label - Right, High Cap",
+        n, colors, values );
 
     opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER |
           PL_COLORBAR_CAP_LOW;
 
     plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Upper, Low Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_2, "Test label - Upper, Low Cap",
+        n, colors, values );
 
     opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER |
           PL_COLORBAR_CAP_HIGH;
 
     plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Lower, High Cap",
-                n, colors, values );
+        ticks, sub_ticks,
+        axis_opts_2, "Test label - Lower, High Cap",
+        n, colors, values );
 
     plvpor( 0.0, 1.0, 0.0, 1.0 );
     plwind( 0.0, 1.0, 0.0, 1.0 );
@@ -751,19 +751,19 @@ main( int argc, const char *argv[] )
     max_height = MAX( max_height, legend_height );
 
     // Color bar examples
-    PLFLT values_small[2] = { 0.0, 1.0 };
+    PLFLT values_small[2]  = { 0.0, 1.0 };
     PLFLT values_uneven[9] = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
-    PLFLT values_even[9] = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+    PLFLT values_even[9]   = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
     plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
     plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
     plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0.0, 0, 9, values_uneven,
-                          "Shade Color Bars - Uneven Steps" );
+        "Shade Color Bars - Uneven Steps" );
     plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0, 3, 9, values_even,
-                          "Shade Color Bars - Even Steps" );
+        "Shade Color Bars - Even Steps" );
     plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
-                          "Gradient Color Bars" );
+        "Gradient Color Bars" );
     plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
-                          "Gradient Color Bars" );
+        "Gradient Color Bars" );
 
     // Free space that contained legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )

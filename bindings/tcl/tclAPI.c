@@ -626,7 +626,7 @@ plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, const char **
         if ( Tcl_ExprBoolean( interp, argv[1], &result ) )
         {
             fprintf( stderr, "wait_until command \"%s\" failed:\n\t %s\n",
-                argv[1], Tcl_GetStringResult(interp) );
+                argv[1], Tcl_GetStringResult( interp ) );
             break;
         }
         if ( result )
@@ -788,7 +788,7 @@ tcl_cmd( Tcl_Interp *interp, char *cmd )
     if ( result != TCL_OK )
     {
         fprintf( stderr, "TCL command \"%s\" failed:\n\t %s\n",
-            cmd, Tcl_GetStringResult(interp) );
+            cmd, Tcl_GetStringResult( interp ) );
     }
     return result;
 }

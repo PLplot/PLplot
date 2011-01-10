@@ -149,10 +149,10 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
     }
     if ( n > PL_MAXPOLY - 1 )
     {
-        xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
-        ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+        xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
+        ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
 
-        if (( xpoly == NULL ) || ( ypoly == NULL ))
+        if ( ( xpoly == NULL ) || ( ypoly == NULL ) )
         {
             plexit( "plfill: Insufficient memory for large polygon" );
         }
@@ -183,8 +183,8 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 
     if ( n > PL_MAXPOLY - 1 )
     {
-        free(xpoly);
-        free(ypoly);
+        free( xpoly );
+        free( ypoly );
     }
 }
 
@@ -225,23 +225,23 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
     npts = n;
     if ( n > PL_MAXPOLY - 1 )
     {
-        tx = (PLFLT *) malloc( ( n + 1 ) * sizeof( PLFLT ) );
-        ty = (PLFLT *) malloc( ( n + 1 ) * sizeof( PLFLT ) );
-        ty = (PLFLT *) malloc( ( n + 1 ) * sizeof( PLFLT ) );
-        xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
-        ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof( PLINT ) );
+        tx    = (PLFLT *) malloc( ( n + 1 ) * sizeof ( PLFLT ) );
+        ty    = (PLFLT *) malloc( ( n + 1 ) * sizeof ( PLFLT ) );
+        ty    = (PLFLT *) malloc( ( n + 1 ) * sizeof ( PLFLT ) );
+        xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
+        ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
 
-        if (( tx == NULL ) || ( ty == NULL ) || ( tz == NULL ) ||
-            ( xpoly == NULL ) || ( ypoly == NULL ))
+        if ( ( tx == NULL ) || ( ty == NULL ) || ( tz == NULL ) ||
+             ( xpoly == NULL ) || ( ypoly == NULL ) )
         {
             plexit( "plfill3: Insufficient memory for large polygon" );
         }
     }
     else
     {
-        tx = _tx;
-        ty = _ty;
-        tz = _tz;
+        tx    = _tx;
+        ty    = _ty;
+        tz    = _tz;
         xpoly = _xpoly;
         ypoly = _ypoly;
     }
@@ -290,11 +290,11 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
 // If the original number of points is large, then free the arrays
     if ( npts > PL_MAXPOLY - 1 )
     {
-        free(tx);
-        free(ty);
-        free(tz);
-        free(xpoly);
-        free(ypoly);
+        free( tx );
+        free( ty );
+        free( tz );
+        free( xpoly );
+        free( ypoly );
     }
 }
 
