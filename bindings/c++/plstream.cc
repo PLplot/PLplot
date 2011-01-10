@@ -993,6 +993,45 @@ void plstream::lab( const char *xlabel, const char *ylabel,
     pllab( xlabel, ylabel, tlabel );
 }
 
+// Routine for drawing line, symbol, or cmap0 legends
+
+void plstream::legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
+                       PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+                       PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                       PLINT nrow, PLINT ncolumn,
+                       PLINT nlegend, const PLINT *opt_array,
+                       PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+                       PLFLT text_justification,
+                       const PLINT *text_colors, const char **text,
+                       const PLINT *box_colors, const PLINT *box_patterns,
+                       const PLFLT *box_scales, const PLINT *box_line_widths,
+                       const PLINT *line_colors, const PLINT *line_styles,
+                       const PLINT *line_widths,
+                       const PLINT *symbol_colors, const PLFLT *symbol_scales,
+                       const PLINT *symbol_numbers, const char **symbols )
+{
+    set_stream();
+
+    pllegend( p_legend_width, p_legend_height, opt, x, y, plot_width,
+        bg_color, bb_color, bb_style, nrow, ncolumn, nlegend, opt_array,
+        text_offset, text_scale, text_spacing, text_justification,
+        text_colors, text, box_colors, box_patterns, box_scales,
+        box_line_widths, line_colors, line_styles, line_widths,
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
+}
+
+void plstream::colorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+                         PLFLT ticks, PLINT sub_ticks,
+                         const char *axis_opts, const char *label,
+                         PLINT n_colors, PLFLT *colors, PLFLT *values )
+{
+    set_stream();
+
+    colorbar( opt, x, y, length, width, ticks, sub_ticks, axis_opts,
+        label, n_colors, colors, values );
+}
+
+
 // Sets position of the light source
 
 void plstream::lightsource( PLFLT x, PLFLT y, PLFLT z )
@@ -2015,6 +2054,30 @@ void plstream::stransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*,
     set_stream();
 
     plstransform( coordinate_transform, coordinate_transform_data );
+}
+
+// Prints out the same string repeatedly at the n points in world
+// coordinates given by the x and y arrays.  Supersedes plpoin and
+// plsymbol for the case where text refers to a unicode glyph either
+// directly as UTF-8 or indirectly via the standard text escape
+// sequences allowed for PLplot input strings.
+
+void plstream::string( PLINT n, PLFLT *x, PLFLT *y, const char *string )
+{
+    set_stream();
+    plstring( n, x, y, string );
+}
+
+// Prints out the same string repeatedly at the n points in world
+// coordinates given by the x, y, and z arrays.  Supersedes plpoin3
+// for the case where text refers to a unicode glyph either directly
+// as UTF-8 or indirectly via the standard text escape sequences
+// allowed for PLplot input strings.
+
+void plstream::string3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string )
+{
+    set_stream();
+    plstring3( n, x, y, z, string );
 }
 
 // Create 1d stripchart

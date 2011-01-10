@@ -69,6 +69,7 @@ EXECUTABLES_list = \
 		 x29$(EXEEXT) \
 		 x30$(EXEEXT) \
 		 x31$(EXEEXT) \
+		 x33$(EXEEXT) \
 		 $(PLPLOTWXWIDGETS_EXECUTABLES_list) \
 		 $(qt_gui_EXECUTABLES_list)
 		 

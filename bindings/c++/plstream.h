@@ -422,6 +422,28 @@ public:
 
     void lab( const char *xlabel, const char *ylabel, const char *tlabel );
 
+// Routine for drawing line, symbol, or cmap0 legends
+    void legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
+                 PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+                 PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                 PLINT nrow, PLINT ncolumn,
+                 PLINT nlegend, const PLINT *opt_array,
+                 PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+                 PLFLT text_justification,
+                 const PLINT *text_colors, const char **text,
+                 const PLINT *box_colors, const PLINT *box_patterns,
+                 const PLFLT *box_scales, const PLINT *box_line_widths,
+                 const PLINT *line_colors, const PLINT *line_styles,
+                 const PLINT *line_widths,
+                 const PLINT *symbol_colors, const PLFLT *symbol_scales,
+                 const PLINT *symbol_numbers, const char **symbols );
+
+    void colorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+                   PLFLT ticks, PLINT sub_ticks,
+                   const char *axis_opts, const char *label,
+                   PLINT n_colors, PLFLT *colors, PLFLT *values );
+
+
 // Sets position of the light source
 
     void lightsource( PLFLT x, PLFLT y, PLFLT z );
@@ -803,6 +825,22 @@ public:
 // Set the coordinate transform
 
     void stransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
+
+// Prints out the same string repeatedly at the n points in world
+// coordinates given by the x and y arrays.  Supersedes plpoin and
+// plsymbol for the case where text refers to a unicode glyph either
+// directly as UTF-8 or indirectly via the standard text escape
+// sequences allowed for PLplot input strings.
+
+    void string( PLINT n, PLFLT *x, PLFLT *y, const char *string );
+
+// Prints out the same string repeatedly at the n points in world
+// coordinates given by the x, y, and z arrays.  Supersedes plpoin3
+// for the case where text refers to a unicode glyph either directly
+// as UTF-8 or indirectly via the standard text escape sequences
+// allowed for PLplot input strings.
+
+    void string3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string );
 
 // Create 1d stripchart
 

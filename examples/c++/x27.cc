@@ -37,7 +37,7 @@ class x27 {
 public:
     x27( int, const char ** );
     void cycloid( void );
-    void spiro( PLFLT data[] );
+    void spiro( PLFLT data[], int fill );
 
 private:
     // Class data
@@ -67,6 +67,7 @@ x27::x27( int argc, const char ** argv )
     };
 
     int   i;
+    int   fill;
 
     // plplot initialization
     pls = new plstream();
@@ -84,11 +85,12 @@ x27::x27( int argc, const char ** argv )
     // First an overview, then all curves one by one
     pls->ssub( 3, 3 ); // Three by three window
 
+    fill = 0;
     for ( i = 0; i < 9; i++ )
     {
         pls->adv( 0 );
         pls->vpor( 0.0, 1.0, 0.0, 1.0 );
-        spiro( &params[i][0] );
+        spiro( &params[i][0], fill );
     }
 
     pls->adv( 0 );
@@ -98,9 +100,21 @@ x27::x27( int argc, const char ** argv )
     {
         pls->adv( 0 );
         pls->vpor( 0.0, 1.0, 0.0, 1.0 );
-        spiro( &params[i][0] );
+        spiro( &params[i][0], fill );
     }
 
+// Fill the curves
+    fill = 1;
+
+    pls->adv( 0 );
+    pls->ssub( 1, 1 ); // One window per curve
+
+    for ( i = 0; i < 9; i++ )
+    {
+        pls->adv( 0 );
+        pls->vpor( 0.0, 1.0, 0.0, 1.0 );
+        spiro( &params[i][0], fill );
+    }
     delete pls;
 }
 
@@ -115,7 +129,7 @@ x27::cycloid( void )
 //--------------------------------------------------------------------------
 
 void
-x27::spiro( PLFLT params[] )
+x27::spiro( PLFLT params[], int fill )
 {
 #define NPNT    20000
     static PLFLT xcoord[NPNT + 1];
@@ -177,7 +191,14 @@ x27::spiro( PLFLT params[] )
     pls->wind( xmin, xmax, ymin, ymax );
 
     pls->col0( 1 );
-    pls->line( 1 + steps * windings, xcoord, ycoord );
+    if ( fill )
+    {
+        pls->fill( 1 + steps * windings, xcoord, ycoord );
+    }
+    else
+    {
+        pls->line( 1 + steps * windings, xcoord, ycoord );
+    }
 }
 
 

@@ -1,3 +1,5 @@
+// -*- coding: utf-8; -*-
+//
 //--------------------------------------------------------------------------
 // $Id$
 // Multi-lingual version of the first page of example 4.
@@ -87,6 +89,12 @@ static const char *alty_label[] = {
     NULL
 };
 
+// Short rearranged versions of y_label and alty_label.
+static const char *legend_text[][2] = {
+    { "Amplitude",          "Phase shift"               },
+    { "Амплитуда", "Фазовый сдвиг" }
+};
+
 static const char *title_label[] = {
     "Single Pole Low-Pass Filter",
     "Однополюсный Низко-Частотный Фильтр",
@@ -102,7 +110,7 @@ static const char *line_label[] = {
 class x26 {
 public:
     x26( int, const char ** );
-    void plot1( int, const char*, const char*, const char*, const char*, const char* );
+    void plot1( int, const char*, const char*, const char*, const char**, const char*, const char* );
 
 private:
     // Class data
@@ -130,8 +138,8 @@ x26::x26( int argc, const char ** argv )
     i = 0;
     while ( x_label[i] != NULL )
     {
-        plot1( 0, x_label[i], y_label[i], alty_label[i], title_label[i],
-            line_label[i] );
+        plot1( 0, x_label[i], y_label[i], alty_label[i], legend_text[i],
+            title_label[i], line_label[i] );
         i++;
     }
 
@@ -142,14 +150,25 @@ x26::x26( int argc, const char ** argv )
 // Log-linear plot.
 
 void x26::plot1( int type, const char *x_label, const char *y_label,
-                 const char *alty_label, const char *title_label,
-                 const char *line_label )
+                 const char *alty_label, const char **legend_text,
+                 const char *title_label, const char *line_label )
 {
-    int   i;
-    PLFLT *freql = new PLFLT[101];
-    PLFLT *ampl  = new PLFLT[101];
-    PLFLT *phase = new PLFLT[101];
-    PLFLT f0, freq;
+    int        i;
+    PLFLT      *freql = new PLFLT[101];
+    PLFLT      *ampl  = new PLFLT[101];
+    PLFLT      *phase = new PLFLT[101];
+    PLFLT      f0, freq;
+    PLINT      nlegend = 2;
+    PLINT      opt_array[2];
+    PLINT      text_colors[2];
+    PLINT      line_colors[2];
+    PLINT      line_styles[2];
+    PLINT      line_widths[2];
+    PLINT      symbol_numbers[2], symbol_colors[2];
+    PLFLT      symbol_scales[2];
+    const char *symbols[2];
+    PLFLT      legend_width, legend_height;
+
 
     pls->adv( 0 );
 
@@ -184,7 +203,7 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
 
     pls->col0( 2 );
     pls->line( 101, freql, ampl );
-    pls->col0( 1 );
+    pls->col0( 2 );
     pls->ptex( 1.6, -30.0, 1.0, -20.0, 0.5, line_label );
 
     // Put labels on.
@@ -204,9 +223,46 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
         pls->box( "", 0.0, 0, "cmstv", 30.0, 3 );
         pls->col0( 3 );
         pls->line( 101, freql, phase );
+        pls->string( 101, freql, phase, "*" );
         pls->col0( 3 );
         pls->mtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
+
+    // Draw a legend
+    // First legend entry.
+    opt_array[0]   = PL_LEGEND_LINE;
+    text_colors[0] = 2;
+    line_colors[0] = 2;
+    line_styles[0] = 1;
+    line_widths[0] = 1;
+    // note from the above opt_array the first symbol (and box) indices
+    // do not have to be specified
+
+    // Second legend entry.
+    opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+    text_colors[1]    = 3;
+    line_colors[1]    = 3;
+    line_styles[1]    = 1;
+    line_widths[1]    = 1;
+    symbol_colors[1]  = 3;
+    symbol_scales[1]  = 1.;
+    symbol_numbers[1] = 4;
+    symbols[1]        = "*";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    pls->scol0a( 15, 32, 32, 32, 0.70 );
+    pls->legend( &legend_width, &legend_height,
+        PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+        0.0, 0.0, 0.10, 15,
+        1, 1, 0, 0,
+        nlegend, opt_array,
+        1.0, 1.0, 2.0,
+        1., text_colors, (const char **) legend_text,
+        NULL, NULL, NULL, NULL,
+        line_colors, line_styles, line_widths,
+        symbol_colors, symbol_scales, symbol_numbers,
+        (const char **) symbols );
 
     delete[] freql;
     delete[] ampl;

@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------
 //
 //--------------------------------------------------------------------------
-// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross
 // Copyright (C) 2004  Alan W. Irwin
 //
 // This file is part of PLplot.
@@ -110,7 +110,8 @@ x18::x18( int argc, const char ** argv )
         if ( opt[k] > 0 )
             pls->line3( NPTS, x, y, z );
         else
-            pls->poin3( NPTS, x, y, z, 1 );
+            // U+22C5 DOT OPERATOR.
+            pls->string3( NPTS, x, y, z, "⋅" );
 
         pls->col0( 3 );
 
