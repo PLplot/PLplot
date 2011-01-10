@@ -1,7 +1,9 @@
 // $Id$
 //
-//      3d plot routines.
-//
+//! @file
+//!
+//! 3d plot routines.
+//!
 // Copyright (C) 2004  Alan W. Irwin
 // Copyright (C) 2004  Joao Cardoso
 // Copyright (C) 2004  Andrew Ross
@@ -922,6 +924,47 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
     plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
         opt, clevel, nlevel, ixstart, ixn, indexymin, indexymax );
 }
+
+//--------------------------------------------------------------------------
+//! Plots a 3-d representation of the virtual function z, which is represented
+//! by zops and zp.
+//!
+//! @param x The x values are stored as x[0..nx-1]
+//! @param y The y values are stored as y[0..ny-1]
+//! @param zops Pointer to a plf2ops_t structure of function pointers (see
+//! plf2opts_t in plplot.h) which define how to perform various manipulations
+//! (including retrieval) on the elements of the the 2D data field pointed to
+//! by zp.  Pointers suitable for passing as zops can be obtained for some
+//! predefined types of 2-d data storage by calling one of the plf2ops_*()
+//! functions (see plf2ops.c) or you can create your own set for arbitrary 2-d
+//! storage formats.
+//! @param zp Pointer to 2D data field.  This pointer is passed to the
+//! functions of zops whenever the 2D field needs to be manipulated.  The
+//! combination of zops and zp provides total flexibility in how the underlying
+//! data values are managed.
+//! @param nx The number of values in x.
+//! @param ny The number of values in y.
+//! @param opt Specifies options for the plot.  It can be a bitwise OR-ing of
+//! these:
+//!   - DRAW_LINEX :  Draw lines parallel to x-axis
+//!   - DRAW_LINEY :  Draw lines parallel to y-axis
+//!   - DRAW_LINEXY:  Draw lines parallel to both axes
+//!   - MAG_COLOR:    Magnitude coloring of wire frame
+//!   - BASE_CONT:    Draw contour at bottom xy plane
+//!   - TOP_CONT:     Draw contour at top xy plane (not yet)
+//!   - DRAW_SIDES:   Draw sides around the plot
+//!   - MESH:         Draw the "under" side of the plot
+//! or any bitwise OR'd combination, e.g. "MAG_COLOR | DRAW_LINEX"
+//! @param clevel z values at which to draw contours
+//! @param nlevel Number of values in clevels
+//! @param ixstart Index of first x coordinate to include in plot
+//! @param ixn Number of x coordinates to include in plot
+//! @param indexymin Array which specifies the min y index for each x
+//! index in range ixstart, ixn.
+//! @param indexymax Array which specifies the max y index for each x
+//! coordinate (following the convention that the upper range limit is one more
+//! than actual index limit) for an x index range of ixstart, ixn.
+//--------------------------------------------------------------------------
 
 void
 plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
