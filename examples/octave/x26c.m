@@ -65,38 +65,45 @@
 
 function ix26c
 
-x_label = [
-  "Frequency";
-  "Частота";
-];
+  x_label = [
+	     "Frequency";
+	     "Частота";
+	     ];
 
-y_label = [
-  "Amplitude (dB)";
-  "Амплитуда (dB)";
-];
+  y_label = [
+	     "Amplitude (dB)";
+	     "Амплитуда (dB)";
+	     ];
 
-alty_label = [
-  "Phase shift (degrees)";
-  "Фазовый сдвиг (градусы)";
-];
+  alty_label = [
+		"Phase shift (degrees)";
+		"Фазовый сдвиг (градусы)";
+		];
 
-title_label = [
-  "Single Pole Low-Pass Filter";
-  "Однополюсный Низко-Частотный Фильтр";
-];
+  title_label = [
+		 "Single Pole Low-Pass Filter";
+		 "Однополюсный Низко-Частотный Фильтр";
+		 ];
 
-line_label = [
-  "-20 dB/decade";
-  "-20 dB/десяток";
-];
+  line_label = [
+		"-20 dB/decade";
+		"-20 dB/десяток";
+		];
 
-## Illustration of logarithmic axes, and redefinition of window.
+  ## Short rearranged versions of y_label and alty_label.
+  legend_text = {
+		 ["Amplitude"; "Phase shift"],
+		 ["Амплитуда"; "Фазовый сдвиг"]
+		 };
 
-## Parse and process command line arguments
 
-##    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
+  ## Illustration of logarithmic axes, and redefinition of window.
 
-## Initialize plplot
+  ## Parse and process command line arguments
+
+  ##    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
+
+  ## Initialize plplot
 
   plinit;
   plfont(2);
@@ -104,15 +111,16 @@ line_label = [
   ## Make log plots using two different styles.
 
   for i = 1:size(x_label)(1);
-    plot1(0, deblank(x_label(i,:)), deblank(y_label(i,:)), deblank(alty_label(i,:)), deblank(title_label(i,:)), deblank(line_label(i,:)));
+    plot1(0, deblank(x_label(i,:)), deblank(y_label(i,:)), deblank(alty_label(i,:)), deblank(title_label(i,:)), deblank(line_label(i,:)), legend_text{i});
   endfor
-    
+  
   plend1;
-end
+endfunction
 
 ## Log-linear plot.
 
-function plot1(plottype, x_label, y_label, alty_label, title_label, line_label)
+function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, legend_text)
+  global PL_LEGEND_LINE PL_LEGEND_SYMBOL PL_LEGEND_BACKGROUND PL_LEGEND_BOUNDING_BOX
 
   pladv(0);
 
@@ -145,7 +153,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label)
 
   plcol0(2);
   plline(freql', ampl');
-  plcol0(1);
+  plcol0(2);
   plptex(1.6, -30.0, 1.0, -20.0, 0.5, line_label);
 
   ## Put labels on */
@@ -164,10 +172,86 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label)
     plbox("", 0.0, 0, "cmstv", 30.0, 3);
     plcol0(3);
     plline(freql', phase');
+    plstring(freql', phase', "*");
     plcol0(3);
     plmtex("r", 5.0, 0.5, 0.5, alty_label);
+    nlegend = 2;
+  else
+    nlegend = 1
+  endif
+  ## Set up legend arrays with the correct size, type.  In octave this may
+  ## be done by clearing the array (in case it was used before) and then
+  ## writing the last element of the array with a placeholder of the right
+  ## type.  Note that for strings the right placeholder length doesn't
+  ## matter.  Octave keeps track of the longest string in each array and pads
+  ## out all other members with blanks to that length if a subsequent string
+  ## assignment for an array element exceeds that length.
+
+  opt_array = 0;
+  text_colors = 0;
+  text = " ";
+  box_colors = 0;
+  box_patterns = 0;
+  box_scales = 0.;
+  box_line_widths = 0;
+  line_colors = 0;
+  line_styles = 0;
+  line_widths = 0;
+  symbol_colors = 0;
+  symbol_scales = 0.;
+  symbol_numbers = 0;
+  symbols = " ";
+
+  opt_array(nlegend,1) = 0;
+  text_colors(nlegend,1) = 0;
+  text(nlegend,1:length(" ")) = " ";
+  box_colors(nlegend,1) = 0;
+  box_patterns(nlegend,1) = 0;
+  box_scales(nlegend,1) = 0.;
+  box_line_widths(nlegend,1) = 0;
+  line_colors(nlegend,1) = 0;
+  line_styles(nlegend,1) = 0;
+  line_widths(nlegend,1) = 0;
+  symbol_colors(nlegend,1) = 0;
+  symbol_scales(nlegend,1) = 0.;
+  symbol_numbers(nlegend,1) = 0;
+  symbols(nlegend,1:length(" ")) = " ";
+
+  ## Only specify legend data that are required according to the
+  ## value of opt_array for that entry.
+
+  ## Data for first legend entry. 
+  opt_array(1) = PL_LEGEND_LINE;
+  text_colors(1) = 2;
+  text(1,1:length(legend_text(1,:))) = legend_text(1,:);
+  line_colors(1) = 2;
+  line_styles(1) = 1;
+  line_widths(1) = 1;
+
+  ## Data for second legend entry.
+  if(nlegend > 1)
+    opt_array(2) = bitor(PL_LEGEND_LINE, PL_LEGEND_SYMBOL);
+    text_colors(2) = 3;
+    text(2,1:length(legend_text(1,:))) = legend_text(2,:);
+    line_colors(2) = 3;
+    line_styles(2) = 1;
+    line_widths(2) = 1;
+    symbol_colors(2) = 3;
+    symbol_scales(2) = 1.;
+    symbol_numbers(2) = 4;
+    symbols(2,1:length("*")) = "*";
   endif
 
-end
+  plscol0a( 15, 32, 32, 32, 0.70 );
+
+  [legend_width, legend_height] = \
+      pllegend( bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX), 0.0, 0.0,
+               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
+               1., text_colors, text, 
+               box_colors, box_patterns, box_scales, box_line_widths, 
+               line_colors, line_styles, line_widths,
+               symbol_colors, symbol_scales, symbol_numbers, symbols );
+
+endfunction
 
 ix26c
