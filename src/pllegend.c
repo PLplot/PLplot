@@ -32,23 +32,23 @@
 //! Calculate parameters that help determine the position of the top left
 //! of the legend in normalized viewport coordinates.
 //!
-//! @param opt : control variable containing valid combinations of the
+//! @param opt Control variable containing valid combinations of the
 //! following control bits that specify the 16 standard positions of
 //! the legend: PL_LEGEND_LEFT, PL_LEGEND_RIGHT, PL_LEGEND_UPPER,
 //! PL_LEGEND_LOWER, PL_LEGEND_INSIDE, and PL_LEGEND_OUTSIDE.
-//! @param legend_width : total legend width in normalized viewport
+//! @param legend_width Total legend width in normalized viewport
 //! coordinates.
-//! @param legend_height : total legend height in normalized viewport
+//! @param legend_height Total legend height in normalized viewport
 //! coordinates.
-//! @param x_legend_position : pointer to a location that contains
+//! @param x_legend_position Pointer to a location that contains
 //! (after the call) the X value of one of the 16 standard legend
 //! positions specified by opt.
-//! @param y_legend_position : pointer to a location that contains
+//! @param y_legend_position Pointer to a location that contains
 //! (after the call) the Y equivalent of x_legend_position.
-//! @param xsign : pointer to a location that contains (after the call)
+//! @param xsign Pointer to a location that contains (after the call)
 //! the sign of the X offset relative to the standard legend position
 //! specified by opt.
-//! @param ysign : pointer to a location that contains (after the call)
+//! @param ysign Pointer to a location that contains (after the call)
 //! the Y equivalent to xsign.
 //!
 
@@ -256,8 +256,8 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
 //--------------------------------------------------------------------------
 //! Obtain ratio of normalized subpage to mm coordinates in both x and y.
 //!
-//! @param x_subpage_per_mm : pointer to a location that contains (after the call) the x ratio.
-//! @param y_subpage_per_mm : pointer to a location that contains (after the call) the y ratio.
+//! @param x_subpage_per_mm Pointer to a location that contains (after the call) the x ratio.
+//! @param y_subpage_per_mm Pointer to a location that contains (after the call) the y ratio.
 //!
 
 static void get_subpage_per_mm( PLFLT *x_subpage_per_mm, PLFLT *y_subpage_per_mm )
@@ -278,7 +278,7 @@ static void get_subpage_per_mm( PLFLT *x_subpage_per_mm, PLFLT *y_subpage_per_mm
 //--------------------------------------------------------------------------
 //! Obtain character or symbol height in (y) subpage coordinates.
 //!
-//! @param ifcharacter : TRUE obtain character height, FALSE obtain symbol
+//! @param ifcharacter TRUE obtain character height, FALSE obtain symbol
 //! height.
 //! @return character or symbol height.
 //!
@@ -306,7 +306,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! Convert from external normalized viewport X coordinate to normalized
 //! subpage X coordinate.
 //!
-//! @param nx : external normalized viewport X coordinate.
+//! @param nx External normalized viewport X coordinate.
 //!
 
 #define viewport_to_subpage_x( nx )    ( ( xdmin_save ) + ( nx ) * ( ( xdmax_save ) - ( xdmin_save ) ) )
@@ -315,7 +315,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! Convert from normalized subpage X coordinate to external normalized
 //! viewport X coordinate.
 //!
-//! @param nx : normalized subpage X coordinate.
+//! @param nx Normalized subpage X coordinate.
 //!
 
 #define subpage_to_viewport_x( nx )    ( ( nx - xdmin_save ) / ( ( xdmax_save ) - ( xdmin_save ) ) )
@@ -324,7 +324,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! Convert from external normalized viewport Y coordinate to normalized
 //! subpage Y coordinate.
 //!
-//! @param ny : external normalized viewport Y coordinate.
+//! @param ny External normalized viewport Y coordinate.
 //!
 
 #define viewport_to_subpage_y( ny )    ( ( ydmin_save ) + ( ny ) * ( ( ydmax_save ) - ( ydmin_save ) ) )
@@ -333,7 +333,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! Convert from normalized subpage Y coordinate to external normalized
 //! viewport Y coordinate.
 //!
-//! @param ny : normalized subpage Y coordinate.
+//! @param ny Normalized subpage Y coordinate.
 //!
 
 #define subpage_to_viewport_y( ny )    ( ( ny - ydmin_save ) / ( ( ydmax_save ) - ( ydmin_save ) ) )
@@ -341,18 +341,18 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //--------------------------------------------------------------------------
 //! Plot discrete annotated legend using filled boxes, lines, and/or symbols.
 //!
-//! @param p_legend_width : pointer to a location which contains
+//! @param p_legend_width Pointer to a location which contains
 //! (after the call) the legend width in normalized viewport
 //! coordinates.  This quantity is calculated from the plot_width and
 //! text_offset arguments, the ncolumn argument (possibly modified
 //! inside the routine depending on the nlegend and nrow arguments),
 //! and the length (calculated internally) of the longest text string.
-//! @param p_legend_height : pointer to a location which contains (after
+//! @param p_legend_height Pointer to a location which contains (after
 //! the call) the legend height in normalized viewport coordinates.
 //! This quantity is calculated from the text_scale and text_spacing arguments
 //! and the nrow argument (possibly modified inside the routine depending
 //! on the nlegend and ncolum arguments).
-//! @param opt : this variable contains bits which control the overall
+//! @param opt This variable contains bits which control the overall
 //! legend.  If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
 //! on the left of the legend and the plotted area on the right.
 //! Otherwise, put the text area on the right of the legend and the
@@ -367,7 +367,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! PL_LEGEND_OUTSIDE position bits specifies one of the 16 possible
 //! standard positions (the 4 corners and 4 side centers for both the
 //! inside and outside cases) of the legend relative to the viewport.
-//! @param x : X offset of the legend position in normalized viewport
+//! @param x X offset of the legend position in normalized viewport
 //! coordinates from the specified standard position of the legend.
 //! For positive x, the direction of motion away from the standard
 //! position is inward/outward from the standard corner positions or
@@ -375,7 +375,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt.  For the
 //! center-upper or center-lower cases, the direction of motion is
 //! toward positive X.
-//! @param y : Y offset of the legend position in normalized viewport
+//! @param y Y offset of the legend position in normalized viewport
 //! coordinates from the specified standard position of the legend.
 //! For positive y, the direction of motion away from the standard
 //! position is inward/outward from the standard corner positions or
@@ -383,22 +383,22 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt.  For the
 //! center-left or center-right cases, the direction of motion is
 //! toward positive Y.
-//! @param plot_width : horizontal width in normalized viewport units
+//! @param plot_width Horizontal width in normalized viewport units
 //! of the plot area (where colored boxes, lines, and/or symbols are
 //! drawn in the legend).
-//! @param bg_color : cmap0 index of the background color for the legend
+//! @param bg_color Cmap0 index of the background color for the legend
 //! (PL_LEGEND_BACKGROUND).
-//! @param bb_color : cmap0 index of the color of the bounding-box
+//! @param bb_color Cmap0 index of the color of the bounding-box
 //! line for the legend (PL_LEGEND_BOUNDING_BOX).
-//! @param bb_style : pllsty style number for the bounding-box line
+//! @param bb_style pllsty style number for the bounding-box line
 //! for the legend (PL_LEGEND_BOUNDING_BOX).
-//! @param nrow : number of rows in the matrix used to render the
+//! @param nrow Number of rows in the matrix used to render the
 //! nlegend legend entries.  For internal transformations of nrow, see
 //! further remarks under nlegend.
-//! @param ncolumn : number of columns in the matrix used to render the
+//! @param ncolumn Number of columns in the matrix used to render the
 //! nlegend legend entries.  For internal transformations of ncolumn,
 //! see further remarks under nlegend.
-//! @param nlegend : number of legend entries.  The above nrow and
+//! @param nlegend Number of legend entries.  The above nrow and
 //! ncolumn values are transformed internally to be consistent with
 //! nlegend.  If either nrow or ncolumn is non-positive it is replaced
 //! by 1.  If the resulting product of nrow and ncolumn is less than
@@ -407,49 +407,49 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! common nrow = 0, ncolumn = 0 case is transformed internally to
 //! nrow = nlegend, ncolumn = 1; i.e., the usual case of a legend
 //! rendered as a single column.
-//! @param opt_array : array of nlegend values of options to control
+//! @param opt_array Array of nlegend values of options to control
 //! each individual plotted area corresponding to a legend entry.  If
 //! the PL_LEGEND_NONE bit is set, then nothing is plotted in the
 //! plotted area.  If the PL_LEGEND_COLOR_BOX, PL_LEGEND_LINE, and/or
 //! PL_LEGEND_SYMBOL bits are set, the plotted area corresponding to a
 //! legend entry is specified with a colored box; a line; and/or a
 //! line of symbols.
-//! @param text_offset : offset of the text area from the plot area in
+//! @param text_offset Offset of the text area from the plot area in
 //! units of character width.
-//! @param text_scale : character height scale for text annotations.
-//! @param text_spacing : vertical spacing in units of the character
+//! @param text_scale Character height scale for text annotations.
+//! @param text_spacing Vertical spacing in units of the character
 //! height from one legend entry to the next.
-//! @param text_justification : justification parameter used for text
+//! @param text_justification Justification parameter used for text
 //! justification.  The most common values of text_justification are
 //! 0., 0.5, or 1. corresponding to a text that is left justified,
 //! centred, or right justified within the text area, but other values
 //! are allowed as well.
-//! @param text_colors : array of nlegend text colors (cmap0 indices).
-//! @param text : array of nlegend pointers to null-terminated text
+//! @param text_colors Array of nlegend text colors (cmap0 indices).
+//! @param text Array of nlegend pointers to null-terminated text
 //! annotation strings.  Like other PLplot strings specified by the
 //! user, UTF-8 or its ascii subset may be used in the strings, and
 //! the strings may include any of the PLplot text escapes.
-//! @param box_colors : array of nlegend colors (cmap0 indices) for
+//! @param box_colors Array of nlegend colors (cmap0 indices) for
 //! the discrete colored boxes (PL_LEGEND_COLOR_BOX).
-//! @param box_patterns : array of nlegend patterns (plpsty indices)
+//! @param box_patterns Array of nlegend patterns (plpsty indices)
 //! for the discrete colored boxes (PL_LEGEND_COLOR_BOX).
-//! @param box_scales : array of nlegend scales (units of fraction of
+//! @param box_scales Array of nlegend scales (units of fraction of
 //! character height) for the height of the discrete colored boxes
 //! (PL_LEGEND_COLOR_BOX).
-//! @param box_line_widths : array of nlegend line widths for the
+//! @param box_line_widths Array of nlegend line widths for the
 //! patterns specified by box_patterns (PL_LEGEND_COLOR_BOX).
-//! @param line_colors : array of nlegend line colors (cmap0 indices)
+//! @param line_colors Array of nlegend line colors (cmap0 indices)
 //! (PL_LEGEND_LINE).
-//! @param line_styles : array of nlegend line styles (pllsty indices)
+//! @param line_styles Array of nlegend line styles (pllsty indices)
 //! (PL_LEGEND_LINE).
-//! @param line_widths : array of nlegend line widths (PL_LEGEND_LINE).
-//! @param symbol_colors : array of nlegend symbol colors (cmap0
+//! @param line_widths Array of nlegend line widths (PL_LEGEND_LINE).
+//! @param symbol_colors Array of nlegend symbol colors (cmap0
 //! indices) (PL_LEGEND_SYMBOL).
-//! @param symbol_scales : array of nlegend scale values for the
+//! @param symbol_scales Array of nlegend scale values for the
 //! symbol height (PL_LEGEND_SYMBOL).
-//! @param symbol_numbers : array of nlegend numbers of symbols to be
+//! @param symbol_numbers Array of nlegend numbers of symbols to be
 //! drawn across the width of the plotted area (PL_LEGEND_SYMBOL).
-//! @param symbols : array of nlegend pointers to null-terminated
+//! @param symbols Array of nlegend pointers to null-terminated
 //! strings which represent the glyph for the symbol to be plotted
 //! (PL_LEGEND_SYMBOL).  Like other PLplot strings specified by the
 //! user, UTF-8 or its ascii subset may be used in the strings, and

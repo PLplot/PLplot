@@ -90,10 +90,10 @@ plhrsh2( PLINT ch, PLINT x, PLINT y );
 //! plptex, the user string can contain FCI escapes to determine the
 //! font, UTF-8 code to determine the glyph or else PLplot escapes for
 //! Hershey or unicode text to determine the glyph.
-//! @param n : number of points in x and y arrays.
-//! @param x : array of X coordinates of points.
-//! @param y : array of Y coordinates of points.
-//! @param string : PLplot user string corresponding to the glyph to
+//! @param n Number of points in x and y arrays.
+//! @param x Array of X coordinates of points.
+//! @param y Array of Y coordinates of points.
+//! @param string PLplot user string corresponding to the glyph to
 //! be plotted at each of the n points.
 //--------------------------------------------------------------------------
 
@@ -110,10 +110,10 @@ c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string )
 //--------------------------------------------------------------------------
 //! Plot a glyph at the specified points.  This function is largely
 //! superseded by plstring which gives access to many(!) more glyphs.
-//! @param n : number of points in x and y arrays.
-//! @param x : pointer to an array with X coordinates of points.
-//! @param y : pointer to an array with Y coordinates of points.
-//! @param code : Hershey symbol code corresponding to a glyph to be
+//! @param n Number of points in x and y arrays.
+//! @param x Pointer to an array with X coordinates of points.
+//! @param y Pointer to an array with Y coordinates of points.
+//! @param code Hershey symbol code corresponding to a glyph to be
 //! plotted at each of the n points.
 //--------------------------------------------------------------------------
 
@@ -153,10 +153,10 @@ c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 //! draw).  If 0 < code < 32, then a useful (but small subset) of
 //! Hershey symbols is plotted.  If 32 <= code <= 127 the
 //! corresponding printable ASCII character is plotted.
-//! @param n : number of points in x and y arrays.
-//! @param x : pointer to an array with X coordinates of points.
-//! @param y : pointer to an array with Y coordinates of points.
-//! @param code : Hershey symbol code (in "ascii-indexed" form with
+//! @param n Number of points in x and y arrays.
+//! @param x Pointer to an array with X coordinates of points.
+//! @param y Pointer to an array with Y coordinates of points.
+//! @param code Hershey symbol code (in "ascii-indexed" form with
 //! -1 <= code <= 127) corresponding to a glyph to be plotted at each
 //! of the n points.
 //--------------------------------------------------------------------------
@@ -215,11 +215,11 @@ c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 //! If 0 < code < 32, then a useful (but small subset) of Hershey
 //! symbols is plotted.  If 32 <= code <= 127 the corresponding
 //! printable ASCII character is plotted.
-//! @param n : number of points in x, y, and z arrays.
-//! @param x : pointer to an array with X coordinates of points.
-//! @param y : pointer to an array with Y coordinates of points.
-//! @param z : pointer to an array with Z coordinates of points.
-//! @param code : Hershey symbol code (in "ascii-indexed" form with
+//! @param n Number of points in x, y, and z arrays.
+//! @param x Pointer to an array with X coordinates of points.
+//! @param y Pointer to an array with Y coordinates of points.
+//! @param z Pointer to an array with Z coordinates of points.
+//! @param code Hershey symbol code (in "ascii-indexed" form with
 //! -1 <= code <= 127) corresponding to a glyph to be plotted at each
 //! of the n points.
 //--------------------------------------------------------------------------
@@ -289,11 +289,11 @@ c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
 //! plptex, the user string can contain FCI escapes to determine the
 //! font, UTF-8 code to determine the glyph or else PLplot escapes for
 //! Hershey or unicode text to determine the glyph.
-//! @param n : number of points in x, y, and z arrays.
-//! @param x : array of X coordinates of points.
-//! @param y : array of Y coordinates of points.
-//! @param z : array of Z coordinates of points.
-//! @param string : PLplot user string corresponding to the glyph to
+//! @param n Number of points in x, y, and z arrays.
+//! @param x Array of X coordinates of points.
+//! @param y Array of Y coordinates of points.
+//! @param z Array of Z coordinates of points.
+//! @param string PLplot user string corresponding to the glyph to
 //! be plotted at each of the n points.
 //--------------------------------------------------------------------------
 
@@ -534,14 +534,14 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel )
 // (may be inside or outside)
 //
 // side	String which is one of the following:
-//	B or b  :  Bottom of viewport
-//	T or t  :  Top of viewport
-//	BV or bv : Bottom of viewport, vertical text
-//	TV or tv : Top of viewport, vertical text
-//	L or l  :  Left of viewport
-//	R or r  :  Right of viewport
-//	LV or lv : Left of viewport, vertical text
-//	RV or rv : Right of viewport, vertical text
+//     B or b  :  Bottom of viewport
+//     T or t  :  Top of viewport
+//     BV or bv : Bottom of viewport, vertical text
+//     TV or tv : Top of viewport, vertical text
+//     L or l  :  Left of viewport
+//     R or r  :  Right of viewport
+//     LV or lv : Left of viewport, vertical text
+//     RV or rv : Right of viewport, vertical text
 //
 // disp Displacement from specified edge of viewport, measured outwards from
 //	the viewport in units of the current character height. The

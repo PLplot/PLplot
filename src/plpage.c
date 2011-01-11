@@ -29,7 +29,7 @@
 //--------------------------------------------------------------------------
 //! Advance to subpage "page" or to the next page if "page" = 0.
 //!
-//! @param page : subpage identifier or 0
+//! @param page Subpage identifier or 0
 //!
 void
 c_pladv( PLINT page )
@@ -209,10 +209,10 @@ plP_setsub( void )
 //! Get subpage boundaries in absolute coordinates (mm from bottom
 //! left-hand corner of page).
 //!
-//! @param xmin : pointer to PLFLT containing minimum x boundary after call
-//! @param xmax : pointer to PLFLT containing maximum x boundary after call
-//! @param ymin : pointer to PLFLT containing minimum y boundary after call
-//! @param ymax : pointer to PLFLT containing maximum y boundary after call
+//! @param xmin Pointer to PLFLT containing minimum x boundary after call
+//! @param xmax Pointer to PLFLT containing maximum x boundary after call
+//! @param ymin Pointer to PLFLT containing minimum y boundary after call
+//! @param ymax Pointer to PLFLT containing maximum y boundary after call
 //!
 void
 c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
@@ -232,7 +232,7 @@ c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
 //! Wait for graphics input event and translate to world coordinates.
 //!
 //! @author Paul Casteels.
-//! @param plg : pointer to PLGraphicsIn
+//! @param plg Pointer to PLGraphicsIn
 //! @return 0 if no translation to world coordinates is possible.
 //! @see PLGraphicsIn
 //!
@@ -248,7 +248,7 @@ plGetCursor( PLGraphicsIn *plg )
 //! coordinates.
 //!
 //! @author Paul Casteels, modified by Alan W. Irwin
-//! @param plg : pointer to PLGraphicsIn
+//! @param plg Pointer to PLGraphicsIn
 //! @return 0 if no translation to world coordinates is possible.
 //!
 int
@@ -274,11 +274,11 @@ plTranslateCursor( PLGraphicsIn *plg )
 //! for any currently existing window.
 //!
 //! @author Paul Casteels, modified by Alan W. Irwin.
-//! @param rx : relative x device coordinates
-//! @param ry : relative y device coordinates
-//! @param wx : Pointer to x world coordinate (after call)
-//! @param wy : Pointer to y world coordinate (after call)
-//! @param window : Pointer index of window for which the world coordinates
+//! @param rx Relative x device coordinates
+//! @param ry Relative y device coordinates
+//! @param wx Pointer to x world coordinate (after call)
+//! @param wy Pointer to y world coordinate (after call)
+//! @param window Pointer index of window for which the world coordinates
 //! are valid
 //!
 void
