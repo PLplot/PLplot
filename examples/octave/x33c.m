@@ -216,10 +216,6 @@ function ix33c()
   opt_array(nlegend,1) = 0;
   text_colors(nlegend,1) = 0;
   text(nlegend,1:length(" ")) = " ";
-  box_colors(nlegend,1) = 0;
-  box_patterns(nlegend,1) = 0;
-  box_scales(nlegend,1) = 0.;
-  box_line_widths(nlegend,1) = 0;
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
   line_widths(nlegend,1) = 0;
@@ -253,7 +249,7 @@ function ix33c()
 	pllegend( opt, 0.05, 0.05,
 		 0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
 		 1., text_colors, text,
-		 box_colors, box_patterns, box_scales, box_line_widths,
+		 [], [], [], [],
 		 line_colors, line_styles, line_widths,
 		 symbol_colors, symbol_scales, symbol_numbers, symbols );
   endfor
@@ -294,10 +290,6 @@ function ix33c()
   opt_array(nlegend,1) = 0;
   text_colors(nlegend,1) = 0;
   text(nlegend,1:length(" ")) = " ";
-  box_colors(nlegend,1) = 0;
-  box_patterns(nlegend,1) = 0;
-  box_scales(nlegend,1) = 0.;
-  box_line_widths(nlegend,1) = 0;
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
   line_widths(nlegend,1) = 0;
@@ -336,7 +328,7 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
@@ -349,7 +341,7 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
@@ -362,7 +354,7 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
@@ -375,7 +367,7 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
@@ -388,7 +380,7 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
@@ -401,7 +393,7 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
@@ -414,7 +406,7 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
@@ -503,7 +495,7 @@ function ix33c()
         pllegend( opt, x, y,
                  0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
                  1., text_colors, text,
-                 box_colors, box_patterns, box_scales, box_line_widths,
+		 [], [], [], [],
                  line_colors, line_styles, line_widths,
                  symbol_colors, symbol_scales, symbol_numbers, symbols );
     if(i == nturn)
@@ -649,8 +641,8 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
 	       0., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
-	       line_colors, line_styles, line_widths,
+	       [], [], [], [],
+	       [], [], [],
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
   max_height = max(max_height, legend_height);
 
@@ -680,8 +672,8 @@ function ix33c()
       pllegend( opt, x, y,
 	       0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
 	       0., text_colors, text,
-	       box_colors, box_patterns, box_scales, box_line_widths,
-	       line_colors, line_styles, line_widths,
+	       [], [], [], [],
+	       [], [], [],
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
   max_height = max(max_height, legend_height);
 
@@ -715,8 +707,8 @@ function ix33c()
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
-               line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols );
+	       [], [], [],
+	       [], [], [], [] );
   max_height = max(max_height, legend_height);
 
   ## Set up box legend entries with various patterns.
@@ -746,8 +738,8 @@ function ix33c()
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
-               line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols );
+	       [], [], [],
+	       [], [], [], [] );
   max_height = max(max_height, legend_height);
 
   ## Set up box legend entries with various box pattern line widths.
@@ -777,8 +769,8 @@ function ix33c()
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
-               line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols );
+	       [], [], [],
+	       [], [], [], [] );
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various colours.
@@ -811,9 +803,9 @@ function ix33c()
       pllegend( opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
-               box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [], 
                line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols' );
+	       [], [], [], [] );
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various styles
@@ -838,9 +830,9 @@ function ix33c()
       pllegend( opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
-               box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [], 
                line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols' );
+	       [], [], [], [] );
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various widths.
@@ -866,9 +858,9 @@ function ix33c()
       pllegend( opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
-               box_colors, box_patterns, box_scales, box_line_widths,
+	       [], [], [], [], 
                line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols' );
+	       [], [], [], [] );
   max_height = max(max_height, legend_height);
 
   ## Color bar examples

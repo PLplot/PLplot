@@ -178,6 +178,18 @@ PyArrayObject* myIntArray_ContiguousFromObject(PyObject* in, int type, int mindi
 }
 %typemap(freearg) PLINT *ArrayCk { Py_DECREF(tmp$argnum);}
 
+/* No count but check consistency with previous or NULL */
+%typemap(in) PLINT *ArrayCkNull (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] != Alen) {
+    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
+    return NULL;
+  }
+  $1 = (PLINT*)tmp->data;
+}
+%typemap(freearg) PLINT *ArrayCkNull { Py_DECREF(tmp$argnum);}
+
 /* Weird case to allow argument to be one shorter than others */
 %typemap(in) PLINT *ArrayCkMinus1 (PyArrayObject* tmp) {
   tmp = (PyArrayObject *)myIntArray_ContiguousFromObject($input, PyArray_PLINT, 1, 1);
@@ -270,6 +282,18 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   $1 = (PLFLT*)tmp->data;
 }
 %typemap(freearg) PLFLT *ArrayCk { Py_DECREF(tmp$argnum);}
+
+/* no count, but check consistency with previous, or NULL */
+%typemap(in) PLFLT *ArrayCkNull (PyArrayObject* tmp) {
+  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] != Alen) {
+    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
+    return NULL;
+  }
+  $1 = (PLFLT*)tmp->data;
+}
+%typemap(freearg) PLFLT *ArrayCkNull { Py_DECREF(tmp$argnum);}
 
 /* check consistency with X dimension of previous */
 %typemap(in) PLFLT *ArrayCkX (PyArrayObject* tmp) {
@@ -460,7 +484,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 /***************************
 	special for pllegend, char ** ArrayCk
 ****************************/
-/* no count, but check consistency with previous */
+/* no count, but check consistency with previous. Always allow NULL strings. */
 %typemap(in) char **ArrayCk (PyArrayObject* tmp) {
   int i;
   tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, NPY_STRING, 1, 1);

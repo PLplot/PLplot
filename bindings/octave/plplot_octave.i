@@ -220,6 +220,23 @@ template void _cvt_to_double(float *, double *, unsigned);
 }
 %typemap(freearg) PLINT *ArrayCk {delete [] $1;}
 
+// No count but check consistency with previous
+%typemap(in) PLINT *ArrayCkNull (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( ! $input.is_empty() ) {  
+  if ( _dim($input, 0) != Alen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = new PLINT[Alen];
+  _cvt_double_to($1, &temp(0,0), Alen);
+  }
+  else {
+    $1 = NULL;
+  }
+}
+%typemap(freearg) PLINT *ArrayCkNull {if ($1 != NULL) delete [] $1;}
+
 // No count but remember size to check others
 %typemap(in) PLINT *Array (Matrix temp) {
   if ( _n_dims($input) > 1 )
@@ -294,6 +311,22 @@ template void _cvt_to_double(float *, double *, unsigned);
   $1 = &temp(0,0);
 }
 %typemap(freearg) PLFLT *ArrayCk {}
+
+// No count but check consistency with previous or NULL
+%typemap(in) PLFLT *ArrayCkNull (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( ! $input.is_empty() ) {
+  if ( _dim($input, 0) != Alen )
+      { error("argument vectors must be same length"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+  }
+  else {
+    $1 = NULL;
+  }
+}
+%typemap(freearg) PLFLT *ArrayCkNull {}
 
 // No count but remember size to check others
 %typemap(in) PLFLT *Array (Matrix temp) {
@@ -1138,7 +1171,7 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
   printf("nlegend = %d\n", nlegend);
   for(i=0;i<nlegend;i++) {
     printf("opt_array[%d] = %d\n", i, opt_array[i]);
-    printf("strlen(text[%d]) = %d\n", i, strlen(text[i]));
+    printf("strlen(text[%d]) = %d\n", i, (int) strlen(text[i]));
     printf("text[%d] = %s\n", i, text[i]);
   }
 }
@@ -1156,6 +1189,7 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
   {
     error("argument must be a scalar or vector or matrix"); SWIG_fail;
   }
+  if ( ! $input.is_empty() ) {
   if ( _dim($input, 0) != Alen )
   {
     error("first dimension must be same length as previous vector"); SWIG_fail;
@@ -1224,14 +1258,20 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
       $1[i][non_blank_length+1] = '\0';
     }
   }
+  } 
+  else {
+    $1 = NULL;
+  }
   
 }
 %typemap(freearg) char **ArrayCk {
   int i;
+  if ($1 != NULL) {
   for(i=0; i<Alen; i++) {
     delete[] $1[i];
   }
   delete[] $1;
+  }
 }
 
 // This test function should be removed when we are confident of our

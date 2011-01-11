@@ -109,10 +109,6 @@ function plot1(type)
   opt_array = 0;
   text_colors = 0;
   text = " ";
-  box_colors = 0;
-  box_patterns = 0;
-  box_scales = 0.;
-  box_line_widths = 0;
   line_colors = 0;
   line_styles = 0;
   line_widths = 0;
@@ -124,10 +120,6 @@ function plot1(type)
   opt_array(nlegend,1) = 0;
   text_colors(nlegend,1) = 0;
   text(nlegend,1:length(" ")) = " ";
-  box_colors(nlegend,1) = 0;
-  box_patterns(nlegend,1) = 0;
-  box_scales(nlegend,1) = 0.;
-  box_line_widths(nlegend,1) = 0;
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
   line_widths(nlegend,1) = 0;
@@ -167,7 +159,7 @@ function plot1(type)
       pllegend( bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX), 0.0, 0.0,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
                1., text_colors, text, 
-               box_colors, box_patterns, box_scales, box_line_widths, 
+               [], [], [], [], 
                line_colors, line_styles, line_widths,
                symbol_colors, symbol_scales, symbol_numbers, symbols );
 

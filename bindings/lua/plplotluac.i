@@ -159,6 +159,17 @@ Naming rules:
 }
 %typemap(freearg) PLINT *ArrayCk { LUA_FREE_ARRAY($1); }
 
+/* No count but check consistency with previous, or NULL */
+%typemap(in) PLINT *ArrayCkNull (int temp) {
+  $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
+  if(!$1) SWIG_fail;
+  if(temp != Alen) {
+    lua_pushfstring(L, "Tables must be of same length.");
+    SWIG_fail;
+  }
+}
+%typemap(freearg) PLINT *ArrayCkNull { LUA_FREE_ARRAY($1); }
+%typemap(default) PLINT *ArrayCkNull { $1=NULL; }
 
 /* Weird case to allow argument to be one shorter than others */
 %typemap(in) PLINT *ArrayCkMinus1 (int temp) {
@@ -232,6 +243,18 @@ Naming rules:
 %typemap(freearg) PLFLT *ArrayCk { LUA_FREE_ARRAY($1); }
 
 
+/* no count, but check consistency with previous, or NULL */
+%typemap(in) PLFLT *ArrayCkNull (int temp) {
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
+  if(!$1) SWIG_fail;
+  if(temp != Alen) {
+    lua_pushfstring(L, "Tables must be of same length.");
+    SWIG_fail;
+  }
+}
+%typemap(freearg) PLFLT *ArrayCkNull { LUA_FREE_ARRAY($1); }
+
+
 /* No length but remember size to check others */
 %typemap(in) PLFLT *Array {
   int temp;
@@ -240,7 +263,7 @@ Naming rules:
   Alen = temp;
 }
 %typemap(freearg) (PLFLT *Array) { LUA_FREE_ARRAY($1); }
-
+%typemap(default) PLFLT *ArrayCkNull { $1=NULL; }
 
 /* with trailing count */
 %typemap(in) (PLFLT *Array, PLINT n) {
