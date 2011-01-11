@@ -1027,7 +1027,7 @@ void plstream::colorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
 {
     set_stream();
 
-    colorbar( opt, x, y, length, width, ticks, sub_ticks, axis_opts,
+    plcolorbar( opt, x, y, length, width, ticks, sub_ticks, axis_opts,
         label, n_colors, colors, values );
 }
 
