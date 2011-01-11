@@ -1,6 +1,6 @@
 // -*- coding: utf-8; -*-
 //
-// $Id:$
+// $Id$
 //
 // Demonstrate most pllegend capability including unicode symbols.
 //
