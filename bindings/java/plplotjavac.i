@@ -321,6 +321,7 @@ some global variables (above) to handle consistency checking amoung parameters.
 Naming rules:
 	Array 		(sets Alen to dim[0])
 	ArrayCk 	(tests that dim[0] == Alen)
+	ArrayCkNull 	(tests that dim[0] == Alen or array is null)
 	ArrayX 		(sets Xlen to dim[0]
 	ArrayCkX 	(tests dim[0] == Xlen)
 	ArrayY 		(sets Ylen to dim[1])
@@ -395,6 +396,33 @@ Naming rules:
 %typemap(jstype) PLINT *ArrayCk "int[]"
 %typemap(javain) PLINT *ArrayCk "$javainput"
 %typemap(javaout) PLINT *ArrayCk {
+   return $jnicall;
+}
+
+/* no count but check consistency with previous or is null */
+%typemap(in) PLINT *ArrayCkNull {
+   if ( $input != NULL ) {
+   jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
+   if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
+      printf("Vectors must be same length.\n");
+      return;
+   }
+   setup_array_1d_i( &$1, jydata, Alen);
+   (*jenv)->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
+   }
+   else {
+      $1 == NULL;
+   }   
+}
+%typemap(freearg) PLINT *ArrayCkNull {
+   if ($1 != NULL)
+      free($1);
+}
+%typemap(jni) PLINT *ArrayCkNull "jintArray"
+%typemap(jtype) PLINT *ArrayCkNull "int[]"
+%typemap(jstype) PLINT *ArrayCkNull "int[]"
+%typemap(javain) PLINT *ArrayCkNull "$javainput"
+%typemap(javaout) PLINT *ArrayCkNull {
    return $jnicall;
 }
 
@@ -607,6 +635,33 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(jstype) PLFLT *ArrayCk jPLFLTbracket
 %typemap(javain) PLFLT *ArrayCk "$javainput"
 %typemap(javaout) PLFLT *ArrayCk{
+   return $jnicall;
+}
+
+/* no count, but check consistency with previous or NULL */
+%typemap(in) PLFLT *ArrayCkNull {
+   if ( $input != NULL ) {
+   jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
+      printf("Vectors must be same length.\n");
+      return;
+   }
+   setup_array_1d_PLFLT( &$1, jydata, Alen );
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
+   }
+   else {
+      $1 = NULL;
+   }
+}
+%typemap(freearg) PLFLT *ArrayCkNull {
+   if ($1 != NULL)
+      free($1);
+}
+%typemap(jni) PLFLT *ArrayCkNull jPLFLTArray
+%typemap(jtype) PLFLT *ArrayCkNull jPLFLTbracket
+%typemap(jstype) PLFLT *ArrayCkNull jPLFLTbracket
+%typemap(javain) PLFLT *ArrayCkNull "$javainput"
+%typemap(javaout) PLFLT *ArrayCkNull{
    return $jnicall;
 }
 
@@ -1720,6 +1775,47 @@ bject. */
    free($1);
 }
 
+%typemap(jni) (char **ArrayCk) "jobjectArray"
+%typemap(jtype) (char **ArrayCk) "String[]"
+%typemap(jstype) (char **ArrayCk) "String[]"
+%typemap(javain) (char **ArrayCk) "$javainput"
+%typemap(javaout) (char **ArrayCk) {
+   return $jnicall;
+}
+%typemap(in) (char **ArrayCk)  {
+   int i = 0;
+   if ($input != NULL) {
+   int size = (*jenv)->GetArrayLength(jenv, $input);
+   if (size != Alen) {
+       printf("Arrays must be the same length\n");
+       return;
+   }
+   $1 = (char **) malloc(Alen*sizeof(char *));
+   /* make a copy of each string */
+   for (i = 0; i<Alen; i++) {
+      jstring j_string = (jstring)(*jenv)->GetObjectArrayElement(jenv, $input, i);
+      const char * c_string = (char *) (*jenv)->GetStringUTFChars(jenv, j_string, 0);
+      $1[i] = malloc((strlen(c_string)+1)*sizeof(const char *));
+      strcpy($1[i], c_string);
+      (*jenv)->ReleaseStringUTFChars(jenv, j_string, c_string);
+      (*jenv)->DeleteLocalRef(jenv, j_string);
+   }
+   }
+   else {
+      $1 = NULL;
+   }
+}
+
+/* This cleans up the memory we malloc'd before the function call */
+%typemap(freearg) (char **ArrayCk) {
+   int i;
+   if ($1 != NULL) {
+   for (i=0; i<Alen; i++)
+     free($1[i]);
+   free($1);
+   }
+}
+
 #if 0
 %typemap(in) PLGraphicsIn *gin (PLGraphicsIn tmp) {
   if(!PySequence_Check($input) || PySequence_Size($input) != 2) {
@@ -1738,9 +1834,6 @@ bject. */
   resultobj = t_output_helper(resultobj, o);
 }
 #endif
-
-// Not implemented yet.
-%ignore pllegend;
 
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i

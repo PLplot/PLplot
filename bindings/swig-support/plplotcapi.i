@@ -554,17 +554,17 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLFLT text_justification,
             const PLINT *ArrayCk, const char **ArrayCk,
-            const PLINT *ArrayCk, const PLINT *ArrayCk,
-            const PLFLT *ArrayCk, const PLINT *ArrayCk,
-            const PLINT *ArrayCk, const PLINT *ArrayCk,
-            const PLINT *ArrayCk,
-            const PLINT *ArrayCk, const PLFLT *ArrayCk,
-            const PLINT *ArrayCk, const char **ArrayCk );
+            const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
+            const PLFLT *ArrayCkNull, const PLINT *ArrayCkNull,
+            const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
+            const PLINT *ArrayCkNull,
+            const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
+            const PLINT *ArrayCkNull, const char **ArrayCk );
 
 %feature( "docstring", "Create a continous colorbar using an image, shade, or gradient with an optional axis label." ) plcolorbar;
 void
 plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
-              PLFLT ticks, PLINT sub_ticks,
+              PLFLT ticks, PLFLT sub_ticks,
               const char *axis_opts, const char *label,
               PLINT n, PLFLT *Array, PLFLT *ArrayCk );
 

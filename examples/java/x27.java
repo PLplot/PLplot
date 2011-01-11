@@ -61,6 +61,7 @@ class x27 {
             { 20.0, -13.0, 20.0, 20.0 } };
 
         int    i;
+	boolean fill;
 
         // plplot initialization
 
@@ -77,11 +78,12 @@ class x27 {
         // First an overview, then all curves one by one
         pls.ssub( 3, 3 ); // Three by three window
 
+	fill = false;
         for ( i = 0; i < 9; i++ )
         {
             pls.adv( 0 );
             pls.vpor( 0.0, 1.0, 0.0, 1.0 );
-            spiro( params[i] );
+            spiro( params[i], fill );
         }
 
         pls.adv( 0 );
@@ -91,8 +93,21 @@ class x27 {
         {
             pls.adv( 0 );
             pls.vpor( 0.0, 1.0, 0.0, 1.0 );
-            spiro( params[i] );
+            spiro( params[i], fill );
         }
+
+	// Fill the curves
+	fill = true;
+	
+	pls.adv( 0 );
+	pls.ssub( 1, 1 ); // One window per curve
+	
+	for ( i = 0; i < 9; i++ )
+        {
+	    pls.adv( 0 );
+	    pls.vpor( 0.0, 1.0, 0.0, 1.0 );
+	    spiro( params[i], fill );
+	}
 
         pls.end();
     }
@@ -106,7 +121,7 @@ class x27 {
 
     // ===============================================================
 
-    void spiro( double params[] )
+    void spiro( double params[], boolean fill )
     {
         int    NPNT = 20000;
         double xcoord[];
@@ -167,7 +182,11 @@ class x27 {
         pls.wind( xmin, xmax, ymin, ymax );
 
         pls.col0( 1 );
-        pls.line( xcoord, ycoord );
+
+	if ( fill )
+	    pls.fill( xcoord, ycoord );
+	else
+	    pls.line( xcoord, ycoord );
     }
 }
 

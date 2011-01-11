@@ -167,7 +167,8 @@ class x18 {
             if ( opt[k] > 0 )
                 pls.line3( x, y, z );
             else
-                pls.poin3( x, y, z, 1 );
+		// U+22C5 DOT OPERATOR.
+		pls.string3( x, y, z, "⋅" );
 
             pls.col0( 3 );
             String title = "#frPLplot Example 18 - Alt=" +
