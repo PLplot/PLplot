@@ -1,4 +1,4 @@
-# $Id: xw30.py 8224 2008-02-07 16:18:26Z andrewross $
+# $Id$
 
 #  Copyright (C) 2007, 2008 Andrew Ross
 
