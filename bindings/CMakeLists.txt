@@ -19,6 +19,9 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# swig-support has to come before swig-generated bindings (currently
+# python, java, lua, and octave).
+add_subdirectory(swig-support)
 add_subdirectory(c++)
 add_subdirectory(f77)
 add_subdirectory(f95)
