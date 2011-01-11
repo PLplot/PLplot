@@ -86,9 +86,9 @@ const char *x33::special_symbols[5] = {
 void
 x33::plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n, PLFLT *values, const char *title )
 {
-    pladv( 0 );
+    pls->adv( 0 );
     // Setup color palette 1
-    plspal1( "cmap1_blue_red.pal", 1 );
+    pls->spal1( "cmap1_blue_red.pal", 1 );
 
     PLFLT colors[n];
     int   i;
@@ -123,7 +123,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n
         }
     }
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, 0.1, 0.1, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Left, High Cap",
         n, colors, values );
@@ -131,7 +131,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n
     opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT |
           PL_COLORBAR_CAP_LOW;
 
-    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+    pls->colorbar( opt, 0.1, 0.4, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Right, Low Cap",
         n, colors, values );
@@ -139,7 +139,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n
     opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER |
           PL_COLORBAR_CAP_HIGH;
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, 0.1, 0.1, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Upper, High Cap",
         n, colors, values );
@@ -147,22 +147,22 @@ x33::plcolorbar_example_1( PLINT bar_type, PLFLT ticks, PLINT sub_ticks, PLINT n
     opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER |
           PL_COLORBAR_CAP_LOW;
 
-    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, 0.4, 0.1, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Lower, Low Cap",
         n, colors, values );
 
-    plvpor( 0.0, 1.0, 0.0, 1.0 );
-    plwind( 0.0, 1.0, 0.0, 1.0 );
-    plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+    pls->vpor( 0.0, 1.0, 0.0, 1.0 );
+    pls->wind( 0.0, 1.0, 0.0, 1.0 );
+    pls->ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
 }
 
 void
 x33::plcolorbar_example_2( PLINT bar_type, PLFLT ticks, PLFLT sub_ticks, PLINT n, PLFLT *values, const char *title )
 {
-    pladv( 0 );
+    pls->adv( 0 );
     // Setup color palette 1
-    plspal1( "cmap1_blue_yellow.pal", 1 );
+    pls->spal1( "cmap1_blue_yellow.pal", 1 );
 
     PLFLT colors[n];
     int   i;
@@ -197,7 +197,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLFLT ticks, PLFLT sub_ticks, PLINT n
         }
     }
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, 0.1, 0.1, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Left, Low Cap",
         n, colors, values );
@@ -205,7 +205,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLFLT ticks, PLFLT sub_ticks, PLINT n
     opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT |
           PL_COLORBAR_CAP_HIGH;
 
-    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+    pls->colorbar( opt, 0.1, 0.4, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Right, High Cap",
         n, colors, values );
@@ -213,7 +213,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLFLT ticks, PLFLT sub_ticks, PLINT n
     opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER |
           PL_COLORBAR_CAP_LOW;
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, 0.1, 0.1, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Upper, Low Cap",
         n, colors, values );
@@ -221,14 +221,14 @@ x33::plcolorbar_example_2( PLINT bar_type, PLFLT ticks, PLFLT sub_ticks, PLINT n
     opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER |
           PL_COLORBAR_CAP_HIGH;
 
-    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, 0.4, 0.1, 0.5, 0.1,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Lower, High Cap",
         n, colors, values );
 
-    plvpor( 0.0, 1.0, 0.0, 1.0 );
-    plwind( 0.0, 1.0, 0.0, 1.0 );
-    plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+    pls->vpor( 0.0, 1.0, 0.0, 1.0 );
+    pls->wind( 0.0, 1.0, 0.0, 1.0 );
+    pls->ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
 }
 
 //--------------------------------------------------------------------------
