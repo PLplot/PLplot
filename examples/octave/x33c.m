@@ -782,17 +782,19 @@ function ix33c()
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various colours.
-  ## Reset text and symbols, because otherwise legend may come out with
-  ## the wrong length text/symbol with prior results embedded.
-  text = " ";
-  text(nlegend,1:length(" ")) = " ";
-  symbols = " ";
-  symbols(nlegend,1:length(" ")) = " ";
+  ## From here on use the cell array of strings paradigm for
+  ## text (and symbols) to show that the PLplot interface works properly for
+  ## this case (and also to demonstrate how to use a cell array of strings
+  ## with PLplot).
+  ## Reset text and symbols cell arrays.
+  text = {};
+  text{nlegend} = "";
+  symbols = {};
+  symbols{nlegend} = "";
 
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_LINE;
-    string = sprintf("%s %d", "Line Color",i+1);
-    text(i+1,1:length(string)) = string;
+    text{i+1} = sprintf("%s %d", "Line Color",i+1);
     text_colors(i+1) = i+1;
     line_colors(i+1) = i+1;
     line_styles(i+1) = 1;
@@ -808,24 +810,22 @@ function ix33c()
   [legend_width, legend_height] = \
       pllegend( opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-               0., text_colors, text,
+               0., text_colors, text',
                box_colors, box_patterns, box_scales, box_line_widths,
                line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols );
+               symbol_colors, symbol_scales, symbol_numbers, symbols' );
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various styles
-  ## Reset text and symbols, because otherwise legend may come out with
-  ## the wrong length text/symbol with prior results embedded.
-  text = " ";
-  text(nlegend,1:length(" ")) = " ";
-  symbols = " ";
-  symbols(nlegend,1:length(" ")) = " ";
+  ## Reset text and symbols cell arrays.
+  text = {};
+  text{nlegend} = "";
+  symbols = {};
+  symbols{nlegend} = "";
 
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_LINE;
-    string = sprintf("%s %d", "Line Style",i+1);
-    text(i+1,1:length(string)) = string;
+    text{i+1} = sprintf("%s %d", "Line Style",i+1);
     text_colors(i+1) = 2;
     line_colors(i+1) = 2;
     line_styles(i+1) = i+1;
@@ -837,24 +837,22 @@ function ix33c()
   [legend_width, legend_height] = \
       pllegend( opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-               0., text_colors, text,
+               0., text_colors, text',
                box_colors, box_patterns, box_scales, box_line_widths,
                line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols );
+               symbol_colors, symbol_scales, symbol_numbers, symbols' );
   max_height = max(max_height, legend_height);
 
   ## Set up line legend entries with various widths.
-  ## Reset text and symbols, because otherwise legend may come out with
-  ## the wrong length text/symbol with prior results embedded.
-  text = " ";
-  text(nlegend,1:length(" ")) = " ";
-  symbols = " ";
-  symbols(nlegend,1:length(" ")) = " ";
+  ## Reset text and symbols cell arrays.
+  text = {};
+  text{nlegend} = "";
+  symbols = {};
+  symbols{nlegend} = "";
 
   for i=0:nlegend-1
     opt_array(i+1) = PL_LEGEND_LINE;
-    string = sprintf("%s %d", "Line Width",i+1);
-    text(i+1,1:length(string)) = string;
+    text{i+1} = sprintf("%s %d", "Line Width",i+1);
     text_colors(i+1) = 2;
     line_colors(i+1) = 2;
     line_styles(i+1) = 1;
@@ -867,10 +865,10 @@ function ix33c()
   [legend_width, legend_height] = \
       pllegend( opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-               0., text_colors, text,
+               0., text_colors, text',
                box_colors, box_patterns, box_scales, box_line_widths,
                line_colors, line_styles, line_widths,
-               symbol_colors, symbol_scales, symbol_numbers, symbols );
+               symbol_colors, symbol_scales, symbol_numbers, symbols' );
   max_height = max(max_height, legend_height);
 
   ## Color bar examples

@@ -1145,38 +1145,84 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
 %}
 
 // No count but check consistency with previous
-%typemap(in) char **ArrayCk (charMatrix temp) {
-  int i, max_length, non_blank_length;
+%typemap(in) char **ArrayCk {
+  charMatrix temp_matrix;
+  Cell temp_cell;
+  char *tmp_cstring;
+  std::string str;
+  size_t max_length, non_blank_length;
+  int i, ifcell;
   if ( _n_dims($input) > 2 )
-      { error("argument must be a scalar or vector or matrix"); SWIG_fail; }
+  {
+    error("argument must be a scalar or vector or matrix"); SWIG_fail;
+  }
   if ( _dim($input, 0) != Alen )
-      { error("first dimension must be same length as previous vector"); SWIG_fail; }
-  // Allow one extra space for null termination.
-  max_length= _dim($input, 1) + 1;
+  {
+    error("first dimension must be same length as previous vector"); SWIG_fail;
+  }
   $1 = new char*[Alen];
-  temp = $input.char_matrix_value();
+  ifcell = $input.is_cell();
+  if (ifcell)
+  {
+    temp_cell = $input.cell_value();
+  }
+  else
+  {
+    temp_matrix = $input.char_matrix_value();
+    // Allow one extra space for null termination.
+    max_length= _dim($input, 1) + 1;
+  }
+  
   for(i=0; i<Alen; i++) {
     // Must copy string to "permanent" location because the string
     // location corresponding to tmp_cstring gets
     // overwritten for each iteration of loop.
-    const char *tmp_cstring = temp.row_as_string(i).c_str();
+    if(ifcell)
+    {
+      if(temp_cell.elem(i).is_string())
+      {
+        str = temp_cell.elem(i).string_value();
+        // leave room for null termination.
+        max_length = str.size() + 1;
+        tmp_cstring = (char *)str.c_str();
+      }
+      else
+      {
+        // Use null string if user attempts to pass a cell array
+        // with a non-string element (likely an empty element
+        // since that should be allowed by the PLplot interface
+        // if that element is going to be unused).
+        // leave room for null termination.
+        max_length = 1;
+        tmp_cstring = (char*)"";
+      }
+    }
+    else
+    {
+      tmp_cstring = (char *)temp_matrix.row_as_string(i).c_str();
+    }
     $1[i] = new char[max_length];
     strncpy( $1[i], tmp_cstring, max_length-1 );
     $1[i][max_length-1] = '\0';
-    // remove trailing-blank padding that is used by the
-    // charMatrix class to insure all strings in a given
-    // charMatrix instance have the same length.
-    // This transformation also removes legitimate trailing
-    // blanks but there is nothing we can do about that
-    // for the charMatrix class.
+    // All the trailing blank crapola should not be needed for
+    // string cell arrays.
+    if(!ifcell)
+    {
+      // remove trailing-blank padding that is used by the
+      // charMatrix class to insure all strings in a given
+      // charMatrix instance have the same length.
+      // This transformation also removes legitimate trailing
+      // blanks but there is nothing we can do about that
+      // for the charMatrix class.
 
-    // Look for trailing nulls first (just in case, although that
-    // shouldn't happen if charMatrix implemented as documented)
-    // before looking for trailing blanks.
-    non_blank_length = max_length-2;
-    while(non_blank_length >= 0 && $1[i][non_blank_length] == '\0') {non_blank_length--;}
-    while(non_blank_length >= 0 && $1[i][non_blank_length] == ' ') {non_blank_length--;}
-    $1[i][non_blank_length+1] = '\0';
+      // Look for trailing nulls first (just in case, although that
+      // shouldn't happen if charMatrix implemented as documented)
+      // before looking for trailing blanks.
+      non_blank_length = max_length-2;
+      while(non_blank_length >= 0 && $1[i][non_blank_length] == '\0') {non_blank_length--;}
+      while(non_blank_length >= 0 && $1[i][non_blank_length] == ' ') {non_blank_length--;}
+      $1[i][non_blank_length+1] = '\0';
+    }
   }
   
 }
