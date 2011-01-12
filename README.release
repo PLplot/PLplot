@@ -204,6 +204,12 @@ INDEX
 
 1. Changes relative to PLplot 5.9.7 (the previous development release)
 
+1.1 The plstring and plstring3 functions have been added
+1.2 The pllegend API has been finalized
+1.3 Octave bindings now implemented with swig
+1.4 Documentation redone for our swig-generated Python and Octave bindings
+1.5 Support large polygons
+
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
 2.1 All autotools-related files have now been removed
@@ -254,7 +260,11 @@ detected
 2.43 Add a Qt device for in memory plotting.
 2.44 Add discrete legend capability.
 2.45 Add full bindings and examples for the D language.
-
+2.46 The plstring and plstring3 functions have been added
+2.47 The pllegend API has been finalized
+2.48 Octave bindings now implemented with swig
+2.49 Documentation redone for our swig-generated Python and Octave bindings
+2.50 Support large polygons
 
 -1. Important changes we should have mentioned in previous release announcements.
 
@@ -284,6 +294,92 @@ for a summary table of all testing done for PLplot-5.9.8.
 
 1. Changes relative to PLplot 5.9.7 (the previous development release)
 
+1.1 The plstring and plstring3 functions have been added
+
+The plstring function largely supersedes plpoin and plsym
+because many(!) more glyphs are accessible with plstring.  The glyph
+is specified with a PLplot user string.  As with plmtex and plptex,
+the user string can contain FCI escapes to determine the font, UTF-8
+code to determine the glyph or else PLplot escapes for Hershey or
+unicode text to determine the glyph.  Standard examples 4 and 26 use
+plstring.
+
+The plstring3 function largely supersedes plpoin3 for the same (access
+to many more glyphs) reasons.  Standard example 18 uses plstring3.
+
+1.2 The pllegend API has been finalized
+
+The function pllegend allows users to create a discrete plot legend
+with a plotted colored box, line, and/or line of symbols for each
+annotated legend entry.  The pllegend function was first made
+available for 5.9.7. Due to feedback from early adopters of pllegend,
+we have now added substantially to the pllegend capabilities. and we
+now believe pllegend is ready for prime time.  The pllegend
+capabilities are documented in our docbook documentation and
+demonstrated in standard examples 4, 26, and 33.  
+
+N.B. The current set of changes required a backwards-incompatible
+change to the pllegend API.  This requires users who tried this new
+functionality for 5.9.7 to reprogramme their pllegend calls.  Since
+the pllegend API was labelled experimental for 5.9.7, we will not be
+bumping the soversions of the affected PLplot libraries.
+
+1.3 Octave bindings now implemented with swig
+
+Octave is a powerful platform that demands a first-class PLplot
+solution, but we were finding it difficult to realize that goal
+because we were running up against some limitations of the (now
+deprecated) matwrap-generated Octave bindings.  Accordingly, a
+swig-generated version of the Octave bindings has now been implemented
+that builds on the prior matwrapped bindings effort but also extends
+it with, e.g., bindings for plstring, plstring3, pllegend, and
+plcolbar which now make it possible to run examples 4, 18, 26, and 33
+(all of which have now have been updated to use those functions) and
+get consistent results with the corresponding C examples.  The
+swig-generated bindings for Octave are used by default, but the build
+system falls back to the matwrapped bindings if swig is not available.
+Users can force the matwrapped bindings by using the
+-DENABLE_swig_octave=OFF cmake command-line option.
+
+Like the matwrapped bindings before it, the new swig-generated octave
+bindings currently do not have a number of the PLplot functions
+wrapped (e.g., "plmap") that are needed by standard example 19.
+However, because of the power of swig we now have some confidence we
+can solve this issue in the future.
+
+1.4 Documentation redone for our swig-generated Python and Octave bindings
+
+Through the docstring %feature, swig can generate documentation
+strings for certain of the languages it supports (currently Python,
+Octave, and Ruby).  We have now removed all such hand-crafted swig
+documentation data from bindings/swig-support/plplotcapi.i and
+replaced it with generated documentation in the file
+bindings/swig-support/swig_documentation.i.  That file is generated
+from doc/docbook/src/api.xml using the perl script
+doc/docbook/bin/api2swigdoc.pl.  The build system Unix target
+"check_swig_documentation" now runs that script and compares results
+with bindings/swig-support/swig_documentation.i in the source tree to
+make sure that latter file is consistent with any changes that might
+have occurred in doc/docbook/src/api.xml.
+
+The resulting Octave and Python user-documentation (obtained by 'help
+<PLplot_command_name>' in Octave and 'print ("%s" %
+<PLplot_command_name>.__doc__)' in Python is much more detailed than
+what was available before using the hand-crafted documentation.  If we
+ever decided to generate PLplot bindings for Ruby with swig, this
+high-quality user-documentation would be available for that language
+as well.
+
+1.5 Support large polygons
+
+Previous releases had an implicit limitation with respect to the
+number of vertices in a polygon. This was due to the use of statically
+defined arrays (to avoid allocating and freeing memory for each polygon
+to be drawn). José Luis García Pallero found this limitation and
+provided patches to eliminate this limitation. The strategy is
+that for small polygons, the original statically defined arrays
+are used and for large polygons new arrays are allocated and freed.
+This strategy has been applied to all relevant source files.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -987,7 +1083,83 @@ you are recommended to disable the d bindings or switch to an
 alternative d compiler (the Digital Mars compiler is reported to be
 good).
 
-2.46 Support large polygons
+2.46 The plstring and plstring3 functions have been added
+
+The plstring function largely supersedes plpoin and plsym
+because many(!) more glyphs are accessible with plstring.  The glyph
+is specified with a PLplot user string.  As with plmtex and plptex,
+the user string can contain FCI escapes to determine the font, UTF-8
+code to determine the glyph or else PLplot escapes for Hershey or
+unicode text to determine the glyph.  Standard examples 4 and 26 use
+plstring.
+
+The plstring3 function largely supersedes plpoin3 for the same (access
+to many more glyphs) reasons.  Standard example 18 uses plstring3.
+
+2.47 The pllegend API has been finalized
+
+The function pllegend allows users to create a discrete plot legend
+with a plotted colored box, line, and/or line of symbols for each
+annotated legend entry.  The pllegend function was first made
+available for 5.9.7. Due to feedback from early adopters of pllegend,
+we have now added substantially to the pllegend capabilities. and we
+now believe pllegend is ready for prime time.  The pllegend
+capabilities are documented in our docbook documentation and
+demonstrated in standard examples 4, 26, and 33.  
+
+N.B. The current set of changes required a backwards-incompatible
+change to the pllegend API.  This requires users who tried this new
+functionality for 5.9.7 to reprogramme their pllegend calls.  Since
+the pllegend API was labelled experimental for 5.9.7, we will not be
+bumping the soversions of the affected PLplot libraries.
+
+2.48 Octave bindings now implemented with swig
+
+Octave is a powerful platform that demands a first-class PLplot
+solution, but we were finding it difficult to realize that goal
+because we were running up against some limitations of the (now
+deprecated) matwrap-generated Octave bindings.  Accordingly, a
+swig-generated version of the Octave bindings has now been implemented
+that builds on the prior matwrapped bindings effort but also extends
+it with, e.g., bindings for plstring, plstring3, pllegend, and
+plcolbar which now make it possible to run examples 4, 18, 26, and 33
+(all of which have now have been updated to use those functions) and
+get consistent results with the corresponding C examples.  The
+swig-generated bindings for Octave are used by default, but the build
+system falls back to the matwrapped bindings if swig is not available.
+Users can force the matwrapped bindings by using the
+-DENABLE_swig_octave=OFF cmake command-line option.
+
+Like the matwrapped bindings before it, the new swig-generated octave
+bindings currently do not have a number of the PLplot functions
+wrapped (e.g., "plmap") that are needed by standard example 19.
+However, because of the power of swig we now have some confidence we
+can solve this issue in the future.
+
+2.49 Documentation redone for our swig-generated Python and Octave bindings
+
+Through the docstring %feature, swig can generate documentation
+strings for certain of the languages it supports (currently Python,
+Octave, and Ruby).  We have now removed all such hand-crafted swig
+documentation data from bindings/swig-support/plplotcapi.i and
+replaced it with generated documentation in the file
+bindings/swig-support/swig_documentation.i.  That file is generated
+from doc/docbook/src/api.xml using the perl script
+doc/docbook/bin/api2swigdoc.pl.  The build system Unix target
+"check_swig_documentation" now runs that script and compares results
+with bindings/swig-support/swig_documentation.i in the source tree to
+make sure that latter file is consistent with any changes that might
+have occurred in doc/docbook/src/api.xml.
+
+The resulting Octave and Python user-documentation (obtained by 'help
+<PLplot_command_name>' in Octave and 'print ("%s" %
+<PLplot_command_name>.__doc__)' in Python is much more detailed than
+what was available before using the hand-crafted documentation.  If we
+ever decided to generate PLplot bindings for Ruby with swig, this
+high-quality user-documentation would be available for that language
+as well.
+
+2.50 Support large polygons
 
 Previous releases had an implicit limitation with respect to the
 number of vertices in a polygon. This was due to the use of statically
