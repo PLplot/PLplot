@@ -56,6 +56,7 @@ set(java_STRING_INDICES
   "29"
   "30"
   "31"
+  "33"
   )
 
 if(CORE_BUILD)
