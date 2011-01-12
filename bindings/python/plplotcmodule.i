@@ -1293,5 +1293,7 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 %pybuffer_mutable_string(void * plotmem)
 #endif
 
-/* swig compatible PLplot API definitions from here on. */
+/* %feature commands supporting swig-generated documentation for the bindings. *.
+%include swig_documentation.i
+/* swig-compatible PLplot API definitions from here on. */
 %include plplotcapi.i

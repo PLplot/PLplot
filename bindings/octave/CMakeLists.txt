@@ -179,7 +179,9 @@ if(ENABLE_octave)
       )
 
     set(SWIG_MODULE_plplot_octave_EXTRA_DEPS
-      ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support/swig_documentation.i
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
+      )
 
     # Set up swig + c wrapper.
     swig_add_module(plplot_octave octave plplot_octave.i)

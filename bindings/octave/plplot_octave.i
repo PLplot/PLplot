@@ -1280,5 +1280,7 @@ void testppchar(PLINT n, const PLINT *Array, const char **ArrayCk);
 
 // Probably never deal with this one.
 %ignore plMinMax2dGrid;
+// %feature commands supporting swig-generated documentation for the bindings.
+%include swig_documentation.i
 // swig-compatible common PLplot API definitions from here on.
 %include plplotcapi.i

@@ -71,7 +71,9 @@ if(ENABLE_python)
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
   set(SWIG_MODULE_plplotcmodule_EXTRA_DEPS
-    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/swig_documentation.i
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
+    )
 
   set_source_files_properties(plplotcmodule.i 
     PROPERTIES SWIG_MODULE_NAME plplotc
