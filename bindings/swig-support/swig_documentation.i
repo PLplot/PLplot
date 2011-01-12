@@ -26,7 +26,8 @@ ARGUMENTS:
 
     sigdig (PLINT, input) :    Number of significant digits.  Default
     value is 2. 
-") pl_setcontlabelformat
+")
+pl_setcontlabelformat;
 
 %feature( "docstring", "Set parameters of contour labelling other than format of numerical label
 
@@ -58,7 +59,8 @@ ARGUMENTS:
 
     active (PLINT, input) :    Activate labels.  Set to 1 if you want
     contour labels on. Default is off (0). 
-") pl_setcontlabelparam
+")
+pl_setcontlabelparam;
 
 %feature( "docstring", "Advance the (sub-)page
 
@@ -89,7 +91,8 @@ ARGUMENTS:
     sub (PLINT, input) :    Specifies the subpage number (starting from 1
     in the top left corner and increasing along the rows) to which to
     advance.  Set to zero to advance to the next subpage. 
-") pladv
+")
+pladv;
 
 %feature( "docstring", "Draw a circular or elliptical arc 
 
@@ -124,7 +127,8 @@ ARGUMENTS:
     angle2 (PLFLT, input) :    Ending angle of the arc. 
 
     fill (PLBOOL, input) :    Draw a filled arc. 
-") plarc
+")
+plarc;
 
 %feature( "docstring", "Draw a box with axes, etc. with arbitrary origin 
 
@@ -212,7 +216,8 @@ ARGUMENTS:
     nysub (PLINT, input) :    Number of subintervals between major y axis
     ticks for minor ticks.    If it is set to zero, PLplot automatically
     generates a suitable minor tick interval. 
-") plaxes
+")
+plaxes;
 
 %feature( "docstring", "Plot a histogram from binned data 
 
@@ -262,7 +267,8 @@ ARGUMENTS:
         size as the ones inside. 
         opt=PL_BIN_NOEMPTY|...: Bins with zero height are not drawn
         (there is a gap for such bins). 
-") plbin
+")
+plbin;
 
 %feature( "docstring", "Begin a new page
 
@@ -288,7 +294,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plbop()
-") plbop
+")
+plbop;
 
 %feature( "docstring", "Draw a box with axes, etc
 
@@ -369,7 +376,8 @@ ARGUMENTS:
     nysub (PLINT, input) :    Number of subintervals between major y axis
     ticks for minor ticks.    If it is set to zero, PLplot automatically
     generates a suitable minor tick interval. 
-") plbox
+")
+plbox;
 
 %feature( "docstring", "Draw a box with axes, etc, in 3-d 
 
@@ -488,7 +496,8 @@ ARGUMENTS:
     nzsub (PLINT, input) :    Number of subintervals between major z axis
     ticks for minor ticks.    If it is set to zero, PLplot automatically
     generates a suitable minor tick interval. 
-") plbox3
+")
+plbox3;
 
 %feature( "docstring", "Calculate world coordinates and corresponding window index from relative device coordinates 
 
@@ -541,7 +550,8 @@ ARGUMENTS:
     coordinates are inside it.  Finally, in all cases where the input
     relative device coordinates are not inside any viewport/window,
     then window is set to -1. 
-") plcalc_world
+")
+plcalc_world;
 
 %feature( "docstring", "Clear current (sub)page 
 
@@ -565,7 +575,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plclear()
-") plclear
+")
+plclear;
 
 %feature( "docstring", "Set color, map0 
 
@@ -592,7 +603,8 @@ ARGUMENTS:
     magenta14 salmon15 white Use plscmap0 to change the entire map0
     color palette and plscol0 to change an individual color in the
     map0 color palette. 
-") plcol0
+")
+plcol0;
 
 %feature( "docstring", "Set color, map1 
 
@@ -617,7 +629,8 @@ ARGUMENTS:
     which by default ranges from blue to the background color to red. 
     The map1 palette can also be straightforwardly changed by the user
     with plscmap1 or plscmap1l. 
-") plcol1
+")
+plcol1;
 
 %feature( "docstring", "Contour plot 
 
@@ -682,7 +695,8 @@ ARGUMENTS:
     pltr_data (PLPointer, input) :    Extra parameter to help pass
     information to pltr0, pltr1, pltr2, or whatever routine that is
     externally supplied. 
-") plcont
+")
+plcont;
 
 %feature( "docstring", "Copy state parameters from the reference stream to the current stream 
 
@@ -715,7 +729,8 @@ ARGUMENTS:
 
     flags (PLBOOL, input) :    If flags is set to true the device
     coordinates are not copied from the reference to current stream. 
-") plcpstrm
+")
+plcpstrm;
 
 %feature( "docstring", "End plotting session 
 
@@ -738,7 +753,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plend()
-") plend
+")
+plend;
 
 %feature( "docstring", "End plotting session for current stream 
 
@@ -756,7 +772,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plend1()
-") plend1
+")
+plend1;
 
 %feature( "docstring", "Same as plenv but if in multiplot mode does not advance the subpage, instead clears it. 
 
@@ -852,7 +869,8 @@ ARGUMENTS:
         71: same as 1 except custom x and y labels. 
         72: same as 2 except custom x and y labels. 
         73: same as 3 except custom x and y labels. 
-") plenv0
+")
+plenv0;
 
 %feature( "docstring", "Set up standard window and draw box 
 
@@ -948,7 +966,8 @@ ARGUMENTS:
         71: same as 1 except custom x and y labels. 
         72: same as 2 except custom x and y labels. 
         73: same as 3 except custom x and y labels. 
-") plenv
+")
+plenv;
 
 %feature( "docstring", "Eject current page 
 
@@ -966,7 +985,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 pleop()
-") pleop
+")
+pleop;
 
 %feature( "docstring", "Draw x error bar 
 
@@ -1001,7 +1021,8 @@ ARGUMENTS:
 
     y (PLFLT *, input) :    Pointer to array with y coordinates of error
     bar. 
-") plerrx
+")
+plerrx;
 
 %feature( "docstring", "Draw y error bar 
 
@@ -1036,7 +1057,8 @@ ARGUMENTS:
 
     ymax (PLFLT *, input) :    Pointer to array with y coordinate of upper
     endpoint of error bar. 
-") plerry
+")
+plerry;
 
 %feature( "docstring", "Advance to the next family file on the next new page 
 
@@ -1053,7 +1075,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plfamadv()
-") plfamadv
+")
+plfamadv;
 
 %feature( "docstring", "Draw filled polygon 
 
@@ -1085,7 +1108,8 @@ ARGUMENTS:
 
     y (PLFLT *, input) :    Pointer to array with y coordinates of
     vertices. 
-") plfill
+")
+plfill;
 
 %feature( "docstring", "Draw filled polygon in 3D 
 
@@ -1121,7 +1145,8 @@ ARGUMENTS:
 
     z (PLFLT *, input) :    Pointer to array with z coordinates of
     vertices. 
-") plfill3
+")
+plfill3;
 
 %feature( "docstring", "Flushes the output stream 
 
@@ -1138,7 +1163,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plflush()
-") plflush
+")
+plflush;
 
 %feature( "docstring", "Set character font 
 
@@ -1165,7 +1191,8 @@ ARGUMENTS:
         2: Roman font 
         3: Italic font 
         4: Script font 
-") plfont
+")
+plfont;
 
 %feature( "docstring", "Load character font 
 
@@ -1189,7 +1216,8 @@ ARGUMENTS:
     set (PLINT, input) :    Specifies the character set to load: 0:
     Standard character set 
         1: Extended character set 
-") plfontld
+")
+plfontld;
 
 %feature( "docstring", "Get character default height and current (scaled) height 
 
@@ -1213,7 +1241,8 @@ ARGUMENTS:
 
     p_ht (PLFLT *, output) :    Pointer to current (scaled) character
     height (mm). 
-") plgchr
+")
+plgchr;
 
 %feature( "docstring", "Returns 8-bit RGB values for given color from color map0 
 
@@ -1242,7 +1271,8 @@ ARGUMENTS:
     g (PLINT *, output) :    Pointer to 8-bit green value. 
 
     b (PLINT *, output) :    Pointer to 8-bit blue value. 
-") plgcol0
+")
+plgcol0;
 
 %feature( "docstring", "Returns 8-bit RGB values and double alpha value for given color from color map0. 
 
@@ -1271,7 +1301,8 @@ ARGUMENTS:
     b (PLINT *, output) :    Pointer to 8-bit blue value. 
 
     a (PLFLT *, output) :    Pointer to PLFLT alpha value. 
-") plgcol0a
+")
+plgcol0a;
 
 %feature( "docstring", " Returns the background color (cmap0[0]) by 8-bit RGB value 
 
@@ -1299,7 +1330,8 @@ ARGUMENTS:
 
     b (PLINT *, output) :    Pointer to an unsigned 8-bit integer (0-255)
     representing the degree of blue in the color. 
-") plgcolbg
+")
+plgcolbg;
 
 %feature( "docstring", " Returns the background color (cmap0[0])  by 8-bit RGB value and double alpha value. 
 
@@ -1328,7 +1360,8 @@ ARGUMENTS:
     representing the degree of blue in the color. 
 
     a (PLFLT *, output) :    Pointer to PLFLT alpha value. 
-") plgcolbga
+")
+plgcolbga;
 
 %feature( "docstring", "Get the current device-compression setting 
 
@@ -1351,7 +1384,8 @@ ARGUMENTS:
 
     compression (PLINT *, output) :    Pointer to a variable to be filled
     with the current device-compression setting. 
-") plgcompression
+")
+plgcompression;
 
 %feature( "docstring", "Get the current device (keyword) name 
 
@@ -1373,7 +1407,8 @@ plgdev(p_dev)
 ARGUMENTS:
 
     p_dev (char *, output) :    Pointer to device (keyword) name string. 
-") plgdev
+")
+plgdev;
 
 %feature( "docstring", "Get parameters that define current device-space window 
 
@@ -1403,7 +1438,8 @@ ARGUMENTS:
     p_jx (PLFLT *, output) :    Pointer to relative justification in x. 
 
     p_jy (PLFLT *, output) :    Pointer to relative justification in y. 
-") plgdidev
+")
+plgdidev;
 
 %feature( "docstring", "Get plot orientation 
 
@@ -1430,7 +1466,8 @@ plgdiori(p_rot)
 ARGUMENTS:
 
     p_rot (PLFLT *, output) :     Pointer to orientation parameter. 
-") plgdiori
+")
+plgdiori;
 
 %feature( "docstring", "Get parameters that define current plot-space window 
 
@@ -1459,7 +1496,8 @@ ARGUMENTS:
     p_xmax (PLFLT *, output) :      Pointer to relative maximum in x. 
 
     p_ymax (PLFLT *, output) :      Pointer to relative maximum in y. 
-") plgdiplt
+")
+plgdiplt;
 
 %feature( "docstring", "Get family file parameters 
 
@@ -1488,7 +1526,8 @@ ARGUMENTS:
 
     bmax (PLINT *, output) :    Pointer to variable with the maximum file
     size (in bytes) for a family file. 
-") plgfam
+")
+plgfam;
 
 %feature( "docstring", "Get FCI (font characterization integer) 
 
@@ -1511,7 +1550,8 @@ ARGUMENTS:
 
     fci (PLUNICODE *, output) :    Pointer to PLUNICODE (unsigned 32-bit
     integer) variable which is updated with current FCI value. 
-") plgfci
+")
+plgfci;
 
 %feature( "docstring", "Get output file name 
 
@@ -1533,7 +1573,8 @@ ARGUMENTS:
 
     fnam (char *, output) :    Pointer to file name string (a preallocated
     string of 80 characters or more). 
-") plgfnam
+")
+plgfnam;
 
 %feature( "docstring", "Get family, style and weight of the current font 
 
@@ -1571,7 +1612,8 @@ ARGUMENTS:
     constants in plplot.h. Current options are PL_FCI_MEDIUM and
     PL_FCI_BOLD. If p_weight is NULL then the font weight is not
     returned. 
-") plgfont
+")
+plgfont;
 
 %feature( "docstring", "Get the (current) run level 
 
@@ -1596,7 +1638,8 @@ plglevel(p_level)
 ARGUMENTS:
 
     p_level (PLINT *, output) :    Pointer to the run level. 
-") plglevel
+")
+plglevel;
 
 %feature( "docstring", "Get page parameters 
 
@@ -1630,7 +1673,8 @@ ARGUMENTS:
     xoff (PLINT *, output) :    Pointer to x page offset. 
 
     yoff (PLINT *, output) :    Pointer to y page offset. 
-") plgpage
+")
+plgpage;
 
 %feature( "docstring", "Switch to graphics screen 
 
@@ -1653,7 +1697,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plgra()
-") plgra
+")
+plgra;
 
 %feature( "docstring", "Draw linear gradient inside polygon 
 
@@ -1699,7 +1744,8 @@ ARGUMENTS:
 
     angle (PLFLT, input) :    Angle (degrees) of gradient vector from x
     axis. 
-") plgradient
+")
+plgradient;
 
 %feature( "docstring", "Grid data from irregularly sampled data 
 
@@ -1776,7 +1822,8 @@ ARGUMENTS:
         the approximation. 
         GRID_NNI, only weights greater than data will be accepted. If
         0, all weights will be accepted. 
-") plgriddata
+")
+plgriddata;
 
 %feature( "docstring", "Get current subpage parameters 
 
@@ -1810,7 +1857,8 @@ ARGUMENTS:
 
     ymax (PLFLT *, output) :    Pointer to variable with position of top
     edge of subpage in millimeters. 
-") plgspa
+")
+plgspa;
 
 %feature( "docstring", "Get current stream number 
 
@@ -1831,7 +1879,8 @@ plgstrm(strm)
 ARGUMENTS:
 
     strm (PLINT *, output) :    Pointer to current stream value. 
-") plgstrm
+")
+plgstrm;
 
 %feature( "docstring", "Get the current library version number 
 
@@ -1854,7 +1903,8 @@ ARGUMENTS:
 
     p_ver (char *, output) :    Pointer to the current library version
     number. 
-") plgver
+")
+plgver;
 
 %feature( "docstring", "Get viewport limits in normalized device coordinates 
 
@@ -1887,7 +1937,8 @@ ARGUMENTS:
 
     p_ymax (PLFLT *, output) :      Upper viewport limit of the normalized
     device coordinate in y. 
-") plgvpd
+")
+plgvpd;
 
 %feature( "docstring", "Get viewport limits in world coordinates 
 
@@ -1920,7 +1971,8 @@ ARGUMENTS:
 
     p_ymax (PLFLT *, output) :      Upper viewport limit of the world
     coordinate in y. 
-") plgvpw
+")
+plgvpw;
 
 %feature( "docstring", "Get x axis parameters 
 
@@ -1951,7 +2003,8 @@ ARGUMENTS:
     digits (PLINT *, output) :      Pointer to variable with the actual
     number of digits for the numeric labels (x axis) from the last
     plot. 
-") plgxax
+")
+plgxax;
 
 %feature( "docstring", "Get y axis parameters 
 
@@ -1980,7 +2033,8 @@ ARGUMENTS:
     digits (PLINT *, output) :      Pointer to variable with the actual
     number of digits for the numeric labels (y axis) from the last
     plot. 
-") plgyax
+")
+plgyax;
 
 %feature( "docstring", "Get z axis parameters 
 
@@ -2009,7 +2063,8 @@ ARGUMENTS:
     digits (PLINT *, output) :      Pointer to variable with the actual
     number of digits for the numeric labels (z axis) from the last
     plot. 
-") plgzax
+")
+plgzax;
 
 %feature( "docstring", "Plot a histogram from unbinned data 
 
@@ -2062,7 +2117,8 @@ ARGUMENTS:
         size as the ones inside. 
         opt=PL_HIST_NOEMPTY|...: Bins with zero height are not drawn
         (there is a gap for such bins). 
-") plhist
+")
+plhist;
 
 %feature( "docstring", "Convert HLS color to RGB 
 
@@ -2100,7 +2156,8 @@ ARGUMENTS:
 
     p_b (PLFLT *, output) :    Pointer to blue intensity (0.0-1.0) of the
     colour 
-") plhlsrgb
+")
+plhlsrgb;
 
 %feature( "docstring", "Plot a 2D matrix using color map1 
 
@@ -2157,7 +2214,8 @@ ARGUMENTS:
     pltr_data (PLPointer, input) :    Extra parameter to help pass
     information to pltr0, pltr1, pltr2, or whatever routine is
     externally supplied. 
-") plimagefr
+")
+plimagefr;
 
 %feature( "docstring", "Plot a 2D matrix using color map1 with automatic colour adjustment 
 
@@ -2196,7 +2254,8 @@ ARGUMENTS:
     Dxmin, Dxmax, Dymin, Dymax (PLFLT, input) :    Plot only the window of
     points whose plot coordinates fall inside the window of (Dxmin,
     Dymin) to (Dxmax, Dymax). 
-") plimage
+")
+plimage;
 
 %feature( "docstring", "Initialize PLplot 
 
@@ -2223,7 +2282,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plinit()
-") plinit
+")
+plinit;
 
 %feature( "docstring", "Draw a line between two points 
 
@@ -2254,7 +2314,8 @@ ARGUMENTS:
     x2 (PLFLT, input) :    x coordinate of second point. 
 
     y2 (PLFLT, input) :    y coordinate of second point. 
-") pljoin
+")
+pljoin;
 
 %feature( "docstring", "Simple routine to write labels 
 
@@ -2279,7 +2340,8 @@ ARGUMENTS:
     ylabel (const char *, input) :    Label for vertical axis. 
 
     tlabel (const char *, input) :    Title of graph. 
-") pllab
+")
+pllab;
 
 %feature( "docstring", "Create a discrete annotated legend using colored boxes, lines, and/or lines of symbols 
 
@@ -2469,7 +2531,8 @@ ARGUMENTS:
     symbols (const char **, input) :    Array of nlegend symbols (plpoin
     indices)  (
     PL_LEGEND_SYMBOL). 
-") pllegend
+")
+pllegend;
 
 %feature( "docstring", "Sets the 3D position of the light source 
 
@@ -2494,7 +2557,8 @@ ARGUMENTS:
     y (PLFLT, input) :      Y-coordinate of the light source. 
 
     z (PLFLT, input) :      Z-coordinate of the light source. 
-") pllightsource
+")
+pllightsource;
 
 %feature( "docstring", "Draw a line 
 
@@ -2519,7 +2583,8 @@ ARGUMENTS:
     x (PLFLT *, input) :    Pointer to array with x coordinates of points. 
 
     y (PLFLT *, input) :    Pointer to array with y coordinates of points. 
-") plline
+")
+plline;
 
 %feature( "docstring", "Draw a line in 3 space 
 
@@ -2549,7 +2614,8 @@ ARGUMENTS:
     y (PLFLT *, input) :    Pointer to array with y coordinates of points. 
 
     z (PLFLT *, input) :    Pointer to array with z coordinates of points. 
-") plline3
+")
+plline3;
 
 %feature( "docstring", "Select line style 
 
@@ -2574,7 +2640,8 @@ ARGUMENTS:
     continuous line, line style 2 is a line with short dashes and
     gaps, line style 3 is a line with long dashes and gaps, line style
     4 has long dashes and short gaps and so on. 
-") pllsty
+")
+pllsty;
 
 %feature( "docstring", "Plot continental outline in world coordinates. 
 
@@ -2634,7 +2701,8 @@ ARGUMENTS:
     maxlat (PLFLT, input) :    The maximum latitudes to be plotted on the
     background.   One can always use 90.0 as the boundary outside the
     plot window  will be automatically eliminated. 
-") plmap
+")
+plmap;
 
 %feature( "docstring", "Plot latitude and longitude lines. 
 
@@ -2691,7 +2759,8 @@ ARGUMENTS:
     maxlat (PLFLT, input) :    The maximum latitudes to be plotted on the
     background.   One can always use 90.0 as the boundary outside the
     plot window  will be automatically eliminated. 
-") plmeridians
+")
+plmeridians;
 
 %feature( "docstring", "Plot surface mesh 
 
@@ -2741,7 +2810,8 @@ ARGUMENTS:
         for each value of x[i]. 
         opt=DRAW_LINEXY: Network of lines is drawn connecting points
         at which function is defined. 
-") plmesh
+")
+plmesh;
 
 %feature( "docstring", "Magnitude colored plot surface mesh with contour. 
 
@@ -2802,7 +2872,8 @@ ARGUMENTS:
     contour level spacing. 
 
     nlevel (PLINT, input) :    Number of elements in the clevel array. 
-") plmeshc
+")
+plmeshc;
 
 %feature( "docstring", "Creates a new stream and makes it the default 
 
@@ -2830,7 +2901,8 @@ ARGUMENTS:
 
     p_strm (PLINT *, output) :      Pointer to stream number of the created
     stream. 
-") plmkstrm
+")
+plmkstrm;
 
 %feature( "docstring", "Write text relative to viewport boundaries 
 
@@ -2885,7 +2957,8 @@ ARGUMENTS:
     values of just give intermediate justifications. 
 
     text (const char *, input) :    The string to be written out. 
-") plmtex
+")
+plmtex;
 
 %feature( "docstring", "Write text relative to viewport boundaries in 3D plots. 
 
@@ -2940,7 +3013,8 @@ ARGUMENTS:
     values of just give intermediate justifications. 
 
     text (const char *, input) :    The string to be written out. 
-") plmtex3
+")
+plmtex3;
 
 %feature( "docstring", "Plot 3-d surface plot 
 
@@ -2997,7 +3071,8 @@ ARGUMENTS:
     side (PLBOOL, input) :    Flag to indicate whether or not ``sides''
     should be draw on the figure.  If side is true sides are drawn,
     otherwise no sides are drawn. 
-") plot3d
+")
+plot3d;
 
 %feature( "docstring", "Magnitude colored plot surface with contour. 
 
@@ -3022,7 +3097,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plot3dc(x, y, z, nx, ny, opt, clevel, nlevel)
-") plot3dc
+")
+plot3dc;
 
 %feature( "docstring", "Parse command-line arguments 
 
@@ -3044,7 +3120,7 @@ DESCRIPTION:
     non-option command line argument is found. Returns with the return
     code of the option handler, if one was called. Deletes command line
     arguments from argv list as they are found, and decrements argc
-    accordingly. Does not show "invisible" options in usage or help
+    accordingly. Does not show \"invisible\" options in usage or help
     messages. Assumes the program name is contained in argv[0]. 
 
     These behaviors may be controlled through the  
@@ -3084,7 +3160,8 @@ ARGUMENTS:
         PL_PARSE_NODASH (64) -- Set if leading dash is NOT required. 
         PL_PARSE_SKIP (128) -- Set to quietly skip over any
         unrecognized arguments. 
-") plparseopts
+")
+plparseopts;
 
 %feature( "docstring", "Set area fill pattern 
 
@@ -3121,7 +3198,8 @@ ARGUMENTS:
     del (PLINT *, input) :    Pointer to array with nlin elements.
     Specifies the spacing in micrometers between the lines making up
     the pattern. 
-") plpat
+")
+plpat;
 
 %feature( "docstring", "Draw a line between two points, accounting for coordinate transforms. 
 
@@ -3156,7 +3234,8 @@ ARGUMENTS:
     x2 (PLFLT, input) :    x coordinate of second point. 
 
     y2 (PLFLT, input) :    y coordinate of second point. 
-") plpath
+")
+plpath;
 
 %feature( "docstring", "Plot a glyph at the specified points 
 
@@ -3170,7 +3249,7 @@ DESCRIPTION:
     same place.  Not ideal, since a sufficiently intelligent output device
     may optimize it away, or there may be faster ways of doing it.  This
     is OK for now, though, and offers a 4X speedup over drawing a Hershey
-    font "point" (which is actually diamond shaped and therefore takes 4
+    font \"point\" (which is actually diamond shaped and therefore takes 4
     strokes to draw).  If 0 < code < 32, then a useful (but small subset)
     of Hershey symbols is plotted.  If 32 <= code <= 127 the corresponding
     printable ASCII character is plotted. 
@@ -3197,7 +3276,8 @@ ARGUMENTS:
 
     code (PLINT, input) :    Hershey symbol code corresponding to a glyph
     to be plotted at each of the n points. 
-") plpoin
+")
+plpoin;
 
 %feature( "docstring", "Plot a glyph at the specified 3D points 
 
@@ -3210,7 +3290,7 @@ DESCRIPTION:
     a point.  Right now it's just a move and a draw at the same place. 
     Not ideal, since a sufficiently intelligent output device may optimize
     it away, or there may be faster ways of doing it.  This is OK for now,
-    though, and offers a 4X speedup over drawing a Hershey font "point"
+    though, and offers a 4X speedup over drawing a Hershey font \"point\"
     (which is actually diamond shaped and therefore takes 4 strokes to
     draw).  If 0 < code < 32, then a useful (but small subset) of Hershey
     symbols is plotted.  If 32 <= code <= 127 the corresponding printable
@@ -3242,7 +3322,8 @@ ARGUMENTS:
     code (PLINT, input) :    Hershey symbol code (in \"ascii-indexed\" form
     with -1 <= code <= 127) corresponding to a glyph to be plotted at
     each of the n points. 
-") plpoin3
+")
+plpoin3;
 
 %feature( "docstring", "Draw a polygon in 3 space 
 
@@ -3297,7 +3378,8 @@ ARGUMENTS:
     counter-clockwise order.  Otherwise, the directionality of the
     polygon is determined by assuming the points are laid out in a
     clockwise order. 
-") plpoly3
+")
+plpoly3;
 
 %feature( "docstring", "Set precision in numeric labels 
 
@@ -3324,7 +3406,8 @@ ARGUMENTS:
 
     prec (PLINT, input) :    The number of characters to draw after the
     decimal point in numeric labels. 
-") plprec
+")
+plprec;
 
 %feature( "docstring", "Select area fill pattern 
 
@@ -3348,7 +3431,8 @@ ARGUMENTS:
     n (PLINT, input) :      The desired pattern. Pattern 1 consists of
     horizontal lines, pattern 2 consists of vertical lines, pattern 3
     consists of lines at 45 degrees angle (upward), and so on. 
-") plpsty
+")
+plpsty;
 
 %feature( "docstring", "Write text inside the viewport 
 
@@ -3400,7 +3484,8 @@ ARGUMENTS:
     values of just give intermediate justifications. 
 
     text (const char *, input) :    The string to be written out. 
-") plptex
+")
+plptex;
 
 %feature( "docstring", "Write text inside the viewport of a 3D plot. 
 
@@ -3482,7 +3567,8 @@ ARGUMENTS:
     values of just give intermediate justifications. 
 
     text (const char *, input) :    The string to be written out. 
-") plptex3
+")
+plptex3;
 
 %feature( "docstring", "Random number generator  returning a real random number in the range [0,1]. 
 
@@ -3505,7 +3591,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plrandd()
-") plrandd
+")
+plrandd;
 
 %feature( "docstring", "Replays contents of plot buffer to current device/file 
 
@@ -3522,7 +3609,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plreplot()
-") plreplot
+")
+plreplot;
 
 %feature( "docstring", "Convert RGB color to HLS 
 
@@ -3558,7 +3646,8 @@ ARGUMENTS:
 
     p_s (PLFLT *, output) :    Pointer to saturation, expressed as a
     fraction of the radius of the colour cone (0.0-1.0) 
-") plrgbhls
+")
+plrgbhls;
 
 %feature( "docstring", "Set character size 
 
@@ -3586,7 +3675,8 @@ ARGUMENTS:
 
     scale (PLFLT, input) :    Scale factor to be applied to default to get
     actual character height. 
-") plschr
+")
+plschr;
 
 %feature( "docstring", "Set color map0 colors by 8-bit RGB values 
 
@@ -3618,7 +3708,8 @@ ARGUMENTS:
     integers (0-255) representing the degree of blue in the color. 
 
     ncol0 (PLINT, input) :    Number of items in the r, g, and b arrays. 
-") plscmap0
+")
+plscmap0;
 
 %feature( "docstring", "Set color map0 colors by 8-bit RGB values and  double alpha value. 
 
@@ -3652,7 +3743,8 @@ ARGUMENTS:
 
     ncol0 (PLINT, input) :    Number of items in the r, g, b, and a
     arrays. 
-") plscmap0a
+")
+plscmap0a;
 
 %feature( "docstring", "Set number of colors in color map0 
 
@@ -3682,7 +3774,8 @@ ARGUMENTS:
     the map0 palette. If this number is zero or less, then the value
     from the previous call to plscmap0n is used and if there is no
     previous call, then a default value is used. 
-") plscmap0n
+")
+plscmap0n;
 
 %feature( "docstring", "Set color map1 colors using 8-bit RGB values 
 
@@ -3713,7 +3806,8 @@ ARGUMENTS:
     integers (0-255) representing the degree of blue in the color. 
 
     ncol1 (PLINT, input) :    Number of items in the r, g, and b arrays. 
-") plscmap1
+")
+plscmap1;
 
 %feature( "docstring", "Set color map1 colors using 8-bit RGB values and double alpha values. 
 
@@ -3747,7 +3841,8 @@ ARGUMENTS:
 
     ncol1 (PLINT, input) :    Number of items in the r, g, b, and a
     arrays. 
-") plscmap1a
+")
+plscmap1a;
 
 %feature( "docstring", "Set color map1 colors using a piece-wise linear relationship 
 
@@ -3779,8 +3874,8 @@ DESCRIPTION:
     three coordinates in HLS or RGB space.  The first point must
     correspond to position = 0, and the last to position = 1. 
 
-    The hue is interpolated around the "front" of the color wheel
-    (red<->green<->blue<->red) unless the "rev" flag is set to true, in
+    The hue is interpolated around the \"front\" of the color wheel
+    (red<->green<->blue<->red) unless the \"rev\" flag is set to true, in
     which case interpolation (between the i and i + 1 control point for
     rev[i]) proceeds around the back (reverse) side.  Specifying rev=NULL
     is equivalent to setting rev[]= false for every control point. 
@@ -3820,7 +3915,8 @@ ARGUMENTS:
     rev (PLBOOL: *, input) :    reverse flag for each control point.
     (rev[i] refers to the interpolation interval between the i and i +
     1 control points). 
-") plscmap1l
+")
+plscmap1l;
 
 %feature( "docstring", "Set color map1 colors using a piece-wise linear relationship 
 
@@ -3864,7 +3960,8 @@ ARGUMENTS:
     rev (PLBOOL: *, input) :    reverse flag for each control point.
     (rev[i] refers to the interpolation interval between the i and i +
     1 control points). 
-") plscmap1la
+")
+plscmap1la;
 
 %feature( "docstring", "Set number of colors in color map1 
 
@@ -3890,7 +3987,8 @@ ARGUMENTS:
     the map1 palette. If this number is zero or less, then the value
     from the previous call to plscmap1n is used and if there is no
     previous call, then a default value is used. 
-") plscmap1n
+")
+plscmap1n;
 
 %feature( "docstring", " Set a given color from color map0 by 8 bit RGB value 
 
@@ -3925,7 +4023,8 @@ ARGUMENTS:
 
     b (PLINT, input) :      Unsigned 8-bit integer (0-255) representing the
     degree of blue in the color. 
-") plscol0
+")
+plscol0;
 
 %feature( "docstring", " Set a given color from color map0 by 8 bit RGB value and double alpha value. 
 
@@ -3961,7 +4060,8 @@ ARGUMENTS:
 
     a (PLFLT, input) :      double value (0.0-1.0) representing the alpha
     value of the color. 
-") plscol0a
+")
+plscol0a;
 
 %feature( "docstring", "Set the background color by 8-bit RGB value 
 
@@ -3990,7 +4090,8 @@ ARGUMENTS:
 
     b (PLINT, input) :      Unsigned 8-bit integer (0-255) representing the
     degree of blue in the color. 
-") plscolbg
+")
+plscolbg;
 
 %feature( "docstring", "Set the background color by 8-bit RGB value and double alpha value. 
 
@@ -4020,7 +4121,8 @@ ARGUMENTS:
 
     a (PLFLT, input) :      double value (0.0-1.0) representing the alpha
     value of the color. 
-") plscolbga
+")
+plscolbga;
 
 %feature( "docstring", "Used to globally turn color output on/off 
 
@@ -4043,7 +4145,8 @@ ARGUMENTS:
 
     color (PLINT, input) :    Color flag (Boolean).  If zero, color is
     turned off.  If non-zero, color is turned on. 
-") plscolor
+")
+plscolor;
 
 %feature( "docstring", "Set device-compression level 
 
@@ -4076,7 +4179,8 @@ ARGUMENTS:
     compression level. Higher compression levels correspond to greater
     compression and small file sizes at the expense of more
     computation. 
-") plscompression
+")
+plscompression;
 
 %feature( "docstring", "Set the device (keyword) name 
 
@@ -4098,7 +4202,8 @@ ARGUMENTS:
 
     devname (const char *, input) :    Pointer to device (keyword) name
     string. 
-") plsdev
+")
+plsdev;
 
 %feature( "docstring", "Set parameters that define current device-space window 
 
@@ -4133,7 +4238,8 @@ ARGUMENTS:
 
     jy (PLFLT, input) :    Relative justification in y. Value must lie in
     the range -0.5 to 0.5. 
-") plsdidev
+")
+plsdidev;
 
 %feature( "docstring", "Set up transformation from metafile coordinates 
 
@@ -4168,7 +4274,8 @@ ARGUMENTS:
     dimxpmm (PLFLT, input) :    NEEDS DOCUMENTATION 
 
     dimypmm (PLFLT, input) :    NEEDS DOCUMENTATION 
-") plsdimap
+")
+plsdimap;
 
 %feature( "docstring", "Set plot orientation 
 
@@ -4203,7 +4310,8 @@ plsdiori(rot)
 ARGUMENTS:
 
     rot (PLFLT, input) :    Plot orientation parameter. 
-") plsdiori
+")
+plsdiori;
 
 %feature( "docstring", "Set parameters that define current plot-space window 
 
@@ -4232,7 +4340,8 @@ ARGUMENTS:
     xmax (PLFLT, input) :    Relative maximum in x. 
 
     ymax (PLFLT, input) :    Relative maximum in y. 
-") plsdiplt
+")
+plsdiplt;
 
 %feature( "docstring", "Set parameters incrementally (zoom mode) that define current plot-space window 
 
@@ -4265,7 +4374,8 @@ ARGUMENTS:
     xmax (PLFLT, input) :    Relative (incremental) maximum in x. 
 
     ymax (PLFLT, input) :    Relative (incremental) maximum in y. 
-") plsdiplz
+")
+plsdiplz;
 
 %feature( "docstring", "Set seed for internal random  number generator. 
 
@@ -4287,7 +4397,8 @@ plseed(seed)
 ARGUMENTS:
 
     seed (unsigned int, input) :    Seed for random number generator. 
-") plseed
+")
+plseed;
 
 %feature( "docstring", "Set the escape character for text strings 
 
@@ -4325,7 +4436,8 @@ plsesc(esc)
 ARGUMENTS:
 
     esc (char, input) :    Escape character. 
-") plsesc
+")
+plsesc;
 
 %feature( "docstring", "Set any command-line option 
 
@@ -4354,7 +4466,8 @@ ARGUMENTS:
 
     optarg (const char *, input) :    Pointer to string containing the
     argument of the command-line option. 
-") plsetopt
+")
+plsetopt;
 
 %feature( "docstring", "Set family file parameters 
 
@@ -4384,7 +4497,8 @@ ARGUMENTS:
 
     bmax (PLINT, input) :    Maximum file size (in bytes) for a family
     file. 
-") plsfam
+")
+plsfam;
 
 %feature( "docstring", "Set FCI (font characterization integer) 
 
@@ -4410,7 +4524,8 @@ ARGUMENTS:
 
     fci (PLUNICODE, input) :    PLUNICODE (unsigned 32-bit integer) value
     of FCI. 
-") plsfci
+")
+plsfci;
 
 %feature( "docstring", "Set output file name 
 
@@ -4435,7 +4550,8 @@ plsfnam(fnam)
 ARGUMENTS:
 
     fnam (const char *, input) :    Pointer to file name string. 
-") plsfnam
+")
+plsfnam;
 
 %feature( "docstring", "Set family, style and weight of the current font 
 
@@ -4473,7 +4589,8 @@ ARGUMENTS:
     plplot.h. Current options are PL_FCI_MEDIUM and PL_FCI_BOLD. A
     negative value signifies that the font weight should not be
     altered.  
-") plsfont
+")
+plsfont;
 
 %feature( "docstring", "Shade regions on the basis of value 
 
@@ -4580,7 +4697,8 @@ ARGUMENTS:
     pltr_data (PLPointer, input) :    Extra parameter to help pass
     information to pltr0, pltr1, pltr2, or whatever routine that is
     externally supplied. 
-") plshades
+")
+plshades;
 
 %feature( "docstring", " Shade individual region on the basis of value 
 
@@ -4648,7 +4766,8 @@ ARGUMENTS:
     pltr (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) , input) :  
 
     pltr_data (PLPointer, input) :    
-") plshade
+")
+plshade;
 
 %feature( "docstring", "Shade individual region on the basis of value 
 
@@ -4772,7 +4891,8 @@ ARGUMENTS:
     pltr_data (PLPointer, input) :    Extra parameter to help pass
     information to pltr0, pltr1, pltr2, or whatever routine that is
     externally supplied. 
-") plshade1
+")
+plshade1;
 
 %feature( "docstring", "Assign a function to use for generating custom axis labels 
 
@@ -4810,7 +4930,8 @@ ARGUMENTS:
 
     label_data (void *, input) :    This parameter may be used to pass
     data to the label_func function. 
-") plslabelfunc
+")
+plslabelfunc;
 
 %feature( "docstring", "Set length of major ticks 
 
@@ -4838,7 +4959,8 @@ ARGUMENTS:
 
     scale (PLFLT, input) :    Scale factor to be applied to default to get
     actual tick length. 
-") plsmaj
+")
+plsmaj;
 
 %feature( "docstring", "Set the memory area to be plotted (RGB) 
 
@@ -4871,7 +4993,8 @@ ARGUMENTS:
 
     plotmem (void *, input) :     Pointer to the beginning of the
     user-supplied memory area. 
-") plsmem
+")
+plsmem;
 
 %feature( "docstring", "Set the memory area to be plotted (RGBA) 
 
@@ -4904,7 +5027,8 @@ ARGUMENTS:
 
     plotmem (void *, input) :     Pointer to the beginning of the
     user-supplied memory area. 
-") plsmema
+")
+plsmema;
 
 %feature( "docstring", "Set length of minor ticks 
 
@@ -4932,7 +5056,8 @@ ARGUMENTS:
 
     scale (PLFLT, input) :    Scale factor to be applied to default to get
     actual tick length. 
-") plsmin
+")
+plsmin;
 
 %feature( "docstring", "Set orientation 
 
@@ -4957,7 +5082,8 @@ ARGUMENTS:
     ori (PLINT, input) :    Orientation value (0 for landscape, 1 for
     portrait, etc.) The value is multiplied by 90 degrees to get the
     angle. 
-") plsori
+")
+plsori;
 
 %feature( "docstring", "Set page parameters 
 
@@ -4996,7 +5122,8 @@ ARGUMENTS:
     xoff (PLINT, input) :    Page offset, x. 
 
     yoff (PLINT, input) :    Page offset, y. 
-") plspage
+")
+plspage;
 
 %feature( "docstring", "Set the colors for color table 0 from a cmap0 file 
 
@@ -5018,7 +5145,8 @@ ARGUMENTS:
 
     filename (const char *, input) :    The name of the cmap0 file, or a
     empty to string to specify the default cmap0 file. 
-") plspal0
+")
+plspal0;
 
 %feature( "docstring", "Set the colors for color table 1 from a cmap1 file 
 
@@ -5040,7 +5168,8 @@ ARGUMENTS:
 
     filename (const char *, input) :    The name of the cmap1 file, or a
     empty to string to specify the default cmap1 file. 
-") plspal1
+")
+plspal1;
 
 %feature( "docstring", "Set the pause (on end-of-page) status 
 
@@ -5063,7 +5192,8 @@ ARGUMENTS:
     pause (PLBOOL, input) :    If pause is true there will be a pause on
     end-of-page for those drivers which support this.  Otherwise there
     is no pause. 
-") plspause
+")
+plspause;
 
 %feature( "docstring", "Set current output stream 
 
@@ -5086,7 +5216,8 @@ plsstrm(strm)
 ARGUMENTS:
 
     strm (PLINT, input) :    The current stream number. 
-") plsstrm
+")
+plsstrm;
 
 %feature( "docstring", "Set the number of subpages in x and y 
 
@@ -5111,7 +5242,8 @@ ARGUMENTS:
 
     ny (PLINT, input) :    Number of windows in y direction (i.e., number
     of window rows). 
-") plssub
+")
+plssub;
 
 %feature( "docstring", "Set symbol size 
 
@@ -5139,7 +5271,8 @@ ARGUMENTS:
 
     scale (PLFLT, input) :    Scale factor to be applied to default to get
     actual symbol height. 
-") plssym
+")
+plssym;
 
 %feature( "docstring", "Initialization 
 
@@ -5170,7 +5303,8 @@ ARGUMENTS:
 
     ny (PLINT, input) :    Number of subpages to divide output page in the
     vertical direction. 
-") plstar
+")
+plstar;
 
 %feature( "docstring", "Initialization 
 
@@ -5208,7 +5342,8 @@ ARGUMENTS:
 
     ny (PLINT, input) :    Number of subpages to divide output page in the
     vertical direction. 
-") plstart
+")
+plstart;
 
 %feature( "docstring", "Set a global coordinate transform function 
 
@@ -5239,7 +5374,8 @@ ARGUMENTS:
 
     data (PLPointer, input) :     Optional extra data for 
     transform_fun. 
-") plstransform
+")
+plstransform;
 
 %feature( "docstring", "Plot a glyph at the specified points 
 
@@ -5277,7 +5413,8 @@ ARGUMENTS:
 
     string (const char *, input) :    PLplot user string corresponding to
     the glyph to be plotted at each of the n points. 
-") plstring
+")
+plstring;
 
 %feature( "docstring", "Add a point to a stripchart 
 
@@ -5307,7 +5444,8 @@ ARGUMENTS:
     x (PLFLT, input) :      X coordinate of point to plot. 
 
     y (PLFLT, input) :      Y coordinate of point to plot. 
-") plstripa
+")
+plstripa;
 
 %feature( "docstring", "Create a 4-pen stripchart 
 
@@ -5384,7 +5522,8 @@ ARGUMENTS:
     laby (char *, input) :    Y-axis label. 
 
     labtop (char *, input) :    Plot title. 
-") plstripc
+")
+plstripc;
 
 %feature( "docstring", "Deletes and releases memory used by a stripchart 
 
@@ -5405,7 +5544,8 @@ plstripd(id)
 ARGUMENTS:
 
     id (PLINT, input) :    Identification number of stripchart to delete. 
-") plstripd
+")
+plstripd;
 
 %feature( "docstring", "Set line style 
 
@@ -5439,7 +5579,8 @@ ARGUMENTS:
 
     space (PLINT *, input) :    Pointer to array with the lengths of the
     segments during which the pen is up, measured in micrometers. 
-") plstyl
+")
+plstyl;
 
 %feature( "docstring", "Plot shaded 3-d surface plot 
 
@@ -5507,7 +5648,8 @@ ARGUMENTS:
     contour level spacing. 
 
     nlevel (PLINT, input) :    Number of elements in the clevel array. 
-") plsurf3d
+")
+plsurf3d;
 
 %feature( "docstring", "Plot shaded 3-d surface plot 
 
@@ -5582,7 +5724,8 @@ ARGUMENTS:
     contour level spacing. 
 
     nlevel (PLINT, input) :    Number of elements in the clevel array. 
-") plfsurf3d
+")
+plfsurf3d;
 
 %feature( "docstring", "Set arrow style for vector plots 
 
@@ -5613,7 +5756,8 @@ ARGUMENTS:
 
     fill (PLBOOL,input) :    If fill is true then the arrow is closed, if
     fill is false then the arrow is open. 
-") plsvect
+")
+plsvect;
 
 %feature( "docstring", "Specify viewport in absolute coordinates 
 
@@ -5647,7 +5791,8 @@ ARGUMENTS:
 
     ymax (PLFLT, input) :    The distance of the top edge of the viewport
     from the bottom edge of the subpage in millimeters. 
-") plsvpa
+")
+plsvpa;
 
 %feature( "docstring", "Set x axis parameters 
 
@@ -5677,7 +5822,8 @@ ARGUMENTS:
     its value here has no effect since it is set only by plbox or
     plbox3.  However, the user may obtain its value after a call to
     either of these functions by calling plgxax. 
-") plsxax
+")
+plsxax;
 
 %feature( "docstring", "Set y axis parameters 
 
@@ -5707,7 +5853,8 @@ ARGUMENTS:
     its value here has no effect since it is set only by plbox or
     plbox3.  However, the user may obtain its value after a call to
     either of these functions by calling plgyax. 
-") plsyax
+")
+plsyax;
 
 %feature( "docstring", "Plot a glyph at the specified points 
 
@@ -5741,7 +5888,8 @@ ARGUMENTS:
 
     code (PLINT, input) :    Hershey symbol code corresponding to a glyph
     to be plotted at each of the n points. 
-") plsym
+")
+plsym;
 
 %feature( "docstring", "Set z axis parameters 
 
@@ -5771,7 +5919,8 @@ ARGUMENTS:
     its value here has no effect since it is set only by plbox or
     plbox3.  However, the user may obtain its value after a call to
     either of these functions by calling plgzax. 
-") plszax
+")
+plszax;
 
 %feature( "docstring", "Switch to text screen 
 
@@ -5798,7 +5947,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 pltext()
-") pltext
+")
+pltext;
 
 %feature( "docstring", "Set format for date / time labels 
 
@@ -5834,7 +5984,8 @@ ARGUMENTS:
         %S: The second as a decimal number.  
         %y: The year as a decimal number without a century.  
         %Y: The year  as a decimal number including a century.  
-") pltimefmt
+")
+pltimefmt;
 
 %feature( "docstring", "Specify viewport using aspect ratio only 
 
@@ -5857,7 +6008,8 @@ ARGUMENTS:
 
     aspect (PLFLT, input) :    Ratio of length of y axis to length of x
     axis. 
-") plvasp
+")
+plvasp;
 
 %feature( "docstring", "Vector plot 
 
@@ -5914,7 +6066,8 @@ ARGUMENTS:
     pltr_data (PLPointer, input) :    Extra parameter to help pass
     information to pltr0, pltr1, pltr2, or whatever routine that is
     externally supplied. 
-") plvect
+")
+plvect;
 
 %feature( "docstring", "Specify viewport using coordinates and aspect ratio 
 
@@ -5953,7 +6106,8 @@ ARGUMENTS:
 
     aspect (PLFLT, input) :    Ratio of length of y axis to length of x
     axis. 
-") plvpas
+")
+plvpas;
 
 %feature( "docstring", "Specify viewport using coordinates 
 
@@ -5989,7 +6143,8 @@ ARGUMENTS:
 
     ymax (PLFLT, input) :    The normalized subpage coordinate of the top
     edge of the viewport. 
-") plvpor
+")
+plvpor;
 
 %feature( "docstring", "Select standard viewport 
 
@@ -6008,7 +6163,8 @@ DESCRIPTION:
 SYNOPSIS:
 
 plvsta()
-") plvsta
+")
+plvsta;
 
 %feature( "docstring", "Set up window for 3-d plotting 
 
@@ -6067,7 +6223,8 @@ ARGUMENTS:
     observer is looking face onto the ZX plane, and as az is
     increased, the observer moves clockwise around the box when viewed
     from above the XY plane. 
-") plw3d
+")
+plw3d;
 
 %feature( "docstring", "Set pen width 
 
@@ -6092,7 +6249,8 @@ ARGUMENTS:
     should be interpreted as as the minimum valid pen width for the
     device.  The interpretation of positive width values is also
     device dependent. 
-") plwid
+")
+plwid;
 
 %feature( "docstring", "Specify world coordinates of viewport boundaries 
 
@@ -6123,7 +6281,8 @@ ARGUMENTS:
 
     ymax (PLFLT, input) :    The world y coordinate of the top edge of the
     viewport. 
-") plwind
+")
+plwind;
 
 %feature( "docstring", "Enter or leave xor mode 
 
@@ -6151,5 +6310,6 @@ ARGUMENTS:
 
     status (PLBOOL *, output) :    Pointer to status. Returned    modestatus
     of true (false) means driver is capable (incapable) of xor mode. 
-") plxormod
+")
+plxormod;
 

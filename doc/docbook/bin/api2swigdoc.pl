@@ -196,7 +196,6 @@ for ($i = 0; $i < $ns; $i++) {
       }
     }
   }
-  #$desc = wrap ($indent, $indent, split(/\n\s*\n/, $desc));
   $varlist = join ("\n", map {
                            s/\t/    /g;
                            /(^\s+)/;
@@ -209,13 +208,14 @@ for ($i = 0; $i < $ns; $i++) {
   # part of the raw title in api.xml.
   $title =~s/^.*: //;
 
-  # Escape double quotes in arguments
+  # Escape double quotes in description and arguments
+  $desc =~ s/\"/\\"/g;
   $varlist =~ s/\"/\\"/g;
   print MAN "%feature( \"docstring\", \"$title\n";
   print MAN "\nDESCRIPTION:\n\n$desc\n";
   print MAN "\nSYNOPSIS:\n\n$synopsis\n";
   print MAN "\nARGUMENTS:\n\n$varlist\n"
     if not $varlist eq "";
-  print MAN "\") $name\n\n";
+  print MAN "\")\n$name;\n\n";
 }
 close MAN;
