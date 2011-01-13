@@ -50,10 +50,10 @@
 #
 #   </sect1>
 
-#  Call this script by ginving the master file (typically
+#  Call this script by giving the master file (typically
 #  plplotdoc.xml) as the first argument, the API chapter file
 #  (typically api.xml) as second argument, and the man volume
-#  (typicvally 3plplot) as third.
+#  (typically 3plplot) as third.
 
 use XML::Parser;
 use XML::DOM;
