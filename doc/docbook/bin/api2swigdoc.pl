@@ -141,6 +141,16 @@ sub process_node {
       elsif  ($tag eq "xref") {
         $ret .= "the PLplot documentation";
       }
+      elsif ($tag eq "simplelist") {
+        my $ncols = $e->getAttributeNode ("columns")->getValue;
+        my $children = $e->getElementsByTagName ("member");
+        my $nc = $children->getLength;
+        $ret .= join ("", map {
+            ($_ % $ncols ? "\t" : "\n")
+              . process_node ($children->item ($_))
+                . " ";
+           } (0 .. ($nc - 1))) . "\n\n";
+      }
       elsif  ($tag eq "varlistentry") {
         $ret .= "\n" . process_node ($e);
       }
