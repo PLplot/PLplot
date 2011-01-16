@@ -597,12 +597,25 @@ plcol0(color)
 ARGUMENTS:
 
     color (PLINT, input) :    Integer representing the color.  The
-    defaults at present are (these may change): 0 black (default
-    background)1 red (default foreground)2 yellow3 green4 aquamarine5
-    pink6 wheat7 grey8 brown9 blue10 BlueViolet11 cyan12 turquoise13
-    magenta14 salmon15 white Use plscmap0 to change the entire map0
-    color palette and plscol0 to change an individual color in the
-    map0 color palette. 
+    defaults at present are (these may change): 
+    0       black (default background) 
+    1       red (default foreground) 
+    2       yellow 
+    3       green 
+    4       aquamarine 
+    5       pink 
+    6       wheat 
+    7       grey 
+    8       brown 
+    9       blue 
+    10        BlueViolet 
+    11        cyan 
+    12        turquoise 
+    13        magenta 
+    14        salmon 
+    15        white 
+      Use plscmap0 to change the entire map0 color palette and plscol0 to
+     change an individual color in the map0 color palette. 
 ")
 plcol0;
 
@@ -2343,16 +2356,18 @@ ARGUMENTS:
 ")
 pllab;
 
-%feature( "docstring", "Create a discrete annotated legend using colored boxes, lines, and/or lines of symbols 
+%feature( "docstring", "Create a discrete annotated legend using boxes, lines, and/or lines of symbols 
 
 DESCRIPTION:
 
-    Routine for creating a discrete plot legend with a plotted	filled
-    box, line, and/or line of symbols for each annotated legend entry. 
-    The arguments of pllegend provide control over the location and size
-    of the legend as well as the location and characteristics of the
-    elements (most of which are optional) within that legend.  The
-    resulting legend is clipped at the boundaries of the current subpage. 
+    (N.B. This is an experimental API that may be subject to further
+    change as we gain more experience with it.)  Routine for creating a
+    discrete plot legend with a plotted box, line, and/or line of symbols
+    for each annotated legend entry.  The arguments of pllegend provide
+    control over the location and size of the legend within the current
+    subpage as well as the location and characteristics of the elements
+    (most of which are optional) within that legend.  The resulting legend
+    is clipped at the boundaries of the current subpage 
 
     Redacted form: pllegend(opt, x, y, plot_width, bg_color, opt_array,
     text_offset, text_scale, text_spacing, test_justification,
@@ -2366,79 +2381,42 @@ DESCRIPTION:
 
 SYNOPSIS:
 
-pllegend(p_legend_width, p_legend_height, opt, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, nlegend, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
+pllegend(opt, x, y, plot_width, bg_color, nlegend, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
 
 ARGUMENTS:
 
-    p_legend_width (PLFLT *, output) :      Pointer to a location which
-    contains (after the call) the legend width in normalized viewport
-    coordinates. This quantity is calculated from plot_width.
-    text_offset, ncolumn (possibly modified inside the routine
-    depending on nlegend and nrow), and the length (calculated
-    internally) of the longest text string. 
-
-    p_legend_height (PLFLT *, output) :    Pointer to a location which
-    contains (after the call) the legend height in normalized viewport
-    coordinates. This quantity is calculated from text_scale,
-    text_spacing, and nrow (possibly modified inside the routine
-    depending on nlegend and nrow). 
-
     opt (PLINT, input) :    opt contains bits controlling the overall
-    legend. If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
-    on the left of the legend and the plotted area on the right.
-    Otherwise, put the text area on the right of the legend and the
-    plotted area on the left. If the PL_LEGEND_BACKGROUND bit is set,
-    plot a (semi-transparent) background for the legend. If the
-    PL_LEGEND_BOUNDING_BOX bit is set, plot a bounding box for the
-    legend. If the PL_LEGEND_ROW_MAJOR bit is set and both of
-    (possibly internally transformed) nrow > 1 and ncolumn > 1, then
-    plot the resulting array of legend entries in row-major order.
-    Finally, the combination of the PL_LEGEND_LEFT, PL_LEGEND_RIGHT,
-    PL_LEGEND_UPPER, PL_LEGEND_LOWER, PL_LEGEND_INSIDE, and
-    PL_LEGEND_OUTSIDE position bits specifies one of the 16 possible
-    standard positions (the 4 corners and 4 side centers for both the
-    inside and outside cases) of the legend relative to the viewport. 
+    legend.  If the 
+    PL_LEGEND_BACKGROUND bit is set, plot a (semi-transparent) background
+    for the legend.  If the 
+    PL_LEGEND_TEXT_LEFT bit is set, put the text area on the left of the
+    legend and the plotted area on the right. Otherwise, put the text
+    area on the right of the legend and the plotted area on the left. 
 
-    x (PLFLT, input) :      X offset of the legend position in normalized
-    viewport coordinates from the specified standard position of the
-    legend. For positive x, the direction of motion away from the
-    standard position is inward/outward from the standard corner
-    positions or standard center-left or center-right positions if the
-    PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt. For the
-    center-upper or center-lower cases, the direction of motion is
-    toward positive X. 
+    x (PLFLT, input) :      Normalized sub-page X position of the upper-left
+    corner of the legend. 
 
-    y (PLFLT, input) :      Y offset of the legend position in normalized
-    viewport coordinates from the specified standard position of the
-    legend. For positive y, the direction of motion away from the
-    standard position is inward/outward from the standard corner
-    positions or standard center-upper or center-lower positions if
-    the PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt. For the
-    center-left or center-right cases, the direction of motion is
-    toward positive Y. 
+    y (PLFLT, input) :      Normalized sub-page Y position of the upper-left
+    corner of the legend. 
 
-    plot_width (PLFLT, input) :    Horizontal width in normalized viewport
-    units of the plot area (where the colored boxes, lines, and/or
-    lines of symbols are drawn) of the legend. 
+    plot_width (PLFLT, input) :    Horizontal width in normalized subpage
+    units of the plot area (where the rectangular boxes, lines, and/or
+    lines of symbols are drawn) of the legend.  N.B.  The total
+    horizontal width of the legend in normalized subpage coordinates
+    is calculated internally from 
+    plot_width, 
+    text_offset (see below), and length (calculated internally) of the
+    longest text string. 
 
     bg_color (PLINT, input) :     The cmap0 index of the background color
-    for the legend (PL_LEGEND_BACKGROUND). 
+    for the legend (
+    PL_LEGEND_BACKGROUND). 
 
-    bb_color (PLINT, input) :     cmap0 index of the color of the
-    bounding-box line for the legend (PL_LEGEND_BOUNDING_BOX). 
-
-    bb_style (PLINT, input) :     The cmap0 index of the background color
-    for the legend (PL_LEGEND_BACKGROUND). 
-
-    nrow (PLINT, input) :    The cmap0 index of the background color for
-    the legend (PL_LEGEND_BACKGROUND). 
-
-    ncolumn (PLINT, input) :    The cmap0 index of the background color
-    for the legend (PL_LEGEND_BACKGROUND). 
-
-    nlegend (PLINT, input) :    Number of legend entries.N.B.  The total
+    nlegend (PLINT, input) :    Number of legend entries.  N.B.  The total
     vertical height of the legend in normalized subpage coordinates is
-    calculated internally from nlegend, text_scale (see below), and
+    calculated internally from 
+    nlegend, 
+    text_scale (see below), and  
     text_spacing (see below). 
 
     opt_array (const PLINT *, input) :      Array of nlegend values of
@@ -2500,11 +2478,6 @@ ARGUMENTS:
     colored boxes  (
     PL_LEGEND_COLOR_BOX). 
 
-    box_line_widths (const PLINT *, input) :    Array of nlegend scales
-    (units of fraction of character height) for the height of the
-    discrete colored boxes    (
-    PL_LEGEND_COLOR_BOX). 
-
     line_colors (const PLINT *, input) :    Array of nlegend line colors
     (cmap0 indices) (
     PL_LEGEND_LINE). 
@@ -2528,7 +2501,7 @@ ARGUMENTS:
     symbols to be drawn across the width of the plotted area (
     PL_LEGEND_SYMBOL). 
 
-    symbols (const char **, input) :    Array of nlegend symbols (plpoin
+    symbols (const PLINT *, input) :    Array of nlegend symbols (plpoin
     indices)  (
     PL_LEGEND_SYMBOL). 
 ")
@@ -3114,14 +3087,18 @@ DESCRIPTION:
     the external table(s) be parsed by calling plClearOpts before
     plMergeOpts. 
 
-    The default action taken by plparseopts is as follows: Returns with an
-    error if an unrecognized option or badly formed option-value pair are
-    encountered. Returns immediately (return code 0) when the first
-    non-option command line argument is found. Returns with the return
-    code of the option handler, if one was called. Deletes command line
-    arguments from argv list as they are found, and decrements argc
-    accordingly. Does not show \"invisible\" options in usage or help
-    messages. Assumes the program name is contained in argv[0]. 
+    The default action taken by plparseopts is as follows: 
+    Returns with an error if an unrecognized option or badly formed
+    option-value pair are encountered.	
+    Returns immediately (return code 0) when the first non-option command
+    line argument is found.  
+    Returns with the return code of the option handler, if one was called.
+     
+    Deletes command line arguments from argv list as they are found, and
+    decrements argc accordingly.  
+    Does not show \"invisible\" options in usage or help messages.  
+    Assumes the program name is contained in argv[0].  
+
 
     These behaviors may be controlled through the  
     mode argument. 
@@ -3237,22 +3214,13 @@ ARGUMENTS:
 ")
 plpath;
 
-%feature( "docstring", "Plot a glyph at the specified points 
+%feature( "docstring", "Plots a character at the specified points 
 
 DESCRIPTION:
 
-    Plot a glyph at a set of n points at positions (
-    x[i], 
-    y[i]) using the glyph defined by code.  This function is superseded by
-    plstring which gives access to many(!) more glyphs. code=-1 means try
-    to just draw a point.  Right now it's just a move and a draw at the
-    same place.  Not ideal, since a sufficiently intelligent output device
-    may optimize it away, or there may be faster ways of doing it.  This
-    is OK for now, though, and offers a 4X speedup over drawing a Hershey
-    font \"point\" (which is actually diamond shaped and therefore takes 4
-    strokes to draw).  If 0 < code < 32, then a useful (but small subset)
-    of Hershey symbols is plotted.  If 32 <= code <= 127 the corresponding
-    printable ASCII character is plotted. 
+    Marks a set of n points in x and y using the symbol defined by code.
+    If code is between 32 and 127, the symbol is simply the corresponding
+    printable ASCII character in the default font. 
 
     Redacted form: plpoin(x, y, code)
 
@@ -3266,35 +3234,26 @@ plpoin(n, x, y, code)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x and y arrays. 
+    n (PLINT, input) :      Number of points to be marked. 
 
-    x (PLFLT *, input) :    Pointer to an array with X coordinates of
+    x (PLFLT *, input) :    Pointer to array with x coordinates of the
     points. 
 
-    y (PLFLT *, input) :    Pointer to an array with Y coordinates of
+    y (PLFLT *, input) :    Pointer to array with y coordinates of the
     points. 
 
-    code (PLINT, input) :    Hershey symbol code corresponding to a glyph
-    to be plotted at each of the n points. 
+    code (PLINT, input) :    Code number for the symbol to be plotted. 
 ")
 plpoin;
 
-%feature( "docstring", "Plot a glyph at the specified 3D points 
+%feature( "docstring", " Plots a character at the specified points in 3 space 
 
 DESCRIPTION:
 
-    Plot a glyph at a set of n points at positions (
-    x[i], 
-    y[i], 
-    z[i]) using the glyph defined by code.  code=-1 means try to just draw
-    a point.  Right now it's just a move and a draw at the same place. 
-    Not ideal, since a sufficiently intelligent output device may optimize
-    it away, or there may be faster ways of doing it.  This is OK for now,
-    though, and offers a 4X speedup over drawing a Hershey font \"point\"
-    (which is actually diamond shaped and therefore takes 4 strokes to
-    draw).  If 0 < code < 32, then a useful (but small subset) of Hershey
-    symbols is plotted.  If 32 <= code <= 127 the corresponding printable
-    ASCII character is plotted. 
+    Marks a set of n points in x, y, and z using the symbol defined by
+    code. If code is between 32 and 127, the symbol is simply the
+    corresponding printable ASCII character in the default font. Setup
+    similar to plline3. 
 
     Redacted form: plpoin3(x, y, z, code)
 
@@ -3308,20 +3267,18 @@ plpoin3(n, x, y, z, code)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x and y arrays. 
+    n (PLINT, input) :      Number of points to be marked. 
 
-    x (PLFLT *, input) :    Pointer to an array with X coordinates of
+    x (PLFLT *, input) :    Pointer to array with x coordinates of the
     points. 
 
-    y (PLFLT *, input) :    Pointer to an array with Y coordinates of
+    y (PLFLT *, input) :    Pointer to array with y coordinates of the
     points. 
 
-    z (PLFLT *, input) :    Pointer to an array with Z coordinates of
+    z (PLFLT *, input) :    Pointer to array with z coordinates of the
     points. 
 
-    code (PLINT, input) :    Hershey symbol code (in \"ascii-indexed\" form
-    with -1 <= code <= 127) corresponding to a glyph to be plotted at
-    each of the n points. 
+    code (PLINT, input) :    Code number for the symbol to be plotted. 
 ")
 plpoin3;
 
@@ -5377,45 +5334,6 @@ ARGUMENTS:
 ")
 plstransform;
 
-%feature( "docstring", "Plot a glyph at the specified points 
-
-DESCRIPTION:
-
-    Plot glyphs (normally just one of them) at a set of n points at
-    positions (
-    x[i], 
-    y[i]) using the glyph defined by string.  Supersedes plpoin and plsym
-    because many(!) more glyphs are accessible with plstring.  The glyph
-    is specified with a PLplot user string.  As with plmtex and plptex,
-    the user string can contain FCI escapes to determine the font, UTF-8
-    code to determine the glyph or else PLplot escapes for Hershey or
-    unicode text to determine the glyph. 
-
-    Redacted form: plsym(x, y, code)
-
-    This function is used in example 7. 
-
-
-
-SYNOPSIS:
-
-plstring(n, x, y, string)
-
-ARGUMENTS:
-
-    n (PLINT, input) :      Number of points in the x and y arrays. 
-
-    x (PLFLT *, input) :    Pointer to an array with X coordinates of
-    points. 
-
-    y (PLFLT *, input) :    Pointer to an array with Y coordinates of
-    points. 
-
-    string (const char *, input) :    PLplot user string corresponding to
-    the glyph to be plotted at each of the n points. 
-")
-plstring;
-
 %feature( "docstring", "Add a point to a stripchart 
 
 DESCRIPTION:
@@ -5856,15 +5774,14 @@ ARGUMENTS:
 ")
 plsyax;
 
-%feature( "docstring", "Plot a glyph at the specified points 
+%feature( "docstring", "Plots a symbol at the specified points 
 
 DESCRIPTION:
 
-    Plot a glyph at a set of n points at positions (
+    Marks out a set of n points at positions (
     x[i], 
-    y[i]) using the glyph defined by code.  The code is interpreted as an
-    index in the Hershey font tables.  This function is superseded by
-    plstring which gives access to many(!) more glyphs. 
+    y[i]), using the symbol defined by code.  The code is interpreted as
+    an index in the Hershey font tables. 
 
     Redacted form: plsym(x, y, code)
 
@@ -5878,16 +5795,15 @@ plsym(n, x, y, code)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x and y arrays. 
+    n (PLINT, input) :      Number of points to be marked. 
 
-    x (PLFLT *, input) :    Pointer to an array with X coordinates of
-    points. 
+    x (PLFLT *, input) :    Pointer to array with set of x coordinate
+    values for the points. 
 
-    y (PLFLT *, input) :    Pointer to an array with Y coordinates of
-    points. 
+    y (PLFLT *, input) :    Pointer to array with set of y coordinate
+    values for the points. 
 
-    code (PLINT, input) :    Hershey symbol code corresponding to a glyph
-    to be plotted at each of the n points. 
+    code (PLINT, input) :    Code number for the symbol to be plotted. 
 ")
 plsym;
 
