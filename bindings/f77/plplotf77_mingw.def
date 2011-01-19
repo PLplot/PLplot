@@ -17,6 +17,8 @@ EXPORTS
 	plimagefr2_
 	plimagefr_
 	pllab_
+	pllegend_cnv_text_
+	pllegend_
 	plmap_
 	plmap_none_
 	plmeridians_

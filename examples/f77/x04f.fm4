@@ -40,6 +40,51 @@ c      Make log plots using two different styles.
       real*8 freql(0:100),ampl(0:100),phase(0:100), freq, f0
       integer i, type
 
+      real*8 legend_width, legend_height
+      integer nlegend
+      integer opt_array(2), text_colors(2), line_colors(2),
+     &        line_styles(2), symbol_colors(2),
+     &        symbol_numbers(2)
+      real*8 line_widths(2), symbol_scales(2)
+      integer box_colors(1), box_patterns(1), box_scales(1)
+      real*8 box_line_widths(1)
+      character*20 text(2)
+      character*1 symbols(2)
+
+c     To include file!
+
+      integer PL_LEGEND_NONE
+      integer PL_LEGEND_COLOR_BOX
+      integer PL_LEGEND_LINE
+      integer PL_LEGEND_SYMBOL
+      integer PL_LEGEND_TEXT_LEFT
+      integer PL_LEGEND_BACKGROUND
+      integer PL_LEGEND_BOUNDING_BOX
+      integer PL_LEGEND_ROW_MAJOR
+      integer PL_LEGEND_LEFT
+      integer PL_LEGEND_RIGHT
+      integer PL_LEGEND_UPPER
+      integer PL_LEGEND_LOWER
+      integer PL_LEGEND_INSIDE
+      integer PL_LEGEND_OUTSIDE
+
+      parameter (PL_LEGEND_NONE           = 1     )
+      parameter (PL_LEGEND_COLOR_BOX      = 2     )
+      parameter (PL_LEGEND_LINE           = 4     )
+      parameter (PL_LEGEND_SYMBOL         = 8     )
+      parameter (PL_LEGEND_TEXT_LEFT      = 16    )
+      parameter (PL_LEGEND_BACKGROUND     = 32    )
+      parameter (PL_LEGEND_BOUNDING_BOX   = 64    )
+      parameter (PL_LEGEND_ROW_MAJOR      = 128   )
+      parameter (PL_LEGEND_LEFT           = 256   )
+      parameter (PL_LEGEND_RIGHT          = 512   )
+      parameter (PL_LEGEND_UPPER          = 1024  )
+      parameter (PL_LEGEND_LOWER          = 2048  )
+      parameter (PL_LEGEND_INSIDE         = 4096  )
+      parameter (PL_LEGEND_OUTSIDE        = 8192  )
+
+
+
       call pladv(0)
 c      Set up data for log plot.
       f0 = 1.d0
@@ -73,6 +118,7 @@ c      Put labels on.
      &            'Single Pole Low-Pass Filter')
       call plcol0(2)
       call plmtex('l', 5.0d0, 0.5d0, 0.5d0, 'Amplitude (dB)')
+      nlegend = 1
 c      For the gridless case, put phase vs freq on same plot.
       if(type.eq.0) then
         call plcol0(1)
@@ -84,5 +130,43 @@ c      For the gridless case, put phase vs freq on same plot.
         call plcol0(3)
         call plmtex('r', 5.0d0, 0.5d0, 0.5d0,
      &              'Phase shift (degrees)')
+        nlegend = 2
       endif
+c      Draw a legend
+c      First legend entry.
+      opt_array(1)   = PL_LEGEND_LINE
+      text_colors(1) = 2
+      text(1)        = 'Amplitude'
+      line_colors(1) = 2
+      line_styles(1) = 1
+      line_widths(1) = 1
+c      note from the above opt_array the first symbol (and box) indices
+c      do not have to be specified
+
+c      Second legend entry.
+      opt_array(2)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
+      text_colors(2)    = 3
+      text(2)           = 'Phase shift'
+      line_colors(2)    = 3
+      line_styles(2)    = 1
+      line_widths(2)    = 1
+      symbol_colors(2)  = 3
+      symbol_scales(2)  = 1.0
+      symbol_numbers(2) = 4
+      symbols(2)        = '*'
+c      from the above opt_arrays we can completely ignore everything
+c      to do with boxes.
+
+      call plscol0a( 15, 32, 32, 32, 0.70 )
+      call pllegend( legend_width, legend_height,
+     &    PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX,
+     &    0.0d0, 0.0d0, 0.1d0, 15,
+     &    1, 1, 0, 0,
+     &    nlegend, opt_array,
+     &    1.0d0, 1.0d0, 2.0d0,
+     &    1.0d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
       end

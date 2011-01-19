@@ -43,6 +43,9 @@ static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT )
 // Slightly different to C version as we don't support PLPointer  for additional data
 static void ( STDCALL *pltransform )( PLFLT *, PLFLT *, PLFLT *, PLFLT * );
 
+static char **pllegend_text;
+static char **pllegend_symbols;
+
 static void
 pltransformf2c( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data )
 {
@@ -507,6 +510,78 @@ pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer da
     while ( ( i >= 0 ) && ( label[i] == ' ' ) )
         i--;
     label[i + 1] = '\0';
+}
+
+// Auxiliary function to create a C-compatible string array
+// Note the hidden argument
+void
+PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length )
+{
+    int    j;
+    int    i;
+    char **p_string;
+    char  *data;
+
+    // Ensure the strings are null terminated
+
+    p_string = (char **) malloc( sizeof(char *) * (*number) );
+    data     = (char *) malloc( sizeof(char *) * (*number) * (length+1) );
+
+    for ( j = 0; j < (*number); j ++ )
+    {
+        p_string[j] = data + j*(length+1);
+        memcpy( p_string[j], &string[j*length], length );
+        i = length - 1;
+        while ( ( i >= 0 ) && ( p_string[j][i] == ' ' ) )
+            i--;
+        p_string[j][i + 1] = '\0';
+    }
+
+    if ( *id == 1 )
+    {
+        pllegend_text = p_string;
+    }
+    else
+    {
+        pllegend_symbols = p_string;
+    }
+}
+
+void PLLEGEND(
+            PLFLT *p_legend_width, PLFLT *p_legend_height,
+            PLINT *opt, PLFLT *x, PLFLT *y, PLFLT *plot_width,
+            PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
+            PLINT *nrow, PLINT *ncolumn,
+            PLINT *nlegend, const PLINT *opt_array,
+            PLFLT *text_offset, PLFLT *text_scale, PLFLT *text_spacing,
+            PLFLT *text_justification,
+            const PLINT *text_colors,
+            const PLINT *box_colors, const PLINT *box_patterns,
+            const PLFLT *box_scales, const PLINT *box_line_widths,
+            const PLINT *line_colors, const PLINT *line_styles,
+            const PLINT *line_widths,
+            const PLINT *symbol_colors, const PLFLT *symbol_scales,
+            const PLINT *symbol_numbers )
+{
+     c_pllegend( p_legend_width, p_legend_height,
+          *opt, *x, *y, *plot_width,
+          *bg_color, *bb_color, *bb_style,
+          *nrow, *ncolumn,
+          *nlegend, opt_array,
+          *text_offset, *text_scale, *text_spacing,
+          *text_justification,
+          text_colors, pllegend_text,
+          box_colors, box_patterns,
+          box_scales, box_line_widths,
+          line_colors, line_styles,
+          line_widths,
+          symbol_colors, symbol_scales,
+          symbol_numbers, pllegend_symbols ) ;
+
+     free( *pllegend_text );
+     free( pllegend_text );
+     free( *pllegend_symbols );
+     free( pllegend_symbols );
 }
 
 void
