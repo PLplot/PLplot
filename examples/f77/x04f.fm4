@@ -157,7 +157,7 @@ c      Second legend entry.
 c      from the above opt_arrays we can completely ignore everything
 c      to do with boxes.
 
-      call plscol0a( 15, 32, 32, 32, 0.70 )
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
       call pllegend( legend_width, legend_height,
      &    PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX,
      &    0.0d0, 0.0d0, 0.1d0, 15,
