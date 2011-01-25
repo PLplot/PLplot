@@ -128,7 +128,7 @@ if(ENABLE_ocaml)
 endif(ENABLE_ocaml)
 
 if(ENABLE_ocaml)
-  option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" OFF)
+  option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" ON)
 
   if(GENERATE_PLPLOT_H_INC)
     find_program(OCAML ocaml)
