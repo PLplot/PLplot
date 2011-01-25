@@ -128,7 +128,9 @@ if(ENABLE_ocaml)
 endif(ENABLE_ocaml)
 
 if(ENABLE_ocaml)
-  option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" ON)
+  # Leave this OFF by default since this target requires extra
+  # dependencies such as libpcre-ocaml-dev package on Debian.
+  option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" OFF)
 
   if(GENERATE_PLPLOT_H_INC)
     find_program(OCAML ocaml)
