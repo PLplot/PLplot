@@ -43,9 +43,9 @@ c      Make log plots using two different styles.
       real*8 legend_width, legend_height
       integer nlegend
       integer opt_array(2), text_colors(2), line_colors(2),
-     &        line_styles(2), symbol_colors(2),
+     &        line_styles(2), line_widths(2), symbol_colors(2),
      &        symbol_numbers(2)
-      real*8 line_widths(2), symbol_scales(2)
+      real*8 symbol_scales(2)
       integer box_colors(1), box_patterns(1), box_scales(1)
       real*8 box_line_widths(1)
       character*20 text(2)
@@ -108,7 +108,7 @@ c      Try different axis and labelling styles.
 c      Plot ampl vs freq.
       call plcol0(2)
       call plline(101,freql,ampl)
-      call plcol0(1)
+      call plcol0(2)
       call plptex(1.6d0, -30.0d0, 1.0d0, -20.0d0, 0.5d0,
      &            '-20 dB/decade')
 c      Put labels on.
