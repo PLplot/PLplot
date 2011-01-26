@@ -42,8 +42,7 @@ c independent streams.
 c      some fortran compilers demand typing of intrinsic lnblnk, and
 c      although this is not demanded on g77 it also works there.
       integer lnblnk
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
       real*8 xp0, yp0
       integer xleng0, yleng0, xoff0, yoff0
       logical valid_geometry
@@ -256,8 +255,7 @@ c      For the final graph we wish to override the default tick intervals,
 c      and so do not use_ PLENV
       implicit none
 
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
       real*8  x(101), y(101)
       real*8  xs(6), ys(6)
       real*8  xscale, yscale, xoff, yoff
@@ -307,8 +305,7 @@ c======================================================================
       real*8 x0(0:360), y0(0:360)
       real*8 x(0:360), y(0:360), dtr, theta, dx, dy, r
       integer i, j, nsp
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
 
       dtr = PI/180.0d0
       do i=0,360
@@ -393,8 +390,7 @@ c======================================================================
       subroutine plot5()
 
       implicit none
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
       integer i, j, nptsx, nptsy, xdim, ydim
 c      xdim and ydim are the absolute static dimensions.
 c      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D

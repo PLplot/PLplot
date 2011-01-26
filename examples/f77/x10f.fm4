@@ -21,8 +21,7 @@ c      License along with PLplot; if not, write to the Free Software
 c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

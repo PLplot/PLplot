@@ -20,8 +20,7 @@ c      License along with PLplot; if not, write to the Free Software
 c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
       real*8 xx, yy, argx, argy, distort, r, t
       integer NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
       parameter(NLEVEL = 20)
@@ -41,8 +40,6 @@ c      dummy to fill argument list with something not currently used.
       real*8 tr(6)
       common /plplot/tr
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

@@ -31,8 +31,7 @@ c      NX and NY are the defined area.
       real*8  xx, yy
       real*8  z(xdim, ydim), zmin, zmax
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

@@ -22,8 +22,9 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-      real*8 PI
+      real*8 PI, TWOPI
       parameter (PI = 3.1415926535897932384d0)
+      parameter (TWOPI = 2.d0*PI)
 
 c flags used for position argument of both pllegend and plcolorbar
       integer PL_POSITION_LEFT

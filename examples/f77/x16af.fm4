@@ -22,8 +22,7 @@ c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 
       implicit none
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -124,12 +123,11 @@ c      Routine for demonstrating use_ of transformation arrays in contour plots.
 
       implicit none
       integer   xdim, ydim, NX, NY, NCONTR, NBDRY
-      real*8    TWOPI
 c      xdim and ydim are the static dimensions of the 2D arrays while
 c      NX and NY are the defined area.
       parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
       parameter (NCONTR = 14, NBDRY=200)
-      parameter (TWOPI=6.2831853071795864768d0)
+      include 'plplot_parameters.h'
 
       real*8    z(xdim, ydim), ztmp(xdim, ydim+1)
       real*8    xg(xdim, ydim+1), yg(xdim, ydim+1),

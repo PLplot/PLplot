@@ -26,8 +26,7 @@ c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       real*8 y0(10)
       real*8 pos(5), rcoord(5), gcoord(5), bcoord(5)
       integer rev(5)
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 
       data pos    /0.0d0, 0.25d0, 0.5d0, 0.75d0, 1.0d0/
       data rcoord /0.0d0, 0.25d0, 0.5d0, 1.0d0, 1.0d0/

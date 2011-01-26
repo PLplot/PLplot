@@ -21,8 +21,7 @@ c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 
 c      Does several contour plots using different coordinate mappings.
       implicit none
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
       integer i, j, nptsx, nptsy, xdim, ydim
 c      xdim and ydim are the absolute static dimensions.
 c      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
@@ -39,8 +38,6 @@ cDEC$ ATTRIBUTES DLLIMPORT :: PLPLOT
 
       data clevel /-1.d0, -0.8d0, -0.6d0, -0.4d0, -0.2d0,
      &  0.d0, 0.2d0, 0.4d0, 0.6d0 ,0.8d0, 1.d0/
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -144,8 +141,7 @@ c      Plot using 2d coordinate transform
 c      polar contour plot example.
       subroutine polar()
       implicit none
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
       integer PERIMETERPTS, RPTS, THETAPTS, NLEVEL, xdim, ydim
       parameter(PERIMETERPTS = 100)
 c      xdim and ydim are the absolute static size of the 2D arrays.
@@ -200,7 +196,7 @@ c      shielded potential contour plot example
      &  nlevel, ilevgt, ilevlt, nlevlt, nlevgt,
      &  ncollin, ncolbox, ncollab,
      &  nxsub, nysub, xdim, ydim
-      real*8 TWOPI, r, theta, rmax, x0, y0, xmin, xmax, eps, q1, d1,
+      real*8 r, theta, rmax, x0, y0, xmin, xmax, eps, q1, d1,
      &  ymin, ymax,
      &  q1i, d1i, q2, d2, q2i, d2i, div1, div1i, div2, div2i,
      &  zmin, zmax, dz, xpmin, xpmax, ypmin, ypmax,
@@ -209,7 +205,7 @@ c      xdim and ydim are the absolute static size of the 2D arrays.
 c      NCX and NCY are associated with the part of the
 c      2D arrays that are defined.
       parameter (xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100)
-      parameter (TWOPI=6.2831853071795864768d0)
+      include 'plplot_parameters.h'
 
       real*8 z(xdim, ydim), ztmp(xdim, ydim+1)
       real*8 xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)
