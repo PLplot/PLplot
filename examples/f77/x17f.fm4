@@ -35,14 +35,10 @@ c--------------------------------------------------------------------------
       external plrandd
       real*8 plrandd
 
-      real*8 PI
-      parameter ( PI = 3.1415926535897932384d0 )
+      include 'plplot_parameters.h'
 
       logical      pl_errcode
       character*80 errmsg
-
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
 
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)

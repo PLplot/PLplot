@@ -28,8 +28,7 @@ c--------------------------------------------------------------------------
       program x18f
       implicit none
 
-      real*8 pi
-      parameter ( pi     = 3.1415926535897932384d0 )
+      include 'plplot_parameters.h'
       integer NPTS
       parameter ( NPTS = 1000 )
 
@@ -45,8 +44,6 @@ c--------------------------------------------------------------------------
       data alt / 20.0d0, 35.0d0, 50.0d0, 65.0d0 /
       data az  / 30.0d0, 40.0d0, 50.0d0, 60.0d0 /
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -105,14 +102,12 @@ c        r = 1. - dble (i-1) / dble (NPTS)
 
       subroutine test_poly(k, alt, az)
       implicit none
+      include 'plplot_parameters.h'
       integer k
       real*8 alt, az
 
       real*8 x(5), y(5), z(5)
       integer i, j
-      real*8 pi, two_pi
-      parameter ( pi     = 3.1415926535897932384d0 )
-      parameter ( two_pi = 2.0d0*pi                )
       integer draw(4,4)
       DATA draw /
      &  1, 1, 1, 1,
@@ -121,8 +116,8 @@ c        r = 1. - dble (i-1) / dble (NPTS)
      &  1, 1, 0, 0 /
       real*8 theta, phi
       integer ia
-      THETA(ia) = (two_pi * (ia) /20.d0)
-      PHI(ia)   = (pi * (ia) / 20.1d0)
+      THETA(ia) = (TWOPI * (ia) /20.d0)
+      PHI(ia)   = (PI * (ia) / 20.1d0)
 
       call pladv(0)
       call plvpor(0.0d0, 1.0d0, 0.0d0, 0.9d0)
