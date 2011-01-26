@@ -20,6 +20,11 @@ C      You should have received a copy of the GNU Library General Public
 C      License along with PLplot; if not, write to the Free Software
 C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+      real*8 PI
+      parameter (PI = 3.1415926535897932384d0)
+
 c flags used for position argument of both pllegend and plcolorbar
       integer PL_POSITION_LEFT
       integer PL_POSITION_RIGHT
@@ -38,6 +43,20 @@ c flags used for position argument of both pllegend and plcolorbar
       parameter (PL_POSITION_OUTSIDE        = 32 )
       parameter (PL_POSITION_VIEWPORT       = 64 )
       parameter (PL_POSITION_SUBPAGE        = 128 )
+
+c Flags for plot3dc() and plsurf3d().
+      integer DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY, MAG_COLOR,
+     &  BASE_CONT, TOP_CONT, SURF_CONT, DRAW_SIDES, FACETED, MESH
+      parameter(DRAW_LINEX = 1)
+      parameter(DRAW_LINEY = 2)
+      parameter(DRAW_LINEXY = 3)
+      parameter(MAG_COLOR = 4)
+      parameter(BASE_CONT = 8)
+      parameter(TOP_CONT = 16)
+      parameter(SURF_CONT = 32)
+      parameter(DRAW_SIDES = 64)
+      parameter(FACETED = 128)
+      parameter(MESH = 256)
 
 c Flags for pllegend.
       integer PL_LEGEND_NONE

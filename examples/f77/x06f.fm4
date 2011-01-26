@@ -24,8 +24,7 @@ c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       real*8 x, y
 
       character*3 text
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

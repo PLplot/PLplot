@@ -26,8 +26,7 @@ c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       character*80 version
       integer digmax
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      some fortran compilers demand typing of intrinsic lnblnk, and
 c      although this is not demanded on g77 it also works there.
       integer lnblnk
@@ -165,8 +164,7 @@ c
 c      For the final graph we wish to override the default tick intervals,
 c      and so do not use_ PLENV
 
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
       real*8  x(101), y(101)
       real*8  xs(6), ys(6)
       real*8  xscale, yscale, xoff, yoff

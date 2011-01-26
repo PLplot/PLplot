@@ -20,8 +20,7 @@ c      License along with PLplot; if not, write to the Free Software
 c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -35,8 +34,7 @@ c      Make log plots using two different styles.
 
       subroutine plot1(type)
       implicit none
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
       real*8 freql(0:100),ampl(0:100),phase(0:100), freq, f0
       integer i, type
 
@@ -50,8 +48,6 @@ c      Make log plots using two different styles.
       real*8 box_line_widths(1)
       character*20 text(2)
       character*1 symbols(2)
-
-      include 'plplot_parameters.h'
 
       call pladv(0)
 c      Set up data for log plot.
