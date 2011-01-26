@@ -86,7 +86,8 @@ c        r = 1. - dble (i-1) / dble (NPTS)
         if ( opt(k).gt. 0 ) then
           call plline3( NPTS, x, y, z )
         else
-          call plpoin3( NPTS, x, y, z, 1 )
+c U+22C5 DOT OPERATOR.
+          call plstring3( NPTS, x, y, z, "⋅" )
         endif
 
         call plcol0(3)
