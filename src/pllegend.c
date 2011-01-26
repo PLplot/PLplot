@@ -32,32 +32,32 @@
 //! Calculate parameters that help determine the position of the top left
 //! of the legend in normalized viewport coordinates.
 //!
-//! @param opt Control variable containing valid combinations of the
+//! @param position Control variable containing valid combinations of the
 //! following control bits that specify the 16 standard positions of
-//! the legend: PL_LEGEND_LEFT, PL_LEGEND_RIGHT, PL_LEGEND_UPPER,
-//! PL_LEGEND_LOWER, PL_LEGEND_INSIDE, and PL_LEGEND_OUTSIDE.
+//! the legend: PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_UPPER,
+//! PL_POSITION_LOWER, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE.
 //! @param legend_width Total legend width in normalized viewport
 //! coordinates.
 //! @param legend_height Total legend height in normalized viewport
 //! coordinates.
 //! @param x_legend_position Pointer to a location that contains
 //! (after the call) the X value of one of the 16 standard legend
-//! positions specified by opt.
+//! positions specified by position.
 //! @param y_legend_position Pointer to a location that contains
 //! (after the call) the Y equivalent of x_legend_position.
 //! @param xsign Pointer to a location that contains (after the call)
 //! the sign of the X offset relative to the standard legend position
-//! specified by opt.
+//! specified by position.
 //! @param ysign Pointer to a location that contains (after the call)
 //! the Y equivalent to xsign.
 //!
 
-static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
+static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_height,
                              PLFLT *x_legend_position, PLFLT *y_legend_position,
                              PLFLT *xsign, PLFLT *ysign )
 {
     // xorigin, yorigin, xlegend, and ylegend are all calculated for
-    // one of the 16 standard positions specified by opt and are
+    // one of the 16 standard positions specified by position and are
     // expressed in normalized viewport coordinates.  xorigin is the X
     // coordinate of the viewport reference point.  yorigin is the Y
     // coordinate of the viewport reference point.  xlegend is the X
@@ -70,20 +70,20 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
     // By default the sign of the x and y offsets is positive.
     *xsign = 1.;
     *ysign = 1.;
-    if ( opt & PL_LEGEND_RIGHT )
+    if ( position & PL_POSITION_RIGHT )
     {
         xorigin = 1.;
-        if ( opt & PL_LEGEND_UPPER )
+        if ( position & PL_POSITION_UPPER )
         {
             yorigin = 1.;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 xlegend = -legend_width;
                 ylegend = 0.;
                 *xsign  = -1.;
                 *ysign  = -1.;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 xlegend = 0.;
                 ylegend = legend_height;
@@ -93,16 +93,16 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
                 plexit( "legend_position: internal logic error 1" );
             }
         }
-        else if ( !( opt & PL_LEGEND_UPPER ) && !( opt & PL_LEGEND_LOWER ) )
+        else if ( !( position & PL_POSITION_UPPER ) && !( position & PL_POSITION_LOWER ) )
         {
             yorigin = 0.5;
             ylegend = 0.5 * legend_height;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 xlegend = -legend_width;
                 *xsign  = -1.;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 xlegend = 0.;
             }
@@ -111,16 +111,16 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
                 plexit( "legend_position: internal logic error 2" );
             }
         }
-        else if ( opt & PL_LEGEND_LOWER )
+        else if ( position & PL_POSITION_LOWER )
         {
             yorigin = 0.;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 xlegend = -legend_width;
                 ylegend = legend_height;
                 *xsign  = -1.;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 xlegend = 0.;
                 ylegend = 0.;
@@ -136,19 +136,19 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             plexit( "legend_position: internal logic error 4" );
         }
     }
-    else if ( !( opt & PL_LEGEND_RIGHT ) && !( opt & PL_LEGEND_LEFT ) )
+    else if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) )
     {
         xorigin = 0.5;
         xlegend = -0.5 * legend_width;
-        if ( opt & PL_LEGEND_UPPER )
+        if ( position & PL_POSITION_UPPER )
         {
             yorigin = 1.;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 ylegend = 0.;
                 *ysign  = -1.;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 ylegend = legend_height;
             }
@@ -157,14 +157,14 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
                 plexit( "legend_position: internal logic error 5" );
             }
         }
-        else if ( opt & PL_LEGEND_LOWER )
+        else if ( position & PL_POSITION_LOWER )
         {
             yorigin = 0.;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 ylegend = legend_height;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 ylegend = 0.;
                 *ysign  = -1.;
@@ -179,19 +179,19 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
             plexit( "legend_position: internal logic error 7" );
         }
     }
-    else if ( opt & PL_LEGEND_LEFT )
+    else if ( position & PL_POSITION_LEFT )
     {
         xorigin = 0.;
-        if ( opt & PL_LEGEND_UPPER )
+        if ( position & PL_POSITION_UPPER )
         {
             yorigin = 1.;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 xlegend = 0.;
                 ylegend = 0.;
                 *ysign  = -1.;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 xlegend = -legend_width;
                 ylegend = legend_height;
@@ -202,15 +202,15 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
                 plexit( "legend_position: internal logic error 8" );
             }
         }
-        else if ( !( opt & PL_LEGEND_UPPER ) && !( opt & PL_LEGEND_LOWER ) )
+        else if ( !( position & PL_POSITION_UPPER ) && !( position & PL_POSITION_LOWER ) )
         {
             yorigin = 0.5;
             ylegend = 0.5 * legend_height;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 xlegend = 0.;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 xlegend = -legend_width;
                 *xsign  = -1.;
@@ -220,15 +220,15 @@ static void legend_position( PLINT opt, PLFLT legend_width, PLFLT legend_height,
                 plexit( "legend_position: internal logic error 9" );
             }
         }
-        else if ( opt & PL_LEGEND_LOWER )
+        else if ( position & PL_POSITION_LOWER )
         {
             yorigin = 0.;
-            if ( opt & PL_LEGEND_INSIDE )
+            if ( position & PL_POSITION_INSIDE )
             {
                 ylegend = legend_height;
                 xlegend = 0.;
             }
-            else if ( opt & PL_LEGEND_OUTSIDE )
+            else if ( position & PL_POSITION_OUTSIDE )
             {
                 xlegend = -legend_width;
                 ylegend = 0.;
@@ -352,6 +352,13 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! This quantity is calculated from the text_scale and text_spacing arguments
 //! and the nrow argument (possibly modified inside the routine depending
 //! on the nlegend and ncolum arguments).
+//! @param position This variable contains bits which control the
+//! overall position of the legend.  The combination of the
+//! PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_UPPER,
+//! PL_POSITION_LOWER, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE
+//! position bits specifies one of the 16 possible standard positions
+//! (the 4 corners and 4 side centers for both the inside and outside
+//! cases) of the legend relative to the viewport.
 //! @param opt This variable contains bits which control the overall
 //! legend.  If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
 //! on the left of the legend and the plotted area on the right.
@@ -362,11 +369,6 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! legend.  If the PL_LEGEND_ROW_MAJOR bit is set and both of the
 //! (possibly internally transformed) nrow > 1 and ncolumn > 1, then
 //! plot the resulting array of legend entries in row-major order.
-//! Finally, the combination of the PL_LEGEND_LEFT, PL_LEGEND_RIGHT,
-//! PL_LEGEND_UPPER, PL_LEGEND_LOWER, PL_LEGEND_INSIDE, and
-//! PL_LEGEND_OUTSIDE position bits specifies one of the 16 possible
-//! standard positions (the 4 corners and 4 side centers for both the
-//! inside and outside cases) of the legend relative to the viewport.
 //! @param x X offset of the legend position in normalized viewport
 //! coordinates from the specified standard position of the legend.
 //! For positive x, the direction of motion away from the standard
@@ -458,7 +460,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 void
 c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-            PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT nlegend, const PLINT *opt_array,
@@ -518,29 +520,29 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // fprintf(stdout, "nrow, ncolumn = %d, %d\n", nrow, ncolumn);
 
     // Default position flags and sanity checks for position flags.
-    if ( !( opt & PL_LEGEND_RIGHT ) && !( opt & PL_LEGEND_LEFT ) && !( opt & PL_LEGEND_UPPER ) && !( opt & PL_LEGEND_LOWER ) )
+    if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_UPPER ) && !( position & PL_POSITION_LOWER ) )
     {
-        opt = opt | PL_LEGEND_RIGHT | PL_LEGEND_UPPER;
+        position = position | PL_POSITION_RIGHT | PL_POSITION_UPPER;
     }
-    else if ( ( opt & PL_LEGEND_RIGHT ) && ( opt & PL_LEGEND_LEFT ) )
+    else if ( ( position & PL_POSITION_RIGHT ) && ( position & PL_POSITION_LEFT ) )
     {
-        plabort( "pllegend: PL_LEGEND_RIGHT and PL_LEGEND_LEFT cannot be simultaneously set." );
+        plabort( "pllegend: PL_POSITION_RIGHT and PL_POSITION_LEFT cannot be simultaneously set." );
         return;
     }
 
-    else if ( ( opt & PL_LEGEND_UPPER ) && ( opt & PL_LEGEND_LOWER ) )
+    else if ( ( position & PL_POSITION_UPPER ) && ( position & PL_POSITION_LOWER ) )
     {
-        plabort( "pllegend: PL_LEGEND_UPPER and PL_LEGEND_LOWER cannot be simultaneously set." );
+        plabort( "pllegend: PL_POSITION_UPPER and PL_POSITION_LOWER cannot be simultaneously set." );
         return;
     }
 
-    if ( !( opt & PL_LEGEND_INSIDE ) && !( opt & PL_LEGEND_OUTSIDE ) )
+    if ( !( position & PL_POSITION_INSIDE ) && !( position & PL_POSITION_OUTSIDE ) )
     {
-        opt = opt | PL_LEGEND_INSIDE;
+        position = position | PL_POSITION_INSIDE;
     }
-    else if ( ( opt & PL_LEGEND_INSIDE ) && ( opt & PL_LEGEND_OUTSIDE ) )
+    else if ( ( position & PL_POSITION_INSIDE ) && ( position & PL_POSITION_OUTSIDE ) )
     {
-        plabort( "pllegend: PL_LEGEND_INSIDE and PL_LEGEND_OUTSIDE cannot be simultaneously set." );
+        plabort( "pllegend: PL_POSITION_INSIDE and PL_POSITION_OUTSIDE cannot be simultaneously set." );
         return;
     }
 
@@ -619,7 +621,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
               viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. );
     drow = text_spacing * character_height;
 
-    legend_position( opt, legend_width_vc, legend_height_vc, &x_legend_position, &y_legend_position, &xsign, &ysign );
+    legend_position( position, legend_width_vc, legend_height_vc, &x_legend_position, &y_legend_position, &xsign, &ysign );
     plot_x     = x * xsign + x_legend_position;
     plot_y     = y * ysign + y_legend_position;
     plot_x_end = plot_x + plot_width;

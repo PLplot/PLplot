@@ -996,7 +996,7 @@ void plstream::lab( const char *xlabel, const char *ylabel,
 // Routine for drawing line, symbol, or cmap0 legends
 
 void plstream::legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-                       PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+                       PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
                        PLINT bg_color, PLINT bb_color, PLINT bb_style,
                        PLINT nrow, PLINT ncolumn,
                        PLINT nlegend, const PLINT *opt_array,
@@ -1012,7 +1012,7 @@ void plstream::legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 {
     set_stream();
 
-    pllegend( p_legend_width, p_legend_height, opt, x, y, plot_width,
+    pllegend( p_legend_width, p_legend_height, position, opt, x, y, plot_width,
         bg_color, bb_color, bb_style, nrow, ncolumn, nlegend, opt_array,
         text_offset, text_scale, text_spacing, text_justification,
         text_colors, text, box_colors, box_patterns, box_scales,

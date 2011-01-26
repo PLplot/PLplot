@@ -33,22 +33,22 @@
 #include "plcdemos.h"
 
 static PLINT position_options[16] = {
-    PL_LEGEND_LEFT | PL_LEGEND_UPPER | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_UPPER | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_RIGHT | PL_LEGEND_UPPER | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_RIGHT | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_RIGHT | PL_LEGEND_LOWER | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_LOWER | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_LEFT | PL_LEGEND_LOWER | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_LEFT | PL_LEGEND_OUTSIDE,
-    PL_LEGEND_LEFT | PL_LEGEND_UPPER | PL_LEGEND_INSIDE,
-    PL_LEGEND_UPPER | PL_LEGEND_INSIDE,
-    PL_LEGEND_RIGHT | PL_LEGEND_UPPER | PL_LEGEND_INSIDE,
-    PL_LEGEND_RIGHT | PL_LEGEND_INSIDE,
-    PL_LEGEND_RIGHT | PL_LEGEND_LOWER | PL_LEGEND_INSIDE,
-    PL_LEGEND_LOWER | PL_LEGEND_INSIDE,
-    PL_LEGEND_LEFT | PL_LEGEND_LOWER | PL_LEGEND_INSIDE,
-    PL_LEGEND_LEFT | PL_LEGEND_INSIDE
+    PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
+    PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_OUTSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
+    PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
+    PL_POSITION_LEFT | PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
+    PL_POSITION_LEFT | PL_POSITION_OUTSIDE,
+    PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_INSIDE,
+    PL_POSITION_UPPER | PL_POSITION_INSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_INSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_INSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_LOWER | PL_POSITION_INSIDE,
+    PL_POSITION_LOWER | PL_POSITION_INSIDE,
+    PL_POSITION_LEFT | PL_POSITION_LOWER | PL_POSITION_INSIDE,
+    PL_POSITION_LEFT | PL_POSITION_INSIDE
 };
 
 // Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
@@ -236,7 +236,7 @@ main( int argc, const char *argv[] )
     char  *text[MAX_NLEGEND], *symbols[MAX_NLEGEND];
     PLFLT legend_width, legend_height, x, y, xstart, ystart;
     PLFLT max_height, text_scale;
-    PLINT opt_base, nrow, ncolumn;
+    PLINT position, opt_base, nrow, ncolumn;
 
     // Create space to contain legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )
@@ -274,13 +274,14 @@ main( int argc, const char *argv[] )
 
     for ( k = 0; k < 16; k++ )
     {
-        opt = opt_base | position_options[k];
+        position = position_options[k];
+        opt = opt_base;
         sprintf( text[0], "%2.2d", k );
         text_colors[0]   = 1 + ( k % 8 );
         line_colors[0]   = 1 + ( k % 8 );
         symbol_colors[0] = 1 + ( k % 8 );
 
-        pllegend( &legend_width, &legend_height, opt, 0.05, 0.05,
+        pllegend( &legend_width, &legend_height, position, opt, 0.05, 0.05,
             0.1, 15, 1, 1, 0, 0,
             nlegend, opt_array, 1.0, 1.0, 2.0,
             1., text_colors, (const char **) text,
@@ -322,12 +323,13 @@ main( int argc, const char *argv[] )
     plsfont( PL_FCI_MONO, -1, -1 );
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    opt     = opt_base | PL_LEGEND_UPPER | PL_LEGEND_OUTSIDE;
+    position = PL_POSITION_UPPER | PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.;
     y       = 0.1;
     nrow    = 1;
     ncolumn = nlegend;
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -335,12 +337,13 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    opt     = opt_base | PL_LEGEND_LOWER | PL_LEGEND_OUTSIDE;
+    position = PL_POSITION_LOWER | PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.;
     y       = 0.1;
     nrow    = 1;
     ncolumn = nlegend;
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -348,12 +351,13 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    opt     = opt_base | PL_LEGEND_LEFT | PL_LEGEND_OUTSIDE;
+    position = PL_POSITION_LEFT | PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.1;
     y       = 0.;
     nrow    = nlegend;
     ncolumn = 1;
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -361,12 +365,13 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    opt     = opt_base | PL_LEGEND_RIGHT | PL_LEGEND_OUTSIDE;
+    position = PL_POSITION_RIGHT | PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.1;
     y       = 0.;
     nrow    = nlegend;
     ncolumn = 1;
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -374,12 +379,13 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    opt     = opt_base | PL_LEGEND_LEFT | PL_LEGEND_UPPER | PL_LEGEND_INSIDE;
+    position = PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
+    opt     = opt_base;
     x       = 0.;
     y       = 0.;
     nrow    = 6;
     ncolumn = 2;
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -387,12 +393,13 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    opt     = opt_base | PL_LEGEND_RIGHT | PL_LEGEND_UPPER | PL_LEGEND_INSIDE | PL_LEGEND_ROW_MAJOR;
+    position = PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
+    opt     = opt_base  | PL_LEGEND_ROW_MAJOR;
     x       = 0.;
     y       = 0.;
     nrow    = 6;
     ncolumn = 2;
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -400,12 +407,13 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    opt     = opt_base | PL_LEGEND_LOWER | PL_LEGEND_INSIDE | PL_LEGEND_ROW_MAJOR;;
+    position = PL_POSITION_LOWER | PL_POSITION_INSIDE;
+    opt     = opt_base | PL_LEGEND_ROW_MAJOR;
     x       = 0.;
     y       = 0.;
     nrow    = 3;
     ncolumn = 3;
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -424,8 +432,9 @@ main( int argc, const char *argv[] )
     y        = 0.1;
     nturn    = 4;
     nlegend  = 0;
-    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_UPPER;
-    opt      = opt_base | PL_LEGEND_LEFT;
+    position = PL_POSITION_UPPER | PL_POSITION_LEFT;
+    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX;
+    opt      = opt_base;
     for ( i = 0; i < 9; i++ )
     {
         // Set up legend arrays with the correct size, type.
@@ -456,7 +465,7 @@ main( int argc, const char *argv[] )
         nrow    = MIN( 3, nlegend );
         ncolumn = 0;
 
-        pllegend( &legend_width, &legend_height, opt, x, y,
+        pllegend( &legend_width, &legend_height, position, opt, x, y,
             0.025, 15, 1, 1, nrow, ncolumn,
             nlegend, opt_array, 1.0, 1.0, 1.5,
             1., text_colors, (const char **) text,
@@ -466,7 +475,8 @@ main( int argc, const char *argv[] )
 
         if ( i == nturn )
         {
-            opt = opt_base | PL_LEGEND_RIGHT;
+          position = PL_POSITION_UPPER | PL_POSITION_RIGHT;
+          opt = opt_base;
             x   = 1. - x;
             y  += legend_height;
         }
@@ -494,7 +504,8 @@ main( int argc, const char *argv[] )
     nlegend = 5;
     // Only specify legend data that are required according to the
     // value of opt_array for that entry.
-    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_LEFT | PL_LEGEND_UPPER | PL_LEGEND_TEXT_LEFT;
+    position = PL_POSITION_LEFT | PL_POSITION_UPPER;
+    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_TEXT_LEFT;
 
     // Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
     opt_array[0] = PL_LEGEND_NONE;
@@ -538,7 +549,7 @@ main( int argc, const char *argv[] )
     opt = opt_base;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -563,7 +574,7 @@ main( int argc, const char *argv[] )
     x  += legend_width;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -588,7 +599,7 @@ main( int argc, const char *argv[] )
     x  += legend_width;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -616,7 +627,7 @@ main( int argc, const char *argv[] )
     max_height = 0.;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -641,7 +652,7 @@ main( int argc, const char *argv[] )
     x  += legend_width;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -666,7 +677,7 @@ main( int argc, const char *argv[] )
     x  += legend_width;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -693,7 +704,7 @@ main( int argc, const char *argv[] )
     max_height = 0.;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -717,7 +728,7 @@ main( int argc, const char *argv[] )
     x  += legend_width;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -741,7 +752,7 @@ main( int argc, const char *argv[] )
     x  += legend_width;
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    pllegend( &legend_width, &legend_height, opt, x, y,
+    pllegend( &legend_width, &legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,

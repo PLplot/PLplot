@@ -58,6 +58,18 @@ enum plplot_run_level_enum {
 };
 typedef enum plplot_run_level_enum plplot_run_level;
 
+enum plplot_position_enum {
+    PL_POSITION_LEFT = 1,
+    PL_POSITION_RIGHT = 2,
+    PL_POSITION_UPPER = 4,
+    PL_POSITION_LOWER = 8,
+    PL_POSITION_INSIDE = 16,
+    PL_POSITION_OUTSIDE = 32,
+    PL_POSITION_VIEWPORT = 64,
+    PL_POSITION_SUBPAGE = 128,
+};
+typedef [set] enum plplot_position_enum plplot_legend_position;
+
 enum plplot_legend_enum {
     PL_LEGEND_NONE = 1,
     PL_LEGEND_COLOR_BOX = 2,
@@ -67,12 +79,6 @@ enum plplot_legend_enum {
     PL_LEGEND_BACKGROUND = 32,
     PL_LEGEND_BOUNDING_BOX = 64,
     PL_LEGEND_ROW_MAJOR = 128,
-    PL_LEGEND_LEFT = 256,
-    PL_LEGEND_RIGHT = 512,
-    PL_LEGEND_UPPER = 1024,
-    PL_LEGEND_LOWER = 2048,
-    PL_LEGEND_INSIDE = 4096,
-    PL_LEGEND_OUTSIDE = 8192,
 };
 typedef [set] enum plplot_legend_enum plplot_legend_opt;
 

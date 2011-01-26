@@ -253,7 +253,7 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
 
     pls->scol0a( 15, 32, 32, 32, 0.70 );
     pls->legend( &legend_width, &legend_height,
-        PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+        0, PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
         0.0, 0.0, 0.10, 15,
         1, 1, 0, 0,
         nlegend, opt_array,

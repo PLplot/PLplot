@@ -41,6 +41,26 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       common /zzplstr8/ string8
       common /zzplstr9/ string9
 
+
+c flags used for position argument of both pllegend and plcolorbar
+      integer PL_POSITION_LEFT
+      integer PL_POSITION_RIGHT
+      integer PL_POSITION_UPPER
+      integer PL_POSITION_LOWER
+      integer PL_POSITION_INSIDE
+      integer PL_POSITION_OUTSIDE
+      integer PL_POSITION_VIEWPORT
+      integer PL_POSITION_SUBPAGE
+
+      parameter (PL_POSITION_LEFT           = 1 )
+      parameter (PL_POSITION_RIGHT          = 2 )
+      parameter (PL_POSITION_UPPER          = 4 )
+      parameter (PL_POSITION_LOWER          = 8 )
+      parameter (PL_POSITION_INSIDE         = 16 )
+      parameter (PL_POSITION_OUTSIDE        = 32 )
+      parameter (PL_POSITION_VIEWPORT       = 64 )
+      parameter (PL_POSITION_SUBPAGE        = 128 )
+
 c Flags for pllegend.
       integer PL_LEGEND_NONE
       integer PL_LEGEND_COLOR_BOX
@@ -50,12 +70,6 @@ c Flags for pllegend.
       integer PL_LEGEND_BACKGROUND
       integer PL_LEGEND_BOUNDING_BOX
       integer PL_LEGEND_ROW_MAJOR
-      integer PL_LEGEND_LEFT
-      integer PL_LEGEND_RIGHT
-      integer PL_LEGEND_UPPER
-      integer PL_LEGEND_LOWER
-      integer PL_LEGEND_INSIDE
-      integer PL_LEGEND_OUTSIDE
 
       parameter (PL_LEGEND_NONE           = 1     )
       parameter (PL_LEGEND_COLOR_BOX      = 2     )
@@ -65,12 +79,6 @@ c Flags for pllegend.
       parameter (PL_LEGEND_BACKGROUND     = 32    )
       parameter (PL_LEGEND_BOUNDING_BOX   = 64    )
       parameter (PL_LEGEND_ROW_MAJOR      = 128   )
-      parameter (PL_LEGEND_LEFT           = 256   )
-      parameter (PL_LEGEND_RIGHT          = 512   )
-      parameter (PL_LEGEND_UPPER          = 1024  )
-      parameter (PL_LEGEND_LOWER          = 2048  )
-      parameter (PL_LEGEND_INSIDE         = 4096  )
-      parameter (PL_LEGEND_OUTSIDE        = 8192  )
 
 c Flags for plcolorbar
       integer PL_COLORBAR_LEFT
@@ -102,4 +110,3 @@ c Flags for plcolorbar
       parameter (PL_COLORBAR_CAP_LOW      = 2048  )
       parameter (PL_COLORBAR_CAP_HIGH     = 4096  )
       parameter (PL_COLORBAR_SHADE_LABEL  = 8192  )
-

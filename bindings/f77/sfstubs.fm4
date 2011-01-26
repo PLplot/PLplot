@@ -265,7 +265,8 @@ cDEC$ ATTRIBUTES DLLEXPORT :: PLPLOT
 
 c***********************************************************************
 
-      subroutine pllegend( legend_width, legend_height, opt, x, y,
+      subroutine pllegend( legend_width, legend_height,
+     &                     position, opt, x, y,
      &                     plot_width, bg_color, bb_color, bb_style,
      &                     nrow, ncolumn, nlegend, opt_array,
      &                     text_offset, text_scale, text_spacing,
@@ -280,7 +281,7 @@ c***********************************************************************
       implicit none
       real*8 legend_width, legend_height, plot_width, x, y
       real*8 text_offset, text_scale, text_spacing, text_justification
-      integer opt, bg_color, bb_color, bb_style
+      integer position, opt, bg_color, bb_color, bb_style
       integer nrow, ncolumn, nlegend
 
       integer opt_array, text_colors, box_colors, box_patterns
@@ -305,7 +306,7 @@ c
       call pllegend07_cnv_text( 1, nlegend, text )
       call pllegend07_cnv_text( 2, nlegend, symbols )
 
-      call pllegend07( legend_width, legend_height, opt, x, y,
+      call pllegend07( legend_width, legend_height, position, opt, x, y,
      &                 plot_width, bg_color, bb_color, bb_style,
      &                 nrow, ncolumn, nlegend, opt_array,
      &                 text_offset, text_scale, text_spacing,

@@ -31,22 +31,22 @@
 
 global position_options special_symbols
 position_options = [
-		    bitor(PL_LEGEND_LEFT, bitor(PL_LEGEND_UPPER, PL_LEGEND_OUTSIDE));
-                    bitor(PL_LEGEND_UPPER, PL_LEGEND_OUTSIDE);
-                    bitor(PL_LEGEND_RIGHT, bitor(PL_LEGEND_UPPER, PL_LEGEND_OUTSIDE));
-                    bitor(PL_LEGEND_RIGHT, PL_LEGEND_OUTSIDE);
-		    bitor(PL_LEGEND_RIGHT, bitor(PL_LEGEND_LOWER, PL_LEGEND_OUTSIDE));
-		    bitor(PL_LEGEND_LOWER, PL_LEGEND_OUTSIDE);
-		    bitor(PL_LEGEND_LEFT, bitor(PL_LEGEND_LOWER, PL_LEGEND_OUTSIDE));
-		    bitor(PL_LEGEND_LEFT, PL_LEGEND_OUTSIDE);
-		    bitor(PL_LEGEND_LEFT, bitor(PL_LEGEND_UPPER, PL_LEGEND_INSIDE));
-		    bitor(PL_LEGEND_UPPER, PL_LEGEND_INSIDE);
-		    bitor(PL_LEGEND_RIGHT, bitor(PL_LEGEND_UPPER, PL_LEGEND_INSIDE));
-		    bitor(PL_LEGEND_RIGHT, PL_LEGEND_INSIDE);
-		    bitor(PL_LEGEND_RIGHT, bitor(PL_LEGEND_LOWER, PL_LEGEND_INSIDE));
-		    bitor(PL_LEGEND_LOWER, PL_LEGEND_INSIDE);
-		    bitor(PL_LEGEND_LEFT, bitor(PL_LEGEND_LOWER, PL_LEGEND_INSIDE));
-		    bitor(PL_LEGEND_LEFT, PL_LEGEND_INSIDE)
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE));
+                    bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE);
+                    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE));
+                    bitor(PL_POSITION_RIGHT, PL_POSITION_OUTSIDE);
+		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE));
+		    bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE);
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE));
+		    bitor(PL_POSITION_LEFT, PL_POSITION_OUTSIDE);
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE);
+		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_RIGHT, PL_POSITION_INSIDE);
+		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE);
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_LEFT, PL_POSITION_INSIDE)
 		    ];
 
 ## Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
@@ -176,7 +176,9 @@ function ix33c()
   
   ## Initialize plplot
   ## set global attributes for PLplot variables used in this function.
-  global PL_FCI_SANS PL_FCI_MONO PL_LEGEND_NONE PL_LEGEND_COLOR_BOX PL_LEGEND_LINE PL_LEGEND_SYMBOL PL_LEGEND_TEXT_LEFT PL_LEGEND_BACKGROUND PL_LEGEND_BOUNDING_BOX PL_LEGEND_ROW_MAJOR PL_LEGEND_LEFT PL_LEGEND_RIGHT PL_LEGEND_UPPER PL_LEGEND_LOWER PL_LEGEND_INSIDE PL_LEGEND_OUTSIDE PL_COLORBAR_IMAGE PL_COLORBAR_SHADE PL_COLORBAR_GRADIENT PL_COLORBAR_SHADE_LABEL
+  global PL_FCI_SANS PL_FCI_MONO PL_LEGEND_NONE PL_LEGEND_COLOR_BOX PL_LEGEND_LINE PL_LEGEND_SYMBOL PL_LEGEND_TEXT_LEFT PL_LEGEND_BACKGROUND PL_LEGEND_BOUNDING_BOX PL_LEGEND_ROW_MAJOR 
+  global PL_POSITION_LEFT PL_POSITION_RIGHT PL_POSITION_UPPER PL_POSITION_LOWER PL_POSITION_INSIDE PL_POSITION_OUTSIDE 
+  global PL_COLORBAR_IMAGE PL_COLORBAR_SHADE PL_COLORBAR_GRADIENT PL_COLORBAR_SHADE_LABEL
   global position_options special_symbols
   plinit();
 
@@ -238,7 +240,8 @@ function ix33c()
   plscol0a( 15, 32, 32, 32, 0.70 );
 
   for k=0:15
-    opt = bitor(opt_base, position_options(k+1));
+    position = position_options(k+1);
+    opt = opt_base;
     string = sprintf("%2.2d", k);
     text(1,1:length(string)) = string;
     text_colors(1) = 1 + mod(k, 8);
@@ -246,7 +249,7 @@ function ix33c()
     symbol_colors(1) = 1 + mod(k, 8);
 
     [legend_width, legend_height] = \
-	pllegend( opt, 0.05, 0.05,
+	pllegend( position, opt, 0.05, 0.05,
 		 0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
 		 1., text_colors, text,
 		 [], [], [], [],
@@ -319,91 +322,99 @@ function ix33c()
   plsfont(PL_FCI_MONO, -1, -1);
   plscol0a( 15, 32, 32, 32, 0.70 );
 
-  opt = bitor(opt_base, bitor(PL_LEGEND_UPPER, PL_LEGEND_OUTSIDE));
+  position = bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE);
+  opt = opt_base;
   x = 0.;
   y = 0.1;
   nrow = 1;
   ncolumn = nlegend;
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
 	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  opt = bitor(opt_base, bitor(PL_LEGEND_LOWER, PL_LEGEND_OUTSIDE));
+  position = bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE);
+  opt = opt_base;
   x = 0.;
   y = 0.1;
   nrow = 1;
   ncolumn = nlegend;
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
 	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  opt = bitor(opt_base, bitor(PL_LEGEND_LEFT, PL_LEGEND_OUTSIDE));
+    
+  position = bitor(PL_POSITION_LEFT, PL_POSITION_OUTSIDE);
+  opt = opt_base;
   x = 0.1;
   y = 0.;
   nrow = nlegend;
   ncolumn = 1;
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
 	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  opt = bitor(opt_base, bitor(PL_LEGEND_RIGHT, PL_LEGEND_OUTSIDE));
+  position = bitor(PL_POSITION_RIGHT, PL_POSITION_OUTSIDE);
+  opt = opt_base;
   x = 0.1;
   y = 0.;
   nrow = nlegend;
   ncolumn = 1;
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
 	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  opt = bitor(opt_base, bitor(PL_LEGEND_LEFT, bitor(PL_LEGEND_UPPER, PL_LEGEND_INSIDE)));
+  position = bitor(PL_POSITION_LEFT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
+  opt = opt_base;
   x = 0.;
   y = 0.;
   nrow = 6;
   ncolumn = 2;
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
 	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  opt = bitor(opt_base, bitor(PL_LEGEND_RIGHT, bitor(PL_LEGEND_UPPER, bitor(PL_LEGEND_INSIDE, PL_LEGEND_ROW_MAJOR))));
+  position = bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
+  opt = bitor(opt_base, PL_LEGEND_ROW_MAJOR);
   x = 0.;
   y = 0.;
   nrow = 6;
   ncolumn = 2;
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
 	       [], [], [], [],
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  opt = bitor(opt_base, bitor(PL_LEGEND_LOWER, bitor(PL_LEGEND_INSIDE, PL_LEGEND_ROW_MAJOR)));
+  position = bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE);
+  opt = bitor(opt_base, PL_LEGEND_ROW_MAJOR);
   x = 0.;
   y = 0.;
   nrow = 3;
   ncolumn = 3;
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
 	       [], [], [], [],
@@ -421,8 +432,9 @@ function ix33c()
   y = 0.1;
   nturn = 4;
   nlegend = 0;
-  opt_base = bitor(PL_LEGEND_BACKGROUND, bitor(PL_LEGEND_BOUNDING_BOX, PL_LEGEND_UPPER));
-  opt = bitor(opt_base, PL_LEGEND_LEFT);
+  position = bitor(PL_POSITION_LEFT, PL_POSITION_UPPER);
+  opt_base = bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX);
+  opt = opt_base;
   for i=0:8
     ## Set up legend arrays with the correct size, type.  In octave this may
     ## be done by clearing the array (in case it was used before) and then
@@ -492,14 +504,15 @@ function ix33c()
     ncolumn = 0;
 
     [legend_width, legend_height] = \
-        pllegend( opt, x, y,
+        pllegend( position, opt, x, y,
                  0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
                  1., text_colors, text,
 		 [], [], [], [],
                  line_colors, line_styles, line_widths,
                  symbol_colors, symbol_scales, symbol_numbers, symbols );
     if(i == nturn)
-      opt = bitor(opt_base, PL_LEGEND_RIGHT);
+      position = bitor(PL_POSITION_RIGHT, PL_POSITION_UPPER);
+      opt = opt_base;
       x = 1. - x;
       y += legend_height;
     else
@@ -563,7 +576,8 @@ function ix33c()
 
   ## Only specify legend data that are required according to the
   ## value of opt_array for that entry.
-  opt_base = bitor(PL_LEGEND_BACKGROUND, bitor(PL_LEGEND_BOUNDING_BOX, bitor(PL_LEGEND_LEFT, bitor(PL_LEGEND_UPPER, PL_LEGEND_TEXT_LEFT))));
+  position = bitor(PL_POSITION_LEFT, PL_POSITION_UPPER);
+  opt_base = bitor(PL_LEGEND_BACKGROUND, bitor(PL_LEGEND_BOUNDING_BOX, PL_LEGEND_TEXT_LEFT));
 
   ## Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
   opt_array(1) = PL_LEGEND_NONE;
@@ -607,7 +621,7 @@ function ix33c()
   opt = opt_base;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
@@ -638,7 +652,7 @@ function ix33c()
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
 	       0., text_colors, text,
 	       [], [], [], [],
@@ -669,7 +683,7 @@ function ix33c()
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
 	       0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
 	       0., text_colors, text,
 	       [], [], [], [],
@@ -703,7 +717,7 @@ function ix33c()
   max_height = 0.;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
@@ -734,7 +748,7 @@ function ix33c()
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
@@ -765,7 +779,7 @@ function ix33c()
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
@@ -800,7 +814,7 @@ function ix33c()
   max_height = 0.;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
 	       [], [], [], [], 
@@ -827,7 +841,7 @@ function ix33c()
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
 	       [], [], [], [], 
@@ -855,7 +869,7 @@ function ix33c()
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
   [legend_width, legend_height] = \
-      pllegend( opt, x, y,
+      pllegend( position, opt, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
 	       [], [], [], [], 

@@ -1209,7 +1209,15 @@ c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 PLDLLIMPEXP void
 c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
-// Routine for drawing line, symbol, or cmap0 legends
+//flags used for position argument of both pllegend and plcolorbar 
+#define PL_POSITION_LEFT             1
+#define PL_POSITION_RIGHT            2
+#define PL_POSITION_UPPER            4
+#define PL_POSITION_LOWER            8
+#define PL_POSITION_INSIDE           16
+#define PL_POSITION_OUTSIDE          32
+#define PL_POSITION_VIEWPORT         64
+#define PL_POSITION_SUBPAGE          128
 
 // Flags for pllegend.
 #define PL_LEGEND_NONE             1
@@ -1220,12 +1228,6 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_LEGEND_BACKGROUND       32
 #define PL_LEGEND_BOUNDING_BOX     64
 #define PL_LEGEND_ROW_MAJOR        128
-#define PL_LEGEND_LEFT             256
-#define PL_LEGEND_RIGHT            512
-#define PL_LEGEND_UPPER            1024
-#define PL_LEGEND_LOWER            2048
-#define PL_LEGEND_INSIDE           4096
-#define PL_LEGEND_OUTSIDE          8192
 
 // Flags for plcolorbar
 #define PL_COLORBAR_LEFT           1
@@ -1243,9 +1245,10 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_COLORBAR_CAP_HIGH       4096
 #define PL_COLORBAR_SHADE_LABEL    8192
 
+// Routine for drawing discrete line, symbol, or cmap0 legends
 PLDLLIMPEXP void
 c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-            PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT nlegend, const PLINT *opt_array,
@@ -1259,6 +1262,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
             const PLINT *symbol_numbers, const char **symbols );
 
+// Routine for drawing continous colour legends
 PLDLLIMPEXP void
 c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLFLT ticks, PLINT sub_ticks,

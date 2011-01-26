@@ -549,6 +549,16 @@ and plplot_run_level_enum =
   | PL_VIEWPORT_DEFINED
   | PL_WORLD_COORDINATES_DEFINED
 and plplot_run_level = plplot_run_level_enum
+and plplot_position_enum =
+    PL_POSITION_LEFT
+  | PL_POSITION_RIGHT
+  | PL_POSITION_UPPER
+  | PL_POSITION_LOWER
+  | PL_POSITION_INSIDE
+  | PL_POSITION_OUTSIDE
+  | PL_POSITION_VIEWPORT
+  | PL_POSITION_SUBPAGE
+and plplot_legend_position = plplot_position_enum list
 and plplot_legend_enum =
     PL_LEGEND_NONE
   | PL_LEGEND_COLOR_BOX
@@ -558,12 +568,6 @@ and plplot_legend_enum =
   | PL_LEGEND_BACKGROUND
   | PL_LEGEND_BOUNDING_BOX
   | PL_LEGEND_ROW_MAJOR
-  | PL_LEGEND_LEFT
-  | PL_LEGEND_RIGHT
-  | PL_LEGEND_UPPER
-  | PL_LEGEND_LOWER
-  | PL_LEGEND_INSIDE
-  | PL_LEGEND_OUTSIDE
 and plplot_legend_opt = plplot_legend_enum list
 and plplot_colorbar_enum =
   | PL_COLORBAR_LEFT
@@ -691,8 +695,8 @@ external plcolorbar : plplot_colorbar_opt -> float -> float -> float ->
   float -> float -> int -> string -> string -> float array -> float array ->
   unit
   = "camlidl_plplot_core_c_plcolorbar_bytecode" "camlidl_plplot_core_c_plcolorbar"
-external pllegend : plplot_legend_opt -> float -> float ->
-  float -> int -> int -> int -> int -> int ->
+external pllegend : plplot_legend_position -> plplot_legend_opt ->
+  float -> float -> float -> int -> int -> int -> int -> int ->
   plplot_legend_opt array -> float -> float ->
   float -> float -> int array -> string array -> int array -> int array ->
   float array -> int array -> int array -> int array -> int array ->

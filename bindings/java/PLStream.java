@@ -529,7 +529,7 @@ public class PLStream implements plplotjavacConstants {
     }
 
     public void legend( double[] p_legend_width, double[] p_legend_height, 
-			int opt, double x, double y, double plot_width,
+			int position, int opt, double x, double y, double plot_width,
 			int bg_color, int bb_color, int bb_style,
 			int nrow, int ncolumn, int[] opt_array,
 			double text_offset, double text_scale, 
@@ -544,7 +544,7 @@ public class PLStream implements plplotjavacConstants {
     {
         if ( set_stream() == -1 ) return;
         plplotjavac.pllegend( p_legend_width, p_legend_height, 
-			      opt, x, y, plot_width, bg_color, bb_color, 
+			      position, opt, x, y, plot_width, bg_color, bb_color, 
 			      bb_style, nrow, ncolumn, opt_array, 
 			      text_offset, text_scale, text_spacing, 
 			      text_justification, text_colors, text,

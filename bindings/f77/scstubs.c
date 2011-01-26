@@ -549,7 +549,7 @@ PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length )
 
 void PLLEGEND(
             PLFLT *p_legend_width, PLFLT *p_legend_height,
-            PLINT *opt, PLFLT *x, PLFLT *y, PLFLT *plot_width,
+            PLINT *position, PLINT *opt, PLFLT *x, PLFLT *y, PLFLT *plot_width,
             PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
             PLINT *nrow, PLINT *ncolumn,
             PLINT *nlegend, const PLINT *opt_array,
@@ -564,7 +564,7 @@ void PLLEGEND(
             const PLINT *symbol_numbers )
 {
      c_pllegend( p_legend_width, p_legend_height,
-          *opt, *x, *y, *plot_width,
+          *position, *opt, *x, *y, *plot_width,
           *bg_color, *bb_color, *bb_style,
           *nrow, *ncolumn,
           *nlegend, opt_array,

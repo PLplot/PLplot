@@ -230,24 +230,24 @@ public x33( String[] args )
     double[]      legend_width = new double[1], legend_height = new double[1];
     double      x, y, xstart, ystart;
     double      max_height, text_scale;
-    int      opt_base, nrow, ncolumn;
+    int      position, opt_base, nrow, ncolumn;
      int[] position_options =  {
-     PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_OUTSIDE,
-     PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_INSIDE,
-     PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_INSIDE,
-     PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_INSIDE,
-     PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_INSIDE,
-     PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_INSIDE,
-     PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_INSIDE,
-     PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_INSIDE,
-     PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_INSIDE
+     PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_OUTSIDE,
+     PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE,
+     PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE,
+     PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE,
+     PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_INSIDE,
+     PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE,
+     PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE,
+     PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE,
+     PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_INSIDE
      };
 
     NumberFormat nf = NumberFormat.getNumberInstance();
@@ -295,13 +295,14 @@ public x33( String[] args )
 
     for ( k = 0; k < 16; k++ )
     {
-        opt = opt_base | position_options[k];
+        position = position_options[k];
+        opt = opt_base;
         text[0] = nf.format( k );
         text_colors[0]   = 1 + ( k % 8 );
         line_colors[0]   = 1 + ( k % 8 );
         symbol_colors[0] = 1 + ( k % 8 );
 
-        pls.legend( legend_width, legend_height, opt, 0.05, 0.05,
+        pls.legend( legend_width, legend_height, position, opt, 0.05, 0.05,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -357,12 +358,13 @@ public x33( String[] args )
     pls.sfont( PLStream.PL_FCI_MONO, -1, -1 );
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    opt     = opt_base | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_OUTSIDE;
+    position = PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.;
     y       = 0.1;
     nrow    = 1;
     ncolumn = nlegend;
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         opt_array, 1.0, 1.0, 2.0,
         1., text_colors, text,
@@ -370,12 +372,13 @@ public x33( String[] args )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-    opt     = opt_base | PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_OUTSIDE;
+    position = PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.;
     y       = 0.1;
     nrow    = 1;
     ncolumn = nlegend;
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         opt_array, 1.0, 1.0, 2.0,
         1., text_colors, text,
@@ -383,12 +386,13 @@ public x33( String[] args )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-    opt     = opt_base | PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_OUTSIDE;
+    position = PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.1;
     y       = 0.;
     nrow    = nlegend;
     ncolumn = 1;
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         opt_array, 1.0, 1.0, 2.0,
         1., text_colors, text,
@@ -396,12 +400,13 @@ public x33( String[] args )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-    opt     = opt_base | PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_OUTSIDE;
+    position = PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_OUTSIDE;
+    opt     = opt_base;
     x       = 0.1;
     y       = 0.;
     nrow    = nlegend;
     ncolumn = 1;
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         opt_array, 1.0, 1.0, 2.0,
         1., text_colors, text,
@@ -409,12 +414,13 @@ public x33( String[] args )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-    opt     = opt_base | PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_INSIDE;
+    position = PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE;
+    opt     = opt_base;
     x       = 0.;
     y       = 0.;
     nrow    = 6;
     ncolumn = 2;
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         opt_array, 1.0, 1.0, 2.0,
         1., text_colors, text,
@@ -422,12 +428,13 @@ public x33( String[] args )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-    opt     = opt_base | PLStream.PL_LEGEND_RIGHT | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_INSIDE | PLStream.PL_LEGEND_ROW_MAJOR;
+    position = PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE;
+    opt     = opt_base | PLStream.PL_LEGEND_ROW_MAJOR;
     x       = 0.;
     y       = 0.;
     nrow    = 6;
     ncolumn = 2;
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         opt_array, 1.0, 1.0, 2.0,
         1., text_colors, text,
@@ -435,12 +442,13 @@ public x33( String[] args )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-    opt     = opt_base | PLStream.PL_LEGEND_LOWER | PLStream.PL_LEGEND_INSIDE | PLStream.PL_LEGEND_ROW_MAJOR;
+    position = PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE;
+    opt     = opt_base | PLStream.PL_LEGEND_ROW_MAJOR;
     x       = 0.;
     y       = 0.;
     nrow    = 3;
     ncolumn = 3;
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         opt_array, 1.0, 1.0, 2.0,
         1., text_colors, text,
@@ -459,8 +467,9 @@ public x33( String[] args )
     y        = 0.1;
     nturn    = 4;
     nlegend  = 0;
-    opt_base = PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX | PLStream.PL_LEGEND_UPPER;
-    opt      = opt_base | PLStream.PL_LEGEND_LEFT;
+    opt_base = PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX;
+    position = PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_LEFT;
+    opt      = opt_base;
     for ( i = 0; i < 9; i++ )
     {
         // Set up legend arrays with the correct size, type.
@@ -506,7 +515,7 @@ public x33( String[] args )
         nrow    = Math.min( 3, nlegend );
         ncolumn = 0;
 
-        pls.legend( legend_width, legend_height, opt, x, y,
+        pls.legend( legend_width, legend_height, position, opt, x, y,
             0.025, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 1.5,
             1., text_colors, text,
@@ -516,7 +525,8 @@ public x33( String[] args )
 
         if ( i == nturn )
         {
-            opt = opt_base | PLStream.PL_LEGEND_RIGHT;
+            position = PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_RIGHT;
+            opt = opt_base;
             x   = 1. - x;
             y  = y + legend_height[0];
         }
@@ -563,7 +573,8 @@ public x33( String[] args )
 
     // Only specify legend data that are required according to the
     // value of opt_array for that entry.
-    opt_base = PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX | PLStream.PL_LEGEND_LEFT | PLStream.PL_LEGEND_UPPER | PLStream.PL_LEGEND_TEXT_LEFT;
+    position = PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER;
+    opt_base = PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX | PLStream.PL_LEGEND_TEXT_LEFT;
 
     // Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
     opt_array[0] = PLStream.PL_LEGEND_NONE;
@@ -607,7 +618,7 @@ public x33( String[] args )
     opt = opt_base;
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -632,7 +643,7 @@ public x33( String[] args )
     x  = x + legend_width[0];
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -657,7 +668,7 @@ public x33( String[] args )
     x  = x + legend_width[0];
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -685,7 +696,7 @@ public x33( String[] args )
     max_height = 0.;
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -710,7 +721,7 @@ public x33( String[] args )
     x   = x + legend_width[0];
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -735,7 +746,7 @@ public x33( String[] args )
     x   = x + legend_width[0];
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -762,7 +773,7 @@ public x33( String[] args )
     max_height = 0.;
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -786,7 +797,7 @@ public x33( String[] args )
     x   = x + legend_width[0];
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,
@@ -810,7 +821,7 @@ public x33( String[] args )
     x   = x + legend_width[0];
     pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls.legend( legend_width, legend_height, opt, x, y,
+    pls.legend( legend_width, legend_height, position, opt, x, y,
         0.1, 15, 1, 1, 0, 0,
         opt_array, 1.0, text_scale, 2.0,
         0., text_colors, text,

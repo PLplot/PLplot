@@ -95,6 +95,17 @@ typedef void*  PLPointer;
 #define PL_HIST_NOEXPAND           8
 #define PL_HIST_NOEMPTY            16
 
+//flags used for position argument of both pllegend and plcolorbar 
+#define PL_POSITION_LEFT             1
+#define PL_POSITION_RIGHT            2
+#define PL_POSITION_UPPER            4
+#define PL_POSITION_LOWER            8
+#define PL_POSITION_INSIDE           16
+#define PL_POSITION_OUTSIDE          32
+#define PL_POSITION_VIEWPORT         64
+#define PL_POSITION_SUBPAGE          128
+
+
 // Flags for pllegend.
 #define PL_LEGEND_NONE            1
 #define PL_LEGEND_COLOR_BOX       2
@@ -104,12 +115,6 @@ typedef void*  PLPointer;
 #define PL_LEGEND_BACKGROUND      32
 #define PL_LEGEND_BOUNDING_BOX    64
 #define PL_LEGEND_ROW_MAJOR       128
-#define PL_LEGEND_LEFT            256
-#define PL_LEGEND_RIGHT           512
-#define PL_LEGEND_UPPER           1024
-#define PL_LEGEND_LOWER           2048
-#define PL_LEGEND_INSIDE          4096
-#define PL_LEGEND_OUTSIDE         8192
 
 // Flags for plcolorbar
 #define PL_COLORBAR_LEFT            1
@@ -477,7 +482,7 @@ pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
 void
 pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
-            PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT n, const PLINT *Array,
