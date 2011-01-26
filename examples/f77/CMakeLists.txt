@@ -128,11 +128,15 @@ if(BUILD_TEST)
   if(CORE_BUILD)
     include_directories(
       ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/bindings/f77
       ${CMAKE_BINARY_DIR}/include
       )
     set(f77_directory ${CMAKE_CURRENT_BINARY_DIR})
   else(CORE_BUILD)
-    include_directories(${INCLUDE_DIR})
+    include_directories(
+      ${INCLUDE_DIR}
+      ${F77_INCLUDE_DIR}
+      )
     set(f77_directory ${CMAKE_CURRENT_SOURCE_DIR})
     set(f77_target)
   endif(CORE_BUILD)

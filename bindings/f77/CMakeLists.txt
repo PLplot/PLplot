@@ -223,6 +223,7 @@ if(ENABLE_f77)
     string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
     set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
     set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
+    set(PC_COMPILE_FLAGS "-I${F77_INCLUDE_DIR} ${PC_COMPILE_FLAGS}")
     set(PC_LINK_FLAGS
       "-l${PC_LIBRARY_NAME} -lplplotf77c${LIB_TAG}${VERSION_SUFFIX} ${PC_LINK_FLAGS}"
       )
@@ -236,4 +237,11 @@ if(ENABLE_f77)
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
+
+  install(
+    FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.h
+    DESTINATION ${F77_INCLUDE_DIR}
+    )
+
 endif(ENABLE_f77)

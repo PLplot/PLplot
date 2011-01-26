@@ -62,6 +62,11 @@ if(ENABLE_f77 OR ENABLE_f95)
     set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
   endif(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 
+  # Set installation location for f77 include files
+  set(F77_INCLUDE_DIR ${LIB_DIR}/fortran/include/${PACKAGE} 
+    CACHE PATH "installation location for f95 modules"
+    )
+
   # Set installation location for f95 modules.
   set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/${PACKAGE} 
     CACHE PATH "installation location for f95 modules"
@@ -70,7 +75,7 @@ if(ENABLE_f77 OR ENABLE_f95)
   # Check if f77/f95 style command line parsing is possible
   include(TestF77CmdLine)
 
-  # Check if isnan is available as an fortran function
+  # Check if isnan is available as a fortran function
   include(TestFortranIsnan)
 
   # Determine which Fortran compiler we have.  We do not need to

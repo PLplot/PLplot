@@ -51,39 +51,7 @@ c      Make log plots using two different styles.
       character*20 text(2)
       character*1 symbols(2)
 
-c     To include file!
-
-      integer PL_LEGEND_NONE
-      integer PL_LEGEND_COLOR_BOX
-      integer PL_LEGEND_LINE
-      integer PL_LEGEND_SYMBOL
-      integer PL_LEGEND_TEXT_LEFT
-      integer PL_LEGEND_BACKGROUND
-      integer PL_LEGEND_BOUNDING_BOX
-      integer PL_LEGEND_ROW_MAJOR
-      integer PL_LEGEND_LEFT
-      integer PL_LEGEND_RIGHT
-      integer PL_LEGEND_UPPER
-      integer PL_LEGEND_LOWER
-      integer PL_LEGEND_INSIDE
-      integer PL_LEGEND_OUTSIDE
-
-      parameter (PL_LEGEND_NONE           = 1     )
-      parameter (PL_LEGEND_COLOR_BOX      = 2     )
-      parameter (PL_LEGEND_LINE           = 4     )
-      parameter (PL_LEGEND_SYMBOL         = 8     )
-      parameter (PL_LEGEND_TEXT_LEFT      = 16    )
-      parameter (PL_LEGEND_BACKGROUND     = 32    )
-      parameter (PL_LEGEND_BOUNDING_BOX   = 64    )
-      parameter (PL_LEGEND_ROW_MAJOR      = 128   )
-      parameter (PL_LEGEND_LEFT           = 256   )
-      parameter (PL_LEGEND_RIGHT          = 512   )
-      parameter (PL_LEGEND_UPPER          = 1024  )
-      parameter (PL_LEGEND_LOWER          = 2048  )
-      parameter (PL_LEGEND_INSIDE         = 4096  )
-      parameter (PL_LEGEND_OUTSIDE        = 8192  )
-
-
+      include 'plplot_parameters.h'
 
       call pladv(0)
 c      Set up data for log plot.
