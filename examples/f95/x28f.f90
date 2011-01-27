@@ -61,22 +61,6 @@
    character(len=80) :: pstring  = &
      "The future of our civilization depends on software freedom."
 
-   !      Plotting options for 3d plots, see plplot.h for the C definitions
-   !      of these options.
-   integer DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY, MAG_COLOR, &
-        BASE_CONT, TOP_CONT, SURF_CONT, DRAW_SIDES, FACETED, MESH
-   parameter(DRAW_LINEX = 1)
-   parameter(DRAW_LINEY = 2)
-   parameter(DRAW_LINEXY = 3)
-   parameter(MAG_COLOR = 4)
-   parameter(BASE_CONT = 8)
-   parameter(TOP_CONT = 16)
-   parameter(SURF_CONT = 32)
-   parameter(DRAW_SIDES = 64)
-   parameter(FACETED = 128)
-   parameter(MESH = 256)
-
-
    ! Allocate and define the minimal x, y, and z to insure 3D box
    allocate( x(XPTS) )
    allocate( y(YPTS) )

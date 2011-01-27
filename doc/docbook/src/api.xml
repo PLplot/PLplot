@@ -6301,7 +6301,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="pllegend" renderas="sect3">
     <title>
       <function>pllegend</function>: Create a discrete annotated legend using
-      boxes, lines, and/or lines of symbols
+      colored boxes, lines, and/or lines of symbols
     </title>
 
     <para>
@@ -6310,11 +6310,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>pllegend</function>
 	  </funcdef>
+	  <paramdef><parameter>p_legend_width</parameter></paramdef>
+	  <paramdef><parameter>p_legend_height</parameter></paramdef>
 	  <paramdef><parameter>opt</parameter></paramdef>
 	  <paramdef><parameter>x</parameter></paramdef>
 	  <paramdef><parameter>y</parameter></paramdef>
 	  <paramdef><parameter>plot_width</parameter></paramdef>
 	  <paramdef><parameter>bg_color</parameter></paramdef>
+	  <paramdef><parameter>bb_color</parameter></paramdef>
+	  <paramdef><parameter>bb_style</parameter></paramdef>
+	  <paramdef><parameter>nrow</parameter></paramdef>
+	  <paramdef><parameter>ncolumn</parameter></paramdef>
 	  <paramdef><parameter>nlegend</parameter></paramdef>
 	  <paramdef><parameter>opt_array</parameter></paramdef>
 	  <paramdef><parameter>text_offset</parameter></paramdef>
@@ -6326,6 +6332,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <paramdef><parameter>box_colors</parameter></paramdef>
 	  <paramdef><parameter>box_patterns</parameter></paramdef>
 	  <paramdef><parameter>box_scales</parameter></paramdef>
+	  <paramdef><parameter>box_line_widths</parameter></paramdef>
 	  <paramdef><parameter>line_colors</parameter></paramdef>
 	  <paramdef><parameter>line_styles</parameter></paramdef>
 	  <paramdef><parameter>line_widths</parameter></paramdef>
@@ -6338,16 +6345,51 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      (N.B. This is an experimental API that may be subject to further
-      change as we gain more experience with it.)  Routine for creating a
-      discrete plot legend with a plotted box, line, and/or line of symbols
-      for each annotated legend entry.  The arguments of pllegend provide
-      control over the location and size of the legend within the current
-      subpage as well as the location and characteristics of the elements
-      (most of which are optional) within that legend.  The resulting legend
-      is clipped at the boundaries of the current subpage
+      Routine for creating a discrete plot legend with a plotted 
+      filled box, line, and/or line of symbols for each annotated legend
+      entry.  The arguments of pllegend provide control over the location
+      and size of the legend as well as the location and characteristics of
+      the elements (most of which are optional) within that legend.  The
+      resulting legend is clipped at the boundaries of the current subpage.
     </para>
     <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>p_legend_width</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a location which contains (after the call) the
+	    legend width in normalized viewport coordinates. This quantity is
+	    calculated from <literal><parameter>plot_width</parameter></literal>.
+	    <literal><parameter>text_offset</parameter></literal>,
+	    <literal><parameter>ncolumn</parameter></literal> (possibly modified
+	    inside the routine depending on
+	    <literal><parameter>nlegend</parameter></literal> and
+	    <literal><parameter>nrow</parameter></literal>), and the length
+	    (calculated internally) of the longest text string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>p_legend_height</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a location which contains (after the call) the
+	    legend height in normalized viewport coordinates. This quantity is
+	    calculated from <literal><parameter>text_scale</parameter></literal>,
+	    <literal><parameter>text_spacing</parameter></literal>, and
+	    <literal><parameter>nrow</parameter></literal> (possibly modified
+	    inside the routine depending on
+	    <literal><parameter>nlegend</parameter></literal> and
+	    <literal><parameter>nrow</parameter></literal>).
+	  </para>
+	</listitem>
+      </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>opt</parameter>
@@ -6355,25 +6397,47 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    <parameter>opt</parameter> contains bits controlling the
-	    overall legend.  If the <parameter>PL_LEGEND_BACKGROUND</parameter>
-	    bit is set, plot a (semi-transparent) background for the legend.  If
-	    the <parameter>PL_LEGEND_TEXT_LEFT</parameter> bit is set, put the
-	    text area on the left of the legend and the plotted area on the right.
-	    Otherwise, put the text area on the right of the legend and the
-	    plotted area on the left.
+	    <literal><parameter>opt</parameter></literal> contains
+	    bits controlling the overall legend. If the
+	    <literal>PL_LEGEND_TEXT_LEFT</literal> bit is set, put the text area
+	    on the left of the legend and the plotted area on the
+	    right. Otherwise, put the text area on the right of the legend and the
+	    plotted area on the left. If the
+	    <literal>PL_LEGEND_BACKGROUND</literal> bit is set, plot a
+	    (semi-transparent) background for the legend. If the
+	    <literal>PL_LEGEND_BOUNDING_BOX</literal> bit is set, plot a bounding
+	    box for the legend. If the <literal>PL_LEGEND_ROW_MAJOR</literal> bit
+	    is set and both of (possibly internally transformed)
+	    <literal><parameter>nrow</parameter></literal> &gt; 1 and
+	    <literal><parameter>ncolumn</parameter></literal> &gt; 1, then plot
+	    the resulting array of legend entries in row-major order. Finally, the
+	    combination of the <literal>PL_LEGEND_LEFT</literal>,
+	    <literal>PL_LEGEND_RIGHT</literal>,
+	    <literal>PL_LEGEND_UPPER</literal>,
+	    <literal>PL_LEGEND_LOWER</literal>,
+	    <literal>PL_LEGEND_INSIDE</literal>, and
+	    <literal>PL_LEGEND_OUTSIDE</literal> position bits specifies one of
+	    the 16 possible standard positions (the 4 corners and 4 side centers
+	    for both the inside and outside cases) of the legend relative to the
+	    viewport.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal> PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Normalized sub-page X position of the upper-left corner of
-	    the legend.
+	    X offset of the legend position in normalized viewport
+	    coordinates from the specified standard position of the legend. For
+	    positive x, the direction of motion away from the standard position is
+	    inward/outward from the standard corner positions or standard
+	    center-left or center-right positions if the
+	    <literal>PL_LEGEND_INSIDE</literal>/<literal>PL_LEGEND_OUTSIDE</literal>
+	    bit is set in opt. For the center-upper or center-lower cases, the
+	    direction of motion is toward positive X.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6384,8 +6448,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Normalized sub-page Y position of the upper-left corner of
-	    the legend.
+	    Y offset of the legend position in normalized viewport
+	    coordinates from the specified standard position of the legend. For
+	    positive y, the direction of motion away from the standard position is
+	    inward/outward from the standard corner positions or standard
+	    center-upper or center-lower positions if the
+	    <literal>PL_LEGEND_INSIDE</literal>/<literal>PL_LEGEND_OUTSIDE</literal>
+	    bit is set in opt. For the center-left or center-right cases, the
+	    direction of motion is toward positive Y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6396,13 +6466,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Horizontal width in normalized subpage units of the plot
-	    area (where the rectangular boxes, lines, and/or lines of symbols are
-	    drawn) of the legend.  N.B.  The total horizontal width of the legend
-	    in normalized subpage coordinates is calculated internally
-	    from <parameter>plot_width</parameter>,
-	    <parameter>text_offset</parameter> (see below), and length (calculated
-	    internally) of the longest text string.
+	    Horizontal width in normalized viewport units of the plot
+	    area (where the colored boxes, lines, and/or lines of symbols are
+	    drawn) of the legend.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6414,7 +6480,55 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    The cmap0 index of the background color for the legend
-	    (<parameter>PL_LEGEND_BACKGROUND</parameter>).
+	    (<literal>PL_LEGEND_BACKGROUND</literal>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>bb_color</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    cmap0 index of the color of the bounding-box line for the legend
+	    (<literal>PL_LEGEND_BOUNDING_BOX</literal>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>bb_style</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The cmap0 index of the background color for the legend
+	    (<literal>PL_LEGEND_BACKGROUND</literal>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nrow</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The cmap0 index of the background color for the legend
+	    (<literal>PL_LEGEND_BACKGROUND</literal>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ncolumn</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The cmap0 index of the background color for the legend
+	    (<literal>PL_LEGEND_BACKGROUND</literal>).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6425,11 +6539,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Number of legend entries.  N.B.  The total vertical height
-	    of the legend in normalized subpage coordinates is
-	    calculated internally from <parameter>nlegend</parameter>,
-	    <parameter>text_scale</parameter> (see below), and 
-	    <parameter>text_spacing</parameter> (see below).
+	    Number of legend entries.N.B.  The total vertical height
+	    of the legend in normalized subpage coordinates is calculated
+	    internally from <literal><parameter>nlegend</parameter></literal>,
+	    <literal><parameter>text_scale</parameter></literal> (see below), and
+	    <literal><parameter>text_spacing</parameter></literal> (see below).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6574,6 +6688,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
+	  <parameter>box_line_widths</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend scales (units of fraction of character height) for
+	    the height of the discrete colored boxes 
+	    (<parameter>PL_LEGEND_COLOR_BOX</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
 	  <parameter>line_colors</parameter>
 	  (<literal>const PLINT *</literal>, input)
 	</term>
@@ -6647,7 +6774,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>symbols</parameter>
-	  (<literal>const PLINT *</literal>, input)
+	  (<literal>const char **</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8539,7 +8666,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plpoin" renderas="sect3">
     <title>
-      <function>plpoin</function>: Plots a character at the specified points
+      <function>plpoin</function>: Plot a glyph at the specified points
     </title>
 
     <para>
@@ -8557,18 +8684,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Marks a set of <literal><parameter>n</parameter></literal>
-      points in
-      <literal><parameter>x</parameter></literal> and
-      <literal><parameter>y</parameter></literal> using
-      the symbol defined by
-      <literal><parameter>code</parameter></literal>.
-      If
-      <literal><parameter>code</parameter></literal> is between 32 and 127,
-      the symbol is simply the corresponding printable ASCII character
-      in the default font.
+      Plot a glyph at a set of
+      <literal><parameter>n</parameter></literal> points at positions
+      <literal>(<parameter>x</parameter>[i],
+      <parameter>y</parameter>[i])</literal> using the glyph defined by
+      <literal><parameter>code</parameter></literal>.  This function is
+      superseded by &plstring; which gives access to many(!) more glyphs.
+      code=-1 means try to just draw a point.  Right now it's just a move
+      and a draw at the same place.  Not ideal, since a sufficiently
+      intelligent output device may optimize it away, or there may be faster
+      ways of doing it.  This is OK for now, though, and offers a 4X speedup
+      over drawing a Hershey font "point" (which is actually diamond shaped
+      and therefore takes 4 strokes to draw).  If 0 &lt; code &lt; 32, then
+      a useful (but small subset) of Hershey symbols is plotted.  If 32
+      &lt;= code &lt;= 127 the corresponding printable ASCII character is
+      plotted.
     </para>
-    <!-- TODO: Hershey symbols outside the range -->
 
     <variablelist>
       <varlistentry>
@@ -8578,7 +8709,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Number of points to be marked.
+	    Number of points in the
+	    <literal><parameter>x</parameter></literal> and
+	    <literal><parameter>y</parameter></literal> arrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8589,7 +8722,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with x coordinates of the points.
+	    Pointer to an array with X coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8600,7 +8733,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with y coordinates of the points.
+	    Pointer to an array with Y coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8611,7 +8744,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Code number for the symbol to be plotted.
+	    Hershey symbol code corresponding to a glyph to be plotted
+	    at each of the <literal><parameter>n</parameter></literal> points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8629,8 +8763,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plpoin3" renderas="sect3">
     <title>
-      <function>plpoin3</function>:  Plots a character at the specified
-      points in 3 space
+      <function>plpoin3</function>: Plot a glyph at the specified 3D points
     </title>
 
     <para>
@@ -8649,18 +8782,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Marks a set of <literal><parameter>n</parameter></literal>
-      points in
-      <literal><parameter>x</parameter></literal>,
-      <literal><parameter>y</parameter></literal>, and
-      <literal><parameter>z</parameter></literal> using
-      the symbol defined by
-      <literal><parameter>code</parameter></literal>.
-      If
-      <literal><parameter>code</parameter></literal> is between 32 and 127,
-      the symbol is simply the corresponding printable ASCII character
-      in the default font.
-      Setup similar to &plline3;.
+      Plot a glyph at a set of
+      <literal><parameter>n</parameter></literal> points at positions
+      <literal>(<parameter>x</parameter>[i], <parameter>y</parameter>[i],
+      <parameter>z</parameter>[i])</literal> using the glyph defined by
+      <literal><parameter>code</parameter></literal>.  code=-1 means try to
+      just draw a point.  Right now it's just a move and a draw at the same
+      place.  Not ideal, since a sufficiently intelligent output device may
+      optimize it away, or there may be faster ways of doing it.  This is OK
+      for now, though, and offers a 4X speedup over drawing a Hershey font
+      "point" (which is actually diamond shaped and therefore takes 4
+      strokes to draw).  If 0 &lt; code &lt; 32, then a useful (but small
+      subset) of Hershey symbols is plotted.  If 32 &lt;= code &lt;= 127 the
+      corresponding printable ASCII character is plotted.
     </para>
 
     <variablelist>
@@ -8671,7 +8805,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Number of points to be marked.
+	    Number of points in the
+	    <literal><parameter>x</parameter></literal> and
+	    <literal><parameter>y</parameter></literal> arrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8682,7 +8818,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with x coordinates of the points.
+	    Pointer to an array with X coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8693,7 +8829,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with y coordinates of the points.
+	    Pointer to an array with Y coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8704,7 +8840,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with z coordinates of the points.
+	    Pointer to an array with Z coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8715,7 +8851,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Code number for the symbol to be plotted.
+	    Hershey symbol code (in "ascii-indexed" form with -1 &lt;= code &lt;=
+	    127) corresponding to a glyph to be plotted at each of the
+	    <literal><parameter>n</parameter></literal> points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -13745,6 +13883,99 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plstring" renderas="sect3">
+    <title>
+      <function>plstring</function>: Plot a glyph at the specified points
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plstring</function>
+	  </funcdef>
+	  <paramdef><parameter>n</parameter></paramdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>string</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Plot glyphs (normally just one of them) at a set of
+      <literal><parameter>n</parameter></literal> points at positions
+      <literal>(<parameter>x</parameter>[i],
+      <parameter>y</parameter>[i])</literal> using the glyph defined by
+      <literal><parameter>string</parameter></literal>.  Supersedes &plpoin;
+      and &plsym; because many(!) more glyphs are accessible with
+      &plstring;.  The glyph is specified with a PLplot user string.  As
+      with &plmtex; and &plptex;, the user string can contain FCI escapes to
+      determine the font, UTF-8 code to determine the glyph or else PLplot
+      escapes for Hershey or unicode text to determine the glyph.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>n</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of points in the
+	    <literal><parameter>x</parameter></literal> and
+	    <literal><parameter>y</parameter></literal> arrays.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to an array with X coordinates of points.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to an array with Y coordinates of points.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>string</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    PLplot user string corresponding to the glyph to be
+	    plotted at each of the <literal><parameter>n</parameter></literal>
+	    points.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plsym(x, y, code)</function>
+    </para>
+
+    <para>
+      This function is used in example 7.
+    </para>
+
+  </sect1>
+
   <sect1 id="plstripa" renderas="sect3">
     <title>
       <function>plstripa</function>: Add a point to a stripchart
@@ -14941,7 +15172,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plsym" renderas="sect3">
     <title>
-      <function>plsym</function>: Plots a symbol at the specified points
+      <function>plsym</function>: Plot a glyph at the specified points
     </title>
 
     <para>
@@ -14959,11 +15190,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Marks out a set of <literal><parameter>n</parameter></literal> points
-      at positions <literal>(<parameter>x</parameter>[i],
-      <parameter>y</parameter>[i])</literal>, using the symbol defined by
+      Plot a glyph at a set of
+      <literal><parameter>n</parameter></literal> points at positions
+      <literal>(<parameter>x</parameter>[i],
+      <parameter>y</parameter>[i])</literal> using the glyph defined by
       <literal><parameter>code</parameter></literal>.  The code is
-      interpreted as an index in the Hershey font tables.
+      interpreted as an index in the Hershey font tables.  This function is
+      superseded by &plstring; which gives access to many(!) more glyphs.
     </para>
 
     <variablelist>
@@ -14974,7 +15207,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Number of points to be marked.
+	    Number of points in the
+	    <literal><parameter>x</parameter></literal> and
+	    <literal><parameter>y</parameter></literal> arrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -14985,8 +15220,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with set of x coordinate values for the
-	    points.
+	    Pointer to an array with X coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -14997,8 +15231,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with set of y coordinate values for the
-	    points.
+	    Pointer to an array with Y coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -15009,7 +15242,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Code number for the symbol to be plotted.
+	    Hershey symbol code corresponding to a glyph to be plotted
+	    at each of the <literal><parameter>n</parameter></literal> points.
 	  </para>
 	</listitem>
       </varlistentry>

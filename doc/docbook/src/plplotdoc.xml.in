@@ -224,6 +224,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plssym '<link linkend="plssym"><function>plssym</function></link>'>
 <!ENTITY plstar '<link linkend="plstar"><function>plstar</function></link>'>
 <!ENTITY plstripa '<link linkend="plstripa"><function>plstripa</function></link>'>
+<!ENTITY plstring '<link linkend="plstring"><function>plstring</function></link>'>
 <!ENTITY plstripc '<link linkend="plstripc"><function>plstripc</function></link>'>
 <!ENTITY plstripd '<link linkend="plstripd"><function>plstripd</function></link>'>
 <!ENTITY plstart '<link linkend="plstart"><function>plstart</function></link>'>

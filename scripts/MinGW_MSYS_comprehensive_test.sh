@@ -66,6 +66,37 @@ CMAKE_LIBRARY_PATH=$PYTHON_PREFIX/libs:$CMAKE_LIBRARY_PATH
 CMAKE_INCLUDE_PATH=$TCL_PREFIX/include:$CMAKE_INCLUDE_PATH
 CMAKE_LIBRARY_PATH=$TCL_PREFIX/lib:$CMAKE_LIBRARY_PATH
 
+# Give access to the Windows version of Lua which was built under MinGW/MSYS
+# using the ordinary Makefile Lua build system.
+
+PATH=$LUA_PREFIX/bin:$PATH
+# Because of CMake misfeature that superpath does not have
+# precedence, must set values explicitly rather than using
+# CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH.
+#CMAKE_INCLUDE_PATH=$LUA_PREFIX/include:$CMAKE_INCLUDE_PATH
+#CMAKE_LIBRARY_PATH=$LUA_PREFIX/lib:$CMAKE_LIBRARY_PATH
+#
+# Where lua.h occurs.
+cmake_extra_options="-DLUA_INCLUDE_DIR:PATH=$LUA_PREFIX/include"
+# Full path to liblua.a
+cmake_extra_options="-DLUA_LIBRARY:FILEPATH=$LUA_PREFIX/lib/liblua.a $cmake_extra_options"
+
+# Give access to the Windows version of Octave.  N.B. the Windows Octave
+# installer puts lots of dependent dll's in the PATH so might get into dll hell
+# here if actually using extensive Octave facilities to test PLplot, but
+# we are not.  So to avoid interference with PLplot dll dependencies, put
+# octave lowest on the PATH.
+
+#Location of octave.exe and liboctave.dll
+PATH=$PATH:$OCTAVE_PREFIX/bin
+#Location of octave.h (with PATH_SUFFIX of octave-3.2.4/octave) and hdf5.h
+# (the external header apparently required by the octave headers).
+CMAKE_INCLUDE_PATH=$OCTAVE_PREFIX/include:$CMAKE_INCLUDE_PATH
+#Location of liboctave.dll.a (with PATH_SUFFIX of octave-3.2.4).
+CMAKE_LIBRARY_PATH=$OCTAVE_PREFIX/lib:$CMAKE_LIBRARY_PATH
+# swig-based build of octave bindings is required on Windows.
+cmake_extra_options="-DENABLE_swig_octave=ON $cmake_extra_options"
+
 # Set MinGW compiler flags for the PLplot build.
 export CFLAGS='-O3'
 export CXXFLAGS=$CFLAGS
@@ -85,14 +116,16 @@ export FFLAGS=$CFLAGS
 # this script if you want to set up all environment variables as
 # they are for a normal run of comprehensive_test.sh without
 # actually running that script.
-#	--cmake_added_options "-DENABLE_f95=OFF -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON" --do_shared yes --do_nondynamic no --do_static no \
+#	--cmake_added_options "-DENABLE_f95=OFF -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON" \
+#	--cmake_added_options "-DENABLE_f95=OFF"\
 
 if [ -z "$DEBUG_COMPREHENSIVE_TEST_RESULT" ] ; then
     bash $PLPLOT_SOURCE_PREFIX/scripts/comprehensive_test.sh \
 	--prefix $TEST_RESULTS_PREFIX \
 	--generator_string "MSYS Makefiles" --build_command "make -j4" \
-	--cmake_added_options "-DENABLE_f95=OFF" --do_shared yes --do_nondynamic no --do_static no \
-	--do_ctest no --do_test_noninteractive yes --do_test_interactive no --do_test_build_tree yes --do_test_install_tree yes --do_test_traditional_install_tree yes
+	--cmake_added_options "-DENABLE_f95=OFF -DDEFAULT_NO_BINDINGS=ON -DENABLE_octave=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON $cmake_extra_options" \
+	--do_shared yes --do_nondynamic no --do_static no \
+	--do_ctest no --do_test_noninteractive yes --do_test_interactive no --do_test_build_tree yes --do_test_install_tree no --do_test_traditional_install_tree no
 
     # This file is sourced so restore original directory location and PATH.
     cd $ORIGINAL_DIR

@@ -179,14 +179,14 @@
 
 !      shielded potential contour plot example
       subroutine potential()
-      use plplot
+      use plplot, TWOPI => PL_TWOPI
       implicit none
 
       integer NCX, NCY, NPLT, i, j, nx, ny, kx, lx, ky, ly, &
         nlevel, ilevgt, ilevlt, nlevlt, nlevgt, &
         ncollin, ncolbox, ncollab, &
         nxsub, nysub, xdim, ydim
-      real(kind=plflt) TWOPI, r, theta, rmax, x0, &
+      real(kind=plflt) r, theta, rmax, x0, &
         y0, xmin, xmax, eps, q1, d1, &
         ymin, ymax, &
         q1i, d1i, q2, d2, q2i, d2i, div1, div1i, div2, div2i, &
@@ -196,7 +196,6 @@
 !      NCX and NCY are associated with the part of the
 !      2D arrays that are defined.
       parameter (xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100)
-      parameter (TWOPI=6.2831853071795864768_plflt)
 
       real(kind=plflt) z(xdim, ydim), ztmp(xdim, ydim+1)
       real(kind=plflt) xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)

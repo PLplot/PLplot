@@ -122,15 +122,13 @@
 
       subroutine polar()
 
-      use plplot
+      use plplot, TWOPI => PL_TWOPI
       implicit none
       integer   xdim, ydim, NX, NY, NCONTR, NBDRY
-      real(kind=plflt)    TWOPI
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
       parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
       parameter (NCONTR = 14, NBDRY=200)
-      parameter (TWOPI=6.2831853071795864768_plflt)
 
       real(kind=plflt)    z(xdim, ydim), ztmp(xdim, ydim+1)
       real(kind=plflt)    xg(xdim, ydim+1), yg(xdim, ydim+1), &

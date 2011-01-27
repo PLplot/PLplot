@@ -24,23 +24,6 @@
 
       implicit none
 
-!       integer PL_PARSE_FULL
-!       parameter(PL_PARSE_FULL = 1)
-      
-      integer GRID_CSA, GRID_DTLI, GRID_NNI, GRID_NNIDW, GRID_NNLI, &
-           GRID_NNAIDW
-      parameter (GRID_CSA = 1)
-      parameter (GRID_DTLI = 2)
-      parameter (GRID_NNI = 3)
-      parameter (GRID_NNIDW = 4)
-      parameter (GRID_NNLI = 5)
-      parameter (GRID_NNAIDW = 6)
-
-      integer DRAW_LINEXY, MAG_COLOR, BASE_CONT
-      parameter(DRAW_LINEXY = 3)
-      parameter(MAG_COLOR = 4)
-      parameter(BASE_CONT = 8)
-      
       external myisnan
       logical myisnan
 

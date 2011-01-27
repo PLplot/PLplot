@@ -37,20 +37,6 @@
       integer nlevel
       parameter (nlevel = 10)
       real(kind=plflt) zmin, zmax, step, clevel(nlevel)
-!      Plotting options for 3d plots, see plplot.h for the C definitions
-!      of these options.
-      integer DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY, MAG_COLOR, &
-        BASE_CONT, TOP_CONT, SURF_CONT, DRAW_SIDES, FACETED, MESH
-      parameter(DRAW_LINEX = 1)
-      parameter(DRAW_LINEY = 2)
-      parameter(DRAW_LINEXY = 3)
-      parameter(MAG_COLOR = 4)
-      parameter(BASE_CONT = 8)
-      parameter(TOP_CONT = 16)
-      parameter(SURF_CONT = 32)
-      parameter(DRAW_SIDES = 64)
-      parameter(FACETED = 128)
-      parameter(MESH = 256)
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

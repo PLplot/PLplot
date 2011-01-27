@@ -102,15 +102,13 @@
       end
 
       subroutine test_poly(k, alt, az)
-      use plplot, PI => PL_PI
+      use plplot, PI => PL_PI, TWOPI => PL_TWOPI
       implicit none
       integer k
       real(kind=plflt) alt, az
 
       real(kind=plflt) x(5), y(5), z(5)
       integer i, j
-      real(kind=plflt) two_pi
-      parameter ( two_pi = 2.0_plflt*pi                )
       logical draw(4,4)
       DATA draw / &
         .true., .true., .true., .true., &
@@ -119,8 +117,8 @@
         .true., .true., .false., .false. /
       real(kind=plflt) theta, phi
       integer ia
-      THETA(ia) = (two_pi * (ia) /20._plflt)
-      PHI(ia)   = (pi * (ia) / 20.1_plflt)
+      THETA(ia) = (TWOPI * (ia) /20._plflt)
+      PHI(ia)   = (PI * (ia) / 20.1_plflt)
 
       call pladv(0)
       call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt)
