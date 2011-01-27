@@ -77,14 +77,17 @@ c --------------------------------------------------------------------------
 
       integer      nolangs
       parameter  ( nolangs = 2 )
+      integer nlegend
+      parameter (nlegend = 2)
 
       character*80 x_label(nolangs)
       character*80 y_label(nolangs)
+      character*80 legend_text(2,nolangs)
       character*80 alty_label(nolangs)
       character*80 title_label(nolangs)
       character*80 line_label(nolangs)
 
-      integer      i
+      integer      i,j
 
       data (x_label(i) ,i=1,nolangs) /
      &    'Frequency',
@@ -97,6 +100,11 @@ c --------------------------------------------------------------------------
       data (alty_label(i) ,i=1,nolangs) /
      &    'Phase shift (degrees)',
      &    'Фазовый сдвиг (градусы)'/
+
+c Short rearranged versions of y_label and alty_label.
+      data ((legend_text(j,i), j=1, nlegend), i=1,nolangs) /
+     &    'Amplitude',          'Phase shift'               ,
+     &    'Амплитуда', 'Фазовый сдвиг' /
 
       data (title_label(i) ,i=1,nolangs) /
      &    'Single Pole Low-Pass Filter',
@@ -119,8 +127,8 @@ c  Initialize plplot
 c  Make log plots using two different styles.
 
       do 110 i = 1,nolangs
-          call plot1(0, x_label(i), y_label(i), alty_label(i),
-     &               title_label(i), line_label(i))
+          call plot1(nlegend, 0, x_label(i), y_label(i), alty_label(i),
+     &               legend_text(1,i), title_label(i), line_label(i))
   110 continue
 
       call plend()
@@ -132,40 +140,36 @@ c
 c  Log-linear plot.
 c --------------------------------------------------------------------------
 
-      subroutine plot1( type, x_label, y_label, alty_label,
-     &                  title_label, line_label )
+      subroutine plot1( nlegend, type, x_label, y_label, alty_label,
+     &                  legend_text, title_label, line_label )
 
       implicit none
 
-      integer type
+      include 'plplot_parameters.h'
+      integer type, nlegend, local_nlegend
+      parameter (local_nlegend = 2)
       character(*) x_label, y_label, alty_label, title_label, line_label
+      character(*) legend_text(nlegend)
 
-      integer i
+      integer i, local
       real*8  freql(101), ampl(101), phase(101)
       real*8  f0, freq
 
-      integer      nlegend
-      integer      opt_array(2)
-      integer      text_colors(2)
-      integer      line_colors(2)
-      integer      line_styles(2)
-      integer      line_widths(2)
-      integer      symbol_numbers(2), symbol_colors(2)
-      real*8       symbol_scales(2)
-      character*20 symbols(2)
+      integer      opt_array(local_nlegend)
+      integer      text_colors(local_nlegend)
+      integer      line_colors(local_nlegend)
+      integer      line_styles(local_nlegend)
+      integer      line_widths(local_nlegend)
+      integer      symbol_numbers(local_nlegend)
+      integer      symbol_colors(local_nlegend)
+      real*8       symbol_scales(local_nlegend)
+      character*20 symbols(local_nlegend)
       integer      box_colors(1), box_patterns(1), box_scales(1)
       real*8       box_line_widths(1)
       real*8       legend_width, legend_height
-      character*40 legend_text(2,2)
 
-      data nlegend / 2 /
-
-c Short rearranged versions of y_label and alty_label.
-      data legend_text /
-     &    'Amplitude',          'Phase shift'               ,
-     &    'Амплитуда', 'Фазовый сдвиг' /
-
-      include 'plplot_parameters.h'
+c Sanity check.
+      if (nlegend.ne.local_nlegend) stop 'plot1: bad nlegend value'
 
       call pladv(0)
 
@@ -196,7 +200,7 @@ c  Plot ampl vs freq
 
       call plcol0(2)
       call plline(101, freql, ampl)
-      call plcol0(1)
+      call plcol0(2)
       call plptex(1.6d0, -30.0d0, 1.0d0, -20.0d0, 0.5d0, line_label)
 
 c  Put labels on
@@ -223,12 +227,16 @@ c  For the gridless case, put phase vs freq on same plot
 c  Draw a legend
 c     First legend entry.
 
-      nlegend        = 2
       opt_array(1)   = PL_LEGEND_LINE
       text_colors(1) = 2
       line_colors(1) = 2
       line_styles(1) = 1
       line_widths(1) = 1
+c     defining this makes the Fortran to C transformation of
+c     symbols(1) work on defined values which makes valgrind
+c     happier (even if that transformed string is not used inside the
+c     C version of pllegend)
+      symbols(1) = ""
 
 c     note from the above opt_array the first symbol (and box) indices
 c     do not have to be specified
