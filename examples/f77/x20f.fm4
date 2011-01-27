@@ -74,8 +74,7 @@ c};
       real*8  XDIMR, YDIMR
       parameter(XDIM = 260, YDIM = 220)
       parameter(XDIMR = XDIM, YDIMR = YDIM)
-      real*8  PI
-      parameter(PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
 
       real*8  x(XDIM), y(YDIM), z(XDIM,YDIM), r(XDIM,YDIM)
       real*8  xi, yi, xe, ye
@@ -108,10 +107,6 @@ c
       logical nosombrero
       logical nointeractive
       character*80 f_name
-
-      integer PL_PARSE_FULL
-      parameter( PL_PARSE_FULL = 1 )
-
 
 c
 c     Bugs in plimage():

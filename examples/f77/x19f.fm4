@@ -42,8 +42,7 @@ c--------------------------------------------------------------------------
       implicit none
 
       real*8    x, y, xt, yt, radius
-      real*8    PI
-      parameter ( PI = 3.1415926535897932384d0 )
+      include 'plplot_parameters.h'
 
       radius = 90.0d0 - y
       xt = radius * cos(x * PI / 180.0d0)
@@ -65,8 +64,7 @@ c--------------------------------------------------------------------------
       integer n
       real*8    x(n)
       real*8    y(n)
-      real*8    PI
-      parameter ( PI = 3.1415926535897932384d0 )
+      include 'plplot_parameters.h'
 
       integer i
       real*8    xp, yp, radius
@@ -155,8 +153,7 @@ c--------------------------------------------------------------------------
       external mapform19
       external geolocation_labeler
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

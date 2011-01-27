@@ -20,11 +20,22 @@ C      You should have received a copy of the GNU Library General Public
 C      License along with PLplot; if not, write to the Free Software
 C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+c common parameters
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
       real*8 PI, TWOPI
       parameter (PI = 3.1415926535897932384d0)
       parameter (TWOPI = 2.d0*PI)
+
+c flags used for plgriddata()
+      integer GRID_CSA, GRID_DTLI, GRID_NNI, GRID_NNIDW, GRID_NNLI, 
+     &     GRID_NNAIDW
+      parameter (GRID_CSA = 1)
+      parameter (GRID_DTLI = 2)
+      parameter (GRID_NNI = 3)
+      parameter (GRID_NNIDW = 4)
+      parameter (GRID_NNLI = 5)
+      parameter (GRID_NNAIDW = 6)
 
 c flags used for position argument of both pllegend and plcolorbar
       integer PL_POSITION_LEFT
