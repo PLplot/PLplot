@@ -73,8 +73,7 @@ c --------------------------------------------------------------------------
 
       implicit none
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 
       integer      nolangs
       parameter  ( nolangs = 2 )
@@ -144,7 +143,6 @@ c --------------------------------------------------------------------------
       integer i
       real*8  freql(101), ampl(101), phase(101)
       real*8  f0, freq
-      real*8  M_PI
 
       integer      nlegend
       integer      opt_array(2)
@@ -167,39 +165,7 @@ c Short rearranged versions of y_label and alty_label.
      &    'Amplitude',          'Phase shift'               ,
      &    'Амплитуда', 'Фазовый сдвиг' /
 
-c     To include file!
-
-      integer PL_LEGEND_NONE
-      integer PL_LEGEND_COLOR_BOX
-      integer PL_LEGEND_LINE
-      integer PL_LEGEND_SYMBOL
-      integer PL_LEGEND_TEXT_LEFT
-      integer PL_LEGEND_BACKGROUND
-      integer PL_LEGEND_BOUNDING_BOX
-      integer PL_LEGEND_ROW_MAJOR
-      integer PL_LEGEND_LEFT
-      integer PL_LEGEND_RIGHT
-      integer PL_LEGEND_UPPER
-      integer PL_LEGEND_LOWER
-      integer PL_LEGEND_INSIDE
-      integer PL_LEGEND_OUTSIDE
-
-      parameter (PL_LEGEND_NONE           = 1     )
-      parameter (PL_LEGEND_COLOR_BOX      = 2     )
-      parameter (PL_LEGEND_LINE           = 4     )
-      parameter (PL_LEGEND_SYMBOL         = 8     )
-      parameter (PL_LEGEND_TEXT_LEFT      = 16    )
-      parameter (PL_LEGEND_BACKGROUND     = 32    )
-      parameter (PL_LEGEND_BOUNDING_BOX   = 64    )
-      parameter (PL_LEGEND_ROW_MAJOR      = 128   )
-      parameter (PL_LEGEND_LEFT           = 256   )
-      parameter (PL_LEGEND_RIGHT          = 512   )
-      parameter (PL_LEGEND_UPPER          = 1024  )
-      parameter (PL_LEGEND_LOWER          = 2048  )
-      parameter (PL_LEGEND_INSIDE         = 4096  )
-      parameter (PL_LEGEND_OUTSIDE        = 8192  )
-
-      M_PI = 4.0d0 * atan(1.0d0)
+      include 'plplot_parameters.h'
 
       call pladv(0)
 
@@ -210,7 +176,7 @@ c  Set up data for log plot
           freql(i) = -2.0d0 + (i-1) / 20.0d0
           freq     = 10.0d0 ** freql(i)
           ampl(i)  = 20.0d0 * log10(1.0d0 / sqrt(1.0d0 + (freq/f0)**2))
-          phase(i) = -(180.0d0 / M_PI) * atan(freq / f0)
+          phase(i) = -(180.0d0 / PI) * atan(freq / f0)
   110 continue
 
       call plvpor(0.15d0, 0.85d0, 0.1d0, 0.9d0)

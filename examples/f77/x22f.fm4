@@ -33,8 +33,7 @@ c      Does several contour plots using different coordinate mappings.
       data arrow2_x/-0.5d0, 0.3d0, 0.3d0, 0.5d0, 0.3d0, 0.3d0/
       data arrow2_y/0.d0, 0.d0, 0.2d0, 0.d0, -0.2d0, 0.d0/
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -107,8 +106,7 @@ c     vector plot of the flow through a constricted pipe
       subroutine constriction()
       implicit none
 
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
 
       integer i, j, nx, ny
       parameter (nx=20, ny=20)
@@ -159,8 +157,7 @@ c     vector plot of the flow through a constricted pipe
       subroutine potential()
       implicit none
 
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
+      include 'plplot_parameters.h'
 
       integer i, j, nr, ntheta, nper, nlevel
       parameter (nr=20, ntheta=20, nper=100, nlevel=10)

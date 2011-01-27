@@ -46,8 +46,7 @@ c   will have to install this package instead and update the font path.
       program x24f
       implicit none
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 
       integer i, j
       integer red(7)

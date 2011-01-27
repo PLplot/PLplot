@@ -13,8 +13,7 @@ c     --------------------------------------------------------------------------
 
       implicit none
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
+      include 'plplot_parameters.h'
 
       integer i,j,k
       integer npts
