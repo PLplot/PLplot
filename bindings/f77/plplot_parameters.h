@@ -26,6 +26,8 @@ c common parameters
       real*8 PI, TWOPI
       parameter (PI = 3.1415926535897932384d0)
       parameter (TWOPI = 2.d0*PI)
+      real*8 PL_NOTSET
+      parameter(PL_NOTSET = -42.0d0)
 
 c flags used for plgriddata()
       integer GRID_CSA, GRID_DTLI, GRID_NNI, GRID_NNIDW, GRID_NNLI, 

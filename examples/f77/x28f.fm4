@@ -24,6 +24,7 @@ c
       program x28f
 
       implicit none
+      include 'plplot_parameters.h'
 
       integer XPTS, YPTS, NREVOLUTION, NROTATION, NSHEAR
       parameter(XPTS = 2)
@@ -32,8 +33,6 @@ c
       parameter(NROTATION = 8)
       parameter(NSHEAR = 8)
       real*8 x(XPTS), y(YPTS), z(XPTS,YPTS)
-      real*8 PI
-      parameter (PI = 3.1415926535897932384d0)
       real*8 xmin, xmax, xmid, xrange
       parameter(xmin = 0.d0)
       parameter(xmax = 1.d0)
@@ -68,10 +67,6 @@ c
       integer i, j
       real*8 radius, pitch, xpos, ypos, zpos
       integer lnblnk
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
-      integer DRAW_LINEXY
-      parameter(DRAW_LINEXY = 3)
 
       character*80 pstring
       pstring =

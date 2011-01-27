@@ -25,6 +25,7 @@ c
       program x30f
 
       implicit none
+      include 'plplot_parameters.h'
 
       integer red(4), green(4), blue(4)
       real*8 alpha(4), px(4), py(4)
@@ -49,9 +50,6 @@ c
       real*8 a
 
       character*1 defined
-
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
 
       call plparseopts(PL_PARSE_FULL)
 

@@ -27,6 +27,7 @@ c Demonstrates absolute positioning of graphs on a page.
 c--------------------------------------------------------------------------
 
       implicit none
+      include 'plplot_parameters.h'
       real*8 xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
       real*8 xmid, ymid, wx, wy
       real*8 mar, aspect, jx, jy, ori
@@ -50,11 +51,6 @@ c--------------------------------------------------------------------------
 
 c     Parse and process command line arguments
 
-      integer PL_PARSE_FULL
-      parameter(PL_PARSE_FULL = 1)
-      real*8 PL_NOTSET
-      parameter(PL_NOTSET = -42.0d0)
-      
       status = 0
       stderr = 0
 
