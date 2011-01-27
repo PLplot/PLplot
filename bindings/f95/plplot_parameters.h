@@ -93,6 +93,7 @@
       integer, parameter :: PL_PARSE_NOPROGRAM = z'0020' ! Program name NOT in *argv[0]..
       integer, parameter :: PL_PARSE_NODASH = z'0040' ! Set if leading dash NOT required
       integer, parameter :: PL_PARSE_SKIP = z'0080' ! Skip over unrecognized args
+      integer, parameter :: PL_FCI_MARK = ishft(1,31) 
       integer, parameter :: PL_FCI_IMPOSSIBLE = z'00000000' 
       integer, parameter :: PL_FCI_HEXDIGIT_MASK = z'f' 
       integer, parameter :: PL_FCI_HEXPOWER_MASK = z'7' 
