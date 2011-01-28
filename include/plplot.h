@@ -1209,15 +1209,15 @@ c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 PLDLLIMPEXP void
 c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
-//flags used for position argument of both pllegend and plcolorbar 
-#define PL_POSITION_LEFT             1
-#define PL_POSITION_RIGHT            2
-#define PL_POSITION_UPPER            4
-#define PL_POSITION_LOWER            8
-#define PL_POSITION_INSIDE           16
-#define PL_POSITION_OUTSIDE          32
-#define PL_POSITION_VIEWPORT         64
-#define PL_POSITION_SUBPAGE          128
+//flags used for position argument of both pllegend and plcolorbar
+#define PL_POSITION_LEFT           1
+#define PL_POSITION_RIGHT          2
+#define PL_POSITION_UPPER          4
+#define PL_POSITION_LOWER          8
+#define PL_POSITION_INSIDE         16
+#define PL_POSITION_OUTSIDE        32
+#define PL_POSITION_VIEWPORT       64
+#define PL_POSITION_SUBPAGE        128
 
 // Flags for pllegend.
 #define PL_LEGEND_NONE             1

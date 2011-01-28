@@ -87,16 +87,16 @@ class x26 {
 
     // Short rearranged versions of y_label and alty_label.
     static String[][] legend_text = {
-	{ "Amplitude", "Phase shift"},
-	{ "Амплитуда", "Фазовый сдвиг" }
+        { "Amplitude",          "Phase shift"               },
+        { "Амплитуда", "Фазовый сдвиг" }
     };
 
-    static   String[] title_label = {
+    static String[] title_label = {
         "Single Pole Low-Pass Filter",
         "Однополюсный Низко-Частотный Фильтр"
     };
 
-    static   String[] line_label = {
+    static String[] line_label = {
         "-20 dB/decade",
         "-20 dB/десяток"
     };
@@ -132,8 +132,8 @@ class x26 {
 
         for ( i = 0; i < nlang; i++ )
         {
-            plot1( 0, x_label[i], y_label[i], alty_label[i], 
-		   legend_text[i], title_label[i], line_label[i] );
+            plot1( 0, x_label[i], y_label[i], alty_label[i],
+                legend_text[i], title_label[i], line_label[i] );
         }
 
         pls.end();
@@ -149,18 +149,18 @@ class x26 {
         double[] ampl  = new double[101];
         double[] phase = new double[101];
         double f0, freq;
-	int nlegend = 2;
-	int[] opt_array = new int[2];
-	int[] text_colors = new int[2];
-	int[] line_colors = new int[2];
-	int[] line_styles = new int[2];
-	int[] line_widths = new int[2];
-	int[] symbol_numbers = new int[2];
-	int[] symbol_colors = new int[2];
-	double[] symbol_scales = new double[2];
-	String[] symbols = new String[2];
-	double[] legend_width = new double[1];
-	double[] legend_height = new double[1];
+        int    nlegend = 2;
+        int[] opt_array        = new int[2];
+        int[] text_colors      = new int[2];
+        int[] line_colors      = new int[2];
+        int[] line_styles      = new int[2];
+        int[] line_widths      = new int[2];
+        int[] symbol_numbers   = new int[2];
+        int[] symbol_colors    = new int[2];
+        double[] symbol_scales = new double[2];
+        String[] symbols       = new String[2];
+        double[] legend_width  = new double[1];
+        double[] legend_height = new double[1];
 
         pls.adv( 0 );
 
@@ -220,43 +220,42 @@ class x26 {
             pls.col0( 3 );
             pls.mtex( "r", 5.0, 0.5, 0.5, alty_label );
         }
-	// Draw a legend
-	// First legend entry.
-	opt_array[0]   = PLStream.PL_LEGEND_LINE;
-	text_colors[0] = 2;
-	line_colors[0] = 2;
-	line_styles[0] = 1;
-	line_widths[0] = 1;
-	// note from the above opt_array the first symbol (and box) indices
-	// do not have to be specified EXCEPT for symbols.
-	// Although this is unused, it can't be undefined as the String
-	// array is copied as part of the java bindings.
-	symbols[0]     = "";
-	
-	// Second legend entry.
-	opt_array[1]      = PLStream.PL_LEGEND_LINE | PLStream.PL_LEGEND_SYMBOL;
-	text_colors[1]    = 3;
-	line_colors[1]    = 3;
-	line_styles[1]    = 1;
-	line_widths[1]    = 1;
-	symbol_colors[1]  = 3;
-	symbol_scales[1]  = 1.;
-	symbol_numbers[1] = 4;
-	symbols[1]        = "*";
-	// from the above opt_arrays we can completely ignore everything
-	// to do with boxes.
+        // Draw a legend
+        // First legend entry.
+        opt_array[0]   = PLStream.PL_LEGEND_LINE;
+        text_colors[0] = 2;
+        line_colors[0] = 2;
+        line_styles[0] = 1;
+        line_widths[0] = 1;
+        // note from the above opt_array the first symbol (and box) indices
+        // do not have to be specified EXCEPT for symbols.
+        // Although this is unused, it can't be undefined as the String
+        // array is copied as part of the java bindings.
+        symbols[0] = "";
 
-	pls.scol0a( 15, 32, 32, 32, 0.70 );
-	pls.legend( legend_width, legend_height,
-		    0, PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX,
-		    0.0, 0.0, 0.10, 15,
-		    1, 1, 0, 0, opt_array,
-		    1.0, 1.0, 2.0,
-		    1., text_colors, legend_text,
-		    null, null, null, null,
-		    line_colors, line_styles, line_widths,
-		    symbol_colors, symbol_scales, symbol_numbers, symbols );
+        // Second legend entry.
+        opt_array[1]      = PLStream.PL_LEGEND_LINE | PLStream.PL_LEGEND_SYMBOL;
+        text_colors[1]    = 3;
+        line_colors[1]    = 3;
+        line_styles[1]    = 1;
+        line_widths[1]    = 1;
+        symbol_colors[1]  = 3;
+        symbol_scales[1]  = 1.;
+        symbol_numbers[1] = 4;
+        symbols[1]        = "*";
+        // from the above opt_arrays we can completely ignore everything
+        // to do with boxes.
 
+        pls.scol0a( 15, 32, 32, 32, 0.70 );
+        pls.legend( legend_width, legend_height,
+            0, PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX,
+            0.0, 0.0, 0.10, 15,
+            1, 1, 0, 0, opt_array,
+            1.0, 1.0, 2.0,
+            1., text_colors, legend_text,
+            null, null, null, null,
+            line_colors, line_styles, line_widths,
+            symbol_colors, symbol_scales, symbol_numbers, symbols );
     }
 }
 

@@ -69,19 +69,19 @@ class x04 {
         double[] ampl  = new double[101];
         double[] phase = new double[101];
         double f0, freq;
-	int        nlegend;
-	String[] text;
-	String[] symbols;
-	int[] opt_array;
-	int[] text_colors;
-	int[] line_colors;
-	int[] line_styles;
-	int[] line_widths;
-	int[] symbol_numbers;
-	int[] symbol_colors;
-	double[] symbol_scales;
-	double[] legend_width = new double[1];
-	double[] legend_height = new double[1];
+        int    nlegend;
+        String[] text;
+        String[] symbols;
+        int[] opt_array;
+        int[] text_colors;
+        int[] line_colors;
+        int[] line_styles;
+        int[] line_widths;
+        int[] symbol_numbers;
+        int[] symbol_colors;
+        double[] symbol_scales;
+        double[] legend_width  = new double[1];
+        double[] legend_height = new double[1];
 
         pls.adv( 0 );
 
@@ -127,7 +127,7 @@ class x04 {
         pls.mtex( "t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter" );
         pls.col0( 2 );
         pls.mtex( "l", 5.0, 0.5, 0.5, "Amplitude (dB)" );
-	nlegend = 1;
+        nlegend = 1;
 
         // For the gridless case, put phase vs freq on same plot.
 
@@ -141,61 +141,61 @@ class x04 {
             pls.string( freql, phase, "*" );
             pls.col0( 3 );
             pls.mtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
-	    nlegend = 2;
+            nlegend = 2;
         }
-	text = new String[nlegend];
-	symbols = new String[nlegend];
-	opt_array = new int[nlegend];
-	text_colors = new int[nlegend];
-	line_colors = new int[nlegend];
-	line_styles = new int[nlegend];
-	line_widths = new int[nlegend];
-	symbol_numbers = new int[nlegend];
-	symbol_colors = new int[nlegend];
-	symbol_scales = new double[nlegend];
+        text           = new String[nlegend];
+        symbols        = new String[nlegend];
+        opt_array      = new int[nlegend];
+        text_colors    = new int[nlegend];
+        line_colors    = new int[nlegend];
+        line_styles    = new int[nlegend];
+        line_widths    = new int[nlegend];
+        symbol_numbers = new int[nlegend];
+        symbol_colors  = new int[nlegend];
+        symbol_scales  = new double[nlegend];
 
-	// Draw a legend
-	// First legend entry.
-	opt_array[0]   = PLStream.PL_LEGEND_LINE;
-	text_colors[0] = 2;
-	text[0]        = "Amplitude";
-	line_colors[0] = 2;
-	line_styles[0] = 1;
-	line_widths[0] = 1;
-	// note from the above opt_array the first symbol (and box) indices
-	// do not have to be specified EXCEPT for symbols.
-	// Although this is unused, it can't be undefined as the String
-	// array is copied as part of the java bindings.
-	symbols[0]     = " ";
-	
-	// Second legend entry.
-	if (nlegend == 2) {
-	    opt_array[1]      = PLStream.PL_LEGEND_LINE | PLStream.PL_LEGEND_SYMBOL;
-	    text_colors[1]    = 3;
-	    text[1]           = "Phase shift";
-	    line_colors[1]    = 3;
-	    line_styles[1]    = 1;
-	    line_widths[1]    = 1;
-	    symbol_colors[1]  = 3;
-	    symbol_scales[1]  = 1.;
-	    symbol_numbers[1] = 4;
-	    symbols[1]        = "*";
-	}
+        // Draw a legend
+        // First legend entry.
+        opt_array[0]   = PLStream.PL_LEGEND_LINE;
+        text_colors[0] = 2;
+        text[0]        = "Amplitude";
+        line_colors[0] = 2;
+        line_styles[0] = 1;
+        line_widths[0] = 1;
+        // note from the above opt_array the first symbol (and box) indices
+        // do not have to be specified EXCEPT for symbols.
+        // Although this is unused, it can't be undefined as the String
+        // array is copied as part of the java bindings.
+        symbols[0] = " ";
 
-	// from the above opt_arrays we can completely ignore everything
-	// to do with boxes.
+        // Second legend entry.
+        if ( nlegend == 2 )
+        {
+            opt_array[1]      = PLStream.PL_LEGEND_LINE | PLStream.PL_LEGEND_SYMBOL;
+            text_colors[1]    = 3;
+            text[1]           = "Phase shift";
+            line_colors[1]    = 3;
+            line_styles[1]    = 1;
+            line_widths[1]    = 1;
+            symbol_colors[1]  = 3;
+            symbol_scales[1]  = 1.;
+            symbol_numbers[1] = 4;
+            symbols[1]        = "*";
+        }
 
-	pls.scol0a( 15, 32, 32, 32, 0.70 );
-	pls.legend( legend_width, legend_height,
-	 	    0, PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX,
-	 	    0.0, 0.0, 0.1, 15,
-	 	    1, 1, 0, 0, opt_array,
-	 	    1.0, 1.0, 2.0,
-	 	    1., text_colors, text,
-	 	    null, null, null, null,
-	 	    line_colors, line_styles, line_widths,
-	 	    symbol_colors, symbol_scales, symbol_numbers, symbols );
+        // from the above opt_arrays we can completely ignore everything
+        // to do with boxes.
 
+        pls.scol0a( 15, 32, 32, 32, 0.70 );
+        pls.legend( legend_width, legend_height,
+            0, PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX,
+            0.0, 0.0, 0.1, 15,
+            1, 1, 0, 0, opt_array,
+            1.0, 1.0, 2.0,
+            1., text_colors, text,
+            null, null, null, null,
+            line_colors, line_styles, line_widths,
+            symbol_colors, symbol_scales, symbol_numbers, symbols );
     }
 }
 

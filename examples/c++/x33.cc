@@ -299,11 +299,11 @@ x33::x33( int argc, const char **argv )
 
     for ( k = 0; k < 16; k++ )
     {
-      position = position_options[k];
-      opt = opt_base;
+        position = position_options[k];
+        opt      = opt_base;
         sprintf( text[0], "%2.2d", k );
-        text_colors[0]   = 1 + ( k % 8 );
-        line_colors[0]   = 1 + ( k % 8 );position, opt,        symbol_colors[0] = 1 + ( k % 8 );
+        text_colors[0] = 1 + ( k % 8 );
+        line_colors[0] = 1 + ( k % 8 );position, opt, symbol_colors[0] = 1 + ( k % 8 );
 
         pls->legend( &legend_width, &legend_height, position, opt, 0.05, 0.05,
             0.1, 15, 1, 1, 0, 0,
@@ -348,11 +348,11 @@ x33::x33( int argc, const char **argv )
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
     position = PL_POSITION_UPPER | PL_POSITION_OUTSIDE;
-    opt     = opt_base;
-    x       = 0.;
-    y       = 0.1;
-    nrow    = 1;
-    ncolumn = nlegend;
+    opt      = opt_base;
+    x        = 0.;
+    y        = 0.1;
+    nrow     = 1;
+    ncolumn  = nlegend;
     pls->legend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
@@ -362,11 +362,11 @@ x33::x33( int argc, const char **argv )
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     position = PL_POSITION_LOWER | PL_POSITION_OUTSIDE;
-    opt     = opt_base;
-    x       = 0.;
-    y       = 0.1;
-    nrow    = 1;
-    ncolumn = nlegend;
+    opt      = opt_base;
+    x        = 0.;
+    y        = 0.1;
+    nrow     = 1;
+    ncolumn  = nlegend;
     pls->legend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
@@ -376,11 +376,11 @@ x33::x33( int argc, const char **argv )
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     position = PL_POSITION_LEFT | PL_POSITION_OUTSIDE;
-    opt     = opt_base;
-    x       = 0.1;
-    y       = 0.;
-    nrow    = nlegend;
-    ncolumn = 1;
+    opt      = opt_base;
+    x        = 0.1;
+    y        = 0.;
+    nrow     = nlegend;
+    ncolumn  = 1;
     pls->legend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
@@ -390,11 +390,11 @@ x33::x33( int argc, const char **argv )
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     position = PL_POSITION_RIGHT | PL_POSITION_OUTSIDE;
-    opt     = opt_base;
-    x       = 0.1;
-    y       = 0.;
-    nrow    = nlegend;
-    ncolumn = 1;
+    opt      = opt_base;
+    x        = 0.1;
+    y        = 0.;
+    nrow     = nlegend;
+    ncolumn  = 1;
     pls->legend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
@@ -404,11 +404,11 @@ x33::x33( int argc, const char **argv )
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     position = PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
-    opt     = opt_base;
-    x       = 0.;
-    y       = 0.;
-    nrow    = 6;
-    ncolumn = 2;
+    opt      = opt_base;
+    x        = 0.;
+    y        = 0.;
+    nrow     = 6;
+    ncolumn  = 2;
     pls->legend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
@@ -418,11 +418,11 @@ x33::x33( int argc, const char **argv )
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     position = PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
-    opt     = opt_base | PL_LEGEND_ROW_MAJOR;
-    x       = 0.;
-    y       = 0.;
-    nrow    = 6;
-    ncolumn = 2;
+    opt      = opt_base | PL_LEGEND_ROW_MAJOR;
+    x        = 0.;
+    y        = 0.;
+    nrow     = 6;
+    ncolumn  = 2;
     pls->legend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
@@ -432,11 +432,11 @@ x33::x33( int argc, const char **argv )
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     position = PL_POSITION_LOWER | PL_POSITION_INSIDE;
-    opt     = opt_base | PL_LEGEND_ROW_MAJOR;
-    x       = 0.;
-    y       = 0.;
-    nrow    = 3;
-    ncolumn = 3;
+    opt      = opt_base | PL_LEGEND_ROW_MAJOR;
+    x        = 0.;
+    y        = 0.;
+    nrow     = 3;
+    ncolumn  = 3;
     pls->legend( &legend_width, &legend_height, position, opt, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
@@ -500,9 +500,9 @@ x33::x33( int argc, const char **argv )
         if ( i == nturn )
         {
             position = PL_POSITION_UPPER | PL_POSITION_RIGHT;
-            opt = opt_base;
-            x   = 1. - x;
-            y  += legend_height;
+            opt      = opt_base;
+            x        = 1. - x;
+            y       += legend_height;
         }
         else
         {

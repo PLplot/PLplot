@@ -528,40 +528,40 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.pllab( xlabel, ylabel, tlabel );
     }
 
-    public void legend( double[] p_legend_width, double[] p_legend_height, 
-			int position, int opt, double x, double y, double plot_width,
-			int bg_color, int bb_color, int bb_style,
-			int nrow, int ncolumn, int[] opt_array,
-			double text_offset, double text_scale, 
-			double text_spacing, double text_justification,
-			int[] text_colors, String[] text,
-			int[] box_colors, int[] box_patterns,
-			double[] box_scales, int[] box_line_widths,
-			int[] line_colors, int[] line_styles,
-			int[] line_widths,
-			int[] symbol_colors, double[]symbol_scales,
-			int[] symbol_numbers, String[] symbols  )
+    public void legend( double[] p_legend_width, double[] p_legend_height,
+                        int position, int opt, double x, double y, double plot_width,
+                        int bg_color, int bb_color, int bb_style,
+                        int nrow, int ncolumn, int[] opt_array,
+                        double text_offset, double text_scale,
+                        double text_spacing, double text_justification,
+                        int[] text_colors, String[] text,
+                        int[] box_colors, int[] box_patterns,
+                        double[] box_scales, int[] box_line_widths,
+                        int[] line_colors, int[] line_styles,
+                        int[] line_widths,
+                        int[] symbol_colors, double[] symbol_scales,
+                        int[] symbol_numbers, String[] symbols )
     {
         if ( set_stream() == -1 ) return;
-        plplotjavac.pllegend( p_legend_width, p_legend_height, 
-			      position, opt, x, y, plot_width, bg_color, bb_color, 
-			      bb_style, nrow, ncolumn, opt_array, 
-			      text_offset, text_scale, text_spacing, 
-			      text_justification, text_colors, text,
-			      box_colors, box_patterns, box_scales, 
-			      box_line_widths, line_colors, line_styles,
-			      line_widths, symbol_colors, symbol_scales,
-			      symbol_numbers, symbols );
+        plplotjavac.pllegend( p_legend_width, p_legend_height,
+            position, opt, x, y, plot_width, bg_color, bb_color,
+            bb_style, nrow, ncolumn, opt_array,
+            text_offset, text_scale, text_spacing,
+            text_justification, text_colors, text,
+            box_colors, box_patterns, box_scales,
+            box_line_widths, line_colors, line_styles,
+            line_widths, symbol_colors, symbol_scales,
+            symbol_numbers, symbols );
     }
 
     public void colorbar( int opt, double x, double y, double length,
-			  double width, double ticks, double subticks,
-			  String axis_opts, String label,
-			  double[] colors, double[] values )
+                          double width, double ticks, double subticks,
+                          String axis_opts, String label,
+                          double[] colors, double[] values )
     {
         if ( set_stream() == -1 ) return;
         plplotjavac.plcolorbar( opt, x, y, length, width, ticks, subticks,
-				axis_opts, label, colors, values );
+            axis_opts, label, colors, values );
     }
 
     public void lightsource( double x, double y, double z )

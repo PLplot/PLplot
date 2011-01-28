@@ -49,7 +49,7 @@ class x27 {
     public x27( String[] args )
     {
         // R, r, p, N
-        double params[][] = {
+        double  params[][] = {
             { 21.0,   7.0,  7.0,  3.0 }, // Deltoid
             { 21.0,   7.0, 10.0,  3.0 },
             { 21.0,  -7.0, 10.0,  3.0 },
@@ -60,8 +60,8 @@ class x27 {
             { 20.0,  13.0, 20.0, 20.0 },
             { 20.0, -13.0, 20.0, 20.0 } };
 
-        int    i;
-	boolean fill;
+        int     i;
+        boolean fill;
 
         // plplot initialization
 
@@ -78,7 +78,7 @@ class x27 {
         // First an overview, then all curves one by one
         pls.ssub( 3, 3 ); // Three by three window
 
-	fill = false;
+        fill = false;
         for ( i = 0; i < 9; i++ )
         {
             pls.adv( 0 );
@@ -96,18 +96,18 @@ class x27 {
             spiro( params[i], fill );
         }
 
-	// Fill the curves
-	fill = true;
-	
-	pls.adv( 0 );
-	pls.ssub( 1, 1 ); // One window per curve
-	
-	for ( i = 0; i < 9; i++ )
+        // Fill the curves
+        fill = true;
+
+        pls.adv( 0 );
+        pls.ssub( 1, 1 ); // One window per curve
+
+        for ( i = 0; i < 9; i++ )
         {
-	    pls.adv( 0 );
-	    pls.vpor( 0.0, 1.0, 0.0, 1.0 );
-	    spiro( params[i], fill );
-	}
+            pls.adv( 0 );
+            pls.vpor( 0.0, 1.0, 0.0, 1.0 );
+            spiro( params[i], fill );
+        }
 
         pls.end();
     }
@@ -183,10 +183,10 @@ class x27 {
 
         pls.col0( 1 );
 
-	if ( fill )
-	    pls.fill( xcoord, ycoord );
-	else
-	    pls.line( xcoord, ycoord );
+        if ( fill )
+            pls.fill( xcoord, ycoord );
+        else
+            pls.line( xcoord, ycoord );
     }
 }
 
