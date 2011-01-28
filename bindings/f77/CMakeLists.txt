@@ -21,14 +21,25 @@
 if(ENABLE_f77)
 
   ## Generate source files depending on type of PLFLT
-  ## Note: Sed will possibly fail on windows. Would this be better
+  ## Note: sed will possibly fail on windows. Would this be better
   ## done using the cmake configure_file option eventually?
+  ## Answer: no.  The configuration option requires @ placeholders
+  ## throughout the f77 source files which make them extremely hard
+  ## to understand/maintain.  Instead, we ask those Windows users who
+  ## want the single-precision library to install sed (from MSYS or
+  ## wherever).
   if(PL_DOUBLE)
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
       COMMAND ${CMAKE_COMMAND}
       -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
+      )
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
+      COMMAND ${CMAKE_COMMAND}
+      -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.fm4 ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.fm4
       )
   else(PL_DOUBLE)
     add_custom_command(
@@ -39,7 +50,44 @@ if(ENABLE_f77)
       ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed
       ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
       )
+
+    # For this case, use more extensive examples/f77 sed script since
+    # have double-precision floating-point constants to convert.
+    add_custom_command(
+      OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
+      COMMAND sed
+      -f ${CMAKE_SOURCE_DIR}/examples/f77/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.fm4 > ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
+      DEPENDS
+      ${CMAKE_SOURCE_DIR}/examples/f77/double2single.sed
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.fm4
+      )
   endif(PL_DOUBLE)
+
+  add_custom_target(build_plplot_parameters_h ALL
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
+    )
+
+# I have found that there is no way to get the proper file dependency
+# between the generated
+# ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h and examples/f77/x??f
+# builds.  For example, if you change plplot_parameters.fm4,
+# plplot_parameters.h gets rebuilt, BUT x??f does not!  This possible
+# CMake bug has been brought up on the cmake mailing list just now
+# (2011-01-28) so a fix may be in the future.  GENERATED makes no
+# diffence to this issue so comment that out below.
+#  set_source_files_properties(
+#    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
+#    PROPERTIES GENERATED ON
+#    )
+
+  install(
+    FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
+    DESTINATION ${F77_INCLUDE_DIR}
+    )
+
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     PROPERTIES GENERATED ON)
 
@@ -78,20 +126,20 @@ if(ENABLE_f77)
   ## Build C part of F77 bindings
 
   # Add (Unix) custom target to check that f77 version of
-  # plplot_parameters.h is up to date.
+  # plplot_parameters.fm4 is up to date.
   add_custom_target(
     check_f77_parameters
     COMMAND ${CMAKE_COMMAND} -E remove -f 
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.fm4_compare
     COMMAND
     sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed < 
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.fm4_compare
     COMMAND
-    ${CMAKE_COMMAND} -E echo Check that f77 version of plplot_parameters.h is up to date.
+    ${CMAKE_COMMAND} -E echo Check that f77 version of plplot_parameters.fm4 is up to date.
     COMMAND
-    cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.h
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
+    cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.fm4
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.fm4_compare
     )
 
   set(plplotf77c${LIB_TAG}_LIB_SRCS
@@ -255,11 +303,5 @@ if(ENABLE_f77)
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
-
-  install(
-    FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.h
-    DESTINATION ${F77_INCLUDE_DIR}
-    )
 
 endif(ENABLE_f77)

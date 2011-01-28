@@ -128,7 +128,7 @@ if(BUILD_TEST)
   if(CORE_BUILD)
     include_directories(
       ${CMAKE_SOURCE_DIR}/include
-      ${CMAKE_SOURCE_DIR}/bindings/f77
+      ${CMAKE_BINARY_DIR}/bindings/f77
       ${CMAKE_BINARY_DIR}/include
       )
     set(f77_directory ${CMAKE_CURRENT_BINARY_DIR})
@@ -149,6 +149,7 @@ if(BUILD_TEST)
     else(STATIC_OPTS)
       target_link_libraries(x${STRING_INDEX}f plplotf77${LIB_TAG})
     endif(STATIC_OPTS)
+    add_dependencies(x${STRING_INDEX}f build_plplot_parameters_h)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f77 x${STRING_INDEX}f)
   endforeach(STRING_INDEX ${f77_STRING_INDICES})
 endif(BUILD_TEST)
