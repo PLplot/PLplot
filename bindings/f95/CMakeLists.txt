@@ -109,7 +109,8 @@ if(ENABLE_f95)
   # include those files in the SRCS list or do anything special with
   # their dependencies.
 
-  # Add (Unix) custom target to check that plplot_oct_def is up to date.
+  # Add (Unix) custom target to check that f95 version of
+  # plplot_parameters.h is up to date.
   add_custom_target(
     check_f95_parameters
     COMMAND ${CMAKE_COMMAND} -E remove -f 
@@ -119,7 +120,7 @@ if(ENABLE_f95)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
-    ${CMAKE_COMMAND} -E echo Check that f95 version of plplot_parameters is up to date.
+    ${CMAKE_COMMAND} -E echo Check that f95 version of plplot_parameters.h is up to date.
     COMMAND
     cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.h
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
