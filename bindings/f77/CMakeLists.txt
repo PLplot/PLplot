@@ -76,6 +76,24 @@ if(ENABLE_f77)
     )
 
   ## Build C part of F77 bindings
+
+  # Add (Unix) custom target to check that f77 version of
+  # plplot_parameters.h is up to date.
+  add_custom_target(
+    check_f77_parameters
+    COMMAND ${CMAKE_COMMAND} -E remove -f 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
+    COMMAND
+    sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed < 
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
+    COMMAND
+    ${CMAKE_COMMAND} -E echo Check that f77 version of plplot_parameters.h is up to date.
+    COMMAND
+    cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.h
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
+    )
+
   set(plplotf77c${LIB_TAG}_LIB_SRCS
     sc3d.c
     sccont.c
