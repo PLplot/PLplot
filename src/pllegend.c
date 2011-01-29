@@ -815,7 +815,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 //!
 
 void
-draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
+draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
 {
     // Save drawing color
     PLINT col0_save = plsc->icol0;
@@ -842,12 +842,12 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
 
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
-        if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT )
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             // Draw the cap on the bottom
-            if ( opt_position & PL_POSITION_LEFT )
+            if ( position & PL_POSITION_LEFT )
                 xs[0] = x;
-            else if ( opt_position & PL_POSITION_RIGHT )
+            else if ( position & PL_POSITION_RIGHT )
                 xs[0] = 1.0 - x - width;
             ys[0] = y;
             xs[2] = xs[0] + width;
@@ -857,13 +857,13 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
 
             plfill( 3, xs, ys );
         }
-        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
+        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
             // Draw the cap on the left
             xs[0] = x;
-            if ( opt_position & PL_POSITION_TOP )
+            if ( position & PL_POSITION_TOP )
                 ys[0] = 1.0 - y - width;
-            else if ( opt_position & PL_POSITION_BOTTOM )
+            else if ( position & PL_POSITION_BOTTOM )
                 ys[0] = y;
             xs[2] = xs[0];
             ys[2] = ys[0] + width;
@@ -875,12 +875,12 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
     }
     else if ( opt & PL_COLORBAR_CAP_HIGH )
     {
-        if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT )
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             // Draw the cap on the top
-            if ( opt_position & PL_POSITION_LEFT )
+            if ( position & PL_POSITION_LEFT )
                 xs[0] = x;
-            else if ( opt_position & PL_POSITION_RIGHT )
+            else if ( position & PL_POSITION_RIGHT )
                 xs[0] = 1.0 - x - width;
             ys[0] = y + length;
             xs[2] = xs[0] + width;
@@ -890,13 +890,13 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
 
             plfill( 3, xs, ys );
         }
-        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
+        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
             // Draw the cap on the right
             xs[0] = x + length;
-            if ( opt_position & PL_POSITION_TOP )
+            if ( position & PL_POSITION_TOP )
                 ys[0] = 1.0 - y - width;
-            else if ( opt_position & PL_POSITION_BOTTOM )
+            else if ( position & PL_POSITION_BOTTOM )
                 ys[0] = y;
             xs[2] = xs[0];
             ys[2] = ys[0] + width;
@@ -921,8 +921,8 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
 //--------------------------------------------------------------------------
 //! Plot color bar for image, shade or gradient plots.
 //!
+//! @param position TODO
 //! @param opt TODO
-//! @param opt_position TODO
 //! @param x TODO
 //! @param y TODO
 //! @param length TODO
@@ -939,7 +939,7 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
 //!
 
 void
-c_plcolorbar( PLINT opt, PLINT opt_position,
+c_plcolorbar( PLINT position, PLINT opt,
               PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
@@ -979,7 +979,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     PLFLT vx_min, vx_max, vy_min, vy_max;
     PLFLT wx_min, wx_max, wy_min, wy_max;
     // Build the proper viewport and window dimensions
-    if ( opt_position & PL_POSITION_LEFT )
+    if ( position & PL_POSITION_LEFT )
     {
         vx_min = x;
         vy_min = y;
@@ -990,7 +990,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         wx_max = 1.0;
         wy_max = max_value;
     }
-    else if ( opt_position & PL_POSITION_RIGHT )
+    else if ( position & PL_POSITION_RIGHT )
     {
         vx_min = 1.0 - x - width;
         vy_min = y;
@@ -1001,7 +1001,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         wx_max = 1.0;
         wy_max = max_value;
     }
-    else if ( opt_position & PL_POSITION_TOP )
+    else if ( position & PL_POSITION_TOP )
     {
         vx_min = x;
         vy_min = 1.0 - y - width;
@@ -1012,7 +1012,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         wx_max = max_value;
         wy_max = 1.0;
     }
-    else if ( opt_position & PL_POSITION_BOTTOM )
+    else if ( position & PL_POSITION_BOTTOM )
     {
         vx_min = x;
         vy_min = y;
@@ -1051,7 +1051,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
             // TODO: Determine a better way to specify the steps here?
             n_steps   = plsc->ncol1;
             step_size = ( max_value - min_value ) / (PLFLT) n_steps;
-            if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT )
+            if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
             {
                 ni = 2;
                 nj = n_steps;
@@ -1064,7 +1064,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
                     }
                 }
             }
-            else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
+            else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
             {
                 ni = n_steps;
                 nj = 2;
@@ -1087,7 +1087,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         {
             n_steps = n_colors;
             // Use the provided values in this case.
-            if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT )
+            if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
             {
                 ni = 2;
                 nj = n_steps;
@@ -1100,7 +1100,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
                     }
                 }
             }
-            else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
+            else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
             {
                 ni = n_steps;
                 nj = 2;
@@ -1146,7 +1146,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
             }
         }
         // Use the provided values.
-        if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT )
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             grid.xg = grid_axis;
             grid.yg = values_ext;
@@ -1163,7 +1163,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
                 }
             }
         }
-        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
+        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
             grid.xg = values_ext;
             grid.yg = grid_axis;
@@ -1203,11 +1203,11 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         xs[3] = wx_min;
         ys[3] = wy_max;
         PLFLT angle;
-        if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT )
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             angle = 90.0;
         }
-        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
+        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
             angle = 0.0;
         }
@@ -1230,29 +1230,29 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     {
         // Add an extra offset for the label so it does not bump in to the
         // cap.
-        if ( ( ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT ) &&
+        if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
                opt & PL_COLORBAR_LABEL_LOWER ) ||
-             ( ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM ) &&
+             ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
                opt & PL_COLORBAR_LABEL_LEFT ) )
         {
             label_offset += 2.5;
         }
         // Draw a filled triangle (cap/arrow) at the low end of the scale
-        draw_cap( opt, opt_position, x, y, length, width, 0.0 );
+        draw_cap( position, opt, x, y, length, width, 0.0 );
     }
     else if ( opt & PL_COLORBAR_CAP_HIGH )
     {
         // Add an extra offset for the label so it does not bump in to the
         // cap.
-        if ( ( ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT ) &&
+        if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
                opt & PL_COLORBAR_LABEL_UPPER ) ||
-             ( ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM ) &&
+             ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
                opt & PL_COLORBAR_LABEL_RIGHT ) )
         {
             label_offset += 2.5;
         }
         // Draw a filled triangle (cap/arrow) at the high end of the scale
-        draw_cap( opt, opt_position, x, y, length, width, 1.0 );
+        draw_cap( position, opt, x, y, length, width, 1.0 );
     }
 
     // Smaller text
@@ -1272,7 +1272,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     char perp;
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
-        if ( opt_position & PL_POSITION_RIGHT || opt_position & PL_POSITION_LEFT )
+        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
             label_offset += 4.0;
             perp          = '\0';
@@ -1287,7 +1287,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     }
     else if ( opt & PL_COLORBAR_LABEL_RIGHT )
     {
-        if ( opt_position & PL_POSITION_RIGHT || opt_position & PL_POSITION_LEFT )
+        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
             label_offset += 4.0;
             perp          = '\0';
@@ -1302,7 +1302,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     }
     else if ( opt & PL_COLORBAR_LABEL_UPPER )
     {
-        if ( opt_position & PL_POSITION_RIGHT || opt_position & PL_POSITION_LEFT )
+        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
             label_offset += 1.5;
             perp          = 'v';
@@ -1317,7 +1317,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     }
     else if ( opt & PL_COLORBAR_LABEL_LOWER )
     {
-        if ( opt_position & PL_POSITION_RIGHT || opt_position & PL_POSITION_LEFT )
+        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
             label_offset += 1.5;
             perp          = 'v';
@@ -1337,22 +1337,22 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     // along an axis.
     if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
     {
-        if ( opt_position & PL_POSITION_LEFT )
+        if ( position & PL_POSITION_LEFT )
         {
             snprintf( opt_string, max_opts, "nt%s", axis_opts );
             label_box_custom( "", 0, NULL, opt_string, n_colors, values );
         }
-        else if ( opt_position & PL_POSITION_RIGHT )
+        else if ( position & PL_POSITION_RIGHT )
         {
             snprintf( opt_string, max_opts, "mt%s", axis_opts );
             label_box_custom( "", 0, NULL, opt_string, n_colors, values );
         }
-        else if ( opt_position & PL_POSITION_TOP )
+        else if ( position & PL_POSITION_TOP )
         {
             snprintf( opt_string, max_opts, "mt%s", axis_opts );
             label_box_custom( opt_string, n_colors, values, "", 0, NULL );
         }
-        else if ( opt_position & PL_POSITION_BOTTOM )
+        else if ( position & PL_POSITION_BOTTOM )
         {
             snprintf( opt_string, max_opts, "nt%s", axis_opts );
             label_box_custom( opt_string, n_colors, values, "", 0, NULL );
@@ -1360,33 +1360,33 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     }
     else
     {
-        if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_BOTTOM )
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_BOTTOM )
         {
             tick_string = "n";
         }
-        else if ( opt_position & PL_POSITION_RIGHT || opt_position & PL_POSITION_TOP )
+        else if ( position & PL_POSITION_RIGHT || position & PL_POSITION_TOP )
         {
             tick_string = "m";
         }
     }
 
     // Draw the boxes, etc.
-    if ( opt_position & PL_POSITION_LEFT )
+    if ( position & PL_POSITION_LEFT )
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( "bc", ticks, sub_ticks, opt_string, ticks, sub_ticks );
     }
-    else if ( opt_position & PL_POSITION_RIGHT )
+    else if ( position & PL_POSITION_RIGHT )
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( "bc", 0.0, 0, opt_string, ticks, sub_ticks );
     }
-    else if ( opt_position & PL_POSITION_TOP )
+    else if ( position & PL_POSITION_TOP )
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
     }
-    else if ( opt_position & PL_POSITION_BOTTOM )
+    else if ( position & PL_POSITION_BOTTOM )
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );

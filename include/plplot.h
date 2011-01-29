@@ -1260,7 +1260,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
 // Routine for drawing continous colour legends
 PLDLLIMPEXP void
-c_plcolorbar( PLINT opt, PLINT opt_position,
+c_plcolorbar( PLINT position, PLINT opt,
               PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
