@@ -758,15 +758,15 @@ int translate_position_option( int position_option )
     int translated_option;
     switch ( position_option )
     {
-        case 0: translated_option = PL_POSITION_LEFT; break;
-        case 1: translated_option = PL_POSITION_RIGHT; break;
-        case 2: translated_option = PL_POSITION_UPPER; break;
-        case 3: translated_option = PL_POSITION_LOWER; break;
-        case 4: translated_option = PL_POSITION_INSIDE; break;
-        case 5: translated_option = PL_POSITION_OUTSIDE; break;
-        case 6: translated_option = PL_POSITION_VIEWPORT; break;
-        case 7: translated_option = PL_POSITION_SUBPAGE; break;
-        default: translated_option = -1;
+    case 0: translated_option  = PL_POSITION_LEFT; break;
+    case 1: translated_option  = PL_POSITION_RIGHT; break;
+    case 2: translated_option  = PL_POSITION_UPPER; break;
+    case 3: translated_option  = PL_POSITION_LOWER; break;
+    case 4: translated_option  = PL_POSITION_INSIDE; break;
+    case 5: translated_option  = PL_POSITION_OUTSIDE; break;
+    case 6: translated_option  = PL_POSITION_VIEWPORT; break;
+    case 7: translated_option  = PL_POSITION_SUBPAGE; break;
+    default: translated_option = -1;
     }
     return translated_option;
 }
@@ -820,7 +820,7 @@ value ml_pllegend( value position, value opt, value x, value y, value plot_width
     INIT_STRING_ARRAY( symbols )
 
     // Translate the legend configuration options
-    c_opt = lor_ml_list( opt, translate_legend_option );
+    c_opt      = lor_ml_list( opt, translate_legend_option );
     c_position = lor_ml_list( position, translate_position_option );
 
     for ( i = 0; i < n_legend; i++ )
