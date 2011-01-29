@@ -69,11 +69,11 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
 
     PLFLT colors[n];
     int   i;
-    PLFLT color_step;
+    PLFLT color_step, color_offset;
     color_step = 1.0 / (PLFLT) ( n - 1 );
     for ( i = 0; i < n; i++ )
     {
-        colors[i] = 0.0 + color_step * (PLFLT) ( i );
+        colors[i] = color_offset + color_step * (PLFLT) ( i );
     }
 
     PLINT opt;
@@ -147,11 +147,23 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
 
     PLFLT colors[n];
     int   i;
-    PLFLT color_step;
+    PLFLT color_step, color_offset;
     color_step = 1.0 / (PLFLT) ( n - 1 );
     for ( i = 0; i < n; i++ )
     {
-        colors[i] = 0.0 + color_step * (PLFLT) ( i );
+        if ( i == 0 )
+        {
+            color_offset = 0.01;
+        }
+        else if ( i == n - 1 )
+        {
+            color_offset = -0.01;
+        }
+        else
+        {
+            color_offset = 0.0;
+        }
+        colors[i] = color_offset + color_step * (PLFLT) ( i );
     }
 
     PLINT opt;
