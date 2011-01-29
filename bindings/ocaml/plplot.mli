@@ -570,10 +570,6 @@ and plplot_legend_enum =
   | PL_LEGEND_ROW_MAJOR
 and plplot_legend_opt = plplot_legend_enum list
 and plplot_colorbar_enum =
-  | PL_COLORBAR_LEFT
-  | PL_COLORBAR_RIGHT
-  | PL_COLORBAR_UPPER
-  | PL_COLORBAR_LOWER
   | PL_COLORBAR_LABEL_LEFT
   | PL_COLORBAR_LABEL_RIGHT
   | PL_COLORBAR_LABEL_UPPER
