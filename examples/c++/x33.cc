@@ -56,21 +56,21 @@ private:
 };
 
 const PLINT x33::position_options[16] = {
-    PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
-    PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
+    PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
+    PL_POSITION_TOP | PL_POSITION_OUTSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
     PL_POSITION_RIGHT | PL_POSITION_OUTSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
-    PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
-    PL_POSITION_LEFT | PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
+    PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
+    PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
     PL_POSITION_LEFT | PL_POSITION_OUTSIDE,
-    PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_INSIDE,
-    PL_POSITION_UPPER | PL_POSITION_INSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_INSIDE,
+    PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE,
+    PL_POSITION_TOP | PL_POSITION_INSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE,
     PL_POSITION_RIGHT | PL_POSITION_INSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_LOWER | PL_POSITION_INSIDE,
-    PL_POSITION_LOWER | PL_POSITION_INSIDE,
-    PL_POSITION_LEFT | PL_POSITION_LOWER | PL_POSITION_INSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
+    PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
+    PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
     PL_POSITION_LEFT | PL_POSITION_INSIDE
 };
 
@@ -347,7 +347,7 @@ x33::x33( int argc, const char **argv )
     pls->sfont( PL_FCI_MONO, -1, -1 );
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    position = PL_POSITION_UPPER | PL_POSITION_OUTSIDE;
+    position = PL_POSITION_TOP | PL_POSITION_OUTSIDE;
     opt      = opt_base;
     x        = 0.;
     y        = 0.1;
@@ -361,7 +361,7 @@ x33::x33( int argc, const char **argv )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_LOWER | PL_POSITION_OUTSIDE;
+    position = PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE;
     opt      = opt_base;
     x        = 0.;
     y        = 0.1;
@@ -403,7 +403,7 @@ x33::x33( int argc, const char **argv )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
+    position = PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE;
     opt      = opt_base;
     x        = 0.;
     y        = 0.;
@@ -417,7 +417,7 @@ x33::x33( int argc, const char **argv )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
+    position = PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE;
     opt      = opt_base | PL_LEGEND_ROW_MAJOR;
     x        = 0.;
     y        = 0.;
@@ -431,7 +431,7 @@ x33::x33( int argc, const char **argv )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_LOWER | PL_POSITION_INSIDE;
+    position = PL_POSITION_BOTTOM | PL_POSITION_INSIDE;
     opt      = opt_base | PL_LEGEND_ROW_MAJOR;
     x        = 0.;
     y        = 0.;
@@ -456,7 +456,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.1;
     nturn    = 4;
     nlegend  = 0;
-    position = PL_POSITION_UPPER | PL_POSITION_LEFT;
+    position = PL_POSITION_TOP | PL_POSITION_LEFT;
     opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX;
     opt      = opt_base;
     for ( i = 0; i < 9; i++ )
@@ -499,7 +499,7 @@ x33::x33( int argc, const char **argv )
 
         if ( i == nturn )
         {
-            position = PL_POSITION_UPPER | PL_POSITION_RIGHT;
+            position = PL_POSITION_TOP | PL_POSITION_RIGHT;
             opt      = opt_base;
             x        = 1. - x;
             y       += legend_height;
@@ -528,7 +528,7 @@ x33::x33( int argc, const char **argv )
     nlegend = 5;
     // Only specify legend data that are required according to the
     // value of opt_array for that entry.
-    position = PL_POSITION_LEFT | PL_POSITION_UPPER;
+    position = PL_POSITION_LEFT | PL_POSITION_TOP;
     opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_TEXT_LEFT;
 
     // Set up None, Box, Line, Symbol, and Line & Symbol legend entries.

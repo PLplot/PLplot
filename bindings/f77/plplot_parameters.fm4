@@ -84,10 +84,10 @@
       parameter (PL_POSITION_LEFT = 1)
       integer*4 PL_POSITION_RIGHT 
       parameter (PL_POSITION_RIGHT = 2)
-      integer*4 PL_POSITION_UPPER 
-      parameter (PL_POSITION_UPPER = 4)
-      integer*4 PL_POSITION_LOWER 
-      parameter (PL_POSITION_LOWER = 8)
+      integer*4 PL_POSITION_TOP 
+      parameter (PL_POSITION_TOP = 4)
+      integer*4 PL_POSITION_BOTTOM 
+      parameter (PL_POSITION_BOTTOM = 8)
       integer*4 PL_POSITION_INSIDE 
       parameter (PL_POSITION_INSIDE = 16)
       integer*4 PL_POSITION_OUTSIDE 

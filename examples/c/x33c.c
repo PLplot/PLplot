@@ -33,21 +33,21 @@
 #include "plcdemos.h"
 
 static PLINT position_options[16] = {
-    PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
-    PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_OUTSIDE,
+    PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
+    PL_POSITION_TOP | PL_POSITION_OUTSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
     PL_POSITION_RIGHT | PL_POSITION_OUTSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
-    PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
-    PL_POSITION_LEFT | PL_POSITION_LOWER | PL_POSITION_OUTSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
+    PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
+    PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
     PL_POSITION_LEFT | PL_POSITION_OUTSIDE,
-    PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_INSIDE,
-    PL_POSITION_UPPER | PL_POSITION_INSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_INSIDE,
+    PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE,
+    PL_POSITION_TOP | PL_POSITION_INSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE,
     PL_POSITION_RIGHT | PL_POSITION_INSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_LOWER | PL_POSITION_INSIDE,
-    PL_POSITION_LOWER | PL_POSITION_INSIDE,
-    PL_POSITION_LEFT | PL_POSITION_LOWER | PL_POSITION_INSIDE,
+    PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
+    PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
+    PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
     PL_POSITION_LEFT | PL_POSITION_INSIDE
 };
 
@@ -77,7 +77,7 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
     }
 
     PLINT opt, opt_position;
-    opt = bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_HIGH;
+    opt          = bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_HIGH;
     opt_position = PL_POSITION_LEFT;
 
     const char *axis_opts_1, *axis_opts_2;
@@ -106,7 +106,7 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         axis_opts_1, "Test label - Left, High Cap",
         n, colors, values );
 
-    opt = bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_LOW;
+    opt          = bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_LOW;
     opt_position = PL_POSITION_RIGHT;
 
     plcolorbar( opt, opt_position, 0.1, 0.4, 0.5, 0.1,
@@ -115,8 +115,8 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         axis_opts_1, "Test label - Right, Low Cap",
         n, colors, values );
 
-    opt = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_HIGH;
-    opt_position = PL_POSITION_UPPER;
+    opt          = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_HIGH;
+    opt_position = PL_POSITION_TOP;
 
     plcolorbar( opt, opt_position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
@@ -124,8 +124,8 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         axis_opts_2, "Test label - Upper, High Cap",
         n, colors, values );
 
-    opt = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_LOW;
-    opt_position = PL_POSITION_LOWER;
+    opt          = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_LOW;
+    opt_position = PL_POSITION_BOTTOM;
 
     plcolorbar( opt, opt_position, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
@@ -167,7 +167,7 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
     }
 
     PLINT opt, opt_position;
-    opt = bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_LOW;
+    opt          = bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_LOW;
     opt_position = PL_POSITION_LEFT;
 
     const char *axis_opts_1, *axis_opts_2;
@@ -196,7 +196,7 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         axis_opts_1, "Test label - Left, Low Cap",
         n, colors, values );
 
-    opt = bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_HIGH;
+    opt          = bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_HIGH;
     opt_position = PL_POSITION_RIGHT;
 
     plcolorbar( opt, opt_position, 0.1, 0.4, 0.5, 0.1,
@@ -205,8 +205,8 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         axis_opts_1, "Test label - Right, High Cap",
         n, colors, values );
 
-    opt = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_LOW;
-    opt_position = PL_POSITION_UPPER;
+    opt          = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_LOW;
+    opt_position = PL_POSITION_TOP;
 
     plcolorbar( opt, opt_position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
@@ -214,8 +214,8 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         axis_opts_2, "Test label - Upper, Low Cap",
         n, colors, values );
 
-    opt = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_HIGH;
-    opt_position = PL_POSITION_LOWER;
+    opt          = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_HIGH;
+    opt_position = PL_POSITION_BOTTOM;
 
     plcolorbar( opt, opt_position, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
@@ -343,7 +343,7 @@ main( int argc, const char *argv[] )
     plsfont( PL_FCI_MONO, -1, -1 );
     plscol0a( 15, 32, 32, 32, 0.70 );
 
-    position = PL_POSITION_UPPER | PL_POSITION_OUTSIDE;
+    position = PL_POSITION_TOP | PL_POSITION_OUTSIDE;
     opt      = opt_base;
     x        = 0.;
     y        = 0.1;
@@ -357,7 +357,7 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_LOWER | PL_POSITION_OUTSIDE;
+    position = PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE;
     opt      = opt_base;
     x        = 0.;
     y        = 0.1;
@@ -399,7 +399,7 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_LEFT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
+    position = PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE;
     opt      = opt_base;
     x        = 0.;
     y        = 0.;
@@ -413,7 +413,7 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_RIGHT | PL_POSITION_UPPER | PL_POSITION_INSIDE;
+    position = PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE;
     opt      = opt_base | PL_LEGEND_ROW_MAJOR;
     x        = 0.;
     y        = 0.;
@@ -427,7 +427,7 @@ main( int argc, const char *argv[] )
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
-    position = PL_POSITION_LOWER | PL_POSITION_INSIDE;
+    position = PL_POSITION_BOTTOM | PL_POSITION_INSIDE;
     opt      = opt_base | PL_LEGEND_ROW_MAJOR;
     x        = 0.;
     y        = 0.;
@@ -452,7 +452,7 @@ main( int argc, const char *argv[] )
     y        = 0.1;
     nturn    = 4;
     nlegend  = 0;
-    position = PL_POSITION_UPPER | PL_POSITION_LEFT;
+    position = PL_POSITION_TOP | PL_POSITION_LEFT;
     opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX;
     opt      = opt_base;
     for ( i = 0; i < 9; i++ )
@@ -495,7 +495,7 @@ main( int argc, const char *argv[] )
 
         if ( i == nturn )
         {
-            position = PL_POSITION_UPPER | PL_POSITION_RIGHT;
+            position = PL_POSITION_TOP | PL_POSITION_RIGHT;
             opt      = opt_base;
             x        = 1. - x;
             y       += legend_height;
@@ -524,7 +524,7 @@ main( int argc, const char *argv[] )
     nlegend = 5;
     // Only specify legend data that are required according to the
     // value of opt_array for that entry.
-    position = PL_POSITION_LEFT | PL_POSITION_UPPER;
+    position = PL_POSITION_LEFT | PL_POSITION_TOP;
     opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_TEXT_LEFT;
 
     // Set up None, Box, Line, Symbol, and Line & Symbol legend entries.

@@ -41,8 +41,8 @@
       integer, parameter :: PL_HIST_NOEMPTY = 16 
       integer, parameter :: PL_POSITION_LEFT = 1 
       integer, parameter :: PL_POSITION_RIGHT = 2 
-      integer, parameter :: PL_POSITION_UPPER = 4 
-      integer, parameter :: PL_POSITION_LOWER = 8 
+      integer, parameter :: PL_POSITION_TOP = 4 
+      integer, parameter :: PL_POSITION_BOTTOM = 8 
       integer, parameter :: PL_POSITION_INSIDE = 16 
       integer, parameter :: PL_POSITION_OUTSIDE = 32 
       integer, parameter :: PL_POSITION_VIEWPORT = 64 

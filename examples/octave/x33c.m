@@ -31,21 +31,21 @@
 
 global position_options special_symbols
 position_options = [
-		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE));
-                    bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE);
-                    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE));
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_TOP, PL_POSITION_OUTSIDE));
+                    bitor(PL_POSITION_TOP, PL_POSITION_OUTSIDE);
+                    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_TOP, PL_POSITION_OUTSIDE));
                     bitor(PL_POSITION_RIGHT, PL_POSITION_OUTSIDE);
-		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE));
-		    bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE);
-		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE));
+		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_BOTTOM, PL_POSITION_OUTSIDE));
+		    bitor(PL_POSITION_BOTTOM, PL_POSITION_OUTSIDE);
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_BOTTOM, PL_POSITION_OUTSIDE));
 		    bitor(PL_POSITION_LEFT, PL_POSITION_OUTSIDE);
-		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
-		    bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE);
-		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_TOP, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_TOP, PL_POSITION_INSIDE);
+		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_TOP, PL_POSITION_INSIDE));
 		    bitor(PL_POSITION_RIGHT, PL_POSITION_INSIDE);
-		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE));
-		    bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE);
-		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_BOTTOM, PL_POSITION_INSIDE));
+		    bitor(PL_POSITION_BOTTOM, PL_POSITION_INSIDE);
+		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_BOTTOM, PL_POSITION_INSIDE));
 		    bitor(PL_POSITION_LEFT, PL_POSITION_INSIDE)
 		    ];
 
@@ -177,7 +177,7 @@ function ix33c()
   ## Initialize plplot
   ## set global attributes for PLplot variables used in this function.
   global PL_FCI_SANS PL_FCI_MONO PL_LEGEND_NONE PL_LEGEND_COLOR_BOX PL_LEGEND_LINE PL_LEGEND_SYMBOL PL_LEGEND_TEXT_LEFT PL_LEGEND_BACKGROUND PL_LEGEND_BOUNDING_BOX PL_LEGEND_ROW_MAJOR 
-  global PL_POSITION_LEFT PL_POSITION_RIGHT PL_POSITION_UPPER PL_POSITION_LOWER PL_POSITION_INSIDE PL_POSITION_OUTSIDE 
+  global PL_POSITION_LEFT PL_POSITION_RIGHT PL_POSITION_TOP PL_POSITION_BOTTOM PL_POSITION_INSIDE PL_POSITION_OUTSIDE 
   global PL_COLORBAR_IMAGE PL_COLORBAR_SHADE PL_COLORBAR_GRADIENT PL_COLORBAR_SHADE_LABEL
   global position_options special_symbols
   plinit();
@@ -322,7 +322,7 @@ function ix33c()
   plsfont(PL_FCI_MONO, -1, -1);
   plscol0a( 15, 32, 32, 32, 0.70 );
 
-  position = bitor(PL_POSITION_UPPER, PL_POSITION_OUTSIDE);
+  position = bitor(PL_POSITION_TOP, PL_POSITION_OUTSIDE);
   opt = opt_base;
   x = 0.;
   y = 0.1;
@@ -336,7 +336,7 @@ function ix33c()
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  position = bitor(PL_POSITION_LOWER, PL_POSITION_OUTSIDE);
+  position = bitor(PL_POSITION_BOTTOM, PL_POSITION_OUTSIDE);
   opt = opt_base;
   x = 0.;
   y = 0.1;
@@ -379,7 +379,7 @@ function ix33c()
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  position = bitor(PL_POSITION_LEFT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
+  position = bitor(PL_POSITION_LEFT, bitor(PL_POSITION_TOP, PL_POSITION_INSIDE));
   opt = opt_base;
   x = 0.;
   y = 0.;
@@ -393,7 +393,7 @@ function ix33c()
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  position = bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_UPPER, PL_POSITION_INSIDE));
+  position = bitor(PL_POSITION_RIGHT, bitor(PL_POSITION_TOP, PL_POSITION_INSIDE));
   opt = bitor(opt_base, PL_LEGEND_ROW_MAJOR);
   x = 0.;
   y = 0.;
@@ -407,7 +407,7 @@ function ix33c()
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-  position = bitor(PL_POSITION_LOWER, PL_POSITION_INSIDE);
+  position = bitor(PL_POSITION_BOTTOM, PL_POSITION_INSIDE);
   opt = bitor(opt_base, PL_LEGEND_ROW_MAJOR);
   x = 0.;
   y = 0.;
@@ -432,7 +432,7 @@ function ix33c()
   y = 0.1;
   nturn = 4;
   nlegend = 0;
-  position = bitor(PL_POSITION_LEFT, PL_POSITION_UPPER);
+  position = bitor(PL_POSITION_LEFT, PL_POSITION_TOP);
   opt_base = bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX);
   opt = opt_base;
   for i=0:8
@@ -511,7 +511,7 @@ function ix33c()
                  line_colors, line_styles, line_widths,
                  symbol_colors, symbol_scales, symbol_numbers, symbols );
     if(i == nturn)
-      position = bitor(PL_POSITION_RIGHT, PL_POSITION_UPPER);
+      position = bitor(PL_POSITION_RIGHT, PL_POSITION_TOP);
       opt = opt_base;
       x = 1. - x;
       y += legend_height;
@@ -576,7 +576,7 @@ function ix33c()
 
   ## Only specify legend data that are required according to the
   ## value of opt_array for that entry.
-  position = bitor(PL_POSITION_LEFT, PL_POSITION_UPPER);
+  position = bitor(PL_POSITION_LEFT, PL_POSITION_TOP);
   opt_base = bitor(PL_LEGEND_BACKGROUND, bitor(PL_LEGEND_BOUNDING_BOX, PL_LEGEND_TEXT_LEFT));
 
   ## Set up None, Box, Line, Symbol, and Line & Symbol legend entries.

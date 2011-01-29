@@ -34,8 +34,8 @@
 //!
 //! @param position Control variable containing valid combinations of the
 //! following control bits that specify the 16 standard positions of
-//! the legend: PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_UPPER,
-//! PL_POSITION_LOWER, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE.
+//! the legend: PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP,
+//! PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE.
 //! @param legend_width Total legend width in normalized viewport
 //! coordinates.
 //! @param legend_height Total legend height in normalized viewport
@@ -73,7 +73,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
     if ( position & PL_POSITION_RIGHT )
     {
         xorigin = 1.;
-        if ( position & PL_POSITION_UPPER )
+        if ( position & PL_POSITION_TOP )
         {
             yorigin = 1.;
             if ( position & PL_POSITION_INSIDE )
@@ -93,7 +93,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
                 plexit( "legend_position: internal logic error 1" );
             }
         }
-        else if ( !( position & PL_POSITION_UPPER ) && !( position & PL_POSITION_LOWER ) )
+        else if ( !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
         {
             yorigin = 0.5;
             ylegend = 0.5 * legend_height;
@@ -111,7 +111,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
                 plexit( "legend_position: internal logic error 2" );
             }
         }
-        else if ( position & PL_POSITION_LOWER )
+        else if ( position & PL_POSITION_BOTTOM )
         {
             yorigin = 0.;
             if ( position & PL_POSITION_INSIDE )
@@ -140,7 +140,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
     {
         xorigin = 0.5;
         xlegend = -0.5 * legend_width;
-        if ( position & PL_POSITION_UPPER )
+        if ( position & PL_POSITION_TOP )
         {
             yorigin = 1.;
             if ( position & PL_POSITION_INSIDE )
@@ -157,7 +157,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
                 plexit( "legend_position: internal logic error 5" );
             }
         }
-        else if ( position & PL_POSITION_LOWER )
+        else if ( position & PL_POSITION_BOTTOM )
         {
             yorigin = 0.;
             if ( position & PL_POSITION_INSIDE )
@@ -182,7 +182,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
     else if ( position & PL_POSITION_LEFT )
     {
         xorigin = 0.;
-        if ( position & PL_POSITION_UPPER )
+        if ( position & PL_POSITION_TOP )
         {
             yorigin = 1.;
             if ( position & PL_POSITION_INSIDE )
@@ -202,7 +202,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
                 plexit( "legend_position: internal logic error 8" );
             }
         }
-        else if ( !( position & PL_POSITION_UPPER ) && !( position & PL_POSITION_LOWER ) )
+        else if ( !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
         {
             yorigin = 0.5;
             ylegend = 0.5 * legend_height;
@@ -220,7 +220,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
                 plexit( "legend_position: internal logic error 9" );
             }
         }
-        else if ( position & PL_POSITION_LOWER )
+        else if ( position & PL_POSITION_BOTTOM )
         {
             yorigin = 0.;
             if ( position & PL_POSITION_INSIDE )
@@ -354,8 +354,8 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! on the nlegend and ncolum arguments).
 //! @param position This variable contains bits which control the
 //! overall position of the legend.  The combination of the
-//! PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_UPPER,
-//! PL_POSITION_LOWER, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE
+//! PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP,
+//! PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE
 //! position bits specifies one of the 16 possible standard positions
 //! (the 4 corners and 4 side centers for both the inside and outside
 //! cases) of the legend relative to the viewport.
@@ -520,9 +520,9 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // fprintf(stdout, "nrow, ncolumn = %d, %d\n", nrow, ncolumn);
 
     // Default position flags and sanity checks for position flags.
-    if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_UPPER ) && !( position & PL_POSITION_LOWER ) )
+    if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
     {
-        position = position | PL_POSITION_RIGHT | PL_POSITION_UPPER;
+        position = position | PL_POSITION_RIGHT | PL_POSITION_TOP;
     }
     else if ( ( position & PL_POSITION_RIGHT ) && ( position & PL_POSITION_LEFT ) )
     {
@@ -530,9 +530,9 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
         return;
     }
 
-    else if ( ( position & PL_POSITION_UPPER ) && ( position & PL_POSITION_LOWER ) )
+    else if ( ( position & PL_POSITION_TOP ) && ( position & PL_POSITION_BOTTOM ) )
     {
-        plabort( "pllegend: PL_POSITION_UPPER and PL_POSITION_LOWER cannot be simultaneously set." );
+        plabort( "pllegend: PL_POSITION_TOP and PL_POSITION_BOTTOM cannot be simultaneously set." );
         return;
     }
 
@@ -857,13 +857,13 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
 
             plfill( 3, xs, ys );
         }
-        else if ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER )
+        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
         {
             // Draw the cap on the left
             xs[0] = x;
-            if ( opt_position & PL_POSITION_UPPER )
+            if ( opt_position & PL_POSITION_TOP )
                 ys[0] = 1.0 - y - width;
-            else if ( opt_position & PL_POSITION_LOWER )
+            else if ( opt_position & PL_POSITION_BOTTOM )
                 ys[0] = y;
             xs[2] = xs[0];
             ys[2] = ys[0] + width;
@@ -890,13 +890,13 @@ draw_cap( PLINT opt, PLINT opt_position, PLFLT x, PLFLT y, PLFLT length, PLFLT w
 
             plfill( 3, xs, ys );
         }
-        else if ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER )
+        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
         {
             // Draw the cap on the right
             xs[0] = x + length;
-            if ( opt_position & PL_POSITION_UPPER )
+            if ( opt_position & PL_POSITION_TOP )
                 ys[0] = 1.0 - y - width;
-            else if ( opt_position & PL_POSITION_LOWER )
+            else if ( opt_position & PL_POSITION_BOTTOM )
                 ys[0] = y;
             xs[2] = xs[0];
             ys[2] = ys[0] + width;
@@ -1001,7 +1001,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         wx_max = 1.0;
         wy_max = max_value;
     }
-    else if ( opt_position & PL_POSITION_UPPER )
+    else if ( opt_position & PL_POSITION_TOP )
     {
         vx_min = x;
         vy_min = 1.0 - y - width;
@@ -1012,7 +1012,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         wx_max = max_value;
         wy_max = 1.0;
     }
-    else if ( opt_position & PL_POSITION_LOWER )
+    else if ( opt_position & PL_POSITION_BOTTOM )
     {
         vx_min = x;
         vy_min = y;
@@ -1064,7 +1064,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
                     }
                 }
             }
-            else if ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER )
+            else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
             {
                 ni = n_steps;
                 nj = 2;
@@ -1100,7 +1100,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
                     }
                 }
             }
-            else if ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER )
+            else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
             {
                 ni = n_steps;
                 nj = 2;
@@ -1129,16 +1129,16 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         PLcGrid grid;
         PLFLT   grid_axis[2] = { 0.0, 1.0 };
         n_steps = n_colors + 2;
-        PLFLT values_ext[n_steps];
+        PLFLT   values_ext[n_steps];
         for ( i = 0; i < n_steps; i++ )
         {
             if ( i == 0 )
             {
-                values_ext[i] = min_value - (values[i + 1] - min_value) * 0.1;
+                values_ext[i] = min_value - ( values[i + 1] - min_value ) * 0.1;
             }
             else if ( i == n_steps - 1 )
             {
-                values_ext[i] = max_value + (max_value - values[i - 1]) * 0.1;
+                values_ext[i] = max_value + ( max_value - values[i - 1] ) * 0.1;
             }
             else
             {
@@ -1163,7 +1163,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
                 }
             }
         }
-        else if ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER )
+        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
         {
             grid.xg = values_ext;
             grid.yg = grid_axis;
@@ -1207,7 +1207,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         {
             angle = 90.0;
         }
-        else if ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER )
+        else if ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM )
         {
             angle = 0.0;
         }
@@ -1232,7 +1232,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         // cap.
         if ( ( ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT ) &&
                opt & PL_COLORBAR_LABEL_LOWER ) ||
-             ( ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER ) &&
+             ( ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM ) &&
                opt & PL_COLORBAR_LABEL_LEFT ) )
         {
             label_offset += 2.5;
@@ -1246,7 +1246,7 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         // cap.
         if ( ( ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_RIGHT ) &&
                opt & PL_COLORBAR_LABEL_UPPER ) ||
-             ( ( opt_position & PL_POSITION_UPPER || opt_position & PL_POSITION_LOWER ) &&
+             ( ( opt_position & PL_POSITION_TOP || opt_position & PL_POSITION_BOTTOM ) &&
                opt & PL_COLORBAR_LABEL_RIGHT ) )
         {
             label_offset += 2.5;
@@ -1347,12 +1347,12 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
             snprintf( opt_string, max_opts, "mt%s", axis_opts );
             label_box_custom( "", 0, NULL, opt_string, n_colors, values );
         }
-        else if ( opt_position & PL_POSITION_UPPER )
+        else if ( opt_position & PL_POSITION_TOP )
         {
             snprintf( opt_string, max_opts, "mt%s", axis_opts );
             label_box_custom( opt_string, n_colors, values, "", 0, NULL );
         }
-        else if ( opt_position & PL_POSITION_LOWER )
+        else if ( opt_position & PL_POSITION_BOTTOM )
         {
             snprintf( opt_string, max_opts, "nt%s", axis_opts );
             label_box_custom( opt_string, n_colors, values, "", 0, NULL );
@@ -1360,11 +1360,11 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
     }
     else
     {
-        if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_LOWER )
+        if ( opt_position & PL_POSITION_LEFT || opt_position & PL_POSITION_BOTTOM )
         {
             tick_string = "n";
         }
-        else if ( opt_position & PL_POSITION_RIGHT || opt_position & PL_POSITION_UPPER )
+        else if ( opt_position & PL_POSITION_RIGHT || opt_position & PL_POSITION_TOP )
         {
             tick_string = "m";
         }
@@ -1381,12 +1381,12 @@ c_plcolorbar( PLINT opt, PLINT opt_position,
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( "bc", 0.0, 0, opt_string, ticks, sub_ticks );
     }
-    else if ( opt_position & PL_POSITION_UPPER )
+    else if ( opt_position & PL_POSITION_TOP )
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
     }
-    else if ( opt_position & PL_POSITION_LOWER )
+    else if ( opt_position & PL_POSITION_BOTTOM )
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );

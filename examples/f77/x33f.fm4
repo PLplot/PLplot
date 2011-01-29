@@ -179,7 +179,7 @@ c     Use monotype fonts so that all legends are the same size.
       call plsfont( PL_FCI_MONO, -1, -1 )
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      position = PL_POSITION_UPPER + PL_POSITION_OUTSIDE
+      position = PL_POSITION_TOP + PL_POSITION_OUTSIDE
       opt     = opt_base
       x       = 0.d0
       y       = 0.1d0
@@ -193,7 +193,7 @@ c     Use monotype fonts so that all legends are the same size.
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-      position = PL_POSITION_LOWER + PL_POSITION_OUTSIDE
+      position = PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
       opt     = opt_base
       x       = 0.d0
       y       = 0.1d0
@@ -235,7 +235,7 @@ c     Use monotype fonts so that all legends are the same size.
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols )
 
-      position = PL_POSITION_LEFT + PL_POSITION_UPPER + PL_POSITION_INSIDE
+      position = PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_INSIDE
       opt     = opt_base
       x       = 0.d0
       y       = 0.d0
@@ -249,7 +249,7 @@ c     Use monotype fonts so that all legends are the same size.
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-      position = PL_POSITION_RIGHT + PL_POSITION_UPPER + PL_POSITION_INSIDE
+      position = PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_INSIDE
       opt     = opt_base + PL_LEGEND_ROW_MAJOR
       x       = 0.d0
       y       = 0.d0
@@ -264,7 +264,7 @@ c     Use monotype fonts so that all legends are the same size.
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
      &
 
-      position = PL_POSITION_LOWER + PL_POSITION_INSIDE
+      position = PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       opt     = opt_base + PL_LEGEND_ROW_MAJOR
       x       = 0.d0
       y       = 0.d0
@@ -290,7 +290,7 @@ c     Third page demonstrating legend alignment
       y        = 0.1d0
       nturn    = 4
       nlegend  = 0
-      position = PL_POSITION_UPPER + PL_POSITION_LEFT
+      position = PL_POSITION_TOP + PL_POSITION_LEFT
       opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
       opt      = opt_base + PL_LEGEND_LEFT
       do 140 i = 1,9
@@ -337,7 +337,7 @@ c         Use monotype fonts so that all legends are the same size.
      &        symbol_colors, symbol_scales, symbol_numbers, symbols )
 
           if ( i == nturn ) then
-              position = PL_POSITION_UPPER + PL_POSITION_RIGHT
+              position = PL_POSITION_TOP + PL_POSITION_RIGHT
               opt = opt_base
               x   = 1.d0 - x
               y   = y + legend_height
@@ -367,7 +367,7 @@ c       call plbox('bc', 0.0, 0, 'bc', 0.0d0, 0)
 c     Only specify legend data that are required according to the
 c     value of opt_array for that entry.
 
-      position = PL_POSITION_LEFT + PL_POSITION_UPPER
+      position = PL_POSITION_LEFT + PL_POSITION_TOP
       opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX + PL_LEGEND_TEXT_LEFT
 
 c     Set up None, Box, Line, Symbol, and Line & Symbol legend entries.

@@ -760,8 +760,8 @@ int translate_position_option( int position_option )
     {
     case 0: translated_option  = PL_POSITION_LEFT; break;
     case 1: translated_option  = PL_POSITION_RIGHT; break;
-    case 2: translated_option  = PL_POSITION_UPPER; break;
-    case 3: translated_option  = PL_POSITION_LOWER; break;
+    case 2: translated_option  = PL_POSITION_TOP; break;
+    case 3: translated_option  = PL_POSITION_BOTTOM; break;
     case 4: translated_option  = PL_POSITION_INSIDE; break;
     case 5: translated_option  = PL_POSITION_OUTSIDE; break;
     case 6: translated_option  = PL_POSITION_VIEWPORT; break;

@@ -98,8 +98,8 @@ typedef void*  PLPointer;
 //flags used for position argument of both pllegend and plcolorbar 
 #define PL_POSITION_LEFT             1
 #define PL_POSITION_RIGHT            2
-#define PL_POSITION_UPPER            4
-#define PL_POSITION_LOWER            8
+#define PL_POSITION_TOP            4
+#define PL_POSITION_BOTTOM            8
 #define PL_POSITION_INSIDE           16
 #define PL_POSITION_OUTSIDE          32
 #define PL_POSITION_VIEWPORT         64

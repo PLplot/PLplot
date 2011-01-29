@@ -552,8 +552,8 @@ and plplot_run_level = plplot_run_level_enum
 and plplot_position_enum =
     PL_POSITION_LEFT
   | PL_POSITION_RIGHT
-  | PL_POSITION_UPPER
-  | PL_POSITION_LOWER
+  | PL_POSITION_TOP
+  | PL_POSITION_BOTTOM
   | PL_POSITION_INSIDE
   | PL_POSITION_OUTSIDE
   | PL_POSITION_VIEWPORT

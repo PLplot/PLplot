@@ -61,8 +61,8 @@ typedef enum plplot_run_level_enum plplot_run_level;
 enum plplot_position_enum {
     PL_POSITION_LEFT = 1,
     PL_POSITION_RIGHT = 2,
-    PL_POSITION_UPPER = 4,
-    PL_POSITION_LOWER = 8,
+    PL_POSITION_TOP = 4,
+    PL_POSITION_BOTTOM = 8,
     PL_POSITION_INSIDE = 16,
     PL_POSITION_OUTSIDE = 32,
     PL_POSITION_VIEWPORT = 64,

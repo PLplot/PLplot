@@ -231,21 +231,21 @@ class x33 {
         double max_height, text_scale;
         int    position, opt_base, nrow, ncolumn;
         int[] position_options = {
-            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE,
-            PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE,
-            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE,
+            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_OUTSIDE,
+            PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_OUTSIDE,
+            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_OUTSIDE,
             PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_OUTSIDE,
-            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE,
-            PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE,
-            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE,
+            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_OUTSIDE,
+            PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_OUTSIDE,
+            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_OUTSIDE,
             PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_OUTSIDE,
-            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE,
-            PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE,
-            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE,
+            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_INSIDE,
+            PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_INSIDE,
+            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_INSIDE,
             PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_INSIDE,
-            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE,
-            PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE,
-            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE,
+            PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_INSIDE,
+            PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_INSIDE,
+            PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_INSIDE,
             PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_INSIDE
         };
 
@@ -357,7 +357,7 @@ class x33 {
         pls.sfont( PLStream.PL_FCI_MONO, -1, -1 );
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        position = PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_OUTSIDE;
+        position = PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_OUTSIDE;
         opt      = opt_base;
         x        = 0.;
         y        = 0.1;
@@ -371,7 +371,7 @@ class x33 {
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-        position = PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_OUTSIDE;
+        position = PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_OUTSIDE;
         opt      = opt_base;
         x        = 0.;
         y        = 0.1;
@@ -413,7 +413,7 @@ class x33 {
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-        position = PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE;
+        position = PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_INSIDE;
         opt      = opt_base;
         x        = 0.;
         y        = 0.;
@@ -427,7 +427,7 @@ class x33 {
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-        position = PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_INSIDE;
+        position = PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_INSIDE;
         opt      = opt_base | PLStream.PL_LEGEND_ROW_MAJOR;
         x        = 0.;
         y        = 0.;
@@ -441,7 +441,7 @@ class x33 {
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-        position = PLStream.PL_POSITION_LOWER | PLStream.PL_POSITION_INSIDE;
+        position = PLStream.PL_POSITION_BOTTOM | PLStream.PL_POSITION_INSIDE;
         opt      = opt_base | PLStream.PL_LEGEND_ROW_MAJOR;
         x        = 0.;
         y        = 0.;
@@ -467,7 +467,7 @@ class x33 {
         nturn    = 4;
         nlegend  = 0;
         opt_base = PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX;
-        position = PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_LEFT;
+        position = PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_LEFT;
         opt      = opt_base;
         for ( i = 0; i < 9; i++ )
         {
@@ -524,7 +524,7 @@ class x33 {
 
             if ( i == nturn )
             {
-                position = PLStream.PL_POSITION_UPPER | PLStream.PL_POSITION_RIGHT;
+                position = PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_RIGHT;
                 opt      = opt_base;
                 x        = 1. - x;
                 y        = y + legend_height[0];
@@ -572,7 +572,7 @@ class x33 {
 
         // Only specify legend data that are required according to the
         // value of opt_array for that entry.
-        position = PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_UPPER;
+        position = PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_TOP;
         opt_base = PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX | PLStream.PL_LEGEND_TEXT_LEFT;
 
         // Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
