@@ -76,9 +76,9 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         colors[i] = color_offset + color_step * (PLFLT) ( i );
     }
 
-    PLINT opt;
-    opt = PL_COLORBAR_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT |
-          PL_COLORBAR_CAP_HIGH;
+    PLINT opt, opt_position;
+    opt = bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_HIGH;
+    opt_position = PL_COLORBAR_LEFT;
 
     const char *axis_opts_1, *axis_opts_2;
     if ( bar_type & PL_COLORBAR_SHADE_LABEL )
@@ -100,34 +100,34 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         }
     }
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Left, High Cap",
         n, colors, values );
 
-    opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT |
-          PL_COLORBAR_CAP_LOW;
+    opt = bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_LOW;
+    opt_position = PL_COLORBAR_RIGHT;
 
-    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.1, 0.4, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Right, Low Cap",
         n, colors, values );
 
-    opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER |
-          PL_COLORBAR_CAP_HIGH;
+    opt = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_HIGH;
+    opt_position = PL_COLORBAR_UPPER;
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Upper, High Cap",
         n, colors, values );
 
-    opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER |
-          PL_COLORBAR_CAP_LOW;
+    opt = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_LOW;
+    opt_position = PL_COLORBAR_LOWER;
 
-    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Lower, Low Cap",
@@ -166,9 +166,9 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         colors[i] = color_offset + color_step * (PLFLT) ( i );
     }
 
-    PLINT opt;
-    opt = PL_COLORBAR_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT |
-          PL_COLORBAR_CAP_LOW;
+    PLINT opt, opt_position;
+    opt = bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_LOW;
+    opt_position = PL_COLORBAR_LEFT;
 
     const char *axis_opts_1, *axis_opts_2;
     if ( bar_type == PL_COLORBAR_SHADE_LABEL )
@@ -190,34 +190,34 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         }
     }
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Left, Low Cap",
         n, colors, values );
 
-    opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT |
-          PL_COLORBAR_CAP_HIGH;
+    opt = bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_HIGH;
+    opt_position = PL_COLORBAR_RIGHT;
 
-    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.1, 0.4, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_1, "Test label - Right, High Cap",
         n, colors, values );
 
-    opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER |
-          PL_COLORBAR_CAP_LOW;
+    opt = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_LOW;
+    opt_position = PL_COLORBAR_UPPER;
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Upper, Low Cap",
         n, colors, values );
 
-    opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER |
-          PL_COLORBAR_CAP_HIGH;
+    opt = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_HIGH;
+    opt_position = PL_COLORBAR_LOWER;
 
-    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
+    plcolorbar( opt, opt_position, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
         axis_opts_2, "Test label - Lower, High Cap",
