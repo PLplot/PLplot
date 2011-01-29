@@ -71,7 +71,7 @@ class x33 {
         }
 
         int opt;
-        opt = PLStream.PL_COLORBAR_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
+        opt = PLStream.PL_POSITION_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
               PLStream.PL_COLORBAR_CAP_HIGH;
 
         String axis_opts_1, axis_opts_2;
@@ -99,7 +99,7 @@ class x33 {
             axis_opts_1, "Test label - Left, High Cap",
             colors, values );
 
-        opt = PLStream.PL_COLORBAR_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
+        opt = PLStream.PL_POSITION_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
               PLStream.PL_COLORBAR_CAP_LOW;
 
         pls.colorbar( opt, 0.1, 0.4, 0.5, 0.1,
@@ -107,7 +107,7 @@ class x33 {
             axis_opts_1, "Test label - Right, Low Cap",
             colors, values );
 
-        opt = PLStream.PL_COLORBAR_UPPER | bar_type | PLStream.PL_COLORBAR_LABEL_UPPER |
+        opt = PLStream.PL_POSITION_TOP | bar_type | PLStream.PL_COLORBAR_LABEL_TOP |
               PLStream.PL_COLORBAR_CAP_HIGH;
 
         pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
@@ -115,7 +115,7 @@ class x33 {
             axis_opts_2, "Test label - Upper, High Cap",
             colors, values );
 
-        opt = PLStream.PL_COLORBAR_LOWER | bar_type | PLStream.PL_COLORBAR_LABEL_LOWER |
+        opt = PLStream.PL_POSITION_BOTTOM | bar_type | PLStream.PL_COLORBAR_LABEL_BOTTOM |
               PLStream.PL_COLORBAR_CAP_LOW;
 
         pls.colorbar( opt, 0.4, 0.1, 0.5, 0.1,
@@ -144,7 +144,7 @@ class x33 {
         }
 
         int opt;
-        opt = PLStream.PL_COLORBAR_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
+        opt = PLStream.PL_POSITION_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
               PLStream.PL_COLORBAR_CAP_LOW;
 
         String axis_opts_1, axis_opts_2;
@@ -172,7 +172,7 @@ class x33 {
             axis_opts_1, "Test label - Left, Low Cap",
             colors, values );
 
-        opt = PLStream.PL_COLORBAR_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
+        opt = PLStream.PL_POSITION_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
               PLStream.PL_COLORBAR_CAP_HIGH;
 
         pls.colorbar( opt, 0.1, 0.4, 0.5, 0.1,
@@ -180,7 +180,7 @@ class x33 {
             axis_opts_1, "Test label - Right, High Cap",
             colors, values );
 
-        opt = PLStream.PL_COLORBAR_UPPER | bar_type | PLStream.PL_COLORBAR_LABEL_UPPER |
+        opt = PLStream.PL_POSITION_TOP | bar_type | PLStream.PL_COLORBAR_LABEL_TOP |
               PLStream.PL_COLORBAR_CAP_LOW;
 
         pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
@@ -188,7 +188,7 @@ class x33 {
             axis_opts_2, "Test label - Upper, Low Cap",
             colors, values );
 
-        opt = PLStream.PL_COLORBAR_LOWER | bar_type | PLStream.PL_COLORBAR_LABEL_LOWER |
+        opt = PLStream.PL_POSITION_BOTTOM | bar_type | PLStream.PL_COLORBAR_LABEL_BOTTOM |
               PLStream.PL_COLORBAR_CAP_HIGH;
 
         pls.colorbar( opt, 0.4, 0.1, 0.5, 0.1,

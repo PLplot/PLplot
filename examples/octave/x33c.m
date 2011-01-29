@@ -59,7 +59,7 @@ special_symbols = [
 		   ];
 
 function plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title )
-  global PL_COLORBAR_LEFT PL_COLORBAR_LABEL_LEFT PL_COLORBAR_CAP_HIGH PL_COLORBAR_SHADE_LABEL PL_COLORBAR_RIGHT PL_COLORBAR_LABEL_RIGHT PL_COLORBAR_CAP_LOW PL_COLORBAR_UPPER PL_COLORBAR_LABEL_UPPER PL_COLORBAR_CAP_HIGH PL_COLORBAR_LOWER PL_COLORBAR_LABEL_LOWER PL_COLORBAR_CAP_LOW 
+  global PL_POSITION_LEFT PL_COLORBAR_LABEL_LEFT PL_COLORBAR_CAP_HIGH PL_COLORBAR_SHADE_LABEL PL_POSITION_RIGHT PL_COLORBAR_LABEL_RIGHT PL_COLORBAR_CAP_LOW PL_POSITION_TOP PL_COLORBAR_LABEL_TOP PL_COLORBAR_CAP_HIGH PL_POSITION_BOTTOM PL_COLORBAR_LABEL_BOTTOM PL_COLORBAR_CAP_LOW 
   pladv( 0 );
   ## Setup color palette 1
   plspal1( "cmap1_blue_red.pal", 1 );
@@ -68,7 +68,7 @@ function plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title )
   color_step = 1.0 / (n - 1);
   colors = (0:n-1)'*color_step;
 
-  opt = bitor(PL_COLORBAR_LEFT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LEFT, PL_COLORBAR_CAP_HIGH)));
+  opt = bitor(PL_POSITION_LEFT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LEFT, PL_COLORBAR_CAP_HIGH)));
 
   if (bitand(bar_type, PL_COLORBAR_SHADE_LABEL))
     axis_opts_1 = "iv";
@@ -88,21 +88,21 @@ function plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title )
              axis_opts_1, "Test label - Left, High Cap",
              colors, values );
 
-  opt = bitor(PL_COLORBAR_RIGHT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_CAP_LOW)));
+  opt = bitor(PL_POSITION_RIGHT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_CAP_LOW)));
 
   plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
              ticks, sub_ticks,
              axis_opts_1, "Test label - Right, Low Cap",
              colors, values );
 
-  opt = bitor(PL_COLORBAR_UPPER, bitor(bar_type, bitor(PL_COLORBAR_LABEL_UPPER, PL_COLORBAR_CAP_HIGH)));
+  opt = bitor(PL_POSITION_TOP, bitor(bar_type, bitor(PL_COLORBAR_LABEL_TOP, PL_COLORBAR_CAP_HIGH)));
 
   plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
              ticks, sub_ticks,
              axis_opts_2, "Test label - Upper, High Cap",
              colors, values );
 
-  opt = bitor(PL_COLORBAR_LOWER, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LOWER, PL_COLORBAR_CAP_LOW)));
+  opt = bitor(PL_POSITION_BOTTOM, bitor(bar_type, bitor(PL_COLORBAR_LABEL_BOTTOM, PL_COLORBAR_CAP_LOW)));
 
   plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
              ticks, sub_ticks,
@@ -115,7 +115,7 @@ function plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title )
 endfunction
 
 function plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title )
-  global PL_COLORBAR_LEFT PL_COLORBAR_LABEL_LEFT PL_COLORBAR_CAP_HIGH PL_COLORBAR_SHADE_LABEL PL_COLORBAR_RIGHT PL_COLORBAR_LABEL_RIGHT PL_COLORBAR_CAP_LOW PL_COLORBAR_UPPER PL_COLORBAR_LABEL_UPPER PL_COLORBAR_CAP_HIGH PL_COLORBAR_LOWER PL_COLORBAR_LABEL_LOWER PL_COLORBAR_CAP_LOW 
+  global PL_POSITION_LEFT PL_COLORBAR_LABEL_LEFT PL_COLORBAR_CAP_HIGH PL_COLORBAR_SHADE_LABEL PL_POSITION_RIGHT PL_COLORBAR_LABEL_RIGHT PL_COLORBAR_CAP_LOW PL_POSITION_TOP PL_COLORBAR_LABEL_TOP PL_COLORBAR_CAP_HIGH PL_POSITION_BOTTOM PL_COLORBAR_LABEL_BOTTOM PL_COLORBAR_CAP_LOW 
   pladv( 0 );
   ## Setup color palette 1
   plspal1( "cmap1_blue_yellow.pal", 1 );
@@ -123,7 +123,7 @@ function plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title )
   n = length(values);
   color_step = 1.0 / (n - 1);
   colors = (0:n-1)'*color_step;
-  opt = bitor(PL_COLORBAR_LEFT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LEFT, PL_COLORBAR_CAP_LOW)));
+  opt = bitor(PL_POSITION_LEFT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LEFT, PL_COLORBAR_CAP_LOW)));
 
   if (bar_type == PL_COLORBAR_SHADE_LABEL)
     axis_opts_1 = "";
@@ -143,21 +143,21 @@ function plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title )
              axis_opts_1, "Test label - Left, Low Cap",
              colors, values );
 
-  opt = bitor(PL_COLORBAR_RIGHT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_CAP_HIGH)));
+  opt = bitor(PL_POSITION_RIGHT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_CAP_HIGH)));
 
   plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
              ticks, sub_ticks,
              axis_opts_1, "Test label - Right, High Cap",
              colors, values );
 
-  opt = bitor(PL_COLORBAR_UPPER, bitor(bar_type, bitor(PL_COLORBAR_LABEL_UPPER, PL_COLORBAR_CAP_LOW)));
+  opt = bitor(PL_POSITION_TOP, bitor(bar_type, bitor(PL_COLORBAR_LABEL_TOP, PL_COLORBAR_CAP_LOW)));
 
   plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
              ticks, sub_ticks,
              axis_opts_2, "Test label - Upper, Low Cap",
              colors, values );
 
-  opt = bitor(PL_COLORBAR_LOWER, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LOWER, PL_COLORBAR_CAP_HIGH)));
+  opt = bitor(PL_POSITION_BOTTOM, bitor(bar_type, bitor(PL_COLORBAR_LABEL_BOTTOM, PL_COLORBAR_CAP_HIGH)));
 
   plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
              ticks, sub_ticks,

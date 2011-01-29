@@ -695,7 +695,7 @@ plcolorbar_example_1( integer bar_type, real*8 ticks, integer sub_ticks, integer
     }
 
     integer opt
-    opt = PL_COLORBAR_LEFT + bar_type + PL_COLORBAR_LABEL_LEFT +
+    opt = PL_POSITION_LEFT + bar_type + PL_COLORBAR_LABEL_LEFT +
    &      PL_COLORBAR_CAP_HIGH
 
     const char *axis_opts_1, *axis_opts_2
@@ -723,7 +723,7 @@ plcolorbar_example_1( integer bar_type, real*8 ticks, integer sub_ticks, integer
    &    axis_opts_1, 'Test label - Left, High Cap',
    &    n, colors, values )
 
-    opt = PL_COLORBAR_RIGHT + bar_type + PL_COLORBAR_LABEL_RIGHT +
+    opt = PL_POSITION_RIGHT + bar_type + PL_COLORBAR_LABEL_RIGHT +
           PL_COLORBAR_CAP_LOW
 
     call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
@@ -731,7 +731,7 @@ plcolorbar_example_1( integer bar_type, real*8 ticks, integer sub_ticks, integer
    &    axis_opts_1, 'Test label - Right, Low Cap',
    &    n, colors, values )
 
-    opt = PL_COLORBAR_UPPER + bar_type + PL_COLORBAR_LABEL_UPPER +
+    opt = PL_POSITION_TOP + bar_type + PL_COLORBAR_LABEL_TOP +
    &      PL_COLORBAR_CAP_HIGH
 
     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
@@ -739,7 +739,7 @@ plcolorbar_example_1( integer bar_type, real*8 ticks, integer sub_ticks, integer
    &    axis_opts_2, 'Test label - Upper, High Cap',
    &    n, colors, values )
 
-    opt = PL_COLORBAR_LOWER + bar_type + PL_COLORBAR_LABEL_LOWER +
+    opt = PL_POSITION_BOTTOM + bar_type + PL_COLORBAR_LABEL_BOTTOM +
    &      PL_COLORBAR_CAP_LOW
 
     call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
@@ -769,7 +769,7 @@ plcolorbar_example_2( integer bar_type, real*8 ticks, real*8 sub_ticks, integer 
     }
 
     integer opt
-    opt = PL_COLORBAR_LEFT + bar_type + PL_COLORBAR_LABEL_LEFT +
+    opt = PL_POSITION_LEFT + bar_type + PL_COLORBAR_LABEL_LEFT +
           PL_COLORBAR_CAP_LOW
 
     const char *axis_opts_1, *axis_opts_2
@@ -797,7 +797,7 @@ plcolorbar_example_2( integer bar_type, real*8 ticks, real*8 sub_ticks, integer 
         axis_opts_1, 'Test label - Left, Low Cap',
         n, colors, values )
 
-    opt = PL_COLORBAR_RIGHT + bar_type + PL_COLORBAR_LABEL_RIGHT +
+    opt = PL_POSITION_RIGHT + bar_type + PL_COLORBAR_LABEL_RIGHT +
           PL_COLORBAR_CAP_HIGH
 
       call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
@@ -805,7 +805,7 @@ plcolorbar_example_2( integer bar_type, real*8 ticks, real*8 sub_ticks, integer 
         axis_opts_1, 'Test label - Right, High Cap',
         n, colors, values )
 
-    opt = PL_COLORBAR_UPPER + bar_type + PL_COLORBAR_LABEL_UPPER +
+    opt = PL_POSITION_TOP + bar_type + PL_COLORBAR_LABEL_TOP +
           PL_COLORBAR_CAP_LOW
 
       call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
@@ -813,7 +813,7 @@ plcolorbar_example_2( integer bar_type, real*8 ticks, real*8 sub_ticks, integer 
         axis_opts_2, 'Test label - Upper, Low Cap',
         n, colors, values )
 
-    opt = PL_COLORBAR_LOWER + bar_type + PL_COLORBAR_LABEL_LOWER +
+    opt = PL_POSITION_BOTTOM + bar_type + PL_COLORBAR_LABEL_BOTTOM +
           PL_COLORBAR_CAP_HIGH
 
       call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,

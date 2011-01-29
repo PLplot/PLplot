@@ -66,7 +66,7 @@ def plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title ):
     color_step = 1.0 / float(n - 1)
     colors = color_step*arange(n)
 
-    opt = PL_COLORBAR_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_HIGH
+    opt = PL_POSITION_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_HIGH
 
     if bar_type & PL_COLORBAR_SHADE_LABEL:
         axis_opts_1 = "iv"
@@ -84,21 +84,21 @@ def plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title ):
                 axis_opts_1, "Test label - Left, High Cap",
                 colors, values )
 
-    opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_LOW
+    opt = PL_POSITION_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_LOW
 
     plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
                 ticks, sub_ticks,
                 axis_opts_1, "Test label - Right, Low Cap",
                 colors, values )
 
-    opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_HIGH
+    opt = PL_POSITION_TOP | bar_type | PL_COLORBAR_LABEL_TOP | PL_COLORBAR_CAP_HIGH
 
     plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
                 ticks, sub_ticks,
                 axis_opts_2, "Test label - Upper, High Cap",
                 colors, values )
 
-    opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_LOW
+    opt = PL_POSITION_BOTTOM | bar_type | PL_COLORBAR_LABEL_BOTTOM | PL_COLORBAR_CAP_LOW
 
     plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
                 ticks, sub_ticks,
@@ -117,7 +117,7 @@ def plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title ):
     n = len(values)
     color_step = 1.0 / float(n - 1)
     colors = color_step*arange(n)
-    opt = PL_COLORBAR_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_LOW
+    opt = PL_POSITION_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_LOW
 
     if bar_type == PL_COLORBAR_SHADE_LABEL:
         axis_opts_1 = ""
@@ -135,21 +135,21 @@ def plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title ):
                 axis_opts_1, "Test label - Left, Low Cap",
                 colors, values )
 
-    opt = PL_COLORBAR_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_HIGH
+    opt = PL_POSITION_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_HIGH
 
     plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
                 ticks, sub_ticks,
                 axis_opts_1, "Test label - Right, High Cap",
                 colors, values )
 
-    opt = PL_COLORBAR_UPPER | bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_LOW
+    opt = PL_POSITION_TOP | bar_type | PL_COLORBAR_LABEL_TOP | PL_COLORBAR_CAP_LOW
 
     plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
                 ticks, sub_ticks,
                 axis_opts_2, "Test label - Upper, Low Cap",
                 colors, values )
 
-    opt = PL_COLORBAR_LOWER | bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_HIGH
+    opt = PL_POSITION_BOTTOM | bar_type | PL_COLORBAR_LABEL_BOTTOM | PL_COLORBAR_CAP_HIGH
 
     plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
                 ticks, sub_ticks,

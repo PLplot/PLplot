@@ -112,22 +112,22 @@
       parameter (PL_LEGEND_BOUNDING_BOX = 64)
       integer*4 PL_LEGEND_ROW_MAJOR 
       parameter (PL_LEGEND_ROW_MAJOR = 128)
-      integer*4 PL_COLORBAR_LEFT 
-      parameter (PL_COLORBAR_LEFT = 1)
-      integer*4 PL_COLORBAR_RIGHT 
-      parameter (PL_COLORBAR_RIGHT = 2)
-      integer*4 PL_COLORBAR_UPPER 
-      parameter (PL_COLORBAR_UPPER = 4)
-      integer*4 PL_COLORBAR_LOWER 
-      parameter (PL_COLORBAR_LOWER = 8)
+      integer*4 PL_POSITION_LEFT 
+      parameter (PL_POSITION_LEFT = 1)
+      integer*4 PL_POSITION_RIGHT 
+      parameter (PL_POSITION_RIGHT = 2)
+      integer*4 PL_POSITION_TOP 
+      parameter (PL_POSITION_TOP = 4)
+      integer*4 PL_POSITION_BOTTOM 
+      parameter (PL_POSITION_BOTTOM = 8)
       integer*4 PL_COLORBAR_LABEL_LEFT 
       parameter (PL_COLORBAR_LABEL_LEFT = 16)
       integer*4 PL_COLORBAR_LABEL_RIGHT 
       parameter (PL_COLORBAR_LABEL_RIGHT = 32)
-      integer*4 PL_COLORBAR_LABEL_UPPER 
-      parameter (PL_COLORBAR_LABEL_UPPER = 64)
-      integer*4 PL_COLORBAR_LABEL_LOWER 
-      parameter (PL_COLORBAR_LABEL_LOWER = 128)
+      integer*4 PL_COLORBAR_LABEL_TOP 
+      parameter (PL_COLORBAR_LABEL_TOP = 64)
+      integer*4 PL_COLORBAR_LABEL_BOTTOM 
+      parameter (PL_COLORBAR_LABEL_BOTTOM = 128)
       integer*4 PL_COLORBAR_IMAGE 
       parameter (PL_COLORBAR_IMAGE = 256)
       integer*4 PL_COLORBAR_SHADE 

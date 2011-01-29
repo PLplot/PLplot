@@ -85,8 +85,8 @@ typedef [set] enum plplot_legend_enum plplot_legend_opt;
 enum plplot_colorbar_enum {
     PL_COLORBAR_LABEL_LEFT = 1,
     PL_COLORBAR_LABEL_RIGHT = 2,
-    PL_COLORBAR_LABEL_UPPER = 4,
-    PL_COLORBAR_LABEL_LOWER = 8,
+    PL_COLORBAR_LABEL_TOP = 4,
+    PL_COLORBAR_LABEL_BOTTOM = 8,
     PL_COLORBAR_IMAGE = 16,
     PL_COLORBAR_SHADE = 32,
     PL_COLORBAR_GRADIENT = 64,

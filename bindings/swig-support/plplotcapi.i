@@ -117,14 +117,14 @@ typedef void*  PLPointer;
 #define PL_LEGEND_ROW_MAJOR       128
 
 // Flags for plcolorbar
-#define PL_COLORBAR_LEFT            1
-#define PL_COLORBAR_RIGHT           2
-#define PL_COLORBAR_UPPER           4
-#define PL_COLORBAR_LOWER           8
+#define PL_POSITION_LEFT            1
+#define PL_POSITION_RIGHT           2
+#define PL_POSITION_TOP           4
+#define PL_POSITION_BOTTOM           8
 #define PL_COLORBAR_LABEL_LEFT      16
 #define PL_COLORBAR_LABEL_RIGHT     32
-#define PL_COLORBAR_LABEL_UPPER     64
-#define PL_COLORBAR_LABEL_LOWER     128
+#define PL_COLORBAR_LABEL_TOP     64
+#define PL_COLORBAR_LABEL_BOTTOM     128
 #define PL_COLORBAR_IMAGE           256
 #define PL_COLORBAR_SHADE           512
 #define PL_COLORBAR_GRADIENT        1024

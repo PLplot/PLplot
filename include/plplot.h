@@ -1232,8 +1232,8 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 // Flags for plcolorbar
 #define PL_COLORBAR_LABEL_LEFT     1
 #define PL_COLORBAR_LABEL_RIGHT    2
-#define PL_COLORBAR_LABEL_UPPER    4
-#define PL_COLORBAR_LABEL_LOWER    8
+#define PL_COLORBAR_LABEL_TOP    4
+#define PL_COLORBAR_LABEL_BOTTOM    8
 #define PL_COLORBAR_IMAGE          16
 #define PL_COLORBAR_SHADE          32
 #define PL_COLORBAR_GRADIENT       64

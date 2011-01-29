@@ -1231,7 +1231,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         // Add an extra offset for the label so it does not bump in to the
         // cap.
         if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
-               opt & PL_COLORBAR_LABEL_LOWER ) ||
+               opt & PL_COLORBAR_LABEL_BOTTOM ) ||
              ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
                opt & PL_COLORBAR_LABEL_LEFT ) )
         {
@@ -1245,7 +1245,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         // Add an extra offset for the label so it does not bump in to the
         // cap.
         if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
-               opt & PL_COLORBAR_LABEL_UPPER ) ||
+               opt & PL_COLORBAR_LABEL_TOP ) ||
              ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
                opt & PL_COLORBAR_LABEL_RIGHT ) )
         {
@@ -1300,7 +1300,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         snprintf( opt_string, max_opts, "r%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
-    else if ( opt & PL_COLORBAR_LABEL_UPPER )
+    else if ( opt & PL_COLORBAR_LABEL_TOP )
     {
         if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
@@ -1315,7 +1315,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         snprintf( opt_string, max_opts, "t%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
-    else if ( opt & PL_COLORBAR_LABEL_LOWER )
+    else if ( opt & PL_COLORBAR_LABEL_BOTTOM )
     {
         if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {

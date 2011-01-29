@@ -116,7 +116,7 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         n, colors, values );
 
     position = PL_POSITION_TOP;
-    opt      = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_HIGH;
+    opt      = bar_type | PL_COLORBAR_LABEL_TOP | PL_COLORBAR_CAP_HIGH;
 
     plcolorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
@@ -125,7 +125,7 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         n, colors, values );
 
     position = PL_POSITION_BOTTOM;
-    opt      = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_LOW;
+    opt      = bar_type | PL_COLORBAR_LABEL_BOTTOM | PL_COLORBAR_CAP_LOW;
 
     plcolorbar( position, opt, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
@@ -206,7 +206,7 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         n, colors, values );
 
     position = PL_POSITION_TOP;
-    opt      = bar_type | PL_COLORBAR_LABEL_UPPER | PL_COLORBAR_CAP_LOW;
+    opt      = bar_type | PL_COLORBAR_LABEL_TOP | PL_COLORBAR_CAP_LOW;
 
     plcolorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
@@ -215,7 +215,7 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
         n, colors, values );
 
     position = PL_POSITION_BOTTOM;
-    opt      = bar_type | PL_COLORBAR_LABEL_LOWER | PL_COLORBAR_CAP_HIGH;
+    opt      = bar_type | PL_COLORBAR_LABEL_BOTTOM | PL_COLORBAR_CAP_HIGH;
 
     plcolorbar( position, opt, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
