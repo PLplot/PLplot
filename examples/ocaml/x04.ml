@@ -88,7 +88,7 @@ let plot1 plot_type =
 
     plscol0a 15 32 32 32 0.70;
     ignore (
-      pllegend [PL_LEGEND_BACKGROUND; PL_LEGEND_BOUNDING_BOX]
+      pllegend [] [PL_LEGEND_BACKGROUND; PL_LEGEND_BOUNDING_BOX]
         0.0 0.0 0.1 15
         1 1 0 0
         opt_array
@@ -117,7 +117,7 @@ let plot1 plot_type =
 
     plscol0a 15 32 32 32 0.70;
     ignore (
-      pllegend [PL_LEGEND_BACKGROUND; PL_LEGEND_BOUNDING_BOX]
+      pllegend [] [PL_LEGEND_BACKGROUND; PL_LEGEND_BOUNDING_BOX]
         0.0 0.0 0.1 15
         1 1 0 0
         opt_array

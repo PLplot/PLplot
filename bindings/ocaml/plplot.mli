@@ -558,7 +558,7 @@ and plplot_position_enum =
   | PL_POSITION_OUTSIDE
   | PL_POSITION_VIEWPORT
   | PL_POSITION_SUBPAGE
-and plplot_legend_position = plplot_position_enum list
+and plplot_position_opt = plplot_position_enum list
 and plplot_legend_enum =
     PL_LEGEND_NONE
   | PL_LEGEND_COLOR_BOX
@@ -695,7 +695,7 @@ external plcolorbar : plplot_colorbar_opt -> float -> float -> float ->
   float -> int -> int -> float -> int -> string -> string -> float array ->
   float array -> unit
   = "camlidl_plplot_core_c_plcolorbar_bytecode" "camlidl_plplot_core_c_plcolorbar"
-external pllegend : plplot_legend_position -> plplot_legend_opt ->
+external pllegend : plplot_position_opt -> plplot_legend_opt ->
   float -> float -> float -> int -> int -> int -> int -> int ->
   plplot_legend_opt array -> float -> float ->
   float -> float -> int array -> string array -> int array -> int array ->

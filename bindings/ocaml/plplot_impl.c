@@ -748,18 +748,30 @@ int translate_legend_option( int legend_option )
     case 5: translated_option  = PL_LEGEND_BACKGROUND; break;
     case 6: translated_option  = PL_LEGEND_BOUNDING_BOX; break;
     case 7: translated_option  = PL_LEGEND_ROW_MAJOR; break;
-    case 8: translated_option  = PL_LEGEND_LEFT; break;
-    case 9: translated_option  = PL_LEGEND_RIGHT; break;
-    case 10: translated_option = PL_LEGEND_UPPER; break;
-    case 11: translated_option = PL_LEGEND_LOWER; break;
-    case 12: translated_option = PL_LEGEND_INSIDE; break;
-    case 13: translated_option = PL_LEGEND_OUTSIDE; break;
     default: translated_option = -1;
     }
     return translated_option;
 }
 
-value ml_pllegend( value opt, value x, value y, value plot_width,
+int translate_position_option( int position_option )
+{
+    int translated_option;
+    switch ( position_option )
+    {
+        case 0: translated_option = PL_POSITION_LEFT; break;
+        case 1: translated_option = PL_POSITION_RIGHT; break;
+        case 2: translated_option = PL_POSITION_UPPER; break;
+        case 3: translated_option = PL_POSITION_LOWER; break;
+        case 4: translated_option = PL_POSITION_INSIDE; break;
+        case 5: translated_option = PL_POSITION_OUTSIDE; break;
+        case 6: translated_option = PL_POSITION_VIEWPORT; break;
+        case 7: translated_option = PL_POSITION_SUBPAGE; break;
+        default: translated_option = -1;
+    }
+    return translated_option;
+}
+
+value ml_pllegend( value position, value opt, value x, value y, value plot_width,
                    value bg_color,
                    value bb_color, value bb_style,
                    value nrow, value ncolumn,
@@ -772,21 +784,19 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
                    value symbol_colors, value symbol_scales,
                    value symbol_numbers, value symbols )
 {
-    CAMLparam5( opt, x, y, plot_width, bg_color );
-    CAMLxparam5( bb_color, bb_style, nrow, ncolumn, opt_array );
-    CAMLxparam5( text_offset, text_scale, text_spacing, text_justification,
-        text_colors );
-    CAMLxparam5( text, box_colors, box_patterns, box_scales, box_line_widths );
-    CAMLxparam5( line_colors, line_styles, line_widths, symbol_colors,
-        symbol_scales );
-    CAMLxparam2( symbol_numbers, symbols );
+    CAMLparam5( position, opt, x, y, plot_width );
+    CAMLxparam5( bg_color, bb_color, bb_style, nrow, ncolumn );
+    CAMLxparam5( opt_array, text_offset, text_scale, text_spacing, text_justification );
+    CAMLxparam5( text_colors, text, box_colors, box_patterns, box_scales );
+    CAMLxparam5( box_line_widths, line_colors, line_styles, line_widths, symbol_colors );
+    CAMLxparam3( symbol_scales, symbol_numbers, symbols );
     CAMLlocal1( result );
     result = caml_alloc( 2, 0 );
 
     // Counter
     int i;
     // General legend options
-    int c_opt;
+    int c_position, c_opt;
     // Number of legend entries
     int n_legend;
     n_legend = Wosize_val( opt_array );
@@ -811,6 +821,7 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
 
     // Translate the legend configuration options
     c_opt = lor_ml_list( opt, translate_legend_option );
+    c_position = lor_ml_list( position, translate_position_option );
 
     for ( i = 0; i < n_legend; i++ )
     {
@@ -821,7 +832,7 @@ value ml_pllegend( value opt, value x, value y, value plot_width,
     // The returned width and height of the legend
     PLFLT width, height;
 
-    pllegend( &width, &height, c_opt, Double_val( x ), Double_val( y ),
+    pllegend( &width, &height, c_position, c_opt, Double_val( x ), Double_val( y ),
         Double_val( plot_width ), Int_val( bg_color ),
         Int_val( bb_color ), Int_val( bb_style ),
         Int_val( nrow ), Int_val( ncolumn ),
@@ -850,7 +861,7 @@ value ml_pllegend_byte( value* argv, int argn )
         argv[10], argv[11], argv[12], argv[13], argv[14],
         argv[15], argv[16], argv[17], argv[18], argv[19],
         argv[20], argv[21], argv[22], argv[23], argv[24],
-        argv[25], argv[26] );
+        argv[25], argv[26], argv[27] );
 }
 
 // pltr* function implementations
