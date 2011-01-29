@@ -27,7 +27,7 @@ open Plplot
 
 let cycloid () = () (* TODO *)
 
-let spiro params =
+let spiro params fill =
   let npnt = 20000 in
   let xcoord = Array.make (npnt + 1) 0.0 in
   let ycoord = Array.make (npnt + 1) 0.0 in
@@ -67,8 +67,12 @@ let spiro params =
   plcol0 1;
   let xcoord' = Array.sub xcoord 0 (1 + steps * windings) in
   let ycoord' = Array.sub ycoord 0 (1 + steps * windings) in
-  plline xcoord' ycoord';
-  ()
+  if fill then (
+    plfill xcoord' ycoord';
+  )
+  else (
+    plline xcoord' ycoord';
+  )
 
 (*--------------------------------------------------------------------------*\
  * Generates two kinds of plots:
@@ -109,7 +113,7 @@ let () =
   for i = 0 to 8 do
     pladv 0;
     plvpor 0.0 1.0 0.0 1.0;
-    spiro params.(i);
+    spiro params.(i) false;
   done;
 
   pladv 0;
@@ -119,7 +123,18 @@ let () =
   for i = 0 to 8 do
     pladv 0;
     plvpor 0.0 1.0 0.0 1.0;
-    spiro params.(i);
+    spiro params.(i) false;
+  done;
+
+  (* Fill the curves *)
+  pladv 0;
+  (* One window per curve *)
+  plssub 1 1;
+
+  for i = 0 to 8 do
+    pladv 0;
+    plvpor 0.0 1.0 0.0 1.0;
+    spiro params.(i) true;
   done;
 
   (* Don't forget to call plend() to finish off! *)
