@@ -1138,7 +1138,7 @@ c_plcolorbar( PLINT position, PLINT opt,
             }
             else if ( i == n_steps - 1 )
             {
-                values_ext[i] = max_value + ( max_value - values[i - 1] ) * 0.1;
+                values_ext[i] = max_value + ( max_value - values[n_colors - 2] ) * 0.1;
             }
             else
             {
