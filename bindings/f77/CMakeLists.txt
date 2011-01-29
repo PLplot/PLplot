@@ -69,19 +69,6 @@ if(ENABLE_f77)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
     )
 
-# I have found that there is no way to get the proper file dependency
-# between the generated
-# ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h and examples/f77/x??f
-# builds.  For example, if you change plplot_parameters.fm4,
-# plplot_parameters.h gets rebuilt, BUT x??f does not!  This possible
-# CMake bug has been brought up on the cmake mailing list just now
-# (2011-01-28) so a fix may be in the future.  GENERATED makes no
-# diffence to this issue so comment that out below.
-#  set_source_files_properties(
-#    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
-#    PROPERTIES GENERATED ON
-#    )
-
   install(
     FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h
