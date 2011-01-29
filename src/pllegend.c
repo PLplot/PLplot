@@ -908,6 +908,7 @@ draw_cap( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
 
 void
 c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
               PLINT n_colors, PLFLT *colors, PLFLT *values )
@@ -1130,7 +1131,7 @@ c_plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
 
         // Draw the color bar
         plshades( color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
-            values, n_colors, 0, 0, 0, plfill, TRUE,
+            values, n_colors, 0, cont_color, cont_width, plfill, TRUE,
             pltr1, (void *) ( &grid ) );
         plFree2dGrid( color_data, ni, nj );
     }
