@@ -55,6 +55,7 @@ class x33 {
         "✦"
     };
 
+  /*
     void plcolorbar_example_1( int bar_type, double ticks, int sub_ticks, int n, double[] values, String title )
     {
         pls.adv( 0 );
@@ -200,7 +201,7 @@ class x33 {
         pls.wind( 0.0, 1.0, 0.0, 1.0 );
         pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
     }
-
+  */
 //--------------------------------------------------------------------------
 // x33
 //
@@ -829,6 +830,7 @@ class x33 {
             null, null, null, null );
         max_height = Math.max( max_height, legend_height[0] );
 
+        /*
         // Color bar examples
         double[] values_small  = { 0.0, 1.0 };
         double[] values_uneven = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
@@ -843,6 +845,7 @@ class x33 {
             "Gradient Color Bars" );
         plcolorbar_example_2( PLStream.PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
             "Gradient Color Bars" );
+        */
 
         pls.end();
     }

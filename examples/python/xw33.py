@@ -699,14 +699,15 @@ def main():
               symbol_colors, symbol_scales, symbol_numbers, symbols )
     max_height = max(max_height, legend_height)
 
-    # Color bar examples
-    values_small = [ 0.0, 1.0 ]
-    values_uneven = [ 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 ]
-    values_even = [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 ]
-    plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
-    plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
-    plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0.0, 0, values_uneven, "Shade Color Bars - Uneven Steps" )
-    plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0, 3, values_even, "Shade Color Bars - Even Steps" )
-    plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
-    plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
+    if False:
+        # Color bar examples
+        values_small = [ 0.0, 1.0 ]
+        values_uneven = [ 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 ]
+        values_even = [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 ]
+        plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
+        plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
+        plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0.0, 0, values_uneven, "Shade Color Bars - Uneven Steps" )
+        plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0, 3, values_even, "Shade Color Bars - Even Steps" )
+        plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
+        plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
 main()

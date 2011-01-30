@@ -554,6 +554,7 @@ public class PLStream implements plplotjavacConstants {
             symbol_numbers, symbols );
     }
 
+  /*
     public void colorbar( int opt, double x, double y, double length,
                           double width, double ticks, double subticks,
                           String axis_opts, String label,
@@ -563,6 +564,7 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.plcolorbar( opt, x, y, length, width, ticks, subticks,
             axis_opts, label, colors, values );
     }
+  */
 
     public void lightsource( double x, double y, double z )
     {

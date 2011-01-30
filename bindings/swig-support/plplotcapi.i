@@ -492,11 +492,13 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
             const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
             const PLINT *ArrayCkNull, const char **ArrayCk );
 
+#if 0
 void
 plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLFLT ticks, PLFLT sub_ticks,
               const char *axis_opts, const char *label,
               PLINT n, PLFLT *Array, PLFLT *ArrayCk );
+#endif
 
 void
 pllightsource( PLFLT x, PLFLT y, PLFLT z );
