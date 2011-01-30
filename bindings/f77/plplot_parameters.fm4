@@ -112,34 +112,26 @@
       parameter (PL_LEGEND_BOUNDING_BOX = 64)
       integer*4 PL_LEGEND_ROW_MAJOR 
       parameter (PL_LEGEND_ROW_MAJOR = 128)
-      integer*4 PL_POSITION_LEFT 
-      parameter (PL_POSITION_LEFT = 1)
-      integer*4 PL_POSITION_RIGHT 
-      parameter (PL_POSITION_RIGHT = 2)
-      integer*4 PL_POSITION_TOP 
-      parameter (PL_POSITION_TOP = 4)
-      integer*4 PL_POSITION_BOTTOM 
-      parameter (PL_POSITION_BOTTOM = 8)
       integer*4 PL_COLORBAR_LABEL_LEFT 
-      parameter (PL_COLORBAR_LABEL_LEFT = 16)
+      parameter (PL_COLORBAR_LABEL_LEFT = 1)
       integer*4 PL_COLORBAR_LABEL_RIGHT 
-      parameter (PL_COLORBAR_LABEL_RIGHT = 32)
+      parameter (PL_COLORBAR_LABEL_RIGHT = 2)
       integer*4 PL_COLORBAR_LABEL_TOP 
-      parameter (PL_COLORBAR_LABEL_TOP = 64)
+      parameter (PL_COLORBAR_LABEL_TOP = 4)
       integer*4 PL_COLORBAR_LABEL_BOTTOM 
-      parameter (PL_COLORBAR_LABEL_BOTTOM = 128)
+      parameter (PL_COLORBAR_LABEL_BOTTOM = 8)
       integer*4 PL_COLORBAR_IMAGE 
-      parameter (PL_COLORBAR_IMAGE = 256)
+      parameter (PL_COLORBAR_IMAGE = 16)
       integer*4 PL_COLORBAR_SHADE 
-      parameter (PL_COLORBAR_SHADE = 512)
+      parameter (PL_COLORBAR_SHADE = 32)
       integer*4 PL_COLORBAR_GRADIENT 
-      parameter (PL_COLORBAR_GRADIENT = 1024)
+      parameter (PL_COLORBAR_GRADIENT = 64)
       integer*4 PL_COLORBAR_CAP_LOW 
-      parameter (PL_COLORBAR_CAP_LOW = 2048)
+      parameter (PL_COLORBAR_CAP_LOW = 128)
       integer*4 PL_COLORBAR_CAP_HIGH 
-      parameter (PL_COLORBAR_CAP_HIGH = 4096)
+      parameter (PL_COLORBAR_CAP_HIGH = 256)
       integer*4 PL_COLORBAR_SHADE_LABEL 
-      parameter (PL_COLORBAR_SHADE_LABEL = 8192)
+      parameter (PL_COLORBAR_SHADE_LABEL = 512)
       integer*4 PLSWIN_DEVICE ! device coordinates
       parameter (PLSWIN_DEVICE = 1)
       integer*4 PLSWIN_WORLD ! world coordinates
