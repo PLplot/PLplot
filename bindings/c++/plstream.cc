@@ -1020,14 +1020,15 @@ void plstream::legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 }
 
-void plstream::colorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+void plstream::colorbar( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLINT cont_color, PLINT cont_width,
                          PLFLT ticks, PLINT sub_ticks,
                          const char *axis_opts, const char *label,
                          PLINT n_colors, PLFLT *colors, PLFLT *values )
 {
     set_stream();
 
-    plcolorbar( opt, x, y, length, width, ticks, sub_ticks, axis_opts,
+    plcolorbar( position, opt, x, y, length, width,
+        cont_color, cont_width, ticks, sub_ticks, axis_opts,
         label, n_colors, colors, values );
 }
 

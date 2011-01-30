@@ -438,7 +438,7 @@ public:
                  const PLINT *symbol_colors, const PLFLT *symbol_scales,
                  const PLINT *symbol_numbers, const char **symbols );
 
-    void colorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+    void colorbar( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLINT cont_color, PLINT cont_width,
                    PLFLT ticks, PLINT sub_ticks,
                    const char *axis_opts, const char *label,
                    PLINT n_colors, PLFLT *colors, PLFLT *values );
