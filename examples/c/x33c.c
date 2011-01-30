@@ -52,13 +52,38 @@ static PLINT position_options[16] = {
 };
 
 // Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
-static char *special_symbols[5] = {
+static char          *special_symbols[5] = {
     "✰",
     "✴",
     "✱",
     "✽",
     "✦"
 };
+
+static int           colorbar = 0; // By default do not plot plcolorbar pages
+                                   // for now while we are working out the API.
+static PLOptionTable options[] = {
+    {
+        "colorbar",              // Turns on pages showing colorbars
+        NULL,
+        NULL,
+        &colorbar,
+        PL_OPT_BOOL,
+        "-colorbar",
+        "Plot the \"color bar\" pages."
+    },
+    {
+        NULL,                   // option
+        NULL,                   // handler
+        NULL,                   // client data
+        NULL,                   // address of variable to set
+        0,                      // mode flag
+        NULL,                   // short syntax
+        NULL
+    }                           // long syntax
+};
+
+const char           *notes[] = { "Make sure you get it right!", NULL };
 
 void
 plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT ticks, PLINT sub_ticks, PLINT n, PLFLT *values, const char *title )
@@ -263,6 +288,7 @@ main( int argc, const char *argv[] )
         text[k] = (char *) malloc( 200 * sizeof ( char ) );
 
     // Parse and process command line arguments
+    plMergeOpts( options, "x33c options", notes );
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
 // Initialize plplot
@@ -781,28 +807,31 @@ main( int argc, const char *argv[] )
         NULL, NULL, NULL, NULL );
     max_height = MAX( max_height, legend_height );
 
-    // Color bar examples
-    PLFLT values_small[2]  = { 0.0, 1.0 };
-    PLFLT values_uneven[9] = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
-    PLFLT values_even[9]   = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
-    plcolorbar_example_1( PL_COLORBAR_IMAGE, 0, 0, 0.0, 0, 2, values_small, "Image Color Bars" );
-    plcolorbar_example_2( PL_COLORBAR_IMAGE, 0, 0, 0.0, 0, 2, values_small, "Image Color Bars" );
-    plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0, 0.0, 0, 9, values_uneven,
-        "Shade Color Bars - Uneven Steps" );
-    plcolorbar_example_2( PL_COLORBAR_SHADE, 0, 0, 3.0, 3, 9, values_even,
-        "Shade Color Bars - Even Steps" );
-    plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 2, 1, 0.0, 0, 9, values_uneven,
-        "Shade Color Bars - Uneven Steps, Contours" );
-    plcolorbar_example_2( PL_COLORBAR_SHADE, 2, 3, 3.0, 3, 9, values_even,
-        "Shade Color Bars - Even Steps, Contours" );
-    plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0, 0, 0.5, 5, 2, values_small,
-        "Gradient Color Bars" );
-    plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0, 0, 0.5, 5, 2, values_small,
-        "Gradient Color Bars" );
-
     // Free space that contained legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )
         free( (void *) text[k] );
+
+    if ( colorbar )
+    {
+        // Color bar examples
+        PLFLT values_small[2]  = { 0.0, 1.0 };
+        PLFLT values_uneven[9] = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
+        PLFLT values_even[9]   = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+        plcolorbar_example_1( PL_COLORBAR_IMAGE, 0, 0, 0.0, 0, 2, values_small, "Image Color Bars" );
+        plcolorbar_example_2( PL_COLORBAR_IMAGE, 0, 0, 0.0, 0, 2, values_small, "Image Color Bars" );
+        plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0, 0.0, 0, 9, values_uneven,
+            "Shade Color Bars - Uneven Steps" );
+        plcolorbar_example_2( PL_COLORBAR_SHADE, 0, 0, 3.0, 3, 9, values_even,
+            "Shade Color Bars - Even Steps" );
+        plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 2, 1, 0.0, 0, 9, values_uneven,
+            "Shade Color Bars - Uneven Steps, Contours" );
+        plcolorbar_example_2( PL_COLORBAR_SHADE, 2, 3, 3.0, 3, 9, values_even,
+            "Shade Color Bars - Even Steps, Contours" );
+        plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0, 0, 0.5, 5, 2, values_small,
+            "Gradient Color Bars" );
+        plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0, 0, 0.5, 5, 2, values_small,
+            "Gradient Color Bars" );
+    }
     plend();
     exit( 0 );
 }

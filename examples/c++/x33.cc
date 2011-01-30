@@ -83,6 +83,7 @@ const char *x33::special_symbols[5] = {
     "✦"
 };
 
+# if 0
 void
 x33::plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT ticks, PLINT sub_ticks, PLINT n, PLFLT *values, const char *title )
 {
@@ -239,6 +240,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
     pls->ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
 }
 
+#endif
 //--------------------------------------------------------------------------
 // x33
 //
@@ -794,6 +796,7 @@ x33::x33( int argc, const char **argv )
         NULL, NULL, NULL, NULL );
     max_height = MAX( max_height, legend_height );
 
+#if 0
     // Color bar examples
     PLFLT values_small[2]  = { 0.0, 1.0 };
     PLFLT values_uneven[9] = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
@@ -813,6 +816,7 @@ x33::x33( int argc, const char **argv )
         "Gradient Color Bars" );
     plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0, 0, 0.5, 5, 2, values_small,
         "Gradient Color Bars" );
+#endif
 
     // Free space that contained legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )
