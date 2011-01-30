@@ -121,7 +121,7 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
     plcolorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
-        axis_opts_2, "Test label - Upper, High Cap",
+        axis_opts_2, "Test label - Top, High Cap",
         n, colors, values );
 
     position = PL_POSITION_BOTTOM;
@@ -130,7 +130,7 @@ plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
     plcolorbar( position, opt, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
-        axis_opts_2, "Test label - Lower, Low Cap",
+        axis_opts_2, "Test label - Bottom, Low Cap",
         n, colors, values );
 
     plvpor( 0.0, 1.0, 0.0, 1.0 );
@@ -211,7 +211,7 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
     plcolorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
-        axis_opts_2, "Test label - Upper, Low Cap",
+        axis_opts_2, "Test label - Top, Low Cap",
         n, colors, values );
 
     position = PL_POSITION_BOTTOM;
@@ -220,7 +220,7 @@ plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT 
     plcolorbar( position, opt, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width,
         ticks, sub_ticks,
-        axis_opts_2, "Test label - Lower, High Cap",
+        axis_opts_2, "Test label - Bottom, High Cap",
         n, colors, values );
 
     plvpor( 0.0, 1.0, 0.0, 1.0 );
