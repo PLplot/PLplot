@@ -186,6 +186,7 @@
 #define    PLCOL                     FNAME( PLCOL, plcol )
 #define    PLCOL0                    FNAME( PLCOL0, plcol0 )
 #define    PLCOL1                    FNAME( PLCOL1, plcol1 )
+#define    PLCOLORBAR                FNAME( PLCOLORBAR7, plcolorbar7 )
 #define    PLCONFIGTIME              FNAME( PLCONFIGTIME, plconfigtime )
 #define    PLCON07                   FNAME( PLCON07, plcon07 )
 #define    PLCON17                   FNAME( PLCON17, plcon17 )

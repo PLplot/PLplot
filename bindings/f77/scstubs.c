@@ -176,6 +176,15 @@ PLCOL( PLINT *icol )
 }
 
 void
+PLCOLORBAR( PLINT *position, PLINT *opt, PLFLT *x, PLFLT *y, PLFLT *length, PLFLT *width,
+    PLINT *cont_color, PLINT *cont_width, PLFLT *ticks, PLINT *sub_ticks,
+    char *axis_opts, char *label, PLINT *n_colors, PLFLT *colors, PLFLT *values )
+{
+    c_plcolorbar( *position, *opt, *x, *y, *length, *width, *cont_color, *cont_width, *ticks, *sub_ticks,
+        axis_opts, label, *n_colors, colors, values );
+}
+
+void
 PLCONFIGTIME( PLFLT *scale, PLFLT *offset1, PLFLT *offset2, PLINT *ccontrol, PLBOOL *ifbtime_offset, PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec )
 {
     c_plconfigtime( *scale, *offset1, *offset2, *ccontrol, *ifbtime_offset, *year, *month, *day, *hour, *min, *sec );
@@ -531,6 +540,7 @@ PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length )
     {
         p_string[j] = data + j * ( length + 1 );
         memcpy( p_string[j], &string[j * length], length );
+        p_string[j][length] = '\0';
         i = length - 1;
         while ( ( i >= 0 ) && ( p_string[j][i] == ' ' ) )
             i--;
@@ -563,20 +573,20 @@ void PLLEGEND(
     const PLINT *symbol_colors, const PLFLT *symbol_scales,
     const PLINT *symbol_numbers )
 {
-    c_pllegend( p_legend_width, p_legend_height,
-        *position, *opt, *x, *y, *plot_width,
-        *bg_color, *bb_color, *bb_style,
-        *nrow, *ncolumn,
-        *nlegend, opt_array,
-        *text_offset, *text_scale, *text_spacing,
-        *text_justification,
-        text_colors, pllegend_text,
-        box_colors, box_patterns,
-        box_scales, box_line_widths,
-        line_colors, line_styles,
-        line_widths,
-        symbol_colors, symbol_scales,
-        symbol_numbers, pllegend_symbols );
+     c_pllegend( p_legend_width, p_legend_height,
+         *position, *opt, *x, *y, *plot_width,
+         *bg_color, *bb_color, *bb_style,
+         *nrow, *ncolumn,
+         *nlegend, opt_array,
+         *text_offset, *text_scale, *text_spacing,
+         *text_justification,
+         text_colors, (const char **)pllegend_text,
+         box_colors, box_patterns,
+         box_scales, box_line_widths,
+         line_colors, line_styles,
+         line_widths,
+         symbol_colors, symbol_scales,
+         symbol_numbers, (const char **)pllegend_symbols ) ;
 
     free( *pllegend_text );
     free( pllegend_text );

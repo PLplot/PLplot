@@ -88,35 +88,35 @@ c     Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽
      &/ 0.0d0, 1.0d0, 2.0d0, 3.0d0, 4.0d0, 5.0d0, 6.0d0, 7.0d0, 8.0d0 /
 
       position_options(1) =
-     &    PL_POSITION_LEFT + PL_POSITION_UPPER + PL_POSITION_OUTSIDE
+     &    PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_OUTSIDE
       position_options(2) =
-     &    PL_POSITION_UPPER + PL_POSITION_OUTSIDE
+     &    PL_POSITION_TOP + PL_POSITION_OUTSIDE
       position_options(3) =
-     &    PL_POSITION_RIGHT + PL_POSITION_UPPER + PL_POSITION_OUTSIDE
+     &    PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_OUTSIDE
       position_options(4) =
      &    PL_POSITION_RIGHT + PL_POSITION_OUTSIDE
       position_options(5) =
-     &    PL_POSITION_RIGHT + PL_POSITION_LOWER + PL_POSITION_OUTSIDE
+     &    PL_POSITION_RIGHT + PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
       position_options(6) =
-     &    PL_POSITION_LOWER + PL_POSITION_OUTSIDE
+     &    PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
       position_options(7) =
-     &    PL_POSITION_LEFT + PL_POSITION_LOWER + PL_POSITION_OUTSIDE
+     &    PL_POSITION_LEFT + PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
       position_options(8) =
      &    PL_POSITION_LEFT + PL_POSITION_OUTSIDE
       position_options(9) =
-     &    PL_POSITION_LEFT + PL_POSITION_UPPER + PL_POSITION_INSIDE
+     &    PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_INSIDE
       position_options(10) =
-     &    PL_POSITION_UPPER + PL_POSITION_INSIDE
+     &    PL_POSITION_TOP + PL_POSITION_INSIDE
       position_options(11) =
-     &    PL_POSITION_RIGHT + PL_POSITION_UPPER + PL_POSITION_INSIDE
+     &    PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_INSIDE
       position_options(12) =
      &    PL_POSITION_RIGHT + PL_POSITION_INSIDE
       position_options(13) =
-     &    PL_POSITION_RIGHT + PL_POSITION_LOWER + PL_POSITION_INSIDE
+     &    PL_POSITION_RIGHT + PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       position_options(14) =
-     &    PL_POSITION_LOWER + PL_POSITION_INSIDE
+     &    PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       position_options(15) =
-     &    PL_POSITION_LEFT + PL_POSITION_LOWER + PL_POSITION_INSIDE
+     &    PL_POSITION_LEFT + PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       position_options(16) =
      &    PL_POSITION_LEFT + PL_POSITION_INSIDE
 
@@ -208,7 +208,7 @@ c     Use monotype fonts so that all legends are the same size.
       call plsfont( PL_FCI_MONO, -1, -1 )
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      position = PL_POSITION_UPPER + PL_POSITION_OUTSIDE
+      position = PL_POSITION_TOP + PL_POSITION_OUTSIDE
       opt     = opt_base
       x       = 0.d0
       y       = 0.1d0
@@ -222,7 +222,7 @@ c     Use monotype fonts so that all legends are the same size.
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-      position = PL_POSITION_LOWER + PL_POSITION_OUTSIDE
+      position = PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
       opt     = opt_base
       x       = 0.d0
       y       = 0.1d0
@@ -264,7 +264,7 @@ c     Use monotype fonts so that all legends are the same size.
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-      position = PL_POSITION_LEFT + PL_POSITION_UPPER +
+      position = PL_POSITION_LEFT + PL_POSITION_TOP +
      &           PL_POSITION_INSIDE
       opt     = opt_base
       x       = 0.d0
@@ -279,7 +279,7 @@ c     Use monotype fonts so that all legends are the same size.
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-      position = PL_POSITION_RIGHT + PL_POSITION_UPPER +
+      position = PL_POSITION_RIGHT + PL_POSITION_TOP +
      &           PL_POSITION_INSIDE
       opt     = opt_base + PL_LEGEND_ROW_MAJOR
       x       = 0.d0
@@ -298,7 +298,7 @@ c
 c This causes an access violation?
 c
 
-      position = PL_POSITION_LOWER + PL_POSITION_INSIDE
+      position = PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       opt     = opt_base + PL_LEGEND_ROW_MAJOR
       x       = 0.d0
       y       = 0.d0
@@ -325,7 +325,7 @@ c     Third page demonstrating legend alignment
       y        = 0.1d0
       nturn    = 5
       nlegend  = 0
-      position = PL_POSITION_UPPER + PL_POSITION_LEFT
+      position = PL_POSITION_TOP + PL_POSITION_LEFT
       opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
       opt      = opt_base + PL_LEGEND_TEXT_LEFT
       do 140 i = 1,9
@@ -373,7 +373,7 @@ c         Use monotype fonts so that all legends are the same size.
      &        symbol_colors, symbol_scales, symbol_numbers, symbols )
 
           if ( i .eq. nturn ) then
-              position = PL_POSITION_UPPER + PL_POSITION_RIGHT
+              position = PL_POSITION_TOP + PL_POSITION_RIGHT
               opt = opt_base
               x   = 1.d0 - x
               y   = y + legend_height
@@ -404,7 +404,7 @@ c       call plbox('bc', 0.0, 0, 'bc', 0.0d0, 0)
 c     Only specify legend data that are required according to the
 c     value of opt_array for that entry.
 
-      position = PL_POSITION_LEFT + PL_POSITION_UPPER
+      position = PL_POSITION_LEFT + PL_POSITION_TOP
       opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX +
      &           PL_LEGEND_TEXT_LEFT
 
@@ -725,7 +725,7 @@ c Color bar routines
 
       include 'plplot_parameters.h'
 
-      integer bar_type
+      integer bar_type, position
       real*8 ticks
       integer sub_ticks
       integer n
@@ -751,8 +751,9 @@ c     Setup color palette 1
           colors(i) = 0.0d0 + color_step * i
   110 continue
 
-      opt = PL_COLORBAR_LEFT + bar_type + PL_COLORBAR_LABEL_LEFT +
-     &      PL_COLORBAR_CAP_HIGH
+      position = PL_POSITION_LEFT
+      opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
+     &           PL_COLORBAR_CAP_HIGH
 
       if ( mod( bar_type, 2*PL_COLORBAR_SHADE_LABEL ) /
      &         PL_COLORBAR_SHADE_LABEL .eq. 1 ) then
@@ -773,24 +774,27 @@ c     Setup color palette 1
      &    axis_opts_1, 'Test label - Left, High Cap',
      &    n, colors, values )
 
-      opt = PL_COLORBAR_RIGHT + bar_type + PL_COLORBAR_LABEL_RIGHT +
-     &      PL_COLORBAR_CAP_LOW
+      position = PL_POSITION_RIGHT
+      opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
+     &           PL_COLORBAR_CAP_LOW
 
       call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
      &    ticks, sub_ticks,
      &    axis_opts_1, 'Test label - Right, Low Cap',
      &    n, colors, values )
 
-      opt = PL_COLORBAR_UPPER + bar_type + PL_COLORBAR_LABEL_UPPER +
-     &      PL_COLORBAR_CAP_HIGH
+      position = PL_POSITION_TOP
+      opt      = bar_type + PL_COLORBAR_LABEL_TOP +
+     &           PL_COLORBAR_CAP_HIGH
 
       call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
      &    ticks, sub_ticks,
      &    axis_opts_2, 'Test label - Upper, High Cap',
      &    n, colors, values )
 
-      opt = PL_COLORBAR_LOWER + bar_type + PL_COLORBAR_LABEL_LOWER +
-     &      PL_COLORBAR_CAP_LOW
+      position = PL_POSITION_TOP
+      opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
+     &           PL_COLORBAR_CAP_LOW
 
       call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
      &    ticks, sub_ticks,
@@ -809,7 +813,7 @@ c     Setup color palette 1
 
       include 'plplot_parameters.h'
 
-      integer bar_type
+      integer bar_type, position
       real*8 ticks
       integer sub_ticks
       integer n
@@ -831,8 +835,9 @@ c     Setup color palette 1
           colors(i) = 0.0d0 + color_step * i
   110 continue
 
-      opt = PL_COLORBAR_LEFT + bar_type + PL_COLORBAR_LABEL_LEFT +
-     &      PL_COLORBAR_CAP_LOW
+      position = PL_POSITION_LEFT
+      opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
+     &           PL_COLORBAR_CAP_LOW
 
       if ( bar_type .eq. PL_COLORBAR_SHADE_LABEL ) then
           axis_opts_1 = ''
@@ -852,24 +857,27 @@ c     Setup color palette 1
      &    axis_opts_1, 'Test label - Left, Low Cap',
      &    n, colors, values )
 
-      opt = PL_COLORBAR_RIGHT + bar_type + PL_COLORBAR_LABEL_RIGHT +
-     &      PL_COLORBAR_CAP_HIGH
+      position = PL_POSITION_RIGHT
+      opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
+     &           PL_COLORBAR_CAP_HIGH
 
       call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
      &    ticks, sub_ticks,
      &    axis_opts_1, 'Test label - Right, High Cap',
      &    n, colors, values )
 
-      opt = PL_COLORBAR_UPPER + bar_type + PL_COLORBAR_LABEL_UPPER +
-     &      PL_COLORBAR_CAP_LOW
+      position = PL_POSITION_TOP
+      opt      = bar_type + PL_COLORBAR_LABEL_TOP +
+     &           PL_COLORBAR_CAP_LOW
 
       call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
      &    ticks, sub_ticks,
      &    axis_opts_2, 'Test label - Upper, Low Cap',
      &    n, colors, values )
 
-      opt = PL_COLORBAR_LOWER + bar_type + PL_COLORBAR_LABEL_LOWER +
-     &    PL_COLORBAR_CAP_HIGH
+      position = PL_POSITION_BOTTOM
+      opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
+     &           PL_COLORBAR_CAP_HIGH
 
       call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
      &    ticks, sub_ticks,
