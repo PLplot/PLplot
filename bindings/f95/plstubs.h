@@ -245,6 +245,8 @@
 #define    PLINIT                    FNAME( PLINIT, plinit )
 #define    PLJOIN                    FNAME( PLJOIN, pljoin )
 #define    PLLAB7                    FNAME( PLLAB7, pllab7 )
+#define    PLLEGEND_CNV_TEXT         FNAME( PLLEGEND07_CNV_TEXT, pllegend07_cnv_text )
+#define    PLLEGEND                  FNAME( PLLEGEND07, pllegend07 )
 #define    PLLIGHTSOURCE             FNAME( PLLIGHTSOURCE, pllightsource )
 #define    PLLINE                    FNAME( PLLINEF77, pllinef77 )
 #define    PLLINE3                   FNAME( PLLINE3F77, plline3f77 )

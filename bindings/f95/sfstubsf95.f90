@@ -1059,6 +1059,52 @@
                           dxmin, dxmax, dymin, dymax )
       end subroutine plimage
 
+      subroutine pllegend( legend_width, legend_height, &
+     &                     position, opt, x, y, &
+     &                     plot_width, bg_color, bb_color, bb_style, &
+     &                     nrow, ncolumn, nlegend, opt_array, &
+     &                     text_offset, text_scale, text_spacing, &
+     &                     text_justification, text_colors, text, &
+     &                     box_colors, box_patterns, box_scales, &
+     &                     box_line_widths, &
+     &                     line_colors, line_styles, line_widths, &
+     &                     symbol_colors, symbol_scales, &
+     &                     symbol_numbers, symbols )
+
+      real(kind=plflt)               :: legend_width, legend_height, plot_width, x, y
+      real(kind=plflt)               :: text_offset, text_scale, text_spacing, text_justification
+      integer                        :: position, opt, bg_color, bb_color, bb_style
+      integer                        :: nrow, ncolumn, nlegend
+
+      character(len=*), dimension(:) :: text, symbols
+
+      integer, dimension(:)          :: opt_array, text_colors, box_colors
+      integer, dimension(:)          :: box_patterns, box_line_widths
+      integer, dimension(:)          :: line_colors, line_styles, line_widths
+      integer, dimension(:)          :: symbol_colors, symbol_numbers
+      real(kind=plflt), dimension(:) :: box_scales, symbol_scales
+
+      !
+      ! Convert the text arrays and store the results in a convenient
+      ! albeit global location. This way we avoid all manner of complications.
+      ! (Though introducing a potentially nasty one: non-threadsafety)
+      !
+      call pllegend07_cnv_text( 1, nlegend, text )
+      call pllegend07_cnv_text( 2, nlegend, symbols )
+
+      call pllegend07( legend_width, legend_height, position, opt, x, y, &
+                       plot_width, bg_color, bb_color, bb_style, &
+                       nrow, ncolumn, nlegend, opt_array, &
+                       text_offset, text_scale, text_spacing, &
+                       text_justification, text_colors, &
+                       box_colors, box_patterns, box_scales, &
+                       box_line_widths, &
+                       line_colors, line_styles, line_widths, &
+                       symbol_colors, symbol_scales, &
+                       symbol_numbers )
+
+      end subroutine pllegend
+
       subroutine plline( x, y )
          real(kind=plflt), dimension(:) :: x, y
 
@@ -1145,8 +1191,8 @@
          real(kind=plflt), dimension(:)   :: x, y, clevel
          real(kind=plflt), dimension(:,:) :: z
 
-	 call plmeshcf77( x, y, z, size(x), size(y), opt, &
-	   clevel, size(clevel), size(x))
+         call plmeshcf77( x, y, z, size(x), size(y), opt, &
+           clevel, size(clevel), size(x))
 
       end subroutine plmeshc
 
@@ -1155,10 +1201,10 @@
          logical                          :: side
          real(kind=plflt), dimension(:)   :: x, y
          real(kind=plflt), dimension(:,:) :: z
-	 integer                          :: iside
+         integer                          :: iside
 
          iside = convert_to_int(side)
-	 call plot3df77( x, y, z, size(x), size(y), opt, iside, size(x))
+         call plot3df77( x, y, z, size(x), size(y), opt, iside, size(x))
 
       end subroutine plot3d
 
@@ -1184,7 +1230,7 @@
       subroutine plsurf3d( x, y, z, opt, clevel )
          integer                        :: opt
          real(kind=plflt), dimension(:) :: x, y, clevel
-	 real(kind=plflt), dimension(:,:) :: z
+         real(kind=plflt), dimension(:,:) :: z
 
          call plsurf3df77( x, y, z, size(x), size(y), opt, clevel, &
            size(clevel), size(x))
@@ -1354,8 +1400,8 @@
       subroutine plsvect( arrowx, arrowy, fill )
            logical                        :: fill
            real(kind=plflt), dimension(:) :: arrowx, arrowy
-	   integer ifill
-	 ifill = convert_to_int(fill)
+           integer ifill
+           ifill = convert_to_int(fill)
 
          call plsvectf77( arrowx, arrowy, size(arrowx), ifill )
       end subroutine plsvect

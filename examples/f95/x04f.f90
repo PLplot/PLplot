@@ -21,6 +21,7 @@
 
       use plplot
       implicit none
+
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -37,6 +38,17 @@
       implicit none
       real(kind=plflt) freql(0:100),ampl(0:100),phase(0:100), freq, f0
       integer i, type
+
+      real(kind=plflt) legend_width, legend_height
+      integer           nlegend
+      integer           opt_array(2), text_colors(2), line_colors(2), &
+                        line_styles(2), line_widths(2), symbol_colors(2), &
+                        symbol_numbers(2)
+      real(kind=plflt)  symbol_scales(2), box_scales(0)
+      integer           box_colors(0), box_patterns(0)
+      integer           box_line_widths(0)
+      character(len=20) text(2)
+      character(len=1)  symbols(2)
 
       call pladv(0)
 !      Set up data for log plot.
@@ -71,6 +83,7 @@
                   'Single Pole Low-Pass Filter')
       call plcol0(2)
       call plmtex('l', 5.0_plflt, 0.5_plflt, 0.5_plflt, 'Amplitude (dB)')
+      nlegend = 1
 !      For the gridless case, put phase vs freq on same plot.
       if(type.eq.0) then
         call plcol0(1)
@@ -82,5 +95,44 @@
         call plcol0(3)
         call plmtex('r', 5.0_plflt, 0.5_plflt, 0.5_plflt, &
                     'Phase shift (degrees)')
+        nlegend = 2
       endif
+
+!     Draw a legend
+!     First legend entry.
+      opt_array(1)   = PL_LEGEND_LINE
+      text_colors(1) = 2
+      text(1)        = 'Amplitude'
+      line_colors(1) = 2
+      line_styles(1) = 1
+      line_widths(1) = 1
+!     note from the above opt_array the first symbol (and box) indices
+!     do not have to be specified
+
+!     Second legend entry.
+      opt_array(2)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
+      text_colors(2)    = 3
+      text(2)           = 'Phase shift'
+      line_colors(2)    = 3
+      line_styles(2)    = 1
+      line_widths(2)    = 1
+      symbol_colors(2)  = 3
+      symbol_scales(2)  = 1.0
+      symbol_numbers(2) = 4
+      symbols(2)        = '*'
+!     from the above opt_arrays we can completely ignore everything
+!     to do with boxes. (Hence the size 0 for the associated arrays)
+
+      call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+      call pllegend( legend_width, legend_height, &
+          0, PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, &
+          0.0_plflt, 0.0_plflt, 0.1_plflt, 15, &
+          1, 1, 0, 0, &
+          nlegend, opt_array, &
+          1.0_plflt, 1.0_plflt, 2.0_plflt, &
+          1.0_plflt, text_colors, text, &
+          box_colors, box_patterns, box_scales, box_line_widths, &
+          line_colors, line_styles, line_widths, &
+          symbol_colors, symbol_scales, symbol_numbers, symbols )
+
       end

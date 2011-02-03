@@ -55,6 +55,7 @@ EXPORTS
   __plplot_MOD_plgriddata
   __plplot_MOD_plhist
   __plplot_MOD_plimage
+  __plplot_MOD_pllegend
   __plplot_MOD_plline
   __plplot_MOD_plline3
   __plplot_MOD_plmesh
