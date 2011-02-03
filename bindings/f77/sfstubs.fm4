@@ -308,8 +308,8 @@ c***********************************************************************
       integer nrow, ncolumn, nlegend
 
       integer opt_array, text_colors, box_colors, box_patterns
-      integer box_scales, line_colors, line_styles
-      real*8 box_line_widths, line_widths, symbol_scales
+      integer box_scales, line_colors, line_styles, line_widths
+      real*8 box_line_widths, symbol_scales
       integer symbol_colors, symbol_numbers
 
       character*(*) text, symbols

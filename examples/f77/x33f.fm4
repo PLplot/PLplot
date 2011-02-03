@@ -669,20 +669,23 @@ c     Set up line legend entries with various widths.
 
 c     Color bar examples
 
-      call plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0d0, 0, 2,
-     &         values_small, 'Image Color Bars' )
-      call plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0d0, 0, 2,
-     &         values_small, 'Image Color Bars' )
-      call plcolorbar_example_1(
-     &         PL_COLORBAR_SHADE + PL_COLORBAR_SHADE_LABEL,
-     &         0.0d0, 0, 9, values_uneven,
-     &         'Shade Color Bars - Uneven Steps' )
-      call plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0d0, 3, 9,
-     &         values_even, 'Shade Color Bars - Even Steps' )
-      call plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5d0, 5, 2,
-     &         values_small, 'Gradient Color Bars' )
-      call plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5d0, 5, 2,
-     &         values_small, 'Gradient Color Bars' )
+c
+c     Note: commented until plcolorbar is ready!
+c
+c     call plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0d0, 0, 2,
+c    &         values_small, 'Image Color Bars' )
+c     call plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0d0, 0, 2,
+c    &         values_small, 'Image Color Bars' )
+c     call plcolorbar_example_1(
+c    &         PL_COLORBAR_SHADE + PL_COLORBAR_SHADE_LABEL,
+c    &         0.0d0, 0, 9, values_uneven,
+c    &         'Shade Color Bars - Uneven Steps' )
+c     call plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0d0, 3, 9,
+c    &         values_even, 'Shade Color Bars - Even Steps' )
+c     call plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5d0, 5, 2,
+c    &         values_small, 'Gradient Color Bars' )
+c     call plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5d0, 5, 2,
+c    &         values_small, 'Gradient Color Bars' )
 
       call plend()
       end
@@ -717,174 +720,174 @@ c
       end
 
 c Color bar routines
-
-      subroutine plcolorbar_example_1( bar_type, ticks, sub_ticks, n,
-     &               values, title )
-
-      implicit none
-
-      include 'plplot_parameters.h'
-
-      integer bar_type, position
-      real*8 ticks
-      integer sub_ticks
-      integer n
-      real*8 values(*)
-      character(*) title
-
+c
+c     subroutine plcolorbar_example_1( bar_type, ticks, sub_ticks, n,
+c    &               values, title )
+c
+c     implicit none
+c
+c     include 'plplot_parameters.h'
+c
+c     integer bar_type, position
+c     real*8 ticks
+c     integer sub_ticks
+c     integer n
+c     real*8 values(*)
+c     character(*) title
+c
 c
 c     FORTRAN 77: array fixed
 c
-      real*8 colors(20)
-      real*8 color_step
-      integer i
-      integer opt
-      character(10) axis_opts_1, axis_opts_2
-
-      call pladv( 0 )
-
+c     real*8 colors(20)
+c     real*8 color_step
+c     integer i
+c     integer opt
+c     character(10) axis_opts_1, axis_opts_2
+c
+c     call pladv( 0 )
+c
 c     Setup color palette 1
-      call plspal1( 'cmap1_blue_red.pal', 1 )
-
-      color_step = 1.0d0 / ( n - 1 )
-      do 110 i = 1,n
-          colors(i) = 0.0d0 + color_step * i
-  110 continue
-
-      position = PL_POSITION_LEFT
-      opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
-     &           PL_COLORBAR_CAP_HIGH
-
-      if ( mod( bar_type, 2*PL_COLORBAR_SHADE_LABEL ) /
-     &         PL_COLORBAR_SHADE_LABEL .eq. 1 ) then
-          axis_opts_1 = 'iv'
-          axis_opts_2 = 'i'
-      else
-          if ( sub_ticks .ne. 0 ) then
-              axis_opts_1 = 'stv'
-              axis_opts_2 = 'st'
-          else
-              axis_opts_1 = 'tv'
-              axis_opts_2 = 't'
-          endif
-      endif
-
-      call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_1, 'Test label - Left, High Cap',
-     &    n, colors, values )
-
-      position = PL_POSITION_RIGHT
-      opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
-     &           PL_COLORBAR_CAP_LOW
-
-      call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_1, 'Test label - Right, Low Cap',
-     &    n, colors, values )
-
-      position = PL_POSITION_TOP
-      opt      = bar_type + PL_COLORBAR_LABEL_TOP +
-     &           PL_COLORBAR_CAP_HIGH
-
-      call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_2, 'Test label - Upper, High Cap',
-     &    n, colors, values )
-
-      position = PL_POSITION_TOP
-      opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
-     &           PL_COLORBAR_CAP_LOW
-
-      call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_2, 'Test label - Lower, Low Cap',
-     &    n, colors, values )
-
-      call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
-      call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
-      call plptex( 0.5d0, 0.5d0, 0.0d0, 0.0d0, 0.5d0, title )
-      end
-
-      subroutine plcolorbar_example_2( bar_type, ticks, sub_ticks, n,
-     &               values, title )
-
-      implicit none
-
-      include 'plplot_parameters.h'
-
-      integer bar_type, position
-      real*8 ticks
-      integer sub_ticks
-      integer n
-      real*8 values(*)
-      character(*) title
-
-      real*8 colors(20)
-      integer i
-      real*8 color_step
-      integer opt
-      character(10) axis_opts_1, axis_opts_2
-
-      call pladv( 0 )
+c     call plspal1( 'cmap1_blue_red.pal', 1 )
+c
+c     color_step = 1.0d0 / ( n - 1 )
+c     do 110 i = 1,n
+c         colors(i) = 0.0d0 + color_step * i
+c 110 continue
+c
+c     position = PL_POSITION_LEFT
+c     opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     if ( mod( bar_type, 2*PL_COLORBAR_SHADE_LABEL ) /
+c    &         PL_COLORBAR_SHADE_LABEL .eq. 1 ) then
+c         axis_opts_1 = 'iv'
+c         axis_opts_2 = 'i'
+c     else
+c         if ( sub_ticks .ne. 0 ) then
+c             axis_opts_1 = 'stv'
+c             axis_opts_2 = 'st'
+c         else
+c             axis_opts_1 = 'tv'
+c             axis_opts_2 = 't'
+c         endif
+c     endif
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Left, High Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_RIGHT
+c     opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Right, Low Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_TOP
+c     opt      = bar_type + PL_COLORBAR_LABEL_TOP +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Upper, High Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_TOP
+c     opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Lower, Low Cap',
+c    &    n, colors, values )
+c
+c     call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plptex( 0.5d0, 0.5d0, 0.0d0, 0.0d0, 0.5d0, title )
+c     end
+c
+c     subroutine plcolorbar_example_2( bar_type, ticks, sub_ticks, n,
+c    &               values, title )
+c
+c     implicit none
+c
+c     include 'plplot_parameters.h'
+c
+c     integer bar_type, position
+c     real*8 ticks
+c     integer sub_ticks
+c     integer n
+c     real*8 values(*)
+c     character(*) title
+c
+c     real*8 colors(20)
+c     integer i
+c     real*8 color_step
+c     integer opt
+c     character(10) axis_opts_1, axis_opts_2
+c
+c     call pladv( 0 )
 c     Setup color palette 1
-      call plspal1( 'cmap1_blue_yellow.pal', 1 )
-
-      color_step = 1.0d0 / ( n - 1 )
-      do 110 i = 1,n
-          colors(i) = 0.0d0 + color_step * i
-  110 continue
-
-      position = PL_POSITION_LEFT
-      opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
-     &           PL_COLORBAR_CAP_LOW
-
-      if ( bar_type .eq. PL_COLORBAR_SHADE_LABEL ) then
-          axis_opts_1 = ''
-          axis_opts_2 = ''
-      else
-          if ( sub_ticks .ne. 0 ) then
-              axis_opts_1 = 'stv'
-              axis_opts_2 = 'st'
-          else
-              axis_opts_1 = 'tv'
-              axis_opts_2 = 't'
-          endif
-      endif
-
-      call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_1, 'Test label - Left, Low Cap',
-     &    n, colors, values )
-
-      position = PL_POSITION_RIGHT
-      opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
-     &           PL_COLORBAR_CAP_HIGH
-
-      call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_1, 'Test label - Right, High Cap',
-     &    n, colors, values )
-
-      position = PL_POSITION_TOP
-      opt      = bar_type + PL_COLORBAR_LABEL_TOP +
-     &           PL_COLORBAR_CAP_LOW
-
-      call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_2, 'Test label - Upper, Low Cap',
-     &    n, colors, values )
-
-      position = PL_POSITION_BOTTOM
-      opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
-     &           PL_COLORBAR_CAP_HIGH
-
-      call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
-     &    ticks, sub_ticks,
-     &    axis_opts_2, 'Test label - Lower, High Cap',
-     &    n, colors, values )
-
-      call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
-      call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
-      call plptex( 0.5d0, 0.5d0, 0.0d0, 0.0d0, 0.5d0, title )
-      end
+c     call plspal1( 'cmap1_blue_yellow.pal', 1 )
+c
+c     color_step = 1.0d0 / ( n - 1 )
+c     do 110 i = 1,n
+c         colors(i) = 0.0d0 + color_step * i
+c 110 continue
+c
+c     position = PL_POSITION_LEFT
+c     opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     if ( bar_type .eq. PL_COLORBAR_SHADE_LABEL ) then
+c         axis_opts_1 = ''
+c         axis_opts_2 = ''
+c     else
+c         if ( sub_ticks .ne. 0 ) then
+c             axis_opts_1 = 'stv'
+c             axis_opts_2 = 'st'
+c         else
+c             axis_opts_1 = 'tv'
+c             axis_opts_2 = 't'
+c         endif
+c     endif
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Left, Low Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_RIGHT
+c     opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Right, High Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_TOP
+c     opt      = bar_type + PL_COLORBAR_LABEL_TOP +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Upper, Low Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_BOTTOM
+c     opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Lower, High Cap',
+c    &    n, colors, values )
+c
+c     call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plptex( 0.5d0, 0.5d0, 0.0d0, 0.0d0, 0.5d0, title )
+c     end
