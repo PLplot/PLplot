@@ -1,6 +1,6 @@
 !  -*- coding: utf-8; -*-
 !
-!  $Id:$
+!  $Id$
 !
 !  Multi-lingual version of the first page of example 4.
 !
@@ -74,16 +74,17 @@ program x26f
   use plplot, PI => PL_PI
   implicit none
 
-  integer      nolangs
-  parameter  ( nolangs = 2 )
+  integer, parameter :: nolangs = 2
+  integer, parameter :: nlegend = 2
 
   character*80 x_label(nolangs)
   character*80 y_label(nolangs)
+  character*80 legend_text(2,nolangs)
   character*80 alty_label(nolangs)
   character*80 title_label(nolangs)
   character*80 line_label(nolangs)
 
-  integer      i
+  integer      i, j
 
   data (x_label(i) ,i=1,nolangs) / &
        'Frequency', &
@@ -96,6 +97,11 @@ program x26f
   data (alty_label(i) ,i=1,nolangs) / &
        'Phase shift (degrees)', &
        'Фазовый сдвиг (градусы)'/
+
+  ! Short rearranged versions of y_label and alty_label.
+  data ((legend_text(j,i), j=1, nlegend), i=1,nolangs) / &
+      'Amplitude',          'Phase shift'              , &
+      'Амплитуда', 'Фазовый сдвиг' /
 
   data (title_label(i) ,i=1,nolangs) / &
       'Single Pole Low-Pass Filter', &
@@ -117,8 +123,8 @@ program x26f
   !  Make log plots using two different styles.
 
   do i = 1,nolangs
-     call plot1(0, x_label(i), y_label(i), alty_label(i), &
-          title_label(i), line_label(i))
+     call plot1(nlegend, 0, x_label(i), y_label(i), alty_label(i), &
+          legend_text(:,i), title_label(i), line_label(i))
   end do
   call plend()
 
@@ -130,18 +136,33 @@ end program x26f
   !  Log-linear plot.
   ! --------------------------------------------------------------------------
 
-  subroutine plot1( type, x_label, y_label, alty_label, &
-       title_label, line_label )
+  subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
+       legend_text, title_label, line_label )
 
     use plplot, PI => PL_PI
     implicit none
 
-    integer type
+    integer type, nlegend
     character(*) x_label, y_label, alty_label, title_label, line_label
 
     integer i
     real(kind=plflt)  freql(101), ampl(101), phase(101)
     real(kind=plflt)  f0, freq
+
+    character(*) legend_text(nlegend)
+
+    integer          opt_array(nlegend)
+    integer          text_colors(nlegend)
+    integer          line_colors(nlegend)
+    integer          line_styles(nlegend)
+    integer          line_widths(nlegend)
+    integer          symbol_numbers(nlegend)
+    integer          symbol_colors(nlegend)
+    real(kind=plflt) symbol_scales(nlegend)
+    character*20     symbols(nlegend)
+    integer          box_colors(0), box_patterns(0), box_line_widths(0)
+    real(kind=plflt) box_scales(0)
+    real(kind=plflt) legend_width, legend_height
 
     call pladv(0)
 
@@ -156,9 +177,9 @@ end program x26f
     end do
     call plvpor(0.15_plflt, 0.85_plflt, 0.1_plflt, 0.9_plflt)
     call plwind(-2.0_plflt, 3.0_plflt, -80.0_plflt, 0.0_plflt)
-    
+
     !  Try different axis and labelling styles.
-    
+
     call plcol0(1)
     if ( type .eq. 0 ) then
        call plbox("bclnst", 0.0_plflt, 0, "bnstv", 0.0_plflt, 0)
@@ -166,31 +187,77 @@ end program x26f
     if ( type .eq. 1 ) then
        call plbox("bcfghlnst", 0.0_plflt, 0, "bcghnstv", 0.0_plflt, 0)
     endif
-    
+
     !  Plot ampl vs freq
-    
+
     call plcol0(2)
     call plline(freql, ampl)
-    call plcol0(1)
+    call plcol0(2)
     call plptex(1.6_plflt, -30.0_plflt, 1.0_plflt, -20.0_plflt, 0.5_plflt, line_label)
 
     !  Put labels on
-    
+
     call plcol0(1)
     call plmtex("b", 3.2_plflt, 0.5_plflt, 0.5_plflt, x_label)
     call plmtex("t", 2.0_plflt, 0.5_plflt, 0.5_plflt, title_label)
     call plcol0(2)
     call plmtex("l", 5.0_plflt, 0.5_plflt, 0.5_plflt, y_label)
-    
+
     !  For the gridless case, put phase vs freq on same plot
-    
+
     if (type .eq. 0) then
        call plcol0(1)
        call plwind(-2.0_plflt, 3.0_plflt, -100.0_plflt, 0.0_plflt)
        call plbox("", 0.0_plflt, 0, "cmstv", 30.0_plflt, 3)
        call plcol0(3)
        call plline(freql, phase)
+       call plstring(freql, phase, '*')
        call plcol0(3)
        call plmtex("r", 5.0_plflt, 0.5_plflt, 0.5_plflt, alty_label)
     endif
+
+    !  Draw a legend
+    !     First legend entry.
+
+    opt_array(1)   = PL_LEGEND_LINE
+    text_colors(1) = 2
+    line_colors(1) = 2
+    line_styles(1) = 1
+    line_widths(1) = 1
+    !     defining this makes the Fortran to C transformation of
+    !     symbols(1) work on defined values which makes valgrind
+    !     happier (even if that transformed string is not used inside the
+    !     C version of pllegend)
+     symbols(1) = ""
+
+    !     note from the above opt_array the first symbol (and box) indices
+    !     do not have to be specified
+
+    !     Second legend entry.
+
+    opt_array(2)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
+    text_colors(2)    = 3
+    line_colors(2)    = 3
+    line_styles(2)    = 1
+    line_widths(2)    = 1
+    symbol_colors(2)  = 3
+    symbol_scales(2)  = 1.
+    symbol_numbers(2) = 4
+    symbols(2)        = "*"
+
+    !     from the above opt_arrays we can completely ignore everything
+    !     to do with boxes.
+
+    call plscol0a( 15, 32, 32, 32, 0.70d0 )
+    call pllegend( legend_width, legend_height, &
+        0, PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, &
+        0.0_plflt, 0.0_plflt, 0.10_plflt, 15, &
+        1, 1, 0, 0, &
+        nlegend, opt_array, &
+        1.0_plflt, 1.0_plflt, 2.0_plflt, &
+        1.0_plflt, text_colors, legend_text, &
+        box_colors, box_patterns, box_scales, box_line_widths, &
+        line_colors, line_styles, line_widths, &
+        symbol_colors, symbol_scales, symbol_numbers, symbols )
+
   end subroutine plot1

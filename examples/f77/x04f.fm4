@@ -44,8 +44,8 @@ c      Make log plots using two different styles.
      &        line_styles(2), line_widths(2), symbol_colors(2),
      &        symbol_numbers(2)
       real*8 symbol_scales(2)
-      integer box_colors(1), box_patterns(1), box_scales(1)
-      real*8 box_line_widths(1)
+      integer box_colors(1), box_patterns(1), box_line_widths(1)
+      real*8 box_scales(1)
       character*20 text(2)
       character*1 symbols(2)
 

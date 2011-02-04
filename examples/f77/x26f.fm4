@@ -164,8 +164,8 @@ c --------------------------------------------------------------------------
       integer      symbol_colors(local_nlegend)
       real*8       symbol_scales(local_nlegend)
       character*20 symbols(local_nlegend)
-      integer      box_colors(1), box_patterns(1), box_scales(1)
-      real*8       box_line_widths(1)
+      integer      box_colors(1), box_patterns(1), box_line_widths(1)
+      real*8       box_scales(1)
       real*8       legend_width, legend_height
 
 c Sanity check.

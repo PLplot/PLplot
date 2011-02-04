@@ -73,7 +73,7 @@
 !      Plot ampl vs freq.
       call plcol0(2)
       call plline(freql,ampl)
-      call plcol0(1)
+      call plcol0(2)
       call plptex(1.6_plflt, -30.0_plflt, 1.0_plflt, -20.0_plflt, 0.5_plflt, &
                   '-20 dB/decade')
 !      Put labels on.

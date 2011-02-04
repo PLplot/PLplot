@@ -156,10 +156,10 @@ c     Use monotype fonts so that all legends are the same size.
       do 110 k = 1,16
           position = position_options(k)
           opt = opt_base
-          text_colors(1)   = 1 + mod( k, 8 )
-          line_colors(1)   = 1 + mod( k, 8 )
-          symbol_colors(1) = 1 + mod( k, 8 )
-          call write_number( text(1), k )
+          text_colors(1)   = 1 + mod( k-1, 8 )
+          line_colors(1)   = 1 + mod( k-1, 8 )
+          symbol_colors(1) = 1 + mod( k-1, 8 )
+          call write_number( text(1), k-1 )
 
           call pllegend( legend_width, legend_height, position, opt,
      &        0.05d0, 0.05d0,
@@ -197,10 +197,10 @@ c     value of opt_array for that entry.
           symbol_scales(k)  = 1.d0
           symbol_numbers(k) = 2
           symbols(k)        = '*'
-          call write_number( text(k), k )
-          text_colors(k)   = 1 + mod( k, 8 )
-          line_colors(k)   = 1 + mod( k, 8 )
-          symbol_colors(k) = 1 + mod( k, 8 )
+          call write_number( text(k), k-1 )
+          text_colors(k)   = 1 + mod( k-1, 8 )
+          line_colors(k)   = 1 + mod( k-1, 8 )
+          symbol_colors(k) = 1 + mod( k-1, 8 )
   120 continue
 
 c     Use monotype fonts so that all legends are the same size.
@@ -294,10 +294,6 @@ c     Use monotype fonts so that all legends are the same size.
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-c
-c This causes an access violation?
-c
-
       position = PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       opt     = opt_base + PL_LEGEND_ROW_MAJOR
       x       = 0.d0
@@ -349,10 +345,10 @@ c         value of opt_array for that entry.
               symbol_scales(k)  = 1.d0
               symbol_numbers(k) = 2
               symbols(k)        = '*'
-              call write_number( text(k), k )
-              text_colors(k)   = 1 + mod( k, 8 )
-              line_colors(k)   = 1 + mod( k, 8 )
-              symbol_colors(k) = 1 + mod( k, 8 )
+              call write_number( text(k), k-1 )
+              text_colors(k)   = 1 + mod( k-1, 8 )
+              line_colors(k)   = 1 + mod( k-1, 8 )
+              symbol_colors(k) = 1 + mod( k-1, 8 )
   130     continue
 
 c         Use monotype fonts so that all legends are the same size.
@@ -465,8 +461,8 @@ c     Set up symbol legend entries with various symbols.
       do 150 i = 1,nlegend
           opt_array(i) = PL_LEGEND_SYMBOL
           text(i) = 'Symbol ' // special_symbols(i)
-          text_colors(i)    = i + 1
-          symbol_colors(i)  = i + 1
+          text_colors(i)    = i
+          symbol_colors(i)  = i
           symbol_scales(i)  = text_scale
           symbol_numbers(i) = 4
           symbols(i)        = special_symbols(i)
@@ -490,8 +486,8 @@ c     Set up symbol legend entries with various numbers of symbols.
       do 160 i = 1,nlegend
           opt_array(i) = PL_LEGEND_SYMBOL
           call write_text_number( text(i), 'Symbol Number', i + 1 )
-          text_colors(i)    = i + 1
-          symbol_colors(i)  = i + 1
+          text_colors(i)    = i
+          symbol_colors(i)  = i
           symbol_scales(i)  = text_scale
           symbol_numbers(i) = i + 2
           symbols(i)        = special_symbols(3)
@@ -544,7 +540,7 @@ c     Set up box legend entries with various patterns.
 
       do 180 i = 1,nlegend
           opt_array(i) = PL_LEGEND_COLOR_BOX
-          call write_text_number( text(i), 'Box Pattern', i )
+          call write_text_number( text(i), 'Box Pattern', i-1 )
           text_colors(i)     = 2
           box_colors(i)      = 2
           box_patterns(i)    = i - 1
@@ -626,7 +622,7 @@ c     Set up line legend entries with various styles.
           call write_text_number( text(i), 'Line Style', i )
           text_colors(i) = 2
           line_colors(i) = 2
-          line_styles(i) = i + 1
+          line_styles(i) = i
           line_widths(i) = 1
   210 continue
 
@@ -651,7 +647,7 @@ c     Set up line legend entries with various widths.
           text_colors(i) = 2
           line_colors(i) = 2
           line_styles(i) = 1
-          line_widths(i) = i + 1
+          line_widths(i) = i
   220 continue
 
       opt = opt_base
