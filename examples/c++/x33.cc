@@ -820,7 +820,7 @@ x33::x33( int argc, const char **argv )
 
     // Free space that contained legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )
-        delete text[k];
+        delete [] text[k];
     //plend();
     delete pls;
 }
