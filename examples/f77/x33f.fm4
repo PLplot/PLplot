@@ -323,7 +323,7 @@ c     Third page demonstrating legend alignment
       nlegend  = 0
       position = PL_POSITION_TOP + PL_POSITION_LEFT
       opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
-      opt      = opt_base + PL_LEGEND_TEXT_LEFT
+      opt      = opt_base
       do 140 i = 1,9
 
 c         Set up legend arrays with the correct size, type.
@@ -489,7 +489,7 @@ c     Set up symbol legend entries with various numbers of symbols.
           text_colors(i)    = i
           symbol_colors(i)  = i
           symbol_scales(i)  = text_scale
-          symbol_numbers(i) = i + 2
+          symbol_numbers(i) = i + 1
           symbols(i)        = special_symbols(3)
   160 continue
 
@@ -500,7 +500,7 @@ c     Set up symbol legend entries with various numbers of symbols.
       call pllegend( legend_width, legend_height, position, opt, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
-     &    0., text_colors, text,
+     &    0.d0, text_colors, text,
      &    box_colors, box_patterns, box_scales, box_line_widths,
      &    line_colors, line_styles, line_widths,
      &    symbol_colors, symbol_scales, symbol_numbers, symbols )
@@ -709,9 +709,9 @@ c
       integer      number
 
       if ( number .lt. 10 ) then
-          write( text, '(a,1x,i1)' ) number
+          write( text, '(a,1x,i1)' ) string, number
       else
-          write( text, '(a,1x,i2)' ) number
+          write( text, '(a,1x,i2)' ) string, number
       endif
       end
 

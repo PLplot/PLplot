@@ -36,11 +36,11 @@
       subroutine plot1(type)
       use plplot, PI => PL_PI
       implicit none
-      real(kind=plflt) freql(0:100),ampl(0:100),phase(0:100), freq, f0
-      integer i, type
-
-      real(kind=plflt) legend_width, legend_height
+      real(kind=plflt)  freql(0:100),ampl(0:100),phase(0:100), freq, f0
+      integer           i, type
       integer           nlegend
+
+      real(kind=plflt)  legend_width, legend_height
       integer           opt_array(2), text_colors(2), line_colors(2), &
                         line_styles(2), line_widths(2), symbol_colors(2), &
                         symbol_numbers(2)
@@ -120,8 +120,10 @@
       symbol_scales(2)  = 1.0
       symbol_numbers(2) = 4
       symbols(2)        = '*'
+
 !     from the above opt_arrays we can completely ignore everything
 !     to do with boxes. (Hence the size 0 for the associated arrays)
+!     (note: use the argument nlegend explicitly)
 
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
       call pllegend( legend_width, legend_height, &
