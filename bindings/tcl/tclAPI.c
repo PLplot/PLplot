@@ -33,6 +33,7 @@
 
 #include "plplotP.h"
 #include "pltcl.h"
+#include "plplot_parameters.h"
 #ifndef __WIN32__
 #ifdef PL_HAVE_UNISTD_H
 #include <unistd.h>
@@ -50,6 +51,7 @@
 
 static int loopbackCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plcontCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int pllegendCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmeshCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmeshcCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plot3dCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -97,6 +99,7 @@ static CmdInfo Cmds[] = {
 #include "tclgen_s.h"
     { "plcol",        plcol0Cmd       },
     { "plcont",       plcontCmd       },
+    { "pllegend",     pllegendCmd     },
     { "plmap",        plmapCmd        },
     { "plmeridians",  plmeridiansCmd  },
     { "plstransform", plstransformCmd },
@@ -591,6 +594,10 @@ environment variable PL_LIBRARY to the directory containing that file",
         Tcl_CreateCommand( interp, cmdInfoPtr->name, cmdInfoPtr->proc,
             (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
     }
+
+// Define the flags as variables in the PLPLOT namespace
+
+    set_plplot_parameters( interp );
 
 // We really need this so the TEA based 'make install' can
 // properly determine the package we have installed
@@ -4007,6 +4014,218 @@ plslabelfuncCmd( ClientData clientData, Tcl_Interp *interp,
     {
         label_objs[3] = NULL;
     }
+
+    return TCL_OK;
+}
+
+//--------------------------------------------------------------------------
+// pllegendCmd
+//
+// Processes pllegend Tcl command.
+// C version takes:
+//    function, data
+// (data argument is optional)
+//--------------------------------------------------------------------------
+
+static int *argv_to_ints( Tcl_Interp *interp, const char *list_numbers, int *number )
+{
+    int      i, retcode;
+    int     *array;
+    Tcl_Obj *list;
+    Tcl_Obj *elem;
+
+    list = Tcl_NewStringObj( list_numbers, (-1) );
+
+    retcode = Tcl_ListObjLength( interp, list, number );
+    if ( retcode != TCL_OK || (*number) == 0 )
+    {
+        *number = 0;
+        return NULL;
+    }
+    else
+    {
+        array = (int *) malloc( sizeof(int) * (*number) );
+        for ( i = 0; i < (*number); i ++ )
+        {
+            Tcl_ListObjIndex( interp, list, i, &elem );
+            Tcl_GetIntFromObj( interp, elem, &array[i] );
+        }
+    }
+    return array;
+}
+
+static double *argv_to_doubles( Tcl_Interp *interp, const char *list_numbers, int *number )
+{
+    int      i, retcode;
+    double  *array;
+    Tcl_Obj *list;
+    Tcl_Obj *elem;
+
+    list = Tcl_NewStringObj( list_numbers, (-1) );
+
+    retcode = Tcl_ListObjLength( interp, list, number );
+    if ( retcode != TCL_OK || (*number) == 0 )
+    {
+        *number = 0;
+        return NULL;
+    }
+    else
+    {
+        array = (double *) malloc( sizeof(double) * (*number) );
+        for ( i = 0; i < (*number); i ++ )
+        {
+            Tcl_ListObjIndex( interp, list, i, &elem );
+            Tcl_GetDoubleFromObj( interp, elem, &array[i] );
+        }
+    }
+    return array;
+}
+
+static char **argv_to_chars( Tcl_Interp *interp, const char *list_strings, int *number )
+{
+    int       i, retcode;
+    char    **array;
+    char     *string;
+    int       length;
+    int       idx;
+    Tcl_Obj  *list;
+    Tcl_Obj  *elem;
+
+    list = Tcl_NewStringObj( list_strings, (-1) );
+
+    retcode = Tcl_ListObjLength( interp, list, number );
+    if ( retcode != TCL_OK || (*number) == 0 )
+    {
+        *number = 0;
+        return NULL;
+    }
+    else
+    {
+        array = (char **) malloc( sizeof(char*) * (*number) );
+        array[0] = (char *) malloc( sizeof(char) * (strlen(list_strings)+1) );
+        idx = 0;
+        for ( i = 0; i < (*number); i ++ )
+        {
+            Tcl_ListObjIndex( interp, list, i, &elem );
+            string = Tcl_GetStringFromObj( elem, &length );
+
+            array[i] = array[0] + idx;
+            strncpy( array[i], string, length );
+            idx += length + 1;
+            array[0][idx-1] = '\0';
+        }
+    }
+    return array;
+}
+
+static int
+pllegendCmd( ClientData clientData, Tcl_Interp *interp,
+                 int argc, const char *argv[] )
+{
+    PLFLT     legend_width, legend_height;
+    PLFLT     x, y, plot_width;
+    PLINT     position, opt;
+    PLINT     bg_color, bb_color, bb_style;
+    PLINT     nrow, ncolumn;
+    PLINT     nlegend;
+    PLINT    *opt_array;
+    PLFLT     text_offset, text_scale, text_spacing, text_justification;
+    PLINT    *text_colors;
+    PLINT    *box_colors, *box_patterns;
+    PLFLT    *box_scales;
+    PLINT    *box_line_widths, *line_colors, *line_styles, *line_widths;
+    PLINT    *symbol_colors, *symbol_numbers;
+    PLFLT    *symbol_scales;
+    char    **text;
+    char    **symbols;
+
+    char      string[20];
+    int       number_opts;
+    int       number_texts;
+    int       dummy;
+    double    value;
+
+    Tcl_Obj  *result;
+    Tcl_Obj  *data[2];
+
+    if ( argc != 29 )
+    {
+        Tcl_AppendResult( interp, "bogus syntax for pllegend, see doc.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    sscanf( argv[1], "%lg", &value ); position = (PLFLT) value;
+    sscanf( argv[2], "%d", &opt );
+    sscanf( argv[3], "%lg", &value ); x = (PLFLT) value;
+    sscanf( argv[4], "%lg", &value ); y = (PLFLT) value;
+    sscanf( argv[5], "%lg", &value ); plot_width = (PLFLT) value;
+    sscanf( argv[6], "%d", &bg_color );
+    sscanf( argv[7], "%d", &bb_color );
+    sscanf( argv[8], "%d", &bb_style );
+    sscanf( argv[9], "%d", &nrow );
+    sscanf( argv[10], "%d", &ncolumn );
+    opt_array = argv_to_ints( interp, argv[11], &number_opts );
+    sscanf( argv[12], "%lg", &value ); text_offset = (PLFLT) value;
+    sscanf( argv[13], "%lg", &value ); text_scale = (PLFLT) value;
+    sscanf( argv[14], "%lg", &value ); text_spacing = (PLFLT) value;
+    sscanf( argv[15], "%lg", &value ); text_justification = (PLFLT) value;
+
+    text_colors     = argv_to_ints(    interp, argv[16], &dummy );
+    text            = argv_to_chars(   interp, argv[17], &number_texts );
+    box_colors      = argv_to_ints(    interp, argv[18], &dummy  );
+    box_patterns    = argv_to_ints(    interp, argv[19], &dummy  );
+    box_scales      = argv_to_doubles( interp, argv[20], &dummy  );
+    box_line_widths = argv_to_ints(    interp, argv[21], &dummy  );
+    line_colors     = argv_to_ints(    interp, argv[22], &dummy  );
+    line_styles     = argv_to_ints(    interp, argv[23], &dummy  );
+    line_widths     = argv_to_ints(    interp, argv[24], &dummy  );
+    symbol_colors   = argv_to_ints(    interp, argv[25], &dummy  );
+    symbol_scales   = argv_to_doubles( interp, argv[26], &dummy  );
+    symbol_numbers  = argv_to_ints(    interp, argv[27], &dummy  );
+    symbols         = argv_to_chars(   interp, argv[28], &dummy  );
+
+    nlegend = MIN( number_opts, number_texts );
+
+    c_pllegend( &legend_width, &legend_height,
+        position, opt, x, y, plot_width,
+        bg_color, bb_color, bb_style,
+        nrow, ncolumn,
+        nlegend, opt_array,
+        text_offset, text_scale, text_spacing,
+        text_justification,
+        text_colors, (const char **) text,
+        box_colors, box_patterns,
+        box_scales, box_line_widths,
+        line_colors, line_styles,
+        line_widths,
+        symbol_colors, symbol_scales,
+        symbol_numbers, (const char **) symbols ) ;
+
+    if ( opt_array   != NULL ) free( opt_array   );
+    if ( text_colors != NULL ) free( text_colors );
+    if ( text        != NULL ) {
+        free( text[0] );
+        free( text );
+    }
+    if ( box_colors      != NULL ) free( box_colors );
+    if ( box_patterns    != NULL ) free( box_patterns );
+    if ( box_scales      != NULL ) free( box_scales   );
+    if ( box_line_widths != NULL ) free( box_line_widths );
+    if ( line_colors     != NULL ) free( line_colors );
+    if ( line_styles     != NULL ) free( line_styles );
+    if ( line_widths     != NULL ) free( line_widths );
+    if ( symbol_colors   != NULL ) free( symbol_colors );
+    if ( symbol_scales   != NULL ) free( symbol_scales );
+    if ( symbol_numbers  != NULL ) free( symbol_numbers );
+    if ( symbols         != NULL ) {
+        free( symbols[0] );
+        free( symbols );
+    }
+
+    data[0] = Tcl_NewDoubleObj( legend_width );
+    data[1] = Tcl_NewDoubleObj( legend_height );
+    Tcl_SetObjResult( interp, Tcl_NewListObj( 2, data ) );
 
     return TCL_OK;
 }

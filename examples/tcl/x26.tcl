@@ -87,6 +87,11 @@ proc x26 {{w loopback}} {
        "Фазовый сдвиг (градусы)"
   }
 
+  # Short rearranged versions of y_label and alty_label.
+  set legend_text {
+    { "Amplitude"          "Phase shift"               }
+    { "Амплитуда" "Фазовый сдвиг" }}
+
   set title_label {
       "Single Pole Low-Pass Filter"
       "Однополюсный Низко-Частотный Фильтр"
@@ -108,8 +113,8 @@ proc x26 {{w loopback}} {
 
   #  Make log plots using two different styles.
 
-  foreach xl $x_label yl $y_label altyl $alty_label title $title_label linel $line_label {
-      plot261 $w 0 $xl $yl $altyl $title $linel
+  foreach xl $x_label yl $y_label altyl $alty_label legend $legend_text title $title_label linel $line_label {
+      plot261 $w 0 $xl $yl $altyl $legend $title $linel
   }
 
   # Restore defauls
@@ -123,7 +128,7 @@ proc x26 {{w loopback}} {
 #  Log-linear plot.
 # --------------------------------------------------------------------------
 
-proc plot261 { w type x_label y_label alty_label title_label line_label } {
+proc plot261 { w type x_label y_label alty_label legend_text title_label line_label } {
 
   set PI [expr {4.0*atan(1.0)}]
 
@@ -159,7 +164,7 @@ proc plot261 { w type x_label y_label alty_label title_label line_label } {
 
   $w cmd plcol0 2
   $w cmd plline 101 freql ampl
-  $w cmd plcol0 1
+  $w cmd plcol0 2
   $w cmd plptex 1.6 -30.0 1.0 -20.0 0.5 $line_label
 
   #  Put labels on
@@ -178,7 +183,45 @@ proc plot261 { w type x_label y_label alty_label title_label line_label } {
      $w cmd plbox "" 0.0 0 "cmstv" 30.0 3
      $w cmd plcol0 3
      $w cmd plline 101 freql phase
+     $w cmd plstring 101 freql phase "*"
      $w cmd plcol0 3
      $w cmd plmtex "r" 5.0 0.5 0.5 $alty_label
   }
+
+  # Draw a legend
+  # First legend entry.
+  set opt_array   [list $::PLPLOT::PL_LEGEND_LINE]
+  set text_colors [list 2]
+  set line_colors [list 2]
+  set line_styles [list 1]
+  set line_widths [list 1]
+  # note from the above opt_array the first symbol (and box) indices
+  # will not be used, but they have to be specified anyway!
+  # (make sure the values are reasonable)
+
+  # Second legend entry.
+  lappend opt_array      [expr {$::PLPLOT::PL_LEGEND_LINE | $::PLPLOT::PL_LEGEND_SYMBOL}]
+  lappend text_colors    3
+  lappend line_colors    3
+  lappend line_styles    1
+  lappend line_widths    1
+  set     symbol_colors  [list 0   3]
+  set     symbol_scales  [list 0.0 1.]
+  set     symbol_numbers [list 0   4]
+  set     symbols        [list ""  "*"]
+
+  # from the above opt_arrays we can completely ignore everything
+  # to do with boxes.
+
+  plscol0a 15 32 32 32 0.70
+  pllegend \
+      0 [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX}] \
+      0.0 0.0 0.10 15 \
+      1 1 0 0 \
+      $opt_array \
+      1.0 1.0 2.0 \
+      1. $text_colors $legend_text \
+      {} {} {} {} \
+      $line_colors $line_styles $line_widths \
+      $symbol_colors $symbol_scales $symbol_numbers $symbols
 }
