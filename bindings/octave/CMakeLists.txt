@@ -121,6 +121,8 @@ if(ENABLE_octave)
     )
 
   # Add (Unix) custom target to check that plplot_oct_def is up to date.
+  # This check only relevant for legacy matwrapped octave bindings since
+  # swig-based bindings don't use plplot_oct_def.
   add_custom_target(
     check_plplot_octave_def
     COMMAND ${CMAKE_COMMAND} -E remove -f 
@@ -137,62 +139,7 @@ if(ENABLE_octave)
     )
 
   # Build octave interface.
-  if(ENABLE_swig_octave)
-
-    add_custom_command(
-      OUTPUT 
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-      COMMAND ${CMAKE_COMMAND} -E copy
-      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-      DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
-      )
-
-    add_custom_target(
-      plplot_stub.m_built ALL
-      DEPENDS
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-      )
-
-    set(octave_interface_INCLUDE_PATHS
-      ${CMAKE_SOURCE_DIR}/include
-      ${CMAKE_SOURCE_DIR}/lib/qsastime
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_BINARY_DIR}/include
-      ${CMAKE_CURRENT_BINARY_DIR}
-      ${OCTAVE_INCLUDE_PATH}
-      ${CMAKE_SOURCE_DIR}/bindings/swig-support
-      )
-    include_directories(${octave_interface_INCLUDE_PATHS})
-    set(CMAKE_SWIG_FLAGS -DSWIG_OCTAVE)
-    set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
-
-    set_source_files_properties(plplot_octave.i 
-      PROPERTIES 
-      SWIG_MODULE_NAME plplot_octave
-      CPLUSPLUS ON
-      )
-
-    set(SWIG_MODULE_plplot_octave_EXTRA_DEPS
-      ${CMAKE_SOURCE_DIR}/bindings/swig-support/swig_documentation.i
-      ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
-      )
-
-    # Set up swig + c wrapper.
-    swig_add_module(plplot_octave octave plplot_octave.i)
-    swig_link_libraries(
-      plplot_octave 
-      plplot${LIB_TAG}
-      "${OCTAVE_LIBRARIES}"
-      "${OCTINTERP_LIBRARIES}"
-      )
-
-    # Make sure plplot_stub.m is copied to build tree before plplot_octave
-    # is created so can use plplot_octave in normal way.
-    add_dependencies(plplot_octave plplot_stub.m_built)
-
-  else(ENABLE_swig_octave)
+  if(ENABLE_matwrapped_octave)
     set(octave_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_BINARY_DIR}
@@ -272,8 +219,60 @@ if(ENABLE_octave)
     # serialize these custom targets so that parallel build jobs
     # don't interfere with each other.
     add_dependencies(plplot_stub.m_built make_documentation)
+  else(ENABLE_matwrapped_octave)
+    add_custom_command(
+      OUTPUT 
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
+      )
 
-  endif(ENABLE_swig_octave)
+    add_custom_target(
+      plplot_stub.m_built ALL
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+      )
+
+    set(octave_interface_INCLUDE_PATHS
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/lib/qsastime
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${OCTAVE_INCLUDE_PATH}
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support
+      )
+    include_directories(${octave_interface_INCLUDE_PATHS})
+    set(CMAKE_SWIG_FLAGS -DSWIG_OCTAVE)
+    set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
+
+    set_source_files_properties(plplot_octave.i 
+      PROPERTIES 
+      SWIG_MODULE_NAME plplot_octave
+      CPLUSPLUS ON
+      )
+
+    set(SWIG_MODULE_plplot_octave_EXTRA_DEPS
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support/swig_documentation.i
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
+      )
+
+    # Set up swig + c wrapper.
+    swig_add_module(plplot_octave octave plplot_octave.i)
+    swig_link_libraries(
+      plplot_octave 
+      plplot${LIB_TAG}
+      "${OCTAVE_LIBRARIES}"
+      "${OCTINTERP_LIBRARIES}"
+      )
+
+    # Make sure plplot_stub.m is copied to build tree before plplot_octave
+    # is created so can use plplot_octave in normal way.
+    add_dependencies(plplot_octave plplot_stub.m_built)
+  endif(ENABLE_matwrapped_octave)
 
   # Need access elsewhere (examples/octave) to the file depends of
   # this custom target.

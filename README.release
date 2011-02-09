@@ -348,9 +348,12 @@ plcolbar which now make it possible to run examples 4, 18, 26, and 33
 (all of which have now have been updated to use those functions) and
 get consistent results with the corresponding C examples.  The
 swig-generated bindings for Octave are used by default, but the build
-system falls back to the matwrapped bindings if swig is not available.
-Users can force the matwrapped bindings by using the
--DENABLE_swig_octave=OFF cmake command-line option.
+system falls back to the legacy matwrapped bindings if swig is not
+available.  For now, users can force the legacy matwrapped bindings by
+using the -DENABLE_matwrapped_octave=ON cmake command-line option for
+comparison purposes, but in the near future we plan to remove the
+matwrapped octave bindings because the swig-generated alternative is
+more complete and easier to maintain.
 
 Like the matwrapped bindings before it, the new swig-generated octave
 bindings currently do not have a number of the PLplot functions
@@ -1170,9 +1173,12 @@ plcolbar which now make it possible to run examples 4, 18, 26, and 33
 (all of which have now have been updated to use those functions) and
 get consistent results with the corresponding C examples.  The
 swig-generated bindings for Octave are used by default, but the build
-system falls back to the matwrapped bindings if swig is not available.
-Users can force the matwrapped bindings by using the
--DENABLE_swig_octave=OFF cmake command-line option.
+system falls back to the legacy matwrapped bindings if swig is not
+available.  For now, users can force the legacy matwrapped bindings by
+using the -DENABLE_matwrapped_octave=ON cmake command-line option for
+comparison purposes, but in the near future we plan to remove the
+matwrapped octave bindings because the swig-generated alternative is
+more complete and easier to maintain.
 
 Like the matwrapped bindings before it, the new swig-generated octave
 bindings currently do not have a number of the PLplot functions
