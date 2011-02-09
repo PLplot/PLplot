@@ -953,13 +953,6 @@ c_plcolorbar( PLINT position, PLINT opt,
     min_value = values[0];
     max_value = values[ n_colors - 1 ];
 
-    // Min and max colors
-    // Assumes that the colors array is sorted from smallest to largest
-    // OR from largest to smallest.
-    PLFLT min_color, max_color;
-    min_color = colors[0];
-    max_color = colors[ n_colors - 1 ];
-
     // Saved normalized coordinates of viewport.
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
     // Saved world coordinates of viewport.
@@ -1128,28 +1121,12 @@ c_plcolorbar( PLINT position, PLINT opt,
         // Transform grid
         PLcGrid grid;
         PLFLT   grid_axis[2] = { 0.0, 1.0 };
-        n_steps = n_colors + 2;
-        PLFLT   values_ext[n_steps];
-        for ( i = 0; i < n_steps; i++ )
-        {
-            if ( i == 0 )
-            {
-                values_ext[i] = min_value - ( values[i + 1] - min_value ) * 0.1;
-            }
-            else if ( i == n_steps - 1 )
-            {
-                values_ext[i] = max_value + ( max_value - values[n_colors - 2] ) * 0.1;
-            }
-            else
-            {
-                values_ext[i] = values[i - 1];
-            }
-        }
+        n_steps = n_colors;
         // Use the provided values.
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             grid.xg = grid_axis;
-            grid.yg = values_ext;
+            grid.yg = values;
             grid.nx = 2;
             grid.ny = n_steps;
             ni      = 2;
@@ -1159,13 +1136,13 @@ c_plcolorbar( PLINT position, PLINT opt,
             {
                 for ( j = 0; j < nj; j++ )
                 {
-                    color_data[i][j] = values_ext[j];
+                    color_data[i][j] = values[j];
                 }
             }
         }
         else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
-            grid.xg = values_ext;
+            grid.xg = values;
             grid.yg = grid_axis;
             grid.nx = n_steps;
             grid.ny = 2;
@@ -1176,7 +1153,7 @@ c_plcolorbar( PLINT position, PLINT opt,
             {
                 for ( j = 0; j < nj; j++ )
                 {
-                    color_data[i][j] = values_ext[i];
+                    color_data[i][j] = values[i];
                 }
             }
         }
@@ -1187,7 +1164,7 @@ c_plcolorbar( PLINT position, PLINT opt,
 
         // Draw the color bar
         plshades( color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
-            values_ext, n_steps, 0, cont_color, cont_width, plfill, TRUE,
+            values, n_steps, 0, cont_color, cont_width, plfill, TRUE,
             pltr1, (void *) ( &grid ) );
         plFree2dGrid( color_data, ni, nj );
     }
