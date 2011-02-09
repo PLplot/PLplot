@@ -256,7 +256,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 */
 
  void
-c_plcolorbar( plplot_colorbar_opt opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+c_plcolorbar( plplot_position_opt position, plplot_colorbar_opt opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
