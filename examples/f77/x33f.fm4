@@ -1,6 +1,6 @@
 c     -*- coding: utf-8; -*-
 c
-c     $Id: x33c.c 11465 2011-01-10 21:59:30Z andrewross $
+c     $Id$
 c
 c     Demonstrate most pllegend capability including unicode symbols.
 c

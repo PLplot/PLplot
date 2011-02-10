@@ -1,6 +1,6 @@
 !     -*- coding: utf-8; -*-
 !
-!     $Id: x33c.c 11465 2011-01-10 21:59:30Z andrewross $
+!     $Id$
 !
 !     Demonstrate most pllegend capability including unicode symbols.
 !
