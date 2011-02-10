@@ -61,7 +61,8 @@ EXECUTABLES_list = \
 		 x28f$(EXEEXT) \
 		 x29f$(EXEEXT) \
 		 x30f$(EXEEXT) \
-		 x31f$(EXEEXT)
+		 x31f$(EXEEXT) \
+		 x33f$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 
