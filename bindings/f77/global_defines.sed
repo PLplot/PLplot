@@ -2,6 +2,17 @@
 # bindings/swig-support/plplotcapi.i into a file that can be used for
 # global variable definitions for f77.
 
+# Insert text at the start:
+1 i\
+c     Do not edit this generated file.  Instead, check its consistency\
+c     with the #defines in bindings/swig-support/plplotcapi.i using the\
+c     (Unix) target "check_f77_parameters".  If that target reports an\
+c     inconsistency (via a cmp message) between the generated\
+c     plplot_parameters.fm4_compare file in the build tree and\
+c     plplot_parameters.fm4 in the source tree, then copy\
+c     plplot_parameters.fm4_compare on top of plplot_parameters.fm4 and\
+c     check in that result.\
+
 # Drop every line that is not a #define
 /^#define/! d
 
