@@ -2,6 +2,17 @@
 # bindings/swig-support/plplotcapi.i into a file that can be used for
 # global variable definitions for f95.
 
+# Insert text at the start:
+1 i\
+!     Do not edit this generated file.  Instead, check its consistency\
+!     with the #defines in bindings/swig-support/plplotcapi.i using the\
+!     (Unix) target "check_f95_parameters".  If that target reports an\
+!     inconsistency (via a cmp message) between the generated\
+!     plplot_parameters.h_compare file in the build tree and\
+!     plplot_parameters.h in the source tree, then copy\
+!     plplot_parameters.h_compare on top of plplot_parameters.h and\
+!     check in that result.\
+
 # Drop every line that is not a #define
 /^#define/! d
 
