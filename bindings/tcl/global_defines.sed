@@ -40,4 +40,12 @@ $ a\
 
 # Parse what is left while preserving trailing comments.  Watch out
 # for parentheses around value as well.
-/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?\\n\\\n\3\\n\\\nvariable \1 \2 \\n\\?
+/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?\\n\\\n\3\\n\\\nvariable \1 \2\\n\\?
+
+# Append extra constants not #defined in plplotcapi.i after PL_NOTSET
+# is processed.
+/PL_NOTSET/ a\
+\\n\\\
+\\n\\\
+variable PL_PI 3.1415926535897932384\\n\\
+
