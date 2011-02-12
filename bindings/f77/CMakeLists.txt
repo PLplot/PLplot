@@ -112,8 +112,7 @@ if(ENABLE_f77)
 
   ## Build C part of F77 bindings
 
-  # Add (Unix) custom target to check that f77 version of
-  # plplot_parameters.fm4 is up to date.
+  # Check consistency of plplot_parameters.fm4.
   add_custom_target(
     check_f77_parameters
     COMMAND ${CMAKE_COMMAND} -E remove -f 
@@ -123,7 +122,7 @@ if(ENABLE_f77)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.fm4_compare
     COMMAND
-    ${CMAKE_COMMAND} -E echo Check that f77 version of plplot_parameters.fm4 is up to date.
+    ${CMAKE_COMMAND} -E echo "Check that plplot_parameters.fm4 is consistent with the #defines in bindings/swig-support/plplotcapi.i"
     COMMAND
     cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.fm4
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.fm4_compare
