@@ -309,7 +309,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param nx External normalized viewport X coordinate.
 //!
 
-#define viewport_to_subpage_x( nx )    ( ( xdmin_save ) + ( nx ) * ( ( xdmax_save ) - ( xdmin_save ) ) )
+#define viewport_to_subpage_x( nx )    ( ( xdmin_adopted ) + ( nx ) * ( ( xdmax_adopted ) - ( xdmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
 //! Convert from normalized subpage X coordinate to external normalized
@@ -318,7 +318,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param nx Normalized subpage X coordinate.
 //!
 
-#define subpage_to_viewport_x( nx )    ( ( nx - xdmin_save ) / ( ( xdmax_save ) - ( xdmin_save ) ) )
+#define subpage_to_viewport_x( nx )    ( ( nx - xdmin_adopted ) / ( ( xdmax_adopted ) - ( xdmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
 //! Convert from external normalized viewport Y coordinate to normalized
@@ -327,7 +327,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param ny External normalized viewport Y coordinate.
 //!
 
-#define viewport_to_subpage_y( ny )    ( ( ydmin_save ) + ( ny ) * ( ( ydmax_save ) - ( ydmin_save ) ) )
+#define viewport_to_subpage_y( ny )    ( ( ydmin_adopted ) + ( ny ) * ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
 //! Convert from normalized subpage Y coordinate to external normalized
@@ -336,7 +336,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param ny Normalized subpage Y coordinate.
 //!
 
-#define subpage_to_viewport_y( ny )    ( ( ny - ydmin_save ) / ( ( ydmax_save ) - ( ydmin_save ) ) )
+#define subpage_to_viewport_y( ny )    ( ( ny - ydmin_adopted ) / ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
 //! Plot discrete annotated legend using filled boxes, lines, and/or symbols.
@@ -495,7 +495,12 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // Saved external world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
     // Saved external normalized coordinates of viewport.
+    // (These are actual values used only for the restore.)
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+    // Saved external normalized coordinates of viewport.
+    // (These are adopted values used to calculate all coordinate
+    // transformations.)
+    PLFLT xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted;
 
     PLFLT x_subpage_per_mm, y_subpage_per_mm, text_width0 = 0., text_width;
     PLFLT width_border, column_separation,
@@ -546,9 +551,32 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
         return;
     }
 
-    // xdmin_save, etc., are the external relative viewport
-    // coordinates within the current sub-page.
+    if ( !( position & PL_POSITION_VIEWPORT ) && !( position & PL_POSITION_SUBPAGE ) )
+    {
+        position = position | PL_POSITION_VIEWPORT;
+    }
+    else if ( ( position & PL_POSITION_VIEWPORT ) && ( position & PL_POSITION_SUBPAGE ) )
+    {
+        plabort( "pllegend: PL_POSITION_VIEWPORT and PL_POSITION_SUBPAGE cannot be simultaneously set." );
+        return;
+    }
+
+    // xdmin_save, etc., are the actual external relative viewport
+    // coordinates within the current sub-page used only for
+    // restoration at the end.
     plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    if ( position & PL_POSITION_SUBPAGE )
+        plvpor( 0., 1., 0., 1. );
+
+    // xdmin_adopted, etc., are the adopted external relative viewport
+    // coordinates within the current sub-page used for all coordinate
+    // transformations.
+    // If position & PL_POSITION_VIEWPORT is true, these coordinates
+    // are the external relative viewport coordinates.
+    // If position & PL_POSITION_SUBPAGE is true, these
+    // coordinates are the relative subpage coordinates.
+    
+    plgvpd( &xdmin_adopted, &xdmax_adopted, &ydmin_adopted, &ydmax_adopted );
 
     // xwmin_save, etc., are the external world coordinates corresponding
     // to the external viewport boundaries.

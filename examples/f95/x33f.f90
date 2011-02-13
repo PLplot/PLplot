@@ -291,17 +291,17 @@
 !     Third page demonstrating legend alignment
 
       call pladv( 0 )
-      call plvpor( 0._plflt, 1._plflt, 0._plflt, 1._plflt )
+      call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt )
       call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
       call plsfont( PL_FCI_SANS, -1, -1 )
-      call plmtex( 't', -2.0_plflt, 0.5_plflt, 0.5_plflt, &
+      call plmtex( 't', 2.0_plflt, 0.5_plflt, 0.5_plflt, &
                'Demonstrate legend alignment' )
 
       x        = 0.1_plflt
       y        = 0.1_plflt
       nturn    = 5
       nlegend  = 0
-      position = PL_POSITION_TOP + PL_POSITION_LEFT
+      position = PL_POSITION_TOP + PL_POSITION_LEFT + PL_POSITION_SUBPAGE
       opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
       opt      = opt_base
       do i = 1,9
@@ -349,7 +349,7 @@
               symbol_colors, symbol_scales, symbol_numbers, symbols  )
 
           if ( i .eq. nturn ) then
-              position = PL_POSITION_TOP + PL_POSITION_RIGHT
+              position = PL_POSITION_TOP + PL_POSITION_RIGHT + PL_POSITION_SUBPAGE
               opt = opt_base
               x   = 1._plflt - x
               y   = y + legend_height

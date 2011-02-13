@@ -311,17 +311,18 @@ c     Use monotype fonts so that all legends are the same size.
 c     Third page demonstrating legend alignment
 
       call pladv( 0 )
-      call plvpor( 0.d0, 1.d0, 0.d0, 1.d0 )
+      call plvpor( 0.0d0, 1.0d0, 0.0d0, 0.9d0 )
       call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
       call plsfont( PL_FCI_SANS, -1, -1 )
-      call plmtex( 't', -2.0d0, 0.5d0, 0.5d0,
+      call plmtex( 't', 2.0d0, 0.5d0, 0.5d0,
      &         'Demonstrate legend alignment' )
 
       x        = 0.1d0
       y        = 0.1d0
       nturn    = 5
       nlegend  = 0
-      position = PL_POSITION_TOP + PL_POSITION_LEFT
+      position = PL_POSITION_TOP + PL_POSITION_LEFT +
+     &           PL_POSITION_SUBPAGE
       opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
       opt      = opt_base
       do 140 i = 1,9
@@ -369,7 +370,8 @@ c         Use monotype fonts so that all legends are the same size.
      &        symbol_colors, symbol_scales, symbol_numbers, symbols )
 
           if ( i .eq. nturn ) then
-              position = PL_POSITION_TOP + PL_POSITION_RIGHT
+              position = PL_POSITION_TOP + PL_POSITION_RIGHT +
+     &        PL_POSITION_SUBPAGE
               opt = opt_base
               x   = 1.d0 - x
               y   = y + legend_height

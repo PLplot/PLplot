@@ -363,16 +363,16 @@ def main():
 
     # Third page demonstrating legend alignment
     pladv(0)
-    plvpor(0., 1., 0., 1.)
+    plvpor(0.0, 1.0, 0.0, 0.9)
     plwind(0.0, 1.0, 0.0, 1.0)
     plsfont(PL_FCI_SANS, -1, -1)
-    plmtex("t", -2.0, 0.5, 0.5, "Demonstrate legend alignment")
+    plmtex("t", 2.0, 0.5, 0.5, "Demonstrate legend alignment")
 
     x = 0.1
     y = 0.1
     nturn = 4
     nlegend = 0
-    position = PL_POSITION_TOP |  PL_POSITION_LEFT
+    position = PL_POSITION_TOP |  PL_POSITION_LEFT | PL_POSITION_SUBPAGE
     opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX
     opt = opt_base
     for i in range(9):
@@ -426,7 +426,7 @@ def main():
                   line_colors, line_styles, line_widths,
                   symbol_colors, symbol_scales, symbol_numbers, symbols )
         if i == nturn:
-            position = PL_POSITION_TOP |  PL_POSITION_RIGHT
+            position = PL_POSITION_TOP |  PL_POSITION_RIGHT | PL_POSITION_SUBPAGE
             opt = opt_base
             x = 1. - x
             y += legend_height

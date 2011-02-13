@@ -458,17 +458,17 @@ class x33 {
 
         // Third page demonstrating legend alignment
         pls.adv( 0 );
-        pls.vpor( 0., 1., 0., 1. );
+        pls.vpor( 0.0, 1.0, 0.0, 0.9 );
         pls.wind( 0.0, 1.0, 0.0, 1.0 );
         pls.sfont( PLStream.PL_FCI_SANS, -1, -1 );
-        pls.mtex( "t", -2.0, 0.5, 0.5, "Demonstrate legend alignment" );
+        pls.mtex( "t", 2.0, 0.5, 0.5, "Demonstrate legend alignment" );
 
         x        = 0.1;
         y        = 0.1;
         nturn    = 4;
         nlegend  = 0;
         opt_base = PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX;
-        position = PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_LEFT;
+        position = PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_LEFT | PLStream.PL_POSITION_SUBPAGE;
         opt      = opt_base;
         for ( i = 0; i < 9; i++ )
         {
@@ -525,7 +525,7 @@ class x33 {
 
             if ( i == nturn )
             {
-                position = PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_RIGHT;
+                position = PLStream.PL_POSITION_TOP | PLStream.PL_POSITION_RIGHT | PLStream.PL_POSITION_SUBPAGE;
                 opt      = opt_base;
                 x        = 1. - x;
                 y        = y + legend_height[0];
