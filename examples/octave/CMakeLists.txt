@@ -78,6 +78,7 @@ set(examples_octave
   x29c.m
   x30c.m
   x31c.m
+  x33c.m
   plplot_octave_demo.m
   lena.img
   )
