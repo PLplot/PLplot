@@ -29,20 +29,53 @@
 #include "plplotP.h"
 
 //--------------------------------------------------------------------------
-//! Calculate parameters that help determine the position of the top left
-//! of the legend in normalized viewport coordinates.
+//! Determine arguments of the last call to plvpor.  This gives a different
+//! result than plgvpd if there is more than one subpage per page.
+//!
+//! @param p_xmin Pointer to a location that contains (after the call)
+//! the normalized subpage coordinate of the left-hand edge of the
+//! viewport.
+//! @param p_xmax Pointer to a location that contains (after the call)
+//! the normalized subpage coordinate of the right-hand edge of the
+//! viewport.
+//! @param p_ymin Pointer to a location that contains (after the call)
+//! the normalized subpage coordinate of the bottom edge of the
+//! viewport.
+//! @param p_ymax Pointer to a location that contains (after the call)
+//! the normalized subpage coordinate of the top edge of the viewport.
+
+static void plgvpsp( PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax )
+{
+  if ( plsc->level < 1 )
+  {
+    plabort( "plgvpsp: Please call plinit first" );
+    return;
+  }
+  if ( ( plsc->cursub <= 0 ) || ( plsc->cursub > ( plsc->nsubx * plsc->nsuby ) ) )
+  {
+    plabort( "plgvpsp: Please call pladv or plenv to go to a subpage" );
+    return;
+  }
+  *p_xmin = ( plsc->vpdxmi - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi );
+  *p_xmax = ( plsc->vpdxma - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi );
+  *p_ymin = ( plsc->vpdymi - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi );
+  *p_ymax = ( plsc->vpdyma - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi );
+}
+
+//--------------------------------------------------------------------------
+//! Calculate parameters that help determine the position of the top
+//! left of the legend in adopted coordinates.  See pllegend
+//! documentation for definition of adopted coordinates.
 //!
 //! @param position Control variable containing valid combinations of the
 //! following control bits that specify the 16 standard positions of
 //! the legend: PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP,
 //! PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE.
-//! @param legend_width Total legend width in normalized viewport
-//! coordinates.
-//! @param legend_height Total legend height in normalized viewport
-//! coordinates.
+//! @param legend_width Total legend width in adopted coordinates.
+//! @param legend_height Total legend height in adopted coordinates.
 //! @param x_legend_position Pointer to a location that contains
-//! (after the call) the X value of one of the 16 standard legend
-//! positions specified by position.
+//! (after the call) the X value in adopted coordinates of
+//! one of the 16 standard legend positions specified by position.
 //! @param y_legend_position Pointer to a location that contains
 //! (after the call) the Y equivalent of x_legend_position.
 //! @param xsign Pointer to a location that contains (after the call)
@@ -58,13 +91,13 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
 {
     // xorigin, yorigin, xlegend, and ylegend are all calculated for
     // one of the 16 standard positions specified by position and are
-    // expressed in normalized viewport coordinates.  xorigin is the X
-    // coordinate of the viewport reference point.  yorigin is the Y
-    // coordinate of the viewport reference point.  xlegend is the X
+    // expressed in adopted coordinates.  xorigin is the X value of
+    // the reference point of the adopted coordinates.  yorigin is the
+    // Y value of the reference point of the adopted coordinates.
+    // xlegend is the X coordinate of the top-left of the legend box
+    // relative to the legend box reference point.  ylegend is the y
     // coordinate of the top-left of the legend box relative to the
-    // legend box reference point.  ylegend is the y coordinate of the
-    // top-left of the legend box relative to the legend box reference
-    // point.
+    // legend box reference point.
 
     PLFLT xorigin, yorigin, xlegend, ylegend;
     // By default the sign of the x and y offsets is positive.
@@ -268,7 +301,7 @@ static void get_subpage_per_mm( PLFLT *x_subpage_per_mm, PLFLT *y_subpage_per_mm
     PLFLT mxmin, mxmax, mymin, mymax;
     // Viewport limits in world coordinates
     PLFLT wxmin, wxmax, wymin, wymax;
-    plgvpd( &vxmin, &vxmax, &vymin, &vymax );
+    plgvpsp( &vxmin, &vxmax, &vymin, &vymax );
     plgspa( &mxmin, &mxmax, &mymin, &mymax );
     plgvpw( &wxmin, &wxmax, &wymin, &wymax );
     *x_subpage_per_mm = ( wxmax - wxmin ) / ( ( vxmax - vxmin ) * ( mxmax - mxmin ) );
@@ -303,62 +336,68 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 }
 
 //--------------------------------------------------------------------------
-//! Convert from external normalized viewport X coordinate to normalized
-//! subpage X coordinate.
+//! Convert from adopted X coordinate to normalized subpage X
+//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinates.
 //!
-//! @param nx External normalized viewport X coordinate.
+//! @param nx Adopted X coordinate.
 //!
 
-#define viewport_to_subpage_x( nx )    ( ( xdmin_adopted ) + ( nx ) * ( ( xdmax_adopted ) - ( xdmin_adopted ) ) )
+#define adopted_to_subpage_x( nx )    ( ( xdmin_adopted ) + ( nx ) * ( ( xdmax_adopted ) - ( xdmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
-//! Convert from normalized subpage X coordinate to external normalized
-//! viewport X coordinate.
+//! Convert from normalized subpage X coordinate to adopted X
+//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinates.
 //!
 //! @param nx Normalized subpage X coordinate.
 //!
 
-#define subpage_to_viewport_x( nx )    ( ( nx - xdmin_adopted ) / ( ( xdmax_adopted ) - ( xdmin_adopted ) ) )
+#define subpage_to_adopted_x( nx )    ( ( nx - xdmin_adopted ) / ( ( xdmax_adopted ) - ( xdmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
-//! Convert from external normalized viewport Y coordinate to normalized
-//! subpage Y coordinate.
+//! Convert from adopted Y coordinate to normalized subpage Y
+//! coordinate.
 //!
-//! @param ny External normalized viewport Y coordinate.
+//! @param ny Adopted Y coordinate.
 //!
 
-#define viewport_to_subpage_y( ny )    ( ( ydmin_adopted ) + ( ny ) * ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
+#define adopted_to_subpage_y( ny )    ( ( ydmin_adopted ) + ( ny ) * ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
-//! Convert from normalized subpage Y coordinate to external normalized
-//! viewport Y coordinate.
+//! Convert from normalized subpage Y coordinate to adopted Y
+//! coordinate.
 //!
 //! @param ny Normalized subpage Y coordinate.
 //!
 
-#define subpage_to_viewport_y( ny )    ( ( ny - ydmin_adopted ) / ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
+#define subpage_to_adopted_y( ny )    ( ( ny - ydmin_adopted ) / ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
 //! Plot discrete annotated legend using filled boxes, lines, and/or symbols.
 //!
-//! @param p_legend_width Pointer to a location which contains
-//! (after the call) the legend width in normalized viewport
-//! coordinates.  This quantity is calculated from the plot_width and
-//! text_offset arguments, the ncolumn argument (possibly modified
-//! inside the routine depending on the nlegend and nrow arguments),
-//! and the length (calculated internally) of the longest text string.
+//! @param p_legend_width Pointer to a location which contains (after
+//! the call) the legend width in adopted coordinates.  (These are
+//! normalized external viewport coordinates if the
+//! PL_POSITION_VIEWPORT bit is set within the position argument or
+//! normalized subpage coordinates if the PL_POSITION_SUBPAGE bit is
+//! set within the position argument.) This quantity is calculated
+//! from the plot_width and text_offset arguments, the ncolumn
+//! argument (possibly modified inside the routine depending on the
+//! nlegend and nrow arguments), and the length (calculated
+//! internally) of the longest text string.
 //! @param p_legend_height Pointer to a location which contains (after
-//! the call) the legend height in normalized viewport coordinates.
-//! This quantity is calculated from the text_scale and text_spacing arguments
-//! and the nrow argument (possibly modified inside the routine depending
-//! on the nlegend and ncolum arguments).
+//! the call) the legend height in adopted coordinates.  This
+//! quantity is calculated from the text_scale and text_spacing
+//! arguments and the nrow argument (possibly modified inside the
+//! routine depending on the nlegend and ncolumn arguments).
 //! @param position This variable contains bits which control the
 //! overall position of the legend.  The combination of the
 //! PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP,
 //! PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE
 //! position bits specifies one of the 16 possible standard positions
 //! (the 4 corners and 4 side centers for both the inside and outside
-//! cases) of the legend relative to the viewport.
+//! cases) of the legend relative to the adopted coordinate system.
 //! @param opt This variable contains bits which control the overall
 //! legend.  If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
 //! on the left of the legend and the plotted area on the right.
@@ -369,25 +408,25 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! legend.  If the PL_LEGEND_ROW_MAJOR bit is set and both of the
 //! (possibly internally transformed) nrow > 1 and ncolumn > 1, then
 //! plot the resulting array of legend entries in row-major order.
-//! @param x X offset of the legend position in normalized viewport
-//! coordinates from the specified standard position of the legend.
-//! For positive x, the direction of motion away from the standard
-//! position is inward/outward from the standard corner positions or
-//! standard center-left or center-right positions if the
+//! @param x X offset of the legend position in adopted coordinates
+//! from the specified standard position of the legend.  For positive
+//! x, the direction of motion away from the standard position is
+//! inward/outward from the standard corner positions or standard
+//! center-left or center-right positions if the
 //! PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt.  For the
 //! center-upper or center-lower cases, the direction of motion is
 //! toward positive X.
-//! @param y Y offset of the legend position in normalized viewport
-//! coordinates from the specified standard position of the legend.
-//! For positive y, the direction of motion away from the standard
-//! position is inward/outward from the standard corner positions or
-//! standard center-upper or center-lower positions if the
+//! @param y Y offset of the legend position in adopted coordinates
+//! from the specified standard position of the legend.  For positive
+//! y, the direction of motion away from the standard position is
+//! inward/outward from the standard corner positions or standard
+//! center-upper or center-lower positions if the
 //! PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt.  For the
 //! center-left or center-right cases, the direction of motion is
 //! toward positive Y.
-//! @param plot_width Horizontal width in normalized viewport units
-//! of the plot area (where colored boxes, lines, and/or symbols are
-//! drawn in the legend).
+//! @param plot_width Horizontal width in adopted coordinates of the
+//! plot area (where colored boxes, lines, and/or symbols are drawn in
+//! the legend).
 //! @param bg_color Cmap0 index of the background color for the legend
 //! (PL_LEGEND_BACKGROUND).
 //! @param bb_color Cmap0 index of the color of the bounding-box
@@ -497,9 +536,8 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // Saved external normalized coordinates of viewport.
     // (These are actual values used only for the restore.)
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
-    // Saved external normalized coordinates of viewport.
-    // (These are adopted values used to calculate all coordinate
-    // transformations.)
+    // Limits of adopted coordinates used to calculate all coordinate
+    // transformations.
     PLFLT xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted;
 
     PLFLT x_subpage_per_mm, y_subpage_per_mm, text_width0 = 0., text_width;
@@ -564,19 +602,20 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // xdmin_save, etc., are the actual external relative viewport
     // coordinates within the current sub-page used only for
     // restoration at the end.
-    plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+
+    // Choose adopted coordinates.
     if ( position & PL_POSITION_SUBPAGE )
         plvpor( 0., 1., 0., 1. );
 
-    // xdmin_adopted, etc., are the adopted external relative viewport
-    // coordinates within the current sub-page used for all coordinate
-    // transformations.
+    // xdmin_adopted, etc., are the adopted coordinates within the
+    // current sub-page used for all coordinate transformations.
     // If position & PL_POSITION_VIEWPORT is true, these coordinates
     // are the external relative viewport coordinates.
     // If position & PL_POSITION_SUBPAGE is true, these
     // coordinates are the relative subpage coordinates.
     
-    plgvpd( &xdmin_adopted, &xdmax_adopted, &ydmin_adopted, &ydmax_adopted );
+    plgvpsp( &xdmin_adopted, &xdmax_adopted, &ydmin_adopted, &ydmax_adopted );
 
     // xwmin_save, etc., are the external world coordinates corresponding
     // to the external viewport boundaries.
@@ -632,21 +671,20 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // Total width and height of legend area in normalized subpage coordinates.
     legend_width = 2. * width_border + ( ncolumn - 1 ) * column_separation +
                    ncolumn * ( text_width +
-                               viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. ) );
+                               adopted_to_subpage_x( plot_width ) - adopted_to_subpage_x( 0. ) );
     legend_height = nrow * text_spacing * character_height;
 
-    // Total width and height of legend area in normalized external viewport
-    // coordinates.
+    // Total width and height of legend area in adopted coordinates.
 
-    legend_width_vc  = subpage_to_viewport_x( legend_width ) - subpage_to_viewport_x( 0. );
-    legend_height_vc = subpage_to_viewport_y( legend_height ) - subpage_to_viewport_y( 0. );
+    legend_width_vc  = subpage_to_adopted_x( legend_width ) - subpage_to_adopted_x( 0. );
+    legend_height_vc = subpage_to_adopted_y( legend_height ) - subpage_to_adopted_y( 0. );
     *p_legend_width  = legend_width_vc;
     *p_legend_height = legend_height_vc;
 
     // dcolumn is the spacing from one column to the next and
     // drow is the spacing from one row to the next.
     dcolumn = column_separation + text_width +
-              viewport_to_subpage_x( plot_width ) - viewport_to_subpage_x( 0. );
+              adopted_to_subpage_x( plot_width ) - adopted_to_subpage_x( 0. );
     drow = text_spacing * character_height;
 
     legend_position( position, legend_width_vc, legend_height_vc, &x_legend_position, &y_legend_position, &xsign, &ysign );
@@ -654,16 +692,16 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     plot_y     = y * ysign + y_legend_position;
     plot_x_end = plot_x + plot_width;
     // Normalized subpage coordinates for legend plots
-    plot_x_subpage     = viewport_to_subpage_x( plot_x );
-    plot_y_subpage     = viewport_to_subpage_y( plot_y );
-    plot_x_end_subpage = viewport_to_subpage_x( plot_x_end );
+    plot_x_subpage     = adopted_to_subpage_x( plot_x );
+    plot_y_subpage     = adopted_to_subpage_y( plot_y );
+    plot_x_end_subpage = adopted_to_subpage_x( plot_x_end );
 
     // Get normalized subpage positions of the start of the legend text
     text_x         = plot_x_end;
     text_y         = plot_y;
-    text_x_subpage = viewport_to_subpage_x( text_x ) +
+    text_x_subpage = adopted_to_subpage_x( text_x ) +
                      text_offset * character_width;
-    text_y_subpage = viewport_to_subpage_y( text_y );
+    text_y_subpage = adopted_to_subpage_y( text_y );
 
     if ( opt & PL_LEGEND_BACKGROUND )
     {
@@ -853,7 +891,7 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
     // Saved world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
-    plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
     plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
 
     // Use the entire sub-page, and make world coordinates 0.0 -> 1.0
@@ -985,7 +1023,7 @@ c_plcolorbar( PLINT position, PLINT opt,
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
     // Saved world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
-    plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
     plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
 
     // Active attributes to be saved and restored afterward.
