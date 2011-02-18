@@ -357,7 +357,8 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 //--------------------------------------------------------------------------
 //! Convert from adopted Y coordinate to normalized subpage Y
-//! coordinate.
+//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinates.
 //!
 //! @param ny Adopted Y coordinate.
 //!
@@ -366,7 +367,8 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 //--------------------------------------------------------------------------
 //! Convert from normalized subpage Y coordinate to adopted Y
-//! coordinate.
+//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinates.
 //!
 //! @param ny Normalized subpage Y coordinate.
 //!
@@ -374,17 +376,16 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 #define subpage_to_adopted_y( ny )    ( ( ny - ydmin_adopted ) / ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
-//! Plot discrete annotated legend using filled boxes, lines, and/or symbols.
+//! Plot legend using discretely annotated filled boxes, lines, and/or symbols.
+//!
+//! (N.B. the adopted coordinate system used for some of the parameters
+//! is defined in the documentation of the position parameter.)
 //!
 //! @param p_legend_width Pointer to a location which contains (after
-//! the call) the legend width in adopted coordinates.  (These are
-//! normalized external viewport coordinates if the
-//! PL_POSITION_VIEWPORT bit is set within the position argument or
-//! normalized subpage coordinates if the PL_POSITION_SUBPAGE bit is
-//! set within the position argument.) This quantity is calculated
-//! from the plot_width and text_offset arguments, the ncolumn
-//! argument (possibly modified inside the routine depending on the
-//! nlegend and nrow arguments), and the length (calculated
+//! the call) the legend width in adopted coordinates.  This quantity
+//! is calculated from the plot_width and text_offset arguments, the
+//! ncolumn argument (possibly modified inside the routine depending
+//! on the nlegend and nrow arguments), and the length (calculated
 //! internally) of the longest text string.
 //! @param p_legend_height Pointer to a location which contains (after
 //! the call) the legend height in adopted coordinates.  This
@@ -392,12 +393,22 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! arguments and the nrow argument (possibly modified inside the
 //! routine depending on the nlegend and ncolumn arguments).
 //! @param position This variable contains bits which control the
-//! overall position of the legend.  The combination of the
+//! overall position of the legend and the definition of the adopted
+//! coordinates used for positions.  The combination of the
 //! PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP,
 //! PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE
-//! position bits specifies one of the 16 possible standard positions
-//! (the 4 corners and 4 side centers for both the inside and outside
-//! cases) of the legend relative to the adopted coordinate system.
+//! bits specifies one of the 16 possible standard positions (the 4
+//! corners and 4 side centers for both the inside and outside cases)
+//! of the legend relative to the adopted coordinate system.  The
+//! adopted coordinates are normalized viewport coordinates if the
+//! PL_POSITION_VIEWPORT bit is set or normalized subpage coordinates
+//! if the PL_POSITION_SUBPAGE bit is set.  Default position bits: If
+//! none of PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP, or
+//! PL_POSITION_BOTTOM are set, then use the combination of
+//! PL_POSITION_RIGHT and PL_POSITION_TOP.  If neither of
+//! PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set, use
+//! PL_POSITION_INSIDE.  If neither of PL_POSITION_VIEWPORT or
+//! PL_POSITION_SUBPAGE is set, use PL_POSITION_VIEWPORT.
 //! @param opt This variable contains bits which control the overall
 //! legend.  If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
 //! on the left of the legend and the plotted area on the right.
@@ -411,19 +422,17 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param x X offset of the legend position in adopted coordinates
 //! from the specified standard position of the legend.  For positive
 //! x, the direction of motion away from the standard position is
-//! inward/outward from the standard corner positions or standard
-//! center-left or center-right positions if the
-//! PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt.  For the
-//! center-upper or center-lower cases, the direction of motion is
-//! toward positive X.
+//! inward/outward from the standard corner positions or standard left
+//! or right positions if the PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit
+//! is set in opt.  For the top or bottom cases, the direction of
+//! motion for positive x is toward positive X.
 //! @param y Y offset of the legend position in adopted coordinates
 //! from the specified standard position of the legend.  For positive
 //! y, the direction of motion away from the standard position is
-//! inward/outward from the standard corner positions or standard
-//! center-upper or center-lower positions if the
-//! PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit is set in opt.  For the
-//! center-left or center-right cases, the direction of motion is
-//! toward positive Y.
+//! inward/outward from the standard corner positions or standard top
+//! or bottom positions if the PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit
+//! is set in opt.  For the left or right cases, the direction of
+//! motion for positive y is toward positive Y.
 //! @param plot_width Horizontal width in adopted coordinates of the
 //! plot area (where colored boxes, lines, and/or symbols are drawn in
 //! the legend).
