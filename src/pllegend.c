@@ -1046,7 +1046,8 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
 //! should be fixed with new, more flexible implementations of plimage,
 //! plimagefr, plshades and plgradient which use user-provided minimum and
 //! maximum colors for their range instead of keeping the minimum color fixed
-//! as 0.0 and the maximum fixed as 1.0.
+//! as 0.0 and the maximum fixed as 1.0.  The net effect of this is that the
+//! values in colors do not have the effect they should at this time.
 //! @param values Numeric values for the data range represented by the
 //! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
 //! between segments.  For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT this
@@ -1087,7 +1088,8 @@ c_plcolorbar( PLINT position, PLINT opt,
     // coordinates).
     PLFLT vx_min, vx_max, vy_min, vy_max;
     PLFLT wx_min, wx_max, wy_min, wy_max;
-    // Build the proper viewport and window dimensions
+    // Build the proper viewport and window dimension along the requested side
+    // of the subpage
     if ( position & PL_POSITION_LEFT )
     {
         vx_min = x;
@@ -1137,7 +1139,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         plabort( "plcolorbar: Invalid or missing side" );
     }
 
-    // The window should take up the whole viewport
+    // The window used to draw the colorbar should take up the whole viewport
     plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
@@ -1235,6 +1237,10 @@ c_plcolorbar( PLINT position, PLINT opt,
     else if ( opt & PL_COLORBAR_SHADE )
     {
         // Transform grid
+        // The transform grid is used to make the size of the shaded segments
+        // scale relative to other segments.  For example, if segment A
+        // makes up 10% of the scale and segment B makes up 20% of the scale
+        // then segment B will be twice the length of segment A.
         PLcGrid grid;
         PLFLT   grid_axis[2] = { 0.0, 1.0 };
         n_steps = n_colors;
@@ -1296,12 +1302,15 @@ c_plcolorbar( PLINT position, PLINT opt,
         xs[3] = wx_min;
         ys[3] = wy_max;
         PLFLT angle;
+        // Make sure the gradient runs in the proper direction
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
+            // Top to bottom
             angle = 90.0;
         }
         else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
+            // Left to right
             angle = 0.0;
         }
         else
@@ -1322,7 +1331,7 @@ c_plcolorbar( PLINT position, PLINT opt,
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
         // Add an extra offset for the label so it does not bump in to the
-        // cap.
+        // cap if the label is placed on the same side as the cap.
         if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
                opt & PL_COLORBAR_LABEL_BOTTOM ) ||
              ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
@@ -1336,7 +1345,7 @@ c_plcolorbar( PLINT position, PLINT opt,
     else if ( opt & PL_COLORBAR_CAP_HIGH )
     {
         // Add an extra offset for the label so it does not bump in to the
-        // cap.
+        // cap if the label is placed on the same side as the cap.
         if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
                opt & PL_COLORBAR_LABEL_TOP ) ||
              ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
@@ -1463,7 +1472,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         }
     }
 
-    // Draw the boxes, etc.
+    // Draw the outline for the entire colorbar, tick marks, tick labels.
     if ( position & PL_POSITION_LEFT )
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
@@ -1485,7 +1494,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
     }
 
-    // Restore
+    // Restore previous plot characteristics.
     plcol0( col0_save );
     plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
     plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
