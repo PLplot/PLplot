@@ -1274,23 +1274,6 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
   }
 }
 
-// typemaps required to set integer and floating-point global values
-// correctly for swig-1.3.40. Follows suggestion made by William S
-// Fulton on 2011-02-04 in post to swig-user mailing list.
-
-%typemap(constcode,noblock=1,fragment="SWIG_" "From" "_" {int}) int {
-
-SWIG_Octave_SetConstant(module_ns,"$symname",SWIG_From_int((int)($value)));
-  set_global_value("$symname",SWIG_From_int((int)($value)));
-}
-
-%typemap(constcode,noblock=1,fragment="SWIG_" "From" "_" {double}) double {
-
-SWIG_Octave_SetConstant(module_ns,"$symname",octave_value($value));
-  set_global_value("$symname",octave_value($value));
-}
-
-
 // This test function should be removed when we are confident of our
 // dealings with all types of octave string arrays.
 void testppchar(PLINT n, const PLINT *Array, const char **ArrayCk);
