@@ -1486,6 +1486,7 @@ c_plcolorbar( PLINT position, PLINT opt,
     }
 
     // Restore
+    plcol0( col0_save );
     plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
     plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
     plsmaj( 0.0, maj_save );
