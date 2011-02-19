@@ -996,21 +996,62 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
 //--------------------------------------------------------------------------
 //! Plot color bar for image, shade or gradient plots.
 //!
-//! @param position TODO
-//! @param opt TODO
-//! @param x TODO
-//! @param y TODO
-//! @param length TODO
-//! @param width TODO
-//! @param cont_color TODO
-//! @param cont_width TODO
-//! @param ticks TODO
-//! @param sub_ticks TODO
-//! @param axis_opts TODO
-//! @param label TODO
-//! @param n_colors TODO
-//! @param colors TODO
-//! @param values TODO
+//! @param position This variable defines the placement of the colorbar on the
+//! subpage.  The position can be one of PL_POSITION_TOP,
+//! PL_POSITION_BOTTOM, PL_POSITION_LEFT or PL_POSITION_RIGHT.  The colorbar
+//! will be drawn perpendicular to the given side of the subpage.
+//! @param opt This variable contains bits which control the overall colorbar.
+//! The type of colorbar can be specified with PL_COLORBAR_SHADE,
+//! PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT.  The position of the (optional)
+//! label/title can be specified with
+//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).  If no label position is
+//! specified then no label will be drawn.  End-caps for the colorbar can
+//! added with PL_COLORBAR_CAP_LOW and PL_COLORBAR_CAP_HIGH.  If a particular
+//! colorbar cap option is not specified then no cap will be drawn for that
+//! end.  As a special case for PL_COLORBAR_SHADE, the option
+//! PL_COLORBAR_SHADE_LABEL can be specified.  If this option is provided then
+//! any tick marks and tick labels will be placed at the breaks between shaded
+//! segments.  TODO: This should be expanded to support custom placement of
+//! tick marks and tick labels at custom value locations for any colorbar type.
+//! @param x Colorbar displacement distance along/away from the horizonal axis
+//! in normalized subpage coordinates.
+//! @param y Colorbar displacement distance along/away from the vertical axis
+//! in normalized subpage coordinates.
+//! @param length Length of the colorbar along its major axis (ex. along the
+//! top of the subpage if pos is PL_POSITION_TOP) in normalized subpage
+//! coordinates.
+//! @param width Width of the colorbar along the minor axis (ex. fraction of
+//! the vertical subpage size if pos is PL_POSITION_TOP) in normalized subpage
+//! coordinates.
+//! @param cont_color Contour color for PL_COLORBAR_SHADE plots.  This is
+//! passed directly to plshades, so it will be interpreted according to the
+//! design of plshades.
+//! @param cont_width Contour width for PL_COLORBAR_SHADE plots.  This is
+//! passed directly to plshades, so it will be interpreted according to the
+//! design of plshades.
+//! @param ticks Spacing of major ticks, as for plbox.
+//! @param sub_ticks Number of subticks, as for plbox.
+//! @param axis_opts Axis options for the colorbar's major axis, as for plbox.
+//! @param label Text label for the colorbar.  No title is drawn if no label
+//! position is specified in pos.
+//! @param n_colors Number of elements in the colors and values arrays.
+//! @param colors Colors (color map 1) used to draw the colorbar.  If this is a
+//! PL_COLORBAR_SHADE bar then there should be one entry per break between
+//! segments.  If this
+//! is a PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT bar then there should be two
+//! elements - one to specify the high end and one to specify the low end.
+//! TODO: Due to a deficiency in plimage, plimagefr, plshades and plgradient,
+//! the high and low values for colors don't have the effect that they should.
+//! Each colorbar will always span the follow range of color map 1.  This
+//! should be fixed with new, more flexible implementations of plimage,
+//! plimagefr, plshades and plgradient which use user-provided minimum and
+//! maximum colors for their range instead of keeping the minimum color fixed
+//! as 0.0 and the maximum fixed as 1.0.
+//! @param values Numeric values for the data range represented by the
+//! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
+//! between segments.  For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT this
+//! include two values, one for the maximum value on the scale and one for the
+//! minimum value.
 //!
 
 void
