@@ -10,7 +10,6 @@ proc x16 {{w loopback}} {
     set nx 35
     set ny 46
 
-    set pi 3.14159265358979323846
     set fill_width 2; set cont_color 0; set cont_width 0
 
     matrix clevel f $ns
@@ -57,12 +56,12 @@ proc x16 {{w loopback}} {
 
     for {set i 0} {$i < $nx} {incr i} {
 	set xx [expr {-1. + $i * ( 2. / ($nx-1.) )}]
-	xg1 $i = [expr {$xx + $distort * cos( .5 * $pi * $xx )} ]
+	xg1 $i = [expr {$xx + $distort * cos( .5 * $::PLPLOT::PL_PI * $xx )} ]
     }
 
     for {set j 0} {$j < $ny} {incr j} {
 	set yy [expr {-1. + $j * ( 2. / ($ny-1.) )}]
-	yg1 $j = [expr {$yy - $distort * cos( .5 * $pi * $yy )} ]
+	yg1 $j = [expr {$yy - $distort * cos( .5 * $::PLPLOT::PL_PI * $yy )} ]
     }
 
 # Build the 2-d coord arrays.
@@ -72,8 +71,8 @@ proc x16 {{w loopback}} {
 	for {set j 0} {$j < $ny} {incr j} {
 	    set yy [expr {-1. + $j * ( 2. / ($ny-1.) )}]
 
-	    set argx [expr {.5 * $pi * $xx}]
-	    set argy [expr {.5 * $pi * $yy}]
+	    set argx [expr {.5 * $::PLPLOT::PL_PI * $xx}]
+	    set argy [expr {.5 * $::PLPLOT::PL_PI * $yy}]
 
 	    xg2 $i $j = [expr {$xx + $distort * cos($argx) * cos($argy)} ]
 	    yg2 $i $j = [expr {$yy - $distort * cos($argx) * cos($argy)} ]
@@ -181,12 +180,12 @@ proc x16 {{w loopback}} {
     for {set i 0} {$i < $nx} {incr i} {
 	set r [expr {$i / ($nx - 1.)}]
 	for {set j 0} {$j < $nylim} {incr j} {
-	    set t [expr {2. * $pi * $j / ($ny - 1.)}]
+	    set t [expr {2. * $::PLPLOT::PL_PI * $j / ($ny - 1.)}]
 
 	    xg $i $j = [expr {$r * cos($t)}]
 	    yg $i $j = [expr {$r * sin($t)}]
 
-	    z $i $j = [expr {exp(-$r*$r) * cos(5.*$t) * cos(5.*$pi*$r)} ]
+	    z $i $j = [expr {exp(-$r*$r) * cos(5.*$t) * cos(5.*$::PLPLOT::PL_PI*$r)} ]
 	}
     }
 
@@ -219,7 +218,7 @@ proc x16 {{w loopback}} {
     matrix px f 100; matrix py f 100
 
     for {set i 0} {$i < 100} {incr i} {
-	set t [expr {2. * $pi * $i / 99.}]
+	set t [expr {2. * $::PLPLOT::PL_PI * $i / 99.}]
 	px $i = [expr {cos($t)}]
 	py $i = [expr {sin($t)}]
     }

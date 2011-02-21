@@ -29,7 +29,7 @@ proc restore_cmap1_8 {w} {
    # For center control points, pick black or white, whichever is closer to bg
    # Be careful to pick just short of top or bottom else hue info is lost
    $w cmd plgcolbg rbg gbg bbg
-   set vertex [expr ($rbg + $gbg + $bbg)/(3.*255.)]
+   set vertex [expr {($rbg + $gbg + $bbg)/(3.*255.)}]
    if {$vertex < 0.5} {
       set vertex 0.01
       set midpt 0.10
@@ -89,10 +89,6 @@ proc cmap1_init_8 {w gray} {
 proc x08 {{w loopback}} {
 
     # these should be defined elsewhere.
-    set MAG_COLOR 0x04
-    set BASE_CONT 0x08
-    set SURF_CONT 0x20
-    set FACETED   0x80
     set rosen 1
 
     matrix alt f 2 = {60.0, 20.0}
@@ -101,23 +97,23 @@ proc x08 {{w loopback}} {
     set xpts 35
     set ypts 46
     set n_col 256
-    set two_pi [expr 2.0 * 3.14159265358979323846 ]
+    set two_pi [expr {2.0 * $::PLPLOT::PL_PI} ]
 
     matrix x f $xpts
     matrix y f $ypts
     matrix z f $xpts $ypts
 
     for {set i 0} {$i < $xpts} {incr i} {
-	x $i = [expr ($i - ($xpts/2)) / double($xpts/2) ]
+	x $i = [expr {($i - ($xpts/2)) / double($xpts/2)} ]
 	if {$rosen == 1} {
-	   x $i = [expr 1.5* [x $i]]
+	   x $i = [expr {1.5* [x $i]}]
 	}
     }
 
     for {set i 0} {$i < $ypts} {incr i} {
-	y $i = [expr ($i - ($ypts/2)) / double($ypts/2) ]
+	y $i = [expr {($i - ($ypts/2)) / double($ypts/2)} ]
 	if {$rosen == 1} {
-	   y $i = [expr 0.5 + [y $i]]
+	   y $i = [expr {0.5 + [y $i]}]
 	}
     }
 
@@ -126,18 +122,18 @@ proc x08 {{w loopback}} {
 	for {set j 0} {$j < $ypts} {incr j} {
 	    set yy [y $j]
 	    if {$rosen == 1} {
-	      z $i $j = [expr (pow(1. - $xx,2) + \
-		100 * pow($yy - pow($xx,2),2))]
+	      z $i $j = [expr {(pow(1. - $xx,2) + \
+		100 * pow($yy - pow($xx,2),2))}]
 	      set zz [z $i $j]
 	      if {$zz > 0.} {
-		z $i $j = [expr (log($zz))]
+		z $i $j = [expr {log($zz)}]
 	      } else {
-		z $i $j = [expr -5]
+		z $i $j = [expr {-5.0}]
 	      }
 	    } else {
-	    set r [expr sqrt( $xx * $xx + $yy * $yy ) ]
+	    set r [expr {sqrt( $xx * $xx + $yy * $yy )} ]
 
-	    z $i $j = [expr exp(-$r * $r) * cos( $two_pi * $r ) ]
+	    z $i $j = [expr {exp(-$r * $r) * cos( $two_pi * $r )} ]
 	    }
 	}
     }
@@ -179,16 +175,19 @@ proc x08 {{w loopback}} {
 	    # magnitude colored plot
 	    } elseif {$ifshade == 1} {
 	       cmap1_init_8 $w 0
-	       $w cmd plsurf3d x y z [expr $MAG_COLOR]
+	
+	       # Note: the [expr] command is essential here - plsurf3d doesn't accept
+	       # the hexadecimal form apparently!
+	       $w cmd plsurf3d x y z [expr {$::PLPLOT::MAG_COLOR}]
 	    # magnitude colored plot with faceted squares
 	    } elseif {$ifshade == 2} {
 	       cmap1_init_8 $w 0
-	       $w cmd plsurf3d x y z [expr $MAG_COLOR | $FACETED]
+	       $w cmd plsurf3d x y z [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::FACETED}]
 	    # magnitude colored plot with contours.
 	    } else {
 	       cmap1_init_8 $w 0
 	       $w cmd plsurf3d x y z $xpts $ypts \
-		 [expr $MAG_COLOR | $SURF_CONT | $BASE_CONT] clev $nlev
+		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev $nlev
 	    }
         }
     }

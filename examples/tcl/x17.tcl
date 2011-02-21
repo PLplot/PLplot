@@ -40,7 +40,6 @@ proc x17 {{w loopback}} {
 #  The plot will grow automatically if needed (but not shrink)
 
     set nsteps 1000
-    set PI     [expr {acos(-1.0)}]
 
     set ymin -0.1
     set ymax  0.1
@@ -103,7 +102,7 @@ proc x17 {{w loopback}} {
         set t       [expr {double($n) * $dt}]
         set noise   [expr {[$w cmd plrandd] - 0.5}]
         set y1      [expr {$y1 + $noise}]
-        set y2      [expr {sin($t*$PI/18.)}]
+        set y2      [expr {sin($t*$::PLPLOT::PL_PI/18.)}]
         set y3      [expr {$y2 * $noise}]
         set y4      [expr {$y2 + $noise/3.}]
 

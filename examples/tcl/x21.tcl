@@ -27,18 +27,7 @@
 
 proc x21 {{w loopback}} {
 
-    set PI          [expr {4.0*atan(1.0)}]
-
-    set GRID_CSA    1
-    set GRID_DTLI   2
-    set GRID_NNI    3
-    set GRID_NNIDW  4
-    set GRID_NNLI   5
-    set GRID_NNAIDW 6
-
-    set DRAW_LINEXY 3
-    set MAG_COLOR   4
-    set BASE_CONT   8
+    set PI          $::PLPLOT::PL_PI
 
     set pts 500
     set xp        25
@@ -141,8 +130,8 @@ proc x21 {{w loopback}} {
 #     the neighbors is done.
 #
 
-            if {($alg == $GRID_CSA)  || ($alg == $GRID_DTLI) ||
-                ($alg == $GRID_NNLI) || ($alg == $GRID_NNI)} {
+            if {($alg == $::PLPLOT::GRID_CSA)  || ($alg == $::PLPLOT::GRID_DTLI) ||
+                ($alg == $::PLPLOT::GRID_NNLI) || ($alg == $::PLPLOT::GRID_NNI)} {
 
                 for {set i 0} {$i < $xp} {incr i} {
                     for {set j 0} {$j < $yp} {incr j} {
@@ -225,7 +214,7 @@ proc x21 {{w loopback}} {
                 $w cmd plcol0 15
                 $w cmd pllab "" "" [lindex $title $alg]
                 $w cmd plot3dc xg yg zg $xp $yp \
-                   [expr {$DRAW_LINEXY|$MAG_COLOR|$BASE_CONT}] clev $nl
+                   [expr {$::PLPLOT::DRAW_LINEXY|$::PLPLOT::MAG_COLOR|$::PLPLOT::BASE_CONT}] clev $nl
             }
         }
     }

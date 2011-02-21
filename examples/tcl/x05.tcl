@@ -8,7 +8,7 @@ proc x05 {{w loopback}} {
 
 # Fill up data points
 
-    set delta [expr 2.0 * 3.14159265358979323846 / $npts]
+    set delta [expr 2.0 * $::PLPLOT::PL_PI / $npts]
     for {set i 0} {$i < $npts} {incr i} {
 	data $i = [expr sin($i * $delta)]
     }

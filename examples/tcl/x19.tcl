@@ -44,7 +44,7 @@ proc map_transform { x y } {
 
 proc mapform19 {n matx maty} {
 
-    set deg_to_rad [expr {acos(-1.0)/180.0}]
+    set deg_to_rad [expr {$::PLPLOT::PL_PI/180.0}]
 
     for {set i 0} {$i < $n} {incr i} {
         set x      [$matx $i]
@@ -180,7 +180,7 @@ proc x19 {{w loopback}} {
 
     $w cmd plssym 0. 1.
     $w cmd plptex -76.6125 43. 0.0 0.0 0.0 "Baltimore, MD"
-  
+
     $w cmd plstransform NULL
 
     $w cmd pllsty 1

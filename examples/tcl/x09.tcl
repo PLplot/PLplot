@@ -20,11 +20,11 @@ proc x09 {{w loopback}} {
 # Calculate the data matrices.
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set xx [expr ($i - ($xpts / 2)) / double($xpts / 2) ]
+	set xx [expr {($i - ($xpts / 2)) / double($xpts / 2)} ]
 	for {set j 0} {$j < $ypts} {incr j} {
-	    set yy [expr ($j - ($ypts / 2)) / double($ypts / 2) - 1.0 ]
-	    zz $i $j = [expr $xx * $xx - $yy * $yy ]
-	    ww $i $j = [expr 2. * $xx * $yy ]
+	    set yy [expr {($j - ($ypts / 2)) / double($ypts / 2) - 1.0} ]
+	    zz $i $j = [expr {$xx * $xx - $yy * $yy} ]
+	    ww $i $j = [expr {2. * $xx * $yy} ]
 	}
     }
 
@@ -37,35 +37,34 @@ proc x09 {{w loopback}} {
     matrix xg2 f $xpts $ypts
     matrix yg2 f $xpts $ypts
 
-    set pi 3.14159265358979323846
     set distort .4
 
 # Build the 1-d coord arrays.
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set xx [expr -1. + $i * ( 2. / ($xpts-1.) )]
-	xg0 $i = [expr $xx]
-	xg1 $i = [expr $xx + $distort * cos( .5 * $pi * $xx ) ]
+	set xx [expr {-1. + $i * ( 2. / ($xpts-1.) )}]
+	xg0 $i = [expr {$xx}]
+	xg1 $i = [expr {$xx + $distort * cos( .5 * $::PLPLOT::PL_PI * $xx )} ]
     }
 
     for {set j 0} {$j < $ypts} {incr j} {
-	set yy [expr -1. + $j * ( 2. / ($ypts-1.) )]
-	yg0 $j = [expr $yy]
-	yg1 $j = [expr $yy - $distort * cos( .5 * $pi * $yy ) ]
+	set yy [expr {-1. + $j * ( 2. / ($ypts-1.) )}]
+	yg0 $j = [expr {$yy}]
+	yg1 $j = [expr {$yy - $distort * cos( .5 * $::PLPLOT::PL_PI * $yy )} ]
     }
 
 # Build the 2-d coord arrays.
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set xx [expr -1. + $i * ( 2. / ($xpts-1.) )]
+	set xx [expr {-1. + $i * ( 2. / ($xpts-1.) )}]
 	for {set j 0} {$j < $ypts} {incr j} {
-	    set yy [expr -1. + $j * ( 2. / ($ypts-1.) )]
+	    set yy [expr {-1. + $j * ( 2. / ($ypts-1.) )}]
 
-	    set argx [expr .5 * $pi * $xx]
-	    set argy [expr .5 * $pi * $yy]
+	    set argx [expr .5 * $::PLPLOT::PL_PI * $xx]
+	    set argy [expr .5 * $::PLPLOT::PL_PI * $yy]
 
-	    xg2 $i $j = [expr $xx + $distort * cos($argx) * cos($argy) ]
-	    yg2 $i $j = [expr $yy - $distort * cos($argx) * cos($argy) ]
+	    xg2 $i $j = [expr {$xx + $distort * cos($argx) * cos($argy)} ]
+	    yg2 $i $j = [expr {$yy - $distort * cos($argx) * cos($argy)} ]
 	}
     }
 
@@ -175,7 +174,6 @@ proc x09 {{w loopback}} {
 
 proc x09_polar {{w loopback}} {
 
-    set pi 3.14159265358979323846
     $w cmd plenv -1 1 -1 1 0 -2
     $w cmd plcol0 1
 
@@ -183,25 +181,25 @@ proc x09_polar {{w loopback}} {
     matrix px f 100; matrix py f 100
 
     for {set i 0} {$i < 100} {incr i} {
-	set t [expr 2. * $pi * $i / 99.]
-	px $i = [expr cos($t)]
-	py $i = [expr sin($t)]
+	set t [expr {2. * $::PLPLOT::PL_PI * $i / 99.}]
+	px $i = [expr {cos($t)}]
+	py $i = [expr {sin($t)}]
     }
 
     $w cmd plline 100 px py
 
-    set xpts 40; set ypts 40; set ylim [expr $ypts - 1]; set wrap 2
+    set xpts 40; set ypts 40; set ylim [expr {$ypts - 1}]; set wrap 2
     matrix xg f $xpts $ylim
     matrix yg f $xpts $ylim
     matrix z f $xpts $ylim
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set r [expr $i / ($xpts - 1.)]
+	set r [expr {$i / ($xpts - 1.)}]
 	for {set j 0} {$j < $ylim} {incr j} {
-	    set t [expr 2. * $pi * $j / ($ypts - 1.)]
+	    set t [expr {2. * $::PLPLOT::PL_PI * $j / ($ypts - 1.)}]
 
-	    xg $i $j = [expr $r * cos($t)]
-	    yg $i $j = [expr $r * sin($t)]
+	    xg $i $j = [expr {$r * cos($t)}]
+	    yg $i $j = [expr {$r * sin($t)}]
 
 	    z $i $j = $r
 	}
@@ -219,8 +217,7 @@ proc x09_polar {{w loopback}} {
 proc x09_potential {{w loopback}} {
 # Shielded potential contour plot example
 
-    set pi 3.14159265358979323846
-    set xpts 40; set ypts 64; set ylim [expr $ypts - 1]; set wrap 2;
+    set xpts 40; set ypts 64; set ylim [expr {$ypts - 1}]; set wrap 2;
     set perimeterpts 100; set nlevel 20
 
     # Create data to be contoured.
@@ -229,9 +226,9 @@ proc x09_potential {{w loopback}} {
     matrix z f $xpts $ylim
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set r [expr 0.5 + $i]
+	set r [expr {0.5 + $i}]
 	for {set j 0} {$j < $ylim} {incr j} {
-	    set theta [expr {(2. * $pi  / ($ypts - 1.))*(0.5 + $j)}]
+	    set theta [expr {(2. * $::PLPLOT::PL_PI  / ($ypts - 1.))*(0.5 + $j)}]
 
 	    xg $i $j = [expr {$r * cos($theta)}]
 	    yg $i $j = [expr {$r * sin($theta)}]
@@ -251,35 +248,35 @@ proc x09_potential {{w loopback}} {
 	  if {[yg $i $j] > $ymax} { set ymax [yg $i $j] }
        }
     }
-    set x0 [expr ($xmin + $xmax)/2.]
-    set y0 [expr ($ymin + $ymax)/2.]
+    set x0 [expr {($xmin + $xmax)/2.}]
+    set y0 [expr {($ymin + $ymax)/2.}]
 
     # Expanded limits.
 
-    set peps [expr 0.05]
-    set xpmin [expr $xmin - abs($xmin)*$peps]
-    set xpmax [expr $xmax + abs($xmax)*$peps]
-    set ypmin [expr $ymin - abs($ymin)*$peps]
-    set ypmax [expr $ymax + abs($ymax)*$peps]
+    set peps 0.05
+    set xpmin [expr {$xmin - abs($xmin)*$peps}]
+    set xpmax [expr {$xmax + abs($xmax)*$peps}]
+    set ypmin [expr {$ymin - abs($ymin)*$peps}]
+    set ypmax [expr {$ymax + abs($ymax)*$peps}]
 
     # Potential inside a conducting cylinder (or sphere) by method of images.
     # Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
     # Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
     # Also put in smoothing term at small distances.
 
-    set eps [expr 2.]
+    set eps 2.
 
-    set q1 [expr 1.]
-    set d1 [expr $rmax/4.]
+    set q1 1.
+    set d1 [expr {$rmax/4.}]
 
-    set q1i [expr - $q1*$rmax/$d1]
-    set d1i [expr pow($rmax,2)/$d1]
+    set q1i [expr {- $q1*$rmax/$d1}]
+    set d1i [expr {pow($rmax,2)/$d1}]
 
-    set q2 [expr -1.]
-    set d2 [expr $rmax/4.]
+    set q2 -1.
+    set d2 [expr {$rmax/4.}]
 
-    set q2i [expr - $q2*$rmax/$d2]
-    set d2i [expr pow($rmax,2)/$d2]
+    set q2i [expr {- $q2*$rmax/$d2}]
+    set d2i [expr {pow($rmax,2)/$d2}]
 
     for {set i 0} {$i < $xpts} {incr i} {
 	for {set j 0} {$j < $ylim} {incr j} {
@@ -301,9 +298,9 @@ proc x09_potential {{w loopback}} {
     }
 
     # Positive and negative contour levels.
-    set dz [expr ($zmax-$zmin)/$nlevel]
-    set nlevelneg [expr 0]
-    set nlevelpos [expr 0]
+    set dz [expr {($zmax-$zmin)/$nlevel}]
+    set nlevelneg 0
+    set nlevelpos 0
     matrix clevelneg f $nlevel
     matrix clevelpos f $nlevel
     for {set i 0} {$i < $nlevel} {incr i} {
@@ -316,10 +313,10 @@ proc x09_potential {{w loopback}} {
      }
 
      # Colours!
-     set ncollin [expr 11]
-     set ncolbox [expr 1]
-     set ncollab [expr 2]
-     
+     set ncollin 11
+     set ncolbox 1
+     set ncollab 2
+
      # Finally start plotting this page!
      $w cmd pladv 0
      $w cmd plcol0 $ncolbox
@@ -339,7 +336,7 @@ proc x09_potential {{w loopback}} {
 	$w cmd pllsty 2
     	$w cmd plcont z levneg pltr2 xg yg $wrap
      }
-     
+
      if {$nlevelpos >0} {
 	# Positive contours
 	# copy partially full clevelpos to full levpos required by plcont
@@ -350,12 +347,12 @@ proc x09_potential {{w loopback}} {
 	$w cmd pllsty 1
     	$w cmd plcont z levpos pltr2 xg yg $wrap
      }
-     
+
     #Draw outer boundary
     matrix px f $perimeterpts
     matrix py f $perimeterpts
     for {set i 0} {$i < $perimeterpts} {incr i} {
-       set t [expr {(2.*$pi/($perimeterpts-1))*$i}]
+       set t [expr {(2.*$::PLPLOT::PL_PI/($perimeterpts-1))*$i}]
 	px $i = [expr {$x0 + $rmax*cos($t)}]
 	py $i = [expr {$y0 + $rmax*sin($t)}]
     }

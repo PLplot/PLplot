@@ -27,9 +27,8 @@ proc x13 {{w loopback}} {
     $w cmd plcol0 2
 
     set theta0 0.
-    set pi 3.14159265358979323846
 
-    set factor [expr {2. * $pi / 500.}]
+    set factor [expr {2. * $::PLPLOT::PL_PI / 500.}]
     set dthet  1.0
     for {set i 0} {$i <= 4} {incr i} {
 	set j 0
@@ -50,7 +49,7 @@ proc x13 {{w loopback}} {
 	}
 
 	$w cmd plcol0 [expr {$i + 1}]
-	$w cmd plpsty [expr {(($i + 3) % 8 + 1)}]
+	$w cmd plpsty [expr {($i + 3) % 8 + 1}]
 	$w cmd plfill $j x y
 	$w cmd plcol0 1
 	$w cmd plline $j x y

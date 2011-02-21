@@ -120,7 +120,6 @@ proc plot2 {w} {
 
 proc plot3 {w} {
 
-    set pi 3.14159265358979323846
     $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 0.0 360.0 -1.2 1.2
@@ -155,7 +154,7 @@ proc plot3 {w} {
 
     for {set i 0} {$i < 101} {incr i} {
 	x $i = [expr 3.6 * $i]
-	y $i = [expr sin([x $i] * $pi / 180.0)]
+	y $i = [expr sin([x $i] * $::PLPLOT::PL_PI / 180.0)]
     }
 
     $w cmd plcol0 4

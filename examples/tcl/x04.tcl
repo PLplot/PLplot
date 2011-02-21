@@ -17,7 +17,6 @@ proc x04 {{w loopback}} {
 proc plot41 {w type} {
 
 
-    set pi 3.14159265358979323846
     matrix freql f 101
     matrix ampl f 101
     matrix phase f 101
@@ -26,10 +25,10 @@ proc plot41 {w type} {
 
     set f0 1.0
     for {set i 0} {$i <= 100} {incr i} {
-	freql $i = [expr -2.0 + $i / 20.0]
-	set freq [expr pow(10.0, [freql $i])]
-	ampl $i = [expr 20.0 * log10(1.0 / sqrt(1.0 + pow(($freq/$f0), 2)))]
-	phase $i = [expr -(180.0 / $pi) * atan($freq/$f0)]
+	freql $i = [expr {-2.0 + $i / 20.0}]
+	set freq [expr {pow(10.0, [freql $i])}]
+	ampl $i = [expr {20.0 * log10(1.0 / sqrt(1.0 + pow(($freq/$f0), 2)))}]
+	phase $i = [expr {-(180.0 / $::PLPLOT::PL_PI) * atan($freq/$f0)}]
     }
 
     $w cmd plvpor 0.15 0.85 0.1 0.9

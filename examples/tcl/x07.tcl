@@ -32,7 +32,7 @@ proc x07 {{w loopback}} {
 
 	$w cmd plcol0 15
 	for {set i 0} {$i <= 9} {incr i} {
-	    $w cmd plmtex "b" 1.5 [expr 0.1 * $i + 0.05] 0.5 $i
+	    $w cmd plmtex "b" 1.5 [expr {0.1 * $i + 0.05}] 0.5 $i
 	}
 
 	set k 0
@@ -40,16 +40,16 @@ proc x07 {{w loopback}} {
 
 	# Write the digits to the left of the frame
 
-	    $w cmd plmtex "lv" 1.0 [expr (0.95 - 0.1 * $i)] 1.0 \
-		[expr [base $l] + 10*$i]
+	    $w cmd plmtex "lv" 1.0 [expr {0.95 - 0.1 * $i}] 1.0 \
+		[expr {[base $l] + 10*$i}]
 
 	    for {set j 0} {$j <= 9} {incr j} {
-		x 0 = [expr 0.1 * $j + 0.05]
-		y 0 = [expr 0.95 - 0.1 * $i]
+		x 0 = [expr {0.1 * $j + 0.05}]
+		y 0 = [expr {0.95 - 0.1 * $i}]
 
 	    # Display the symbols
 
-		$w cmd plsym 1 x y [expr [base $l] + $k]
+		$w cmd plsym 1 x y [expr {[base $l] + $k}]
 		incr k
 	    }
 	}

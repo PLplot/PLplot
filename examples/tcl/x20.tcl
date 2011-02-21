@@ -70,7 +70,7 @@
 
 proc x20 {{w loopback}} {
 
-    set PI   [expr {4.0*atan(1.0)}]
+    set PI   $::PLPLOT::PL_PI
 
     set XDIM 260
     set YDIM 220

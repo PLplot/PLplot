@@ -73,11 +73,7 @@ proc x11 {{w loopback}} {
     # these should be defined elsewhere.
     # Must use numerical rather than hex value for this one since used
     # inside an array
-#    set DRAW_LINEXY 0x03
-    set DRAW_LINEXY 3
-    set MAG_COLOR 0x04
-    set BASE_CONT 0x08
-    matrix opt i 2 = "$DRAW_LINEXY, $DRAW_LINEXY"
+    matrix opt i 2 = "[expr {$::PLPLOT::DRAW_LINEXY}], [expr {$::PLPLOT::DRAW_LINEXY}]"
     matrix alt f 2 = {33.0, 17.0}
     matrix az  f 2 = {24.0, 115.0}
 
@@ -145,16 +141,16 @@ proc x11 {{w loopback}} {
 
         # magnitude colored wireframe plot
         } elseif {$i == 1} {
-	   $w cmd plmesh x y z [expr {[opt $k] | $MAG_COLOR}]
+	   $w cmd plmesh x y z [expr {[opt $k] | $::PLPLOT::MAG_COLOR}]
 
         # magnitude colored wireframe plot with sides
         } elseif {$i == 2} {
-	   $w cmd plot3d x y z [expr {[opt $k] | $MAG_COLOR}] 1
+	   $w cmd plot3d x y z [expr {[opt $k] | $::PLPLOT::MAG_COLOR}] 1
 
         # magnitude colored wireframe plot with base contour
         } elseif {$i == 3} {
 	   $w cmd plmeshc x y z $xpts $ypts \
-	     [expr {[opt $k] | $MAG_COLOR | $BASE_CONT}] clev $nlev
+	     [expr {[opt $k] | $::PLPLOT::MAG_COLOR | $::PLPLOT::BASE_CONT}] clev $nlev
         }
 
 	$w cmd plcol0 3

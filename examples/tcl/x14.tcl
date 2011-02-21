@@ -9,7 +9,7 @@ proc x14 {{w loopback}} {
 
 # Set up first stream
     $w cmd plsetopt "geometry" $geometry_master
-    
+
     $w cmd plssub 2 2
     $w cmd plinit
 	
@@ -18,13 +18,13 @@ proc x14 {{w loopback}} {
     puts "Demo of multiple output streams via the $driver driver."
     puts "Running with the second stream as slave to the first."
     puts ""
-    
+
 # Start next stream
 	
     $w cmd plsstrm 1
-    
+
 # Turn off pause to make this a slave (must follow master)
-    
+
     $w cmd plsetopt "geometry" $geometry_slave
     $w cmd plspause 0
     if {$driver != ""} {
@@ -33,10 +33,10 @@ proc x14 {{w loopback}} {
     $w cmd plsfam $fam $num $bmax
     $w cmd plsetopt "fflen" "2"
     $w cmd plinit
-    
+
 # Set up the data & plot
 # Original case
-    
+
     $w cmd plsstrm 0
 
     set xscale 6.0
@@ -51,51 +51,51 @@ proc x14 {{w loopback}} {
     set xscale 1.
     set yscale 1.e+6
     plot141 $w
-	    
+	
 # Set up the data & plot
-    
+
     set xscale 1.
     set yscale 1.e-6
     set digmax 2
     $w cmd plsyax digmax 0
     plot141 $w
-    
+
 # Set up the data & plot
-    
+
     set xscale 1.
     set yscale 0.0014
     set yoff 0.0185
     set digmax 5
     $w cmd plsyax digmax 0
     plot141 $w
-    
+
 # To slave
 # The pleop() ensures the eop indicator gets lit.
 
     $w cmd plsstrm 1
     plot144 $w
-    $w cmd pleop 
-    
+    $w cmd pleop
+
 # Back to master
-    
+
     $w cmd plsstrm 0
     plot142 $w
     plot143 $w
-							
+
 # To slave */
 
     $w cmd plsstrm 1
     plot145 $w
-    
-    $w cmd pleop 
-    
+
+    $w cmd pleop
+
 # Back to master to wait for user to advance
-    
+
     $w cmd plsstrm 0
     $w cmd pleop
-		    
+
 # Call plend to finish off.
-		    
+
     $w cmd plend
 }
 
@@ -109,20 +109,20 @@ proc plot141 {w} {
     matrix y f $npts
 
     for {set i 0} {$i < $npts} {incr i} {
-	x $i = [expr $xoff + ($xscale * ($i + 1)) / $npts]
-	y $i = [expr $yoff + $yscale * pow([x $i],2)]
+	x $i = [expr {$xoff + ($xscale * ($i + 1)) / $npts}]
+	y $i = [expr {$yoff + $yscale * pow([x $i],2)}]
     }
 
-    set xmin [x [expr 0]]
-    set xmax [x [expr $npts-1]]
-    set ymin [y [expr 0]]
-    set ymax [y [expr $npts-1]]
+    set xmin [x 0]
+    set xmax [x [expr {$npts-1}]]
+    set ymin [y 0]
+    set ymax [y [expr {$npts-1}]]
 
     matrix x1 f 6
     matrix y1 f 6
 
     for {set i 0} {$i < 6} {incr i} {
-	set j [expr $i*10+3]
+	set j [expr {$i*10+3}]
 	x1 $i = [x $j]
 	y1 $i = [y $j]
     }
@@ -158,10 +158,10 @@ proc plot142 {w} {
     matrix y1 f 101
 
     for {set i 0} {$i < 100} {incr i} {
-	set x [expr ($i - 19.)/6.]
+	set x [expr {($i - 19.)/6.}]
 	x1 $i = $x
 	y1 $i = 1
-	if {$x != 0} { y1 $i = [expr sin($x)/$x] }
+	if {$x != 0} { y1 $i = [expr {sin($x)/$x}] }
     }
 
     $w cmd plcol0 3
@@ -173,7 +173,6 @@ proc plot142 {w} {
 
 proc plot143 {w} {
 
-    set pi 3.14159265358979323846
     $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 0.0 360.0 -1.2 1.2
@@ -183,7 +182,7 @@ proc plot143 {w} {
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 60.0 2 "bcnstv" 0.2 2
 
-# Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+# Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 # plstyl expects two integer matrices for mark and space!
 
     matrix mark i 1
@@ -208,7 +207,7 @@ proc plot143 {w} {
 
     for {set i 0} {$i < 101} {incr i} {
 	x $i = [expr 3.6 * $i]
-	y $i = [expr sin([x $i] * $pi / 180.0)]
+	y $i = [expr sin([x $i] * $::PLPLOT::PL_PI / 180.0)]
     }
 
     $w cmd plcol0 4
@@ -218,8 +217,8 @@ proc plot143 {w} {
 
 # This is supposed to work like example 3.
 proc plot144 {w} {
-    set twopi  [expr 2. * 3.14159265358979323846]
-# Set up viewport and window, but do not draw box 
+    set twopi  [expr {2. * $::PLPLOT::PL_PI}]
+# Set up viewport and window, but do not draw box
 
     $w cmd plenv -1.3 1.3 -1.3 1.3 1 -2
 
@@ -227,20 +226,20 @@ proc plot144 {w} {
 
     set ni 10
     set nj 360
-    set nj1 [expr $nj + 1]
+    set nj1 [expr {$nj + 1}]
 
-    set dr     [expr 1. / $ni]
-    set dtheta [expr $twopi / $nj]
+    set dr     [expr {1. / $ni}]
+    set dtheta [expr {$twopi / $nj}]
 
     matrix xj f $nj1
     matrix yj f $nj1
 
     for {set i 1} {$i <= $ni} {incr i} {
 	for {set j 0} {$j < $nj1} {incr j} {
-	    set r     [expr $i * $dr]
-	    set theta [expr $j * $dtheta]
-	    xj $j = [expr $r * cos($theta)]
-	    yj $j = [expr $r * sin($theta)]
+	    set r     [expr {$i * $dr}]
+	    set theta [expr {$j * $dtheta}]
+	    xj $j = [expr {$r * cos($theta)}]
+	    yj $j = [expr {$r * sin($theta)}]
 	}
 	$w cmd plline $nj1 xj yj
     }
@@ -249,9 +248,9 @@ proc plot144 {w} {
 
     $w cmd plcol0 2
     for {set j 0} {$j <= 11} {incr j} {
-	set theta [expr $j * $twopi / 12.]
-	set xg [expr cos($theta)]
-	set yg [expr sin($theta)]
+	set theta [expr {$j * $twopi / 12.}]
+	set xg [expr {cos($theta)}]
+	set yg [expr {sin($theta)}]
 	$w cmd pljoin 0.0 0.0 $xg $yg
 
 # Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
@@ -260,33 +259,33 @@ proc plot144 {w} {
 	    set dy $yg
 	    set just -0.15
 	} else {
-	    set dx [expr -$xg]
-	    set dy [expr -$yg]
+	    set dx [expr {-$xg}]
+	    set dy [expr {-$yg}]
 	    set just 1.15
 	}
-	set label [expr round($theta*360./$twopi)]
+	set label [expr {round($theta*360./$twopi)}]
 
-# N.B. cannot get this command to give same postscript output.  Also visual 
+# N.B. cannot get this command to give same postscript output.  Also visual
 # inspection shows 90 deg label jumping around slightly compared to python
 # and C front ends.  No idea why (AWI comment).
 	$w cmd plptex $xg $yg $dx $dy $just $label
     }
 
-# Draw the graph 
+# Draw the graph
 
     set npts 360
-    set npts1 [expr $npts+1]
+    set npts1 [expr {$npts+1}]
 
-    set dtheta [expr $twopi / $npts]
+    set dtheta [expr {$twopi / $npts}]
 
     matrix x f $npts1
     matrix y f $npts1
 
     for {set j 0} {$j <= $npts} {incr j} {
-	set theta [expr $j * $dtheta]
-	set r     [expr sin(5 * $theta)]
-	x $j = [expr $r * cos($theta)]
-	y $j = [expr $r * sin($theta)]
+	set theta [expr {$j * $dtheta}]
+	set r     [expr {sin(5 * $theta)}]
+	x $j = [expr {$r * cos($theta)}]
+	y $j = [expr {$r * sin($theta)}]
     }
     $w cmd plcol0 3
     $w cmd plline $npts1 x y
@@ -312,11 +311,11 @@ proc plot145 {w} {
 # Calculate the data matrices.
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set xx [expr ($i - ($xpts / 2)) / double($xpts / 2) ]
+	set xx [expr {($i - ($xpts / 2)) / double($xpts / 2)} ]
 	for {set j 0} {$j < $ypts} {incr j} {
-	    set yy [expr ($j - ($ypts / 2)) / double($ypts / 2) - 1.0 ]
-	    zz $i $j = [expr $xx * $xx - $yy * $yy ]
-	    ww $i $j = [expr 2. * $xx * $yy ]
+	    set yy [expr {($j - ($ypts / 2)) / double($ypts / 2) - 1.0} ]
+	    zz $i $j = [expr {$xx * $xx - $yy * $yy} ]
+	    ww $i $j = [expr {2. * $xx * $yy} ]
 	}
     }
 
@@ -326,13 +325,13 @@ proc plot145 {w} {
 # Build the 1-d coord arrays.
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set xx [expr -1. + $i * ( 2. / ($xpts-1.) )]
-	xg0 $i = [expr $xx]
+	set xx [expr {-1. + $i * ( 2. / ($xpts-1.) )}]
+	xg0 $i = $xx
     }
 
     for {set j 0} {$j < $ypts} {incr j} {
-	set yy [expr -1. + $j * ( 2. / ($ypts-1.) )]
-	yg0 $j = [expr $yy]
+	set yy [expr {-1. + $j * ( 2. / ($ypts-1.) )}]
+	yg0 $j = $yy
     }
 
 # Plot using scaled identity transformation used to create
