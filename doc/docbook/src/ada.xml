@@ -615,8 +615,7 @@ Note to self: Uncomment these lines when editing with Serna or XMLmind.
             <para>Color resetting functions for the 16 colors of color map
             0</para>
 
-            <para><literal>Reset_Black, Reset_Red, …,
-            Reset_White</literal></para>
+            <para><literal>Reset_Black, Reset_Red, ..., Reset_White</literal></para>
           </listitem>
 
           <listitem>
