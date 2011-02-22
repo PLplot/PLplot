@@ -4,9 +4,6 @@
 
 proc x31 {{w loopback}} {
 
-    # this constant should be defined centrally.
-    set PL_NOTSET -42
-
     # Test setting / getting familying parameters before plinit.
     # Save values set by plparseopts to be restored later.
 
@@ -25,7 +22,7 @@ proc x31 {{w loopback}} {
     }
     # Restore values set initially by plparseopts.
     $w cmd plsfam $fam0 $num0 $bmax0
-    
+
     # Test setting / getting page parameters before plinit.
     # Save values set by plparseopts to be restored later.
     $w cmd plgpage xp0 yp0 xleng0 yleng0 xoff0 yoff0
@@ -57,7 +54,7 @@ proc x31 {{w loopback}} {
 
     # Test if device initialization screwed around with the preset
     # compression parameter.
-    $w cmd plgcompression compression2 
+    $w cmd plgcompression compression2
     puts [ format "Output various PLplot parameters" ]
     puts [ format "compression parameter = %d" $compression2 ]
     if {$compression2 != $compression1} {
@@ -75,7 +72,7 @@ proc x31 {{w loopback}} {
     $w cmd plscmap1 r1 g1 b1 2
     $w cmd plscmap1a r1 g1 b1 a1 2
 
-    $w cmd plglevel level2 
+    $w cmd plglevel level2
     puts [ format "level parameter = %d" $level2 ]
     if {$level2 != 1} {
         puts stderr "plglevel test failed."
@@ -90,8 +87,8 @@ proc x31 {{w loopback}} {
         puts stderr "plgvpd test failed"
         set status 1
     }
-    set xmid [ expr 0.5*($xmin+$xmax) ]
-    set ymid [ expr 0.5*($ymin+$ymax) ]
+    set xmid [ expr {0.5*($xmin+$xmax)} ]
+    set ymid [ expr {0.5*($ymin+$ymax)} ]
 
     $w cmd plwind 0.2 0.3 0.4 0.5
     $w cmd plgvpw xmin xmax ymin ymax
@@ -110,7 +107,7 @@ proc x31 {{w loopback}} {
     }
 
     # Retrieve and print the name of the output file (if any)
-    $w cmd plgfnam fnam 
+    $w cmd plgfnam fnam
     if {$fnam == ""} {
 	puts [ format "No output file name is set" ]
     } {else} {
@@ -119,7 +116,7 @@ proc x31 {{w loopback}} {
     puts stderr [ format "Output file name is %s" $fnam ]
 
     # Set and get the number of digits used to display axis labels
-    # Note digits is currently ignored in pls[xyz]ax and 
+    # Note digits is currently ignored in pls[xyz]ax and
     # therefore it does not make sense to test the returned value.
     $w cmd plsxax 3 0
     $w cmd plgxax digmax digits
@@ -137,14 +134,14 @@ proc x31 {{w loopback}} {
 	set status 1
     }
     $w cmd plszax 5 0
-    $w cmd plgzax digmax digits 
+    $w cmd plgzax digmax digits
     puts [ format "z axis parameters: digmax, digits = %d %d" $digmax $digits ]
     if {$digmax != 5} {
 	puts stderr "plgzax test failed"
 	set status 1
     }
 
-    $w cmd plsdidev 0.05 $PL_NOTSET 0.1 0.2
+    $w cmd plsdidev 0.05 [expr {$::PLPLOT::PL_NOTSET}] 0.1 0.2
     $w cmd plgdidev mar aspect jx jy
     puts [ format "device-space window parameters: mar, aspect, jx, jy = %f %f %f %f" $mar $aspect $jx $jy ]
     if {$mar != 0.05 || $jx != 0.1 || $jy != 0.2} {

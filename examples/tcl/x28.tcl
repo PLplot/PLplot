@@ -35,9 +35,7 @@ proc x28 {{w loopback}} {
     set NROTATION 8
     set NSHEAR 8
 
-    set pi 3.14159265358979323846
-    
-    set DRAW_LINEXY 3
+    set pi $::PLPLOT::PL_PI
 
     set xmin 0.
     set xmax 1.0
@@ -63,7 +61,7 @@ proc x28 {{w loopback}} {
     set dzsrot [expr {$zsrange / ( $NROTATION - 1 )}]
     set dzsshear [expr {$zsrange / ( $NSHEAR - 1 )}]
 
-    # p1string must be exactly one character + the null termination 
+    # p1string must be exactly one character + the null termination
     # character.
     set p1string "O"
     set pstring "The future of our civilization depends on software freedom."
@@ -87,12 +85,12 @@ proc x28 {{w loopback}} {
     }
 
     # Page 1: Demonstrate inclination and shear capability pattern.
-   
+
     $w cmd pladv 0
     $w cmd plvpor -0.15 1.15 -0.05 1.05
     $w cmd plwind -1.2 1.2 -0.8 1.5
     $w cmd plw3d 1.0 1.0 1.0 $xmin $xmax $ymin $ymax $zmin $zmax 20. 45.
-    
+
     $w cmd plcol0 2
     $w cmd plbox3 "b" "" [expr {$xmax-$xmin}] 0 \
 	"b" "" [expr {$ymax-$ymin}] 0 \
@@ -117,7 +115,7 @@ proc x28 {{w loopback}} {
 	    0.0 "  revolution"
     }
 
-    # x = xmax. 
+    # x = xmax.
     $w cmd plschr 0. 1.0
     for {set i 0} {$i < $NREVOLUTION} {incr i} {
 	set omega [expr {2.*$pi*double($i)/double($NREVOLUTION)}]
@@ -136,7 +134,7 @@ proc x28 {{w loopback}} {
 	    0.0 "  revolution"
     }
 
-    # y = ymax. 
+    # y = ymax.
     $w cmd plschr 0., 1.0
     for {set i 0} {$i < $NREVOLUTION} {incr i} {
 	set omega [expr {2.*$pi*double($i)/double($NREVOLUTION)}]
@@ -154,21 +152,21 @@ proc x28 {{w loopback}} {
 	    $x_shear $y_shear $z_shear \
 	    0.0 "  revolution"
     }
-    # Draw minimal 3D grid to finish defining the 3D box. 
-    $w cmd plmesh x y z $XPTS $YPTS $DRAW_LINEXY
-    
-    # Page 2: Demonstrate rotation of string around its axis. 
+    # Draw minimal 3D grid to finish defining the 3D box.
+    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+
+    # Page 2: Demonstrate rotation of string around its axis.
     $w cmd pladv 0
     $w cmd plvpor -0.15 1.15 -0.05 1.05
     $w cmd plwind -1.2 1.2 -0.8 1.5
     $w cmd plw3d 1.0 1.0 1.0 $xmin $xmax $ymin $ymax $zmin $zmax 20. 45.
-   
+
     $w cmd plcol0 2
     $w cmd plbox3 "b" "" [expr {$xmax-$xmin}] 0 \
 	"b" "" [expr {$ymax-$ymin}] 0 \
 	"bcd" "" [expr {$zmax-$zmin}] 0
 
-    # y = ymax. 
+    # y = ymax.
     $w cmd plschr 0. 1.0
     set x_inclination 1.
     set y_inclination 0.
@@ -188,7 +186,7 @@ proc x28 {{w loopback}} {
 	    0.5 "rotation for y = y#dmax#u"
     }
 
-    # x = xmax. 
+    # x = xmax.
     $w cmd plschr 0. 1.0
     set x_inclination 0.
     set y_inclination -1.
@@ -208,7 +206,7 @@ proc x28 {{w loopback}} {
 	    0.5 "rotation for x = x#dmax#u"
     }
 
-    # z = zmin. 
+    # z = zmin.
     $w cmd plschr 0. 1.0
     set x_inclination 1.
     set y_inclination 0.
@@ -227,25 +225,25 @@ proc x28 {{w loopback}} {
 	    $x_shear $y_shear $z_shear \
 	    0.5 "rotation for z = z#dmin#u"
     }
-    # Draw minimal 3D grid to finish defining the 3D box. 
-    $w cmd plmesh x y z $XPTS $YPTS $DRAW_LINEXY
+    # Draw minimal 3D grid to finish defining the 3D box.
+    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
 
-    # Page 3: Demonstrate shear of string along its axis. 
-    # Work around xcairo and pngcairo (but not pscairo) problems for 
+    # Page 3: Demonstrate shear of string along its axis.
+    # Work around xcairo and pngcairo (but not pscairo) problems for
     # shear vector too close to axis of string. (N.B. no workaround
-    # would be domega = 0.) 
+    # would be domega = 0.)
     set domega 0.05
     $w cmd pladv 0
     $w cmd plvpor -0.15 1.15 -0.05 1.05
     $w cmd plwind -1.2 1.2 -0.8 1.5
     $w cmd plw3d 1.0 1.0 1.0 $xmin $xmax $ymin $ymax $zmin $zmax 20. 45.
-    
+
     $w cmd plcol0 2
     $w cmd plbox3 "b" "" [expr {$xmax-$xmin}] 0 \
 	"b" "" [expr {$ymax-$ymin}] 0 \
 	"bcd" "" [expr {$zmax-$zmin}] 0
 
-    # y = ymax. 
+    # y = ymax.
     $w cmd plschr 0. 1.0
     set x_inclination 1.
     set y_inclination 0.
@@ -265,7 +263,7 @@ proc x28 {{w loopback}} {
 	    0.5 "shear for y = y#dmax#u"
     }
 
-    # x = xmax. 
+    # x = xmax.
     $w cmd plschr 0. 1.0
     set x_inclination 0.
     set y_inclination -1.
@@ -285,7 +283,7 @@ proc x28 {{w loopback}} {
 	    0.5 "shear for x = x#dmax#u"
     }
 
-    # z = zmin. 
+    # z = zmin.
     $w cmd plschr 0. 1.0
     set x_inclination 1.
     set y_inclination 0.
@@ -304,28 +302,28 @@ proc x28 {{w loopback}} {
 	    $x_shear $y_shear $z_shear \
 	    0.5 "shear for z = z#dmin#u"
     }
-    # Draw minimal 3D grid to finish defining the 3D box. 
-    $w cmd plmesh x y z $XPTS $YPTS $DRAW_LINEXY
-    
-    # Page 4: Demonstrate drawing a string on a 3D path. 
+    # Draw minimal 3D grid to finish defining the 3D box.
+    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+
+    # Page 4: Demonstrate drawing a string on a 3D path.
     $w cmd pladv 0
     $w cmd plvpor -0.15 1.15 -0.05 1.05
     $w cmd plwind -1.2 1.2 -0.8 1.5
     $w cmd plw3d 1.0 1.0 1.0 $xmin $xmax $ymin $ymax $zmin $zmax 40. -30.
-   
+
     $w cmd plcol0 2
     $w cmd plbox3 "b" "" [expr {$xmax-$xmin}] 0 \
 	"b" "" [expr {$ymax-$ymin}] 0 \
 	"bcd" "" [expr {$zmax-$zmin}] 0
-    
+
     $w cmd plschr 0. 1.2
     # domega controls the spacing between the various characters of the
     # string and also the maximum value of omega for the given number
-    # of characters in *pstring. 
+    # of characters in *pstring.
     set pslen [string length $pstring]
     set domega [expr {2.*$pi/$pslen}]
     set omega 0.
-    # 3D function is a helix of the given radius and pitch 
+    # 3D function is a helix of the given radius and pitch
     set radius 0.5
     set pitch [expr {1./(2.*$pi)}]
     for {set i 0} {$i < $pslen} {incr i} {
@@ -334,14 +332,14 @@ proc x28 {{w loopback}} {
 	set xpos [expr {$xmid + $radius*$sin_omega}]
 	set ypos [expr {$ymid - $radius*$cos_omega}]
 	set zpos [expr {$zmin + $pitch*$omega}]
-	# In general, the inclination is proportional to the derivative of 
-	# the position wrt theta. 
+	# In general, the inclination is proportional to the derivative of
+	# the position wrt theta.
 	set x_inclination [expr {$radius*$cos_omega}]
 	set y_inclination [expr {$radius*$sin_omega}]
 	set z_inclination [expr {$pitch}]
 	# The shear vector should be perpendicular to the 3D line with Z
 	# component maximized, but for low pitch a good approximation is
-	# a constant vector that is parallel to the Z axis. 
+	# a constant vector that is parallel to the Z axis.
 	set x_shear 0.
 	set y_shear 0.
 	set z_shear 1.
@@ -352,15 +350,15 @@ proc x28 {{w loopback}} {
 	    0.5 [string range $pstring $i $i]
 	set omega [expr {$omega + $domega}]
     }
-    # Draw minimal 3D grid to finish defining the 3D box. 
-    $w cmd plmesh x y z $XPTS $YPTS $DRAW_LINEXY
+    # Draw minimal 3D grid to finish defining the 3D box.
+    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
 
-    # Page 5: Demonstrate plmtex3 axis labelling capability 
+    # Page 5: Demonstrate plmtex3 axis labelling capability
     $w cmd pladv 0
     $w cmd plvpor -0.15 1.15 -0.05 1.05
     $w cmd plwind -1.2 1.2 -0.8 1.5
     $w cmd plw3d 1.0 1.0 1.0 $xmin $xmax $ymin $ymax $zmin $zmax 20. 45.
-   
+
     $w cmd plcol0 2
     $w cmd plbox3 "b" "" [expr {$xmax-$xmin}] 0 \
 	"b" "" [expr {$ymax-$ymin}] 0 \
@@ -379,7 +377,7 @@ proc x28 {{w loopback}} {
     $w cmd plmtex3 "zp" 3.0 0.5 0.5 "primary Z-axis label"
     $w cmd plmtex3 "zs" -2.5 0.5 0.5 "Arbitrarily displaced"
     $w cmd plmtex3 "zs" -1.0 0.5 0.5 "secondary Z-axis label"
-    # Draw minimal 3D grid to finish defining the 3D box. 
-    $w cmd plmesh x y z $XPTS $YPTS $DRAW_LINEXY
-    
+    # Draw minimal 3D grid to finish defining the 3D box.
+    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+
 }

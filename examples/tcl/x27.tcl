@@ -93,7 +93,7 @@ proc spiro {w params} {
 
   set windings [expr {int($param4)}]
   set steps    [expr {$NPNT/$windings}]
-  set dphi     [expr {8.0*acos(-1.0)/double($steps)}]
+  set dphi     [expr {8.0*$::PLPLOT::PL_PI/double($steps)}]
 
   #     This initialisation is safe!
   set xmin 0.0

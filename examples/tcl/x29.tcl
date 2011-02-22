@@ -24,14 +24,14 @@
 
 # Draws several plots which demonstrate the use of date / time formats for
 # the axis labels.
-# Time formatting is done using the system strftime routine. See the 
+# Time formatting is done using the system strftime routine. See the
 # documentation of this for full details of the available formats.
 #
 # 1) Plotting temperature over a day (using hours / minutes)
-# 2) Plotting 
+# 2) Plotting
 #
-# Note: Times are stored as seconds since the epoch (usually 1st Jan 1970). 
-# 
+# Note: Times are stored as seconds since the epoch (usually 1st Jan 1970).
+#
 
 proc x29 {{w loopback}} {
 
@@ -50,27 +50,25 @@ proc x29 {{w loopback}} {
 # Plot a model diurnal cycle of temperature
 proc x29_plot1 {{w loopback}} {
 
-    set pi 3.14159265358979323846    
-
     # Data points every 10 minutes for 1 day
     set npts 73
-    
+
     matrix x f $npts
     matrix y f $npts
     matrix xerr1 f $npts
     matrix xerr2 f $npts
     matrix yerr1 f $npts
     matrix yerr2 f $npts
-    
+
     set xmin 0
     # Number of seconds in a day
-    set xmax [expr {60.0*60.0*24.0}]    
+    set xmax [expr {60.0*60.0*24.0}]
     set ymin 10.0
     set ymax 20.0
-    
+
     for {set i 0} {$i<$npts} {incr i} {
 	set xx [expr {$xmax*double($i)/double($npts)}]
-	set yy [expr {15.0 - 5.0*cos( 2*$pi*double($i)/double($npts))}]
+	set yy [expr {15.0 - 5.0*cos( 2*$::PLPLOT::PL_PI*double($i)/double($npts))}]
         x $i = $xx
         y $i = $yy
         xerr1 $i = [expr {$xx - 60.0*5.0}]
@@ -78,7 +76,7 @@ proc x29_plot1 {{w loopback}} {
         yerr1 $i = [expr {$yy - 0.1}]
         yerr2 $i = [expr {$yy + 0.1}]
     }
-  
+
     $w cmd pladv 0
 
     $w cmd plsmaj 0.0 0.5
@@ -96,7 +94,7 @@ proc x29_plot1 {{w loopback}} {
     $w cmd plcol0 3
     $w cmd pllab "Time (hours:mins)" "Temperature (degC)" \
 	"@frPLplot Example 29 - Daily temperature"
-  
+
     $w cmd plcol0 4
 
     $w cmd plline $npts x y
@@ -110,25 +108,25 @@ proc x29_plot1 {{w loopback}} {
 }
 
 # Plot the number of hours of daylight as a function of day for a year
-proc x29_plot2 {{w loopback}} {    
-    
-    set pi 3.14159265358979323846
+proc x29_plot2 {{w loopback}} {
+
+    set pi $::PLPLOT::PL_PI
 
     # Latitude for London
     set lat 51.5
-    
+
     set npts 365
-    
+
     matrix x f $npts
     matrix y f $npts
-    
+
     set xmin 0
     set xmax [expr {$npts*60.0*60.0*24.0}]
     set ymin 0
     set ymax 24
-    
-    # Formula for hours of daylight from 
-    # "A Model Comparison for Daylength as a Function of Latitude and 
+
+    # Formula for hours of daylight from
+    # "A Model Comparison for Daylength as a Function of Latitude and
     # Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
     for {set j 0} {$j < $npts} {incr j} {
 	x $j = [expr {$j*60.0*60.0*24.0}]
@@ -139,7 +137,7 @@ proc x29_plot2 {{w loopback}} {
 				   (cos($lat*$pi/180.0)*cos($p)) )}]
 	y $j = $d
     }
-    
+
     $w cmd plcol0 1
     # Set time format to be abbreviated month name followed by day of month
     $w cmd pltimefmt "%b %d"
@@ -150,7 +148,7 @@ proc x29_plot2 {{w loopback}} {
     $w cmd plcol0 3
     $w cmd pllab "Date" "Hours of daylight" \
 	"@frPLplot Example 29 - Hours of daylight at 51.5N"
-  
+
     $w cmd plcol0 4
 
     $w cmd plline $npts x y
@@ -160,16 +158,14 @@ proc x29_plot2 {{w loopback}} {
 
 proc x29_plot3 {{w loopback}} {
 
-    set pi 3.14159265358979323846
-
     # Calculate seconds since the Unix epoch for 2005-12-01 UTC.
-    # On newer versions of tcl should use the -format "%Y-%m-%d" 
-    # option rather than free-form scanning, but this doesn't 
+    # On newer versions of tcl should use the -format "%Y-%m-%d"
+    # option rather than free-form scanning, but this doesn't
     # seem to work on tcl8.4
     # Also -timezone :UTC should be used instead of -gmt
     set tstart [clock scan "2005-12-01" \
 		    -gmt true ]
-   
+
     set npts 62
 
     matrix x f $npts
@@ -179,11 +175,11 @@ proc x29_plot3 {{w loopback}} {
     set xmax [expr {$xmin + $npts*60.0*60.0*24.0}]
     set ymin 0.0
     set ymax 5.0
-  
+
     for {set i 0} {$i<$npts} {incr i} {
 	x $i = [expr {$xmin + $i*60.0*60.0*24.0}]
 	set imin [expr {$i < $npts-$i ? $i : $npts-$i}]
-	y $i = [expr {1.0 + sin( 2*$pi*double($i)/7.0 ) +  \
+	y $i = [expr {1.0 + sin( 2*$::PLPLOT::PL_PI*double($i)/7.0 ) +  \
 			      exp( double($imin) / 31.0) }]
     }
     $w cmd pladv 0
@@ -197,25 +193,25 @@ proc x29_plot3 {{w loopback}} {
     $w cmd pltimefmt "%Y-%m-%d"
     # Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
     $w cmd plbox "bcnstd" [expr {14*24.0*60.0*60.0}] 14 "bcnstv" 1 4
-    
+
     $w cmd plcol0 3
     $w cmd pllab "Date" "Hours of television watched" \
 	"@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006"
-  
+
     $w cmd plcol0 4
 
     $w cmd plssym 0.0 0.5
     $w cmd plpoin $npts x y 2
-    $w cmd plline $npts x y 
+    $w cmd plline $npts x y
 }
 
 proc x29_plot4 {{w loopback}} {
     # TAI-UTC (seconds) as a function of time.
     # Use Besselian epochs as the continuous time interval just to prove
     # this does not introduce any issues.
-    
+
     # Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-    # B = 1900. + (JD -2415020.31352)/365.242198781 
+    # B = 1900. + (JD -2415020.31352)/365.242198781
     # ==> (as calculated with aid of "bc -l" command)
     # B = (MJD + 678940.364163900)/365.242198781
     # ==>
@@ -327,6 +323,6 @@ proc x29_plot4 {{w loopback}} {
 	
 	$w cmd plline $npts x y
     }
-    
+
 }
 
