@@ -28,35 +28,6 @@
 # course, you must have the appropriate TrueType fonts installed to
 # have access to all the required glyphs.
 
-set position_options [list \
-    [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_OUTSIDE}]     \
-    [expr {$::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_OUTSIDE}]                                   \
-    [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_OUTSIDE}]    \
-    [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_OUTSIDE}]                                 \
-    [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_OUTSIDE}] \
-    [expr {$::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_OUTSIDE}]                                \
-    [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_OUTSIDE}]  \
-    [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_OUTSIDE}]                                  \
-    [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_INSIDE}]      \
-    [expr {$::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_INSIDE}]                                    \
-    [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_INSIDE}]     \
-    [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_INSIDE}]                                  \
-    [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_INSIDE}]  \
-    [expr {$::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_INSIDE}]                                 \
-    [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_INSIDE}]   \
-    [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_INSIDE}]                                   ]
-
-# Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
-set special_symbols [list \
-    "✰" \
-    "✴" \
-    "✱" \
-    "✽" \
-    "✦" ]
-
-set colorbar 0 ;# By default do not plot plcolorbar pages
-                # for now while we are working out the API.
-
 # TODO
 #set options [list {
 #    {
@@ -79,8 +50,6 @@ set colorbar 0 ;# By default do not plot plcolorbar pages
 #    }                           // long syntax
 #};
 
-set notes { "Make sure you get it right!" NULL }
-
 # --------------------------------------------------------------------------
 # main
 #
@@ -91,13 +60,41 @@ set MAX_NLEGEND    7
 
 proc x33 {{w loopback}} {
 
+    set position_options [list \
+        [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_OUTSIDE}]     \
+        [expr {$::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_OUTSIDE}]                                   \
+        [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_OUTSIDE}]    \
+        [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_OUTSIDE}]                                 \
+        [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_OUTSIDE}] \
+        [expr {$::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_OUTSIDE}]                                \
+        [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_OUTSIDE}]  \
+        [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_OUTSIDE}]                                  \
+        [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_INSIDE}]      \
+        [expr {$::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_INSIDE}]                                    \
+        [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_TOP | $::PLPLOT::PL_POSITION_INSIDE}]     \
+        [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_INSIDE}]                                  \
+        [expr {$::PLPLOT::PL_POSITION_RIGHT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_INSIDE}]  \
+        [expr {$::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_INSIDE}]                                 \
+        [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_BOTTOM | $::PLPLOT::PL_POSITION_INSIDE}]   \
+        [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_INSIDE}]                                   ]
+
+    # Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
+    set special_symbols [list \
+        "✰" \
+        "✴" \
+        "✱" \
+        "✽" \
+        "✦" ]
+
+    set colorbar 0 ;# By default do not plot plcolorbar pages
+                    # for now while we are working out the API.
+
+    set notes { "Make sure you get it right!" NULL }
+
     # Parse and process command line arguments
     # TODO
     # plMergeOpts options "x33c options" notes
     # void plparseopts &argc argv PL_PARSE_FULL
-
-    # Initialize plplot
-    $w cmd plinit
 
     # First page illustrating the 16 standard positions.
     $w cmd pladv 0
@@ -127,9 +124,9 @@ proc x33 {{w loopback}} {
         set position      [lindex $position_options $k]
         set opt           $opt_base
         set text          [list [format "%2.2d" $k]]
-        set text_colors   [list [expr {1 +  k % 8}]]
-        set line_colors   [list [expr {1 +  k % 8}]]
-        set symbol_colors [list [expr {1 +  k % 8}]]
+        set text_colors   [list [expr {1 +  $k % 8}]]
+        set line_colors   [list [expr {1 +  $k % 8}]]
+        set symbol_colors [list [expr {1 +  $k % 8}]]
 
         $w cmd pllegend $position $opt 0.05 0.05 \
             0.1 15 1 1 0 0 \
@@ -161,6 +158,7 @@ proc x33 {{w loopback}} {
     set symbol_scales  [list]
     set symbol_numbers [list]
     set symbols        [list]
+    set text           [list]
     set text_colors    [list]
     set line_colors    [list]
     set symbol_colors  [list]
@@ -172,9 +170,9 @@ proc x33 {{w loopback}} {
         lappend symbol_numbers 2
         lappend symbols        "*"
         lappend text           [format "%2.2d" $k]
-        lappend text_colors    [expr {1 +  k % 8}]
-        lappend line_colors    [expr {1 +  k % 8}]
-        lappend symbol_colors  [expr {1 +  k % 8}]
+        lappend text_colors    [expr {1 +  $k % 8}]
+        lappend line_colors    [expr {1 +  $k % 8}]
+        lappend symbol_colors  [expr {1 +  $k % 8}]
     }
 
     # Use monotype fonts so that all legends are the same size.
@@ -300,7 +298,7 @@ proc x33 {{w loopback}} {
         } else {
             incr nlegend -1
         }
-        set nlegend [max 1 nlegend]
+        set nlegend [max 1 $nlegend]
         # nly specify legend data that are required according to the
         # value of opt_array for that entry.
         set opt_array      [list]
@@ -309,6 +307,7 @@ proc x33 {{w loopback}} {
         set symbol_scales  [list]
         set symbol_numbers [list]
         set symbols        [list]
+        set text           [list]
         set text_colors    [list]
         set line_colors    [list]
         set symbol_colors  [list]
@@ -320,15 +319,15 @@ proc x33 {{w loopback}} {
             lappend symbol_numbers 2
             lappend symbols        "*"
             lappend text           [format "%2.2d" $k]
-            lappend text_colors    [expr {1 +  k % 8}]
-            lappend line_colors    [expr {1 +  k % 8}]
-            lappend symbol_colors  [expr {1 +  k % 8}]
+            lappend text_colors    [expr {1 + $k % 8}]
+            lappend line_colors    [expr {1 + $k % 8}]
+            lappend symbol_colors  [expr {1 + $k % 8}]
         }
         # Use monotype fonts so that all legends are the same size.
         $w cmd plsfont [expr {$::PLPLOT::PL_FCI_MONO}] -1 -1
         $w cmd plscol0a 15 32 32 32 0.70
 
-        set nrow    [min 3 nlegend]
+        set nrow    [min 3 $nlegend]
         set ncolumn 0
 
         set legend_data [$w cmd pllegend $position $opt $x $y \
@@ -368,31 +367,40 @@ proc x33 {{w loopback}} {
     set nlegend 5
     # Only specify legend data that are required according to the
     # value of opt_array for that entry.
-    set position = [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_TOP}]
-    set opt_base = [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX | $::PLPLOT::PL_LEGEND_TEXT_LEFT}]
+    set position [expr {$::PLPLOT::PL_POSITION_LEFT | $::PLPLOT::PL_POSITION_TOP}]
+    set opt_base [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX | $::PLPLOT::PL_LEGEND_TEXT_LEFT}]
 
     # Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
 
-    set opt_array   [list [expr {$::PLPLOT::PL_LEGEND_NONE}]]
-    set text        [list "None"]
-    set text_colors [list 1]
+    set opt_array       [list [expr {$::PLPLOT::PL_LEGEND_NONE}]]
+    set text            [list "None"]
+    set text_colors     [list 1]
+    set line_colors     [list {}]
+    set line_styles     [list {}]
+    set line_widths     [list {}]
+    set box_colors      [list {}]
+    set box_patterns    [list {}]
+    set box_scales      [list {}]
+    set box_line_widths [list {}]
+    set symbol_scales   [list {}]
+    set symbol_numbers  [list {}]
+    set symbols         [list {}]
+    set symbol_colors   [list {}]
 
     lappend opt_array       [expr {$::PLPLOT::PL_LEGEND_COLOR_BOX}]
     lappend text            "Box"
     lappend text_colors     2
+    lappend line_colors     {}
+    lappend line_styles     {}
+    lappend line_widths     {}
     lappend box_colors      2
     lappend box_patterns    0
     lappend box_scales      0.8
     lappend box_line_widths 1
+    lappend symbol_scales   {}
+    lappend symbol_numbers  {}
+    lappend symbols         {}
+    lappend symbol_colors   {}
 
     lappend opt_array       [expr {$::PLPLOT::PL_LEGEND_LINE}]
     lappend text            "Line"
@@ -400,10 +408,25 @@ proc x33 {{w loopback}} {
     lappend line_colors     3
     lappend line_styles     1
     lappend line_widths     1
+    lappend box_colors      {}
+    lappend box_patterns    {}
+    lappend box_scales      {}
+    lappend box_line_widths {}
+    lappend symbol_scales   {}
+    lappend symbol_numbers  {}
+    lappend symbols         {}
+    lappend symbol_colors   {}
 
     lappend opt_array       [expr {$::PLPLOT::PL_LEGEND_SYMBOL}]
     lappend text            "Symbol"
     lappend text_colors     4
+    lappend line_colors     {}
+    lappend line_styles     {}
+    lappend line_widths     {}
+    lappend box_colors      {}
+    lappend box_patterns    {}
+    lappend box_scales      {}
+    lappend box_line_widths {}
     lappend symbol_colors   4
     lappend symbol_scales   $text_scale
     lappend symbol_numbers  4
@@ -415,6 +438,10 @@ proc x33 {{w loopback}} {
     lappend line_colors     5
     lappend line_styles     1
     lappend line_widths     1
+    lappend box_colors      {}
+    lappend box_patterns    {}
+    lappend box_scales      {}
+    lappend box_line_widths {}
     lappend symbol_colors   5
     lappend symbol_scales   $text_scale
     lappend symbol_numbers  4
@@ -435,15 +462,20 @@ proc x33 {{w loopback}} {
     set max_height [max $max_height $legend_height]
 
     # Set up symbol legend entries with various symbols.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for { set i 0} {$i < $nlegend} {incr i} {
         lappend opt_array      [expr {$::PLPLOT::PL_LEGEND_SYMBOL}]
         lappend text           "Symbol [lindex $special_symbols $i]"
@@ -469,17 +501,22 @@ proc x33 {{w loopback}} {
     set max_height [max $max_height $legend_height]
 
     # Set up symbol legend entries with various numbers of symbols.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for {set i 0} {$i < $nlegend} {incr i} {
-        lappend opt_array[i]   [expr {$::PLPLOT::PL_LEGEND_SYMBOL}]
+        lappend opt_array      [expr {$::PLPLOT::PL_LEGEND_SYMBOL}]
         lappend text           [format "%s %d" "Symbol Number" [expr {$i + 2}]]
         lappend text_colors    [expr {$i + 1}]
         lappend symbol_colors  [expr {$i + 1}]
@@ -503,15 +540,20 @@ proc x33 {{w loopback}} {
     set max_height [max $max_height $legend_height]
 
     # Set up box legend entries with various colours.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for {set i 0} {$i < $nlegend} {incr i} {
         lappend opt_array       [expr {$::PLPLOT::PL_LEGEND_COLOR_BOX}]
         lappend text            [format "%s %d" "Box Color" [expr {$i + 1}]]
@@ -540,15 +582,20 @@ proc x33 {{w loopback}} {
     set max_height [max $max_height $legend_height]
 
     # Set up box legend entries with various patterns.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for {set i 0} {$i < $nlegend} {incr i} {
         lappend opt_array       [expr {$::PLPLOT::PL_LEGEND_COLOR_BOX}]
         lappend text            [format "%s %d" "Box Pattern" $i]
@@ -571,18 +618,23 @@ proc x33 {{w loopback}} {
         {} {} {} \
         {} {} {} {}]
     foreach {legend_width legend_height} $legend_data {break}
-    set max_height = MAX max_height legend_height
+    set max_height [max $max_height $legend_height]
 
     # Set up box legend entries with various box pattern line widths.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for {set i 0} {$i < $nlegend} {incr i} {
         lappend opt_array       [expr {$::PLPLOT::PL_LEGEND_COLOR_BOX}]
         lappend text            [format "%s %d" "Box Line Width" [expr {$i + 1}]]
@@ -599,27 +651,32 @@ proc x33 {{w loopback}} {
 
     set legend_data [$w cmd pllegend $position $opt $x $y \
         0.1 15 1 1 0 0 \
-        $nlegend opt_array 1.0 $text_scale 2.0 \
+        $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
         $box_colors $box_patterns $box_scales $box_line_widths \
         {} {} {} \
         {} {} {} {}]
     foreach {legend_width legend_height} $legend_data {break}
-    set max_height [max max_height legend_height]
+    set max_height [max $max_height $legend_height]
 
     # Set up line legend entries with various colours.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for {set i 0} {$i < $nlegend} {incr i} {
         lappend opt_array   [expr {$::PLPLOT::PL_LEGEND_LINE}]
-        lappend text        [format "%s %d" "Line Color" [expr {$i + 1}]
+        lappend text        [format "%s %d" "Line Color" [expr {$i + 1}]]
         lappend text_colors [expr {$i + 1}]
         lappend line_colors [expr {$i + 1}]
         lappend line_styles 1
@@ -629,13 +686,13 @@ proc x33 {{w loopback}} {
     set opt $opt_base
     # Use new origin
     set x          $xstart
-    set y          [expr {$x + $max_height}]
+    set y          [expr {$y + $max_height}]
     set max_height 0.
     $w cmd plscol0a 15 32 32 32 0.70
 
     set legend_data [$w cmd pllegend $position $opt $x $y \
         0.1 15 1 1 0 0 \
-        $nlegend $opt_array 1.0 $text_scale 2.0 \
+        $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
         {} {} {} {} \
         $line_colors $line_styles $line_widths \
@@ -644,15 +701,20 @@ proc x33 {{w loopback}} {
     set max_height [max $max_height $legend_height]
 
     # Set up line legend entries with various styles.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for {set i 0} {$i < $nlegend} {incr i} {
         lappend opt_array   [expr {$::PLPLOT::PL_LEGEND_LINE}]
         lappend text        [format "%s %d" "Line Style" [expr {$i + 1}]]
@@ -668,7 +730,7 @@ proc x33 {{w loopback}} {
 
     set legend_data [$w cmd pllegend $position $opt $x $y \
         0.1 15 1 1 0 0 \
-        $nlegend $opt_array 1.0 $text_scale 2.0 \
+        $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
         {} {} {} {} \
         $line_colors $line_styles $line_widths \
@@ -677,15 +739,20 @@ proc x33 {{w loopback}} {
     set max_height [max $max_height $legend_height]
 
     # Set up line legend entries with various widths.
-    set opt_array      [list]
-    set line_styles    [list]
-    set line_widths    [list]
-    set symbol_scales  [list]
-    set symbol_numbers [list]
-    set symbols        [list]
-    set text_colors    [list]
-    set line_colors    [list]
-    set symbol_colors  [list]
+    set opt_array       [list]
+    set line_styles     [list]
+    set line_widths     [list]
+    set symbol_scales   [list]
+    set symbol_numbers  [list]
+    set symbols         [list]
+    set text            [list]
+    set text_colors     [list]
+    set line_colors     [list]
+    set symbol_colors   [list]
+    set box_colors      [list]
+    set box_patterns    [list]
+    set box_scales      [list]
+    set box_line_widths [list]
     for {set i 0} {$i < $nlegend} {incr i} {
         lappend opt_array   [expr {$::PLPLOT::PL_LEGEND_LINE}]
         lappend text        [format "%s %d" "Line Width" [expr {$i + 1}]]
@@ -701,7 +768,7 @@ proc x33 {{w loopback}} {
 
     set legend_data [$w cmd pllegend $position $opt $x $y \
         0.1 15 1 1 0 0 \
-       $nlegend $opt_array 1.0 $text_scale 2.0 \
+        $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
         {} {} {} {} \
         $line_colors $line_styles $line_widths \

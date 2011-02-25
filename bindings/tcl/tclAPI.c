@@ -4155,7 +4155,7 @@ pllegendCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    sscanf( argv[1], "%lg", &value ); position = (PLFLT) value;
+    sscanf( argv[1], "%d", &position );
     sscanf( argv[2], "%d", &opt );
     sscanf( argv[3], "%lg", &value ); x = (PLFLT) value;
     sscanf( argv[4], "%lg", &value ); y = (PLFLT) value;
