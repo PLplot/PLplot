@@ -127,7 +127,7 @@ void QtPLDriver::drawPolygon( short * x, short * y, PLINT npts )
         polygon[i].setX( (PLFLT) x[i] * downscale );
         polygon[i].setY( m_dHeight - (PLFLT) y[i] * downscale );
     }
-    m_painterP->drawPolygon( polygon, npts );
+    m_painterP->drawPolygon( polygon, npts, Qt::WindingFill );
     delete[] polygon;
 }
 
@@ -1295,7 +1295,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
                 p->setPen( NoPen );
                 hasPen = false;
             }
-            p->drawConvexPolygon( *( i->Data.Polyline ) );
+            p->drawPolygon( *( i->Data.Polyline ), Qt::WindingFill );
             p->setRenderHints( QPainter::Antialiasing, (bool) lines_aa );
             break;
 
