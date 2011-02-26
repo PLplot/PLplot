@@ -867,11 +867,11 @@ FillPolygonCmd( PLStream *pls )
 
     if ( dev->write_to_window )
         XFillPolygon( xwd->display, dev->window, dev->gc,
-            pts, pls->dev_npts, Nonconvex, CoordModeOrigin );
+            pts, pls->dev_npts, Complex, CoordModeOrigin );
 
     if ( dev->write_to_pixmap )
         XFillPolygon( xwd->display, dev->pixmap, dev->gc,
-            pts, pls->dev_npts, Nonconvex, CoordModeOrigin );
+            pts, pls->dev_npts, Complex, CoordModeOrigin );
 
 // If in debug mode, draw outline of boxes being filled
 
