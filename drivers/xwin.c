@@ -1127,6 +1127,9 @@ Init( PLStream *pls )
     XSetWindowBackground( xwd->display, dev->window, xwd->cmap0[0].pixel );
     XSetBackground( xwd->display, dev->gc, xwd->cmap0[0].pixel );
 
+// Set fill rule.
+    XSetFillRule( xwd->display, dev->gc, WindingRule );
+
 // If main window, need to map it and wait for exposure
 
     if ( dev->is_main )
