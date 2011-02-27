@@ -81,7 +81,7 @@ static int      plresc_fill( PLRDev *plr );
 static int     csave = -1;
 static U_CHAR  dum_uchar;
 static U_SHORT dum_ushort;
-static PLFLT   x[PL_MAXPOLY], y[PL_MAXPOLY];
+static PLFLT   xstatic[PL_MAXPOLY], ystatic[PL_MAXPOLY];
 
 //--------------------------------------------------------------------------
 // plr_start()
@@ -266,6 +266,13 @@ plr_line( PLRDev *plr, int c )
 {
     int     c1;
     U_SHORT npts;
+    PLFLT *x, *y;
+
+    // "Temporary" logic until can figure out what value of npts will
+    // actually be required which would allow use of malloc whenever
+    // that npts value > PL_MAXPOLY.
+    x = xstatic;
+    y = ystatic;
 
     npts = 1;
     x[0] = plr->xold;
@@ -275,6 +282,7 @@ plr_line( PLRDev *plr, int c )
     {
     case LINE:
         plr_cmd( get_ncoords( plr, x, y, 1 ) );
+        // n.b. falls through to LINETO case.
 
     case LINETO:
         for (;; )
@@ -546,13 +554,29 @@ static int
 plresc_fill( PLRDev *plr )
 {
     U_SHORT npts;
+    PLFLT *x, *y;
 
     dbug_enter( "plresc_fill" );
 
     plr_rd( pdf_rd_2bytes( plr->pdfs, &npts ) );
+    if ( npts > PL_MAXPOLY )
+    {
+        x = (PLFLT *) malloc( sizeof ( PLFLT ) * npts );
+        y = (PLFLT *) malloc( sizeof ( PLFLT ) * npts );
+    }
+    else
+    {
+        x = xstatic;
+        y = ystatic;
+    }
     get_ncoords( plr, x, y, npts );
     plfill( npts, x, y );
 
+    if ( npts > PL_MAXPOLY )
+    {
+        free( x );
+        free( y );
+    }
     return 0;
 }
 
