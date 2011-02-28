@@ -132,6 +132,7 @@ package PLplot is
     Max_Lines_For_Multiplot : constant := 5;
     
     -- Pre-defined line styles, e.g., continuous, dashed, etc.
+    -- fixme Discover actual line types and make up names for them. PLplot API uses integers.
     subtype Line_Style_Type is Integer range 1..8;
 
     -- Arrays for various line appearances.
