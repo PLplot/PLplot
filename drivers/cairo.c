@@ -1615,6 +1615,12 @@ static signed int xcairo_init_cairo( PLStream *pls )
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill)
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
+
     // Fill in the X window with the background color to avoid starting out
     // with a blank window of an unexpected color.
     cairo_rectangle( aStream->cairoContext_X, 0.0, 0.0, pls->xlength, pls->ylength );
@@ -2038,6 +2044,13 @@ void plD_init_pdfcairo( PLStream *pls )
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
+
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill)
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
+
 }
 
 #endif
@@ -2112,8 +2125,14 @@ void plD_init_pscairo( PLStream *pls )
         pls->freeaspect = 1;
     }
     rotate_cairo_surface( pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength, FALSE );
-}
 
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill)
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
+
+}
 
 #endif
 
@@ -2206,6 +2225,13 @@ void plD_init_svgcairo( PLStream *pls )
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
+
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill)
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
+
 }
 
 #endif
@@ -2300,6 +2326,13 @@ void plD_init_pngcairo( PLStream *pls )
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
+
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill)
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
+
 }
 
 //--------------------------------------------------------------------------
@@ -2488,6 +2521,13 @@ void plD_init_memcairo( PLStream *pls )
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
+
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill)
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
+
 }
 
 //--------------------------------------------------------------------------
@@ -2702,6 +2742,12 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
         {
             extcairo_setbackground( pls );
         }
+
+        // Set fill rule for the case of self-intersecting boundaries.
+        if ( pls->dev_eofill)
+            cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+        else
+            cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
         break;
     default: // Fall back on default Cairo actions
         plD_esc_cairo( pls, op, ptr );
@@ -3044,6 +3090,13 @@ void plD_init_wincairo( PLStream *pls )
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
+
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill)
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD);
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING);
+
 }
 
 //--------------------------------------------------------------------------
