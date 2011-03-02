@@ -198,6 +198,10 @@ typedef struct
 // dev_npts	PLINT	Number of points we are plotting
 // dev_x	short*	Pointer to array of x values
 // dev_y	short*	Pointer to array of x values
+// For the case where the boundary of the filled region is
+// self-intersecting, use the even-odd fill rule rather than the
+// default nonzero fill rule.
+// dev_eofill   PLINT
 //
 // For images
 // dev_nptsX	PLINT	Number of points we are plotting in X
@@ -784,6 +788,7 @@ typedef struct
     PLINT      has_string_length;
     PLFLT      string_length;
     PLINT      get_string_length;
+    PLINT      dev_eofill;
 } PLStream;
 
 //--------------------------------------------------------------------------

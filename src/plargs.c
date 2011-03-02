@@ -160,6 +160,7 @@ static int opt_dev_compression( const char *, const char *, void * );
 static int opt_cmap0( const char *, const char *, void * );
 static int opt_cmap1( const char *, const char *, void * );
 static int opt_locale( const char *, const char *, void * );
+static int opt_eofill( const char *, const char *, void * );
 
 // Global variables
 
@@ -635,6 +636,15 @@ static PLOptionTable ploption_table[] = {
         PL_OPT_FUNC,
         "-locale",
         "Use locale environment (e.g., LC_ALL, LC_NUMERIC, or LANG) to set LC_NUMERIC locale (which affects decimal point separator)."
+    },
+    {
+        "eofill",
+        opt_eofill,
+        NULL,
+        NULL,
+        PL_OPT_FUNC,
+        "-eofill",
+        "For the case where the boundary of the filled region is self-intersecting, use the even-odd fill rule rather than the default nonzero fill rule."
     },
     {
         "drvopt",               // Driver specific options
@@ -2458,3 +2468,17 @@ opt_locale( const char *opt, const char *optarg, void *client_data )
     return 0;
 }
 
+//--------------------------------------------------------------------------
+// opt_eofill()
+//
+// For the case where the boundary of the filled region is
+// self-intersecting, use the even-odd fill rule rather than the
+// default nonzero fill rule.
+//--------------------------------------------------------------------------
+
+static int
+opt_eofill( const char *opt, const char *optarg, void *client_data )
+{
+    plsc->dev_eofill = 1;
+    return 0;
+}
