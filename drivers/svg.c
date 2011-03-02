@@ -439,6 +439,10 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
             svg_stroke_color( pls );
         }
         svg_fill_color( pls );
+        if ( pls->dev_eofill )
+            svg_attr_value( aStream, "fill-rule", "evenodd" );
+        else
+            svg_attr_value( aStream, "fill-rule", "nonzero" );
     }
     else
     {
