@@ -646,6 +646,12 @@ plD_init_wingcc( PLStream *pls )
     plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );
     plP_setphy( 0, (PLINT) ( dev->scale * dev->width ), 0, (PLINT) ( dev->scale * dev->height ) );
 
+    // Set fill rule.
+    if( pls->dev_eofill)
+        SetPolyFillMode( dev->hdc, ALTERNATE);
+    else
+        SetPolyFillMode( dev->hdc, WINDING);
+
 #ifdef HAVE_FREETYPE
     if ( pls->dev_text )
     {
