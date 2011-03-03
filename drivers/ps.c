@@ -362,7 +362,10 @@ ps_init( PLStream *pls )
     // Modify to use fill and stroke for better output with
     // anti-aliasing
     //fprintf(OF, "/F {fill} def\n");
-    fprintf( OF, "/F {closepath gsave fill grestore stroke} def " );
+    if ( pls->dev_eofill )
+        fprintf( OF, "/F {closepath gsave eofill grestore stroke} def " );
+    else
+        fprintf( OF, "/F {closepath gsave fill grestore stroke} def " );
     fprintf( OF, "/N {newpath} def" );
     fprintf( OF, "/C {setrgbcolor} def\n" );
     fprintf( OF, "/G {setgray} def\n" );

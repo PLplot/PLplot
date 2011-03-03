@@ -422,7 +422,10 @@ writeHeader(PLStream *pls) {
     doc->osHeader() << "/A {0.5 0 360 arc} def\n";
     doc->osHeader() << "/S {stroke} def\n";
     doc->osHeader() << "/Z {stroke newpath} def\n";
-    doc->osHeader() << "/F {closepath gsave fill grestore stroke} def\n";
+    if ( pls->dev_eofill )
+        doc->osHeader() << "/F {closepath gsave eofill grestore stroke} def\n";
+    else
+        doc->osHeader() << "/F {closepath gsave fill grestore stroke} def\n";
     doc->osHeader() << "/N {newpath} def\n";
     doc->osHeader() << "/C {setrgbcolor} def\n";
     doc->osHeader() << "/G {setgray} def\n";
