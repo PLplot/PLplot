@@ -174,7 +174,14 @@ void wxPLDevDC::FillPolygon( PLStream *pls )
             AddtoClipRegion( points[i - 1].x, points[i - 1].y, points[i].x, points[i].y );
     }
 
-    m_dc->DrawPolygon( pls->dev_npts, points );
+    if ( pls->dev_eofill )
+    {
+        m_dc->DrawPolygon( pls->dev_npts, points, wxODDEVEN_RULE );
+    }
+    else
+    {
+        m_dc->DrawPolygon( pls->dev_npts, points, wxWINDING_RULE );
+    }
     delete[] points;
 }
 
