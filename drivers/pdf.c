@@ -459,9 +459,16 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
         HPDF_Page_LineTo( dev->page, (HPDF_REAL) xa[i], (HPDF_REAL) ya[i] );
 
     if ( fill == 1 )
-        HPDF_Page_FillStroke( dev->page );
+    {
+        if ( pls->dev_eofill )
+            HPDF_Page_EofillStroke( dev->page );
+        else
+            HPDF_Page_FillStroke( dev->page );
+    }
     else
+    {
         HPDF_Page_Stroke( dev->page );
+    }
 }
 
 
