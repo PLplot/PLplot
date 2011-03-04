@@ -23,6 +23,7 @@
 #
 
 from plplot_py_demos import *
+import types
 
 # main
 # 
@@ -32,7 +33,11 @@ from plplot_py_demos import *
 
 def main():
 
-    # R, r, p, N 
+    # R, r, p, N
+    # R and r should be integers to give correct termination of the
+    # angle loop using gcd.
+    # N.B. N is just a place holder since it is no longer used
+    # (because we now have proper termination of the angle loop).
     params = [ [21.0,  7.0,  7.0,  3.0],  # Deltoid
                [21.0,  7.0, 10.0,  3.0],
                [21.0, -7.0, 10.0,  3.0],
@@ -74,48 +79,41 @@ def main():
         plvpor( 0.0, 1.0, 0.0, 1.0 )
         spiro( params[i], 1 )
 
+def gcd(a, b):
+    if not (type(a) is  types.IntType and type(b) is types.IntType):
+        raise RuntimeError, "gcd arguments must be integers"
+    a = abs(a);
+    b = abs(b);
+    while(b != 0):
+        t = b
+        b = a % b
+        a = t
+    return a
 
 def spiro(params, fill):
     # Fill the coordinates
-    NPNT = 20000
+    NPNT = 2000
 
-    windings = int(params[3])
+    # Proper termination of the angle loop very near the beginning
+    # point, see
+    # http://mathforum.org/mathimages/index.php/Hypotrochoid.
+    windings = int(abs(params[1])/gcd(int(params[0]), int(params[1])))
     steps    = int(NPNT/windings)
-    dphi     = 8.0*arccos(-1.0)/steps
+    dphi     = 2.0*pi/float(steps)
 
-    xmin = 0.0 # This initialisation is safe!
-    xmax = 0.0
-    ymin = 0.0
-    ymax = 0.0
-
-    # Add 0. to convert to real array for Numeric.  numpy does not require this.
-    xcoord = 0. + zeros(windings*steps+1)
-    ycoord = 0. + zeros(windings*steps+1)
-
-    for i in range(windings*steps+1) :
-        phi       = i * dphi
-        phiw      = (params[0]-params[1])/params[1]*phi
-        xcoord[i] = (params[0]-params[1])*cos(phi) + params[2]*cos(phiw)
-        ycoord[i] = (params[0]-params[1])*sin(phi) - params[2]*sin(phiw)
-        
-        if ( xmin > xcoord[i] ) :
-            xmin = xcoord[i]
-        if ( xmax < xcoord[i] ) :
-            xmax = xcoord[i]
-        if ( ymin > ycoord[i] ) :
-            ymin = ycoord[i]
-        if ( ymax < ycoord[i] ) :
-            ymax = ycoord[i]
-            
-    if ( xmax-xmin > ymax-ymin ) :
-        scale = xmax - xmin
-    else :
-        scale = ymax - ymin
+    phi = arange(windings*steps+1)*dphi
+    phiw      = (params[0]-params[1])/params[1]*phi
+    xcoord = (params[0]-params[1])*cos(phi) + params[2]*cos(phiw)
+    ycoord = (params[0]-params[1])*sin(phi) - params[2]*sin(phiw)
+    xmin = min(xcoord)
+    xmax = max(xcoord)
+    ymin = min(ycoord)
+    ymax = max(ycoord)
     
-    xmin = - 0.65 * scale
-    xmax =   0.65 * scale
-    ymin = - 0.65 * scale
-    ymax =   0.65 * scale
+    xmin -= 0.15 * (xmax - xmin)
+    xmax += 0.15 * (xmax - xmin)
+    ymin -= 0.15 * (ymax - ymin)
+    ymax += 0.15 * (ymax - ymin)
 
     plwind( xmin, xmax, ymin, ymax )
 
