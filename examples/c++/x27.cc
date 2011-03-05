@@ -38,6 +38,7 @@ public:
     x27( int, const char ** );
     void cycloid( void );
     void spiro( PLFLT data[], int fill );
+    PLINT gcd (PLINT a, PLINT b);
 
 private:
     // Class data
@@ -54,6 +55,10 @@ private:
 x27::x27( int argc, const char ** argv )
 {
     // R, r, p, N
+    // R and r should be integers to give correct termination of the
+    // angle loop using gcd.
+    // N.B. N is just a place holder since it is no longer used
+    // (because we now have proper termination of the angle loop).
     PLFLT params[9][4] = {
         21.0,   7.0,  7.0,  3.0, // Deltoid
         21.0,   7.0, 10.0,  3.0,
@@ -119,6 +124,24 @@ x27::x27( int argc, const char ** argv )
 }
 
 //--------------------------------------------------------------------------
+// Calculate greatest common divisor following pseudo-code for the
+// Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
+ 
+PLINT x27::gcd (PLINT a, PLINT b)
+{
+    PLINT t;
+    a = abs(a);
+    b = abs(b);
+    while ( b != 0 )
+    {
+        t = b;
+        b = a % b;
+        a = t; 
+    }
+    return a;
+}
+
+//--------------------------------------------------------------------------
 
 void
 x27::cycloid( void )
@@ -131,7 +154,7 @@ x27::cycloid( void )
 void
 x27::spiro( PLFLT params[], int fill )
 {
-#define NPNT    20000
+#define NPNT    2000
     static PLFLT xcoord[NPNT + 1];
     static PLFLT ycoord[NPNT + 1];
 
@@ -145,18 +168,15 @@ x27::spiro( PLFLT params[], int fill )
     PLFLT        xmax;
     PLFLT        ymin;
     PLFLT        ymax;
-    PLFLT        scale;
 
     // Fill the coordinates
 
-    windings = (int) params[3];
+    // Proper termination of the angle loop very near the beginning
+    // point, see
+    // http://mathforum.org/mathimages/index.php/Hypotrochoid.
+    windings = (PLINT) abs(params[1])/gcd((PLINT) params[0], (PLINT) params[1]);
     steps    = NPNT / windings;
-    dphi     = 8.0 * acos( -1.0 ) / (PLFLT) steps;
-
-    xmin = 0.0;  // This initialisation is safe!
-    xmax = 0.0;
-    ymin = 0.0;
-    ymax = 0.0;
+    dphi     = 2.0 * M_PI / (PLFLT) steps;
 
     for ( i = 0; i <= windings * steps; i++ )
     {
@@ -165,6 +185,13 @@ x27::spiro( PLFLT params[], int fill )
         xcoord[i] = ( params[0] - params[1] ) * cos( phi ) + params[2] * cos( phiw );
         ycoord[i] = ( params[0] - params[1] ) * sin( phi ) - params[2] * sin( phiw );
 
+        if ( i == 0)
+        {
+            xmin = xcoord[i];
+            xmax = xcoord[i];
+            ymin = ycoord[i];
+            ymax = ycoord[i];
+        }
         if ( xmin > xcoord[i] )
             xmin = xcoord[i];
         if ( xmax < xcoord[i] )
@@ -175,18 +202,10 @@ x27::spiro( PLFLT params[], int fill )
             ymax = ycoord[i];
     }
 
-    if ( xmax - xmin > ymax - ymin )
-    {
-        scale = xmax - xmin;
-    }
-    else
-    {
-        scale = ymax - ymin;
-    }
-    xmin = -0.65 * scale;
-    xmax = 0.65 * scale;
-    ymin = -0.65 * scale;
-    ymax = 0.65 * scale;
+    xmin -= 0.15 * (xmax - xmin);
+    xmax += 0.15 * (xmax - xmin);
+    ymin -= 0.15 * (ymax - ymin);
+    ymax += 0.15 * (ymax - ymin);
 
     pls->wind( xmin, xmax, ymin, ymax );
 
