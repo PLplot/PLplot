@@ -49,6 +49,10 @@ class x27 {
     public x27( String[] args )
     {
         // R, r, p, N
+        // R and r should be integers to give correct termination of the
+        // angle loop using gcd.
+        // N.B. N is just a place holder since it is no longer used
+        // (because we now have proper termination of the angle loop).
         double  params[][] = {
             { 21.0,   7.0,  7.0,  3.0 }, // Deltoid
             { 21.0,   7.0, 10.0,  3.0 },
@@ -112,6 +116,24 @@ class x27 {
         pls.end();
     }
 
+//--------------------------------------------------------------------------
+// Calculate greatest common divisor following pseudo-code for the
+// Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
+
+int gcd (int a, int b)
+{
+    int t;
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while ( b != 0 )
+    {
+        t = b;
+        b = a % b;
+        a = t; 
+    }
+    return a;
+}
+
     // ===============================================================
 
     void cycloid()
@@ -123,7 +145,7 @@ class x27 {
 
     void spiro( double params[], boolean fill )
     {
-        int    NPNT = 20000;
+        int    NPNT = 2000;
         double xcoord[];
         double ycoord[];
 
@@ -133,22 +155,21 @@ class x27 {
         double phi;
         double phiw;
         double dphi;
-        double xmin;
-        double xmax;
-        double ymin;
-        double ymax;
-        double scale;
+        // Initialize to quiet java compiler errors about the possibility
+        // these variables are not initialized in the code below.
+        double xmin = 0.;
+        double xmax = 0.;
+        double ymin = 0.;
+        double ymax = 0.;
 
         // Fill the coordinates
 
-        windings = (int) params[3];
+    // Proper termination of the angle loop very near the beginning
+    // point, see
+    // http://mathforum.org/mathimages/index.php/Hypotrochoid.
+    windings = (int) Math.abs(params[1])/gcd((int) params[0], (int) params[1]);
         steps    = NPNT / windings;
-        dphi     = 8.0 * Math.acos( -1.0 ) / (double) steps;
-
-        xmin = 0.0;  // This initialisation is safe!
-        xmax = 0.0;
-        ymin = 0.0;
-        ymax = 0.0;
+        dphi     = 2.0 * Math.PI / (double) steps;
 
         xcoord = new double[windings * steps + 1];
         ycoord = new double[windings * steps + 1];
@@ -160,24 +181,23 @@ class x27 {
             xcoord[i] = ( params[0] - params[1] ) * Math.cos( phi ) + params[2] * Math.cos( phiw );
             ycoord[i] = ( params[0] - params[1] ) * Math.sin( phi ) - params[2] * Math.sin( phiw );
 
+            if ( i == 0)
+            {
+                xmin = xcoord[i];
+                xmax = xcoord[i];
+                ymin = ycoord[i];
+                ymax = ycoord[i];
+            }
             if ( xmin > xcoord[i] ) xmin = xcoord[i];
             if ( xmax < xcoord[i] ) xmax = xcoord[i];
             if ( ymin > ycoord[i] ) ymin = ycoord[i];
             if ( ymax < ycoord[i] ) ymax = ycoord[i];
         }
 
-        if ( xmax - xmin > ymax - ymin )
-        {
-            scale = xmax - xmin;
-        }
-        else
-        {
-            scale = ymax - ymin;
-        }
-        xmin = -0.65 * scale;
-        xmax = 0.65 * scale;
-        ymin = -0.65 * scale;
-        ymax = 0.65 * scale;
+        xmin -= 0.15 * (xmax - xmin);
+        xmax += 0.15 * (xmax - xmin);
+        ymin -= 0.15 * (ymax - ymin);
+        ymax += 0.15 * (ymax - ymin);
 
         pls.wind( xmin, xmax, ymin, ymax );
 
