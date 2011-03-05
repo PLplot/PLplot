@@ -37,7 +37,11 @@ import plplot;
 
 int main( char[][] args )
 {
-    /* R, r, p, N */
+    // R, r, p, N
+    // R and r should be integers to give correct termination of the
+    // angle loop using gcd.
+    // N.B. N is just a place holder since it is no longer used
+    // (because we now have proper termination of the angle loop).
     static PLFLT[4][9] params = [
         [ 21.0, 7.0, 7.0, 3.0 ], /* Deltoid */
         [ 21.0, 7.0, 10.0, 3.0 ],
@@ -66,11 +70,12 @@ int main( char[][] args )
      */
     plssub( 3, 3 ); /* Three by three window */
 
+    int fill = 0;
     for ( int i = 0; i < 9; i++ )
     {
         pladv( 0 );
         plvpor( 0.0, 1.0, 0.0, 1.0 );
-        spiro( params[i] );
+        spiro( params[i], fill );
     }
 
     pladv( 0 );
@@ -80,12 +85,42 @@ int main( char[][] args )
     {
         pladv( 0 );
         plvpor( 0.0, 1.0, 0.0, 1.0 );
-        spiro( params[i] );
+        spiro( params[i], fill );
     }
 
-    /* Don't forget to call plend() to finish off! */
+    // fill the curves
+    fill = 1;
+
+    pladv( 0 );
+    plssub( 1, 1 ); /* One window per curve */
+
+    for ( int i = 0; i < 9; i++ )
+    {
+        pladv( 0 );
+        plvpor( 0.0, 1.0, 0.0, 1.0 );
+        spiro( params[i], fill );
+    }
+
     plend();
     return 0;
+}
+
+//--------------------------------------------------------------------------
+// Calculate greatest common divisor following pseudo-code for the
+// Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
+
+PLINT gcd (PLINT a, PLINT b)
+{
+    PLINT t;
+    a = abs(a);
+    b = abs(b);
+    while ( b != 0 )
+    {
+        t = b;
+        b = a % b;
+        a = t; 
+    }
+    return a;
 }
 
 /* =============================================================== */
@@ -96,23 +131,22 @@ void cycloid()
 }
 
 /* =============================================================== */
-void spiro( PLFLT[] params )
+void spiro( PLFLT[] params, int fill )
 {
-    const int npnt = 20000;
+    const int npnt = 2000;
     PLFLT[]   xcoord, ycoord;
+    int windings, steps;
+    PLFLT dphi, phi, phiw, xmin, xmax, ymin, ymax;
 
-    /* Fill the coordinates */
-    int   windings = cast(int) ( params[3] );
-    int   steps    = npnt / windings;
-    PLFLT dphi     = 8.0 * acos( -1.0 ) / steps;
+    // Fill the coordinates
 
-    PLFLT xmin = 0.0; /* This initialisation is safe! */
-    PLFLT xmax = 0.0;
-    PLFLT ymin = 0.0;
-    PLFLT ymax = 0.0;
+    // Proper termination of the angle loop very near the beginning
+    // point, see
+    // http://mathforum.org/mathimages/index.php/Hypotrochoid.
+    windings = cast(PLINT) abs(params[1])/gcd(cast(PLINT) params[0], cast(PLINT) params[1]);
+    steps    = npnt / windings;
+    dphi     = 2.0 * PI / cast(PLFLT) steps;
 
-    PLFLT phi;
-    PLFLT phiw;
     xcoord.length = windings * steps + 1;
     ycoord.length = windings * steps + 1;
     for ( int i = 0; i <= windings * steps; i++ )
@@ -122,6 +156,13 @@ void spiro( PLFLT[] params )
         xcoord[i] = ( params[0] - params[1] ) * cos( phi ) + params[2] * cos( phiw );
         ycoord[i] = ( params[0] - params[1] ) * sin( phi ) - params[2] * sin( phiw );
 
+        if ( i == 0)
+        {
+            xmin = xcoord[i];
+            xmax = xcoord[i];
+            ymin = ycoord[i];
+            ymax = ycoord[i];
+        }
         if ( xmin > xcoord[i] )
             xmin = xcoord[i];
         if ( xmax < xcoord[i] )
@@ -132,18 +173,20 @@ void spiro( PLFLT[] params )
             ymax = ycoord[i];
     }
 
-    PLFLT scale;
-    if ( xmax - xmin > ymax - ymin )
-        scale = xmax - xmin;
-    else
-        scale = ymax - ymin;
-    xmin = -0.65 * scale;
-    xmax = 0.65 * scale;
-    ymin = -0.65 * scale;
-    ymax = 0.65 * scale;
+    xmin -= 0.15 * (xmax - xmin);
+    xmax += 0.15 * (xmax - xmin);
+    ymin -= 0.15 * (ymax - ymin);
+    ymax += 0.15 * (ymax - ymin);
 
     plwind( xmin, xmax, ymin, ymax );
 
     plcol0( 1 );
-    plline( xcoord, ycoord );
+    if ( fill )
+    {
+        plfill( xcoord, ycoord );
+    }
+    else
+    {
+        plline( xcoord, ycoord );
+    }
 }
