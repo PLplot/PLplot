@@ -36,12 +36,15 @@ c --------------------------------------------------------------------------
 
       include 'plplot_parameters.h'
 
-c     R, r, p, N
+
+      integer i, j, fill
 
       real*8 params(4,9)
-
-      integer i, j
-
+c     R, r, p, N
+c     R and r should be integers to give correct termination of the
+c     angle loop using gcd.
+c     N.B. N is just a place holder since it is no longer used
+c     (because we now have proper termination of the angle loop).
       data ( ( params(i,j) ,i=1,4) ,j=1,9 ) /
      & 21.0d0,  7.0d0,  7.0d0,  3.0d0,
      & 21.0d0,  7.0d0, 10.0d0,  3.0d0,
@@ -72,10 +75,11 @@ c  First an overview, then all curves one by one
 
       call plssub(3, 3)
 
+      fill = 0
       do 110 i = 1,9
           call pladv(0)
           call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
-          call spiro( params(1,i) )
+          call spiro( params(1,i), fill )
   110 continue
 
       call pladv(0)
@@ -84,12 +88,38 @@ c  First an overview, then all curves one by one
       do 120 i = 1,9
           call pladv(0)
           call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
-          call spiro( params(1,i) )
+          call spiro( params(1,i), fill )
   120 continue
 
-c  Don't forget to call plend() to finish off!
+c     fill the curves.
+      fill = 1
+      call pladv(0)
+      call plssub(1, 1)
+
+      do 130 i = 1,9
+          call pladv(0)
+          call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+          call spiro( params(1,i), fill )
+  130 continue
 
       call plend()
+      end
+
+c  --------------------------------------------------------------------------
+c Calculate greatest common divisor following pseudo-code for the
+c Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
+
+      integer function gcd (a,  b)
+      implicit none
+      integer a, b, t
+      a = abs(a)
+      b = abs(b)
+      do while ( b .ne. 0 )
+         t = b
+         b = mod (a, b)
+         a = t
+      enddo
+      gcd = a
       end
 
 c  ===============================================================
@@ -102,19 +132,21 @@ c     TODO
 
 c  ===============================================================
 
-      subroutine spiro( params )
+      subroutine spiro( params, fill )
 
       implicit none
+      include 'plplot_parameters.h'
 
       real*8      params(*)
       integer     NPNT
-      parameter ( NPNT = 20000 )
+      parameter ( NPNT = 2000 )
       real*8      xcoord(NPNT+1)
       real*8      ycoord(NPNT+1)
 
       integer     windings
       integer     steps
       integer     i
+      integer     fill
       real*8      phi
       real*8      phiw
       real*8      dphi
@@ -122,19 +154,16 @@ c  ===============================================================
       real*8      xmax
       real*8      ymin
       real*8      ymax
-      real*8      scale
+      integer gcd
 
 c     Fill the coordinates
 
-      windings = int(params(4))
+c     Proper termination of the angle loop very near the beginning
+c     point, see
+c     http://mathforum.org/mathimages/index.php/Hypotrochoid.
+      windings = int(abs(params(2))/gcd(int(params(1)), int(params(2))))
       steps    = NPNT/windings
-      dphi     = 8.0d0*acos(-1.0d0)/dble(steps)
-
-c     This initialisation is safe!
-      xmin = 0.0d0
-      xmax = 0.0d0
-      ymin = 0.0d0
-      ymax = 0.0d0
+      dphi     = 2.d0*PI/dble(steps)
 
       do 110 i = 1,windings*steps+1
           phi       = dble(i-1) * dphi
@@ -142,25 +171,30 @@ c     This initialisation is safe!
           xcoord(i) = (params(1)-params(2))*cos(phi)+params(3)*cos(phiw)
           ycoord(i) = (params(1)-params(2))*sin(phi)-params(3)*sin(phiw)
 
+          if (i.eq.1) then
+               xmin = xcoord(1)
+               xmax = xcoord(1)
+               ymin = ycoord(1)
+               ymax = ycoord(1)
+          endif
           if ( xmin > xcoord(i) ) xmin = xcoord(i)
           if ( xmax < xcoord(i) ) xmax = xcoord(i)
           if ( ymin > ycoord(i) ) ymin = ycoord(i)
           if ( ymax < ycoord(i) ) ymax = ycoord(i)
   110 continue
 
-      if ( xmax-xmin > ymax-ymin ) then
-          scale = xmax - xmin
-      else
-          scale = ymax - ymin
-      endif
-      xmin = - 0.65d0 * scale
-      xmax =   0.65d0 * scale
-      ymin = - 0.65d0 * scale
-      ymax =   0.65d0 * scale
+      xmin = xmin - 0.15d0 * (xmax - xmin)
+      xmax = xmax + 0.15d0 * (xmax - xmin)
+      ymin = ymin - 0.15d0 * (ymax - ymin)
+      ymax = ymax + 0.15d0 * (ymax - ymin)
 
       call plwind( xmin, xmax, ymin, ymax )
 
       call plcol0(1)
-      call plline( 1+steps*windings, xcoord, ycoord )
+      if (fill.eq.1) then
+         call plfill( 1+steps*windings, xcoord, ycoord )
+      else
+         call plline( 1+steps*windings, xcoord, ycoord )
+      endif
 
       end
