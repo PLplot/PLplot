@@ -103,7 +103,7 @@ proc x33 {{w loopback}} {
     $w cmd plbox "bc" 0.0 0 "bc" 0.0 0
     $w cmd plsfont [expr {$::PLPLOT::PL_FCI_SANS}] -1 -1
     $w cmd plmtex "t" 8.0 0.5 0.5 "The 16 standard legend positions with"
-    $w cmd plmtex "t" 6.0 0.5 0.5 "the same 0.05 offset in x and y"
+    $w cmd plmtex "t" 6.0 0.5 0.5 "the same (0.05) offset in x and y"
 
     set nlegend 1
     # Only specify legend data that are required according to the
@@ -144,7 +144,7 @@ proc x33 {{w loopback}} {
     $w cmd plwind 0.0 1.0 0.0 1.0
     $w cmd plbox "bc" 0.0 0 "bc" 0.0 0
     $w cmd plsfont [expr {$::PLPLOT::PL_FCI_SANS}] -1 -1
-    $w cmd plmtex "t" 8.0 0.5 0.5 "The effect of nrow ncolumn PL_LEGEND_ROW_MAJOR"
+    $w cmd plmtex "t" 8.0 0.5 0.5 "The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,"
     $w cmd plmtex "t" 6.0 0.5 0.5 "and position for the same legend data"
 
     set nlegend 7
@@ -601,7 +601,7 @@ proc x33 {{w loopback}} {
         lappend text            [format "%s %d" "Box Pattern" $i]
         lappend text_colors     2
         lappend box_colors      2
-        lappend box_patterns    i
+        lappend box_patterns    $i
         lappend box_scales      0.8
         lappend box_line_widths 1
     }
