@@ -35,6 +35,10 @@ function ix27c
 ##--------------------------------------------------------------------------*/
 
   ## R, r, p, N
+  ## R and r should be integers to give correct termination of the
+  ## angle loop using gcd.
+  ## N.B. N is just a place holder since it is no longer used
+  ## (because we now have proper termination of the angle loop).
   params = [
 	    21.0,  7.0,  7.0,  3.0;  ## Deltoid
 	    21.0,  7.0, 10.0,  3.0;
@@ -62,10 +66,11 @@ function ix27c
 
   plssub(3, 3); ## Three by three window
 
+  fill = 0;
   for i = 1:9
     pladv(0);
     plvpor( 0.0, 1.0, 0.0, 1.0 );
-    spiro( params(i,:), 0 );
+    spiro( params(i,:), fill );
   endfor
 
   pladv(0);
@@ -74,21 +79,37 @@ function ix27c
   for i=1:9
     pladv(0);
     plvpor( 0.0, 1.0, 0.0, 1.0 );
-    spiro( params(i,:), 0 );
+    spiro( params(i,:), fill );
   endfor
 
   ## Fill the curves.
+  fill = 1;
   pladv( 0 );
   plssub( 1, 1 ); ## One window per curve
   for i=1:9
     pladv(0);
     plvpor( 0.0, 1.0, 0.0, 1.0 );
-    spiro( params(i,:), 1 );
+    spiro( params(i,:), fill );
   endfor
 
   ## Don't forget to call plend() to finish off!
 
   plend1();
+end
+
+##------------------------------------------------------------------------
+## Calculate greatest common divisor following pseudo-code for the
+## Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
+
+function [value] = gcd (a,  b)
+    a = floor(abs(a));
+    b = floor(abs(b));
+    while(b!=0)
+        t = b;
+        b = mod(a,b);
+        a = t;
+    endwhile
+    value = a;
 end
 
 ## ===============================================================
@@ -101,18 +122,16 @@ endfunction
 
   function spiro(params, fill)
   
-  NPNT=20000;
+  NPNT=2000;
 
   ## Fill the coordinates
 
-  windings = floor(params(4));
+  ## Proper termination of the angle loop very near the beginning
+  ## point, see
+  ## http://mathforum.org/mathimages/index.php/Hypotrochoid.
+  windings = floor(abs(params(2))/gcd(params(1), params(2)));
   steps    = floor(NPNT/windings);
-  dphi     = 8.0*acos(-1.0)/steps;
-
-  xmin = 0.0; ## This initialisation is safe!
-  xmax = 0.0;
-  ymin = 0.0;
-  ymax = 0.0;
+  dphi     = 2.0*pi/steps;
 
   i = (0:windings*steps)';
   phi = i*dphi;
@@ -125,11 +144,10 @@ endfunction
   ymin = min(ycoord);
   ymax = max(ycoord);
 
-  scale = max(xmax-xmin,ymax-ymin);
-  xmin = - 0.65 * scale;
-  xmax =   0.65 * scale;
-  ymin = - 0.65 * scale;
-  ymax =   0.65 * scale;
+  xmin -= 0.15*(xmax-xmin);
+  xmax += 0.15*(xmax-xmin);
+  ymin -= 0.15*(ymax-ymin);
+  ymax += 0.15*(ymax-ymin);
   
   plwind( xmin, xmax, ymin, ymax );
   
