@@ -132,11 +132,12 @@ for k=1, 4 do
 
 	pl.col0(2)
 
-	if opt[k]~=0 then 
-    pl.line3( x, y, z )
+	if opt[k]~=0 then
+		pl.line3( x, y, z )
 	else
-    pl.poin3( x, y, z, 1 )
-  end
+		-- U+22C5 DOT OPERATOR.
+		pl.string3( x, y, z, "⋅" )
+	end
 
 	pl.col0(3)
 	pl.mtex("t", 1.0, 0.5, 0.5, "#frPLplot Example 18 - Alt=" .. alt[k] .. ", Az=" .. az[k])

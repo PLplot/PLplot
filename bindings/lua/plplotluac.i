@@ -1152,6 +1152,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 %rename(star) plstar;
 %rename(start) plstart;
 %rename(string) plstring;
+%rename(string3) plstring3;
 %rename(stripa) plstripa;
 %rename(stripc) plstripc;
 %rename(stripd) plstripd;
