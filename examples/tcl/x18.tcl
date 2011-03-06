@@ -47,7 +47,8 @@ proc x18 {{w loopback}} {
 	if {[opt $k]} {
 	    $w cmd plline3 $npts x y z
 	} else {
-	    $w cmd plpoin3 $npts x y z 1
+	    # U+22C5 DOT OPERATOR.
+	    $w cmd plstring3 $npts x y z "⋅" 
 	}
 
 	$w cmd plcol0 3
