@@ -87,7 +87,8 @@
         if ( opt(k).gt. 0 ) then
           call plline3(x, y, z)
         else
-          call plpoin3(x, y, z, 1)
+          !U+22C5 DOT OPERATOR.
+          call plstring3( x, y, z, "⋅" )
         endif
 
         call plcol0(3)
