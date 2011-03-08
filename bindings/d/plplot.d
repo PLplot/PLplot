@@ -434,6 +434,23 @@ void plpoin3( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLINT code )
     c_plpoin3( n, x.ptr, y.ptr, z.ptr, code );
 }
 
+/* Plots array y against x for n points using (UTF-8) text string*/
+void plstring( PLFLT[] x, PLFLT[] y, string text )
+{
+    PLINT n = x.length;
+    assert( n == y.length, "plstring(): Arrays must be of same length!" );
+    c_plstring( n, x.ptr, y.ptr, toStringz( text ) );
+}
+
+/* Draws a series of points (described by [UTF8] text string) in 3 space. */
+void plstring3( PLFLT[] x, PLFLT[] y, PLFLT[] z, string text )
+{
+    PLINT n = x.length;
+    assert( n == y.length, "plstring3(): Arrays must be of same length!" );
+    assert( n == z.length, "plstring3(): Arrays must be of same length!" );
+    c_plstring3( n, x.ptr, y.ptr, z.ptr, toStringz( text ) );
+}
+
 /* Draws a polygon in 3 space.  */
 void plpoly3( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLBOOL[] draw, PLBOOL ifcc )
 {
@@ -1380,6 +1397,8 @@ alias c_plstransform plstransform;
 alias c_plstripa     plstripa;
 //alias c_plstripc plstripc;
 alias c_plstripd     plstripd;
+//alias c_plstring     plstring;
+//alias c_plstring3     plstring3;
 //alias c_plstyl plstyl;
 //alias c_plsurf3d plsurf3d;
 //alias c_plsurf3dl plsurf3dl;
@@ -1766,6 +1785,12 @@ void c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code );
 
 /* Draws a polygon in 3 space.  */
 void c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc );
+
+/* Plots array y against x for n points using (UTF-8) text string*/
+void c_plstring( PLINT n, PLFLT *x, PLFLT *y, char *text );
+
+/* Draws a series of points (described by [UTF8] text string) in 3 space. */
+void c_plstring3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, char * text );
 
 /* Set the floating point precision (in number of places) in numeric labels. */
 void c_plprec( PLINT setp, PLINT prec );
