@@ -54,10 +54,12 @@ proc x27 {{w loopback}} {
   $w cmd pladv 0
   $w cmd plssub 3 3
 
+  set fill 0
+
   for { set i 0 } { $i < 9 } { incr i } {
      $w cmd pladv 0
      $w cmd plvpor 0.0  1.0  0.0  1.0
-     spiro $w [lindex $params $i]
+     spiro $w [lindex $params $i] $fill
   }
   $w cmd pladv 0
   $w cmd plssub 1 1
@@ -65,9 +67,36 @@ proc x27 {{w loopback}} {
   for { set i 0 } { $i < 9 } { incr i } {
      $w cmd pladv 0
      $w cmd plvpor 0.0  1.0  0.0  1.0
-     spiro $w [lindex $params $i]
+     spiro $w [lindex $params $i] $fill
   }
 
+  #  Fill the curves
+  set fill 1
+
+  $w cmd pladv 0
+  $w cmd plssub 1 1 ;# One window per curve
+
+  for { set i 0 } { $i < 9 } { incr i } {
+      $w cmd  pladv 0
+      $w cmd  plvpor 0.0 1.0 0.0 1.0
+      spiro $w [lindex $params $i] $fill
+  }
+}
+
+#--------------------------------------------------------------------------
+# Calculate greatest common divisor following pseudo-code for the
+# Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
+
+proc gcd {a b} {
+
+    set a [expr {int(abs($a))}]
+    set b [expr {int(abs($b))}]
+    while { $b != 0 } {
+        set t $b
+        set b [expr {$a % $b}]
+        set a $t
+    }
+    return $a
 }
 
 #  ===============================================================
@@ -80,7 +109,7 @@ proc cycloid {w} {
 
 #  ===============================================================
 
-proc spiro {w params} {
+proc spiro {w params fill} {
 
   foreach {param1 param2 param3 param4} $params {break}
 
@@ -91,9 +120,12 @@ proc spiro {w params} {
 
   #     Fill the coordinates
 
-  set windings [expr {int($param4)}]
+  #     Proper termination of the angle loop very near the beginning
+  #     point, see
+  #     http://mathforum.org/mathimages/index.php/Hypotrochoid.
+  set windings [expr {int(abs($param2)/[gcd $param1 $param2])}]
   set steps    [expr {$NPNT/$windings}]
-  set dphi     [expr {8.0*$::PLPLOT::PL_PI/double($steps)}]
+  set dphi     [expr {2.0*$::PLPLOT::PL_PI/double($steps)}]
 
   #     This initialisation is safe!
   set xmin 0.0
@@ -101,9 +133,9 @@ proc spiro {w params} {
   set ymin 0.0
   set ymax 0.0
 
-  set n [expr {int($windings*$steps+1)}]
+  set n [expr {$windings*$steps}]
 
-  for { set i 0 } { $i < $n } { incr i } {
+  for { set i 0 } { $i <= $n } { incr i } {
      set phi  [expr {double($i) * $dphi}]
      set phiw [expr {($param1-$param2)/$param2*$phi}]
      xcoord $i = [expr {($param1-$param2)*cos($phi)+$param3*cos($phiw)}]
@@ -128,6 +160,10 @@ proc spiro {w params} {
   $w cmd plwind $xmin $xmax $ymin $ymax
 
   $w cmd plcol0 1
-  $w cmd plline $n xcoord ycoord
 
+  if { $fill } {
+      $w cmd plfill $n xcoord ycoord
+  } else {
+      $w cmd plline $n xcoord ycoord
+  }
 }
