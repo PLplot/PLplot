@@ -113,7 +113,7 @@ proc spiro {w params fill} {
 
   foreach {param1 param2 param3 param4} $params {break}
 
-  set NPNT 20000
+  set NPNT 2000
 
   matrix xcoord f [expr {$NPNT+1}]
   matrix ycoord f [expr {$NPNT+1}]
@@ -124,38 +124,34 @@ proc spiro {w params fill} {
   #     point, see
   #     http://mathforum.org/mathimages/index.php/Hypotrochoid.
   set windings [expr {int(abs($param2)/[gcd $param1 $param2])}]
-  set steps    [expr {$NPNT/$windings}]
+  set steps    [expr {int($NPNT/$windings)}]
   set dphi     [expr {2.0*$::PLPLOT::PL_PI/double($steps)}]
+  # puts [ format "windings, steps, dphi = %d, %d, %f" $windings $steps $dphi ]
 
-  #     This initialisation is safe!
-  set xmin 0.0
-  set xmax 0.0
-  set ymin 0.0
-  set ymax 0.0
+  set n [expr {int($windings*$steps)+1}]
 
-  set n [expr {$windings*$steps}]
-
-  for { set i 0 } { $i <= $n } { incr i } {
+  for { set i 0 } { $i < $n } { incr i } {
      set phi  [expr {double($i) * $dphi}]
      set phiw [expr {($param1-$param2)/$param2*$phi}]
      xcoord $i = [expr {($param1-$param2)*cos($phi)+$param3*cos($phiw)}]
      ycoord $i = [expr {($param1-$param2)*sin($phi)-$param3*sin($phiw)}]
 
+     if { $i == 0} {
+	set xmin [xcoord 0]  
+	set xmax [xcoord 0]  
+	set ymin [ycoord 0]  
+	set ymax [ycoord 0]  
+     }  
      if { $xmin > [xcoord $i] } { set xmin [xcoord $i] }
      if { $xmax < [xcoord $i] } { set xmax [xcoord $i] }
      if { $ymin > [ycoord $i] } { set ymin [ycoord $i] }
      if { $ymax < [ycoord $i] } { set ymax [ycoord $i] }
   }
 
-  if { $xmax-$xmin > $ymax-$ymin } {
-     set scale [expr {$xmax - $xmin}]
-  } else {
-     set scale [expr {$ymax - $ymin}]
-  }
-  set xmin [expr {- 0.65 * $scale}]
-  set xmax [expr {  0.65 * $scale}]
-  set ymin [expr {- 0.65 * $scale}]
-  set ymax [expr {  0.65 * $scale}]
+  set xmin [expr {$xmin - 0.15 * ($xmax - $xmin) }]
+  set xmax [expr {$xmax + 0.15 * ($xmax - $xmin) }]
+  set ymin [expr {$ymin - 0.15 * ($ymax - $ymin) }]
+  set ymax [expr {$ymax + 0.15 * ($ymax - $ymin) }]
 
   $w cmd plwind $xmin $xmax $ymin $ymax
 
