@@ -160,8 +160,10 @@ spiro( PLFLT params[], int fill )
     PLFLT        dphi;
     PLFLT        xmin;
     PLFLT        xmax;
+    PLFLT        xrange_adjust;
     PLFLT        ymin;
     PLFLT        ymax;
+    PLFLT        yrange_adjust;
 
     // Fill the coordinates
 
@@ -195,10 +197,12 @@ spiro( PLFLT params[], int fill )
             ymax = ycoord[i];
     }
 
-    xmin -= 0.15 * (xmax - xmin);
-    xmax += 0.15 * (xmax - xmin);
-    ymin -= 0.15 * (ymax - ymin);
-    ymax += 0.15 * (ymax - ymin);
+    xrange_adjust = 0.15 * (xmax - xmin);
+    xmin -= xrange_adjust;
+    xmax += xrange_adjust;
+    yrange_adjust = 0.15 * (ymax - ymin);
+    ymin -= yrange_adjust;
+    ymax += yrange_adjust;
 
     plwind( xmin, xmax, ymin, ymax );
 

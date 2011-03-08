@@ -55,11 +55,12 @@ let spiro params fill =
   let steps = npnt / windings in
   let dphi = 2.0 *. pi /. float_of_int steps in
 
-  (* This initialisation is safe! *)
+  (* This initialisation appears to be necessary, but I (AWI) don't understand why!  *)
   let xmin = ref 0.0 in
   let xmax = ref 0.0 in
   let ymin = ref 0.0 in
   let ymax = ref 0.0 in
+
 
   for i = 0 to windings * steps do
     let phi = float_of_int i *. dphi in
@@ -81,10 +82,12 @@ let spiro params fill =
     if !ymax < ycoord.(i) then ymax := ycoord.(i) else ();
   done;
 
-  let xmin = !xmin -. 0.15 *. (!xmax -. !xmin) in
-  let xmax = !xmax +. 0.15 *. (!xmax -. xmin) in
-  let ymin = !ymin -. 0.15 *. (!ymax -. !ymin) in
-  let ymax = !ymax +. 0.15 *. (!ymax -. ymin) in
+  let xrange_adjust = 0.15 *. (!xmax -. !xmin) in
+  let xmin = !xmin -. xrange_adjust in
+  let xmax = !xmax +. xrange_adjust in
+  let yrange_adjust = 0.15 *. (!ymax -. !ymin) in
+  let ymin = !ymin -. yrange_adjust in
+  let ymax = !ymax +. yrange_adjust in
 
   plwind xmin xmax ymin ymax;
 

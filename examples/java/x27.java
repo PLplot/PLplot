@@ -161,6 +161,8 @@ int gcd (int a, int b)
         double xmax = 0.;
         double ymin = 0.;
         double ymax = 0.;
+        double xrange_adjust;
+        double yrange_adjust;
 
         // Fill the coordinates
 
@@ -194,10 +196,12 @@ int gcd (int a, int b)
             if ( ymax < ycoord[i] ) ymax = ycoord[i];
         }
 
-        xmin -= 0.15 * (xmax - xmin);
-        xmax += 0.15 * (xmax - xmin);
-        ymin -= 0.15 * (ymax - ymin);
-        ymax += 0.15 * (ymax - ymin);
+        xrange_adjust = 0.15 * (xmax - xmin);
+        xmin -= xrange_adjust;
+        xmax += xrange_adjust;
+        yrange_adjust = 0.15 * (ymax - ymin);
+        ymin -= yrange_adjust;
+        ymax += yrange_adjust;
 
         pls.wind( xmin, xmax, ymin, ymax );
 

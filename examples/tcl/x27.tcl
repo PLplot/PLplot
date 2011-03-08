@@ -148,10 +148,12 @@ proc spiro {w params fill} {
      if { $ymax < [ycoord $i] } { set ymax [ycoord $i] }
   }
 
-  set xmin [expr {$xmin - 0.15 * ($xmax - $xmin) }]
-  set xmax [expr {$xmax + 0.15 * ($xmax - $xmin) }]
-  set ymin [expr {$ymin - 0.15 * ($ymax - $ymin) }]
-  set ymax [expr {$ymax + 0.15 * ($ymax - $ymin) }]
+  set xrange_adjust [expr {0.15 * ($xmax - $xmin) }]
+  set xmin [expr {$xmin - $xrange_adjust }]
+  set xmax [expr {$xmax + $xrange_adjust }]
+  set yrange_adjust [expr {0.15 * ($ymax - $ymin) }]
+  set ymin [expr {$ymin - $yrange_adjust }]
+  set ymax [expr {$ymax + $yrange_adjust }]
 
   $w cmd plwind $xmin $xmax $ymin $ymax
 

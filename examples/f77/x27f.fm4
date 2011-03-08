@@ -152,8 +152,10 @@ c  ===============================================================
       real*8      dphi
       real*8      xmin
       real*8      xmax
+      real*8      xrange_adjust
       real*8      ymin
       real*8      ymax
+      real*8      yrange_adjust
       integer gcd
 
 c     Fill the coordinates
@@ -183,10 +185,12 @@ c     http://mathforum.org/mathimages/index.php/Hypotrochoid.
           if ( ymax < ycoord(i) ) ymax = ycoord(i)
   110 continue
 
-      xmin = xmin - 0.15d0 * (xmax - xmin)
-      xmax = xmax + 0.15d0 * (xmax - xmin)
-      ymin = ymin - 0.15d0 * (ymax - ymin)
-      ymax = ymax + 0.15d0 * (ymax - ymin)
+      xrange_adjust = 0.15d0 * (xmax - xmin)
+      xmin = xmin - xrange_adjust
+      xmax = xmax + xrange_adjust
+      yrange_adjust = 0.15d0 * (ymax - ymin)
+      ymin = ymin - yrange_adjust
+      ymax = ymax + yrange_adjust
 
       call plwind( xmin, xmax, ymin, ymax )
 

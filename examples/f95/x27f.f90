@@ -153,8 +153,10 @@ subroutine spiro( params, fill )
   real(kind=plflt)      dphi
   real(kind=plflt)      xmin
   real(kind=plflt)      xmax
+  real(kind=plflt)      xrange_adjust
   real(kind=plflt)      ymin
   real(kind=plflt)      ymax
+  real(kind=plflt)      yrange_adjust
   integer gcd
 
   ! Fill the coordinates
@@ -186,10 +188,12 @@ subroutine spiro( params, fill )
      if ( ymax < ycoord(i) ) ymax = ycoord(i)
   end do
 
-  xmin = xmin - 0.15_plflt * (xmax - xmin)
-  xmax = xmax + 0.15_plflt * (xmax - xmin)
-  ymin = ymin - 0.15_plflt * (ymax - ymin)
-  ymax = ymax + 0.15_plflt * (ymax - ymin)
+  xrange_adjust = 0.15_plflt * (xmax - xmin)
+  xmin = xmin - xrange_adjust
+  xmax = xmax + xrange_adjust
+  yrange_adjust = 0.15_plflt * (ymax - ymin)
+  ymin = ymin - yrange_adjust
+  ymax = ymax + yrange_adjust
 
   call plwind( xmin, xmax, ymin, ymax )
 

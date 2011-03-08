@@ -144,11 +144,13 @@ endfunction
   ymin = min(ycoord);
   ymax = max(ycoord);
 
-  xmin -= 0.15*(xmax-xmin);
-  xmax += 0.15*(xmax-xmin);
-  ymin -= 0.15*(ymax-ymin);
-  ymax += 0.15*(ymax-ymin);
-  
+  xrange_adjust = 0.15 * (xmax - xmin);
+  xmin -= xrange_adjust;
+  xmax += xrange_adjust;
+  yrange_adjust = 0.15 * (ymax - ymin);
+  ymin -= yrange_adjust;
+  ymax += yrange_adjust;
+
   plwind( xmin, xmax, ymin, ymax );
   
   plcol0(1);
@@ -159,6 +161,5 @@ endfunction
   endif
 
 endfunction
-## Log-linear plot.
 
 ix27c

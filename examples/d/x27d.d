@@ -136,7 +136,9 @@ void spiro( PLFLT[] params, int fill )
     const int npnt = 2000;
     PLFLT[]   xcoord, ycoord;
     int windings, steps;
-    PLFLT dphi, phi, phiw, xmin, xmax, ymin, ymax;
+    PLFLT dphi, phi, phiw;
+    PLFLT xmin, xmax, xrange_adjust;
+    PLFLT ymin, ymax, yrange_adjust;
 
     // Fill the coordinates
 
@@ -173,10 +175,12 @@ void spiro( PLFLT[] params, int fill )
             ymax = ycoord[i];
     }
 
-    xmin -= 0.15 * (xmax - xmin);
-    xmax += 0.15 * (xmax - xmin);
-    ymin -= 0.15 * (ymax - ymin);
-    ymax += 0.15 * (ymax - ymin);
+    xrange_adjust = 0.15*(xmax-xmin);
+    xmin = xmin - xrange_adjust;
+    xmax = xmax + xrange_adjust;
+    yrange_adjust = 0.15*(ymax-ymin);
+    ymin = ymin - yrange_adjust;
+    ymax = ymax + yrange_adjust;
 
     plwind( xmin, xmax, ymin, ymax );
 

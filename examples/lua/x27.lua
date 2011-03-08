@@ -76,10 +76,12 @@ function spiro( params, fill )
     if ymax<ycoord[i] then ymax = ycoord[i] end
   end
 
-  xmin = xmin - 0.15*(xmax-xmin)
-  xmax = xmax + 0.15*(xmax-xmin)
-  ymin = ymin - 0.15*(ymax-ymin)
-  ymax = ymax + 0.15*(ymax-ymin)
+  xrange_adjust = 0.15*(xmax-xmin)
+  xmin = xmin - xrange_adjust
+  xmax = xmax + xrange_adjust
+  yrange_adjust = 0.15*(ymax-ymin)
+  ymin = ymin - yrange_adjust
+  ymax = ymax + yrange_adjust
 
   pl.wind(xmin, xmax, ymin, ymax)
 
