@@ -416,31 +416,31 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! plotted area on the left.  If the PL_LEGEND_BACKGROUND bit is set,
 //! plot a (semi-transparent) background for the legend.  If the
 //! PL_LEGEND_BOUNDING_BOX bit is set, plot a bounding box for the
-//! legend.  If the PL_LEGEND_ROW_MAJOR bit is set and both of the
-//! (possibly internally transformed) nrow > 1 and ncolumn > 1, then
+//! legend.  If the PL_LEGEND_ROW_MAJOR bit is set and both (of the
+//! possibly internally transformed) nrow > 1 and ncolumn > 1, then
 //! plot the resulting array of legend entries in row-major order.
 //! @param x X offset of the legend position in adopted coordinates
 //! from the specified standard position of the legend.  For positive
 //! x, the direction of motion away from the standard position is
 //! inward/outward from the standard corner positions or standard left
-//! or right positions if the PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit
-//! is set in opt.  For the top or bottom cases, the direction of
-//! motion for positive x is toward positive X.
+//! or right positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
+//! bit is set in position.  For the standard top or bottom positions,
+//! the direction of motion for positive x is toward positive X.
 //! @param y Y offset of the legend position in adopted coordinates
 //! from the specified standard position of the legend.  For positive
 //! y, the direction of motion away from the standard position is
 //! inward/outward from the standard corner positions or standard top
-//! or bottom positions if the PL_LEGEND_INSIDE/PL_LEGEND_OUTSIDE bit
-//! is set in opt.  For the left or right cases, the direction of
-//! motion for positive y is toward positive Y.
+//! or bottom positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
+//! bit is set in position.  For the standard left or right positions,
+//! the direction of motion for positive y is toward positive Y.
 //! @param plot_width Horizontal width in adopted coordinates of the
 //! plot area (where colored boxes, lines, and/or symbols are drawn in
 //! the legend).
-//! @param bg_color Cmap0 index of the background color for the legend
+//! @param bg_color The cmap0 index of the background color for the legend
 //! (PL_LEGEND_BACKGROUND).
-//! @param bb_color Cmap0 index of the color of the bounding-box
+//! @param bb_color The cmap0 index of the color of the bounding-box
 //! line for the legend (PL_LEGEND_BOUNDING_BOX).
-//! @param bb_style pllsty style number for the bounding-box line
+//! @param bb_style The pllsty style number for the bounding-box line
 //! for the legend (PL_LEGEND_BOUNDING_BOX).
 //! @param nrow Number of rows in the matrix used to render the
 //! nlegend legend entries.  For internal transformations of nrow, see
