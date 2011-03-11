@@ -127,16 +127,16 @@ Naming rules:
 **********************************************************************************/
 
 /* With preceding count */
-%typemap(in) (PLINT n, PLINT *Array) {
+%typemap(in) (PLINT n, const PLINT *Array) {
   $2 = (PLINT*)LUA_get_int_num_array_var(L, $input, &$1);
   if(!$2) SWIG_fail;
   Alen = $1;
 }
-%typemap(freearg) (PLINT n, PLINT *Array) { LUA_FREE_ARRAY($2); }
+%typemap(freearg) (PLINT n, const PLINT *Array) { LUA_FREE_ARRAY($2); }
 
 
 /* Trailing count and check consistency with previous */
-%typemap(in) (PLINT *ArrayCk, PLINT n) (int temp) {
+%typemap(in) (const PLINT *ArrayCk, PLINT n) (int temp) {
   $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
@@ -145,11 +145,11 @@ Naming rules:
   }
   $2 = temp;
 }
-%typemap(freearg) (PLINT *ArrayCk, PLINT n) { LUA_FREE_ARRAY($1); }
+%typemap(freearg) (const PLINT *ArrayCk, PLINT n) { LUA_FREE_ARRAY($1); }
 
 
 /* No count but check consistency with previous */
-%typemap(in) PLINT *ArrayCk (int temp) {
+%typemap(in) const PLINT *ArrayCk (int temp) {
   $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
@@ -157,10 +157,10 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLINT *ArrayCk { LUA_FREE_ARRAY($1); }
+%typemap(freearg) const PLINT *ArrayCk { LUA_FREE_ARRAY($1); }
 
 /* No count but check consistency with previous, or NULL */
-%typemap(in) PLINT *ArrayCkNull (int temp) {
+%typemap(in) const PLINT *ArrayCkNull (int temp) {
   $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
@@ -168,11 +168,11 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLINT *ArrayCkNull { LUA_FREE_ARRAY($1); }
-%typemap(default) PLINT *ArrayCkNull { $1=NULL; }
+%typemap(freearg) const PLINT *ArrayCkNull { LUA_FREE_ARRAY($1); }
+%typemap(default) const PLINT *ArrayCkNull { $1=NULL; }
 
 /* Weird case to allow argument to be one shorter than others */
-%typemap(in) PLINT *ArrayCkMinus1 (int temp) {
+%typemap(in) const PLINT *ArrayCkMinus1 (int temp) {
   $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp < Alen-1) {
@@ -180,9 +180,9 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLINT *ArrayCkMinus1 { LUA_FREE_ARRAY($1); }
+%typemap(freearg) const PLINT *ArrayCkMinus1 { LUA_FREE_ARRAY($1); }
 
-%typemap(in) PLINT *ArrayCkMinus1Null (int temp) {
+%typemap(in) const PLINT *ArrayCkMinus1Null (int temp) {
   $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp < Alen-1) {
@@ -190,17 +190,17 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLINT *ArrayCkMinus1Null { LUA_FREE_ARRAY($1); }
-%typemap(default) PLINT *ArrayCkMinus1Null { $1=NULL; }
+%typemap(freearg) const PLINT *ArrayCkMinus1Null { LUA_FREE_ARRAY($1); }
+%typemap(default) const PLINT *ArrayCkMinus1Null { $1=NULL; }
 
 
 /* No length but remember size to check others */
-%typemap(in) PLINT *Array (int temp) {
+%typemap(in) const PLINT *Array (int temp) {
   $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Alen = temp;
 }
-%typemap(freearg) (PLINT *Array) { LUA_FREE_ARRAY($1); }
+%typemap(freearg) (const PLINT *Array) { LUA_FREE_ARRAY($1); }
 
 
 /******************************************************************************
@@ -208,17 +208,17 @@ Naming rules:
 ******************************************************************************/
 
 /* with preceding count */
-%typemap(in) (PLINT n, PLFLT *Array) {
+%typemap(in) (PLINT n, const PLFLT *Array) {
   int temp;
   $2 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$2) SWIG_fail;
   $1 = Alen = temp;
 }
-%typemap(freearg) (PLINT n, PLFLT *Array) { LUA_FREE_ARRAY($2); }
+%typemap(freearg) (PLINT n, const PLFLT *Array) { LUA_FREE_ARRAY($2); }
 
 
 /* Trailing count and check consistency with previous */
-%typemap(in) (PLFLT *ArrayCk, PLINT n) {
+%typemap(in) (const PLFLT *ArrayCk, PLINT n) {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
@@ -228,11 +228,11 @@ Naming rules:
   }
   $2 = temp;
 }
-%typemap(freearg) (PLFLT *ArrayCk, PLINT n) { LUA_FREE_ARRAY($1); }
+%typemap(freearg) (const PLFLT *ArrayCk, PLINT n) { LUA_FREE_ARRAY($1); }
 
 
 /* no count, but check consistency with previous */
-%typemap(in) PLFLT *ArrayCk (int temp) {
+%typemap(in) const PLFLT *ArrayCk (int temp) {
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
@@ -240,11 +240,11 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT *ArrayCk { LUA_FREE_ARRAY($1); }
+%typemap(freearg) const PLFLT *ArrayCk { LUA_FREE_ARRAY($1); }
 
 
 /* no count, but check consistency with previous, or NULL */
-%typemap(in) PLFLT *ArrayCkNull (int temp) {
+%typemap(in) const PLFLT *ArrayCkNull (int temp) {
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
@@ -252,31 +252,31 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT *ArrayCkNull { LUA_FREE_ARRAY($1); }
+%typemap(freearg) const PLFLT *ArrayCkNull { LUA_FREE_ARRAY($1); }
 
 
 /* No length but remember size to check others */
-%typemap(in) PLFLT *Array {
+%typemap(in) const PLFLT *Array {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Alen = temp;
 }
-%typemap(freearg) (PLFLT *Array) { LUA_FREE_ARRAY($1); }
-%typemap(default) PLFLT *ArrayCkNull { $1=NULL; }
+%typemap(freearg) (const PLFLT *Array) { LUA_FREE_ARRAY($1); }
+%typemap(default) const PLFLT *ArrayCkNull { $1=NULL; }
 
 /* with trailing count */
-%typemap(in) (PLFLT *Array, PLINT n) {
+%typemap(in) (const PLFLT *Array, PLINT n) {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   $2 = Alen = temp;
 }
-%typemap(freearg) (PLFLT *Array, PLINT n) { LUA_FREE_ARRAY($1); }
+%typemap(freearg) (const PLFLT *Array, PLINT n) { LUA_FREE_ARRAY($1); }
 
 
 /* check consistency with X dimension of previous */
-%typemap(in) PLFLT *ArrayCkX {
+%typemap(in) const PLFLT *ArrayCkX {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
@@ -285,11 +285,11 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT *ArrayCkX { LUA_FREE_ARRAY($1); }
+%typemap(freearg) const PLFLT *ArrayCkX { LUA_FREE_ARRAY($1); }
 
 
 /* check consistency with Y dimension of previous */
-%typemap(in) PLFLT *ArrayCkY {
+%typemap(in) const PLFLT *ArrayCkY {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
@@ -298,47 +298,47 @@ Naming rules:
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT *ArrayCkY { LUA_FREE_ARRAY($1); }
+%typemap(freearg) const PLFLT *ArrayCkY { LUA_FREE_ARRAY($1); }
 
 
 /* set X length for later consistency checking, with trailing count */
-%typemap(in) (PLFLT *ArrayX, PLINT nx) {
+%typemap(in) (const PLFLT *ArrayX, PLINT nx) {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   $2 = Xlen = temp;
 }
-%typemap(freearg) (PLFLT *ArrayX, PLINT nx) { LUA_FREE_ARRAY($1); }
+%typemap(freearg) (const PLFLT *ArrayX, PLINT nx) { LUA_FREE_ARRAY($1); }
 
 
 /* set X length for later consistency checking */
-%typemap(in) PLFLT *ArrayX {
+%typemap(in) const PLFLT *ArrayX {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Xlen = temp;
 }
-%typemap(freearg) PLFLT *ArrayX { LUA_FREE_ARRAY($1); }
+%typemap(freearg) const PLFLT *ArrayX { LUA_FREE_ARRAY($1); }
 
 
 /* Set Y length for later consistency checking, with trailing count */
-%typemap(in) (PLFLT *ArrayY, PLINT ny) {
+%typemap(in) (const PLFLT *ArrayY, PLINT ny) {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   $2 = Ylen = temp;
 }
-%typemap(freearg) (PLFLT *ArrayY, PLINT ny) { LUA_FREE_ARRAY($1); }
+%typemap(freearg) (const PLFLT *ArrayY, PLINT ny) { LUA_FREE_ARRAY($1); }
 
 
 /* set Y length for later consistency checking */
-%typemap(in) PLFLT *ArrayY {
+%typemap(in) const PLFLT *ArrayY {
   int temp;
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Ylen = temp;
 }
-%typemap(freearg) (PLFLT *ArrayY) { LUA_FREE_ARRAY($1); }
+%typemap(freearg) (const PLFLT *ArrayY) { LUA_FREE_ARRAY($1); }
 
 
 %{
@@ -420,7 +420,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 
 
 /* 2D array with trailing dimensions, check consistency with previous */
-%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) (int ii) {
+%typemap(in) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) (int ii) {
   int jj;
   
   $1 = read_double_Matrix(L, $input, &ii, &jj );
@@ -432,7 +432,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
     SWIG_fail;
   }
 }
-%typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+%typemap(freearg) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) {
   int i;
   
   if($1) {
@@ -444,7 +444,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 
 
 /* 2D array with trailing dimensions, set the X, Y size for later checking */
-%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) (int ii) {
+%typemap(in) (const PLFLT **Matrix, PLINT nx, PLINT ny) (int ii) {
   int jj;
   
   $1 = read_double_Matrix(L, $input, &ii, &jj );
@@ -452,7 +452,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
   Xlen = $2 = ii;
   Ylen = $3 = jj;
 }
-%typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+%typemap(freearg) (const PLFLT **Matrix, PLINT nx, PLINT ny) {
   int i;
   
   if($1) {
@@ -464,7 +464,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 
 
 /* 2D array with no dimensions, set the X, Y size for later checking */
-%typemap(in) PLFLT **Matrix (int ii) {
+%typemap(in) const PLFLT **Matrix (int ii) {
   int jj;
   
   $1 = read_double_Matrix(L, $input, &ii, &jj );
@@ -472,7 +472,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
   Xlen = ii;
   Ylen = jj;
 }
-%typemap(freearg) PLFLT **Matrix {
+%typemap(freearg) const PLFLT **Matrix {
   int i;
   
   if($1) {
@@ -484,7 +484,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 
 
 /* 2D array, check for consistency */
-%typemap(in) PLFLT **MatrixCk (int ii) {
+%typemap(in) const PLFLT **MatrixCk (int ii) {
   int jj;
   
   $1 = read_double_Matrix(L, $input, &ii, &jj );
@@ -494,7 +494,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT **MatrixCk {
+%typemap(freearg) const PLFLT **MatrixCk {
   int i;
   
   if($1) {
@@ -507,7 +507,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 
 /* Set Y length for later consistency checking, with trailing count */
 /* and 2D array, check for consistency input / output version */
-%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
+%typemap(in) (const PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
   int temp, i;
   
   $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
@@ -524,7 +524,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
     if(!$3[i]) SWIG_fail;
   }
 }
-%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
+%typemap(argout) (const PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
   int i;
   
   if($3) {
@@ -536,7 +536,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
     SWIG_arg++;
   }
 }
-%typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
+%typemap(freearg) (const PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
   int i;
   
   LUA_FREE_ARRAY($1);
@@ -632,7 +632,7 @@ void mapform(PLINT n, PLFLT* x, PLFLT* y)
 %}
 
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
-typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
+typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT*, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
@@ -640,7 +640,7 @@ typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 
 %{
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
-typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
+typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
@@ -937,7 +937,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 /* this typemap takes a sequence of strings and converts them for plstripc 
    also checks that previous Arrays were of length 4 
 */
-%typemap(in, checkfn="lua_istable") char *legline[4] {
+%typemap(in, checkfn="lua_istable") const char *legline[4] {
   int i;
   $1=NULL;
   
@@ -964,7 +964,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
     lua_pop(L,1);
   }
 }
-%typemap(freearg) char *legline[4] {
+%typemap(freearg) const char *legline[4] {
   if($1) {free($1); $1=NULL;}
 }
 
