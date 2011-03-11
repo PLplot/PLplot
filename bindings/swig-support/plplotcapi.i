@@ -251,7 +251,7 @@ typedef struct
 // python API.
 
 void
-plarrows( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
+plarrows( const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk, const PLFLT *ArrayCk, PLINT n,
           PLFLT scale, PLFLT dx, PLFLT dy );
 
 #endif
@@ -281,7 +281,7 @@ plaxes( PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
         const char *yopt, PLFLT ytick, PLINT nysub );
 
 void
-plbin( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT center );
+plbin( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, PLINT center );
 
 void
 plbtime( PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLFLT *OUTPUT, PLFLT ctime );
@@ -314,8 +314,8 @@ void
 plconfigtime( PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec );
 
 void
-plcont( PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-        PLINT ky, PLINT ly, PLFLT *Array, PLINT n,
+plcont( const PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+        PLINT ky, PLINT ly, const PLFLT *Array, PLINT n,
         pltr_func pltr,
         PLPointer SWIG_OBJECT_DATA );
 
@@ -344,22 +344,22 @@ void
 pleop( void );
 
 void
-plerrx( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
+plerrx( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk );
 
 void
-plerry( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
+plerry( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk );
 
 void
 plfamadv( void );
 
 void
-plfill( PLINT n, PLFLT *Array, PLFLT *ArrayCk );
+plfill( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk );
 
 void
-plfill3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
+plfill3( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk );
 
 void
-plgradient( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT angle );
+plgradient( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, PLFLT angle );
 
 void
 plflush( void );
@@ -423,8 +423,8 @@ void
 plgra( void );
 
 void
-plgriddata( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
-            PLFLT *ArrayX, PLINT nx, PLFLT *ArrayY, PLINT ny,
+plgriddata( const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk, PLINT n,
+            const PLFLT *ArrayX, PLINT nx, const PLFLT *ArrayY, PLINT ny,
             PLFLT **OutMatrixCk, PLINT type, PLFLT data );
 
 
@@ -453,7 +453,7 @@ void
 plgzax( PLINT *OUTPUT, PLINT *OUTPUT );
 
 void
-plhist( PLINT n, PLFLT *Array, PLFLT datmin, PLFLT datmax,
+plhist( PLINT n, const PLFLT *Array, PLFLT datmin, PLFLT datmax,
         PLINT nbin, PLINT oldwin );
 
 #if 0
@@ -497,28 +497,28 @@ void
 plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLFLT ticks, PLFLT sub_ticks,
               const char *axis_opts, const char *label,
-              PLINT n, PLFLT *Array, PLFLT *ArrayCk );
+              PLINT n, const PLFLT *Array, const PLFLT *ArrayCk );
 #endif
 
 void
 pllightsource( PLFLT x, PLFLT y, PLFLT z );
 
 void
-plline( PLINT n, PLFLT *Array, PLFLT *ArrayCk );
+plline( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk );
 
 void
-plline3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk );
+plline3( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk );
 
 void
 pllsty( PLINT lin );
 
 void
-plmesh( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+plmesh( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT **MatrixCk,
         PLINT nx, PLINT ny, PLINT opt );
 
 void
-plmeshc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-         PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+plmeshc( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT **MatrixCk,
+         PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
 
 void
 plmkstrm( PLINT *OUTPUT );
@@ -532,41 +532,41 @@ plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
          const char *text );
 
 void
-plot3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+plot3d( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT **MatrixCk,
         PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
 
 void
-plot3dc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-         PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+plot3dc( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT **MatrixCk,
+         PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
 
 void
-plot3dcl( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n,
-          PLINT ixstart, PLINT n, PLINT *Array, PLINT *ArrayCk );
+plot3dcl( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT **MatrixCk,
+          PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n,
+          PLINT ixstart, PLINT n, const PLINT *Array, const PLINT *ArrayCk );
 
 void
-plsurf3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+plsurf3d( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT **MatrixCk,
+          PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
 
 void
-plsurf3dl( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-           PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n,
-           PLINT ixstart, PLINT n, PLINT *Array, PLINT *ArrayCk );
+plsurf3dl( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT **MatrixCk,
+           PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n,
+           PLINT ixstart, PLINT n, const PLINT *Array, const PLINT *ArrayCk );
 
 PLINT
 plparseopts( int *p_argc, const char **argv, PLINT mode );
 
 void
-plpat( PLINT n, PLINT *Array, PLINT *ArrayCk );
+plpat( PLINT n, const PLINT *Array, const PLINT *ArrayCk );
 
 void
-plpoin( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT code );
+plpoin( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, PLINT code );
 
 void
-plpoin3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT code );
+plpoin3( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk, PLINT code );
 
 void
-plpoly3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLBOOL *ArrayCkMinus1,
+plpoly3( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk, const PLBOOL *ArrayCkMinus1,
          PLBOOL flag );
 
 void
@@ -594,29 +594,29 @@ void
 plschr( PLFLT def, PLFLT scale );
 
 void
-plscmap0( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n );
+plscmap0( const PLINT *Array, const PLINT *ArrayCk, const PLINT *ArrayCk, PLINT n );
 
 void
-plscmap0a( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLFLT *ArrayCk, PLINT n );
+plscmap0a( const PLINT *Array, const PLINT *ArrayCk, const PLINT *ArrayCk, const PLFLT *ArrayCk, PLINT n );
 
 void
 plscmap0n( PLINT ncol0 );
 
 void
-plscmap1( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n );
+plscmap1( const PLINT *Array, const PLINT *ArrayCk, const PLINT *ArrayCk, PLINT n );
 
 void
-plscmap1a( PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLFLT *ArrayCk, PLINT n );
+plscmap1a( const PLINT *Array, const PLINT *ArrayCk, const PLINT *ArrayCk, const PLFLT *ArrayCk, PLINT n );
 
 void
-plscmap1l( PLBOOL itype, PLINT n, PLFLT *Array,
-           PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
-           PLBOOL *ArrayCkMinus1Null );
+plscmap1l( PLBOOL itype, PLINT n, const PLFLT *Array,
+           const PLFLT *ArrayCk, const PLFLT *ArrayCk, const PLFLT *ArrayCk,
+           const PLBOOL *ArrayCkMinus1Null );
 
 void
-plscmap1la( PLBOOL itype, PLINT n, PLFLT *Array,
-            PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
-            PLBOOL *ArrayCkMinus1Null );
+plscmap1la( PLBOOL itype, PLINT n, const PLFLT *Array,
+            const PLFLT *ArrayCk, const PLFLT *ArrayCk, const PLFLT *ArrayCk, const PLFLT *ArrayCk,
+            const PLBOOL *ArrayCkMinus1Null );
 
 void
 plscmap1n( PLINT ncol1 );
@@ -680,16 +680,16 @@ void
 plsfont( PLINT family, PLINT style, PLINT weight );
 
 void
-plshades( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
+plshades( const PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-          PLFLT *Array, PLINT n, PLINT fill_width,
+          const PLFLT *Array, PLINT n, PLINT fill_width,
           PLINT cont_color, PLINT cont_width,
           fill_func ff, PLBOOL rectangular,
           pltr_func pltr,
           PLPointer SWIG_OBJECT_DATA );
 
 void
-plshade( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
+plshade( const PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
          PLFLT shade_min, PLFLT shade_max,
          PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -755,10 +755,10 @@ plstransform( ct_func ctf, PLPointer data );
 #endif
 
 void
-plstring( PLINT n, PLFLT *Array, PLFLT *ArrayCk, const char *string );
+plstring( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const char *string );
 
 void
-plstring3( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, const char *string );
+plstring3( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk, const char *string );
 
 void
 plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );
@@ -769,17 +769,17 @@ plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
           PLFLT xlpos, PLFLT ylpos,
           PLBOOL y_ascl, PLBOOL acc,
           PLINT colbox, PLINT collab,
-          PLINT *Array, PLINT *ArrayCk, const char *legline[4],
+          const PLINT *Array, const PLINT *ArrayCk, const char *legline[4],
           const char *labx, const char *laby, const char *labtop );
 
 void
 plstripd( PLINT id );
 
 void
-plstyl( PLINT n, PLINT *Array, PLINT *ArrayCk );
+plstyl( PLINT n, const PLINT *Array, const PLINT *ArrayCk );
 
 void
-plsvect( PLFLT *Array, PLFLT *ArrayCk, PLINT n, PLBOOL fill );
+plsvect( const PLFLT *Array, const PLFLT *ArrayCk, PLINT n, PLBOOL fill );
 
 void
 plsvpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
@@ -791,7 +791,7 @@ void
 plsyax( PLINT digmax, PLINT digits );
 
 void
-plsym( PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT code );
+plsym( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, PLINT code );
 
 void
 plszax( PLINT digmax, PLINT digits );
@@ -806,7 +806,7 @@ void
 plvasp( PLFLT aspect );
 
 void
-plvect( PLFLT **Matrix, PLFLT **MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+plvect( const PLFLT **Matrix, const PLFLT **MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
         pltr_func pltr,
         PLPointer SWIG_OBJECT_DATA );
 
@@ -845,7 +845,7 @@ void
 plrgb1( PLINT r, PLINT g, PLINT b );
 
 void
-plshade1( PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
+plshade1( const PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
           PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
           PLFLT shade_min, PLFLT shade_max,
           PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -874,7 +874,7 @@ void
 plfcont( f2eval_func f2eval,
          PLPointer SWIG_OBJECT_DATA,
          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-         PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+         PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
          pltr_func pltr,
          PLPointer SWIG_OBJECT_DATA );
 
@@ -927,14 +927,14 @@ pldip2dc( PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT, PLFLT *INOUT );
 // plots a 2d image (or a matrix too large for plshade() ).
 
 void
-plimage( PLFLT **Matrix, PLINT nx, PLINT ny,
+plimage( const PLFLT **Matrix, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
          PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
 
 // plots a 2d image (or a matrix too large for plshade() ).
 
 void
-plimagefr( PLFLT **Matrix, PLINT nx, PLINT ny,
+plimagefr( const PLFLT **Matrix, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
            PLFLT valuemin, PLFLT valuemax,
            pltr_func pltr_img, PLPointer SWIG_OBJECT_DATA_img );
@@ -1114,7 +1114,7 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT ny );
 #endif
 
 void
-plMinMax2dGrid( PLFLT **Matrix, PLINT nx, PLINT ny, PLFLT *OUTPUT, PLFLT *OUTPUT );
+plMinMax2dGrid( const PLFLT **Matrix, PLINT nx, PLINT ny, PLFLT *OUTPUT, PLFLT *OUTPUT );
 
 // Wait for graphics input event and translate to world coordinates
 

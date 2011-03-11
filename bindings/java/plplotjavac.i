@@ -335,7 +335,7 @@ Naming rules:
 **********************************************************************************/
 
 /* with preceding count */
-%typemap(in) (PLINT n, PLINT *Array) {
+%typemap(in) (PLINT n, const PLINT *Array) {
    jint *jxdata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    $1 = (*jenv)->GetArrayLength( jenv, $input);
    Alen = $1;
@@ -345,19 +345,19 @@ Naming rules:
     * the java array can be released immediately. */
    (*jenv)->ReleaseIntArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) (PLINT n, PLINT *Array) {
+%typemap(freearg) (PLINT n, const PLINT *Array) {
    free($2);
 }
-%typemap(jni) (PLINT n, PLINT *Array) "jintArray"
-%typemap(jtype) (PLINT n, PLINT *Array) "int[]"
-%typemap(jstype) (PLINT n, PLINT *Array) "int[]"
-%typemap(javain) (PLINT n, PLINT *Array) "$javainput"
-%typemap(javaout) (PLINT n, PLINT *Array) {
+%typemap(jni) (PLINT n, const PLINT *Array) "jintArray"
+%typemap(jtype) (PLINT n, const PLINT *Array) "int[]"
+%typemap(jstype) (PLINT n, const PLINT *Array) "int[]"
+%typemap(javain) (PLINT n, const PLINT *Array) "$javainput"
+%typemap(javaout) (PLINT n, const PLINT *Array) {
    return $jnicall;
 }
 
 /* Trailing count and check consistency with previous*/
-%typemap(in) (PLINT *ArrayCk, PLINT n) {
+%typemap(in) (const PLINT *ArrayCk, PLINT n) {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
       printf("Vectors must be same length.\n");
@@ -367,19 +367,19 @@ Naming rules:
    setup_array_1d_i( &$1, jydata, Alen);
    (*jenv)->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) (PLINT *ArrayCk, PLINT n) {
+%typemap(freearg) (const PLINT *ArrayCk, PLINT n) {
    free($1);
 }
-%typemap(jni) (PLINT *ArrayCk, PLINT n) "jintArray"
-%typemap(jtype) (PLINT *ArrayCk, PLINT n) "int[]"
-%typemap(jstype) (PLINT *ArrayCk, PLINT n) "int[]"
-%typemap(javain) (PLINT *ArrayCk, PLINT n) "$javainput"
-%typemap(javaout) (PLINT *ArrayCk, PLINT n) {
+%typemap(jni) (const PLINT *ArrayCk, PLINT n) "jintArray"
+%typemap(jtype) (const PLINT *ArrayCk, PLINT n) "int[]"
+%typemap(jstype) (const PLINT *ArrayCk, PLINT n) "int[]"
+%typemap(javain) (const PLINT *ArrayCk, PLINT n) "$javainput"
+%typemap(javaout) (const PLINT *ArrayCk, PLINT n) {
    return $jnicall;
 }
 
 /* no count but check consistency with previous */
-%typemap(in) PLINT *ArrayCk {
+%typemap(in) const PLINT *ArrayCk {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
       printf("Vectors must be same length.\n");
@@ -388,19 +388,19 @@ Naming rules:
    setup_array_1d_i( &$1, jydata, Alen);
    (*jenv)->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) PLINT *ArrayCk {
+%typemap(freearg) const PLINT *ArrayCk {
    free($1);
 }
-%typemap(jni) PLINT *ArrayCk "jintArray"
-%typemap(jtype) PLINT *ArrayCk "int[]"
-%typemap(jstype) PLINT *ArrayCk "int[]"
-%typemap(javain) PLINT *ArrayCk "$javainput"
-%typemap(javaout) PLINT *ArrayCk {
+%typemap(jni) const PLINT *ArrayCk "jintArray"
+%typemap(jtype) const PLINT *ArrayCk "int[]"
+%typemap(jstype) const PLINT *ArrayCk "int[]"
+%typemap(javain) const PLINT *ArrayCk "$javainput"
+%typemap(javaout) const PLINT *ArrayCk {
    return $jnicall;
 }
 
 /* no count but check consistency with previous or is null */
-%typemap(in) PLINT *ArrayCkNull {
+%typemap(in) const PLINT *ArrayCkNull {
    if ( $input != NULL ) {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
@@ -414,15 +414,15 @@ Naming rules:
       $1 == NULL;
    }   
 }
-%typemap(freearg) PLINT *ArrayCkNull {
+%typemap(freearg) const PLINT *ArrayCkNull {
    if ($1 != NULL)
       free($1);
 }
-%typemap(jni) PLINT *ArrayCkNull "jintArray"
-%typemap(jtype) PLINT *ArrayCkNull "int[]"
-%typemap(jstype) PLINT *ArrayCkNull "int[]"
-%typemap(javain) PLINT *ArrayCkNull "$javainput"
-%typemap(javaout) PLINT *ArrayCkNull {
+%typemap(jni) const PLINT *ArrayCkNull "jintArray"
+%typemap(jtype) const PLINT *ArrayCkNull "int[]"
+%typemap(jstype) const PLINT *ArrayCkNull "int[]"
+%typemap(javain) const PLINT *ArrayCkNull "$javainput"
+%typemap(javaout) const PLINT *ArrayCkNull {
    return $jnicall;
 }
 
@@ -432,7 +432,7 @@ Naming rules:
  * typedef PLINT PLBOOL;)
  * Also add version which must be one shorter than others or null.
  */
-%typemap(in) PLBOOL *ArrayCkMinus1 {
+%typemap(in) const PLBOOL *ArrayCkMinus1 {
    jboolean *jydata = (*jenv)->GetBooleanArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
       printf("Vector must be at least length of others minus 1.\n");
@@ -441,18 +441,18 @@ Naming rules:
    setup_array_1d_b( &$1, jydata, Alen);
    (*jenv)->ReleaseBooleanArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) PLBOOL *ArrayCkMinus1 {
+%typemap(freearg) const PLBOOL *ArrayCkMinus1 {
    free($1);
 }
-%typemap(jni) PLBOOL *ArrayCkMinus1 "jbooleanArray"
-%typemap(jtype) PLBOOL *ArrayCkMinus1 "boolean[]"
-%typemap(jstype) PLBOOL *ArrayCkMinus1 "boolean[]"
-%typemap(javain) PLBOOL *ArrayCkMinus1 "$javainput"
-%typemap(javaout) PLBOOL *ArrayCkMinus1 {
+%typemap(jni) const PLBOOL *ArrayCkMinus1 "jbooleanArray"
+%typemap(jtype) const PLBOOL *ArrayCkMinus1 "boolean[]"
+%typemap(jstype) const PLBOOL *ArrayCkMinus1 "boolean[]"
+%typemap(javain) const PLBOOL *ArrayCkMinus1 "$javainput"
+%typemap(javaout) const PLBOOL *ArrayCkMinus1 {
    return $jnicall;
 }
 
-%typemap(in) PLBOOL *ArrayCkMinus1Null {
+%typemap(in) const PLBOOL *ArrayCkMinus1Null {
    if ($input != NULL) {
    jboolean *jydata = (*jenv)->GetBooleanArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
@@ -466,19 +466,19 @@ Naming rules:
        $1 = NULL;
    }
 }
-%typemap(freearg) PLBOOL *ArrayCkMinus1Null {
+%typemap(freearg) const PLBOOL *ArrayCkMinus1Null {
    if ($1 != NULL) 
        free($1);
 }
-%typemap(jni) PLBOOL *ArrayCkMinus1Null "jbooleanArray"
-%typemap(jtype) PLBOOL *ArrayCkMinus1Null "boolean[]"
-%typemap(jstype) PLBOOL *ArrayCkMinus1Null "boolean[]"
-%typemap(javain) PLBOOL *ArrayCkMinus1Null "$javainput"
-%typemap(javaout) PLBOOL *ArrayCkMinus1Null {
+%typemap(jni) const PLBOOL *ArrayCkMinus1Null "jbooleanArray"
+%typemap(jtype) const PLBOOL *ArrayCkMinus1Null "boolean[]"
+%typemap(jstype) const PLBOOL *ArrayCkMinus1Null "boolean[]"
+%typemap(javain) const PLBOOL *ArrayCkMinus1Null "$javainput"
+%typemap(javaout) const PLBOOL *ArrayCkMinus1Null {
    return $jnicall;
 }
 
-%typemap(in) PLINT *ArrayCkMinus1 {
+%typemap(in) const PLINT *ArrayCkMinus1 {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
       printf("Vector must be at least length of others minus 1.\n");
@@ -487,18 +487,18 @@ Naming rules:
    setup_array_1d_i( &$1, jydata, Alen);
    (*jenv)->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) PLINT *ArrayCkMinus1 {
+%typemap(freearg) const PLINT *ArrayCkMinus1 {
    free($1);
 }
-%typemap(jni) PLINT *ArrayCkMinus1 "jintArray"
-%typemap(jtype) PLINT *ArrayCkMinus1 "int[]"
-%typemap(jstype) PLINT *ArrayCkMinus1 "int[]"
-%typemap(javain) PLINT *ArrayCkMinus1 "$javainput"
-%typemap(javaout) PLINT *ArrayCkMinus1 {
+%typemap(jni) const PLINT *ArrayCkMinus1 "jintArray"
+%typemap(jtype) const PLINT *ArrayCkMinus1 "int[]"
+%typemap(jstype) const PLINT *ArrayCkMinus1 "int[]"
+%typemap(javain) const PLINT *ArrayCkMinus1 "$javainput"
+%typemap(javaout) const PLINT *ArrayCkMinus1 {
    return $jnicall;
 }
 
-%typemap(in) PLINT *ArrayCkMinus1Null {
+%typemap(in) const PLINT *ArrayCkMinus1Null {
    if ($input != NULL) {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) < Alen-1) {
@@ -512,33 +512,33 @@ Naming rules:
      $1 = NULL;
    }
 }
-%typemap(freearg) PLINT *ArrayCkMinus1Null {
+%typemap(freearg) const PLINT *ArrayCkMinus1Null {
    if ($1 != NULL)
        free($1);
 }
-%typemap(jni) PLINT *ArrayCkMinus1Null "jintArray"
-%typemap(jtype) PLINT *ArrayCkMinus1Null "int[]"
-%typemap(jstype) PLINT *ArrayCkMinus1Null "int[]"
-%typemap(javain) PLINT *ArrayCkMinus1Null "$javainput"
-%typemap(javaout) PLINT *ArrayCkMinus1Null {
+%typemap(jni) const PLINT *ArrayCkMinus1Null "jintArray"
+%typemap(jtype) const PLINT *ArrayCkMinus1Null "int[]"
+%typemap(jstype) const PLINT *ArrayCkMinus1Null "int[]"
+%typemap(javain) const PLINT *ArrayCkMinus1Null "$javainput"
+%typemap(javaout) const PLINT *ArrayCkMinus1Null {
    return $jnicall;
 }
 
 /* No length but remember size to check others */
-%typemap(in) PLINT *Array {
+%typemap(in) const PLINT *Array {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    Alen = (*jenv)->GetArrayLength( jenv, $input);
    setup_array_1d_i( &$1, jydata, Alen);
    (*jenv)->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) PLINT *Array {
+%typemap(freearg) const PLINT *Array {
    free($1);
 }
-%typemap(jni) PLINT *Array "jintArray"
-%typemap(jtype) PLINT *Array "int[]"
-%typemap(jstype) PLINT *Array "int[]"
-%typemap(javain) PLINT *Array "$javainput"
-%typemap(javaout) PLINT *Array {
+%typemap(jni) const PLINT *Array "jintArray"
+%typemap(jtype) const PLINT *Array "int[]"
+%typemap(jstype) const PLINT *Array "int[]"
+%typemap(javain) const PLINT *Array "$javainput"
+%typemap(javaout) const PLINT *Array {
    return $jnicall;
 }
 
@@ -574,7 +574,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 /* temporary*/
 #endif
 /* with preceding count */
-%typemap(in) (PLINT n, PLFLT *Array) {
+%typemap(in) (PLINT n, const PLFLT *Array) {
    jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    $1 = (*jenv)->GetArrayLength( jenv, $input);
    Alen = $1;
@@ -584,19 +584,19 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
     * the java array can be released immediately. */
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) (PLINT n, PLFLT *Array) {
+%typemap(freearg) (PLINT n, const PLFLT *Array) {
    free($2);
 }
-%typemap(jni) (PLINT n, PLFLT *Array) jPLFLTArray
-%typemap(jtype) (PLINT n, PLFLT *Array) jPLFLTbracket
-%typemap(jstype) (PLINT n, PLFLT *Array) jPLFLTbracket
-%typemap(javain) (PLINT n, PLFLT *Array) "$javainput"
-%typemap(javaout) (PLINT n, PLFLT *Array) {
+%typemap(jni) (PLINT n, const PLFLT *Array) jPLFLTArray
+%typemap(jtype) (PLINT n, const PLFLT *Array) jPLFLTbracket
+%typemap(jstype) (PLINT n, const PLFLT *Array) jPLFLTbracket
+%typemap(javain) (PLINT n, const PLFLT *Array) "$javainput"
+%typemap(javaout) (PLINT n, const PLFLT *Array) {
    return $jnicall;
 }
 
 /* trailing count, and check consistency with previous */
-%typemap(in) (PLFLT *ArrayCk, PLINT n) {
+%typemap(in) (const PLFLT *ArrayCk, PLINT n) {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    $2 = (*jenv)->GetArrayLength( jenv, $input );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
@@ -606,19 +606,19 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    setup_array_1d_PLFLT( &$1, jydata, Alen );
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) (PLFLT *ArrayCk, PLINT n) {
+%typemap(freearg) (const PLFLT *ArrayCk, PLINT n) {
    free($1);
 }
-%typemap(jni) (PLFLT *ArrayCk, PLINT n) jPLFLTArray
-%typemap(jtype) (PLFLT *ArrayCk, PLINT n) jPLFLTbracket
-%typemap(jstype) (PLFLT *ArrayCk, PLINT n) jPLFLTbracket
-%typemap(javain) (PLFLT *ArrayCk, PLINT n) "$javainput"
-%typemap(javaout) (PLFLT *ArrayCk, PLINT n){
+%typemap(jni) (const PLFLT *ArrayCk, PLINT n) jPLFLTArray
+%typemap(jtype) (const PLFLT *ArrayCk, PLINT n) jPLFLTbracket
+%typemap(jstype) (const PLFLT *ArrayCk, PLINT n) jPLFLTbracket
+%typemap(javain) (const PLFLT *ArrayCk, PLINT n) "$javainput"
+%typemap(javaout) (const PLFLT *ArrayCk, PLINT n){
    return $jnicall;
 }
 
 /* no count, but check consistency with previous */
-%typemap(in) PLFLT *ArrayCk {
+%typemap(in) const PLFLT *ArrayCk {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
       printf("Vectors must be same length.\n");
@@ -627,19 +627,19 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    setup_array_1d_PLFLT( &$1, jydata, Alen );
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) PLFLT *ArrayCk {
+%typemap(freearg) const PLFLT *ArrayCk {
    free($1);
 }
-%typemap(jni) PLFLT *ArrayCk jPLFLTArray
-%typemap(jtype) PLFLT *ArrayCk jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayCk jPLFLTbracket
-%typemap(javain) PLFLT *ArrayCk "$javainput"
-%typemap(javaout) PLFLT *ArrayCk{
+%typemap(jni) const PLFLT *ArrayCk jPLFLTArray
+%typemap(jtype) const PLFLT *ArrayCk jPLFLTbracket
+%typemap(jstype) const PLFLT *ArrayCk jPLFLTbracket
+%typemap(javain) const PLFLT *ArrayCk "$javainput"
+%typemap(javaout) const PLFLT *ArrayCk{
    return $jnicall;
 }
 
 /* no count, but check consistency with previous or NULL */
-%typemap(in) PLFLT *ArrayCkNull {
+%typemap(in) const PLFLT *ArrayCkNull {
    if ( $input != NULL ) {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
@@ -653,128 +653,128 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
       $1 = NULL;
    }
 }
-%typemap(freearg) PLFLT *ArrayCkNull {
+%typemap(freearg) const PLFLT *ArrayCkNull {
    if ($1 != NULL)
       free($1);
 }
-%typemap(jni) PLFLT *ArrayCkNull jPLFLTArray
-%typemap(jtype) PLFLT *ArrayCkNull jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayCkNull jPLFLTbracket
-%typemap(javain) PLFLT *ArrayCkNull "$javainput"
-%typemap(javaout) PLFLT *ArrayCkNull{
+%typemap(jni) const PLFLT *ArrayCkNull jPLFLTArray
+%typemap(jtype) const PLFLT *ArrayCkNull jPLFLTbracket
+%typemap(jstype) const PLFLT *ArrayCkNull jPLFLTbracket
+%typemap(javain) const PLFLT *ArrayCkNull "$javainput"
+%typemap(javaout) const PLFLT *ArrayCkNull{
    return $jnicall;
 }
 
 /* set X length for later consistency checking */
-%typemap(in) (PLFLT *ArrayX, PLINT nx) {
+%typemap(in) (const PLFLT *ArrayX, PLINT nx) {
    jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    Xlen = (*jenv)->GetArrayLength( jenv, $input);
    $2 = Xlen;
    setup_array_1d_PLFLT( &$1, jxdata, Xlen);
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) (PLFLT *ArrayX, PLINT nx) {
+%typemap(freearg) (const PLFLT *ArrayX, PLINT nx) {
    free($1);
 }
-%typemap(jni) PLFLT *ArrayX jPLFLTArray
-%typemap(jtype) PLFLT *ArrayX jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayX jPLFLTbracket
-%typemap(javain) PLFLT *ArrayX "$javainput"
-%typemap(javaout) PLFLT *ArrayX {
+%typemap(jni) (const PLFLT *ArrayX, PLINT nx) jPLFLTArray
+%typemap(jtype) (const PLFLT *ArrayX, PLINT nx) jPLFLTbracket
+%typemap(jstype) (const PLFLT *ArrayX, PLINT nx) jPLFLTbracket
+%typemap(javain) (const PLFLT *ArrayX, PLINT nx) "$javainput"
+%typemap(javaout) (const PLFLT *ArrayX, PLINT nx) {
    return $jnicall;
 }
 
-%typemap(in) PLFLT *ArrayX {
+%typemap(in) const PLFLT *ArrayX {
    jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    Xlen = (*jenv)->GetArrayLength( jenv, $input);
    setup_array_1d_PLFLT( &$1, jxdata, Xlen);
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) PLFLT *ArrayX {
+%typemap(freearg) const PLFLT *ArrayX {
    free($1);
 }
-%typemap(jni) PLFLT *ArrayX jPLFLTArray
-%typemap(jtype) PLFLT *ArrayX jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayX jPLFLTbracket
-%typemap(javain) PLFLT *ArrayX "$javainput"
-%typemap(javaout) PLFLT *ArrayX {
+%typemap(jni) const PLFLT *ArrayX jPLFLTArray
+%typemap(jtype) const PLFLT *ArrayX jPLFLTbracket
+%typemap(jstype) const PLFLT *ArrayX jPLFLTbracket
+%typemap(javain) const PLFLT *ArrayX "$javainput"
+%typemap(javaout) const PLFLT *ArrayX {
    return $jnicall;
 }
 
 /* set Y length for later consistency checking */
-%typemap(in) (PLFLT *ArrayY, PLINT ny) {
+%typemap(in) (const PLFLT *ArrayY, PLINT ny) {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    Ylen = (*jenv)->GetArrayLength( jenv, $input);
    $2 = Ylen;
    setup_array_1d_PLFLT( &$1, jydata, Ylen);
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) (PLFLT *ArrayY, PLINT ny) {
+%typemap(freearg) (const PLFLT *ArrayY, PLINT ny) {
    free($1);
 }
-%typemap(jni) PLFLT *ArrayY jPLFLTArray
-%typemap(jtype) PLFLT *ArrayY jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayY jPLFLTbracket
-%typemap(javain) PLFLT *ArrayY "$javainput"
-%typemap(javaout) PLFLT *ArrayY {
+%typemap(jni) (const PLFLT *ArrayY, PLINT ny) jPLFLTArray
+%typemap(jtype) (const PLFLT *ArrayY, PLINT ny) jPLFLTbracket
+%typemap(jstype) (const PLFLT *ArrayY, PLINT ny) jPLFLTbracket
+%typemap(javain) (const PLFLT *ArrayY, PLINT ny) "$javainput"
+%typemap(javaout) (const PLFLT *ArrayY, PLINT ny) {
    return $jnicall;
 }
 
-%typemap(in) PLFLT *ArrayY {
+%typemap(in) const PLFLT *ArrayY {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    Ylen = (*jenv)->GetArrayLength( jenv, $input);
    setup_array_1d_PLFLT( &$1, jydata, Ylen);
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) PLFLT *ArrayY {
+%typemap(freearg) const PLFLT *ArrayY {
    free($1);
 }
-%typemap(jni) PLFLT *ArrayY jPLFLTArray
-%typemap(jtype) PLFLT *ArrayY jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayY jPLFLTbracket
-%typemap(javain) PLFLT *ArrayY "$javainput"
-%typemap(javaout) PLFLT *ArrayY {
+%typemap(jni) const PLFLT *ArrayY jPLFLTArray
+%typemap(jtype) const PLFLT *ArrayY jPLFLTbracket
+%typemap(jstype) const PLFLT *ArrayY jPLFLTbracket
+%typemap(javain) const PLFLT *ArrayY "$javainput"
+%typemap(javaout) const PLFLT *ArrayY {
    return $jnicall;
 }
 
 /* with trailing count */
-%typemap(in) (PLFLT *Array, PLINT n) {
+%typemap(in) (const PLFLT *Array, PLINT n) {
    jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    $2 = (*jenv)->GetArrayLength( jenv, $input );
    setup_array_1d_PLFLT( &$1, jxdata, $2);
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) (PLFLT *Array, PLINT n) {
+%typemap(freearg) (const PLFLT *Array, PLINT n) {
    free($1);
 }
-%typemap(jni) (PLFLT *Array, PLINT n) jPLFLTArray
-%typemap(jtype) (PLFLT *Array, PLINT n) jPLFLTbracket
-%typemap(jstype) (PLFLT *Array, PLINT n) jPLFLTbracket
-%typemap(javain) (PLFLT *Array, PLINT n) "$javainput"
-%typemap(javaout) (PLFLT *Array, PLINT n) {
+%typemap(jni) (const PLFLT *Array, PLINT n) jPLFLTArray
+%typemap(jtype) (const PLFLT *Array, PLINT n) jPLFLTbracket
+%typemap(jstype) (const PLFLT *Array, PLINT n) jPLFLTbracket
+%typemap(javain) (const PLFLT *Array, PLINT n) "$javainput"
+%typemap(javaout) (const PLFLT *Array, PLINT n) {
    return $jnicall;
 }
 
 /* with no trailing count */
-%typemap(in) PLFLT *Array {
+%typemap(in) const PLFLT *Array {
    jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    Alen = (*jenv)->GetArrayLength( jenv, $input );
    setup_array_1d_PLFLT( &$1, jxdata, Alen);
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) PLFLT *Array {
+%typemap(freearg) const PLFLT *Array {
    free($1);
 }
-%typemap(jni) PLFLT *Array jPLFLTArray
-%typemap(jtype) PLFLT *Array jPLFLTbracket
-%typemap(jstype) PLFLT *Array jPLFLTbracket
-%typemap(javain) PLFLT *Array "$javainput"
-%typemap(javaout) PLFLT *Array {
+%typemap(jni) const PLFLT *Array jPLFLTArray
+%typemap(jtype) const PLFLT *Array jPLFLTbracket
+%typemap(jstype) const PLFLT *Array jPLFLTbracket
+%typemap(javain) const PLFLT *Array "$javainput"
+%typemap(javaout) const PLFLT *Array {
    return $jnicall;
 }
 
 /* check consistency with X dimension of previous */
-%typemap(in) PLFLT *ArrayCkX {
+%typemap(in) const PLFLT *ArrayCkX {
    jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Xlen) {
       printf("Vectors must be same length.\n");
@@ -783,19 +783,19 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    setup_array_1d_PLFLT( &$1, jxdata, Xlen );
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) PLFLT *ArrayCkX {
+%typemap(freearg) const PLFLT *ArrayCkX {
    free($1);
 }
-%typemap(jni) PLFLT *ArrayCkX jPLFLTArray
-%typemap(jtype) PLFLT *ArrayCkX jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayCkX jPLFLTbracket
-%typemap(javain) PLFLT *ArrayCkX "$javainput"
-%typemap(javaout) PLFLT *ArrayCkX{
+%typemap(jni) const PLFLT *ArrayCkX jPLFLTArray
+%typemap(jtype) const PLFLT *ArrayCkX jPLFLTbracket
+%typemap(jstype) const PLFLT *ArrayCkX jPLFLTbracket
+%typemap(javain) const PLFLT *ArrayCkX "$javainput"
+%typemap(javaout) const PLFLT *ArrayCkX{
    return $jnicall;
 }
 
 /* check consistency with Y dimension of previous */
-%typemap(in) PLFLT *ArrayCkY {
+%typemap(in) const PLFLT *ArrayCkY {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Ylen) {
       printf("Vectors must be same length.\n");
@@ -804,19 +804,19 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    setup_array_1d_PLFLT( &$1, jydata, Ylen );
    (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) PLFLT *ArrayCkY {
+%typemap(freearg) const PLFLT *ArrayCkY {
    free($1);
 }
-%typemap(jni) PLFLT *ArrayCkY jPLFLTArray
-%typemap(jtype) PLFLT *ArrayCkY jPLFLTbracket
-%typemap(jstype) PLFLT *ArrayCkY jPLFLTbracket
-%typemap(javain) PLFLT *ArrayCkY "$javainput"
-%typemap(javaout) PLFLT *ArrayCkY{
+%typemap(jni) const PLFLT *ArrayCkY jPLFLTArray
+%typemap(jtype) const PLFLT *ArrayCkY jPLFLTbracket
+%typemap(jstype) const PLFLT *ArrayCkY jPLFLTbracket
+%typemap(javain) const PLFLT *ArrayCkY "$javainput"
+%typemap(javaout) const PLFLT *ArrayCkY{
    return $jnicall;
 }
 
 /* 2D array with trailing dimensions, check consistency with previous */
-%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+%typemap(in) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) {
    jPLFLT **adat;
    jobject *ai;
    int nx = (*jenv)->GetArrayLength( jenv, $input );
@@ -865,20 +865,20 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    free(ai);
 
 }
-%typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+%typemap(freearg) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) {
    free($1[0]);
    free($1);
 }
-%typemap(jni) (PLFLT **MatrixCk, PLINT nx, PLINT ny) "jobjectArray"
-%typemap(jtype) (PLFLT **MatrixCk, PLINT nx, PLINT ny) jPLFLTbracket2
-%typemap(jstype) (PLFLT **MatrixCk, PLINT nx, PLINT ny) jPLFLTbracket2
-%typemap(javain) (PLFLT **MatrixCk, PLINT nx, PLINT ny) "$javainput"
-%typemap(javaout) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+%typemap(jni) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) "jobjectArray"
+%typemap(jtype) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(jstype) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(javain) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) "$javainput"
+%typemap(javaout) (const PLFLT **MatrixCk, PLINT nx, PLINT ny) {
    return $jnicall;
 }
 
 /* 2D array with trailing dimensions, set the X, Y size for later checking */
-%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+%typemap(in) (const PLFLT **Matrix, PLINT nx, PLINT ny) {
    jPLFLT **adat;
    jobject *ai;
    int nx = (*jenv)->GetArrayLength( jenv, $input );
@@ -920,20 +920,20 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    free(ai);
 
 }
-%typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+%typemap(freearg) (const PLFLT **Matrix, PLINT nx, PLINT ny) {
    free($1[0]);
    free($1);
 }
-%typemap(jni) (PLFLT **Matrix, PLINT nx, PLINT ny) "jobjectArray"
-%typemap(jtype) (PLFLT **Matrix, PLINT nx, PLINT ny) jPLFLTbracket2
-%typemap(jstype) (PLFLT **Matrix, PLINT nx, PLINT ny) jPLFLTbracket2
-%typemap(javain) (PLFLT **Matrix, PLINT nx, PLINT ny) "$javainput"
-%typemap(javaout) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+%typemap(jni) (const PLFLT **Matrix, PLINT nx, PLINT ny) "jobjectArray"
+%typemap(jtype) (const PLFLT **Matrix, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(jstype) (const PLFLT **Matrix, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(javain) (const PLFLT **Matrix, PLINT nx, PLINT ny) "$javainput"
+%typemap(javaout) (const PLFLT **Matrix, PLINT nx, PLINT ny) {
    return $jnicall;
 }
 
 /* 2D array with no trailing dimensions, set the X, Y size for later checking */
-%typemap(in) PLFLT **Matrix {
+%typemap(in) const PLFLT **Matrix {
    jPLFLT **adat;
    jobject *ai;
    int nx = (*jenv)->GetArrayLength( jenv, $input );
@@ -973,20 +973,20 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    free(ai);
 
 }
-%typemap(freearg) PLFLT **Matrix {
+%typemap(freearg) const PLFLT **Matrix {
    free($1[0]);
    free($1);
 }
-%typemap(jni) PLFLT **Matrix "jobjectArray"
-%typemap(jtype) PLFLT **Matrix jPLFLTbracket2
-%typemap(jstype) PLFLT **Matrix jPLFLTbracket2
-%typemap(javain) PLFLT **Matrix "$javainput"
-%typemap(javaout) PLFLT **Matrix {
+%typemap(jni) const PLFLT **Matrix "jobjectArray"
+%typemap(jtype) const PLFLT **Matrix jPLFLTbracket2
+%typemap(jstype) const PLFLT **Matrix jPLFLTbracket2
+%typemap(javain) const PLFLT **Matrix "$javainput"
+%typemap(javaout) const PLFLT **Matrix {
    return $jnicall;
 }
 
 /* 2D array, check for consistency */
-%typemap(in) PLFLT **MatrixCk {
+%typemap(in) const PLFLT **MatrixCk {
    jPLFLT **adat;
    jobject *ai;
    int nx = (*jenv)->GetArrayLength( jenv, $input );
@@ -1032,15 +1032,15 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    free(ai);
 
 }
-%typemap(freearg) PLFLT **MatrixCk {
+%typemap(freearg) const PLFLT **MatrixCk {
    free($1[0]);
    free($1);
 }
-%typemap(jni) PLFLT **MatrixCk "jobjectArray"
-%typemap(jtype) PLFLT **MatrixCk jPLFLTbracket2
-%typemap(jstype) PLFLT **MatrixCk jPLFLTbracket2
-%typemap(javain) PLFLT **MatrixCk "$javainput"
-%typemap(javaout) PLFLT **MatrixCk {
+%typemap(jni) const PLFLT **MatrixCk "jobjectArray"
+%typemap(jtype) const PLFLT **MatrixCk jPLFLTbracket2
+%typemap(jstype) const PLFLT **MatrixCk jPLFLTbracket2
+%typemap(javain) const PLFLT **MatrixCk "$javainput"
+%typemap(javaout) const PLFLT **MatrixCk {
    return $jnicall;
 }
 
@@ -1133,7 +1133,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 
 %{
    typedef PLINT (*defined_func)(PLFLT, PLFLT);
-   typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
+   typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
    typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
    typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
    typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
@@ -1775,14 +1775,7 @@ bject. */
    free($1);
 }
 
-%typemap(jni) (char **ArrayCk) "jobjectArray"
-%typemap(jtype) (char **ArrayCk) "String[]"
-%typemap(jstype) (char **ArrayCk) "String[]"
-%typemap(javain) (char **ArrayCk) "$javainput"
-%typemap(javaout) (char **ArrayCk) {
-   return $jnicall;
-}
-%typemap(in) (char **ArrayCk)  {
+%typemap(in) (const char **ArrayCk)  {
    int i = 0;
    if ($input != NULL) {
    int size = (*jenv)->GetArrayLength(jenv, $input);
@@ -1807,13 +1800,20 @@ bject. */
 }
 
 /* This cleans up the memory we malloc'd before the function call */
-%typemap(freearg) (char **ArrayCk) {
+%typemap(freearg) (const char **ArrayCk) {
    int i;
    if ($1 != NULL) {
    for (i=0; i<Alen; i++)
      free($1[i]);
    free($1);
    }
+}
+%typemap(jni) (const char **ArrayCk) "jobjectArray"
+%typemap(jtype) (const char **ArrayCk) "String[]"
+%typemap(jstype) (const char **ArrayCk) "String[]"
+%typemap(javain) (const char **ArrayCk) "$javainput"
+%typemap(javaout) (const char **ArrayCk) {
+   return $jnicall;
 }
 
 #if 0

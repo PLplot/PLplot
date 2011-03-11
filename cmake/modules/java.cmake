@@ -25,7 +25,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_java "Enable Java bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_java "Enable Java bindings" OFF)
+  option(ENABLE_java "Enable Java bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_java AND NOT BUILD_SHARED_LIBS)
