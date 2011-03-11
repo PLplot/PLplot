@@ -98,7 +98,7 @@ x15::x15( int argc, const char ** argv )
         }
     }
 
-    pls->MinMax2dGrid( z, XPTS, YPTS, &zmax, &zmin );
+    pls->MinMax2dGrid( (const PLFLT **) z, XPTS, YPTS, &zmax, &zmin );
 
     plot1( z, zmin, zmax );
     plot2( z, zmin, zmax );

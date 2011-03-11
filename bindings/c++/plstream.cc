@@ -2677,7 +2677,7 @@ void plstream::Free2dGrid( PLFLT **f, PLINT nx, PLINT ny )
 }
 
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
-void plstream::MinMax2dGrid( PLFLT **f, PLINT nx, PLINT ny,
+void plstream::MinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny,
                              PLFLT *fmax, PLFLT *fmin )
 {
     set_stream();

@@ -2272,7 +2272,7 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT ny );
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
 
 PLDLLIMPEXP void
-plMinMax2dGrid( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
+plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
 
 // Wait for graphics input event and translate to world coordinates
 

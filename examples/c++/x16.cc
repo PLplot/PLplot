@@ -189,7 +189,7 @@ x16::x16( int argc, const char ** argv )
         }
     }
 
-    pls->MinMax2dGrid( z, nx, ny, &zmax, &zmin );
+    pls->MinMax2dGrid( (const PLFLT **) z, nx, ny, &zmax, &zmin );
 
     for ( i = 0; i < ns; i++ )
         clevel[i] = zmin + ( zmax - zmin ) * ( i + 0.5 ) / (PLFLT) ns;
@@ -369,7 +369,7 @@ x16::x16( int argc, const char ** argv )
 
     //Need a new shedge to go along with the new data set.
 
-    pls->MinMax2dGrid( z, nx, ny, &zmax, &zmin );
+    pls->MinMax2dGrid( (const PLFLT **) z, nx, ny, &zmax, &zmin );
 
     for ( i = 0; i < ns + 1; i++ )
         shedge[i] = zmin + ( zmax - zmin ) * (PLFLT) i / (PLFLT) ns;

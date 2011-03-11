@@ -280,7 +280,7 @@ x21::x21( int argc, const char ** argv )
                 }
             }
 
-            pls->MinMax2dGrid( zg, xp, yp, &lzM, &lzm );
+            pls->MinMax2dGrid( (const PLFLT **) zg, xp, yp, &lzM, &lzm );
 
             lzm = MIN( lzm, zmin );
             lzM = MAX( lzM, zmax );

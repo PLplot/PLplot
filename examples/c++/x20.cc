@@ -294,7 +294,7 @@ x20::x20( int argc, const char ** argv )
     }
 
     // Base the dynamic range on the image contents.
-    pls->MinMax2dGrid( img_f, width, height, &img_max, &img_min );
+    pls->MinMax2dGrid( (const PLFLT **) img_f, width, height, &img_max, &img_min );
 
     // Draw a saturated version of the original image.  Only use the middle 50%
     // of the image's full dynamic range.

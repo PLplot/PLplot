@@ -1119,7 +1119,7 @@ public:
     void Free2dGrid( PLFLT **f, PLINT nx, PLINT ny );
 
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
-    void MinMax2dGrid( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
+    void MinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
 
 // Functions for converting between HLS and RGB color space
 

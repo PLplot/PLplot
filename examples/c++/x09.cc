@@ -376,8 +376,8 @@ const void x09::potential()
 
     rmax = r;
 
-    pls->MinMax2dGrid( cgrid2.xg, PRPTS, PTHETAPTS, &xmax, &xmin );
-    pls->MinMax2dGrid( cgrid2.yg, PRPTS, PTHETAPTS, &ymax, &ymin );
+    pls->MinMax2dGrid( (const PLFLT **) cgrid2.xg, PRPTS, PTHETAPTS, &xmax, &xmin );
+    pls->MinMax2dGrid( (const PLFLT **) cgrid2.yg, PRPTS, PTHETAPTS, &ymax, &ymin );
 
     x0 = ( xmin + xmax ) / 2.;
     y0 = ( ymin + ymax ) / 2.;
@@ -421,7 +421,7 @@ const void x09::potential()
     }
 
 
-    pls->MinMax2dGrid( z, PRPTS, PTHETAPTS, &zmax, &zmin );
+    pls->MinMax2dGrid( (const PLFLT **) z, PRPTS, PTHETAPTS, &zmax, &zmin );
 
     //	printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
     //    q1, d1, q1i, d1i, q2, d2, q2i, d2i);
