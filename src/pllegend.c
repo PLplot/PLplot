@@ -1061,7 +1061,7 @@ c_plcolorbar( PLINT position, PLINT opt,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
-              PLINT n_colors, PLFLT *colors, PLFLT *values )
+              PLINT n_colors, const PLFLT *colors, const PLFLT *values )
 {
     // Min and max values
     // Assumes that the values array is sorted from smallest to largest
@@ -1230,7 +1230,7 @@ c_plcolorbar( PLINT position, PLINT opt,
             }
         }
         // Draw the color bar
-        plimage( color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
+        plimage( (const PLFLT **) color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
             min_value, max_value, wx_min, wx_max, wy_min, wy_max );
         plFree2dGrid( color_data, ni, nj );
     }
@@ -1248,7 +1248,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             grid.xg = grid_axis;
-            grid.yg = values;
+            grid.yg = (PLFLT *) values;
             grid.nx = 2;
             grid.ny = n_steps;
             ni      = 2;
@@ -1264,7 +1264,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         }
         else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
-            grid.xg = values;
+            grid.xg = (PLFLT *) values;
             grid.yg = grid_axis;
             grid.nx = n_steps;
             grid.ny = 2;
@@ -1285,7 +1285,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         }
 
         // Draw the color bar
-        plshades( color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
+        plshades( (const PLFLT **) color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
             values, n_steps, 0, cont_color, cont_width, plfill, TRUE,
             pltr1, (void *) ( &grid ) );
         plFree2dGrid( color_data, ni, nj );

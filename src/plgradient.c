@@ -29,7 +29,7 @@
 static int foo;
 // software fallback for gradient.
 static void
-plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
+plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle );
 
 // define where plshades plots gradient for software fallback for
 // gradient.
@@ -51,7 +51,7 @@ gradient_defined( PLFLT x, PLFLT y );
 //--------------------------------------------------------------------------
 
 void
-c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
+c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
 {
     if ( plsc->level < 3 )
     {
@@ -179,7 +179,7 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
 //--------------------------------------------------------------------------
 
 void
-plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
+plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
 {
     PLFLT xrot, xrot_min, xrot_max, cosangle, sinangle;
     PLFLT xmin, xmax, ymin, ymax;
@@ -195,8 +195,8 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
 
     // Define polygon boundary so it is accessible from gradient_defined.
     plsc->n_polygon = n;
-    plsc->x_polygon = x;
-    plsc->y_polygon = y;
+    plsc->x_polygon = (PLFLT *)x;
+    plsc->y_polygon = (PLFLT *)y;
 
     // Find x and y range of polygon.
     xmin = x[0];
@@ -255,7 +255,7 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     for ( i = 0; i < NEDGE; i++ )
         edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 
-    plshades( z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
+    plshades( (const PLFLT **) z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
         edge, NEDGE, 0, 0, 0, plfill, 1, NULL, NULL );
     free( (void *) edge );
     plFree2dGrid( z, NX, NY );

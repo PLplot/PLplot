@@ -375,7 +375,7 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
 //--------------------------------------------------------------------------
 
 void
-c_plscmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 )
+c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 )
 {
     int i;
 
@@ -412,7 +412,7 @@ c_plscmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 )
 //--------------------------------------------------------------------------
 
 void
-c_plscmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 )
+c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol0 )
 {
     int i;
 
@@ -450,7 +450,7 @@ c_plscmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 )
 //--------------------------------------------------------------------------
 
 void
-c_plscmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
+c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 )
 {
     int i;
 
@@ -486,7 +486,7 @@ c_plscmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
 //--------------------------------------------------------------------------
 
 void
-c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
+c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol1 )
 {
     int i;
 
@@ -567,8 +567,8 @@ c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
 //--------------------------------------------------------------------------
 
 void
-c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
-             PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev )
+c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
+             const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *rev )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -641,8 +641,8 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
 //--------------------------------------------------------------------------
 
 void
-c_plscmap1la( PLINT itype, PLINT npts, PLFLT *pos,
-              PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev )
+c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
+              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a, const PLINT *rev )
 {
     int   n;
     PLFLT h, l, s, r, g, b;

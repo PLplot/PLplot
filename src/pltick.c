@@ -178,7 +178,7 @@ plery1( PLFLT x, PLFLT ymin, PLFLT ymax )
 //--------------------------------------------------------------------------
 
 void
-c_plerrx( PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y )
+c_plerrx( PLINT n, const PLFLT *xmin, const PLFLT *xmax, const PLFLT *y )
 {
     PLINT i;
 
@@ -199,7 +199,7 @@ c_plerrx( PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y )
 //--------------------------------------------------------------------------
 
 void
-c_plerry( PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax )
+c_plerry( PLINT n, const PLFLT *x, const PLFLT *ymin, const PLFLT *ymax )
 {
     PLINT i;
 

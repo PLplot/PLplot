@@ -186,7 +186,7 @@ x20::x20( int argc, const char ** argv )
 
         pls->lab( "...around a blue square.", " ", "A red border should appear..." );
 
-        pls->image( z, XDIM, YDIM,
+        pls->image( (const PLFLT **) z, XDIM, YDIM,
             1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 0., 0.,
             1., (PLFLT) XDIM, 1., (PLFLT) YDIM );
     }
@@ -212,7 +212,7 @@ x20::x20( int argc, const char ** argv )
 
         pls->lab( "No, an amplitude clipped \"sombrero\"", "", "Saturn?" );
         pls->ptex( 2., 2., 3., 4., 0., "Transparent image" );
-        pls->image( z, XDIM, YDIM, 0., 2. * M_PI, 0, 3. * M_PI, 0.05, 1.,
+        pls->image( (const PLFLT **) z, XDIM, YDIM, 0., 2. * M_PI, 0, 3. * M_PI, 0.05, 1.,
             0., 2. * M_PI, 0, 3. * M_PI );
         pls->Free2dGrid( r, XDIM, YDIM );
 
@@ -245,7 +245,7 @@ x20::x20( int argc, const char ** argv )
     else
         pls->lab( "", " ", "Lena..." );
 
-    pls->image( img_f, width, height, 1., width, 1., height, 0., 0.,
+    pls->image( (const PLFLT **) img_f, width, height, 1., width, 1., height, 0., 0.,
         1., width, 1., height );
 
     // selection/expansion demo
@@ -284,13 +284,13 @@ x20::x20( int argc, const char ** argv )
         pls->adv( 0 );
 
         // display selection only
-        pls->image( img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
+        pls->image( (const PLFLT **) img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
 
         pls->spause( true );
 
         // zoom in selection
         pls->env( xi, xe, ye, yi, 1, -1 );
-        pls->image( img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
+        pls->image( (const PLFLT **) img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
     }
 
     // Base the dynamic range on the image contents.
@@ -301,7 +301,7 @@ x20::x20( int argc, const char ** argv )
     pls->col0( 2 );
     pls->env( 0, width, 0, height, 1, -1 );
     pls->lab( "", "", "Reduced dynamic range image example" );
-    pls->imagefr( img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL );
+    pls->imagefr( (const PLFLT **) img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL );
 
     // Draw a distorted version of the original image, showing its full dynamic range.
     pls->env( 0, width, 0, height, 1, -1 );
@@ -335,7 +335,7 @@ x20::x20( int argc, const char ** argv )
         }
     }
 
-    pls->imagefr( img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2 );
+    pls->imagefr( (const PLFLT **) img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2 );
 
     pls->Free2dGrid( cgrid2.xg, width + 1, height + 1 );
     pls->Free2dGrid( cgrid2.yg, width + 1, height + 1 );

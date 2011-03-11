@@ -184,7 +184,7 @@ x28::x28( int argc, const char *argv[] )
             0.0, "  revolution" );
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    pls->mesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 2: Demonstrate rotation of string around its axis.
     pls->adv( 0 );
@@ -261,7 +261,7 @@ x28::x28( int argc, const char *argv[] )
             0.5, "rotation for z = z#dmin#u" );
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    pls->mesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 3: Demonstrate shear of string along its axis.
     // Work around xcairo and pngcairo (but not pscairo) problems for
@@ -342,7 +342,7 @@ x28::x28( int argc, const char *argv[] )
             0.5, "shear for z = z#dmin#u" );
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    pls->mesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 4: Demonstrate drawing a string on a 3D path.
     pls->adv( 0 );
@@ -393,7 +393,7 @@ x28::x28( int argc, const char *argv[] )
         omega += domega;
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    pls->mesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 5: Demonstrate plmtex3 axis labelling capability
     pls->adv( 0 );
@@ -421,7 +421,7 @@ x28::x28( int argc, const char *argv[] )
     pls->mtex3( "zs", -2.5, 0.5, 0.5, "Arbitrarily displaced" );
     pls->mtex3( "zs", -1.0, 0.5, 0.5, "secondary Z-axis label" );
     // Draw minimal 3D grid to finish defining the 3D box.
-    pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    pls->mesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Clean up.
     delete[] x;

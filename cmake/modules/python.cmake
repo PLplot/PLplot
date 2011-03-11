@@ -23,7 +23,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_python "Enable Python bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_python "Enable Python bindings" ON)
+  option(ENABLE_python "Enable Python bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_python AND NOT BUILD_SHARED_LIBS)

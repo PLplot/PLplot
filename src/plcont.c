@@ -489,8 +489,8 @@ plf2evalr( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 //--------------------------------------------------------------------------
 
 void
-cont_store( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-            PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+cont_store( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+            PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
             PLPointer pltr_data,
             CONT_LEVEL **contour )
@@ -512,8 +512,8 @@ cont_store( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 //--------------------------------------------------------------------------
 
 void
-c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-          PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+c_plcont( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+          PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )
 {
@@ -550,7 +550,7 @@ void
 plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
          PLPointer f2eval_data,
          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-         PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+         PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
          PLPointer pltr_data )
 {

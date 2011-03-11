@@ -154,14 +154,14 @@ static int
 find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x );
 
 static void
-selected_polygon( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
+selected_polygon( void ( *fill )( PLINT, const PLFLT *, const PLFLT * ),
                   PLINT ( *defined )( PLFLT, PLFLT ),
-                  PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 );
+                  const PLFLT *x, const PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 );
 
 static void
-exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
+exfill( void ( *fill )( PLINT, const PLFLT *, const PLFLT * ),
         PLINT ( *defined )( PLFLT, PLFLT ),
-        int n, PLFLT *x, PLFLT *y );
+        int n, const PLFLT *x, const PLFLT *y );
 
 static void
 big_recl( int *cond_code, register int ny, int dx, int dy,
@@ -190,7 +190,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
              PLINT min_color, PLINT min_width,
              PLINT max_color, PLINT max_width,
-             void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+             void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data );
 
@@ -207,11 +207,11 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 // (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
 //--------------------------------------------------------------------------
 
-void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+void c_plshades( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                 const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                  PLINT cont_color, PLINT cont_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data )
 {
@@ -240,9 +240,9 @@ void
 plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
            PLINT ( *defined )( PLFLT, PLFLT ),
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-           PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+           const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
            PLINT cont_color, PLINT cont_width,
-           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+           void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
            PLPointer pltr_data )
 {
@@ -317,13 +317,13 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 // via a (PLFLT **), and is column-dominant (normal C ordering).
 //--------------------------------------------------------------------------
 
-void c_plshade( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+void c_plshade( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                 PLFLT shade_min, PLFLT shade_max,
                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                 PLINT min_color, PLINT min_width,
                 PLINT max_color, PLINT max_width,
-                void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+                void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data )
 {
@@ -345,19 +345,19 @@ void c_plshade( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT 
 // via a (PLFLT *), and is column-dominant (normal C ordering).
 //--------------------------------------------------------------------------
 
-void c_plshade1( PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+void c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                  PLINT min_color, PLINT min_width,
                  PLINT max_color, PLINT max_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data )
 {
     PLfGrid grid;
 
-    grid.f  = a;
+    grid.f  = (PLFLT *) a;
     grid.nx = nx;
     grid.ny = ny;
 
@@ -389,7 +389,7 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
           PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
           PLINT min_color, PLINT min_width,
           PLINT max_color, PLINT max_width,
-          void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+          void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )
 {
@@ -420,7 +420,7 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
            PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
            PLINT min_color, PLINT min_width,
            PLINT max_color, PLINT max_width,
-           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+           void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
            PLPointer pltr_data )
 {
@@ -486,7 +486,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
              PLINT min_color, PLINT min_width,
              PLINT max_color, PLINT max_width,
-             void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+             void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data )
 {
@@ -897,9 +897,9 @@ find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x )
 //--------------------------------------------------------------------------
 
 static void
-selected_polygon( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
+selected_polygon( void ( *fill )( PLINT, const PLFLT *, const PLFLT * ),
                   PLINT ( *defined )( PLFLT, PLFLT ),
-                  PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 )
+                  const PLFLT *x, const PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 )
 {
     register PLINT n = 0;
     PLFLT          xx[4], yy[4];
@@ -926,7 +926,7 @@ selected_polygon( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
         xx[n]   = x[v4];
         yy[n++] = y[v4];
     }
-    exfill( fill, defined, n, xx, yy );
+    exfill( fill, defined, n, (PLFLT *) xx, (PLFLT *) yy );
 }
 
 //--------------------------------------------------------------------------
@@ -975,9 +975,9 @@ bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
 //--------------------------------------------------------------------------
 
 static void
-exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
+exfill( void ( *fill )( PLINT, const PLFLT *, const PLFLT * ),
         PLINT ( *defined )( PLFLT, PLFLT ),
-        int n, PLFLT *x, PLFLT *y )
+        int n, const PLFLT *x, const PLFLT *y )
 {
     if ( n < 3 )
     {
@@ -1045,7 +1045,7 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
         }
 
         if ( count >= 3 )
-            ( *fill )( count, xx, yy );
+            ( *fill )( count, (const PLFLT *) xx, (const PLFLT *) yy );
 
         free( xx );
         free( yy );

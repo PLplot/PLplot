@@ -299,7 +299,7 @@ x21::x21( int argc, const char ** argv )
                 pls->env0( xm, xM, ym, yM, 2, 0 );
                 pls->col0( 15 );
                 pls->lab( "X", "Y", title[alg - 1] );
-                pls->shades( zg, xp, yp, NULL, xm, xM, ym, yM,
+                pls->shades( (const PLFLT **) zg, xp, yp, NULL, xm, xM, ym, yM,
                     clev, nl, 1, 0, 1, plfill, true, NULL, NULL );
                 pls->col0( 2 );
             }
@@ -325,7 +325,7 @@ x21::x21( int argc, const char ** argv )
                     "bcdfntu", "Z", 0.5, 0 );
                 pls->col0( 15 );
                 pls->lab( "", "", title[alg - 1] );
-                pls->plot3dc( xg, yg, zg, xp, yp, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev, nl );
+                pls->plot3dc( xg, yg, (const PLFLT **) zg, xp, yp, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev, nl );
             }
         }
     }

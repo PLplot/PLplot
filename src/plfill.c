@@ -130,7 +130,7 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
 //--------------------------------------------------------------------------
 
 void
-c_plfill( PLINT n, PLFLT *x, PLFLT *y )
+c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
 {
     PLINT _xpoly[PL_MAXPOLY], _ypoly[PL_MAXPOLY];
     PLINT *xpoly, *ypoly;
@@ -200,7 +200,7 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 //--------------------------------------------------------------------------
 
 void
-c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
+c_plfill3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z )
 {
     PLFLT _tx[PL_MAXPOLY], _ty[PL_MAXPOLY], _tz[PL_MAXPOLY];
     PLFLT *tx, *ty, *tz;

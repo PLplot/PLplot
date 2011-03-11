@@ -262,22 +262,22 @@ x08::x08( int argc, const char **argv )
             if ( ifshade == 0 ) // diffuse light surface plot
             {
                 cmap1_init( 1 );
-                pls->surf3d( x, y, z, XPTS, YPTS, 0, NULL, 0 );
+                pls->surf3d( x, y, (const PLFLT **) z, XPTS, YPTS, 0, NULL, 0 );
             }
             else if ( ifshade == 1 )   // magnitude colored plot
             {
                 cmap1_init( 0 );
-                pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
+                pls->surf3d( x, y, (const PLFLT **) z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
             }
             else if ( ifshade == 2 )   //  magnitude colored plot with faceted squares
             {
                 cmap1_init( 0 );
-                pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
+                pls->surf3d( x, y, (const PLFLT **) z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
             }
             else                     // magnitude colored plot with contours
             {
                 cmap1_init( 0 );
-                pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS );
+                pls->surf3d( x, y, (const PLFLT **) z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS );
             }
         }
     }

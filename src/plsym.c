@@ -98,7 +98,7 @@ plhrsh2( PLINT ch, PLINT x, PLINT y );
 //--------------------------------------------------------------------------
 
 void
-c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string )
+c_plstring( PLINT n, const PLFLT *x, const PLFLT *y, const char *string )
 {
     PLINT i;
     for ( i = 0; i < n; i++ )
@@ -118,7 +118,7 @@ c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string )
 //--------------------------------------------------------------------------
 
 void
-c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
+c_plsym( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
 {
     PLINT i;
     PLFLT xt, yt;
@@ -162,7 +162,7 @@ c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 //--------------------------------------------------------------------------
 
 void
-c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
+c_plpoin( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
 {
     PLINT i, sym, ifont = plsc->cfont;
     PLFLT xt, yt;
@@ -225,7 +225,7 @@ c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 //--------------------------------------------------------------------------
 
 void
-c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
+c_plpoin3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT code )
 {
     PLINT i, sym, ifont = plsc->cfont;
     PLFLT u, v;
@@ -298,7 +298,7 @@ c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
 //--------------------------------------------------------------------------
 
 void
-c_plstring3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, const char * string )
+c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char * string )
 {
     PLINT i;
     PLFLT u, v;

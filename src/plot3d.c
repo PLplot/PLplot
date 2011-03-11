@@ -115,13 +115,13 @@ c_pllightsource( PLFLT x, PLFLT y, PLFLT z )
 //--------------------------------------------------------------------------
 
 void
-c_plmesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
+c_plmesh( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, NULL, 0 );
 }
 
 void
-plfmesh( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+plfmesh( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
          PLINT nx, PLINT ny, PLINT opt )
 {
     plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, NULL, 0 );
@@ -147,15 +147,15 @@ plfmesh( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plmeshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
-           PLFLT *clevel, PLINT nlevel )
+c_plmeshc( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+           const PLFLT *clevel, PLINT nlevel )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, clevel, nlevel );
 }
 
 void
-plfmeshc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-          PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+plfmeshc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
+          PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, clevel, nlevel );
 }
@@ -323,16 +323,16 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
 //--------------------------------------------------------------------------
 
 void
-c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-            PLINT opt, PLFLT *clevel, PLINT nlevel )
+c_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny,
+            PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
         opt, clevel, nlevel );
 }
 
 void
-plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-           PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
+           PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     PLINT i;
     PLINT *indexymin = (PLINT *) malloc( (size_t) ( nx * sizeof ( PLINT ) ) );
@@ -386,18 +386,18 @@ plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-             PLINT opt, PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny,
+             PLINT opt, const PLFLT *clevel, PLINT nlevel,
+             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
 {
     plfsurf3dl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
         opt, clevel, nlevel, ixstart, ixn, indexymin, indexymax );
 }
 
 void
-plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-            PLINT opt, PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+            PLINT opt, const PLFLT *clevel, PLINT nlevel,
+            PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
 {
     PLFLT      cxx, cxy, cyx, cyy, cyz;
     PLINT      i, j, k;
@@ -617,7 +617,7 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             }
         }
         // Fill cont structure with contours.
-        cont_store( zstore, nx, ny, ixstart + 1, ixn, 1, ny,
+        cont_store( (const PLFLT **) zstore, nx, ny, ixstart + 1, ixn, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         // Free the 2D input arrays to cont_store since not needed any more.
@@ -856,14 +856,14 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 //--------------------------------------------------------------------------
 
 void
-c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
+c_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
           PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
 }
 
 void
-plfplot3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+plfplot3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
            PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
     plfplot3dc( x, y, zops, zp, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
@@ -879,16 +879,16 @@ plfplot3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
+c_plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT **z,
            PLINT nx, PLINT ny, PLINT opt,
-           PLFLT *clevel, PLINT nlevel )
+           const PLFLT *clevel, PLINT nlevel )
 {
     plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
 
 void
-plfplot3dc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-            PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+plfplot3dc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
+            PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     plfplot3dcl( x, y, zops, zp, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
@@ -917,10 +917,10 @@ plfplot3dc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
+c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT **z,
             PLINT nx, PLINT ny, PLINT opt,
-            PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+            const PLFLT *clevel, PLINT nlevel,
+            PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
 {
     plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
         opt, clevel, nlevel, ixstart, ixn, indexymin, indexymax );
@@ -968,10 +968,10 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 //--------------------------------------------------------------------------
 
 void
-plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
              PLINT nx, PLINT ny, PLINT opt,
-             PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+             const PLFLT *clevel, PLINT nlevel,
+             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, i, ix, iy, color, width;
@@ -979,6 +979,8 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     PLINT ixmin   = 0, ixmax = nx - 1, iymin = 0, iymax = ny - 1;
     PLINT clipped = 0, base_cont = 0, side = 0;
     PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
+    PLFLT *_x, *_y, **_z;
+    PLFLT *x_modified, *y_modified;
 
     pl3mode = 0;
 
@@ -1062,7 +1064,6 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         // adjust the input so it stays within bounds
         int _nx = ixmax - ixmin + 1;
         int _ny = iymax - iymin + 1;
-        PLFLT *_x, *_y, **_z;
         PLFLT ty0, ty1, tx0, tx1;
         int i, j;
 
@@ -1142,14 +1143,22 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
             }
         }
         // replace the input with our clipped versions
-        x    = _x;
-        y    = _y;
         zp   = (PLPointer) _z;
         getz = plf2ops_c()->get;
         nx   = _nx;
         ny   = _ny;
+        // Do not want to modify input x and y (const modifier)
+        x_modified    = _x;
+        y_modified    = _y;
+    }
+    else
+    {
+      x_modified = (PLFLT *)x;
+      y_modified = (PLFLT *)y;
     }
 
+    // From here on must use x_modified and y_modified rather than
+    // x and y.
     if ( ( opt & BASE_CONT ) || ( opt & TOP_CONT ) || ( opt && MAG_COLOR ) )
     {
         //
@@ -1208,72 +1217,72 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     if ( cxx >= 0.0 && cxy <= 0.0 )
     {
         if ( opt == DRAW_LINEY )
-            plt3zz( 1, ny, 1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+          plt3zz( 1, ny, 1, -1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = 2; iy <= ny; iy++ )
-                plt3zz( 1, iy, 1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( 1, iy, 1, -1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEX )
-            plt3zz( 1, ny, 1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, ny, 1, -1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = 1; ix <= nx - 1; ix++ )
-                plt3zz( ix, ny, 1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, ny, 1, -1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
     else if ( cxx <= 0.0 && cxy <= 0.0 )
     {
         if ( opt == DRAW_LINEX )
-            plt3zz( nx, ny, -1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, ny, -1, -1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = 2; ix <= nx; ix++ )
-                plt3zz( ix, ny, -1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, ny, -1, -1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEY )
-            plt3zz( nx, ny, -1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, ny, -1, -1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = ny; iy >= 2; iy-- )
-                plt3zz( nx, iy, -1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( nx, iy, -1, -1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
     else if ( cxx <= 0.0 && cxy >= 0.0 )
     {
         if ( opt == DRAW_LINEY )
-            plt3zz( nx, 1, -1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, 1, -1, 1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = ny - 1; iy >= 1; iy-- )
-                plt3zz( nx, iy, -1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( nx, iy, -1, 1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEX )
-            plt3zz( nx, 1, -1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, 1, -1, 1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = nx; ix >= 2; ix-- )
-                plt3zz( ix, 1, -1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, 1, -1, 1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
     else if ( cxx >= 0.0 && cxy >= 0.0 )
     {
         if ( opt == DRAW_LINEX )
-            plt3zz( 1, 1, 1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+          plt3zz( 1, 1, 1, 1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = nx - 1; ix >= 1; ix-- )
-                plt3zz( ix, 1, 1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, 1, 1, 1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEY )
-            plt3zz( 1, 1, 1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, 1, 1, 1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = 1; iy <= ny - 1; iy++ )
-                plt3zz( 1, iy, 1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( 1, iy, 1, 1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
@@ -1306,8 +1315,8 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         {
             for ( j = 0; j < ny; j++ )
             {
-                cgrid2.xg[i][j] = x[i];
-                cgrid2.yg[i][j] = y[j];
+                cgrid2.xg[i][j] = x_modified[i];
+                cgrid2.yg[i][j] = y_modified[j];
                 zstore[i][j]    = getz( zp, i, j );
             }
         }
@@ -1315,7 +1324,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         pl3upv = 0;
 
         // Fill cont structure with contours.
-        cont_store( zstore, nx, ny, 1, nx, 1, ny,
+        cont_store( (const PLFLT **) zstore, nx, ny, 1, nx, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         // Free the 2D input arrays to cont_store since not needed any more.
@@ -1418,7 +1427,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 // Finish up by drawing sides, background grid (both are optional)
 
     if ( side )
-        plside3( x, y, zops, zp, nx, ny, opt );
+        plside3( x_modified, y_modified, zops, zp, nx, ny, opt );
 
     if ( zbflg )
     {
@@ -1435,12 +1444,11 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 
     if ( clipped )
     {
-        PLFLT **z = (PLFLT **) zp;
-        free( x );
-        free( y );
+        free( _x );
+        free( _y );
         for ( i = 0; i < nx; i++ )
-            free( z[i] );
-        free( z );
+            free( _z[i] );
+        free( _z );
     }
 }
 

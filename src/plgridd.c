@@ -37,43 +37,43 @@
 
 // forward declarations
 static void
-grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_nnaidw( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+             const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
              PLF2OPS zops, PLPointer zgp );
 
 static void
-grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_nnli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
            PLF2OPS zops, PLPointer zgp, PLFLT threshold );
 
 static void
-grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_nnidw( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+            const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
             PLF2OPS zops, PLPointer zgp, int knn_order );
 
 #ifdef WITH_CSA
 static void
-grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_csa( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+          const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
           PLF2OPS zops, PLPointer zgp );
 #endif
 
 #ifdef HAVE_QHULL
 static void
-grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+          const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
           PLF2OPS zops, PLPointer zgp, PLFLT wmin );
 
 static void
-grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_dtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
            PLF2OPS zops, PLPointer zgp );
 #endif
 
 static void
-dist1( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts, int knn_order );
+dist1( PLFLT gx, PLFLT gy, const PLFLT *x, const PLFLT *y, int npts, int knn_order );
 static void
-dist2( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts );
+dist2( PLFLT gx, PLFLT gy, const PLFLT *x, const PLFLT *y, int npts );
 
 #define KNN_MAX_ORDER    100
 
@@ -111,16 +111,16 @@ static PT items[KNN_MAX_ORDER];
 //--------------------------------------------------------------------------
 
 void
-c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
-              PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
+c_plgriddata( const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT npts,
+              const PLFLT *xg, PLINT nptsx, const PLFLT *yg, PLINT nptsy,
               PLFLT **zg, PLINT type, PLFLT data )
 {
     plfgriddata( x, y, z, npts, xg, nptsx, yg, nptsy, plf2ops_c(), (PLPointer) zg, type, data );
 }
 
 void
-plfgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
-             PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
+plfgriddata( const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT npts,
+             const PLFLT *xg, PLINT nptsx, const PLFLT *yg, PLINT nptsy,
              PLF2OPS zops, PLPointer zgp, PLINT type, PLFLT data )
 {
     int i, j;
@@ -210,8 +210,8 @@ plfgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 //
 
 static void
-grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_csa( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+          const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
           PLF2OPS zops, PLPointer zgp )
 {
     PLFLT *xt, *yt, *zt;
@@ -224,7 +224,10 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         plexit( "grid_csa: Insufficient memory" );
     }
 
-    xt = x; yt = y; zt = z; pt = pin;
+    xt = (PLFLT *) x;
+    yt = (PLFLT *) y;
+    zt = (PLFLT *) z;
+    pt = pin;
     for ( i = 0; i < npts; i++ )
     {
         pt->x = (double) *xt++;
@@ -239,10 +242,11 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         plexit( "grid_csa: Insufficient memory" );
     }
 
-    yt = yg; pt = pgrid;
+    yt = (PLFLT *) yg;
+    pt = pgrid;
     for ( j = 0; j < nptsy; j++ )
     {
-        xt = xg;
+        xt = (PLFLT *) xg;
         for ( i = 0; i < nptsx; i++ )
         {
             pt->x = (double) *xt++;
@@ -281,8 +285,8 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 //
 
 static void
-grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_nnidw( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+            const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
             PLF2OPS zops, PLPointer zgp, int knn_order )
 {
     int   i, j, k;
@@ -344,8 +348,8 @@ grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 //
 
 static void
-grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+grid_nnli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
            PLF2OPS zops, PLPointer zgp, PLFLT threshold )
 {
     PLFLT xx[4], yy[4], zz[4], t, A, B, C, D, d1, d2, d3, max_thick;
@@ -523,8 +527,8 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 //
 
 static void
-grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
+grid_nnaidw( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+             const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
 {
     PLFLT d, nt;
     int   i, j, k;
@@ -566,8 +570,8 @@ grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 //
 
 static void
-grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
+grid_dtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
 {
     point *pin, *pgrid, *pt;
     PLFLT *xt, *yt, *zt;
@@ -584,7 +588,10 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         plexit( "grid_dtli: Insufficient memory" );
     }
 
-    xt = x; yt = y; zt = z; pt = pin;
+    xt = (PLFLT *) x;
+    yt = (PLFLT *) y;
+    zt = (PLFLT *) z;
+    pt = pin;
     for ( i = 0; i < npts; i++ )
     {
         pt->x = (double) *xt++;
@@ -600,10 +607,11 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         plexit( "grid_dtli: Insufficient memory" );
     }
 
-    yt = yg; pt = pgrid;
+    yt = (PLFLT *) yg;
+    pt = pgrid;
     for ( j = 0; j < nptsy; j++ )
     {
-        xt = xg;
+        xt = (PLFLT *) xg;
         for ( i = 0; i < nptsx; i++ )
         {
             pt->x = (double) *xt++;
@@ -635,8 +643,8 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 //
 
 static void
-grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp,
+grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+          const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp,
           PLFLT wmin )
 {
     PLFLT *xt, *yt, *zt;
@@ -661,7 +669,10 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         plexit( "plgridata: Insufficient memory" );
     }
 
-    xt = x; yt = y; zt = z; pt = pin;
+    xt = (PLFLT *) x;
+    yt = (PLFLT *) y;
+    zt = (PLFLT *) z;
+    pt = pin;
     for ( i = 0; i < npts; i++ )
     {
         pt->x = (double) *xt++;
@@ -677,10 +688,11 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         plexit( "plgridata: Insufficient memory" );
     }
 
-    yt = yg; pt = pgrid;
+    yt = (PLFLT *) yg;
+    pt = pgrid;
     for ( j = 0; j < nptsy; j++ )
     {
-        xt = xg;
+        xt = (PLFLT *) xg;
         for ( i = 0; i < nptsx; i++ )
         {
             pt->x = (double) *xt++;
@@ -711,7 +723,7 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 //
 
 static void
-dist1( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts, int knn_order )
+dist1( PLFLT gx, PLFLT gy, const PLFLT *x, const PLFLT *y, int npts, int knn_order )
 {
     PLFLT d, max_dist;
     int   max_slot, i, j;
@@ -761,7 +773,7 @@ dist1( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts, int knn_order )
 //
 
 static void
-dist2( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts )
+dist2( PLFLT gx, PLFLT gy, const PLFLT *x, const PLFLT *y, int npts )
 {
     PLFLT d;
     int   i, quad;
@@ -801,8 +813,8 @@ dist2( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts )
 
 #ifdef NONN // another DTLI, based only on QHULL, not nn
 static void
-grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
+grid_adtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+            const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
 {
     coordT  *points;          // array of coordinates for each point
     boolT   ismalloc = False; // True if qhull should free points

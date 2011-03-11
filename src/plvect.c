@@ -37,7 +37,7 @@ static void plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale );
 //--------------------------------------------------------------------------
 
 void
-c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill )
+c_plsvect( const PLFLT *arrowx, const PLFLT *arrowy, PLINT npts, PLINT fill )
 {
     int i;
 
@@ -213,7 +213,7 @@ void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
 }
 
 void
-c_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+c_plvect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )
 {

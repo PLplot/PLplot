@@ -125,15 +125,15 @@ public:
               PLBOOL fill );
 
 // Simple arrow plotter
-    void arrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+    void arrows( const PLFLT *u, const PLFLT *v, const PLFLT *x, const PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy );
 
-    void vect( PLFLT * *u, PLFLT * *v, PLINT nx, PLINT ny, PLFLT scale,
+    void vect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
                void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                PLPointer pltr_data );
 
 // Set the arrow style
-    void svect( PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, bool fill );
+    void svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, bool fill );
 
 // This functions similarly to plbox() except that the origin of the axes is
 // placed at the user-specified point (x0, y0).
@@ -143,7 +143,7 @@ public:
 
 // Plot a histogram using x to store data values and y to store frequencies.
 
-    void bin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT center );
+    void bin( PLINT nbin, const PLFLT *x, const PLFLT *y, PLINT center );
 
 // Start new page.  Should only be used with pleop().
 
@@ -200,8 +200,8 @@ public:
 // Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 // plfcont, with a particular choice for f2eval and f2eval_data.
 
-    void cont( PLFLT * *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-               PLINT ky, PLINT ly, PLFLT * clevel, PLINT nlevel,
+    void cont( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+               PLINT ky, PLINT ly, const PLFLT * clevel, PLINT nlevel,
                void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                PLPointer pltr_data );
 
@@ -212,7 +212,7 @@ public:
     void fcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                 PLPointer f2eval_data,
                 PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-                PLINT ky, PLINT ly, PLFLT * clevel, PLINT nlevel,
+                PLINT ky, PLINT ly, const PLFLT * clevel, PLINT nlevel,
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data );
 
@@ -262,11 +262,11 @@ public:
 
 // Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i)).
 
-    void errx( PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y );
+    void errx( PLINT n, const PLFLT *xmin, const PLFLT *xmax, const PLFLT *y );
 
 // Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i)).
 
-    void erry( PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax );
+    void erry( PLINT n, const PLFLT *x, const PLFLT *ymin, const PLFLT *ymax );
 
 // Advance to the next family file on the next new page.
 
@@ -274,11 +274,11 @@ public:
 
 // Pattern fills the polygon bounded by the input points.
 
-    static void fill( PLINT n, PLFLT *x, PLFLT *y );
+    static void fill( PLINT n, const PLFLT *x, const PLFLT *y );
 
 // Pattern fills the 3d polygon bounded by the input points.
 
-    static void fill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z );
+    static void fill3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z );
 
 // Flushes the output stream.  Use sparingly, if at all.
 
@@ -359,12 +359,12 @@ public:
 
 // Draw gradient in polygon.
 
-    static void gradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
+    static void gradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle );
 
 // grid irregularly sampled data
 
-    void griddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
-                   PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
+    void griddata( const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT npts,
+                   const PLFLT *xg, PLINT nptsx, const PLFLT *yg, PLINT nptsy,
                    PLFLT **zg, PLINT type, PLFLT data );
 
 // Get subpage boundaries in absolute coordinates.
@@ -403,7 +403,7 @@ public:
 
 // Draws a histogram of n values of a variable in array data[0..n-1]
 
-    void hist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
+    void hist( PLINT n, const PLFLT *data, PLFLT datmin, PLFLT datmax,
                PLINT nbin, PLINT oldwin );
 
 // Set current color (map 0) by hue, lightness, and saturation.
@@ -441,7 +441,7 @@ public:
     void colorbar( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLINT cont_color, PLINT cont_width,
                    PLFLT ticks, PLINT sub_ticks,
                    const char *axis_opts, const char *label,
-                   PLINT n_colors, PLFLT *colors, PLFLT *values );
+                   PLINT n_colors, const PLFLT *colors, const PLFLT *values );
 
 
 // Sets position of the light source
@@ -450,11 +450,11 @@ public:
 
 // Draws line segments connecting a series of points.
 
-    void line( PLINT n, PLFLT *x, PLFLT *y );
+    void line( PLINT n, const PLFLT *x, const PLFLT *y );
 
 // Draws a line in 3 space.
 
-    void line3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z );
+    void line3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z );
 
 // Set line style.
 
@@ -473,12 +473,12 @@ public:
 
 // Plots a mesh representation of the function z[x][y].
 
-    void mesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt );
+    void mesh( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt );
 
 // Plots a mesh representation of the function z[x][y] with contour.
 
-    void meshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
-                PLFLT *clevel, PLINT nlevel );
+    void meshc( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+                const PLFLT *clevel, PLINT nlevel );
 
 // Creates a new stream and makes it the default.
 
@@ -497,37 +497,37 @@ public:
 
 // Plots a 3-d representation of the function z[x][y].
 
-    void plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
+    void plot3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
                  PLINT nx, PLINT ny, PLINT opt, bool side );
 
 // Plots a 3-d representation of the function z[x][y] with contour.
 
-    void plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
+    void plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT **z,
                   PLINT nx, PLINT ny, PLINT opt,
-                  PLFLT *clevel, PLINT nlevel );
+                  const PLFLT *clevel, PLINT nlevel );
 
 // Plots a 3-d representation of the function z[x][y] with contour
 // and y index limits.
 
-    void plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
+    void plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT **z,
                    PLINT nx, PLINT ny, PLINT opt,
-                   PLFLT *clevel, PLINT nlevel,
-                   PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax );
+                   const PLFLT *clevel, PLINT nlevel,
+                   PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
 
 
 // Plots a 3-d shaded representation of the function z[x][y].
 
-    void surf3d( PLFLT *x, PLFLT *y, PLFLT **z,
+    void surf3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
                  PLINT nx, PLINT ny, PLINT opt,
-                 PLFLT *clevel, PLINT nlevel );
+                 const PLFLT *clevel, PLINT nlevel );
 
 // Plots a 3-d shaded representation of the function z[x][y] with y
 // index limits
 
-    void surf3dl( PLFLT *x, PLFLT *y, PLFLT **z,
+    void surf3dl( const PLFLT *x, const PLFLT *y, const PLFLT **z,
                   PLINT nx, PLINT ny, PLINT opt,
-                  PLFLT *clevel, PLINT nlevel,
-                  PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax );
+                  const PLFLT *clevel, PLINT nlevel,
+                  PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
 
 
 // Process options list using current options info.
@@ -536,19 +536,19 @@ public:
 
 // Set fill pattern directly.
 
-    void pat( PLINT nlin, PLINT *inc, PLINT *del );
+    void pat( PLINT nlin, const PLINT *inc, const PLINT *del );
 
 // Plots array y against x for n points using ASCII code "code".
 
-    void poin( PLINT n, PLFLT *x, PLFLT *y, PLINT code );
+    void poin( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code );
 
 // Draws a series of points in 3 space.
 
-    void poin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code );
+    void poin3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT code );
 
 // Draws a polygon in 3 space.
 
-    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, bool *draw, bool ifcc );
+    void poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const bool *draw, bool ifcc );
 
 // Set the floating point precision (in number of places) in numeric labels.
 
@@ -594,25 +594,25 @@ public:
 
 // Set color map 0 colors by 8 bit RGB values
 
-    void scmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 );
+    void scmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 );
 
 // Set color map 0 colors by 8 bit RGB values and alpha value (0.0-1.0)
 
-    void scmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 );
+    void scmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol0 );
 
 // Set color map 1 colors by 8 bit RGB values
 
-    void scmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 );
+    void scmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 );
 
 // Set color map 1 colors by 8 bit RGB values and alpha value (0.0-1.0)
 
-    void scmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 );
+    void scmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol1 );
 
 // Set color map 1 colors using a piece-wise linear relationship between
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 
-    void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
-                  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, bool *rev = NULL );
+    void scmap1l( bool itype, PLINT npts, const PLFLT *intensity,
+                  const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const bool *rev = NULL );
 
 //    void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
 //                PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
@@ -621,9 +621,9 @@ public:
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 // Include alpha value in range 0.0-1.0.
 
-    void scmap1la( bool itype, PLINT npts, PLFLT *intensity,
-                   PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a,
-                   bool *rev = NULL );
+    void scmap1la( bool itype, PLINT npts, const PLFLT *intensity,
+                   const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a,
+                   const bool *rev = NULL );
 
 // Set a given color from color map 0 by 8 bit RGB value
 
@@ -711,23 +711,23 @@ public:
 
 // Shade region.
 
-    void shade( PLFLT * *a, PLINT nx, PLINT ny,
+    void shade( const PLFLT **a, PLINT nx, PLINT ny,
                 PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                 PLFLT shade_min, PLFLT shade_max,
                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                 PLINT min_color, PLINT min_width,
                 PLINT max_color, PLINT max_width,
-                void ( *fill )( PLINT, PLFLT *, PLFLT * ), bool rectangular,
+                void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data );
 
-    void shades( PLFLT * *a, PLINT nx, PLINT ny,
+    void shades( const PLFLT **a, PLINT nx, PLINT ny,
                  PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 PLFLT * clevel, PLINT nlevel, PLINT fill_width,
+                 const PLFLT * clevel, PLINT nlevel, PLINT fill_width,
                  PLINT cont_color, PLINT cont_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), bool rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data );
 
@@ -743,14 +743,14 @@ public:
                 bool rectangular,
                 Coord_Xformer *pcxf );
 
-    void shade1( PLFLT * a, PLINT nx, PLINT ny,
+    void shade1( const PLFLT *a, PLINT nx, PLINT ny,
                  PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                  PLINT min_color, PLINT min_width,
                  PLINT max_color, PLINT max_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), bool rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data );
 
@@ -764,7 +764,7 @@ public:
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                  PLINT min_color, PLINT min_width,
                  PLINT max_color, PLINT max_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), bool rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data );
 
@@ -832,7 +832,7 @@ public:
 // directly as UTF-8 or indirectly via the standard text escape
 // sequences allowed for PLplot input strings.
 
-    void string( PLINT n, PLFLT *x, PLFLT *y, const char *string );
+    void string( PLINT n, const PLFLT *x, const PLFLT *y, const char *string );
 
 // Prints out the same string repeatedly at the n points in world
 // coordinates given by the x, y, and z arrays.  Supersedes plpoin3
@@ -840,16 +840,16 @@ public:
 // as UTF-8 or indirectly via the standard text escape sequences
 // allowed for PLplot input strings.
 
-    void string3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string );
+    void string3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char *string );
 
 // Create 1d stripchart
 
-    void stripc( PLINT * id, const char *xspec, const char *yspec,
+    void stripc( PLINT *id, const char *xspec, const char *yspec,
                  PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
                  PLFLT xlpos, PLFLT ylpos,
                  bool y_ascl, bool acc,
                  PLINT colbox, PLINT collab,
-                 PLINT colline[], PLINT styline[], const char *legline[],
+                 const PLINT colline[], const PLINT styline[], const char *legline[],
                  const char *labx, const char *laby, const char *labtop );
 
 // Add a point to a stripchart.
@@ -863,13 +863,13 @@ public:
 // plots a 2d image (or a matrix too large for plshade() ) - colors
 // automatically scaled
 
-    void image( PLFLT **data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
+    void image( const PLFLT **data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
                 PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
                 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
 
 // plots a 2d image (or a matrix too large for plshade() )
 
-    void imagefr( PLFLT * *data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
+    void imagefr( const PLFLT **data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
                   PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
                   PLFLT valuemin, PLFLT valuemax,
                   void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
@@ -877,7 +877,7 @@ public:
 
 // Set up a new line style
 
-    void styl( PLINT nms, PLINT *mark, PLINT *space );
+    void styl( PLINT nms, const PLINT *mark, const PLINT *space );
 
 // Sets the edges of the viewport to the specified absolute coordinates
 
@@ -897,7 +897,7 @@ public:
 
 // Plots array y against x for n points using Hershey symbol "code"
 
-    void sym( PLINT n, PLFLT *x, PLFLT *y, PLINT code );
+    void sym( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code );
 
 // Set z axis labeling parameters
 
@@ -1134,31 +1134,31 @@ public:
     int GetCursor( PLGraphicsIn *plg );
 
 // Deprecated versions of methods which use PLINT instead of bool
-    void svect( PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, PLINT fill );
+    void svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, PLINT fill );
     void cpstrm( plstream &pls, PLINT flags );
-    void plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
+    void plot3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
                  PLINT nx, PLINT ny, PLINT opt, PLINT side );
-    void poly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc );
-    void scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
-                  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev );
+    void poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const PLINT *draw, PLINT ifcc );
+    void scmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
+                  const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *rev );
 
-    void shade( PLFLT * *a, PLINT nx, PLINT ny,
+    void shade( const PLFLT **a, PLINT nx, PLINT ny,
                 PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                 PLFLT shade_min, PLFLT shade_max,
                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                 PLINT min_color, PLINT min_width,
                 PLINT max_color, PLINT max_width,
-                void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+                void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data );
 
-    void shades( PLFLT * *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
+    void shades( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
                                                                      PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 PLFLT * clevel, PLINT nlevel, PLINT fill_width,
+                 const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                  PLINT cont_color, PLINT cont_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data );
 
@@ -1170,14 +1170,14 @@ public:
                 PLINT rectangular,
                 Coord_Xformer *pcxf );
 
-    void shade1( PLFLT * a, PLINT nx, PLINT ny,
+    void shade1( const PLFLT *a, PLINT nx, PLINT ny,
                  PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                  PLINT min_color, PLINT min_width,
                  PLINT max_color, PLINT max_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data );
 
@@ -1191,18 +1191,18 @@ public:
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                  PLINT min_color, PLINT min_width,
                  PLINT max_color, PLINT max_width,
-                 void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data );
 
     void spause( PLINT pause );
 
-    void stripc( PLINT * id, const char *xspec, const char *yspec,
+    void stripc( PLINT *id, const char *xspec, const char *yspec,
                  PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
                  PLFLT xlpos, PLFLT ylpos,
                  PLINT y_ascl, PLINT acc,
                  PLINT colbox, PLINT collab,
-                 PLINT colline[], PLINT styline[], const char *legline[],
+                 const PLINT colline[], const PLINT styline[], const char *legline[],
                  const char *labx, const char *laby, const char *labtop );
 
     void xormod( PLINT mode, PLINT *status );

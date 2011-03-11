@@ -70,7 +70,7 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
             PLFLT xlpos, PLFLT ylpos,
             PLINT y_ascl, PLINT acc,
             PLINT colbox, PLINT collab,
-            PLINT *colline, PLINT *styline, const char *legline[],
+            const PLINT *colline, const PLINT *styline, const char *legline[],
             const char *labx, const char *laby, const char *labtop )
 {
     int i;
