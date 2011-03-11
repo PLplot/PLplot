@@ -6300,8 +6300,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="pllegend" renderas="sect3">
     <title>
-      <function>pllegend</function>: Create a discrete annotated legend using
-      colored boxes, lines, and/or lines of symbols
+      <function>pllegend</function>: Plot legend using discretely annotated filled boxes, lines, and/or symbols
     </title>
 
     <para>
@@ -6312,6 +6311,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </funcdef>
 	  <paramdef><parameter>p_legend_width</parameter></paramdef>
 	  <paramdef><parameter>p_legend_height</parameter></paramdef>
+	  <paramdef><parameter>position</parameter></paramdef>
 	  <paramdef><parameter>opt</parameter></paramdef>
 	  <paramdef><parameter>x</parameter></paramdef>
 	  <paramdef><parameter>y</parameter></paramdef>
@@ -6345,12 +6345,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Routine for creating a discrete plot legend with a plotted 
+      Routine for creating a discrete plot legend with a plotted
       filled box, line, and/or line of symbols for each annotated legend
       entry.  The arguments of pllegend provide control over the location
       and size of the legend as well as the location and characteristics of
       the elements (most of which are optional) within that legend.  The
       resulting legend is clipped at the boundaries of the current subpage.
+      (N.B. the adopted coordinate system used for some of the parameters is
+      defined in the documentation of the
+      <literal><parameter>position</parameter></literal> parameter.)
     </para>
     <variablelist>
       <varlistentry>
@@ -6361,8 +6364,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Pointer to a location which contains (after the call) the
-	    legend width in normalized viewport coordinates. This quantity is
-	    calculated from <literal><parameter>plot_width</parameter></literal>.
+	    legend width in adopted coordinates. This quantity is
+	    calculated from <literal><parameter>plot_width</parameter></literal>,
 	    <literal><parameter>text_offset</parameter></literal>,
 	    <literal><parameter>ncolumn</parameter></literal> (possibly modified
 	    inside the routine depending on
@@ -6380,13 +6383,50 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Pointer to a location which contains (after the call) the
-	    legend height in normalized viewport coordinates. This quantity is
+	    legend height in adopted coordinates. This quantity is
 	    calculated from <literal><parameter>text_scale</parameter></literal>,
 	    <literal><parameter>text_spacing</parameter></literal>, and
 	    <literal><parameter>nrow</parameter></literal> (possibly modified
 	    inside the routine depending on
 	    <literal><parameter>nlegend</parameter></literal> and
 	    <literal><parameter>nrow</parameter></literal>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>position</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    <literal><parameter>position</parameter></literal>
+	    contains bits controlling the overall position of the legend and the
+	    definition of the adopted coordinates used for positions. The
+	    combination of the <literal>PL_POSITION_LEFT</literal>,
+	    <literal>PL_POSITION_RIGHT</literal>,
+	    <literal>PL_POSITION_TOP</literal>,
+	    <literal>PL_POSITION_BOTTOM</literal>,
+	    <literal>PL_POSITION_INSIDE</literal>, and
+	    <literal>PL_POSITION_OUTSIDE</literal> bits specifies one of the 16
+	    possible standard positions (the 4 corners and 4 side centers for both
+	    the inside and outside cases) of the legend relative to the adopted
+	    coordinate system. The adopted coordinates are normalized viewport
+	    coordinates if the <literal>PL_POSITION_VIEWPORT</literal> bit is set
+	    or normalized subpage coordinates if the
+	    <literal>PL_POSITION_SUBPAGE</literal> bit is set. Default position
+	    bits: If none of <literal>PL_POSITION_LEFT</literal>,
+	    <literal>PL_POSITION_RIGHT</literal>,
+	    <literal>PL_POSITION_TOP</literal>, or
+	    <literal>PL_POSITION_BOTTOM</literal> are set, then use the
+	    combination of <literal>PL_POSITION_RIGHT</literal> and
+	    <literal>PL_POSITION_TOP</literal>. If neither of
+	    <literal>PL_POSITION_INSIDE</literal> or
+	    <literal>PL_POSITION_OUTSIDE</literal> is set, use
+	    <literal>PL_POSITION_INSIDE</literal>. If neither of
+	    <literal>PL_POSITION_VIEWPORT</literal> or
+	    <literal>PL_POSITION_SUBPAGE</literal> is set, use
+	    <literal>PL_POSITION_VIEWPORT</literal>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6407,19 +6447,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    (semi-transparent) background for the legend. If the
 	    <literal>PL_LEGEND_BOUNDING_BOX</literal> bit is set, plot a bounding
 	    box for the legend. If the <literal>PL_LEGEND_ROW_MAJOR</literal> bit
-	    is set and both of (possibly internally transformed)
+	    is set and (both of the possibly internally transformed)
 	    <literal><parameter>nrow</parameter></literal> &gt; 1 and
 	    <literal><parameter>ncolumn</parameter></literal> &gt; 1, then plot
-	    the resulting array of legend entries in row-major order. Finally, the
-	    combination of the <literal>PL_LEGEND_LEFT</literal>,
-	    <literal>PL_LEGEND_RIGHT</literal>,
-	    <literal>PL_LEGEND_UPPER</literal>,
-	    <literal>PL_LEGEND_LOWER</literal>,
-	    <literal>PL_LEGEND_INSIDE</literal>, and
-	    <literal>PL_LEGEND_OUTSIDE</literal> position bits specifies one of
-	    the 16 possible standard positions (the 4 corners and 4 side centers
-	    for both the inside and outside cases) of the legend relative to the
-	    viewport.
+	    the resulting array of legend entries in row-major order.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6430,14 +6461,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    X offset of the legend position in normalized viewport
-	    coordinates from the specified standard position of the legend. For
-	    positive x, the direction of motion away from the standard position is
-	    inward/outward from the standard corner positions or standard
-	    center-left or center-right positions if the
-	    <literal>PL_LEGEND_INSIDE</literal>/<literal>PL_LEGEND_OUTSIDE</literal>
-	    bit is set in opt. For the center-upper or center-lower cases, the
-	    direction of motion is toward positive X.
+	    X offset of the legend position in adopted coordinates
+	    from the specified standard position of the legend. For positive x,
+	    the direction of motion away from the standard position is
+	    inward/outward from the standard corner positions or standard left or
+	    right positions if the
+	    <literal>PL_POSITION_INSIDE</literal>/<literal>PL_POSITION_OUTSIDE</literal>
+	    bit is set in <literal><parameter>position</parameter></literal>.  For
+	    the standard top or bottom positions, the direction of motion is toward
+	    positive X.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6448,13 +6480,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Y offset of the legend position in normalized viewport
-	    coordinates from the specified standard position of the legend. For
-	    positive y, the direction of motion away from the standard position is
+	    Y offset of the legend position in adopted coordinates
+	    from the specified standard position of the legend. For positive y,
+	    the direction of motion away from the standard position is
 	    inward/outward from the standard corner positions or standard
-	    center-upper or center-lower positions if the
-	    <literal>PL_LEGEND_INSIDE</literal>/<literal>PL_LEGEND_OUTSIDE</literal>
-	    bit is set in opt. For the center-left or center-right cases, the
+	    top or bottom positions if the
+	    <literal>PL_POSITION_INSIDE</literal>/<literal>PL_POSITION_OUTSIDE</literal>
+	    bit is set in <literal><parameter>position</parameter></literal>. 
+	    For the standard left or right positions, the 
 	    direction of motion is toward positive Y.
 	  </para>
 	</listitem>
@@ -6466,9 +6499,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Horizontal width in normalized viewport units of the plot
-	    area (where the colored boxes, lines, and/or lines of symbols are
-	    drawn) of the legend.
+	    Horizontal width in adopted coordinates of the plot area
+	    (where the colored boxes, lines, and/or lines of symbols are drawn) of
+	    the legend.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6491,7 +6524,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    cmap0 index of the color of the bounding-box line for the legend
+	    The cmap0 index of the color of the bounding-box line for the legend
 	    (<literal>PL_LEGEND_BOUNDING_BOX</literal>).
 	  </para>
 	</listitem>
@@ -6539,8 +6572,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Number of legend entries.N.B.  The total vertical height
-	    of the legend in normalized subpage coordinates is calculated
+	    Number of legend entries.  N.B.  The total vertical height
+	    of the legend in adopted coordinates is calculated
 	    internally from <literal><parameter>nlegend</parameter></literal>,
 	    <literal><parameter>text_scale</parameter></literal> (see below), and
 	    <literal><parameter>text_spacing</parameter></literal> (see below).
@@ -6575,7 +6608,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    Offset of the text area from the plot area in units of
 	    character width.  N.B.  The total horizontal width of the legend in
-	    normalized subpage coordinates is calculated internally from
+	    adopted coordinates is calculated internally from
 	    <parameter>plot_width</parameter> (see above),
 	    <parameter>text_offset</parameter>, and length (calculated internally)
 	    of the longest text string.
@@ -6590,7 +6623,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Character height scale for text annotations.  N.B.  The
-	    total vertical height of the legend in normalized subpage coordinates
+	    total vertical height of the legend in adopted coordinates
 	    is calculated internally from <parameter>nlegend</parameter> (see
 	    above), <parameter>text_scale</parameter>, and
 	    <parameter>text_spacing</parameter> (see below).
@@ -6606,7 +6639,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    Vertical spacing in units of the character height from one
 	    legend entry to the next.  N.B.  The total vertical height of the
-	    legend in normalized subpage coordinates is calculated internally from
+	    legend in adopted coordinates is calculated internally from
 	    <parameter>nlegend</parameter> (see above),
 	    <parameter>text_scale</parameter> (see above), and
 	    <parameter>text_spacing</parameter>.
