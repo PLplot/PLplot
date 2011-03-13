@@ -339,21 +339,15 @@ bumping the soversions of the affected PLplot libraries.
 
 Octave is a powerful platform that demands a first-class PLplot
 solution, but we were finding it difficult to realize that goal
-because we were running up against some limitations of the (now
-deprecated) matwrap-generated Octave bindings.  Accordingly, a
-swig-generated version of the Octave bindings has now been implemented
-that builds on the prior matwrapped bindings effort but also extends
-it with, e.g., bindings for plstring, plstring3, pllegend, and
-plcolbar which now make it possible to run examples 4, 18, 26, and 33
-(all of which have now have been updated to use those functions) and
-get consistent results with the corresponding C examples.  The
-swig-generated bindings for Octave are used by default, but the build
-system falls back to the legacy matwrapped bindings if swig is not
-available.  For now, users can force the legacy matwrapped bindings by
-using the -DENABLE_matwrapped_octave=ON cmake command-line option for
-comparison purposes, but in the near future we plan to remove the
-matwrapped octave bindings because the swig-generated alternative is
-more complete and easier to maintain.
+because we were running up against limitations of the previous
+matwrap-generated Octave bindings.  Accordingly, a swig-generated
+version of the Octave bindings has now been implemented that builds on
+the prior matwrapped bindings effort but also extends it with, e.g.,
+bindings for plstring, plstring3, pllegend, and plcolbar.  These new
+octave bindings (which now completely replace the prior matwrapped
+bindings) make it possible to run examples 4, 18, 26, and 33 (all of
+which have now have been updated to use those functions) and get
+consistent results with the corresponding C examples.
 
 Like the matwrapped bindings before it, the new swig-generated octave
 bindings currently do not have a number of the PLplot functions
@@ -1164,21 +1158,15 @@ bumping the soversions of the affected PLplot libraries.
 
 Octave is a powerful platform that demands a first-class PLplot
 solution, but we were finding it difficult to realize that goal
-because we were running up against some limitations of the (now
-deprecated) matwrap-generated Octave bindings.  Accordingly, a
-swig-generated version of the Octave bindings has now been implemented
-that builds on the prior matwrapped bindings effort but also extends
-it with, e.g., bindings for plstring, plstring3, pllegend, and
-plcolbar which now make it possible to run examples 4, 18, 26, and 33
-(all of which have now have been updated to use those functions) and
-get consistent results with the corresponding C examples.  The
-swig-generated bindings for Octave are used by default, but the build
-system falls back to the legacy matwrapped bindings if swig is not
-available.  For now, users can force the legacy matwrapped bindings by
-using the -DENABLE_matwrapped_octave=ON cmake command-line option for
-comparison purposes, but in the near future we plan to remove the
-matwrapped octave bindings because the swig-generated alternative is
-more complete and easier to maintain.
+because we were running up against limitations of the previous
+matwrap-generated Octave bindings.  Accordingly, a swig-generated
+version of the Octave bindings has now been implemented that builds on
+the prior matwrapped bindings effort but also extends it with, e.g.,
+bindings for plstring, plstring3, pllegend, and plcolbar.  These new
+octave bindings (which now completely replace the prior matwrapped
+bindings) make it possible to run examples 4, 18, 26, and 33 (all of
+which have now have been updated to use those functions) and get
+consistent results with the corresponding C examples.
 
 Like the matwrapped bindings before it, the new swig-generated octave
 bindings currently do not have a number of the PLplot functions
