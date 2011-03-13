@@ -185,7 +185,7 @@ template void _cvt_to_double(float *, double *, unsigned);
 **********************************************************************************/
 
 // With preceding count and remember size to check others
-%typemap(in) (PLINT n, PLINT *Array) (Matrix temp) {
+%typemap(in) (PLINT n, const PLINT *Array) (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   $1 = Alen = (PLINT)(_dim($input, 0));
@@ -193,10 +193,10 @@ template void _cvt_to_double(float *, double *, unsigned);
   temp = $input.matrix_value();
   _cvt_double_to($2, &temp(0,0), Alen);
 }
-%typemap(freearg) (PLINT n, PLINT *Array) {delete [] $2;}
+%typemap(freearg) (PLINT n, const PLINT *Array) {delete [] $2;}
 
 // With trailing count and check consistency with previous
-%typemap(in) (PLINT *ArrayCk, PLINT n) (Matrix temp) {
+%typemap(in) (const PLINT *ArrayCk, PLINT n) (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( _dim($input, 0) != Alen )
@@ -206,10 +206,10 @@ template void _cvt_to_double(float *, double *, unsigned);
   _cvt_double_to($1, &temp(0,0), Alen);
   $2 = Alen;
 }
-%typemap(freearg) (PLINT *ArrayCk, PLINT n) {delete [] $1;}
+%typemap(freearg) (const PLINT *ArrayCk, PLINT n) {delete [] $1;}
 
 // No count but check consistency with previous
-%typemap(in) PLINT *ArrayCk (Matrix temp) {
+%typemap(in) const PLINT *ArrayCk (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( _dim($input, 0) != Alen )
@@ -218,10 +218,10 @@ template void _cvt_to_double(float *, double *, unsigned);
   $1 = new PLINT[Alen];
   _cvt_double_to($1, &temp(0,0), Alen);
 }
-%typemap(freearg) PLINT *ArrayCk {delete [] $1;}
+%typemap(freearg) const PLINT *ArrayCk {delete [] $1;}
 
 // No count but check consistency with previous
-%typemap(in) PLINT *ArrayCkNull (Matrix temp) {
+%typemap(in) const PLINT *ArrayCkNull (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( ! $input.is_empty() ) {  
@@ -235,10 +235,10 @@ template void _cvt_to_double(float *, double *, unsigned);
     $1 = NULL;
   }
 }
-%typemap(freearg) PLINT *ArrayCkNull {if ($1 != NULL) delete [] $1;}
+%typemap(freearg) const PLINT *ArrayCkNull {if ($1 != NULL) delete [] $1;}
 
 // No count but remember size to check others
-%typemap(in) PLINT *Array (Matrix temp) {
+%typemap(in) const PLINT *Array (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   Alen = (PLINT)(_dim($input, 0));
@@ -246,11 +246,11 @@ template void _cvt_to_double(float *, double *, unsigned);
   $1 = new PLINT[Alen];
   _cvt_double_to($1, &temp(0,0), Alen);
 }
-%typemap(freearg) (PLINT *Array) {delete [] $1;}
+%typemap(freearg) (const PLINT *Array) {delete [] $1;}
 
 // No count but check consistency with previous
 // Variation to allow argument to be one shorter than others.
-%typemap(in) PLINT *ArrayCkMinus1 (Matrix temp) {
+%typemap(in) const PLINT *ArrayCkMinus1 (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( ! (_dim($input, 0) == Alen || _dim($input, 0) == Alen-1) )
@@ -259,11 +259,11 @@ template void _cvt_to_double(float *, double *, unsigned);
   $1 = new PLINT[Alen];
   _cvt_double_to($1, &temp(0,0), Alen);
 }
-%typemap(freearg) PLINT *ArrayCkMinus1 {delete [] $1;}
+%typemap(freearg) const PLINT *ArrayCkMinus1 {delete [] $1;}
 
 // For octave there is no provision for dropping the last argument
 // so this typemap is identical to the previous one.
-%typemap(in) PLINT *ArrayCkMinus1Null (Matrix temp) {
+%typemap(in) const PLINT *ArrayCkMinus1Null (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( ! (_dim($input, 0) == Alen || _dim($input, 0) == Alen-1) )
@@ -272,7 +272,7 @@ template void _cvt_to_double(float *, double *, unsigned);
   $1 = new PLINT[Alen];
   _cvt_double_to($1, &temp(0,0), Alen);
 }
-%typemap(freearg) PLINT *ArrayCkMinus1Null {delete [] $1;}
+%typemap(freearg) const PLINT *ArrayCkMinus1Null {delete [] $1;}
 
 
 /******************************************************************************
@@ -280,17 +280,17 @@ template void _cvt_to_double(float *, double *, unsigned);
 ******************************************************************************/
 
 // With preceding count and remember size to check others
-%typemap(in) (PLINT n, PLFLT *Array) (Matrix temp) {
+%typemap(in) (PLINT n, const PLFLT *Array) (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   $1 = Alen = (PLINT)(_dim($input, 0));
   temp = $input.matrix_value();
   $2 = &temp(0,0);
 }
-%typemap(freearg) (PLINT n, PLFLT *Array) {}
+%typemap(freearg) (PLINT n, const PLFLT *Array) {}
 
 // With trailing count and check consistency with previous
-%typemap(in) (PLFLT *ArrayCk, PLINT n) (Matrix temp) {
+%typemap(in) (const PLFLT *ArrayCk, PLINT n) (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( _dim($input, 0) != Alen )
@@ -299,10 +299,10 @@ template void _cvt_to_double(float *, double *, unsigned);
   $1 = &temp(0,0);
   $2 = (PLINT)(_dim($input, 0));
 }
-%typemap(freearg) (PLFLT *ArrayCk, PLINT n) {}
+%typemap(freearg) (const PLFLT *ArrayCk, PLINT n) {}
 
 // No count but check consistency with previous
-%typemap(in) PLFLT *ArrayCk (Matrix temp) {
+%typemap(in) const PLFLT *ArrayCk (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( _dim($input, 0) != Alen )
@@ -310,10 +310,22 @@ template void _cvt_to_double(float *, double *, unsigned);
   temp = $input.matrix_value();
   $1 = &temp(0,0);
 }
-%typemap(freearg) PLFLT *ArrayCk {}
+%typemap(freearg) const PLFLT *ArrayCk {}
+
+// Special version to handle my_* non-const tr arguments.
+// No count but check that has length of 6.
+%typemap(in) PLFLT *Array6 (Matrix temp) {
+  if ( _n_dims($input) > 1 )
+      { error("argument must be a scalar or vector"); SWIG_fail; }
+  if ( _dim($input, 0) != 6 )
+      { error("argument vectors must have length of 6"); SWIG_fail; }
+  temp = $input.matrix_value();
+  $1 = &temp(0,0);
+}
+%typemap(freearg) PLFLT *Array6 {}
 
 // No count but check consistency with previous or NULL
-%typemap(in) PLFLT *ArrayCkNull (Matrix temp) {
+%typemap(in) const PLFLT *ArrayCkNull (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( ! $input.is_empty() ) {
@@ -326,27 +338,27 @@ template void _cvt_to_double(float *, double *, unsigned);
     $1 = NULL;
   }
 }
-%typemap(freearg) PLFLT *ArrayCkNull {}
+%typemap(freearg) const PLFLT *ArrayCkNull {}
 
 // No count but remember size to check others
-%typemap(in) PLFLT *Array (Matrix temp) {
+%typemap(in) const PLFLT *Array (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   Alen = (PLINT)(_dim($input, 0));
   temp = $input.matrix_value();
   $1 = &temp(0,0);
 }
-%typemap(freearg) (PLFLT *Array) {}
+%typemap(freearg) (const PLFLT *Array) {}
 
 // With trailing count but remember size to check others
-%typemap(in) (PLFLT *Array, PLINT n) (Matrix temp) {
+%typemap(in) (const PLFLT *Array, PLINT n) (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   temp = $input.matrix_value();
   $1 = &temp(0,0);
   $2 = Alen = (PLINT)(_dim($input, 0));
 }
-%typemap(freearg) (PLFLT *Array, PLINT n) {}
+%typemap(freearg) (const PLFLT *Array, PLINT n) {}
 
 // The Matrix typemaps below here are a special form (with **Matrix
 // replaced by *Matrix) that is only suitable for special octave
@@ -354,7 +366,7 @@ template void _cvt_to_double(float *, double *, unsigned);
 // PLplot functions that use **Matrix are %ignored.
 
 // No X count but check consistency with previous
-%typemap(in) PLFLT *ArrayCkX (Matrix temp) {
+%typemap(in) const PLFLT *ArrayCkX (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( _dim($input, 0) != Xlen )
@@ -362,10 +374,10 @@ template void _cvt_to_double(float *, double *, unsigned);
   temp = $input.matrix_value();
   $1 = &temp(0,0);
 }
-%typemap(freearg) PLFLT *ArrayCkX {}
+%typemap(freearg) const PLFLT *ArrayCkX {}
 
 // No Y count but check consistency with previous
-%typemap(in) PLFLT *ArrayCkY (Matrix temp) {
+%typemap(in) const PLFLT *ArrayCkY (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   if ( _dim($input, 0) != Ylen )
@@ -373,50 +385,50 @@ template void _cvt_to_double(float *, double *, unsigned);
   temp = $input.matrix_value();
   $1 = &temp(0,0);
 }
-%typemap(freearg) PLFLT *ArrayCkY {}
+%typemap(freearg) const PLFLT *ArrayCkY {}
 
 // With trailing X count but remember X size to check others
-%typemap(in) (PLFLT *ArrayX, PLINT nx) (Matrix temp) {
+%typemap(in) (const PLFLT *ArrayX, PLINT nx) (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   temp = $input.matrix_value();
   $1 = &temp(0,0);
   $2 = Xlen = (PLINT)(_dim($input, 0));
 }
-%typemap(freearg) (PLFLT *ArrayX, PLINT nx) {}
+%typemap(freearg) (const PLFLT *ArrayX, PLINT nx) {}
 
 // No X count but remember X size to check others
-%typemap(in) PLFLT *ArrayX (Matrix temp) {
+%typemap(in) const PLFLT *ArrayX (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   temp = $input.matrix_value();
   $1 = &temp(0,0);
   Xlen = (PLINT)(_dim($input, 0));
 }
-%typemap(freearg) PLFLT *ArrayX {}
+%typemap(freearg) const PLFLT *ArrayX {}
 
 // With trailing Y count but remember Y size to check others
-%typemap(in) (PLFLT *ArrayY, PLINT ny) (Matrix temp) {
+%typemap(in) (const PLFLT *ArrayY, PLINT ny) (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   temp = $input.matrix_value();
   $1 = &temp(0,0);
   $2 = Ylen = (PLINT)(_dim($input, 0));
 }
-%typemap(freearg) (PLFLT *ArrayY, PLINT ny) {}
+%typemap(freearg) (const PLFLT *ArrayY, PLINT ny) {}
 
 // No Y count but remember Y size to check others
-%typemap(in) PLFLT *ArrayY (Matrix temp) {
+%typemap(in) const PLFLT *ArrayY (Matrix temp) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   temp = $input.matrix_value();
   $1 = &temp(0,0);
   Ylen = (PLINT)(_dim($input, 0));
 }
-%typemap(freearg) (PLFLT *ArrayY) {}
+%typemap(freearg) (const PLFLT *ArrayY) {}
 
 // 2D array with trailing dimensions, check consistency with previous
-%typemap(in) (PLFLT *MatrixCk, PLINT nx, PLINT ny) (Matrix temp) {
+%typemap(in) (const PLFLT *MatrixCk, PLINT nx, PLINT ny) (Matrix temp) {
   if ( _n_dims($input) >2 )
       { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
   if ( _dim($input, 0) != Xlen )
@@ -428,10 +440,10 @@ template void _cvt_to_double(float *, double *, unsigned);
   $2 = (PLINT)(_dim($input, 0));
   $3 = (PLINT)(_dim($input, 1));
 }
-%typemap(freearg) (PLFLT *MatrixCk, PLINT nx, PLINT ny) {}
+%typemap(freearg) (const PLFLT *MatrixCk, PLINT nx, PLINT ny) {}
 
 // 2D array with trailing dimensions but set the X, Y size for later checking
-%typemap(in) (PLFLT *Matrix, PLINT nx, PLINT ny) (Matrix temp) {
+%typemap(in) (const PLFLT *Matrix, PLINT nx, PLINT ny) (Matrix temp) {
   if ( _n_dims($input) > 2 )
       { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
   temp = $input.matrix_value();
@@ -439,11 +451,11 @@ template void _cvt_to_double(float *, double *, unsigned);
   $2 = Xlen = (PLINT)(_dim($input, 0));
   $3 = Ylen = (PLINT)(_dim($input, 1));
 }
-%typemap(freearg) (PLFLT *Matrix, PLINT nx, PLINT ny) {}
+%typemap(freearg) (const PLFLT *Matrix, PLINT nx, PLINT ny) {}
 
 
 // 2D array with no count but set the X, Y size for later checking
-%typemap(in) PLFLT *Matrix (Matrix temp) {
+%typemap(in) const PLFLT *Matrix (Matrix temp) {
   if ( _n_dims($input) > 2 )
       { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
   temp = $input.matrix_value();
@@ -451,11 +463,11 @@ template void _cvt_to_double(float *, double *, unsigned);
   Xlen = (PLINT)(_dim($input, 0));
   Ylen = (PLINT)(_dim($input, 1));
 }
-%typemap(freearg) PLFLT *Matrix {}
+%typemap(freearg) const PLFLT *Matrix {}
 
 
 // 2D array with no count but check for consistency
-%typemap(in) PLFLT *MatrixCk (Matrix temp) {
+%typemap(in) const PLFLT *MatrixCk (Matrix temp) {
   if ( _n_dims($input) > 2 )
       { error("argument must be a scalar, vector, or 2D matrix."); SWIG_fail; }
   if ( _dim($input, 0) != Xlen )
@@ -465,12 +477,12 @@ template void _cvt_to_double(float *, double *, unsigned);
   temp = $input.matrix_value();
   $1 = &temp(0,0);
 }
-%typemap(freearg) PLFLT *MatrixCk {}
+%typemap(freearg) const PLFLT *MatrixCk {}
 
 
 // Set Y length for later consistency checking, with trailing count
 // and 2D array, check for consistency input / output version
-%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) (Matrix temp, octave_value_list retval) {
+%typemap(in) (const PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) (Matrix temp, octave_value_list retval) {
   if ( _n_dims($input) > 1 )
       { error("argument must be a scalar or vector"); SWIG_fail; }
   temp = $input.matrix_value();
@@ -480,10 +492,10 @@ template void _cvt_to_double(float *, double *, unsigned);
   $3 = (PLFLT *)retval(0).matrix_value().data();
 
 }
-%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {
+%typemap(argout) (const PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {
   $result = SWIG_Octave_AppendOutput($result, retval$argnum(0));
 }
-%typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {}
+%typemap(freearg) (const PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {}
 
 
 //-----------------------------------------------------------------------------
@@ -504,7 +516,7 @@ template void _cvt_to_double(float *, double *, unsigned);
  } 
 
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
-typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
+typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT*, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
@@ -512,7 +524,7 @@ typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 
 %{
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
-typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
+typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
@@ -597,7 +609,7 @@ void my_plstripc( PLINT *id, const char *xspec, const char *yspec,
                   PLFLT xlpos, PLFLT ylpos,
                   PLBOOL y_ascl, PLBOOL acc,
                   PLINT colbox, PLINT collab,
-                  PLINT *colline, PLINT *styline,
+                  const PLINT *colline, const PLINT *styline,
                   const char *legline1, const char *legline2, const char *legline3, const char *legline4,
                   const char *labx, const char *laby, const char *labtop )
 {
@@ -615,7 +627,7 @@ void my_plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
                   PLFLT xlpos, PLFLT ylpos,
                   PLBOOL y_ascl, PLBOOL acc,
                   PLINT colbox, PLINT collab,
-                  PLINT *Array, PLINT *ArrayCk,
+                  const PLINT *Array, const PLINT *ArrayCk,
                   const char *legline1, const char *legline2, const char *legline3, const char *legline4,
                   const char *labx, const char *laby, const char *labtop );
 
@@ -650,7 +662,7 @@ void xform( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 // convert from Fortran like arrays (one vector), to C like 2D arrays
 
 #define  f2c( f, ff, nx, ny )                              \
-    PLFLT * *ff;                                           \
+    PLFLT **ff;                                           \
     ff = (PLFLT **) alloca( nx * sizeof ( PLFLT * ) );     \
     for ( int i = 0; i < nx; i++ ) {                       \
         ff[i] = (PLFLT *) alloca( ny * sizeof ( PLFLT ) ); \
@@ -659,78 +671,78 @@ void xform( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 
 // simpler plcont() for use with xform()
 
-void my_plcont( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *tr )
+void my_plcont( const PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                PLINT ly, const PLFLT *clevel, PLINT nlevel, PLFLT *tr )
 {
     f2c( f, ff, nx, ny );
-    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, xform, tr );
+    c_plcont( (const PLFLT **) ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, xform, tr );
 }
 
 // plcont() for use with pltr0() NOT TESTED
 
-void my_plcont0( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                 PLINT ly, PLFLT *clevel, PLINT nlevel )
+void my_plcont0( const PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, const PLFLT *clevel, PLINT nlevel )
 {
     f2c( f, ff, nx, ny );
-    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr0, NULL );
+    c_plcont( (const PLFLT **) ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr0, NULL );
 }
 
 // plcont() for use with pltr1()
 
-void my_plcont1( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                 PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *xg, PLFLT *yg )
+void my_plcont1( const PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, const PLFLT *clevel, PLINT nlevel, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid grid1;
     grid1.nx = nx;  grid1.ny = ny;
-    grid1.xg = xg;  grid1.yg = yg;
+    grid1.xg = (PLFLT *) xg;  grid1.yg = (PLFLT *) yg;
     f2c( f, ff, nx, ny );
-    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr1, &grid1 );
+    c_plcont( (const PLFLT **) ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr1, &grid1 );
 }
 
 // plcont() for use with pltr2()
-void my_plcont2( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                 PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *xg, PLFLT *yg )
+void my_plcont2( const PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, const PLFLT *clevel, PLINT nlevel, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid2 grid2;
     f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
     grid2.nx = nx;  grid2.ny = ny;
     grid2.xg = xgg; grid2.yg = ygg;
     f2c( f, ff, nx, ny );
-    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr2, &grid2 );
+    c_plcont( (const PLFLT **) ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr2, &grid2 );
 }
 
 // plcont() for use with pltr2p()
 
-void my_plcont2p( PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                  PLINT ly, PLFLT *clevel, PLINT nlevel, PLFLT *xg, PLFLT *yg )
+void my_plcont2p( const PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                  PLINT ly, const PLFLT *clevel, PLINT nlevel, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid2 grid2;
     f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
     grid2.nx = nx;  grid2.ny = ny;
     grid2.xg = xgg; grid2.yg = ygg;
     f2c( f, ff, nx, ny );
-    c_plcont( ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr2, &grid2 );
+    c_plcont( (const PLFLT **) ff, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr2, &grid2 );
 }
 %}
 
-void my_plcont( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                PLINT ly, PLFLT *Array, PLINT n, PLFLT *Array );
-void my_plcont0( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                 PLINT ly, PLFLT *Array, PLINT n );
-void my_plcont1( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                 PLINT ly, PLFLT *Array, PLINT n, PLFLT *ArrayCkX, PLFLT *ArrayCkY );
-void my_plcont2( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                 PLINT ly, PLFLT *Array, PLINT n, PLFLT *MatrixCk, PLFLT *MatrixCk );
-void my_plcont2p( PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
-                  PLINT ly, PLFLT *Array, PLINT n, PLFLT *MatrixCk, PLFLT *MatrixCk );
+void my_plcont( const PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                PLINT ly, const PLFLT *Array, PLINT n, PLFLT *Array6 );
+void my_plcont0( const PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, const PLFLT *Array, PLINT n );
+void my_plcont1( const PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, const PLFLT *Array, PLINT n, const PLFLT *ArrayCkX, const PLFLT *ArrayCkY );
+void my_plcont2( const PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                 PLINT ly, const PLFLT *Array, PLINT n, const PLFLT *MatrixCk, const PLFLT *MatrixCk );
+void my_plcont2p( const PLFLT *Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
+                  PLINT ly, const PLFLT *Array, PLINT n, const PLFLT *MatrixCk, const PLFLT *MatrixCk );
 
 // plgriddata wrapper.
 %ignore plgriddata;
 %rename(plgriddata) my_plgriddata;
 
 %{
-void my_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-                    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+void my_plgriddata( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
+                    const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
                     PLFLT *zg, int type, PLFLT data )
 {
     f2c( zg, zgg, nptsx, nptsy );
@@ -741,8 +753,8 @@ void my_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 }
 %}
 
-void my_plgriddata( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
-            PLFLT *ArrayX, PLINT nx, PLFLT *ArrayY, PLINT ny,
+void my_plgriddata( const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk, PLINT n,
+            const PLFLT *ArrayX, PLINT nx, const PLFLT *ArrayY, PLINT ny,
             PLFLT *OutMatrixCk, PLINT type, PLFLT data );
 
 // plmesh-related wrappers.
@@ -754,26 +766,26 @@ void my_plgriddata( PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk, PLINT n,
 %{
 // Plots a mesh representation of the function z[x][y].
 
-void my_plmesh( PLFLT *x, PLFLT *y, PLFLT *z, PLINT nx, PLINT ny, PLINT opt )
+void my_plmesh( const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT nx, PLINT ny, PLINT opt )
 {
     f2c( z, zz, nx, ny );
-    c_plmesh( x, y, zz, nx, ny, opt );
+    c_plmesh( x, y, (const PLFLT **) zz, nx, ny, opt );
 }
 
 // Plots a mesh representation of the function z[x][y] with contour
 
-void my_plmeshc( PLFLT *x, PLFLT *y, PLFLT *z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+void my_plmeshc( const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     f2c( z, zz, nx, ny );
-    c_plmeshc( x, y, zz, nx, ny, opt, clevel, nlevel );
+    c_plmeshc( x, y, (const PLFLT **) zz, nx, ny, opt, clevel, nlevel );
 }
 %}
 
-void my_plmesh( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
+void my_plmesh( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
         PLINT nx, PLINT ny, PLINT opt );
 
-void my_plmeshc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
-         PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+void my_plmeshc( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
+         PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
 
 // plot3d-related wrappers.
 
@@ -786,28 +798,28 @@ void my_plmeshc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
 
 %{
 // Plots a 3-d representation of the function z[x][y].
-void my_plot3d( PLFLT *x, PLFLT *y, PLFLT *z,
+void my_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT *z,
                 PLINT nx, PLINT ny, PLINT opt, PLINT side )
 {
     f2c( z, zz, nx, ny )
-    c_plot3d( x, y, zz, nx, ny, opt, side );
+    c_plot3d( x, y, (const PLFLT **) zz, nx, ny, opt, side );
 }
 
 // Plots a 3-d representation of the function z[x][y] with contour
-void my_plot3dc( PLFLT *x, PLFLT *y, PLFLT *z,
+void my_plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT *z,
                  PLINT nx, PLINT ny, PLINT opt,
-                 PLFLT *clevel, PLINT nlevel )
+                 const PLFLT *clevel, PLINT nlevel )
 {
     f2c( z, zz, nx, ny )
-    c_plot3dc( x, y, zz, nx, ny, opt, clevel, nlevel );
+    c_plot3dc( x, y, (const PLFLT **) zz, nx, ny, opt, clevel, nlevel );
 }
 %}
 
-void my_plot3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
+void my_plot3d( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
         PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
 
-void my_plot3dc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
-         PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+void my_plot3dc( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
+         PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
 
 // plsurf3d-related wrappings:
 %ignore plsurf3d;
@@ -816,16 +828,16 @@ void my_plot3dc( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
 //unimplemented: %rename(plsurf3d) my_plsurf3d;
 
 %{
-void my_plsurf3d( PLFLT *x, PLFLT *y, PLFLT *z,
-                  PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+void my_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT *z,
+                  PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     f2c( z, zz, nx, ny )
-    c_plsurf3d( x, y, zz, nx, ny, opt, clevel, nlevel );
+    c_plsurf3d( x, y, (const PLFLT **) zz, nx, ny, opt, clevel, nlevel );
 }
 %}
 
-void my_plsurf3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
-          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n );
+void my_plsurf3d( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
+          PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
 
 // plshade-related wrappers.
 
@@ -842,7 +854,7 @@ void my_plsurf3d( PLFLT *ArrayX, PLFLT *ArrayY, PLFLT *MatrixCk,
 //
 
 // the simpler plshade()
-void my_plshade( PLFLT *a, PLINT nx, PLINT ny, PLFLT *defined,
+void my_plshade( const PLFLT *a, PLINT nx, PLINT ny, const PLFLT *defined,
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -851,46 +863,46 @@ void my_plshade( PLFLT *a, PLINT nx, PLINT ny, PLFLT *defined,
                  PLINT rectangular, PLFLT *tr )
 {
     f2c( a, aa, nx, ny );
-    c_plshade( aa, nx, ny, NULL, left, right, bottom, top,
+    c_plshade( (const PLFLT **) aa, nx, ny, NULL, left, right, bottom, top,
         shade_min, shade_max, sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
         plfill, rectangular, xform, tr );
 }
 
 //  plshade() for use with pltr1
-void my_plshade1( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+void my_plshade1( const PLFLT *a, PLINT nx, PLINT ny, const char *defined,
                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                   PLFLT shade_min, PLFLT shade_max,
                   PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                   PLINT min_color, PLINT min_width,
                   PLINT max_color, PLINT max_width,
-                  PLINT rectangular, PLFLT *xg, PLFLT *yg )
+                  PLINT rectangular, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid grid1;
     grid1.nx = nx;  grid1.ny = ny;
-    grid1.xg = xg;  grid1.yg = yg;
+    grid1.xg = (PLFLT *) xg;  grid1.yg = (PLFLT *) yg;
     f2c( a, aa, nx, ny );
-    c_plshade( aa, nx, ny, NULL, left, right, bottom, top,
+    c_plshade( (const PLFLT **) aa, nx, ny, NULL, left, right, bottom, top,
         shade_min, shade_max, sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
         plfill, rectangular, pltr1, &grid1 );
 }
 
 //  plshade() for use with pltr2
-void my_plshade2( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+void my_plshade2( const PLFLT *a, PLINT nx, PLINT ny, const char *defined,
                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                   PLFLT shade_min, PLFLT shade_max,
                   PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
                   PLINT min_color, PLINT min_width,
                   PLINT max_color, PLINT max_width,
-                  PLINT rectangular, PLFLT *xg, PLFLT *yg )
+                  PLINT rectangular, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid2 grid2;
     f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
     grid2.nx = nx;  grid2.ny = ny;
     grid2.xg = xgg; grid2.yg = ygg;
     f2c( a, aa, nx, ny );
-    c_plshade( aa, nx, ny, NULL, left, right, bottom, top,
+    c_plshade( (const PLFLT **) aa, nx, ny, NULL, left, right, bottom, top,
         shade_min, shade_max, sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
         plfill, rectangular, pltr2, &grid2 );
@@ -900,36 +912,36 @@ void my_plshade2( PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 
 // The defined functionality is completely unused, but through
 // a historical anomaly is typed differently between my_plshade and
-// my_plshade1 (or my_plshade2) which is why we use PLFLT *Array for
+// my_plshade1 (or my_plshade2) which is why we use const PLFLT *Array for
 // the fourth argument of my_plshade, but const char * defined
 // for the other fourth arguments.  FIXME.  I (AWI) recommend an API break
 // with this fourth (unused) argument completely eliminated, but
 // that needs discussion.
 // my_plshade1 and my_plshade2 are completely untested by the standard examples.
 
-void my_plshade( PLFLT *Matrix, PLINT nx, PLINT ny, PLFLT *Array,
+void my_plshade( const PLFLT *Matrix, PLINT nx, PLINT ny, const PLFLT *Array,
          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
          PLFLT shade_min, PLFLT shade_max,
          PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
          PLINT min_color, PLINT min_width,
          PLINT max_color, PLINT max_width,
-         PLBOOL rectangular, PLFLT *Array );
+         PLBOOL rectangular, PLFLT *Array6 );
 
-void my_plshade1( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
+void my_plshade1( const PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
          PLFLT shade_min, PLFLT shade_max,
          PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
          PLINT min_color, PLINT min_width,
          PLINT max_color, PLINT max_width,
-         PLBOOL rectangular, PLFLT *ArrayCkX, PLFLT *ArrayCkY);
+         PLBOOL rectangular, const PLFLT *ArrayCkX, const PLFLT *ArrayCkY);
 
-void my_plshade2( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
+void my_plshade2( const PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
          PLFLT shade_min, PLFLT shade_max,
          PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
          PLINT min_color, PLINT min_width,
          PLINT max_color, PLINT max_width,
-         PLBOOL rectangular, PLFLT *Matrix, PLFLT *Matrix);
+         PLBOOL rectangular, const PLFLT *Matrix, const PLFLT *Matrix);
 
 // plshades-related wrappers.
 
@@ -941,86 +953,86 @@ void my_plshade2( PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
 %rename(plshades2) my_plshades2;
 
 %{
-void my_plshades( PLFLT *a, PLINT nx, PLINT ny,
+void my_plshades( const PLFLT *a, PLINT nx, PLINT ny,
                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-                  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                  const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                   PLINT cont_color, PLINT cont_width,
                   PLINT rectangular )
 {
     f2c( a, aa, nx, ny );
-    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+    c_plshades( (const PLFLT **) aa, nx, ny, NULL, left, right, bottom, top,
         clevel, nlevel, fill_width, cont_color, cont_width,
         plfill, rectangular, NULL, NULL );
 }
 
-void my_plshadesx( PLFLT *a, PLINT nx, PLINT ny,
+void my_plshadesx( const PLFLT *a, PLINT nx, PLINT ny,
                    PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                   const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                    PLINT cont_color, PLINT cont_width,
                    PLINT rectangular, PLFLT *tr )
 {
     f2c( a, aa, nx, ny );
-    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+    c_plshades( (const PLFLT **) aa, nx, ny, NULL, left, right, bottom, top,
         clevel, nlevel, fill_width, cont_color, cont_width,
         plfill, rectangular, xform, tr );
 }
 
-void my_plshades1( PLFLT *a, PLINT nx, PLINT ny,
+void my_plshades1( const PLFLT *a, PLINT nx, PLINT ny,
                    PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                   const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                    PLINT cont_color, PLINT cont_width,
-                   PLINT rectangular, PLFLT *xg, PLFLT *yg )
+                   PLINT rectangular, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid grid1;
     grid1.nx = nx;  grid1.ny = ny;
-    grid1.xg = xg;  grid1.yg = yg;
+    grid1.xg = (PLFLT *) xg;  grid1.yg = (PLFLT *) yg;
 
     f2c( a, aa, nx, ny );
-    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+    c_plshades( (const PLFLT **) aa, nx, ny, NULL, left, right, bottom, top,
         clevel, nlevel, fill_width, cont_color, cont_width,
         plfill, rectangular, pltr1, &grid1 );
 }
 
-void my_plshades2( PLFLT *a, PLINT nx, PLINT ny,
+void my_plshades2( const PLFLT *a, PLINT nx, PLINT ny,
                    PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                   const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                    PLINT cont_color, PLINT cont_width,
-                   PLINT rectangular, PLFLT *xg, PLFLT *yg )
+                   PLINT rectangular, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid2 grid2;
     f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
     grid2.nx = nx;  grid2.ny = ny;
     grid2.xg = xgg; grid2.yg = ygg;
     f2c( a, aa, nx, ny );
-    c_plshades( aa, nx, ny, NULL, left, right, bottom, top,
+    c_plshades( (const PLFLT **) aa, nx, ny, NULL, left, right, bottom, top,
         clevel, nlevel, fill_width, cont_color, cont_width,
         plfill, rectangular, pltr2, &grid2 );
 }
 %}
 
-void my_plshades( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plshades( const PLFLT *Matrix, PLINT nx, PLINT ny,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-          PLFLT *Array, PLINT n, PLINT fill_width,
+          const PLFLT *Array, PLINT n, PLINT fill_width,
           PLINT cont_color, PLINT cont_width,
           PLBOOL rectangular);
 
-void my_plshadesx( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plshadesx( const PLFLT *Matrix, PLINT nx, PLINT ny,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-          PLFLT *Array, PLINT n, PLINT fill_width,
+          const PLFLT *Array, PLINT n, PLINT fill_width,
           PLINT cont_color, PLINT cont_width,
-          PLBOOL rectangular, PLFLT *Array);
+          PLBOOL rectangular, PLFLT *Array6 );
 
-void my_plshades1( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plshades1( const PLFLT *Matrix, PLINT nx, PLINT ny,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-          PLFLT *Array, PLINT n, PLINT fill_width,
+          const PLFLT *Array, PLINT n, PLINT fill_width,
           PLINT cont_color, PLINT cont_width,
-          PLBOOL rectangular, PLFLT *ArrayCkX, PLFLT *ArrayCkY);
+          PLBOOL rectangular, const PLFLT *ArrayCkX, const PLFLT *ArrayCkY);
 
-void my_plshades2( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plshades2( const PLFLT *Matrix, PLINT nx, PLINT ny,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-          PLFLT *Array, PLINT n, PLINT fill_width,
+          const PLFLT *Array, PLINT n, PLINT fill_width,
           PLINT cont_color, PLINT cont_width,
-          PLBOOL rectangular, PLFLT *Matrix, PLFLT *Matrix);
+          PLBOOL rectangular, const PLFLT *Matrix, const PLFLT *Matrix);
 
 // plvect-related wrappers.
 
@@ -1034,26 +1046,26 @@ void my_plshades2( PLFLT *Matrix, PLINT nx, PLINT ny,
 // Plot an array of vector arrows - uses the same function pointer
 // convention as plcont
 
-void my_plvect( PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *tr )
+void my_plvect( const PLFLT *u, const PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *tr )
 {
     f2c( u, uu, nx, ny );
     f2c( v, vv, nx, ny );
-    c_plvect( uu, vv, nx, ny, scale, xform, tr );
+    c_plvect( (const PLFLT **) uu, (const PLFLT **) vv, nx, ny, scale, xform, tr );
 }
 
 // plvect() for use with pltr1
-void my_plvect1( PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *xg, PLFLT *yg )
+void my_plvect1( const PLFLT *u, const PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid grid1;
     grid1.nx = nx;  grid1.ny = ny;
-    grid1.xg = xg;  grid1.yg = yg;
+    grid1.xg = (PLFLT *) xg;  grid1.yg = (PLFLT *) yg;
     f2c( u, uu, nx, ny );
     f2c( v, vv, nx, ny );
-    c_plvect( uu, vv, nx, ny, scale, pltr1, &grid1 );
+    c_plvect( (const PLFLT **) uu, (const PLFLT **) vv, nx, ny, scale, pltr1, &grid1 );
 }
 
 // plvect() for use with pltr2
-void my_plvect2( PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *xg, PLFLT *yg )
+void my_plvect2( const PLFLT *u, const PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid2 grid2;
     f2c( xg, xgg, nx, ny );  f2c( yg, ygg, nx, ny );
@@ -1061,18 +1073,18 @@ void my_plvect2( PLFLT *u, PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, PLFLT *xg,
     grid2.xg = xgg;  grid2.yg = ygg;
     f2c( u, uu, nx, ny );
     f2c( v, vv, nx, ny );
-    c_plvect( uu, vv, nx, ny, scale, pltr2, &grid2 );
+    c_plvect( (const PLFLT **) uu, (const PLFLT **) vv, nx, ny, scale, pltr2, &grid2 );
 }
 %}
 
-void my_plvect( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
-        PLFLT *Array );
+void my_plvect( const PLFLT *Matrix, const PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+        PLFLT *Array6 );
 
-void my_plvect1( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
-         PLFLT *ArrayCkX, PLFLT *ArrayCkY );
+void my_plvect1( const PLFLT *Matrix, const PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+         const PLFLT *ArrayCkX, const PLFLT *ArrayCkY );
 
-void my_plvect2( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
-         PLFLT *Matrix, PLFLT *Matrix);
+void my_plvect2( const PLFLT *Matrix, const PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale,
+         const PLFLT *Matrix, const PLFLT *Matrix);
 
 // plimage-related wrappers.
 %ignore plimage;
@@ -1085,83 +1097,83 @@ void my_plvect2( PLFLT *Matrix, PLFLT *MatrixCk, PLINT nx, PLINT ny, PLFLT scale
 
 %{
 // Plot an image with distortion - uses the same function pointer
-void my_plimage( PLFLT *a, PLINT nx, PLINT ny,
+void my_plimage( const PLFLT *a, PLINT nx, PLINT ny,
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  PLFLT zmin, PLFLT zmax,
                  PLFLT dxmin, PLFLT dxmax, PLFLT dymin, PLFLT dymax )
 {
     f2c( a, aa, nx, ny );
-    plimage( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, dxmin, dxmax, dymin, dymax );
+    plimage( (const PLFLT **) aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, dxmin, dxmax, dymin, dymax );
 }
 
 // Plot an image with distortion - uses the same function pointer
 // convention as plcont
-void my_plimagefr( PLFLT *a, PLINT nx, PLINT ny,
+void my_plimagefr( const PLFLT *a, PLINT nx, PLINT ny,
                    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                    PLFLT zmin, PLFLT zmax,
                    PLFLT valuemin, PLFLT valuemax )
 {
     f2c( a, aa, nx, ny );
-    plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, NULL, NULL );
+    plimagefr( (const PLFLT **) aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, NULL, NULL );
 }
 
-void my_plimagefrx( PLFLT *a, PLINT nx, PLINT ny,
+void my_plimagefrx( const PLFLT *a, PLINT nx, PLINT ny,
                     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                     PLFLT zmin, PLFLT zmax,
                     PLFLT valuemin, PLFLT valuemax, PLFLT *tr )
 {
     f2c( a, aa, nx, ny );
-    plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, xform, tr );
+    plimagefr( (const PLFLT **) aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, xform, tr );
 }
 
 // plimagefr() for use with pltr1
-void my_plimagefr1( PLFLT *a, PLINT nx, PLINT ny,
+void my_plimagefr1( const PLFLT *a, PLINT nx, PLINT ny,
                     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                     PLFLT zmin, PLFLT zmax,
-                    PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg )
+                    PLFLT valuemin, PLFLT valuemax, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid grid1;
     grid1.nx = nx + 1;  grid1.ny = ny + 1;
-    grid1.xg = xg;  grid1.yg = yg;
+    grid1.xg = (PLFLT *) xg;  grid1.yg = (PLFLT *) yg;
     f2c( a, aa, nx, ny );
-    c_plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr1, &grid1 );
+    c_plimagefr( (const PLFLT **) aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr1, &grid1 );
 }
 
 // plimagefr() for use with pltr2
-void my_plimagefr2( PLFLT *a, PLINT nx, PLINT ny,
+void my_plimagefr2( const PLFLT *a, PLINT nx, PLINT ny,
                     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                     PLFLT zmin, PLFLT zmax,
-                    PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg )
+                    PLFLT valuemin, PLFLT valuemax, const PLFLT *xg, const PLFLT *yg )
 {
     PLcGrid2 grid2;
     f2c( xg, xgg, ( nx + 1 ), ( ny + 1 ) );  f2c( yg, ygg, ( nx + 1 ), ( ny + 1 ) );
     grid2.nx = nx + 1;  grid2.ny = ny + 1;
     grid2.xg = xgg;  grid2.yg = ygg;
     f2c( a, aa, nx, ny );
-    c_plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr2, &grid2 );
+    c_plimagefr( (const PLFLT **) aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr2, &grid2 );
 }
 
 %}
 
-void my_plimage( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plimage( const PLFLT *Matrix, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
          PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
 
-void my_plimagefr( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plimagefr( const PLFLT *Matrix, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
                 PLFLT valuemin, PLFLT valuemax );
 
-void my_plimagefrx( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plimagefrx( const PLFLT *Matrix, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-         PLFLT valuemin, PLFLT valuemax, PLFLT *Array );
+         PLFLT valuemin, PLFLT valuemax, PLFLT *Array6 );
 
-void my_plimagefr1( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plimagefr1( const PLFLT *Matrix, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-         PLFLT valuemin, PLFLT valuemax, PLFLT *ArrayCkX, PLFLT * ArrayCkY );
+         PLFLT valuemin, PLFLT valuemax, const PLFLT *ArrayCkX, const PLFLT *ArrayCkY );
 
-void my_plimagefr2( PLFLT *Matrix, PLINT nx, PLINT ny,
+void my_plimagefr2( const PLFLT *Matrix, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-         PLFLT valuemin, PLFLT valuemax, PLFLT *Matrix, PLFLT *Matrix );
+         PLFLT valuemin, PLFLT valuemax, const PLFLT *Matrix, const PLFLT *Matrix );
 
 // This test function should be removed when we are confident of our
 // dealings with all types of octave string arrays.
@@ -1178,7 +1190,7 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
 %}
 
 // No count but check consistency with previous
-%typemap(in) char **ArrayCk {
+%typemap(in) const char **ArrayCk {
   charMatrix temp_matrix;
   Cell temp_cell;
   char *tmp_cstring;
@@ -1264,7 +1276,7 @@ void testppchar(PLINT nlegend, const PLINT *opt_array, const char ** text) {
   }
   
 }
-%typemap(freearg) char **ArrayCk {
+%typemap(freearg) const char **ArrayCk {
   int i;
   if ($1 != NULL) {
   for(i=0; i<Alen; i++) {

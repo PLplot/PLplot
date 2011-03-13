@@ -23,7 +23,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_octave "Enable Octave bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_octave "Enable Octave bindings" OFF)
+  option(ENABLE_octave "Enable Octave bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_octave AND NOT CMAKE_CXX_COMPILER_WORKS)
