@@ -68,11 +68,9 @@ main( int argc, const char **argv )
 static int
 plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
-    char *tmp;
+    const char *tmp = Tcl_GetStringResult( interp );
 
 // Print error message if one given
-
-    tmp = Tcl_GetStringResult( interp );
     if ( tmp != NULL && tmp != '\0' )
         fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
 
