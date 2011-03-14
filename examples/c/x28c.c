@@ -163,7 +163,7 @@ int main( int argc, const char *argv[] )
             0.0, "  revolution" );
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    plmesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 2: Demonstrate rotation of string around its axis.
     pladv( 0 );
@@ -240,7 +240,7 @@ int main( int argc, const char *argv[] )
             0.5, "rotation for z = z#dmin#u" );
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    plmesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 3: Demonstrate shear of string along its axis.
     // Work around xcairo and pngcairo (but not pscairo) problems for
@@ -321,7 +321,7 @@ int main( int argc, const char *argv[] )
             0.5, "shear for z = z#dmin#u" );
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    plmesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 4: Demonstrate drawing a string on a 3D path.
     pladv( 0 );
@@ -372,7 +372,7 @@ int main( int argc, const char *argv[] )
         omega += domega;
     }
     // Draw minimal 3D grid to finish defining the 3D box.
-    plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    plmesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Page 5: Demonstrate plmtex3 axis labelling capability
     pladv( 0 );
@@ -400,7 +400,7 @@ int main( int argc, const char *argv[] )
     plmtex3( "zs", -2.5, 0.5, 0.5, "Arbitrarily displaced" );
     plmtex3( "zs", -1.0, 0.5, 0.5, "secondary Z-axis label" );
     // Draw minimal 3D grid to finish defining the 3D box.
-    plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
+    plmesh( x, y, (const PLFLT **) z, XPTS, YPTS, DRAW_LINEXY );
 
     // Clean up.
     free( (void *) x );

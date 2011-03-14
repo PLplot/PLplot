@@ -1164,7 +1164,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
 // contour the data.
 
-    plcont( zused, nx, ny,
+    plcont( (const PLFLT **) zused, nx, ny,
         kx, lx, ky, ly,
         matclev->fdata, nclev,
         pltr, pltr_data );
@@ -1497,7 +1497,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
 // plot the vector data.
 
-    plvect( uused, vused, nx, ny,
+    plvect( (const PLFLT **) uused, (const PLFLT **) vused, nx, ny,
         scaling, pltr, pltr_data );
 // Now free up any space which got allocated for our coordinate trickery.
 
@@ -1642,7 +1642,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    plmesh( x, y, z, nx, ny, opt );
+    plmesh( x, y, (const PLFLT **) z, nx, ny, opt );
 
     if ( argc == 7 )
     {
@@ -1881,7 +1881,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    plmeshc( x, y, z, nx, ny, opt, clev, nlev );
+    plmeshc( x, y, (const PLFLT **) z, nx, ny, opt, clev, nlev );
 
     if ( argc == 7 )
     {
@@ -2018,7 +2018,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    plot3d( x, y, z, nx, ny, opt, side );
+    plot3d( x, y, (const PLFLT **) z, nx, ny, opt, side );
 
     if ( argc == 8 )
     {
@@ -2257,7 +2257,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    plot3dc( x, y, z, nx, ny, opt, clev, nlev );
+    plot3dc( x, y, (const PLFLT **) z, nx, ny, opt, clev, nlev );
 
     if ( argc == 7 )
     {
@@ -2496,7 +2496,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    plsurf3d( x, y, z, nx, ny, opt, clev, nlev );
+    plsurf3d( x, y, (const PLFLT **) z, nx, ny, opt, clev, nlev );
 
     if ( argc == 7 )
     {
@@ -2851,7 +2851,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 
 // Now go make the plot.
 
-    plshade( zused, nx, ny, NULL,
+    plshade( (const PLFLT **) zused, nx, ny, NULL,
         xmin, xmax, ymin, ymax,
         sh_min, sh_max, sh_cmap, sh_col, sh_wid,
         min_col, min_wid, max_col, max_wid,
@@ -3176,7 +3176,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 
 // Now go make the plot.
 
-    plshades( zused, nx, ny, NULL,
+    plshades( (const PLFLT **) zused, nx, ny, NULL,
         xmin, xmax, ymin, ymax,
         matclevel->fdata, nlevel, fill_width, cont_color, cont_width,
         plfill, rect, pltr, pltr_data );
@@ -3688,7 +3688,7 @@ two-dimensional matrix - ", argv[1], (char *) NULL );
     // fprintf(stderr,"Dymin, Dymax: %.17g %.17g\n", Dymin, Dymax);
     //
 
-    c_plimage( pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+    c_plimage( (const PLFLT **) pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
         Dxmin, Dxmax, Dymin, Dymax );
 
     plFree2dGrid( pidata, nx, ny );
@@ -3794,12 +3794,12 @@ two-dimensional matrix - ", argv[11], (char *) NULL );
                 cgrid2.yg[i][j] = yg->fdata[j + i * ( ny + 1 )];
             }
         }
-        c_plimagefr( pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+        c_plimagefr( (const PLFLT **) pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
             valuemin, valuemax, pltr2, (void *) &cgrid2 );
     }
     else
     {
-        c_plimagefr( pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+        c_plimagefr( (const PLFLT **) pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
             valuemin, valuemax, pltr0, NULL );
     }
 

@@ -114,7 +114,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-    plMinMax2dGrid( z, XPTS, YPTS, &zmax, &zmin );
+    plMinMax2dGrid( (const PLFLT **) z, XPTS, YPTS, &zmax, &zmin );
     step = ( zmax - zmin ) / ( nlevel + 1 );
     for ( i = 0; i < nlevel; i++ )
         clevel[i] = zmin + step + step * i;
@@ -137,19 +137,19 @@ main( int argc, const char *argv[] )
 
             // wireframe plot
             if ( i == 0 )
-                plmesh( x, y, z, XPTS, YPTS, opt[k] );
+                plmesh( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] );
 
             // magnitude colored wireframe plot
             else if ( i == 1 )
-                plmesh( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR );
+                plmesh( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] | MAG_COLOR );
 
             // magnitude colored wireframe plot with sides
             else if ( i == 2 )
-                plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, 1 );
+                plot3d( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] | MAG_COLOR, 1 );
 
             // magnitude colored wireframe plot with base contour
             else if ( i == 3 )
-                plmeshc( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
+                plmeshc( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
                     clevel, nlevel );
 
             plcol0( 3 );

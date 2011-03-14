@@ -85,7 +85,7 @@ circulation()
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
     pllab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
     plcol0( 2 );
-    plvect( u, v, nx, ny, 0.0, pltr2, (void *) &cgrid2 );
+    plvect( (const PLFLT **) u, (const PLFLT **) v, nx, ny, 0.0, pltr2, (void *) &cgrid2 );
     plcol0( 1 );
 
     plFree2dGrid( cgrid2.xg, nx, ny );
@@ -153,7 +153,7 @@ constriction()
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
     pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction" );
     plcol0( 2 );
-    plvect( u, v, nx, ny, -0.5, pltr2, (void *) &cgrid2 );
+    plvect( (const PLFLT **) u, (const PLFLT **) v, nx, ny, -0.5, pltr2, (void *) &cgrid2 );
     plcol0( 1 );
 
     plFree2dGrid( cgrid2.xg, nx, ny );
@@ -275,13 +275,13 @@ void potential()
     }
     plcol0( 3 );
     pllsty( 2 );
-    plcont( z, nr, ntheta, 1, nr, 1, ntheta, clevel, nlevel, pltr2, (void *) &cgrid2 );
+    plcont( (const PLFLT **) z, nr, ntheta, 1, nr, 1, ntheta, clevel, nlevel, pltr2, (void *) &cgrid2 );
     pllsty( 1 );
     plcol0( 1 );
 
     // Plot the vectors of the gradient of the potential
     plcol0( 2 );
-    plvect( u, v, nr, ntheta, 25.0, pltr2, (void *) &cgrid2 );
+    plvect( (const PLFLT **) u, (const PLFLT **) v, nr, ntheta, 25.0, pltr2, (void *) &cgrid2 );
     plcol0( 1 );
 
     // Plot the perimeter of the cylinder
