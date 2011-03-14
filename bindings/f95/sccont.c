@@ -287,7 +287,7 @@ PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         }
     }
 
-    c_plshade( a, *nx, *ny, NULL,
+    c_plshade( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
@@ -329,7 +329,7 @@ PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     cgrid.ny = *ny;
     cgrid.xg = xg1;
     cgrid.yg = yg1;
-    c_plshade( a, *nx, *ny, NULL,
+    c_plshade( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
@@ -372,7 +372,7 @@ PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         }
     }
 
-    c_plshade( a, *nx, *ny, NULL,
+    c_plshade( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
@@ -407,7 +407,7 @@ PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         }
     }
 
-    c_plshade( a, *nx, *ny, NULL,
+    c_plshade( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
@@ -448,7 +448,7 @@ PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         }
     }
 
-    c_plshades( a, *nx, *ny, NULL,
+    c_plshades( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         clevel, *nlevel, *fill_width,
         *cont_color, *cont_width,
@@ -485,7 +485,7 @@ PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
     cgrid.xg = xg1;
     cgrid.yg = yg1;
 
-    c_plshades( a, *nx, *ny, NULL,
+    c_plshades( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         clevel, *nlevel, *fill_width,
         *cont_color, *cont_width,
@@ -523,7 +523,7 @@ PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         }
     }
 
-    c_plshades( a, *nx, *ny, NULL,
+    c_plshades( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         clevel, *nlevel, *fill_width,
         *cont_color, *cont_width,
@@ -555,7 +555,7 @@ PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         }
     }
 
-    c_plshades( a, *nx, *ny, NULL,
+    c_plshades( (const PLFLT **) a, *nx, *ny, NULL,
         *xmin, *xmax, *ymin, *ymax,
         clevel, *nlevel, *fill_width,
         *cont_color, *cont_width,
@@ -608,7 +608,7 @@ PLIMAGEFR07( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr0, NULL );
 
@@ -640,7 +640,7 @@ PLIMAGEFR17( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr1, (void *) &cgrid );
 
@@ -680,7 +680,7 @@ PLIMAGEFR27( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr2, (void *) &cgrid2 );
 
@@ -708,7 +708,7 @@ PLIMAGEFR7( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr, (void *) ftr );
 

@@ -479,7 +479,7 @@ PLIMAGE( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimage( pidata, *nx, *ny,
+    c_plimage( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *Dxmin, *Dxmax, *Dymin, *Dymax );
 

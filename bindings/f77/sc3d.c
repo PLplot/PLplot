@@ -42,7 +42,7 @@ PLOT3DC__( PLFLT *x, PLFLT *y, PLFLT *z,
         }
     }
 
-    c_plot3dc( x, y, a, *nx, *ny, *opt, clevel, *nlevel );
+    c_plot3dc( x, y, (const PLFLT **) a, *nx, *ny, *opt, clevel, *nlevel );
 
 // Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
@@ -93,7 +93,7 @@ PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
         for ( j = 0; j < *ny; j++ )
             temp[i][j] = *( z + j * *lx + i );
 
-    c_plsurf3d( x, y, temp, *nx, *ny, *opt, clevel, *nlevel );
+    c_plsurf3d( x, y, (const PLFLT **) temp, *nx, *ny, *opt, clevel, *nlevel );
 
     for ( i = 0; i < *nx; i++ )
         free( (void *) temp[i] );

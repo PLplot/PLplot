@@ -565,7 +565,7 @@ PLIMAGEFR07( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr0, NULL );
 
@@ -597,7 +597,7 @@ PLIMAGEFR17( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr1, (void *) &cgrid );
 
@@ -637,7 +637,7 @@ PLIMAGEFR27( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr2, (void *) &cgrid2 );
 
@@ -665,7 +665,7 @@ PLIMAGEFR7( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimagefr( pidata, *nx, *ny,
+    c_plimagefr( (const PLFLT **) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *valuemin, *valuemax, pltr, (void *) ftr );
 
