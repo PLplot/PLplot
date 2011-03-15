@@ -203,6 +203,46 @@ affected constants, see the #defines in swig-support/plplotcapi.i
 which are used internally to help generate the plplot module.  See
 also Index item 2.51 below.
 
+XXI. As of release 5.9.8 there has been widespread const modifier
+changes in the API for libplplotd and libplplotcxxd.  Those
+backwards-incompatible API changes are indicated in the usual way by a
+soversion bump in those two libraries which will force all apps and
+libraries that depend on those two libraries to be rebuilt.
+
+Specifically, we have changed the following arguments in the C library
+(libplplotd) case
+
+type * name1 ==> const type * name1
+type * name2 ==> const type ** name2
+
+and the following arguments in the C++ library (libplplotcxxd) case
+
+type * name1 ==> const type * name1
+type * name1 ==> const type * const * name2
+
+where name1 is the name of a singly dimensioned array whose values
+are not changed internally by the PLplot libraries and
+name2 is the name of a doubly dimensioned array whose values
+are not changed internally by the PLplot libraries.
+
+The general documentation and safety justification for such const
+modifier changes to our API is given in
+http://www.cprogramming.com/tutorial/const_correctness.html.
+Essentially, the above const modifier changes constitute our
+guarantee that the associated arrays are not changed internally
+by the PLplot libraries.
+
+Although it is necessary to rebuild all apps and libraries that depend
+on libplplotd and/or libplplotcxxd, that rebuild should be possible
+with unchanged source code without build errors in all cases.  For C
+apps and libraries (depending on libplplotd) there will be additional
+build warnings due to a limitation in the C standard discussed at
+http://c-faq.com/ansi/constmismatch.html unless all doubly dimensioned
+arrays (but not singly dimensioned) are explicitly cast to (const type
+**).  However, such source code changes will not be necessary to avoid
+warning messages for the C++ (libplplotcxxd) change because of the
+double use of const in the above "const type * const * name2" change.
+
 INDEX
 
 -1. Important changes we should have mentioned in previous release announcements.
