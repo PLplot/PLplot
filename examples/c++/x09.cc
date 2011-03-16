@@ -184,10 +184,10 @@ x09::x09( int argc, const char **argv )
     pls->setcontlabelparam( 0.006, 0.3, 0.1, 1 );
     pls->env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     pls->col0( 2 );
-    pls->cont( (const PLFLT **) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    pls->cont( z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
     pls->styl( 1, &mark, &space );
     pls->col0( 3 );
-    pls->cont( (const PLFLT **) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    pls->cont( w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
     pls->styl( 0, &mark, &space );
     pls->col0( 1 );
     pls->lab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
@@ -196,11 +196,11 @@ x09::x09( int argc, const char **argv )
     // Plot using 1d coordinate transform
     pls->env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     pls->col0( 2 );
-    pls->cont( (const PLFLT **) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    pls->cont( z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         plstream::tr1, (void *) &cgrid1 );
     pls->styl( 1, &mark, &space );
     pls->col0( 3 );
-    pls->cont( (const PLFLT **) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    pls->cont( w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         plstream::tr1, (void *) &cgrid1 );
     pls->styl( 0, NULL, NULL );
     pls->col0( 1 );
@@ -223,11 +223,11 @@ x09::x09( int argc, const char **argv )
     // Plot using 2d coordinate transform
     pls->env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     pls->col0( 2 );
-    pls->cont( (const PLFLT **) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    pls->cont( z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         plstream::tr2, (void *) &cgrid2 );
     pls->styl( 1, &mark, &space );
     pls->col0( 3 );
-    pls->cont( (const PLFLT **) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    pls->cont( w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         plstream::tr2, (void *) &cgrid2 );
     pls->styl( 0, &mark, &space );
     pls->col0( 1 );
@@ -321,7 +321,7 @@ void x09::polar()
     }
 
     pls->col0( 2 );
-    pls->cont( (const PLFLT **) z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
+    pls->cont( z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
         plstream::tr2, (void *) &cgrid2 );
     pls->col0( 1 );
     pls->lab( "", "", "Polar Contour Plot" );
@@ -376,8 +376,8 @@ const void x09::potential()
 
     rmax = r;
 
-    pls->MinMax2dGrid( (const PLFLT **) cgrid2.xg, PRPTS, PTHETAPTS, &xmax, &xmin );
-    pls->MinMax2dGrid( (const PLFLT **) cgrid2.yg, PRPTS, PTHETAPTS, &ymax, &ymin );
+    pls->MinMax2dGrid( cgrid2.xg, PRPTS, PTHETAPTS, &xmax, &xmin );
+    pls->MinMax2dGrid( cgrid2.yg, PRPTS, PTHETAPTS, &ymax, &ymin );
 
     x0 = ( xmin + xmax ) / 2.;
     y0 = ( ymin + ymax ) / 2.;
@@ -421,7 +421,7 @@ const void x09::potential()
     }
 
 
-    pls->MinMax2dGrid( (const PLFLT **) z, PRPTS, PTHETAPTS, &zmax, &zmin );
+    pls->MinMax2dGrid( z, PRPTS, PTHETAPTS, &zmax, &zmin );
 
     //	printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
     //    q1, d1, q1i, d1i, q2, d2, q2i, d2i);
@@ -458,7 +458,7 @@ const void x09::potential()
     {
         // Negative contours
         pls->lsty( 2 );
-        pls->cont( (const PLFLT **) z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
+        pls->cont( z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
             clevelneg, nlevelneg, plstream::tr2, (void *) &cgrid2 );
     }
 
@@ -466,7 +466,7 @@ const void x09::potential()
     {
         // Positive contours
         pls->lsty( 1 );
-        pls->cont( (const PLFLT **) z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
+        pls->cont( z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
             clevelpos, nlevelpos, plstream::tr2, (void *) &cgrid2 );
     }
 

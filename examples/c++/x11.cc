@@ -180,21 +180,21 @@ x11::x11( int argc, const char **argv )
 
             // wireframe plot
             if ( i == 0 )
-                pls->mesh( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] );
+                pls->mesh( x, y, z, XPTS, YPTS, opt[k] );
 
             // magnitude colored wireframe plot
             else if ( i == 1 )
-                pls->mesh( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] | MAG_COLOR );
+                pls->mesh( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR );
 
             // magnitude colored wireframe plot with sides
             else if ( i == 2 )
             {
-                pls->plot3d( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
+                pls->plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
             }
 
             // magnitude colored wireframe plot with base contour
             else if ( i == 3 )
-                pls->meshc( x, y, (const PLFLT **) z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
+                pls->meshc( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
                     clevel, nlevel );
 
 

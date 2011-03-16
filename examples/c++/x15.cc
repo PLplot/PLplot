@@ -98,7 +98,7 @@ x15::x15( int argc, const char ** argv )
         }
     }
 
-    pls->MinMax2dGrid( (const PLFLT **) z, XPTS, YPTS, &zmax, &zmin );
+    pls->MinMax2dGrid( z, XPTS, YPTS, &zmax, &zmin );
 
     plot1( z, zmin, zmax );
     plot2( z, zmin, zmax );
@@ -137,7 +137,7 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
 
     pls->psty( 8 );
 
-    pls->shade( (const PLFLT **) z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
+    pls->shade( z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
         shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -181,7 +181,7 @@ void x15::plot2( PLFLT **z, PLFLT zmin, PLFLT zmax )
         sh_color  = i + 6;
         pls->pat( nlin[i], inc[i], del[i] );
 
-        pls->shade( (const PLFLT **) z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
+        pls->shade( z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
             shade_min, shade_max,
             sh_cmap, sh_color, sh_width,
             min_color, min_width, max_color, max_width,

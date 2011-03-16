@@ -128,7 +128,7 @@ public:
     void arrows( const PLFLT *u, const PLFLT *v, const PLFLT *x, const PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy );
 
-    void vect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+    void vect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
                void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                PLPointer pltr_data );
 
@@ -200,7 +200,7 @@ public:
 // Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 // plfcont, with a particular choice for f2eval and f2eval_data.
 
-    void cont( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+    void cont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
                PLINT ky, PLINT ly, const PLFLT * clevel, PLINT nlevel,
                void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                PLPointer pltr_data );
@@ -473,11 +473,11 @@ public:
 
 // Plots a mesh representation of the function z[x][y].
 
-    void mesh( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt );
+    void mesh( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt );
 
 // Plots a mesh representation of the function z[x][y] with contour.
 
-    void meshc( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+    void meshc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt,
                 const PLFLT *clevel, PLINT nlevel );
 
 // Creates a new stream and makes it the default.
@@ -497,19 +497,19 @@ public:
 
 // Plots a 3-d representation of the function z[x][y].
 
-    void plot3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+    void plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
                  PLINT nx, PLINT ny, PLINT opt, bool side );
 
 // Plots a 3-d representation of the function z[x][y] with contour.
 
-    void plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+    void plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
                   PLINT nx, PLINT ny, PLINT opt,
                   const PLFLT *clevel, PLINT nlevel );
 
 // Plots a 3-d representation of the function z[x][y] with contour
 // and y index limits.
 
-    void plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+    void plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
                    PLINT nx, PLINT ny, PLINT opt,
                    const PLFLT *clevel, PLINT nlevel,
                    PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
@@ -517,14 +517,14 @@ public:
 
 // Plots a 3-d shaded representation of the function z[x][y].
 
-    void surf3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+    void surf3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
                  PLINT nx, PLINT ny, PLINT opt,
                  const PLFLT *clevel, PLINT nlevel );
 
 // Plots a 3-d shaded representation of the function z[x][y] with y
 // index limits
 
-    void surf3dl( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+    void surf3dl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
                   PLINT nx, PLINT ny, PLINT opt,
                   const PLFLT *clevel, PLINT nlevel,
                   PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
@@ -711,7 +711,7 @@ public:
 
 // Shade region.
 
-    void shade( const PLFLT **a, PLINT nx, PLINT ny,
+    void shade( const PLFLT * const *a, PLINT nx, PLINT ny,
                 PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                 PLFLT shade_min, PLFLT shade_max,
@@ -722,7 +722,7 @@ public:
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data );
 
-    void shades( const PLFLT **a, PLINT nx, PLINT ny,
+    void shades( const PLFLT * const *a, PLINT nx, PLINT ny,
                  PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  const PLFLT * clevel, PLINT nlevel, PLINT fill_width,
@@ -863,13 +863,13 @@ public:
 // plots a 2d image (or a matrix too large for plshade() ) - colors
 // automatically scaled
 
-    void image( const PLFLT **data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
+    void image( const PLFLT * const *data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
                 PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
                 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
 
 // plots a 2d image (or a matrix too large for plshade() )
 
-    void imagefr( const PLFLT **data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
+    void imagefr( const PLFLT * const *data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
                   PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
                   PLFLT valuemin, PLFLT valuemax,
                   void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
@@ -1119,7 +1119,7 @@ public:
     void Free2dGrid( PLFLT **f, PLINT nx, PLINT ny );
 
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
-    void MinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
+    void MinMax2dGrid( const PLFLT * const *f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
 
 // Functions for converting between HLS and RGB color space
 
@@ -1136,13 +1136,13 @@ public:
 // Deprecated versions of methods which use PLINT instead of bool
     void svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, PLINT fill );
     void cpstrm( plstream &pls, PLINT flags );
-    void plot3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+    void plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
                  PLINT nx, PLINT ny, PLINT opt, PLINT side );
     void poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const PLINT *draw, PLINT ifcc );
     void scmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
                   const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *rev );
 
-    void shade( const PLFLT **a, PLINT nx, PLINT ny,
+    void shade( const PLFLT * const *a, PLINT nx, PLINT ny,
                 PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                 PLFLT shade_min, PLFLT shade_max,
@@ -1153,7 +1153,7 @@ public:
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data );
 
-    void shades( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
+    void shades( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
                                                                      PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  const PLFLT *clevel, PLINT nlevel, PLINT fill_width,

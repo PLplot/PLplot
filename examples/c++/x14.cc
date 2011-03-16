@@ -428,10 +428,10 @@ void x14::plot5( plstream *pls )
 
     pls->env( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     pls->col0( 2 );
-    pls->cont( (const PLFLT **) z, xpts, ypts, 1, xpts, 1, ypts, clevel, 11, x14::mypltr, NULL );
+    pls->cont( z, xpts, ypts, 1, xpts, 1, ypts, clevel, 11, x14::mypltr, NULL );
     pls->styl( 1, &mark, &space );
     pls->col0( 3 );
-    pls->cont( (const PLFLT **) w, xpts, ypts, 1, xpts, 1, ypts, clevel, 11, x14::mypltr, NULL );
+    pls->cont( w, xpts, ypts, 1, xpts, 1, ypts, clevel, 11, x14::mypltr, NULL );
     pls->col0( 1 );
     pls->lab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
     pls->flush();

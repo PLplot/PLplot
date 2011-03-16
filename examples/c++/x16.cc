@@ -189,7 +189,7 @@ x16::x16( int argc, const char ** argv )
         }
     }
 
-    pls->MinMax2dGrid( (const PLFLT **) z, nx, ny, &zmax, &zmin );
+    pls->MinMax2dGrid( z, nx, ny, &zmax, &zmin );
 
     for ( i = 0; i < ns; i++ )
         clevel[i] = zmin + ( zmax - zmin ) * ( i + 0.5 ) / (PLFLT) ns;
@@ -235,7 +235,7 @@ x16::x16( int argc, const char ** argv )
 
     pls->psty( 0 );
 
-    pls->shades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plstream::fill, true, NULL, NULL );
@@ -257,7 +257,7 @@ x16::x16( int argc, const char ** argv )
 
     pls->psty( 0 );
 
-    pls->shades((const PLFLT **)  z, nx, ny, NULL, -1., 1., -1., 1.,
+    pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plstream::fill, true, plstream::tr1, (void *) &cgrid1 );
@@ -280,7 +280,7 @@ x16::x16( int argc, const char ** argv )
 
     pls->psty( 0 );
 
-    pls->shades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
@@ -288,7 +288,7 @@ x16::x16( int argc, const char ** argv )
     pls->col0( 1 );
     pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     pls->col0( 2 );
-    pls->cont( (const PLFLT **) w, nx, ny, 1, nx, 1, ny, clevel, ns, plstream::tr2, (void *) &cgrid2 );
+    pls->cont( w, nx, ny, 1, nx, 1, ny, clevel, ns, plstream::tr2, (void *) &cgrid2 );
 
     pls->lab( "distance", "altitude", "Bogon density, with streamlines" );
 
@@ -304,7 +304,7 @@ x16::x16( int argc, const char ** argv )
 
     pls->psty( 0 );
 
-    pls->shades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         2, 3,
         plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
@@ -330,7 +330,7 @@ x16::x16( int argc, const char ** argv )
 
         pls->psty( 0 );
 
-        pls->shades( (const PLFLT **) z, nx, ny, zdefined, -1., 1., -1., 1.,
+        pls->shades( z, nx, ny, zdefined, -1., 1., -1., 1.,
             shedge, ns + 1, fill_width,
             cont_color, cont_width,
             plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
@@ -369,12 +369,12 @@ x16::x16( int argc, const char ** argv )
 
     //Need a new shedge to go along with the new data set.
 
-    pls->MinMax2dGrid( (const PLFLT **) z, nx, ny, &zmax, &zmin );
+    pls->MinMax2dGrid( z, nx, ny, &zmax, &zmin );
 
     for ( i = 0; i < ns + 1; i++ )
         shedge[i] = zmin + ( zmax - zmin ) * (PLFLT) i / (PLFLT) ns;
 
-    pls->shades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
