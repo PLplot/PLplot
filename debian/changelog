@@ -1,17 +1,53 @@
-plplot (5.9.6-1) unstable; urgency=low
+plplot (5.9.7-1) unstable; urgency=low
 
   * New upstream release (closes: #564216).
+  * debian/rules: remove -DHAVE_PTHREADS=ON option as it is on by default. 
+    Option name is also likely to change in future releases.
+  * debian/control.in, debian/rules, debian/python-plplot.files: change from
+    using dh_pycentral to dh_python2 (closes: #616942).
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 16 Mar 2011 11:10:59 +0000
+
+plplot (5.9.6-1) UNRELEASED; urgency=low
+
+  * New upstream release.
   * debian/patches/series: 
     + Remove the following patches which are included upstream
         11_minus-sign-manpage.diff
         16_wxwidget-with-cmake-2.8.diff
         17_fix_cmap_support.diff
+        18_update_cmake_fortran.diff
       and delete the patches from the patches directory.
-    + Comment out 07_octave_prune_examples.diff from the list of applied patches, 
-      but leave patch for now to see if octave example p7 is ok on alpha.
+    + Comment out 07_octave_prune_examples.diff from the list of applied 
+      patches, but leave patch for now to see if octave example p7 is ok 
+      on alpha.
     + Update remaining patches for 5.9.6.
+  * debian/control.in: drop plplot-bin package altogether as all these scripts
+    are now obsolete.
+  * debian/control.in, debian/rules, debian/plplot9-driver-qt.files:
+    Add new plplot9-driver-qt package which includes the qt driver and bindings.
+  * debian/source/format: Add file to select 3.0 (quilt) format for the package. 
+    Fixes lintian warning.
+  * debian/NEWS: update NEWS file for 5.9.6.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 19 May 2010 11:14:30 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 27 Aug 2010 23:31:10 +0100
+
+plplot (5.9.5-4) unstable; urgency=low
+
+  * debian/rules, debian/control.in: update to use dh_numpy in debian/rules 
+    to get versioned numpy support. Requires python numpy >= 1:1.1.4.1-4~ 
+    (closes: 590770).
+  * debian/control.in: Bump standards version to 3.9.1.
+  * debian/control.in, debian/plplot-bin.files: remove references to plrender
+    in package descriptions (no longer included) and also remove plpr / plm2gif
+    scripts which rely on plrender.
+  * debian/control.in: Fix spelling mistake in cairo driver package 
+    (closes: 592970)
+  * debian/patches/18_update_cmake_fortran.diff: Remove plplot workaround for
+    cmake fortran support as this is no longer needed with cmake 2.8.2 and
+    causes errors building the f77 and f95 libraries.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 26 Aug 2010 13:38:26 +0100
 
 plplot (5.9.5-3) unstable; urgency=low
 
