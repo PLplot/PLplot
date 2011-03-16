@@ -419,6 +419,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! legend.  If the PL_LEGEND_ROW_MAJOR bit is set and both (of the
 //! possibly internally transformed) nrow > 1 and ncolumn > 1, then
 //! plot the resulting array of legend entries in row-major order.
+//! Otherwise, plot the legend entries in column-major order.
 //! @param x X offset of the legend position in adopted coordinates
 //! from the specified standard position of the legend.  For positive
 //! x, the direction of motion away from the standard position is
@@ -477,8 +478,8 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param text_colors Array of nlegend text colors (cmap0 indices).
 //! @param text Array of nlegend pointers to null-terminated text
 //! annotation strings.  Like other PLplot strings specified by the
-//! user, UTF-8 or its ascii subset may be used in the strings, and
-//! the strings may include any of the PLplot text escapes.
+//! user, the string must be UTF-8 (including its ascii subset) and
+//! may include any of the PLplot text escapes.
 //! @param box_colors Array of nlegend colors (cmap0 indices) for
 //! the discrete colored boxes (PL_LEGEND_COLOR_BOX).
 //! @param box_patterns Array of nlegend patterns (plpsty indices)
@@ -502,8 +503,8 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param symbols Array of nlegend pointers to null-terminated
 //! strings which represent the glyph for the symbol to be plotted
 //! (PL_LEGEND_SYMBOL).  Like other PLplot strings specified by the
-//! user, UTF-8 or its ascii subset may be used in the strings, and
-//! the strings may include any of the PLplot text escapes.
+//! user, the string must be UTF-8 (including its ascii subset) and
+//! may include any of the PLplot text escapes.
 //!
 
 void
