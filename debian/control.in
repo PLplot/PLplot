@@ -59,9 +59,10 @@ Description: Scientific plotting library (development files)
  virtually all aspects of plotting are configurable.
  .
  This package contains all that is needed for doing development in C, C++,
- and Fortran with PLplot.  Examples of programs for these languages are
- also included.  For development in Tcl/Tk, Python, and Octave, install
- the plplot-tcl, python-plplot, and octave-plplot packages, respectively.
+ Fortran and Ada with PLplot.  Examples of programs for these languages are
+ also included.  For development in Tcl/Tk, Python, Octave, and Java install
+ the plplot-tcl, python-plplot, octave-plplot and libplplot9-java packages, 
+ respectively.
 
 Package: libplplot-c++9c2
 Architecture: any
@@ -206,7 +207,10 @@ Description: Scientific plotting library (GD driver)
  virtually all aspects of plotting are configurable.
  .
  This package provides the GD driver module for PLplot. It allows the
- generation of PNG and JPEG files directly from PLplot programs.
+ generation of PNG and JPEG files directly from PLplot programs. The GD 
+ driver is no longer actively maintained upstream and is likely to be 
+ dropped in a future release. The cairo and qt drivers offer newer, and
+ better alternatives. 
 
 Package: plplot9-driver-cairo
 Architecture: any

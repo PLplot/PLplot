@@ -5,6 +5,7 @@ plplot (5.9.7-1) unstable; urgency=low
     Option name is also likely to change in future releases.
   * debian/control.in, debian/rules, debian/python-plplot.files: change from
     using dh_pycentral to dh_python2 (closes: #616942).
+  * debian/control.in: minor tweaks to package descriptions.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 16 Mar 2011 11:10:59 +0000
 

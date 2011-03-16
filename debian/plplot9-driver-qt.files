@@ -1,6 +1,3 @@
 usr/lib/plplot*/driversd/qt.*
 usr/lib/libplplotqtd.so.*
 usr/share/doc/plplot9-driver-qt
-usr/share/doc/libplplot9/examples/c++/*qt*
-
-
