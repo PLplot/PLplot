@@ -926,7 +926,7 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 	/* grab the Global Interpreter Lock to be sure threads don't mess us up */
 	MY_BLOCK_THREADS	
 	/* build the argument list */
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
 	px = PyArray_SimpleNewFromData(1, &nn, NPY_PLFLT,(void *)x);
 	py = PyArray_SimpleNewFromData(1, &nn, NPY_PLFLT,(void *)y);
 #else

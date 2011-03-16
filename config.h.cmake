@@ -125,10 +125,10 @@
 #cmakedefine HAVE_NSGETARGC
 
 // Define if pthreads is available
-#cmakedefine HAVE_PTHREAD
+#cmakedefine PL_HAVE_PTHREAD
 
 // Define if Qhull is available
-#cmakedefine HAVE_QHULL
+#cmakedefine PL_HAVE_QHULL
 
 // Define to 1 if you have the <stdlib.h> header file.
 #cmakedefine HAVE_STDLIB_H 1

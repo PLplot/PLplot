@@ -220,7 +220,7 @@ if(WITH_CSA)
     )
 endif(WITH_CSA)
 
-if(HAVE_QHULL)
+if(PL_HAVE_QHULL)
   set(
     libplplot${LIB_TAG}_LINK_LIBRARIES
     ${libplplot${LIB_TAG}_LINK_LIBRARIES}
@@ -244,7 +244,7 @@ if(HAVE_QHULL)
   # Needed by the traditional pkg-config approach for installed examples
   # as well as the new CMake-based build system for the installed examples.
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${QHULL_RPATH})
-endif(HAVE_QHULL)
+endif(PL_HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
   list(APPEND  libplplot${LIB_TAG}_LINK_LIBRARIES nistcd)

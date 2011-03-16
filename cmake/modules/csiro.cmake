@@ -19,14 +19,14 @@
 
 # Module for determining all configuration variables for the CSIRO libraries.
 
-option(HAVE_QHULL "Enable use of the Qhull library" ON)
+option(PL_HAVE_QHULL "Enable use of the Qhull library" ON)
 option(WITH_CSA "Enable use of the csa library" ON)
 
 # This logic copied verbatim from csiro.ac for ix86 systems and alpha systems
 # with two possible compilers.  In future, this logic will need to be
 # expanded to a lot more cases as we gain platform experience.
 set(NAN_CFLAGS ${CMAKE_C_FLAGS})
-if(HAVE_QHULL OR WITH_CSA)
+if(PL_HAVE_QHULL OR WITH_CSA)
   if(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86")
     set(NAN_CFLAGS "${NAN_CFLAGS} -mieee-fp")
   else(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86")
@@ -57,8 +57,8 @@ if(HAVE_QHULL OR WITH_CSA)
 	)
     else(NaNAwareCCompiler)
       message(STATUS "Check for NaN awareness in C compiler - not found")
-      message(STATUS "WARNING: Setting HAVE_QHULL and WITH_CSA to OFF.")
-      set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
+      message(STATUS "WARNING: Setting PL_HAVE_QHULL and WITH_CSA to OFF.")
+      set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
       set(WITH_CSA OFF CACHE BOOL "Enable use of the csa library" FORCE)
       file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
 	"Determining whether C compiler is NaN aware failed with "
@@ -66,9 +66,9 @@ if(HAVE_QHULL OR WITH_CSA)
 	)
     endif(NaNAwareCCompiler)
   endif(NOT DEFINED NaNAwareCCompiler)
-endif(HAVE_QHULL OR WITH_CSA)
+endif(PL_HAVE_QHULL OR WITH_CSA)
 
-if(HAVE_QHULL)
+if(PL_HAVE_QHULL)
   find_package(QHULL)
   if(QHULL_FOUND)
     include(CheckFunctionExists)
@@ -82,13 +82,13 @@ if(HAVE_QHULL)
       filter_rpath(QHULL_RPATH)
       message(STATUS "QHULL_RPATH = ${QHULL_RPATH}")
     else(QH_NEW_EXIST)
-      message(STATUS "WARNING: function qh_new_qhull not found.  Setting HAVE_QHULL to OFF.")
-      set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
+      message(STATUS "WARNING: function qh_new_qhull not found.  Setting PL_HAVE_QHULL to OFF.")
+      set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
     endif(QH_NEW_EXIST)
   else(QHULL_FOUND)
     message(STATUS
-      "WARNING: qhull library not found.  Setting HAVE_QHULL to OFF."
+      "WARNING: qhull library not found.  Setting PL_HAVE_QHULL to OFF."
       )
-    set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
+    set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
   endif(QHULL_FOUND)
-endif(HAVE_QHULL)
+endif(PL_HAVE_QHULL)

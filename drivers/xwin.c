@@ -35,7 +35,7 @@
 #include "drivers.h"
 #include "plevent.h"
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
 #include <pthread.h>
 #include <signal.h>
 int    pthread_mutexattr_settype( pthread_mutexattr_t *attr, int kind );
@@ -259,13 +259,13 @@ plD_init_xw( PLStream *pls )
     pls->dev_fastimg = 1;       // is a fast image device
     pls->dev_xor     = 1;       // device support xor mode
 
-#ifndef HAVE_PTHREAD
+#ifndef PL_HAVE_PTHREAD
     usepthreads = 0;
 #endif
 
     plParseDrvOpts( xwin_options );
 
-#ifndef HAVE_PTHREAD
+#ifndef PL_HAVE_PTHREAD
     if ( usepthreads )
         plwarn( "You said you want pthreads, but they are not available." );
 #endif
@@ -304,7 +304,7 @@ plD_init_xw( PLStream *pls )
     plP_setpxl( pxlx, pxly );
     plP_setphy( xmin, xmax, ymin, ymax );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
     {
         pthread_mutexattr_t mutexatt;
@@ -363,7 +363,7 @@ plD_line_xw( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     dbug_enter( "plD_line_xw" );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
 #endif
@@ -384,7 +384,7 @@ plD_line_xw( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     if ( dev->write_to_pixmap )
         XDrawLine( xwd->display, dev->pixmap, dev->gc, x1, y1, x2, y2 );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
 #endif
@@ -435,7 +435,7 @@ plD_polyline_xw( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     dbug_enter( "plD_polyline_xw" );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
 #endif
@@ -456,7 +456,7 @@ plD_polyline_xw( PLStream *pls, short *xa, short *ya, PLINT npts )
         XDrawLines( xwd->display, dev->pixmap, dev->gc, pts, npts,
             CoordModeOrigin );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
 #endif
@@ -481,7 +481,7 @@ plD_eop_xw( PLStream *pls )
 
     dbug_enter( "plD_eop_xw" );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
 #endif
@@ -493,7 +493,7 @@ plD_eop_xw( PLStream *pls )
     if ( dev->is_main && !pls->nopause )
         WaitForPage( pls );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
 #endif
@@ -513,7 +513,7 @@ plD_bop_xw( PLStream *pls )
 
     dbug_enter( "plD_bop_xw" );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
 #endif
@@ -532,7 +532,7 @@ plD_bop_xw( PLStream *pls )
     XSync( xwd->display, 0 );
     pls->page++;
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
 #endif
@@ -552,7 +552,7 @@ plD_tidy_xw( PLStream *pls )
 
     dbug_enter( "plD_tidy_xw" );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
     {
         pthread_mutex_lock( &events_mutex );
@@ -603,7 +603,7 @@ plD_state_xw( PLStream *pls, PLINT op )
 
     dbug_enter( "plD_state_xw" );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
 #endif
@@ -676,7 +676,7 @@ plD_state_xw( PLStream *pls, PLINT op )
         break;
     }
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
 #endif
@@ -717,7 +717,7 @@ plD_esc_xw( PLStream *pls, PLINT op, void *ptr )
 {
     dbug_enter( "plD_esc_xw" );
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
 #endif
@@ -788,7 +788,7 @@ plD_esc_xw( PLStream *pls, PLINT op, void *ptr )
         break;
     }
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
 #endif
@@ -976,7 +976,7 @@ OpenXwin( PLStream *pls )
         xwd->nstreams = 1;
 
 // Open display
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
         if ( usepthreads )
             if ( !XInitThreads() )
                 plexit( "xwin: XInitThreads() not successful." );
@@ -1310,7 +1310,7 @@ WaitForPage( PLStream *pls )
 //
 //--------------------------------------------------------------------------
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
 static void
 events_thread( void *pls )
 {

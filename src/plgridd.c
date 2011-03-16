@@ -30,7 +30,7 @@
 #endif
 #include "../lib/csa/nan.h" // this is handy
 
-#ifdef HAVE_QHULL
+#ifdef PL_HAVE_QHULL
 #include "../lib/nn/nn.h"
 #include <qhull/qhull_a.h>
 #endif
@@ -58,7 +58,7 @@ grid_csa( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
           PLF2OPS zops, PLPointer zgp );
 #endif
 
-#ifdef HAVE_QHULL
+#ifdef PL_HAVE_QHULL
 static void
 grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
@@ -180,7 +180,7 @@ plfgriddata( const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT npts,
         break;
 
     case ( GRID_DTLI ): // Delaunay Triangulation Linear Interpolation
-#ifdef HAVE_QHULL
+#ifdef PL_HAVE_QHULL
         grid_dtli( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp );
 #else
         plwarn( "plgriddata(): you must have the Qhull library installed to use GRID_DTLI.\n  Reverting to GRID_NNAIDW." );
@@ -189,7 +189,7 @@ plfgriddata( const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT npts,
         break;
 
     case ( GRID_NNI ): // Natural Neighbors
-#ifdef HAVE_QHULL
+#ifdef PL_HAVE_QHULL
         grid_nni( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp, data );
 #else
         plwarn( "plgriddata(): you must have the Qhull library installed to use GRID_NNI.\n  Reverting to GRID_NNAIDW." );
@@ -557,7 +557,7 @@ grid_nnaidw( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
     }
 }
 
-#ifdef HAVE_QHULL
+#ifdef PL_HAVE_QHULL
 //
 // Delaunay Triangulation Linear Interpolation using Pavel Sakov's nn package
 //
@@ -715,7 +715,7 @@ grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
     free( pin );
     free( pgrid );
 }
-#endif // HAVE_QHULL
+#endif // PL_HAVE_QHULL
 
 //
 // this function just calculates the K Nearest Neighbors of grid point

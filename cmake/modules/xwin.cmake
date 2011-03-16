@@ -25,26 +25,26 @@
 # 			    device.
 # xwin_LINK_FLAGS	  - individual LINK_FLAGS for dynamic xwin device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
-# HAVE_PTHREAD		  - ON means use pthreads with xwin driver.
+# PL_HAVE_PTHREAD         - ON means use pthreads with xwin driver.
 # PLPLOT_MUTEX_RECURSIVE  - Portable definition for PTHREAD_MUTEX_RECURSIVE
 if(PLD_xwin)
   if(X11_FOUND)
     set(xwin_COMPILE_FLAGS "${X11_COMPILE_FLAGS}")
     set(xwin_LINK_FLAGS "${X11_LIBRARIES}")
     if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      # turn HAVE_PTHREAD OFF by default for Mac OS X since it doesn't
+      # turn PL_HAVE_PTHREAD OFF by default for Mac OS X since it doesn't
       # work for Mac OS X 10.4.  Werner says it does work for vanilla 
       # XQuartz X11, but the official Apple version of X(Quartz) for 10.5
       # doesn't have all the fixes of the vanilla version so he doesn't trust
       # it.  This his advice for now is to be conservative until we can
       # get a clear report that official X works for 10.5.
-      option(HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
+      option(PL_HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
     else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      # Turn HAVE_PTHREAD ON by default for other platforms now that
+      # Turn PL_HAVE_PTHREAD ON by default for other platforms now that
       # the tk segmentation fault has been cured.
-      option(HAVE_PTHREAD "Use pthreads with the xwin driver" ON)
+      option(PL_HAVE_PTHREAD "Use pthreads with the xwin driver" ON)
     endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    if(HAVE_PTHREAD)
+    if(PL_HAVE_PTHREAD)
       find_package(Threads)
       if(CMAKE_USE_PTHREADS_INIT)
         set(xwin_LINK_FLAGS ${xwin_LINK_FLAGS} ${CMAKE_THREAD_LIBS_INIT})
@@ -60,9 +60,9 @@ if(PLD_xwin)
         # I am being super-careful here to follow the autotools model.  In
         # fact, it is possible other thread systems will work as well as
 	# pthreads.  So something to investigate for later.
-        set(HAVE_PTHREAD OFF)
+        set(PL_HAVE_PTHREAD OFF)
       endif(CMAKE_USE_PTHREADS_INIT)
-    endif(HAVE_PTHREAD)
+    endif(PL_HAVE_PTHREAD)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${xwin_LINK_FLAGS})
   else(X11_FOUND)
     set(PLD_xwin OFF CACHE BOOL "Enable xwin device" FORCE)

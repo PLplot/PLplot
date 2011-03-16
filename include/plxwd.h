@@ -9,7 +9,7 @@
 
 #include "plplot.h"
 #include "plstrm.h"
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
 #include <pthread.h>
 #endif
 
@@ -104,7 +104,7 @@ typedef struct
     XPoint       xhair_x[2], xhair_y[2];           // Crosshair lines
 
     void ( *MasterEH )( PLStream *, XEvent * );    // Master X event handler
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     pthread_t updater;                             // The X events updater thread id
 #endif
 } XwDev;

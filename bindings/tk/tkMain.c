@@ -185,7 +185,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     char       buf[20];
     int        code;
 
-#ifdef HAVE_PTHREAD
+#ifdef PL_HAVE_PTHREAD
     XInitThreads();
 #endif
 

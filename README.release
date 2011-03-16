@@ -41,9 +41,10 @@ be identical.  However, you may notice some small changes to your plot
 results if you use these stream variables directly (only possible in C/C++)
 or use plgvpw.
 
-IV. As of release 5.9.2 we have set HAVE_PTHREAD to ON by default for all
-platforms other than Darwin.  Darwin will follow later once it appears the
-Apple version of X supports it.
+IV. As of release 5.9.2 we have set HAVE_PTHREAD (now called
+PL_HAVE_PTHREAD as of release 5.9.8) to ON by default for all
+platforms other than Darwin.  Darwin will follow later once it appears
+the Apple version of X supports it.
 
 V. As of release 5.9.3 our build system requires CMake version 2.6.0 or
 higher.
