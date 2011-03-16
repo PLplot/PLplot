@@ -433,7 +433,7 @@ shade( void )
         sh_width  = 2;
         plpsty( 0 );
 
-        plshade( z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
+        plshade( (const PLFLT **) z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
             shade_min, shade_max,
             sh_cmap, sh_color, sh_width,
             min_color, min_width, max_color, max_width,
