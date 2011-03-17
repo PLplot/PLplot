@@ -1,14 +1,120 @@
 INDEX
-(1) Creating a PLplot Release.
-(2) Install and test a local copy of the PLplot website.
-(3) Upload the local website to SourceForge.
+(1) Install and test a local copy of the PLplot website.
+(2) Upload the local website to SourceForge.
+(3) Creating a PLplot Release.
+(4) Publicity for the release announcement.
+(5) Immediate preparation for next release cycle
+
 (A1) GNU Privacy Guard (gpg).
 (A2) Creating a test tarball from trunk.
 
+(1) Install and test a local copy of the PLplot website:
 
---- Main ---
+(N.B. this step needs to be done first to insure the associated source tree
+updates get into the release tarball, the svn tags version of the release,
+and associated commit messages get into the ChangeLog for the
+release.)
 
-(1) Creating a PLplot Release:
+You should always generate and install from scratch a local copy of the
+PLplot website on some ssh-accessible machine (normally your local machine).
+
+If necessary, update the examples list in
+scripts/htdocs-gen_plot-examples.sh. That list is used to generate the
+website example-related files and copy the results to the website. The list
+automatically controls what example source code is configured (for source
+code that needs that), as well as what example plots and example thumbnails
+are generated.  The list also automatically controls what examples-related
+files are copied to the website.
+
+Update the project web page, including the examples: edit
+www/examples.php to reflect the forthcoming release version number and
+any changes to the examples themselves (i.e. pages added or removed
+from an existing example or entirely new examples).
+
+Edit PROJECT_NUMBER in doc/Doxyfile.in to reflect the upcoming release
+version number.  (The doxygen documentation is now part of our
+release so it is important to get the version number correct.)
+
+Run (on a Linux host that is capable of building the documentation
+for the source tree that has all local changes)
+
+scripts/generate_website.sh
+
+with no arguments.  The script asks you four questions, gives you a chance
+to verify your answers, then does all the rest of it (downloading a
+throwaway copy of the PLplot source code, building the documentation,
+generating the announcements that are part of the base website, uploading
+the base website, uploading the documentation, building the examples,
+running the examples, uploading the example source code and example results)
+automatically.  I (AWI) tested this script using the four answers
+
+Summary:
+USERNAME = irwin
+GROUPNAME = irwin
+HOSTNAME = raven
+WEBSITE_PREFIX = /home/irwin/public_html/plplot
+
+(raven is my local computer name, and /home/irwin/public_html is a location
+where I can put various websites).  You can check for errors (e.g., due
+to missing commands that need to be installed) by running
+
+find /tmp/plplotdoc -name '*.out' |xargs grep -i error
+
+You should install both apache and PHP on your computer.  For Debian Testing
+(a.k.a. squeeze) that is done (as root) by installing libapache2-mod-php5
+and enabling user directories using the command
+
+a2enmod userdir
+
+and editing /etc/apache2/mods-available/php5.conf as indicated in that
+file to allow user directories for php.  I am not sure, but I believe
+from some google results I found that editing of that file is also
+necessary on modern versions of Ubuntu in order to allow php-based websites
+like that of PLplot to work when installed in local user directories.
+
+(When user directories are enabled this way, for the above case
+/home/irwin/public_html/plplot/htdocs, browses as
+http://raven/~irwin/plplot/htdocs/.)
+
+I test http://raven/~irwin/plplot/htdocs/ by clicking on most links, checking
+the documentation looks good, checking the examples look good and the
+source code for each language for examples is accessible, etc.
+
+N.B. scripts/generate_website.sh uses the local source tree where that
+script resides (including all local changes) as the source tree for
+generating the local website.  So there is no need to commit every
+above example and version change until you are completely satisfied
+with the local website.  But after you _are_ satisfied with the
+local website you should commit all your changes so they are available
+for generating the tarball and ChangeLog (see below) for this release.
+
+(2) Upload the local website to SourceForge:
+
+Once you are satisfied with the local website, you should upload it to
+SourceForge with rsync.
+
+For the above WEBSITE_PREFIX, here is what worked for me from my computer
+with the hostname of raven where that WEBSITE_PREFIX directory was
+created.
+
+rsync -av --delete \
+/home/irwin/public_html/plplot/htdocs/ \
+airwin,plplot@web.sourceforge.net:htdocs 
+
+Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
+username makes sure you have the right group permissions and default website
+directory location for PLplot.  
+
+N.B. the trailing slash on the source directory is essential and means rsync
+the contents of this directory with the contents of the destination htdocs
+directory.  Without the trailing slash you would rsync the the contents of
+the source directory with the contents of the htdocs/htdocs destination
+directory which is not what you want to do.  
+
+N.B. the --dry-run option for rsync is a god-send and tells you exactly what
+will happen without actually doing it.
+
+(3) Creating a PLplot Release:
 
 Update the README.release file.
 
@@ -20,7 +126,9 @@ Update cmake/module/plplot_version.cmake to reflect the current version. Also,
 follow the instructions in this file for updating the SOVERSION, the minor
 number and the patch number.
 
-IMPORTANT: commit all local changes to the repository.
+IMPORTANT: commit all local changes to the repository so they
+will be reflected in the ChangeLog, tagged version of the release,
+and release tarball.
 
 Prepare the ChangeLog.release file to keep track of all changes
 made for the release.  (This destroys the ChangeLog.release file
@@ -167,7 +275,13 @@ Click "Submit"
     the release numbers.
 
 
-Immediate preparation for next release cycle
+(4) Publicity for the release announcement.
+
+Jerry: macresearch.org
+
+Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
+
+(5) Immediate preparation for next release cycle
 
   a. Append the README.release file from the current release onto the front of
      the OLD-README.release file. This is done to preserve a record of the
@@ -175,113 +289,6 @@ Immediate preparation for next release cycle
   b. Update README.release file to reflect significant changes made between
      the current release and the last release.
 
-Update the web page following the instructions in sections (2) and (3)
-
-Publicity for the release announcement.
-
-Jerry: macresearch.org
-
-Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
-
-
-(2) Install and test a local copy of the PLplot website:
-
-You should always generate and install from scratch a local copy of the
-PLplot website on some ssh-accessible machine (normally your local machine).
-
-If necessary, update the examples list in
-scripts/htdocs-gen_plot-examples.sh. That list is used to generate the
-website example-related files and copy the results to the website. The list
-automatically controls what example source code is configured (for source
-code that needs that), as well as what example plots and example thumbnails
-are generated.  The list also automatically controls what examples-related
-files are copied to the website.
-
-Update the project web page, including the examples: edit
-www/examples.php to reflect the forthcoming release version number and
-any changes to the examples themselves (i.e. pages added or removed
-from an existing example or entirely new examples).
-
-Edit PROJECT_NUMBER in doc/Doxyfile.in to reflect the release
-version number.
-
-The above changes may be committed now or later in the release process
-(see "IMPORTANT: commit all local changes to the repository." below)
-since the script, scripts/generate_website.sh uses the local source
-tree where that script resides (including all local changes) as the
-source tree for generating the website.)
-
-Run (on a Linux host that is capable of building the documentation
-for the source tree that has all local changes)
-
-scripts/generate_website.sh
-
-with no arguments.  The script asks you four questions, gives you a chance
-to verify your answers, then does all the rest of it (downloading a
-throwaway copy of the PLplot source code, building the documentation,
-generating the announcements that are part of the base website, uploading
-the base website, uploading the documentation, building the examples,
-running the examples, uploading the example source code and example results)
-automatically.  I (AWI) tested this script using the four answers
-
-Summary:
-USERNAME = irwin
-GROUPNAME = irwin
-HOSTNAME = raven
-WEBSITE_PREFIX = /home/irwin/public_html/plplot
-
-(raven is my local computer name, and /home/irwin/public_html is a location
-where I can put various websites).  You can check for errors (e.g., due
-to missing commands that need to be installed) by running
-
-find /tmp/plplotdoc -name '*.out' |xargs grep -i error
-
-You should install both apache and PHP on your computer.  For Debian Testing
-(a.k.a. squeeze) that is done (as root) by installing libapache2-mod-php5
-and enabling user directories using the command
-
-a2enmod userdir
-
-and editing /etc/apache2/mods-available/php5.conf as indicated in that
-file to allow user directories for php.  I am not sure, but I believe
-from some google results I found that editing of that file is also
-necessary on modern versions of Ubuntu in order to allow php-based websites
-like that of PLplot to work when installed in local user directories.
-
-(When user directories are enabled this way, for the above case
-/home/irwin/public_html/plplot/htdocs, browses as
-http://raven/~irwin/plplot/htdocs/.)
-
-I test http://raven/~irwin/plplot/htdocs/ by clicking on most links, checking
-the documentation looks good, checking the examples look good and the
-source code for each language for examples is accessible, etc.
-
-
-(3) Upload the local website to SourceForge:
-
-Once you are satisfied with the local website, you should upload it to
-SourceForge with rsync.
-
-For the above WEBSITE_PREFIX, here is what worked for me from my computer
-with the hostname of raven where that WEBSITE_PREFIX directory was
-created.
-
-rsync -av --delete \
-/home/irwin/public_html/plplot/htdocs/ \
-airwin,plplot@web.sourceforge.net:htdocs 
-
-Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
-username makes sure you have the right group permissions and default website
-directory location for PLplot.  
-
-N.B. the trailing slash on the source directory is essential and means rsync
-the contents of this directory with the contents of the destination htdocs
-directory.  Without the trailing slash you would rsync the the contents of
-the source directory with the contents of the htdocs/htdocs destination
-directory which is not what you want to do.  
-
-N.B. the --dry-run option for rsync is a god-send and tells you exactly what
-will happen without actually doing it.
 
 
 --- Appendix ---
