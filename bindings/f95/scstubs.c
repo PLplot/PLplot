@@ -38,7 +38,8 @@ static void ( STDCALL *plmapform )( PLINT *, PLFLT *, PLFLT * ); // Note: slight
                                                                  // (*mapform)!
 // Slightly different to (*label_func) as we don't support PLPointer for
 // additional data in f77.
-static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT * );
+// Note the hidden argument!
+static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT );
 
 // Slightly different to C version as we don't support PLPointer  for additional data
 static void ( STDCALL *pltransform )( PLFLT *, PLFLT *, PLFLT *, PLFLT * );
@@ -547,7 +548,10 @@ pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer da
 {
     int i;
 
-        ( *pllabelfunc )( &axis, &value, label, &length );
+    // (AM) Note the hidden argument "length" - it ensures that the string "label"
+    // is recognised to have that length
+    //
+    ( *pllabelfunc )( &axis, &value, label, &length, length );
 
     // Ensure string is null terminated
     i = length - 1;
@@ -1006,18 +1010,18 @@ PLSFONT( PLINT *family, PLINT *style, PLINT *weight )
 }
 
 void
-PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ) )
+PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT ) )
 {
     pllabelfunc = labelfunc;
-    // N.B. neglect pointer to additional data for f77
+    // N.B. neglect pointer to additional data for f95
     c_plslabelfunc( pllabelfuncf2c, NULL );
 }
 
 void
-PLSLABELFUNC_ONa( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ) )
+PLSLABELFUNC_ONa( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT ) )
 {
     pllabelfunc = labelfunc;
-    // N.B. neglect pointer to additional data for f77
+    // N.B. neglect pointer to additional data for f95
     c_plslabelfunc( pllabelfuncf2c, NULL );
 }
 

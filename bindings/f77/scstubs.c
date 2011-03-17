@@ -479,7 +479,7 @@ PLIMAGE( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimage( (const PLFLT **) pidata, *nx, *ny,
+    c_plimage( pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *Dxmin, *Dxmax, *Dymin, *Dymax );
 
@@ -958,7 +958,7 @@ PLSFONT( PLINT *family, PLINT *style, PLINT *weight )
 }
 
 void
-PLSLABELFUNC( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ) )
+PLSLABELFUNC( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT ) )
 {
     pllabelfunc = labelfunc;
     // N.B. neglect pointer to additional data for f77
