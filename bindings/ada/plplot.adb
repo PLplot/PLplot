@@ -1798,13 +1798,13 @@ package body PLplot is
 
     -- Set current color (map 0) by hue, lightness, and saturation.
     -- plhls
-    procedure Set_Color_HLS
-       (Hue_Component        : Long_Float; -- Not documented; presumably 0.0..360.0.
-        Lightness_Component  : Long_Float_0_1_Type;
-        Saturation_Component : Long_Float_0_1_Type) is
-    begin
-        plhls(Hue_Component, Lightness_Component, Saturation_Component);
-    end Set_Color_HLS;
+    -- procedure Set_Color_HLS
+    --    (Hue_Component        : Long_Float; -- Not documented; presumably 0.0..360.0.
+    --     Lightness_Component  : Long_Float_0_1_Type;
+    --     Saturation_Component : Long_Float_0_1_Type) is
+    -- begin
+    --     plhls(Hue_Component, Lightness_Component, Saturation_Component);
+    -- end Set_Color_HLS;
 
 
     -- Functions for converting between HLS and RGB color space
@@ -2165,20 +2165,21 @@ package body PLplot is
     end Replot;
 
 
+    -- This deprecated - commented out
     -- Set line color by red, green, blue from 0.0 to 1.0
     -- plrgb
-    procedure Set_Line_Color_RGB_0_1(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type) is
-    begin
-        plrgb(Red_Component, Blue_Component, Green_Component);
-    end Set_Line_Color_RGB_0_1;
+    -- procedure Set_Line_Color_RGB_0_1(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type) is
+    -- begin
+    --     plrgb(Red_Component, Blue_Component, Green_Component);
+    -- end Set_Line_Color_RGB_0_1;
 
 
     -- Set line color by 8 bit RGB values.
     -- plrgb1
-    procedure Set_Line_Color_RGB_0_255(Red_Component, Blue_Component, Green_Component : Integer) is
-    begin
-        plrgb1(Red_Component, Blue_Component, Green_Component);
-    end Set_Line_Color_RGB_0_255;
+    -- procedure Set_Line_Color_RGB_0_255(Red_Component, Blue_Component, Green_Component : Integer) is
+    -- begin
+    --     plrgb1(Red_Component, Blue_Component, Green_Component);
+    -- end Set_Line_Color_RGB_0_255;
 
 
     -- Functions for converting between HLS and RGB color space

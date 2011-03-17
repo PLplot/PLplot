@@ -25,150 +25,102 @@
 //  is explicitly commented.
 //
 
+#ifdef PL_DEPRECATED
+
 #define NEED_PLDEBUG
 #include "plplotP.h"
 
-//--------------------------------------------------------------------------
-// Use plparseopts instead.
-//--------------------------------------------------------------------------
-int
-plParseOpts( int *p_argc, const char **argv, PLINT mode )
-{
-    plwarn( "plParseOpts: function deprecated. Use plparseopts instead" );
-    return c_plparseopts( p_argc, argv, mode );
-}
+// The following functions have been removed from plplot ahead of the 5.9.8 
+// release. They have long been advertised as deprecated.
+//   plParseOpts
+//   plHLS_RGB
+//   plRGB_HLS
+//   plarrows
 
 
-//--------------------------------------------------------------------------
-// Use plhlsrgb instead.
-//--------------------------------------------------------------------------
-void
-plHLS_RGB( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b )
-{
-    plwarn( "plHLS_RGB: function deprecated. Use plhlsrgb instead" );
-    c_plhlsrgb( h, l, s, p_r, p_g, p_b );
-}
+// The following functions have been marked as obsolete for some time, 
+// but were formally deprecated as of version 5.9.8
+//   plrgb
+//   plrgb1
+//   plhls
 
 //--------------------------------------------------------------------------
-// Use plrgbhls instead.
-//--------------------------------------------------------------------------
-void
-plRGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
-{
-    plwarn( "plRGB_HLS: function deprecated. Use plrgbhls instead" );
-    c_plrgbhls( r, g, b, p_h, p_l, p_s );
-}
-
-//--------------------------------------------------------------------------
-// Use plvect / plsvect instead.
-// void plarrows()
+// plrgb()
 //
-// simple arrow plotter
-// copyright 1993 Wesley Ebisuzaki
-//
-// an arrow is defined by its location (x, y) and its direction (u, v)
-//
-// inputs:
-//   u[i], v[i]      arrow's horizontal and vertical projection
-//   x[i], y[i]      arrow's location (world coordinates)
-//   n               number of arrows to draw
-//   scale           > 0  scaling factor for arrows
-//                   0    default scaling factor
-//                   < 0  default scaling factor * (-scale)
-//   dx, dy          distance between arrows
-//                   used when calculating the default arrow scaling
-//                   so that arrows don't overlap
-//
+// Set line color by red, green, blue from  0. to 1.
+// Do NOT use this.  Only retained for backward compatibility
 //--------------------------------------------------------------------------
-
-#define SCALE0    2.0
-
-// definition of original arrow: 2 line segments
-
-static PLFLT arrow_x[4] = { 0.5, -0.5, -0.27, -0.5 };
-static PLFLT arrow_y[4] = { 0.0, 0.0, 0.0, 0.20 };
 
 void
-plarrows( const PLFLT *u, const PLFLT *v, const PLFLT *x, const PLFLT *y, PLINT n,
-          PLFLT scale, PLFLT dx, PLFLT dy )
+c_plrgb( PLFLT r, PLFLT g, PLFLT b )
 {
-    PLFLT  uu, vv;
-    PLINT  i, j, npts = 4;
-    PLINT  px0, py0, dpx, dpy;
-    PLINT  a_x[4], a_y[4];
-    PLFLT  max_u, max_v;
-    double t;
+    plwarn( "plrgb: function deprecated. Use plscol instead" );
 
-    plwarn( "plarrows: function deprecated. Use plvect instead" );
-
-    if ( n <= 0 )
+    if ( plsc->level < 1 )
+    {
+        plabort( "plrgb: Please call plinit first" );
         return;
-
-    if ( scale <= 0.0 )
-    {
-        // automatic scaling
-        // find max / min values of data
-
-        max_u = u[0];
-        max_v = v[0];
-        for ( i = 1; i < n; i++ )
-        {
-            t     = fabs( (double) u[i] );
-            max_u = t > max_u ? t : max_u;
-            t     = fabs( (double) v[i] );
-            max_v = t > max_v ? t : max_v;
-        }
-
-        // measure distance in grid boxs
-
-        max_u = max_u / fabs( (double) dx );
-        max_v = max_v / fabs( (double) dy );
-
-        t = ( max_u > max_v ? max_u : max_v );
-        t = SCALE0 / t;
-        if ( scale < 0 )
-        {
-            scale = -scale * t;
-        }
-        else
-        {
-            scale = t;
-        }
     }
-    pldebug( "plarrows", "scale factor=%lf n=%d\n", scale, n );
 
-    for ( i = 0; i < n; i++ )
-    {
-        uu = scale * u[i];
-        vv = scale * v[i];
-        if ( uu == 0.0 && uu == 0.0 )
-            continue;
+    plsc->icol0      = PL_RGB_COLOR;
+    plsc->curcolor.r = MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
+    plsc->curcolor.g = MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
+    plsc->curcolor.b = MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
 
-        // conversion to physical coordinates
-
-        px0 = plP_wcpcx( x[i] );
-        py0 = plP_wcpcy( y[i] );
-
-        pldebug( "plarrows", "%f %f %d %d\n", x[i], y[i], px0, py0 );
-
-        dpx = plP_wcpcx( x[i] + 0.5 * uu ) - px0;
-        dpy = plP_wcpcy( y[i] + 0.5 * vv ) - py0;
-
-        // transform arrow -> a
-
-        for ( j = 0; j < npts; j++ )
-        {
-            a_x[j] = (PLINT) ( arrow_x[j] * dpx -
-                               arrow_y[j] * dpy + px0 );
-            a_y[j] = (PLINT) ( arrow_x[j] * dpy +
-                               arrow_y[j] * dpx + py0 );
-        }
-
-        // draw the arrow
-        plP_movphy( a_x[0], a_y[0] );
-        plP_draphy( a_x[1], a_y[1] );
-        plP_movphy( a_x[2], a_y[2] );
-        plP_draphy( a_x[3], a_y[3] );
-    }
+    plsc->curcmap = 0;
+    plP_state( PLSTATE_COLOR0 );
 }
 
+//--------------------------------------------------------------------------
+// plrgb1()
+//
+// Set line color by 8 bit RGB values.
+// Do NOT use this.  Only retained for backward compatibility
+//--------------------------------------------------------------------------
+
+void
+c_plrgb1( PLINT r, PLINT g, PLINT b )
+{
+    plwarn( "plrgb1: function deprecated. Use plscol instead" );
+
+    if ( plsc->level < 1 )
+    {
+        plabort( "plrgb1: Please call plinit first" );
+        return;
+    }
+    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) )
+    {
+        plabort( "plrgb1: Invalid color" );
+        return;
+    }
+
+    plsc->icol0      = PL_RGB_COLOR;
+    plsc->curcolor.r = r;
+    plsc->curcolor.g = g;
+    plsc->curcolor.b = b;
+
+    plsc->curcmap = 0;
+    plP_state( PLSTATE_COLOR0 );
+}
+
+//--------------------------------------------------------------------------
+// void plhls()
+//
+// Set current color by hue, lightness, and saturation.
+// Convert hls color coordinates to rgb, then call plrgb.
+// Do NOT use this.  Only retained for backward compatibility
+//--------------------------------------------------------------------------
+
+void
+c_plhls( PLFLT h, PLFLT l, PLFLT s )
+{
+    PLFLT r, g, b;
+
+    plwarn( "plhls: function deprecated. Use plhlsrgb / plscol instead" );
+
+    c_plhlsrgb( h, l, s, &r, &g, &b );
+    plrgb( r, g, b );
+}
+
+
+#endif // PL_DEPRECATED

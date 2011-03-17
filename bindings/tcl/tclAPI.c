@@ -97,7 +97,6 @@ typedef struct
 static CmdInfo Cmds[] = {
     { "loopback",     loopbackCmd     },
 #include "tclgen_s.h"
-    { "plcol",        plcol0Cmd       },
     { "plcont",       plcontCmd       },
     { "pllegend",     pllegendCmd     },
     { "plmap",        plmapCmd        },

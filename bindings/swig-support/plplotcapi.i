@@ -246,16 +246,6 @@ typedef struct
 // Non-common API that are included here because they traditionally
 // were part of plmodule.c.
 
-#if 0
-// Deprecated function that we no longer want to propagate to the
-// python API.
-
-void
-plarrows( const PLFLT *Array, const PLFLT *ArrayCk, const PLFLT *ArrayCk, const PLFLT *ArrayCk, PLINT n,
-          PLFLT scale, PLFLT dx, PLFLT dy );
-
-#endif
-
 void
 plsxwin( PLINT window_id );
 
@@ -455,14 +445,6 @@ plgzax( PLINT *OUTPUT, PLINT *OUTPUT );
 void
 plhist( PLINT n, const PLFLT *Array, PLFLT datmin, PLFLT datmax,
         PLINT nbin, PLINT oldwin );
-
-#if 0
-// Deprecated function that we no longer want to propagate to the
-// python API.
-
-void
-plhls( PLFLT h, PLFLT l, PLFLT s );
-#endif
 
 void
 plhlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT );
@@ -837,12 +819,6 @@ plxormod( PLBOOL mode, PLBOOL *OUTPUT );
 
 // Deprecated functions that are in common API, but we don't want to
 // propagate them to the python API.
-
-void
-plrgb( PLFLT r, PLFLT g, PLFLT b );
-
-void
-plrgb1( PLINT r, PLINT g, PLINT b );
 
 void
 plshade1( const PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,

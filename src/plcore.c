@@ -2319,7 +2319,7 @@ c_plinit( void )
 // Switch to graphics mode and set color and arrow style
 
     plgra();
-    plcol( 1 );
+    plcol0( 1 );
 
     pllsty( 1 );
     plpat( 1, &inc, &del );

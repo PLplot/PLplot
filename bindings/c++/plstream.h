@@ -125,8 +125,10 @@ public:
               PLBOOL fill );
 
 // Simple arrow plotter
+#ifdef PL_DEPRECATED
     void arrows( const PLFLT *u, const PLFLT *v, const PLFLT *x, const PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy );
+#endif // PL_DEPRECATED
 
     void vect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
                void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
@@ -408,7 +410,9 @@ public:
 
 // Set current color (map 0) by hue, lightness, and saturation.
 
+#ifdef PL_DEPRECATED
     void hls( PLFLT h, PLFLT l, PLFLT s );
+#endif // PL_DEPRECATED
 
 // Initializes PLplot, using preset or default options
 
@@ -574,11 +578,15 @@ public:
 
 // Set line color by red, green, blue from  0. to 1.
 
+#ifdef PL_DEPRECATED
     void rgb( PLFLT r, PLFLT g, PLFLT b );
+#endif // PL_DEPRECATED
 
 // Set line color by 8 bit RGB values.
 
+#ifdef PL_DEPRECATED
     void rgb( PLINT r, PLINT g, PLINT b );
+#endif // PL_DEPRECATED
 
 // Set character height.
 

@@ -1052,10 +1052,10 @@ package PLplot_Traditional is
 
 
     -- Set current color (map 0) by hue, lightness, and saturation.
-    procedure plhls
-       (Hue_Component        : Long_Float; -- Not documented; presumably 0.0..360.0.
-        Lightness_Component  : Long_Float_0_1_Type;
-        Saturation_Component : Long_Float_0_1_Type);
+    -- procedure plhls
+    --    (Hue_Component        : Long_Float; -- Not documented; presumably 0.0..360.0.
+    --     Lightness_Component  : Long_Float_0_1_Type;
+    --     Saturation_Component : Long_Float_0_1_Type);
 
 
     -- Functions for converting between HLS and RGB color space
@@ -1258,11 +1258,11 @@ package PLplot_Traditional is
 
 
     -- Set line color by red, green, blue from 0.0 to 1.0
-    procedure plrgb(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type);
+    -- procedure plrgb(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type);
 
 
     -- Set line color by 8 bit RGB values.
-    procedure plrgb1(Red_Component, Blue_Component, Green_Component : Integer);
+    -- procedure plrgb1(Red_Component, Blue_Component, Green_Component : Integer);
 
 
     -- Functions for converting between HLS and RGB color space

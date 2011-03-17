@@ -459,10 +459,10 @@ oldwin	PLINT
 
 # Set current color (map 0) by hue, lightness, and saturation.
 
-pltclcmd plhls void
-h	PLFLT
-l	PLFLT
-s	PLFLT
+#pltclcmd plhls void
+#h	PLFLT
+#l	PLFLT
+#s	PLFLT
 
 # Function to transform from HLS to RGB color space.
 
@@ -630,17 +630,17 @@ pltclcmd plreplot void
 
 # Set line color by red, green, blue from  0. to 1.
 
-pltclcmd plrgb void
-r	PLFLT
-g	PLFLT
-b	PLFLT
+#pltclcmd plrgb void
+#r	PLFLT
+#g	PLFLT
+#b	PLFLT
 
 # Set line color by 8 bit RGB values.
 
-pltclcmd plrgb1 void
-r	PLINT
-g	PLINT
-b	PLINT
+#pltclcmd plrgb1 void
+#r	PLINT
+#g	PLINT
+#b	PLINT
 
 # Function to transform from RGB to HLS color space.
 

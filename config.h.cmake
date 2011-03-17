@@ -35,6 +35,9 @@
 // Name of the default cmap1 palette to use
 #define PL_DEFAULT_CMAP1_FILE    "@DEFAULT_CMAP1_FILE@"
 
+// Define if support for deprecated plplot functions should be compiled
+#cmakedefine PL_DEPRECATED
+
 // Define if there is support for dynamically loaded drivers
 #cmakedefine ENABLE_DYNDRIVERS
 

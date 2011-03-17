@@ -436,11 +436,11 @@ plr_state( PLRDev *plr )
             plr_rd( pdf_rd_1byte( plr->pdfs, &r ) );
             plr_rd( pdf_rd_1byte( plr->pdfs, &g ) );
             plr_rd( pdf_rd_1byte( plr->pdfs, &b ) );
-            plrgb1( r, g, b );
+            plscol0( icol0, r, g, b );
         }
         else
         {
-            plcol( icol0 );
+            plcol0( icol0 );
         }
         break;
     }

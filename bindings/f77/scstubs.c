@@ -449,11 +449,13 @@ PLHIST( PLINT *n, PLFLT *data, PLFLT *datmin, PLFLT *datmax,
     c_plhist( *n, data, *datmin, *datmax, *nbin, *oldwin );
 }
 
+#ifdef PL_DEPRECATED
 void
 PLHLS( PLFLT *hue, PLFLT *light, PLFLT *sat )
 {
     c_plhls( *hue, *light, *sat );
 }
+#endif  // PL_DEPRECATED
 
 void
 PLHLSRGB( PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b )
@@ -748,17 +750,21 @@ PLREPLOT( void )
     c_plreplot();
 }
 
+#ifdef PL_DEPRECATED
 void
 PLRGB( PLFLT *red, PLFLT *green, PLFLT *blue )
 {
     c_plrgb( *red, *green, *blue );
 }
+#endif  // PL_DEPRECATED
 
+#ifdef PL_DEPRECATED
 void
 PLRGB1( PLINT *r, PLINT *g, PLINT *b )
 {
     c_plrgb1( *r, *g, *b );
 }
+#endif  // PL_DEPRECATED
 
 void
 PLRGBHLS( PLFLT *r, PLFLT *g, PLFLT *b, PLFLT *h, PLFLT *l, PLFLT *s )

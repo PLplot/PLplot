@@ -235,7 +235,6 @@
 #define    PLGYAX                    FNAME( PLGYAX, plgyax )
 #define    PLGZAX                    FNAME( PLGZAX, plgzax )
 #define    PLHIST                    FNAME( PLHIST, plhist )
-#define    PLHLS                     FNAME( PLHLS, plhls )
 #define    PLHLSRGB                  FNAME( PLHLSRGB, plhlsrgb )
 #define    PLIMAGE                   FNAME( PLIMAGE, plimage )
 #define    PLIMAGEFR07               FNAME( PLIMAGEFR07, plimagefr07 )
@@ -273,8 +272,6 @@
 #define    PLPTEX37                  FNAME( PLPTEX37, plptex37 )
 #define    PLRANDD                   FNAME( PLRANDD, plrandd )
 #define    PLREPLOT                  FNAME( PLREPLOT, plreplot )
-#define    PLRGB                     FNAME( PLRGB, plrgb )
-#define    PLRGB1                    FNAME( PLRGB1, plrgb1 )
 #define    PLRGBHLS                  FNAME( PLRGBHLS, plrgbhls )
 #define    PLSCHR                    FNAME( PLSCHR, plschr )
 #define    PLSCMAP0                  FNAME( PLSCMAP0, plscmap0 )
@@ -359,5 +356,14 @@
 #define    PLWID                     FNAME( PLWID, plwid )
 #define    PLWIND                    FNAME( PLWIND, plwind )
 #define    PLXORMOD                  FNAME( PLXORMOD, plxormod )
+
+// The following are deprecated and will be removed in future versions of plplot
+#ifdef PL_DEPRECATED
+
+#define    PLRGB                     FNAME( PLRGB, plrgb )
+#define    PLRGB1                    FNAME( PLRGB1, plrgb1 )
+#define    PLHLS                     FNAME( PLHLS, plhls )
+
+#endif  // PL_DEPRECATED
 
 #endif  // __PLSTUBS_H__

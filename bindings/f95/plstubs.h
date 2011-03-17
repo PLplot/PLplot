@@ -235,7 +235,6 @@
 #define    PLGYAX                    FNAME( PLGYAX, plgyax )
 #define    PLGZAX                    FNAME( PLGZAX, plgzax )
 #define    PLHIST                    FNAME( PLHISTF77, plhistf77 )
-#define    PLHLS                     FNAME( PLHLS, plhls )
 #define    PLHLSRGB                  FNAME( PLHLSRGB, plhlsrgb )
 #define    PLIMAGE                   FNAME( PLIMAGEF77, plimagef77 )
 #define    PLIMAGEFR07               FNAME( PLIMAGEFR07, plimagefr07 )
@@ -280,8 +279,6 @@
 #define    PLPTEX37                  FNAME( PLPTEX37, plptex37 )
 #define    PLRANDD                   FNAME( PLRANDDF77, plranddf77 )
 #define    PLREPLOT                  FNAME( PLREPLOT, plreplot )
-#define    PLRGB                     FNAME( PLRGB, plrgb )
-#define    PLRGB1                    FNAME( PLRGB1, plrgb1 )
 #define    PLRGBHLS                  FNAME( PLRGBHLS, plrgbhls )
 #define    PLSCHR                    FNAME( PLSCHR, plschr )
 #define    PLSCMAP0                  FNAME( PLSCMAP0F77, plscmap0f77 )
@@ -370,5 +367,11 @@
 #define    PLWID                     FNAME( PLWID, plwid )
 #define    PLWIND                    FNAME( PLWIND, plwind )
 #define    PLXORMOD                  FNAME( PLXORMODF77, plxormodf77 )
+
+#ifdef PL_DEPRECATE
+#define    PLRGB                     FNAME( PLRGB, plrgb )
+#define    PLRGB1                    FNAME( PLRGB1, plrgb1 )
+#define    PLHLS                     FNAME( PLHLS, plhls )
+#endif  // PL_DEPRECATED
 
 #endif  // __PLSTUBS_H__

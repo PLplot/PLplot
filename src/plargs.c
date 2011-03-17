@@ -150,7 +150,6 @@ static int opt_drvopt( const char *, const char *, void * );
 
 static int opt_plserver( const char *, const char *, void * );
 static int opt_plwindow( const char *, const char *, void * );
-static int opt_tcl_cmd( const char *, const char *, void * );
 static int opt_auto_path( const char *, const char *, void * );
 static int opt_bufmax( const char *, const char *, void * );
 static int opt_server_name( const char *, const char *, void * );
@@ -564,15 +563,6 @@ static PLOptionTable ploption_table[] = {
         PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
         "-plwindow name",
         "Name of PLplot container window (tk driver)"
-    },
-    {
-        "tcl_cmd",              // TCL initialization command
-        opt_tcl_cmd,
-        NULL,
-        NULL,
-        PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
-        "-tcl_cmd command",
-        "Depreciated - use -drvopt tcl_cmd= instead"
     },
     {
         "auto_path",            // Additional directory(s) to autoload
@@ -2166,35 +2156,6 @@ opt_plwindow( const char *opt, const char *optarg, void *client_data )
         plexit( "opt_plwindow: Insufficient memory" );
     }
     strcpy( plsc->plwindow, optarg );
-    return 0;
-}
-
-//--------------------------------------------------------------------------
-// opt_tcl_cmd()
-//
-// Performs appropriate action for option "tcl_cmd":
-// Sets TCL command(s) to eval on startup
-// Depreciated - just bounce on to -drvopt tcl_cmd=
-//--------------------------------------------------------------------------
-
-static int
-opt_tcl_cmd( const char *opt, const char *optarg, void *client_data )
-{
-    char *newcmd;
-
-    if ( ( newcmd = (char *) malloc( (size_t) ( strlen( optarg ) + 9 ) * sizeof ( char ) ) ) == NULL )
-    {
-        plexit( "opt_tcl_cmd: Insufficient memory" );
-    }
-
-    strcpy( newcmd, "tcl_cmd=" );
-    strcat( newcmd, optarg );
-
-    fprintf( stderr, "-tcl_cmd <cmd> is obsolete. Please use -drvopt tcl_cmd=<cmd> instead\n" );
-
-    opt_drvopt( "drvopt", newcmd, NULL );
-    free( newcmd );
-
     return 0;
 }
 

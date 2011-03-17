@@ -65,7 +65,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Deprecated.  Use the new name, &pleop;, for this function instead.
+      Removed.  Use the new name, &pleop;, for this function instead.
     </para>
 
   </sect1>
@@ -87,7 +87,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Deprecated.  Use the new name, &plcol0;, for this function instead.
+      Removed.  Use the new name, &plcol0;, for this function instead.
     </para>
 
     <variablelist>
@@ -128,7 +128,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       Set current color by hue, lightness, and saturation.
       Convert hls color coordinates to rgb, then call plrgb.
-      Do <emphasis>not</emphasis> use this.  Only retained for backward compatibility.
+      This function has been removed.
       Use &plhlsrgb; and &plscol0; instead.
     </para>
     <!-- TODO: find out what to do exactly -->
@@ -193,8 +193,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Use &plhlsrgb; from the common API instead of this deprecated C-only
-      function.
+      Removed. Use &plhlsrgb; from the common API instead.
     </para>
 
     <variablelist>
@@ -287,7 +286,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Deprecated.  Use the new name, &plbop;, for this function instead.
+      Removed.  Use the new name, &plbop;, for this function instead.
     </para>
 
   </sect1>
@@ -312,9 +311,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Set line color by red, green, blue from  0. to 1.  Do
-      <emphasis>not</emphasis> use this.
-      Only retained for backward compatibility. Use the function &plscol0;
-      instead.
+      Removed. Use the function &plscol0; instead.
     </para>
 
     <variablelist>
@@ -375,8 +372,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Set line color by 8-bit RGB values.  Do <emphasis>not</emphasis> use this.
-      Only retained for backward compatibility. Use the function &plscol0;
-      instead.
+      Removed. Use the function &plscol0; instead.
     </para>
 
     <variablelist>

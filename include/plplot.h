@@ -314,10 +314,16 @@ typedef void*    PLPointer;
 #define PL_FCI_MEDIUM                 0x0
 #define PL_FCI_BOLD                   0x1
 
+#ifdef PL_DEPRECATED
+
 // Obsolete names
 
 #define plParseInternalOpts( a, b, c )    c_plparseopts( a, b, c )
 #define plSetInternalOpt( a, b )          plSetOpt( a, b )
+
+#endif  // PL_DEPRECATED
+
+
 // Option table definition
 
 typedef struct
@@ -799,6 +805,8 @@ typedef plf2ops_t * PLF2OPS;
 
 #ifndef __PLSTUBS_H__   // i.e. do not expand this in the stubs
 
+#ifdef PL_DEPRECATED
+
 #define    plclr           pleop
 #define    plpage          plbop
 #define    plcol           plcol0
@@ -809,6 +817,8 @@ typedef plf2ops_t * PLF2OPS;
 #define    plP_gvpd        plgvpd
 #define    plP_gvpw        plgvpw
 #define    plotsh3d( x, y, z, nx, ny, opt )    plsurf3d( x, y, z, nx, ny, opt, NULL, 0 )
+
+#endif // PL_DEPRECATED
 
 #endif // __PLSTUBS_H__
 
@@ -2196,8 +2206,12 @@ plSetUsage( const char *program_string, const char *usage_string );
 PLDLLIMPEXP int
 c_plsetopt( const char *opt, const char *optarg );
 
+#ifdef PL_DEPRECATED
+
 PLDLLIMPEXP int
 plSetOpt( const char *opt, const char *optarg );
+
+#endif // PL_DEPRECATED
 
 // Process options list using current options info.
 
@@ -2284,21 +2298,7 @@ plGetCursor( PLGraphicsIn *gin );
 PLDLLIMPEXP int
 plTranslateCursor( PLGraphicsIn *gin );
 
-// Deprecated function names which are handled as wrappers for strict
-// backwards compatibility of the library API
-
-PLDLLIMPEXP int
-plParseOpts( int *p_argc, const char **argv, PLINT mode );
-
-PLDLLIMPEXP void
-plHLS_RGB( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b );
-
-PLDLLIMPEXP void
-plRGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s );
-
-PLDLLIMPEXP void
-plarrows( const PLFLT *u, const PLFLT *v, const PLFLT *x, const PLFLT *y, PLINT n,
-          PLFLT scale, PLFLT dx, PLFLT dy );
+#ifdef PL_DEPRECATED
 
 // These functions are depreciated and only retained for backwards
 // compatibility - do not use in new code.
@@ -2317,6 +2317,8 @@ c_plrgb( PLFLT r, PLFLT g, PLFLT b );
 
 PLDLLIMPEXP void
 c_plrgb1( PLINT r, PLINT g, PLINT b );
+
+#endif // PL_DEPRECATED
 
 
 #ifdef __cplusplus

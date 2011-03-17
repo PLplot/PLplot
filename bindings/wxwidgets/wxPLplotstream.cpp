@@ -80,7 +80,7 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
         backend );
     strncat( drvopt, buffer, bufferSize - strlen( drvopt ) );
 
-    SetOpt( "-drvopt", drvopt );
+    setopt( "-drvopt", drvopt );
 
     init();
 

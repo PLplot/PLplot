@@ -159,9 +159,9 @@ static void plstrip_legend( PLStrip *stripc, int first )
     {
         if ( stripc->npts[i] || first )
         {
-            plcol( stripc->colline[i] ); pllsty( stripc->styline[i] );
+            plcol0( stripc->colline[i] ); pllsty( stripc->styline[i] );
             pljoin( stripc->xlpos, stripc->ylpos - sc, stripc->xlpos + 0.1, stripc->ylpos - sc );
-            plcol( stripc->collab );
+            plcol0( stripc->collab );
             plptex( stripc->xlpos + 0.11, stripc->ylpos - sc, 0., 0., 0, stripc->legline[i] ); sc += dy;
         }
     }
@@ -184,7 +184,7 @@ static void plstrip_gen( PLStrip *strip )
 
     plvpor( 0, 1, 0, 1 );
     plwind( 0, 1, 0, 1 );
-    plcol( 0 ); plpsty( 0 );
+    plcol0( 0 ); plpsty( 0 );
     plclear();
     plvsta();
 
@@ -195,17 +195,17 @@ static void plstrip_gen( PLStrip *strip )
     plwind( strip->xmin, strip->xmax, strip->ymin, strip->ymax );
 
     pllsty( 1 );
-    plcol( strip->colbox );
+    plcol0( strip->colbox );
     plbox( strip->xspec, 0.0, 0, strip->yspec, 0.0, 0 );
 
-    plcol( strip->collab );
+    plcol0( strip->collab );
     pllab( strip->labx, strip->laby, strip->labtop );
 
     for ( i = 0; i < PEN; i++ )
     {
         if ( strip->npts[i] > 0 )
         {
-            plcol( strip->colline[i] ); pllsty( strip->styline[i] );
+            plcol0( strip->colline[i] ); pllsty( strip->styline[i] );
             plline( strip->npts[i], strip->x[i], strip->y[i] );
         }
     }
@@ -274,7 +274,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
             // If user has changed subwindow, make shure we have the correct one
             plvsta();
             plwind( stripc->wxmin, stripc->wxmax, stripc->wymin, stripc->wymax );   // FIXME - can exist some redundancy here
-            plcol( stripc->colline[p] ); pllsty( stripc->styline[p] );
+            plcol0( stripc->colline[p] ); pllsty( stripc->styline[p] );
             if ( ( stripc->npts[p] - 2 ) < 0 )
                 plP_movwor( stripc->x[p][stripc->npts[p] - 1], stripc->y[p][stripc->npts[p] - 1] );
             else

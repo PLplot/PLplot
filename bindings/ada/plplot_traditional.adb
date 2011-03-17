@@ -1734,13 +1734,13 @@ package body PLplot_Traditional is
 
 
     -- Set current color (map 0) by hue, lightness, and saturation.
-    procedure plhls
-       (Hue_Component        : Long_Float; -- Not documented; presumably 0.0..360.0.
-        Lightness_Component  : Long_Float_0_1_Type;
-        Saturation_Component : Long_Float_0_1_Type) is
-    begin
-        PLplot_Thin.plhls(Hue_Component, Lightness_Component, Saturation_Component);
-    end plhls;
+    -- procedure plhls
+    --    (Hue_Component        : Long_Float; -- Not documented; presumably 0.0..360.0.
+    --     Lightness_Component  : Long_Float_0_1_Type;
+    --     Saturation_Component : Long_Float_0_1_Type) is
+    -- begin
+    --     PLplot_Thin.plhls(Hue_Component, Lightness_Component, Saturation_Component);
+    -- end plhls;
 
 
     -- Functions for converting between HLS and RGB color space
@@ -2075,17 +2075,17 @@ package body PLplot_Traditional is
 
 
     -- Set line color by red, green, blue from 0.0 to 1.0
-    procedure plrgb(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type) is
-    begin
-        PLplot_Thin.plrgb(Red_Component, Blue_Component, Green_Component);
-    end plrgb;
+    -- procedure plrgb(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type) is
+    -- begin
+    --     PLplot_Thin.plrgb(Red_Component, Blue_Component, Green_Component);
+    -- end plrgb;
 
 
     -- Set line color by 8 bit RGB values.
-    procedure plrgb1(Red_Component, Blue_Component, Green_Component : Integer) is
-    begin
-        PLplot_Thin.plrgb1(Red_Component, Blue_Component, Green_Component);
-    end plrgb1;
+    -- procedure plrgb1(Red_Component, Blue_Component, Green_Component : Integer) is
+    -- begin
+    --     PLplot_Thin.plrgb1(Red_Component, Blue_Component, Green_Component);
+    -- end plrgb1;
 
 
     -- Functions for converting between HLS and RGB color space

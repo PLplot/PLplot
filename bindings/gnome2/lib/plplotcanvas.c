@@ -199,12 +199,6 @@ void plplot_canvas_adv( PlplotCanvas* self, PLINT page )
 
 // simple arrow plotter.
 
-// deprecated in core so remove this.
-// void plplot_canvas_arrows(PlplotCanvas* self, PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n, PLFLT scale, PLFLT dx, PLFLT dy) {
-// plsstrm(self->Nstream);
-// plarrows(u, v, x, y, n, scale, dx, dy) ;
-// }
-
 void plplot_canvas_vect( PlplotCanvas* self, PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ), PLPointer pltr_data )
 {
     plsstrm( self->Nstream );
@@ -626,11 +620,13 @@ void plplot_canvas_hist( PlplotCanvas* self, PLINT n, PLFLT *data, PLFLT datmin,
 
 // Set current color (map 0) by hue, lightness, and saturation.
 
+#ifdef PL_DEPRECATED
 void plplot_canvas_hls( PlplotCanvas* self, PLFLT h, PLFLT l, PLFLT s )
 {
     plsstrm( self->Nstream );
     plhls( h, l, s );
 }
+#endif  // PL_DEPRECATED
 
 // /\* Initializes PLplot, using preset or default options *\/
 
@@ -823,6 +819,7 @@ void plplot_canvas_replot( PlplotCanvas* self )
     plreplot();
 }
 
+#ifdef PL_DEPRECATED
 // Set line color by red, green, blue from  0. to 1.
 
 void plplot_canvas_rgb( PlplotCanvas* self, PLFLT r, PLFLT g, PLFLT b )
@@ -838,6 +835,7 @@ void plplot_canvas_rgb1( PlplotCanvas* self, PLINT r, PLINT g, PLINT b )
     plsstrm( self->Nstream );
     plrgb1( r, g, b );
 }
+#endif  // PL_DEPRECATED
 
 // Set character height.
 

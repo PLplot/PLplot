@@ -204,19 +204,19 @@ plot1( void )
 // scaled separately (just = 0), and we just draw a labelled
 // box (axis = 0).
 
-    plcol( 1 );
+    plcol0( 1 );
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
-    plcol( 6 );
+    plcol0( 6 );
     pllab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
 // Plot the data points
 
-    plcol( 9 );
+    plcol0( 9 );
     plpoin( 6, xs1, ys1, 9 );
 
 // Draw the line through the data
 
-    plcol( 4 );
+    plcol0( 4 );
     plline( 60, x, y );
 }
 
@@ -231,9 +231,9 @@ plot2( void )
 // 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
 // (just = 0), and we draw a box with axes (axis = 1).
 
-    plcol( 1 );
+    plcol0( 1 );
     plenv( (PLFLT) -2.0, (PLFLT) 10.0, (PLFLT) -0.4, (PLFLT) 1.2, 0, 1 );
-    plcol( 2 );
+    plcol0( 2 );
     pllab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
 
 // Fill up the arrays
@@ -248,7 +248,7 @@ plot2( void )
 
 // Draw the line
 
-    plcol( 3 );
+    plcol0( 3 );
     plline( 100, x, y );
 }
 
@@ -272,18 +272,18 @@ plot3( void )
 
 // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-    plcol( 1 );
+    plcol0( 1 );
     plbox( "bcnst", (PLFLT) 60.0, 2, "bcnstv", (PLFLT) 0.2, 2 );
 
 // Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
 // expects a pointer!!
 
     plstyl( 1, &mark1, &space1 );
-    plcol( 2 );
+    plcol0( 2 );
     plbox( "g", (PLFLT) 30.0, 0, "g", (PLFLT) 0.2, 0 );
     plstyl( 0, &mark0, &space0 );
 
-    plcol( 3 );
+    plcol0( 3 );
     pllab( "Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function" );
 
     for ( i = 0; i < 101; i++ )
@@ -292,7 +292,7 @@ plot3( void )
         y[i] = sin( x[i] * 3.141592654 / 180.0 );
     }
 
-    plcol( 4 );
+    plcol0( 4 );
     plline( 101, x, y );
 }
 
@@ -440,9 +440,9 @@ shade( void )
             plfill, 1, NULL, NULL );
     }
 
-    plcol( 1 );
+    plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
-    plcol( 2 );
+    plcol0( 2 );
 //
 //  plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR, mypltr, NULL);
 //
