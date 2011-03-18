@@ -29,7 +29,7 @@ use
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
     
---with Ada.Numerics.Long_Real_Arrays;
+--    with Ada.Numerics.Long_Real_Arrays;
 
 package PLplot_Auxiliary is
 
@@ -47,18 +47,18 @@ package PLplot_Auxiliary is
     -- Annex G.3 or the user simply prefers to declare real vectors and matrices
     -- in a manner that is type-compatible with that annex. ALSO IN THIS CASE
     -- uncomment the line above: with Ada.Numerics.Long_Real_Arrays;.
-    -- Using Annex G.3 requires linking to BLAS and LAPACK libraries or the 
+    -- Using Annex G.3 requires linking to BLAS and LAPACK libraries or the
     -- PLplot build process will fail when attempting to link the Ada examples
     -- e.g. x01a.adb.
-    --subtype Real_Vector is Ada.Numerics.Long_Real_Arrays.Real_Vector;
-    --subtype Real_Matrix is Ada.Numerics.Long_Real_Arrays.Real_Matrix;
+--    subtype Real_Vector is Ada.Numerics.Long_Real_Arrays.Real_Vector;
+--    subtype Real_Matrix is Ada.Numerics.Long_Real_Arrays.Real_Matrix;
 
     ----------------------------------------------------------------------------
     -- Implementation note: The easy ability to switch to Ada 2005 Annex G.3
     -- capability (with only these simple edits to this file) is the only reason
-    -- for requiring that this package be with-ed in the bindings. Only the 
+    -- for requiring that this package be with-ed in the bindings. Only the
     -- examples use the utility procedures below--not the bindings themselves.
-    -- If it were ever to be decided to abandon Ada 95 compatibility and to 
+    -- If it were ever to be decided to abandon Ada 95 compatibility and to
     -- require all Ada-capable PLplot builds to link to BLAS and LAPACK, then
     -- the with-s to this package in the bindings could be removed.
     ----------------------------------------------------------------------------

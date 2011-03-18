@@ -2,7 +2,7 @@
 
 -- Thick Ada binding to PLplot
 
--- Copyright (C) 2006-2007 Jerry Bauck
+-- Copyright (C) 2006-2011 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -82,6 +82,8 @@ package body PLplot is
     -- line colors, widths, and styles, justification, zoom, and labels.
     -- Can be used directly or as part of a "simple" plotter 
     -- such as those that follow or which are made by the user.
+    -- fixme Add capability for labels, legends.
+    -- fixme Add capability for labels, legends.
     procedure Multiplot_Pairs
        (x1            : Real_Vector     := Dont_Plot_This;
         y1            : Real_Vector     := Dont_Plot_This;
@@ -1847,6 +1849,101 @@ package body PLplot is
     end Write_Labels;
 
 
+    -- Arrays that could have elements of Plot_Color_Type are merely arrays of 
+    -- integers; we have not defined special arrays (e.g., array(somerange) of 
+    -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors, 
+    -- or Symbol_Colors.
+    -- Routine for drawing discrete line, symbol, or cmap0 legends
+    -- pllegend
+    procedure Create_Legend
+       (Legend_Width, Legend_Height           : out Long_Float;
+        Position, Options                     : Integer;
+        X_Offset, Y_Offset                    : Long_Float;
+        Plot_Area_Width                       : Long_Float;
+        Background_Color, Bounding_Box_Color  : Plot_Color_Type;
+        Bounding_Box_Style                    : Legend_Flag_Type;
+        Number_Rows, Number_Columns           : Integer;
+        -- fixme Entry_Options could (should?) be an array of Legend_Flag_Type.
+        Entry_Options                         : Integer_Array_1D;
+        Text_Offset, Text_Scale, Text_Spacing : Long_Float;
+        Text_Justification                    : Long_Float;
+        Text_Colors                           : Integer_Array_1D;
+        Label_Text                            : in out Legend_String_Array_Type;
+        Box_Colors, Box_Patterns              : Integer_Array_1D;
+        Box_Scales                            : Real_Vector;
+        Box_Line_Widths                       : Integer_Array_1D;
+        Line_Colors, Line_Styles, Line_Widths : Integer_Array_1D; --fixme Arrays of  types?
+        Symbol_Colors                         : Integer_Array_1D;
+        Symbol_Scales                         : Real_Vector;
+        Symbol_Numbers                        : Integer_Array_1D;
+        Symbols                               : in out Legend_String_Array_Type)
+    is
+        Number_Entries : Integer := Label_Text'length;
+        L : Integer; -- Used to check lengths of arrays.
+        PL_Label_Text, PL_Symbols : PL_Legend_String_Array(Label_Text'range);
+        C_Legend_String_Array  : array(Label_Text'range) of PL_Legend_String;
+        C_Symbols_String_Array : array(Symbols'range)    of PL_Legend_String;
+    begin
+        -- Check that all array lengths in the argument list are the same.
+        L := Entry_Options'length;
+        if L /= Text_Colors'length or L /= Label_Text'length or L /= Box_Colors'length or
+            L /= Box_Patterns'length or L /= Box_Scales'length or 
+            L /= Box_Line_Widths'length or L /= Line_Colors'length or L /= Line_Styles'length or
+            L /= Line_Widths'length or L /= Symbol_Colors'length or L /= Symbol_Scales'length or
+            L /= Symbol_Numbers'length or L /= Symbols'length
+        then
+            Put_Line("*** WARNING: Mismatched array lengths at Create_Legend");
+        end if;
+        
+        -- Adapt Label_Text and Symbols to C. See the comment at Create_Stripchart.
+        -- Adapt Label_Text first.
+        for I in Label_Text'range loop
+
+            -- Check length and adjust if necessary.
+            if Length(Label_Text(I)) >= Max_Legend_Label_Length then
+                Put_Line("*** Warning: Legend label was truncated to" 
+                    & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
+                Label_Text(I) := Head(Label_Text(I), Max_Legend_Label_Length);
+            end if;
+
+            -- Make the C-style string with null character immediately after the text.
+            C_Legend_String_Array(I) := To_C(To_String(Label_Text(I) 
+                & Character'val(0) 
+                & (Max_Legend_Label_Length - Length(Label_Text(I))) * " "), False);
+
+            -- Set the I-th pointer in the array of pointers.
+            PL_Label_Text(I) := C_Legend_String_Array(I)'Address;
+        end loop;
+
+        -- Adapt Symbols next.
+        for I in Symbols'range loop
+
+            -- Check length and adjust if necessary.
+            if Length(Symbols(I)) >= Max_Legend_Label_Length then
+                Put_Line("*** Warning: Legend symbols label was truncated to" 
+                    & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
+                Symbols(I) := Head(Symbols(I), Max_Legend_Label_Length);
+            end if;
+
+            -- Make the C-style string with null character immediately after the text.
+            C_Symbols_String_Array(I) := To_C(To_String(Symbols(I) 
+                & Character'val(0) 
+                & (Max_Legend_Label_Length - Length(Symbols(I))) * " "), False);
+
+            -- Set the I-th pointer in the array of pointers.
+            PL_Symbols(I) := C_Symbols_String_Array(I)'Address;
+        end loop;            
+
+        pllegend(Legend_Width, Legend_Height, Position, Options,
+            X_Offset, Y_Offset, Plot_Area_Width, Background_Color, Bounding_Box_Color,
+            Bounding_Box_Style, Number_Rows, Number_Columns, Number_Entries, 
+            Entry_Options, Text_Offset, Text_Scale, Text_Spacing, Text_Justification,
+            Text_Colors, PL_Label_Text, Box_Colors, Box_Patterns, Box_Scales,
+            Box_Line_Widths, Line_Colors, Line_Styles, Line_Widths, Symbol_Colors,
+            Symbol_Scales, Symbol_Numbers, PL_Symbols);
+    end Create_Legend;
+
+
     -- Sets position of the light source
     -- pllightsource
     procedure Set_Light_Source
@@ -2901,6 +2998,34 @@ package body PLplot is
     begin
         Set_Custom_Coordinate_Transform(null, System.Null_Address);
     end Clear_Custom_Coordinate_Transform;
+
+
+    -- Prints out the same string repeatedly at the n points in world
+    -- coordinates given by the x and y arrays.  Supersedes plpoin and
+    -- plsymbol for the case where text refers to a unicode glyph either
+    -- directly as UTF-8 or indirectly via the standard text escape
+    -- sequences allowed for PLplot input strings.
+    -- plstring
+    procedure Draw_String
+       (x, y : Real_Vector;
+        Plot_This_String : String) is
+    begin
+        plstring(x'Length, x, y, To_C(Plot_This_String));
+    end Draw_String;
+
+
+    -- Prints out the same string repeatedly at the n points in world
+    -- coordinates given by the x, y, and z arrays.  Supersedes plpoin3
+    -- for the case where text refers to a unicode glyph either directly
+    -- as UTF-8 or indirectly via the standard text escape sequences
+    -- allowed for PLplot input strings.
+    -- plstring3
+    procedure Draw_String_3D
+       (x, y, z : Real_Vector;
+        Plot_This_String : String) is
+    begin
+        plstring3(x'Length, x, y, z, To_C(Plot_This_String));
+    end Draw_String_3D;
 
 
     -- Add a point to a stripchart.

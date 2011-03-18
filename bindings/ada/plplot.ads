@@ -2,7 +2,7 @@
 
 -- Thick Ada binding to PLplot
 
--- Copyright (C) 2006-2007 Jerry Bauck
+-- Copyright (C) 2006-2011 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -110,7 +110,7 @@ package PLplot is
     -- color map has been changed, then these colors will return surprising 
     -- results. Color map 0 can always be restored to its default state using 
     -- Restore_Default_Snapshot_Of_Color_Map_0.
-    subtype Plot_Color_Type is Integer;
+    subtype Plot_Color_Type is Natural; -- Remember that user can expand color map 0.
     Black      : constant Plot_Color_Type := 0;
     Red        : constant Plot_Color_Type := 1;
     Yellow     : constant Plot_Color_Type := 2;
@@ -153,6 +153,76 @@ package PLplot is
     -- Things for stripcharts
     Maximum_Number_Of_Stripcharts : Integer := 4; -- Limited by PLplot designers.
     type Stripchart_Label_String_Array_Type is array (1 .. Maximum_Number_Of_Stripcharts) of Unbounded_String;
+
+    -- Things for legends
+    -- The user program must declare one of these with definite bounds, one
+    -- element for each legend label.
+    type Legend_String_Array_Type is array (Integer range <>) of Unbounded_String;
+
+    --Flags used for position argument of both pllegend and plcolorbar 
+    -- (duplicated from plplot_thin.ads)
+    PL_Position_Left     : constant Legend_Colorbar_Position_Type := 1;
+    PL_Position_Right    : constant Legend_Colorbar_Position_Type := 2;
+    PL_Position_Top      : constant Legend_Colorbar_Position_Type := 4;
+    PL_Position_Bottom   : constant Legend_Colorbar_Position_Type := 8;
+    PL_Position_Inside   : constant Legend_Colorbar_Position_Type := 16;
+    PL_Position_Outside  : constant Legend_Colorbar_Position_Type := 32;
+    PL_Position_Viewport : constant Legend_Colorbar_Position_Type := 64;
+    PL_Position_Subpage  : constant Legend_Colorbar_Position_Type := 128;
+
+    --Renamed flags used for position argument of both pllegend and plcolorbar
+    Legend_Position_Left     : constant Legend_Colorbar_Position_Type := PL_Position_Left;
+    Legend_Position_Right    : constant Legend_Colorbar_Position_Type := PL_Position_Right;
+    Legend_Position_Top      : constant Legend_Colorbar_Position_Type := PL_Position_Top;
+    Legend_Position_Bottom   : constant Legend_Colorbar_Position_Type := PL_Position_Bottom;
+    Legend_Position_Inside   : constant Legend_Colorbar_Position_Type := PL_Position_Inside;
+    Legend_Position_Outside  : constant Legend_Colorbar_Position_Type := PL_Position_Outside;
+    Legend_Position_Viewport : constant Legend_Colorbar_Position_Type := PL_Position_Viewport;
+    Legend_Position_Subpage  : constant Legend_Colorbar_Position_Type := PL_Position_Subpage;
+
+    -- Flags for pllegend (duplicated from plplot_thin.ads)
+    PL_Legend_None         : constant Legend_Flag_Type := 1;
+    PL_Legend_Color_Box    : constant Legend_Flag_Type := 2;
+    PL_Legend_Line         : constant Legend_Flag_Type := 4;
+    PL_Legend_Symbol       : constant Legend_Flag_Type := 8;
+    PL_Legend_Text_Left    : constant Legend_Flag_Type := 16;
+    PL_Legend_Background   : constant Legend_Flag_Type := 32;
+    PL_Legend_Bounding_Box : constant Legend_Flag_Type := 64;
+    PL_Legend_Row_Major    : constant Legend_Flag_Type := 128;
+
+    -- Renamed flags for pllegend
+    Legend_None         : constant Legend_Flag_Type := PL_Legend_None;
+    Legend_Color_Box    : constant Legend_Flag_Type := PL_Legend_Color_Box;
+    Legend_Line         : constant Legend_Flag_Type := PL_Legend_Line;
+    Legend_Symbol       : constant Legend_Flag_Type := PL_Legend_Symbol;
+    Legend_Text_Left    : constant Legend_Flag_Type := PL_Legend_Text_Left;
+    Legend_Background   : constant Legend_Flag_Type := PL_Legend_Background;
+    Legend_Bounding_Box : constant Legend_Flag_Type := PL_Legend_Bounding_Box;
+    Legend_Row_Major    : constant Legend_Flag_Type := PL_Legend_Row_Major;
+
+    -- Flags for plcolorbar (duplicated from plplot_thin.ads)
+    PL_Colorbar_Label_Left   : constant Colorbar_Flag_Type := 1;
+    PL_Colorbar_Label_Right  : constant Colorbar_Flag_Type := 2;
+    PL_Colorbar_Label_Top    : constant Colorbar_Flag_Type := 4;
+    PL_Colorbar_Label_Bottom : constant Colorbar_Flag_Type := 8;
+    PL_Colorbar_Image        : constant Colorbar_Flag_Type := 16;
+    PL_Colorbar_Shade        : constant Colorbar_Flag_Type := 32;
+    PL_Colorbar_Gradient     : constant Colorbar_Flag_Type := 64;
+    PL_Colorbar_Cap_Low      : constant Colorbar_Flag_Type := 128;
+    PL_Colorbar_Cap_High     : constant Colorbar_Flag_Type := 256;
+    PL_Colorbar_Shade_Label  : constant Colorbar_Flag_Type := 512;
+
+    -- Renamed flags for plcolorbar
+    Colorbar_Label_Left   : constant Colorbar_Flag_Type := PL_Colorbar_Label_Left;
+    Colorbar_Label_Right  : constant Colorbar_Flag_Type := PL_Colorbar_Label_Right;
+    Colorbar_Label_Top    : constant Colorbar_Flag_Type := PL_Colorbar_Label_Top;
+    Colorbar_Label_Bottom : constant Colorbar_Flag_Type := PL_Colorbar_Label_Bottom;
+    Colorbar_Image        : constant Colorbar_Flag_Type := PL_Colorbar_Image;
+    Colorbar_Shade        : constant Colorbar_Flag_Type := PL_Colorbar_Shade;
+    Colorbar_Gradient     : constant Colorbar_Flag_Type := PL_Colorbar_Gradient;
+    Colorbar_Cap_Low      : constant Colorbar_Flag_Type := PL_Colorbar_Cap_Low;
+    Colorbar_Cap_High     : constant Colorbar_Flag_Type := PL_Colorbar_Cap_High;
+    Colorbar_Shade_Label  : constant Colorbar_Flag_Type := PL_Colorbar_Shade_Label;
 
     -- Justification for plots
     subtype Justification_Type is Integer range -1..2;
@@ -1155,6 +1225,36 @@ package PLplot is
     procedure Write_Labels(X_Label, Y_Label, Title_Label : String := To_String(Default_Label_String));
 
 
+    -- Arrays that could have elements of Plot_Color_Type are merely arrays of 
+    -- integers; we have not defined special arrays (e.g., array(somerange) of 
+    -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors, 
+    -- or Symbol_Colors.
+    -- Routine for drawing discrete line, symbol, or cmap0 legends
+    -- pllegend
+    procedure Create_Legend
+       (Legend_Width, Legend_Height           : out Long_Float;
+        Position, Options                     : Integer;
+        X_Offset, Y_Offset                    : Long_Float;
+        Plot_Area_Width                       : Long_Float;
+        Background_Color, Bounding_Box_Color  : Plot_Color_Type;
+        Bounding_Box_Style                    : Legend_Flag_Type;
+        Number_Rows, Number_Columns           : Integer;
+        -- fixme Entry_Options could (should?) be an array of Legend_Flag_Type.
+        Entry_Options                         : Integer_Array_1D;
+        Text_Offset, Text_Scale, Text_Spacing : Long_Float;
+        Text_Justification                    : Long_Float;
+        Text_Colors                           : Integer_Array_1D;
+        Label_Text                            : in out Legend_String_Array_Type;
+        Box_Colors, Box_Patterns              : Integer_Array_1D;
+        Box_Scales                            : Real_Vector;
+        Box_Line_Widths                       : Integer_Array_1D;
+        Line_Colors, Line_Styles, Line_Widths : Integer_Array_1D;
+        Symbol_Colors                         : Integer_Array_1D;
+        Symbol_Scales                         : Real_Vector;
+        Symbol_Numbers                        : Integer_Array_1D;
+        Symbols                               : in out Legend_String_Array_Type);
+
+
     -- Sets position of the light source
     -- pllightsource
     procedure Set_Light_Source
@@ -1761,6 +1861,28 @@ package PLplot is
     
     -- Clear the coordinate transform. Ada only; not part of the C API.
     procedure Clear_Custom_Coordinate_Transform;
+
+
+    -- Prints out the same string repeatedly at the n points in world
+    -- coordinates given by the x and y arrays.  Supersedes plpoin and
+    -- plsymbol for the case where text refers to a unicode glyph either
+    -- directly as UTF-8 or indirectly via the standard text escape
+    -- sequences allowed for PLplot input strings.
+    -- plstring
+    procedure Draw_String
+       (x, y : Real_Vector;
+        Plot_This_String : String);
+
+
+    -- Prints out the same string repeatedly at the n points in world
+    -- coordinates given by the x, y, and z arrays.  Supersedes plpoin3
+    -- for the case where text refers to a unicode glyph either directly
+    -- as UTF-8 or indirectly via the standard text escape sequences
+    -- allowed for PLplot input strings.
+    -- plstring3
+    procedure Draw_String_3D
+       (x, y, z : Real_Vector;
+        Plot_This_String : String);
 
 
     -- Add a point to a stripchart.
