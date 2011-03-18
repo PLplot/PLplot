@@ -19,8 +19,11 @@
 
 # Module file to decide whether to build doxygen documentation and
 # and, if so, find the necessary doxygen command.
+# N.B. turn OFF by default since the doxygen build now requires something
+# like 10 seconds, and that build latency would be annoying for developers
+# who are just making some trivial change in the source tree.
 
-option(BUILD_DOX_DOC "Build doxygen documentation" ON)
+option(BUILD_DOX_DOC "Build doxygen documentation" OFF)
 
 if(BUILD_DOX_DOC)
   find_package(Doxygen)
