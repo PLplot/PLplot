@@ -376,7 +376,7 @@ value ml_plstransform( value unit )
 // void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 // PLPointer pltr_data);
 //
-void ml_plcont( PLFLT **f, PLINT nx, PLINT ny,
+void ml_plcont( const PLFLT **f, PLINT nx, PLINT ny,
                 PLINT kx, PLINT lx, PLINT ky, PLINT ly,
                 PLFLT *clevel, PLINT nlevel )
 {
@@ -407,7 +407,7 @@ void ml_plcont( PLFLT **f, PLINT nx, PLINT ny,
 // void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 // PLPointer pltr_data);
 //
-void ml_plshade( PLFLT **a, PLINT nx, PLINT ny,
+void ml_plshade( const PLFLT **a, PLINT nx, PLINT ny,
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -447,7 +447,7 @@ void ml_plshade( PLFLT **a, PLINT nx, PLINT ny,
 // void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 // PLPointer pltr_data);
 //
-void ml_plshades( PLFLT **a, PLINT nx, PLINT ny,
+void ml_plshades( const PLFLT **a, PLINT nx, PLINT ny,
                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                   PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                   PLINT cont_color, PLINT cont_width,
@@ -471,7 +471,7 @@ void ml_plshades( PLFLT **a, PLINT nx, PLINT ny,
 //      void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 //      PLPointer pltr_data);
 //
-void ml_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
+void ml_plimagefr( const PLFLT **idata, PLINT nx, PLINT ny,
                    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                    PLFLT zmin, PLFLT zmax,
                    PLFLT valuemin, PLFLT valuemax )
@@ -490,7 +490,7 @@ void ml_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
 // void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 //      PLPointer pltr_data);
 //
-void ml_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale )
+void ml_plvect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scale )
 {
     c_plvect( u, v, nx, ny, scale,
         get_ml_plotter_func(),
