@@ -2,7 +2,7 @@
 
 --  3-d line and point plot demo.  Adapted from x08c.c.
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008 - 2011 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -35,8 +35,6 @@ use
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
     PLplot;
-
-
 
 procedure xthick18a is
     ----------------------------------------------------------------------------
@@ -113,7 +111,6 @@ procedure xthick18a is
         Write_Text_Viewport("t", 1.0, 0.5, 0.5, "unit radius sphere" );
     end test_poly;
 
-
 begin
     -- Parse and process command line arguments 
     Parse_Command_Line_Arguments(Parse_Full);
@@ -150,7 +147,7 @@ begin
         if opt(k) then
             Draw_Curve_3D(x, y, z);
         else
-            Draw_Points_3D(x, y, z, 1);
+            Draw_String_3D(x, y, z, "⋅");
         end if;
 
         Set_Pen_Color(Green);

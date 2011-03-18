@@ -83,7 +83,6 @@ package body PLplot is
     -- Can be used directly or as part of a "simple" plotter 
     -- such as those that follow or which are made by the user.
     -- fixme Add capability for labels, legends.
-    -- fixme Add capability for labels, legends.
     procedure Multiplot_Pairs
        (x1            : Real_Vector     := Dont_Plot_This;
         y1            : Real_Vector     := Dont_Plot_This;
