@@ -2,7 +2,7 @@
 
 -- Simple line plot and multiple windows demo.
 
--- Copyright (C) 2007 Jerry Bauck
+-- Copyright (C) 2007 - 2011 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -32,8 +32,6 @@ use
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
     PLplot_Traditional;
-
-
 
 procedure x01a is
     xs, ys : Real_Vector (0 .. 5);
