@@ -241,7 +241,7 @@ proc x20 {{w loopback}} {
 
     a2mnmx img_f $width $height img_min img_max
 
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd plenv 0. $width 0. $height 1 -1
     $w cmd pllab "" "" "Reduced dynamic range image example"
     $w cmd plimagefr img_f 0. $width 0. $height 0. 0. \

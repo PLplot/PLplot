@@ -282,11 +282,11 @@ proc plot {{file {}} {columns {}}} {
     plvpor 0.15 0.85 0.1 0.9
     plwind $xmin $xmax $ymin $ymax
 
-    plcol 1
+    plcol0 1
     pllsty 1
     plbox $xopt 0.0 0 $yopt 0.0 0
 
-    plcol 2
+    plcol0 2
     pllab "$xlab" "$ylab" "$title"
 
 # Plot the data
@@ -295,7 +295,7 @@ proc plot {{file {}} {columns {}}} {
 	pllsty $lsty
 	for {set iy 0} {$iy < $ny} {incr iy} {
 	    set jy [lindex $columns $iy]
-	    plcol [expr 2 + $jy]
+	    plcol0 [expr 2 + $jy]
 	    plline $nx x y$jy
 	}
 
@@ -303,7 +303,7 @@ proc plot {{file {}} {columns {}}} {
 	if { $poin < 0 } {set poin 1}
 	for {set iy 0} {$iy < $ny} {incr iy} {
 	    set jy [lindex $columns $iy]
-	    plcol [expr 2 + $jy]
+	    plcol0 [expr 2 + $jy]
 	    plpoin $nx x y$jy $poin
 	}
     }
