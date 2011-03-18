@@ -31,6 +31,7 @@ PROJECT_NAME           = PLplot
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
+# Requires updating for every release.
 PROJECT_NUMBER         = 5.9.7
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
@@ -581,7 +582,16 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = "@CMAKE_SOURCE_DIR@/src"
+INPUT                  = \
+                         "@CMAKE_SOURCE_DIR@/lib" \
+		         "@CMAKE_SOURCE_DIR@/src" \
+                         "@CMAKE_SOURCE_DIR@/drivers" \
+                         "@CMAKE_SOURCE_DIR@/bindings" \
+                         "@CMAKE_SOURCE_DIR@/include" \
+                         "@CMAKE_BINARY_DIR@/config.h" \
+                         "@CMAKE_BINARY_DIR@/lib" \
+                         "@CMAKE_BINARY_DIR@/bindings" \
+                         "@CMAKE_BINARY_DIR@/include" \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -598,6 +608,7 @@ INPUT_ENCODING         = UTF-8
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py *.f90
 
+# Only process C, C++, D, Java, Python, and Fortran files.
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \
@@ -605,30 +616,10 @@ FILE_PATTERNS          = *.c \
                          *.c++ \
                          *.d \
                          *.java \
-                         *.ii \
-                         *.ixx \
-                         *.ipp \
-                         *.i++ \
-                         *.inl \
                          *.h \
-                         *.hh \
-                         *.hxx \
-                         *.hpp \
-                         *.h++ \
-                         *.idl \
-                         *.odl \
-                         *.cs \
-                         *.php \
-                         *.php3 \
-                         *.inc \
-                         *.m \
-                         *.mm \
-                         *.dox \
                          *.py \
                          *.f90 \
                          *.f \
-                         *.vhd \
-                         *.vhdl
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -640,7 +631,13 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                =
+# These files are Fortran, but their extension confuses doxygen
+# into thinking they are C/C++ headers so exclude them as a workaround.
+EXCLUDE                = \
+                         "@CMAKE_BINARY_DIR@/bindings/f77/plplot_parameters.h" \
+                         "@CMAKE_SOURCE_DIR@/bindings/f95/plplot_parameters.h" \
+                         "@CMAKE_BINARY_DIR@/bindings/f95/plplot_parameters.h" \
+		         
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -654,7 +651,9 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+# Ignore .svn directories in the source tree and CMakeFiles directories
+# in the build tree.
+EXCLUDE_PATTERNS       = */.svn/* */CMakeFiles/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1378,7 +1377,9 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by
 # the preprocessor.
 
-INCLUDE_PATH           =
+# Work around a doxygen bug in finding build_tree/bindings/tcl/tclgen_s.h even
+# though the corresponding directory is recursively part of input.
+INCLUDE_PATH           = @CMAKE_BINARY_DIR@/bindings/tcl
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
