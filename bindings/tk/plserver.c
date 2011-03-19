@@ -235,6 +235,10 @@ AppInit( Tcl_Interp *interp )
     Tcl_CreateCommand( interp, "exit", (Tcl_CmdProc *) plExitCmd,
         (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL );
 
+// Define the flags as variables in the PLPLOT namespace
+
+    set_plplot_parameters( interp );
+
     return TCL_OK;
 }
 

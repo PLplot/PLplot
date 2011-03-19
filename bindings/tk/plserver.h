@@ -12,6 +12,7 @@
 #include "plDevs.h"
 #include "pltkd.h"
 #include "pltcl.h"
+#include "plplot_parameters.h"
 
 // State info for the rendering code
 
