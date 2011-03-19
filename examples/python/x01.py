@@ -137,19 +137,19 @@ def plot1(w):
 	# are scaled separately (just = 0), and we just draw a
 	# labelled box (axis = 0).
 
-	w.plcol(1)
+	w.plcol0(1)
 	w.plenv(xmin, xmax, ymin, ymax, 0, 0)
-	w.plcol(2)
+	w.plcol0(2)
 	w.pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2")
 
 	# Plot the data points
 
-	w.plcol(4)
+	w.plcol0(4)
 	w.plpoin(xs, ys, 9)
 
 	# Draw the line through the data
 
-	w.plcol(3)
+	w.plcol0(3)
 	w.plline(x, y)
 
 	w.pleop()
@@ -170,9 +170,9 @@ def plot2(w):
 ##	pl.env(-2.0, 10.0, -0.4, 1.2, 0, 1)
 ##	pl.col(2)
 ##	pl.lab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function")
-	w.plcol(1)
+	w.plcol0(1)
 	w.plenv(-2.0, 10.0, -0.4, 1.2, 0, 1)
-	w.plcol(2)
+	w.plcol0(2)
 	w.pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function")
 
 	# Fill up the arrays
@@ -198,7 +198,7 @@ def plot2(w):
 
 ##	pl.col(3)
 ##	pl.line(x, y)
-	w.plcol(3)
+	w.plcol0(3)
 	w.plline(x, y)
 
 	w.pleop()
@@ -222,18 +222,18 @@ def plot3(w):
 
 	# Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-	w.plcol(1)
+	w.plcol0(1)
 	w.plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2)
 
 	# Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
 	# plstyl expects a pointer!! 
 
 	#w.plstyl([1500], [1500])
-	w.plcol(2)
+	w.plcol0(2)
 	w.plbox("g", 30.0, 0, "g", 0.2, 0)
 	#w.plstyl([], [])
 
-	w.plcol(3)
+	w.plcol0(3)
 	w.pllab("Angle (degrees)", "sine",
 	       "#frPLplot Example 1 - Sine function")
 
@@ -247,7 +247,7 @@ def plot3(w):
 	    x[i] = 3.6 * i
 	    y[i] = math.sin(x[i] * math.pi / 180.0)
 
-	w.plcol(4)
+	w.plcol0(4)
 	w.plline(x, y)
 
 	w.pleop()

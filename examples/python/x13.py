@@ -36,7 +36,7 @@ def main(w):
 ##    pl.init()
 
     w.plenv(0., 10., 0., 10., 1, -2)
-    w.plcol(2)
+    w.plcol0(2)
 
     per = [10, 32, 12, 30, 16]
     theta0 = 0.
@@ -55,10 +55,10 @@ def main(w):
 	    y.append(5 + 3 * math.sin(theta))
 	    theta = theta + dthet
 
-	w.plcol(i + 1)
+	w.plcol0(i + 1)
 	w.plpsty((i + 3) % 8 + 1)
 	w.plfill(x, y)
-	w.plcol(1)
+	w.plcol0(1)
 	w.plline(x, y)
 	just = (theta0 + theta1) / 2.
 	dx = .25 * math.cos(just)

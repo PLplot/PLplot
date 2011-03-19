@@ -41,9 +41,9 @@ def main(w):
     for i in range(NPTS):
 	data[i] = math.sin(i * delta)
 
-    w.plcol(1)
+    w.plcol0(1)
     w.plhist(data, -1.1, 1.1, 44, 0)
-    w.plcol(2)
+    w.plcol0(2)
     w.pllab("#frValue", "#frFrequency",
 	   "#frPLplot Example 5 - Probability function of Oscillator")
 

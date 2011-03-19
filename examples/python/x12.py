@@ -33,13 +33,13 @@ def main(w):
     w.plvsta()
     w.plwind(1980.0, 1990.0, 0.0, 35.0)
     w.plbox("bc", 1.0, 0, "bcnv", 10.0, 0)
-    w.plcol(2)
+    w.plcol0(2)
     w.pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
 
     y0 = [5, 15, 12, 24, 28, 30, 20, 8, 12, 3]
 
     for i in range(10):
-	w.plcol(i + 1)
+	w.plcol0(i + 1)
 	w.plpsty(0)
 	fbox( w, (1980. + i), y0[i] )
 	string = `y0[i]`
@@ -56,7 +56,7 @@ def fbox( w, x0, y0 ):
     x = [x0, x0, x0 + 1., x0 + 1.]
     y = [0., y0, y0, 0.]
     w.plfill(x, y)
-    w.plcol(1)
+    w.plcol0(1)
     w.pllsty(1)
     w.plline(x, y)
 

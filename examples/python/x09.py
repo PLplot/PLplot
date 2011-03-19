@@ -131,31 +131,31 @@ def main():
 ##/*    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 ## */
 ##    plenv(.0, 1.*XPTS, .0, 1.*YPTS, 0, 0);
-##    plcol(2);
+##    plcol0(2);
 ##/*    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
 ## */
 ##    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, pltr0, NULL);
 ##    plstyl(1, &mark, &space);
-##    plcol(3);
+##    plcol0(3);
 ##/*    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
 ## */
 ##    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, pltr0, NULL);
 ##    plstyl(0, &mark, &space);
-##    plcol(1);
+##    plcol0(1);
 ##    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     plenv( 0., 1.*xpts, 0., 1.*ypts, 0, 0 )
-    plcol(2)
+    plcol0(2)
     plcont2( z, 1, xpts, 1, ypts, clevel )
 
     plstyl( 1, mark, space )
-    plcol(3)
+    plcol0(3)
     plcont2( w, 1, 1.*xpts, 1, 1.*ypts, clevel )
     plstyl( 0, mark, space )
 
     # other stuff
 
-    plcol(1)
+    plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pleop()

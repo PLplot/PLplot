@@ -74,16 +74,16 @@ def main(w):
 	w.pladv(0)
 	w.plvpor(0.0, 1.0, 0.0, 0.9)
 	w.plwind(-1.0, 1.0, -0.9, 1.1)
-	w.plcol(1)
+	w.plcol0(1)
 	w.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
 		alt[k], az[k])
 	w.plbox3("bnstu", "x axis", 0.0, 0,
 		 "bnstu", "y axis", 0.0, 0,
 		 "bcdmnstuv", "z axis", 0.0, 0)
 
-	w.plcol(2)
+	w.plcol0(2)
 	w.plot3d(x, y, z, opt[k], 1)
-	w.plcol(3)
+	w.plcol0(3)
 	w.plmtex("t", 1.0, 0.5, 0.5, title[k])
 
 	w.pleop()

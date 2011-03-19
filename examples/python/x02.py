@@ -36,7 +36,7 @@ def main(w):
     w.plfont(4)
 
     for i in range(16):
-	w.plcol(i)
+	w.plcol0(i)
 	w.pladv(0)
 	vmin = 0.1
 	vmax = 0.9
