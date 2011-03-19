@@ -272,7 +272,7 @@ c     Base the dynamic range on the image contents.
 
       call a2mnmx(img_f,width,height,img_min,img_max,WDIM)
 
-      call plcol(2)
+      call plcol0(2)
       call plenv(0.d0, width_r, 0.d0, height_r, 1, -1)
       call pllab("", "", "Reduced dynamic range image example")
       call plimagefr0(img_f, width, height, 0.d0, width_r, 0.d0,

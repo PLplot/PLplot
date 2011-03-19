@@ -167,14 +167,6 @@ PLCOL1( PLFLT *col )
     c_plcol1( *col );
 }
 
-// The old way, same as plcol0
-
-void
-PLCOL( PLINT *icol )
-{
-    c_plcol0( *icol );
-}
-
 void
 PLCOLORBAR( PLINT *position, PLINT *opt, PLFLT *x, PLFLT *y, PLFLT *length, PLFLT *width,
     PLINT *cont_color, PLINT *cont_width, PLFLT *ticks, PLINT *sub_ticks,

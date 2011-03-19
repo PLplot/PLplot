@@ -183,7 +183,6 @@
 #define    PLCALC_WORLDa             FNAME( PLCALC_WORLD_, plcalc_world_ )
 #define    PLCLEAR                   FNAME( PLCLEAR, plclear )
 #define    PLCLR                     FNAME( PLCLR, plclr )
-#define    PLCOL                     FNAME( PLCOL, plcol )
 #define    PLCOL0                    FNAME( PLCOL0, plcol0 )
 #define    PLCOL1                    FNAME( PLCOL1, plcol1 )
 #define    PLCONFIGTIME              FNAME( PLCONFIGTIME, plconfigtime )

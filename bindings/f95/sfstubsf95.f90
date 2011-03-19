@@ -177,12 +177,6 @@
       end interface
 
       interface
-         subroutine plcol( icol )
-            integer :: icol
-         end subroutine plcol
-      end interface
-
-      interface
          subroutine plcol1( col )
             use plplot_flt
             real(kind=plflt) :: col

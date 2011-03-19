@@ -111,9 +111,9 @@
           min_color, min_width, max_color, max_width )
       enddo
 
-      call plcol(1)
+      call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
-      call plcol(2)
+      call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
       end
@@ -235,7 +235,7 @@
       ncollab = 2
 
       call pladv(0)
-      call plcol(ncolbox)
+      call plcol0(ncolbox)
 
 !      Scale window to user coordinates.
 !      Make a bit larger so the boundary does not get clipped.
@@ -284,10 +284,10 @@
         xtm(i) = x0 + rmax * cos(theta)
         ytm(i) = y0 + rmax * sin(theta)
       enddo
-      call plcol(ncolbox)
+      call plcol0(ncolbox)
       call plline(xtm, ytm)
 
-      call plcol(ncollab)
+      call plcol0(ncollab)
       call pllab(' ', ' ', &
       'Shielded potential of charges in a conducting sphere')
 

@@ -168,14 +168,6 @@ PLCOL1( PLFLT *col )
     c_plcol1( *col );
 }
 
-// The old way, same as plcol0
-
-void
-PLCOL( PLINT *icol )
-{
-    c_plcol0( *icol );
-}
-
 void
 PLCONFIGTIME( PLFLT *scale, PLFLT *offset1, PLFLT *offset2, PLINT *ccontrol, PLBOOL *ifbtime_offset, PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec )
 {

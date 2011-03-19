@@ -261,7 +261,7 @@
 
       call a2mnmx(img_f,width,height,img_min,img_max,width)
 
-      call plcol(2)
+      call plcol0(2)
       call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
       call pllab("", "", "Reduced dynamic range image example")
       call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &

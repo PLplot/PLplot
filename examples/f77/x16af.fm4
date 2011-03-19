@@ -110,9 +110,9 @@ c      Plot using identity transform
      &    min_color, min_width, max_color, max_width, xdim)
       enddo
 
-      call plcol(1)
+      call plcol0(1)
       call plbox('bcnst', 0.0d0, 0, 'bcnstv', 0.0d0, 0)
-      call plcol(2)
+      call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
       end
@@ -234,7 +234,7 @@ c      Advance graphics frame and get ready to plot.
       ncollab = 2
 
       call pladv(0)
-      call plcol(ncolbox)
+      call plcol0(ncolbox)
 
 c      Scale window to user coordinates.
 c      Make a bit larger so the boundary does not get clipped.
@@ -282,10 +282,10 @@ c      Draw boundary.
         xtm(i) = x0 + rmax * cos(theta)
         ytm(i) = y0 + rmax * sin(theta)
       enddo
-      call plcol(ncolbox)
+      call plcol0(ncolbox)
       call plline(NBDRY, xtm, ytm)
 
-      call plcol(ncollab)
+      call plcol0(ncollab)
       call pllab(' ', ' ',
      &'Shielded potential of charges in a conducting sphere')
 
