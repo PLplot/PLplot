@@ -88,9 +88,24 @@ if(BUILD_DOX_DOC)
   # would be caused by editing one of the prerequisites of these
   # generated source files) should be a rare case in practice.
   add_dependencies(build_doxygen plplot${LIB_TAG})
+  # Generated C code for the Tcl bindings.
   if(ENABLE_tcl)
     add_dependencies(build_doxygen plplottcltk${LIB_TAG})
   endif(ENABLE_tcl)
+  # Generated C (and C++ in the Octave case) code for the
+  # swig-generated bindings.
+  if(ENABLE_python)
+    add_dependencies(build_doxygen _plplotcmodule)
+  endif(ENABLE_python)
+  if(ENABLE_java)
+    add_dependencies(build_doxygen plplotjavac_wrap)
+  endif(ENABLE_java)
+  if(ENABLE_lua)
+    add_dependencies(build_doxygen plplotluac)
+  endif(ENABLE_lua)
+  if(ENABLE_octave)
+    add_dependencies(build_doxygen plplot_octave)
+  endif(ENABLE_octave)
 
   install(CODE "message(STATUS \"Installing: ${DOC_DIR}/doxygen tree\")\nexecute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/doxygen ${DOC_DIR}/doxygen)")
   if(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
