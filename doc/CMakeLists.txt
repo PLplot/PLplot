@@ -63,8 +63,15 @@ if(BUILD_DOX_DOC)
   list(APPEND doxygen_globs ${CMAKE_BINARY_DIR}/config.h)
   #message(STATUS "DEBUG: doxygen_globs = ${doxygen_globs}")
 
-  file(GLOB_RECURSE doxygen_file_depends ${doxygen_globs})
-  # message(STATUS "DEBUG: doxygen_file_depends = ${doxygen_file_depends}")
+  # RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} works (because that is the
+  # [default] working directory for running the doxygen command) and makes the
+  # resulting paths substantially shorter, but is actually not
+  # necessary.
+  file(GLOB_RECURSE doxygen_file_depends
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    ${doxygen_globs}
+    )
+  #message(STATUS "DEBUG: doxygen_file_depends = ${doxygen_file_depends}")
 
   # Notes: OUTPUT file is a directory so this insures "make clean"
   # removes that directory.
