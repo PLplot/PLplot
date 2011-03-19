@@ -63,12 +63,12 @@ proc contour {} {
     .plw plvpor 0.1 0.9 0.1 0.9
     .plw plwind 1. 64. 1. 64.
 
-    .plw plcol 6
+    .plw plcol0 6
     .plw pllab "(x)" "(y)" "#frPLplot Example Tk04"
 
     # plot the data points
 
-    .plw plcol 9
+    .plw plcol0 9
 
     matrix clev f 10
 
@@ -81,7 +81,7 @@ proc contour {} {
 
     .plw plcont x clev
 
-    .plw plcol 1
+    .plw plcol0 1
     .plw plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
 }
 
@@ -93,7 +93,7 @@ proc shade {} {
     .plw plvpor 0.1 0.9 0.1 0.9
     .plw plwind 0. 1. 0. 1.
 
-    .plw plcol 6
+    .plw plcol0 6
     .plw pllab "(x)" "(y)" "Cool shade plot example from Tcl"
 
     set max [x max]
@@ -115,7 +115,7 @@ proc shade {} {
 	    
     }
 
-    .plw plcol 1
+    .plw plcol0 1
     .plw plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
 }
 
