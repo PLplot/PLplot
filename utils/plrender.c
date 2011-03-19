@@ -986,7 +986,7 @@ plr_state( U_CHAR op )
             }
             else
             {
-                plcol( icol0 );
+                plcol0( icol0 );
             }
         }
         else if ( strcmp( mf_version, "1993a" ) >= 0 )
@@ -1004,14 +1004,14 @@ plr_state( U_CHAR op )
             }
             else
             {
-                plcol( icol0 );
+                plcol0( icol0 );
             }
         }
         else
         {
             U_SHORT icol;
             plm_rd( pdf_rd_2bytes( pdfs, &icol ) );
-            plcol( icol );
+            plcol0( icol );
         }
         break;
     }

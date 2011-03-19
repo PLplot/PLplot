@@ -52,9 +52,6 @@ class Plframe(Widget):
 ## on the Numeric extensions cannot work this way, so for those we
 ## call straight to the Python compiled interface to the PLplot API.
 
-    def plcol(s,c):
-	s.cmd( 'plcol', c )
-
     def plenv( s, xmin, xmax, ymin, ymax, i, j ):
 	s.cmd( 'plenv', xmin, xmax, ymin, ymax, i, j )
 
@@ -1101,11 +1098,8 @@ class PlXframe(Frame):
                yopt, ylabel, ytick, nsuby,
                zopt, zlabel, ztick, nsubz )
 
-    def plcol(s,c):
-        s.cmd( 'plcol', c )
-
     def plcol0( s, col0 ):
-	s.plcol( col0 )
+	s.cmd( 'plcol0', col0 )
 
     def plcol1( s, col1 ):
         s.cmd( 'plcol1', col1 )

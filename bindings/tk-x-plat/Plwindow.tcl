@@ -47,10 +47,6 @@ itcl::class Plwindow {
 	uplevel 1 $itk_interior.plwin cmd $args
     }
 
-    method plcol {color} {
-	cmd plcol0 $color
-    }
-
     method plcont {data clev} {
 	upvar $data d
 	upvar $clev c

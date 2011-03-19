@@ -80,17 +80,17 @@ itcl::body Plbarchart::constructor {args} {
 
 itcl::body Plbarchart::datapoints {data} {
     if {[info commands _pp$nn] == "_pp$nn"} {
-	cmd plcol 0
+	cmd plcol0 0
 	cmd plhist [_pp$nn info] _pp$nn $minbin $maxbin $bins 0
 	rename _pp$nn {}
     }
     matrix -persist _pp$nn f [llength $data] = $data
-    cmd plcol 1
+    cmd plcol0 1
     cmd plhist [_pp$nn info] _pp$nn $minbin $maxbin $bins 0
 }
 
 itcl::body Plbarchart::drawAxes {} {
-    cmd plcol 15
+    cmd plcol0 15
     cmd plenv [expr {[lindex $V 0] -0.7*$step}] \
       [expr {[lindex $V end] +0.7*$step}] \
       0 $ymax 0 0

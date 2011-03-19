@@ -90,10 +90,10 @@ itcl::body Pltimeseries::constructor {args} {
 }
 
 itcl::body Pltimeseries::initialise {} {
-    cmd plcol 15
+    cmd plcol0 15
     cmd plenv $min_time $max_time $y_min $y_max 0 1
     cmd pllab $itk_option(-xname) $itk_option(-yname) $itk_option(-title)
-    cmd plcol 1
+    cmd plcol0 1
 }
 
 itcl::body Pltimeseries::destructor {} {
@@ -115,7 +115,7 @@ itcl::body Pltimeseries::tick {} {
 	    }
 	}
 	foreach trace [array names _points] {
-	    cmd plcol [expr {1 + int($trace * $colour_increment) % 15}]
+	    cmd plcol0 [expr {1 + int($trace * $colour_increment) % 15}]
 	    plotline [lrange $_ticks $l end] [lrange $_points($trace) $l end]
 	}
 	return
@@ -130,16 +130,16 @@ itcl::body Pltimeseries::tick {} {
     set _ticks [lrange $_ticks $i end]
     plotaxes
     foreach trace [array names _points] {
-	cmd plcol [expr {1 + int($trace * $colour_increment) % 15}]
+	cmd plcol0 [expr {1 + int($trace * $colour_increment) % 15}]
 	plotline $_ticks $_points($trace)
     }
 }
 
 itcl::body Pltimeseries::plotaxes {} {
-    cmd plcol 15
+    cmd plcol0 15
     cmd plenv $min_time $max_time $y_min $y_max 0 1
     cmd pllab $itk_option(-xname) $itk_option(-yname) $itk_option(-title)
-    cmd plcol 1
+    cmd plcol0 1
 }
 
 itcl::body Pltimeseries::plotpoint {t y} {
