@@ -70,9 +70,11 @@ if(SH_EXECUTABLE)
     )
   list(APPEND SCRIPTS test_c_interactive.sh)
 
+  set(examples_compare_DEPENDS)
   add_test(examples_c
     ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
     )
+  list(APPEND examples_compare_DEPENDS examples_c)
 
   if(ENABLE_cxx)
     configure_file(
@@ -84,6 +86,7 @@ if(SH_EXECUTABLE)
     add_test(examples_cxx
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
       )
+    list(APPEND examples_compare_DEPENDS examples_cxx)
   endif(ENABLE_cxx)
 
   if(ENABLE_f77)
@@ -96,6 +99,7 @@ if(SH_EXECUTABLE)
     add_test(examples_f77
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f77"
       )
+    list(APPEND examples_compare_DEPENDS examples_f77)
   endif(ENABLE_f77)
 
   if(ENABLE_f95)
@@ -108,6 +112,7 @@ if(SH_EXECUTABLE)
     add_test(examples_f95
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
       )
+    list(APPEND examples_compare_DEPENDS examples_f95)
   endif(ENABLE_f95)
 
   if(ENABLE_java)
@@ -120,6 +125,7 @@ if(SH_EXECUTABLE)
     add_test(examples_java
       ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
       )
+    list(APPEND examples_compare_DEPENDS examples_java)
   endif(ENABLE_java)
 
   if(ENABLE_octave)
@@ -147,6 +153,7 @@ if(SH_EXECUTABLE)
     add_test(examples_octave
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
       )
+    list(APPEND examples_compare_DEPENDS examples_octave)
   endif(ENABLE_octave)
 
   if(ENABLE_python)
@@ -165,6 +172,7 @@ if(SH_EXECUTABLE)
     add_test(examples_python
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
       )
+    list(APPEND examples_compare_DEPENDS examples_python)
   endif(ENABLE_python)
 
   if(ENABLE_tcl)
@@ -186,6 +194,7 @@ if(SH_EXECUTABLE)
     add_test(examples_tcl
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
       )
+    list(APPEND examples_compare_DEPENDS examples_tcl)
     set(PLTCL_DIR ${BIN_DIR})
     # Transform drive-letter form to leading-slash form, see comment above.
     string(REGEX REPLACE "^(.):" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
@@ -206,6 +215,7 @@ if(SH_EXECUTABLE)
     add_test(examples_pdl
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
       )
+    list(APPEND examples_compare_DEPENDS examples_pdl)
   endif(ENABLE_pdl)
 
   if(ENABLE_ada)
@@ -218,6 +228,7 @@ if(SH_EXECUTABLE)
     add_test(examples_ada
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
       )
+    list(APPEND examples_compare_DEPENDS examples_ada)
   endif(ENABLE_ada)
 
   if(ENABLE_ocaml)
@@ -230,6 +241,7 @@ if(SH_EXECUTABLE)
     add_test(examples_ocaml
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
       )
+    list(APPEND examples_compare_DEPENDS examples_ocaml)
   endif(ENABLE_ocaml)
 
   if(ENABLE_lua)
@@ -242,6 +254,7 @@ if(SH_EXECUTABLE)
     add_test(examples_lua
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=lua"
       )
+    list(APPEND examples_compare_DEPENDS examples_lua)
   endif(ENABLE_lua)
 
   if(ENABLE_d)
@@ -254,6 +267,7 @@ if(SH_EXECUTABLE)
     add_test(examples_d
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=d"
       )
+    list(APPEND examples_compare_DEPENDS examples_d)
   endif(ENABLE_d)
 
   # Run C examples with different drivers
@@ -389,6 +403,19 @@ if(SH_EXECUTABLE)
     add_test(examples_compare
       ${SH_EXECUTABLE} -c "./test_diff.sh"
       )
+    # There is a bug in 2.8.x with x < 5 where tests are run out of
+    # the order in which they are declared by default.
+    # Also, 2.8.x can run repeat tests out of order due
+    # to some optimizations that have been implemented.  So for
+    # 2.8.x and above always force examples_compare to be run
+    # after the other tests it depends on.
+    if(CMAKE_MAJOR_VERSION EQUAL 2 AND NOT CMAKE_MINOR_VERSION LESS 8)
+      #message(STATUS "DEBUG: examples_compare_DEPENDS = ${examples_compare_DEPENDS}")
+      set_tests_properties(examples_compare
+	PROPERTIES
+	DEPENDS "${examples_compare_DEPENDS}"
+	)
+    endif(CMAKE_MAJOR_VERSION EQUAL 2 AND NOT CMAKE_MINOR_VERSION LESS 8)
   endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
 
 
