@@ -384,7 +384,7 @@ because we were running up against limitations of the previous
 matwrap-generated Octave bindings.  Accordingly, a swig-generated
 version of the Octave bindings has now been implemented that builds on
 the prior matwrapped bindings effort but also extends it with, e.g.,
-bindings for plstring, plstring3, pllegend, and plcolbar.  These new
+bindings for plstring, plstring3, pllegend, and plcolorbar.  These new
 octave bindings (which now completely replace the prior matwrapped
 bindings) make it possible to run examples 4, 18, 26, and 33 (all of
 which have now have been updated to use those functions) and get
@@ -1203,7 +1203,7 @@ because we were running up against limitations of the previous
 matwrap-generated Octave bindings.  Accordingly, a swig-generated
 version of the Octave bindings has now been implemented that builds on
 the prior matwrapped bindings effort but also extends it with, e.g.,
-bindings for plstring, plstring3, pllegend, and plcolbar.  These new
+bindings for plstring, plstring3, pllegend, and plcolorbar.  These new
 octave bindings (which now completely replace the prior matwrapped
 bindings) make it possible to run examples 4, 18, 26, and 33 (all of
 which have now have been updated to use those functions) and get
