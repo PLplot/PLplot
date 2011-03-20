@@ -181,7 +181,8 @@ module Plot = struct
 
   type plot_t =
     (* Standard plot elements *)
-    | Arc of (color_t * float * float * float * float * float * float * bool)
+    | Arc of
+      (color_t * float * float * float * float * float * float * float * bool)
     | Axes of
       (color_t * axis_options_t list * axis_options_t list * int *
        line_style_t * (plplot_axis_type -> float -> string) option)
@@ -493,8 +494,8 @@ module Plot = struct
   (** {3 Simplified plotting interface} *)
 
   (** [arc ?fill color x y a b angle1 angle2 rotation] *)
-  let arc ?(fill = false) color x y a b angle1 angle2 =
-    Arc (color, x, y, a, b, angle1, angle2, fill)
+  let arc ?(fill = false) color x y a b angle1 angle2 rotation =
+    Arc (color, x, y, a, b, angle1, angle2, rotation, fill)
 
   (** [axes ?color ?style ?width xopt yopt] *)
   let axes ?(color = Black) ?(style = Solid_line) ?(width = 1) ?labelfunc xopt yopt =
@@ -504,7 +505,7 @@ module Plot = struct
   let default_axes = axes default_axis_options default_axis_options
 
   (** [circle ?fill color x y r] - A special case of [arc]. *)
-  let circle ?fill color x y r = arc ?fill color x y r r 0.0 360.0
+  let circle ?fill color x y r = arc ?fill color x y r r 0.0 360.0 0.0
 
   (** Draw a colorbar, optionally log scaled and labeled. *)
   let image_colorbar ?custom_axis ?label ?log ?pos ?width data =
@@ -950,9 +951,9 @@ module Plot = struct
       set_color (Index_color old_color);
       ()
     in
-    let plot_arc (color, x, y, a, b, angle1, angle2, fill) =
+    let plot_arc (color, x, y, a, b, angle1, angle2, rotate, fill) =
       set_color_in color (
-        fun () -> plarc x y a b angle1 angle2 fill;
+        fun () -> plarc x y a b angle1 angle2 rotate fill;
       )
     in
     let plot_axes (color, xopt, yopt, width, style, labelfunc) =

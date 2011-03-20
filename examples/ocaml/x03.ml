@@ -50,7 +50,7 @@ let main () =
   for i = 1 to 10 do
     (* Draw circles for polar grid *)
     let r = 0.1 *. float_of_int i in
-    plarc 0.0 0.0 r r 0.0 360.0 false;
+    plarc 0.0 0.0 r r 0.0 360.0 0.0 false;
   done;
 
   plcol0 2;

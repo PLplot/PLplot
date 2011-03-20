@@ -262,10 +262,11 @@ module Plot :
 
     (** {4 Plot elements} *)
 
-    (** [arc ?fill color x y a b angle0 angle1] *)
+    (** [arc ?fill color x y a b angle0 angle1 rotate] *)
     val arc :
       ?fill:bool ->
-      color_t -> float -> float -> float -> float -> float -> float -> plot_t
+      color_t -> float -> float -> float -> float -> float -> float -> float ->
+      plot_t
 
     (** [axes ?color ?style ?width xopt yopt] *)
     val axes :
@@ -587,7 +588,7 @@ external pl_setcontlabelparam : float -> float -> float -> int -> unit
   = "camlidl_plplot_core_c_pl_setcontlabelparam"
 external pladv : int -> unit = "camlidl_plplot_core_c_pladv"
 external plarc :
-  float -> float -> float -> float -> float -> float -> bool -> unit
+  float -> float -> float -> float -> float -> float -> float -> bool -> unit
   = "camlidl_plplot_core_c_plarc_bytecode" "camlidl_plplot_core_c_plarc"
 external plaxes :
   float -> float -> string -> float -> int -> string -> float -> int -> unit

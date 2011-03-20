@@ -1,7 +1,7 @@
 [mlname(pl_setcontlabelformat)] void c_pl_setcontlabelformat ( int lexp, int sigdig );
 [mlname(pl_setcontlabelparam)] void c_pl_setcontlabelparam ( double offset, double size, double spacing, int active );
 [mlname(pladv)] void c_pladv ( int page );
-[mlname(plarc)] void c_plarc ( double x, double y, double a, double b, double angle1, double angle2, boolean fill );
+[mlname(plarc)] void c_plarc ( double x, double y, double a, double b, double angle1, double angle2, double rotate, boolean fill );
 [mlname(plaxes)] void c_plaxes ( double x0, double y0, [string] const char * xopt, double xtick, int nxsub, [string] const char * yopt, double ytick, int nysub );
 [mlname(plbin)] void c_plbin ( int nbin, [in, size_is(nbin)] double * x, [in, size_is(nbin)] double * y, plplot_bin_style opt );
 [mlname(plbtime)] void c_plbtime ( [out] int * year, [out] int * month, [out] int * day, [out] int * hour, [out] int * min, [out] double * sec, double ctime );
