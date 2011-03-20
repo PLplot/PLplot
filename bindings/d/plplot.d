@@ -1494,7 +1494,7 @@ void c_plcalc_world( PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window );
 
 /* Plot an arc */
 void c_plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-              PLBOOL fill );
+              PLFLT rotate, PLBOOL fill );
 
 /* Clear current subpage. */
 void c_plclear();

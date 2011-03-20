@@ -49,7 +49,7 @@
 !     Draw circles for polar grid
       do i = 1,10
         call plarc(0.0_plflt, 0.0_plflt, 0.1_plflt*i, 0.1_plflt*i, &
-             0.0_plflt, 360.0_plflt, 0)
+             0.0_plflt, 360.0_plflt, 0.0_plflt, 0)
       enddo
       call plcol0(2)
       do i = 0,11

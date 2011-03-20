@@ -630,7 +630,7 @@ void c_pladv( PLINT page ); //%name pladv
 // Plot an arc
 
 void c_plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-              PLBOOL fill ); //%name plarc
+              PLFLT rotate, PLBOOL fill ); //%name plarc
 
 // This functions similarly to plbox() except that the origin of the axes
 // is placed at the user-specified point (x0, y0).

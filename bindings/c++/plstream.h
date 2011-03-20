@@ -122,7 +122,7 @@ public:
 // Plot an arc
 
     void arc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-              PLBOOL fill );
+              PLFLT rotate, PLBOOL fill );
 
 // Simple arrow plotter
 #ifdef PL_DEPRECATED

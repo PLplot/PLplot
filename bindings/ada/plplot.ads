@@ -738,7 +738,7 @@ package PLplot is
     -- Plot an arc.
     -- plarc
     procedure Draw_Arc
-       (x, y, a, b, angle1, angle2 : Long_Float;
+       (x, y, a, b, angle1, angle2, rotate : Long_Float;
         fill : Boolean);
 
 

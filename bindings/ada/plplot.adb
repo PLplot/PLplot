@@ -1086,7 +1086,7 @@ package body PLplot is
     -- Plot an arc.
     -- plarc
     procedure Draw_Arc
-       (x, y, a, b, angle1, angle2 : Long_Float;
+       (x, y, a, b, angle1, angle2, rotate : Long_Float;
         fill : Boolean) is
 
         fill_arc : PLBOOL;
@@ -1097,7 +1097,7 @@ package body PLplot is
         else
             fill_arc := PLfalse;
         end if;
-        plarc(x, y, a, b, angle1, angle2, fill_arc);
+        plarc(x, y, a, b, angle1, angle2, rotate, fill_arc);
     end Draw_Arc;
 
 

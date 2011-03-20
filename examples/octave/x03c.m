@@ -40,7 +40,7 @@ function x03c
   plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
   ## Draw circles for polar grid
     for i=1:10
-      plarc(0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0);
+      plarc(0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0);
     endfor
   
 

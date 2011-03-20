@@ -131,10 +131,10 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.pladv( page );
     }
 
-    public void arc( double x, double y, double a, double b, double angle1, double angle2, boolean fill )
+    public void arc( double x, double y, double a, double b, double angle1, double angle2, double rotate, boolean fill )
     {
         if ( set_stream() == -1 ) return;
-        plplotjavac.plarc( x, y, a, b, angle1, angle2, fill );
+        plplotjavac.plarc( x, y, a, b, angle1, angle2, rotate, fill );
     }
 
     public void axes( double x0, double y0, String xopt, double xtick, int nxsub,

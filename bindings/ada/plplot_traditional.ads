@@ -732,7 +732,7 @@ package PLplot_Traditional is
 
     -- Plot an arc.
     procedure plarc
-       (x, y, a, b, angle1, angle2 : Long_Float;
+       (x, y, a, b, angle1, angle2, rotate : Long_Float;
         fill : Boolean);
 
 

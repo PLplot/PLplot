@@ -81,7 +81,7 @@ x03::x03( int argc, const char ** argv )
     // Draw circles for polar grid
     for ( i = 1; i <= 10; i++ )
     {
-        pls->arc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0 );
+        pls->arc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0 );
     }
 
     pls->col0( 2 );

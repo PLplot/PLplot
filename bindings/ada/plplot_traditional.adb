@@ -1083,7 +1083,7 @@ package body PLplot_Traditional is
 
     -- Plot an arc.
     procedure plarc
-       (x, y, a, b, angle1, angle2 : Long_Float;
+       (x, y, a, b, angle1, angle2, rotate : Long_Float;
         fill : Boolean) is
 
         fill_arc : PLBOOL;
@@ -1094,7 +1094,7 @@ package body PLplot_Traditional is
         else
             fill_arc := PLfalse;
         end if;
-        PLplot_Thin.plarc(x, y, a, b, angle1, angle2, fill_arc);
+        PLplot_Thin.plarc(x, y, a, b, angle1, angle2, rotate, fill_arc);
     end plarc;
 
 

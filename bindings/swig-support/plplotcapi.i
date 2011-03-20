@@ -264,7 +264,7 @@ pladv( PLINT page );
 
 void
 plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-       PLBOOL fill );
+       PLFLT rotate, PLBOOL fill );
 
 void
 plaxes( PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,

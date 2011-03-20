@@ -65,7 +65,7 @@ begin
 
         -- Draw circles for polar grid. 
     for i in 1 .. 10 loop
-        plarc(0.0, 0.0, 0.1 * Long_Float(i), 0.1 * Long_Float(i), 0.0, 360.0, False);
+        plarc(0.0, 0.0, 0.1 * Long_Float(i), 0.1 * Long_Float(i), 0.0, 360.0, 0.0, False);
     end loop;
 
     plcol0(2);

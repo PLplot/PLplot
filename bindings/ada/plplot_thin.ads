@@ -512,7 +512,7 @@ package PLplot_Thin is
 
     -- Plot an arc.
     procedure
-    plarc(x : PLFLT; y : PLFLT; a : PLFLT; b : PLFLT; angle1 : PLFLT; angle2 : PLFLT; fill : PLBOOL);
+    plarc(x : PLFLT; y : PLFLT; a : PLFLT; b : PLFLT; angle1 : PLFLT; angle2 : PLFLT; rotate : PLFLT; fill : PLBOOL);
     pragma Import(C, plarc, "c_plarc");
 
 

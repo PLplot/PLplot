@@ -39,7 +39,7 @@ int main( char[][] args )
 
     /* Draw circles for polar grid */
     for ( size_t i = 1; i < 11; i++ )
-        plarc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0 );
+        plarc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0 );
 
     plcol0( 2 );
     for ( size_t i = 0; i <= 11; i++ )

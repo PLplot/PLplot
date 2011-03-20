@@ -321,11 +321,11 @@ plstream::adv( PLINT page )
 
 void
 plstream::arc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-               PLBOOL fill )
+               PLFLT rotate, PLBOOL fill )
 {
     set_stream();
 
-    plarc( x, y, a, b, angle1, angle2, fill );
+    plarc( x, y, a, b, angle1, angle2, rotate, fill );
 }
 
 #ifdef PL_DEPRECATED

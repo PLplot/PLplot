@@ -45,6 +45,7 @@ a	PLFLT
 b	PLFLT
 angle1	PLFLT
 angle2	PLFLT
+rotate  PLFLT
 fill	PLINT
 
 # This functions similarly to plbox() except that the origin of the axes

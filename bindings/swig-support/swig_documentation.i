@@ -101,7 +101,7 @@ DESCRIPTION:
     Draw a possible filled arc centered at x, y with semimajor axis  a and
     semiminor axis  b, starting at  angle1 and ending at  angle2. 
 
-    Redacted form:  General: plarc(x, y, a, b, angle1, angle2, fill)
+    Redacted form:  General: plarc(x, y, a, b, angle1, angle2, rotate, fill)
 
 
     This function is used in example 3. 
@@ -110,7 +110,7 @@ DESCRIPTION:
 
 SYNOPSIS:
 
-plarc(x, y, a, b, angle1, angle2, fill)
+plarc(x, y, a, b, angle1, angle2, rotate, fill)
 
 ARGUMENTS:
 
@@ -125,6 +125,8 @@ ARGUMENTS:
     angle1 (PLFLT, input) :    Starting angle of the arc. 
 
     angle2 (PLFLT, input) :    Ending angle of the arc. 
+
+    rotate (PLFLT, input) :    Rotation of arc
 
     fill (PLBOOL, input) :    Draw a filled arc. 
 ")

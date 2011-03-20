@@ -49,7 +49,8 @@ c      Set up viewport and window, but do not draw box
 
 c     Draw circles for polar grid
       do i = 1,10
-         call plarc(0.0d0, 0.0d0, 0.1d0*i, 0.1d0*i, 0.0d0, 360.0d0, 0)
+         call plarc(0.0d0, 0.0d0, 0.1d0*i, 0.1d0*i,
+     &     0.0d0, 360.0d0, 0.0d0, 0)
       enddo
 
       call plcol0(2)

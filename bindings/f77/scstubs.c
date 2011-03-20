@@ -90,9 +90,9 @@ PLADV( PLINT *sub )
 }
 
 void
-PLARC( PLFLT *x, PLFLT *y, PLFLT *a, PLFLT *b, PLFLT *angle1, PLFLT *angle2, PLBOOL *fill )
+PLARC( PLFLT *x, PLFLT *y, PLFLT *a, PLFLT *b, PLFLT *angle1, PLFLT *angle2, PLFLT *rotate, PLBOOL *fill )
 {
-    c_plarc( *x, *y, *a, *b, *angle1, *angle2, *fill );
+    c_plarc( *x, *y, *a, *b, *angle1, *angle2, *rotate, *fill );
 }
 
 void

@@ -21,7 +21,7 @@ proc x03 {{w loopback}} {
     matrix yj f $nj1
 
     for {set i 1} {$i <= $ni} {incr i} {
-        $w cmd plarc 0.0 0.0 [expr {0.1 * $i}]] [expr {0.1 * $i}] 0.0 360.0 0
+        $w cmd plarc 0.0 0.0 [expr {0.1 * $i}]] [expr {0.1 * $i}] 0.0 360.0 0.0 0
     }
 
 # Draw radial spokes for polar grid and write labels for angle

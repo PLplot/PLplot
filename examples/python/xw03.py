@@ -39,7 +39,7 @@ def main():
     
     # Draw circles for polar grid
     for i in range(10):
-	plarc(0.0, 0.0, 0.1*(i+1), 0.1*(i+1), 0.0, 360.0, 0)
+	plarc(0.0, 0.0, 0.1*(i+1), 0.1*(i+1), 0.0, 360.0, 0.0, 0)
 
     plcol0(2)
     for i in range(12):
