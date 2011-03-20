@@ -51,6 +51,17 @@
 # PYQT_SIP_DIR		  - sip system directory
 # PYQT_SIP_FLAGS	  - sip command flags
 
+# valgrind shows severe memory management problems with qt_example and
+# qt_example either segfaults or hangs when ENABLE_DYNDRIVERS is OFF.
+# I presume this is due to some linking issue for that case, but for
+# now disable PLD_extqt when ENABLE_DYNDRIVERS is OFF until someone can
+# investigate this issue further.
+
+if(PLD_extqt AND NOT ENABLE_DYNDRIVERS)
+  message(STATUS "WARNING: ENABLE_DYNDRIVERS is OFF so force PLD_extqt to be OFF")
+  set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+endif(PLD_extqt AND NOT ENABLE_DYNDRIVERS)
+
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt OR PLD_memqt)
   set(ANY_QT_DEVICE ON)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt OR PLD_memqt)
