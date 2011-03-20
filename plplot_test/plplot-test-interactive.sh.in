@@ -309,6 +309,6 @@ fi
 if [ "$OVERALL_STATUS_CODE" -ne 0 ] ; then
     echo "A major error occurred for one of the interactive examples"
 else
-    echo "All interactive tests completed without major errors"
+    echo "All interactive tests completed without any noticeable issues"
 fi
 exit $OVERALL_STATUS_CODE
