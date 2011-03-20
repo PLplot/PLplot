@@ -498,6 +498,7 @@ template void _cvt_to_double(float *, double *, unsigned);
 %typemap(freearg) (const PLFLT *ArrayY, PLINT ny, PLFLT *OutMatrixCk) {}
 
 
+
 //-----------------------------------------------------------------------------
 //				 String returning functions
 //-----------------------------------------------------------------------------
@@ -518,6 +519,7 @@ template void _cvt_to_double(float *, double *, unsigned);
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT*, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
@@ -526,10 +528,186 @@ typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 %}
+
+%{
+#include <iostream>
+
+  octave_function *fcnMapForm;
+  std::string nameMapForm;
+
+  void mapform_octave(PLINT n, PLFLT *x, PLFLT *y) {
+    octave_idx_type i;
+    octave_value_list functionArguments;
+    octave_value_list retval;
+
+    Matrix xin(n,1);
+    Matrix yin(n,1);
+    Matrix xout;
+    Matrix yout;
+
+    for (i=0;i<n;i++) {
+      xin(i,0) = x[i];
+      yin(i,0) = y[i];
+    }
+
+    functionArguments(0) = xin;
+    functionArguments(1) = yin;
+
+    if (fcnMapForm != NULL) 
+      retval = feval(fcnMapForm, functionArguments, 1);
+    else      
+      retval = feval(nameMapForm, functionArguments, 1);
+
+
+    if (retval.length() >= 2) {
+      xout = retval(0).matrix_value();
+      yout = retval(1).matrix_value();
+
+      for (i=0;i<n;i++) {
+	x[i] = xout(i,0);
+	y[i] = yout(i,0);
+      }
+    }
+
+  }
+%}
+
+/* Handle function pointers to mapform function */
+%typemap(in) mapform_func mapform {
+
+   octave_value obj = $input;
+   if (! obj.is_empty() ) {
+     if ( obj.is_function_handle() || obj.is_inline_function() ) 
+     {
+       fcnMapForm = obj.function_value();
+     }
+     else if ( obj.is_string() )
+     {
+       nameMapForm = obj.string_value();
+       fcnMapForm = NULL;
+     }
+     $1 = mapform_octave;
+   }
+   else {
+      $1 = NULL;
+   }
+
+}
+
+%{
+
+  octave_function *fcnLabelFunc;
+  std::string nameLabelFunc;
+
+  void labelfunc_octave(PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data) {
+    int i;
+    octave_value_list functionArguments;
+    octave_value_list retval;
+
+    Matrix inAxis(1,1);
+    Matrix inValue(1,1);
+    inAxis(0,0) = axis;
+    inValue(0,0) = value;
+
+    functionArguments(0) = inAxis;
+    functionArguments(1) = inValue;
+
+    if (fcnLabelFunc != NULL) 
+      retval = feval(fcnLabelFunc, functionArguments, 1);
+    else      
+      retval = feval(nameLabelFunc, functionArguments, 1);
+
+    strncpy(label,retval(0).string_value().c_str(),length);
+  }
+%}
+
+/* Handle function pointers to mapform function */
+%typemap(in) label_func lf {
+
+   octave_value obj = $input;
+   if (! obj.is_empty() ) {
+     if ( obj.is_function_handle() || obj.is_inline_function() ) 
+     {
+       fcnLabelFunc = obj.function_value();
+     }
+     else if ( obj.is_string() )
+     {
+       nameLabelFunc = obj.string_value();
+       fcnLabelFunc = NULL;
+     }
+     $1 = labelfunc_octave;
+   }
+   else {
+      $1 = NULL;
+   }
+
+}
+
+%{
+
+  octave_function *fcnCoordTrans;
+  std::string nameCoordTrans;
+
+  void ct_octave(PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data) {
+    octave_idx_type i;
+    octave_value_list functionArguments;
+    octave_value_list retval;
+
+    Matrix xin(1,1);
+    Matrix yin(1,1);
+    Matrix xout;
+    Matrix yout;
+
+    xin(0,0) = x;
+    yin(0,0) = y;
+
+    functionArguments(0) = xin;
+    functionArguments(1) = yin;
+
+    if (fcnCoordTrans != NULL) 
+      retval = feval(fcnCoordTrans, functionArguments, 1);
+    else      
+      retval = feval(nameCoordTrans, functionArguments, 1);
+
+
+    if (retval.length() >= 2) {
+      xout = retval(0).matrix_value();
+      yout = retval(1).matrix_value();
+
+      *xt = xout(0,0);
+      *yt = yout(0,0);
+    }
+
+  }
+%}
+
+/* Handle function pointers to mapform function */
+%typemap(in) ct_func ctf {
+
+   octave_value obj = $input;
+   if (! obj.is_empty() ) {
+     if ( obj.is_function_handle() || obj.is_inline_function() ) 
+     {
+       fcnCoordTrans = obj.function_value();
+     }
+     else if ( obj.is_string() )
+     {
+       nameCoordTrans = obj.string_value();
+       fcnCoordTrans = NULL;
+     }
+     $1 = ct_octave;
+   }
+   else {
+      $1 = NULL;
+   }
+
+}
+
 // The octave bindings started out as an independent project with a
 // historical API that does not match up that well with the PLplot API
 // function names and numbers and types of arguments.  So there are a

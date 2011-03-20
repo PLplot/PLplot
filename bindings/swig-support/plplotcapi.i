@@ -731,7 +731,7 @@ plstar( PLINT nx, PLINT ny );
 void
 plstart( const char *devname, PLINT nx, PLINT ny );
 
-#if !defined ( SWIG_LUA ) && !defined ( SWIG_OCTAVE )
+#if !defined ( SWIG_LUA )
 void
 plstransform( ct_func ctf, PLPointer data );
 #endif
