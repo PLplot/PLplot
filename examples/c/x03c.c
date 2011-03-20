@@ -45,7 +45,7 @@ main( int argc, const char *argv[] )
     // Draw circles for polar grid
     for ( i = 1; i <= 10; i++ )
     {
-        plarc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0 );
+        plarc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0 );
     }
 
     plcol0( 2 );

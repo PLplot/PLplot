@@ -853,7 +853,7 @@ c_pladv( PLINT page );
 
 PLDLLIMPEXP void
 c_plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-         PLBOOL fill );
+         PLFLT rotate, PLBOOL fill );
 
 // This functions similarly to plbox() except that the origin of the axes
 // is placed at the user-specified point (x0, y0).
