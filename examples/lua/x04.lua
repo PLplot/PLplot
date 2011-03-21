@@ -31,6 +31,19 @@ dofile("plplot_examples.lua")
 -- Log-linear plot.
 ----------------------------------------------------------------------------
 
+-- return single bit (for OR)
+function bit(x,b)
+  return (math.mod(x, 2^b) - math.mod(x,2^(b-1)) > 0)
+end
+
+-- logic OR for number values
+
+function lor(x,y)
+  result = 0
+  for p=1,8 do result = result + (((bit(x,p) or bit(y,p)) == true) and 2^(p-1) or 0) end
+  return result
+end
+
 function plot1(type)
   freql = {}
   ampl = {}
@@ -54,16 +67,16 @@ function plot1(type)
   pl.col0(1)
   if type == 0 then
     pl.box("bclnst", 0, 0, "bnstv", 0, 0)
-  end
-  
-  if type == 1 then
+  elseif type == 1 then
     pl.box("bcfghlnst", 0, 0, "bcghnstv", 0, 0)
+  else
+    print("error: type must be either 0 or 1")
   end
   
   -- Plot ampl vs freq 
   pl.col0(2)
   pl.line(freql, ampl)
-  pl.col0(1)
+  pl.col0(2)
   pl.ptex(1.6, -30, 1, -20, 0.5, "-20 dB/decade")
 
   -- Put labels on 
@@ -83,9 +96,74 @@ function plot1(type)
     pl.string(freql, phase, "*")
     pl.col0(3)
     pl.mtex("r", 5, 0.5, 0.5, "Phase shift (degrees)")
+    nlegend = 2
+  else
+    nlegend = 1
   end
-end
 
+  -- Draw a legend.
+  opt_array = {}
+  text_colors = {}
+  text = {}
+  box_colors = {}
+  box_patterns = {}
+  box_scales = {}
+  box_line_widths = {}
+  line_colors = {}
+  line_styles = {}
+  line_widths = {}
+  symbol_colors = {}
+  symbol_scales = {}
+  symbol_numbers = {}
+  symbols = {}
+
+  -- Data for the first legend entry.
+  opt_array[1] = pl.PL_LEGEND_LINE
+  text_colors[1] = 2
+  text[1] = "Amplitude"
+  -- box data unused so initialize to arbitrary values.
+  box_colors[1] = 0
+  box_patterns[1] = 0
+  box_scales[1] = 0
+  box_line_widths[1] = 0
+  line_colors[1] = 2
+  line_styles[1] = 1
+  line_widths[1] = 1
+  -- unused arbitrary data
+  symbol_colors[1]  = 0
+  symbol_scales[1]  = 0
+  symbol_numbers[1] = 0
+  symbols[1]        = ""
+
+  -- Data for the second legend entry.
+  if nlegend > 1 then
+    opt_array[2]      = lor(pl.PL_LEGEND_LINE, pl.PL_LEGEND_SYMBOL)
+    text_colors[2]    = 3
+    text[2]           = "Phase shift"
+  -- box data unused so initialize to arbitrary values.
+    box_colors[2] = 0
+    box_patterns[2] = 0
+    box_scales[2] = 0
+    box_line_widths[2] = 0
+    line_colors[2]    = 3
+    line_styles[2]    = 1
+    line_widths[2]    = 1
+    symbol_colors[2]  = 3
+    symbol_scales[2]  = 1.
+    symbol_numbers[2] = 4
+    symbols[2]        = "*"
+  end
+
+  pl.scol0a( 15, 32, 32, 32, 0.70 )
+
+  legend_width, legend_height = pl.legend(
+    0, lor(pl.PL_LEGEND_BACKGROUND, pl.PL_LEGEND_BOUNDING_BOX), 0.0, 0.0,
+    0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
+    1., text_colors, text, 
+    box_colors, box_patterns, box_scales, box_line_widths, 
+    line_colors, line_styles, line_widths,
+    symbol_colors, symbol_scales, symbol_numbers, symbols )
+end
 
 ----------------------------------------------------------------------------
 -- main

@@ -968,6 +968,34 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
   if($1) {free($1); $1=NULL;}
 }
 
+// No count but check consistency with previous
+%typemap(in, checkfn="lua_istable") const char **ArrayCk {
+  int i;
+  $1=NULL;
+  
+  if(SWIG_table_size(L, $input) != Alen) {
+    lua_pushfstring(L, "Tables must be of same length.");
+    SWIG_fail;
+  }
+  $1 = malloc(sizeof(char*)*Alen);
+  for(i = 1; i <= Alen; i++) {
+    lua_rawgeti(L, $input, i);
+    if(lua_isstring(L, -1)) {
+      $1[i-1] = (char*)lua_tostring(L, -1);
+    } else {
+      lua_pop(L,1);
+      lua_pushfstring(L, "Requires a sequence of strings.");
+      SWIG_fail;
+      /* $1 array is freed after 'fail:' */
+    }
+    lua_pop(L,1);
+  }
+}
+%typemap(freearg) const char **ArrayCk {
+  if($1) {free($1); $1=NULL;}
+}
+
+
 
 /* Process options list using current options info. */
 %typemap(in, checkfn="lua_istable") (int *p_argc, const char **argv) {
@@ -1079,6 +1107,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 %rename(init) plinit;
 %rename(join) pljoin;
 %rename(lab) pllab;
+%rename(legend) pllegend;
 %rename(lightsource) pllightsource;
 %rename(line) plline;
 %rename(line3) plline3;
@@ -1179,9 +1208,6 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 %rename(warn) plwarn;
 %rename(abort) plabort;
 %rename(MinMax2dGrid) plMinMax2dGrid;
-
-// Not implemented yet.
-%ignore pllegend;
 
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
