@@ -56,6 +56,7 @@ set(lua_STRING_INDICES
   "29"
   "30"
   "31"
+  "33"
   )
 
 set(lua_SCRIPTS)
