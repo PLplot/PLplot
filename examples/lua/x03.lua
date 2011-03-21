@@ -57,7 +57,7 @@ pl.env(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
 -- Draw circles for polar grid
 for i = 1, 10 do
-		pl.arc(0, 0, 0.1*i, 0.1*i, 0, 360, 0);
+		pl.arc(0, 0, 0.1*i, 0.1*i, 0, 360, 0, 0);
 end
 
 pl.col0(2)

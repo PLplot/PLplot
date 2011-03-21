@@ -65,7 +65,7 @@ begin
 
     -- Draw circles for polar grid. 
     for i in 1 .. 10 loop
-        Draw_Arc(0.0, 0.0, 0.1 * Long_Float(i), 0.1 * Long_Float(i), 0.0, 360.0, False);
+        Draw_Arc(0.0, 0.0, 0.1 * Long_Float(i), 0.1 * Long_Float(i), 0.0, 360.0, 0.0, False);
     end loop;
 
     Set_Pen_Color(2);
