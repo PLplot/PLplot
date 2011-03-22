@@ -39,6 +39,21 @@ void plot1( int type )
 {
     PLFLT[101] freql, ampl, phase;
     PLFLT f0, freq;
+    PLINT        nlegend;
+    string[] text, symbols;
+    PLINT[]        opt_array;
+    PLINT[]        text_colors;
+    PLINT[]        box_colors;
+    PLINT[]       box_patterns;
+    PLFLT[]       box_scales;
+    PLINT[]      box_line_widths;
+    PLINT[]        line_colors;
+    PLINT[]        line_styles;
+    PLINT[]        line_widths;
+    PLINT[]        symbol_numbers, symbol_colors;
+    PLFLT[]        symbol_scales;
+    PLFLT        legend_width, legend_height;
+    
 
     pladv( 0 );
 
@@ -70,7 +85,7 @@ void plot1( int type )
     /* Plot ampl vs freq */
     plcol0( 2 );
     plline( freql, ampl );
-    plcol0( 1 );
+    plcol0( 2 );
     plptex( 1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade" );
 
     /* Put labels on */
@@ -88,7 +103,67 @@ void plot1( int type )
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( freql, phase );
+	plstring( freql, phase, "*" );
+
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
+	nlegend = 2;
     }
+    else
+    {
+        nlegend = 1;
+    }
+    // Initialize arrays needed for pllegend.
+    opt_array.length = nlegend;
+    text_colors.length = nlegend;
+    text.length = nlegend;
+    line_colors.length = nlegend;
+    line_styles.length = nlegend;
+    line_widths.length = nlegend;
+    box_colors.length = nlegend;
+    box_patterns.length = nlegend;
+    box_scales.length = nlegend;
+    box_line_widths.length = nlegend;
+    symbol_numbers.length = nlegend;
+    symbol_colors.length = nlegend;
+    symbol_scales.length = nlegend;
+    symbols.length = nlegend;
+
+    // Draw a legend
+    // First legend entry.
+    opt_array[0]   = PL_LEGEND_LINE;
+    text_colors[0] = 2;
+    text[0]        = "Amplitude";
+    line_colors[0] = 2;
+    line_styles[0] = 1;
+    line_widths[0] = 1;
+    // Note from the above opt_array the first symbol (and box) indices
+    // do not have to be specified
+
+    if (nlegend == 2)
+    {
+	opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+	text_colors[1]    = 3;
+	text[1]           = "Phase shift";
+	line_colors[1]    = 3;
+	line_styles[1]    = 1;
+	line_widths[1]    = 1;
+	symbol_colors[1]  = 3;
+	symbol_scales[1]  = 1.;
+	symbol_numbers[1] = 4;
+	symbols[1]        = "*";
+    	// Note from the above opt_array the second box array indices
+    	// do not have to be specified
+    }
+    plscol0a( 15, 32, 32, 32, 0.70 );
+    pllegend( &legend_width, &legend_height,
+        0, PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+        0.0, 0.0, 0.1, 15,
+        1, 1, 0, 0,
+        opt_array,
+        1.0, 1.0, 2.0,
+        1., text_colors, text,
+	box_colors, box_patterns, box_scales, box_line_widths,
+        line_colors, line_styles, line_widths,
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
 }
