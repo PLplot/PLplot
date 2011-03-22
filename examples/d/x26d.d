@@ -84,6 +84,13 @@ string[] alty_label = [
     null
 ];
 
+// Short rearranged versions of y_label and alty_label.
+string[][] legend_text = [
+    [ "Amplitude",          "Phase shift"               ],
+    [ "Амплитуда", "Фазовый сдвиг" ],
+    null
+];
+
 string[] title_label = [
     "Single Pole Low-Pass Filter",
     "Однополюсный Низко-Частотный Фильтр",
@@ -115,7 +122,7 @@ int main( char[][] args )
     int i = 0;
     while ( x_label[i] )
     {
-        plot1( 0, x_label[i], y_label[i], alty_label[i], title_label[i], line_label[i] );
+        plot1( 0, x_label[i], y_label[i], alty_label[i], title_label[i], line_label[i], legend_text[i] );
         i++;
     }
 
@@ -129,11 +136,26 @@ int main( char[][] args )
  * Log-linear plot.
  \*--------------------------------------------------------------------------*/
 void plot1( int type, string x_label, string y_label, string alty_label,
-            string title_label, string line_label )
+            string title_label, string line_label, string[] legend_text )
 {
     /* Set up data for log plot */
     PLFLT[101] freql, ampl, phase;
     PLFLT f0 = 1.0, freq;
+    PLINT        nlegend = 2;
+    string[] symbols;
+    PLINT[]        opt_array;
+    PLINT[]        text_colors;
+    PLINT[]        box_colors;
+    PLINT[]       box_patterns;
+    PLFLT[]       box_scales;
+    PLINT[]      box_line_widths;
+    PLINT[]        line_colors;
+    PLINT[]        line_styles;
+    PLINT[]        line_widths;
+    PLINT[]        symbol_numbers, symbol_colors;
+    PLFLT[]        symbol_scales;
+    PLFLT        legend_width, legend_height;
+    
     for ( int i = 0; i < 101; i++ )
     {
         freql[i] = -2.0 + i / 20.0;
@@ -162,7 +184,7 @@ void plot1( int type, string x_label, string y_label, string alty_label,
     /* Plot ampl vs freq */
     plcol0( 2 );
     plline( freql, ampl );
-    plcol0( 1 );
+    plcol0( 2 );
     plptex( 1.6, -30.0, 1.0, -20.0, 0.5, line_label );
 
     /* Put labels on */
@@ -180,7 +202,57 @@ void plot1( int type, string x_label, string y_label, string alty_label,
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( freql, phase );
+	plstring( freql, phase, "*" );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
+    // Initialize arrays needed for pllegend.
+    opt_array.length = nlegend;
+    text_colors.length = nlegend;
+    line_colors.length = nlegend;
+    line_styles.length = nlegend;
+    line_widths.length = nlegend;
+    box_colors.length = nlegend;
+    box_patterns.length = nlegend;
+    box_scales.length = nlegend;
+    box_line_widths.length = nlegend;
+    symbol_numbers.length = nlegend;
+    symbol_colors.length = nlegend;
+    symbol_scales.length = nlegend;
+    symbols.length = nlegend;
+
+    // Draw a legend
+    // First legend entry.
+    opt_array[0]   = PL_LEGEND_LINE;
+    text_colors[0] = 2;
+    line_colors[0] = 2;
+    line_styles[0] = 1;
+    line_widths[0] = 1;
+    // Note from the above opt_array the first symbol (and box) indices
+    // do not have to be specified
+
+    // Second legend entry.
+    opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+    text_colors[1]    = 3;
+    line_colors[1]    = 3;
+    line_styles[1]    = 1;
+    line_widths[1]    = 1;
+    symbol_colors[1]  = 3;
+    symbol_scales[1]  = 1.;
+    symbol_numbers[1] = 4;
+    symbols[1]        = "*";
+    // Note from the above opt_array the second box array indices
+    // do not have to be specified
+
+    plscol0a( 15, 32, 32, 32, 0.70 );
+    pllegend( &legend_width, &legend_height,
+        0, PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+        0.0, 0.0, 0.1, 15,
+        1, 1, 0, 0,
+        opt_array,
+        1.0, 1.0, 2.0,
+        1., text_colors, legend_text,
+	box_colors, box_patterns, box_scales, box_line_widths,
+        line_colors, line_styles, line_widths,
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
 }
