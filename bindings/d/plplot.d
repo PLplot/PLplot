@@ -310,25 +310,7 @@ void pllab( string xlabel, string ylabel, string tlabel )
     c_pllab( toStringz( xlabel ), toStringz( ylabel ), toStringz( tlabel ) );
 }
 
-/* Draws line segments connecting a series of points. */
-void plline( PLFLT[] x, PLFLT[] y )
-{
-    PLINT n = x.length;
-    assert( n == y.length, "plline(): Arrays must be of same length!" );
-    c_plline( n, x.ptr, y.ptr );
-}
-
-/* Draws a line in 3 space.  */
-void plline3( PLFLT[] x, PLFLT[] y, PLFLT[] z )
-{
-    PLINT n = x.length;
-    assert( n == y.length, "plline3(): Arrays must be of same length!" );
-    assert( n == z.length, "plline3(): Arrays must be of same length!" );
-    c_plline3( n, x.ptr, y.ptr, z.ptr );
-}
-
 // Routine for drawing discrete line, symbol, or cmap0 legends
-
 void pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
@@ -382,6 +364,22 @@ void pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             symbol_numbers.ptr, symbolsz.ptr );
 }
 
+/* Draws line segments connecting a series of points. */
+void plline( PLFLT[] x, PLFLT[] y )
+{
+    PLINT n = x.length;
+    assert( n == y.length, "plline(): Arrays must be of same length!" );
+    c_plline( n, x.ptr, y.ptr );
+}
+
+/* Draws a line in 3 space.  */
+void plline3( PLFLT[] x, PLFLT[] y, PLFLT[] z )
+{
+    PLINT n = x.length;
+    assert( n == y.length, "plline3(): Arrays must be of same length!" );
+    assert( n == z.length, "plline3(): Arrays must be of same length!" );
+    c_plline3( n, x.ptr, y.ptr, z.ptr );
+}
 
 /* plot continental outline in world coordinates */
 void plmap( mapform_func mapform, string type, PLFLT minlong, PLFLT maxlong,
