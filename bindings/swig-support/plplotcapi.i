@@ -731,10 +731,8 @@ plstar( PLINT nx, PLINT ny );
 void
 plstart( const char *devname, PLINT nx, PLINT ny );
 
-#if !defined ( SWIG_LUA )
 void
 plstransform( ct_func ctf, PLPointer data );
-#endif
 
 void
 plstring( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, const char *string );

@@ -634,6 +634,7 @@ void mapform(PLINT n, PLFLT* x, PLFLT* y)
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT*, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
@@ -642,6 +643,7 @@ typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, const PLFLT*, const PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
@@ -678,6 +680,47 @@ void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
   }
   if(!lua_isnumber(myL, -1)) {
     fprintf(stderr, "function `%s' must return a number as 2nd result", mypltr_funcstr);
+    return;
+  }
+  *tx = lua_tonumber(myL, -2);
+  *ty = lua_tonumber(myL, -1);
+  lua_pop(myL, 2);  /* pop returned values */
+  
+  return;
+}
+
+static char myct_funcstr[255];   
+
+/* This is the callback that gets handed to the C code.
+   It, in turn, calls the Lua callback */
+void myct(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+{
+  *tx=0;
+  *ty=0;
+  
+  /* check Lua state */
+  if(myL==NULL) {
+    fprintf(stderr, "Lua state is not set!");
+    return;
+  }  
+  
+  /* push functions and arguments */
+  lua_getglobal(myL, myct_funcstr);  /* function to be called */
+  lua_pushnumber(myL, x);   /* push 1st argument */
+  lua_pushnumber(myL, y);   /* push 2nd argument */
+
+  /* do the call (2 arguments, 2 result) */
+  if(lua_pcall(myL, 2, 2, 0) != 0)
+    fprintf(stderr, "error running function `%s': %s",
+            myct_funcstr, lua_tostring(myL, -1));
+
+  /* retrieve results */
+  if(!lua_isnumber(myL, -2)) {
+    fprintf(stderr, "function `%s' must return a number as 1st result", myct_funcstr);
+    return;
+  }
+  if(!lua_isnumber(myL, -1)) {
+    fprintf(stderr, "function `%s' must return a number as 2nd result", myct_funcstr);
     return;
   }
   *tx = lua_tonumber(myL, -2);
@@ -798,6 +841,23 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 }
 %apply pltr_func pltr { pltr_func pltr_img };
 
+%typemap(in) ct_func ctf {
+  $1 = NULL;
+  myct_funcstr[0]='\0';
+  
+  if(lua_isstring(L, $input)) {
+    const char* funcstr = lua_tostring(L, $input); 
+    $1 = myct;
+    strncpy(myct_funcstr, funcstr, 255);
+    myL = L;
+  } else 
+    SWIG_fail_arg("$symname", $argnum, "$1_type")
+}
+/* you can omit the ct func */
+%typemap(default) ct_func ctf {
+  $1 = NULL;
+  myct_funcstr[0]='\0';
+}
 
 %typemap(arginit) PLPointer OBJECT_DATA {
   cgrid1$argnum.xg = cgrid1$argnum.yg = cgrid1$argnum.zg = NULL;
@@ -1180,6 +1240,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 %rename(ssym) plssym;
 %rename(star) plstar;
 %rename(start) plstart;
+%rename(stransform) plstransform;
 %rename(string) plstring;
 %rename(string3) plstring3;
 %rename(stripa) plstripa;

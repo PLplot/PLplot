@@ -25,6 +25,14 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
+function map_transform(x,y)
+  radius = 90 - y
+  xt = radius * math.cos(x * math.pi / 180)
+  yt = radius * math.sin(x * math.pi / 180)
+  
+  return xt, yt
+end
+
 --------------------------------------------------------------------------
 -- mapform19
 --
@@ -35,11 +43,7 @@ dofile("plplot_examples.lua")
 
 function mapform19(n, x, y) 
   for i = 1, n do
-    radius = 90 - y[i]
-    xp = radius * math.cos(x[i] * math.pi / 180)
-    yp = radius * math.sin(x[i] * math.pi / 180)
-    x[i] = xp
-    y[i] = yp
+    x[i], y[i] = map_transform(x[i], y[i])
   end
   
   return x, y
@@ -106,6 +110,9 @@ end
 
 -- Parse and process command line arguments 
 
+x = {}
+y = {}
+
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
 -- Longitude (x) and latitude (y) 
@@ -150,4 +157,33 @@ pl.map("mapform19", "globe", minx, maxx, miny, maxy)
 
 pl.lsty(2)
 pl.meridians("mapform19", 10, 10, 0, 360, -10, 80)
+
+-- Polar, Northern hemisphere, this time with a PLplot-wide transform
+
+minx = 0
+maxx = 360
+
+pl.stransform( "map_transform" )
+
+pl.lsty( 1 )
+pl.env( -75., 75., -75., 75., 1, -1 )
+-- No need to set the map transform here as the global transform will be
+-- used.
+pl.map( nil, "globe", minx, maxx, miny, maxy )
+
+pl.lsty( 2 );
+pl.meridians( nil, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 )
+
+-- Show Baltimore, MD on the map
+pl.col0( 2 )
+pl.ssym( 0.0, 2.0 )
+x[1] = -76.6125
+y[1] = 39.2902778
+pl.poin( x, y, 18 )
+pl.ssym( 0.0, 1.0 )
+pl.ptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" )
+
+-- For C, this is how the global transform is cleared
+pl.stransform( );
+
 pl.plend()
