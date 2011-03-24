@@ -6451,6 +6451,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    <literal><parameter>nrow</parameter></literal> &gt; 1 and
 	    <literal><parameter>ncolumn</parameter></literal> &gt; 1, then plot
 	    the resulting array of legend entries in row-major order.
+	    Otherwise, plot the legend entries in column-major order.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8717,13 +8718,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Plot a glyph at a set of
-      <literal><parameter>n</parameter></literal> points at positions
-      <literal>(<parameter>x</parameter>[i],
-      <parameter>y</parameter>[i])</literal> using the glyph defined by
-      <literal><parameter>code</parameter></literal>.  This function is
-      superseded by &plstring; which gives access to many(!) more glyphs.
-      code=-1 means try to just draw a point.  Right now it's just a move
+      Plot a glyph at the specified points.  (This function is largely
+      superseded by &plstring; which gives access to many[!] more glyphs.)
+      <literal><parameter>code</parameter>=-1</literal> means try to
+      just draw a point.  Right now it's just a move
       and a draw at the same place.  Not ideal, since a sufficiently
       intelligent output device may optimize it away, or there may be faster
       ways of doing it.  This is OK for now, though, and offers a 4X speedup
@@ -8777,8 +8775,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Hershey symbol code corresponding to a glyph to be plotted
-	    at each of the <literal><parameter>n</parameter></literal> points.
+	    Hershey symbol code (in "ascii-indexed" form with -1 &lt;= code &lt;=
+	    127) corresponding to a glyph to be plotted at each of the
+	    <literal><parameter>n</parameter></literal> points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8789,7 +8788,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in examples 1,6,14,18,21,29.
+      This function is used in examples 1,6,14,21,29.
     </para>
 
   </sect1>
@@ -8815,11 +8814,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Plot a glyph at a set of
-      <literal><parameter>n</parameter></literal> points at positions
-      <literal>(<parameter>x</parameter>[i], <parameter>y</parameter>[i],
-      <parameter>z</parameter>[i])</literal> using the glyph defined by
-      <literal><parameter>code</parameter></literal>.  code=-1 means try to
+      Plot a glyph at the specified 3D points.  (This function is largely
+      superseded by &plstring3; which gives access to many[!] more glyphs.)
+      Set up the call to this function similar to what is done for &plline3;.
+      <literal><parameter>code</parameter>=-1</literal> means try to
       just draw a point.  Right now it's just a move and a draw at the same
       place.  Not ideal, since a sufficiently intelligent output device may
       optimize it away, or there may be faster ways of doing it.  This is OK
@@ -8897,7 +8895,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in example 18.
+      This function is not used in any example.
     </para>
 
   </sect1>
@@ -13936,16 +13934,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Plot glyphs (normally just one of them) at a set of
-      <literal><parameter>n</parameter></literal> points at positions
-      <literal>(<parameter>x</parameter>[i],
-      <parameter>y</parameter>[i])</literal> using the glyph defined by
-      <literal><parameter>string</parameter></literal>.  Supersedes &plpoin;
-      and &plsym; because many(!) more glyphs are accessible with
-      &plstring;.  The glyph is specified with a PLplot user string.  As
-      with &plmtex; and &plptex;, the user string can contain FCI escapes to
-      determine the font, UTF-8 code to determine the glyph or else PLplot
-      escapes for Hershey or unicode text to determine the glyph.
+      Plot a glyph at the specified points. (Supersedes &plpoin; and
+      &plsym; because many[!] more glyphs are accessible with &plstring;.)
+      The glyph is specified with a PLplot user string.  Note that the user
+      string is not actually limited to one glyph so it is possible (but not
+      normally useful) to plot more than one glyph at the specified points
+      with this function.  As with &plmtex; and &plptex;, the user string
+      can contain FCI escapes to determine the font, UTF-8 code to determine
+      the glyph or else PLplot escapes for Hershey or unicode text to
+      determine the glyph.
     </para>
 
     <variablelist>
@@ -14000,11 +13997,117 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plsym(x, y, code)</function>
+      Redacted form: <function>plstring(x, y, string)</function>
     </para>
 
     <para>
-      This function is used in example 7.
+      This function is used in examples 4 and 26.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plstring3" renderas="sect3">
+    <title>
+      <function>plstring3</function>: Plot a glyph at the specified 3D points
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plstring3</function>
+	  </funcdef>
+	  <paramdef><parameter>n</parameter></paramdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>z</parameter></paramdef>
+	  <paramdef><parameter>string</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Plot a glyph at the specified 3D points. (Supersedes &plpoin3; 
+      because many[!] more glyphs are accessible with &plstring3;.)
+      Set up the call to this function similar to what is done for &plline3;.
+      The glyph is specified with a PLplot user string.  Note that the user
+      string is not actually limited to one glyph so it is possible (but not
+      normally useful) to plot more than one glyph at the specified points
+      with this function.  As with &plmtex; and &plptex;, the user string
+      can contain FCI escapes to determine the font, UTF-8 code to determine
+      the glyph or else PLplot escapes for Hershey or unicode text to
+      determine the glyph.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>n</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of points in the
+	    <literal><parameter>x</parameter></literal>,
+	    <literal><parameter>y</parameter></literal>, and
+	    <literal><parameter>z</parameter></literal> arrays.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to an array with X coordinates of points.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to an array with Y coordinates of points.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to an array with Z coordinates of points.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>string</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    PLplot user string corresponding to the glyph to be
+	    plotted at each of the <literal><parameter>n</parameter></literal>
+	    points.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plstring3(x, y, z, string)</function>
+    </para>
+
+    <para>
+      This function is used in example 18.
     </para>
 
   </sect1>
@@ -15223,13 +15326,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Plot a glyph at a set of
-      <literal><parameter>n</parameter></literal> points at positions
-      <literal>(<parameter>x</parameter>[i],
-      <parameter>y</parameter>[i])</literal> using the glyph defined by
-      <literal><parameter>code</parameter></literal>.  The code is
-      interpreted as an index in the Hershey font tables.  This function is
-      superseded by &plstring; which gives access to many(!) more glyphs.
+      Plot a glyph at the specified points.  (This function is
+      largely superseded by &plstring; which gives access to many[!] 
+      more glyphs.)
     </para>
 
     <variablelist>

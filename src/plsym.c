@@ -83,13 +83,15 @@ static void
 plhrsh2( PLINT ch, PLINT x, PLINT y );
 
 //--------------------------------------------------------------------------
-//! Plot glyphs (normally just one of them) at the specified
-//! coordinates.  This function largely supersedes plpoin and plsym
-//! because many(!) more glyphs are accessible with plstring.  The
-//! glyph is specified with a PLplot user string.  As with plmtex and
-//! plptex, the user string can contain FCI escapes to determine the
-//! font, UTF-8 code to determine the glyph or else PLplot escapes for
-//! Hershey or unicode text to determine the glyph.
+//! Plot a glyph at the specified points.  (This function largely
+//! supersedes plpoin and plsym because many[!] more glyphs are
+//! accessible with plstring.)  The glyph is specified with a PLplot
+//! user string.  Note that the user string is not actually limited to
+//! one glyph so it is possible (but not normally useful) to plot more
+//! than one glyph at the specified points with this function.  As
+//! with plmtex and plptex, the user string can contain FCI escapes to
+//! determine the font, UTF-8 code to determine the glyph or else
+//! PLplot escapes for Hershey or unicode text to determine the glyph.
 //! @param n Number of points in x and y arrays.
 //! @param x Array of X coordinates of points.
 //! @param y Array of Y coordinates of points.
@@ -108,8 +110,8 @@ c_plstring( PLINT n, const PLFLT *x, const PLFLT *y, const char *string )
 }
 
 //--------------------------------------------------------------------------
-//! Plot a glyph at the specified points.  This function is largely
-//! superseded by plstring which gives access to many(!) more glyphs.
+//! Plot a glyph at the specified points.  (This function is largely
+//! superseded by plstring which gives access to many[!] more glyphs.)
 //! @param n Number of points in x and y arrays.
 //! @param x Pointer to an array with X coordinates of points.
 //! @param y Pointer to an array with Y coordinates of points.
@@ -142,8 +144,8 @@ c_plsym( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
 }
 
 //--------------------------------------------------------------------------
-//! Plot a glyph at the specified points.  This function is largely
-//! superseded by plstring which gives access to many(!) more glyphs.
+//! Plot a glyph at the specified points.  (This function is largely
+//! superseded by plstring which gives access to many[!] more glyphs.)
 //! code=-1 means try to just draw a point.  Right now it's just a
 //! move and a draw at the same place.  Not ideal, since a
 //! sufficiently intelligent output device may optimize it away, or
@@ -203,11 +205,11 @@ c_plpoin( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
 }
 
 //--------------------------------------------------------------------------
-//! Plot a glyph at the specified 3D points.  Setup the call to this
-//! function similar to what is done for plline3.  This function is
-//! largely superseded by plstring3 which gives access to many(!) more
-//! glyphs.  code=-1 means try to just draw a point.  Right now it's
-//! just a move and a draw at the same place.  Not ideal, since a
+//! Plot a glyph at the specified 3D points.  (This function is
+//! largely superseded by plstring3 which gives access to many[!] more
+//! glyphs.)  Set up the call to this function similar to what is done
+//! for plline3.  code=-1 means try to just draw a point.  Right now
+//! it's just a move and a draw at the same place.  Not ideal, since a
 //! sufficiently intelligent output device may optimize it away, or
 //! there may be faster ways of doing it.  This is OK for now, though,
 //! and offers a 4X speedup over drawing a Hershey font "point" (which
@@ -281,14 +283,17 @@ c_plpoin3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT code )
 }
 
 //--------------------------------------------------------------------------
-//! Plot glyphs (normally just one of them) at the specified 3D
-//! coordinates.  Setup the call to this function similar to what is
-//! done for plline3.  This function largely supersedes plpoin3
-//! because many(!) more glyphs are accessible with plstring3.  The
-//! glyph is specified with a PLplot user string.  As with plmtex and
-//! plptex, the user string can contain FCI escapes to determine the
-//! font, UTF-8 code to determine the glyph or else PLplot escapes for
-//! Hershey or unicode text to determine the glyph.
+//! Plot a glyph at the specified 3D points.  (This function
+//! largely supersedes plpoin3 because many[!] more glyphs are
+//! accessible with plstring3).  Set up the call to this function
+//! similar to what is done for plline3.  The glyph is specified with
+//! a PLplot user string.  Note that the user string is not actually
+//! limited to one glyph so it is possible (but not normally useful)
+//! to plot more than one glyph at the specified points with this
+//! function.  As with plmtex and plptex, the user string can contain
+//! FCI escapes to determine the font, UTF-8 code to determine the
+//! glyph or else PLplot escapes for Hershey or unicode text to
+//! determine the glyph.
 //! @param n Number of points in x, y, and z arrays.
 //! @param x Array of X coordinates of points.
 //! @param y Array of Y coordinates of points.
