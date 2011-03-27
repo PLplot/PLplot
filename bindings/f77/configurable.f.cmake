@@ -5,7 +5,7 @@ C
 C      This file is part of PLplot.
 C
 C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
+C      it under the terms of the GNU Library General Public License as
 C      published by the Free Software Foundation; either version 2 of the
 C      License, or (at your option) any later version.
 C
