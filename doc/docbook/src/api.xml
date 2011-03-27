@@ -12670,7 +12670,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Defines color map.
+	    Defines color map. If 
+	    <literal><parameter>sh_cmap</parameter>=0</literal>, then
+	    <literal><parameter>sh_color</parameter></literal>
+	    is interpreted as a color map 0 (integer) index.  If 
+	    <literal><parameter>sh_cmap</parameter>=1</literal>, then
+	    <literal><parameter>sh_color</parameter></literal>
+	    is interpreted as a color map 1 floating-point index which
+	    ranges from 0. to 1.
 	  </para>
 	</listitem>
       </varlistentry>
