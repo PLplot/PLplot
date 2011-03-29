@@ -114,6 +114,7 @@ procedure x04a is
                 symbol_scales(0)  := 1.0; -- Don't care; not used.
                 symbol_numbers(0) := 4;   -- Don't care; not used.
                 symbols(0) := To_Unbounded_String("*"); -- Don't care; not used.
+
                 -- Second legend entry.
                 opt_array(1)      := Legend_Line + Legend_Symbol;
                 text_colors(1)    := 3;

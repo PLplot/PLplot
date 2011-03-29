@@ -1244,7 +1244,7 @@ package PLplot is
         Text_Offset, Text_Scale, Text_Spacing : Long_Float;
         Text_Justification                    : Long_Float;
         Text_Colors                           : Integer_Array_1D;
-        Label_Text                            : in out Legend_String_Array_Type;
+        Label_Text                            : Legend_String_Array_Type;
         Box_Colors, Box_Patterns              : Integer_Array_1D;
         Box_Scales                            : Real_Vector;
         Box_Line_Widths                       : Integer_Array_1D;
@@ -1252,7 +1252,7 @@ package PLplot is
         Symbol_Colors                         : Integer_Array_1D;
         Symbol_Scales                         : Real_Vector;
         Symbol_Numbers                        : Integer_Array_1D;
-        Symbols                               : in out Legend_String_Array_Type);
+        Symbols                               : Legend_String_Array_Type);
 
 
     -- Sets position of the light source

@@ -22,7 +22,7 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
-    Ada.Strings.Bounded,
+    Ada.Strings.Bounded, -- fixme Probable cruft.
     Ada.Strings.Unbounded;
 
 use 
@@ -67,6 +67,15 @@ package PLplot_Auxiliary is
 --------------------------------------------------------------------------------
 --            Utility procedures useful in compiling the examples             --
 --------------------------------------------------------------------------------
+
+    -- Mimic C conversion of float to integer; something similar works in e.g.
+    -- plplot_thin.adb.
+    -- C truncates towards 0. Ada rounds to nearest integer; midway rounded 
+    -- away from zero, e.g. Inteter(±3.5) is ±4. But any completely reliable 
+    -- conversion is probalby not possible; indeed, this one exactly emulates C
+    -- when tested for values around ±2 to ±3. Both convert ±2.9999999999999997
+    -- to ±2 and ±2.9999999999999998 to ±3.
+    function Trunc(a : Long_Float) return Integer;
 
     -- Find minimum in a 1D array.
     function Vector_Min(x : Real_Vector) return Long_Float;

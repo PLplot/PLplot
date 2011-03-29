@@ -1798,7 +1798,7 @@ package body PLplot_Traditional is
         Text_Offset, Text_Scale, Text_Spacing : Long_Float;
         Text_Justification                    : Long_Float;
         Text_Colors                           : Integer_Array_1D; -- Really Plot_Color_Type
-        Label_Text                            : in out Legend_String_Array_Type;
+        Label_Text                            : Legend_String_Array_Type;
         Box_Colors, Box_Patterns              : Integer_Array_1D;
         Box_Scales                            : Real_Vector;
         Box_Line_Widths                       : Integer_Array_1D;
@@ -1806,13 +1806,14 @@ package body PLplot_Traditional is
         Symbol_Colors                         : Integer_Array_1D;
         Symbol_Scales                         : Real_Vector;
         Symbol_Numbers                        : Integer_Array_1D;
-        Symbols                               : in out Legend_String_Array_Type)
+        Symbols                               : Legend_String_Array_Type)
     is
         Number_Entries : Integer := Label_Text'length;
         L : Integer; -- Used to check lengths of arrays.
         PL_Label_Text, PL_Symbols : PL_Legend_String_Array(Label_Text'range);
         C_Legend_String_Array  : array(Label_Text'range) of PL_Legend_String;
         C_Symbols_String_Array : array(Symbols'range)    of PL_Legend_String;
+        Dum_Text : Legend_String_Array_Type(Label_Text'range);
     begin
         -- Check that all array lengths in the argument list are the same.
         L := Entry_Options'length;
@@ -1833,13 +1834,15 @@ package body PLplot_Traditional is
             if Length(Label_Text(I)) >= Max_Legend_Label_Length then
                 Put_Line("*** Warning: Legend label was truncated to" 
                     & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
-                Label_Text(I) := Head(Label_Text(I), Max_Legend_Label_Length);
+                Dum_Text(I) := Head(Label_Text(I), Max_Legend_Label_Length);
+            else
+                Dum_Text(I) := Label_Text(I);
             end if;
 
             -- Make the C-style string with null character immediately after the text.
-            C_Legend_String_Array(I) := To_C(To_String(Label_Text(I) 
+            C_Legend_String_Array(I) := To_C(To_String(Dum_Text(I) 
                 & Character'val(0) 
-                & (Max_Legend_Label_Length - Length(Label_Text(I))) * " "), False);
+                & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
 
             -- Set the I-th pointer in the array of pointers.
             PL_Label_Text(I) := C_Legend_String_Array(I)'Address;
@@ -1852,13 +1855,15 @@ package body PLplot_Traditional is
             if Length(Symbols(I)) >= Max_Legend_Label_Length then
                 Put_Line("*** Warning: Legend symbols label was truncated to" 
                     & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
-                Symbols(I) := Head(Symbols(I), Max_Legend_Label_Length);
+                Dum_Text(I) := Head(Symbols(I), Max_Legend_Label_Length);
+            else
+                Dum_Text(I) := Symbols(I);
             end if;
 
             -- Make the C-style string with null character immediately after the text.
-            C_Symbols_String_Array(I) := To_C(To_String(Symbols(I) 
+            C_Symbols_String_Array(I) := To_C(To_String(Dum_Text(I) 
                 & Character'val(0) 
-                & (Max_Legend_Label_Length - Length(Symbols(I))) * " "), False);
+                & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
 
             -- Set the I-th pointer in the array of pointers.
             PL_Symbols(I) := C_Symbols_String_Array(I)'Address;

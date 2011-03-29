@@ -2,7 +2,7 @@
 
 -- Multi-lingual version of the first page of example 4.
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008 - 2011 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -55,26 +55,31 @@
 --     http://en.wikipedia.org/wiki/Decade_(log_scale) .
 
 with
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
     PLplot_Traditional;
 use
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x26a is
 
-    function x_label(which : Integer) return String is
-    begin
-        if which = 0 then return "Frequency"; end if;
-        if which = 1 then return "Частота"; end if;
-        return "oops";
-    end x_label;
+    -- Here we show two ways of passing strings for plot1...
+    -- ...a function...
+    --function x_label(which : Integer) return String is
+    --begin
+    --    if which = 0 then return "Frequency"; end if;
+    --    if which = 1 then return "Частота"; end if;
+    --    return "oops";
+    --end x_label;
+    -- ...or an array of unbounded strings.
+    -- (TUB renames Ada.Strings.Unbounded.To_Unbounded_String in plplot_traditional.ads.)
+    x_label : array(0 .. 1) of Unbounded_String := (TUB("Frequency"), TUB("Частота"));
 
 
     function y_label(which : Integer) return String is
@@ -91,6 +96,13 @@ procedure x26a is
         if which = 1 then return "Фазовый сдвиг (градусы)"; end if;
         return "oops";
     end alty_label;
+
+
+    -- Short rearranged versions of y_label and alty_label.
+    -- (TUB renames Ada.Strings.Unbounded.To_Unbounded_String in plplot_traditional.ads.)
+    Legend_0 : Legend_String_Array_Type(0..1) := (TUB("Amplitude"), TUB("Phase shift"));
+    Legend_1 : Legend_String_Array_Type(0..1) := (TUB("Амплитуда"), TUB("Фазовый сдвиг"));
+    Legend_text : array(0 .. 1) of Legend_String_Array_Type(0..1) := (Legend_0, Legend_1);
 
 
     function title_label(which : Integer) return String is
@@ -110,10 +122,22 @@ procedure x26a is
 
 
     procedure plot1
-       (x_label, y_label, alty_label, title_label, line_label : String)
+       (x_label, y_label, alty_label : String;
+        L_Text : Legend_String_Array_Type;
+        title_label, line_label : String)
     is
         freql, ampl, phase : Real_Vector(0 .. 100);
         f0, freq : Long_Float;
+        opt_array : Integer_Array_1D(0 .. 1);
+        text_colors, line_colors, line_styles, line_widths : Integer_Array_1D(0..1);
+        symbol_numbers, symbol_colors : Integer_Array_1D(0 .. 1);
+        symbol_scales : Real_Vector(0 .. 1);
+        symbols : Legend_String_Array_Type(0 .. 1);
+        legend_width, legend_height  : Long_Float;
+        -- Dummy arrays for unused entities. C uses null arguments but we can't.
+        Box_Colors, Box_Patterns, Box_Line_Widths : Integer_Array_1D(0 .. 1)
+            := (others => 0);
+        Box_Scales : Real_Vector(0 .. 1):= (others => 1.0);
     begin
         pladv(0);
         f0 := 1.0;
@@ -135,7 +159,7 @@ procedure x26a is
         -- Plot ampl vs freq
         plcol0(2);
         plline(freql, ampl);
-        plcol0(1);
+        plcol0(2);
         plptex(1.6, -30.0, 1.0, -20.0, 0.5, line_label);
 
         -- Put labels on
@@ -151,10 +175,46 @@ procedure x26a is
         plbox("", 0.0, 0, "cmstv", 30.0, 3);
         plcol0(3);
         plline(freql, phase);
+        plstring(freql, phase, "*");
         plcol0(3);
         plmtex("r", 5.0, 0.5, 0.5, alty_label);
-    end plot1;
 
+        -- Draw a legend
+        -- First legend entry.
+        opt_array(0)   := Legend_Line;
+        text_colors(0) := 2;
+        line_colors(0) := 2;
+        line_styles(0) := 1;
+        line_widths(0) := 1;
+        symbol_colors(0)  := 3;   -- Don't care; not used.
+        symbol_scales(0)  := 1.0; -- Don't care; not used.
+        symbol_numbers(0) := 4;   -- Don't care; not used.
+        symbols(0) := To_Unbounded_String("*"); -- Don't care; not used.
+
+        -- Second legend entry.
+        opt_array(1)      := Legend_Line + Legend_Symbol;
+        text_colors(1)    := 3;
+        line_colors(1)    := 3;
+        line_styles(1)    := 1;
+        line_widths(1)    := 1;
+        symbol_colors(1)  := 3;
+        symbol_scales(1)  := 1.0;
+        symbol_numbers(1) := 4;
+        symbols(1)        := To_Unbounded_String("*");
+
+        plscol0a(15, 32, 32, 32, 0.70);
+        pllegend(legend_width, legend_height,
+            0, Legend_Background + Legend_Bounding_Box,
+            0.0, 0.0, 0.1, 15,
+            1, 1, 0, 0,
+            opt_array,
+            1.0, 1.0, 2.0,
+            1.0, text_colors, L_Text,
+            Box_Colors, Box_Patterns, 
+            Box_Scales, Box_Line_Widths,
+            line_colors, line_styles, line_widths,
+            symbol_colors, symbol_scales, symbol_numbers, symbols);
+    end plot1;
 begin
     -- Parse and process command line arguments */
     plparseopts(PL_PARSE_FULL);
@@ -165,7 +225,8 @@ begin
 
     -- Make log plots using two different styles.
     for i in 0 .. 1 loop
-        plot1(x_label(i), y_label(i), alty_label(i), title_label(i), line_label(i));
+        plot1(To_String(x_label(i)), y_label(i), alty_label(i), legend_text(i),
+            title_label(i), line_label(i));
     end loop;
     
     plend;

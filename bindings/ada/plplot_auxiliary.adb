@@ -27,6 +27,23 @@ package body PLplot_Auxiliary is
 --            Utility procedures useful in compiling the examples             --
 --------------------------------------------------------------------------------
 
+    -- Mimic C conversion of float to integer; something similar works in e.g.
+    -- plplot_thin.adb.
+    -- C truncates towards 0. Ada rounds to nearest integer; midway rounded 
+    -- away from zero, e.g. Inteter(±3.5) is ±4. But any completely reliable 
+    -- conversion is probalby not possible; indeed, this one exactly emulates C
+    -- when tested for values around ±2 to ±3. Both convert ±2.9999999999999997
+    -- to ±2 and ±2.9999999999999998 to ±3.
+    function Trunc(a : Long_Float) return Integer is
+    begin
+        if a >= 0.0 then
+            return Integer(a - 0.4999999999999999);
+        else
+            return Integer(a + 0.4999999999999999);
+        end if;
+    end Trunc;
+
+
     -- Find minimum in a 1D array.
     function Vector_Min(x : Real_Vector) return Long_Float is
         Result : Long_Float;
