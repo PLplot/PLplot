@@ -266,7 +266,7 @@ plr_line( PLRDev *plr, int c )
 {
     int     c1;
     U_SHORT npts;
-    PLFLT *x, *y;
+    PLFLT   *x, *y;
 
     // "Temporary" logic until can figure out what value of npts will
     // actually be required which would allow use of malloc whenever
@@ -282,7 +282,7 @@ plr_line( PLRDev *plr, int c )
     {
     case LINE:
         plr_cmd( get_ncoords( plr, x, y, 1 ) );
-        // n.b. falls through to LINETO case.
+    // n.b. falls through to LINETO case.
 
     case LINETO:
         for (;; )
@@ -554,7 +554,7 @@ static int
 plresc_fill( PLRDev *plr )
 {
     U_SHORT npts;
-    PLFLT *x, *y;
+    PLFLT   *x, *y;
 
     dbug_enter( "plresc_fill" );
 

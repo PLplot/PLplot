@@ -55,153 +55,153 @@ class x33 {
         "✦"
     };
 
-  /*
-    void plcolorbar_example_1( int bar_type, double ticks, int sub_ticks, int n, double[] values, String title )
-    {
-        pls.adv( 0 );
-        // Setup color palette 1
-        pls.spal1( "cmap1_blue_red.pal", true );
-
-        double[] colors = new double[n];
-        int    i;
-        double color_step;
-        color_step = 1.0 / (double) ( n - 1 );
-        for ( i = 0; i < n; i++ )
-        {
-            colors[i] = 0.0 + color_step * (double) ( i );
-        }
-
-        int opt;
-        opt = PLStream.PL_POSITION_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
-              PLStream.PL_COLORBAR_CAP_HIGH;
-
-        String axis_opts_1, axis_opts_2;
-        if ( ( bar_type & PLStream.PL_COLORBAR_SHADE_LABEL ) > 0 )
-        {
-            axis_opts_1 = "iv";
-            axis_opts_2 = "i";
-        }
-        else
-        {
-            if ( sub_ticks != 0 )
-            {
-                axis_opts_1 = "stv";
-                axis_opts_2 = "st";
-            }
-            else
-            {
-                axis_opts_1 = "tv";
-                axis_opts_2 = "t";
-            }
-        }
-
-        pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_1, "Test label - Left, High Cap",
-            colors, values );
-
-        opt = PLStream.PL_POSITION_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
-              PLStream.PL_COLORBAR_CAP_LOW;
-
-        pls.colorbar( opt, 0.1, 0.4, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_1, "Test label - Right, Low Cap",
-            colors, values );
-
-        opt = PLStream.PL_POSITION_TOP | bar_type | PLStream.PL_COLORBAR_LABEL_TOP |
-              PLStream.PL_COLORBAR_CAP_HIGH;
-
-        pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_2, "Test label - Upper, High Cap",
-            colors, values );
-
-        opt = PLStream.PL_POSITION_BOTTOM | bar_type | PLStream.PL_COLORBAR_LABEL_BOTTOM |
-              PLStream.PL_COLORBAR_CAP_LOW;
-
-        pls.colorbar( opt, 0.4, 0.1, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_2, "Test label - Lower, Low Cap",
-            colors, values );
-
-        pls.vpor( 0.0, 1.0, 0.0, 1.0 );
-        pls.wind( 0.0, 1.0, 0.0, 1.0 );
-        pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
-    }
-
-    void plcolorbar_example_2( int bar_type, double ticks, double sub_ticks, int n, double[] values, String title )
-    {
-        pls.adv( 0 );
-        // Setup color palette 1
-        pls.spal1( "cmap1_blue_yellow.pal", true );
-
-        double[] colors = new double[n];
-        int    i;
-        double color_step;
-        color_step = 1.0 / (double) ( n - 1 );
-        for ( i = 0; i < n; i++ )
-        {
-            colors[i] = 0.0 + color_step * (double) ( i );
-        }
-
-        int opt;
-        opt = PLStream.PL_POSITION_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
-              PLStream.PL_COLORBAR_CAP_LOW;
-
-        String axis_opts_1, axis_opts_2;
-        if ( bar_type == PLStream.PL_COLORBAR_SHADE_LABEL )
-        {
-            axis_opts_1 = "";
-            axis_opts_2 = "";
-        }
-        else
-        {
-            if ( sub_ticks != 0 )
-            {
-                axis_opts_1 = "stv";
-                axis_opts_2 = "st";
-            }
-            else
-            {
-                axis_opts_1 = "tv";
-                axis_opts_2 = "t";
-            }
-        }
-
-        pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_1, "Test label - Left, Low Cap",
-            colors, values );
-
-        opt = PLStream.PL_POSITION_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
-              PLStream.PL_COLORBAR_CAP_HIGH;
-
-        pls.colorbar( opt, 0.1, 0.4, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_1, "Test label - Right, High Cap",
-            colors, values );
-
-        opt = PLStream.PL_POSITION_TOP | bar_type | PLStream.PL_COLORBAR_LABEL_TOP |
-              PLStream.PL_COLORBAR_CAP_LOW;
-
-        pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_2, "Test label - Upper, Low Cap",
-            colors, values );
-
-        opt = PLStream.PL_POSITION_BOTTOM | bar_type | PLStream.PL_COLORBAR_LABEL_BOTTOM |
-              PLStream.PL_COLORBAR_CAP_HIGH;
-
-        pls.colorbar( opt, 0.4, 0.1, 0.5, 0.1,
-            ticks, sub_ticks,
-            axis_opts_2, "Test label - Lower, High Cap",
-            colors, values );
-
-        pls.vpor( 0.0, 1.0, 0.0, 1.0 );
-        pls.wind( 0.0, 1.0, 0.0, 1.0 );
-        pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
-    }
-  */
+    //
+//      void plcolorbar_example_1( int bar_type, double ticks, int sub_ticks, int n, double[] values, String title )
+//      {
+//          pls.adv( 0 );
+//          // Setup color palette 1
+//          pls.spal1( "cmap1_blue_red.pal", true );
+//
+//          double[] colors = new double[n];
+//          int    i;
+//          double color_step;
+//          color_step = 1.0 / (double) ( n - 1 );
+//          for ( i = 0; i < n; i++ )
+//          {
+//              colors[i] = 0.0 + color_step * (double) ( i );
+//          }
+//
+//          int opt;
+//          opt = PLStream.PL_POSITION_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
+//                PLStream.PL_COLORBAR_CAP_HIGH;
+//
+//          String axis_opts_1, axis_opts_2;
+//          if ( ( bar_type & PLStream.PL_COLORBAR_SHADE_LABEL ) > 0 )
+//          {
+//              axis_opts_1 = "iv";
+//              axis_opts_2 = "i";
+//          }
+//          else
+//          {
+//              if ( sub_ticks != 0 )
+//              {
+//                  axis_opts_1 = "stv";
+//                  axis_opts_2 = "st";
+//              }
+//              else
+//              {
+//                  axis_opts_1 = "tv";
+//                  axis_opts_2 = "t";
+//              }
+//          }
+//
+//          pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_1, "Test label - Left, High Cap",
+//              colors, values );
+//
+//          opt = PLStream.PL_POSITION_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
+//                PLStream.PL_COLORBAR_CAP_LOW;
+//
+//          pls.colorbar( opt, 0.1, 0.4, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_1, "Test label - Right, Low Cap",
+//              colors, values );
+//
+//          opt = PLStream.PL_POSITION_TOP | bar_type | PLStream.PL_COLORBAR_LABEL_TOP |
+//                PLStream.PL_COLORBAR_CAP_HIGH;
+//
+//          pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_2, "Test label - Upper, High Cap",
+//              colors, values );
+//
+//          opt = PLStream.PL_POSITION_BOTTOM | bar_type | PLStream.PL_COLORBAR_LABEL_BOTTOM |
+//                PLStream.PL_COLORBAR_CAP_LOW;
+//
+//          pls.colorbar( opt, 0.4, 0.1, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_2, "Test label - Lower, Low Cap",
+//              colors, values );
+//
+//          pls.vpor( 0.0, 1.0, 0.0, 1.0 );
+//          pls.wind( 0.0, 1.0, 0.0, 1.0 );
+//          pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+//      }
+//
+//      void plcolorbar_example_2( int bar_type, double ticks, double sub_ticks, int n, double[] values, String title )
+//      {
+//          pls.adv( 0 );
+//          // Setup color palette 1
+//          pls.spal1( "cmap1_blue_yellow.pal", true );
+//
+//          double[] colors = new double[n];
+//          int    i;
+//          double color_step;
+//          color_step = 1.0 / (double) ( n - 1 );
+//          for ( i = 0; i < n; i++ )
+//          {
+//              colors[i] = 0.0 + color_step * (double) ( i );
+//          }
+//
+//          int opt;
+//          opt = PLStream.PL_POSITION_LEFT | bar_type | PLStream.PL_COLORBAR_LABEL_LEFT |
+//                PLStream.PL_COLORBAR_CAP_LOW;
+//
+//          String axis_opts_1, axis_opts_2;
+//          if ( bar_type == PLStream.PL_COLORBAR_SHADE_LABEL )
+//          {
+//              axis_opts_1 = "";
+//              axis_opts_2 = "";
+//          }
+//          else
+//          {
+//              if ( sub_ticks != 0 )
+//              {
+//                  axis_opts_1 = "stv";
+//                  axis_opts_2 = "st";
+//              }
+//              else
+//              {
+//                  axis_opts_1 = "tv";
+//                  axis_opts_2 = "t";
+//              }
+//          }
+//
+//          pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_1, "Test label - Left, Low Cap",
+//              colors, values );
+//
+//          opt = PLStream.PL_POSITION_RIGHT | bar_type | PLStream.PL_COLORBAR_LABEL_RIGHT |
+//                PLStream.PL_COLORBAR_CAP_HIGH;
+//
+//          pls.colorbar( opt, 0.1, 0.4, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_1, "Test label - Right, High Cap",
+//              colors, values );
+//
+//          opt = PLStream.PL_POSITION_TOP | bar_type | PLStream.PL_COLORBAR_LABEL_TOP |
+//                PLStream.PL_COLORBAR_CAP_LOW;
+//
+//          pls.colorbar( opt, 0.1, 0.1, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_2, "Test label - Upper, Low Cap",
+//              colors, values );
+//
+//          opt = PLStream.PL_POSITION_BOTTOM | bar_type | PLStream.PL_COLORBAR_LABEL_BOTTOM |
+//                PLStream.PL_COLORBAR_CAP_HIGH;
+//
+//          pls.colorbar( opt, 0.4, 0.1, 0.5, 0.1,
+//              ticks, sub_ticks,
+//              axis_opts_2, "Test label - Lower, High Cap",
+//              colors, values );
+//
+//          pls.vpor( 0.0, 1.0, 0.0, 1.0 );
+//          pls.wind( 0.0, 1.0, 0.0, 1.0 );
+//          pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+//      }
+   //
 //--------------------------------------------------------------------------
 // x33
 //
@@ -830,22 +830,22 @@ class x33 {
             null, null, null, null );
         max_height = Math.max( max_height, legend_height[0] );
 
-        /*
-        // Color bar examples
-        double[] values_small  = { 0.0, 1.0 };
-        double[] values_uneven = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
-        double[] values_even   = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
-        plcolorbar_example_1( PLStream.PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
-        plcolorbar_example_2( PLStream.PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
-        plcolorbar_example_1( PLStream.PL_COLORBAR_SHADE | PLStream.PL_COLORBAR_SHADE_LABEL, 0.0, 0, 9, values_uneven,
-            "Shade Color Bars - Uneven Steps" );
-        plcolorbar_example_2( PLStream.PL_COLORBAR_SHADE, 3.0, 3, 9, values_even,
-            "Shade Color Bars - Even Steps" );
-        plcolorbar_example_1( PLStream.PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
-            "Gradient Color Bars" );
-        plcolorbar_example_2( PLStream.PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
-            "Gradient Color Bars" );
-        */
+        //
+//        // Color bar examples
+//        double[] values_small  = { 0.0, 1.0 };
+//        double[] values_uneven = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
+//        double[] values_even   = { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 };
+//        plcolorbar_example_1( PLStream.PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
+//        plcolorbar_example_2( PLStream.PL_COLORBAR_IMAGE, 0.0, 0, 2, values_small, "Image Color Bars" );
+//        plcolorbar_example_1( PLStream.PL_COLORBAR_SHADE | PLStream.PL_COLORBAR_SHADE_LABEL, 0.0, 0, 9, values_uneven,
+//            "Shade Color Bars - Uneven Steps" );
+//        plcolorbar_example_2( PLStream.PL_COLORBAR_SHADE, 3.0, 3, 9, values_even,
+//            "Shade Color Bars - Even Steps" );
+//        plcolorbar_example_1( PLStream.PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
+//            "Gradient Color Bars" );
+//        plcolorbar_example_2( PLStream.PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
+//            "Gradient Color Bars" );
+       //
 
         pls.end();
     }

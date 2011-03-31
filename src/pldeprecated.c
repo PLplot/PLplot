@@ -30,7 +30,7 @@
 #define NEED_PLDEBUG
 #include "plplotP.h"
 
-// The following functions have been removed from plplot ahead of the 5.9.8 
+// The following functions have been removed from plplot ahead of the 5.9.8
 // release. They have long been advertised as deprecated.
 //   plParseOpts
 //   plHLS_RGB
@@ -38,7 +38,7 @@
 //   plarrows
 
 
-// The following functions have been marked as obsolete for some time, 
+// The following functions have been marked as obsolete for some time,
 // but were formally deprecated as of version 5.9.8
 //   plrgb
 //   plrgb1

@@ -10,8 +10,8 @@
 //  This file contains a function to set the various global variables
 //  used by PLplot
 
-static void set_plplot_parameters( Tcl_Interp *interp ) {
-
+static void set_plplot_parameters( Tcl_Interp *interp )
+{
     Tcl_Eval( interp, "namespace eval ::PLPLOT { \n\
 \n\
 # obsolete\n\
@@ -380,5 +380,4 @@ variable GRID_NNLI 5\n\
 # Nearest Neighbors Around Inverse Distance Weighted\n\
 variable GRID_NNAIDW 6\n\
 }" );
-
 }

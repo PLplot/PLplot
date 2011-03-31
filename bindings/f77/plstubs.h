@@ -359,9 +359,9 @@
 // The following are deprecated and will be removed in future versions of plplot
 #ifdef PL_DEPRECATED
 
-#define    PLRGB                     FNAME( PLRGB, plrgb )
-#define    PLRGB1                    FNAME( PLRGB1, plrgb1 )
-#define    PLHLS                     FNAME( PLHLS, plhls )
+#define    PLRGB     FNAME( PLRGB, plrgb )
+#define    PLRGB1    FNAME( PLRGB1, plrgb1 )
+#define    PLHLS     FNAME( PLHLS, plhls )
 
 #endif  // PL_DEPRECATED
 

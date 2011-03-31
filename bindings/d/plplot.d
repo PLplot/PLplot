@@ -312,27 +312,27 @@ void pllab( string xlabel, string ylabel, string tlabel )
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 void pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
-            PLINT bg_color, PLINT bb_color, PLINT bb_style,
-            PLINT nrow, PLINT ncolumn,
-            PLINT[] opt_array,
-            PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-            PLFLT text_justification,
-            PLINT[] text_colors, string[] text,
-            PLINT[] box_colors, PLINT[] box_patterns,
-            PLFLT[] box_scales, PLINT[] box_line_widths,
-            PLINT[] line_colors, PLINT[] line_styles,
-            PLINT[] line_widths,
-            PLINT[] symbol_colors, PLFLT[] symbol_scales,
-            PLINT[] symbol_numbers, string[] symbols )
+               PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+               PLINT bg_color, PLINT bb_color, PLINT bb_style,
+               PLINT nrow, PLINT ncolumn,
+               PLINT[] opt_array,
+               PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+               PLFLT text_justification,
+               PLINT[] text_colors, string[] text,
+               PLINT[] box_colors, PLINT[] box_patterns,
+               PLFLT[] box_scales, PLINT[] box_line_widths,
+               PLINT[] line_colors, PLINT[] line_styles,
+               PLINT[] line_widths,
+               PLINT[] symbol_colors, PLFLT[] symbol_scales,
+               PLINT[] symbol_numbers, string[] symbols )
 {
-    PLINT nlegend = opt_array.length;
+    PLINT   nlegend = opt_array.length;
     char*[] textz, symbolsz;
-    textz.length = nlegend;
+    textz.length    = nlegend;
     symbolsz.length = nlegend;
-        for ( int i = 0; i < nlegend; i++ )
+    for ( int i = 0; i < nlegend; i++ )
     {
-        textz[i] = toStringz( text[i] );
+        textz[i]    = toStringz( text[i] );
         symbolsz[i] = toStringz( symbols[i] );
     }
     assert( nlegend == text_colors.length, "pllegend(): Arrays must be of same length!" );
@@ -349,19 +349,19 @@ void pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     assert( nlegend == symbol_numbers.length, "pllegend(): Arrays must be of same length!" );
     assert( nlegend == symbols.length, "pllegend(): Arrays must be of same length!" );
     c_pllegend( p_legend_width, p_legend_height,
-            position, opt, x, y, plot_width,
-            bg_color, bb_color, bb_style,
-            nrow, ncolumn,
-            nlegend, opt_array.ptr,
-            text_offset, text_scale, text_spacing,
-            text_justification,
-            text_colors.ptr, textz.ptr,
-            box_colors.ptr, box_patterns.ptr,
-            box_scales.ptr, box_line_widths.ptr,
-            line_colors.ptr, line_styles.ptr,
-            line_widths.ptr,
-            symbol_colors.ptr, symbol_scales.ptr,
-            symbol_numbers.ptr, symbolsz.ptr );
+        position, opt, x, y, plot_width,
+        bg_color, bb_color, bb_style,
+        nrow, ncolumn,
+        nlegend, opt_array.ptr,
+        text_offset, text_scale, text_spacing,
+        text_justification,
+        text_colors.ptr, textz.ptr,
+        box_colors.ptr, box_patterns.ptr,
+        box_scales.ptr, box_line_widths.ptr,
+        line_colors.ptr, line_styles.ptr,
+        line_widths.ptr,
+        symbol_colors.ptr, symbol_scales.ptr,
+        symbol_numbers.ptr, symbolsz.ptr );
 }
 
 /* Draws line segments connecting a series of points. */
@@ -1373,8 +1373,8 @@ alias c_plhls          plhls;
 alias c_plhlsrgb       plhlsrgb;
 //alias c_plimage plimage;
 //alias c_plimagefr plimagefr;
-alias c_plinit        plinit;
-alias c_pljoin        pljoin;
+alias c_plinit plinit;
+alias c_pljoin pljoin;
 //alias c_pllab pllab;
 //alias c_pllegend pllegend;
 alias c_pllightsource pllightsource;
@@ -1754,52 +1754,52 @@ void c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 void c_pllab( char *xlabel, char *ylabel, char *tlabel );
 
 // Flags used for position argument of both pllegend and plcolorbar
-const PL_POSITION_LEFT            = 1;
-const PL_POSITION_RIGHT           = 2;
-const PL_POSITION_TOP             = 4;
-const PL_POSITION_BOTTOM          = 8;
-const PL_POSITION_INSIDE          = 16;
-const PL_POSITION_OUTSIDE         = 32;
-const PL_POSITION_VIEWPORT        = 64;
-const PL_POSITION_SUBPAGE         = 128;
+const PL_POSITION_LEFT     = 1;
+const PL_POSITION_RIGHT    = 2;
+const PL_POSITION_TOP      = 4;
+const PL_POSITION_BOTTOM   = 8;
+const PL_POSITION_INSIDE   = 16;
+const PL_POSITION_OUTSIDE  = 32;
+const PL_POSITION_VIEWPORT = 64;
+const PL_POSITION_SUBPAGE  = 128;
 
 // Flags for pllegend
-const PL_LEGEND_NONE              = 1;
-const PL_LEGEND_COLOR_BOX         = 2;
-const PL_LEGEND_LINE              = 4;
-const PL_LEGEND_SYMBOL            = 8;
-const PL_LEGEND_TEXT_LEFT         = 16;
-const PL_LEGEND_BACKGROUND        = 32;
-const PL_LEGEND_BOUNDING_BOX      = 64;
-const PL_LEGEND_ROW_MAJOR         = 128;
+const PL_LEGEND_NONE         = 1;
+const PL_LEGEND_COLOR_BOX    = 2;
+const PL_LEGEND_LINE         = 4;
+const PL_LEGEND_SYMBOL       = 8;
+const PL_LEGEND_TEXT_LEFT    = 16;
+const PL_LEGEND_BACKGROUND   = 32;
+const PL_LEGEND_BOUNDING_BOX = 64;
+const PL_LEGEND_ROW_MAJOR    = 128;
 
 // Flags for plcolorbar
-const PL_COLORBAR_LABEL_LEFT      = 1;
-const PL_COLORBAR_LABEL_RIGHT     = 2;
-const PL_COLORBAR_LABEL_TOP       = 4;
-const PL_COLORBAR_LABEL_BOTTOM    = 8;
-const PL_COLORBAR_IMAGE           = 16;
-const PL_COLORBAR_SHADE           = 32;
-const PL_COLORBAR_GRADIENT        = 64;
-const PL_COLORBAR_CAP_LOW         = 128;
-const PL_COLORBAR_CAP_HIGH        = 256;
-const PL_COLORBAR_SHADE_LABEL     = 512;
+const PL_COLORBAR_LABEL_LEFT   = 1;
+const PL_COLORBAR_LABEL_RIGHT  = 2;
+const PL_COLORBAR_LABEL_TOP    = 4;
+const PL_COLORBAR_LABEL_BOTTOM = 8;
+const PL_COLORBAR_IMAGE        = 16;
+const PL_COLORBAR_SHADE        = 32;
+const PL_COLORBAR_GRADIENT     = 64;
+const PL_COLORBAR_CAP_LOW      = 128;
+const PL_COLORBAR_CAP_HIGH     = 256;
+const PL_COLORBAR_SHADE_LABEL  = 512;
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 void c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
-            PLINT bg_color, PLINT bb_color, PLINT bb_style,
-            PLINT nrow, PLINT ncolumn,
-            PLINT nlegend, PLINT *opt_array,
-            PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-            PLFLT text_justification,
-            PLINT *text_colors, char **text,
-            PLINT *box_colors, PLINT *box_patterns,
-            PLFLT *box_scales, PLINT *box_line_widths,
-            PLINT *line_colors, PLINT *line_styles,
-            PLINT *line_widths,
-            PLINT *symbol_colors, PLFLT *symbol_scales,
-            PLINT *symbol_numbers, char **symbols );
+                 PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+                 PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                 PLINT nrow, PLINT ncolumn,
+                 PLINT nlegend, PLINT *opt_array,
+                 PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+                 PLFLT text_justification,
+                 PLINT *text_colors, char **text,
+                 PLINT *box_colors, PLINT *box_patterns,
+                 PLFLT *box_scales, PLINT *box_line_widths,
+                 PLINT *line_colors, PLINT *line_styles,
+                 PLINT *line_widths,
+                 PLINT *symbol_colors, PLFLT *symbol_scales,
+                 PLINT *symbol_numbers, char **symbols );
 
 /* Sets position of the light source */
 void c_pllightsource( PLFLT x, PLFLT y, PLFLT z );

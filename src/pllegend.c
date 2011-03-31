@@ -46,20 +46,20 @@
 
 static void plgvpsp( PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax )
 {
-  if ( plsc->level < 1 )
-  {
-    plabort( "plgvpsp: Please call plinit first" );
-    return;
-  }
-  if ( ( plsc->cursub <= 0 ) || ( plsc->cursub > ( plsc->nsubx * plsc->nsuby ) ) )
-  {
-    plabort( "plgvpsp: Please call pladv or plenv to go to a subpage" );
-    return;
-  }
-  *p_xmin = ( plsc->vpdxmi - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi );
-  *p_xmax = ( plsc->vpdxma - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi );
-  *p_ymin = ( plsc->vpdymi - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi );
-  *p_ymax = ( plsc->vpdyma - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi );
+    if ( plsc->level < 1 )
+    {
+        plabort( "plgvpsp: Please call plinit first" );
+        return;
+    }
+    if ( ( plsc->cursub <= 0 ) || ( plsc->cursub > ( plsc->nsubx * plsc->nsuby ) ) )
+    {
+        plabort( "plgvpsp: Please call pladv or plenv to go to a subpage" );
+        return;
+    }
+    *p_xmin = ( plsc->vpdxmi - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi );
+    *p_xmax = ( plsc->vpdxma - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi );
+    *p_ymin = ( plsc->vpdymi - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi );
+    *p_ymax = ( plsc->vpdyma - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi );
 }
 
 //--------------------------------------------------------------------------
@@ -624,7 +624,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // are the external relative viewport coordinates.
     // If position & PL_POSITION_SUBPAGE is true, these
     // coordinates are the relative subpage coordinates.
-    
+
     plgvpsp( &xdmin_adopted, &xdmax_adopted, &ydmin_adopted, &ydmax_adopted );
 
     // xwmin_save, etc., are the external world coordinates corresponding

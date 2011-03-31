@@ -86,7 +86,7 @@ string[] alty_label = [
 
 // Short rearranged versions of y_label and alty_label.
 string[][] legend_text = [
-    [ "Amplitude",          "Phase shift"               ],
+    [ "Amplitude", "Phase shift"               ],
     [ "Амплитуда", "Фазовый сдвиг" ],
     null
 ];
@@ -140,22 +140,22 @@ void plot1( int type, string x_label, string y_label, string alty_label,
 {
     /* Set up data for log plot */
     PLFLT[101] freql, ampl, phase;
-    PLFLT f0 = 1.0, freq;
-    PLINT        nlegend = 2;
+    PLFLT    f0      = 1.0, freq;
+    PLINT    nlegend = 2;
     string[] symbols;
-    PLINT[]        opt_array;
-    PLINT[]        text_colors;
-    PLINT[]        box_colors;
-    PLINT[]       box_patterns;
-    PLFLT[]       box_scales;
-    PLINT[]      box_line_widths;
-    PLINT[]        line_colors;
-    PLINT[]        line_styles;
-    PLINT[]        line_widths;
-    PLINT[]        symbol_numbers, symbol_colors;
-    PLFLT[]        symbol_scales;
-    PLFLT        legend_width, legend_height;
-    
+    PLINT[]  opt_array;
+    PLINT[]  text_colors;
+    PLINT[]  box_colors;
+    PLINT[]  box_patterns;
+    PLFLT[]  box_scales;
+    PLINT[]  box_line_widths;
+    PLINT[]  line_colors;
+    PLINT[]  line_styles;
+    PLINT[]  line_widths;
+    PLINT[]  symbol_numbers, symbol_colors;
+    PLFLT[]  symbol_scales;
+    PLFLT    legend_width, legend_height;
+
     for ( int i = 0; i < 101; i++ )
     {
         freql[i] = -2.0 + i / 20.0;
@@ -202,24 +202,24 @@ void plot1( int type, string x_label, string y_label, string alty_label,
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( freql, phase );
-	plstring( freql, phase, "*" );
+        plstring( freql, phase, "*" );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
     // Initialize arrays needed for pllegend.
-    opt_array.length = nlegend;
-    text_colors.length = nlegend;
-    line_colors.length = nlegend;
-    line_styles.length = nlegend;
-    line_widths.length = nlegend;
-    box_colors.length = nlegend;
-    box_patterns.length = nlegend;
-    box_scales.length = nlegend;
+    opt_array.length       = nlegend;
+    text_colors.length     = nlegend;
+    line_colors.length     = nlegend;
+    line_styles.length     = nlegend;
+    line_widths.length     = nlegend;
+    box_colors.length      = nlegend;
+    box_patterns.length    = nlegend;
+    box_scales.length      = nlegend;
     box_line_widths.length = nlegend;
-    symbol_numbers.length = nlegend;
-    symbol_colors.length = nlegend;
-    symbol_scales.length = nlegend;
-    symbols.length = nlegend;
+    symbol_numbers.length  = nlegend;
+    symbol_colors.length   = nlegend;
+    symbol_scales.length   = nlegend;
+    symbols.length         = nlegend;
 
     // Draw a legend
     // First legend entry.
@@ -252,7 +252,7 @@ void plot1( int type, string x_label, string y_label, string alty_label,
         opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, legend_text,
-	box_colors, box_patterns, box_scales, box_line_widths,
+        box_colors, box_patterns, box_scales, box_line_widths,
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 }

@@ -195,8 +195,8 @@ plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
 
     // Define polygon boundary so it is accessible from gradient_defined.
     plsc->n_polygon = n;
-    plsc->x_polygon = (PLFLT *)x;
-    plsc->y_polygon = (PLFLT *)y;
+    plsc->x_polygon = (PLFLT *) x;
+    plsc->y_polygon = (PLFLT *) y;
 
     // Find x and y range of polygon.
     xmin = x[0];

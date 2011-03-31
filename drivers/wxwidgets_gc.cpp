@@ -207,10 +207,10 @@ void wxPLDevGC::FillPolygon( PLStream *pls )
             path.AddLineToPoint( x[i] / scalex, height - y[i] / scaley );
         path.CloseSubpath();
 
-        if ( pls->dev_eofill)
-            m_context->DrawPath( path,  wxODDEVEN_RULE );
+        if ( pls->dev_eofill )
+            m_context->DrawPath( path, wxODDEVEN_RULE );
         else
-            m_context->DrawPath( path,  wxWINDING_RULE );
+            m_context->DrawPath( path, wxWINDING_RULE );
 
         wxDouble x, y, w, h;
         path.GetBox( &x, &y, &w, &h );

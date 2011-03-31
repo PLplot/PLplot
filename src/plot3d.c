@@ -1148,13 +1148,13 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         nx   = _nx;
         ny   = _ny;
         // Do not want to modify input x and y (const modifier)
-        x_modified    = _x;
-        y_modified    = _y;
+        x_modified = _x;
+        y_modified = _y;
     }
     else
     {
-      x_modified = (PLFLT *)x;
-      y_modified = (PLFLT *)y;
+        x_modified = (PLFLT *) x;
+        y_modified = (PLFLT *) y;
     }
 
     // From here on must use x_modified and y_modified rather than
@@ -1217,7 +1217,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     if ( cxx >= 0.0 && cxy <= 0.0 )
     {
         if ( opt == DRAW_LINEY )
-          plt3zz( 1, ny, 1, -1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, ny, 1, -1, -opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = 2; iy <= ny; iy++ )
@@ -1271,7 +1271,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     else if ( cxx >= 0.0 && cxy >= 0.0 )
     {
         if ( opt == DRAW_LINEX )
-          plt3zz( 1, 1, 1, 1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, 1, 1, 1, opt, &init, x_modified, y_modified, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = nx - 1; ix >= 1; ix-- )

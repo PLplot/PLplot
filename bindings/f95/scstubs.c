@@ -451,7 +451,7 @@ PLHIST( PLINT *n, PLFLT *data, PLFLT *datmin, PLFLT *datmax,
     c_plhist( *n, data, *datmin, *datmax, *nbin, *oldwin );
 }
 
-#ifdef PL_DEPRECATED 
+#ifdef PL_DEPRECATED
 void
 PLHLS( PLFLT *hue, PLFLT *light, PLFLT *sat )
 {
@@ -606,20 +606,20 @@ void PLLEGEND(
     const PLINT *symbol_colors, const PLFLT *symbol_scales,
     const PLINT *symbol_numbers )
 {
-     c_pllegend( p_legend_width, p_legend_height,
-         *position, *opt, *x, *y, *plot_width,
-         *bg_color, *bb_color, *bb_style,
-         *nrow, *ncolumn,
-         *nlegend, opt_array,
-         *text_offset, *text_scale, *text_spacing,
-         *text_justification,
-         text_colors, (const char **)pllegend_text,
-         box_colors, box_patterns,
-         box_scales, box_line_widths,
-         line_colors, line_styles,
-         line_widths,
-         symbol_colors, symbol_scales,
-         symbol_numbers, (const char **)pllegend_symbols ) ;
+    c_pllegend( p_legend_width, p_legend_height,
+        *position, *opt, *x, *y, *plot_width,
+        *bg_color, *bb_color, *bb_style,
+        *nrow, *ncolumn,
+        *nlegend, opt_array,
+        *text_offset, *text_scale, *text_spacing,
+        *text_justification,
+        text_colors, (const char **) pllegend_text,
+        box_colors, box_patterns,
+        box_scales, box_line_widths,
+        line_colors, line_styles,
+        line_widths,
+        symbol_colors, symbol_scales,
+        symbol_numbers, (const char **) pllegend_symbols );
 
     free( *pllegend_text );
     free( pllegend_text );
@@ -781,7 +781,7 @@ PLREPLOT( void )
     c_plreplot();
 }
 
-#ifdef PL_DEPRECATED 
+#ifdef PL_DEPRECATED
 void
 PLRGB( PLFLT *red, PLFLT *green, PLFLT *blue )
 {
@@ -789,7 +789,7 @@ PLRGB( PLFLT *red, PLFLT *green, PLFLT *blue )
 }
 #endif // PL_DEPRECATED
 
-#ifdef PL_DEPRECATED 
+#ifdef PL_DEPRECATED
 void
 PLRGB1( PLINT *r, PLINT *g, PLINT *b )
 {

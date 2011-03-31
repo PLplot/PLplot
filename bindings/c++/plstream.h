@@ -751,7 +751,7 @@ public:
                 bool rectangular,
                 Coord_Xformer *pcxf );
 
-    void shade1( const PLFLT *a, PLINT nx, PLINT ny,
+    void shade1( const PLFLT * a, PLINT nx, PLINT ny,
                  PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
@@ -1162,9 +1162,9 @@ public:
                 PLPointer pltr_data );
 
     void shades( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
-                                                                     PLFLT ),
+                                                                                 PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                 const PLFLT * clevel, PLINT nlevel, PLINT fill_width,
                  PLINT cont_color, PLINT cont_width,
                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
@@ -1178,7 +1178,7 @@ public:
                 PLINT rectangular,
                 Coord_Xformer *pcxf );
 
-    void shade1( const PLFLT *a, PLINT nx, PLINT ny,
+    void shade1( const PLFLT * a, PLINT nx, PLINT ny,
                  PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,

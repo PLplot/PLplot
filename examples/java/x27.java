@@ -120,19 +120,19 @@ class x27 {
 // Calculate greatest common divisor following pseudo-code for the
 // Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
 
-int gcd (int a, int b)
-{
-    int t;
-    a = Math.abs(a);
-    b = Math.abs(b);
-    while ( b != 0 )
+    int gcd( int a, int b )
     {
-        t = b;
-        b = a % b;
-        a = t; 
+        int t;
+        a = Math.abs( a );
+        b = Math.abs( b );
+        while ( b != 0 )
+        {
+            t = b;
+            b = a % b;
+            a = t;
+        }
+        return a;
     }
-    return a;
-}
 
     // ===============================================================
 
@@ -166,10 +166,10 @@ int gcd (int a, int b)
 
         // Fill the coordinates
 
-    // Proper termination of the angle loop very near the beginning
-    // point, see
-    // http://mathforum.org/mathimages/index.php/Hypotrochoid.
-    windings = (int) Math.abs(params[1])/gcd((int) params[0], (int) params[1]);
+        // Proper termination of the angle loop very near the beginning
+        // point, see
+        // http://mathforum.org/mathimages/index.php/Hypotrochoid.
+        windings = (int) Math.abs( params[1] ) / gcd( (int) params[0], (int) params[1] );
         steps    = NPNT / windings;
         dphi     = 2.0 * Math.PI / (double) steps;
 
@@ -183,7 +183,7 @@ int gcd (int a, int b)
             xcoord[i] = ( params[0] - params[1] ) * Math.cos( phi ) + params[2] * Math.cos( phiw );
             ycoord[i] = ( params[0] - params[1] ) * Math.sin( phi ) - params[2] * Math.sin( phiw );
 
-            if ( i == 0)
+            if ( i == 0 )
             {
                 xmin = xcoord[i];
                 xmax = xcoord[i];
@@ -196,12 +196,12 @@ int gcd (int a, int b)
             if ( ymax < ycoord[i] ) ymax = ycoord[i];
         }
 
-        xrange_adjust = 0.15 * (xmax - xmin);
-        xmin -= xrange_adjust;
-        xmax += xrange_adjust;
-        yrange_adjust = 0.15 * (ymax - ymin);
-        ymin -= yrange_adjust;
-        ymax += yrange_adjust;
+        xrange_adjust = 0.15 * ( xmax - xmin );
+        xmin         -= xrange_adjust;
+        xmax         += xrange_adjust;
+        yrange_adjust = 0.15 * ( ymax - ymin );
+        ymin         -= yrange_adjust;
+        ymax         += yrange_adjust;
 
         pls.wind( xmin, xmax, ymin, ymax );
 

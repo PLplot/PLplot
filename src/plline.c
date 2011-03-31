@@ -527,7 +527,7 @@ plP_drawor( PLFLT x, PLFLT y )
 //--------------------------------------------------------------------------
 
 void
-plP_draphy_poly( PLINT *x,  PLINT *y, PLINT n )
+plP_draphy_poly( PLINT *x, PLINT *y, PLINT n )
 {
     PLINT i, j, ib, ilim;
 

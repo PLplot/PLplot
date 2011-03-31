@@ -65,12 +65,12 @@ int main( char[][] args )
         if ( opt[k] )
         {
             plline3( x, y, z );
-	}
+        }
         else
-	{
-	    // U+22C5 DOT OPERATOR.
+        {
+            // U+22C5 DOT OPERATOR.
             plstring3( x, y, z, "⋅" );
-	}
+        }
 
         plcol0( 3 );
         plmtex( "t", 1.0, 0.5, 0.5, format( "#frPLplot Example 18 - Alt=%.0f, Az=%.0f", alt[k], az[k] ) );

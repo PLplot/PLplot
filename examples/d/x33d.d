@@ -43,52 +43,52 @@ import std.string;
 
 int main( char[][] args )
 {
-    PLINT opt;
-    PLINT nlegend, nturn;
-    PLINT[] opt_array;
-    PLINT[] text_colors;
-    PLINT[] box_colors;
-    PLINT[] box_patterns;
-    PLFLT[] box_scales;
-    PLINT[] box_line_widths;
-    PLINT[] line_colors;
-    PLINT[] line_styles;
-    PLINT[] line_widths;
-    PLINT[] symbol_numbers, symbol_colors;
-    PLFLT[] symbol_scales;
+    PLINT    opt;
+    PLINT    nlegend, nturn;
+    PLINT[]  opt_array;
+    PLINT[]  text_colors;
+    PLINT[]  box_colors;
+    PLINT[]  box_patterns;
+    PLFLT[]  box_scales;
+    PLINT[]  box_line_widths;
+    PLINT[]  line_colors;
+    PLINT[]  line_styles;
+    PLINT[]  line_widths;
+    PLINT[]  symbol_numbers, symbol_colors;
+    PLFLT[]  symbol_scales;
     string[] text, symbols;
 
-    PLFLT legend_width, legend_height, x, y, xstart, ystart;
-    PLFLT max_height, text_scale;
-    PLINT position, opt_base, nrow, ncolumn;
+    PLFLT    legend_width, legend_height, x, y, xstart, ystart;
+    PLFLT    max_height, text_scale;
+    PLINT    position, opt_base, nrow, ncolumn;
 
     PLINT[16] position_options = [
-    PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
-    PL_POSITION_TOP | PL_POSITION_OUTSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_OUTSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
-    PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
-    PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
-    PL_POSITION_LEFT | PL_POSITION_OUTSIDE,
-    PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE,
-    PL_POSITION_TOP | PL_POSITION_INSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_INSIDE,
-    PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
-    PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
-    PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
-    PL_POSITION_LEFT | PL_POSITION_INSIDE
+        PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
+        PL_POSITION_TOP | PL_POSITION_OUTSIDE,
+        PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
+        PL_POSITION_RIGHT | PL_POSITION_OUTSIDE,
+        PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
+        PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
+        PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
+        PL_POSITION_LEFT | PL_POSITION_OUTSIDE,
+        PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE,
+        PL_POSITION_TOP | PL_POSITION_INSIDE,
+        PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE,
+        PL_POSITION_RIGHT | PL_POSITION_INSIDE,
+        PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
+        PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
+        PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
+        PL_POSITION_LEFT | PL_POSITION_INSIDE
     ];
 
     // Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
     string[5] special_symbols = [
-    "✰",
-    "✴",
-    "✱",
-    "✽",
-    "✦"
-];
+        "✰",
+        "✴",
+        "✱",
+        "✽",
+        "✦"
+    ];
 
     // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
@@ -106,20 +106,20 @@ int main( char[][] args )
 
     nlegend = 1;
     // Initialize arrays needed for pllegend.
-    opt_array.length = nlegend;
-    text_colors.length = nlegend;
-    text.length = nlegend;
-    line_colors.length = nlegend;
-    line_styles.length = nlegend;
-    line_widths.length = nlegend;
-    box_colors.length = nlegend;
-    box_patterns.length = nlegend;
-    box_scales.length = nlegend;
+    opt_array.length       = nlegend;
+    text_colors.length     = nlegend;
+    text.length            = nlegend;
+    line_colors.length     = nlegend;
+    line_styles.length     = nlegend;
+    line_widths.length     = nlegend;
+    box_colors.length      = nlegend;
+    box_patterns.length    = nlegend;
+    box_scales.length      = nlegend;
     box_line_widths.length = nlegend;
-    symbol_numbers.length = nlegend;
-    symbol_colors.length = nlegend;
-    symbol_scales.length = nlegend;
-    symbols.length = nlegend;
+    symbol_numbers.length  = nlegend;
+    symbol_colors.length   = nlegend;
+    symbol_scales.length   = nlegend;
+    symbols.length         = nlegend;
 
     // Only specify legend data that are required according to the
     // value of opt_array for that entry.
@@ -137,9 +137,9 @@ int main( char[][] args )
 
     for ( size_t k = 0; k < 16; k++ )
     {
-        position = position_options[k];
-        opt      = opt_base;
-        text[0] = format( "%2.2d", k );
+        position         = position_options[k];
+        opt              = opt_base;
+        text[0]          = format( "%2.2d", k );
         text_colors[0]   = 1 + ( k % 8 );
         line_colors[0]   = 1 + ( k % 8 );
         symbol_colors[0] = 1 + ( k % 8 );
@@ -165,20 +165,20 @@ int main( char[][] args )
 
     nlegend = 7;
     // Initialize arrays needed for pllegend.
-    opt_array.length = nlegend;
-    text_colors.length = nlegend;
-    text.length = nlegend;
-    line_colors.length = nlegend;
-    line_styles.length = nlegend;
-    line_widths.length = nlegend;
-    box_colors.length = nlegend;
-    box_patterns.length = nlegend;
-    box_scales.length = nlegend;
+    opt_array.length       = nlegend;
+    text_colors.length     = nlegend;
+    text.length            = nlegend;
+    line_colors.length     = nlegend;
+    line_styles.length     = nlegend;
+    line_widths.length     = nlegend;
+    box_colors.length      = nlegend;
+    box_patterns.length    = nlegend;
+    box_scales.length      = nlegend;
     box_line_widths.length = nlegend;
-    symbol_numbers.length = nlegend;
-    symbol_colors.length = nlegend;
-    symbol_scales.length = nlegend;
-    symbols.length = nlegend;
+    symbol_numbers.length  = nlegend;
+    symbol_colors.length   = nlegend;
+    symbol_scales.length   = nlegend;
+    symbols.length         = nlegend;
 
     // Only specify legend data that are required according to the
     // value of opt_array for that entry.
@@ -191,10 +191,10 @@ int main( char[][] args )
         symbol_scales[k]  = 1.;
         symbol_numbers[k] = 2;
         symbols[k]        = "*";
-        text[k] = format( "%2.2d", k );
-        text_colors[k]   = 1 + ( k % 8 );
-        line_colors[k]   = 1 + ( k % 8 );
-        symbol_colors[k] = 1 + ( k % 8 );
+        text[k]           = format( "%2.2d", k );
+        text_colors[k]    = 1 + ( k % 8 );
+        line_colors[k]    = 1 + ( k % 8 );
+        symbol_colors[k]  = 1 + ( k % 8 );
     }
 
     // Use monotype fonts so that all legends are the same size.
@@ -321,21 +321,21 @@ int main( char[][] args )
         else
             nlegend -= 1;
         nlegend = cast(PLINT) fmax( 1, nlegend );
-    // Initialize arrays needed for pllegend.
-    opt_array.length = nlegend;
-    text_colors.length = nlegend;
-    text.length = nlegend;
-    line_colors.length = nlegend;
-    line_styles.length = nlegend;
-    line_widths.length = nlegend;
-    box_colors.length = nlegend;
-    box_patterns.length = nlegend;
-    box_scales.length = nlegend;
-    box_line_widths.length = nlegend;
-    symbol_numbers.length = nlegend;
-    symbol_colors.length = nlegend;
-    symbol_scales.length = nlegend;
-    symbols.length = nlegend;
+        // Initialize arrays needed for pllegend.
+        opt_array.length       = nlegend;
+        text_colors.length     = nlegend;
+        text.length            = nlegend;
+        line_colors.length     = nlegend;
+        line_styles.length     = nlegend;
+        line_widths.length     = nlegend;
+        box_colors.length      = nlegend;
+        box_patterns.length    = nlegend;
+        box_scales.length      = nlegend;
+        box_line_widths.length = nlegend;
+        symbol_numbers.length  = nlegend;
+        symbol_colors.length   = nlegend;
+        symbol_scales.length   = nlegend;
+        symbols.length         = nlegend;
 
         // nly specify legend data that are required according to the
         //  value of opt_array for that entry.
@@ -347,10 +347,10 @@ int main( char[][] args )
             symbol_scales[k]  = 1.;
             symbol_numbers[k] = 2;
             symbols[k]        = "*";
-            text[k] = format( "%2.2d", k );
-            text_colors[k]   = 1 + ( k % 8 );
-            line_colors[k]   = 1 + ( k % 8 );
-            symbol_colors[k] = 1 + ( k % 8 );
+            text[k]           = format( "%2.2d", k );
+            text_colors[k]    = 1 + ( k % 8 );
+            line_colors[k]    = 1 + ( k % 8 );
+            symbol_colors[k]  = 1 + ( k % 8 );
         }
         // Use monotype fonts so that all legends are the same size.
         plsfont( PL_FCI_MONO, -1, -1 );
@@ -397,20 +397,20 @@ int main( char[][] args )
 
     nlegend = 5;
     // Initialize arrays needed for pllegend.
-    opt_array.length = nlegend;
-    text_colors.length = nlegend;
-    text.length = nlegend;
-    line_colors.length = nlegend;
-    line_styles.length = nlegend;
-    line_widths.length = nlegend;
-    box_colors.length = nlegend;
-    box_patterns.length = nlegend;
-    box_scales.length = nlegend;
+    opt_array.length       = nlegend;
+    text_colors.length     = nlegend;
+    text.length            = nlegend;
+    line_colors.length     = nlegend;
+    line_styles.length     = nlegend;
+    line_widths.length     = nlegend;
+    box_colors.length      = nlegend;
+    box_patterns.length    = nlegend;
+    box_scales.length      = nlegend;
     box_line_widths.length = nlegend;
-    symbol_numbers.length = nlegend;
-    symbol_colors.length = nlegend;
-    symbol_scales.length = nlegend;
-    symbols.length = nlegend;
+    symbol_numbers.length  = nlegend;
+    symbol_colors.length   = nlegend;
+    symbol_scales.length   = nlegend;
+    symbols.length         = nlegend;
 
     // Only specify legend data that are required according to the
     // value of opt_array for that entry.
@@ -418,35 +418,35 @@ int main( char[][] args )
     opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_TEXT_LEFT;
 
     // Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
-    opt_array[0] = PL_LEGEND_NONE;
-    text[0] = format( "%s", "None" );
+    opt_array[0]   = PL_LEGEND_NONE;
+    text[0]        = format( "%s", "None" );
     text_colors[0] = 1;
 
-    opt_array[1] = PL_LEGEND_COLOR_BOX;
-    text[1] = format( "%s", "Box" );
+    opt_array[1]       = PL_LEGEND_COLOR_BOX;
+    text[1]            = format( "%s", "Box" );
     text_colors[1]     = 2;
     box_colors[1]      = 2;
     box_patterns[1]    = 0;
     box_scales[1]      = 0.8;
     box_line_widths[1] = 1;
 
-    opt_array[2] = PL_LEGEND_LINE;
-    text[2] = format( "%s", "Line" );
+    opt_array[2]   = PL_LEGEND_LINE;
+    text[2]        = format( "%s", "Line" );
     text_colors[2] = 3;
     line_colors[2] = 3;
     line_styles[2] = 1;
     line_widths[2] = 1;
 
-    opt_array[3] = PL_LEGEND_SYMBOL;
-    text[3] = format( "%s", "Symbol" );
+    opt_array[3]      = PL_LEGEND_SYMBOL;
+    text[3]           = format( "%s", "Symbol" );
     text_colors[3]    = 4;
     symbol_colors[3]  = 4;
     symbol_scales[3]  = text_scale;
     symbol_numbers[3] = 4;
     symbols[3]        = special_symbols[2];
 
-    opt_array[4] = PL_LEGEND_SYMBOL | PL_LEGEND_LINE;
-    text[4] = format( "%s", "L & S" );
+    opt_array[4]      = PL_LEGEND_SYMBOL | PL_LEGEND_LINE;
+    text[4]           = format( "%s", "L & S" );
     text_colors[4]    = 5;
     line_colors[4]    = 5;
     line_styles[4]    = 1;
@@ -471,8 +471,8 @@ int main( char[][] args )
     // Set up symbol legend entries with various symbols.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_SYMBOL;
-        text[i] = format( "%s%s", "Symbol ", special_symbols[i] );
+        opt_array[i]      = PL_LEGEND_SYMBOL;
+        text[i]           = format( "%s%s", "Symbol ", special_symbols[i] );
         text_colors[i]    = i + 1;
         symbol_colors[i]  = i + 1;
         symbol_scales[i]  = text_scale;
@@ -496,8 +496,8 @@ int main( char[][] args )
     // Set up symbol legend entries with various numbers of symbols.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_SYMBOL;
-        text[i] = format( "%s %d", "Symbol Number", i + 2 );
+        opt_array[i]      = PL_LEGEND_SYMBOL;
+        text[i]           = format( "%s %d", "Symbol Number", i + 2 );
         text_colors[i]    = i + 1;
         symbol_colors[i]  = i + 1;
         symbol_scales[i]  = text_scale;
@@ -521,8 +521,8 @@ int main( char[][] args )
     // Set up box legend entries with various colours.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_COLOR_BOX;
-        text[i] = format( "%s %d", "Box Color", i + 1 );
+        opt_array[i]       = PL_LEGEND_COLOR_BOX;
+        text[i]            = format( "%s %d", "Box Color", i + 1 );
         text_colors[i]     = i + 1;
         box_colors[i]      = i + 1;
         box_patterns[i]    = 0;
@@ -549,8 +549,8 @@ int main( char[][] args )
     // Set up box legend entries with various patterns.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_COLOR_BOX;
-        text[i] = format( "%s %d", "Box Pattern", i );
+        opt_array[i]       = PL_LEGEND_COLOR_BOX;
+        text[i]            = format( "%s %d", "Box Pattern", i );
         text_colors[i]     = 2;
         box_colors[i]      = 2;
         box_patterns[i]    = i;
@@ -568,14 +568,14 @@ int main( char[][] args )
         0., text_colors, text,
         box_colors, box_patterns, box_scales, box_line_widths,
         line_colors, line_styles, line_widths,
-        symbol_colors, symbol_scales, symbol_numbers, symbols   );
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
     max_height = fmax( max_height, legend_height );
 
     // Set up box legend entries with various box pattern line widths.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_COLOR_BOX;
-        text[i] = format( "%s %d", "Box Line Width", i + 1 );
+        opt_array[i]       = PL_LEGEND_COLOR_BOX;
+        text[i]            = format( "%s %d", "Box Line Width", i + 1 );
         text_colors[i]     = 2;
         box_colors[i]      = 2;
         box_patterns[i]    = 3;
@@ -593,14 +593,14 @@ int main( char[][] args )
         0., text_colors, text,
         box_colors, box_patterns, box_scales, box_line_widths,
         line_colors, line_styles, line_widths,
-        symbol_colors, symbol_scales, symbol_numbers, symbols   );
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
     max_height = fmax( max_height, legend_height );
 
     // Set up line legend entries with various colours.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_LINE;
-        text[i] = format( "%s %d", "Line Color", i + 1 );
+        opt_array[i]   = PL_LEGEND_LINE;
+        text[i]        = format( "%s %d", "Line Color", i + 1 );
         text_colors[i] = i + 1;
         line_colors[i] = i + 1;
         line_styles[i] = 1;
@@ -620,14 +620,14 @@ int main( char[][] args )
         0., text_colors, text,
         box_colors, box_patterns, box_scales, box_line_widths,
         line_colors, line_styles, line_widths,
-        symbol_colors, symbol_scales, symbol_numbers, symbols   );
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
     max_height = fmax( max_height, legend_height );
 
     // Set up line legend entries with various styles.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_LINE;
-        text[i] = format( "%s %d", "Line Style", i + 1 );
+        opt_array[i]   = PL_LEGEND_LINE;
+        text[i]        = format( "%s %d", "Line Style", i + 1 );
         text_colors[i] = 2;
         line_colors[i] = 2;
         line_styles[i] = i + 1;
@@ -644,14 +644,14 @@ int main( char[][] args )
         0., text_colors, text,
         box_colors, box_patterns, box_scales, box_line_widths,
         line_colors, line_styles, line_widths,
-        symbol_colors, symbol_scales, symbol_numbers, symbols   );
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
     max_height = fmax( max_height, legend_height );
 
     // Set up line legend entries with various widths.
     for ( size_t i = 0; i < nlegend; i++ )
     {
-        opt_array[i] = PL_LEGEND_LINE;
-        text[i] = format( "%s %d", "Line Width", i + 1 );
+        opt_array[i]   = PL_LEGEND_LINE;
+        text[i]        = format( "%s %d", "Line Width", i + 1 );
         text_colors[i] = 2;
         line_colors[i] = 2;
         line_styles[i] = 1;

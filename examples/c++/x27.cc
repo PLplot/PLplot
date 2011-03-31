@@ -38,7 +38,7 @@ public:
     x27( int, const char ** );
     void cycloid( void );
     void spiro( PLFLT data[], int fill );
-    PLINT gcd (PLINT a, PLINT b);
+    PLINT gcd( PLINT a, PLINT b );
 
 private:
     // Class data
@@ -126,17 +126,17 @@ x27::x27( int argc, const char ** argv )
 //--------------------------------------------------------------------------
 // Calculate greatest common divisor following pseudo-code for the
 // Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
- 
-PLINT x27::gcd (PLINT a, PLINT b)
+
+PLINT x27::gcd( PLINT a, PLINT b )
 {
     PLINT t;
-    a = abs(a);
-    b = abs(b);
+    a = abs( a );
+    b = abs( b );
     while ( b != 0 )
     {
         t = b;
         b = a % b;
-        a = t; 
+        a = t;
     }
     return a;
 }
@@ -176,7 +176,7 @@ x27::spiro( PLFLT params[], int fill )
     // Proper termination of the angle loop very near the beginning
     // point, see
     // http://mathforum.org/mathimages/index.php/Hypotrochoid.
-    windings = (PLINT) abs(params[1])/gcd((PLINT) params[0], (PLINT) params[1]);
+    windings = (PLINT) abs( params[1] ) / gcd( (PLINT) params[0], (PLINT) params[1] );
     steps    = NPNT / windings;
     dphi     = 2.0 * M_PI / (PLFLT) steps;
 
@@ -187,7 +187,7 @@ x27::spiro( PLFLT params[], int fill )
         xcoord[i] = ( params[0] - params[1] ) * cos( phi ) + params[2] * cos( phiw );
         ycoord[i] = ( params[0] - params[1] ) * sin( phi ) - params[2] * sin( phiw );
 
-        if ( i == 0)
+        if ( i == 0 )
         {
             xmin = xcoord[i];
             xmax = xcoord[i];
@@ -204,12 +204,12 @@ x27::spiro( PLFLT params[], int fill )
             ymax = ycoord[i];
     }
 
-    xrange_adjust = 0.15 * (xmax - xmin);
-    xmin -= xrange_adjust;
-    xmax += xrange_adjust;
-    yrange_adjust = 0.15 * (ymax - ymin);
-    ymin -= yrange_adjust;
-    ymax += yrange_adjust;
+    xrange_adjust = 0.15 * ( xmax - xmin );
+    xmin         -= xrange_adjust;
+    xmax         += xrange_adjust;
+    yrange_adjust = 0.15 * ( ymax - ymin );
+    ymin         -= yrange_adjust;
+    ymax         += yrange_adjust;
 
     pls->wind( xmin, xmax, ymin, ymax );
 

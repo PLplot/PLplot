@@ -1128,7 +1128,7 @@ Init( PLStream *pls )
     XSetBackground( xwd->display, dev->gc, xwd->cmap0[0].pixel );
 
 // Set fill rule.
-    if( pls->dev_eofill)
+    if ( pls->dev_eofill )
         XSetFillRule( xwd->display, dev->gc, EvenOddRule );
     else
         XSetFillRule( xwd->display, dev->gc, WindingRule );
