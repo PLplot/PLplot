@@ -1,29 +1,29 @@
-/* $Id$
- *
- *      plshade demo, using color fill.
- *
- *      Maurice LeBrun
- *      IFS, University of Texas at Austin
- *      20 Mar 1994
- */
+// $Id$
+//
+//      plshade demo, using color fill.
+//
+//      Maurice LeBrun
+//      IFS, University of Texas at Austin
+//      20 Mar 1994
+//
 
 import std.string;
 import std.math;
 
 import plplot;
 
-/* Fundamental settings.  See notes[] for more info. */
+// Fundamental settings.  See notes[] for more info.
 
-int ns      = 20; /* Default number of shade levels */
-int nx      = 35; /* Default number of data points in x */
-int ny      = 46; /* Default number of data points in y */
-int exclude = 0;  /* By default do not plot a page illustrating
-                   * exclusion.  API is probably going to change
-                   * anyway, and cannot be reproduced by any
-                   * front end other than the C one. */
+int ns      = 20; // Default number of shade levels
+int nx      = 35; // Default number of data points in x
+int ny      = 46; // Default number of data points in y
+int exclude = 0;  // By default do not plot a page illustrating
+                  // exclusion.  API is probably going to change
+                  // anyway, and cannot be reproduced by any
+                  // front end other than the C one.
 
 extern ( C ) {
-/* Transformation function */
+// Transformation function
 PLFLT[] tr;
 
 void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void* pltr_data )
@@ -33,7 +33,7 @@ void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void* pltr_data )
 }
 }
 
-/* Options data structure definition. */
+// Options data structure definition.
 //~ static PLOptionTable options[] = {
 //~ {
 //~ "exclude",			/* Turns on page showing exclusion */
@@ -93,33 +93,33 @@ PLINT zdefined( PLFLT x, PLFLT y )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does several shade plots using different coordinate mappings.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does several shade plots using different coordinate mappings.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
     const int PERIMETERPTS = 100;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     //plMergeOpts(options, "x16c options", notes);
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Load colour palettes*/
+    // Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_gray.pal", 1 );
 
-    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    // Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
-    /* Set up transformation function */
+    // Set up transformation function
     tr = [ 2. / ( nx - 1 ), 0.0, -1.0, 0.0, 2. / ( ny - 1 ), -1.0 ];
 
-    /* Allocate data structures */
+    // Allocate data structures
     PLFLT[][] z = new PLFLT[][nx];
     for ( int i = 0; i < nx; i++ )
         z[i] = new PLFLT[ny];
@@ -128,7 +128,7 @@ int main( char[][] args )
     for ( int i = 0; i < nx; i++ )
         w[i] = new PLFLT[ny];
 
-    /* Set up data array */
+    // Set up data array
     PLFLT x, y;
     for ( int i = 0; i < nx; i++ )
     {
@@ -152,7 +152,7 @@ int main( char[][] args )
     for ( int i = 0; i < ns + 1; i++ )
         shedge[i] = zmin + ( zmax - zmin ) * i / ns;
 
-    /* Set up coordinate grids */
+    // Set up coordinate grids
     PLcGrid cgrid1;
     cgrid1.xg = new PLFLT[nx];
     cgrid1.yg = new PLFLT[ny];
@@ -185,7 +185,7 @@ int main( char[][] args )
         }
     }
 
-    /* Plot using identity transform */
+    // Plot using identity transform
     PLINT fill_width = 2, cont_color = 0, cont_width = 0;
 
     pladv( 0 );
@@ -202,13 +202,13 @@ int main( char[][] args )
     plcol0( 2 );
     pllab( "distance", "altitude", "Bogon density" );
 
-    /* Plot using 1d coordinate transform */
+    // Plot using 1d coordinate transform
 
-    /* Load colour palettes*/
+    // Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_blue_yellow.pal", 1 );
 
-    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    // Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -225,13 +225,13 @@ int main( char[][] args )
     plcol0( 2 );
     pllab( "distance", "altitude", "Bogon density" );
 
-    /* Plot using 2d coordinate transform */
+    // Plot using 2d coordinate transform
 
-    /* Load colour palettes*/
+    // Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_blue_red.pal", 1 );
 
-    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    // Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -250,13 +250,13 @@ int main( char[][] args )
 
     pllab( "distance", "altitude", "Bogon density, with streamlines" );
 
-    /* Plot using 2d coordinate transform */
+    // Plot using 2d coordinate transform
 
-    /* Load colour palettes*/
+    // Load colour palettes
     plspal0( "" );
     plspal1( "", 1 );
 
-    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    // Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -274,16 +274,16 @@ int main( char[][] args )
 
     pllab( "distance", "altitude", "Bogon density" );
 
-    /* Note this exclusion API will probably change. */
+    // Note this exclusion API will probably change.
 
-    /* Plot using 2d coordinate transform and exclusion*/
+    // Plot using 2d coordinate transform and exclusion
     if ( exclude )
     {
-        /* Load colour palettes*/
+        // Load colour palettes
         plspal0( "cmap0_black_on_white.pal" );
         plspal1( "cmap1_gray.pal", 1 );
 
-        /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+        // Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
         plscmap0n( 3 );
 
         pladv( 0 );
@@ -301,13 +301,13 @@ int main( char[][] args )
         pllab( "distance", "altitude", "Bogon density with exclusion" );
     }
 
-    /* Example with polar coordinates. */
+    // Example with polar coordinates.
 
-    /* Load colour palettes*/
+    // Load colour palettes
     plspal0( "cmap0_black_on_white.pal" );
     plspal1( "cmap1_gray.pal", 1 );
 
-    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    // Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n( 3 );
 
     pladv( 0 );
@@ -316,7 +316,7 @@ int main( char[][] args )
 
     plpsty( 0 );
 
-    /* Build new coordinate matrices. */
+    // Build new coordinate matrices.
     PLFLT r, t;
     for ( int i = 0; i < nx; i++ )
     {
@@ -330,17 +330,17 @@ int main( char[][] args )
         }
     }
 
-    /* Need a new shedge to go along with the new data set. */
+    // Need a new shedge to go along with the new data set.
     f2mnmx( z, zmin, zmax );
 
     for ( int i = 0; i < ns + 1; i++ )
         shedge[i] = zmin + ( zmax - zmin ) * i / ns;
 
-    /*  Now we can shade the interior region. */
+    //  Now we can shade the interior region.
     plshades( z, null, -1., 1., -1., 1., shedge, fill_width,
         cont_color, cont_width, 0, cgrid2 );
 
-    /* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) */
+    // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
     PLFLT[PERIMETERPTS] px, py;
     for ( int i = 0; i < PERIMETERPTS; i++ )
     {
@@ -351,7 +351,7 @@ int main( char[][] args )
     plcol0( 1 );
     plline( px, py );
 
-    /* And label the plot.*/
+    // And label the plot.
     plcol0( 2 );
     pllab( "", "", "Tokamak Bogon Instability" );
 
@@ -360,11 +360,11 @@ int main( char[][] args )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * f2mnmx
- *
- * Returns min & max of input 2d array.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// f2mnmx
+//
+// Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
 void f2mnmx( PLFLT[][] f, out PLFLT fmn, out PLFLT fmx )
 {
     fmx = f[0][0];

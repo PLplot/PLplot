@@ -1,25 +1,25 @@
-/* $Id$
- *
- *      Histogram demo.
- */
+// $Id$
+//
+//      Histogram demo.
+//
 
 import std.math;
 import plplot;
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Draws a histogram from sample data.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Draws a histogram from sample data.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
-    /* Fill up data points */
+    // Fill up data points
     const int npts  = 2047;
     PLFLT     delta = 2.0 * PI / npts;
     PLFLT[npts] data;

@@ -1,39 +1,39 @@
-/* $Id$
- *
- *      Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
- *
- * Copyright (C) 2009  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
+//
+// Copyright (C) 2009  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 import std.string;
 import std.math;
 
 import plplot;
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Generates two kinds of plots:
- *   - construction of a cycloid (animated)
- *   - series of epitrochoids and hypotrochoids
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Generates two kinds of plots:
+//   - construction of a cycloid (animated)
+//   - series of epitrochoids and hypotrochoids
+//--------------------------------------------------------------------------
 
 int main( char[][] args )
 {
@@ -43,7 +43,7 @@ int main( char[][] args )
     // N.B. N is just a place holder since it is no longer used
     // (because we now have proper termination of the angle loop).
     static PLFLT[4][9] params = [
-        [ 21.0, 7.0, 7.0, 3.0 ], /* Deltoid */
+        [ 21.0, 7.0, 7.0, 3.0 ], // Deltoid
         [ 21.0, 7.0, 10.0, 3.0 ],
         [ 21.0, -7.0, 10.0, 3.0 ],
         [ 20.0, 3.0, 7.0, 20.0 ],
@@ -54,21 +54,21 @@ int main( char[][] args )
         [ 20.0, -13.0, 20.0, 20.0 ]
     ];
 
-    /* plplot initialization */
+    // plplot initialization
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
-    /* Illustrate the construction of a cycloid */
+    // Illustrate the construction of a cycloid
     cycloid();
 
-    /* Loop over the various curves
-     * First an overview, then all curves one by one
-     */
-    plssub( 3, 3 ); /* Three by three window */
+    // Loop over the various curves
+    // First an overview, then all curves one by one
+    //
+    plssub( 3, 3 ); // Three by three window
 
     int fill = 0;
     for ( int i = 0; i < 9; i++ )
@@ -79,7 +79,7 @@ int main( char[][] args )
     }
 
     pladv( 0 );
-    plssub( 1, 1 ); /* One window per curve */
+    plssub( 1, 1 ); // One window per curve
 
     for ( int i = 0; i < 9; i++ )
     {
@@ -92,7 +92,7 @@ int main( char[][] args )
     fill = 1;
 
     pladv( 0 );
-    plssub( 1, 1 ); /* One window per curve */
+    plssub( 1, 1 ); // One window per curve
 
     for ( int i = 0; i < 9; i++ )
     {
@@ -123,14 +123,14 @@ PLINT gcd( PLINT a, PLINT b )
     return a;
 }
 
-/* =============================================================== */
+//--------------------------------------------------------------------------
 
 void cycloid()
 {
-    /* TODO */
+    // TODO
 }
 
-/* =============================================================== */
+//--------------------------------------------------------------------------
 void spiro( PLFLT[] params, int fill )
 {
     const int npnt = 2000;

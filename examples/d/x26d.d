@@ -1,64 +1,64 @@
-/* -*- coding: utf-8; -*-
- *
- * $Id$
- *
- * Multi-lingual version of the first page of example 4.
- *
- * Copyright (C) 2009 Werner Smekal
- *
- * Thanks to the following for providing translated strings for this example:
- * Valery Pipin (Russian)
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// -*- coding: utf-8; -*-
+//
+// $Id$
+//
+// Multi-lingual version of the first page of example 4.
+//
+// Copyright (C) 2009 Werner Smekal
+//
+// Thanks to the following for providing translated strings for this example:
+// Valery Pipin (Russian)
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
-/*
- * This example designed just for devices (e.g., psttfc and the
- * cairo-related devices) that use the pango and fontconfig libraries. The
- * best choice of glyph is selected by fontconfig and automatically rendered
- * by pango in way that is sensitive to complex text layout (CTL) language
- * issues for each unicode character in this example. Of course, you must
- * have the appropriate TrueType fonts installed to have access to all the
- * required glyphs.
- *
- * Translation instructions: The strings to be translated are given by
- * x_label, y_label, alty_label, title_label, and line_label below.  The
- * encoding used must be UTF-8.
- *
- * The following strings to be translated involve some scientific/mathematical
- * jargon which is now discussed further to help translators.
- *
- * (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
- * (2) degrees is an angular measure, see
- *    http://en.wikipedia.org/wiki/Degree_(angle) .
- * (3) low-pass filter is one that transmits (passes) low frequencies.
- * (4) pole is in the mathematical sense, see
- *    http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
- *    means a particular mathematical transformation of the filter function has
- *    a single pole, see
- *    http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
- *    Furthermore, a single-pole filter must have an inverse square decline
- *    (or -20 db/decade). Since the filter plotted here does have that
- *    characteristic, it must by definition be a single-pole filter, see also
- *    http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
- * (5) decade represents a factor of 10, see
- *    http://en.wikipedia.org/wiki/Decade_(log_scale) .
- */
+//
+// This example designed just for devices (e.g., psttfc and the
+// cairo-related devices) that use the pango and fontconfig libraries. The
+// best choice of glyph is selected by fontconfig and automatically rendered
+// by pango in way that is sensitive to complex text layout (CTL) language
+// issues for each unicode character in this example. Of course, you must
+// have the appropriate TrueType fonts installed to have access to all the
+// required glyphs.
+//
+// Translation instructions: The strings to be translated are given by
+// x_label, y_label, alty_label, title_label, and line_label below.  The
+// encoding used must be UTF-8.
+//
+// The following strings to be translated involve some scientific/mathematical
+// jargon which is now discussed further to help translators.
+//
+// (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
+// (2) degrees is an angular measure, see
+//    http://en.wikipedia.org/wiki/Degree_(angle) .
+// (3) low-pass filter is one that transmits (passes) low frequencies.
+// (4) pole is in the mathematical sense, see
+//    http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
+//    means a particular mathematical transformation of the filter function has
+//    a single pole, see
+//    http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
+//    Furthermore, a single-pole filter must have an inverse square decline
+//    (or -20 db/decade). Since the filter plotted here does have that
+//    characteristic, it must by definition be a single-pole filter, see also
+//    http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
+// (5) decade represents a factor of 10, see
+//    http://en.wikipedia.org/wiki/Decade_(log_scale) .
+//
 
 
 import std.string;
@@ -104,21 +104,21 @@ string[] line_label = [
 ];
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Illustration of logarithmic axes, and redefinition of window.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Illustration of logarithmic axes, and redefinition of window.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
     plfont( 2 );
 
-    /* Make log plots using two different styles. */
+    // Make log plots using two different styles.
     int i = 0;
     while ( x_label[i] )
     {
@@ -130,15 +130,15 @@ int main( char[][] args )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * plot1
- *
- * Log-linear plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plot1
+//
+// Log-linear plot.
+//--------------------------------------------------------------------------
 void plot1( int type, string x_label, string y_label, string alty_label,
             string title_label, string line_label, string[] legend_text )
 {
-    /* Set up data for log plot */
+    // Set up data for log plot
     PLFLT[101] freql, ampl, phase;
     PLFLT    f0      = 1.0, freq;
     PLINT    nlegend = 2;
@@ -169,7 +169,7 @@ void plot1( int type, string x_label, string y_label, string alty_label,
     plvpor( 0.15, 0.85, 0.1, 0.9 );
     plwind( -2.0, 3.0, -80.0, 0.0 );
 
-    /* Try different axis and labelling styles. */
+    // Try different axis and labelling styles.
     plcol0( 1 );
     switch ( type )
     {
@@ -181,20 +181,20 @@ void plot1( int type, string x_label, string y_label, string alty_label,
         break;
     }
 
-    /* Plot ampl vs freq */
+    // Plot ampl vs freq
     plcol0( 2 );
     plline( freql, ampl );
     plcol0( 2 );
     plptex( 1.6, -30.0, 1.0, -20.0, 0.5, line_label );
 
-    /* Put labels on */
+    // Put labels on
     plcol0( 1 );
     plmtex( "b", 3.2, 0.5, 0.5, x_label );
     plmtex( "t", 2.0, 0.5, 0.5, title_label );
     plcol0( 2 );
     plmtex( "l", 5.0, 0.5, 0.5, y_label );
 
-    /* For the gridless case, put phase vs freq on same plot */
+    // For the gridless case, put phase vs freq on same plot
     if ( type == 0 )
     {
         plcol0( 1 );

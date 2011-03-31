@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      3-d line and point plot demo.  Adapted from x08c.c.
- */
+// $Id$
+//
+//      3-d line and point plot demo.  Adapted from x08c.c.
+//
 
 import std.math;
 import std.string;
@@ -12,20 +12,20 @@ int opt[]   = [ 1, 0, 1, 0 ];
 PLFLT alt[] = [ 20.0, 35.0, 50.0, 65.0 ];
 PLFLT az[]  = [ 30.0, 40.0, 50.0, 60.0 ];
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a series of 3-d plots for a given data set, with different
- * viewing options in each plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a series of 3-d plots for a given data set, with different
+// viewing options in each plot.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
     const int npts = 1000;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
     for ( int k = 0; k < 4; k++ )
@@ -35,14 +35,14 @@ int main( char[][] args )
     PLFLT[] y = new PLFLT[npts];
     PLFLT[] z = new PLFLT[npts];
 
-    /* From the mind of a sick and twisted physicist... */
+    // From the mind of a sick and twisted physicist...
     PLFLT r;
     for ( int i = 0; i < npts; i++ )
     {
         z[i] = -1. + 2. * i / npts;
 
-        /* Pick one ... */
-        /* r = 1. - cast(PLFLT)i/npts; */
+        // Pick one ...
+        // r = 1. - cast(PLFLT)i/npts;
         r = z[i];
 
         x[i] = r * cos( 2. * PI * 6. * i / npts );

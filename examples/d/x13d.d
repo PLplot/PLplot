@@ -1,7 +1,7 @@
-/* $Id$
- *
- *      Pie chart demo.
- */
+// $Id$
+//
+//      Pie chart demo.
+//
 
 import std.string;
 import std.stdio;
@@ -15,29 +15,29 @@ string[] text = [ "Maurice",
                   "Rafael",
                   "Vince" ];
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a simple pie chart.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a simple pie chart.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
     pladv( 0 );
 
-    /* Ensure window has aspect ratio of one so circle is
-     * plotted as a circle. */
+    // Ensure window has aspect ratio of one so circle is
+    // plotted as a circle.
     plvasp( 1.0 );
     plwind( 0.0, 10.0, 0.0, 10.0 );
     plcol0( 2 );
 
-    /* n.b. all theta quantities scaled by 2*M_PI/500 to be integers to avoid
-     * floating point logic problems. */
+    // n.b. all theta quantities scaled by 2*M_PI/500 to be integers to avoid
+    // floating point logic problems.
     int     theta0 = 0;
     int     dthet  = 1;
     int     theta1, theta;
@@ -48,8 +48,8 @@ int main( char[][] args )
     {
         size_t j = 0;
 
-        /* n.b. the theta quantities multiplied by 2*M_PI/500 afterward so
-         * in fact per is interpreted as a percentage. */
+        // n.b. the theta quantities multiplied by 2*M_PI/500 afterward so
+        // in fact per is interpreted as a percentage.
         theta1 = cast(int) ( theta0 + 5.0 * per[i] );
         if ( i == 4 )
             theta1 = 500;
@@ -85,7 +85,7 @@ int main( char[][] args )
     plschr( 0., 1.3 );
     plptex( 5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales" );
 
-    /* Don't forget to call PLEND to finish off! */
+    // Don't forget to call PLEND to finish off!
     plend();
     return 0;
 }

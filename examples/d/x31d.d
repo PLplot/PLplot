@@ -1,26 +1,26 @@
-/* $Id$
- *
- * Copyright (C) 2009 Werner Smekal
- *
- * set/get tester
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+// Copyright (C) 2009 Werner Smekal
+//
+// set/get tester
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 import std.string;
 import std.stdio;
@@ -31,12 +31,12 @@ import plplot;
 
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     int status = 0;
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Test setting / getting familying parameters before plinit */
-    /* Save values set by plparseopts to be restored later. */
+    // Test setting / getting familying parameters before plinit
+    // Save values set by plparseopts to be restored later.
     PLINT fam0, num0, bmax0;
     plgfam( &fam0, &num0, &bmax0 );
     PLINT fam1  = 0;
@@ -44,7 +44,7 @@ int main( char[][] args )
     PLINT bmax1 = 1000;
     plsfam( fam1, num1, bmax1 );
 
-    /* Retrieve the same values? */
+    // Retrieve the same values?
     PLINT fam2, num2, bmax2;
     plgfam( &fam2, &num2, &bmax2 );
     writefln( "family parameters: fam, num, bmax = %d %d %d", fam2, num2, bmax2 );
@@ -53,11 +53,11 @@ int main( char[][] args )
         derr.writefln( "plgfam test failed" );
         status = 1;
     }
-    /* Restore values set initially by plparseopts. */
+    // Restore values set initially by plparseopts.
     plsfam( fam0, num0, bmax0 );
 
-    /* Test setting / getting page parameters before plinit */
-    /* Save values set by plparseopts to be restored later. */
+    // Test setting / getting page parameters before plinit
+    // Save values set by plparseopts to be restored later.
     PLFLT xp0, yp0;
     PLINT xleng0, yleng0, xoff0, yoff0;
     plgpage( &xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0 );
@@ -69,7 +69,7 @@ int main( char[][] args )
     PLINT yoff1  = 20;
     plspage( xp1, yp1, xleng1, yleng1, xoff1, yoff1 );
 
-    /* Retrieve the same values? */
+    // Retrieve the same values?
     PLFLT xp2, yp2;
     PLINT xleng2, yleng2, xoff2, yoff2;
     plgpage( &xp2, &yp2, &xleng2, &yleng2, &xoff2, &yoff2 );
@@ -80,18 +80,18 @@ int main( char[][] args )
         derr.writefln( "plgpage test failed" );
         status = 1;
     }
-    /* Restore values set initially by plparseopts. */
+    // Restore values set initially by plparseopts.
     plspage( xp0, yp0, xleng0, yleng0, xoff0, yoff0 );
 
-    /* Test setting / getting compression parameter across plinit. */
+    // Test setting / getting compression parameter across plinit.
     PLINT compression1 = 95;
     plscompression( compression1 );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
-    /* Test if device initialization screwed around with the preset
-     * compression parameter. */
+    // Test if device initialization screwed around with the preset
+    // compression parameter.
     PLINT compression2;
     plgcompression( &compression2 );
     writefln( "Output various PLplot parameters" );
@@ -103,8 +103,8 @@ int main( char[][] args )
     }
 
 
-    /* Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
-     * they work without any obvious error messages. */
+    // Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
+    // they work without any obvious error messages.
     PLINT[] r1 = [ 0, 255 ];
     PLINT[] g1 = [ 255, 0 ];
     PLINT[] b1 = [ 0, 0 ];
@@ -145,7 +145,7 @@ int main( char[][] args )
         status = 1;
     }
 
-    /* Get world coordinates for middle of viewport */
+    // Get world coordinates for middle of viewport
     PLFLT wx, wy;
     PLINT win;
     plcalc_world( xmid, ymid, &wx, &wy, &win );
@@ -156,9 +156,9 @@ int main( char[][] args )
         status = 1;
     }
 
-    /* Retrieve and print the name of the output file (if any).
-     * This goes to stderr not stdout since it will vary between tests and
-     * we want stdout to be identical for compare test. */
+    // Retrieve and print the name of the output file (if any).
+    // This goes to stderr not stdout since it will vary between tests and
+    // we want stdout to be identical for compare test.
     string fnam;
     plgfnam( fnam );
     if ( fnam.length == 0 )
@@ -167,10 +167,10 @@ int main( char[][] args )
         writefln( "Output file name read" );
     derr.writefln( "Output file name is %s", fnam );
 
-    /* Set and get the number of digits used to display axis labels */
-    /* Note digits is currently ignored in pls[xyz]ax and
-     * therefore it does not make sense to test the returned
-     * value */
+    // Set and get the number of digits used to display axis labels
+    // Note digits is currently ignored in pls[xyz]ax and
+    // therefore it does not make sense to test the returned
+    // value
     plsxax( 3, 0 );
     PLINT digmax, digits;
     plgxax( &digmax, &digits );

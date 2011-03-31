@@ -1,11 +1,11 @@
-/* $Id$
- *
- *      Shade plot demo.
- *
- *      Maurice LeBrun
- *      IFS, University of Texas at Austin
- *      31 Aug 1993
- */
+// $Id$
+//
+//      Shade plot demo.
+//
+//      Maurice LeBrun
+//      IFS, University of Texas at Austin
+//      31 Aug 1993
+//
 
 import std.math;
 import std.stdio;
@@ -14,32 +14,32 @@ import std.string;
 import plplot;
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a variety of shade plots.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a variety of shade plots.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    const int XPTS = 35;        /* Data points in x */
-    const int YPTS = 46;        /* Data points in y */
+    const int XPTS = 35;        // Data points in x
+    const int YPTS = 46;        // Data points in y
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Set up color map 0 */
+    // Set up color map 0
     // plscmap0n(3);
 
     // create plot object
     plot myPlot = new plot;
 
-    /* Set up color map 1 */
+    // Set up color map 1
     myPlot.cmap1_init2();
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
-    /* Set up data array */
+    // Set up data array
     PLFLT     xx, yy;
     PLFLT[][] z = new PLFLT[][XPTS];
     for ( int i = 0; i < XPTS; i++ )
@@ -55,7 +55,7 @@ int main( char[][] args )
         }
     }
 
-    /* Plot using identity transform */
+    // Plot using identity transform
     myPlot.plot1( z );
     myPlot.plot2( z );
     myPlot.plot3();
@@ -66,11 +66,11 @@ int main( char[][] args )
 
 
 class plot {
-    /*--------------------------------------------------------------------------*\
-     * cmap1_init1
-     *
-     * Initializes color map 1 in HLS space.
-     \*--------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // cmap1_init1
+    //
+    // Initializes color map 1 in HLS space.
+//--------------------------------------------------------------------------
     public void cmap1_init1()
     {
         PLFLT[] i = [ 0.0, 0.45, 0.55, 1.0 ];       // left boundary, just before center,
@@ -84,11 +84,11 @@ class plot {
         plscmap1l( 0, i, h, l, s );
     }
 
-    /*--------------------------------------------------------------------------*\
-     * cmap1_init2
-     *
-     * Initializes color map 1 in HLS space.
-     \*--------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // cmap1_init2
+    //
+    // Initializes color map 1 in HLS space.
+//--------------------------------------------------------------------------
     public void cmap1_init2()
     {
         PLFLT[] i = [ 0.0, 0.45, 0.55, 1.0 ];       // left boundary, just before center,
@@ -103,11 +103,11 @@ class plot {
         plscmap1l( 0, i, h, l, s );
     }
 
-    /*--------------------------------------------------------------------------*\
-     * plot1
-     *
-     * Illustrates a single shaded region.
-     \*--------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // plot1
+    //
+    // Illustrates a single shaded region.
+//--------------------------------------------------------------------------
     public void plot1( PLFLT[][] z )
     {
         pladv( 0 );
@@ -139,12 +139,12 @@ class plot {
         pllab( "distance", "altitude", "Bogon flux" );
     }
 
-    /*--------------------------------------------------------------------------*\
-     * plot2
-     *
-     * Illustrates multiple adjacent shaded regions, using different fill
-     * patterns for each region.
-     \*--------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // plot2
+    //
+    // Illustrates multiple adjacent shaded regions, using different fill
+    // patterns for each region.
+//--------------------------------------------------------------------------
     public void plot2( PLFLT[][] z )
     {
         static PLINT nlin[10]   = [ 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 ];
@@ -165,7 +165,7 @@ class plot {
         PLFLT zmin, zmax;
         f2mnmx( z, zmin, zmax );
 
-        /* Plot using identity transform */
+        // Plot using identity transform
         for ( int i = 0; i < 10; i++ )
         {
             PLFLT shade_min = zmin + ( zmax - zmin ) * i / 10.0;
@@ -185,12 +185,12 @@ class plot {
         pllab( "distance", "altitude", "Bogon flux" );
     }
 
-    /*--------------------------------------------------------------------------*\
-     * plot3
-     *
-     * Illustrates shaded regions in 3d, using a different fill pattern for
-     * each region.
-     \*--------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // plot3
+    //
+    // Illustrates shaded regions in 3d, using a different fill pattern for
+    // each region.
+//--------------------------------------------------------------------------
     public void plot3()
     {
         static PLFLT xx[2][5] = [ [-1.0, 1.0, 1.0, -1.0, -1.0],
@@ -205,7 +205,7 @@ class plot {
         plwind( -1.0, 1.0, -1.0, 1.0 );
         plw3d( 1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40 );
 
-        /* Plot using identity transform */
+        // Plot using identity transform
         plcol0( 1 );
         plbox3( "bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0 );
         plcol0( 2 );
@@ -220,11 +220,11 @@ class plot {
         plfill3( xx[1][0..4], yy[1][0..4], zz[1][0..4] );
     }
 
-    /*--------------------------------------------------------------------------*\
-     * f2mnmx
-     *
-     * Returns min & max of input 2d array.
-     \*--------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // f2mnmx
+    //
+    // Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
     public void f2mnmx( PLFLT[][] f, out PLFLT fmn, out PLFLT fmx )
     {
         fmx = f[0][0];

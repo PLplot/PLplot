@@ -1,42 +1,42 @@
-/* $Id$
- *
- *  Simple vector plot example
- *  Copyright (C) 2009  Werner Smekal
- *
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//  Simple vector plot example
+//  Copyright (C) 2009  Werner Smekal
+//
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Library General Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 import std.math;
 
 import plplot;
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Generates several simple vector plots.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Generates several simple vector plots.
+//--------------------------------------------------------------------------
 
 
 class plot {
-    /*
-     * Vector plot of the circulation about the origin
-     */
+    //
+    // Vector plot of the circulation about the origin
+    //
     void circulation()
     {
         const int nx = 20;
@@ -65,7 +65,7 @@ class plot {
         for ( int i = 0; i < nx; i++ )
             v[i] = new PLFLT[ny];
 
-        /* Create data - circulation around the origin. */
+        // Create data - circulation around the origin.
         PLFLT x, y;
         for ( int i = 0; i < nx; i++ )
         {
@@ -80,7 +80,7 @@ class plot {
             }
         }
 
-        /* Plot vectors with default arrows */
+        // Plot vectors with default arrows
         plenv( xmin, xmax, ymin, ymax, 0, 0 );
         pllab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
         plcol0( 2 );
@@ -88,9 +88,9 @@ class plot {
         plcol0( 1 );
     }
 
-    /*
-     * Vector plot of flow through a constricted pipe
-     */
+    //
+    // Vector plot of flow through a constricted pipe
+    //
     void
     constriction()
     {
@@ -152,11 +152,11 @@ class plot {
         plcol0( 1 );
     }
 
-    /*--------------------------------------------------------------------------*\
-     * f2mnmx
-     *
-     * Returns min & max of input 2d array.
-     \*--------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // f2mnmx
+    //
+    // Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
     void f2mnmx( PLFLT[][] f, out PLFLT fmn, out PLFLT fmx )
     {
         fmx = f[0][0];
@@ -173,9 +173,9 @@ class plot {
     }
 
 
-    /*
-     * Vector plot of the gradient of a shielded potential (see example 9)
-     */
+    //
+    // Vector plot of the gradient of a shielded potential (see example 9)
+    //
     void potential()
     {
         const int nper   = 100;
@@ -201,11 +201,11 @@ class plot {
         for ( int i = 0; i < nr; i++ )
             z[i] = new PLFLT[ntheta];
 
-        /* Potential inside a conducting cylinder (or sphere) by method of images.
-         * Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-         * Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-         * Also put in smoothing term at small distances.
-         */
+        // Potential inside a conducting cylinder (or sphere) by method of images.
+        // Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+        // Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+        // Also put in smoothing term at small distances.
+        //
 
         PLFLT rmax = nr;
 
@@ -255,7 +255,7 @@ class plot {
         plenv( xmin, xmax, ymin, ymax, 0, 0 );
         pllab( "(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot" );
 
-        /* Plot contours of the potential */
+        // Plot contours of the potential
         PLFLT   dz     = ( zmax - zmin ) / nlevel;
         PLFLT[] clevel = new PLFLT[nlevel];
         for ( int i = 0; i < nlevel; i++ )
@@ -267,12 +267,12 @@ class plot {
         pllsty( 1 );
         plcol0( 1 );
 
-        /* Plot the vectors of the gradient of the potential */
+        // Plot the vectors of the gradient of the potential
         plcol0( 2 );
         plvect( u, v, 25.0, cgrid2 );
         plcol0( 1 );
 
-        /* Plot the perimeter of the cylinder */
+        // Plot the perimeter of the cylinder
         PLFLT[] px = new PLFLT[nper];
         PLFLT[] py = new PLFLT[nper];
         for ( int i = 0; i < nper; i++ )
@@ -288,10 +288,10 @@ class plot {
 
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
     plot myPlot = new plot;
@@ -300,21 +300,21 @@ int main( char[][] args )
 
     PLINT fill = 0;
 
-    /* Pairs of points making the line segments used to plot the user defined arrow */
+    // Pairs of points making the line segments used to plot the user defined arrow
     PLFLT[] arrow_x = [ -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 ];
     PLFLT[] arrow_y = [  0.0, 0.0, 0.2, 0.0, -0.2, 0.0 ];
 
-    /* Set arrow style using arrow_x and arrow_y then
-     *       plot using these arrows.*/
+    // Set arrow style using arrow_x and arrow_y then
+    //       plot using these arrows.
     plsvect( arrow_x, arrow_y, fill );
     myPlot.constriction();
 
-    /* Pairs of points making the line segments used to plot the user defined arrow */
+    // Pairs of points making the line segments used to plot the user defined arrow
     PLFLT[] arrow2_x = [ -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 ];
     PLFLT[] arrow2_y = [  0.0, 0.0, 0.2, 0.0, -0.2, 0.0 ];
 
-    /* Set arrow style using arrow2_x and arrow2_y then
-     *       plot using these filled arrows. */
+    // Set arrow style using arrow2_x and arrow2_y then
+    //       plot using these filled arrows.
     fill = 1;
     plsvect( arrow2_x, arrow2_y, fill );
     myPlot.constriction();

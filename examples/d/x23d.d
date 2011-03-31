@@ -1,27 +1,27 @@
-/* $Id$
- *
- *  Displays Greek letters and mathematically interesting Unicode ranges
- *  Copyright (C) 2005,2008 Alan Irwin
- *  Copyright (C) 2005,2008 Andrew Ross
- *
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//  Displays Greek letters and mathematically interesting Unicode ranges
+//  Copyright (C) 2005,2008 Alan Irwin
+//  Copyright (C) 2005,2008 Andrew Ross
+//
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Library General Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 import std.string;
 import std.stdio;
@@ -29,11 +29,11 @@ import std.stdio;
 import plplot;
 
 
-/*
- * main
- *
- * Displays Greek letters and mathematically interesting Unicode ranges
- */
+//
+// main
+//
+// Displays Greek letters and mathematically interesting Unicode ranges
+//
 
 static char[][] Greek = [
     "#gA", "#gB", "#gG", "#gD", "#gE", "#gZ", "#gY", "#gH", "#gI", "#gK", "#gL", "#gM",
@@ -149,7 +149,7 @@ static int[] nycells = [
     8
 ];
 
-/* non-zero values Must be consistent with nxcells and nycells. */
+// non-zero values Must be consistent with nxcells and nycells.
 static int[] offset = [
     0,
     0,
@@ -164,7 +164,7 @@ static int[] offset = [
     0,
 ];
 
-/* 30 possible FCI values. */
+// 30 possible FCI values.
 
 const int          FCI_COMBINATIONS = 30;
 static PLUNICODE[] fci = [
@@ -223,7 +223,7 @@ int main( char[][] args )
 {
     string cmdString;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
     plinit();
@@ -232,7 +232,7 @@ int main( char[][] args )
     {
         pladv( 0 );
 
-        /* Set up viewport and window */
+        // Set up viewport and window
         plvpor( 0.02, 0.98, 0.02, 0.90 );
         plwind( 0.0, 1.0, 0.0, 1.0 );
 
@@ -241,12 +241,12 @@ int main( char[][] args )
         plschr( 0., 0.8 );
         PLFLT ycharacter_scale = ( 1.0 - 0.0 ) / ( ymax - ymin );
 
-        /* Factor should be 0.5, but heuristically it turns out to be larger. */
+        // Factor should be 0.5, but heuristically it turns out to be larger.
         PLFLT chardef, charht;
         plgchr( &chardef, &charht );
         PLFLT yoffset = 1.0 * charht * ycharacter_scale;
 
-        /* Draw the grid using plbox */
+        // Draw the grid using plbox
         plcol0( 2 );
         PLFLT deltax = 1.0 / nxcells[page];
         PLFLT deltay = 1.0 / nycells[page];
@@ -277,12 +277,12 @@ int main( char[][] args )
             }
         }
 
-        /* Page title */
+        // Page title
         plschr( 0., 1.0 );
         plmtex( "t", 1.5, 0.5, 0.5, title[page] );
     }
 
-    /* Demonstrate methods of getting the current fonts */
+    // Demonstrate methods of getting the current fonts
     PLUNICODE fci_old;
     plgfci( &fci_old );
 
@@ -356,7 +356,7 @@ int main( char[][] args )
         plschr( 0., 1.0 );
     }
 
-    /* Restore defaults */
+    // Restore defaults
     plcol0( 1 );
 
     plend();

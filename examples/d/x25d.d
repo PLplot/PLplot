@@ -1,24 +1,24 @@
-/* $Id$
- *
- *      Filling and clipping polygons.
- */
+// $Id$
+//
+//      Filling and clipping polygons.
+//
 
 import plplot;
 import std.string;
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Test program for filling polygons and proper clipping
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Test program for filling polygons and proper clipping
+//--------------------------------------------------------------------------
 
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plssub( 3, 3 );
     plinit();
 
@@ -52,24 +52,24 @@ int main( char[][] args )
             case 0:
                 x0.length = 4;
                 y0.length = 4;
-                /* Polygon 1: a diamond */
+                // Polygon 1: a diamond
                 x0[] = [   0.0, -100.0, 0.0, 100.0 ];
                 y0[] = [-100.0, 0.0, 100.0, 0.0 ];
                 break;
             case 1:
-                /* Polygon 1: a diamond - reverse direction */
+                // Polygon 1: a diamond - reverse direction
                 x0[] = [ 100.0, 0.0, -100.0, 0.0 ];
                 y0[] = [   0.0, 100.0, 0.0, -100.0 ];
                 break;
             case 2:
-                /* Polygon 2: a square with punctures */
+                // Polygon 2: a square with punctures
                 x0.length = 10;
                 y0.length = 10;
                 x0[]      = [ -100.0, -100.0, 80.0, -100.0, -100.0, -80.0, 0.0, 80.0, 100.0, 100.0 ];
                 y0[]      = [ -100.0, -80.0, 0.0, 80.0, 100.0, 100.0, 80.0, 100.0, 100.0, -100.0 ];
                 break;
             case 3:
-                /* Polygon 2: a square with punctures - reversed direction */
+                // Polygon 2: a square with punctures - reversed direction
                 x0[] = [  100.0, 100.0, 80.0, 0.0, -80.0, -100.0, -100.0, 80.0, -100.0, -100.0 ];
                 y0[] = [ -100.0, 100.0, 100.0, 80.0, 100.0, 100.0, 80.0, 0.0, -80.0, -100.0 ];
                 break;
@@ -96,7 +96,7 @@ int main( char[][] args )
         }
     }
 
-    /* Don't forget to call plend() to finish off! */
+    // Don't forget to call plend() to finish off!
     plend();
     return 0;
 }

@@ -1,29 +1,29 @@
-/* $Id$
- *
- *      Demo of multiple stream/window capability (requires Tk or Tcl-DP).
- *
- *      Maurice LeBrun
- *      IFS, University of Texas at Austin
- *
- * Copyright (C) 2009  Werner Smekal
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Demo of multiple stream/window capability (requires Tk or Tcl-DP).
+//
+//      Maurice LeBrun
+//      IFS, University of Texas at Austin
+//
+// Copyright (C) 2009  Werner Smekal
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 import std.string;
 import std.math;
@@ -31,33 +31,33 @@ import std.stdio;
 
 import plplot;
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Plots several simple functions from other example programs.
- *
- * This version sends the output of the first 4 plots (one page) to two
- * independent streams.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Plots several simple functions from other example programs.
+//
+// This version sends the output of the first 4 plots (one page) to two
+// independent streams.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    /* Select either TK or DP driver and use a small window */
-    /* Using DP results in a crash at the end due to some odd cleanup problems */
-    /* The geometry strings MUST be in writable memory */
+    // Select either TK or DP driver and use a small window
+    // Using DP results in a crash at the end due to some odd cleanup problems
+    // The geometry strings MUST be in writable memory
     string geometry_master = "500x410+100+200";
     string geometry_slave  = "500x410+650+200";
 
-    /* plplot initialization */
-    /* Parse and process command line arguments */
+    // plplot initialization
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* If valid geometry specified on command line, use it for both streams. */
+    // If valid geometry specified on command line, use it for both streams.
     PLFLT xp0, yp0;
     PLINT xleng0, yleng0, xoff0, yoff0;
     plgpage( &xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0 );
     bool  valid_geometry = ( xleng0 > 0 && yleng0 > 0 );
 
-    /* Set up first stream */
+    // Set up first stream
     if ( valid_geometry )
         plspage( xp0, yp0, xleng0, yleng0, xoff0, yoff0 );
     else
@@ -75,7 +75,7 @@ int main( char[][] args )
     writefln( "Demo of multiple output streams via the %s driver.", driver );
     writefln( "Running with the second stream as slave to the first.\n" );
 
-    /* Start next stream */
+    // Start next stream
     plsstrm( 1 );
 
     if ( valid_geometry )
@@ -83,69 +83,69 @@ int main( char[][] args )
     else
         plsetopt( "geometry", geometry_slave );
 
-    /* Turn off pause to make this a slave (must follow master) */
+    // Turn off pause to make this a slave (must follow master)
     plspause( 0 );
     plsdev( driver );
     plsfam( fam, num, bmax );
 
-    /* Currently number of digits in format number can only be
-     * set via the command line option */
+    // Currently number of digits in format number can only be
+    // set via the command line option
     plsetopt( "fflen", "2" );
     plinit();
 
-    /* Set up the data & plot */
-    /* Original case */
+    // Set up the data & plot
+    // Original case
     plsstrm( 0 );
 
     plot myPlot = new plot;
     myPlot.plot1( 6, 1, 0, 0 );
 
-    /* Set up the data & plot */
+    // Set up the data & plot
     myPlot.plot1( 1, 1e6, 0, 0 );
 
-    /* Set up the data & plot */
+    // Set up the data & plot
     int digmax = 2;
     plsyax( digmax, 0 );
     myPlot.plot1( 1, 1e-6, 0, 0 );
 
-    /* Set up the data & plot */
+    // Set up the data & plot
     digmax = 5;
     plsyax( digmax, 0 );
     myPlot.plot1( 1, 0.0014, 0, 0.0185 );
 
-    /* To slave */
-    /* The pleop() ensures the eop indicator gets lit. */
+    // To slave
+    // The pleop() ensures the eop indicator gets lit.
     plsstrm( 1 );
     myPlot.plot4();
     pleop();
 
-    /* Back to master */
+    // Back to master
     plsstrm( 0 );
     myPlot.plot2();
     myPlot.plot3();
 
-    /* To slave */
+    // To slave
     plsstrm( 1 );
     myPlot.plot5();
     pleop();
 
-    /* Back to master to wait for user to advance */
+    // Back to master to wait for user to advance
     plsstrm( 0 );
     pleop();
 
-    /* Call plend to finish off. */
+    // Call plend to finish off.
     plend();
     return 0;
 }
 
 
-/* special variables for plot5() and mypltr */
+// special variables for plot5() and mypltr
 const int    XPTS = 35;
 const int    YPTS = 46;
 const double XSPA = 2.0 / ( XPTS - 1 );
 const double YSPA = 2.0 / ( YPTS - 1 );
 
-/* Transformation function */
+// Transformation function
 extern ( C ) {
 PLFLT[] tr = [ XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 ];
 
@@ -182,20 +182,20 @@ class plot {
             ys[i] = y[i * 10 + 3];
         }
 
-        /* Set up the viewport and window using PLENV. The range in X is */
-        /* 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
-        /* scaled separately (just = 0), and we just draw a labelled */
-        /* box (axis = 0). */
+        // Set up the viewport and window using PLENV. The range in X is
+        // 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+        // scaled separately (just = 0), and we just draw a labelled
+        // box (axis = 0).
         plcol0( 1 );
         plenv( xmin, xmax, ymin, ymax, 0, 0 );
         plcol0( 6 );
         pllab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
-        /* Plot the data points */
+        // Plot the data points
         plcol0( 9 );
         plpoin( xs, ys, 9 );
 
-        /* Draw the line through the data */
+        // Draw the line through the data
         plcol0( 4 );
         plline( x, y );
         plflush();
@@ -203,15 +203,15 @@ class plot {
 
     public void plot2()
     {
-        /* Set up the viewport and window using PLENV. The range in X is -2.0 to
-         * 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-         * (just = 0), and we draw a box with axes (axis = 1). */
+        // Set up the viewport and window using PLENV. The range in X is -2.0 to
+        // 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
+        // (just = 0), and we draw a box with axes (axis = 1).
         plcol0( 1 );
         plenv( -2.0, 10.0, -0.4, 1.2, 0, 1 );
         plcol0( 2 );
         pllab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
 
-        /* Fill up the arrays */
+        // Fill up the arrays
         x.length = 100;
         y.length = 100;
         for ( int i = 0; i < 100; i++ )
@@ -222,7 +222,7 @@ class plot {
                 y[i] = sin( x[i] ) / x[i];
         }
 
-        /* Draw the line */
+        // Draw the line
         plcol0( 3 );
         plline( x, y );
         plflush();
@@ -230,21 +230,21 @@ class plot {
 
     public void plot3()
     {
-        /* For the final graph we wish to override the default tick intervals, and
-         * so do not use PLENV */
+        // For the final graph we wish to override the default tick intervals, and
+        // so do not use PLENV
         pladv( 0 );
 
-        /* Use standard viewport, and define X range from 0 to 360 degrees, Y range
-         * from -1.2 to 1.2. */
+        // Use standard viewport, and define X range from 0 to 360 degrees, Y range
+        // from -1.2 to 1.2.
         plvsta();
         plwind( 0.0, 360.0, -1.2, 1.2 );
 
-        /* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
+        // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
         plcol0( 1 );
         plbox( "bcnst", 60.0, 2, "bcnstv", 0.2, 2 );
 
-        /* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
-         * expects a pointer!! */
+        // Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
+        // expects a pointer!!
         plstyl( mark1, space1 );
         plcol0( 2 );
         plbox( "g", 30.0, 0, "g", 0.2, 0 );
@@ -279,7 +279,7 @@ class plot {
             y0[i] = sin( dtr * i );
         }
 
-        /* Set up viewport and window, but do not draw box */
+        // Set up viewport and window, but do not draw box
         plenv( -1.3, 1.3, -1.3, 1.3, 1, -2 );
 
         x.length = 361;
@@ -292,7 +292,7 @@ class plot {
                 y[j] = 0.1 * i * y0[j];
             }
 
-            /* Draw circles for polar grid */
+            // Draw circles for polar grid
             plline( x, y );
         }
 
@@ -303,20 +303,20 @@ class plot {
             PLFLT dx    = cos( dtr * theta );
             PLFLT dy    = sin( dtr * theta );
 
-            /* Draw radial spokes for polar grid */
+            // Draw radial spokes for polar grid
             pljoin( 0.0, 0.0, dx, dy );
             text = format( "%d", lrint( theta ) );
 
-            /* Write labels for angle */
+            // Write labels for angle
 
-            /* Slightly off zero to avoid floating point logic flips at 90 and 270 deg. */
+            // Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
             if ( dx >= -0.00001 )
                 plptex( dx, dy, dx, dy, -0.15, text );
             else
                 plptex( dx, dy, -dx, -dy, 1.15, text );
         }
 
-        /* Draw the graph */
+        // Draw the graph
 
         for ( int i = 0; i < 361; i++ )
         {
@@ -332,13 +332,13 @@ class plot {
         plflush();
     }
 
-    /* =============================================================== */
-    /* Demonstration of contour plotting */
+    // ===============================================================
+    // Demonstration of contour plotting
     public void plot5()
     {
         PLFLT[] clevel = [ -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. ];
 
-        /* Set up function arrays */
+        // Set up function arrays
         PLFLT[][] z, w;
         z.length = XPTS;
         w.length = XPTS;

@@ -1,50 +1,38 @@
-/*  $Id$
- *
- *  Unicode Pace Flag
- *
- *  Copyright (C) 2009  Werner Smekal
- *
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *
- * In Debian, run like this:
- *
- * ( TTFDIR=/usr/share/fonts/truetype ; \
- *   PLPLOT_FREETYPE_SANS_FONT=$TTFDIR/arphic/bkai00mp.ttf \
- *   PLPLOT_FREETYPE_SERIF_FONT=$TTFDIR/freefont/FreeSerif.ttf \
- *   PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
- *   PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
- *   PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
- *   ./x24c -dev png -o x24c.png )
- *
- * Packages needed:
- *
- * ttf-arphic-bkai00mp
- * ttf-freefont
- * ttf-devanagari-fonts
- * ttf-unfonts
- * ttf-bengali-fonts
- *
- * For the latest Ubuntu systems lohit_hi.ttf has been moved to the
- * ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
- * will have to use this package instead and update the font path.
- */
-
+//  $Id$
+//
+//  Unicode Pace Flag
+//
+//  Copyright (C) 2009  Werner Smekal
+//
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Library General Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
+// For Debian, the required font packages are the following:
+// ttf-arphic-bkai00mp
+// ttf-freefont
+// ttf-devanagari-fonts
+// ttf-unfonts
+// ttf-bengali-fonts
+//
+// For the latest Ubuntu systems lohit_hi.ttf has been moved to the
+// ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
+// will have to use this package instead and update the font path.
+//
 
 import std.string;
 
@@ -88,39 +76,39 @@ static PLFLT[] sy = [
 ];
 
 
-/* Taken from http://www.columbia.edu/~fdc/pace/ */
+// Taken from http://www.columbia.edu/~fdc/pace/
 
 static char[][] peace = [
-    /* Mandarin */
+    // Mandarin
     "#<0x00>和平",
-    /* Hindi */
+    // Hindi
     "#<0x20>शांति",
-    /* English */
+    // English
     "#<0x10>Peace",
-    /* Hebrew */
+    // Hebrew
     "#<0x10>שלום",
-    /* Russian */
+    // Russian
     "#<0x10>Мир",
-    /* German */
+    // German
     "#<0x10>Friede",
-    /* Korean */
+    // Korean
     "#<0x30>평화",
-    /* French */
+    // French
     "#<0x10>Paix",
-    /* Spanish */
+    // Spanish
     "#<0x10>Paz",
-    /* Arabic */
+    // Arabic
     "#<0x10>ﺳﻼم",
-    /* Turkish*/
+    // Turkish
     "#<0x10>Barış",
-    /* Kurdish */
+    // Kurdish
     "#<0x10>Hasîtî",
 ];
 
 
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
     plinit();

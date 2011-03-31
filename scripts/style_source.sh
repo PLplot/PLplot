@@ -240,4 +240,4 @@ transform_source()
 transform_source "$csource_LIST" C "comments"
 transform_source "$cppsource_LIST" CPP "comments"
 transform_source "$javasource_LIST" JAVA "comments"
-transform_source "$dsource_LIST" D
+transform_source "$dsource_LIST" D "comments"

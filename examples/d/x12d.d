@@ -1,26 +1,26 @@
-/* $Id$
- *
- *      Bar chart demo.
- */
+// $Id$
+//
+//      Bar chart demo.
+//
 
 import std.string;
 
 import plplot;
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a simple bar chart, using color fill.  If color fill is
- * unavailable, pattern fill is used instead (automatic).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a simple bar chart, using color fill.  If color fill is
+// unavailable, pattern fill is used instead (automatic).
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
     string text;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
     pladv( 0 );
@@ -48,7 +48,7 @@ int main( char[][] args )
         plmtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, text );
     }
 
-    /* Don't forget to call plend() to finish off! */
+    // Don't forget to call plend() to finish off!
     plend();
     return 0;
 }

@@ -1,27 +1,27 @@
-/* $Id$ */
-/*
- *
- *      Mesh plot demo.
- *
- * Copyright (C) 2008  Werner Smekal
- * Copyright (C) 2004  Rafael Laboissiere
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free So  ftware
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//
+//      Mesh plot demo.
+//
+// Copyright (C) 2008  Werner Smekal
+// Copyright (C) 2004  Rafael Laboissiere
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free So  ftware
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 import plplot;
 import std.string;
@@ -32,8 +32,8 @@ void cmap1_init()
 {
     PLFLT[2] i, h, l, s;
 
-    i[] = [ 0.0, 1.0 ];         /* boundaries */
-    h[] = [ 240.0, 0.0 ];       /* blue -> green -> yellow -> red */
+    i[] = [ 0.0, 1.0 ];         // boundaries
+    h[] = [ 240.0, 0.0 ];       // blue -> green -> yellow -> red
     l[] = [ 0.6, 0.6 ];
     s[] = [ 0.8, 0.8 ];
 
@@ -43,17 +43,17 @@ void cmap1_init()
 }
 
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Does a series of mesh plots for a given data set, with different
- * viewing options in each plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Does a series of mesh plots for a given data set, with different
+// viewing options in each plot.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
     const   nlevel = 10;
-    const   XPTS   = 35;        /* Data points in x */
-    const   YPTS   = 46;        /* Data points in y */
+    const   XPTS   = 35;        // Data points in x
+    const   YPTS   = 46;        // Data points in y
 
     int[]   opt = [ DRAW_LINEXY, DRAW_LINEXY ];
 
@@ -65,10 +65,10 @@ int main( char[][] args )
 
     PLFLT xx, yy;
 
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
     PLFLT[XPTS] x;
@@ -94,7 +94,7 @@ int main( char[][] args )
                       10. * ( xx / 5. - pow( xx, 3. ) - pow( yy, 5. ) ) * exp( -xx * xx - yy * yy ) -
                       1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
 
-            if ( 0 ) /* Jungfraujoch/Interlaken */
+            if ( 0 ) // Jungfraujoch/Interlaken
             {
                 if ( z[i][j] < -1. )
                     z[i][j] = -1.;
@@ -128,19 +128,19 @@ int main( char[][] args )
             switch ( i )
             {
             case 0:
-                /* wireframe plot */
+                // wireframe plot
                 plmesh( x, y, z, opt[k] );
                 break;
             case 1:
-                /* magnitude colored wireframe plot */
+                // magnitude colored wireframe plot
                 plmesh( x, y, z, opt[k] | MAG_COLOR );
                 break;
             case 2:
-                /* magnitude colored wireframe plot with sides */
+                // magnitude colored wireframe plot with sides
                 plot3d( x, y, z, opt[k] | MAG_COLOR, 1 );
                 break;
             case 3:
-                /* magnitude colored wireframe plot with base contour */
+                // magnitude colored wireframe plot with base contour
                 plmeshc( x, y, z, opt[k] | MAG_COLOR | BASE_CONT, clevel );
                 break;
             }
@@ -154,11 +154,11 @@ int main( char[][] args )
     return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * f2mnmx
- *
- * Returns min & max of input 2d array.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// f2mnmx
+//
+// Returns min & max of input 2d array.
+//--------------------------------------------------------------------------
 void f2mnmx( PLFLT[][] f, out PLFLT fmn, out PLFLT fmx )
 {
     fmx = f[0][0];

@@ -1,23 +1,23 @@
-/* $Id$ */
-/*
- *
- *      Window positioning demo.
- */
+// $Id$
+//
+//
+//      Window positioning demo.
+//
 
 import plplot;
 import std.string;
 
-/*--------------------------------------------------------------------------*\
- * main
- *
- * Demonstrates absolute positioning of graphs on a page.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// main
+//
+// Demonstrates absolute positioning of graphs on a page.
+//--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    /* Parse and process command line arguments */
+    // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
 
-    /* Initialize plplot */
+    // Initialize plplot
     plinit();
 
     pladv( 0 );
