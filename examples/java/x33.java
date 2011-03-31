@@ -201,7 +201,7 @@ class x33 {
 //          pls.wind( 0.0, 1.0, 0.0, 1.0 );
 //          pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
 //      }
-   //
+//
 //--------------------------------------------------------------------------
 // x33
 //
@@ -845,7 +845,7 @@ class x33 {
 //            "Gradient Color Bars" );
 //        plcolorbar_example_2( PLStream.PL_COLORBAR_GRADIENT, 0.5, 5, 2, values_small,
 //            "Gradient Color Bars" );
-       //
+        //
 
         pls.end();
     }
