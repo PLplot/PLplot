@@ -414,6 +414,10 @@ module Plot :
         rendered. *)
     val list : plot_t list -> plot_t
 
+    (** [maybe m_p] will plot the contents of [m_p].  If [m_p] is [None] then
+        this is effectively a no-op. *)
+    val maybe : plot_t option -> plot_t
+
     (** Plot a list of plottable elements *)
     val plot : ?stream:stream_t -> plot_t list -> unit
 
@@ -422,11 +426,53 @@ module Plot :
     (** Character height in world coordinate units *)
     val character_height : ?stream:stream_t -> unit -> float
 
-    (** Draw a legend, given a list of titles and colors *)
-    val draw_legend :
-      ?stream:stream_t ->
-      ?line_length:float ->
-      ?x:float -> ?y:float -> string list -> color_t list -> unit
+    (** Legend entry *)
+    type legend_entry_t
+
+    (** Layout of elements *)
+    type 'a layout_t
+
+    (** Empty legend entry *)
+    val no_legend : legend_entry_t
+
+    (** Color-filled box legend entry *)
+    val box_legend :
+      ?pattern:int ->
+      ?scale:float ->
+      ?line_width:int ->
+      ?label_color:color_t -> label:string -> color_t -> legend_entry_t
+
+    (** Line legend entry *)
+    val line_legend :
+      ?style:int ->
+      ?width:int ->
+      ?label_color:color_t -> label:string -> color_t -> legend_entry_t
+
+    (** Symbol/point legend entry *)
+    val symbol_legend :
+      ?scale:float ->
+      ?number:int ->
+      ?label_color:color_t ->
+      label:string -> color_t -> string -> legend_entry_t
+
+    (** Row-major layout *)
+    val row_major : 'a -> 'b -> ('a * 'b) layout_t
+
+    (** Column-major layout *)
+    val column_major : 'a -> 'b -> ('a * 'b) layout_t
+
+    (** [legend entries] *)
+    val legend :
+      ?pos:float plot_side_t * float plot_side_t ->
+      ?plot_width:float ->
+      ?bg:int ->
+      ?bb:int * int ->
+      ?layout:(int * int) layout_t ->
+      ?text_offset:float ->
+      ?text_scale:float ->
+      ?text_spacing:float ->
+      ?text_justification:float ->
+      ?text_left:bool -> legend_entry_t list list -> plot_t
 
     (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
         axis labeling function when a colorbar is meant to represent values

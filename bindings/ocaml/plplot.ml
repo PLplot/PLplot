@@ -60,6 +60,11 @@ module Option = struct
     | Some x -> x
     | None -> x_default
 
+  let map f o =
+    match o with
+    | Some x -> Some (f x)
+    | None -> None
+
   let map_default f x_default o =
     match o with
     | Some x -> f x
@@ -634,47 +639,170 @@ module Plot = struct
         char_height_norm *. world_y
     )
 
-  (** Draw a legend with the upper-left corner at (x,y) *)
-  let draw_legend ?stream ?line_length ?x ?y names colors =
-    with_stream ?stream (
+  type legend_entry_t =
+    | No_legend (** An empty entry *)
+    | Box_legend of (int * int * float * int * int * string)
+    | Line_legend of (int * int * int * int * string)
+    | Symbol_legend of (int * float * int * string * int * string)
+
+  let opt_of_entry = function
+    | No_legend -> PL_LEGEND_NONE
+    | Box_legend _ -> PL_LEGEND_COLOR_BOX
+    | Line_legend _ -> PL_LEGEND_LINE
+    | Symbol_legend _ -> PL_LEGEND_SYMBOL
+
+  type 'a layout_t =
+    | Row_major of 'a
+    | Column_major of 'a
+
+  let no_legend = No_legend
+
+  let box_legend ?(pattern = 0) ?(scale = 1.0) ?(line_width = 1)
+                 ?(label_color = Black) ~label color =
+    let label_color = int_of_color label_color in
+    let color = int_of_color color in
+    Box_legend (color, pattern, scale, line_width, label_color, label)
+
+  let line_legend ?(style = 1) ?(width = 1) ?(label_color = Black) ~label color =
+    let label_color = int_of_color label_color in
+    let color = int_of_color color in
+    Line_legend (color, style, width, label_color, label)
+
+  let symbol_legend ?(scale = 1.0) ?(number = 3) ?(label_color = Black) ~label
+                    color symbol =
+    let label_color = int_of_color label_color in
+    let color = int_of_color color in
+    Symbol_legend (color, scale, number, symbol, label_color, label)
+
+  let row_major x y = Row_major (x, y)
+
+  let column_major x y = Column_major (x, y)
+
+  let legend ?pos ?(plot_width = 0.1) ?bg ?bb ?layout
+             ?(text_offset = 1.0) ?(text_scale = 1.0) ?(text_spacing = 2.0)
+             ?(text_justification = 1.0)
+             ?(text_left = false)
+             entries =
+    (* Legend position *)
+    let legend_x, legend_y, pos_opt =
+      match pos with
+      | Some (p1, p2) ->
+          begin
+            let convert = function
+              | Right x -> x, PL_POSITION_RIGHT
+              | Left x -> x, PL_POSITION_LEFT
+              | Top x -> x, PL_POSITION_TOP
+              | Bottom x -> x, PL_POSITION_BOTTOM
+            in
+            let p1_x, p1_opt = convert p1 in
+            let p2_x, p2_opt = convert p2 in
+            p1_x, p2_x, [p1_opt; p2_opt]
+          end
+      | None ->
+          0.0, 0.0, []
+    in
+    (* Legend background color *)
+    let bg, bg_opt =
+      match bg with
+      | Some color -> color, [PL_LEGEND_BACKGROUND]
+      | None -> 0, []
+    in
+    (* Legend bounding box *)
+    let bb, bb_style, bb_opt =
+      match bb with
+      | Some (color, style) -> color, style, [PL_LEGEND_BOUNDING_BOX]
+      | None -> 0, 0, []
+    in
+    (* Legend layout *)
+    let rows, columns, layout_opt =
+      match layout with
+      | Some l ->
+          (* Custom layout *)
+          begin
+            match l with
+            | Row_major (x, y) -> x, y, [PL_LEGEND_ROW_MAJOR]
+            | Column_major (x, y) -> x, y, []
+          end
+      | None ->
+          (* PLplot's default layout *)
+          0, 0, []
+    in
+    (* Text on the left? *)
+    let text_left_opt =
+      if text_left then [PL_LEGEND_TEXT_LEFT]
+      else []
+    in
+    (* General legend options *)
+    let opt =
+      List.flatten [
+        bg_opt;
+        bb_opt;
+        layout_opt;
+        text_left_opt;
+      ]
+    in
+
+    (* Get the types of entries in a form PLplot understands *)
+    let entries = Array.of_list entries in
+    let entry_opts = Array.map (List.map opt_of_entry) entries in
+
+    (* Build the actual entries *)
+    let n_entries = Array.length entries in
+    (* Text labels *)
+    let text_colors = Array.make n_entries 0 in
+    let text = Array.make n_entries "" in
+    (* Color filled boxes *)
+    let box_colors = Array.make n_entries 0 in
+    let box_patterns = Array.make n_entries 0 in
+    let box_scales = Array.make n_entries 0.0 in
+    let box_line_widths = Array.make n_entries 0 in
+    let line_colors = Array.make n_entries 0 in
+    let line_styles = Array.make n_entries 0 in
+    let line_widths = Array.make n_entries 0 in
+    let symbol_colors = Array.make n_entries 0 in
+    let symbol_scales = Array.make n_entries 0.0 in
+    let symbol_numbers = Array.make n_entries 0 in
+    let symbols = Array.make n_entries "" in
+    for i = 0 to n_entries - 1 do
+      List.iter (
+        fun entry ->
+          match entry with
+          | No_legend ->
+              (* Nothing to do here - just leave an empty space *)
+              ()
+          | Box_legend (color, pattern, scale, line_width, label_color, label) ->
+              box_colors.(i) <- color;
+              box_patterns.(i) <- pattern;
+              box_scales.(i) <- scale;
+              box_line_widths.(i) <- line_width;
+              text_colors.(i) <- label_color;
+              text.(i) <- label;
+          | Line_legend (color, style, width, label_color, label) ->
+              line_colors.(i) <- color;
+              line_styles.(i) <- style;
+              line_widths.(i) <- width;
+              text_colors.(i) <- label_color;
+              text.(i) <- label;
+          | Symbol_legend (color, scale, number, symbol, label_color, label) ->
+              symbol_colors.(i) <- color;
+              symbol_scales.(i) <- scale;
+              symbol_numbers.(i) <- number;
+              symbols.(i) <- symbol;
+              text_colors.(i) <- label_color;
+              text.(i) <- label;
+      ) entries.(i)
+    done;
+    custom (
       fun () ->
-      (* Save the current color to restore at the end *)
-      let old_col0 = plg_current_col0 () in
-
-      (* Get viewport world-coordinate limits *)
-      let xmin, xmax, ymin, ymax = plgvpw () in
-      let normalized_to_world nx ny =
-        xmin +. nx *. (xmax -. xmin),
-        ymin +. ny *. (ymax -. ymin)
-      in
-
-      (* Get world-coordinate positions of the start of the legend text *)
-      let line_x = x |? 0.6 in
-      let line_y = y |? 0.95 in
-      let line_x_end = line_x +. 0.1 in
-      let line_x_world, line_y_world = normalized_to_world line_x line_y in
-      let line_x_end_world, _ = normalized_to_world line_x_end line_y in
-      let text_x = line_x_end +. 0.01 in
-      let text_y = line_y in
-      let text_x_world, text_y_world = normalized_to_world text_x text_y in
-
-      let character_height = character_height () in
-      let ty = ref (text_y_world -. character_height) in
-
-      (* Draw each line type with the appropriate label *)
-      List.iter2 (
-        fun n c ->
-          set_color c;
-          plline [|line_x_world; line_x_end_world|] [|!ty; !ty|];
-          set_color Black;
-          plptex text_x_world !ty 0.0 0.0 0.0 n;
-          ty := !ty -. (1.5 *. character_height);
-          ()
-      ) names colors;
-
-      (* Restore old color *)
-      plcol0 old_col0;
-      ()
+        ignore (
+          pllegend pos_opt opt legend_x legend_y plot_width bg bb bb_style
+            rows columns
+            entry_opts
+            text_offset text_scale text_spacing text_justification text_colors text
+            box_colors box_patterns box_scales box_line_widths
+            line_colors line_styles line_widths
+            symbol_colors symbol_scales symbol_numbers symbols
+        )
     )
 
   (** Set the drawing color in [f], and restore the previous drawing color
@@ -1220,6 +1348,19 @@ module Quick_plot = struct
         (if y_log then Log :: y_axis else y_axis)
     ) (x_axis, y_axis) log
 
+  let maybe_legend names colors =
+    maybe (
+      Option.map (
+        fun names' ->
+          let entries =
+            List.map2 (
+              fun color label -> [line_legend ~label color]
+            ) (Array.to_list colors) names'
+          in
+          legend entries
+      ) names
+    )
+
   (** [points [xs, ys; ...] plots the points described by the coordinates [xs]
       and [ys]. *)
   let points ?filename ?size ?(device = Window Cairo) ?labels ?log xs_ys_list =
@@ -1242,7 +1383,7 @@ module Quick_plot = struct
     plot ~stream [
       list plottable_points;
       axes x_axis y_axis;
-      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
+      maybe (Option.map (fun (x, y, t) -> label x y t) labels);
     ];
     end_stream ~stream ();
     ()
@@ -1267,10 +1408,10 @@ module Quick_plot = struct
     let x_axis, y_axis = maybe_log log in
     plot ~stream [
       list plottable_lines;
+      maybe_legend names colors;
       axes x_axis y_axis;
-      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
+      maybe (Option.map (fun (x, y, t) -> label x y t) labels);
     ];
-    Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     end_stream ~stream ();
     ()
 
@@ -1288,7 +1429,7 @@ module Quick_plot = struct
     plot ~stream [
       image (xmin, ymin) (xmax, ymax) m;
       default_axes;
-      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
+      maybe (Option.map (fun (x, y, t) -> label x y t) labels);
       image_colorbar ?log ~pos:(Right 0.12) (m_min, m_max);
     ];
     end_stream ~stream ();
@@ -1326,10 +1467,10 @@ module Quick_plot = struct
     in
     plot ~stream [
       list plot_content;
+      maybe_legend names colors;
       default_axes;
-      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
+      maybe (Option.map (fun (x, y, t) -> label x y t) labels);
     ];
-    Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     end_stream ~stream ();
     ()
 
@@ -1351,7 +1492,7 @@ module Quick_plot = struct
     plot ~stream [
       shades (xmin, ymin) (xmax, ymax) contours m;
       default_axes;
-      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
+      maybe (Option.map (fun (x, y, t) -> label x y t) labels);
       shade_colorbar ?log ~pos:(Right 0.12) contours;
     ];
     end_stream ~stream ();
