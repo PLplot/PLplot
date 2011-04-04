@@ -218,6 +218,8 @@ module Plot = struct
     | Custom of (unit -> unit)
     (* Embedded list of plottable elements *)
     | List of plot_t list
+    (* Could be a plottable element... *)
+    | Maybe of plot_t option
   and image_t = (float * float) option * float * float * float * float * float array array
 
   type plot_device_family_t =
@@ -608,6 +610,9 @@ module Plot = struct
 
   (** [list l] *)
   let list l = List l
+
+  (** [maybe x] *)
+  let maybe x = Maybe x
 
   (** Get the font character height in plot world coordinates *)
   let character_height ?stream () =
@@ -1094,7 +1099,7 @@ module Plot = struct
         (fun () -> plmtex side_string displacement position just s)
     in
 
-    let one_plot p =
+    let rec one_plot p =
       match p with
       | Arc a -> plot_arc a
       | Axes ax -> plot_axes ax
@@ -1117,6 +1122,8 @@ module Plot = struct
       | Clear_pltr -> plunset_pltr ()
       | Custom f -> f ()
       | List l -> plot l
+      | Maybe None -> () (* no-op *)
+      | Maybe (Some m_p) -> one_plot m_p
     in
     List.iter (
       fun plottable -> with_stream ?stream (fun () -> one_plot plottable)
