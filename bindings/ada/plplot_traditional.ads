@@ -318,6 +318,30 @@ package PLplot_Traditional is
     Parse_No_Dash    : constant Parse_Mode_Type := 64;  -- Set if leading dash NOT required
     Parse_Skip       : constant Parse_Mode_Type := 128; -- Skip over unrecognized args
 
+    -- FCI (font characterization integer) related constants. 
+    FCI_Mark                : constant Integer := 16#10000000#;
+    FCI_Impossible          : constant Integer := 16#00000000#;
+    FCI_Hexdigit_Mask       : constant Integer := 16#f#;
+    FCI_Hexpower_Mask       : constant Integer := 16#7#;
+    FCI_Hexpower_Impossible : constant Integer := 16#f#;
+    -- These define hexpower values corresponding to each font attribute. 
+    FCI_Family : constant Integer := 16#0#;
+    FCI_Style  : constant Integer := 16#1#;
+    FCI_Weight : constant Integer := 16#2#;
+    -- These are legal values for font family attribute 
+    FCI_Sans   : constant Integer := 16#0#;
+    FCI_Serif  : constant Integer := 16#1#;
+    FCI_Mono   : constant Integer := 16#2#;
+    FCI_Script : constant Integer := 16#3#;
+    FCI_Symbol : constant Integer := 16#4#;
+    -- These are legal values for font style attribute 
+    FCI_Upright : constant Integer := 16#0#;
+    FCI_Italic  : constant Integer := 16#1#;
+    FCI_Oblique : constant Integer := 16#2#;
+    -- These are legal values for font weight attribute 
+    FCI_Medium : constant Integer := 16#0#;
+    FCI_Bold   : constant Integer := 16#1#;
+
     -- Descriptions of map outlines for continents, countries, and US states.
     type Map_Type is (Continents, USA_and_States, Continents_and_Countries, USA_States_and_Continents);
 
@@ -369,7 +393,31 @@ package PLplot_Traditional is
     PL_PARSE_NODASH    : constant Parse_Mode_Type := 16#0040#; -- Set if leading dash NOT required
     PL_PARSE_SKIP      : constant Parse_Mode_Type := 16#0080#; -- Skip over unrecognized args
 
-    -- definitions for the opt argument in plot3dc() and plsurf3d()
+    -- FCI (font characterization integer) related constants. 
+    PL_FCI_MARK                : constant Integer := 16#10000000#;
+    PL_FCI_IMPOSSIBLE          : constant Integer := 16#00000000#;
+    PL_FCI_HEXDIGIT_MASK       : constant Integer := 16#f#;
+    PL_FCI_HEXPOWER_MASK       : constant Integer := 16#7#;
+    PL_FCI_HEXPOWER_IMPOSSIBLE : constant Integer := 16#f#;
+    -- These define hexpower values corresponding to each font attribute. 
+    PL_FCI_FAMILY : constant Integer := 16#0#;
+    PL_FCI_STYLE  : constant Integer := 16#1#;
+    PL_FCI_WEIGHT : constant Integer := 16#2#;
+    -- These are legal values for font family attribute 
+    PL_FCI_SANS   : constant Integer := 16#0#;
+    PL_FCI_SERIF  : constant Integer := 16#1#;
+    PL_FCI_MONO   : constant Integer := 16#2#;
+    PL_FCI_SCRIPT : constant Integer := 16#3#;
+    PL_FCI_SYMBOL : constant Integer := 16#4#;
+    -- These are legal values for font style attribute 
+    PL_FCI_UPRIGHT : constant Integer := 16#0#;
+    PL_FCI_ITALIC  : constant Integer := 16#1#;
+    PL_FCI_OBLIQUE : constant Integer := 16#2#;
+    -- These are legal values for font weight attribute 
+    PL_FCI_MEDIUM : constant Integer := 16#0#;
+    PL_FCI_BOLD   : constant Integer := 16#1#;
+
+    -- Definitions for the opt argument in plot3dc() and plsurf3d()
     DRAW_LINEX  : constant Integer := 1;   -- draw lines parallel to the X axis
     DRAW_LINEY  : constant Integer := 2;   -- draw lines parallel to the Y axis
     DRAW_LINEXY : constant Integer := 3;   -- draw lines parallel to both the X and Y axis
@@ -1155,7 +1203,8 @@ package PLplot_Traditional is
     -- Arrays that could have elements of Plot_Color_Type are merely arrays of 
     -- integers; we have not defined special arrays (e.g., array(somerange) of 
     -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors, 
-    -- or Symbol_Colors.
+    -- or Symbol_Colors. Similarly for Entry_Options which could be an array
+    -- of Legend_Flag_Type and some other arguments. fixme
     -- Routine for drawing discrete line, symbol, or cmap0 legends
     procedure pllegend
        (Legend_Width, Legend_Height           : out Long_Float;
@@ -1165,7 +1214,6 @@ package PLplot_Traditional is
         Background_Color, Bounding_Box_Color  : Plot_Color_Type;
         Bounding_Box_Style                    : Legend_Flag_Type;
         Number_Rows, Number_Columns           : Integer;
-        -- fixme Entry_Options could (should?) be an array of Legend_Flag_Type.
         Entry_Options                         : Integer_Array_1D;
         Text_Offset, Text_Scale, Text_Spacing : Long_Float;
         Text_Justification                    : Long_Float;

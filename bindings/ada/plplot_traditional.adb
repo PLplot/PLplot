@@ -1783,7 +1783,8 @@ package body PLplot_Traditional is
     -- Arrays that could have elements of Plot_Color_Type are merely arrays of 
     -- integers; we have not defined special arrays (e.g., array(somerange) of 
     -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors, 
-    -- or Symbol_Colors.
+    -- or Symbol_Colors. Similarly for Entry_Options which could be an array
+    -- of Legend_Flag_Type and some other arguments. fixme
     -- Routine for drawing discrete line, symbol, or cmap0 legends
     procedure pllegend
        (Legend_Width, Legend_Height           : out Long_Float;
@@ -1793,16 +1794,15 @@ package body PLplot_Traditional is
         Background_Color, Bounding_Box_Color  : Plot_Color_Type;
         Bounding_Box_Style                    : Legend_Flag_Type;
         Number_Rows, Number_Columns           : Integer;
-        -- fixme Entry_Options could (should?) be an array of Legend_Flag_Type.
         Entry_Options                         : Integer_Array_1D;
         Text_Offset, Text_Scale, Text_Spacing : Long_Float;
         Text_Justification                    : Long_Float;
-        Text_Colors                           : Integer_Array_1D; -- Really Plot_Color_Type
+        Text_Colors                           : Integer_Array_1D;
         Label_Text                            : Legend_String_Array_Type;
         Box_Colors, Box_Patterns              : Integer_Array_1D;
         Box_Scales                            : Real_Vector;
         Box_Line_Widths                       : Integer_Array_1D;
-        Line_Colors, Line_Styles, Line_Widths : Integer_Array_1D; --fixme Arrays of  types?
+        Line_Colors, Line_Styles, Line_Widths : Integer_Array_1D;
         Symbol_Colors                         : Integer_Array_1D;
         Symbol_Scales                         : Real_Vector;
         Symbol_Numbers                        : Integer_Array_1D;
