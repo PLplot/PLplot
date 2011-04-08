@@ -1,6 +1,6 @@
 # cmake/modules/octave.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2010  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -73,28 +73,34 @@ if(ENABLE_octave)
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
+  find_program(OCTAVE_CONFIG octave-config)
+  if(OCTAVE_CONFIG)
+    message(STATUS "OCTAVE_CONFIG = ${OCTAVE_CONFIG}")
+  else(OCTAVE_CONFIG)
+    message(STATUS "WARNING: "
+    "octave-config not found. Disabling octave bindings")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+  endif(OCTAVE_CONFIG)
+endif(ENABLE_octave)
+
+if(ENABLE_octave)
   #OCTAVE_VERSION is the (dotted triplet) octave version.
   execute_process(
-    COMMAND ${OCTAVE} --version
-    OUTPUT_VARIABLE _OCTAVE_VERSION
+    COMMAND ${OCTAVE_CONFIG} -p VERSION
+    OUTPUT_VARIABLE OCTAVE_VERSION
     ERROR_VARIABLE OCTAVE_ERROR
     RESULT_VARIABLE return_code
+    OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   if(return_code)
     message(STATUS "OCTAVE_ERROR = ${OCTAVE_ERROR}")
     message(STATUS "WARNING: "
-    "${OCTAVE} --version generates an error (non-zero return code).  Disabling octave bindings")
+    "${OCTAVE_CONFIG} -p VERSION generates an error (non-zero return code).  Disabling octave bindings")
     set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
   endif(return_code)
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
-  string(REGEX REPLACE
-  "^.*version ([0-9]\\.[0-9]\\.[0-9]*).*$" 
-  "\\1"
-  OCTAVE_VERSION
-  ${_OCTAVE_VERSION}
-  )
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
   # Logic that depends on octave version
   transform_version(NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION "2.9.0")
@@ -123,22 +129,35 @@ if(ENABLE_octave)
   # if OCTAVE_INCLUDE_PATH is defined from the previous cmake run should be
   # fine.
   if(NOT DEFINED OCTAVE_INCLUDE_PATH)
+    execute_process(
+    COMMAND ${OCTAVE_CONFIG} -p OCTINCLUDEDIR
+    OUTPUT_VARIABLE OCTAVE_INCLUDE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
     find_path(
     OCTAVE_INCLUDE_PATH
     oct.h
-    PATH_SUFFIXES octave-${OCTAVE_VERSION}/octave
+    PATHS ${OCTAVE_INCLUDE_DIR}
+    PATH_SUFFIXES octave
+    )
+
+    execute_process(
+    COMMAND ${OCTAVE_CONFIG} -p OCTLIBDIR
+    OUTPUT_VARIABLE OCTAVE_LIB_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
     find_library(
     OCTAVE_LIBRARIES
     octave
-    PATH_SUFFIXES octave-${OCTAVE_VERSION}
+    PATHS ${OCTAVE_LIB_DIR}
     )
     
     find_library(
     OCTINTERP_LIBRARIES
     octinterp
-    PATH_SUFFIXES octave-${OCTAVE_VERSION}
+    PATHS ${OCTAVE_LIB_DIR}
     )
 
     if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
