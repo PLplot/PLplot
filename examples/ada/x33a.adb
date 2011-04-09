@@ -1,6 +1,6 @@
 -- -*- coding: utf-8; -*-
 --
--- $Id: x33c.c 11680 2011-03-27 17:57:51Z airwin $
+-- $Id$
 --
 -- Demonstrate most pllegend capability including unicode symbols.
 --
