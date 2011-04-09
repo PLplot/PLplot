@@ -56,6 +56,7 @@ set(ada_STRING_INDICES
   "29"
   "30"
   "31"
+  "33"
   "thick01"
   "thick02"
   "thick03"
@@ -87,6 +88,7 @@ set(ada_STRING_INDICES
   "thick29"
   "thick30"
   "thick31"
+  "thick33"
   )
 
 if(CORE_BUILD)
