@@ -86,6 +86,12 @@ arrays (but not singly dimensioned) are explicitly cast to (const type
 warning messages for the C++ (libplplotcxxd) change because of the
 double use of const in the above "const type * const * name2" change.
 
+(5.9.8) The plarc API has changed in release 5.9.8.  The plarc API now
+has a rotation parameter which will eventually allow for rotated arcs.
+PLplot does not currently support rotated arcs, but the plarc function
+signature has been modified to avoid changing the API when this
+functionality is added.
+
 (5.9.6) We have retired the pbm driver containing the pbm (actually
 portable pixmap) file device. This device is quite primitive and
 poorly maintained. It ignores unicode fonts (i.e., uses the Hershey
@@ -262,7 +268,6 @@ INDEX
 1.4 Documentation redone for our swig-generated Python and Octave bindings
 1.5 Support large polygons
 1.6 Complete set of PLplot parameters now available for Fortran
-1.7 Change to plarc API for rotation support
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -320,6 +325,7 @@ detected
 2.49 Documentation redone for our swig-generated Python and Octave bindings
 2.50 Support large polygons
 2.51 Complete set of PLplot parameters now available for Fortran
+2.52 The plarc function has been added
 
 -1. Important changes we should have mentioned in previous release announcements.
 
@@ -465,13 +471,6 @@ parameters is automatic wherever the "use plplot" statement is used.
 This is extremely convenient for new Fortran 95 apps that use PLplot,
 but, in general, changes will have to be made for existing apps. (See
 announcement XX above for the details).
-
-1.7 Change to plarc API
-
-The plarc API now has a rotation parameter which will eventually allow
-for rotated arcs.  PLplot does not currently support rotated arcs, but
-the plarc function signature has been modified to avoid changing the API
-when this functionality is added.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -1291,3 +1290,8 @@ parameters is automatic wherever the "use plplot" statement is used.
 This is extremely convenient for new Fortran 95 apps that use PLplot,
 but, in general, changes will have to be made for existing apps. (See
 announcement XX above for the details).
+
+2.52 The plarc function has been added
+
+The plarc function allows drawing filled and outlined arcs in PLplot.
+Standard example 3 uses plarc.
