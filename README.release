@@ -17,176 +17,18 @@ file.
 
 Official Notices for Users.
 
-I. As of release 5.9.1 we have removed our previously deprecated
-autotools-based build system.  Instead, use the CMake-based build system
-following the directions in the INSTALL file.
-
-II. As of release 5.9.1 we no longer support Octave-2.1.73 which has a
-variety of run-time issues in our tests of the Octave examples on different
-platforms. In contrast our tests show we get good run-time results with all
-our Octave examples for Octave-3.0.1. Also, that is the recommended stable
-version of Octave at http://www.gnu.org/software/octave/download.html so
-that is the only version of Octave we support at this time.
-
-III. As of release 5.9.1 we have decided for consistency sake to change the
-PLplot stream variables plsc->vpwxmi, plsc->vpwxma, plsc->vpwymi, and
-plsc->vpwyma and the results returned by plgvpw to reflect the exact window
-limit values input by users using plwind. Previously to this change, the
-stream variables and the values returned by plgvpw reflected the internal
-slightly expanded range of window limits used by PLplot so that the user's
-specified limits would be on the graph.  Two users noted this slight
-difference, and we agree with them it should not be there. Note that
-internally, PLplot still uses the expanded ranges so most users results will
-be identical.  However, you may notice some small changes to your plot
-results if you use these stream variables directly (only possible in C/C++)
-or use plgvpw.
-
-IV. As of release 5.9.2 we have set HAVE_PTHREAD (now called
-PL_HAVE_PTHREAD as of release 5.9.8) to ON by default for all
-platforms other than Darwin.  Darwin will follow later once it appears
-the Apple version of X supports it.
-
-V. As of release 5.9.3 our build system requires CMake version 2.6.0 or
-higher.
-
-VI. As of release 5.9.3 we have deprecated the gcw device driver and the
-related gnome2 and pygcw bindings since these are essentially unmaintained.
-For example, the gcw device and associated bindings still depends on the
-plfreetype approach for accessing unicode fonts which has known issues
-(inconsistent text offsets, inconvenient font setting capabilities, and
-incorrect rendering of CTL languages).  To avoid these issues we advise
-using the xcairo device and the externally supplied XDrawable or Cairo
-context associated with the xcairo device and the extcairo device (see
-examples/c/README.cairo) instead. If you still absolutely must use -dev gcw
-or the related gnome2 or pygcw bindings despite the known problems, then
-they can still be accessed by setting PLD_gcw, ENABLE_gnome2, and/or
-ENABLE_pygcw to ON.
-N.B. This announcement has been superseded by the subsequent retirement
-of gcw, gnome2, and pygcw, see announcement XVII.
-
-VII. As of release 5.9.3 we have deprecated the gd device driver which
-implements the png, jpeg, and gif devices.  This device driver is
-essentially unmaintained. For example, it still depends on the plfreetype
-approach for accessing unicode fonts which has known issues (inconsistent
-text offsets, inconvenient font setting capabilities, and incorrect
-rendering of CTL languages).  To avoid these issues for PNG format, we
-advise using the pngcairo or pngqt devices.  To avoid these issues for the
-JPEG format, we advise using the jpgqt device.  PNG is normally considered a
-better raster format than GIF, but if you absolutely require GIF format, we
-advise using the pngcairo or pngqt devices and then downgrading the results
-to the GIF format using the ImageMagick "convert" application.  For those
-platforms where libgd (the dependency of the gd device driver) is accessible
-while the required dependencies of the cairo and/or qt devices are not
-accessible, you can still use these deprecated devices by setting PLD_png,
-PLD_jpeg, or PLD_gif to ON.
-
-VIII. As of release 5.9.3 we have re-enabled the tk, itk, and itcl components
-of PLplot by default that were disabled by default as of release 5.9.1 due
-to segfaults.  The cause of the segfaults was a bug (now fixed) in how
-pthread support was implemented for the Tk-related components of PLplot.
-
-IX. As of release 5.9.4 we have deprecated the pbm device driver (containing
-the pbm device) because glibc detects a catastrophic double free.
-
-X. As of release 5.9.5 we have removed pyqt3 access to PLplot and
-replaced it by pyqt4 access to PLplot (see details below).
-
-XI. As of release 5.9.5 the only method of specifying a non-default compiler
-(and associated compiler options) that we support is the environment
-variable approach, e.g.,
-
-export CC='gcc -g -fvisibility=hidden'
-export CXX='g++ -g -fvisibility=hidden'
-export FC='gfortran -g -fvisibility=hidden'
-
-All other CMake methods of specifying a non-default compiler and associated
-compiler options will not be supported until CMake bug 9220 is fixed, see
-discussion below of the soft-landing re-implementation for details.
-
-XII. As of release 5.9.5 we have retired the hpgl driver (containing the
-hp7470, hp7580, and lj_hpgl devices), the impress driver (containing the imp
-device), the ljii driver (containing the ljii and ljiip devices), and the
-tek driver (containing the conex, mskermit, tek4107, tek4107f, tek4010,
-tek4010f, versaterm, vlt, and xterm devices).  Retirement means we have
-removed the build options which would allow these devices to build and
-install.  Recent tests have shown a number of run-time issues (hpgl,
-impress, and ljii) or build-time issues (tek) with these devices, and as far
-as we know there is no more user interest in them. Therefore, we have
-decided to retire these devices rather than fix them.
-
-XIII. As of release 5.9.6 we have retired the pbm driver containing the pbm
-(actually portable pixmap) file device. This device is quite primitive and
-poorly maintained. It ignores unicode fonts (i.e., uses the Hershey font
-fallback), falls back to ugly software fills, doesn't support alpha
-transparency, etc.  It also has a serious run-time issue with example 2
-(double free detected by glibc) which probably indicates some fundamental
-issue with the 100 colours in cmap0 for that example. For those who really
-need portable pixmap results, we suggest using the ImageMagick convert
-programme, e.g., "convert examples/x24c01.pngqt test.ppm" or "convert
-examples/x24c01.pngcairo test.ppm" to produce good-looking portable pixmap
-results from our best png device results.
-
-XIV. As of release 5.9.6 we have retired the linuxvga driver
-containing the linuxvga interactive device.  This device is quite
-primitive, difficult to test, and poorly maintained. It ignores
-unicode fonts (i.e., uses the Hershey font fallback), falls back to
-ugly software fills, doesn't support alpha transparency, etc.  It is
-Linux only, can only be run as root, and svgalib (the library used by
-linuxsvga) is not supported by some mainstream (e.g., Intel) chipsets.
-All of these characteristics make it difficult to even test this
-device much less use it for anything serious.  Finally, it has had a
-well-known issue for years (incorrect colours) which has never been
-fixed indicating nobody is interested in maintaining this device.
-
-XV. As of release 5.9.6 we have retired our platform support of djgpp
-that used to reside in sys/dos/djgpp.  The developer (Andrew Roach)
-who used to maintain those support files for djgpp feels that the
-djgpp platform is no longer actively developed, and he no longer uses
-djgpp himself.
-
-XVI. As of release 5.9.6 plpoin results for ascii codes 92, 94, and 95
-are changed from centred dot, degree symbol, and centred dot glyphs to
-the correct backslash, caret, and underscore glyphs that are
-associated with those ascii indices.  This change is consistent with
-the documentation of plpoin and solves a long-standing issue with
-backslash, caret, and underscore ascii characters in character strings
-used for example by pl[mp]tex.  Those who need access to a centred dot
-with plpoin should use index 1.  The degree symbol is no longer
-accessible with plpoin, but it is available in ordinary text input to
-PLplot as Hershey escape "#(718)", where 718 is the Hershey index of
-the degree symbol, unicode escape "#[0x00B0]" where 0x00B0 is the
-unicode index for the degree symbol or direct UTF8 unicode string "°".
-
-XVII. As of release 5.9.6 we have retired the gcw device driver and
-the related gnome2 and pygcw bindings since these are unmaintained and
-there are good replacements.  These components of PLplot were
-deprecated as of release 5.9.3.  A good replacement for the gcw device
-is either the xcairo or qtwidget device.  A good replacement for the
-gnome2 bindings is the externally supplied XDrawable or Cairo context
-associated with the xcairo device and the extcairo device (see
-examples/c/README.cairo).  A good replacement for pygcw is our new
-pyqt4 bindings for PLplot.
-
-XVIII. As of release 5.9.6 we have deprecated support for the python
-Numeric array extensions. Numeric is no longer maintained and users
-of Numeric are advised to migrate to numpy. Numpy has been the standard
-for PLplot for some time. If numpy is not present PLplot will now
-disable python by default. If you still require Numeric support in the
-short term then set USE_NUMERIC to ON in cmake. The PLplot support
-for Numeric will be dropped in a future release.
-
-XIX. As of release 5.9.8, and for unicode-aware devices we now follow
-what is done for the Hershey font case for epsilon, theta, and phi.
-This means the #ge, #gh, and #gf escapes now give users the Greek
-lunate epsilon, the ordinary Greek lower case theta, and the Greek
-symbol phi for Unicode fonts just like has occurred since the dawn of
-PLplot history for the Hershey font case.  Previously these legacy escapes
-were assigned to ordinary Greek lower-case epsilon, the Greek symbol theta
-(= script theta), and the ordinary Greek lower case phi for unicode
-fonts inconsistently with what occurred for Hershey fonts.  This change
-gets rid of this inconsistency, that is the #g escapes should give
-the best unicode approximation to the Hershey glyph result that is possible
-for unicode-aware devices.
+(5.9.8) For unicode-aware devices we now follow what is done for the
+Hershey font case for epsilon, theta, and phi.  This means the #ge,
+#gh, and #gf escapes now give users the Greek lunate epsilon, the
+ordinary Greek lower case theta, and the Greek symbol phi for Unicode
+fonts just like has occurred since the dawn of PLplot history for the
+Hershey font case.  Previously these legacy escapes were assigned to
+ordinary Greek lower-case epsilon, the Greek symbol theta (= script
+theta), and the ordinary Greek lower case phi for unicode fonts
+inconsistently with what occurred for Hershey fonts.  This change gets
+rid of this inconsistency, that is the #g escapes should give the best
+unicode approximation to the Hershey glyph result that is possible for
+unicode-aware devices.
 
 In general we encourage users of unicode-aware devices who might
 dislike the Greek glyph Hershey-lookalike choices they get with the
@@ -195,20 +37,20 @@ legacy #g escapes to use instead either PLplot unicode escapes (e.g.,
 example 23) or better yet, UTF-8 strings (e.g., "ε") to specify
 exactly what unicode glyph they want.
 
-XX. As of release 5.9.8, the full set of PLplot constants have been
-made available to our Fortran 95 users as part of the plplot module.
-This means those users will have to remove any parameter statements
-where they have previously defined the PLplot constants (whose names
-typically start with "PL_" for themselves.  For a complete list of the
-affected constants, see the #defines in swig-support/plplotcapi.i
-which are used internally to help generate the plplot module.  See
-also Index item 2.51 below.
+(5.9.8) The full set of PLplot constants have been made available to
+our Fortran 95 users as part of the plplot module.  This means those
+users will have to remove any parameter statements where they have
+previously defined the PLplot constants (whose names typically start
+with "PL_" for themselves.  For a complete list of the affected
+constants, see the #defines in swig-support/plplotcapi.i which are
+used internally to help generate the plplot module.  See also Index
+item 2.51 below.
 
-XXI. As of release 5.9.8 there has been widespread const modifier
-changes in the API for libplplotd and libplplotcxxd.  Those
-backwards-incompatible API changes are indicated in the usual way by a
-soversion bump in those two libraries which will force all apps and
-libraries that depend on those two libraries to be rebuilt.
+(5.9.8) There has been widespread const modifier changes in the API
+for libplplotd and libplplotcxxd.  Those backwards-incompatible API
+changes are indicated in the usual way by a soversion bump in those
+two libraries which will force all apps and libraries that depend on
+those two libraries to be rebuilt.
 
 Specifically, we have changed the following arguments in the C library
 (libplplotd) case
@@ -221,17 +63,17 @@ and the following arguments in the C++ library (libplplotcxxd) case
 type * name1 ==> const type * name1
 type * name1 ==> const type * const * name2
 
-where name1 is the name of a singly dimensioned array whose values
-are not changed internally by the PLplot libraries and
-name2 is the name of a doubly dimensioned array whose values
-are not changed internally by the PLplot libraries.
+where name1 is the name of a singly dimensioned array whose values are
+not changed internally by the PLplot libraries and name2 is the name
+of a doubly dimensioned array whose values are not changed internally
+by the PLplot libraries.
 
 The general documentation and safety justification for such const
 modifier changes to our API is given in
 http://www.cprogramming.com/tutorial/const_correctness.html.
-Essentially, the above const modifier changes constitute our
-guarantee that the associated arrays are not changed internally
-by the PLplot libraries.
+Essentially, the above const modifier changes constitute our guarantee
+that the associated arrays are not changed internally by the PLplot
+libraries.
 
 Although it is necessary to rebuild all apps and libraries that depend
 on libplplotd and/or libplplotcxxd, that rebuild should be possible
@@ -243,6 +85,166 @@ arrays (but not singly dimensioned) are explicitly cast to (const type
 **).  However, such source code changes will not be necessary to avoid
 warning messages for the C++ (libplplotcxxd) change because of the
 double use of const in the above "const type * const * name2" change.
+
+(5.9.6) We have retired the pbm driver containing the pbm (actually
+portable pixmap) file device. This device is quite primitive and
+poorly maintained. It ignores unicode fonts (i.e., uses the Hershey
+font fallback), falls back to ugly software fills, doesn't support
+alpha transparency, etc.  It also has a serious run-time issue with
+example 2 (double free detected by glibc) which probably indicates
+some fundamental issue with the 100 colours in cmap0 for that
+example. For those who really need portable pixmap results, we suggest
+using the ImageMagick convert programme, e.g., "convert
+examples/x24c01.pngqt test.ppm" or "convert examples/x24c01.pngcairo
+test.ppm" to produce good-looking portable pixmap results from our
+best png device results.
+
+(5.9.6) We have retired the linuxvga driver containing the linuxvga
+interactive device.  This device is quite primitive, difficult to
+test, and poorly maintained. It ignores unicode fonts (i.e., uses the
+Hershey font fallback), falls back to ugly software fills, doesn't
+support alpha transparency, etc.  It is Linux only, can only be run as
+root, and svgalib (the library used by linuxsvga) is not supported by
+some mainstream (e.g., Intel) chipsets.  All of these characteristics
+make it difficult to even test this device much less use it for
+anything serious.  Finally, it has had a well-known issue for years
+(incorrect colours) which has never been fixed indicating nobody is
+interested in maintaining this device.
+
+(5.9.6) We have retired our platform support of djgpp that used to
+reside in sys/dos/djgpp.  The developer (Andrew Roach) who used to
+maintain those support files for djgpp feels that the djgpp platform
+is no longer actively developed, and he no longer uses djgpp himself.
+
+(5.9.6) We have changed plpoin results for ascii codes 92, 94, and 95
+from centred dot, degree symbol, and centred dot glyphs to the correct
+backslash, caret, and underscore glyphs that are associated with those
+ascii indices.  This change is consistent with the documentation of
+plpoin and solves a long-standing issue with backslash, caret, and
+underscore ascii characters in character strings used for example by
+pl[mp]tex.  Those who need access to a centred dot with plpoin should
+use index 1.  The degree symbol is no longer accessible with plpoin,
+but it is available in ordinary text input to PLplot as Hershey escape
+"#(718)", where 718 is the Hershey index of the degree symbol, unicode
+escape "#[0x00B0]" where 0x00B0 is the unicode index for the degree
+symbol or direct UTF8 unicode string "°".
+
+(5.9.6) We have retired the gcw device driver and the related gnome2
+and pygcw bindings since these are unmaintained and there are good
+replacements.  These components of PLplot were deprecated as of
+release 5.9.3.  A good replacement for the gcw device is either the
+xcairo or qtwidget device.  A good replacement for the gnome2 bindings
+is the externally supplied XDrawable or Cairo context associated with
+the xcairo device and the extcairo device (see
+examples/c/README.cairo).  A good replacement for pygcw is our new
+pyqt4 bindings for PLplot.
+
+(5.9.6) We have deprecated support for the python Numeric array
+extensions. Numeric is no longer maintained and users of Numeric are
+advised to migrate to numpy. Numpy has been the standard for PLplot
+for some time. If numpy is not present PLplot will now disable python
+by default. If you still require Numeric support in the short term
+then set USE_NUMERIC to ON in cmake. The PLplot support for Numeric
+will be dropped in a future release.
+
+(5.9.5) We have removed pyqt3 access to PLplot and replaced it by
+pyqt4 access to PLplot (see details below).
+
+(5.9.5) The only method of specifying a non-default compiler (and
+associated compiler options) that we support is the environment
+variable approach, e.g.,
+
+export CC='gcc -g -fvisibility=hidden'
+export CXX='g++ -g -fvisibility=hidden'
+export FC='gfortran -g -fvisibility=hidden'
+
+All other CMake methods of specifying a non-default compiler and
+associated compiler options will not be supported until CMake bug 9220
+is fixed, see discussion below of the soft-landing re-implementation
+for details.
+
+(5.9.5) We have retired the hpgl driver (containing the hp7470,
+hp7580, and lj_hpgl devices), the impress driver (containing the imp
+device), the ljii driver (containing the ljii and ljiip devices), and
+the tek driver (containing the conex, mskermit, tek4107, tek4107f,
+tek4010, tek4010f, versaterm, vlt, and xterm devices).  Retirement
+means we have removed the build options which would allow these
+devices to build and install.  Recent tests have shown a number of
+run-time issues (hpgl, impress, and ljii) or build-time issues (tek)
+with these devices, and as far as we know there is no more user
+interest in them. Therefore, we have decided to retire these devices
+rather than fix them.
+
+(5.9.4) We have deprecated the pbm device driver (containing the pbm
+device) because glibc detects a catastrophic double free.
+
+(5.9.3) Our build system requires CMake version 2.6.0 or higher.
+
+(5.9.3) We have deprecated the gcw device driver and the related
+gnome2 and pygcw bindings since these are essentially unmaintained.
+For example, the gcw device and associated bindings still depends on
+the plfreetype approach for accessing unicode fonts which has known
+issues (inconsistent text offsets, inconvenient font setting
+capabilities, and incorrect rendering of CTL languages).  To avoid
+these issues we advise using the xcairo device and the externally
+supplied XDrawable or Cairo context associated with the xcairo device
+and the extcairo device (see examples/c/README.cairo) instead. If you
+still absolutely must use -dev gcw or the related gnome2 or pygcw
+bindings despite the known problems, then they can still be accessed
+by setting PLD_gcw, ENABLE_gnome2, and/or ENABLE_pygcw to ON.
+
+(5.9.3) We have deprecated the gd device driver which implements the
+png, jpeg, and gif devices.  This device driver is essentially
+unmaintained. For example, it still depends on the plfreetype approach
+for accessing unicode fonts which has known issues (inconsistent text
+offsets, inconvenient font setting capabilities, and incorrect
+rendering of CTL languages).  To avoid these issues for PNG format, we
+advise using the pngcairo or pngqt devices.  To avoid these issues for
+the JPEG format, we advise using the jpgqt device.  PNG is normally
+considered a better raster format than GIF, but if you absolutely
+require GIF format, we advise using the pngcairo or pngqt devices and
+then downgrading the results to the GIF format using the ImageMagick
+"convert" application.  For those platforms where libgd (the
+dependency of the gd device driver) is accessible while the required
+dependencies of the cairo and/or qt devices are not accessible, you
+can still use these deprecated devices by setting PLD_png, PLD_jpeg,
+or PLD_gif to ON.
+
+(5.9.3) We have re-enabled the tk, itk, and itcl components of PLplot
+by default that were disabled by default as of release 5.9.1 due to
+segfaults.  The cause of the segfaults was a bug (now fixed) in how
+pthread support was implemented for the Tk-related components of
+PLplot.
+
+(5.9.2) We have set HAVE_PTHREAD (now called PL_HAVE_PTHREAD as of
+release 5.9.8) to ON by default for all platforms other than Darwin.
+Darwin will follow later once it appears the Apple version of X
+supports it.
+
+(5.9.1) We have removed our previously deprecated autotools-based
+build system.  Instead, use the CMake-based build system following the
+directions in the INSTALL file.
+
+(5.9.1) We no longer support Octave-2.1.73 which has a variety of
+run-time issues in our tests of the Octave examples on different
+platforms. In contrast our tests show we get good run-time results
+with all our Octave examples for Octave-3.0.1. Also, that is the
+recommended stable version of Octave at
+http://www.gnu.org/software/octave/download.html so that is the only
+version of Octave we support at this time.
+
+(5.9.1) We have decided for consistency sake to change the PLplot
+stream variables plsc->vpwxmi, plsc->vpwxma, plsc->vpwymi, and
+plsc->vpwyma and the results returned by plgvpw to reflect the exact
+window limit values input by users using plwind. Previously to this
+change, the stream variables and the values returned by plgvpw
+reflected the internal slightly expanded range of window limits used
+by PLplot so that the user's specified limits would be on the graph.
+Two users noted this slight difference, and we agree with them it
+should not be there. Note that internally, PLplot still uses the
+expanded ranges so most users results will be identical.  However, you
+may notice some small changes to your plot results if you use these
+stream variables directly (only possible in C/C++) or use plgvpw.
 
 INDEX
 
