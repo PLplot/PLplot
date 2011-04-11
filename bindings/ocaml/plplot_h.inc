@@ -108,7 +108,7 @@
 [mlname(plsfam)] void c_plsfam ( int fam, int num, int bmax );
 [mlname(plsfci)] void c_plsfci ( long long fci );
 [mlname(plsfnam)] void c_plsfnam ( [string] const char * fnam );
-[mlname(plsfont)] void c_plsfont ( int family, int style, int weight );
+[mlname(plsfont)] void c_plsfont ( enum plplot_fci_family_enum family, enum plplot_fci_style_enum style, enum plplot_fci_weight_enum weight );
 [mlname(plsmaj)] void c_plsmaj ( double def, double scale );
 [mlname(plsmin)] void c_plsmin ( double def, double scale );
 [mlname(plsori)] void c_plsori ( int ori );

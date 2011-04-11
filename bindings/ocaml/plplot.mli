@@ -628,6 +628,22 @@ and plplot_colorbar_enum =
   | PL_COLORBAR_CAP_HIGH
   | PL_COLORBAR_SHADE_LABEL
 and plplot_colorbar_opt = plplot_colorbar_enum list
+and plplot_fci_family_enum =
+  | PL_FCI_FAMILY_UNCHANGED
+  | PL_FCI_SANS
+  | PL_FCI_SERIF
+  | PL_FCI_MONO
+  | PL_FCI_SCRIPT
+  | PL_FCI_SYMBOL
+and plplot_fci_style_enum =
+  | PL_FCI_STYLE_UNCHANGED
+  | PL_FCI_UPRIGHT
+  | PL_FCI_ITALIC
+  | PL_FCI_OBLIQUE
+and plplot_fci_weight_enum =
+  | PL_FCI_WEIGHT_UNCHANGED
+  | PL_FCI_MEDIUM
+  | PL_FCI_BOLD
 external pl_setcontlabelformat : int -> int -> unit
   = "camlidl_plplot_core_c_pl_setcontlabelformat"
 external pl_setcontlabelparam : float -> float -> float -> int -> unit
@@ -848,7 +864,8 @@ external plsesc : char -> unit = "camlidl_plplot_core_c_plsesc"
 external plsfam : int -> int -> int -> unit = "camlidl_plplot_core_c_plsfam"
 external plsfci : int64 -> unit = "camlidl_plplot_core_c_plsfci"
 external plsfnam : string -> unit = "camlidl_plplot_core_c_plsfnam"
-external plsfont : int -> int -> int -> unit
+external plsfont : plplot_fci_family_enum -> plplot_fci_style_enum ->
+  plplot_fci_weight_enum -> unit
   = "camlidl_plplot_core_c_plsfont"
 external plsmaj : float -> float -> unit = "camlidl_plplot_core_c_plsmaj"
 external plsmin : float -> float -> unit = "camlidl_plplot_core_c_plsmin"

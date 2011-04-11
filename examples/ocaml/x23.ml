@@ -215,6 +215,25 @@ let weight = [|
   "bold";
 |]
 
+let family_of_int = [|
+  PL_FCI_SANS;
+  PL_FCI_SERIF;
+  PL_FCI_MONO;
+  PL_FCI_SCRIPT;
+  PL_FCI_SYMBOL;
+|]
+
+let style_of_int = [|
+  PL_FCI_UPRIGHT;
+  PL_FCI_ITALIC;
+  PL_FCI_OBLIQUE;
+|]
+
+let weight_of_int = [|
+  PL_FCI_MEDIUM;
+  PL_FCI_BOLD;
+|]
+
 let () =
   plparseopts Sys.argv [PL_PARSE_FULL];
 
@@ -320,7 +339,8 @@ let () =
                 style.(style_index)
                 weight.(weight_index);
           | 12 ->
-              plsfont family_index style_index weight_index;
+              plsfont family_of_int.(family_index) style_of_int.(style_index)
+                weight_of_int.(weight_index);
               sprintf
                 "Page 13, %s, %s, %s:  The quick brown fox jumps over the lazy dog"
                 family.(family_index)

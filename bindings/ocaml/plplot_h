@@ -463,7 +463,7 @@ c_plsfci(PLUNICODE fci);
 c_plsfnam(const char *fnam);
 
  void
-c_plsfont(PLINT family, PLINT style, PLINT weight);
+c_plsfont( enum plplot_fci_family_enum family, enum plplot_fci_style_enum style, enum plplot_fci_weight_enum weight);
 
 /*
  void

@@ -96,6 +96,29 @@ enum plplot_colorbar_enum {
 };
 typedef [set] enum plplot_colorbar_enum plplot_colorbar_opt;
 
+enum plplot_fci_family_enum {
+    // = These are legal values for font family attribute
+    PL_FCI_FAMILY_UNCHANGED = -1,
+    PL_FCI_SANS = 0x0,
+    PL_FCI_SERIF = 0x1,
+    PL_FCI_MONO = 0x2,
+    PL_FCI_SCRIPT = 0x3,
+    PL_FCI_SYMBOL = 0x4
+};
+enum plplot_fci_style_enum {
+    // = These are legal values for font style attribute
+    PL_FCI_STYLE_UNCHANGED = -1,
+    PL_FCI_UPRIGHT = 0x0,
+    PL_FCI_ITALIC = 0x1,
+    PL_FCI_OBLIQUE = 0x2
+};
+enum plplot_fci_weight_enum {
+    // = These are legal values for font weight attribute
+    PL_FCI_WEIGHT_UNCHANGED = -1,
+    PL_FCI_MEDIUM = 0x0,
+    PL_FCI_BOLD = 0x1
+};
+
 // Any function which has a nonzero_error_int return type will raise
 // an Invalid_argument error if the return value is <> 0.
 typedef [errorcheck(plplot_check_nonzero_result), errorcode] int nonzero_error_int;
