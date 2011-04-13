@@ -125,10 +125,10 @@ PLBOOL_INPUT_TYPEMAP(PLBOOL, jboolean, boolean, "Z");
 %typemap(freearg) TYPE *OUTPUT, TYPE &OUTPUT ""
 
 %typemap(argout) TYPE *OUTPUT, TYPE &OUTPUT 
-{
+%{
   JNITYPE jvalue = (JNITYPE)temp$argnum;
   JCALL4(Set##JAVATYPE##ArrayRegion, jenv, $input, 0, 1, &jvalue);
-}
+%}
 
 %typemap(typecheck) TYPE *INOUT = TYPECHECKTYPE;
 %typemap(typecheck) TYPE &INOUT = TYPECHECKTYPE;
