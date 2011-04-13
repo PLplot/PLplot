@@ -95,26 +95,26 @@ typedef void*  PLPointer;
 #define PL_HIST_NOEXPAND           8
 #define PL_HIST_NOEMPTY            16
 
-//flags used for position argument of both pllegend and plcolorbar 
-#define PL_POSITION_LEFT             1
-#define PL_POSITION_RIGHT            2
+//flags used for position argument of both pllegend and plcolorbar
+#define PL_POSITION_LEFT           1
+#define PL_POSITION_RIGHT          2
 #define PL_POSITION_TOP            4
-#define PL_POSITION_BOTTOM            8
-#define PL_POSITION_INSIDE           16
-#define PL_POSITION_OUTSIDE          32
-#define PL_POSITION_VIEWPORT         64
-#define PL_POSITION_SUBPAGE          128
+#define PL_POSITION_BOTTOM         8
+#define PL_POSITION_INSIDE         16
+#define PL_POSITION_OUTSIDE        32
+#define PL_POSITION_VIEWPORT       64
+#define PL_POSITION_SUBPAGE        128
 
 
 // Flags for pllegend.
-#define PL_LEGEND_NONE            1
-#define PL_LEGEND_COLOR_BOX       2
-#define PL_LEGEND_LINE            4
-#define PL_LEGEND_SYMBOL          8
-#define PL_LEGEND_TEXT_LEFT       16
-#define PL_LEGEND_BACKGROUND      32
-#define PL_LEGEND_BOUNDING_BOX    64
-#define PL_LEGEND_ROW_MAJOR       128
+#define PL_LEGEND_NONE              1
+#define PL_LEGEND_COLOR_BOX         2
+#define PL_LEGEND_LINE              4
+#define PL_LEGEND_SYMBOL            8
+#define PL_LEGEND_TEXT_LEFT         16
+#define PL_LEGEND_BACKGROUND        32
+#define PL_LEGEND_BOUNDING_BOX      64
+#define PL_LEGEND_ROW_MAJOR         128
 
 // Flags for plcolorbar
 #define PL_COLORBAR_LABEL_LEFT      1
@@ -460,26 +460,26 @@ pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
 void
 pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
-            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
-            PLINT bg_color, PLINT bb_color, PLINT bb_style,
-            PLINT nrow, PLINT ncolumn,
-            PLINT n, const PLINT *Array,
-            PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-            PLFLT text_justification,
-            const PLINT *ArrayCk, const char **ArrayCk,
-            const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
-            const PLFLT *ArrayCkNull, const PLINT *ArrayCkNull,
-            const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
-            const PLINT *ArrayCkNull,
-            const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
-            const PLINT *ArrayCkNull, const char **ArrayCk );
+          PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+          PLINT bg_color, PLINT bb_color, PLINT bb_style,
+          PLINT nrow, PLINT ncolumn,
+          PLINT n, const PLINT *Array,
+          PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+          PLFLT text_justification,
+          const PLINT *ArrayCk, const char **ArrayCk,
+          const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
+          const PLFLT *ArrayCkNull, const PLINT *ArrayCkNull,
+          const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
+          const PLINT *ArrayCkNull,
+          const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
+          const PLINT *ArrayCkNull, const char **ArrayCk );
 
 #if 0
 void
 plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
-              PLFLT ticks, PLFLT sub_ticks,
-              const char *axis_opts, const char *label,
-              PLINT n, const PLFLT *Array, const PLFLT *ArrayCk );
+            PLFLT ticks, PLFLT sub_ticks,
+            const char *axis_opts, const char *label,
+            PLINT n, const PLFLT *Array, const PLFLT *ArrayCk );
 #endif
 
 void
