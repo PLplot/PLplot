@@ -785,7 +785,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
     strncpy(mapform_funcstr, lua_tostring(L, $input), 255);
     myL = L;
   } else 
-    SWIG_fail_arg("$symname", $argnum, "$1_type")
+    SWIG_fail_arg("$symname", $argnum, "$1_type");
 }
 %typemap(freearg) mapform_func mapform {
   mapform_funcstr[0]='\0';
@@ -807,7 +807,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
     strncpy(label_funcstr, lua_tostring(L, $input), 255);
     myL = L;
   } else 
-    SWIG_fail_arg("$symname", $argnum, "$1_type")
+    SWIG_fail_arg("$symname", $argnum, "$1_type");
 }
 %typemap(freearg) label_func lf {
 }
@@ -830,7 +830,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
       myL = L;
     }
   } else 
-    SWIG_fail_arg("$symname", $argnum, "$1_type")
+    SWIG_fail_arg("$symname", $argnum, "$1_type");
 }
 %typemap(freearg) pltr_func pltr {
   mypltr_funcstr[0]='\0';
@@ -851,7 +851,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
     strncpy(myct_funcstr, funcstr, 255);
     myL = L;
   } else 
-    SWIG_fail_arg("$symname", $argnum, "$1_type")
+    SWIG_fail_arg("$symname", $argnum, "$1_type");
 }
 /* you can omit the ct func */
 %typemap(default) ct_func ctf {
