@@ -176,8 +176,25 @@ dsource_LIST="bindings/d/*.d"
 # D part of examples/d
 dsource_LIST="$dsource_LIST examples/d/*.d"
 
+export swig_csource_LIST
+
+# API description for Swig being sure to ignore the generated file,
+# bindings/swig-support/swig_documentation.i
+swig_csource_LIST=bindings/swig-support/plplotcapi.i
+
+# Use specific names here for each C-like file controlling specific
+# language bindings since some files (e.g., bindings/python/fragments.i)
+# are copied from swig itself so don't mess with them.  Also, ignore octave
+# since that C++-like file goes under swig_cppsource_LIST.
+swig_csource_LIST="$swig_csource_LIST bindings/java/plplotjavac.i"
+swig_csource_LIST="$swig_csource_LIST bindings/lua/plplotluac.i"
+swig_csource_LIST="$swig_csource_LIST bindings/python/plplotcmodule.i"
+
+export swig_cppsource_LIST
+swig_cppsource_LIST=bindings/octave/plplot_octave.i
+
 # Check that source file lists actually refer to files.
-for source in $csource_LIST $cppsource_LIST $javasource_LIST $dsource_LIST ; do
+for source in $csource_LIST $cppsource_LIST $javasource_LIST $dsource_LIST $swig_csource_LIST $swig_cppsource_LIST; do
     if [ ! -f $source ] ; then
 	echo $source is not a regular file so this script will not work without further editing.
 	exit 1
@@ -193,7 +210,7 @@ transform_source()
     u_command="uncrustify -c uncrustify.cfg -q -l $2"
     # $3 is either "comments" to indicate comments will be transformed
     # using scripts/convert_comment.py or any other string (or
-    # nothing) to indicate uncrustify will be used.
+    # nothing) to indicate comment style processing will not be used.
     if [ "$3" = "comments" ] ; then
         c_command="scripts/convert_comment.py"
 	# Check all files for run-time errors with the python script.
@@ -215,22 +232,48 @@ transform_source()
         c_command="cat -"
     fi
 
+    # Swig-language *.i files are approximately the same as C or C++
+    # other than the %whatever swig directives.  $4 is either "swig"
+    # to indicate a sed script should be applied to get rid of issues
+    # imposed by uncrustify and which is not acceptable in swig
+    # directives or any other string (or nothing) to indicate that
+    # this swig correction should not be applied.
+    if [ "$4" = "swig" ] ; then
+	# Splitting s_command into multiple invocations of sed is
+        # required (for reasons I have not figured out) in order for
+        # the changes to be done as designed.
+	# The first two stanzas are to deal with uncrustify
+        # splitting both %} and %{ by newline characters and
+        # also getting rid of any surrounding blanks.
+        # The next two stanzas are to take care of blanks inserted by
+        # uncrustify after % and to get rid of any
+        # uncrustify-generated indentation for all % swig directives.
+	# The next two stanzas are to place %} and %{ on individually
+	# separate lines.
+	# The next two stanzas are to deal with $ variables.
+        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "s?\$ \* ?\$\*?g" -e "s?\$ & ?\$\&?g"'
+    else
+        s_command="cat -"
+    fi
+
     # Process $c_command after $u_command so that comments will be rendered
     # in standard form by uncrustify before scripts/convert_comment.py
-    # is run.
+    # is run.  Process the $s_command (with eval because of the
+    # quotes) after the $c_command to correct introduced swig styling
+    # errors (if in fact you are styling swig source).
 
     for language_source in $1 ; do
-	$u_command < $language_source | $c_command | \
+	$u_command < $language_source | $c_command | eval $s_command | \
 	    cmp --quiet $language_source -
 	if [ "$?" -ne 0 ] ; then
 	    ls $language_source
 	    if [ "$diff" = "ON" ] ; then
-		$u_command < $language_source | $c_command | \
-		    diff $diff_options $language_source -
+		$u_command < $language_source | $c_command | eval $s_command | \
+		diff $diff_options $language_source -
 	    fi
 
 	    if [ "$apply" = "ON" ] ; then
-		$u_command < $language_source | $c_command >| /tmp/temporary.file
+		$u_command < $language_source | $c_command | eval $s_command >| /tmp/temporary.file
 		mv -f /tmp/temporary.file $language_source
 	    fi
 	fi
@@ -241,3 +284,5 @@ transform_source "$csource_LIST" C "comments"
 transform_source "$cppsource_LIST" CPP "comments"
 transform_source "$javasource_LIST" JAVA "comments"
 transform_source "$dsource_LIST" D "comments"
+transform_source "$swig_csource_LIST" C "comments" "swig"
+transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
