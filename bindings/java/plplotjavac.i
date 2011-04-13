@@ -110,7 +110,7 @@ PLBOOL_INPUT_TYPEMAP( PLBOOL, jboolean, boolean, "Z" );
 %typemap( javadirectorout ) TYPE * OUTPUT, TYPE & OUTPUT "$javacall"
 
 %typemap( in ) TYPE * OUTPUT( $*1_ltype temp ), TYPE &OUTPUT( $*1_ltype temp )
-%{
+{
     if ( !$input )
     {
         SWIG_JavaThrowException( jenv, SWIG_JavaNullPointerException, "array null" );
@@ -122,7 +122,7 @@ PLBOOL_INPUT_TYPEMAP( PLBOOL, jboolean, boolean, "Z" );
         return $null;
     }
     $1 = &temp;
-%}
+}
 
 %typemap( directorin, descriptor = JNIDESC ) TYPE & OUTPUT
 %{
@@ -130,16 +130,16 @@ PLBOOL_INPUT_TYPEMAP( PLBOOL, jboolean, boolean, "Z" );
 %}
 
 %typemap( directorin, descriptor = JNIDESC, warning = "Need to provide TYPE *OUTPUT directorin typemap, TYPE array length is unknown" ) TYPE * OUTPUT
-%{
-%}
+{
+}
 
 %typemap( freearg ) TYPE * OUTPUT, TYPE & OUTPUT ""
 
 %typemap( argout ) TYPE * OUTPUT, TYPE & OUTPUT
-%{
+{
     JNITYPE jvalue = (JNITYPE) temp$argnum;
     JCALL4( Set ## JAVATYPE ## ArrayRegion, jenv, $input, 0, 1, &jvalue );
-%}
+}
 
 %typemap( typecheck ) TYPE * INOUT = TYPECHECKTYPE;
 %typemap( typecheck ) TYPE &INOUT  = TYPECHECKTYPE;
