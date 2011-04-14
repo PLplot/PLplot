@@ -90,14 +90,16 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
       # to explicitly turn graphics AA off any more with
       # DRIVEROPT='-drvopt graphics_anti_aliasing=1'
 	DRIVEROPT=
+    elif [ $exe = "09" -o $exe = "21" ] ; then
+      # Text clipping.
+        DRIVEROPT='-drvopt text_clipping=1'
+    elif [ $exe = "27" ] ; then
+      # even-odd fill rule (a general option rather than a driver option)
+      # generates more interesting results.
+        DRIVEROPT='-eofill'
     else
-	if [ $exe = "09" -o $exe = "21" ] ; then
-        # Text clipping.
-            DRIVEROPT='-drvopt text_clipping=1'
-	else
-        # Otherwise use default graphics AA which is full AA 
-            DRIVEROPT=
-	fi
+      # Otherwise use default graphics AA which is full AA 
+        DRIVEROPT=
     fi
     echo Working on example ${exe} using DRIVEROPT of $DRIVEROPT
 
