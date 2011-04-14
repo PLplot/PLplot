@@ -88,8 +88,17 @@
 	  array(26,  2, 1, "
 	<p>Demo of multi-lingual unicode versions of the first page of example 4.</p>
 	\n"),
-	  array(27, 10, 1, "
-	<p>Demo of drawing 'spirograph' curves - epitrochoids, cycolids, roulettes.</p>
+	  array(27, 19, 1, "
+	<p>Demo of drawing and filling 'spirograph' curves -
+epitrochoids, cycolids, roulettes.  We have specified the general
+PLplot option '-eofill' when generating these figures.  That means the
+spirographic curves will be filled using the even-odd fill rule rather
+than the (default) non-zero winding number fill rule.  The motivation
+for this choice is the even-odd rule produces more 'interesting'
+looking results than would be produced by the non-zero rule (where a
+much larger fraction of the complex spirographic curve would be
+filled).
+     	</p>
 	\n"),
 	  array(28,  5, 1, "
 	<p>Demo of 3-d writing of text (plmtex3 and plptex3).</p>
