@@ -5,13 +5,40 @@ The files in this directory are close translations of the PLplot demos
 written in C (see directory above ../c/).  They use the PDL and
 PDL::Graphics::PLplot modules distributed with PDL.
 
-Here is a recipe for building and installing the latest version of that
-module.
+Instructions for building and installing Doug Hunt's latest version of
+PDL::Graphics::PLplot consistently with the latest version of PLplot
+that you have installed.
 
-Instructions for building and installing Doug Hunt's latest version of the
-PDL Graphics PLplot module (version 0.47 at the time of writing)
+# PLplot is a prerequisite so install the latest PLplot by running the
+# "make install" command _in the PLplot build tree_.  N.B. that installation
+# is required in order to build and install PDL::Graphics::PLplot.
+# Furthermore, that installation is required in order for PLplot builds
+# subsequent to the build and install of PDL::Graphics::PLplot to
+# be able to detect that module, and thus run the Perl/PDL examples
+# that are part of PLplot.
 
-export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.47
+# Adjust this value to the prefix of that PLplot installation.
+export PLPLOT_INSTALL_PREFIX=/home/software/plplot_svn/installcmake
+
+# Check http://search.cpan.org/~dhunt/PDL-Graphics-PLplot-0.52 to see
+# if there is a later version than 0.52 (the latest version at this
+# time of writing).
+
+# Adjust this value to the latest version.
+export PDL_GRAPHICS_PLPLOT_VERSION=0.52
+
+# Adjust this value for the path to the needed (for version 0.52 of
+# PDL::Graphics::PLplot) patch.
+
+export PATCH=/home/software/plplot_svn/HEAD/plplot_cmake_qt/examples/perl/plplot.pd.patch
+
+# Adjust this value to where you want the PDL Graphics PLplot module
+# to be installed.
+export PDL_GRAPHICS_PLPLOT_PREFIX=/home/software/pdl/install-$PDL_GRAPHICS_PLPLOT_VERSION
+
+# N.B. no adjustments beyond here.
+
+export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-$PDL_GRAPHICS_PLPLOT_VERSION
 
 wget \
 http://search.cpan.org/CPAN/authors/id/D/DH/DHUNT/$TARBALL_ROOT_NAME.tar.gz
@@ -19,30 +46,36 @@ http://search.cpan.org/CPAN/authors/id/D/DH/DHUNT/$TARBALL_ROOT_NAME.tar.gz
 less $TARBALL_ROOT_NAME.tar.gz
 
 tar zxf $TARBALL_ROOT_NAME.tar.gz
-
 cd $TARBALL_ROOT_NAME
 
-# Specify the location of the PLplot headers and libraries
-# (if not installed in a standard location).  For example, if the
-# PLplot install prefix is $PLPLOT_INSTALL_PREFIX
+# Must patch plplot.pd to get it to work with preliminary versions of
+# PLplot-5.9.8 which has backwards incompatible changes due to
+# removed functions that have long been deprecated.
 
-export PLPLOT_INCDIR=$PLPLOT_INSTALL_PREFIX/include/plplot
-export PLPLOT_LIBDIR=$PLPLOT_INSTALL_PREFIX/lib
+patch -p0 <$PATCH
 
-# If you want to install PDL-Graphics-PLplot to a local 
-# directory for testing, then specify that with INSTALL_BASE
-# which for later convenience can be specified with an environment
-# variable.
-# For example,
-export PDL_GRAPHICS_PLPLOT_PREFIX=/home/software/pdl/install
+env PLPLOT_LIBDIR=$PLPLOT_INSTALL_PREFIX/lib \
+PLPLOT_INCDIR=$PLPLOT_INSTALL_PREFIX/include/plplot \
+perl Makefile.PL
 
-perl Makefile.PL INSTALL_BASE=$PDL_GRAPHICS_PLPLOT_PREFIX
-make >& make.out
+# No hard rpath coded so that LD_LIBRARY_PATH will work
+env LD_RUN_PATH= \
+make -e >& make.out
+
+export LD_LIBRARY_PATH=$PLPLOT_INSTALL_PREFIX/lib
 make test >& make_test.out
-make install >& make_install.out
+
+# Remove this directory before using it for the install.
+rm -rf $PDL_GRAPHICS_PLPLOT_PREFIX
+
+make PREFIX=$PDL_GRAPHICS_PLPLOT_PREFIX install >& make_install.out
+
+# Update the install location.
+cd ..
+rm -f install
+ln -s install-$PDL_GRAPHICS_PLPLOT_VERSION install
 
 # Check what files have been installed
-
 find $PDL_GRAPHICS_PLPLOT_PREFIX -type f
 
 # Find the equivalent files in your PDL installation.  For example, on my

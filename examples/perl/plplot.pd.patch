@@ -1,0 +1,27 @@
+--- plplot.pd_orig	2011-04-15 10:01:38.000000000 -0700
++++ plplot.pd	2011-04-15 10:07:50.000000000 -0700
+@@ -2240,7 +2240,6 @@
+ 
+ create_low_level (<<'EODEF');
+ void c_pladv(PLINT page);
+-void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n, PLFLT scale, PLFLT dx, PLFLT dy);
+ void c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub, const char *yopt, PLFLT ytick, PLINT nysub);
+ void c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center);
+ void c_plbop(void);
+@@ -2286,7 +2285,6 @@
+ void c_plgyax(PLINT *p_digmax, PLINT *p_digits);
+ void c_plgzax(PLINT *p_digmax, PLINT *p_digits);
+ #void c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT oldwin);
+-void c_plhls(PLFLT h, PLFLT l, PLFLT s);
+ #void c_plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b); # implemented below
+ void c_plinit(void);
+ void c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
+@@ -2310,8 +2308,6 @@
+ void c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
+ void c_plptex3(PLFLT x, PLFLT y, PLFLT z, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
+ void c_plreplot(void);
+-void c_plrgb(PLFLT r, PLFLT g, PLFLT b);
+-void c_plrgb1(PLINT r, PLINT g, PLINT b);
+ void c_plschr(PLFLT def, PLFLT scale);
+ void c_plscmap0n(PLINT ncol0);
+ void c_plscmap1n(PLINT ncol1);
