@@ -782,6 +782,56 @@ plcmap1_calc( void )
 }
 
 //--------------------------------------------------------------------------
+//! Set the color map 1 value range to use in continuous color plots.
+//!
+//! @param min_color Specifies the minimum color to use.  A value of 0.0 or
+//! less indicates that the range should start at the lowest color map 1
+//! value available.
+//! @param max_color Specifies the maximum color to use.  A value of 1.0 or
+//! greater indicates that the range should exten to the highest color map 1
+//! value available.
+//!
+//! If min_color > max_color or min_color is greater than 1.0 or max_color is
+//! less than 0.0 then no change is made.
+//--------------------------------------------------------------------------
+
+void
+c_plscmap1_range( PLFLT min_color, PLFLT max_color )
+{
+    if ( min_color > max_color || max_color < 0.0 || min_color > 1.0 )
+    {
+        plwarn( "plscmap1_range called with invalid color range" );
+        return;
+    }
+    if ( min_color < 0.0 )
+    {
+        plwarn( "plscmap1_range called with a negative minimum color value" );
+        min_color = 0.0;
+    }
+    if ( max_color > 1.0 )
+    {
+        plwarn( "plscmap1_range called with an out of range maximum color value" );
+        max_color = 1.0;
+    }
+    plsc->cmap1_min = min_color;
+    plsc->cmap1_max = max_color;
+}
+
+//--------------------------------------------------------------------------
+//! Get the color map 1 value range used in continuous color plots.
+//!
+//! @param min_color Specifies the minimum color used.
+//! @param max_color Specifies the maximum color used.
+//--------------------------------------------------------------------------
+
+void
+c_plgcmap1_range( PLFLT *min_color, PLFLT *max_color )
+{
+    *min_color = plsc->cmap1_min;
+    *max_color = plsc->cmap1_max;
+}
+
+//--------------------------------------------------------------------------
 // plscmap0n()
 //
 // Set number of colors in cmap 0, (re-)allocate cmap 0, and fill with

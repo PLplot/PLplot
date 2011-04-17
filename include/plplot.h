@@ -732,6 +732,8 @@ typedef plf2ops_t * PLF2OPS;
 #define    plscmap1l                c_plscmap1l
 #define    plscmap1la               c_plscmap1la
 #define    plscmap1n                c_plscmap1n
+#define    plscmap1_range           c_plscmap1_range
+#define    plgcmap1_range           c_plgcmap1_range
 #define    plscol0                  c_plscol0
 #define    plscol0a                 c_plscol0a
 #define    plscolbg                 c_plscolbg
@@ -1530,6 +1532,16 @@ c_plscmap1la( PLBOOL itype, PLINT npts, const PLFLT *intensity,
 
 PLDLLIMPEXP void
 c_plscmap1n( PLINT ncol1 );
+
+// Set the color map 1 range used in continuous plots
+
+PLDLLIMPEXP void
+c_plscmap1_range( PLFLT min_color, PLFLT max_color );
+
+// Get the color map 1 range used in continuous plots
+
+PLDLLIMPEXP void
+c_plgcmap1_range( PLFLT *min_color, PLFLT *max_color );
 
 // Set a given color from color map 0 by 8 bit RGB value
 
