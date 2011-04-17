@@ -1274,10 +1274,11 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 PLDLLIMPEXP void
 c_plcolorbar( PLINT position, PLINT opt,
               PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
-              PLINT n_colors, const PLFLT *colors, const PLFLT *values );
+              PLINT n_values, const PLFLT *values );
 
 // Sets position of the light source
 PLDLLIMPEXP void

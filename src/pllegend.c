@@ -879,20 +879,32 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 }
 
 //--------------------------------------------------------------------------
-//! Draw end-caps for color bars.
+//! Draw triangular end-caps for color bars.
 //!
-//! @param opt TODO
-//! @param opt_position TODO
-//! @param x TODO
-//! @param y TODO
-//! @param length TODO
-//! @param width TODO
-//! @param color TODO
+//! @param position This variable defines the placement of the colorbar on the
+//! subpage.  The position can be one of PL_POSITION_TOP,
+//! PL_POSITION_BOTTOM, PL_POSITION_LEFT or PL_POSITION_RIGHT.  The colorbar
+//! will be drawn perpendicular to the given side of the subpage.
+//! @param opt This variable can be PL_COLORBAR_CAP_LOW or
+//! PL_COLORBAR_CAP_HIGH, indicating whether we are drawing a low-end cap or a
+//! high-end cap.
+//! @param a1 First primary coordinate for the end cap base.  If position
+//! is PL_POSITION_LEFT or PL_POSITION_RIGHT then a1 and a2 are x coordinates.
+//! if position is PL_POSITION_TOP or PL_POSITION_BOTTOM then a1 and a2 are y
+//! coordinates.  (a1, b) and (a2, b) OR (b, a1) and (b, a2) define the base of
+//! the triangular cap.
+//! @param a2 Second primary coordinate for the end cap base.
+//! @param b Secondary coordinate for the end cap base.  If a1 and a2 are x,
+//! b is y.  If a1 and a2 are y, b is x.
+//! @param color Color (color palette 1) used to fill the end cap.
 //!
 
 void
-draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLFLT color )
+draw_cap( PLINT position, PLINT opt, PLFLT a1, PLFLT a2, PLFLT b, PLFLT color )
 {
+    // Height the cap in normalized coordinates
+    PLFLT cap_height = 0.05;
+
     // Save drawing color
     PLINT col0_save = plsc->icol0;
 
@@ -906,7 +918,7 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
 
     // Use the entire sub-page, and make world coordinates 0.0 -> 1.0
     // This way the location and orientation of the cap can be easily
-    // defined by a combination of opt, x and y.
+    // defined by a combination of position, opt, a1, a2 and b.
     plvpor( 0.0, 1.0, 0.0, 1.0 );
     plwind( 0.0, 1.0, 0.0, 1.0 );
 
@@ -921,29 +933,23 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             // Draw the cap on the bottom
-            if ( position & PL_POSITION_LEFT )
-                xs[0] = x;
-            else if ( position & PL_POSITION_RIGHT )
-                xs[0] = 1.0 - x - width;
-            ys[0] = y;
-            xs[2] = xs[0] + width;
-            ys[2] = ys[0];
+            xs[0] = a1;
+            ys[0] = b;
+            xs[2] = a2;
+            ys[2] = b;
             xs[1] = ( xs[0] + xs[2] ) / 2.0;
-            ys[1] = ys[0] - 0.05;
+            ys[1] = ys[0] - cap_height;
 
             plfill( 3, xs, ys );
         }
         else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
             // Draw the cap on the left
-            xs[0] = x;
-            if ( position & PL_POSITION_TOP )
-                ys[0] = 1.0 - y - width;
-            else if ( position & PL_POSITION_BOTTOM )
-                ys[0] = y;
-            xs[2] = xs[0];
-            ys[2] = ys[0] + width;
-            xs[1] = xs[0] - 0.05;
+            xs[0] = b;
+            ys[0] = a1;
+            xs[2] = b;
+            ys[2] = a2;
+            xs[1] = xs[0] - cap_height;
             ys[1] = ( ys[0] + ys[2] ) / 2.0;
 
             plfill( 3, xs, ys );
@@ -954,29 +960,23 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
             // Draw the cap on the top
-            if ( position & PL_POSITION_LEFT )
-                xs[0] = x;
-            else if ( position & PL_POSITION_RIGHT )
-                xs[0] = 1.0 - x - width;
-            ys[0] = y + length;
-            xs[2] = xs[0] + width;
-            ys[2] = ys[0];
+            xs[0] = a1;
+            ys[0] = b;
+            xs[2] = a2;
+            ys[2] = b;
             xs[1] = ( xs[0] + xs[2] ) / 2.0;
-            ys[1] = ys[0] + 0.05;
+            ys[1] = ys[0] + cap_height;
 
             plfill( 3, xs, ys );
         }
         else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
         {
             // Draw the cap on the right
-            xs[0] = x + length;
-            if ( position & PL_POSITION_TOP )
-                ys[0] = 1.0 - y - width;
-            else if ( position & PL_POSITION_BOTTOM )
-                ys[0] = y;
-            xs[2] = xs[0];
-            ys[2] = ys[0] + width;
-            xs[1] = xs[0] + 0.05;
+            xs[0] = b;
+            ys[0] = a1;
+            xs[2] = b;
+            ys[2] = a2;
+            xs[1] = xs[0] + cap_height;
             ys[1] = ( ys[0] + ys[2] ) / 2.0;
 
             plfill( 3, xs, ys );
@@ -1024,6 +1024,8 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
 //! @param width Width of the colorbar along the minor axis (ex. fraction of
 //! the vertical subpage size if pos is PL_POSITION_TOP) in normalized subpage
 //! coordinates.
+//! @param low_cap_color Color of the low-end color bar cap, if it is drawn.
+//! @param high_cap_color Color of the high-end color bar cap, if it is drawn.
 //! @param cont_color Contour color for PL_COLORBAR_SHADE plots.  This is
 //! passed directly to plshades, so it will be interpreted according to the
 //! design of plshades.
@@ -1035,20 +1037,13 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
 //! @param axis_opts Axis options for the colorbar's major axis, as for plbox.
 //! @param label Text label for the colorbar.  No title is drawn if no label
 //! position is specified in pos.
-//! @param n_colors Number of elements in the colors and values arrays.
+//! @param n_values Number of elements in the values array.
 //! @param colors Colors (color map 1) used to draw the colorbar.  If this is a
 //! PL_COLORBAR_SHADE bar then there should be one entry per break between
 //! segments.  If this
 //! is a PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT bar then there should be two
 //! elements - one to specify the high end and one to specify the low end.
-//! TODO: Due to a deficiency in plimage, plimagefr, plshades and plgradient,
-//! the high and low values for colors don't have the effect that they should.
-//! Each colorbar will always span the follow range of color map 1.  This
-//! should be fixed with new, more flexible implementations of plimage,
-//! plimagefr, plshades and plgradient which use user-provided minimum and
-//! maximum colors for their range instead of keeping the minimum color fixed
-//! as 0.0 and the maximum fixed as 1.0.  The net effect of this is that the
-//! values in colors do not have the effect they should at this time.
+//! This should have (n_values - 1) elements.
 //! @param values Numeric values for the data range represented by the
 //! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
 //! between segments.  For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT this
@@ -1059,17 +1054,26 @@ draw_cap( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width
 void
 c_plcolorbar( PLINT position, PLINT opt,
               PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
-              PLINT n_colors, const PLFLT *colors, const PLFLT *values )
+              PLINT n_values, const PLFLT *values )
 {
+    // Justification of label text
+    PLFLT just;
+
     // Min and max values
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
     PLFLT min_value, max_value;
     min_value = values[0];
-    max_value = values[ n_colors - 1 ];
+    max_value = values[ n_values - 1 ];
+
+    // Min and max colors
+    // Assumes that the colors array is sorted from smallest to largest.
+    PLFLT min_color, max_color;
+    plgcmap1_range( &min_color, &max_color );
 
     // Saved normalized coordinates of viewport.
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
@@ -1155,8 +1159,8 @@ c_plcolorbar( PLINT position, PLINT opt,
     {
         // Interpolate
         // TODO: Should this be decided with an extra opt option instead of by
-        // counting n_colors?
-        if ( n_colors == 2 )
+        // counting n_values?
+        if ( n_values == 2 )
         {
             // Use the same number of steps as there are steps in
             // color palette 1.
@@ -1197,7 +1201,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         // No interpolation - use values array as-is
         else
         {
-            n_steps = n_colors;
+            n_steps = n_values;
             // Use the provided values in this case.
             if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
             {
@@ -1244,7 +1248,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         // then segment B will be twice the length of segment A.
         PLcGrid grid;
         PLFLT   grid_axis[2] = { 0.0, 1.0 };
-        n_steps = n_colors;
+        n_steps = n_values;
         // Use the provided values.
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
@@ -1341,9 +1345,16 @@ c_plcolorbar( PLINT position, PLINT opt,
             label_offset += 2.5;
         }
         // Draw a filled triangle (cap/arrow) at the low end of the scale
-        draw_cap( position, opt, x, y, length, width, 0.0 );
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
+        {
+            draw_cap( position, PL_COLORBAR_CAP_LOW, vx_min, vx_max, vy_min, low_cap_color );
+        }
+        else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
+        {
+            draw_cap( position, PL_COLORBAR_CAP_LOW, vy_min, vy_max, vx_min, low_cap_color );
+        }
     }
-    else if ( opt & PL_COLORBAR_CAP_HIGH )
+    if ( opt & PL_COLORBAR_CAP_HIGH )
     {
         // Add an extra offset for the label so it does not bump in to the
         // cap if the label is placed on the same side as the cap.
@@ -1355,7 +1366,14 @@ c_plcolorbar( PLINT position, PLINT opt,
             label_offset += 2.5;
         }
         // Draw a filled triangle (cap/arrow) at the high end of the scale
-        draw_cap( position, opt, x, y, length, width, 1.0 );
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
+        {
+            draw_cap( position, PL_COLORBAR_CAP_HIGH, vx_min, vx_max, vy_max, high_cap_color );
+        }
+        else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
+        {
+            draw_cap( position, PL_COLORBAR_CAP_HIGH, vy_min, vy_max, vx_max, high_cap_color );
+        }
     }
 
     // Smaller text
@@ -1379,14 +1397,16 @@ c_plcolorbar( PLINT position, PLINT opt,
         {
             label_offset += 4.0;
             perp          = '\0';
+            just          = 0.5;
         }
         else
         {
             label_offset += 1.5;
             perp          = 'v';
+            just          = 1.0;
         }
         snprintf( opt_string, max_opts, "l%c", perp );
-        plmtex( opt_string, label_offset, 0.5, 0.5, label );
+        plmtex( opt_string, label_offset, 0.5, just, label );
     }
     else if ( opt & PL_COLORBAR_LABEL_RIGHT )
     {
@@ -1394,21 +1414,23 @@ c_plcolorbar( PLINT position, PLINT opt,
         {
             label_offset += 4.0;
             perp          = '\0';
+            just          = 0.5;
         }
         else
         {
             label_offset += 1.5;
             perp          = 'v';
+            just          = 0.0;
         }
         snprintf( opt_string, max_opts, "r%c", perp );
-        plmtex( opt_string, label_offset, 0.5, 0.5, label );
+        plmtex( opt_string, label_offset, 0.5, just, label );
     }
     else if ( opt & PL_COLORBAR_LABEL_TOP )
     {
         if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
             label_offset += 1.5;
-            perp          = 'v';
+            perp          = '\0';
         }
         else
         {
@@ -1423,7 +1445,7 @@ c_plcolorbar( PLINT position, PLINT opt,
         if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
             label_offset += 1.5;
-            perp          = 'v';
+            perp          = '\0';
         }
         else
         {
@@ -1443,22 +1465,22 @@ c_plcolorbar( PLINT position, PLINT opt,
         if ( position & PL_POSITION_LEFT )
         {
             snprintf( opt_string, max_opts, "nt%s", axis_opts );
-            label_box_custom( "", 0, NULL, opt_string, n_colors, values );
+            label_box_custom( "", 0, NULL, opt_string, n_values, values );
         }
         else if ( position & PL_POSITION_RIGHT )
         {
             snprintf( opt_string, max_opts, "mt%s", axis_opts );
-            label_box_custom( "", 0, NULL, opt_string, n_colors, values );
+            label_box_custom( "", 0, NULL, opt_string, n_values, values );
         }
         else if ( position & PL_POSITION_TOP )
         {
             snprintf( opt_string, max_opts, "mt%s", axis_opts );
-            label_box_custom( opt_string, n_colors, values, "", 0, NULL );
+            label_box_custom( opt_string, n_values, values, "", 0, NULL );
         }
         else if ( position & PL_POSITION_BOTTOM )
         {
             snprintf( opt_string, max_opts, "nt%s", axis_opts );
-            label_box_custom( opt_string, n_colors, values, "", 0, NULL );
+            label_box_custom( opt_string, n_values, values, "", 0, NULL );
         }
     }
     else
