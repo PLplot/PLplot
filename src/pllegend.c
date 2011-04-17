@@ -1084,10 +1084,6 @@ c_plcolorbar( PLINT position, PLINT opt,
 
     // Active attributes to be saved and restored afterward.
     PLINT col0_save       = plsc->icol0;
-    PLFLT text_scale_save = plsc->chrht / plsc->chrdef;
-    // Axis tick spacing
-    PLFLT maj_save = plsc->majht / plsc->majdef;
-    PLFLT min_save = plsc->minht / plsc->mindef;
 
     // Position of the color bar in normalized viewport (= normalized subpage
     // coordinates).
@@ -1376,12 +1372,6 @@ c_plcolorbar( PLINT position, PLINT opt,
         }
     }
 
-    // Smaller text
-    plschr( 0.0, 0.75 );
-    // Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5 );
-    plsmin( 0.0, 0.5 );
-
     // For building axis option string
     PLINT      max_opts = 25;
     char       opt_string[max_opts];
@@ -1521,9 +1511,6 @@ c_plcolorbar( PLINT position, PLINT opt,
     plcol0( col0_save );
     plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
     plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
-    plsmaj( 0.0, maj_save );
-    plsmin( 0.0, min_save );
-    plschr( 0.0, text_scale_save );
 
     return;
 }

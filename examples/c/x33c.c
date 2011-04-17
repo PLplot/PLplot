@@ -224,6 +224,12 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
                  colorbar_position_option_labels[position_i],
                  colorbar_label_option_labels[label_i] );
 
+        // Smaller text
+        plschr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 );
+        plsmin( 0.0, 0.5 );
+
         plcolorbar( position, opt,
                     x, y, length, width,
                     low_cap_color, high_cap_color,
@@ -231,6 +237,11 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
                     ticks, sub_ticks,
                     axis_opts, label,
                     n_values, values );
+
+        // Reset text and tick sizes
+        plschr( 0.0, 1.0 );
+        plsmaj( 0.0, 1.0 );
+        plsmin( 0.0, 1.0 );
     }
 
     // Draw a page title
