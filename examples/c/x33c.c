@@ -849,7 +849,7 @@ main( int argc, const char *argv[] )
         // Test shade colorbars with larger arrays
         for ( i = 0; i < 2; i++ )
         {
-            plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 9, values_even );
+            plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, 9, values_even );
         }
         for ( i = 0; i < 2; i++ )
         {
