@@ -125,6 +125,8 @@ typedef struct
 // tmpcolor	RGB[]	Temporary color storage
 // cmap0        RGB[]	Color map 0: maximum of ncol0 RGB 8-bit values
 // cmap1        RGB[]	Color map 1: maximum of ncol1 RGB 8-bit values
+// cmap1_min    PLFLT   Minimum color map 1 color to use in continuous tone plots
+// cmap1_max    PLFLT   Maximum color map 1 color to use in continuous tone plots
 //
 //--------------------------------------------------------------------------
 //
@@ -541,6 +543,8 @@ typedef struct
 // Colormaps
 
     PLINT       icol0, ncol0, icol1, ncol1, ncp1, curcmap;
+
+    PLFLT       cmap1_min, cmap1_max;
 
     PLColor     curcolor, tmpcolor;
     PLColor     *cmap0;

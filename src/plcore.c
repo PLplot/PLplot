@@ -2592,6 +2592,10 @@ plstrm_init( void )
 
         if ( plsc->cmap1 == NULL )
             plspal1( "", TRUE );
+
+        // Set continuous plots to use the full color map 1 range
+        plsc->cmap1_min = 0.0;
+        plsc->cmap1_max = 1.0;
     }
 
     plsc->psdoc = NULL;
@@ -2704,6 +2708,8 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
 
     plsc->icol1 = plsr->icol1;
     plsc->ncol1 = plsr->ncol1;
+    plsc->cmap1_min = plsr->cmap1_min;
+    plsc->cmap1_max = plsr->cmap1_max;
     if ( plsc->cmap1 != NULL )
         free( (void *) plsc->cmap1 );
 
