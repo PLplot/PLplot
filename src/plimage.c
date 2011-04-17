@@ -215,6 +215,8 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
     PLFLT datum;
     // Color palette 0 color in use before the plimage* call
     PLINT init_color;
+    // Color range
+    PLFLT color_min, color_max, color_range;
 
     if ( plsc->level < 3 )
     {
@@ -244,6 +246,11 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
         idataops->minmax( idatap, nx, ny, &zmin, &zmax );
     }
 
+    // Calculate the size of the color range to use
+    color_min = plsc->cmap1_min;
+    color_max = plsc->cmap1_max;
+    color_range = color_max - color_min;
+
     // Go through the image values and scale them to fit in
     // the COLOR_MIN to COLOR_MAX range.
     // Any values greater than valuemax are set to valuemax,
@@ -257,7 +264,7 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
             if ( valuemin == valuemax )
             {
                 // If valuemin == valuemax, avoid dividing by zero.
-                z[ix * ny + iy] = ( COLOR_MAX + COLOR_MIN ) / 2.0;
+                z[ix * ny + iy] = ( color_max + color_min ) / 2.0;
             }
             else
             {
@@ -277,9 +284,9 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
                     {
                         datum = valuemax;
                     }
-                    // Set to a value scaled between COLOR_MIN and COLOR_MAX.
+                    // Set to a value scaled between color_min and color_max.
                     z[ix * ny + iy] =
-                        ( datum - valuemin + COLOR_MIN ) / ( valuemax - valuemin ) * COLOR_MAX;
+                        color_min + ( datum - valuemin + COLOR_MIN ) / ( valuemax - valuemin ) * COLOR_MAX * color_range;
                 }
             }
         }

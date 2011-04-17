@@ -248,12 +248,18 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 {
     PLFLT shade_min, shade_max, shade_color;
     PLINT i, init_color, init_width;
+    PLFLT color_min, color_max, color_range;
+
+    // Color range to use
+    color_min = plsc->cmap1_min;
+    color_max = plsc->cmap1_max;
+    color_range = color_max - color_min;
 
     for ( i = 0; i < nlevel - 1; i++ )
     {
         shade_min   = clevel[i];
         shade_max   = clevel[i + 1];
-        shade_color = i / (PLFLT) ( nlevel - 2 );
+        shade_color = color_min + i / (PLFLT) ( nlevel - 2 ) * color_range;
         // The constants in order mean
         // (1) color map1,
         // (0, 0, 0, 0) all edge effects will be done with plcont rather
