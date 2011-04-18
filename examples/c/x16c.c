@@ -19,6 +19,9 @@ static int exclude = 0;         // By default do not plot a page illustrating
                                 // anyway, and cannot be reproduced by any
                                 // front end other than the C one.
 
+// For now, don't show the colorbars while we are working out the API.
+static int colorbar = 0;
+
 // polar plot data
 #define PERIMETERPTS    100
 
@@ -41,6 +44,15 @@ f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax );
 // Options data structure definition.
 
 static PLOptionTable options[] = {
+    {
+        "colorbar",              // Turns on the colorbar for each page
+        NULL,
+        NULL,
+        &colorbar,
+        PL_OPT_BOOL,
+        "-colorbar",
+        "Plot a \"color bar\" on each page."
+    },
     {
         "exclude",              // Turns on page showing exclusion
         NULL,
@@ -221,6 +233,25 @@ main( int argc, const char *argv[] )
         cont_color, cont_width,
         plfill, 1, NULL, NULL );
 
+    if ( colorbar )
+    {
+        // Smaller text
+        plschr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 );
+        plsmin( 0.0, 0.5 );
+
+        plcolorbar( PL_POSITION_RIGHT, PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+                    0.05, 0.15, 0.7, 0.03, 0.0, 0.0,
+                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    ns + 1, shedge );
+
+        // Reset text and tick sizes
+        plschr( 0.0, 1.0 );
+        plsmaj( 0.0, 1.0 );
+        plsmin( 0.0, 1.0 );
+    }
+
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     plcol0( 2 );
@@ -247,6 +278,25 @@ main( int argc, const char *argv[] )
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plfill, 1, pltr1, (void *) &cgrid1 );
+
+    if ( colorbar )
+    {
+        // Smaller text
+        plschr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 );
+        plsmin( 0.0, 0.5 );
+
+        plcolorbar( PL_POSITION_RIGHT, PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+                    0.05, 0.15, 0.7, 0.03, 0.0, 0.0,
+                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    ns + 1, shedge );
+
+        // Reset text and tick sizes
+        plschr( 0.0, 1.0 );
+        plsmaj( 0.0, 1.0 );
+        plsmin( 0.0, 1.0 );
+    }
 
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -275,6 +325,25 @@ main( int argc, const char *argv[] )
         cont_color, cont_width,
         plfill, 0, pltr2, (void *) &cgrid2 );
 
+    if ( colorbar )
+    {
+        // Smaller text
+        plschr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 );
+        plsmin( 0.0, 0.5 );
+
+        plcolorbar( PL_POSITION_RIGHT, PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+                    0.05, 0.15, 0.7, 0.03, 0.0, 0.0,
+                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    ns + 1, shedge );
+
+        // Reset text and tick sizes
+        plschr( 0.0, 1.0 );
+        plsmaj( 0.0, 1.0 );
+        plsmin( 0.0, 1.0 );
+    }
+
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     plcol0( 2 );
@@ -300,6 +369,25 @@ main( int argc, const char *argv[] )
         shedge, ns + 1, fill_width,
         2, 3,
         plfill, 0, pltr2, (void *) &cgrid2 );
+
+    if ( colorbar )
+    {
+        // Smaller text
+        plschr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 );
+        plsmin( 0.0, 0.5 );
+
+        plcolorbar( PL_POSITION_RIGHT, PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+                    0.05, 0.15, 0.7, 0.03, 0.0, 0.0,
+                    2, 3, 0.0, 0, "bv", "",
+                    ns + 1, shedge );
+
+        // Reset text and tick sizes
+        plschr( 0.0, 1.0 );
+        plsmaj( 0.0, 1.0 );
+        plsmin( 0.0, 1.0 );
+    }
 
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -377,6 +465,25 @@ main( int argc, const char *argv[] )
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plfill, 0, pltr2, (void *) &cgrid2 );
+
+    if ( colorbar )
+    {
+        // Smaller text
+        plschr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 );
+        plsmin( 0.0, 0.5 );
+
+        plcolorbar( PL_POSITION_RIGHT, PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+                    0.06, 0.15, 0.7, 0.03, 0.0, 0.0,
+                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    ns + 1, shedge );
+
+        // Reset text and tick sizes
+        plschr( 0.0, 1.0 );
+        plsmaj( 0.0, 1.0 );
+        plsmin( 0.0, 1.0 );
+    }
 
 // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
     for ( i = 0; i < PERIMETERPTS; i++ )
