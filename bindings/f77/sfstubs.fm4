@@ -213,26 +213,26 @@ c***********************************************************************
 
 c***********************************************************************
 
-      subroutine plcolorbar(position,opt,x,y,length,width,
-     &    cont_color,cont_width,ticks,sub_ticks,
-     &    axis_opts,label,n_colors,colors,values)
-
-      implicit none
-      integer position, opt, cont_color, cont_width, sub_ticks, n_colors
-      real*8 x, y, length, width, ticks
-      real*8 colors(*), values(*)
-      character(*) axis_opts, label
-
-      include 'sfstubs.h'
-
-      call plstrf2c(axis_opts, string1, maxlen)
-      call plstrf2c(label, string2, maxlen)
-
-      call plcolorbar7(position,opt,x,y,length,width,
-     &    cont_color,cont_width,ticks,sub_ticks,
-     &    string1,string2,n_colors,colors,values)
-
-      end
+c      subroutine plcolorbar(position,opt,x,y,length,width,
+c     &    cont_color,cont_width,ticks,sub_ticks,
+c     &    axis_opts,label,n_colors,colors,values)
+c
+c      implicit none
+c      integer position, opt, cont_color, cont_width, sub_ticks, n_colors
+c      real*8 x, y, length, width, ticks
+c      real*8 colors(*), values(*)
+c      character(*) axis_opts, label
+c
+c      include 'sfstubs.h'
+c
+c      call plstrf2c(axis_opts, string1, maxlen)
+c      call plstrf2c(label, string2, maxlen)
+c
+c      call plcolorbar7(position,opt,x,y,length,width,
+c     &    cont_color,cont_width,ticks,sub_ticks,
+c     &    string1,string2,n_colors,colors,values)
+c
+c      end
 
 c***********************************************************************
 
