@@ -167,14 +167,14 @@ PLCOL1( PLFLT *col )
     c_plcol1( *col );
 }
 
-void
-PLCOLORBAR( PLINT *position, PLINT *opt, PLFLT *x, PLFLT *y, PLFLT *length, PLFLT *width,
-            PLINT *cont_color, PLINT *cont_width, PLFLT *ticks, PLINT *sub_ticks,
-            char *axis_opts, char *label, PLINT *n_colors, PLFLT *colors, PLFLT *values )
-{
-    c_plcolorbar( *position, *opt, *x, *y, *length, *width, *cont_color, *cont_width, *ticks, *sub_ticks,
-        axis_opts, label, *n_colors, colors, values );
-}
+//void
+//PLCOLORBAR( PLINT *position, PLINT *opt, PLFLT *x, PLFLT *y, PLFLT *length, PLFLT *width,
+//            PLINT *cont_color, PLINT *cont_width, PLFLT *ticks, PLINT *sub_ticks,
+//            char *axis_opts, char *label, PLINT *n_colors, PLFLT *colors, PLFLT *values )
+//{
+//    c_plcolorbar( *position, *opt, *x, *y, *length, *width, *cont_color, *cont_width, *ticks, *sub_ticks,
+//        axis_opts, label, *n_colors, colors, values );
+//}
 
 void
 PLCONFIGTIME( PLFLT *scale, PLFLT *offset1, PLFLT *offset2, PLINT *ccontrol, PLBOOL *ifbtime_offset, PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec )
