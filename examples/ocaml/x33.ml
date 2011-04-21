@@ -121,7 +121,7 @@ let () =
     symbol_colors.(0) <- 1 + ( k mod 8 );
 
     ignore (
-      pllegend position opt 0.05 0.05
+      pllegend opt position 0.05 0.05
           0.1 15 1 1 0 0
           opt_array 1.0 1.0 2.0
           1.0 text_colors text
@@ -171,7 +171,7 @@ let () =
   let ncolumn = nlegend in
   ignore (
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.05 15 1 1 nrow ncolumn
         opt_array 1.0 1.0 2.0
         1.0 text_colors text
@@ -188,7 +188,7 @@ let () =
   let ncolumn = nlegend in
   ignore (
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.05 15 1 1 nrow ncolumn
         opt_array 1.0 1.0 2.0
         1.0 text_colors text
@@ -205,7 +205,7 @@ let () =
   let ncolumn = 1 in
   ignore (
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.05 15 1 1 nrow ncolumn
         opt_array 1.0 1.0 2.0
         1.0 text_colors text
@@ -222,7 +222,7 @@ let () =
   let ncolumn = 1 in
   ignore (
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.05 15 1 1 nrow ncolumn
         opt_array 1.0 1.0 2.0
         1.0 text_colors text
@@ -239,7 +239,7 @@ let () =
   let ncolumn = 2 in
   ignore (
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.05 15 1 1 nrow ncolumn
         opt_array 1.0 1.0 2.0
         1.0 text_colors text
@@ -256,7 +256,7 @@ let () =
   let ncolumn = 2 in
   ignore (
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.05 15 1 1 nrow ncolumn
         opt_array 1.0 1.0 2.0
         1.0 text_colors text
@@ -273,7 +273,7 @@ let () =
   let ncolumn = 3 in
   ignore (
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.05 15 1 1 nrow ncolumn
         opt_array 1.0 1.0 2.0
         1.0 text_colors text
@@ -326,7 +326,7 @@ let () =
 
     let legend_width, legend_height =
       let opt_array = Array.sub opt_array 0 !nlegend in
-      pllegend !position !opt !x !y
+      pllegend !opt !position !x !y
           0.025 15 1 1 nrow ncolumn
           opt_array 1.0 1.0 1.5
           1.0 text_colors text
@@ -410,7 +410,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -437,7 +437,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -464,7 +464,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -494,7 +494,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -521,7 +521,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -548,7 +548,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -577,7 +577,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -603,7 +603,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text
@@ -629,7 +629,7 @@ let () =
 
   let legend_width, legend_height =
     let opt_array = Array.sub opt_array 0 nlegend in
-    pllegend position opt x y
+    pllegend opt position x y
         0.1 15 1 1 0 0
         opt_array 1.0 text_scale 2.0
         0.0 text_colors text

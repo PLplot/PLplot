@@ -1069,7 +1069,7 @@ package PLplot_Thin is
     procedure
     pllegend
        (p_legend_width : out PLFLT; p_legend_height : out PLFLT;
-        plposition : PLINT; opt : PLINT; x : PLFLT; y : PLFLT; plot_width : PLFLT;
+        opt : PLINT; plposition : PLINT; x : PLFLT; y : PLFLT; plot_width : PLFLT;
         bg_color : PLINT; bb_color : PLINT; bb_style : PLINT;
         nrow : PLINT; ncolumn : PLINT;
         nlegend : PLINT; opt_array : PL_Integer_Array;

@@ -161,7 +161,7 @@ c     Use monotype fonts so that all legends are the same size.
           symbol_colors(1) = 1 + mod( k-1, 8 )
           call write_number( text(1), k-1 )
 
-          call pllegend( legend_width, legend_height, position, opt,
+          call pllegend( legend_width, legend_height, opt, position,
      &        0.05d0, 0.05d0,
      &        0.1d0, 15, 1, 1, 0, 0,
      &        nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
@@ -214,7 +214,7 @@ c     Use monotype fonts so that all legends are the same size.
       y       = 0.1d0
       nrow    = 1
       ncolumn = nlegend
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.05d0, 15, 1, 1, nrow, ncolumn,
      &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
      &    1.d0, text_colors, text,
@@ -228,7 +228,7 @@ c     Use monotype fonts so that all legends are the same size.
       y       = 0.1d0
       nrow    = 1
       ncolumn = nlegend
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.05d0, 15, 1, 1, nrow, ncolumn,
      &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
      &    1.d0, text_colors, text,
@@ -242,7 +242,7 @@ c     Use monotype fonts so that all legends are the same size.
       y       = 0.d0
       nrow    = nlegend
       ncolumn = 1
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.05d0, 15, 1, 1, nrow, ncolumn,
      &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
      &    1.d0, text_colors, text,
@@ -256,7 +256,7 @@ c     Use monotype fonts so that all legends are the same size.
       y       = 0.d0
       nrow    = nlegend
       ncolumn = 1
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.05d0, 15, 1, 1, nrow, ncolumn,
      &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
      &    1.d0, text_colors, text,
@@ -271,7 +271,7 @@ c     Use monotype fonts so that all legends are the same size.
       y       = 0.d0
       nrow    = 6
       ncolumn = 2
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.05d0, 15, 1, 1, nrow, ncolumn,
      &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
      &    1.d0, text_colors, text,
@@ -286,7 +286,7 @@ c     Use monotype fonts so that all legends are the same size.
       y       = 0.d0
       nrow    = 6
       ncolumn = 2
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.05d0, 15, 1, 1, nrow, ncolumn,
      &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
      &    1.d0, text_colors, text,
@@ -300,7 +300,7 @@ c     Use monotype fonts so that all legends are the same size.
       y       = 0.d0
       nrow    = 3
       ncolumn = 3
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.05d0, 15, 1, 1, nrow, ncolumn,
      &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
      &    1.d0, text_colors, text,
@@ -360,7 +360,7 @@ c         Use monotype fonts so that all legends are the same size.
           nrow    = MIN( 3, nlegend )
           ncolumn = 0
 
-          call pllegend( legend_width, legend_height, position, opt,
+          call pllegend( legend_width, legend_height, opt, position,
      &        x, y,
      &        0.025d0, 15, 1, 1, nrow, ncolumn,
      &        nlegend, opt_array, 1.0d0, 1.0d0, 1.5d0,
@@ -449,7 +449,7 @@ c     Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
       opt = opt_base
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -474,7 +474,7 @@ c     Set up symbol legend entries with various symbols.
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -499,7 +499,7 @@ c     Set up symbol legend entries with various numbers of symbols.
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -529,7 +529,7 @@ c     Use new origin
       max_height = 0.d0
       call plscol0a( 15, 32, 32, 32, 0.70d0)
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -554,7 +554,7 @@ c     Set up box legend entries with various patterns.
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -579,7 +579,7 @@ c     Set up box legend entries with various box pattern line widths.
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -608,7 +608,7 @@ c     Use new origin
       max_height = 0.d0
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -632,7 +632,7 @@ c     Set up line legend entries with various styles.
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,
@@ -656,7 +656,7 @@ c     Set up line legend entries with various widths.
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70d0 )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y,
+      call pllegend( legend_width, legend_height, opt, position, x, y,
      &    0.1d0, 15, 1, 1, 0, 0,
      &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
      &    0.d0, text_colors, text,

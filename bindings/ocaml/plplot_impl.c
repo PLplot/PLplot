@@ -771,7 +771,7 @@ int translate_position_option( int position_option )
     return translated_option;
 }
 
-value ml_pllegend( value position, value opt, value x, value y, value plot_width,
+value ml_pllegend( value opt, value position, value x, value y, value plot_width,
                    value bg_color,
                    value bb_color, value bb_style,
                    value nrow, value ncolumn,
@@ -832,7 +832,7 @@ value ml_pllegend( value position, value opt, value x, value y, value plot_width
     // The returned width and height of the legend
     PLFLT width, height;
 
-    pllegend( &width, &height, c_position, c_opt, Double_val( x ), Double_val( y ),
+    pllegend( &width, &height, c_opt, c_position, Double_val( x ), Double_val( y ),
         Double_val( plot_width ), Int_val( bg_color ),
         Int_val( bb_color ), Int_val( bb_style ),
         Int_val( nrow ), Int_val( ncolumn ),

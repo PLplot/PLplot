@@ -1059,7 +1059,7 @@
       end subroutine plimage
 
       subroutine pllegend_1( legend_width, legend_height, &
-     &                       position, opt, x, y, &
+     &                       opt, position, x, y, &
      &                       plot_width, bg_color, bb_color, bb_style, &
      &                       nrow, ncolumn, nlegend, opt_array, &
      &                       text_offset, text_scale, text_spacing, &
@@ -1091,7 +1091,7 @@
       call pllegend07_cnv_text( 1, nlegend, text )
       call pllegend07_cnv_text( 2, nlegend, symbols )
 
-      call pllegend07( legend_width, legend_height, position, opt, x, y, &
+      call pllegend07( legend_width, legend_height, opt, position, x, y, &
                        plot_width, bg_color, bb_color, bb_style, &
                        nrow, ncolumn, nlegend, opt_array, &
                        text_offset, text_scale, text_spacing, &
@@ -1105,7 +1105,7 @@
       end subroutine pllegend_1
 
       subroutine pllegend_2( legend_width, legend_height, &
-     &                       position, opt, x, y, &
+     &                       opt, position, x, y, &
      &                       plot_width, bg_color, bb_color, bb_style, &
      &                       nrow, ncolumn, opt_array, &
      &                       text_offset, text_scale, text_spacing, &
@@ -1137,7 +1137,7 @@
       nlegend = min( size(opt_array), size(text) )
 
       call pllegend_1( legend_width, legend_height, &
-                       position, opt, x, y, &
+                       opt, position, x, y, &
                        plot_width, bg_color, bb_color, bb_style, &
                        nrow, ncolumn, nlegend, opt_array, &
                        text_offset, text_scale, text_spacing, &

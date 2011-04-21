@@ -100,7 +100,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
         colors[i] = 0.0 + color_step * (PLFLT) ( i );
     }
 
-    PLINT position, opt;
+    PLINT opt, position;
     position = PL_POSITION_LEFT;
     opt      = bar_type | PL_COLORBAR_LABEL_LEFT |
                PL_COLORBAR_CAP_HIGH;
@@ -125,7 +125,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
         }
     }
 
-    pls->colorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_1, "Test label - Left, High Cap",
         n, colors, values );
@@ -134,7 +134,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
     opt      = bar_type | PL_COLORBAR_LABEL_RIGHT |
                PL_COLORBAR_CAP_LOW;
 
-    pls->colorbar( position, opt, 0.1, 0.4, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.1, 0.4, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_1, "Test label - Right, Low Cap",
         n, colors, values );
@@ -143,7 +143,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
     opt      = bar_type | PL_COLORBAR_LABEL_TOP |
                PL_COLORBAR_CAP_HIGH;
 
-    pls->colorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_2, "Test label - Top, High Cap",
         n, colors, values );
@@ -152,7 +152,7 @@ x33::plcolorbar_example_1( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
     opt      = bar_type | PL_COLORBAR_LABEL_BOTTOM |
                PL_COLORBAR_CAP_LOW;
 
-    pls->colorbar( position, opt, 0.4, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_2, "Test label - Bottom, Low Cap",
         n, colors, values );
@@ -178,7 +178,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
         colors[i] = 0.0 + color_step * (PLFLT) ( i );
     }
 
-    PLINT position, opt;
+    PLINT opt, position;
     position = PL_POSITION_LEFT;
     opt      = bar_type | PL_COLORBAR_LABEL_LEFT |
                PL_COLORBAR_CAP_LOW;
@@ -203,7 +203,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
         }
     }
 
-    pls->colorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_1, "Test label - Left, Low Cap",
         n, colors, values );
@@ -212,7 +212,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
     opt      = bar_type | PL_COLORBAR_LABEL_RIGHT |
                PL_COLORBAR_CAP_HIGH;
 
-    pls->colorbar( position, opt, 0.1, 0.4, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.1, 0.4, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_1, "Test label - Right, High Cap",
         n, colors, values );
@@ -221,7 +221,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
     opt      = bar_type | PL_COLORBAR_LABEL_TOP |
                PL_COLORBAR_CAP_LOW;
 
-    pls->colorbar( position, opt, 0.1, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.1, 0.1, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_2, "Test label - Top, Low Cap",
         n, colors, values );
@@ -230,7 +230,7 @@ x33::plcolorbar_example_2( PLINT bar_type, PLINT cont_color, PLINT cont_width, P
     opt      = bar_type | PL_COLORBAR_LABEL_BOTTOM |
                PL_COLORBAR_CAP_HIGH;
 
-    pls->colorbar( position, opt, 0.4, 0.1, 0.5, 0.1,
+    pls->colorbar( opt, position, 0.4, 0.1, 0.5, 0.1,
         cont_color, cont_width, ticks, sub_ticks,
         axis_opts_2, "Test label - Bottom, High Cap",
         n, colors, values );
@@ -316,7 +316,7 @@ x33::x33( int argc, const char **argv )
         line_colors[0]   = 1 + ( k % 8 );
         symbol_colors[0] = 1 + ( k % 8 );
 
-        pls->legend( &legend_width, &legend_height, position, opt, 0.05, 0.05,
+        pls->legend( &legend_width, &legend_height, opt, position, 0.05, 0.05,
             0.1, 15, 1, 1, 0, 0,
             nlegend, opt_array, 1.0, 1.0, 2.0,
             1., text_colors, (const char **) text,
@@ -364,7 +364,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.1;
     nrow     = 1;
     ncolumn  = nlegend;
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -378,7 +378,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.1;
     nrow     = 1;
     ncolumn  = nlegend;
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -392,7 +392,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.;
     nrow     = nlegend;
     ncolumn  = 1;
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -406,7 +406,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.;
     nrow     = nlegend;
     ncolumn  = 1;
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -420,7 +420,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.;
     nrow     = 6;
     ncolumn  = 2;
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -434,7 +434,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.;
     nrow     = 6;
     ncolumn  = 2;
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -448,7 +448,7 @@ x33::x33( int argc, const char **argv )
     y        = 0.;
     nrow     = 3;
     ncolumn  = 3;
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.05, 15, 1, 1, nrow, ncolumn,
         nlegend, opt_array, 1.0, 1.0, 2.0,
         1., text_colors, (const char **) text,
@@ -500,7 +500,7 @@ x33::x33( int argc, const char **argv )
         nrow    = MIN( 3, nlegend );
         ncolumn = 0;
 
-        pls->legend( &legend_width, &legend_height, position, opt, x, y,
+        pls->legend( &legend_width, &legend_height, opt, position, x, y,
             0.025, 15, 1, 1, nrow, ncolumn,
             nlegend, opt_array, 1.0, 1.0, 1.5,
             1., text_colors, (const char **) text,
@@ -584,7 +584,7 @@ x33::x33( int argc, const char **argv )
     opt = opt_base;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -609,7 +609,7 @@ x33::x33( int argc, const char **argv )
     x  += legend_width;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -634,7 +634,7 @@ x33::x33( int argc, const char **argv )
     x  += legend_width;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -662,7 +662,7 @@ x33::x33( int argc, const char **argv )
     max_height = 0.;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -687,7 +687,7 @@ x33::x33( int argc, const char **argv )
     x  += legend_width;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -712,7 +712,7 @@ x33::x33( int argc, const char **argv )
     x  += legend_width;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -739,7 +739,7 @@ x33::x33( int argc, const char **argv )
     max_height = 0.;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -763,7 +763,7 @@ x33::x33( int argc, const char **argv )
     x  += legend_width;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,
@@ -787,7 +787,7 @@ x33::x33( int argc, const char **argv )
     x  += legend_width;
     pls->scol0a( 15, 32, 32, 32, 0.70 );
 
-    pls->legend( &legend_width, &legend_height, position, opt, x, y,
+    pls->legend( &legend_width, &legend_height, opt, position, x, y,
         0.1, 15, 1, 1, 0, 0,
         nlegend, opt_array, 1.0, text_scale, 2.0,
         0., text_colors, (const char **) text,

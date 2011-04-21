@@ -795,7 +795,7 @@ module Plot = struct
     custom (
       fun () ->
         ignore (
-          pllegend pos_opt opt legend_x legend_y plot_width bg bb bb_style
+          pllegend opt pos_opt legend_x legend_y plot_width bg bb bb_style
             rows columns
             entry_opts
             text_offset text_scale text_spacing text_justification text_colors text

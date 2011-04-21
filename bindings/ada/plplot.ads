@@ -1282,7 +1282,7 @@ package PLplot is
     -- pllegend
     procedure Create_Legend
        (Legend_Width, Legend_Height           : out Long_Float;
-        Position, Options                     : Integer;
+        Options, Position                     : Integer;
         X_Offset, Y_Offset                    : Long_Float;
         Plot_Area_Width                       : Long_Float;
         Background_Color, Bounding_Box_Color  : Plot_Color_Type;

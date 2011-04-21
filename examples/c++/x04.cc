@@ -172,7 +172,7 @@ void x04::plot1( int type )
 
     pls->scol0a( 15, 32, 32, 32, 0.70 );
     pls->legend( &legend_width, &legend_height,
-        0, PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+        PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
         0.0, 0.0, 0.1, 15,
         1, 1, 0, 0,
         nlegend, opt_array,

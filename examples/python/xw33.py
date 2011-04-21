@@ -210,7 +210,7 @@ def main():
         symbol_colors[0] = 1 + (k % 8)
 
         (legend_width, legend_height) = \
-        pllegend( position, opt, 0.05, 0.05,
+        pllegend( opt, position, 0.05, 0.05,
                   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
                   1., text_colors, text,
                   box_colors, box_patterns, box_scales, box_line_widths,
@@ -270,7 +270,7 @@ def main():
     nrow = 1
     ncolumn = nlegend
     (legend_width, legend_height) = \
-     pllegend( position, opt, x, y,
+     pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -284,7 +284,7 @@ def main():
     nrow = 1
     ncolumn = nlegend
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -298,7 +298,7 @@ def main():
     nrow = nlegend
     ncolumn = 1
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -312,7 +312,7 @@ def main():
     nrow = nlegend
     ncolumn = 1
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -326,7 +326,7 @@ def main():
     nrow = 6
     ncolumn = 2
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -340,7 +340,7 @@ def main():
     nrow = 6
     ncolumn = 2
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -354,7 +354,7 @@ def main():
     nrow = 3
     ncolumn = 3
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -419,7 +419,7 @@ def main():
         ncolumn = 0
 
         (legend_width, legend_height) = \
-        pllegend( position, opt, x, y,
+        pllegend( opt, position, x, y,
                   0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
                   1., text_colors, text,
                   box_colors, box_patterns, box_scales, box_line_widths,
@@ -512,7 +512,7 @@ def main():
     opt = opt_base
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -534,7 +534,7 @@ def main():
     x += legend_width
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -556,7 +556,7 @@ def main():
     x += legend_width
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -581,7 +581,7 @@ def main():
     max_height = 0.
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -603,7 +603,7 @@ def main():
     x += legend_width
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -625,7 +625,7 @@ def main():
     x += legend_width
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -649,7 +649,7 @@ def main():
     max_height = 0.
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -670,7 +670,7 @@ def main():
     x += legend_width
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -691,7 +691,7 @@ def main():
     x += legend_width
     plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( position, opt, x, y,
+    pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,

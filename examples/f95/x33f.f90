@@ -143,7 +143,7 @@
           symbol_colors(1) = 1 + mod( k-1, 8 )
           write( text(1), '(i2.2)' ) k-1
 
-          call pllegend( legend_width, legend_height, position, opt, &
+          call pllegend( legend_width, legend_height, opt, position, &
               0.05_plflt, 0.05_plflt,                                &
               0.1_plflt, 15, 1, 1, 0, 0,                             &
               opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt, &
@@ -196,7 +196,7 @@
       y       = 0.1_plflt
       nrow    = 1
       ncolumn = nlegend
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
           1._plflt, text_colors, text,                                 &
@@ -210,7 +210,7 @@
       y       = 0.1_plflt
       nrow    = 1
       ncolumn = nlegend
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
           1._plflt, text_colors, text,                                 &
@@ -224,7 +224,7 @@
       y       = 0._plflt
       nrow    = nlegend
       ncolumn = 1
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
           1._plflt, text_colors, text,                                 &
@@ -238,7 +238,7 @@
       y       = 0._plflt
       nrow    = nlegend
       ncolumn = 1
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
           1._plflt, text_colors, text,                                 &
@@ -252,7 +252,7 @@
       y       = 0._plflt
       nrow    = 6
       ncolumn = 2
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
           1._plflt, text_colors, text,                                 &
@@ -266,7 +266,7 @@
       y       = 0._plflt
       nrow    = 6
       ncolumn = 2
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
           1._plflt, text_colors, text,                                 &
@@ -280,7 +280,7 @@
       y       = 0._plflt
       nrow    = 3
       ncolumn = 3
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
           1._plflt, text_colors, text,                                 &
@@ -339,7 +339,7 @@
           nrow    = MIN( 3, nlegend )
           ncolumn = 0
 
-          call pllegend( legend_width, legend_height, position, opt, &
+          call pllegend( legend_width, legend_height, opt, position, &
               x, y,                                                  &
               0.025_plflt, 15, 1, 1, nrow, ncolumn,                  &
               opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 1.5_plflt, &
@@ -426,7 +426,7 @@
       opt = opt_base
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -451,7 +451,7 @@
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -476,7 +476,7 @@
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -506,7 +506,7 @@
       max_height = 0._plflt
       call plscol0a( 15, 32, 32, 32, 0.70_plflt)
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -531,7 +531,7 @@
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -556,7 +556,7 @@
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -585,7 +585,7 @@
       max_height = 0._plflt
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -609,7 +609,7 @@
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &
@@ -633,7 +633,7 @@
       x   = x + legend_width
       call plscol0a( 15, 32, 32, 32, 0.70_plflt )
 
-      call pllegend( legend_width, legend_height, position, opt, x, y, &
+      call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
           0._plflt, text_colors, text,                                 &

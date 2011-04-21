@@ -194,7 +194,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
     plscol0a( 15, 32, 32, 32, 0.70 )
 
     (legend_width, legend_height) = \
-    pllegend( 0, PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0.0, 0.0,
+    pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0, 0.0, 0.0,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths, 

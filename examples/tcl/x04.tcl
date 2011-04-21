@@ -102,7 +102,7 @@ proc plot41 {w type} {
 
     $w cmd plscol0a 15 32 32 32 0.70
     foreach { legend_width legend_height } \
-        [$w cmd pllegend 0 [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX}] \
+        [$w cmd pllegend [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX}] 0 \
             0.0 0.0 0.1 15 \
             1 1 0 0 \
             [lrange $opt_array 0 [expr {$nlegend-1}]] \

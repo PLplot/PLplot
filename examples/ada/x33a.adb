@@ -108,7 +108,7 @@ procedure x33a is
     --     colors : Real_Vector(0 .. n - 1);
     --     i : Integer;
     --     color_step, color_offset : Long_Float;
-    --     position, opt : Integer;
+    --     opt, position : Integer;
     --     axis_opts_1, axis_opts_2 : Unbounded_String;
     -- begin
     --     pladv(0);
@@ -137,7 +137,7 @@ procedure x33a is
     --         end if;
     --     end if;
     -- 
-    --     plcolorbar(position, opt, 0.1, 0.1, 0.5, 0.1, -- fixme
+    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1, -- fixme
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_1, "Test label - Left, High Cap",
@@ -146,7 +146,7 @@ procedure x33a is
     --     position := PL_POSITION_RIGHT;
     --     opt      := bar_type + PL_COLORBAR_LABEL_RIGHT + PL_COLORBAR_CAP_LOW;
     -- 
-    --     plcolorbar(position, opt, 0.1, 0.4, 0.5, 0.1, -- fixme etc.
+    --     plcolorbar(opt, position, 0.1, 0.4, 0.5, 0.1, -- fixme etc.
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_1, "Test label - Right, Low Cap",
@@ -155,7 +155,7 @@ procedure x33a is
     --     position := PL_POSITION_TOP;
     --     opt      := bar_type + PL_COLORBAR_LABEL_TOP + PL_COLORBAR_CAP_HIGH;
     -- 
-    --     plcolorbar(position, opt, 0.1, 0.1, 0.5, 0.1,
+    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1,
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_2, "Test label - Top, High Cap",
@@ -164,7 +164,7 @@ procedure x33a is
     --     position := PL_POSITION_BOTTOM;
     --     opt      := bar_type + PL_COLORBAR_LABEL_BOTTOM + PL_COLORBAR_CAP_LOW;
     -- 
-    --     plcolorbar(position, opt, 0.4, 0.1, 0.5, 0.1,
+    --     plcolorbar(opt, position, 0.4, 0.1, 0.5, 0.1,
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_2, "Test label - Bottom, Low Cap",
@@ -186,7 +186,7 @@ procedure x33a is
     --     colors : Long_Float(0 .. n - 1);
     --     i : Integer;
     --     color_step, color_offset : Long_Float;
-    --     position, opt : Integer;
+    --     opt, position : Integer;
     --     axis_opts_1, axis_opts_2 : Unbounded_String;
     -- begin
     --     pladv(0);
@@ -222,7 +222,7 @@ procedure x33a is
     --         end if;
     --     end if;
     -- 
-    --     plcolorbar(position, opt, 0.1, 0.1, 0.5, 0.1,
+    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1,
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_1, "Test label - Left, Low Cap",
@@ -231,7 +231,7 @@ procedure x33a is
     --     position := PL_POSITION_RIGHT;
     --     opt      := bar_type + PL_COLORBAR_LABEL_RIGHT + PL_COLORBAR_CAP_HIGH;
     -- 
-    --     plcolorbar(position, opt, 0.1, 0.4, 0.5, 0.1,
+    --     plcolorbar(opt, position, 0.1, 0.4, 0.5, 0.1,
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_1, "Test label - Right, High Cap",
@@ -240,7 +240,7 @@ procedure x33a is
     --     position := PL_POSITION_TOP;
     --     opt      := bar_type + PL_COLORBAR_LABEL_TOP + PL_COLORBAR_CAP_LOW;
     -- 
-    --     plcolorbar(position, opt, 0.1, 0.1, 0.5, 0.1,
+    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1,
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_2, "Test label - Top, Low Cap",
@@ -249,7 +249,7 @@ procedure x33a is
     --     position := PL_POSITION_BOTTOM;
     --     opt      := bar_type + PL_COLORBAR_LABEL_BOTTOM + PL_COLORBAR_CAP_HIGH;
     -- 
-    --     plcolorbar(position, opt, 0.4, 0.1, 0.5, 0.1,
+    --     plcolorbar(opt, position, 0.4, 0.1, 0.5, 0.1,
     --         cont_color, cont_width,
     --         ticks, sub_ticks,
     --         axis_opts_2, "Test label - Bottom, High Cap",
@@ -330,7 +330,7 @@ begin -- main
             line_colors(0)   := 1 + (k mod 8);
             symbol_colors(0) := 1 + (k mod 8);
 
-            pllegend(legend_width, legend_height, position, opt, 0.05, 0.05,
+            pllegend(legend_width, legend_height, opt, position, 0.05, 0.05,
                 0.1, 15, 1, 1, 0, 0,
                 opt_array, 1.0, 1.0, 2.0,
                 1.0, text_colors, text,
@@ -398,7 +398,7 @@ begin -- main
         y        := 0.1;
         nrow     := 1;
         ncolumn  := nlegend;
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -413,7 +413,7 @@ begin -- main
         y        := 0.1;
         nrow     := 1;
         ncolumn  := nlegend;
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -428,7 +428,7 @@ begin -- main
         y        := 0.0;
         nrow     := nlegend;
         ncolumn  := 1;
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -443,7 +443,7 @@ begin -- main
         y        := 0.0;
         nrow     := nlegend;
         ncolumn  := 1;
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -458,7 +458,7 @@ begin -- main
         y        := 0.0;
         nrow     := 6;
         ncolumn  := 2;
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -473,7 +473,7 @@ begin -- main
         y        := 0.0;
         nrow     := 6;
         ncolumn  := 2;
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -488,7 +488,7 @@ begin -- main
         y        := 0.0;
         nrow     := 3;
         ncolumn  := 3;
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -564,7 +564,7 @@ begin -- main
             nrow    := Integer'min(3, nlegend);
             ncolumn := 0;
 
-            pllegend(legend_width, legend_height, position, opt, x, y,
+            pllegend(legend_width, legend_height, opt, position, x, y,
                 0.025, 15, 1, 1, nrow, ncolumn,
                 opt_array, 1.0, 1.0, 1.5,
                 1.0, text_colors, text,
@@ -662,7 +662,7 @@ begin -- main
         opt := opt_base;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -686,7 +686,7 @@ begin -- main
         x  := x + legend_width;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -711,7 +711,7 @@ begin -- main
         x  := x + legend_width;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -739,7 +739,7 @@ begin -- main
         max_height := 0.0;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -763,7 +763,7 @@ begin -- main
         x  := x + legend_width;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -787,7 +787,7 @@ begin -- main
         x  := x + legend_width;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -813,7 +813,7 @@ begin -- main
         max_height := 0.0;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -836,7 +836,7 @@ begin -- main
         x  := x + legend_width;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -859,7 +859,7 @@ begin -- main
         x  := x + legend_width;
         plscol0a(15, 32, 32, 32, 0.70);
 
-        pllegend(legend_width, legend_height, position, opt, x, y,
+        pllegend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,

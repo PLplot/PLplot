@@ -152,7 +152,7 @@ for k=0,15 do
   line_colors[1] = 1 + (k % 8)
   symbol_colors[1] = 1 + (k % 8)
   legend_width, legend_height = pl.legend(
-    position, opt, 0.05, 0.05,
+    opt, position, 0.05, 0.05,
     0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
     1.0, text_colors, text, 
     box_colors, box_patterns, box_scales, box_line_widths, 
@@ -201,7 +201,7 @@ y = 0.1
 nrow = 1
 ncolumn = nlegend
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
   1.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -215,7 +215,7 @@ y = 0.1
 nrow = 1
 ncolumn = nlegend
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
   1.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -229,7 +229,7 @@ y = 0.
 nrow = nlegend
 ncolumn = 1
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
   1.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -243,7 +243,7 @@ y = 0.
 nrow = nlegend
 ncolumn = 1
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
   1.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -257,7 +257,7 @@ y = 0.
 nrow = 6
 ncolumn = 2
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
   1.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -271,7 +271,7 @@ y = 0.
 nrow = 6
 ncolumn = 2
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
   1.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -285,7 +285,7 @@ y = 0.
 nrow = 3
 ncolumn = 3
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
   1.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -336,7 +336,7 @@ for i=0,8 do
   nrow = math.min(3, nlegend)
   ncolumn = 0
   legend_width, legend_height = pl.legend(
-    position, opt, x, y,
+    opt, position, x, y,
     0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
     1.0, text_colors, text, 
     box_colors, box_patterns, box_scales, box_line_widths, 
@@ -418,7 +418,7 @@ symbols[5] = special_symbols[3]
 opt = opt_base
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -440,7 +440,7 @@ opt = opt_base
 x = x + legend_width
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -463,7 +463,7 @@ opt = opt_base
 x = x + legend_width
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -489,7 +489,7 @@ y = y + max_height
 max_height = 0
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -512,7 +512,7 @@ opt = opt_base
 x = x + legend_width
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -535,7 +535,7 @@ opt = opt_base
 x = x + legend_width
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -560,7 +560,7 @@ y = y + max_height
 max_height = 0
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -582,7 +582,7 @@ opt = opt_base
 x = x + legend_width
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 
@@ -604,7 +604,7 @@ opt = opt_base
 x = x + legend_width
 pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
-  position, opt, x, y,
+  opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
   0.0, text_colors, text, 
   box_colors, box_patterns, box_scales, box_line_widths, 

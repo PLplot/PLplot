@@ -332,7 +332,7 @@ begin -- main
             line_colors(0)   := 1 + (k mod 8);
             symbol_colors(0) := 1 + (k mod 8);
 
-            Create_Legend(legend_width, legend_height, position, opt, 0.05, 0.05,
+            Create_Legend(legend_width, legend_height, opt, position, 0.05, 0.05,
                 0.1, 15, 1, 1, 0, 0,
                 opt_array, 1.0, 1.0, 2.0,
                 1.0, text_colors, text,
@@ -400,7 +400,7 @@ begin -- main
         y        := 0.1;
         nrow     := 1;
         ncolumn  := nlegend;
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -415,7 +415,7 @@ begin -- main
         y        := 0.1;
         nrow     := 1;
         ncolumn  := nlegend;
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -430,7 +430,7 @@ begin -- main
         y        := 0.0;
         nrow     := nlegend;
         ncolumn  := 1;
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -445,7 +445,7 @@ begin -- main
         y        := 0.0;
         nrow     := nlegend;
         ncolumn  := 1;
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -460,7 +460,7 @@ begin -- main
         y        := 0.0;
         nrow     := 6;
         ncolumn  := 2;
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -475,7 +475,7 @@ begin -- main
         y        := 0.0;
         nrow     := 6;
         ncolumn  := 2;
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -490,7 +490,7 @@ begin -- main
         y        := 0.0;
         nrow     := 3;
         ncolumn  := 3;
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
@@ -566,7 +566,7 @@ begin -- main
             nrow    := Integer'min(3, nlegend);
             ncolumn := 0;
 
-            Create_Legend(legend_width, legend_height, position, opt, x, y,
+            Create_Legend(legend_width, legend_height, opt, position, x, y,
                 0.025, 15, 1, 1, nrow, ncolumn,
                 opt_array, 1.0, 1.0, 1.5,
                 1.0, text_colors, text,
@@ -664,7 +664,7 @@ begin -- main
         opt := opt_base;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -688,7 +688,7 @@ begin -- main
         x  := x + legend_width;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -713,7 +713,7 @@ begin -- main
         x  := x + legend_width;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -741,7 +741,7 @@ begin -- main
         max_height := 0.0;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -765,7 +765,7 @@ begin -- main
         x  := x + legend_width;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -789,7 +789,7 @@ begin -- main
         x  := x + legend_width;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -815,7 +815,7 @@ begin -- main
         max_height := 0.0;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -838,7 +838,7 @@ begin -- main
         x  := x + legend_width;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
@@ -861,7 +861,7 @@ begin -- main
         x  := x + legend_width;
         Set_One_Color_Map_0_And_Alpha(White, 32, 32, 32, 0.70);
 
-        Create_Legend(legend_width, legend_height, position, opt, x, y,
+        Create_Legend(legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,

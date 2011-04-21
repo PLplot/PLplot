@@ -1256,7 +1256,7 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 // Routine for drawing discrete line, symbol, or cmap0 legends
 PLDLLIMPEXP void
 c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+            PLINT opt, PLINT position, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT nlegend, const PLINT *opt_array,

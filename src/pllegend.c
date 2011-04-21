@@ -376,7 +376,8 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 #define subpage_to_adopted_y( ny )    ( ( ny - ydmin_adopted ) / ( ( ydmax_adopted ) - ( ydmin_adopted ) ) )
 
 //--------------------------------------------------------------------------
-//! Plot legend using discretely annotated filled boxes, lines, and/or symbols.
+//! Plot legend using discretely annotated filled boxes, lines, and/or lines
+//! of symbols.
 //!
 //! (N.B. the adopted coordinate system used for some of the parameters
 //! is defined in the documentation of the position parameter.)
@@ -392,6 +393,17 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! quantity is calculated from the text_scale and text_spacing
 //! arguments and the nrow argument (possibly modified inside the
 //! routine depending on the nlegend and ncolumn arguments).
+//! @param opt This variable contains bits which control the overall
+//! legend.  If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
+//! on the left of the legend and the plotted area on the right.
+//! Otherwise, put the text area on the right of the legend and the
+//! plotted area on the left.  If the PL_LEGEND_BACKGROUND bit is set,
+//! plot a (semi-transparent) background for the legend.  If the
+//! PL_LEGEND_BOUNDING_BOX bit is set, plot a bounding box for the
+//! legend.  If the PL_LEGEND_ROW_MAJOR bit is set and both (of the
+//! possibly internally transformed) nrow > 1 and ncolumn > 1, then
+//! plot the resulting array of legend entries in row-major order.
+//! Otherwise, plot the legend entries in column-major order.
 //! @param position This variable contains bits which control the
 //! overall position of the legend and the definition of the adopted
 //! coordinates used for positions.  The combination of the
@@ -409,17 +421,6 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set, use
 //! PL_POSITION_INSIDE.  If neither of PL_POSITION_VIEWPORT or
 //! PL_POSITION_SUBPAGE is set, use PL_POSITION_VIEWPORT.
-//! @param opt This variable contains bits which control the overall
-//! legend.  If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
-//! on the left of the legend and the plotted area on the right.
-//! Otherwise, put the text area on the right of the legend and the
-//! plotted area on the left.  If the PL_LEGEND_BACKGROUND bit is set,
-//! plot a (semi-transparent) background for the legend.  If the
-//! PL_LEGEND_BOUNDING_BOX bit is set, plot a bounding box for the
-//! legend.  If the PL_LEGEND_ROW_MAJOR bit is set and both (of the
-//! possibly internally transformed) nrow > 1 and ncolumn > 1, then
-//! plot the resulting array of legend entries in row-major order.
-//! Otherwise, plot the legend entries in column-major order.
 //! @param x X offset of the legend position in adopted coordinates
 //! from the specified standard position of the legend.  For positive
 //! x, the direction of motion away from the standard position is
@@ -509,7 +510,7 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 void
 c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-            PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+            PLINT opt, PLINT position, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
             PLINT nlegend, const PLINT *opt_array,

@@ -128,7 +128,7 @@ proc x33 {{w loopback}} {
         set line_colors   [list [expr {1 +  $k % 8}]]
         set symbol_colors [list [expr {1 +  $k % 8}]]
 
-        $w cmd pllegend $position $opt 0.05 0.05 \
+        $w cmd pllegend $opt $position 0.05 0.05 \
             0.1 15 1 1 0 0 \
             $opt_array 1.0 1.0 2.0 \
             1. $text_colors $text \
@@ -185,7 +185,7 @@ proc x33 {{w loopback}} {
     set y        0.1
     set nrow     1
     set ncolumn  $nlegend
-    $w cmd pllegend $position $opt $x $y \
+    $w cmd pllegend $opt $position $x $y \
         0.05 15 1 1 $nrow $ncolumn \
         $opt_array 1.0 1.0 2.0 \
         1. $text_colors $text \
@@ -199,7 +199,7 @@ proc x33 {{w loopback}} {
     set y        0.1
     set nrow     1
     set ncolumn  $nlegend
-    $w cmd pllegend $position $opt $x $y \
+    $w cmd pllegend $opt $position $x $y \
         0.05 15 1 1 $nrow $ncolumn \
         $opt_array 1.0 1.0 2.0 \
         1. $text_colors $text \
@@ -213,7 +213,7 @@ proc x33 {{w loopback}} {
     set y        0.
     set nrow     $nlegend
     set ncolumn  1
-    $w cmd pllegend $position $opt $x $y \
+    $w cmd pllegend $opt $position $x $y \
         0.05 15 1 1 $nrow $ncolumn \
         $opt_array 1.0 1.0 2.0 \
         1. $text_colors $text \
@@ -227,7 +227,7 @@ proc x33 {{w loopback}} {
     set y        0.
     set nrow     $nlegend
     set ncolumn  1
-    $w cmd pllegend $position $opt $x $y \
+    $w cmd pllegend $opt $position $x $y \
         0.05 15 1 1 $nrow $ncolumn \
         $opt_array 1.0 1.0 2.0 \
         1. $text_colors $text \
@@ -241,7 +241,7 @@ proc x33 {{w loopback}} {
     set y        0.
     set nrow     6
     set ncolumn  2
-    $w cmd pllegend $position $opt $x $y \
+    $w cmd pllegend $opt $position $x $y \
         0.05 15 1 1 $nrow $ncolumn \
         $opt_array 1.0 1.0 2.0 \
         1. $text_colors $text \
@@ -255,7 +255,7 @@ proc x33 {{w loopback}} {
     set y        0.
     set nrow     6
     set ncolumn  2
-    $w cmd pllegend $position $opt $x $y \
+    $w cmd pllegend $opt $position $x $y \
         0.05 15 1 1 $nrow $ncolumn \
         $opt_array 1.0 1.0 2.0 \
         1. $text_colors $text \
@@ -269,7 +269,7 @@ proc x33 {{w loopback}} {
     set y        0.
     set nrow     3
     set ncolumn  3
-    $w cmd pllegend $position $opt $x $y \
+    $w cmd pllegend $opt $position $x $y \
         0.05 15 1 1 $nrow $ncolumn \
         $opt_array 1.0 1.0 2.0 \
         1. $text_colors $text \
@@ -330,7 +330,7 @@ proc x33 {{w loopback}} {
         set nrow    [min 3 $nlegend]
         set ncolumn 0
 
-        set legend_data [$w cmd pllegend $position $opt $x $y \
+        set legend_data [$w cmd pllegend $opt $position $x $y \
             0.025 15 1 1 $nrow $ncolumn \
             $opt_array 1.0 1.0 1.5 \
             1. $text_colors $text \
@@ -450,7 +450,7 @@ proc x33 {{w loopback}} {
     set opt $opt_base
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -490,7 +490,7 @@ proc x33 {{w loopback}} {
     set x   [expr {$x + $legend_width}]
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -529,7 +529,7 @@ proc x33 {{w loopback}} {
     set x   [expr {$x + $legend_width}]
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -571,7 +571,7 @@ proc x33 {{w loopback}} {
     set max_height 0.
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -610,7 +610,7 @@ proc x33 {{w loopback}} {
     set x   [expr {$x + $legend_width}]
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -649,7 +649,7 @@ proc x33 {{w loopback}} {
     set x   [expr {$x + $legend_width}]
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -690,7 +690,7 @@ proc x33 {{w loopback}} {
     set max_height 0.
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -728,7 +728,7 @@ proc x33 {{w loopback}} {
     set x   [expr {$x + $legend_width}]
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \
@@ -766,7 +766,7 @@ proc x33 {{w loopback}} {
     set x   [expr {$x + $legend_width}]
     $w cmd plscol0a 15 32 32 32 0.70
 
-    set legend_data [$w cmd pllegend $position $opt $x $y \
+    set legend_data [$w cmd pllegend $opt $position $x $y \
         0.1 15 1 1 0 0 \
         $opt_array 1.0 $text_scale 2.0 \
         0. $text_colors $text \

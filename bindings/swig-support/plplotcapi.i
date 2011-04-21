@@ -460,7 +460,7 @@ pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
 void
 pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
-          PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width,
+          PLINT opt, PLINT position, PLFLT x, PLFLT y, PLFLT plot_width,
           PLINT bg_color, PLINT bb_color, PLINT bb_style,
           PLINT nrow, PLINT ncolumn,
           PLINT n, const PLINT *Array,

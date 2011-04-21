@@ -188,7 +188,7 @@ class x04 {
 
         pls.scol0a( 15, 32, 32, 32, 0.70 );
         pls.legend( legend_width, legend_height,
-            0, PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX,
+            PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX, 0,
             0.0, 0.0, 0.1, 15,
             1, 1, 0, 0, opt_array,
             1.0, 1.0, 2.0,

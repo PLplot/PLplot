@@ -243,7 +243,7 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
 
     plscol0a( 15, 32, 32, 32, 0.70 );
     pllegend( &legend_width, &legend_height,
-        0, PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX,
+        PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
         0.0, 0.0, 0.10, 15,
         1, 1, 0, 0,
         nlegend, opt_array,

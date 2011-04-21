@@ -213,7 +213,7 @@ proc plot261 { w type x_label y_label alty_label legend_text title_label line_la
 
   $w cmd plscol0a 15 32 32 32 0.70
   $w cmd pllegend \
-      0 [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX}] \
+      [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX}] 0 \
       0.0 0.0 0.10 15 \
       1 1 0 0 \
       $opt_array \

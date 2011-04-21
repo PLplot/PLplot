@@ -128,7 +128,7 @@ procedure x04a is
                 symbols(1)        := To_Unbounded_String("*");
 
                 pllegend(legend_width, legend_height,
-                    0, Legend_Background + Legend_Bounding_Box,
+                    Legend_Background + Legend_Bounding_Box, 0,
                     0.0, 0.0, 0.1, 15,
                     1, 1, 0, 0,
                     opt_array,
@@ -169,7 +169,7 @@ procedure x04a is
                 Box_Scales(0)      := 0.0;
 
                 pllegend(legend_width, legend_height,
-                    0, Legend_Background + Legend_Bounding_Box,
+                    Legend_Background + Legend_Bounding_Box, 0,
                     0.0, 0.0, 0.1, 15, -- fixme Replace colors and styles with names.
                     1, 1, 0, 0,
                     opt_array,

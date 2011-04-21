@@ -314,5 +314,5 @@ quote(mli, "val plunset_exit : unit -> unit");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
 RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> unit = "ml_plparseopts")
-RAW_ML(external pllegend : plplot_position_opt -> plplot_legend_opt -> float -> float -> float -> int -> int -> int -> int -> int -> plplot_legend_opt array -> float -> float -> float -> float -> int array -> string array -> int array -> int array -> float array -> int array -> int array -> int array -> int array -> int array -> float array -> int array -> string array -> float * float = "ml_pllegend_byte" "ml_pllegend")
+RAW_ML(external pllegend : plplot_legend_opt -> plplot_position_opt -> float -> float -> float -> int -> int -> int -> int -> int -> plplot_legend_opt array -> float -> float -> float -> float -> int array -> string array -> int array -> int array -> float array -> int array -> int array -> int array -> int array -> int array -> float array -> int array -> string array -> float * float = "ml_pllegend_byte" "ml_pllegend")
 

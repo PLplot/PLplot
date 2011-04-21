@@ -1857,7 +1857,7 @@ package body PLplot is
     -- pllegend
     procedure Create_Legend
        (Legend_Width, Legend_Height           : out Long_Float;
-        Position, Options                     : Integer;
+        Options, Position                     : Integer;
         X_Offset, Y_Offset                    : Long_Float;
         Plot_Area_Width                       : Long_Float;
         Background_Color, Bounding_Box_Color  : Plot_Color_Type;
@@ -1938,7 +1938,7 @@ package body PLplot is
             PL_Symbols(I) := C_Symbols_String_Array(I)'Address;
         end loop;            
 
-        pllegend(Legend_Width, Legend_Height, Position, Options,
+        pllegend(Legend_Width, Legend_Height, Options, Position,
             X_Offset, Y_Offset, Plot_Area_Width, Background_Color, Bounding_Box_Color,
             Bounding_Box_Style, Number_Rows, Number_Columns, Number_Entries, 
             Entry_Options, Text_Offset, Text_Scale, Text_Spacing, Text_Justification,

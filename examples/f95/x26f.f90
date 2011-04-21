@@ -252,7 +252,7 @@ end program x26f
 
     call plscol0a( 15, 32, 32, 32, 0.70d0 )
     call pllegend( legend_width, legend_height, &
-        0, PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, &
+        PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, 0, &
         0.0_plflt, 0.0_plflt, 0.10_plflt, 15, &
         1, 1, 0, 0, &
         opt_array, &

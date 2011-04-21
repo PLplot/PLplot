@@ -128,7 +128,7 @@ procedure xthick04a is
                 symbols(1)        := To_Unbounded_String("*");
 
                 Create_Legend(legend_width, legend_height,
-                    0, Legend_Background + Legend_Bounding_Box,
+                    Legend_Background + Legend_Bounding_Box, 0,
                     0.0, 0.0, 0.1, White,
                     Red, 1, 0, 0,
                     opt_array,
@@ -169,7 +169,7 @@ procedure xthick04a is
                 Box_Scales(0)      := 0.0;
 
                 Create_Legend(legend_width, legend_height,
-                    0, Legend_Background + Legend_Bounding_Box,
+                    Legend_Background + Legend_Bounding_Box, 0,
                     0.0, 0.0, 0.1, White,
                     Red, 1, 0, 0,
                     opt_array,

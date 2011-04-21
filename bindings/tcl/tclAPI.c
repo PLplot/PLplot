@@ -4123,7 +4123,7 @@ pllegendCmd( ClientData clientData, Tcl_Interp *interp,
 {
     PLFLT   legend_width, legend_height;
     PLFLT   x, y, plot_width;
-    PLINT   position, opt;
+    PLINT   opt, position;
     PLINT   bg_color, bb_color, bb_style;
     PLINT   nrow, ncolumn;
     PLINT   nlegend;
@@ -4154,8 +4154,8 @@ pllegendCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    sscanf( argv[1], "%d", &position );
-    sscanf( argv[2], "%d", &opt );
+    sscanf( argv[1], "%d", &opt );
+    sscanf( argv[2], "%d", &position );
     sscanf( argv[3], "%lg", &value ); x          = (PLFLT) value;
     sscanf( argv[4], "%lg", &value ); y          = (PLFLT) value;
     sscanf( argv[5], "%lg", &value ); plot_width = (PLFLT) value;
@@ -4187,7 +4187,7 @@ pllegendCmd( ClientData clientData, Tcl_Interp *interp,
     nlegend = MIN( number_opts, number_texts );
 
     c_pllegend( &legend_width, &legend_height,
-        position, opt, x, y, plot_width,
+        opt, position, x, y, plot_width,
         bg_color, bb_color, bb_style,
         nrow, ncolumn,
         nlegend, opt_array,

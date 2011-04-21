@@ -204,7 +204,7 @@ procedure x26a is
 
         plscol0a(15, 32, 32, 32, 0.70);
         pllegend(legend_width, legend_height,
-            0, Legend_Background + Legend_Bounding_Box,
+            Legend_Background + Legend_Bounding_Box, 0,
             0.0, 0.0, 0.1, 15,
             1, 1, 0, 0,
             opt_array,

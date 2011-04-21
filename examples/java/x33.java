@@ -302,7 +302,7 @@ class x33 {
             line_colors[0]   = 1 + ( k % 8 );
             symbol_colors[0] = 1 + ( k % 8 );
 
-            pls.legend( legend_width, legend_height, position, opt, 0.05, 0.05,
+            pls.legend( legend_width, legend_height, opt, position, 0.05, 0.05,
                 0.1, 15, 1, 1, 0, 0,
                 opt_array, 1.0, 1.0, 2.0,
                 1., text_colors, text,
@@ -364,7 +364,7 @@ class x33 {
         y        = 0.1;
         nrow     = 1;
         ncolumn  = nlegend;
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -378,7 +378,7 @@ class x33 {
         y        = 0.1;
         nrow     = 1;
         ncolumn  = nlegend;
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -392,7 +392,7 @@ class x33 {
         y        = 0.;
         nrow     = nlegend;
         ncolumn  = 1;
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -406,7 +406,7 @@ class x33 {
         y        = 0.;
         nrow     = nlegend;
         ncolumn  = 1;
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -420,7 +420,7 @@ class x33 {
         y        = 0.;
         nrow     = 6;
         ncolumn  = 2;
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -434,7 +434,7 @@ class x33 {
         y        = 0.;
         nrow     = 6;
         ncolumn  = 2;
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -448,7 +448,7 @@ class x33 {
         y        = 0.;
         nrow     = 3;
         ncolumn  = 3;
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.05, 15, 1, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1., text_colors, text,
@@ -515,7 +515,7 @@ class x33 {
             nrow    = Math.min( 3, nlegend );
             ncolumn = 0;
 
-            pls.legend( legend_width, legend_height, position, opt, x, y,
+            pls.legend( legend_width, legend_height, opt, position, x, y,
                 0.025, 15, 1, 1, nrow, ncolumn,
                 opt_array, 1.0, 1.0, 1.5,
                 1., text_colors, text,
@@ -618,7 +618,7 @@ class x33 {
         opt = opt_base;
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -643,7 +643,7 @@ class x33 {
         x   = x + legend_width[0];
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -668,7 +668,7 @@ class x33 {
         x   = x + legend_width[0];
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -696,7 +696,7 @@ class x33 {
         max_height = 0.;
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -721,7 +721,7 @@ class x33 {
         x   = x + legend_width[0];
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -746,7 +746,7 @@ class x33 {
         x   = x + legend_width[0];
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -773,7 +773,7 @@ class x33 {
         max_height = 0.;
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -797,7 +797,7 @@ class x33 {
         x   = x + legend_width[0];
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,
@@ -821,7 +821,7 @@ class x33 {
         x   = x + legend_width[0];
         pls.scol0a( 15, 32, 32, 32, 0.70 );
 
-        pls.legend( legend_width, legend_height, position, opt, x, y,
+        pls.legend( legend_width, legend_height, opt, position, x, y,
             0.1, 15, 1, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0., text_colors, text,

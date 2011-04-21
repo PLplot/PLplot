@@ -204,7 +204,7 @@ procedure xthick26a is
 
         Set_One_Color_Map_0_And_Alpha(15, 32, 32, 32, 0.70);
         Create_Legend(legend_width, legend_height,
-            0, Legend_Background + Legend_Bounding_Box,
+            Legend_Background + Legend_Bounding_Box, 0,
             0.0, 0.0, 0.1, 15,
             1, 1, 0, 0,
             opt_array,
