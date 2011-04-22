@@ -1386,7 +1386,10 @@ c_plcolorbar( PLINT opt, PLINT position,
     {
         if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
-            label_offset += 4.0;
+            if ( position & PL_POSITION_LEFT )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
             perp          = '\0';
             just          = 0.5;
         }
@@ -1403,7 +1406,10 @@ c_plcolorbar( PLINT opt, PLINT position,
     {
         if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
         {
-            label_offset += 4.0;
+            if ( position & PL_POSITION_RIGHT )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
             perp          = '\0';
             just          = 0.5;
         }
@@ -1425,7 +1431,10 @@ c_plcolorbar( PLINT opt, PLINT position,
         }
         else
         {
-            label_offset += 4.0;
+            if ( position & PL_POSITION_TOP )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
             perp          = '\0';
         }
         snprintf( opt_string, max_opts, "t%c", perp );
@@ -1440,7 +1449,10 @@ c_plcolorbar( PLINT opt, PLINT position,
         }
         else
         {
-            label_offset += 4.0;
+            if ( position & PL_POSITION_BOTTOM )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
             perp          = '\0';
         }
         snprintf( opt_string, max_opts, "b%c", perp );
