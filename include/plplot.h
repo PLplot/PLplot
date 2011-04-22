@@ -1249,6 +1249,7 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_COLORBAR_IMAGE           16
 #define PL_COLORBAR_SHADE           32
 #define PL_COLORBAR_GRADIENT        64
+#define PL_COLORBAR_CAP_NONE        0
 #define PL_COLORBAR_CAP_LOW         128
 #define PL_COLORBAR_CAP_HIGH        256
 #define PL_COLORBAR_SHADE_LABEL     512

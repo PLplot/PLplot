@@ -108,13 +108,15 @@ static const char *colorbar_label_option_labels[COLORBAR_LABELS] = {
 };
 
 // Colorbar cap options
-#define COLORBAR_CAPS 3
+#define COLORBAR_CAPS 4
 static PLINT colorbar_cap_options[COLORBAR_CAPS] = {
+    PL_COLORBAR_CAP_NONE,
     PL_COLORBAR_CAP_LOW,
     PL_COLORBAR_CAP_HIGH,
     PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
 };
 static const char *colorbar_cap_option_labels[COLORBAR_CAPS] = {
+    "No caps",
     "Low cap",
     "High cap",
     "Low and high caps"
