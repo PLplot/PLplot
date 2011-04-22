@@ -998,10 +998,6 @@ draw_cap( PLINT position, PLINT opt, PLFLT a1, PLFLT a2, PLFLT b, PLFLT color )
 //--------------------------------------------------------------------------
 //! Plot color bar for image, shade or gradient plots.
 //!
-//! @param position This variable defines the placement of the colorbar on the
-//! subpage.  The position can be one of PL_POSITION_TOP,
-//! PL_POSITION_BOTTOM, PL_POSITION_LEFT or PL_POSITION_RIGHT.  The colorbar
-//! will be drawn perpendicular to the given side of the subpage.
 //! @param opt This variable contains bits which control the overall colorbar.
 //! The type of colorbar can be specified with PL_COLORBAR_SHADE,
 //! PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT.  The position of the (optional)
@@ -1015,6 +1011,10 @@ draw_cap( PLINT position, PLINT opt, PLFLT a1, PLFLT a2, PLFLT b, PLFLT color )
 //! any tick marks and tick labels will be placed at the breaks between shaded
 //! segments.  TODO: This should be expanded to support custom placement of
 //! tick marks and tick labels at custom value locations for any colorbar type.
+//! @param position This variable defines the placement of the colorbar on the
+//! subpage.  The position can be one of PL_POSITION_TOP,
+//! PL_POSITION_BOTTOM, PL_POSITION_LEFT or PL_POSITION_RIGHT.  The colorbar
+//! will be drawn perpendicular to the given side of the subpage.
 //! @param x Colorbar displacement distance along/away from the horizonal axis
 //! in normalized subpage coordinates.
 //! @param y Colorbar displacement distance along/away from the vertical axis
@@ -1053,7 +1053,7 @@ draw_cap( PLINT position, PLINT opt, PLFLT a1, PLFLT a2, PLFLT b, PLFLT color )
 //!
 
 void
-c_plcolorbar( PLINT position, PLINT opt,
+c_plcolorbar( PLINT opt, PLINT position,
               PLFLT x, PLFLT y, PLFLT length, PLFLT width,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
