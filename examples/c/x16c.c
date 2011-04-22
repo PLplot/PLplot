@@ -333,7 +333,7 @@ main( int argc, const char *argv[] )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plcolorbar( PL_POSITION_RIGHT, PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.7, 0.03, 0.0, 0.0,
                     cont_color, cont_width, 0.0, 0, "bv", "",
                     ns + 1, shedge );
