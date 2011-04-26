@@ -882,33 +882,32 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 #define PL_COLORBAR_NEW_API
 #ifdef PL_COLORBAR_NEW_API
 // Code version with reorganized API for plcolorbar
+
+enum PLCapOrientation
+{
+  PLCapRight,
+  PLCapUp,
+  PLCapLeft,
+  PLCapDown
+};
 //--------------------------------------------------------------------------
 //! Draw triangular end-caps for color bars.
 //!
-//! @param position This variable defines the placement of the colorbar on the
-//! subpage.  The position can be one of PL_POSITION_TOP,
-//! PL_POSITION_BOTTOM, PL_POSITION_LEFT or PL_POSITION_RIGHT.  The colorbar
-//! will be drawn perpendicular to the given side of the subpage.
-//! @param opt This variable can be PL_COLORBAR_CAP_LOW or
-//! PL_COLORBAR_CAP_HIGH, indicating whether we are drawing a low-end cap or a
-//! high-end cap.
-//! @param a1 First primary coordinate for the end cap base.  If position
-//! is PL_POSITION_LEFT or PL_POSITION_RIGHT then a1 and a2 are x coordinates.
-//! if position is PL_POSITION_TOP or PL_POSITION_BOTTOM then a1 and a2 are y
-//! coordinates.  (a1, b) and (a2, b) OR (b, a1) and (b, a2) define the base of
-//! the triangular cap.
-//! @param a2 Second primary coordinate for the end cap base.
-//! @param b Secondary coordinate for the end cap base.  If a1 and a2 are x,
-//! b is y.  If a1 and a2 are y, b is x.
+//! @param orientation This enum variable defines the
+//! orientation of the triangle.  The triangle points to the
+//! right, up, left, or down if orientation is equal to
+//! PLCapRight, PLCapUp, PLCapLeft, or PLCapDown.
+//! @param xmin Minimum X coordinate of rectangle inscribing the triangle.
+//! @param xmax Maximum X coordinate of rectangle inscribing the triangle.
+//! @param ymin Minimum Y coordinate of rectangle inscribing the triangle.
+//! @param ymax Minimum Y coordinate of rectangle inscribing the triangle.
 //! @param color Color (color palette 1) used to fill the end cap.
 //!
 
 void
-draw_cap( PLINT position, PLINT opt, PLFLT a1, PLFLT a2, PLFLT b, PLFLT color )
+draw_cap( enum PLCapOrientation orientation, PLFLT xmin, PLFLT xmax,
+          PLFLT ymin,PLFLT ymax, PLFLT color )
 {
-    // Height the cap in normalized coordinates
-    PLFLT cap_height = 0.05;
-
     // Save drawing color
     PLINT col0_save = plsc->icol0;
 
@@ -917,76 +916,58 @@ draw_cap( PLINT position, PLINT opt, PLFLT a1, PLFLT a2, PLFLT b, PLFLT color )
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
     // Saved world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
-    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
-    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
-
-    // Use the entire sub-page, and make world coordinates 0.0 -> 1.0
-    // This way the location and orientation of the cap can be easily
-    // defined by a combination of position, opt, a1, a2 and b.
-    plvpor( 0.0, 1.0, 0.0, 1.0 );
-    plwind( 0.0, 1.0, 0.0, 1.0 );
-
     // Points for the triangle
     PLFLT xs[3];
     PLFLT ys[3];
 
+    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
+
+    // The viewport is the specified rectangle that inscribes the
+    // triangle.  The world coordinates are chosen to make drawing of
+    // the triangle convenient.
+    plvpor( xmin, xmax, ymin, ymax );
+    plwind( 0.0, 1.0, 0.0, 1.0 );
+
+    if ( orientation == PLCapRight )
+    {
+            xs[0] = 0.;
+            ys[0] = 0.;
+            xs[1] = 1.;
+            ys[1] = 0.5;
+            xs[2] = 0.;
+            ys[2] = 1.;
+    }
+    else if ( orientation == PLCapUp )
+    {
+            xs[0] = 1.;
+            ys[0] = 0.;
+            xs[1] = 0.5;
+            ys[1] = 1.;
+            xs[2] = 0.;
+            ys[2] = 0.;
+    }
+    else if ( orientation == PLCapLeft )
+    {
+            xs[0] = 1.;
+            ys[0] = 1.;
+            xs[1] = 0.;
+            ys[1] = 0.5;
+            xs[2] = 1.;
+            ys[2] = 0.;
+    }
+    else if ( orientation == PLCapDown )
+    {
+            xs[0] = 0.;
+            ys[0] = 1.;
+            xs[1] = 0.5;
+            ys[1] = 0.;
+            xs[2] = 1.;
+            ys[2] = 1.;
+    }
+
     plcol1( color );
-
-    if ( opt & PL_COLORBAR_CAP_LOW )
-    {
-        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
-        {
-            // Draw the cap on the bottom
-            xs[0] = a1;
-            ys[0] = b;
-            xs[2] = a2;
-            ys[2] = b;
-            xs[1] = ( xs[0] + xs[2] ) / 2.0;
-            ys[1] = ys[0] - cap_height;
-
-            plfill( 3, xs, ys );
-        }
-        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
-        {
-            // Draw the cap on the left
-            xs[0] = b;
-            ys[0] = a1;
-            xs[2] = b;
-            ys[2] = a2;
-            xs[1] = xs[0] - cap_height;
-            ys[1] = ( ys[0] + ys[2] ) / 2.0;
-
-            plfill( 3, xs, ys );
-        }
-    }
-    else if ( opt & PL_COLORBAR_CAP_HIGH )
-    {
-        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
-        {
-            // Draw the cap on the top
-            xs[0] = a1;
-            ys[0] = b;
-            xs[2] = a2;
-            ys[2] = b;
-            xs[1] = ( xs[0] + xs[2] ) / 2.0;
-            ys[1] = ys[0] + cap_height;
-
-            plfill( 3, xs, ys );
-        }
-        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
-        {
-            // Draw the cap on the right
-            xs[0] = b;
-            ys[0] = a1;
-            xs[2] = b;
-            ys[2] = a2;
-            xs[1] = xs[0] + cap_height;
-            ys[1] = ( ys[0] + ys[2] ) / 2.0;
-
-            plfill( 3, xs, ys );
-        }
-    }
-
+    plfill( 3, xs, ys );
     // Restore the drawing color
     plcol0( col0_save );
 
@@ -1071,6 +1052,9 @@ c_plcolorbar( PLINT opt, PLINT position,
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
     PLFLT min_value, max_value;
+    // Height the cap in normalized coordinates
+    PLFLT cap_height = 0.05;
+
     min_value = values[0];
     max_value = values[ n_values - 1 ];
 
@@ -1347,11 +1331,11 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
-            draw_cap( position, PL_COLORBAR_CAP_LOW, vx_min, vx_max, vy_min, low_cap_color );
+          draw_cap( PLCapDown, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
         }
         else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
         {
-            draw_cap( position, PL_COLORBAR_CAP_LOW, vy_min, vy_max, vx_min, low_cap_color );
+          draw_cap( PLCapLeft, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
         }
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
@@ -1368,13 +1352,13 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
-            draw_cap( position, PL_COLORBAR_CAP_HIGH, vx_min, vx_max, vy_max, high_cap_color );
+          draw_cap( PLCapUp, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
         }
         else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
         {
-            draw_cap( position, PL_COLORBAR_CAP_HIGH, vy_min, vy_max, vx_max, high_cap_color );
+          draw_cap( PLCapRight, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
         }
-    }
+     }
 
     // For building axis option string
     PLINT      max_opts = 25;
