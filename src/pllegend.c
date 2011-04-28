@@ -883,20 +883,14 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 #ifdef PL_COLORBAR_NEW_API
 // Code version with reorganized API for plcolorbar
 
-enum PLCapOrientation
-{
-  PLCapRight,
-  PLCapUp,
-  PLCapLeft,
-  PLCapDown
-};
 //--------------------------------------------------------------------------
 //! Draw triangular end-caps for color bars.
 //!
-//! @param orientation This enum variable defines the
-//! orientation of the triangle.  The triangle points to the
-//! right, up, left, or down if orientation is equal to
-//! PLCapRight, PLCapUp, PLCapLeft, or PLCapDown.
+//! @param orientation This enum variable defines the orientation of
+//! the triangle.  The triangle points to the right, up, left, or down
+//! if orientation contains PL_COLORBAR_ORIENT_RIGHT,
+//! PL_COLORBAR_ORIENT_TOP, PL_COLORBAR_ORIENT_LEFT, or
+//! PL_COLORBAR_ORIENT_BOTTOM bits.
 //! @param xmin Minimum X coordinate of rectangle inscribing the triangle.
 //! @param xmax Maximum X coordinate of rectangle inscribing the triangle.
 //! @param ymin Minimum Y coordinate of rectangle inscribing the triangle.
@@ -905,10 +899,10 @@ enum PLCapOrientation
 //!
 
 void
-draw_cap( enum PLCapOrientation orientation, PLFLT xmin, PLFLT xmax,
+draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
           PLFLT ymin,PLFLT ymax, PLFLT color )
 {
-    // Save drawing color
+    // Save current drawing color.
     PLINT col0_save = plsc->icol0;
 
     // Save window and viewport
@@ -925,11 +919,11 @@ draw_cap( enum PLCapOrientation orientation, PLFLT xmin, PLFLT xmax,
 
     // The viewport is the specified rectangle that inscribes the
     // triangle.  The world coordinates are chosen to make drawing of
-    // the triangle convenient.
+    // that triangle convenient.
     plvpor( xmin, xmax, ymin, ymax );
     plwind( 0.0, 1.0, 0.0, 1.0 );
 
-    if ( orientation == PLCapRight )
+    if ( orientation == PL_COLORBAR_ORIENT_RIGHT )
     {
             xs[0] = 0.;
             ys[0] = 0.;
@@ -938,7 +932,7 @@ draw_cap( enum PLCapOrientation orientation, PLFLT xmin, PLFLT xmax,
             xs[2] = 0.;
             ys[2] = 1.;
     }
-    else if ( orientation == PLCapUp )
+    else if ( orientation == PL_COLORBAR_ORIENT_TOP )
     {
             xs[0] = 1.;
             ys[0] = 0.;
@@ -947,7 +941,7 @@ draw_cap( enum PLCapOrientation orientation, PLFLT xmin, PLFLT xmax,
             xs[2] = 0.;
             ys[2] = 0.;
     }
-    else if ( orientation == PLCapLeft )
+    else if ( orientation == PL_COLORBAR_ORIENT_LEFT )
     {
             xs[0] = 1.;
             ys[0] = 1.;
@@ -956,7 +950,7 @@ draw_cap( enum PLCapOrientation orientation, PLFLT xmin, PLFLT xmax,
             xs[2] = 1.;
             ys[2] = 0.;
     }
-    else if ( orientation == PLCapDown )
+    else if ( orientation == PL_COLORBAR_ORIENT_BOTTOM )
     {
             xs[0] = 0.;
             ys[0] = 1.;
@@ -964,6 +958,10 @@ draw_cap( enum PLCapOrientation orientation, PLFLT xmin, PLFLT xmax,
             ys[1] = 0.;
             xs[2] = 1.;
             ys[2] = 1.;
+    }
+    else
+    {
+      plexit( "draw_cap: internal error. Incorrect orientation");
     }
 
     plcol1( color );
@@ -1052,7 +1050,8 @@ c_plcolorbar( PLINT opt, PLINT position,
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
     PLFLT min_value, max_value;
-    // Height the cap in normalized coordinates
+    // Height of the cap in normalized coordinates
+    // ToDo: Use better value related to size of color bar.
     PLFLT cap_height = 0.05;
 
     min_value = values[0];
@@ -1331,11 +1330,11 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
-          draw_cap( PLCapDown, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
+          draw_cap( PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
         }
         else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
         {
-          draw_cap( PLCapLeft, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
+          draw_cap( PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
         }
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
@@ -1352,11 +1351,11 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
-          draw_cap( PLCapUp, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
+          draw_cap( PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
         }
         else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
         {
-          draw_cap( PLCapRight, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
+          draw_cap( PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
         }
      }
 
