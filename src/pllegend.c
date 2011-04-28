@@ -980,19 +980,25 @@ draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
 //--------------------------------------------------------------------------
 //! Plot color bar for image, shade or gradient plots.
 //!
-//! @param opt This variable contains bits which control the overall colorbar.
-//! The type of colorbar can be specified with PL_COLORBAR_SHADE,
-//! PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT.  The position of the (optional)
-//! label/title can be specified with
-//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).  If no label position is
-//! specified then no label will be drawn.  End-caps for the colorbar can
-//! added with PL_COLORBAR_CAP_LOW and PL_COLORBAR_CAP_HIGH.  If a particular
-//! colorbar cap option is not specified then no cap will be drawn for that
-//! end.  As a special case for PL_COLORBAR_SHADE, the option
-//! PL_COLORBAR_SHADE_LABEL can be specified.  If this option is provided then
-//! any tick marks and tick labels will be placed at the breaks between shaded
-//! segments.  TODO: This should be expanded to support custom placement of
-//! tick marks and tick labels at custom value locations for any colorbar type.
+//! @param opt This variable contains bits which control the overall
+//! colorbar.  The orientation (direction of the maximum value) of the
+//! colorbar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
+//! BOTTOM).  If none of those bits are specified, the default orientation
+//! is toward the top, i.e., a vertical colorbar.  The type of
+//! colorbar can be specified with PL_COLORBAR_SHADE,
+//! PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT.  The position of the
+//! (optional) label/title can be specified with
+//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).  If no label position
+//! is specified then no label will be drawn.  End-caps for the
+//! colorbar can added with PL_COLORBAR_CAP_LOW and
+//! PL_COLORBAR_CAP_HIGH.  If a particular colorbar cap option is not
+//! specified then no cap will be drawn for that end.  As a special
+//! case for PL_COLORBAR_SHADE, the option PL_COLORBAR_SHADE_LABEL can
+//! be specified.  If this option is provided then any tick marks and
+//! tick labels will be placed at the breaks between shaded segments.
+//! TODO: This should be expanded to support custom placement of tick
+//! marks and tick labels at custom value locations for any colorbar
+//! type.
 //! @param position This variable defines the placement of the colorbar on the
 //! subpage.  The position can be one of PL_POSITION_TOP,
 //! PL_POSITION_BOTTOM, PL_POSITION_LEFT or PL_POSITION_RIGHT.  The colorbar
@@ -1001,12 +1007,10 @@ draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! in normalized subpage coordinates.
 //! @param y Colorbar displacement distance along/away from the vertical axis
 //! in normalized subpage coordinates.
-//! @param length Length of the colorbar along its major axis (ex. along the
-//! top of the subpage if pos is PL_POSITION_TOP) in normalized subpage
-//! coordinates.
-//! @param width Width of the colorbar along the minor axis (ex. fraction of
-//! the vertical subpage size if pos is PL_POSITION_TOP) in normalized subpage
-//! coordinates.
+//! @param x_length Length of the colorbar in the X direction in
+//! adopted coordinates.
+//! @param y_length Length of the colorbar in the Y direction in
+//! adopted coordinates.
 //! @param low_cap_color Color of the low-end color bar cap, if it is drawn.
 //! @param high_cap_color Color of the high-end color bar cap, if it is drawn.
 //! @param cont_color Contour color for PL_COLORBAR_SHADE plots.  This is
@@ -1036,7 +1040,7 @@ draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
 
 void
 c_plcolorbar( PLINT opt, PLINT position,
-              PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+              PLFLT x, PLFLT y, PLFLT x_length, PLFLT y_length,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
@@ -1082,8 +1086,8 @@ c_plcolorbar( PLINT opt, PLINT position,
     {
         vx_min = x;
         vy_min = y;
-        vx_max = vx_min + width;
-        vy_max = vy_min + length;
+        vx_max = vx_min + x_length;
+        vy_max = vy_min + y_length;
         wx_min = 0.0;
         wy_min = min_value;
         wx_max = 1.0;
@@ -1091,10 +1095,10 @@ c_plcolorbar( PLINT opt, PLINT position,
     }
     else if ( position & PL_POSITION_RIGHT )
     {
-        vx_min = 1.0 - x - width;
+        vx_min = 1.0 - x - x_length;
         vy_min = y;
-        vx_max = vx_min + width;
-        vy_max = vy_min + length;
+        vx_max = vx_min + x_length;
+        vy_max = vy_min + y_length;
         wx_min = 0.0;
         wy_min = min_value;
         wx_max = 1.0;
@@ -1103,9 +1107,9 @@ c_plcolorbar( PLINT opt, PLINT position,
     else if ( position & PL_POSITION_TOP )
     {
         vx_min = x;
-        vy_min = 1.0 - y - width;
-        vx_max = vx_min + length;
-        vy_max = vy_min + width;
+        vy_min = 1.0 - y - y_length;
+        vx_max = vx_min + x_length;
+        vy_max = vy_min + y_length;
         wx_min = min_value;
         wy_min = 0.0;
         wx_max = max_value;
@@ -1115,8 +1119,8 @@ c_plcolorbar( PLINT opt, PLINT position,
     {
         vx_min = x;
         vy_min = y;
-        vx_max = vx_min + length;
-        vy_max = vy_min + width;
+        vx_max = vx_min + x_length;
+        vy_max = vy_min + y_length;
         wx_min = min_value;
         wy_min = 0.0;
         wx_max = max_value;
