@@ -1058,20 +1058,14 @@ c_plcolorbar( PLINT opt, PLINT position,
     // ToDo: Use better value related to size of color bar.
     PLFLT cap_height = 0.05;
 
-    min_value = values[0];
-    max_value = values[ n_values - 1 ];
-
     // Min and max colors
-    // Assumes that the colors array is sorted from smallest to largest.
     PLFLT min_color, max_color;
-    plgcmap1_range( &min_color, &max_color );
 
     // Saved normalized coordinates of viewport.
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+
     // Saved world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
-    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
-    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
 
     // Active attributes to be saved and restored afterward.
     PLINT col0_save       = plsc->icol0;
@@ -1080,6 +1074,34 @@ c_plcolorbar( PLINT opt, PLINT position,
     // coordinates).
     PLFLT vx_min, vx_max, vy_min, vy_max;
     PLFLT wx_min, wx_max, wy_min, wy_max;
+
+    // The data to plot
+    PLFLT **color_data;
+
+    // Setting up the data for display
+    PLINT i, j, ni, nj, n_steps;
+    PLFLT step_size;
+
+    // How far away from the axis should the label be drawn?
+    PLFLT label_offset;
+
+    // For building axis option string
+    PLINT      max_opts = 25;
+    char       opt_string[max_opts];
+    const char *tick_string;
+
+    // Draw a title
+    char perp;
+
+    min_value = values[0];
+    max_value = values[ n_values - 1 ];
+
+    // Assumes that the colors array is sorted from smallest to largest.
+    plgcmap1_range( &min_color, &max_color );
+
+    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
+
     // Build the proper viewport and window dimension along the requested side
     // of the subpage
     if ( position & PL_POSITION_LEFT )
@@ -1134,12 +1156,6 @@ c_plcolorbar( PLINT opt, PLINT position,
     // The window used to draw the colorbar should take up the whole viewport
     plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
-
-    // The data to plot
-    PLFLT **color_data;
-    // Setting up the data for display
-    PLINT i, j, ni, nj, n_steps;
-    PLFLT step_size;
 
     // What kind of color bar are we making?
     if ( opt & PL_COLORBAR_IMAGE )
@@ -1285,6 +1301,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     else if ( opt & PL_COLORBAR_GRADIENT )
     {
         PLFLT xs[4], ys[4];
+        PLFLT angle;
         xs[0] = wx_min;
         ys[0] = wy_min;
         xs[1] = wx_max;
@@ -1293,7 +1310,6 @@ c_plcolorbar( PLINT opt, PLINT position,
         ys[2] = wy_max;
         xs[3] = wx_min;
         ys[3] = wy_max;
-        PLFLT angle;
         // Make sure the gradient runs in the proper direction
         if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
         {
@@ -1315,8 +1331,6 @@ c_plcolorbar( PLINT opt, PLINT position,
     // Restore the previous drawing color to use for outlines and text
     plcol0( col0_save );
 
-    // How far away from the axis should the label be drawn?
-    PLFLT label_offset;
     label_offset = 0.0;
 
     // Draw end-caps
@@ -1363,15 +1377,8 @@ c_plcolorbar( PLINT opt, PLINT position,
         }
      }
 
-    // For building axis option string
-    PLINT      max_opts = 25;
-    char       opt_string[max_opts];
-    const char *tick_string;
-
     tick_string = "";
 
-    // Draw a title
-    char perp;
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
         if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
