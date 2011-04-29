@@ -35,7 +35,11 @@ plinit ();
 #   - construction of a cycloid (animated) (TBD)
 #   - series of epitrochoids and hypotrochoids
 
-# R, r, p, N 
+# R, r, p, N
+# R and r should be integers to give correct termination of the
+# angle loop using gcd.
+# N.B. N is just a place holder since it is no longer used
+# (because we now have proper termination of the angle loop).
 my $params = [ [21.0,  7.0,  7.0,  3.0],  # Deltoid
                [21.0,  7.0, 10.0,  3.0],
                [21.0, -7.0, 10.0,  3.0],
@@ -55,10 +59,11 @@ my $params = [ [21.0,  7.0,  7.0,  3.0],  # Deltoid
 # First an overview, then all curves one by one
 plssub(3, 3);  # Three by three window
 
+my $fill = 0;
 foreach my $parm (@$params) {
   pladv(0);
   plvpor(0, 1, 0, 1);
-  spiro($parm);
+  spiro($parm, $fill);
 }
 
 pladv(0);
@@ -67,19 +72,50 @@ plssub(1, 1);  # One window per curve
 foreach my $parm (@$params) {
   pladv(0);
   plvpor(0, 1, 0, 1);
-  spiro($parm);
+  spiro($parm, $fill);
 }
-plend ();
+
+# Fill the curves
+$fill = 1;
+
+pladv( 0 );
+plssub( 1, 1 ); # One window per curve
+
+foreach my $parm (@$params) {
+  pladv( 0 );
+  plvpor(0, 1, 0, 1);
+  spiro( $parm, $fill);
+}
+
+# Don't forget to call plend() to finish off!
+plend();
+
+
+#--------------------------------------------------------------------------
+# Calculate greatest common divisor following pseudo-code for the
+# Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
+sub gcd  {
+  my ($a, $b) = @_;
+  $a = abs( $a );
+  $b = abs( $b );
+  while ( $b != 0 ) {
+    my $t = $b;
+    $b = $a % $b;
+    $a = $t;
+  }
+  return $a;
+}
 
 sub spiro {
   my $params = shift;
+  my $fill   = shift;
 
   # Fill the coordinates
-  my $NPNT = 20000;
+  my $NPNT = 2000;
 
-  my $windings = int($params->[3]);
+  my $windings = abs($params->[1]) / gcd($params->[0], $params->[1]);
   my $steps    = int($NPNT/$windings);
-  my $dphi     = 8.0*PI/$steps;
+  my $dphi     = 2.0*PI/$steps;
 
   my $phi  = sequence($windings*$steps+1) * $dphi;
   my $phiw = ($params->[0]-$params->[1])/$params->[1]*$phi;
@@ -90,16 +126,20 @@ sub spiro {
   my ($xmin, $xmax) = $xcoord->minmax;
   my ($ymin, $ymax) = $ycoord->minmax;
 
-  my $scale = ($xmax-$xmin > $ymax-$ymin) ? $xmax - $xmin : $ymax - $ymin;
-
-  $xmin  = -0.65 * $scale;
-  $xmax  =  0.65 * $scale;
-  $ymin  = -0.65 * $scale;
-  $ymax  =  0.65 * $scale;
+  my $xrange_adjust = 0.15 * ($xmax - $xmin);
+  $xmin -= $xrange_adjust;
+  $xmax += $xrange_adjust;
+  my $yrange_adjust = 0.15 * ($ymax - $ymin);
+  $ymin -= $yrange_adjust;
+  $ymax += $yrange_adjust;
 
   plwind($xmin, $xmax, $ymin, $ymax);
 
   plcol0(1);
-  plline($xcoord, $ycoord);
+  if ($fill) {
+    plfill ($xcoord, $ycoord);
+  } else {
+    plline ($xcoord, $ycoord);
+  }
 
 }

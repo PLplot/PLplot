@@ -129,8 +129,11 @@ unshift (@ARGV, $0);
 
 plParseOpts (\@ARGV, PL_PARSE_PARTIAL);
 
-# Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+# Load colour palettes
+plspal0( "cmap0_black_on_white.pal" );
+plspal1( "cmap1_gray.pal", 1 );
 
+# Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 plscmap0n (3);
 
 # Initialize plplot
@@ -193,6 +196,13 @@ pllab ("distance", "altitude", "Bogon density");
 
 # Plot using 1d coordinate transform
 
+# Load colour palettes
+plspal0( "cmap0_black_on_white.pal" );
+plspal1( "cmap1_blue_yellow.pal", 1 );
+
+# Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+plscmap0n( 3 );
+
 pladv (0);
 plvpor (0.1, 0.9, 0.1, 0.9);
 plwind (-1.0, 1.0, -1.0, 1.0);
@@ -208,6 +218,13 @@ plcol0 (2);
 pllab ("distance", "altitude", "Bogon density");
 
 # Plot using 2d coordinate transform
+
+# Load colour palettes
+plspal0( "cmap0_black_on_white.pal" );
+plspal1( "cmap1_blue_red.pal", 1 );
+
+# Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+plscmap0n( 3 );
 
 pladv (0);
 plvpor (0.1, 0.9, 0.1, 0.9);
@@ -225,6 +242,13 @@ plcont ($w, 1, $nx, 1, $ny, $clevel, \&pltr2, $cgrid2);
 pllab ("distance", "altitude", "Bogon density, with streamlines");
 
 # Plot using 2d coordinate transform
+
+# Load colour palettes
+plspal0( "" );
+plspal1( "", 1 );
+
+# Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+plscmap0n( 3 );
 
 pladv (0);
 plvpor (0.1, 0.9, 0.1, 0.9);
@@ -263,6 +287,13 @@ plFreeGrid ($cgrid1);
 plFree2dGrid ($cgrid2);
 
 # Example with polar coordinates
+
+# Load colour palettes
+plspal0( "cmap0_black_on_white.pal" );
+plspal1( "cmap1_gray.pal", 1 );
+
+# Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+plscmap0n( 3 );
 
 pladv (0);
 plvpor (.1, .9, .1, .9);

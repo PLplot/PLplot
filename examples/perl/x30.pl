@@ -127,21 +127,11 @@ for(my $i = 0; $i < 5; $i++){
 plscmap1n(128);
 plscmap1la(1, $pos, $rcoord, $gcoord, $bcoord, $acoord, $rev);
 
-# Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
-# used for the shade plot. plshades will use linear interpolation to
-# calculate the z values of all the intermediate points in this array.
-my $z = pdl([[0, 0],[1,1]]);
-
-# Set the color levels array. These levels are also between 0.0 and 1.0 
-my $clevel = sequence(101) * 0.01;
-
-# Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges
-# such that it fills the entire plotting area.
-my $fill_width = 0;
-my $cont_color = -1;
-my $cont_width = 2;
-plshades($z, 0.0, 1.0, 0.0, 1.0, $clevel, $fill_width, $cont_color, $cont_width, 
-	 1, 0, 0, 0);
+# Use that cmap1 to create a transparent red gradient for the whole
+# window.
+my $px = pdl(0,1,1,0);
+my $py = pdl(0,0,1,1);
+plgradient($px, $py, 90);
 
 plend();
 

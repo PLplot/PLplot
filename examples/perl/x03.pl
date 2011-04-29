@@ -29,9 +29,6 @@ use PDL;
 use PDL::Graphics::PLplot;
 use Math::Trig qw [pi];
 
-my $dtr = pi / 180.0;
-my $x0 = cos ($dtr * sequence (361));
-my $y0 = sin ($dtr * sequence (361));
 
 # Parse and process command line arguments
 
@@ -49,14 +46,22 @@ plinit ();
 
 plenv (-1.3, 1.3, -1.3, 1.3, 1, -2);
 
+my $dtr = pi / 180.0;
+my $x0 = cos ($dtr * sequence (361));
+my $y0 = sin ($dtr * sequence (361));
+
 my ($x, $y);
 for my $i (1 .. 10) {
-  my $x = pdl (0.1 * $i * $x0);
-  my $y = pdl (0.1 * $i * $y0);
 
   # Draw circles for polar grid
 
-  plline ($x, $y);
+   # old way
+   #  my $x = pdl (0.1 * $i * $x0);
+   #  my $y = pdl (0.1 * $i * $y0);
+   #  plline ($x, $y);
+
+   # new way
+   plarc(0, 0, 0.1 * $i, 0.1 * $i, 0, 360, 0, 0);
 }
 
 plcol0 (2);

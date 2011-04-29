@@ -44,44 +44,51 @@ my $xextreme = pdl( [-120, -120, -120, -80, -220, -20, -20, -80, 20], [120, 120,
 my $yextreme = pdl( [-120, 20, -20, -20, -120, -120, -20, -80, -120], [120, 120, 120, 120, 120, 120, 20, 80, 120]);
 my ($x0, $y0);
 
-for ( $j = 0; $j < 4; $j ++ ) {
-    if ( $j == 0 ) {
+for ( $k = 0; $k < 2; $k++ ) {
+    for ( $j = 0; $j < 4; $j ++ ) {
+	if ( $j == 0 ) {
 # Polygon 1: a diamond 
-	$x0 = pdl( 0, -100, 0, 100);
-	$y0 = pdl( -100, 0, 100, 0);
-    }
-    if ( $j == 1 ) {
+	    $x0 = pdl( 0, -100, 0, 100);
+	    $y0 = pdl( -100, 0, 100, 0);
+	}
+	if ( $j == 1 ) {
 # Polygon 1: a diamond - reverse direction
-	$x0 = pdl( 100, 0, -100, 0);
-	$y0 = pdl( 0, 100, 0, -100);
-    }
-    if ( $j == 2 ) {
+	    $x0 = pdl( 100, 0, -100, 0);
+	    $y0 = pdl( 0, 100, 0, -100);
+	}
+	if ( $j == 2 ) {
 # Polygon 2: a square with punctures
-	$x0 = pdl( -100, -100, 80, -100, -100, -80, 0, 80, 100, 100);
-	$y0 = pdl( -100, -80, 0, 80, 100, 100, 80, 100, 100, -100);
-    }
-    if ( $j == 3 ) {
+	    $x0 = pdl( -100, -100, 80, -100, -100, -80, 0, 80, 100, 100);
+	    $y0 = pdl( -100, -80, 0, 80, 100, 100, 80, 100, 100, -100);
+	}
+	if ( $j == 3 ) {
 # Polygon 2: a square with punctures - reversed direction 
-	$x0 = pdl( 100, 100, 80, 0, -80, -100, -100, 80, -100, -100);
-	$y0 = pdl( -100, 100, 100, 80, 100, 100, 80, 0, -80, -100);
-    }
+	    $x0 = pdl( 100, 100, 80, 0, -80, -100, -100, 80, -100, -100);
+	    $y0 = pdl( -100, 100, 100, 80, 100, 100, 80, 0, -80, -100);
+	}
 
-    for ( $i = 0; $i < 9 ; $i ++ ) {
-	pladv(0);
-	plvsta();
-	plwind($xextreme->at($i,0), $xextreme->at($i,1), $yextreme->at($i,0), $yextreme->at($i,1));
+	for ( $i = 0; $i < 9 ; $i ++ ) {
+	    pladv(0);
+	    plvsta();
+	    plwind($xextreme->at($i,0), $xextreme->at($i,1), $yextreme->at($i,0), $yextreme->at($i,1));
+	    
+	    plcol0(2) ;
+	    plbox(1.0, 0, 10.0, 0, "bc", "bcnv", );
+	    plcol0(1) ;
+	    plpsty(0) ;
 
-	plcol0(2) ;
-	plbox(1.0, 0, 10.0, 0, "bc", "bcnv", );
-	plcol0(1) ;
-	plpsty(0) ;
-	plfill($x0,$y0) ;
-	plcol0(2) ;
-	pllsty(1) ;
-	plline($x0,$y0) ;
+	    if ( $k == 0 ) {
+		plfill( $x0, $y0 );
+	    } else {
+		plgradient( $x0, $y0, 45. );
+	    }
+
+	    plcol0(2) ;
+	    pllsty(1) ;
+	    plline($x0,$y0) ;
+	}
     }
 }
-
 # Don't forget to call plend() to finish off!
 
 plend();

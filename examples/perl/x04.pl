@@ -75,7 +75,7 @@ sub plot1 {
 
   plcol0 (2);
   plline ($freql, $ampl);
-  plcol0 (1);
+  plcol0 (2);
   plptex (1.6, -30, 1, -20, 0.5, "-20 dB/decade");
 
   # Put labels on
@@ -85,6 +85,7 @@ sub plot1 {
   plmtex (2, 0.5, 0.5, "t", "Single Pole Low-Pass Filter");
   plcol0 (2);
   plmtex (5, 0.5, 0.5, "l", "Amplitude (dB)");
+  my $nlegend = 1;
 
   # For the gridless case, put phase vs freq on same plot
 
@@ -94,8 +95,34 @@ sub plot1 {
     plbox (0, 0, 30, 3, "", "cmstv");
     plcol0 (3);
     plline ($freql, $phase);
+    plstring($freql, $phase, "*");
     plcol0 (3);
     plmtex (5, 0.5, 0.5, "r", "Phase shift (degrees)");
+    $nlegend = 2;
   }
+
+  # Draw a legend
+  my @opt_array   = (PL_LEGEND_LINE, PL_LEGEND_LINE | PL_LEGEND_SYMBOL);
+  my @text_colors = (2, 3);
+  my @text        = ("Amplitude", "Phase shift");
+  my @line_colors = (2, 3);
+  my @line_styles = (1, 1);
+  my @line_widths = (1, 1);
+  my @symbol_colors = (3, 3); # ???
+  my @symbol_scales = (1, 1); # ???
+  my @symbol_numbers = (4, 4);# ???
+  my @symbols        = ('*', '*'); # ???
+  
+  plscol0a(15, 32, 32, 32, 0.70);
+  my ($legend_width, $legend_height) = pllegend(
+      PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
+      0.0, 0.0, 0.1, 15,
+      1, 1, 0, 0,
+      $nlegend, \@opt_array,
+      1.0, 1.0, 2.0,
+      1., \@text_colors, \@text,
+      0, 0, 0, 0,
+      \@line_colors, \@line_styles, \@line_widths,
+      \@symbol_colors, \@symbol_scales, \@symbol_numbers, \@symbols);
 
 }

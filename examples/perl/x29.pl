@@ -49,11 +49,16 @@ plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 # Initialize plplot 
 plinit();
 
+# Change the escape character to a '@' instead of the default '#'
+plsesc('@');
+
 plot1();
 
 plot2();
 
 plot3();
+
+plot4();
 
 # Don't forget to call plend() to finish off!
 plend();
@@ -93,7 +98,7 @@ sub plot1 {
     plbox(3.0*60*60, 3, 1, 5, "bcnstd", "bcnstv");
 
     plcol0(3);
-    pllab("Time (hours:mins)", "Temperature (degC)", "#frPLplot Example 29 - Daily temperature");
+    pllab("Time (hours:mins)", "Temperature (degC)", '@frPLplot Example 29 - Daily temperature');
     
     plcol0(4);
 
@@ -138,7 +143,7 @@ sub plot2 {
     plenv($xmin, $xmax, $ymin, $ymax, 0, 40);
 
     plcol0(3);
-    pllab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N");
+    pllab("Date", "Hours of daylight", '@frPLplot Example 29 - Hours of daylight at 51.5N');
     
     plcol0(4);
 
@@ -184,13 +189,145 @@ sub plot3 {
     plbox(14*24.0*60.0*60.0,14, 1, 4, "bcnstd", "bcnstv");
 
     plcol0(3);
-    pllab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
+    pllab("Date", "Hours of television watched", '@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006');
     
     plcol0(4);
 
     plssym(0.0,0.5);
     plpoin($x, $y, 2);
     plline($x, $y);
-    
+
 }
 
+sub plot4 {
+
+    # TAI-UTC (seconds) as a function of time.
+    # Use Besselian epochs as the continuous time interval just to prove
+    # this does not introduce any issues.
+
+    # Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+    # B = 1900. + (JD -2415020.31352)/365.242198781
+    # ==> (as calculated with aid of "bc -l" command)
+    # B = (MJD + 678940.364163900)/365.242198781
+    # ==>
+    # MJD = B*365.24219878 - 678940.364163900
+    my $scale   = 365.242198781;
+    my $offset1 = -678940.;
+    my $offset2 = -0.3641639;
+    plconfigtime($scale, $offset1, $offset2, 0x0, 0, 0, 0, 0, 0, 0, 0);
+
+    my ($xmin, $xmax);
+    for ( my $kind = 0; $kind < 7; $kind++ )
+    {
+        if ( $kind == 0 )
+        {
+            $xmin = plctime(1950, 0, 2, 0, 0, 0);
+            $xmax = plctime(2020, 0, 2, 0, 0, 0);
+            $npts = 70 * 12 + 1;
+            $ymin = 0.0;
+            $ymax = 36.0;
+            $time_format = "%Y%";
+            $if_TAI_time_format = 1;
+            $title_suffix = "from 1950 to 2020";
+            $xtitle = "Year";
+            $xlabel_step = 10;
+        }
+        elsif ( $kind == 1 || $kind == 2 )
+        {
+            $xmin = plctime(1961, 7, 1, 0, 0, 1.64757 - .20);
+            $xmax = plctime( 1961, 7, 1, 0, 0, 1.64757 + .20);
+            $npts = 1001;
+            $ymin = 1.625;
+            $ymax = 1.725;
+            $time_format = "%S%2%";
+            $title_suffix = "near 1961-08-01 (TAI)";
+            $xlabel_step = 0.05 / ( $scale * 86400. );
+            if ( $kind == 1 )
+            {
+                $if_TAI_time_format = 1;
+                $xtitle = "Seconds (TAI)";
+            }
+            else
+            {
+                $if_TAI_time_format = 0;
+                $xtitle = "Seconds (TAI) labelled with corresponding UTC";
+            }
+        }
+        elsif ( $kind == 3 || $kind == 4 )
+        {
+            $xmin = plctime(1963, 10, 1, 0, 0, 2.6972788 - .20);
+            $xmax = plctime(1963, 10, 1, 0, 0, 2.6972788 + .20);
+            $npts = 1001;
+            $ymin = 2.55;
+            $ymax = 2.75;
+            $time_format = "%S%2%";
+            $title_suffix = "near 1963-11-01 (TAI)";
+            $xlabel_step = 0.05 / ( $scale * 86400. );
+            if ( $kind == 3 )
+            {
+                $if_TAI_time_format = 1;
+                $xtitle = "Seconds (TAI)";
+            }
+            else
+            {
+                $if_TAI_time_format = 0;
+                $xtitle = "Seconds (TAI) labelled with corresponding UTC";
+            }
+        }
+        elsif ( $kind == 5 || $kind == 6 )
+        {
+	  $xmin = plctime(2009, 0, 1, 0, 0, 34. - 5);
+          $xmax = plctime(2009, 0, 1, 0, 0, 34. + 5);
+          $npts = 1001;
+          $ymin = 32.5;
+          $ymax = 34.5;
+          $time_format = "%S%2%";
+          $title_suffix = "near 2009-01-01 (TAI)";
+          $xlabel_step = 1. / ( $scale * 86400. );
+	  if ( $kind == 5 )
+            {
+	      $if_TAI_time_format = 1;
+	      $xtitle = "Seconds (TAI)";
+            }
+	  else
+            {
+	      $if_TAI_time_format = 0;
+              $xtitle = "Seconds (TAI) labelled with corresponding UTC";
+            }
+        }
+
+        my (@x, @y);
+        for ( $i = 0; $i < $npts; $i++ )
+        {
+	  $x[$i] = $xmin + $i * ( $xmax - $xmin ) / ( $npts - 1 );
+          plconfigtime( $scale, $offset1, $offset2, 0x0, 0, 0, 0, 0, 0, 0, 0 );
+          $tai = $x[$i];
+          ($tai_year, $tai_month, $tai_day, $tai_hour, $tai_min, $tai_sec) = plbtime($tai);
+          plconfigtime( $scale, $offset1, $offset2, 0x2, 0, 0, 0, 0, 0, 0, 0 );
+          ($utc_year, $utc_month, $utc_day, $utc_hour, $utc_min, $utc_sec) = plbtime($tai);
+          plconfigtime( $scale, $offset1, $offset2, 0x0, 0, 0, 0, 0, 0, 0, 0 );
+          $utc = plctime($utc_year, $utc_month, $utc_day, $utc_hour, $utc_min, $utc_sec);
+          $y[$i] = ( $tai - $utc ) * $scale * 86400;
+        }
+
+        pladv( 0 );
+        plvsta();
+        plwind( $xmin, $xmax, $ymin, $ymax );
+        plcol0( 1 );
+        if ( $if_TAI_time_format ) {
+            plconfigtime( $scale, $offset1, $offset2, 0x0, 0, 0, 0, 0, 0, 0, 0 );
+        } else {
+            plconfigtime( $scale, $offset1, $offset2, 0x2, 0, 0, 0, 0, 0, 0, 0 );
+        }
+        pltimefmt( $time_format );
+        plbox( $xlabel_step, 0, 0, 0, "bcnstd",  "bcnstv" );
+        plcol0( 3 );
+        $title  = '@frPLplot Example 29 - TAI-UTC ';
+        $title .= $title_suffix;
+        pllab( $xtitle, "TAI-UTC (sec)", $title );
+
+        plcol0( 4 );
+
+        plline( pdl(@x), pdl(@y) );
+    }
+}

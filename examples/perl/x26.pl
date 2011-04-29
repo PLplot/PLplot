@@ -85,6 +85,11 @@ use Getopt::Long;
   "Фазовый сдвиг (градусы)"
 );
 
+@legend_text = (
+    [ "Amplitude", "Phase shift"   ],
+    [ "Амплитуда", "Фазовый сдвиг" ],
+);
+
 @title_label = (
   "Single Pole Low-Pass Filter",
   "Однополюсный Низко-Частотный Фильтр"
@@ -110,8 +115,8 @@ sub main {
 # Make log plots using two different styles.
 
     for (my $i=0; $i<scalar(@x_label); $i++) {
-      plot1(0, $x_label[$i], $y_label[$i], $alty_label[$i], $title_label[$i], 
-	    $line_label[$i]);
+      plot1(0, $x_label[$i], $y_label[$i], $alty_label[$i], 
+	    $legend_text[$i], $title_label[$i], $line_label[$i]);
     }
 
     plend();
@@ -119,12 +124,12 @@ sub main {
 }
 
 sub plot1 {
-    my ($type, $x_label, $y_label, $alty_label, $title_label, $line_label) = @_;
+    my ($type, $x_label, $y_label, $alty_label, $legend_text, $title_label, $line_label) = @_;
 
     pladv(0);
 
-# Set up data for log plot 
-    
+# Set up data for log plot
+
     my $f0 = 1.0;
     my $freql = -2.0 + sequence(101)/20.0;
     my $freq = 10**$freql;
@@ -148,7 +153,7 @@ sub plot1 {
 
     plcol0(2);
     plline($freql, $ampl);
-    plcol0(1);
+    plcol0(2);
     plptex(1.6, -30.0, 1.0, -20.0, 0.5, $line_label);
 
 # Put labels on
@@ -167,9 +172,35 @@ sub plot1 {
 	plbox(0.0, 0, 30.0, 3, "", "cmstv");
 	plcol0(3);
 	plline($freql, $phase);
+        plstring($freql, $phase, "*");
 	plcol0(3);
 	plmtex(5.0, 0.5, 0.5, "r", $alty_label);
     }
+
+  # Draw a legend
+  my @opt_array   = (PL_LEGEND_LINE, PL_LEGEND_LINE | PL_LEGEND_SYMBOL);
+  my @text_colors = (2, 3);
+  my @text        = ("Amplitude", "Phase shift");
+  my @line_colors = (2, 3);
+  my @line_styles = (1, 1);
+  my @line_widths = (1, 1);
+  my @symbol_colors = (3, 3); # ???
+  my @symbol_scales = (1, 1); # ???
+  my @symbol_numbers = (4, 4);# ???
+  my @symbols        = ('*', '*'); # ???
+  
+  plscol0a(15, 32, 32, 32, 0.70);
+  my ($legend_width, $legend_height) = pllegend(
+      PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
+      0.0, 0.0, 0.1, 15,
+      1, 1, 0, 0,
+      $nlegend = 2, \@opt_array,
+      1.0, 1.0, 2.0,
+      1., \@text_colors, $legend_text,
+      0, 0, 0, 0,
+      \@line_colors, \@line_styles, \@line_widths,
+      \@symbol_colors, \@symbol_scales, \@symbol_numbers, \@symbols);
+
 }
 
 main();
