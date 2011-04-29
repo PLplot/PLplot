@@ -123,7 +123,12 @@ for ($k = 0; $k < 4; $k++) {
   if ($opt[$k]) {
     plline3 ($x, $y, $z);
   } else {
-    plpoin3 ($x, $y, $z, 1);
+
+    # plpoin3 ($x, $y, $z, 1);
+
+    # U+22C5 DOT OPERATOR.
+    plstring3($x, $y, $z, "⋅" );
+
   }
 
   plcol0 (3);
