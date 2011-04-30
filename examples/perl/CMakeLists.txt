@@ -56,6 +56,7 @@ set(perl_STRING_INDICES
   "29"
   "30"
   "31"
+  "33"
   )
 
 set(perl_SCRIPTS)
