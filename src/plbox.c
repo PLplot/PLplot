@@ -1515,7 +1515,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
 //--------------------------------------------------------------------------
 
 void
-label_box_custom( const char *xopt, PLINT n_xticks, PLFLT *xticks, const char *yopt, PLINT n_yticks, PLFLT *yticks )
+label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const char *yopt, PLINT n_yticks, const PLFLT *yticks )
 {
     static char string[STRING_LEN];
     PLBOOL      ldx, lfx, lix, llx, lmx, lnx, ltx, lox;
