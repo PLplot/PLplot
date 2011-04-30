@@ -1093,6 +1093,18 @@ c_plcolorbar( PLINT opt, PLINT position,
     // Draw a title
     char perp;
 
+    // Default orientation.
+    if ( !( opt & PL_COLORBAR_ORIENT_RIGHT ||
+            opt & PL_COLORBAR_ORIENT_TOP ||
+            opt & PL_COLORBAR_ORIENT_LEFT ||
+            opt & PL_COLORBAR_ORIENT_BOTTOM ) )
+    {
+      if ( position & PL_POSITION_LEFT  || position & PL_POSITION_RIGHT )
+        opt = opt | PL_COLORBAR_ORIENT_TOP;
+      else
+        opt = opt | PL_COLORBAR_ORIENT_RIGHT;
+    }
+
     min_value = values[0];
     max_value = values[ n_values - 1 ];
 
@@ -1102,58 +1114,69 @@ c_plcolorbar( PLINT opt, PLINT position,
     plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
     plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
 
-    // Build the proper viewport and window dimension along the requested side
+    // Specify the proper viewport ranges along the requested side
     // of the subpage
     if ( position & PL_POSITION_LEFT )
     {
         vx_min = x;
         vy_min = y;
-        vx_max = vx_min + x_length;
-        vy_max = vy_min + y_length;
-        wx_min = 0.0;
-        wy_min = min_value;
-        wx_max = 1.0;
-        wy_max = max_value;
     }
     else if ( position & PL_POSITION_RIGHT )
     {
         vx_min = 1.0 - x - x_length;
         vy_min = y;
-        vx_max = vx_min + x_length;
-        vy_max = vy_min + y_length;
-        wx_min = 0.0;
-        wy_min = min_value;
-        wx_max = 1.0;
-        wy_max = max_value;
     }
     else if ( position & PL_POSITION_TOP )
     {
         vx_min = x;
         vy_min = 1.0 - y - y_length;
-        vx_max = vx_min + x_length;
-        vy_max = vy_min + y_length;
-        wx_min = min_value;
-        wy_min = 0.0;
-        wx_max = max_value;
-        wy_max = 1.0;
     }
     else if ( position & PL_POSITION_BOTTOM )
     {
         vx_min = x;
         vy_min = y;
-        vx_max = vx_min + x_length;
-        vy_max = vy_min + y_length;
-        wx_min = min_value;
-        wy_min = 0.0;
-        wx_max = max_value;
-        wy_max = 1.0;
     }
     else
     {
-        plabort( "plcolorbar: Invalid or missing side" );
+        plabort( "plcolorbar: Invalid PL_POSITION_* bits" );
+    }
+    vx_max = vx_min + x_length;
+    vy_max = vy_min + y_length;
+
+    // Specify the proper window ranges depending on orientation.
+    if ( opt & PL_COLORBAR_ORIENT_RIGHT )
+    {
+        wx_min = min_value;
+        wx_max = max_value;
+        wy_min = 0.0;
+        wy_max = 1.0;
+    }
+    else if ( opt & PL_COLORBAR_ORIENT_TOP )
+    {
+        wx_min = 0.0;
+        wx_max = 1.0;
+        wy_min = min_value;
+        wy_max = max_value;
+    }
+    else if ( opt & PL_COLORBAR_ORIENT_LEFT )
+    {
+        wx_min = max_value;
+        wx_max = min_value;
+        wy_min = 0.0;
+        wy_max = 1.0;
+    }
+    else if ( opt & PL_COLORBAR_ORIENT_BOTTOM)
+    {
+        wx_min = 0.0;
+        wx_max = 1.0;
+        wy_min = max_value;
+        wy_max = min_value;
+    }
+    else
+    {
+        plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
     }
 
-    // The window used to draw the colorbar should take up the whole viewport
     plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
@@ -1170,20 +1193,7 @@ c_plcolorbar( PLINT opt, PLINT position,
             // TODO: Determine a better way to specify the steps here?
             n_steps   = plsc->ncol1;
             step_size = ( max_value - min_value ) / (PLFLT) n_steps;
-            if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
-            {
-                ni = 2;
-                nj = n_steps;
-                plAlloc2dGrid( &color_data, ni, nj );
-                for ( i = 0; i < ni; i++ )
-                {
-                    for ( j = 0; j < nj; j++ )
-                    {
-                        color_data[i][j] = min_value + (PLFLT) j * step_size;
-                    }
-                }
-            }
-            else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
+            if ( opt & PL_COLORBAR_ORIENT_RIGHT )
             {
                 ni = n_steps;
                 nj = 2;
@@ -1196,9 +1206,48 @@ c_plcolorbar( PLINT opt, PLINT position,
                     }
                 }
             }
+            else if ( opt & PL_COLORBAR_ORIENT_TOP )
+            {
+                ni = 2;
+                nj = n_steps;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = min_value + (PLFLT) j * step_size;
+                    }
+                }
+            }
+            else if ( opt & PL_COLORBAR_ORIENT_LEFT )
+            {
+                ni = n_steps;
+                nj = 2;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = max_value - (PLFLT) i * step_size;
+                    }
+                }
+            }
+            else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
+            {
+                ni = 2;
+                nj = n_steps;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = max_value - (PLFLT) j * step_size;
+                    }
+                }
+            }
             else
             {
-                plabort( "plcolorbar: Invalid side" );
+                plabort( "plcolorbar: Invalid orientation bits" );
             }
         }
         // No interpolation - use values array as-is
@@ -1206,7 +1255,20 @@ c_plcolorbar( PLINT opt, PLINT position,
         {
             n_steps = n_values;
             // Use the provided values in this case.
-            if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
+            if ( opt & PL_COLORBAR_ORIENT_RIGHT )
+            {
+                ni = n_steps;
+                nj = 2;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = values[i];
+                    }
+                }
+            }
+            else if ( opt & PL_COLORBAR_ORIENT_TOP )
             {
                 ni = 2;
                 nj = n_steps;
@@ -1219,7 +1281,7 @@ c_plcolorbar( PLINT opt, PLINT position,
                     }
                 }
             }
-            else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
+            else if ( opt & PL_COLORBAR_ORIENT_LEFT )
             {
                 ni = n_steps;
                 nj = 2;
@@ -1228,7 +1290,20 @@ c_plcolorbar( PLINT opt, PLINT position,
                 {
                     for ( j = 0; j < nj; j++ )
                     {
-                        color_data[i][j] = values[i];
+                        color_data[i][j] = values[ni - 1 - i];
+                    }
+                }
+            }
+            else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
+            {
+                ni = 2;
+                nj = n_steps;
+                plAlloc2dGrid( &color_data, ni, nj );
+                for ( i = 0; i < ni; i++ )
+                {
+                    for ( j = 0; j < nj; j++ )
+                    {
+                        color_data[i][j] = values[nj - 1 - j];
                     }
                 }
             }
@@ -1253,24 +1328,7 @@ c_plcolorbar( PLINT opt, PLINT position,
         PLFLT   grid_axis[2] = { 0.0, 1.0 };
         n_steps = n_values;
         // Use the provided values.
-        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
-        {
-            grid.xg = grid_axis;
-            grid.yg = (PLFLT *) values;
-            grid.nx = 2;
-            grid.ny = n_steps;
-            ni      = 2;
-            nj      = n_steps;
-            plAlloc2dGrid( &color_data, ni, nj );
-            for ( i = 0; i < ni; i++ )
-            {
-                for ( j = 0; j < nj; j++ )
-                {
-                    color_data[i][j] = values[j];
-                }
-            }
-        }
-        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
             grid.xg = (PLFLT *) values;
             grid.yg = grid_axis;
@@ -1287,9 +1345,60 @@ c_plcolorbar( PLINT opt, PLINT position,
                 }
             }
         }
+        else if ( opt & PL_COLORBAR_ORIENT_TOP )
+        {
+            grid.xg = grid_axis;
+            grid.yg = (PLFLT *) values;
+            grid.nx = 2;
+            grid.ny = n_steps;
+            ni      = 2;
+            nj      = n_steps;
+            plAlloc2dGrid( &color_data, ni, nj );
+            for ( i = 0; i < ni; i++ )
+            {
+                for ( j = 0; j < nj; j++ )
+                {
+                    color_data[i][j] = values[j];
+                }
+            }
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_LEFT )
+        {
+            grid.xg = (PLFLT *) values;
+            grid.yg = grid_axis;
+            grid.nx = n_steps;
+            grid.ny = 2;
+            ni      = n_steps;
+            nj      = 2;
+            plAlloc2dGrid( &color_data, ni, nj );
+            for ( i = 0; i < ni; i++ )
+            {
+                for ( j = 0; j < nj; j++ )
+                {
+                    color_data[i][j] = values[ni - 1 - i];
+                }
+            }
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            grid.xg = grid_axis;
+            grid.yg = (PLFLT *) values;
+            grid.nx = 2;
+            grid.ny = n_steps;
+            ni      = 2;
+            nj      = n_steps;
+            plAlloc2dGrid( &color_data, ni, nj );
+            for ( i = 0; i < ni; i++ )
+            {
+                for ( j = 0; j < nj; j++ )
+                {
+                    color_data[i][j] = values[nj - 1 - j];
+                }
+            }
+        }
         else
         {
-            plabort( "plcolorbar: Invalid side" );
+            plabort( "plcolorbar: Invalid orientation" );
         }
 
         // Draw the color bar
@@ -1311,19 +1420,25 @@ c_plcolorbar( PLINT opt, PLINT position,
         xs[3] = wx_min;
         ys[3] = wy_max;
         // Make sure the gradient runs in the proper direction
-        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-            // Top to bottom
+            angle = 0.0;
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_TOP )
+        {
             angle = 90.0;
         }
-        else if ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM )
+        else if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-            // Left to right
-            angle = 0.0;
+            angle = 180.0;
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            angle = 270.0;
         }
         else
         {
-            plabort( "plcolorbar: Invalid side" );
+            plabort( "plcolorbar: Invalid orientation" );
         }
         plgradient( 4, xs, ys, angle );
     }
@@ -1338,42 +1453,58 @@ c_plcolorbar( PLINT opt, PLINT position,
     {
         // Add an extra offset for the label so it does not bump in to the
         // cap if the label is placed on the same side as the cap.
-        if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
-               opt & PL_COLORBAR_LABEL_BOTTOM ) ||
-             ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
-               opt & PL_COLORBAR_LABEL_LEFT ) )
+        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_LEFT ) ||
+             ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_BOTTOM ) ||
+             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
+             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_TOP ) )
         {
             label_offset += 2.5;
         }
         // Draw a filled triangle (cap/arrow) at the low end of the scale
-        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT )
+        {
+          draw_cap( PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
           draw_cap( PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
         }
-        else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
+        else if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-          draw_cap( PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
+          draw_cap( PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, low_cap_color );
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+          draw_cap( PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, low_cap_color );
         }
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
     {
         // Add an extra offset for the label so it does not bump in to the
         // cap if the label is placed on the same side as the cap.
-        if ( ( ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT ) &&
-               opt & PL_COLORBAR_LABEL_TOP ) ||
-             ( ( position & PL_POSITION_TOP || position & PL_POSITION_BOTTOM ) &&
-               opt & PL_COLORBAR_LABEL_RIGHT ) )
+        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
+             ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_TOP ) ||
+             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_LEFT ) ||
+             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_BOTTOM ) )
         {
             label_offset += 2.5;
         }
         // Draw a filled triangle (cap/arrow) at the high end of the scale
-        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT )
+        {
+          draw_cap( PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
           draw_cap( PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
         }
-        else if ( position & PL_POSITION_BOTTOM || position & PL_POSITION_TOP )
+        if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-          draw_cap( PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
+          draw_cap( PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, high_cap_color );
+        }
+        else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+          draw_cap( PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, high_cap_color );
         }
      }
 
@@ -1381,7 +1512,7 @@ c_plcolorbar( PLINT opt, PLINT position,
 
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
-        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
             if ( position & PL_POSITION_LEFT )
                 label_offset += 4.0;
@@ -1401,7 +1532,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     }
     else if ( opt & PL_COLORBAR_LABEL_RIGHT )
     {
-        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
             if ( position & PL_POSITION_RIGHT )
                 label_offset += 4.0;
@@ -1421,7 +1552,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     }
     else if ( opt & PL_COLORBAR_LABEL_TOP )
     {
-        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
             label_offset += 1.5;
             perp          = '\0';
@@ -1439,7 +1570,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     }
     else if ( opt & PL_COLORBAR_LABEL_BOTTOM )
     {
-        if ( position & PL_POSITION_RIGHT || position & PL_POSITION_LEFT )
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
             label_offset += 1.5;
             perp          = '\0';
@@ -1496,22 +1627,12 @@ c_plcolorbar( PLINT opt, PLINT position,
     }
 
     // Draw the outline for the entire colorbar, tick marks, tick labels.
-    if ( position & PL_POSITION_LEFT )
-    {
-        snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
-        plbox( "bc", ticks, sub_ticks, opt_string, ticks, sub_ticks );
-    }
-    else if ( position & PL_POSITION_RIGHT )
+    if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM)
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( "bc", 0.0, 0, opt_string, ticks, sub_ticks );
     }
-    else if ( position & PL_POSITION_TOP )
-    {
-        snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
-        plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
-    }
-    else if ( position & PL_POSITION_BOTTOM )
+    else 
     {
         snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
         plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
