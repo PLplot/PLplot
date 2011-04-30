@@ -1,7 +1,7 @@
 #! /usr/bin/env perl
 # -*- coding: utf-8; -*-
 #
-# $Id: x33c.c 11719 2011-04-22 04:48:51Z hezekiahcarty $
+# $Id$
 #
 # Demonstrate most pllegend capability including unicode symbols.
 #
