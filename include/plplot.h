@@ -1257,6 +1257,8 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_COLORBAR_ORIENT_TOP      4096
 #define PL_COLORBAR_ORIENT_LEFT     8192
 #define PL_COLORBAR_ORIENT_BOTTOM   16384
+#define PL_COLORBAR_NOEDGE          32768
+#define PL_COLORBAR_EDGE            65536
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 PLDLLIMPEXP void

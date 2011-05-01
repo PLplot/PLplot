@@ -241,9 +241,9 @@ main( int argc, const char *argv[] )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, PL_POSITION_RIGHT,
+        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    cont_color, cont_width, 0.0, 0, "v", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -287,9 +287,9 @@ main( int argc, const char *argv[] )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, PL_POSITION_RIGHT,
+        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    cont_color, cont_width, 0.0, 0, "v", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -333,9 +333,9 @@ main( int argc, const char *argv[] )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, PL_POSITION_RIGHT,
+        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    cont_color, cont_width, 0.0, 0, "v", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -378,9 +378,9 @@ main( int argc, const char *argv[] )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, PL_POSITION_RIGHT,
+        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    2, 3, 0.0, 0, "bv", "",
+                    2, 3, 0.0, 0, "v", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -474,7 +474,7 @@ main( int argc, const char *argv[] )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, PL_POSITION_RIGHT,
+        plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.06, 0.15, 0.03, 0.7, 0.0, 0.0,
                     cont_color, cont_width, 0.0, 0, "bv", "",
                     ns + 1, shedge );

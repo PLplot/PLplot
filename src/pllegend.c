@@ -886,7 +886,9 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 //--------------------------------------------------------------------------
 //! Draw triangular end-caps for color bars.
 //!
-//! @param orientation This enum variable defines the orientation of
+//! @param opt If the PL_COLORBAR_NOEDGE/EDGE bit is set, draw (no edge)/(an edge) around
+//! the triangle.
+//! @param orientation This variable defines the orientation of
 //! the triangle.  The triangle points to the right, up, left, or down
 //! if orientation contains PL_COLORBAR_ORIENT_RIGHT,
 //! PL_COLORBAR_ORIENT_TOP, PL_COLORBAR_ORIENT_LEFT, or
@@ -899,7 +901,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 //!
 
 void
-draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
+static draw_cap( PLINT opt, PLINT orientation, PLFLT xmin, PLFLT xmax,
           PLFLT ymin,PLFLT ymax, PLFLT color )
 {
     // Save current drawing color.
@@ -970,7 +972,8 @@ draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
     plcol0( col0_save );
 
     // Draw cap outline
-    plline( 3, xs, ys );
+    if ( opt & PL_COLORBAR_EDGE)
+        plline( 3, xs, ys );
 
     // Restore window and viewport
     plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
@@ -983,14 +986,17 @@ draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! @param opt This variable contains bits which control the overall
 //! colorbar.  The orientation (direction of the maximum value) of the
 //! colorbar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
-//! BOTTOM).  If none of those bits are specified, the default orientation
-//! is toward the top, i.e., a vertical colorbar.  The type of
-//! colorbar can be specified with PL_COLORBAR_SHADE,
-//! PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT.  The position of the
-//! (optional) label/title can be specified with
-//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).  If no label position
-//! is specified then no label will be drawn.  End-caps for the
-//! colorbar can added with PL_COLORBAR_CAP_LOW and
+//! BOTTOM).  If none of those bits are specified, the default
+//! orientation is toward the top, i.e., a vertical colorbar.  Whether
+//! the edges of the colour box and caps is not drawn or drawn (for
+//! the current cmap0 color index) depends on PL_COLORBAR_(NOEDGE,
+//! EDGE).  If neither of these bits are specified, then by default
+//! PL_COLORBAR_NOEDGE is assumed.  The type of colorbar can be
+//! specified with PL_COLORBAR_SHADE, PL_COLORBAR_IMAGE or
+//! PL_COLORBAR_GRADIENT.  The position of the (optional) label/title
+//! can be specified with PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).
+//! If no label position is specified then no label will be drawn.
+//! End-caps for the colorbar can added with PL_COLORBAR_CAP_LOW and
 //! PL_COLORBAR_CAP_HIGH.  If a particular colorbar cap option is not
 //! specified then no cap will be drawn for that end.  As a special
 //! case for PL_COLORBAR_SHADE, the option PL_COLORBAR_SHADE_LABEL can
@@ -1034,7 +1040,7 @@ draw_cap( PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! @param values Numeric values for the data range represented by the
 //! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
 //! between segments.  For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT this
-//! include two values, one for the maximum value on the scale and one for the
+//! includes two values, one for the maximum value on the scale and one for the
 //! minimum value.
 //!
 
@@ -1088,7 +1094,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     // For building axis option string
     PLINT      max_opts = 25;
     char       opt_string[max_opts];
-    const char *tick_string;
+    const char *tick_string, *edge_string;
 
     // Draw a title
     char perp;
@@ -1104,6 +1110,13 @@ c_plcolorbar( PLINT opt, PLINT position,
       else
         opt = opt | PL_COLORBAR_ORIENT_RIGHT;
     }
+
+    // Do not draw edges of color box and caps by default.
+    if ( !( opt & PL_COLORBAR_NOEDGE || opt & PL_COLORBAR_EDGE ) )
+        opt = opt | PL_COLORBAR_NOEDGE;
+
+    //ToDo: Sanity checking on axis_opts to remove all axis opts
+    //(e.g, "b") that are controlled by other means.
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
@@ -1463,19 +1476,19 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-          draw_cap( PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
-          draw_cap( PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-          draw_cap( PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, low_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-          draw_cap( PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, low_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, low_cap_color );
         }
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
@@ -1492,23 +1505,21 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-          draw_cap( PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
-          draw_cap( PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
         }
         if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-          draw_cap( PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, high_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, high_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-          draw_cap( PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, high_cap_color );
+          draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, high_cap_color );
         }
      }
-
-    tick_string = "";
 
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
@@ -1593,6 +1604,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     // along an axis.
     if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
     {
+        tick_string = "";
         if ( position & PL_POSITION_LEFT )
         {
             snprintf( opt_string, max_opts, "nt%s", axis_opts );
@@ -1627,15 +1639,19 @@ c_plcolorbar( PLINT opt, PLINT position,
     }
 
     // Draw the outline for the entire colorbar, tick marks, tick labels.
+
+    if ( opt & PL_COLORBAR_EDGE )
+        edge_string = "bc";
+    else
+        edge_string = "uw";
+    snprintf( opt_string, max_opts, "%s%s%s", edge_string, tick_string, axis_opts );
     if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM)
     {
-        snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
-        plbox( "bc", 0.0, 0, opt_string, ticks, sub_ticks );
+          plbox( edge_string , 0.0, 0, opt_string, ticks, sub_ticks );
     }
     else 
     {
-        snprintf( opt_string, max_opts, "bc%s%s", tick_string, axis_opts );
-        plbox( opt_string, ticks, sub_ticks, "bc", 0.0, 0 );
+          plbox( opt_string, ticks, sub_ticks, edge_string, 0.0, 0 );
     }
 
     // Restore previous plot characteristics.
