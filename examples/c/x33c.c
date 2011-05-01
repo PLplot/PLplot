@@ -848,16 +848,16 @@ main( int argc, const char *argv[] )
         // We can only test image and gradient colorbars with two element arrays
         for ( i = 2; i < COLORBAR_KINDS; i ++ )
         {
-            plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 2, values_small );
+            plcolorbar_example( "cmap1_blue_red.pal", i, 0, 0, 2, values_small );
         }
         // Test shade colorbars with larger arrays
         for ( i = 0; i < 2; i++ )
         {
-            plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, 9, values_even );
+            plcolorbar_example( "cmap1_blue_red.pal", i, 4, 2, 9, values_even );
         }
         for ( i = 0; i < 2; i++ )
         {
-            plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 9, values_uneven );
+            plcolorbar_example( "cmap1_blue_red.pal", i, 0, 0, 9, values_uneven );
         }
     }
     plend();
