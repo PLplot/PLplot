@@ -1060,6 +1060,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		  <literal>t</literal>: Draws major ticks.
 		</para>
 	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>u</literal>: Exactly like "b" except don't draw edge line.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>w</literal>: Exactly like "c" except don't draw edge line.
+		</para>
+	      </listitem>
 	    </itemizedlist>
 	  </para>
 	</listitem>
@@ -6300,7 +6310,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="pllegend" renderas="sect3">
     <title>
-      <function>pllegend</function>: Plot legend using discretely annotated filled boxes, lines, and/or symbols
+      <function>pllegend</function>: Plot legend using discretely annotated filled boxes, lines, and/or lines of symbols
     </title>
 
     <para>
