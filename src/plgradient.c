@@ -160,7 +160,7 @@ c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
             plsc->clpymi, plsc->clpyma, plP_gradient );
         // Plot line corresponding to gradient to give visual
         // debugging cue.
-        plline( NGRAD, dxgrad, dygrad );
+        //plline( NGRAD, dxgrad, dygrad );
 
         // Check the original number of points
         if ( npts > PL_MAXPOLY - 1 )
