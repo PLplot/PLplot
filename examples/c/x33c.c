@@ -836,6 +836,8 @@ main( int argc, const char *argv[] )
 
     if ( colorbar )
     {
+        // Use unsaturated green background colour to contrast with black caps.
+        plscolbg (70, 185, 70);
         // Color bar examples
         PLFLT values_small[2]  = { 0.0, 1.0 };
         PLFLT values_uneven[9] = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
@@ -848,16 +850,16 @@ main( int argc, const char *argv[] )
         // We can only test image and gradient colorbars with two element arrays
         for ( i = 2; i < COLORBAR_KINDS; i ++ )
         {
-            plcolorbar_example( "cmap1_blue_red.pal", i, 0, 0, 2, values_small );
+            plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 2, values_small );
         }
         // Test shade colorbars with larger arrays
         for ( i = 0; i < 2; i++ )
         {
-            plcolorbar_example( "cmap1_blue_red.pal", i, 4, 2, 9, values_even );
+            plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, 9, values_even );
         }
         for ( i = 0; i < 2; i++ )
         {
-            plcolorbar_example( "cmap1_blue_red.pal", i, 0, 0, 9, values_uneven );
+            plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 9, values_uneven );
         }
     }
     plend();
