@@ -520,6 +520,8 @@ plD_bop_xw( PLStream *pls )
 
     if ( dev->write_to_window )
     {
+        XSetWindowBackground( xwd->display, dev->window, xwd->cmap0[0].pixel );
+        XSetBackground( xwd->display, dev->gc, xwd->cmap0[0].pixel );
         XClearWindow( xwd->display, dev->window );
     }
     if ( dev->write_to_pixmap )
