@@ -1294,7 +1294,7 @@ WaitForPage( PLStream *pls )
 //--------------------------------------------------------------------------
 // events_thread()
 //
-// This function is being running continously by a tread and is
+// This function is being running continously by a thread and is
 // responsible for dealing with expose and resize X events, in
 // the case that the main program is too busy to honor them.
 //

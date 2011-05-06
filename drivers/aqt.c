@@ -738,7 +738,7 @@ void set_font_and_size( NSMutableAttributedString * str, PLUNICODE fci, PLFLT fo
 
     font = plP_FCI2FontName( fci, AQT_FontLookup, AQT_N_FontLookup );
 
-    // check whether that font exists & if not, use standard font instread
+    // check whether that font exists & if not, use standard font instead
 
     if ( font == NULL )
     {
