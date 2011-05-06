@@ -518,15 +518,17 @@ plD_bop_xw( PLStream *pls )
         pthread_mutex_lock( &events_mutex );
 #endif
 
+    dev->bgcolor = xwd->cmap0[0];
+
     if ( dev->write_to_window )
     {
-        XSetWindowBackground( xwd->display, dev->window, xwd->cmap0[0].pixel );
-        XSetBackground( xwd->display, dev->gc, xwd->cmap0[0].pixel );
+        XSetWindowBackground( xwd->display, dev->window, dev->bgcolor.pixel );
+        XSetBackground( xwd->display, dev->gc, dev->bgcolor.pixel );
         XClearWindow( xwd->display, dev->window );
     }
     if ( dev->write_to_pixmap )
     {
-        XSetForeground( xwd->display, dev->gc, xwd->cmap0[0].pixel );
+        XSetForeground( xwd->display, dev->gc, dev->bgcolor.pixel );
         XFillRectangle( xwd->display, dev->pixmap, dev->gc, 0, 0,
             dev->width, dev->height );
         XSetForeground( xwd->display, dev->gc, dev->curcolor.pixel );
@@ -2371,7 +2373,16 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
 
 // Initialize & redraw (to pixmap, if available).
 
-    plD_bop_xw( pls );
+    if ( dev->write_to_pixmap )
+    {
+        XSetForeground( xwd->display, dev->gc, dev->bgcolor.pixel );
+        XFillRectangle( xwd->display, dev->pixmap, dev->gc, 0, 0,
+            dev->width, dev->height );
+        XSetForeground( xwd->display, dev->gc, dev->curcolor.pixel );
+    }
+    if ( dev->write_to_window ) {
+      XClearWindow( xwd->display, dev->window );
+    }
     plRemakePlot( pls );
     XSync( xwd->display, 0 );
 
@@ -2445,10 +2456,16 @@ RedrawCmd( PLStream *pls )
 
 // Initialize & redraw (to pixmap, if available).
 
-    if ( dev->write_to_pixmap )
+    if ( dev->write_to_pixmap ) {
         dev->write_to_window = 0;
-
-    plD_bop_xw( pls );
+        XSetForeground( xwd->display, dev->gc, dev->bgcolor.pixel );
+        XFillRectangle( xwd->display, dev->pixmap, dev->gc, 0, 0,
+            dev->width, dev->height );
+        XSetForeground( xwd->display, dev->gc, dev->curcolor.pixel );
+    }
+    if ( dev->write_to_window ) {
+      XClearWindow( xwd->display, dev->window );
+    }
     plRemakePlot( pls );
     XSync( xwd->display, 0 );
 
