@@ -271,7 +271,7 @@ plD_init_xw( PLStream *pls )
 #endif
 
     if ( nobuffered )
-        pls->plbuf_write = 0;   // desactivate plot buffer
+        pls->plbuf_write = 0;   // deactivate plot buffer
 
 // The real meat of the initialization done here
 
