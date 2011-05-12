@@ -243,7 +243,7 @@ main( int argc, const char *argv[] )
 
         plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    cont_color, cont_width, 0.0, 0, "v", "",
+                    cont_color, cont_width, 0.0, 0, "vt", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -289,7 +289,7 @@ main( int argc, const char *argv[] )
 
         plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    cont_color, cont_width, 0.0, 0, "v", "",
+                    cont_color, cont_width, 0.0, 0, "vt", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -335,7 +335,7 @@ main( int argc, const char *argv[] )
 
         plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    cont_color, cont_width, 0.0, 0, "v", "",
+                    cont_color, cont_width, 0.0, 0, "vt", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -380,7 +380,7 @@ main( int argc, const char *argv[] )
 
         plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.05, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    2, 3, 0.0, 0, "v", "",
+                    2, 3, 0.0, 0, "vx", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes
@@ -476,7 +476,7 @@ main( int argc, const char *argv[] )
 
         plcolorbar( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_EDGE, PL_POSITION_RIGHT,
                     0.06, 0.15, 0.03, 0.7, 0.0, 0.0,
-                    cont_color, cont_width, 0.0, 0, "bv", "",
+                    cont_color, cont_width, 0.0, 0, "vt", "",
                     ns + 1, shedge );
 
         // Reset text and tick sizes

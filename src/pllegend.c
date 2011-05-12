@@ -884,6 +884,29 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 // Code version with reorganized API for plcolorbar
 
 //--------------------------------------------------------------------------
+//! Remove specified ascii characters from null-terminated string.
+//!
+//! @param string Null-terminated string where specified characters
+//! (if present) are removed.
+//! @param characters Null-terminated string consisting of ascii characters
+//! to be removed from string.
+
+void
+static remove_characters( char *string, const char *characters )
+{
+    size_t length = strlen(string);
+    size_t prefix_length = strcspn( string, characters );
+    if ( prefix_length < length )
+    {
+        // Remove first matching character by shifting tail of string
+        // (including null-terminator) down by one.
+        memmove( string+prefix_length, string+prefix_length+1, length - prefix_length );
+        // Recurse to remove any remaining specified characters.
+        remove_characters( string, characters );
+    }
+}
+
+//--------------------------------------------------------------------------
 //! Draw triangular end-caps for color bars.
 //!
 //! @param opt If the PL_COLORBAR_NOEDGE/EDGE bit is set, draw (no edge)/(an edge) around
@@ -1094,7 +1117,9 @@ c_plcolorbar( PLINT opt, PLINT position,
     // For building axis option string
     PLINT      max_opts = 25;
     char       opt_string[max_opts];
-    const char *tick_string, *edge_string;
+    const char *tick_label_string, *edge_string;
+    size_t length_axis_opts = strlen(axis_opts);
+    char *local_axis_opts;
 
     // Draw a title
     char perp;
@@ -1115,8 +1140,18 @@ c_plcolorbar( PLINT opt, PLINT position,
     if ( !( opt & PL_COLORBAR_NOEDGE || opt & PL_COLORBAR_EDGE ) )
         opt = opt | PL_COLORBAR_NOEDGE;
 
-    //ToDo: Sanity checking on axis_opts to remove all axis opts
-    //(e.g, "b") that are controlled by other means.
+    // local_axis_opts is local version that can be modified from
+    // const input version.
+    if ( ( local_axis_opts = (char *) malloc( (length_axis_opts + 1) * sizeof ( char ) ) ) == NULL )
+    {
+        plexit( "plcolorbar: Insufficient memory" );
+    }
+    strcpy(local_axis_opts, axis_opts);
+
+    
+    // Sanity checking on local_axis_opts to remove all control characters
+    // that are specified by other means inside this routine.
+    remove_characters(local_axis_opts, "BbCcMmNnUuWw");
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
@@ -1521,6 +1556,7 @@ c_plcolorbar( PLINT opt, PLINT position,
         }
      }
 
+    // Write label.
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
         if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
@@ -1598,44 +1634,33 @@ c_plcolorbar( PLINT opt, PLINT position,
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
 
-    // Draw labels and tick marks if this is a shade color bar
+    if ( position & PL_POSITION_LEFT || position & PL_POSITION_BOTTOM )
+    {
+        tick_label_string = "n";
+    }
+    else if ( position & PL_POSITION_RIGHT || position & PL_POSITION_TOP )
+    {
+        tick_label_string = "m";
+    }
+ 
+    // Draw numerical labels and tick marks if this is a shade color bar
     // TODO: A better way to handle this would be to update the
     // internals of plbox to support custom tick and label positions
     // along an axis.
+
     if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
     {
-        tick_string = "";
-        if ( position & PL_POSITION_LEFT )
-        {
-            snprintf( opt_string, max_opts, "nt%s", axis_opts );
-            label_box_custom( "", 0, NULL, opt_string, n_values, values );
-        }
-        else if ( position & PL_POSITION_RIGHT )
-        {
-            snprintf( opt_string, max_opts, "mt%s", axis_opts );
-            label_box_custom( "", 0, NULL, opt_string, n_values, values );
-        }
-        else if ( position & PL_POSITION_TOP )
-        {
-            snprintf( opt_string, max_opts, "mt%s", axis_opts );
+        snprintf( opt_string, max_opts, "%s%s", tick_label_string, local_axis_opts );
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT)
             label_box_custom( opt_string, n_values, values, "", 0, NULL );
-        }
-        else if ( position & PL_POSITION_BOTTOM )
-        {
-            snprintf( opt_string, max_opts, "nt%s", axis_opts );
-            label_box_custom( opt_string, n_values, values, "", 0, NULL );
-        }
-    }
-    else
-    {
-        if ( position & PL_POSITION_LEFT || position & PL_POSITION_BOTTOM )
-        {
-            tick_string = "n";
-        }
-        else if ( position & PL_POSITION_RIGHT || position & PL_POSITION_TOP )
-        {
-            tick_string = "m";
-        }
+        else
+            label_box_custom( "", 0, NULL, opt_string, n_values, values );
+        // Exclude tick labels for plbox call below since those tick
+        // labels have already been handled in a custom way above.
+        tick_label_string = "";
+        // Exclude ticks for plbox call below since those tick marks
+        // have already been handled in a custom way above.
+        remove_characters(local_axis_opts, "TtXx");
     }
 
     // Draw the outline for the entire colorbar, tick marks, tick labels.
@@ -1644,7 +1669,7 @@ c_plcolorbar( PLINT opt, PLINT position,
         edge_string = "bc";
     else
         edge_string = "uw";
-    snprintf( opt_string, max_opts, "%s%s%s", edge_string, tick_string, axis_opts );
+    snprintf( opt_string, max_opts, "%s%s%s", edge_string, tick_label_string, local_axis_opts );
     if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM)
     {
           plbox( edge_string , 0.0, 0, opt_string, ticks, sub_ticks );
@@ -1653,6 +1678,8 @@ c_plcolorbar( PLINT opt, PLINT position,
     {
           plbox( opt_string, ticks, sub_ticks, edge_string, 0.0, 0 );
     }
+
+    free(local_axis_opts);
 
     // Restore previous plot characteristics.
     plcol0( col0_save );

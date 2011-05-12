@@ -199,29 +199,13 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         }
 
         // Set appropriate labeling options
-        if ( opt & PL_COLORBAR_SHADE_LABEL )
+        if ( cont_color == 0 || cont_width == 0 )
         {
-            if ( vertical )
-                axis_opts = "iv";
-            else
-                axis_opts = "i";
+            axis_opts = "tv";
         }
         else
         {
-            if ( sub_ticks != 0 )
-            {
-                if ( vertical )
-                    axis_opts = "stv";
-                else
-                    axis_opts = "st";
-            }
-            else
-            {
-                if ( vertical )
-                    axis_opts = "tv";
-                else
-                    axis_opts = "t";
-            }
+            axis_opts = "xv";
         }
 
         sprintf( label, "%s, %s",
@@ -865,4 +849,3 @@ main( int argc, const char *argv[] )
     plend();
     exit( 0 );
 }
-
