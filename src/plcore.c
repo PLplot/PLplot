@@ -2706,8 +2706,8 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
 
 // cmap 1
 
-    plsc->icol1 = plsr->icol1;
-    plsc->ncol1 = plsr->ncol1;
+    plsc->icol1     = plsr->icol1;
+    plsc->ncol1     = plsr->ncol1;
     plsc->cmap1_min = plsr->cmap1_min;
     plsc->cmap1_max = plsr->cmap1_max;
     if ( plsc->cmap1 != NULL )

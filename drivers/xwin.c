@@ -2380,8 +2380,9 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
             dev->width, dev->height );
         XSetForeground( xwd->display, dev->gc, dev->curcolor.pixel );
     }
-    if ( dev->write_to_window ) {
-      XClearWindow( xwd->display, dev->window );
+    if ( dev->write_to_window )
+    {
+        XClearWindow( xwd->display, dev->window );
     }
     plRemakePlot( pls );
     XSync( xwd->display, 0 );
@@ -2456,15 +2457,17 @@ RedrawCmd( PLStream *pls )
 
 // Initialize & redraw (to pixmap, if available).
 
-    if ( dev->write_to_pixmap ) {
+    if ( dev->write_to_pixmap )
+    {
         dev->write_to_window = 0;
         XSetForeground( xwd->display, dev->gc, dev->bgcolor.pixel );
         XFillRectangle( xwd->display, dev->pixmap, dev->gc, 0, 0,
             dev->width, dev->height );
         XSetForeground( xwd->display, dev->gc, dev->curcolor.pixel );
     }
-    if ( dev->write_to_window ) {
-      XClearWindow( xwd->display, dev->window );
+    if ( dev->write_to_window )
+    {
+        XClearWindow( xwd->display, dev->window );
     }
     plRemakePlot( pls );
     XSync( xwd->display, 0 );

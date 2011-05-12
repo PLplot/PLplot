@@ -251,8 +251,8 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
     PLFLT color_min, color_max, color_range;
 
     // Color range to use
-    color_min = plsc->cmap1_min;
-    color_max = plsc->cmap1_max;
+    color_min   = plsc->cmap1_min;
+    color_max   = plsc->cmap1_max;
     color_range = color_max - color_min;
 
     for ( i = 0; i < nlevel - 1; i++ )

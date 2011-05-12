@@ -1222,43 +1222,43 @@ PLDLLIMPEXP void
 c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
 //flags used for position argument of both pllegend and plcolorbar
-#define PL_POSITION_LEFT            1
-#define PL_POSITION_RIGHT           2
-#define PL_POSITION_TOP             4
-#define PL_POSITION_BOTTOM          8
-#define PL_POSITION_INSIDE          16
-#define PL_POSITION_OUTSIDE         32
-#define PL_POSITION_VIEWPORT        64
-#define PL_POSITION_SUBPAGE         128
+#define PL_POSITION_LEFT             1
+#define PL_POSITION_RIGHT            2
+#define PL_POSITION_TOP              4
+#define PL_POSITION_BOTTOM           8
+#define PL_POSITION_INSIDE           16
+#define PL_POSITION_OUTSIDE          32
+#define PL_POSITION_VIEWPORT         64
+#define PL_POSITION_SUBPAGE          128
 
 // Flags for pllegend.
-#define PL_LEGEND_NONE              1
-#define PL_LEGEND_COLOR_BOX         2
-#define PL_LEGEND_LINE              4
-#define PL_LEGEND_SYMBOL            8
-#define PL_LEGEND_TEXT_LEFT         16
-#define PL_LEGEND_BACKGROUND        32
-#define PL_LEGEND_BOUNDING_BOX      64
-#define PL_LEGEND_ROW_MAJOR         128
+#define PL_LEGEND_NONE               1
+#define PL_LEGEND_COLOR_BOX          2
+#define PL_LEGEND_LINE               4
+#define PL_LEGEND_SYMBOL             8
+#define PL_LEGEND_TEXT_LEFT          16
+#define PL_LEGEND_BACKGROUND         32
+#define PL_LEGEND_BOUNDING_BOX       64
+#define PL_LEGEND_ROW_MAJOR          128
 
 // Flags for plcolorbar
-#define PL_COLORBAR_LABEL_LEFT      1
-#define PL_COLORBAR_LABEL_RIGHT     2
-#define PL_COLORBAR_LABEL_TOP       4
-#define PL_COLORBAR_LABEL_BOTTOM    8
-#define PL_COLORBAR_IMAGE           16
-#define PL_COLORBAR_SHADE           32
-#define PL_COLORBAR_GRADIENT        64
-#define PL_COLORBAR_CAP_NONE        128
-#define PL_COLORBAR_CAP_LOW         256
-#define PL_COLORBAR_CAP_HIGH        512
-#define PL_COLORBAR_SHADE_LABEL     1024
-#define PL_COLORBAR_ORIENT_RIGHT    2048
-#define PL_COLORBAR_ORIENT_TOP      4096
-#define PL_COLORBAR_ORIENT_LEFT     8192
-#define PL_COLORBAR_ORIENT_BOTTOM   16384
-#define PL_COLORBAR_NOEDGE          32768
-#define PL_COLORBAR_EDGE            65536
+#define PL_COLORBAR_LABEL_LEFT       1
+#define PL_COLORBAR_LABEL_RIGHT      2
+#define PL_COLORBAR_LABEL_TOP        4
+#define PL_COLORBAR_LABEL_BOTTOM     8
+#define PL_COLORBAR_IMAGE            16
+#define PL_COLORBAR_SHADE            32
+#define PL_COLORBAR_GRADIENT         64
+#define PL_COLORBAR_CAP_NONE         128
+#define PL_COLORBAR_CAP_LOW          256
+#define PL_COLORBAR_CAP_HIGH         512
+#define PL_COLORBAR_SHADE_LABEL      1024
+#define PL_COLORBAR_ORIENT_RIGHT     2048
+#define PL_COLORBAR_ORIENT_TOP       4096
+#define PL_COLORBAR_ORIENT_LEFT      8192
+#define PL_COLORBAR_ORIENT_BOTTOM    16384
+#define PL_COLORBAR_NOEDGE           32768
+#define PL_COLORBAR_EDGE             65536
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 PLDLLIMPEXP void

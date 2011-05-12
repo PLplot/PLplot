@@ -107,7 +107,7 @@ typedef struct
 #ifdef PL_HAVE_PTHREAD
     pthread_t updater;                             // The X events updater thread id
 #endif
-    XColor       bgcolor;                          // Background color
+    XColor    bgcolor;                             // Background color
 } XwDev;
 
 #endif  // __PLXWD_H__

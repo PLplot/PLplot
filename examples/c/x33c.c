@@ -52,7 +52,7 @@ static PLINT position_options[16] = {
 };
 
 // Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
-static char          *special_symbols[5] = {
+static char *special_symbols[5] = {
     "✰",
     "✴",
     "✱",
@@ -63,8 +63,8 @@ static char          *special_symbols[5] = {
 // plcolorbar options
 
 // Colorbar type options
-#define COLORBAR_KINDS 4
-static PLINT colorbar_option_kinds[COLORBAR_KINDS] = {
+#define COLORBAR_KINDS    4
+static PLINT      colorbar_option_kinds[COLORBAR_KINDS] = {
     PL_COLORBAR_SHADE,
     PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
     PL_COLORBAR_IMAGE,
@@ -78,8 +78,8 @@ static const char *colorbar_option_kind_labels[COLORBAR_KINDS] = {
 };
 
 // Which side of the page are we positioned relative to?
-#define COLORBAR_POSITIONS 4
-static PLINT colorbar_position_options[COLORBAR_POSITIONS] = {
+#define COLORBAR_POSITIONS    4
+static PLINT      colorbar_position_options[COLORBAR_POSITIONS] = {
     PL_POSITION_LEFT,
     PL_POSITION_RIGHT,
     PL_POSITION_TOP,
@@ -93,8 +93,8 @@ static const char *colorbar_position_option_labels[COLORBAR_POSITIONS] = {
 };
 
 // Colorbar label positioning options
-#define COLORBAR_LABELS 4
-static PLINT colorbar_label_options[COLORBAR_LABELS] = {
+#define COLORBAR_LABELS    4
+static PLINT      colorbar_label_options[COLORBAR_LABELS] = {
     PL_COLORBAR_LABEL_LEFT,
     PL_COLORBAR_LABEL_RIGHT,
     PL_COLORBAR_LABEL_TOP,
@@ -108,14 +108,14 @@ static const char *colorbar_label_option_labels[COLORBAR_LABELS] = {
 };
 
 // Colorbar cap options
-#define COLORBAR_CAPS 4
-static PLINT colorbar_cap_options[COLORBAR_CAPS] = {
+#define COLORBAR_CAPS    4
+static PLINT         colorbar_cap_options[COLORBAR_CAPS] = {
     PL_COLORBAR_CAP_NONE,
     PL_COLORBAR_CAP_LOW,
     PL_COLORBAR_CAP_HIGH,
     PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
 };
-static const char *colorbar_cap_option_labels[COLORBAR_CAPS] = {
+static const char    *colorbar_cap_option_labels[COLORBAR_CAPS] = {
     "No caps",
     "Low cap",
     "High cap",
@@ -151,30 +151,30 @@ void
 plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, PLINT cont_width, PLINT n_values, PLFLT *values )
 {
     // Parameters for the colorbars on this page
-    PLINT position_i, position, opt;
-    PLFLT x, y, x_length, y_length;
-    PLFLT ticks;
-    PLINT sub_ticks;
-    PLFLT low_cap_color, high_cap_color;
-    PLINT vertical;
+    PLINT      position_i, position, opt;
+    PLFLT      x, y, x_length, y_length;
+    PLFLT      ticks;
+    PLINT      sub_ticks;
+    PLFLT      low_cap_color, high_cap_color;
+    PLINT      vertical;
     const char *axis_opts;
-    char label[200];
-    char title[200];
+    char       label[200];
+    char       title[200];
 
-    ticks = 0.0;
+    ticks     = 0.0;
     sub_ticks = 0;
 
-    low_cap_color = 0.0;
+    low_cap_color  = 0.0;
     high_cap_color = 1.0;
 
     // Start a new page
     pladv( 0 );
 
     // Draw one colorbar relative to each side of the page
-    for ( position_i = 0; position_i < COLORBAR_POSITIONS; position_i ++ )
+    for ( position_i = 0; position_i < COLORBAR_POSITIONS; position_i++ )
     {
         position = colorbar_position_options[position_i];
-        opt =
+        opt      =
             colorbar_option_kinds[kind_i] |
             colorbar_label_options[label_i] |
             colorbar_cap_options[cap_i];
@@ -184,16 +184,15 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         // Set the offset position on the page
         if ( vertical )
         {
-            x = 0.1;
-            y = 0.25;
+            x        = 0.1;
+            y        = 0.25;
             x_length = 0.05;
             y_length = 0.5;
-
         }
         else
         {
-            x = 0.25;
-            y = 0.1;
+            x        = 0.25;
+            y        = 0.1;
             x_length = 0.5;
             y_length = 0.05;
         }
@@ -209,8 +208,8 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         }
 
         sprintf( label, "%s, %s",
-                 colorbar_position_option_labels[position_i],
-                 colorbar_label_option_labels[label_i] );
+            colorbar_position_option_labels[position_i],
+            colorbar_label_option_labels[label_i] );
 
         // Smaller text
         plschr( 0.0, 0.75 );
@@ -219,12 +218,12 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         plsmin( 0.0, 0.5 );
 
         plcolorbar( opt, position,
-                    x, y, x_length, y_length,
-                    low_cap_color, high_cap_color,
-                    cont_color, cont_width,
-                    ticks, sub_ticks,
-                    axis_opts, label,
-                    n_values, values );
+            x, y, x_length, y_length,
+            low_cap_color, high_cap_color,
+            cont_color, cont_width,
+            ticks, sub_ticks,
+            axis_opts, label,
+            n_values, values );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );
@@ -234,8 +233,8 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
 
     // Draw a page title
     sprintf( title, "%s - %s",
-             colorbar_option_kind_labels[kind_i],
-             colorbar_cap_option_labels[cap_i] );
+        colorbar_option_kind_labels[kind_i],
+        colorbar_cap_option_labels[cap_i] );
     plvpor( 0.0, 1.0, 0.0, 1.0 );
     plwind( 0.0, 1.0, 0.0, 1.0 );
     plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
@@ -254,8 +253,8 @@ plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLINT con
         for ( cap_i = 0; cap_i < COLORBAR_CAPS; cap_i++ )
         {
             plcolorbar_example_page( kind_i, label_i, cap_i,
-                                     cont_color, cont_width,
-                                     n_values, values );
+                cont_color, cont_width,
+                n_values, values );
         }
     }
 }
@@ -821,7 +820,7 @@ main( int argc, const char *argv[] )
     if ( colorbar )
     {
         // Use unsaturated green background colour to contrast with black caps.
-        plscolbg (70, 185, 70);
+        plscolbg( 70, 185, 70 );
         // Color bar examples
         PLFLT values_small[2]  = { 0.0, 1.0 };
         PLFLT values_uneven[9] = { 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 };
@@ -832,7 +831,7 @@ main( int argc, const char *argv[] )
         plscmap1_range( 0.01, 0.99 );
 
         // We can only test image and gradient colorbars with two element arrays
-        for ( i = 2; i < COLORBAR_KINDS; i ++ )
+        for ( i = 2; i < COLORBAR_KINDS; i++ )
         {
             plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 2, values_small );
         }

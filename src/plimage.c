@@ -247,8 +247,8 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
     }
 
     // Calculate the size of the color range to use
-    color_min = plsc->cmap1_min;
-    color_max = plsc->cmap1_max;
+    color_min   = plsc->cmap1_min;
+    color_max   = plsc->cmap1_max;
     color_range = color_max - color_min;
 
     // Go through the image values and scale them to fit in

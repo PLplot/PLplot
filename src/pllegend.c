@@ -894,13 +894,13 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 void
 static remove_characters( char *string, const char *characters )
 {
-    size_t length = strlen(string);
+    size_t length        = strlen( string );
     size_t prefix_length = strcspn( string, characters );
     if ( prefix_length < length )
     {
         // Remove first matching character by shifting tail of string
         // (including null-terminator) down by one.
-        memmove( string+prefix_length, string+prefix_length+1, length - prefix_length );
+        memmove( string + prefix_length, string + prefix_length + 1, length - prefix_length );
         // Recurse to remove any remaining specified characters.
         remove_characters( string, characters );
     }
@@ -925,7 +925,7 @@ static remove_characters( char *string, const char *characters )
 
 void
 static draw_cap( PLINT opt, PLINT orientation, PLFLT xmin, PLFLT xmax,
-          PLFLT ymin,PLFLT ymax, PLFLT color )
+                 PLFLT ymin, PLFLT ymax, PLFLT color )
 {
     // Save current drawing color.
     PLINT col0_save = plsc->icol0;
@@ -950,43 +950,43 @@ static draw_cap( PLINT opt, PLINT orientation, PLFLT xmin, PLFLT xmax,
 
     if ( orientation == PL_COLORBAR_ORIENT_RIGHT )
     {
-            xs[0] = 0.;
-            ys[0] = 0.;
-            xs[1] = 1.;
-            ys[1] = 0.5;
-            xs[2] = 0.;
-            ys[2] = 1.;
+        xs[0] = 0.;
+        ys[0] = 0.;
+        xs[1] = 1.;
+        ys[1] = 0.5;
+        xs[2] = 0.;
+        ys[2] = 1.;
     }
     else if ( orientation == PL_COLORBAR_ORIENT_TOP )
     {
-            xs[0] = 1.;
-            ys[0] = 0.;
-            xs[1] = 0.5;
-            ys[1] = 1.;
-            xs[2] = 0.;
-            ys[2] = 0.;
+        xs[0] = 1.;
+        ys[0] = 0.;
+        xs[1] = 0.5;
+        ys[1] = 1.;
+        xs[2] = 0.;
+        ys[2] = 0.;
     }
     else if ( orientation == PL_COLORBAR_ORIENT_LEFT )
     {
-            xs[0] = 1.;
-            ys[0] = 1.;
-            xs[1] = 0.;
-            ys[1] = 0.5;
-            xs[2] = 1.;
-            ys[2] = 0.;
+        xs[0] = 1.;
+        ys[0] = 1.;
+        xs[1] = 0.;
+        ys[1] = 0.5;
+        xs[2] = 1.;
+        ys[2] = 0.;
     }
     else if ( orientation == PL_COLORBAR_ORIENT_BOTTOM )
     {
-            xs[0] = 0.;
-            ys[0] = 1.;
-            xs[1] = 0.5;
-            ys[1] = 0.;
-            xs[2] = 1.;
-            ys[2] = 1.;
+        xs[0] = 0.;
+        ys[0] = 1.;
+        xs[1] = 0.5;
+        ys[1] = 0.;
+        xs[2] = 1.;
+        ys[2] = 1.;
     }
     else
     {
-      plexit( "draw_cap: internal error. Incorrect orientation");
+        plexit( "draw_cap: internal error. Incorrect orientation" );
     }
 
     plcol1( color );
@@ -995,7 +995,7 @@ static draw_cap( PLINT opt, PLINT orientation, PLFLT xmin, PLFLT xmax,
     plcol0( col0_save );
 
     // Draw cap outline
-    if ( opt & PL_COLORBAR_EDGE)
+    if ( opt & PL_COLORBAR_EDGE )
         plline( 3, xs, ys );
 
     // Restore window and viewport
@@ -1097,7 +1097,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
 
     // Active attributes to be saved and restored afterward.
-    PLINT col0_save       = plsc->icol0;
+    PLINT col0_save = plsc->icol0;
 
     // Position of the color bar in normalized viewport (= normalized subpage
     // coordinates).
@@ -1118,8 +1118,8 @@ c_plcolorbar( PLINT opt, PLINT position,
     PLINT      max_opts = 25;
     char       opt_string[max_opts];
     const char *tick_label_string, *edge_string;
-    size_t length_axis_opts = strlen(axis_opts);
-    char *local_axis_opts;
+    size_t     length_axis_opts = strlen( axis_opts );
+    char       *local_axis_opts;
 
     // Draw a title
     char perp;
@@ -1130,10 +1130,10 @@ c_plcolorbar( PLINT opt, PLINT position,
             opt & PL_COLORBAR_ORIENT_LEFT ||
             opt & PL_COLORBAR_ORIENT_BOTTOM ) )
     {
-      if ( position & PL_POSITION_LEFT  || position & PL_POSITION_RIGHT )
-        opt = opt | PL_COLORBAR_ORIENT_TOP;
-      else
-        opt = opt | PL_COLORBAR_ORIENT_RIGHT;
+        if ( position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT )
+            opt = opt | PL_COLORBAR_ORIENT_TOP;
+        else
+            opt = opt | PL_COLORBAR_ORIENT_RIGHT;
     }
 
     // Do not draw edges of color box and caps by default.
@@ -1142,16 +1142,16 @@ c_plcolorbar( PLINT opt, PLINT position,
 
     // local_axis_opts is local version that can be modified from
     // const input version.
-    if ( ( local_axis_opts = (char *) malloc( (length_axis_opts + 1) * sizeof ( char ) ) ) == NULL )
+    if ( ( local_axis_opts = (char *) malloc( ( length_axis_opts + 1 ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "plcolorbar: Insufficient memory" );
     }
-    strcpy(local_axis_opts, axis_opts);
+    strcpy( local_axis_opts, axis_opts );
 
-    
+
     // Sanity checking on local_axis_opts to remove all control characters
     // that are specified by other means inside this routine.
-    remove_characters(local_axis_opts, "BbCcMmNnUuWw");
+    remove_characters( local_axis_opts, "BbCcMmNnUuWw" );
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
@@ -1213,7 +1213,7 @@ c_plcolorbar( PLINT opt, PLINT position,
         wy_min = 0.0;
         wy_max = 1.0;
     }
-    else if ( opt & PL_COLORBAR_ORIENT_BOTTOM)
+    else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
         wx_min = 0.0;
         wx_max = 1.0;
@@ -1511,19 +1511,19 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, low_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, low_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, low_cap_color );
         }
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
@@ -1540,21 +1540,21 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
         }
         if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, high_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, high_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-          draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, high_cap_color );
+            draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, high_cap_color );
         }
-     }
+    }
 
     // Write label.
     if ( opt & PL_COLORBAR_LABEL_LEFT )
@@ -1565,8 +1565,8 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
-            just          = 0.5;
+            perp = '\0';
+            just = 0.5;
         }
         else
         {
@@ -1585,8 +1585,8 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
-            just          = 0.5;
+            perp = '\0';
+            just = 0.5;
         }
         else
         {
@@ -1610,7 +1610,7 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
+            perp = '\0';
         }
         snprintf( opt_string, max_opts, "t%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
@@ -1628,7 +1628,7 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
+            perp = '\0';
         }
         snprintf( opt_string, max_opts, "b%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
@@ -1642,7 +1642,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     {
         tick_label_string = "m";
     }
- 
+
     // Draw numerical labels and tick marks if this is a shade color bar
     // TODO: A better way to handle this would be to update the
     // internals of plbox to support custom tick and label positions
@@ -1651,7 +1651,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
     {
         snprintf( opt_string, max_opts, "%s%s", tick_label_string, local_axis_opts );
-        if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT)
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
             label_box_custom( opt_string, n_values, values, "", 0, NULL );
         else
             label_box_custom( "", 0, NULL, opt_string, n_values, values );
@@ -1660,7 +1660,7 @@ c_plcolorbar( PLINT opt, PLINT position,
         tick_label_string = "";
         // Exclude ticks for plbox call below since those tick marks
         // have already been handled in a custom way above.
-        remove_characters(local_axis_opts, "TtXx");
+        remove_characters( local_axis_opts, "TtXx" );
     }
 
     // Draw the outline for the entire colorbar, tick marks, tick labels.
@@ -1670,16 +1670,16 @@ c_plcolorbar( PLINT opt, PLINT position,
     else
         edge_string = "uw";
     snprintf( opt_string, max_opts, "%s%s%s", edge_string, tick_label_string, local_axis_opts );
-    if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM)
+    if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
-          plbox( edge_string , 0.0, 0, opt_string, ticks, sub_ticks );
+        plbox( edge_string, 0.0, 0, opt_string, ticks, sub_ticks );
     }
-    else 
+    else
     {
-          plbox( opt_string, ticks, sub_ticks, edge_string, 0.0, 0 );
+        plbox( opt_string, ticks, sub_ticks, edge_string, 0.0, 0 );
     }
 
-    free(local_axis_opts);
+    free( local_axis_opts );
 
     // Restore previous plot characteristics.
     plcol0( col0_save );
@@ -1896,7 +1896,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
 
     // Active attributes to be saved and restored afterward.
-    PLINT col0_save       = plsc->icol0;
+    PLINT col0_save = plsc->icol0;
 
     // Position of the color bar in normalized viewport (= normalized subpage
     // coordinates).
@@ -2202,8 +2202,8 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
-            just          = 0.5;
+            perp = '\0';
+            just = 0.5;
         }
         else
         {
@@ -2222,8 +2222,8 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
-            just          = 0.5;
+            perp = '\0';
+            just = 0.5;
         }
         else
         {
@@ -2247,7 +2247,7 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
+            perp = '\0';
         }
         snprintf( opt_string, max_opts, "t%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
@@ -2265,7 +2265,7 @@ c_plcolorbar( PLINT opt, PLINT position,
                 label_offset += 4.0;
             else
                 label_offset += 2.0;
-            perp          = '\0';
+            perp = '\0';
         }
         snprintf( opt_string, max_opts, "b%c", perp );
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
