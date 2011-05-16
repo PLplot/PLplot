@@ -909,7 +909,7 @@ static remove_characters( char *string, const char *characters )
 //--------------------------------------------------------------------------
 //! Draw triangular end-caps for color bars.
 //!
-//! @param opt If the PL_COLORBAR_NOEDGE/EDGE bit is set, draw (no edge)/(an edge) around
+//! @param if_edge If if_edge is true/false, draw an edge/no edge around
 //! the triangle.
 //! @param orientation This variable defines the orientation of
 //! the triangle.  The triangle points to the right, up, left, or down
@@ -924,7 +924,7 @@ static remove_characters( char *string, const char *characters )
 //!
 
 void
-static draw_cap( PLINT opt, PLINT orientation, PLFLT xmin, PLFLT xmax,
+static draw_cap( PLBOOL if_edge , PLINT orientation, PLFLT xmin, PLFLT xmax,
                  PLFLT ymin, PLFLT ymax, PLFLT color )
 {
     // Save current drawing color.
@@ -995,7 +995,7 @@ static draw_cap( PLINT opt, PLINT orientation, PLFLT xmin, PLFLT xmax,
     plcol0( col0_save );
 
     // Draw cap outline
-    if ( opt & PL_COLORBAR_EDGE )
+    if ( if_edge )
         plline( 3, xs, ys );
 
     // Restore window and viewport
@@ -1010,16 +1010,13 @@ static draw_cap( PLINT opt, PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! colorbar.  The orientation (direction of the maximum value) of the
 //! colorbar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
 //! BOTTOM).  If none of those bits are specified, the default
-//! orientation is toward the top, i.e., a vertical colorbar.  Whether
-//! the edges of the colour box and caps is not drawn or drawn (for
-//! the current cmap0 color index) depends on PL_COLORBAR_(NOEDGE,
-//! EDGE).  If neither of these bits are specified, then by default
-//! PL_COLORBAR_NOEDGE is assumed.  The type of colorbar can be
-//! specified with PL_COLORBAR_SHADE, PL_COLORBAR_IMAGE or
-//! PL_COLORBAR_GRADIENT.  The position of the (optional) label/title
-//! can be specified with PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).
-//! If no label position is specified then no label will be drawn.
-//! End-caps for the colorbar can added with PL_COLORBAR_CAP_LOW and
+//! orientation is toward the top, i.e., a vertical colorbar.  The
+//! type of colorbar can be specified with PL_COLORBAR_SHADE,
+//! PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT.  The position of the
+//! (optional) label/title can be specified with
+//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).  If no label position
+//! is specified then no label will be drawn.  End-caps for the
+//! colorbar can added with PL_COLORBAR_CAP_LOW and
 //! PL_COLORBAR_CAP_HIGH.  If a particular colorbar cap option is not
 //! specified then no cap will be drawn for that end.  As a special
 //! case for PL_COLORBAR_SHADE, the option PL_COLORBAR_SHADE_LABEL can
@@ -1120,6 +1117,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     const char *tick_label_string, *edge_string;
     size_t     length_axis_opts = strlen( axis_opts );
     char       *local_axis_opts;
+    PLBOOL     if_edge;
 
     // Draw a title
     char perp;
@@ -1136,10 +1134,6 @@ c_plcolorbar( PLINT opt, PLINT position,
             opt = opt | PL_COLORBAR_ORIENT_RIGHT;
     }
 
-    // Do not draw edges of color box and caps by default.
-    if ( !( opt & PL_COLORBAR_NOEDGE || opt & PL_COLORBAR_EDGE ) )
-        opt = opt | PL_COLORBAR_NOEDGE;
-
     // local_axis_opts is local version that can be modified from
     // const input version.
     if ( ( local_axis_opts = (char *) malloc( ( length_axis_opts + 1 ) * sizeof ( char ) ) ) == NULL )
@@ -1151,7 +1145,12 @@ c_plcolorbar( PLINT opt, PLINT position,
 
     // Sanity checking on local_axis_opts to remove all control characters
     // that are specified by other means inside this routine.
-    remove_characters( local_axis_opts, "BbCcMmNnUuWw" );
+    remove_characters( local_axis_opts, "MmNn" );
+
+    if_edge = plP_stsearch( local_axis_opts, 'b' ) &&
+        !plP_stsearch( local_axis_opts, 'u' ) &&
+        plP_stsearch( local_axis_opts, 'c' ) &&
+        !plP_stsearch( local_axis_opts, 'w' );
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
@@ -1511,19 +1510,19 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, low_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, low_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, low_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, low_cap_color );
         }
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
@@ -1540,19 +1539,19 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
+          draw_cap( if_edge, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_TOP, vx_min, vx_max, vy_max, vy_max + cap_height, high_cap_color );
         }
         if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, high_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_LEFT, vx_min - cap_height, vx_min, vy_min, vy_max, high_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-            draw_cap( opt, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, high_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_BOTTOM, vx_min, vx_max, vy_min - cap_height, vy_min, high_cap_color );
         }
     }
 
@@ -1665,11 +1664,11 @@ c_plcolorbar( PLINT opt, PLINT position,
 
     // Draw the outline for the entire colorbar, tick marks, tick labels.
 
-    if ( opt & PL_COLORBAR_EDGE )
+    if ( if_edge )
         edge_string = "bc";
     else
         edge_string = "uw";
-    snprintf( opt_string, max_opts, "%s%s%s", edge_string, tick_label_string, local_axis_opts );
+    snprintf( opt_string, max_opts, "%s%s", tick_label_string, local_axis_opts );
     if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
         plbox( edge_string, 0.0, 0, opt_string, ticks, sub_ticks );
