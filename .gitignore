@@ -2,3 +2,4 @@
 *.flc
 *.pyc
 tmp/
+build/
