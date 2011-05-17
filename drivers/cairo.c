@@ -253,6 +253,9 @@ static void rotate_cairo_surface( PLStream *, float, float, float, float, float,
 // Rasterization of plotted material
 static void start_raster( PLStream* );
 static void end_raster( PLStream* );
+// Get/set drawing mode
+static void set_mode( PLStream*, PLINT* );
+static void get_mode( PLStream*, PLINT* );
 
 // PLplot interface functions
 
@@ -565,7 +568,73 @@ void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
     case PLESC_ARC: // Draw an arc, either filled or outline
         arc( pls, (arc_struct *) ptr );
         break;
+    case PLESC_MODESET: // Set drawing mode
+        set_mode( pls, (int *) ptr );
+        break;
+    case PLESC_MODEGET: // Get drawing mode
+        get_mode( pls, (int *) ptr );
+        break;
     }
+}
+
+
+//--------------------------------------------------------------------------
+// set_mode
+//
+// Set drawing mode.
+//--------------------------------------------------------------------------
+void set_mode( PLStream *pls, PLINT *mode )
+{
+    PLCairo *aStream;
+
+    aStream = (PLCairo *) pls->dev;
+
+    switch ( *mode )
+    {
+    case PL_MODE_UNKNOWN: // Invalid - do nothing
+        break;
+    case PL_MODE_DEFAULT:
+        cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_OVER );
+        break;
+    case PL_MODE_REPLACE:
+        cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_SOURCE );
+        break;
+    case PL_MODE_XOR:
+        cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_XOR );
+        break;
+    }
+    return;
+}
+
+//--------------------------------------------------------------------------
+// get_mode
+//
+// Get drawing mode.
+//--------------------------------------------------------------------------
+void get_mode( PLStream *pls, PLINT *mode )
+{
+    PLCairo *aStream;
+    cairo_operator_t op;
+
+    aStream = (PLCairo *) pls->dev;
+
+    op = cairo_get_operator( aStream->cairoContext );
+
+    switch ( op )
+    {
+    case CAIRO_OPERATOR_OVER:
+        *mode = PL_MODE_DEFAULT;
+        break;
+    case CAIRO_OPERATOR_SOURCE:
+        *mode = PL_MODE_REPLACE;
+        break;
+    case CAIRO_OPERATOR_XOR:
+        *mode = PL_MODE_XOR;
+        break;
+    default:
+        *mode = PL_MODE_UNKNOWN;
+    }
+    return;
 }
 
 //--------------------------------------------------------------------------
@@ -1147,6 +1216,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     pls->dev_arc           = 1;           // Supports driver-level arcs
     pls->plbuf_write       = interactive; // Activate plot buffer
     pls->has_string_length = 1;           // Driver supports string length calculations
+    pls->dev_modeset       = 1;           // Driver supports drawing mode setting
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
@@ -1289,8 +1359,6 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     // Draw the polygons
     poly_line( pls, xa, ya, npts );
-
-    cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_OVER );
 
     cairo_set_source_rgba( aStream->cairoContext,
         (double) pls->curcolor.r / 255.0,
@@ -1597,14 +1665,14 @@ static signed int xcairo_init_cairo( PLStream *pls )
     // This is the Cairo surface PLplot will actually plot to.
     if ( aStream->image_buffering == 0 )
     {
-        aStream->cairoSurface = cairo_surface_create_similar( aStream->cairoSurface_X, CAIRO_CONTENT_COLOR, pls->xlength, pls->ylength );
+        aStream->cairoSurface = cairo_surface_create_similar( aStream->cairoSurface_X, CAIRO_CONTENT_COLOR_ALPHA, pls->xlength, pls->ylength );
         aStream->cairoContext = cairo_create( aStream->cairoSurface );
     }
     else
     {
         // Plot to an off-screen image
         aStream->cairoSurface =
-            cairo_image_surface_create( CAIRO_FORMAT_RGB24,
+            cairo_image_surface_create( CAIRO_FORMAT_ARGB32,
                 pls->xlength, pls->ylength );
         aStream->cairoContext = cairo_create( aStream->cairoSurface );
     }
@@ -1690,13 +1758,31 @@ void plD_init_xcairo( PLStream *pls )
 //--------------------------------------------------------------------------
 // blit_to_x()
 //
+//
 // Blit the offscreen image to the X window.
 //--------------------------------------------------------------------------
 
-void blit_to_x( PLCairo *aStream, double x, double y, double w, double h )
+void blit_to_x( PLStream *pls, double x, double y, double w, double h )
 {
-    // Copy a portion of the surface
+    PLCairo *aStream;
+
+    aStream = pls->dev;
+
+    cairo_save( aStream->cairoContext );
+    // "Flatten" any transparent regions to look like they were drawn over the
+    // correct background color
+    cairo_rectangle( aStream->cairoContext, x, y, w, h );
+    cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_DEST_OVER );
+    cairo_set_source_rgba( aStream->cairoContext,
+        (double) pls->cmap0[0].r / 255.0,
+        (double) pls->cmap0[0].g / 255.0,
+        (double) pls->cmap0[0].b / 255.0,
+        (double) pls->cmap0[0].a );
+    cairo_fill( aStream->cairoContext );
+    cairo_restore( aStream->cairoContext );
+
     cairo_save( aStream->cairoContext_X );
+    // Copy a portion of the surface
     cairo_rectangle( aStream->cairoContext_X, x, y, w, h );
     cairo_set_operator( aStream->cairoContext_X, CAIRO_OPERATOR_SOURCE );
     cairo_set_source_surface( aStream->cairoContext_X,
@@ -1753,7 +1839,7 @@ void plD_eop_xcairo( PLStream *pls )
         return;
 
     // Blit the offscreen image to the X window.
-    blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
+    blit_to_x( pls, 0.0, 0.0, pls->xlength, pls->ylength );
 
     if ( aStream->xdrawable_mode )
         return;
@@ -1794,7 +1880,7 @@ void plD_eop_xcairo( PLStream *pls )
             expose = (XExposeEvent *) &event;
             if ( expose->count == 0 )
             {
-                blit_to_x( aStream, expose->x, expose->y,
+                blit_to_x( pls, expose->x, expose->y,
                     expose->width, expose->height );
             }
             break;
@@ -1850,11 +1936,11 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_FLUSH:    // forced update of the window
-        blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
+        blit_to_x( pls, 0.0, 0.0, pls->xlength, pls->ylength );
         XFlush( aStream->XDisplay );
         break;
     case PLESC_GETC:     // get cursor position
-        blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
+        blit_to_x( pls, 0.0, 0.0, pls->xlength, pls->ylength );
         XFlush( aStream->XDisplay );
         xcairo_get_cursor( pls, (PLGraphicsIn*) ptr );
         break;
