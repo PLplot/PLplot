@@ -8,6 +8,7 @@
 // Copyright (C) 2004  Rafael Laboissiere
 // Copyright (C) 2008  Hazen Babcock
 // Copyright (C) 2009  Alan W. Irwin
+// Copyright (C) 2011 Hezekiah M. Carty
 //
 // This file is part of PLplot.
 //
@@ -1817,6 +1818,57 @@ c_plxormod( PLINT mode, PLINT *status )   // xor mode
             plsc->plbuf_write = ostate;
     }
     *status = 1;
+}
+
+//--------------------------------------------------------------------------
+//! Set drawing mode (depends on device support!)
+//!
+//! @param mode This determines which drawing mode to use.
+//!
+void
+c_plsdrawmode( PLINT mode )
+{
+    if ( !plsc->dev_modeset )
+    {
+        plwarn( "plsdrawmode: Mode setting is not supported" );
+    }
+    else if ( plsc->level > 0 )
+    {
+        plP_esc( PLESC_MODESET, &mode );
+    }
+    else
+    {
+        plwarn( "plsdrawmode: Initialize PLplot first" );
+    }
+    return;
+}
+
+//--------------------------------------------------------------------------
+//! Get drawing mode (depends on device support!)
+//!
+//! @returns Current drawing mode
+//!
+PLINT
+c_plgdrawmode()
+{
+    PLINT mode;
+
+    if ( !plsc->dev_modeset )
+    {
+        plwarn( "plgdrawmode: Mode getting is not supported" );
+        mode = PL_MODE_UNKNOWN;
+    }
+    else if ( plsc->level > 0 )
+    {
+        plP_esc( PLESC_MODEGET, &mode );
+    }
+    else
+    {
+        plwarn( "plsdrawmode: Initialize PLplot first" );
+        mode = PL_MODE_UNKNOWN;
+    }
+
+    return( mode );
 }
 
 //--------------------------------------------------------------------------

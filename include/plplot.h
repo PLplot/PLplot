@@ -236,6 +236,8 @@ typedef void*    PLPointer;
 #define PLESC_END_RASTERIZE      33     // end rasterized rendering
 #define PLESC_ARC                34     // render an arc
 #define PLESC_GRADIENT           35     // render a gradient
+#define PLESC_MODESET            36     // set drawing mode
+#define PLESC_MODEGET            37     // get drawing mode
 
 // Alternative unicode text handling control characters
 #define PLTEXT_FONTCHANGE        0      // font change in the text stream
@@ -667,6 +669,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plgdidev                 c_plgdidev
 #define    plgdiori                 c_plgdiori
 #define    plgdiplt                 c_plgdiplt
+#define    plgdrawmode              c_plgdrawmode
 #define    plgfam                   c_plgfam
 #define    plgfci                   c_plgfci
 #define    plgfnam                  c_plgfnam
@@ -762,6 +765,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plsmem                   c_plsmem
 #define    plsmema                  c_plsmema
 #define    plsmin                   c_plsmin
+#define    plsdrawmode              c_plsdrawmode
 #define    plsori                   c_plsori
 #define    plspage                  c_plspage
 #define    plspal0                  c_plspal0
@@ -1085,6 +1089,11 @@ c_plgdiori( PLFLT *p_rot );
 PLDLLIMPEXP void
 c_plgdiplt( PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax );
 
+// Get the drawing mode
+
+PLDLLIMPEXP PLINT
+c_plgdrawmode();
+
 // Get FCI (font characterization integer)
 
 PLDLLIMPEXP void
@@ -1257,6 +1266,12 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_COLORBAR_ORIENT_TOP       4096
 #define PL_COLORBAR_ORIENT_LEFT      8192
 #define PL_COLORBAR_ORIENT_BOTTOM    16384
+
+// Flags for drawing mode
+#define PL_MODE_UNKNOWN             0
+#define PL_MODE_DEFAULT             1
+#define PL_MODE_REPLACE             2
+#define PL_MODE_XOR                 4
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 PLDLLIMPEXP void
@@ -1736,6 +1751,10 @@ c_plsmema( PLINT maxx, PLINT maxy, void *plotmem );
 
 PLDLLIMPEXP void
 c_plsmin( PLFLT def, PLFLT scale );
+
+// Set the drawing mode
+PLDLLIMPEXP void
+c_plsdrawmode( PLINT mode );
 
 // Set orientation.  Must be done before calling plinit.
 

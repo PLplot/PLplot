@@ -793,6 +793,9 @@ typedef struct
     PLFLT      string_length;
     PLINT      get_string_length;
     PLINT      dev_eofill;
+
+    // Drawing mode section
+    PLINT      dev_modeset;
 } PLStream;
 
 //--------------------------------------------------------------------------
