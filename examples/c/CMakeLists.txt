@@ -58,6 +58,7 @@ set(c_STRING_INDICES
   "31"
   "32"
   "33"
+  "34"
   )
 
 if(CORE_BUILD)
