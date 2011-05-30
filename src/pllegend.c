@@ -1,9 +1,9 @@
 // $Id$
-// pllegend(...) (which plots a discrete plot legend) and the static
-// routines which support it.
+// All routines that help to create a discrete legend (pllegend) or 
+// a continuous legend (plcolorbar).
 //
-// Copyright (C) 2010  Hezekiah M. Carty
-// Copyright (C) 2010  Alan W. Irwin
+// Copyright (C) 2010-2011  Hezekiah M. Carty
+// Copyright (C) 2010-2011  Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -1114,7 +1114,7 @@ c_plcolorbar( PLINT opt, PLINT position,
     // For building axis option string
     PLINT      max_opts = 25;
     char       opt_string[max_opts];
-    const char *tick_label_string, *edge_string;
+    const char *edge_string;
     size_t     length_axis_opts = strlen( axis_opts );
     char       *local_axis_opts;
     PLBOOL     if_edge;
@@ -1141,11 +1141,6 @@ c_plcolorbar( PLINT opt, PLINT position,
         plexit( "plcolorbar: Insufficient memory" );
     }
     strcpy( local_axis_opts, axis_opts );
-
-
-    // Sanity checking on local_axis_opts to remove all control characters
-    // that are specified by other means inside this routine.
-    remove_characters( local_axis_opts, "MmNn" );
 
     if_edge = plP_stsearch( local_axis_opts, 'b' ) &&
         !plP_stsearch( local_axis_opts, 'u' ) &&
@@ -1633,15 +1628,6 @@ c_plcolorbar( PLINT opt, PLINT position,
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
 
-    if ( position & PL_POSITION_LEFT || position & PL_POSITION_BOTTOM )
-    {
-        tick_label_string = "n";
-    }
-    else if ( position & PL_POSITION_RIGHT || position & PL_POSITION_TOP )
-    {
-        tick_label_string = "m";
-    }
-
     // Draw numerical labels and tick marks if this is a shade color bar
     // TODO: A better way to handle this would be to update the
     // internals of plbox to support custom tick and label positions
@@ -1649,16 +1635,12 @@ c_plcolorbar( PLINT opt, PLINT position,
 
     if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
     {
-        snprintf( opt_string, max_opts, "%s%s", tick_label_string, local_axis_opts );
         if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
-            label_box_custom( opt_string, n_values, values, "", 0, NULL );
+            label_box_custom( local_axis_opts, n_values, values, "", 0, NULL );
         else
-            label_box_custom( "", 0, NULL, opt_string, n_values, values );
-        // Exclude tick labels for plbox call below since those tick
-        // labels have already been handled in a custom way above.
-        tick_label_string = "";
-        // Exclude ticks for plbox call below since those tick marks
-        // have already been handled in a custom way above.
+            label_box_custom( "", 0, NULL, local_axis_opts, n_values, values );
+        // Exclude ticks for plbox call below since those tick marks and
+        // associated labels have already been handled in a custom way above.
         remove_characters( local_axis_opts, "TtXx" );
     }
 
@@ -1668,14 +1650,13 @@ c_plcolorbar( PLINT opt, PLINT position,
         edge_string = "bc";
     else
         edge_string = "uw";
-    snprintf( opt_string, max_opts, "%s%s", tick_label_string, local_axis_opts );
     if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
-        plbox( edge_string, 0.0, 0, opt_string, ticks, sub_ticks );
+        plbox( edge_string, 0.0, 0, local_axis_opts, ticks, sub_ticks );
     }
     else
     {
-        plbox( opt_string, ticks, sub_ticks, edge_string, 0.0, 0 );
+        plbox( local_axis_opts, ticks, sub_ticks, edge_string, 0.0, 0 );
     }
 
     free( local_axis_opts );
