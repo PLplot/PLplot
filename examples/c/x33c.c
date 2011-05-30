@@ -180,7 +180,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
             colorbar_cap_options[cap_i];
 
         vertical = position & PL_POSITION_LEFT || position & PL_POSITION_RIGHT;
-        ifn = position & PL_POSITION_LEFT || position & PL_POSITION_BOTTOM;
+        ifn      = position & PL_POSITION_LEFT || position & PL_POSITION_BOTTOM;
 
         // Set the offset position on the page
         if ( vertical )
@@ -201,25 +201,25 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         // Set appropriate labelling options.
         if ( ifn )
         {
-        if ( cont_color == 0 || cont_width == 0 )
-        {
-            axis_opts = "uwtvn";
+            if ( cont_color == 0 || cont_width == 0 )
+            {
+                axis_opts = "uwtvn";
+            }
+            else
+            {
+                axis_opts = "uwxvn";
+            }
         }
         else
         {
-            axis_opts = "uwxvn";
-        }
-        }
-        else
-        {
-        if ( cont_color == 0 || cont_width == 0 )
-        {
-            axis_opts = "uwtvm";
-        }
-        else
-        {
-            axis_opts = "uwxvm";
-        }
+            if ( cont_color == 0 || cont_width == 0 )
+            {
+                axis_opts = "uwtvm";
+            }
+            else
+            {
+                axis_opts = "uwxvm";
+            }
         }
 
         sprintf( label, "%s, %s",

@@ -1,5 +1,5 @@
 // $Id$
-// All routines that help to create a discrete legend (pllegend) or 
+// All routines that help to create a discrete legend (pllegend) or
 // a continuous legend (plcolorbar).
 //
 // Copyright (C) 2010-2011  Hezekiah M. Carty
@@ -924,7 +924,7 @@ static remove_characters( char *string, const char *characters )
 //!
 
 void
-static draw_cap( PLBOOL if_edge , PLINT orientation, PLFLT xmin, PLFLT xmax,
+static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
                  PLFLT ymin, PLFLT ymax, PLFLT color )
 {
     // Save current drawing color.
@@ -1143,9 +1143,9 @@ c_plcolorbar( PLINT opt, PLINT position,
     strcpy( local_axis_opts, axis_opts );
 
     if_edge = plP_stsearch( local_axis_opts, 'b' ) &&
-        !plP_stsearch( local_axis_opts, 'u' ) &&
-        plP_stsearch( local_axis_opts, 'c' ) &&
-        !plP_stsearch( local_axis_opts, 'w' );
+              !plP_stsearch( local_axis_opts, 'u' ) &&
+              plP_stsearch( local_axis_opts, 'c' ) &&
+              !plP_stsearch( local_axis_opts, 'w' );
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
@@ -1534,7 +1534,7 @@ c_plcolorbar( PLINT opt, PLINT position,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
-          draw_cap( if_edge, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
+            draw_cap( if_edge, PL_COLORBAR_ORIENT_RIGHT, vx_max, vx_max + cap_height, vy_min, vy_max, high_cap_color );
         }
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
         {

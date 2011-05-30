@@ -613,7 +613,7 @@ void set_mode( PLStream *pls, PLINT *mode )
 //--------------------------------------------------------------------------
 void get_mode( PLStream *pls, PLINT *mode )
 {
-    PLCairo *aStream;
+    PLCairo          *aStream;
     cairo_operator_t op;
 
     aStream = (PLCairo *) pls->dev;

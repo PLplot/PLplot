@@ -1868,7 +1868,7 @@ c_plgdrawmode()
         mode = PL_MODE_UNKNOWN;
     }
 
-    return( mode );
+    return ( mode );
 }
 
 //--------------------------------------------------------------------------

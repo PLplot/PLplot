@@ -25,8 +25,8 @@
 #include "plcdemos.h"
 
 // Drawing modes to demonstrate
-#define NUM_MODES 3
-PLINT drawing_modes[NUM_MODES] = {
+#define NUM_MODES    3
+PLINT      drawing_modes[NUM_MODES] = {
     PL_MODE_DEFAULT,
     PL_MODE_REPLACE,
     PL_MODE_XOR
