@@ -56,6 +56,9 @@
 #include "mt19937ar.h"
 
 #define BUFFER_SIZE    256
+#define COLLEN          30
+#define PALLEN         160
+#define MSGLEN        1024
 
 // small epsilon for fuzzy range checks that is still large enough to
 // work even in the single precision floating point case.
@@ -86,6 +89,9 @@ plcmap1_def( void );
 
 static PLFLT
 value( double n1, double n2, double hue );
+
+static char *
+read_line( char *buffer, int length, FILE *fp );
 
 static void
 cmap0_palette_read( const char *filename,
@@ -1212,6 +1218,53 @@ c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
 }
 
 //--------------------------------------------------------------------------
+// read_line()
+//
+// Read a complete line and fill the buffer with its contents up to
+// capacity. Then sanitize the string - no control characters, no
+// trailing blanks
+//--------------------------------------------------------------------------
+
+static char *
+read_line( char *buffer, int length, FILE *fp )
+{
+    char *pchr;
+
+    // Read the string
+    if ( fgets( buffer, length, fp ) == NULL ) {
+        return NULL;
+    }
+
+    // Sanitize the string we read - it may contain EOL characters
+    // Make sure file reading starts at the next line
+    pchr = strchr( buffer, '\n' );
+    if ( pchr != NULL )
+    {
+        *pchr = '\0';
+    }
+    else
+    {
+        fscanf( fp, "%*[^\n]\n" );
+    }
+
+    pchr = strchr( buffer, '\r' );
+    if ( pchr != NULL )
+    {
+        *pchr = '\0';
+    }
+
+    // Remove trailing blanks
+    pchr = buffer + strlen(buffer)-1;
+    while ( pchr != buffer && *pchr == ' ' )
+    {
+        *pchr = '\0';
+        pchr --;
+    }
+
+    return buffer;
+}
+
+//--------------------------------------------------------------------------
 // cmap0_palette_read()
 //
 // Read and check r, g, b, a data from a cmap0*.pal format file.
@@ -1223,8 +1276,8 @@ cmap0_palette_read( const char *filename,
                     int *number_colors, int **r, int **g, int **b, double **a )
 {
     int  i, err = 0;
-    char color_info[30];
-    char msgbuf[1024];
+    char color_info[COLLEN];
+    char msgbuf[MSGLEN];
     FILE *fp;
     char * save_locale = plsave_set_locale();
 
@@ -1233,7 +1286,7 @@ cmap0_palette_read( const char *filename,
         fp = plLibOpen( PL_DEFAULT_CMAP0_FILE );
         if ( fp == NULL )
         {
-            snprintf( msgbuf, 1024, "Unable to open cmap0 file %s\n", PL_DEFAULT_CMAP0_FILE );
+            snprintf( msgbuf, MSGLEN, "Unable to open cmap0 file %s\n", PL_DEFAULT_CMAP0_FILE );
             plwarn( msgbuf );
             err = 1;
         }
@@ -1243,7 +1296,7 @@ cmap0_palette_read( const char *filename,
         fp = plLibOpen( filename );
         if ( fp == NULL )
         {
-            snprintf( msgbuf, 1024, "Unable to open cmap0 file %s\n", filename );
+            snprintf( msgbuf, MSGLEN, "Unable to open cmap0 file %s\n", filename );
             plwarn( msgbuf );
             err = 1;
         }
@@ -1251,7 +1304,7 @@ cmap0_palette_read( const char *filename,
     if ( !err && ( fscanf( fp, "%d\n", number_colors ) != 1 || *number_colors < 1 ) )
     {
         fclose( fp );
-        snprintf( msgbuf, 1024, "Unrecognized cmap0 header\n" );
+        snprintf( msgbuf, MSGLEN, "Unrecognized cmap0 header\n" );
         plwarn( msgbuf );
         err = 1;
     }
@@ -1271,12 +1324,13 @@ cmap0_palette_read( const char *filename,
 
         for ( i = 0; i < *number_colors; i++ )
         {
-            if ( fgets( color_info, 30, fp ) == NULL )
+            if ( read_line( color_info, COLLEN, fp ) == NULL )
             {
                 err = 1;
                 break;
             }
-            color_info[strlen( color_info ) - 1] = '\0'; // remove return character
+
+            // Get the color data
             if ( strlen( color_info ) == 7 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x",
@@ -1320,7 +1374,7 @@ cmap0_palette_read( const char *filename,
         fclose( fp );
         if ( err )
         {
-            snprintf( msgbuf, 1024, "Unrecognized cmap0 format data line.  Line is %s\n",
+            snprintf( msgbuf, MSGLEN, "Unrecognized cmap0 format data line.  Line is %s\n",
                 color_info );
             plwarn( msgbuf );
             free( *r );
@@ -1395,7 +1449,7 @@ c_plspal0( const char *filename )
 //
 #define fuzzy_range_check( value, min, max, fuzz, err_number )                                                                      \
     if ( value < ( min - fuzz ) || value > ( max + fuzz ) ) {                                                                       \
-        snprintf( msgbuf, 1024, "Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", err_number, color_info ); \
+        snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", err_number, color_info ); \
         plwarn( msgbuf );                                                                                                           \
         err = 1;                                                                                                                    \
         break;                                                                                                                      \
@@ -1418,14 +1472,14 @@ c_plspal1( const char *filename, PLBOOL interpolate )
     int    number_colors;
     int    format_version, err;
     PLBOOL rgb;
-    char   color_info[160];
+    char   color_info[PALLEN];
     int    r_i, g_i, b_i, pos_i, rev_i;
     double r_d, g_d, b_d, a_d, pos_d;
     PLFLT  *r, *g, *b, *a, *pos;
     PLINT  *ri, *gi, *bi;
     PLBOOL *rev;
     FILE   *fp;
-    char   msgbuf[1024];
+    char   msgbuf[MSGLEN];
     char   * save_locale = plsave_set_locale();
 
     rgb            = TRUE;
@@ -1436,7 +1490,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         fp = plLibOpen( PL_DEFAULT_CMAP1_FILE );
         if ( fp == NULL )
         {
-            snprintf( msgbuf, 1024, "Unable to open cmap1 .pal file %s\n", PL_DEFAULT_CMAP1_FILE );
+            snprintf( msgbuf, MSGLEN, "Unable to open cmap1 .pal file %s\n", PL_DEFAULT_CMAP1_FILE );
             plwarn( msgbuf );
             goto finish;
         }
@@ -1446,15 +1500,15 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         fp = plLibOpen( filename );
         if ( fp == NULL )
         {
-            snprintf( msgbuf, 1024, "Unable to open cmap1 .pal file %s\n", filename );
+            snprintf( msgbuf, MSGLEN, "Unable to open cmap1 .pal file %s\n", filename );
             plwarn( msgbuf );
             goto finish;
         }
     }
     // Check for new file format
-    if ( fgets( color_info, 160, fp ) == NULL )
+    if ( read_line( color_info, PALLEN, fp ) == NULL )
     {
-        snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
+        snprintf( msgbuf, MSGLEN, "Error reading cmap1 .pal file %s\n", filename );
         plwarn( msgbuf );
         fclose( fp );
         goto finish;
@@ -1468,13 +1522,13 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             rgb = TRUE;
         else
         {
-            snprintf( msgbuf, 1024, "Invalid color space %s - assuming RGB\n", &color_info[3] );
+            snprintf( msgbuf, MSGLEN, "Invalid color space %s - assuming RGB\n", &color_info[3] );
             plwarn( msgbuf );
             rgb = TRUE;
         }
-        if ( fgets( color_info, 160, fp ) == NULL )
+        if ( read_line( color_info, PALLEN, fp ) == NULL )
         {
-            snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
+            snprintf( msgbuf, MSGLEN, "Error reading cmap1 .pal file %s\n", filename );
             plwarn( msgbuf );
             fclose( fp );
             goto finish;
@@ -1483,7 +1537,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
 
     if ( sscanf( color_info, "%d\n", &number_colors ) != 1 || number_colors < 2 )
     {
-        snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of colors) %s\n", color_info );
+        snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format (wrong number of colors) %s\n", color_info );
         plwarn( msgbuf );
         fclose( fp );
         goto finish;
@@ -1505,19 +1559,19 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         // Old tk file format
         for ( i = 0; i < number_colors; i++ )
         {
-            if ( fgets( color_info, 160, fp ) == NULL )
+            if ( read_line( color_info, PALLEN, fp ) == NULL )
             {
-                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
+                snprintf( msgbuf, MSGLEN, "Error reading cmap1 .pal file %s\n", filename );
                 plwarn( msgbuf );
                 fclose( fp );
                 goto finish;
             }
             // Ensure string is null terminated if > 160 characters
-            color_info[159] = '\0';
+            color_info[PALLEN-1] = '\0';
             return_sscanf   = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i );
             if ( return_sscanf < 4 || ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ) )
             {
-                snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n", color_info );
+                snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n", color_info );
                 plwarn( msgbuf );
                 err = 1;
                 break;
@@ -1552,16 +1606,16 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         // New floating point file version with support for alpha and rev values
         for ( i = 0; i < number_colors; i++ )
         {
-            if ( fgets( color_info, 160, fp ) == NULL )
+            if ( read_line( color_info, PALLEN, fp ) == NULL )
             {
-                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
+                snprintf( msgbuf, MSGLEN, "Error reading cmap1 .pal file %s\n", filename );
                 plwarn( msgbuf );
                 fclose( fp );
                 goto finish;
             }
             if ( sscanf( color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &rev_i ) != 6 )
             {
-                snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of items for version 2 of format) %s\n", color_info );
+                snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format (wrong number of items for version 2 of format) %s\n", color_info );
                 plwarn( msgbuf );
                 err = 1;
                 break;
