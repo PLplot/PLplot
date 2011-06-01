@@ -399,7 +399,7 @@ PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
         *min_color, *min_width, *max_color, *max_width,
-        c_plfill, rect, pltr, ( PLPointer ) ftr );
+        c_plfill, rect, pltr, (PLPointer) ftr );
 }
 
 //--------------------------------------------------------------------------

@@ -333,7 +333,7 @@ void c_plshade( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, 
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data )
 {
-    plshade_int( plf2eval1, ( PLPointer ) a,
+    plshade_int( plf2eval1, (PLPointer) a,
         NULL, NULL,
 //	     plc2eval, (PLPointer) &cgrid,
         defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin,

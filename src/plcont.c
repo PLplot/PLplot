@@ -280,7 +280,7 @@ static void pl_drawcontlabel( PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distanc
 
     plP_drawor( tpx, tpy );
 
-    if ( (int ) ( fabs( *distance / contlabel_space ) ) > *lastindex )
+    if ( (int) ( fabs( *distance / contlabel_space ) ) > *lastindex )
     {
         PLFLT scale, vec_x, vec_y, mx, my, dev_x, dev_y, off_x, off_y;
 
@@ -294,8 +294,8 @@ static void pl_drawcontlabel( PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distanc
             vec_y = -vec_y;
         }
 
-        mx = (double ) plsc->wpxscl / (double ) plsc->phyxlen;
-        my = (double ) plsc->wpyscl / (double ) plsc->phyylen;
+        mx = (double) plsc->wpxscl / (double) plsc->phyxlen;
+        my = (double) plsc->wpyscl / (double) plsc->phyylen;
 
         dev_x = -my * vec_y / mx;
         dev_y = mx * vec_x / my;
@@ -352,20 +352,20 @@ static void plfloatlabel( PLFLT value, char *string, PLINT len )
         tmp = 0;
 
     if ( tmp >= 0.0 )
-        exponent = (int ) tmp;
+        exponent = (int) tmp;
     else if ( tmp < 0.0 )
     {
         tmp = -tmp;
         if ( floor( tmp ) < tmp )
-            exponent = -(int ) ( floor( tmp ) + 1.0 );
+            exponent = -(int) ( floor( tmp ) + 1.0 );
         else
-            exponent = -(int ) ( floor( tmp ) );
+            exponent = -(int) ( floor( tmp ) );
     }
 
     mant = value / pow( 10.0, exponent );
 
     if ( mant != 0.0 )
-        mant = (int ) ( mant * pow( 10.0, prec - 1 ) + 0.5 * mant / fabs( mant ) ) / pow( 10.0, prec - 1 );
+        mant = (int) ( mant * pow( 10.0, prec - 1 ) + 0.5 * mant / fabs( mant ) ) / pow( 10.0, prec - 1 );
 
     snprintf( form, FORM_LEN, "%%.%df", prec - 1 );
     snprintf( string, len, form, mant );
@@ -524,7 +524,7 @@ c_plcont( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
         return;
     }
 
-    plfcont( plf2eval1, ( PLPointer ) f,
+    plfcont( plf2eval1, (PLPointer) f,
         nx, ny, kx, lx, ky, ly, clevel, nlevel,
         pltr, pltr_data );
 }

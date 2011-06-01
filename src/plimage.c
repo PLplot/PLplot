@@ -194,7 +194,7 @@ c_plimagefr( const PLFLT **idata, PLINT nx, PLINT ny,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data )
 {
-    plfimagefr( plf2ops_c(), ( PLPointer ) idata, nx, ny,
+    plfimagefr( plf2ops_c(), (PLPointer) idata, nx, ny,
         xmin, xmax, ymin, ymax, zmin, zmax,
         valuemin, valuemax, pltr, pltr_data );
 }

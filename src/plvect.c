@@ -217,6 +217,6 @@ c_plvect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )
 {
-    plfvect( plf2eval1, ( PLPointer ) u, ( PLPointer ) v,
+    plfvect( plf2eval1, (PLPointer) u, (PLPointer) v,
         nx, ny, scale, pltr, pltr_data );
 }
