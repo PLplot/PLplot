@@ -88,7 +88,7 @@ void pdf_set            PLARGS( ( char *option, int value ) );
 PLDLLIMPEXP PDFstrm *pdf_fopen  PLARGS( ( const char *fileName, const char *mode ) );
 PLDLLIMPEXP PDFstrm *pdf_bopen  PLARGS( ( U_CHAR * buffer, long bufmax ) );
 PLDLLIMPEXP PDFstrm *pdf_finit  PLARGS( ( FILE * file ) );
-PDFstrm *plLibOpenPdfstrm PLARGS( (const char *fn) );
+PDFstrm *plLibOpenPdfstrm PLARGS( (const char * fn) );
 PLDLLIMPEXP int pdf_close              PLARGS( ( PDFstrm * pdfs ) );
 
 int pdf_putc           PLARGS( ( int c, PDFstrm * pdfs ) );

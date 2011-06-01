@@ -280,8 +280,8 @@ void plD_init_rasterqt( PLStream * pls )
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
         pls->dev     = new QtRasterDevice;
-        pls->xlength = (PLINT) ( ( (QtRasterDevice*) ( pls->dev ) )->m_dWidth );
-        pls->ylength = (PLINT) ( ( (QtRasterDevice*) ( pls->dev ) )->m_dHeight );
+        pls->xlength = (PLINT) ( ( (QtRasterDevice *) ( pls->dev ) )->m_dWidth );
+        pls->ylength = (PLINT) ( ( (QtRasterDevice *) ( pls->dev ) )->m_dHeight );
     }
     else
     {
@@ -290,18 +290,18 @@ void plD_init_rasterqt( PLStream * pls )
     ( (QtRasterDevice *) pls->dev )->setPLStream( pls );
 
     if ( isMaster )
-        handler.setMasterDevice( (QtRasterDevice*) ( pls->dev ) );
+        handler.setMasterDevice( (QtRasterDevice *) ( pls->dev ) );
 
     if ( pls->xlength > pls->ylength )
-        ( (QtRasterDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
+        ( (QtRasterDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
     else
-        ( (QtRasterDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
+        ( (QtRasterDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
 
-    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtRasterDevice*) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtRasterDevice*) ( pls->dev ) )->downscale ) );
+    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtRasterDevice *) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtRasterDevice *) ( pls->dev ) )->downscale ) );
 
-    plP_setpxl( dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale, dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale );
+    plP_setpxl( dpi / 25.4 / ( (QtRasterDevice *) ( pls->dev ) )->downscale, dpi / 25.4 / ( (QtRasterDevice *) ( pls->dev ) )->downscale );
 
-    ( (QtRasterDevice*) ( pls->dev ) )->setResolution( dpi );
+    ( (QtRasterDevice *) ( pls->dev ) )->setResolution( dpi );
 
     // Initialize family file info
     plFamInit( pls );
@@ -321,7 +321,7 @@ void plD_eop_rasterqt( PLStream *pls )
 
 void plD_line_rasterqt( PLStream * pls, short x1a, short y1a, short x2a, short y2a )
 {
-    QtRasterDevice* widget = (QtRasterDevice*) pls->dev;
+    QtRasterDevice* widget = (QtRasterDevice *) pls->dev;
 
     if ( widget != NULL && qt_family_check( pls ) )
     {
@@ -448,11 +448,11 @@ void plD_state_rasterqt( PLStream * pls, PLINT op )
         break;
 
     case PLSTATE_COLOR0:
-        ( (QtPLDriver*) widget )->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
+        ( (QtPLDriver *) widget )->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         break;
 
     case PLSTATE_COLOR1:
-        ( (QtPLDriver*) widget )->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
+        ( (QtPLDriver *) widget )->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         break;
 
 
@@ -462,7 +462,7 @@ void plD_state_rasterqt( PLStream * pls, PLINT op )
 
 void plD_tidy_rasterqt( PLStream * pls )
 {
-    QtRasterDevice * widget = (QtRasterDevice*) pls->dev;
+    QtRasterDevice * widget = (QtRasterDevice *) pls->dev;
 
     if ( widget != NULL )
     {
@@ -701,8 +701,8 @@ void plD_init_svgqt( PLStream * pls )
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
         pls->dev     = new QtSVGDevice;
-        pls->xlength = (int) ( ( (QtSVGDevice*) ( pls->dev ) )->m_dWidth );
-        pls->ylength = (int) ( ( (QtSVGDevice*) ( pls->dev ) )->m_dHeight );
+        pls->xlength = (int) ( ( (QtSVGDevice *) ( pls->dev ) )->m_dWidth );
+        pls->ylength = (int) ( ( (QtSVGDevice *) ( pls->dev ) )->m_dHeight );
     }
     else
     {
@@ -711,16 +711,16 @@ void plD_init_svgqt( PLStream * pls )
     ( (QtSVGDevice *) pls->dev )->setPLStream( pls );
 
     if ( isMaster )
-        handler.setMasterDevice( (QtSVGDevice*) ( pls->dev ) );
+        handler.setMasterDevice( (QtSVGDevice *) ( pls->dev ) );
 
     if ( pls->xlength > pls->ylength )
-        ( (QtSVGDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
+        ( (QtSVGDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
     else
-        ( (QtSVGDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
+        ( (QtSVGDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
 
-    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtSVGDevice*) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtSVGDevice*) ( pls->dev ) )->downscale ) );
+    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtSVGDevice *) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtSVGDevice *) ( pls->dev ) )->downscale ) );
 
-    plP_setpxl( POINTS_PER_INCH / 25.4 / ( (QtSVGDevice*) ( pls->dev ) )->downscale, POINTS_PER_INCH / 25.4 / ( (QtSVGDevice*) ( pls->dev ) )->downscale );
+    plP_setpxl( POINTS_PER_INCH / 25.4 / ( (QtSVGDevice *) ( pls->dev ) )->downscale, POINTS_PER_INCH / 25.4 / ( (QtSVGDevice *) ( pls->dev ) )->downscale );
 
     // Initialize family file info
     plFamInit( pls );
@@ -767,7 +767,7 @@ void plD_eop_svgqt( PLStream *pls )
 
 void plD_line_svgqt( PLStream * pls, short x1a, short y1a, short x2a, short y2a )
 {
-    QtSVGDevice* widget = (QtSVGDevice*) pls->dev;
+    QtSVGDevice* widget = (QtSVGDevice *) pls->dev;
     if ( widget != NULL && qt_family_check( pls ) )
     {
         return;
@@ -986,8 +986,8 @@ void plD_init_epspdfqt( PLStream * pls )
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
         pls->dev     = new QtEPSDevice;
-        pls->xlength = (int) ( ( (QtEPSDevice*) ( pls->dev ) )->m_dWidth );
-        pls->ylength = (int) ( ( (QtEPSDevice*) ( pls->dev ) )->m_dHeight );
+        pls->xlength = (int) ( ( (QtEPSDevice *) ( pls->dev ) )->m_dWidth );
+        pls->ylength = (int) ( ( (QtEPSDevice *) ( pls->dev ) )->m_dHeight );
     }
     else
     {
@@ -996,16 +996,16 @@ void plD_init_epspdfqt( PLStream * pls )
     ( (QtEPSDevice *) pls->dev )->setPLStream( pls );
 
     if ( isMaster )
-        handler.setMasterDevice( (QtEPSDevice*) ( pls->dev ) );
+        handler.setMasterDevice( (QtEPSDevice *) ( pls->dev ) );
 
     if ( pls->xlength > pls->ylength )
-        ( (QtEPSDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
+        ( (QtEPSDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
     else
-        ( (QtEPSDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
+        ( (QtEPSDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
 
-    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtEPSDevice*) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtEPSDevice*) ( pls->dev ) )->downscale ) );
+    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtEPSDevice *) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtEPSDevice *) ( pls->dev ) )->downscale ) );
 
-    plP_setpxl( POINTS_PER_INCH / 25.4 / ( (QtEPSDevice*) ( pls->dev ) )->downscale, POINTS_PER_INCH / 25.4 / ( (QtEPSDevice*) ( pls->dev ) )->downscale );
+    plP_setpxl( POINTS_PER_INCH / 25.4 / ( (QtEPSDevice *) ( pls->dev ) )->downscale, POINTS_PER_INCH / 25.4 / ( (QtEPSDevice *) ( pls->dev ) )->downscale );
 
     // Initialize family file info
     plFamInit( pls );
@@ -1055,7 +1055,7 @@ void plD_eop_epspdfqt( PLStream *pls )
 
 void plD_line_epspdfqt( PLStream * pls, short x1a, short y1a, short x2a, short y2a )
 {
-    QtEPSDevice* widget = (QtEPSDevice*) pls->dev;
+    QtEPSDevice* widget = (QtEPSDevice *) pls->dev;
     if ( widget != NULL && qt_family_check( pls ) )
     {
         return;
@@ -1246,14 +1246,14 @@ void plD_init_qtwidget( PLStream * pls )
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
         widget       = new QtPLWidget;
-        pls->dev     = (void*) widget;
+        pls->dev     = (void *) widget;
         pls->xlength = (int) widget->m_dWidth;
         pls->ylength = (int) widget->m_dHeight;
     }
     else
     {
         widget   = new QtPLWidget( pls->xlength, pls->ylength );
-        pls->dev = (void*) widget;
+        pls->dev = (void *) widget;
     }
     widget->setPLStream( pls );
 
@@ -1301,7 +1301,7 @@ void plD_init_qtwidget( PLStream * pls )
 
 void plD_eop_qtwidget( PLStream *pls )
 {
-    QtPLWidget* widget    = ( (QtPLWidget*) pls->dev );
+    QtPLWidget* widget    = ( (QtPLWidget *) pls->dev );
     int       currentPage = widget->pageNumber;
     widget->flush();
     widget->raise();
@@ -1313,13 +1313,13 @@ void plD_eop_qtwidget( PLStream *pls )
 
 void plD_bop_qtwidget( PLStream *pls )
 {
-    QtPLWidget* widget = ( (QtPLWidget*) pls->dev );
+    QtPLWidget* widget = ( (QtPLWidget *) pls->dev );
     widget->setBackgroundColor( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a );
 }
 
 void plD_line_qtwidget( PLStream * pls, short x1a, short y1a, short x2a, short y2a )
 {
-    QtPLWidget* widget = (QtPLWidget*) pls->dev;
+    QtPLWidget* widget = (QtPLWidget *) pls->dev;
     if ( widget == NULL )
         return;
 
@@ -1483,7 +1483,7 @@ void plD_init_extqt( PLStream * pls )
         return;
     }
 
-    QtExtWidget* widget = (QtExtWidget*) ( pls->dev );
+    QtExtWidget* widget = (QtExtWidget *) ( pls->dev );
 
     if ( widget->m_dWidth > widget->m_dHeight )
         widget->downscale = (PLFLT) widget->m_dWidth / (PLFLT) ( PIXELS_X - 1 );
@@ -1525,7 +1525,7 @@ void plD_line_extqt( PLStream * pls, short x1a, short y1a, short x2a, short y2a 
 {
     QtExtWidget * widget = NULL;
 
-    widget = (QtExtWidget*) pls->dev;
+    widget = (QtExtWidget *) pls->dev;
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawLine( x1a, y1a, x2a, y2a );
 }
@@ -1534,7 +1534,7 @@ void plD_polyline_extqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     QtExtWidget * widget = NULL;
 
-    widget = (QtExtWidget*) pls->dev;
+    widget = (QtExtWidget *) pls->dev;
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawPolyline( xa, ya, npts );
 }
@@ -1547,7 +1547,7 @@ void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
     PLFLT         *alpha;
     QtExtWidget   * widget = NULL;
 
-    widget = (QtExtWidget*) pls->dev;
+    widget = (QtExtWidget *) pls->dev;
     switch ( op )
     {
     case PLESC_FILL:
@@ -1613,7 +1613,7 @@ void plD_state_extqt( PLStream * pls, PLINT op )
 {
     QtExtWidget * widget = NULL;
 
-    widget = (QtExtWidget*) pls->dev;
+    widget = (QtExtWidget *) pls->dev;
     switch ( op )
     {
     case PLSTATE_WIDTH:
@@ -1637,7 +1637,7 @@ void plD_tidy_extqt( PLStream * pls )
 {
     QtExtWidget * widget = NULL;
 
-    widget = (QtExtWidget*) pls->dev;
+    widget = (QtExtWidget *) pls->dev;
     if ( widget != NULL )
     {
         handler.DeviceClosed( widget );
@@ -1655,7 +1655,7 @@ void plD_eop_extqt( PLStream *pls )
 void plD_bop_extqt( PLStream *pls )
 {
     QtExtWidget * widget = NULL;
-    widget = (QtExtWidget*) pls->dev;
+    widget = (QtExtWidget *) pls->dev;
     widget->setBackgroundColor( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a );
 }
 #endif
@@ -1731,16 +1731,16 @@ void plD_init_memqt( PLStream * pls )
     ( (QtRasterDevice *) pls->dev )->memory = input_mem;
 
     if ( isMaster )
-        handler.setMasterDevice( (QtRasterDevice*) ( pls->dev ) );
+        handler.setMasterDevice( (QtRasterDevice *) ( pls->dev ) );
 
     if ( pls->xlength > pls->ylength )
-        ( (QtRasterDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
+        ( (QtRasterDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
     else
-        ( (QtRasterDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
+        ( (QtRasterDevice *) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
 
-    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtRasterDevice*) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtRasterDevice*) ( pls->dev ) )->downscale ) );
+    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtRasterDevice *) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtRasterDevice *) ( pls->dev ) )->downscale ) );
 
-    plP_setpxl( dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale, dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale );
+    plP_setpxl( dpi / 25.4 / ( (QtRasterDevice *) ( pls->dev ) )->downscale, dpi / 25.4 / ( (QtRasterDevice *) ( pls->dev ) )->downscale );
 
     // Copy the user supplied memory into the QImage.
 //       This device assumes that the format of the QImage
@@ -1765,7 +1765,7 @@ void plD_init_memqt( PLStream * pls )
         qt_mem += 4;
     }
 
-    ( (QtRasterDevice*) ( pls->dev ) )->setResolution( dpi );
+    ( (QtRasterDevice *) ( pls->dev ) )->setResolution( dpi );
 
     // This is set so the we'll always make it past the qt_family_check().
     pls->family = true;

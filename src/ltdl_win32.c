@@ -95,7 +95,7 @@ void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
     {
 #ifdef __BORLANDC__
         unsigned int bufferLength = strlen( symbol ) + 2;
-        char         * buffer     = (char*) malloc( bufferLength );
+        char         * buffer     = (char *) malloc( bufferLength );
         void         * retPointer;
 
         buffer[0] = '_';

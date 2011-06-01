@@ -88,7 +88,7 @@ PLINT zdefined( PLFLT x, PLFLT y )
 {
     PLFLT z = sqrt( x * x + y * y );
 
-    return z<0.4 || z>0.6;
+    return z < 0.4 || z > 0.6;
 }
 }
 

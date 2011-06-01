@@ -86,7 +86,7 @@ public:
 //--------------------------------------------------------------------------
 
 class PLDLLIMPEXP_CXX plstream {
-    PLINT        stream;
+    PLINT stream;
 
     static PLINT active_streams;
 
@@ -105,9 +105,9 @@ public:
     plstream( PLS::stream_id sid, PLINT strm = 0 );
     plstream( PLINT _stream ) : stream( _stream ) {}
     plstream( PLINT nx /*=1*/, PLINT ny /*=1*/,
-        const char *driver = NULL, const char *file = NULL );
+              const char *driver = NULL, const char *file = NULL );
     plstream( PLINT nx /*=1*/, PLINT ny /*=1*/, PLINT r, PLINT g, PLINT b,
-        const char *driver = NULL, const char *file = NULL );
+              const char *driver = NULL, const char *file = NULL );
 
     virtual ~plstream();
 

@@ -428,7 +428,7 @@ void wxPLDevAGG::SetColor1( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevAGG::SetExternalBuffer( void* image )
 {
-    mBuffer = (wxImage*) image; // Add the image to the device
+    mBuffer = (wxImage *) image; // Add the image to the device
     mRenderingBuffer.attach( mBuffer->GetData(), width, height, width * 3 );
 
     mRendererBase.reset_clipping( true );

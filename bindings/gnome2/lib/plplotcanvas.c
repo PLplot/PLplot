@@ -76,8 +76,8 @@ static void plplot_canvas_class_init( PlplotCanvasClass *klass )
 {
     parent_class = g_type_class_peek( G_TYPE_OBJECT );
     GObjectClass* gobject_class = G_OBJECT_CLASS( klass );
-    gobject_class->dispose  = (void*) plplot_canvas_dispose;
-    gobject_class->finalize = (void*) plplot_canvas_finalize;
+    gobject_class->dispose  = (void *) plplot_canvas_dispose;
+    gobject_class->finalize = (void *) plplot_canvas_finalize;
 }
 
 void plplot_canvas_devinit( PlplotCanvas *self )
@@ -90,9 +90,9 @@ void plplot_canvas_devinit( PlplotCanvas *self )
     //
     plsc->hack = 1;
 
-    plsdev( "gcw" );                        // Set the device
-    plinit();                               // Initialize the device
-    plP_esc( PLESC_DEVINIT, (void*) self ); // Install into the driver
+    plsdev( "gcw" );                         // Set the device
+    plinit();                                // Initialize the device
+    plP_esc( PLESC_DEVINIT, (void *) self ); // Install into the driver
 }
 
 GType plplot_canvas_get_type()

@@ -57,12 +57,12 @@ private:
     static PLOptionTable options[];
 };
 
-const int x20::XDIM          = 260;
-const int x20::YDIM          = 220;
-int x20::      dbg           = 0;
-int x20::      nosombrero    = 0;
-int x20::      nointeractive = 0;
-char *x20::    f_name        = NULL;
+const int x20::XDIM                = 260;
+const int x20::YDIM                = 220;
+int       x20::      dbg           = 0;
+int       x20::      nosombrero    = 0;
+int       x20::      nointeractive = 0;
+char      *x20::    f_name         = NULL;
 
 struct stretch_data
 {

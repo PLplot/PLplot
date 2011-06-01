@@ -65,7 +65,7 @@ const char* x23::Greek[] = {
     "#gn", "#gc", "#go", "#gp", "#gr", "#gs", "#gt", "#gu", "#gf", "#gx", "#gq", "#gw",
 };
 
-int x23::        Type1[] = {
+int       x23::        Type1[] = {
     0x0020, 0x0021, 0x0023, 0x0025, 0x0026,
     0x0028, 0x0029, 0x002b, 0x002c, 0x002e,
     0x002f, 0x0030, 0x0031, 0x0032, 0x0033,
@@ -116,7 +116,7 @@ const char* x23::title[] = {
     "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block (d)",
 };
 
-int x23::        lo[] = {
+int       x23::        lo[] = {
     0x0,
     0x0,
     0x40,
@@ -130,7 +130,7 @@ int x23::        lo[] = {
     0x22c0,
 };
 
-int x23::        hi[] = {
+int       x23::        hi[] = {
     0x30,
     0x40,
     0x80,
@@ -144,7 +144,7 @@ int x23::        hi[] = {
     0x2300,
 };
 
-int x23::        nxcells[] = {
+int       x23::        nxcells[] = {
     12,
     8,
     8,
@@ -158,7 +158,7 @@ int x23::        nxcells[] = {
     8,
 };
 
-int x23::        nycells[] = {
+int       x23::        nycells[] = {
     8,
     8,
     8,

@@ -591,7 +591,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 // some really twisted stuff to allow calling a single precision library from python
     PyArrayObject* myArray_ContiguousFromObject( PyObject* in, int type, int mindims, int maxdims )
     {
-        PyArrayObject* tmp = (PyArrayObject*) PyArray_ContiguousFromObject( in, PyArray_FLOAT,
+        PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, PyArray_FLOAT,
             mindims, maxdims );
         if ( !tmp )
         {
@@ -599,7 +599,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
             if ( PyArray_Check( in ) )
             {
                 PyErr_Clear();
-                tmp = (PyArrayObject*) PyArray_Cast( (PyArrayObject*) in, PyArray_FLOAT );
+                tmp = (PyArrayObject *) PyArray_Cast( (PyArrayObject *) in, PyArray_FLOAT );
             }
         }
         return tmp;

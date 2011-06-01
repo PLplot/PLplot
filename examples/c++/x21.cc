@@ -71,15 +71,15 @@ private:
 };
 
 
-PLINT x21::        pts       = 500;
-PLINT x21::        xp        = 25;
-PLINT x21::        yp        = 20;
-PLINT x21::        nl        = 16;
-PLINT x21::        knn_order = 20;
-PLFLT x21::        threshold = 1.001;
-PLFLT x21::        wmin      = -1e3;
-PLINT x21::        randn     = 0;
-PLINT x21::        rosen     = 0;
+PLINT         x21::        pts       = 500;
+PLINT         x21::        xp        = 25;
+PLINT         x21::        yp        = 20;
+PLINT         x21::        nl        = 16;
+PLINT         x21::        knn_order = 20;
+PLFLT         x21::        threshold = 1.001;
+PLFLT         x21::        wmin      = -1e3;
+PLINT         x21::        randn     = 0;
+PLINT         x21::        rosen     = 0;
 
 PLOptionTable x21::options[] = {
     {

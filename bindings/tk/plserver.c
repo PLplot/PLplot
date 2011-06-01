@@ -233,7 +233,7 @@ AppInit( Tcl_Interp *interp )
     tcl_cmd( interp, "rename exit tkexit" );
 
     Tcl_CreateCommand( interp, "exit", (Tcl_CmdProc *) plExitCmd,
-        (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL );
+        (ClientData) mainWindow, (Tcl_CmdDeleteProc *) NULL );
 
 // Define the flags as variables in the PLPLOT namespace
 

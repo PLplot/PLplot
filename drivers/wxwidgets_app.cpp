@@ -194,7 +194,7 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 {
     // Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
 
-    m_dev = (wxPLDevBase*) pls->dev;
+    m_dev = (wxPLDevBase *) pls->dev;
 
     m_panel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN );
     wxBoxSizer* box = new wxBoxSizer( wxVERTICAL );
@@ -334,7 +334,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
             {
                 const wxCharBuffer buf1 = dialog.GetPath().mb_str();
                 const wxCharBuffer buf2 = dev_entries[index].dev_name.mb_str();
-                SavePlot( (const char*) buf1, (const char*) buf2, width, height );
+                SavePlot( (const char *) buf1, (const char *) buf2, width, height );
             }
         }
     }
@@ -381,7 +381,7 @@ bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int wid
 
         plsetopt( "-drvopt", "backend=0" );
         plinit();
-        pl_cmd( PLESC_DEVINIT, (void*) &memDC );
+        pl_cmd( PLESC_DEVINIT, (void *) &memDC );
 
         plcpstrm( pls, 0 );
         pladv( 0 );
@@ -454,7 +454,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
     // Log_Verbose( "wxPLplotWindow::wxPLplotWindow" );
 
     m_pls       = pls;
-    m_dev       = (wxPLDevBase*) pls->dev;
+    m_dev       = (wxPLDevBase *) pls->dev;
     refresh     = false;
     mouse_x     = old_mouse_x = -1;
     mouse_y     = old_mouse_y = -1;

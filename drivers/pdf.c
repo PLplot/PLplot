@@ -190,10 +190,10 @@ void plD_init_pdf( PLStream *pls )
     pdfdev* dev;
 
     // allocate memory for the device storage
-    dev = (pdfdev*) calloc( 1, sizeof ( pdfdev ) );
+    dev = (pdfdev *) calloc( 1, sizeof ( pdfdev ) );
     if ( dev == NULL )
         plexit( "Insufficient memory\n" );
-    pls->dev = (void*) dev;
+    pls->dev = (void *) dev;
 
     // Check for and set up driver options
     plParseDrvOpts( pdf_options );
@@ -296,7 +296,7 @@ void plD_init_pdf( PLStream *pls )
 //--------------------------------------------------------------------------
 void plD_bop_pdf( PLStream *pls )
 {
-    pdfdev    * dev = (pdfdev*) pls->dev;
+    pdfdev    * dev = (pdfdev *) pls->dev;
     HPDF_REAL width, height;
 
     pls->page++;
@@ -374,7 +374,7 @@ void plD_eop_pdf( PLStream *pls )
 //--------------------------------------------------------------------------
 void plD_tidy_pdf( PLStream *pls )
 {
-    pdfdev* dev = (pdfdev*) pls->dev;
+    pdfdev* dev = (pdfdev *) pls->dev;
 
     // save the document to a stream
     HPDF_SaveToStream( dev->pdf );
@@ -430,7 +430,7 @@ void plD_esc_pdf( PLStream *pls, PLINT op, void *ptr )
         poly_line( pls, pls->dev_x, pls->dev_y, pls->dev_npts, 1 );
         break;
     case PLESC_HAS_TEXT: // render text
-        process_string( pls, (EscText*) ptr );
+        process_string( pls, (EscText *) ptr );
         break;
     }
 }
@@ -443,7 +443,7 @@ void plD_esc_pdf( PLStream *pls, PLINT op, void *ptr )
 //--------------------------------------------------------------------------
 void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 {
-    pdfdev* dev = (pdfdev*) pls->dev;
+    pdfdev* dev = (pdfdev *) pls->dev;
     PLINT i;
 
     HPDF_Page_SetLineWidth( dev->page, (HPDF_REAL) ( pls->width ) );
@@ -531,12 +531,12 @@ void PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawTex
         HPDF_Page_SetTextRenderingMode( dev->page, HPDF_FILL );
         HPDF_Page_SetRGBFill( dev->page, dev->textRed, dev->textGreen, dev->textBlue );
         HPDF_Page_MoveTextPos( dev->page, dev->textWidth, dev->yOffset );
-        HPDF_Page_ShowText( dev->page, (char*) type1_string ); // TODO: this conversion must be wrong
+        HPDF_Page_ShowText( dev->page, (char *) type1_string ); // TODO: this conversion must be wrong
         HPDF_Page_EndText( dev->page );
     }
 
     // determine text width and height
-    dev->textWidth += HPDF_Page_TextWidth( dev->page, (char*) type1_string ); // TODO: this conversion must be wrong
+    dev->textWidth += HPDF_Page_TextWidth( dev->page, (char *) type1_string ); // TODO: this conversion must be wrong
     th              = (HPDF_REAL) ( HPDF_Font_GetCapHeight( dev->m_font ) * dev->fontSize * dev->fontScale / 1000.0 );
     dev->textHeight = dev->textHeight > ( th + dev->yOffset ) ? dev->textHeight : ( th + dev->yOffset );
 
@@ -788,7 +788,7 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
 //--------------------------------------------------------------------------
 void process_string( PLStream* pls, EscText* args )
 {
-    pdfdev    * dev = (pdfdev*) pls->dev;
+    pdfdev    * dev = (pdfdev *) pls->dev;
     PLFLT     rotation, shear, stride;
     HPDF_REAL cos_rot, sin_rot, cos_shear, sin_shear;
 

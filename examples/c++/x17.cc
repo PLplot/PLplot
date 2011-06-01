@@ -52,8 +52,8 @@ public:
     static char  errmsg[160];
 };
 
-PLINT x17::pl_errcode  = 0;
-char x17:: errmsg[160] = "";
+PLINT x17::pl_errcode   = 0;
+char  x17:: errmsg[160] = "";
 
 x17::x17( int argc, const char ** argv )
 {

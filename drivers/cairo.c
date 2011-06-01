@@ -1174,7 +1174,7 @@ cairo_status_t write_to_stream( void *filePointer, unsigned char *data, unsigned
 {
     int bytes_written;
 
-    bytes_written = fwrite( data, 1, length, (FILE*) filePointer );
+    bytes_written = fwrite( data, 1, length, (FILE *) filePointer );
     if ( bytes_written == length )
     {
         return CAIRO_STATUS_SUCCESS;
@@ -1942,7 +1942,7 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
     case PLESC_GETC:     // get cursor position
         blit_to_x( pls, 0.0, 0.0, pls->xlength, pls->ylength );
         XFlush( aStream->XDisplay );
-        xcairo_get_cursor( pls, (PLGraphicsIn*) ptr );
+        xcairo_get_cursor( pls, (PLGraphicsIn *) ptr );
         break;
     case PLESC_DEVINIT: { // Set external drawable
         Window               rootwin;
@@ -3256,7 +3256,7 @@ void plD_esc_wincairo( PLStream *pls, PLINT op, void *ptr )
         InvalidateRect( aStream->hwnd, NULL, TRUE );
         break;
     case PLESC_GETC:
-        handle_locate( pls, (PLGraphicsIn*) ptr );
+        handle_locate( pls, (PLGraphicsIn *) ptr );
         break;
     default:
         plD_esc_cairo( pls, op, ptr );

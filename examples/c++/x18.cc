@@ -50,8 +50,8 @@ private:
 };
 
 
-const int x18::  NPTS  = 1000;
-const int x18::  opt[] = { 1, 0, 1, 0 };
+const int   x18::  NPTS  = 1000;
+const int   x18::  opt[] = { 1, 0, 1, 0 };
 const PLFLT x18::alt[4] = { 20.0, 35.0, 50.0, 65.0 };
 const PLFLT x18::az[4] = { 30.0, 40.0, 50.0, 60.0 };
 

@@ -65,7 +65,7 @@ wxPLDevDC::~wxPLDevDC()
     {
         if ( m_dc )
         {
-            ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap );
+            ( (wxMemoryDC *) m_dc )->SelectObject( wxNullBitmap );
             delete m_dc;
         }
         if ( m_bitmap )
@@ -211,11 +211,11 @@ void wxPLDevDC::CreateCanvas()
         if ( !m_dc )
             m_dc = new wxMemoryDC();
 
-        ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); // deselect bitmap
+        ( (wxMemoryDC *) m_dc )->SelectObject( wxNullBitmap ); // deselect bitmap
         if ( m_bitmap )
             delete m_bitmap;
         m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
-        ( (wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
+        ( (wxMemoryDC *) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
     }
 }
 
@@ -269,7 +269,7 @@ void wxPLDevDC::SetColor1( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevDC::SetExternalBuffer( void* dc )
 {
-    m_dc   = (wxDC*) dc; // Add the dc to the device
+    m_dc   = (wxDC *) dc; // Add the dc to the device
     ready  = true;
     ownGUI = false;
 }

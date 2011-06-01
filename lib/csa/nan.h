@@ -34,7 +34,7 @@ static const double NaN = 0.0 / 0.0;
 
 static unsigned _int64 lNaN = ( (unsigned _int64) 1 << 63 ) - 1;
 
-#define NaN    ( *(double*) &lNaN )
+#define NaN    ( *(double *) &lNaN )
 
 #else
 
@@ -59,7 +59,7 @@ static unsigned _int64 lNaN = ( (unsigned _int64) 1 << 63 ) - 1;
 
 static const long long lNaN = ( (unsigned long long) 1 << 63 ) - 1;
 
-#define NaN    ( *(double*) &lNaN )
+#define NaN    ( *(double *) &lNaN )
 
 #endif
 

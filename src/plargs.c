@@ -1368,7 +1368,7 @@ plParseDrvOpts( DrvOpt *acc_opt )
                 case DRV_STR:
                     *(char **) ( t->var_ptr ) = ( drvp->value );
 #ifdef DEBUG
-                    fprintf( stderr, "plParseDrvOpts: %s %s\n", t->opt, *(char**) t->var_ptr );
+                    fprintf( stderr, "plParseDrvOpts: %s %s\n", t->opt, *(char **) t->var_ptr );
 #endif
                     break;
 
@@ -1975,7 +1975,7 @@ opt_fsiz( const char *opt, const char *optarg, void *client_data )
     int   len        = strlen( optarg );
     char  lastchar   = optarg[len - 1];
     PLFLT multiplier = 1.0e6;
-    char  *spec      = (char*) malloc( len + 1 );
+    char  *spec      = (char *) malloc( len + 1 );
 
     if ( spec == NULL )
         plexit( "opt_fsiz: Insufficient memory" );

@@ -391,7 +391,7 @@ void ml_plcont( const PLFLT **f, PLINT nx, PLINT ny,
     else
     {
         c_plcont( f, nx, ny, kx, lx, ky, ly, clevel, nlevel,
-            get_ml_plotter_func(), (void*) 1 );
+            get_ml_plotter_func(), (void *) 1 );
     }
 }
 
@@ -421,7 +421,7 @@ void ml_plshade( const PLFLT **a, PLINT nx, PLINT ny,
         shade_min, shade_max,
         sh_cmap, sh_color, sh_width, min_color, min_width,
         max_color, max_width, plfill, rectangular,
-        get_ml_plotter_func(), (void*) 1 );
+        get_ml_plotter_func(), (void *) 1 );
 }
 
 //
@@ -460,7 +460,7 @@ void ml_plshades( const PLFLT **a, PLINT nx, PLINT ny,
         cont_color, cont_width,
         plfill, rectangular,
         get_ml_plotter_func(),
-        (void*) 1 );
+        (void *) 1 );
 }
 
 //
@@ -481,7 +481,7 @@ void ml_plimagefr( const PLFLT **idata, PLINT nx, PLINT ny,
         zmin, zmax,
         valuemin, valuemax,
         get_ml_plotter_func(),
-        (void*) 1 );
+        (void *) 1 );
 }
 
 //
@@ -494,7 +494,7 @@ void ml_plvect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scal
 {
     c_plvect( u, v, nx, ny, scale,
         get_ml_plotter_func(),
-        (void*) 1 );
+        (void *) 1 );
 }
 
 //
@@ -566,8 +566,8 @@ value ml_plgriddata( value x, value y, value z,
 
     // Using "type + 1" because "type" is passed in as a variant type, so
     // the indexing starts from 0 rather than 1.
-    c_plgriddata( (double*) x, (double*) y, (double*) z, npts, (double*) xg, nptsx,
-        (double*) yg, nptsy, zg_local, Int_val( type ) + 1,
+    c_plgriddata( (double *) x, (double *) y, (double *) z, npts, (double *) xg, nptsx,
+        (double *) yg, nptsy, zg_local, Int_val( type ) + 1,
         Double_val( data ) );
 
     // Allocate the X-dimension of the to-be-returned OCaml array
@@ -878,8 +878,8 @@ value ml_pltr1( value xg, value yg, value x, value y )
     double  tx;
     double  ty;
     PLcGrid grid;
-    grid.xg = (double*) xg;
-    grid.yg = (double*) yg;
+    grid.xg = (double *) xg;
+    grid.yg = (double *) yg;
     grid.nx = Wosize_val( xg ) / Double_wosize;
     grid.ny = Wosize_val( yg ) / Double_wosize;
     pltr1( Double_val( x ), Double_val( y ), &tx, &ty, ( PLPointer ) & grid );
@@ -914,12 +914,12 @@ value ml_pltr2( value xg, value yg, value x, value y )
     c_xg    = malloc( length1 * sizeof ( double* ) );
     for ( i = 0; i < length1; i++ )
     {
-        c_xg[i] = (double*) Field( xg, i );
+        c_xg[i] = (double *) Field( xg, i );
     }
     c_yg = malloc( length1 * sizeof ( double* ) );
     for ( i = 0; i < length1; i++ )
     {
-        c_yg[i] = (double*) Field( yg, i );
+        c_yg[i] = (double *) Field( yg, i );
     }
     grid.xg = c_xg;
     grid.yg = c_yg;

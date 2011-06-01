@@ -36,8 +36,8 @@ class PLDLLIMPEXP_WX wxPLplotwindow : public wxWindow
 {
 public:
     wxPLplotwindow( wxWindow * parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0,
-        int pl_style = wxPLPLOT_NONE );                                     //!< Constructor.
+                    const wxSize& size = wxDefaultSize, long style = 0,
+                    int pl_style = wxPLPLOT_NONE );                         //!< Constructor.
     ~wxPLplotwindow( void );                                                //!< Deconstructor.
 
     void RenewPlot( void );                                                 //!< Redo plot.

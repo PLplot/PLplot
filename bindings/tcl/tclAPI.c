@@ -470,7 +470,7 @@ PlbasicInit( Tcl_Interp *interp )
             Tcl_ResetResult( interp );
         }
         else
-            libDir = (char*) Tcl_GetVar( interp, "pllibrary", TCL_GLOBAL_ONLY );
+            libDir = (char *) Tcl_GetVar( interp, "pllibrary", TCL_GLOBAL_ONLY );
     }
 
 #ifdef TCL_DIR
@@ -555,7 +555,7 @@ PlbasicInit( Tcl_Interp *interp )
 // Can be used with either Tcl-DP or TK
 
     Tcl_CreateCommand( interp, "wait_until", (Tcl_CmdProc *) plWait_Until,
-        (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
+        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
 
     return TCL_OK;
 }
@@ -591,7 +591,7 @@ environment variable PL_LIBRARY to the directory containing that file",
     for ( cmdInfoPtr = Cmds; cmdInfoPtr->name != NULL; cmdInfoPtr++ )
     {
         Tcl_CreateCommand( interp, cmdInfoPtr->name, cmdInfoPtr->proc,
-            (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
+            (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
     }
 
 // Define the flags as variables in the PLPLOT namespace

@@ -187,7 +187,7 @@ static void free2d( void* pp )
     void* p;
 
     assert( pp != NULL );
-    p = ( (void**) pp )[0];
+    p = ( (void **) pp )[0];
     free( pp );
     assert( p != NULL );
     free( p );

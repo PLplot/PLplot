@@ -484,7 +484,7 @@ nnhpi* nnhpi_create( delaunay* d, int size )
 
 static void free_nn_weights( void* data )
 {
-    nn_weights* weights = (nn_weights*) data;
+    nn_weights* weights = (nn_weights *) data;
 
     free( weights->vertices );
     free( weights->weights );

@@ -51,14 +51,14 @@ private:
 };
 
 
-const int x11::  XPTS   = 35;
-const int x11::  YPTS   = 46;
-const int x11::  LEVELS = 10;
-const int x11::  opt[]  = { 3, 3 };
+const int   x11::  XPTS   = 35;
+const int   x11::  YPTS   = 46;
+const int   x11::  LEVELS = 10;
+const int   x11::  opt[]  = { 3, 3 };
 const PLFLT x11::alt[] = { 33.0, 17.0 };
 const PLFLT x11::az[] = { 24.0, 115.0 };
 
-const char *x11::title[] = {
+const char  *x11::title[] = {
     "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
     "#frPLplot Example 11 - Alt=17, Az=115, Opt=3"
 };

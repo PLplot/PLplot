@@ -377,8 +377,8 @@ plPlotterCmd( ClientData clientData, Tcl_Interp *interp,
     plPlotterPtr->interp    = interp;
     plPlotterPtr->widgetCmd =
         Tcl_CreateCommand( interp, Tk_PathName( plPlotterPtr->tkwin ),
-            (Tcl_CmdProc*) PlPlotterWidgetCmd, (ClientData) plPlotterPtr,
-            (Tcl_CmdDeleteProc*) NULL );
+            (Tcl_CmdProc *) PlPlotterWidgetCmd, (ClientData) plPlotterPtr,
+            (Tcl_CmdDeleteProc *) NULL );
     plPlotterPtr->xorGC          = NULL;
     plPlotterPtr->border         = NULL;
     plPlotterPtr->cursor         = None;
@@ -454,7 +454,7 @@ plPlotterCmd( ClientData clientData, Tcl_Interp *interp,
 // for active plot
     ActiveState( plPlotterPtr, 1 );
 
-    if ( ConfigurePlPlotter( interp, plPlotterPtr, argc - 2, (CONST char**) argv + 2, 0 ) != TCL_OK )
+    if ( ConfigurePlPlotter( interp, plPlotterPtr, argc - 2, (CONST char **) argv + 2, 0 ) != TCL_OK )
     {
         Tk_DestroyWindow( plPlotterPtr->tkwin );
         return TCL_ERROR;
@@ -905,7 +905,7 @@ PlPlotterConfigureEH( ClientData clientData, register XEvent *eventPtr )
         {
             Tcl_CancelIdleCall( DisplayPlPlotter, (ClientData) plPlotterPtr );
         }
-        Tk_EventuallyFree( (ClientData) plPlotterPtr, (Tcl_FreeProc*) DestroyPlPlotter );
+        Tk_EventuallyFree( (ClientData) plPlotterPtr, (Tcl_FreeProc *) DestroyPlPlotter );
         break;
 
     case MapNotify:

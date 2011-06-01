@@ -56,7 +56,7 @@
 #include <tk.h>
 #endif
     #define malloc     ckalloc
-    #define free( m )    ckfree( (char*) m )
+    #define free( m )    ckfree( (char *) m )
     #define realloc    ckrealloc
     #define calloc     ckcalloc
 #else
@@ -312,7 +312,7 @@ plD_open_tkwin( PLStream *pls )
     if ( pls->dev != NULL )
         plwarn( "plD_open_tkw: device pointer is already set" );
 
-    pls->dev = (TkwDev*) calloc( 1, (size_t) sizeof ( TkwDev ) );
+    pls->dev = (TkwDev *) calloc( 1, (size_t) sizeof ( TkwDev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_tkw: Out of memory." );
 
@@ -1944,7 +1944,7 @@ void *  ckcalloc( size_t nmemb, size_t size )
     long *ptr;
     long *p;
     size *= nmemb;
-    ptr   = (long*) malloc( size );
+    ptr   = (long *) malloc( size );
     if ( !ptr )
         return ( 0 );
 

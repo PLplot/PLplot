@@ -129,7 +129,7 @@ typedef PLINT          PLBOOL;
 // With preceding count
 %typemap( in ) ( PLINT n, const PLINT * Array )
 {
-    $2 = (PLINT*) LUA_get_int_num_array_var( L, $input, &$1 );
+    $2 = (PLINT *) LUA_get_int_num_array_var( L, $input, &$1 );
     if ( !$2 )
         SWIG_fail;
     Alen = $1;
@@ -143,7 +143,7 @@ typedef PLINT          PLBOOL;
 // Trailing count and check consistency with previous
 %typemap( in ) ( const PLINT * ArrayCk, PLINT n ) ( int temp )
 {
-    $1 = (PLINT*) LUA_get_int_num_array_var( L, $input, &temp );
+    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Alen )
@@ -162,7 +162,7 @@ typedef PLINT          PLBOOL;
 // No count but check consistency with previous
 %typemap( in ) const PLINT * ArrayCk( int temp )
 {
-    $1 = (PLINT*) LUA_get_int_num_array_var( L, $input, &temp );
+    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Alen )
@@ -176,7 +176,7 @@ typedef PLINT          PLBOOL;
 // No count but check consistency with previous, or NULL
 %typemap( in ) const PLINT * ArrayCkNull( int temp )
 {
-    $1 = (PLINT*) LUA_get_int_num_array_var( L, $input, &temp );
+    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Alen )
@@ -191,7 +191,7 @@ typedef PLINT          PLBOOL;
 // Weird case to allow argument to be one shorter than others
 %typemap( in ) const PLINT * ArrayCkMinus1( int temp )
 {
-    $1 = (PLINT*) LUA_get_int_num_array_var( L, $input, &temp );
+    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp < Alen - 1 )
@@ -204,7 +204,7 @@ typedef PLINT          PLBOOL;
 
 %typemap( in ) const PLINT * ArrayCkMinus1Null( int temp )
 {
-    $1 = (PLINT*) LUA_get_int_num_array_var( L, $input, &temp );
+    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp < Alen - 1 )
@@ -220,7 +220,7 @@ typedef PLINT          PLBOOL;
 // No length but remember size to check others
 %typemap( in ) const PLINT * Array( int temp )
 {
-    $1 = (PLINT*) LUA_get_int_num_array_var( L, $input, &temp );
+    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     Alen = temp;
@@ -239,7 +239,7 @@ typedef PLINT          PLBOOL;
 %typemap( in ) ( PLINT n, const PLFLT * Array )
 {
     int temp;
-    $2 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $2 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$2 )
         SWIG_fail;
     $1 = Alen = temp;
@@ -254,7 +254,7 @@ typedef PLINT          PLBOOL;
 %typemap( in ) ( const PLFLT * ArrayCk, PLINT n )
 {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Alen )
@@ -273,7 +273,7 @@ typedef PLINT          PLBOOL;
 // no count, but check consistency with previous
 %typemap( in ) const PLFLT * ArrayCk( int temp )
 {
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Alen )
@@ -288,7 +288,7 @@ typedef PLINT          PLBOOL;
 // no count, but check consistency with previous, or NULL
 %typemap( in ) const PLFLT * ArrayCkNull( int temp )
 {
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Alen )
@@ -303,7 +303,7 @@ typedef PLINT          PLBOOL;
 // No length but remember size to check others
 %typemap( in ) const PLFLT * Array {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     Alen = temp;
@@ -318,7 +318,7 @@ typedef PLINT          PLBOOL;
 %typemap( in ) ( const PLFLT * Array, PLINT n )
 {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     $2 = Alen = temp;
@@ -332,7 +332,7 @@ typedef PLINT          PLBOOL;
 // check consistency with X dimension of previous
 %typemap( in ) const PLFLT * ArrayCkX {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Xlen )
@@ -347,7 +347,7 @@ typedef PLINT          PLBOOL;
 // check consistency with Y dimension of previous
 %typemap( in ) const PLFLT * ArrayCkY {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     if ( temp != Ylen )
@@ -363,7 +363,7 @@ typedef PLINT          PLBOOL;
 %typemap( in ) ( const PLFLT * ArrayX, PLINT nx )
 {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     $2 = Xlen = temp;
@@ -377,7 +377,7 @@ typedef PLINT          PLBOOL;
 // set X length for later consistency checking
 %typemap( in ) const PLFLT * ArrayX {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     Xlen = temp;
@@ -389,7 +389,7 @@ typedef PLINT          PLBOOL;
 %typemap( in ) ( const PLFLT * ArrayY, PLINT ny )
 {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     $2 = Ylen = temp;
@@ -403,7 +403,7 @@ typedef PLINT          PLBOOL;
 // set Y length for later consistency checking
 %typemap( in ) const PLFLT * ArrayY {
     int temp;
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     Ylen = temp;
@@ -611,7 +611,7 @@ typedef PLINT          PLBOOL;
 {
     int temp, i;
 
-    $1 = (PLFLT*) LUA_get_double_num_array_var( L, $input, &temp );
+    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
     $2 = Ylen = temp;
@@ -675,7 +675,7 @@ typedef PLINT          PLBOOL;
 }
 
 %typemap( in, checkfn = "lua_isstring" ) const char *message {
-    $1 = (char*) lua_tostring( L, $input );
+    $1 = (char *) lua_tostring( L, $input );
 }
 
 
@@ -721,7 +721,7 @@ typedef PLINT          PLBOOL;
             fprintf( stderr, "function `%s' must return a table as 2nd result", mapform_funcstr );
             return;
         }
-        xtemp = (PLFLT*) LUA_get_double_num_array_var( myL, -2, &len );
+        xtemp = (PLFLT *) LUA_get_double_num_array_var( myL, -2, &len );
         if ( !xtemp || len != n )
         {
             fprintf( stderr, "function `%s' must return a table of length%d", mapform_funcstr, n );
@@ -731,7 +731,7 @@ typedef PLINT          PLBOOL;
             x[i] = xtemp[i];
         LUA_FREE_ARRAY( xtemp );
 
-        ytemp = (PLFLT*) LUA_get_double_num_array_var( myL, -1, &len );
+        ytemp = (PLFLT *) LUA_get_double_num_array_var( myL, -1, &len );
         if ( !ytemp || len != n )
         {
             fprintf( stderr, "function `%s' must return a table of length%d", mapform_funcstr, n );
@@ -1036,7 +1036,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     lua_pop( L, 1 ); // pop test element
     if ( gridmode == 1 )
     {
-        cgrid1.xg = (PLFLT*) LUA_get_double_num_array_var( L, -1, &nx );
+        cgrid1.xg = (PLFLT *) LUA_get_double_num_array_var( L, -1, &nx );
         if ( !cgrid1.xg )
         {
             lua_pop( L, 1 ); // pop "xg"
@@ -1100,7 +1100,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     lua_pop( L, 1 ); // pop "1"
     if ( gridmode == 1 )
     {
-        cgrid1.yg = (PLFLT*) LUA_get_double_num_array_var( L, -1, &ny );
+        cgrid1.yg = (PLFLT *) LUA_get_double_num_array_var( L, -1, &ny );
         if ( !cgrid1.yg )
         {
             lua_pop( L, 1 ); // pop "yg"
@@ -1186,7 +1186,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         lua_rawgeti( L, $input, i );
         if ( lua_isstring( L, -1 ) )
         {
-            $1[i - 1] = (char*) lua_tostring( L, -1 );
+            $1[i - 1] = (char *) lua_tostring( L, -1 );
         }
         else
         {
@@ -1221,7 +1221,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         lua_rawgeti( L, $input, i );
         if ( lua_isstring( L, -1 ) )
         {
-            $1[i - 1] = (char*) lua_tostring( L, -1 );
+            $1[i - 1] = (char *) lua_tostring( L, -1 );
         }
         else
         {
@@ -1271,7 +1271,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         lua_rawgeti( L, $input, i );
         if ( lua_isstring( L, -1 ) )
         {
-            $2[i] = (char*) lua_tostring( L, -1 );
+            $2[i] = (char *) lua_tostring( L, -1 );
         }
         else
         {

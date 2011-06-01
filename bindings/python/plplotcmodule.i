@@ -128,7 +128,7 @@ typedef PLINT          PLBOOL;
 // some really twisted stuff to allow calling a single precision library from python
     PyArrayObject* myIntArray_ContiguousFromObject( PyObject* in, int type, int mindims, int maxdims )
     {
-        PyArrayObject* tmp = (PyArrayObject*) PyArray_ContiguousFromObject( in, PyArray_PLINT,
+        PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, PyArray_PLINT,
             mindims, maxdims );
         if ( !tmp )
         {
@@ -136,7 +136,7 @@ typedef PLINT          PLBOOL;
             if ( PyArray_Check( in ) )
             {
                 PyErr_Clear();
-                tmp = (PyArrayObject*) PyArray_Cast( (PyArrayObject*) in, PyArray_PLINT );
+                tmp = (PyArrayObject *) PyArray_Cast( (PyArrayObject *) in, PyArray_PLINT );
             }
         }
         return tmp;
@@ -156,7 +156,7 @@ typedef PLINT          PLBOOL;
     if ( tmp == NULL )
         return NULL;
     $1 = Alen = tmp->dimensions[0];
-    $2 = (PLINT*) tmp->data;
+    $2 = (PLINT *) tmp->data;
 }
 %typemap( freearg ) ( PLINT n, const PLINT * Array )
 {
@@ -175,7 +175,7 @@ typedef PLINT          PLBOOL;
         return NULL;
     }
     $2 = tmp->dimensions[0];
-    $1 = (PLINT*) tmp->data;
+    $1 = (PLINT *) tmp->data;
 }
 %typemap( freearg ) ( const PLINT * ArrayCk, PLINT n )
 {
@@ -193,7 +193,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLINT*) tmp->data;
+    $1 = (PLINT *) tmp->data;
 }
 %typemap( freearg ) const PLINT * ArrayCk { Py_DECREF( tmp$argnum );}
 
@@ -208,7 +208,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLINT*) tmp->data;
+    $1 = (PLINT *) tmp->data;
 }
 %typemap( freearg ) const PLINT * ArrayCkNull { Py_DECREF( tmp$argnum );}
 
@@ -223,7 +223,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vector must be at least length of others minus 1." );
         return NULL;
     }
-    $1 = (PLINT*) tmp->data;
+    $1 = (PLINT *) tmp->data;
 }
 %typemap( freearg ) const PLINT * ArrayCkMinus1 { Py_DECREF( tmp$argnum );}
 
@@ -237,7 +237,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vector must be at least length of others minus 1." );
         return NULL;
     }
-    $1 = (PLINT*) tmp->data;
+    $1 = (PLINT *) tmp->data;
 }
 %typemap( freearg ) const PLINT * ArrayCkMinus1Null { Py_DECREF( tmp$argnum );}
 
@@ -248,7 +248,7 @@ typedef PLINT          PLBOOL;
     if ( tmp == NULL )
         return NULL;
     Alen = tmp->dimensions[0];
-    $1   = (PLINT*) tmp->data;
+    $1   = (PLINT *) tmp->data;
 }
 %typemap( freearg ) const PLINT * Array { Py_DECREF( tmp$argnum );}
 
@@ -262,7 +262,7 @@ typedef PLINT          PLBOOL;
 // some really twisted stuff to allow calling a single precision library from python
     PyArrayObject* myArray_ContiguousFromObject( PyObject* in, int type, int mindims, int maxdims )
     {
-        PyArrayObject* tmp = (PyArrayObject*) PyArray_ContiguousFromObject( in, PyArray_FLOAT,
+        PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, PyArray_FLOAT,
             mindims, maxdims );
         if ( !tmp )
         {
@@ -270,7 +270,7 @@ typedef PLINT          PLBOOL;
             if ( PyArray_Check( in ) )
             {
                 PyErr_Clear();
-                tmp = (PyArrayObject*) PyArray_Cast( (PyArrayObject*) in, PyArray_FLOAT );
+                tmp = (PyArrayObject *) PyArray_Cast( (PyArrayObject *) in, PyArray_FLOAT );
             }
         }
         return tmp;
@@ -290,7 +290,7 @@ typedef PLINT          PLBOOL;
     if ( tmp == NULL )
         return NULL;
     $1 = Alen = tmp->dimensions[0];
-    $2 = (PLFLT*) tmp->data;
+    $2 = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) ( PLINT n, const PLFLT * Array )
 {
@@ -308,7 +308,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT*) tmp->data;
+    $1 = (PLFLT *) tmp->data;
     $2 = tmp->dimensions[0];
 }
 %typemap( freearg ) ( const PLFLT * ArrayCk, PLINT n )
@@ -327,7 +327,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT*) tmp->data;
+    $1 = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) const PLFLT * ArrayCk { Py_DECREF( tmp$argnum );}
 
@@ -342,7 +342,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT*) tmp->data;
+    $1 = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) const PLFLT * ArrayCkNull { Py_DECREF( tmp$argnum );}
 
@@ -357,7 +357,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT*) tmp->data;
+    $1 = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) const PLFLT * ArrayCkX { Py_DECREF( tmp$argnum );}
 
@@ -372,7 +372,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT*) tmp->data;
+    $1 = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) const PLFLT * ArrayCkY { Py_DECREF( tmp$argnum );}
 
@@ -384,7 +384,7 @@ typedef PLINT          PLBOOL;
         return NULL;
     Xlen = tmp->dimensions[0];
     $2   = Xlen;
-    $1   = (PLFLT*) tmp->data;
+    $1   = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) ( const PLFLT * ArrayX, PLINT nx )
 {
@@ -398,7 +398,7 @@ typedef PLINT          PLBOOL;
     if ( tmp == NULL )
         return NULL;
     Xlen = tmp->dimensions[0];
-    $1   = (PLFLT*) tmp->data;
+    $1   = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) const PLFLT * ArrayX { Py_DECREF( tmp$argnum );}
 
@@ -410,7 +410,7 @@ typedef PLINT          PLBOOL;
         return NULL;
     Ylen = tmp->dimensions[0];
     $2   = Ylen;
-    $1   = (PLFLT*) tmp->data;
+    $1   = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny )
 {
@@ -424,7 +424,7 @@ typedef PLINT          PLBOOL;
     if ( tmp == NULL )
         return NULL;
     Ylen = tmp->dimensions[0];
-    $1   = (PLFLT*) tmp->data;
+    $1   = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) const PLFLT * ArrayY { Py_DECREF( tmp$argnum );}
 
@@ -436,7 +436,7 @@ typedef PLINT          PLBOOL;
     if ( tmp == NULL )
         return NULL;
     $2 = tmp->dimensions[0];
-    $1 = (PLFLT*) tmp->data;
+    $1 = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) ( const PLFLT * Array, PLINT n )
 {
@@ -450,7 +450,7 @@ typedef PLINT          PLBOOL;
     if ( tmp == NULL )
         return NULL;
     Alen = tmp->dimensions[0];
-    $1   = (PLFLT*) tmp->data;
+    $1   = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) const PLFLT * Array { Py_DECREF( tmp$argnum );}
 
@@ -469,9 +469,9 @@ typedef PLINT          PLBOOL;
     $2   = tmp->dimensions[0];
     $3   = tmp->dimensions[1];
     size = sizeof ( PLFLT ) * $3;
-    $1   = (PLFLT**) malloc( sizeof ( PLFLT* ) * $2 );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
     for ( i = 0; i < $2; i++ )
-        $1[i] = (PLFLT*) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( tmp->data + i * size );
 }
 %typemap( freearg ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny )
 {
@@ -489,9 +489,9 @@ typedef PLINT          PLBOOL;
     Xlen = $2 = tmp->dimensions[0];
     Ylen = $3 = tmp->dimensions[1];
     size = sizeof ( PLFLT ) * $3;
-    $1   = (PLFLT**) malloc( sizeof ( PLFLT* ) * $2 );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
     for ( i = 0; i < $2; i++ )
-        $1[i] = (PLFLT*) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( tmp->data + i * size );
 }
 %typemap( freearg ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny )
 {
@@ -509,9 +509,9 @@ typedef PLINT          PLBOOL;
     Xlen = tmp->dimensions[0];
     Ylen = tmp->dimensions[1];
     size = sizeof ( PLFLT ) * Ylen;
-    $1   = (PLFLT**) malloc( sizeof ( PLFLT* ) * Xlen );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT*) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( tmp->data + i * size );
 }
 %typemap( freearg ) const PLFLT * *Matrix {
     Py_DECREF( tmp$argnum );
@@ -526,7 +526,7 @@ typedef PLINT          PLBOOL;
         return NULL;
     Xlen = $2 = tmp->dimensions[0];
     Ylen = $3 = tmp->dimensions[1];
-    $1   = (PLFLT*) tmp->data;
+    $1   = (PLFLT *) tmp->data;
 }
 %typemap( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
 {
@@ -546,9 +546,9 @@ typedef PLINT          PLBOOL;
         return NULL;
     }
     size = sizeof ( PLFLT ) * Ylen;
-    $1   = (PLFLT**) malloc( sizeof ( PLFLT* ) * Xlen );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT*) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( tmp->data + i * size );
 }
 %typemap( freearg ) const PLFLT * *MatrixCk {
     Py_DECREF( tmp$argnum );
@@ -568,9 +568,9 @@ typedef PLINT          PLBOOL;
         return NULL;
     }
     size = sizeof ( PLFLT ) * Ylen;
-    $1   = (PLFLT**) malloc( sizeof ( PLFLT* ) * Xlen );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT*) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( tmp->data + i * size );
 }
 %typemap( freearg ) PLFLT * *OutMatrixCk {
     Py_DECREF( tmp$argnum );
@@ -657,9 +657,9 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             PyErr_SetString( PyExc_ValueError, "Expected a sequence of two arrays." );
             return NULL;
         }
-        pltr_xg = (PyArrayObject*) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 0 ),
+        pltr_xg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 0 ),
             PyArray_PLFLT, 1, 1 );
-        pltr_yg = (PyArrayObject*) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 1 ),
+        pltr_yg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 1 ),
             PyArray_PLFLT, 1, 1 );
         if ( pltr_xg == 0 || pltr_yg == 0 )
         {
@@ -684,8 +684,8 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
                 return NULL;
             }
         }
-        tmpGrid1.xg = (PLFLT*) pltr_xg->data;
-        tmpGrid1.yg = (PLFLT*) pltr_yg->data;
+        tmpGrid1.xg = (PLFLT *) pltr_xg->data;
+        tmpGrid1.yg = (PLFLT *) pltr_yg->data;
         return &tmpGrid1;
     }
 
@@ -705,9 +705,9 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             PyErr_SetString( PyExc_ValueError, "Expected a sequence of two arrays." );
             return NULL;
         }
-        pltr_xg = (PyArrayObject*) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 0 ),
+        pltr_xg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 0 ),
             PyArray_PLFLT, 2, 2 );
-        pltr_yg = (PyArrayObject*) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 1 ),
+        pltr_yg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 1 ),
             PyArray_PLFLT, 2, 2 );
         if ( pltr_xg == 0 || pltr_yg == 0 )
         {
@@ -739,12 +739,12 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             }
         }
         size        = sizeof ( PLFLT ) * tmpGrid2.ny;
-        tmpGrid2.xg = (PLFLT**) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
+        tmpGrid2.xg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
-            tmpGrid2.xg[i] = (PLFLT*) ( pltr_xg->data + i * size );
-        tmpGrid2.yg = (PLFLT**) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
+            tmpGrid2.xg[i] = (PLFLT *) ( pltr_xg->data + i * size );
+        tmpGrid2.yg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
-            tmpGrid2.yg[i] = (PLFLT*) ( pltr_yg->data + i * size );
+            tmpGrid2.yg[i] = (PLFLT *) ( pltr_yg->data + i * size );
         return &tmpGrid2;
     }
 
@@ -858,7 +858,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         PyArrayObject *tmp;
 
         // the data argument is acutally a pointer to a python object
-        pdata = (PyObject*) data;
+        pdata = (PyObject *) data;
         if ( data == NULL )
         {
             pdata = Py_None;
@@ -902,7 +902,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 }
                 else
                 {
-                    PLFLT* t = (PLFLT*) tmp->data;
+                    PLFLT* t = (PLFLT *) tmp->data;
                     *tx = t[0];
                     *ty = t[1];
                     Py_XDECREF( tmp );
@@ -921,7 +921,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         PLFLT    fresult = 0.0;
 
         // the data argument is acutally a pointer to a python object
-        pdata = (PyObject*) data;
+        pdata = (PyObject *) data;
         if ( python_f2eval ) // if not something is terribly wrong
         {                    // hold a reference to the data object
             Py_XINCREF( pdata );
@@ -960,7 +960,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 
         // the data argument is acutally a pointer to a python object
         if ( data )
-            pdata = (PyObject*) data;
+            pdata = (PyObject *) data;
         else
             pdata = Py_None;
         if ( python_label ) // if not something is terribly wrong
@@ -1013,7 +1013,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         n = 1;
 
         // the data argument is acutally a pointer to a python object
-        pdata = (PyObject*) data;
+        pdata = (PyObject *) data;
         if ( data == NULL )
         {
             pdata = Py_None;
@@ -1190,7 +1190,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             break;
         case CB_Python:
             Py_XINCREF( input );
-            result = (PLPointer*) input;
+            result = (PLPointer *) input;
             break;
         default:
             fprintf( stderr, "pltr_type is invalid\n" );
@@ -1231,7 +1231,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     }
     else
     {
-        if ( !PyCallable_Check( (PyObject*) $input ) )
+        if ( !PyCallable_Check( (PyObject *) $input ) )
         {
             PyErr_SetString( PyExc_ValueError, "pltr argument must be callable" );
             return NULL;
@@ -1259,7 +1259,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     }
     else
     {
-        if ( !PyCallable_Check( (PyObject*) $input ) )
+        if ( !PyCallable_Check( (PyObject *) $input ) )
         {
             PyErr_SetString( PyExc_ValueError, "coordinate transform argument must be callable" );
             return NULL;
@@ -1282,7 +1282,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     }
     else
     {
-        if ( !PyCallable_Check( (PyObject*) $input ) )
+        if ( !PyCallable_Check( (PyObject *) $input ) )
         {
             PyErr_SetString( PyExc_ValueError, "mapform argument must be callable" );
             return NULL;
@@ -1345,14 +1345,14 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     }
     else
     {
-        if ( !PyCallable_Check( (PyObject*) $input ) )
+        if ( !PyCallable_Check( (PyObject *) $input ) )
         {
             PyErr_SetString( PyExc_ValueError, "pltr argument must be callable" );
             return NULL;
         }
         // hold a reference to it
-        Py_XINCREF( (PyObject*) $input );
-        python_f2eval = (PyObject*) $input;
+        Py_XINCREF( (PyObject *) $input );
+        python_f2eval = (PyObject *) $input;
         // this function handles calling the python function
         $1 = do_f2eval_callback;
     }
@@ -1376,14 +1376,14 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     }
     else
     {
-        if ( !PyCallable_Check( (PyObject*) $input ) )
+        if ( !PyCallable_Check( (PyObject *) $input ) )
         {
             PyErr_SetString( PyExc_ValueError, "label_func argument must be callable" );
             return NULL;
         }
         // hold a reference to it
-        Py_XINCREF( (PyObject*) $input );
-        python_label = (PyObject*) $input;
+        Py_XINCREF( (PyObject *) $input );
+        python_label = (PyObject *) $input;
         // this function handles calling the python function
         $1 = do_label_callback;
     }

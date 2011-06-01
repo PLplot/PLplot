@@ -141,8 +141,8 @@ AppInit( Tcl_Interp *interp )
 // they weren't already created by the init procedures called above.
 //
 
-    Tcl_CreateCommand( interp, "myplot", (Tcl_CmdProc*) myplotCmd,
-        (ClientData) main, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "myplot", (Tcl_CmdProc *) myplotCmd,
+        (ClientData) main, (Tcl_CmdDeleteProc *) NULL );
 
     Tcl_MatrixInstallXtnsn( "stuff", stuff );
 

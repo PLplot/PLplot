@@ -385,7 +385,7 @@ wxPLDevBase* common_init( PLStream *pls )
     {
         plexit( "Insufficient memory" );
     }
-    pls->dev = (void*) dev;
+    pls->dev = (void *) dev;
 
 // be verbose and write out debug messages
 #ifdef _DEBUG
@@ -597,7 +597,7 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 {
     // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     if ( !( dev->ready ) )
         install_buffer( pls );
@@ -627,7 +627,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
     // Log_Verbose( "plD_polyline_wxwidgets()" );
 
     // should be changed to use the wxDC::DrawLines function?
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     if ( !( dev->ready ) )
         install_buffer( pls );
@@ -658,7 +658,7 @@ void plD_eop_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_eop_wxwidgets()" );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     if ( dev->bitmapType )
     {
@@ -695,7 +695,7 @@ void plD_bop_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_bop_wxwidgets()" );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     if ( dev->ready )
     {
@@ -750,7 +750,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_tidy_wxwidgets()" );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
 #ifdef HAVE_FREETYPE
     if ( dev->freetype )
@@ -783,7 +783,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 {
     // Log_Verbose( "plD_state_wxwidgets(op=%d)", op );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     switch ( op )
     {
@@ -826,7 +826,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 {
     // Log_Verbose( "plD_esc_wxwidgets(op=%d, ptr=%x)", op, ptr );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     switch ( op )
     {
@@ -867,7 +867,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 
     case PLESC_RESIZE:
     {
-        wxSize* size = (wxSize*) ptr;
+        wxSize* size = (wxSize *) ptr;
         wx_set_size( pls, size->GetWidth(), size->GetHeight() );
     }
     break;
@@ -900,7 +900,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_GETBACKEND:
-        *( (int*) ptr ) = dev->backend;
+        *( (int *) ptr ) = dev->backend;
         break;
 
     default:
@@ -918,7 +918,7 @@ static void fill_polygon( PLStream *pls )
 {
     // Log_Verbose( "fill_polygon(), npts=%d, x[0]=%d, y[0]=%d", pls->dev_npts, pls->dev_y[0], pls->dev_y[0] );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     if ( !( dev->ready ) )
         install_buffer( pls );
@@ -948,7 +948,7 @@ void wx_set_size( PLStream* pls, int width, int height )
     // TODO: buffer must be resized here or in wxplotstream
     // Log_Verbose( "wx_set_size()" );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     // set new size and scale parameters
     dev->width  = width;
@@ -1032,7 +1032,7 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
 {
     // Log_Verbose( "plD_pixel_wxwidgets" );
 
-    wxPLDevBase *dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase *dev = (wxPLDevBase *) pls->dev;
 
     if ( !( dev->ready ) )
         install_buffer( pls );
@@ -1061,7 +1061,7 @@ static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colo
 {
     // Log_Verbose( "plD_set_pixel_wxwidgets" );
 
-    wxPLDevBase *dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase *dev = (wxPLDevBase *) pls->dev;
 
     if ( !( dev->ready ) )
         install_buffer( pls );
@@ -1090,7 +1090,7 @@ static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y )
 {
     // Log_Verbose( "plD_read_pixel_wxwidgets" );
 
-    wxPLDevBase *dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase *dev = (wxPLDevBase *) pls->dev;
 
     if ( !( dev->ready ) )
         install_buffer( pls );
@@ -1111,7 +1111,7 @@ static void init_freetype_lv1( PLStream *pls )
 {
     // Log_Verbose( "init_freetype_lv1" );
 
-    wxPLDevBase *dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase *dev = (wxPLDevBase *) pls->dev;
 
     plD_FreeType_init( pls );
 
@@ -1252,7 +1252,7 @@ static void install_buffer( PLStream *pls )
 {
     // Log_Verbose( "install_buffer" );
 
-    wxPLDevBase * dev   = (wxPLDevBase*) pls->dev;
+    wxPLDevBase * dev   = (wxPLDevBase *) pls->dev;
     static bool initApp = false;
 
     if ( !initApp )
@@ -1337,7 +1337,7 @@ static void wxRunApp( PLStream *pls, bool runonce )
 {
     // Log_Verbose( "wxRunApp" );
 
-    wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
+    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
     dev->waiting = true;
     wxTRY

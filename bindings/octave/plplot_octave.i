@@ -1572,7 +1572,7 @@ void my_plimagefr2( const PLFLT *Matrix, PLINT nx, PLINT ny,
                     // if that element is going to be unused).
                     // leave room for null termination.
                     max_length  = 1;
-                    tmp_cstring = (char*) "";
+                    tmp_cstring = (char *) "";
                 }
             }
             else

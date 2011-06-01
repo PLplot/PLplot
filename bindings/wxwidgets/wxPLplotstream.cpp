@@ -90,10 +90,10 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     if ( m_backend == wxPLPLOT_BACKEND_AGG )
     {
         m_image = new wxImage( m_width, m_height );
-        cmd( PLESC_DEVINIT, (void*) m_image );
+        cmd( PLESC_DEVINIT, (void *) m_image );
     }
     else
-        cmd( PLESC_DEVINIT, (void*) m_dc );
+        cmd( PLESC_DEVINIT, (void *) m_dc );
 }
 
 
@@ -130,20 +130,20 @@ void wxPLplotstream::SetSize( int width, int height )
         {
             delete m_image;
             m_image = new wxImage( width, height );
-            cmd( PLESC_DEVINIT, (void*) m_image );
+            cmd( PLESC_DEVINIT, (void *) m_image );
         }
         wxSize size( width, height );
-        cmd( PLESC_RESIZE, (void*) &size );
+        cmd( PLESC_RESIZE, (void *) &size );
     }
     else
     {
         wxSize size( width, height );
-        cmd( PLESC_RESIZE, (void*) &size );
+        cmd( PLESC_RESIZE, (void *) &size );
         if ( m_image )
         {
             delete m_image;
             m_image = new wxImage( width, height );
-            cmd( PLESC_DEVINIT, (void*) m_image );
+            cmd( PLESC_DEVINIT, (void *) m_image );
         }
     }
 

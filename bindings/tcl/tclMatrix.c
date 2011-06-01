@@ -319,7 +319,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         }
         matPtr->tracing = 1;
         Tcl_TraceVar( interp, matPtr->name, TCL_TRACE_UNSETS,
-            (Tcl_VarTraceProc*) DeleteMatrixVar, (ClientData) matPtr );
+            (Tcl_VarTraceProc *) DeleteMatrixVar, (ClientData) matPtr );
     }
 
 // Create matrix operator
@@ -327,8 +327,8 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 #ifdef DEBUG
     fprintf( stderr, "Creating Matrix operator of name %s\n", matPtr->name );
 #endif
-    Tcl_CreateCommand( interp, matPtr->name, (Tcl_CmdProc*) MatrixCmd,
-        (ClientData) matPtr, (Tcl_CmdDeleteProc*) DeleteMatrixCmd );
+    Tcl_CreateCommand( interp, matPtr->name, (Tcl_CmdProc *) MatrixCmd,
+        (ClientData) matPtr, (Tcl_CmdDeleteProc *) DeleteMatrixCmd );
 
 // Store pointer to interpreter to handle bizarre uses of multiple
 // interpreters (e.g. as in [incr Tcl])

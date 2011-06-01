@@ -474,7 +474,7 @@ void plD_esc_aqt( PLStream *pls, PLINT op, void *ptr )
         break;
     case PLESC_GETC:               // get cursor position
         [adapter renderPlot];      // needed to give the user something to click on
-        get_cursor( pls, (PLGraphicsIn*) ptr );
+        get_cursor( pls, (PLGraphicsIn *) ptr );
         break;
     case PLESC_SWIN:               // set window parameters
         break;
@@ -799,7 +799,7 @@ void check_font_environment_variables( void )
 
             // printf("new font : %s\n", new_font);
 
-            AQT_FontLookup[i].pfont = (unsigned char*) new_font;
+            AQT_FontLookup[i].pfont = (unsigned char *) new_font;
         }
     }
 }

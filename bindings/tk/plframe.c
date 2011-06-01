@@ -455,7 +455,7 @@ plFrameCmd( ClientData clientData, Tcl_Interp *interp,
         plFramePtr->devName[i] = NULL;
     }
     ndev = NDEV;
-    plgFileDevs( (const char***) &plFramePtr->devDesc, (const char ***) &plFramePtr->devName, &ndev );
+    plgFileDevs( (const char ***) &plFramePtr->devDesc, (const char ***) &plFramePtr->devName, &ndev );
 
 // Start up event handlers and other good stuff
 
@@ -471,7 +471,7 @@ plFrameCmd( ClientData clientData, Tcl_Interp *interp,
     plFramePtr->widgetCmd =
 #endif
     Tcl_CreateCommand( interp, Tk_PathName( plFramePtr->tkwin ),
-        (Tcl_CmdProc*) PlFrameWidgetCmd, (ClientData) plFramePtr, (Tcl_CmdDeleteProc*) NULL );
+        (Tcl_CmdProc *) PlFrameWidgetCmd, (ClientData) plFramePtr, (Tcl_CmdDeleteProc *) NULL );
 #ifdef HAVE_ITCL
     Itk_SetWidgetCommand( plFramePtr->tkwin, plFramePtr->widgetCmd );
 #endif
@@ -2253,7 +2253,7 @@ ConfigurePlFrame( Tcl_Interp *interp, register PlFrame *plFramePtr,
     dbug_enter( "ConfigurePlFrame" );
 
     if ( Tk_ConfigureWidget( interp, tkwin, configSpecs,
-             argc, (CONST char**) argv, (char *) plFramePtr, flags ) != TCL_OK )
+             argc, (CONST char **) argv, (char *) plFramePtr, flags ) != TCL_OK )
     {
         return TCL_ERROR;
     }

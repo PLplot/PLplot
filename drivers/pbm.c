@@ -277,7 +277,7 @@ void
 plD_bop_pbm( PLStream *pls )
 {
     int i, j, k;
-    cmap = (char*) malloc( pls->xlength * pls->ylength * 3 );
+    cmap = (char *) malloc( pls->xlength * pls->ylength * 3 );
     for ( i = 0; i < pls->ylength; i++ )
         for ( j = 0; j < pls->xlength; j++ )
         {

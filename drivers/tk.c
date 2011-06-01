@@ -960,28 +960,28 @@ pltkdriver_Init( PLStream *pls )
 // they weren't already created by the init procedures called above.
 //
 
-    Tcl_CreateCommand( interp, "wait_until", (Tcl_CmdProc*) plWait_Until,
-        (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "wait_until", (Tcl_CmdProc *) plWait_Until,
+        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
 
 #ifdef PLD_dp
     if ( pls->dp )
     {
-        Tcl_CreateCommand( interp, "host_id", (Tcl_CmdProc*) plHost_ID,
-            (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
+        Tcl_CreateCommand( interp, "host_id", (Tcl_CmdProc *) plHost_ID,
+            (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
     }
 #endif
 
-    Tcl_CreateCommand( interp, "abort", (Tcl_CmdProc*) Abort,
-        (ClientData) pls, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "abort", (Tcl_CmdProc *) Abort,
+        (ClientData) pls, (Tcl_CmdDeleteProc *) NULL );
 
-    Tcl_CreateCommand( interp, "plfinfo", (Tcl_CmdProc*) Plfinfo,
-        (ClientData) pls, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "plfinfo", (Tcl_CmdProc *) Plfinfo,
+        (ClientData) pls, (Tcl_CmdDeleteProc *) NULL );
 
-    Tcl_CreateCommand( interp, "keypress", (Tcl_CmdProc*) KeyEH,
-        (ClientData) pls, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "keypress", (Tcl_CmdProc *) KeyEH,
+        (ClientData) pls, (Tcl_CmdDeleteProc *) NULL );
 
-    Tcl_CreateCommand( interp, "buttonpress", (Tcl_CmdProc*) ButtonEH,
-        (ClientData) pls, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "buttonpress", (Tcl_CmdProc *) ButtonEH,
+        (ClientData) pls, (Tcl_CmdDeleteProc *) NULL );
 
 // Set some relevant interpreter variables
 

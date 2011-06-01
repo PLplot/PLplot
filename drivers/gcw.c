@@ -360,7 +360,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
     if ( dev->use_pixmap && !dev->use_persistence ) // Write to bg pixmap
 
     {
-        if ( ( gdkpoints = (GdkPoint*) malloc( npts * sizeof ( GdkPoint ) ) ) == NULL )
+        if ( ( gdkpoints = (GdkPoint *) malloc( npts * sizeof ( GdkPoint ) ) ) == NULL )
         {
             plabort( "GCW driver <plD_polyline_gcw>: Could not create gdkpoints" );
             return;
@@ -531,8 +531,8 @@ void plD_eop_gcw( PLStream *pls )
         group = dev->group_hidden;
 
     // Retrieve the device width and height of the canvas
-    width  = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
-    height = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-height" );
+    width  = *(PLINT *) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
+    height = *(PLINT *) g_object_get_data( G_OBJECT( canvas ), "canvas-height" );
 
     if ( dev->pixmap_has_data )
     {
@@ -601,7 +601,7 @@ void plD_eop_gcw( PLStream *pls )
     // Destroy the old visible group
     if ( GNOME_IS_CANVAS_GROUP( dev->group_visible ) )
     {
-        gtk_object_destroy( (GtkObject*) ( dev->group_visible ) );
+        gtk_object_destroy( (GtkObject *) ( dev->group_visible ) );
         dev->group_visible = NULL;
     }
 
@@ -871,7 +871,7 @@ static void fill_polygon( PLStream* pls )
     if ( dev->use_pixmap && !dev->use_persistence ) // Write to a pixmap
 
     {
-        if ( ( gdkpoints = (GdkPoint*) malloc( pls->dev_npts * sizeof ( GdkPoint ) ) ) == NULL )
+        if ( ( gdkpoints = (GdkPoint *) malloc( pls->dev_npts * sizeof ( GdkPoint ) ) ) == NULL )
         {
             plabort( "GCW driver <fill_polygon>: Could not create gdkpoints" );
             return;

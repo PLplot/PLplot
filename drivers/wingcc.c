@@ -982,7 +982,7 @@ plD_esc_wingcc( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_XORMOD:
-        if ( *(PLINT*) ( ptr ) == 0 )
+        if ( *(PLINT *) ( ptr ) == 0 )
             SetROP2( dev->hdc, R2_COPYPEN );
         else
             SetROP2( dev->hdc, R2_XORPEN );

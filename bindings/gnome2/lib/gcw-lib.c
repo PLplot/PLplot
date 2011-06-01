@@ -90,8 +90,8 @@ void gcw_clear_background()
 #endif
 
     // Retrieve the device width and height
-    width  = *(PLINT*) g_object_get_data( G_OBJECT( dev->canvas ), "canvas-width" );
-    height = *(PLINT*) g_object_get_data( G_OBJECT( dev->canvas ), "canvas-height" );
+    width  = *(PLINT *) g_object_get_data( G_OBJECT( dev->canvas ), "canvas-width" );
+    height = *(PLINT *) g_object_get_data( G_OBJECT( dev->canvas ), "canvas-height" );
 
     // Allocate the background color
     gdk_colormap_alloc_color( dev->colormap, &( dev->bgcolor ), FALSE, TRUE );
@@ -664,8 +664,8 @@ void gcw_install_canvas( GnomeCanvas *canvas )
         gtk_window_set_focus( GTK_WINDOW( dev->window ), dev->notebook );
 
         // Retrieve the canvas width and height
-        width  = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
-        height = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-height" );
+        width  = *(PLINT *) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
+        height = *(PLINT *) g_object_get_data( G_OBJECT( canvas ), "canvas-height" );
 
         // Size the window
         gtk_window_resize( GTK_WINDOW( dev->window ), width * ZOOM100 + 65,
@@ -761,9 +761,9 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
     height += 1;
 
     // Attach the width and height to the canvas
-    if ( ( w = (PLINT*) malloc( sizeof ( gint ) ) ) == NULL )
+    if ( ( w = (PLINT *) malloc( sizeof ( gint ) ) ) == NULL )
         plwarn( "GCW driver <gcw_set_canvas_size>: Insufficient memory." );
-    if ( ( h = (PLINT*) malloc( sizeof ( gint ) ) ) == NULL )
+    if ( ( h = (PLINT *) malloc( sizeof ( gint ) ) ) == NULL )
         plwarn( "GCW driver <gcw_set_canvas_size>: Insufficient memory." );
     *w = width;
     *h = height;
@@ -847,8 +847,8 @@ void gcw_set_canvas_zoom( GnomeCanvas* canvas, PLFLT magnification )
 #endif
 
     // Retrieve the device width and height
-    width  = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
-    height = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-height" );
+    width  = *(PLINT *) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
+    height = *(PLINT *) g_object_get_data( G_OBJECT( canvas ), "canvas-height" );
 
     // Get the current magnification
     gnome_canvas_c2w( canvas, 1, 0, &curmag, &dum );

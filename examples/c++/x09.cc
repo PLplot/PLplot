@@ -64,10 +64,10 @@ public:
     static const PLFLT YSPA;
 };
 
-const int x09::  XPTS = 35;
-const int x09::  YPTS = 46;
-const PLFLT x09::XSPA = 2. / ( XPTS - 1 );
-const PLFLT x09::YSPA = 2. / ( YPTS - 1 );
+const int   x09::  XPTS = 35;
+const int   x09::  YPTS = 46;
+const PLFLT x09::XSPA   = 2. / ( XPTS - 1 );
+const PLFLT x09::YSPA   = 2. / ( YPTS - 1 );
 
 // polar plot data
 const int x09::PERIMETERPTS = 100;
@@ -80,7 +80,7 @@ const int x09::PRPTS         = 40;
 const int x09::PTHETAPTS     = 64;
 const int x09::PNLEVEL       = 20;
 
-PLFLT x09::    clevel[] = { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
+PLFLT     x09::    clevel[] = { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
 // Transformation function
 //const PLFLT x09::tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 

@@ -169,7 +169,7 @@ class PLDLLIMPEXP_QT QtRasterDevice : public QtPLDriver, public QImage
 {
 public:
     QtRasterDevice( int i_iWidth = QT_DEFAULT_X,
-        int i_iHeight = QT_DEFAULT_Y );
+                    int i_iHeight = QT_DEFAULT_Y );
     virtual ~QtRasterDevice();
 
     virtual void setBackgroundColor( int r, int g, int b, double alpha );
@@ -196,7 +196,7 @@ class PLDLLIMPEXP_QT QtSVGDevice : public QtPLDriver, public QSvgGenerator
 {
 public:
     QtSVGDevice( int i_iWidth = QT_DEFAULT_X,
-        int i_iHeight = QT_DEFAULT_Y );
+                 int i_iHeight = QT_DEFAULT_Y );
 
     virtual ~QtSVGDevice();
 

@@ -87,8 +87,8 @@ Plplotter_Init( Tcl_Interp *interp )
 
 // plframe -- PLplot graphing widget
 
-    Tcl_CreateCommand( interp, "plframe", (Tcl_CmdProc*) plPlotterCmd,
-        (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "plframe", (Tcl_CmdProc *) plPlotterCmd,
+        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
 
     Tcl_PkgProvide( interp, "Plplotter", VERSION );
     return TCL_OK;

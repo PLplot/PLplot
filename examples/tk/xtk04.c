@@ -137,8 +137,8 @@ AppInit( Tcl_Interp *interp )
 // they weren't already created by the init procedures called above.
 //
 
-    Tcl_CreateCommand( interp, "get_data", (Tcl_CmdProc*) get_dataCmd,
-        (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL );
+    Tcl_CreateCommand( interp, "get_data", (Tcl_CmdProc *) get_dataCmd,
+        (ClientData) mainWindow, (Tcl_CmdDeleteProc *) NULL );
 
     Tcl_MatrixInstallXtnsn( "max", mat_max );
     Tcl_MatrixInstallXtnsn( "min", mat_min );

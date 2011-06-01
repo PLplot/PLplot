@@ -86,7 +86,7 @@ while test $# -gt 0; do
     shift
 done
 
-allowed_version=0.56
+allowed_version=0.58
 version=$(uncrustify --version)
 if [ "$version" != "uncrustify $allowed_version" ] ; then
     echo "

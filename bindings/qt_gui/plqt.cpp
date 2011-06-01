@@ -304,7 +304,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
 
 
             case '#':
-                currentString.append( QString( (QChar*) &( text[i] ), 1 ) );
+                currentString.append( QString( (QChar *) &( text[i] ), 1 ) );
                 break;
 
             default:
@@ -1503,20 +1503,20 @@ void QtExtWidget::paintEvent( QPaintEvent* event )
 
 void plsetqtdev( QtExtWidget* widget )
 {
-    plsc->dev = (void*) widget;
+    plsc->dev = (void *) widget;
     widget->setPLStream( plsc );
 }
 
 void plsetqtdev( QtExtWidget* widget, int argc, char** argv )
 {
-    plparseopts( &argc, (const char**) argv, PL_PARSE_FULL );
-    plsc->dev = (void*) widget;
+    plparseopts( &argc, (const char **) argv, PL_PARSE_FULL );
+    plsc->dev = (void *) widget;
     widget->setPLStream( plsc );
 }
 
 void plfreeqtdev()
 {
-    delete ( (QtExtWidget*) plsc->dev );
+    delete ( (QtExtWidget *) plsc->dev );
     plsc->dev = NULL;
 }
 #endif

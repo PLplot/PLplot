@@ -1074,9 +1074,9 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         }
 
         // allocate storage for new versions of the input vectors
-        if ( ( ( _x = (PLFLT*) malloc( _nx * sizeof ( PLFLT ) ) ) == NULL ) ||
-             ( ( _y = (PLFLT*) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL ) ||
-             ( ( _z = (PLFLT**) malloc( _nx * sizeof ( PLFLT* ) ) ) == NULL ) )
+        if ( ( ( _x = (PLFLT *) malloc( _nx * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( _y = (PLFLT *) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( _z = (PLFLT **) malloc( _nx * sizeof ( PLFLT* ) ) ) == NULL ) )
         {
             plexit( "c_plot3dcl: Insufficient memory" );
         }
@@ -1096,7 +1096,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         // copy the data array so we can interpolate around the edges
         for ( i = 0; i < _nx; i++ )
         {
-            if ( ( _z[i] = (PLFLT*) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL )
+            if ( ( _z[i] = (PLFLT *) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL )
             {
                 plexit( "c_plot3dcl: Insufficient memory" );
             }

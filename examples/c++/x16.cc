@@ -54,13 +54,13 @@ public:
     static const char    *notes[];
 };
 
-int x16::      ns           = 20;
-int x16::      nx           = 35;
-int x16::      ny           = 46;
-int x16::      exclude      = 0;
-const int x16::PERIMETERPTS = 100;
+int       x16::      ns      = 20;
+int       x16::      nx      = 35;
+int       x16::      ny      = 46;
+int       x16::      exclude = 0;
+const int x16::PERIMETERPTS  = 100;
 
-PLFLT x16::    tr[] = { 2. / ( nx - 1 ), 0.0, -1.0, 0.0, 2. / ( ny - 1 ), -1.0 };
+PLFLT     x16::    tr[] = { 2. / ( nx - 1 ), 0.0, -1.0, 0.0, 2. / ( ny - 1 ), -1.0 };
 
 
 // Options data structure definition.
@@ -113,7 +113,7 @@ PLOptionTable x16::options[] = {
     }                           // long syntax
 };
 
-const char *x16::  notes[] = {
+const char    *x16::  notes[] = {
     "To get smoother color variation, increase ns, nx, and ny.  To get faster",
     "response (especially on a serial link), decrease them.  A decent but quick",
     "test results from ns around 5 and nx, ny around 25.",

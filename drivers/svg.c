@@ -595,7 +595,7 @@ void proc_str( PLStream *pls, EscText *args )
     ftHt = FONT_SIZE_RATIO * pls->chrht * POINTS_PER_INCH / 25.4;
 
     // Setup & apply text clipping area if desired
-    aStream = (SVG*) pls->dev;
+    aStream = (SVG *) pls->dev;
     if ( aStream->textClipping )
     {
         svg_open( aStream, "clipPath" );

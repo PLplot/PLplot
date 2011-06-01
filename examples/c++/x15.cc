@@ -51,8 +51,8 @@ private:
     const static PLFLT tr[];
 };
 
-const int x15::  XPTS = 35;
-const int x15::  YPTS = 46;
+const int   x15::  XPTS = 35;
+const int   x15::  YPTS = 46;
 // calculated constants and array that depends on them
 const PLFLT x15::XSPA = 2. / ( XPTS - 1 );
 const PLFLT x15::YSPA = 2. / ( YPTS - 1 );

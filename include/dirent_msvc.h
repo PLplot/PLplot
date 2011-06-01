@@ -114,7 +114,7 @@ opendir(
     assert( strlen( dirname ) < MAX_PATH );
 
     // construct new DIR structure
-    dirp = (DIR*) malloc( sizeof ( struct DIR ) );
+    dirp = (DIR *) malloc( sizeof ( struct DIR ) );
     if ( dirp != NULL )
     {
         char *p;

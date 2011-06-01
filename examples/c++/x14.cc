@@ -57,10 +57,10 @@ private:
 PLINT x14::space0 = 0, x14::mark0 = 0,
 x14::space1       = 1500, x14::mark1 = 1500;
 
-const int x14::  xpts = 35;
-const int x14::  ypts = 46;
-const PLFLT x14::xspa = 2. / ( x14::xpts - 1 );
-const PLFLT x14::yspa = 2. / ( x14::ypts - 1 );
+const int   x14::  xpts = 35;
+const int   x14::  ypts = 46;
+const PLFLT x14::xspa   = 2. / ( x14::xpts - 1 );
+const PLFLT x14::yspa   = 2. / ( x14::ypts - 1 );
 
 const PLFLT x14::tr[6] =
 { x14::xspa, 0.0, -1.0, 0.0, x14::yspa, -1.0 };

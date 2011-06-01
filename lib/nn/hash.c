@@ -183,7 +183,7 @@ void* ht_insert( hashtable* table, void* key, void* data )
     // place as soon as it was determined that the present key in the list
     // was larger than this one.
     //
-    bucket = (ht_bucket*) malloc( sizeof ( ht_bucket ) );
+    bucket = (ht_bucket *) malloc( sizeof ( ht_bucket ) );
     if ( bucket == NULL )
         return 0;
     bucket->key  = table->cp( key );
@@ -305,12 +305,12 @@ void ht_process( hashtable* table, void ( *func )( void* ) )
 
 static unsigned int strhash( void* key )
 {
-    char         * str     = (char*) key;
+    char         * str     = (char *) key;
     unsigned int hashvalue = 0;
 
     while ( *str != 0 )
     {
-        hashvalue  ^= *(unsigned int*) str;
+        hashvalue  ^= *(unsigned int *) str;
         hashvalue <<= 1;
         str++;
     }
@@ -332,7 +332,7 @@ static int streq( void* key1, void* key2 )
 
 static unsigned int d1hash( void* key )
 {
-    unsigned int* v = (unsigned int*) key;
+    unsigned int* v = (unsigned int *) key;
 
 #if INT_PER_DOUBLE == 2
     return v[0] + v[1];
@@ -345,14 +345,14 @@ static void* d1cp( void* key )
 {
     double* newkey = malloc( sizeof ( double ) );
 
-    *newkey = *(double*) key;
+    *newkey = *(double *) key;
 
     return newkey;
 }
 
 int d1eq( void* key1, void* key2 )
 {
-    return *(double*) key1 == *(double*) key2;
+    return *(double *) key1 == *(double *) key2;
 }
 
 //
@@ -363,7 +363,7 @@ int d1eq( void* key1, void* key2 )
 
 static unsigned int d2hash( void* key )
 {
-    unsigned int* v = (unsigned int*) key;
+    unsigned int* v = (unsigned int *) key;
 
 #if INT_PER_DOUBLE == 2
     //
@@ -380,15 +380,15 @@ static void* d2cp( void* key )
 {
     double* newkey = malloc( sizeof ( double ) * 2 );
 
-    newkey[0] = ( (double*) key )[0];
-    newkey[1] = ( (double*) key )[1];
+    newkey[0] = ( (double *) key )[0];
+    newkey[1] = ( (double *) key )[1];
 
     return newkey;
 }
 
 static int d2eq( void* key1, void* key2 )
 {
-    return ( ( (double*) key1 )[0] == ( (double*) key2 )[0] ) && ( ( (double*) key1 )[1] == ( (double*) key2 )[1] );
+    return ( ( (double *) key1 )[0] == ( (double *) key2 )[0] ) && ( ( (double *) key1 )[1] == ( (double *) key2 )[1] );
 }
 
 hashtable* ht_create_d1( int size )
@@ -415,12 +415,12 @@ hashtable* ht_create_str( int size )
 
 static void print_double( void* data )
 {
-    printf( " \"%d\"", (int) *(double*) data );
+    printf( " \"%d\"", (int) *(double *) data );
 }
 
 static void print_string( void* data )
 {
-    printf( " \"%s\"", (char*) data );
+    printf( " \"%s\"", (char *) data );
 }
 
 int main()

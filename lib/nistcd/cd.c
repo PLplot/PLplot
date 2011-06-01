@@ -396,7 +396,7 @@ int cdCgmPic( cdImagePtr im, int sticky )
 
     //** Attribute: BegPic; Elem Class 0; Elem ID 3
     sprintf( tb, "picture %d", im->picnum );
-    buf = (unsigned char*) tb;
+    buf = (unsigned char *) tb;
     // buf = (unsigned char *) "picture 1";
     blen = strlen( (char *) buf );
     cdcomhead( head, 0, 3, blen + 1 );
@@ -3276,14 +3276,14 @@ cdImagePtr cdImageStartCgm()
     if ( tmpsl > 250 )
         tmpsl = 250;
     im->desc = (unsigned char *) calloc( tmpsl + 1, SIZEOF( unsigned char ) );
-    strncpy( (char*) im->desc, tmps, tmpsl );
+    strncpy( (char *) im->desc, tmps, tmpsl );
     // The font list can be quite long, but individual font names can
     // can only be 250 chars
     tmps         = "TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,HELVETICA,HELVETICA_BOLD,HELVETICA_ITALIC,HELVETICA_BOLD_ITALIC,COURIER,COURIER_BOLD,COURIER_ITALIC,COURIER_BOLD_ITALIC";
     im->numfonts = 12;
     tmpsl        = strlen( tmps );
     im->fontlist = (unsigned char *) calloc( tmpsl + 1, SIZEOF( unsigned char ) );
-    strcpy( (char*) im->fontlist, tmps );
+    strcpy( (char *) im->fontlist, tmps );
     im->outfile = NULL;
 
     if ( !cdImageSetDefaults( im ) )

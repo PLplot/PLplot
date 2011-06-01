@@ -59,7 +59,7 @@ wxPLDevGC::~wxPLDevGC()
     {
         if ( m_dc )
         {
-            ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap );
+            ( (wxMemoryDC *) m_dc )->SelectObject( wxNullBitmap );
             delete m_dc;
         }
         if ( m_bitmap )
@@ -238,15 +238,15 @@ void wxPLDevGC::CreateCanvas()
         if ( !m_dc )
             m_dc = new wxMemoryDC();
 
-        ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); // deselect bitmap
+        ( (wxMemoryDC *) m_dc )->SelectObject( wxNullBitmap ); // deselect bitmap
         if ( m_bitmap )
             delete m_bitmap;
         m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
-        ( (wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
+        ( (wxMemoryDC *) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
     }
 
     if ( m_dc )
-        m_context = wxGraphicsContext::Create( *( (wxMemoryDC*) m_dc ) );
+        m_context = wxGraphicsContext::Create( *( (wxMemoryDC *) m_dc ) );
 }
 
 
@@ -308,8 +308,8 @@ void wxPLDevGC::SetExternalBuffer( void* dc )
 {
     // Log_Verbose( "%s", __FUNCTION__ );
 
-    m_dc      = (wxDC*) dc; // Add the dc to the device
-    m_context = wxGraphicsContext::Create( *( (wxMemoryDC*) m_dc ) );
+    m_dc      = (wxDC *) dc; // Add the dc to the device
+    m_context = wxGraphicsContext::Create( *( (wxMemoryDC *) m_dc ) );
     ready     = true;
     ownGUI    = false;
 }

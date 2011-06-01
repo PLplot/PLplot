@@ -278,7 +278,7 @@ plP_esc( PLINT op, void *ptr )
         // Apply the driver interface filter
         if ( plsc->difilt )
         {
-            args = (EscText*) ptr;
+            args = (EscText *) ptr;
             difilt( &( args->x ), &( args->y ), 1, &clpxmi, &clpxma, &clpymi, &clpyma );
         }
     }

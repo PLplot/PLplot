@@ -59,7 +59,7 @@ wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& 
     MemPlotDCBitmap = new wxBitmap( bitmapWidth, bitmapHeight, -1 );
     MemPlotDC->SelectObject( *MemPlotDCBitmap );
 
-    m_stream = new wxPLplotstream( (wxDC*) MemPlotDC, m_width, m_height, pl_style );
+    m_stream = new wxPLplotstream( (wxDC *) MemPlotDC, m_width, m_height, pl_style );
 
     m_stream->cmd( PLESC_GETBACKEND, &m_backend );
     m_backend = 1 << ( m_backend + 2 );

@@ -52,12 +52,12 @@ private:
 };
 
 
-const int x08::    XPTS  = 35;
-const int x08::    YPTS  = 46;
-PLFLT x08::        alt[] = { 60.0, 20.0 };
-PLFLT x08::        az[] = { 30.0, 60.0 };
+const int     x08::    XPTS      = 35;
+const int     x08::    YPTS      = 46;
+PLFLT         x08::        alt[] = { 60.0, 20.0 };
+PLFLT         x08::        az[] = { 30.0, 60.0 };
 
-const char *x08::  title[] = {
+const char    *x08::  title[] = {
     "#frPLplot Example 8 - Alt=60, Az=30",
     "#frPLplot Example 8 - Alt=20, Az=60",
 };
