@@ -56,9 +56,9 @@
 #include "mt19937ar.h"
 
 #define BUFFER_SIZE    256
-#define COLLEN          30
+#define COLLEN         30
 #define PALLEN         160
-#define MSGLEN        1024
+#define MSGLEN         1024
 
 // small epsilon for fuzzy range checks that is still large enough to
 // work even in the single precision floating point case.
@@ -1231,7 +1231,8 @@ read_line( char *buffer, int length, FILE *fp )
     char *pchr;
 
     // Read the string
-    if ( fgets( buffer, length, fp ) == NULL ) {
+    if ( fgets( buffer, length, fp ) == NULL )
+    {
         return NULL;
     }
 
@@ -1254,11 +1255,11 @@ read_line( char *buffer, int length, FILE *fp )
     }
 
     // Remove trailing blanks
-    pchr = buffer + strlen(buffer)-1;
+    pchr = buffer + strlen( buffer ) - 1;
     while ( pchr != buffer && *pchr == ' ' )
     {
         *pchr = '\0';
-        pchr --;
+        pchr--;
     }
 
     return buffer;
@@ -1447,16 +1448,16 @@ c_plspal0( const char *filename )
 // floating-point range checking of a value and the adjustment of that
 // value when close to the range when there is floating-point errors.
 //
-#define fuzzy_range_check( value, min, max, fuzz, err_number )                                                                      \
-    if ( value < ( min - fuzz ) || value > ( max + fuzz ) ) {                                                                       \
+#define fuzzy_range_check( value, min, max, fuzz, err_number )                                                                        \
+    if ( value < ( min - fuzz ) || value > ( max + fuzz ) ) {                                                                         \
         snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", err_number, color_info ); \
-        plwarn( msgbuf );                                                                                                           \
-        err = 1;                                                                                                                    \
-        break;                                                                                                                      \
-    } else if ( value < min ) {                                                                                                     \
-        value = min;                                                                                                                \
-    } else if ( value > max ) {                                                                                                     \
-        value = max;                                                                                                                \
+        plwarn( msgbuf );                                                                                                             \
+        err = 1;                                                                                                                      \
+        break;                                                                                                                        \
+    } else if ( value < min ) {                                                                                                       \
+        value = min;                                                                                                                  \
+    } else if ( value > max ) {                                                                                                       \
+        value = max;                                                                                                                  \
     }
 //--------------------------------------------------------------------------
 // void c_plspal1(filename)
@@ -1567,8 +1568,8 @@ c_plspal1( const char *filename, PLBOOL interpolate )
                 goto finish;
             }
             // Ensure string is null terminated if > 160 characters
-            color_info[PALLEN-1] = '\0';
-            return_sscanf   = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i );
+            color_info[PALLEN - 1] = '\0';
+            return_sscanf          = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i );
             if ( return_sscanf < 4 || ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ) )
             {
                 snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n", color_info );
