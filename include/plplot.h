@@ -1266,6 +1266,8 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_COLORBAR_ORIENT_TOP       0x1000
 #define PL_COLORBAR_ORIENT_LEFT      0x2000
 #define PL_COLORBAR_ORIENT_BOTTOM    0x4000
+#define PL_COLORBAR_BACKGROUND       0x8000
+#define PL_COLORBAR_BOUNDING_BOX     0x10000
 
 // Flags for drawing mode
 #define PL_MODE_UNKNOWN              0
@@ -1292,8 +1294,10 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
 // Routine for drawing continous colour legends
 PLDLLIMPEXP void
-c_plcolorbar( PLINT position, PLINT opt,
-              PLFLT x, PLFLT y, PLFLT x_length, PLFLT y_length,
+c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+              PLINT opt, PLINT position, PLFLT x, PLFLT y,
+              PLFLT x_length, PLFLT y_length,
+              PLINT bg_color, PLINT bb_color, PLINT bb_style,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,

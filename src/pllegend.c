@@ -337,7 +337,12 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 //--------------------------------------------------------------------------
 //! Convert from adopted X coordinate to normalized subpage X
-//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinate.  The *_adopted variables are the normalized subpage
+//! limits of the adopted viewport which is either the external
+//! viewport (PL_POSITION_VIEWPORT bit set in the position parameter)
+//! or the subpage itself (PL_POSITION_SUBPAGE bit set in the position
+//! parameter, in which case this is an identity transform).  See
+//! pllegend documentation for more details concerning the adopted
 //! coordinates.
 //!
 //! @param nx Adopted X coordinate.
@@ -347,7 +352,12 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 //--------------------------------------------------------------------------
 //! Convert from normalized subpage X coordinate to adopted X
-//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinate.  The *_adopted variables are the normalized subpage
+//! limits of the adopted viewport which is either the external
+//! viewport (PL_POSITION_VIEWPORT bit set in the position parameter)
+//! or the subpage itself (PL_POSITION_SUBPAGE bit set in the position
+//! parameter, in which case this is an identity transform).  See
+//! pllegend documentation for more details concerning the adopted
 //! coordinates.
 //!
 //! @param nx Normalized subpage X coordinate.
@@ -357,7 +367,12 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 //--------------------------------------------------------------------------
 //! Convert from adopted Y coordinate to normalized subpage Y
-//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinate.  The *_adopted variables are the normalized subpage
+//! limits of the adopted viewport which is either the external
+//! viewport (PL_POSITION_VIEWPORT bit set in the position parameter)
+//! or the subpage itself (PL_POSITION_SUBPAGE bit set in the position
+//! parameter, in which case this is an identity transform).  See
+//! pllegend documentation for more details concerning the adopted
 //! coordinates.
 //!
 //! @param ny Adopted Y coordinate.
@@ -367,7 +382,12 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 //--------------------------------------------------------------------------
 //! Convert from normalized subpage Y coordinate to adopted Y
-//! coordinate.  See pllegend documentation for definition of adopted
+//! coordinate.  The *_adopted variables are the normalized subpage
+//! limits of the adopted viewport which is either the external
+//! viewport (PL_POSITION_VIEWPORT bit set in the position parameter)
+//! or the subpage itself (PL_POSITION_SUBPAGE bit set in the position
+//! parameter, in which case this is an identity transform).  See
+//! pllegend documentation for more details concerning the adopted
 //! coordinates.
 //!
 //! @param ny Normalized subpage Y coordinate.
@@ -406,19 +426,21 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! Otherwise, plot the legend entries in column-major order.
 //! @param position This variable contains bits which control the
 //! overall position of the legend and the definition of the adopted
-//! coordinates used for positions.  The combination of the
-//! PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP,
-//! PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE
-//! bits specifies one of the 16 possible standard positions (the 4
-//! corners and 4 side centers for both the inside and outside cases)
-//! of the legend relative to the adopted coordinate system.  The
-//! adopted coordinates are normalized viewport coordinates if the
-//! PL_POSITION_VIEWPORT bit is set or normalized subpage coordinates
-//! if the PL_POSITION_SUBPAGE bit is set.  Default position bits: If
-//! none of PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP, or
-//! PL_POSITION_BOTTOM are set, then use the combination of
-//! PL_POSITION_RIGHT and PL_POSITION_TOP.  If neither of
-//! PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set, use
+//! coordinates used for positions just like what is done for the
+//! position argument for plcolorbar.  Note, however, that the defaults
+//! for the position bits (see below) are different than the plcolorbar
+//! case.  The combination of the PL_POSITION_LEFT, PL_POSITION_RIGHT,
+//! PL_POSITION_TOP, PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and
+//! PL_POSITION_OUTSIDE bits specifies one of the 16 possible standard
+//! positions (the 4 corners and 4 side centers for both the inside
+//! and outside cases) of the legend relative to the adopted
+//! coordinate system.  The adopted coordinates are normalized
+//! viewport coordinates if the PL_POSITION_VIEWPORT bit is set or
+//! normalized subpage coordinates if the PL_POSITION_SUBPAGE bit is
+//! set.  Default position bits: If none of PL_POSITION_LEFT,
+//! PL_POSITION_RIGHT, PL_POSITION_TOP, or PL_POSITION_BOTTOM are set,
+//! then the combination of PL_POSITION_RIGHT and PL_POSITION_TOP.  If
+//! neither of PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set, use
 //! PL_POSITION_INSIDE.  If neither of PL_POSITION_VIEWPORT or
 //! PL_POSITION_SUBPAGE is set, use PL_POSITION_VIEWPORT.
 //! @param x X offset of the legend position in adopted coordinates
@@ -619,13 +641,13 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     if ( position & PL_POSITION_SUBPAGE )
         plvpor( 0., 1., 0., 1. );
 
-    // xdmin_adopted, etc., are the adopted coordinates within the
-    // current sub-page used for all coordinate transformations.
-    // If position & PL_POSITION_VIEWPORT is true, these coordinates
-    // are the external relative viewport coordinates.
+    // xdmin_adopted, etc., are the adopted limits of the coordinates
+    // within the current sub-page used for all coordinate
+    // transformations.
+    // If position & PL_POSITION_VIEWPORT is true, these limits
+    // are the external relative viewport limits.
     // If position & PL_POSITION_SUBPAGE is true, these
     // coordinates are the relative subpage coordinates.
-
     plgvpsp( &xdmin_adopted, &xdmax_adopted, &ydmin_adopted, &ydmax_adopted );
 
     // xwmin_save, etc., are the external world coordinates corresponding
@@ -636,7 +658,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // be clipped at sub-page boundaries.
     plvpor( 0., 1., 0., 1. );
 
-    // Internal window coordinates are the same as normalized internal
+    // Internal world coordinates are the same as normalized internal
     // viewport coordinates which are the same as normalized subpage coordinates.
     plwind( 0., 1., 0., 1. );
 
@@ -916,10 +938,14 @@ static remove_characters( char *string, const char *characters )
 //! if orientation contains PL_COLORBAR_ORIENT_RIGHT,
 //! PL_COLORBAR_ORIENT_TOP, PL_COLORBAR_ORIENT_LEFT, or
 //! PL_COLORBAR_ORIENT_BOTTOM bits.
-//! @param xmin Minimum X coordinate of rectangle inscribing the triangle.
-//! @param xmax Maximum X coordinate of rectangle inscribing the triangle.
-//! @param ymin Minimum Y coordinate of rectangle inscribing the triangle.
-//! @param ymax Minimum Y coordinate of rectangle inscribing the triangle.
+//! @param xmin Minimum world X coordinate of rectangle
+//! inscribing the triangle.
+//! @param xmax Maximum world X coordinate of rectangle
+//! inscribing the triangle.
+//! @param ymin Minimum world Y coordinate of rectangle
+//! inscribing the triangle.
+//! @param ymax Maximum world Y coordinate of rectangle
+//! inscribing the triangle.
 //! @param color Color (color palette 1) used to fill the end cap.
 //!
 
@@ -929,60 +955,50 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 {
     // Save current drawing color.
     PLINT col0_save = plsc->icol0;
+    PLFLT xhalf     = 0.5 * ( xmin + xmax );
+    PLFLT yhalf     = 0.5 * ( ymin + ymax );
 
-    // Save window and viewport
-    // Saved normalized coordinates of viewport.
-    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
-    // Saved world coordinates of viewport.
-    PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
-    // Points for the triangle
+    // World coordinates for the triangle.  Due to setup in the
+    // plcolorbar routine that calls this, these are also normalized
+    // subpage coordinates.
     PLFLT xs[3];
     PLFLT ys[3];
 
-    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
-    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
-
-    // The viewport is the specified rectangle that inscribes the
-    // triangle.  The world coordinates are chosen to make drawing of
-    // that triangle convenient.
-    plvpor( xmin, xmax, ymin, ymax );
-    plwind( 0.0, 1.0, 0.0, 1.0 );
-
     if ( orientation == PL_COLORBAR_ORIENT_RIGHT )
     {
-        xs[0] = 0.;
-        ys[0] = 0.;
-        xs[1] = 1.;
-        ys[1] = 0.5;
-        xs[2] = 0.;
-        ys[2] = 1.;
+        xs[0] = xmin;
+        ys[0] = ymin;
+        xs[1] = xmax;
+        ys[1] = yhalf;
+        xs[2] = xmin;
+        ys[2] = ymax;
     }
     else if ( orientation == PL_COLORBAR_ORIENT_TOP )
     {
-        xs[0] = 1.;
-        ys[0] = 0.;
-        xs[1] = 0.5;
-        ys[1] = 1.;
-        xs[2] = 0.;
-        ys[2] = 0.;
+        xs[0] = xmax;
+        ys[0] = ymin;
+        xs[1] = xhalf;
+        ys[1] = ymax;
+        xs[2] = xmin;
+        ys[2] = ymin;
     }
     else if ( orientation == PL_COLORBAR_ORIENT_LEFT )
     {
-        xs[0] = 1.;
-        ys[0] = 1.;
-        xs[1] = 0.;
-        ys[1] = 0.5;
-        xs[2] = 1.;
-        ys[2] = 0.;
+        xs[0] = xmax;
+        ys[0] = ymax;
+        xs[1] = xmin;
+        ys[1] = yhalf;
+        xs[2] = xmax;
+        ys[2] = ymin;
     }
     else if ( orientation == PL_COLORBAR_ORIENT_BOTTOM )
     {
-        xs[0] = 0.;
-        ys[0] = 1.;
-        xs[1] = 0.5;
-        ys[1] = 0.;
-        xs[2] = 1.;
-        ys[2] = 1.;
+        xs[0] = xmin;
+        ys[0] = ymax;
+        xs[1] = xhalf;
+        ys[1] = ymin;
+        xs[2] = xmax;
+        ys[2] = ymax;
     }
     else
     {
@@ -997,10 +1013,6 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
     // Draw cap outline
     if ( if_edge )
         plline( 3, xs, ys );
-
-    // Restore window and viewport
-    plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
-    plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
 }
 
 //--------------------------------------------------------------------------
@@ -1025,18 +1037,43 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! TODO: This should be expanded to support custom placement of tick
 //! marks and tick labels at custom value locations for any colorbar
 //! type.
-//! @param position This variable defines the placement of the colorbar on the
-//! subpage.  The position can be one of PL_POSITION_TOP,
-//! PL_POSITION_BOTTOM, PL_POSITION_LEFT or PL_POSITION_RIGHT.  The colorbar
-//! will be drawn perpendicular to the given side of the subpage.
-//! @param x Colorbar displacement distance along/away from the horizonal axis
-//! in normalized subpage coordinates.
-//! @param y Colorbar displacement distance along/away from the vertical axis
-//! in normalized subpage coordinates.
-//! @param x_length Length of the colorbar in the X direction in
-//! adopted coordinates.
-//! @param y_length Length of the colorbar in the Y direction in
-//! adopted coordinates.
+//! @param position This variable contains bits which control the
+//! overall position of the legend and the definition of the adopted
+//! coordinates used for positions just like what is done for the
+//! position argument for pllegend.  Note, however, that the defaults
+//! for the position bits (see below) are different than the pllegend
+//! case.  The combination of the PL_POSITION_LEFT, PL_POSITION_RIGHT,
+//! PL_POSITION_TOP, PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and
+//! PL_POSITION_OUTSIDE bits specifies one of the 16 possible standard
+//! positions (the 4 corners and 4 side centers for both the inside
+//! and outside cases) of the legend relative to the adopted
+//! coordinate system.  The adopted coordinates are normalized
+//! viewport coordinates if the PL_POSITION_VIEWPORT bit is set or
+//! normalized subpage coordinates if the PL_POSITION_SUBPAGE bit is
+//! set.  Default position bits: If none of PL_POSITION_LEFT,
+//! PL_POSITION_RIGHT, PL_POSITION_TOP, or PL_POSITION_BOTTOM are set,
+//! then use PL_POSITION_RIGHT.  If neither of PL_POSITION_INSIDE or
+//! PL_POSITION_OUTSIDE is set, use PL_POSITION_OUTSIDE.  If neither
+//! of PL_POSITION_VIEWPORT or PL_POSITION_SUBPAGE is set, use
+//! PL_POSITION_VIEWPORT.
+//! @param x X offset of the legend position in adopted coordinates
+//! from the specified standard position of the legend.  For positive
+//! x, the direction of motion away from the standard position is
+//! inward/outward from the standard corner positions or standard left
+//! or right positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
+//! bit is set in position.  For the standard top or bottom positions,
+//! the direction of motion for positive x is toward positive X.
+//! @param y Y offset of the legend position in adopted coordinates
+//! from the specified standard position of the legend.  For positive
+//! y, the direction of motion away from the standard position is
+//! inward/outward from the standard corner positions or standard top
+//! or bottom positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
+//! bit is set in position.  For the standard left or right positions,
+//! the direction of motion for positive y is toward positive Y.
+//! @param x_length Length of the body of the colorbar in the X
+//! direction in adopted coordinates.
+//! @param y_length Length of the body of the colorbar in the Y
+//! direction in adopted coordinates.
 //! @param low_cap_color Color of the low-end color bar cap, if it is drawn.
 //! @param high_cap_color Color of the high-end color bar cap, if it is drawn.
 //! @param cont_color Contour color for PL_COLORBAR_SHADE plots.  This is
@@ -1048,15 +1085,10 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! @param ticks Spacing of major ticks, as for plbox.
 //! @param sub_ticks Number of subticks, as for plbox.
 //! @param axis_opts Axis options for the colorbar's major axis, as for plbox.
-//! @param label Text label for the colorbar.  No title is drawn if no label
-//! position is specified in pos.
+//! @param label Text label for the colorbar.  No label is drawn if no
+//! label position is specified with one of the
+//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM) bits in opt.
 //! @param n_values Number of elements in the values array.
-//! @param colors Colors (color map 1) used to draw the colorbar.  If this is a
-//! PL_COLORBAR_SHADE bar then there should be one entry per break between
-//! segments.  If this
-//! is a PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT bar then there should be two
-//! elements - one to specify the high end and one to specify the low end.
-//! This should have (n_values - 1) elements.
 //! @param values Numeric values for the data range represented by the
 //! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
 //! between segments.  For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT this
@@ -1065,8 +1097,10 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 //!
 
 void
-c_plcolorbar( PLINT opt, PLINT position,
-              PLFLT x, PLFLT y, PLFLT x_length, PLFLT y_length,
+c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+              PLINT opt, PLINT position, PLFLT x, PLFLT y,
+              PLFLT x_length, PLFLT y_length,
+              PLINT bg_color, PLINT bb_color, PLINT bb_style,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
@@ -1080,24 +1114,26 @@ c_plcolorbar( PLINT opt, PLINT position,
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
     PLFLT min_value, max_value;
-    // Height of the cap in normalized coordinates
+    // Height of the cap in adopted coordinates
     // ToDo: Use better value related to size of color bar.
     PLFLT cap_height = 0.05;
 
     // Min and max colors
     PLFLT min_color, max_color;
 
-    // Saved normalized coordinates of viewport.
-    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
-
-    // Saved world coordinates of viewport.
+    // Saved external world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
+    // Saved external normalized coordinates of viewport.
+    // (These are actual values used only for the restore.)
+    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+    // Limits of adopted coordinates used to calculate all coordinate
+    // transformations.
+    PLFLT xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted;
 
     // Active attributes to be saved and restored afterward.
     PLINT col0_save = plsc->icol0;
 
-    // Position of the color bar in normalized viewport (= normalized subpage
-    // coordinates).
+    // Position of the color bar in adopted coordinates.
     PLFLT vx_min, vx_max, vy_min, vy_max;
     PLFLT wx_min, wx_max, wy_min, wy_max;
 
@@ -1111,16 +1147,91 @@ c_plcolorbar( PLINT opt, PLINT position,
     // How far away from the axis should the label be drawn?
     PLFLT label_offset;
 
-    // For building axis option string
-    PLINT      max_opts = 25;
-    char       opt_string[max_opts];
+    // For building plmtex option string.
+    PLINT max_opts = 25;
+    char  opt_string[max_opts];
+    char  perp;
+
+    // axis option strings.
     const char *edge_string;
     size_t     length_axis_opts = strlen( axis_opts );
     char       *local_axis_opts;
     PLBOOL     if_edge;
 
-    // Draw a title
-    char perp;
+    // positional data.
+    PLFLT colorbar_width, colorbar_height,
+          colorbar_width_vc, colorbar_height_vc,
+          x_colorbar_position, y_colorbar_position,
+          xsign, ysign,
+          plot_x, plot_y,
+          plot_x_subpage, plot_y_subpage;
+
+    // Default position flags and sanity checks for position flags.
+    if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
+    {
+        position = position | PL_POSITION_RIGHT;
+    }
+    else if ( ( position & PL_POSITION_RIGHT ) && ( position & PL_POSITION_LEFT ) )
+    {
+        plabort( "plcolorbar: PL_POSITION_RIGHT and PL_POSITION_LEFT cannot be simultaneously set." );
+        return;
+    }
+
+    else if ( ( position & PL_POSITION_TOP ) && ( position & PL_POSITION_BOTTOM ) )
+    {
+        plabort( "plcolorbar: PL_POSITION_TOP and PL_POSITION_BOTTOM cannot be simultaneously set." );
+        return;
+    }
+
+    if ( !( position & PL_POSITION_INSIDE ) && !( position & PL_POSITION_OUTSIDE ) )
+    {
+        position = position | PL_POSITION_OUTSIDE;
+    }
+    else if ( ( position & PL_POSITION_INSIDE ) && ( position & PL_POSITION_OUTSIDE ) )
+    {
+        plabort( "plcolorbar: PL_POSITION_INSIDE and PL_POSITION_OUTSIDE cannot be simultaneously set." );
+        return;
+    }
+
+    if ( !( position & PL_POSITION_VIEWPORT ) && !( position & PL_POSITION_SUBPAGE ) )
+    {
+        position = position | PL_POSITION_VIEWPORT;
+    }
+    else if ( ( position & PL_POSITION_VIEWPORT ) && ( position & PL_POSITION_SUBPAGE ) )
+    {
+        plabort( "plcolorbar: PL_POSITION_VIEWPORT and PL_POSITION_SUBPAGE cannot be simultaneously set." );
+        return;
+    }
+
+    // xdmin_save, etc., are the actual external relative viewport
+    // coordinates within the current sub-page used only for
+    // restoration at the end.
+    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+
+    // Choose adopted coordinates.
+    if ( position & PL_POSITION_SUBPAGE )
+        plvpor( 0., 1., 0., 1. );
+
+    // xdmin_adopted, etc., are the adopted limits of the coordinates
+    // within the current sub-page used for all coordinate
+    // transformations.
+    // If position & PL_POSITION_VIEWPORT is true, these limits
+    // are the external relative viewport limits.
+    // If position & PL_POSITION_SUBPAGE is true, these
+    // coordinates are the relative subpage coordinates.
+    plgvpsp( &xdmin_adopted, &xdmax_adopted, &ydmin_adopted, &ydmax_adopted );
+
+    // xwmin_save, etc., are the external world coordinates corresponding
+    // to the external viewport boundaries.
+    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
+
+    // Internal viewport corresponds to sub-page so that all parts of the
+    // colorbar will be clipped at sub-page boundaries.
+    plvpor( 0., 1., 0., 1. );
+
+    // Internal world coordinates are the same as normalized internal
+    // viewport coordinates which are the same as normalized subpage coordinates.
+    plwind( 0., 1., 0., 1. );
 
     // Default orientation.
     if ( !( opt & PL_COLORBAR_ORIENT_RIGHT ||
@@ -1153,9 +1264,64 @@ c_plcolorbar( PLINT opt, PLINT position,
     // Assumes that the colors array is sorted from smallest to largest.
     plgcmap1_range( &min_color, &max_color );
 
-    plgvpsp( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
-    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
+    // Total width and height of colorbar bounding box in normalized subpage
+    // coordinates.
+    colorbar_width  = adopted_to_subpage_x( x_length ) - adopted_to_subpage_x( 0. );
+    colorbar_height = adopted_to_subpage_y( y_length ) - adopted_to_subpage_y( 0. );
+    // Total width and height of colorbar bounding box in adopted subpage
+    // coordinates.
+    colorbar_width_vc  = subpage_to_adopted_x( colorbar_width ) - subpage_to_adopted_x( 0. );
+    colorbar_height_vc = subpage_to_adopted_y( colorbar_height ) - subpage_to_adopted_y( 0. );
+    *p_colorbar_width  = colorbar_width_vc;
+    *p_colorbar_height = colorbar_height_vc;
+    legend_position( position, colorbar_width_vc, colorbar_height_vc, &x_colorbar_position, &y_colorbar_position, &xsign, &ysign );
+    plot_x = x * xsign + x_colorbar_position;
+    plot_y = y * ysign + y_colorbar_position;
+    // Normalized subpage coordinates for colorbar plots
+    plot_x_subpage = adopted_to_subpage_x( plot_x );
+    plot_y_subpage = adopted_to_subpage_y( plot_y );
 
+    if ( opt & PL_COLORBAR_BACKGROUND )
+    {
+        PLFLT xbg[4] = {
+            plot_x_subpage,
+            plot_x_subpage,
+            plot_x_subpage + colorbar_width,
+            plot_x_subpage + colorbar_width,
+        };
+        PLFLT ybg[4] = {
+            plot_y_subpage,
+            plot_y_subpage - colorbar_height,
+            plot_y_subpage - colorbar_height,
+            plot_y_subpage,
+        };
+        plpsty( 0 );
+        plcol0( bg_color );
+        plfill( 4, xbg, ybg );
+        plcol0( col0_save );
+    }
+
+    if ( opt & PL_COLORBAR_BOUNDING_BOX )
+    {
+        PLFLT xbb[5] = {
+            plot_x_subpage,
+            plot_x_subpage,
+            plot_x_subpage + colorbar_width,
+            plot_x_subpage + colorbar_width,
+            plot_x_subpage,
+        };
+        PLFLT ybb[5] = {
+            plot_y_subpage,
+            plot_y_subpage - colorbar_height,
+            plot_y_subpage - colorbar_height,
+            plot_y_subpage,
+            plot_y_subpage,
+        };
+        pllsty( bb_style );
+        plcol0( bb_color );
+        plline( 5, xbb, ybb );
+        plcol0( col0_save );
+    }
     // Specify the proper viewport ranges along the requested side
     // of the subpage
     if ( position & PL_POSITION_LEFT )

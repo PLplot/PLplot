@@ -160,6 +160,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     const char *axis_opts;
     char       label[200];
     char       title[200];
+    PLFLT      colorbar_width, colorbar_height;
 
     ticks     = 0.0;
     sub_ticks = 0;
@@ -232,9 +233,11 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plcolorbar( opt, position,
+        plcolorbar( &colorbar_width, &colorbar_height,
+            opt, position,
             x, y, x_length, y_length,
             low_cap_color, high_cap_color,
+            0, 1, 1,
             cont_color, cont_width,
             ticks, sub_ticks,
             axis_opts, label,
