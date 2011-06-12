@@ -243,9 +243,9 @@ main( int argc, const char *argv[] )
         plsmin( 0.0, 0.5 );
 
         plcolorbar( &colorbar_width, &colorbar_height,
-//            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_BOUNDING_BOX, 0,
-            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
-            0.05, 0.15, 0.03, 0.7, 0, 1, 1, 0.0, 0.0,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL | PL_COLORBAR_BOUNDING_BOX, 0,
+//            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.026, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width, 0.0, 0, "bcvtm", "",
             ns + 1, shedge );
 

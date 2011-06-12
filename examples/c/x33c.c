@@ -186,15 +186,15 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         // Set the offset position on the page
         if ( vertical )
         {
-            x        = 0.1;
-            y        = 0.25;
+            x        = 0.0;
+            y        = 0.0;
             x_length = 0.05;
             y_length = 0.5;
         }
         else
         {
-            x        = 0.25;
-            y        = 0.1;
+            x        = 0.0;
+            y        = 0.0;
             x_length = 0.5;
             y_length = 0.05;
         }
@@ -233,11 +233,13 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
+        plvpor( 0.1, 0.9, 0.1, 0.9 );
+        plwind( 0.0, 1.0, 0.0, 1.0 );
         plcolorbar( &colorbar_width, &colorbar_height,
-            opt, position,
+            opt | PL_COLORBAR_BOUNDING_BOX, position,
             x, y, x_length, y_length,
-            low_cap_color, high_cap_color,
             0, 1, 1,
+            low_cap_color, high_cap_color,
             cont_color, cont_width,
             ticks, sub_ticks,
             axis_opts, label,
