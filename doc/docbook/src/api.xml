@@ -5903,7 +5903,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Plot coordinates to strecth the image data to.  idata[0][0]
+	    Stretch image data to these Plot coordinates.  idata[0][0]
 	    corresponds to (xmin, ymin) and idata[nx - 1][ny - 1] corresponds
 	    to (xmax, ymax).
 	  </para>
