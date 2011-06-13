@@ -1148,6 +1148,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
           line_style_save = plsc->line_style;
 
     // Position of the color bar in adopted coordinates.
+    PLFLT vx_min, vx_max, vy_min, vy_max;
     PLFLT wx_min, wx_max, wy_min, wy_max;
 
     // The data to plot
@@ -1296,44 +1297,57 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Specify the proper window ranges depending on orientation.
     if ( opt & PL_COLORBAR_ORIENT_RIGHT )
     {
-        wx_min = plot_x_subpage;
-        wx_max = plot_x_subpage + bar_width;
-        wy_min = plot_y_subpage - bar_height;
-        wy_max = plot_y_subpage;
+        vx_min = plot_x_subpage;
+        vx_max = plot_x_subpage + bar_width;
+        vy_min = plot_y_subpage - bar_height;
+        vy_max = plot_y_subpage;
+        wx_min = min_value;
+        wx_max = max_value;
+        wy_min = 0.0;
+        wy_max = 1.0;
     }
     else if ( opt & PL_COLORBAR_ORIENT_TOP )
     {
-        wx_min = plot_x_subpage;
-        wx_max = plot_x_subpage + bar_width;
-        wy_min = plot_y_subpage - bar_height;
-        wy_max = plot_y_subpage;
+        vx_min = plot_x_subpage;
+        vx_max = plot_x_subpage + bar_width;
+        vy_min = plot_y_subpage - bar_height;
+        vy_max = plot_y_subpage;
+        wx_min = 0.0;
+        wx_max = 1.0;
+        wy_min = min_value;
+        wy_max = max_value;
     }
     else if ( opt & PL_COLORBAR_ORIENT_LEFT )
     {
-        wx_max = plot_x_subpage;
-        wx_min = plot_x_subpage + bar_width;
-        wy_min = plot_y_subpage - bar_height;
-        wy_max = plot_y_subpage;
+        vx_min = plot_x_subpage;
+        vx_max = plot_x_subpage + bar_width;
+        vy_min = plot_y_subpage - bar_height;
+        vy_max = plot_y_subpage;
+        wx_min = max_value;
+        wx_max = min_value;
+        wy_min = 0.0;
+        wy_max = 1.0;
     }
     else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
-        wx_min = plot_x_subpage;
-        wx_max = plot_x_subpage + bar_width;
-        wy_max = plot_y_subpage - bar_height;
-        wy_min = plot_y_subpage;
+        vx_min = plot_x_subpage;
+        vx_max = plot_x_subpage + bar_width;
+        vy_min = plot_y_subpage - bar_height;
+        vy_max = plot_y_subpage;
+        wx_min = 0.0;
+        wx_max = 1.0;
+        wy_min = max_value;
+        wy_max = min_value;
     }
     else
     {
         plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
     }
 
-    // Internal viewport corresponds to sub-page so that all parts of the
-    // colorbar will be clipped at sub-page boundaries.
-    plvpor( 0., 1., 0., 1. );
-
-    // Internal world coordinates are the same as normalized internal
-    // viewport coordinates which are the same as normalized subpage coordinates.
-    plwind( 0., 1., 0., 1. );
+    // Viewport and world coordinate ranges for all but cap and
+    // bounding-box areas.
+    plvpor( vx_min, vx_max, vy_min, vy_max );
+    plwind( wx_min, wx_max, wy_min, wy_max );
 
     // What kind of color bar are we making?
     if ( opt & PL_COLORBAR_IMAGE )
@@ -1605,6 +1619,10 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 
     // Draw end-caps
 
+    // Viewport and world coordinate ranges for cap and bounding-box areas.
+    plvpor( 0., 1., 0., 1. );
+    plwind( 0., 1., 0., 1. );
+
     if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
         cap_extent = cap_ratio * bar_height / aspspp;
     else
@@ -1682,41 +1700,9 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // internals of plbox to support custom tick and label positions
     // along an axis.
 
-    plvpor( wx_min, wx_max, wy_min, wy_max );
-    // Specify the proper window ranges depending on orientation.
-    if ( opt & PL_COLORBAR_ORIENT_RIGHT )
-    {
-        wx_min = min_value;
-        wx_max = max_value;
-        wy_min = 0.0;
-        wy_max = 1.0;
-    }
-    else if ( opt & PL_COLORBAR_ORIENT_TOP )
-    {
-        wx_min = 0.0;
-        wx_max = 1.0;
-        wy_min = min_value;
-        wy_max = max_value;
-    }
-    else if ( opt & PL_COLORBAR_ORIENT_LEFT )
-    {
-        wx_min = max_value;
-        wx_max = min_value;
-        wy_min = 0.0;
-        wy_max = 1.0;
-    }
-    else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
-    {
-        wx_min = 0.0;
-        wx_max = 1.0;
-        wy_min = max_value;
-        wy_max = min_value;
-    }
-    else
-    {
-        plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
-    }
-
+    // Viewport and world coordinate ranges for all but cap and
+    // bounding-box areas.
+    plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
     if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
@@ -1825,12 +1811,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         plmtex( opt_string, label_offset, 0.5, 0.5, label );
     }
 
-    // Internal viewport corresponds to sub-page so that all parts of the
-    // colorbar will be clipped at sub-page boundaries.
+    // Viewport and world coordinate ranges for cap and bounding-box areas.
     plvpor( 0., 1., 0., 1. );
-
-    // Internal world coordinates are the same as normalized internal
-    // viewport coordinates which are the same as normalized subpage coordinates.
     plwind( 0., 1., 0., 1. );
 
     if ( opt & PL_COLORBAR_BACKGROUND )

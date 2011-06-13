@@ -236,7 +236,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         plvpor( 0.1, 0.9, 0.1, 0.9 );
         plwind( 0.0, 1.0, 0.0, 1.0 );
         plcolorbar( &colorbar_width, &colorbar_height,
-            opt | PL_COLORBAR_BOUNDING_BOX, position,
+            opt, position,
             x, y, x_length, y_length,
             0, 1, 1,
             low_cap_color, high_cap_color,
