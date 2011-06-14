@@ -1119,7 +1119,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // direction of the orientation of the cap.  In other words,
     // cap_angle completely controls the shape of the triangle, but
     // not its scale.
-    PLFLT cap_angle = 90.;
+    PLFLT cap_angle = 15.;
     // Ratio of length of cap in orientation direction
     // to the width of the bar (and cap) in the direction
     // perpendicular to the orientation in physical coordinates
@@ -1147,8 +1147,28 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLINT col0_save       = plsc->icol0,
           line_style_save = plsc->line_style;
 
-    // Position of the color bar in adopted coordinates.
+    // positional data.
+    PLFLT colorbar_width, colorbar_height,
+          colorbar_width_bb, colorbar_height_bb,
+          colorbar_width_vc, colorbar_height_vc,
+          x_colorbar_position, y_colorbar_position,
+          xsign, ysign,
+          plot_x, plot_y;
+    // Normalized subpage coordinates of top left of the bounding box.
+    PLFLT plot_x_subpage_bb, plot_y_subpage_bb;
+    // Differences between normalized subpage coordinates for the
+    // undecorated colorbar (where the decorations consist of external
+    // tick marks, numerical tick labels, or text if any of those
+    // exist) and the bounding box.
+    PLFLT dx_subpage = 0., dy_subpage = 0.;
+    // Normalized subpage coordinates of the top left of undecorated
+    // colorbar,
+    PLFLT plot_x_subpage, plot_y_subpage;
+
+    // Position of the undecorated colorbar in normalized subpage coordinates.
     PLFLT vx_min, vx_max, vy_min, vy_max;
+
+    // World coordinate limits describing undecorated colorbar.
     PLFLT wx_min, wx_max, wy_min, wy_max;
 
     // The data to plot
@@ -1171,15 +1191,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     size_t     length_axis_opts = strlen( axis_opts );
     char       *local_axis_opts;
     PLBOOL     if_edge;
-
-    // positional data.
-    PLFLT colorbar_width, colorbar_height,
-          bar_width, bar_height,
-          colorbar_width_vc, colorbar_height_vc,
-          x_colorbar_position, y_colorbar_position,
-          xsign, ysign,
-          plot_x, plot_y,
-          plot_x_subpage, plot_y_subpage;
 
     // Default position flags and sanity checks for position flags.
     if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
@@ -1271,35 +1282,94 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Assumes that the colors array is sorted from smallest to largest.
     plgcmap1_range( &min_color, &max_color );
 
-    // Width and height of just the bar (i.e., excluding caps, numerical tick
-    // labels, and text) in normalized subpage coordinates.
-    bar_width  = adopted_to_subpage_x( x_length ) - adopted_to_subpage_x( 0. );
-    bar_height = adopted_to_subpage_y( y_length ) - adopted_to_subpage_y( 0. );
-    // Total width and height of colorbar bounding box in normalized subpage
-    // coordinates.
-    // FIXME.  Need to add caps + numerical tick labels + text to
+    // Width and height of the undecorated colorbar in normalized
+    // subpage coordinates.
+    colorbar_width  = adopted_to_subpage_x( x_length ) -
+                      adopted_to_subpage_x( 0. );
+    colorbar_height = adopted_to_subpage_y( y_length ) -
+                      adopted_to_subpage_y( 0. );
+    // width and height of colorbar bounding box in normalized subpage
+    // coordinates.  Caps taken care of.
+    // FIXME.  Need to add inverted tickmarks + numerical tick labels + text to
     // these calculations.
-    colorbar_width  = bar_width;
-    colorbar_height = bar_height;
+    if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
+    {
+        cap_extent = cap_ratio * colorbar_height / aspspp;
+    }
+    else
+    {
+        cap_extent = cap_ratio * colorbar_width * aspspp;
+    }
+
+    colorbar_width_bb  = colorbar_width;
+    colorbar_height_bb = colorbar_height;
+    if ( opt & PL_COLORBAR_CAP_LOW )
+    {
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT )
+        {
+            colorbar_width_bb += cap_extent;
+            dx_subpage += cap_extent;
+        }
+        if (opt & PL_COLORBAR_ORIENT_TOP )
+        {
+            colorbar_height_bb += cap_extent;
+        }
+        if (opt & PL_COLORBAR_ORIENT_LEFT )
+        {
+            colorbar_width_bb += cap_extent;
+        }
+        if (opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            colorbar_height_bb += cap_extent;
+            dy_subpage -= cap_extent;
+        }
+    }
+    if ( opt & PL_COLORBAR_CAP_HIGH )
+    {
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT )
+        {
+            colorbar_width_bb += cap_extent;
+        }
+        if (opt & PL_COLORBAR_ORIENT_TOP )
+        {
+            colorbar_height_bb += cap_extent;
+            dy_subpage -= cap_extent;
+        }
+        if (opt & PL_COLORBAR_ORIENT_LEFT )
+        {
+            colorbar_width_bb += cap_extent;
+            dx_subpage += cap_extent;
+        }
+        if (opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            colorbar_height_bb += cap_extent;
+        }
+    }
     // Total width and height of colorbar bounding box in adopted subpage
     // coordinates.
-    colorbar_width_vc  = subpage_to_adopted_x( colorbar_width ) - subpage_to_adopted_x( 0. );
-    colorbar_height_vc = subpage_to_adopted_y( colorbar_height ) - subpage_to_adopted_y( 0. );
+    colorbar_width_vc  = subpage_to_adopted_x( colorbar_width_bb ) -
+                         subpage_to_adopted_x( 0. );
+    colorbar_height_vc = subpage_to_adopted_y( colorbar_height_bb ) -
+                         subpage_to_adopted_y( 0. );
     *p_colorbar_width  = colorbar_width_vc;
     *p_colorbar_height = colorbar_height_vc;
     legend_position( position, colorbar_width_vc, colorbar_height_vc, &x_colorbar_position, &y_colorbar_position, &xsign, &ysign );
     plot_x = x * xsign + x_colorbar_position;
     plot_y = y * ysign + y_colorbar_position;
-    // Normalized subpage coordinates for colorbar plots
-    plot_x_subpage = adopted_to_subpage_x( plot_x );
-    plot_y_subpage = adopted_to_subpage_y( plot_y );
+    // Normalized subpage coordinates (top-left corner) for bounding box.
+    plot_x_subpage_bb = adopted_to_subpage_x( plot_x );
+    plot_y_subpage_bb = adopted_to_subpage_y( plot_y );
+    // Normalized subpage coordinates (top-left corner) for undecorated
+    // colorbar
+    plot_x_subpage = plot_x_subpage_bb + dx_subpage;
+    plot_y_subpage = plot_y_subpage_bb + dy_subpage;
 
     // Specify the proper window ranges depending on orientation.
     if ( opt & PL_COLORBAR_ORIENT_RIGHT )
     {
         vx_min = plot_x_subpage;
-        vx_max = plot_x_subpage + bar_width;
-        vy_min = plot_y_subpage - bar_height;
+        vx_max = plot_x_subpage + colorbar_width;
+        vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
         wx_min = min_value;
         wx_max = max_value;
@@ -1309,8 +1379,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     else if ( opt & PL_COLORBAR_ORIENT_TOP )
     {
         vx_min = plot_x_subpage;
-        vx_max = plot_x_subpage + bar_width;
-        vy_min = plot_y_subpage - bar_height;
+        vx_max = plot_x_subpage + colorbar_width;
+        vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
         wx_min = 0.0;
         wx_max = 1.0;
@@ -1320,8 +1390,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     else if ( opt & PL_COLORBAR_ORIENT_LEFT )
     {
         vx_min = plot_x_subpage;
-        vx_max = plot_x_subpage + bar_width;
-        vy_min = plot_y_subpage - bar_height;
+        vx_max = plot_x_subpage + colorbar_width;
+        vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
         wx_min = max_value;
         wx_max = min_value;
@@ -1331,8 +1401,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
         vx_min = plot_x_subpage;
-        vx_max = plot_x_subpage + bar_width;
-        vy_min = plot_y_subpage - bar_height;
+        vx_max = plot_x_subpage + colorbar_width;
+        vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
         wx_min = 0.0;
         wx_max = 1.0;
@@ -1342,6 +1412,30 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     else
     {
         plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
+    }
+
+    // Viewport and world coordinate ranges for cap and bounding-box areas.
+    plvpor( 0., 1., 0., 1. );
+    plwind( 0., 1., 0., 1. );
+
+    if ( opt & PL_COLORBAR_BACKGROUND )
+    {
+        PLFLT xbg[4] = {
+            plot_x_subpage_bb,
+            plot_x_subpage_bb,
+            plot_x_subpage_bb + colorbar_width_bb,
+            plot_x_subpage_bb + colorbar_width_bb,
+        };
+        PLFLT ybg[4] = {
+            plot_y_subpage_bb,
+            plot_y_subpage_bb - colorbar_height_bb,
+            plot_y_subpage_bb - colorbar_height_bb,
+            plot_y_subpage_bb,
+        };
+        plpsty( 0 );
+        plcol0( bg_color );
+        plfill( 4, xbg, ybg );
+        plcol0( col0_save );
     }
 
     // Viewport and world coordinate ranges for all but cap and
@@ -1623,11 +1717,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
 
-    if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
-        cap_extent = cap_ratio * bar_height / aspspp;
-    else
-        cap_extent = cap_ratio * bar_width * aspspp;
-
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
         // Add an extra offset for the label so it does not bump in to the
@@ -1643,21 +1732,21 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_LEFT,
                 plot_x_subpage - cap_extent, plot_x_subpage,
-                plot_y_subpage - bar_height, plot_y_subpage,
+                plot_y_subpage - colorbar_height, plot_y_subpage,
                 low_cap_color );
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_BOTTOM,
-                plot_x_subpage, plot_x_subpage + bar_width,
-                plot_y_subpage - bar_height - cap_extent, plot_y_subpage - bar_height,
+                plot_x_subpage, plot_x_subpage + colorbar_width,
+                plot_y_subpage - colorbar_height - cap_extent, plot_y_subpage - colorbar_height,
                 low_cap_color );
         else if ( opt & PL_COLORBAR_ORIENT_LEFT )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_RIGHT,
-                plot_x_subpage + bar_width, plot_x_subpage + bar_width + cap_extent,
-                plot_y_subpage - bar_height, plot_y_subpage,
+                plot_x_subpage + colorbar_width, plot_x_subpage + colorbar_width + cap_extent,
+                plot_y_subpage - colorbar_height, plot_y_subpage,
                 low_cap_color );
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_TOP,
-                plot_x_subpage, plot_x_subpage + bar_width,
+                plot_x_subpage, plot_x_subpage + colorbar_width,
                 plot_y_subpage, plot_y_subpage + cap_extent,
                 low_cap_color );
     }
@@ -1675,23 +1764,23 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_RIGHT,
-                plot_x_subpage + bar_width, plot_x_subpage + bar_width + cap_extent,
-                plot_y_subpage - bar_height, plot_y_subpage,
+                plot_x_subpage + colorbar_width, plot_x_subpage + colorbar_width + cap_extent,
+                plot_y_subpage - colorbar_height, plot_y_subpage,
                 high_cap_color );
         else if ( opt & PL_COLORBAR_ORIENT_TOP )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_TOP,
-                plot_x_subpage, plot_x_subpage + bar_width,
+                plot_x_subpage, plot_x_subpage + colorbar_width,
                 plot_y_subpage, plot_y_subpage + cap_extent,
                 high_cap_color );
         else if ( opt & PL_COLORBAR_ORIENT_LEFT )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_LEFT,
                 plot_x_subpage - cap_extent, plot_x_subpage,
-                plot_y_subpage - bar_height, plot_y_subpage,
+                plot_y_subpage - colorbar_height, plot_y_subpage,
                 high_cap_color );
         else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_BOTTOM,
-                plot_x_subpage, plot_x_subpage + bar_width,
-                plot_y_subpage - bar_height - cap_extent, plot_y_subpage - bar_height,
+                plot_x_subpage, plot_x_subpage + colorbar_width,
+                plot_y_subpage - colorbar_height - cap_extent, plot_y_subpage - colorbar_height,
                 high_cap_color );
     }
 
@@ -1815,41 +1904,21 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
 
-    if ( opt & PL_COLORBAR_BACKGROUND )
-    {
-        PLFLT xbg[4] = {
-            plot_x_subpage,
-            plot_x_subpage,
-            plot_x_subpage + colorbar_width,
-            plot_x_subpage + colorbar_width,
-        };
-        PLFLT ybg[4] = {
-            plot_y_subpage,
-            plot_y_subpage - colorbar_height,
-            plot_y_subpage - colorbar_height,
-            plot_y_subpage,
-        };
-        plpsty( 0 );
-        plcol0( bg_color );
-        plfill( 4, xbg, ybg );
-        plcol0( col0_save );
-    }
-
     if ( opt & PL_COLORBAR_BOUNDING_BOX )
     {
         PLFLT xbb[5] = {
-            plot_x_subpage,
-            plot_x_subpage,
-            plot_x_subpage + colorbar_width,
-            plot_x_subpage + colorbar_width,
-            plot_x_subpage,
+            plot_x_subpage_bb,
+            plot_x_subpage_bb,
+            plot_x_subpage_bb + colorbar_width_bb,
+            plot_x_subpage_bb + colorbar_width_bb,
+            plot_x_subpage_bb,
         };
         PLFLT ybb[5] = {
-            plot_y_subpage,
-            plot_y_subpage - colorbar_height,
-            plot_y_subpage - colorbar_height,
-            plot_y_subpage,
-            plot_y_subpage,
+            plot_y_subpage_bb,
+            plot_y_subpage_bb - colorbar_height_bb,
+            plot_y_subpage_bb - colorbar_height_bb,
+            plot_y_subpage_bb,
+            plot_y_subpage_bb,
         };
         pllsty( bb_style );
         plcol0( bb_color );
