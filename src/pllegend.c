@@ -309,7 +309,7 @@ static void get_subpage_per_mm( PLFLT *x_subpage_per_mm, PLFLT *y_subpage_per_mm
 }
 
 //--------------------------------------------------------------------------
-//! Obtain character or symbol height in (y) subpage coordinates.
+//! Obtain character or symbol height in (y) in normalized subpage coordinates.
 //!
 //! @param ifcharacter TRUE obtain character height, FALSE obtain symbol
 //! height.
@@ -1119,7 +1119,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // direction of the orientation of the cap.  In other words,
     // cap_angle completely controls the shape of the triangle, but
     // not its scale.
-    PLFLT cap_angle = 15.;
+    PLFLT cap_angle = 90.;
     // Ratio of length of cap in orientation direction
     // to the width of the bar (and cap) in the direction
     // perpendicular to the orientation in physical coordinates
@@ -1178,8 +1178,9 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLINT i, j, ni, nj, n_steps;
     PLFLT step_size;
 
-    // How far away from the axis should the label be drawn?
-    PLFLT label_offset;
+    // How far away from the axis should the label be drawn in units of
+    // the character height?
+    PLFLT label_offset = 0.;
 
     // For building plmtex option string.
     PLINT max_opts = 25;
@@ -1191,6 +1192,9 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     size_t     length_axis_opts = strlen( axis_opts );
     char       *local_axis_opts;
     PLBOOL     if_edge;
+
+    // Character height in x and y normalized subpage coordinates.
+    PLFLT character_height_x, character_height_y;
 
     // Default position flags and sanity checks for position flags.
     if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
@@ -1709,24 +1713,29 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Restore the previous drawing color to use for outlines and text
     plcol0( col0_save );
 
-    label_offset = 0.0;
-
     // Draw end-caps
 
     // Viewport and world coordinate ranges for cap and bounding-box areas.
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
 
+    character_height_y = get_character_or_symbol_height( TRUE );
+    // character height _in normalized subpage coordinates_ is smaller
+    // in the x direction if the subpage aspect ratio is larger than one.
+    character_height_x = character_height_y / aspspp;
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
         // Add an extra offset for the label so it does not bump in to the
         // cap if the label is placed on the same side as the cap.
         if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_LEFT ) ||
-             ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_BOTTOM ) ||
-             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
+             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_RIGHT ) )
+        {
+            label_offset += cap_extent/character_height_x;
+        }
+        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_BOTTOM ) ||
              ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_TOP ) )
         {
-            label_offset += 2.5;
+            label_offset += cap_extent/character_height_y;
         }
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
@@ -1755,11 +1764,14 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         // Add an extra offset for the label so it does not bump in to the
         // cap if the label is placed on the same side as the cap.
         if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
-             ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_TOP ) ||
-             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_LEFT ) ||
+             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_LEFT ) )
+        {
+            label_offset += cap_extent/character_height_x;
+        }
+        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_TOP ) ||
              ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_BOTTOM ) )
         {
-            label_offset += 2.5;
+            label_offset += cap_extent/character_height_y;
         }
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
