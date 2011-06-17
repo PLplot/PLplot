@@ -267,6 +267,7 @@ void plD_init_rasterqt( PLStream * pls )
     pls->page        = 0;
     pls->dev_text    = 1;                        // want to draw text
     pls->dev_unicode = 1;                        // want unicode
+    pls->has_string_length = 1; // Driver supports string length calculations
 
     // Needs to be true only because of multi-stream case
     bool isMaster = initQtApp( true );
@@ -694,6 +695,7 @@ void plD_init_svgqt( PLStream * pls )
     pls->page        = 0;
     pls->dev_text    = 1;                        // want to draw text
     pls->dev_unicode = 1;                        // want unicode
+    pls->has_string_length = 1; // Driver supports string length calculations
 
     // Needs to be true only because of multi-stream case
     bool isMaster = initQtApp( true );
@@ -978,6 +980,7 @@ void plD_init_epspdfqt( PLStream * pls )
     pls->page        = 0;
     pls->dev_text    = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
+    pls->has_string_length = 1; // Driver supports string length calculations
 
     // QPrinter devices won't create if there is no QApplication declared...
     // Needs to be true only because of multi-stream case
@@ -1288,6 +1291,7 @@ void plD_init_qtwidget( PLStream * pls )
     pls->termin      = 1;
     pls->dev_text    = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
+    pls->has_string_length = 1; // Driver supports string length calculations
 
     widget->setVisible( true );
     widget->resize( plsc->xlength, plsc->ylength );
@@ -1513,6 +1517,7 @@ void plD_init_extqt( PLStream * pls )
     pls->termin      = 0;
     pls->dev_text    = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
+    pls->has_string_length = 1; // Driver supports string length calculations
 }
 
 //
@@ -1708,6 +1713,7 @@ void plD_init_memqt( PLStream * pls )
     pls->page        = 0;
     pls->dev_text    = 1;                        // want to draw text
     pls->dev_unicode = 1;                        // want unicode
+    pls->has_string_length = 1; // Driver supports string length calculations
 
     // Needs to be true only because of multi-stream case
     bool isMaster = initQtApp( true );

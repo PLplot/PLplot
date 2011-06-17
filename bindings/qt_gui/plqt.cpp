@@ -325,6 +325,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
     drawTextInPicture( &p, currentString );
 
     p.end();
+
     return res;
 }
 
@@ -355,6 +356,12 @@ void QtPLDriver::drawText( EscText* txt )
     plgfci( &fci );
     QPicture  picText = getTextPicture( fci, txt->unicode_array, txt->unicode_array_len, pls->chrht );
     picDpi = picText.logicalDpiY();
+
+    if ( pls->get_string_length )
+    {
+        pls->string_length = ((PLFLT) xOffset / picDpi) * 25.4;
+        return;
+    }
 
     m_painterP->setClipping( true );
     m_painterP->setClipRect( QRect( (int) ( pls->clpxmi * downscale ), (int) ( m_dHeight - pls->clpyma * downscale ), (int) ( ( pls->clpxma - pls->clpxmi ) * downscale ), (int) ( ( pls->clpyma - pls->clpymi ) * downscale ) ), Qt::ReplaceClip );
@@ -874,7 +881,35 @@ void QtPLWidget::setWidth( PLINT w )
 
 void QtPLWidget::drawText( EscText* txt )
 {
+    if ( pls->get_string_length )
+    {
+        PLUNICODE fci;
+        QPicture picText;
+        double picDpi;
+	PLUNICODE *text;
+
+        plgfci( &fci );
+	text = new PLUNICODE[txt->unicode_array_len];
+	memcpy( text, txt->unicode_array, txt->unicode_array_len * sizeof ( PLUNICODE ) );
+        picText = getTextPicture( fci,
+				  text, 
+				  txt->unicode_array_len, 
+				  pls->chrht);
+	//
+	// I'm assuming that y_fact is 1.0 here, as it is impossible 
+	// to know in advance (or so I believe). When the text is
+	// rendered "for real" it will be: pls->chrht * y_fact.
+	//
+	// Hazen 6/2011
+	//
+	picDpi = picText.logicalDpiY();
+        pls->string_length = ((PLFLT) xOffset / picDpi) * 25.4;
+	free(text);
+        return;
+    }
+
     BufferElement el;
+
     el.Element                   = TEXT;
     el.Data.TextStruct           = new struct TextStruct_;
     el.Data.TextStruct->x        = txt->x * downscale;
