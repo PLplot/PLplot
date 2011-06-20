@@ -204,7 +204,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         {
             if ( cont_color == 0 || cont_width == 0 )
             {
-                axis_opts = "uwtvn";
+                axis_opts = "uwtivn";
             }
             else
             {
@@ -215,7 +215,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         {
             if ( cont_color == 0 || cont_width == 0 )
             {
-                axis_opts = "uwtvm";
+                axis_opts = "uwtivm";
             }
             else
             {
@@ -238,7 +238,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         // Set interesting background colour.
         plscol0a( 15, 0, 0, 0, 0.20 );
         plcolorbar( &colorbar_width, &colorbar_height,
-            opt|PL_COLORBAR_BOUNDING_BOX|PL_COLORBAR_BACKGROUND, position,
+            opt | PL_COLORBAR_BOUNDING_BOX | PL_COLORBAR_BACKGROUND, position,
             x, y, x_length, y_length,
             15, 1, 1,
             low_cap_color, high_cap_color,

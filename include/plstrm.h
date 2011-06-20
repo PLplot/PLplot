@@ -796,6 +796,13 @@ typedef struct
 
     // Drawing mode section
     PLINT      dev_modeset;
+
+    // Calculate bounding-box limits rather than plot box?
+    PLBOOL     if_boxbb;
+    // Bounding box limits in mm for box including decorations
+    // (inverted tick marks and numerical tick labels if either is
+    // present).
+    PLFLT boxbb_xmin, boxbb_xmax, boxbb_ymin, boxbb_ymax;
 } PLStream;
 
 //--------------------------------------------------------------------------

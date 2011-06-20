@@ -1012,6 +1012,64 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
         plline( 3, xs, ys );
 }
 
+static void
+draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
+          PLFLT ticks, PLINT sub_ticks, PLINT n_values, const PLFLT *values )
+{
+    // axis option strings.
+    const char *edge_string;
+    size_t     length_axis_opts = strlen( axis_opts );
+    char       *local_axis_opts;
+
+    // local_axis_opts is local version that can be modified from
+    // const input version.
+    if ( ( local_axis_opts = (char *) malloc( ( length_axis_opts + 1 ) * sizeof ( char ) ) ) == NULL )
+    {
+        plexit( "draw_box: Insufficient memory" );
+    }
+    strcpy( local_axis_opts, axis_opts );
+
+    plsc->if_boxbb = if_bb;
+    // Draw numerical labels and tick marks if this is a shade color bar
+    // TODO: A better way to handle this would be to update the
+    // internals of plbox to support custom tick and label positions
+    // along an axis.
+
+    if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
+    {
+        if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
+            label_box_custom( local_axis_opts, n_values, values, "", 0, NULL );
+        else
+            label_box_custom( "", 0, NULL, local_axis_opts, n_values, values );
+        if ( if_bb )
+        {
+            plsc->if_boxbb = FALSE;
+            return;
+        }
+        // Exclude ticks for plbox call below since those tick marks and
+        // associated labels have already been handled in a custom way above.
+        remove_characters( local_axis_opts, "TtXx" );
+    }
+
+    // Draw the outline for the entire colorbar, tick marks, tick labels.
+
+    if ( if_edge )
+        edge_string = "bc";
+    else
+        edge_string = "uw";
+    if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
+    {
+        plbox( edge_string, 0.0, 0, local_axis_opts, ticks, sub_ticks );
+    }
+    else
+    {
+        plbox( local_axis_opts, ticks, sub_ticks, edge_string, 0.0, 0 );
+    }
+    plsc->if_boxbb = FALSE;
+
+    free( local_axis_opts );
+}
+
 //--------------------------------------------------------------------------
 //! Plot color bar for image, shade or gradient plots.
 //!
@@ -1183,18 +1241,18 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLFLT label_offset = 0.;
 
     // For building plmtex option string.
-    PLINT max_opts = 25;
-    char  opt_string[max_opts];
-    char  perp;
+    PLINT  max_opts = 25;
+    char   opt_string[max_opts];
+    char   perp;
 
-    // axis option strings.
-    const char *edge_string;
-    size_t     length_axis_opts = strlen( axis_opts );
-    char       *local_axis_opts;
-    PLBOOL     if_edge;
+    PLBOOL if_edge;
 
     // Character height in x and y normalized subpage coordinates.
     PLFLT character_height_x, character_height_y;
+
+    // Ratio of normalized subpage coordinates to mm coordinates in
+    // x and y.
+    PLFLT ncxpmm, ncypmm;
 
     // Default position flags and sanity checks for position flags.
     if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
@@ -1267,18 +1325,10 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
             opt = opt | PL_COLORBAR_ORIENT_RIGHT;
     }
 
-    // local_axis_opts is local version that can be modified from
-    // const input version.
-    if ( ( local_axis_opts = (char *) malloc( ( length_axis_opts + 1 ) * sizeof ( char ) ) ) == NULL )
-    {
-        plexit( "plcolorbar: Insufficient memory" );
-    }
-    strcpy( local_axis_opts, axis_opts );
-
-    if_edge = plP_stsearch( local_axis_opts, 'b' ) &&
-              !plP_stsearch( local_axis_opts, 'u' ) &&
-              plP_stsearch( local_axis_opts, 'c' ) &&
-              !plP_stsearch( local_axis_opts, 'w' );
+    if_edge = plP_stsearch( axis_opts, 'b' ) &&
+              !plP_stsearch( axis_opts, 'u' ) &&
+              plP_stsearch( axis_opts, 'c' ) &&
+              !plP_stsearch( axis_opts, 'w' );
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
@@ -1288,14 +1338,12 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 
     // Width and height of the undecorated colorbar in normalized
     // subpage coordinates.
-    colorbar_width  = adopted_to_subpage_x( x_length ) -
-                      adopted_to_subpage_x( 0. );
+    colorbar_width = adopted_to_subpage_x( x_length ) -
+                     adopted_to_subpage_x( 0. );
     colorbar_height = adopted_to_subpage_y( y_length ) -
                       adopted_to_subpage_y( 0. );
     // width and height of colorbar bounding box in normalized subpage
     // coordinates.  Caps taken care of.
-    // FIXME.  Need to add inverted tickmarks + numerical tick labels + text to
-    // these calculations.
     if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
     {
         cap_extent = cap_ratio * colorbar_height / aspspp;
@@ -1305,27 +1353,77 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         cap_extent = cap_ratio * colorbar_width * aspspp;
     }
 
-    colorbar_width_bb  = colorbar_width;
-    colorbar_height_bb = colorbar_height;
+    // Specify the proper window ranges for colorbar depending on
+    // orientation.
+    if ( opt & PL_COLORBAR_ORIENT_RIGHT )
+    {
+        wx_min = min_value;
+        wx_max = max_value;
+        wy_min = 0.0;
+        wy_max = 1.0;
+    }
+    else if ( opt & PL_COLORBAR_ORIENT_TOP )
+    {
+        wx_min = 0.0;
+        wx_max = 1.0;
+        wy_min = min_value;
+        wy_max = max_value;
+    }
+    else if ( opt & PL_COLORBAR_ORIENT_LEFT )
+    {
+        wx_min = max_value;
+        wx_max = min_value;
+        wy_min = 0.0;
+        wy_max = 1.0;
+    }
+    else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
+    {
+        wx_min = 0.0;
+        wx_max = 1.0;
+        wy_min = max_value;
+        wy_max = min_value;
+    }
+    else
+    {
+        plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
+    }
+    // Viewport is correct size, but has an incorrect offset compared
+    // to the final result, but this should not affect the bounding
+    // box range or offsets calculated just below.
+    plvpor( 0., colorbar_width, 0., colorbar_height );
+    plwind( wx_min, wx_max, wy_min, wy_max );
+
+    // Calculate the bounding box for decorated (i.e., including tick
+    // marks + numerical tick labels) box.
+    draw_box( TRUE, opt, axis_opts, if_edge,
+        ticks, sub_ticks, n_values, values );
+    ncxpmm             = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
+    ncypmm             = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
+    colorbar_width_bb  = ( plsc->boxbb_xmax - plsc->boxbb_xmin ) * ncxpmm;
+    colorbar_height_bb = ( plsc->boxbb_ymax - plsc->boxbb_ymin ) * ncypmm;
+    // Offsets of upper left corner relative to plvpor coordinates of that
+    // point which are (0., colorbar_height), see above.
+    dx_subpage += -plsc->boxbb_xmin * ncxpmm;
+    dy_subpage -= plsc->boxbb_ymax * ncypmm - colorbar_height;
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
             colorbar_width_bb += cap_extent;
-            dx_subpage += cap_extent;
+            dx_subpage        += cap_extent;
         }
-        if (opt & PL_COLORBAR_ORIENT_TOP )
+        if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
             colorbar_height_bb += cap_extent;
         }
-        if (opt & PL_COLORBAR_ORIENT_LEFT )
+        if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
             colorbar_width_bb += cap_extent;
         }
-        if (opt & PL_COLORBAR_ORIENT_BOTTOM )
+        if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
             colorbar_height_bb += cap_extent;
-            dy_subpage -= cap_extent;
+            dy_subpage         -= cap_extent;
         }
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
@@ -1334,25 +1432,25 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         {
             colorbar_width_bb += cap_extent;
         }
-        if (opt & PL_COLORBAR_ORIENT_TOP )
+        if ( opt & PL_COLORBAR_ORIENT_TOP )
         {
             colorbar_height_bb += cap_extent;
-            dy_subpage -= cap_extent;
+            dy_subpage         -= cap_extent;
         }
-        if (opt & PL_COLORBAR_ORIENT_LEFT )
+        if ( opt & PL_COLORBAR_ORIENT_LEFT )
         {
             colorbar_width_bb += cap_extent;
-            dx_subpage += cap_extent;
+            dx_subpage        += cap_extent;
         }
-        if (opt & PL_COLORBAR_ORIENT_BOTTOM )
+        if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
             colorbar_height_bb += cap_extent;
         }
     }
     // Total width and height of colorbar bounding box in adopted subpage
     // coordinates.
-    colorbar_width_vc  = subpage_to_adopted_x( colorbar_width_bb ) -
-                         subpage_to_adopted_x( 0. );
+    colorbar_width_vc = subpage_to_adopted_x( colorbar_width_bb ) -
+                        subpage_to_adopted_x( 0. );
     colorbar_height_vc = subpage_to_adopted_y( colorbar_height_bb ) -
                          subpage_to_adopted_y( 0. );
     *p_colorbar_width  = colorbar_width_vc;
@@ -1368,17 +1466,14 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plot_x_subpage = plot_x_subpage_bb + dx_subpage;
     plot_y_subpage = plot_y_subpage_bb + dy_subpage;
 
-    // Specify the proper window ranges depending on orientation.
+    // Specify the proper viewport ranges for colorbar depending on
+    // orientation.
     if ( opt & PL_COLORBAR_ORIENT_RIGHT )
     {
         vx_min = plot_x_subpage;
         vx_max = plot_x_subpage + colorbar_width;
         vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
-        wx_min = min_value;
-        wx_max = max_value;
-        wy_min = 0.0;
-        wy_max = 1.0;
     }
     else if ( opt & PL_COLORBAR_ORIENT_TOP )
     {
@@ -1386,10 +1481,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         vx_max = plot_x_subpage + colorbar_width;
         vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
-        wx_min = 0.0;
-        wx_max = 1.0;
-        wy_min = min_value;
-        wy_max = max_value;
     }
     else if ( opt & PL_COLORBAR_ORIENT_LEFT )
     {
@@ -1397,10 +1488,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         vx_max = plot_x_subpage + colorbar_width;
         vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
-        wx_min = max_value;
-        wx_max = min_value;
-        wy_min = 0.0;
-        wy_max = 1.0;
     }
     else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
@@ -1408,10 +1495,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         vx_max = plot_x_subpage + colorbar_width;
         vy_min = plot_y_subpage - colorbar_height;
         vy_max = plot_y_subpage;
-        wx_min = 0.0;
-        wx_max = 1.0;
-        wy_min = max_value;
-        wy_max = min_value;
     }
     else
     {
@@ -1730,12 +1813,12 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_LEFT ) ||
              ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_RIGHT ) )
         {
-            label_offset += cap_extent/character_height_x;
+            label_offset += cap_extent / character_height_x;
         }
         if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_BOTTOM ) ||
              ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_TOP ) )
         {
-            label_offset += cap_extent/character_height_y;
+            label_offset += cap_extent / character_height_y;
         }
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
@@ -1766,12 +1849,12 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
              ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_LEFT ) )
         {
-            label_offset += cap_extent/character_height_x;
+            label_offset += cap_extent / character_height_x;
         }
         if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_TOP ) ||
              ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_BOTTOM ) )
         {
-            label_offset += cap_extent/character_height_y;
+            label_offset += cap_extent / character_height_y;
         }
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
@@ -1796,44 +1879,15 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                 high_cap_color );
     }
 
-    // Draw numerical labels and tick marks if this is a shade color bar
-    // TODO: A better way to handle this would be to update the
-    // internals of plbox to support custom tick and label positions
-    // along an axis.
-
     // Viewport and world coordinate ranges for all but cap and
     // bounding-box areas.
     plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
-    if ( opt & PL_COLORBAR_SHADE && opt & PL_COLORBAR_SHADE_LABEL )
-    {
-        if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
-            label_box_custom( local_axis_opts, n_values, values, "", 0, NULL );
-        else
-            label_box_custom( "", 0, NULL, local_axis_opts, n_values, values );
-        // Exclude ticks for plbox call below since those tick marks and
-        // associated labels have already been handled in a custom way above.
-        remove_characters( local_axis_opts, "TtXx" );
-    }
-
-    // Draw the outline for the entire colorbar, tick marks, tick labels.
-
-    if ( if_edge )
-        edge_string = "bc";
-    else
-        edge_string = "uw";
-    if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
-    {
-        plbox( edge_string, 0.0, 0, local_axis_opts, ticks, sub_ticks );
-    }
-    else
-    {
-        plbox( local_axis_opts, ticks, sub_ticks, edge_string, 0.0, 0 );
-    }
-
-    free( local_axis_opts );
-
+    // draw decorated (i.e., including tick marks + numerical tick
+    // labels) box.
+    draw_box( FALSE, opt, axis_opts, if_edge,
+        ticks, sub_ticks, n_values, values );
     // Write label.
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
