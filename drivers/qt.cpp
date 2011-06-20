@@ -262,11 +262,11 @@ void plD_init_rasterqt( PLStream * pls )
     pls->dev_flush = 1;
     // Driver does not have a clear capability so use (good) PLplot core
     // fallback for that instead.
-    pls->dev_clear   = 0;
-    pls->termin      = 0;
-    pls->page        = 0;
-    pls->dev_text    = 1;                        // want to draw text
-    pls->dev_unicode = 1;                        // want unicode
+    pls->dev_clear         = 0;
+    pls->termin            = 0;
+    pls->page              = 0;
+    pls->dev_text          = 1; // want to draw text
+    pls->dev_unicode       = 1; // want unicode
     pls->has_string_length = 1; // Driver supports string length calculations
 
     // Needs to be true only because of multi-stream case
@@ -690,11 +690,11 @@ void plD_init_svgqt( PLStream * pls )
     pls->dev_flush = 1;
     // Driver does not have a clear capability so use (good) PLplot core
     // fallback for that instead.
-    pls->dev_clear   = 0;
-    pls->termin      = 0;
-    pls->page        = 0;
-    pls->dev_text    = 1;                        // want to draw text
-    pls->dev_unicode = 1;                        // want unicode
+    pls->dev_clear         = 0;
+    pls->termin            = 0;
+    pls->page              = 0;
+    pls->dev_text          = 1; // want to draw text
+    pls->dev_unicode       = 1; // want unicode
     pls->has_string_length = 1; // Driver supports string length calculations
 
     // Needs to be true only because of multi-stream case
@@ -975,11 +975,11 @@ void plD_init_epspdfqt( PLStream * pls )
     pls->dev_flush = 1;
     // Driver does not have a clear capability so use (good) PLplot core
     // fallback for that instead.
-    pls->dev_clear   = 0;
-    pls->termin      = 0;
-    pls->page        = 0;
-    pls->dev_text    = 1; // want to draw text
-    pls->dev_unicode = 1; // want unicode
+    pls->dev_clear         = 0;
+    pls->termin            = 0;
+    pls->page              = 0;
+    pls->dev_text          = 1; // want to draw text
+    pls->dev_unicode       = 1; // want unicode
     pls->has_string_length = 1; // Driver supports string length calculations
 
     // QPrinter devices won't create if there is no QApplication declared...
@@ -1287,10 +1287,10 @@ void plD_init_qtwidget( PLStream * pls )
     pls->dev_flush = 1;
     // Driver does not have a clear capability so use (good) PLplot core
     // fallback for that instead.
-    pls->dev_clear   = 0;
-    pls->termin      = 1;
-    pls->dev_text    = 1; // want to draw text
-    pls->dev_unicode = 1; // want unicode
+    pls->dev_clear         = 0;
+    pls->termin            = 1;
+    pls->dev_text          = 1; // want to draw text
+    pls->dev_unicode       = 1; // want unicode
     pls->has_string_length = 1; // Driver supports string length calculations
 
     widget->setVisible( true );
@@ -1513,10 +1513,10 @@ void plD_init_extqt( PLStream * pls )
     pls->dev_flush = 1;
     // Driver does not have a clear capability so use (good) PLplot core
     // fallback for that instead.
-    pls->dev_clear   = 0;
-    pls->termin      = 0;
-    pls->dev_text    = 1; // want to draw text
-    pls->dev_unicode = 1; // want unicode
+    pls->dev_clear         = 0;
+    pls->termin            = 0;
+    pls->dev_text          = 1; // want to draw text
+    pls->dev_unicode       = 1; // want unicode
     pls->has_string_length = 1; // Driver supports string length calculations
 }
 
@@ -1708,11 +1708,11 @@ void plD_init_memqt( PLStream * pls )
     pls->dev_flush = 1;
     // Driver does not have a clear capability so use (good) PLplot core
     // fallback for that instead.
-    pls->dev_clear   = 0;
-    pls->termin      = 0;
-    pls->page        = 0;
-    pls->dev_text    = 1;                        // want to draw text
-    pls->dev_unicode = 1;                        // want unicode
+    pls->dev_clear         = 0;
+    pls->termin            = 0;
+    pls->page              = 0;
+    pls->dev_text          = 1; // want to draw text
+    pls->dev_unicode       = 1; // want unicode
     pls->has_string_length = 1; // Driver supports string length calculations
 
     // Needs to be true only because of multi-stream case

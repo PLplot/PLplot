@@ -359,7 +359,7 @@ void QtPLDriver::drawText( EscText* txt )
 
     if ( pls->get_string_length )
     {
-        pls->string_length = ((PLFLT) xOffset / picDpi) * 25.4;
+        pls->string_length = ( (PLFLT) xOffset / picDpi ) * 25.4;
         return;
     }
 
@@ -884,27 +884,27 @@ void QtPLWidget::drawText( EscText* txt )
     if ( pls->get_string_length )
     {
         PLUNICODE fci;
-        QPicture picText;
-        double picDpi;
-	PLUNICODE *text;
+        QPicture  picText;
+        double    picDpi;
+        PLUNICODE *text;
 
         plgfci( &fci );
-	text = new PLUNICODE[txt->unicode_array_len];
-	memcpy( text, txt->unicode_array, txt->unicode_array_len * sizeof ( PLUNICODE ) );
+        text = new PLUNICODE[txt->unicode_array_len];
+        memcpy( text, txt->unicode_array, txt->unicode_array_len * sizeof ( PLUNICODE ) );
         picText = getTextPicture( fci,
-				  text, 
-				  txt->unicode_array_len, 
-				  pls->chrht);
-	//
-	// I'm assuming that y_fact is 1.0 here, as it is impossible 
-	// to know in advance (or so I believe). When the text is
-	// rendered "for real" it will be: pls->chrht * y_fact.
-	//
-	// Hazen 6/2011
-	//
-	picDpi = picText.logicalDpiY();
-        pls->string_length = ((PLFLT) xOffset / picDpi) * 25.4;
-	free(text);
+            text,
+            txt->unicode_array_len,
+            pls->chrht );
+        //
+        // I'm assuming that y_fact is 1.0 here, as it is impossible
+        // to know in advance (or so I believe). When the text is
+        // rendered "for real" it will be: pls->chrht * y_fact.
+        //
+        // Hazen 6/2011
+        //
+        picDpi             = picText.logicalDpiY();
+        pls->string_length = ( (PLFLT) xOffset / picDpi ) * 25.4;
+        free( text );
         return;
     }
 
