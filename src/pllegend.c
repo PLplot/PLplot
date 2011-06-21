@@ -1177,7 +1177,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // direction of the orientation of the cap.  In other words,
     // cap_angle completely controls the shape of the triangle, but
     // not its scale.
-    PLFLT cap_angle = 90.;
+    PLFLT cap_angle = 45.;
     // Ratio of length of cap in orientation direction
     // to the width of the bar (and cap) in the direction
     // perpendicular to the orientation in physical coordinates
@@ -1218,7 +1218,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // undecorated colorbar (where the decorations consist of external
     // tick marks, numerical tick labels, or text if any of those
     // exist) and the bounding box.
-    PLFLT dx_subpage = 0., dy_subpage = 0.;
+    PLFLT dx_subpage, dy_subpage;
     // Normalized subpage coordinates of the top left of undecorated
     // colorbar,
     PLFLT plot_x_subpage, plot_y_subpage;
@@ -1252,7 +1252,10 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 
     // Ratio of normalized subpage coordinates to mm coordinates in
     // x and y.
-    PLFLT ncxpmm, ncypmm;
+    PLFLT sbxpmm, sbypmm;
+
+    // Decorated colorbox bounding box limits in subpage coordinates.
+    PLFLT bb_xmin, bb_xmax, bb_ymin, bb_ymax;
 
     // Default position flags and sanity checks for position flags.
     if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
@@ -1342,8 +1345,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                      adopted_to_subpage_x( 0. );
     colorbar_height = adopted_to_subpage_y( y_length ) -
                       adopted_to_subpage_y( 0. );
-    // width and height of colorbar bounding box in normalized subpage
-    // coordinates.  Caps taken care of.
+    // Extent of cap in normalized subpage coordinates in either X or Y
+    // direction as appropriate.
     if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
     {
         cap_extent = cap_ratio * colorbar_height / aspspp;
@@ -1397,56 +1400,40 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // marks + numerical tick labels) box.
     draw_box( TRUE, opt, axis_opts, if_edge,
         ticks, sub_ticks, n_values, values );
-    ncxpmm             = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
-    ncypmm             = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
-    colorbar_width_bb  = ( plsc->boxbb_xmax - plsc->boxbb_xmin ) * ncxpmm;
-    colorbar_height_bb = ( plsc->boxbb_ymax - plsc->boxbb_ymin ) * ncypmm;
-    // Offsets of upper left corner relative to plvpor coordinates of that
-    // point which are (0., colorbar_height), see above.
-    dx_subpage += -plsc->boxbb_xmin * ncxpmm;
-    dy_subpage -= plsc->boxbb_ymax * ncypmm - colorbar_height;
+    sbxpmm  = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
+    sbypmm  = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
+    bb_xmin = plsc->boxbb_xmin * sbxpmm;
+    bb_xmax = plsc->boxbb_xmax * sbxpmm;
+    bb_ymin = plsc->boxbb_ymin * sbypmm;
+    bb_ymax = plsc->boxbb_ymax * sbypmm;
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
-        {
-            colorbar_width_bb += cap_extent;
-            dx_subpage        += cap_extent;
-        }
+            bb_xmin = MIN( bb_xmin, -cap_extent );
         if ( opt & PL_COLORBAR_ORIENT_TOP )
-        {
-            colorbar_height_bb += cap_extent;
-        }
+            bb_ymin = MIN( bb_ymin, -cap_extent );
         if ( opt & PL_COLORBAR_ORIENT_LEFT )
-        {
-            colorbar_width_bb += cap_extent;
-        }
+            bb_xmax = MAX( bb_xmax, colorbar_width + cap_extent );
         if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            colorbar_height_bb += cap_extent;
-            dy_subpage         -= cap_extent;
-        }
+            bb_ymax = MAX( bb_ymax, colorbar_height + cap_extent );
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
     {
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
-        {
-            colorbar_width_bb += cap_extent;
-        }
+            bb_xmax = MAX( bb_xmax, colorbar_width + cap_extent );
         if ( opt & PL_COLORBAR_ORIENT_TOP )
-        {
-            colorbar_height_bb += cap_extent;
-            dy_subpage         -= cap_extent;
-        }
+            bb_ymax = MAX( bb_ymax, colorbar_height + cap_extent );
         if ( opt & PL_COLORBAR_ORIENT_LEFT )
-        {
-            colorbar_width_bb += cap_extent;
-            dx_subpage        += cap_extent;
-        }
+            bb_xmin = MIN( bb_xmin, -cap_extent );
         if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            colorbar_height_bb += cap_extent;
-        }
+            bb_ymin = MIN( bb_ymin, -cap_extent );
     }
+    colorbar_width_bb  = bb_xmax - bb_xmin;
+    colorbar_height_bb = bb_ymax - bb_ymin;
+    // Offsets of upper left corner relative to plvpor coordinates of that
+    // point which are (0., colorbar_height), see above.
+    dx_subpage = -bb_xmin;
+    dy_subpage = colorbar_height - bb_ymax;
     // Total width and height of colorbar bounding box in adopted subpage
     // coordinates.
     colorbar_width_vc = subpage_to_adopted_x( colorbar_width_bb ) -

@@ -1369,6 +1369,10 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     PLFLT       pos, tn, tp, offset, height, just;
     PLFLT       factor, tstart;
     const char  *timefmt;
+    PLFLT       default_mm, char_height_mm, height_mm;
+    PLFLT       string_length_mm, pos_mm;
+
+    plgchr( &default_mm, &char_height_mm );
 
 // Set plot options from input
 
@@ -1402,110 +1406,201 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     vpwyma = ( vpwymax > vpwymin ) ? vpwymax : vpwymin;
 
 // Write horizontal label(s)
-    if ( plsc->if_boxbb )
+    if ( ( lmx || lnx ) && ( ltx || lxx ) )
     {
-    }
-    else
-    {
-        if ( ( lmx || lnx ) && ( ltx || lxx ) )
+        PLINT xmode, xprec, xdigmax, xdigits, xscale;
+
+        plgxax( &xdigmax, &xdigits );
+        pldprec( vpwxmi, vpwxma, xtick1, lfx, &xmode, &xprec, xdigmax, &xscale );
+        timefmt = plP_gtimefmt();
+
+        if ( ldx )
         {
-            PLINT xmode, xprec, xdigmax, xdigits, xscale;
+            pldtfac( vpwxmi, vpwxma, &factor, &tstart );
+            tp = xtick1 * ( 1. + floor( ( vpwxmi - tstart ) / xtick1 ) ) + tstart;
+        }
+        else
+        {
+            tp = xtick1 * ( 1. + floor( vpwxmi / xtick1 ) );
+        }
+        height = lix ? 1.75 : 1.5;
+        if ( plsc->if_boxbb )
+        {
+            // Height of zero corresponds to character centred on edge
+            // so should add 0.5 to height to obtain bounding box edge
+            // in direction away from edge.  However, experimentally
+            // found 0.7 gave a better looking result.
+            height_mm = ( height + 0.7 ) * char_height_mm;
+            if ( lnx )
+                plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, plsc->vppymi /
+                    plsc->ypmm - height_mm );
+            if ( lmx )
+                plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                    plsc->ypmm + height_mm );
+        }
 
-            plgxax( &xdigmax, &xdigits );
-            pldprec( vpwxmi, vpwxma, xtick1, lfx, &xmode, &xprec, xdigmax, &xscale );
-            timefmt = plP_gtimefmt();
-
+        for ( tn = tp; BETW( tn, vpwxmi, vpwxma ); tn += xtick1 )
+        {
             if ( ldx )
             {
-                pldtfac( vpwxmi, vpwxma, &factor, &tstart );
-                tp = xtick1 * ( 1. + floor( ( vpwxmi - tstart ) / xtick1 ) ) + tstart;
+                strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
             }
             else
-                tp = xtick1 * ( 1. + floor( vpwxmi / xtick1 ) );
-            for ( tn = tp; BETW( tn, vpwxmi, vpwxma ); tn += xtick1 )
             {
-                if ( ldx )
-                {
-                    strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
-                }
-                else
-                {
-                    plform( PL_X_AXIS, tn, xscale, xprec, string, STRING_LEN, llx, lfx, lox );
-                }
-                height = lix ? 1.75 : 1.5;
-                pos    = ( vpwxmax > vpwxmin ) ?
-                         ( tn - vpwxmi ) / ( vpwxma - vpwxmi ) :
-                         ( vpwxma - tn ) / ( vpwxma - vpwxmi );
-                if ( lnx )
-                    plmtex( "b", height, pos, 0.5, string );
-                if ( lmx )
-                    plmtex( "t", height, pos, 0.5, string );
+                plform( PL_X_AXIS, tn, xscale, xprec, string, STRING_LEN, llx, lfx, lox );
             }
-            xdigits = 2;
-            plsxax( xdigmax, xdigits );
-
-            // Write separate exponential label if mode = 1.
-
-            if ( !llx && !ldx && !lox && xmode )
+            pos = ( vpwxmax > vpwxmin ) ?
+                  ( tn - vpwxmi ) / ( vpwxma - vpwxmi ) :
+                  ( vpwxma - tn ) / ( vpwxma - vpwxmi );
+            if ( plsc->if_boxbb )
             {
-                // Assume label data is for placement of exponents if no custom
-                // label function is provided.
-                if ( plsc->label_data )
+                string_length_mm = plstrl( string );
+                pos_mm           = ( plsc->vppxmi + pos * ( plsc->vppxma - plsc->vppxmi ) ) /
+                                   plsc->xpmm;
+            }
+            if ( lnx )
+            {
+                // Bottom axis.
+                if ( plsc->if_boxbb )
                 {
-                    height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
-                    pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
-                    just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+                    plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                        pos_mm - 0.5 * string_length_mm );
+                    plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                        pos_mm + 0.5 * string_length_mm );
                 }
                 else
                 {
-                    height = 3.2;
-                    pos    = 1.0;
-                    just   = 0.5;
+                    plmtex( "b", height, pos, 0.5, string );
                 }
-                snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
-                if ( lnx )
-                    plmtex( "b", height, pos, just, string );
-                if ( lmx )
-                    plmtex( "t", height, pos, just, string );
+            }
+            if ( lmx )
+            {
+                // Top axis.
+                if ( plsc->if_boxbb )
+                {
+                    plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                        pos_mm - 0.5 * string_length_mm );
+                    plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                        pos_mm + 0.5 * string_length_mm );
+                }
+                else
+                {
+                    plmtex( "t", height, pos, 0.5, string );
+                }
             }
         }
+        xdigits = 2;
+        plsxax( xdigmax, xdigits );
+
+        // Write separate exponential label if mode = 1.
+
+        if ( !llx && !ldx && !lox && xmode )
+        {
+            // Assume label data is for placement of exponents if no custom
+            // label function is provided.
+            if ( plsc->label_data )
+            {
+                height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+            }
+            else
+            {
+                height = 3.2;
+                pos    = 1.0;
+                just   = 0.5;
+            }
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
+            if ( lnx )
+            {
+                // Bottom axis exponent.
+                if ( plsc->if_boxbb )
+                {
+                    // FIXME: Add Y bounding box calculations for
+                    // exponent.
+                    // FIXME: Add X bounding box calculations for
+                    // exponent that slops over the end of the axis.
+                }
+                else
+                {
+                    plmtex( "b", height, pos, just, string );
+                }
+            }
+            if ( lmx )
+            {
+                // Top axis exponent.
+                if ( plsc->if_boxbb )
+                {
+                    // FIXME: Add Y bounding box calculations for
+                    // exponent.
+                    // FIXME: Add X bounding box calculations for
+                    // exponent that slops over the end of the axis.
+                }
+                else
+                {
+                    plmtex( "t", height, pos, just, string );
+                }
+            }
+        }
+    }
 
 // Write vertical label(s)
 
-        if ( ( lmy || lny ) && ( lty || lxy ) )
+    if ( ( lmy || lny ) && ( lty || lxy ) )
+    {
+        PLINT ymode, yprec, ydigmax, ydigits, yscale;
+
+        plgyax( &ydigmax, &ydigits );
+        pldprec( vpwymi, vpwyma, ytick1, lfy, &ymode, &yprec, ydigmax, &yscale );
+
+        ydigits = 0;
+        if ( ldy )
         {
-            PLINT ymode, yprec, ydigmax, ydigits, yscale;
-
-            plgyax( &ydigmax, &ydigits );
-            pldprec( vpwymi, vpwyma, ytick1, lfy, &ymode, &yprec, ydigmax, &yscale );
-
-            ydigits = 0;
+            pldtfac( vpwymi, vpwyma, &factor, &tstart );
+            tp = ytick1 * ( 1. + floor( ( vpwymi - tstart ) / ytick1 ) ) + tstart;
+        }
+        else
+        {
+            tp = ytick1 * ( 1. + floor( vpwymi / ytick1 ) );
+        }
+        for ( tn = tp; BETW( tn, vpwymi, vpwyma ); tn += ytick1 )
+        {
             if ( ldy )
             {
-                pldtfac( vpwymi, vpwyma, &factor, &tstart );
-                tp = ytick1 * ( 1. + floor( ( vpwymi - tstart ) / ytick1 ) ) + tstart;
+                strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
             }
             else
-                tp = ytick1 * ( 1. + floor( vpwymi / ytick1 ) );
-            for ( tn = tp; BETW( tn, vpwymi, vpwyma ); tn += ytick1 )
             {
-                if ( ldy )
+                plform( PL_Y_AXIS, tn, yscale, yprec, string, STRING_LEN, lly, lfy, loy );
+            }
+            pos = ( vpwymax > vpwymin ) ?
+                  ( tn - vpwymi ) / ( vpwyma - vpwymi ) :
+                  ( vpwyma - tn ) / ( vpwyma - vpwymi );
+            if ( lny )
+            {
+                if ( lvy )
                 {
-                    strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
-                }
-                else
-                {
-                    plform( PL_Y_AXIS, tn, yscale, yprec, string, STRING_LEN, lly, lfy, loy );
-                }
-                pos = ( vpwymax > vpwymin ) ?
-                      ( tn - vpwymi ) / ( vpwyma - vpwymi ) :
-                      ( vpwyma - tn ) / ( vpwyma - vpwymi );
-                if ( lny )
-                {
-                    if ( lvy )
+                    // Left axis with text written perpendicular to edge.
+                    if ( plsc->if_boxbb )
+                    {
+                        // FIXME: Add X bounding box calculations for
+                        // numerical labels that slop over the end of the
+                        // axis.
+                    }
+                    else
                     {
                         height = liy ? 1.0 : 0.5;
                         plmtex( "lv", height, pos, 1.0, string );
+                    }
+                }
+                else
+                {
+                    // Top axis.
+                    if ( plsc->if_boxbb )
+                    {
+                        // FIXME: Add X bounding box calculations for
+                        // numerical labels that slop over the end of the
+                        // axis.
                     }
                     else
                     {
@@ -1513,12 +1608,32 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                         plmtex( "l", height, pos, 0.5, string );
                     }
                 }
-                if ( lmy )
+            }
+            if ( lmy )
+            {
+                if ( lvy )
                 {
-                    if ( lvy )
+                    // Top axis.
+                    if ( plsc->if_boxbb )
+                    {
+                        // FIXME: Add X bounding box calculations for
+                        // numerical labels that slop over the end of the
+                        // axis.
+                    }
+                    else
                     {
                         height = liy ? 1.0 : 0.5;
                         plmtex( "rv", height, pos, 0.0, string );
+                    }
+                }
+                else
+                {
+                    // Top axis.
+                    if ( plsc->if_boxbb )
+                    {
+                        // FIXME: Add X bounding box calculations for
+                        // numerical labels that slop over the end of the
+                        // axis.
                     }
                     else
                     {
@@ -1526,39 +1641,49 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                         plmtex( "r", height, pos, 0.5, string );
                     }
                 }
-                ydigits = MAX( ydigits, (PLINT) strlen( string ) );
             }
-            if ( !lvy )
-                ydigits = 2;
+            ydigits = MAX( ydigits, (PLINT) strlen( string ) );
+        }
+        if ( !lvy )
+            ydigits = 2;
 
-            plsyax( ydigmax, ydigits );
+        plsyax( ydigmax, ydigits );
 
-            // Write separate exponential label if mode = 1.
+        // Write separate exponential label if mode = 1.
 
-            if ( !lly && !ldy && !loy && ymode )
+        if ( !lly && !ldy && !loy && ymode )
+        {
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
+            if ( plsc->label_data )
             {
-                snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
-                if ( plsc->label_data )
+                height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+            }
+            else
+            {
+                offset = 0.02;
+                height = 2.0;
+                if ( lny )
                 {
-                    height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
-                    pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
-                    just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+                    pos  = 0.0 - offset;
+                    just = 1.0;
                 }
-                else
+                if ( lmy )
                 {
-                    offset = 0.02;
-                    height = 2.0;
-                    if ( lny )
-                    {
-                        pos  = 0.0 - offset;
-                        just = 1.0;
-                    }
-                    if ( lmy )
-                    {
-                        pos  = 1.0 + offset;
-                        just = 0.0;
-                    }
+                    pos  = 1.0 + offset;
+                    just = 0.0;
                 }
+            }
+            // Top axis.
+            if ( plsc->if_boxbb )
+            {
+                // FIXME: Add X bounding box calculations for
+                // numerical labels that slop over the end of the
+                // axis.
+            }
+            else
+            {
                 plmtex( "t", height, pos, just, string );
             }
         }
