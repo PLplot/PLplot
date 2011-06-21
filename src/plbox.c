@@ -1455,7 +1455,8 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
             if ( plsc->if_boxbb )
             {
                 string_length_mm = plstrl( string );
-                pos_mm           = ( plsc->vppxmi + pos * ( plsc->vppxma - plsc->vppxmi ) ) /
+                pos_mm           = ( plsc->vppxmi + pos *
+                                     ( plsc->vppxma - plsc->vppxmi ) ) /
                                    plsc->xpmm;
             }
             if ( lnx )
@@ -1516,10 +1517,21 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                 // Bottom axis exponent.
                 if ( plsc->if_boxbb )
                 {
-                    // FIXME: Add Y bounding box calculations for
-                    // exponent.
-                    // FIXME: Add X bounding box calculations for
-                    // exponent that slops over the end of the axis.
+                    // Height of zero corresponds to character centred on edge
+                    // so should add 0.5 to height to obtain bounding box edge
+                    // in direction away from edge if no exponent.
+                    // Add an additional offset to make exponent fit.
+                    height_mm        = ( height + 0.9 ) * char_height_mm;
+                    plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, plsc->vppymi /
+                        plsc->ypmm - height_mm );
+                    string_length_mm = plstrl( string );
+                    pos_mm           = ( plsc->vppxmi + pos *
+                                         ( plsc->vppxma - plsc->vppxmi ) ) /
+                                       plsc->xpmm;
+                    plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                        pos_mm - 0.5 * string_length_mm );
+                    plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                        pos_mm + 0.5 * string_length_mm );
                 }
                 else
                 {
@@ -1531,10 +1543,21 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                 // Top axis exponent.
                 if ( plsc->if_boxbb )
                 {
-                    // FIXME: Add Y bounding box calculations for
-                    // exponent.
-                    // FIXME: Add X bounding box calculations for
-                    // exponent that slops over the end of the axis.
+                    // Height of zero corresponds to character centred on edge
+                    // so should add 0.5 to height to obtain bounding box edge
+                    // in direction away from edge if no exponent.
+                    // Add an additional offset to make exponent fit.
+                    height_mm        = ( height + 1.4 ) * char_height_mm;
+                    plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                        plsc->ypmm + height_mm );
+                    string_length_mm = plstrl( string );
+                    pos_mm           = ( plsc->vppxmi + pos *
+                                         ( plsc->vppxma - plsc->vppxmi ) ) /
+                                       plsc->xpmm;
+                    plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                        pos_mm - 0.5 * string_length_mm );
+                    plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                        pos_mm + 0.5 * string_length_mm );
                 }
                 else
                 {
