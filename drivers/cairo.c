@@ -1137,7 +1137,7 @@ void close_span_tag( char *pangoMarkupString, int upDown )
 // Create a rise span tag w/ appropriate font size & baseline offset
 //--------------------------------------------------------------------------
 
-#define STEPSIZE    7500.0
+#define STEPSIZE    15000.0
 
 char *rise_span_tag( int level, int direction )
 {
@@ -1148,7 +1148,7 @@ char *rise_span_tag( int level, int direction )
 
     for ( i = 0; i < abs( level ); i++ )
     {
-        multiplier = multiplier * 0.9;
+        multiplier = multiplier * 0.75;
         rise      += STEPSIZE * multiplier;
     }
     if ( direction > 0 )
