@@ -240,7 +240,7 @@ static void text_end_cairo( PLStream *pls, EscText *args );
 static char *ucs4_to_pango_markup_format( PLUNICODE *, int, float );
 static void open_span_tag( char *, PLUNICODE, float, int );
 static void close_span_tag( char *, int );
-static char *rise_span_tag( int, int );
+static char *rise_span_tag( int, int, float );
 
 // Graphics
 
@@ -651,7 +651,8 @@ void text_begin_cairo( PLStream *pls, EscText *args )
     aStream                    = (PLCairo *) pls->dev;
     aStream->upDown            = 0;
     aStream->pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
-    aStream->fontSize          = pls->chrht * DPI / 25.4;
+    // Calculate the font size (in points since DPI = 72).
+    aStream->fontSize = pls->chrht * DPI / 25.4;
     for ( i = 0; i < MAX_MARKUP_LEN; i++ )
     {
         aStream->pangoMarkupString[i] = 0;
@@ -717,7 +718,7 @@ void text_esc_cairo( PLStream *pls, EscText *args )
         }
         else
         {
-            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, 1, aStream->fontSize ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown++;
         break;
@@ -728,7 +729,7 @@ void text_esc_cairo( PLStream *pls, EscText *args )
         }
         else
         {
-            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, -1, aStream->fontSize ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown--;
         break;
@@ -866,7 +867,7 @@ void proc_str( PLStream *pls, EscText *args )
         return;
     }
 
-    // Calculate the font size (in pixels)
+    // Calculate the font size (in points since DPI = 72).
     fontSize = pls->chrht * DPI / 25.4;
 
     // Convert the escape characters into the appropriate Pango markup
@@ -1019,7 +1020,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                     }
                     else
                     {
-                        strncat( pangoMarkupString, rise_span_tag( upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                        strncat( pangoMarkupString, rise_span_tag( upDown, 1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown++;
                 }
@@ -1031,7 +1032,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                     }
                     else
                     {
-                        strncat( pangoMarkupString, rise_span_tag( upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                        strncat( pangoMarkupString, rise_span_tag( upDown, -1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown--;
                 }
@@ -1090,7 +1091,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
         while ( upDown > 0 )
         {
             upDown--;
-            strncat( pangoMarkupString, rise_span_tag( upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+            strncat( pangoMarkupString, rise_span_tag( upDown, 1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
         }
     }
     if ( upDown < 0 )
@@ -1098,7 +1099,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
         while ( upDown < 0 )
         {
             upDown++;
-            strncat( pangoMarkupString, rise_span_tag( upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+            strncat( pangoMarkupString, rise_span_tag( upDown, -1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
         }
     }
 }
@@ -1131,33 +1132,59 @@ void close_span_tag( char *pangoMarkupString, int upDown )
     strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 }
 
+// Use 16/20ths to mimic what plstr in plsym.c does for first level
+// of superscripts/subscripts.
+# define RISE_FACTOR    0.8
+
+// Experimental correction to help account for difference between
+// cairo and PLplot character coordinate systems.
+# define OFFSET_FACTOR    1.0
+
 //--------------------------------------------------------------------------
 // rise_span_tag
 //
 // Create a rise span tag w/ appropriate font size & baseline offset
 //--------------------------------------------------------------------------
 
-#define STEPSIZE    15000.0
-
-char *rise_span_tag( int level, int direction )
+char *rise_span_tag( int level, int direction, float fontSize )
 {
     int         i;
     float       multiplier = 1.0;
-    float       rise       = STEPSIZE;
+    float       rise       = RISE_FACTOR;
+    float       offset;
     static char tag[100];
 
     for ( i = 0; i < abs( level ); i++ )
     {
         multiplier = multiplier * 0.75;
-        rise      += STEPSIZE * multiplier;
+        rise      += RISE_FACTOR * multiplier;
     }
+    // http://developer.gnome.org/pango/unstable/PangoMarkupFormat.html says
+    // rise should be in units of 10000 em's, but empricial evidence shows
+    // it is in units of 1024th of a point.  Therefore, since FontSize
+    // is in points, a rise of 1024. * fontSize corresponds a rise of
+    // a full character height.
+    rise = 1024. * fontSize * rise;
+
+    // This is the correction for the difference between baseline and
+    // middle coordinate systems.  Theoretically this offset should be
+    // 0.5*(fontSize - superscript/subscript fontSize).  We make the
+    // assumption that the "smaller" fonts below are close to 0.75*
+    // multiplier * fontSize in size, where the "extra" factor of 0.75
+    // corrects for an off-by-one issue in the termination of
+    // the multiplier calculation in the above loop.  OFFSET_FACTOR
+    // is an empirical correction.
+    offset = 1024. * 0.5 * fontSize * ( 1.0 - 0.75 * multiplier * OFFSET_FACTOR );
+
     if ( direction > 0 )
     {
-        sprintf( tag, "<span rise=\"%d\" size=\"smaller\">", (int) rise );
+        sprintf( tag, "<span rise=\"%d\" size=\"smaller\">",
+            (int) ( rise + offset ) );
     }
     else
     {
-        sprintf( tag, "<span rise=\"%d\" size=\"smaller\">", (int) -rise );
+        sprintf( tag, "<span rise=\"%d\" size=\"smaller\">",
+            (int) -( rise - offset ) );
     }
 
     return ( tag );
