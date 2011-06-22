@@ -45,7 +45,6 @@ plmtex("b", 3.2, 1.0, 0.5, "(x10#u-100#d)")
 plmtex("t", 2.0, 0.0-0.02, 1.0, "(x10#u-100#d)")
 plmtex("t", 2.0, 1.0+0.02, 0.0, "(x10#u-100#d)")
 
-
 # Terminate plplot
 plend()
 
