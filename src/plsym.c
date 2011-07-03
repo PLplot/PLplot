@@ -787,6 +787,7 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
 
     PLINT       ch, i, length, level = 0, style, oline = 0, uline = 0;
     PLFLT       width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale;
+    PLFLT old_sscale, sscale, old_soffset, soffset;
 
     plgchr( &def, &ht );
     dscale = 0.05 * ht;
@@ -802,17 +803,19 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
     for ( i = 0; i < length; i++ )
     {
         ch = symbol[i];
-        if ( ch == -1 )   // super-script
+        if ( ch == -1 )   // superscript
         {
-            level++;
-            yorg += 16.0 * scale;
-            scale = dscale * pow( 0.75, (double) ABS( level ) );
+          plP_script_scale( TRUE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset);
+          yorg = 16.0*dscale*soffset;
+          scale = dscale * sscale;
         }
-        else if ( ch == -2 )   // sub-script
+        else if ( ch == -2 )   // subscript
         {
-            level--;
-            scale = dscale * pow( 0.75, (double) ABS( level ) );
-            yorg -= 16.0 * scale;
+          plP_script_scale( FALSE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset);
+          yorg = -16.0*dscale*soffset;
+          scale = dscale * sscale;
         }
         else if ( ch == -3 ) // back-char
             xorg -= width * scale;
@@ -1226,6 +1229,74 @@ plP_stsearch( const char *str, int chr )
         return TRUE;
     else
         return FALSE;
+}
+
+//--------------------------------------------------------------------------
+//! Calculate scale of font size and scale of magnitude of vertical
+//! offset associated with superscripts and subscripts.
+//! Notes on arguments: ifupper must be either TRUE or FALSE on every
+//! call to plP_script_scale.  The contents of the location pointed to
+//! by the level pointer must be zero on the first call to
+//! plP_script_scale, but not modified externally from then on.  The
+//! contents of the locations pointed to by all other pointer
+//! arguments are initialized internally, and should not be modified
+//! externally.
+//!
+//! @param ifupper Value which is TRUE if superscripting, i.e., if
+//! incrementing the previous level, and FALSE if subscripting, i.e.,
+//! decrementing the previous level.
+//! @param level Pointer to a location which contains the value of the
+//! superscript/subscript level.  That value is 0, +-1, +-2, etc., for
+//! no superscript/subscript, the first level of
+//! superscript/subscript, the second level of superscript/subscript,
+//! etc.  Before the call the value is the old level, and after the
+//! call the value will be incremented (ifupper TRUE) or decremented
+//! (ifupper FALSE) from the previous value.
+//! @param old_scale A pointer to a location that contains after the
+//! call the old font size scale value.
+//! @param scale A pointer to a location that contains after the call
+//! the font size scale value.  This value is 0.75^{|level|} where
+//! |level| is the magnitude of the value of the superscript/subscript
+//! level after the call.
+//! @param old_offset A pointer to a location that contains after the
+//! call the old value of the magnitude of the superscript/subscript
+//! offset.
+//! @param offset A pointer to a location that contains after the call
+//! the value of the magnitude of the superscript/subscript offset
+//! which is zero for |level|=0 and sum_{i=1}^{i=|level|} 0.75^{i-1},
+//! otherwise.
+
+void
+plP_script_scale( PLBOOL ifupper, PLINT *level,
+                   PLFLT *old_scale, PLFLT *scale,
+                   PLFLT *old_offset, PLFLT *offset)
+{
+  if (*level == 0)
+  {
+    *old_scale = 1.;
+    *old_offset = 0.;
+  }
+  else
+  {
+    *old_scale = *scale;
+    *old_offset = *offset;
+  }
+  if((*level >=0 && ifupper) || (*level <=0 && !ifupper))
+  {
+    // If superscript of subscript moves further away from centerline....
+    *scale = 0.75 * *old_scale;
+    *offset = *old_offset + *old_scale; 
+  }
+  else
+  {
+    // If superscript of subscript moves closer to centerline....
+    *scale = *old_scale/0.75;
+    *offset = *old_offset - *scale; 
+  }
+  if(ifupper)
+    (*level)++;
+  else
+    (*level)--;
 }
 
 //--------------------------------------------------------------------------

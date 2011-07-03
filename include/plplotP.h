@@ -620,6 +620,14 @@ difilt( PLINT *, PLINT *, PLINT,
 PLDLLIMPEXP void
 difilt_clip( PLINT *, PLINT * );
 
+// Calculate scale of font size and scale of magnitude of vertical
+// offset associated with superscripts and subscripts.
+
+PLDLLIMPEXP void
+plP_script_scale( PLBOOL ifupper, PLINT *level,
+                   PLFLT *old_scale, PLFLT *scale,
+                   PLFLT *old_offset, PLFLT *offset);
+                   
 // Driver draws text
 
 void
