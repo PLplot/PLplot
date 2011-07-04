@@ -1068,6 +1068,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
 {
     unsigned char fontFamily, fontStyle, fontWeight;
     char          openTag[TAG_LEN];
+    int           level;
 
     // Generate the font info for the open tag & concatenate this
     // onto the markup string.
@@ -1085,22 +1086,14 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     snprintf( openTag, TAG_LEN, "weight=\"%s\">", weightLookup[fontWeight] );
     strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
-    // Move to the right sub/super-script level
-    if ( upDown > 0 )
+    // Move to the right superscript/subscript level
+    for ( level = 0; level < upDown; level++ )
     {
-        while ( upDown > 0 )
-        {
-            upDown--;
-            strncat( pangoMarkupString, rise_span_tag( upDown, 1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
-        }
+        strncat( pangoMarkupString, rise_span_tag( level, 1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
     }
-    if ( upDown < 0 )
+    for ( level = 0; level > upDown; level-- )
     {
-        while ( upDown < 0 )
-        {
-            upDown++;
-            strncat( pangoMarkupString, rise_span_tag( upDown, -1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
-        }
+        strncat( pangoMarkupString, rise_span_tag( level, -1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
     }
 }
 
