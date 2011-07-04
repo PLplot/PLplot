@@ -625,9 +625,9 @@ difilt_clip( PLINT *, PLINT * );
 
 PLDLLIMPEXP void
 plP_script_scale( PLBOOL ifupper, PLINT *level,
-                   PLFLT *old_scale, PLFLT *scale,
-                   PLFLT *old_offset, PLFLT *offset);
-                   
+                  PLFLT *old_scale, PLFLT *scale,
+                  PLFLT *old_offset, PLFLT *offset );
+
 // Driver draws text
 
 void

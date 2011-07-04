@@ -787,7 +787,7 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
 
     PLINT       ch, i, length, level = 0, style, oline = 0, uline = 0;
     PLFLT       width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale;
-    PLFLT old_sscale, sscale, old_soffset, soffset;
+    PLFLT       old_sscale, sscale, old_soffset, soffset;
 
     plgchr( &def, &ht );
     dscale = 0.05 * ht;
@@ -805,17 +805,17 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
         ch = symbol[i];
         if ( ch == -1 )   // superscript
         {
-          plP_script_scale( TRUE, &level,
-                            &old_sscale, &sscale, &old_soffset, &soffset);
-          yorg = 16.0*dscale*soffset;
-          scale = dscale * sscale;
+            plP_script_scale( TRUE, &level,
+                &old_sscale, &sscale, &old_soffset, &soffset );
+            yorg  = 16.0 * dscale * soffset;
+            scale = dscale * sscale;
         }
         else if ( ch == -2 )   // subscript
         {
-          plP_script_scale( FALSE, &level,
-                            &old_sscale, &sscale, &old_soffset, &soffset);
-          yorg = -16.0*dscale*soffset;
-          scale = dscale * sscale;
+            plP_script_scale( FALSE, &level,
+                &old_sscale, &sscale, &old_soffset, &soffset );
+            yorg  = -16.0 * dscale * soffset;
+            scale = dscale * sscale;
         }
         else if ( ch == -3 ) // back-char
             xorg -= width * scale;
@@ -1268,35 +1268,35 @@ plP_stsearch( const char *str, int chr )
 
 void
 plP_script_scale( PLBOOL ifupper, PLINT *level,
-                   PLFLT *old_scale, PLFLT *scale,
-                   PLFLT *old_offset, PLFLT *offset)
+                  PLFLT *old_scale, PLFLT *scale,
+                  PLFLT *old_offset, PLFLT *offset )
 {
-  if (*level == 0)
-  {
-    *old_scale = 1.;
-    *old_offset = 0.;
-  }
-  else
-  {
-    *old_scale = *scale;
-    *old_offset = *offset;
-  }
-  if((*level >=0 && ifupper) || (*level <=0 && !ifupper))
-  {
-    // If superscript of subscript moves further away from centerline....
-    *scale = 0.75 * *old_scale;
-    *offset = *old_offset + *old_scale; 
-  }
-  else
-  {
-    // If superscript of subscript moves closer to centerline....
-    *scale = *old_scale/0.75;
-    *offset = *old_offset - *scale; 
-  }
-  if(ifupper)
-    (*level)++;
-  else
-    (*level)--;
+    if ( *level == 0 )
+    {
+        *old_scale  = 1.;
+        *old_offset = 0.;
+    }
+    else
+    {
+        *old_scale  = *scale;
+        *old_offset = *offset;
+    }
+    if ( ( *level >= 0 && ifupper ) || ( *level <= 0 && !ifupper ) )
+    {
+        // If superscript of subscript moves further away from centerline....
+        *scale  = 0.75 * *old_scale;
+        *offset = *old_offset + *old_scale;
+    }
+    else
+    {
+        // If superscript of subscript moves closer to centerline....
+        *scale  = *old_scale / 0.75;
+        *offset = *old_offset - *scale;
+    }
+    if ( ifupper )
+        ( *level )++;
+    else
+        ( *level )--;
 }
 
 //--------------------------------------------------------------------------
