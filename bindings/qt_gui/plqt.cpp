@@ -1,12 +1,11 @@
-//
-//
-// This software is provided under the LGPL in March 2009 by the
+// This software was donated under the LGPL to the PLplot project in
+// March 2009 by the
 // Cluster Science Centre
 // QSAS team,
 // Imperial College, London
 //
 // Copyright (C) 2009  Imperial College, London
-// Copyright (C) 2009  Alan W. Irwin
+// Copyright (C) 2009-2011  Alan W. Irwin
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Lesser Public License as published
@@ -22,14 +21,6 @@
 // write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
-// History:
-//
-//
-// March 2009:  v1.00
-// Initial release.
-//
-//
-
 
 #include "qt.h"
 
@@ -211,29 +202,36 @@ void QtPLDriver::drawTextInPicture( QPainter* p, const QString& text )
     xOffset += bounding.width();
 }
 
+// 0.8 mimics the offset of first superscript/subscript level implemented
+// in plstr (plsym.c) for Hershey fonts.  Indeed when comparing with
+// -dev xwin results this factor appears to offset the centers of the
+// letters appropriately (but not their edges since different font sizes
+// are involved).
+# define RISE_FACTOR    0.8
+
 QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PLFLT chrht )
 {
     char plplotEsc;
     plgesc( &plplotEsc );
 
-    double   old_fontScale;
-
     QPicture res;
     QPainter p( &res );
 
     QString  currentString;
+    PLFLT    old_sscale, sscale, old_soffset, soffset;
+    PLINT    level    = 0;
+    PLFLT    dyOffset = 0.;
 
     yOffset = 0.;
     xOffset = 0.;
 
-    // Scaling factor of 1.6 determined empirically to make all qt results
+    // Scaling factor of 1.45 determined empirically to make all qt results
     // have the same character size as cairo results (taking into account
     // the slightly different actual glyph sizes for the different
     // default fonts found by cairo and qt).
-    currentFontSize  = chrht * POINTS_PER_INCH / 25.4 * 1.45;
-    currentFontScale = 1.;
-    underlined       = false;
-    overlined        = false;
+    currentFontSize = chrht * POINTS_PER_INCH / 25.4 * 1.45;
+    underlined      = false;
+    overlined       = false;
 
     p.setFont( getFont( fci ) );
 
@@ -251,38 +249,42 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
             ++i; // Now analyse the escaped character
             switch ( text[i] )
             {
-            case 'd':
+            case 'd': //subscript
                 drawTextInPicture( &p, currentString );
                 currentString.clear();
-                old_fontScale = currentFontScale;
-                if ( yOffset > 0.000000000001 )    // I've already encountered precision issues here, so changed 0 into epsilon
-                {
-                    currentFontScale *= 1.25;      // Subscript scaling parameter
-                }
-                else
-                {
-                    currentFontScale *= 0.8;      // Subscript scaling parameter
-                }
+                plP_script_scale( FALSE, &level,
+                    &old_sscale, &sscale, &old_soffset, &soffset );
+                currentFontScale = sscale;
 
-                yOffset -= currentFontSize * old_fontScale / 2.;
+                // The correction for the difference in magnitude
+                // between the baseline and middle coordinate systems
+                // for subscripts should be
+                // -0.5*(fontSize - superscript/subscript fontSize).
+                // dyOffset = -0.5 * currentFontSize * ( 1.0 - sscale );
+                // But empirically this change in offset should not be applied
+                // so leave it at its initial value of zero.
+                yOffset = -( currentFontSize * RISE_FACTOR * soffset + dyOffset );
 
                 p.setFont( getFont( fci ) );
                 break;
 
-            case 'u':
+            case 'u':  //superscript
                 drawTextInPicture( &p, currentString );
 
                 currentString.clear();
-                if ( yOffset < -0.000000000001 )
-                {
-                    currentFontScale *= 1.25;      // Subscript scaling parameter
-                }
-                else
-                {
-                    currentFontScale *= 0.8;      // Subscript scaling parameter
-                }
+                plP_script_scale( TRUE, &level,
+                    &old_sscale, &sscale, &old_soffset, &soffset );
+                currentFontScale = sscale;
 
-                yOffset += currentFontSize * currentFontScale / 2.;
+                // The correction for the difference in magnitude
+                // between the baseline and middle coordinate systems
+                // for superscripts should be
+                // 0.5*(fontSize - superscript/subscript fontSize).
+                // dyOffset = 0.5 * currentFontSize * ( 1.0 - sscale );
+                // But empirically this change in offset should not be applied
+                // so leave it at its initial value of zero.
+                yOffset = currentFontSize * RISE_FACTOR * soffset + dyOffset;
+
                 p.setFont( getFont( fci ) );
                 break;
 
