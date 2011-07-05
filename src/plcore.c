@@ -638,6 +638,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
         {
             PLINT         ig;
             PLUNICODE     fci;
+            PLUNICODE     orig_fci;
             unsigned char hexdigit, hexpower;
 
             // Now process the text string
@@ -663,6 +664,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                 // Obtain FCI (font characterization integer) for start of
                 // string.
                 plgfci( &fci );
+		orig_fci = fci;
 
                 // Walk through the string, and convert
                 // some stuff to unicode on the fly
@@ -884,7 +886,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
                 if ( plsc->alt_unicode )
                 {
-                    args.n_fci = fci;
+                    args.n_fci = orig_fci;
                     plP_esc( PLESC_BEGIN_TEXT, &args );
 
                     for ( i = 0; i < len; i++ )
