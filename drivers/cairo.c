@@ -1125,13 +1125,12 @@ void close_span_tag( char *pangoMarkupString, int upDown )
     strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 }
 
-// Use 16/20ths to mimic what plstr in plsym.c does for first level
-// of superscripts/subscripts.
+// 0.8 mimics the offset of first superscript/subscript level implemented
+// in plstr (plsym.c) for Hershey fonts.  Indeed when comparing with
+// -dev xwin results this factor appears to offset the centers of the
+// letters appropriately (but not their edges since different font sizes
+// are involved).
 # define RISE_FACTOR    0.8
-
-// Experimental correction to help account for difference between
-// cairo and PLplot character coordinate systems.
-# define OFFSET_FACTOR    1.0
 
 //--------------------------------------------------------------------------
 // rise_span_tag
@@ -1143,41 +1142,38 @@ char *rise_span_tag( int level, int direction, float fontSize )
 {
     int         i;
     float       multiplier = 1.0;
-    float       rise       = RISE_FACTOR;
+    float       rise       = 1.0;
     float       offset;
     static char tag[100];
 
     for ( i = 0; i < abs( level ); i++ )
     {
         multiplier = multiplier * 0.75;
-        rise      += RISE_FACTOR * multiplier;
+        rise      += multiplier;
     }
+    // Adjust multiplier to correspond to font scale for level.
+    multiplier = multiplier * 0.75;
     // http://developer.gnome.org/pango/unstable/PangoMarkupFormat.html says
     // rise should be in units of 10000 em's, but empricial evidence shows
     // it is in units of 1024th of a point.  Therefore, since FontSize
     // is in points, a rise of 1024. * fontSize corresponds a rise of
     // a full character height.
-    rise = 1024. * fontSize * rise;
+    rise = 1024. * fontSize * RISE_FACTOR * rise;
 
     // This is the correction for the difference between baseline and
-    // middle coordinate systems.  Theoretically this offset should be
-    // 0.5*(fontSize - superscript/subscript fontSize).  We make the
-    // assumption that the "smaller" fonts below are close to 0.75*
-    // multiplier * fontSize in size, where the "extra" factor of 0.75
-    // corrects for an off-by-one issue in the termination of
-    // the multiplier calculation in the above loop.  OFFSET_FACTOR
-    // is an empirical correction.
-    offset = 1024. * 0.5 * fontSize * ( 1.0 - 0.75 * multiplier * OFFSET_FACTOR );
+    // middle coordinate systems.  This offset should be
+    // 0.5*(fontSize - superscript/subscript fontSize).
+    offset = 1024. * 0.5 * fontSize * ( 1.0 - multiplier );
 
     if ( direction > 0 )
     {
-        sprintf( tag, "<span rise=\"%d\" size=\"smaller\">",
-            (int) ( rise + offset ) );
+        sprintf( tag, "<span rise=\"%d\" size=\"%d\">",
+            (int) ( rise + offset ), (int) ( fontSize * 1024. * multiplier ) );
     }
     else
     {
-        sprintf( tag, "<span rise=\"%d\" size=\"smaller\">",
-            (int) -( rise - offset ) );
+        sprintf( tag, "<span rise=\"%d\" size=\"%d\">",
+            (int) -( rise - offset ), (int) ( fontSize * 1024. * multiplier ) );
     }
 
     return ( tag );
