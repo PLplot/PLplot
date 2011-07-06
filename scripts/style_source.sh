@@ -152,7 +152,7 @@ cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 cppsource_LIST="$cppsource_LIST include/qt.h"
 
 # C++ part of drivers.
-cppsource_LIST="$cppsource_LIST drivers/wxwidgets.h drivers/*.cpp" 
+cppsource_LIST="$cppsource_LIST drivers/wxwidgets.h drivers/*.cpp drivers/*.cc" 
 
 # C++ part of examples.
 cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h"
