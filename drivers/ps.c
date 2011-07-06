@@ -736,6 +736,14 @@ ps_getdate( void )
 }
 
 
+// 0.8 should mimic the offset of first superscript/subscript level
+// implemented in plstr (plsym.c) for Hershey fonts.  However, when
+// comparing with -dev xwin and -dev xcairo results changing this
+// factor to 0.6 appears to offset the centers of the letters
+// appropriately while 0.8 gives much poorer agreement with the
+// other devices.
+# define RISE_FACTOR    0.6
+
 //--------------------------------------------------------------------------
 // proc_str()
 //
@@ -773,6 +781,8 @@ proc_str( PLStream *pls, EscText *args )
         char      *fonts[PROC_STR_STRING_LENGTH];
         const PLUNICODE              *cur_text;
         PLUNICODE fci, fci_save;
+        PLFLT     old_sscale, sscale, old_soffset, soffset, dup;
+        PLINT     level = 0;
         // translate from unicode into type 1 font index.
         //
         // Choose the font family, style, variant, and weight using
@@ -993,22 +1003,30 @@ proc_str( PLStream *pls, EscText *args )
                 else
                     switch ( *cur_strp++ )
                     {
-                    case 'd':
+                    case 'd':  //subscript
                     case 'D':
-                        if ( up > 0. )
-                            scale *= 1.25;            // Subscript scaling parameter
-                        else
-                            scale *= 0.8;             // Subscript scaling parameter
-                        up -= font_factor * ENLARGE * ft_ht / 2.;
+                        plP_script_scale( FALSE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset );
+                        scale = sscale;
+                        // The correction for the difference in magnitude
+                        // between the baseline and middle coordinate systems
+                        // for subscripts should be
+                        // -0.5*(base font size - superscript/subscript font size).
+                        dup = -0.5 * ( 1.0 - sscale );
+                        up  = -font_factor * ENLARGE * ft_ht * ( RISE_FACTOR * soffset + dup );
                         break;
 
-                    case 'u':
+                    case 'u':  //superscript
                     case 'U':
-                        if ( up < 0. )
-                            scale *= 1.25;            // Subscript scaling parameter
-                        else
-                            scale *= 0.8;             // Subscript scaling parameter
-                        up += font_factor * ENLARGE * ft_ht / 2.;
+                        plP_script_scale( TRUE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset );
+                        scale = sscale;
+                        // The correction for the difference in magnitude
+                        // between the baseline and middle coordinate systems
+                        // for superscripts should be
+                        // 0.5*(base font size - superscript/subscript font size).
+                        dup = 0.5 * ( 1.0 - sscale );
+                        up  = font_factor * ENLARGE * ft_ht * ( RISE_FACTOR * soffset + dup );
                         break;
 
                     // ignore the next sequences
