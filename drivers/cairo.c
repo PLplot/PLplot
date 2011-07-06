@@ -934,11 +934,11 @@ void proc_str( PLStream *pls, EscText *args )
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
     free( cairoTransformMatrix );
 
-    // printf("baseline (ps) %d %d\n", baseline, textYExtent);
+    // printf("baseline (ps) %d %d %f\n", baseline, textYExtent, aStream->fontSize);
     // Move to the text starting point
     cairo_rel_move_to( aStream->cairoContext,
 	(double) ( -1.0 * args->just * (double) textXExtent ),
-	(double) 0.5 * aStream->fontSize - baseline / 1024.0);
+	(double) 0.5 * fontSize - baseline / 1024.0);
 
     // Render the text
     pango_cairo_show_layout( aStream->cairoContext, layout );
