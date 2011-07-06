@@ -5,7 +5,7 @@
 
   Copyright (C) 1992, 2001  Geoffrey Furnish  
   Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
-  Copyright (C) 2000, 2001, 2002, 2004, 2005  Alan W. Irwin 
+  Copyright (C) 2000-2011 Alan W. Irwin 
   Copyright (C) 2001, 2002  Joao Cardoso  
   Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
   Copyright (C) 2004, 2005  Thomas J. Duck
@@ -795,6 +795,13 @@ ps_getdate(void)
     return p;
 }
 
+// 0.8 should mimic the offset of first superscript/subscript level
+// implemented in plstr (plsym.c) for Hershey fonts.  However, when
+// comparing with -dev xwin and -dev xcairo results changing this
+// factor to 0.6 appears to offset the centers of the letters
+// appropriately while 0.8 gives much poorer agreement with the
+// other devices.
+# define RISE_FACTOR    0.6
 
 /*--------------------------------------------------------------------------*\
  * proc_str()
@@ -844,6 +851,9 @@ proc_str (PLStream *pls, EscText *args)
 	const PLUNICODE *cur_text;
 	PLUNICODE fci;
 	unsigned char fontfamily, fontstyle, fontweight;
+        PLFLT    old_sscale, sscale, old_soffset, soffset, dup;
+        PLINT    level    = 0;
+
 	/* translate from unicode into type 1 font index. */
 	/*
 	 * Choose the font family, style, variant, and weight using
@@ -1012,18 +1022,30 @@ proc_str (PLStream *pls, EscText *args)
 	      }
 	      else switch (*cur_strp++) {
 		 
-	       case 'd':
+               case 'd': //subscript
 	       case 'D':
-		 if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
-		 else scale *= 0.8;  /* Subscript scaling parameter */
-		 up -= font_factor * ENLARGE * ft_ht / 2.;
+                 plP_script_scale( FALSE, &level,
+                    &old_sscale, &sscale, &old_soffset, &soffset );
+                 scale = sscale;
+                 // The correction for the difference in magnitude
+                 // between the baseline and middle coordinate systems
+                 // for subscripts should be
+                 // -0.5*(base font size - superscript/subscript font size).
+                 dup =  -0.5 * ( 1.0 - sscale );
+                 up = -font_factor * ENLARGE * ft_ht * (RISE_FACTOR * soffset + dup);
 		 break;
 		 
-	       case 'u':
+               case 'u': //superscript
 	       case 'U':
-		 if(up<0.) scale *= 1.25;  /* Superscript scaling parameter */
-		 else scale *= 0.8;  /* Superscript scaling parameter */
-		 up += font_factor * ENLARGE * ft_ht / 2.;
+                 plP_script_scale( TRUE, &level,
+                    &old_sscale, &sscale, &old_soffset, &soffset );
+                 scale = sscale;
+                 // The correction for the difference in magnitude
+                 // between the baseline and middle coordinate systems
+                 // for superscripts should be
+                 // 0.5*(base font size - superscript/subscript font size).
+                 dup =  0.5 * ( 1.0 - sscale );
+                 up = font_factor * ENLARGE * ft_ht * (RISE_FACTOR * soffset + dup);
 		 break;
 		 
 		 /* ignore the next sequences */
@@ -1045,7 +1067,7 @@ proc_str (PLStream *pls, EscText *args)
 	   }
 	   *strp = '\0';
 	   
-	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
+           //	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
 	   
 	   /* Set the font size */
 	   doc->setFont(font,style,weight);
@@ -1063,6 +1085,7 @@ proc_str (PLStream *pls, EscText *args)
 	ymax = 0;
 
 	/* Reset parameters */
+        level = 0;
 	scale = 1.0;
 	up = 0.0;
 
@@ -1102,18 +1125,30 @@ proc_str (PLStream *pls, EscText *args)
 	      }
 	      else switch (*cur_strp++) {
 		 
-	       case 'd':
+               case 'd': //subscript
 	       case 'D':
-		 if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
-		 else scale *= 0.8;  /* Subscript scaling parameter */
-		 up -= font_factor * ENLARGE * ft_ht / 2.;
+                 plP_script_scale( FALSE, &level,
+                    &old_sscale, &sscale, &old_soffset, &soffset );
+                 scale = sscale;
+                 // The correction for the difference in magnitude
+                 // between the baseline and middle coordinate systems
+                 // for subscripts should be
+                 // -0.5*(base font size - superscript/subscript font size).
+                 dup =  -0.5 * ( 1.0 - sscale );
+                 up = -font_factor * ENLARGE * ft_ht * (RISE_FACTOR * soffset + dup);
 		 break;
 		 
-	       case 'u':
+               case 'u': //superscript
 	       case 'U':
-		 if(up<0.) scale *= 1.25;  /* Superscript scaling parameter */
-		 else scale *= 0.8;  /* Superscript scaling parameter */
-		 up += font_factor * ENLARGE * ft_ht / 2.;
+                 plP_script_scale( TRUE, &level,
+                    &old_sscale, &sscale, &old_soffset, &soffset );
+                 scale = sscale;
+                 // The correction for the difference in magnitude
+                 // between the baseline and middle coordinate systems
+                 // for superscripts should be
+                 // 0.5*(base font size - superscript/subscript font size).
+                 dup =  0.5 * ( 1.0 - sscale );
+                 up = font_factor * ENLARGE * ft_ht * (RISE_FACTOR * soffset + dup);
 		 break;
 		 
 		 /* ignore the next sequences */
@@ -1135,7 +1170,7 @@ proc_str (PLStream *pls, EscText *args)
 	   }
 	   *strp = '\0';
 	   
-	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
+           //	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
 	   
 	   /* Set the font size */
 	   doc->setFont(font,style,weight);
