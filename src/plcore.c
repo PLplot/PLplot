@@ -664,7 +664,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                 // Obtain FCI (font characterization integer) for start of
                 // string.
                 plgfci( &fci );
-		orig_fci = fci;
+                orig_fci = fci;
 
                 // Walk through the string, and convert
                 // some stuff to unicode on the fly
