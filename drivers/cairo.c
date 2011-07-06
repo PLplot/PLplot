@@ -744,7 +744,7 @@ void text_esc_cairo( PLStream *pls, EscText *args )
 
 void text_end_cairo( PLStream *pls, EscText *args )
 {
-    int   textXExtent, textYExtent;
+    int   textXExtent, textYExtent, baseline;
     PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
     cairo_matrix_t       *cairoTransformMatrix;
     cairo_font_options_t *cairoFontOptions;
@@ -759,10 +759,13 @@ void text_end_cairo( PLStream *pls, EscText *args )
     // Close the last span tag.
     close_span_tag( aStream->pangoMarkupString, aStream->upDown );
 
+    // printf("%s\n", aStream->pangoMarkupString);
+
     // Create the Pango text layout so we can figure out how big it is
     layout = pango_cairo_create_layout( aStream->cairoContext );
     pango_layout_set_markup( layout, aStream->pangoMarkupString, -1 );
     pango_layout_get_pixel_size( layout, &textXExtent, &textYExtent );
+    baseline = pango_layout_get_baseline( layout );
 
     // If asked, set the string length (in mm) and return
     if ( pls->get_string_length )
@@ -816,9 +819,10 @@ void text_end_cairo( PLStream *pls, EscText *args )
     free( cairoTransformMatrix );
 
     // Move to the text starting point
+    // printf("baseline %d %d\n", baseline, textYExtent);
     cairo_rel_move_to( aStream->cairoContext,
         (double) ( -1.0 * args->just * (double) textXExtent ),
-        (double) ( -0.5 * textYExtent ) );
+	(double) 0.5 * aStream->fontSize - baseline / 1024.0);
 
     // Render the text
     pango_cairo_show_layout( aStream->cairoContext, layout );
@@ -840,7 +844,7 @@ void text_end_cairo( PLStream *pls, EscText *args )
 void proc_str( PLStream *pls, EscText *args )
 {
     float fontSize;
-    int   textXExtent, textYExtent;
+    int   textXExtent, textYExtent, baseline;
     char                 *textWithPangoMarkup;
     PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
     cairo_matrix_t       *cairoTransformMatrix;
@@ -877,6 +881,14 @@ void proc_str( PLStream *pls, EscText *args )
     layout = pango_cairo_create_layout( aStream->cairoContext );
     pango_layout_set_markup( layout, textWithPangoMarkup, -1 );
     pango_layout_get_pixel_size( layout, &textXExtent, &textYExtent );
+    baseline = pango_layout_get_baseline( layout );
+
+    // If asked, set the string length (in mm) and return
+    if ( pls->get_string_length )
+    {
+        pls->string_length = (PLFLT) textXExtent * 25.4 / DPI;
+        return;
+    }
 
     // Set font aliasing
     context          = pango_layout_get_context( layout );
@@ -922,10 +934,11 @@ void proc_str( PLStream *pls, EscText *args )
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
     free( cairoTransformMatrix );
 
+    // printf("baseline (ps) %d %d\n", baseline, textYExtent);
     // Move to the text starting point
     cairo_rel_move_to( aStream->cairoContext,
-        (double) ( -1.0 * args->just * (double) textXExtent ),
-        (double) ( -0.5 * textYExtent ) );
+	(double) ( -1.0 * args->just * (double) textXExtent ),
+	(double) 0.5 * aStream->fontSize - baseline / 1024.0);
 
     // Render the text
     pango_cairo_show_layout( aStream->cairoContext, layout );
@@ -1075,6 +1088,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
     plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
+
     // From http://library.gnome.org/devel/pango/unstable/PangoMarkupFormat.html
     // size = font size in 1024ths of a point.
     snprintf( openTag, TAG_LEN, "<span font_desc=\"%s\" size=\"%d\" ", familyLookup[fontFamily], (int) ( fontSize * 1024. ) );
