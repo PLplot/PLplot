@@ -229,9 +229,10 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
     // have the same character size as cairo results (taking into account
     // the slightly different actual glyph sizes for the different
     // default fonts found by cairo and qt).
-    currentFontSize = chrht * POINTS_PER_INCH / 25.4 * 1.45;
-    underlined      = false;
-    overlined       = false;
+    currentFontSize  = chrht * POINTS_PER_INCH / 25.4 * 1.45;
+    currentFontScale = 1.;
+    underlined       = false;
+    overlined        = false;
 
     p.setFont( getFont( fci ) );
 
