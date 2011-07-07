@@ -107,6 +107,16 @@ typedef struct
     short           upDown;
     float           fontSize;
     short           closed;
+
+    // These are arguments for plP_script_scale which must be retained
+    // in aStream for the alt_unicode approach.  level has an
+    // identical meaning to upDown above, but it is incremented and
+    // decremented in plP_script_scale as well as other places in the
+    // code so the only safe thing to do is to treat level separately
+    // from upDown.
+    PLFLT           old_sscale, sscale, old_soffset, soffset;
+    PLINT           level;
+
 #if defined ( PLD_xcairo )
     cairo_surface_t *cairoSurface_X;
     cairo_t         *cairoContext_X;
@@ -240,7 +250,7 @@ static void text_end_cairo( PLStream *pls, EscText *args );
 static char *ucs4_to_pango_markup_format( PLUNICODE *, int, float );
 static void open_span_tag( char *, PLUNICODE, float, int );
 static void close_span_tag( char *, int );
-static char *rise_span_tag( int, int, float );
+static char *rise_span_tag( int, float, float, float );
 
 // Graphics
 
@@ -650,6 +660,7 @@ void text_begin_cairo( PLStream *pls, EscText *args )
 
     aStream                    = (PLCairo *) pls->dev;
     aStream->upDown            = 0;
+    aStream->level             = 0;
     aStream->pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
     // Calculate the font size (in points since DPI = 72).
     aStream->fontSize = pls->chrht * DPI / 25.4;
@@ -715,10 +726,15 @@ void text_esc_cairo( PLStream *pls, EscText *args )
         if ( aStream->upDown < 0 )
         {
             strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            aStream->level++;
         }
         else
         {
-            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, 1, aStream->fontSize ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            plP_script_scale( TRUE, &aStream->level,
+                &aStream->old_sscale, &aStream->sscale, &aStream->old_soffset, &aStream->soffset );
+            strncat( aStream->pangoMarkupString,
+                rise_span_tag( TRUE, aStream->fontSize, aStream->sscale, aStream->soffset ),
+                MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown++;
         break;
@@ -726,10 +742,15 @@ void text_esc_cairo( PLStream *pls, EscText *args )
         if ( aStream->upDown > 0 )
         {
             strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            aStream->level--;
         }
         else
         {
-            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, -1, aStream->fontSize ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            plP_script_scale( FALSE, &aStream->level,
+                &aStream->old_sscale, &aStream->sscale, &aStream->old_soffset, &aStream->soffset );
+            strncat( aStream->pangoMarkupString,
+                rise_span_tag( FALSE, aStream->fontSize, aStream->sscale, aStream->soffset ),
+                MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown--;
         break;
@@ -822,7 +843,7 @@ void text_end_cairo( PLStream *pls, EscText *args )
     // printf("baseline %d %d\n", baseline, textYExtent);
     cairo_rel_move_to( aStream->cairoContext,
         (double) ( -1.0 * args->just * (double) textXExtent ),
-	(double) 0.5 * aStream->fontSize - baseline / 1024.0);
+        (double) 0.5 * aStream->fontSize - baseline / 1024.0 );
 
     // Render the text
     pango_cairo_show_layout( aStream->cairoContext, layout );
@@ -937,8 +958,8 @@ void proc_str( PLStream *pls, EscText *args )
     // printf("baseline (ps) %d %d %f\n", baseline, textYExtent, aStream->fontSize);
     // Move to the text starting point
     cairo_rel_move_to( aStream->cairoContext,
-	(double) ( -1.0 * args->just * (double) textXExtent ),
-	(double) 0.5 * fontSize - baseline / 1024.0);
+        (double) ( -1.0 * args->just * (double) textXExtent ),
+        (double) 0.5 * fontSize - baseline / 1024.0 );
 
     // Render the text
     pango_cairo_show_layout( aStream->cairoContext, layout );
@@ -968,6 +989,8 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
     PLUNICODE fci;
     char      utf8[5];
     char      *pangoMarkupString;
+    PLFLT     old_sscale, sscale, old_soffset, soffset;
+    PLINT     level = 0.;
 
     // Will this be big enough? We might have lots of markup.
     pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
@@ -1030,10 +1053,15 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                     if ( upDown < 0 )
                     {
                         strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                        level++;
                     }
                     else
                     {
-                        strncat( pangoMarkupString, rise_span_tag( upDown, 1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                        plP_script_scale( TRUE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset );
+                        strncat( pangoMarkupString,
+                            rise_span_tag( TRUE, fontSize, sscale, soffset ),
+                            MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown++;
                 }
@@ -1042,10 +1070,15 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                     if ( upDown > 0 )
                     {
                         strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                        level--;
                     }
                     else
                     {
-                        strncat( pangoMarkupString, rise_span_tag( upDown, -1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                        plP_script_scale( FALSE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset );
+                        strncat( pangoMarkupString,
+                            rise_span_tag( FALSE, fontSize, sscale, soffset ),
+                            MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown--;
                 }
@@ -1081,7 +1114,9 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
 {
     unsigned char fontFamily, fontStyle, fontWeight;
     char          openTag[TAG_LEN];
-    int           level;
+    int           upDown_level;
+    PLFLT         old_sscale, sscale, old_soffset, soffset;
+    PLINT         level = 0.;
 
     // Generate the font info for the open tag & concatenate this
     // onto the markup string.
@@ -1101,13 +1136,21 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
     // Move to the right superscript/subscript level
-    for ( level = 0; level < upDown; level++ )
+    for ( upDown_level = 0; upDown_level < upDown; upDown_level++ )
     {
-        strncat( pangoMarkupString, rise_span_tag( level, 1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+        plP_script_scale( TRUE, &level,
+            &old_sscale, &sscale, &old_soffset, &soffset );
+        strncat( pangoMarkupString,
+            rise_span_tag( TRUE, fontSize, sscale, soffset ),
+            MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
     }
-    for ( level = 0; level > upDown; level-- )
+    for ( upDown_level = 0; upDown_level > upDown; upDown_level-- )
     {
-        strncat( pangoMarkupString, rise_span_tag( level, -1, fontSize ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+        plP_script_scale( FALSE, &level,
+            &old_sscale, &sscale, &old_soffset, &soffset );
+        strncat( pangoMarkupString,
+            rise_span_tag( FALSE, fontSize, sscale, soffset ),
+            MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
     }
 }
 
@@ -1150,23 +1193,18 @@ void close_span_tag( char *pangoMarkupString, int upDown )
 // rise_span_tag
 //
 // Create a rise span tag w/ appropriate font size & baseline offset
+// fontSize is the baseline font size in points (1/72 of an inch),
+// multiplier is a scaling factor for that font size for superscript
+// or subscript, and rise is the vertical offset (in units of font
+// size) for that superscript or subscript.
+
 //--------------------------------------------------------------------------
 
-char *rise_span_tag( int level, int direction, float fontSize )
+char *rise_span_tag( int ifsuperscript, float fontSize, float multiplier, float rise )
 {
-    int         i;
-    float       multiplier = 1.0;
-    float       rise       = 1.0;
     float       offset;
     static char tag[100];
 
-    for ( i = 0; i < abs( level ); i++ )
-    {
-        multiplier = multiplier * 0.75;
-        rise      += multiplier;
-    }
-    // Adjust multiplier to correspond to font scale for level.
-    multiplier = multiplier * 0.75;
     // http://developer.gnome.org/pango/unstable/PangoMarkupFormat.html says
     // rise should be in units of 10000 em's, but empricial evidence shows
     // it is in units of 1024th of a point.  Therefore, since FontSize
@@ -1179,7 +1217,7 @@ char *rise_span_tag( int level, int direction, float fontSize )
     // 0.5*(fontSize - superscript/subscript fontSize).
     offset = 1024. * 0.5 * fontSize * ( 1.0 - multiplier );
 
-    if ( direction > 0 )
+    if ( ifsuperscript )
     {
         sprintf( tag, "<span rise=\"%d\" size=\"%d\">",
             (int) ( rise + offset ), (int) ( fontSize * 1024. * multiplier ) );
