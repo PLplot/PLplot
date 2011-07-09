@@ -796,16 +796,16 @@ void proc_str( PLStream *pls, EscText *args )
                         // for superscripts should be
                         // 0.5*(base font size - superscript/subscript font size).
                         old_dup = dup;
-                        dup = 0.5 * ( 1.0 - sscale );
-                        if(level <= 0)
+                        dup     = 0.5 * ( 1.0 - sscale );
+                        if ( level <= 0 )
                         {
-                          scaled_offset = FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) - ( dup - old_dup ) );
+                            scaled_offset = FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) - ( dup - old_dup ) );
                         }
                         else
                         {
-                          scaled_offset = -FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) + ( dup - old_dup ) );
+                            scaled_offset = -FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) + ( dup - old_dup ) );
                         }
-                        scaled_ftHt   = sscale* ftHt;
+                        scaled_ftHt = sscale * ftHt;
                         if ( if_write )
                         {
                             totalTags++;
@@ -825,16 +825,16 @@ void proc_str( PLStream *pls, EscText *args )
                         // for superscripts should be
                         // 0.5*(base font size - superscript/subscript font size).
                         old_dup = dup;
-                        dup = 0.5 * ( 1.0 - sscale );
-                        if(level < 0)
+                        dup     = 0.5 * ( 1.0 - sscale );
+                        if ( level < 0 )
                         {
-                          scaled_offset = FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) - ( dup - old_dup ) );
+                            scaled_offset = FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) - ( dup - old_dup ) );
                         }
                         else
                         {
-                          scaled_offset = -FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) + ( dup - old_dup ) );
+                            scaled_offset = -FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) + ( dup - old_dup ) );
                         }
-                        scaled_ftHt   = sscale* ftHt;
+                        scaled_ftHt = sscale * ftHt;
                         if ( if_write )
                         {
                             totalTags++;
