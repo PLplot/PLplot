@@ -3,7 +3,7 @@
     api.xml: "The Common API for PLplot" chapter
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999-2010  Alan W. Irwin
+Copyright (C) 1999-2011  Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 Copyright (C) 2004, 2007  Andrew Ross
@@ -4609,7 +4609,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in example 31.
+      This function is used in examples 14 and 31.
     </para>
 
   </sect1>
@@ -13392,7 +13392,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in example 31.
+      This function is used in examples 14 and 31.
     </para>
 
   </sect1>
