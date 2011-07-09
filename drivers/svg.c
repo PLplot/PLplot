@@ -566,7 +566,6 @@ void proc_str( PLStream *pls, EscText *args )
     char         plplot_esc;
     short static which_clip = 0;
     short        i;
-    short        upDown;
     short        totalTags = 1;
     short        ucs4Len   = args->unicode_array_len;
     double       ftHt, scaled_offset, scaled_ftHt;
@@ -579,6 +578,8 @@ void proc_str( PLStream *pls, EscText *args )
     //   PLFLT *t = args->xform;
     PLUNICODE    *ucs4 = args->unicode_array;
     SVG          *aStream;
+    PLFLT        old_sscale, sscale, old_soffset, soffset, old_dup, dup;
+    PLINT        level;
 
     // check that we got unicode
     if ( ucs4Len == 0 )
@@ -748,7 +749,8 @@ void proc_str( PLStream *pls, EscText *args )
         }
         i           = 0;
         scaled_ftHt = ftHt;
-        upDown      = 0;
+        level       = 0;
+        dup         = 0.;
         while ( i < ucs4Len )
         {
             if ( ucs4[i] < PL_FCI_MARK )                 // not a font change
@@ -787,9 +789,23 @@ void proc_str( PLStream *pls, EscText *args )
                     // adjustment.
                     if ( ucs4[i] == (PLUNICODE) 'u' ) // Superscript
                     {
-                        upDown++;
-                        scaled_offset = -FONT_SHIFT_RATIO * 0.80 * scaled_ftHt;
-                        scaled_ftHt   = ftHt * pow( 0.75, (double) abs( upDown ) );
+                        plP_script_scale( TRUE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset );
+                        // The correction for the difference in magnitude
+                        // between the baseline and middle coordinate systems
+                        // for superscripts should be
+                        // 0.5*(base font size - superscript/subscript font size).
+                        old_dup = dup;
+                        dup = 0.5 * ( 1.0 - sscale );
+                        if(level <= 0)
+                        {
+                          scaled_offset = FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) - ( dup - old_dup ) );
+                        }
+                        else
+                        {
+                          scaled_offset = -FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) + ( dup - old_dup ) );
+                        }
+                        scaled_ftHt   = sscale* ftHt;
                         if ( if_write )
                         {
                             totalTags++;
@@ -802,9 +818,23 @@ void proc_str( PLStream *pls, EscText *args )
                     }
                     if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                     {
-                        upDown--;
-                        scaled_ftHt   = ftHt * pow( 0.75, (double) abs( upDown ) );
-                        scaled_offset = FONT_SHIFT_RATIO * 0.80 * scaled_ftHt;
+                        plP_script_scale( FALSE, &level,
+                            &old_sscale, &sscale, &old_soffset, &soffset );
+                        // The correction for the difference in magnitude
+                        // between the baseline and middle coordinate systems
+                        // for superscripts should be
+                        // 0.5*(base font size - superscript/subscript font size).
+                        old_dup = dup;
+                        dup = 0.5 * ( 1.0 - sscale );
+                        if(level < 0)
+                        {
+                          scaled_offset = FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) - ( dup - old_dup ) );
+                        }
+                        else
+                        {
+                          scaled_offset = -FONT_SHIFT_RATIO * ftHt * ( 0.80 * ( soffset - old_soffset ) + ( dup - old_dup ) );
+                        }
+                        scaled_ftHt   = sscale* ftHt;
                         if ( if_write )
                         {
                             totalTags++;
