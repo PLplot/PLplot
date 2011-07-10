@@ -579,6 +579,13 @@ void PSSetFont( pdfdev* dev, PLUNICODE fci )
     HPDF_Page_SetFontAndSize( dev->page, dev->m_font, dev->fontSize * dev->fontScale );
 }
 
+// 0.8 should mimic the offset of first superscript/subscript level
+// implemented in plstr (plsym.c) for Hershey fonts.  However, when
+// comparing with -dev xwin and -dev xcairo results changing this
+// factor to 0.6 appears to offset the centers of the letters
+// appropriately while 0.8 gives much poorer agreement with the
+// other devices.
+# define RISE_FACTOR    0.6
 
 //--------------------------------------------------------------------------
 // PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
@@ -594,6 +601,8 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
     char          plplotEsc;
     PLUNICODE     fci;
     int           last_chance = 0;
+    PLFLT         old_sscale, sscale, old_soffset, soffset, dup;
+    PLINT         level = 0;
 
     memset( type1_string, '\0', MAX_STRING_LEN );
 
@@ -721,34 +730,38 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
             else
             {
                 if ( ucs4[i] == (PLUNICODE) 'u' ) // Superscript
-                {                                 // draw string so far
-                    PSDrawTextToCanvas( dev, type1_string, drawText );
-                    s = 0;
-
-                    // change font scale
-                    if ( dev->yOffset < 0.0 )
-                        dev->fontScale *= (HPDF_REAL) 1.25; // Subscript scaling parameter
-                    else
-                        dev->fontScale *= (HPDF_REAL) 0.8;  // Subscript scaling parameter
-                    PSSetFont( dev, fci );
-
-                    dev->yOffset += dev->fontSize * dev->fontScale / (HPDF_REAL) 2.;
-                }
-                if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {
-                    HPDF_REAL old_fontScale = dev->fontScale;
                     // draw string so far
                     PSDrawTextToCanvas( dev, type1_string, drawText );
                     s = 0;
 
-                    // change font scale
-                    if ( dev->yOffset > 0.0 )
-                        dev->fontScale *= (HPDF_REAL) 1.25; // Subscript scaling parameter
-                    else
-                        dev->fontScale *= (HPDF_REAL) 0.8;  // Subscript scaling parameter
+                    plP_script_scale( TRUE, &level,
+                        &old_sscale, &sscale, &old_soffset, &soffset );
+                    // The correction for the difference in magnitude
+                    // between the baseline and middle coordinate systems
+                    // for superscripts should be
+                    // 0.5*(base font size - superscript/subscript font size).
+                    dup            = 0.5 * ( 1.0 - sscale );
+                    dev->fontScale = sscale;
                     PSSetFont( dev, fci );
+                    dev->yOffset = dev->fontSize * ( soffset * RISE_FACTOR + dup );
+                }
+                if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
+                {
+                    // draw string so far
+                    PSDrawTextToCanvas( dev, type1_string, drawText );
+                    s = 0;
 
-                    dev->yOffset -= dev->fontSize * old_fontScale / (HPDF_REAL) 2.;
+                    plP_script_scale( FALSE, &level,
+                        &old_sscale, &sscale, &old_soffset, &soffset );
+                    // The correction for the difference in magnitude
+                    // between the baseline and middle coordinate systems
+                    // for subcripts should be
+                    // 0.5*(base font size - superscript/subscript font size).
+                    dup            = -0.5 * ( 1.0 - sscale );
+                    dev->fontScale = sscale;
+                    PSSetFont( dev, fci );
+                    dev->yOffset = -dev->fontSize * ( soffset * RISE_FACTOR + dup );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
                 {                                 // draw string so far
