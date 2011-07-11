@@ -845,13 +845,13 @@ main( int argc, const char *argv[] )
 
     if ( colorbar )
     {
+        // Color bar examples
+        PLFLT values_small[2]  = { -1.0e-200, 1.0e-200 };
+        PLFLT values_uneven[9] = { -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 };
+        PLFLT values_even[9]   = { -2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200 };
+
         // Use unsaturated green background colour to contrast with black caps.
         plscolbg( 70, 185, 70 );
-        // Color bar examples
-        PLFLT values_small[2]  = { 0.0e-200, 1.0e-200 };
-        PLFLT values_uneven[9] = { 0.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 };
-        PLFLT values_even[9]   = { 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200, 7.0e-200, 8.0e-200 };
-
         // Cut out the greatest and smallest bits of the color spectrum to
         // leave colors for the end caps.
         plscmap1_range( 0.01, 0.99 );
