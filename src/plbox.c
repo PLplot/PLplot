@@ -1405,7 +1405,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     vpwymi = ( vpwymax > vpwymin ) ? vpwymin : vpwymax;
     vpwyma = ( vpwymax > vpwymin ) ? vpwymax : vpwymin;
 
-// Write horizontal label(s)
+    // Write label(s) for horizontal axes.
     if ( ( lmx || lnx ) && ( ltx || lxx ) )
     {
         PLINT xmode, xprec, xdigmax, xdigits, xscale;
@@ -1426,10 +1426,11 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
         height = lix ? 1.75 : 1.5;
         if ( plsc->if_boxbb )
         {
-            // Height of zero corresponds to character centred on edge
-            // so should add 0.5 to height to obtain bounding box edge
-            // in direction away from edge.  However, experimentally
-            // found 0.7 gave a better looking result.
+            // For horizontal axes, height of zero corresponds to
+            // character centred on edge so should add 0.5 to height
+            // to obtain bounding box edge in direction away from
+            // edge.  However, experimentally found 0.7 gave a better
+            // looking result.
             height_mm = ( height + 0.7 ) * char_height_mm;
             if ( lnx )
                 plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, plsc->vppymi /
@@ -1517,10 +1518,11 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                 // Bottom axis exponent.
                 if ( plsc->if_boxbb )
                 {
-                    // Height of zero corresponds to character centred on edge
-                    // so should add 0.5 to height to obtain bounding box edge
-                    // in direction away from edge if no exponent.
-                    // Add an additional offset to make exponent fit.
+                    // For horizontal axes, height of zero corresponds
+                    // to character centred on edge so should add 0.5
+                    // to height to obtain bounding box edge in
+                    // direction away from edge if no exponent.  Add
+                    // an additional offset to make exponent fit.
                     height_mm        = ( height + 0.9 ) * char_height_mm;
                     plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, plsc->vppymi /
                         plsc->ypmm - height_mm );
@@ -1543,10 +1545,11 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                 // Top axis exponent.
                 if ( plsc->if_boxbb )
                 {
-                    // Height of zero corresponds to character centred on edge
-                    // so should add 0.5 to height to obtain bounding box edge
-                    // in direction away from edge if no exponent.
-                    // Add an additional offset to make exponent fit.
+                    // For horizontal axes, height of zero corresponds
+                    // to character centred on edge so should add 0.5
+                    // to height to obtain bounding box edge in
+                    // direction away from edge if no exponent.  Add
+                    // an additional offset to make exponent fit.
                     height_mm        = ( height + 1.4 ) * char_height_mm;
                     plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
                         plsc->ypmm + height_mm );
@@ -1567,7 +1570,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
         }
     }
 
-// Write vertical label(s)
+    // Write label(s) for vertical axes.
 
     if ( ( lmy || lny ) && ( lty || lxy ) )
     {
@@ -1604,30 +1607,61 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                 if ( lvy )
                 {
                     // Left axis with text written perpendicular to edge.
+                    height = liy ? 1.0 : 0.5;
                     if ( plsc->if_boxbb )
                     {
-                        // FIXME: Add X bounding box calculations for
-                        // numerical labels that slop over the end of the
-                        // axis.
+                        // For vertical axes with text written
+                        // perpendicular to edge, height of zero
+                        // corresponds character centred on edge so
+                        // should add 0.5 to height to obtain bounding
+                        // box edge in direction away from edge, and
+                        // that value apparently works.
+                        height_mm        = ( height + 0.0 ) * char_height_mm;
+                        string_length_mm = plstrl( string );
+                        plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, plsc->vppxmi /
+                            plsc->xpmm - height_mm - string_length_mm );
+                        pos_mm = ( plsc->vppymi + pos *
+                                   ( plsc->vppyma - plsc->vppymi ) ) /
+                                 plsc->ypmm;
+                        // Expected offset is 0.5, but adjust to improve
+                        // look of result.
+                        plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                            pos_mm - 0.6 * char_height_mm );
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                            pos_mm + 0.7 * char_height_mm );
                     }
                     else
                     {
-                        height = liy ? 1.0 : 0.5;
                         plmtex( "lv", height, pos, 1.0, string );
                     }
                 }
                 else
                 {
-                    // Top axis.
+                    // Left axis with text written parallel to edge.
+                    height = liy ? 1.75 : 1.5;
                     if ( plsc->if_boxbb )
                     {
-                        // FIXME: Add X bounding box calculations for
-                        // numerical labels that slop over the end of the
-                        // axis.
+                        // For vertical axes with text written
+                        // parallel to edge, height of zero
+                        // corresponds to character centred on edge so
+                        // should add 0.5 to height to obtain bounding
+                        // box edge in direction away from edge,
+                        // However, experimentally found 0.8 gave a
+                        // better looking result.
+                        height_mm        = ( height + 0.8 ) * char_height_mm;
+                        plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, plsc->vppxmi /
+                            plsc->xpmm - height_mm  );
+                        pos_mm = ( plsc->vppymi + pos *
+                                   ( plsc->vppyma - plsc->vppymi ) ) /
+                                 plsc->ypmm;
+                        string_length_mm = plstrl( string );
+                        plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                            pos_mm - 0.5 * string_length_mm );
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                            pos_mm + 0.5 * string_length_mm );
                     }
                     else
                     {
-                        height = liy ? 1.75 : 1.5;
                         plmtex( "l", height, pos, 0.5, string );
                     }
                 }
@@ -1636,31 +1670,62 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
             {
                 if ( lvy )
                 {
-                    // Top axis.
+                    // Right axis with text written perpendicular to edge.
+                    height = liy ? 1.0 : 0.5;
                     if ( plsc->if_boxbb )
                     {
-                        // FIXME: Add X bounding box calculations for
-                        // numerical labels that slop over the end of the
-                        // axis.
+                        // For vertical axes with text written
+                        // perpendicular to edge, height of zero
+                        // corresponds character centred on edge so
+                        // should add 0.5 to height to obtain bounding
+                        // box edge in direction away from edge, and
+                        // that value apparently works.
+                        height_mm        = ( height + 0.0 ) * char_height_mm;
+                        string_length_mm = plstrl( string );
+                        plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, plsc->vppxma /
+                            plsc->xpmm + height_mm + string_length_mm );
+                        pos_mm = ( plsc->vppymi + pos *
+                                   ( plsc->vppyma - plsc->vppymi ) ) /
+                                 plsc->ypmm;
+                        // Expected offset is 0.5, but adjust to improve
+                        // look of result.
+                        plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                            pos_mm - 0.6 * char_height_mm );
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                            pos_mm + 0.7 * char_height_mm );
                     }
                     else
                     {
-                        height = liy ? 1.0 : 0.5;
                         plmtex( "rv", height, pos, 0.0, string );
                     }
                 }
                 else
                 {
-                    // Top axis.
+                    // Right axis with text written parallel to edge.
+                    height = liy ? 1.75 : 1.5;
                     if ( plsc->if_boxbb )
                     {
-                        // FIXME: Add X bounding box calculations for
-                        // numerical labels that slop over the end of the
-                        // axis.
+                        // For vertical axes with text written
+                        // parallel to edge, height of zero
+                        // corresponds to character centred on edge so
+                        // should add 0.5 to height to obtain bounding
+                        // box edge in direction away from edge,
+                        // However, experimentally found 0.8 gave a
+                        // better looking result.
+                        height_mm        = ( height + 0.8 ) * char_height_mm;
+                        plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, plsc->vppxma /
+                            plsc->xpmm + height_mm  );
+                        pos_mm = ( plsc->vppymi + pos *
+                                   ( plsc->vppyma - plsc->vppymi ) ) /
+                                 plsc->ypmm;
+                        string_length_mm = plstrl( string );
+                        plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                            pos_mm - 0.5 * string_length_mm );
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                            pos_mm + 0.5 * string_length_mm );
                     }
                     else
                     {
-                        height = liy ? 1.75 : 1.5;
                         plmtex( "r", height, pos, 0.5, string );
                     }
                 }
@@ -1691,23 +1756,32 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                 {
                     pos  = 0.0 - offset;
                     just = 1.0;
+                    if ( plsc->if_boxbb )
+                    {
+                        // FIXME: Add X bounding box calculations for
+                        // numerical labels that slop over the end of the
+                        // axis.
+                    }
+                    else
+                    {
+                        plmtex( "t", height, pos, just, string );
+                    }
                 }
                 if ( lmy )
                 {
                     pos  = 1.0 + offset;
                     just = 0.0;
+                    if ( plsc->if_boxbb )
+                    {
+                        // FIXME: Add X bounding box calculations for
+                        // numerical labels that slop over the end of the
+                        // axis.
+                    }
+                    else
+                    {
+                        plmtex( "t", height, pos, just, string );
+                    }
                 }
-            }
-            // Top axis.
-            if ( plsc->if_boxbb )
-            {
-                // FIXME: Add X bounding box calculations for
-                // numerical labels that slop over the end of the
-                // axis.
-            }
-            else
-            {
-                plmtex( "t", height, pos, just, string );
             }
         }
     }
