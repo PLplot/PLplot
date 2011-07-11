@@ -835,6 +835,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                 ybox[2] = ty - 0.5 * drow * box_scales[i];
                 ybox[3] = ty + 0.5 * drow * box_scales[i];
                 plfill( 4, xbox, ybox );
+                pllsty( line_style_save );
                 plwid( line_width_save );
             }
             if ( opt_array[i] & PL_LEGEND_LINE )
