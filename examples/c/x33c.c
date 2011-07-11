@@ -205,10 +205,12 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
             if ( cont_color == 0 || cont_width == 0 )
             {
                 axis_opts = "uwtivn";
+                //axis_opts = "uwtin";
             }
             else
             {
                 axis_opts = "uwxvn";
+                //axis_opts = "uwxn";
             }
         }
         else
@@ -216,10 +218,12 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
             if ( cont_color == 0 || cont_width == 0 )
             {
                 axis_opts = "uwtivm";
+                //axis_opts = "uwtim";
             }
             else
             {
                 axis_opts = "uwxvm";
+                //axis_opts = "uwxm";
             }
         }
 
