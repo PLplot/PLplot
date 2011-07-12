@@ -1013,6 +1013,28 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
         plline( 3, xs, ys );
 }
 
+//--------------------------------------------------------------------------
+//! Calculate bounding-box (if_bb TRUE) or draw box (if_bb FALSE)
+//! around colorbar with possible tick mark, numerical label, and
+//! exponent decorations.
+//!
+//! @param if_bb If if_bb is TRUE evaluate bounding box of decorated box.
+//! If if_bb is FALSE draw the decorated box.
+//! @param opt Can contain the same control bits as the opt argument
+//! for plcolorbar.  However, the only bits that relevant here are
+//! PL_COLORBAR_SHADE,PL_COLORBAR_SHADE_LABEL, and
+//! PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM).  For full
+//! documentation of these bits, see the documentation of opt for
+//! plcolorbar.
+//! @param axis_opts Axis options for the colorbar's major axis, as
+//! for plcolorbar.
+//! @param if_edge If if_edge is TRUE (FALSE) do (do not) draw the edge of
+//! the colorbox.
+//! @param ticks As for plcolorbar.
+//! @param sub_ticks As for plcolorbar.
+//! @param n_values As for plcolorbar.
+//! @param values As for plcolorbar.
+
 static void
 draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
           PLFLT ticks, PLINT sub_ticks, PLINT n_values, const PLFLT *values )
@@ -1045,6 +1067,7 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
         if ( if_bb )
         {
             plsc->if_boxbb = FALSE;
+            free( local_axis_opts );
             return;
         }
         // Exclude ticks for plbox call below since those tick marks and
@@ -1079,17 +1102,20 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! colorbar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
 //! BOTTOM).  If none of those bits are specified, the default
 //! orientation is toward the top, i.e., a vertical colorbar.  The
-//! type of colorbar can be specified with PL_COLORBAR_SHADE,
-//! PL_COLORBAR_IMAGE or PL_COLORBAR_GRADIENT.  The position of the
-//! (optional) label/title can be specified with
-//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM).  If no label position
-//! is specified then no label will be drawn.  End-caps for the
-//! colorbar can added with PL_COLORBAR_CAP_LOW and
-//! PL_COLORBAR_CAP_HIGH.  If a particular colorbar cap option is not
-//! specified then no cap will be drawn for that end.  As a special
-//! case for PL_COLORBAR_SHADE, the option PL_COLORBAR_SHADE_LABEL can
-//! be specified.  If this option is provided then any tick marks and
-//! tick labels will be placed at the breaks between shaded segments.
+//! type of colorbar must be specified with one of PL_COLORBAR_IMAGE,
+//! PL_COLORBAR_SHADE or PL_COLORBAR_GRADIENT.  If more than one of
+//! those bits is set only the first one in the above list is honored.
+//! The position of the (optional) label/title can be specified with
+//! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).  If no label position
+//! bit is set then no label will be drawn.  If more than one of this
+//! list of bits is specified, only the first one on the list is
+//! honored.  End-caps for the colorbar can added with
+//! PL_COLORBAR_CAP_LOW and PL_COLORBAR_CAP_HIGH.  If a particular
+//! colorbar cap option is not specified then no cap will be drawn for
+//! that end.  As a special case for PL_COLORBAR_SHADE, the option
+//! PL_COLORBAR_SHADE_LABEL can be specified.  If this option is
+//! provided then any tick marks and tick labels will be placed at the
+//! breaks between shaded segments.
 //! TODO: This should be expanded to support custom placement of tick
 //! marks and tick labels at custom value locations for any colorbar
 //! type.
@@ -1143,7 +1169,7 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! @param axis_opts Axis options for the colorbar's major axis, as for plbox.
 //! @param label Text label for the colorbar.  No label is drawn if no
 //! label position is specified with one of the
-//! PL_COLORBAR_LABEL_(LEFT|RIGHT|TOP|BOTTOM) bits in opt.
+//! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in opt.
 //! @param n_values Number of elements in the values array.
 //! @param values Numeric values for the data range represented by the
 //! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
@@ -1258,6 +1284,9 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Decorated colorbox bounding box limits in subpage coordinates.
     PLFLT bb_xmin, bb_xmax, bb_ymin, bb_ymax;
 
+    // To help sanity check number of specified labels.
+    PLINT nlabel = 0;
+
     // Default position flags and sanity checks for position flags.
     if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
     {
@@ -1293,6 +1322,34 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     {
         plabort( "plcolorbar: PL_POSITION_VIEWPORT and PL_POSITION_SUBPAGE cannot be simultaneously set." );
         return;
+    }
+
+    // Only honor first bit in list of
+    // PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).
+    if ( opt & PL_COLORBAR_LABEL_RIGHT )
+    {
+        nlabel = 1;
+    }
+    if ( opt & PL_COLORBAR_LABEL_TOP )
+    {
+        if ( nlabel == 1 )
+            opt = opt & ~PL_COLORBAR_LABEL_TOP;
+        else
+            nlabel = 1;
+    }
+    if ( opt & PL_COLORBAR_LABEL_LEFT )
+    {
+        if ( nlabel == 1 )
+            opt = opt & ~PL_COLORBAR_LABEL_LEFT;
+        else
+            nlabel = 1;
+    }
+    if ( opt & PL_COLORBAR_LABEL_BOTTOM )
+    {
+        if ( nlabel == 1 )
+            opt = opt & ~PL_COLORBAR_LABEL_BOTTOM;
+        else
+            nlabel = 1;
     }
 
     // xdmin_save, etc., are the actual external relative viewport
@@ -1336,7 +1393,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
-    max_abs   = MAX( fabs(min_value), fabs(max_value));
+    max_abs   = MAX( fabs( min_value ), fabs( max_value ) );
 
     // Assumes that the colors array is sorted from smallest to largest.
     plgcmap1_range( &min_color, &max_color );
@@ -1780,6 +1837,10 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
             plabort( "plcolorbar: Invalid orientation" );
         }
         plgradient( 4, xs, ys, angle );
+    }
+    else
+    {
+        plabort( "plcolorbar: One of PL_COLORBAR_IMAGE, PL_COLORBAR_SHADE, or PL_COLORBAR_GRADIENT bits must be set in opt" );
     }
 
     // Restore the previous drawing color to use for outlines and text
