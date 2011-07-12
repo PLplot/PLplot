@@ -1752,30 +1752,54 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
             {
                 offset = 0.02;
                 height = 2.0;
+                // Left axis exponent
                 if ( lny )
                 {
                     pos  = 0.0 - offset;
                     just = 1.0;
                     if ( plsc->if_boxbb )
                     {
-                        // FIXME: Add X bounding box calculations for
-                        // numerical labels that slop over the end of the
-                        // axis.
+                      // For horizontal axes, height of zero corresponds
+                      // to character centred on edge so should add 0.5
+                      // to height to obtain bounding box edge in
+                      // direction away from edge if no exponent.  Add
+                      // an additional offset to make exponent fit.
+                      height_mm        = ( height + 1.4 ) * char_height_mm;
+                      plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                                              plsc->ypmm + height_mm );
+                      string_length_mm = plstrl( string );
+                      pos_mm           = ( plsc->vppxmi + pos *
+                                           ( plsc->vppxma - plsc->vppxmi ) ) /
+                          plsc->xpmm;
+                      plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                                              pos_mm - string_length_mm );
                     }
                     else
                     {
                         plmtex( "t", height, pos, just, string );
                     }
                 }
+                // Right axis exponent.
                 if ( lmy )
                 {
                     pos  = 1.0 + offset;
                     just = 0.0;
                     if ( plsc->if_boxbb )
                     {
-                        // FIXME: Add X bounding box calculations for
-                        // numerical labels that slop over the end of the
-                        // axis.
+                      // For horizontal axes, height of zero corresponds
+                      // to character centred on edge so should add 0.5
+                      // to height to obtain bounding box edge in
+                      // direction away from edge if no exponent.  Add
+                      // an additional offset to make exponent fit.
+                      height_mm        = ( height + 1.4 ) * char_height_mm;
+                      plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                                              plsc->ypmm + height_mm );
+                      string_length_mm = plstrl( string );
+                      pos_mm           = ( plsc->vppxmi + pos *
+                                           ( plsc->vppxma - plsc->vppxmi ) ) /
+                          plsc->xpmm;
+                      plsc->boxbb_xmax = MAX( plsc->boxbb_xmin,
+                                              pos_mm + string_length_mm );
                     }
                     else
                     {
