@@ -1650,7 +1650,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                         // better looking result.
                         height_mm        = ( height + 0.8 ) * char_height_mm;
                         plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, plsc->vppxmi /
-                            plsc->xpmm - height_mm  );
+                            plsc->xpmm - height_mm );
                         pos_mm = ( plsc->vppymi + pos *
                                    ( plsc->vppyma - plsc->vppymi ) ) /
                                  plsc->ypmm;
@@ -1714,7 +1714,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                         // better looking result.
                         height_mm        = ( height + 0.8 ) * char_height_mm;
                         plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, plsc->vppxma /
-                            plsc->xpmm + height_mm  );
+                            plsc->xpmm + height_mm );
                         pos_mm = ( plsc->vppymi + pos *
                                    ( plsc->vppyma - plsc->vppymi ) ) /
                                  plsc->ypmm;
@@ -1759,20 +1759,20 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                     just = 1.0;
                     if ( plsc->if_boxbb )
                     {
-                      // For horizontal axes, height of zero corresponds
-                      // to character centred on edge so should add 0.5
-                      // to height to obtain bounding box edge in
-                      // direction away from edge if no exponent.  Add
-                      // an additional offset to make exponent fit.
-                      height_mm        = ( height + 1.4 ) * char_height_mm;
-                      plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
-                                              plsc->ypmm + height_mm );
-                      string_length_mm = plstrl( string );
-                      pos_mm           = ( plsc->vppxmi + pos *
-                                           ( plsc->vppxma - plsc->vppxmi ) ) /
-                          plsc->xpmm;
-                      plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
-                                              pos_mm - string_length_mm );
+                        // For horizontal axes, height of zero corresponds
+                        // to character centred on edge so should add 0.5
+                        // to height to obtain bounding box edge in
+                        // direction away from edge if no exponent.  Add
+                        // an additional offset to make exponent fit.
+                        height_mm        = ( height + 1.4 ) * char_height_mm;
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                            plsc->ypmm + height_mm );
+                        string_length_mm = plstrl( string );
+                        pos_mm           = ( plsc->vppxmi + pos *
+                                             ( plsc->vppxma - plsc->vppxmi ) ) /
+                                           plsc->xpmm;
+                        plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                            pos_mm - string_length_mm );
                     }
                     else
                     {
@@ -1786,20 +1786,20 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                     just = 0.0;
                     if ( plsc->if_boxbb )
                     {
-                      // For horizontal axes, height of zero corresponds
-                      // to character centred on edge so should add 0.5
-                      // to height to obtain bounding box edge in
-                      // direction away from edge if no exponent.  Add
-                      // an additional offset to make exponent fit.
-                      height_mm        = ( height + 1.4 ) * char_height_mm;
-                      plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
-                                              plsc->ypmm + height_mm );
-                      string_length_mm = plstrl( string );
-                      pos_mm           = ( plsc->vppxmi + pos *
-                                           ( plsc->vppxma - plsc->vppxmi ) ) /
-                          plsc->xpmm;
-                      plsc->boxbb_xmax = MAX( plsc->boxbb_xmin,
-                                              pos_mm + string_length_mm );
+                        // For horizontal axes, height of zero corresponds
+                        // to character centred on edge so should add 0.5
+                        // to height to obtain bounding box edge in
+                        // direction away from edge if no exponent.  Add
+                        // an additional offset to make exponent fit.
+                        height_mm        = ( height + 1.4 ) * char_height_mm;
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                            plsc->ypmm + height_mm );
+                        string_length_mm = plstrl( string );
+                        pos_mm           = ( plsc->vppxmi + pos *
+                                             ( plsc->vppxma - plsc->vppxmi ) ) /
+                                           plsc->xpmm;
+                        plsc->boxbb_xmax = MAX( plsc->boxbb_xmin,
+                            pos_mm + string_length_mm );
                     }
                     else
                     {
@@ -1833,6 +1833,10 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     PLINT       ydigmax, ydigits, ydigmax_old, ydigits_old;
     PLINT       lxmin, lxmax, lymin, lymax;
     PLINT       pxmin, pxmax, pymin, pymax;
+    PLFLT       default_mm, char_height_mm, height_mm;
+    PLFLT       string_length_mm, pos_mm;
+
+    plgchr( &default_mm, &char_height_mm );
 
     // Save some parameters
     plgxax( &xdigmax, &xdigits );
@@ -1904,197 +1908,436 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
             plsc->boxbb_xmax += ymajor / plsc->xpmm;
         }
     }
-    else
+    // Write label(s) for horizontal axes.
+
+    if ( ( lmx || lnx ) && ( ltx || lxx ) )
     {
-// Write horizontal label(s)
+        PLINT xmode, xprec, xscale;
+        PLFLT x_spacing, x_spacing_tmp;
 
-        if ( ( lmx || lnx ) && ( ltx || lxx ) )
+        // Determine spacing between ticks
+        // Use the x-size of the window
+        x_spacing = vpwxma - vpwxmi;
+        if ( n_xticks > 1 )
         {
-            PLINT xmode, xprec, xscale;
-            PLFLT x_spacing, x_spacing_tmp;
-
-            // Determine spacing between ticks
-            // Use the x-size of the window
-            x_spacing = vpwxma - vpwxmi;
-            if ( n_xticks > 1 )
+            // Use the smallest space between ticks
+            for ( i = 1; i < n_xticks; i++ )
             {
-                // Use the smallest space between ticks
-                for ( i = 1; i < n_xticks; i++ )
-                {
-                    x_spacing_tmp = fabs( xticks[i] - xticks[i - 1] );
-                    x_spacing     = MIN( x_spacing, x_spacing_tmp );
-                }
-            }
-
-            plgxax( &xdigmax, &xdigits );
-            pldprec( vpwxmi, vpwxma, x_spacing, lfx, &xmode, &xprec, xdigmax, &xscale );
-            timefmt = plP_gtimefmt();
-
-            // Loop through all of the tick marks
-            for ( i = 0; i < n_xticks; i++ )
-            {
-                tn = xticks[i];
-                if ( BETW( tn, vpwxmi, vpwxma ) )
-                {
-                    if ( !lxx )
-                    {
-                        plwxtik( tn, vpwymin, FALSE, !lix );
-                        plwxtik( tn, vpwymax, FALSE, lix );
-                    }
-                    if ( ldx )
-                    {
-                        strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
-                    }
-                    else
-                    {
-                        plform( PL_X_AXIS, tn, xscale, xprec, string, STRING_LEN, llx, lfx, lox );
-                    }
-                    height = lix ? 1.75 : 1.5;
-                    pos    = ( vpwxmax > vpwxmin ) ?
-                             ( tn - vpwxmi ) / ( vpwxma - vpwxmi ) :
-                             ( vpwxma - tn ) / ( vpwxma - vpwxmi );
-                    if ( lnx )
-                        plmtex( "b", height, pos, 0.5, string );
-                    if ( lmx )
-                        plmtex( "t", height, pos, 0.5, string );
-                }
-            }
-            xdigits = 2;
-            plsxax( xdigmax, xdigits );
-
-            // Write separate exponential label if mode = 1.
-
-            if ( !llx && !ldx && !lox && xmode )
-            {
-                // Assume label data is for placement of exponents if no custom
-                // label function is provided.
-                if ( plsc->label_data )
-                {
-                    height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
-                    pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
-                    just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
-                }
-                else
-                {
-                    height = 3.2;
-                    pos    = 1.0;
-                    just   = 0.5;
-                }
-                snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
-                if ( lnx )
-                    plmtex( "b", height, pos, just, string );
-                if ( lmx )
-                    plmtex( "t", height, pos, just, string );
+                x_spacing_tmp = fabs( xticks[i] - xticks[i - 1] );
+                x_spacing     = MIN( x_spacing, x_spacing_tmp );
             }
         }
 
-// Write vertical label(s)
+        plgxax( &xdigmax, &xdigits );
+        pldprec( vpwxmi, vpwxma, x_spacing, lfx, &xmode, &xprec, xdigmax, &xscale );
+        timefmt = plP_gtimefmt();
 
-        if ( ( lmy || lny ) && ( lty || lxy ) )
+        height = lix ? 1.75 : 1.5;
+        if ( plsc->if_boxbb )
         {
-            PLINT ymode, yprec, yscale;
-            PLFLT y_spacing, y_spacing_tmp;
-
-            // Determine spacing between ticks
-            // Use the y-size of the window
-            y_spacing = vpwyma - vpwymi;
-            if ( n_yticks > 1 )
+            // For horizontal axes, height of zero corresponds to
+            // character centred on edge so should add 0.5 to height
+            // to obtain bounding box edge in direction away from
+            // edge.  However, experimentally found 0.7 gave a better
+            // looking result.
+            height_mm = ( height + 0.7 ) * char_height_mm;
+            if ( lnx )
+                plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, plsc->vppymi /
+                    plsc->ypmm - height_mm );
+            if ( lmx )
+                plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                    plsc->ypmm + height_mm );
+        }
+        // Loop through all of the tick marks
+        for ( i = 0; i < n_xticks; i++ )
+        {
+            tn = xticks[i];
+            if ( BETW( tn, vpwxmi, vpwxma ) )
             {
-                // Use the smallest space between ticks
-                for ( i = 1; i < n_yticks; i++ )
+                if ( !lxx && !plsc->if_boxbb )
                 {
-                    y_spacing_tmp = fabs( yticks[i] - yticks[i - 1] );
-                    y_spacing     = MIN( y_spacing, y_spacing_tmp );
+                    plwxtik( tn, vpwymin, FALSE, !lix );
+                    plwxtik( tn, vpwymax, FALSE, lix );
                 }
-            }
-
-            plgyax( &ydigmax, &ydigits );
-            pldprec( vpwymi, vpwyma, y_spacing, lfy, &ymode, &yprec, ydigmax, &yscale );
-            timefmt = plP_gtimefmt();
-
-            ydigits = 0;
-            for ( i = 0; i < n_yticks; i++ )
-            {
-                tn = yticks[i];
-                if ( BETW( tn, vpwymi, vpwyma ) )
+                if ( ldx )
                 {
-                    if ( !lxy )
-                    {
-                        plwytik( vpwxmin, tn, FALSE, !liy );
-                        plwytik( vpwxmax, tn, FALSE, liy );
-                    }
-                    if ( ldy )
-                    {
-                        strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
-                    }
-                    else
-                    {
-                        plform( PL_Y_AXIS, tn, yscale, yprec, string, STRING_LEN, lly, lfy, loy );
-                    }
-                    pos = ( vpwymax > vpwymin ) ?
-                          ( tn - vpwymi ) / ( vpwyma - vpwymi ) :
-                          ( vpwyma - tn ) / ( vpwyma - vpwymi );
-                    if ( lny )
-                    {
-                        if ( lvy )
-                        {
-                            height = liy ? 1.0 : 0.5;
-                            plmtex( "lv", height, pos, 1.0, string );
-                        }
-                        else
-                        {
-                            height = liy ? 1.75 : 1.5;
-                            plmtex( "l", height, pos, 0.5, string );
-                        }
-                    }
-                    if ( lmy )
-                    {
-                        if ( lvy )
-                        {
-                            height = liy ? 1.0 : 0.5;
-                            plmtex( "rv", height, pos, 0.0, string );
-                        }
-                        else
-                        {
-                            height = liy ? 1.75 : 1.5;
-                            plmtex( "r", height, pos, 0.5, string );
-                        }
-                    }
-                    ydigits = MAX( ydigits, (PLINT) strlen( string ) );
-                }
-            }
-            if ( !lvy )
-                ydigits = 2;
-
-            plsyax( ydigmax, ydigits );
-
-            // Write separate exponential label if mode = 1.
-
-            if ( !lly && !ldy && !loy && ymode )
-            {
-                snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
-                if ( plsc->label_data )
-                {
-                    height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
-                    pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
-                    just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+                    strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
                 }
                 else
                 {
-                    offset = 0.02;
-                    height = 2.0;
-                    if ( lny )
+                    plform( PL_X_AXIS, tn, xscale, xprec, string, STRING_LEN, llx, lfx, lox );
+                }
+                pos = ( vpwxmax > vpwxmin ) ?
+                      ( tn - vpwxmi ) / ( vpwxma - vpwxmi ) :
+                      ( vpwxma - tn ) / ( vpwxma - vpwxmi );
+                if ( plsc->if_boxbb )
+                {
+                    string_length_mm = plstrl( string );
+                    pos_mm           = ( plsc->vppxmi + pos *
+                                         ( plsc->vppxma - plsc->vppxmi ) ) /
+                                       plsc->xpmm;
+                }
+                if ( lnx )
+                {
+                    // Bottom axis.
+                    if ( plsc->if_boxbb )
                     {
-                        pos  = 0.0 - offset;
-                        just = 1.0;
+                        plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                            pos_mm - 0.5 * string_length_mm );
+                        plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                            pos_mm + 0.5 * string_length_mm );
                     }
-                    if ( lmy )
+                    else
                     {
-                        pos  = 1.0 + offset;
-                        just = 0.0;
+                        plmtex( "b", height, pos, 0.5, string );
                     }
                 }
-                plmtex( "t", height, pos, just, string );
+                if ( lmx )
+                {
+                    // Top axis.
+                    if ( plsc->if_boxbb )
+                    {
+                        plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                            pos_mm - 0.5 * string_length_mm );
+                        plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                            pos_mm + 0.5 * string_length_mm );
+                    }
+                    else
+                    {
+                        plmtex( "t", height, pos, 0.5, string );
+                    }
+                }
+            }
+        }
+        xdigits = 2;
+        plsxax( xdigmax, xdigits );
+
+        // Write separate exponential label if mode = 1.
+
+        if ( !llx && !ldx && !lox && xmode )
+        {
+            // Assume label data is for placement of exponents if no custom
+            // label function is provided.
+            if ( plsc->label_data )
+            {
+                height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+            }
+            else
+            {
+                height = 3.2;
+                pos    = 1.0;
+                just   = 0.5;
+            }
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
+            if ( lnx )
+            {
+                // Bottom axis exponent.
+                if ( plsc->if_boxbb )
+                {
+                    // For horizontal axes, height of zero corresponds
+                    // to character centred on edge so should add 0.5
+                    // to height to obtain bounding box edge in
+                    // direction away from edge if no exponent.  Add
+                    // an additional offset to make exponent fit.
+                    height_mm        = ( height + 0.9 ) * char_height_mm;
+                    plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, plsc->vppymi /
+                        plsc->ypmm - height_mm );
+                    string_length_mm = plstrl( string );
+                    pos_mm           = ( plsc->vppxmi + pos *
+                                         ( plsc->vppxma - plsc->vppxmi ) ) /
+                                       plsc->xpmm;
+                    plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                        pos_mm - 0.5 * string_length_mm );
+                    plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                        pos_mm + 0.5 * string_length_mm );
+                }
+                else
+                {
+                    plmtex( "b", height, pos, just, string );
+                }
+            }
+            if ( lmx )
+            {
+                // Top axis exponent.
+                if ( plsc->if_boxbb )
+                {
+                    // For horizontal axes, height of zero corresponds
+                    // to character centred on edge so should add 0.5
+                    // to height to obtain bounding box edge in
+                    // direction away from edge if no exponent.  Add
+                    // an additional offset to make exponent fit.
+                    height_mm        = ( height + 1.4 ) * char_height_mm;
+                    plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                        plsc->ypmm + height_mm );
+                    string_length_mm = plstrl( string );
+                    pos_mm           = ( plsc->vppxmi + pos *
+                                         ( plsc->vppxma - plsc->vppxmi ) ) /
+                                       plsc->xpmm;
+                    plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                        pos_mm - 0.5 * string_length_mm );
+                    plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                        pos_mm + 0.5 * string_length_mm );
+                }
+                else
+                {
+                    plmtex( "t", height, pos, just, string );
+                }
+            }
+        }
+    }
+
+    // Write label(s) for vertical axes.
+    if ( ( lmy || lny ) && ( lty || lxy ) )
+    {
+        PLINT ymode, yprec, yscale;
+        PLFLT y_spacing, y_spacing_tmp;
+
+        // Determine spacing between ticks
+        // Use the y-size of the window
+        y_spacing = vpwyma - vpwymi;
+        if ( n_yticks > 1 )
+        {
+            // Use the smallest space between ticks
+            for ( i = 1; i < n_yticks; i++ )
+            {
+                y_spacing_tmp = fabs( yticks[i] - yticks[i - 1] );
+                y_spacing     = MIN( y_spacing, y_spacing_tmp );
+            }
+        }
+
+        plgyax( &ydigmax, &ydigits );
+        pldprec( vpwymi, vpwyma, y_spacing, lfy, &ymode, &yprec, ydigmax, &yscale );
+        timefmt = plP_gtimefmt();
+
+        ydigits = 0;
+        for ( i = 0; i < n_yticks; i++ )
+        {
+            tn = yticks[i];
+            if ( BETW( tn, vpwymi, vpwyma ) )
+            {
+                if ( !lxy && !plsc->if_boxbb )
+                {
+                    plwytik( vpwxmin, tn, FALSE, !liy );
+                    plwytik( vpwxmax, tn, FALSE, liy );
+                }
+                if ( ldy )
+                {
+                    strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
+                }
+                else
+                {
+                    plform( PL_Y_AXIS, tn, yscale, yprec, string, STRING_LEN, lly, lfy, loy );
+                }
+                pos = ( vpwymax > vpwymin ) ?
+                      ( tn - vpwymi ) / ( vpwyma - vpwymi ) :
+                      ( vpwyma - tn ) / ( vpwyma - vpwymi );
+                if ( lny )
+                {
+                    if ( lvy )
+                    {
+                        // Left axis with text written perpendicular to edge.
+                        height = liy ? 1.0 : 0.5;
+                        if ( plsc->if_boxbb )
+                        {
+                            // For vertical axes with text written
+                            // perpendicular to edge, height of zero
+                            // corresponds character centred on edge so
+                            // should add 0.5 to height to obtain bounding
+                            // box edge in direction away from edge, and
+                            // that value apparently works.
+                            height_mm        = ( height + 0.0 ) * char_height_mm;
+                            string_length_mm = plstrl( string );
+                            plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, plsc->vppxmi /
+                                plsc->xpmm - height_mm - string_length_mm );
+                            pos_mm = ( plsc->vppymi + pos *
+                                       ( plsc->vppyma - plsc->vppymi ) ) /
+                                     plsc->ypmm;
+                            // Expected offset is 0.5, but adjust to improve
+                            // look of result.
+                            plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                                pos_mm - 0.6 * char_height_mm );
+                            plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                                pos_mm + 0.7 * char_height_mm );
+                        }
+                        else
+                        {
+                            plmtex( "lv", height, pos, 1.0, string );
+                        }
+                    }
+                    else
+                    {
+                        // Left axis with text written parallel to edge.
+                        height = liy ? 1.75 : 1.5;
+                        if ( plsc->if_boxbb )
+                        {
+                            // For vertical axes with text written
+                            // parallel to edge, height of zero
+                            // corresponds to character centred on edge so
+                            // should add 0.5 to height to obtain bounding
+                            // box edge in direction away from edge,
+                            // However, experimentally found 0.8 gave a
+                            // better looking result.
+                            height_mm        = ( height + 0.8 ) * char_height_mm;
+                            plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, plsc->vppxmi /
+                                plsc->xpmm - height_mm );
+                            pos_mm = ( plsc->vppymi + pos *
+                                       ( plsc->vppyma - plsc->vppymi ) ) /
+                                     plsc->ypmm;
+                            string_length_mm = plstrl( string );
+                            plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                                pos_mm - 0.5 * string_length_mm );
+                            plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                                pos_mm + 0.5 * string_length_mm );
+                        }
+                        else
+                        {
+                            plmtex( "l", height, pos, 0.5, string );
+                        }
+                    }
+                }
+                if ( lmy )
+                {
+                    if ( lvy )
+                    {
+                        // Right axis with text written perpendicular to edge.
+                        height = liy ? 1.0 : 0.5;
+                        if ( plsc->if_boxbb )
+                        {
+                            // For vertical axes with text written
+                            // perpendicular to edge, height of zero
+                            // corresponds character centred on edge so
+                            // should add 0.5 to height to obtain bounding
+                            // box edge in direction away from edge, and
+                            // that value apparently works.
+                            height_mm        = ( height + 0.0 ) * char_height_mm;
+                            string_length_mm = plstrl( string );
+                            plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, plsc->vppxma /
+                                plsc->xpmm + height_mm + string_length_mm );
+                            pos_mm = ( plsc->vppymi + pos *
+                                       ( plsc->vppyma - plsc->vppymi ) ) /
+                                     plsc->ypmm;
+                            // Expected offset is 0.5, but adjust to improve
+                            // look of result.
+                            plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                                pos_mm - 0.6 * char_height_mm );
+                            plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                                pos_mm + 0.7 * char_height_mm );
+                        }
+                        else
+                        {
+                            plmtex( "rv", height, pos, 0.0, string );
+                        }
+                    }
+                    else
+                    {
+                        // Right axis with text written parallel to edge.
+                        height = liy ? 1.75 : 1.5;
+                        if ( plsc->if_boxbb )
+                        {
+                            // For vertical axes with text written
+                            // parallel to edge, height of zero
+                            // corresponds to character centred on edge so
+                            // should add 0.5 to height to obtain bounding
+                            // box edge in direction away from edge,
+                            // However, experimentally found 0.8 gave a
+                            // better looking result.
+                            height_mm        = ( height + 0.8 ) * char_height_mm;
+                            plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, plsc->vppxma /
+                                plsc->xpmm + height_mm );
+                            pos_mm = ( plsc->vppymi + pos *
+                                       ( plsc->vppyma - plsc->vppymi ) ) /
+                                     plsc->ypmm;
+                            string_length_mm = plstrl( string );
+                            plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                                pos_mm - 0.5 * string_length_mm );
+                            plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                                pos_mm + 0.5 * string_length_mm );
+                        }
+                        else
+                        {
+                            plmtex( "r", height, pos, 0.5, string );
+                        }
+                    }
+                }
+                ydigits = MAX( ydigits, (PLINT) strlen( string ) );
+            }
+        }
+        if ( !lvy )
+            ydigits = 2;
+
+        plsyax( ydigmax, ydigits );
+
+        // Write separate exponential label if mode = 1.
+
+        if ( !lly && !ldy && !loy && ymode )
+        {
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
+            if ( plsc->label_data )
+            {
+                height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ( (PLLabelDefaults *) plsc->label_data )->exp_label_just;
+            }
+            else
+            {
+                offset = 0.02;
+                height = 2.0;
+                // Left axis exponent.
+                if ( lny )
+                {
+                    pos  = 0.0 - offset;
+                    just = 1.0;
+                    if ( plsc->if_boxbb )
+                    {
+                        // For horizontal axes, height of zero corresponds
+                        // to character centred on edge so should add 0.5
+                        // to height to obtain bounding box edge in
+                        // direction away from edge if no exponent.  Add
+                        // an additional offset to make exponent fit.
+                        height_mm        = ( height + 1.4 ) * char_height_mm;
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                            plsc->ypmm + height_mm );
+                        string_length_mm = plstrl( string );
+                        pos_mm           = ( plsc->vppxmi + pos *
+                                             ( plsc->vppxma - plsc->vppxmi ) ) /
+                                           plsc->xpmm;
+                        plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                            pos_mm - string_length_mm );
+                    }
+                    else
+                    {
+                        plmtex( "t", height, pos, just, string );
+                    }
+                }
+                // Right axis exponent.
+                if ( lmy )
+                {
+                    pos  = 1.0 + offset;
+                    just = 0.0;
+                    if ( plsc->if_boxbb )
+                    {
+                        // For horizontal axes, height of zero corresponds
+                        // to character centred on edge so should add 0.5
+                        // to height to obtain bounding box edge in
+                        // direction away from edge if no exponent.  Add
+                        // an additional offset to make exponent fit.
+                        height_mm        = ( height + 1.4 ) * char_height_mm;
+                        plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                            plsc->ypmm + height_mm );
+                        string_length_mm = plstrl( string );
+                        pos_mm           = ( plsc->vppxmi + pos *
+                                             ( plsc->vppxma - plsc->vppxmi ) ) /
+                                           plsc->xpmm;
+                        plsc->boxbb_xmax = MAX( plsc->boxbb_xmin,
+                            pos_mm + string_length_mm );
+                    }
+                    else
+                    {
+                        plmtex( "t", height, pos, just, string );
+                    }
+                }
             }
         }
     }
@@ -2103,8 +2346,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     plsxax( xdigmax_old, xdigits_old );
     plsyax( ydigmax_old, ydigits_old );
 
-// Restore the clip limits to viewport edge
-
+    // Restore the clip limits to viewport edge
     plP_sclp( lxmin, lxmax, lymin, lymax );
 }
 
