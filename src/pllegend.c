@@ -1169,7 +1169,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Min and max values
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
-    PLFLT min_value, max_value;
+    PLFLT min_value, max_value, max_abs;
     // Length of cap in orientation direction
     PLFLT cap_extent;
 
@@ -1336,6 +1336,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 
     min_value = values[0];
     max_value = values[ n_values - 1 ];
+    max_abs   = MAX( fabs(min_value), fabs(max_value));
 
     // Assumes that the colors array is sorted from smallest to largest.
     plgcmap1_range( &min_color, &max_color );
@@ -1364,12 +1365,12 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         wx_min = min_value;
         wx_max = max_value;
         wy_min = 0.0;
-        wy_max = 1.0;
+        wy_max = max_abs;
     }
     else if ( opt & PL_COLORBAR_ORIENT_TOP )
     {
         wx_min = 0.0;
-        wx_max = 1.0;
+        wx_max = max_abs;
         wy_min = min_value;
         wy_max = max_value;
     }
@@ -1378,12 +1379,12 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         wx_min = max_value;
         wx_max = min_value;
         wy_min = 0.0;
-        wy_max = 1.0;
+        wy_max = max_abs;
     }
     else if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
     {
         wx_min = 0.0;
-        wx_max = 1.0;
+        wx_max = max_abs;
         wy_min = max_value;
         wy_max = min_value;
     }
@@ -1663,7 +1664,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         // makes up 10% of the scale and segment B makes up 20% of the scale
         // then segment B will be twice the length of segment A.
         PLcGrid grid;
-        PLFLT   grid_axis[2] = { 0.0, 1.0 };
+        PLFLT   grid_axis[2] = { 0.0, max_abs };
         n_steps = n_values;
         // Use the provided values.
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
