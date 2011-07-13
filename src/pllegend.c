@@ -295,17 +295,11 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
 
 static void get_subpage_per_mm( PLFLT *x_subpage_per_mm, PLFLT *y_subpage_per_mm )
 {
-    // Normalized viewport limits
-    PLFLT vxmin, vxmax, vymin, vymax;
     // Size of subpage in mm
     PLFLT mxmin, mxmax, mymin, mymax;
-    // Viewport limits in world coordinates
-    PLFLT wxmin, wxmax, wymin, wymax;
-    plgvpsp( &vxmin, &vxmax, &vymin, &vymax );
     plgspa( &mxmin, &mxmax, &mymin, &mymax );
-    plgvpw( &wxmin, &wxmax, &wymin, &wymax );
-    *x_subpage_per_mm = ( wxmax - wxmin ) / ( ( vxmax - vxmin ) * ( mxmax - mxmin ) );
-    *y_subpage_per_mm = ( wymax - wymin ) / ( ( vymax - vymin ) * ( mymax - mymin ) );
+    *x_subpage_per_mm = 1. / ( mxmax - mxmin );
+    *y_subpage_per_mm = 1. / ( mymax - mymin );
 }
 
 //--------------------------------------------------------------------------
