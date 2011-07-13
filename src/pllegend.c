@@ -1008,15 +1008,16 @@ static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 }
 
 //--------------------------------------------------------------------------
-//! Calculate bounding-box (if_bb TRUE) or draw box (if_bb FALSE)
-//! around colorbar with possible tick mark, numerical label, and
-//! exponent decorations.
+//! Draw box (when if_bb FALSE) around colorbar with possible tick
+//! marks, numerical labels of those tick marks, and exponent
+//! decorations of that box or else (when if_bb TRUE) calculate
+//! bounding box of that decorated box.
 //!
-//! @param if_bb If if_bb is TRUE evaluate bounding box of decorated box.
+//! @param If if_bb is TRUE evaluate bounding box of decorated box.
 //! If if_bb is FALSE draw the decorated box.
 //! @param opt Can contain the same control bits as the opt argument
-//! for plcolorbar.  However, the only bits that relevant here are
-//! PL_COLORBAR_SHADE,PL_COLORBAR_SHADE_LABEL, and
+//! for plcolorbar.  However, the only bits that are relevant here are
+//! PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL, and
 //! PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM).  For full
 //! documentation of these bits, see the documentation of opt for
 //! plcolorbar.
@@ -1086,6 +1087,199 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
     plsc->if_boxbb = FALSE;
 
     free( local_axis_opts );
+}
+
+//--------------------------------------------------------------------------
+//! Draw label (when if_bb FALSE) with appropriate position relative to the
+//! "inner" bounding-box of the decorated box around the colorbar
+//! or else (when if_bb TRUE) calculate combined bounding box of that label
+//! + decorated box.
+//!
+//! @param if_bb If if_bb is TRUE evaluate bounding box of combined
+//! decorated box + label.  If if_bb is FALSE draw the label.
+//! @param opt Can contain the same control bits as the opt argument
+//! for plcolorbar.  However, the only bits that are relevant here are
+//! PL_COLORBAR_CAP_LOW, PL_COLORBAR_CAP_HIGH,
+//! PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM), and
+//! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).  For full documentation
+//! of these bits, see the documentation of opt for plcolorbar.
+//! @param cap_extent Extent of cap in normalized subpage coordinates
+//! in either X or Y direction as appropriate.
+//! @param label Text label for the colorbar.  No label is drawn if no
+//! label position is specified with one of the
+//! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in opt.
+
+static void
+draw_label( PLBOOL if_bb, PLINT opt, PLINT position, PLFLT cap_extent,
+            const char *label)
+{
+    // Justification of label text
+    PLFLT just;
+
+    // How far away from the axis should the label be drawn in units of
+    // the character height?
+    PLFLT label_offset = 0.;
+
+    // For building plmtex option string.
+    PLINT  max_opts = 25;
+    char   opt_label[max_opts];
+    char   perp;
+
+    // To help sanity check number of specified labels.
+    PLINT nlabel = 0;
+
+    // aspect ratio of physical area of subpage.
+    PLFLT aspspp = ( ( plsc->sppxma - plsc->sppxmi ) / plsc->xpmm ) /
+                   ( ( plsc->sppyma - plsc->sppymi ) / plsc->ypmm );
+
+    // Character height in y and x normalized subpage coordinates.
+    PLFLT character_height_y = get_character_or_symbol_height( TRUE );
+    // character height _in normalized subpage coordinates_ is smaller
+    // in the x direction if the subpage aspect ratio is larger than one.
+    PLFLT character_height_x = character_height_y / aspspp;
+    
+    // Only honor first bit in list of
+    // PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).
+    if ( opt & PL_COLORBAR_LABEL_RIGHT )
+    {
+        nlabel = 1;
+    }
+    if ( opt & PL_COLORBAR_LABEL_TOP )
+    {
+        if ( nlabel == 1 )
+            opt = opt & ~PL_COLORBAR_LABEL_TOP;
+        else
+            nlabel = 1;
+    }
+    if ( opt & PL_COLORBAR_LABEL_LEFT )
+    {
+        if ( nlabel == 1 )
+            opt = opt & ~PL_COLORBAR_LABEL_LEFT;
+        else
+            nlabel = 1;
+    }
+    if ( opt & PL_COLORBAR_LABEL_BOTTOM )
+    {
+        if ( nlabel == 1 )
+            opt = opt & ~PL_COLORBAR_LABEL_BOTTOM;
+        else
+            nlabel = 1;
+    }
+
+    // Start preparing data to help plot the label or
+    // calculate the corresponding bounding box changes.
+    
+    if ( opt & PL_COLORBAR_CAP_LOW )
+    {
+        // Add an extra offset for the label so it does not bump in to the
+        // cap if the label is placed on the same side as the cap.
+        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_LEFT ) ||
+             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_RIGHT ) )
+        {
+            label_offset += cap_extent / character_height_x;
+        }
+        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_BOTTOM ) ||
+             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_TOP ) )
+        {
+            label_offset += cap_extent / character_height_y;
+        }
+    }
+    if ( opt & PL_COLORBAR_CAP_HIGH )
+    {
+        // Add an extra offset for the label so it does not bump in to the
+        // cap if the label is placed on the same side as the cap.
+        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
+             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_LEFT ) )
+        {
+            label_offset += cap_extent / character_height_x;
+        }
+        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_TOP ) ||
+             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_BOTTOM ) )
+        {
+            label_offset += cap_extent / character_height_y;
+        }
+    }
+    if ( opt & PL_COLORBAR_LABEL_LEFT )
+    {
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            if ( position & PL_POSITION_LEFT )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
+            perp = '\0';
+            just = 0.5;
+        }
+        else
+        {
+            label_offset += 1.5;
+            perp          = 'v';
+            just          = 1.0;
+        }
+        snprintf( opt_label, max_opts, "l%c", perp );
+    }
+    else if ( opt & PL_COLORBAR_LABEL_RIGHT )
+    {
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            if ( position & PL_POSITION_RIGHT )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
+            perp = '\0';
+            just = 0.5;
+        }
+        else
+        {
+            label_offset += 1.5;
+            perp          = 'v';
+            just          = 0.0;
+        }
+        snprintf( opt_label, max_opts, "r%c", perp );
+    }
+    else if ( opt & PL_COLORBAR_LABEL_TOP )
+    {
+        just = 0.5;
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            label_offset += 1.5;
+            perp          = '\0';
+        }
+        else
+        {
+            if ( position & PL_POSITION_TOP )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
+            perp = '\0';
+        }
+        snprintf( opt_label, max_opts, "t%c", perp );
+    }
+    else if ( opt & PL_COLORBAR_LABEL_BOTTOM )
+    {
+        just = 0.5;
+        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
+        {
+            label_offset += 1.5;
+            perp          = '\0';
+        }
+        else
+        {
+            if ( position & PL_POSITION_BOTTOM )
+                label_offset += 4.0;
+            else
+                label_offset += 2.0;
+            perp = '\0';
+        }
+        snprintf( opt_label, max_opts, "b%c", perp );
+    }
+    if ( if_bb )
+    {
+    }
+    else
+    {
+        plmtex( opt_label, label_offset, 0.5, just, label );
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -1183,9 +1377,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
               const char *axis_opts, const char *label,
               PLINT n_values, const PLFLT *values )
 {
-    // Justification of label text
-    PLFLT just;
-
     // Min and max values
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
@@ -1257,19 +1448,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLINT i, j, ni, nj, n_steps;
     PLFLT step_size;
 
-    // How far away from the axis should the label be drawn in units of
-    // the character height?
-    PLFLT label_offset = 0.;
-
-    // For building plmtex option string.
-    PLINT  max_opts = 25;
-    char   opt_string[max_opts];
-    char   perp;
-
     PLBOOL if_edge;
-
-    // Character height in x and y normalized subpage coordinates.
-    PLFLT character_height_x, character_height_y;
 
     // Ratio of normalized subpage coordinates to mm coordinates in
     // x and y.
@@ -1277,9 +1456,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 
     // Decorated colorbox bounding box limits in subpage coordinates.
     PLFLT bb_xmin, bb_xmax, bb_ymin, bb_ymax;
-
-    // To help sanity check number of specified labels.
-    PLINT nlabel = 0;
 
     // Default position flags and sanity checks for position flags.
     if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
@@ -1316,34 +1492,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     {
         plabort( "plcolorbar: PL_POSITION_VIEWPORT and PL_POSITION_SUBPAGE cannot be simultaneously set." );
         return;
-    }
-
-    // Only honor first bit in list of
-    // PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).
-    if ( opt & PL_COLORBAR_LABEL_RIGHT )
-    {
-        nlabel = 1;
-    }
-    if ( opt & PL_COLORBAR_LABEL_TOP )
-    {
-        if ( nlabel == 1 )
-            opt = opt & ~PL_COLORBAR_LABEL_TOP;
-        else
-            nlabel = 1;
-    }
-    if ( opt & PL_COLORBAR_LABEL_LEFT )
-    {
-        if ( nlabel == 1 )
-            opt = opt & ~PL_COLORBAR_LABEL_LEFT;
-        else
-            nlabel = 1;
-    }
-    if ( opt & PL_COLORBAR_LABEL_BOTTOM )
-    {
-        if ( nlabel == 1 )
-            opt = opt & ~PL_COLORBAR_LABEL_BOTTOM;
-        else
-            nlabel = 1;
     }
 
     // xdmin_save, etc., are the actual external relative viewport
@@ -1846,24 +1994,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
 
-    character_height_y = get_character_or_symbol_height( TRUE );
-    // character height _in normalized subpage coordinates_ is smaller
-    // in the x direction if the subpage aspect ratio is larger than one.
-    character_height_x = character_height_y / aspspp;
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
-        // Add an extra offset for the label so it does not bump in to the
-        // cap if the label is placed on the same side as the cap.
-        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_LEFT ) ||
-             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_RIGHT ) )
-        {
-            label_offset += cap_extent / character_height_x;
-        }
-        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_BOTTOM ) ||
-             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_TOP ) )
-        {
-            label_offset += cap_extent / character_height_y;
-        }
         // Draw a filled triangle (cap/arrow) at the low end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_LEFT,
@@ -1888,18 +2020,6 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
     {
-        // Add an extra offset for the label so it does not bump in to the
-        // cap if the label is placed on the same side as the cap.
-        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
-             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_LEFT ) )
-        {
-            label_offset += cap_extent / character_height_x;
-        }
-        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_TOP ) ||
-             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_BOTTOM ) )
-        {
-            label_offset += cap_extent / character_height_y;
-        }
         // Draw a filled triangle (cap/arrow) at the high end of the scale
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
             draw_cap( if_edge, PL_COLORBAR_ORIENT_RIGHT,
@@ -1933,83 +2053,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     draw_box( FALSE, opt, axis_opts, if_edge,
         ticks, sub_ticks, n_values, values );
     // Write label.
-    if ( opt & PL_COLORBAR_LABEL_LEFT )
-    {
-        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            if ( position & PL_POSITION_LEFT )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
-            perp = '\0';
-            just = 0.5;
-        }
-        else
-        {
-            label_offset += 1.5;
-            perp          = 'v';
-            just          = 1.0;
-        }
-        snprintf( opt_string, max_opts, "l%c", perp );
-        plmtex( opt_string, label_offset, 0.5, just, label );
-    }
-    else if ( opt & PL_COLORBAR_LABEL_RIGHT )
-    {
-        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            if ( position & PL_POSITION_RIGHT )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
-            perp = '\0';
-            just = 0.5;
-        }
-        else
-        {
-            label_offset += 1.5;
-            perp          = 'v';
-            just          = 0.0;
-        }
-        snprintf( opt_string, max_opts, "r%c", perp );
-        plmtex( opt_string, label_offset, 0.5, just, label );
-    }
-    else if ( opt & PL_COLORBAR_LABEL_TOP )
-    {
-        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            label_offset += 1.5;
-            perp          = '\0';
-        }
-        else
-        {
-            if ( position & PL_POSITION_TOP )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
-            perp = '\0';
-        }
-        snprintf( opt_string, max_opts, "t%c", perp );
-        plmtex( opt_string, label_offset, 0.5, 0.5, label );
-    }
-    else if ( opt & PL_COLORBAR_LABEL_BOTTOM )
-    {
-        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            label_offset += 1.5;
-            perp          = '\0';
-        }
-        else
-        {
-            if ( position & PL_POSITION_BOTTOM )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
-            perp = '\0';
-        }
-        snprintf( opt_string, max_opts, "b%c", perp );
-        plmtex( opt_string, label_offset, 0.5, 0.5, label );
-    }
-
+    draw_label( FALSE, opt, position, cap_extent, label );
     // Viewport and world coordinate ranges for cap and bounding-box areas.
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
