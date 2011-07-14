@@ -237,7 +237,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        plvpor( 0.15, 0.85, 0.15, 0.85 );
+        plvpor( 0.20, 0.80, 0.20, 0.80 );
         plwind( 0.0, 1.0, 0.0, 1.0 );
         // Set interesting background colour.
         plscol0a( 15, 0, 0, 0, 0.20 );
