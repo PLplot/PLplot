@@ -1110,15 +1110,14 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in opt.
 
 static void
-draw_label( PLBOOL if_bb, PLINT opt, PLINT position, PLFLT cap_extent,
-            const char *label)
+draw_label( PLBOOL if_bb, PLINT opt, const char *label)
 {
     // Justification of label text
     PLFLT just;
 
     // How far away from the axis should the label be drawn in units of
     // the character height?
-    PLFLT label_offset = 0.;
+    PLFLT label_offset = 1.2;
 
     // For building plmtex option string.
     PLINT  max_opts = 25;
@@ -1169,52 +1168,18 @@ draw_label( PLBOOL if_bb, PLINT opt, PLINT position, PLFLT cap_extent,
     // Start preparing data to help plot the label or
     // calculate the corresponding bounding box changes.
     
-    if ( opt & PL_COLORBAR_CAP_LOW )
-    {
-        // Add an extra offset for the label so it does not bump in to the
-        // cap if the label is placed on the same side as the cap.
-        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_LEFT ) ||
-             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_RIGHT ) )
-        {
-            label_offset += cap_extent / character_height_x;
-        }
-        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_BOTTOM ) ||
-             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_TOP ) )
-        {
-            label_offset += cap_extent / character_height_y;
-        }
-    }
-    if ( opt & PL_COLORBAR_CAP_HIGH )
-    {
-        // Add an extra offset for the label so it does not bump in to the
-        // cap if the label is placed on the same side as the cap.
-        if ( ( opt & PL_COLORBAR_ORIENT_RIGHT && opt & PL_COLORBAR_LABEL_RIGHT ) ||
-             ( opt & PL_COLORBAR_ORIENT_LEFT && opt & PL_COLORBAR_LABEL_LEFT ) )
-        {
-            label_offset += cap_extent / character_height_x;
-        }
-        if ( ( opt & PL_COLORBAR_ORIENT_TOP && opt & PL_COLORBAR_LABEL_TOP ) ||
-             ( opt & PL_COLORBAR_ORIENT_BOTTOM && opt & PL_COLORBAR_LABEL_BOTTOM ) )
-        {
-            label_offset += cap_extent / character_height_y;
-        }
-    }
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
         if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-            if ( position & PL_POSITION_LEFT )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
             perp = '\0';
             just = 0.5;
         }
         else
         {
-            label_offset += 1.5;
             perp          = 'v';
             just          = 1.0;
+            label_offset -= 0.5;
         }
         snprintf( opt_label, max_opts, "l%c", perp );
     }
@@ -1222,55 +1187,27 @@ draw_label( PLBOOL if_bb, PLINT opt, PLINT position, PLFLT cap_extent,
     {
         if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
-            if ( position & PL_POSITION_RIGHT )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
             perp = '\0';
             just = 0.5;
         }
         else
         {
-            label_offset += 1.5;
             perp          = 'v';
             just          = 0.0;
+            label_offset -= 0.5;
         }
         snprintf( opt_label, max_opts, "r%c", perp );
     }
     else if ( opt & PL_COLORBAR_LABEL_TOP )
     {
+        perp = '\0';
         just = 0.5;
-        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            label_offset += 1.5;
-            perp          = '\0';
-        }
-        else
-        {
-            if ( position & PL_POSITION_TOP )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
-            perp = '\0';
-        }
         snprintf( opt_label, max_opts, "t%c", perp );
     }
     else if ( opt & PL_COLORBAR_LABEL_BOTTOM )
     {
+        perp = '\0';
         just = 0.5;
-        if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
-        {
-            label_offset += 1.5;
-            perp          = '\0';
-        }
-        else
-        {
-            if ( position & PL_POSITION_BOTTOM )
-                label_offset += 4.0;
-            else
-                label_offset += 2.0;
-            perp = '\0';
-        }
         snprintf( opt_label, max_opts, "b%c", perp );
     }
     if ( if_bb )
@@ -1607,6 +1544,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     bb_xmax = plsc->boxbb_xmax * sbxpmm;
     bb_ymin = plsc->boxbb_ymin * sbypmm;
     bb_ymax = plsc->boxbb_ymax * sbypmm;
+
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
@@ -1629,6 +1567,10 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
             bb_ymin = MIN( bb_ymin, -cap_extent );
     }
+
+    // Calculate the bounding box for combined label + decorated box.
+    //draw_label( TRUE , opt, label );
+
     colorbar_width_bb  = bb_xmax - bb_xmin;
     colorbar_height_bb = bb_ymax - bb_ymin;
     // Offsets of upper left corner relative to plvpor coordinates of that
@@ -1689,7 +1631,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
     }
 
-    // Viewport and world coordinate ranges for cap and bounding-box areas.
+    // Viewport and world coordinate ranges for bounding-box.
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
 
@@ -1713,8 +1655,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         plcol0( col0_save );
     }
 
-    // Viewport and world coordinate ranges for all but cap and
-    // bounding-box areas.
+    // Viewport and world coordinate ranges for colorbar.
     plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
@@ -1990,7 +1931,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 
     // Draw end-caps
 
-    // Viewport and world coordinate ranges for cap and bounding-box areas.
+    // Viewport and world coordinate ranges for cap.
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
 
@@ -2043,8 +1984,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                 high_cap_color );
     }
 
-    // Viewport and world coordinate ranges for all but cap and
-    // bounding-box areas.
+    // Viewport and world coordinate ranges for box.
     plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
@@ -2052,9 +1992,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // labels) box.
     draw_box( FALSE, opt, axis_opts, if_edge,
         ticks, sub_ticks, n_values, values );
-    // Write label.
-    draw_label( FALSE, opt, position, cap_extent, label );
-    // Viewport and world coordinate ranges for cap and bounding-box areas.
+
+    // Viewport and world coordinate ranges for bounding-box.
     plvpor( 0., 1., 0., 1. );
     plwind( 0., 1., 0., 1. );
 
@@ -2080,6 +2019,13 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         plcol0( col0_save );
         pllsty( line_style_save );
     }
+
+    // Viewport coordinate ranges for label.
+    //plvpor( vx_min, vx_max, vy_min, vy_max );
+    plvpor( plot_x_subpage_bb, plot_x_subpage_bb + colorbar_width_bb, plot_y_subpage_bb - colorbar_height_bb, plot_y_subpage_bb );
+
+    // Write label.
+    draw_label( FALSE, opt, label );
 
     // Restore previous plot characteristics.
     plcol0( col0_save );
