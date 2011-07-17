@@ -1661,38 +1661,42 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plot_x_subpage = plot_x_subpage_bb + dx_subpage;
     plot_y_subpage = plot_y_subpage_bb + dy_subpage;
 
+    // Coordinates of bounding box for decorated colorbar (without overall label).
     label_vpor_xmin = plot_x_subpage_bb;
     label_vpor_xmax = plot_x_subpage_bb + colorbar_width_bb;
     label_vpor_ymin = plot_y_subpage_bb - colorbar_height_bb;
     label_vpor_ymax = plot_y_subpage_bb;
 
-    if ( 0 )
-    {
-        // Viewport for draw_label is correct size, but has a shifted zero
-        // point compared to the final result but consistent with the
-        // coordinate scheme for bb_xmin, etc., established above with the
-        // previous plvpor call.  calculate_limits below takes account of
-        // this shifted zero point so its results such as bounding-box
-        // range and position of the bounding box should be unaffected.
-        plvpor( 0., label_vpor_xmax - label_vpor_xmin, 0., label_vpor_ymax - label_vpor_ymin );
+    // Viewport for draw_label is correct size, but has a shifted zero
+    // point compared to the final result but consistent with the
+    // coordinate scheme for bb_xmin, etc., established above with the
+    // previous plvpor call.  calculate_limits below takes account of
+    // this shifted zero point so its results such as bounding-box
+    // range and position of the bounding box should be unaffected.
+    plvpor( 0., label_vpor_xmax - label_vpor_xmin, 0., label_vpor_ymax - label_vpor_ymin );
 
-        // Calculate the bounding box for combined label + decorated box.
-        draw_label( TRUE, opt, label );
+    // Calculate the bounding box for combined label + decorated box.
+    draw_label( TRUE, opt, label );
 
-        // Calculate overall limits.
-        calculate_limits( position, x, y,
-            xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted,
-            label_vpor_ymax - label_vpor_ymin,
-            &colorbar_width_bb, &colorbar_height_bb,
-            &colorbar_width_ac, &colorbar_height_ac,
-            &plot_x_subpage_bb, &plot_y_subpage_bb,
-            &dx_subpage, &dy_subpage );
+    // Calculate overall limits.
+    calculate_limits( position, x, y,
+        xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted,
+        label_vpor_ymax - label_vpor_ymin,
+        &colorbar_width_bb, &colorbar_height_bb,
+        &colorbar_width_ac, &colorbar_height_ac,
+        &plot_x_subpage_bb, &plot_y_subpage_bb,
+        &dx_subpage, &dy_subpage );
 
-        // Normalized subpage coordinates (top-left corner) for undecorated
-        // colorbar
-        //plot_x_subpage = plot_x_subpage_bb + dx_subpage;
-        //plot_y_subpage = plot_y_subpage_bb + dy_subpage;
-    }
+    // Transform normalized subpage coordinates (top-left corner) for undecorated
+    // colorbar to new coordinate system.
+    plot_x_subpage += dx_subpage;
+    plot_y_subpage += dy_subpage;
+    // Transform bounding box for decorated colorbar (without label) to
+    // new coordinate system.
+    label_vpor_xmin   += dx_subpage;
+    label_vpor_xmax   += dx_subpage;
+    label_vpor_ymin   += dy_subpage;
+    label_vpor_ymax   += dy_subpage;
     *p_colorbar_width  = colorbar_width_ac;
     *p_colorbar_height = colorbar_height_ac;
 
