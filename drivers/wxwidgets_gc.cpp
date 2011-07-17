@@ -245,8 +245,10 @@ void wxPLDevGC::CreateCanvas()
         ( (wxMemoryDC *) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
     }
 
-    if ( m_dc )
+    if ( m_dc ) {
+		delete m_context;
         m_context = wxGraphicsContext::Create( *( (wxMemoryDC *) m_dc ) );
+	}
 }
 
 
