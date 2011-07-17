@@ -569,7 +569,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
     PLFLT x_subpage_per_mm, y_subpage_per_mm, text_width0 = 0., text_width;
     PLFLT width_border, column_separation,
-          legend_width, legend_height, legend_width_vc, legend_height_vc;
+          legend_width, legend_height, legend_width_ac, legend_height_ac;
     PLFLT x_legend_position, y_legend_position, xsign, ysign;
 
     PLINT some_boxes         = 0, some_lines = 0, some_symbols = 0;
@@ -703,10 +703,10 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
     // Total width and height of legend area in adopted coordinates.
 
-    legend_width_vc  = subpage_to_adopted_x( legend_width ) - subpage_to_adopted_x( 0. );
-    legend_height_vc = subpage_to_adopted_y( legend_height ) - subpage_to_adopted_y( 0. );
-    *p_legend_width  = legend_width_vc;
-    *p_legend_height = legend_height_vc;
+    legend_width_ac  = subpage_to_adopted_x( legend_width ) - subpage_to_adopted_x( 0. );
+    legend_height_ac = subpage_to_adopted_y( legend_height ) - subpage_to_adopted_y( 0. );
+    *p_legend_width  = legend_width_ac;
+    *p_legend_height = legend_height_ac;
 
     // dcolumn is the spacing from one column to the next and
     // drow is the spacing from one row to the next.
@@ -714,7 +714,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
               adopted_to_subpage_x( plot_width ) - adopted_to_subpage_x( 0. );
     drow = text_spacing * character_height;
 
-    legend_position( position, legend_width_vc, legend_height_vc, &x_legend_position, &y_legend_position, &xsign, &ysign );
+    legend_position( position, legend_width_ac, legend_height_ac, &x_legend_position, &y_legend_position, &xsign, &ysign );
     plot_x     = x * xsign + x_legend_position;
     plot_y     = y * ysign + y_legend_position;
     plot_x_end = plot_x + plot_width;
@@ -1110,7 +1110,7 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in opt.
 
 static void
-draw_label( PLBOOL if_bb, PLINT opt, const char *label)
+draw_label( PLBOOL if_bb, PLINT opt, const char *label )
 {
     // Justification of label text
     PLFLT just;
@@ -1120,9 +1120,9 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label)
     PLFLT label_offset = 1.2;
 
     // For building plmtex option string.
-    PLINT  max_opts = 25;
-    char   opt_label[max_opts];
-    char   perp;
+    PLINT max_opts = 25;
+    char  opt_label[max_opts];
+    char  perp;
 
     // To help sanity check number of specified labels.
     PLINT nlabel = 0;
@@ -1136,7 +1136,18 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label)
     // character height _in normalized subpage coordinates_ is smaller
     // in the x direction if the subpage aspect ratio is larger than one.
     PLFLT character_height_x = character_height_y / aspspp;
-    
+
+    // Ratio of normalized subpage coordinates to mm coordinates in
+    // x and y.
+    PLFLT spxpmm          = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
+    PLFLT spypmm          = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
+    PLFLT label_length_mm = plstrl( label );
+
+    PLFLT parallel_height_mm, perpendicular_height_mm,
+          default_mm, char_height_mm;
+
+    plgchr( &default_mm, &char_height_mm );
+
     // Only honor first bit in list of
     // PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).
     if ( opt & PL_COLORBAR_LABEL_RIGHT )
@@ -1167,13 +1178,41 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label)
 
     // Start preparing data to help plot the label or
     // calculate the corresponding bounding box changes.
-    
+
+    if ( if_bb )
+    {
+        // Bounding-box limits are the viewport limits in mm before corrections
+        // for decorations are applied.
+        plsc->boxbb_xmin = plsc->vppxmi / plsc->xpmm;
+        plsc->boxbb_xmax = plsc->vppxma / plsc->xpmm;
+        plsc->boxbb_ymin = plsc->vppymi / plsc->ypmm;
+        plsc->boxbb_ymax = plsc->vppyma / plsc->ypmm;
+
+        // For labels written parallel to axis, label_offset of zero
+        // corresponds to character centred on edge so should add 0.5 to
+        // height to obtain bounding box edge in direction away from
+        // edge.  However, experimentally found 0.7 gave a better
+        // looking result.
+        parallel_height_mm = ( label_offset + 0.7 ) * char_height_mm;
+
+        // For labels written perpendicular to axis, label_offset of
+        // zero corresponds to a character whose edge just touches the
+        // edge of the box so should add 0. to label_offset (corrected
+        // by -0.5 below) to obtain bounding box edge in direction away
+        // from edge, and that value apparently works.
+        perpendicular_height_mm = ( label_offset - 0.5 + 0.0 ) * char_height_mm;
+    }
     if ( opt & PL_COLORBAR_LABEL_LEFT )
     {
         if ( opt & PL_COLORBAR_ORIENT_TOP || opt & PL_COLORBAR_ORIENT_BOTTOM )
         {
             perp = '\0';
             just = 0.5;
+            if ( if_bb )
+            {
+                //*p_bb_xmin = MIN ( *p_bb_xmin, spxpmm * ( plsc->vppxmi /
+                //                plsc->xpmm - parallel_height_mm - label_length_mm ) );
+            }
         }
         else
         {
@@ -1210,14 +1249,56 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label)
         just = 0.5;
         snprintf( opt_label, max_opts, "b%c", perp );
     }
-    if ( if_bb )
-    {
-    }
-    else
-    {
+    if ( !if_bb )
         plmtex( opt_label, label_offset, 0.5, just, label );
-    }
 }
+
+//--------------------------------------------------------------------------
+//! Calculate important positional limits for colorbar as a function
+//! of the current bounding box limits and prior bounding-box height.
+//!
+// dx_subpage, dy_subpageDifferences between normalized subpage coordinates for the old
+// bounding box and the new one.
+
+static void
+calculate_limits( PLINT position, PLFLT x, PLFLT y,
+                  PLFLT xdmin_adopted, PLFLT xdmax_adopted, PLFLT ydmin_adopted, PLFLT ydmax_adopted,
+                  PLFLT prior_bb_height,
+                  PLFLT *p_colorbar_width_bb, PLFLT *p_colorbar_height_bb,
+                  PLFLT *p_colorbar_width_ac, PLFLT *p_colorbar_height_ac,
+                  PLFLT *p_plot_x_subpage_bb, PLFLT *p_plot_y_subpage_bb,
+                  PLFLT *p_dx_subpage, PLFLT *p_dy_subpage
+                  )
+{
+    PLFLT x_colorbar_position, y_colorbar_position, xsign, ysign;
+    PLFLT plot_x, plot_y;
+    // Ratio of normalized subpage coordinates to mm coordinates in
+    // x and y.
+    PLFLT spxpmm = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
+    PLFLT spypmm = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
+
+    // New bounding box width and height
+    *p_colorbar_width_bb  = ( plsc->boxbb_xmax - plsc->boxbb_xmin ) * spxpmm;
+    *p_colorbar_height_bb = ( plsc->boxbb_ymax - plsc->boxbb_ymin ) * spypmm;
+    // Offsets of upper left corner relative to plvpor coordinates of that
+    // point which must be (0., prior_bb_height) as set up by the
+    // plvpor call prior to the calculate_limits call.
+    *p_dx_subpage = -plsc->boxbb_xmin * spxpmm;
+    *p_dy_subpage = prior_bb_height - plsc->boxbb_ymax * spypmm;
+    // Total width and height of colorbar bounding box in adopted
+    // coordinates.
+    *p_colorbar_width_ac = subpage_to_adopted_x( *p_colorbar_width_bb ) -
+                           subpage_to_adopted_x( 0. );
+    *p_colorbar_height_ac = subpage_to_adopted_y( *p_colorbar_height_bb ) -
+                            subpage_to_adopted_y( 0. );
+    legend_position( position, *p_colorbar_width_ac, *p_colorbar_height_ac, &x_colorbar_position, &y_colorbar_position, &xsign, &ysign );
+    plot_x = x * xsign + x_colorbar_position;
+    plot_y = y * ysign + y_colorbar_position;
+    // Normalized subpage coordinates (top-left corner) for bounding box.
+    *p_plot_x_subpage_bb = adopted_to_subpage_x( plot_x );
+    *p_plot_y_subpage_bb = adopted_to_subpage_y( plot_y );
+}
+
 
 //--------------------------------------------------------------------------
 //! Plot color bar for image, shade or gradient plots.
@@ -1318,8 +1399,9 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
     PLFLT min_value, max_value, max_abs;
-    // Length of cap in orientation direction
-    PLFLT cap_extent;
+    // Length of cap in orientation direction in normalized subpage
+    // coordinates and mm.
+    PLFLT cap_extent, cap_extent_mm;
 
     // The colorbar cap is an equilateral triangle with cap_angle
     // the angle (in degrees) of the unequal angle pointing in the
@@ -1357,16 +1439,12 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // positional data.
     PLFLT colorbar_width, colorbar_height,
           colorbar_width_bb, colorbar_height_bb,
-          colorbar_width_vc, colorbar_height_vc,
-          x_colorbar_position, y_colorbar_position,
-          xsign, ysign,
-          plot_x, plot_y;
+          colorbar_width_ac, colorbar_height_ac,
+          colorbar_width_mm, colorbar_height_mm;
     // Normalized subpage coordinates of top left of the bounding box.
     PLFLT plot_x_subpage_bb, plot_y_subpage_bb;
-    // Differences between normalized subpage coordinates for the
-    // undecorated colorbar (where the decorations consist of external
-    // tick marks, numerical tick labels, or text if any of those
-    // exist) and the bounding box.
+    // Change in normalized subpage coordinates of the top left of undecorated
+    // colorbar,
     PLFLT dx_subpage, dy_subpage;
     // Normalized subpage coordinates of the top left of undecorated
     // colorbar,
@@ -1382,17 +1460,18 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLFLT **color_data;
 
     // Setting up the data for display
-    PLINT i, j, ni, nj, n_steps;
-    PLFLT step_size;
+    PLINT  i, j, ni, nj, n_steps;
+    PLFLT  step_size;
 
     PLBOOL if_edge;
 
     // Ratio of normalized subpage coordinates to mm coordinates in
     // x and y.
-    PLFLT sbxpmm, sbypmm;
+    PLFLT spxpmm = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
+    PLFLT spypmm = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
 
-    // Decorated colorbox bounding box limits in subpage coordinates.
-    PLFLT bb_xmin, bb_xmax, bb_ymin, bb_ymax;
+    // plvpor limits for label.
+    PLFLT label_vpor_xmin, label_vpor_xmax, label_vpor_ymin, label_vpor_ymax;
 
     // Default position flags and sanity checks for position flags.
     if ( !( position & PL_POSITION_RIGHT ) && !( position & PL_POSITION_LEFT ) && !( position & PL_POSITION_TOP ) && !( position & PL_POSITION_BOTTOM ) )
@@ -1478,20 +1557,24 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plgcmap1_range( &min_color, &max_color );
 
     // Width and height of the undecorated colorbar in normalized
-    // subpage coordinates.
+    // subpage coordinates and mm.
     colorbar_width = adopted_to_subpage_x( x_length ) -
                      adopted_to_subpage_x( 0. );
     colorbar_height = adopted_to_subpage_y( y_length ) -
                       adopted_to_subpage_y( 0. );
+    colorbar_width_mm  = colorbar_width / spxpmm;
+    colorbar_height_mm = colorbar_height / spypmm;
     // Extent of cap in normalized subpage coordinates in either X or Y
-    // direction as appropriate.
+    // direction as appropriate in normalized subpage coordinates and  mm.
     if ( opt & PL_COLORBAR_ORIENT_RIGHT || opt & PL_COLORBAR_ORIENT_LEFT )
     {
-        cap_extent = cap_ratio * colorbar_height / aspspp;
+        cap_extent    = cap_ratio * colorbar_height / aspspp;
+        cap_extent_mm = cap_extent / spxpmm;
     }
     else
     {
-        cap_extent = cap_ratio * colorbar_width * aspspp;
+        cap_extent    = cap_ratio * colorbar_width * aspspp;
+        cap_extent_mm = cap_extent / spypmm;
     }
 
     // Specify the proper window ranges for colorbar depending on
@@ -1528,9 +1611,11 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     {
         plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
     }
-    // Viewport is correct size, but has an incorrect offset compared
-    // to the final result, but this should not affect the bounding
-    // box range or offsets calculated just below.
+    // Viewport is correct size but has a shifted zero point compared
+    // to the final result. This difference affects individual values
+    // of bb_xmin, etc., but calculate_limits below takes account of
+    // this shifted zero point so its results such as bounding-box
+    // range and position of the bounding box should be unaffected.
     plvpor( 0., colorbar_width, 0., colorbar_height );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
@@ -1538,63 +1623,78 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // marks + numerical tick labels) box.
     draw_box( TRUE, opt, axis_opts, if_edge,
         ticks, sub_ticks, n_values, values );
-    sbxpmm  = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
-    sbypmm  = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
-    bb_xmin = plsc->boxbb_xmin * sbxpmm;
-    bb_xmax = plsc->boxbb_xmax * sbxpmm;
-    bb_ymin = plsc->boxbb_ymin * sbypmm;
-    bb_ymax = plsc->boxbb_ymax * sbypmm;
 
     if ( opt & PL_COLORBAR_CAP_LOW )
     {
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
-            bb_xmin = MIN( bb_xmin, -cap_extent );
+            plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, -cap_extent_mm );
         if ( opt & PL_COLORBAR_ORIENT_TOP )
-            bb_ymin = MIN( bb_ymin, -cap_extent );
+            plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, -cap_extent_mm );
         if ( opt & PL_COLORBAR_ORIENT_LEFT )
-            bb_xmax = MAX( bb_xmax, colorbar_width + cap_extent );
+            plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, colorbar_width_mm + cap_extent_mm );
         if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
-            bb_ymax = MAX( bb_ymax, colorbar_height + cap_extent );
+            plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, colorbar_height_mm + cap_extent_mm );
     }
     if ( opt & PL_COLORBAR_CAP_HIGH )
     {
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
-            bb_xmax = MAX( bb_xmax, colorbar_width + cap_extent );
+            plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, colorbar_width_mm + cap_extent_mm );
         if ( opt & PL_COLORBAR_ORIENT_TOP )
-            bb_ymax = MAX( bb_ymax, colorbar_height + cap_extent );
+            plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, colorbar_height_mm + cap_extent_mm );
         if ( opt & PL_COLORBAR_ORIENT_LEFT )
-            bb_xmin = MIN( bb_xmin, -cap_extent );
+            plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, -cap_extent_mm );
         if ( opt & PL_COLORBAR_ORIENT_BOTTOM )
-            bb_ymin = MIN( bb_ymin, -cap_extent );
+            plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, -cap_extent_mm );
     }
 
-    // Calculate the bounding box for combined label + decorated box.
-    //draw_label( TRUE , opt, label );
+    // Calculate limits relevant to label position.
+    calculate_limits( position, x, y,
+        xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted,
+        colorbar_height,
+        &colorbar_width_bb, &colorbar_height_bb,
+        &colorbar_width_ac, &colorbar_height_ac,
+        &plot_x_subpage_bb, &plot_y_subpage_bb,
+        &dx_subpage, &dy_subpage );
 
-    colorbar_width_bb  = bb_xmax - bb_xmin;
-    colorbar_height_bb = bb_ymax - bb_ymin;
-    // Offsets of upper left corner relative to plvpor coordinates of that
-    // point which are (0., colorbar_height), see above.
-    dx_subpage = -bb_xmin;
-    dy_subpage = colorbar_height - bb_ymax;
-    // Total width and height of colorbar bounding box in adopted subpage
-    // coordinates.
-    colorbar_width_vc = subpage_to_adopted_x( colorbar_width_bb ) -
-                        subpage_to_adopted_x( 0. );
-    colorbar_height_vc = subpage_to_adopted_y( colorbar_height_bb ) -
-                         subpage_to_adopted_y( 0. );
-    *p_colorbar_width  = colorbar_width_vc;
-    *p_colorbar_height = colorbar_height_vc;
-    legend_position( position, colorbar_width_vc, colorbar_height_vc, &x_colorbar_position, &y_colorbar_position, &xsign, &ysign );
-    plot_x = x * xsign + x_colorbar_position;
-    plot_y = y * ysign + y_colorbar_position;
-    // Normalized subpage coordinates (top-left corner) for bounding box.
-    plot_x_subpage_bb = adopted_to_subpage_x( plot_x );
-    plot_y_subpage_bb = adopted_to_subpage_y( plot_y );
     // Normalized subpage coordinates (top-left corner) for undecorated
     // colorbar
     plot_x_subpage = plot_x_subpage_bb + dx_subpage;
     plot_y_subpage = plot_y_subpage_bb + dy_subpage;
+
+    label_vpor_xmin = plot_x_subpage_bb;
+    label_vpor_xmax = plot_x_subpage_bb + colorbar_width_bb;
+    label_vpor_ymin = plot_y_subpage_bb - colorbar_height_bb;
+    label_vpor_ymax = plot_y_subpage_bb;
+
+    if ( 0 )
+    {
+        // Viewport for draw_label is correct size, but has a shifted zero
+        // point compared to the final result but consistent with the
+        // coordinate scheme for bb_xmin, etc., established above with the
+        // previous plvpor call.  calculate_limits below takes account of
+        // this shifted zero point so its results such as bounding-box
+        // range and position of the bounding box should be unaffected.
+        plvpor( 0., label_vpor_xmax - label_vpor_xmin, 0., label_vpor_ymax - label_vpor_ymin );
+
+        // Calculate the bounding box for combined label + decorated box.
+        draw_label( TRUE, opt, label );
+
+        // Calculate overall limits.
+        calculate_limits( position, x, y,
+            xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted,
+            label_vpor_ymax - label_vpor_ymin,
+            &colorbar_width_bb, &colorbar_height_bb,
+            &colorbar_width_ac, &colorbar_height_ac,
+            &plot_x_subpage_bb, &plot_y_subpage_bb,
+            &dx_subpage, &dy_subpage );
+
+        // Normalized subpage coordinates (top-left corner) for undecorated
+        // colorbar
+        //plot_x_subpage = plot_x_subpage_bb + dx_subpage;
+        //plot_y_subpage = plot_y_subpage_bb + dy_subpage;
+    }
+    *p_colorbar_width  = colorbar_width_ac;
+    *p_colorbar_height = colorbar_height_ac;
 
     // Specify the proper viewport ranges for colorbar depending on
     // orientation.
@@ -2020,11 +2120,9 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         pllsty( line_style_save );
     }
 
-    // Viewport coordinate ranges for label.
-    //plvpor( vx_min, vx_max, vy_min, vy_max );
-    plvpor( plot_x_subpage_bb, plot_x_subpage_bb + colorbar_width_bb, plot_y_subpage_bb - colorbar_height_bb, plot_y_subpage_bb );
-
     // Write label.
+    // Viewport coordinate ranges for label.
+    plvpor( label_vpor_xmin, label_vpor_xmax, label_vpor_ymin, label_vpor_ymax );
     draw_label( FALSE, opt, label );
 
     // Restore previous plot characteristics.
