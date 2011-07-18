@@ -1191,9 +1191,9 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
         // For labels written parallel to axis, label_offset of zero
         // corresponds to character centred on edge so should add 0.5 to
         // height to obtain bounding box edge in direction away from
-        // edge.  However, experimentally found 0.7 gave a better
+        // edge.  However, experimentally found 0.8 gave a better
         // looking result.
-        parallel_height_mm = ( label_offset + 0.7 ) * char_height_mm;
+        parallel_height_mm = ( label_offset + 0.8 ) * char_height_mm;
 
         // For labels written perpendicular to axis, label_offset of
         // zero corresponds to a character whose edge just touches the
@@ -1210,8 +1210,14 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
             just = 0.5;
             if ( if_bb )
             {
-                //*p_bb_xmin = MIN ( *p_bb_xmin, spxpmm * ( plsc->vppxmi /
-                //                plsc->xpmm - parallel_height_mm - label_length_mm ) );
+                plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, plsc->vppxmi /
+                    plsc->xpmm - parallel_height_mm );
+                plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                    0.5 * ( plsc->vppymi + plsc->vppyma ) /
+                    plsc->ypmm - 0.5 * label_length_mm );
+                plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                    0.5 * ( plsc->vppymi + plsc->vppyma ) /
+                    plsc->ypmm + 0.5 * label_length_mm );
             }
         }
         else
@@ -1219,6 +1225,11 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
             perp          = 'v';
             just          = 1.0;
             label_offset -= 0.5;
+            if ( if_bb )
+            {
+                plsc->boxbb_xmin = MIN( plsc->boxbb_xmin, plsc->vppxmi /
+                    plsc->xpmm - perpendicular_height_mm - label_length_mm );
+            }
         }
         snprintf( opt_label, max_opts, "l%c", perp );
     }
@@ -1228,12 +1239,28 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
         {
             perp = '\0';
             just = 0.5;
+            if ( if_bb )
+            {
+                plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, plsc->vppxma /
+                    plsc->xpmm + parallel_height_mm );
+                plsc->boxbb_ymin = MIN( plsc->boxbb_ymin,
+                    0.5 * ( plsc->vppymi + plsc->vppyma ) /
+                    plsc->ypmm - 0.5 * label_length_mm );
+                plsc->boxbb_ymax = MAX( plsc->boxbb_ymax,
+                    0.5 * ( plsc->vppymi + plsc->vppyma ) /
+                    plsc->ypmm + 0.5 * label_length_mm );
+            }
         }
         else
         {
             perp          = 'v';
             just          = 0.0;
             label_offset -= 0.5;
+            if ( if_bb )
+            {
+                plsc->boxbb_xmax = MAX( plsc->boxbb_xmax, plsc->vppxma /
+                    plsc->xpmm + perpendicular_height_mm + label_length_mm );
+            }
         }
         snprintf( opt_label, max_opts, "r%c", perp );
     }
@@ -1242,12 +1269,34 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
         perp = '\0';
         just = 0.5;
         snprintf( opt_label, max_opts, "t%c", perp );
+        if ( if_bb )
+        {
+            plsc->boxbb_ymax = MAX( plsc->boxbb_ymax, plsc->vppyma /
+                plsc->ypmm + parallel_height_mm );
+            plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                0.5 * ( plsc->vppxmi + plsc->vppxma ) /
+                plsc->xpmm - 0.5 * label_length_mm );
+            plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                0.5 * ( plsc->vppxmi + plsc->vppxma ) /
+                plsc->xpmm + 0.5 * label_length_mm );
+        }
     }
     else if ( opt & PL_COLORBAR_LABEL_BOTTOM )
     {
         perp = '\0';
         just = 0.5;
         snprintf( opt_label, max_opts, "b%c", perp );
+        if ( if_bb )
+        {
+            plsc->boxbb_ymin = MIN( plsc->boxbb_ymin, plsc->vppymi /
+                plsc->ypmm - parallel_height_mm );
+            plsc->boxbb_xmin = MIN( plsc->boxbb_xmin,
+                0.5 * ( plsc->vppxmi + plsc->vppxma ) /
+                plsc->xpmm - 0.5 * label_length_mm );
+            plsc->boxbb_xmax = MAX( plsc->boxbb_xmax,
+                0.5 * ( plsc->vppxmi + plsc->vppxma ) /
+                plsc->xpmm + 0.5 * label_length_mm );
+        }
     }
     if ( !if_bb )
         plmtex( opt_label, label_offset, 0.5, just, label );
@@ -1256,6 +1305,13 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
 //--------------------------------------------------------------------------
 //! Calculate important positional limits for colorbar as a function
 //! of the current bounding box limits and prior bounding-box height.
+//! plvpor(0, prior_bb_width, 0, prior_bb_height) is called before
+//! each bounding-box calculation and this calculate_limits call,
+//! where prior_bb_width and prior_bb_height are the width and height
+//! of the prior bounding box in subpage coordinates.  Thus, an
+//! arbitrary but convenient offset is given to old and new bounding
+//! box limits because the actual offset is not known until
+//! calculate_limits is finished.
 //!
 // dx_subpage, dy_subpageDifferences between normalized subpage coordinates for the old
 // bounding box and the new one.
@@ -1277,24 +1333,31 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
     PLFLT spxpmm = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
     PLFLT spypmm = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
 
-    // New bounding box width and height
+    // New bounding box width and height in normalized subpage coordinates.
     *p_colorbar_width_bb  = ( plsc->boxbb_xmax - plsc->boxbb_xmin ) * spxpmm;
     *p_colorbar_height_bb = ( plsc->boxbb_ymax - plsc->boxbb_ymin ) * spypmm;
-    // Offsets of upper left corner relative to plvpor coordinates of that
-    // point which must be (0., prior_bb_height) as set up by the
-    // plvpor call prior to the calculate_limits call.
+
+    // Offsets (in sense of prior minus current) of upper left corner of prior bounding box
+    // relative to current bounding box in normalized subpage coordinates.  From
+    // the above comments, the upper left corner of prior bounding box
+    // has the coordinates (0., prior_bb_height).
     *p_dx_subpage = -plsc->boxbb_xmin * spxpmm;
     *p_dy_subpage = prior_bb_height - plsc->boxbb_ymax * spypmm;
-    // Total width and height of colorbar bounding box in adopted
+
+    // Total width and height of new bounding box in adopted
     // coordinates.
     *p_colorbar_width_ac = subpage_to_adopted_x( *p_colorbar_width_bb ) -
                            subpage_to_adopted_x( 0. );
     *p_colorbar_height_ac = subpage_to_adopted_y( *p_colorbar_height_bb ) -
                             subpage_to_adopted_y( 0. );
+
+    // Calculate parameters that help determine the position of the top
+    // left of the legend in adopted coordinates.  See pllegend
+    // documentation for definition of adopted coordinates.
     legend_position( position, *p_colorbar_width_ac, *p_colorbar_height_ac, &x_colorbar_position, &y_colorbar_position, &xsign, &ysign );
     plot_x = x * xsign + x_colorbar_position;
     plot_y = y * ysign + y_colorbar_position;
-    // Normalized subpage coordinates (top-left corner) for bounding box.
+    // Calculate normalized subpage coordinates of top left of new bounding box.
     *p_plot_x_subpage_bb = adopted_to_subpage_x( plot_x );
     *p_plot_y_subpage_bb = adopted_to_subpage_y( plot_y );
 }
@@ -1436,16 +1499,30 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLINT col0_save       = plsc->icol0,
           line_style_save = plsc->line_style;
 
-    // positional data.
-    PLFLT colorbar_width, colorbar_height,
-          colorbar_width_bb, colorbar_height_bb,
-          colorbar_width_ac, colorbar_height_ac,
-          colorbar_width_mm, colorbar_height_mm;
     // Normalized subpage coordinates of top left of the bounding box.
     PLFLT plot_x_subpage_bb, plot_y_subpage_bb;
-    // Change in normalized subpage coordinates of the top left of undecorated
-    // colorbar,
-    PLFLT dx_subpage, dy_subpage;
+
+    // colorbar width and height in normalized subpage coordinates.
+    // No suffix refers to bonding box of undecorated colorbar, d
+    // suffix refers to bounding box of decorated colorbar, and l
+    // suffix refers to bounding box of labelled and decorated
+    // colorbar.
+    PLFLT colorbar_width, colorbar_height,
+          colorbar_width_d, colorbar_height_d,
+          colorbar_width_l, colorbar_height_l;
+
+    // ac suffix refers to latest colorbar_width (d or l suffix) converted to
+    // adopted coordinates.
+    // mm suffix refers to colorbar_width and colorbar_height (with no suffix)
+    // converted from normalized subpage coordinates to mm.
+    PLFLT colorbar_width_ac, colorbar_height_ac,
+          colorbar_width_mm, colorbar_height_mm;
+
+    // Change in normalized subpage coordinates of the top left of
+    // undecorated colorbar.  (The omd suffix refers to original
+    // colorbar minus decorated colorbar, and the dml suffix refers to
+    // decorated colorbar minus labelled and decorated colorbar.)
+    PLFLT dx_subpage_omd, dy_subpage_omd, dx_subpage_dml, dy_subpage_dml;
     // Normalized subpage coordinates of the top left of undecorated
     // colorbar,
     PLFLT plot_x_subpage, plot_y_subpage;
@@ -1611,11 +1688,11 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     {
         plabort( "plcolorbar: Invalid PL_COLORBAR_ORIENT_* bits" );
     }
-    // Viewport is correct size but has a shifted zero point compared
-    // to the final result. This difference affects individual values
-    // of bb_xmin, etc., but calculate_limits below takes account of
-    // this shifted zero point so its results such as bounding-box
-    // range and position of the bounding box should be unaffected.
+
+    // Viewport has correct size but has a shifted zero-point
+    // convention required by bounding-box calculations in draw_box,
+    // further bounding-box calculations in the cap_extent section
+    // below, and also in the calculate_limits call below that.
     plvpor( 0., colorbar_width, 0., colorbar_height );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
@@ -1651,29 +1728,15 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     calculate_limits( position, x, y,
         xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted,
         colorbar_height,
-        &colorbar_width_bb, &colorbar_height_bb,
+        &colorbar_width_d, &colorbar_height_d,
         &colorbar_width_ac, &colorbar_height_ac,
         &plot_x_subpage_bb, &plot_y_subpage_bb,
-        &dx_subpage, &dy_subpage );
+        &dx_subpage_omd, &dy_subpage_omd );
 
-    // Normalized subpage coordinates (top-left corner) for undecorated
-    // colorbar
-    plot_x_subpage = plot_x_subpage_bb + dx_subpage;
-    plot_y_subpage = plot_y_subpage_bb + dy_subpage;
-
-    // Coordinates of bounding box for decorated colorbar (without overall label).
-    label_vpor_xmin = plot_x_subpage_bb;
-    label_vpor_xmax = plot_x_subpage_bb + colorbar_width_bb;
-    label_vpor_ymin = plot_y_subpage_bb - colorbar_height_bb;
-    label_vpor_ymax = plot_y_subpage_bb;
-
-    // Viewport for draw_label is correct size, but has a shifted zero
-    // point compared to the final result but consistent with the
-    // coordinate scheme for bb_xmin, etc., established above with the
-    // previous plvpor call.  calculate_limits below takes account of
-    // this shifted zero point so its results such as bounding-box
-    // range and position of the bounding box should be unaffected.
-    plvpor( 0., label_vpor_xmax - label_vpor_xmin, 0., label_vpor_ymax - label_vpor_ymin );
+    // Viewport has correct size but has a shifted zero point
+    // convention required by bounding-box calculations in draw_label
+    // and further calculations in calculate_limits.
+    plvpor( 0., colorbar_width_d, 0., colorbar_height_d );
 
     // Calculate the bounding box for combined label + decorated box.
     draw_label( TRUE, opt, label );
@@ -1681,22 +1744,25 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Calculate overall limits.
     calculate_limits( position, x, y,
         xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted,
-        label_vpor_ymax - label_vpor_ymin,
-        &colorbar_width_bb, &colorbar_height_bb,
+        colorbar_height_d,
+        &colorbar_width_l, &colorbar_height_l,
         &colorbar_width_ac, &colorbar_height_ac,
         &plot_x_subpage_bb, &plot_y_subpage_bb,
-        &dx_subpage, &dy_subpage );
+        &dx_subpage_dml, &dy_subpage_dml );
 
-    // Transform normalized subpage coordinates (top-left corner) for undecorated
-    // colorbar to new coordinate system.
-    plot_x_subpage += dx_subpage;
-    plot_y_subpage += dy_subpage;
-    // Transform bounding box for decorated colorbar (without label) to
-    // new coordinate system.
-    label_vpor_xmin   += dx_subpage;
-    label_vpor_xmax   += dx_subpage;
-    label_vpor_ymin   += dy_subpage;
-    label_vpor_ymax   += dy_subpage;
+    // Normalized subpage coordinates (top-left corner) for undecorated
+    // colorbar
+    plot_x_subpage = plot_x_subpage_bb + dx_subpage_omd + dx_subpage_dml;
+    plot_y_subpage = plot_y_subpage_bb + dy_subpage_omd + dy_subpage_dml;
+
+    // Coordinates of bounding box for decorated colorbar (without overall label).
+    label_vpor_xmin = plot_x_subpage_bb + dx_subpage_dml;
+    label_vpor_xmax = label_vpor_xmin + colorbar_width_d;
+    label_vpor_ymax = plot_y_subpage_bb + dy_subpage_dml;
+    label_vpor_ymin = label_vpor_ymax - colorbar_height_d;
+
+    // Return bounding box width and height in adopted coordinates for
+    // labelled and decorated colorbar.
     *p_colorbar_width  = colorbar_width_ac;
     *p_colorbar_height = colorbar_height_ac;
 
@@ -1744,13 +1810,13 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         PLFLT xbg[4] = {
             plot_x_subpage_bb,
             plot_x_subpage_bb,
-            plot_x_subpage_bb + colorbar_width_bb,
-            plot_x_subpage_bb + colorbar_width_bb,
+            plot_x_subpage_bb + colorbar_width_l,
+            plot_x_subpage_bb + colorbar_width_l,
         };
         PLFLT ybg[4] = {
             plot_y_subpage_bb,
-            plot_y_subpage_bb - colorbar_height_bb,
-            plot_y_subpage_bb - colorbar_height_bb,
+            plot_y_subpage_bb - colorbar_height_l,
+            plot_y_subpage_bb - colorbar_height_l,
             plot_y_subpage_bb,
         };
         plpsty( 0 );
@@ -2106,14 +2172,14 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         PLFLT xbb[5] = {
             plot_x_subpage_bb,
             plot_x_subpage_bb,
-            plot_x_subpage_bb + colorbar_width_bb,
-            plot_x_subpage_bb + colorbar_width_bb,
+            plot_x_subpage_bb + colorbar_width_l,
+            plot_x_subpage_bb + colorbar_width_l,
             plot_x_subpage_bb,
         };
         PLFLT ybb[5] = {
             plot_y_subpage_bb,
-            plot_y_subpage_bb - colorbar_height_bb,
-            plot_y_subpage_bb - colorbar_height_bb,
+            plot_y_subpage_bb - colorbar_height_l,
+            plot_y_subpage_bb - colorbar_height_l,
             plot_y_subpage_bb,
             plot_y_subpage_bb,
         };
