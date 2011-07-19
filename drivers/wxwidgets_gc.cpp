@@ -425,6 +425,19 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
     PLINT rcx[4], rcy[4];
     difilt_clip( rcx, rcy );
 
+#ifdef __WXOSX_COCOA__ 
+    wxPoint topLeft(width, height), bottomRight(-1, -1);
+    for ( int i = 0; i < 4; i++ )
+    {
+        topLeft.x = topLeft.x > (rcx[i] / scalex) ? (rcx[i] / scalex) : topLeft.x;
+        topLeft.y = topLeft.y > (height - rcy[i] / scaley) ? (height - rcy[i] / scaley) : topLeft.y;
+        bottomRight.x = bottomRight.x < (rcx[i] / scalex) ? (rcx[i] / scalex) : bottomRight.x;
+        bottomRight.y = bottomRight.y < (height - rcy[i] / scaley) ? (height - rcy[i] / scaley) : bottomRight.y;
+    }
+
+    m_context->Clip( wxRegion( topLeft.x, topLeft.y, bottomRight.x-topLeft.x, bottomRight.y-topLeft.y ) );
+    // m_context->Clip( wxRegion( topLeft, bottomRight) );  // this wxRegion constructor doesn't work in wxWidgets 2.9.2/Cocoa
+#else
     wxPoint cpoints[4];
     for ( int i = 0; i < 4; i++ )
     {
@@ -432,6 +445,7 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
         cpoints[i].y = height - rcy[i] / scaley;
     }
     m_context->Clip( wxRegion( 4, cpoints ) );
+#endif
 
     // text color
     textRed   = pls->cmap0[pls->icol0].r;
