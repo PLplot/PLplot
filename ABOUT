@@ -1,0 +1,68 @@
+
+What is PLplot?
+
+PLplot is relatively small, portable, freely distributable plotting library, 
+that is rich enough to satisfy most users.  It has a wide range of plot types 
+including line (linear, log), contour, 3D, fill, and it supports unicode text
+so that plots can be labeled in pretty much any language.  The package is 
+designed to make it easy to quickly get graphical output; only a handful of 
+function calls are typically required. For more advanced use, virtually all 
+aspects of plotting are configurable. 
+
+
+Why and when did PLplot came to be?
+
+???
+
+
+In which [language(s)|platform(s)] is PLplot developed?
+
+PLplot is developed in primarily C, with language bindings for Ada, C++, 
+D, Fortran, Java, Lua, Perl, Python, OCaml, Octave and Tcl/Tk. Every effort 
+is made to support the Linux, OS-X and Windows platforms.
+
+
+Does PLplot has sponsors (private, academic, other)?
+
+UBC? QSAS?
+
+
+How are the sponsors supporting the project?
+
+QSAS donated the original version of the Qt driver, along with a month(?)
+of developer time to help with the integration into PLplot.
+
+
+How many users you estimate PLplot has?
+
+???
+
+
+Do you know where is PLplot used (corporations, universities, other)?
+
+??
+
+
+How many team members does PLplot has?  (You can list their names)
+
+10? Do we want to list names?
+
+
+In what areas of PLplot development do you currently need help?
+
+This project is fairly mature, so we are primarily looking for help
+in testing on various platforms, particularly windows. Bug reports
+are also appreciated.
+
+
+How can people get involved with PLplot?
+
+The best way to start is by submitting suggestion and patches to the
+mailing list. Users who seem particularly enthusiasitic and who have
+a history of contributions are often added to the project as developers.
+
+
+What features are in the roadmap?
+
+Roadmap?
+
