@@ -10,6 +10,7 @@ graphical output; only a handful of function calls are typically
 required. For more advanced use, virtually all aspects of plotting are
 configurable.
 
+
 Why and when did PLplot came to be?
 
 ???
@@ -29,16 +30,19 @@ symbols that are plotted by our modern device drivers.  We presume
 this is one of the reasons why PLplot usage is spread between 100
 different countries (see below).
 
+
 Does PLplot have sponsors (private, academic, other)?
 
 Virtually all of our developers have been unpaid volunteers.  The
 exception has been a recent important development contribution from
 the Cluster Science Centre QSAS team, Imperial College, London
 
+
 How are the sponsors supporting the project?
 
 QSAS donated the original version of the Qt driver, along with ~two
 months of developer time to help with the integration into PLplot.
+
 
 How many users do you estimate PLplot has?
 
@@ -77,16 +81,19 @@ SourceForge PLplot source download statistics site so these splits are
 likely distorted by lack of similar evidence from the binary package
 users of PLplot.
 
+
 Do you know where is PLplot used (corporations, universities, other)?
 
 No.
 
-How many team members does PLplot has?  (You can list their names)
+
+How many team members does PLplot have?  (You can list their names)
 
 There are 10 PLplot developers who currently have write access to our
 subversion repository.  There names are Alan W. Irwin, Andrew Ross,
 Arjen Markus, Geoffrey Furnish, Hazen Babcock, Hezekiah M. Carty, Doug
 Hunt, Jerry Bauck, Maurice LeBrun, and Werner Smekal.
+
 
 In what areas of PLplot development do you currently need help?
 
@@ -97,12 +104,17 @@ windows. Bug reports are also appreciated.
 
 How can people get involved with PLplot?
 
-The best way to start is by submitting suggestion and patches to the
+The best way to start is by submitting suggestions and patches to the
 mailing list. Users who seem particularly enthusiasitic and who have
 a history of contributions are often added to the project as developers
 with subversion repository write access.
 
+
 What features are in the roadmap?
 
-Roadmap?
+The PLplot project does not have a formal roadmap. Development
+operates primarily in a reactive mode, bugs are fixed as users 
+discover them and features are added on request (if there is a 
+consensus among the developers that the feature seems like a
+reasonable addition).
 
