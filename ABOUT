@@ -11,7 +11,7 @@ required. For more advanced use, virtually all aspects of plotting are
 configurable.
 
 
-Why and when did PLplot came to be?
+Why and when did PLplot come to be?
 
 ???
 
@@ -40,8 +40,8 @@ the Cluster Science Centre QSAS team, Imperial College, London
 
 How are the sponsors supporting the project?
 
-QSAS donated the original version of the Qt driver, along with ~two
-months of developer time to help with the integration into PLplot.
+QSAS donated the original version of the qt device driver along with ~two
+months of developer time to help with its integration into PLplot.
 
 
 How many users do you estimate PLplot has?
@@ -82,17 +82,19 @@ likely distorted by lack of similar evidence from the binary package
 users of PLplot.
 
 
-Do you know where is PLplot used (corporations, universities, other)?
+Do you know where PLplot is used (corporations, universities, other)?
 
-No.
+No, although we assume it is used mostly for scientific plotting.
 
 
 How many team members does PLplot have?  (You can list their names)
 
 There are 10 PLplot developers who currently have write access to our
-subversion repository.  There names are Alan W. Irwin, Andrew Ross,
+subversion repository.  Their names are Alan W. Irwin, Andrew Ross,
 Arjen Markus, Geoffrey Furnish, Hazen Babcock, Hezekiah M. Carty, Doug
-Hunt, Jerry Bauck, Maurice LeBrun, and Werner Smekal.
+Hunt, Jerry Bauck, Maurice LeBrun, and Werner Smekal.  For more information
+on the work of our current developers and historical developers see
+PLplot see http://www.ohloh.net/p/plplot/contributors.
 
 
 In what areas of PLplot development do you currently need help?
@@ -105,7 +107,7 @@ windows. Bug reports are also appreciated.
 How can people get involved with PLplot?
 
 The best way to start is by submitting suggestions and patches to the
-mailing list. Users who seem particularly enthusiasitic and who have
+mailing list. Users who seem particularly enthusiastic and who have
 a history of contributions are often added to the project as developers
 with subversion repository write access.
 
