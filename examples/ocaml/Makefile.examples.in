@@ -63,7 +63,8 @@ EXECUTABLES_list = \
 		 x28ocaml$(EXEEXT) \
 		 x29ocaml$(EXEEXT) \
 		 x30ocaml$(EXEEXT) \
-		 x31ocaml$(EXEEXT)
+		 x31ocaml$(EXEEXT) \
+		 x33ocaml$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 
