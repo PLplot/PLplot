@@ -100,8 +100,14 @@ Each of the steps in this comprehensive test may take a while...."
 		    if [ "$do_ctest" = "yes" ] ; then
 			output="$OUTPUT_TREE"/ctest.out
 			rm -f "$output"
-			echo "launch ctest job in the build tree"
-			ctest --extra-verbose >& "$output" &
+			echo "ctest in the build tree"
+			ctest --extra-verbose >& "$output"
+		    fi
+		    if [ "$do_test_interactive" != "yes" -a "$do_clean_as_you_go" = "yes" ] ; then
+			output="$OUTPUT_TREE"/clean.out
+			rm -f "$output"
+			echo "$build_command clean in the build tree (since we are done with it)"
+			$build_command clean >& "$output"
 		    fi
 		    PATH="$INSTALL_TREE/bin":$PATH_SAVE
 		    if [ "$MINGW_OR_MSYS" = "true" ] ; then
@@ -132,6 +138,12 @@ Each of the steps in this comprehensive test may take a while...."
 			    rm -f "$output"
 			    echo "$build_command test_noninteractive in the installed examples build tree"
 			    $build_command VERBOSE=1 test_noninteractive >& "$output"
+			    if [ "$do_test_interactive" != "yes" -a "$do_clean_as_you_go" = "yes" ] ; then
+				output="$OUTPUT_TREE"/installed_clean.out
+				rm -f "$output"
+				echo "$build_command clean in the installed examples build tree (since we are done with it)"
+				$build_command clean >& "$output"
+			    fi
 			fi
 		    fi
 		    if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
@@ -140,6 +152,12 @@ Each of the steps in this comprehensive test may take a while...."
 			rm -f "$output"
 			echo "Traditional $build_command test_noninteractive in the installed examples tree"
 			$build_command test_noninteractive >& "$output"
+			if [ "$do_test_interactive" != "yes" -a "$do_clean_as_you_go" = "yes" ] ; then
+			    output="$OUTPUT_TREE"/traditional_clean.out
+			    rm -f "$output"
+			    echo "Traditional $build_command clean in the installed examples tree (since we are done with it)"
+			    $build_command clean >& "$output"
+			fi
 		    fi
 		else
 		    echo "ERROR: $build_command install failed in the build tree"
@@ -160,6 +178,12 @@ Each of the steps in this comprehensive test may take a while...."
 		echo "$build_command test_interactive in the build tree"
 		$build_command VERBOSE=1 test_interactive >& "$output"
 	    fi
+	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+		output="$OUTPUT_TREE"/clean.out
+		rm -f "$output"
+		echo "$build_command clean in the build tree (since we are done with it)"
+		$build_command clean >& "$output"
+	    fi
 	    PATH="$INSTALL_TREE/bin":$PATH_SAVE
 	    if [ "$do_test_install_tree" = "yes" ] ; then
 		cd "$INSTALL_BUILD_TREE"
@@ -167,6 +191,12 @@ Each of the steps in this comprehensive test may take a while...."
 		rm -f "$output"
 		echo "$build_command test_interactive in the installed examples build tree"
 		$build_command VERBOSE=1 test_interactive >& "$output"
+		if [ "$do_clean_as_you_go" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/installed_clean.out
+		    rm -f "$output"
+		    echo "$build_command clean in the installed examples build tree (since we are done with it)"
+		    $build_command clean >& "$output"
+		fi
 	    fi
 	    if [ "$do_test_traditional_install_tree" = "yes" ] ; then
 		cd "$INSTALL_TREE"/share/plplot?.?.?/examples
@@ -174,6 +204,12 @@ Each of the steps in this comprehensive test may take a while...."
 		rm -f "$output"
 		echo "Traditional $build_command test_interactive in the installed examples tree"
 		$build_command test_interactive >& "$output"
+		if [ "$do_clean_as_you_go" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/traditional_clean.out
+		    rm -f "$output"
+		    echo "Traditional $build_command clean in the installed examples tree (since we are done with it)"
+		    $build_command clean >& "$output"
+		fi
 	    fi
 	fi
     else
@@ -190,6 +226,13 @@ OPTIONS:
   all files produced by this script are located.
   [--prefix (defaults to the 'comprehensive_test_disposeable'
                   subdirectory of the top-level source-tree directory)]
+
+  The next option controls whether the script runs clean to get rid of
+  file results and save disk space after the tests are completed.
+  This option is highly recommended to greatly reduce the high-water
+  mark of disk usage (which can be as large as 40GB [!] without this
+  option).
+  [--do_clean_as_you_go (yes/no, defaults to yes)]
 
   The next three control how the builds and tests are done.
   [--generator_string (defaults to 'Unix Makefiles')]
@@ -242,6 +285,8 @@ SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
 # Default values for options
 prefix="${SOURCE_TREE}/comprehensive_test_disposeable"
 
+do_clean_as_you_go=yes
+
 generator_string="Unix Makefiles"
 path_excluding_msys=
 build_command="make -j4"
@@ -266,6 +311,18 @@ while test $# -gt 0; do
         --prefix)
 	    prefix=$2
 	    shift
+	    ;;
+	--do_clean_as_you_go)
+	    case $2 in
+		yes|no)
+		    do_clean_as_you_go=$2
+		    shift
+		    ;;
+		
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
 	    ;;
         --generator_string)
 	    generator_string=$2
@@ -411,25 +468,27 @@ fi
 
 echo "Summary of options used for these tests
 
-prefix = $prefix
+prefix=$prefix
 
-generator_string = $generator_string"
-if [ "$generator_string" = "MinGW Makefiles" ] ; then
-    echo "path_excluding_msys = $path_excluding_msys"
+do_clean_as_you_go=$do_clean_as_you_go
+
+generator_string=$generator_string"
+if [ "$generator_string"="MinGW Makefiles" ] ; then
+    echo "path_excluding_msys=$path_excluding_msys"
 fi
-echo "build_command = $build_command
+echo "build_command=$build_command
 
-cmake_added_options = $cmake_added_options
-do_shared = $do_shared
-do_nondynamic = $do_nondynamic
-do_static = $do_static
+cmake_added_options=$cmake_added_options
+do_shared=$do_shared
+do_nondynamic=$do_nondynamic
+do_static=$do_static
 
-do_ctest = $do_ctest
-do_test_noninteractive = $do_test_noninteractive
-do_test_interactive = $do_test_interactive
-do_test_build_tree = $do_test_build_tree
-do_test_install_tree = $do_test_install_tree
-do_test_traditional_install_tree = $do_test_traditional_install_tree
+do_ctest=$do_ctest
+do_test_noninteractive=$do_test_noninteractive
+do_test_interactive=$do_test_interactive
+do_test_build_tree=$do_test_build_tree
+do_test_install_tree=$do_test_install_tree
+do_test_traditional_install_tree=$do_test_traditional_install_tree
 
 "
 ANSWER=
