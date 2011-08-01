@@ -130,9 +130,10 @@ if(BORLAND)
 endif(BORLAND)
 
 set(top_level_DOCFILES
+  ABOUT
   AUTHORS
   COPYING.LIB
-  ChangeLog
+  ChangeLog.release
   Copyright
   FAQ
   NEWS
