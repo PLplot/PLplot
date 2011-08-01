@@ -72,6 +72,8 @@ from some google results I found that editing of that file is also
 necessary on modern versions of Ubuntu in order to allow php-based websites
 like that of PLplot to work when installed in local user directories.
 
+You will also need to install "xml-to" (in the xml-to debian package).
+
 (When user directories are enabled this way, for the above case
 /home/irwin/public_html/plplot/htdocs, browses as
 http://raven/~irwin/plplot/htdocs/.)
@@ -222,6 +224,10 @@ test configure and runs "make install" after cmake, make and ctest. When the
 above command finishes executing you should go to this directory and verify
 that the examples build and that plplot_test.sh executes without errors.
 
+The build will fail (without any warning messages on the console) if you 
+do not have the necessary tools to build the documentation. It is a good 
+idea to verify that you can build the documentation (-DBUILD_DOC=ON).
+
 In the event that problems are found in PLplot during the release
 process, corrections should be made to trunk/, the ChangeLog.release
 file recreated and committed (see instructions above).  Then merge the
@@ -245,24 +251,17 @@ Login to sf.net.
 Go to the PLplot SourceForge project page.
 
 Upload the Release:
-Select Project Admin / File Manager.
-Click on the plplot folder & select "New folder" from the pop-up menu (the gear like
-thing to the left of the plplot folder icon).
+Select Files.
+Click on the plplot folder & select "Add folder".
 Enter the release name as the "New folder name:", e.g. X.Y.Z Source.
-Click on the release folder pop-up menu & select "Upload here", upload the
+Click on the release folder pop-up menu & select "upload", upload the
 release and the gpg signature file from /tmp/plplot-dist-prep/. This can
 take a few minutes without much feedback.
 Concatenate the README.release and ChangeLog.release files into a single 
 README.release file.
-Click on "Upload File" again to upload the concatenated README.release file.
-Click on this file and mark it as "Release Note".
-Click on the source tarball & the signature file pop menu icon and select
-Properties. 
-Select README.release in the "Release Notes for this file" drop down menu. 
-Click on "Select All" for the platform set as default download (only do this
-for the source tarball).
-Click on the release folder pop-up menu icon, select properties and set
-the release notes for the folder.
+Upload the concatenated README.release file.
+Click on the "i" or "info" button to mark the tar.gz file as the default 
+file to download for all platforms.
 
 
 Create a news item for the Release:
