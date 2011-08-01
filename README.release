@@ -1,4 +1,4 @@
-PLplot Release 5.9.8
+PLplot Release 5.9.9
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development
@@ -70,7 +70,7 @@ by the PLplot libraries.
 
 The general documentation and safety justification for such const
 modifier changes to our API is given in
-http://www.cprogramming.com/tutorial/const_correctness.html.
+http://www.cprogrammbing.com/tutorial/const_correctness.html.
 Essentially, the above const modifier changes constitute our guarantee
 that the associated arrays are not changed internally by the PLplot
 libraries.
@@ -258,16 +258,10 @@ INDEX
 
 -1.1 Add full bindings and examples for the D language.
 
-0. Tests made for release 5.9.8
+0. Tests made for release 5.9.9
 
-1. Changes relative to PLplot 5.9.7 (the previous development release)
+1. Changes relative to PLplot 5.9.8 (the previous development release)
 
-1.1 The plstring and plstring3 functions have been added
-1.2 The pllegend API has been finalized
-1.3 Octave bindings now implemented with swig
-1.4 Documentation redone for our swig-generated Python and Octave bindings
-1.5 Support large polygons
-1.6 Complete set of PLplot parameters now available for Fortran
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
