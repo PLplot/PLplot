@@ -1,0 +1,41 @@
+#!@SH_EXECUTABLE@
+# Run plserver example for standard examples.
+# Drop examples 14 and 31 because querying for devices does not
+# seem to work in this context.
+# Note the backslash at the end - this causes Tcl to ignore
+# the next line. It becomes a valid Tcl script as well as
+# valid shell script
+# \
+@plserver_LOCATION@ <<EOF
+source tkdemos.tcl
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+exit
+EOF

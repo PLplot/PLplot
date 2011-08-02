@@ -1,0 +1,92 @@
+#!@SH_EXECUTABLE@
+# Test suite for interactive ("p??") octave examples.
+#
+# Copyright (C) 2004-2010  Alan W. Irwin
+# Copyright (C) 2004  Rafael Laboissiere
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+# This is called from plplot-test.sh with $octave, $octavedir, $options,
+# and $device defined.
+
+# The following is only need for the build tree!  It should has no effect
+# when this script is launched from the install tree.
+lang="o"
+export lang
+TOPDIR=`pwd`/..
+echo "$TOPDIR"
+export LD_LIBRARY_PATH="$TOPDIR"/src:"$TOPDIR"/lib/csa:"$TOPDIR"/lib/nn
+
+# Launch an Octave script that exercises all the "p" demos.
+$octave -f -q -p "$octavedir" <<EOF 2> test.error
+
+# Check verbose_test variable
+if (strcmp(getenv("verbose_test"),"on") == 1)
+  verbose_test = 1;
+else
+  verbose_test = 0;
+endif
+
+plplot_stub;
+t = split("$options", "-"); 
+if (t); t(1,:)=""; endif;
+for i=1:rows(t)
+  tt = deblank (t(i,:)); len = length(tt);
+  ix = index(tt," ");
+  if (ix == 0); ix = len; len = 0; endif
+  plsetopt(tt(1:ix), tt(ix+1:len));
+endfor
+
+# -dev wxwidgets will work on one at a time, but segfaults
+# for multiple examples.
+
+# -dev xcairo very slow on all of these (the well-known interactive
+# slowness issue with that device).
+# 17 - the selection rectangle is not drawn because xcairo does not support xor mode.
+
+# The following comments are for -dev qtwidget.
+# 14 - looks pretty to start but then segfaults on some systems (octave 3.0?);
+#    - with octave 3.2 the animation does not work correctly (as with xwin / tk )
+# 17 - the selection rectangle is not drawn because qtwidget does not support xor mode.
+
+# -dev wxwidgets had similar issues except possibly for examples 18
+# and 19 which seemed fine, but there is no way to tell for sure with
+# second wxwidgets example (no matter what) always segfaulting.
+
+# -dev xwin and -dev tk worked for all examples and Octave-3.0.  For
+# Octave-3.2 the animation for p14 does not work correctly with these devices.
+
+# Remove 7, 16, 20 until plshade1 fix is done.
+# Remove 17 until an additional fix is done.
+# Remove combined example 21.
+plsetopt("dev","$device");
+for i=[1:20];
+  if (verbose_test)
+      printf("p%d\n",i);
+  endif
+  #figure(i,"$device",sprintf("${OUTPUT_DIR}/p%d%%n.$dsuffix",i));
+  figure(i,"$device");
+  plsetopt("dev","$device");
+  feval(sprintf("p%d",i))
+  closefig
+endfor
+EOF
+status_code=$?
+cat test.error
+if [ "$status_code" -ne 0 ] ; then
+    exit $status_code
+fi

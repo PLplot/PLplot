@@ -1,0 +1,131 @@
+This package was debianized by Rafael Laboissiere rafael@debian.org on
+Sun Feb 16 18:44:55 CET 2003
+
+It was downloaded from:
+
+    http://sourceforge.net/project/showfiles.php?group_id=2915
+
+Several files were backported from the CVS sources available at:
+
+    http://sourceforge.net/cvs/?group_id=2915
+
+Below is the copyright notice that comes with the source distribution
+(reference to the location of LGPL text in the Debian system was
+added):
+
+
+Copyright (from file "Copyright" in the pristine source distributions;
+added text for the Debian package are between brackets):
+
+The PLplot package may be distributed under the following terms:
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc. 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+The text of this license is given in the file COPYING.LIB in the
+distribution directory.  [In Debian systems, see the file
+/usr/share/common-licenses/LGPL.]  Exceptions are noted below.
+
+The intent behind distributing PLplot under the LGPL is to ensure that it
+continues to evolve in a positive way, while remaining freely
+distributable.  The package is considered a "library" even though there
+are associated programs, such as plrender, pltek, plserver, and pltcl.
+The ties between these programs and the library are so great that I
+consider them as part of the library, so distribution under the terms of
+the LGPL makes sense.  Software developers are allowed and encouraged to
+use PLplot as an integral part of their product, even a commercial
+product.  Under the conditions of the LGPL, however, the PLplot source
+code must remain freely available, including any modifications you make to
+it (if you distribute a program based on the modified library).  Please
+read the full license for more info.
+
+
+Additional Copyrights
+---------------------
+
+The startup code used in argument handling (utils/plrender.c and
+src/plargs.c) is partially derived from "xterm.c" of the X11R5
+distribution, and its copyright is reproduced here:
+
+******************************************************************************
+Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts,
+and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
+
+                        All Rights Reserved
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the names of Digital or MIT not be
+used in advertising or publicity pertaining to distribution of the
+software without specific, written prior permission.
+
+DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+SOFTWARE.
+******************************************************************************
+
+The documentation files are distributed under the following license terms:
+
+               DocBook documentation for the PLplot Library
+
+Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
+Copyright (C) 1999, 2000, 2001, 2003 Alan W. Irwin and Rafael Laboissiere,
+Copyright (C) 2003  Joao Cardoso
+
+License terms:
+
+  ===========================================================================
+
+    Redistribution and use in source (XML DocBook) and "compiled" forms
+    (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+       1. Redistributions of source code (XML DocBook) must retain the
+          above copyright notice, this list of conditions and the following
+          disclaimer as the first lines of this file unmodified.
+
+       2. Redistributions in compiled form (transformed to other DTDs,
+          converted to HTML, PDF, PostScript, and other formats) must
+          reproduce the above copyright notice, this list of conditions and
+          the following disclaimer in the documentation and/or other
+          materials provided with the distribution.
+
+    Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  ===========================================================================
+
+
+Any file that is explicitly marked as "public domain" is free from any
+restriction on distribution.
+
+Any file that has a explicit copyright notice may be distributed under
+the terms of both the LGPL and whatever stated conditions accompany the
+copyright.

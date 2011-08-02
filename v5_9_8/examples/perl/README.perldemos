@@ -1,0 +1,108 @@
+Perl (PDL) demos for PLplot
+---------------------------
+
+The files in this directory are close translations of the PLplot demos
+written in C (see directory above ../c/).  They use the PDL and
+PDL::Graphics::PLplot modules distributed with PDL.
+
+Instructions for building and installing Doug Hunt's latest version of
+PDL::Graphics::PLplot consistently with the latest version of PLplot
+that you have installed.
+
+# PLplot is a prerequisite so install the latest PLplot by running the
+# "make install" command _in the PLplot build tree_.  N.B. that installation
+# is required in order to build and install PDL::Graphics::PLplot.
+# Furthermore, that installation is required in order for PLplot builds
+# subsequent to the build and install of PDL::Graphics::PLplot to
+# be able to detect that module, and thus run the Perl/PDL examples
+# that are part of PLplot.
+
+# Adjust this value to the prefix of that PLplot installation.
+export PLPLOT_INSTALL_PREFIX=/home/software/plplot_svn/installcmake
+
+# Check http://search.cpan.org/~dhunt/PDL-Graphics-PLplot-0.55 to see
+# if there is a later version than 0.55 (the latest version at this
+# time of writing).
+
+# Adjust this value to the latest version.
+export PDL_GRAPHICS_PLPLOT_VERSION=0.55
+
+# Adjust this value to where you want the PDL Graphics PLplot module
+# to be installed.
+export PDL_GRAPHICS_PLPLOT_PREFIX=/home/software/pdl/install-$PDL_GRAPHICS_PLPLOT_VERSION
+
+# N.B. no adjustments beyond here.
+
+export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-$PDL_GRAPHICS_PLPLOT_VERSION
+
+wget \
+http://search.cpan.org/CPAN/authors/id/D/DH/DHUNT/$TARBALL_ROOT_NAME.tar.gz
+
+less $TARBALL_ROOT_NAME.tar.gz
+
+tar zxf $TARBALL_ROOT_NAME.tar.gz
+cd $TARBALL_ROOT_NAME
+
+env PLPLOT_LIBDIR=$PLPLOT_INSTALL_PREFIX/lib \
+PLPLOT_INCDIR=$PLPLOT_INSTALL_PREFIX/include/plplot \
+perl Makefile.PL
+
+# No hard rpath coded so that LD_LIBRARY_PATH will work
+env LD_RUN_PATH= \
+make -e >& make.out
+less make.out
+
+# N.B. this is also necessary for the PLplot detection of
+# PDL::Graphics::PLplot to work during cmake step of PLplot build.
+export LD_LIBRARY_PATH=$PLPLOT_INSTALL_PREFIX/lib
+make test >& make_test.out
+less make_test.out
+
+# Remove this directory before using it for the install.
+rm -rf $PDL_GRAPHICS_PLPLOT_PREFIX
+
+make PREFIX=$PDL_GRAPHICS_PLPLOT_PREFIX install >& make_install.out
+less make_install.out
+
+# Update the install location.
+cd ..
+rm -f install
+ln -s install-$PDL_GRAPHICS_PLPLOT_VERSION install
+
+# Check what files have been installed
+find $PDL_GRAPHICS_PLPLOT_PREFIX -type f
+
+# Find the equivalent files in your PDL installation.  For example, on my
+# system the equivalent files are
+
+/usr/lib/perl5/PDL/Graphics/PLplot.pm
+/usr/lib/perl5/auto/PDL/Graphics/PLplot
+/usr/lib/perl5/auto/PDL/Graphics/PLplot/PLplot.so
+/usr/lib/perl5/auto/PDL/Graphics/PLplot/PLplot.bs
+
+# Back those up (so none of your further changes are irrevocable), and
+# replace them (probably with the aid of symlinks for convenience).  You can
+# ignore some of the list you generate with the above find command, but you
+# do have to replace/symlink the .../PDL/Graphics/PLplot directory
+# and also replace/symlink the individual file,
+# .../PDL/Graphics/PLplot.pm.
+
+Testing the Perl/PDL PLplot examples.
+
+1a. Make sure you have set LD_LIBRARY_PATH correctly, see above, and do
+not remove the PLplot installation.  Otherwise, cmake won't be able to
+find the PDL::Graphics::PLplot installation that was just done.
+
+1b. Go ahead and remove the old PLplot installation, and skip version
+checks for PDL::Graphics::PLplot using -DSKIP_PDL_CHECK=ON for
+cmake step below.
+
+2. Normal cmake step for PLplot build.  If you want to do build-tree
+tests of Perl/PDl examples, then use the -DBUILD_TEST=ON option.
+Check the cmake output to make sure PDL::Graphics::PLplot was found
+with correct version if -DSKIP_PDL_CHECK=ON option was not used.
+Alternatively, use -DSKIP_PDL_CHECK=ON (see 1b above) which skips
+all version checks for PDL::Graphics::PLplot
+
+3. Normal noninteractive test (e.g., ctest in the build tree or
+"make test_noninteractive" or "make test_diff_psc" in the build tree).

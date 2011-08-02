@@ -1,0 +1,12 @@
+-- initialise Lua bindings for PLplot examples.
+if string.sub(_VERSION,1,7)=='Lua 5.0' then
+	lib=loadlib('@lua_lib_location@/plplotluac.so','luaopen_plplotluac') or
+      loadlib('@lua_lib_location@/plplotluac.dll','luaopen_plplotluac') or
+      loadlib('@lua_lib_location@/plplotluac.dylib','luaopen_plplotluac')
+	assert(lib)()
+else
+	package.cpath = '@lua_lib_location@/?.so;' ..
+                  '@lua_lib_location@/?.dll;' ..
+                  '@lua_lib_location@/?.dylib;' ..package.cpath
+	require('plplotluac')
+end

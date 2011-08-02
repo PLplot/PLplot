@@ -1,0 +1,18 @@
+The Status of the Python Examples
+
+For details of how we build PLplot access from Python please consult
+../../bindings/python/README.pythonbuild.  The principal module is
+plplot.py. This make all the common PLplot API available to python in a
+user-friendly way.  plplot.py wraps the swig-generated plplotc.py which in
+turn wraps the _plplotc extension module (built with the aid of swig). The
+extension module, plplot_widget contains support for loading plframe
+from python.  This functionality is demonstrated with pytkdemo which
+uses the old x??.py examples.  Plans are afoot (2009-07-05) to drop using
+those old, limited and buggy examples, and instead use the modern xw??.py
+examples.  Once that works, we will remove all the old examples and
+rename all the modern xw??.py examples as x??.py (which is a better
+namespace).  Stay tuned.
+
+To try out the xw??.py examples without a widget simply run pythondemos.py
+in the installed directory to run all of them, or alternatively run them
+one at at time by executing x??.

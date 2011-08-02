@@ -1,0 +1,239 @@
+c      $Id$
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU Library General Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+
+c--------------------------------------------------------------------------
+c floor
+c
+c Compatibility function - keep all examples as equal as possible
+c--------------------------------------------------------------------------
+      real*8 function floor(x)
+      real*8 x
+      if ( x .gt. 0.0d0 ) then
+          floor = real(int(x))
+      else
+          floor = real(int(x)-1)
+      endif
+      end
+
+c--------------------------------------------------------------------------
+c map_transform
+c
+c General coordinate transform function
+c--------------------------------------------------------------------------
+      subroutine map_transform(x, y, xt, yt)
+      implicit none
+
+      real*8    x, y, xt, yt, radius
+      include 'plplot_parameters.h'
+
+      radius = 90.0d0 - y
+      xt = radius * cos(x * PI / 180.0d0)
+      yt = radius * sin(x * PI / 180.0d0)
+      return
+      end subroutine
+
+c--------------------------------------------------------------------------
+c mapform19
+c
+c Defines specific coordinate transformation for example 19.
+c Not to be confused with mapform in src/plmap.c.
+c x(), y() are the coordinates to be plotted.
+c--------------------------------------------------------------------------
+
+      subroutine mapform19(n, x, y)
+      implicit none
+
+      integer n
+      real*8    x(n)
+      real*8    y(n)
+      include 'plplot_parameters.h'
+
+      integer i
+      real*8    xp, yp, radius
+
+      do i = 1,n
+         call map_transform(x(i),y(i),xp,yp)
+         x(i) = xp
+         y(i) = yp
+      enddo
+      return
+      end
+
+c     "Normalize" longitude values so that they always fall between
+c      -180.0 and 180.0
+      function normalize_longitude(lon)
+      implicit none
+      real*8 normalize_longitude
+      real*8 lon, times
+
+      external floor
+      real*8 floor
+
+      if ((lon .ge. -180.0d0) .and. (lon .le. 180.0d0)) then
+         normalize_longitude = lon
+      else
+         times = floor ((abs(lon) + 180.0d0) / 360.0d0)
+        if (lon .lt. 0.0d0) then
+           normalize_longitude = lon + 360.0d0 * times
+        else
+           normalize_longitude = lon - 360.0d0 * times
+        endif
+      endif
+      return
+      end function
+
+c A custom axis labeling function for longitudes and latitudes.
+      subroutine geolocation_labeler(axis, value, label, length)
+      implicit none
+      integer axis, length
+      real*8 value
+      character*(*) label
+      character*5 direction_label
+      real*8 label_val
+      real*8 normalize_longitude
+
+      if (axis .eq. 2) then
+         label_val = value
+         if (label_val .gt. 0.0d0) then
+            direction_label = ' N'
+         else if (label_val .lt. 0.0d0) then
+            direction_label = ' S'
+         else
+            direction_label = 'Eq'
+         endif
+      else if (axis .eq. 1) then
+         label_val = normalize_longitude(value)
+         if (label_val .gt. 0.0d0) then
+            direction_label = ' E'
+         else if (label_val .lt. 0.0d0) then
+            direction_label = ' W'
+         else
+            direction_label = ''
+         endif
+      endif
+      if (axis .eq. 2 .and. value .eq. 0.0d0) then
+c     A special case for the equator
+         label = direction_label
+      else if (abs(label_val) .lt. 100.0d0) then
+         write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
+      else
+         write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
+      endif
+      end
+
+c--------------------------------------------------------------------------
+c main
+c
+c Shows two views of the world map.
+c--------------------------------------------------------------------------
+
+      program x19f
+      implicit none
+      real*8    minx, maxx, miny, maxy
+      real*8    x, y
+      external map_transform
+      external mapform19
+      external geolocation_labeler
+
+      include 'plplot_parameters.h'
+c      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
+c Longitude (x) and latitude (y)
+
+      miny = -70
+      maxy = 80
+
+      call plinit()
+
+c Cartesian plots
+c Most of world
+
+      minx = 190
+      maxx = 190+360
+
+c Setup a custom latitude and longitude-based scaling function.
+      call plslabelfunc(geolocation_labeler)
+
+      call plcol0(1)
+      call plenv(minx, maxx, miny, maxy, 1, 70)
+      call plmap_none('usaglobe', minx, maxx, miny, maxy)
+
+c The Americas
+
+      minx = 190
+      maxx = 340
+
+      call plcol0(1)
+      call plenv(minx, maxx, miny, maxy, 1, 70)
+      call plmap_none('usaglobe', minx, maxx, miny, maxy)
+
+c Clear the labeling function
+c (Note: FORTRAN 77 does not handle NULL pointers, so an
+c alternative function is used)
+      call plslabelfunc_none
+
+c Polar, Northern hemisphere
+
+      minx = 0
+      maxx = 360
+
+      call plenv(-75.d0, 75.d0, -75.d0,
+     &        75.d0, 1, -1)
+      call plmap(mapform19,'globe', minx, maxx, miny, maxy)
+
+      call pllsty(2)
+      call plmeridians(mapform19,10.0d0, 10.0d0,
+     &        0.0d0, 360.0d0, -10.0d0,
+     &        80.0d0)
+
+c Polar, Northern hemisphere, this time with a PLplot-wide transform
+
+      minx = 0
+      maxx = 360
+      
+      call plstransform( map_transform )
+
+      call pllsty( 1 )
+      call plenv( -75.d0, 75.d0, -75.d0, 75.d0, 1, -1 )
+      ! No need to set the map transform here as the global 
+      ! transform will be used.
+      call plmap_none( 'globe', minx, maxx, miny, maxy )
+      
+      call pllsty( 2 )
+      call plmeridians_none( 10.0d0, 10.0d0, 0.0d0,
+     &     360.0d0, -10.0d0, 80.0d0 )
+      
+      ! Show Baltimore, MD on the map
+      call plcol0( 2 )
+      call plssym( 0.0d0, 2.0d0 )
+      x=-76.6125d0
+      y=39.2902778d0
+      call plpoin( 1, x, y, 18 )
+      call plssym( 0.0d0, 1.0d0 )
+      call plptex( -76.6125d0, 43.0d0, 0.0d0, 0.0d0,
+     &     0.0d0, 'Baltimore, MD' )
+      
+      ! For f77, this is how the global transform is cleared
+      call plstransform_none
+
+      call plend()
+      end

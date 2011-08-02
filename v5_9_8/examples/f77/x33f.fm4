@@ -1,0 +1,891 @@
+c     -*- coding: utf-8; -*-
+c
+c     $Id$
+c
+c     Demonstrate most pllegend capability including unicode symbols.
+c
+c     Copyright (C) 2010 Alan Irwin
+c
+c     This file is part of PLplot.
+c
+c     PLplot is free software; you can redistribute it and/or modify
+c     it under the terms of the GNU Library General Public License as published
+c     by the Free Software Foundation; either version 2 of the License, or
+c     (at your option) any later version.
+c
+c     PLplot is distributed in the hope that it will be useful,
+c     but WITHOUT ANY WARRANTY; without even the implied warranty of
+c     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c     GNU Library General Public License for more details.
+c
+c     You should have received a copy of the GNU Library General Public License
+c     along with PLplot; if not, write to the Free Software
+c     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
+c
+c     This example designed just for devices (e.g., the cairo-related and
+c     qt-related devices) where the best choice of glyph is automatically
+c     selected by the related libraries (pango/cairo or Qt4) for each
+c     unicode character depending on what system fonts are installed.  Of
+c     course, you must have the appropriate TrueType fonts installed to
+c     have access to all the required glyphs.
+
+
+c--------------------------------------------------------------------------
+c  main
+c
+c  Demonstrate most pllegend capability including unicode symbols.
+c --------------------------------------------------------------------------
+
+      implicit none
+
+      include 'plplot_parameters.h'
+
+      integer MAX_NLEGEND
+      parameter (MAX_NLEGEND = 7)
+
+      integer i, k
+      integer opt, position
+      integer nlegend, nturn
+      integer opt_array(MAX_NLEGEND)
+      integer text_colors(MAX_NLEGEND)
+      integer box_colors(MAX_NLEGEND)
+      integer box_patterns(MAX_NLEGEND)
+      real*8 box_scales(MAX_NLEGEND)
+      integer box_line_widths(MAX_NLEGEND)
+      integer line_colors(MAX_NLEGEND)
+      integer line_styles(MAX_NLEGEND)
+      integer line_widths(MAX_NLEGEND)
+      integer symbol_numbers(MAX_NLEGEND), symbol_colors(MAX_NLEGEND)
+      real*8 symbol_scales(MAX_NLEGEND)
+      character*200 text(MAX_NLEGEND)
+      character*3 symbols(MAX_NLEGEND)
+      real*8 legend_width, legend_height, x, y, xstart, ystart
+      real*8 max_height, text_scale
+      integer opt_base, nrow, ncolumn
+
+      integer position_options(16)
+      character*3 special_symbols(5)
+
+      real*8 values_small(2)
+      real*8 values_uneven(9)
+      real*8 values_even(9)
+
+
+c     Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
+      data special_symbols /
+     &    '✰',
+     &    '✴',
+     &    '✱',
+     &    '✽',
+     &    '✦'
+     &/
+
+      data values_small   / 0.0d0, 1.0d0 /
+      data values_uneven
+     &/ 0.0d0, 2.0d0, 2.6d0, 3.4d0, 6.0d0, 7.0d0, 8.0d0, 9.0d0, 10.0d0 /
+      data values_even
+     &/ 0.0d0, 1.0d0, 2.0d0, 3.0d0, 4.0d0, 5.0d0, 6.0d0, 7.0d0, 8.0d0 /
+
+      position_options(1) =
+     &    PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_OUTSIDE
+      position_options(2) =
+     &    PL_POSITION_TOP + PL_POSITION_OUTSIDE
+      position_options(3) =
+     &    PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_OUTSIDE
+      position_options(4) =
+     &    PL_POSITION_RIGHT + PL_POSITION_OUTSIDE
+      position_options(5) =
+     &    PL_POSITION_RIGHT + PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
+      position_options(6) =
+     &    PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
+      position_options(7) =
+     &    PL_POSITION_LEFT + PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
+      position_options(8) =
+     &    PL_POSITION_LEFT + PL_POSITION_OUTSIDE
+      position_options(9) =
+     &    PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_INSIDE
+      position_options(10) =
+     &    PL_POSITION_TOP + PL_POSITION_INSIDE
+      position_options(11) =
+     &    PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_INSIDE
+      position_options(12) =
+     &    PL_POSITION_RIGHT + PL_POSITION_INSIDE
+      position_options(13) =
+     &    PL_POSITION_RIGHT + PL_POSITION_BOTTOM + PL_POSITION_INSIDE
+      position_options(14) =
+     &    PL_POSITION_BOTTOM + PL_POSITION_INSIDE
+      position_options(15) =
+     &    PL_POSITION_LEFT + PL_POSITION_BOTTOM + PL_POSITION_INSIDE
+      position_options(16) =
+     &    PL_POSITION_LEFT + PL_POSITION_INSIDE
+
+c     Parse and process command line arguments
+
+      call plparseopts(PL_PARSE_FULL)
+
+c     Initialize plplot
+      call plinit
+
+c     First page illustrating the 16 standard positions.
+      call pladv( 0 )
+      call plvpor( 0.25d0, 0.75d0, 0.25d0, 0.75d0 )
+      call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+      call plbox( 'bc', 0.0d0, 0, 'bc', 0.0d0, 0 )
+      call plsfont( PL_FCI_SANS, -1, -1 )
+      call plmtex( 't', 8.0d0, 0.5d0, 0.5d0,
+     &         'The 16 standard legend positions with' )
+      call plmtex( 't', 6.0d0, 0.5d0, 0.5d0,
+     &         'the same (0.05) offset in x and y' )
+
+      nlegend = 1
+c     Only specify legend data that are required according to the
+c     value of opt_array for that entry.
+      opt_base          = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
+      opt_array(1)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
+      line_styles(1)    = 1
+      line_widths(1)    = 1
+      symbol_scales(1)  = 1.d0
+      symbol_numbers(1) = 4
+      symbols(1)        = '*'
+
+c     Use monotype fonts so that all legends are the same size.
+      call plsfont( PL_FCI_MONO, -1, -1 )
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      do 110 k = 1,16
+          position = position_options(k)
+          opt = opt_base
+          text_colors(1)   = 1 + mod( k-1, 8 )
+          line_colors(1)   = 1 + mod( k-1, 8 )
+          symbol_colors(1) = 1 + mod( k-1, 8 )
+          call write_number( text(1), k-1 )
+
+          call pllegend( legend_width, legend_height, opt, position,
+     &        0.05d0, 0.05d0,
+     &        0.1d0, 15, 1, 1, 0, 0,
+     &        nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &        1.d0, text_colors, text,
+     &        box_colors, box_patterns, box_scales, box_line_widths,
+     &        line_colors, line_styles, line_widths,
+     &        symbol_colors, symbol_scales, symbol_numbers, symbols )
+  110 continue
+
+c     Second page illustrating effect of nrow, ncolumn for the same legend
+c     data.
+
+      call pladv( 0 )
+      call plvpor( 0.25d0, 0.75d0, 0.25d0, 0.75d0 )
+      call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+      call plbox( 'bc', 0.0d0, 0, 'bc', 0.0d0, 0 )
+      call plsfont( PL_FCI_SANS, -1, -1 )
+      call plmtex( 't', 8.0d0, 0.5d0, 0.5d0,
+     &         'The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,' )
+      call plmtex( 't', 6.0d0, 0.5d0, 0.5d0,
+     &         'and position for the same legend data' )
+
+      nlegend = 7
+
+c     Only specify legend data that are required according to the
+c     value of opt_array for that entry.
+
+      opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
+      do 120 k = 1,nlegend
+          opt_array(k)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
+          line_styles(k)    = 1
+          line_widths(k)    = 1
+          symbol_scales(k)  = 1.d0
+          symbol_numbers(k) = 2
+          symbols(k)        = '*'
+          call write_number( text(k), k-1 )
+          text_colors(k)   = 1 + mod( k-1, 8 )
+          line_colors(k)   = 1 + mod( k-1, 8 )
+          symbol_colors(k) = 1 + mod( k-1, 8 )
+  120 continue
+
+c     Use monotype fonts so that all legends are the same size.
+
+      call plsfont( PL_FCI_MONO, -1, -1 )
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      position = PL_POSITION_TOP + PL_POSITION_OUTSIDE
+      opt     = opt_base
+      x       = 0.d0
+      y       = 0.1d0
+      nrow    = 1
+      ncolumn = nlegend
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.05d0, 15, 1, 1, nrow, ncolumn,
+     &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &    1.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+      position = PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
+      opt     = opt_base
+      x       = 0.d0
+      y       = 0.1d0
+      nrow    = 1
+      ncolumn = nlegend
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.05d0, 15, 1, 1, nrow, ncolumn,
+     &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &    1.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+      position = PL_POSITION_LEFT + PL_POSITION_OUTSIDE
+      opt     = opt_base
+      x       = 0.1d0
+      y       = 0.d0
+      nrow    = nlegend
+      ncolumn = 1
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.05d0, 15, 1, 1, nrow, ncolumn,
+     &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &    1.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+      position = PL_POSITION_RIGHT + PL_POSITION_OUTSIDE
+      opt     = opt_base
+      x       = 0.1d0
+      y       = 0.d0
+      nrow    = nlegend
+      ncolumn = 1
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.05d0, 15, 1, 1, nrow, ncolumn,
+     &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &    1.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+      position = PL_POSITION_LEFT + PL_POSITION_TOP +
+     &           PL_POSITION_INSIDE
+      opt     = opt_base
+      x       = 0.d0
+      y       = 0.d0
+      nrow    = 6
+      ncolumn = 2
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.05d0, 15, 1, 1, nrow, ncolumn,
+     &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &    1.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+      position = PL_POSITION_RIGHT + PL_POSITION_TOP +
+     &           PL_POSITION_INSIDE
+      opt     = opt_base + PL_LEGEND_ROW_MAJOR
+      x       = 0.d0
+      y       = 0.d0
+      nrow    = 6
+      ncolumn = 2
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.05d0, 15, 1, 1, nrow, ncolumn,
+     &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &    1.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+      position = PL_POSITION_BOTTOM + PL_POSITION_INSIDE
+      opt     = opt_base + PL_LEGEND_ROW_MAJOR
+      x       = 0.d0
+      y       = 0.d0
+      nrow    = 3
+      ncolumn = 3
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.05d0, 15, 1, 1, nrow, ncolumn,
+     &    nlegend, opt_array, 1.0d0, 1.0d0, 2.0d0,
+     &    1.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+c     Third page demonstrating legend alignment
+
+      call pladv( 0 )
+      call plvpor( 0.0d0, 1.0d0, 0.0d0, 0.9d0 )
+      call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+      call plsfont( PL_FCI_SANS, -1, -1 )
+      call plmtex( 't', 2.0d0, 0.5d0, 0.5d0,
+     &         'Demonstrate legend alignment' )
+
+      x        = 0.1d0
+      y        = 0.1d0
+      nturn    = 5
+      nlegend  = 0
+      position = PL_POSITION_TOP + PL_POSITION_LEFT +
+     &           PL_POSITION_SUBPAGE
+      opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX
+      opt      = opt_base
+      do 140 i = 1,9
+
+c         Set up legend arrays with the correct size, type.
+
+          if ( i .le. nturn ) then
+              nlegend = nlegend + 1
+          else
+              nlegend = nlegend - 1
+          endif
+          nlegend = max( 1, nlegend )
+
+c         nly specify legend data that are required according to the
+c         value of opt_array for that entry.
+
+          do 130 k = 1,nlegend
+              opt_array(k)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
+              line_styles(k)    = 1
+              line_widths(k)    = 1
+              symbol_scales(k)  = 1.d0
+              symbol_numbers(k) = 2
+              symbols(k)        = '*'
+              call write_number( text(k), k-1 )
+              text_colors(k)   = 1 + mod( k-1, 8 )
+              line_colors(k)   = 1 + mod( k-1, 8 )
+              symbol_colors(k) = 1 + mod( k-1, 8 )
+  130     continue
+
+c         Use monotype fonts so that all legends are the same size.
+
+          call plsfont( PL_FCI_MONO, -1, -1 )
+          call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+          nrow    = MIN( 3, nlegend )
+          ncolumn = 0
+
+          call pllegend( legend_width, legend_height, opt, position,
+     &        x, y,
+     &        0.025d0, 15, 1, 1, nrow, ncolumn,
+     &        nlegend, opt_array, 1.0d0, 1.0d0, 1.5d0,
+     &        1.d0, text_colors, text,
+     &        box_colors, box_patterns, box_scales, box_line_widths,
+     &        line_colors, line_styles, line_widths,
+     &        symbol_colors, symbol_scales, symbol_numbers, symbols )
+
+          if ( i .eq. nturn ) then
+              position = PL_POSITION_TOP + PL_POSITION_RIGHT +
+     &        PL_POSITION_SUBPAGE
+              opt = opt_base
+              x   = 1.d0 - x
+              y   = y + legend_height
+          else
+              x = x + legend_width
+              y = y + legend_height
+          endif
+  140 continue
+
+c     Fourth page illustrating various kinds of legends
+
+      max_height = 0.d0
+      xstart     = 0.0d0
+      ystart     = 0.1d0
+      x          = xstart
+      y          = ystart
+      text_scale = 0.90d0
+      call pladv( 0 )
+      call plvpor( 0.0d0, 1.d0, 0.0d0, 0.90d0 )
+      call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c       call plbox('bc', 0.0, 0, 'bc', 0.0d0, 0)
+      call plsfont( PL_FCI_SANS, -1, -1 )
+      call plmtex( 't', 2.0d0, 0.5d0, 0.5d0,
+     &         'Demonstrate Various Kinds of Legends' )
+
+      nlegend = 5
+
+c     Only specify legend data that are required according to the
+c     value of opt_array for that entry.
+
+      position = PL_POSITION_LEFT + PL_POSITION_TOP
+      opt_base = PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX +
+     &           PL_LEGEND_TEXT_LEFT
+
+c     Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
+
+      opt_array(1) = PL_LEGEND_NONE
+      text(1) = 'None'
+      text_colors(1) = 1
+
+      opt_array(2) = PL_LEGEND_COLOR_BOX
+      text(2) = 'Box'
+      text_colors(2)     = 2
+      box_colors(2)      = 2
+      box_patterns(2)    = 0
+      box_scales(2)      = 0.8d0
+      box_line_widths(2) = 1
+
+      opt_array(3) = PL_LEGEND_LINE
+      text(3) = 'Line'
+      text_colors(3) = 3
+      line_colors(3) = 3
+      line_styles(3) = 1
+      line_widths(3) = 1
+
+      opt_array(4) = PL_LEGEND_SYMBOL
+      text(4) = 'Symbol'
+      text_colors(4)    = 4
+      symbol_colors(4)  = 4
+      symbol_scales(4)  = text_scale
+      symbol_numbers(4) = 4
+      symbols(4)        = special_symbols(3)
+
+      opt_array(5) = PL_LEGEND_SYMBOL + PL_LEGEND_LINE
+      text(5) = 'L & S'
+      text_colors(5)    = 5
+      line_colors(5)    = 5
+      line_styles(5)    = 1
+      line_widths(5)    = 1
+      symbol_colors(5)  = 5
+      symbol_scales(5)  = text_scale
+      symbol_numbers(5) = 4
+      symbols(5)        = special_symbols(3)
+
+      opt = opt_base
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up symbol legend entries with various symbols.
+
+      do 150 i = 1,nlegend
+          opt_array(i) = PL_LEGEND_SYMBOL
+          text(i) = 'Symbol ' // special_symbols(i)
+          text_colors(i)    = i
+          symbol_colors(i)  = i
+          symbol_scales(i)  = text_scale
+          symbol_numbers(i) = 4
+          symbols(i)        = special_symbols(i)
+  150 continue
+
+      opt = opt_base
+      x   = x + legend_width
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up symbol legend entries with various numbers of symbols.
+
+      do 160 i = 1,nlegend
+          opt_array(i) = PL_LEGEND_SYMBOL
+          call write_text_number( text(i), 'Symbol Number', i + 1 )
+          text_colors(i)    = i
+          symbol_colors(i)  = i
+          symbol_scales(i)  = text_scale
+          symbol_numbers(i) = i + 1
+          symbols(i)        = special_symbols(3)
+  160 continue
+
+      opt = opt_base
+      x   = x + legend_width
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up box legend entries with various colours.
+
+      do 170 i = 1,nlegend
+          opt_array(i) = PL_LEGEND_COLOR_BOX
+          call write_text_number( text(i), 'Box Color', i )
+          text_colors(i)     = i
+          box_colors(i)      = i
+          box_patterns(i)    = 0
+          box_scales(i)      = 0.8d0
+          box_line_widths(i) = 1
+  170 continue
+
+      opt = opt_base
+
+c     Use new origin
+
+      x          = xstart
+      y          = y + max_height
+      max_height = 0.d0
+      call plscol0a( 15, 32, 32, 32, 0.70d0)
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up box legend entries with various patterns.
+
+      do 180 i = 1,nlegend
+          opt_array(i) = PL_LEGEND_COLOR_BOX
+          call write_text_number( text(i), 'Box Pattern', i-1 )
+          text_colors(i)     = 2
+          box_colors(i)      = 2
+          box_patterns(i)    = i - 1
+          box_scales(i)      = 0.8d0
+          box_line_widths(i) = 1
+  180 continue
+
+      opt = opt_base
+      x   = x + legend_width
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up box legend entries with various box pattern line widths.
+
+      do 190 i = 1,nlegend
+          opt_array(i) = PL_LEGEND_COLOR_BOX
+          call write_text_number( text(i), 'Box Line Width', i )
+          text_colors(i)     = 2
+          box_colors(i)      = 2
+          box_patterns(i)    = 3
+          box_scales(i)      = 0.8d0
+          box_line_widths(i) = i
+  190 continue
+
+      opt = opt_base
+      x   = x + legend_width
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up line legend entries with various colours.
+
+      do 200 i =1,nlegend
+          opt_array(i) = PL_LEGEND_LINE
+          call write_text_number( text(i), 'Line Color', i )
+          text_colors(i) = i
+          line_colors(i) = i
+          line_styles(i) = 1
+          line_widths(i) = 1
+  200 continue
+
+      opt = opt_base
+
+c     Use new origin
+
+      x          = xstart
+      y          = y + max_height
+      max_height = 0.d0
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up line legend entries with various styles.
+
+      do 210 i = 1,nlegend
+          opt_array(i) = PL_LEGEND_LINE
+          call write_text_number( text(i), 'Line Style', i )
+          text_colors(i) = 2
+          line_colors(i) = 2
+          line_styles(i) = i
+          line_widths(i) = 1
+  210 continue
+
+      opt = opt_base
+      x   = x + legend_width
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Set up line legend entries with various widths.
+
+      do 220 i =1,nlegend
+          opt_array(i) = PL_LEGEND_LINE
+          call write_text_number( text(i), 'Line Width', i )
+          text_colors(i) = 2
+          line_colors(i) = 2
+          line_styles(i) = 1
+          line_widths(i) = i
+  220 continue
+
+      opt = opt_base
+      x   = x + legend_width
+      call plscol0a( 15, 32, 32, 32, 0.70d0 )
+
+      call pllegend( legend_width, legend_height, opt, position, x, y,
+     &    0.1d0, 15, 1, 1, 0, 0,
+     &    nlegend, opt_array, 1.0d0, text_scale, 2.0d0,
+     &    0.d0, text_colors, text,
+     &    box_colors, box_patterns, box_scales, box_line_widths,
+     &    line_colors, line_styles, line_widths,
+     &    symbol_colors, symbol_scales, symbol_numbers, symbols )
+      max_height = max( max_height, legend_height )
+
+c     Color bar examples
+
+c
+c     Note: commented until plcolorbar is ready!
+c
+c     call plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0d0, 0, 2,
+c    &         values_small, 'Image Color Bars' )
+c     call plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0d0, 0, 2,
+c    &         values_small, 'Image Color Bars' )
+c     call plcolorbar_example_1(
+c    &         PL_COLORBAR_SHADE + PL_COLORBAR_SHADE_LABEL,
+c    &         0.0d0, 0, 9, values_uneven,
+c    &         'Shade Color Bars - Uneven Steps' )
+c     call plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0d0, 3, 9,
+c    &         values_even, 'Shade Color Bars - Even Steps' )
+c     call plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5d0, 5, 2,
+c    &         values_small, 'Gradient Color Bars' )
+c     call plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5d0, 5, 2,
+c    &         values_small, 'Gradient Color Bars' )
+
+      call plend()
+      end
+
+c
+c     Auxiliary routines
+c
+      subroutine write_number( text, number )
+
+      implicit none
+
+      character(*) text
+      integer      number
+
+      write( text, '(i2)') number
+      if ( text(1:1) .eq. ' ' ) text(1:1) = '0'
+      end
+
+      subroutine write_text_number( text, string, number )
+
+      implicit none
+
+      character(*) text
+      character(*) string
+      integer      number
+
+      if ( number .lt. 10 ) then
+          write( text, '(a,1x,i1)' ) string, number
+      else
+          write( text, '(a,1x,i2)' ) string, number
+      endif
+      end
+
+c Color bar routines
+c
+c     subroutine plcolorbar_example_1( bar_type, ticks, sub_ticks, n,
+c    &               values, title )
+c
+c     implicit none
+c
+c     include 'plplot_parameters.h'
+c
+c     integer bar_type, position
+c     real*8 ticks
+c     integer sub_ticks
+c     integer n
+c     real*8 values(*)
+c     character(*) title
+c
+c
+c     FORTRAN 77: array fixed
+c
+c     real*8 colors(20)
+c     real*8 color_step
+c     integer i
+c     integer opt
+c     character(10) axis_opts_1, axis_opts_2
+c
+c     call pladv( 0 )
+c
+c     Setup color palette 1
+c     call plspal1( 'cmap1_blue_red.pal', 1 )
+c
+c     color_step = 1.0d0 / ( n - 1 )
+c     do 110 i = 1,n
+c         colors(i) = 0.0d0 + color_step * i
+c 110 continue
+c
+c     position = PL_POSITION_LEFT
+c     opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     if ( mod( bar_type, 2*PL_COLORBAR_SHADE_LABEL ) /
+c    &         PL_COLORBAR_SHADE_LABEL .eq. 1 ) then
+c         axis_opts_1 = 'iv'
+c         axis_opts_2 = 'i'
+c     else
+c         if ( sub_ticks .ne. 0 ) then
+c             axis_opts_1 = 'stv'
+c             axis_opts_2 = 'st'
+c         else
+c             axis_opts_1 = 'tv'
+c             axis_opts_2 = 't'
+c         endif
+c     endif
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Left, High Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_RIGHT
+c     opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Right, Low Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_TOP
+c     opt      = bar_type + PL_COLORBAR_LABEL_TOP +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Upper, High Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_TOP
+c     opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Lower, Low Cap',
+c    &    n, colors, values )
+c
+c     call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plptex( 0.5d0, 0.5d0, 0.0d0, 0.0d0, 0.5d0, title )
+c     end
+c
+c     subroutine plcolorbar_example_2( bar_type, ticks, sub_ticks, n,
+c    &               values, title )
+c
+c     implicit none
+c
+c     include 'plplot_parameters.h'
+c
+c     integer bar_type, position
+c     real*8 ticks
+c     integer sub_ticks
+c     integer n
+c     real*8 values(*)
+c     character(*) title
+c
+c     real*8 colors(20)
+c     integer i
+c     real*8 color_step
+c     integer opt
+c     character(10) axis_opts_1, axis_opts_2
+c
+c     call pladv( 0 )
+c     Setup color palette 1
+c     call plspal1( 'cmap1_blue_yellow.pal', 1 )
+c
+c     color_step = 1.0d0 / ( n - 1 )
+c     do 110 i = 1,n
+c         colors(i) = 0.0d0 + color_step * i
+c 110 continue
+c
+c     position = PL_POSITION_LEFT
+c     opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     if ( bar_type .eq. PL_COLORBAR_SHADE_LABEL ) then
+c         axis_opts_1 = ''
+c         axis_opts_2 = ''
+c     else
+c         if ( sub_ticks .ne. 0 ) then
+c             axis_opts_1 = 'stv'
+c             axis_opts_2 = 'st'
+c         else
+c             axis_opts_1 = 'tv'
+c             axis_opts_2 = 't'
+c         endif
+c     endif
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Left, Low Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_RIGHT
+c     opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     call plcolorbar( opt, 0.1d0, 0.4d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_1, 'Test label - Right, High Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_TOP
+c     opt      = bar_type + PL_COLORBAR_LABEL_TOP +
+c    &           PL_COLORBAR_CAP_LOW
+c
+c     call plcolorbar( opt, 0.1d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Upper, Low Cap',
+c    &    n, colors, values )
+c
+c     position = PL_POSITION_BOTTOM
+c     opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
+c    &           PL_COLORBAR_CAP_HIGH
+c
+c     call plcolorbar( opt, 0.4d0, 0.1d0, 0.5d0, 0.1d0,
+c    &    ticks, sub_ticks,
+c    &    axis_opts_2, 'Test label - Lower, High Cap',
+c    &    n, colors, values )
+c
+c     call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plwind( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+c     call plptex( 0.5d0, 0.5d0, 0.0d0, 0.0d0, 0.5d0, title )
+c     end

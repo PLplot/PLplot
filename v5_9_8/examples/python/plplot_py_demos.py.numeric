@@ -1,0 +1,6 @@
+from plplot import *
+from Numeric import *
+
+def isnan(x):
+    return (x != x)
+

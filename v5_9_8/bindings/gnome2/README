@@ -1,0 +1,75 @@
+README FOR PLPLOT-GNOME2 BINDINGS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Tom Duck <tom.duck@dal.ca>
+  16 May 2005
+
+
+PLplot-Gnome2 APIs and Library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     The GCW driver API defines some simple functions in gcw.h to
+allow better control of the driver's behaviours.
+
+     PlplotCanvas is a derivative of the GnomeCanvas widget, and 
+provides a mechanism to embed plots in Gnome/GTK applications. It 
+defines a variety of methods in plplotcanvas.h to control various 
+aspects of the object and its presentation.  PlplotCanvas wraps the 
+entire PLplot API so that the PLplot functions can be called in an 
+object-oriented fashion.
+
+     The PLplot-Gnome2 library is libplplotgnome2d, and the
+dependencies are described in the pkg-config file plplotd-gnome2.pc.
+
+
+PLplot-Gnome2 Bindings
+~~~~~~~~~~~~~~~~~~~~~~
+     This directory is where the PLplot-Gnome2 bindings live.
+GTK officially supports bindings for C++, python, java and perl.
+The status of each binding for PLplot-Gnome2 is as follows:
+
+  C++: To do
+  Python: Complete
+  Java: To do
+  Perl: To do
+
+Bindings for other languages that have unofficial/incomplete GTK bindings
+are also possible.
+
+
+Binding Construction Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Those interested in constructing language bindings for PLplot-Gnome2
+should first discuss the details with Tom Duck <tom.duck@dal.ca>.
+
+     For instructions on how to create bindings that properly
+interoperate with GTK, see:
+
+  C++: ?
+
+  Python: 
+    http://www.async.com.br/faq/pygtk/index.py?req=show&file=faq01.011.htp
+    http://www-106.ibm.com/developerworks/linux/library/l-wrap/
+
+  Java: 
+    http://java-gnome.sourceforge.net/cgi-bin/bin/view/Main/JavaGnomeHacking
+
+  Perl: 
+    http://gtk2-perl.sourceforge.net/doc/binding_howto.pod.html
+
+     In the python directory, the gcw.defs and plplotcanvas.defs 
+files provide an easy-to-parse description of gcw.h and plplotcanvas.h
+that may be used in the construction of other language bindings.  All
+PLplot-Gnome2 bindings should be generated automatically so that
+maintenance is minimized as the PLplot API grows and/or changes.
+
+     Where appropriate, the PLplot wrappers in PlplotCanvas may be 
+reimplemented in the binding.  This may make the binding simpler to
+construct because the bound versions of the PLplot functions can be
+used.  As in the PlplotCanvas code, however, you must be sure to set 
+the PLplot stream number first.  Also be aware of the performance 
+limitations when different binding strategies are used.
+
+     Care must be taken in the design of the PlplotCanvas constructor
+for each binding.  The constructor must set the "aa" property so that
+an anti-aliased Canvas results.
+

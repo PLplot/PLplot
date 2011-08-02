@@ -1,0 +1,62 @@
+This is an interface to PLplot (http://plplot.sourceforge.net/) for the
+Objective Caml language.
+
+* REQUIREMENTS
+- OCaml (tested with 3.10.x and 3.11.x, should work with earlier versions)
+  - ocamlbuild WAS used in PLplot 5.9.5 and earlier, but not in versions
+    since then.  PLplot should, therefore, now work on OCaml 3.09.x, 3.08.x
+    and possibly earlier versions.
+- camlidl
+
+* FILES
+This is a list of the files which make up the OCaml bindings, along with a
+description of their purpose.
+
+Boilerplate (not used by the CMake build system):
+- plplot_h:
+  - This is a simplified version of include/plplot.h
+- touchup.ml:
+  - This script processes plplot_h to add some annotations to make the file
+    ready for use with camlidl.  It generates plplot_h.inc as output.
+
+Code generation (used in the CMake build system to automatically generate code):
+- plplot_h.inc:
+  - This is a simplified and annotated version of include/plplot.h, generated
+    by touchup.ml, which contains camlidl-ready definitions of most of the
+    PLplot functions.
+- plplot_core.idl:
+  - This file (which includes plotplot_h.inc) contains the definitions of all
+    of the functions and data types required to generate OCaml bindings for
+    the C PLplot API.  camlidl uses this file to produce the C and OCaml code
+    required to interface with the core PLplot API.
+
+Hand-written source code (used in the CMake build system):
+- plplot_impl.c:
+  - This file contains C stubs for functions which are not currently handled
+    correctly by camlidl.  This includes functions which take callbacks and
+    void pointers as arguments.
+- plplot.ml:
+  - This file contains the OCaml-specific interface to PLplot as well as the
+    core PLplot API.
+- plplot.mli:
+  - This file contains the Plplot OCaml module interface definition and
+    ocamldoc comments.
+
+Misc:
+- META.cmake (processed by CMake to produce META)
+  - A findlib-compatible META-file.  The PLplot OCaml bindings can be used
+    with findlib (ocamlfind and the OCaml toplevel).  Please see the OCaml
+    section of the PLplot documentation for more information on using findlib
+    with the OCaml PLplot bindings.
+- README
+  - This file.
+
+* NOTES
+The OCaml bindings have been tested on and reported to work OCaml versions
+since 3.09.x under 32bit and 64bit Linux (Fedora, Debian and CentOS).  Users
+have reported success on Mac OSX as well.  It should work on both earlier and
+later versions of OCaml, but these are not tested.  Any questions or feedback
+regarding function or lack of function on Linux or other platforms are welcome.
+
+Hezekiah M. Carty
+hcarty@atmos.umd.edu

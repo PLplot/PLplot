@@ -1,0 +1,5 @@
+*~
+*.flc
+*.pyc
+tmp/
+build/
