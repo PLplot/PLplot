@@ -21,11 +21,8 @@
 
 #include "plplotP.h"
 
-#define CIRCLE_SEGMENTS    ( PL_MAXPOLY - 1 )
+#define CIRCLE_SEGMENTS    ( PL_MAXPOLY - 2 )
 #define DEG_TO_RAD( x )                    ( ( x ) * M_PI / 180.0 )
-
-#define PLARC_POINT_X( x, a, b, theta )    ( ( x ) + ( ( a ) * cos( theta ) ) )
-#define PLARC_POINT_Y( y, a, b, theta )    ( ( y ) + ( ( b ) * sin( theta ) ) )
 
 //--------------------------------------------------------------------------
 // plarc_approx : Plot an approximated arc with a series of lines
@@ -40,11 +37,16 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
     PLFLT theta0, theta_step, theta, d_angle;
     PLINT segments;
     PLFLT xs[CIRCLE_SEGMENTS + 1], ys[CIRCLE_SEGMENTS + 1];
+    PLFLT cphi,sphi,ctheta,stheta;
 
     // The difference between the start and end angles
     d_angle = DEG_TO_RAD( angle2 - angle1 );
     if ( fabs( d_angle ) > M_PI * 2.0 )
         d_angle = M_PI * 2.0;
+
+    // Calculate cosine and sine of angle of major axis wrt the x axis
+    cphi = cos(DEG_TO_RAD(rotate));
+    sphi = sin(DEG_TO_RAD(rotate));
 
     // The number of line segments used to approximate the arc
     segments = fabs( d_angle ) / ( 2.0 * M_PI ) * CIRCLE_SEGMENTS;
@@ -61,8 +63,10 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
     for ( i = 0; i < segments; i++ )
     {
         theta = theta0 + theta_step * (PLFLT) i;
-        xs[i] = PLARC_POINT_X( x, a, b, theta );
-        ys[i] = PLARC_POINT_Y( y, a, b, theta );
+        ctheta = cos(theta);
+        stheta = sin(theta);
+        xs[i] = x + a*ctheta*cphi - b*stheta*sphi;
+        ys[i] = y + a*ctheta*sphi + b*stheta*cphi;
     }
 
     if ( fill )

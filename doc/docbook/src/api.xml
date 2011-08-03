@@ -362,6 +362,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <paramdef><parameter>b</parameter></paramdef>
 	  <paramdef><parameter>angle1</parameter></paramdef>
 	  <paramdef><parameter>angle2</parameter></paramdef>
+	  <paramdef><parameter>rotate</parameter></paramdef>
 	  <paramdef><parameter>fill</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
@@ -429,7 +430,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Starting angle of the arc.
+	    Starting angle of the arc relative to the semimajor axis.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -440,7 +441,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Ending angle of the arc.
+	    Ending angle of the arc relative to the semimajor axis.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>rotate</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Angle of the semimajor axis relative to the X-axis.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -462,7 +474,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <itemizedlist>
 	<listitem>
 	  <para>
-	    General: <function>plarc(x, y, a, b, angle1, angle2, fill)</function>
+	    General: <function>plarc(x, y, a, b, angle1, angle2, rotate, fill)</function>
 	  </para>
 	</listitem>
       </itemizedlist>
