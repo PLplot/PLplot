@@ -30,104 +30,59 @@ proc about {{w .about}} {
     normal_text_setup $w 56
 
     insertWithTags $w.t {\
-      This is the TK output driver for PLPLOT, a scientific plotting package.
-PLPLOT is relatively small, portable, freely distributable, and is rich
-enough to satisfy most users.  It has a wide range of plot types including
-line (linear, log), contour, 3D, fill, and almost 1000 characters (including
-Greek and mathematical) in its extended font set.  The package is 
-designed to make it easy to quickly get graphical output; only a handful of
-function calls is typically required.  For more advanced use, virtually all
-aspects of plotting are configurable.
 
-At present, PLPLOT is known to work on the following systems:
+      This is the Tk output driver for PLplot, a cross-platform
+software package for creating scientific plots. To help accomplish
+that task it is organized as a core C library, language bindings for
+that library, and device drivers which control how the plots are
+presented in non-interactive and interactive plotting contexts.  The
+PLplot core library can be used to create standard x-y plots, semi-log
+plots, log-log plots, contour plots, 3D surface plots, mesh plots, bar
+charts and pie charts. Multiple graphs (of the same or different
+sizes) may be placed on a single page, and multiple pages are allowed
+for those device formats that support them.  PLplot has core support
+for Unicode. This means for our many Unicode-aware devices that plots
+can be labelled using the enormous selection of Unicode mathematical
+symbols. A large subset of our Unicode-aware devices also support
+complex text layout (CTL) languages such as Arabic, Hebrew, and Indic
+and Indic-derived CTL scripts such as Devanagari, Thai, Lao, and
+Tibetan.  A number of compiled and interpreted languages have access
+to PLplot, see our list of language bindings.  PLplot device drivers
+support a number of different file formats for non-interactive
+plotting and a number of different platforms that are suitable for
+interactive plotting. It is easy to add new device drivers to PLplot
+by writing a small number of device dependent routines.  PLplot is
+free software primarily licensed under the LGPL.
 
-	Unix:	A/IX 		(IBM)
-		DG/UX		(Data General)
-		HP-UX		(Hewlett-Packard)
-		IRIX		(Silicon Graphics)
-		Linux		(various)
-		OSF/1		(DEC)
-		SunOS		(Sun)
-		Super-UX	(NEC)
-		SysV		(various)
-		Ultrix		(DEC)
-		Unicos		(Cray)
+Platforms: PLplot is currently known to work on Linux, Mac OS X, and
+other Unices and Windows (2000, XP and Vista).  PLplot is built on
+these platforms using our CMake-based build system.
 
-	Amiga/Exec
-	MS-DOS
-	OS/2
-	NeXT
+Language Bindings: The core C PLplot library has language bindings in
+Ada, C/C++/D, Fortran 77/90, Java, Lisp, Lua, OCaml, Octave, Perl,
+Python, and Tcl/Tk.
 
-      Many different output device drivers are available, including postscript,
-tektronix, HP laserjet, HP pen plotters, XFig, xterm, X-windows, and a
-portable metafile format, among others.  The TK driver under Unix/X 
-provides a full user interface, with facilities to zoom, pan, orient,
-determine placement on the output page, and save the plot or any set of
-plots to a specified file and device type.  The metafile renderer (} normal
-    insertWithTags $w.t {plrender} bold
-    insertWithTags $w.t {)
-supports seeking backwards or forwards to any specified page when
-interactively viewing metafile output.
+File Devices: PLplot has devices that produce files in the CGM, GIF,
+JPEG, LaTeX, PBM, PDF, PNG, PostScript, SVG, and Xfig formats.
+
+GUI Devices: PLplot has devices that produce GUI's on the GNOME, Gtk+,
+PyQt, Qt, Tcl/Tk, wxWidgets, and X platforms.
 
       Tcl stands for ``tool command language'' and is pronounced ``tickle.''  
-TK is an X11 toolkit that provides the Motif look and feel and is 
+Tk is an X11 toolkit that provides the Motif look and feel and is 
 implemented using the Tcl command language.  All of the fancy graphical
 elements (buttons, menus, scrollbars, etc) in the user interface are
-implemented via TK with Tcl the glue that holds everything together.  
-The combination of Tcl and TK is very powerful, providing easy access at
+implemented via Tk with Tcl the glue that holds everything together.  
+The combination of Tcl and Tk is very powerful, providing easy access at
 a high level to the workings of the graphical interface, which in turn
 enables rapid prototyping and an unparalleled degree of flexibility.  The
-PLPLOT TK driver is built with these principles in mind, and provides 
+PLPLOT Tk driver is built with these principles in mind, and provides 
 ways for the user to customize the interface (add buttons, menu entries,
 callbacks to user code, etc).
 
-      The PLPLOT package is freely distributable, but NOT in the public 
-domain. The PLPLOT source code, except header files and those files
-explicitly granting permission, may not be used in a commercial software
-package without consent of the authors.  You are allowed and encouraged 
-to include the PLPLOT object library and header files in a commercial 
-package provided that: (1) it is explicitly and prominently stated that the
-PLPLOT library is freely available, and (2) the full copyrights on the 
-PLPLOT package be displayed somewhere in the documentation for the 
-package.
+For more information about PLplot (including complete documentation)
+consult our website at http://plplot.sourceforge.net.
 
-      Suggestions on how to improve this code are welcome, especially in the 
-form of user-contributed enhancements or bug fixes.  If PLPLOT is used 
-in any published papers, please include an acknowledgment or citation as 
-this will help us to continue improving PLPLOT.  Also, please remember 
-that as PLPLOT is not a commercial product, the authors cannot be 
-expected to offer the kind of support that a commercial product may.  
-There is great interest in extending PLPLOT and fixing bugs, but we can 
-only afford to work on it part time.  Improvements will necessarily focus 
-on those which help us get our work done.
-
-      PLPLOT is written in C, enabling it to run on many platforms 
-practically without modification.  Fortran programs may use it 
-transparently; stub routines are provided to handle the C <-> Fortran
-interface without any modification of the user program (although some of 
-the more advanced features are only available from C).  C programs are
-required to include the header file ``plplot.h''; see the documentation for
-more details.
-
-      The main documentation for PLPLOT is available in both postscript
-(plplot.ps) and info (plplot.info) form.  These are built from the various
-LaTeXinfo files stored in the doc/ directory of the source distribution.
-Unfortunately documentation tends to lag actual improvements to the code,
-so don't be surprised if some known features are not explained there.
-Consult ``Changes.log'' to see a list of recent changes. For more 
-information on how to get or use PLPLOT on your system, see (1) the
-appendices to the PLPLOT manual, and (2) the system-specific documentation
-in the appropriate sys/<system> directory of the source distribution.
-
-      To become a subscriber to the PLPLOT mailing list, send a request to
-plplot-request@dino.ph.utexas.edu.  The latest plplot source distribution 
-and document in postscript form can be obtained via anonymous ftp from
-dino.ph.utexas.edu, in the plplot/ directory.
-
-Maurice LeBrun
-Institute for Fusion Studies
-University of Texas
-mjl@dino.ph.utexas.edu 
 } normal
     $w.t configure -state disabled
     $w.t mark set insert 0.0
