@@ -1546,7 +1546,7 @@ void arc( PLStream *pls, arc_struct *arc_info )
 {
     PLCairo *aStream;
     double  x, y, a, b;
-    double  angle1, angle2;
+    double  angle1, angle2, rotate;
 
     set_current_context( pls );
 
@@ -1561,6 +1561,7 @@ void arc( PLStream *pls, arc_struct *arc_info )
     // Degrees to radians
     angle1 = arc_info->angle1 * M_PI / 180.0;
     angle2 = arc_info->angle2 * M_PI / 180.0;
+    rotate = arc_info->rotate * M_PI / 180.0;
 
     cairo_save( aStream->cairoContext );
 
@@ -1570,6 +1571,7 @@ void arc( PLStream *pls, arc_struct *arc_info )
     // Make sure the arc is properly shaped and oriented
     cairo_save( aStream->cairoContext );
     cairo_translate( aStream->cairoContext, x, y );
+    cairo_rotate( aStream->cairoContext, rotate );
     cairo_scale( aStream->cairoContext, a, b );
     cairo_arc( aStream->cairoContext, 0.0, 0.0, 1.0, angle1, angle2 );
     if ( arc_info->fill )

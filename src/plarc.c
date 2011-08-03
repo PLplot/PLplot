@@ -134,6 +134,7 @@ c_plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLFLT r
 
         arc_info->angle1 = angle1;
         arc_info->angle2 = angle2;
+        arc_info->rotate = rotate;
         arc_info->fill   = fill;
 
         plP_esc( PLESC_ARC, arc_info );

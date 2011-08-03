@@ -1036,6 +1036,7 @@ typedef struct
     PLFLT  b;
     PLFLT  angle1;
     PLFLT  angle2;
+    PLFLT  rotate;
     PLBOOL fill;
 } arc_struct;
 
