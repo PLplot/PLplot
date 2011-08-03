@@ -5,6 +5,8 @@ plplot (5.9.8-1) unstable; urgency=low
   * debian/rules: 
     + update to reflect changs in upstream ChangeLog file name. 
     + Tidy up some old comments.
+  * debian/rules, debian/control.in, debian/libplplot9-ocaml.files.in:
+    Add new libplplot9-ocaml package which includes the ocaml bindings.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 02 Aug 2011 15:41:38 +0100
 

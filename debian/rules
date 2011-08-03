@@ -30,6 +30,9 @@ JAVA_HOME = /usr/lib/jvm/default-java
 
 PYVERS = $(shell pyversions -vr)
 
+OCAMLABI := $(shell ocamlc -version)
+OFILES := $(filter-out debian/control,$(patsubst %.in,%,$(wildcard debian/*.in)))
+
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 # Disable Ada build on armel - gnat not available on armel at the moment.
@@ -56,7 +59,7 @@ JAVA_OPTIONS = \
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=OFF \
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=ON \
 	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
         -DTCL_TCLSH=/usr/bin/tclsh8.5 \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
@@ -64,6 +67,8 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
 
+ocamlinit:
+	for f in $(OFILES); do sed -e 's/@OCamlABI@/$(OCAMLABI)/g' $$f.in > $$f; done
 
 control:
 ifeq ($(BUILD_ADA),no)
@@ -73,7 +78,7 @@ else
 endif
 
 config: config-stamp
-config-stamp: control
+config-stamp: control ocamlinit
 	mkdir $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
@@ -213,7 +218,7 @@ binary-arch: build-arch install-arch
           -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib
 	octave-depends --package=octave-plplot
 	dh_installdeb -a
-	dh_gencontrol -a
+	dh_gencontrol -a -- -VF:OCamlABI="$(OCAMLABI)"
 	dh_md5sums -a
 	dh_builddeb -a
 
@@ -222,4 +227,4 @@ source diff:
 
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary config \
-        patch unpatch control
+        patch unpatch control ocamlinit
