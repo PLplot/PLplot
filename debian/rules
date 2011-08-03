@@ -53,12 +53,11 @@ JAVA_OPTIONS = \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
 
-CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
+CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
 	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=OFF \
 	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
-        -DDEFAULT_NO_QT_DEVICES=ON \
         -DTCL_TCLSH=/usr/bin/tclsh8.5 \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
 
@@ -85,12 +84,6 @@ config-stamp: control
 build-arch: build-arch-stamp
 build-arch-stamp: patch config-stamp
 	dh_testdir
-	# The hack below is to go around a bug in matwrap that was
-	# preventing the Octave binding to compile with g++ 4.0
-	#( cd lib ; $(MAKE) )
-	#( cd src ; $(MAKE) )
-	#( cd bindings/octave ; \
-	#  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	( cd $(BUILD_DIR) ; $(MAKE)  )
 	-( cd $(BUILD_DIR) ; ctest -VV )
 	touch build-arch-stamp
@@ -113,10 +106,9 @@ clean: unpatch
 
 install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-		     --no-package=plplot-bin --no-package=python-plplot   \
+		     --no-package=python-plplot   \
 		     --no-package=libplplot9-java --no-package=libplplot-ada
 	dh_movefiles --package=python-plplot
-	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=libplplot9-java
 ifeq ($(BUILD_ADA),yes)
 	dh_movefiles --package=libplplot-ada
@@ -135,7 +127,7 @@ install-arch-stamp: build-arch-stamp
 
 	( cd $(debdoc)/plplot ; \
 	  rm -f COPYING.LIB *.dvi ; \
-	  mv ChangeLog changelog )
+	  mv ChangeLog.release changelog )
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
 
 	install -d $(debex)/perl
@@ -146,8 +138,8 @@ install-arch-stamp: build-arch-stamp
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
-		python-plplot plplot-bin libplplot-c++9c2 		\
-		plplot9-driver-wxwidgets                                \
+		python-plplot libplplot-c++9c2 plplot9-driver-wxwidgets \
+		plplot9-driver-qt					\
 		plplot9-driver-cairo libplplot-fortran9	; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
@@ -180,7 +172,7 @@ install-python: $(PYVERS:%=install-python%)
 
 install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy;/usr/lib/pyshared/python$*/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
 	  for d in python ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
@@ -211,7 +203,8 @@ binary-arch: build-arch install-arch
 	dh_installdocs --package=$(libpkg) --package=libcsiro0
 	dh_installchangelogs --package=$(libpkg) --package=libcsiro0
 
-	dh_pycentral --package=python-plplot
+	dh_python2 --package=python-plplot
+	dh_numpy
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a

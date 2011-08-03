@@ -1,0 +1,3 @@
+usr/lib/plplot*/driversd/qt.*
+usr/lib/libplplotqtd.so.*
+usr/share/doc/plplot9-driver-qt
