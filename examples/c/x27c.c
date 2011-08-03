@@ -24,11 +24,14 @@
 
 #include "plcdemos.h"
 
+#define DEG_TO_RAD( x )                    ( ( x ) * M_PI / 180.0 )
+
 // Function prototypes
 
 void cycloid( void );
 void spiro( PLFLT data[], int fill );
 PLINT gcd( PLINT a, PLINT b );
+void arcs( void );
 
 //--------------------------------------------------------------------------
 // main
@@ -110,6 +113,10 @@ main( int argc, const char *argv[] )
         plvpor( 0.0, 1.0, 0.0, 1.0 );
         spiro( &params[i][0], fill );
     }
+
+// Finally, an example to test out plarc capabilities
+
+    arcs();
 
 // Don't forget to call plend() to finish off!
 
@@ -215,4 +222,34 @@ spiro( PLFLT params[], int fill )
     {
         plline( 1 + steps * windings, xcoord, ycoord );
     }
+}
+
+void arcs() {
+#define NSEG 8
+    int i;
+    PLFLT theta, dtheta, thetarad;
+    PLFLT a, b;
+
+    theta = 0.0;
+    dtheta = 360.0 / NSEG;
+    plenv( -10.0, 10.0, -10.0, 10.0, 1, 0 );
+
+    // Plot segments of circle in different colors
+    for ( i = 0; i < NSEG; i++ ) {
+        plcol0( i%2 + 1 );
+        plarc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0);
+        theta = theta + dtheta;
+    }
+
+    // Draw several filled ellipses inside the circle at different
+    // angles.
+    a = 3.0;
+    b = a * tan( DEG_TO_RAD(dtheta)/2.0 );
+    theta = dtheta/2.0;
+    for ( i = 0; i < NSEG; i++ ) {
+        plcol0( 2 - i%2 );
+        plarc( a*cos(DEG_TO_RAD(theta)), a*sin(DEG_TO_RAD(theta)), a, b, 0.0, 360.0, theta, 1);
+        theta = theta + dtheta;
+    }
+
 }
