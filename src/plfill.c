@@ -134,7 +134,7 @@ c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
 {
     PLINT _xpoly[PL_MAXPOLY], _ypoly[PL_MAXPOLY];
     PLINT *xpoly, *ypoly;
-    PLINT i;
+    PLINT i, npts;
     PLFLT xt, yt;
 
     if ( plsc->level < 3 )
@@ -147,6 +147,7 @@ c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
         plabort( "plfill: Not enough points in object" );
         return;
     }
+    npts = n;
     if ( n > PL_MAXPOLY - 1 )
     {
         xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
@@ -181,7 +182,7 @@ c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
         plsc->clpymi, plsc->clpyma, plP_fill );
 
-    if ( xpoly != _xpoly )
+    if ( npts > PL_MAXPOLY - 1 )
     {
         free( xpoly );
         free( ypoly );
@@ -227,7 +228,7 @@ c_plfill3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z )
     {
         tx    = (PLFLT *) malloc( ( n + 1 ) * sizeof ( PLFLT ) );
         ty    = (PLFLT *) malloc( ( n + 1 ) * sizeof ( PLFLT ) );
-        ty    = (PLFLT *) malloc( ( n + 1 ) * sizeof ( PLFLT ) );
+        tz    = (PLFLT *) malloc( ( n + 1 ) * sizeof ( PLFLT ) );
         xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
         ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
 
