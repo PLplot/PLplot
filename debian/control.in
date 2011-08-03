@@ -321,7 +321,7 @@ Description: Scientific plotting library (qt driver)
  C++ bindings to allow use of the PLplot API in qt applications.
 
 
-Package: libplplot9-ocaml
+Package: libplplot-ocaml
 Architecture: any
 Section: libs
 Depends: libplplot9, ocaml-base-nox-${F:OCamlABI}, ${shlibs:Depends}, ${misc:Depends}
