@@ -181,7 +181,7 @@ c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
         plsc->clpymi, plsc->clpyma, plP_fill );
 
-    if ( n > PL_MAXPOLY - 1 )
+    if ( xpoly != _xpoly )
     {
         free( xpoly );
         free( ypoly );
