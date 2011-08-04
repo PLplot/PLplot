@@ -13,7 +13,7 @@ Build-Depends: cmake (>= 2.6.3), debhelper (>= 7),
  python-numpy (>= 1:1.4.1-4~), ttf-freefont, default-jdk,
  fastjar, swig, gnat [!sh4], libqt4-dev, python-sip-dev,
  ocaml-nox, camlidl, ocaml-findlib, libcairo-ocaml-dev,
- liblablgtk2-ocaml-dev
+ liblablgtk2-ocaml-dev, liblua5.1-0-dev, lua5.1, gdc
 Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex, ghostscript
 Build-Conflicts: libplplot5, octave3.0-headers
@@ -46,10 +46,11 @@ Description: Scientific plotting library
 Package: libplplot-dev
 Architecture: any
 Section: libdevel
-Recommends: pkg-config
-Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev, libplplot-c++9c2 (= ${binary:Version}), 
+Recommends: pkg-config, libplplot-c++9c2 (= ${binary:Version}), 
  libplplot-fortran9 (= ${binary:Version})[ADA:, libplplot-ada (= ${binary:Version}):], 
+ libplplot-ocaml, libplplot-lua, libplplot-d
+Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
+ libltdl3-dev 
  ${misc:Depends}
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -64,7 +65,9 @@ Description: Scientific plotting library (development files)
  Fortran and Ada with PLplot.  Examples of programs for these languages are
  also included.  For development in Tcl/Tk, Python, Octave, and Java install
  the plplot-tcl, python-plplot, octave-plplot and libplplot9-java packages, 
- respectively.
+ respectively. This package also includes the ocaml, lua and D examples. To use
+ a particular language you will also need to install the libplplot-xxx package
+ for that language.
 
 Package: libplplot-c++9c2
 Architecture: any
@@ -283,8 +286,7 @@ Description: Ada support for PLplot, a plotting library
  handful of function calls is typically required.  For more advanced use,
  virtually all aspects of plotting are configurable.
  .
- This package contains the Ada bindings for PLplot.  The ada bindings are
- currently under development and should be considered experimental.
+ This package contains the Ada bindings for PLplot.  
 :]
 Package: plplot-doc
 Architecture: all
@@ -335,3 +337,35 @@ Description: Scientific plotting library (ocaml bindings)
  virtually all aspects of plotting are configurable.
  .
  This package provides the OCaml bindings for PLplot.
+
+
+Package: libplplot-lua
+Architecture: any
+Section: libs
+Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
+Description: Scientific plotting library (lua bindings)
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package provides the lua bindings for PLplot.
+
+
+Package: libplplot-d
+Architecture: any
+Section: libs
+Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
+Description: Scientific plotting library (D language bindings)
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package provides the D language bindings for PLplot.

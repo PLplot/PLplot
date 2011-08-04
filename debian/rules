@@ -59,7 +59,7 @@ JAVA_OPTIONS = \
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=ON \
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON \
 	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
         -DTCL_TCLSH=/usr/bin/tclsh8.5 \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
@@ -144,12 +144,12 @@ install-arch-stamp: build-arch-stamp
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot libplplot-c++9c2 plplot9-driver-wxwidgets \
-		plplot9-driver-qt					\
-		plplot9-driver-cairo libplplot-fortran9	; do		\
+		plplot9-driver-qt libplplot9-java			\
+		plplot9-driver-cairo libplplot-fortran9			\
+		libplplot-ocaml libplplot-lua libplplot-d ; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
-	ln -s $(libpkg) $(debdoc)/libplplot9-java
 	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
 

@@ -7,6 +7,10 @@ plplot (5.9.8-1) unstable; urgency=low
     + Tidy up some old comments.
   * debian/rules, debian/control.in, debian/libplplot-ocaml.files.in:
     Add new libplplot-ocaml package which includes the ocaml bindings.
+  * debian/rules, debian/control.in, debian/libplplot-lua.files.in:
+    Add new libplplot-lua package which includes the lua bindings.
+  * debian/rules, debian/control.in, debian/libplplot-d.files.in:
+    Add new libplplot-d package which includes the D language bindings.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 02 Aug 2011 15:41:38 +0100
 
