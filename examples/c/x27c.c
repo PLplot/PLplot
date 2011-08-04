@@ -24,8 +24,6 @@
 
 #include "plcdemos.h"
 
-#define DEG_TO_RAD( x )                    ( ( x ) * M_PI / 180.0 )
-
 // Function prototypes
 
 void cycloid( void );
@@ -227,7 +225,7 @@ spiro( PLFLT params[], int fill )
 void arcs() {
 #define NSEG 8
     int i;
-    PLFLT theta, dtheta, thetarad;
+    PLFLT theta, dtheta;
     PLFLT a, b;
 
     theta = 0.0;
@@ -244,11 +242,11 @@ void arcs() {
     // Draw several filled ellipses inside the circle at different
     // angles.
     a = 3.0;
-    b = a * tan( DEG_TO_RAD(dtheta)/2.0 );
+    b = a * tan( (dtheta/180.0*M_PI)/2.0 );
     theta = dtheta/2.0;
     for ( i = 0; i < NSEG; i++ ) {
         plcol0( 2 - i%2 );
-        plarc( a*cos(DEG_TO_RAD(theta)), a*sin(DEG_TO_RAD(theta)), a, b, 0.0, 360.0, theta, 1);
+        plarc( a*cos(theta/180.0*M_PI), a*sin(theta/180.0*M_PI), a, b, 0.0, 360.0, theta, 1);
         theta = theta + dtheta;
     }
 

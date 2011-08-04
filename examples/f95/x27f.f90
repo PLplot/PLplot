@@ -101,6 +101,9 @@ program x27f
      call spiro( params(1,i), fill )
   end do
 
+  ! Finally, an example to test out plarc capabilities
+  call arcs()
+
   call plend()
 
 end program x27f
@@ -205,3 +208,44 @@ subroutine spiro( params, fill )
   endif
 
 end subroutine spiro
+
+!  ===============================================================
+
+subroutine arcs( )
+
+  use plplot
+  implicit none
+
+  integer NSEG
+  parameter ( NSEG = 8 )
+  integer i;
+  real (kind=plflt) theta, dtheta
+  real (kind=plflt) a, b
+
+  theta = 0.0_plflt
+  dtheta = 360.0_plflt / dble(NSEG)
+  call plenv( -10.0_plflt, 10.0_plflt, -10.0_plflt, 10.0_plflt, 1, 0 )
+
+  ! Plot segments of circle in different colors
+  do i = 0, NSEG-1
+     call plcol0( mod(i,2) + 1 )
+     call plarc(0.0_plflt, 0.0_plflt, 8.0_plflt, 8.0_plflt, theta, &
+          theta + dtheta, 0.0_plflt, 0)
+     theta = theta + dtheta
+  enddo
+  
+  ! Draw several filled ellipses inside the circle at different
+  ! angles.
+  a = 3.0_plflt
+  b = a * tan( (dtheta/180.0_plflt*PL_PI)/2.0_plflt )
+  theta = dtheta/2.0_plflt
+  do i = 0, NSEG-1 
+     call plcol0( 2 - mod(i,2) )
+     call plarc( a*cos(theta/180.0_plflt*PL_PI), &
+          a*sin(theta/180.0_plflt*PL_PI), &
+          a, b, 0.0_plflt, 360.0_plflt, theta, .true.)
+     theta = theta + dtheta;
+  enddo
+
+end subroutine arcs
+      

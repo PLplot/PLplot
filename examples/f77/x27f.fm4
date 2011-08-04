@@ -102,6 +102,10 @@ c     fill the curves.
           call spiro( params(1,i), fill )
   130 continue
 
+c     Finally, an example to test out plarc capabilities
+
+      call arcs()
+
       call plend()
       end
 
@@ -200,5 +204,43 @@ c     http://mathforum.org/mathimages/index.php/Hypotrochoid.
       else
          call plline( 1+steps*windings, xcoord, ycoord )
       endif
+
+      end
+
+c  ===============================================================
+
+      subroutine arcs()
+      
+      implicit none
+      include 'plplot_parameters.h'
+      integer NSEG
+      parameter ( NSEG = 8 )
+      integer i;
+      real*8 theta, dtheta
+      real*8 a, b
+
+      theta = 0.0d0
+      dtheta = 360.0d0 / dble(NSEG)
+      call plenv( -10.0d0, 10.0d0, -10.0d0, 10.0d0, 1, 0 )
+
+c     Plot segments of circle in different colors
+      do i = 0, NSEG-1
+        call plcol0( mod(i,2) + 1 )
+        call plarc(0.0d0, 0.0d0, 8.0d0, 8.0d0, theta, theta + dtheta, 
+     1       0.0d0, 0)
+        theta = theta + dtheta
+      enddo
+      
+c     Draw several filled ellipses inside the circle at different
+c     angles.
+      a = 3.0d0
+      b = a * tan( (dtheta/180.0d0*pi)/2.0d0 )
+      theta = dtheta/2.0d0
+      do i = 0, NSEG-1 
+         call plcol0( 2 - mod(i,2) )
+         call plarc( a*cos(theta/180.0d0*pi), a*sin(theta/180.0d0*pi), 
+     1        a, b, 0.0d0, 360.0d0, theta, .true.)
+         theta = theta + dtheta;
+      enddo
 
       end
