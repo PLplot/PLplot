@@ -11,6 +11,11 @@ plplot (5.9.8-1) unstable; urgency=low
     Add new libplplot-lua package which includes the lua bindings.
   * debian/rules, debian/control.in, debian/libplplot-d.files.in:
     Add new libplplot-d package which includes the D language bindings.
+  * debian/control.in: remove dependency of libplplot9-java on default-jre
+    as per policy. Java libraries do not need to depend on a java runtime.
+    Fixes lintian warning.
+  * debian/control.in: Bump standards version to 3.9.2.
+  * debian/NEWS: update NEWS file for 5.9.8.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 02 Aug 2011 15:41:38 +0100
 
@@ -20,7 +25,7 @@ plplot (5.9.7-1) UNRELEASED; urgency=low
   * debian/rules: remove -DHAVE_PTHREADS=ON option as it is on by default. 
     Option name is also likely to change in future releases.
   * debian/control.in, debian/rules, debian/python-plplot.files: change from
-    using dh_pycentral to dh_python2 (closes: #616942).
+    using dh_pycentral to dh_python2 (closes: #616942). Also fixes lintian warning.
   * debian/control.in: minor tweaks to package descriptions.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 16 Mar 2011 11:10:59 +0000

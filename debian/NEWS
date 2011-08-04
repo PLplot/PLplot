@@ -1,3 +1,11 @@
+plplot (5.9.8-1) unstable; urgency=low
+
+    New libplplot-ocaml, libplplot-lua and libplplot-d packages have been 
+    introduced. These contain the PLplot bindings for the ocaml, lua and D
+    languages respectively.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 02 Aug 2011 15:41:38 +0100
+
 plplot (5.9.6-1) unstable; urgency=low
 
     The plplot-bin package has been dropped since all the utilities in contained

@@ -2,7 +2,7 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 Build-Depends: cmake (>= 2.6.3), debhelper (>= 7), 
  tcl8.5-dev, tk8.5-dev, itcl3-dev, libx11-dev, libxext-dev,
  libxi-dev, gfortran, itk3-dev, octave3.2-headers,
@@ -105,7 +105,7 @@ Description: Scientific plotting library (fortran bindings)
 Package: libplplot9-java
 Architecture: any
 Section: java
-Depends: default-jre, ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (Java bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
