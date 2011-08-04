@@ -369,7 +369,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Draw a possible filled arc centered at
+      Draw a possibly filled arc centered at
       <literal><parameter>x</parameter></literal>,
       <literal><parameter>y</parameter></literal> with semimajor axis 
       <literal><parameter>a</parameter></literal> and semiminor axis 
