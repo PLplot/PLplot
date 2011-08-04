@@ -112,7 +112,10 @@ class x27 {
             pls.vpor( 0.0, 1.0, 0.0, 1.0 );
             spiro( params[i], fill );
         }
-
+	
+	// Finally, an example to test out plarc capabilities
+	arcs();
+	
         pls.end();
     }
 
@@ -212,6 +215,37 @@ class x27 {
         else
             pls.line( xcoord, ycoord );
     }
+
+    void arcs() {
+	int NSEG = 8;
+	int i;
+	double theta, dtheta;
+	double a, b;
+
+	theta = 0.0;
+	dtheta = 360.0 / NSEG;
+	pls.env( -10.0, 10.0, -10.0, 10.0, 1, 0 );
+	
+	// Plot segments of circle in different colors
+	for ( i = 0; i < NSEG; i++ ) {
+	    pls.col0( i%2 + 1 );
+	    pls.arc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, false);
+	    theta = theta + dtheta;
+	}
+	
+	// Draw several filled ellipses inside the circle at different
+	// angles.
+	a = 3.0;
+	b = a * Math.tan( (dtheta/180.0*Math.PI)/2.0 );
+	theta = dtheta/2.0;
+	for ( i = 0; i < NSEG; i++ ) {
+	    pls.col0( 2 - i%2 );
+	    pls.arc( a*Math.cos(theta/180.0*Math.PI), a*Math.sin(theta/180.0*Math.PI), a, b, 0.0, 360.0, theta, true);
+	    theta = theta + dtheta;
+	}
+	
+    }
+
 }
 
 //--------------------------------------------------------------------------
