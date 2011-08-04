@@ -101,6 +101,34 @@ let spiro params fill =
     plline xcoord' ycoord';
   )
 
+let deg_to_rad x = x *. pi /. 180.0
+
+let arcs () =
+  let nseg = 8 in
+
+  let theta = ref 0.0 in
+  let dtheta = 360.0 /. float_of_int nseg in
+  plenv ~-.10.0 10.0 ~-.10.0 10.0 1 0;
+
+  (* Plot segments of circle in different colors *)
+  for i = 0 to nseg - 1 do
+    plcol0 (i mod 2 + 1);
+    plarc 0.0 0.0 8.0 8.0 !theta (!theta +. dtheta) 0.0 false;
+    theta := !theta +. dtheta;
+  done;
+
+  (* Draw several filled ellipses inside the circle at different
+     angles. *)
+  let a = 3.0 in
+  let b = a *. tan (deg_to_rad dtheta /. 2.0) in
+  theta := dtheta /. 2.0;
+  for i = 0 to nseg - 1 do
+    plcol0 (2 - i mod 2);
+    plarc (a *. cos (deg_to_rad !theta)) (a *. sin (deg_to_rad !theta)) a b 0.0 360.0 !theta true;
+    theta := !theta +. dtheta;
+  done;
+  ()
+
 (*--------------------------------------------------------------------------*\
  * Generates two kinds of plots:
  *   - construction of a cycloid (animated)
@@ -163,6 +191,9 @@ let () =
     plvpor 0.0 1.0 0.0 1.0;
     spiro params.(i) true;
   done;
+
+  (* Finally, an example to test out plarc capabilities *)
+  arcs ();
 
   (* Don't forget to call plend() to finish off! *)
   plend ();
