@@ -92,6 +92,10 @@ function ix27c
     spiro( params(i,:), fill );
   endfor
 
+  ## Finally, an example to test out plarc capabilities
+  arcs();
+
+
   ## Don't forget to call plend() to finish off!
 
   plend1();
@@ -120,7 +124,7 @@ endfunction
 
 ## ===============================================================
 
-  function spiro(params, fill)
+function spiro(params, fill)
   
   NPNT=2000;
 
@@ -159,6 +163,33 @@ endfunction
   else
     plline( xcoord, ycoord );
   endif
+
+endfunction
+
+function arcs
+  NSEG = 8;
+
+  theta = 0.0;
+  dtheta = 360.0 / NSEG;
+  plenv( -10.0, 10.0, -10.0, 10.0, 1, 0 );
+
+  ## Plot segments of circle in different colors
+  for i = 0:NSEG-1
+    plcol0( mod(i,2) + 1 );
+    plarc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0);
+    theta = theta + dtheta;
+  endfor
+
+  ## Draw several filled ellipses inside the circle at different
+  ## angles.
+  a = 3.0;
+  b = a * tan( (dtheta/180.0*pi)/2.0 );
+  theta = dtheta/2.0;
+  for i = 0:NSEG-1
+    plcol0( 2 - mod(i,2) );
+    plarc( a*cos(theta/180.0*pi), a*sin(theta/180.0*pi), a, b, 0.0, 360.0, theta, 1);
+    theta = theta + dtheta;
+  endfor
 
 endfunction
 
