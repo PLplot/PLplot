@@ -81,6 +81,8 @@ proc x27 {{w loopback}} {
       $w cmd  plvpor 0.0 1.0 0.0 1.0
       spiro $w [lindex $params $i] $fill
   }
+
+  arcs $w
 }
 
 #--------------------------------------------------------------------------
@@ -164,4 +166,32 @@ proc spiro {w params fill} {
   } else {
       $w cmd plline $n xcoord ycoord
   }
+}
+
+proc arcs {w} {
+    set NSEG 8
+    set pi $::PLPLOT::PL_PI
+
+    set theta 0.0
+    set dtheta [expr {360.0 / $NSEG}]
+    $w cmd plenv -10.0 10.0 -10.0 10.0 1 0
+
+    # Plot segments of circle in different colors
+    for { set i 0 } { $i < $NSEG } {incr i} {
+        $w cmd plcol0 [expr {$i%2 + 1}]
+        $w cmd plarc 0.0 0.0 8.0 8.0 $theta [expr {$theta + $dtheta}] 0.0 0
+        set theta [expr {$theta + $dtheta}]
+    }
+
+    # Draw several filled ellipses inside the circle at different
+    # angles.
+    set a 3.0
+    set b [expr {$a * tan( ($dtheta/180.0*$pi)/2.0 )}]
+    set theta  [expr {$dtheta/2.0}]
+    for {set i 0} { $i < $NSEG } { incr i } {
+        $w cmd plcol0 [expr {2 - $i%2}]
+        $w cmd plarc [expr {$a*cos($theta/180.0*$pi)}] [expr {$a*sin($theta/180.0*$pi)}] $a $b 0.0 360.0 $theta 1
+	set theta [expr {$theta + $dtheta}]
+    }
+
 }

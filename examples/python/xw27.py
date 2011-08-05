@@ -79,6 +79,8 @@ def main():
         plvpor( 0.0, 1.0, 0.0, 1.0 )
         spiro( params[i], 1 )
 
+    arcs()
+
 def gcd(a, b):
     if not (type(a) is  types.IntType and type(b) is types.IntType):
         raise RuntimeError, "gcd arguments must be integers"
@@ -124,5 +126,31 @@ def spiro(params, fill):
         plfill( xcoord, ycoord )
     else:
         plline( xcoord, ycoord )
+
+def arcs() :
+    NSEG = 8
+
+    theta = 0.0
+    dtheta = 360.0 / NSEG
+    plenv( -10.0, 10.0, -10.0, 10.0, 1, 0 )
+
+    # Plot segments of circle in different colors
+    for i in range (NSEG) :
+        plcol0( i%2 + 1 )
+        plarc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0)
+        theta = theta + dtheta
+    
+
+    # Draw several filled ellipses inside the circle at different
+    # angles.
+    a = 3.0
+    b = a * tan( (dtheta/180.0*pi)/2.0 )
+    theta = dtheta/2.0
+    for i in range(NSEG):
+        plcol0( 2 - i%2 )
+        plarc( a*cos(theta/180.0*pi), a*sin(theta/180.0*pi), a, b, 0.0, 360.0, theta, 1)
+        theta = theta + dtheta
+    
+
 
 main()
