@@ -94,6 +94,34 @@ function spiro( params, fill )
 end
 
 
+function arcs()
+    NSEG = 8
+
+    theta = 0.0
+    dtheta = 360.0 / NSEG
+    pl.env( -10.0, 10.0, -10.0, 10.0, 1, 0 )
+
+    -- Plot segments of circle in different colors
+    for i = 0, NSEG-1 do
+        pl.col0( i%2 + 1 )
+        pl.arc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0)
+        theta = theta + dtheta
+    end    
+
+    -- Draw several filled ellipses inside the circle at different
+    -- angles.
+    a = 3.0
+    b = a * math.tan( (dtheta/180.0*math.pi)/2.0 )
+    theta = dtheta/2.0
+    for i = 0, NSEG-1 do
+        pl.col0( 2 - i%2 )
+        pl.arc( a*math.cos(theta/180.0*math.pi), a*math.sin(theta/180.0*math.pi), a, b, 0.0, 360.0, theta, 1)
+        theta = theta + dtheta
+    end
+
+end
+
+
 ----------------------------------------------------------------------------
 -- main
 --
@@ -161,5 +189,7 @@ for i = 1, 9 do
   pl.vpor(0, 1, 0, 1) 
   spiro(params[i], fill) 
 end
+
+arcs()
 
 pl.plend()
