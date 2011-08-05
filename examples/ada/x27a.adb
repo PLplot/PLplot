@@ -43,7 +43,7 @@ procedure x27a is
     -- angle loop using gcd.
     -- N.B. N is just a place holder since it is no longer used
     -- (because we now have proper termination of the angle loop).
-    params : Real_Matrix(0 .. 8, 0 .. 3) := 
+    params : Real_Matrix(0 .. 8, 0 .. 3) :=
       ((21.0,  7.0,  7.0,  3.0),
        (21.0,  7.0, 10.0,  3.0),
        (21.0, -7.0, 10.0,  3.0),
@@ -53,18 +53,18 @@ procedure x27a is
        (20.0, 13.0,  7.0, 20.0),
        (20.0, 13.0, 20.0, 20.0),
        (20.0,-13.0, 20.0, 20.0));
-       
+
     fill : Boolean;
 
     -- To understand why spiro is written this way you need to understand the
     -- C code from which this was derived. In the main C program, params
-    -- is a two-dimensional array with 9 rows numbered 0 .. 8 and 4 columns 
-    -- numbered 0 .. 3. When spiro is called, it is passed the _address_ of the 
+    -- is a two-dimensional array with 9 rows numbered 0 .. 8 and 4 columns
+    -- numbered 0 .. 3. When spiro is called, it is passed the _address_ of the
     -- element of params's ith row, 0th column--nothing else. Then, inside spiro,
     -- the corresponding entity (also called params!) appears as a
-    -- _one-dimensional_ array whose 0th element shares the same address as what 
-    -- was passed from the main program. So memory locations starting there, 
-    -- and numbered from 0, represent the 1D array equivalent to the ith row of 
+    -- _one-dimensional_ array whose 0th element shares the same address as what
+    -- was passed from the main program. So memory locations starting there,
+    -- and numbered from 0, represent the 1D array equivalent to the ith row of
     -- params in the main program. Wilma, call Barney--we're programming a
     -- micaprocessor here.
     procedure spiro(params : Real_Matrix; row : Integer; fill : Boolean) is
@@ -96,10 +96,10 @@ procedure x27a is
             while bb /= 0 loop
                 t := bb;
                 bb := aa mod bb;
-                aa := t; 
+                aa := t;
             end loop;
             return aa;
-        end gcd;        
+        end gcd;
 
     begin -- spiro
         -- Fill the coordinates.
@@ -154,6 +154,38 @@ procedure x27a is
         null; -- TODO
     end cycloid;
 
+    procedure arcs is
+       NSEG : constant Integer := 8;
+       theta : Long_Float;
+       dtheta : Long_Float;
+       a : Long_Float;
+       b : Long_Float;
+    begin
+
+       theta := 0.0;
+       dtheta := 360.0/Long_Float(NSEG);
+       plenv( -10.0, 10.0, -10.0, 10.0, 1, 0 );
+
+       -- Plot segments of circle in different colors
+       for i in 0 .. NSEG-1 loop
+          plcol0( (i mod 2) + 1 );
+          plarc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, False);
+          theta := theta + dtheta;
+       end loop;
+
+       -- Draw several filled ellipses inside the circle at different
+       -- angles.
+       a := 3.0;
+       b := a * tan( (dtheta/180.0*pi)/2.0 );
+       theta := dtheta/2.0;
+       for i in 0 .. NSEG-1 loop
+          plcol0( 2 - (i mod 2 ) );
+          plarc( a*cos(theta/180.0*pi), a*sin(theta/180.0*pi), a, b, 0.0, 360.0, theta, True);
+          theta := theta + dtheta;
+       end loop;
+
+    end arcs;
+
 begin
     -- Parse and process command line arguments
     plparseopts(PL_PARSE_FULL);
@@ -194,6 +226,8 @@ begin
         plvpor(0.0, 1.0, 0.0, 1.0);
         spiro(params, i, fill);
     end loop;
+
+    arcs;
 
     -- Don't forget to call plend to finish off!
     plend;
