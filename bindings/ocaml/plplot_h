@@ -259,11 +259,15 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 */
 
  void
-c_plcolorbar( plplot_position_opt position, plplot_colorbar_opt opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
+c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+              plplot_colorbar_opt opt, plplot_position_opt position, PLFLT x, PLFLT y,
+              PLFLT x_length, PLFLT y_length,
+              PLINT bg_color, PLINT bb_color, PLINT bb_style,
+              PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
-              PLINT n_colors, PLFLT *colors, PLFLT *values );
+              PLINT n_values, /*const*/ PLFLT *values );
 
  void
 c_pllightsource(PLFLT x, PLFLT y, PLFLT z);

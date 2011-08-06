@@ -82,8 +82,9 @@ let manual_function_attributes =
     {
       function_name = "c_plcolorbar";
       function_attrs = None;
-      parameter_attrs = Some ["colors", ["in"; "size_is(n_colors)"];
-                              "values", ["in"; "size_is(n_colors)"]];
+      parameter_attrs = Some ["values", ["in"; "size_is(n_values)"];
+                              "p_colorbar_width", ["out"];
+                              "p_colorbar_height", ["out"]];
     };
     (* For now, this will be wrapped by hand...
     {
