@@ -38,6 +38,7 @@
 [mlname(plgdidev)] void c_plgdidev ( [out] double * p_mar, [out] double * p_aspect, [out] double * p_jx, [out] double * p_jy );
 [mlname(plgdiori)] void c_plgdiori ( [out] double * p_rot );
 [mlname(plgdiplt)] void c_plgdiplt ( [out] double * p_xmin, [out] double * p_ymin, [out] double * p_xmax, [out] double * p_ymax );
+[mlname(plgdrawmode)] enum plplot_draw_mode_enum c_plgdrawmode ( );
 [mlname(plgfci)] void c_plgfci ( [out] long long * pfci );
 [mlname(plgfam)] void c_plgfam ( [out] int * p_fam, [out] int * p_num, [out] int * p_bmax );
 [mlname(plgfnam)] void c_plgfnam ( [string, out, length_is(1024)] char * fnam );
@@ -111,6 +112,7 @@
 [mlname(plsfont)] void c_plsfont ( enum plplot_fci_family_enum family, enum plplot_fci_style_enum style, enum plplot_fci_weight_enum weight );
 [mlname(plsmaj)] void c_plsmaj ( double def, double scale );
 [mlname(plsmin)] void c_plsmin ( double def, double scale );
+[mlname(plsdrawmode)] void c_plsdrawmode ( enum plplot_draw_mode_enum mode );
 [mlname(plsori)] void c_plsori ( int ori );
 [mlname(plspage)] void c_plspage ( double xp, double yp, int xleng, int yleng, int xoff, int yoff );
 [mlname(plspal0)] void c_plspal0 ( [string] const char * filename );

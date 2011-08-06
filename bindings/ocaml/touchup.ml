@@ -389,10 +389,12 @@ let process_prototype line =
      prototypes. *)
   let pieces =
     line
-    |> Pcre.extract ~pat:"^((?:(?:const|unsigned) )?\\w+ (?:\\*\\s*)?)(\\w+)\\s*\\(([\\w\\s\\*\\[\\],]*)\\)" ~full_match:false
+    |> Pcre.extract ~pat:"^((?:(?:const|unsigned|enum) )?\\w+ (?:\\*\\s*)?)(\\w+)\\s*\\(([\\w\\s\\*\\[\\],]*)\\)" ~full_match:false
     |> Array.map minimize_whitespace
   in
   (* Get the return type, name and arg list separately *)
+  Array.iter print_string pieces;
+  print_newline ();
   let return_type = pieces.(0) in
   let function_name = pieces.(1) in
   let params =
@@ -449,15 +451,11 @@ let process_file () =
   |> List.map minimize_whitespace
   |> List.map (
        fun l ->
-         if Pcre.pmatch ~pat:"^enum" l then
-           l
-         else (
-           try
-             process_prototype l
-           with
-           | Not_found ->
-               failwith ("Unhandled or malformed prototype: " ^ l)
-         )
+         try
+           process_prototype l
+         with
+         | Not_found ->
+             failwith ("Unhandled or malformed prototype: " ^ l)
      )
   |> List.map minimize_whitespace
   |> List.map (fun l -> l ^ "\n")

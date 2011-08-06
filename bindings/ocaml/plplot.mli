@@ -644,6 +644,11 @@ and plplot_fci_weight_enum =
   | PL_FCI_WEIGHT_UNCHANGED
   | PL_FCI_MEDIUM
   | PL_FCI_BOLD
+and plplot_draw_mode_enum =
+  | PL_DRAWMODE_UNKNOWN
+  | PL_DRAWMODE_DEFAULT
+  | PL_DRAWMODE_REPLACE
+  | PL_DRAWMODE_XOR
 external pl_setcontlabelformat : int -> int -> unit
   = "camlidl_plplot_core_c_pl_setcontlabelformat"
 external pl_setcontlabelparam : float -> float -> float -> int -> unit
@@ -719,6 +724,8 @@ external plgdidev : unit -> float * float * float * float
 external plgdiori : unit -> float = "camlidl_plplot_core_c_plgdiori"
 external plgdiplt : unit -> float * float * float * float
   = "camlidl_plplot_core_c_plgdiplt"
+external plgdrawmode : unit -> plplot_draw_mode_enum
+  = "camlidl_plplot_core_c_plgdrawmode"
 external plgfci : unit -> int64 = "camlidl_plplot_core_c_plgfci"
 external plgfam : unit -> int * int * int = "camlidl_plplot_core_c_plgfam"
 external plgfnam : unit -> string = "camlidl_plplot_core_c_plgfnam"
@@ -869,6 +876,8 @@ external plsfont : plplot_fci_family_enum -> plplot_fci_style_enum ->
   = "camlidl_plplot_core_c_plsfont"
 external plsmaj : float -> float -> unit = "camlidl_plplot_core_c_plsmaj"
 external plsmin : float -> float -> unit = "camlidl_plplot_core_c_plsmin"
+external plsdrawmode : plplot_draw_mode_enum -> unit
+  = "camlidl_plplot_core_c_plsdrawmode"
 external plsori : int -> unit = "camlidl_plplot_core_c_plsori"
 external plspage : float -> float -> int -> int -> int -> int -> unit
   = "camlidl_plplot_core_c_plspage_bytecode" "camlidl_plplot_core_c_plspage"

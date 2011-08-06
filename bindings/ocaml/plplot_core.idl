@@ -119,6 +119,14 @@ enum plplot_fci_weight_enum {
     PL_FCI_BOLD = 0x1
 };
 
+enum plplot_draw_mode_enum {
+    // Flags for drawing mode
+    PL_DRAWMODE_UNKNOWN = 0x0,
+    PL_DRAWMODE_DEFAULT = 0x1,
+    PL_DRAWMODE_REPLACE = 0x2,
+    PL_DRAWMODE_XOR = 0x4
+};
+
 // Any function which has a nonzero_error_int return type will raise
 // an Invalid_argument error if the return value is <> 0.
 typedef [errorcheck(plplot_check_nonzero_result), errorcode] int nonzero_error_int;

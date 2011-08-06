@@ -160,6 +160,9 @@ c_plgdiori(PLFLT *p_rot);
  void
 c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax);
 
+ enum plplot_draw_mode_enum
+c_plgdrawmode();
+
  void
 c_plgfci(PLUNICODE *pfci);
 
@@ -552,6 +555,9 @@ c_plsmema( PLINT maxx, PLINT maxy, void *plotmem );
 
  void
 c_plsmin(PLFLT def, PLFLT scale);
+
+ void
+c_plsdrawmode(enum plplot_draw_mode_enum mode);
 
  void
 c_plsori(PLINT ori);
