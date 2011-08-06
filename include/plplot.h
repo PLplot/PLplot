@@ -1270,10 +1270,10 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_COLORBAR_BOUNDING_BOX     0x10000
 
 // Flags for drawing mode
-#define PL_MODE_UNKNOWN              0
-#define PL_MODE_DEFAULT              1
-#define PL_MODE_REPLACE              2
-#define PL_MODE_XOR                  4
+#define PL_DRAWMODE_UNKNOWN          0x0
+#define PL_DRAWMODE_DEFAULT          0x1
+#define PL_DRAWMODE_REPLACE          0x2
+#define PL_DRAWMODE_XOR              0x4
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 PLDLLIMPEXP void

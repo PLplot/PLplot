@@ -27,9 +27,9 @@
 // Drawing modes to demonstrate
 #define NUM_MODES    3
 PLINT      drawing_modes[NUM_MODES] = {
-    PL_MODE_DEFAULT,
-    PL_MODE_REPLACE,
-    PL_MODE_XOR
+    PL_DRAWMODE_DEFAULT,
+    PL_DRAWMODE_REPLACE,
+    PL_DRAWMODE_XOR
 };
 
 const char *drawing_mode_names[NUM_MODES] = {
@@ -61,7 +61,7 @@ int main( int argc, const char *argv[] )
     // Check for drawing mode support
     mode = plgdrawmode();
 
-    if ( mode == PL_MODE_UNKNOWN )
+    if ( mode == PL_DRAWMODE_UNKNOWN )
     {
         printf( "WARNING: This driver does not support drawing mode getting/setting" );
     }
@@ -119,7 +119,7 @@ void draw_page( PLINT mode, const char *title )
 
     // Draw a background triangle using the default drawing mode
     plcol0( 2 );
-    plsdrawmode( PL_MODE_DEFAULT );
+    plsdrawmode( PL_DRAWMODE_DEFAULT );
     plfill( 3, xs, ys );
 
     // Draw a circle in the given drawing mode

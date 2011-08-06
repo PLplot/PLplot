@@ -601,15 +601,15 @@ void set_mode( PLStream *pls, PLINT *mode )
 
     switch ( *mode )
     {
-    case PL_MODE_UNKNOWN: // Invalid - do nothing
+    case PL_DRAWMODE_UNKNOWN: // Invalid - do nothing
         break;
-    case PL_MODE_DEFAULT:
+    case PL_DRAWMODE_DEFAULT:
         cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_OVER );
         break;
-    case PL_MODE_REPLACE:
+    case PL_DRAWMODE_REPLACE:
         cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_SOURCE );
         break;
-    case PL_MODE_XOR:
+    case PL_DRAWMODE_XOR:
         cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_XOR );
         break;
     }
@@ -633,16 +633,16 @@ void get_mode( PLStream *pls, PLINT *mode )
     switch ( op )
     {
     case CAIRO_OPERATOR_OVER:
-        *mode = PL_MODE_DEFAULT;
+        *mode = PL_DRAWMODE_DEFAULT;
         break;
     case CAIRO_OPERATOR_SOURCE:
-        *mode = PL_MODE_REPLACE;
+        *mode = PL_DRAWMODE_REPLACE;
         break;
     case CAIRO_OPERATOR_XOR:
-        *mode = PL_MODE_XOR;
+        *mode = PL_DRAWMODE_XOR;
         break;
     default:
-        *mode = PL_MODE_UNKNOWN;
+        *mode = PL_DRAWMODE_UNKNOWN;
     }
     return;
 }

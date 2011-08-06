@@ -1911,7 +1911,7 @@ c_plgdrawmode()
     if ( !plsc->dev_modeset )
     {
         plwarn( "plgdrawmode: Mode getting is not supported" );
-        mode = PL_MODE_UNKNOWN;
+        mode = PL_DRAWMODE_UNKNOWN;
     }
     else if ( plsc->level > 0 )
     {
@@ -1920,7 +1920,7 @@ c_plgdrawmode()
     else
     {
         plwarn( "plsdrawmode: Initialize PLplot first" );
-        mode = PL_MODE_UNKNOWN;
+        mode = PL_DRAWMODE_UNKNOWN;
     }
 
     return ( mode );
