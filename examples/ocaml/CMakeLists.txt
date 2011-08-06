@@ -61,6 +61,7 @@ set(ocaml_STRING_INDICES
   "30"
   "31"
   "33"
+  "34"
   "plot01"
   )
 
