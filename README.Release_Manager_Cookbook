@@ -5,8 +5,9 @@ INDEX
 (4) Publicity for the release announcement.
 (5) Immediate preparation for next release cycle
 
-(A1) GNU Privacy Guard (gpg).
-(A2) Creating a test tarball from trunk.
+(A1) GNU Privacy Guard (gpg)
+(A2) Creating a test tarball from trunk
+(A3) Correct computer time
 
 (1) Install and test a local copy of the PLplot website:
 
@@ -30,10 +31,6 @@ Update the project web page, including the examples: edit
 www/examples.php to reflect the forthcoming release version number and
 any changes to the examples themselves (i.e. pages added or removed
 from an existing example or entirely new examples).
-
-Edit PROJECT_NUMBER in doc/Doxyfile.in to reflect the upcoming release
-version number.  (The doxygen documentation is now part of our
-release so it is important to get the version number correct.)
 
 Run (on a Linux host that is capable of building the documentation
 for the source tree that has all local changes)
@@ -148,24 +145,6 @@ Check that ChangeLog.release is in the appropriate date range (i.e. only the
 changes that were made since the last release should be included) then
 (IMPORTANT) commit it so it will also be available for the tagged
 release version, the release tarball, etc.
-
-(While it is useful to have the correct time on your computer, this is no 
-longer strictly necessary).
-Verify that your computer has the right date and time using the command date.
-The easiest way to make sure the time and date are correct is to do the 
-following:
-1. Install the debian ntpdate package.
-2. Execute the command "/usr/sbin/ntpdate pool.ntp.org", which you will
-   have to do as root.
-This will immediately change your system clock. It is not recommended if you
-have other apps running on your system that expect time to increase in a
-smooth and linear fashion.
-
-If you would like your computer to always have the correct time and date, you 
-can install the debian ntp package, which must be properly configured to work.
-Some notes about how to do this can be found in the PLplot mailing list 
-archive. Look for the thread titled "PLplot 5.7.2 is now available" dated 
-Jan 22/23 2007.
 
 Based on suggestions in the svn manual, the PLplot svn archive is configured
 as follows:
@@ -365,3 +344,24 @@ display x08c.pscairo
 
 where "display" is the general image viewer from the imagemagick suite
 of programmes.
+
+(A3) Correct computer time
+
+(While it is useful to have the correct time on your computer, this is no 
+longer strictly necessary).
+Verify that your computer has the right date and time using the command date.
+The easiest way to make sure the time and date are correct is to do the 
+following:
+1. Install the debian ntpdate package.
+2. Execute the command "/usr/sbin/ntpdate pool.ntp.org", which you will
+   have to do as root.
+This will immediately change your system clock. It is not recommended if you
+have other apps running on your system that expect time to increase in a
+smooth and linear fashion.
+
+If you would like your computer to always have the correct time and date, you 
+can install the debian ntp package, which must be properly configured to work.
+Some notes about how to do this can be found in the PLplot mailing list 
+archive. Look for the thread titled "PLplot 5.7.2 is now available" dated 
+Jan 22/23 2007.
+
