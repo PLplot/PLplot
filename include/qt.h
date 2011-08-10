@@ -124,6 +124,7 @@ public:
 
     void setPLStream( PLStream *pls );  // store the related stream
 
+    virtual void drawArc( short x, short y, short width, short height, PLFLT angle1, PLFLT angle2, PLFLT rotate, bool fill );
     // Draws a line from (x1, y1) to (x2, y2) in internal plplot coordinates
     virtual void drawLine( short x1, short y1, short x2, short y2 );
     virtual void drawPolyline( short * x, short * y, PLINT npts );
@@ -243,7 +244,8 @@ typedef enum ElementType_
     SET_GRADIENT,
     SET_SMOOTH,
     TEXT,
-    SET_BG_COLOUR
+    SET_BG_COLOUR,
+    ARC
 } ElementType; // Identifiers for elements of the buffer
 
 struct ColourStruct_
@@ -269,6 +271,15 @@ struct TextStruct_
     PLFLT     chrht;
 };
 
+struct ArcStruct_
+{
+    QRectF *rect;
+    QPointF *dx;
+    int startAngle;
+    int spanAngle;
+    PLFLT rotate;
+    bool fill;
+};
 
 class BufferElement
 {
@@ -283,6 +294,7 @@ public:
         QLinearGradient     * LinearGradient;
         struct ColourStruct_* ColourStruct;
         struct TextStruct_  * TextStruct;
+        struct ArcStruct_    * ArcStruct;
         PLINT intParam;
         PLFLT fltParam;
     } Data;
@@ -307,6 +319,7 @@ public:
 
     int pageNumber;
 
+    void drawArc( short x, short y, short width, short height, PLFLT angle1, PLFLT angle2, PLFLT rotate, bool fill );
     void drawLine( short x1, short y1, short x2, short y2 );
     void drawPolyline( short * x, short * y, PLINT npts );
     void drawPolygon( short * x, short * y, PLINT npts );

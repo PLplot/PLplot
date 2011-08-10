@@ -81,6 +81,34 @@ void QtPLDriver::setPLStream( PLStream *p )
     pls = p;
 }
 
+void QtPLDriver::drawArc( short x, short y, short a, short b, PLFLT angle1,  PLFLT angle2, PLFLT rotate, bool fill )
+{
+    if ( !m_painterP->isActive() )
+        return;
+    QRectF rect( (PLFLT) (x-a) * downscale,
+                 m_dHeight - (PLFLT) (y+b) * downscale,
+                 (PLFLT) a * downscale * 2,
+                 (PLFLT) b * downscale * 2
+                 );
+    if (rotate != 0.0) {
+      m_painterP->save();
+      m_painterP->translate((PLFLT)x*downscale, m_dHeight - (PLFLT) y * downscale );
+      m_painterP->rotate(-rotate);
+      m_painterP->translate(-(PLFLT)x*downscale, -m_dHeight + (PLFLT) y * downscale );
+    }      
+
+    if (fill)
+        m_painterP->drawPie( rect, (int) (angle1*16), (int) ((angle2-angle1)*16) );
+    else
+        m_painterP->drawArc( rect, (int) (angle1*16), (int) ((angle2-angle1)*16) );
+
+    if (rotate != 0.0) {
+      m_painterP->restore();
+    }      
+
+
+}
+
 void QtPLDriver::drawLine( short x1, short y1, short x2, short y2 )
 {
     if ( !m_painterP->isActive() )
@@ -688,6 +716,11 @@ void QtPLWidget::clearBuffer()
         case SET_GRADIENT:
             delete i->Data.LinearGradient;
             break;
+	    
+	case ARC:
+   	    delete i->Data.ArcStruct->rect;
+   	    delete i->Data.ArcStruct->dx;
+	    delete i->Data.ArcStruct;
 
         default:
             break;
@@ -698,6 +731,28 @@ void QtPLWidget::clearBuffer()
     start_iterator = m_listBuffer.constBegin();
     redrawAll      = true;
 }
+
+
+void QtPLWidget::drawArc( short x, short y, short a, short b, PLFLT angle1,  PLFLT angle2, PLFLT rotate, bool fill )
+{
+    BufferElement el;
+    el.Element = ARC;
+    el.Data.ArcStruct = new struct ArcStruct_;
+    el.Data.ArcStruct->rect = new QRectF( (PLFLT) (x-a) * downscale,
+					 m_dHeight - (PLFLT) (y+b) * downscale,
+					 (PLFLT) a * downscale * 2,
+					 (PLFLT) b * downscale * 2
+					 );
+    el.Data.ArcStruct->startAngle = (int) (angle1*16);
+    el.Data.ArcStruct->spanAngle = (int) ((angle2-angle1)*16);
+    el.Data.ArcStruct->rotate = rotate;
+    el.Data.ArcStruct->dx = new QPointF( (PLFLT)x*downscale, m_dHeight - (PLFLT) y * downscale );
+    el.Data.ArcStruct->fill = fill;
+
+    m_listBuffer.append( el );
+    redrawFromLastFlush = true;  
+}
+
 
 void QtPLWidget::drawLine( short x1, short y1, short x2, short y2 )
 {
@@ -1369,6 +1424,29 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
             p->fillRect( 0, 0, (int) m_dWidth, (int) m_dHeight, SolidBrush );
             break;
 
+        case ARC:
+            if ( !hasPen )
+            {
+                p->setPen( SolidPen );
+                hasPen = true;
+            }
+	    if (i->Data.ArcStruct->rotate != 0.0) {
+	        p->save();
+	        p->translate( *(i->Data.ArcStruct->dx) );
+	        p->rotate( - i->Data.ArcStruct->rotate );
+	        p->translate( - *(i->Data.ArcStruct->dx) );
+	    }      
+
+	    if (i->Data.ArcStruct->fill)
+  	        p->drawPie( *(i->Data.ArcStruct->rect),  i->Data.ArcStruct->startAngle,  i->Data.ArcStruct->spanAngle );
+	    else
+	        p->drawArc( *(i->Data.ArcStruct->rect),  i->Data.ArcStruct->startAngle,  i->Data.ArcStruct->spanAngle );
+	    
+	    if (i->Data.ArcStruct->rotate != 0.0) {
+	        p->restore();
+	    }      
+
+            break;
         default:
             break;
         }

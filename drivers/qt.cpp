@@ -422,7 +422,7 @@ void plD_esc_rasterqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        //$$ call the generic ProcessString function
+        //  call the generic ProcessString function
         //  ProcessString( pls, (EscText *)ptr );
         widget->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
@@ -860,7 +860,7 @@ void plD_esc_svgqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        //$$ call the generic ProcessString function
+        // call the generic ProcessString function
         //  ProcessString( pls, (EscText *)ptr );
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
@@ -968,6 +968,7 @@ void plD_init_epspdfqt( PLStream * pls )
     pls->dev_fill0    = 1;
     pls->dev_fill1    = 0;
     pls->dev_gradient = 1;      // driver renders gradient
+    pls->dev_arc      = 1;      // driver renders arcs
     // Let the PLplot core handle dashed lines since
     // the driver results for this capability have a number of issues.
     // pls->dev_dash=1;
@@ -1091,6 +1092,8 @@ void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
     PLFLT         *alpha;
     PLINT         i;
     QtEPSDevice   * widget = (QtEPSDevice *) pls->dev;
+    arc_struct *arc_info = (arc_struct *) ptr;
+
     if ( widget != NULL && qt_family_check( pls ) )
     {
         return;
@@ -1149,11 +1152,15 @@ void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        //$$ call the generic ProcessString function
+        // call the generic ProcessString function
         //  ProcessString( pls, (EscText *)ptr );
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
         break;
+
+    case PLESC_ARC:
+      widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill);
+	break;
 
     default: break;
     }
@@ -1280,6 +1287,7 @@ void plD_init_qtwidget( PLStream * pls )
     pls->dev_fill0    = 1;      // Handle solid fills
     pls->dev_fill1    = 0;
     pls->dev_gradient = 1;      // driver renders gradient
+    pls->dev_arc      = 1;      // driver renders arcs
     // Let the PLplot core handle dashed lines since
     // the driver results for this capability have a number of issues.
     // pls->dev_dash=1;
@@ -1348,6 +1356,7 @@ void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
     unsigned char *r, *g, *b;
     PLFLT         *alpha;
     QtPLWidget    * widget = (QtPLWidget *) pls->dev;
+    arc_struct *arc_info = (arc_struct *) ptr;
     if ( widget == NULL )
         return;
 
@@ -1406,6 +1415,10 @@ void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
         break;
+
+    case PLESC_ARC:
+      widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill);
+	break;
 
     case PLESC_FLUSH:
         widget->flush();
@@ -1506,6 +1519,7 @@ void plD_init_extqt( PLStream * pls )
     pls->dev_fill0    = 1;      // Handle solid fills
     pls->dev_fill1    = 0;
     pls->dev_gradient = 1;      // driver renders gradient
+    pls->dev_arc      = 1;      // driver renders arcs
     // Let the PLplot core handle dashed lines since
     // the driver results for this capability have a number of issues.
     // pls->dev_dash=1;
@@ -1551,6 +1565,7 @@ void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
     unsigned char *r, *g, *b;
     PLFLT         *alpha;
     QtExtWidget   * widget = NULL;
+    arc_struct *arc_info = (arc_struct *) ptr;
 
     widget = (QtExtWidget *) pls->dev;
     switch ( op )
@@ -1604,11 +1619,15 @@ void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        //$$ call the generic ProcessString function
+        // call the generic ProcessString function
         //  ProcessString( pls, (EscText *)ptr );
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
         widget->drawText( (EscText *) ptr );
         break;
+
+    case PLESC_ARC:
+      widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill);
+	break;
 
     default: break;
     }
@@ -1701,6 +1720,7 @@ void plD_init_memqt( PLStream * pls )
     pls->dev_fill0    = 1;
     pls->dev_fill1    = 0;
     pls->dev_gradient = 1;      // driver renders gradient
+    pls->dev_arc      = 1;      // driver renders arcs
     // Let the PLplot core handle dashed lines since
     // the driver results for this capability have a number of issues.
     // pls->dev_dash=1;
