@@ -94,7 +94,7 @@ build-arch-stamp: patch config-stamp
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
-build-indep-stamp: patch
+build-indep-stamp: patch 
 	dh_testdir
 	( cd $(BUILD_DIR) ; cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DBUILD_DOC=ON ; \
 	cd doc ; $(MAKE)  )
@@ -228,3 +228,6 @@ source diff:
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary config \
         patch unpatch control ocamlinit
+
+.NOTPARALLEL:
+
