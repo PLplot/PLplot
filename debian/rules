@@ -90,7 +90,7 @@ build-arch: build-arch-stamp
 build-arch-stamp: patch config-stamp
 	dh_testdir
 	( cd $(BUILD_DIR) ; $(MAKE)  )
-	-( cd $(BUILD_DIR) ; ctest -VV )
+	-( cd $(BUILD_DIR) ; $(MAKE) test_noninteractive )
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
