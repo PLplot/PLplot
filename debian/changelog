@@ -6,7 +6,9 @@ plplot (5.9.8-1) unstable; urgency=low
     + update to reflect changs in upstream ChangeLog file name. 
     + Tidy up some old comments.
     + Change from calling ctest to using "make test_noninteractive"
-      to run the tests. This should allow parallel builds.
+      to run the tests. Also include .NOTPARALLEL target to prevent the 
+      rules makefile being parallelised. Instead pass -j options to the
+      plplot make files. This allows parallel builds to work correctly.
   * debian/rules, debian/control.in, debian/libplplot-ocaml.files.in:
     Add new libplplot-ocaml package which includes the ocaml bindings.
   * debian/rules, debian/control.in, debian/libplplot-lua.files.in:
