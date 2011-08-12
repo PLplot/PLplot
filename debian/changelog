@@ -25,7 +25,8 @@ plplot (5.9.8-1) unstable; urgency=low
   * debian/control.in: Bump standards version to 3.9.2.
   * debian/NEWS: update NEWS file for 5.9.8.
   * debain/patches/series, debian/patches/08_oct_perms.diff, 
-    debian/patches/09_qt_nodisplay.diff, debian/patches/10_fix_test_scripts.diff:
+    debian/patches/09_qt_nodisplay.diff, 
+    debian/patches/10_fix_test_scripts.diff:
     + Add new patch to turn off execute permissions for plplot_octave.oct 
       (fixes lintian error). Add patch from upstream to enable 
       non-interactive qt devices to work even if DISPLAY is not set 
