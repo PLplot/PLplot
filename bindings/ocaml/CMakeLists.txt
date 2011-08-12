@@ -331,8 +331,14 @@ if(ENABLE_ocaml)
     DESTINATION ${OCAML_INSTALL_DIR}/plplot
     )
 
-  # Shared library stubs go in stublibs
-  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
+  # Shared library stubs go in stublibs.
+  # Use default permissions (rw-r--r--) for FILES signature because
+  # those are the permissions used by install(TARGETS...   (which
+  # we are trying to emulate here because that signature not
+  # available to us because this  shared object was
+  # created by a custom command).
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
     )
 
