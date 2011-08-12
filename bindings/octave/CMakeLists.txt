@@ -314,11 +314,8 @@ if(ENABLE_octave)
   set(PERM_MODULES
     OWNER_READ
     OWNER_WRITE
-    OWNER_EXECUTE
     GROUP_READ
-    GROUP_EXECUTE
     WORLD_READ
-    WORLD_EXECUTE
     )
 
   install(TARGETS plplot_octave
