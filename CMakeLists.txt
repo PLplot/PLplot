@@ -261,6 +261,7 @@ set(CPACK_SOURCE_IGNORE_FILES
   "^${PROJECT_SOURCE_DIR}/sys/dos/emx"
   "^${PROJECT_SOURCE_DIR}/sys/win-tk"
   "^${PROJECT_SOURCE_DIR}/sys/win32"
+  "^${PROJECT_SOURCE_DIR}/debian"
   )
 #message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)
