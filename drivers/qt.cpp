@@ -96,6 +96,11 @@ bool initQtApp( bool isGUI )
         argv[1] = new char[1];
         snprintf( argv[0], 10, "qt_driver" );
         argv[1][0] = '\0';
+#ifdef Q_WS_X11
+	// On X11 if DISPLAY is not set then cannot open GUI. This allows non-interactive devices to still work in this case.
+	if (getenv("DISPLAY") == NULL) 
+	    isGUI = false;
+#endif
         new QApplication( argc, argv, isGUI );
         res = true;
     }
