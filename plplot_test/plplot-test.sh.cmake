@@ -233,9 +233,6 @@ script with DEVICE='"$device"'.
 	echo "Testing interactive octave examples for device $device"
 	script="$scripts_dir"/test_octave_interactive.sh
     fi
-    if [ "@WIN32@" != "1" ] ; then
-	chmod +x "$script"
-    fi
     @SH_EXECUTABLE@ "$script" || status=1
 
     exit $status
@@ -405,9 +402,6 @@ export critical_examples exesuffix
 for i in $FRONT_END ; do
    echo "Testing front-end $i"
    script="$scripts_dir"/test_$i.sh
-   if [ "@WIN32@" != "1" ] ; then
-      chmod +x "$script"
-   fi
    @SH_EXECUTABLE@ "$script" || status=1
 done
 
