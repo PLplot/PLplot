@@ -1,3 +1,6 @@
 02_unset-python-path.diff
 #04_use-mkoctfile.diff
 #07_octave_prune_examples.diff
+08_oct_perms.diff
+09_qt_nodisplay.diff
+10_fix_test_scripts.diff

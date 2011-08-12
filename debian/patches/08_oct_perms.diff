@@ -1,0 +1,21 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 08_oct_perms.diff by Andrew Ross <andrewross@users.sourceforge.net>
+##
+## DP: Correctly set permissions for plplot_octave.oct 
+
+@DPATCH@
+
+--- plplot-5.9.8.orig/bindings/octave/CMakeLists.txt	2011-08-12 09:11:40.000000000 +0100
++++ plplot-5.9.8/bindings/octave/CMakeLists.txt.bak	2011-08-12 09:11:32.000000000 +0100
+@@ -314,11 +314,8 @@
+   set(PERM_MODULES
+     OWNER_READ
+     OWNER_WRITE
+-    OWNER_EXECUTE
+     GROUP_READ
+-    GROUP_EXECUTE
+     WORLD_READ
+-    WORLD_EXECUTE
+     )
+ 
+   install(TARGETS plplot_octave

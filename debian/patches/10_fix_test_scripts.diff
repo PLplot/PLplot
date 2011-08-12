@@ -1,0 +1,29 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 10_fix_test_scripts.diff by Andrew Ross <andrewross@users.sourceforge.net>
+##
+## DP: Patch from upstream to remove superfluous chmod from test scripts so installed tests work ok.
+
+@DPATCH@
+
+--- plplot-5.9.8.orig/plplot_test/plplot-test.sh.cmake	2011-08-02 15:26:37.000000000 +0100
++++ plplot-5.9.8/plplot_test/plplot-test.sh.cmake.new	2011-08-12 10:19:20.000000000 +0100
+@@ -233,9 +233,6 @@
+ 	echo "Testing interactive octave examples for device $device"
+ 	script="$scripts_dir"/test_octave_interactive.sh
+     fi
+-    if [ "@WIN32@" != "1" ] ; then
+-	chmod +x "$script"
+-    fi
+     @SH_EXECUTABLE@ "$script" || status=1
+ 
+     exit $status
+@@ -405,9 +402,6 @@
+ for i in $FRONT_END ; do
+    echo "Testing front-end $i"
+    script="$scripts_dir"/test_$i.sh
+-   if [ "@WIN32@" != "1" ] ; then
+-      chmod +x "$script"
+-   fi
+    @SH_EXECUTABLE@ "$script" || status=1
+ done
+ 

@@ -3,25 +3,37 @@ plplot (5.9.8-1) unstable; urgency=low
   * New upstream release.
   * Rebuild against gfortran-4.6 (closes: #635739).
   * debian/rules: 
-    + update to reflect changs in upstream ChangeLog file name. 
+    + Update to reflect changs in upstream ChangeLog file name. 
     + Tidy up some old comments.
     + Change from calling ctest to using "make test_noninteractive"
       to run the tests. Also include .NOTPARALLEL target to prevent the 
       rules makefile being parallelised. Instead pass -j options to the
       plplot make files. This allows parallel builds to work correctly.
+    + Fix a temporary permissions problem with test script in the 5.9.8
+      tarball.
   * debian/rules, debian/control.in, debian/libplplot-ocaml.files.in:
     Add new libplplot-ocaml package which includes the ocaml bindings.
   * debian/rules, debian/control.in, debian/libplplot-lua.files.in:
     Add new libplplot-lua package which includes the lua bindings.
   * debian/rules, debian/control.in, debian/libplplot-d.files.in:
     Add new libplplot-d package which includes the D language bindings.
-  * debian/control.in: remove dependency of libplplot9-java on default-jre
-    as per policy. Java libraries do not need to depend on a java runtime.
-    Fixes lintian warning.
+  * debian/control.in: 
+    + Remove dependency of libplplot9-java on default-jre as per policy. 
+      Java libraries do not need to depend on a java runtime. Fixes 
+      lintian warning.
+    + Tidy up section / priority headers for the packages.
   * debian/control.in: Bump standards version to 3.9.2.
   * debian/NEWS: update NEWS file for 5.9.8.
+  * debain/patches/series, debian/patches/08_oct_perms.diff, 
+    debian/patches/09_qt_nodisplay.diff, debian/patches/10_fix_test_scripts.diff:
+    + Add new patch to turn off execute permissions for plplot_octave.oct 
+      (fixes lintian error). Add patch from upstream to enable 
+      non-interactive qt devices to work even if DISPLAY is not set 
+      (prevents error when running tests on a buildd / using pbuilder). Add new
+      upstream patch to remove spurious chmod commands from test scripts. This
+      ensures the installed examples will work as expected.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 02 Aug 2011 15:41:38 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 12 Aug 2011 10:23:38 +0100
 
 plplot (5.9.7-1) UNRELEASED; urgency=low
 

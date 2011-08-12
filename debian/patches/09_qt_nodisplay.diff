@@ -1,0 +1,21 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 09_qt_nodisplay.diff by Andrew Ross <andrewross@users.sourceforge.net>
+##
+## DP: Upstream patch so all non-interactive Qt drivers still work if DISPLAY is not set
+
+@DPATCH@
+
+--- plplot-5.9.8.orig/drivers/qt.cpp	2011-08-12 09:11:40.000000000 +0100
++++ plplot-5.9.8/drivers/qt.cpp		2011-08-12 09:11:32.000000000 +0100
+@@ -96,6 +96,11 @@
+         argv[1] = new char[1];
+         snprintf( argv[0], 10, "qt_driver" );
+         argv[1][0] = '\0';
++#ifdef Q_WS_X11
++       // On X11 if DISPLAY is not set then cannot open GUI. This allows non-interactive devices to still work in this case.
++       if (getenv("DISPLAY") == NULL) 
++           isGUI = false;
++#endif
+         new QApplication( argc, argv, isGUI );
+         res = true;
+     }
