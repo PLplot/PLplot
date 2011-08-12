@@ -24,7 +24,7 @@ plplot (5.9.8-1) unstable; urgency=low
     + Tidy up section / priority headers for the packages.
   * debian/control.in: Bump standards version to 3.9.2.
   * debian/NEWS: update NEWS file for 5.9.8.
-  * debain/patches/series, debian/patches/08_oct_perms.diff, 
+  * debian/patches/series, debian/patches/08_oct_perms.diff, 
     debian/patches/09_qt_nodisplay.diff, 
     debian/patches/10_fix_test_scripts.diff:
     + Add new patch to turn off execute permissions for plplot_octave.oct 
@@ -1946,7 +1946,7 @@ plplot (4.99j-5) unstable; urgency=low
     includes shared libraries.
   * Links to the shared library are now Policy compliant, i.e. their names
     have only one number after .so.
-  * debain/shlibs.local is renamed to debian/shlibs, and
+  * debian/shlibs.local is renamed to debian/shlibs, and
     debian/plplot-tcl.shlibs is created.
   * The scripts installed under usr/lib/tcl8.0/plplot/ should not be
     executable.
