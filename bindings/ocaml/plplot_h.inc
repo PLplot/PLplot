@@ -29,6 +29,7 @@
 [mlname(plfont)] void c_plfont ( int ifont );
 [mlname(plfontld)] void c_plfontld ( int fnt );
 [mlname(plgchr)] void c_plgchr ( [out] double * p_def, [out] double * p_ht );
+[mlname(plgcmap1_range)] void c_plgcmap1_range ( [out] double * min_color, [out] double * max_color );
 [mlname(plgcol0)] void c_plgcol0 ( int icol0, [out] int * r, [out] int * g, [out] int * b );
 [mlname(plgcol0a)] void c_plgcol0a ( int icol0, [out] int * r, [out] int * g, [out] int * b, [out] double * a );
 [mlname(plgcolbg)] void c_plgcolbg ( [out] int * r, [out] int * g, [out] int * b );
@@ -92,6 +93,7 @@
 [mlname(plscmap1l)] void c_plscmap1l ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [in, size_is(npts), in, size_is(npts), unique] boolean * rev );
 [mlname(plscmap1la)] void c_plscmap1la ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [size_is(npts), in, size_is(npts)] double * a, [in, size_is(npts), in, size_is(npts), unique] boolean * rev );
 [mlname(plscmap1n)] void c_plscmap1n ( int ncol1 );
+[mlname(plscmap1_range)] void c_plscmap1_range ( double min_color, double max_color );
 [mlname(plscol0)] void c_plscol0 ( int icol0, int r, int g, int b );
 [mlname(plscol0a)] void c_plscol0a ( int icol0, int r, int g, int b, double a );
 [mlname(plscolbg)] void c_plscolbg ( int r, int g, int b );

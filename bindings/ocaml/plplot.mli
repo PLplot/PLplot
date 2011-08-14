@@ -734,6 +734,8 @@ external plflush : unit -> unit = "camlidl_plplot_core_c_plflush"
 external plfont : int -> unit = "camlidl_plplot_core_c_plfont"
 external plfontld : int -> unit = "camlidl_plplot_core_c_plfontld"
 external plgchr : unit -> float * float = "camlidl_plplot_core_c_plgchr"
+external plgcmap1_range : unit -> float * float =
+  "camlidl_plplot_core_c_plgcmap1_range"
 external plgcol0 : int -> int * int * int = "camlidl_plplot_core_c_plgcol0"
 external plgcol0a : int -> int * int * int * float
   = "camlidl_plplot_core_c_plgcol0a"
@@ -869,6 +871,8 @@ external plscmap1la :
   = "camlidl_plplot_core_c_plscmap1la_bytecode"
   "camlidl_plplot_core_c_plscmap1la"
 external plscmap1n : int -> unit = "camlidl_plplot_core_c_plscmap1n"
+external plscmap1_range : float -> float -> unit =
+  "camlidl_plplot_core_c_plscmap1_range"
 external plscol0 : int -> int -> int -> int -> unit
   = "camlidl_plplot_core_c_plscol0"
 external plscol0a : int -> int -> int -> int -> float -> unit

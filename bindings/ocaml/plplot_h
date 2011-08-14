@@ -134,6 +134,9 @@ c_plfontld(PLINT fnt);
 c_plgchr(PLFLT *p_def, PLFLT *p_ht);
 
  void
+c_plgcmap1_range( PLFLT *min_color, PLFLT *max_color );
+
+ void
 c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
 
  void
@@ -416,6 +419,9 @@ c_plscmap1la(PLBOOL itype, PLINT npts, PLFLT *intensity,
 
  void
 c_plscmap1n(PLINT ncol1);
+
+ void
+c_plscmap1_range( PLFLT min_color, PLFLT max_color );
 
  void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b);
