@@ -27,6 +27,32 @@ if(ENABLE_ocaml)
   # Optionally build the Plcairo module
   add_subdirectory(plcairo)
 
+  # Stack on a bunch of extra flags if we are building against a static PLplot core
+  set(ocaml_STATIC_FLAGS)
+  if(NOT BUILD_SHARED_LIBS)
+    foreach(DEP ${plplotd_LIB_DEPENDS} ${csirocsa_LIB_DEPENDS} ${csironn_LIB_DEPENDS})
+      if(DEP STREQUAL "csirocsa" OR DEP STREQUAL "csironn" OR DEP STREQUAL "qsastime")
+        set(internal_LIB_DIR)
+        if(DEP STREQUAL "csirocsa")
+          set(internal_LIB_DIR "csa")
+        elseif(DEP STREQUAL "csironn")
+          set(internal_LIB_DIR "nn")
+        elseif(DEP STREQUAL "qsastime")
+          set(internal_LIB_DIR "qsastime")
+        endif()
+        set(ocaml_STATIC_FLAGS ${ocaml_STATIC_FLAGS} -cclib ${CMAKE_BINARY_DIR}/lib/${internal_LIB_DIR}/lib${DEP}.a)
+      elseif(DEP STREQUAL "general")
+        set(ocaml_STATIC_FLAGS ${ocaml_STATIC_FLAGS})
+      else()
+        if(DEP MATCHES "^-")
+          set(ocaml_STATIC_FLAGS ${ocaml_STATIC_FLAGS} -ccopt ${DEP})
+        else()
+          set(ocaml_STATIC_FLAGS ${ocaml_STATIC_FLAGS} -cclib ${DEP})
+        endif()
+      endif()
+    endforeach(DEP ${plplotd_LIB_DEPENDS})
+  endif(NOT BUILD_SHARED_LIBS)
+
   # optional command to generate generated_plplot_h.inc.  This generated
   # version of the file should be identical to plplot_h.inc.
   if(GENERATE_PLPLOT_H_INC)
@@ -76,7 +102,7 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
     COMMAND ${OCAMLC} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
     COMMAND ${OCAMLC} -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime  -c ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
-    COMMAND ${OCAMLMKLIB} -o plplot_stubs -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
+    COMMAND ${OCAMLMKLIB} -o plplot_stubs -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o ${ocaml_STATIC_FLAGS}
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
@@ -135,7 +161,7 @@ if(ENABLE_ocaml)
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
-    COMMAND ${OCAMLC} -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo -dllib -lplplot_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -dllpath ${CMAKE_BINARY_DIR}/src
+    COMMAND ${OCAMLC} -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo -dllib -lplplot_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -dllpath ${CMAKE_BINARY_DIR}/src ${ocaml_STATIC_FLAGS}
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
@@ -188,7 +214,7 @@ if(ENABLE_ocaml)
       OUTPUT
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
-      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG}
+      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} ${ocaml_STATIC_FLAGS}
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx

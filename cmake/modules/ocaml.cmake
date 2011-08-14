@@ -28,9 +28,10 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
-  message(STATUS "WARNING: "
-    "OCaml requires shared libraries. Disabling ocaml bindings")
-  set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+  message(STATUS "NOTICE: "
+    "OCaml requires -fPIC flag when building static PLplot. Forcing -fPIC for C and C++ compilation.")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_ocaml)

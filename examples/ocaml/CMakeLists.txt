@@ -120,10 +120,14 @@ if(BUILD_TEST)
   set(ocaml_EXTRA_CLEAN_FILES)
   if(CORE_BUILD)
     set(I_OPTION ${CMAKE_BINARY_DIR}/bindings/ocaml)
-    set(ccopt_OPTION "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR}/src ")
+    if(BUILD_SHARED_LIBS)
+      set(ccopt_OPTION -ccopt "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR}/src ")
+    endif()
   else(CORE_BUILD)
     set(I_OPTION ${OCAML_INSTALL_DIR}/plplot)
-    set(ccopt_OPTION "-L ${CMAKE_INSTALL_LIBDIR} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR} ")
+    if(BUILD_SHARED_LIBS)
+      set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR} ")
+    endif()
   endif(CORE_BUILD)
 
   get_property(files_plplot_ocaml GLOBAL PROPERTY FILES_plplot_ocaml)
@@ -155,7 +159,7 @@ if(BUILD_TEST)
       COMMAND ${ocaml_compiler}
       -g
       -I ${I_OPTION}
-      -ccopt ${ccopt_OPTION}
+      ${ccopt_OPTION}
       plplot.${ocaml_lib_extension}
       ${unix_lib}
       -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
