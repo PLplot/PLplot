@@ -94,7 +94,7 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
 
   P.plot ~stream [
     (* Plot the data points *)
-    P.points ~symbol:P.Solar_symbol P.Green xs ys;
+    P.points ~symbol:"⊙" P.Green xs ys;
     (* Draw the line through the data *)
     P.lines P.Red x y;
     (* Show the axes *)

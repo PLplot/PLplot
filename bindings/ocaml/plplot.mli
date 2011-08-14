@@ -1,5 +1,5 @@
 (*
-Copyright 2009  Hezekiah M. Carty
+Copyright 2009, 2010, 2011  Hezekiah M. Carty
 
 This file is part of PLplot.
 
@@ -136,23 +136,6 @@ module Plot :
                                                 (mark, space) pair defining the
                                                 length of one segment and gap
                                                 in the line drawing pattern. *)
-
-    (** Point/symbol styles *)
-    type symbol_t =
-      | Point_symbol
-      | Box_symbol
-      | Dot_symbol
-      | Plus_symbol
-      | Circle_symbol
-      | X_symbol
-      | Solar_symbol
-      | Diamond_symbol
-      | Open_star_symbol
-      | Big_dot_symbol
-      | Star_symbol
-      | Open_dot_symbol
-      | Index_symbol of int (** The index value here is the same value used in
-                                {!plssym}. *)
 
     (** The default list of axis rendering options, used for all plots generated
         with {!init} if no custom options are provided. *)
@@ -344,7 +327,7 @@ module Plot :
     (** [points ?label ?symbol ?scale color xs ys] *)
     val points :
       ?label:string ->
-      ?symbol:symbol_t ->
+      ?symbol:string ->
       ?scale:float ->
       color_t -> float array -> float array -> plot_t
 
@@ -385,7 +368,7 @@ module Plot :
         [x = min] to [x = max].  [step] can be used to tighten or coarsen the
         sampling of plot points. *)
     val func :
-      ?symbol:symbol_t ->
+      ?symbol:string ->
       ?step:float ->
       color_t -> (float -> float) -> float * float -> plot_t
 
@@ -426,6 +409,19 @@ module Plot :
     (** Character height in world coordinate units *)
     val character_height : ?stream:stream_t -> unit -> float
 
+    (** Positioning within viewport or subpage *)
+    type position_t
+
+    (** Position relative to the plot viewport *)
+    val viewport_pos :
+      ?side1:unit plot_side_t ->
+      ?side2:unit plot_side_t -> ?inside:bool -> float -> float -> position_t
+
+    (** Position relative to the plot subpage *)
+    val subpage_pos :
+      ?side1:unit plot_side_t ->
+      ?side2:unit plot_side_t -> ?inside:bool -> float -> float -> position_t
+
     (** Legend entry *)
     type legend_entry_t
 
@@ -463,27 +459,48 @@ module Plot :
 
     (** [legend entries] *)
     val legend :
-      ?pos:float plot_side_t * float plot_side_t ->
+      ?pos:position_t ->
       ?plot_width:float ->
-      ?bg:int ->
-      ?bb:int * int ->
+      ?bg:color_t ->
+      ?bb:color_t * line_style_t ->
       ?layout:(int * int) layout_t ->
+      ?color:color_t ->
       ?text_offset:float ->
       ?text_scale:float ->
       ?text_spacing:float ->
       ?text_justification:float ->
       ?text_left:bool -> legend_entry_t list list -> plot_t
 
-    (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
-        axis labeling function when a colorbar is meant to represent values
-        beyond those which are represented.  So if the colorbar labeling shows
-        values from 0.0 to 1.0, but the color for 1.0 is meant to represent
-        values > 1.0 then set [max_value] 1.0. *)
-    val colorbar_labeler :
-      ?log:bool ->
-      ?min:float ->
-      ?max:float ->
-      plplot_axis_type -> float -> string
+    (** Available colorbar kinds *)
+    type colorbar_kind_t
+
+    (** [gradient_colorbar [|min; max|]] from [min] to [max] *)
+    val gradient_colorbar : float array -> colorbar_kind_t
+
+    (** [image_colorbar [|min; max|]] from [min] to [max] *)
+    val image_colorbar : float array -> colorbar_kind_t
+
+    (** [shade_colorbar ?custom contours] defines a shaded contour colorbar
+        with axis labels at even spacings ([custom = false]) or at the
+        locations of the values in [contours]
+        ([custom = true] - the default). *)
+    val shade_colorbar : ?custom:bool -> float array -> colorbar_kind_t
+
+    (** Default options used for a colorbar axis *)
+    val default_colorbar_axis : axis_options_t list
+
+    (** [colorbar colorbar_kind] *)
+    val colorbar :
+      ?pos:position_t ->
+      ?bg:color_t ->
+      ?bb:color_t * line_style_t ->
+      ?cap:float option * float option ->
+      ?contour:color_t * int ->
+      ?orient:(float * float) plot_side_t ->
+      ?axis:axis_options_t list ->
+      ?label:string plot_side_t ->
+      ?color:color_t -> ?scale:float ->
+      colorbar_kind_t -> plot_t
 
     (** Draw the plot axes on the current plot page *)
     val plot_axes :
@@ -513,6 +530,7 @@ module Quick_plot :
       ?size:int * int ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
+      ?names:string list ->
       ?log:bool * bool -> (float array * float array) list -> unit
 
     (** [lines xs ys] plots the line segments described by the coordinates
@@ -543,7 +561,7 @@ module Quick_plot :
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?names:string list ->
-      ?symbol:Plot.symbol_t ->
+      ?symbol:string ->
       ?step:float -> (float -> float) list -> float * float -> unit
 
     (** [shades ?log ?contours m] plots a filled contour/shaded [m] with a
@@ -624,9 +642,16 @@ and plplot_colorbar_enum =
   | PL_COLORBAR_IMAGE
   | PL_COLORBAR_SHADE
   | PL_COLORBAR_GRADIENT
+  | PL_COLORBAR_CAP_NONE
   | PL_COLORBAR_CAP_LOW
   | PL_COLORBAR_CAP_HIGH
   | PL_COLORBAR_SHADE_LABEL
+  | PL_COLORBAR_ORIENT_RIGHT
+  | PL_COLORBAR_ORIENT_TOP
+  | PL_COLORBAR_ORIENT_LEFT
+  | PL_COLORBAR_ORIENT_BOTTOM
+  | PL_COLORBAR_BACKGROUND
+  | PL_COLORBAR_BOUNDING_BOX
 and plplot_colorbar_opt = plplot_colorbar_enum list
 and plplot_fci_family_enum =
   | PL_FCI_FAMILY_UNCHANGED

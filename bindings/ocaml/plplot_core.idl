@@ -1,5 +1,5 @@
 /*
-Copyright 2007, 2008  Hezekiah M. Carty
+Copyright 2007, 2008, 2009, 2010, 2011  Hezekiah M. Carty
 
 This file is part of ocaml-plplot.
 
@@ -59,40 +59,47 @@ enum plplot_run_level_enum {
 typedef enum plplot_run_level_enum plplot_run_level;
 
 enum plplot_position_enum {
-    PL_POSITION_LEFT = 1,
-    PL_POSITION_RIGHT = 2,
-    PL_POSITION_TOP = 4,
-    PL_POSITION_BOTTOM = 8,
-    PL_POSITION_INSIDE = 16,
-    PL_POSITION_OUTSIDE = 32,
-    PL_POSITION_VIEWPORT = 64,
-    PL_POSITION_SUBPAGE = 128,
+    PL_POSITION_LEFT = 0x1,
+    PL_POSITION_RIGHT = 0x2,
+    PL_POSITION_TOP = 0x4,
+    PL_POSITION_BOTTOM = 0x8,
+    PL_POSITION_INSIDE = 0x10,
+    PL_POSITION_OUTSIDE = 0x20,
+    PL_POSITION_VIEWPORT = 0x40,
+    PL_POSITION_SUBPAGE = 0x80,
 };
 typedef [set] enum plplot_position_enum plplot_position_opt;
 
 enum plplot_legend_enum {
-    PL_LEGEND_NONE = 1,
-    PL_LEGEND_COLOR_BOX = 2,
-    PL_LEGEND_LINE = 4,
-    PL_LEGEND_SYMBOL = 8,
-    PL_LEGEND_TEXT_LEFT = 16,
-    PL_LEGEND_BACKGROUND = 32,
-    PL_LEGEND_BOUNDING_BOX = 64,
-    PL_LEGEND_ROW_MAJOR = 128,
+    PL_LEGEND_NONE = 0x1,
+    PL_LEGEND_COLOR_BOX = 0x2,
+    PL_LEGEND_LINE = 0x4,
+    PL_LEGEND_SYMBOL = 0x8,
+    PL_LEGEND_TEXT_LEFT = 0x10,
+    PL_LEGEND_BACKGROUND = 0x20,
+    PL_LEGEND_BOUNDING_BOX = 0x40,
+    PL_LEGEND_ROW_MAJOR = 0x80,
 };
 typedef [set] enum plplot_legend_enum plplot_legend_opt;
 
 enum plplot_colorbar_enum {
-    PL_COLORBAR_LABEL_LEFT = 1,
-    PL_COLORBAR_LABEL_RIGHT = 2,
-    PL_COLORBAR_LABEL_TOP = 4,
-    PL_COLORBAR_LABEL_BOTTOM = 8,
-    PL_COLORBAR_IMAGE = 16,
-    PL_COLORBAR_SHADE = 32,
-    PL_COLORBAR_GRADIENT = 64,
-    PL_COLORBAR_CAP_LOW = 128,
-    PL_COLORBAR_CAP_HIGH = 256,
-    PL_COLORBAR_SHADE_LABEL = 512,
+    PL_COLORBAR_LABEL_LEFT = 0x1,
+    PL_COLORBAR_LABEL_RIGHT = 0x2,
+    PL_COLORBAR_LABEL_TOP = 0x4,
+    PL_COLORBAR_LABEL_BOTTOM = 0x8,
+    PL_COLORBAR_IMAGE = 0x10,
+    PL_COLORBAR_SHADE = 0x20,
+    PL_COLORBAR_GRADIENT = 0x40,
+    PL_COLORBAR_CAP_NONE = 0x80,
+    PL_COLORBAR_CAP_LOW = 0x100,
+    PL_COLORBAR_CAP_HIGH = 0x200,
+    PL_COLORBAR_SHADE_LABEL = 0x400,
+    PL_COLORBAR_ORIENT_RIGHT = 0x800,
+    PL_COLORBAR_ORIENT_TOP = 0x1000,
+    PL_COLORBAR_ORIENT_LEFT = 0x2000,
+    PL_COLORBAR_ORIENT_BOTTOM = 0x4000,
+    PL_COLORBAR_BACKGROUND = 0x8000,
+    PL_COLORBAR_BOUNDING_BOX = 0x10000,
 };
 typedef [set] enum plplot_colorbar_enum plplot_colorbar_opt;
 

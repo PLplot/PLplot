@@ -1,5 +1,5 @@
 //
-// Copyright 2007, 2008, 2009  Hezekiah M. Carty
+// Copyright 2007, 2008, 2009, 2010, 2011  Hezekiah M. Carty
 //
 // This file is part of PLplot.
 //
