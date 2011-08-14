@@ -394,8 +394,6 @@ let process_prototype line =
     |> Array.map minimize_whitespace
   in
   (* Get the return type, name and arg list separately *)
-  Array.iter print_string pieces;
-  print_newline ();
   let return_type = pieces.(0) in
   let function_name = pieces.(1) in
   let params =
