@@ -106,7 +106,6 @@ typedef struct
     char            *pangoMarkupString;
     short           upDown;
     float           fontSize;
-    short           closed;
 
     // These are arguments for plP_script_scale which must be retained
     // in aStream for the alt_unicode approach.  level has an
@@ -292,9 +291,6 @@ void start_raster( PLStream *pls )
 
     aStream = (PLCairo *) pls->dev;
 
-    if ( aStream->closed )
-        return;
-
     // Do not use the external surface if the user says not to
     if ( !aStream->rasterize_image )
         return;
@@ -339,9 +335,6 @@ void end_raster( PLStream *pls )
 
     aStream = (PLCairo *) pls->dev;
 
-    if ( aStream->closed )
-        return;
-
     // TODO FIXME: This should really only copy the used portion of the
     // offscreen pixmap.
 
@@ -382,9 +375,6 @@ void plD_bop_cairo( PLStream *pls )
     PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
-
-    if ( aStream->closed )
-        return;
 
     // Some Cairo devices support delayed device setup (eg: xcairo with
     // external drawable and extcairo with an external context).
@@ -435,9 +425,6 @@ void plD_line_cairo( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     aStream = (PLCairo *) pls->dev;
 
-    if ( aStream->closed )
-        return;
-
     set_current_context( pls );
 
     cairo_save( aStream->cairoContext );
@@ -464,9 +451,6 @@ void plD_polyline_cairo( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     aStream = (PLCairo *) pls->dev;
 
-    if ( aStream->closed )
-        return;
-
     cairo_save( aStream->cairoContext );
 
     set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
@@ -489,9 +473,6 @@ void plD_eop_cairo( PLStream *pls )
     PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
-
-    if ( aStream->closed )
-        return;
 
     cairo_show_page( aStream->cairoContext );
 }
@@ -539,9 +520,6 @@ void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
     PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
-
-    if ( aStream->closed )
-        return;
 
     switch ( op )
     {
@@ -1352,9 +1330,6 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     aStream->set_background         = set_background;
     aStream->image_buffering        = image_buffering;
 
-    // set stream as not closed.
-    aStream->closed = 0;
-
     return aStream;
 }
 
@@ -1875,9 +1850,6 @@ void plD_bop_xcairo( PLStream *pls )
 
     plD_bop_cairo( pls );
 
-    if ( aStream->closed )
-        return;
-
     if ( aStream->xdrawable_mode )
         return;
 
@@ -1904,9 +1876,6 @@ void plD_eop_xcairo( PLStream *pls )
     char           *plotTitle;
 
     aStream = (PLCairo *) pls->dev;
-
-    if ( aStream->closed )
-        return;
 
     // Blit the offscreen image to the X window.
     blit_to_x( pls, 0.0, 0.0, pls->xlength, pls->ylength );
@@ -1999,9 +1968,6 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
     PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
-
-    if ( aStream->closed )
-        return;
 
     switch ( op )
     {
