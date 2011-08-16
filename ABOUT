@@ -13,7 +13,42 @@ configurable.
 
 Why and when did PLplot come to be?
 
-???
+PLplot was originally developed by Sze Tan of the University of Auckland 
+in Fortran-77 (in 1986). Many of the underlying concepts used in the 
+PLplot package are based on ideas used in Tim Pearson's PGPLOT package.
+Sze Tan writes:
+
+    I'm rather amazed how far PLPLOT has traveled given its origins etc. I
+    first used PGPLOT on the Starlink VAX computers while I was a graduate
+    student at the Mullard Radio Astronomy Observatory in Cambridge from
+    1983-1987. At the beginning of 1986, I was to give a seminar within the
+    department at which I wanted to have a computer graphics demonstration on
+    an IBM PC which was connected to a completely non-standard graphics
+    card. Having about a week to do this and not having any drivers for the
+    card, I started from the back end and designed PLPLOT to be such that one
+    only needed to be able to draw a line or a dot on the screen in order to
+    do arbitrary graphics. The application programmer's interface was made as
+    similar as possible to PGPLOT so that I could easily port my programs from
+    the VAX to the PC. The kernel of PLPLOT was modeled on PGPLOT but the code
+    is not derived from it.
+
+Then Tony Richardson ported it to the Commodore Amiga, rewriting in C with
+additional improvements.
+
+While doing a post-doc fellowship in Japan Maurice LeBrun needed a free 
+scientific graphics library for his plasma simulation code and came across 
+PLplot on the Amiga "Fish disks" (disk 222).  Maurice ported it back to 
+several varieties of Unix and took over maintenance from Tony. After 
+returning to the Institute of Fusion Studies at University of Texas Maurice 
+continued to develop the package, with Geoff Furnish joining him as a
+co-developer. In the early 90s's the new contributions were released under 
+the LGPL.
+
+When Maurice left UT in '95 Geoff became sole maintainer for some years, 
+and was responsible for getting it up at Sourceforge in the earliest days 
+of that site's existence.  That made it easier to add collaborators & such, 
+and starting with Alan Irwin & Rafael Laboissiere the core team gradually 
+came to be.
 
 
 In which [language(s)|platform(s)] is PLplot developed?
