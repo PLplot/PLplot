@@ -483,58 +483,6 @@ typedef struct
 } PLLabelDefaults;
 
 //
-// Structures and Enumerations used by plget and plset.
-//
-
-enum PLAttributeName   // alphabetical?
-{
-    PL_CMAP0,
-    PL_CMAP1,
-    PL_CURCHARSIZE,
-    PL_CURCOLOR0,
-    PL_CURMAJORTICK,
-    PL_CURMINORTICK,
-    PL_DEFCHARSIZE,
-    PL_DEFMAJORTICK,
-    PL_DEFMINORTICK,
-    PL_ICOL0,
-    PL_ICOL1,
-    PL_NCOL0,
-    PL_NCOL1,
-    PL_PENWIDTH,
-    PL_PRECISION,
-    PL_SETPRECISION,
-    PL_XDIGITS,
-    PL_XDIGMAX,
-    PL_YDIGITS,
-    PL_YDIGMAX,
-    PL_ZDIGITS,
-    PL_ZDIGMAX
-};
-
-enum PLAttributeType
-{
-    PL_COLOR,
-    PL_COLORPTR,
-    PL_FLT,
-    PL_FLTPTR,
-    PL_INT,
-    PL_INTPTR
-};
-
-typedef struct
-{
-    PLINT   attributeType;
-    PLINT   intValue;
-    PLINT   *intValues;
-    PLFLT   fltValue;
-    PLFLT   *fltValues;
-    PLColor colorValue;
-    PLColor *colorValues;
-    PLINT   nValues;
-} PLAttribute;
-
-//
 // typedefs for access methods for arbitrary (i.e. user defined) data storage
 //
 
@@ -674,7 +622,6 @@ typedef plf2ops_t * PLF2OPS;
 #define    plgfci                   c_plgfci
 #define    plgfnam                  c_plgfnam
 #define    plgfont                  c_plgfont
-#define    plget                    c_plget
 #define    plglevel                 c_plglevel
 #define    plgpage                  c_plgpage
 #define    plgra                    c_plgra
@@ -751,7 +698,6 @@ typedef plf2ops_t * PLF2OPS;
 #define    plsdiplz                 c_plsdiplz
 #define    plseed                   c_plseed
 #define    plsesc                   c_plsesc
-#define    plset                    c_plset
 #define    plsetopt                 c_plsetopt
 #define    plsfam                   c_plsfam
 #define    plsfci                   c_plsfci
@@ -2031,14 +1977,6 @@ c_plwind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 
 PLDLLIMPEXP void
 c_plxormod( PLBOOL mode, PLBOOL *status );
-
-// Get the value of a variable from the current stream.
-PLDLLIMPEXP void
-c_plget( enum PLAttributeName attrName, PLAttribute *attr );
-
-// Set the value of a variable in the current stream.
-PLDLLIMPEXP void
-c_plset( enum PLAttributeName attrName, PLAttribute attr );
 
 
 //--------------------------------------------------------------------------

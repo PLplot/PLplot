@@ -35,7 +35,6 @@ set(plplot${LIB_TAG}_LIB_SRCS
   plfill.c
   plfreetype.c
   plgradient.c
-  plgset.c
   plhist.c
   plimage.c
   plline.c
