@@ -273,7 +273,7 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
 (A1) GNU Privacy Guard (gpg)
 A brief summary of developer relevant gpg commands, see also:
-http://webber.dewinter.com/gnupg_howto/
+http://dewinter.com/gnupg_howto/english/GPGMiniHowto.html
 man gpg
 
 create a new key:
