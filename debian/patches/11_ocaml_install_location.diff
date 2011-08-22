@@ -62,6 +62,7 @@
 +  # we are trying to emulate here because that signature not
 +  # available to us because this  shared object was
 +  # created by a custom command).
++  install(
 +    FILES ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
      DESTINATION ${OCAML_INSTALL_DIR}/stublibs
      )
