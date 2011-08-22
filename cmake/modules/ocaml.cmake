@@ -122,7 +122,7 @@ if(ENABLE_ocaml)
 
   # Installation follows the Debian ocaml policy for want of a better
   # standard.
-  set(OCAML_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/ocaml/${OCAML_VERSION}
+  set(OCAML_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/ocaml
     CACHE PATH "install location for ocaml files"
     )
 

@@ -209,8 +209,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         look for PLplot:
       </para>
       <programlisting>
-        export OCAMLPATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml/$OCAML_VERSION:$OCAMLPATH
-        export LD_LIBRARY_PATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml/$OCAML_VERSION/stublibs:$LD_LIBRARY_PATH
+        export OCAMLPATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml:$OCAMLPATH
+        export LD_LIBRARY_PATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml/stublibs:$LD_LIBRARY_PATH
       </programlisting>
     </sect2>
     <sect2 id="ocaml_command_line_sample_project_core">
