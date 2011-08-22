@@ -1,7 +1,9 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
 ## 11_ocaml_install_location.diff by Andrew Ross <andrewross@users.sourceforge.net>
 ##
-## DP: Patch from upstream to remove ocaml version from ocaml library install path as per ocaml policy.
+## DP: Patch from upstream to remove ocaml version from ocaml library 
+## DP: install path and remove executable bit for stublibs s per ocaml 
+## DP: policy.
 
 @DPATCH@
 
@@ -29,3 +31,38 @@
        </programlisting>
      </sect2>
      <sect2 id="ocaml_command_line_sample_project_core">
+--- plplot-5.9.8.orig/bindings/ocaml/plcairo/CMakeLists.txt       2011-08-02 15:26:14.000000000
++++ plplot-5.9.8/bindings/ocaml/plcairo/CMakeLists.txt       2011-08-20 20:23:44.000000000 +0100
+@@ -251,7 +251,13 @@
+     )
+ 
+   # Shared library stubs go in stublibs
+-  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/dllplcairo_stubs.so
++  # Use default permissions (rw-r--r--) for FILES signature because
++  # those are the permissions used by install(TARGETS...   (which
++  # we are trying to emulate here because that signature not
++  # available to us because this  shared object was
++  # created by a custom command).
++  install(
++    FILES ${CMAKE_CURRENT_BINARY_DIR}/dllplcairo_stubs.so
+     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
+     )
+ 
+--- plplot-5.9.8.orig/bindings/ocaml/CMakeLists.txt       2011-08-02 15:26:14.000000000
++++ plplot-5.9.8/bindings/ocaml/CMakeLists.txt       2011-08-20 20:23:44.000000000 +0100
+@@ -331,8 +331,14 @@
+     DESTINATION ${OCAML_INSTALL_DIR}/plplot
+     )
+ 
+-  # Shared library stubs go in stublibs
+-  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
++  # Shared library stubs go in stublibs.
++  # Use default permissions (rw-r--r--) for FILES signature because
++  # those are the permissions used by install(TARGETS...   (which
++  # we are trying to emulate here because that signature not
++  # available to us because this  shared object was
++  # created by a custom command).
++    FILES ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
+     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
+     )
+ 

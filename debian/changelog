@@ -36,7 +36,8 @@ plplot (5.9.8-1) unstable; urgency=low
     + Add new upstream patch to remove spurious chmod commands from test 
       scripts. This ensures the installed examples will work as expected.
     + Add new upstream patch to change the install location for ocaml
-      libraries to remove the ocaml version (as per Debian ocaml practice).
+      libraries to remove the ocaml version (as per Debian ocaml practice)
+      and to remove the execute permissions for the stublibs.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 22 Aug 2011 19:20:38 +0100
 
