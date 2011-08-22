@@ -26,15 +26,19 @@ plplot (5.9.8-1) unstable; urgency=low
   * debian/NEWS: update NEWS file for 5.9.8.
   * debian/patches/series, debian/patches/08_oct_perms.diff, 
     debian/patches/09_qt_nodisplay.diff, 
-    debian/patches/10_fix_test_scripts.diff:
+    debian/patches/10_fix_test_scripts.diff,
+    debian/patches/11_ocaml_library_location.diff:
     + Add new patch to turn off execute permissions for plplot_octave.oct 
-      (fixes lintian error). Add patch from upstream to enable 
-      non-interactive qt devices to work even if DISPLAY is not set 
-      (prevents error when running tests on a buildd / using pbuilder). Add new
-      upstream patch to remove spurious chmod commands from test scripts. This
-      ensures the installed examples will work as expected.
+      (fixes lintian error). 
+    + Add patch from upstream to enable non-interactive qt devices to work
+      even if DISPLAY is not set (prevents error when running tests on a 
+      buildd / using pbuilder). 
+    + Add new upstream patch to remove spurious chmod commands from test 
+      scripts. This ensures the installed examples will work as expected.
+    + Add new upstream patch to change the install location for ocaml
+      libraries to remove the ocaml version (as per Debian ocaml practice).
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 12 Aug 2011 10:23:38 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 22 Aug 2011 19:20:38 +0100
 
 plplot (5.9.7-1) UNRELEASED; urgency=low
 

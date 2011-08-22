@@ -1,0 +1,31 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 11_ocaml_install_location.diff by Andrew Ross <andrewross@users.sourceforge.net>
+##
+## DP: Patch from upstream to remove ocaml version from ocaml library install path as per ocaml policy.
+
+@DPATCH@
+
+--- plplot-5.9.8.orig/cmake/modules/ocaml.cmake   2011-08-02 15:26:05.000000000 +0100
++++ plplot-5.9.8/cmake/modules/ocaml.cmake   2011-08-22 19:02:34.000000000 +0100
+@@ -122,7 +122,7 @@
+ 
+   # Installation follows the Debian ocaml policy for want of a better
+   # standard.
+-  set(OCAML_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/ocaml/${OCAML_VERSION}
++  set(OCAML_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/ocaml
+     CACHE PATH "install location for ocaml files"
+     )
+ 
+--- plplot-5.9.8.orig/doc/docbook/src/ocaml.xml   2011-08-02 15:26:17.000000000 +0100
++++ plplot-5.9.8/doc/docbook/src/ocaml.xml   2011-08-22 19:07:54.000000000
+@@ -209,8 +209,8 @@
+         look for PLplot:
+       </para>
+       <programlisting>
+-        export OCAMLPATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml/$OCAML_VERSION:$OCAMLPATH
+-        export LD_LIBRARY_PATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml/$OCAML_VERSION/stublibs:$LD_LIBRARY_PATH
++        export OCAMLPATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml:$OCAMLPATH
++        export LD_LIBRARY_PATH=$PLPLOT_INSTALL_PREFIX/lib/ocaml/stublibs:$LD_LIBRARY_PATH
+       </programlisting>
+     </sect2>
+     <sect2 id="ocaml_command_line_sample_project_core">

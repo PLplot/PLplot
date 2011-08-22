@@ -4,3 +4,4 @@
 08_oct_perms.diff
 09_qt_nodisplay.diff
 10_fix_test_scripts.diff
+11_ocaml_install_location.diff

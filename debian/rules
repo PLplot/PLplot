@@ -67,9 +67,6 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
 
-ocamlinit:
-	for f in $(OFILES); do sed -e 's/@OCamlABI@/$(OCAMLABI)/g' $$f.in > $$f; done
-
 control:
 ifeq ($(BUILD_ADA),no)
 	slice -o UNDEF+ADA:debian/control debian/control.in
