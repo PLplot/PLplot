@@ -75,7 +75,7 @@ else
 endif
 
 config: config-stamp
-config-stamp: control ocamlinit
+config-stamp: control 
         # Temporary fix for perms problem in 5.9.8
 	chmod a+x $(SRC_DIR)/plplot_test/test_d.sh.in
 	mkdir $(BUILD_DIR)
@@ -231,7 +231,7 @@ source diff:
 
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary config \
-        patch unpatch control ocamlinit
+        patch unpatch control 
 
 .NOTPARALLEL:
 

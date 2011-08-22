@@ -11,11 +11,11 @@ plplot (5.9.8-1) unstable; urgency=low
       plplot make files. This allows parallel builds to work correctly.
     + Fix a temporary permissions problem with test script in the 5.9.8
       tarball.
-  * debian/rules, debian/control.in, debian/libplplot-ocaml.files.in:
+  * debian/rules, debian/control.in, debian/libplplot-ocaml.files:
     Add new libplplot-ocaml package which includes the ocaml bindings.
-  * debian/rules, debian/control.in, debian/libplplot-lua.files.in:
+  * debian/rules, debian/control.in, debian/libplplot-lua.files:
     Add new libplplot-lua package which includes the lua bindings.
-  * debian/rules, debian/control.in, debian/libplplot-d.files.in:
+  * debian/rules, debian/control.in, debian/libplplot-d.files:
     Add new libplplot-d package which includes the D language bindings.
   * debian/control.in: 
     + Remove dependency of libplplot9-java on default-jre as per policy. 
