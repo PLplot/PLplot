@@ -1,5 +1,0 @@
-! Include file to control the kind of floating point number
-! used by PLplot (single vs double)
-! This file is automatically configured by CMake
-integer, parameter :: plflt   = kind(@ONE_IN_DEFAULT_PRECISION@)
-integer, parameter :: plunicode  = 4
