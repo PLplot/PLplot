@@ -50,8 +50,7 @@ Recommends: pkg-config, libplplot-c++9c2 (= ${binary:Version}),
  libplplot-fortran9 (= ${binary:Version}), libplplot-ada (= ${binary:Version}), 
  libplplot-ocaml, libplplot-lua, libplplot-d
 Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev 
- ${misc:Depends}
+ libltdl3-dev, ${misc:Depends}
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -65,7 +64,7 @@ Description: Scientific plotting library (development files)
  Fortran and Ada with PLplot.  Examples of programs for these languages are
  also included.  For development in Tcl/Tk, Python, Octave, and Java install
  the plplot-tcl, python-plplot, octave-plplot and libplplot9-java packages, 
- respectively. This package also includes the ocaml, lua and D examples. To use
+ respectively. This package also includes the OCaml, lua and D examples. To use
  a particular language you will also need to install the libplplot-xxx package
  for that language.
 
@@ -220,6 +219,7 @@ Description: Scientific plotting library (GD driver)
 Package: plplot9-driver-cairo
 Architecture: any
 Section: libs
+Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: plplot9-driver-psttf
 Replaces: plplot9-driver-psttf
@@ -239,6 +239,7 @@ Description: Scientific plotting library (Cairo driver)
 Package: python-plplot
 Architecture: any
 Section: python
+Priority: extra
 Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends},
  ${python:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
@@ -257,6 +258,7 @@ Description: Python support for PLplot, a plotting library
 
 Package: octave-plplot
 Architecture: any
+Section: math
 Priority: extra
 Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends},
  ${misc:Depends}
@@ -288,9 +290,11 @@ Description: Ada support for PLplot, a plotting library
  .
  This package contains the Ada bindings for PLplot.  
 
+
 Package: plplot-doc
 Architecture: all
 Section: doc
+Priority: extra
 Suggests: libplplot-dev
 Depends: dpkg (>= 1.15.4) | install-info, ${misc:Depends}
 Description: Documentation for PLplot, a plotting library
@@ -309,6 +313,7 @@ Description: Documentation for PLplot, a plotting library
 Package: plplot9-driver-qt
 Architecture: any
 Section: libs
+Priority: extra
 Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (qt driver)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -325,9 +330,10 @@ Description: Scientific plotting library (qt driver)
 
 Package: libplplot-ocaml
 Architecture: any
-Section: libs
+Section: ocaml
+Priority: extra
 Depends: libplplot9, ocaml-base-nox-${F:OCamlABI}, ${shlibs:Depends}, ${misc:Depends}
-Description: Scientific plotting library (ocaml bindings)
+Description: Scientific plotting library (OCaml bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
  line (linear, log), contour, 3D, fill, and almost 1000 characters
@@ -342,6 +348,7 @@ Description: Scientific plotting library (ocaml bindings)
 Package: libplplot-lua
 Architecture: any
 Section: libs
+Priority: extra
 Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (lua bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -358,6 +365,7 @@ Description: Scientific plotting library (lua bindings)
 Package: libplplot-d
 Architecture: any
 Section: libs
+Priority: extra
 Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (D language bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
