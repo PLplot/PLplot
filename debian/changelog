@@ -1,6 +1,8 @@
 plplot (5.9.8-1) unstable; urgency=low
 
   * New upstream release.
+  * debian/control.in: Bump standards version to 3.9.2.
+  * debian/NEWS: update NEWS file for 5.9.8.
   * Rebuild against gfortran-4.6 (closes: #635739).
   * debian/rules: 
     + Update to reflect changs in upstream ChangeLog file name. 
@@ -11,23 +13,28 @@ plplot (5.9.8-1) unstable; urgency=low
       plplot make files. This allows parallel builds to work correctly.
     + Fix a temporary permissions problem with test script in the 5.9.8
       tarball.
+    + Fix dependency generation for octave package.
+    + Fix python build so that the installed example Makefiles are 
+      properly configured.
   * debian/rules, debian/control.in, debian/libplplot-ocaml.files:
-    Add new libplplot-ocaml package which includes the ocaml bindings.
+    Add new libplplot-ocaml package which includes the OCaml bindings.
   * debian/rules, debian/control.in, debian/libplplot-lua.files:
     Add new libplplot-lua package which includes the lua bindings.
   * debian/rules, debian/control.in, debian/libplplot-d.files:
     Add new libplplot-d package which includes the D language bindings.
+  * debian/rules, debian/control.in, debian/python-plplot-qt.files:
+    Add new python-plplot-qt package which includes the python bindings to
+    alllow use of the plplot API in qt applications. 
   * debian/control.in: 
     + Remove dependency of libplplot9-java on default-jre as per policy. 
       Java libraries do not need to depend on a java runtime. Fixes 
       lintian warning.
     + Tidy up section / priority headers for the packages.
-  * debian/control.in: Bump standards version to 3.9.2.
-  * debian/NEWS: update NEWS file for 5.9.8.
   * debian/patches/series, debian/patches/08_oct_perms.diff, 
     debian/patches/09_qt_nodisplay.diff, 
     debian/patches/10_fix_test_scripts.diff,
-    debian/patches/11_ocaml_library_location.diff:
+    debian/patches/11_ocaml_library_location.diff,
+    debian/patches/12_octave_rpath.diff:
     + Add new patch to turn off execute permissions for plplot_octave.oct 
       (fixes lintian error). 
     + Add patch from upstream to enable non-interactive qt devices to work
@@ -35,11 +42,15 @@ plplot (5.9.8-1) unstable; urgency=low
       buildd / using pbuilder). 
     + Add new upstream patch to remove spurious chmod commands from test 
       scripts. This ensures the installed examples will work as expected.
-    + Add new upstream patch to change the install location for ocaml
-      libraries to remove the ocaml version (as per Debian ocaml practice)
+    + Add new upstream patch to change the install location for OCaml
+      libraries to remove the OCaml version (as per Debian OCaml practice)
       and to remove the execute permissions for the stublibs.
+    + Add new patch to include rpath information for octave libraries (as
+      mkoctfile does) to ensure they are found correctly.
+  * debian/copyright: Make explicit that the license is LGPL-2 (fixes
+    lintian warning).
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 22 Aug 2011 19:20:38 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 24 Aug 2011 09:22:38 +0100
 
 plplot (5.9.7-1) UNRELEASED; urgency=low
 
@@ -212,7 +223,7 @@ plplot (5.9.2-2) unstable; urgency=low
       large number of warnings. Also fixes automatic_replot support.
       (closes: #522423)
 
-  * debian/rules: Disable ocaml support to prevent ocaml bindings
+  * debian/rules: Disable OCaml support to prevent OCaml bindings
     being build if ocamlc is installed.
 
   [ Rafael Laboissiere ]

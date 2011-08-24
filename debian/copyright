@@ -35,7 +35,7 @@ The PLplot package may be distributed under the following terms:
 
 The text of this license is given in the file COPYING.LIB in the
 distribution directory.  [In Debian systems, see the file
-/usr/share/common-licenses/LGPL.]  Exceptions are noted below.
+/usr/share/common-licenses/LGPL-2.]  Exceptions are noted below.
 
 The intent behind distributing PLplot under the LGPL is to ensure that it
 continues to evolve in a positive way, while remaining freely
