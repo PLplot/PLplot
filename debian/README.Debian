@@ -5,7 +5,8 @@ plplot for Debian
 
     These are the debianized packages for PLplot, a scientific plotting
     library.  They were put together by Rafael Laboissiere. The porting
-    to the new CMake build system was done by Andrew Ross.
+    to the new CMake build system and current maintenance is done by 
+    Andrew Ross.
 
 
 2. PACKAGES
@@ -77,7 +78,7 @@ plplot for Debian
 
       * libqsastime0, libqsastime-dev: library and development packages for
         the qsastime library for handling time format conversions. This is
-        use by PLplot.
+        used by PLplot.
 
 
 3. DOCUMENTATION

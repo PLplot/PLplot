@@ -216,8 +216,8 @@ binary-arch: build-arch install-arch
 	dh_testroot -a
 	dh_installdirs -a
 
-	dh_installdocs --package=$(libpkg) --package=libcsiro0
-	dh_installchangelogs --package=$(libpkg) --package=libcsiro0
+	dh_installdocs --package=$(libpkg) --package=libcsiro0 --package=libqsastime0
+	dh_installchangelogs --package=$(libpkg) --package=libcsiro0 --package=libqsastime0
 
 	dh_python2 --package=python-plplot-qt --package=python-plplot
 	dh_numpy

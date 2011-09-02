@@ -47,7 +47,7 @@ plplot (5.9.8-1) unstable; urgency=low
       libraries to remove the OCaml version (as per Debian OCaml practice)
       and to remove the execute permissions for the stublibs.
   * debian/copyright: Make explicit that the license is LGPL-2 (fixes
-    lintian warning).
+    lintian warning). Update consistent with upstream copyright file.
   * debian/control.in, debian/rules, debian/libqsastime0.files, 
     debian/libqsastime-dev.file:
     Split libqsastime off into separate library and devel packages.
