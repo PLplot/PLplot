@@ -2,7 +2,10 @@ plplot (5.9.8-1) unstable; urgency=low
 
     New libplplot-ocaml, libplplot-lua and libplplot-d packages have been 
     introduced. These contain the PLplot bindings for the ocaml, lua and D
-    languages respectively.
+    languages respectively. 
+
+    New python-plplot-qt package has been introduced which allows the PLplot
+    API to be used in Qt applications from python using pyqt4.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 02 Aug 2011 15:41:38 +0100
 

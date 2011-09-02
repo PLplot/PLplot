@@ -23,13 +23,13 @@ Homepage: http://www.plplot.org
 Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
 Vcs-Browser: http://plplot.svn.sourceforge.net/viewvc/plplot/trunk/debian/
 
-Package: libplplot9
+Package: libplplot11
 Architecture: any
 Section: libs
-Conflicts: libplplot5, plplot (<< 5)
+Conflicts: libplplot9
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Suggests: plplot9-driver-xwin, plplot9-driver-gd,
- plplot9-driver-cairo, plplot9-driver-wxwidgets, plplot-tcl
+Suggests: plplot11-driver-xwin, plplot11-driver-gd,
+ plplot11-driver-cairo, plplot11-driver-qt, plplot11-driver-wxwidgets, plplot11-tcl
 Replaces: plplot-bin (<< 5.9.6-1)
 Breaks: plplot-bin (<<5.9.6-1)
 Description: Scientific plotting library
@@ -47,11 +47,12 @@ Description: Scientific plotting library
 Package: libplplot-dev
 Architecture: any
 Section: libdevel
-Recommends: pkg-config, libplplot-c++9c2 (= ${binary:Version}), 
+Recommends: pkg-config, libplplot-c++10 (= ${binary:Version}), 
  libplplot-fortran9 (= ${binary:Version})[ADA:, libplplot-ada (= ${binary:Version}):], 
  libplplot-ocaml, libplplot-lua, libplplot-d
-Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
+Depends: libplplot11 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, ${misc:Depends}
+Conflicts: libplplot-fortran9 (<< 5.9.8-1)
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -64,16 +65,16 @@ Description: Scientific plotting library (development files)
  This package contains all that is needed for doing development in C, C++,
  Fortran and Ada with PLplot.  Examples of programs for these languages are
  also included.  For development in Tcl/Tk, Python, Octave, and Java install
- the plplot-tcl, python-plplot, octave-plplot and libplplot9-java packages, 
+ the plplot-tcl, python-plplot, octave-plplot and libplplot-java packages, 
  respectively. This package also includes the OCaml, lua and D examples. To use
  a particular language you will also need to install the libplplot-xxx package
  for that language.
 
-Package: libplplot-c++9c2
+Package: libplplot-c++10
 Architecture: any
 Section: libs
-Conflicts: libplplot5, libplplot-c++9
-Replaces: libplplot-c++9
+Conflicts: libplplot5, libplplot-c++9, libplplot-c++9c2
+Replaces: libplplot-c++9c2
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (C++ binding)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -102,9 +103,11 @@ Description: Scientific plotting library (fortran bindings)
  This package contains the Fortran 77 and Fortran 95 bindings for
  PLplot.
 
-Package: libplplot9-java
+Package: libplplot-java
 Architecture: any
 Section: java
+Breaks: libplplot9-java
+Replaces: libplplot9-java
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (Java bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -120,7 +123,7 @@ Description: Scientific plotting library (Java bindings)
 Package: libcsiro0
 Architecture: any
 Section: libs
-Conflicts: libplplot5, libplplot9 (<< 5.3.0.cvs.20040303)
+Conflicts: libplplot9 (<< 5.3.0.cvs.20040303)
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (CSIRO libraries)
  This package contains two libraries developed by Pavel Sakov, from the
@@ -132,7 +135,40 @@ Description: Scientific plotting library (CSIRO libraries)
  The source code for these libraries are part of the plplot source
  package.
 
-Package: plplot9-driver-xwin
+Package: libqsastime0
+Architecture: any
+Section: libs
+Conflicts: libplplot9
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Time format conversion library
+ The qsastime library is a simple library for handling time format
+ conversion. It overcomes the limitations of the POSIX time handling
+ routines by allow high precision time variables over a large range
+ of ranges of dates and by correctly handling leap seconds. It was
+ designed with the needs of scientific data plotting in mind. This 
+ package provides the runtime library.
+ .
+ The source code for this library is part of the plplot source
+ package.
+
+Package: libqsastime-dev
+Architecture: any
+Section: libdevel
+Conflicts: libplplot-dev (<< 5.9.8-1)
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Time format conversion library
+ The qsastime library is a simple library for handling time format
+ conversion. It overcomes the limitations of the POSIX time handling
+ routines by allow high precision time variables over a large range
+ of ranges of dates and by correctly handling leap seconds. It was
+ designed with the needs of scientific data plotting in mind. This 
+ package provides the necessary files to do development with 
+ libqsastime.
+ .
+ The source code for this library is part of the plplot source
+ package.
+
+Package: plplot11-driver-xwin
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -148,10 +184,10 @@ Description: Scientific plotting library (X11 driver)
  .
  This package provides the X11 driver module for PLplot.
 
-Package: plplot9-driver-wxwidgets
+Package: plplot11-driver-wxwidgets
 Architecture: any
 Section: libs
-Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
+Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (wxWidgets driver)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -166,7 +202,7 @@ Description: Scientific plotting library (wxWidgets driver)
 Package: plplot-tcl
 Architecture: any
 Priority: extra
-Depends: plplot9-driver-xwin, iwidgets4, ${shlibs:Depends}, ${misc:Depends}
+Depends: plplot11-driver-xwin, iwidgets4, ${shlibs:Depends}, ${misc:Depends}
 Description: Tcl/Tk support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -183,7 +219,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
 Package: plplot-tcl-dev
 Architecture: any
 Priority: extra
-Depends: libplplot9 (= ${binary:Version}), plplot-tcl, ${misc:Depends}
+Depends: libplplot11 (= ${binary:Version}), plplot-tcl, ${misc:Depends}
 Conflicts: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -197,7 +233,7 @@ Description: Tcl/Tk development support for PLplot, a plotting library
  This package contains the necessary files to do development in Tcl/Tk
  with PLplot: header files, shared libraries links, and examples.
 
-Package: plplot9-driver-gd
+Package: plplot11-driver-gd
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -217,13 +253,11 @@ Description: Scientific plotting library (GD driver)
  dropped in a future release. The cairo and qt drivers offer newer, and
  better alternatives. 
 
-Package: plplot9-driver-cairo
+Package: plplot11-driver-cairo
 Architecture: any
 Section: libs
 Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: plplot9-driver-psttf
-Replaces: plplot9-driver-psttf
 Description: Scientific plotting library (Cairo driver)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -241,7 +275,7 @@ Package: python-plplot
 Architecture: any
 Section: python
 Priority: extra
-Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends},
+Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends},
  ${python:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
 Description: Python support for PLplot, a plotting library
@@ -261,8 +295,8 @@ Package: python-plplot-qt
 Architecture: any
 Section: python
 Priority: extra
-Depends: libplplot9 (= ${binary:Version}), python-plplot-qt (= ${binary:Version}), 
- plplot9-driver-qt (= ${binary:Version}), 
+Depends: libplplot11 (= ${binary:Version}), python-plplot-qt (= ${binary:Version}), 
+ plplot11-driver-qt (= ${binary:Version}), 
  ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
 Description: Scientific plotting library (python qt GUI)
@@ -281,7 +315,7 @@ Package: octave-plplot
 Architecture: any
 Section: math
 Priority: extra
-Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends},
+Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends},
  ${misc:Depends}
 Description: Octave support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -299,7 +333,7 @@ Description: Octave support for PLplot, a plotting library
 [ADA:Package: libplplot-ada
 Architecture: any
 Priority: extra
-Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Ada support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -331,11 +365,11 @@ Description: Documentation for PLplot, a plotting library
  PLplot documentation.  It also contains the man pages for the API
  functions.
 
-Package: plplot9-driver-qt
+Package: plplot11-driver-qt
 Architecture: any
 Section: libs
 Priority: extra
-Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
+Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (qt driver)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -353,7 +387,7 @@ Package: libplplot-ocaml
 Architecture: any
 Section: ocaml
 Priority: extra
-Depends: libplplot9, ocaml-base-nox-${F:OCamlABI}, ${shlibs:Depends}, ${misc:Depends}
+Depends: libplplot11, ocaml-base-nox-${F:OCamlABI}, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (OCaml bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -370,7 +404,7 @@ Package: libplplot-lua
 Architecture: any
 Section: libs
 Priority: extra
-Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
+Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (lua bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -387,7 +421,7 @@ Package: libplplot-d
 Architecture: any
 Section: libs
 Priority: extra
-Depends: libplplot9, ${shlibs:Depends}, ${misc:Depends}
+Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (D language bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
