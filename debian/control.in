@@ -106,7 +106,7 @@ Description: Scientific plotting library (fortran bindings)
 Package: libplplot-java
 Architecture: any
 Section: java
-Breaks: libplplot9-java
+Conflicts: libplplot9-java
 Replaces: libplplot9-java
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (Java bindings)
@@ -172,7 +172,8 @@ Package: plplot11-driver-xwin
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: plplot-lib, plplot (<< 5)
+Conflicts: plplot9-driver-xwin
+Replaces: plplot9-driver-xwin
 Description: Scientific plotting library (X11 driver)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -188,6 +189,8 @@ Package: plplot11-driver-wxwidgets
 Architecture: any
 Section: libs
 Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: plplot9-driver-wxwidgets
+Replaces: plplot9-driver-wxwidgets
 Description: Scientific plotting library (wxWidgets driver)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -237,6 +240,8 @@ Package: plplot11-driver-gd
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: plplot9-driver-gd
+Replaces: plplot9-driver-gd
 Recommends: ttf-freefont
 Description: Scientific plotting library (GD driver)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -258,6 +263,8 @@ Architecture: any
 Section: libs
 Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: plplot9-driver-cairo
+Replaces: plplot9-driver-cairo
 Description: Scientific plotting library (Cairo driver)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
