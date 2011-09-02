@@ -11,8 +11,8 @@ The PLplot package may be distributed under the following terms:
     Library General Public License for more details.
 
     You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    License along with this library; if not, write to the Free Software 
+    Foundation, Inc. 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 The text of this license is given in the file COPYING.LIB in the
 distribution directory.  Exceptions are noted below.
@@ -65,6 +65,8 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 ******************************************************************************
 
+The documentation files are distributed under the following license terms:
+
                DocBook documentation for the PLplot Library
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
@@ -103,7 +105,8 @@ License terms:
     OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-******************************************************************************
+  ===========================================================================
+
 
 Any file that is explicitly marked as "public domain" is free from any
 restriction on distribution.  
