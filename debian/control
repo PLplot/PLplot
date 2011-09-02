@@ -50,9 +50,10 @@ Section: libdevel
 Recommends: pkg-config, libplplot-c++10 (= ${binary:Version}), 
  libplplot-fortran9 (= ${binary:Version}), libplplot-ada (= ${binary:Version}), 
  libplplot-ocaml, libplplot-lua, libplplot-d
+Suggests: plplot-doc
 Depends: libplplot11 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, ${misc:Depends}
-Conflicts: libplplot-fortran9 (<< 5.9.8-1)
+Breaks: libplplot-fortran9 (<< 5.9.8-1)
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -62,10 +63,9 @@ Description: Scientific plotting library (development files)
  handful of function calls is typically required.  For more advanced use,
  virtually all aspects of plotting are configurable.
  .
- This package contains all that is needed for doing development in C, C++,
  Fortran and Ada with PLplot.  Examples of programs for these languages are
  also included.  For development in Tcl/Tk, Python, Octave, and Java install
- the plplot-tcl, python-plplot, octave-plplot and libplplot-java packages, 
+ the plplot-tcl-dev, python-plplot, octave-plplot and libplplot-java packages,
  respectively. This package also includes the OCaml, lua and D examples. To use
  a particular language you will also need to install the libplplot-xxx package
  for that language.
@@ -123,7 +123,6 @@ Description: Scientific plotting library (Java bindings)
 Package: libcsiro0
 Architecture: any
 Section: libs
-Conflicts: libplplot9 (<< 5.3.0.cvs.20040303)
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (CSIRO libraries)
  This package contains two libraries developed by Pavel Sakov, from the
@@ -154,9 +153,9 @@ Description: Time format conversion library
 Package: libqsastime-dev
 Architecture: any
 Section: libdevel
-Conflicts: libplplot-dev (<< 5.9.8-1)
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Time format conversion library
+Breaks: libplplot-dev (<< 5.9.8-1)
+Depends: libqsastime0 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Time format conversion library (development files)
  The qsastime library is a simple library for handling time format
  conversion. It overcomes the limitations of the POSIX time handling
  routines by allow high precision time variables over a large range
@@ -223,7 +222,7 @@ Package: plplot-tcl-dev
 Architecture: any
 Priority: extra
 Depends: libplplot11 (= ${binary:Version}), plplot-tcl, ${misc:Depends}
-Conflicts: plplot-tcl (<= 5.2.0.cvs.20030224-1)
+Breaks: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -302,7 +301,7 @@ Package: python-plplot-qt
 Architecture: any
 Section: python
 Priority: extra
-Depends: libplplot11 (= ${binary:Version}), python-plplot-qt (= ${binary:Version}), 
+Depends: libplplot11 (= ${binary:Version}), python-plplot (= ${binary:Version}), 
  plplot11-driver-qt (= ${binary:Version}), 
  ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
@@ -315,12 +314,11 @@ Description: Scientific plotting library (python qt GUI)
  handful of function calls is typically required.  For more advanced use,
  virtually all aspects of plotting are configurable.
  .
- This package provides python bindings to allow use of the PLplot API in 
+ This package provides Python bindings to allow use of the PLplot API in 
  qt applications.
 
 Package: octave-plplot
 Architecture: any
-Section: math
 Priority: extra
 Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends},
  ${misc:Depends}

@@ -27,6 +27,15 @@ debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
 octver		:= $(shell octave-config -v)
 
+CFLAGS = $(shell dpkg-buildflags --get CFLAGS)
+CFLAGS += -fvisibility=hidden
+#Don't add -fvisibility=hidden to CXXFLAGS for now as this breaks the octave bindings.
+#CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
+#CXXFLAGS += -fvisibility=hidden
+LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
+LDFLAGS += -Wl,--as-needed
+
+
 JAVA_HOME = /usr/lib/jvm/default-java
 
 PYVERS = $(shell pyversions -vr)
@@ -57,14 +66,13 @@ JAVA_OPTIONS = \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
 
-CONFIGURE_OPTIONS = -DBUILD_TEST=OFF \
+CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
 	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON \
 	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
         -DTCL_TCLSH=/usr/bin/tclsh8.5 \
-	$(ADA_OPTIONS) $(JAVA_OPTIONS) \
-	-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--as-needed"
+	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
 
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
@@ -91,7 +99,7 @@ build-arch: build-arch-stamp
 build-arch-stamp: patch config-stamp
 	dh_testdir
 	( cd $(BUILD_DIR) ; $(MAKE)  )
-	-( cd $(BUILD_DIR) ; unset DISPLAY ; echo $(MAKE) test_noninteractive )
+	-( cd $(BUILD_DIR) ; unset DISPLAY ; $(MAKE) test_noninteractive )
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
@@ -136,7 +144,7 @@ install-arch-stamp: build-arch-stamp
 
 	# Strip bindings/octave/plplot_octave.oct as this is missed by 
         # dh_strip.
-	strip $(BUILD_DIR)/bindings/octave/plplot_octave.oct
+	strip --strip-unneeded --remove-section=.comment $(BUILD_DIR)/bindings/octave/plplot_octave.oct
 
 	( cd $(BUILD_DIR) ; \
 	  $(MAKE) DESTDIR=$(debtmp) install )
@@ -207,6 +215,7 @@ binary-indep: build-indep install-indep
 	dh_compress -i --exclude=.pdf
 	dh_fixperms -i
 	dh_installdeb -i
+	dh_lintian -i
 	dh_gencontrol -i
 	dh_md5sums -i
 	dh_builddeb -i
@@ -230,6 +239,7 @@ binary-arch: build-arch install-arch
 	dpkg-shlibdeps -Tdebian/octave-plplot.substvars -S$(debbase)/$(libpkg)/usr/lib/*.so* -S/usr/lib/$(octver)/*.so* $(debbase)/octave-plplot/$(OCTDIR)/plplot_octave.oct
 	octave-depends --package=octave-plplot
 	dh_installdeb -a
+	dh_lintian -a
 	dh_gencontrol -a -- -VF:OCamlABI="$(OCAMLABI)"
 	dh_md5sums -a
 	dh_builddeb -a

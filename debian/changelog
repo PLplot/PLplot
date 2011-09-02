@@ -54,8 +54,14 @@ plplot (5.9.8-1) unstable; urgency=low
   * debian/libplplot-dev.files, debian/libplplot-fortran9.files:
     Move fortran .h and .mod files to the libplplot-dev package as these
     are required for compiling fortran with plplot and not for runtime.
+  * debian/plplot-tcl-dev.lintian-overrides: Add lintian override for
+    informational warning about interpreter path not being absolute.
+  * debian/rules: Add -fvisibility=hidden to CFLAGS and -Wl,--as-needed
+    to LD_FLAGS to only export required symbols and prevent linking in
+    unnecessary libraries. Reduces the dependency requirements, 
+    particularly for the drivers.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 24 Aug 2011 09:22:38 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 2 Sep 2011 20:35:33 +0100
 
 plplot (5.9.7-1) UNRELEASED; urgency=low
 
