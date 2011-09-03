@@ -962,7 +962,7 @@ void QtPLWidget::drawText( EscText* txt )
         //
         picDpi             = picText.logicalDpiY();
         pls->string_length = ( (PLFLT) xOffset / picDpi ) * 25.4;
-        free( text );
+        delete[] text;
         return;
     }
 
