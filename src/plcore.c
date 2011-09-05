@@ -3272,6 +3272,10 @@ plLoadDriver( void )
             driver->drvnam, drvspec );
 
         driver->dlhand = lt_dlopenext( drvspec );
+
+        if (strcmp(driver->drvnam,"qt") == 0) {
+          lt_dlmakeresident(driver->dlhand);
+        }
     }
 
 // If it still isn't loaded, then we're doomed.
