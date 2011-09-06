@@ -17,8 +17,8 @@
 #define ENLARGE       5
 #define XPSSIZE       ENLARGE * XSIZE
 #define YPSSIZE       ENLARGE * YSIZE
-#define XOFFSET       32                // Margins --
-#define YOFFSET       32                // .5 inches each
+#define XOFFSET       (int) ( pls->xoffset * ( pls->xdpi / 72. ) )   // Margins --
+#define YOFFSET       (int) ( pls->yoffset * ( pls->ydpi / 72. ) )   // .5 inches each
 #define PSX           XPSSIZE - 1
 #define PSY           YPSSIZE - 1
 #define OF            pls->OutFile
