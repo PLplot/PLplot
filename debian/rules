@@ -30,7 +30,7 @@ octver		:= $(shell octave-config -v)
 CFLAGS = $(shell dpkg-buildflags --get CFLAGS)
 CFLAGS += -fvisibility=hidden
 #Don't add -fvisibility=hidden to CXXFLAGS for now as this breaks the octave bindings.
-#CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
+CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
 #CXXFLAGS += -fvisibility=hidden
 LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
 LDFLAGS += -Wl,--as-needed

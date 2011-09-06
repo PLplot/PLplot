@@ -409,7 +409,7 @@ Package: libplplot-lua
 Architecture: any
 Section: libs
 Priority: extra
-Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
+Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}, lua5.1
 Description: Scientific plotting library (lua bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
