@@ -1,0 +1,21 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 12_qt_unload_fix.diff by Andrew Ross <andrewross@users.sourceforge.net>
+##
+## DP: Prevent unloading of qt driver which leads to a segfault on exit 
+## DP: with Qt 4.7.3.
+
+@DPATCH@
+
+--- plplot-5.9.8-orig/src/plcore.c	2011-09-05 10:21:54.000000000 +0100
++++ plplot-5.9.8/src/plcore.c	2011-09-05 10:21:37.000000000 +0100
+@@ -3272,6 +3272,10 @@
+             driver->drvnam, drvspec );
+ 
+         driver->dlhand = lt_dlopenext( drvspec );
++
++        if (strcmp(driver->drvnam,"qt") == 0) {
++          lt_dlmakeresident(driver->dlhand);
++        }
+     }
+ 
+ // If it still isn't loaded, then we're doomed.

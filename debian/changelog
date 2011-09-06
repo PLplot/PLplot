@@ -36,6 +36,7 @@ plplot (5.9.8-1) unstable; urgency=low
     debian/patches/09_qt_nodisplay.diff, 
     debian/patches/10_fix_test_scripts.diff,
     debian/patches/11_ocaml_library_location.diff,
+    debian/patches/12_qt_unload_fix.diff
     + Add new patch to turn off execute permissions for plplot_octave.oct 
       (fixes lintian error). 
     + Add patch from upstream to enable non-interactive qt devices to work
@@ -46,6 +47,8 @@ plplot (5.9.8-1) unstable; urgency=low
     + Add new upstream patch to change the install location for OCaml
       libraries to remove the OCaml version (as per Debian OCaml practice)
       and to remove the execute permissions for the stublibs.
+    + Add temporary workaround from upstream to prevent crash on exit with
+      the qt driver and Qt-4.7.3.
   * debian/copyright: Make explicit that the license is LGPL-2 (fixes
     lintian warning). Update consistent with upstream copyright file.
   * debian/control.in, debian/rules, debian/libqsastime0.files, 

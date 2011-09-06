@@ -5,3 +5,4 @@
 09_qt_nodisplay.diff
 10_fix_test_scripts.diff
 11_ocaml_install_location.diff
+12_qt_unload_fix.diff
