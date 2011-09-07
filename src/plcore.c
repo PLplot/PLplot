@@ -3272,10 +3272,11 @@ plLoadDriver( void )
             driver->drvnam, drvspec );
 
         driver->dlhand = lt_dlopenext( drvspec );
-
-        if (strcmp(driver->drvnam,"qt") == 0) {
-          lt_dlmakeresident(driver->dlhand);
-        }
+        
+        // Mark all drivers resident to prevent problems
+        // with atexit handlers / library reinitialisation such
+        // as those seen with qt and cairo drivers. 
+        lt_dlmakeresident(driver->dlhand);
     }
 
 // If it still isn't loaded, then we're doomed.
