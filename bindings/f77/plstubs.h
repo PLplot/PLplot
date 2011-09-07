@@ -313,6 +313,7 @@
 #define    PLSLABELFUNC_NONEa        FNAME( PLSLABELFUNC_NONE_, plslabelfunc_none_ )
 #define    PLSMAJ                    FNAME( PLSMAJ, plsmaj )
 #define    PLSMEM                    FNAME( PLSMEM, plsmem )
+#define    PLSMEMA                   FNAME( PLSMEMA, plsmema )
 #define    PLSMIN                    FNAME( PLSMIN, plsmin )
 #define    PLSORI                    FNAME( PLSORI, plsori )
 #define    PLSPAGE                   FNAME( PLSPAGE, plspage )

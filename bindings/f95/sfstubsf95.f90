@@ -752,6 +752,7 @@
       end interface
 
       ! plsmem: void * argument tricky - TODO
+      ! plsmema: void * argument tricky - TODO
 
       interface
          subroutine plsmin( def, scale )

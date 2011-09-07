@@ -990,6 +990,12 @@ PLSMEM( PLINT *maxx, PLINT *maxy, void *plotmem )
 }
 
 void
+PLSMEMA( PLINT *maxx, PLINT *maxy, void *plotmem )
+{
+    c_plsmema( *maxx, *maxy, plotmem );
+}
+
+void
 PLSMIN( PLFLT *def, PLFLT *scale )
 {
     c_plsmin( *def, *scale );
