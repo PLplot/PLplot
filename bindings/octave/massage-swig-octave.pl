@@ -5,7 +5,7 @@
 #
 # (C) Andrew Ross 2011
 #
-# This file is part of PLplot and release under the terms of the GNU GPL.
+# This file is part of PLplot and released under the terms of the GNU LGPL.
 # No warranties.
 
 die "Usage:\n  $0 plplot_octaveOCTAVE.cxx\n"
