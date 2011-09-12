@@ -35,6 +35,15 @@
 
 %{
 #include "plplotP.h"
+
+// Temporary fix for problems with -fvisibility=hidden and octave headers.
+#ifdef OCTAVE_EXPORT
+  #if defined ( __GNUC__ ) && __GNUC__ > 3
+    #undef OCTAVE_EXPORT
+    #define OCTAVE_EXPORT    __attribute__ ( ( visibility( "default" ) ) )
+  #endif
+#endif
+
 %}
 
 // type definitions
