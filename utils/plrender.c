@@ -830,6 +830,12 @@ plr_line( U_CHAR c )
 // Read n coordinate vectors.
 //--------------------------------------------------------------------------
 
+#define plr_rdn( code )                                           \
+    if ( code ) { fprintf( stderr,                                \
+                      "Unable to read in %s at line %d, bytecount %d\n\
+Bytes requested: %d\n",  __FILE__, __LINE__, \
+                      (int) pdfs->bp, (int) 2 * n ); return -1; }
+
 static void
 get_ncoords( PLFLT *x, PLFLT *y, PLINT n )
 {
@@ -982,7 +988,7 @@ plr_state( U_CHAR op )
                 plm_rd( pdf_rd_1byte( pdfs, &r ) );
                 plm_rd( pdf_rd_1byte( pdfs, &g ) );
                 plm_rd( pdf_rd_1byte( pdfs, &b ) );
-                plrgb1( r, g, b );
+                plscol0( icol0, r, g, b );
             }
             else
             {
@@ -1000,7 +1006,7 @@ plr_state( U_CHAR op )
                 plm_rd( pdf_rd_1byte( pdfs, &r ) );
                 plm_rd( pdf_rd_1byte( pdfs, &g ) );
                 plm_rd( pdf_rd_1byte( pdfs, &b ) );
-                plrgb1( r, g, b );
+                plscol0( PL_RGB_COLOR, r, g, b );
             }
             else
             {
@@ -1161,7 +1167,7 @@ plresc_rgb( void )
     green = (double) igreen / 65535.;
     blue  = (double) iblue / 65535.;
 
-    plrgb( red, green, blue );
+    plscol0( PL_RGB_COLOR, red, green, blue );
 }
 
 //--------------------------------------------------------------------------
