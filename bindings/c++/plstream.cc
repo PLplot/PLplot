@@ -328,17 +328,6 @@ plstream::arc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
     plarc( x, y, a, b, angle1, angle2, rotate, fill );
 }
 
-#ifdef PL_DEPRECATED
-void
-plstream::arrows( const PLFLT *u, const PLFLT *v, const PLFLT *x, const PLFLT *y, PLINT n,
-                  PLFLT scale, PLFLT dx, PLFLT dy )
-{
-    set_stream();
-
-    plarrows( u, v, x, y, n, scale, dx, dy );
-}
-#endif // PL_DEPRECATED
-
 void
 plstream::vect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
@@ -2577,17 +2566,6 @@ int plstream::SetOpt( const char *opt, const char *optarg )
     set_stream();
 
     return ::plsetopt( opt, optarg );
-}
-#endif // PL_DEPRECATED
-
-// Process options list using current options info.
-
-#ifdef PL_DEPRECATED
-int plstream::ParseOpts( int *p_argc, const char **argv, PLINT mode )
-{
-    set_stream();
-
-    return ::plParseOpts( p_argc, argv, mode );
 }
 #endif // PL_DEPRECATED
 

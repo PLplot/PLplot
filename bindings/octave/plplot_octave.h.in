@@ -1809,14 +1809,6 @@ void my_plimagefr2( PLFLT *a, PLINT nx, PLINT ny,
     c_plimagefr( aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr2, &grid2 );
 }  //%name plimagefr2  //%input a(nx,ny), xg(nx+1,ny+1), yg(nx+1,ny+1)
 
-// Depreciated functions - retained for backwards compatibility
-
-// simple arrow plotter.
-
-void plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-               PLFLT scale, PLFLT dx, PLFLT dy ); //%name plarrows //%input u(n), v(n), x(n), y(n)
-
-
 #ifdef __cplusplus
 }
 #endif

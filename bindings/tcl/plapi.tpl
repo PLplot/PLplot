@@ -1201,11 +1201,6 @@ st  PLINT&
 # int
 # plsetopt(char *opt, char *optarg);
 
-# Process options list using current options info.
-
-# int
-# plParseOpts(int *p_argc, char **argv, PLINT mode);
-
 # Print usage & syntax message.
 
 # void
