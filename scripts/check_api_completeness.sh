@@ -15,7 +15,6 @@ cut --delimiter=" " --fields=2 |\
 grep -v 'plclr$' |\
 grep -v 'plcol$' |\
 grep -v 'plhls$' |\
-grep -v 'plHLS$' |\
 grep -v 'plpage$' |\
 grep -v 'plrgb$' |\
 grep -v 'plrgb1$' |\

@@ -64,13 +64,7 @@ def main():
 ##    PLcGrid  cgrid1;
 ##    PLcGrid2 cgrid2;
 ##
-##/* Parse and process command line arguments */
-##
-##    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
-##
 ##/* Initialize plplot */
-##
-##    plinit();
 
     plinit()
 
