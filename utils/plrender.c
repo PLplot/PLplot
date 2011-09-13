@@ -440,7 +440,7 @@ ProcessFile( int argc, char **argv )
     plgdev( devname );
     if ( strncmp( devname, "tk", 2 ) == 0 )
     {
-        plSetInternalOpt( "-drvopt", "tcl_cmd=set plw_create_proc plr_create" );
+        plSetOpt( "-drvopt", "tcl_cmd=set plw_create_proc plr_create" );
     }
 
 //
