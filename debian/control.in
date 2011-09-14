@@ -203,7 +203,6 @@ Description: Scientific plotting library (wxWidgets driver)
 
 Package: plplot-tcl
 Architecture: any
-Priority: extra
 Depends: plplot11-driver-xwin, iwidgets4, ${shlibs:Depends}, ${misc:Depends}
 Description: Tcl/Tk support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -220,7 +219,6 @@ Description: Tcl/Tk support for PLplot, a plotting library
 
 Package: plplot-tcl-dev
 Architecture: any
-Priority: extra
 Depends: libplplot11 (= ${binary:Version}), plplot-tcl, ${misc:Depends}
 Breaks: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library
@@ -260,7 +258,6 @@ Description: Scientific plotting library (GD driver)
 Package: plplot11-driver-cairo
 Architecture: any
 Section: libs
-Priority: extra
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: plplot9-driver-cairo
 Replaces: plplot9-driver-cairo
@@ -280,7 +277,6 @@ Description: Scientific plotting library (Cairo driver)
 Package: python-plplot
 Architecture: any
 Section: python
-Priority: extra
 Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends},
  ${python:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
@@ -300,7 +296,6 @@ Description: Python support for PLplot, a plotting library
 Package: python-plplot-qt
 Architecture: any
 Section: python
-Priority: extra
 Depends: libplplot11 (= ${binary:Version}), python-plplot (= ${binary:Version}), 
  plplot11-driver-qt (= ${binary:Version}), 
  ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}
@@ -319,7 +314,6 @@ Description: Scientific plotting library (python qt GUI)
 
 Package: octave-plplot
 Architecture: any
-Priority: extra
 Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends},
  ${misc:Depends}
 Description: Octave support for PLplot, a plotting library
@@ -337,7 +331,6 @@ Description: Octave support for PLplot, a plotting library
 
 [ADA:Package: libplplot-ada
 Architecture: any
-Priority: extra
 Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Ada support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -354,7 +347,6 @@ Description: Ada support for PLplot, a plotting library
 Package: plplot-doc
 Architecture: all
 Section: doc
-Priority: extra
 Suggests: libplplot-dev
 Depends: dpkg (>= 1.15.4) | install-info, ${misc:Depends}
 Description: Documentation for PLplot, a plotting library
@@ -373,7 +365,6 @@ Description: Documentation for PLplot, a plotting library
 Package: plplot11-driver-qt
 Architecture: any
 Section: libs
-Priority: extra
 Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (qt driver)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -391,7 +382,6 @@ Description: Scientific plotting library (qt driver)
 Package: libplplot-ocaml
 Architecture: any
 Section: ocaml
-Priority: extra
 Depends: libplplot11, ocaml-base-nox-${F:OCamlABI}, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (OCaml bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -408,7 +398,6 @@ Description: Scientific plotting library (OCaml bindings)
 Package: libplplot-lua
 Architecture: any
 Section: libs
-Priority: extra
 Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}, lua5.1
 Description: Scientific plotting library (lua bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -425,7 +414,6 @@ Description: Scientific plotting library (lua bindings)
 Package: libplplot-d
 Architecture: any
 Section: libs
-Priority: extra
 Depends: libplplot11, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (D language bindings)
  PLplot is relatively small, portable, freely distributable, and is rich

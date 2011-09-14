@@ -1,3 +1,9 @@
+plplot (5.9.8-2) unstable; urgency=low
+
+  * debian/control.in: Change package priority to optional as per policy.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 14 Sep 2011 09:46:45 +0100
+
 plplot (5.9.8-1) unstable; urgency=low
 
   * New upstream release.
