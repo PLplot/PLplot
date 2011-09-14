@@ -66,6 +66,11 @@ int main( char[][] args )
     {
         plenv( 1.0, XDIM, 1.0, YDIM, 1, 1 ); // no plot box
 
+        // Zero z array before use
+        for ( int j = 0; j < YDIM; j++ )
+            for ( int i = 0; i < XDIM; i++ )
+                z[i][j] = 0.0;
+
         // build a one pixel square border, for diagnostics
         for ( int i = 0; i < XDIM; i++ )
             z[i][YDIM - 1] = 1.0; // right
