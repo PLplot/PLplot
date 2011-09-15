@@ -52,7 +52,7 @@ Recommends: pkg-config, libplplot-c++10 (= ${binary:Version}),
  libplplot-ocaml, libplplot-lua, libplplot-d
 Suggests: plplot-doc
 Depends: libplplot11 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev, ${misc:Depends}
+ libltdl3-dev, libqsastime-dev, ${misc:Depends}
 Breaks: libplplot-fortran9 (<< 5.9.8-1)
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
