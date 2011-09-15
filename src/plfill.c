@@ -171,12 +171,11 @@ c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
         ypoly[i] = plP_wcpcy( yt );
     }
 
-    if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
+    if ( xpoly[0] != xpoly[n - 1] || ypoly[0] != ypoly[n - 1] )
     {
         n++;
-        TRANSFORM( x[0], y[0], &xt, &yt );
-        xpoly[n - 1] = plP_wcpcx( xt );
-        ypoly[n - 1] = plP_wcpcy( yt );
+        xpoly[n - 1] = xpoly[0];
+        ypoly[n - 1] = ypoly[0];
     }
 
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
