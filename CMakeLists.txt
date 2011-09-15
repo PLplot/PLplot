@@ -249,6 +249,7 @@ set(CPACK_SOURCE_GENERATOR TGZ)
 # in absolute path + filename to find files or directories to be excluded
 # from source tarball.
 set(CPACK_SOURCE_IGNORE_FILES
+  "\\\\#*\\\\#$"
   "~$"
   "\\\\.cvsignore$"
   "^${PROJECT_SOURCE_DIR}.*/\\\\.svn/"
