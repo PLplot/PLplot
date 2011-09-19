@@ -3,9 +3,10 @@ plplot (5.9.8-2) unstable; urgency=low
   * debian/control.in: 
     + Change package priority to optional as per policy.
     + Add libplplot-dev dependency on libqsastime-dev.
+    + Fix description for libplplot-dev package (closes: #642122).
   * debian/plplot-tcl-dev.lintian-overrides: Fix lintian overrides.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 15 Sep 2011 09:50:43 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 19 Sep 2011 20:38:55 +0100
 
 plplot (5.9.8-1) unstable; urgency=low
 

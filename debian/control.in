@@ -63,6 +63,7 @@ Description: Scientific plotting library (development files)
  handful of function calls is typically required.  For more advanced use,
  virtually all aspects of plotting are configurable.
  .
+ This package contains all that is needed for doing development in C, C++,
  Fortran and Ada with PLplot.  Examples of programs for these languages are
  also included.  For development in Tcl/Tk, Python, Octave, and Java install
  the plplot-tcl-dev, python-plplot, octave-plplot and libplplot-java packages,
