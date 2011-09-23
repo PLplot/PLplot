@@ -24,7 +24,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_ocaml "Enable OCaml bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_ocaml "Enable OCaml bindings" OFF)
+  option(ENABLE_ocaml "Enable OCaml bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
