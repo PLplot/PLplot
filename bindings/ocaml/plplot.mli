@@ -266,29 +266,6 @@ module Plot :
     (** [circle ?fill color x y r] *)
     val circle : ?fill:bool -> color_t -> float -> float -> float -> plot_t
 
-    (** [image_colorbar ?label ?log ?pos ?width (min, max)] add a
-        color bar to a plot using the current color scale.  This function
-        should be called after the rest of the plot is complete. *)
-    val image_colorbar :
-      ?custom_axis:axis_options_t list ->
-      ?label:string plot_side_t ->
-      ?log:bool ->
-      ?pos:float plot_side_t ->
-      ?width:float ->
-      float * float -> plot_t
-
-    (** [shade_colorbar ?label ?log ?pos ?width contours] add a shaded
-        color bar to a plot using the current color scale.  This is similar to
-        {!image_colorbar} but takes [contours] as rather than a range.  This
-        function should be called after the rest of the plot is complete. *)
-    val shade_colorbar :
-      ?custom_axis:axis_options_t list ->
-      ?label:string plot_side_t ->
-      ?log:bool ->
-      ?pos:float plot_side_t ->
-      ?width:float ->
-      float array -> plot_t
-
     (** [contours color tranform_func contours data] *)
     val contours :
       color_t -> pltr_t -> float array -> float array array -> plot_t
