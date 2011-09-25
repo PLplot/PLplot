@@ -3272,11 +3272,21 @@ plLoadDriver( void )
             driver->drvnam, drvspec );
 
         driver->dlhand = lt_dlopenext( drvspec );
-        
-        // Mark all drivers resident to prevent problems
-        // with atexit handlers / library reinitialisation such
-        // as those seen with qt and cairo drivers. 
-        lt_dlmakeresident(driver->dlhand);
+
+        // A few of our drivers do not depend on other libraries.  So
+        // allow them to be completely removed by plend to give clean
+        // valgrind results.  However, the (large) remainder of our
+        // drivers do depend on other libraries so mark them resident
+        // to prevent problems with atexit handlers / library
+        // reinitialisation such as those seen with qt and cairo
+        // drivers.
+        if ( !( strcmp( driver->drvnam, "mem" ) == 0 ||
+                strcmp( driver->drvnam, "null" ) == 0 ||
+                strcmp( driver->drvnam, "plmeta" ) == 0 ||
+                strcmp( driver->drvnam, "ps" ) == 0 ||
+                strcmp( driver->drvnam, "svg" ) == 0 ||
+                strcmp( driver->drvnam, "xfig" ) == 0 ) )
+            lt_dlmakeresident( driver->dlhand );
     }
 
 // If it still isn't loaded, then we're doomed.
