@@ -97,9 +97,9 @@ bool initQtApp( bool isGUI )
         snprintf( argv[0], 10, "qt_driver" );
         argv[1][0] = '\0';
 #ifdef Q_WS_X11
-	// On X11 if DISPLAY is not set then cannot open GUI. This allows non-interactive devices to still work in this case.
-	if (getenv("DISPLAY") == NULL) 
-	    isGUI = false;
+        // On X11 if DISPLAY is not set then cannot open GUI. This allows non-interactive devices to still work in this case.
+        if ( getenv( "DISPLAY" ) == NULL )
+            isGUI = false;
 #endif
         new QApplication( argc, argv, isGUI );
         res = true;
@@ -1096,8 +1096,8 @@ void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
     unsigned char *r, *g, *b;
     PLFLT         *alpha;
     PLINT         i;
-    QtEPSDevice   * widget = (QtEPSDevice *) pls->dev;
-    arc_struct *arc_info = (arc_struct *) ptr;
+    QtEPSDevice   * widget  = (QtEPSDevice *) pls->dev;
+    arc_struct    *arc_info = (arc_struct *) ptr;
 
     if ( widget != NULL && qt_family_check( pls ) )
     {
@@ -1164,8 +1164,8 @@ void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_ARC:
-      widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill);
-	break;
+        widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill );
+        break;
 
     default: break;
     }
@@ -1360,8 +1360,8 @@ void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
     PLINT         i;
     unsigned char *r, *g, *b;
     PLFLT         *alpha;
-    QtPLWidget    * widget = (QtPLWidget *) pls->dev;
-    arc_struct *arc_info = (arc_struct *) ptr;
+    QtPLWidget    * widget  = (QtPLWidget *) pls->dev;
+    arc_struct    *arc_info = (arc_struct *) ptr;
     if ( widget == NULL )
         return;
 
@@ -1422,8 +1422,8 @@ void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_ARC:
-      widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill);
-	break;
+        widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill );
+        break;
 
     case PLESC_FLUSH:
         widget->flush();
@@ -1569,8 +1569,8 @@ void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
     PLINT         i;
     unsigned char *r, *g, *b;
     PLFLT         *alpha;
-    QtExtWidget   * widget = NULL;
-    arc_struct *arc_info = (arc_struct *) ptr;
+    QtExtWidget   * widget  = NULL;
+    arc_struct    *arc_info = (arc_struct *) ptr;
 
     widget = (QtExtWidget *) pls->dev;
     switch ( op )
@@ -1631,8 +1631,8 @@ void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
         break;
 
     case PLESC_ARC:
-      widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill);
-	break;
+        widget->drawArc( arc_info->x, arc_info->y, arc_info->a, arc_info->b, arc_info->angle1, arc_info->angle2, arc_info->rotate, arc_info->fill );
+        break;
 
     default: break;
     }

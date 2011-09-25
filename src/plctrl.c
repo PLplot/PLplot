@@ -1245,11 +1245,12 @@ read_line( char *buffer, int length, FILE *fp )
     }
     else
     {
-        if ( fscanf( fp, "%*[^\n]\n" ) == EOF && ferror(fp) ) {
+        if ( fscanf( fp, "%*[^\n]\n" ) == EOF && ferror( fp ) )
+        {
             return NULL;
         }
     }
-    
+
 
     pchr = strchr( buffer, '\r' );
     if ( pchr != NULL )

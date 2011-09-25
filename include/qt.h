@@ -273,12 +273,12 @@ struct TextStruct_
 
 struct ArcStruct_
 {
-    QRectF *rect;
+    QRectF  *rect;
     QPointF *dx;
-    int startAngle;
-    int spanAngle;
-    PLFLT rotate;
-    bool fill;
+    int     startAngle;
+    int     spanAngle;
+    PLFLT   rotate;
+    bool    fill;
 };
 
 class BufferElement
@@ -294,7 +294,7 @@ public:
         QLinearGradient     * LinearGradient;
         struct ColourStruct_* ColourStruct;
         struct TextStruct_  * TextStruct;
-        struct ArcStruct_    * ArcStruct;
+        struct ArcStruct_   * ArcStruct;
         PLINT intParam;
         PLFLT fltParam;
     } Data;

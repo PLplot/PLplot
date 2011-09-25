@@ -167,8 +167,8 @@ ps_init( PLStream *pls )
     {
         pls->xlength = 540;
         pls->ylength = 720;
-	pls->xoffset = 32;
-	pls->yoffset = 32;
+        pls->xoffset = 32;
+        pls->yoffset = 32;
     }
     if ( pls->xdpi <= 0 )
         pls->xdpi = 72.;

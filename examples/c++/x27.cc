@@ -230,35 +230,37 @@ x27::spiro( PLFLT params[], int fill )
     }
 }
 
-void 
-x27::arcs() {
-#define NSEG 8
-    int i;
+void
+x27::arcs()
+{
+#define NSEG    8
+    int   i;
     PLFLT theta, dtheta;
     PLFLT a, b;
 
-    theta = 0.0;
+    theta  = 0.0;
     dtheta = 360.0 / NSEG;
     pls->env( -10.0, 10.0, -10.0, 10.0, 1, 0 );
 
     // Plot segments of circle in different colors
-    for ( i = 0; i < NSEG; i++ ) {
-        pls->col0( i%2 + 1 );
-        pls->arc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0);
+    for ( i = 0; i < NSEG; i++ )
+    {
+        pls->col0( i % 2 + 1 );
+        pls->arc( 0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0 );
         theta = theta + dtheta;
     }
 
     // Draw several filled ellipses inside the circle at different
     // angles.
-    a = 3.0;
-    b = a * tan( (dtheta/180.0*M_PI)/2.0 );
-    theta = dtheta/2.0;
-    for ( i = 0; i < NSEG; i++ ) {
-        pls->col0( 2 - i%2 );
-        pls->arc( a*cos(theta/180.0*M_PI), a*sin(theta/180.0*M_PI), a, b, 0.0, 360.0, theta, 1);
+    a     = 3.0;
+    b     = a * tan( ( dtheta / 180.0 * M_PI ) / 2.0 );
+    theta = dtheta / 2.0;
+    for ( i = 0; i < NSEG; i++ )
+    {
+        pls->col0( 2 - i % 2 );
+        pls->arc( a * cos( theta / 180.0 * M_PI ), a * sin( theta / 180.0 * M_PI ), a, b, 0.0, 360.0, theta, 1 );
         theta = theta + dtheta;
     }
-
 }
 
 

@@ -245,10 +245,11 @@ void wxPLDevGC::CreateCanvas()
         ( (wxMemoryDC *) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
     }
 
-    if ( m_dc ) {
-		delete m_context;
+    if ( m_dc )
+    {
+        delete m_context;
         m_context = wxGraphicsContext::Create( *( (wxMemoryDC *) m_dc ) );
-	}
+    }
 }
 
 
@@ -425,17 +426,17 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
     PLINT rcx[4], rcy[4];
     difilt_clip( rcx, rcy );
 
-#ifdef __WXOSX_COCOA__ 
-    wxPoint topLeft(width, height), bottomRight(-1, -1);
+#ifdef __WXOSX_COCOA__
+    wxPoint topLeft( width, height ), bottomRight( -1, -1 );
     for ( int i = 0; i < 4; i++ )
     {
-        topLeft.x = topLeft.x > (rcx[i] / scalex) ? (rcx[i] / scalex) : topLeft.x;
-        topLeft.y = topLeft.y > (height - rcy[i] / scaley) ? (height - rcy[i] / scaley) : topLeft.y;
-        bottomRight.x = bottomRight.x < (rcx[i] / scalex) ? (rcx[i] / scalex) : bottomRight.x;
-        bottomRight.y = bottomRight.y < (height - rcy[i] / scaley) ? (height - rcy[i] / scaley) : bottomRight.y;
+        topLeft.x     = topLeft.x > ( rcx[i] / scalex ) ? ( rcx[i] / scalex ) : topLeft.x;
+        topLeft.y     = topLeft.y > ( height - rcy[i] / scaley ) ? ( height - rcy[i] / scaley ) : topLeft.y;
+        bottomRight.x = bottomRight.x < ( rcx[i] / scalex ) ? ( rcx[i] / scalex ) : bottomRight.x;
+        bottomRight.y = bottomRight.y < ( height - rcy[i] / scaley ) ? ( height - rcy[i] / scaley ) : bottomRight.y;
     }
 
-    m_context->Clip( wxRegion( topLeft.x, topLeft.y, bottomRight.x-topLeft.x, bottomRight.y-topLeft.y ) );
+    m_context->Clip( wxRegion( topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y ) );
     // m_context->Clip( wxRegion( topLeft, bottomRight) );  // this wxRegion constructor doesn't work in wxWidgets 2.9.2/Cocoa
 #else
     wxPoint cpoints[4];

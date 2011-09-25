@@ -1940,7 +1940,7 @@ void plstream::smaj( PLFLT def, PLFLT scale )
 
 // Set the RGB memory area to be plotted (with the 'mem' or 'memcairo' drivers)
 
-void plstream::smem( PLINT maxx, PLINT maxy, void *plotmem)
+void plstream::smem( PLINT maxx, PLINT maxy, void *plotmem )
 {
     set_stream();
 
@@ -1949,7 +1949,7 @@ void plstream::smem( PLINT maxx, PLINT maxy, void *plotmem)
 
 // Set the RGBA memory area to be plotted (with the 'memcairo' drivers)
 
-void plstream::smema( PLINT maxx, PLINT maxy, void *plotmem)
+void plstream::smema( PLINT maxx, PLINT maxy, void *plotmem )
 {
     set_stream();
 

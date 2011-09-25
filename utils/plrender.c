@@ -830,10 +830,10 @@ plr_line( U_CHAR c )
 // Read n coordinate vectors.
 //--------------------------------------------------------------------------
 
-#define plr_rdn( code )                                           \
-    if ( code ) { fprintf( stderr,                                \
+#define plr_rdn( code )                     \
+    if ( code ) { fprintf( stderr,          \
                       "Unable to read in %s at line %d, bytecount %d\n\
-Bytes requested: %d\n",  __FILE__, __LINE__, \
+Bytes requested: %d\n", __FILE__, __LINE__, \
                       (int) pdfs->bp, (int) 2 * n ); return -1; }
 
 static void
