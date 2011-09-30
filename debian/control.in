@@ -47,12 +47,12 @@ Description: Scientific plotting library
 Package: libplplot-dev
 Architecture: any
 Section: libdevel
-Recommends: pkg-config, libplplot-c++10 (= ${binary:Version}), 
- libplplot-fortran9 (= ${binary:Version})[ADA:, libplplot-ada (= ${binary:Version}):], 
- libplplot-ocaml, libplplot-lua, libplplot-d
+Recommends: pkg-config, libplplot-ocaml, libplplot-lua, libplplot-d
 Suggests: plplot-doc
 Depends: libplplot11 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev, libqsastime-dev, ${misc:Depends}
+ libltdl3-dev, libqsastime-dev, ${misc:Depends}, 
+ libplplot-c++10 (= ${binary:Version}), libplplot-fortran9 (= ${binary:Version})
+ [ADA:, libplplot-ada (= ${binary:Version}):] 
 Breaks: libplplot-fortran9 (<< 5.9.8-1)
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -68,7 +68,7 @@ Description: Scientific plotting library (development files)
  also included.  For development in Tcl/Tk, Python, Octave, and Java install
  the plplot-tcl-dev, python-plplot, octave-plplot and libplplot-java packages,
  respectively. This package also includes the OCaml, lua and D examples. To use
- a particular language you will also need to install the libplplot-xxx package
+ one of these languages you will also need to install the libplplot-xxx package
  for that language.
 
 Package: libplplot-c++10

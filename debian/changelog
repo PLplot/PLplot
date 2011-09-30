@@ -1,3 +1,13 @@
+plplot (5.9.8-3) unstable; urgency=low
+
+  * debian/control.in:
+    + Add back in dependencies (rather than recommends) on the C++, 
+      fortran and ada libraries. This does pull in extra libraries if you 
+      only wish to develop with one language, but reverts to the old 
+      behaviour (closes: #642715). 
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 30 Sep 2011 15:42:04 +0100
+
 plplot (5.9.8-2) unstable; urgency=low
 
   * debian/control.in: 
