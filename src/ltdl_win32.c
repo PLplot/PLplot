@@ -111,3 +111,9 @@ void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
     else
         return NULL;
 }
+
+// Placeholder that does nothing for now.
+int lt_dlmakeresident (lt_dlhandle handle)
+{
+    return 0;
+}
