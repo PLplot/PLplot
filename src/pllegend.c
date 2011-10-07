@@ -1120,7 +1120,7 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
     PLFLT label_offset = 1.2;
 
     // For building plmtex option string.
-    PLINT max_opts = 25;
+#define max_opts 25
     char  opt_label[max_opts];
     char  perp;
 
