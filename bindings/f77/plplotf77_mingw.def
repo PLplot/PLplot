@@ -31,6 +31,7 @@ EXPORTS
 	plptex_
 	plsdev_
 	plsetopt_
+	plsettransform_
 	plsfnam_
 	plshade0_
 	plshade1_
