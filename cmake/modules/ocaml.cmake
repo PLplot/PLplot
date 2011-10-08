@@ -27,6 +27,14 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_ocaml "Enable OCaml bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+option(ENABLE_ocaml_static "Enable OCaml bindings for the static build case" OFF)
+
+if(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
+    message(STATUS "WARNING:"
+      "Static build with ENABLE_ocaml_static false.  Therefore, disabling ocaml bindings")
+    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+endif(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
+
 if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
   message(STATUS "NOTICE: "
     "OCaml requires -fPIC flag when building static PLplot. Forcing -fPIC for C and C++ compilation.")
