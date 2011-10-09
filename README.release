@@ -15,7 +15,93 @@ at http://sourceforge.net/tracker/?group_id=2915&atid=102915.
 (LGPL), and the disclaimer of all warranties, given in the COPYING.LIB
 file.
 
-Official Notices for Users.
+INDEX
+
+OFFICIAL NOTICES FOR USERS
+
+CHANGES
+
+-1. Important changes we should have mentioned in previous release announcements.
+
+-1.1 Add full bindings and examples for the D language.
+
+0. Tests made for release 5.9.9
+
+1. Changes relative to PLplot 5.9.8 (the previous development release)
+
+2. Changes relative to PLplot 5.8.0 (the previous stable release)
+
+2.1 All autotools-related files have now been removed
+2.2 Build system bug fixes
+2.3 Build system improvements
+2.4 Implement build-system infrastructure for installed Ada bindings and
+examples
+2.5 Code cleanup
+2.6 Date / time labels for axes
+2.7 Alpha value support
+2.8 New PLplot functions
+2.9 External libLASi library improvements affecting our psttf device
+2.10 Improvements to the cairo driver family
+2.11 wxWidgets driver improvements
+2.12 pdf driver improvements
+2.13 svg driver improvements
+2.14 Ada language support
+2.15 OCaml language support
+2.16 Perl/PDL language support
+2.17 Update to various language bindings
+2.18 Update to various examples
+2.19 Extension of our test framework
+2.20 Rename test subdirectory to plplot_test
+2.21 Website support files updated
+2.22 Internal changes to function visibility
+2.23 Dynamic driver support in Windows
+2.24 Documentation updates
+2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
+2.26 get-drv-info now changed to test-drv-info
+2.27 Text clipping now enabled by default for the cairo devices
+2.28 A powerful qt device driver has been implemented
+2.29 The PLplot API is now accessible from Qt GUI applications
+2.30 NaN / Inf support for some PLplot functions
+2.31 Various bug fixes
+2.32 Cairo driver improvements
+2.33 PyQt changes
+2.34 Color Palettes
+2.35 Re-implementation of a "soft landing" when a bad/missing compiler is
+detected
+2.36 Make PLplot aware of LC_NUMERIC locale
+2.37 Linear gradients have been implemented
+2.38 Cairo Windows driver implemented
+2.39 Custom axis labeling implemented
+2.40 Universal coordinate transform implemented
+2.41 Support for arbitrary storage of 2D user data
+2.42 Font improvements
+2.42 Alpha value support for plotting in memory.
+2.43 Add a Qt device for in memory plotting.
+2.44 Add discrete legend capability.
+2.45 Add full bindings and examples for the D language.
+2.46 The plstring and plstring3 functions have been added
+2.47 The pllegend API has been finalized
+2.48 Octave bindings now implemented with swig
+2.49 Documentation redone for our swig-generated Python and Octave bindings
+2.50 Support large polygons
+2.51 Complete set of PLplot parameters now available for Fortran
+2.52 The plarc function has been added
+
+OFFICIAL NOTICES FOR USERS
+
+(5.9.9) This is a quick release to deal with two broken build issues
+that were recently discovered for our Windows platform.  Windows users should
+avoid 5.9.8 because of these problems for that release, and instead use
+5.9.9 which has been heavily tested on a number of platforms including
+Windows, see "Tests made for release 5.9.9" below.
+
+(5.9.9) During our extensive testing of this release we noticed a segfault
+with the OCaml bindings/examples.  Follow up with valgrind indicated
+some widespread memory management issues with our OCaml
+bindings/examples.  Therefore, we have disabled OCaml by default for
+this release and hope to reinstate it again just as soon as we figure
+out these issues.  If you want to try it anyway for this release
+specify the -DENABLE_ocaml=ON cmake option.
 
 (5.9.8) For unicode-aware devices we now follow what is done for the
 Hershey font case for epsilon, theta, and phi.  This means the #ge,
@@ -252,74 +338,7 @@ expanded ranges so most users results will be identical.  However, you
 may notice some small changes to your plot results if you use these
 stream variables directly (only possible in C/C++) or use plgvpw.
 
-INDEX
-
--1. Important changes we should have mentioned in previous release announcements.
-
--1.1 Add full bindings and examples for the D language.
-
-0. Tests made for release 5.9.9
-
-1. Changes relative to PLplot 5.9.8 (the previous development release)
-
-
-2. Changes relative to PLplot 5.8.0 (the previous stable release)
-
-2.1 All autotools-related files have now been removed
-2.2 Build system bug fixes
-2.3 Build system improvements
-2.4 Implement build-system infrastructure for installed Ada bindings and
-examples
-2.5 Code cleanup
-2.6 Date / time labels for axes
-2.7 Alpha value support
-2.8 New PLplot functions
-2.9 External libLASi library improvements affecting our psttf device
-2.10 Improvements to the cairo driver family
-2.11 wxWidgets driver improvements
-2.12 pdf driver improvements
-2.13 svg driver improvements
-2.14 Ada language support
-2.15 OCaml language support
-2.16 Perl/PDL language support
-2.17 Update to various language bindings
-2.18 Update to various examples
-2.19 Extension of our test framework
-2.20 Rename test subdirectory to plplot_test
-2.21 Website support files updated
-2.22 Internal changes to function visibility
-2.23 Dynamic driver support in Windows
-2.24 Documentation updates
-2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
-2.26 get-drv-info now changed to test-drv-info
-2.27 Text clipping now enabled by default for the cairo devices
-2.28 A powerful qt device driver has been implemented
-2.29 The PLplot API is now accessible from Qt GUI applications
-2.30 NaN / Inf support for some PLplot functions
-2.31 Various bug fixes
-2.32 Cairo driver improvements
-2.33 PyQt changes
-2.34 Color Palettes
-2.35 Re-implementation of a "soft landing" when a bad/missing compiler is
-detected
-2.36 Make PLplot aware of LC_NUMERIC locale
-2.37 Linear gradients have been implemented
-2.38 Cairo Windows driver implemented
-2.39 Custom axis labeling implemented
-2.40 Universal coordinate transform implemented
-2.41 Support for arbitrary storage of 2D user data
-2.42 Font improvements
-2.42 Alpha value support for plotting in memory.
-2.43 Add a Qt device for in memory plotting.
-2.44 Add discrete legend capability.
-2.45 Add full bindings and examples for the D language.
-2.46 The plstring and plstring3 functions have been added
-2.47 The pllegend API has been finalized
-2.48 Octave bindings now implemented with swig
-2.49 Documentation redone for our swig-generated Python and Octave bindings
-2.50 Support large polygons
-2.51 Complete set of PLplot parameters now available for Fortran
-2.52 The plarc function has been added
+CHANGES
 
 -1. Important changes we should have mentioned in previous release announcements.
 
@@ -340,131 +359,73 @@ alternative d compiler (the Digital Mars compiler is reported to be
 good).
 
 
-0. Tests made for release 5.9.8
+0. Tests made for release 5.9.9
 
-See
-http://www.miscdebris.net/plplot_wiki/index.php?title=Testing_PLplot#Testing_Reports
-for a summary table of all testing done for PLplot-5.9.8.
+* (Alan W. Irwin) A fully loaded (all Linux bindings other than PDL,
+  all Linux device drivers including our qt and cairo device drivers) Debian Squeeze
+  Linux platform gave a good result for the
+  scripts/comprehensive_test.sh script.  This script runs 7 major
+  tests for each of our three principal build configurations (shared
+  library/dynamic device drivers, shared libraries/nondynamic device
+  drivers, static libraries/nondynamic device drivers). Those 7 tests
+  are ctest and the test_noninteractive and test_interactive targets
+  in the build tree, the test_noninteractive and test_interactive
+  targets configured with CMake in the installed examples tree, and
+  the traditional (MakeFile + pkg-config) test_noninteractive and
+  test_interactive targets in the installed examples tree.
 
+* (Andrew Ross) For one Ubuntu platform the test_noninteractive and
+  test_interactive targets for the shared libraries and dynamic
+  drivers case gave good results.  This was for a fully loaded
+  platform including our qt and cairo device drivers.
 
-1. Changes relative to PLplot 5.9.7 (the previous development release)
+* (Hezekiah M. Carty) scripts/comprehensive_test.sh failed on a Ubuntu
+  Linux platform because of a segfault in one of the qt devices.  We
+  have tentatively ascribed this issue to issues with the Qt4 stack of
+  libraries on that platform since this bad qt result contrasts with
+  the good qt result on the previous two Linux platforms.
 
-1.1 The plstring and plstring3 functions have been added
+* (Arjen Markus) MinGW/MSYS installed on a lightly loaded (at least
+  compared to Linux tests) Windows XP system gives good results for
+  the test_noninteractive target in the build tree for the shared
+  library/dynamic device drivers case.
 
-The plstring function largely supersedes plpoin and plsym
-because many(!) more glyphs are accessible with plstring.  The glyph
-is specified with a PLplot user string.  As with plmtex and plptex,
-the user string can contain FCI escapes to determine the font, UTF-8
-code to determine the glyph or else PLplot escapes for Hershey or
-unicode text to determine the glyph.  Standard examples 4 and 26 use
-plstring.
+* (Arjen Markus) The combination of Microsoft Visual C/C++ version 9.0
+  and Intel Fortran compilers installed on a lightly loaded Windows XP
+  system gives good results for the "all" target for the shared
+  library/dynamic device drivers case.  That target just builds the
+  software.  In addition, some run-time testing was done by hand with
+  no sign of any run-time trouble.
 
-The plstring3 function largely supersedes plpoin3 for the same (access
-to many more glyphs) reasons.  Standard example 18 uses plstring3.
+* (Jerry Bauck) Mac OS X 10.6.8 (Snow Leopard) platform with Ada
+  bindings and good coverage of devices (e.g., qt and cairo) but
+  lightly loaded with regard to non-Ada bindings give fairly good
+  results for ctest and the test_noninteractive target for the shared
+  library/dynamic device drivers case.  All tests passed including qt
+  and cairo device driver tests, but when looking at detailed results
+  some missing circular symbol issues were discovered for the pscairo
+  results.  We don't understand this issue because the cairo devices
+  give both superb and reliable results on our Linux platforms.  The
+  cairo device driver depends on a subset (e.g., pango and cairo) of
+  the GTK+ stack of libraries.  These results were obtained for GTK+
+  version 2.18.5.
 
-1.2 The pllegend API has been finalized
+* (Werner Smekal) Mac OS X 10.7.1, XCode 4.1 platform that is lightly
+  loaded (e.g., GTK+ but no Qt4) gave mixed results for ctest and the
+  test_noninteractive target for the shared library/dynamic device
+  drivers case.  The build worked without issues, and also everything
+  but cairo devices at run time.  However, all cairo device results
+  had major run-time errors (e.g., segfaults).  In this case the GTK+
+  library was newer than we have tested before (version 2.24 from the
+  Homebrew packaging effort as compared to 2.21 that gives such good
+  results on Linux) so there may be a mismatch between our cairo
+  device driver and this newer version of GTK+ that needs to be sorted
+  out.
 
-The function pllegend allows users to create a discrete plot legend
-with a plotted colored box, line, and/or line of symbols for each
-annotated legend entry.  The pllegend function was first made
-available for 5.9.7. Due to feedback from early adopters of pllegend,
-we have now added substantially to the pllegend capabilities. and we
-now believe pllegend is ready for prime time.  The pllegend
-capabilities are documented in our docbook documentation and
-demonstrated in standard examples 4, 26, and 33.  
+1. Changes relative to PLplot 5.9.8 (the previous development release)
 
-N.B. The current set of changes required a backwards-incompatible
-change to the pllegend API.  This requires users who tried this new
-functionality for 5.9.7 to reprogramme their pllegend calls.  Since
-the pllegend API was labelled experimental for 5.9.7, we will not be
-bumping the soversions of the affected PLplot libraries.
-
-1.3 Octave bindings now implemented with swig
-
-Octave is a powerful platform that demands a first-class PLplot
-solution, but we were finding it difficult to realize that goal
-because we were running up against limitations of the previous
-matwrap-generated Octave bindings.  Accordingly, a swig-generated
-version of the Octave bindings has now been implemented that builds on
-the prior matwrapped bindings effort but also extends it with, e.g.,
-bindings for plstring, plstring3, pllegend, and plcolorbar.  These new
-octave bindings (which now completely replace the prior matwrapped
-bindings) make it possible to run examples 4, 18, 26, and 33 (all of
-which have now have been updated to use those functions) and get
-consistent results with the corresponding C examples.
-
-Like the matwrapped bindings before it, the new swig-generated octave
-bindings currently do not have a number of the PLplot functions
-wrapped (e.g., "plmap") that are needed by standard example 19.
-However, because of the power of swig we now have some confidence we
-can solve this issue in the future.
-
-1.4 Documentation redone for our swig-generated Python and Octave bindings
-
-Through the docstring %feature, swig can generate documentation
-strings for certain of the languages it supports (currently Python,
-Octave, and Ruby).  We have now removed all such hand-crafted swig
-documentation data from bindings/swig-support/plplotcapi.i and
-replaced it with generated documentation in the file
-bindings/swig-support/swig_documentation.i.  That file is generated
-from doc/docbook/src/api.xml using the perl script
-doc/docbook/bin/api2swigdoc.pl.  The build system Unix target
-"check_swig_documentation" now runs that script and compares results
-with bindings/swig-support/swig_documentation.i in the source tree to
-make sure that latter file is consistent with any changes that might
-have occurred in doc/docbook/src/api.xml.
-
-The resulting Octave and Python user-documentation (obtained by 'help
-<PLplot_command_name>' in Octave and 'print ("%s" %
-<PLplot_command_name>.__doc__)' in Python is much more detailed than
-what was available before using the hand-crafted documentation.  If we
-ever decided to generate PLplot bindings for Ruby with swig, this
-high-quality user-documentation would be available for that language
-as well.
-
-1.5 Support large polygons
-
-Previous releases had an implicit limitation with respect to the
-number of vertices in a polygon. This was due to the use of statically
-defined arrays (to avoid allocating and freeing memory for each polygon
-to be drawn). José Luis García Pallero found this limitation and
-provided patches to eliminate this limitation. The strategy is
-that for small polygons, the original statically defined arrays
-are used and for large polygons new arrays are allocated and freed.
-This strategy has been applied to all relevant source files.
-
-1.6 Complete set of PLplot parameters now available for Fortran
-
-The #defines in bindings/swig-support/plplotcapi.i (which are
-consistent with those in include/plplot.h) define the complete set of
-important PLplot constants (whose names typically start with "PL_").
-We have implemented automatic methods of transforming that complete
-set of #defines into Fortran parameters that can be used from either
-Fortran 77 or Fortran 95.
-
-For Fortran 77, the user must insert an
-
-      include 'plplot_parameters.h'
-
-statement in every function/subroutine/main programme where he expects
-to use PLplot constants (whose names typically start with "PL_".  (See
-examples/f77/*.fm4 for examples of this method).  When compiling he
-must also insert the appropriate -I option to find this file (in
-bindings/f77/ in the source tree and currently in
-$prefix/lib/fortran/include/plplot$version in the install tree
-although that install location may be subject to change).  Note, the
-above method does not interfere with existing apps which have
-necessarily been forced to define the needed PLplot constants for
-themselves.  But for future f77 use, the above statement is
-more convenient and much less subject to error than a whole bunch of
-parameter statements for the required constants.
-
-For Fortran 95, the complete set of parameters are made available as
-part of the plplot module.  So access to this complete set of
-parameters is automatic wherever the "use plplot" statement is used.
-This is extremely convenient for new Fortran 95 apps that use PLplot,
-but, in general, changes will have to be made for existing apps. (See
-announcement XX above for the details).
+No notable new features.  This is a bug fix release.  See the above
+announcements.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -888,7 +849,7 @@ Various bugs in the 5.9.3 release have been fixed including:
 - Fixes for the qt examples with dynamic drivers disabled
 - Fixes to several tcl examples so they work with plserver
 - Fix pkg-config files to work correctly with Debug / Release build types set
-- Make fortran command line argument parsing work with shared libraries on Windows
+- Make Fortran command line argument parsing work with shared libraries on Windows
 
 2.32 Cairo driver improvements
 
@@ -1052,7 +1013,7 @@ ongoing.
 This improvement courtesy of David MacMahon adds support for arbitrary
 storage of 2D user data.  This is very similar to the technique employed
 by some existing functions (e.g. plfcont and plfshade) that use "evaluator"
-functions to access 2D user data that is stored in an arbtrary format.
+functions to access 2D user data that is stored in an arbitrary format.
 The new approach extends the concept of a user-supplied (or predefined)
 "evaluator" function to a group of user-supplied (or predefined) "operator"
 functions.  The operator functions provide for various operations on the
@@ -1072,7 +1033,7 @@ structure containing (pointers to) suitable operator functions and a
 PLPointer to the actual 2D data store.  Existing functions that accept
 2D data are modified to simply pass their parameters to the
 corresponding new variant of the function, along with a pointer to the
-suitable predefined plf2ops_t stucture of operator function pointers.
+suitable predefined plf2ops_t structure of operator function pointers.
 
 The list of functions for which new variants are created is:
 c_plimage, c_plimagefr, c_plmesh, c_plmeshc, c_plot3d, c_plot3dc,
@@ -1189,7 +1150,7 @@ annotated legend entry.  The pllegend function was first made
 available for 5.9.7. Due to feedback from early adopters of pllegend,
 we have now added substantially to the pllegend capabilities. and we
 now believe pllegend is ready for prime time.  The pllegend
-capabilities are documented in our docbook documentation and
+capabilities are documented in our DocBook documentation and
 demonstrated in standard examples 4, 26, and 33.  
 
 N.B. The current set of changes required a backwards-incompatible
