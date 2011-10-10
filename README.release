@@ -95,14 +95,6 @@ avoid 5.9.8 because of these problems for that release, and instead use
 5.9.9 which has been heavily tested on a number of platforms including
 Windows, see "Tests made for release 5.9.9" below.
 
-(5.9.9) During our extensive testing of this release we noticed a segfault
-with the OCaml bindings/examples.  Follow up with valgrind indicated
-some widespread memory management issues with our OCaml
-bindings/examples.  Therefore, we have disabled OCaml by default for
-this release and hope to reinstate it again just as soon as we figure
-out these issues.  If you want to try it anyway for this release
-specify the -DENABLE_ocaml=ON cmake option.
-
 (5.9.8) For unicode-aware devices we now follow what is done for the
 Hershey font case for epsilon, theta, and phi.  This means the #ge,
 #gh, and #gf escapes now give users the Greek lunate epsilon, the
@@ -382,12 +374,12 @@ good).
   platform including our qt and cairo device drivers.
 
 * (Hezekiah M. Carty) scripts/comprehensive_test.sh failed on a Ubuntu
-  Linux platform because of a segfault in one of the qt devices.  We
+  Linux platform because of segfaults in the qt devices.  We
   have tentatively ascribed this issue to issues with the Qt4 stack of
   libraries on that platform since this bad qt result contrasts with
   the good qt result on the previous two Linux platforms.  When qt devices
-  were ignored, clean valgrind results were obtained for OCaml-3.12.1
-  (in contrast to the bad valgrind results seen for OCaml-3.11.2 above). 
+  were ignored, clean valgrind results were obtained for OCaml-3.12.1 and
+  OCaml-3.11.2 (in contrast to the results seen for OCaml-3.11.2 above).
 
 * (Arjen Markus) MinGW/MSYS installed on a lightly loaded (at least
   compared to Linux tests) Windows XP system gives good results for
