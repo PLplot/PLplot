@@ -367,6 +367,9 @@ good).
   test_interactive targets in the installed examples tree.  These
   tests were done with OCaml disabled because of a segfault and a
   series of bad valgrind test results that occurred for OCaml 3.11.2.
+  We have tentatively ascribed this issue to issues with the OCaml
+  stack on that platform since this bad OCaml result contrasts with
+  good OCaml results on other reported platforms.
 
 * (Andrew Ross) For one Ubuntu platform the test_noninteractive and
   test_interactive targets for the shared libraries and dynamic
@@ -380,6 +383,8 @@ good).
   the good qt result on the previous two Linux platforms.  When qt devices
   were ignored, clean valgrind results were obtained for OCaml-3.12.1 and
   OCaml-3.11.2 (in contrast to the results seen for OCaml-3.11.2 above).
+  Testing with the comprehensive_test.sh script and qt devices disabled
+  completed with good results.
 
 * (Arjen Markus) MinGW/MSYS installed on a lightly loaded (at least
   compared to Linux tests) Windows XP system gives good results for
