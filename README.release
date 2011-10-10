@@ -362,8 +362,8 @@ good).
 0. Tests made for release 5.9.9
 
 * (Alan W. Irwin) A fully loaded (all Linux bindings other than PDL,
-  all Linux device drivers including our qt and cairo device drivers) Debian Squeeze
-  Linux platform gave a good result for the
+  all Linux device drivers including our qt and cairo device drivers)
+  Debian Squeeze Linux platform gave a good result for the
   scripts/comprehensive_test.sh script.  This script runs 7 major
   tests for each of our three principal build configurations (shared
   library/dynamic device drivers, shared libraries/nondynamic device
@@ -372,7 +372,9 @@ good).
   in the build tree, the test_noninteractive and test_interactive
   targets configured with CMake in the installed examples tree, and
   the traditional (MakeFile + pkg-config) test_noninteractive and
-  test_interactive targets in the installed examples tree.
+  test_interactive targets in the installed examples tree.  These
+  tests were done with OCaml disabled because of a segfault and a
+  series of bad valgrind test results that occurred for OCaml 3.11.2.
 
 * (Andrew Ross) For one Ubuntu platform the test_noninteractive and
   test_interactive targets for the shared libraries and dynamic
@@ -383,7 +385,9 @@ good).
   Linux platform because of a segfault in one of the qt devices.  We
   have tentatively ascribed this issue to issues with the Qt4 stack of
   libraries on that platform since this bad qt result contrasts with
-  the good qt result on the previous two Linux platforms.
+  the good qt result on the previous two Linux platforms.  When qt devices
+  were ignored, clean valgrind results were obtained for OCaml-3.12.1
+  (in contrast to the bad valgrind results seen for OCaml-3.11.2 above). 
 
 * (Arjen Markus) MinGW/MSYS installed on a lightly loaded (at least
   compared to Linux tests) Windows XP system gives good results for
