@@ -49,7 +49,11 @@ plplot for Debian
       * libplplot-java: Contains the bindings for using the PLplot
 	functions from java. 
 
-      * libplplot-ada: Contains the Ada bindings for the PLplot functions.
+      * libplplot-ada0: Contains the runtiem Ada bindings library for the 
+        PLplot functions.
+
+      * libplplot-ada0-dev: Development files for the Ada bindings for 
+        the PLplot functions.
 
       * libplplot-ocaml: Contains the OCaml bindings for the PLplot functions.
 

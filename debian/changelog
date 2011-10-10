@@ -1,12 +1,22 @@
 plplot (5.9.8-3) unstable; urgency=low
 
   * debian/control.in:
-    + Add back in dependencies (rather than recommends) on the C++, 
-      fortran and ada libraries. This does pull in extra libraries if you 
+    + Add back in dependencies (rather than recommends) on the C++
+      and fortran libraries. This does pull in extra libraries if you 
       only wish to develop with one language, but reverts to the old 
       behaviour (closes: #642715). 
+  * debian/control.in, debian/libplplot-ada0.files,
+    debian/libplplot-ada0-dev.files, debian/libplplot-dev, debian/rules,
+    debian/README.Debian:
+    + Split off ada development files from libplplot-dev package into new
+      libplplot-ada0-dev package. Move .ali files from libplplot-ada into
+      libplplot-ada0-dev package as per Debian Ada policy. Add explicit
+      dependency on ada-compiler, gnat and gnat-4.6 as per policy.
+      (closes: #644105, #644110, #644112)
+    + Rename libplplot-ada package to libplplot-ada0 so it includes the 
+      library soversion as per Debian Ada policy.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 30 Sep 2011 15:42:04 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 10 Oct 2011 08:55:58 +0100
 
 plplot (5.9.8-2) unstable; urgency=low
 

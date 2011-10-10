@@ -121,9 +121,9 @@ clean: unpatch
 install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
 		     --no-package=python-plplot --no-package=python-plplot-qt   \
-		     --no-package=libplplot-java --no-package=libplplot-ada \
+		     --no-package=libplplot-java --no-package=libplplot-ada0 \
 	             --no-package=libplplot-ocaml --no-package=libplplot-lua \
-	             --no-package=libplplot-d
+	             --no-package=libplplot-d --no-package=libplplot-ada0-dev
 	dh_movefiles --package=python-plplot-qt
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-java
@@ -131,11 +131,10 @@ install-arch: install-arch-stamp install-python
 	dh_movefiles --package=libplplot-lua
 	dh_movefiles --package=libplplot-d
 ifeq ($(BUILD_ADA),yes)
-	dh_movefiles --package=libplplot-ada
-	dh_movefiles --package=libplplot-dev usr/share/ada
-else
-	dh_movefiles --package=libplplot-dev
+	dh_movefiles --package=libplplot-ada0
+	dh_movefiles --package=libplplot-ada0-dev 
 endif
+	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=$(libpkg)
 
 install-arch-stamp: build-arch-stamp
@@ -175,7 +174,8 @@ install-arch-stamp: build-arch-stamp
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
 
 ifeq ($(BUILD_ADA),yes)
-	ln -s $(libpkg) $(debdoc)/libplplot-ada
+	ln -s $(libpkg) $(debdoc)/libplplot-ada0
+	ln -s $(libpkg) $(debdoc)/libplplot-ada0-dev
 endif
 
 	touch install-arch-stamp
