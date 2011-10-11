@@ -1159,6 +1159,10 @@ void configqsas( double scale, double offset1, double offset2, int ccontrol, int
         }
     }
 
+    // Set bhunt_search index to a definite value less than -1 to insure no
+    // initial hunt phase from some random index value is done.
+    ( *qsasconfig )->index = -40;
+
     if ( scale != 0. )
     {
         if ( ifbtime_offset )
