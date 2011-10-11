@@ -353,23 +353,35 @@ good).
 
 0. Tests made for release 5.9.9
 
-* (Alan W. Irwin) A fully loaded (all Linux bindings other than PDL,
-  all Linux device drivers including our qt and cairo device drivers)
-  Debian Squeeze Linux platform gave a good result for the
-  scripts/comprehensive_test.sh script.  This script runs 7 major
-  tests for each of our three principal build configurations (shared
-  library/dynamic device drivers, shared libraries/nondynamic device
-  drivers, static libraries/nondynamic device drivers). Those 7 tests
-  are ctest and the test_noninteractive and test_interactive targets
-  in the build tree, the test_noninteractive and test_interactive
-  targets configured with CMake in the installed examples tree, and
-  the traditional (MakeFile + pkg-config) test_noninteractive and
-  test_interactive targets in the installed examples tree.  These
-  tests were done with OCaml disabled because of a segfault and a
-  series of bad valgrind test results that occurred for OCaml 3.11.2.
-  We have tentatively ascribed this issue to issues with the OCaml
-  stack on that platform since this bad OCaml result contrasts with
-  good OCaml results on other reported platforms.
+* (Alan W. Irwin) The scripts/comprehensive_test.sh script was run for
+  a fully loaded (all Linux bindings other than PDL, all Linux device
+  drivers including our qt and cairo device drivers) Debian Squeeze
+  Linux platform with no obvious build-time or run-time issues being
+  found.  This script runs 7 major tests for each of our three
+  principal build configurations (shared library/dynamic device
+  drivers, shared libraries/nondynamic device drivers, static
+  libraries/nondynamic device drivers). Those 7 tests are ctest and
+  the test_noninteractive and test_interactive targets in the build
+  tree, the test_noninteractive and test_interactive targets
+  configured with CMake in the installed examples tree, and the
+  traditional (MakeFile + pkg-config) test_noninteractive and
+  test_interactive targets in the installed examples tree.
+
+  These tests were done with OCaml disabled because of a segfault and
+  a series of bad valgrind test results that occurred for OCaml
+  3.11.2.  We have tentatively ascribed this issue to issues with the
+  OCaml stack on that platform since this bad OCaml result contrasts
+  with good OCaml results on other reported platforms.  
+
+  In addition to the scripts/comprehensive_test.sh result,
+  comprehensive valgrind results were clean for all C examples for
+  both -dev psc and -dev epsqt for the build-tree/shared
+  library/dynamic device drivers case.  The first result verifies
+  there are no core memory management issues for our C library and C
+  examples for one of our simpler devices that has no external
+  dependencies.  The second result shows in addition that there are no
+  memory management issues for our epsqt device and the part of the
+  Qt4 version 4.6.3 stack that it uses on this platform.
 
 * (Andrew Ross) For one Ubuntu platform the test_noninteractive and
   test_interactive targets for the shared libraries and dynamic
