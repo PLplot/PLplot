@@ -9,7 +9,7 @@ set(VERSION 5.9.8)
 # CPack version numbers for release tarball name.
 set(CPACK_PACKAGE_VERSION_MAJOR 5)
 set(CPACK_PACKAGE_VERSION_MINOR 9)
-set(CPACK_PACKAGE_VERSION_PATCH 8)
+set(CPACK_PACKAGE_VERSION_PATCH 9)
 
 # PLplot library version information.
 
