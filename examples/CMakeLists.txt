@@ -410,8 +410,6 @@ if(BUILD_TEST)
     set(compare_command ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
   endif(CORE_BUILD)
 
-  # Pick a standard example to depend on which is available in all languages.
-  set(stdnum 01)
   if(PLD_psc)
     set(compare_file_depends ${custom_test_command})
     if(ENABLE_DYNDRIVERS)
@@ -466,18 +464,19 @@ if(BUILD_TEST)
 	  set(environment ${custom_env})
 	endif(language STREQUAL "java")
 
+	list_example_files(${CMAKE_CURRENT_BINARY_DIR} psc ${suffix} output_list)
 	add_custom_command(
-	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x${stdnum}${suffix}.psc
+	  OUTPUT ${output_list}
 	  COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
 	  COMMAND env ${environment} ${custom_test_command} --verbose --front-end=${language} --device=psc
 	  DEPENDS ${compare_file_depends_${language}}
 	  VERBATIM
 	  )
 	add_custom_target(test_${language}_psc
-	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x${stdnum}${suffix}.psc
+	  DEPENDS ${output_list}
 	  )
 	list(APPEND diff_targets_LIST test_${language}_psc)
-	list(APPEND diff_files_LIST ${CMAKE_CURRENT_BINARY_DIR}/x${stdnum}${suffix}.psc)
+	list(APPEND diff_files_LIST ${output_list})
 	# If the subdirectory used an add_custom_target (as indicated
 	# by both files_examples_${language} and targets_examples_${language}
 	# being true), then for that special case must add a target-level
@@ -537,16 +536,6 @@ if(BUILD_TEST)
       string(REGEX REPLACE "^.*:(.*):.*$" "\\1" driver ${file_devices_info})
       string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" familied ${file_devices_info})
       
-      # If familying turned on for this device in plplot-test.sh, then the OUTPUT
-      # files appear in the form x??c??.${device} rather than x??c.${device}.
-      # Put in a representative placeholder for the familying index in the
-      # OUTPUT name.
-      if(familied)
-	set(index 01)
-      else(familied)
-	set(index)
-      endif(familied)
-      
       set(file_device_depends_${device} ${device_depends})
       if(ENABLE_DYNDRIVERS)
 	get_property(FILE_DEPENDS_${driver} 
@@ -556,10 +545,10 @@ if(BUILD_TEST)
 	  ${FILE_DEPENDS_${driver}} ${driver}
 	  )
       endif(ENABLE_DYNDRIVERS)
-      #message("DEBUG: OUTPUT filename = x${stdnum}c${index}.${device}")
       #message("DEBUG:file_device_depends_${device} = ${file_device_depends_${device}}")
+	list_example_files(${CMAKE_CURRENT_BINARY_DIR} ${device} c output_list)
       add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x${stdnum}c${index}.${device}
+	OUTPUT ${output_list}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
 	COMMAND env ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device}
 	DEPENDS
@@ -567,7 +556,7 @@ if(BUILD_TEST)
 	VERBATIM
 	)
       add_custom_target(test_c_${device}
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x${stdnum}c${index}.${device}
+	DEPENDS ${output_list}
 	)
       list(APPEND noninteractive_targets_LIST test_c_${device})
       # Follow what was done above.
