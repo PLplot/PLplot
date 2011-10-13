@@ -1,3 +1,1270 @@
+PLplot Release 5.9.9
+~~~~~~~~~~~~~~~~~~~~
+This is a development release of PLplot. It represents the ongoing efforts
+of the community to improve the PLplot plotting package. Development
+releases in the 5.9.x series will be available every few months. The next
+stable release will be 5.10.0.
+
+     If you encounter a problem that is not already documented in the
+PROBLEMS file or on our bugtracker, then please send bug reports to PLplot
+developers via the mailing lists at
+http://sourceforge.net/mail/?group_id=2915 (preferred) or on our bugtracker
+at http://sourceforge.net/tracker/?group_id=2915&atid=102915.
+
+     Please see the license under which this software is distributed
+(LGPL), and the disclaimer of all warranties, given in the COPYING.LIB
+file.
+
+INDEX
+
+OFFICIAL NOTICES FOR USERS
+
+CHANGES
+
+-1. Important changes we should have mentioned in previous release announcements.
+
+-1.1 Add full bindings and examples for the D language.
+
+0. Tests made for release 5.9.9
+
+1. Changes relative to PLplot 5.9.8 (the previous development release)
+
+2. Changes relative to PLplot 5.8.0 (the previous stable release)
+
+2.1 All autotools-related files have now been removed
+2.2 Build system bug fixes
+2.3 Build system improvements
+2.4 Implement build-system infrastructure for installed Ada bindings and
+examples
+2.5 Code cleanup
+2.6 Date / time labels for axes
+2.7 Alpha value support
+2.8 New PLplot functions
+2.9 External libLASi library improvements affecting our psttf device
+2.10 Improvements to the cairo driver family
+2.11 wxWidgets driver improvements
+2.12 pdf driver improvements
+2.13 svg driver improvements
+2.14 Ada language support
+2.15 OCaml language support
+2.16 Perl/PDL language support
+2.17 Update to various language bindings
+2.18 Update to various examples
+2.19 Extension of our test framework
+2.20 Rename test subdirectory to plplot_test
+2.21 Website support files updated
+2.22 Internal changes to function visibility
+2.23 Dynamic driver support in Windows
+2.24 Documentation updates
+2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
+2.26 get-drv-info now changed to test-drv-info
+2.27 Text clipping now enabled by default for the cairo devices
+2.28 A powerful qt device driver has been implemented
+2.29 The PLplot API is now accessible from Qt GUI applications
+2.30 NaN / Inf support for some PLplot functions
+2.31 Various bug fixes
+2.32 Cairo driver improvements
+2.33 PyQt changes
+2.34 Color Palettes
+2.35 Re-implementation of a "soft landing" when a bad/missing compiler is
+detected
+2.36 Make PLplot aware of LC_NUMERIC locale
+2.37 Linear gradients have been implemented
+2.38 Cairo Windows driver implemented
+2.39 Custom axis labeling implemented
+2.40 Universal coordinate transform implemented
+2.41 Support for arbitrary storage of 2D user data
+2.42 Font improvements
+2.42 Alpha value support for plotting in memory.
+2.43 Add a Qt device for in memory plotting.
+2.44 Add discrete legend capability.
+2.45 Add full bindings and examples for the D language.
+2.46 The plstring and plstring3 functions have been added
+2.47 The pllegend API has been finalized
+2.48 Octave bindings now implemented with swig
+2.49 Documentation redone for our swig-generated Python and Octave bindings
+2.50 Support large polygons
+2.51 Complete set of PLplot parameters now available for Fortran
+2.52 The plarc function has been added
+
+OFFICIAL NOTICES FOR USERS
+
+(5.9.9) This is a quick release to deal with two broken build issues
+that were recently discovered for our Windows platform.  Windows users should
+avoid 5.9.8 because of these problems for that release, and instead use
+5.9.9 which has been heavily tested on a number of platforms including
+Windows, see "Tests made for release 5.9.9" below.
+
+(5.9.8) For unicode-aware devices we now follow what is done for the
+Hershey font case for epsilon, theta, and phi.  This means the #ge,
+#gh, and #gf escapes now give users the Greek lunate epsilon, the
+ordinary Greek lower case theta, and the Greek symbol phi for Unicode
+fonts just like has occurred since the dawn of PLplot history for the
+Hershey font case.  Previously these legacy escapes were assigned to
+ordinary Greek lower-case epsilon, the Greek symbol theta (= script
+theta), and the ordinary Greek lower case phi for unicode fonts
+inconsistently with what occurred for Hershey fonts.  This change gets
+rid of this inconsistency, that is the #g escapes should give the best
+unicode approximation to the Hershey glyph result that is possible for
+unicode-aware devices.
+
+In general we encourage users of unicode-aware devices who might
+dislike the Greek glyph Hershey-lookalike choices they get with the
+legacy #g escapes to use instead either PLplot unicode escapes (e.g.,
+"#[0x03b5]" for ordinary Greek lower-case epsilon, see page 3 of
+example 23) or better yet, UTF-8 strings (e.g., "Îµ") to specify
+exactly what unicode glyph they want.
+
+(5.9.8) The full set of PLplot constants have been made available to
+our Fortran 95 users as part of the plplot module.  This means those
+users will have to remove any parameter statements where they have
+previously defined the PLplot constants (whose names typically start
+with "PL_" for themselves.  For a complete list of the affected
+constants, see the #defines in swig-support/plplotcapi.i which are
+used internally to help generate the plplot module.  See also Index
+item 2.51 below.
+
+(5.9.8) There has been widespread const modifier changes in the API
+for libplplotd and libplplotcxxd.  Those backwards-incompatible API
+changes are indicated in the usual way by a soversion bump in those
+two libraries which will force all apps and libraries that depend on
+those two libraries to be rebuilt.
+
+Specifically, we have changed the following arguments in the C library
+(libplplotd) case
+
+type * name1 ==> const type * name1
+type * name2 ==> const type ** name2
+
+and the following arguments in the C++ library (libplplotcxxd) case
+
+type * name1 ==> const type * name1
+type * name1 ==> const type * const * name2
+
+where name1 is the name of a singly dimensioned array whose values are
+not changed internally by the PLplot libraries and name2 is the name
+of a doubly dimensioned array whose values are not changed internally
+by the PLplot libraries.
+
+The general documentation and safety justification for such const
+modifier changes to our API is given in
+http://www.cprogrammbing.com/tutorial/const_correctness.html.
+Essentially, the above const modifier changes constitute our guarantee
+that the associated arrays are not changed internally by the PLplot
+libraries.
+
+Although it is necessary to rebuild all apps and libraries that depend
+on libplplotd and/or libplplotcxxd, that rebuild should be possible
+with unchanged source code without build errors in all cases.  For C
+apps and libraries (depending on libplplotd) there will be additional
+build warnings due to a limitation in the C standard discussed at
+http://c-faq.com/ansi/constmismatch.html unless all doubly dimensioned
+arrays (but not singly dimensioned) are explicitly cast to (const type
+**).  However, such source code changes will not be necessary to avoid
+warning messages for the C++ (libplplotcxxd) change because of the
+double use of const in the above "const type * const * name2" change.
+
+(5.9.8) The plarc API has changed in release 5.9.8.  The plarc API now
+has a rotation parameter which will eventually allow for rotated arcs.
+PLplot does not currently support rotated arcs, but the plarc function
+signature has been modified to avoid changing the API when this
+functionality is added.
+
+(5.9.6) We have retired the pbm driver containing the pbm (actually
+portable pixmap) file device. This device is quite primitive and
+poorly maintained. It ignores unicode fonts (i.e., uses the Hershey
+font fallback), falls back to ugly software fills, doesn't support
+alpha transparency, etc.  It also has a serious run-time issue with
+example 2 (double free detected by glibc) which probably indicates
+some fundamental issue with the 100 colours in cmap0 for that
+example. For those who really need portable pixmap results, we suggest
+using the ImageMagick convert programme, e.g., "convert
+examples/x24c01.pngqt test.ppm" or "convert examples/x24c01.pngcairo
+test.ppm" to produce good-looking portable pixmap results from our
+best png device results.
+
+(5.9.6) We have retired the linuxvga driver containing the linuxvga
+interactive device.  This device is quite primitive, difficult to
+test, and poorly maintained. It ignores unicode fonts (i.e., uses the
+Hershey font fallback), falls back to ugly software fills, doesn't
+support alpha transparency, etc.  It is Linux only, can only be run as
+root, and svgalib (the library used by linuxsvga) is not supported by
+some mainstream (e.g., Intel) chipsets.  All of these characteristics
+make it difficult to even test this device much less use it for
+anything serious.  Finally, it has had a well-known issue for years
+(incorrect colours) which has never been fixed indicating nobody is
+interested in maintaining this device.
+
+(5.9.6) We have retired our platform support of djgpp that used to
+reside in sys/dos/djgpp.  The developer (Andrew Roach) who used to
+maintain those support files for djgpp feels that the djgpp platform
+is no longer actively developed, and he no longer uses djgpp himself.
+
+(5.9.6) We have changed plpoin results for ascii codes 92, 94, and 95
+from centred dot, degree symbol, and centred dot glyphs to the correct
+backslash, caret, and underscore glyphs that are associated with those
+ascii indices.  This change is consistent with the documentation of
+plpoin and solves a long-standing issue with backslash, caret, and
+underscore ascii characters in character strings used for example by
+pl[mp]tex.  Those who need access to a centred dot with plpoin should
+use index 1.  The degree symbol is no longer accessible with plpoin,
+but it is available in ordinary text input to PLplot as Hershey escape
+"#(718)", where 718 is the Hershey index of the degree symbol, unicode
+escape "#[0x00B0]" where 0x00B0 is the unicode index for the degree
+symbol or direct UTF8 unicode string "Â°".
+
+(5.9.6) We have retired the gcw device driver and the related gnome2
+and pygcw bindings since these are unmaintained and there are good
+replacements.  These components of PLplot were deprecated as of
+release 5.9.3.  A good replacement for the gcw device is either the
+xcairo or qtwidget device.  A good replacement for the gnome2 bindings
+is the externally supplied XDrawable or Cairo context associated with
+the xcairo device and the extcairo device (see
+examples/c/README.cairo).  A good replacement for pygcw is our new
+pyqt4 bindings for PLplot.
+
+(5.9.6) We have deprecated support for the python Numeric array
+extensions. Numeric is no longer maintained and users of Numeric are
+advised to migrate to numpy. Numpy has been the standard for PLplot
+for some time. If numpy is not present PLplot will now disable python
+by default. If you still require Numeric support in the short term
+then set USE_NUMERIC to ON in cmake. The PLplot support for Numeric
+will be dropped in a future release.
+
+(5.9.5) We have removed pyqt3 access to PLplot and replaced it by
+pyqt4 access to PLplot (see details below).
+
+(5.9.5) The only method of specifying a non-default compiler (and
+associated compiler options) that we support is the environment
+variable approach, e.g.,
+
+export CC='gcc -g -fvisibility=hidden'
+export CXX='g++ -g -fvisibility=hidden'
+export FC='gfortran -g -fvisibility=hidden'
+
+All other CMake methods of specifying a non-default compiler and
+associated compiler options will not be supported until CMake bug 9220
+is fixed, see discussion below of the soft-landing re-implementation
+for details.
+
+(5.9.5) We have retired the hpgl driver (containing the hp7470,
+hp7580, and lj_hpgl devices), the impress driver (containing the imp
+device), the ljii driver (containing the ljii and ljiip devices), and
+the tek driver (containing the conex, mskermit, tek4107, tek4107f,
+tek4010, tek4010f, versaterm, vlt, and xterm devices).  Retirement
+means we have removed the build options which would allow these
+devices to build and install.  Recent tests have shown a number of
+run-time issues (hpgl, impress, and ljii) or build-time issues (tek)
+with these devices, and as far as we know there is no more user
+interest in them. Therefore, we have decided to retire these devices
+rather than fix them.
+
+(5.9.4) We have deprecated the pbm device driver (containing the pbm
+device) because glibc detects a catastrophic double free.
+
+(5.9.3) Our build system requires CMake version 2.6.0 or higher.
+
+(5.9.3) We have deprecated the gcw device driver and the related
+gnome2 and pygcw bindings since these are essentially unmaintained.
+For example, the gcw device and associated bindings still depends on
+the plfreetype approach for accessing unicode fonts which has known
+issues (inconsistent text offsets, inconvenient font setting
+capabilities, and incorrect rendering of CTL languages).  To avoid
+these issues we advise using the xcairo device and the externally
+supplied XDrawable or Cairo context associated with the xcairo device
+and the extcairo device (see examples/c/README.cairo) instead. If you
+still absolutely must use -dev gcw or the related gnome2 or pygcw
+bindings despite the known problems, then they can still be accessed
+by setting PLD_gcw, ENABLE_gnome2, and/or ENABLE_pygcw to ON.
+
+(5.9.3) We have deprecated the gd device driver which implements the
+png, jpeg, and gif devices.  This device driver is essentially
+unmaintained. For example, it still depends on the plfreetype approach
+for accessing unicode fonts which has known issues (inconsistent text
+offsets, inconvenient font setting capabilities, and incorrect
+rendering of CTL languages).  To avoid these issues for PNG format, we
+advise using the pngcairo or pngqt devices.  To avoid these issues for
+the JPEG format, we advise using the jpgqt device.  PNG is normally
+considered a better raster format than GIF, but if you absolutely
+require GIF format, we advise using the pngcairo or pngqt devices and
+then downgrading the results to the GIF format using the ImageMagick
+"convert" application.  For those platforms where libgd (the
+dependency of the gd device driver) is accessible while the required
+dependencies of the cairo and/or qt devices are not accessible, you
+can still use these deprecated devices by setting PLD_png, PLD_jpeg,
+or PLD_gif to ON.
+
+(5.9.3) We have re-enabled the tk, itk, and itcl components of PLplot
+by default that were disabled by default as of release 5.9.1 due to
+segfaults.  The cause of the segfaults was a bug (now fixed) in how
+pthread support was implemented for the Tk-related components of
+PLplot.
+
+(5.9.2) We have set HAVE_PTHREAD (now called PL_HAVE_PTHREAD as of
+release 5.9.8) to ON by default for all platforms other than Darwin.
+Darwin will follow later once it appears the Apple version of X
+supports it.
+
+(5.9.1) We have removed our previously deprecated autotools-based
+build system.  Instead, use the CMake-based build system following the
+directions in the INSTALL file.
+
+(5.9.1) We no longer support Octave-2.1.73 which has a variety of
+run-time issues in our tests of the Octave examples on different
+platforms. In contrast our tests show we get good run-time results
+with all our Octave examples for Octave-3.0.1. Also, that is the
+recommended stable version of Octave at
+http://www.gnu.org/software/octave/download.html so that is the only
+version of Octave we support at this time.
+
+(5.9.1) We have decided for consistency sake to change the PLplot
+stream variables plsc->vpwxmi, plsc->vpwxma, plsc->vpwymi, and
+plsc->vpwyma and the results returned by plgvpw to reflect the exact
+window limit values input by users using plwind. Previously to this
+change, the stream variables and the values returned by plgvpw
+reflected the internal slightly expanded range of window limits used
+by PLplot so that the user's specified limits would be on the graph.
+Two users noted this slight difference, and we agree with them it
+should not be there. Note that internally, PLplot still uses the
+expanded ranges so most users results will be identical.  However, you
+may notice some small changes to your plot results if you use these
+stream variables directly (only possible in C/C++) or use plgvpw.
+
+CHANGES
+
+-1. Important changes we should have mentioned in previous release announcements.
+
+-1.1 Add full bindings and examples for the D language.
+
+As of release 5.9.5 we added full bindings and examples for the D
+language.  The results for the D examples are generally consistent
+with the corresponding C examples which helps to verify the D
+bindings.
+
+Since the release of 5.9.5 it has come to our attention that the
+version of gdc supplied with several recent versions of Ubuntu has a
+very serious bug on 64-bit systems (see
+https://bugs.launchpad.net/ubuntu/+source/gdc-4.2/+bug/235955) which
+causes several of the plplot D examples to crash. If this affects you,
+you are recommended to disable the d bindings or switch to an
+alternative d compiler (the Digital Mars compiler is reported to be
+good).
+
+
+0. Tests made for release 5.9.9
+
+* (Alan W. Irwin) The scripts/comprehensive_test.sh script was run for
+  a fully loaded (all Linux bindings other than PDL, all Linux device
+  drivers including our qt and cairo device drivers) Debian Squeeze
+  Linux platform with no obvious build-time or run-time issues being
+  found.  This script runs 7 major tests for each of our three
+  principal build configurations (shared library/dynamic device
+  drivers, shared libraries/nondynamic device drivers, static
+  libraries/nondynamic device drivers). Those 7 tests are ctest and
+  the test_noninteractive and test_interactive targets in the build
+  tree, the test_noninteractive and test_interactive targets
+  configured with CMake in the installed examples tree, and the
+  traditional (MakeFile + pkg-config) test_noninteractive and
+  test_interactive targets in the installed examples tree.
+
+  These tests were done with OCaml disabled because of a segfault and
+  a series of bad valgrind test results that occurred for OCaml
+  3.11.2.  We have tentatively ascribed this issue to issues with the
+  OCaml stack on that platform since this bad OCaml result contrasts
+  with good OCaml results on other reported platforms.  
+
+  In addition to the scripts/comprehensive_test.sh result,
+  comprehensive valgrind results were clean for all C examples for
+  both -dev psc and -dev epsqt for the build-tree/shared
+  library/dynamic device drivers case.  The first result verifies
+  there are no core memory management issues for our C library and C
+  examples for one of our simpler devices that has no external
+  dependencies.  The second result shows in addition that there are no
+  memory management issues for our epsqt device and the part of the
+  Qt4 version 4.6.3 stack that it uses on this platform.
+
+* (Andrew Ross) For one Ubuntu platform the test_noninteractive and
+  test_interactive targets for the shared libraries and dynamic
+  drivers case gave good results.  This was for a fully loaded
+  platform including our qt and cairo device drivers.
+
+* (Hezekiah M. Carty) scripts/comprehensive_test.sh failed on a Ubuntu
+  Linux platform because of segfaults in the qt devices.  We
+  have tentatively ascribed this issue to issues with the Qt4 stack of
+  libraries on that platform since this bad qt result contrasts with
+  the good qt result on the previous two Linux platforms.  When qt devices
+  were ignored, clean valgrind results were obtained for OCaml-3.12.1 and
+  OCaml-3.11.2 (in contrast to the results seen for OCaml-3.11.2 above).
+  Testing with the comprehensive_test.sh script and qt devices disabled
+  completed with good results.
+
+* (Arjen Markus) MinGW/MSYS installed on a lightly loaded (at least
+  compared to Linux tests) Windows XP system gives good results for
+  the test_noninteractive target in the build tree for the shared
+  library/dynamic device drivers case.
+
+* (Arjen Markus) The combination of Microsoft Visual C/C++ version 9.0
+  and Intel Fortran compilers installed on a lightly loaded Windows XP
+  system gives good results for the "all" target for the shared
+  library/dynamic device drivers case.  That target just builds the
+  software.  In addition, some run-time testing was done by hand with
+  no sign of any run-time trouble.
+
+* (Jerry Bauck) Mac OS X 10.6.8 (Snow Leopard) platform with Ada
+  bindings and good coverage of devices (e.g., qt and cairo) but
+  lightly loaded with regard to non-Ada bindings give fairly good
+  results for ctest and the test_noninteractive target for the shared
+  library/dynamic device drivers case.  All tests passed including qt
+  and cairo device driver tests, but when looking at detailed results
+  some missing circular symbol issues were discovered for the pscairo
+  results.  We don't understand this issue because the cairo devices
+  give both superb and reliable results on our Linux platforms.  The
+  cairo device driver depends on a subset (e.g., pango and cairo) of
+  the GTK+ stack of libraries.  These results were obtained for GTK+
+  version 2.18.5.
+
+* (Werner Smekal) Mac OS X 10.7.1, XCode 4.1 platform that is lightly
+  loaded (e.g., GTK+ but no Qt4) gave mixed results for ctest and the
+  test_noninteractive target for the shared library/dynamic device
+  drivers case.  The build worked without issues, and also everything
+  but cairo devices at run time.  However, all cairo device results
+  had major run-time errors (e.g., segfaults).  In this case the GTK+
+  library was newer than we have tested before (version 2.24 from the
+  Homebrew packaging effort as compared to 2.21 that gives such good
+  results on Linux) so there may be a mismatch between our cairo
+  device driver and this newer version of GTK+ that needs to be sorted
+  out.
+
+1. Changes relative to PLplot 5.9.8 (the previous development release)
+
+No notable new features.  This is a bug fix release.  See the above
+announcements.
+
+2. Changes relative to PLplot 5.8.0 (the previous stable release)
+
+2.1 All autotools-related files have now been removed
+
+CMake is now the only supported build system. It has been tested on
+Linux / Unix, Mac OS-X and Windows platforms.
+
+2.2 Build system bug fixes
+
+Various fixes include the following:
+
+Ctest will now work correctly when the build tree path includes symlinks.
+
+Dependencies for swig generated files fixed so they are not rebuilt every
+time make is called.
+
+Various dependency fixes to ensure that parallel builds (using make -j)
+work under unix.
+
+2.3 Build system improvements
+
+We now transform link flag results delivered to the CMake environment by
+pkg-config into the preferred CMake form of library information.  The
+practical effect of this improvement is that external libraries in
+non-standard locations now have their rpath options set correctly for our
+build system both for the build tree and the install tree so you don't have
+to fiddle with LD_LIBRARY_PATH, etc.
+
+2.4 Implement build-system infrastructure for installed Ada bindings and
+examples
+
+Install source files, library information files, and the plplotada library
+associated with the Ada bindings.  Configure and install the pkg-config file
+for the plplotada library.  Install the Ada examples and a configured Makefile
+to build them in the install tree.
+
+2.5 Code cleanup
+
+The PLplot source code has been cleaned up to make consistent use of
+(const char *) and (char *) throughout. Some API functions have changed
+to use const char * instead of char * to make it clear that the strings
+are not modified by the function. The C and C++ examples have been updated
+consistent with this. These changes fix a large number of warnings
+with gcc-4.2. Note: this should not require programs using PLplot to be
+recompiled as it is not a binary API change.
+
+There has also been some cleanup of include files in the C++ examples
+so the code will compile with the forthcoming gcc-4.3.
+
+2.6 Date / time labels for axes
+
+PLplot now allows date / time labels to be used on axes. A new option
+('d') is available for the xopt and yopt arguments to plbox which
+indicates that the axis should be interpreted as a date / time. Similarly
+there is a new range of options for plenv to select date / time labels.
+The time format is seconds since the epoch (usually 1 Jan 1970). This
+format is commonly used on most systems. The C gmtime routine can be
+used to calculate this for a given date and time. The format for the
+labels is controlled using a new pltimefmt function, which takes a
+format string. All formatting is done using the C strftime function.
+See documentation for available options on your platform. Example 29
+demonstrates the new capabilities.
+
+N.B. Our reliance on C library POSIX time routines to (1) convert from
+broken-down time to time-epoch, (2) to convert from time-epoch to
+broken-down time, and (3) to format results with strftime have proved
+problematic for non-C languages which have time routines of variable
+quality.  Also, it is not clear that even the POSIX time routines are
+available on Windows. So we have plans afoot to implement high-quality
+versions of (1), (2), and (3) with additional functions to get/set the epoch
+in the PLplot core library itself.  These routines should work on all C
+platforms and should also be uniformly accessible for all our language
+bindings.
+
+WARNING.....  Therefore, assuming these plans are implemented, the present
+part of our date/time PLplot API that uses POSIX time routines will be
+changed.
+
+2.7 Alpha value support
+
+PLplot core has been modified to support a transparency or alpha value
+channel for each color in color map 0 and 1. In addition a number of new
+functions were added the PLplot API so that the user can both set and query
+alpha values for color in the two color maps. These functions have the same
+name as their non-alpha value equivalents, but with a an "a" added to the
+end. Example 30 demonstrates some different ways to use these functions
+and the effects of alpha values, at least for those drivers that support alpha
+values. This change should have no effect on the device drivers that do not
+currently support alpha values. Currently only the cairo, qt, gd, wxwidgets and
+aquaterm drivers support alpha values. There are some limitations with the gd
+driver due to transparency support in the underlying libgd library.
+
+2.8 New PLplot functions
+
+An enhanced version of plimage, plimagefr has been added. This allows images
+to be plotted using coordinate transformation, and also for the dynamic range
+of the plotted values to be altered. Example 20 has been modified to
+demonstrate this new functionality.
+
+To ensure consistent results in example 21 between different platforms and
+language bindings PLplot now includes a small random number generator within
+the library. plrandd will return a PLFLT random number in the range 0.0-1.0.
+plseed will allow the random number generator to be seeded.
+
+2.9 External libLASi library improvements affecting our psttf device
+
+Our psttf device depends on the libLASi library. libLASi-1.1.0 has just been
+released at http://sourceforge.net/svn/?group_id=187113 .  We recommend
+using this latest version of libLASi for building PLplot and the psttf
+device since this version of libLASi is more robust against glyph
+information returned by pango/cairo/fontconfig that on rare occasions is not
+suitable for use by libLASi.
+
+2.10 Improvements to the cairo driver family
+
+Jonathan Woithe improved the xcairo driver so that it can optionally be
+used with an external user supplied X Drawable. This enables a nice
+separation of graphing (PLplot) and window management (Gtk, etc..). Doug
+Hunt fixed the bugs that broke the memcairo driver and it is now fully
+functional. Additionally, a new extcairo driver was added that will plot
+into a user supplied cairo context.
+
+2.11 wxWidgets driver improvements
+
+Complete reorganization of the driver code. A new backend was added, based
+on the wxGraphicsContext class, which is available for wxWidgets 2.8.4
+and later. This backend produces antialized output similar to the
+AGG backend but has no dependency on the AGG library. The basic wxDC
+backend and the wxGraphicsContext backend process the text output
+on their own, which results in much nicer plots than with the standard
+Hershey fonts and is much faster than using the freetype library. New
+options were introduced in the wxWidgets driver:
+ - backend: Choose backend: (0) standard, (1) using AGG library,
+                            (2) using wxGraphicsContext
+ - hrshsym: Use Hershey symbol set (hrshsym=0|1)
+ - text: Use own text routines (text=0|1)
+ - freetype: Use FreeType library (freetype=0|1)
+The option "text" changed its meaning, since it enabled the FreeType library
+support, while now the option enables the driver's own text routines.
+
+Some other features were added:
+ * the wxWidgets driver now correctly clears the background (or parts of it)
+ * transparency support was added
+ * the "locate mode" (already available in the xwin and tk driver) was
+   implemented, where graphics input events are processed and translated
+   to world coordinates
+
+2.12 pdf driver improvements
+
+The pdf driver (which is based on the haru library http://www.libharu.org)
+processes the text output now on its own. So far only the Adobe Type1
+fonts are supported. TrueType font support will follow. Full unicode
+support will follow after the haru library will support unicode strings. The
+driver is now able to produce A4, letter, A5 and A3 pages. The Hershey font
+may be used only for symbols. Output can now be compressed, resulting in
+much smaller file sizes.
+Added new options:
+ - text: Use own text routines (text=0|1)
+ - compress: Compress pdf output (compress=0|1)
+ - hrshsym: Use Hershey symbol set (hrshsym=0|1)
+ - pagesize: Set page size (pagesize=A4|letter|A3|A5)
+
+2.13 svg driver improvements
+
+This device driver has had the following improvements: schema for generated
+file now validates properly at http://validator.w3.org/ for the
+automatically detected document type of SVG 1.1; -geometry option now works;
+alpha channel transparency has been implemented; file familying for
+multipage examples has been implemented; coordinate scaling has been
+implemented so that full internal PLplot resolution is used; extraneous
+whitespace and line endings that were being injected into text in error have
+now been removed; and differential correction to string justification is now
+applied.
+
+The result of these improvements is that our SVG device now gives the
+best-looking results of all our devices.  However, currently you must be
+careful of which SVG viewer or editor you try because a number of them have
+some bugs that need to be resolved.  For example, there is a librsvg bug in
+text placement (http://bugzilla.gnome.org/show_bug.cgi?id=525023) that
+affects all svg use within GNOME as well as the ImageMagick "display"
+application.  However, at least the latest konqueror and firefox as well as
+inkscape and scribus-ng (but not scribus!) give outstanding looking results
+for files generated by our svg device driver.
+
+2.14 Ada language support
+
+We now have a complete Ada bindings implemented for PLplot. We also have a
+complete set of our standard examples implemented in Ada which give results
+that are identical with corresponding results for the C standard examples.
+This is an excellent test of a large subset of the Ada bindings. We now
+enable Ada by default for our users and request widespread testing of this
+new feature.
+
+2.15 OCaml language support
+
+Thanks primarily to Hezekiah M. Carty's efforts we now have a complete OCaml
+bindings implemented for PLplot. We also have a complete set of our standard
+examples implemented in OCaml which give results that are identical with
+corresponding results for the C standard examples. This is an excellent test
+of a large subset of the OCaml bindings. We now enable OCaml by default for
+our users and request widespread testing of this new feature.
+
+2.16 Perl/PDL language support
+
+Thanks to Doug Hunt's efforts the external Perl/PDL module,
+PDL::Graphics::PLplot version 0.46 available at
+http://search.cpan.org/dist/PDL-Graphics-PLplot has been brought up to date
+to give access to recently added PLplot API.  The instructions for how to
+install this module on top of an official PDL release are given in
+examples/perl/README.perldemos. Doug has also finished implementing a
+complete set of standard examples in Perl/PDL which are part of PLplot and
+which produce identical results to their C counterparts if the above updated
+module has been installed.  Our build system tests the version of
+PDL::Graphics::PLplot that is available, and if it is not 0.46 or later, the
+list of Perl/PDL examples that are run as part of our standard tests is
+substantially reduced to avoid examples that use the new functionality.  In
+sum, if you use PDL::Graphics::PLplot version 0.46 or later the full
+complement of PLplot commands is available to you from Perl/PDL, but
+otherwise not.
+
+2.17 Updates to various language bindings
+
+A concerted effort has been made to bring all the language bindings up to
+date with recently added functions. Ada, C++, f77, f95, Java, OCaml, Octave,
+Perl/PDL, Python, and Tcl now all support the common PLplot API (with the
+exception of the mapping functions which are not yet implemented for all
+bindings due to technical issues.) This is a significant step forward for
+those using languages other than C.
+
+2.18 Updates to various examples
+
+To help test the updates to the language bindings the examples have been
+thoroughly checked. Ada, C, C++, f77, f95, and OCaml now contain a full set
+of non-interactive tests (examples 1-31 excluding 14 and 17). Java, Octave,
+Python and Tcl are missing example 19 because of the issue with the mapping
+functions. The examples have also been checked to ensure consistent results
+between different language bindings. Currently there are still some minor
+differences in the results for the tcl examples, probably due to rounding
+errors.  Some of the Tcl examples (example 21) require Tcl version 8.5 for
+proper support for NaNs.
+
+Also new is an option for the plplot_test.sh script to run the examples
+using a debugging command. This is enabled using the --debug option. The
+default it to use the valgrind memory checker. This has highlighted at
+least one memory leaks in PLplot which have been fixed. It is not part
+of the standard ctest tests because it can be _very_ slow for a complete
+set of language bindings and device drivers.
+
+2.19 Extension of our test framework
+
+The standard test suite for PLplot now carries out a comparison of the
+stdout output (especially important for example 31 which tests most of our
+set and get functions) and PostScript output for different languages as a
+check.  Thanks to the addition of example 31, the inclusion of examples 14
+and 17 in the test suite and other recent extensions of the other
+examples we now have rigourous testing in place for almost the entirety
+of our common API.  This extensive testing framework has already helped
+us track down a number of bugs, and it should make it much easier for us
+to maintain high quality for our ongoing PLplot releases.
+
+2.20 Rename test subdirectory to plplot_test
+
+This change was necessary to quit clashing with the "make test" target which
+now works for the first time ever (by executing ctest).
+
+2.21 Website support files updated
+
+Our new website content is generated with PHP and uses CSS (cascaded style
+sheets) to implement a consistent style.  This new approach demanded lots of
+changes in the website support files that are used to generate and upload
+our website and which are automatically included with the release.
+
+2.22 Internal changes to function visibility
+
+The internal definitions of functions in PLplot have been significantly
+tidied up to allow the use of the -fvisibility=hidden option with newer
+versions of gcc. This prevents internal functions from being exported
+to the user where possible. This extends the existing support for this
+on windows.
+
+2.23 Dynamic driver support in Windows
+
+An interface based on the ltdl library function calls was established
+which allows to open and close dynamic link libraries (DLL) during
+run-time and call functions from these libraries. As a consequence
+drivers can now be compiled into single DLLs separate from the core
+PLplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
+ON by default for Windows if a shared PLplot library is built.
+
+2.24 Documentation updates
+
+The DocBook documentation has been updated to include many of the
+C-specific functions (for example plAlloc2dGrid) which are not part
+of the common API, but are used in the examples and may be helpful
+for PLplot users.
+
+2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
+
+CGM format is a long-established (since 1987) open standard for vector
+graphics that is supported by w3c (see http://www.w3.org/Graphics/WebCGM/).
+PLplot has long had a cgm device driver which depended on the (mostly)
+public domain libcd library that was distributed in the mid 90's by National
+Institute of Standards and Technology (NIST) and which is still available
+from http://www.pa.msu.edu/ftp/pub/unix/cd1.3.tar.gz.  As a convenience
+to our -dev cgm users, we have brought that
+source code in house under lib/nistcd and now build libnistcd routinely
+as part of our ordinary builds.  The only changes we have made to the
+cd1.3 source code is visibility changes in cd.h and swapping the sense of
+the return codes for the test executables so that 0 is returned on success
+and 1 on failure.  If you want to test libnistcd on your platform,
+please run
+
+make test_nistcd
+
+in the top-level build tree.  (That tests runs all the test executables
+that are built as part of cd1.3 and compares the results that are generated
+with the *.cgm files that are supplied as part of cd1.3.)
+
+Two applications that convert and/or display CGM results on Linux are
+ralcgm (which is called by the ImageMagick convert and display applications)
+and uniconvertor.
+
+Some additional work on -dev cgm is required to implement antialiasing and
+non-Hershey fonts, but both those should be possible using libnistcd according
+to the text that is shown by lib/nistcd/cdtext.cgm and lib/nistcd/cdexp1.cgm.
+
+2.26 get-drv-info now changed to test-drv-info
+
+To make cross-building much easier for PLplot we now configure the *.rc
+files that are used to describe our various dynamic devices rather than
+generating the required *.rc files with get-drv-info.  We have changed the
+name of get-drv-info to test-drv-info.  That name is more appropriate
+because that executable has always tested dynamic loading of the driver
+plug-ins as well as generating the *.rc files from the information gleaned
+from that dynamic loading.  Now, we simply run test-drv-info as an option
+(defaults to ON unless cross-building is enabled) and compare the resulting
+*.rc file with the one configured by cmake to be sure the dynamic device
+has been built correctly.
+
+2.27 Text clipping now enabled by default for the cairo devices
+
+When correct text clipping was first implemented for cairo devices, it was
+discovered that the libcairo library of that era (2007-08) did that clipping
+quite inefficiently so text clipping was disabled by default.  Recent tests
+of text clipping for the cairo devices using libcairo 1.6.4 (released in
+2008-04) shows text clipping is quite efficient now.  Therefore, it is now
+enabled by default.  If you notice a significant slowdown for some libcairo
+version prior to 1.6.4 you can use the option -drvopt text_clipping=0 for
+your cairo device plots (and accept the improperly clipped text results that
+might occur with that option).  Better yet, use libcairo 1.6.4 or later.
+
+2.28 A powerful qt device driver has been implemented
+
+Thanks to the efforts of Alban Rochel of the QSAS team, we now have a new qt
+device driver which delivers the following 9 (!) devices: qtwidget, bmpqt,
+jpgqt, pngqt, ppmqt, tiffqt, epsqt, pdfqt, and svgqt. qtwidget is an
+elementary interactive device where, for now, the possible interactions
+consist of resizing the window and right clicking with the mouse (or hitting
+<return> to be consistent with other PLplot interactive devices) to control
+paging.  The qtwidget overall size is expressed in pixels. bmpqt, jpgqt,
+pngqt, ppmqt, and tiffqt are file devices whose overall sizes are specified
+in pixels and whose output is BMP (Windows bitmap), JPEG, PNG, PPM (portable
+pixmap), and TIFF (tagged image file format) formatted files. epsqt, pdfqt,
+svgqt are file devices whose overall sizes are specified in points (1/72 of
+an inch) and whose output is EPS (encapsulated PostScript), PDF, and SVG
+formatted files.  The qt device driver is based on the powerful facilities
+of Qt4 so all qt devices implement variable opacity (alpha channel) effects
+(see example 30).  The qt devices also use system unicode fonts, and deal
+with CTL (complex text layout) languages automatically without any
+intervention required by the user.  (To show this, try qt device results
+from examples 23 [mathematical symbols] and 24 [CTL languages].)
+
+Our exhaustive Linux testing of the qt devices (which consisted of detailed
+comparisons for all our standard examples between qt device results and the
+corresponding cairo device results) indicates this device driver is mature,
+but testing on other platforms is requested to confirm that maturity. Qt-4.5
+(the version we used for most of our tests) has some essential SVG
+functionality so we recommend that version (downloadable from
+http://www.qtsoftware.com/downloads for Linux, Mac OS X, and Windows) for
+svgqt.  One of our developers found that pdfqt was orders of magnitude
+slower than the other qt devices for Qt-4.4.3 on Ubuntu 8.10 installed on a
+64 bit box.  That problem was completely cured by moving to the downloadable
+Qt-4.5 version.  However, we have also had good Qt-4.4.3 pdfqt reports on
+other platforms.  One of our developers also found that all first pages of
+examples were black for just the qtwidget device for Qt-4.5.1 on Mac OS X.
+From the other improvements we see in Qt-4.5.1 relative to Qt-4.4.3 we
+assume this black first page for qtwidget problem also exists for Qt-4.4.3,
+but we haven't tested that combination.
+
+In sum, Qt-4.4.3 is worth trying if it is already installed on your machine,
+but if you run into any difficulty with it please switch to Qt-4.5.x (once
+Qt-4.5.x is installed all you have to do is to put the 4.5.x version of
+qmake in your path, and cmake does the rest).  If the problem persists for
+Qt-4.5, then it is worth reporting a qt bug.
+
+2.29 The PLplot API is now accessible from Qt GUI applications
+
+This important new feature has been implemented by Alban Rochel of the QSAS
+team as a spin-off of the qt device driver project using the extqt device
+(which constitutes the tenth qt device).  See examples/c++/README.qt_example
+for a brief description of a simple Qt example which accesses the PLplot API
+and which is built in the installed examples tree using the pkg-config
+approach. Our build system has been enhanced to configure the necessary
+plplotd-qt.pc file.
+
+2.30 NaN / Inf support for some PLplot functions
+
+Some PLplot now correctly handle Nan or Inf values in the data to be plotted.
+Line plotting (plline etc) and image plotting (plimage, plimagefr) will
+now ignore NaN / Inf values. Currently some of the contour plotting / 3-d
+routines do not handle NaN / Inf values. This functionality will
+depend on whether the language binding used supports NaN / Inf values.
+
+2.31 Various bug fixes
+
+Various bugs in the 5.9.3 release have been fixed including:
+
+- Include missing file needed for the aqt driver on Mac OS X
+- Missing library version number for nistcd
+- Fixes for the qt examples with dynamic drivers disabled
+- Fixes to several tcl examples so they work with plserver
+- Fix pkg-config files to work correctly with Debug / Release build types set
+- Make Fortran command line argument parsing work with shared libraries on Windows
+
+2.32 Cairo driver improvements
+
+Improvements to the cairo driver to give better results for bitmap
+formats when used with anti-aliasing file viewers.
+
+2.33 PyQt changes
+
+Years ago we got a donation of a hand-crafted pyqt3 interface to PLplot
+(some of the functions in plplot_widgetmodule.c in bindings/python) and a
+proof-of-concept example (prova.py and qplplot.py in examples/python), but
+this code did not gain any developer interest and was therefore not
+understood or maintained. Recently one of our core developers has
+implemented a sip-generated pyqt4 interface to PLplot (controlled by
+plplot_pyqt4.sip in bindings/qt_gui/pyqt4) that builds without problems as a
+python extension module, and a good-looking pyqt4 example (pyqt4_example.py
+in examples/python) that works well.  Since this pyqt4 approach is
+maintained by a PLplot developer it appears to have a good future, and we
+have therefore decided to concentrate on pyqt4 and remove the pyqt3 PLplot
+interface and example completely.
+
+2.34 Color Palettes
+
+Support has been added to PLplot for user defined color palette files.
+These files can be loaded at the command line using the -cmap0 or
+-cmap1 commands, or via the API using the plspal0 and plspal1 commands.
+The commands cmap0 / plspal0 are used to load cmap0 type files which
+specify the colors in PLplot's color table 0. The commands cmap1 /
+plspal1 are used to load cmap1 type files which specify PLplot's color
+table 1. Examples of both types of files can be found in either the
+plplot-source/data directory or the PLplot installed directory
+(typically /usr/local/share/plplotx.y.z/ on Linux).
+
+2.35 Reimplementation of a "soft landing" when a bad/missing compiler is
+detected
+
+The PLplot core library is written in C so our CMake-based build system will
+error out if it doesn't detect a working C compiler.  However all other
+compiled languages (Ada, C++, D, Fortran, Java, and OCaml) we support are
+optional.  If a working compiler is not available, we give a "soft landing"
+(give a warning message, disable the optional component, and keep going).
+The old implementation of the soft landing was not applied consistently (C++
+was unnecessarily mandatory before) and also caused problems for ccmake (a
+CLI front-end to the cmake application) and cmake-gui (a CMake GUI front-end
+to the cmake application) which incorrectly dropped languages as a result
+even when there was a working compiler.
+
+We now have completely reimplemented the soft landing logic.  The result
+works well for cmake, ccmake, and cmake-gui.  The one limitation of this new
+method that we are aware of is it only recognizes either the default
+compiler chosen by the generator or else a compiler specified by the
+environment variable approach (see Official Notice XII above).  Once CMake
+bug 9220 has been fixed (so that the OPTIONAL signature of the
+enable_language command actually works without erroring out), then our
+soft-landing approach (which is a workaround for bug 9220) will be replaced
+by the OPTIONAL signature of enable_language, and all CMake methods of
+specifying compilers and compiler options will automatically be recognized
+as a result.
+
+2.36 Make PLplot aware of LC_NUMERIC locale
+
+For POSIX-compliant systems, locale is set globally so any external
+applications or libraries that use the PLplot library or any external
+libraries used by the PLplot library or PLplot device drivers could
+potentially change the LC_NUMERIC locale used by PLplot to anything those
+external applications and libraries choose. The principal consequence of
+such choice is the decimal separator could be a comma (for some locales)
+rather than the period assumed for the "C" locale.  For previous versions of
+PLplot a comma decimal separator would have lead to a large number of
+errors, but this issue is now addressed with a side benefit that our plots
+now have the capability of displaying the comma (e.g., in axis labels) for
+the decimal separator for those locales which require that.
+
+If you are not satisfied with the results for the default PLplot locale set
+by external applications and libraries, then you can now choose the
+LC_NUMERIC locale for PLplot by (a) specifying the new -locale command-line
+option for PLplot (if you do not specify that option, a default locale is
+chosen depending on applications and libraries external to PLplot (see
+comments above), and (b) setting an environment variable (LC_ALL,
+LC_NUMERIC, or LANG on Linux, for example) to some locale that has been
+installed on your system.  On Linux, to find what locales are installed, use
+the "locale -a" option. The "C" locale is always installed, but usually
+there is also a principal locale that works on a platform such as
+en_US.UTF8, nl_NL.UTF8, etc.  Furthermore, it is straightforward to build
+and install any additional locale you desire.  (For example, on Debian Linux
+you do that by running "dpkg-reconfigure locales".)
+
+Normally, users will not use the -locale option since the period
+decimal separator that you get for the normal LC_NUMERIC default "C"
+locale used by external applications and libraries is fine for their needs.
+However, if the resulting decimal separator is not what the user
+wants, then they would do something like the following to (a) use a period
+decimal separator for command-line input and plots:
+
+LC_ALL=C examples/c/x09c -locale -dev psc -o test.psc -ori 0.5
+
+or (b) use a comma decimal separator for command-line input and plots:
+
+LC_ALL=nl_NL.UTF8 examples/c/x09c -locale -dev psc -o test.psc -ori 0,5
+
+N.B. in either case if the wrong separator is used for input (e.g., -ori 0,5
+in the first case or -ori 0.5 in the second) the floating-point conversion
+(using atof) is silently terminated at the wrong separator for the locale,
+i.e., the fractional part of the number is silently dropped.  This is
+obviously not ideal, but on the other hand there are relatively few
+floating-point command-line options for PLplot, and we also expect those who
+use the -locale option to specifically ask for a given separator for plots
+(e.g., axis labels) will then use it for command-line input of
+floating-point values as well.
+
+Certain critical areas of the PLplot library (e.g., our colour palette file
+reading routines and much of the code in our device drivers) absolutely
+require a period for the decimal separator.  We now protect those critical
+areas by saving the normal PLplot LC_NUMERIC locale (established with the
+above -locale option or by default by whatever is set by external
+applications or libraries), setting the LC_NUMERIC "C" locale, executing the
+critical code, then restoring back to the normal PLplot LC_NUMERIC locale.
+Previous versions of PLplot did not have this protection of the critical
+areas so were vulnerable to default LC_NUMERIC settings of external
+applications that resulted in a comma decimal separator that did not work
+correctly for the critical areas.
+
+2.37 Linear gradients have been implemented
+
+The new plgradient routine draws a linear gradient (based on the
+current colour map 1) at a specified angle with the x axis for a
+specified polygon.  Standard examples 25 and 30 now demonstrate use of
+plgradient.  Some devices use a software fallback to render the
+gradient.  This fallback is implemented with plshades which uses a
+series of rectangles to approximate the gradient. Tiny alignment
+issues for those rectangles relative to the pixel grid may look
+problematic for transparency gradients.  To avoid that issue, we try
+to use native gradient capability whenever that is possible for any of
+our devices.  Currently, this has been implemented for our svg, qt,
+and cairo devices.  The result is nice-looking smooth transparency
+gradients for those devices, for, e.g., example 30, page 2.
+
+2.38 Cairo Windows driver implemented
+
+A cairo Windows driver has been implemented. This provides an
+interactive cairo driver for Windows similar to xcairo on Linux.
+Work to improve its functionality is ongoing.
+
+2.39 Custom axis labeling implemented
+
+Axis text labels can now be customized using the new plslabelfunc function.
+This allows a user to specify what text should be draw at a given position
+along a plot axis.  Example 19 has been updated to illustrate this function's
+use through labeling geographic coordinates in degrees North, South, East and
+West.
+
+2.40 Universal coordinate transform implemented
+
+A custom coordinate transformation function can be set using plstransform.
+This transformation function affects all subsequent plot function calls which
+work with plot window coordinates.  Testing and refinement of this support is
+ongoing.
+
+2.41 Support for arbitrary storage of 2D user data
+
+This improvement courtesy of David MacMahon adds support for arbitrary
+storage of 2D user data.  This is very similar to the technique employed
+by some existing functions (e.g. plfcont and plfshade) that use "evaluator"
+functions to access 2D user data that is stored in an arbitrary format.
+The new approach extends the concept of a user-supplied (or predefined)
+"evaluator" function to a group of user-supplied (or predefined) "operator"
+functions.  The operator functions provide for various operations on the
+arbitrarily stored 2D data including: get, set, +=, -=, *=, /=, isnan,
+minmax, and f2eval.
+
+To facilitate the passing of an entire family of operator functions (via
+function pointers), a plf2ops_t structure is defined to contain a
+pointer to each type of operator function.  Predefined operator
+functions are defined for several common 2D data storage techniques.
+Variables (of type plf2ops_t) containing function pointers for these
+operator functions are also defined.
+
+New variants of functions that accept 2D data are created.  The new
+variants accept the 2D data as two parameters: a pointer to a plf2ops_t
+structure containing (pointers to) suitable operator functions and a
+PLPointer to the actual 2D data store.  Existing functions that accept
+2D data are modified to simply pass their parameters to the
+corresponding new variant of the function, along with a pointer to the
+suitable predefined plf2ops_t structure of operator function pointers.
+
+The list of functions for which new variants are created is:
+c_plimage, c_plimagefr, c_plmesh, c_plmeshc, c_plot3d, c_plot3dc,
+c_plot3dcl, c_plshade1, c_plshades, c_plsurf3d, and c_plsurf3dl, and
+c_plgriddata.  The new variants are named the same as their
+corresponding existing function except that the "c_" prefix is changed
+to "plf" (e.g. the new variant of c_plmesh is called plfmesh).
+
+Adds plfvect declaration to plplot.h and changes the names (and only the
+names) of some plfvect arguments to make them slightly clearer.  In
+order to maintain backwards API compatibility, this function and the
+other existing functions that use "evaluator" functions are NOT changed
+to use the new operator functions.
+
+Makes plplot.h and libplplot consistent vis-a-vis pltr0f and pltr2d.
+Moves the definitions of pltr2f (already declared in plplot.h) from the
+sccont.c files of the FORTRAN 77 and Fortran 95 bindings into plcont.c.
+Removes pltr0f declaration from plplot.h.
+
+Changes x08c.c to demonstrate use of new support for arbitrary storage
+of 2D data arrays.  Shows how to do surface plots with the following
+four types of 2D data arrays:
+
+1) PLFLT z[nx][ny];
+2) PLfGrid2 z;
+3) PLFLT z[nx*ny]; /* row major order */
+4) PLFLT z[nx*ny]; /* column major order */
+
+2.42 Font improvements
+
+We have added the underscore to the Hershey glyphs (thanks to David
+MacMahon) and slightly rearranged the ascii index to the Hershey
+indices so that plpoin now generates the complete set of printable
+ascii characters in the correct order for the Hershey fonts (and therefore
+the Type1 and TrueType fonts as well).
+
+We have improved how we access TrueType and Type1 fonts via the Hershey
+font index (used by plpoin, plsym, and the Hershey escape sequences in pl*tex
+commands).  We have added considerably to the Hershey index to Unicode index
+translation table both for the compact and extended Hershey indexing scheme,
+and we have adopted the standard Unicode to Type1 index translation tables
+from http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/.
+
+We have also dropped the momentary switch to symbol font that was
+implemented in the PLplot core library.  That switch was designed to partially
+compensate for the lack of symbol glyphs in the standard Type1 fonts.  That
+was a bad design because it affected TrueType font devices as well as
+the desired Type1 font devices.  To replace this bad idea we now
+change from Type1 standard fonts to the Type1 Symbol font (and vice
+versa) whenever there is a glyph lookup failure in the Type1 font
+device drivers (ps and pdf).
+
+2.42 Alpha value support for plotting in memory.
+
+The function plsmema() was added to the PLplot API. This allows the user
+to supply a RGBA formatted array that PLplot can use to do in memory
+plotting with alpha value support. At present only the memcairo device
+is capable of using RGBA formatted memory. The mem device, at least
+for the time being, only supports RGB formatted memory and will exit
+if the user attempts to give it RGBA formatted memory to plot in.
+
+2.43 Add a Qt device for in memory plotting.
+
+A new device called memqt has been added for in memory plotting using
+Qt. This device is the Qt equivalent of the memcairo device.
+
+2.44 Add discrete legend capability.
+
+A new routine called pllegend has been added to our core C API.
+(N.B. This is an experimental API that may be subject to further
+change as we gain more experience with it.)  This routine creates a
+discrete plot legend with a plotted box, line, and/or line of symbols
+for each annotated legend entry. The arguments of pllegend provide
+control over the location and size of the legend within the current
+subpage as well as the location and characteristics of the elements
+(most of which are optional) within that legend. The resulting legend
+is clipped at the boundaries of the current subpage
+
+
+2.45 Add full bindings and examples for the D language.
+
+As of release 5.9.5 we added full bindings and examples for the D
+language.  The results for the D examples are generally consistent
+with the corresponding C examples which helps to verify the D
+bindings.
+
+Since the release of 5.9.5 it has come to our attention that the
+version of gdc supplied with several recent versions of Ubuntu has a
+very serious bug on 64-bit systems (see
+https://bugs.launchpad.net/ubuntu/+source/gdc-4.2/+bug/235955) which
+causes several of the plplot D examples to crash. If this affects you,
+you are recommended to disable the d bindings or switch to an
+alternative d compiler (the Digital Mars compiler is reported to be
+good).
+
+2.46 The plstring and plstring3 functions have been added
+
+The plstring function largely supersedes plpoin and plsym
+because many(!) more glyphs are accessible with plstring.  The glyph
+is specified with a PLplot user string.  As with plmtex and plptex,
+the user string can contain FCI escapes to determine the font, UTF-8
+code to determine the glyph or else PLplot escapes for Hershey or
+unicode text to determine the glyph.  Standard examples 4 and 26 use
+plstring.
+
+The plstring3 function largely supersedes plpoin3 for the same (access
+to many more glyphs) reasons.  Standard example 18 uses plstring3.
+
+2.47 The pllegend API has been finalized
+
+The function pllegend allows users to create a discrete plot legend
+with a plotted colored box, line, and/or line of symbols for each
+annotated legend entry.  The pllegend function was first made
+available for 5.9.7. Due to feedback from early adopters of pllegend,
+we have now added substantially to the pllegend capabilities. and we
+now believe pllegend is ready for prime time.  The pllegend
+capabilities are documented in our DocBook documentation and
+demonstrated in standard examples 4, 26, and 33.  
+
+N.B. The current set of changes required a backwards-incompatible
+change to the pllegend API.  This requires users who tried this new
+functionality for 5.9.7 to reprogramme their pllegend calls.  Since
+the pllegend API was labelled experimental for 5.9.7, we will not be
+bumping the soversions of the affected PLplot libraries.
+
+2.48 Octave bindings now implemented with swig
+
+Octave is a powerful platform that demands a first-class PLplot
+solution, but we were finding it difficult to realize that goal
+because we were running up against limitations of the previous
+matwrap-generated Octave bindings.  Accordingly, a swig-generated
+version of the Octave bindings has now been implemented that builds on
+the prior matwrapped bindings effort but also extends it with, e.g.,
+bindings for plstring, plstring3, pllegend, and plcolorbar.  These new
+octave bindings (which now completely replace the prior matwrapped
+bindings) make it possible to run examples 4, 18, 26, and 33 (all of
+which have now have been updated to use those functions) and get
+consistent results with the corresponding C examples.
+
+Like the matwrapped bindings before it, the new swig-generated octave
+bindings currently do not have a number of the PLplot functions
+wrapped (e.g., "plmap") that are needed by standard example 19.
+However, because of the power of swig we now have some confidence we
+can solve this issue in the future.
+
+2.49 Documentation redone for our swig-generated Python and Octave bindings
+
+Through the docstring %feature, swig can generate documentation
+strings for certain of the languages it supports (currently Python,
+Octave, and Ruby).  We have now removed all such hand-crafted swig
+documentation data from bindings/swig-support/plplotcapi.i and
+replaced it with generated documentation in the file
+bindings/swig-support/swig_documentation.i.  That file is generated
+from doc/docbook/src/api.xml using the perl script
+doc/docbook/bin/api2swigdoc.pl.  The build system Unix target
+"check_swig_documentation" now runs that script and compares results
+with bindings/swig-support/swig_documentation.i in the source tree to
+make sure that latter file is consistent with any changes that might
+have occurred in doc/docbook/src/api.xml.
+
+The resulting Octave and Python user-documentation (obtained by 'help
+<PLplot_command_name>' in Octave and 'print ("%s" %
+<PLplot_command_name>.__doc__)' in Python is much more detailed than
+what was available before using the hand-crafted documentation.  If we
+ever decided to generate PLplot bindings for Ruby with swig, this
+high-quality user-documentation would be available for that language
+as well.
+
+2.50 Support large polygons
+
+Previous releases had an implicit limitation with respect to the
+number of vertices in a polygon. This was due to the use of statically
+defined arrays (to avoid allocating and freeing memory for each polygon
+to be drawn). José Luis García Pallero found this limitation and
+provided patches to eliminate this limitation. The strategy is
+that for small polygons, the original statically defined arrays
+are used and for large polygons new arrays are allocated and freed.
+This strategy has been applied to all relevant source files.
+
+2.51 Complete set of PLplot parameters now available for Fortran
+
+The #defines in bindings/swig-support/plplotcapi.i (which are
+consistent with those in include/plplot.h) define the complete set of
+important PLplot constants (whose names typically start with "PL_").
+We have implemented automatic methods of transforming that complete
+set of #defines into Fortran parameters that can be used from either
+Fortran 77 or Fortran 95.
+
+For Fortran 77, the user must insert an
+
+      include 'plplot_parameters.h'
+
+statement in every function/subroutine/main programme where he expects
+to use PLplot constants (whose names typically start with "PL_".  (See
+examples/f77/*.fm4 for examples of this method).  When compiling he
+must also insert the appropriate -I option to find this file (in
+bindings/f77/ in the source tree and currently in
+$prefix/lib/fortran/include/plplot$version in the install tree
+although that install location may be subject to change).  Note, the
+above method does not interfere with existing apps which have
+necessarily been forced to define the needed PLplot constants for
+themselves.  But for future f77 use, the above statement is
+more convenient and much less subject to error than a whole bunch of
+parameter statements for the required constants.
+
+For Fortran 95, the complete set of parameters are made available as
+part of the plplot module.  So access to this complete set of
+parameters is automatic wherever the "use plplot" statement is used.
+This is extremely convenient for new Fortran 95 apps that use PLplot,
+but, in general, changes will have to be made for existing apps. (See
+announcement XX above for the details).
+
+2.52 The plarc function has been added
+
+The plarc function allows drawing filled and outlined arcs in PLplot.
+Standard example 3 uses plarc.
+
+
 PLplot Release 5.9.8
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts

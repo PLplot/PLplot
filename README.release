@@ -1,4 +1,4 @@
-PLplot Release 5.9.9
+PLplot Release 5.9.10
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development
@@ -25,9 +25,9 @@ CHANGES
 
 -1.1 Add full bindings and examples for the D language.
 
-0. Tests made for release 5.9.9
+0. Tests made for release 5.9.10
 
-1. Changes relative to PLplot 5.9.8 (the previous development release)
+1. Changes relative to PLplot 5.9.9 (the previous development release)
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -351,91 +351,10 @@ alternative d compiler (the Digital Mars compiler is reported to be
 good).
 
 
-0. Tests made for release 5.9.9
+0. Tests made for release 5.9.10
 
-* (Alan W. Irwin) The scripts/comprehensive_test.sh script was run for
-  a fully loaded (all Linux bindings other than PDL, all Linux device
-  drivers including our qt and cairo device drivers) Debian Squeeze
-  Linux platform with no obvious build-time or run-time issues being
-  found.  This script runs 7 major tests for each of our three
-  principal build configurations (shared library/dynamic device
-  drivers, shared libraries/nondynamic device drivers, static
-  libraries/nondynamic device drivers). Those 7 tests are ctest and
-  the test_noninteractive and test_interactive targets in the build
-  tree, the test_noninteractive and test_interactive targets
-  configured with CMake in the installed examples tree, and the
-  traditional (MakeFile + pkg-config) test_noninteractive and
-  test_interactive targets in the installed examples tree.
 
-  These tests were done with OCaml disabled because of a segfault and
-  a series of bad valgrind test results that occurred for OCaml
-  3.11.2.  We have tentatively ascribed this issue to issues with the
-  OCaml stack on that platform since this bad OCaml result contrasts
-  with good OCaml results on other reported platforms.  
-
-  In addition to the scripts/comprehensive_test.sh result,
-  comprehensive valgrind results were clean for all C examples for
-  both -dev psc and -dev epsqt for the build-tree/shared
-  library/dynamic device drivers case.  The first result verifies
-  there are no core memory management issues for our C library and C
-  examples for one of our simpler devices that has no external
-  dependencies.  The second result shows in addition that there are no
-  memory management issues for our epsqt device and the part of the
-  Qt4 version 4.6.3 stack that it uses on this platform.
-
-* (Andrew Ross) For one Ubuntu platform the test_noninteractive and
-  test_interactive targets for the shared libraries and dynamic
-  drivers case gave good results.  This was for a fully loaded
-  platform including our qt and cairo device drivers.
-
-* (Hezekiah M. Carty) scripts/comprehensive_test.sh failed on a Ubuntu
-  Linux platform because of segfaults in the qt devices.  We
-  have tentatively ascribed this issue to issues with the Qt4 stack of
-  libraries on that platform since this bad qt result contrasts with
-  the good qt result on the previous two Linux platforms.  When qt devices
-  were ignored, clean valgrind results were obtained for OCaml-3.12.1 and
-  OCaml-3.11.2 (in contrast to the results seen for OCaml-3.11.2 above).
-  Testing with the comprehensive_test.sh script and qt devices disabled
-  completed with good results.
-
-* (Arjen Markus) MinGW/MSYS installed on a lightly loaded (at least
-  compared to Linux tests) Windows XP system gives good results for
-  the test_noninteractive target in the build tree for the shared
-  library/dynamic device drivers case.
-
-* (Arjen Markus) The combination of Microsoft Visual C/C++ version 9.0
-  and Intel Fortran compilers installed on a lightly loaded Windows XP
-  system gives good results for the "all" target for the shared
-  library/dynamic device drivers case.  That target just builds the
-  software.  In addition, some run-time testing was done by hand with
-  no sign of any run-time trouble.
-
-* (Jerry Bauck) Mac OS X 10.6.8 (Snow Leopard) platform with Ada
-  bindings and good coverage of devices (e.g., qt and cairo) but
-  lightly loaded with regard to non-Ada bindings give fairly good
-  results for ctest and the test_noninteractive target for the shared
-  library/dynamic device drivers case.  All tests passed including qt
-  and cairo device driver tests, but when looking at detailed results
-  some missing circular symbol issues were discovered for the pscairo
-  results.  We don't understand this issue because the cairo devices
-  give both superb and reliable results on our Linux platforms.  The
-  cairo device driver depends on a subset (e.g., pango and cairo) of
-  the GTK+ stack of libraries.  These results were obtained for GTK+
-  version 2.18.5.
-
-* (Werner Smekal) Mac OS X 10.7.1, XCode 4.1 platform that is lightly
-  loaded (e.g., GTK+ but no Qt4) gave mixed results for ctest and the
-  test_noninteractive target for the shared library/dynamic device
-  drivers case.  The build worked without issues, and also everything
-  but cairo devices at run time.  However, all cairo device results
-  had major run-time errors (e.g., segfaults).  In this case the GTK+
-  library was newer than we have tested before (version 2.24 from the
-  Homebrew packaging effort as compared to 2.21 that gives such good
-  results on Linux) so there may be a mismatch between our cairo
-  device driver and this newer version of GTK+ that needs to be sorted
-  out.
-
-1. Changes relative to PLplot 5.9.8 (the previous development release)
+1. Changes relative to PLplot 5.9.9 (the previous development release)
 
 No notable new features.  This is a bug fix release.  See the above
 announcements.
