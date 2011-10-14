@@ -284,7 +284,7 @@ test_interactive:
 test_clean:
 	rm -f *.psc *.pdfcairo *.pngcairo *.pscairo *.svgcairo \
 	*.gif *.jpeg *.png *.psttfc *.svg *.xfig *.pstex* *.*qt *.cgm \
-	*.txt test.error \
+	*_*.txt test.error \
 	compare
 
 clean: test_clean
