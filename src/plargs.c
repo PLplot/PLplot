@@ -113,6 +113,10 @@ static int  GetOptarg( const char **, int *, const char ***, int * );
 static void Help( void );
 static void Syntax( void );
 
+#ifndef PL_DEPRECATED
+int plSetOpt( const char *opt, const char *optarg );
+#endif
+
 // Option handlers
 
 static int opt_h( const char *, const char *, void * );
@@ -720,13 +724,13 @@ static int       tables = 1;
 //--------------------------------------------------------------------------
 
 int
-c_plsetopt( const char *opt, const char *optarg )
+plSetOpt( const char *opt, const char *optarg )
 {
-    return ( plSetOpt( opt, optarg ) );
+    return ( c_plsetopt( opt, optarg ) );
 }
 
 int
-plSetOpt( const char *opt, const char *optarg )
+c_plsetopt( const char *opt, const char *optarg )
 {
     int        mode = 0, argc = 2, status;
     const char *argv[3];
@@ -1112,7 +1116,7 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
 
         // Set var (can be NULL initially) to point to optarg string
 
-        *(char **) tab->var = (char *) optarg;
+        *(char **) tab->var = (const char *) optarg;
         break;
 
     default:
@@ -2414,7 +2418,7 @@ static int
 opt_locale( const char *opt, const char *optarg, void *client_data )
 {
     char *locale;
-    if ( locale = setlocale( LC_NUMERIC, "" ) )
+    if ( ( locale = setlocale( LC_NUMERIC, "" ) ) )
     {
         printf( "LC_NUMERIC locale set to \"%s\"\n", locale );
     }

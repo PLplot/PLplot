@@ -905,8 +905,8 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 //! @param characters Null-terminated string consisting of ascii characters
 //! to be removed from string.
 
-void
-static remove_characters( char *string, const char *characters )
+static void
+remove_characters( char *string, const char *characters )
 {
     size_t length        = strlen( string );
     size_t prefix_length = strcspn( string, characters );
@@ -941,8 +941,8 @@ static remove_characters( char *string, const char *characters )
 //! @param color Color (color palette 1) used to fill the end cap.
 //!
 
-void
-static draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
+static void
+draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
                  PLFLT ymin, PLFLT ymax, PLFLT color )
 {
     // Save current drawing color.

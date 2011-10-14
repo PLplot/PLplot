@@ -24,6 +24,8 @@
 #define CIRCLE_SEGMENTS    ( PL_MAXPOLY - 1 )
 #define DEG_TO_RAD( x )    ( ( x ) * M_PI / 180.0 )
 
+void plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLFLT rotate, PLBOOL fill );
+
 //--------------------------------------------------------------------------
 // plarc_approx : Plot an approximated arc with a series of lines
 //

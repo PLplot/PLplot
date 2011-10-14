@@ -321,7 +321,7 @@ typedef void*    PLPointer;
 // Obsolete names
 
 #define plParseInternalOpts( a, b, c )    c_plparseopts( a, b, c )
-#define plSetInternalOpt( a, b )          plSetOpt( a, b )
+#define plSetInternalOpt( a, b )          c_plsetopt( a, b )
 
 #endif  // PL_DEPRECATED
 
@@ -1038,7 +1038,7 @@ c_plgdiplt( PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax );
 // Get the drawing mode
 
 PLDLLIMPEXP PLINT
-c_plgdrawmode();
+c_plgdrawmode( void );
 
 // Get FCI (font characterization integer)
 
@@ -2068,7 +2068,7 @@ pltr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
 //
 
 PLDLLIMPEXP PLF2OPS
-plf2ops_c();
+plf2ops_c( void );
 
 //
 // Returns a pointer to a plf2ops_t stucture with pointers to functions for accessing 2-D data
@@ -2077,7 +2077,7 @@ plf2ops_c();
 //
 
 PLDLLIMPEXP PLF2OPS
-plf2ops_grid_c();
+plf2ops_grid_c( void );
 
 //
 // Returns a pointer to a plf2ops_t stucture with pointers to functions for
@@ -2089,7 +2089,7 @@ plf2ops_grid_c();
 //
 
 PLDLLIMPEXP PLF2OPS
-plf2ops_grid_row_major();
+plf2ops_grid_row_major( void );
 
 //
 // Returns a pointer to a plf2ops_t stucture with pointers to functions for
@@ -2101,7 +2101,7 @@ plf2ops_grid_row_major();
 //
 
 PLDLLIMPEXP PLF2OPS
-plf2ops_grid_col_major();
+plf2ops_grid_col_major( void );
 
 
 // Function evaluators (Should these be deprecated in favor of plf2ops?)

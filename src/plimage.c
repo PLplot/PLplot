@@ -56,23 +56,26 @@ RestoreWrite2BufferPixmap()
     plP_esc( PLESC_IMAGEOPS, &op );
 }
 
-void
-disabledisplay()
-{
-    PLINT op = ZEROW2D;
-
-    plP_esc( PLESC_IMAGEOPS, &op );
-}
-
-void
-enabledisplay()
-{
-    PLINT op = ONEW2D;
-
-    plP_esc( PLESC_IMAGEOPS, &op );
-    plP_esc( PLESC_EXPOSE, NULL );
-}
-
+//
+// Unused functions - comment out
+//
+//void
+//disabledisplay()
+//{
+//    PLINT op = ZEROW2D;
+//
+//    plP_esc( PLESC_IMAGEOPS, &op );
+//}
+//
+//void
+//enabledisplay()
+//{
+//    PLINT op = ONEW2D;
+//
+//    plP_esc( PLESC_IMAGEOPS, &op );
+//    plP_esc( PLESC_EXPOSE, NULL );
+//}
+//
 
 
 //

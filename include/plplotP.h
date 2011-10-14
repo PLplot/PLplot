@@ -845,7 +845,7 @@ plP_gprec( PLINT *p_setp, PLINT *p_prec );
 // Get the date / time format for numeric labels
 
 const char *
-plP_gtimefmt();
+plP_gtimefmt( void );
 
 // Computes the length of a string in mm, including escape sequences.
 
@@ -1117,7 +1117,7 @@ void
 grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny );
 
 PLDLLIMPEXP int
-plInBuildTree();
+plInBuildTree( void );
 
 void
 plimageslow( PLFLT *idata, PLINT nx, PLINT ny,
@@ -1154,7 +1154,7 @@ plhershey2unicode( int in );
 typedef struct
 {
     PLUNICODE     fci;
-    unsigned char *pfont;
+    const unsigned char *pfont;
 } FCI_to_FontName_Table;
 
 // Internal function to obtain a pointer to a valid font name.
@@ -1165,7 +1165,7 @@ plP_FCI2FontName( PLUNICODE fci,
 
 // Internal function to free memory from driver options
 void
-plP_FreeDrvOpts();
+plP_FreeDrvOpts( void );
 
 // Convert a ucs4 unichar to utf8 char string
 PLDLLIMPEXP int

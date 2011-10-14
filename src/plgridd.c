@@ -62,7 +62,7 @@ grid_csa( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
 static void
 grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
-          PLF2OPS zops, PLPointer zgp, PLFLT wmin );
+          PLF2OPS zops, PLPointer zgp, PLFLT wtmin );
 
 static void
 grid_dtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
@@ -645,7 +645,7 @@ grid_dtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
 static void
 grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp,
-          PLFLT wmin )
+          PLFLT wtmin )
 {
     PLFLT *xt, *yt, *zt;
     point *pin, *pgrid, *pt;
@@ -658,10 +658,10 @@ grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
         return;
     }
 
-    if ( wmin == 0. ) // only accept weights greater than wmin
+    if ( wtmin == 0. ) // only accept weights greater than wtmin
     {
-        plwarn( "plgriddata(): GRID_NNI: wmin must be specified with 'data' arg. Using -PLFLT_MAX" );
-        wmin = -PLFLT_MAX;
+        plwarn( "plgriddata(): GRID_NNI: wtmin must be specified with 'data' arg. Using -PLFLT_MAX" );
+        wtmin = -PLFLT_MAX;
     }
 
     if ( ( pin = (point *) malloc( npts * sizeof ( point ) ) ) == NULL )
@@ -702,7 +702,7 @@ grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
         yt++;
     }
 
-    nnpi_interpolate_points( npts, pin, wmin, nptsg, pgrid );
+    nnpi_interpolate_points( npts, pin, wtmin, nptsg, pgrid );
     for ( i = 0; i < nptsx; i++ )
     {
         for ( j = 0; j < nptsy; j++ )

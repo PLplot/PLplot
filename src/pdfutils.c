@@ -774,7 +774,7 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
 {
     double fdbl, fmant, f_new;
     float  fsgl, f_tmp;
-    int    istat, exp, e_new, e_off, bias = 127;
+    int    istat, ex, e_new, e_off, bias = 127;
     U_LONG value, s_ieee, e_ieee, f_ieee;
 
     if ( f == 0.0 )
@@ -784,7 +784,7 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
     }
     fdbl  = f;
     fsgl  = (float) fdbl;
-    fmant = frexp( fdbl, &exp );
+    fmant = frexp( fdbl, &ex );
 
     if ( fmant < 0 )
         s_ieee = 1;
@@ -793,7 +793,7 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
 
     fmant = fabs( fmant );
     f_new = 2 * fmant;
-    e_new = exp - 1;
+    e_new = ex - 1;
 
     if ( e_new < 1 - bias )
     {
@@ -843,7 +843,7 @@ pdf_rd_ieeef( PDFstrm *pdfs, float *pf )
 {
     double f_new, f_tmp;
     float  fsgl;
-    int    istat, exp, bias = 127;
+    int    istat, ex, bias = 127;
     U_LONG value, s_ieee, e_ieee, f_ieee;
 
     if ( ( istat = pdf_rd_4bytes( pdfs, &value ) ) )
@@ -857,16 +857,16 @@ pdf_rd_ieeef( PDFstrm *pdfs, float *pf )
 
     if ( e_ieee == 0 )
     {
-        exp   = 1 - bias;
+        ex   = 1 - bias;
         f_new = f_tmp;
     }
     else
     {
-        exp   = (int) e_ieee - bias;
+        ex   = (int) e_ieee - bias;
         f_new = 1.0 + f_tmp;
     }
 
-    fsgl = (float) ( f_new * pow( 2.0, (double) exp ) );
+    fsgl = (float) ( f_new * pow( 2.0, (double) ex ) );
     if ( s_ieee == 1 )
         fsgl = -fsgl;
 
@@ -981,7 +981,7 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT ny )
 //--------------------------------------------------------------------------
 
 void
-plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin )
+plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmax, PLFLT *fnmin )
 {
     int   i, j;
     PLFLT m, M;
@@ -1006,6 +1006,6 @@ plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin )
                 m = f[i][j];
         }
     }
-    *fmax = M;
-    *fmin = m;
+    *fnmax = M;
+    *fnmin = m;
 }

@@ -70,7 +70,7 @@
 char PLDLLIMPEXP * plplotLibDir = 0;
 
 static void
-color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name );
+color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, const char *name );
 
 static void
 strcat_delim( char *dirspec );
@@ -95,7 +95,9 @@ read_line( char *buffer, int length, FILE *fp );
 
 static void
 cmap0_palette_read( const char *filename,
-                    int *number_colors, int **r, int **g, int **b, double **a );
+                    int *number_colors, unsigned int **r, unsigned int **g, 
+                    unsigned int **b, double **a );
+
 // An additional hardwired location for lib files.
 // I have no plans to change these again, ever.
 
@@ -905,7 +907,7 @@ c_plscmap0n( PLINT ncol0 )
 //--------------------------------------------------------------------------
 
 void
-color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
+color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, const char *name )
 {
     plsc->cmap0[i].r    = r;
     plsc->cmap0[i].g    = g;
@@ -927,14 +929,15 @@ color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
 void
 plcmap0_def( int imin, int imax )
 {
-    int    i, *r, *g, *b;
+    int    i;
+    unsigned int *r, *g, *b;
     double *a;
     int    number_colors;
     if ( imin <= imax )
     {
         cmap0_palette_read( "", &number_colors, &r, &g, &b, &a );
         for ( i = imin; i <= MIN( ( number_colors - 1 ), imax ); i++ )
-            color_def( i, r[i], g[i], b[i], a[i],
+            color_def( i, (PLINT) r[i], (PLINT) g[i], (PLINT) b[i], a[i],
                 "colors defined by default cmap0 palette file" );
         free( r );
         free( g );
@@ -1278,7 +1281,7 @@ read_line( char *buffer, int length, FILE *fp )
 
 void
 cmap0_palette_read( const char *filename,
-                    int *number_colors, int **r, int **g, int **b, double **a )
+                    int *number_colors, unsigned int **r, unsigned int **g, unsigned int **b, double **a )
 {
     int  i, err = 0;
     char color_info[COLLEN];
@@ -1318,9 +1321,9 @@ cmap0_palette_read( const char *filename,
     {
         // Allocate arrays to hold r, g, b, and a data for calling routine.
         // The caller must free these after it is finished with them.
-        if ( ( ( *r = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
-             ( ( *g = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
-             ( ( *b = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+        if ( ( ( *r = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *g = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *b = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
              ( ( *a = (double *) malloc( *number_colors * sizeof ( double ) ) ) == NULL ) )
         {
             fclose( fp );
@@ -1339,7 +1342,8 @@ cmap0_palette_read( const char *filename,
             if ( strlen( color_info ) == 7 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x",
-                         (int *) ( *r + i ), (int *) ( *g + i ), (int *) ( *b + i ) ) != 3 )
+                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ), 
+                         (unsigned int *) ( *b + i ) ) != 3 )
                 {
                     err = 1;
                     break;
@@ -1349,8 +1353,8 @@ cmap0_palette_read( const char *filename,
             else if ( strlen( color_info ) > 9 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x %lf",
-                         (int *) ( *r + i ), (int *) ( *g + i ), (int *) ( *b + i ),
-                         (double *) ( *a + i ) ) != 4 )
+                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ), 
+                         (unsigned int *) ( *b + i ), (double *) ( *a + i ) ) != 4 )
                 {
                     err = 1;
                     break;
@@ -1393,9 +1397,9 @@ cmap0_palette_read( const char *filename,
     if ( err )
     {
         *number_colors = 16;
-        if ( ( ( *r = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
-             ( ( *g = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
-             ( ( *b = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+        if ( ( ( *r = (unsigned int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *g = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *b = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
              ( ( *a = (double *) malloc( *number_colors * sizeof ( double ) ) ) == NULL ) )
         {
             plexit( "cmap0_palette_read: insufficient memory" );
@@ -1426,7 +1430,8 @@ cmap0_palette_read( const char *filename,
 void
 c_plspal0( const char *filename )
 {
-    int    i, *r, *g, *b;
+    int    i;
+    unsigned int *r, *g, *b;
     double *a;
     int    number_colors;
     cmap0_palette_read( filename, &number_colors, &r, &g, &b, &a );
@@ -1440,7 +1445,7 @@ c_plspal0( const char *filename )
     }
     for ( i = 0; i < number_colors; i++ )
     {
-        c_plscol0a( i, r[i], g[i], b[i], a[i] );
+        c_plscol0a( i, (PLINT) r[i], (PLINT) g[i], (PLINT) b[i], a[i] );
     }
     free( r );
     free( g );
@@ -1478,7 +1483,8 @@ c_plspal1( const char *filename, PLBOOL interpolate )
     int    format_version, err;
     PLBOOL rgb;
     char   color_info[PALLEN];
-    int    r_i, g_i, b_i, pos_i, rev_i;
+    unsigned int    r_i, g_i, b_i;
+    int    pos_i, rev_i;
     double r_d, g_d, b_d, a_d, pos_d;
     PLFLT  *r, *g, *b, *a, *pos;
     PLINT  *ri, *gi, *bi;
@@ -1560,7 +1566,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
 
     if ( format_version == 0 )
     {
-        int return_sscanf, return_sscanf_old = 0;
+        int return_sscanf = -1, return_sscanf_old = 0;
         // Old tk file format
         for ( i = 0; i < number_colors; i++ )
         {
@@ -2189,7 +2195,6 @@ plFindName( char *p )
 {
     int         n;
     char        buf[PLPLOT_MAX_PATH], *cp;
-    extern int  errno;
     struct stat sbuf;
 
     pldebug( "plFindName", "Trying to find %s\n", p );

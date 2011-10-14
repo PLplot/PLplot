@@ -69,8 +69,8 @@ static void savehipoint( PLINT, PLINT );
 static void savelopoint( PLINT, PLINT );
 static void swaphiview( void );
 static void swaploview( void );
-static void myexit( char * );
-static void myabort( char * );
+static void myexit( const char * );
+static void myabort( const char * );
 static void freework( void );
 static int  plabv( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
 static void pl3cut( PLINT, PLINT, PLINT, PLINT, PLINT,
@@ -2644,7 +2644,7 @@ freework( void )
 //--------------------------------------------------------------------------
 
 static void
-myexit( char *msg )
+myexit( const char *msg )
 {
     freework();
     plexit( msg );
@@ -2658,7 +2658,7 @@ myexit( char *msg )
 //--------------------------------------------------------------------------
 
 static void
-myabort( char *msg )
+myabort( const char *msg )
 {
     freework();
     plabort( msg );
