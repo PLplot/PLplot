@@ -152,7 +152,7 @@ extern PLDLLIMPORT char * plplotLibDir;
 // Evals the specified command, aborting on an error.
 
 static int
-tcl_cmd( Tcl_Interp *interp, char *cmd );
+tcl_cmd( Tcl_Interp *interp, const char *cmd );
 
 //--------------------------------------------------------------------------
 // Append_Cmdlist
@@ -786,7 +786,7 @@ finish:    free_mem( buf );
 //--------------------------------------------------------------------------
 
 static int
-tcl_cmd( Tcl_Interp *interp, char *cmd )
+tcl_cmd( Tcl_Interp *interp, const char *cmd )
 {
     int result;
 

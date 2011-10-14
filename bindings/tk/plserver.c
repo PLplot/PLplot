@@ -74,7 +74,7 @@ plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv );
 // Evals the specified command, aborting on an error.
 
 static void
-tcl_cmd( Tcl_Interp *interp, char *cmd );
+tcl_cmd( Tcl_Interp *interp, const char *cmd );
 
 // Application-specific startup
 
@@ -291,7 +291,7 @@ plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 //--------------------------------------------------------------------------
 
 static void
-tcl_cmd( Tcl_Interp *interp, char *cmd )
+tcl_cmd( Tcl_Interp *interp, const char *cmd )
 {
     int result;
 

@@ -97,10 +97,10 @@ private:
     plstream& operator=( const plstream& );
 
 protected:
-    virtual void set_stream() { ::c_plsstrm( stream ); }
+    virtual void set_stream( void ) { ::c_plsstrm( stream ); }
 
 public:
-    plstream();
+    plstream( void );
     plstream( plstream * pls );
     plstream( PLS::stream_id sid, PLINT strm = 0 );
     plstream( PLINT _stream ) : stream( _stream ) {}
@@ -109,7 +109,7 @@ public:
     plstream( PLINT nx /*=1*/, PLINT ny /*=1*/, PLINT r, PLINT g, PLINT b,
               const char *driver = NULL, const char *file = NULL );
 
-    virtual ~plstream();
+    virtual ~plstream( void );
 
 // Now start miroring the PLplot C API.
 
@@ -149,7 +149,7 @@ public:
 
 // Start new page.  Should only be used with pleop().
 
-    void bop();
+    void bop( void );
 
 // This draws a box around the current viewport.
 
@@ -173,7 +173,7 @@ public:
 
 // Clear the current subpage.
 
-    void clear();
+    void clear( void );
 
 // Set color, map 0.  Argument is integer between 0 and 15.
 
@@ -260,7 +260,7 @@ public:
 
 // End current page.  Should only be used with plbop().
 
-    void eop();
+    void eop( void );
 
 // Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i)).
 
@@ -272,7 +272,7 @@ public:
 
 // Advance to the next family file on the next new page.
 
-    void famadv();
+    void famadv( void );
 
 // Pattern fills the polygon bounded by the input points.
 
@@ -284,7 +284,7 @@ public:
 
 // Flushes the output stream.  Use sparingly, if at all.
 
-    void flush();
+    void flush( void );
 
 // Sets the global font flag to 'ifont'.
 
@@ -357,7 +357,7 @@ public:
 
 // Switches to graphics screen.
 
-    void gra();
+    void gra( void );
 
 // Draw gradient in polygon.
 
@@ -416,7 +416,7 @@ public:
 
 // Initializes PLplot, using preset or default options
 
-    void init();
+    void init( void );
 
 // Draws a line segment from (x1, y1) to (x2, y2).
 
@@ -574,7 +574,7 @@ public:
 
 // Replays contents of plot buffer to current device/file.
 
-    void replot();
+    void replot( void );
 
 // Set line color by red, green, blue from  0. to 1.
 
@@ -921,7 +921,7 @@ public:
 
 // Switches to text screen.
 
-    void text();
+    void text( void );
 
 // Set the format for date / time labels
 
@@ -944,7 +944,7 @@ public:
 // Defines a "standard" viewport with seven character heights for
 // the left margin and four character heights everywhere else.
 
-    void vsta();
+    void vsta( void );
 
 // Set up a window for three-dimensional plotting.
 
@@ -1055,11 +1055,11 @@ public:
 
 // Clear internal option table info structure.
 
-    void ClearOpts();
+    void ClearOpts( void );
 
 // Reset internal option table info structure.
 
-    void ResetOpts();
+    void ResetOpts( void );
 
 // Merge user option table into internal info structure.
 
@@ -1083,7 +1083,7 @@ public:
 
 // Print usage & syntax message.
 
-    void OptUsage();
+    void OptUsage( void );
 
     // Miscellaneous
 
