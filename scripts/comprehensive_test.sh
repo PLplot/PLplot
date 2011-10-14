@@ -68,153 +68,167 @@ Each of the steps in this comprehensive test may take a while...."
 	$* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
         "$SOURCE_TREE" >& "$output"
     cmake_rc=$?
+    if [ "$cmake_rc" -ne 0 ] ; then
+	echo "ERROR: cmake in the build tree failed"
+	exit 1
+    fi
+
     PATH=$PATH_AFTER_CMAKE
-    if [ "$cmake_rc" -eq 0 ] ; then
-	if [ "$do_test_build_tree" = "yes" -a  "$do_test_noninteractive" = "yes" ] ; then
-	    output="$OUTPUT_TREE"/make_noninteractive.out
+    if [ "$do_ctest" = "yes" ] ; then
+	output="$OUTPUT_TREE"/make.out
+	rm -f "$output"
+	echo "$build_command in the build tree"
+	$build_command VERBOSE=1 >& "$output"
+	make_rc=$?
+	if [ "$make_rc" -eq 0 ] ; then
+	    output="$OUTPUT_TREE"/ctest.out
 	    rm -f "$output"
-	    echo "$build_command test_noninteractive in the build tree"
-	    $build_command VERBOSE=1 test_noninteractive >& "$output"
-	    make_test_noninteractive_rc=$?
-	    if [ "$make_test_noninteractive_rc" -ne 0 ] ; then
-		echo "ERROR: $build_command test_noninteractive failed in the build tree"
-		exit 1
-	    fi
-	fi
-	if [ "$do_ctest" = "yes" -o \
-	    "$do_test_install_tree" = "yes" -o \
-	    "$do_test_traditional_install_tree" = "yes" ] ; then
-	    rm -rf "$INSTALL_TREE"
-	    output="$OUTPUT_TREE"/make.out
-	    rm -f "$output"
-	    echo "$build_command in the build tree"
-	    $build_command VERBOSE=1 >& "$output"
-	    make_rc=$?
-	    if [ "$make_rc" -eq 0 ] ; then
-		output="$OUTPUT_TREE"/make_install.out
+	    echo "$ctest_command in the build tree"
+	    $ctest_command --extra-verbose >& "$output"
+	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+		output="$OUTPUT_TREE"/clean_ctest_plot_files.out
 		rm -f "$output"
-		echo "$build_command install in the build tree"
-		$build_command VERBOSE=1 install >& "$output"
-		make_install_rc=$?
-		if [ "$make_install_rc" -eq 0 ] ; then
-		    if [ "$do_ctest" = "yes" ] ; then
-			output="$OUTPUT_TREE"/ctest.out
-			rm -f "$output"
-			echo "ctest in the build tree"
-			ctest --extra-verbose >& "$output"
-		    fi
-		    if [ "$do_test_interactive" != "yes" -a "$do_clean_as_you_go" = "yes" ] ; then
-			output="$OUTPUT_TREE"/clean.out
-			rm -f "$output"
-			echo "$build_command clean in the build tree (since we are done with it)"
-			$build_command clean >& "$output"
-		    fi
-		    PATH="$INSTALL_TREE/bin":$PATH_SAVE
-		    if [ "$MINGW_OR_MSYS" = "true" ] ; then
-			# Use this logic to be as version-independent as possible.
-			current_dir=$(pwd)
-			# Wild cards must not be inside quotes.
-			cd "$INSTALL_TREE"/lib/plplot?.?.?*/drivers*
-			PATH="$(pwd):$PATH"
-			cd $current_dir
-		    fi
-		    if [ "$do_test_install_tree" = "yes" ] ; then
-			rm -rf "$INSTALL_BUILD_TREE"
-			mkdir -p "$INSTALL_BUILD_TREE"
-			cd "$INSTALL_BUILD_TREE"
-			output="$OUTPUT_TREE"/installed_cmake.out
-			rm -f "$output"
-			echo "cmake in the installed examples build tree"
-			PATH_AFTER_CMAKE=$PATH
-			if [ "$generator_string" = "MinGW Makefiles" ] ; then
-                            # For this case must use PATH specified by the user 
-                            # that excludes MSYS.
-			    PATH=$path_excluding_msys
-			fi
-			cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot?.?.?/examples >& "$output"
-			PATH=$PATH_AFTER_CMAKE
-			if [ "$do_test_noninteractive" = "yes" ] ; then
-			    output="$OUTPUT_TREE"/installed_make_noninteractive.out
-			    rm -f "$output"
-			    echo "$build_command test_noninteractive in the installed examples build tree"
-			    $build_command VERBOSE=1 test_noninteractive >& "$output"
-			    if [ "$do_test_interactive" != "yes" -a "$do_clean_as_you_go" = "yes" ] ; then
-				output="$OUTPUT_TREE"/installed_clean.out
-				rm -f "$output"
-				echo "$build_command clean in the installed examples build tree (since we are done with it)"
-				$build_command clean >& "$output"
-			    fi
-			fi
-		    fi
-		    if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
-			cd "$INSTALL_TREE"/share/plplot?.?.?/examples
-			output="$OUTPUT_TREE"/traditional_make_noninteractive.out
-			rm -f "$output"
-			echo "Traditional $build_command test_noninteractive in the installed examples tree"
-			$build_command test_noninteractive >& "$output"
-			if [ "$do_test_interactive" != "yes" -a "$do_clean_as_you_go" = "yes" ] ; then
-			    output="$OUTPUT_TREE"/traditional_clean.out
-			    rm -f "$output"
-			    echo "Traditional $build_command clean in the installed examples tree (since we are done with it)"
-			    $build_command clean >& "$output"
-			fi
-		    fi
-		else
-		    echo "ERROR: $build_command install failed in the build tree"
-		    exit 1
-		fi
-	    else
-		echo "ERROR: $build_command failed in the build tree"
-		exit 1
+		echo "$build_command clean_ctest_plot_files in the build tree (since we are done with ctest)"
+		$build_command clean_ctest_plot_files >& "$output"
 	    fi
+	else
+	    echo "ERROR: $build_command failed in the build tree"
+	    exit 1
+	fi
+    fi
+
+    if [ "$do_test_build_tree" = "yes" -a  "$do_test_noninteractive" = "yes" ] ; then
+	output="$OUTPUT_TREE"/make_noninteractive.out
+	rm -f "$output"
+	echo "$build_command test_noninteractive in the build tree"
+	$build_command VERBOSE=1 test_noninteractive >& "$output"
+	make_test_noninteractive_rc=$?
+	if [ "$make_test_noninteractive_rc" -ne 0 ] ; then
+	    echo "ERROR: $build_command test_noninteractive failed in the build tree"
+	    exit 1
+	fi
+    fi
+
+    if [ "$do_test_install_tree" = "yes" -o \
+	"$do_test_traditional_install_tree" = "yes" ] ; then
+	rm -rf "$INSTALL_TREE"
+	output="$OUTPUT_TREE"/make_install.out
+	rm -f "$output"
+	echo "$build_command install in the build tree"
+	$build_command VERBOSE=1 install >& "$output"
+	make_install_rc=$?
+	if [ "$make_install_rc" -ne 0 ] ; then
+	    echo "ERROR: $build_command install failed in the build tree"
+	    exit 1
+	fi
+    fi
+
+    if [ "$do_clean_as_you_go" = "yes" ] ; then
+	output="$OUTPUT_TREE"/clean.out
+	rm -f "$output"
+	echo "$build_command clean in the build tree (since we are done with it at least for the non-interactive test case)"
+	$build_command clean >& "$output"
+    fi
+
+    if [ "$do_test_install_tree" = "yes" -o \
+	"$do_test_traditional_install_tree" = "yes" ] ; then
+	PATH="$INSTALL_TREE/bin":$PATH_SAVE
+
+	if [ "$MINGW_OR_MSYS" = "true" ] ; then
+	    # Use this logic to be as version-independent as possible.
+	    current_dir=$(pwd)
+	    # Wild cards must not be inside quotes.
+	    cd "$INSTALL_TREE"/lib/plplot?.?.?*/drivers*
+	    PATH="$(pwd):$PATH"
+	    cd $current_dir
 	fi
 
-	PATH=$PATH_SAVE
-	if [ "$do_test_interactive" = "yes" ] ; then
-	    if [ "$do_test_build_tree" = "yes" ] ; then
-		cd "$BUILD_TREE"
-		output="$OUTPUT_TREE"/make_interactive.out
-		rm -f "$output"
-		echo "$build_command test_interactive in the build tree"
-		$build_command VERBOSE=1 test_interactive >& "$output"
+	if [ "$do_test_install_tree" = "yes" ] ; then
+	    rm -rf "$INSTALL_BUILD_TREE"
+	    mkdir -p "$INSTALL_BUILD_TREE"
+	    cd "$INSTALL_BUILD_TREE"
+	    output="$OUTPUT_TREE"/installed_cmake.out
+	    rm -f "$output"
+	    echo "cmake in the installed examples build tree"
+	    PATH_AFTER_CMAKE=$PATH
+	    if [ "$generator_string" = "MinGW Makefiles" ] ; then
+                # For this case must use PATH specified by the user 
+                # that excludes MSYS.
+		PATH=$path_excluding_msys
 	    fi
-	    if [ "$do_clean_as_you_go" = "yes" ] ; then
-		output="$OUTPUT_TREE"/clean.out
+	    cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot?.?.?/examples >& "$output"
+	    PATH=$PATH_AFTER_CMAKE
+	    if [ "$do_test_noninteractive" = "yes" ] ; then
+		output="$OUTPUT_TREE"/installed_make_noninteractive.out
 		rm -f "$output"
-		echo "$build_command clean in the build tree (since we are done with it)"
-		$build_command clean >& "$output"
-	    fi
-	    PATH="$INSTALL_TREE/bin":$PATH_SAVE
-	    if [ "$do_test_install_tree" = "yes" ] ; then
-		cd "$INSTALL_BUILD_TREE"
-		output="$OUTPUT_TREE"/installed_make_interactive.out
-		rm -f "$output"
-		echo "$build_command test_interactive in the installed examples build tree"
-		$build_command VERBOSE=1 test_interactive >& "$output"
+		echo "$build_command test_noninteractive in the installed examples build tree"
+		$build_command VERBOSE=1 test_noninteractive >& "$output"
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
 		    output="$OUTPUT_TREE"/installed_clean.out
 		    rm -f "$output"
-		    echo "$build_command clean in the installed examples build tree (since we are done with it)"
-		    $build_command clean >& "$output"
-		fi
-	    fi
-	    if [ "$do_test_traditional_install_tree" = "yes" ] ; then
-		cd "$INSTALL_TREE"/share/plplot?.?.?/examples
-		output="$OUTPUT_TREE"/traditional_make_interactive.out
-		rm -f "$output"
-		echo "Traditional $build_command test_interactive in the installed examples tree"
-		$build_command test_interactive >& "$output"
-		if [ "$do_clean_as_you_go" = "yes" ] ; then
-		    output="$OUTPUT_TREE"/traditional_clean.out
-		    rm -f "$output"
-		    echo "Traditional $build_command clean in the installed examples tree (since we are done with it)"
+		    echo "$build_command clean in the installed examples build tree (since we are done with it at least for the non-interactive test case)"
 		    $build_command clean >& "$output"
 		fi
 	    fi
 	fi
-    else
-	echo "ERROR: cmake in the build tree failed"
-	exit 1
+
+	if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
+	    cd "$INSTALL_TREE"/share/plplot?.?.?/examples
+	    output="$OUTPUT_TREE"/traditional_make_noninteractive.out
+	    rm -f "$output"
+	    echo "Traditional $build_command test_noninteractive in the installed examples tree"
+	    $build_command test_noninteractive >& "$output"
+	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+		output="$OUTPUT_TREE"/traditional_clean.out
+		rm -f "$output"
+		echo "Traditional $build_command clean in the installed examples tree (since we are done with it at least for the non-interactive test case)"
+		$build_command clean >& "$output"
+	    fi
+	fi
+    fi
+
+    PATH=$PATH_SAVE
+    if [ "$do_test_interactive" = "yes" ] ; then
+	if [ "$do_test_build_tree" = "yes" ] ; then
+	    cd "$BUILD_TREE"
+	    output="$OUTPUT_TREE"/make_interactive.out
+	    rm -f "$output"
+	    echo "$build_command test_interactive in the build tree"
+	    $build_command VERBOSE=1 test_interactive >& "$output"
+	fi
+	if [ "$do_clean_as_you_go" = "yes" ] ; then
+	    output="$OUTPUT_TREE"/clean.out
+	    rm -f "$output"
+	    echo "$build_command clean in the build tree (since we are done with it)"
+	    $build_command clean >& "$output"
+	fi
+	PATH="$INSTALL_TREE/bin":$PATH_SAVE
+	if [ "$do_test_install_tree" = "yes" ] ; then
+	    cd "$INSTALL_BUILD_TREE"
+	    output="$OUTPUT_TREE"/installed_make_interactive.out
+	    rm -f "$output"
+	    echo "$build_command test_interactive in the installed examples build tree"
+	    $build_command VERBOSE=1 test_interactive >& "$output"
+	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+		output="$OUTPUT_TREE"/installed_clean.out
+		rm -f "$output"
+		echo "$build_command clean in the installed examples build tree (since we are done with it)"
+		$build_command clean >& "$output"
+	    fi
+	fi
+	if [ "$do_test_traditional_install_tree" = "yes" ] ; then
+	    cd "$INSTALL_TREE"/share/plplot?.?.?/examples
+	    output="$OUTPUT_TREE"/traditional_make_interactive.out
+	    rm -f "$output"
+	    echo "Traditional $build_command test_interactive in the installed examples tree"
+	    $build_command test_interactive >& "$output"
+	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+		output="$OUTPUT_TREE"/traditional_clean.out
+		rm -f "$output"
+		echo "Traditional $build_command clean in the installed examples tree (since we are done with it)"
+		$build_command clean >& "$output"
+	    fi
+	fi
     fi
 }
 
@@ -229,17 +243,18 @@ OPTIONS:
 
   The next option controls whether the script runs clean to get rid of
   file results and save disk space after the tests are completed.
-  This option is highly recommended to greatly reduce the high-water
-  mark of disk usage (which can be as large as 40GB [!] without this
+  This option is highly recommended to greatly reduce the
+  the disk usage (which can be as large as 40GB [!] without this
   option).
   [--do_clean_as_you_go (yes/no, defaults to yes)]
 
-  The next three control how the builds and tests are done.
+  The next four control how the builds and tests are done.
   [--generator_string (defaults to 'Unix Makefiles')]
   [--path_excluding_msys (MUST be specified whenever the generator string is
                           'MinGW Makefiles' where it is necessary to limit 
                           the PATH for the cmake invocation to exclude MSYS.
                           Otherwise this option is completely ignored)]
+  [--ctest_command (defaults to 'ctest -j4')]
   [--build_command (defaults to 'make -j4')]
 
   The next four control what kind of builds and tests are done.
@@ -283,12 +298,13 @@ SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
 # INSTALL_BUILD_TREE, and OUTPUT_TREE.  It is disposable.
 
 # Default values for options
-prefix="${SOURCE_TREE}/comprehensive_test_disposeable"
+prefix="${SOURCE_TREE}/../comprehensive_test_disposeable"
 
 do_clean_as_you_go=yes
 
 generator_string="Unix Makefiles"
 path_excluding_msys=
+ctest_command="ctest -j4"
 build_command="make -j4"
 
 cmake_added_options=
@@ -330,6 +346,10 @@ while test $# -gt 0; do
 	    ;;
         --path_excluding_msys)
 	    path_excluding_msys=$2
+	    shift
+	    ;;
+        --ctest_command)
+	    ctest_command=$2
 	    shift
 	    ;;
         --build_command)
@@ -476,7 +496,9 @@ generator_string=$generator_string"
 if [ "$generator_string"="MinGW Makefiles" ] ; then
     echo "path_excluding_msys=$path_excluding_msys"
 fi
-echo "build_command=$build_command
+echo "
+ctest_command=$ctest_command
+build_command=$build_command
 
 cmake_added_options=$cmake_added_options
 do_shared=$do_shared
@@ -490,6 +512,10 @@ do_test_build_tree=$do_test_build_tree
 do_test_install_tree=$do_test_install_tree
 do_test_traditional_install_tree=$do_test_traditional_install_tree
 
+N.B. do_clean_as_you_go above should be yes unless you don't mind an
+accumulation of ~40GB of plot files!  Even with this option set to yes
+the high-water mark of disk usage can still be as high as 4GB so be
+sure you have enough free disk space to run this test!
 "
 ANSWER=
 while [ "$ANSWER" != "yes" -a "$ANSWER" != "no" ] ; do
