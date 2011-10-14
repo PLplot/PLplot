@@ -112,19 +112,19 @@ int main( int argc, char *argv[] )
     //   Allocate memory to the arrays which will hold the data
     //
 
-    if ( ( MJDstart = (int *) calloc( number_of_lines, (size_t) sizeof ( int ) ) ) == NULL )
+    if ( ( MJDstart = (int *) calloc( (size_t) number_of_lines, (size_t) sizeof ( int ) ) ) == NULL )
         MemError1( "Allocating memory to the MJDstart table" );
 
-    if ( ( offset1 = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
+    if ( ( offset1 = (double *) calloc( (size_t) number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the offset1 table" );
 
-    if ( ( offset2 = (int *) calloc( number_of_lines, (size_t) sizeof ( int ) ) ) == NULL )
+    if ( ( offset2 = (int *) calloc( (size_t) number_of_lines, (size_t) sizeof ( int ) ) ) == NULL )
         MemError1( "Allocating memory to the offset2 table" );
 
-    if ( ( slope = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
+    if ( ( slope = (double *) calloc( (size_t) number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the slope table" );
 
-    if ( ( leap_sec = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
+    if ( ( leap_sec = (double *) calloc( (size_t) number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the leap_sec table" );
 
     rewind( fr ); // Go back to the start of the file

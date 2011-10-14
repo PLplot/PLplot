@@ -393,7 +393,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
     // Find required resolution
     resolution = 0;
-    fmtlen     = strlen( format );
+    fmtlen     = (int) strlen( format );
     i          = 0;
     while ( i < fmtlen )
     {
@@ -405,7 +405,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
             next = format[i];
             if ( isdigit( next ) != 0 )
             {
-                nplaces = strtol( &( format[i] ), NULL, 10 );
+                nplaces = (int) strtol( &( format[i] ), NULL, 10 );
                 if ( nplaces > resolution )
                     resolution = nplaces;
             }
@@ -723,7 +723,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                         // maximum number of places
                         nplaces = 9;
                     else
-                        nplaces = strtol( &( format[i + 2] ), NULL, 10 );
+                        nplaces = (int) strtol( &( format[i + 2] ), NULL, 10 );
                     i += 2;
                 }
                 else
@@ -741,7 +741,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                     sprintf( DateTime, dynamic_format, sec );
                     if ( format[i] == '.' )
                     {
-                        slen = strlen( DateTime ) - 1;
+                        slen = (int) strlen( DateTime ) - 1;
                         while ( DateTime[slen] == '0' && DateTime[slen - 1] != '.' )
                         {
                             DateTime[slen] = '\0'; // remove trailing zeros
@@ -979,7 +979,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                     // maximum number of places
                     nplaces = 9;
                 else
-                    nplaces = strtol( &( format[i] ), NULL, 10 );
+                    nplaces = (int) strtol( &( format[i] ), NULL, 10 );
 
                 // fractional part of seconds to maximum available accuracy
                 sec_fraction = sec - (int) sec;
@@ -991,7 +991,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 if ( next == '.' )
                 {
-                    slen = strlen( DateTime ) - 1;
+                    slen = (int) strlen( DateTime ) - 1;
                     while ( DateTime[slen] == '0' && DateTime[slen - 1] != '.' )
                     {
                         DateTime[slen] = '\0'; // remove trailing zeros
@@ -1327,18 +1327,18 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
     else
     {
         // binary hunt phase where we are assured 0 <= *low < n
-        indexbase = (const void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
+        indexbase = (const void *) ( ( (const char *) base ) + ( size * (size_t) ( *low ) ) );
         if ( ( *ge )( key, indexbase ) )
         {
             high      = ( *low ) + hunt_inc;
-            indexbase = (const void *) ( ( (const char *) base ) + ( size * high ) );
+            indexbase = (const void *) ( ( (const char *) base ) + ( size * (size_t) high ) );
             // indexbase is valid if high < n.
             while ( ( high < n ) && ( ( *ge )( key, indexbase ) ) )
             {
                 *low      = high;
                 hunt_inc += hunt_inc;
                 high      = high + hunt_inc;
-                indexbase = (const void *) ( ( (const char *) base ) + ( size * high ) );
+                indexbase = (const void *) ( ( (const char *) base ) + ( size * (size_t) high ) );
             }
             if ( high >= n )
                 high = n;
@@ -1349,14 +1349,14 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
         {
             high      = *low;
             *low      = high - hunt_inc;
-            indexbase = (const void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
+            indexbase = (const void *) ( ( (const char *) base ) + ( size * (size_t) ( *low ) ) );
             // indexbase is valid if(*low) >= 0
             while ( ( ( *low ) >= 0 ) && !( ( *ge )( key, indexbase ) ) )
             {
                 high      = *low;
                 hunt_inc += hunt_inc;
                 *low      = ( *low ) - hunt_inc;
-                indexbase = (const void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
+                indexbase = (const void *) ( ( (const char *) base ) + ( size * (size_t) ( *low ) ) );
             }
             if ( ( *low ) < 0 )
                 *low = -1;
@@ -1370,7 +1370,7 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
     while ( high - *low > 1 )
     {
         mid       = *low + ( high - *low ) / 2;
-        indexbase = (const void *) ( ( (const char *) base ) + ( size * mid ) );
+        indexbase = (const void *) ( ( (const char *) base ) + ( size * (size_t) mid ) );
         if ( ( *ge )( key, indexbase ) )
             *low = mid;
         else

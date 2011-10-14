@@ -31,8 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-int dspline( double *x, double *y, int n,
-             int if1, double cond1, int ifn, double condn, double *y2 );
+#include "dspline.h"
 
 
 //--------------------------------------------------------------------------
@@ -103,13 +102,13 @@ int main( int argc, char *argv[] )
     //   Allocate memory to the arrays which will hold the data
     //
 
-    if ( ( xspline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
+    if ( ( xspline = (double *) calloc( (size_t) number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the xspline table" );
 
-    if ( ( yspline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
+    if ( ( yspline = (double *) calloc( (size_t) number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the yspline table" );
 
-    if ( ( y2spline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
+    if ( ( y2spline = (double *) calloc( (size_t) number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the y2spline table" );
 
     rewind( fr ); // Go back to the start of the file

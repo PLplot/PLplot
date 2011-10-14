@@ -22,6 +22,9 @@
 // Fortran to C with the aid of f2c and relicensed for PLplot under the LGPL
 // with the permission of the FreeEOS copyright holder (Alan W. Irwin).
 //
+
+#include "dsplint.h"
+
 # define MAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 # define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 

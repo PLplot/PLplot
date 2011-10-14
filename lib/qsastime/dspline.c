@@ -22,6 +22,9 @@
 // Fortran to C with the aid of f2c and relicensed for PLplot under the LGPL
 // with the permission of the FreeEOS copyright holder (Alan W. Irwin).
 //
+
+#include "dspline.h"
+
 int dspline( double *x, double *y, int n,
              int if1, double cond1, int ifn, double condn, double *y2 )
 {
