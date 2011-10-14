@@ -166,7 +166,7 @@ main( int argc, const char *argv[] )
 // Allocate data structures
 
     clevel = (PLFLT *) calloc( (size_t) ns, sizeof ( PLFLT ) );
-    shedge = (PLFLT *) calloc( (size_t) (ns + 1), sizeof ( PLFLT ) );
+    shedge = (PLFLT *) calloc( (size_t) ( ns + 1 ), sizeof ( PLFLT ) );
     xg1    = (PLFLT *) calloc( (size_t) nx, sizeof ( PLFLT ) );
     yg1    = (PLFLT *) calloc( (size_t) ny, sizeof ( PLFLT ) );
 

@@ -95,7 +95,7 @@ read_line( char *buffer, int length, FILE *fp );
 
 static void
 cmap0_palette_read( const char *filename,
-                    int *number_colors, unsigned int **r, unsigned int **g, 
+                    int *number_colors, unsigned int **r, unsigned int **g,
                     unsigned int **b, double **a );
 
 // An additional hardwired location for lib files.
@@ -929,10 +929,10 @@ color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, const char *name )
 void
 plcmap0_def( int imin, int imax )
 {
-    int    i;
+    int          i;
     unsigned int *r, *g, *b;
-    double *a;
-    int    number_colors;
+    double       *a;
+    int          number_colors;
     if ( imin <= imax )
     {
         cmap0_palette_read( "", &number_colors, &r, &g, &b, &a );
@@ -1342,7 +1342,7 @@ cmap0_palette_read( const char *filename,
             if ( strlen( color_info ) == 7 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x",
-                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ), 
+                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ),
                          (unsigned int *) ( *b + i ) ) != 3 )
                 {
                     err = 1;
@@ -1353,7 +1353,7 @@ cmap0_palette_read( const char *filename,
             else if ( strlen( color_info ) > 9 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x %lf",
-                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ), 
+                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ),
                          (unsigned int *) ( *b + i ), (double *) ( *a + i ) ) != 4 )
                 {
                     err = 1;
@@ -1430,10 +1430,10 @@ cmap0_palette_read( const char *filename,
 void
 c_plspal0( const char *filename )
 {
-    int    i;
+    int          i;
     unsigned int *r, *g, *b;
-    double *a;
-    int    number_colors;
+    double       *a;
+    int          number_colors;
     cmap0_palette_read( filename, &number_colors, &r, &g, &b, &a );
     // Allocate default number of cmap0 colours if cmap0 allocation not
     // done already.
@@ -1478,20 +1478,20 @@ c_plspal0( const char *filename )
 void
 c_plspal1( const char *filename, PLBOOL interpolate )
 {
-    int    i;
-    int    number_colors;
-    int    format_version, err;
-    PLBOOL rgb;
-    char   color_info[PALLEN];
-    unsigned int    r_i, g_i, b_i;
-    int    pos_i, rev_i;
-    double r_d, g_d, b_d, a_d, pos_d;
-    PLFLT  *r, *g, *b, *a, *pos;
-    PLINT  *ri, *gi, *bi;
-    PLBOOL *rev;
-    FILE   *fp;
-    char   msgbuf[MSGLEN];
-    char   * save_locale = plsave_set_locale();
+    int          i;
+    int          number_colors;
+    int          format_version, err;
+    PLBOOL       rgb;
+    char         color_info[PALLEN];
+    unsigned int r_i, g_i, b_i;
+    int          pos_i, rev_i;
+    double       r_d, g_d, b_d, a_d, pos_d;
+    PLFLT        *r, *g, *b, *a, *pos;
+    PLINT        *ri, *gi, *bi;
+    PLBOOL       *rev;
+    FILE         *fp;
+    char         msgbuf[MSGLEN];
+    char         * save_locale = plsave_set_locale();
 
     rgb            = TRUE;
     err            = 0;

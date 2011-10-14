@@ -113,7 +113,7 @@ void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
 }
 
 // Placeholder that does nothing for now.
-int lt_dlmakeresident (lt_dlhandle handle)
+int lt_dlmakeresident( lt_dlhandle handle )
 {
     return 0;
 }

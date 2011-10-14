@@ -1153,7 +1153,7 @@ plhershey2unicode( int in );
 // struct used for FCI to FontName lookups.
 typedef struct
 {
-    PLUNICODE     fci;
+    PLUNICODE           fci;
     const unsigned char *pfont;
 } FCI_to_FontName_Table;
 

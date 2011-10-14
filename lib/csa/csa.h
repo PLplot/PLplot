@@ -34,7 +34,7 @@ typedef struct
 } point;
 #endif
 
-extern int csa_verbose;
+extern int       csa_verbose;
 extern const char* csa_version;
 
 struct csa;

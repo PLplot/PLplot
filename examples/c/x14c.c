@@ -359,7 +359,7 @@ plot4( void )
 
     for ( i = 0; i <= 360; i++ )
     {
-        r    = sin( dtr * ( 5 * i ) );
+        r     = sin( dtr * ( 5 * i ) );
         x1[i] = x0[i] * r;
         y1[i] = y0[i] * r;
     }

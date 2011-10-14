@@ -517,7 +517,7 @@ void nnhpi_destroy( nnhpi* nn )
 //
 void nnhpi_interpolate( nnhpi* nnhp, point* p )
 {
-    nnpi      * nnp       = nnhp->nnpi;
+    nnpi      * nnp        = nnhp->nnpi;
     delaunay  * d          = nnp->d;
     hashtable * ht_weights = nnhp->ht_weights;
     nn_weights* weights;

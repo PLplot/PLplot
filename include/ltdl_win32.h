@@ -46,6 +46,6 @@ PLDLLIMPEXP const char* lt_dlerror();
 
 PLDLLIMPEXP void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol );
 
-PLDLLIMPEXP int lt_dlmakeresident (lt_dlhandle handle);
+PLDLLIMPEXP int lt_dlmakeresident( lt_dlhandle handle );
 
 #endif // __LTDL_WIN32_H__

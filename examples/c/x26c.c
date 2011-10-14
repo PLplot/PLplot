@@ -100,8 +100,8 @@ static const char *line_labels[] = {
     NULL
 };
 
-void plot1( int type, const char *x_label, const char *y_label, 
-            const char *alty_label, const char * legend_text[], 
+void plot1( int type, const char *x_label, const char *y_label,
+            const char *alty_label, const char * legend_text[],
             const char *title_label, const char *line_label );
 
 //--------------------------------------------------------------------------

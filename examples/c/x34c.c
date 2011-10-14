@@ -80,7 +80,7 @@ int main( int argc, const char *argv[] )
     // Clean up
     plend();
 
-    exit(0);
+    exit( 0 );
 }
 
 void initialize_colors( void )

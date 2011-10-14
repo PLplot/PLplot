@@ -152,19 +152,19 @@ PLFLT xm, xM, ym, yM;
 int
 main( int argc, const char *argv[] )
 {
-    PLFLT *x, *y, *z, *clev;
-    PLFLT *xg, *yg, **zg;
-    PLFLT zmin, zmax, lzm, lzM;
-    int   i, j, k;
-    PLINT alg;
-    const char  *title[] = { "Cubic Spline Approximation",
-                       "Delaunay Linear Interpolation",
-                       "Natural Neighbors Interpolation",
-                       "KNN Inv. Distance Weighted",
-                       "3NN Linear Interpolation",
-                       "4NN Around Inv. Dist. Weighted" };
+    PLFLT      *x, *y, *z, *clev;
+    PLFLT      *xg, *yg, **zg;
+    PLFLT      zmin, zmax, lzm, lzM;
+    int        i, j, k;
+    PLINT      alg;
+    const char *title[] = { "Cubic Spline Approximation",
+                            "Delaunay Linear Interpolation",
+                            "Natural Neighbors Interpolation",
+                            "KNN Inv. Distance Weighted",
+                            "3NN Linear Interpolation",
+                            "4NN Around Inv. Dist. Weighted" };
 
-    PLFLT opt[] = { 0., 0., 0., 0., 0., 0. };
+    PLFLT      opt[] = { 0., 0., 0., 0., 0., 0. };
 
     xm = ym = -0.2;
     xM = yM = 0.6;

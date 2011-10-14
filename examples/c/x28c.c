@@ -61,8 +61,8 @@ int main( int argc, const char *argv[] )
     PLFLT radius, pitch, xpos, ypos, zpos;
     // p1string must be exactly one character + the null termination
     // character.
-    char p1string[]     = "O";
-    const char *pstring = "The future of our civilization depends on software freedom.";
+    char       p1string[] = "O";
+    const char *pstring   = "The future of our civilization depends on software freedom.";
     // Allocate and define the minimal x, y, and z to insure 3D box
     x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ) );
     y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );

@@ -63,7 +63,7 @@ void nnpi_set_point( nnpi* nn, point* p );
 //
 nnai* nnai_build( delaunay* d, int n, double* x, double* y )
 {
-    nnai  * nn   = malloc( sizeof ( nnai ) );
+    nnai  * nn  = malloc( sizeof ( nnai ) );
     nnpi  * nnp = nnpi_create( d );
     int   * vertices;
     double* weights;

@@ -44,7 +44,7 @@ mapform19( PLINT n, PLFLT *x, PLFLT *y )
 
 // "Normalize" longitude values so that they always fall between -180.0 and
 // 180.0
-PLFLT 
+PLFLT
 normalize_longitude( PLFLT lon )
 {
     PLFLT times;

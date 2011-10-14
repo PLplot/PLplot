@@ -169,7 +169,7 @@ constriction( void )
 
 
 
-void 
+void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax )
 {
     int i, j;
@@ -190,7 +190,7 @@ f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax )
 //
 // Vector plot of the gradient of a shielded potential (see example 9)
 //
-void 
+void
 potential( void )
 {
 #if !defined ( WIN32 )

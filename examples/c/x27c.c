@@ -48,15 +48,15 @@ main( int argc, const char *argv[] )
     // N.B. N is just a place holder since it is no longer used
     // (because we now have proper termination of the angle loop).
     PLFLT params[9][4] = {
-        { 21.0,   7.0,  7.0,  3.0} , // Deltoid
-        { 21.0,   7.0, 10.0,  3.0} ,
-        { 21.0,  -7.0, 10.0,  3.0} ,
-        { 20.0,   3.0,  7.0, 20.0} ,
-        { 20.0,   3.0, 10.0, 20.0} ,
-        { 20.0,  -3.0, 10.0, 20.0} ,
-        { 20.0,  13.0,  7.0, 20.0} ,
-        { 20.0,  13.0, 20.0, 20.0} ,
-        { 20.0, -13.0, 20.0, 20.0}
+        { 21.0,   7.0,  7.0,  3.0 }, // Deltoid
+        { 21.0,   7.0, 10.0,  3.0 },
+        { 21.0,  -7.0, 10.0,  3.0 },
+        { 20.0,   3.0,  7.0, 20.0 },
+        { 20.0,   3.0, 10.0, 20.0 },
+        { 20.0,  -3.0, 10.0, 20.0 },
+        { 20.0,  13.0,  7.0, 20.0 },
+        { 20.0,  13.0, 20.0, 20.0 },
+        { 20.0, -13.0, 20.0, 20.0 }
     };
 
     int   i;
@@ -175,7 +175,7 @@ spiro( PLFLT params[], int fill )
     // Proper termination of the angle loop very near the beginning
     // point, see
     // http://mathforum.org/mathimages/index.php/Hypotrochoid.
-    windings = (PLINT) (abs( params[1] ) / gcd( (PLINT) params[0], (PLINT) params[1] ));
+    windings = (PLINT) ( abs( params[1] ) / gcd( (PLINT) params[0], (PLINT) params[1] ) );
     steps    = NPNT / windings;
     dphi     = 2.0 * PI / (PLFLT) steps;
 

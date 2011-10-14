@@ -943,7 +943,7 @@ remove_characters( char *string, const char *characters )
 
 static void
 draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
-                 PLFLT ymin, PLFLT ymax, PLFLT color )
+          PLFLT ymin, PLFLT ymax, PLFLT color )
 {
     // Save current drawing color.
     PLINT col0_save = plsc->icol0;
@@ -1120,9 +1120,9 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
     PLFLT label_offset = 1.2;
 
     // For building plmtex option string.
-#define max_opts 25
-    char  opt_label[max_opts];
-    char  perp;
+#define max_opts    25
+    char opt_label[max_opts];
+    char perp;
 
     // To help sanity check number of specified labels.
     PLINT nlabel = 0;

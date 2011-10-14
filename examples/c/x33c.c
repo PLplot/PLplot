@@ -299,25 +299,25 @@ plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLINT con
 int
 main( int argc, const char *argv[] )
 {
-    int   i, k;
-    PLINT opt;
-    PLINT nlegend, nturn;
-    PLINT opt_array[MAX_NLEGEND];
-    PLINT text_colors[MAX_NLEGEND];
-    PLINT box_colors[MAX_NLEGEND];
-    PLINT box_patterns[MAX_NLEGEND];
-    PLFLT box_scales[MAX_NLEGEND];
-    PLINT box_line_widths[MAX_NLEGEND];
-    PLINT line_colors[MAX_NLEGEND];
-    PLINT line_styles[MAX_NLEGEND];
-    PLINT line_widths[MAX_NLEGEND];
-    PLINT symbol_numbers[MAX_NLEGEND], symbol_colors[MAX_NLEGEND];
-    PLFLT symbol_scales[MAX_NLEGEND];
-    char  *text[MAX_NLEGEND];
+    int        i, k;
+    PLINT      opt;
+    PLINT      nlegend, nturn;
+    PLINT      opt_array[MAX_NLEGEND];
+    PLINT      text_colors[MAX_NLEGEND];
+    PLINT      box_colors[MAX_NLEGEND];
+    PLINT      box_patterns[MAX_NLEGEND];
+    PLFLT      box_scales[MAX_NLEGEND];
+    PLINT      box_line_widths[MAX_NLEGEND];
+    PLINT      line_colors[MAX_NLEGEND];
+    PLINT      line_styles[MAX_NLEGEND];
+    PLINT      line_widths[MAX_NLEGEND];
+    PLINT      symbol_numbers[MAX_NLEGEND], symbol_colors[MAX_NLEGEND];
+    PLFLT      symbol_scales[MAX_NLEGEND];
+    char       *text[MAX_NLEGEND];
     const char *symbols[MAX_NLEGEND];
-    PLFLT legend_width, legend_height, x, y, xstart, ystart;
-    PLFLT max_height, text_scale;
-    PLINT position, opt_base, nrow, ncolumn;
+    PLFLT      legend_width, legend_height, x, y, xstart, ystart;
+    PLFLT      max_height, text_scale;
+    PLINT      position, opt_base, nrow, ncolumn;
 
     // Create space to contain legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )

@@ -940,10 +940,10 @@ void svg_attr_value( SVG *aStream, const char *attribute, const char *value )
 
 void svg_attr_values( SVG *aStream, const char *attribute, const char *format, ... )
 {
-    va_list ap;
-    const char    *p, *sval;
-    int     ival;
-    double  dval;
+    va_list    ap;
+    const char *p, *sval;
+    int        ival;
+    double     dval;
 
     svg_indent( aStream );
     fprintf( aStream->svgFile, "%s=\"", attribute );

@@ -334,7 +334,7 @@ void breakDownMJD( int *year, int *month, int *day, int *hour, int *min, double 
 const char * getDayOfWeek( const MJDtime *MJD )
 {
     static const char *dow = { "Wed\0Thu\0Fri\0Sat\0Sun\0Mon\0Tue" };
-    int         d    = MJD->base_day % 7;
+    int d = MJD->base_day % 7;
     if ( d < 0 )
         d += 7;
     return &( dow[d * 4] );
@@ -343,7 +343,7 @@ const char * getDayOfWeek( const MJDtime *MJD )
 const char * getLongDayOfWeek( const MJDtime *MJD )
 {
     static const char *dow = { "Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday\0\0Sunday\0\0\0\0Monday\0\0\0\0Tuesday" };
-    int         d    = MJD->base_day % 7;
+    int d = MJD->base_day % 7;
     if ( d < 0 )
         d += 7;
     return &( dow[d * 10] );

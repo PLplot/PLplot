@@ -38,7 +38,7 @@ static const char* Greek[] = {
     "#gn", "#gc", "#go", "#gp", "#gr", "#gs", "#gt", "#gu", "#gf", "#gx", "#gq", "#gw",
 };
 
-static int Type1[] = {
+static int       Type1[] = {
     0x0020, 0x0021, 0x0023, 0x0025, 0x0026,
     0x0028, 0x0029, 0x002b, 0x002c, 0x002e,
     0x002f, 0x0030, 0x0031, 0x0032, 0x0033,
@@ -89,7 +89,7 @@ static const char* title[] = {
     "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block (d)",
 };
 
-static int lo[] = {
+static int       lo[] = {
     0x0,
     0x0,
     0x40,
@@ -103,7 +103,7 @@ static int lo[] = {
     0x22c0,
 };
 
-static int hi[] = {
+static int       hi[] = {
     0x30,
     0x40,
     0x80,
@@ -117,7 +117,7 @@ static int hi[] = {
     0x2300,
 };
 
-static int nxcells[] = {
+static int       nxcells[] = {
     12,
     8,
     8,
@@ -131,7 +131,7 @@ static int nxcells[] = {
     8,
 };
 
-static int nycells[] = {
+static int       nycells[] = {
     8,
     8,
     8,

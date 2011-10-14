@@ -1599,7 +1599,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         {
             i1intersect[ncrossed] = i1;
             if ( ncrossed_change == 2 )
-               ;
+                ;
             i1intersect[1] = i1;
 
             ncrossed += ncrossed_change;

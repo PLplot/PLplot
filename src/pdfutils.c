@@ -857,12 +857,12 @@ pdf_rd_ieeef( PDFstrm *pdfs, float *pf )
 
     if ( e_ieee == 0 )
     {
-        ex   = 1 - bias;
+        ex    = 1 - bias;
         f_new = f_tmp;
     }
     else
     {
-        ex   = (int) e_ieee - bias;
+        ex    = (int) e_ieee - bias;
         f_new = 1.0 + f_tmp;
     }
 
