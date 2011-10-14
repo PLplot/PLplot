@@ -25,6 +25,11 @@
 
 #include "plcdemos.h"
 
+void circulation( void );
+void constriction( void );
+void potential( void );
+void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax );
+
 // Pairs of points making the line segments used to plot the user defined arrow
 static PLFLT arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
 static PLFLT arrow_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
@@ -41,7 +46,7 @@ static PLFLT arrow2_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
 // Vector plot of the circulation about the origin
 //
 void
-circulation()
+circulation( void )
 {
     int       i, j;
     PLFLT     dx, dy, x, y;
@@ -98,7 +103,7 @@ circulation()
 // Vector plot of flow through a constricted pipe
 //
 void
-constriction()
+constriction( void )
 {
     int       i, j;
     PLFLT     dx, dy, x, y;
@@ -164,19 +169,20 @@ constriction()
 
 
 
-void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
+void 
+f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax )
 {
     int i, j;
 
-    *fmax = f[0][0];
-    *fmin = *fmax;
+    *fnmax = f[0][0];
+    *fnmin = *fnmax;
 
     for ( i = 0; i < nx; i++ )
     {
         for ( j = 0; j < ny; j++ )
         {
-            *fmax = MAX( *fmax, f[i][j] );
-            *fmin = MIN( *fmin, f[i][j] );
+            *fnmax = MAX( *fnmax, f[i][j] );
+            *fnmin = MIN( *fnmin, f[i][j] );
         }
     }
 }
@@ -184,7 +190,8 @@ void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
 //
 // Vector plot of the gradient of a shielded potential (see example 9)
 //
-void potential()
+void 
+potential( void )
 {
 #if !defined ( WIN32 )
     const int nper   = 100;

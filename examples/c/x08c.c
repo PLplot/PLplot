@@ -37,7 +37,7 @@ static PLFLT alt[] = { 60.0, 20.0 };
 static PLFLT az[] = { 30.0, 60.0 };
 static void cmap1_init( int );
 
-static char *title[] =
+static const char *title[] =
 {
     "#frPLplot Example 8 - Alt=60, Az=30",
     "#frPLplot Example 8 - Alt=20, Az=60",

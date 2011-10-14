@@ -31,7 +31,7 @@
 // Displays Greek letters and mathematically interesting Unicode ranges
 //
 
-static char* Greek[] = {
+static const char* Greek[] = {
     "#gA", "#gB", "#gG", "#gD", "#gE", "#gZ", "#gY", "#gH", "#gI", "#gK", "#gL", "#gM",
     "#gN", "#gC", "#gO", "#gP", "#gR", "#gS", "#gT", "#gU", "#gF", "#gX", "#gQ", "#gW",
     "#ga", "#gb", "#gg", "#gd", "#ge", "#gz", "#gy", "#gh", "#gi", "#gk", "#gl", "#gm",
@@ -75,7 +75,7 @@ static int Type1[] = {
     0x2666,
 };
 
-static char* title[] = {
+static const char* title[] = {
     "#<0x10>PLplot Example 23 - Greek Letters",
     "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (a)",
     "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (b)",

@@ -12,8 +12,8 @@
 // user-modified.
 //--------------------------------------------------------------------------
 
-void demo1();
-void demo2();
+void demo1( void );
+void demo2( void );
 void draw_windows( int nw, int cmap0_offset );
 
 int
@@ -39,7 +39,7 @@ main( int argc, const char *argv[] )
 // Demonstrates multiple windows and default color map 0 palette.
 //--------------------------------------------------------------------------
 
-void demo1()
+void demo1( void )
 {
     plbop();
 
@@ -58,7 +58,7 @@ void demo1()
 // HLS -> RGB translation.
 //--------------------------------------------------------------------------
 
-void demo2()
+void demo2( void )
 {
 // Set up cmap0
 // Use 100 custom colors in addition to base 16

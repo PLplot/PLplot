@@ -13,7 +13,7 @@
 
 void save_plot( char * );
 void gray_cmap( PLINT );
-int read_img( char *, PLFLT ***, int *, int *, int * );
+int read_img( const char *, PLFLT ***, int *, int *, int * );
 int get_clip( PLFLT *, PLFLT *, PLFLT *, PLFLT * );
 
 int  dbg           = 0;
@@ -303,7 +303,7 @@ main( int argc, const char *argv[] )
 }
 
 // read image from file in binary ppm format
-int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col )
+int read_img( const char *fname, PLFLT ***img_f, int *width, int *height, int *num_col )
 {
     FILE          *fp;
     unsigned char *img;

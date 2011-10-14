@@ -41,6 +41,8 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
 static void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax );
 
+PLINT zdefined( PLFLT x, PLFLT y );
+
 // Options data structure definition.
 
 static PLOptionTable options[] = {
@@ -163,10 +165,10 @@ main( int argc, const char *argv[] )
 
 // Allocate data structures
 
-    clevel = (PLFLT *) calloc( ns, sizeof ( PLFLT ) );
-    shedge = (PLFLT *) calloc( ns + 1, sizeof ( PLFLT ) );
-    xg1    = (PLFLT *) calloc( nx, sizeof ( PLFLT ) );
-    yg1    = (PLFLT *) calloc( ny, sizeof ( PLFLT ) );
+    clevel = (PLFLT *) calloc( (size_t) ns, sizeof ( PLFLT ) );
+    shedge = (PLFLT *) calloc( (size_t) (ns + 1), sizeof ( PLFLT ) );
+    xg1    = (PLFLT *) calloc( (size_t) nx, sizeof ( PLFLT ) );
+    yg1    = (PLFLT *) calloc( (size_t) ny, sizeof ( PLFLT ) );
 
     plAlloc2dGrid( &z, nx, ny );
     plAlloc2dGrid( &w, nx, ny );
@@ -530,19 +532,19 @@ main( int argc, const char *argv[] )
 //--------------------------------------------------------------------------
 
 static void
-f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
+f2mnmx( PLFLT **f, PLINT nnx, PLINT nny, PLFLT *fnmin, PLFLT *fnmax )
 {
     int i, j;
 
-    *fmax = f[0][0];
-    *fmin = *fmax;
+    *fnmax = f[0][0];
+    *fnmin = *fnmax;
 
-    for ( i = 0; i < nx; i++ )
+    for ( i = 0; i < nnx; i++ )
     {
-        for ( j = 0; j < ny; j++ )
+        for ( j = 0; j < nny; j++ )
         {
-            *fmax = MAX( *fmax, f[i][j] );
-            *fmin = MIN( *fmin, f[i][j] );
+            *fnmax = MAX( *fnmax, f[i][j] );
+            *fnmin = MIN( *fnmin, f[i][j] );
         }
     }
 }

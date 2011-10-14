@@ -36,7 +36,7 @@ class x09 {
 public:
     x09( int, const char** );
     void polar();
-    const void potential();
+    void potential();
 
 private:
     plstream         *pls;
@@ -335,7 +335,7 @@ void x09::polar()
     delete[] lev;
 }
 
-const void x09::potential()
+void x09::potential()
 // Shielded potential contour plot example.
 {
     int      i, j;

@@ -32,6 +32,9 @@
 
 #include "plcdemos.h"
 
+void plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, PLINT cont_width, PLINT n_values, PLFLT *values );
+void plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLINT cont_width, PLINT n_values, PLFLT *values );
+
 static PLINT position_options[16] = {
     PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
     PL_POSITION_TOP | PL_POSITION_OUTSIDE,
@@ -52,7 +55,7 @@ static PLINT position_options[16] = {
 };
 
 // Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
-static char *special_symbols[5] = {
+static const char *special_symbols[5] = {
     "✰",
     "✴",
     "✱",
@@ -310,7 +313,8 @@ main( int argc, const char *argv[] )
     PLINT line_widths[MAX_NLEGEND];
     PLINT symbol_numbers[MAX_NLEGEND], symbol_colors[MAX_NLEGEND];
     PLFLT symbol_scales[MAX_NLEGEND];
-    char  *text[MAX_NLEGEND], *symbols[MAX_NLEGEND];
+    char  *text[MAX_NLEGEND];
+    const char *symbols[MAX_NLEGEND];
     PLFLT legend_width, legend_height, x, y, xstart, ystart;
     PLFLT max_height, text_scale;
     PLINT position, opt_base, nrow, ncolumn;

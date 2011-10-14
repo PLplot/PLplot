@@ -38,7 +38,7 @@ const char *drawing_mode_names[NUM_MODES] = {
     "XOR drawing"
 };
 
-void initialize_colors();
+void initialize_colors( void );
 void draw_page( PLINT mode, const char *title );
 
 //--------------------------------------------------------------------------
@@ -80,10 +80,10 @@ int main( int argc, const char *argv[] )
     // Clean up
     plend();
 
-    return;
+    exit(0);
 }
 
-void initialize_colors()
+void initialize_colors( void )
 {
     plscol0( 0, 255, 255, 255 );
     plscol0( 1, 0, 0, 0 );

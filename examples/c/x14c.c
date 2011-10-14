@@ -31,11 +31,12 @@ static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
 
-void plot1();
-void plot2();
-void plot3();
-void plot4();
-void plot5();
+void plot1( void );
+void plot2( void );
+void plot3( void );
+void plot4( void );
+void plot5( void );
+void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
 
 //--------------------------------------------------------------------------
 // main
@@ -308,7 +309,7 @@ plot4( void )
     PLFLT dtr, theta, dx, dy, r;
     char  text[4];
     PLFLT x0[361], y0[361];
-    PLFLT x[361], y[361];
+    PLFLT x1[361], y1[361];
 
     dtr = M_PI / 180.0;
     for ( i = 0; i <= 360; i++ )
@@ -324,13 +325,13 @@ plot4( void )
     {
         for ( j = 0; j <= 360; j++ )
         {
-            x[j] = 0.1 * i * x0[j];
-            y[j] = 0.1 * i * y0[j];
+            x1[j] = 0.1 * i * x0[j];
+            y1[j] = 0.1 * i * y0[j];
         }
 
 // Draw circles for polar grid
 
-        plline( 361, x, y );
+        plline( 361, x1, y1 );
     }
 
     plcol0( 2 );
@@ -359,11 +360,11 @@ plot4( void )
     for ( i = 0; i <= 360; i++ )
     {
         r    = sin( dtr * ( 5 * i ) );
-        x[i] = x0[i] * r;
-        y[i] = y0[i] * r;
+        x1[i] = x0[i] * r;
+        y1[i] = y0[i] * r;
     }
     plcol0( 3 );
-    plline( 361, x, y );
+    plline( 361, x1, y1 );
 
     plcol0( 4 );
     plmtex( "t", 2.0, 0.5, 0.5,
@@ -384,10 +385,10 @@ PLFLT tr[6] =
 { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
 void
-mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+mypltr( PLFLT xx, PLFLT yy, PLFLT *tx, PLFLT *ty, void *pltr_data )
 {
-    *tx = tr[0] * x + tr[1] * y + tr[2];
-    *ty = tr[3] * x + tr[4] * y + tr[5];
+    *tx = tr[0] * xx + tr[1] * yy + tr[2];
+    *ty = tr[3] * xx + tr[4] * yy + tr[5];
 }
 
 static PLFLT clevel[11] =

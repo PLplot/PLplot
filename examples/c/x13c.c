@@ -5,7 +5,7 @@
 
 #include "plcdemos.h"
 
-static char *text[] =
+static const char *text[] =
 {
     "Maurice",
     "Geoffrey",

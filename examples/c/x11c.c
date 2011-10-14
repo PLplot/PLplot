@@ -32,14 +32,14 @@ static int   opt[] = { DRAW_LINEXY, DRAW_LINEXY };
 static PLFLT alt[] = { 33.0, 17.0 };
 static PLFLT az[] = { 24.0, 115.0 };
 
-static char  *title[4] =
+static const char  *title[4] =
 {
     "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
     "#frPLplot Example 11 - Alt=17, Az=115, Opt=3",
 };
 
 static void
-cmap1_init()
+cmap1_init( void )
 {
     PLFLT i[2], h[2], l[2], s[2];
 

@@ -121,13 +121,13 @@ static PLOptionTable options[] = {
     }                           // long syntax
 };
 
-void create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts );
+void create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int npts );
 void free_data( PLFLT *x, PLFLT *y, PLFLT *z );
 void create_grid( PLFLT **xi, int px, PLFLT **yi, int py );
 void free_grid( PLFLT *x, PLFLT *y );
 
 static void
-cmap1_init()
+cmap1_init( void )
 {
     PLFLT i[2], h[2], l[2], s[2];
 
@@ -157,7 +157,7 @@ main( int argc, const char *argv[] )
     PLFLT zmin, zmax, lzm, lzM;
     int   i, j, k;
     PLINT alg;
-    char  *title[] = { "Cubic Spline Approximation",
+    const char  *title[] = { "Cubic Spline Approximation",
                        "Delaunay Linear Interpolation",
                        "Natural Neighbors Interpolation",
                        "KNN Inv. Distance Weighted",
@@ -196,7 +196,7 @@ main( int argc, const char *argv[] )
 
     create_grid( &xg, xp, &yg, yp ); // grid the data at
     plAlloc2dGrid( &zg, xp, yp );    // the output grided data
-    clev = (PLFLT *) malloc( nl * sizeof ( PLFLT ) );
+    clev = (PLFLT *) malloc( (size_t) nl * sizeof ( PLFLT ) );
 
     // printf("Npts=%d gridx=%d gridy=%d", pts, xp, yp);
     plcol0( 1 );
@@ -330,8 +330,8 @@ create_grid( PLFLT **xi, int px, PLFLT **yi, int py )
     PLFLT *x, *y;
     int   i;
 
-    x = *xi = (PLFLT *) malloc( px * sizeof ( PLFLT ) );
-    y = *yi = (PLFLT *) malloc( py * sizeof ( PLFLT ) );
+    x = *xi = (PLFLT *) malloc( (size_t) px * sizeof ( PLFLT ) );
+    y = *yi = (PLFLT *) malloc( (size_t) py * sizeof ( PLFLT ) );
 
     for ( i = 0; i < px; i++ )
         *x++ = xm + ( xM - xm ) * i / ( px - 1. );
@@ -348,17 +348,17 @@ free_grid( PLFLT *xi, PLFLT *yi )
 }
 
 void
-create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts )
+create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int npts )
 {
     int   i;
     PLFLT *x, *y, *z, r;
     PLFLT xt, yt;
 
-    *xi = x = (PLFLT *) malloc( pts * sizeof ( PLFLT ) );
-    *yi = y = (PLFLT *) malloc( pts * sizeof ( PLFLT ) );
-    *zi = z = (PLFLT *) malloc( pts * sizeof ( PLFLT ) );
+    *xi = x = (PLFLT *) malloc( (size_t) npts * sizeof ( PLFLT ) );
+    *yi = y = (PLFLT *) malloc( (size_t) npts * sizeof ( PLFLT ) );
+    *zi = z = (PLFLT *) malloc( (size_t) npts * sizeof ( PLFLT ) );
 
-    for ( i = 0; i < pts; i++ )
+    for ( i = 0; i < npts; i++ )
     {
         xt = ( xM - xm ) * plrandd();
         yt = ( yM - ym ) * plrandd();

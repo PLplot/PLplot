@@ -6,6 +6,11 @@
 
 #include "plcdemos.h"
 
+void map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data );
+void mapform19( PLINT n, PLFLT *x, PLFLT *y );
+PLFLT normalize_longitude( PLFLT lon );
+void geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data );
+
 void
 map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 {
@@ -39,7 +44,8 @@ mapform19( PLINT n, PLFLT *x, PLFLT *y )
 
 // "Normalize" longitude values so that they always fall between -180.0 and
 // 180.0
-PLFLT normalize_longitude( PLFLT lon )
+PLFLT 
+normalize_longitude( PLFLT lon )
 {
     PLFLT times;
     if ( lon >= -180.0 && lon <= 180.0 )

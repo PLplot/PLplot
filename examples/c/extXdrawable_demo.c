@@ -50,9 +50,13 @@ typedef struct App
 
 App app;
 
+void setup_plot_drawable( App *a );
+static gint ev_plotwindow_conf( GtkWidget *widget, GdkEventConfigure *ev, gpointer *data );
+void init_app( App *a );
+
 //--------------------------------------------------------------------------
 
-void setup_plot_drawable( App *app )
+void setup_plot_drawable( App *a )
 {
     struct
     {
@@ -69,12 +73,12 @@ void setup_plot_drawable( App *app )
 
   #if TO_PIXMAP == 1
     // Here we set up to draw to a pixmap
-    xinfo.display  = GDK_PIXMAP_XDISPLAY( app->plotwindow_pixmap );
-    xinfo.drawable = GDK_PIXMAP_XID( app->plotwindow_pixmap );
+    xinfo.display  = GDK_PIXMAP_XDISPLAY( a->plotwindow_pixmap );
+    xinfo.drawable = GDK_PIXMAP_XID( a->plotwindow_pixmap );
   #else
     // Alternatively, we can do direct to a visible X Window
-    xinfo.display  = GDK_WINDOW_XDISPLAY( app->plotwindow->window );
-    xinfo.drawable = GDK_WINDOW_XID( app->plotwindow->window );
+    xinfo.display  = GDK_WINDOW_XDISPLAY( a->plotwindow->window );
+    xinfo.drawable = GDK_WINDOW_XID( a->plotwindow->window );
   #endif
 
     pl_cmd( PLESC_DEVINIT, &xinfo );
@@ -131,7 +135,7 @@ static gint ev_plotwindow_expose( GtkWidget *widget, GdkEventExpose *ev, gpointe
 
 //--------------------------------------------------------------------------
 
-void init_app( App *app )
+void init_app( App *a )
 {
     GtkWidget      *menubar;
     GtkItemFactory *item_factory;
@@ -141,18 +145,18 @@ void init_app( App *app )
     GtkWidget      *vbox, *hbox;
 
     // Create the top-level root window
-    app->rootwindow = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-    gtk_signal_connect( GTK_OBJECT( app->rootwindow ), "delete_event", gtk_main_quit,
+    a->rootwindow = gtk_window_new( GTK_WINDOW_TOPLEVEL );
+    gtk_signal_connect( GTK_OBJECT( a->rootwindow ), "delete_event", gtk_main_quit,
         NULL );
 
     // A toplevel box to hold things
     vbox = gtk_vbox_new( FALSE, 0 );
-    gtk_container_add( GTK_CONTAINER( app->rootwindow ), vbox );
+    gtk_container_add( GTK_CONTAINER( a->rootwindow ), vbox );
 
     // Construct the main menu structure
     item_factory = gtk_item_factory_new( GTK_TYPE_MENU_BAR, "<main>", accel_group );
     gtk_item_factory_create_items( item_factory, nitems, menu_items, NULL );
-    gtk_window_add_accel_group( GTK_WINDOW( app->rootwindow ), accel_group );
+    gtk_window_add_accel_group( GTK_WINDOW( a->rootwindow ), accel_group );
     menubar = gtk_item_factory_get_widget( item_factory, "<main>" );
     gtk_box_pack_start( GTK_BOX( vbox ), menubar, FALSE, FALSE, 0 );
     gtk_widget_show( menubar );
@@ -164,32 +168,32 @@ void init_app( App *app )
     gtk_box_pack_start( GTK_BOX( hbox ), vbox, TRUE, TRUE, 10 );
 
     // Add an area to plot into
-    app->plotwindow        = gtk_drawing_area_new();
-    app->plotwindow_pixmap = NULL;
+    a->plotwindow        = gtk_drawing_area_new();
+    a->plotwindow_pixmap = NULL;
 
   #if TO_PIXMAP != 1
     // Turn off double buffering if we are plotting direct to the plotwindow
     // in setup_plot_drawable().
     //
-    GTK_WIDGET_UNSET_FLAGS( app->plotwindow, GTK_DOUBLE_BUFFERED );
+    GTK_WIDGET_UNSET_FLAGS( a->plotwindow, GTK_DOUBLE_BUFFERED );
   #endif
 
     // By experiment, 3x3 seems to be the smallest size plplot can cope with.
     // Here we utilise the side effect that gtk_widget_set_size_request()
     // effectively sets the minimum size of the widget.
     //
-    gtk_widget_set_size_request( app->plotwindow, 3, 3 );
-    gtk_box_pack_start( GTK_BOX( vbox ), app->plotwindow, TRUE, TRUE, 0 );
+    gtk_widget_set_size_request( a->plotwindow, 3, 3 );
+    gtk_box_pack_start( GTK_BOX( vbox ), a->plotwindow, TRUE, TRUE, 0 );
 
     // Set the initial size of the application
-    gtk_window_set_default_size( GTK_WINDOW( app->rootwindow ), APP_INITIAL_WIDTH, APP_INITIAL_HEIGHT );
+    gtk_window_set_default_size( GTK_WINDOW( a->rootwindow ), APP_INITIAL_WIDTH, APP_INITIAL_HEIGHT );
 
-    g_signal_connect( G_OBJECT( app->plotwindow ), "configure_event",
+    g_signal_connect( G_OBJECT( a->plotwindow ), "configure_event",
         G_CALLBACK( ev_plotwindow_conf ), NULL );
-    g_signal_connect( G_OBJECT( app->plotwindow ), "expose_event",
+    g_signal_connect( G_OBJECT( a->plotwindow ), "expose_event",
         G_CALLBACK( ev_plotwindow_expose ), NULL );
 
-    gtk_widget_show_all( app->rootwindow );
+    gtk_widget_show_all( a->rootwindow );
 }
 //--------------------------------------------------------------------------
 

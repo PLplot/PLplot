@@ -61,8 +61,8 @@ int main( int argc, const char *argv[] )
     PLFLT radius, pitch, xpos, ypos, zpos;
     // p1string must be exactly one character + the null termination
     // character.
-    char p1string[] = "O",
-    *pstring        = "The future of our civilization depends on software freedom.";
+    char p1string[]     = "O";
+    const char *pstring = "The future of our civilization depends on software freedom.";
     // Allocate and define the minimal x, y, and z to insure 3D box
     x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ) );
     y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
@@ -339,7 +339,7 @@ int main( int argc, const char *argv[] )
     // domega controls the spacing between the various characters of the
     // string and also the maximum value of omega for the given number
     // of characters in *pstring.
-    domega = 2. * M_PI / strlen( pstring );
+    domega = 2. * M_PI / (double) strlen( pstring );
     omega  = 0.;
     // 3D function is a helix of the given radius and pitch
     radius = 0.5;

@@ -295,19 +295,19 @@ plot3( void )
 #define F( a, b )    ( f[a * ny + b] )
 
 static void
-f2mnmx( PLFLT *f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
+f2mnmx( PLFLT *f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax )
 {
     int i, j;
 
-    *fmax = F( 0, 0 );
-    *fmin = *fmax;
+    *fnmax = F( 0, 0 );
+    *fnmin = *fnmax;
 
     for ( i = 0; i < nx; i++ )
     {
         for ( j = 0; j < ny; j++ )
         {
-            *fmax = MAX( *fmax, F( i, j ) );
-            *fmin = MIN( *fmin, F( i, j ) );
+            *fnmax = MAX( *fnmax, F( i, j ) );
+            *fnmin = MIN( *fnmin, F( i, j ) );
         }
     }
 }

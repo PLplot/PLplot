@@ -54,7 +54,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-static void polar()
+static void polar( void )
 //polar contour plot example.
 {
     int      i, j;
@@ -117,24 +117,24 @@ static void polar()
 //--------------------------------------------------------------------------
 
 static void
-f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
+f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax )
 {
     int i, j;
 
-    *fmax = f[0][0];
-    *fmin = *fmax;
+    *fnmax = f[0][0];
+    *fnmin = *fnmax;
 
     for ( i = 0; i < nx; i++ )
     {
         for ( j = 0; j < ny; j++ )
         {
-            *fmax = MAX( *fmax, f[i][j] );
-            *fmin = MIN( *fmin, f[i][j] );
+            *fnmax = MAX( *fnmax, f[i][j] );
+            *fnmin = MIN( *fnmin, f[i][j] );
         }
     }
 }
 
-static void potential()
+static void potential( void )
 //shielded potential contour plot example.
 {
     int      i, j;
@@ -145,7 +145,7 @@ static void potential()
     PLFLT    div1, div1i, div2, div2i;
     PLFLT    **z;
     PLINT    nlevelneg, nlevelpos;
-    PLFLT    dz, clevel, clevelneg[PNLEVEL], clevelpos[PNLEVEL];
+    PLFLT    dz, clevel2, clevelneg[PNLEVEL], clevelpos[PNLEVEL];
     PLINT    ncollin, ncolbox, ncollab;
     PLFLT    px[PPERIMETERPTS], py[PPERIMETERPTS];
     PLFLT    t, r, theta;
@@ -224,11 +224,11 @@ static void potential()
     nlevelpos = 0;
     for ( i = 0; i < PNLEVEL; i++ )
     {
-        clevel = zmin + ( (double) i + 0.5 ) * dz;
-        if ( clevel <= 0. )
-            clevelneg[nlevelneg++] = clevel;
+        clevel2 = zmin + ( (double) i + 0.5 ) * dz;
+        if ( clevel2 <= 0. )
+            clevelneg[nlevelneg++] = clevel2;
         else
-            clevelpos[nlevelpos++] = clevel;
+            clevelpos[nlevelpos++] = clevel2;
     }
     // Colours!
     ncollin = 11;
