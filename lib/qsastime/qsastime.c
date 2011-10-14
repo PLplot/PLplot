@@ -333,7 +333,7 @@ void breakDownMJD( int *year, int *month, int *day, int *hour, int *min, double 
 
 const char * getDayOfWeek( const MJDtime *MJD )
 {
-    static char *dow = { "Wed\0Thu\0Fri\0Sat\0Sun\0Mon\0Tue" };
+    static const char *dow = { "Wed\0Thu\0Fri\0Sat\0Sun\0Mon\0Tue" };
     int         d    = MJD->base_day % 7;
     if ( d < 0 )
         d += 7;
@@ -342,7 +342,7 @@ const char * getDayOfWeek( const MJDtime *MJD )
 
 const char * getLongDayOfWeek( const MJDtime *MJD )
 {
-    static char *dow = { "Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday\0\0Sunday\0\0\0\0Monday\0\0\0\0Tuesday" };
+    static const char *dow = { "Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday\0\0Sunday\0\0\0\0Monday\0\0\0\0Tuesday" };
     int         d    = MJD->base_day % 7;
     if ( d < 0 )
         d += 7;
@@ -351,13 +351,13 @@ const char * getLongDayOfWeek( const MJDtime *MJD )
 
 const char * getMonth( int m )
 {
-    static char *months = { "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec" };
+    static const char *months = { "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec" };
     return &( months[( m ) * 4] );
 }
 
 const char * getLongMonth( int m )
 {
-    static char *months = { "January\0\0\0February\0\0March\0\0\0\0\0April\0\0\0\0\0May\0\0\0\0\0\0\0June\0\0\0\0\0\0July\0\0\0\0\0\0August\0\0\0\0September\0October\0\0\0November\0\0December" };
+    static const char *months = { "January\0\0\0February\0\0March\0\0\0\0\0April\0\0\0\0\0May\0\0\0\0\0\0\0June\0\0\0\0\0\0July\0\0\0\0\0\0August\0\0\0\0September\0October\0\0\0November\0\0December" };
     return &( months[( m ) * 10] );
 }
 
@@ -540,7 +540,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
             else if ( next == 'D' )
             {
                 // month/day/year
-                int y = year % 100;
+                y = year % 100;
                 if ( ysign == 0 )
                     sprintf( DateTime, "%02d/%02d/%02d", month + 1, day, y );
                 else
@@ -839,7 +839,6 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
             }
             else if ( next == 'V' )
             {
-                int days_in_wk1;
                 // week of year as a number,  (01 - 53) start of week is Monday and first week has at least 3 days in year
                 getYAD( &y1, &ifleapyear, &doy, nMJD, forceJulian );
                 days_in_wk1 = ( nMJD->base_day - doy - 3 ) % 7;
@@ -1328,18 +1327,18 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
     else
     {
         // binary hunt phase where we are assured 0 <= *low < n
-        indexbase = (void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
+        indexbase = (const void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
         if ( ( *ge )( key, indexbase ) )
         {
             high      = ( *low ) + hunt_inc;
-            indexbase = (void *) ( ( (const char *) base ) + ( size * high ) );
+            indexbase = (const void *) ( ( (const char *) base ) + ( size * high ) );
             // indexbase is valid if high < n.
             while ( ( high < n ) && ( ( *ge )( key, indexbase ) ) )
             {
                 *low      = high;
                 hunt_inc += hunt_inc;
                 high      = high + hunt_inc;
-                indexbase = (void *) ( ( (const char *) base ) + ( size * high ) );
+                indexbase = (const void *) ( ( (const char *) base ) + ( size * high ) );
             }
             if ( high >= n )
                 high = n;
@@ -1350,14 +1349,14 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
         {
             high      = *low;
             *low      = high - hunt_inc;
-            indexbase = (void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
+            indexbase = (const void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
             // indexbase is valid if(*low) >= 0
             while ( ( ( *low ) >= 0 ) && !( ( *ge )( key, indexbase ) ) )
             {
                 high      = *low;
                 hunt_inc += hunt_inc;
                 *low      = ( *low ) - hunt_inc;
-                indexbase = (void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
+                indexbase = (const void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
             }
             if ( ( *low ) < 0 )
                 *low = -1;
@@ -1371,7 +1370,7 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
     while ( high - *low > 1 )
     {
         mid       = *low + ( high - *low ) / 2;
-        indexbase = (void *) ( ( (const char *) base ) + ( size * mid ) );
+        indexbase = (const void *) ( ( (const char *) base ) + ( size * mid ) );
         if ( ( *ge )( key, indexbase ) )
             *low = mid;
         else

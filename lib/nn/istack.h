@@ -26,7 +26,7 @@ typedef struct
 } istack;
 
 int istack_contains( istack* s, int v );
-istack* istack_create();
+istack* istack_create( void );
 void istack_destroy( istack* s );
 void istack_push( istack* s, int v );
 int istack_pop( istack* s );

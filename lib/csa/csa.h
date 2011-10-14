@@ -35,13 +35,13 @@ typedef struct
 #endif
 
 extern int csa_verbose;
-extern char* csa_version;
+extern const char* csa_version;
 
 struct csa;
 typedef struct csa   csa;
 
 CSADLLIMPEXP
-csa* csa_create();
+csa* csa_create( void );
 CSADLLIMPEXP
 void csa_destroy( csa* a );
 CSADLLIMPEXP

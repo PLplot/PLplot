@@ -47,6 +47,8 @@ struct hashtable
     ht_bucket   ** table;
 };
 
+int d1eq( void* key1, void* key2 );
+
 // Creates a hashtable of specified size.
 //
 hashtable* ht_create( int size, ht_keycp cp, ht_keyeq eq, ht_key2hash hash )

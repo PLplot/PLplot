@@ -69,7 +69,14 @@ int circle_build( circle* c, point* p0, point* p1, point* p2 );
 int circle_contains( circle* c, point* p );
 void delaunay_circles_find( delaunay* d, point* p, int* n, int** out );
 int delaunay_xytoi( delaunay* d, point* p, int seed );
-void nn_quit( char* format, ... );
+void nn_quit( const char* format, ... );
+void nnpi_reset( nnpi* nn );
+void nnpi_calculate_weights( nnpi* nn );
+void nnpi_normalize_weights( nnpi* nn );
+void nnpi_set_point( nnpi* nn, point* p );
+int nnpi_get_nvertices( nnpi* nn );
+int* nnpi_get_vertices( nnpi* nn );
+double* nnpi_get_weights( nnpi* nn );
 
 #define NSTART             10
 #define NINC               10
@@ -505,14 +512,14 @@ void nnhpi_destroy( nnhpi* nn )
 
 // Finds Natural Neighbours-interpolated value in a point.
 //
-// @param nnhpi NN point hashing interpolator
+// @param nnhp NN point hashing interpolator
 // @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
 //
-void nnhpi_interpolate( nnhpi* nnhpi, point* p )
+void nnhpi_interpolate( nnhpi* nnhp, point* p )
 {
-    nnpi      * nnpi       = nnhpi->nnpi;
-    delaunay  * d          = nnpi->d;
-    hashtable * ht_weights = nnhpi->ht_weights;
+    nnpi      * nnp       = nnhp->nnpi;
+    delaunay  * d          = nnp->d;
+    hashtable * ht_weights = nnhp->ht_weights;
     nn_weights* weights;
     int       i;
 
@@ -524,21 +531,21 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
     }
     else
     {
-        nnpi_reset( nnpi );
-        nnpi->p = p;
-        nnpi_calculate_weights( nnpi );
-        nnpi_normalize_weights( nnpi );
+        nnpi_reset( nnp );
+        nnp->p = p;
+        nnpi_calculate_weights( nnp );
+        nnpi_normalize_weights( nnp );
 
         weights           = malloc( sizeof ( nn_weights ) );
-        weights->vertices = malloc( sizeof ( int ) * nnpi->nvertices );
-        weights->weights  = malloc( sizeof ( double ) * nnpi->nvertices );
+        weights->vertices = malloc( sizeof ( int ) * nnp->nvertices );
+        weights->weights  = malloc( sizeof ( double ) * nnp->nvertices );
 
-        weights->nvertices = nnpi->nvertices;
+        weights->nvertices = nnp->nvertices;
 
-        for ( i = 0; i < nnpi->nvertices; ++i )
+        for ( i = 0; i < nnp->nvertices; ++i )
         {
-            weights->vertices[i] = nnpi->vertices[i];
-            weights->weights[i]  = nnpi->weights[i];
+            weights->vertices[i] = nnp->vertices[i];
+            weights->weights[i]  = nnp->weights[i];
         }
 
         ht_insert( ht_weights, p, weights );
@@ -547,15 +554,15 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
         {
             if ( nn_test_vertice == -1 )
             {
-                if ( nnpi->n == 0 )
+                if ( nnp->n == 0 )
                     fprintf( stderr, "weights:\n" );
-                fprintf( stderr, "  %d: {", nnpi->n );
+                fprintf( stderr, "  %d: {", nnp->n );
 
-                for ( i = 0; i < nnpi->nvertices; ++i )
+                for ( i = 0; i < nnp->nvertices; ++i )
                 {
-                    fprintf( stderr, "(%d,%.5g)", nnpi->vertices[i], nnpi->weights[i] );
+                    fprintf( stderr, "(%d,%.5g)", nnp->vertices[i], nnp->weights[i] );
 
-                    if ( i < nnpi->nvertices - 1 )
+                    if ( i < nnp->nvertices - 1 )
                         fprintf( stderr, ", " );
                 }
                 fprintf( stderr, "}\n" );
@@ -564,13 +571,13 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
             {
                 double w = 0.0;
 
-                if ( nnpi->n == 0 )
+                if ( nnp->n == 0 )
                     fprintf( stderr, "weights for vertex %d:\n", nn_test_vertice );
-                for ( i = 0; i < nnpi->nvertices; ++i )
+                for ( i = 0; i < nnp->nvertices; ++i )
                 {
-                    if ( nnpi->vertices[i] == nn_test_vertice )
+                    if ( nnp->vertices[i] == nn_test_vertice )
                     {
-                        w = nnpi->weights[i];
+                        w = nnp->weights[i];
 
                         break;
                     }
@@ -579,10 +586,10 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
             }
         }
 
-        nnpi->n++;
+        nnp->n++;
     }
 
-    nnhpi->n++;
+    nnhp->n++;
 
     if ( weights->nvertices == 0 )
     {
@@ -593,7 +600,7 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
     p->z = 0.0;
     for ( i = 0; i < weights->nvertices; ++i )
     {
-        if ( weights->weights[i] < nnpi->wmin )
+        if ( weights->weights[i] < nnp->wmin )
         {
             p->z = NaN;
             return;
@@ -607,12 +614,12 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
 // pd->x = p->x and pd->y = p->y, and copies p->z to pd->z. Exits with error
 // if the point is not found.
 //
-// @param nnhpi Natural Neighbours hashing point interpolator
+// @param nnhp Natural Neighbours hashing point interpolator
 // @param p New data
 //
-void nnhpi_modify_data( nnhpi* nnhpi, point* p )
+void nnhpi_modify_data( nnhpi* nnhp, point* p )
 {
-    point* orig = ht_find( nnhpi->ht_data, p );
+    point* orig = ht_find( nnhp->ht_data, p );
 
     assert( orig != NULL );
     orig->z = p->z;

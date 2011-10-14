@@ -316,7 +316,7 @@ extern NNDLLIMPEXP_DATA( NN_RULE ) nn_rule;
 
 // Contains version string for the nn package.
 //
-extern char* nn_version;
+extern const char* nn_version;
 
 // Limits verbose information to a particular vertex (used mainly for
 // debugging purposes).

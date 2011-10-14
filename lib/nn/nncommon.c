@@ -46,7 +46,11 @@ NN_RULE nn_rule         = SIBSON;
 
 #include "version.h"
 
-void nn_quit( char* format, ... )
+void nn_quit( const char* format, ... );
+int circle_build( circle* c, point* p1, point* p2, point* p3 );
+int circle_contains( circle* c, point* p );
+
+void nn_quit( const char* format, ... )
 {
     va_list args;
 

@@ -44,6 +44,8 @@
 
 int circle_build( circle* c, point* p0, point* p1, point* p2 );
 int circle_contains( circle* c, point* p );
+int delaunay_xytoi( delaunay* d, point* p, int id );
+void delaunay_circles_find( delaunay* d, point* p, int* n, int** out );
 
 #ifdef USE_QHULL
 static int cw( delaunay *d, triangle *t );

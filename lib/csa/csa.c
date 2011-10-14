@@ -132,7 +132,9 @@ struct csa
     int nppc;                   // average number of points per square
 };
 
-static void csa_quit( char* format, ... )
+void csa_setnppc( csa* a, double nppc );
+
+static void csa_quit( const char* format, ... )
 {
     va_list args;
 
@@ -671,8 +673,8 @@ static void thindata( triangle* t, int npmax )
     for ( ii = 0; ii < t->npoints; ++ii )
     {
         point * p = t->points[ii];
-        int   i   = (int) floor( ( p->x - xmin ) / h );
-        int   j   = (int) floor( ( p->y - ymin ) / h );
+        i   = (int) floor( ( p->x - xmin ) / h );
+        j   = (int) floor( ( p->y - ymin ) / h );
         square* s = squares[j][i];
 
         if ( s->npoints == 0 )
@@ -1040,8 +1042,8 @@ static void svd( double** a, int n, int m, double* w, double** v )
                     s    = -f * h;
                     for ( j = 0; j < m; j++ )
                     {
-                        double y = a[j][l1];
-                        double z = a[j][i];
+                        y = a[j][l1];
+                        z = a[j][i];
 
                         a[j][l1] = y * c + z * s;
                         a[j][i]  = z * c - y * s;

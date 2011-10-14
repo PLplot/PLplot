@@ -78,13 +78,13 @@ int main( int argc, char *argv[] )
     int    i               = 0;
     int    number_of_lines = 0;
 
-    if ( ( fr = fopen( argv[1], "r" ) ) == NULL )
+    if ( (argc < 2) || ( fr = fopen( argv[1], "r" ) ) == NULL )
     {
         fprintf( stderr, "Cannot open first file as readable\n" );
         exit( 1 );
     }
 
-    if ( ( fw = fopen( argv[2], "w" ) ) == NULL )
+    if ( (argc < 3) || ( fw = fopen( argv[2], "w" ) ) == NULL )
     {
         fprintf( stderr, "Cannot open second file as writable\n" );
         exit( 1 );

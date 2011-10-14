@@ -46,7 +46,7 @@ struct nnai
     nn_weights* weights;
 };
 
-void nn_quit( char* format, ... );
+void nn_quit( const char* format, ... );
 void nnpi_calculate_weights( nnpi* nn );
 int nnpi_get_nvertices( nnpi* nn );
 int* nnpi_get_vertices( nnpi* nn );
@@ -64,7 +64,7 @@ void nnpi_set_point( nnpi* nn, point* p );
 nnai* nnai_build( delaunay* d, int n, double* x, double* y )
 {
     nnai  * nn   = malloc( sizeof ( nnai ) );
-    nnpi  * nnpi = nnpi_create( d );
+    nnpi  * nnp = nnpi_create( d );
     int   * vertices;
     double* weights;
     int   i;
@@ -88,22 +88,22 @@ nnai* nnai_build( delaunay* d, int n, double* x, double* y )
         p.x = x[i];
         p.y = y[i];
 
-        nnpi_reset( nnpi );
-        nnpi_set_point( nnpi, &p );
-        nnpi_calculate_weights( nnpi );
-        nnpi_normalize_weights( nnpi );
+        nnpi_reset( nnp );
+        nnpi_set_point( nnp, &p );
+        nnpi_calculate_weights( nnp );
+        nnpi_normalize_weights( nnp );
 
-        vertices = nnpi_get_vertices( nnpi );
-        weights  = nnpi_get_weights( nnpi );
+        vertices = nnpi_get_vertices( nnp );
+        weights  = nnpi_get_weights( nnp );
 
-        w->nvertices = nnpi_get_nvertices( nnpi );
+        w->nvertices = nnpi_get_nvertices( nnp );
         w->vertices  = malloc( w->nvertices * sizeof ( int ) );
         memcpy( w->vertices, vertices, w->nvertices * sizeof ( int ) );
         w->weights = malloc( w->nvertices * sizeof ( double ) );
         memcpy( w->weights, weights, w->nvertices * sizeof ( double ) );
     }
 
-    nnpi_destroy( nnpi );
+    nnpi_destroy( nnp );
 
     return nn;
 }
