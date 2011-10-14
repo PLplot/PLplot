@@ -391,7 +391,7 @@ plD_open_tkwin( PLStream *pls )
             // but we will actually 'free' it later ourselves, and therefore
             // need to own the memory.
             //
-            pls->FileName = strdup( TkGetDefaultScreenName( NULL, NULL ) );
+            pls->FileName = plstrdup( TkGetDefaultScreenName( NULL, NULL ) );
         }
         tkwd->display = pls->plPlotterPtr->display;
 #else

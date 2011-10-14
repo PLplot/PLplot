@@ -90,7 +90,7 @@ get_font( PSDev* dev, PLUNICODE fci );
 
 
 static void ps_dispatch_init_helper( PLDispatchTable *pdt,
-                                     char *menustr, char *devnam,
+                                     const char *menustr, const char *devnam,
                                      int type, int seq, plD_init_fp init )
 {
 #ifndef ENABLE_DYNDRIVERS

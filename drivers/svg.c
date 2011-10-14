@@ -81,12 +81,12 @@ typedef struct
 
 // Functions for writing XML SVG tags to a file
 
-static void svg_open( SVG *, char * );
+static void svg_open( SVG *, const char * );
 static void svg_open_end( SVG * );
-static void svg_attr_value( SVG *, char *, char * );
-static void svg_attr_values( SVG *, char *, char *, ... );
-static void svg_close( SVG *, char * );
-static void svg_general( SVG *, char * );
+static void svg_attr_value( SVG *, const char *, const char * );
+static void svg_attr_values( SVG *, const char *, const char *, ... );
+static void svg_close( SVG *, const char * );
+static void svg_general( SVG *, const char * );
 static void svg_indent( SVG * );
 static void svg_stroke_width( PLStream * );
 static void svg_stroke_color( PLStream * );
@@ -564,7 +564,7 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 void proc_str( PLStream *pls, EscText *args )
 {
     char         plplot_esc;
-    short static which_clip = 0;
+    static short which_clip = 0;
     short        i;
     short        totalTags = 1;
     short        ucs4Len   = args->unicode_array_len;
@@ -893,7 +893,7 @@ void proc_str( PLStream *pls, EscText *args )
 // Used to open a new XML expression, sets the indent level appropriately
 //--------------------------------------------------------------------------
 
-void svg_open( SVG *aStream, char *tag )
+void svg_open( SVG *aStream, const char *tag )
 {
     svg_indent( aStream );
     fprintf( aStream->svgFile, "<%s\n", tag );
@@ -921,7 +921,7 @@ void svg_open_end( SVG *aStream )
 // i.e. foo="bar"
 //--------------------------------------------------------------------------
 
-void svg_attr_value( SVG *aStream, char *attribute, char *value )
+void svg_attr_value( SVG *aStream, const char *attribute, const char *value )
 {
     svg_indent( aStream );
     fprintf( aStream->svgFile, "%s=\"%s\"\n", attribute, value );
@@ -938,10 +938,10 @@ void svg_attr_value( SVG *aStream, char *attribute, char *value )
 //
 //--------------------------------------------------------------------------
 
-void svg_attr_values( SVG *aStream, char *attribute, char *format, ... )
+void svg_attr_values( SVG *aStream, const char *attribute, const char *format, ... )
 {
     va_list ap;
-    char    *p, *sval;
+    const char    *p, *sval;
     int     ival;
     double  dval;
 
@@ -989,7 +989,7 @@ void svg_attr_values( SVG *aStream, char *attribute, char *format, ... )
 // Used to close a XML expression, sets the indent level appropriately
 //--------------------------------------------------------------------------
 
-void svg_close( SVG *aStream, char *tag )
+void svg_close( SVG *aStream, const char *tag )
 {
     aStream->svgIndent -= 2;
     svg_indent( aStream );
@@ -1009,7 +1009,7 @@ void svg_close( SVG *aStream, char *tag )
 // Used to print any text into the svgFile
 //--------------------------------------------------------------------------
 
-void svg_general( SVG *aStream, char *text )
+void svg_general( SVG *aStream, const char *text )
 {
     svg_indent( aStream );
     fprintf( aStream->svgFile, "%s", text );
