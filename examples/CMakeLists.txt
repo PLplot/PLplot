@@ -277,6 +277,12 @@ if(CORE_BUILD)
     RENAME plplot_configure.cmake
     )
 
+  # function support for CMake-based build system for installed examples.
+  install(FILES
+    ${CMAKE_SOURCE_DIR}/cmake/modules/plplot_functions.cmake
+    DESTINATION ${DATA_DIR}/examples/cmake/modules
+    )
+
   # pkg-config support for CMake-based build system for installed examples.
   install(FILES
     ${CMAKE_SOURCE_DIR}/cmake/modules/pkg-config.cmake
