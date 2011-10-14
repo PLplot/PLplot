@@ -70,11 +70,14 @@ if(SH_EXECUTABLE)
     )
   list(APPEND SCRIPTS test_c_interactive.sh)
 
+  set(test_output_files_LIST)
   set(examples_compare_DEPENDS)
   add_test(examples_c
     ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
     )
   list(APPEND examples_compare_DEPENDS examples_c)
+  list_example_files(. ${TEST_DEVICE} c output_list)
+  list(APPEND test_output_files_LIST ${output_list})
 
   if(ENABLE_cxx)
     configure_file(
@@ -87,6 +90,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
       )
     list(APPEND examples_compare_DEPENDS examples_cxx)
+    list_example_files(. ${TEST_DEVICE} cxx output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_cxx)
 
   if(ENABLE_f77)
@@ -100,6 +105,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f77"
       )
     list(APPEND examples_compare_DEPENDS examples_f77)
+    list_example_files(. ${TEST_DEVICE} f output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_f77)
 
   if(ENABLE_f95)
@@ -113,6 +120,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
       )
     list(APPEND examples_compare_DEPENDS examples_f95)
+    list_example_files(. ${TEST_DEVICE} f95 output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_f95)
 
   if(ENABLE_java)
@@ -126,6 +135,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
       )
     list(APPEND examples_compare_DEPENDS examples_java)
+    list_example_files(. ${TEST_DEVICE} j output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_java)
 
   if(ENABLE_octave)
@@ -154,6 +165,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
       )
     list(APPEND examples_compare_DEPENDS examples_octave)
+    list_example_files(. ${TEST_DEVICE} o output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_octave)
 
   if(ENABLE_python)
@@ -173,6 +186,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
       )
     list(APPEND examples_compare_DEPENDS examples_python)
+    list_example_files(. ${TEST_DEVICE} p output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_python)
 
   if(ENABLE_tcl)
@@ -195,6 +210,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
       )
     list(APPEND examples_compare_DEPENDS examples_tcl)
+    list_example_files(. ${TEST_DEVICE} t output_list)
+    list(APPEND test_output_files_LIST ${output_list})
     set(PLTCL_DIR ${BIN_DIR})
     # Transform drive-letter form to leading-slash form, see comment above.
     string(REGEX REPLACE "^(.):" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
@@ -216,6 +233,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
       )
     list(APPEND examples_compare_DEPENDS examples_pdl)
+    list_example_files(. ${TEST_DEVICE} pdl output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_pdl)
 
   if(ENABLE_ada)
@@ -229,6 +248,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
       )
     list(APPEND examples_compare_DEPENDS examples_ada)
+    list_example_files(. ${TEST_DEVICE} a output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_ada)
 
   if(ENABLE_ocaml)
@@ -242,6 +263,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
       )
     list(APPEND examples_compare_DEPENDS examples_ocaml)
+    list_example_files(. ${TEST_DEVICE} ocaml output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_ocaml)
 
   if(ENABLE_lua)
@@ -255,6 +278,8 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=lua"
       )
     list(APPEND examples_compare_DEPENDS examples_lua)
+    list_example_files(. ${TEST_DEVICE} lua output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_lua)
 
   if(ENABLE_d)
@@ -268,14 +293,18 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=d"
       )
     list(APPEND examples_compare_DEPENDS examples_d)
+    list_example_files(. ${TEST_DEVICE} d output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_d)
 
   # Run C examples with different drivers
   if(PLD_psc)
     if (NOT TEST_DEVICE STREQUAL "psc")
-      add_test(examples_psttfc
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
+      add_test(examples_psc
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psc"
 	)
+      list_example_files(. psc c output_list)
+      list(APPEND test_output_files_LIST ${output_list})
     endif(NOT TEST_DEVICE STREQUAL "psc")
   endif(PLD_psc)
 
@@ -283,114 +312,152 @@ if(SH_EXECUTABLE)
     add_test(examples_psttfc
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
       )
+    list_example_files(. psttfc c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_psttf)
 
   if(PLD_pstex)
     add_test(examples_pstex
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pstex"
       )
+    list_example_files(. pstex c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pstex)
 
   if(PLD_png)
     add_test(examples_png
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=png"
       )
+    list_example_files(. png c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_png)
 
   if(PLD_svg)
     add_test(examples_svg
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
       )
+    list_example_files(. svg c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_svg)
 
   if(PLD_plmeta)
     add_test(examples_plmeta
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=plmeta"
       )
+    list_example_files(. plmeta c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_plmeta)
 
   if(PLD_pscairo)
     add_test(examples_pscairo
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pscairo"
       )
+    list_example_files(. pscairo c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pscairo)
 
   if(PLD_pngcairo)
     add_test(examples_pngcairo
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngcairo"
       )
+    list_example_files(. pngcairo c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pngcairo)
 
   if(PLD_xfig)
     add_test(examples_xfig
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=xfig"
       )
+    list_example_files(. xfig c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_xfig)
 
   if(PLD_gif)
     add_test(examples_gif
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=gif"
       )
+    list_example_files(. gif c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_gif)
 
   if(PLD_cgm)
     add_test(examples_cgm
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=cgm"
       )
+    list_example_files(. cgm c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_cgm)
 
   if(PLD_bmpqt)
     add_test(examples_bmpqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=bmpqt"
       )
+    list_example_files(. bmpqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_bmpqt)
 
   if(PLD_jpgqt)
     add_test(examples_jpgqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=jpgqt"
       )
+    list_example_files(. jpgqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_jpgqt)
 
   if(PLD_pngqt)
     add_test(examples_pngqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngqt"
       )
+    list_example_files(. pngqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pngqt)
 
   if(PLD_ppmqt)
     add_test(examples_ppmqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=ppmqt"
       )
+    list_example_files(. ppmqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_ppmqt)
 
   if(PLD_tiffqt)
     add_test(examples_tiffqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=tiffqt"
       )
+    list_example_files(. tiffqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_tiffqt)
 
   if(PLD_svgqt)
     add_test(examples_svgqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svgqt"
       )
+    list_example_files(. svgqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_svgqt)
 
   if(PLD_epsqt)
     add_test(examples_epsqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=epsqt"
       )
+    list_example_files(. epsqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_epsqt)
 
   if(PLD_pdfqt)
     add_test(examples_pdfqt
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdfqt"
       )
+    list_example_files(. pdfqt c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pdfqt)
 
   if(PLD_pdf)
     add_test(examples_pdf
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdf"
       )
+    list_example_files(. pdf c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pdf)
 
   if(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
@@ -418,11 +485,9 @@ if(SH_EXECUTABLE)
     endif(CMAKE_MAJOR_VERSION EQUAL 2 AND NOT CMAKE_MINOR_VERSION LESS 8)
   endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
 
-
-  # Make a copy of lena.pgm to the test subdirectory of the build
-  # tree so that example 20 will run from there.
-  # Also need a copy of lena.img for the octave bindings
   if(BUILD_TEST)
+    # Make a copy of lena.pgm to the test subdirectory of the build
+    # tree so that example 20 will run from there.
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
       COMMAND ${CMAKE_COMMAND} -E copy
@@ -432,6 +497,7 @@ if(SH_EXECUTABLE)
       )
     add_custom_target(lena_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm)
     if(ENABLE_octave)
+      # Also need a copy of lena.img for the octave bindings
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.img
 	COMMAND ${CMAKE_COMMAND} -E copy
@@ -441,6 +507,16 @@ if(SH_EXECUTABLE)
 	)
       add_custom_target(lena_octave_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.img)
     endif(ENABLE_octave)
+
+    # Custom target to remove everything created by ctest
+    # N.B. the test_output_files_LIST is extremely long and
+    # overflows the maximum line length of the shell if you
+    # replace "." above with ${CMAKE_CURRENT_BINARY_DIR}
+    add_custom_target(clean_ctest_plot_files
+      COMMAND ${CMAKE_COMMAND} -E remove ${test_output_files_LIST}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+
   endif(BUILD_TEST)
 
   set(PERM_SCRIPTS
