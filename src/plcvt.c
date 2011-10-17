@@ -64,7 +64,7 @@ plP_mmpcy( PLFLT y )
 PLINT
 plP_wcpcx( PLFLT x )
 {
-    if ( !finite( x ) )
+    if ( !isfinite( x ) )
         return PLINT_MIN;
     return ( ROUND( plsc->wpxoff + plsc->wpxscl * x ) );
 }
@@ -74,7 +74,7 @@ plP_wcpcx( PLFLT x )
 PLINT
 plP_wcpcy( PLFLT y )
 {
-    if ( !finite( y ) )
+    if ( !isfinite( y ) )
         return PLINT_MIN;
     return ( ROUND( plsc->wpyoff + plsc->wpyscl * y ) );
 }

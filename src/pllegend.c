@@ -99,7 +99,7 @@ static void legend_position( PLINT position, PLFLT legend_width, PLFLT legend_he
     // coordinate of the top-left of the legend box relative to the
     // legend box reference point.
 
-    PLFLT xorigin, yorigin, xlegend, ylegend;
+    PLFLT xorigin = 0.0, yorigin = 0.0, xlegend = 0.0, ylegend = 0.0;
     // By default the sign of the x and y offsets is positive.
     *xsign = 1.;
     *ysign = 1.;
@@ -546,11 +546,11 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     PLFLT plot_y, plot_y_subpage;
     PLFLT text_x, text_y, text_x_subpage, text_y_subpage;
     // Character height (normalized subpage coordinates)
-    PLFLT character_height, character_width, symbol_width;
+    PLFLT character_height, character_width, symbol_width = 0.0;
     // x, y-position of the current legend entry
     PLFLT ty, xshift, drow, dcolumn;
     // Positions of the legend entries
-    PLFLT dxs, *xs, *ys, xl[2], yl[2], xbox[4], ybox[4];
+    PLFLT dxs, *xs = NULL, *ys = NULL, xl[2], yl[2], xbox[4], ybox[4];
     PLINT i, j;
     // Active attributes to be saved and restored afterward.
     PLINT col0_save       = plsc->icol0,
@@ -562,10 +562,10 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
     // Saved external normalized coordinates of viewport.
     // (These are actual values used only for the restore.)
-    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+    PLFLT xdmin_save = 0.0, xdmax_save = 0.0, ydmin_save = 0.0, ydmax_save = 0.0;
     // Limits of adopted coordinates used to calculate all coordinate
     // transformations.
-    PLFLT xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted;
+    PLFLT xdmin_adopted = 0.0, xdmax_adopted = 0.0, ydmin_adopted = 0.0, ydmax_adopted = 0.0;
 
     PLFLT x_subpage_per_mm, y_subpage_per_mm, text_width0 = 0., text_width;
     PLFLT width_border, column_separation,
@@ -788,8 +788,8 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     if ( some_symbols )
     {
         max_symbol_numbers = MAX( 2, max_symbol_numbers );
-        if ( ( ( xs = (PLFLT *) malloc( max_symbol_numbers * sizeof ( PLFLT ) ) ) == NULL ) ||
-             ( ( ys = (PLFLT *) malloc( max_symbol_numbers * sizeof ( PLFLT ) ) ) == NULL ) )
+        if ( ( ( xs = (PLFLT *) malloc( (size_t) max_symbol_numbers * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( ys = (PLFLT *) malloc( (size_t) max_symbol_numbers * sizeof ( PLFLT ) ) ) == NULL ) )
         {
             plexit( "pllegend: Insufficient memory" );
         }
@@ -1113,7 +1113,7 @@ static void
 draw_label( PLBOOL if_bb, PLINT opt, const char *label )
 {
     // Justification of label text
-    PLFLT just;
+    PLFLT just = 0.0;
 
     // How far away from the axis should the label be drawn in units of
     // the character height?
@@ -1128,22 +1128,22 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
     PLINT nlabel = 0;
 
     // aspect ratio of physical area of subpage.
-    PLFLT aspspp = ( ( plsc->sppxma - plsc->sppxmi ) / plsc->xpmm ) /
-                   ( ( plsc->sppyma - plsc->sppymi ) / plsc->ypmm );
+    //PLFLT aspspp = ( ( plsc->sppxma - plsc->sppxmi ) / plsc->xpmm ) /
+    //               ( ( plsc->sppyma - plsc->sppymi ) / plsc->ypmm );
 
     // Character height in y and x normalized subpage coordinates.
-    PLFLT character_height_y = get_character_or_symbol_height( TRUE );
+    //PLFLT character_height_y = get_character_or_symbol_height( TRUE );
     // character height _in normalized subpage coordinates_ is smaller
     // in the x direction if the subpage aspect ratio is larger than one.
-    PLFLT character_height_x = character_height_y / aspspp;
+    //PLFLT character_height_x = character_height_y / aspspp;
 
     // Ratio of normalized subpage coordinates to mm coordinates in
     // x and y.
-    PLFLT spxpmm          = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
-    PLFLT spypmm          = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
+    //PLFLT spxpmm          = plsc->xpmm / ( plsc->sppxma - plsc->sppxmi );
+    //PLFLT spypmm          = plsc->ypmm / ( plsc->sppyma - plsc->sppymi );
     PLFLT label_length_mm = plstrl( label );
 
-    PLFLT parallel_height_mm, perpendicular_height_mm,
+    PLFLT parallel_height_mm = 0.0, perpendicular_height_mm = 0.0,
           default_mm, char_height_mm;
 
     plgchr( &default_mm, &char_height_mm );
@@ -1489,11 +1489,11 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
     // Saved external normalized coordinates of viewport.
     // (These are actual values used only for the restore.)
-    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+    PLFLT xdmin_save = 0.0, xdmax_save = 0.0, ydmin_save = 0.0, ydmax_save = 0.0;
 
     // Limits of adopted coordinates used to calculate all coordinate
     // transformations.
-    PLFLT xdmin_adopted, xdmax_adopted, ydmin_adopted, ydmax_adopted;
+    PLFLT xdmin_adopted = 0.0, xdmax_adopted = 0.0, ydmin_adopted = 0.0, ydmax_adopted = 0.0;
 
     // Active attributes to be saved and restored afterward.
     PLINT col0_save       = plsc->icol0,
@@ -1528,16 +1528,16 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLFLT plot_x_subpage, plot_y_subpage;
 
     // Position of the undecorated colorbar in normalized subpage coordinates.
-    PLFLT vx_min, vx_max, vy_min, vy_max;
+    PLFLT vx_min = 0.0, vx_max = 0.0, vy_min = 0.0, vy_max = 0.0;
 
     // World coordinate limits describing undecorated colorbar.
-    PLFLT wx_min, wx_max, wy_min, wy_max;
+    PLFLT wx_min = 0.0, wx_max = 0.0, wy_min = 0.0, wy_max = 0.0;
 
     // The data to plot
     PLFLT **color_data;
 
     // Setting up the data for display
-    PLINT  i, j, ni, nj, n_steps;
+    PLINT  i, j, ni = 0, nj = 0, n_steps;
     PLFLT  step_size;
 
     PLBOOL if_edge;
@@ -2059,7 +2059,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     else if ( opt & PL_COLORBAR_GRADIENT )
     {
         PLFLT xs[4], ys[4];
-        PLFLT angle;
+        PLFLT angle = 0.0;
         xs[0] = wx_min;
         ys[0] = wy_min;
         xs[1] = wx_max;

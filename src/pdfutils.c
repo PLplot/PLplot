@@ -1,4 +1,4 @@
-// $Id$
+// xId: pdfutils.c 11966 2011-10-14 07:10:05Z andrewross $
 //
 //  pdf_utils.c
 //
@@ -133,7 +133,7 @@ pdf_fopen( const char *filename, const char *mode )
 //--------------------------------------------------------------------------
 
 PDFstrm *
-pdf_bopen( U_CHAR *buffer, long bufmax )
+pdf_bopen( U_CHAR *buffer, size_t bufmax )
 {
     PDFstrm *pdfs;
 
@@ -270,7 +270,7 @@ pdf_putc( int c, PDFstrm *pdfs )
                 plexit( "pdf_putc: Insufficient memory" );
             }
         }
-        pdfs->buffer[pdfs->bp++] = c;
+        pdfs->buffer[pdfs->bp++] = (unsigned char) c;
         result = c;
     }
     else
@@ -342,7 +342,7 @@ pdf_ungetc( int c, PDFstrm *pdfs )
     {
         if ( pdfs->bp > 0 )
         {
-            pdfs->buffer[--pdfs->bp] = c;
+            pdfs->buffer[--pdfs->bp] = (unsigned char) c;
             result = c;
         }
     }
@@ -365,8 +365,8 @@ pdf_wrx( const U_CHAR *x, long nitems, PDFstrm *pdfs )
 
     if ( pdfs->file != NULL )
     {
-        result    = fwrite( x, 1, nitems, pdfs->file );
-        pdfs->bp += nitems;
+        result    = (int) fwrite( x, 1, (size_t) nitems, pdfs->file );
+        pdfs->bp += (size_t) nitems;
 #ifdef PLPLOT_USE_TCL_CHANNELS
     }
     else if ( pdfs->tclChan != NULL )
@@ -411,8 +411,8 @@ pdf_rdx( U_CHAR *x, long nitems, PDFstrm *pdfs )
 
     if ( pdfs->file != NULL )
     {
-        result    = fread( x, 1, nitems, pdfs->file );
-        pdfs->bp += nitems;
+        result    = (int) fread( x, 1, (size_t) nitems, pdfs->file );
+        pdfs->bp += (size_t) nitems;
 #ifdef PLPLOT_USE_TCL_CHANNELS
     }
     else if ( pdfs->tclChan != NULL )
@@ -482,7 +482,7 @@ pdf_rd_header( PDFstrm *pdfs, char *header )
         if ( ( c = pdf_getc( pdfs ) ) == EOF )
             return PDF_RDERR;
 
-        header[i] = c;
+        header[i] = (char) c;
         if ( header[i] == '\n' )
             break;
     }
@@ -531,7 +531,7 @@ pdf_rd_string( PDFstrm *pdfs, char *string, int nmax )
         if ( ( c = pdf_getc( pdfs ) ) == EOF )
             return PDF_RDERR;
 
-        string[i] = c;
+        string[i] = (char) c;
         if ( c == '\0' )
             break;
     }
@@ -610,8 +610,8 @@ pdf_rd_2bytes( PDFstrm *pdfs, U_SHORT *ps )
         return PDF_RDERR;
 
     *ps  = 0;
-    *ps |= (U_LONG) x[0];
-    *ps |= (U_LONG) x[1] << 8;
+    *ps |= (U_SHORT) x[0];
+    *ps |= (U_SHORT) x[1] << 8;
 
     return 0;
 }
@@ -772,10 +772,11 @@ pdf_rd_4bytes( PDFstrm *pdfs, U_LONG *ps )
 int
 pdf_wr_ieeef( PDFstrm *pdfs, float f )
 {
-    double fdbl, fmant, f_new;
-    float  fsgl, f_tmp;
-    int    istat, ex, e_new, e_off, bias = 127;
-    U_LONG value, s_ieee, e_ieee, f_ieee;
+    double    fdbl, fmant, f_new;
+    float     fsgl, f_tmp;
+    int       istat, ex, e_new, e_off;
+    const int bias = 127;
+    U_LONG    value, s_ieee, e_ieee, f_ieee;
 
     if ( f == 0.0 )
     {
@@ -803,7 +804,7 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
     }
     else
     {
-        e_ieee = e_new + bias;
+        e_ieee = (U_LONG) ( e_new + bias );
         f_tmp  = (float) ( f_new - 1 );
     }
     f_ieee = (U_LONG) ( f_tmp * 8388608 );         // multiply by 2^23
@@ -946,12 +947,12 @@ plAlloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 {
     PLINT i;
 
-    if ( ( *f = (PLFLT **) calloc( nx, sizeof ( PLFLT * ) ) ) == NULL )
+    if ( ( *f = (PLFLT **) calloc( (size_t) nx, sizeof ( PLFLT * ) ) ) == NULL )
         plexit( "Memory allocation error in \"plAlloc2dGrid\"" );
 
     for ( i = 0; i < nx; i++ )
     {
-        if ( ( ( *f )[i] = (PLFLT *) calloc( ny, sizeof ( PLFLT ) ) ) == NULL )
+        if ( ( ( *f )[i] = (PLFLT *) calloc( (size_t) ny, sizeof ( PLFLT ) ) ) == NULL )
             plexit( "Memory allocation error in \"plAlloc2dGrid\"" );
     }
 }
@@ -986,7 +987,7 @@ plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmax, PLFLT *fnmin 
     int   i, j;
     PLFLT m, M;
 
-    if ( !finite( f[0][0] ) )
+    if ( !isfinite( f[0][0] ) )
     {
         M = -HUGE_VAL;
         m = HUGE_VAL;
@@ -998,7 +999,7 @@ plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmax, PLFLT *fnmin 
     {
         for ( j = 0; j < ny; j++ )
         {
-            if ( !finite( f[i][j] ) )
+            if ( !isfinite( f[i][j] ) )
                 continue;
             if ( f[i][j] > M )
                 M = f[i][j];

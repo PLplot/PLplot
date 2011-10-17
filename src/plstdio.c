@@ -23,7 +23,6 @@
 //
 //
 
-#define NEED_PLDEBUG
 #include "plplotP.h"
 
 #if defined ( MSDOS ) || defined ( WIN32 )
@@ -173,11 +172,13 @@ plio_fgets( char *buf, int size, FILE *stream )
 FILE *
 pl_create_tempfile( char **fname )
 {
-    int        flags;
     FILE       *fd;
-    char       *tmpdir;
+    const char *tmpdir;
     char       *template;
     const char *tmpname = "plplot_XXXXXX";
+#ifndef PL_HAVE_UNLINK
+    int        flags;
+#endif
 
 #if defined ( MSDOS ) || defined ( WIN32 )
     tmpdir = getenv( "TEMP" );

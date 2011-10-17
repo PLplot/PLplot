@@ -191,7 +191,7 @@ static struct pattern
 // Set defining parameters for pattern fill
 
 static void
-spat( PLINT inc[], PLINT del[], PLINT nlin );
+spat( const PLINT inc[], const PLINT del[], PLINT nlin );
 
 //--------------------------------------------------------------------------
 // void plschr()
@@ -307,7 +307,7 @@ c_plpat( PLINT nlin, const PLINT *inc, const PLINT *del )
             return;
         }
     }
-    spat( (PLINT *) inc, (PLINT *) del, nlin );
+    spat( inc, del, nlin );
 }
 
 //--------------------------------------------------------------------------
@@ -353,7 +353,7 @@ c_plpsty( PLINT patt )
 //--------------------------------------------------------------------------
 
 static void
-spat( PLINT inc[], PLINT del[], PLINT nlin )
+spat( const PLINT inc[], const PLINT del[], PLINT nlin )
 {
     PLINT i;
 

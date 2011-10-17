@@ -293,13 +293,13 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             PLFLT   *x, *y;
             cgrid1.nx = nx;
             cgrid1.ny = ny;
-            x         = (PLFLT *) malloc( nx * sizeof ( PLFLT ) );
+            x         = (PLFLT *) malloc( (size_t) nx * sizeof ( PLFLT ) );
             if ( x == NULL )
                 plexit( "plfshades: Out of memory for x" );
             cgrid1.xg = x;
             for ( i = 0; i < nx; i++ )
                 cgrid1.xg[i] = xmin + ( xmax - xmin ) * (float) i / (float) ( nx - 1 );
-            y = (PLFLT *) malloc( ny * sizeof ( PLFLT ) );
+            y = (PLFLT *) malloc( (size_t) ny * sizeof ( PLFLT ) );
             if ( y == NULL )
                 plexit( "plfshades: Out of memory for y" );
             cgrid1.yg = y;
@@ -552,7 +552,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     // alloc space for value array, and initialize
     // This is only a temporary kludge
     nxny = nx * ny;
-    if ( ( a = (PLFLT *) malloc( nxny * sizeof ( PLFLT ) ) ) == NULL )
+    if ( ( a = (PLFLT *) malloc( (size_t) nxny * sizeof ( PLFLT ) ) ) == NULL )
     {
         plabort( "plfshade: unable to allocate memory for value array" );
         return;
@@ -564,7 +564,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
     // alloc space for condition codes
 
-    if ( ( c = (int *) malloc( nxny * sizeof ( int ) ) ) == NULL )
+    if ( ( c = (int *) malloc( (size_t) nxny * sizeof ( int ) ) ) == NULL )
     {
         plabort( "plfshade: unable to allocate memory for condition codes" );
         free( a );
@@ -1007,9 +1007,9 @@ exfill( void ( *fill )( PLINT, const PLFLT *, const PLFLT * ),
 
         // Slightly less than 2 n points are required for xx, yy, but
         // allocate room for 2 n to be safe.
-        if ( ( xx = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ) ) ) == NULL )
+        if ( ( xx = (PLFLT *) malloc( 2 * (size_t) n * sizeof ( PLFLT ) ) ) == NULL )
             plexit( "exfill: out of memory for xx" );
-        if ( ( yy = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ) ) ) == NULL )
+        if ( ( yy = (PLFLT *) malloc( 2 * (size_t) n * sizeof ( PLFLT ) ) ) == NULL )
             plexit( "exfill: out of memory for yy." );
 
         for ( i = 0; i < n; i++ )

@@ -384,13 +384,12 @@ c_plpoly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const PLBOOL
         // remaining segment is visible
         if ( axis == 3 && draw[i] ) //  not clipped away
         {
-            PLFLT u0, v0, u1, v1;
-            u0 = plP_wcpcx( plP_w3wcx( p0[0], p0[1], p0[2] ) );
-            v0 = plP_wcpcy( plP_w3wcy( p0[0], p0[1], p0[2] ) );
-            u1 = plP_wcpcx( plP_w3wcx( p1[0], p1[1], p1[2] ) );
-            v1 = plP_wcpcy( plP_w3wcy( p1[0], p1[1], p1[2] ) );
-            plP_movphy( (PLINT) u0, (PLINT) v0 );
-            plP_draphy( (PLINT) u1, (PLINT) v1 );
+            u1 = plP_wcpcx( plP_w3wcx( p0[0], p0[1], p0[2] ) );
+            v1 = plP_wcpcy( plP_w3wcy( p0[0], p0[1], p0[2] ) );
+            u2 = plP_wcpcx( plP_w3wcx( p1[0], p1[1], p1[2] ) );
+            v2 = plP_wcpcy( plP_w3wcy( p1[0], p1[1], p1[2] ) );
+            plP_movphy( (PLINT) u1, (PLINT) v1 );
+            plP_draphy( (PLINT) u2, (PLINT) v2 );
         }
     }
     return;
@@ -607,7 +606,7 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
     PLINT i, iclp = 0;
 
     short _xclp[PL_MAXPOLY], _yclp[PL_MAXPOLY];
-    short *xclp, *yclp;
+    short *xclp = NULL, *yclp = NULL;
     int   drawable;
 
     if ( npts < PL_MAXPOLY )
@@ -617,8 +616,8 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
     }
     else
     {
-        if ( ( ( xclp = (short *) malloc( npts * sizeof ( short ) ) ) == NULL ) ||
-             ( ( yclp = (short *) malloc( npts * sizeof ( short ) ) ) == NULL ) )
+        if ( ( ( xclp = (short *) malloc( (size_t) npts * sizeof ( short ) ) ) == NULL ) ||
+             ( ( yclp = (short *) malloc( (size_t) npts * sizeof ( short ) ) ) == NULL ) )
         {
             plexit( "plP_pllclp: Insufficient memory" );
         }
@@ -642,11 +641,11 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
 
             if ( iclp == 0 )
             {
-                xclp[iclp] = x1;
-                yclp[iclp] = y1;
+                xclp[iclp] = (short) x1;
+                yclp[iclp] = (short) y1;
                 iclp++;
-                xclp[iclp] = x2;
-                yclp[iclp] = y2;
+                xclp[iclp] = (short) x2;
+                yclp[iclp] = (short) y2;
             }
 
 // Not first point.  Check if first point of this segment matches up to
@@ -655,8 +654,8 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
             else if ( x1 == xclp[iclp] && y1 == yclp[iclp] )
             {
                 iclp++;
-                xclp[iclp] = x2;
-                yclp[iclp] = y2;
+                xclp[iclp] = (short) x2;
+                yclp[iclp] = (short) y2;
             }
 
 // Otherwise it's time to start a new polyline
@@ -666,11 +665,11 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
                 if ( iclp + 1 >= 2 )
                     ( *draw )( xclp, yclp, iclp + 1 );
                 iclp       = 0;
-                xclp[iclp] = x1;
-                yclp[iclp] = y1;
+                xclp[iclp] = (short) x1;
+                yclp[iclp] = (short) y1;
                 iclp++;
-                xclp[iclp] = x2;
-                yclp[iclp] = y2;
+                xclp[iclp] = (short) x2;
+                yclp[iclp] = (short) y2;
             }
         }
     }
@@ -933,10 +932,10 @@ grdashline( short *x, short *y )
         }
         if ( plsc->pendn != 0 )
         {
-            xl[0] = lastx;
-            yl[0] = lasty;
-            xl[1] = xtmp;
-            yl[1] = ytmp;
+            xl[0] = (short) lastx;
+            yl[0] = (short) lasty;
+            xl[1] = (short) xtmp;
+            yl[1] = (short) ytmp;
             plP_line( xl, yl );
         }
 
@@ -983,7 +982,7 @@ PLFLT *interpolate_between( PLINT n, PLFLT a, PLFLT b )
     PLFLT step_size;
     int   i;
 
-    if ( ( values = (PLFLT *) malloc( n * sizeof ( PLFLT ) ) ) == NULL )
+    if ( ( values = (PLFLT *) malloc( (size_t) n * sizeof ( PLFLT ) ) ) == NULL )
     {
         return NULL;
     }

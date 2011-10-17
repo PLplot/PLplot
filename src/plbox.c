@@ -65,6 +65,15 @@ grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
 static void
 label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 );
 
+static void
+plP_default_label_log( PLINT axis, PLFLT value, char *string, PLINT len, void *data );
+
+static void
+plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT len, void *data );
+
+static void
+plP_default_label( PLINT axis, PLFLT value, char *string, PLINT len, void *data );
+
 //--------------------------------------------------------------------------
 // void plbox()
 //
@@ -127,7 +136,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
           const char *yopt, PLFLT ytick, PLINT nysub )
 {
     PLBOOL lax, lbx, lcx, ldx, lgx, lix, llx, lsx, ltx, lux, lwx, lxx;
-    PLBOOL lay, lBy, lby, lCy, lcy, ldy, lgy, liy, lly, lsy, lty, luy, lwy, lxy;
+    PLBOOL lay, lby, lcy, ldy, lgy, liy, lly, lsy, lty, luy, lwy, lxy;
     PLINT  xmajor, xminor, ymajor, yminor;
     PLINT  i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y;
     PLINT  nxsub1, nysub1;
@@ -1148,7 +1157,7 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
             if ( lm && right )
                 plztx( "v", dx, dy, wx, wy1, wy2, -0.5, pos, 0.0, string );
 
-            lstring = strlen( string );
+            lstring = (PLINT) strlen( string );
             *digits = MAX( *digits, lstring );
         }
         if ( !ll && !lo && mode )
@@ -1826,7 +1835,6 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     PLFLT       vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT       pos, tn, offset, height, just;
-    PLFLT       factor, tstart;
     const char  *timefmt;
     PLINT       i;
     PLINT       xdigmax, xdigits, xdigmax_old, xdigits_old;
@@ -1834,7 +1842,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     PLINT       lxmin, lxmax, lymin, lymax;
     PLINT       pxmin, pxmax, pymin, pymax;
     PLFLT       default_mm, char_height_mm, height_mm;
-    PLFLT       string_length_mm, pos_mm;
+    PLFLT       string_length_mm = 0.0, pos_mm = 0.0;
 
     plgchr( &default_mm, &char_height_mm );
 
@@ -2364,7 +2372,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
 void plP_default_label_log( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
 {
     // Exponential, i.e. 10^-1, 10^0, 10^1, etc
-    snprintf( string, len, "10#u%d", (int) ROUND( value ) );
+    snprintf( string, (size_t) len, "10#u%d", (int) ROUND( value ) );
 }
 
 void plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
@@ -2378,11 +2386,11 @@ void plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT l
     {
         char form[FORMAT_LEN];
         snprintf( form, FORMAT_LEN, "%%.%df", ABS( exponent ) );
-        snprintf( string, len, form, value );
+        snprintf( string, (size_t) len, form, value );
     }
     else
     {
-        snprintf( string, len, "%d", (int) value );
+        snprintf( string, (size_t) len, "%d", (int) value );
     }
 }
 
@@ -2411,7 +2419,7 @@ void plP_default_label( PLINT axis, PLFLT value, char *string, PLINT len, void *
 
     snprintf( form, FORMAT_LEN, "%%.%df", (int) prec );
     snprintf( temp, TEMP_LEN, form, value );
-    strncpy( string, temp, len - 1 );
+    strncpy( string, temp, (size_t) ( len - 1 ) );
     string[len - 1] = '\0';
 }
 

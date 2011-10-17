@@ -178,14 +178,14 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
 // and this is the best thing I could think of.
 //
 
-    y -= FT->face->size->metrics.height;
+    y -= (int) FT->face->size->metrics.height;
 
 // walk through the text character by character
     for ( i = 0; i < len; i++ )
     {
-        if ( ( text[i] == esc ) && ( text[i - 1] != esc ) )
+        if ( ( text[i] == (PLUNICODE) esc ) && ( text[i - 1] != (PLUNICODE) esc ) )
         {
-            if ( text[i + 1] == esc )
+            if ( text[i + 1] == (PLUNICODE) esc )
                 continue;
 
             switch ( text[i + 1] )
@@ -213,7 +213,7 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
                     text[i],
                     ft_kerning_default,
                     &akerning );
-                x += ( akerning.x >> 6 );        // add (or subtract) the kerning
+                x += (int) ( akerning.x >> 6 );        // add (or subtract) the kerning
             }
 
             //
@@ -234,8 +234,8 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
             // Y is negative because freetype does things upside down
             //
 
-            x += ( FT->face->glyph->advance.x );
-            y -= ( FT->face->glyph->advance.y );
+            x += (int) ( FT->face->glyph->advance.x );
+            y -= (int) ( FT->face->glyph->advance.y );
         }
     }
 
@@ -304,8 +304,8 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
     adjust.x = 0;
     adjust.y = 0;
     FT_Vector_Transform( &adjust, &FT->matrix );
-    x += adjust.x;
-    y -= adjust.y;
+    x += (int) adjust.x;
+    y -= (int) adjust.y;
 
 // (RL, on 2005-01-25) The computation of cumulated glyph width within
 // the text is done now with full precision, using 26.6 Freetype
@@ -324,9 +324,9 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 
     for ( i = 0; i < len; i++ )
     {
-        if ( ( text[i] == esc ) && ( text[i - 1] != esc ) )
+        if ( ( text[i] == (PLUNICODE) esc ) && ( text[i - 1] != (PLUNICODE) esc ) )
         {
-            if ( text[i + 1] == esc )
+            if ( text[i + 1] == (PLUNICODE) esc )
                 continue;
 
             switch ( text[i + 1] )
@@ -345,8 +345,8 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
                 adjust.y = FT->face->size->metrics.height / 2;
                 adjust.x = 0;
                 FT_Vector_Transform( &adjust, &FT->matrix );
-                x += adjust.x;
-                y -= adjust.y;
+                x += (int) adjust.x;
+                y -= (int) adjust.y;
                 i++;
                 break;
 
@@ -355,8 +355,8 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
                 adjust.y = -FT->face->size->metrics.height / 2;
                 adjust.x = 0;
                 FT_Vector_Transform( &adjust, &FT->matrix );
-                x += adjust.x;
-                y -= adjust.y;
+                x += (int) adjust.x;
+                y -= (int) adjust.y;
                 i++;
                 break;
             }
@@ -377,8 +377,8 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
                     text[last_char],
                     text[i],
                     ft_kerning_default, &akerning );
-                x += akerning.x;        // add (or subtract) the kerning
-                y -= akerning.y;        // Do I need this in case of rotation ?
+                x += (int) akerning.x;        // add (or subtract) the kerning
+                y -= (int) akerning.y;        // Do I need this in case of rotation ?
             }
 
 
@@ -386,8 +386,8 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
             FT_PlotChar( pls, FT, FT->face->glyph,
                 ROUND( x / 64.0 ), ROUND( y / 64.0 ), 2 );          // render the text
 
-            x += FT->face->glyph->advance.x;
-            y -= FT->face->glyph->advance.y;
+            x += (int) FT->face->glyph->advance.x;
+            y -= (int) FT->face->glyph->advance.y;
 
             last_char = i;
         }
@@ -410,7 +410,8 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     int           n = slot->bitmap.pitch;
     int           current_pixel_colour;
     int           R, G, B;
-    PLFLT         alpha_a, alpha_b;
+    PLFLT         alpha_a;
+    //PLFLT         alpha_b;
     int           xx;
     short         imin, imax, kmin, kmax;
 
@@ -433,33 +434,33 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
 
     if ( FT->scale != 0.0 )    // scale was set
     {
-        clipxmin = clipxmin / FT->scale;
-        clipxmax = clipxmax / FT->scale;
+        clipxmin = (PLINT) ( clipxmin / FT->scale );
+        clipxmax = (PLINT) ( clipxmax / FT->scale );
         if ( FT->invert_y == 1 )
         {
-            clipymin = FT->ymax - ( clipymin / FT->scale );
-            clipymax = FT->ymax - ( clipymax / FT->scale );
+            clipymin = (PLINT) ( FT->ymax - ( clipymin / FT->scale ) );
+            clipymax = (PLINT) ( FT->ymax - ( clipymax / FT->scale ) );
         }
         else
         {
-            clipymin = clipymin / FT->scale;
-            clipymax = clipymax / FT->scale;
+            clipymin = (PLINT) ( clipymin / FT->scale );
+            clipymax = (PLINT) ( clipymax / FT->scale );
         }
     }
     else
     {
-        clipxmin = clipxmin / FT->scalex;
-        clipxmax = clipxmax / FT->scalex;
+        clipxmin = (PLINT) ( clipxmin / FT->scalex );
+        clipxmax = (PLINT) ( clipxmax / FT->scalex );
 
         if ( FT->invert_y == 1 )
         {
-            clipymin = FT->ymax - ( clipymin / FT->scaley );
-            clipymax = FT->ymax - ( clipymax / FT->scaley );
+            clipymin = (PLINT) ( FT->ymax - ( clipymin / FT->scaley ) );
+            clipymax = (PLINT) ( FT->ymax - ( clipymax / FT->scaley ) );
         }
         else
         {
-            clipymin = clipymin / FT->scaley;
-            clipymax = clipymax / FT->scaley;
+            clipymin = (PLINT) ( clipymin / FT->scaley );
+            clipymax = (PLINT) ( clipymax / FT->scaley );
         }
     }
     if ( clipxmin > clipxmax )
@@ -484,8 +485,8 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
         x += slot->bitmap_left;
         y -= slot->bitmap_top;
 
-        imin = MAX( 0, clipymin - y );
-        imax = MIN( slot->bitmap.rows, clipymax - y );
+        imin = (short) MAX( 0, clipymin - y );
+        imax = (short) MIN( slot->bitmap.rows, clipymax - y );
         for ( i = imin; i < imax; i++ )
         {
             for ( k = 0; k < n; k++ )
@@ -512,10 +513,10 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
         x += slot->bitmap_left;
         y -= slot->bitmap_top;
 
-        imin = MAX( 0, clipymin - y );
-        imax = MIN( slot->bitmap.rows, clipymax - y );
-        kmin = MAX( 0, clipxmin - x );
-        kmax = MIN( slot->bitmap.width, clipxmax - x );
+        imin = (short) MAX( 0, clipymin - y );
+        imax = (short) MIN( slot->bitmap.rows, clipymax - y );
+        kmin = (short) MAX( 0, clipxmin - x );
+        kmax = (short) MIN( slot->bitmap.width, clipxmax - x );
         for ( i = imin; i < imax; i++ )
         {
             for ( k = kmin; k < kmax; k++ )
@@ -554,9 +555,9 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                             //  Is one faster than the other so that you'd ever notice ?
                             //
 
-                            R = ( ( ( plsc->cmap0[pls->icol0].r - R ) * alpha_a ) + R );
-                            G = ( ( ( plsc->cmap0[pls->icol0].g - G ) * alpha_a ) + G );
-                            B = ( ( ( plsc->cmap0[pls->icol0].b - B ) * alpha_a ) + B );
+                            R = (int) ( ( ( plsc->cmap0[pls->icol0].r - R ) * alpha_a ) + R );
+                            G = (int) ( ( ( plsc->cmap0[pls->icol0].g - G ) * alpha_a ) + G );
+                            B = (int) ( ( ( plsc->cmap0[pls->icol0].b - B ) * alpha_a ) + B );
 
                             FT->set_pixel( pls, x + k, y + i, RGB( R > 255 ? 255 : R, G > 255 ? 255 : G, B > 255 ? 255 : B ) );
                         }
@@ -749,7 +750,7 @@ void plD_FreeType_init( PLStream *pls )
         else
         {
             strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
-            strncat( FT->font_name[i], (char *) TrueTypeLookup[i].pfont, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ) );
+            strncat( FT->font_name[i], (const char *) TrueTypeLookup[i].pfont, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ) );
         }
         FT->font_name[i][PLPLOT_MAX_PATH - 1] = '\0';
 
@@ -796,7 +797,7 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
 
     if ( fci != FT->fci )
     {
-        char *font_name = plP_FCI2FontName( fci, FontLookup, N_TrueTypeLookup );
+        const char *font_name = plP_FCI2FontName( fci, FontLookup, N_TrueTypeLookup );
         if ( font_name == NULL )
         {
             if ( FT->fci == PL_FCI_IMPOSSIBLE )
@@ -822,8 +823,8 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
         }
     }
     FT_Set_Char_Size( FT->face, 0,
-        font_size * 64 / TEXT_SCALING_FACTOR, pls->xdpi,
-        pls->ydpi );
+        (FT_F26Dot6) ( font_size * 64 / TEXT_SCALING_FACTOR ), (FT_UInt) pls->xdpi,
+        (FT_UInt) pls->ydpi );
 }
 
 //--------------------------------------------------------------------------
@@ -891,7 +892,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
         FT_Vector_Transform( &FT->pos, &FT->matrix );
         FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
-        FT_StrX_YW( pls, args->unicode_array, args->unicode_array_len, &w, &h );
+        FT_StrX_YW( pls, args->unicode_array, (short) args->unicode_array_len, &w, &h );
 
 //
 //      Set up the transformation Matrix
@@ -921,15 +922,15 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
         height = (FT_Fixed) ( 0x10000 * height_factor );
 
 #ifdef DJGPP
-        FT->matrix.xx = height * t[0];
-        FT->matrix.xy = height * t[2];
-        FT->matrix.yx = height * t[1];
-        FT->matrix.yy = height * t[3];
+        FT->matrix.xx = (FT_Fixed) ( (PLFLT) height * t[0] );
+        FT->matrix.xy = (FT_Fixed) ( (PLFLT) height * t[2] );
+        FT->matrix.yx = (FT_Fixed) ( (PLFLT) height * t[1] );
+        FT->matrix.yy = (FT_Fixed) ( (PLFLT) height * t[3] );
 #else
-        FT->matrix.xx = height * t[0];
-        FT->matrix.xy = height * t[1];
-        FT->matrix.yx = height * t[2];
-        FT->matrix.yy = height * t[3];
+        FT->matrix.xx = (FT_Fixed) ( (PLFLT) height * t[0] );
+        FT->matrix.xy = (FT_Fixed) ( (PLFLT) height * t[1] );
+        FT->matrix.yx = (FT_Fixed) ( (PLFLT) height * t[2] );
+        FT->matrix.yy = (FT_Fixed) ( (PLFLT) height * t[3] );
 #endif
 
 
@@ -943,17 +944,17 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
         Cos_A = cos( angle );
         Sin_A = sin( angle );
 
-        matrix.xx = (FT_Fixed) 0x10000 * Cos_A;
+        matrix.xx = (FT_Fixed) ( (PLFLT) 0x10000 * Cos_A );
 
 #ifdef DJGPP
-        matrix.xy = (FT_Fixed) 0x10000 * Sin_A * -1;
-        matrix.yx = (FT_Fixed) 0x10000 * Sin_A;
+        matrix.xy = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A * -1.0 );
+        matrix.yx = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A );
 #else
-        matrix.xy = (FT_Fixed) 0x10000 * Sin_A;
-        matrix.yx = (FT_Fixed) 0x10000 * Sin_A * -1;
+        matrix.xy = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A );
+        matrix.yx = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A * -1.0 );
 #endif
 
-        matrix.yy = (FT_Fixed) 0x10000 * Cos_A;
+        matrix.yy = (FT_Fixed) ( (PLFLT) 0x10000 * Cos_A );
 
         FT_Matrix_Multiply( &matrix, &FT->matrix );
 
@@ -997,21 +998,21 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 
         if ( FT->scale != 0.0 ) // scale was set
         {
-            x = args->x / FT->scale;
+            x = (int) ( args->x / FT->scale );
 
             if ( FT->invert_y == 1 )
-                y = FT->ymax - ( args->y / FT->scale );
+                y = (int) ( FT->ymax - ( args->y / FT->scale ) );
             else
-                y = args->y / FT->scale;
+                y = (int) ( args->y / FT->scale );
         }
         else
         {
-            x = args->x / FT->scalex;
+            x = (int) ( args->x / FT->scalex );
 
             if ( FT->invert_y == 1 )
-                y = FT->ymax - ( args->y / FT->scaley );
+                y = (int) ( FT->ymax - ( args->y / FT->scaley ) );
             else
-                y = args->y / FT->scaley;
+                y = (int) ( args->y / FT->scaley );
         }
 
         //          Adjust for the justification and character height
@@ -1063,8 +1064,8 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
         if ( ( args->unicode_array_len == 2 )
              && ( args->unicode_array[0] == ( PL_FCI_MARK | 0x004 ) ) )
         {
-            adjust.x = args->just * ROUND( FT->face->glyph->metrics.width / 64.0 );
-            adjust.y = (FT_Pos) ROUND( FT->face->glyph->metrics.height / 128.0 );
+            adjust.x = (FT_Pos) ( args->just * ROUND( (PLFLT) FT->face->glyph->metrics.width / 64.0 ) );
+            adjust.y = (FT_Pos) ROUND( (PLFLT) FT->face->glyph->metrics.height / 128.0 );
         }
         else
         {
@@ -1078,16 +1079,16 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 //
 
             adjust.y = (FT_Pos)
-                       ROUND( FT->face->size->metrics.height / height_factor / 128.0 );
+                       ROUND( (PLFLT) FT->face->size->metrics.height / height_factor / 128.0 );
             adjust.x = (FT_Pos) ( args->just * ROUND( w / 64.0 ) );
         }
 
         FT_Vector_Transform( &adjust, &FT->matrix ); // was /&matrix); -  was I using the wrong matrix all this time ?
 
-        x -= adjust.x;
-        y += adjust.y;
+        x -= (int) adjust.x;
+        y += (int) adjust.y;
 
-        FT_WriteStrW( pls, args->unicode_array, args->unicode_array_len, x, y ); // write it out
+        FT_WriteStrW( pls, args->unicode_array, (short) args->unicode_array_len, x, y ); // write it out
     }
     else
     {
@@ -1106,7 +1107,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 void plD_FreeType_Destroy( PLStream *pls )
 {
     FT_Data *FT = (FT_Data *) pls->FT;
-    extern int FT_Done_Library( FT_Library library );
+    //extern int FT_Done_Library( FT_Library library );
 
     if ( FT )
     {
@@ -1176,9 +1177,9 @@ void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org )
 
         for ( j = 0, k = ncol0_org + i - 1; j < ncol0_width; j++, k += ( ncol0_org - 1 ) )
         {
-            r -= r_inc;
-            g -= g_inc;
-            b -= b_inc;
+            r -= (int) r_inc;
+            g -= (int) g_inc;
+            b -= (int) b_inc;
             if ( ( r < 0 ) || ( g < 0 ) || ( b < 0 ) )
                 plscol0( k, 0, 0, 0 );
             else
@@ -1209,21 +1210,21 @@ void plD_render_freetype_sym( PLStream *pls, EscText *args )
 
     if ( FT->scale != 0.0 )    // scale was set
     {
-        x = args->x / FT->scale;
+        x = (int) ( args->x / FT->scale );
 
         if ( FT->invert_y == 1 )
-            y = FT->ymax - ( args->y / FT->scale );
+            y = (int) ( FT->ymax - ( args->y / FT->scale ) );
         else
-            y = args->y / FT->scale;
+            y = (int) ( args->y / FT->scale );
     }
     else
     {
-        x = args->x / FT->scalex;
+        x = (int) ( args->x / FT->scalex );
 
         if ( FT->invert_y == 1 )
-            y = FT->ymax - ( args->y / FT->scaley );
+            y = (int) ( FT->ymax - ( args->y / FT->scaley ) );
         else
-            y = args->y / FT->scaley;
+            y = (int) ( args->y / FT->scaley );
     }
 
 
@@ -1251,8 +1252,8 @@ void plD_render_freetype_sym( PLStream *pls, EscText *args )
 
     adjust.x = 0;
     FT_Vector_Transform( &adjust, &FT->matrix );
-    x += adjust.x;
-    y -= adjust.y;
+    x += (int) adjust.x;
+    y -= (int) adjust.y;
 
     plgfci( &fci );
     FT_SetFace( pls, fci );
@@ -1270,8 +1271,8 @@ void plD_render_freetype_sym( PLStream *pls, EscText *args )
 // but it is as good a way as I can think of.
 //
 
-    x -= ( FT->face->glyph->advance.x >> 6 ) / 2;
-    FT_PlotChar( pls, FT, FT->face->glyph, x, y, pls->icol0 ); // render the text
+    x -= (int) ( ( FT->face->glyph->advance.x >> 6 ) / 2 );
+    FT_PlotChar( pls, FT, FT->face->glyph, x, y, (short) pls->icol0 ); // render the text
 }
 
 

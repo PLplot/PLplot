@@ -31,11 +31,9 @@
 
 #include "plDevs.h"
 
-#define DEBUG
-
 #if defined ( PLD_psttf )
 
-#define NEED_PLDEBUG
+//#define NEED_PLDEBUG
 #include "plplotP.h"
 #include "drivers.h"
 #include "ps.h"
@@ -70,7 +68,7 @@ static char  *ps_getdate( void );
 static void  ps_init( PLStream * );
 static void  fill_polygon( PLStream *pls );
 static void  proc_str( PLStream *, EscText * );
-static void  esc_purge( char *, char * );
+//static void  esc_purge( char *, char * );
 
 #define OUTBUF_LEN    128
 static char outbuf[OUTBUF_LEN];
@@ -450,7 +448,7 @@ writeHeader( PLStream *pls )
 
     doc->osHeader() << "PSDict begin\n";
     doc->osHeader() << "@start\n";
-    doc->osHeader() << "%d @copies\n", COPIES;
+    doc->osHeader() << "%d @copies\n" << COPIES;
     doc->osHeader() << "@line\n";
     doc->osHeader() << YSIZE << " @hsize\n";
     doc->osHeader() << XSIZE << " @vsize\n";
@@ -1274,43 +1272,43 @@ proc_str( PLStream *pls, EscText *args )
     }
 }
 
-static void
-esc_purge( char *dstr, char *sstr )
-{
-    char esc;
-
-    plgesc( &esc );
-
-    while ( *sstr )
-    {
-        if ( *sstr != esc )
-        {
-            *dstr++ = *sstr++;
-            continue;
-        }
-
-        sstr++;
-        if ( *sstr == esc )
-        {
-            *dstr++ = *sstr++;
-            continue;
-        }
-
-        else
-        {
-            switch ( *sstr++ )
-            {
-            case 'f':
-                sstr++;
-                break; // two chars sequence
-
-            default:
-                break; // single char escape
-            }
-        }
-    }
-    *dstr = '\0';
-}
+//static void
+//esc_purge( char *dstr, char *sstr )
+//{
+//    char esc;
+//
+//    plgesc( &esc );
+//
+//    while ( *sstr )
+//    {
+//        if ( *sstr != esc )
+//        {
+//            *dstr++ = *sstr++;
+//            continue;
+//        }
+//
+//        sstr++;
+//        if ( *sstr == esc )
+//        {
+//            *dstr++ = *sstr++;
+//            continue;
+//        }
+//
+//        else
+//        {
+//            switch ( *sstr++ )
+//            {
+//            case 'f':
+//                sstr++;
+//                break; // two chars sequence
+//
+//            default:
+//                break; // single char escape
+//            }
+//        }
+//    }
+//    *dstr = '\0';
+//}
 
 #else
 int

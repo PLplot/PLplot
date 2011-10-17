@@ -89,6 +89,12 @@
 
 #include <errno.h>
 
+int
+text2num( const char *text, char end, PLUNICODE *num );
+
+int
+text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower );
+
 //--------------------------------------------------------------------------
 // Driver Interface
 //
@@ -539,7 +545,7 @@ int text2num( const char *text, char end, PLUNICODE *num )
     char *endptr;
     char msgbuf[BUFFER_SIZE];
 
-    *num = strtoul( text, &endptr, 0 );
+    *num = (PLUNICODE) strtoul( text, &endptr, 0 );
 
     if ( end != endptr[0] )
     {
@@ -572,7 +578,7 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
 {
     typedef struct
     {
-        char          *ptext;
+        const char    *ptext;
         unsigned char hexdigit;
         unsigned char hexpower;
     }
@@ -596,8 +602,8 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
     int i, length;
     for ( i = 0; i < N_TextLookupTable; i++ )
     {
-        length = strlen( lookup[i].ptext );
-        if ( !strncmp( text, lookup[i].ptext, length ) )
+        length = (int) strlen( lookup[i].ptext );
+        if ( !strncmp( text, lookup[i].ptext, (size_t) length ) )
         {
             *hexdigit = lookup[i].hexdigit;
             *hexpower = lookup[i].hexpower;
@@ -617,13 +623,13 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 {
     if ( plsc->dev_text ) // Does the device render it's own text ?
     {
-        EscText        args;
-        short          len = 0;
-        char           skip;
-        unsigned short i, j;
-        PLUNICODE      code;
-        char           esc;
-        int            idx;
+        EscText   args;
+        short     len = 0;
+        char      skip;
+        int       i, j;
+        PLUNICODE code;
+        char      esc;
+        int       idx = -1;
 
         args.base   = base;
         args.just   = just;
@@ -648,9 +654,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     //
 
             {
-                len = strlen( string ); // this length is only used in the loop
-                                        // counter, we will work out the length of
-                                        // the unicode string as we go
+                len = (short) strlen( string ); // this length is only used in the loop
+                // counter, we will work out the length of
+                // the unicode string as we go
                 plgesc( &esc );
 
                 // At this stage we will do some translations into unicode, like
@@ -677,8 +683,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                         switch ( string[i + 1] )
                         {
                         case '(': // hershey code
-                            i  += 2 + text2num( &string[i + 2], ')', &code );
-                            idx = plhershey2unicode( code );
+                            i  += ( 2 + text2num( &string[i + 2], ')', &code ) );
+                            idx = plhershey2unicode( (int) code );
                             unicode_buffer[j++] = \
                                 (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
 
@@ -690,14 +696,14 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             // escape characters that are interpreted by the device
                             // driver.
                             //
-                            if ( unicode_buffer[j - 1] == esc )
-                                unicode_buffer[j++] = esc;
+                            if ( unicode_buffer[j - 1] == (PLUNICODE) esc )
+                                unicode_buffer[j++] = (PLUNICODE) esc;
                             j--;
                             skip = 1;
                             break;
 
                         case '[': // unicode
-                            i += 2 + text2num( &string[i + 2], ']', &code );
+                            i += ( 2 + text2num( &string[i + 2], ']', &code ) );
                             unicode_buffer[j++] = code;
 
 
@@ -708,8 +714,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             // escape characters that are interpreted by the device
                             // driver.
                             //
-                            if ( unicode_buffer[j - 1] == esc )
-                                unicode_buffer[j++] = esc;
+                            if ( unicode_buffer[j - 1] == (PLUNICODE) esc )
+                                unicode_buffer[j++] = (PLUNICODE) esc;
                             j--;
                             skip = 1;
                             break;
@@ -817,7 +823,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     ig = 685;
                                 else if ( ig == 647 )
                                     ig = 686;
-                                idx = plhershey2unicode( ig );
+                                idx = (int) plhershey2unicode( ig );
                                 unicode_buffer[j++] = \
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 i   += 2;
@@ -840,11 +846,11 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
                     if ( skip == 0 )
                     {
-                        PLUNICODE unichar = 0;
+                        PLUNICODE  unichar = 0;
 #ifdef HAVE_LIBUNICODE
-                        char      * ptr = unicode_get_utf8( string + i, &unichar );
+                        const char * ptr = unicode_get_utf8( string + i, &unichar );
 #else
-                        char      * ptr = utf8_to_ucs4( string + i, &unichar );
+                        const char * ptr = utf8_to_ucs4( string + i, &unichar );
 #endif
                         if ( ptr == NULL )
                         {
@@ -858,27 +864,27 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             return;
                         }
                         unicode_buffer [j] = unichar;
-                        i += ptr - ( string + i ) - 1;
+                        i += (int) ( ptr - ( string + i ) - 1 );
 
                         // Search for escesc (an unescaped escape) in the input
                         // string and adjust unicode_buffer accordingly).
                         //
-                        if ( unicode_buffer[j] == esc && string[i + 1] == esc )
+                        if ( unicode_buffer[j] == (PLUNICODE) esc && string[i + 1] == esc )
                         {
                             i++;
-                            unicode_buffer[++j] = esc;
+                            unicode_buffer[++j] = (PLUNICODE) esc;
                         }
                     }
                     j++;
                 }
                 if ( j > 0 )
                 {
-                    args.unicode_array_len = j;                  // Much easier to set the length than
+                    args.unicode_array_len = (short unsigned int) j; // Much easier to set the length than
                     // work it out later :-)
-                    args.unicode_array = &unicode_buffer[0];     // Get address of the
-                                                                 // unicode buffer (even
-                                                                 // though it is
-                                                                 // currently  static)
+                    args.unicode_array = &unicode_buffer[0];         // Get address of the
+                                                                     // unicode buffer (even
+                                                                     // though it is
+                                                                     // currently  static)
                 }
 
 
@@ -899,7 +905,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             {
                             case '(': // hershey code
                                 i          += 2 + text2num( &string[i + 2], ')', &code );
-                                idx         = plhershey2unicode( code );
+                                idx         = plhershey2unicode( (int) code );
                                 args.n_char = \
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 plP_esc( PLESC_TEXT_CHAR, &args );
@@ -1069,11 +1075,11 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
                         if ( skip == 0 )
                         {
-                            PLUNICODE unichar = 0;
+                            PLUNICODE  unichar = 0;
 #ifdef HAVE_LIBUNICODE
-                            char      * ptr = unicode_get_utf8( string + i, &unichar );
+                            const char * ptr = unicode_get_utf8( string + i, &unichar );
 #else
-                            char      * ptr = utf8_to_ucs4( string + i, &unichar );
+                            const char * ptr = utf8_to_ucs4( string + i, &unichar );
 #endif
                             if ( ptr == NULL )
                             {
@@ -1086,7 +1092,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 plabort( buf );
                                 return;
                             }
-                            i += ptr - ( string + i ) - 1;
+                            i += (int) ( ptr - ( string + i ) - 1 );
 
                             // Search for escesc (an unescaped escape) in the input
                             // string and adjust unicode_buffer accordingly).
@@ -1094,7 +1100,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             if ( string[i] == esc && string[i + 1] == esc )
                             {
                                 i++;
-                                args.n_char = esc;
+                                args.n_char = (PLUNICODE) esc;
                             }
                             else
                             {
@@ -1134,7 +1140,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 }
 
 // convert utf8 string to ucs4 unichar
-static char *
+static const char *
 utf8_to_ucs4( const char *ptr, PLUNICODE *unichar )
 {
     char tmp;
@@ -1199,7 +1205,7 @@ utf8_to_ucs4( const char *ptr, PLUNICODE *unichar )
             }
         }
     } while ( cnt > 0 );
-    return (char *) ptr;
+    return ptr;
 }
 
 // convert ucs4 unichar to utf8 string
@@ -1219,31 +1225,31 @@ ucs4_to_utf8( PLUNICODE unichar, char *ptr )
     }
     else if ( ( unichar & 0xfff800 ) == 0 ) // two bytes
     {
-        *tmp = (unsigned char) 0xc0 | ( unichar >> 6 );
+        *tmp = (unsigned char) 0xc0 | (unsigned char) ( unichar >> 6 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | ( unichar & 0x3f );
+        *tmp = (unsigned char) 0x80 | (unsigned char) ( unichar & 0x3f );
         tmp++;
         len = 2;
     }
     else if ( ( unichar & 0xff0000 ) == 0 ) // three bytes
     {
-        *tmp = (unsigned char) 0xe0 | ( unichar >> 12 );
+        *tmp = (unsigned char) 0xe0 | (unsigned char) ( unichar >> 12 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | ( ( unichar >> 6 ) & 0x3f );
+        *tmp = (unsigned char) 0x80 | (unsigned char) ( ( unichar >> 6 ) & 0x3f );
         tmp++;
-        *tmp = (unsigned char) 0x80 | ( unichar & 0x3f );
+        *tmp = (unsigned char) 0x80 | ( (unsigned char) unichar & 0x3f );
         tmp++;
         len = 3;
     }
     else if ( ( unichar & 0xe0000 ) == 0 ) // four bytes
     {
-        *tmp = (unsigned char) 0xf0 | ( unichar >> 18 );
+        *tmp = (unsigned char) 0xf0 | (unsigned char) ( unichar >> 18 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | ( ( unichar >> 12 ) & 0x3f );
+        *tmp = (unsigned char) 0x80 | (unsigned char) ( ( unichar >> 12 ) & 0x3f );
         tmp++;
-        *tmp = (unsigned char) 0x80 | ( ( unichar >> 6 ) & 0x3f );
+        *tmp = (unsigned char) 0x80 | (unsigned char) ( ( unichar >> 6 ) & 0x3f );
         tmp++;
-        *tmp = (unsigned char) 0x80 | ( unichar & 0x3f );
+        *tmp = (unsigned char) 0x80 | (unsigned char) ( unichar & 0x3f );
         tmp++;
         len = 4;
     }
@@ -1335,7 +1341,7 @@ grgradient( short *x, short *y, PLINT npts )
 //--------------------------------------------------------------------------
 
 void
-difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
+difilt( PLINT *xsc, PLINT *ysc, PLINT npts,
         PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
 {
     PLINT i, x, y;
@@ -1346,8 +1352,8 @@ difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
     {
         for ( i = 0; i < npts; i++ )
         {
-            xscl[i] = (PLINT) ( plsc->dimxax * xscl[i] + plsc->dimxb );
-            yscl[i] = (PLINT) ( plsc->dimyay * yscl[i] + plsc->dimyb );
+            xsc[i] = (PLINT) ( plsc->dimxax * xsc[i] + plsc->dimxb );
+            ysc[i] = (PLINT) ( plsc->dimyay * ysc[i] + plsc->dimyb );
         }
     }
 
@@ -1357,10 +1363,10 @@ difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
     {
         for ( i = 0; i < npts; i++ )
         {
-            x       = (PLINT) ( plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb );
-            y       = (PLINT) ( plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb );
-            xscl[i] = x;
-            yscl[i] = y;
+            x      = (PLINT) ( plsc->dioxax * xsc[i] + plsc->dioxay * ysc[i] + plsc->dioxb );
+            y      = (PLINT) ( plsc->dioyax * xsc[i] + plsc->dioyay * ysc[i] + plsc->dioyb );
+            xsc[i] = x;
+            ysc[i] = y;
         }
     }
 
@@ -1370,8 +1376,8 @@ difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
     {
         for ( i = 0; i < npts; i++ )
         {
-            xscl[i] = (PLINT) ( plsc->dipxax * xscl[i] + plsc->dipxb );
-            yscl[i] = (PLINT) ( plsc->dipyay * yscl[i] + plsc->dipyb );
+            xsc[i] = (PLINT) ( plsc->dipxax * xsc[i] + plsc->dipxb );
+            ysc[i] = (PLINT) ( plsc->dipyay * ysc[i] + plsc->dipyb );
         }
     }
 
@@ -1382,8 +1388,8 @@ difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
     {
         for ( i = 0; i < npts; i++ )
         {
-            xscl[i] = (PLINT) ( plsc->didxax * xscl[i] + plsc->didxb );
-            yscl[i] = (PLINT) ( plsc->didyay * yscl[i] + plsc->didyb );
+            xsc[i] = (PLINT) ( plsc->didxax * xsc[i] + plsc->didxb );
+            ysc[i] = (PLINT) ( plsc->didyay * ysc[i] + plsc->didyb );
         }
         *clpxmi = plsc->diclpxmi;
         *clpxma = plsc->diclpxma;
@@ -1399,71 +1405,76 @@ difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
     }
 }
 
-void
-sdifilt( short *xscl, short *yscl, PLINT npts,
-         PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
-{
-    int   i;
-    short x, y;
 
-// Map meta coordinates to physical coordinates
+// Function is unused except for commented out image code
+// If / when that is fixed, then reinstate this function.
+// Needs a prototype and the casting fixed.
+//
+// void
+// sdifilt( short *xscl, short *yscl, PLINT npts,
+//          PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
+// {
+//     int   i;
+//     short x, y;
 
-    if ( plsc->difilt & PLDI_MAP )
-    {
-        for ( i = 0; i < npts; i++ )
-        {
-            xscl[i] = (PLINT) ( plsc->dimxax * xscl[i] + plsc->dimxb );
-            yscl[i] = (PLINT) ( plsc->dimyay * yscl[i] + plsc->dimyb );
-        }
-    }
+// // Map meta coordinates to physical coordinates
 
-// Change orientation
+//     if ( plsc->difilt & PLDI_MAP )
+//     {
+//         for ( i = 0; i < npts; i++ )
+//         {
+//             xscl[i] = (PLINT) ( plsc->dimxax * xscl[i] + plsc->dimxb );
+//             yscl[i] = (PLINT) ( plsc->dimyay * yscl[i] + plsc->dimyb );
+//         }
+//     }
 
-    if ( plsc->difilt & PLDI_ORI )
-    {
-        for ( i = 0; i < npts; i++ )
-        {
-            x       = (PLINT) ( plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb );
-            y       = (PLINT) ( plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb );
-            xscl[i] = x;
-            yscl[i] = y;
-        }
-    }
+// // Change orientation
 
-// Change window into plot space
+//     if ( plsc->difilt & PLDI_ORI )
+//     {
+//         for ( i = 0; i < npts; i++ )
+//         {
+//             x       = (PLINT) ( plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb );
+//             y       = (PLINT) ( plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb );
+//             xscl[i] = x;
+//             yscl[i] = y;
+//         }
+//     }
 
-    if ( plsc->difilt & PLDI_PLT )
-    {
-        for ( i = 0; i < npts; i++ )
-        {
-            xscl[i] = (PLINT) ( plsc->dipxax * xscl[i] + plsc->dipxb );
-            yscl[i] = (PLINT) ( plsc->dipyay * yscl[i] + plsc->dipyb );
-        }
-    }
+// // Change window into plot space
 
-// Change window into device space and set clip limits
-// (this is the only filter that modifies them)
+//     if ( plsc->difilt & PLDI_PLT )
+//     {
+//         for ( i = 0; i < npts; i++ )
+//         {
+//             xscl[i] = (PLINT) ( plsc->dipxax * xscl[i] + plsc->dipxb );
+//             yscl[i] = (PLINT) ( plsc->dipyay * yscl[i] + plsc->dipyb );
+//         }
+//     }
 
-    if ( plsc->difilt & PLDI_DEV )
-    {
-        for ( i = 0; i < npts; i++ )
-        {
-            xscl[i] = (PLINT) ( plsc->didxax * xscl[i] + plsc->didxb );
-            yscl[i] = (PLINT) ( plsc->didyay * yscl[i] + plsc->didyb );
-        }
-        *clpxmi = (PLINT) ( plsc->diclpxmi );
-        *clpxma = (PLINT) ( plsc->diclpxma );
-        *clpymi = (PLINT) ( plsc->diclpymi );
-        *clpyma = (PLINT) ( plsc->diclpyma );
-    }
-    else
-    {
-        *clpxmi = plsc->phyxmi;
-        *clpxma = plsc->phyxma;
-        *clpymi = plsc->phyymi;
-        *clpyma = plsc->phyyma;
-    }
-}
+// // Change window into device space and set clip limits
+// // (this is the only filter that modifies them)
+
+//     if ( plsc->difilt & PLDI_DEV )
+//     {
+//         for ( i = 0; i < npts; i++ )
+//         {
+//             xscl[i] = (PLINT) ( plsc->didxax * xscl[i] + plsc->didxb );
+//             yscl[i] = (PLINT) ( plsc->didyay * yscl[i] + plsc->didyb );
+//         }
+//         *clpxmi = (PLINT) ( plsc->diclpxmi );
+//         *clpxma = (PLINT) ( plsc->diclpxma );
+//         *clpymi = (PLINT) ( plsc->diclpymi );
+//         *clpyma = (PLINT) ( plsc->diclpyma );
+//     }
+//     else
+//     {
+//         *clpxmi = plsc->phyxmi;
+//         *clpxma = plsc->phyxma;
+//         *clpymi = plsc->phyymi;
+//         *clpyma = plsc->phyyma;
+//     }
+// }
 
 //--------------------------------------------------------------------------
 // void difilt_clip
@@ -1501,7 +1512,7 @@ difilt_clip( PLINT *x_coords, PLINT *y_coords )
 //--------------------------------------------------------------------------
 
 static void
-setdef_diplt()
+setdef_diplt( void )
 {
     plsc->dipxmin = 0.0;
     plsc->dipxmax = 1.0;
@@ -1510,7 +1521,7 @@ setdef_diplt()
 }
 
 static void
-setdef_didev()
+setdef_didev( void )
 {
     plsc->mar    = 0.0;
     plsc->aspect = 0.0;
@@ -1519,7 +1530,7 @@ setdef_didev()
 }
 
 static void
-setdef_diori()
+setdef_diori( void )
 {
     plsc->diorot = 0.;
 }
@@ -2698,7 +2709,7 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
     if ( plsc->cmap0 != NULL )
         free( (void *) plsc->cmap0 );
 
-    if ( ( plsc->cmap0 = (PLColor *) calloc( 1, plsc->ncol0 * sizeof ( PLColor ) ) ) == NULL )
+    if ( ( plsc->cmap0 = (PLColor *) calloc( 1, (size_t) plsc->ncol0 * sizeof ( PLColor ) ) ) == NULL )
     {
         plexit( "c_plcpstrm: Insufficient memory" );
     }
@@ -2715,7 +2726,7 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
     if ( plsc->cmap1 != NULL )
         free( (void *) plsc->cmap1 );
 
-    if ( ( plsc->cmap1 = (PLColor *) calloc( 1, plsc->ncol1 * sizeof ( PLColor ) ) ) == NULL )
+    if ( ( plsc->cmap1 = (PLColor *) calloc( 1, (size_t) plsc->ncol1 * sizeof ( PLColor ) ) ) == NULL )
     {
         plexit( "c_plcpstrm: Insufficient memory" );
     }
@@ -2810,10 +2821,10 @@ PLDLLIMPEXP int plInBuildTree()
 
 #ifdef ENABLE_DYNDRIVERS
 
-char*
+const char*
 plGetDrvDir()
 {
-    char* drvdir;
+    const char* drvdir;
 
 // Get drivers directory in PLPLOT_DRV_DIR or DRV_DIR,
 //  on this order
@@ -2867,7 +2878,7 @@ plInitDispatchTable()
 
 #ifdef ENABLE_DYNDRIVERS
     char         buf[BUFFER2_SIZE];
-    char         * drvdir;
+    const char   * drvdir;
     char         *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
     int          seq;
     int          i, j, driver_found, done = 0;
@@ -2904,9 +2915,9 @@ plInitDispatchTable()
     pldebug( "plInitDispatchTable", "Scanning dyndrivers dir\n" );
     while ( ( entry = readdir( dp_drvdir ) ) != NULL )
     {
-        char* name = entry->d_name;
+        char   * name = entry->d_name;
         // Suffix .driver_info has a length of 12 letters.
-        int len = strlen( name ) - 12;
+        size_t len = strlen( name ) - 12;
 
         pldebug( "plInitDispatchTable",
             "Consider file %s\n", name );
@@ -2957,7 +2968,7 @@ plInitDispatchTable()
 
 // Allocate space for the dispatch table.
     if ( ( dispatch_table = (PLDispatchTable **)
-                            malloc( ( nplstaticdevices + npldynamicdevices ) * sizeof ( PLDispatchTable * ) ) ) == NULL )
+                            malloc( (size_t) ( nplstaticdevices + npldynamicdevices ) * sizeof ( PLDispatchTable * ) ) ) == NULL )
     {
 #ifdef ENABLE_DYNDRIVERS
         fclose( fp_drvdb );
@@ -2989,8 +3000,8 @@ plInitDispatchTable()
 // Allocate space for the device and driver specs.  We may not use all of
 // these driver descriptors, but we obviously won't need more drivers than
 // devices...
-    if ( ( ( loadable_device_list = malloc( npldynamicdevices * sizeof ( PLLoadableDevice ) ) ) == NULL ) ||
-         ( ( loadable_driver_list = malloc( npldynamicdevices * sizeof ( PLLoadableDriver ) ) ) == NULL ) )
+    if ( ( ( loadable_device_list = malloc( (size_t) npldynamicdevices * sizeof ( PLLoadableDevice ) ) ) == NULL ) ||
+         ( ( loadable_driver_list = malloc( (size_t) npldynamicdevices * sizeof ( PLLoadableDriver ) ) ) == NULL ) )
     {
         fclose( fp_drvdb );
         plexit( "plInitDispatchTable: Insufficient memory" );
@@ -3090,7 +3101,7 @@ plInitDispatchTable()
 // Finally, we need to sort the list into presentation order, based on the
 // sequence number in the dispatch ttable entries.
 
-    qsort( dispatch_table, npldrivers, sizeof ( PLDispatchTable* ),
+    qsort( dispatch_table, (size_t) npldrivers, sizeof ( PLDispatchTable* ),
         plDispatchSequencer );
 }
 
@@ -3108,9 +3119,10 @@ plInitDispatchTable()
 static void
 plSelectDev()
 {
-    int  dev, i, count, length;
-    char response[80];
-    char * devname_env;
+    int    dev, i, count;
+    size_t length;
+    char   response[80];
+    char   * devname_env;
 
 // If device name is not already specified, try to get it from environment
 
@@ -3678,9 +3690,9 @@ c_plsfnam( const char *fnam )
 // Set the pause (on end-of-page) status
 
 void
-c_plspause( PLINT pause )
+c_plspause( PLINT p )
 {
-    plsc->nopause = !pause;
+    plsc->nopause = !p;
 }
 
 // Set the floating point precision (in number of places) in numeric labels.

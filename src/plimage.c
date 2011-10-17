@@ -233,7 +233,7 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
         return;
     }
 
-    if ( ( z = (PLFLT *) malloc( ny * nx * sizeof ( PLFLT ) ) ) == NULL )
+    if ( ( z = (PLFLT *) malloc( (size_t) ( ny * nx ) * sizeof ( PLFLT ) ) ) == NULL )
     {
         plexit( "plimagefr: Insufficient memory" );
     }

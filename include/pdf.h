@@ -55,7 +55,7 @@ typedef struct
 #ifdef PLPLOT_USE_TCL_CHANNELS
     Tcl_Channel   tclChan;              // Tcl channel
 #endif
-    long          bp, bufmax;           // Buffer pointer and max size
+    size_t        bp, bufmax;           // Buffer pointer and max size
 } PDFstrm;
 
 // Info for the i/o device.  Only used by Tcl/TK/dp drivers for now
@@ -86,7 +86,7 @@ typedef struct
 
 void pdf_set            PLARGS( ( char *option, int value ) );
 PLDLLIMPEXP PDFstrm *pdf_fopen  PLARGS( ( const char *fileName, const char *mode ) );
-PLDLLIMPEXP PDFstrm *pdf_bopen  PLARGS( ( U_CHAR * buffer, long bufmax ) );
+PLDLLIMPEXP PDFstrm *pdf_bopen  PLARGS( ( U_CHAR * buffer, size_t bufmax ) );
 PLDLLIMPEXP PDFstrm *pdf_finit  PLARGS( ( FILE * file ) );
 PDFstrm *plLibOpenPdfstrm PLARGS( (const char * fn) );
 PLDLLIMPEXP int pdf_close              PLARGS( ( PDFstrm * pdfs ) );

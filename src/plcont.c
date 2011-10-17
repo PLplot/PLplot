@@ -148,9 +148,9 @@ static void
 realloc_line( CONT_LINE *line )
 {
     if ( ( ( line->x = (PLFLT *) realloc( line->x,
-                 ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) ||
+                 (size_t) ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) ||
          ( ( line->y = (PLFLT *) realloc( line->y,
-                 ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) )
+                 (size_t) ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) )
         plexit( "realloc_line: Insufficient memory" );
 }
 
@@ -368,9 +368,9 @@ static void plfloatlabel( PLFLT value, char *string, PLINT len )
         mant = (int) ( mant * pow( 10.0, prec - 1 ) + 0.5 * mant / fabs( mant ) ) / pow( 10.0, prec - 1 );
 
     snprintf( form, FORM_LEN, "%%.%df", prec - 1 );
-    snprintf( string, len, form, mant );
+    snprintf( string, (size_t) len, form, mant );
     snprintf( tmpstring, TMPSTRING_LEN, "#(229)10#u%d", exponent );
-    strncat( string, tmpstring, len - strlen( string ) - 1 );
+    strncat( string, tmpstring, (size_t) len - strlen( string ) - 1 );
 
     if ( abs( exponent ) < limexp || value == 0.0 )
     {
@@ -385,7 +385,7 @@ static void plfloatlabel( PLFLT value, char *string, PLINT len )
             prec = 0;
 
         snprintf( form, FORM_LEN, "%%.%df", (int) prec );
-        snprintf( string, len, form, value );
+        snprintf( string, (size_t) len, form, value );
     }
 }
 
@@ -567,14 +567,14 @@ plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
         return;
     }
 
-    if ( ( ipts = (PLINT **) malloc( nx * sizeof ( PLINT * ) ) ) == NULL )
+    if ( ( ipts = (PLINT **) malloc( (size_t) nx * sizeof ( PLINT * ) ) ) == NULL )
     {
         plexit( "plfcont: Insufficient memory" );
     }
 
     for ( i = 0; i < nx; i++ )
     {
-        if ( ( ipts[i] = (PLINT *) malloc( ny * sizeof ( PLINT * ) ) ) == NULL )
+        if ( ( ipts[i] = (PLINT *) malloc( (size_t) ny * sizeof ( PLINT * ) ) ) == NULL )
         {
             plexit( "plfcont: Insufficient memory" );
         }

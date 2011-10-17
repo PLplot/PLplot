@@ -81,7 +81,7 @@ plunicode2type1( const PLUNICODE index,
                  const Unicode_to_Type1_table lookup[],
                  const int number_of_entries );
 
-static char *
+static const char *
 get_font( PSDev* dev, PLUNICODE fci );
 
 // text > 0 uses some postscript tricks, namely a transformation matrix
@@ -450,7 +450,7 @@ plD_line_ps( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     dev->ury = MAX( dev->ury, y2 );
 
     fprintf( OF, "%s", outbuf );
-    pls->bytecnt += 1 + strlen( outbuf );
+    pls->bytecnt += 1 + (PLINT) strlen( outbuf );
     dev->xold     = x2;
     dev->yold     = y2;
 }
@@ -688,7 +688,7 @@ fill_polygon( PLStream *pls )
             dev->urx = MAX( dev->urx, x );
             dev->ury = MAX( dev->ury, y );
             fprintf( OF, "%s", outbuf );
-            pls->bytecnt += strlen( outbuf );
+            pls->bytecnt += (PLINT) strlen( outbuf );
             continue;
         }
 
@@ -709,7 +709,7 @@ fill_polygon( PLStream *pls )
         dev->ury = MAX( dev->ury, y );
 
         fprintf( OF, "%s", outbuf );
-        pls->bytecnt += strlen( outbuf );
+        pls->bytecnt += (PLINT) strlen( outbuf );
         pls->linepos += 21;
     }
     dev->xold = PL_UNDEFINED;
@@ -732,7 +732,7 @@ ps_getdate( void )
 
     t   = time( (time_t *) 0 );
     p   = ctime( &t );
-    len = strlen( p );
+    len = (int) strlen( p );
     *( p + len - 1 ) = '\0';      // zap the newline character
     return p;
 }
@@ -757,12 +757,13 @@ ps_getdate( void )
 void
 proc_str( PLStream *pls, EscText *args )
 {
-    PLFLT *t = args->xform, tt[4];                // Transform matrices
-    PLFLT theta, shear, stride;                   // Rotation angle and shear from the matrix
-    PLFLT ft_ht, offset;                          // Font height and offset
-    PLFLT cs, sn, l1, l2;
-    PSDev *dev = (PSDev *) pls->dev;
-    char  *font, esc;
+    PLFLT      *t = args->xform, tt[4];           // Transform matrices
+    PLFLT      theta, shear, stride;              // Rotation angle and shear from the matrix
+    PLFLT      ft_ht, offset;                     // Font height and offset
+    PLFLT      cs, sn, l1, l2;
+    PSDev      *dev = (PSDev *) pls->dev;
+    const char *font;
+    char       esc;
     // Be generous.  Used to store lots of font changes which take
     // 3 characters per change.
   #define PROC_STR_STRING_LENGTH    1000
@@ -779,12 +780,12 @@ proc_str( PLStream *pls, EscText *args )
     // unicode only! so test for it.
     if ( args->unicode_array_len > 0 )
     {
-        int       j, s, f;
-        char      *fonts[PROC_STR_STRING_LENGTH];
+        int j, s, f;
+        const char *fonts[PROC_STR_STRING_LENGTH];
         const PLUNICODE              *cur_text;
-        PLUNICODE fci, fci_save;
-        PLFLT     old_sscale, sscale, old_soffset, soffset, dup;
-        PLINT     level = 0;
+        PLUNICODE  fci, fci_save;
+        PLFLT      old_sscale, sscale, old_soffset, soffset, ddup;
+        PLINT      level = 0;
         // translate from unicode into type 1 font index.
         //
         // Choose the font family, style, variant, and weight using
@@ -808,7 +809,7 @@ proc_str( PLStream *pls, EscText *args )
                 {
                     fci_save     = cur_text[j];
                     fonts[f++]   = get_font( dev, fci_save );
-                    cur_str[s++] = esc;
+                    cur_str[s++] = (unsigned char) esc;
                     cur_str[s++] = 'f';
                     cur_str[s++] = 'f';
                 }
@@ -842,7 +843,7 @@ proc_str( PLStream *pls, EscText *args )
                         // font instead which will return a blank if
                         // that fails as well.
                         fonts[f++]   = get_font( dev, 0 );
-                        cur_str[s++] = esc;
+                        cur_str[s++] = (unsigned char) esc;
                         cur_str[s++] = 'f';
                         cur_str[s++] = 'f';
                         cur_str[s++] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
@@ -853,7 +854,7 @@ proc_str( PLStream *pls, EscText *args )
                         // font instead which will return a blank if
                         // that fails as well.
                         fonts[f++]   = get_font( dev, fci_save );
-                        cur_str[s++] = esc;
+                        cur_str[s++] = (unsigned char) esc;
                         cur_str[s++] = 'f';
                         cur_str[s++] = 'f';
                         cur_str[s++] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
@@ -1014,8 +1015,8 @@ proc_str( PLStream *pls, EscText *args )
                         // between the baseline and middle coordinate systems
                         // for subscripts should be
                         // -0.5*(base font size - superscript/subscript font size).
-                        dup = -0.5 * ( 1.0 - sscale );
-                        up  = -font_factor * ENLARGE * ft_ht * ( RISE_FACTOR * soffset + dup );
+                        ddup = -0.5 * ( 1.0 - sscale );
+                        up   = -font_factor * ENLARGE * ft_ht * ( RISE_FACTOR * soffset + ddup );
                         break;
 
                     case 'u':  //superscript
@@ -1027,8 +1028,8 @@ proc_str( PLStream *pls, EscText *args )
                         // between the baseline and middle coordinate systems
                         // for superscripts should be
                         // 0.5*(base font size - superscript/subscript font size).
-                        dup = 0.5 * ( 1.0 - sscale );
-                        up  = font_factor * ENLARGE * ft_ht * ( RISE_FACTOR * soffset + dup );
+                        ddup = 0.5 * ( 1.0 - sscale );
+                        up   = font_factor * ENLARGE * ft_ht * ( RISE_FACTOR * soffset + ddup );
                         break;
 
                     // ignore the next sequences
@@ -1190,10 +1191,10 @@ plunicode2type1( const PLUNICODE index,
 //
 // Sets the Type1 font.
 //--------------------------------------------------------------------------
-static char *
+static const char *
 get_font( PSDev* dev, PLUNICODE fci )
 {
-    char *font;
+    const char *font;
     // fci = 0 is a special value indicating the Type 1 Symbol font
     // is desired.  This value cannot be confused with a normal FCI value
     // because it doesn't have the PL_FCI_MARK.

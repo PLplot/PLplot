@@ -400,7 +400,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             plhrsh_unicode_buffer[0] = unicode_char;
             // watch out for escape character and unescape it by appending
             // one extra.
-            if ( unicode_char == esc )
+            if ( unicode_char == (PLUNICODE) esc )
             {
                 args.unicode_array_len   = 2;
                 plhrsh_unicode_buffer[1] = unicode_char;
@@ -1073,7 +1073,7 @@ plcvec( PLINT ch, signed char **xygr )
 static void
 pldeco( short int **symbol, PLINT *length, const char *text )
 {
-    PLINT     ch, ifont = plsc->cfont, ig, j = 0, lentxt = strlen( text );
+    PLINT     ch, ifont = plsc->cfont, ig, j = 0, lentxt = (PLINT) strlen( text );
     char      test, esc;
     short int *sym = symbol_buffer;
 
@@ -1124,7 +1124,7 @@ pldeco( short int **symbol, PLINT *length, const char *text )
                 sym[*length] = 0;
                 while ( '0' <= text[j] && text[j] <= '9' )
                 {
-                    sym[*length] = sym[*length] * 10 + text[j] - '0';
+                    sym[*length] = (short) ( (int) sym[*length] * 10 + text[j] - '0' );
                     j++;
                 }
                 ( *length )++;
@@ -1385,8 +1385,8 @@ plfntld( PLINT fnt )
     pdf_rd_2bytes( pdfs, (U_SHORT *) &bffrleng );
     numberfonts = bffrleng / 256;
     numberchars = bffrleng & 0xff;
-    bffrleng    = numberfonts * numberchars;
-    fntlkup     = (short int *) malloc( bffrleng * sizeof ( short int ) );
+    bffrleng    = (short) ( numberfonts * numberchars );
+    fntlkup     = (short int *) malloc( (size_t) bffrleng * sizeof ( short int ) );
     if ( !fntlkup )
         plexit( "plfntld: Out of memory while allocating font buffer." );
 
@@ -1395,7 +1395,7 @@ plfntld( PLINT fnt )
 // Read fntindx[]
 
     pdf_rd_2bytes( pdfs, (U_SHORT *) &indxleng );
-    fntindx = (short int *) malloc( indxleng * sizeof ( short int ) );
+    fntindx = (short int *) malloc( (size_t) indxleng * sizeof ( short int ) );
     if ( !fntindx )
         plexit( "plfntld: Out of memory while allocating font buffer." );
 
@@ -1405,12 +1405,12 @@ plfntld( PLINT fnt )
 // Since this is an array of char, there are no endian problems
 
     pdf_rd_2bytes( pdfs, (U_SHORT *) &bffrleng );
-    fntbffr = (signed char *) malloc( 2 * bffrleng * sizeof ( signed char ) );
+    fntbffr = (signed char *) malloc( 2 * (size_t) bffrleng * sizeof ( signed char ) );
     if ( !fntbffr )
         plexit( "plfntld: Out of memory while allocating font buffer." );
 
 #if PLPLOT_USE_TCL_CHANNELS
-    pdf_rdx( fntbffr, sizeof ( signed char ) * ( 2 * bffrleng ), pdfs );
+    pdf_rdx( fntbffr, sizeof ( signed char ) * (size_t) ( 2 * bffrleng ), pdfs );
 #else
     plio_fread( (void *) fntbffr, (size_t) sizeof ( signed char ),
         (size_t) ( 2 * bffrleng ), pdfs->file );
@@ -1512,7 +1512,7 @@ int plhershey2unicode( int in )
 //  index is not present the returned value is NULL.
 //--------------------------------------------------------------------------
 
-char *
+const char *
 plP_FCI2FontName( PLUNICODE fci,
                   const FCI_to_FontName_Table lookup[], const int nlookup )
 {
@@ -1532,7 +1532,7 @@ plP_FCI2FontName( PLUNICODE fci,
             // We have found it!
             // fci == lookup[jmid].fci
             //
-            return (char *) ( lookup[jmid].pfont );
+            return (const char *) ( lookup[jmid].pfont );
     }
     // jlo is invalid or it is valid and fci > lookup[jlo].Unicode.
     // jhi is invalid or it is valid and fci < lookup[jhi].Unicode.
@@ -1583,7 +1583,7 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
 
     // calculated
     PLFLT xpc, ypc, xrefpc, yrefpc;
-    PLFLT epx1, epy1, epx2, epy2, epx3, epy3;
+    PLFLT epx1 = 0.0, epy1 = 0.0, epx2 = 0.0, epy2 = 0.0, epx3 = 0.0, epy3 = 0.0;
     PLFLT dispx, dispy, xform[4];
     PLFLT shift, theta, temp;
 

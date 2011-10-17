@@ -51,6 +51,9 @@
 // Define to 1 if you have the <dlfcn.h> header file.
 #cmakedefine HAVE_DLFCN_H 1
 
+// Define if isfinite is available
+#cmakedefine PL_HAVE_ISFINITE
+
 // Define if finite is available
 #cmakedefine PL_HAVE_FINITE
 

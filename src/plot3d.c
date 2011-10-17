@@ -57,9 +57,9 @@ static PLFLT fc_minz, fc_maxz;
 
 static void plgrid3( PLFLT );
 static void plnxtv( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
-static void plside3( PLFLT *, PLFLT *, PLF2OPS, PLPointer, PLINT, PLINT, PLINT );
+static void plside3( const PLFLT *, const PLFLT *, PLF2OPS, PLPointer, PLINT, PLINT, PLINT );
 static void plt3zz( PLINT, PLINT, PLINT, PLINT,
-                    PLINT, PLINT *, PLFLT *, PLFLT *, PLF2OPS, PLPointer,
+                    PLINT, PLINT *, const PLFLT *, const PLFLT *, PLF2OPS, PLPointer,
                     PLINT, PLINT, PLINT *, PLINT *, PLFLT* );
 static void plnxtvhi( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvlo( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
@@ -77,10 +77,10 @@ static void pl3cut( PLINT, PLINT, PLINT, PLINT, PLINT,
                     PLINT, PLINT, PLINT, PLINT *, PLINT * );
 static PLFLT plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z );
 static void plP_draw3d( PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move );
-static void plxyindexlimits( PLINT instart, PLINT inn,
-                             PLINT *inarray_min, PLINT *inarray_max,
-                             PLINT *outstart, PLINT *outn, PLINT outnmax,
-                             PLINT *outarray_min, PLINT *outarray_max );
+//static void plxyindexlimits( PLINT instart, PLINT inn,
+//                             PLINT *inarray_min, PLINT *inarray_max,
+//                             PLINT *outstart, PLINT *outn, PLINT outnmax,
+//                             PLINT *outarray_min, PLINT *outarray_max );
 
 
 // #define MJL_HACK 1
@@ -167,14 +167,14 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
 {
     int   anyout = 0;
     PLFLT _in[PL_MAXPOLY], _T[3][PL_MAXPOLY];
-    PLFLT *in, *T[3], *TT;
+    PLFLT *in, *T[3], *TT = NULL;
     int   No = 0;
     int   i, j, k;
 
     if ( Ni > PL_MAXPOLY )
     {
-        in = (PLFLT *) malloc( sizeof ( PLFLT ) * Ni );
-        TT = (PLFLT *) malloc( 3 * sizeof ( PLFLT ) * Ni );
+        in = (PLFLT *) malloc( sizeof ( PLFLT ) * (size_t) Ni );
+        TT = (PLFLT *) malloc( 3 * sizeof ( PLFLT ) * (size_t) Ni );
 
         if ( in == NULL || TT == NULL )
         {
@@ -297,8 +297,8 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
 
         for ( i = 0; i < n; i++ )
         {
-            u[i] = plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ) );
-            v[i] = plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ) );
+            u[i] = (short) plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ) );
+            v[i] = (short) plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ) );
         }
         u[n] = u[0];
         v[n] = v[0];
@@ -335,8 +335,8 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
            PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     PLINT i;
-    PLINT *indexymin = (PLINT *) malloc( (size_t) ( nx * sizeof ( PLINT ) ) );
-    PLINT *indexymax = (PLINT *) malloc( (size_t) ( nx * sizeof ( PLINT ) ) );
+    PLINT *indexymin = (PLINT *) malloc( (size_t) nx * sizeof ( PLINT ) );
+    PLINT *indexymax = (PLINT *) malloc( (size_t) nx * sizeof ( PLINT ) );
 
     if ( !indexymin || !indexymax )
         plexit( "plsurf3d: Out of memory." );
@@ -582,8 +582,8 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
         int      np = NPTS;
         PLFLT    **zstore;
         PLcGrid2 cgrid2;
-        PLFLT    *zz = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
-        if ( zz == NULL )
+        PLFLT    *zzloc = (PLFLT *) malloc( (size_t) NPTS * sizeof ( PLFLT ) );
+        if ( zzloc == NULL )
             plexit( "plsurf3dl: Insufficient memory" );
 
         // get the contour lines
@@ -635,17 +635,17 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
                 if ( cline->npts > np )
                 {
                     np = cline->npts;
-                    if ( ( zz = (PLFLT *) realloc( zz, np * sizeof ( PLFLT ) ) ) == NULL )
+                    if ( ( zzloc = (PLFLT *) realloc( zzloc, (size_t) np * sizeof ( PLFLT ) ) ) == NULL )
                     {
                         plexit( "plsurf3dl: Insufficient memory" );
                     }
                 }
                 for ( j = 0; j < cline->npts; j++ )
-                    zz[j] = plsc->ranmi;
+                    zzloc[j] = plsc->ranmi;
                 if ( cline->npts > 0 )
                 {
                     plcol1( ( clev->level - fc_minz ) / ( fc_maxz - fc_minz ) );
-                    plline3( cline->npts, cline->x, cline->y, zz );
+                    plline3( cline->npts, cline->x, cline->y, zzloc );
                 }
                 cline = cline->next;
             }
@@ -655,7 +655,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
         while ( clev != NULL );
 
         cont_clean_store( cont ); // now release the memory
-        free( zz );
+        free( zzloc );
     }
 
     // Now we can iterate over the grid drawing the quads
@@ -782,8 +782,6 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
 
     if ( opt & DRAW_SIDES ) // the sides look ugly !!!
     {                       // draw one more row with all the Z's set to zmin
-        PLFLT zscale, zmin, zmax;
-
         plP_grange( &zscale, &zmin, &zmax );
 
         iSlow      = nSlow - 1;
@@ -974,13 +972,13 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
              PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT init, i, ix, iy, color, width;
+    PLINT init, ix, iy, color, width;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLINT ixmin   = 0, ixmax = nx - 1, iymin = 0, iymax = ny - 1;
     PLINT clipped = 0, base_cont = 0, side = 0;
     PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
-    PLFLT *_x, *_y, **_z;
-    PLFLT *x_modified, *y_modified;
+    PLFLT *_x = NULL, *_y = NULL, **_z = NULL;
+    const PLFLT *x_modified, *y_modified;
 
     pl3mode = 0;
 
@@ -1013,7 +1011,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 
 // Check that points in x and in y are strictly increasing
 
-    for ( i = 0; i < nx - 1; i++ )
+    for ( int i = 0; i < nx - 1; i++ )
     {
         if ( x[i] >= x[i + 1] )
         {
@@ -1021,7 +1019,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
             return;
         }
     }
-    for ( i = 0; i < ny - 1; i++ )
+    for ( int i = 0; i < ny - 1; i++ )
     {
         if ( y[i] >= y[i + 1] )
         {
@@ -1074,9 +1072,9 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         }
 
         // allocate storage for new versions of the input vectors
-        if ( ( ( _x = (PLFLT *) malloc( _nx * sizeof ( PLFLT ) ) ) == NULL ) ||
-             ( ( _y = (PLFLT *) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL ) ||
-             ( ( _z = (PLFLT **) malloc( _nx * sizeof ( PLFLT* ) ) ) == NULL ) )
+        if ( ( ( _x = (PLFLT *) malloc( (size_t) _nx * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( _y = (PLFLT *) malloc( (size_t) _ny * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( _z = (PLFLT **) malloc( (size_t) _nx * sizeof ( PLFLT* ) ) ) == NULL ) )
         {
             plexit( "c_plot3dcl: Insufficient memory" );
         }
@@ -1096,7 +1094,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         // copy the data array so we can interpolate around the edges
         for ( i = 0; i < _nx; i++ )
         {
-            if ( ( _z[i] = (PLFLT *) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL )
+            if ( ( _z[i] = (PLFLT *) malloc( (size_t) _ny * sizeof ( PLFLT ) ) ) == NULL )
             {
                 plexit( "c_plot3dcl: Insufficient memory" );
             }
@@ -1148,13 +1146,13 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         nx   = _nx;
         ny   = _ny;
         // Do not want to modify input x and y (const modifier)
-        x_modified = _x;
-        y_modified = _y;
+        x_modified = (const PLFLT *) _x;
+        y_modified = (const PLFLT *) _y;
     }
     else
     {
-        x_modified = (PLFLT *) x;
-        y_modified = (PLFLT *) y;
+        x_modified = x;
+        y_modified = y;
     }
 
     // From here on must use x_modified and y_modified rather than
@@ -1191,7 +1189,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 
     if ( opt & MAG_COLOR )    // If enabled, use magnitude colored wireframe
     {
-        if ( ( ctmp = (PLFLT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLFLT ) ) ) ) == NULL )
+        if ( ( ctmp = (PLFLT *) malloc( (size_t) ( 2 * MAX( nx, ny ) ) * sizeof ( PLFLT ) ) ) == NULL )
         {
             plexit( "c_plot3dcl: Insufficient memory" );
         }
@@ -1204,8 +1202,8 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 
     // Allocate work arrays
 
-    utmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT ) ) );
-    vtmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT ) ) );
+    utmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) ) * sizeof ( PLINT ) );
+    vtmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) ) * sizeof ( PLINT ) );
 
     if ( !utmp || !vtmp )
         myexit( "plot3dcl: Out of memory." );
@@ -1294,8 +1292,8 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         CONT_LEVEL *cont, *clev;
         CONT_LINE *cline;
 
-        PLINT *uu = (PLINT *) malloc( NPTS * sizeof ( PLINT ) );
-        PLINT *vv = (PLINT *) malloc( NPTS * sizeof ( PLINT ) );
+        PLINT *uu = (PLINT *) malloc( (size_t) NPTS * sizeof ( PLINT ) );
+        PLINT *vv = (PLINT *) malloc( (size_t) NPTS * sizeof ( PLINT ) );
         // prepare cont_store input
         PLFLT **zstore;
         PLcGrid2 cgrid2;
@@ -1311,7 +1309,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         plAlloc2dGrid( &cgrid2.yg, nx, ny );
         plAlloc2dGrid( &zstore, nx, ny );
 
-        for ( i = 0; i < nx; i++ )
+        for ( int i = 0; i < nx; i++ )
         {
             for ( j = 0; j < ny; j++ )
             {
@@ -1344,8 +1342,8 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
                 if ( cline->npts > np )
                 {
                     np = cline->npts;
-                    if ( ( ( uu = (PLINT *) realloc( uu, np * sizeof ( PLINT ) ) ) == NULL ) ||
-                         ( ( vv = (PLINT *) realloc( vv, np * sizeof ( PLINT ) ) ) == NULL ) )
+                    if ( ( ( uu = (PLINT *) realloc( uu, (size_t) np * sizeof ( PLINT ) ) ) == NULL ) ||
+                         ( ( vv = (PLINT *) realloc( vv, (size_t) np * sizeof ( PLINT ) ) ) == NULL ) )
                     {
                         plexit( "c_plot3dcl: Insufficient memory" );
                     }
@@ -1446,7 +1444,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     {
         free( _x );
         free( _y );
-        for ( i = 0; i < nx; i++ )
+        for ( int i = 0; i < nx; i++ )
             free( _z[i] );
         free( _z );
     }
@@ -1471,74 +1469,74 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 // inarray_min array has a maximum or inarray_max array has a minimum.
 //--------------------------------------------------------------------------
 
-static void
-plxyindexlimits( PLINT instart, PLINT inn,
-                 PLINT *inarray_min, PLINT *inarray_max,
-                 PLINT *outstart, PLINT *outn, PLINT outnmax,
-                 PLINT *outarray_min, PLINT *outarray_max )
-{
-    PLINT i, j;
-    if ( inn < 0 )
-    {
-        myabort( "plxyindexlimits: Must have instart >= 0" );
-        return;
-    }
-    if ( inn - instart <= 0 )
-    {
-        myabort( "plxyindexlimits: Must have at least 1 defined point" );
-        return;
-    }
-    *outstart = inarray_min[instart];
-    *outn     = inarray_max[instart];
-    for ( i = instart; i < inn; i++ )
-    {
-        *outstart = MIN( *outstart, inarray_min[i] );
-        *outn     = MAX( *outn, inarray_max[i] );
-        if ( i + 2 < inn )
-        {
-            if ( inarray_min[i] < inarray_min[i + 1] &&
-                 inarray_min[i + 1] > inarray_min[i + 2] )
-            {
-                myabort( "plxyindexlimits: inarray_min must not have a maximum" );
-                return;
-            }
-            if ( inarray_max[i] > inarray_max[i + 1] &&
-                 inarray_max[i + 1] < inarray_max[i + 2] )
-            {
-                myabort( "plxyindexlimits: inarray_max must not have a minimum" );
-                return;
-            }
-        }
-    }
-    if ( *outstart < 0 )
-    {
-        myabort( "plxyindexlimits: Must have all elements of inarray_min >= 0" );
-        return;
-    }
-    if ( *outn > outnmax )
-    {
-        myabort( "plxyindexlimits: Must have all elements of inarray_max <= outnmax" );
-        return;
-    }
-    for ( j = *outstart; j < *outn; j++ )
-    {
-        i = instart;
-        // Find first valid i for this j.
-        while ( i < inn && !( inarray_min[i] <= j && j < inarray_max[i] ) )
-            i++;
-        if ( i < inn )
-            outarray_min[j] = i;
-        else
-        {
-            myabort( "plxyindexlimits: bad logic; invalid i should never happen" );
-            return;
-        }
-        // Find next invalid i for this j.
-        while ( i < inn && ( inarray_min[i] <= j && j < inarray_max[i] ) )
-            i++;
-        outarray_max[j] = i;
-    }
-}
+//static void
+//plxyindexlimits( PLINT instart, PLINT inn,
+//                 PLINT *inarray_min, PLINT *inarray_max,
+//                 PLINT *outstart, PLINT *outn, PLINT outnmax,
+//                 PLINT *outarray_min, PLINT *outarray_max )
+//{
+//    PLINT i, j;
+//    if ( inn < 0 )
+//    {
+//        myabort( "plxyindexlimits: Must have instart >= 0" );
+//        return;
+//    }
+//    if ( inn - instart <= 0 )
+//    {
+//        myabort( "plxyindexlimits: Must have at least 1 defined point" );
+//        return;
+//    }
+//    *outstart = inarray_min[instart];
+//    *outn     = inarray_max[instart];
+//    for ( i = instart; i < inn; i++ )
+//    {
+//        *outstart = MIN( *outstart, inarray_min[i] );
+//        *outn     = MAX( *outn, inarray_max[i] );
+//        if ( i + 2 < inn )
+//        {
+//            if ( inarray_min[i] < inarray_min[i + 1] &&
+//                 inarray_min[i + 1] > inarray_min[i + 2] )
+//            {
+//                myabort( "plxyindexlimits: inarray_min must not have a maximum" );
+//                return;
+//            }
+//            if ( inarray_max[i] > inarray_max[i + 1] &&
+//                 inarray_max[i + 1] < inarray_max[i + 2] )
+//            {
+//                myabort( "plxyindexlimits: inarray_max must not have a minimum" );
+//                return;
+//            }
+//        }
+//    }
+//    if ( *outstart < 0 )
+//    {
+//        myabort( "plxyindexlimits: Must have all elements of inarray_min >= 0" );
+//        return;
+//    }
+//    if ( *outn > outnmax )
+//    {
+//        myabort( "plxyindexlimits: Must have all elements of inarray_max <= outnmax" );
+//        return;
+//    }
+//    for ( j = *outstart; j < *outn; j++ )
+//    {
+//        i = instart;
+//        // Find first valid i for this j.
+//        while ( i < inn && !( inarray_min[i] <= j && j < inarray_max[i] ) )
+//            i++;
+//        if ( i < inn )
+//            outarray_min[j] = i;
+//        else
+//        {
+//            myabort( "plxyindexlimits: bad logic; invalid i should never happen" );
+//            return;
+//        }
+//        // Find next invalid i for this j.
+//        while ( i < inn && ( inarray_min[i] <= j && j < inarray_max[i] ) )
+//            i++;
+//        outarray_max[j] = i;
+//    }
+//}
 
 //--------------------------------------------------------------------------
 // void plP_gzback()
@@ -1619,7 +1617,7 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
 
 static void
 plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
-        PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+        const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         PLINT *u, PLINT *v, PLFLT* c )
 {
     PLINT n = 0;
@@ -1701,7 +1699,7 @@ plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 //--------------------------------------------------------------------------
 
 static void
-plside3( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLINT opt )
+plside3( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLINT opt )
 {
     PLINT i;
     PLFLT cxx, cxy, cyx, cyy, cyz;
@@ -1966,7 +1964,7 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
     if ( init == 1 )
     {
         int i;
-        oldhiview = (PLINT *) malloc( (size_t) ( 2 * n * sizeof ( PLINT ) ) );
+        oldhiview = (PLINT *) malloc( (size_t) ( 2 * n ) * sizeof ( PLINT ) );
         if ( !oldhiview )
             myexit( "plnxtvhi: Out of memory." );
 
@@ -2004,12 +2002,12 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
         {
             newhiview =
                 (PLINT *) realloc( (void *) newhiview,
-                    (size_t) ( newhisize * sizeof ( PLINT ) ) );
+                    (size_t) newhisize * sizeof ( PLINT ) );
         }
         else
         {
             newhiview =
-                (PLINT *) malloc( (size_t) ( newhisize * sizeof ( PLINT ) ) );
+                (PLINT *) malloc( (size_t) newhisize * sizeof ( PLINT ) );
         }
         if ( !newhiview )
             myexit( "plnxtvhi: Out of memory." );
@@ -2285,7 +2283,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
     //
     if ( init == 1 )
     {
-        oldloview = (PLINT *) malloc( (size_t) ( 2 * n * sizeof ( PLINT ) ) );
+        oldloview = (PLINT *) malloc( (size_t) ( 2 * n ) * sizeof ( PLINT ) );
         if ( !oldloview )
             myexit( "\nplnxtvlo: Out of memory." );
 
@@ -2325,12 +2323,12 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
         {
             newloview =
                 (PLINT *) realloc( (void *) newloview,
-                    (size_t) ( newlosize * sizeof ( PLINT ) ) );
+                    (size_t) newlosize * sizeof ( PLINT ) );
         }
         else
         {
             newloview =
-                (PLINT *) malloc( (size_t) ( newlosize * sizeof ( PLINT ) ) );
+                (PLINT *) malloc( (size_t) newlosize * sizeof ( PLINT ) );
         }
         if ( !newloview )
             myexit( "plnxtvlo: Out of memory." );
@@ -2551,7 +2549,7 @@ savehipoint( PLINT px, PLINT py )
     {
         newhisize += 2 * BINC;
         newhiview  = (PLINT *) realloc( (void *) newhiview,
-            (size_t) ( newhisize * sizeof ( PLINT ) ) );
+            (size_t) newhisize * sizeof ( PLINT ) );
         if ( !newhiview )
             myexit( "savehipoint: Out of memory." );
     }
@@ -2572,7 +2570,7 @@ savelopoint( PLINT px, PLINT py )
     {
         newlosize += 2 * BINC;
         newloview  = (PLINT *) realloc( (void *) newloview,
-            (size_t) ( newlosize * sizeof ( PLINT ) ) );
+            (size_t) newlosize * sizeof ( PLINT ) );
         if ( !newloview )
             myexit( "savelopoint: Out of memory." );
     }

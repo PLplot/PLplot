@@ -51,7 +51,7 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
     sphi = sin( DEG_TO_RAD( rotate ) );
 
     // The number of line segments used to approximate the arc
-    segments = fabs( d_angle ) / ( 2.0 * M_PI ) * CIRCLE_SEGMENTS;
+    segments = (PLINT) ( fabs( d_angle ) / ( 2.0 * M_PI ) * CIRCLE_SEGMENTS );
     // Always use at least 2 arc points, otherwise fills will break.
     if ( segments < 2 )
         segments = 2;

@@ -131,8 +131,8 @@ c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
         npts = n;
         if ( n > PL_MAXPOLY - 1 )
         {
-            xpoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
-            ypoly = (PLINT *) malloc( ( n + 1 ) * sizeof ( PLINT ) );
+            xpoly = (PLINT *) malloc( (size_t) ( n + 1 ) * sizeof ( PLINT ) );
+            ypoly = (PLINT *) malloc( (size_t) ( n + 1 ) * sizeof ( PLINT ) );
 
             if ( ( xpoly == NULL ) || ( ypoly == NULL ) )
             {
@@ -195,8 +195,8 @@ plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
 
     // Define polygon boundary so it is accessible from gradient_defined.
     plsc->n_polygon = n;
-    plsc->x_polygon = (PLFLT *) x;
-    plsc->y_polygon = (PLFLT *) y;
+    plsc->x_polygon = x;
+    plsc->y_polygon = y;
 
     // Find x and y range of polygon.
     xmin = x[0];

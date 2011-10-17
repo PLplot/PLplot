@@ -166,7 +166,7 @@ plD_init_xfig( PLStream *pls )
     stcmap1( pls );
 
     dev->bufflen = 2 * BSIZE;
-    dev->buffptr = (int *) malloc( sizeof ( int ) * dev->bufflen );
+    dev->buffptr = (int *) malloc( sizeof ( int ) * (size_t) ( dev->bufflen ) );
     if ( dev->buffptr == NULL )
         plexit( "plD_init_xfig: Out of memory!" );
 }
@@ -265,7 +265,7 @@ plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         {
             dev->bufflen += 2 * BSIZE;
             tempptr       = (int *)
-                            realloc( (void *) dev->buffptr, dev->bufflen * sizeof ( int ) );
+                            realloc( (void *) dev->buffptr, (size_t) ( dev->bufflen ) * sizeof ( int ) );
             if ( tempptr == NULL )
             {
                 free( (void *) dev->buffptr );

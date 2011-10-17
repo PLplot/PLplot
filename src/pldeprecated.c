@@ -25,10 +25,9 @@
 //  is explicitly commented.
 //
 
-#ifdef PL_DEPRECATED
-
-#define NEED_PLDEBUG
 #include "plplotP.h"
+
+#ifdef PL_DEPRECATED
 
 // The following functions have been removed from plplot ahead of the 5.9.8
 // release. They have long been advertised as deprecated.

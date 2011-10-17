@@ -301,9 +301,9 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
         return;
     }
 
-    plsc->cmap0[icol0].r = r;
-    plsc->cmap0[icol0].g = g;
-    plsc->cmap0[icol0].b = b;
+    plsc->cmap0[icol0].r = (unsigned char) r;
+    plsc->cmap0[icol0].g = (unsigned char) g;
+    plsc->cmap0[icol0].b = (unsigned char) b;
     plsc->cmap0[icol0].a = a;
 
     if ( plsc->level > 0 )
@@ -403,9 +403,9 @@ c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 )
             return;
         }
 
-        plsc->cmap0[i].r = r[i];
-        plsc->cmap0[i].g = g[i];
-        plsc->cmap0[i].b = b[i];
+        plsc->cmap0[i].r = (unsigned char) r[i];
+        plsc->cmap0[i].g = (unsigned char) g[i];
+        plsc->cmap0[i].b = (unsigned char) b[i];
         plsc->cmap0[i].a = 1.0;
     }
 
@@ -441,9 +441,9 @@ c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
             return;
         }
 
-        plsc->cmap0[i].r = r[i];
-        plsc->cmap0[i].g = g[i];
-        plsc->cmap0[i].b = b[i];
+        plsc->cmap0[i].r = (unsigned char) r[i];
+        plsc->cmap0[i].g = (unsigned char) g[i];
+        plsc->cmap0[i].b = (unsigned char) b[i];
         plsc->cmap0[i].a = a[i];
     }
 
@@ -477,9 +477,9 @@ c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 )
             plabort( buffer );
             return;
         }
-        plsc->cmap1[i].r = r[i];
-        plsc->cmap1[i].g = g[i];
-        plsc->cmap1[i].b = b[i];
+        plsc->cmap1[i].r = (unsigned char) r[i];
+        plsc->cmap1[i].g = (unsigned char) g[i];
+        plsc->cmap1[i].b = (unsigned char) b[i];
         plsc->cmap1[i].a = 1.0;
     }
 
@@ -514,9 +514,9 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
             plabort( buffer );
             return;
         }
-        plsc->cmap1[i].r = r[i];
-        plsc->cmap1[i].g = g[i];
-        plsc->cmap1[i].b = b[i];
+        plsc->cmap1[i].r = (unsigned char) r[i];
+        plsc->cmap1[i].g = (unsigned char) g[i];
+        plsc->cmap1[i].b = (unsigned char) b[i];
         plsc->cmap1[i].a = a[i];
     }
 
@@ -779,9 +779,9 @@ plcmap1_calc( void )
 
             c_plhlsrgb( h, l, s, &r, &g, &b );
 
-            plsc->cmap1[i].r = MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
-            plsc->cmap1[i].g = MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
-            plsc->cmap1[i].b = MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
+            plsc->cmap1[i].r = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
+            plsc->cmap1[i].g = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
+            plsc->cmap1[i].b = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
             plsc->cmap1[i].a = a;
         }
     }
@@ -870,13 +870,13 @@ c_plscmap0n( PLINT ncol0 )
         ncol = ncol0;
 
     imax = ncol - 1;
-    size = ncol * sizeof ( PLColor );
+    size = ncol * (int) sizeof ( PLColor );
 
 // Allocate the space
 
     if ( plsc->cmap0 == NULL )
     {
-        if ( ( plsc->cmap0 = (PLColor *) calloc( 1, size ) ) == NULL )
+        if ( ( plsc->cmap0 = (PLColor *) calloc( 1, (size_t) size ) ) == NULL )
         {
             plexit( "c_plscmap0n: Insufficient memory" );
         }
@@ -884,7 +884,7 @@ c_plscmap0n( PLINT ncol0 )
     }
     else
     {
-        if ( ( plsc->cmap0 = (PLColor *) realloc( plsc->cmap0, size ) ) == NULL )
+        if ( ( plsc->cmap0 = (PLColor *) realloc( plsc->cmap0, (size_t) size ) ) == NULL )
         {
             plexit( "c_plscmap0n: Insufficient memory" );
         }
@@ -937,7 +937,7 @@ plcmap0_def( int imin, int imax )
     {
         cmap0_palette_read( "", &number_colors, &r, &g, &b, &a );
         for ( i = imin; i <= MIN( ( number_colors - 1 ), imax ); i++ )
-            color_def( i, (PLINT) r[i], (PLINT) g[i], (PLINT) b[i], a[i],
+            color_def( i, (U_CHAR) r[i], (U_CHAR) g[i], (U_CHAR) b[i], a[i],
                 "colors defined by default cmap0 palette file" );
         free( r );
         free( g );
@@ -969,7 +969,8 @@ plcmap0_def( int imin, int imax )
 void
 c_plscmap1n( PLINT ncol1 )
 {
-    int ncol, size;
+    PLINT  ncol;
+    size_t size;
 
 // No change
 
@@ -985,7 +986,7 @@ c_plscmap1n( PLINT ncol1 )
     else
         ncol = ncol1;
 
-    size = ncol * sizeof ( PLColor );
+    size = (size_t) ncol * sizeof ( PLColor );
 
 // Allocate the space
 
@@ -998,7 +999,7 @@ c_plscmap1n( PLINT ncol1 )
     }
     else
     {
-        if ( ( plsc->cmap1 = (PLColor *) calloc( ncol, sizeof ( PLColor ) ) ) == NULL )
+        if ( ( plsc->cmap1 = (PLColor *) calloc( (size_t) ncol, sizeof ( PLColor ) ) ) == NULL )
         {
             plexit( "c_plscmap1n: Insufficient memory" );
         }
@@ -1321,10 +1322,10 @@ cmap0_palette_read( const char *filename,
     {
         // Allocate arrays to hold r, g, b, and a data for calling routine.
         // The caller must free these after it is finished with them.
-        if ( ( ( *r = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
-             ( ( *g = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
-             ( ( *b = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
-             ( ( *a = (double *) malloc( *number_colors * sizeof ( double ) ) ) == NULL ) )
+        if ( ( ( *r = (unsigned int *) malloc( (size_t) ( *number_colors ) * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *g = (unsigned int *) malloc( (size_t) ( *number_colors ) * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *b = (unsigned int *) malloc( (size_t) ( *number_colors ) * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *a = (double *) malloc( (size_t) ( *number_colors ) * sizeof ( double ) ) ) == NULL ) )
         {
             fclose( fp );
             plexit( "cmap0_palette_read: insufficient memory" );
@@ -1397,10 +1398,10 @@ cmap0_palette_read( const char *filename,
     if ( err )
     {
         *number_colors = 16;
-        if ( ( ( *r = (unsigned int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
-             ( ( *g = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
-             ( ( *b = (unsigned int *) malloc( *number_colors * sizeof ( unsigned int ) ) ) == NULL ) ||
-             ( ( *a = (double *) malloc( *number_colors * sizeof ( double ) ) ) == NULL ) )
+        if ( ( ( *r = (unsigned int *) malloc( (size_t) ( *number_colors ) * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *g = (unsigned int *) malloc( (size_t) ( *number_colors ) * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *b = (unsigned int *) malloc( (size_t) ( *number_colors ) * sizeof ( unsigned int ) ) ) == NULL ) ||
+             ( ( *a = (double *) malloc( (size_t) ( *number_colors ) * sizeof ( double ) ) ) == NULL ) )
         {
             plexit( "cmap0_palette_read: insufficient memory" );
         }
@@ -1554,15 +1555,15 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         goto finish;
     }
 
-    r   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-    g   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-    b   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-    ri  = (PLINT *) malloc( number_colors * sizeof ( PLINT ) );
-    gi  = (PLINT *) malloc( number_colors * sizeof ( PLINT ) );
-    bi  = (PLINT *) malloc( number_colors * sizeof ( PLINT ) );
-    a   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-    pos = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-    rev = (PLBOOL *) malloc( number_colors * sizeof ( PLBOOL ) );
+    r   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    g   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    b   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    ri  = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
+    gi  = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
+    bi  = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
+    a   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    pos = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    rev = (PLBOOL *) malloc( (size_t) number_colors * sizeof ( PLBOOL ) );
 
     if ( format_version == 0 )
     {
@@ -1668,9 +1669,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         {
             for ( i = 0; i < number_colors; i++ )
             {
-                ri[i] = r[i] * 255.0;
-                gi[i] = g[i] * 255.0;
-                bi[i] = b[i] * 255.0;
+                ri[i] = (PLINT) ( r[i] * 255.0 );
+                gi[i] = (PLINT) ( g[i] * 255.0 );
+                bi[i] = (PLINT) ( b[i] * 255.0 );
             }
             c_plscmap1a( ri, gi, bi, a, number_colors );
         }
@@ -1684,10 +1685,10 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         free( b );
         free( pos );
         number_colors = 2;
-        r             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-        g             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-        b             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
-        pos           = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+        r             = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+        g             = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+        b             = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+        pos           = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
         r[0]          = 0.;
         r[1]          = 1.;
         g[0]          = 0.;
@@ -2205,7 +2206,7 @@ plFindName( char *p )
         {
             // Link is an absolute path
 
-            strncpy( p, buf, n );
+            strncpy( p, buf, (size_t) n );
             p[n] = '\0';
             pldebug( "plFindName", "Link is absolute: %s\n", p );
         }
@@ -2214,7 +2215,7 @@ plFindName( char *p )
             // Link is relative to its directory; make it absolute
 
             cp = 1 + strrchr( p, '/' );
-            strncpy( cp, buf, n );
+            strncpy( cp, buf, (size_t) n );
             cp[n] = '\0';
             pldebug( "plFindName",
                 "Link is relative: %s\n\tTotal path:%s\n", cp, p );
@@ -2262,7 +2263,7 @@ plFindName( char *p )
 void
 plGetName( const char *dir, const char *subdir, const char *filename, char **filespec )
 {
-    int lfilespec;
+    size_t lfilespec;
 
 // Malloc space for filespec
 
@@ -2285,7 +2286,7 @@ plGetName( const char *dir, const char *subdir, const char *filename, char **fil
         strcat_delim( *filespec );
         strcat( *filespec, filename );
     }
-    pldebug( "plGetName", "Length of full pathname of file to be found is %d\n", lfilespec );
+    pldebug( "plGetName", "Length of full pathname of file to be found is %zu\n", lfilespec );
     pldebug( "plGetName", "Full pathname of file to be found is %s\n", *filespec );
 }
 
@@ -2299,7 +2300,7 @@ plGetName( const char *dir, const char *subdir, const char *filename, char **fil
 void
 strcat_delim( char *dirspec )
 {
-    int ldirspec = strlen( dirspec );
+    size_t ldirspec = strlen( dirspec );
 #if defined ( MSDOS ) || defined ( WIN32 )
     if ( dirspec[ldirspec - 1] != '\\' )
         strcat( dirspec, "\\" );
@@ -2444,11 +2445,11 @@ plCloseFile( PLStream *pls )
 void
 plP_getmember( PLStream *pls )
 {
-    char tmp[BUFFER_SIZE];
-    char prefix[BUFFER_SIZE];
-    char * suffix;
-    char num[BUFFER_SIZE];
-    int  maxlen;
+    char   tmp[BUFFER_SIZE];
+    char   prefix[BUFFER_SIZE];
+    char   * suffix;
+    char   num[BUFFER_SIZE];
+    size_t maxlen;
 
     maxlen = strlen( pls->BaseName ) + 10;
     if ( pls->FileName == NULL )
@@ -2484,9 +2485,9 @@ plP_getmember( PLStream *pls )
 void
 plP_sfnam( PLStream *pls, const char *fnam )
 {
-    char prefix[BUFFER_SIZE];
-    char * suffix;
-    int  maxlen;
+    char   prefix[BUFFER_SIZE];
+    char   * suffix;
+    size_t maxlen;
     pls->OutFile = NULL;
 
     if ( pls->FileName != NULL )

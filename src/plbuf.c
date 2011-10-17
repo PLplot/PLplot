@@ -115,8 +115,8 @@ plbuf_polyline( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     wr_data( pls, &npts, sizeof ( PLINT ) );
 
-    wr_data( pls, xa, sizeof ( short ) * npts );
-    wr_data( pls, ya, sizeof ( short ) * npts );
+    wr_data( pls, xa, sizeof ( short ) * (size_t) npts );
+    wr_data( pls, ya, sizeof ( short ) * (size_t) npts );
 }
 
 //--------------------------------------------------------------------------
@@ -265,9 +265,9 @@ plbuf_image( PLStream *pls, IMG_DT *img_dt )
     wr_data( pls, &pls->dev_zmin, sizeof ( short ) );
     wr_data( pls, &pls->dev_zmax, sizeof ( short ) );
 
-    wr_data( pls, pls->dev_ix, sizeof ( short ) * npts );
-    wr_data( pls, pls->dev_iy, sizeof ( short ) * npts );
-    wr_data( pls, pls->dev_z, sizeof ( unsigned short ) * ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ) );
+    wr_data( pls, pls->dev_ix, sizeof ( short ) * (size_t) npts );
+    wr_data( pls, pls->dev_iy, sizeof ( short ) * (size_t) npts );
+    wr_data( pls, pls->dev_z, sizeof ( unsigned short ) * (size_t) ( ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ) ) );
 }
 
 //--------------------------------------------------------------------------
@@ -421,8 +421,8 @@ plbuf_fill( PLStream *pls )
     dbug_enter( "plbuf_fill" );
 
     wr_data( pls, &pls->dev_npts, sizeof ( PLINT ) );
-    wr_data( pls, pls->dev_x, sizeof ( short ) * pls->dev_npts );
-    wr_data( pls, pls->dev_y, sizeof ( short ) * pls->dev_npts );
+    wr_data( pls, pls->dev_x, sizeof ( short ) * (size_t) pls->dev_npts );
+    wr_data( pls, pls->dev_y, sizeof ( short ) * (size_t) pls->dev_npts );
 }
 
 //--------------------------------------------------------------------------
@@ -475,8 +475,8 @@ rdbuf_line( PLStream *pls )
 
     dbug_enter( "rdbuf_line" );
 
-    rd_data( pls, xpl, sizeof ( short ) * npts );
-    rd_data( pls, ypl, sizeof ( short ) * npts );
+    rd_data( pls, xpl, sizeof ( short ) * (size_t) npts );
+    rd_data( pls, ypl, sizeof ( short ) * (size_t) npts );
 
     plP_line( xpl, ypl );
 }
@@ -500,8 +500,8 @@ rdbuf_polyline( PLStream *pls )
 
     if ( npts > PL_MAXPOLY )
     {
-        xpl = (short *) malloc( ( npts + 1 ) * sizeof ( PLINT ) );
-        ypl = (short *) malloc( ( npts + 1 ) * sizeof ( PLINT ) );
+        xpl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
+        ypl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
 
         if ( ( xpl == NULL ) || ( ypl == NULL ) )
         {
@@ -515,8 +515,8 @@ rdbuf_polyline( PLStream *pls )
     }
 
 
-    rd_data( pls, xpl, sizeof ( short ) * npts );
-    rd_data( pls, ypl, sizeof ( short ) * npts );
+    rd_data( pls, xpl, sizeof ( short ) * (size_t) npts );
+    rd_data( pls, ypl, sizeof ( short ) * (size_t) npts );
 
     plP_polyline( xpl, ypl, npts );
 
@@ -736,8 +736,8 @@ rdbuf_fill( PLStream *pls )
 
     if ( npts > PL_MAXPOLY )
     {
-        xpl = (short *) malloc( ( npts + 1 ) * sizeof ( PLINT ) );
-        ypl = (short *) malloc( ( npts + 1 ) * sizeof ( PLINT ) );
+        xpl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
+        ypl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
 
         if ( ( xpl == NULL ) || ( ypl == NULL ) )
         {
@@ -750,8 +750,8 @@ rdbuf_fill( PLStream *pls )
         ypl = _ypl;
     }
 
-    rd_data( pls, xpl, sizeof ( short ) * npts );
-    rd_data( pls, ypl, sizeof ( short ) * npts );
+    rd_data( pls, xpl, sizeof ( short ) * (size_t) npts );
+    rd_data( pls, ypl, sizeof ( short ) * (size_t) npts );
 
     plP_fill( xpl, ypl, npts );
 
@@ -794,14 +794,14 @@ rdbuf_image( PLStream *pls )
     // we still allocate and copy the data because I think that method works
     // better in a multithreaded environment.  I could be wrong.
     //
-    if ( ( ( dev_ix = (short *) malloc( npts * sizeof ( short ) ) ) == NULL ) ||
-         ( ( dev_iy = (short *) malloc( npts * sizeof ( short ) ) ) == NULL ) ||
-         ( ( dev_z = (unsigned short *) malloc( ( nptsX - 1 ) * ( nptsY - 1 ) * sizeof ( unsigned short ) ) ) == NULL ) )
+    if ( ( ( dev_ix = (short *) malloc( (size_t) npts * sizeof ( short ) ) ) == NULL ) ||
+         ( ( dev_iy = (short *) malloc( (size_t) npts * sizeof ( short ) ) ) == NULL ) ||
+         ( ( dev_z = (unsigned short *) malloc( (size_t) ( ( nptsX - 1 ) * ( nptsY - 1 ) ) * sizeof ( unsigned short ) ) ) == NULL ) )
         plexit( "rdbuf_image: Insufficient memory" );
 
-    rd_data( pls, dev_ix, sizeof ( short ) * npts );
-    rd_data( pls, dev_iy, sizeof ( short ) * npts );
-    rd_data( pls, dev_z, sizeof ( unsigned short ) * ( nptsX - 1 ) * ( nptsY - 1 ) );
+    rd_data( pls, dev_ix, sizeof ( short ) * (size_t) npts );
+    rd_data( pls, dev_iy, sizeof ( short ) * (size_t) npts );
+    rd_data( pls, dev_z, sizeof ( unsigned short ) * (size_t) ( ( nptsX - 1 ) * ( nptsY - 1 ) ) );
 
     //
     // COMMENTED OUT by Hezekiah Carty
@@ -1217,8 +1217,8 @@ void * plbuf_save( PLStream *pls, void *state )
         //
         save_size = sizeof ( struct _state )
                     + 2 * sizeof ( struct _color_map )
-                    + pls->ncol0 * sizeof ( PLColor )
-                    + pls->ncol1 * sizeof ( PLColor );
+                    + (size_t) ( pls->ncol0 ) * sizeof ( PLColor )
+                    + (size_t) ( pls->ncol1 ) * sizeof ( PLColor );
 
 #ifndef BUFFERED_FILE
         // Only copy as much of the plot buffer that is being used
@@ -1340,9 +1340,9 @@ void * plbuf_save( PLStream *pls, void *state )
 
         // Then we need to make space for the colormaps themselves
         plot_state->color_map[0].cmap = (PLColor *) buf;
-        buf += sizeof ( PLColor ) * pls->ncol0;
+        buf += sizeof ( PLColor ) * (size_t) ( pls->ncol0 );
         plot_state->color_map[1].cmap = (PLColor *) buf;
-        buf += sizeof ( PLColor ) * pls->ncol1;
+        buf += sizeof ( PLColor ) * (size_t) ( pls->ncol1 );
 
         // Save cmap 0
         plot_state->color_map[0].icol = pls->icol0;

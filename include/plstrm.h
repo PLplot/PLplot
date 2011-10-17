@@ -774,31 +774,31 @@ typedef struct
     // transformation between broken-down and continuous time used in
     // the qsastime library.
 
-    QSASConfig *qsasconfig;
+    QSASConfig  *qsasconfig;
 
     // Gradient section.
-    PLINT      dev_gradient;
-    PLINT      ngradient;
-    PLINT      *xgradient, *ygradient;
+    PLINT       dev_gradient;
+    PLINT       ngradient;
+    PLINT       *xgradient, *ygradient;
     // The next three variables define the polygon boundary used
     // in the software fallback for the gradient.
-    PLINT      n_polygon;
-    PLFLT      *x_polygon, *y_polygon;
+    PLINT       n_polygon;
+    const PLFLT *x_polygon, *y_polygon;
 
     //CONSTANT SOVERSION FIX
-    PLBOOL     stream_closed;
-    PLINT      line_style;
-    PLINT      dev_mem_alpha;
-    PLINT      has_string_length;
-    PLFLT      string_length;
-    PLINT      get_string_length;
-    PLINT      dev_eofill;
+    PLBOOL      stream_closed;
+    PLINT       line_style;
+    PLINT       dev_mem_alpha;
+    PLINT       has_string_length;
+    PLFLT       string_length;
+    PLINT       get_string_length;
+    PLINT       dev_eofill;
 
     // Drawing mode section
-    PLINT      dev_modeset;
+    PLINT       dev_modeset;
 
     // Calculate bounding-box limits rather than plot box?
-    PLBOOL     if_boxbb;
+    PLBOOL      if_boxbb;
     // Bounding box limits in mm for box including decorations
     // (inverted tick marks and numerical tick labels if either is
     // present).

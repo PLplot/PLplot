@@ -88,7 +88,7 @@ plf2ops_c_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLFLT *zmax )
     PLFLT min, max;
     PLFLT **z = (PLFLT **) p;
 
-    if ( !finite( z[0][0] ) )
+    if ( !isfinite( z[0][0] ) )
     {
         max = -HUGE_VAL;
         min = HUGE_VAL;
@@ -100,7 +100,7 @@ plf2ops_c_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLFLT *zmax )
     {
         for ( j = 0; j < ny; j++ )
         {
-            if ( !finite( z[i][j] ) )
+            if ( !isfinite( z[i][j] ) )
                 continue;
             if ( z[i][j] < min )
                 min = z[i][j];
@@ -195,7 +195,7 @@ plf2ops_grid_c_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLFLT *zmax
     nx = g->nx;
     ny = g->ny;
 
-    if ( !finite( z[0][0] ) )
+    if ( !isfinite( z[0][0] ) )
     {
         max = -HUGE_VAL;
         min = HUGE_VAL;
@@ -207,7 +207,7 @@ plf2ops_grid_c_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLFLT *zmax
     {
         for ( j = 0; j < ny; j++ )
         {
-            if ( !finite( z[i][j] ) )
+            if ( !isfinite( z[i][j] ) )
                 continue;
             if ( z[i][j] < min )
                 min = z[i][j];
@@ -313,7 +313,7 @@ plf2ops_grid_xxx_major_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLF
     nx = g->nx;
     ny = g->ny;
 
-    if ( !finite( z[0] ) )
+    if ( !isfinite( z[0] ) )
     {
         max = -HUGE_VAL;
         min = HUGE_VAL;
@@ -323,7 +323,7 @@ plf2ops_grid_xxx_major_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLF
 
     for ( i = 0; i < nx * ny; i++ )
     {
-        if ( !finite( z[i] ) )
+        if ( !isfinite( z[i] ) )
             continue;
         if ( z[i] < min )
             min = z[i];

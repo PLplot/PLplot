@@ -252,22 +252,25 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #  endif
 #endif
 #if defined ( PL__HAVE_ISINF )
-#  define isinf     _isinf
+#  define isinf       _isinf
+#endif
+#if defined ( PL_HAVE_FINITE )
+#  define isfinite    finite
 #endif
 #if defined ( PL__HAVE_FINITE )
-#  define finite    _finite
+#  define isfinite    _finite
 #endif
 
 // Note these replacements follow the old BSD convention and not
 // C99. In particular isinf does not distinguish +/- inf.
 #if !defined ( PL_HAVE_ISNAN )
-#  define isnan( x )     ( ( x ) != ( x ) )
+#  define isnan( x )       ( ( x ) != ( x ) )
 #endif
 #if !defined ( PL_HAVE_ISINF )
-#  define isinf( x )     ( !isnan( x ) && isnan( x - x ) )
+#  define isinf( x )       ( !isnan( x ) && isnan( x - x ) )
 #endif
-#if !defined ( PL_HAVE_FINITE )
-#  define finite( x )    ( !isnan( x - x ) )
+#if !defined ( PL_HAVE_ISFINITE )
+#  define isfinite( x )    ( !isnan( x - x ) )
 #endif
 
 // Check if C99 HUGE_VAL macro is available - if not then
@@ -1158,7 +1161,7 @@ typedef struct
 } FCI_to_FontName_Table;
 
 // Internal function to obtain a pointer to a valid font name.
-PLDLLIMPEXP char *
+PLDLLIMPEXP const char *
 plP_FCI2FontName( PLUNICODE fci,
                   const FCI_to_FontName_Table lookup[], const int nlookup );
 
@@ -1190,10 +1193,18 @@ plio_fread( void *, size_t, size_t, FILE * );
 void
 plio_fgets( char *, int, FILE * );
 
+// Draws a tick parallel to x, using world coordinates
+void
+plwxtik( PLFLT x, PLFLT y, PLBOOL minor, PLBOOL invert );
+
+// Draws a tick parallel to y, using world coordinates
+void
+plwytik( PLFLT x, PLFLT y, PLBOOL minor, PLBOOL invert );
+
 // get drivers directory
 
 #ifdef ENABLE_DYNDRIVERS
-PLDLLIMPEXP char*
+PLDLLIMPEXP const char*
 plGetDrvDir( void );
 #endif
 

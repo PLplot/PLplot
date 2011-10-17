@@ -84,10 +84,10 @@ c_plclear( void )
         short x[5], y[5];
         int   ocolor = plsc->icol0;
 
-        x[0] = x[3] = x[4] = plsc->sppxmi;
-        x[1] = x[2] = plsc->sppxma;
-        y[0] = y[1] = y[4] = plsc->sppymi;
-        y[2] = y[3] = plsc->sppyma;
+        x[0] = x[3] = x[4] = (short) plsc->sppxmi;
+        x[1] = x[2] = (short) plsc->sppxma;
+        y[0] = y[1] = y[4] = (short) plsc->sppymi;
+        y[2] = y[3] = (short) plsc->sppyma;
         plcol0( 0 );
         plP_fill( x, y, 5 );
         plcol0( ocolor );

@@ -389,7 +389,7 @@ c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
 {
     PLFLT spxmin, spxmax, spymin, spymax;
     PLFLT vpxmin, vpxmax, vpymin, vpymax;
-    PLFLT spxmid, spymid, xsize, ysize, nxsize, nysize, w_aspect, ratio;
+    PLFLT xsize, ysize, nxsize, nysize;
     PLFLT xoffset, yoffset;
 
     if ( plsc->level < 1 )

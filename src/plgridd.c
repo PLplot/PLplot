@@ -214,19 +214,19 @@ grid_csa( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy,
           PLF2OPS zops, PLPointer zgp )
 {
-    PLFLT *xt, *yt, *zt;
-    point *pin, *pgrid, *pt;
-    csa   * a = NULL;
-    int   i, j, nptsg;
+    const PLFLT *xt, *yt, *zt;
+    point       *pin, *pgrid, *pt;
+    csa         * a = NULL;
+    int         i, j, nptsg;
 
-    if ( ( pin = (point *) malloc( npts * sizeof ( point ) ) ) == NULL )
+    if ( ( pin = (point *) malloc( (size_t) npts * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_csa: Insufficient memory" );
     }
 
-    xt = (PLFLT *) x;
-    yt = (PLFLT *) y;
-    zt = (PLFLT *) z;
+    xt = x;
+    yt = y;
+    zt = z;
     pt = pin;
     for ( i = 0; i < npts; i++ )
     {
@@ -237,16 +237,16 @@ grid_csa( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
     }
 
     nptsg = nptsx * nptsy;
-    if ( ( pgrid = (point *) malloc( nptsg * sizeof ( point ) ) ) == NULL )
+    if ( ( pgrid = (point *) malloc( (size_t) nptsg * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_csa: Insufficient memory" );
     }
 
-    yt = (PLFLT *) yg;
+    yt = yg;
     pt = pgrid;
     for ( j = 0; j < nptsy; j++ )
     {
-        xt = (PLFLT *) xg;
+        xt = xg;
         for ( i = 0; i < nptsx; i++ )
         {
             pt->x = (double) *xt++;
@@ -573,9 +573,9 @@ static void
 grid_dtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
            const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
 {
-    point *pin, *pgrid, *pt;
-    PLFLT *xt, *yt, *zt;
-    int   i, j, nptsg;
+    point       *pin, *pgrid, *pt;
+    const PLFLT *xt, *yt, *zt;
+    int         i, j, nptsg;
 
     if ( sizeof ( realT ) != sizeof ( double ) )
     {
@@ -583,14 +583,14 @@ grid_dtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
         return;
     }
 
-    if ( ( pin = (point *) malloc( npts * sizeof ( point ) ) ) == NULL )
+    if ( ( pin = (point *) malloc( (size_t) npts * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_dtli: Insufficient memory" );
     }
 
-    xt = (PLFLT *) x;
-    yt = (PLFLT *) y;
-    zt = (PLFLT *) z;
+    xt = x;
+    yt = y;
+    zt = z;
     pt = pin;
     for ( i = 0; i < npts; i++ )
     {
@@ -602,16 +602,16 @@ grid_dtli( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
 
     nptsg = nptsx * nptsy;
 
-    if ( ( pgrid = (point *) malloc( nptsg * sizeof ( point ) ) ) == NULL )
+    if ( ( pgrid = (point *) malloc( (size_t) nptsg * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_dtli: Insufficient memory" );
     }
 
-    yt = (PLFLT *) yg;
+    yt = yg;
     pt = pgrid;
     for ( j = 0; j < nptsy; j++ )
     {
-        xt = (PLFLT *) xg;
+        xt = xg;
         for ( i = 0; i < nptsx; i++ )
         {
             pt->x = (double) *xt++;
@@ -647,9 +647,9 @@ grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
           const PLFLT *xg, int nptsx, const PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp,
           PLFLT wtmin )
 {
-    PLFLT *xt, *yt, *zt;
-    point *pin, *pgrid, *pt;
-    int   i, j, nptsg;
+    const PLFLT *xt, *yt, *zt;
+    point       *pin, *pgrid, *pt;
+    int         i, j, nptsg;
     nn_rule = NON_SIBSONIAN;
 
     if ( sizeof ( realT ) != sizeof ( double ) )
@@ -664,14 +664,14 @@ grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
         wtmin = -PLFLT_MAX;
     }
 
-    if ( ( pin = (point *) malloc( npts * sizeof ( point ) ) ) == NULL )
+    if ( ( pin = (point *) malloc( (size_t) npts * sizeof ( point ) ) ) == NULL )
     {
         plexit( "plgridata: Insufficient memory" );
     }
 
-    xt = (PLFLT *) x;
-    yt = (PLFLT *) y;
-    zt = (PLFLT *) z;
+    xt = x;
+    yt = y;
+    zt = z;
     pt = pin;
     for ( i = 0; i < npts; i++ )
     {
@@ -683,16 +683,16 @@ grid_nni( const PLFLT *x, const PLFLT *y, const PLFLT *z, int npts,
 
     nptsg = nptsx * nptsy;
 
-    if ( ( pgrid = (point *) malloc( nptsg * sizeof ( point ) ) ) == NULL )
+    if ( ( pgrid = (point *) malloc( (size_t) nptsg * sizeof ( point ) ) ) == NULL )
     {
         plexit( "plgridata: Insufficient memory" );
     }
 
-    yt = (PLFLT *) yg;
+    yt = yg;
     pt = pgrid;
     for ( j = 0; j < nptsy; j++ )
     {
-        xt = (PLFLT *) xg;
+        xt = xg;
         for ( i = 0; i < nptsx; i++ )
         {
             pt->x = (double) *xt++;

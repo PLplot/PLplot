@@ -110,8 +110,8 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
         stripc->colline[i] = colline[i];
         stripc->styline[i] = styline[i];
         stripc->legline[i] = plstrdup( legline[i] );
-        stripc->x[i]       = (PLFLT *) malloc( (size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
-        stripc->y[i]       = (PLFLT *) malloc( (size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
+        stripc->x[i]       = (PLFLT *) malloc( (size_t) sizeof ( PLFLT ) * (size_t) ( stripc->nptsmax[i] ) );
+        stripc->y[i]       = (PLFLT *) malloc( (size_t) sizeof ( PLFLT ) * (size_t) ( stripc->nptsmax[i] ) );
         if ( stripc->x[i] == NULL || stripc->y[i] == NULL )
         {
             plabort( "plstripc: Out of memory." );
@@ -145,7 +145,7 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
     plstrip_legend( stripc, 1 );
 }
 
-static void plstrip_legend( PLStrip *stripc, int first )
+static void plstrip_legend( PLStrip *stripcloc, int first )
 {
     int   i;
     PLFLT sc, dy;
@@ -157,15 +157,15 @@ static void plstrip_legend( PLStrip *stripc, int first )
     plwind( -0.01, 1.01, -0.01, 1.01 );
     for ( i = 0; i < PEN; i++ )
     {
-        if ( stripc->npts[i] || first )
+        if ( stripcloc->npts[i] || first )
         {
-            plcol0( stripc->colline[i] ); pllsty( stripc->styline[i] );
-            pljoin( stripc->xlpos, stripc->ylpos - sc, stripc->xlpos + 0.1, stripc->ylpos - sc );
-            plcol0( stripc->collab );
-            plptex( stripc->xlpos + 0.11, stripc->ylpos - sc, 0., 0., 0, stripc->legline[i] ); sc += dy;
+            plcol0( stripcloc->colline[i] ); pllsty( stripcloc->styline[i] );
+            pljoin( stripcloc->xlpos, stripcloc->ylpos - sc, stripcloc->xlpos + 0.1, stripcloc->ylpos - sc );
+            plcol0( stripcloc->collab );
+            plptex( stripcloc->xlpos + 0.11, stripcloc->ylpos - sc, 0., 0., 0, stripcloc->legline[i] ); sc += dy;
         }
     }
-    plwind( stripc->xmin, stripc->xmax, stripc->ymin, stripc->ymax );
+    plwind( stripcloc->xmin, stripcloc->xmax, stripcloc->ymin, stripcloc->ymax );
     plflush();
 }
 
@@ -176,7 +176,7 @@ static void plstrip_legend( PLStrip *stripc, int first )
 // during rescaling.
 //--------------------------------------------------------------------------
 
-static void plstrip_gen( PLStrip *strip )
+static void plstrip_gen( PLStrip *striploc )
 {
     int i;
 
@@ -189,28 +189,28 @@ static void plstrip_gen( PLStrip *strip )
     plvsta();
 
 // Draw box and same window dimensions
-    strip->wxmin = strip->xmin; strip->wxmax = strip->xmax;
-    strip->wymin = strip->ymin; strip->wymax = strip->ymax; // FIXME - can exist some redundancy here
+    striploc->wxmin = striploc->xmin; striploc->wxmax = striploc->xmax;
+    striploc->wymin = striploc->ymin; striploc->wymax = striploc->ymax; // FIXME - can exist some redundancy here
 
-    plwind( strip->xmin, strip->xmax, strip->ymin, strip->ymax );
+    plwind( striploc->xmin, striploc->xmax, striploc->ymin, striploc->ymax );
 
     pllsty( 1 );
-    plcol0( strip->colbox );
-    plbox( strip->xspec, 0.0, 0, strip->yspec, 0.0, 0 );
+    plcol0( striploc->colbox );
+    plbox( striploc->xspec, 0.0, 0, striploc->yspec, 0.0, 0 );
 
-    plcol0( strip->collab );
-    pllab( strip->labx, strip->laby, strip->labtop );
+    plcol0( striploc->collab );
+    pllab( striploc->labx, striploc->laby, striploc->labtop );
 
     for ( i = 0; i < PEN; i++ )
     {
-        if ( strip->npts[i] > 0 )
+        if ( striploc->npts[i] > 0 )
         {
-            plcol0( strip->colline[i] ); pllsty( strip->styline[i] );
-            plline( strip->npts[i], strip->x[i], strip->y[i] );
+            plcol0( striploc->colline[i] ); pllsty( striploc->styline[i] );
+            plline( striploc->npts[i], striploc->x[i], striploc->y[i] );
         }
     }
 
-    plstrip_legend( strip, 0 );
+    plstrip_legend( striploc, 0 );
 }
 
 //--------------------------------------------------------------------------
@@ -242,8 +242,8 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     if ( ++stripc->npts[p] > stripc->nptsmax[p] )
     {
         stripc->nptsmax[p] += 32;
-        stripc->x[p]        = (PLFLT *) realloc( (void *) stripc->x[p], sizeof ( PLFLT ) * stripc->nptsmax[p] );
-        stripc->y[p]        = (PLFLT *) realloc( (void *) stripc->y[p], sizeof ( PLFLT ) * stripc->nptsmax[p] );
+        stripc->x[p]        = (PLFLT *) realloc( (void *) stripc->x[p], sizeof ( PLFLT ) * (size_t) ( stripc->nptsmax[p] ) );
+        stripc->y[p]        = (PLFLT *) realloc( (void *) stripc->y[p], sizeof ( PLFLT ) * (size_t) ( stripc->nptsmax[p] ) );
         if ( stripc->x[p] == NULL || stripc->y[p] == NULL )
         {
             plabort( "plstripc: Out of memory." );
@@ -302,8 +302,8 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
                         istart++;
 
                     stripc->npts[j] = stripc->npts[j] - istart;
-                    memcpy( &stripc->x[j][0], &stripc->x[j][istart], ( stripc->npts[j] ) * sizeof ( PLFLT ) );
-                    memcpy( &stripc->y[j][0], &stripc->y[j][istart], ( stripc->npts[j] ) * sizeof ( PLFLT ) );
+                    memcpy( &stripc->x[j][0], &stripc->x[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
+                    memcpy( &stripc->y[j][0], &stripc->y[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
                 }
             }
         }

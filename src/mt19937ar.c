@@ -63,7 +63,7 @@ void init_genrand( unsigned long s )
     for ( mti = 1; mti < N; mti++ )
     {
         mt[mti] =
-            ( 1812433253UL * ( mt[mti - 1] ^ ( mt[mti - 1] >> 30 ) ) + mti );
+            ( 1812433253UL * ( mt[mti - 1] ^ ( mt[mti - 1] >> 30 ) ) + (unsigned long) mti );
         // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
         // In the previous versions, MSBs of the seed affect
         // only MSBs of the array mt[].
@@ -86,8 +86,8 @@ void init_by_array( unsigned long init_key[], int key_length )
     for (; k; k-- )
     {
         mt[i] = ( mt[i] ^ ( ( mt[i - 1] ^ ( mt[i - 1] >> 30 ) ) * 1664525UL ) )
-                + init_key[j] + j; // non linear
-        mt[i] &= 0xffffffffUL;     // for WORDSIZE > 32 machines
+                + init_key[j] + (unsigned long) j; // non linear
+        mt[i] &= 0xffffffffUL;                     // for WORDSIZE > 32 machines
         i++; j++;
         if ( i >= N )
         {
@@ -99,8 +99,8 @@ void init_by_array( unsigned long init_key[], int key_length )
     for ( k = N - 1; k; k-- )
     {
         mt[i] = ( mt[i] ^ ( ( mt[i - 1] ^ ( mt[i - 1] >> 30 ) ) * 1566083941UL ) )
-                - i;           // non linear
-        mt[i] &= 0xffffffffUL; // for WORDSIZE > 32 machines
+                - (unsigned long) i; // non linear
+        mt[i] &= 0xffffffffUL;       // for WORDSIZE > 32 machines
         i++;
         if ( i >= N )
         {
@@ -161,14 +161,14 @@ long genrand_int31( void )
 // generates a random number on [0,1]-real-interval
 double genrand_real1( void )
 {
-    return genrand_int32() * ( 1.0 / 4294967295.0 );
+    return (double) genrand_int32() * ( 1.0 / 4294967295.0 );
     // divided by 2^32-1
 }
 
 // generates a random number on [0,1)-real-interval
 double genrand_real2( void )
 {
-    return genrand_int32() * ( 1.0 / 4294967296.0 );
+    return (double) genrand_int32() * ( 1.0 / 4294967296.0 );
     // divided by 2^32
 }
 
@@ -183,6 +183,6 @@ double genrand_real3( void )
 double genrand_res53( void )
 {
     unsigned long a = genrand_int32() >> 5, b = genrand_int32() >> 6;
-    return ( a * 67108864.0 + b ) * ( 1.0 / 9007199254740992.0 );
+    return ( (double) a * 67108864.0 + (double) b ) * ( 1.0 / 9007199254740992.0 );
 }
 // These real versions are due to Isaku Wada, 2002/01/09 added

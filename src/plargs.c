@@ -1116,7 +1116,7 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
 
         // Set var (can be NULL initially) to point to optarg string
 
-        *(char **) tab->var = (const char *) optarg;
+        *(const char **) tab->var = optarg;
         break;
 
     default:
@@ -1247,7 +1247,7 @@ Syntax( void )
             if ( tab->syntax == NULL )
                 continue;
 
-            len = 3 + strlen( tab->syntax );              // space [ string ]
+            len = 3 + (int) strlen( tab->syntax );              // space [ string ]
             if ( col + len > 79 )
             {
                 fprintf( stderr, "\n   " );               // 3 spaces
@@ -1728,7 +1728,8 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
 {
     const char *rgb;
     char       *color_field, *alpha_field;
-    long       bgcolor, r, g, b;
+    long       bgcolor;
+    PLINT      r, g, b;
     PLFLT      a;
 
 // Strip off leading "#" (TK-ism) if present.
@@ -1761,9 +1762,9 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
     switch ( strlen( color_field ) )
     {
     case 3:
-        r = ( bgcolor & 0xF00 ) >> 8;
-        g = ( bgcolor & 0x0F0 ) >> 4;
-        b = ( bgcolor & 0x00F );
+        r = (PLINT) ( ( bgcolor & 0xF00 ) >> 8 );
+        g = (PLINT) ( ( bgcolor & 0x0F0 ) >> 4 );
+        b = (PLINT) ( bgcolor & 0x00F );
 
         r = r | ( r << 4 );
         g = g | ( g << 4 );       // doubling
@@ -1771,9 +1772,9 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
         break;
 
     case 6:
-        r = ( bgcolor & 0xFF0000 ) >> 16;
-        g = ( bgcolor & 0x00FF00 ) >> 8;
-        b = ( bgcolor & 0x0000FF );
+        r = (PLINT) ( ( bgcolor & 0xFF0000 ) >> 16 );
+        g = (PLINT) ( ( bgcolor & 0x00FF00 ) >> 8 );
+        b = (PLINT) ( bgcolor & 0x0000FF );
         break;
 
     default:
@@ -1975,11 +1976,11 @@ opt_fam( const char *opt, const char *optarg, void *client_data )
 static int
 opt_fsiz( const char *opt, const char *optarg, void *client_data )
 {
-    PLINT bytemax;
-    int   len        = strlen( optarg );
-    char  lastchar   = optarg[len - 1];
-    PLFLT multiplier = 1.0e6;
-    char  *spec      = (char *) malloc( len + 1 );
+    PLINT  bytemax;
+    size_t len        = strlen( optarg );
+    char   lastchar   = optarg[len - 1];
+    PLFLT  multiplier = 1.0e6;
+    char   *spec      = (char *) malloc( len + 1 );
 
     if ( spec == NULL )
         plexit( "opt_fsiz: Insufficient memory" );

@@ -113,25 +113,25 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
     for (;; )
     {
         // read in # points in segment
-        if ( pdf_rdx( n_buff, sizeof ( unsigned char ) * 2, in ) == 0 )
+        if ( pdf_rdx( n_buff, (long) sizeof ( unsigned char ) * 2, in ) == 0 )
             break;
         n = ( n_buff[0] << 8 ) + n_buff[1];
         if ( n == 0 )
             break;
 
-        pdf_rdx( buff, sizeof ( unsigned char ) * 4 * n, in );
+        pdf_rdx( buff, (long) sizeof ( unsigned char ) * 4 * n, in );
         if ( n == 1 )
             continue;
 
         for ( j = i = 0; i < n; i++, j += 2 )
         {
             t       = ( buff[j] << 8 ) + buff[j + 1];
-            bufx[i] = ( t - OFFSET ) / SCALE;
+            bufx[i] = ( (PLFLT) t - OFFSET ) / SCALE;
         }
         for ( i = 0; i < n; i++, j += 2 )
         {
             t       = ( buff[j] << 8 ) + buff[j + 1];
-            bufy[i] = ( t - OFFSET ) / SCALE;
+            bufy[i] = ( (PLFLT) t - OFFSET ) / SCALE;
         }
 
         for ( i = 0; i < n; i++ )
