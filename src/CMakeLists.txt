@@ -29,7 +29,6 @@ set(plplot${LIB_TAG}_LIB_SRCS
   plcore.c
   plctrl.c
   plcvt.c
-  pldeprecated.c
   pldtik.c
   plf2ops.c
   plfill.c
@@ -56,6 +55,9 @@ set(plplot${LIB_TAG}_LIB_SRCS
   pltime.c
   pllegend.c
   )
+if(PL_DEPRECATED)
+  set(plplot${LIB_TAG}_LIB_SRCS ${plplot${LIB_TAG}_LIB_SRCS} pldeprecated.c)
+endif(PL_DEPRECATED)
 if(LTDL_WIN32)
   set(plplot${LIB_TAG}_LIB_SRCS ${plplot${LIB_TAG}_LIB_SRCS} ltdl_win32.c)
 endif(LTDL_WIN32)
