@@ -89,6 +89,26 @@ detected
 
 OFFICIAL NOTICES FOR USERS
 
+(5.9.10) For some years now we have had both FORTRAN 77 and Fortran 95
+bindings, but to the best of our knowledge, there are no longer
+any maintained FORTRAN 77 compilers left that do not also support
+Fortran 95. (g77 for instance has not been maintained for several
+years now. Its successor gfortran supports Fortran 95 and later standards
+as well all g77's legacy features).
+
+An important consequence is that we can not test the implementation for
+compliance to the FORTRAN 77 standard. Current Fortran compilers do
+allow this for the Fortran 95 standard.
+
+We therefore want to encourage anyone who uses PLplot with Fortran programs
+to use the Fortran 95 bindings. In the next release we will turn off
+the FORTRAN 77 bindings by default. That is, you can still build them
+and use them but you will need to specify that explicitly via the
+CMake options.
+
+In some future release we will deprecate these bindings. When this
+will happen has not been decided yet.
+
 (5.9.9) This is a quick release to deal with two broken build issues
 that were recently discovered for our Windows platform.  Windows users should
 avoid 5.9.8 because of these problems for that release, and instead use
@@ -1083,7 +1103,7 @@ available for 5.9.7. Due to feedback from early adopters of pllegend,
 we have now added substantially to the pllegend capabilities. and we
 now believe pllegend is ready for prime time.  The pllegend
 capabilities are documented in our DocBook documentation and
-demonstrated in standard examples 4, 26, and 33.  
+demonstrated in standard examples 4, 26, and 33.
 
 N.B. The current set of changes required a backwards-incompatible
 change to the pllegend API.  This requires users who tried this new
