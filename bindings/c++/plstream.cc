@@ -1013,10 +1013,10 @@ void plstream::legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 }
 
-void plstream::colorbar( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLINT cont_color, PLINT cont_width,
-                         PLFLT ticks, PLINT sub_ticks,
-                         const char *axis_opts, const char *label,
-                         PLINT n_colors, const PLFLT *colors, const PLFLT *values )
+void plstream::colorbar( PLINT /*position*/, PLINT /*opt*/, PLFLT /*x*/, PLFLT /*y*/, PLFLT /*length*/, PLFLT /*width*/, PLINT /*cont_color*/, PLINT /*cont_width*/,
+                         PLFLT /*ticks*/, PLINT /*sub_ticks*/,
+                         const char * /*axis_opts*/, const char * /*label*/,
+                         PLINT /*n_colors*/, const PLFLT * /*colors*/, const PLFLT * /*values*/ )
 {
     set_stream();
 
