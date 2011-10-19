@@ -57,7 +57,7 @@ void PL_SETCONTLABELPARAMa( PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *a
 void PLABORT7( const char *text );
 void PLADV( PLINT *sub );
 void PLARC( PLFLT *x, PLFLT *y, PLFLT *a, PLFLT *b, PLFLT *angle1, PLFLT *angle2, PLFLT *rotate, PLBOOL *fill );
-void PLAXES7( PLFLT *x0, PLFLT *y0, const char *xopt, PLFLT *xtick, 
+void PLAXES7( PLFLT *x0, PLFLT *y0, const char *xopt, PLFLT *xtick,
               PLINT *nxsub, const char *yopt, PLFLT *ytick, PLINT *nysub );
 void PLBIN( PLINT *nbin, PLFLT *x, PLFLT *y, PLINT *center );
 void PLBTIME( PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT *ctime );
@@ -118,7 +118,7 @@ void PLGZAX( PLINT *digmax, PLINT *digits );
 void PLHIST( PLINT *n, PLFLT *data, PLFLT *datmin, PLFLT *datmax, PLINT *nbin, PLINT *oldwin );
 void PLHLS( PLFLT *hue, PLFLT *light, PLFLT *sat );
 void PLHLSRGB( PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b );
-void PLIMAGEFR( PLFLT *idata, PLINT *nx, PLINT *ny, 
+void PLIMAGEFR( PLFLT *idata, PLINT *nx, PLINT *ny,
                 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
                 PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax,
                 PLFLT *valuemin, PLFLT *valuemax );
@@ -130,19 +130,19 @@ void PLJOIN( PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2 );
 void PLLAB7( const char *xlab, const char *ylab, const char *title );
 void PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length );
 void PLLEGEND( PLFLT *p_legend_width, PLFLT *p_legend_height,
-    PLINT *opt, PLINT *position, PLFLT *x, PLFLT *y, PLFLT *plot_width,
-    PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
-    PLINT *nrow, PLINT *ncolumn,
-    PLINT *nlegend, const PLINT *opt_array,
-    PLFLT *text_offset, PLFLT *text_scale, PLFLT *text_spacing,
-    PLFLT *text_justification,
-    const PLINT *text_colors,
-    const PLINT *box_colors, const PLINT *box_patterns,
-    const PLFLT *box_scales, const PLINT *box_line_widths,
-    const PLINT *line_colors, const PLINT *line_styles,
-    const PLINT *line_widths,
-    const PLINT *symbol_colors, const PLFLT *symbol_scales,
-    const PLINT *symbol_numbers );
+               PLINT *opt, PLINT *position, PLFLT *x, PLFLT *y, PLFLT *plot_width,
+               PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
+               PLINT *nrow, PLINT *ncolumn,
+               PLINT *nlegend, const PLINT *opt_array,
+               PLFLT *text_offset, PLFLT *text_scale, PLFLT *text_spacing,
+               PLFLT *text_justification,
+               const PLINT *text_colors,
+               const PLINT *box_colors, const PLINT *box_patterns,
+               const PLFLT *box_scales, const PLINT *box_line_widths,
+               const PLINT *line_colors, const PLINT *line_styles,
+               const PLINT *line_widths,
+               const PLINT *symbol_colors, const PLFLT *symbol_scales,
+               const PLINT *symbol_numbers );
 void PLLIGHTSOURCE( PLFLT *x, PLFLT *y, PLFLT *z );
 void PLLINE( PLINT *n, PLFLT *x, PLFLT *y );
 void PLLINE3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z );
@@ -162,10 +162,10 @@ void PLPOLY3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL *ifcc
 void PLPREC( PLINT *setp, PLINT *prec );
 void PLPSTY( PLINT *patt );
 void PLPTEX7( PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text );
-void PLPTEX37(PLFLT *x, PLFLT *y, PLFLT *z,
-    PLFLT *dx, PLFLT *dy, PLFLT *dz,
-    PLFLT *sx, PLFLT *sy, PLFLT *sz,
-    PLFLT *just, const char *text );
+void PLPTEX37( PLFLT *x, PLFLT *y, PLFLT *z,
+               PLFLT *dx, PLFLT *dy, PLFLT *dz,
+               PLFLT *sx, PLFLT *sy, PLFLT *sz,
+               PLFLT *just, const char *text );
 PLFLT PLRANDD( void );
 void PLREPLOT( void );
 void PLRGB( PLFLT *red, PLFLT *green, PLFLT *blue );
@@ -178,13 +178,13 @@ void PLSCMAP0N( PLINT *n );
 void PLSCMAP1( PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1 );
 void PLSCMAP1A( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT *ncol1 );
 void PLSCMAP1L( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev );
+                PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev );
 void PLSCMAP1L2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
+                 PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
 void PLSCMAP1LA( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev );
+                 PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev );
 void PLSCMAP1LA2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a );
+                  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a );
 void PLSCMAP1N( PLINT *n );
 void PLSCOL0( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b );
 void PLSCOL0A( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
@@ -195,7 +195,7 @@ void PLSCOMPRESSION( PLINT *compression );
 void PLSDEV7( const char *dev );
 void PLSDIDEV( PLFLT *mar, PLFLT *aspect, PLFLT *jx, PLFLT *jy );
 void PLSDIMAP( PLINT *dimxmin, PLINT *dimxmax, PLINT *dimymin, PLINT *dimymax,
-PLFLT *dimxpmm, PLFLT *dimypmm );
+               PLFLT *dimxpmm, PLFLT *dimypmm );
 void PLSDIORI( PLFLT *rot );
 void PLSDIPLT( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax );
 void PLSDIPLZ( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax );
@@ -218,7 +218,7 @@ void PLSMEMA( PLINT *maxx, PLINT *maxy, void *plotmem );
 void PLSMIN( PLFLT *def, PLFLT *scale );
 void PLSORI( PLINT *ori );
 void PLSPAGE( PLFLT *xpmm, PLFLT *ypmm,
-PLINT *xwid, PLINT *ywid, PLINT *xoff, PLINT *yoff );
+              PLINT *xwid, PLINT *ywid, PLINT *xoff, PLINT *yoff );
 void PLSPAL07( const char *filename );
 void PLSPAL17( const char *filename, PLBOOL *interpolate );
 void PLSPAUSE( PLBOOL *pause );
@@ -234,14 +234,14 @@ void PLSTRING7( PLINT *n, PLFLT *x, PLFLT *y, const char *string );
 void PLSTRING37( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string );
 void PLSTRIPA( PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y );
 void PLSTRIPC( PLINT *id, const char *xspec, const char *yspec,
-          PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
-          PLFLT *xlpos, PLFLT *ylpos,
-          PLBOOL *y_ascl, PLBOOL *acc,
-          PLINT *colbox, PLINT *collab,
-          PLINT *colline, PLINT *styline,
-          const char *legline0, const char *legline1,
-          const char *legline2, const char *legline3,
-          const char *labx, const char *laby, const char *labtop );
+               PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
+               PLFLT *xlpos, PLFLT *ylpos,
+               PLBOOL *y_ascl, PLBOOL *acc,
+               PLINT *colbox, PLINT *collab,
+               PLINT *colline, PLINT *styline,
+               const char *legline0, const char *legline1,
+               const char *legline2, const char *legline3,
+               const char *labx, const char *laby, const char *labtop );
 void PLSTRIPD( PLINT *id );
 void PLSTYL( PLINT *n, PLINT *mark, PLINT *space );
 void PLSVECT( PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill );
@@ -257,9 +257,9 @@ void PLVPAS( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *aspect )
 void PLVPOR( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
 void PLVSTA( void );
 void PLW3D( PLFLT *basex, PLFLT *basey, PLFLT *height,
-       PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-       PLFLT *zmin, PLFLT *zmax,
-       PLFLT *alt, PLFLT *az );
+            PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+            PLFLT *zmin, PLFLT *zmax,
+            PLFLT *alt, PLFLT *az );
 void PLWID( PLINT *width );
 void PLWIND( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
 void PLXORMOD( PLBOOL *mode, PLBOOL *status );
@@ -783,7 +783,7 @@ PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length )
     // Ensure the strings are null terminated
 
     p_string = (char **) malloc( sizeof ( char * ) * (size_t) ( *number ) );
-    data     = (char *) malloc( sizeof ( char * ) * (size_t) (( *number ) * ( length + 1 ) ) );
+    data     = (char *) malloc( sizeof ( char * ) * (size_t) ( ( *number ) * ( length + 1 ) ) );
 
     for ( j = 0; j < ( *number ); j++ )
     {
