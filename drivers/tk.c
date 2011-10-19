@@ -1283,7 +1283,7 @@ launch_server( PLStream *pls )
 
     if ( pls->dp && pls->server_host != NULL )
     {
-        if ( ( dev->child_pid = vfork() ) < 0 )
+        if ( ( dev->child_pid = fork() ) < 0 )
         {
             abort_session( pls, "Unable to fork server process" );
         }
@@ -1305,7 +1305,7 @@ launch_server( PLStream *pls )
     else
     {
         plserver_exec = plFindCommand( pls->plserver );
-        if ( ( plserver_exec == NULL ) || ( dev->child_pid = vfork() ) < 0 )
+        if ( ( plserver_exec == NULL ) || ( dev->child_pid = fork() ) < 0 )
         {
             abort_session( pls, "Unable to fork server process" );
         }
