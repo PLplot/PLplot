@@ -34,6 +34,9 @@
 #define SYM_LEN        300
 #define DRVSPEC_LEN    400
 
+// function prototype
+RETSIGTYPE catch_segv( int sig );
+
 // SEGV signal handler
 RETSIGTYPE
 catch_segv( int sig )
