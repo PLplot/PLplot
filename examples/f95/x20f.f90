@@ -97,7 +97,7 @@
       logical dbg
       logical nosombrero
       logical nointeractive
-      character*80 f_name
+      character(len=80) f_name
 
 !
 !     Bugs in plimage():
@@ -304,7 +304,7 @@
       implicit none
       integer     bytes
 
-      character*8 string
+      character(len=8) string
       integer     i
       integer     ierr
 

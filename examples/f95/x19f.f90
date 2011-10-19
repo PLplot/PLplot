@@ -89,8 +89,8 @@
       implicit none
       integer :: axis, length
       real(kind=plflt) :: value
-      character*(length) label
-      character*5 direction_label
+      character(len=length) label
+      character(len=5) direction_label
       real(kind=plflt) :: label_val = 0.0_plflt
       real(kind=plflt) :: normalize_longitude
 

@@ -32,10 +32,10 @@
       real(kind=plflt) y1, y2, y3, y4, ymin, ymax, xlab, ylab
       real(kind=plflt) t, tmin, tmax, tjump, dt, noise
       integer colbox, collab, colline(4), styline(4)
-      character*20 legline(4)
+      character(len=20) legline(4)
 
       logical      pl_errcode
-      character*80 errmsg
+      character(len=80) errmsg
 
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)

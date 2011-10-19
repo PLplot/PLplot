@@ -27,7 +27,7 @@
       parameter (xdim=99, ydim=100, xpts=35, ypts=46)
       real(kind=plflt) x(xdim), y(ydim), z(xdim,ypts), xx, yy, r
 
-      character*80 title(2)
+      character (len=80) title(2)
       real(kind=plflt) alt(2),az(2)
       data alt /60.0_plflt,20.0_plflt/
       data az  /30.0_plflt,60.0_plflt/

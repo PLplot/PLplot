@@ -46,7 +46,7 @@
       real(kind=plflt) zmin, zmax, lzmin, lzmax
       integer i, j, k
       integer alg
-      character*80 title(6)
+      character(len=80) title(6)
       data title /'Cubic Spline Approximation', &
                  'Delaunay Linear Interpolation', &
                  'Natural Neighbors Interpolation', &
@@ -63,7 +63,7 @@
       integer ii, jj
       real(kind=plflt) dist, d
 
-      character*1 defined
+      character(len=1) defined
 
       xmin = -0.2_plflt
       ymin = -0.2_plflt

@@ -121,10 +121,10 @@
       subroutine draw_windows( nw, cmap0_offset )
       use plplot
       implicit none
-      integer nw, cmap0_offset
-      integer i,j
-      real(kind=plflt) vmin, vmax
-      character*3 text
+      integer :: nw, cmap0_offset
+      integer :: i,j
+      real(kind=plflt) :: vmin, vmax
+      character (len=3) :: text
       
       
       call plschr(0.0_plflt, 3.5_plflt)

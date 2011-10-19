@@ -22,7 +22,7 @@
       use plplot
       implicit none
 
-      character*4 text
+      character (len=4) :: text
 
       integer i, j, k, l, base(20)
       data base / &

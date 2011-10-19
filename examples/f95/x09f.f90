@@ -201,7 +201,7 @@
       real(kind=plflt) xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)
 
       real(kind=plflt) clevel(20)
-      character*8 xopt, yopt
+      character(len=8) xopt, yopt
 
       nx = NCX
       ny = NCY

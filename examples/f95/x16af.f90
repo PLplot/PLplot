@@ -147,7 +147,7 @@
       integer   i, j, kx, lx, ky, ly
       integer   sh_cmap, sh_width
       integer   min_color, min_width, max_color, max_width
-      character*8 xopt, yopt
+      character(len=8) xopt, yopt
 
 !      Set up for plshade call
 

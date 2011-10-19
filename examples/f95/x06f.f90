@@ -21,10 +21,10 @@
 
       use plplot
       implicit none
-      integer i, j, k, font, kind_font, maxfont
+      integer :: i, j, k, font, kind_font, maxfont
       real(kind=plflt), dimension(1:1) :: x, y
 
-      character*3 text
+      character (len=3) :: text
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

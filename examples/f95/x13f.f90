@@ -23,7 +23,7 @@
       implicit none
       real(kind=plflt) just, dx, dy, x(500), y(500), per(5)
       integer i, j, dthet, theta0, theta1, theta
-      character*20 text(5)
+      character(len=20),dimension(5) :: text
       data text / 'Maurice', 'Geoffrey', 'Alan', 'Rafael', 'Vince'/
 
 !      Process command-line arguments

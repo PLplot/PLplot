@@ -31,14 +31,14 @@
       real(kind=plflt) xmin, xmax, ymin, ymax, ycharacter_scale, yoffset
       real(kind=plflt) chardef, charht, deltax, deltay, x, y
       integer i, j, page, length, slice
-      character*20 cmdString
+      character(len=20) cmdString
       integer(kind=plunicode) fci_old
       integer ifamily, istyle, iweight
       real(kind=plflt) dy
       integer family_index, style_index, weight_index
       ! Must be big enough to contain the prefix strings, the font-changing
       ! commands, and the "The quick brown..." string.
-      character*200 string
+      character(len=200) string
 
        
 
@@ -48,18 +48,18 @@
       integer      fci_combinations
       parameter(fci_combinations = 30)
 
-      character*5  greek(48)
+      character(len=5)  greek(48)
       integer      type1(166)
-      character*80 title(11)
+      character(len=80) title(11)
       integer      lo(11)
       integer      hi(11)
       integer      nxcells(11)
       integer      nycells(11)
       integer      offset(11)
       integer(kind=plunicode) :: fci(fci_combinations)
-      character*11 family(5)
-      character*8  style(3)
-      character*7  weight(2)
+      character(len=11) family(5)
+      character(len=8)  style(3)
+      character(len=7)  weight(2)
 
       data (greek(i) ,i=1,48) / &
        '#gA','#gB','#gG','#gD','#gE','#gZ', &

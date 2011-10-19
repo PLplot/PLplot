@@ -77,12 +77,12 @@ program x26f
   integer, parameter :: nolangs = 2
   integer, parameter :: nlegend = 2
 
-  character*80 x_label(nolangs)
-  character*80 y_label(nolangs)
-  character*80 legend_text(2,nolangs)
-  character*80 alty_label(nolangs)
-  character*80 title_label(nolangs)
-  character*80 line_label(nolangs)
+  character(len=80) x_label(nolangs)
+  character(len=80) y_label(nolangs)
+  character(len=80) legend_text(2,nolangs)
+  character(len=80) alty_label(nolangs)
+  character(len=80) title_label(nolangs)
+  character(len=80) line_label(nolangs)
 
   integer      i, j
 
@@ -159,7 +159,7 @@ end program x26f
     integer          symbol_numbers(nlegend)
     integer          symbol_colors(nlegend)
     real(kind=plflt) symbol_scales(nlegend)
-    character*20     symbols(nlegend)
+    character(len=20) symbols(nlegend)
     integer          box_colors(0), box_patterns(0), box_line_widths(0)
     real(kind=plflt) box_scales(0)
     real(kind=plflt) legend_width, legend_height

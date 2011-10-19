@@ -158,7 +158,7 @@
       integer xdim, XPTS, YPTS
       real(kind=plflt)  z(xdim,YPTS), zmin, zmax
 
-      character*1 undefined
+      character(len=1) undefined
       real(kind=plflt)  shade_min, shade_max, sh_color
       integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width
@@ -214,7 +214,7 @@
       integer xdim, XPTS, YPTS
       real(kind=plflt)  z(xdim,YPTS), zmin, zmax
 
-      character*1 undefined
+      character(len=1) undefined
       real(kind=plflt)  shade_min, shade_max, sh_color
       integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width

@@ -30,19 +30,19 @@
 
       integer digmax
 
-      character*80 driver
-      character*15 geometry_master
-      character*15 geometry_slave
+      character(len=80) :: driver
+      character(len=15) :: geometry_master
+      character(len=15) :: geometry_slave
 
-      integer fam, num, bmax
+      integer :: fam, num, bmax
 
-      real(kind=plflt)  x(101), y(101)
-      real(kind=plflt)  xs(6), ys(6)
-      real(kind=plflt)  xscale, yscale, xoff, yoff
+      real(kind=plflt), dimension(101) ::  x, y
+      real(kind=plflt), dimension(6) ::  xs, ys
+      real(kind=plflt)  :: xscale, yscale, xoff, yoff
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
-      real(kind=plflt) xp0, yp0
-      integer xleng0, yleng0, xoff0, yoff0
-      logical valid_geometry
+      real(kind=plflt) :: xp0, yp0
+      integer :: xleng0, yleng0, xoff0, yoff0
+      logical :: valid_geometry
 
       geometry_master = '500x410+100+200'
       geometry_slave = '500x410+650+200'
@@ -164,11 +164,10 @@
       use plplot
       implicit none
 
-      real(kind=plflt) x(101), y(101)
-      real(kind=plflt) xs(6), ys(6)
-      real(kind=plflt)  xscale, yscale, xoff, yoff, &
-        xmin, xmax, ymin, ymax
-      integer i
+      real(kind=plflt), dimension(101) :: x, y
+      real(kind=plflt), dimension(6) :: xs, ys
+      real(kind=plflt) :: xscale, yscale, xoff, yoff, xmin, xmax, ymin, ymax
+      integer :: i
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
       do i = 1, 60
@@ -213,10 +212,10 @@
       subroutine plot2()
       use plplot
       implicit none
-      real(kind=plflt)  x(101), y(101)
-      real(kind=plflt)  xs(6), ys(6)
-      real(kind=plflt)  xscale, yscale, xoff, yoff
-      integer i
+      real(kind=plflt), dimension(101) :: x, y
+      real(kind=plflt), dimension(6) :: xs, ys
+      real(kind=plflt) :: xscale, yscale, xoff, yoff
+      integer :: i
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
 !======================================================================
@@ -255,10 +254,10 @@
 
       use plplot, PI => PL_PI
       implicit none
-      real(kind=plflt)  x(101), y(101)
-      real(kind=plflt)  xs(6), ys(6)
-      real(kind=plflt)  xscale, yscale, xoff, yoff
-      integer i
+      real(kind=plflt), dimension(101) ::  x, y
+      real(kind=plflt), dimension(6) :: xs, ys
+      real(kind=plflt) :: xscale, yscale, xoff, yoff
+      integer :: i
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       call pladv(0)
 
@@ -301,10 +300,10 @@
 
       use plplot, PI => PL_PI
       implicit none
-      character*3 text
-      real(kind=plflt) x0(0:360), y0(0:360)
-      real(kind=plflt) x(0:360), y(0:360), dtr, theta, dx, dy, r
-      integer i, j, nsp
+      character(len=3) :: text
+      real(kind=plflt), dimension(0:360) :: x0, y0, x, y
+      real(kind=plflt) :: dtr, theta, dx, dy, r
+      integer :: i, j, nsp
 
       dtr = PI/180.0_plflt
       do i=0,360
@@ -391,17 +390,18 @@
 
       use plplot, PI => PL_PI
       implicit none
-      integer i, j, nptsx, nptsy, xdim, ydim
+      integer :: i, j, nptsx, nptsy, xdim, ydim
 !      xdim and ydim are the absolute static dimensions.
 !      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
 !      arrays that is actually used.
       parameter (xdim=99, ydim=100, nptsx=35,nptsy=46)
 
-      real(kind=plflt) z(xdim, ydim), w(xdim, ydim), clevel(11), &
-        xg1(xdim), yg1(ydim), &
-        xg2(xdim, ydim), yg2(xdim, ydim)
-      real(kind=plflt) xx, yy, argx, argy, distort
-      real(kind=plflt) tr(6)
+      real(kind=plflt), dimension(xdim,ydim) ::  z, w, xg2, yg2
+      real(kind=plflt), dimension(11) :: clevel
+      real(kind=plflt), dimension(xdim) ::  xg1
+      real(kind=plflt), dimension(ydim) :: yg1
+      real(kind=plflt) :: xx, yy, argx, argy, distort
+      real(kind=plflt), dimension(6) :: tr
 
       data clevel /-1._plflt, -0.8_plflt, -0.6_plflt, -0.4_plflt, &
         -0.2_plflt, &

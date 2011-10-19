@@ -36,7 +36,7 @@
       integer fill_width, cont_color, cont_width
       integer i, j
 !      dummy to fill argument list with something not currently used.
-      character*1 defined
+      character(len=1) defined
       real(kind=plflt) tr(6)
 
 !      Process command-line arguments

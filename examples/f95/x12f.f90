@@ -22,10 +22,10 @@
       use plplot
       implicit none
 
-      character*20 string
-      integer i
-      real(kind=plflt) y0(10)
-      real(kind=plflt) pos(5), red(5), green(5), blue(5)
+      character(len=20) :: string
+      integer :: i
+      real(kind=plflt) :: y0(10)
+      real(kind=plflt) :: pos(5), red(5), green(5), blue(5)
 
       data pos   /0.0_plflt, 0.25_plflt, 0.5_plflt, 0.75_plflt, 1.0_plflt/
       data red   /0.0_plflt, 0.25_plflt, 0.5_plflt, 1.0_plflt, 1.0_plflt/

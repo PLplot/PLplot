@@ -59,7 +59,7 @@ program x24f
   real(kind=plflt)  sx(12)
   real(kind=plflt)  sy(12)
   
-  character*30 peace(12)
+  character(len=30) peace(12)
   
   data (red(i) ,i=1,7)   / 240, 204, 204, 204,   0,  39, 125 /
   data (green(i) ,i=1,7) / 240,   0, 125, 204, 204,  80,   0 /

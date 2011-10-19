@@ -26,7 +26,7 @@
 
       real(kind=plflt) x(xpts), y(ypts), z(xpts,ypts), xx, yy
 
-      character*80 title(2)
+      character(len=80) title(2)
       real(kind=plflt) alt(2),az(2)
       integer opt(2)
       data alt /33.0_plflt,17.0_plflt/

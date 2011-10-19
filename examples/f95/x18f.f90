@@ -33,9 +33,8 @@
       parameter ( NPTS = 1000 )
 
       integer i, k
-      real(kind=plflt)    x(NPTS), y(NPTS), z(NPTS)
-      real(kind=plflt)    r
-      character*80 title
+      real(kind=plflt), dimension(NPTS) :: x, y, z, r
+      character(len=80) title
 
       integer opt(4)
       real(kind=plflt)    alt(4)
@@ -43,6 +42,8 @@
       data opt /    1,    0,    1,    0 /
       data alt / 20.0_plflt, 35.0_plflt, 50.0_plflt, 65.0_plflt /
       data az  / 30.0_plflt, 40.0_plflt, 50.0_plflt, 60.0_plflt /
+
+      integer, dimension(NPTS) :: ia = (/(i,i=1,NPTS)/)
 
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
@@ -55,19 +56,17 @@
         call test_poly(k, alt(k), az(k))
       enddo
 
-!      From the mind of a sick and twisted physicist...
+!     From the mind of a sick and twisted physicist...
 
-      do i = 1,NPTS
-        z(i) = -1._plflt + 2._plflt * dble (i-1) / dble (NPTS)
+      z = -1._plflt + 2._plflt * dble (ia-1) / dble (NPTS)
 
-!        Pick one ...
+!     Pick one ...
 
-!        r = 1. - dble (i-1) / dble (NPTS)
-        r = z(i)
+!     r = 1. - dble (ia-1) / dble (NPTS)
+      r = z
 
-        x(i) = r * cos( 2._plflt * PI * 6._plflt * dble (i-1) / dble (NPTS) )
-        y(i) = r * sin( 2._plflt * PI * 6._plflt * dble (i-1) / dble (NPTS) )
-      enddo
+      x = r * cos( 2._plflt * PI * 6._plflt * dble (ia-1) / dble (NPTS) )
+      y = r * sin( 2._plflt * PI * 6._plflt * dble (ia-1) / dble (NPTS) )
 
       do k = 1, 4
         call pladv(0)
@@ -116,10 +115,10 @@
         .true., .false., .true., .false., &
         .false., .true., .false., .true., &
         .true., .true., .false., .false. /
-      real(kind=plflt) theta, phi
-      integer ia
-      THETA(ia) = (TWOPI * (ia) /20._plflt)
-      PHI(ia)   = (PI * (ia) / 20.1_plflt)
+      integer, dimension(0:20) :: ia = (/(j,j=0,20)/)
+      real(kind=plflt), dimension(0:20) :: theta, phi
+      theta = TWOPI * ia /20._plflt
+      phi   = PI * ia / 20.1_plflt
 
       call pladv(0)
       call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt)
@@ -143,25 +142,25 @@
 
       do i=0,19
         do j=0,19
-          x(1) = sin( PHI(j) ) * cos( THETA(i) )
-          y(1) = sin( PHI(j) ) * sin( THETA(i) )
-          z(1) = cos( PHI(j) )
+          x(1) = sin( phi(j) ) * cos( theta(i) )
+          y(1) = sin( phi(j) ) * sin( theta(i) )
+          z(1) = cos( phi(j) )
 
-          x(2) = sin( PHI(j+1) ) * cos( THETA(i) )
-          y(2) = sin( PHI(j+1) ) * sin( THETA(i) )
-          z(2) = cos( PHI(j+1) )
+          x(2) = sin( phi(j+1) ) * cos( theta(i) )
+          y(2) = sin( phi(j+1) ) * sin( theta(i) )
+          z(2) = cos( phi(j+1) )
 
-          x(3) = sin( PHI(j+1) ) * cos( THETA(i+1) )
-          y(3) = sin( PHI(j+1) ) * sin( THETA(i+1) )
-          z(3) = cos( PHI(j+1) )
+          x(3) = sin( phi(j+1) ) * cos( theta(i+1) )
+          y(3) = sin( phi(j+1) ) * sin( theta(i+1) )
+          z(3) = cos( phi(j+1) )
 
-          x(4) = sin( PHI(j) ) * cos( THETA(i+1) )
-          y(4) = sin( PHI(j) ) * sin( THETA(i+1) )
-          z(4) = cos( PHI(j) )
+          x(4) = sin( phi(j) ) * cos( theta(i+1) )
+          y(4) = sin( phi(j) ) * sin( theta(i+1) )
+          z(4) = cos( phi(j) )
 
-          x(5) = sin( PHI(j) ) * cos( THETA(i) )
-          y(5) = sin( PHI(j) ) * sin( THETA(i) )
-          z(5) = cos( PHI(j) )
+          x(5) = sin( phi(j) ) * cos( theta(i) )
+          y(5) = sin( phi(j) ) * sin( theta(i) )
+          z(5) = cos( phi(j) )
 
           call plpoly3(x, y, z, draw(:,k), .true.)
         enddo
