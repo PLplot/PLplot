@@ -56,7 +56,7 @@ void istack_push( istack* s, int v )
 {
     if ( s->n == s->nallocated )
     {
-        s->v           = realloc( s->v, ( s->nallocated + STACK_NINC ) * sizeof ( int ) );
+        s->v           = realloc( s->v, (size_t) ( s->nallocated + STACK_NINC ) * sizeof ( int ) );
         s->nallocated += STACK_NINC;
     }
 

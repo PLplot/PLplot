@@ -151,11 +151,11 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     for ( i = 1; i < argc; i++ )
     {
         c      = argv[i][0];
-        length = strlen( argv[i] );
+        length = (int) strlen( argv[i] );
 
         // If found, set persist variable and compress argv-list
 
-        if ( ( c == '-' ) && ( strncmp( argv[i], "-persist", length ) == 0 ) )
+        if ( ( c == '-' ) && ( strncmp( argv[i], "-persist", (size_t) length ) == 0 ) )
         {
             persist = 1;
             argc--;
@@ -206,15 +206,15 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
     argc--; argv++;
     c      = argv[0][0];
-    length = strlen( argv[0] );
+    length = (int) strlen( argv[0] );
 
-    if ( ( c == 'f' ) && ( strncmp( argv[0], "float", length ) == 0 ) )
+    if ( ( c == 'f' ) && ( strncmp( argv[0], "float", (size_t) length ) == 0 ) )
     {
         matPtr->type = TYPE_FLOAT;
         matPtr->put  = MatrixPut_f;
         matPtr->get  = MatrixGet_f;
     }
-    else if ( ( c == 'i' ) && ( strncmp( argv[0], "int", length ) == 0 ) )
+    else if ( ( c == 'i' ) && ( strncmp( argv[0], "int", (size_t) length ) == 0 ) )
     {
         matPtr->type = TYPE_INT;
         matPtr->put  = MatrixPut_i;
@@ -287,13 +287,13 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     switch ( matPtr->type )
     {
     case TYPE_FLOAT:
-        matPtr->fdata = (Mat_float *) malloc( matPtr->len * sizeof ( Mat_float ) );
+        matPtr->fdata = (Mat_float *) malloc( (size_t) ( matPtr->len ) * sizeof ( Mat_float ) );
         for ( i = 0; i < matPtr->len; i++ )
             matPtr->fdata[i] = 0.0;
         break;
 
     case TYPE_INT:
-        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ) );
+        matPtr->idata = (Mat_int *) malloc( (size_t) ( matPtr->len ) * sizeof ( Mat_int ) );
         for ( i = 0; i < matPtr->len; i++ )
             matPtr->idata[i] = 0;
         break;
@@ -550,12 +550,12 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
     argc--; argv++;
     c      = argv[0][0];
-    length = strlen( argv[0] );
+    length = (int) strlen( argv[0] );
 
 // dump -- send a nicely formatted listing of the array contents to stdout
 // (very helpful for debugging)
 
-    if ( ( c == 'd' ) && ( strncmp( argv[0], "dump", length ) == 0 ) )
+    if ( ( c == 'd' ) && ( strncmp( argv[0], "dump", (size_t) length ) == 0 ) )
     {
         for ( i = nmin[0]; i <= nmax[0]; i++ )
         {
@@ -578,7 +578,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 // delete -- delete the array
 
-    else if ( ( c == 'd' ) && ( strncmp( argv[0], "delete", length ) == 0 ) )
+    else if ( ( c == 'd' ) && ( strncmp( argv[0], "delete", (size_t) length ) == 0 ) )
     {
 #ifdef DEBUG
         fprintf( stderr, "Deleting array %s\n", name );
@@ -590,9 +590,9 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 // filter
 // Only works on 1d matrices
 
-    else if ( ( c == 'f' ) && ( strncmp( argv[0], "filter", length ) == 0 ) )
+    else if ( ( c == 'f' ) && ( strncmp( argv[0], "filter", (size_t) length ) == 0 ) )
     {
-        Mat_float *tmp;
+        Mat_float *tmpMat;
         int       ifilt, nfilt;
 
         if ( argc != 2 )
@@ -610,36 +610,36 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             return TCL_ERROR;
         }
 
-        nfilt = atoi( argv[1] );
-        tmp   = (Mat_float *) malloc( ( matPtr->len + 2 ) * sizeof ( Mat_float ) );
+        nfilt  = atoi( argv[1] );
+        tmpMat = (Mat_float *) malloc( (size_t) ( matPtr->len + 2 ) * sizeof ( Mat_float ) );
 
         for ( ifilt = 0; ifilt < nfilt; ifilt++ )
         {
             // Set up temporary filtering array.  Use even boundary conditions.
 
-            j = 0; tmp[j] = matPtr->fdata[0];
+            j = 0; tmpMat[j] = matPtr->fdata[0];
             for ( i = 0; i < matPtr->len; i++ )
             {
-                j++; tmp[j] = matPtr->fdata[i];
+                j++; tmpMat[j] = matPtr->fdata[i];
             }
-            j++; tmp[j] = matPtr->fdata[matPtr->len - 1];
+            j++; tmpMat[j] = matPtr->fdata[matPtr->len - 1];
 
             // Apply 3-point binomial filter
 
             for ( i = 0; i < matPtr->len; i++ )
             {
                 j = i + 1;
-                matPtr->fdata[i] = 0.25 * ( tmp[j - 1] + 2 * tmp[j] + tmp[j + 1] );
+                matPtr->fdata[i] = 0.25 * ( tmpMat[j - 1] + 2 * tmpMat[j] + tmpMat[j + 1] );
             }
         }
 
-        free( (void *) tmp );
+        free( (void *) tmpMat );
         return TCL_OK;
     }
 
 // help
 
-    else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", length ) == 0 ) )
+    else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", (size_t) length ) == 0 ) )
     {
         Tcl_AppendResult( interp,
             "So you really thought there'd be help, eh?  Sucker.",
@@ -649,7 +649,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 // info
 
-    else if ( ( c == 'i' ) && ( strncmp( argv[0], "info", length ) == 0 ) )
+    else if ( ( c == 'i' ) && ( strncmp( argv[0], "info", (size_t) length ) == 0 ) )
     {
         for ( i = 0; i < matPtr->dim; i++ )
         {
@@ -665,7 +665,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 // max
 
-    else if ( ( c == 'm' ) && ( strncmp( argv[0], "max", length ) == 0 ) )
+    else if ( ( c == 'm' ) && ( strncmp( argv[0], "max", (size_t) length ) == 0 ) )
     {
         int len;
         if ( argc < 1 || argc > 2 )
@@ -706,7 +706,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 // min
 
-    else if ( ( c == 'm' ) && ( strncmp( argv[0], "min", length ) == 0 ) )
+    else if ( ( c == 'm' ) && ( strncmp( argv[0], "min", (size_t) length ) == 0 ) )
     {
         int len;
         if ( argc < 1 || argc > 2 )
@@ -748,7 +748,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 // redim
 // Only works on 1d matrices
 
-    else if ( ( c == 'r' ) && ( strncmp( argv[0], "redim", length ) == 0 ) )
+    else if ( ( c == 'r' ) && ( strncmp( argv[0], "redim", (size_t) length ) == 0 ) )
     {
         int  newlen;
         void *data;
@@ -772,7 +772,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         switch ( matPtr->type )
         {
         case TYPE_FLOAT:
-            data = realloc( matPtr->fdata, newlen * sizeof ( Mat_float ) );
+            data = realloc( matPtr->fdata, (size_t) newlen * sizeof ( Mat_float ) );
             if ( data == NULL )
             {
                 Tcl_AppendResult( interp, "redim failed!",
@@ -785,7 +785,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             break;
 
         case TYPE_INT:
-            data = realloc( matPtr->idata, newlen * sizeof ( Mat_int ) );
+            data = realloc( matPtr->idata, (size_t) newlen * sizeof ( Mat_int ) );
             if ( data == NULL )
             {
                 Tcl_AppendResult( interp, "redim failed!",
@@ -804,7 +804,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 // scale
 // Only works on 1d matrices
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "scale", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "scale", (size_t) length ) == 0 ) )
     {
         Mat_float scale;
 
@@ -833,7 +833,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
         case TYPE_INT:
             for ( i = 0; i < matPtr->len; i++ )
-                matPtr->idata[i] *= scale;
+                matPtr->idata[i] = (Mat_int) ( (Mat_float) ( matPtr->idata[i] ) * scale );
             break;
         }
         return TCL_OK;
@@ -845,7 +845,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         tclMatrixXtnsnDescr *p = head;
         for (; p; p = p->next )
         {
-            if ( ( c == p->cmd[0] ) && ( strncmp( argv[0], p->cmd, length ) == 0 ) )
+            if ( ( c == p->cmd[0] ) && ( strncmp( argv[0], p->cmd, (size_t) length ) == 0 ) )
             {
 #ifdef DEBUG
                 printf( "found a match, invoking %s\n", p->cmd );
@@ -980,7 +980,7 @@ MatrixPut_i( ClientData clientData, Tcl_Interp* interp, int index, const char *s
 
     if ( ( strlen( string ) > 2 ) && ( strncmp( string, "0x", 2 ) == 0 ) )
     {
-        matPtr->idata[index] = strtoul( &string[2], NULL, 16 );
+        matPtr->idata[index] = (Mat_int) strtoul( &string[2], NULL, 16 );
     }
     else
         matPtr->idata[index] = atoi( string );

@@ -359,7 +359,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
         return NULL;
     }
 
-    qpoints = (coordT *) malloc( np * ( dim + 1 ) * sizeof ( coordT ) );
+    qpoints = (coordT *) malloc( (size_t) ( np * ( dim + 1 ) ) * sizeof ( coordT ) );
 
     for ( i = 0; i < np; i++ )
     {
@@ -395,7 +395,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
         d->ymax = -DBL_MAX;
 
         d->npoints = np;
-        d->points  = malloc( np * sizeof ( point ) );
+        d->points  = malloc( (size_t) np * sizeof ( point ) );
         for ( i = 0; i < np; ++i )
         {
             point* p = &d->points[i];
@@ -438,9 +438,9 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
         }
 
         d->ntriangles = ntriangles;
-        d->triangles  = malloc( d->ntriangles * sizeof ( triangle ) );
-        d->neighbours = malloc( d->ntriangles * sizeof ( triangle_neighbours ) );
-        d->circles    = malloc( d->ntriangles * sizeof ( circle ) );
+        d->triangles  = malloc( (size_t) d->ntriangles * sizeof ( triangle ) );
+        d->neighbours = malloc( (size_t) d->ntriangles * sizeof ( triangle_neighbours ) );
+        d->circles    = malloc( (size_t) d->ntriangles * sizeof ( circle ) );
 
         if ( nn_verbose )
             fprintf( stderr, "triangles:\tneighbors:\n" );
@@ -459,7 +459,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
 
                 j = 0;
                 FOREACHneighbor_( facet )
-                n->tids[j++] = neighbor->visitid ? neighbor->visitid - 1 : -1;
+                n->tids[j++] = ( neighbor->visitid > 0 ) ? (int) neighbor->visitid - 1 : -1;
 
                 // Put triangle vertices in counterclockwise order, as
                 // 'triangle' do.
@@ -495,9 +495,9 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
             }
         }
 
-        d->flags = calloc( d->ntriangles, sizeof ( int ) );
+        d->flags = calloc( (size_t) ( d->ntriangles ), sizeof ( int ) );
 
-        d->n_point_triangles = calloc( d->npoints, sizeof ( int ) );
+        d->n_point_triangles = calloc( (size_t) ( d->npoints ), sizeof ( int ) );
         for ( i = 0; i < d->ntriangles; ++i )
         {
             triangle* t = &d->triangles[i];
@@ -505,11 +505,11 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
             for ( j = 0; j < 3; ++j )
                 d->n_point_triangles[t->vids[j]]++;
         }
-        d->point_triangles = malloc( d->npoints * sizeof ( int* ) );
+        d->point_triangles = malloc( (size_t) ( d->npoints ) * sizeof ( int* ) );
         for ( i = 0; i < d->npoints; ++i )
         {
             if ( d->n_point_triangles[i] > 0 )
-                d->point_triangles[i] = malloc( d->n_point_triangles[i] * sizeof ( int ) );
+                d->point_triangles[i] = malloc( (size_t) ( d->n_point_triangles[i] ) * sizeof ( int ) );
             else
                 d->point_triangles[i] = NULL;
             d->n_point_triangles[i] = 0;

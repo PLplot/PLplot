@@ -268,11 +268,11 @@ plD_init_tkwin( PLStream *pls )
 
     // Get ready for plotting
 
-    dev->xlen = xmax - xmin;
-    dev->ylen = ymax - ymin;
+    dev->xlen = (short) ( xmax - xmin );
+    dev->ylen = (short) ( ymax - ymin );
 
-    dev->xscale_init = dev->init_width / (double) dev->xlen;
-    dev->yscale_init = dev->init_height / (double) dev->ylen;
+    dev->xscale_init = (double) dev->init_width / (double) dev->xlen;
+    dev->yscale_init = (double) dev->init_height / (double) dev->ylen;
 
     dev->xscale = dev->xscale_init;
     dev->yscale = dev->yscale_init;
@@ -495,7 +495,7 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     if ( npts > PL_MAXPOLY )
     {
-        pts = (XPoint *) malloc( sizeof ( XPoint ) * npts );
+        pts = (XPoint *) malloc( sizeof ( XPoint ) * (size_t) npts );
     }
     else
     {
@@ -596,8 +596,9 @@ plD_bop_tkwin( PLStream *pls )
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
 
     XRectangle xrect;
-    xrect.x     = 0; xrect.y = 0;
-    xrect.width = dev->width; xrect.height = dev->height;
+    xrect.x      = 0; xrect.y = 0;
+    xrect.width  = (short unsigned) dev->width;
+    xrect.height = (short unsigned) dev->height;
 
     dbug_enter( "plD_bop_tkw" );
     if ( dev->flags & 1 )
@@ -856,7 +857,7 @@ FillPolygonCmd( PLStream *pls )
 
     if ( pls->dev_npts > PL_MAXPOLY )
     {
-        pts = (XPoint *) malloc( sizeof ( XPoint ) * pls->dev_npts );
+        pts = (XPoint *) malloc( sizeof ( XPoint ) * (size_t) ( pls->dev_npts ) );
     }
     else
     {
@@ -925,7 +926,7 @@ Init( PLStream *pls )
 
     dbug_enter( "Init" );
 
-    dev->window = pls->window_id;
+    dev->window = (Window) pls->window_id;
 
     plf = pls->plPlotterPtr;
     if ( plf == NULL )
@@ -960,10 +961,10 @@ Init( PLStream *pls )
     }
 
 // Get initial drawing area dimensions
-    dev->width  = Tk_Width( plf->tkwin );
-    dev->height = Tk_Height( plf->tkwin );
-    dev->border = Tk_InternalBorderWidth( plf->tkwin );
-    tkwd->depth = Tk_Depth( plf->tkwin );
+    dev->width  = (unsigned int) Tk_Width( plf->tkwin );
+    dev->height = (unsigned int) Tk_Height( plf->tkwin );
+    dev->border = (unsigned int) Tk_InternalBorderWidth( plf->tkwin );
+    tkwd->depth = (unsigned int) Tk_Depth( plf->tkwin );
 
     dev->init_width  = dev->width;
     dev->init_height = dev->height;
@@ -1025,15 +1026,15 @@ ExposeCmd( PLStream *pls, PLDisplay *pldis )
     {
         x      = 0;
         y      = 0;
-        width  = dev->width;
-        height = dev->height;
+        width  = (int) dev->width;
+        height = (int) dev->height;
     }
     else
     {
-        x      = pldis->x;
-        y      = pldis->y;
-        width  = pldis->width;
-        height = pldis->height;
+        x      = (int) pldis->x;
+        y      = (int) pldis->y;
+        width  = (int) pldis->width;
+        height = (int) pldis->height;
     }
 
     // Usual case: refresh window from pixmap
@@ -1043,18 +1044,18 @@ ExposeCmd( PLStream *pls, PLDisplay *pldis )
     if ( dev->write_to_pixmap )
     {
         XCopyArea( tkwd->display, dev->pixmap, dev->window, dev->gc,
-            x, y, width, height, x, y );
+            x, y, (unsigned int) width, (unsigned int) height, x, y );
         XSync( tkwd->display, 0 );
 #ifdef DEBUG
         if ( pls->debug )
         {
             XPoint pts[5];
             int    x0 = x, x1 = x + width, y0 = y, y1 = y + height;
-            pts[0].x = x0; pts[0].y = y0;
-            pts[1].x = x1; pts[1].y = y0;
-            pts[2].x = x1; pts[2].y = y1;
-            pts[3].x = x0; pts[3].y = y1;
-            pts[4].x = x0; pts[4].y = y0;
+            pts[0].x = (short) x0; pts[0].y = (short) y0;
+            pts[1].x = (short) x1; pts[1].y = (short) y0;
+            pts[2].x = (short) x1; pts[2].y = (short) y1;
+            pts[3].x = (short) x0; pts[3].y = (short) y1;
+            pts[4].x = (short) x0; pts[4].y = (short) y0;
 
             XDrawLines( tkwd->display, dev->window, dev->gc, pts, 5,
                 CoordModeOrigin );
@@ -1231,7 +1232,7 @@ CreatePixmap( PLStream *pls )
     Tk_Window  tkwin = pls->plPlotterPtr->tkwin;
 
 #if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
-    int ( *oldErrorHandler )();
+    int ( *oldErrorHandler )( Display *, XErrorEvent * );
     oldErrorHandler    = XSetErrorHandler( CreatePixmapErrorHandler );
     CreatePixmapStatus = Success;
 #endif
@@ -1308,7 +1309,7 @@ GetVisual( PLStream *pls )
         pls->plPlotterPtr->tkwin,
         "best",
         &depth, NULL );
-    tkwd->depth = depth;
+    tkwd->depth = (unsigned int) depth;
 }
 
 //--------------------------------------------------------------------------
@@ -1410,9 +1411,9 @@ pltkwin_setBGFG( PLStream *pls )
     {
         pls->cmap0[0].r = pls->cmap0[0].g = pls->cmap0[0].b = 0xFF;
     }
-    gslevbg = ( (long) pls->cmap0[0].r +
-                (long) pls->cmap0[0].g +
-                (long) pls->cmap0[0].b ) / 3;
+    gslevbg = (int) ( ( (long) pls->cmap0[0].r +
+                        (long) pls->cmap0[0].g +
+                        (long) pls->cmap0[0].b ) / 3 );
 
     PLColor_to_TkColor( &pls->cmap0[0], &tkwd->cmap0[0] );
 
@@ -1431,7 +1432,7 @@ pltkwin_setBGFG( PLStream *pls )
     else
         gslevfg = 0xFF;
 
-    fgcolor.r = fgcolor.g = fgcolor.b = gslevfg;
+    fgcolor.r = fgcolor.g = fgcolor.b = (unsigned char) gslevfg;
 
     PLColor_to_TkColor( &fgcolor, &tkwd->fgcolor );
 
@@ -1528,7 +1529,7 @@ AllocCustomMap( PLStream *pls )
 
     for ( i = 0; i < MAX_COLORS; i++ )
     {
-        xwm_colors[i].pixel = i;
+        xwm_colors[i].pixel = (long unsigned) i;
     }
 #ifndef MAC_TCL
     XQueryColors( tkwd->display, tkwd->map, xwm_colors, MAX_COLORS );
@@ -1801,6 +1802,7 @@ void Tkw_StoreColor( PLStream* pls, TkwDisplay* tkwd, XColor* col )
 #ifndef USE_TK
     XStoreColor( tkwd->display, tkwd->map, col );
 #else
+    (void) tkwd;  // tkwd unused in this case
     // We're probably losing memory here
     xc = Tk_GetColorByValue( pls->plPlotterPtr->tkwin, col );
     CopyColour( xc, col );
@@ -1821,9 +1823,9 @@ void Tkw_StoreColor( PLStream* pls, TkwDisplay* tkwd, XColor* col )
 void
 PLColor_to_TkColor( PLColor *plcolor, XColor *xcolor )
 {
-    xcolor->red   = ToXColor( plcolor->r );
-    xcolor->green = ToXColor( plcolor->g );
-    xcolor->blue  = ToXColor( plcolor->b );
+    xcolor->red   = (short unsigned) ToXColor( plcolor->r );
+    xcolor->green = (short unsigned) ToXColor( plcolor->g );
+    xcolor->blue  = (short unsigned) ToXColor( plcolor->b );
     xcolor->flags = DoRed | DoGreen | DoBlue;
 }
 
@@ -1861,19 +1863,19 @@ PLColor_from_TkColor_Changed( PLColor *plcolor, XColor *xcolor )
     if ( plcolor->r != color )
     {
         changed    = 1;
-        plcolor->r = color;
+        plcolor->r = (unsigned char) color;
     }
     color = ToPLColor( xcolor->green );
     if ( plcolor->g != color )
     {
         changed    = 1;
-        plcolor->g = color;
+        plcolor->g = (unsigned char) color;
     }
     color = ToPLColor( xcolor->blue );
     if ( plcolor->b != color )
     {
         changed    = 1;
-        plcolor->b = color;
+        plcolor->b = (unsigned char) color;
     }
     return changed;
 }

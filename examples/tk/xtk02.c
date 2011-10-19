@@ -21,9 +21,12 @@
 
 #include "pltk.h"
 #include <math.h>
+#include <string.h>
 
 static int
 AppInit( Tcl_Interp *interp );
+
+int stuff( tclMatrix *pm, Tcl_Interp *interp, int argc, const char *argv[] );
 
 //--------------------------------------------------------------------------
 // A pithy little proc to show off how to install and use a tclMatrix
@@ -116,9 +119,9 @@ int   myplotCmd( ClientData, Tcl_Interp *, int, char ** );
 static int
 AppInit( Tcl_Interp *interp )
 {
-    Tk_Window main;
+    Tk_Window mainWin;
 
-    main = Tk_MainWindow( interp );
+    mainWin = Tk_MainWindow( interp );
 
 //
 // Call the init procedures for included packages.  Each call should
@@ -142,17 +145,17 @@ AppInit( Tcl_Interp *interp )
 //
 
     Tcl_CreateCommand( interp, "myplot", (Tcl_CmdProc *) myplotCmd,
-        (ClientData) main, (Tcl_CmdDeleteProc *) NULL );
+        (ClientData) mainWin, (Tcl_CmdDeleteProc *) NULL );
 
     Tcl_MatrixInstallXtnsn( "stuff", stuff );
 
     return TCL_OK;
 }
 
-void myplot1();
-void myplot2();
-void myplot3();
-void myplot4();
+void myplot1( void );
+void myplot2( void );
+void myplot3( void );
+void myplot4( void );
 
 // Plots several simple functions
 // Note the compiler should automatically convert all non-pointer arguments

@@ -120,10 +120,10 @@ void points_thin( int* pn, point** ppoints, int nx, int ny )
     double ymin        = DBL_MAX;
     double ymax        = -DBL_MAX;
     int    nxy         = nx * ny;
-    double * sumx      = calloc( nxy, sizeof ( double ) );
-    double * sumy      = calloc( nxy, sizeof ( double ) );
-    double * sumz      = calloc( nxy, sizeof ( double ) );
-    int    * count     = calloc( nxy, sizeof ( int ) );
+    double * sumx      = calloc( (size_t) nxy, sizeof ( double ) );
+    double * sumy      = calloc( (size_t) nxy, sizeof ( double ) );
+    double * sumz      = calloc( (size_t) nxy, sizeof ( double ) );
+    int    * count     = calloc( (size_t) nxy, sizeof ( int ) );
     double stepx       = 0.0;
     double stepy       = 0.0;
     int    nnew        = 0;
@@ -174,8 +174,8 @@ void points_thin( int* pn, point** ppoints, int nx, int ny )
         // floating point particulars. Do not be surprised if different
         // compilers/options give different results here.
         //
-        i = ( nx == 1 ) ? 0 : ( p->x - xmin ) / stepx;
-        j = ( ny == 1 ) ? 0 : ( p->y - ymin ) / stepy;
+        i = ( nx == 1 ) ? 0 : (int) ( ( p->x - xmin ) / stepx );
+        j = ( ny == 1 ) ? 0 : (int) ( ( p->y - ymin ) / stepy );
 
         if ( i == nx )
             i--;
@@ -199,7 +199,7 @@ void points_thin( int* pn, point** ppoints, int nx, int ny )
         }
     }
 
-    pointsnew = malloc( nnew * sizeof ( point ) );
+    pointsnew = malloc( (size_t) nnew * sizeof ( point ) );
 
     ii = 0;
     for ( j = 0; j < ny; ++j )
@@ -294,7 +294,7 @@ void points_generate1( int nin, point pin[], int nx, int ny, double zoom, int* n
     }
 
     *nout = nx * ny;
-    *pout = malloc( *nout * sizeof ( point ) );
+    *pout = malloc( (size_t) ( *nout ) * sizeof ( point ) );
 
     stepx = ( nx > 1 ) ? ( xmax - xmin ) / ( nx - 1 ) : 0.0;
     stepy = ( ny > 1 ) ? ( ymax - ymin ) / ( ny - 1 ) : 0.0;
@@ -345,7 +345,7 @@ void points_generate2( double xmin, double xmax, double ymin, double ymax, int n
     }
 
     *nout = nx * ny;
-    *pout = malloc( *nout * sizeof ( point ) );
+    *pout = malloc( (size_t) ( *nout ) * sizeof ( point ) );
 
     stepx = ( nx > 1 ) ? ( xmax - xmin ) / ( nx - 1 ) : 0.0;
     stepy = ( ny > 1 ) ? ( ymax - ymin ) / ( ny - 1 ) : 0.0;
@@ -428,7 +428,7 @@ void points_read( char* fname, int dim, int* n, point** points )
         }
     }
 
-    *points = malloc( nallocated * sizeof ( point ) );
+    *points = malloc( (size_t) nallocated * sizeof ( point ) );
     *n      = 0;
     while ( fgets( buf, BUFSIZE, f ) != NULL )
     {
@@ -437,7 +437,7 @@ void points_read( char* fname, int dim, int* n, point** points )
         if ( *n == nallocated )
         {
             nallocated *= 2;
-            *points     = realloc( *points, nallocated * sizeof ( point ) );
+            *points     = realloc( *points, (size_t) nallocated * sizeof ( point ) );
         }
 
         p = &( *points )[*n];
@@ -470,7 +470,7 @@ void points_read( char* fname, int dim, int* n, point** points )
         *points = NULL;
     }
     else
-        *points = realloc( *points, *n * sizeof ( point ) );
+        *points = realloc( *points, (size_t) ( *n ) * sizeof ( point ) );
 
     if ( f != stdin )
         if ( fclose( f ) != 0 )

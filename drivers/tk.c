@@ -102,6 +102,7 @@ void plD_bop_tk( PLStream * );
 void plD_tidy_tk( PLStream * );
 void plD_state_tk( PLStream *, PLINT );
 void plD_esc_tk( PLStream *, PLINT, void * );
+void plD_init_dp( PLStream *pls );
 
 // various
 
@@ -128,11 +129,11 @@ static int   pltkdriver_Init( PLStream *pls );
 
 // Tcl/TK utility commands
 
-static void  tk_wait( PLStream *pls, char * );
-static void  abort_session( PLStream *pls, char * );
-static void  server_cmd( PLStream *pls, char *, int );
-static void  tcl_cmd( PLStream *pls, char * );
-static void  copybuf( PLStream *pls, char *cmd );
+static void  tk_wait( PLStream *pls, const char * );
+static void  abort_session( PLStream *pls, const char * );
+static void  server_cmd( PLStream *pls, const char *, int );
+static void  tcl_cmd( PLStream *pls, const char * );
+static void  copybuf( PLStream *pls, const char *cmd );
 static int   pltk_toplevel( Tk_Window *w, Tcl_Interp *interp );
 
 static void  ProcessKey( PLStream *pls );
@@ -206,7 +207,7 @@ plD_init_dp( PLStream *pls )
 }
 
 static void
-tk_wr_header( PLStream *pls, char *header )
+tk_wr_header( PLStream *pls, const char *header )
 {
     tk_wr( pdf_wr_header( pls->pdfs, header ) );
 }
@@ -347,8 +348,8 @@ plD_line_tk( PLStream *pls, short x1, short y1, short x2, short y2 )
         c = (U_CHAR) LINETO;
         tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
-        xy[0] = x2;
-        xy[1] = y2;
+        xy[0] = (U_SHORT) x2;
+        xy[1] = (U_SHORT) y2;
         tk_wr( pdf_wr_2nbytes( pls->pdfs, xy, 2 ) );
     }
     else
@@ -356,16 +357,16 @@ plD_line_tk( PLStream *pls, short x1, short y1, short x2, short y2 )
         c = (U_CHAR) LINE;
         tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
-        xy[0] = x1;
-        xy[1] = y1;
-        xy[2] = x2;
-        xy[3] = y2;
+        xy[0] = (U_SHORT) x1;
+        xy[1] = (U_SHORT) y1;
+        xy[2] = (U_SHORT) x2;
+        xy[3] = (U_SHORT) y2;
         tk_wr( pdf_wr_2nbytes( pls->pdfs, xy, 4 ) );
     }
     dev->xold = x2;
     dev->yold = y2;
 
-    if ( pls->pdfs->bp > pls->bufmax )
+    if ( pls->pdfs->bp > (size_t) pls->bufmax )
         flush_output( pls );
 }
 
@@ -392,7 +393,7 @@ plD_polyline_tk( PLStream *pls, short *xa, short *ya, PLINT npts )
     dev->xold = xa[npts - 1];
     dev->yold = ya[npts - 1];
 
-    if ( pls->pdfs->bp > pls->bufmax )
+    if ( pls->pdfs->bp > (size_t) pls->bufmax )
         flush_output( pls );
 }
 
@@ -468,7 +469,7 @@ plD_state_tk( PLStream *pls, PLINT op )
     dbug_enter( "plD_state_tk" );
 
     tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
-    tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
+    tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ) );
 
     switch ( op )
     {
@@ -477,7 +478,7 @@ plD_state_tk( PLStream *pls, PLINT op )
         break;
 
     case PLSTATE_COLOR0:
-        tk_wr( pdf_wr_2bytes( pls->pdfs, (short) pls->icol0 ) );
+        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->icol0 ) );
 
         if ( pls->icol0 == PL_RGB_COLOR )
         {
@@ -517,15 +518,15 @@ plD_state_tk( PLStream *pls, PLINT op )
         tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncp1 ) );
         for ( i = 0; i < pls->ncp1; i++ )
         {
-            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].h ) );
-            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].l ) );
-            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].s ) );
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1cp[i].rev ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].h ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].l ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].s ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) pls->cmap1cp[i].rev ) );
         }
         break;
     }
 
-    if ( pls->pdfs->bp > pls->bufmax )
+    if ( pls->pdfs->bp > (size_t) pls->bufmax )
         flush_output( pls );
 }
 
@@ -556,25 +557,25 @@ plD_esc_tk( PLStream *pls, PLINT op, void *ptr )
     {
     case PLESC_DI:
         tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ) );
         tk_di( pls );
         break;
 
     case PLESC_EH:
         tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ) );
         HandleEvents( pls );
         break;
 
     case PLESC_FLUSH:
         tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ) );
         flush_output( pls );
         break;
 
     case PLESC_FILL:
         tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ) );
         tk_fill( pls );
         break;
 
@@ -588,7 +589,7 @@ plD_esc_tk( PLStream *pls, PLINT op, void *ptr )
 
     default:
         tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ) );
     }
 }
 
@@ -901,7 +902,7 @@ tk_stop( PLStream *pls )
 //--------------------------------------------------------------------------
 
 static void
-abort_session( PLStream *pls, char *msg )
+abort_session( PLStream *pls, const char *msg )
 {
     TkDev *dev = (TkDev *) pls->dev;
 
@@ -1135,7 +1136,9 @@ static void
 launch_server( PLStream *pls )
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char  * argv[20], *plserver_exec = NULL, *ptr, *tmp = NULL;
+    char  * argv[20];
+    char  *plserver_exec = NULL, *ptr;
+    char  *tmp           = NULL;
     int   i;
 
     dbug_enter( "launch_server" );
@@ -1196,7 +1199,7 @@ launch_server( PLStream *pls )
 
     if ( pls->plwindow != NULL )
     {
-        char *t, *tmp;
+        char *t;
         argv[i++] = "-name";                       // plserver name
         tmp       = plstrdup( pls->plwindow + 1 ); // get rid of the initial dot
         argv[i++] = tmp;
@@ -1206,7 +1209,7 @@ launch_server( PLStream *pls )
     else
     {
         argv[i++] = "-name";            // plserver name
-        argv[i++] = (char *) pls->program;
+        argv[i++] = pls->program;
     }
 
     if ( pls->auto_path != NULL )
@@ -1227,10 +1230,10 @@ launch_server( PLStream *pls )
     if ( pls->dp )
     {
         argv[i++] = "-client_host";
-        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_host", TCL_GLOBAL_ONLY );
+        argv[i++] = Tcl_GetVar( dev->interp, "client_host", TCL_GLOBAL_ONLY );
 
         argv[i++] = "-client_port";
-        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_port", TCL_GLOBAL_ONLY );
+        argv[i++] = Tcl_GetVar( dev->interp, "client_port", TCL_GLOBAL_ONLY );
 
         if ( pls->user != NULL )
         {
@@ -1241,7 +1244,7 @@ launch_server( PLStream *pls )
     else
     {
         argv[i++] = "-client_name";
-        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_name", TCL_GLOBAL_ONLY );
+        argv[i++] = Tcl_GetVar( dev->interp, "client_name", TCL_GLOBAL_ONLY );
     }
 
 // The display absolutely must be set if invoking a remote server (by rsh)
@@ -1383,8 +1386,8 @@ plwindow_init( PLStream *pls )
     // and with ' ' replaced by '_' and all other '.' by '_' to avoid
     // quoting and bad window name problems. Also avoid name starting with
     // an upper case letter.
-    n   = strlen( pls->plwindow ) + 1;
-    tmp = (char *) malloc( sizeof ( char ) * ( n + 1 ) );
+    n   = (int) strlen( pls->plwindow ) + 1;
+    tmp = (char *) malloc( sizeof ( char ) * (size_t) ( n + 1 ) );
     sprintf( tmp, ".%s", pls->plwindow );
     for ( i = 1; i < n; i++ )
     {
@@ -1409,7 +1412,7 @@ plwindow_init( PLStream *pls )
 // Configure background color if anything other than black
 // The default color is handled from a resource setting in plconfig.tcl
 
-    bg = pls->cmap0[0].b | ( pls->cmap0[0].g << 8 ) | ( pls->cmap0[0].r << 16 );
+    bg = (unsigned int) ( pls->cmap0[0].b | ( pls->cmap0[0].g << 8 ) | ( pls->cmap0[0].r << 16 ) );
     if ( bg > 0 )
     {
         snprintf( command, CMD_LEN, "$plwidget configure -plbg #%06x", bg );
@@ -1461,7 +1464,8 @@ static void
 set_windowname( PLStream *pls )
 {
     const char *pname;
-    int        i, maxlen;
+    int        i;
+    size_t     maxlen;
 
     // Set to "plclient" if not initialized via plargs or otherwise
 
@@ -1516,7 +1520,7 @@ link_init( PLStream *pls )
 {
     TkDev   *dev   = (TkDev *) pls->dev;
     PLiodev *iodev = (PLiodev *) dev->iodev;
-    long    bufmax = pls->bufmax * 1.2;
+    size_t  bufmax = (size_t) ( pls->bufmax * 1.2 );
 
     dbug_enter( "link_init" );
 
@@ -1562,7 +1566,7 @@ link_init( PLStream *pls )
         iodev->type     = 1;
         iodev->typeName = "socket";
         tcl_cmd( pls, "plclient_dp_init" );
-        iodev->fileHandle = (char *) Tcl_GetVar( dev->interp, "data_sock", 0 );
+        iodev->fileHandle = Tcl_GetVar( dev->interp, "data_sock", 0 );
 
         if ( Tcl_GetOpenFile( dev->interp, iodev->fileHandle,
                  0, 1, ( ClientData ) & iodev->file ) != TCL_OK )
@@ -1576,7 +1580,7 @@ link_init( PLStream *pls )
 
 // Create data buffer
 
-    pls->pdfs = pdf_bopen( NULL, bufmax );
+    pls->pdfs = pdf_bopen( NULL, (size_t) bufmax );
 }
 
 //--------------------------------------------------------------------------
@@ -1721,8 +1725,8 @@ Plfinfo( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
     }
     else
     {
-        dev->width  = atoi( argv[1] );
-        dev->height = atoi( argv[2] );
+        dev->width  = (unsigned int) atoi( argv[1] );
+        dev->height = (unsigned int) atoi( argv[2] );
 #if PHYSICAL
         {
             PLFLT pxlx = (double) PIXELS_X / dev->width * DPMM;
@@ -1825,10 +1829,10 @@ LookupTkKeyEvent( PLStream *pls, Tcl_Interp *interp, int argc, char **argv )
         return TCL_ERROR;
     }
 
-    gin->keysym = atol( argv[1] );
-    gin->state  = atol( argv[2] );
-    gin->pX     = atol( argv[3] );
-    gin->pY     = atol( argv[4] );
+    gin->keysym = (unsigned int) atol( argv[1] );
+    gin->state  = (unsigned int) atol( argv[2] );
+    gin->pX     = atoi( argv[3] );
+    gin->pY     = atoi( argv[4] );
     gin->dX     = atof( argv[5] );
     gin->dY     = atof( argv[6] );
 
@@ -1892,10 +1896,10 @@ LookupTkButtonEvent( PLStream *pls, Tcl_Interp *interp, int argc, char **argv )
         return TCL_ERROR;
     }
 
-    gin->button = atol( argv[1] );
-    gin->state  = atol( argv[2] );
-    gin->pX     = atof( argv[3] );
-    gin->pY     = atof( argv[4] );
+    gin->button = (unsigned int) atol( argv[1] );
+    gin->state  = (unsigned int) atol( argv[2] );
+    gin->pX     = atoi( argv[3] );
+    gin->pY     = atoi( argv[4] );
     gin->dX     = atof( argv[5] );
     gin->dY     = atof( argv[6] );
     gin->keysym = 0x20;
@@ -2152,7 +2156,7 @@ pltk_toplevel( Tk_Window *w, Tcl_Interp *interp )
 //--------------------------------------------------------------------------
 
 static void
-tk_wait( PLStream *pls, char *cmd )
+tk_wait( PLStream *pls, const char *cmd )
 {
     TkDev *dev   = (TkDev *) pls->dev;
     int   result = 0;
@@ -2191,7 +2195,7 @@ tk_wait( PLStream *pls, char *cmd )
 //--------------------------------------------------------------------------
 
 static void
-server_cmd( PLStream *pls, char *cmd, int nowait )
+server_cmd( PLStream *pls, const char *cmd, int nowait )
 {
     TkDev       *dev          = (TkDev *) pls->dev;
     static char dpsend_cmd0[] = "dp_RPC $server ";
@@ -2237,7 +2241,7 @@ server_cmd( PLStream *pls, char *cmd, int nowait )
 //--------------------------------------------------------------------------
 
 static void
-tcl_cmd( PLStream *pls, char *cmd )
+tcl_cmd( PLStream *pls, const char *cmd )
 {
     TkDev *dev = (TkDev *) pls->dev;
 
@@ -2260,7 +2264,7 @@ tcl_cmd( PLStream *pls, char *cmd )
 //--------------------------------------------------------------------------
 
 static void
-copybuf( PLStream *pls, char *cmd )
+copybuf( PLStream *pls, const char *cmd )
 {
     TkDev *dev = (TkDev *) pls->dev;
 
@@ -2270,7 +2274,7 @@ copybuf( PLStream *pls, char *cmd )
         dev->cmdbuf     = (char *) malloc( dev->cmdbuf_len );
     }
 
-    if ( (int) strlen( cmd ) >= dev->cmdbuf_len )
+    if ( strlen( cmd ) >= dev->cmdbuf_len )
     {
         free( (void *) dev->cmdbuf );
         dev->cmdbuf_len = strlen( cmd ) + 20;

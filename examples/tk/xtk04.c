@@ -26,6 +26,9 @@
 static int
 AppInit( Tcl_Interp *interp );
 
+int mat_max( tclMatrix *pm, Tcl_Interp *interp, int argc, const char *argv[] );
+int mat_min( tclMatrix *pm, Tcl_Interp *interp, int argc, const char *argv[] );
+
 int mat_max( tclMatrix *pm, Tcl_Interp *interp,
              int argc, const char *argv[] )
 {

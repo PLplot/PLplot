@@ -74,11 +74,11 @@ nnai* nnai_build( delaunay* d, int n, double* x, double* y )
 
     nn->d = d;
     nn->n = n;
-    nn->x = malloc( n * sizeof ( double ) );
-    memcpy( nn->x, x, n * sizeof ( double ) );
-    nn->y = malloc( n * sizeof ( double ) );
-    memcpy( nn->y, y, n * sizeof ( double ) );
-    nn->weights = malloc( n * sizeof ( nn_weights ) );
+    nn->x = malloc( (size_t) n * sizeof ( double ) );
+    memcpy( nn->x, x, (size_t) n * sizeof ( double ) );
+    nn->y = malloc( (size_t) n * sizeof ( double ) );
+    memcpy( nn->y, y, (size_t) n * sizeof ( double ) );
+    nn->weights = malloc( (size_t) n * sizeof ( nn_weights ) );
 
     for ( i = 0; i < n; ++i )
     {
@@ -97,10 +97,10 @@ nnai* nnai_build( delaunay* d, int n, double* x, double* y )
         weights  = nnpi_get_weights( nnp );
 
         w->nvertices = nnpi_get_nvertices( nnp );
-        w->vertices  = malloc( w->nvertices * sizeof ( int ) );
-        memcpy( w->vertices, vertices, w->nvertices * sizeof ( int ) );
-        w->weights = malloc( w->nvertices * sizeof ( double ) );
-        memcpy( w->weights, weights, w->nvertices * sizeof ( double ) );
+        w->vertices  = malloc( (size_t) ( w->nvertices ) * sizeof ( int ) );
+        memcpy( w->vertices, vertices, (size_t) ( w->nvertices ) * sizeof ( int ) );
+        w->weights = malloc( (size_t) ( w->nvertices ) * sizeof ( double ) );
+        memcpy( w->weights, weights, (size_t) ( w->nvertices ) * sizeof ( double ) );
     }
 
     nnpi_destroy( nnp );

@@ -259,12 +259,17 @@ static void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts );
 static void gradient( PLStream *pls, short *xa, short *ya, PLINT npts );
 static void arc( PLStream *, arc_struct * );
 static void rotate_cairo_surface( PLStream *, float, float, float, float, float, float, PLBOOL );
+static void blit_to_x( PLStream *pls, double x, double y, double w, double h );
 // Rasterization of plotted material
 static void start_raster( PLStream* );
 static void end_raster( PLStream* );
 // Get/set drawing mode
 static void set_mode( PLStream*, PLINT* );
 static void get_mode( PLStream*, PLINT* );
+// Get / set line properties
+void get_line_properties( PLCairo *aStream, cairo_line_join_t *join, cairo_line_cap_t *cap );
+void set_line_properties( PLCairo *aStream, cairo_line_join_t join, cairo_line_cap_t cap );
+
 
 // PLplot interface functions
 
@@ -641,7 +646,7 @@ void text_begin_cairo( PLStream *pls, EscText *args )
     aStream->level             = 0;
     aStream->pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
     // Calculate the font size (in points since DPI = 72).
-    aStream->fontSize = pls->chrht * DPI / 25.4;
+    aStream->fontSize = (float) ( pls->chrht * DPI / 25.4 );
     for ( i = 0; i < MAX_MARKUP_LEN; i++ )
     {
         aStream->pangoMarkupString[i] = 0;
@@ -711,7 +716,7 @@ void text_esc_cairo( PLStream *pls, EscText *args )
             plP_script_scale( TRUE, &aStream->level,
                 &aStream->old_sscale, &aStream->sscale, &aStream->old_soffset, &aStream->soffset );
             strncat( aStream->pangoMarkupString,
-                rise_span_tag( TRUE, aStream->fontSize, aStream->sscale, aStream->soffset ),
+                rise_span_tag( TRUE, aStream->fontSize, (float) aStream->sscale, (float) aStream->soffset ),
                 MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown++;
@@ -727,7 +732,7 @@ void text_esc_cairo( PLStream *pls, EscText *args )
             plP_script_scale( FALSE, &aStream->level,
                 &aStream->old_sscale, &aStream->sscale, &aStream->old_soffset, &aStream->soffset );
             strncat( aStream->pangoMarkupString,
-                rise_span_tag( FALSE, aStream->fontSize, aStream->sscale, aStream->soffset ),
+                rise_span_tag( FALSE, aStream->fontSize, (float) aStream->sscale, (float) aStream->soffset ),
                 MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown--;
@@ -871,7 +876,7 @@ void proc_str( PLStream *pls, EscText *args )
     }
 
     // Calculate the font size (in points since DPI = 72).
-    fontSize = pls->chrht * DPI / 25.4;
+    fontSize = (float) ( pls->chrht * DPI / 25.4 );
 
     // Convert the escape characters into the appropriate Pango markup
     textWithPangoMarkup = ucs4_to_pango_markup_format( args->unicode_array, args->unicode_array_len, fontSize );
@@ -1038,7 +1043,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                         plP_script_scale( TRUE, &level,
                             &old_sscale, &sscale, &old_soffset, &soffset );
                         strncat( pangoMarkupString,
-                            rise_span_tag( TRUE, fontSize, sscale, soffset ),
+                            rise_span_tag( TRUE, fontSize, (float) sscale, (float) soffset ),
                             MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown++;
@@ -1055,7 +1060,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                         plP_script_scale( FALSE, &level,
                             &old_sscale, &sscale, &old_soffset, &soffset );
                         strncat( pangoMarkupString,
-                            rise_span_tag( FALSE, fontSize, sscale, soffset ),
+                            rise_span_tag( FALSE, fontSize, (float) sscale, (float) soffset ),
                             MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown--;
@@ -1119,7 +1124,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
         plP_script_scale( TRUE, &level,
             &old_sscale, &sscale, &old_soffset, &soffset );
         strncat( pangoMarkupString,
-            rise_span_tag( TRUE, fontSize, sscale, soffset ),
+            rise_span_tag( TRUE, fontSize, (float) sscale, (float) soffset ),
             MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
     }
     for ( upDown_level = 0; upDown_level > upDown; upDown_level-- )
@@ -1127,7 +1132,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
         plP_script_scale( FALSE, &level,
             &old_sscale, &sscale, &old_soffset, &soffset );
         strncat( pangoMarkupString,
-            rise_span_tag( FALSE, fontSize, sscale, soffset ),
+            rise_span_tag( FALSE, fontSize, (float) sscale, (float) soffset ),
             MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
     }
 }
@@ -1184,16 +1189,16 @@ char *rise_span_tag( int ifsuperscript, float fontSize, float multiplier, float 
     static char tag[100];
 
     // http://developer.gnome.org/pango/unstable/PangoMarkupFormat.html says
-    // rise should be in units of 10000 em's, but empricial evidence shows
+    // rise should be in units of 10000 em's, but empirical evidence shows
     // it is in units of 1024th of a point.  Therefore, since FontSize
     // is in points, a rise of 1024. * fontSize corresponds a rise of
     // a full character height.
-    rise = 1024. * fontSize * RISE_FACTOR * rise;
+    rise = 1024.f * fontSize * (float) RISE_FACTOR * rise;
 
     // This is the correction for the difference between baseline and
     // middle coordinate systems.  This offset should be
     // 0.5*(fontSize - superscript/subscript fontSize).
-    offset = 1024. * 0.5 * fontSize * ( 1.0 - multiplier );
+    offset = 1024.f * 0.5f * fontSize * ( 1.0f - multiplier );
 
     if ( ifsuperscript )
     {
@@ -1218,9 +1223,9 @@ char *rise_span_tag( int ifsuperscript, float fontSize, float multiplier, float 
 
 cairo_status_t write_to_stream( void *filePointer, unsigned char *data, unsigned int length )
 {
-    int bytes_written;
+    unsigned int bytes_written;
 
-    bytes_written = fwrite( data, 1, length, (FILE *) filePointer );
+    bytes_written = (unsigned int) fwrite( data, 1, (size_t) length, (FILE *) filePointer );
     if ( bytes_written == length )
     {
         return CAIRO_STATUS_SUCCESS;
@@ -1298,7 +1303,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     aStream = malloc( sizeof ( PLCairo ) );
 #if defined ( PLD_xcairo )
     aStream->XDisplay = NULL;
-    aStream->XWindow  = -1;
+    aStream->XWindow  = 0;
 #endif
     aStream->cairoSurface = NULL;
     aStream->cairoContext = NULL;
@@ -1324,11 +1329,11 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     }
 
     // Record users desired text and graphics aliasing and rasterization
-    aStream->text_anti_aliasing     = text_anti_aliasing;
-    aStream->graphics_anti_aliasing = graphics_anti_aliasing;
-    aStream->rasterize_image        = rasterize_image;
-    aStream->set_background         = set_background;
-    aStream->image_buffering        = image_buffering;
+    aStream->text_anti_aliasing     = (short) text_anti_aliasing;
+    aStream->graphics_anti_aliasing = (short) graphics_anti_aliasing;
+    aStream->rasterize_image        = (short) rasterize_image;
+    aStream->set_background         = (short) set_background;
+    aStream->image_buffering        = (short) image_buffering;
 
     return aStream;
 }
@@ -1393,7 +1398,6 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts )
 
 void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    int     i;
     PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
@@ -1723,7 +1727,7 @@ static signed int xcairo_init_cairo( PLStream *pls )
     }
 
     // Invert the surface so that the graphs are drawn right side up.
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, TRUE );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, (float) pls->ylength, TRUE );
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -1784,7 +1788,7 @@ void plD_init_xcairo( PLStream *pls )
         XScreen    = DefaultScreen( aStream->XDisplay );
         rootWindow = RootWindow( aStream->XDisplay, XScreen );
 
-        aStream->XWindow = XCreateSimpleWindow( aStream->XDisplay, rootWindow, 0, 0, pls->xlength, pls->ylength,
+        aStream->XWindow = XCreateSimpleWindow( aStream->XDisplay, rootWindow, 0, 0, (unsigned int) pls->xlength, (unsigned int) pls->ylength,
             1, BlackPixel( aStream->XDisplay, XScreen ), BlackPixel( aStream->XDisplay, XScreen ) );
         XStoreName( aStream->XDisplay, aStream->XWindow, pls->plwindow );
         XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
@@ -1872,8 +1876,6 @@ void plD_eop_xcairo( PLStream *pls )
     XEvent         event;
     XExposeEvent   *expose;
     PLCairo        *aStream;
-    char           helpmsg[] = " - Press Enter or right-click to continue";
-    char           *plotTitle;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -2001,8 +2003,8 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
         // Ensure plplot knows the real dimensions of the drawable
         XGetGeometry( aStream->XDisplay, aStream->XWindow, &rootwin,
             &x, &y, &w, &h, &b, &d );
-        pls->xlength = w;
-        pls->ylength = h;
+        pls->xlength = (PLINT) w;
+        pls->ylength = (PLINT) h;
         plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / aStream->downscale ), (PLINT) 0,
             (PLINT) ( pls->ylength / aStream->downscale ) );
 
@@ -2028,15 +2030,14 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
 
 void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
 {
-    int            number_chars;
-    char           *ksname;
-    char           str[257];
-    KeySym         keysym;
-    XComposeStatus cs;
-    XEvent         event;
-    XButtonEvent   *xButtonEvent;
-    Cursor         xHairCursor;
-    PLCairo        *aStream;
+    int          number_chars;
+    const char   *ksname;
+    char         str[257];
+    KeySym       keysym;
+    XEvent       event;
+    XButtonEvent *xButtonEvent;
+    Cursor       xHairCursor;
+    PLCairo      *aStream;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -2082,7 +2083,7 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
             gin->keysym = 0xFF & keysym;
             break;
         default:
-            gin->keysym = keysym;
+            gin->keysym = (unsigned int) keysym;
         }
     }
     else // button press
@@ -2162,7 +2163,7 @@ void plD_init_pdfcairo( PLStream *pls )
     pls->dev = aStream;
 
     // Invert the surface so that the graphs are drawn right side up.
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, (float) pls->ylength, FALSE );
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2245,7 +2246,7 @@ void plD_init_pscairo( PLStream *pls )
         plsdiori( 1 );
         pls->freeaspect = 1;
     }
-    rotate_cairo_surface( pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength, FALSE );
+    rotate_cairo_surface( pls, 0.0, -1.0, -1.0, 0.0, (float) pls->ylength, (float) pls->xlength, FALSE );
 
     // Set fill rule for the case of self-intersecting boundaries.
     if ( pls->dev_eofill )
@@ -2341,7 +2342,7 @@ void plD_init_svgcairo( PLStream *pls )
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     // Invert the surface so that the graphs are drawn right side up.
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, (float) pls->ylength, FALSE );
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2437,11 +2438,11 @@ void plD_init_pngcairo( PLStream *pls )
 
     // Create a new cairo surface & context for PNG file.
     // Dimension units are pixels from cairo documentation.
-    aStream->cairoSurface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, (double) pls->xlength, (double) pls->ylength );
+    aStream->cairoSurface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, (int) pls->xlength, (int) pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     // Invert the surface so that the graphs are drawn right side up.
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, (float) pls->ylength, FALSE );
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2574,7 +2575,7 @@ void plD_init_memcairo( PLStream *pls )
     // Red, Green, and Blue are stored in the remaining 24 bits in that order
     stride = pls->xlength * 4;
     // stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pls->xlength);  This function missing from version 1.4 :-(
-    aStream->cairo_format_memory = (unsigned char *) calloc( stride * pls->ylength, 1 );
+    aStream->cairo_format_memory = (unsigned char *) calloc( (size_t) stride * pls->ylength, 1 );
 
     // Copy the input data into the Cairo data format
     cairo_mem = aStream->cairo_format_memory;
@@ -2635,7 +2636,7 @@ void plD_init_memcairo( PLStream *pls )
     pls->dev = aStream;
 
     // Invert the surface so that the graphs are drawn right side up.
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, (float) pls->ylength, FALSE );
 
     // Set graphics aliasing
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2849,7 +2850,7 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
         cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 
         // Invert the surface so that the graphs are drawn right side up.
-        rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
+        rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, (float) pls->ylength, FALSE );
 
         // Should adjust plot size to fit in the given cairo context?
         // Cairo does not provide a way to query the dimensions of a context?

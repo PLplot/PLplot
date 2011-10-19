@@ -212,7 +212,7 @@ typedef struct
 static Tk_ConfigSpec configSpecs[] = {
     { TK_CONFIG_BORDER,        "-background",     "background",     "Background",
       DEF_PLFRAME_BG_COLOR, Tk_Offset( PlFrame, border ),
-      TK_CONFIG_COLOR_ONLY },
+      TK_CONFIG_COLOR_ONLY, NULL },
 //
 //  {TK_CONFIG_COLOR, (char *) NULL, (char *) NULL, (char *) NULL,
 //      (char *) NULL, Tk_Offset(PlFrame, bgColor),
@@ -221,11 +221,11 @@ static Tk_ConfigSpec configSpecs[] = {
 #ifndef MAC_TCL
     { TK_CONFIG_COLOR,         "-plbg",           "plbackground",   "Plbackground",
       DEF_PLFRAME_BG_COLOR, Tk_Offset( PlFrame, bgColor ),
-      TK_CONFIG_COLOR_ONLY },
+      TK_CONFIG_COLOR_ONLY, NULL },
 #endif
     { TK_CONFIG_BORDER,        "-background",     "background",     "Background",
       DEF_PLFRAME_BG_MONO, Tk_Offset( PlFrame, border ),
-      TK_CONFIG_MONO_ONLY },
+      TK_CONFIG_MONO_ONLY, NULL },
 //
 //  {TK_CONFIG_COLOR, (char *) NULL, (char *) NULL, (char *) NULL,
 //      (char *) NULL, Tk_Offset(PlFrame, bgColor),
@@ -234,36 +234,36 @@ static Tk_ConfigSpec configSpecs[] = {
 #ifndef MAC_TCL
     { TK_CONFIG_COLOR,         "-plbg",           (char *) NULL,    (char *) NULL,
       DEF_PLFRAME_BG_MONO, Tk_Offset( PlFrame, bgColor ),
-      TK_CONFIG_MONO_ONLY },
+      TK_CONFIG_MONO_ONLY, NULL },
 #endif
     { TK_CONFIG_SYNONYM,       "-bd",             "borderWidth",    (char *) NULL,
-      (char *) NULL, 0, 0 },
+      (char *) NULL, 0, 0, NULL },
     { TK_CONFIG_SYNONYM,       "-bg",             "background",     (char *) NULL,
-      (char *) NULL, 0, 0 },
+      (char *) NULL, 0, 0, NULL },
     { TK_CONFIG_PIXELS,        "-borderwidth",    "borderWidth",    "BorderWidth",
-      DEF_PLFRAME_BORDER_WIDTH, Tk_Offset( PlFrame, borderWidth ), 0 },
+      DEF_PLFRAME_BORDER_WIDTH, Tk_Offset( PlFrame, borderWidth ), 0, NULL },
     { TK_CONFIG_ACTIVE_CURSOR, "-cursor",         "cursor",         "Cursor",
-      DEF_PLFRAME_CURSOR, Tk_Offset( PlFrame, cursor ), TK_CONFIG_NULL_OK },
+      DEF_PLFRAME_CURSOR, Tk_Offset( PlFrame, cursor ), TK_CONFIG_NULL_OK, NULL },
     { TK_CONFIG_STRING,        "-bopcmd",         "bopcmd",         "PgCommand",
-      (char *) NULL, Tk_Offset( PlFrame, bopCmd ), TK_CONFIG_NULL_OK },
+      (char *) NULL, Tk_Offset( PlFrame, bopCmd ), TK_CONFIG_NULL_OK, NULL },
     { TK_CONFIG_STRING,        "-eopcmd",         "eopcmd",         "PgCommand",
-      (char *) NULL, Tk_Offset( PlFrame, eopCmd ), TK_CONFIG_NULL_OK },
+      (char *) NULL, Tk_Offset( PlFrame, eopCmd ), TK_CONFIG_NULL_OK, NULL },
     { TK_CONFIG_PIXELS,        "-height",         "height",         "Height",
-      DEF_PLFRAME_HEIGHT, Tk_Offset( PlFrame, height ), 0 },
+      DEF_PLFRAME_HEIGHT, Tk_Offset( PlFrame, height ), 0, NULL },
     { TK_CONFIG_RELIEF,        "-relief",         "relief",         "Relief",
-      DEF_PLFRAME_RELIEF, Tk_Offset( PlFrame, relief ), 0 },
+      DEF_PLFRAME_RELIEF, Tk_Offset( PlFrame, relief ), 0, NULL },
     { TK_CONFIG_PIXELS,        "-width",          "width",          "Width",
-      DEF_PLFRAME_WIDTH, Tk_Offset( PlFrame, width ), 0 },
+      DEF_PLFRAME_WIDTH, Tk_Offset( PlFrame, width ), 0, NULL },
     { TK_CONFIG_BOOLEAN,       "-xhairs",         (char *) NULL,    (char *) NULL,
-      "0", Tk_Offset( PlFrame, xhairs ), TK_CONFIG_DONT_SET_DEFAULT },
+      "0", Tk_Offset( PlFrame, xhairs ), TK_CONFIG_DONT_SET_DEFAULT, NULL },
     { TK_CONFIG_BOOLEAN,       "-rubberband",     (char *) NULL,    (char *) NULL,
-      "0", Tk_Offset( PlFrame, rband ), TK_CONFIG_DONT_SET_DEFAULT },
+      "0", Tk_Offset( PlFrame, rband ), TK_CONFIG_DONT_SET_DEFAULT, NULL },
     { TK_CONFIG_STRING,        "-xscrollcommand", "xScrollCommand", "ScrollCommand",
-      (char *) NULL, Tk_Offset( PlFrame, xScrollCmd ), TK_CONFIG_NULL_OK },
+      (char *) NULL, Tk_Offset( PlFrame, xScrollCmd ), TK_CONFIG_NULL_OK, NULL },
     { TK_CONFIG_STRING,        "-yscrollcommand", "yScrollCommand", "ScrollCommand",
-      (char *) NULL, Tk_Offset( PlFrame, yScrollCmd ), TK_CONFIG_NULL_OK },
+      (char *) NULL, Tk_Offset( PlFrame, yScrollCmd ), TK_CONFIG_NULL_OK, NULL },
     { TK_CONFIG_END,           (char *) NULL,     (char *) NULL,    (char *) NULL,
-      (char *) NULL, 0, 0 }
+      (char *) NULL, 0, 0, NULL }
 };
 
 // Forward declarations for procedures defined later in this file:
@@ -540,7 +540,7 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
     }
     Tk_Preserve( (ClientData) plFramePtr );
     c      = argv[1][0];
-    length = strlen( argv[1] );
+    length = (int) strlen( argv[1] );
 
 // First, before anything else, we have to set the stream to be the one that
 // corresponds to this widget.
@@ -548,14 +548,14 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // cmd -- issue a command to the PLplot library
 
-    if ( ( c == 'c' ) && ( strncmp( argv[1], "cmd", length ) == 0 ) )
+    if ( ( c == 'c' ) && ( strncmp( argv[1], "cmd", (size_t) length ) == 0 ) )
     {
         result = Cmd( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // cget
 
-    else if ( ( c == 'c' ) && ( strncmp( argv[1], "cget", length ) == 0 ) )
+    else if ( ( c == 'c' ) && ( strncmp( argv[1], "cget", (size_t) length ) == 0 ) )
     {
         if ( argc > 2 )
         {
@@ -573,7 +573,7 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // configure
 
-    else if ( ( c == 'c' ) && ( strncmp( argv[1], "configure", length ) == 0 ) )
+    else if ( ( c == 'c' ) && ( strncmp( argv[1], "configure", (size_t) length ) == 0 ) )
     {
         if ( argc == 2 )
         {
@@ -595,8 +595,8 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 // double buffering
 
     else if ( ( c == 'd' ) &&
-              ( ( strncmp( argv[1], "db", length ) == 0 ) ||
-                ( strncmp( argv[1], "doublebuffering", length == 0 ) ) ) )
+              ( ( strncmp( argv[1], "db", (size_t) length ) == 0 ) ||
+                ( strncmp( argv[1], "doublebuffering", (size_t) length == 0 ) ) ) )
     {
         PLBufferingCB bcb;
 
@@ -625,7 +625,7 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // closelink -- Close a binary data link previously opened with openlink
 
-    else if ( ( c == 'c' ) && ( strncmp( argv[1], "closelink", length ) == 0 ) )
+    else if ( ( c == 'c' ) && ( strncmp( argv[1], "closelink", (size_t) length ) == 0 ) )
     {
         if ( argc > 2 )
         {
@@ -642,7 +642,7 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // draw -- rubber-band draw used in region selection
 
-    else if ( ( c == 'd' ) && ( strncmp( argv[1], "draw", length ) == 0 ) )
+    else if ( ( c == 'd' ) && ( strncmp( argv[1], "draw", (size_t) length ) == 0 ) )
     {
         if ( argc == 2 )
         {
@@ -659,31 +659,31 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // color-manipulating commands, grouped together for convenience
 
-    else if ( ( ( c == 'g' ) && ( ( strncmp( argv[1], "gcmap0", length ) == 0 ) ||
-                                  ( strncmp( argv[1], "gcmap1", length ) == 0 ) ) ) ||
-              ( ( c == 's' ) && ( ( strncmp( argv[1], "scmap0", length ) == 0 ) ||
-                                  ( strncmp( argv[1], "scmap1", length ) == 0 ) ||
-                                  ( strncmp( argv[1], "scol0", length ) == 0 ) ||
-                                  ( strncmp( argv[1], "scol1", length ) == 0 ) ) ) )
+    else if ( ( ( c == 'g' ) && ( ( strncmp( argv[1], "gcmap0", (size_t) length ) == 0 ) ||
+                                  ( strncmp( argv[1], "gcmap1", (size_t) length ) == 0 ) ) ) ||
+              ( ( c == 's' ) && ( ( strncmp( argv[1], "scmap0", (size_t) length ) == 0 ) ||
+                                  ( strncmp( argv[1], "scmap1", (size_t) length ) == 0 ) ||
+                                  ( strncmp( argv[1], "scol0", (size_t) length ) == 0 ) ||
+                                  ( strncmp( argv[1], "scol1", (size_t) length ) == 0 ) ) ) )
         result = ColorManip( interp, plFramePtr, argc - 1, argv + 1 );
 
 // info -- returns requested info
 
-    else if ( ( c == 'i' ) && ( strncmp( argv[1], "info", length ) == 0 ) )
+    else if ( ( c == 'i' ) && ( strncmp( argv[1], "info", (size_t) length ) == 0 ) )
     {
         result = Info( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // orient -- Set plot orientation
 
-    else if ( ( c == 'o' ) && ( strncmp( argv[1], "orient", length ) == 0 ) )
+    else if ( ( c == 'o' ) && ( strncmp( argv[1], "orient", (size_t) length ) == 0 ) )
     {
         result = Orient( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // openlink -- Open a binary data link (FIFO or socket)
 
-    else if ( ( c == 'o' ) && ( strncmp( argv[1], "openlink", length ) == 0 ) )
+    else if ( ( c == 'o' ) && ( strncmp( argv[1], "openlink", (size_t) length ) == 0 ) )
     {
         if ( argc < 3 )
         {
@@ -700,21 +700,21 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // page -- change or return output page setup
 
-    else if ( ( c == 'p' ) && ( strncmp( argv[1], "page", length ) == 0 ) )
+    else if ( ( c == 'p' ) && ( strncmp( argv[1], "page", (size_t) length ) == 0 ) )
     {
         result = Page( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // print -- prints plot
 
-    else if ( ( c == 'p' ) && ( strncmp( argv[1], "print", length ) == 0 ) )
+    else if ( ( c == 'p' ) && ( strncmp( argv[1], "print", (size_t) length ) == 0 ) )
     {
         result = Print( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // redraw -- redraw plot
 
-    else if ( ( c == 'r' ) && ( strncmp( argv[1], "redraw", length ) == 0 ) )
+    else if ( ( c == 'r' ) && ( strncmp( argv[1], "redraw", (size_t) length ) == 0 ) )
     {
         if ( argc > 2 )
         {
@@ -731,28 +731,28 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // report -- find out useful info about the plframe (GMF)
 
-    else if ( ( c == 'r' ) && ( strncmp( argv[1], "report", length ) == 0 ) )
+    else if ( ( c == 'r' ) && ( strncmp( argv[1], "report", (size_t) length ) == 0 ) )
     {
         result = report( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // save -- saves plot to the specified plot file type
 
-    else if ( ( c == 's' ) && ( strncmp( argv[1], "save", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[1], "save", (size_t) length ) == 0 ) )
     {
         result = Save( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // view -- change or return window into plot
 
-    else if ( ( c == 'v' ) && ( strncmp( argv[1], "view", length ) == 0 ) )
+    else if ( ( c == 'v' ) && ( strncmp( argv[1], "view", (size_t) length ) == 0 ) )
     {
         result = View( interp, plFramePtr, argc - 2, argv + 2 );
     }
 
 // xscroll -- horizontally scroll window into plot
 
-    else if ( ( c == 'x' ) && ( strncmp( argv[1], "xscroll", length ) == 0 ) )
+    else if ( ( c == 'x' ) && ( strncmp( argv[1], "xscroll", (size_t) length ) == 0 ) )
     {
         if ( argc == 2 || argc > 3 )
         {
@@ -769,7 +769,7 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
 
 // yscroll -- vertically scroll window into plot
 
-    else if ( ( c == 'y' ) && ( strncmp( argv[1], "yscroll", length ) == 0 ) )
+    else if ( ( c == 'y' ) && ( strncmp( argv[1], "yscroll", (size_t) length ) == 0 ) )
     {
         if ( argc == 2 || argc > 3 )
         {
@@ -1012,20 +1012,20 @@ PlFrameExposeEH( ClientData clientData, register XEvent *eventPtr )
     {
         int x0_old, x1_old, y0_old, y1_old, x0_new, x1_new, y0_new, y1_new;
 
-        x0_old = plFramePtr->pldis.x;
-        y0_old = plFramePtr->pldis.y;
-        x1_old = x0_old + plFramePtr->pldis.width;
-        y1_old = y0_old + plFramePtr->pldis.height;
+        x0_old = (int) plFramePtr->pldis.x;
+        y0_old = (int) plFramePtr->pldis.y;
+        x1_old = x0_old + (int) plFramePtr->pldis.width;
+        y1_old = y0_old + (int) plFramePtr->pldis.height;
 
         x0_new = event->x;
         y0_new = event->y;
         x1_new = x0_new + event->width;
         y1_new = y0_new + event->height;
 
-        plFramePtr->pldis.x      = MIN( x0_old, x0_new );
-        plFramePtr->pldis.y      = MIN( y0_old, y0_new );
-        plFramePtr->pldis.width  = MAX( x1_old, x1_new ) - plFramePtr->pldis.x;
-        plFramePtr->pldis.height = MAX( y1_old, y1_new ) - plFramePtr->pldis.y;
+        plFramePtr->pldis.x      = (unsigned int) MIN( x0_old, x0_new );
+        plFramePtr->pldis.y      = (unsigned int) MIN( y0_old, y0_new );
+        plFramePtr->pldis.width  = (unsigned int) MAX( x1_old, x1_new ) - plFramePtr->pldis.x;
+        plFramePtr->pldis.height = (unsigned int) MAX( y1_old, y1_new ) - plFramePtr->pldis.y;
     }
 
 // Invoke DoWhenIdle handler to redisplay widget.
@@ -1377,11 +1377,11 @@ DrawXhairs( PlFrame *plFramePtr, int x0, int y0 )
     if ( plFramePtr->drawing_xhairs )
         UpdateXhairs( plFramePtr );
 
-    plFramePtr->xhair_x[0].x = xmin; plFramePtr->xhair_x[0].y = y0;
-    plFramePtr->xhair_x[1].x = xmax; plFramePtr->xhair_x[1].y = y0;
+    plFramePtr->xhair_x[0].x = (short) xmin; plFramePtr->xhair_x[0].y = (short) y0;
+    plFramePtr->xhair_x[1].x = (short) xmax; plFramePtr->xhair_x[1].y = (short) y0;
 
-    plFramePtr->xhair_y[0].x = x0; plFramePtr->xhair_y[0].y = ymin;
-    plFramePtr->xhair_y[1].x = x0; plFramePtr->xhair_y[1].y = ymax;
+    plFramePtr->xhair_y[0].x = (short) x0; plFramePtr->xhair_y[0].y = (short) ymin;
+    plFramePtr->xhair_y[1].x = (short) x0; plFramePtr->xhair_y[1].y = (short) ymax;
 
     UpdateXhairs( plFramePtr );
 }
@@ -1430,8 +1430,8 @@ CreateRband( PlFrame *plFramePtr )
              win_y >= 0 && win_y < Tk_Height( tkwin ) )
         {
             // Okay, pointer is in our window.
-            plFramePtr->rband_pt[0].x = win_x;
-            plFramePtr->rband_pt[0].y = win_y;
+            plFramePtr->rband_pt[0].x = (short) win_x;
+            plFramePtr->rband_pt[0].y = (short) win_y;
 
             DrawRband( plFramePtr, win_x, win_y );
             plFramePtr->drawing_rband = 1;
@@ -1510,7 +1510,7 @@ DrawRband( PlFrame *plFramePtr, int x0, int y0 )
     if ( plFramePtr->drawing_rband )
         UpdateRband( plFramePtr );
 
-    plFramePtr->rband_pt[1].x = x0; plFramePtr->rband_pt[1].y = y0;
+    plFramePtr->rband_pt[1].x = (short) x0; plFramePtr->rband_pt[1].y = (short) y0;
 
     UpdateRband( plFramePtr );
 }
@@ -1563,7 +1563,7 @@ PlFrameInit( ClientData clientData )
     if ( !plFramePtr->tkwin_initted )
     {
         plsstrm( plFramePtr->ipls );
-        plsxwin( Tk_WindowId( tkwin ) );
+        plsxwin( (PLINT) Tk_WindowId( tkwin ) );
         plspause( 0 );
         plinit();
 // plplot_ccmap is statically defined in plxwd.h.  Note that
@@ -1739,8 +1739,8 @@ DisplayPlFrame( ClientData clientData )
         else if ( ( plFramePtr->width != plFramePtr->prevWidth ) ||
                   ( plFramePtr->height != plFramePtr->prevHeight ) )
         {
-            plFramePtr->pldis.width  = plFramePtr->width;
-            plFramePtr->pldis.height = plFramePtr->height;
+            plFramePtr->pldis.width  = (unsigned int) plFramePtr->width;
+            plFramePtr->pldis.height = (unsigned int) plFramePtr->height;
 
             plsstrm( plFramePtr->ipls );
             pl_cmd( PLESC_RESIZE, (void *) &( plFramePtr->pldis ) );
@@ -1766,10 +1766,10 @@ DisplayPlFrame( ClientData clientData )
 
             // Reset window bounds so that next time they are set fresh
 
-            plFramePtr->pldis.x      = Tk_X( tkwin ) + Tk_Width( tkwin );
-            plFramePtr->pldis.y      = Tk_Y( tkwin ) + Tk_Height( tkwin );
-            plFramePtr->pldis.width  = -Tk_Width( tkwin );
-            plFramePtr->pldis.height = -Tk_Height( tkwin );
+            plFramePtr->pldis.x      = (unsigned int) ( Tk_X( tkwin ) + Tk_Width( tkwin ) );
+            plFramePtr->pldis.y      = (unsigned int) ( Tk_Y( tkwin ) + Tk_Height( tkwin ) );
+            plFramePtr->pldis.width  = (unsigned int) ( -Tk_Width( tkwin ) );
+            plFramePtr->pldis.height = (unsigned int) ( -Tk_Height( tkwin ) );
         }
 
         // Update graphic crosshairs if necessary
@@ -1829,9 +1829,9 @@ scol0( Tcl_Interp *interp, register PlFrame *plFramePtr,
          ( pls->cmap0[i].g != g ) ||
          ( pls->cmap0[i].b != b ) )
     {
-        pls->cmap0[i].r = r;
-        pls->cmap0[i].g = g;
-        pls->cmap0[i].b = b;
+        pls->cmap0[i].r = (unsigned char) r;
+        pls->cmap0[i].g = (unsigned char) g;
+        pls->cmap0[i].b = (unsigned char) b;
         *p_changed      = 1;
     }
 
@@ -1960,12 +1960,12 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
     plsstrm( plFramePtr->ipls );
 
     c      = argv[0][0];
-    length = strlen( argv[0] );
+    length = (int) strlen( argv[0] );
 
 // gcmap0 -- get color map 0
 // first arg is number of colors, the rest are hex number specifications
 
-    if ( ( c == 'g' ) && ( strncmp( argv[0], "gcmap0", length ) == 0 ) )
+    if ( ( c == 'g' ) && ( strncmp( argv[0], "gcmap0", (size_t) length ) == 0 ) )
     {
         int           i;
         unsigned long plcolor;
@@ -1975,9 +1975,9 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
         Tcl_AppendElement( interp, str );
         for ( i = 0; i < pls->ncol0; i++ )
         {
-            plcolor = ( ( pls->cmap0[i].r << 16 ) |
-                        ( pls->cmap0[i].g << 8 ) |
-                        ( pls->cmap0[i].b ) );
+            plcolor = (unsigned long) ( ( pls->cmap0[i].r << 16 ) |
+                                        ( pls->cmap0[i].g << 8 ) |
+                                        ( pls->cmap0[i].b ) );
 
             sprintf( str, "#%06lx", ( plcolor & 0xFFFFFF ) );
             Tcl_AppendElement( interp, str );
@@ -1989,7 +1989,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // first arg is number of control points
 // the rest are hex number specifications followed by positions (0-100)
 
-    else if ( ( c == 'g' ) && ( strncmp( argv[0], "gcmap1", length ) == 0 ) )
+    else if ( ( c == 'g' ) && ( strncmp( argv[0], "gcmap1", (size_t) length ) == 0 ) )
     {
         int           i;
         unsigned long plcolor;
@@ -2011,7 +2011,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
             g1 = MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
             b1 = MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
 
-            plcolor = ( ( r1 << 16 ) | ( g1 << 8 ) | ( b1 ) );
+            plcolor = (unsigned long) ( ( r1 << 16 ) | ( g1 << 8 ) | ( b1 ) );
 
             sprintf( str, "#%06lx", ( plcolor & 0xFFFFFF ) );
             Tcl_AppendElement( interp, str );
@@ -2028,7 +2028,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // scmap0 -- set color map 0
 // first arg is number of colors, the rest are hex number specifications
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "scmap0", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "scmap0", (size_t) length ) == 0 ) )
     {
         int  i, changed = 1, ncol0 = atoi( argv[1] );
         char *col;
@@ -2063,7 +2063,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // scmap1 -- set color map 1
 // first arg is number of colors, the rest are hex number specifications
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "scmap1", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "scmap1", (size_t) length ) == 0 ) )
     {
         int  i, changed = 1, ncp1 = atoi( argv[1] );
         char *col, *pos, *rev;
@@ -2098,8 +2098,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
         if ( changed )
         {
-            PLStream *pls = plFramePtr->pls;
-            pls->ncp1 = ncp1;
+            plFramePtr->pls->ncp1 = ncp1;
             plcmap1_calc();
         }
     }
@@ -2107,7 +2106,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // scol0 -- set single color in cmap0
 // first arg is the color number, the next is the color in hex
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "scol0", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "scol0", (size_t) length ) == 0 ) )
     {
         int i = atoi( argv[1] ), changed = 1;
 
@@ -2128,7 +2127,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // scol1 -- set color of control point in cmap1
 // first arg is the control point, the next two are the color in hex and pos
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "scol1", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "scol1", (size_t) length ) == 0 ) )
     {
         int i = atoi( argv[1] ), changed = 1;
 
@@ -2354,7 +2353,7 @@ Draw( Tcl_Interp *interp, register PlFrame *plFramePtr,
     register Tk_Window tkwin = plFramePtr->tkwin;
     int  result = TCL_OK;
     char c      = argv[0][0];
-    int  length = strlen( argv[0] );
+    int  length = (int) strlen( argv[0] );
 
 // Make sure widget has been initialized before going any further
 
@@ -2365,14 +2364,14 @@ Draw( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 // init -- sets up for rubber-band drawing
 
-    if ( ( c == 'i' ) && ( strncmp( argv[0], "init", length ) == 0 ) )
+    if ( ( c == 'i' ) && ( strncmp( argv[0], "init", (size_t) length ) == 0 ) )
     {
         Tk_DefineCursor( tkwin, plFramePtr->xhair_cursor );
     }
 
 // end -- ends rubber-band drawing
 
-    else if ( ( c == 'e' ) && ( strncmp( argv[0], "end", length ) == 0 ) )
+    else if ( ( c == 'e' ) && ( strncmp( argv[0], "end", (size_t) length ) == 0 ) )
     {
         Tk_DefineCursor( tkwin, plFramePtr->cursor );
         if ( plFramePtr->continue_draw )
@@ -2389,7 +2388,7 @@ Draw( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // rect -- draw a rectangle, used to select rectangular areas
 // first draw erases old outline
 
-    else if ( ( c == 'r' ) && ( strncmp( argv[0], "rect", length ) == 0 ) )
+    else if ( ( c == 'r' ) && ( strncmp( argv[0], "rect", (size_t) length ) == 0 ) )
     {
         if ( argc < 5 )
         {
@@ -2421,11 +2420,11 @@ Draw( Tcl_Interp *interp, register PlFrame *plFramePtr,
                 XSync( Tk_Display( tkwin ), 0 );
             }
 
-            plFramePtr->pts[0].x = x0; plFramePtr->pts[0].y = y0;
-            plFramePtr->pts[1].x = x1; plFramePtr->pts[1].y = y0;
-            plFramePtr->pts[2].x = x1; plFramePtr->pts[2].y = y1;
-            plFramePtr->pts[3].x = x0; plFramePtr->pts[3].y = y1;
-            plFramePtr->pts[4].x = x0; plFramePtr->pts[4].y = y0;
+            plFramePtr->pts[0].x = (short) x0; plFramePtr->pts[0].y = (short) y0;
+            plFramePtr->pts[1].x = (short) x1; plFramePtr->pts[1].y = (short) y0;
+            plFramePtr->pts[2].x = (short) x1; plFramePtr->pts[2].y = (short) y1;
+            plFramePtr->pts[3].x = (short) x0; plFramePtr->pts[3].y = (short) y1;
+            plFramePtr->pts[4].x = (short) x0; plFramePtr->pts[4].y = (short) y0;
 
             XDrawLines( Tk_Display( tkwin ), Tk_WindowId( tkwin ),
                 plFramePtr->xorGC, plFramePtr->pts, 5,
@@ -2463,11 +2462,11 @@ Info( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
     c      = argv[0][0];
-    length = strlen( argv[0] );
+    length = (int) strlen( argv[0] );
 
 // devkeys -- return list of supported device keywords
 
-    if ( ( c == 'd' ) && ( strncmp( argv[0], "devkeys", length ) == 0 ) )
+    if ( ( c == 'd' ) && ( strncmp( argv[0], "devkeys", (size_t) length ) == 0 ) )
     {
         int i = 0;
         while ( plFramePtr->devName[i] != NULL )
@@ -2478,7 +2477,7 @@ Info( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 // devkeys -- return list of supported device types
 
-    else if ( ( c == 'd' ) && ( strncmp( argv[0], "devnames", length ) == 0 ) )
+    else if ( ( c == 'd' ) && ( strncmp( argv[0], "devnames", (size_t) length ) == 0 ) )
     {
         int i = 0;
         while ( plFramePtr->devDesc[i] != NULL )
@@ -2516,13 +2515,13 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
     register PLiodev *iodev = plr->iodev;
 
     char             c = argv[0][0];
-    int length         = strlen( argv[0] );
+    int length         = (int) strlen( argv[0] );
 
     dbug_enter( "Openlink" );
 
 // Open fifo
 
-    if ( ( c == 'f' ) && ( strncmp( argv[0], "fifo", length ) == 0 ) )
+    if ( ( c == 'f' ) && ( strncmp( argv[0], "fifo", (size_t) length ) == 0 ) )
     {
         if ( argc < 1 )
         {
@@ -2544,7 +2543,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 // Open socket
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "socket", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "socket", (size_t) length ) == 0 ) )
     {
         if ( argc < 1 )
         {
@@ -2728,7 +2727,7 @@ ReadData( ClientData clientData, int mask )
         if ( pdfs->bp == 0 )
             return TCL_OK;
 
-        plr->nbytes = pdfs->bp;
+        plr->nbytes = (int) pdfs->bp;
         pdfs->bp    = 0;
         result      = process_data( interp, plFramePtr );
     }
@@ -2984,11 +2983,11 @@ Save( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
     c      = argv[0][0];
-    length = strlen( argv[0] );
+    length = (int) strlen( argv[0] );
 
 // save to specified device & file
 
-    if ( ( c == 'a' ) && ( strncmp( argv[0], "as", length ) == 0 ) )
+    if ( ( c == 'a' ) && ( strncmp( argv[0], "as", (size_t) length ) == 0 ) )
     {
         if ( argc < 3 )
         {
@@ -3045,7 +3044,7 @@ Save( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 // close save file
 
-    else if ( ( c == 'c' ) && ( strncmp( argv[0], "close", length ) == 0 ) )
+    else if ( ( c == 'c' ) && ( strncmp( argv[0], "close", (size_t) length ) == 0 ) )
     {
         if ( !plFramePtr->ipls_save )
         {
@@ -3104,12 +3103,12 @@ View( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
     c      = argv[0][0];
-    length = strlen( argv[0] );
+    length = (int) strlen( argv[0] );
 
 // view bounds -- return relative device coordinates of bounds on current
 // plot window
 
-    if ( ( c == 'b' ) && ( strncmp( argv[0], "bounds", length ) == 0 ) )
+    if ( ( c == 'b' ) && ( strncmp( argv[0], "bounds", (size_t) length ) == 0 ) )
     {
         char result_str[128];
         xl = 0.; yl = 0.;
@@ -3122,7 +3121,7 @@ View( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 // view reset -- Resets plot
 
-    if ( ( c == 'r' ) && ( strncmp( argv[0], "reset", length ) == 0 ) )
+    if ( ( c == 'r' ) && ( strncmp( argv[0], "reset", (size_t) length ) == 0 ) )
     {
         xl = 0.; yl = 0.;
         xr = 1.; yr = 1.;
@@ -3132,7 +3131,7 @@ View( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // view select -- set window into plot space
 // Specifies in terms of plot window coordinates, not device coordinates
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "select", length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "select", (size_t) length ) == 0 ) )
     {
         if ( argc < 5 )
         {
@@ -3151,7 +3150,7 @@ View( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // view zoom -- set window into plot space incrementally (zoom)
 // Here we need to take the page (device) offsets into account
 
-    else if ( ( c == 'z' ) && ( strncmp( argv[0], "zoom", length ) == 0 ) )
+    else if ( ( c == 'z' ) && ( strncmp( argv[0], "zoom", (size_t) length ) == 0 ) )
     {
         if ( argc < 5 )
         {
@@ -3363,8 +3362,8 @@ UpdateVScrollbar( register PlFrame *plFramePtr )
         return;
 
     totalUnits  = height;
-    firstUnit   = 0.5 + (PLFLT) height * ( 1. - plFramePtr->yr );
-    lastUnit    = 0.5 + (PLFLT) height * ( 1. - plFramePtr->yl );
+    firstUnit   = (int) ( 0.5 + (PLFLT) height * ( 1. - plFramePtr->yr ) );
+    lastUnit    = (int) ( 0.5 + (PLFLT) height * ( 1. - plFramePtr->yl ) );
     windowUnits = lastUnit - firstUnit;
     sprintf( string, " %d %d %d %d",
         totalUnits, windowUnits, firstUnit, lastUnit );
@@ -3395,8 +3394,8 @@ UpdateHScrollbar( register PlFrame *plFramePtr )
         return;
 
     totalUnits  = width;
-    firstUnit   = 0.5 + (PLFLT) width * plFramePtr->xl;
-    lastUnit    = 0.5 + (PLFLT) width * plFramePtr->xr;
+    firstUnit   = (int) ( 0.5 + (PLFLT) width * plFramePtr->xl );
+    lastUnit    = (int) ( 0.5 + (PLFLT) width * plFramePtr->xr );
     windowUnits = lastUnit - firstUnit;
     sprintf( string, " %d %d %d %d",
         totalUnits, windowUnits, firstUnit, lastUnit );

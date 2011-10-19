@@ -180,8 +180,8 @@ int
 pltkMain( int argc, const char **argv, char *RcFileName,
           int ( *AppInit )( Tcl_Interp *interp ) )
 {
-    char       *args, *msg;
-    const char *p;
+    char       *args;
+    const char *msg, *p;
     char       buf[20];
     int        code;
 
@@ -439,7 +439,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     exit( 1 );
 
 error:
-    msg = (char *) Tcl_GetVar( interp, "errorInfo", TCL_GLOBAL_ONLY );
+    msg = Tcl_GetVar( interp, "errorInfo", TCL_GLOBAL_ONLY );
     if ( msg == NULL )
     {
         msg = interp->result;
@@ -481,7 +481,7 @@ int mask;                               // Not used.
     char       *cmd;
     int        code, count;
 
-    count = read( fileno( stdin ), input, BUFFER_SIZE );
+    count = (int) read( fileno( stdin ), input, BUFFER_SIZE );
     if ( count <= 0 )
     {
         if ( !gotPartial )
@@ -573,16 +573,16 @@ prompt:
 //
 
 static void
-Prompt( interp, partial )
-Tcl_Interp * interp;                    // Interpreter to use for prompting.
-int partial;                            // Non-zero means there already
-                                        // exists a partial command, so use
-                                        // the secondary prompt.
+Prompt( intp, partial )
+Tcl_Interp * intp;                    // Interpreter to use for prompting.
+int partial;                          // Non-zero means there already
+                                      // exists a partial command, so use
+                                      // the secondary prompt.
 {
-    char *promptCmd;
-    int  code;
+    const char *promptCmd;
+    int        code;
 
-    promptCmd = (char *) Tcl_GetVar( interp,
+    promptCmd = Tcl_GetVar( intp,
         partial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY );
     if ( promptCmd == NULL )
     {
@@ -594,12 +594,12 @@ defaultPrompt:
     }
     else
     {
-        code = Tcl_Eval( interp, promptCmd );
+        code = Tcl_Eval( intp, promptCmd );
         if ( code != TCL_OK )
         {
-            Tcl_AddErrorInfo( interp,
+            Tcl_AddErrorInfo( intp,
                 "\n    (script that generates prompt)" );
-            fprintf( stderr, "%s\n", interp->result );
+            fprintf( stderr, "%s\n", intp->result );
             goto defaultPrompt;
         }
     }

@@ -123,7 +123,7 @@ void nnpi_reset( nnpi* nn )
 {
     nn->nvertices = 0;
     nn->p         = NULL;
-    memset( nn->d->flags, 0, nn->d->ntriangles * sizeof ( int ) );
+    memset( nn->d->flags, 0, (size_t) ( nn->d->ntriangles ) * sizeof ( int ) );
 }
 
 static void nnpi_add_weight( nnpi* nn, int vertex, double w )
@@ -143,8 +143,8 @@ static void nnpi_add_weight( nnpi* nn, int vertex, double w )
         //
         if ( nn->nvertices == nn->nallocated )
         {
-            nn->vertices    = realloc( nn->vertices, ( nn->nallocated + NINC ) * sizeof ( int ) );
-            nn->weights     = realloc( nn->weights, ( nn->nallocated + NINC ) * sizeof ( double ) );
+            nn->vertices    = realloc( nn->vertices, (size_t) ( nn->nallocated + NINC ) * sizeof ( int ) );
+            nn->weights     = realloc( nn->weights, (size_t) ( nn->nallocated + NINC ) * sizeof ( double ) );
             nn->nallocated += NINC;
         }
 
@@ -537,8 +537,8 @@ void nnhpi_interpolate( nnhpi* nnhp, point* p )
         nnpi_normalize_weights( nnp );
 
         weights           = malloc( sizeof ( nn_weights ) );
-        weights->vertices = malloc( sizeof ( int ) * nnp->nvertices );
-        weights->weights  = malloc( sizeof ( double ) * nnp->nvertices );
+        weights->vertices = malloc( sizeof ( int ) * (size_t) ( nnp->nvertices ) );
+        weights->weights  = malloc( sizeof ( double ) * (size_t) ( nnp->nvertices ) );
 
         weights->nvertices = nnp->nvertices;
 

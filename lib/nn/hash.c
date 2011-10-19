@@ -72,7 +72,7 @@ hashtable* ht_create( int size, ht_keycp cp, ht_keyeq eq, ht_key2hash hash )
     }
 
     table->size  = size;
-    table->table = malloc( sizeof ( ht_bucket* ) * size );
+    table->table = malloc( sizeof ( ht_bucket* ) * (size_t) size );
     bucket       = table->table;
 
     if ( bucket == NULL )
@@ -134,7 +134,7 @@ void ht_destroy( hashtable* table )
 //
 void* ht_insert( hashtable* table, void* key, void* data )
 {
-    unsigned int val = table->hash( key ) % table->size;
+    unsigned int val = table->hash( key ) % (unsigned int) table->size;
     ht_bucket    * bucket;
 
     //
@@ -209,7 +209,7 @@ void* ht_insert( hashtable* table, void* key, void* data )
 //
 void* ht_find( hashtable* table, void* key )
 {
-    unsigned int val = table->hash( key ) % table->size;
+    unsigned int val = table->hash( key ) % (unsigned int) table->size;
     ht_bucket    * bucket;
 
     if ( ( table->table )[val] == NULL )
@@ -232,7 +232,7 @@ void* ht_find( hashtable* table, void* key )
 //
 void* ht_delete( hashtable* table, void* key )
 {
-    unsigned int val = table->hash( key ) % table->size;
+    unsigned int val = table->hash( key ) % (unsigned int) table->size;
     ht_bucket    * prev;
     ht_bucket    * bucket;
     void         * data;
@@ -322,7 +322,7 @@ static unsigned int strhash( void* key )
 
 static void* strcp( void* key )
 {
-    return strdup( key );
+    return (void *) strdup( (const char *) key );
 }
 
 static int streq( void* key1, void* key2 )

@@ -50,7 +50,7 @@ lpi* lpi_build( delaunay* d )
     lpi * l = malloc( sizeof ( lpi ) );
 
     l->d       = d;
-    l->weights = malloc( d->ntriangles * sizeof ( lweights ) );
+    l->weights = malloc( (size_t) d->ntriangles * sizeof ( lweights ) );
 
     for ( i = 0; i < d->ntriangles; ++i )
     {

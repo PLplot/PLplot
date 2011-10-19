@@ -98,7 +98,7 @@ main( int argc, const char **argv )
     int        i, myargc = argc;
     const char *myargv[20];
     Tcl_Interp *interp;
-    char       *helpmsg = "Command-specific options:";
+    const char *helpmsg = "Command-specific options:";
 
 #ifdef DEBUG
     fprintf( stderr, "Program %s called with arguments :\n", argv[0] );

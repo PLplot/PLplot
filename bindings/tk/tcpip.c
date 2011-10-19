@@ -84,7 +84,6 @@
 #ifdef caddr_t
 #undef caddr_t
 #endif
-#define PLARGS( a )    ( )
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,6 +96,7 @@
 #include <unistd.h>
 #endif
 
+#include "plplot.h"
 #include "tcpip.h"
 #include <tcl.h>
 #include <tk.h>
@@ -108,7 +108,7 @@
 #include <sys/uio.h>
 #include <errno.h>
 
-extern int errno;
+//extern int errno;
 
 #ifndef MIN
 #define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
@@ -139,10 +139,12 @@ typedef struct PartialRead
 
 static PartialRead *partial[MAX_OPEN_FILES];
 
-static void pl_FreeReadBuffer   PLARGS( (int fd) );
-static void pl_Unread           PLARGS( ( int fd, char *buffer,
-                                          int numBytes, int copy ) );
-static int pl_Read             PLARGS( ( int fd, char *buffer, int numReq ) );
+static void pl_FreeReadBuffer( int fd );
+static void pl_Unread( int fd, char *buffer, int numBytes, int copy );
+static int  pl_Read( int fd, char *buffer, int numReq );
+
+int pl_PacketReceive( Tcl_Interp * interp, PLiodev *iodev, PDFstrm *pdfs );
+int pl_PacketSend( Tcl_Interp * interp, PLiodev *iodev, PDFstrm *pdfs );
 
 //
 //--------------------------------------------------------------------------
@@ -162,8 +164,7 @@ static int pl_Read             PLARGS( ( int fd, char *buffer, int numReq ) );
 //
 
 static void
-pl_FreeReadBuffer( fd )
-int fd;
+pl_FreeReadBuffer( int fd )
 {
     PartialRead *readList;
 
@@ -194,20 +195,20 @@ int fd;
 //
 
 static void
-pl_Unread( fd, buffer, numBytes, copy )
-int fd;                         // File descriptor
-char *buffer;                   // Data to unget
-int  numBytes;                  // Number of bytes to unget
-int  copy;                      // Should we copy the data, or use this
-                                // buffer?
+pl_Unread( int fd, char *buffer, int numBytes, int copy )
+//int fd;                         // File descriptor
+//char *buffer;                   // Data to unget
+//int  numBytes;                  // Number of bytes to unget
+//int  copy;                      // Should we copy the data, or use this
+// buffer?
 {
     PartialRead *new;
 
     new = (PartialRead *) malloc( sizeof ( PartialRead ) );
     if ( copy )
     {
-        new->buffer = (char *) malloc( numBytes );
-        memcpy( new->buffer, buffer, numBytes );
+        new->buffer = (char *) malloc( (size_t) numBytes );
+        memcpy( new->buffer, buffer, (size_t) numBytes );
     }
     else
     {
@@ -238,10 +239,10 @@ int  copy;                      // Should we copy the data, or use this
 //
 
 static int
-pl_Read( fd, buffer, numReq )
-int fd;                         // File descriptor to read from
-char *buffer;                   // Place to put the data
-int  numReq;                    // Number of bytes to get
+pl_Read( int fd, char *buffer, int numReq )
+//int fd;                         // File descriptor to read from
+//char *buffer;                   // Place to put the data
+//int  numReq;                    // Number of bytes to get
 {
     PartialRead *readList;
     PartialRead *tmp;
@@ -256,7 +257,7 @@ int  numReq;                    // Number of bytes to get
     //
     if ( readList == NULL )
     {
-        numRead = read( fd, buffer, numReq );
+        numRead = (int) read( fd, buffer, (size_t) numReq );
 #ifdef DEBUG
         {
             int j;
@@ -282,7 +283,7 @@ int  numReq;                    // Number of bytes to get
         {
             numToCopy = numReq - numRead;
         }
-        memcpy( buffer + numRead, readList->buffer + readList->offset, numToCopy );
+        memcpy( buffer + numRead, readList->buffer + readList->offset, (size_t) numToCopy );
 
         //
         // Consume the data
@@ -305,7 +306,7 @@ int  numReq;                    // Number of bytes to get
     if ( ( numRead < numReq ) )
     {
         numToCopy = numReq - numRead;
-        numRead  += read( fd, buffer + numRead, numToCopy );
+        numRead  += (int) read( fd, buffer + numRead, (size_t) numToCopy );
     }
 
     return numRead;
@@ -334,9 +335,7 @@ int  numReq;                    // Number of bytes to get
 //--------------------------------------------------------------------------
 
 static char *
-get_inet( listptr, length )
-char **listptr;
-int length;
+get_inet( char ** listptr, int length )
 {
     struct in_addr *ptr;
 
@@ -347,11 +346,7 @@ int length;
 }
 
 int
-plHost_ID( clientData, interp, argc, argv )
-ClientData clientData;
-Tcl_Interp *interp;
-int        argc;
-char       **argv;
+plHost_ID( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
     register struct hostent *hostptr;
     char hostname[100];
@@ -403,16 +398,13 @@ char       **argv;
 //--------------------------------------------------------------------------
 //
 int
-pl_PacketReceive( interp, iodev, pdfs )
-Tcl_Interp * interp;
-PLiodev *iodev;
-PDFstrm *pdfs;
+pl_PacketReceive( Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs )
 {
     int           j, numRead;
     unsigned int  packetLen, header[2];
     int           headerSize;
     unsigned char hbuf[8];
-    char          *errMsg;
+    const char    *errMsg;
 
     pdfs->bp = 0;
 
@@ -453,15 +445,15 @@ PDFstrm *pdfs;
     j = 0;
 
     header[0]  = 0;
-    header[0] |= hbuf[j++] << 24;
-    header[0] |= hbuf[j++] << 16;
-    header[0] |= hbuf[j++] << 8;
+    header[0] |= (unsigned int) ( hbuf[j++] << 24 );
+    header[0] |= (unsigned int) ( hbuf[j++] << 16 );
+    header[0] |= (unsigned int) ( hbuf[j++] << 8 );
     header[0] |= hbuf[j++];
 
     header[1]  = 0;
-    header[1] |= hbuf[j++] << 24;
-    header[1] |= hbuf[j++] << 16;
-    header[1] |= hbuf[j++] << 8;
+    header[1] |= (unsigned int) ( hbuf[j++] << 24 );
+    header[1] |= (unsigned int) ( hbuf[j++] << 16 );
+    header[1] |= (unsigned int) ( hbuf[j++] << 8 );
     header[1] |= hbuf[j++];
 
     //
@@ -478,7 +470,7 @@ PDFstrm *pdfs;
             ": badly formatted packet", (char *) NULL );
         return TCL_ERROR;
     }
-    packetLen = header[1] - headerSize;
+    packetLen = header[1] - (unsigned int) headerSize;
 
     //
     // Expand the size of the buffer, as needed.
@@ -501,7 +493,7 @@ PDFstrm *pdfs;
 
     if ( iodev->type == 0 )
     {
-        numRead = pl_Read( iodev->fd, (char *) pdfs->buffer, packetLen );
+        numRead = pl_Read( iodev->fd, (char *) pdfs->buffer, (int) packetLen );
     }
     else
     {
@@ -537,7 +529,7 @@ PDFstrm *pdfs;
         return TCL_OK;
     }
 
-    pdfs->bp = numRead;
+    pdfs->bp = (size_t) numRead;
 #ifdef DEBUG
     fprintf( stderr, "received %d byte packet starting with:", numRead );
     for ( j = 0; j < 4; j++ )
@@ -569,7 +561,7 @@ readError:
     // Record the error before closing the file
     if ( numRead != 0 )
     {
-        errMsg = (char *) Tcl_PosixError( interp );
+        errMsg = Tcl_PosixError( interp );
     }
     else
     {
@@ -622,15 +614,12 @@ readError:
 //
 
 int
-pl_PacketSend( interp, iodev, pdfs )
-Tcl_Interp * interp;
-PLiodev *iodev;
-PDFstrm *pdfs;
+pl_PacketSend( Tcl_Interp * interp, PLiodev *iodev, PDFstrm *pdfs )
 {
     int           j, numSent;
     unsigned char hbuf[8];
     unsigned int  packetLen, header[2];
-    int           len;
+    size_t        len;
     char          *buffer, tmp[256];
 
     //
@@ -640,7 +629,7 @@ PDFstrm *pdfs;
     //	  Next packetLen-8 bytes are buffer contents.
     //
 
-    packetLen = pdfs->bp + 8;
+    packetLen = (unsigned int) pdfs->bp + 8;
 
     header[0] = PACKET_MAGIC;
     header[1] = packetLen;
@@ -652,15 +641,15 @@ PDFstrm *pdfs;
 
     j = 0;
 
-    hbuf[j++] = ( header[0] & (unsigned long) 0xFF000000 ) >> 24;
-    hbuf[j++] = ( header[0] & (unsigned long) 0x00FF0000 ) >> 16;
-    hbuf[j++] = ( header[0] & (unsigned long) 0x0000FF00 ) >> 8;
-    hbuf[j++] = ( header[0] & (unsigned long) 0x000000FF );
+    hbuf[j++] = (unsigned char) ( ( header[0] & (unsigned long) 0xFF000000 ) >> 24 );
+    hbuf[j++] = (unsigned char) ( ( header[0] & (unsigned long) 0x00FF0000 ) >> 16 );
+    hbuf[j++] = (unsigned char) ( ( header[0] & (unsigned long) 0x0000FF00 ) >> 8 );
+    hbuf[j++] = (unsigned char) ( header[0] & (unsigned long) 0x000000FF );
 
-    hbuf[j++] = ( header[1] & (unsigned long) 0xFF000000 ) >> 24;
-    hbuf[j++] = ( header[1] & (unsigned long) 0x00FF0000 ) >> 16;
-    hbuf[j++] = ( header[1] & (unsigned long) 0x0000FF00 ) >> 8;
-    hbuf[j++] = ( header[1] & (unsigned long) 0x000000FF );
+    hbuf[j++] = (unsigned char) ( ( header[1] & (unsigned long) 0xFF000000 ) >> 24 );
+    hbuf[j++] = (unsigned char) ( ( header[1] & (unsigned long) 0x00FF0000 ) >> 16 );
+    hbuf[j++] = (unsigned char) ( ( header[1] & (unsigned long) 0x0000FF00 ) >> 8 );
+    hbuf[j++] = (unsigned char) ( header[1] & (unsigned long) 0x000000FF );
 
     //
     // Send it off, with error checking.
@@ -675,14 +664,14 @@ PDFstrm *pdfs;
     memcpy( buffer + 8, (char *) pdfs->buffer, pdfs->bp );
 
 #ifdef DEBUG
-    fprintf( stderr, "sending  %d byte packet starting with:", len );
+    fprintf( stderr, "sending  %z byte packet starting with:", len );
     for ( j = 0; j < 12; j++ )
     {
         fprintf( stderr, " %x", 0x000000FF & (unsigned long) buffer[j] );
     }
     fprintf( stderr, "\n" );
 #endif
-    numSent = write( iodev->fd, buffer, len );
+    numSent = (int) write( iodev->fd, buffer, len );
 
     free( buffer );
 

@@ -444,7 +444,7 @@ pdf_rdx( U_CHAR *x, long nitems, PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 
 int
-pdf_wr_header( PDFstrm *pdfs, char *header )
+pdf_wr_header( PDFstrm *pdfs, const char *header )
 {
     int i;
 

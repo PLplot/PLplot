@@ -32,9 +32,9 @@ typedef struct
     int          exit_eventloop;        // Break out of event loop
     int          pass_thru;             // Skip normal error termination
     char         *cmdbuf;               // Command buffer
-    int          cmdbuf_len;            // and its length
+    size_t       cmdbuf_len;            // and its length
     PLiodev      *iodev;                // I/O device info
-    char         *updatecmd;            // Name of update command
+    const char   *updatecmd;            // Name of update command
     pid_t        child_pid;             // PID for child process
     int          instr;                 // Instruction timer
     int          max_instr;             // Limit before issuing an update

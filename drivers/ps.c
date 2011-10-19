@@ -780,7 +780,7 @@ proc_str( PLStream *pls, EscText *args )
     // unicode only! so test for it.
     if ( args->unicode_array_len > 0 )
     {
-        int j, s, f;
+        int        j, s, f;
         const char *fonts[PROC_STR_STRING_LENGTH];
         const PLUNICODE              *cur_text;
         PLUNICODE  fci, fci_save;

@@ -114,10 +114,6 @@
 #endif
 #endif
 
-// A wrapper used in some header files so they can be compiled with cc
-
-#define PLARGS( a )    a
-
 //--------------------------------------------------------------------------
 // dll functions
 //--------------------------------------------------------------------------

@@ -38,7 +38,6 @@
 
 static int plplot_ccmap = 0;
 
-
 // One of these holds the display info, shared by all streams on a given
 // display
 

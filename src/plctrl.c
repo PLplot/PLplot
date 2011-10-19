@@ -2194,7 +2194,7 @@ done:
 int
 plFindName( char *p )
 {
-    int         n;
+    ssize_t     n;
     char        buf[PLPLOT_MAX_PATH], *cp;
     struct stat sbuf;
 

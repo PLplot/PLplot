@@ -116,7 +116,7 @@ plr_process( PLRDev *plr )
 
     dbug_enter( "plr_process" );
 
-    while ( plr->pdfs->bp < plr->nbytes )
+    while ( plr->pdfs->bp < (size_t) plr->nbytes )
     {
         plr_cmd( c = plr_get( plr ) );
         csave = c;
@@ -217,28 +217,28 @@ plr_init( PLRDev *plr )
         if ( !strcmp( tag, "xmin" ) )
         {
             plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
-            plr->xmin = dum_ushort;
+            plr->xmin = (short) dum_ushort;
             continue;
         }
 
         if ( !strcmp( tag, "xmax" ) )
         {
             plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
-            plr->xmax = dum_ushort;
+            plr->xmax = (short) dum_ushort;
             continue;
         }
 
         if ( !strcmp( tag, "ymin" ) )
         {
             plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
-            plr->ymin = dum_ushort;
+            plr->ymin = (short) dum_ushort;
             continue;
         }
 
         if ( !strcmp( tag, "ymax" ) )
         {
             plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
-            plr->ymax = dum_ushort;
+            plr->ymax = (short) dum_ushort;
             continue;
         }
 
@@ -290,7 +290,7 @@ plr_line( PLRDev *plr, int c )
             plr_cmd( get_ncoords( plr, x + npts, y + npts, 1 ) );
 
             npts++;
-            if ( npts == PL_MAXPOLY || ( plr->pdfs->bp == plr->nbytes ) )
+            if ( npts == PL_MAXPOLY || ( plr->pdfs->bp == (size_t) plr->nbytes ) )
                 break;
 
             plr_cmd( c1 = plr_get( plr ) );
@@ -337,8 +337,8 @@ get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n )
 
     if ( n > PL_MAXPOLY )
     {
-        xs = (short *) malloc( sizeof ( short ) * n );
-        ys = (short *) malloc( sizeof ( short ) * n );
+        xs = (short *) malloc( sizeof ( short ) * (size_t) n );
+        ys = (short *) malloc( sizeof ( short ) * (size_t) n );
     }
     else
     {
@@ -428,7 +428,7 @@ plr_state( PLRDev *plr )
     case PLSTATE_COLOR0: {
         short icol0;
 
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &icol0 ) );
+        plr_rd( pdf_rd_2bytes( plr->pdfs, (unsigned short *) &icol0 ) );
 
         if ( icol0 == PL_RGB_COLOR )
         {

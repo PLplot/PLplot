@@ -21,6 +21,7 @@
 
 #include "pltk.h"
 #include <math.h>
+#include <string.h>
 
 static int
 AppInit( Tcl_Interp *interp );
@@ -127,6 +128,11 @@ AppInit( Tcl_Interp *interp )
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
+
+void myplot1( void );
+void myplot2( void );
+void myplot3( void );
+void myplot4( void );
 
 void plot1( void );
 void plot2( void );
@@ -335,16 +341,18 @@ PLFLT tr[6] =
 { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
 static void
-mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+mypltr( PLFLT xloc, PLFLT yloc, PLFLT *tx, PLFLT *ty, void *pltr_data )
 {
-    *tx = tr[0] * x + tr[1] * y + tr[2];
-    *ty = tr[3] * x + tr[4] * y + tr[5];
+    *tx = tr[0] * xloc + tr[1] * yloc + tr[2];
+    *ty = tr[3] * xloc + tr[4] * yloc + tr[5];
 }
 
 // Function prototypes
 
 static void
 f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax );
+
+void shade( void );
 
 //--------------------------------------------------------------------------
 // shade
@@ -356,7 +364,7 @@ void
 shade( void )
 {
     int      i, j;
-    PLFLT    x, y, argx, argy, distort;
+    PLFLT    xloc, yloc, argx, argy, distort;
 
     PLFLT    **z, **w, zmin, zmax;
     PLFLT    xg1[XPTS], yg1[YPTS];
@@ -376,13 +384,13 @@ shade( void )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        x = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
+        xloc = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
         for ( j = 0; j < YPTS; j++ )
         {
-            y = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
+            yloc = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
 
-            z[i][j] = -sin( 7. * x ) * cos( 7. * y ) + x * x - y * y;
-            w[i][j] = -cos( 7. * x ) * sin( 7. * y ) + 2 * x * y;
+            z[i][j] = -sin( 7. * xloc ) * cos( 7. * yloc ) + xloc * xloc - yloc * yloc;
+            w[i][j] = -cos( 7. * xloc ) * sin( 7. * yloc ) + 2 * xloc * yloc;
         }
     }
     f2mnmx( z, XPTS, YPTS, &zmin, &zmax );
@@ -405,17 +413,17 @@ shade( void )
     {
         for ( j = 0; j < YPTS; j++ )
         {
-            mypltr( (PLFLT) i, (PLFLT) j, &x, &y, NULL );
+            mypltr( (PLFLT) i, (PLFLT) j, &xloc, &yloc, NULL );
 
-            argx    = x * PI / 2;
-            argy    = y * PI / 2;
+            argx    = xloc * PI / 2;
+            argy    = yloc * PI / 2;
             distort = 0.4;
 
-            cgrid1.xg[i] = x + distort * cos( argx );
-            cgrid1.yg[j] = y - distort * cos( argy );
+            cgrid1.xg[i] = xloc + distort * cos( argx );
+            cgrid1.yg[j] = yloc - distort * cos( argy );
 
-            cgrid2.xg[i][j] = x + distort * cos( argx ) * cos( argy );
-            cgrid2.yg[i][j] = y - distort * cos( argx ) * cos( argy );
+            cgrid2.xg[i][j] = xloc + distort * cos( argx ) * cos( argy );
+            cgrid2.yg[i][j] = yloc - distort * cos( argx ) * cos( argy );
         }
     }
 
@@ -463,19 +471,19 @@ shade( void )
 //--------------------------------------------------------------------------
 
 static void
-f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
+f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmn, PLFLT *fmx )
 {
     int i, j;
 
-    *fmax = f[0][0];
-    *fmin = *fmax;
+    *fmx = f[0][0];
+    *fmn = *fmx;
 
     for ( i = 0; i < nx; i++ )
     {
         for ( j = 0; j < ny; j++ )
         {
-            *fmax = MAX( *fmax, f[i][j] );
-            *fmin = MIN( *fmin, f[i][j] );
+            *fmx = MAX( *fmx, f[i][j] );
+            *fmn = MIN( *fmn, f[i][j] );
         }
     }
 }
