@@ -49,8 +49,6 @@ program x30f95
   integer icol, r, g, b
   real(kind=plflt) :: a
 
-  character*1 defined
-
   call plparseopts(PL_PARSE_FULL)
 
   call plinit()

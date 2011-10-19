@@ -25,7 +25,7 @@
       character*3 text
       real(kind=plflt) x0(0:360), y0(0:360)
       real(kind=plflt) x(0:360), y(0:360), dtr, theta, dx, dy, r, offset
-      integer i, j, nsp
+      integer i, nsp
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

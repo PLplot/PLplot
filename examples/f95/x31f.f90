@@ -260,6 +260,9 @@ program x31f95
   endif
   
   call plend()
-  call exit(status)
+  if (status.ne.0) then
+    stop 'Error occured'
+  endif
+  stop
 
 end program x31f95

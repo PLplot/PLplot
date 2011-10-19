@@ -19,14 +19,14 @@
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       subroutine plparseopts(mode)
+      use plplot
       implicit none
-      include 'sfstubs.h'
-      integer mode
-      integer maxargs, iargs, numargs, index, maxindex, iargc, islen
+      integer :: mode
+      integer :: maxargs, iargs, numargs, index, maxindex, iargc, islen
       parameter(maxindex = maxlen/4)
       parameter (maxargs=20)
-      character*(maxlen) arg
-      integer*4 iargsarr(maxindex, maxargs)
+      character (len=maxlen) :: arg
+      integer, dimension(maxindex, maxargs) :: iargsarr
 !       write(0,'(a)') 'plparseopts not implemented on this fortran'//
 !      & ' platform because iargc or getarg are not available'
       numargs = iargc()

@@ -26,14 +26,13 @@
       program x17f
       use plplot, PI => PL_PI
       implicit none
-      integer id1, id2, n, nsteps
+      integer id1, n, nsteps
       logical autoy, acc
       parameter ( nsteps = 1000 )
       real(kind=plflt) y1, y2, y3, y4, ymin, ymax, xlab, ylab
       real(kind=plflt) t, tmin, tmax, tjump, dt, noise
       integer colbox, collab, colline(4), styline(4)
       character*20 legline(4)
-      character*20 toplab
 
       logical      pl_errcode
       character*80 errmsg

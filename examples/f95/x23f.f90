@@ -192,36 +192,36 @@
 !    the marker is not needed, in any case, for calls to plsfci.
 
       data (fci(i), i=1,fci_combinations) / &
-	z'00000000', &
-	z'00000001', &
-	z'00000002', &
-	z'00000003', &
-	z'00000004', &
-	z'00000010', &
-	z'00000011', &
-	z'00000012', &
-	z'00000013', &
-	z'00000014', &
-	z'00000020', &
-	z'00000021', &
-	z'00000022', &
-	z'00000023', &
-	z'00000024', &
-	z'00000100', &
-	z'00000101', &
-	z'00000102', &
-	z'00000103', &
-	z'00000104', &
-	z'00000110', &
-	z'00000111', &
-	z'00000112', &
-	z'00000113', &
-	z'00000114', &
-	z'00000120', &
-	z'00000121', &
-	z'00000122', &
-	z'00000123', &
-	z'00000124' /
+        z'00000000', &
+        z'00000001', &
+        z'00000002', &
+        z'00000003', &
+        z'00000004', &
+        z'00000010', &
+        z'00000011', &
+        z'00000012', &
+        z'00000013', &
+        z'00000014', &
+        z'00000020', &
+        z'00000021', &
+        z'00000022', &
+        z'00000023', &
+        z'00000024', &
+        z'00000100', &
+        z'00000101', &
+        z'00000102', &
+        z'00000103', &
+        z'00000104', &
+        z'00000110', &
+        z'00000111', &
+        z'00000112', &
+        z'00000113', &
+        z'00000114', &
+        z'00000120', &
+        z'00000121', &
+        z'00000122', &
+        z'00000123', &
+        z'00000124' /
 
         data (family(i), i=1,5) / &
              "sans-serif", &
@@ -317,57 +317,57 @@
        call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
        call plsfci(0_plunicode)
        if (page == 11) then
-	  call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+          call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with plsfci')
        elseif (page == 12) then
-	  call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+          call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with plsfont')
        elseif(page == 13) then
-	  call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+          call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with ##<0x8nnnnnnn> construct')
        elseif(page == 14) then
-	  call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+          call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with ##<0xmn> constructs')
        elseif(page == 15) then
-	  call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+          call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with ##<FCI COMMAND STRING/> constructs')
        endif
        call plschr(0._plflt, 0.75_plflt)
        do i=0,fci_combinations-1
-	 family_index = mod(i,5)
-	 style_index = mod(i/5,3)
-	 weight_index = mod((i/5)/3,2)
-	 if(page == 11) then
-	    call plsfci(fci(i+1))
-	    write(string,'(a)') &
+         family_index = mod(i,5)
+         style_index = mod(i/5,3)
+         weight_index = mod((i/5)/3,2)
+         if(page == 11) then
+            call plsfci(fci(i+1))
+            write(string,'(a)') &
                  'Page 12, '// &
                  trim(family(family_index+1))//', '// &
                  trim(style(style_index+1))//', '// &
                  trim(weight(weight_index+1))//':  '// &
                  'The quick brown fox jumps over the lazy dog'
-	 elseif(page == 12) then
-	    call plsfont(family_index, style_index, weight_index)
-	    write(string,'(a)') &
+         elseif(page == 12) then
+            call plsfont(family_index, style_index, weight_index)
+            write(string,'(a)') &
                  'Page 13, '// &
                  trim(family(family_index+1))//', '// &
                  trim(style(style_index+1))//', '// &
                  trim(weight(weight_index+1))//':  '// &
                  'The quick brown fox jumps over the lazy dog'
-	 elseif(page == 13) then
+         elseif(page == 13) then
 !           Note, must put in missing FCI marker for this particular case.
-	    write(string,'(a,"#<0x8",z7.7,">",a)') &
+            write(string,'(a,"#<0x8",z7.7,">",a)') &
                  'Page 14, '//trim(family(family_index+1))//', '// &
                  trim(style(style_index+1))//', '// &
                  trim(weight(weight_index+1))//':  ', &
                  fci(i+1), &
                  'The quick brown fox jumps over the lazy dog'
-	 elseif(page == 14) then
-	    write(string,'(a,"#<0x",z1,"0>#<0x",z1,"1>#<0x",z1,"2>",a)') &
+         elseif(page == 14) then
+            write(string,'(a,"#<0x",z1,"0>#<0x",z1,"1>#<0x",z1,"2>",a)') &
                  'Page 15, '// &
                  trim(family(family_index+1))//', '// &
                  trim(style(style_index+1))//', '// &
@@ -376,8 +376,8 @@
                  style_index, &
                  weight_index, &
                  'The quick brown fox jumps over the lazy dog'
-	 elseif(page == 15) then
-	    write(string,'(a)') &
+         elseif(page == 15) then
+            write(string,'(a)') &
                  'Page 16, '// &
                  trim(family(family_index+1))//', '// &
                  trim(style(style_index+1))//', '// &

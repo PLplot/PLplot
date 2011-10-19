@@ -41,8 +41,6 @@
       implicit none
       character*(*) opt, optarg
 
-      include 'sfstubs.h'
-
       call plstrf2c(opt, string1, maxlen)
       call plstrf2c(optarg, string2, maxlen)
       s1 = transfer( string1, s1 )
@@ -58,8 +56,6 @@
       implicit none
       character*(*) text
 
-      include 'sfstubs.h'
-
       call plstrf2c(text, string1, maxlen)
       s1 = transfer( string1, s1 )
       call plabort7(s1)
@@ -72,8 +68,6 @@
 
       implicit none
       character*(*) dnam
-
-      include 'sfstubs.h'
 
       call plstrf2c(dnam, string1, maxlen)
       s1 = transfer( string1, s1 )
@@ -88,8 +82,6 @@
       implicit none
       character*(*) dnam
 
-      include 'sfstubs.h'
-
       call plgdev7(string1)
       call plstrc2f(string1, dnam)
 
@@ -101,8 +93,6 @@
 
       implicit none
       character*(*) fnam
-
-      include 'sfstubs.h'
 
       call plstrf2c(fnam, string1, maxlen)
       s1 = transfer( string1, s1 )
@@ -117,8 +107,6 @@
       implicit none
       character*(*) fnam
 
-      include 'sfstubs.h'
-
       call plgfnam7(string1)
       call plstrc2f(string1, fnam)
 
@@ -130,8 +118,6 @@
 
       implicit none
       character*(*) ver
-
-      include 'sfstubs.h'
 
       call plgver7(s1)
       string1 = transfer( s1, string1 )
@@ -147,8 +133,6 @@
       real(kind=plflt) x0, y0, xtick, ytick
       integer nxsub, nysub
       character*(*) xopt,yopt
-
-      include 'sfstubs.h'
 
       call plstrf2c(xopt, string1, maxlen)
       call plstrf2c(yopt, string2, maxlen)
@@ -168,8 +152,6 @@
       integer nxsub, nysub
       character*(*) xopt,yopt
 
-      include 'sfstubs.h'
-
       call plstrf2c(xopt, string1, maxlen)
       call plstrf2c(yopt, string2, maxlen)
 
@@ -188,8 +170,6 @@
       real(kind=plflt) xtick, ytick, ztick
       character*(*) xopt,xlabel,yopt,ylabel,zopt,zlabel
       integer nxsub, nysub, nzsub
-
-      include 'sfstubs.h'
 
       call plstrf2c(xopt, string1, maxlen)
       call plstrf2c(xlabel, string2, maxlen)
@@ -332,8 +312,6 @@
       real(kind=plflt) x(:), y(:)
       character(len=*) string
 
-      include 'sfstubs.h'
-
       integer n
 
       n = size(x)
@@ -351,8 +329,6 @@
       implicit none
       real(kind=plflt) x(:), y(:), z(:)
       character(len=*) string
-
-      include 'sfstubs.h'
 
       integer n
 
@@ -425,8 +401,6 @@
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
-      include 'sfstubs.h'
-
 !	call plstrf2c(dnam, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -453,8 +427,6 @@
       integer min_color, min_width, max_color, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:), yg(:)
-
-      include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
@@ -484,8 +456,6 @@
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:,:), yg(:,:)
 
-      include 'sfstubs.h'
-
 !	call plstrf2c(dnam, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -514,8 +484,6 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
 
-      include 'sfstubs.h'
-
       s1 = transfer( string1, s1 )
       call plshade7(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
@@ -537,8 +505,6 @@
       integer fill_width, cont_color, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
-
-      include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
@@ -564,8 +530,6 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
                        xg1(:), yg1(:)
 
-      include 'sfstubs.h'
-
 !	call plstrf2c(dnam, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -589,8 +553,6 @@
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
         xg2(:,:), yg2(:,:)
-
-      include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
@@ -616,8 +578,6 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
 
-      include 'sfstubs.h'
-
 !	call plstrf2c(dnam, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -634,7 +594,6 @@
            valuemin,valuemax)
 
       implicit none
-      integer nx, ny, lx
       real(kind=plflt) z(:,:)
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
 
@@ -649,7 +608,6 @@
            valuemin,valuemax,xg,yg)
 
       implicit none
-      integer nx, ny, lx
       real(kind=plflt) z(:,:), xg(:), yg(:)
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
 
@@ -664,7 +622,6 @@
            valuemin,valuemax,xg,yg)
 
       implicit none
-      integer nx, ny, lx
       real(kind=plflt) z(:,:), xg(:,:), yg(:,:)
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
 
@@ -679,7 +636,6 @@
            valuemin,valuemax,tr)
 
       implicit none
-      integer nx, ny, lx
       real(kind=plflt) z(:,:)
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
       real(kind=plflt) tr(6)
@@ -695,8 +651,6 @@
 
       implicit none
       character*(*) xlab,ylab,title
-
-      include 'sfstubs.h'
 
       call plstrf2c(xlab, string1, maxlen)
       call plstrf2c(ylab, string2, maxlen)
@@ -716,8 +670,6 @@
       implicit none
       character*(*) filename
 
-      include 'sfstubs.h'
-
       call plstrf2c(filename, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -733,8 +685,6 @@
       character*(*) filename
       integer interpolate
 
-      include 'sfstubs.h'
-
       call plstrf2c(filename, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -749,8 +699,6 @@
       implicit none
       real(kind=plflt) disp, pos, xjust
       character*(*) side, text
-
-      include 'sfstubs.h'
 
       call plstrf2c(side, string1, maxlen)
       call plstrf2c(text, string2, maxlen)
@@ -769,8 +717,6 @@
       real(kind=plflt) disp, pos, xjust
       character*(*) side, text
 
-      include 'sfstubs.h'
-
       call plstrf2c(side, string1, maxlen)
       call plstrf2c(text, string2, maxlen)
 
@@ -788,8 +734,6 @@
       real(kind=plflt) x, y, dx, dy, xjust
       character*(*) text
 
-      include 'sfstubs.h'
-
       call plstrf2c(text, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -804,8 +748,6 @@
       implicit none
       real(kind=plflt) x, y, z, dx, dy, dz, sx, sy, sz, xjust
       character*(*) text
-
-      include 'sfstubs.h'
 
       call plstrf2c(text, string1, maxlen)
 
@@ -822,8 +764,6 @@
       character*(*) devname
       integer nx, ny
 
-      include 'sfstubs.h'
-
       call plstrf2c(devname, string1, maxlen)
 
       s1 = transfer( string1, s1 )
@@ -837,8 +777,6 @@
 
       implicit none
       character*(*) fmt
-
-      include 'sfstubs.h'
 
       call plstrf2c(fmt, string1, maxlen)
       s1 = transfer( string1, s1 )

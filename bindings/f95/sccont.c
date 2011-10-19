@@ -24,6 +24,93 @@
 
 #include "plstubs.h"
 
+// Function prototypes
+void pltr0f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
+void PLCON07( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	      PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel );
+void PLCON17( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	      PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
+	      PLFLT *xg, PLFLT *yg );
+void PLCON27( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	      PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
+	      PLFLT *xg, PLFLT *yg );
+void PLVEC07( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale );
+void PLVEC17( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
+	      PLFLT *xg, PLFLT *yg );
+void PLVEC27( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
+	      PLFLT *xg, PLFLT *yg );
+static void pltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
+void PLCONT7( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	      PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel, PLFLT *ftr );
+void PLVECT7( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
+	      PLFLT *ftr );
+void PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+		PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		PLFLT *shade_min, PLFLT *shade_max,
+		PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+		PLINT *min_color, PLINT *min_width,
+		PLINT *max_color, PLINT *max_width, PLINT *lx );
+void PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+		PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		PLFLT *shade_min, PLFLT *shade_max,
+		PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+		PLINT *min_color, PLINT *min_width,
+		PLINT *max_color, PLINT *max_width,
+		PLFLT *xg1, PLFLT *yg1, PLINT *lx );
+void PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+		PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		PLFLT *shade_min, PLFLT *shade_max,
+		PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+		PLINT *min_color, PLINT *min_width,
+		PLINT *max_color, PLINT *max_width,
+		PLFLT *xg2, PLFLT *yg2, PLINT *lx );
+void PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+	       PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	       PLFLT *shade_min, PLFLT *shade_max,
+	       PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+	       PLINT *min_color, PLINT *min_width,
+	       PLINT *max_color, PLINT *max_width, PLFLT *ftr, PLINT *lx );
+void PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+		 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		 PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
+		 PLINT *cont_color, PLINT *cont_width, PLINT *lx );
+void PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+		 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		 PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
+		 PLINT *cont_color, PLINT *cont_width,
+		 PLFLT *xg1, PLFLT *yg1, PLINT *lx );
+void PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+		 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		 PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
+		 PLINT *cont_color, PLINT *cont_width,
+		 PLFLT *xg2, PLFLT *yg2, PLINT *lx );
+void PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
+		PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
+		PLINT *cont_color, PLINT *cont_width, PLFLT *ftr, PLINT *lx );
+void PLGRIDDATA( PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts, PLFLT *xg,
+		 PLINT *nx, PLFLT *yg, PLINT *ny, PLFLT *zg, PLINT *type, 
+		 PLFLT *data );
+void PLIMAGEFR07( PLFLT *idata, PLINT *nx, PLINT *ny,
+		  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		  PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax,
+		  PLINT *lx );
+void PLIMAGEFR17( PLFLT *idata, PLINT *nx, PLINT *ny,
+		  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		  PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax,
+		  PLFLT *xg, PLFLT *yg, PLINT *lx );
+void PLIMAGEFR27( PLFLT *idata, PLINT *nx, PLINT *ny,
+		  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		  PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax,
+		  PLFLT *xg, PLFLT *yg, PLINT *lx );
+void PLIMAGEFR7( PLFLT *idata, PLINT *nx, PLINT *ny,
+		 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+		 PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax,
+		 PLFLT *ftr, PLINT *lx );
+
+
+
+
 //--------------------------------------------------------------------------
 // pltr0f()
 //

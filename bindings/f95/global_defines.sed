@@ -40,4 +40,5 @@
 
 /^#define/ s?^#define *\(PL_NOTSET\)[ (]*\([^ ]*\)[ )]*\(.*\)$?      real(kind=plflt), parameter :: \1 = \2.0_plflt\3\n      real(kind=plflt), parameter :: PL_PI = 3.1415926535897932384_plflt\n      real(kind=plflt), parameter :: PL_TWOPI = 2.0_plflt*PL_PI?
 
+/^#define/ s?^#define *\([^ ]*\)[ (]*\([oz][^ ]*\)[ )]*\(.*\)$?      integer :: \1 \3\n      data \1 / \2 /?
 /^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?      integer, parameter :: \1 = \2 \3?

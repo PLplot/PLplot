@@ -48,6 +48,222 @@ static void ( STDCALL *pltransform )( PLFLT *, PLFLT *, PLFLT *, PLFLT * );
 static char **pllegend_text;
 static char **pllegend_symbols;
 
+// Function prototypes
+static void pltransformf2c( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data );
+void PL_SETCONTLABELFORMAT( PLINT *lexp, PLINT *sigdig );
+void PL_SETCONTLABELFORMATa( PLINT *lexp, PLINT *sigdig );
+void PL_SETCONTLABELPARAM( PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active );
+void PL_SETCONTLABELPARAMa( PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active );
+void PLABORT7( const char *text );
+void PLADV( PLINT *sub );
+void PLARC( PLFLT *x, PLFLT *y, PLFLT *a, PLFLT *b, PLFLT *angle1, PLFLT *angle2, PLFLT *rotate, PLBOOL *fill );
+void PLAXES7( PLFLT *x0, PLFLT *y0, const char *xopt, PLFLT *xtick, 
+              PLINT *nxsub, const char *yopt, PLFLT *ytick, PLINT *nysub );
+void PLBIN( PLINT *nbin, PLFLT *x, PLFLT *y, PLINT *center );
+void PLBTIME( PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT *ctime );
+void PLBOP( void );
+void PLBOX7( const char *xopt, PLFLT *xtick, PLINT *nxsub,
+             const char *yopt, PLFLT *ytick, PLINT *nysub );
+void PLBOX37( const char *xopt, const char *xlabel, PLFLT *xtick, PLINT *nxsub,
+              const char *yopt, const char *ylabel, PLFLT *ytick, PLINT *nysub,
+              const char *zopt, const char *zlabel, PLFLT *ztick, PLINT *nzsub );
+void PLCALC_WORLD( PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window );
+void PLCALC_WORLDa( PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window );
+void PLCLEAR( void );
+void PLCOL0( PLINT *icol );
+void PLCOL1( PLFLT *col );
+void PLCONFIGTIME( PLFLT *scale, PLFLT *offset1, PLFLT *offset2, PLINT *ccontrol, PLBOOL *ifbtime_offset, PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec );
+void PLCPSTRM( PLINT *iplsr, PLBOOL *flags );
+void PLCTIME( PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT *ctime );
+void PLEND( void );
+void PLEND1( void );
+void PLENV( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLINT *just, PLINT *axis );
+void PLENV0( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLINT *just, PLINT *axis );
+void PLEOP( void );
+void PLERRX( PLINT *n, PLFLT *xmin, PLFLT *xmax, PLFLT *y );
+void PLERRY( PLINT *n, PLFLT *x, PLFLT *ymin, PLFLT *ymax );
+void PLFAMADV( void );
+void PLFILL( PLINT *n, PLFLT *x, PLFLT *y );
+void PLFILL3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z );
+void PLFLUSH( void );
+void PLFONT( PLINT *font );
+void PLFONTLD( PLINT *charset );
+void PLGCHR( PLFLT *chrdef, PLFLT *chrht );
+void PLGCOL0( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b );
+void PLGCOL0A( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
+void PLGCOLBG( PLINT *r, PLINT *g, PLINT *b );
+void PLGCOLBGA( PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
+void PLGCOMPRESSION( PLINT *compression );
+void PLGDEV7( char *dev, int length );
+void PLGDIDEV( PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy );
+void PLGDIORI( PLFLT *p_rot );
+void PLGDIPLT( PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax );
+void PLGETCURSOR( PLGraphicsIn *gin );
+void PLGFAM( PLINT *fam, PLINT *num, PLINT *bmax );
+void PLGFCI( PLUNICODE *pfci );
+void PLGFNAM7( char *fnam, int length );
+void PLGFONT( PLINT *family, PLINT *style, PLINT *weight );
+void PLGLEVEL( PLINT *level );
+void PLGPAGE( PLFLT *xpmm, PLFLT *ypmm, PLINT *xwid, PLINT *ywid, PLINT *xoff, PLINT *yoff );
+void PLGRA( void );
+void PLGRADIENT( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *angle );
+void PLGSPA( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
+void PLGSTRM( PLINT *strm );
+void PLGVER7( char *ver );
+void PLGVPD( PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax );
+void PLGVPW( PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax );
+void PLGXAX( PLINT *digmax, PLINT *digits );
+void PLGYAX( PLINT *digmax, PLINT *digits );
+void PLGZAX( PLINT *digmax, PLINT *digits );
+void PLHIST( PLINT *n, PLFLT *data, PLFLT *datmin, PLFLT *datmax, PLINT *nbin, PLINT *oldwin );
+void PLHLS( PLFLT *hue, PLFLT *light, PLFLT *sat );
+void PLHLSRGB( PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b );
+void PLIMAGEFR( PLFLT *idata, PLINT *nx, PLINT *ny, 
+                PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
+                PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax,
+                PLFLT *valuemin, PLFLT *valuemax );
+void PLIMAGE( PLFLT *idata, PLINT *nx, PLINT *ny,
+              PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
+              PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax );
+void PLINIT( void );
+void PLJOIN( PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2 );
+void PLLAB7( const char *xlab, const char *ylab, const char *title );
+void PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length );
+void PLLEGEND( PLFLT *p_legend_width, PLFLT *p_legend_height,
+    PLINT *opt, PLINT *position, PLFLT *x, PLFLT *y, PLFLT *plot_width,
+    PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
+    PLINT *nrow, PLINT *ncolumn,
+    PLINT *nlegend, const PLINT *opt_array,
+    PLFLT *text_offset, PLFLT *text_scale, PLFLT *text_spacing,
+    PLFLT *text_justification,
+    const PLINT *text_colors,
+    const PLINT *box_colors, const PLINT *box_patterns,
+    const PLFLT *box_scales, const PLINT *box_line_widths,
+    const PLINT *line_colors, const PLINT *line_styles,
+    const PLINT *line_widths,
+    const PLINT *symbol_colors, const PLFLT *symbol_scales,
+    const PLINT *symbol_numbers );
+void PLLIGHTSOURCE( PLFLT *x, PLFLT *y, PLFLT *z );
+void PLLINE( PLINT *n, PLFLT *x, PLFLT *y );
+void PLLINE3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z );
+void PLLSTY( PLINT *lin );
+void PLMAP7( const char *type,
+             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat );
+void PLMERIDIANS7( PLFLT *dlong, PLFLT *dlat,
+                   PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat );
+void PLMKSTRM( PLINT *p_strm );
+void PLMTEX7( const char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, const char *text );
+void PLMTEX37( const char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, const char *text );
+void PLPARSEOPTS7( int *numargs, const char *iargs, PLINT *mode, PLINT *maxindex );
+void PLPAT( PLINT *nlin, PLINT *inc, PLINT *del );
+void PLPOIN( PLINT *n, PLFLT *x, PLFLT *y, PLINT *code );
+void PLPOIN3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *code );
+void PLPOLY3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL *ifcc );
+void PLPREC( PLINT *setp, PLINT *prec );
+void PLPSTY( PLINT *patt );
+void PLPTEX7( PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text );
+void PLPTEX37(PLFLT *x, PLFLT *y, PLFLT *z,
+    PLFLT *dx, PLFLT *dy, PLFLT *dz,
+    PLFLT *sx, PLFLT *sy, PLFLT *sz,
+    PLFLT *just, const char *text );
+PLFLT PLRANDD( void );
+void PLREPLOT( void );
+void PLRGB( PLFLT *red, PLFLT *green, PLFLT *blue );
+void PLRGB1( PLINT *r, PLINT *g, PLINT *b );
+void PLRGBHLS( PLFLT *r, PLFLT *g, PLFLT *b, PLFLT *h, PLFLT *l, PLFLT *s );
+void PLSCHR( PLFLT *def, PLFLT *scale );
+void PLSCMAP0( PLINT *r, PLINT *g, PLINT *b, PLINT *ncol0 );
+void PLSCMAP0A( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT *ncol0 );
+void PLSCMAP0N( PLINT *n );
+void PLSCMAP1( PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1 );
+void PLSCMAP1A( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT *ncol1 );
+void PLSCMAP1L( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev );
+void PLSCMAP1L2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
+void PLSCMAP1LA( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev );
+void PLSCMAP1LA2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a );
+void PLSCMAP1N( PLINT *n );
+void PLSCOL0( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b );
+void PLSCOL0A( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
+void PLSCOLBG( PLINT *r, PLINT *g, PLINT *b );
+void PLSCOLBGA( PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
+void PLSCOLOR( PLINT *color );
+void PLSCOMPRESSION( PLINT *compression );
+void PLSDEV7( const char *dev );
+void PLSDIDEV( PLFLT *mar, PLFLT *aspect, PLFLT *jx, PLFLT *jy );
+void PLSDIMAP( PLINT *dimxmin, PLINT *dimxmax, PLINT *dimymin, PLINT *dimymax,
+PLFLT *dimxpmm, PLFLT *dimypmm );
+void PLSDIORI( PLFLT *rot );
+void PLSDIPLT( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax );
+void PLSDIPLZ( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax );
+void PLSEED( unsigned int *s );
+void PLSESC( PLINT *esc );
+void PLSETOPT7( const char *opt, const char *optarg );
+void PLSFAM( PLINT *fam, PLINT *num, PLINT *bmax );
+void PLSFCI( PLUNICODE *fci );
+void PLSFNAM7( const char *fnam );
+void PLSFONT( PLINT *family, PLINT *style, PLINT *weight );
+void PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT ) );
+void PLSLABELFUNC_ONa( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT ) );
+void PLSLABELFUNC_OFF( PLINT *dummy );
+void PLSLABELFUNC_OFFa( PLINT *dummy );
+void PLSLABELFUNC_NONE( void );
+void PLSLABELFUNC_NONEa( void );
+void PLSMAJ( PLFLT *def, PLFLT *scale );
+void PLSMEM( PLINT *maxx, PLINT *maxy, void *plotmem );
+void PLSMEMA( PLINT *maxx, PLINT *maxy, void *plotmem );
+void PLSMIN( PLFLT *def, PLFLT *scale );
+void PLSORI( PLINT *ori );
+void PLSPAGE( PLFLT *xpmm, PLFLT *ypmm,
+PLINT *xwid, PLINT *ywid, PLINT *xoff, PLINT *yoff );
+void PLSPAL07( const char *filename );
+void PLSPAL17( const char *filename, PLBOOL *interpolate );
+void PLSPAUSE( PLBOOL *pause );
+void PLSSTRM( PLINT *strm );
+void PLSSUB( PLINT *nx, PLINT *ny );
+void PLSSYM( PLFLT *def, PLFLT *scale );
+void PLSTAR( PLINT *nx, PLINT *ny );
+void PLSTART7( const char *devname, PLINT *nx, PLINT *ny );
+void PLSTRANSFORM1( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFLT * ) );
+void PLSTRANSFORM2( PLINT *dummy );
+void PLSTRANSFORM3( void );
+void PLSTRING7( PLINT *n, PLFLT *x, PLFLT *y, const char *string );
+void PLSTRING37( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string );
+void PLSTRIPA( PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y );
+void PLSTRIPC( PLINT *id, const char *xspec, const char *yspec,
+          PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
+          PLFLT *xlpos, PLFLT *ylpos,
+          PLBOOL *y_ascl, PLBOOL *acc,
+          PLINT *colbox, PLINT *collab,
+          PLINT *colline, PLINT *styline,
+          const char *legline0, const char *legline1,
+          const char *legline2, const char *legline3,
+          const char *labx, const char *laby, const char *labtop );
+void PLSTRIPD( PLINT *id );
+void PLSTYL( PLINT *n, PLINT *mark, PLINT *space );
+void PLSVECT( PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill );
+void PLSVPA( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
+void PLSXAX( PLINT *digmax, PLINT *digits );
+void PLSYAX( PLINT *digmax, PLINT *digits );
+void PLSYM( PLINT *n, PLFLT *x, PLFLT *y, PLINT *code );
+void PLSZAX( PLINT *digmax, PLINT *digits );
+void PLTEXT( void );
+void PLTIMEFMT7( const char *fmt );
+void PLVASP( PLFLT *aspect );
+void PLVPAS( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *aspect );
+void PLVPOR( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
+void PLVSTA( void );
+void PLW3D( PLFLT *basex, PLFLT *basey, PLFLT *height,
+       PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+       PLFLT *zmin, PLFLT *zmax,
+       PLFLT *alt, PLFLT *az );
+void PLWID( PLINT *width );
+void PLWIND( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
+void PLXORMOD( PLBOOL *mode, PLBOOL *status );
+
 static void
 pltransformf2c( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data )
 {
@@ -566,13 +782,13 @@ PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length )
 
     // Ensure the strings are null terminated
 
-    p_string = (char **) malloc( sizeof ( char * ) * ( *number ) );
-    data     = (char *) malloc( sizeof ( char * ) * ( *number ) * ( length + 1 ) );
+    p_string = (char **) malloc( sizeof ( char * ) * (size_t) ( *number ) );
+    data     = (char *) malloc( sizeof ( char * ) * (size_t) (( *number ) * ( length + 1 ) ) );
 
     for ( j = 0; j < ( *number ); j++ )
     {
         p_string[j] = data + j * ( length + 1 );
-        memcpy( p_string[j], &string[j * length], length );
+        memcpy( p_string[j], &string[j * length], (size_t) length );
         p_string[j][length] = '\0';
         i = length - 1;
         while ( ( i >= 0 ) && ( p_string[j][i] == ' ' ) )
@@ -963,21 +1179,24 @@ PLSESC( PLINT *esc )
 //
 #define    PLSETMAPFORMC      FNAME( PLSETMAPFORMC, plsetmapformc )
 #define    PLCLEARMAPFORMC    FNAME( PLCLEARMAPFORMC, plclearmapformc )
+void PLSETMAPFORMC( void ( STDCALL *mapform )( PLINT *, PLFLT *, PLFLT * ) );
+void PLCLEARMAPFORMC( void );
+
 void
 PLSETMAPFORMC( void ( STDCALL *mapform )( PLINT *, PLFLT *, PLFLT * ) )
 {
     plmapform = mapform;
 }
 void
-PLCLEARMAPFORMC(  )
+PLCLEARMAPFORMC( void )
 {
     plmapform = NULL;
 }
 
 void
-PLSETOPT7( const char *opt, const char *optarg )
+PLSETOPT7( const char *opt, const char *oarg )
 {
-    c_plsetopt( opt, optarg );
+    c_plsetopt( opt, oarg );
 }
 
 void
@@ -1101,9 +1320,9 @@ PLSPAL17( const char *filename, PLBOOL *interpolate )
 }
 
 void
-PLSPAUSE( PLBOOL *pause )
+PLSPAUSE( PLBOOL *ipause )
 {
-    c_plspause( *pause );
+    c_plspause( *ipause );
 }
 
 void

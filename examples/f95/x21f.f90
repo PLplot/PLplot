@@ -49,9 +49,9 @@
       character*80 title(6)
       data title /'Cubic Spline Approximation', &
                  'Delaunay Linear Interpolation', &
-     		  'Natural Neighbors Interpolation', &
-     		  'KNN Inv. Distance Weighted', &
-     		  '3NN Linear Interpolation', &
+                 'Natural Neighbors Interpolation', &
+                 'KNN Inv. Distance Weighted', &
+                 '3NN Linear Interpolation', &
                  '4NN Around Inv. Dist. Weighted'/
 
       real(kind=plflt) opt(6)

@@ -32,7 +32,7 @@
       integer NPTS
       parameter ( NPTS = 1000 )
 
-      integer i, j, k
+      integer i, k
       real(kind=plflt)    x(NPTS), y(NPTS), z(NPTS)
       real(kind=plflt)    r
       character*80 title
@@ -127,7 +127,7 @@
       call plcol0(1)
       call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, &
         -1.0_plflt, 1.0_plflt, -1.0_plflt, &
-	1.0_plflt,  -1.0_plflt, 1.0_plflt, &
+        1.0_plflt,  -1.0_plflt, 1.0_plflt, &
         alt, az)
       call plbox3('bnstu', 'x axis', 0.0_plflt, 0, &
         'bnstu', 'y axis', 0.0_plflt, 0, &

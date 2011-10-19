@@ -91,7 +91,7 @@
       real(kind=plflt) :: value
       character*(length) label
       character*5 direction_label
-      real(kind=plflt) :: label_val
+      real(kind=plflt) :: label_val = 0.0_plflt
       real(kind=plflt) :: normalize_longitude
 
       if (axis .eq. 2) then
@@ -134,7 +134,6 @@
       implicit none
       real(kind=plflt)    minx, maxx, miny, maxy
       real(kind=plflt), dimension(1:1) :: x, y
-      integer c
       external map_transform
       external mapform19
       external geolocation_labeler

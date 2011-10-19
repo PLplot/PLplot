@@ -59,8 +59,23 @@
          include 'plflt.inc'
       end module
 
-      module plplotp
+      ! 
+      ! Parameters and variables for strings / arrays for
+      ! string conversion
+      !
+      module plplot_str
+         integer :: maxleni, maxlen
+         parameter (maxlen = 320)
+         parameter (maxleni = 80)
+         character (len = maxlen) :: string1, string2, string3
+         character (len = maxlen) :: string4, string5, string6
+         character (len = maxlen) :: string7, string8, string9
+         integer, dimension(maxleni) :: s1, s2, s3, s4, s5, s6, s7, s8, s9
+      end module
+
+       module plplotp
          use plplot_flt
+         use plplot_str
          implicit none
 
          interface plcont
@@ -1165,12 +1180,11 @@
 
       subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy)
         use plplot_flt
+        use plplot_str
         implicit none
         real(kind=plflt) minx, maxx, miny, maxy
         character*(*) mapname
         external mapform
-
-        include 'sfstubs.h'
 
         call plstrf2c(mapname, string1, maxlen)
 
@@ -1182,11 +1196,10 @@
 
       subroutine plmap2(mapname,minx,maxx,miny,maxy)
         use plplot_flt
+        use plplot_str
         implicit none
         real(kind=plflt) minx, maxx, miny, maxy
         character*(*) mapname
-
-        include 'sfstubs.h'
 
         call plstrf2c(mapname, string1, maxlen)
 
@@ -1203,8 +1216,6 @@
       real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
       external mapform
 
-      include 'sfstubs.h'
-
       call plsetmapformc(mapform)
       call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
 
@@ -1215,8 +1226,6 @@
 
       implicit none
       real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
-
-      include 'sfstubs.h'
 
       call plclearmapformc
       call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
@@ -1403,15 +1412,14 @@
         colbox, collab, colline, styline, legline, &
         labx, laby, labtop)
 
+!      use plplot_str
       implicit none
       integer id, colbox, collab, colline(4), styline(4)
       character*(*) xspec, yspec, legline(4), labx, laby, labtop
       real(kind=plflt) xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
-      integer nx, ny
       logical y_ascl, acc
       integer iy_ascl, iacc
 
-      include 'sfstubs.h'
 
       call plstrf2c(xspec, string1, maxlen)
       call plstrf2c(yspec, string2, maxlen)

@@ -24,6 +24,24 @@
 
 #include "plstubs.h"
 
+// Function prototypes
+void PLOT3DC__( PLFLT *x, PLFLT *y, PLFLT *z,
+           PLINT *nx, PLINT *ny, PLINT *opt,
+           PLFLT *clevel, PLINT *nlevel, PLINT *lx );
+void PLOT3DC( PLFLT *x, PLFLT *y, PLFLT *z,
+         PLINT *nx, PLINT *ny, PLINT *opt,
+         PLFLT *clevel, PLINT *nlevel, PLINT *lx );
+void PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
+          PLINT *nx, PLINT *ny, PLINT *opt,
+          PLFLT *clevel, PLINT *nlevel, PLINT *lx );
+void PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
+        PLINT *nx, PLINT *ny, PLINT *opt, PLINT *lx );
+void PLMESHC( PLFLT *x, PLFLT *y, PLFLT *z,
+         PLINT *nx, PLINT *ny, PLINT *opt,
+         PLFLT *clevel, PLINT *nlevel, PLINT *lx );
+void PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
+        PLINT *nx, PLINT *ny, PLINT *opt, PLBOOL *side, PLINT *lx );
+
 void
 PLOT3DC__( PLFLT *x, PLFLT *y, PLFLT *z,
            PLINT *nx, PLINT *ny, PLINT *opt,

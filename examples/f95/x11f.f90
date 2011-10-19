@@ -24,7 +24,7 @@
       integer i, j, k, ifshade, xpts, ypts
       parameter (xpts=35, ypts=46)
 
-      real(kind=plflt) x(xpts), y(ypts), z(xpts,ypts), xx, yy, r
+      real(kind=plflt) x(xpts), y(ypts), z(xpts,ypts), xx, yy
 
       character*80 title(2)
       real(kind=plflt) alt(2),az(2)

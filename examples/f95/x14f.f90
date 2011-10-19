@@ -28,7 +28,7 @@
       use plplot
       implicit none
 
-      integer i, digmax
+      integer digmax
 
       character*80 driver
       character*15 geometry_master
@@ -40,7 +40,6 @@
       real(kind=plflt)  xs(6), ys(6)
       real(kind=plflt)  xscale, yscale, xoff, yoff
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
-      character*80 version
       real(kind=plflt) xp0, yp0
       integer xleng0, yleng0, xoff0, yoff0
       logical valid_geometry

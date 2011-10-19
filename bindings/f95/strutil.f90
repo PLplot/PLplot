@@ -20,10 +20,10 @@
 
       subroutine plstrf2c(string1, string2, maxlen)
 
-      integer*4 maxlen
-      character*(*) string1, string2
+      integer :: maxlen
+      character*(*) :: string1, string2
 
-      integer*4 limit, islen
+      integer :: limit, islen
       external islen
 
       limit = min0(islen(string1),maxlen-1)
@@ -40,8 +40,8 @@
 
       character*(*) string1, string2
 
-      integer*4 limit
-      character*300 stringbuf
+      integer :: limit
+      character (len=300) :: stringbuf
 
       limit = 1
  10   if (ichar(string1(limit:limit)) .eq. 0) goto 20
@@ -61,7 +61,7 @@
 
       integer function islen(string)
       character*(*) string
-      integer i
+      integer :: i
 
       do 100 i = len(string),1,-1
          if (string(i:i) .ne. ' ') then

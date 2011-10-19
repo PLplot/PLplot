@@ -28,7 +28,7 @@
       logical fill
       parameter (narr=6)
       real(kind=plflt) arrow_x(narr),arrow_y(narr), &
-      	arrow2_x(narr),arrow2_y(narr)
+        arrow2_x(narr),arrow2_y(narr)
 
       data arrow_x/-0.5_plflt, 0.5_plflt, 0.3_plflt, 0.5_plflt, 0.3_plflt, 0.5_plflt/
       data arrow_y/0._plflt, 0._plflt, 0.2_plflt, 0._plflt, -0.2_plflt, 0._plflt/
@@ -87,8 +87,8 @@
         xx = (dble(i)-nx/2.0_plflt-0.5_plflt)*dx
         do j=1,ny
           yy = (dble(j)-ny/2.0_plflt-0.5_plflt)*dy
-	  xg(i,j) = xx
-	  yg(i,j) = yy
+          xg(i,j) = xx
+          yg(i,j) = yy
           u(i,j) = yy
           v(i,j) = -xx
         enddo
@@ -96,7 +96,7 @@
 
       call plenv(xmin, xmax, ymin, ymax, 0, 0)
       call pllab('(x)', '(y)',  &
-      	'#frPLplot Example 22 - circulation')
+       '#frPLplot Example 22 - circulation')
       call plcol0(2)
       scaling = 0.0_plflt
       call plvect(u,v,scaling,xg,yg)
@@ -130,8 +130,8 @@
         xx = (dble(i)-dble(nx)/2.0_plflt-0.5_plflt)*dx
         do j=1,ny
           yy = (dble(j)-dble(ny)/2.0_plflt-0.5_plflt)*dy
-	  xg(i,j) = xx
-	  yg(i,j) = yy
+          xg(i,j) = xx
+          yg(i,j) = yy
           b = ymax/4.0_plflt*(3.0_plflt-cos(PI*xx/xmax))
           if (abs(yy).lt.b) then
              dbdx = ymax/4.0_plflt*sin(PI*xx/xmax)*yy/b
@@ -146,7 +146,7 @@
 
       call plenv(xmin, xmax, ymin, ymax, 0, 0)
       call pllab('(x)', '(y)',  &
-      	'#frPLplot Example 22 - constriction')
+       '#frPLplot Example 22 - constriction')
       call plcol0(2)
       scaling = -0.5_plflt
       call plvect(u,v,scaling,xg,yg)
@@ -216,7 +216,7 @@
 
       call plenv(xmin, xmax, ymin, ymax, 0, 0)
       call pllab('(x)', '(y)',  &
-      	'#frPLplot Example 22 - potential gradient vector plot')
+        '#frPLplot Example 22 - potential gradient vector plot')
 
 !     plot contours of the potential
       dz = abs(zmax - zmin)/dble (nlevel)

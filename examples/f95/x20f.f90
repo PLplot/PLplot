@@ -224,7 +224,7 @@
 
           if (get_clip(xi, xe, yi, ye)) then
               call plend()
-              call myexit(0)
+              stop
           endif
 
 !
@@ -295,7 +295,7 @@
       deallocate( img_f, xg, yg )
 
       call plend()
-      call myexit(0)
+      stop
 
       contains
 
@@ -330,17 +330,17 @@
 
       character, dimension(8) :: img
       character(len=80), dimension(2) :: ver
-      integer      i, j, k, w, h, b
+      integer ::  i, j, w, h, b
 
-      integer      ierr
-      integer      count
-      integer      record
+      integer :: ierr
+      integer ::  count
+      integer ::  record
 
-      integer      bytes
-      integer      lastlf
-      integer      first
-      integer      last
-      integer      pixel
+      integer ::  bytes = 0
+      integer ::  lastlf = 0
+      integer ::  first
+      integer ::  last
+      integer ::  pixel
 
 !     Naive grayscale binary ppm reading. If you know how to, improve it
 
@@ -499,7 +499,9 @@
       real(kind=plflt) sx(5), sy(5)
 
       integer PLK_Return
-      parameter(PLK_Return = Z'0D')
+      data PLK_Return / Z'0D' / 
+      integer hex100
+      data hex100 / Z'100' / 
 
       xxi = xi
       yyi = yi
@@ -534,7 +536,7 @@
                sy(5) = yyi
             endif
 
-            if (iand(gin%state,Z'100').ne.0) then
+            if (iand(gin%state,hex100).ne.0) then
                xxe = gin%wX
                yye = gin%wY
                if (start) then
@@ -640,12 +642,3 @@
       enddo
       end
 
-!----------------------------------------------------------------------------
-!      Subroutine myexit
-!      Just calls exit - works around bug in gfortran <= 4.1
-      subroutine myexit(icode)
-      implicit none
-      integer icode
-
-      call exit(icode)
-      end
