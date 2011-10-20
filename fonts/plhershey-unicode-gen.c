@@ -84,14 +84,14 @@ const char header[] = ""                                                        
 
 int main( int argc, char *argv[] )
 {
-    FILE *fr, *fw;
-    char readbuffer[256];
-    int  *Hershey        = NULL;
-    unsigned int  *Unicode = NULL;
-    char *Font           = NULL;
-    int  Hershey_old     = 0;
-    int  i               = 0;
-    int  number_of_lines = 0;
+    FILE         *fr, *fw;
+    char         readbuffer[256];
+    int          *Hershey        = NULL;
+    unsigned int *Unicode        = NULL;
+    char         *Font           = NULL;
+    int          Hershey_old     = 0;
+    int          i               = 0;
+    int          number_of_lines = 0;
 
     if ( ( argc >= 2 ) && ( fr = fopen( argv[1], "r" ) ) != NULL )
     {
