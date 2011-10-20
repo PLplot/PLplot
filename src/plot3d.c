@@ -979,6 +979,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
     PLFLT *_x = NULL, *_y = NULL, **_z = NULL;
     const PLFLT *x_modified, *y_modified;
+    int   i;
 
     pl3mode = 0;
 
@@ -1011,7 +1012,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 
 // Check that points in x and in y are strictly increasing
 
-    for ( int i = 0; i < nx - 1; i++ )
+    for ( i = 0; i < nx - 1; i++ )
     {
         if ( x[i] >= x[i + 1] )
         {
@@ -1019,7 +1020,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
             return;
         }
     }
-    for ( int i = 0; i < ny - 1; i++ )
+    for ( i = 0; i < ny - 1; i++ )
     {
         if ( y[i] >= y[i + 1] )
         {
@@ -1309,7 +1310,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         plAlloc2dGrid( &cgrid2.yg, nx, ny );
         plAlloc2dGrid( &zstore, nx, ny );
 
-        for ( int i = 0; i < nx; i++ )
+        for ( i = 0; i < nx; i++ )
         {
             for ( j = 0; j < ny; j++ )
             {
@@ -1444,7 +1445,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     {
         free( _x );
         free( _y );
-        for ( int i = 0; i < nx; i++ )
+        for ( i = 0; i < nx; i++ )
             free( _z[i] );
         free( _z );
     }
