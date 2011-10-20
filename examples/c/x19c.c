@@ -71,7 +71,7 @@ void
 geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data )
 {
     const char *direction_label = NULL;
-    PLFLT      label_val = 0.0;
+    PLFLT      label_val        = 0.0;
 
     if ( axis == PL_Y_AXIS )
     {
