@@ -1064,7 +1064,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         int _nx = ixmax - ixmin + 1;
         int _ny = iymax - iymin + 1;
         PLFLT ty0, ty1, tx0, tx1;
-        int i, j;
+        int j;
 
         if ( _nx <= 1 || _ny <= 1 )
         {
@@ -1338,7 +1338,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
             cline = clev->line;
             do  // there are several lines that make up each contour
             {
-                int cx, i, k, l, m, start, end;
+                int cx, k, l, m, start, end;
                 PLFLT tx, ty;
                 if ( cline->npts > np )
                 {
