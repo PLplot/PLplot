@@ -114,7 +114,7 @@ static void Help( void );
 static void Syntax( void );
 
 #ifndef PL_DEPRECATED
-int plSetOpt( const char *opt, const char *optarg );
+int plSetOpt( const char *opt, const char *opt_arg );
 #endif
 
 // Option handlers
@@ -223,13 +223,13 @@ static char opttmp[OPTMAX];
 //
 // The following mode bits cause the option to be processed as specified:
 //
-// PL_OPT_FUNC		Call function handler (opt, optarg)
+// PL_OPT_FUNC		Call function handler (opt, opt_arg)
 // PL_OPT_BOOL		Set *var=1
-// PL_OPT_INT		Set *var=atoi(optarg)
-// PL_OPT_FLOAT		Set *var=atof(optarg)
-// PL_OPT_STRING	Set *var=optarg
+// PL_OPT_INT		Set *var=atoi(opt_arg)
+// PL_OPT_FLOAT		Set *var=atof(opt_arg)
+// PL_OPT_STRING	Set *var=opt_arg
 //
-// where opt points to the option string and optarg points to the
+// where opt points to the option string and opt_arg points to the
 // argument string.
 //
 //--------------------------------------------------------------------------
@@ -724,19 +724,19 @@ static int       tables = 1;
 //--------------------------------------------------------------------------
 
 int
-plSetOpt( const char *opt, const char *optarg )
+plSetOpt( const char *opt, const char *opt_arg )
 {
-    return ( c_plsetopt( opt, optarg ) );
+    return ( c_plsetopt( opt, opt_arg ) );
 }
 
 int
-c_plsetopt( const char *opt, const char *optarg )
+c_plsetopt( const char *opt, const char *opt_arg )
 {
     int        mode = 0, argc = 2, status;
     const char *argv[3];
 
     argv[0] = opt;
-    argv[1] = optarg;
+    argv[1] = opt_arg;
     argv[2] = NULL;
     mode    =
         PL_PARSE_QUIET |
@@ -1022,7 +1022,7 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
             int *p_argc )
 {
     int        need_arg, res;
-    const char *optarg = NULL;
+    const char *opt_arg = NULL;
 
 // Get option argument if necessary
 
@@ -1030,7 +1030,7 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
 
     if ( tab->mode & need_arg )
     {
-        if ( GetOptarg( &optarg, p_myargc, p_argv, p_argc ) )
+        if ( GetOptarg( &opt_arg, p_myargc, p_argv, p_argc ) )
             return 1;
     }
 
@@ -1050,24 +1050,24 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
             return 1;
         }
 
-        if ( mode_nodelete && optarg )
+        if ( mode_nodelete && opt_arg )
         {
-            // Make a copy, since handler may mung optarg with strtok()
+            // Make a copy, since handler may mung opt_arg with strtok()
             char *copy =
-                (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) );
+                (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) );
             if ( copy == NULL )
             {
                 plabort( "ProcessOpt: out of memory" );
                 return 1;
             }
-            strcpy( copy, optarg );
+            strcpy( copy, opt_arg );
             res = ( ( *tab->handler )( opt, copy, tab->client_data ) );
             free( (void *) copy );
             return res;
         }
         else
         {
-            return ( ( *tab->handler )( opt, optarg, tab->client_data ) );
+            return ( ( *tab->handler )( opt, opt_arg, tab->client_data ) );
         }
 
     case PL_OPT_BOOL:
@@ -1095,7 +1095,7 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
                 tab->opt );
             return 1;
         }
-        *(int *) tab->var = atoi( optarg );
+        *(int *) tab->var = atoi( opt_arg );
         break;
 
     case PL_OPT_FLOAT:
@@ -1109,14 +1109,14 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
                 tab->opt );
             return 1;
         }
-        *(PLFLT *) tab->var = atof( optarg );
+        *(PLFLT *) tab->var = atof( opt_arg );
         break;
 
     case PL_OPT_STRING:
 
-        // Set var (can be NULL initially) to point to optarg string
+        // Set var (can be NULL initially) to point to opt_arg string
 
-        *(const char **) tab->var = optarg;
+        *(const char **) tab->var = opt_arg;
         break;
 
     default:
@@ -1139,7 +1139,7 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
 //--------------------------------------------------------------------------
 
 static int
-GetOptarg( const char **poptarg, int *p_myargc, const char ***p_argv, int *p_argc )
+GetOptarg( const char **popt_arg, int *p_myargc, const char ***p_argv, int *p_argc )
 {
     int result = 0;
 
@@ -1161,7 +1161,7 @@ GetOptarg( const char **poptarg, int *p_myargc, const char ***p_argv, int *p_arg
     if ( !result )                      // yeah, the user got it right
     {
         ( *p_argc )--;
-        *poptarg = ( *p_argv )[0];
+        *popt_arg = ( *p_argv )[0];
     }
     else
     {
@@ -1479,7 +1479,7 @@ plP_FreeDrvOpts()
 //--------------------------------------------------------------------------
 
 static int
-opt_h( const char *opt, const char *optarg, void *client_data )
+opt_h( const char *opt, const char *opt_arg, void *client_data )
 {
     if ( !mode_quiet )
         Help();
@@ -1495,7 +1495,7 @@ opt_h( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_v( const char *opt, const char *optarg, void *client_data )
+opt_v( const char *opt, const char *opt_arg, void *client_data )
 {
     if ( !mode_quiet )
         fprintf( stderr, "PLplot library version: %s\n", VERSION );
@@ -1511,7 +1511,7 @@ opt_v( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_verbose( const char *opt, const char *optarg, void *client_data )
+opt_verbose( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->verbose = 1;
     return 0;
@@ -1525,7 +1525,7 @@ opt_verbose( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_debug( const char *opt, const char *optarg, void *client_data )
+opt_debug( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->debug   = 1;
     plsc->verbose = 1;
@@ -1540,7 +1540,7 @@ opt_debug( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_hack( const char *opt, const char *optarg, void *client_data )
+opt_hack( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->hack = 1;
     return 0;
@@ -1554,9 +1554,9 @@ opt_hack( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_dev( const char *opt, const char *optarg, void *client_data )
+opt_dev( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsdev( optarg );
+    plsdev( opt_arg );
     return 0;
 }
 
@@ -1568,9 +1568,9 @@ opt_dev( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_o( const char *opt, const char *optarg, void *client_data )
+opt_o( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsfnam( optarg );
+    plsfnam( opt_arg );
     return 0;
 }
 
@@ -1582,9 +1582,9 @@ opt_o( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_mar( const char *opt, const char *optarg, void *client_data )
+opt_mar( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsdidev( atof( optarg ), PL_NOTSET, PL_NOTSET, PL_NOTSET );
+    plsdidev( atof( opt_arg ), PL_NOTSET, PL_NOTSET, PL_NOTSET );
     return 0;
 }
 
@@ -1596,9 +1596,9 @@ opt_mar( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_a( const char *opt, const char *optarg, void *client_data )
+opt_a( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsdidev( PL_NOTSET, atof( optarg ), PL_NOTSET, PL_NOTSET );
+    plsdidev( PL_NOTSET, atof( opt_arg ), PL_NOTSET, PL_NOTSET );
     return 0;
 }
 
@@ -1610,9 +1610,9 @@ opt_a( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_jx( const char *opt, const char *optarg, void *client_data )
+opt_jx( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsdidev( PL_NOTSET, PL_NOTSET, atof( optarg ), PL_NOTSET );
+    plsdidev( PL_NOTSET, PL_NOTSET, atof( opt_arg ), PL_NOTSET );
     return 0;
 }
 
@@ -1624,9 +1624,9 @@ opt_jx( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_jy( const char *opt, const char *optarg, void *client_data )
+opt_jy( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsdidev( PL_NOTSET, PL_NOTSET, PL_NOTSET, atof( optarg ) );
+    plsdidev( PL_NOTSET, PL_NOTSET, PL_NOTSET, atof( opt_arg ) );
     return 0;
 }
 
@@ -1638,9 +1638,9 @@ opt_jy( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_ori( const char *opt, const char *optarg, void *client_data )
+opt_ori( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsdiori( atof( optarg ) );
+    plsdiori( atof( opt_arg ) );
     return 0;
 }
 
@@ -1652,7 +1652,7 @@ opt_ori( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_freeaspect( const char *opt, const char *optarg, void *client_data )
+opt_freeaspect( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->freeaspect = 1;
     return 0;
@@ -1680,7 +1680,7 @@ opt_freeaspect( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_portrait( const char *opt, const char *optarg, void *client_data )
+opt_portrait( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->portrait = 1;
     return 0;
@@ -1694,11 +1694,11 @@ opt_portrait( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_width( const char *opt, const char *optarg, void *client_data )
+opt_width( const char *opt, const char *opt_arg, void *client_data )
 {
     int width;
 
-    width = atoi( optarg );
+    width = atoi( opt_arg );
     if ( width < 0 )
     {
         fprintf( stderr, "?invalid width\n" );
@@ -1724,7 +1724,7 @@ opt_width( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_bg( const char *opt, const char *optarg, void *client_data )
+opt_bg( const char *opt, const char *opt_arg, void *client_data )
 {
     const char *rgb;
     char       *color_field, *alpha_field;
@@ -1734,12 +1734,12 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
 
 // Strip off leading "#" (TK-ism) if present.
 
-    if ( *optarg == '#' )
-        rgb = optarg + 1;
+    if ( *opt_arg == '#' )
+        rgb = opt_arg + 1;
     else
-        rgb = optarg;
+        rgb = opt_arg;
 
-    strncpy( opttmp, optarg, OPTMAX - 1 );
+    strncpy( opttmp, opt_arg, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
 
     if ( strchr( opttmp, '_' ) )
@@ -1800,9 +1800,9 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol0( const char *opt, const char *optarg, void *client_data )
+opt_ncol0( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->ncol0 = atoi( optarg );
+    plsc->ncol0 = atoi( opt_arg );
     return 0;
 }
 
@@ -1814,9 +1814,9 @@ opt_ncol0( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol1( const char *opt, const char *optarg, void *client_data )
+opt_ncol1( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->ncol1 = atoi( optarg );
+    plsc->ncol1 = atoi( opt_arg );
     return 0;
 }
 
@@ -1828,12 +1828,12 @@ opt_ncol1( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_wplt( const char *opt, const char *optarg, void *client_data )
+opt_wplt( const char *opt, const char *opt_arg, void *client_data )
 {
     char  *field;
     PLFLT xl, yl, xr, yr;
 
-    strncpy( opttmp, optarg, OPTMAX - 1 );
+    strncpy( opttmp, opt_arg, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
 
     if ( ( field = strtok( opttmp, "," ) ) == NULL )
@@ -1868,24 +1868,24 @@ opt_wplt( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_drvopt( const char *opt, const char *optarg, void *client_data )
+opt_drvopt( const char *opt, const char *opt_arg, void *client_data )
 {
     char      t, *tt, *option, *value;
     int       fl = 0;
     DrvOptCmd *drvp;
 
-    option = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) );
+    option = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) );
     if ( option == NULL )
         plexit( "opt_drvopt: Out of memory!?" );
 
-    value = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) );
+    value = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) );
     if ( value == NULL )
         plexit( "opt_drvopt: Out of memory!?" );
 
     drvp    = &drv_opt;
     *option = *value = '\0';
     tt      = option;
-    while ( ( t = *optarg++ ) )
+    while ( ( t = *opt_arg++ ) )
     {
         switch ( t )
         {
@@ -1951,7 +1951,7 @@ opt_drvopt( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_fam( const char *opt, const char *optarg, void *client_data )
+opt_fam( const char *opt, const char *opt_arg, void *client_data )
 {
     plsfam( 1, -1, -1 );
     return 0;
@@ -1974,11 +1974,11 @@ opt_fam( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_fsiz( const char *opt, const char *optarg, void *client_data )
+opt_fsiz( const char *opt, const char *opt_arg, void *client_data )
 {
     PLINT  bytemax;
-    size_t len        = strlen( optarg );
-    char   lastchar   = optarg[len - 1];
+    size_t len        = strlen( opt_arg );
+    char   lastchar   = opt_arg[len - 1];
     PLFLT  multiplier = 1.0e6;
     char   *spec      = (char *) malloc( len + 1 );
 
@@ -2002,7 +2002,7 @@ opt_fsiz( const char *opt, const char *optarg, void *client_data )
         multiplier = 1.0e9; len--;
         break;
     }
-    strncpy( spec, optarg, len );
+    strncpy( spec, opt_arg, len );
     spec[len] = '\0';
 
     bytemax = (PLINT) ( multiplier * atof( spec ) );
@@ -2025,9 +2025,9 @@ opt_fsiz( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_fbeg( const char *opt, const char *optarg, void *client_data )
+opt_fbeg( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->member = atoi( optarg );
+    plsc->member = atoi( opt_arg );
 
     return 0;
 }
@@ -2040,9 +2040,9 @@ opt_fbeg( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_finc( const char *opt, const char *optarg, void *client_data )
+opt_finc( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->finc = atoi( optarg );
+    plsc->finc = atoi( opt_arg );
 
     return 0;
 }
@@ -2055,9 +2055,9 @@ opt_finc( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_fflen( const char *opt, const char *optarg, void *client_data )
+opt_fflen( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->fflen = atoi( optarg );
+    plsc->fflen = atoi( opt_arg );
 
     return 0;
 }
@@ -2070,7 +2070,7 @@ opt_fflen( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_np( const char *opt, const char *optarg, void *client_data )
+opt_np( const char *opt, const char *opt_arg, void *client_data )
 {
     plspause( 0 );
     return 0;
@@ -2084,7 +2084,7 @@ opt_np( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_nopixmap( const char *opt, const char *optarg, void *client_data )
+opt_nopixmap( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->nopixmap = 1;
     return 0;
@@ -2098,7 +2098,7 @@ opt_nopixmap( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_db( const char *opt, const char *optarg, void *client_data )
+opt_db( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->db = 1;
     return 0;
@@ -2112,9 +2112,9 @@ opt_db( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_bufmax( const char *opt, const char *optarg, void *client_data )
+opt_bufmax( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->bufmax = atoi( optarg );
+    plsc->bufmax = atoi( opt_arg );
     return 0;
 }
 
@@ -2126,9 +2126,9 @@ opt_bufmax( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_server_name( const char *opt, const char *optarg, void *client_data )
+opt_server_name( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->server_name = plstrdup( optarg );
+    plsc->server_name = plstrdup( opt_arg );
     return 0;
 }
 
@@ -2140,9 +2140,9 @@ opt_server_name( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_plserver( const char *opt, const char *optarg, void *client_data )
+opt_plserver( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->plserver = plstrdup( optarg );
+    plsc->plserver = plstrdup( opt_arg );
     return 0;
 }
 
@@ -2154,13 +2154,13 @@ opt_plserver( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_plwindow( const char *opt, const char *optarg, void *client_data )
+opt_plwindow( const char *opt, const char *opt_arg, void *client_data )
 {
-    if ( ( plsc->plwindow = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) ) ) == NULL )
+    if ( ( plsc->plwindow = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "opt_plwindow: Insufficient memory" );
     }
-    strcpy( plsc->plwindow, optarg );
+    strcpy( plsc->plwindow, opt_arg );
     return 0;
 }
 
@@ -2172,9 +2172,9 @@ opt_plwindow( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_auto_path( const char *opt, const char *optarg, void *client_data )
+opt_auto_path( const char *opt, const char *opt_arg, void *client_data )
 {
-    plsc->auto_path = plstrdup( optarg );
+    plsc->auto_path = plstrdup( opt_arg );
     return 0;
 }
 
@@ -2186,9 +2186,9 @@ opt_auto_path( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_px( const char *opt, const char *optarg, void *client_data )
+opt_px( const char *opt, const char *opt_arg, void *client_data )
 {
-    plssub( atoi( optarg ), -1 );
+    plssub( atoi( opt_arg ), -1 );
     return 0;
 }
 
@@ -2200,9 +2200,9 @@ opt_px( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_py( const char *opt, const char *optarg, void *client_data )
+opt_py( const char *opt, const char *opt_arg, void *client_data )
 {
-    plssub( -1, atoi( optarg ) );
+    plssub( -1, atoi( opt_arg ) );
     return 0;
 }
 
@@ -2218,7 +2218,7 @@ opt_py( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_geo( const char *opt, const char *optarg, void *client_data )
+opt_geo( const char *opt, const char *opt_arg, void *client_data )
 {
     int   numargs;
     PLFLT xdpi = 0., ydpi = 0.;
@@ -2226,69 +2226,69 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
 
 // The TK driver uses the geometry string directly
 
-    if ( ( plsc->geometry = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) ) ) == NULL )
+    if ( ( plsc->geometry = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "opt_geo: Insufficient memory" );
     }
 
-    strcpy( plsc->geometry, optarg );
+    strcpy( plsc->geometry, opt_arg );
 
-    numargs = sscanf( optarg, "%dx%d%d%d", &xwid, &ywid, &xoff, &yoff );
+    numargs = sscanf( opt_arg, "%dx%d%d%d", &xwid, &ywid, &xoff, &yoff );
     if ( numargs == 2 )
     {
         xoff = 0;
         yoff = 0;
         if ( xwid == 0 )
-            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", opt_arg );
         if ( ywid == 0 )
-            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", opt_arg );
         if ( xwid < 0 )
         {
-            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", opt_arg );
             return 1;
         }
         if ( ywid < 0 )
         {
-            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", opt_arg );
             return 1;
         }
     }
     else if ( numargs == 4 )
     {
         if ( xwid == 0 )
-            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", opt_arg );
         if ( ywid == 0 )
-            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", opt_arg );
         if ( xwid < 0 )
         {
-            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", opt_arg );
             return 1;
         }
         if ( ywid < 0 )
         {
-            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", opt_arg );
             return 1;
         }
         if ( abs( xoff ) == 0 )
-            fprintf( stderr, "?invalid xoff in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid xoff in -geometry %s\n", opt_arg );
         if ( abs( yoff ) == 0 )
-            fprintf( stderr, "?invalid yoff in -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid yoff in -geometry %s\n", opt_arg );
     }
     else
     {
-        numargs = sscanf( optarg, "%d%d", &xoff, &yoff );
+        numargs = sscanf( opt_arg, "%d%d", &xoff, &yoff );
         if ( numargs == 2 )
         {
             xwid = 0;
             ywid = 0;
             if ( abs( xoff ) == 0 )
-                fprintf( stderr, "?invalid xoff in -geometry %s\n", optarg );
+                fprintf( stderr, "?invalid xoff in -geometry %s\n", opt_arg );
             if ( abs( yoff ) == 0 )
-                fprintf( stderr, "?invalid yoff in -geometry %s\n", optarg );
+                fprintf( stderr, "?invalid yoff in -geometry %s\n", opt_arg );
         }
         else
         {
-            fprintf( stderr, "?invalid -geometry %s\n", optarg );
+            fprintf( stderr, "?invalid -geometry %s\n", opt_arg );
             return 1;
         }
     }
@@ -2304,14 +2304,14 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_tk_file( const char *opt, const char *optarg, void *client_data )
+opt_tk_file( const char *opt, const char *opt_arg, void *client_data )
 {
-    if ( ( plsc->tk_file = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) ) ) == NULL )
+    if ( ( plsc->tk_file = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "opt_tk_file: Insufficient memory" );
     }
 
-    strcpy( plsc->tk_file, optarg );
+    strcpy( plsc->tk_file, opt_arg );
     return 0;
 }
 
@@ -2327,13 +2327,13 @@ opt_tk_file( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_dpi( const char *opt, const char *optarg, void *client_data )
+opt_dpi( const char *opt, const char *opt_arg, void *client_data )
 {
     char  *field;
     PLFLT xdpi = 0., ydpi = 0.;
     PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
 
-    strncpy( opttmp, optarg, OPTMAX - 1 );
+    strncpy( opttmp, opt_arg, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
     if ( strchr( opttmp, 'x' ) )
     {
@@ -2368,11 +2368,11 @@ opt_dpi( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_dev_compression( const char *opt, const char *optarg, void *client_data )
+opt_dev_compression( const char *opt, const char *opt_arg, void *client_data )
 {
     PLINT comp = 0;
 
-    comp = atoi( optarg );
+    comp = atoi( opt_arg );
     if ( comp == 0 )
     {
         fprintf( stderr, "?invalid compression\n" );
@@ -2390,9 +2390,9 @@ opt_dev_compression( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap0( const char *opt, const char *optarg, void *client_data )
+opt_cmap0( const char *opt, const char *opt_arg, void *client_data )
 {
-    plspal0( optarg );
+    plspal0( opt_arg );
     return 0;
 }
 
@@ -2403,9 +2403,9 @@ opt_cmap0( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap1( const char *opt, const char *optarg, void *client_data )
+opt_cmap1( const char *opt, const char *opt_arg, void *client_data )
 {
-    plspal1( optarg, TRUE );
+    plspal1( opt_arg, TRUE );
     return 0;
 }
 
@@ -2416,7 +2416,7 @@ opt_cmap1( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_locale( const char *opt, const char *optarg, void *client_data )
+opt_locale( const char *opt, const char *opt_arg, void *client_data )
 {
     char *locale;
     if ( ( locale = setlocale( LC_NUMERIC, "" ) ) )
@@ -2443,7 +2443,7 @@ opt_locale( const char *opt, const char *optarg, void *client_data )
 //--------------------------------------------------------------------------
 
 static int
-opt_eofill( const char *opt, const char *optarg, void *client_data )
+opt_eofill( const char *opt, const char *opt_arg, void *client_data )
 {
     plsc->dev_eofill = 1;
     return 0;
