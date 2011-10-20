@@ -1136,7 +1136,7 @@ static void
 launch_server( PLStream *pls )
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char  * argv[20];
+    const char  *argv[20];
     char  *plserver_exec = NULL, *ptr;
     char  *tmp           = NULL;
     int   i;
@@ -1209,7 +1209,7 @@ launch_server( PLStream *pls )
     else
     {
         argv[i++] = "-name";            // plserver name
-        argv[i++] = (char *) pls->program;
+        argv[i++] = pls->program;
     }
 
     if ( pls->auto_path != NULL )
@@ -1230,10 +1230,10 @@ launch_server( PLStream *pls )
     if ( pls->dp )
     {
         argv[i++] = "-client_host";
-        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_host", TCL_GLOBAL_ONLY );
+        argv[i++] = Tcl_GetVar( dev->interp, "client_host", TCL_GLOBAL_ONLY );
 
         argv[i++] = "-client_port";
-        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_port", TCL_GLOBAL_ONLY );
+        argv[i++] = Tcl_GetVar( dev->interp, "client_port", TCL_GLOBAL_ONLY );
 
         if ( pls->user != NULL )
         {
@@ -1244,7 +1244,7 @@ launch_server( PLStream *pls )
     else
     {
         argv[i++] = "-client_name";
-        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_name", TCL_GLOBAL_ONLY );
+        argv[i++] = Tcl_GetVar( dev->interp, "client_name", TCL_GLOBAL_ONLY );
     }
 
 // The display absolutely must be set if invoking a remote server (by rsh)
@@ -1292,7 +1292,7 @@ launch_server( PLStream *pls )
             fprintf( stderr, "Starting up %s on node %s\n", pls->plserver,
                 pls->server_host );
 
-            if ( execvp( "rsh", argv ) )
+            if ( execvp( "rsh", (char *const *)argv ) )
             {
                 perror( "Unable to exec server process" );
                 _exit( 1 );
@@ -1323,7 +1323,7 @@ launch_server( PLStream *pls )
             }
 
             pldebug( "launch_server", "Starting up %s\n", plserver_exec );
-            if ( execv( plserver_exec, argv ) )
+            if ( execv( plserver_exec, (char * const *) argv ) )
             {
                 fprintf( stderr, "Unable to exec server process.\n" );
                 _exit( 1 );
