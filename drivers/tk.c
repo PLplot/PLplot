@@ -1135,11 +1135,11 @@ init_server( PLStream *pls )
 static void
 launch_server( PLStream *pls )
 {
-    TkDev *dev = (TkDev *) pls->dev;
-    const char  *argv[20];
-    char  *plserver_exec = NULL, *ptr;
-    char  *tmp           = NULL;
-    int   i;
+    TkDev      *dev = (TkDev *) pls->dev;
+    const char *argv[20];
+    char       *plserver_exec = NULL, *ptr;
+    char       *tmp           = NULL;
+    int        i;
 
     dbug_enter( "launch_server" );
 
@@ -1292,7 +1292,7 @@ launch_server( PLStream *pls )
             fprintf( stderr, "Starting up %s on node %s\n", pls->plserver,
                 pls->server_host );
 
-            if ( execvp( "rsh", (char *const *)argv ) )
+            if ( execvp( "rsh", (char * const *) argv ) )
             {
                 perror( "Unable to exec server process" );
                 _exit( 1 );

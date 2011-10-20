@@ -1377,9 +1377,9 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT       pos, tn, tp, offset, height, just;
     PLFLT       factor, tstart;
-    const char  *timefmt;
+    const char  *timefmt = NULL;
     PLFLT       default_mm, char_height_mm, height_mm;
-    PLFLT       string_length_mm, pos_mm;
+    PLFLT       string_length_mm = 0.0, pos_mm = 0.0;
 
     plgchr( &default_mm, &char_height_mm );
 

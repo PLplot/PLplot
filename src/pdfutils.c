@@ -604,14 +604,17 @@ pdf_wr_2bytes( PDFstrm *pdfs, U_SHORT s )
 int
 pdf_rd_2bytes( PDFstrm *pdfs, U_SHORT *ps )
 {
-    U_CHAR x[2];
+    U_CHAR  x[2];
+    U_SHORT xs;
 
     if ( !pdf_rdx( x, 2, pdfs ) )
         return PDF_RDERR;
 
     *ps  = 0;
-    *ps |= (U_SHORT) x[0];
-    *ps |= (U_SHORT) x[1] << 8;
+    xs   = (U_SHORT) x[0];
+    *ps |= xs;
+    xs   = (U_SHORT) ( (U_SHORT) x[1] << 8 );
+    *ps |= xs;
 
     return 0;
 }
@@ -648,8 +651,9 @@ pdf_wr_2nbytes( PDFstrm *pdfs, U_SHORT *s, PLINT n )
 int
 pdf_rd_2nbytes( PDFstrm *pdfs, U_SHORT *s, PLINT n )
 {
-    PLINT  i;
-    U_CHAR x[2];
+    PLINT   i;
+    U_CHAR  x[2];
+    U_SHORT xs;
 
     for ( i = 0; i < n; i++ )
     {
@@ -657,8 +661,10 @@ pdf_rd_2nbytes( PDFstrm *pdfs, U_SHORT *s, PLINT n )
             return PDF_RDERR;
 
         s[i]  = 0;
-        s[i] |= (U_SHORT) x[0];
-        s[i] |= (U_SHORT) x[1] << 8;
+        xs    = (U_SHORT) x[0];
+        s[i] |= xs;
+        xs    = (U_SHORT) ( (U_SHORT) x[1] << 8 );
+        s[i] |= xs;
     }
     return 0;
 }

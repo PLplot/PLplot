@@ -386,8 +386,8 @@ typedef struct
 
 typedef struct
 {
-    PLFLT *f;
-    PLINT nx, ny, nz;
+    const PLFLT *f;
+    PLINT       nx, ny, nz;
 } PLfGrid;
 
 //

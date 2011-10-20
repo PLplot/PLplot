@@ -771,7 +771,7 @@ rdbuf_fill( PLStream *pls )
 static void
 rdbuf_image( PLStream *pls )
 {
-    short          *dev_ix, *dev_iy;
+    short          *dev_ix, *dev_iy = NULL;
     unsigned short *dev_z, dev_zmin, dev_zmax;
     PLINT          nptsX, nptsY, npts;
     PLFLT          xmin, ymin, dx, dy;

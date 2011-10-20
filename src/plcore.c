@@ -1227,7 +1227,7 @@ ucs4_to_utf8( PLUNICODE unichar, char *ptr )
     {
         *tmp = (unsigned char) 0xc0 | (unsigned char) ( unichar >> 6 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (unsigned char) ( unichar & 0x3f );
+        *tmp = (unsigned char) ( 0x80 | (unsigned char) ( unichar & (PLUINT) 0x3f ) );
         tmp++;
         len = 2;
     }
@@ -1235,9 +1235,9 @@ ucs4_to_utf8( PLUNICODE unichar, char *ptr )
     {
         *tmp = (unsigned char) 0xe0 | (unsigned char) ( unichar >> 12 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (unsigned char) ( ( unichar >> 6 ) & 0x3f );
+        *tmp = (unsigned char) ( 0x80 | (unsigned char) ( ( unichar >> 6 ) & 0x3f ) );
         tmp++;
-        *tmp = (unsigned char) 0x80 | ( (unsigned char) unichar & 0x3f );
+        *tmp = (unsigned char) ( 0x80 | ( (unsigned char) unichar & 0x3f ) );
         tmp++;
         len = 3;
     }
@@ -1245,11 +1245,11 @@ ucs4_to_utf8( PLUNICODE unichar, char *ptr )
     {
         *tmp = (unsigned char) 0xf0 | (unsigned char) ( unichar >> 18 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (unsigned char) ( ( unichar >> 12 ) & 0x3f );
+        *tmp = (unsigned char) ( 0x80 | (unsigned char) ( ( unichar >> 12 ) & 0x3f ) );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (unsigned char) ( ( unichar >> 6 ) & 0x3f );
+        *tmp = (unsigned char) ( 0x80 | (unsigned char) ( ( unichar >> 6 ) & 0x3f ) );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (unsigned char) ( unichar & 0x3f );
+        *tmp = (unsigned char) ( 0x80 | (unsigned char) ( unichar & 0x3f ) );
         tmp++;
         len = 4;
     }
@@ -2862,8 +2862,8 @@ plGetDrvDir()
 
 static int plDispatchSequencer( const void *p1, const void *p2 )
 {
-    const PLDispatchTable* t1 = *(PLDispatchTable **) p1;
-    const PLDispatchTable* t2 = *(PLDispatchTable **) p2;
+    const PLDispatchTable* t1 = *(const PLDispatchTable * const *) p1;
+    const PLDispatchTable* t2 = *(const PLDispatchTable * const *) p2;
 
 //     printf( "sorting: t1.name=%s t1.seq=%d t2.name=%s t2.seq=%d\n",
 //             t1->pl_DevName, t1->pl_seq, t2->pl_DevName, t2->pl_seq );

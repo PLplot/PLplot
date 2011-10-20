@@ -34,8 +34,8 @@
 
 // Main menu structure
 static GtkItemFactoryEntry menu_items[] = {
-    { "/_File",      NULL,         NULL,          0, "<Branch>" },
-    { "/File/_Quit", "<control>Q", gtk_main_quit, 0, NULL       },
+    { "/_File",      NULL,         NULL,          0, "<Branch>", NULL },
+    { "/File/_Quit", "<control>Q", gtk_main_quit, 0, NULL,       NULL },
 };
 
 #define APP_INITIAL_WIDTH     320
@@ -155,7 +155,7 @@ void init_app( App *a )
 
     // Construct the main menu structure
     item_factory = gtk_item_factory_new( GTK_TYPE_MENU_BAR, "<main>", accel_group );
-    gtk_item_factory_create_items( item_factory, nitems, menu_items, NULL );
+    gtk_item_factory_create_items( item_factory, (guint) nitems, menu_items, NULL );
     gtk_window_add_accel_group( GTK_WINDOW( a->rootwindow ), accel_group );
     menubar = gtk_item_factory_get_widget( item_factory, "<main>" );
     gtk_box_pack_start( GTK_BOX( vbox ), menubar, FALSE, FALSE, 0 );

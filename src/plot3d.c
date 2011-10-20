@@ -979,7 +979,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
     PLFLT *_x = NULL, *_y = NULL, **_z = NULL;
     const PLFLT *x_modified, *y_modified;
-    int   i;
+    int i;
 
     pl3mode = 0;
 

@@ -856,8 +856,8 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
 
     if ( !mode_noprogram )
     {
-        program       = plstrdup( argv[0] );
-        plsc->program = program;
+        plsc->program = plstrdup( argv[0] );
+        program       = (const char *) plsc->program;
         --myargc; ++argv;
     }
     if ( myargc == 0 )
