@@ -170,11 +170,11 @@ x27::spiro( PLFLT params[], int fill )
     PLFLT        phi;
     PLFLT        phiw;
     PLFLT        dphi;
-    PLFLT        xmin;
-    PLFLT        xmax;
+    PLFLT        xmin = 0.0;
+    PLFLT        xmax = 0.0;
     PLFLT        xrange_adjust;
-    PLFLT        ymin;
-    PLFLT        ymax;
+    PLFLT        ymin = 0.0;
+    PLFLT        ymax = 0.0;
     PLFLT        yrange_adjust;
 
     // Fill the coordinates

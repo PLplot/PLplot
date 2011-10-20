@@ -70,8 +70,8 @@ normalize_longitude( PLFLT lon )
 void
 geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data )
 {
-    const char *direction_label;
-    PLFLT      label_val;
+    const char *direction_label = NULL;
+    PLFLT      label_val = 0.0;
 
     if ( axis == PL_Y_AXIS )
     {
@@ -108,11 +108,11 @@ geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPoint
     if ( axis == PL_Y_AXIS && value == 0.0 )
     {
         // A special case for the equator
-        snprintf( label, length, "%s", direction_label );
+        snprintf( label, (size_t) length, "%s", direction_label );
     }
     else
     {
-        snprintf( label, length, "%.0f%s", fabs( label_val ), direction_label );
+        snprintf( label, (size_t) length, "%.0f%s", fabs( label_val ), direction_label );
     }
 }
 

@@ -346,10 +346,10 @@ int read_img( const char *fname, PLFLT ***img_f, int *width, int *height, int *n
     }
     // printf("width=%d height=%d num_col=%d\n", w, h, *num_col);
 
-    img = (unsigned char *) malloc( w * h * sizeof ( char ) );
+    img = (unsigned char *) malloc( (size_t) (w * h) * sizeof ( char ) );
     plAlloc2dGrid( &imf, w, h );
 
-    if ( fread( img, sizeof ( char ), w * h, fp ) != w * h )
+    if ( (int) fread( img, sizeof ( char ), (size_t) (w * h), fp ) != w * h )
     {
         fclose( fp );
         free( img );

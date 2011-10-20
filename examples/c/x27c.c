@@ -163,11 +163,11 @@ spiro( PLFLT params[], int fill )
     PLFLT        phi;
     PLFLT        phiw;
     PLFLT        dphi;
-    PLFLT        xmin;
-    PLFLT        xmax;
+    PLFLT        xmin = 0.0;
+    PLFLT        xmax = 0.0;
     PLFLT        xrange_adjust;
-    PLFLT        ymin;
-    PLFLT        ymax;
+    PLFLT        ymin = 0.0;
+    PLFLT        ymax = 0.0;
     PLFLT        yrange_adjust;
 
     // Fill the coordinates
@@ -175,7 +175,7 @@ spiro( PLFLT params[], int fill )
     // Proper termination of the angle loop very near the beginning
     // point, see
     // http://mathforum.org/mathimages/index.php/Hypotrochoid.
-    windings = (PLINT) ( abs( params[1] ) / gcd( (PLINT) params[0], (PLINT) params[1] ) );
+    windings = (int) ( abs( (int) params[1] ) / gcd( (PLINT) params[0], (PLINT) params[1] ) );
     steps    = NPNT / windings;
     dphi     = 2.0 * PI / (PLFLT) steps;
 
