@@ -1209,7 +1209,7 @@ launch_server( PLStream *pls )
     else
     {
         argv[i++] = "-name";            // plserver name
-        argv[i++] = pls->program;
+        argv[i++] = (char *) pls->program;
     }
 
     if ( pls->auto_path != NULL )
@@ -1230,10 +1230,10 @@ launch_server( PLStream *pls )
     if ( pls->dp )
     {
         argv[i++] = "-client_host";
-        argv[i++] = Tcl_GetVar( dev->interp, "client_host", TCL_GLOBAL_ONLY );
+        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_host", TCL_GLOBAL_ONLY );
 
         argv[i++] = "-client_port";
-        argv[i++] = Tcl_GetVar( dev->interp, "client_port", TCL_GLOBAL_ONLY );
+        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_port", TCL_GLOBAL_ONLY );
 
         if ( pls->user != NULL )
         {
@@ -1244,7 +1244,7 @@ launch_server( PLStream *pls )
     else
     {
         argv[i++] = "-client_name";
-        argv[i++] = Tcl_GetVar( dev->interp, "client_name", TCL_GLOBAL_ONLY );
+        argv[i++] = (char *) Tcl_GetVar( dev->interp, "client_name", TCL_GLOBAL_ONLY );
     }
 
 // The display absolutely must be set if invoking a remote server (by rsh)
