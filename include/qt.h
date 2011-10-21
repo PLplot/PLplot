@@ -131,7 +131,7 @@ public:
     virtual void drawPolygon( short * x, short * y, PLINT npts );
     virtual void drawText( EscText* txt );
     virtual void setColor( int r, int g, int b, double alpha );
-    virtual void setBackgroundColor( int r, int g, int b, double alpha ){}
+    virtual void setBackgroundColor( int /* r */, int /* g */, int /* b */, double /* alpha */ ){}
     virtual void setGradient( int x1, int x2, int y1, int y2,
                               unsigned char *r, unsigned char *g,
                               unsigned char *b, PLFLT *alpha, PLINT ncol1 );

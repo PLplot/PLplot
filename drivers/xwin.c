@@ -1102,8 +1102,8 @@ Init( PLStream *pls )
     (void) XGetGeometry( xwd->display, dev->window, &root, &x, &y,
         &dev->width, &dev->height, &dev->border, &xwd->depth );
 
-    dev->init_width  = dev->width;
-    dev->init_height = dev->height;
+    dev->init_width  = (long) dev->width;
+    dev->init_height = (long) dev->height;
 
 // Set up flags that determine what we are writing to
 // If nopixmap is set, ignore db

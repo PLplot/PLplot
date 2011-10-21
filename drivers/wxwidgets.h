@@ -28,12 +28,6 @@
 // freetype headers and macros
 #ifdef HAVE_FREETYPE
   #include "plfreetype.h"
-
-static void plD_pixel_wxwidgets( PLStream *pls, short x, short y );
-static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y );
-static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour );
-static void init_freetype_lv1( PLStream *pls );
-static void init_freetype_lv2( PLStream *pls );
 #endif
 
 #ifndef max_number_of_grey_levels_used_in_text_smoothing
@@ -491,11 +485,6 @@ static inline void Use( void * )
 }
 #define WX_SUPPRESS_UNUSED_WARN( x )    Use( &x )
 
-// private functions needed by the wxwidgets Driver
-static void install_buffer( PLStream *pls );
-static void wxRunApp( PLStream *pls, bool runonce = false );
-static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
-
 
 //--------------------------------------------------------------------------
 //  Declarations for the device.
@@ -511,7 +500,6 @@ void plD_tidy_wxwidgets( PLStream * );
 void plD_state_wxwidgets( PLStream *, PLINT );
 void plD_esc_wxwidgets( PLStream *, PLINT, void * );
 
-static void fill_polygon( PLStream *pls );
 void wx_set_dc( PLStream* pls, wxDC* dc );
 void wx_set_buffer( PLStream* pls, wxImage* buffer );
 void wx_set_size( PLStream* pls, int width, int height );

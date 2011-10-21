@@ -345,7 +345,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 //
 //  Event method, which is called if user
 //--------------------------------------------------------------------------
-void wxPLplotFrame::OnClose( wxCloseEvent& event )
+void wxPLplotFrame::OnClose( wxCloseEvent& /* event */ )
 {
     // Log_Verbose( "wxPLplotFrame::OnClose" );
 
@@ -802,10 +802,12 @@ void wxPLplotWindow::Locate( void )
             // If invoked by the API, we're done
             // Otherwise send report to stdout
             if ( m_dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
+            {
                 if ( gin->keysym < 0xFF && isprint( gin->keysym ) )
                     printf( "%f %f %c\n", gin->wX, gin->wY, gin->keysym );
                 else
                     printf( "%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym );
+            }
         }
         else
         {

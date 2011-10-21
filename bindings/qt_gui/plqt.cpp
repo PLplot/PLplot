@@ -1046,6 +1046,8 @@ void QtPLWidget::lookupButtonEvent( QMouseEvent * event )
     case Qt::RightButton:
         gin.button = 3;
         break;
+    default:
+        break;
     }
 
     // Map Qt button and key states to the (X windows) values used
@@ -1561,7 +1563,7 @@ void QtExtWidget::mouseMoveEvent( QMouseEvent* event )
     update();
 }
 
-void QtExtWidget::mousePressEvent( QMouseEvent* event )
+void QtExtWidget::mousePressEvent( QMouseEvent*  /* event */ )
 {
 }
 

@@ -2575,7 +2575,7 @@ void plD_init_memcairo( PLStream *pls )
     // Red, Green, and Blue are stored in the remaining 24 bits in that order
     stride = pls->xlength * 4;
     // stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pls->xlength);  This function missing from version 1.4 :-(
-    aStream->cairo_format_memory = (unsigned char *) calloc( (size_t) stride * pls->ylength, 1 );
+    aStream->cairo_format_memory = (unsigned char *) calloc( (size_t) ( stride * pls->ylength ), 1 );
 
     // Copy the input data into the Cairo data format
     cairo_mem = aStream->cairo_format_memory;

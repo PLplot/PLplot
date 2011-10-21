@@ -66,6 +66,15 @@
 #cmakedefine _PL_HAVE_SNPRINTF
 #endif
 
+// Define if isfinite is available
+#cmakedefine PL_HAVE_ISFINITE
+
+// Define if finite is available
+#cmakedefine PL_HAVE_FINITE
+
+// Define if _finite is available
+#cmakedefine PL__HAVE_FINITE
+
 // Define if isinf is available
 #cmakedefine PL_HAVE_ISINF
 

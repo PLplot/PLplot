@@ -41,6 +41,21 @@
 
 #include "wxwidgets.h"
 
+// Static function prototypes
+#ifdef HAVE_FREETYPE
+static void plD_pixel_wxwidgets( PLStream *pls, short x, short y );
+static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y );
+static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour );
+static void init_freetype_lv1( PLStream *pls );
+static void init_freetype_lv2( PLStream *pls );
+#endif
+
+// private functions needed by the wxwidgets Driver
+static void install_buffer( PLStream *pls );
+static void wxRunApp( PLStream *pls, bool runonce = false );
+static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
+static void fill_polygon( PLStream *pls );
+
 #ifdef __WXMAC__
         #include <Carbon/Carbon.h>
 extern "C" { void CPSEnableForegroundOperation( ProcessSerialNumber* psn ); }
@@ -373,10 +388,12 @@ wxPLDevBase* common_init( PLStream *pls )
         dev = new wxPLDevDC;
         // by default the own text routines are used for wxDC
         if ( text == -1 )
+        {
             if ( freetype != 1 )
                 text = 1;
             else
                 text = 0;
+        }
         if ( freetype == -1 )
             freetype = 0;
         break;
@@ -675,10 +692,12 @@ void plD_eop_wxwidgets( PLStream *pls )
     }
 
     if ( dev->ownGUI )
+    {
         if ( pls->nopause || !dev->showGUI )
             wxRunApp( pls, true );
         else
             wxRunApp( pls );
+    }
 }
 
 
