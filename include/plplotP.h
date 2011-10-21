@@ -279,6 +279,17 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #define HUGE_VAL    ( 1.0 / 0.0 )
 #endif
 
+// Macro to mark function parameters as unused. 
+// For gcc this uses the unused attribute to remove compiler warnings. 
+// For all compilers the parameter name is also mangled to prevent
+// accidental use.
+#ifdef UNUSED
+#elif defined(__GNUC__)
+# define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+#else
+# define UNUSED(x) UNUSED_ ## x
+#endif
+
 //--------------------------------------------------------------------------
 //                       PLPLOT control macros
 //--------------------------------------------------------------------------
