@@ -1041,8 +1041,6 @@ void plD_eop_epspdfqt( PLStream *pls )
 {
     double downscale;
 
-    int    argc   = 0;
-    char   argv[] = { '\0' };
     if ( qt_family_check( pls ) )
     {
         return;
@@ -1677,7 +1675,7 @@ void plD_tidy_extqt( PLStream * pls )
     closeQtApp();
 }
 
-void plD_eop_extqt( PLStream *pls )
+void plD_eop_extqt( PLStream * /* pls */ )
 {
 }
 
@@ -1802,7 +1800,7 @@ void plD_init_memqt( PLStream * pls )
     pls->family = true;
 }
 
-void plD_bop_memqt( PLStream *pls )
+void plD_bop_memqt( PLStream * /* pls */ )
 {
     // Do nothing to preserve user data
 }

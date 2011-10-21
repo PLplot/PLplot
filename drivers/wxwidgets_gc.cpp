@@ -345,6 +345,9 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
     // Log_Verbose( "%s", __FUNCTION__ );
 
   #ifdef __WXGTK__
+    // Cast function parameters to (void) to silence compiler warnings about unused parameters
+    (void) x;
+    (void) y;
     // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
     // always to the background color, since this is the case anyway 99% of the time.
     PLINT bgr, bgg, bgb;           // red, green, blue
