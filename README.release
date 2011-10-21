@@ -206,7 +206,7 @@ by the PLplot libraries.
 
 The general documentation and safety justification for such const
 modifier changes to our API is given in
-http://www.cprogrammbing.com/tutorial/const_correctness.html.
+http://www.cprogramming.com/tutorial/const_correctness.html.
 Essentially, the above const modifier changes constitute our guarantee
 that the associated arrays are not changed internally by the PLplot
 libraries.
