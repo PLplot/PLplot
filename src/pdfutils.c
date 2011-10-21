@@ -35,7 +35,7 @@
 #define NEED_PLDEBUG
 #include "plplotP.h"
 
-static void print_ieeef( void *, void * );
+static void print_ieeef( float *, U_LONG * );
 static int  pdf_wrx( const U_CHAR *x, long nitems, PDFstrm *pdfs );
 
 static int debug = 0;
@@ -898,10 +898,10 @@ pdf_rd_ieeef( PDFstrm *pdfs, float *pf )
 //--------------------------------------------------------------------------
 
 static void
-print_ieeef( void *vx, void *vy )
+print_ieeef( float *vx, U_LONG *vy )
 {
     int    i;
-    U_LONG f, *x = (U_LONG *) vx, *y = (U_LONG *) vy;
+    U_LONG f, *x = (U_LONG *) vx, *y = vy;
     char   bitrep[33];
 
     bitrep[32] = '\0';

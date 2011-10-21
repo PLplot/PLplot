@@ -85,6 +85,9 @@ pldebug( const char *label, ... )
         if ( plsc->termin )
             c_plgra();
     }
+#else
+    // Avoid warning about unused parameter
+    (void) label;
 #endif  // DEBUG
 }
 #endif  // NEED_PLDEBUG

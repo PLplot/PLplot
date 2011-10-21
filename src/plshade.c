@@ -363,7 +363,7 @@ void c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, 
 {
     PLfGrid grid;
 
-    grid.f  = (PLFLT *) a;
+    grid.f  = a;
     grid.nx = nx;
     grid.ny = ny;
 
