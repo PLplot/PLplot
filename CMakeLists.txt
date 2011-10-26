@@ -38,12 +38,24 @@ set(
 project(plplot C)
 
 message(STATUS "CMake version = ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
+message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
-# Note that the variable MSYS is first known at this point in the
-# build process in case have different minimum version for that case.
-
-# Version 2.6.4 or above of cmake is currently required for all platforms.
-cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # We prefer to support only the latest CMake version because it
+  # tends to be more free of issues and more consistent with recent
+  # software releases of software that PLplot depends on than earlier versions.
+  # However, as a special concession to our modern (not enterprise or
+  # LTS) Linux distro users so they can avoid a download of recent CMake,
+  # we allow them to use the system version of
+  # CMake which at this time (2011-10) is typically 2.8.2 or later.
+  cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
+else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # For non-Linux platforms we prefer to support only the most recent
+  # CMake version since that tends to be most free of issues and most
+  # consistent with releases of software that PLplot depends on.  The
+  # most recently released CMake is 2.8.6 at this time (2011-10).
+  cmake_minimum_required(VERSION 2.8.6 FATAL_ERROR)
+endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 #foreach(policy RANGE 0 9)
 #  cmake_policy(GET CMP000${policy} policy_result)
