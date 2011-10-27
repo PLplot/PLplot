@@ -1,17 +1,155 @@
-plplot (5.9.6-1) unstable; urgency=low
+plplot (5.9.9-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/patches/series: Remove patches from upstream which are included
+    in the new release.
+  * debian/control.in:
+    + Add back in dependencies (rather than recommends) on the C++
+      and fortran libraries. This does pull in extra libraries if you 
+      only wish to develop with one language, but reverts to the old 
+      behaviour (closes: #642715). 
+  * debian/control.in, debian/libplplot-ada0.files,
+    debian/libplplot-ada0-dev.files, debian/libplplot-dev, debian/rules,
+    debian/README.Debian:
+    + Split off ada development files from libplplot-dev package into new
+      libplplot-ada0-dev package. Move .ali files from libplplot-ada into
+      libplplot-ada0-dev package as per Debian Ada policy. Add explicit
+      dependency on ada-compiler, gnat and gnat-4.6 as per policy.
+      (closes: #644105, #644110, #644112)
+    + Rename libplplot-ada package to libplplot-ada0 so it includes the 
+      library soversion as per Debian Ada policy.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 27 Oct 2011 21:30:38 +0100
+
+plplot (5.9.8-2) unstable; urgency=low
+
+  * debian/control.in: 
+    + Change package priority to optional as per policy.
+    + Add libplplot-dev dependency on libqsastime-dev (closes: #642146).
+    + Fix description for libplplot-dev package (closes: #642122).
+  * debian/plplot-tcl-dev.lintian-overrides: Fix lintian overrides.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 19 Sep 2011 20:38:55 +0100
+
+plplot (5.9.8-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control.in: Bump standards version to 3.9.2.
+  * debian/NEWS: update NEWS file for 5.9.8.
+  * debian/control.in, debian/rules, debian/*.files:
+    Rename packages to reflect bump in SONAME version.
+  * Rebuild against gfortran-4.6 (closes: #635739).
+  * debian/rules: 
+    + Update to reflect changes in upstream ChangeLog file name. 
+    + Tidy up some old comments.
+    + Change from calling ctest to using "make test_noninteractive"
+      to run the tests. Also include .NOTPARALLEL target to prevent the 
+      rules makefile being parallelised. Instead pass -j options to the
+      plplot make files. This allows parallel builds to work correctly.
+    + Fix a temporary permissions problem with test script in the 5.9.8
+      tarball.
+    + Fix dependency generation for octave package.
+    + Fix python build so that the installed example Makefiles are 
+      properly configured.
+  * debian/rules, debian/control.in, debian/libplplot-ocaml.files:
+    Add new libplplot-ocaml package which includes the OCaml bindings.
+  * debian/rules, debian/control.in, debian/libplplot-lua.files:
+    Add new libplplot-lua package which includes the lua bindings.
+  * debian/rules, debian/control.in, debian/libplplot-d.files:
+    Add new libplplot-d package which includes the D language bindings.
+  * debian/rules, debian/control.in, debian/python-plplot-qt.files:
+    Add new python-plplot-qt package which includes the python bindings to
+    allow use of the plplot API in qt applications. 
+  * debian/control.in: 
+    + Remove dependency of libplplot-java on default-jre as per policy. 
+      Java libraries do not need to depend on a java runtime. Fixes 
+      lintian warning.
+    + Tidy up section / priority headers for the packages.
+  * debian/patches/series, debian/patches/08_oct_perms.diff, 
+    debian/patches/09_qt_nodisplay.diff, 
+    debian/patches/10_fix_test_scripts.diff,
+    debian/patches/11_ocaml_library_location.diff,
+    debian/patches/12_qt_unload_fix.diff
+    + Add new patch to turn off execute permissions for plplot_octave.oct 
+      (fixes lintian error). 
+    + Add patch from upstream to enable non-interactive qt devices to work
+      even if DISPLAY is not set (prevents error when running tests on a 
+      buildd / using pbuilder). 
+    + Add new upstream patch to remove spurious chmod commands from test 
+      scripts. This ensures the installed examples will work as expected.
+    + Add new upstream patch to change the install location for OCaml
+      libraries to remove the OCaml version (as per Debian OCaml practice)
+      and to remove the execute permissions for the stublibs.
+    + Add temporary workaround from upstream to prevent crash on exit with
+      the qt driver and Qt-4.7.3.
+  * debian/copyright: Make explicit that the license is LGPL-2 (fixes
+    lintian warning). Update consistent with upstream copyright file.
+  * debian/control.in, debian/rules, debian/libqsastime0.files, 
+    debian/libqsastime-dev.file:
+    Split libqsastime off into separate library and devel packages.
+  * debian/libplplot-dev.files, debian/libplplot-fortran9.files:
+    Move fortran .h and .mod files to the libplplot-dev package as these
+    are required for compiling fortran with plplot and not for runtime.
+  * debian/plplot-tcl-dev.lintian-overrides: Add lintian override for
+    informational warning about interpreter path not being absolute.
+  * debian/rules: Add -fvisibility=hidden to CFLAGS and -Wl,--as-needed
+    to LD_FLAGS to only export required symbols and prevent linking in
+    unnecessary libraries. Reduces the dependency requirements, 
+    particularly for the drivers.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 2 Sep 2011 20:35:33 +0100
+
+plplot (5.9.7-1) UNRELEASED; urgency=low
 
   * New upstream release (closes: #564216).
+  * debian/rules: remove -DHAVE_PTHREADS=ON option as it is on by default. 
+    Option name is also likely to change in future releases.
+  * debian/control.in, debian/rules, debian/python-plplot.files: change from
+    using dh_pycentral to dh_python2 (closes: #616942). Also fixes lintian warning.
+  * debian/control.in: minor tweaks to package descriptions.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 16 Mar 2011 11:10:59 +0000
+
+plplot (5.9.6-1) UNRELEASED; urgency=low
+
+  * New upstream release.
   * debian/patches/series: 
     + Remove the following patches which are included upstream
         11_minus-sign-manpage.diff
         16_wxwidget-with-cmake-2.8.diff
         17_fix_cmap_support.diff
+        18_update_cmake_fortran.diff
       and delete the patches from the patches directory.
-    + Comment out 07_octave_prune_examples.diff from the list of applied patches, 
-      but leave patch for now to see if octave example p7 is ok on alpha.
+    + Comment out 07_octave_prune_examples.diff from the list of applied 
+      patches, but leave patch for now to see if octave example p7 is ok 
+      on alpha.
     + Update remaining patches for 5.9.6.
+  * debian/control.in: drop plplot-bin package altogether as all these scripts
+    are now obsolete.
+  * debian/control.in, debian/rules, debian/plplot9-driver-qt.files:
+    Add new plplot9-driver-qt package which includes the qt driver and bindings.
+  * debian/source/format: Add file to select 3.0 (quilt) format for the package. 
+    Fixes lintian warning.
+  * debian/NEWS: update NEWS file for 5.9.6.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 19 May 2010 11:14:30 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 27 Aug 2010 23:31:10 +0100
+
+plplot (5.9.5-4) unstable; urgency=low
+
+  * debian/rules, debian/control.in: update to use dh_numpy in debian/rules 
+    to get versioned numpy support. Requires python numpy >= 1:1.1.4.1-4~ 
+    (closes: 590770).
+  * debian/control.in: Bump standards version to 3.9.1.
+  * debian/control.in, debian/plplot-bin.files: remove references to plrender
+    in package descriptions (no longer included) and also remove plpr / plm2gif
+    scripts which rely on plrender.
+  * debian/control.in: Fix spelling mistake in cairo driver package 
+    (closes: 592970)
+  * debian/patches/18_update_cmake_fortran.diff: Remove plplot workaround for
+    cmake fortran support as this is no longer needed with cmake 2.8.2 and
+    causes errors building the f77 and f95 libraries.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 26 Aug 2010 13:38:26 +0100
 
 plplot (5.9.5-3) unstable; urgency=low
 
@@ -132,7 +270,7 @@ plplot (5.9.2-2) unstable; urgency=low
       large number of warnings. Also fixes automatic_replot support.
       (closes: #522423)
 
-  * debian/rules: Disable ocaml support to prevent ocaml bindings
+  * debian/rules: Disable OCaml support to prevent OCaml bindings
     being build if ocamlc is installed.
 
   [ Rafael Laboissiere ]
@@ -1055,7 +1193,7 @@ plplot (5.2.1.cvs.20031030-1) unstable; urgency=low
     - debian/rules
     - debian/libplplot9.README.Debian (new)
     - debian/libplplot9.files (new)
-  * In order to avoid backward incompatibilities withe the release of
+  * In order to avoid backward incompatibilities with the release of
     libplplot9, the driver module packages have now versioned names:
     - plplot9-driver-gd
     - plplot9-driver-xwin
@@ -1871,7 +2009,7 @@ plplot (4.99j-5) unstable; urgency=low
     includes shared libraries.
   * Links to the shared library are now Policy compliant, i.e. their names
     have only one number after .so.
-  * debain/shlibs.local is renamed to debian/shlibs, and
+  * debian/shlibs.local is renamed to debian/shlibs, and
     debian/plplot-tcl.shlibs is created.
   * The scripts installed under usr/lib/tcl8.0/plplot/ should not be
     executable.

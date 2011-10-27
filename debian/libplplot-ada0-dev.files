@@ -1,0 +1,5 @@
+usr/lib/ada
+usr/share/ada
+usr/lib/libplplotada*.so
+usr/share/doc/libplplot11/examples/ada
+usr/share/doc/libplplot-ada0-dev

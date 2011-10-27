@@ -1,0 +1,3 @@
+usr/lib/libqsastime*.so
+usr/include/plplot/qsas*.h
+usr/share/doc/libqsastime-dev

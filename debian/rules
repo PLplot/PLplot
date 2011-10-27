@@ -15,7 +15,7 @@ include /usr/share/octave/debian/defs.make
 include /usr/share/quilt/quilt.make
 
 version		:= $(shell perl debian/get-upstream-version.pl < cmake/modules/plplot_version.cmake)
-libpkg          := libplplot9
+libpkg          := libplplot11
 docpkg          := plplot-doc
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
@@ -25,10 +25,23 @@ debshr		:= $(debusr)/share
 debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
+octver		:= $(shell octave-config -v)
+
+CFLAGS = $(shell dpkg-buildflags --get CFLAGS)
+CFLAGS += -fvisibility=hidden
+#Don't add -fvisibility=hidden to CXXFLAGS for now as this breaks the octave bindings.
+CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
+#CXXFLAGS += -fvisibility=hidden
+LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
+LDFLAGS += -Wl,--as-needed
+
 
 JAVA_HOME = /usr/lib/jvm/default-java
 
 PYVERS = $(shell pyversions -vr)
+
+OCAMLABI := $(shell ocamlc -version)
+OFILES := $(filter-out debian/control,$(patsubst %.in,%,$(wildcard debian/*.in)))
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
@@ -53,18 +66,16 @@ JAVA_OPTIONS = \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
 
-CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
+CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=OFF \
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON \
 	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
-        -DDEFAULT_NO_QT_DEVICES=ON \
         -DTCL_TCLSH=/usr/bin/tclsh8.5 \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
 
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
-
 
 control:
 ifeq ($(BUILD_ADA),no)
@@ -74,29 +85,25 @@ else
 endif
 
 config: config-stamp
-config-stamp: control
+config-stamp: control 
+        # Temporary fix for perms problem in 5.9.8
+	chmod a+x $(SRC_DIR)/plplot_test/test_d.sh.in
 	mkdir $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
 	JAVA_HOME=$(JAVA_HOME) \
-	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=OFF )
+	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) )
 	touch config-stamp
 
 build-arch: build-arch-stamp
 build-arch-stamp: patch config-stamp
 	dh_testdir
-	# The hack below is to go around a bug in matwrap that was
-	# preventing the Octave binding to compile with g++ 4.0
-	#( cd lib ; $(MAKE) )
-	#( cd src ; $(MAKE) )
-	#( cd bindings/octave ; \
-	#  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	( cd $(BUILD_DIR) ; $(MAKE)  )
-	-( cd $(BUILD_DIR) ; ctest -VV )
+	-( cd $(BUILD_DIR) ; unset DISPLAY ; $(MAKE) test_noninteractive )
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
-build-indep-stamp: patch
+build-indep-stamp: patch 
 	dh_testdir
 	( cd $(BUILD_DIR) ; cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DBUILD_DOC=ON ; \
 	cd doc ; $(MAKE)  )
@@ -113,29 +120,37 @@ clean: unpatch
 
 install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-		     --no-package=plplot-bin --no-package=python-plplot   \
-		     --no-package=libplplot9-java --no-package=libplplot-ada
+		     --no-package=python-plplot --no-package=python-plplot-qt   \
+		     --no-package=libplplot-java --no-package=libplplot-ada0 \
+	             --no-package=libplplot-ocaml --no-package=libplplot-lua \
+	             --no-package=libplplot-d --no-package=libplplot-ada0-dev
+	dh_movefiles --package=python-plplot-qt
 	dh_movefiles --package=python-plplot
-	dh_movefiles --package=plplot-bin
-	dh_movefiles --package=libplplot9-java
+	dh_movefiles --package=libplplot-java
+	dh_movefiles --package=libplplot-ocaml
+	dh_movefiles --package=libplplot-lua
+	dh_movefiles --package=libplplot-d
 ifeq ($(BUILD_ADA),yes)
-	dh_movefiles --package=libplplot-ada
-	dh_movefiles --package=libplplot-dev usr/share/ada
-else
-	dh_movefiles --package=libplplot-dev
+	dh_movefiles --package=libplplot-ada0
+	dh_movefiles --package=libplplot-ada0-dev 
 endif
+	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=$(libpkg)
 
 install-arch-stamp: build-arch-stamp
 	dh_testdir
 	dh_testroot
 
+	# Strip bindings/octave/plplot_octave.oct as this is missed by 
+        # dh_strip.
+	strip --strip-unneeded --remove-section=.comment $(BUILD_DIR)/bindings/octave/plplot_octave.oct
+
 	( cd $(BUILD_DIR) ; \
 	  $(MAKE) DESTDIR=$(debtmp) install )
 
 	( cd $(debdoc)/plplot ; \
 	  rm -f COPYING.LIB *.dvi ; \
-	  mv ChangeLog changelog )
+	  mv ChangeLog.release changelog )
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
 
 	install -d $(debex)/perl
@@ -145,19 +160,22 @@ install-arch-stamp: build-arch-stamp
 	rm -f $(debtmp)/usr/bin/plplot-config
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
-		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
-		python-plplot plplot-bin libplplot-c++9c2 		\
-		plplot9-driver-wxwidgets                                \
-		plplot9-driver-cairo libplplot-fortran9	; do		\
+		plplot11-driver-gd plplot11-driver-xwin octave-plplot	\
+		python-plplot-qt                                        \
+		python-plplot libplplot-c++10 plplot11-driver-wxwidgets \
+		plplot11-driver-qt libplplot-java			\
+		plplot11-driver-cairo libplplot-fortran9			\
+		libplplot-ocaml libplplot-lua libplplot-d ; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
+	ln -s libqsastime0 $(debdoc)/libqsastime-dev
 
-	ln -s $(libpkg) $(debdoc)/libplplot9-java
 	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
 
 ifeq ($(BUILD_ADA),yes)
-	ln -s $(libpkg) $(debdoc)/libplplot-ada
+	ln -s $(libpkg) $(debdoc)/libplplot-ada0
+	ln -s $(libpkg) $(debdoc)/libplplot-ada0-dev
 endif
 
 	touch install-arch-stamp
@@ -174,14 +192,12 @@ install-indep-stamp: build-indep-stamp
 	touch install-indep-stamp
 
 install-python: $(PYVERS:%=install-python%)
-	( cd $(BUILD_DIR)/examples/python ; $(MAKE) DESTDIR=$(debtmp) install )
-	mv $(debex)/python $(debdoc)/$(libpkg)/examples
 	touch $@
 
 install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
-	  for d in python ; do		\
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy;/usr/lib/pyshared/python$*/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
+	  for d in python qt_gui/pyqt4 ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
 	      $(MAKE) ;					\
@@ -199,6 +215,7 @@ binary-indep: build-indep install-indep
 	dh_compress -i --exclude=.pdf
 	dh_fixperms -i
 	dh_installdeb -i
+	dh_lintian -i
 	dh_gencontrol -i
 	dh_md5sums -i
 	dh_builddeb -i
@@ -208,19 +225,22 @@ binary-arch: build-arch install-arch
 	dh_testroot -a
 	dh_installdirs -a
 
-	dh_installdocs --package=$(libpkg) --package=libcsiro0
-	dh_installchangelogs --package=$(libpkg) --package=libcsiro0
+	dh_installdocs --package=$(libpkg) --package=libcsiro0 --package=libqsastime0
+	dh_installchangelogs --package=$(libpkg) --package=libcsiro0 --package=libqsastime0
 
-	dh_pycentral --package=python-plplot
+	dh_python2 --package=python-plplot-qt --package=python-plplot
+	dh_numpy
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a
 	dh_makeshlibs -V -a
-	dh_shlibdeps -a -L $(libpkg) \
-          -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib
+	dh_shlibdeps -a --no-package=octave-plplot -L $(libpkg) \
+          -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib 
+	dpkg-shlibdeps -Tdebian/octave-plplot.substvars -S$(debbase)/$(libpkg)/usr/lib/*.so* -S/usr/lib/$(octver)/*.so* $(debbase)/octave-plplot/$(OCTDIR)/plplot_octave.oct
 	octave-depends --package=octave-plplot
 	dh_installdeb -a
-	dh_gencontrol -a
+	dh_lintian -a
+	dh_gencontrol -a -- -VF:OCamlABI="$(OCAMLABI)"
 	dh_md5sums -a
 	dh_builddeb -a
 
@@ -229,4 +249,7 @@ source diff:
 
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary config \
-        patch unpatch control
+        patch unpatch control 
+
+.NOTPARALLEL:
+
