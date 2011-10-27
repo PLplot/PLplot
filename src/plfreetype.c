@@ -136,7 +136,7 @@ void plD_render_freetype_sym( PLStream *pls, EscText *args );
 
 //  Private prototypes for use in this file only
 
-static void FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot, int x, int y, short colour );
+static void FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot, int x, int y );
 static void FT_SetFace( PLStream *pls, PLUNICODE fci );
 static PLFLT CalculateIncrement( int bg, int fg, int levels );
 
@@ -384,7 +384,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 
             FT_Load_Char( FT->face, text[i], ( FT->smooth_text == 0 ) ? FT_LOAD_MONOCHROME + FT_LOAD_RENDER : FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT );
             FT_PlotChar( pls, FT, FT->face->glyph,
-                ROUND( x / 64.0 ), ROUND( y / 64.0 ), 2 );          // render the text
+                ROUND( x / 64.0 ), ROUND( y / 64.0 ) );          // render the text
 
             x += (int) FT->face->glyph->advance.x;
             y -= (int) FT->face->glyph->advance.y;
@@ -403,7 +403,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 
 void
 FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
-             int x, int y, short colour )
+             int x, int y )
 {
     unsigned char bittest;
     short         i, k, j;
@@ -1272,7 +1272,7 @@ void plD_render_freetype_sym( PLStream *pls, EscText *args )
 //
 
     x -= (int) ( ( FT->face->glyph->advance.x >> 6 ) / 2 );
-    FT_PlotChar( pls, FT, FT->face->glyph, x, y, (short) pls->icol0 ); // render the text
+    FT_PlotChar( pls, FT, FT->face->glyph, x, y ); // render the text
 }
 
 

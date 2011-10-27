@@ -970,7 +970,7 @@ plAlloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 //--------------------------------------------------------------------------
 
 void
-plFree2dGrid( PLFLT **f, PLINT nx, PLINT ny )
+plFree2dGrid( PLFLT **f, PLINT nx, PLINT UNUSED( ny ) )
 {
     PLINT i;
 

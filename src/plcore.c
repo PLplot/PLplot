@@ -1263,7 +1263,7 @@ ucs4_to_utf8( PLUNICODE unichar, char *ptr )
 }
 
 static void
-grline( short *x, short *y, PLINT npts )
+grline( short *x, short *y, PLINT UNUSED( npts ) )
 {
     char *save_locale = plsave_set_locale();
     if ( !plsc->stream_closed )

@@ -105,7 +105,7 @@ static CONT_LINE  *currline;
 static int        cont3d = 0;
 
 static CONT_LINE *
-alloc_line( CONT_LEVEL *node )
+alloc_line( void )
 {
     CONT_LINE *line;
 
@@ -139,7 +139,7 @@ alloc_level( PLFLT level )
     }
     node->level = level;
     node->next  = NULL;
-    node->line  = alloc_line( node );
+    node->line  = alloc_line( );
 
     return node;
 }
@@ -236,7 +236,7 @@ cont_mv_store( PLFLT xx, PLFLT yy )
     {
         if ( currline->npts != 0 ) // not an empty list, allocate new
         {
-            currline->next = alloc_line( currlev );
+            currline->next = alloc_line( );
             currline       = currline->next;
         }
 
@@ -865,7 +865,7 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 //--------------------------------------------------------------------------
 
 void
-pltr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
+pltr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer UNUSED( pltr_data ) )
 {
     *tx = x;
     *ty = y;

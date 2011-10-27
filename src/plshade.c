@@ -124,10 +124,6 @@
 #include "plplotP.h"
 #include <float.h>
 
-#define MISSING_MIN_DEF      (PLFLT) 1.0
-#define MISSING_MAX_DEF      (PLFLT) -1.0
-
-
 #define NEG                  1
 #define POS                  8
 #define OK                   0
@@ -183,7 +179,6 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
              PLPointer c2eval_data,
              PLINT ( *defined )( PLFLT, PLFLT ),
-             PLFLT missing_min, PLFLT missing_max,
              PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
              PLFLT shade_min, PLFLT shade_max,
@@ -336,7 +331,7 @@ void c_plshade( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, 
     plshade_int( plf2eval1, (PLPointer) a,
         NULL, NULL,
 //	     plc2eval, (PLPointer) &cgrid,
-        defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin,
+        defined, nx, ny, xmin,
         xmax, ymin, ymax, shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -370,7 +365,7 @@ void c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, 
     plshade_int( plf2eval, ( PLPointer ) & grid,
         NULL, NULL,
 //	     plc2eval, (PLPointer) &cgrid,
-        defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin,
+        defined, nx, ny, xmin,
         xmax, ymin, ymax, shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -400,7 +395,7 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
           PLPointer pltr_data )
 {
     plshade_int( f2eval, f2eval_data, c2eval, c2eval_data,
-        NULL, MISSING_MIN_DEF, MISSING_MAX_DEF,
+        NULL, 
         nx, ny, xmin, xmax, ymin, ymax,
         shade_min, shade_max, sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -433,7 +428,7 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
     plshade_int( zops->f2eval, zp,
         NULL, NULL,
 //	     plc2eval, (PLPointer) &cgrid,
-        defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin,
+        defined, nx, ny, xmin,
         xmax, ymin, ymax, shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -451,19 +446,10 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 //
 // 4/95
 //
-// new: missing_min, missing_max
-//
-//     if data <= missing_max and data >= missing_min
-//       then the data will beconsidered to be missing
-//     this allows 2nd way to set undefined points (good for ftn)
-//     if missing feature is not used, set missing_max < missing_min
-//
 // parameters:
 //
 // f2eval, f2eval_data:  data to plot
-// c2eval, c2eval_data:  defined mask (not implimented)
 // defined: defined mask (old API - implimented)
-// missing_min, missing_max: yet another way to set data to undefined
 // nx, ny: array dimensions
 // xmin, xmax, ymin, ymax: grid coordinates
 // shade_min, shade_max: shade region with values between ...
@@ -482,10 +468,9 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 static void
 plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              PLPointer f2eval_data,
-             PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
-             PLPointer c2eval_data,
+             PLFLT ( * c2eval )( PLINT, PLINT, PLPointer ), // unused, but macro doesn't work
+             PLPointer UNUSED( c2eval_data ),
              PLINT ( *defined )( PLFLT, PLFLT ),
-             PLFLT missing_min, PLFLT missing_max,
              PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
              PLFLT shade_min, PLFLT shade_max,
@@ -501,6 +486,8 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     PLFLT *a, *a0, *a1, dx, dy;
     PLFLT x[8], y[8], xp[2], tx, ty;
     int   *c, *c0, *c1;
+
+    (void) c2eval;   // Cast to void to silence compiler warning about unused parameter
 
     if ( plsc->level < 3 )
     {
@@ -1251,7 +1238,7 @@ draw_boundary( PLINT slope, PLFLT *x, PLFLT *y )
 #define RATIO_SQ          6.0
 
 static PLINT
-plctest( PLFLT *x, PLFLT level )
+plctest( PLFLT *x, PLFLT UNUSED( level ) )
 {
     int    i, j;
     double t[4], sorted[4], temp;

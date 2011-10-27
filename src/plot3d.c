@@ -969,7 +969,7 @@ void
 plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
              PLINT nx, PLINT ny, PLINT opt,
              const PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
+             PLINT UNUSED( ixstart ), PLINT UNUSED( ixn ), const PLINT * UNUSED( indexymin ), const PLINT * UNUSED( indexymax ) )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, ix, iy, color, width;

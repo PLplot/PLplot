@@ -782,7 +782,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 static void
 plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
         PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
-        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits )
+        PLFLT tick, PLINT nsub, PLINT UNUSED( nolast ), PLINT *digits )
 {
     static char string[STRING_LEN];
     PLINT       lb, ld, lf, li, ll, ln, ls, lt, lu, lo;
@@ -2369,13 +2369,13 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
 // potential exposure in the PLplot API.
 //
 //--------------------------------------------------------------------------
-void plP_default_label_log( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
+void plP_default_label_log( PLINT UNUSED( axis ), PLFLT value, char *string, PLINT len, void * UNUSED( data ) )
 {
     // Exponential, i.e. 10^-1, 10^0, 10^1, etc
     snprintf( string, (size_t) len, "10#u%d", (int) ROUND( value ) );
 }
 
-void plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
+void plP_default_label_log_fixed( PLINT UNUSED( axis ), PLFLT value, char *string, PLINT len, void * UNUSED( data ) )
 {
     // Fixed point, i.e. .1, 1, 10, etc
 
@@ -2394,7 +2394,7 @@ void plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT l
     }
 }
 
-void plP_default_label( PLINT axis, PLFLT value, char *string, PLINT len, void *data )
+void plP_default_label( PLINT UNUSED( axis ), PLFLT value, char *string, PLINT len, void *data )
 {
     PLINT  scale, prec;
     PLINT  setpre, precis;

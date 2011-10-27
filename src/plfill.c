@@ -423,7 +423,7 @@ tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
 }
 
 void
-buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
+buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT UNUSED( xp3 ), PLINT yp3,
            PLINT dinc )
 {
     PLINT min_y, max_y;
