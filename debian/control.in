@@ -64,11 +64,11 @@ Description: Scientific plotting library (development files)
  .
  This package contains all that is needed for doing development in C, C++
  and Fortran with PLplot.  Examples of programs for these languages are
- also included.  For development in Tcl/Tk, Python, Octave, and Java install
- the plplot-tcl-dev, python-plplot, octave-plplot and libplplot-java packages,
- respectively. This package also includes the OCaml, lua and D examples. To use
- one of these languages you will also need to install the libplplot-xxx package
- for that language.
+ also included.  For development in Tcl/Tk, Python, Octave, Ada and Java 
+ install the plplot-tcl-dev, python-plplot, octave-plplot, libplplot-ada0-dev
+ and libplplot-java packages, respectively. This package also includes the 
+ OCaml, lua and D examples. To use one of these languages you will also 
+ need to install the libplplot-xxx package for that language.
 
 Package: libplplot-c++10
 Architecture: any
