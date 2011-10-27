@@ -48,13 +48,13 @@
 // Some wrapper macros to return (-1) on error
 
 // Note we use %lu and an explicit cast to unsigned long to print size_t pointers.
-// C99 adds %zd as an explicit format specifier for size_t but this is not yet 
-// fully adopted. 
+// C99 adds %zd as an explicit format specifier for size_t but this is not yet
+// fully adopted.
 
-#define plr_rd( code )                                                            \
-    if ( code ) { fprintf( stderr,                                                \
-                      "Unable to read from %s in %s at line %d, bytecount %lu\n", \
-                      plr->iodev->typeName, __FILE__, __LINE__, (unsigned long) plr->pdfs->bp );  \
+#define plr_rd( code )                                                                           \
+    if ( code ) { fprintf( stderr,                                                               \
+                      "Unable to read from %s in %s at line %d, bytecount %lu\n",                \
+                      plr->iodev->typeName, __FILE__, __LINE__, (unsigned long) plr->pdfs->bp ); \
                   return -1; }
 
 #define plr_cmd( code ) \
