@@ -39,6 +39,7 @@ EXEEXT = @EXEEXT@
 @extcairo_true@@pkg_config_true@	ext-cairo-test$(EXEEXT)
 
 EXECUTABLES_list = \
+		 x00c$(EXEEXT) \
 		 x01c$(EXEEXT) \
 		 x02c$(EXEEXT) \
 		 x03c$(EXEEXT) \
