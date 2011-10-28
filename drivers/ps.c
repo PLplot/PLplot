@@ -96,6 +96,9 @@ static void ps_dispatch_init_helper( PLDispatchTable *pdt,
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr = menustr;
     pdt->pl_DevName = devnam;
+#else
+    (void) menustr;   // Cast to void to silence compiler warnings about unused parameters
+    (void) devnam;
 #endif
     pdt->pl_type     = type;
     pdt->pl_seq      = seq;

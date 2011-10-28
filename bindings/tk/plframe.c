@@ -356,7 +356,7 @@ static void  UpdateHScrollbar( register PlFrame * );
 //
 
 int
-plFrameCmd( ClientData clientData, Tcl_Interp *interp,
+plFrameCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
             int argc, const char **argv )
 {
     Tk_Window        new;
@@ -1131,7 +1131,7 @@ PlFrameEnterEH( ClientData clientData, register XEvent *eventPtr )
 //--------------------------------------------------------------------------
 
 static void
-PlFrameLeaveEH( ClientData clientData, register XEvent *eventPtr )
+PlFrameLeaveEH( ClientData clientData, register XEvent * UNUSED( eventPtr ) )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 
@@ -1946,6 +1946,8 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
         }
         fprintf( stderr, "\n" );
     }
+#else
+    (void) argc;       // Cast to void to suppress compiler warning about unused parameter
 #endif
 
 // Make sure widget has been initialized before going any further
@@ -2613,7 +2615,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Closelink( Tcl_Interp *interp, register PlFrame *plFramePtr,
-           int argc, const char **argv )
+           int UNUSED( argc ), const char ** UNUSED( argv ) )
 {
     register PLRDev  *plr   = plFramePtr->plr;
     register PLiodev *iodev = plr->iodev;
@@ -2787,7 +2789,7 @@ Orient( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
-       int argc, const char **argv )
+       int UNUSED( argc ), const char ** UNUSED( argv ) )
 {
     PLINT ipls;
     int   result = TCL_OK;
@@ -2921,8 +2923,8 @@ Page( Tcl_Interp *interp, register PlFrame *plFramePtr,
 //--------------------------------------------------------------------------
 
 static int
-Redraw( Tcl_Interp *interp, register PlFrame *plFramePtr,
-        int argc, const char **argv )
+Redraw( Tcl_Interp *UNUSED( interp ), register PlFrame *plFramePtr,
+        int UNUSED( argc ), const char ** UNUSED( argv ) )
 {
     dbug_enter( "Redraw" );
 
@@ -3317,7 +3319,7 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
 //--------------------------------------------------------------------------
 
 static void
-process_bop( void *clientData, int *skip_driver_bop )
+process_bop( void *clientData, int * UNUSED( skip_driver_bop ) )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 
@@ -3332,7 +3334,7 @@ process_bop( void *clientData, int *skip_driver_bop )
 //--------------------------------------------------------------------------
 
 static void
-process_eop( void *clientData, int *skip_driver_eop )
+process_eop( void *clientData, int * UNUSED( skip_driver_eop ) )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 

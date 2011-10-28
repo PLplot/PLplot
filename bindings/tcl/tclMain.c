@@ -48,8 +48,9 @@
 // RCS: @(#) $Id$
 //
 
-#include <tcl.h>
-#include "plplot.h"
+#include "pltcl.h"
+// Required for definition of UNUSED macro
+#include "plplotP.h"
 
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 5
 // From (private) tclInt.h in tcl8.5
@@ -94,6 +95,10 @@ static const char *tclStartupScriptFileName = NULL;
 
 static void
 plPrepOutputHandler( Tcl_Interp *interp, int code, int tty );
+
+// Other functio prototypes
+void TclSetStartupScriptFileName( char *fileName );
+const char *TclGetStartupScriptFileName( void );
 
 // These are globally visible and can be replaced
 
@@ -218,7 +223,7 @@ const char *TclGetStartupScriptFileName( void )
 //
 
 int PLDLLEXPORT
-pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
+pltclMain( int argc, const char **argv, char * UNUSED( RcFileName ) /* OBSOLETE */,
            int ( *appInitProc )( Tcl_Interp *interp ) )
 {
     Tcl_Obj     *resultPtr;
@@ -507,7 +512,7 @@ done:
 //
 
 static void
-plPrepOutputHandler( Tcl_Interp *interp, int code, int tty )
+plPrepOutputHandler( Tcl_Interp *UNUSED( interp ), int UNUSED( code ), int UNUSED( tty ) )
 {
     pltext();
 }

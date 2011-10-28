@@ -471,9 +471,7 @@ error:
 
 // ARGSUSED
 static void
-StdinProc( clientData, mask )
-ClientData clientData;                  // Not used.
-int mask;                               // Not used.
+StdinProc( ClientData UNUSED( clientData ),  int UNUSED( mask ) )
 {
 #define BUFFER_SIZE    4000
     char       input[BUFFER_SIZE + 1];

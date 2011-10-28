@@ -300,7 +300,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
     }
 
     size_t index = event.GetId() - wxPL_Save;
-    if ( ( index >= 0 ) && ( index < sizeof ( dev_entries ) / sizeof ( dev_entry ) ) )
+    if ( ( event.GetId() >=  wxPL_Save ) && ( index < sizeof ( dev_entries ) / sizeof ( dev_entry ) ) )
     {
         int  width   = 800;
         int  height  = 600;
@@ -412,6 +412,8 @@ bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int wid
         else if ( !strcmp( devname, "wxpnm" ) )
             type = wxBITMAP_TYPE_PNM;
 #endif
+        else
+            type = wxBITMAP_TYPE_BMP;
         bool status = bitmap.SaveFile( wxString( filename, *wxConvCurrent ), type );
 
         if ( !status )

@@ -265,7 +265,7 @@ void PLWIND( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
 void PLXORMOD( PLBOOL *mode, PLBOOL *status );
 
 static void
-pltransformf2c( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data )
+pltransformf2c( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer UNUSED( data ) )
 {
     ( *pltransform )( &x, &y, tx, ty );
 }
@@ -519,7 +519,7 @@ PLGCOMPRESSION( PLINT *compression )
 }
 
 void
-PLGDEV7( char *dev, int length )
+PLGDEV7( char *dev, int UNUSED( length ) )
 {
     c_plgdev( dev );
 }
@@ -564,7 +564,7 @@ PLGFCI( PLUNICODE *pfci )
 }
 
 void
-PLGFNAM7( char *fnam, int length )
+PLGFNAM7( char *fnam, int UNUSED( length ) )
 {
     c_plgfnam( fnam );
 }
@@ -754,7 +754,7 @@ PLLAB7( const char *xlab, const char *ylab, const char *title )
 }
 
 static void
-pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data )
+pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer UNUSED( data ) )
 {
     int i;
 
@@ -1243,14 +1243,14 @@ PLSLABELFUNC_ONa( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT *
 }
 
 void
-PLSLABELFUNC_OFF( PLINT *dummy )
+PLSLABELFUNC_OFF( PLINT * UNUSED( dummy ) )
 {
     pllabelfunc = NULL;
     c_plslabelfunc( NULL, NULL );
 }
 
 void
-PLSLABELFUNC_OFFa( PLINT *dummy )
+PLSLABELFUNC_OFFa( PLINT * UNUSED( dummy ) )
 {
     pllabelfunc = NULL;
     c_plslabelfunc( NULL, NULL );
@@ -1364,7 +1364,7 @@ PLSTRANSFORM1( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFLT
 }
 
 void
-PLSTRANSFORM2( PLINT *dummy )
+PLSTRANSFORM2( PLINT * UNUSED( dummy ) )
 {
     pltransform = NULL;
 

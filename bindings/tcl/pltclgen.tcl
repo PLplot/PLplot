@@ -187,7 +187,7 @@ proc process_pltclcmd {cmd rtype} {
                             puts $GENFILE "    $argname($i) = atoi(argv\[1+$i\]);"
                         }
                         "PLUNICODE" {
-                            puts $GENFILE "    $argname($i) = strtoul(argv\[1+$i\],NULL,10);"
+                            puts $GENFILE "    $argname($i) = (PLUNICODE) strtoul(argv\[1+$i\],NULL,10);"
                         }
                         "unsigned int" {
                             puts $GENFILE "    $argname($i) = (unsigned int) strtoul(argv\[1+$i\],NULL,10);"

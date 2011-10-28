@@ -71,6 +71,7 @@ static int plimagefrCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plstripcCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plslabelfuncCmd( ClientData, Tcl_Interp *, int, const char ** );
 void mapform( PLINT n, PLFLT *x, PLFLT *y );
+void labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer data );
 PLFLT tclMatrix_feval( PLINT i, PLINT j, PLPointer p );
 
 //
@@ -206,7 +207,7 @@ Append_Cmdlist( Tcl_Interp *interp )
 //--------------------------------------------------------------------------
 
 static void
-plTclCmd_Init( Tcl_Interp *interp )
+plTclCmd_Init( Tcl_Interp * UNUSED( interp ) )
 {
     register Command *cmdPtr;
     register CmdInfo *cmdInfoPtr;
@@ -328,7 +329,7 @@ plTclCmd( char *cmdlist, Tcl_Interp *interp, int argc, const char **argv )
 //--------------------------------------------------------------------------
 
 static int
-loopbackCmd( ClientData clientData, Tcl_Interp *interp,
+loopbackCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
              int argc, const char **argv )
 {
     register Tcl_HashEntry *hPtr;
@@ -623,7 +624,7 @@ environment variable PL_LIBRARY to the directory containing that file",
 //--------------------------------------------------------------------------
 
 int
-plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, const char **argv )
+plWait_Until( ClientData UNUSED( clientData ), Tcl_Interp *interp, int UNUSED( argc ), const char **argv )
 {
     int result = 0;
 
@@ -862,7 +863,7 @@ PLFLT tclMatrix_feval( PLINT i, PLINT j, PLPointer p )
 }
 
 static int
-plcontCmd( ClientData clientData, Tcl_Interp *interp,
+plcontCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
            int argc, const char *argv[] )
 {
     tclMatrix  *matPtr, *matf, *matclev;
@@ -1198,7 +1199,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 // plvect implementation (based on plcont above)
 //--------------------------------------------------------------------------
 static int
-plvectCmd( ClientData clientData, Tcl_Interp *interp,
+plvectCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
            int argc, const char *argv[] )
 {
     tclMatrix  *matPtr, *matu, *matv;
@@ -1542,7 +1543,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plmeshCmd( ClientData clientData, Tcl_Interp *interp,
+plmeshCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
            int argc, const char *argv[] )
 {
     PLINT     nx, ny, opt;
@@ -1680,7 +1681,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
+plmeshcCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
             int argc, const char *argv[] )
 {
     PLINT     nx, ny, opt, nlev = 10;
@@ -1916,7 +1917,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plot3dCmd( ClientData clientData, Tcl_Interp *interp,
+plot3dCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
            int argc, const char *argv[] )
 {
     PLINT     nx, ny, opt, side;
@@ -2056,7 +2057,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
+plot3dcCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
             int argc, const char *argv[] )
 {
     PLINT     nx, ny, opt, nlev = 10;
@@ -2295,7 +2296,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
+plsurf3dCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
              int argc, const char *argv[] )
 {
     PLINT     nx, ny, opt, nlev = 10;
@@ -2522,7 +2523,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plranddCmd( ClientData clientData, Tcl_Interp *interp,
+plranddCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
             int argc, const char **argv )
 {
     if ( argc != 1 )
@@ -2545,7 +2546,7 @@ plranddCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plsetoptCmd( ClientData clientData, Tcl_Interp *interp,
+plsetoptCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
              int argc, const char **argv )
 {
     if ( argc < 2 || argc > 3 )
@@ -2579,15 +2580,15 @@ plsetoptCmd( ClientData clientData, Tcl_Interp *interp,
 // wrapping specifier, as in plcont.  So the new command looks like:
 //
 // *INDENT-OFF*
-//      plshade z xmin xmax ymin ymax \
-//          sh_min sh_max sh_cmap sh_color sh_width \
-//          min_col min_wid max_col max_wid \
+//      plshade z xmin xmax ymin ymax 
+//          sh_min sh_max sh_cmap sh_color sh_width 
+//          min_col min_wid max_col max_wid 
 //          rect [[pltr x y] | NULL ] [wrap]
 // *INDENT-ON*
 //--------------------------------------------------------------------------
 
 static int
-plshadeCmd( ClientData clientData, Tcl_Interp *interp,
+plshadeCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
             int argc, const char *argv[] )
 {
     tclMatrix  *matPtr, *matz, *mattrx = NULL, *mattry = NULL;
@@ -2901,14 +2902,14 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 // So the new command looks like:
 //
 // *INDENT-OFF*
-//      plshades z xmin xmax ymin ymax \
-//          clevel, fill_width, cont_color, cont_width\
+//      plshades z xmin xmax ymin ymax 
+//          clevel, fill_width, cont_color, cont_width
 //          rect [[pltr x y] | NULL] [wrap]
 // *INDENT-ON*
 //--------------------------------------------------------------------------
 
 static int
-plshadesCmd( ClientData clientData, Tcl_Interp *interp,
+plshadesCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
              int argc, const char *argv[] )
 {
     tclMatrix  *matPtr, *matz, *mattrx = NULL, *mattry = NULL;
@@ -3294,7 +3295,7 @@ mapform( PLINT n, PLFLT *x, PLFLT *y )
 //--------------------------------------------------------------------------
 
 static int
-plmapCmd( ClientData clientData, Tcl_Interp *interp,
+plmapCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
           int argc, const char *argv[] )
 {
     PLFLT minlong, maxlong, minlat, maxlat;
@@ -3361,7 +3362,7 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static int
-plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
+plmeridiansCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
                 int argc, const char *argv[] )
 {
     PLFLT dlong, dlat, minlong, maxlong, minlat, maxlat;
@@ -3431,7 +3432,7 @@ static const char *tcl_xform_template =
 static char *tcl_xform_code = 0;
 
 static void
-Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer UNUSED( data ) )
 {
     Tcl_Obj *objx, *objy;
     int     code;
@@ -3491,7 +3492,7 @@ Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 //--------------------------------------------------------------------------
 
 static int
-plstransformCmd( ClientData clientData, Tcl_Interp *interp,
+plstransformCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
                  int argc, const char *argv[] )
 {
     if ( argc == 1
@@ -3509,7 +3510,6 @@ plstransformCmd( ClientData clientData, Tcl_Interp *interp,
     else
     {
         size_t     len;
-        const char *data = argc > 2 ? argv[2] : 0;
 
         tcl_xform_interp   = interp;
         tcl_xform_procname = plstrdup( argv[1] );
@@ -3530,7 +3530,7 @@ plstransformCmd( ClientData clientData, Tcl_Interp *interp,
 // Processes plgriddata Tcl command.
 //--------------------------------------------------------------------------
 static int
-plgriddataCmd( ClientData clientData, Tcl_Interp *interp,
+plgriddataCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
                int argc, const char *argv[] )
 {
     tclMatrix *arrx, *arry, *arrz, *xcoord, *ycoord, *zvalue;
@@ -3630,7 +3630,7 @@ two-dimensional matrix - ", argv[6], (char *) NULL );
 // Processes plimage Tcl command.
 //--------------------------------------------------------------------------
 static int
-plimageCmd( ClientData clientData, Tcl_Interp *interp,
+plimageCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
             int argc, const char *argv[] )
 {
     tclMatrix *zvalue;
@@ -3706,7 +3706,7 @@ two-dimensional matrix - ", argv[1], (char *) NULL );
 // Very basic! No user-defined interpolation routines
 //--------------------------------------------------------------------------
 static int
-plimagefrCmd( ClientData clientData, Tcl_Interp *interp,
+plimagefrCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
               int argc, const char *argv[] )
 {
     tclMatrix *zvalue;
@@ -3820,7 +3820,7 @@ two-dimensional matrix - ", argv[11], (char *) NULL );
 // Processes plstripc Tcl command.
 //--------------------------------------------------------------------------
 static int
-plstripcCmd( ClientData clientData, Tcl_Interp *interp,
+plstripcCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
              int argc, const char *argv[] )
 {
     int        i;
@@ -3930,7 +3930,7 @@ static Tcl_Obj *label_objs[4] = { NULL, NULL, NULL, NULL };   // Arguments for t
                                                               // that handles the custom labels
 
 void
-labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer data )
+labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer UNUSED( data ) )
 {
     int objc;
 
@@ -3972,7 +3972,7 @@ labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer
 //--------------------------------------------------------------------------
 
 static int
-plslabelfuncCmd( ClientData clientData, Tcl_Interp *interp,
+plslabelfuncCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
                  int argc, const char *argv[] )
 {
     if ( argc < 2 || argc > 3 )
@@ -4120,7 +4120,7 @@ static char **argv_to_chars( Tcl_Interp *interp, const char *list_strings, int *
 }
 
 static int
-pllegendCmd( ClientData clientData, Tcl_Interp *interp,
+pllegendCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
              int argc, const char *argv[] )
 {
     PLFLT   legend_width, legend_height;

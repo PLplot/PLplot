@@ -38,6 +38,7 @@
 
 #define NEED_PLDEBUG
 #include "plserver.h"
+#include "plplot_parameters.h"
 
 // Application-specific command-line options
 // Variable declarations
@@ -251,7 +252,7 @@ AppInit( Tcl_Interp *interp )
 //--------------------------------------------------------------------------
 
 static int
-plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
+plExitCmd( ClientData UNUSED ( clientData ), Tcl_Interp *interp, int argc, char **argv )
 {
     int value = 0;
 

@@ -316,6 +316,7 @@ PLINT wxPLDevDC::GetPixel( short x, short y )
     // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
     // always to the background color, since this is the case anyway 99% of the time.
     PLINT bgr, bgg, bgb;           // red, green, blue
+    (void) x;  (void) y;           // Cast to void to silence compiler warnings about unused parameters
     plgcolbg( &bgr, &bgg, &bgb );  // get background color information
     return RGB( bgr, bgg, bgb );
 #else

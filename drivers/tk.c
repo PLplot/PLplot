@@ -1691,7 +1691,7 @@ flush_output( PLStream *pls )
 //--------------------------------------------------------------------------
 
 static int
-Abort( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
+Abort( ClientData clientData, Tcl_Interp *UNUSED( interp ), int UNUSED( argc ), char **UNUSED( argv ) )
 {
     PLStream *pls = (PLStream *) clientData;
 
@@ -2127,7 +2127,7 @@ Locate( PLStream *pls )
 //--------------------------------------------------------------------------
 
 static int
-pltk_toplevel( Tk_Window *w, Tcl_Interp *interp )
+pltk_toplevel( Tk_Window *UNUSED( w ), Tcl_Interp *interp )
 {
     static char wcmd[] = "wm withdraw .";
 

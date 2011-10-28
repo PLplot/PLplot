@@ -78,6 +78,8 @@ void Log_Verbose( const char *fmt, ... )
     fprintf( stderr, "\n" );
     va_end( args );
     fflush( stderr );
+#else 
+    (void) fmt;        // Cast to void to silence compiler warnings about unused paraemeter
 #endif
 }
 
@@ -97,6 +99,8 @@ void Log_Debug( const char *fmt, ... )
     fprintf( stderr, "\n" );
     va_end( args );
     fflush( stderr );
+#else 
+    (void) fmt;        // Cast to void to silence compiler warnings about unused paraemeter
 #endif
 }
 
@@ -1129,8 +1133,6 @@ static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y )
 static void init_freetype_lv1( PLStream *pls )
 {
     // Log_Verbose( "init_freetype_lv1" );
-
-    wxPLDevBase *dev = (wxPLDevBase *) pls->dev;
 
     plD_FreeType_init( pls );
 
