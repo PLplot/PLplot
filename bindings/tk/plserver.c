@@ -252,7 +252,7 @@ AppInit( Tcl_Interp *interp )
 //--------------------------------------------------------------------------
 
 static int
-plExitCmd( ClientData PL_UNUSED ( clientData ), Tcl_Interp *interp, int argc, char **argv )
+plExitCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp, int argc, char **argv )
 {
     int value = 0;
 

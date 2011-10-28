@@ -395,7 +395,7 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
           PLPointer pltr_data )
 {
     plshade_int( f2eval, f2eval_data, c2eval, c2eval_data,
-        NULL, 
+        NULL,
         nx, ny, xmin, xmax, ymin, ymax,
         shade_min, shade_max, sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,

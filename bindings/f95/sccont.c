@@ -623,7 +623,7 @@ PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
 }
 
 void
-PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined) ,
+PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
            PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
            PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
            PLINT *cont_color, PLINT *cont_width, PLFLT *ftr, PLINT *lx )

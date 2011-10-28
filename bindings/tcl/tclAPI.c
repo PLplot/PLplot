@@ -2580,9 +2580,9 @@ plsetoptCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 // wrapping specifier, as in plcont.  So the new command looks like:
 //
 // *INDENT-OFF*
-//      plshade z xmin xmax ymin ymax 
-//          sh_min sh_max sh_cmap sh_color sh_width 
-//          min_col min_wid max_col max_wid 
+//      plshade z xmin xmax ymin ymax
+//          sh_min sh_max sh_cmap sh_color sh_width
+//          min_col min_wid max_col max_wid
 //          rect [[pltr x y] | NULL ] [wrap]
 // *INDENT-ON*
 //--------------------------------------------------------------------------
@@ -2902,7 +2902,7 @@ plshadeCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 // So the new command looks like:
 //
 // *INDENT-OFF*
-//      plshades z xmin xmax ymin ymax 
+//      plshades z xmin xmax ymin ymax
 //          clevel, fill_width, cont_color, cont_width
 //          rect [[pltr x y] | NULL] [wrap]
 // *INDENT-ON*
@@ -3509,7 +3509,7 @@ plstransformCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
     else
     {
-        size_t     len;
+        size_t len;
 
         tcl_xform_interp   = interp;
         tcl_xform_procname = plstrdup( argv[1] );

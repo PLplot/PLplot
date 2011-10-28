@@ -300,7 +300,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
     }
 
     size_t index = event.GetId() - wxPL_Save;
-    if ( ( event.GetId() >=  wxPL_Save ) && ( index < sizeof ( dev_entries ) / sizeof ( dev_entry ) ) )
+    if ( ( event.GetId() >= wxPL_Save ) && ( index < sizeof ( dev_entries ) / sizeof ( dev_entry ) ) )
     {
         int  width   = 800;
         int  height  = 600;

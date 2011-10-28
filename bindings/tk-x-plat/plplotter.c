@@ -1721,7 +1721,7 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     char     c3;
     int      result    = TCL_OK;
     char     cmdlist[] = "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
-    char *   argv_cp;
+    char     * argv_cp;
 
 #ifdef DEBUG
     if ( pls->debug )
@@ -1837,7 +1837,7 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         for ( i = 0; i < pls->ncol0; i++ )
         {
             argv_cp = plstrdup( argv[2 + i] );
-            col = strtok( argv_cp , " " );
+            col     = strtok( argv_cp, " " );
             if ( col == NULL )
                 break;
 
@@ -1867,9 +1867,9 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         }
 
         argv_cp = plstrdup( argv[2] );
-        col = strtok( argv_cp, " " );
-        pos = strtok( NULL, " " );
-        rev = strtok( NULL, " " );
+        col     = strtok( argv_cp, " " );
+        pos     = strtok( NULL, " " );
+        rev     = strtok( NULL, " " );
         for ( i = 0; i < ncp1; i++ )
         {
             if ( col == NULL )

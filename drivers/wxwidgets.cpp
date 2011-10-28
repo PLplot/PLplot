@@ -78,7 +78,7 @@ void Log_Verbose( const char *fmt, ... )
     fprintf( stderr, "\n" );
     va_end( args );
     fflush( stderr );
-#else 
+#else
     (void) fmt;        // Cast to void to silence compiler warnings about unused paraemeter
 #endif
 }
@@ -99,7 +99,7 @@ void Log_Debug( const char *fmt, ... )
     fprintf( stderr, "\n" );
     va_end( args );
     fflush( stderr );
-#else 
+#else
     (void) fmt;        // Cast to void to silence compiler warnings about unused paraemeter
 #endif
 }
