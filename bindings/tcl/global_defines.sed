@@ -16,14 +16,13 @@
 //  This file contains a function to set the various global variables\
 //  used by PLplot\
 \
-static void set_plplot_parameters( Tcl_Interp *interp ) {\
-\
+static void set_plplot_parameters( Tcl_Interp *interp )\
+{\
     Tcl_Eval( interp, "namespace eval ::PLPLOT { \\n\\
 
 # Append text at the end:
 $ a\
 }" );\
-\
 }
 # Drop every line that is not a #define
 /^#define/! d
@@ -48,4 +47,3 @@ $ a\
 \\n\\\
 \\n\\\
 variable PL_PI 3.1415926535897932384\\n\\
-
