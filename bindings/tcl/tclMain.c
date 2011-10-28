@@ -49,7 +49,7 @@
 //
 
 #include "pltcl.h"
-// Required for definition of UNUSED macro
+// Required for definition of PL_UNUSED macro
 #include "plplotP.h"
 
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 5
@@ -223,7 +223,7 @@ const char *TclGetStartupScriptFileName( void )
 //
 
 int PLDLLEXPORT
-pltclMain( int argc, const char **argv, char * UNUSED( RcFileName ) /* OBSOLETE */,
+pltclMain( int argc, const char **argv, char * PL_UNUSED( RcFileName ) /* OBSOLETE */,
            int ( *appInitProc )( Tcl_Interp *interp ) )
 {
     Tcl_Obj     *resultPtr;
@@ -512,7 +512,7 @@ done:
 //
 
 static void
-plPrepOutputHandler( Tcl_Interp *UNUSED( interp ), int UNUSED( code ), int UNUSED( tty ) )
+plPrepOutputHandler( Tcl_Interp *PL_UNUSED( interp ), int PL_UNUSED( code ), int PL_UNUSED( tty ) )
 {
     pltext();
 }

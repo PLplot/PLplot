@@ -89,7 +89,7 @@ void setup_plot_drawable( App *a )
 }
 //--------------------------------------------------------------------------
 
-static gint ev_plotwindow_conf( GtkWidget *widget, GdkEventConfigure *ev, gpointer *data )
+static gint ev_plotwindow_conf( GtkWidget *widget, GdkEventConfigure * PL_UNUSED( ev ), gpointer * PL_UNUSED( data ) )
 {
   #if TO_PIXMAP == 1
     // Allocate pixmap
@@ -107,12 +107,14 @@ static gint ev_plotwindow_conf( GtkWidget *widget, GdkEventConfigure *ev, gpoint
     // the pixmap is now realised (the window widget isn't).
     //
     setup_plot_drawable( &app );
+  #else
+    (void) widget;     // Cast to void to silence compiler warning about unused parameter
   #endif
 
     return ( TRUE );
 }
 
-static gint ev_plotwindow_expose( GtkWidget *widget, GdkEventExpose *ev, gpointer *data )
+static gint ev_plotwindow_expose( GtkWidget *widget, GdkEventExpose *ev, gpointer * PL_UNUSED( data ) )
 {
   #if TO_PIXMAP == 1
     // Dump the cached plot (created in the conf handler) to the window from
@@ -123,6 +125,8 @@ static gint ev_plotwindow_expose( GtkWidget *widget, GdkEventExpose *ev, gpointe
         app.plotwindow_pixmap, ev->area.x, ev->area.y, ev->area.x, ev->area.y,
         ev->area.width, ev->area.height );
   #else
+    (void) widget;     // Cast to void to silence compiler warning about unused parameter
+    (void) ev;
     // If drawing direct to an X Window, ensure GTK's double buffering
     // is turned off for that window or else the plot will be overridden
     // when the buffer is dumped to the screen.

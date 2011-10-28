@@ -39,14 +39,14 @@ RETSIGTYPE catch_segv( int sig );
 
 // SEGV signal handler
 RETSIGTYPE
-catch_segv( int UNUSED( sig ) )
+catch_segv( int PL_UNUSED( sig ) )
 {
     fprintf( stderr, "libltdl error: %s\n", lt_dlerror() );
     exit( 1 );
 }
 
 int
-main( int UNUSED( argc ), char* argv[] )
+main( int PL_UNUSED( argc ), char* argv[] )
 {
     lt_dlhandle dlhand;
     char        sym[SYM_LEN];

@@ -373,7 +373,7 @@ void plD_tidy_svg( PLStream *pls )
 // PLStream for each element that is drawn.
 //--------------------------------------------------------------------------
 
-void plD_state_svg( PLStream *UNUSED( pls ), PLINT UNUSED( op ) )
+void plD_state_svg( PLStream *PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 {
 }
 

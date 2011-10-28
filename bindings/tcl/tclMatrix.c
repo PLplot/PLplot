@@ -40,7 +40,6 @@
 #include <string.h>
 #include "pldll.h"
 #include "tclMatrix.h"
-#include "plplotP.h"   // Required for definition of UNUSED macro
 
 // Cool math macros
 
@@ -121,7 +120,7 @@ MatrixGet_i( ClientData clientData, Tcl_Interp* interp, int index, char *string 
 //--------------------------------------------------------------------------
 
 int
-Tcl_MatrixCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
+Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
                int argc, const char **argv )
 {
     register tclMatrix *matPtr;
@@ -957,7 +956,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 
 static void
-MatrixPut_f( ClientData clientData, Tcl_Interp* UNUSED( interp ), int index, const char *string )
+MatrixPut_f( ClientData clientData, Tcl_Interp* PL_UNUSED( interp ), int index, const char *string )
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
@@ -975,7 +974,7 @@ MatrixGet_f( ClientData clientData, Tcl_Interp* interp, int index, char *string 
 }
 
 static void
-MatrixPut_i( ClientData clientData, Tcl_Interp* UNUSED( interp ), int index, const char *string )
+MatrixPut_i( ClientData clientData, Tcl_Interp* PL_UNUSED( interp ), int index, const char *string )
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
@@ -988,7 +987,7 @@ MatrixPut_i( ClientData clientData, Tcl_Interp* UNUSED( interp ), int index, con
 }
 
 static void
-MatrixGet_i( ClientData clientData, Tcl_Interp* UNUSED( interp ), int index, char *string )
+MatrixGet_i( ClientData clientData, Tcl_Interp* PL_UNUSED( interp ), int index, char *string )
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
@@ -1012,7 +1011,7 @@ MatrixGet_i( ClientData clientData, Tcl_Interp* UNUSED( interp ), int index, cha
 
 static char *
 DeleteMatrixVar( ClientData clientData,
-                 Tcl_Interp * UNUSED( interp ), char * UNUSED( name1 ), char * UNUSED( name2 ), int UNUSED( flags ) )
+                 Tcl_Interp * PL_UNUSED( interp ), char * PL_UNUSED( name1 ), char * PL_UNUSED( name2 ), int PL_UNUSED( flags ) )
 {
     tclMatrix   *matPtr = (tclMatrix *) clientData;
     Tcl_CmdInfo infoPtr;

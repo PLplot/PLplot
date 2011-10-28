@@ -510,7 +510,7 @@ void plD_tidy_cairo( PLStream *pls )
 // PLStream for each element that is drawn.
 //--------------------------------------------------------------------------
 
-void plD_state_cairo( PLStream * UNUSED( pls ), PLINT UNUSED( op ) )
+void plD_state_cairo( PLStream * PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 {
 }
 
@@ -2517,7 +2517,7 @@ void plD_dispatch_init_memcairo( PLDispatchTable *pdt )
 // Set up for the next page.
 //--------------------------------------------------------------------------
 
-void plD_bop_memcairo( PLStream * UNUSED( pls ) )
+void plD_bop_memcairo( PLStream * PL_UNUSED( pls ) )
 {
     // nothing to do here (we want to preserve the memory as it is)
 }
@@ -2823,7 +2823,7 @@ void plD_bop_extcairo( PLStream *pls )
 // End of page.
 //--------------------------------------------------------------------------
 
-void plD_eop_extcairo( PLStream * UNUSED( pls ) )
+void plD_eop_extcairo( PLStream * PL_UNUSED( pls ) )
 {
     // nothing to do here, we leave it to the calling program to display
     // (or not) the update cairo context.
@@ -2880,7 +2880,7 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
 // context, etc...
 //--------------------------------------------------------------------------
 
-void plD_tidy_extcairo( PLStream * UNUSED( pls ) )
+void plD_tidy_extcairo( PLStream * PL_UNUSED( pls ) )
 {
 }
 

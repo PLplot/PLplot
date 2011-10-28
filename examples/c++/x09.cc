@@ -87,7 +87,7 @@ PLFLT     x09::    clevel[] = { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. }
 
 static const PLFLT tr[] = { x09::XSPA, 0.0, -1.0, 0.0, x09::YSPA, -1.0 };
 
-static void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+static void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * /* pltr_data */ )
 {
     *tx = tr[0] * x + tr[1] * y + tr[2];
     *ty = tr[3] * x + tr[4] * y + tr[5];

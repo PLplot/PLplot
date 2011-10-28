@@ -238,8 +238,8 @@ plot4( void )
     // this does not introduce any issues.
 
     PLFLT scale, offset1, offset2;
-    PLFLT xmin, xmax, ymin, ymax, xlabel_step;
-    int   kind, npts, if_TAI_time_format, i;
+    PLFLT xmin, xmax, ymin = 0.0, ymax = 0.0, xlabel_step = 0.0;
+    int   kind, npts = 0, if_TAI_time_format = 0, i;
     char  time_format[10];
     char  title_suffix[100];
     char  xtitle[100];

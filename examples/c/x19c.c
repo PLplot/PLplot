@@ -12,7 +12,7 @@ PLFLT normalize_longitude( PLFLT lon );
 void geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data );
 
 void
-map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer PL_UNUSED( data ) )
 {
     double radius;
 
@@ -68,7 +68,7 @@ normalize_longitude( PLFLT lon )
 
 // A custom axis labeling function for longitudes and latitudes.
 void
-geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data )
+geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer PL_UNUSED( data ) )
 {
     const char *direction_label = NULL;
     PLFLT      label_val        = 0.0;

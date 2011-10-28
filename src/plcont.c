@@ -865,7 +865,7 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 //--------------------------------------------------------------------------
 
 void
-pltr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer UNUSED( pltr_data ) )
+pltr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer PL_UNUSED( pltr_data ) )
 {
     *tx = x;
     *ty = y;

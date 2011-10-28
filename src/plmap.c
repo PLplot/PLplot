@@ -87,7 +87,7 @@
 
 void
 plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-       PLFLT minlong, PLFLT maxlong, PLFLT UNUSED( minlat ), PLFLT UNUSED( maxlat ) )
+       PLFLT minlong, PLFLT maxlong, PLFLT PL_UNUSED( minlat ), PLFLT PL_UNUSED( maxlat ) )
 {
     PLINT            wrap, sign;
     int              i, j;

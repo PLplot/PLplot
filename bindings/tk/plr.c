@@ -375,7 +375,7 @@ get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n )
 //--------------------------------------------------------------------------
 
 static int
-plr_eop( PLRDev * UNUSED( plr ) )
+plr_eop( PLRDev * PL_UNUSED( plr ) )
 {
     dbug_enter( "plr_eop" );
 

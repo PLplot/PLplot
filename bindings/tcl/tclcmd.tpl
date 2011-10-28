@@ -5,7 +5,7 @@
 \*--------------------------------------------------------------------------*/
 
 static int
-%cmd%Cmd( ClientData UNUSED( clientData ), Tcl_Interp *interp, int argc, const char *argv[] )
+%cmd%Cmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp, int argc, const char *argv[] )
 {
 <argdecls>
 

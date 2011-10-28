@@ -211,7 +211,7 @@ plP_dcscy( PLFLT y )
 // See c_plw3d for a mathematical explanation of the transformation.
 
 PLFLT
-plP_w3wcx( PLFLT x, PLFLT y, PLFLT UNUSED( z ) )
+plP_w3wcx( PLFLT x, PLFLT y, PLFLT PL_UNUSED( z ) )
 {
     return ( (PLFLT) ( ( x - plsc->basecx ) * plsc->cxx +
                        ( y - plsc->basecy ) * plsc->cxy ) );

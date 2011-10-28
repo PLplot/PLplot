@@ -65,7 +65,7 @@ const PLFLT x14::yspa   = 2. / ( x14::ypts - 1 );
 const PLFLT x14::tr[6] =
 { x14::xspa, 0.0, -1.0, 0.0, x14::yspa, -1.0 };
 
-void x14::mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+void x14::mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * /* pltr_data */ )
 {
     *tx = tr[0] * x + tr[1] * y + tr[2];
     *ty = tr[3] * x + tr[4] * y + tr[5];

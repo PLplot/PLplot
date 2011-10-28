@@ -345,7 +345,7 @@ static void  UpdateHScrollbar( register PlPlotter * );
 //
 
 int
-plPlotterCmd( ClientData clientData, Tcl_Interp *interp,
+plPlotterCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
               int argc, const char **argv )
 {
     Tk_Window          tkwin;
@@ -1092,7 +1092,7 @@ PlPlotterEnterEH( ClientData clientData, register XEvent *eventPtr )
 //--------------------------------------------------------------------------
 
 static void
-PlPlotterLeaveEH( ClientData clientData, register XEvent *eventPtr )
+PlPlotterLeaveEH( ClientData clientData, register XEvent * PL_UNUSED( eventPtr ) )
 {
     register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
 
@@ -1721,6 +1721,7 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     char     c3;
     int      result    = TCL_OK;
     char     cmdlist[] = "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
+    char *   argv_cp;
 
 #ifdef DEBUG
     if ( pls->debug )
@@ -1835,12 +1836,14 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         pls->ncol0 = ncol0;
         for ( i = 0; i < pls->ncol0; i++ )
         {
-            col = strtok( (char *) argv[2 + i], " " );
+            argv_cp = plstrdup( argv[2 + i] );
+            col = strtok( argv_cp , " " );
             if ( col == NULL )
                 break;
 
             if ( scol0( interp, plPlotterPtr, i, col, &changed ) != TCL_OK )
                 return TCL_ERROR;
+            free_mem( argv_cp );
         }
 
         if ( changed )
@@ -1863,7 +1866,8 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
             return TCL_ERROR;
         }
 
-        col = strtok( (char *) argv[2], " " );
+        argv_cp = plstrdup( argv[2] );
+        col = strtok( argv_cp, " " );
         pos = strtok( NULL, " " );
         rev = strtok( NULL, " " );
         for ( i = 0; i < ncp1; i++ )
@@ -1879,6 +1883,8 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
             pos = strtok( NULL, " " );
             rev = strtok( NULL, " " );
         }
+
+        free_mem( argv_cp );
 
         if ( changed )
         {
@@ -2419,7 +2425,7 @@ Openlink( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Closelink( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-           int argc, CONST char **argv )
+           int PL_UNUSED( argc ), CONST char ** PL_UNUSED( argv ) )
 {
 #if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
     register PLRDev  *plr   = plPlotterPtr->plr;
@@ -2607,7 +2613,7 @@ Orient( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-       int argc, CONST char **argv )
+       int PL_UNUSED( argc ), CONST char ** PL_UNUSED( argv ) )
 {
     PLINT ipls;
     int   result = TCL_OK;
@@ -2700,7 +2706,7 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 static int
 NextPage( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-          int argc, CONST char **argv )
+          int argc, CONST char ** PL_UNUSED( argv ) )
 {
     TkwDev *dev = (TkwDev *) plPlotterPtr->pls->dev;
     if ( argc == 0 )
@@ -2766,8 +2772,8 @@ Page( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 //--------------------------------------------------------------------------
 
 static int
-Redraw( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
-        int argc, CONST char **argv )
+Redraw( Tcl_Interp * PL_UNUSED( interp ), register PlPlotter *plPlotterPtr,
+        int PL_UNUSED( argc ), CONST char ** PL_UNUSED( argv ) )
 {
     dbug_enter( "Redraw" );
 

@@ -20,7 +20,7 @@ static void     plot1( void );
 static void     plot2( void );
 static void     plot3( void );
 static void     f2mnmx( PLFLT *, PLINT, PLINT, PLFLT *, PLFLT * );
-static void     cmap1_init1( void );
+//static void     cmap1_init1( void );
 static void     cmap1_init2( void );
 
 
@@ -80,40 +80,40 @@ main( int argc, const char *argv[] )
 // Initializes color map 1 in HLS space.
 //--------------------------------------------------------------------------
 
-static void
-cmap1_init1( void )
-{
-    PLFLT i[4], h[4], l[4], s[4];
-
-    i[0] = 0;           // left boundary
-    i[1] = 0.45;        // just before center
-    i[2] = 0.55;        // just after center
-    i[3] = 1;           // right boundary
-
-    h[0] = 260;         // hue -- low: blue-violet
-    h[1] = 260;         // only change as we go over vertex
-    h[2] = 20;          // hue -- high: red
-    h[3] = 20;          // keep fixed
-
-#if 1
-    l[0] = 0.5;         // lightness -- low
-    l[1] = 0.0;         // lightness -- center
-    l[2] = 0.0;         // lightness -- center
-    l[3] = 0.5;         // lightness -- high
-#else
-    plscolbg( 255, 255, 255 );
-    l[0] = 0.5;         // lightness -- low
-    l[1] = 1.0;         // lightness -- center
-    l[2] = 1.0;         // lightness -- center
-    l[3] = 0.5;         // lightness -- high
-#endif
-    s[0] = 1;           // maximum saturation
-    s[1] = 1;           // maximum saturation
-    s[2] = 1;           // maximum saturation
-    s[3] = 1;           // maximum saturation
-
-    c_plscmap1l( 0, 4, i, h, l, s, NULL );
-}
+//static void
+//cmap1_init1( void )
+//{
+//    PLFLT i[4], h[4], l[4], s[4];
+//
+//    i[0] = 0;           // left boundary
+//    i[1] = 0.45;        // just before center
+//    i[2] = 0.55;        // just after center
+//    i[3] = 1;           // right boundary
+//
+//    h[0] = 260;         // hue -- low: blue-violet
+//    h[1] = 260;         // only change as we go over vertex
+//    h[2] = 20;          // hue -- high: red
+//    h[3] = 20;          // keep fixed
+//
+//#if 1
+//    l[0] = 0.5;         // lightness -- low
+//    l[1] = 0.0;         // lightness -- center
+//    l[2] = 0.0;         // lightness -- center
+//    l[3] = 0.5;         // lightness -- high
+//#else
+//    plscolbg( 255, 255, 255 );
+//    l[0] = 0.5;         // lightness -- low
+//    l[1] = 1.0;         // lightness -- center
+//    l[2] = 1.0;         // lightness -- center
+//    l[3] = 0.5;         // lightness -- high
+//#endif
+//    s[0] = 1;           // maximum saturation
+//    s[1] = 1;           // maximum saturation
+//    s[2] = 1;           // maximum saturation
+//    s[3] = 1;           // maximum saturation
+//
+//    c_plscmap1l( 0, 4, i, h, l, s, NULL );
+//}
 
 //--------------------------------------------------------------------------
 // cmap1_init2

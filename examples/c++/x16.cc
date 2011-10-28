@@ -122,7 +122,7 @@ const char    *x16::  notes[] = {
 
 // Transformation function
 
-static void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+static void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * /* pltr_data */ )
 {
     *tx = x16::tr[0] * x + x16::tr[1] * y + x16::tr[2];
     *ty = x16::tr[3] * x + x16::tr[4] * y + x16::tr[5];

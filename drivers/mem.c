@@ -161,25 +161,25 @@ plD_eop_mem( PLStream *pls )
 }
 
 void
-plD_bop_mem( PLStream * UNUSED( pls ) )
+plD_bop_mem( PLStream * PL_UNUSED( pls ) )
 {
 // Nothing to do here
 }
 
 void
-plD_tidy_mem( PLStream * UNUSED( pls ) )
+plD_tidy_mem( PLStream * PL_UNUSED( pls ) )
 {
 // Nothing to do here
 }
 
 void
-plD_state_mem( PLStream * UNUSED( pls ), PLINT UNUSED( op ) )
+plD_state_mem( PLStream * PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 {
 // Nothing to do here
 }
 
 void
-plD_esc_mem( PLStream *UNUSED( pls ), PLINT UNUSED( op ), void * UNUSED( ptr ) )
+plD_esc_mem( PLStream *PL_UNUSED( pls ), PLINT PL_UNUSED( op ), void * PL_UNUSED( ptr ) )
 {
 // Nothing to do here
 }

@@ -384,8 +384,9 @@ plot4( void )
 PLFLT tr[6] =
 { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
+// pltr_data argument is unused so mark it with the PL_UNUSED macro
 void
-mypltr( PLFLT xx, PLFLT yy, PLFLT *tx, PLFLT *ty, void *pltr_data )
+mypltr( PLFLT xx, PLFLT yy, PLFLT *tx, PLFLT *ty, void * PL_UNUSED( pltr_data ) )
 {
     *tx = tr[0] * xx + tr[1] * yy + tr[2];
     *ty = tr[3] * xx + tr[4] * yy + tr[5];

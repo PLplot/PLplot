@@ -126,7 +126,7 @@ plbuf_polyline( PLStream *pls, short *xa, short *ya, PLINT npts )
 //--------------------------------------------------------------------------
 
 void
-plbuf_eop( PLStream * UNUSED( pls ) )
+plbuf_eop( PLStream * PL_UNUSED( pls ) )
 {
     dbug_enter( "plbuf_eop" );
 }
@@ -186,7 +186,7 @@ plbuf_bop( PLStream *pls )
 //--------------------------------------------------------------------------
 
 void
-plbuf_tidy( PLStream * UNUSED( pls ) )
+plbuf_tidy( PLStream * PL_UNUSED( pls ) )
 {
     dbug_enter( "plbuf_tidy" );
 
@@ -456,7 +456,7 @@ plbuf_swin( PLStream *pls, PLWindow *plwin )
 //--------------------------------------------------------------------------
 
 static void
-rdbuf_init( PLStream * UNUSED( pls ) )
+rdbuf_init( PLStream * PL_UNUSED( pls ) )
 {
     dbug_enter( "rdbuf_init" );
 }
@@ -534,7 +534,7 @@ rdbuf_polyline( PLStream *pls )
 //--------------------------------------------------------------------------
 
 static void
-rdbuf_eop( PLStream * UNUSED( pls ) )
+rdbuf_eop( PLStream * PL_UNUSED( pls ) )
 {
     dbug_enter( "rdbuf_eop" );
 }

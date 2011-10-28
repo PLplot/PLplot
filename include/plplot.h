@@ -119,6 +119,17 @@
 //--------------------------------------------------------------------------
 #include "pldll.h"
 
+// Macro to mark function parameters as unused.
+// For gcc this uses the unused attribute to remove compiler warnings.
+// For all compilers the parameter name is also mangled to prevent
+// accidental use.
+#ifdef PL_UNUSED
+#elif defined ( __GNUC__ )
+# define PL_UNUSED( x )    UNUSED_ ## x __attribute__( ( unused ) )
+#else
+# define PL_UNUSED( x )    UNUSED_ ## x
+#endif
+
 //--------------------------------------------------------------------------
 // Base types for PLplot
 //

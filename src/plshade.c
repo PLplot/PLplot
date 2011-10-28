@@ -469,7 +469,7 @@ static void
 plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              PLPointer f2eval_data,
              PLFLT ( * c2eval )( PLINT, PLINT, PLPointer ), // unused, but macro doesn't work
-             PLPointer UNUSED( c2eval_data ),
+             PLPointer PL_UNUSED( c2eval_data ),
              PLINT ( *defined )( PLFLT, PLFLT ),
              PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -1238,7 +1238,7 @@ draw_boundary( PLINT slope, PLFLT *x, PLFLT *y )
 #define RATIO_SQ          6.0
 
 static PLINT
-plctest( PLFLT *x, PLFLT UNUSED( level ) )
+plctest( PLFLT *x, PLFLT PL_UNUSED( level ) )
 {
     int    i, j;
     double t[4], sorted[4], temp;

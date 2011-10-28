@@ -356,7 +356,7 @@ static void  UpdateHScrollbar( register PlFrame * );
 //
 
 int
-plFrameCmd( ClientData UNUSED( clientData ), Tcl_Interp *interp,
+plFrameCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             int argc, const char **argv )
 {
     Tk_Window        new;
@@ -1131,7 +1131,7 @@ PlFrameEnterEH( ClientData clientData, register XEvent *eventPtr )
 //--------------------------------------------------------------------------
 
 static void
-PlFrameLeaveEH( ClientData clientData, register XEvent * UNUSED( eventPtr ) )
+PlFrameLeaveEH( ClientData clientData, register XEvent * PL_UNUSED( eventPtr ) )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 
@@ -2615,7 +2615,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Closelink( Tcl_Interp *interp, register PlFrame *plFramePtr,
-           int UNUSED( argc ), const char ** UNUSED( argv ) )
+           int PL_UNUSED( argc ), const char ** PL_UNUSED( argv ) )
 {
     register PLRDev  *plr   = plFramePtr->plr;
     register PLiodev *iodev = plr->iodev;
@@ -2789,7 +2789,7 @@ Orient( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
-       int UNUSED( argc ), const char ** UNUSED( argv ) )
+       int PL_UNUSED( argc ), const char ** PL_UNUSED( argv ) )
 {
     PLINT ipls;
     int   result = TCL_OK;
@@ -2923,8 +2923,8 @@ Page( Tcl_Interp *interp, register PlFrame *plFramePtr,
 //--------------------------------------------------------------------------
 
 static int
-Redraw( Tcl_Interp *UNUSED( interp ), register PlFrame *plFramePtr,
-        int UNUSED( argc ), const char ** UNUSED( argv ) )
+Redraw( Tcl_Interp *PL_UNUSED( interp ), register PlFrame *plFramePtr,
+        int PL_UNUSED( argc ), const char ** PL_UNUSED( argv ) )
 {
     dbug_enter( "Redraw" );
 
@@ -3319,7 +3319,7 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
 //--------------------------------------------------------------------------
 
 static void
-process_bop( void *clientData, int * UNUSED( skip_driver_bop ) )
+process_bop( void *clientData, int * PL_UNUSED( skip_driver_bop ) )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 
@@ -3334,7 +3334,7 @@ process_bop( void *clientData, int * UNUSED( skip_driver_bop ) )
 //--------------------------------------------------------------------------
 
 static void
-process_eop( void *clientData, int * UNUSED( skip_driver_eop ) )
+process_eop( void *clientData, int * PL_UNUSED( skip_driver_eop ) )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 

@@ -1996,7 +1996,7 @@ EnterEH( PLStream *pls, XEvent *event )
 //--------------------------------------------------------------------------
 
 static void
-LeaveEH( PLStream *pls, XEvent * UNUSED( event ) )
+LeaveEH( PLStream *pls, XEvent * PL_UNUSED( event ) )
 {
     XwDev *dev = (XwDev *) pls->dev;
 

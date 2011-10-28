@@ -1479,7 +1479,7 @@ plP_FreeDrvOpts()
 //--------------------------------------------------------------------------
 
 static int
-opt_h( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_h( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     if ( !mode_quiet )
         Help();
@@ -1495,7 +1495,7 @@ opt_h( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_v( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_v( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     if ( !mode_quiet )
         fprintf( stderr, "PLplot library version: %s\n", VERSION );
@@ -1511,7 +1511,7 @@ opt_v( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_verbose( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_verbose( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->verbose = 1;
     return 0;
@@ -1525,7 +1525,7 @@ opt_verbose( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * 
 //--------------------------------------------------------------------------
 
 static int
-opt_debug( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_debug( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->debug   = 1;
     plsc->verbose = 1;
@@ -1540,7 +1540,7 @@ opt_debug( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UN
 //--------------------------------------------------------------------------
 
 static int
-opt_hack( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_hack( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->hack = 1;
     return 0;
@@ -1554,7 +1554,7 @@ opt_hack( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNU
 //--------------------------------------------------------------------------
 
 static int
-opt_dev( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_dev( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdev( opt_arg );
     return 0;
@@ -1568,7 +1568,7 @@ opt_dev( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_
 //--------------------------------------------------------------------------
 
 static int
-opt_o( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_o( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsfnam( opt_arg );
     return 0;
@@ -1582,7 +1582,7 @@ opt_o( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_da
 //--------------------------------------------------------------------------
 
 static int
-opt_mar( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_mar( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( atof( opt_arg ), PL_NOTSET, PL_NOTSET, PL_NOTSET );
     return 0;
@@ -1596,7 +1596,7 @@ opt_mar( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_
 //--------------------------------------------------------------------------
 
 static int
-opt_a( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_a( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, atof( opt_arg ), PL_NOTSET, PL_NOTSET );
     return 0;
@@ -1610,7 +1610,7 @@ opt_a( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_da
 //--------------------------------------------------------------------------
 
 static int
-opt_jx( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_jx( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, PL_NOTSET, atof( opt_arg ), PL_NOTSET );
     return 0;
@@ -1624,7 +1624,7 @@ opt_jx( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_d
 //--------------------------------------------------------------------------
 
 static int
-opt_jy( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_jy( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, PL_NOTSET, PL_NOTSET, atof( opt_arg ) );
     return 0;
@@ -1638,7 +1638,7 @@ opt_jy( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_d
 //--------------------------------------------------------------------------
 
 static int
-opt_ori( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_ori( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdiori( atof( opt_arg ) );
     return 0;
@@ -1652,7 +1652,7 @@ opt_ori( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_
 //--------------------------------------------------------------------------
 
 static int
-opt_freeaspect( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_freeaspect( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->freeaspect = 1;
     return 0;
@@ -1680,7 +1680,7 @@ opt_freeaspect( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void
 //--------------------------------------------------------------------------
 
 static int
-opt_portrait( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_portrait( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->portrait = 1;
     return 0;
@@ -1694,7 +1694,7 @@ opt_portrait( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void *
 //--------------------------------------------------------------------------
 
 static int
-opt_width( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_width( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     int width;
 
@@ -1724,7 +1724,7 @@ opt_width( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clien
 //--------------------------------------------------------------------------
 
 static int
-opt_bg( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_bg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     const char *rgb;
     char       *color_field, *alpha_field;
@@ -1800,7 +1800,7 @@ opt_bg( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_d
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol0( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_ncol0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->ncol0 = atoi( opt_arg );
     return 0;
@@ -1814,7 +1814,7 @@ opt_ncol0( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clien
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol1( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_ncol1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->ncol1 = atoi( opt_arg );
     return 0;
@@ -1828,7 +1828,7 @@ opt_ncol1( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clien
 //--------------------------------------------------------------------------
 
 static int
-opt_wplt( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_wplt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     char  *field;
     PLFLT xl, yl, xr, yr;
@@ -1868,7 +1868,7 @@ opt_wplt( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client
 //--------------------------------------------------------------------------
 
 static int
-opt_drvopt( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_drvopt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     char      t, *tt, *option, *value;
     int       fl = 0;
@@ -1951,7 +1951,7 @@ opt_drvopt( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clie
 //--------------------------------------------------------------------------
 
 static int
-opt_fam( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_fam( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsfam( 1, -1, -1 );
     return 0;
@@ -1974,7 +1974,7 @@ opt_fam( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUS
 //--------------------------------------------------------------------------
 
 static int
-opt_fsiz( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_fsiz( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     PLINT  bytemax;
     size_t len        = strlen( opt_arg );
@@ -2025,7 +2025,7 @@ opt_fsiz( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client
 //--------------------------------------------------------------------------
 
 static int
-opt_fbeg( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_fbeg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->member = atoi( opt_arg );
 
@@ -2040,7 +2040,7 @@ opt_fbeg( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client
 //--------------------------------------------------------------------------
 
 static int
-opt_finc( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_finc( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->finc = atoi( opt_arg );
 
@@ -2055,7 +2055,7 @@ opt_finc( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client
 //--------------------------------------------------------------------------
 
 static int
-opt_fflen( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_fflen( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->fflen = atoi( opt_arg );
 
@@ -2070,7 +2070,7 @@ opt_fflen( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clien
 //--------------------------------------------------------------------------
 
 static int
-opt_np( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_np( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plspause( 0 );
     return 0;
@@ -2084,7 +2084,7 @@ opt_np( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSE
 //--------------------------------------------------------------------------
 
 static int
-opt_nopixmap( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_nopixmap( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->nopixmap = 1;
     return 0;
@@ -2098,7 +2098,7 @@ opt_nopixmap( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void *
 //--------------------------------------------------------------------------
 
 static int
-opt_db( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_db( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->db = 1;
     return 0;
@@ -2112,7 +2112,7 @@ opt_db( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSE
 //--------------------------------------------------------------------------
 
 static int
-opt_bufmax( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_bufmax( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->bufmax = atoi( opt_arg );
     return 0;
@@ -2126,7 +2126,7 @@ opt_bufmax( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clie
 //--------------------------------------------------------------------------
 
 static int
-opt_server_name( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_server_name( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->server_name = plstrdup( opt_arg );
     return 0;
@@ -2140,7 +2140,7 @@ opt_server_name( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_plserver( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_plserver( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->plserver = plstrdup( opt_arg );
     return 0;
@@ -2154,7 +2154,7 @@ opt_plserver( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( cl
 //--------------------------------------------------------------------------
 
 static int
-opt_plwindow( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_plwindow( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->plwindow = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
@@ -2172,7 +2172,7 @@ opt_plwindow( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( cl
 //--------------------------------------------------------------------------
 
 static int
-opt_auto_path( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_auto_path( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->auto_path = plstrdup( opt_arg );
     return 0;
@@ -2186,7 +2186,7 @@ opt_auto_path( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( c
 //--------------------------------------------------------------------------
 
 static int
-opt_px( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_px( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plssub( atoi( opt_arg ), -1 );
     return 0;
@@ -2200,7 +2200,7 @@ opt_px( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_d
 //--------------------------------------------------------------------------
 
 static int
-opt_py( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_py( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plssub( -1, atoi( opt_arg ) );
     return 0;
@@ -2218,7 +2218,7 @@ opt_py( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_d
 //--------------------------------------------------------------------------
 
 static int
-opt_geo( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_geo( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     int   numargs;
     PLFLT xdpi = 0., ydpi = 0.;
@@ -2304,7 +2304,7 @@ opt_geo( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_
 //--------------------------------------------------------------------------
 
 static int
-opt_tk_file( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_tk_file( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->tk_file = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
@@ -2327,7 +2327,7 @@ opt_tk_file( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( cli
 //--------------------------------------------------------------------------
 
 static int
-opt_dpi( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_dpi( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     char  *field;
     PLFLT xdpi = 0., ydpi = 0.;
@@ -2368,7 +2368,7 @@ opt_dpi( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_
 //--------------------------------------------------------------------------
 
 static int
-opt_dev_compression( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_dev_compression( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     PLINT comp = 0;
 
@@ -2390,7 +2390,7 @@ opt_dev_compression( const char * UNUSED( opt ), const char *opt_arg, void * UNU
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap0( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_cmap0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plspal0( opt_arg );
     return 0;
@@ -2403,7 +2403,7 @@ opt_cmap0( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clien
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap1( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( client_data ) )
+opt_cmap1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
     plspal1( opt_arg, TRUE );
     return 0;
@@ -2416,7 +2416,7 @@ opt_cmap1( const char * UNUSED( opt ), const char *opt_arg, void * UNUSED( clien
 //--------------------------------------------------------------------------
 
 static int
-opt_locale( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_locale( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     char *locale;
     if ( ( locale = setlocale( LC_NUMERIC, "" ) ) )
@@ -2443,7 +2443,7 @@ opt_locale( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * U
 //--------------------------------------------------------------------------
 
 static int
-opt_eofill( const char * UNUSED( opt ), const char * UNUSED( opt_arg ), void * UNUSED( client_data ) )
+opt_eofill( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->dev_eofill = 1;
     return 0;

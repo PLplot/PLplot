@@ -48,7 +48,7 @@ void plD_dispatch_init_null( PLDispatchTable *pdt )
 //--------------------------------------------------------------------------
 
 void
-plD_init_null( PLStream *UNUSED( pls ) )
+plD_init_null( PLStream *PL_UNUSED( pls ) )
 {
     int   xmin = 0;
     int   xmax = PIXELS_X - 1;
@@ -69,37 +69,37 @@ plD_init_null( PLStream *UNUSED( pls ) )
 //--------------------------------------------------------------------------
 
 void
-plD_line_null( PLStream * UNUSED( pls ), short UNUSED( x1a ), short UNUSED( y1a ), short UNUSED( x2a ), short UNUSED( y2a ) )
+plD_line_null( PLStream * PL_UNUSED( pls ), short PL_UNUSED( x1a ), short PL_UNUSED( y1a ), short PL_UNUSED( x2a ), short PL_UNUSED( y2a ) )
 {
 }
 
 void
-plD_polyline_null( PLStream *UNUSED( pls ), short *UNUSED( xa ), short *UNUSED( ya ), PLINT UNUSED( npts ) )
+plD_polyline_null( PLStream *PL_UNUSED( pls ), short *PL_UNUSED( xa ), short *PL_UNUSED( ya ), PLINT PL_UNUSED( npts ) )
 {
 }
 
 void
-plD_eop_null( PLStream *UNUSED( pls ) )
+plD_eop_null( PLStream *PL_UNUSED( pls ) )
 {
 }
 
 void
-plD_bop_null( PLStream *UNUSED( pls ) )
+plD_bop_null( PLStream *PL_UNUSED( pls ) )
 {
 }
 
 void
-plD_tidy_null( PLStream *UNUSED( pls ) )
+plD_tidy_null( PLStream *PL_UNUSED( pls ) )
 {
 }
 
 void
-plD_state_null( PLStream *UNUSED( pls ), PLINT UNUSED( op ) )
+plD_state_null( PLStream *PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 {
 }
 
 void
-plD_esc_null( PLStream *UNUSED( pls ), PLINT UNUSED( op ), void *UNUSED( ptr ) )
+plD_esc_null( PLStream *PL_UNUSED( pls ), PLINT PL_UNUSED( op ), void *PL_UNUSED( ptr ) )
 {
 }
 
