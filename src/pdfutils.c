@@ -28,9 +28,11 @@
 //
 //--------------------------------------------------------------------------
 //
-//  These functions do the low-level reading/writing of portable data files.
-//  Data can be written to/read from either a file handle or memory buffer.
-//
+
+//! @file
+//!  These functions do the low-level reading/writing of portable data files.
+//!  Data can be written to/read from either a file handle or memory buffer.
+//!
 
 #define NEED_PLDEBUG
 #include "plplotP.h"
@@ -43,7 +45,11 @@ static int debug = 0;
 //--------------------------------------------------------------------------
 // void pdf_set (string, value)
 //
-// Set an option.  Pretty sparse right now but you never know.
+//! Set an option.  Pretty sparse right now but you never know.
+//!
+//! @param option The option string.
+//! @param value The value to set it to.
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -56,8 +62,12 @@ pdf_set( char *option, int value )
 //--------------------------------------------------------------------------
 // pdf_fopen()
 //
-// Initializes a PDFstrm for a file oriented device.
-// Used exactly like fopen().
+//! Initializes a PDFstrm for a file oriented device.
+//! Used exactly like fopen().
+//!
+//! @param filename The filename of the file to open.
+//! @param mode File access mode, as would be used by fopen.
+//!
 //--------------------------------------------------------------------------
 
 PDFstrm *
@@ -128,8 +138,14 @@ pdf_fopen( const char *filename, const char *mode )
 //--------------------------------------------------------------------------
 // pdf_bopen()
 //
-// Initializes a PDFstrm for reading/writing to a memory buffer.
-// If buffer is NULL, a standard buffer is allocated.
+//! Initializes a PDFstrm for reading/writing to a memory buffer.
+//! If buffer is NULL, a standard buffer is allocated.
+//!
+//! @param buffer User allocated memory, can be NULL.
+//! @param bufmax Size of buffer, or the desired buffer.
+//!
+//! @returns A PDFstrm structure.
+//!
 //--------------------------------------------------------------------------
 
 PDFstrm *
@@ -176,8 +192,12 @@ pdf_bopen( U_CHAR *buffer, size_t bufmax )
 //--------------------------------------------------------------------------
 // pdf_finit()
 //
-// Initializes a PDFstrm for a file oriented device.
-// Like pdf_fopen() but an existing file handle is specified.
+//! Initializes a PDFstrm for a file oriented device.
+//! Like pdf_fopen() but an existing file handle is specified.
+//!
+//! @param file A open file handle.
+//!
+//! @returns A PDFstrm structure.
 //--------------------------------------------------------------------------
 
 PDFstrm *
@@ -205,8 +225,13 @@ pdf_finit( FILE *file )
 //--------------------------------------------------------------------------
 // pdf_close()
 //
-// Closes a PDFstrm.
-// Used exactly like fclose().
+//! Closes a PDFstrm.
+//! Used exactly like fclose().
+//!
+//! @param pdfs The file stream to close.
+//!
+//! @returns 0
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -238,7 +263,13 @@ pdf_close( PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 // int pdf_putc()
 //
-// Writes a single character.
+//! Writes a single character.
+//!
+//! @param c The character to write.
+//! @param pdfs The stream to write it to.
+//!
+//! @returns The character written or EOF.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -282,7 +313,12 @@ pdf_putc( int c, PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 // int pdf_getc()
 //
-// Reads a single character.
+//! Reads a single character.
+//!
+//! @param pdfs The stream to read the character from.
+//!
+//! @return The character read or EOF.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -316,7 +352,13 @@ pdf_getc( PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 // int pdf_ungetc()
 //
-// Push back the last command read.
+//! Push back the last command read.
+//!
+//! @param c The character to pushback.
+//! @param pdfs The stream to push it back into.
+//!
+//! @returns The character pushed back, or EOF.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -355,7 +397,14 @@ pdf_ungetc( int c, PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 // int pdf_wrx()
 //
-// Writes a record.
+//! Writes a record.
+//!
+//! @param x The data to write.
+//! @param nitems The length of x.
+//! @param pdfs The stream to write it to.
+//!
+//! @returns The number of bytes actually written.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -401,7 +450,14 @@ pdf_wrx( const U_CHAR *x, long nitems, PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 // int pdf_rdx()
 //
-// Reads a record.
+//! Reads a record.
+//!
+//! @param x Storage for the data to read.
+//! @param nitems The length of the x.
+//! @param pdfs The stream to read it from.
+//!
+//! @returns The number of bytes read.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -438,9 +494,15 @@ pdf_rdx( U_CHAR *x, long nitems, PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 // pdf_wr_header()
 //
-// Writes a header string.  Input string must be NULL-terminated.  The
-// written string is terminated by a new-line, not a NULL.  This is done
-// so you can type e.g. "% strings <file> | head" and get sensible output.
+//! Writes a header string.  Input string must be NULL-terminated.  The
+//! written string is terminated by a new-line, not a NULL.  This is done
+//! so you can type e.g. "% strings <file> | head" and get sensible output.
+//!
+//! @param pdfs The stream to which to write the header.
+//! @param header The header.
+//!
+//! @returns 0 if there was no error.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -466,8 +528,14 @@ pdf_wr_header( PDFstrm *pdfs, const char *header )
 //--------------------------------------------------------------------------
 // int pdf_rd_header
 //
-// Reads a newline-terminated header string from PDFstrm *pdfs, and
-// converts to a usual NULL-terminated string.  80 chars maximum assumed.
+//! Reads a newline-terminated header string from PDFstrm *pdfs, and
+//! converts to a usual NULL-terminated string.  80 chars maximum assumed.
+//!
+//! @param pdfs The stream to read the header from.
+//! @param header Pre-allocated storage for the header.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -493,7 +561,13 @@ pdf_rd_header( PDFstrm *pdfs, char *header )
 //--------------------------------------------------------------------------
 // pdf_wr_string()
 //
-// Writes a null-terminated string.
+//! Writes a null-terminated string.
+//!
+//! @param pdfs The stream to write the string to.
+//! @param string The string to write.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -515,8 +589,15 @@ pdf_wr_string( PDFstrm *pdfs, const char *string )
 //--------------------------------------------------------------------------
 // int pdf_rd_string
 //
-// Reads a null-terminated string from PDFstrm *pdfs.
-// A max of nmax chars are read.
+//! Reads a null-terminated string from PDFstrm *pdfs.
+//! A max of nmax chars are read.
+//!
+//! @param pdfs The stream to read the string from.
+//! @param string Pre-allocated storage for the string.
+//! @param nmax The size of string.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -542,7 +623,13 @@ pdf_rd_string( PDFstrm *pdfs, char *string, int nmax )
 //--------------------------------------------------------------------------
 // int pdf_wr_1byte()
 //
-// Writes a U_CHAR as a single byte.
+//! Writes a U_CHAR as a single byte.
+//!
+//! @param pdfs The stream to write the byte too.
+//! @param s The byte to write.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -560,7 +647,13 @@ pdf_wr_1byte( PDFstrm *pdfs, U_CHAR s )
 //--------------------------------------------------------------------------
 // int pdf_rd_1byte()
 //
-// Reads a single byte, storing into a U_CHAR.
+//! Reads a single byte, storing into a U_CHAR.
+//!
+//! @param pdfs The stream to read the byte from.
+//! @param ps Storage for the byte.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -578,7 +671,13 @@ pdf_rd_1byte( PDFstrm *pdfs, U_CHAR *ps )
 //--------------------------------------------------------------------------
 // pdf_wr_2bytes()
 //
-// Writes a U_SHORT as two single bytes, low end first.
+//! Writes a U_SHORT as two single bytes, low end first.
+//!
+//! @param pdfs The stream to write the two bytes to.
+//! @param s The two bytes to write.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -598,7 +697,13 @@ pdf_wr_2bytes( PDFstrm *pdfs, U_SHORT s )
 //--------------------------------------------------------------------------
 // pdf_rd_2bytes()
 //
-// Reads a U_SHORT from two single bytes, low end first.
+//! Reads a U_SHORT from two single bytes, low end first.
+//!
+//! @param pdfs The stream to read the two bytes from.
+//! @param ps Pre-allocated storage for the two bytes.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -622,7 +727,14 @@ pdf_rd_2bytes( PDFstrm *pdfs, U_SHORT *ps )
 //--------------------------------------------------------------------------
 // pdf_wr_2nbytes()
 //
-// Writes n U_SHORT's as 2n single bytes, low end first.
+//! Writes n U_SHORT's as 2n single bytes, low end first.
+//!
+//! @param pdfs The stream to write the shorts to.
+//! @param s An array of shorts.
+//! @param n Size of s.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -645,7 +757,14 @@ pdf_wr_2nbytes( PDFstrm *pdfs, U_SHORT *s, PLINT n )
 //--------------------------------------------------------------------------
 // pdf_rd_2nbytes()
 //
-// Reads n U_SHORT's from 2n single bytes, low end first.
+//! Reads n U_SHORT's from 2n single bytes, low end first.
+//!
+//! @param pdfs The stream to read the shorts from.
+//! @param s Pre-allocated storage for the shorts.
+//! @param n Size of s.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -672,7 +791,13 @@ pdf_rd_2nbytes( PDFstrm *pdfs, U_SHORT *s, PLINT n )
 //--------------------------------------------------------------------------
 // pdf_wr_4bytes()
 //
-// Writes an unsigned long as four single bytes, low end first.
+//! Writes an unsigned long as four single bytes, low end first.
+//!
+//! @param pdfs The stream to write the unsigned long to.
+//! @param s The unsigned long to write.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -694,7 +819,13 @@ pdf_wr_4bytes( PDFstrm *pdfs, U_LONG s )
 //--------------------------------------------------------------------------
 // pdf_rd_4bytes()
 //
-// Reads an unsigned long from 4 single bytes, low end first.
+//! Reads an unsigned long from 4 single bytes, low end first.
+//!
+//! @param pdfs The stream to read the unsigned long from.
+//! @param ps Pre-allocated storage for the unsigned long.
+//!
+//! @returns 0 is successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -772,7 +903,13 @@ pdf_rd_4bytes( PDFstrm *pdfs, U_LONG *ps )
 //--------------------------------------------------------------------------
 // int pdf_wr_ieeef()
 //
-// Writes a float in IEEE single precision (32 bit) format.
+//! Writes a float in IEEE single precision (32 bit) format.
+//!
+//! @param pdfs The stream to write the float to.
+//! @param f The float.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -842,7 +979,13 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
 //--------------------------------------------------------------------------
 // int pdf_rd_ieeef()
 //
-// Reads a float from a IEEE single precision (32 bit) format.
+//! Reads a float from a IEEE single precision (32 bit) format.
+//!
+//! @param pdfs The stream to read the float from.
+//! @param pf Pre-allocated storage for the float.
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -891,10 +1034,14 @@ pdf_rd_ieeef( PDFstrm *pdfs, float *pf )
 //--------------------------------------------------------------------------
 // print_ieeef()
 //
-// Prints binary representation for numbers pointed to by arguments.
-// The first argument is the original float, the second is the
-// IEEE representation.  They should be the same on any machine that
-// uses IEEE floats.
+//! Prints binary representation for numbers pointed to by arguments.
+//! The first argument is the original float, the second is the
+//! IEEE representation.  They should be the same on any machine that
+//! uses IEEE floats.
+//!
+//! @param vx The original float?
+//! @param vy The IEEE representation?
+//!
 //--------------------------------------------------------------------------
 
 static void
@@ -936,16 +1083,21 @@ print_ieeef( float *vx, U_LONG *vy )
 //--------------------------------------------------------------------------
 // plAlloc2dGrid()
 //
-// Allocates a block of memory for use as a 2-d grid of PLFLT's.
-// Resulting array can be indexed as f[i][j] anywhere.  This is to be used
-// instead of PLFLT f[nx][ny], which is less useful.  Note that this type
-// of allocation is required by the PLplot functions which take a 2-d
-// grids of PLFLT's as an argument, such as plcont() and plot3d().
-// Example usage:
-//
-//   PLFLT **z;
-//
-//   Alloc2dGrid(&z, XPTS, YPTS);
+//! Allocates a block of memory for use as a 2-d grid of PLFLT's.
+//! Resulting array can be indexed as f[i][j] anywhere.  This is to be used
+//! instead of PLFLT f[nx][ny], which is less useful.  Note that this type
+//! of allocation is required by the PLplot functions which take a 2-d
+//! grids of PLFLT's as an argument, such as plcont() and plot3d().
+//! Example usage:
+//!
+//!   PLFLT **z;
+//!
+//!   Alloc2dGrid(&z, XPTS, YPTS);
+//!
+//! @param f Location of the storage (address of a **).
+//! @param nx Size of the grid in x.
+//! @param ny Size of the grid in y.
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -966,7 +1118,12 @@ plAlloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 //--------------------------------------------------------------------------
 // Free2dGrid()
 //
-// Frees a block of memory allocated with Alloc2dGrid().
+//! Frees a block of memory allocated with Alloc2dGrid().
+//!
+//! @param f The [][] to the storage.
+//! @param nx Size of the grid in x.
+//! @param ny Size of the grid in y (not used).
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -983,8 +1140,15 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT PL_UNUSED( ny ) )
 //--------------------------------------------------------------------------
 // MinMax2dGrid()
 //
-// Finds the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
-// NaN and +/- infinity values are ignored.
+//! Finds the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
+//! NaN and +/- infinity values are ignored.
+//!
+//! param f 2d matrix pointer.
+//! param nx Size of the grid in x.
+//! param ny Size of the grid in y.
+//! param fnmax Maximum value in the matrix.
+//! param fnmin Minimum value in the matrix.
+//!
 //--------------------------------------------------------------------------
 
 void

@@ -43,6 +43,11 @@
 // email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
 //
 
+//! @file
+//!
+//! Mersenne twister random number generator.
+//!
+
 #include <stdio.h>
 #include "mt19937ar.h"
 
@@ -56,7 +61,10 @@
 static unsigned long mt[N];        // the array for the state vector
 static int           mti = N + 1;  // mti==N+1 means mt[N] is not initialized
 
-// initializes mt[N] with a seed
+//! Initializes mt[N] with a seed
+//!
+//! @param s Seed value for the random number generator.
+//!
 void init_genrand( unsigned long s )
 {
     mt[0] = s & 0xffffffffUL;
@@ -73,10 +81,12 @@ void init_genrand( unsigned long s )
     }
 }
 
-// initialize by an array with array-length
-// init_key is the array for initializing keys
-// key_length is its length
-// slight change for C++, 2004/2/26
+//! Initialize by an array with array-length
+//! Slight change for C++, 2004/2/26
+//!
+//! @param init_key The array for initializing keys
+//! @param key_length Length of the array
+//!
 void init_by_array( unsigned long init_key[], int key_length )
 {
     int i, j, k;
@@ -111,7 +121,10 @@ void init_by_array( unsigned long init_key[], int key_length )
     mt[0] = 0x80000000UL; // MSB is 1; assuring non-zero initial array
 }
 
-// generates a random number on [0,0xffffffff]-interval
+//! generates a random number on [0,0xffffffff]-interval
+//!
+//! @returns A random integer with 32-bit resolution.
+//!
 unsigned long genrand_int32( void )
 {
     unsigned long        y;
@@ -152,34 +165,49 @@ unsigned long genrand_int32( void )
     return y;
 }
 
-// generates a random number on [0,0x7fffffff]-interval
+//! generates a random number on [0,0x7fffffff]-interval
+//!
+//! @returns A random integer with 31-bit resolution.
+//!
 long genrand_int31( void )
 {
     return (long) ( genrand_int32() >> 1 );
 }
 
-// generates a random number on [0,1]-real-interval
+//! generates a random number on [0,1]-real-interval
+//!
+//! @returns A random number [0,1].
+//!
 double genrand_real1( void )
 {
     return (double) genrand_int32() * ( 1.0 / 4294967295.0 );
     // divided by 2^32-1
 }
 
-// generates a random number on [0,1)-real-interval
+//! generates a random number on [0,1)-real-interval
+//!
+//! @returns A random number [0,1).
+//!
 double genrand_real2( void )
 {
     return (double) genrand_int32() * ( 1.0 / 4294967296.0 );
     // divided by 2^32
 }
 
-// generates a random number on (0,1)-real-interval
+//! generates a random number on (0,1)-real-interval
+//!
+//! @returns A random number (0,1).
+//!
 double genrand_real3( void )
 {
     return ( ( (double) genrand_int32() ) + 0.5 ) * ( 1.0 / 4294967296.0 );
     // divided by 2^32
 }
 
-// generates a random number on [0,1) with 53-bit resolution
+//! generates a random number on [0,1) with 53-bit resolution
+//!
+//! @returns A random numer [0,1) with 53-bit resolution.
+//!
 double genrand_res53( void )
 {
     unsigned long a = genrand_int32() >> 5, b = genrand_int32() >> 6;

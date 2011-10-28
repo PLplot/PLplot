@@ -22,6 +22,11 @@
 //
 //
 
+//! @file
+//!
+//! Routines that map unix libtool commands to their window equivalent.
+//!
+
 #include <windows.h>
 #include <stdlib.h>
 #include "ltdl_win32.h"
@@ -34,14 +39,16 @@ lt_dlhandle lastHandle = NULL;
 char errortext[512];
 
 
-// initialise variables
+//! initialise variables
+//!
 void lt_dlinit( void )
 {
     lastHandle = NULL;
 }
 
 
-// on exit free library handles and release allocate memory
+//! on exit free library handles and release allocate memory
+//!
 void lt_dlexit( void )
 {
     lt_dlhandle prev;
@@ -57,9 +64,14 @@ void lt_dlexit( void )
 }
 
 
-// try to open shared library with given dllname. If there is
-// no extension given LoadLibrary() assumes .dll. The library
-// must be somewhere in the path or in the current directory.
+//! Try to open shared library with given dllname. If there is
+//! no extension given LoadLibrary() assumes .dll. The library
+//! must be somewhere in the path or in the current directory.
+//!
+//! @param dllname The name of shared library.
+//!
+//! @returns A handle to the shared library (if found).
+//!
 lt_dlhandle lt_dlopenext( char* dllname )
 {
     lt_dlhandle dlhandle = malloc( sizeof ( struct __dlhandle ) );
@@ -79,7 +91,10 @@ lt_dlhandle lt_dlopenext( char* dllname )
 }
 
 
-// return last error occured. Needs some work :).
+//! return last error occured. Needs some work :).
+//!
+//! @returns Not much.. A string containing "No error information."
+//!
 const char* lt_dlerror()
 {
     strncpy( errortext, "No error information", 512 );
@@ -88,7 +103,13 @@ const char* lt_dlerror()
 }
 
 
-// load symbol from library
+//! load symbol from library
+//!
+//! @param dlhandle Library handle as returned by ltdlopenext().
+//! @param symbol The name of symbol to load.
+//!
+//! @returns A pointer to the symbol requested.
+//!
 void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
 {
     if ( dlhandle->hinstLib )
@@ -112,7 +133,12 @@ void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
         return NULL;
 }
 
-// Placeholder that does nothing for now.
+//! Placeholder that does nothing for now.
+//!
+//! @param handle Library handle.
+//!
+//! @returns 0
+//!
 int lt_dlmakeresident( lt_dlhandle handle )
 {
     return 0;
