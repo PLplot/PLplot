@@ -79,6 +79,5 @@ QSASTIME_static const char * getLongDayOfWeek( const MJDtime *MJD );
 QSASTIME_static const char * getMonth( int m );
 QSASTIME_static const char * getLongMonth( int m );
 QSASTIME_static void getYAD( int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJulian );
-QSASTIME_static int dsplint( double *xa, double *ya, double *y2a, int n, double x, double *y );
 
 #endif

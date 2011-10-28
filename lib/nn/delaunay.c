@@ -348,6 +348,9 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     int     dim, ntriangles;
     int     numfacets, numsimplicial, numridges, totneighbors, numcoplanars, numtricoplanars;
 
+    (void) segments;    // Cast to void to suppress compiler warnings about unused parameters
+    (void) holes;
+
     dim = 2;
 
     assert( sizeof ( realT ) == sizeof ( double ) ); // Qhull was compiled with doubles?
