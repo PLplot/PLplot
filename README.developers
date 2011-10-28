@@ -1,67 +1,55 @@
 Information for developers on UNIX/Linux
 ----------------------------------------
 
-It is recommended that all developers now use the cmake build system instead 
-of the autotools build system described below. The latest instructions for 
+The plplot build system now requires CMake. The latest instructions for 
 building PLplot with cmake can be found on the PLplot wiki.
 
 http://www.miscdebris.net/plplot_wiki
 
 
+Coding standards for PLplot
+---------------------------
 
+When writing / contributing code for PLplot the following standards are 
+followed:
 
+C: ISO C99 standards with POSIX.1-2001 base specification (required 
+for a number of functions)
+C++: ISO C++ 1998 standard plus amendents
+Fortran 95: Fortran 95 standard
 
+To check code it is recommended to try compiling with suitable compiler 
+flags to enforce these standards and to enable compiler warnings to check
+for dubious code.
 
+For gcc / g++ / gfortran the following flags can be used
 
+CFLAGS='-O3 -std=c99 -pedantic -D_POSIX_C_SOURCE=200112L -Wall  \
+-Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs \ 
+-Wconversion -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings' 
 
-When you check out the PLplot source tree from CVS, you will need
-to build the ./configure script mentioned in the INSTALL file 
-yourself. Basically, this is done with the cf/bootstrap.sh script:
+CCFLAGS='-O3 -fvisibility=hidden -std=c++98 -pedantic -Wall -Wextra'
 
-  > cf/bootstrap.sh
+FFLAGS='-std=f95 -O3 -fall-intrinsics -fvisibility=hidden -pedantic \
+-Wall -Wextra'
 
-This will invoke the GNU autotools:
+Adherence to the standards should help make the code more portable.
 
-   * automake, version 1.8.2 or higher is required
-  
-   * autoconf, version 2.59 (*** earlier versions may work too)
+Some notes and recommendations
+------------------------------
 
-   * libtool, version 1.5.10 (*** earlier versions may work too)
+- Use C++ style // comments rather than the older /* */ style comments. 
+The only exception to this where a comment is embeded in a line of code, 
+e.g. to comment out a parameter name in a function definition in C++. 
 
+- To mark function parameters as unused and to suppress at least gcc
+warnings about these, mark the parameter names with the PL_UNUSED( )
+macro.
 
-Three situations can occur:
+Styling of code
+---------------
 
-Situation 1: 
-If the proper versions are installed and the installation is correct,
-then the end result will be a ./configure file in the Plplot 
-directory.
-
-You can then follow the instructions in the INSTALL file.
-
-
-Situation 2:
-If error messages occur and no ./configure file is created, then:
-
-   * Install the latest versions of the autotools
-
-   * Make sure no caching information is left behind (notably the
-     autom4te.cache directory). One way to do that is to check
-     out PLplot in a new directory - tracing all cache files is
-     cumbersome.
-
-   * Re-run the cf/bootstrap.sh script
-
-
-Situation 3:
-If the script complains about certain macros, like AM_PROG_LIBTOOL, then 
-you may have a somewhat broken installation of the autotools, especially
-of libtool. One way to force the autotools to take a look at the correct
-macros, is:
-
-   * Look for the version of "aclocal.m4" in the libtool directory
-
-   * Specify that directory to the bootstrap script:
-
-     > cf/bootstrap.sh --aclocal-incdir=/that/particular/directory
-
-This ought to work. If not, try re-installing the autotools.
+The uncrustify code beautifying program is used to style the source
+code consistently and in a readable manner. Running the 
+scripts/style_source.sh shell script can be used the check the 
+source code, and to apply any styling changes required.
