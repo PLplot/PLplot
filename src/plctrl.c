@@ -8,7 +8,7 @@
 // Copyright (C) 2004  Rafael Laboissiere
 // Copyright (C) 2008  Hazen Babcock
 // Copyright (C) 2009  Alan W. Irwin
-// Copyright (C) 2011 Hezekiah M. Carty
+// Copyright (C) 2011  Hezekiah M. Carty
 //
 // This file is part of PLplot.
 //
@@ -27,6 +27,12 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
 //
+
+//! @file
+//!
+//! Part 1: Color map routines.
+//! Part 2: "A grab-bag of various control routines".
+//!
 
 #define DEBUG
 
@@ -128,8 +134,10 @@ cmap0_palette_read( const char *filename,
 //--------------------------------------------------------------------------
 // plcol0()
 //
-// Set color, map 0.  Argument is integer between 0 and plsc->ncol0.
-//--------------------------------------------------------------------------
+//! Set color, map 0.  Argument is a integer between 0 and plsc->ncol0.
+//! 
+//! @param icol0 The index of the color map 0 color to use as the current 
+//! color. (0 - plsc->ncol0).
 
 void
 c_plcol0( PLINT icol0 )
@@ -160,8 +168,10 @@ c_plcol0( PLINT icol0 )
 //--------------------------------------------------------------------------
 // plcol1()
 //
-// Set color, map 1.  Argument is a float between 0. and 1.
-//--------------------------------------------------------------------------
+//! Set color, map 1.  Argument is a float between 0. and 1.
+//! 
+//! @param icol1 The index of the color map 1 color to use as the current 
+//! color. (0.0 - 1.0)
 
 void
 c_plcol1( PLFLT col1 )
@@ -197,8 +207,11 @@ c_plcol1( PLFLT col1 )
 //--------------------------------------------------------------------------
 // plscolbg()
 //
-// Set the background color (cmap0[0]) by 8 bit RGB value
-//--------------------------------------------------------------------------
+//! Set the background color (cmap0[0]) by 8 bit RGB value
+//! 
+//! @param r Red value of the background color (0 - 255).
+//! @param g Green value of the background color (0 - 255).
+//! @param b Blue value of the background color (0 - 255).
 
 void
 c_plscolbg( PLINT r, PLINT g, PLINT b )
@@ -209,7 +222,14 @@ c_plscolbg( PLINT r, PLINT g, PLINT b )
 //--------------------------------------------------------------------------
 // plscolbga()
 //
-// Set the background color (cmap0[0]) by 8 bit RGB value and alpha value
+//! Set the background color (cmap0[0]) by 8 bit RGB value and alpha value
+//! 
+//! @param r Red value of the background color (0 - 255).
+//! @param g Green value of the background color (0 - 255).
+//! @param b Blue value of the background color (0 - 255).
+//! @param a Alpha (transparency) value of the background color 
+//! (0.0 - 1.0).
+
 //--------------------------------------------------------------------------
 
 void
@@ -221,8 +241,11 @@ c_plscolbga( PLINT r, PLINT g, PLINT b, PLFLT a )
 //--------------------------------------------------------------------------
 // plgcolbg()
 //
-// Returns the background color (cmap0[0]) by 8 bit RGB value
-//--------------------------------------------------------------------------
+//! Returns the background color (cmap0[0]) by 8 bit RGB value
+//!
+//! @param r Current red value of the background color.
+//! @param g Current green value of the background color.
+//! @param b Current blue value of the background color.
 
 void
 c_plgcolbg( PLINT *r, PLINT *g, PLINT *b )
@@ -233,8 +256,12 @@ c_plgcolbg( PLINT *r, PLINT *g, PLINT *b )
 //--------------------------------------------------------------------------
 // plgcolbga()
 //
-// Returns the background color (cmap0[0]) by 8 bit RGB value and alpha value
-//--------------------------------------------------------------------------
+//! Returns the background color (cmap0[0]) by 8 bit RGB value and alpha value
+//!
+//! @param r Current red value of the background color.
+//! @param g Current green value of the background color.
+//! @param b Current blue value of the background color.
+//! @param a Current alpha value of the background color.
 
 void
 c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
@@ -245,9 +272,13 @@ c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
 //--------------------------------------------------------------------------
 // plscol0()
 //
-// Set a given color from color map 0 by 8 bit RGB value
-// Does not result in any additional cells to be allocated.
-//--------------------------------------------------------------------------
+//! Set a given color from color map 0 by 8 bit RGB value
+//! Does not result in any additional cells to be allocated.
+//! 
+//! @param icol0 index of the color to set (0 - plsc->ncol0)
+//! @param r Red value of the color (0 - 255).
+//! @param g Green value of the color (0 - 255).
+//! @param b Blue value of the color (0 - 255).
 
 void
 c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
@@ -276,9 +307,14 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
 //--------------------------------------------------------------------------
 // plscol0a()
 //
-// Set a given color from color map 0 by 8 bit RGB value and alpha value.
-// Does not result in any additional cells to be allocated.
-//--------------------------------------------------------------------------
+//! Set a given color from color map 0 by 8 bit RGB value and alpha value.
+//! Does not result in any additional cells to be allocated.
+//! 
+//! @param icol0 index of the color to set (0 - plsc->ncol0)
+//! @param r Red value of the color (0 - 255).
+//! @param g Green value of the color (0 - 255).
+//! @param b Blue value of the color (0 - 255).
+//! @param a Alpha value of the color (0.0 - 1.0).
 
 void
 c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
@@ -313,9 +349,13 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
 //--------------------------------------------------------------------------
 // plgcol0()
 //
-// Returns 8 bit RGB values for given color from color map 0
-// Values are negative if an invalid color id is given
-//--------------------------------------------------------------------------
+//! Returns 8 bit RGB values for given color from color map 0
+//! Values are negative if an invalid color id is given
+//! 
+//! @param icol0 Index of the color to be return (0 - plsc->ncol0).
+//! @param r Current red value of the color.
+//! @param g Current green value of the color.
+//! @param b Current blue value of the color.
 
 void
 c_plgcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b )
@@ -345,9 +385,14 @@ c_plgcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b )
 //--------------------------------------------------------------------------
 // plgcol0a()
 //
-// Returns 8 bit RGB values for given color from color map 0 and alpha value
-// Values are negative if an invalid color id is given
-//--------------------------------------------------------------------------
+//! Returns 8 bit RGB values for given color from color map 0 and alpha value
+//! Values are negative if an invalid color id is given
+//!
+//! @param icol0 Index of the color to be return (0 - plsc->ncol0).
+//! @param r Current red value of the color.
+//! @param g Current green value of the color.
+//! @param b Current blue value of the color.
+//! @param a Current alpha value of the color.
 
 void
 c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
@@ -379,9 +424,13 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
 //--------------------------------------------------------------------------
 // plscmap0()
 //
-// Set color map 0 colors by 8 bit RGB values.  This sets the entire color
-// map -- only as many colors as specified will be allocated.
-//--------------------------------------------------------------------------
+//! Set color map 0 colors by 8 bit RGB values.  This sets the entire color
+//! map -- only as many colors as specified will be allocated.
+//!
+//! @param r Array of red values.
+//! @param g Array of green values.
+//! @param b Array of blue values.
+//! @param ncol0 Total number of RGB values.
 
 void
 c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 )
@@ -416,9 +465,14 @@ c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 )
 //--------------------------------------------------------------------------
 // plscmap0a()
 //
-// Set color map 0 colors by 8 bit RGB and alpha value.  This sets the
-// entire color map -- only as many colors as specified will be allocated.
-//--------------------------------------------------------------------------
+//! Set color map 0 colors by 8 bit RGB and alpha value.  This sets the
+//! entire color map -- only as many colors as specified will be allocated.
+//!
+//! @param r Array of red values.
+//! @param g Array of green values.
+//! @param b Array of blue values.
+//! @param a Array of alpha values.
+//! @param ncol0 Total number of RGBA values.
 
 void
 c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol0 )
@@ -454,9 +508,13 @@ c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
 //--------------------------------------------------------------------------
 // plscmap1()
 //
-// Set color map 1 colors by 8 bit RGB values
-// This also sets the number of colors.
-//--------------------------------------------------------------------------
+//! Set color map 1 colors by 8 bit RGB values
+//! This also sets the number of colors.
+//!
+//! @param r Array of red values.
+//! @param g Array of green values.
+//! @param b Array of blue values.
+//! @param ncol1 Total number of RGB values.
 
 void
 c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 )
@@ -490,9 +548,14 @@ c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 )
 //--------------------------------------------------------------------------
 // plscmap1a()
 //
-// Set color map 1 colors by 8 bit RGB and alpha values
-// This also sets the number of colors.
-//--------------------------------------------------------------------------
+//! Set color map 1 colors by 8 bit RGB and alpha values
+//! This also sets the number of colors.
+//!
+//! @param r Array of red values.
+//! @param g Array of green values.
+//! @param b Array of blue values.
+//! @param a Array of alpha values.
+//! @param ncol1 Total number of RGBA values.
 
 void
 c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol1 )
@@ -527,53 +590,52 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
 //--------------------------------------------------------------------------
 // plscmap1l()
 //
-// Set color map 1 colors using a piece-wise linear relationship between
-// position in the color map (from 0 to 1) and position in HLS or RGB color
-// space.  May be called at any time.
-//
-// The idea here is to specify a number of control points that specify the
-// mapping between HLS (or RGB or CMY) and palette 1 value.  Between these
-// points, linear interpolation is used.  By mapping position in the color
-// map to function value, this gives a smooth variation of color with
-// intensity.  Any number of control points may be specified, located at
-// arbitrary positions (intensities), although typically 2 - 4 are enough.
-// Another way of stating this is that we are traversing a given number of
-// lines through HLS (or RGB) space as we move through cmap 1 entries.  The
-// control points at the minimum and maximum intensity (0 and 1) must
-// always be specified.  By adding more control points you can get more
-// variation.  One good technique for plotting functions that vary about
-// some expected average is to use an additional 2 control points in the
-// center (intensity ~= 0.5) that are the same color as the background
-// (typically white for paper output, black for crt), and same hue as the
-// boundary control points.  This allows the highs and lows to be very
-// easily distinguished.
-//
-// Each control point must specify the position in cmap 1 as well as three
-// coordinates in HLS or RGB space.  The first point MUST correspond to
-// position = 0, and the last to position = 1.
-//
-// The hue is interpolated around the "front" of the color wheel
-// (red<->green<->blue<->red) unless the "rev" flag is set, in which case
-// interpolation proceeds around the back (reverse) side.  Specifying
-// rev=NULL is equivalent to setting rev[]=0 for every control point.
-//
-// Bounds on RGB coordinates:
-//	R,G,B		[0, 1]		magnitude
-//
-// Bounds on HLS coordinates:
-//	hue		[0, 360]	degrees
-//	lightness	[0, 1]		magnitude
-//	saturation	[0, 1]		magnitude
-//
-// The inputs are:
-//	itype		0: HLS, 1: RGB
-//	npts		number of control points
-//	pos[]		position for each control point
-//	coord1[]	first coordinate for each control point
-//	coord2[]	second coordinate for each control point
-//	coord3[]	third coordinate for each control point
-//	rev[]		reverse flag for each control point
-//--------------------------------------------------------------------------
+//! Set color map 1 colors using a piece-wise linear relationship between
+//! position in the color map (from 0 to 1) and position in HLS or RGB color
+//! space.  May be called at any time.
+//!
+//! The idea here is to specify a number of control points that specify the
+//! mapping between HLS (or RGB or CMY) and palette 1 value.  Between these
+//! points, linear interpolation is used.  By mapping position in the color
+//! map to function value, this gives a smooth variation of color with
+//! intensity.  Any number of control points may be specified, located at
+//! arbitrary positions (intensities), although typically 2 - 4 are enough.
+//! Another way of stating this is that we are traversing a given number of
+//! lines through HLS (or RGB) space as we move through cmap 1 entries.  The
+//! control points at the minimum and maximum intensity (0 and 1) must
+//! always be specified.  By adding more control points you can get more
+//! variation.  One good technique for plotting functions that vary about
+//! some expected average is to use an additional 2 control points in the
+//! center (intensity ~= 0.5) that are the same color as the background
+//! (typically white for paper output, black for crt), and same hue as the
+//! boundary control points.  This allows the highs and lows to be very
+//! easily distinguished.
+//!
+//! Each control point must specify the position in cmap 1 as well as three
+//! coordinates in HLS or RGB space.  The first point MUST correspond to
+//! position = 0, and the last to position = 1.
+//!
+//! The hue is interpolated around the "front" of the color wheel
+//! (red<->green<->blue<->red) unless the "rev" flag is set, in which case
+//! interpolation proceeds around the back (reverse) side.  Specifying
+//! rev=NULL is equivalent to setting rev[]=0 for every control point.
+//!
+//! Bounds on RGB coordinates:
+//!	R,G,B		[0, 1]		magnitude
+//!
+//! Bounds on HLS coordinates:
+//!	hue		[0, 360]	degrees
+//!	lightness	[0, 1]		magnitude
+//!	saturation	[0, 1]		magnitude
+//!
+//! The inputs are:
+//! @param itype 0: HLS, 1: RGB
+//! @param npts	number of control points
+//! @param pos[] position for each control point
+//! @param coord1[] first coordinate for each control point
+//! @param coord2[] second coordinate for each control point
+//! @param coord3[] third coordinate for each control point
+//! @param rev[] reverse flag for each control point
 
 void
 c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
@@ -645,9 +707,16 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
 //--------------------------------------------------------------------------
 // plscmap1la()
 //
-// This is the same as plscmap1l, but also allows alpha value interpolation.
-//
-//--------------------------------------------------------------------------
+//! This is the same as plscmap1l, but also allows alpha value interpolation.
+//!
+//! @param itype 0: HLS, 1: RGB
+//! @param npts	number of control points
+//! @param pos[] position for each control point
+//! @param coord1[] first coordinate for each control point
+//! @param coord2[] second coordinate for each control point
+//! @param coord3[] third coordinate for each control point
+//! @param a[] alpha value for each control point
+//! @param rev[] reverse flag for each control point
 
 void
 c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
@@ -719,9 +788,8 @@ c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
 //--------------------------------------------------------------------------
 // plcmap1_calc()
 //
-// Bin up cmap 1 space and assign colors to make inverse mapping easy.
-// Always do interpolation in HLS space.
-//--------------------------------------------------------------------------
+//! Bin up cmap 1 space and assign colors to make inverse mapping easy.
+//! Always do interpolation in HLS space.
 
 void
 plcmap1_calc( void )
@@ -843,12 +911,13 @@ c_plgcmap1_range( PLFLT *min_color, PLFLT *max_color )
 //--------------------------------------------------------------------------
 // plscmap0n()
 //
-// Set number of colors in cmap 0, (re-)allocate cmap 0, and fill with
-// default values for those colors not previously allocated (and less
-// than index 15, after that you just get grey).
-//
-// The driver is not guaranteed to support all of these.
-//--------------------------------------------------------------------------
+//! Set number of colors in cmap 0, (re-)allocate cmap 0, and fill with
+//! default values for those colors not previously allocated (and less
+//! than index 15, after that you just get grey).
+//!
+//! The driver is not guaranteed to support all of these.
+//!
+//! @param ncol0 Total number of colors.
 
 void
 c_plscmap0n( PLINT ncol0 )
@@ -903,8 +972,14 @@ c_plscmap0n( PLINT ncol0 )
 //--------------------------------------------------------------------------
 // color_set()
 //
-// Initializes color table entry by RGB values.
-//--------------------------------------------------------------------------
+//! Initializes color table 0 entry by RGB values.
+//!
+//! @param i Index of the color.
+//! @param r Red value of the color.
+//! @param g Green value of the color.
+//! @param b Blue value of the color.
+//! @param a Alpha value of the color.
+//! @param name The name of the color.
 
 void
 color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, const char *name )
@@ -922,9 +997,11 @@ color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, const char *name )
 //--------------------------------------------------------------------------
 // plcmap0_def()
 //
-// Initializes specified color map 0 color entry to its default for
-// index range from imin to imax.
-//--------------------------------------------------------------------------
+//! Initializes specified color map 0 color entry to its default for
+//! index range from imin to imax.
+//!
+//! @param imin Index of the first color to set to its default.
+//! @param imax Index of the last color to set to its default.
 
 void
 plcmap0_def( int imin, int imax )
@@ -959,12 +1036,13 @@ plcmap0_def( int imin, int imax )
 //--------------------------------------------------------------------------
 // plscmap1n()
 //
-// Set number of colors in cmap 1, (re-)allocate cmap 1, and set default
-// values if this is the first allocation.
-//
-// Note that the driver is allowed to disregard this number.
-// In particular, most use fewer than we use internally.
-//--------------------------------------------------------------------------
+//! Set number of colors in cmap 1, (re-)allocate cmap 1, and set default
+//! values if this is the first allocation.
+//!
+//! Note that the driver is allowed to disregard this number.
+//! In particular, most use fewer than we use internally.
+//!
+//! @param ncol1 The number of colors in cmap1.
 
 void
 c_plscmap1n( PLINT ncol1 )
@@ -1017,15 +1095,15 @@ c_plscmap1n( PLINT ncol1 )
 //--------------------------------------------------------------------------
 // plcmap1_def()
 //
-// Initializes color map 1.
-//
-// The default initialization uses 6 control points in HLS space, the inner
-// ones being very close to one of the vertices of the HLS double cone.  The
-// vertex used (black or white) is chosen to be the closer to the background
-// color.  The 6 points were chosen over the older 4 points in order to make
-// weaker structures more easily visible, and give more control through the
-// palette editor.  If you don't like these settings.. change them!
-//--------------------------------------------------------------------------
+//! Initializes color map 1.
+//!
+//! The default initialization uses 6 control points in HLS space, the inner
+//! ones being very close to one of the vertices of the HLS double cone.  The
+//! vertex used (black or white) is chosen to be the closer to the background
+//! color.  The 6 points were chosen over the older 4 points in order to make
+//! weaker structures more easily visible, and give more control through the
+//! palette editor.  If you don't like these settings.. change them!
+//!
 
 void
 plcmap1_def( void )
@@ -1096,7 +1174,9 @@ plcmap1_def( void )
 //--------------------------------------------------------------------------
 // plscolor()
 //
-// Used to globally turn color output on/off
+//! Used to globally turn color output on/off
+//!
+//! @param color 0 = no color, Not zero = color.
 //--------------------------------------------------------------------------
 
 void
@@ -1109,7 +1189,11 @@ c_plscolor( PLINT color )
 //--------------------------------------------------------------------------
 // void value()
 //
-// Auxiliary function used by c_plhlsrgb().
+//! Auxiliary function used by c_plhlsrgb().
+//!
+//! @param n1 Lightness/saturation value 1.
+//! @param n2 Lightness/saturation value 2.
+//! @param hue hue (0.0 - 360.0).
 //--------------------------------------------------------------------------
 
 PLFLT
@@ -1137,16 +1221,22 @@ value( double n1, double n2, double hue )
 //--------------------------------------------------------------------------
 // void c_plhlsrgb()
 //
-// Convert HLS color to RGB color.
-// Bounds on HLS (input):
-//	hue		[0., 360.]	degrees
-//	lightness	[0., 1.]	magnitude
-//	saturation	[0., 1.]	magnitude
-//
-// Hue is always mapped onto the interval [0., 360.] regardless of input.
-// Bounds on RGB (output) is always [0., 1.].  Convert to RGB color values
-// by multiplying by 2**nbits (nbits typically 8).
-//--------------------------------------------------------------------------
+//! Convert HLS color to RGB color.
+//! Bounds on HLS (input):
+//!	hue		[0., 360.]	degrees
+//!	lightness	[0., 1.]	magnitude
+//!	saturation	[0., 1.]	magnitude
+//!
+//! Hue is always mapped onto the interval [0., 360.] regardless of input.
+//! Bounds on RGB (output) is always [0., 1.].  Convert to RGB color values
+//! by multiplying by 2**nbits (nbits typically 8).
+//!
+//! @param h hue in HLS color scheme (0.0 - 360.0)
+//! @param l lightness in HLS color scheme (0.0 - 1.0)
+//! @param s saturation in HLS color scheme (0.0 - 1.0)
+//! @param p_r red value of the HLS color
+//! @param p_g green value of the HLS color
+//! @param p_b blue value of the HLS color
 
 void
 c_plhlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b )
@@ -1168,13 +1258,18 @@ c_plhlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b )
 //--------------------------------------------------------------------------
 // void c_plrgbhls()
 //
-// Convert RGB color to HLS color.
-// Bounds on RGB (input) is always [0., 1.].
-// Bounds on HLS (output):
-//	hue		[0., 360.]	degrees
-//	lightness	[0., 1.]	magnitude
-//	saturation	[0., 1.]	magnitude
-//--------------------------------------------------------------------------
+//! Convert RGB color to HLS color.
+//! Bounds on RGB (input) is always [0., 1.].
+//! Bounds on HLS (output):
+//!	hue		[0., 360.]	degrees
+//!	lightness	[0., 1.]	magnitude
+//!	saturation	[0., 1.]	magnitude
+//! @param r red in RGB color scheme (0.0 - 1.0)
+//! @param g green in RGB color scheme (0.0 - 1.0)
+//! @param b blue in RGB color scheme (0.0 - 1.0)
+//! @param p_h hue value of the RGB color.
+//! @param p_l lightness value of the RGB color.
+//! @param p_s saturation value of the RGB color.
 
 void
 c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
@@ -1224,10 +1319,15 @@ c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
 //--------------------------------------------------------------------------
 // read_line()
 //
-// Read a complete line and fill the buffer with its contents up to
-// capacity. Then sanitize the string - no control characters, no
-// trailing blanks
-//--------------------------------------------------------------------------
+//! Read a complete line and fill the buffer with its contents up to
+//! capacity. Then sanitize the string - no control characters, no
+//! trailing blanks
+//!
+//! @param buffer storage for the line of text.
+//! @param length size of the buffer.
+//! @param fp open file pointer from which the line of text should be read.
+//!
+//! @returns The sanitized line from the file.
 
 static char *
 read_line( char *buffer, int length, FILE *fp )
@@ -1276,9 +1376,15 @@ read_line( char *buffer, int length, FILE *fp )
 //--------------------------------------------------------------------------
 // cmap0_palette_read()
 //
-// Read and check r, g, b, a data from a cmap0*.pal format file.
-// The caller must free the returned malloc'ed space for r, g, b, and a.
-//--------------------------------------------------------------------------
+//! Read and check r, g, b, a data from a cmap0*.pal format file.
+//! The caller must free the returned malloc'ed space for r, g, b, and a.
+//!
+//! @param filename name of the cmap0 palette file.
+//! @param number_colors number of color found in the palette file.
+//! @param r red value of each color in the palette file.
+//! @param g green value of each color in the palette file.
+//! @param b blue value of each color in the palette file.
+//! @param a alpha value of each color in the palette file.
 
 void
 cmap0_palette_read( const char *filename,
@@ -1424,9 +1530,10 @@ cmap0_palette_read( const char *filename,
 //--------------------------------------------------------------------------
 // void c_plspal0(filename)
 //
-// Set the palette for color map 0 using a cmap0*.pal format file.
-// filename: the name of the cmap0*.pal file to use.
-//--------------------------------------------------------------------------
+//! Set the palette for color map 0 using a cmap0*.pal format file.
+//! filename: the name of the cmap0*.pal file to use.
+//!
+//! @param filename name of the cmap0 palette file.
 
 void
 c_plspal0( const char *filename )
@@ -1454,10 +1561,15 @@ c_plspal0( const char *filename )
     free( a );
 }
 
-// This code fragment used a lot in plspal1 to deal with
-// floating-point range checking of a value and the adjustment of that
-// value when close to the range when there is floating-point errors.
-//
+//! This code fragment used a lot in plspal1 to deal with
+//! floating-point range checking of a value and the adjustment of that
+//! value when close to the range when there is floating-point errors.
+//!
+//! @param value The value to range check.
+//! @param min The minimum allowable value.
+//! @param max The maximum allowable value.
+//! @param fuzz Amount of slop to allow beyond the range defined by min & max.
+//! @param err_number The error number.
 #define fuzzy_range_check( value, min, max, fuzz, err_number )                                                                        \
     if ( value < ( min - fuzz ) || value > ( max + fuzz ) ) {                                                                         \
         snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", err_number, color_info ); \
@@ -1469,12 +1581,15 @@ c_plspal0( const char *filename )
     } else if ( value > max ) {                                                                                                       \
         value = max;                                                                                                                  \
     }
+
 //--------------------------------------------------------------------------
 // void c_plspal1(filename)
 //
-// Set the palette for color map 1 using a cmap1*.pal format file.
-// filename: the name of the cmap1*.pal file to use.
-//--------------------------------------------------------------------------
+//! Set the palette for color map 1 using a cmap1*.pal format file.
+//! filename: the name of the cmap1*.pal file to use.
+//!
+//! @param filename name of the cmap1 palette file.
+//! @param interpolate interpolate between control points.
 
 void
 c_plspal1( const char *filename, PLBOOL interpolate )
@@ -1720,8 +1835,9 @@ finish: plrestore_locale( save_locale );
 //--------------------------------------------------------------------------
 // void plwarn()
 //
-// A handy way to issue warnings, if need be.
-//--------------------------------------------------------------------------
+//! A handy way to issue warnings, if need be.
+//!
+//! @param errormsg The error message.
 
 void
 plwarn( const char *errormsg )
@@ -1745,13 +1861,14 @@ plwarn( const char *errormsg )
 //--------------------------------------------------------------------------
 // void plabort()
 //
-// Much the same as plwarn(), but appends ", aborting operation" to the
-// error message.  Helps to keep source code uncluttered and provides a
-// convention for error aborts.
-//
-// If cleanup needs to be done in the main program, the user should write
-// his/her own exit handler and pass it in via plsabort().
-//--------------------------------------------------------------------------
+//! Much the same as plwarn(), but appends ", aborting operation" to the
+//! error message.  Helps to keep source code uncluttered and provides a
+//! convention for error aborts.
+//!
+//! If cleanup needs to be done in the main program, the user should write
+//! his/her own exit handler and pass it in via plsabort().
+//!
+//! @param errormsg The error message.
 
 void
 plabort( const char *errormsg )
@@ -1791,7 +1908,10 @@ plabort( const char *errormsg )
 //--------------------------------------------------------------------------
 // void plsabort()
 //
-// Sets an optional user abort handler.
+//! Sets an optional user abort handler.
+//!
+//! @param handler A function that takes a const char * argument that will
+//! be called in the event of a abort.
 //--------------------------------------------------------------------------
 
 void
@@ -1803,13 +1923,15 @@ plsabort( void ( *handler )( const char * ) )
 //--------------------------------------------------------------------------
 // void plexit()
 //
-// In case of an abort this routine is called.  It just prints out an error
-// message and tries to clean up as much as possible.  It's best to turn
-// off pause and then restore previous setting before returning.
-//
-// If cleanup needs to be done in the main program, the user should write
-// his/her own exit handler and pass it in via plsexit().  This function
-// should should either call plend() before exiting, or simply return.
+//! In case of an abort this routine is called.  It just prints out an error
+//! message and tries to clean up as much as possible.  It's best to turn
+//! off pause and then restore previous setting before returning.
+//!
+//! If cleanup needs to be done in the main program, the user should write
+//! his/her own exit handler and pass it in via plsexit().  This function
+//! should should either call plend() before exiting, or simply return.
+//!
+//! @param errormsg The error message.
 //--------------------------------------------------------------------------
 
 void
@@ -1835,7 +1957,10 @@ plexit( const char *errormsg )
 //--------------------------------------------------------------------------
 // void plsexit()
 //
-// Sets an optional user exit handler.
+//! Sets an optional user exit handler.
+//!
+//! @param handler A function that takes a const char * argument that will
+//! will be called in the event of a exit.
 //--------------------------------------------------------------------------
 
 void
@@ -1847,11 +1972,11 @@ plsexit( int ( *handler )( const char * ) )
 //--------------------------------------------------------------------------
 // void plgra()
 //
-// Switches to graphics screen.
-//
-// Here and in pltext() it's a good idea to return silently if plinit()
-// hasn't yet been called, since plwarn() calls pltext() and plgra(), and
-// plwarn() may be called at any time.
+//! Switches to graphics screen.
+//!
+//! Here and in pltext() it's a good idea to return silently if plinit()
+//! hasn't yet been called, since plwarn() calls pltext() and plgra(), and
+//! plwarn() may be called at any time.
 //--------------------------------------------------------------------------
 
 void
@@ -1860,6 +1985,14 @@ c_plgra( void )
     if ( plsc->level > 0 )
         plP_esc( PLESC_GRAPH, NULL );
 }
+
+//--------------------------------------------------------------------------
+// void plxormod()
+//
+//! Set xor mode? FIXME: Not really sure what this function does.
+//!
+//! @param mode Boolean.
+//! @param status 1 if successful, 0 otherwise.
 
 void
 c_plxormod( PLINT mode, PLINT *status )   // xor mode
@@ -1940,7 +2073,7 @@ c_plgdrawmode()
 //--------------------------------------------------------------------------
 // void pltext()
 //
-// Switches to text screen.
+//! Switches to text screen.
 //--------------------------------------------------------------------------
 
 void
@@ -1953,9 +2086,12 @@ c_pltext( void )
 //--------------------------------------------------------------------------
 // void pl_cmd()
 //
-// Front-end to driver escape function.
-// In principle this can be used to pass just about anything directly
-// to the driver.
+//! Front-end to driver escape function.
+//! In principle this can be used to pass just about anything directly
+//! to the driver.
+//!
+//! @param op A PLESC command to pass to the driver.
+//! @param ptr Data associated with the op command.
 //--------------------------------------------------------------------------
 
 void
@@ -1967,18 +2103,22 @@ pl_cmd( PLINT op, void *ptr )
 //--------------------------------------------------------------------------
 // char *plFindCommand
 //
-// Looks for the specified executable file.  Search path:
-//      if command invoked in the build tree:
-//         build_tree/tk (plserver lies there - needed for the tk driver)
-//         source_tree/scripts (plpr lies there - needed for the tk driver)
-//      else
-//	PLPLOT_BIN_ENV = $(PLPLOT_BIN)
-//	current directory
-//	PLPLOT_HOME_ENV/bin = $(PLPLOT_HOME)/bin
-//	BIN_DIR
-//
-// The caller must free the returned pointer (points to malloc'ed memory)
-// when finished with it.
+//! Looks for the specified executable file.  Search path:
+//!      if command invoked in the build tree:
+//!         build_tree/tk (plserver lies there - needed for the tk driver)
+//!         source_tree/scripts (plpr lies there - needed for the tk driver)
+//!      else
+//!	PLPLOT_BIN_ENV = $(PLPLOT_BIN)
+//!	current directory
+//!	PLPLOT_HOME_ENV/bin = $(PLPLOT_HOME)/bin
+//!	BIN_DIR
+//!
+//! The caller must free the returned pointer (points to malloc'ed memory)
+//! when finished with it.
+//!
+//! @param fn Name of the executable(?).
+//! 
+//! @returns The location of the executable file.
 //--------------------------------------------------------------------------
 
 char *
@@ -2051,13 +2191,17 @@ plFindCommand( const char *fn )
 //--------------------------------------------------------------------------
 // FILE *plLibOpen(fn)
 //
-// Return file pointer to lib file.
-// Locations checked:
-//	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
-//	current directory
-//	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
-//	DATA_DIR
-//	PLLIBDEV
+//! Return file pointer to library file (such as a colormap palette).
+//! Locations checked:
+//!	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
+//!	current directory
+//!	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
+//!	DATA_DIR
+//!	PLLIBDEV
+//!
+//! @param fn Name of the file.
+//!
+//! @returns A open file pointer (if successful).
 //--------------------------------------------------------------------------
 
 FILE *
@@ -2079,6 +2223,21 @@ plLibOpen( const char *fn )
     return ret;
 }
 
+//--------------------------------------------------------------------------
+// FILE *plLibOpenPdfstrm(fn)
+//
+//! Return file PDFstrm * to a file (originally used for loading fonts?).
+//! Locations checked:
+//!	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
+//!	current directory
+//!	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
+//!	DATA_DIR
+//!	PLLIBDEV
+//!
+//! @param fn Name of the file.
+//!
+//! @returns A open PDFstrm file pointer (if successful)
+//--------------------------------------------------------------------------
 PDFstrm *
 plLibOpenPdfstrm( const char *fn )
 {
@@ -2175,19 +2334,23 @@ done:
 //--------------------------------------------------------------------------
 // int plFindName
 //
-// Authors: Paul Dubois (LLNL), others?
-// This function is in the public domain.
-//
-// Given a pathname, determine if it is a symbolic link.  If so, continue
-// searching to the ultimate terminus - there may be more than one link.
-// Use the error value to determine when the terminus is reached, and to
-// determine if the pathname really exists.  Then stat it to determine
-// whether it's executable.  Return 0 for an executable, errno otherwise.
-// Note that 'p' _must_ have at least one '/' character - it does by
-// construction in this program.  The contents of the array pointed to by
-// 'p' are changed to the actual pathname if findname is successful.
-//
-// This function is only defined under Unix for now.
+//! Authors: Paul Dubois (LLNL), others?
+//! This function is in the public domain.
+//!
+//! Given a pathname, determine if it is a symbolic link.  If so, continue
+//! searching to the ultimate terminus - there may be more than one link.
+//! Use the error value to determine when the terminus is reached, and to
+//! determine if the pathname really exists.  Then stat it to determine
+//! whether it's executable.  Return 0 for an executable, errno otherwise.
+//! Note that 'p' _must_ have at least one '/' character - it does by
+//! construction in this program.  The contents of the array pointed to by
+//! 'p' are changed to the actual pathname if findname is successful.
+//!
+//! This function is only defined under Unix for now.
+//!
+//! @param p Name of the executable to find.
+//!
+//! @returns 0 if p is found & is an executable.
 //--------------------------------------------------------------------------
 
 #ifdef __unix
@@ -2254,10 +2417,15 @@ plFindName( char *p )
 //--------------------------------------------------------------------------
 // void plGetName()
 //
-// Gets search name for file by concatenating the dir, subdir, and file
-// name, allocating memory as needed.  The appropriate delimiter is added
-// after the dir specification as necessary.  The caller is responsible
-// for freeing the malloc'ed memory.
+//! Gets search name for file by concatenating the dir, subdir, and file
+//! name, allocating memory as needed.  The appropriate delimiter is added
+//! after the dir specification as necessary.  The caller is responsible
+//! for freeing the malloc'ed memory.
+//!
+//! @param dir The directory name.
+//! @param subdir The sub-directory name.
+//! @param filename The file name.
+//! @param filespec The result of concatenating dir, subdir and filename.
 //--------------------------------------------------------------------------
 
 void
@@ -2293,8 +2461,10 @@ plGetName( const char *dir, const char *subdir, const char *filename, char **fil
 //--------------------------------------------------------------------------
 // void strcat_delim()
 //
-// Append path name deliminator if necessary (does not add one if one's
-// there already, or if dealing with a colon-terminated device name).
+//! Append path name deliminator if necessary (does not add one if one's
+//! there already, or if dealing with a colon-terminated device name).
+//!
+//! @param dirspec String to add the appropriate delimiter too.
 //--------------------------------------------------------------------------
 
 void
@@ -2316,9 +2486,14 @@ strcat_delim( char *dirspec )
 //--------------------------------------------------------------------------
 // plcol_interp()
 //
-// Initializes device cmap 1 entry by interpolation from pls->cmap1
-// entries.  Returned PLColor is supposed to represent the i_th color
-// out of a total of ncol colors in the current color scheme.
+//! Initializes device cmap 1 entry by interpolation from pls->cmap1
+//! entries.  Returned PLColor is supposed to represent the i_th color
+//! out of a total of ncol colors in the current color scheme.
+//!
+//! @param pls A plot stream structure.
+//! @param newcolor A color structure to store the color in.
+//! @param i Index of the desired color.
+//! @param ncol Total number of colors (supported by the device?).
 //--------------------------------------------------------------------------
 
 void
@@ -2354,9 +2529,11 @@ plcol_interp( PLStream *pls, PLColor *newcolor, int i, int ncol )
 //--------------------------------------------------------------------------
 // plOpenFile()
 //
-// Opens file for output, prompting if not set.
-// Prints extra newline at end to make output look better in batch runs.
-// A file name of "-" indicates output to stdout.
+//! Opens file for output, prompting if not set.
+//! Prints extra newline at end to make output look better in batch runs.
+//! A file name of "-" indicates output to stdout.
+//!
+//! @param pls A plot stream structure.
 //--------------------------------------------------------------------------
 
 #define MAX_NUM_TRIES    10
@@ -2419,7 +2596,9 @@ plOpenFile( PLStream *pls )
 //--------------------------------------------------------------------------
 // plCloseFile()
 //
-// Closes output file unless it is associated with stdout.
+//! Closes output file unless it is associated with stdout.
+//!
+//! @param pls A plot stream structure.
 //--------------------------------------------------------------------------
 
 void
@@ -2439,7 +2618,9 @@ plCloseFile( PLStream *pls )
 //--------------------------------------------------------------------------
 // plP_getmember()
 //
-// Sets up next file member name (in pls->FileName), but does not open it.
+//! Sets up next file member name (in pls->FileName), but does not open it.
+//!
+//! @param pls A plot stream structure.
 //--------------------------------------------------------------------------
 
 void
@@ -2478,8 +2659,11 @@ plP_getmember( PLStream *pls )
 //--------------------------------------------------------------------------
 // plP_sfnam()
 //
-// Sets up file name (with "%n" removed if present) & family stem name.
-// Reserve some extra space (10 chars) to hold an optional member number.
+//! Sets up file name (with "%n" removed if present) & family stem name.
+//! Reserve some extra space (10 chars) to hold an optional member number.
+//!
+//! @param pls A plot stream.
+//! @param fnam The base file name of the plot files.
 //--------------------------------------------------------------------------
 
 void
@@ -2528,7 +2712,9 @@ plP_sfnam( PLStream *pls, const char *fnam )
 //--------------------------------------------------------------------------
 // plFamInit()
 //
-// Initializes family file parameters.
+//! Initializes family file parameters.
+//!
+//! @param pls A plot stream structure.
 //--------------------------------------------------------------------------
 
 void
@@ -2551,11 +2737,13 @@ plFamInit( PLStream *pls )
 //--------------------------------------------------------------------------
 // plGetFam()
 //
-// Starts new member file of family file set if necessary.
-//
-// Note each member file is a complete graphics file (can be printed
-// individually), although 'plrender' will treat a family as a single
-// logical file if given the family name instead of the member name.
+//! Starts new member file of family file set if necessary.
+//!
+//! Note each member file is a complete graphics file (can be printed
+//! individually), although 'plrender' will treat a family as a single
+//! logical file if given the family name instead of the member name.
+//!
+//! @param pls A plot stream structure.
 //--------------------------------------------------------------------------
 
 void
@@ -2588,10 +2776,18 @@ plGetFam( PLStream *pls )
 //--------------------------------------------------------------------------
 // plRotPhy()
 //
-// Rotates physical coordinates if necessary for given orientation.
-// Each time orient is incremented, the plot is rotated 90 deg clockwise.
-// Note: this is now used only to rotate by 90 degrees for devices that
-// expect portrait mode.
+//! Rotates physical coordinates if necessary for given orientation.
+//! Each time orient is incremented, the plot is rotated 90 deg clockwise.
+//! Note: this is now used only to rotate by 90 degrees for devices that
+//! expect portrait mode.
+//!
+//! @param orient New plot orientation (0-3)
+//! @param xmin Current plot x minimum?
+//! @param ymin Current plot y minimum?
+//! @param xmax Current plot x maximum?
+//! @param ymax Current plot y maximum?
+//! @param px Old x coordinate mapped to new x coordinate.
+//! @param py Old y coordinate mapped to new y coordinate.
 //--------------------------------------------------------------------------
 
 void
@@ -2628,8 +2824,12 @@ plRotPhy( PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
 //--------------------------------------------------------------------------
 // plAllocDev()
 //
-// Allocates a standard PLDev structure for device-specific data, stores
-// the address in pls->dev, and returns the address as well.
+//! Allocates a standard PLDev structure for device-specific data, stores
+//! the address in pls->dev, and returns the address as well.
+//!
+//! @param pls A plot stream structure.
+//!
+//! @returns A PLDev *
 //--------------------------------------------------------------------------
 
 PLDev *
@@ -2648,7 +2848,9 @@ plAllocDev( PLStream *pls )
 //--------------------------------------------------------------------------
 // plGinInit()
 //
-// Just fills in the PLGraphicsIn with appropriate initial values.
+//! Just fills in the PLGraphicsIn with appropriate initial values.
+//!
+//! @param gin A plot graphics input (i.e. keypress or mouseclick) structure.
 //--------------------------------------------------------------------------
 
 void
@@ -2667,7 +2869,11 @@ plGinInit( PLGraphicsIn *gin )
 //--------------------------------------------------------------------------
 // plGetInt()
 //
-// Prompts human to input an integer in response to given message.
+//! Prompts human to input an integer in response to given message.
+//!
+//! @param s The prompt message.
+//!
+//! @returns The PLINT the human entered.
 //--------------------------------------------------------------------------
 
 PLINT
@@ -2698,7 +2904,11 @@ plGetInt( const char *s )
 //--------------------------------------------------------------------------
 // plGetFlt()
 //
-// Prompts human to input a float in response to given message.
+//! Prompts human to input a float in response to given message.
+//!
+//! @param s The prompt message.
+//!
+//! @returns The PLFLT the human entered.
 //--------------------------------------------------------------------------
 
 PLFLT
@@ -2733,8 +2943,12 @@ plGetFlt( const char *s )
 //--------------------------------------------------------------------------
 // plstrdup()
 //
-// A replacement for strdup(), which isn't portable.
-// Caller responsible for freeing the allocated memory.
+//! A replacement for strdup(), which isn't portable.
+//! Caller responsible for freeing the allocated memory.
+//!
+//! @param src The string to duplicate.
+//!
+//! @returns A copy of the string src.
 //--------------------------------------------------------------------------
 
 char PLDLLIMPEXP *
@@ -2753,9 +2967,16 @@ plstrdup( const char *src )
 //--------------------------------------------------------------------------
 // plsnprintf()
 //
-// Dummy function for snprintf(). This function just calls
-// the unsafe function ignoring the string size. This function will
-// rarely be needed if ever.
+//! Dummy function for snprintf(). This function just calls
+//! the unsafe function ignoring the string size. This function will
+//! rarely be needed if ever.
+//!
+//! @param buffer String output buffer.
+//! @param n Size of buffer.
+//! @param format The format string.
+//! @param ... The values that go in the format string (...)
+//!
+//! @returns The length of buffer that is actually used.
 //--------------------------------------------------------------------------
 
 int
@@ -2778,9 +2999,16 @@ plsnprintf( char *buffer, int n, const char *format, ... )
 //--------------------------------------------------------------------------
 // plsnscanf()
 //
-// Dummy function for snscanf(). This function just calls
-// the unsafe function ignoring the string size. This function will
-// rarely be needed if ever.
+//! Dummy function for snscanf(). This function just calls
+//! the unsafe function ignoring the string size. This function will
+//! rarely be needed if ever.
+//!
+//! @param buffer String output buffer.
+//! @param n Size of buffer.
+//! @param format The format string.
+//! @param ... The values that go in the format string (...)
+//!
+//! @returns The length of buffer that is actually used.
 //--------------------------------------------------------------------------
 
 int
@@ -2801,7 +3029,9 @@ plsnscanf( const char *buffer, int n, const char *format, ... )
 //--------------------------------------------------------------------------
 // plseed()
 //
-// Set the seed for the random number generator included.
+//! Set the seed for the random number generator included.
+//!
+//! @param s The random number generator seed value.
 //--------------------------------------------------------------------------
 
 void
@@ -2813,7 +3043,8 @@ c_plseed( unsigned int s )
 //--------------------------------------------------------------------------
 // plrandd()
 //
-// Returns a random number on [0,1]-interval.
+//! @returns A random number on [0,1]-interval.
+//!
 //--------------------------------------------------------------------------
 
 PLFLT
@@ -2825,13 +3056,15 @@ c_plrandd( void )
 //--------------------------------------------------------------------------
 // plsave_set_locale()
 //
-// Save LC_NUMERIC locale in a string.  The pointer to that string is
-// returned. Then set LC_NUMERIC to "C" locale.
-// n.b. plsave_set_locale and plrestore_locale should always be used as
-// a pair to surround PLplot code that absolutely requires the
-// LC_NUMERIC "C" locale to be in effect.  It is one of plrestore_locale's
-// responsibilities to free the memory allocated here for the locale
-// string.
+//! Save LC_NUMERIC locale in a string.  The pointer to that string is
+//! returned. Then set LC_NUMERIC to "C" locale.
+//! n.b. plsave_set_locale and plrestore_locale should always be used as
+//! a pair to surround PLplot code that absolutely requires the
+//! LC_NUMERIC "C" locale to be in effect.  It is one of plrestore_locale's
+//! responsibilities to free the memory allocated here for the locale
+//! string.
+//!
+//! @returns The LC_NUMERIC locale.
 //--------------------------------------------------------------------------
 
 char *
@@ -2871,9 +3104,11 @@ plsave_set_locale( void )
 //--------------------------------------------------------------------------
 // plrestore_locale()
 //
-// Restore LC_NUMERIC locale string that was determined by
-// plsave_set_locale with the pointer to that string as the argument.
-// Also, free the memory for that string.
+//! Restore LC_NUMERIC locale string that was determined by
+//! plsave_set_locale with the pointer to that string as the argument.
+//! Also, free the memory for that string.
+//!
+//! @param saved_lc_numeric_locale The saved numeric locale..
 //--------------------------------------------------------------------------
 
 void
