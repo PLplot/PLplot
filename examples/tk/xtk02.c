@@ -37,7 +37,7 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp, int argc, const char *argv[] );
 //--------------------------------------------------------------------------
 
 int stuff( tclMatrix *pm, Tcl_Interp *interp,
-           int argc, const char *argv[] )
+           int PL_UNUSED( argc ), const char * PL_UNUSED( argv []) )
 {
     int   i;
     PLFLT x, y;
@@ -335,7 +335,7 @@ plot3( void )
     plline( 101, x, y );
 }
 
-int   myplotCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
+int   myplotCmd( ClientData PL_UNUSED( cd ), Tcl_Interp *PL_UNUSED( interp ), int PL_UNUSED( argc ), char **argv )
 {
     if ( !strcmp( argv[1], "1" ) )
         myplot1();

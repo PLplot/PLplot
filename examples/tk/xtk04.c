@@ -30,7 +30,7 @@ int mat_max( tclMatrix *pm, Tcl_Interp *interp, int argc, const char *argv[] );
 int mat_min( tclMatrix *pm, Tcl_Interp *interp, int argc, const char *argv[] );
 
 int mat_max( tclMatrix *pm, Tcl_Interp *interp,
-             int argc, const char *argv[] )
+             int PL_UNUSED( argc ), const char *PL_UNUSED( argv[] ) )
 {
     PLFLT max = pm->fdata[0];
     int   i;
@@ -43,7 +43,7 @@ int mat_max( tclMatrix *pm, Tcl_Interp *interp,
 }
 
 int mat_min( tclMatrix *pm, Tcl_Interp *interp,
-             int argc, const char *argv[] )
+             int PL_UNUSED( argc ), const char *PL_UNUSED( argv[] ) )
 {
     PLFLT min = pm->fdata[0];
     int   i;
@@ -112,7 +112,7 @@ main( int argc, const char **argv )
 //--------------------------------------------------------------------------
 //
 
-int   get_dataCmd( ClientData, Tcl_Interp *, int, char ** );
+int get_dataCmd( ClientData, Tcl_Interp *, int, char ** );
 
 static int
 AppInit( Tcl_Interp *interp )
@@ -149,7 +149,8 @@ AppInit( Tcl_Interp *interp )
     return TCL_OK;
 }
 
-int   get_dataCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
+int   
+get_dataCmd( ClientData PL_UNUSED( cd ), Tcl_Interp *interp, int PL_UNUSED( argc ), char **argv )
 {
     tclMatrix *pm, *matPtr;
     int       nx, ny, i, j;

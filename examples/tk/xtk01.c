@@ -341,7 +341,7 @@ PLFLT tr[6] =
 { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
 static void
-mypltr( PLFLT xloc, PLFLT yloc, PLFLT *tx, PLFLT *ty, void *pltr_data )
+mypltr( PLFLT xloc, PLFLT yloc, PLFLT *tx, PLFLT *ty, void * PL_UNUSED( pltr_data ) )
 {
     *tx = tr[0] * xloc + tr[1] * yloc + tr[2];
     *ty = tr[3] * xloc + tr[4] * yloc + tr[5];
@@ -489,7 +489,7 @@ f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmn, PLFLT *fmx )
 }
 //--------------------------------------------------------------------------
 
-int   myplotCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
+int   myplotCmd( ClientData PL_UNUSED( cd ), Tcl_Interp *PL_UNUSED( interp ), int PL_UNUSED( argc ), char **argv )
 {
     if ( !strcmp( argv[1], "1" ) )
         myplot1();
