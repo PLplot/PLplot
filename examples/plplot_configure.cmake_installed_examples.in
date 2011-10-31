@@ -23,6 +23,8 @@ set(INCLUDE_DIR "@INCLUDE_DIR@")
 set(MATH_LIB @MATH_LIB@)
 set(SH_EXECUTABLE @SH_EXECUTABLE@)
 
+set(BUILD_SHARED_LIBS @BUILD_SHARED_LIBS@)
+
 set(language_info_LIST @language_info_LIST@)
 
 # This list of set commands must be consistent with language_info_LIST
