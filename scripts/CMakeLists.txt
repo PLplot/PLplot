@@ -35,3 +35,7 @@ if(HAVE_BASH)
   endif (NOT ${scripts_SCRIPTS} STREQUAL "")
 endif(HAVE_BASH)
 
+if(ENABLE_tcl OR ENABLE_tk)
+  install(PROGRAMS mktclIndex DESTINATION ${DATA_DIR}/examples/tcl)
+endif(ENABLE_tcl OR ENABLE_tk)
+
