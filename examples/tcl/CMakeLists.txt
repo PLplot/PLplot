@@ -84,34 +84,35 @@ configure_file(
   @ONLY
 )
 
-if(CORE_BUILD)
-  # Copy file and scripts to the binary directory if different to the
-  # source directory. Needed for ctest, but also so the tclIndex file
-  # is generated in the binary tree not the source tree.
-  set(tclIndex_DEPENDS)
-  foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-      )
-    list(APPEND tclIndex_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${file})
-  endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
-  add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
-
+# Copy file and scripts to the binary directory if different to the
+# source directory. Needed for ctest, but also so the tclIndex file
+# is generated in the binary tree not the source tree.
+set(tclIndex_DEPENDS)
+foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-    COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-    DEPENDS ${tclIndex_DEPENDS}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
     )
-  add_custom_target(tclIndex_examples_tcl ALL
-    DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-    )
+  list(APPEND tclIndex_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${file})
+endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
+add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
 
-  # These two custom targets file-depend on common files so must serialize.
-  add_dependencies(tclIndex_examples_tcl tcl_examples)
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+  COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+  DEPENDS ${tclIndex_DEPENDS}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
+add_custom_target(tclIndex_examples_tcl ALL
+  DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+  )
+
+# These two custom targets file-depend on common files so must serialize.
+add_dependencies(tclIndex_examples_tcl tcl_examples)
+
+if(CORE_BUILD)
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
     DESTINATION ${DATA_DIR}/examples/tcl
@@ -125,14 +126,6 @@ if(CORE_BUILD)
   install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/tcl
     )
-
-else(CORE_BUILD)
-  set(tclIndex_DEPENDS)
-  foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
-    list(APPEND tclIndex_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-  endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
-  add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
-
 endif(CORE_BUILD)
 
 if(BUILD_TEST)

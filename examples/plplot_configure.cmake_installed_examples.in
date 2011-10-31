@@ -137,7 +137,7 @@ endif(ENABLE_ocaml)
 
 if(ENABLE_tcl OR ENABLE_tk)
   set(TCL_TCLSH @TCL_TCLSH@)
-  set(MKTCLINDEX @MKTCLINDEX@)
+  set(MKTCLINDEX ${CMAKE_SOURCE_DIR}/tcl/mktclIndex)
   set(MKTCLINDEX_ARGS @MKTCLINDEX_ARGS@)
 endif(ENABLE_tcl OR ENABLE_tk)
 
