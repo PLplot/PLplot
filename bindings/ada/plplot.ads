@@ -381,7 +381,7 @@ package PLplot is
 --------------------------------------------------------------------------------
 -- Constants copied from PLplot_Thin.ads so that it doesn't have to be seen.  --
 -- These are replicated herein with other names. Either name may be used,     --
--- e.g., Parse_Full is the same as PL_PARSE_FULL.    --
+-- e.g., Parse_Full is the same as PL_PARSE_FULL.                             --
 --------------------------------------------------------------------------------
 
     -- Modes for parsing command line arguments (redux).

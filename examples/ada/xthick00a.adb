@@ -24,16 +24,16 @@
 -- See x00_easy_a.adb for an easier way to generate similar results using
 -- Ada-specific extensions to PLplot.
 
--- See x00thicka.adb for a version of this program that uses easy-to-read names.
+-- See x00a.adb for a version of this program that uses traditional plplot names.
 
 with
     PLplot_Auxiliary,
-    PLplot_Traditional;
+    PLplot;
 use
     PLplot_Auxiliary,
-    PLplot_Traditional;
+    PLplot;
 
-procedure x00a is
+procedure x00thicka is
     x, y : Real_Vector(0 .. 100);
     x_Min, y_Min : Long_Float := 0.0;
     x_Max : Long_Float := 1.0;
@@ -46,18 +46,23 @@ begin
     end loop;
 
     -- Parse and process command line arguments.
-    plparseopts(PL_PARSE_FULL); 
+    Parse_Command_Line_Arguments(Parse_Full); 
 
     -- Initialize plplot.
-    plinit;
+    Initialize_PLplot;
 
     -- Create a labelled box to hold the plot.
-    plenv(x_Min, x_Max, y_Min, y_Max, 0, 0);
-    pllab("x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot");
+    Set_Environment(x_Min, x_Max, y_Min, y_Max, 
+        Justification => Not_Justified, 
+        Axis_Style    => Linear_Box_Plus);
+    Write_Labels
+       (X_Label     => "x", 
+        Y_Label     => "y=100 x#u2#d",
+        Title_Label => "Simple PLplot demo of a 2D line plot");
 
     -- Plot the data that was prepared above.
-    plline(x, y);
+    Draw_Curve(x, y);
 
     -- Close PLplot library.
-    plend;
-end x00a;
+    End_PLplot;
+end x00thicka;

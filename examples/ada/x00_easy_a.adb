@@ -32,8 +32,7 @@ use
     PLplot;
 
 procedure x00_easy_a is
-    N : Integer := 100;
-    x, y : Real_Vector(0 .. N);
+    x, y : Real_Vector(0 .. 100);
     x_Min, y_Min : Long_Float := 0.0;
     x_Max : Long_Float := 1.0;
     y_Max : Long_Float := 100.0;
