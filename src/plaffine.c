@@ -24,31 +24,36 @@
 
 #include "plplotP.h"
 
-// For background on these affine functions see SVG specification, e.g.,
-// http://www.w3.org/TR/SVGTiny12/coords.html#EstablishingANewUserSpace.
-// Affine 3x3 matrices with elements A_i,j always have a last row of
-// 0, 0, 1 so the elements are conveniently stored in a vector in the order
-// A_1_1, A_2_1, A_1_2, A_2_2, A_1_3, A_2_3, with the last row implied.
-//
-// N.B.  The PLplot affine interpretation of translate, scale, etc., is
-// as actions on coordinate systems, rather than actions on objects.  This
-// is identical to the SVG specficiation interpretation.  However, the
-// SVG specification interprets the affine matrix as follows:
-// old_coord_vector = affine_matrix * new_coordinate vector.  In PLplot
-// we use the alternative interpretation
-// new_coord_vector = affine_matrix * old_coordinate vector.
-// The result is all affine matrices below are the inverses of the SVG
-// equivalents.
-//
-// N.B. All PLplot affine functions below return the affine matrix result (in
-// vector form) as the first argument).  It is the calling routine's
-// responsibility to provide the space for all affine matrix arguments,
-// i.e., a PLFLT array with a dimension of 6.
-//
+//! @file
+//!  These function perform variuos affine transformations.
+//!
+//! For background on these affine functions see SVG specification, e.g.,
+//! http://www.w3.org/TR/SVGTiny12/coords.html#EstablishingANewUserSpace.
+//! Affine 3x3 matrices with elements A_i,j always have a last row of
+//! 0, 0, 1 so the elements are conveniently stored in a vector in the order
+//! A_1_1, A_2_1, A_1_2, A_2_2, A_1_3, A_2_3, with the last row implied.
+//!
+//! N.B.  The PLplot affine interpretation of translate, scale, etc., is
+//! as actions on coordinate systems, rather than actions on objects.  This
+//! is identical to the SVG specficiation interpretation.  However, the
+//! SVG specification interprets the affine matrix as follows:
+//! old_coord_vector = affine_matrix * new_coordinate vector.  In PLplot
+//! we use the alternative interpretation
+//! new_coord_vector = affine_matrix * old_coordinate vector.
+//! The result is all affine matrices below are the inverses of the SVG
+//! equivalents.
+//!
+//! N.B. All PLplot affine functions below return the affine matrix result (in
+//! vector form) as the first argument).  It is the calling routine's
+//! responsibility to provide the space for all affine matrix arguments,
+//! i.e., a PLFLT array with a dimension of 6.
+//!
 //
 
-// Returns affine identity matrix
-
+//! Returns affine identity matrix
+//!
+//! @param affine_vector Initialize a (pre-allocated) transform matrix.
+//!
 void
 plP_affine_identity( PLFLT *affine_vector )
 {
@@ -60,8 +65,12 @@ plP_affine_identity( PLFLT *affine_vector )
     affine_vector[5] = 0.;
 }
 
-// Translate new coordinate system axes relative to the old.
-
+//! Translate new coordinate system axes relative to the old.
+//!
+//! @param affine_vector Pre-allocated storage for a translation matrix.
+//! @param xtranslate Amount to translate in x.
+//! @param ytranslate Amount to translate in y.
+//!
 void
 plP_affine_translate( PLFLT *affine_vector, PLFLT xtranslate, PLFLT ytranslate )
 {
@@ -76,8 +85,12 @@ plP_affine_translate( PLFLT *affine_vector, PLFLT xtranslate, PLFLT ytranslate )
     affine_vector[5] = -ytranslate;
 }
 
-// Scale new coordinate system axes relative to the old.
-
+//! Scale new coordinate system axes relative to the old.
+//!
+//! @param affine_vector Pre-allocate storage for a scale matrix.
+//! @param xscale Amount to scale in x.
+//! @param yscale Amount to scale in y.
+//!
 void
 plP_affine_scale( PLFLT *affine_vector, PLFLT xscale, PLFLT yscale )
 {
@@ -102,9 +115,12 @@ plP_affine_scale( PLFLT *affine_vector, PLFLT xscale, PLFLT yscale )
     affine_vector[5] = 0.;
 }
 
-// Rotate new coordinate system axes relative to the old.
-// angle is in degrees.
-
+//! Rotate new coordinate system axes relative to the old.
+//! angle is in degrees.
+//!
+//! @param affine_vector Pre-allocated storage for a rotation matrix.
+//! @param angle Amount to rotate in degrees.
+//!
 void
 plP_affine_rotate( PLFLT *affine_vector, PLFLT angle )
 {
@@ -118,8 +134,12 @@ plP_affine_rotate( PLFLT *affine_vector, PLFLT angle )
     affine_vector[5] = 0.;
 }
 
-// Skew new X coordinate axis relative to the old.
-// angle is in degrees.
+//! Skew new X coordinate axis relative to the old.
+//! angle is in degrees.
+//!
+//! @param affine_vector Pre-allocated storage for a skew (in x) matrix.
+//! @param angle Amount to skew in degrees.
+//!
 
 void
 plP_affine_xskew( PLFLT *affine_vector, PLFLT angle )
@@ -133,8 +153,12 @@ plP_affine_xskew( PLFLT *affine_vector, PLFLT angle )
     affine_vector[5] = 0.;
 }
 
-// Skew new Y coordinate axis relative to the old.
-// angle is in degrees.
+//! Skew new Y coordinate axis relative to the old.
+//! angle is in degrees.
+//!
+//! @param affine_vector Pre-allocated storage for a skew (in y) matrix.
+//! @param angle Amount to skew in degrees.
+//!
 
 void
 plP_affine_yskew( PLFLT *affine_vector, PLFLT angle )
@@ -148,11 +172,15 @@ plP_affine_yskew( PLFLT *affine_vector, PLFLT angle )
     affine_vector[5] = 0.;
 }
 
-// Multiply two affine transformation matrices to form a third.
-//
-// A = B * C
-//
-//
+//! Multiply two affine transformation matrices to form a third.
+//!
+//! A = B * C
+//!
+//! @param affine_vectorA Pre-allocated storage for the result of
+//! multiplying matrix affine_vectorB by matrix affine_vectorC.
+//! @param affine_vectorB First matrix to multiply.
+//! @param affine_vectorC Second matrix to multiply.
+//!
 
 void
 plP_affine_multiply(

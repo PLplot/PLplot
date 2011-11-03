@@ -19,6 +19,10 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
 
+//! @file
+//!  Functions for drawing an arc.
+//!
+
 #include "plplotP.h"
 
 #define CIRCLE_SEGMENTS    ( PL_MAXPOLY - 1 )
@@ -29,8 +33,19 @@ void plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle
 //--------------------------------------------------------------------------
 // plarc_approx : Plot an approximated arc with a series of lines
 //
-// Takes the same arguments, with the same units, as c_plarc below.
-//
+//! Takes the same arguments, with the same units, as c_plarc below.
+//! This is the fallback function in the event that the output
+//! device does not have native support for drawing arcs.
+//!
+//! @param x Center coordinate of the arc in x.
+//! @param y Center coordinate of the arc in y.
+//! @param a Radius of the arcs major axis.
+//! @param b Radius of the arcs minor axis.
+//! @param angle1 Start angle in degrees.
+//! @param angle2 End angle in degrees.
+//! @param rotate How much to rotate the arc?
+//! @param fill Fill the arc.
+//!
 //--------------------------------------------------------------------------
 void
 plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLFLT rotate, PLBOOL fill )
@@ -93,22 +108,33 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
 //--------------------------------------------------------------------------
 // plarc : Plot an arc
 //
-// Takes the following arguments:
-//
-//   x, y:
-//      x and y coordinates for the center of the arc
-//
-//   a, b:
-//      Radius of the arc's major and minor axes
-//
-//   angle1:
-//      Start angle (degrees)
-//
-//   angle2:
-//      End angle (degrees)
-//
-//   fill:
-//      Should the arc be filled?
+//! Plot an Arc.
+//!  Takes the following arguments:
+//!
+//!   x, y:
+//!      x and y coordinates for the center of the arc
+//!
+//!   a, b:
+//!      Radius of the arc's major and minor axes
+//!
+//!   angle1:
+//!      Start angle (degrees)
+//!
+//!   angle2:
+//!      End angle (degrees)
+//!
+//!   fill:
+//!      Should the arc be filled
+//!
+//! @param x Center coordinate of the arc in x.
+//! @param y Center coordinate of the arc in y.
+//! @param a Radius of the arcs major axis.
+//! @param b Radius of the arcs minor axis.
+//! @param angle1 Start angle in degrees.
+//! @param angle2 End angle in degrees.
+//! @param rotate How much to rotate the arc?
+//! @param fill Fill the arc.
+//!
 //
 //--------------------------------------------------------------------------
 void
