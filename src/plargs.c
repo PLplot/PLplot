@@ -36,64 +36,66 @@
 //
 //--------------------------------------------------------------------------
 //
-//  This file contains routines to extract & process command flags.  The
-//  command flags recognized by PLplot are stored in the "ploption_table"
-//  structure, along with strings giving the syntax, long help message, and
-//  option handler.
-//
-//  The command line parser -- plparseopts() -- removes all recognized flags
-//  (decreasing argc accordingly), so that invalid input may be readily
-//  detected.  It can also be used to process user command line flags.  The
-//  user can merge an option table of type PLOptionTable into the internal
-//  option table info structure using plMergeOpts().  Or, the user can
-//  specify that ONLY the external table(s) be parsed by calling
-//  plClearOpts() before plMergeOpts().
-//
-//  The default action taken by plparseopts() is as follows:
-//      - Returns with an error if an unrecognized option or badly formed
-//        option-value pair are encountered.
-//      - Returns immediately (return code 0) when the first non-option
-//        command line argument is found.
-//      - Returns with the return code of the option handler, if one
-//        was called.
-//      - Deletes command line arguments from argv list as they are found,
-//        and decrements argc accordingly.
-//      - Does not show "invisible" options in usage or help messages.
-//      - Assumes the program name is contained in argv[0].
-//
-//  These behaviors may be controlled through the "mode" argument, which can
-//  have the following bits set:
-//
-//  PL_PARSE_FULL -- Full parsing of command line and all error messages
-//  enabled, including program exit when an error occurs.  Anything on the
-//  command line that isn't recognized as a valid option or option argument
-//  is flagged as an error.
-//
-//  PL_PARSE_QUIET -- Turns off all output except in the case of
-//  errors.
-//
-//  PL_PARSE_NODELETE -- Turns off deletion of processed arguments.
-//
-//  PL_PARSE_SHOWALL -- Show invisible options
-//
-//  PL_PARSE_NOPROGRAM -- Specified if argv[0] is NOT a pointer to the
-//  program name.
-//
-//  PL_PARSE_NODASH -- Set if leading dash is NOT required.
-//
-//  PL_PARSE_SKIP -- Set to quietly skip over any unrecognized args.
-//
-//  Note: if you want to have both your option and a PLplot option of the
-//  same name processed (e.g. the -v option in plrender), do the following:
-//      1. Tag your option with PL_OPT_NODELETE
-//      2. Give it an option handler that uses a return code of 1.
-//      3. Merge your option table in.
-//  By merging your table, your option will be processed before the PLplot
-//  one.  The PL_OPT_NODELETE ensures that the option string is not deleted
-//  from the argv list, and the return code of 1 ensures that the parser
-//  continues looking for it.
-//
-//  See plrender.c for examples of actual usage.
+//! @file
+//!  This file contains routines to extract & process command flags.  The
+//!  command flags recognized by PLplot are stored in the "ploption_table"
+//!  structure, along with strings giving the syntax, long help message, and
+//!  option handler.
+//!
+//!  The command line parser -- plparseopts() -- removes all recognized flags
+//!  (decreasing argc accordingly), so that invalid input may be readily
+//!  detected.  It can also be used to process user command line flags.  The
+//!  user can merge an option table of type PLOptionTable into the internal
+//!  option table info structure using plMergeOpts().  Or, the user can
+//!  specify that ONLY the external table(s) be parsed by calling
+//!  plClearOpts() before plMergeOpts().
+//!
+//!  The default action taken by plparseopts() is as follows:
+//!      - Returns with an error if an unrecognized option or badly formed
+//!        option-value pair are encountered.
+//!      - Returns immediately (return code 0) when the first non-option
+//!        command line argument is found.
+//!      - Returns with the return code of the option handler, if one
+//!        was called.
+//!      - Deletes command line arguments from argv list as they are found,
+//!        and decrements argc accordingly.
+//!      - Does not show "invisible" options in usage or help messages.
+//!      - Assumes the program name is contained in argv[0].
+//!
+//!  These behaviors may be controlled through the "mode" argument, which can
+//!  have the following bits set:
+//!
+//!  PL_PARSE_FULL -- Full parsing of command line and all error messages
+//!  enabled, including program exit when an error occurs.  Anything on the
+//!  command line that isn't recognized as a valid option or option argument
+//!  is flagged as an error.
+//!
+//!  PL_PARSE_QUIET -- Turns off all output except in the case of
+//!  errors.
+//!
+//!  PL_PARSE_NODELETE -- Turns off deletion of processed arguments.
+//!
+//!  PL_PARSE_SHOWALL -- Show invisible options
+//!
+//!  PL_PARSE_NOPROGRAM -- Specified if argv[0] is NOT a pointer to the
+//!  program name.
+//!
+//!  PL_PARSE_NODASH -- Set if leading dash is NOT required.
+//!
+//!  PL_PARSE_SKIP -- Set to quietly skip over any unrecognized args.
+//!
+//!  Note: if you want to have both your option and a PLplot option of the
+//!  same name processed (e.g. the -v option in plrender), do the following:
+//!      1. Tag your option with PL_OPT_NODELETE
+//!      2. Give it an option handler that uses a return code of 1.
+//!      3. Merge your option table in.
+//!  By merging your table, your option will be processed before the PLplot
+//!  one.  The PL_OPT_NODELETE ensures that the option string is not deleted
+//!  from the argv list, and the return code of 1 ensures that the parser
+//!  continues looking for it.
+//!
+//!  See plrender.c for examples of actual usage.
+//!
 
 #include "plplotP.h"
 #include <ctype.h>
@@ -184,54 +186,55 @@ static int        mode_skip;
 static char opttmp[OPTMAX];
 
 //--------------------------------------------------------------------------
-// PLPLOT options data structure definition.
-//
-// The table is defined as follows
-//
-// typedef struct {
-//     const char *opt;
-//     int  (*handler)	(const char *, const char *, void *);
-//     void *client_data;
-//     void *var;
-//     long mode;
-//     const char *syntax;
-//     const char *desc;
-// } PLOptionTable;
-//
-// where each entry has the following meaning:
-//
-// opt		option string
-// handler	pointer to function for processing the option and
-//		 (optionally) its argument
-// client_data	pointer to data that gets passed to (*handler)
-// var		address of variable to set based on "mode"
-// mode		governs handling of option (see below)
-// syntax	short syntax description
-// desc		long syntax description
-//
-// The syntax and or desc strings can be NULL if the option is never to be
-// described.  Usually this is only used for obsolete arguments; those we
-// just wish to hide from normal use are better made invisible (which are
-// made visible by either specifying -showall first or PL_PARSE_SHOWALL).
-//
-// The mode bits are:
-//
-// PL_OPT_ARG		Option has an argment
-// PL_OPT_NODELETE	Don't delete after processing
-// PL_OPT_INVISIBLE	Make invisible (usually for debugging)
-// PL_OPT_DISABLED	Ignore this option
-//
-// The following mode bits cause the option to be processed as specified:
-//
-// PL_OPT_FUNC		Call function handler (opt, opt_arg)
-// PL_OPT_BOOL		Set *var=1
-// PL_OPT_INT		Set *var=atoi(opt_arg)
-// PL_OPT_FLOAT		Set *var=atof(opt_arg)
-// PL_OPT_STRING	Set *var=opt_arg
-//
-// where opt points to the option string and opt_arg points to the
-// argument string.
-//
+//!
+//! PLPLOT options data structure definition.
+//!
+//! The table is defined as follows
+//!
+//! typedef struct {
+//!     const char *opt;
+//!     int  (*handler)	(const char *, const char *, void *);
+//!     void *client_data;
+//!     void *var;
+//!     long mode;
+//!     const char *syntax;
+//!     const char *desc;
+//! } PLOptionTable;
+//!
+//! where each entry has the following meaning:
+//!
+//! opt		option string
+//! handler	pointer to function for processing the option and
+//!		 (optionally) its argument
+//! client_data	pointer to data that gets passed to (*handler)
+//! var		address of variable to set based on "mode"
+//! mode		governs handling of option (see below)
+//! syntax	short syntax description
+//! desc		long syntax description
+//!
+//! The syntax and or desc strings can be NULL if the option is never to be
+//! described.  Usually this is only used for obsolete arguments; those we
+//! just wish to hide from normal use are better made invisible (which are
+//! made visible by either specifying -showall first or PL_PARSE_SHOWALL).
+//!
+//! The mode bits are:
+//!
+//! PL_OPT_ARG		Option has an argment
+//! PL_OPT_NODELETE	Don't delete after processing
+//! PL_OPT_INVISIBLE	Make invisible (usually for debugging)
+//! PL_OPT_DISABLED	Ignore this option
+//!
+//! The following mode bits cause the option to be processed as specified:
+//!
+//! PL_OPT_FUNC		Call function handler (opt, opt_arg)
+//! PL_OPT_BOOL		Set *var=1
+//! PL_OPT_INT		Set *var=atoi(opt_arg)
+//! PL_OPT_FLOAT		Set *var=atof(opt_arg)
+//! PL_OPT_STRING	Set *var=opt_arg
+//!
+//! where opt points to the option string and opt_arg points to the
+//! argument string.
+//!
 //--------------------------------------------------------------------------
 
 static PLOptionTable ploption_table[] = {
@@ -667,17 +670,19 @@ static const char    *plplot_notes[] = {
 };
 
 //--------------------------------------------------------------------------
-// Array of option tables and associated info.
-//
-// The user may merge up to PL_MAX_OPT_TABLES custom option tables (of type
-// PLOptionTable) with the internal one.  The resulting treatment is simple,
-// powerful, and robust.  The tables are parsed in the order of last added
-// first, to the internal table last.  If multiple options of the same name
-// occur, only the first parsed is "seen", thus, the user can easily
-// override any PLplot internal option merely by providing the same option.
-// This same precedence is followed when printing help and usage messages,
-// with each set of options given separately.  See example usage in
-// plrender.c.
+//! @struct PLOptionInfo
+//!
+//! Array of option tables and associated info.
+//!
+//! The user may merge up to PL_MAX_OPT_TABLES custom option tables (of type
+//! PLOptionTable) with the internal one.  The resulting treatment is simple,
+//! powerful, and robust.  The tables are parsed in the order of last added
+//! first, to the internal table last.  If multiple options of the same name
+//! occur, only the first parsed is "seen", thus, the user can easily
+//! override any PLplot internal option merely by providing the same option.
+//! This same precedence is followed when printing help and usage messages,
+//! with each set of options given separately.  See example usage in
+//! plrender.c.
 //--------------------------------------------------------------------------
 
 typedef struct
@@ -719,8 +724,14 @@ static int       tables = 1;
 //--------------------------------------------------------------------------
 // plSetOpt()
 //
-// Process input strings, treating them as an option and argument pair.
-// Returns 1 on an error.
+//! Process input strings, treating them as an option and argument pair.
+//! Returns 1 on an error.
+//!
+//! @param opt The option.
+//! @param opt_arg The value to set it to.
+//!
+//! @returns 1 on an error.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -755,7 +766,12 @@ c_plsetopt( const char * opt, const char *opt_arg )
 //--------------------------------------------------------------------------
 // plMergeOpts()
 //
-// Merge user option table info structure with internal one.
+//! Merge user option table info structure with internal one.
+//!
+//! @param options ?
+//! @param name ?
+//! @param notes ?
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -801,7 +817,8 @@ plMergeOpts( PLOptionTable *options, const char *name, const char **notes )
 //--------------------------------------------------------------------------
 // plClearOpts()
 //
-// Clear internal option table info structure.
+//! Clear internal option table info structure.
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -813,7 +830,8 @@ plClearOpts( void )
 //--------------------------------------------------------------------------
 // plResetOpts()
 //
-// Reset internal option table info structure.
+//! Reset internal option table info structure.
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -826,9 +844,16 @@ plResetOpts( void )
 //--------------------------------------------------------------------------
 // plparseopts()
 //
-// Process options list using current ploptions_info structure.
-// An error in parsing the argument list causes a program exit if
-// mode_full is set, otherwise the function returns with an error.
+//! Process options list using current ploptions_info structure.
+//! An error in parsing the argument list causes a program exit if
+//! mode_full is set, otherwise the function returns with an error.
+//!
+//! @param p_argc ?
+//! @param argv ?
+//! @param mode ?
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -962,7 +987,16 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
 //--------------------------------------------------------------------------
 // ParseOpt()
 //
-// Parses & determines appropriate action for input flag.
+//! Parses & determines appropriate action for input flag.
+//!
+//! @param p_myargc ?
+//! @param p_argv ?
+//! @param p_argc ?
+//! @param p_argsave ?
+//! @param option_table ?
+//! 
+//! @returns ?
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1014,7 +1048,15 @@ ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_args
 //--------------------------------------------------------------------------
 // ProcessOpt()
 //
-// Process option (and argument if applicable).
+//! Process option (and argument if applicable).
+//!
+//! @param opt ?
+//! @param tab ?
+//! @param p_myargc ?
+//! @param p_argv ?
+//! @param p_argc ?
+//!
+//! @returns 0 if successful.
 //--------------------------------------------------------------------------
 
 static int
@@ -1134,8 +1176,16 @@ ProcessOpt( const char * opt, PLOptionTable *tab, int *p_myargc, const char ***p
 //--------------------------------------------------------------------------
 // GetOptarg()
 //
-// Retrieves an option argument.
-// If an error occurs here it is a true syntax error.
+//! Retrieves an option argument.
+//! If an error occurs here it is a true syntax error.
+//!
+//! @param popt_arg ?
+//! @param p_myargc ?
+//! @param p_argv ?
+//! @param p_argc ?
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1177,7 +1227,11 @@ GetOptarg( const char **popt_arg, int *p_myargc, const char ***p_argv, int *p_ar
 //--------------------------------------------------------------------------
 // plSetUsage()
 //
-// Set the strings used in usage and syntax messages.
+//! Set the strings used in usage and syntax messages.
+//!
+//! @param program_string The program name.
+//! @param usage_string String describing how to use the program.
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -1193,7 +1247,8 @@ plSetUsage( const char *program_string, const char *usage_string )
 //--------------------------------------------------------------------------
 // plOptUsage()
 //
-// Print usage & syntax message.
+//! Print usage & syntax message.
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -1213,7 +1268,8 @@ plOptUsage( void )
 //--------------------------------------------------------------------------
 // Syntax()
 //
-// Print short syntax message.
+//! Print short syntax message.
+//!
 //--------------------------------------------------------------------------
 
 static void
@@ -1263,7 +1319,8 @@ Syntax( void )
 //--------------------------------------------------------------------------
 // Help()
 //
-// Print long help message.
+//! Print long help message.
+//!
 //--------------------------------------------------------------------------
 
 static void
@@ -1343,7 +1400,12 @@ Help( void )
 //--------------------------------------------------------------------------
 // plParseDrvOpts
 //
-// Parse driver specific options
+//! Parse driver specific options
+//!
+//! @param acc_opt ?
+//!
+//! @returns 0 if successful.
+//!
 //--------------------------------------------------------------------------
 
 int
@@ -1419,7 +1481,10 @@ plParseDrvOpts( DrvOpt *acc_opt )
 //--------------------------------------------------------------------------
 // plHelpDrvOpts
 //
-// Give driver specific help
+//! Give driver specific help
+//!
+//! @param acc_opt ?
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -1438,7 +1503,8 @@ plHelpDrvOpts( DrvOpt *acc_opt )
 //--------------------------------------------------------------------------
 // tidyDrvOpts
 //
-// Tidy up and free memory associated with driver options
+//! Tidy up and free memory associated with driver options
+//!
 //--------------------------------------------------------------------------
 
 void
@@ -1474,8 +1540,15 @@ plP_FreeDrvOpts()
 //--------------------------------------------------------------------------
 // opt_h()
 //
-// Performs appropriate action for option "h":
-// Issues help message
+//! Performs appropriate action for option "h":
+//! Issues help message
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 2.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1490,8 +1563,15 @@ opt_h( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * 
 //--------------------------------------------------------------------------
 // opt_v()
 //
-// Performs appropriate action for option "v":
-// Issues version message
+//! Performs appropriate action for option "v":
+//! Issues version message
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 2.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1506,8 +1586,15 @@ opt_v( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * 
 //--------------------------------------------------------------------------
 // opt_verbose()
 //
-// Performs appropriate action for option "verbose":
-// Turn on verbosity flag
+//! Performs appropriate action for option "verbose":
+//! Turn on verbosity flag
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1520,8 +1607,15 @@ opt_verbose( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), v
 //--------------------------------------------------------------------------
 // opt_debug()
 //
-// Performs appropriate action for option "debug":
-// Turn on debugging flag
+//! Performs appropriate action for option "debug":
+//! Turn on debugging flag
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1535,8 +1629,15 @@ opt_debug( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), voi
 //--------------------------------------------------------------------------
 // opt_hack()
 //
-// Performs appropriate action for option "hack":
-// Enables driver-specific hack(s)
+//! Performs appropriate action for option "hack":
+//! Enables driver-specific hack(s)
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1549,8 +1650,15 @@ opt_hack( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void
 //--------------------------------------------------------------------------
 // opt_dev()
 //
-// Performs appropriate action for option "dev":
-// Sets output device keyword
+//! Performs appropriate action for option "dev":
+//! Sets output device keyword
+//! 
+//! @param opt Not used.
+//! @param opt_arg The name of the output device.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1563,8 +1671,15 @@ opt_dev( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 // opt_o()
 //
-// Performs appropriate action for option "o":
-// Sets output file name
+//! Performs appropriate action for option "o":
+//! Sets output file name
+//! 
+//! @param opt Not used.
+//! @param opt_arg The file family name.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1577,8 +1692,15 @@ opt_o( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cli
 //--------------------------------------------------------------------------
 // opt_mar()
 //
-// Performs appropriate action for option "mar":
-// Sets relative margin width
+//! Performs appropriate action for option "mar":
+//! Sets relative margin width
+//! 
+//! @param opt Not used.
+//! @param opt_arg Plot margin width.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1591,8 +1713,15 @@ opt_mar( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 // opt_a()
 //
-// Performs appropriate action for option "a":
-// Sets plot aspect ratio on page
+//! Performs appropriate action for option "a":
+//! Sets plot aspect ratio on page
+//! 
+//! @param opt Not used.
+//! @param opt_arg Plot aspect ratio.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1605,8 +1734,15 @@ opt_a( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cli
 //--------------------------------------------------------------------------
 // opt_jx()
 //
-// Performs appropriate action for option "jx":
-// Sets relative justification in x
+//! Performs appropriate action for option "jx":
+//! Sets relative justification in x
+//! 
+//! @param opt Not used.
+//! @param opt_arg Plot relative justification in x(?)
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1619,8 +1755,15 @@ opt_jx( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 // opt_jy()
 //
-// Performs appropriate action for option "jy":
-// Sets relative justification in y
+//! Performs appropriate action for option "jy":
+//! Sets relative justification in y
+//! 
+//! @param opt Not used.
+//! @param opt_arg Plot relative justification in y(?)
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1633,8 +1776,15 @@ opt_jy( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 // opt_ori()
 //
-// Performs appropriate action for option "ori":
-// Sets orientation
+//! Performs appropriate action for option "ori":
+//! Sets orientation
+//! 
+//! @param opt Not used.
+//! @param opt_arg Plot orientation.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1647,8 +1797,15 @@ opt_ori( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 // opt_freeaspect()
 //
-// Performs appropriate action for option "freeaspect":
-// Allow aspect ratio to adjust to orientation swaps.
+//! Performs appropriate action for option "freeaspect":
+//! Allow aspect ratio to adjust to orientation swaps.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1661,22 +1818,29 @@ opt_freeaspect( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg )
 //--------------------------------------------------------------------------
 // opt_portrait()
 //
-// Performs appropriate action for option "portrait":
-// Set portrait mode.  If plsc->portrait = 1, then the orientation for certain
-// drivers is changed by 90 deg to portrait orientation from the default
-// landscape orientation used by PLplot while the  aspect ratio allowed to
-// adjust using freeaspect.
-// N.B. the driver list where this flag is honored is currently limited
-// to ljii, ljiip, psc, ps, and pstex.  A 90 deg rotation is just not
-// appropriate for certain other drivers.  These drivers where portrait
-// mode is ignored include display drivers (e.g., xwin, tk), drivers
-// which are subequently going to be transformed to another form
-// (e.g., meta or pbm), or drivers which are normally used for web
-// publishing (e.g., png, jpeg).  That said, the case is not entirely clear
-// for all drivers so the list of drivers where portrait mode is honored
-// may increase in the future. To add to the list simply copy the small
-// bit of code from  ps.c that has to do with pls->portrait to the
-// appropriate driver file.
+//! Performs appropriate action for option "portrait":
+//! Set portrait mode.  If plsc->portrait = 1, then the orientation for certain
+//! drivers is changed by 90 deg to portrait orientation from the default
+//! landscape orientation used by PLplot while the  aspect ratio allowed to
+//! adjust using freeaspect.
+//! N.B. the driver list where this flag is honored is currently limited
+//! to ljii, ljiip, psc, ps, and pstex.  A 90 deg rotation is just not
+//! appropriate for certain other drivers.  These drivers where portrait
+//! mode is ignored include display drivers (e.g., xwin, tk), drivers
+//! which are subequently going to be transformed to another form
+//! (e.g., meta or pbm), or drivers which are normally used for web
+//! publishing (e.g., png, jpeg).  That said, the case is not entirely clear
+//! for all drivers so the list of drivers where portrait mode is honored
+//! may increase in the future. To add to the list simply copy the small
+//! bit of code from  ps.c that has to do with pls->portrait to the
+//! appropriate driver file.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1689,8 +1853,15 @@ opt_portrait( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), 
 //--------------------------------------------------------------------------
 // opt_width()
 //
-// Performs appropriate action for option "width":
-// Sets pen width
+//! Performs appropriate action for option "width":
+//! Sets pen width
+//! 
+//! @param opt Not used.
+//! @param opt_arg Plot pen width.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1715,12 +1886,19 @@ opt_width( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 // opt_bg()
 //
-// Performs appropriate action for option "bg":
-// Sets background color (rgb represented in hex on command line) and alpha
-// (represented as floating point on the command line with underscore
-// delimiter), e.g.,
-// -bg ff0000 (set background to red with an alpha value of 1.0)
-// -bg ff0000_0.1 (set background to red with an alpha value of 0.1
+//! Performs appropriate action for option "bg":
+//! Sets background color (rgb represented in hex on command line) and alpha
+//! (represented as floating point on the command line with underscore
+//! delimiter), e.g.,
+//! -bg ff0000 (set background to red with an alpha value of 1.0)
+//! -bg ff0000_0.1 (set background to red with an alpha value of 0.1
+//! 
+//! @param opt Not used.
+//! @param opt_arg Background RGB color in hex.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1795,8 +1973,15 @@ opt_bg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 // opt_ncol0()
 //
-// Performs appropriate action for option "ncol0":
-// Sets number of colors to allocate in cmap 0 (upper bound).
+//! Performs appropriate action for option "ncol0":
+//! Sets number of colors to allocate in cmap 0 (upper bound).
+//! 
+//! @param opt Not used.
+//! @param opt_arg Number of color map 0 colors.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1809,8 +1994,15 @@ opt_ncol0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 // opt_ncol1()
 //
-// Performs appropriate action for option "ncol1":
-// Sets number of colors to allocate in cmap 1 (upper bound).
+//! Performs appropriate action for option "ncol1":
+//! Sets number of colors to allocate in cmap 1 (upper bound).
+//! 
+//! @param opt Not used.
+//! @param opt_arg Number of color map 1 colors.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1823,8 +2015,15 @@ opt_ncol1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 // opt_wplt()
 //
-// Performs appropriate action for option "wplt":
-// Sets (zoom) window into plot (e.g. "0,0,0.5,0.5")
+//! Performs appropriate action for option "wplt":
+//! Sets (zoom) window into plot (e.g. "0,0,0.5,0.5")
+//! 
+//! @param opt Not used.
+//! @param opt_arg Zoom setting.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1863,8 +2062,15 @@ opt_wplt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 // opt_drvopt()
 //
-// Get driver specific options in the form <option[=value]>[,option[=value]]*
-// If "value" is not specified, it defaults to "1".
+//! Get driver specific options in the form <option[=value]>[,option[=value]]*
+//! If "value" is not specified, it defaults to "1".
+//! 
+//! @param opt Not used.
+//! @param opt_arg The driver specific option.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1946,8 +2152,15 @@ opt_drvopt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 // opt_fam()
 //
-// Performs appropriate action for option "fam":
-// Enables family output files
+//! Performs appropriate action for option "fam":
+//! Enables family output files
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -1960,17 +2173,24 @@ opt_fam( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void 
 //--------------------------------------------------------------------------
 // opt_fsiz()
 //
-// Performs appropriate action for option "fsiz":
-// Sets size of a family member file (may be somewhat larger since eof must
-// occur at a page break).  Also turns on familying.  Example usage:
-//
-//	-fsiz 5M	(5 MB)
-//	-fsiz 300K	(300 KB)
-//	-fsiz .3M	(same)
-//	-fsiz .5G	(half a GB)
-//
-// Note case of the trailing suffix doesn't matter.
-// If no suffix, defaults to MB.
+//! Performs appropriate action for option "fsiz":
+//! Sets size of a family member file (may be somewhat larger since eof must
+//! occur at a page break).  Also turns on familying.  Example usage:
+//!
+//!	-fsiz 5M	(5 MB)
+//!	-fsiz 300K	(300 KB)
+//!	-fsiz .3M	(same)
+//!	-fsiz .5G	(half a GB)
+//!
+//! Note case of the trailing suffix doesn't matter.
+//! If no suffix, defaults to MB.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Family size setting.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2020,8 +2240,15 @@ opt_fsiz( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 // opt_fbeg()
 //
-// Performs appropriate action for option "fbeg":
-// Starts with the specified family member number.
+//! Performs appropriate action for option "fbeg":
+//! Starts with the specified family member number.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Number of the first plot.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2035,8 +2262,15 @@ opt_fbeg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 // opt_finc()
 //
-// Performs appropriate action for option "finc":
-// Specify increment between family members.
+//! Performs appropriate action for option "finc":
+//! Specify increment between family members.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Amount to increment the plot number between plots.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2050,8 +2284,15 @@ opt_finc( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 // opt_fflen()
 //
-// Performs appropriate action for option "fflen":
-// Specify minimum field length for family member number.
+//! Performs appropriate action for option "fflen":
+//! Specify minimum field length for family member number.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Size of the family number field (e.g. "1", "01", "001" ?)
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2065,8 +2306,15 @@ opt_fflen( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 // opt_np()
 //
-// Performs appropriate action for option "np":
-// Disables pause between pages
+//! Performs appropriate action for option "np":
+//! Disables pause between pages
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2079,8 +2327,15 @@ opt_np( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void *
 //--------------------------------------------------------------------------
 // opt_nopixmap()
 //
-// Performs appropriate action for option "nopixmap":
-// Disables use of pixmaps in X drivers
+//! Performs appropriate action for option "nopixmap":
+//! Disables use of pixmaps in X drivers
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2093,8 +2348,15 @@ opt_nopixmap( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), 
 //--------------------------------------------------------------------------
 // opt_db()
 //
-// Performs appropriate action for option "db":
-// Double buffer X output (update only done on eop or Expose)
+//! Performs appropriate action for option "db":
+//! Double buffer X output (update only done on eop or Expose)
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2107,8 +2369,15 @@ opt_db( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void *
 //--------------------------------------------------------------------------
 // opt_bufmax()
 //
-// Performs appropriate action for option "bufmax":
-// Sets size of data buffer for tk driver
+//! Performs appropriate action for option "bufmax":
+//! Sets size of data buffer for tk driver
+//! 
+//! @param opt Not used.
+//! @param opt_arg Size of the data buffer for the tk driver.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2121,8 +2390,15 @@ opt_bufmax( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 // opt_server_name()
 //
-// Performs appropriate action for option "server_name":
-// Sets main window name of server (Tcl/TK driver only)
+//! Performs appropriate action for option "server_name":
+//! Sets main window name of server (Tcl/TK driver only)
+//! 
+//! @param opt Not used.
+//! @param opt_arg The name of the main window.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2135,8 +2411,15 @@ opt_server_name( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_U
 //--------------------------------------------------------------------------
 // opt_plserver()
 //
-// Performs appropriate action for option "plserver":
-// Sets name to use when invoking server (Tcl/TK driver only)
+//! Performs appropriate action for option "plserver":
+//! Sets name to use when invoking server (Tcl/TK driver only)
+//! 
+//! @param opt Not used.
+//! @param opt_arg Name of Tcl/TK server (?).
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2149,8 +2432,15 @@ opt_plserver( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 // opt_plwindow()
 //
-// Performs appropriate action for option "plwindow":
-// Sets PLplot window name
+//! Performs appropriate action for option "plwindow":
+//! Sets PLplot window name
+//! 
+//! @param opt Not used.
+//! @param opt_arg Name of the window.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2167,8 +2457,15 @@ opt_plwindow( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 // opt_auto_path()
 //
-// Performs appropriate action for option "auto_path":
-// Sets additional directories to autoload
+//! Performs appropriate action for option "auto_path":
+//! Sets additional directories to autoload
+//! 
+//! @param opt Not used.
+//! @param opt_arg Additional directories to add the the load path (?).
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2181,8 +2478,15 @@ opt_auto_path( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNU
 //--------------------------------------------------------------------------
 // opt_px()
 //
-// Performs appropriate action for option "px":
-// Set packing in x
+//! Performs appropriate action for option "px":
+//! Set packing in x
+//! 
+//! @param opt Not used.
+//! @param opt_arg X packing (?).
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2195,8 +2499,15 @@ opt_px( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 // opt_py()
 //
-// Performs appropriate action for option "py":
-// Set packing in y
+//! Performs appropriate action for option "py":
+//! Set packing in y
+//! 
+//! @param opt Not used.
+//! @param opt_arg Y packing (?).
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2209,12 +2520,19 @@ opt_py( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 // opt_geo()
 //
-// Performs appropriate action for option "geo": Set geometry for
-// output window, i.e., "-geometry WIDTHxHEIGHT+XOFF+YOFF" where
-// WIDTHxHEIGHT, +XOFF+YOFF, or both must be present, and +XOFF+YOFF
-// stands for one of the four combinations +XOFF+YOFF, +XOFF-YOFF,
-// -XOFF+YOFF, and -XOFF-YOFF.  Some examples are the following:
-// -geometry 400x300, -geometry -100+200, and -geometry 400x300-100+200.
+//! Performs appropriate action for option "geo": Set geometry for
+//! output window, i.e., "-geometry WIDTHxHEIGHT+XOFF+YOFF" where
+//! WIDTHxHEIGHT, +XOFF+YOFF, or both must be present, and +XOFF+YOFF
+//! stands for one of the four combinations +XOFF+YOFF, +XOFF-YOFF,
+//! -XOFF+YOFF, and -XOFF-YOFF.  Some examples are the following:
+//! -geometry 400x300, -geometry -100+200, and -geometry 400x300-100+200.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Plot geometry descriptor.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2300,7 +2618,14 @@ opt_geo( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 // opt_tk_file()
 //
-// File name for plserver tk_file option
+//! File name for plserver tk_file option
+//! 
+//! @param opt Not used.
+//! @param opt_arg Tk file name.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2318,12 +2643,19 @@ opt_tk_file( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSE
 //--------------------------------------------------------------------------
 // opt_dpi()
 //
-// Performs appropriate action for option "dpi":
-// Set dpi resolution for output device
-//   e.g.,  "-dpi 600x300", will set X dpi to 600 and Y dpi to 300
-//              or
-//   e.g., "-dpi 1200"
-// Will set both X and Y dpi to 1200 dpi
+//! Performs appropriate action for option "dpi":
+//! Set dpi resolution for output device
+//!   e.g.,  "-dpi 600x300", will set X dpi to 600 and Y dpi to 300
+//!              or
+//!   e.g., "-dpi 1200"
+//! Will set both X and Y dpi to 1200 dpi
+//! 
+//! @param opt Not used.
+//! @param opt_arg DPI descriptor string.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2364,7 +2696,14 @@ opt_dpi( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 // opt_dev_compression()
 //
-// Sets device compression
+//! Sets device compression
+//! 
+//! @param opt Not used.
+//! @param opt_arg Device compression (?).
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2386,7 +2725,14 @@ opt_dev_compression( const char * PL_UNUSED( opt ), const char *opt_arg, void * 
 //--------------------------------------------------------------------------
 // opt_cmap0()
 //
-// Sets color table 0 based on a cmap0.pal file.
+//! Sets color table 0 based on a cmap0.pal file.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Name of color map 0 .pal file.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2399,7 +2745,14 @@ opt_cmap0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 // opt_cmap1()
 //
-// Sets color table 1 based on a cmap1.pal file.
+//! Sets color table 1 based on a cmap1.pal file.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Name of a color map 1 .pal file.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2412,7 +2765,14 @@ opt_cmap1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 // opt_locale()
 //
-// Make PLplot portable to all LC_NUMERIC locales.
+//! Make PLplot portable to all LC_NUMERIC locales.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
@@ -2437,9 +2797,16 @@ opt_locale( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), vo
 //--------------------------------------------------------------------------
 // opt_eofill()
 //
-// For the case where the boundary of the filled region is
-// self-intersecting, use the even-odd fill rule rather than the
-// default nonzero fill rule.
+//! For the case where the boundary of the filled region is
+//! self-intersecting, use the even-odd fill rule rather than the
+//! default nonzero fill rule.
+//! 
+//! @param opt Not used.
+//! @param opt_arg Not used.
+//! @param client_data Not used.
+//!
+//! returns 0.
+//!
 //--------------------------------------------------------------------------
 
 static int
