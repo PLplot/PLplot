@@ -147,26 +147,26 @@ CMake options.
 In some future release we will deprecate these bindings. When this
 will happen has not been decided yet.
 
-(5.9.10) We have found that some distributions of the gfortran compiler
-on Windows MinGW/gfortran compiler (i.e., MinGW/gfortran 4.6.1 and 4.6.2 from
-http://www.equation.com) may cause a link error due to duplicate symbols
-like __gfortran_setarg_. These errors can be suppressed by adding
-the flag -Wl,--allow-multiple-define. It is very likely that this
-is a bug in these distributions.
+(5.9.10) We have found that some distributions of the Windows
+MinGW/gfortran compiler (i.e., MinGW/gfortran 4.6.1 and 4.6.2 from
+http://www.equation.com) may cause a link error due to duplicate
+symbols like __gfortran_setarg_. These errors can be suppressed by
+adding the flag -Wl,--allow-multiple-define. It is very likely that
+this is a bug in these distributions.
 
 As building the libraries and the examples succeeds without any problem
 if you use most other distributions of Windows MinGW/gfortran,
 we have decided not to include this flag in our build system.
 
-Distributions of gfortran that are known to work:
+Distributions that are known to work:
 - MinGW/gfortran-4.5 from http://www.equation.com,
 - MinGW/gfortran-4.5.2-1 that is installed using the latest
   mingw-get-inst-20110802 automatic installer available at
   http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst
 - MinGW/gfortran-4.6.2 from tdm-gcc.tdragon.net
 
-(Therefore it is not the version of gfortran as such that causes
-this problem.)
+(Therefore it is not the 4.5.x versus 4.6.x version of MinGW/gfortran
+as such that causes this problem.)
 
 (5.9.9) This is a quick release to deal with two broken build issues
 that were recently discovered for our Windows platform.  Windows users should
