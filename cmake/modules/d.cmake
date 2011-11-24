@@ -46,3 +46,10 @@ if(ENABLE_d)
   endif(NOT CMAKE_D_COMPILER_WORKS)
 endif(ENABLE_d)
 
+if(ENABLE_d)
+  # Set this option to OFF by default since the STATIC library is
+  # the only one that seems to work for now on Debian Squeeze and
+  # potentially other Linux systems.
+  option(plplotdmd_SHARED "Treat libplplotdmd as a shared library" OFF)
+endif(ENABLE_d)
+  

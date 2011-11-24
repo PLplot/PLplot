@@ -71,6 +71,21 @@ if(CORE_BUILD)
     )
 
   set(DC ${CMAKE_D_COMPILER})
+
+  if(NON_TRANSITIVE)
+    if(plplotdmd_SHARED AND BUILD_SHARED_LIBS)
+      # pkg-config does not use --static option for d examples build.
+      set(PC_STATIC_OPTION_D)
+    else(plplotdmd_SHARED AND BUILD_SHARED_LIBS)
+      # pkg-config uses --static option for d examples build.
+      set(PC_STATIC_OPTION_D "--static")
+    endif(plplotdmd_SHARED AND BUILD_SHARED_LIBS)
+  else(NON_TRANSITIVE)
+    # pkg-config never uses the --static option for the d examples build
+    # for the transitive case.
+    set(PC_STATIC_OPTION_D)
+  endif(NON_TRANSITIVE)
+
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

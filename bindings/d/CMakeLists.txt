@@ -30,11 +30,13 @@ if(ENABLE_d)
     plplot.d
   )
   # Set this option to OFF by default since the STATIC library is
-  # the only one that seems to work for now on Debian Lenny and
+  # the only one that seems to work for now on Debian Squeeze and
   # potentially other Linux systems.
   option(plplotdmd_SHARED "Treat libplplotdmd as a shared library" OFF)
   
   if(plplotdmd_SHARED)
+    # pkg-config does not use --static option for d examples build.
+    set(PC_STATIC_OPTION_D)
     add_library(plplotdmd${LIB_TAG} ${plplotdmd${LIB_TAG}_LIB_SRCS})
 
     if(BUILD_SHARED_LIBS)
@@ -62,9 +64,22 @@ if(ENABLE_d)
 	)
     endif(USE_RPATH)
   else(plplotdmd_SHARED)
+    # pkg-config uses --static option for d examples build.
+    set(PC_STATIC_OPTION_D "--static")
     add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
     target_link_libraries(plplotdmd${LIB_TAG} plplot${LIB_TAG})
   endif(plplotdmd_SHARED)
+
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libplplotadad in the shared libraries case.
+    target_link_libraries(plplotdmd${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    # This configures the pkg-config method to use non-transitive linking.
+    set(PC_REQUIRES_TAG "Requires.private")
+  else(NON_TRANSITIVE)
+    # This configures the pkg-config method to use transitive linking
+    set(PC_REQUIRES_TAG "Requires")
+  endif(NON_TRANSITIVE)
 
   install(TARGETS plplotdmd${LIB_TAG}
     EXPORT export_plplot
