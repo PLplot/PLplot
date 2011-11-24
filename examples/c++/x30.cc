@@ -177,7 +177,7 @@ x30::x30( int argc, const char *argv[] )
     py[2] = 1.;
     py[3] = 1.;
 
-    plgradient( 4, px, py, 90. );
+    pls->gradient( 4, px, py, 90. );
 
     delete pls;
 }
