@@ -45,8 +45,8 @@ if(ENABLE_cxx)
 
   target_link_libraries(plplotcxx${LIB_TAG} plplot${LIB_TAG})
   if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for shared libraries for
-    # everything (e.g., the C++ examples) that links to libplplotcxx.
+    # empty list ==> non-transitive linking for everything that links
+    # to libplplotcxx in the shared libraries case.
     target_link_libraries(plplotcxx${LIB_TAG} LINK_INTERFACE_LIBRARIES)
     # This configures the pkg-config method to use non-transitive linking.
     set(PC_REQUIRES_TAG "Requires.private")
