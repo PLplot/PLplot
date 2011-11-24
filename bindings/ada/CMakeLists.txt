@@ -56,6 +56,17 @@ if(ENABLE_ada)
 
   add_library(plplotada${LIB_TAG} ${plplotada${LIB_TAG}_LIB_SRCS})
 
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libplplotadad in the shared libraries case.
+    target_link_libraries(plplotada${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    # This configures the pkg-config method to use non-transitive linking.
+    set(PC_REQUIRES_TAG "Requires.private")
+  else(NON_TRANSITIVE)
+    # This configures the pkg-config method to use transitive linking
+    set(PC_REQUIRES_TAG "Requires")
+  endif(NON_TRANSITIVE)
+
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed
   # at the Ada language support level and not worked around here.
