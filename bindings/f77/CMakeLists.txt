@@ -203,6 +203,18 @@ if(ENABLE_f77)
 
   add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})
 
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libplplotf77cd and libplplotf77d in the shared libraries case.
+    target_link_libraries(plplotf77c${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplotf77${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    # This configures the pkg-config method to use non-transitive linking.
+    set(PC_REQUIRES_TAG "Requires.private")
+  else(NON_TRANSITIVE)
+    # This configures the pkg-config method to use transitive linking
+    set(PC_REQUIRES_TAG "Requires")
+  endif(NON_TRANSITIVE)
+
   if(STATIC_OPTS)
     add_library(plplotf77opts${LIB_TAG} STATIC ${plplotf77opts${LIB_TAG}_LIB_SRCS})
     target_link_libraries(plplotf77${LIB_TAG} plplotf77c${LIB_TAG})

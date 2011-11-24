@@ -147,6 +147,18 @@ if(ENABLE_f95)
 
   add_library(plplotf95${LIB_TAG} ${plplotf95${LIB_TAG}_LIB_SRCS})
 
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libplplotf95cd and libplplotf95d in the shared libraries case.
+    target_link_libraries(plplotf95c${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplotf95${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    # This configures the pkg-config method to use non-transitive linking.
+    set(PC_REQUIRES_TAG "Requires.private")
+  else(NON_TRANSITIVE)
+    # This configures the pkg-config method to use transitive linking
+    set(PC_REQUIRES_TAG "Requires")
+  endif(NON_TRANSITIVE)
+
   if(STATIC_OPTS)
     add_library(plplotf95opts${LIB_TAG} STATIC ${plplotf95opts${LIB_TAG}_LIB_SRCS})
     target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
