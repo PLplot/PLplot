@@ -98,6 +98,12 @@ endif(BUILD_SHARED_LIBS)
 add_library(qsastime ${qsastime_LIB_SRCS})
 add_dependencies(qsastime tai-utc.h_built deltaT.h_built)
 
+if(NON_TRANSITIVE)
+  # empty list ==> non-transitive linking for everything that links to
+  # libqsatime in the shared libraries case.
+  target_link_libraries(qsastime LINK_INTERFACE_LIBRARIES)
+endif(NON_TRANSITIVE)
+
 if(MATH_LIB)
   target_link_libraries(qsastime ${MATH_LIB})
 endif(MATH_LIB)

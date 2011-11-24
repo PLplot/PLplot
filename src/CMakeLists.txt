@@ -182,6 +182,17 @@ include_directories(
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built ${qt_dependency})
 
+if(NON_TRANSITIVE)
+  # empty list ==> non-transitive linking for everything that links to
+  # libplplotd in the shared libraries case.
+  target_link_libraries(plplot${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+  # This configures the pkg-config method to use non-transitive linking.
+  set(PC_REQUIRES_TAG "Requires.private")
+else(NON_TRANSITIVE)
+  # This configures the pkg-config method to use transitive linking
+  set(PC_REQUIRES_TAG "Requires")
+endif(NON_TRANSITIVE)
+
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 if(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_LIBRARIES ${LTDL_LIBRARIES})

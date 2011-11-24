@@ -33,6 +33,12 @@ if(WITH_CSA)
 
   add_library(csirocsa ${csirocsa_LIB_SRCS})
 
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libcsirocsa in the shared libraries case.
+    target_link_libraries(csirocsa LINK_INTERFACE_LIBRARIES)
+  endif(NON_TRANSITIVE)
+
   set_target_properties(csirocsa
     PROPERTIES SOVERSION ${csirocsa_SOVERSION} VERSION ${csirocsa_VERSION}
     INSTALL_NAME_DIR "${LIB_DIR}"

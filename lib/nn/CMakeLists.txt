@@ -38,6 +38,13 @@ if(PL_HAVE_QHULL)
   endif(BUILD_SHARED_LIBS)
 
   add_library(csironn ${csironn_LIB_SRCS})
+
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libcsironn in the shared libraries case.
+    target_link_libraries(csironn LINK_INTERFACE_LIBRARIES)
+  endif(NON_TRANSITIVE)
+
   set_target_properties(
     csironn
     PROPERTIES
@@ -47,6 +54,7 @@ if(PL_HAVE_QHULL)
     INSTALL_NAME_DIR "${LIB_DIR}"
     )
   target_link_libraries(csironn ${QHULL_LIBRARIES})
+
   install(TARGETS csironn
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
