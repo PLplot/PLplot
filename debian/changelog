@@ -1,3 +1,10 @@
+plplot (5.9.9-2) unstable; urgency=low
+
+  * debian/control.in: Add recommends on cmake for libplplot-dev since
+    this provides a better way of building the examples.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 31 Oct 2011 15:10:57 +0000
+
 plplot (5.9.9-1) unstable; urgency=low
 
   * New upstream release.

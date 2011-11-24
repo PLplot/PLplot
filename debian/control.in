@@ -47,7 +47,7 @@ Description: Scientific plotting library
 Package: libplplot-dev
 Architecture: any
 Section: libdevel
-Recommends: pkg-config, libplplot-ocaml, libplplot-lua, libplplot-d
+Recommends: pkg-config, cmake, libplplot-ocaml, libplplot-lua, libplplot-d
 Suggests: plplot-doc
 Depends: libplplot11 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, libqsastime-dev, ${misc:Depends}, 
