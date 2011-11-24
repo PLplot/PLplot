@@ -22,6 +22,13 @@
 # libraries are all shared by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
+# OFF means libraries are transitively linked by default.
+option(NON_TRANSITIVE "Experimental option to try non-transitive linking" OFF)
+# For now use this default which causes transitive linking of software built
+# with our pkg-config files (unless PC_REQUIRES_TAG specifically overridden
+# for particular language bindings with Requires.private).
+set(PC_REQUIRES_TAG "Requires")
+
 # Color maps (discrete and continuous) to use by default
 if(NOT DEFAULT_CMAP0_FILE)
   set(DEFAULT_CMAP0_FILE "cmap0_default.pal")
