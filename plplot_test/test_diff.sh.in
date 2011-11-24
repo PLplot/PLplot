@@ -90,7 +90,7 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml lua d; do
     missingstdout=""
 
     # List of standard examples
-    INDEX_LIST="01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 33"
+    INDEX_LIST="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 33"
     # Check if any examples exist for this language.
     EXAMPLES_EXIST="no"
     for index in ${INDEX_LIST} ; do
