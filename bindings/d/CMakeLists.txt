@@ -29,11 +29,7 @@ if(ENABLE_d)
   set(plplotdmd${LIB_TAG}_LIB_SRCS
     plplot.d
   )
-  # Set this option to OFF by default since the STATIC library is
-  # the only one that seems to work for now on Debian Squeeze and
-  # potentially other Linux systems.
-  option(plplotdmd_SHARED "Treat libplplotdmd as a shared library" OFF)
-  
+
   if(plplotdmd_SHARED)
     # pkg-config does not use --static option for d examples build.
     set(PC_STATIC_OPTION_D)
