@@ -168,14 +168,14 @@ if [ "@PLD_extcairo@" = "ON" ] ; then
     COUNT=$(( $COUNT + 1 ))
 fi
 
-if [ "@ENABLE_wxwidgets@" = "ON" ] ; then
+if [ "@ENABLE_wxwidgets@" = "ON" -a "@ENABLE_cxx@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
     COMMAND[$COUNT]="./wxPLplotDemo"
     COUNT=$(( $COUNT + 1 ))
 fi
 
-if [ "@PLD_extqt@" = "ON" ] ; then
+if [ "@PLD_extqt@" = "ON" -a "@ENABLE_cxx@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
     COMMAND[$COUNT]="./qt_example"
