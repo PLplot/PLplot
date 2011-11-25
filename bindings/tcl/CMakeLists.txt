@@ -219,6 +219,18 @@ libplplottcltk${LIB_TAG}_LINK_FLAGS
 
 add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
 
+if(NON_TRANSITIVE)
+  # empty list ==> non-transitive linking for everything that links to
+  # libtclmatrixd and libplplottcltkd in the shared libraries case.
+  target_link_libraries(tclmatrix${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+  target_link_libraries(plplottcltk${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+  # This configures the pkg-config method to use non-transitive linking.
+  set(PC_REQUIRES_TAG "Requires.private")
+else(NON_TRANSITIVE)
+  # This configures the pkg-config method to use transitive linking
+  set(PC_REQUIRES_TAG "Requires")
+endif(NON_TRANSITIVE)
+
 #message(STATUS
 #"plplottcltk${LIB_TAG}_link_libraries =
 #${plplottcltk${LIB_TAG}_link_libraries}"
