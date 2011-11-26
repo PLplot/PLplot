@@ -22,12 +22,24 @@
 # libraries are all shared by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-# OFF means libraries are transitively linked by default.
+if(NOT BUILD_SHARED_LIBS)
+  option(FORCE_EXTERNAL_STATIC "Force external UNIX libraries to be static" OFF)
+endif(NOT BUILD_SHARED_LIBS)
+
+# CYGWIN eliminated here because .a suffix is not sufficient to guarantee a
+# static library on that platform.
+if(UNIX AND NOT CYGWIN AND FORCE_EXTERNAL_STATIC)
+  # All find_library commands append this suffix to the searched name so
+  # this always forces find_library to find only the Unix static library
+  # if it exists or fail if it doesn't exist.
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+endif(UNIX AND NOT CYGWIN AND FORCE_EXTERNAL_STATIC)
+
+# OFF means shared libraries (but never static libraries) are
+# transitively linked by default by CMake and also by pkg-config (used
+# to generate compile and link flags for the traditional build and
+# test system of the installed examples).
 option(NON_TRANSITIVE "Experimental option to try non-transitive linking" OFF)
-# For now use this default which causes transitive linking of software built
-# with our pkg-config files (unless PC_REQUIRES_TAG specifically overridden
-# for particular language bindings with Requires.private).
-set(PC_REQUIRES_TAG "Requires")
 
 # Color maps (discrete and continuous) to use by default
 if(NOT DEFAULT_CMAP0_FILE)
