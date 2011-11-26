@@ -254,8 +254,8 @@ OPTIONS:
                           'MinGW Makefiles' where it is necessary to limit 
                           the PATH for the cmake invocation to exclude MSYS.
                           Otherwise this option is completely ignored)]
-  [--ctest_command (defaults to 'ctest -j4')]
-  [--build_command (defaults to 'make -j4')]
+  [--ctest_command (defaults to 'ctest -j8')]
+  [--build_command (defaults to 'make -j8')]
 
   The next four control what kind of builds and tests are done.
   [--cmake_added_options (defaults to none, but can be used to specify any
@@ -304,8 +304,8 @@ do_clean_as_you_go=yes
 
 generator_string="Unix Makefiles"
 path_excluding_msys=
-ctest_command="ctest -j4"
-build_command="make -j4"
+ctest_command="ctest -j8"
+build_command="make -j8"
 
 cmake_added_options=
 do_shared=yes
