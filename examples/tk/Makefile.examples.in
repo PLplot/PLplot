@@ -37,7 +37,7 @@ clean:
 	rm -f $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
 .c$(EXEEXT):
-@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
+@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-tcl`
 @pkg_config_false@	$(CC) $< -o $@ `plplot-config --cflags --libs --with-tcl`
 
 .SUFFIXES: .c $(EXEEXT)

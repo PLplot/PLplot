@@ -181,6 +181,22 @@ if(CORE_BUILD)
     set(PDFQT_COMMENT "#")
   endif(NOT PLD_pdfqt)
 
+  # The D case takes special handling so the logic below is for the
+  # generic non-D examples case.
+  if(NON_TRANSITIVE)
+    if(BUILD_SHARED_LIBS)
+      # pkg-config does not use --static option for examples build.
+      set(PC_STATIC_OPTION)
+    else(BUILD_SHARED_LIBS)
+      # pkg-config does use --static option for examples build.
+      set(PC_STATIC_OPTION "--static")
+    endif(BUILD_SHARED_LIBS)
+  else(NON_TRANSITIVE)
+    # pkg-config never uses the --static option for the examples build
+    # for the transitive case.
+    set(PC_STATIC_OPTION)
+  endif(NON_TRANSITIVE)
+
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
