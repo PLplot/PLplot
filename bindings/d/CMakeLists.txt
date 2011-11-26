@@ -31,8 +31,6 @@ if(ENABLE_d)
   )
 
   if(plplotdmd_SHARED)
-    # pkg-config does not use --static option for d examples build.
-    set(PC_STATIC_OPTION_D)
     add_library(plplotdmd${LIB_TAG} ${plplotdmd${LIB_TAG}_LIB_SRCS})
 
     if(BUILD_SHARED_LIBS)
@@ -60,8 +58,6 @@ if(ENABLE_d)
 	)
     endif(USE_RPATH)
   else(plplotdmd_SHARED)
-    # pkg-config uses --static option for d examples build.
-    set(PC_STATIC_OPTION_D "--static")
     add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
     target_link_libraries(plplotdmd${LIB_TAG} plplot${LIB_TAG})
   endif(plplotdmd_SHARED)
