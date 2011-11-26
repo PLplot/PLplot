@@ -297,6 +297,11 @@ if(ENABLE_ocaml)
   configure_file(META.in ${CMAKE_CURRENT_BINARY_DIR}/META)
   # Configure pkg-config *.pc file corresponding to plplot.cma
   if(PKG_CONFIG_EXECUTABLE)
+    # This configures the pkg-config method to use transitive linking
+    # (since we don't really know how to deal with non-transitive
+    # linking for ocaml).
+    set(PC_REQUIRES_TAG "Requires")
+
     if(LIB_TAG)
       set(PC_PRECISION "double")
     else(LIB_TAG)
