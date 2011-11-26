@@ -57,6 +57,16 @@ if(ENABLE_qt)
     ${MATH_LIB}
     ${QT_LIBRARIES}
     )
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libplplotqtd in the shared libraries case.
+    target_link_libraries(plplotqt${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    # This configures the pkg-config method to use non-transitive linking.
+    set(PC_REQUIRES_TAG "Requires.private")
+  else(NON_TRANSITIVE)
+    # This configures the pkg-config method to use transitive linking
+    set(PC_REQUIRES_TAG "Requires")
+  endif(NON_TRANSITIVE)
   # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the 
   # install-tree rpath since cmake handles the build-tree rpath
   # automatically (so long as full pathnames to libraries are used).

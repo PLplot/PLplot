@@ -49,6 +49,17 @@ if(ENABLE_wxwidgets)
   # Create plplotwxwidgets[d] library
   add_library(plplotwxwidgets${LIB_TAG} ${plplotwxwidgets${LIB_TAG}_LIB_SRCS})
 
+  if(NON_TRANSITIVE)
+    # empty list ==> non-transitive linking for everything that links to
+    # libplplotwxwidgetsd in the shared libraries case.
+    target_link_libraries(plplotwxwidgets${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    # This configures the pkg-config method to use non-transitive linking.
+    set(PC_REQUIRES_TAG "Requires.private")
+  else(NON_TRANSITIVE)
+    # This configures the pkg-config method to use transitive linking
+    set(PC_REQUIRES_TAG "Requires")
+  endif(NON_TRANSITIVE)
+
   if(BUILD_SHARED_LIBS)
     SET_SOURCE_FILES_PROPERTIES(${plplotwxwidgets${LIB_TAG}_LIB_SRCS}
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
