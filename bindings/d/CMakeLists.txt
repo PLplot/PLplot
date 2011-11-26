@@ -68,7 +68,7 @@ if(ENABLE_d)
 
   if(NON_TRANSITIVE)
     # empty list ==> non-transitive linking for everything that links to
-    # libplplotadad in the shared libraries case.
+    # libplplotdmdd in the shared libraries case.
     target_link_libraries(plplotdmd${LIB_TAG} LINK_INTERFACE_LIBRARIES)
     # This configures the pkg-config method to use non-transitive linking.
     set(PC_REQUIRES_TAG "Requires.private")
