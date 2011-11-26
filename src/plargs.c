@@ -994,7 +994,7 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
 //! @param p_argc ?
 //! @param p_argsave ?
 //! @param option_table ?
-//! 
+//!
 //! @returns ?
 //!
 //--------------------------------------------------------------------------
@@ -1542,7 +1542,7 @@ plP_FreeDrvOpts()
 //
 //! Performs appropriate action for option "h":
 //! Issues help message
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -1565,7 +1565,7 @@ opt_h( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * 
 //
 //! Performs appropriate action for option "v":
 //! Issues version message
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -1588,7 +1588,7 @@ opt_v( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * 
 //
 //! Performs appropriate action for option "verbose":
 //! Turn on verbosity flag
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -1609,7 +1609,7 @@ opt_verbose( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), v
 //
 //! Performs appropriate action for option "debug":
 //! Turn on debugging flag
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -1631,7 +1631,7 @@ opt_debug( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), voi
 //
 //! Performs appropriate action for option "hack":
 //! Enables driver-specific hack(s)
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -1652,7 +1652,7 @@ opt_hack( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void
 //
 //! Performs appropriate action for option "dev":
 //! Sets output device keyword
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg The name of the output device.
 //! @param client_data Not used.
@@ -1673,7 +1673,7 @@ opt_dev( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //
 //! Performs appropriate action for option "o":
 //! Sets output file name
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg The file family name.
 //! @param client_data Not used.
@@ -1694,7 +1694,7 @@ opt_o( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cli
 //
 //! Performs appropriate action for option "mar":
 //! Sets relative margin width
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Plot margin width.
 //! @param client_data Not used.
@@ -1715,7 +1715,7 @@ opt_mar( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //
 //! Performs appropriate action for option "a":
 //! Sets plot aspect ratio on page
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Plot aspect ratio.
 //! @param client_data Not used.
@@ -1736,7 +1736,7 @@ opt_a( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cli
 //
 //! Performs appropriate action for option "jx":
 //! Sets relative justification in x
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Plot relative justification in x(?)
 //! @param client_data Not used.
@@ -1757,7 +1757,7 @@ opt_jx( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //
 //! Performs appropriate action for option "jy":
 //! Sets relative justification in y
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Plot relative justification in y(?)
 //! @param client_data Not used.
@@ -1778,7 +1778,7 @@ opt_jy( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //
 //! Performs appropriate action for option "ori":
 //! Sets orientation
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Plot orientation.
 //! @param client_data Not used.
@@ -1799,7 +1799,7 @@ opt_ori( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //
 //! Performs appropriate action for option "freeaspect":
 //! Allow aspect ratio to adjust to orientation swaps.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -1834,7 +1834,7 @@ opt_freeaspect( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg )
 //! may increase in the future. To add to the list simply copy the small
 //! bit of code from  ps.c that has to do with pls->portrait to the
 //! appropriate driver file.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -1855,7 +1855,7 @@ opt_portrait( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), 
 //
 //! Performs appropriate action for option "width":
 //! Sets pen width
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Plot pen width.
 //! @param client_data Not used.
@@ -1892,7 +1892,7 @@ opt_width( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //! delimiter), e.g.,
 //! -bg ff0000 (set background to red with an alpha value of 1.0)
 //! -bg ff0000_0.1 (set background to red with an alpha value of 0.1
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Background RGB color in hex.
 //! @param client_data Not used.
@@ -1975,7 +1975,7 @@ opt_bg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //
 //! Performs appropriate action for option "ncol0":
 //! Sets number of colors to allocate in cmap 0 (upper bound).
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Number of color map 0 colors.
 //! @param client_data Not used.
@@ -1996,7 +1996,7 @@ opt_ncol0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //
 //! Performs appropriate action for option "ncol1":
 //! Sets number of colors to allocate in cmap 1 (upper bound).
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Number of color map 1 colors.
 //! @param client_data Not used.
@@ -2017,7 +2017,7 @@ opt_ncol1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //
 //! Performs appropriate action for option "wplt":
 //! Sets (zoom) window into plot (e.g. "0,0,0.5,0.5")
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Zoom setting.
 //! @param client_data Not used.
@@ -2064,7 +2064,7 @@ opt_wplt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //
 //! Get driver specific options in the form <option[=value]>[,option[=value]]*
 //! If "value" is not specified, it defaults to "1".
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg The driver specific option.
 //! @param client_data Not used.
@@ -2154,7 +2154,7 @@ opt_drvopt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED
 //
 //! Performs appropriate action for option "fam":
 //! Enables family output files
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -2184,7 +2184,7 @@ opt_fam( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void 
 //!
 //! Note case of the trailing suffix doesn't matter.
 //! If no suffix, defaults to MB.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Family size setting.
 //! @param client_data Not used.
@@ -2242,7 +2242,7 @@ opt_fsiz( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //
 //! Performs appropriate action for option "fbeg":
 //! Starts with the specified family member number.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Number of the first plot.
 //! @param client_data Not used.
@@ -2264,7 +2264,7 @@ opt_fbeg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //
 //! Performs appropriate action for option "finc":
 //! Specify increment between family members.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Amount to increment the plot number between plots.
 //! @param client_data Not used.
@@ -2286,7 +2286,7 @@ opt_finc( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //
 //! Performs appropriate action for option "fflen":
 //! Specify minimum field length for family member number.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Size of the family number field (e.g. "1", "01", "001" ?)
 //! @param client_data Not used.
@@ -2308,7 +2308,7 @@ opt_fflen( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //
 //! Performs appropriate action for option "np":
 //! Disables pause between pages
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -2329,7 +2329,7 @@ opt_np( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void *
 //
 //! Performs appropriate action for option "nopixmap":
 //! Disables use of pixmaps in X drivers
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -2350,7 +2350,7 @@ opt_nopixmap( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), 
 //
 //! Performs appropriate action for option "db":
 //! Double buffer X output (update only done on eop or Expose)
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -2371,7 +2371,7 @@ opt_db( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void *
 //
 //! Performs appropriate action for option "bufmax":
 //! Sets size of data buffer for tk driver
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Size of the data buffer for the tk driver.
 //! @param client_data Not used.
@@ -2392,7 +2392,7 @@ opt_bufmax( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED
 //
 //! Performs appropriate action for option "server_name":
 //! Sets main window name of server (Tcl/TK driver only)
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg The name of the main window.
 //! @param client_data Not used.
@@ -2413,7 +2413,7 @@ opt_server_name( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_U
 //
 //! Performs appropriate action for option "plserver":
 //! Sets name to use when invoking server (Tcl/TK driver only)
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Name of Tcl/TK server (?).
 //! @param client_data Not used.
@@ -2434,7 +2434,7 @@ opt_plserver( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUS
 //
 //! Performs appropriate action for option "plwindow":
 //! Sets PLplot window name
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Name of the window.
 //! @param client_data Not used.
@@ -2459,7 +2459,7 @@ opt_plwindow( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUS
 //
 //! Performs appropriate action for option "auto_path":
 //! Sets additional directories to autoload
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Additional directories to add the the load path (?).
 //! @param client_data Not used.
@@ -2480,7 +2480,7 @@ opt_auto_path( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNU
 //
 //! Performs appropriate action for option "px":
 //! Set packing in x
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg X packing (?).
 //! @param client_data Not used.
@@ -2501,7 +2501,7 @@ opt_px( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //
 //! Performs appropriate action for option "py":
 //! Set packing in y
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Y packing (?).
 //! @param client_data Not used.
@@ -2526,7 +2526,7 @@ opt_py( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //! stands for one of the four combinations +XOFF+YOFF, +XOFF-YOFF,
 //! -XOFF+YOFF, and -XOFF-YOFF.  Some examples are the following:
 //! -geometry 400x300, -geometry -100+200, and -geometry 400x300-100+200.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Plot geometry descriptor.
 //! @param client_data Not used.
@@ -2619,7 +2619,7 @@ opt_geo( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 // opt_tk_file()
 //
 //! File name for plserver tk_file option
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Tk file name.
 //! @param client_data Not used.
@@ -2649,7 +2649,7 @@ opt_tk_file( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSE
 //!              or
 //!   e.g., "-dpi 1200"
 //! Will set both X and Y dpi to 1200 dpi
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg DPI descriptor string.
 //! @param client_data Not used.
@@ -2697,7 +2697,7 @@ opt_dpi( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 // opt_dev_compression()
 //
 //! Sets device compression
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Device compression (?).
 //! @param client_data Not used.
@@ -2726,7 +2726,7 @@ opt_dev_compression( const char * PL_UNUSED( opt ), const char *opt_arg, void * 
 // opt_cmap0()
 //
 //! Sets color table 0 based on a cmap0.pal file.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Name of color map 0 .pal file.
 //! @param client_data Not used.
@@ -2746,7 +2746,7 @@ opt_cmap0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 // opt_cmap1()
 //
 //! Sets color table 1 based on a cmap1.pal file.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Name of a color map 1 .pal file.
 //! @param client_data Not used.
@@ -2766,7 +2766,7 @@ opt_cmap1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 // opt_locale()
 //
 //! Make PLplot portable to all LC_NUMERIC locales.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.
@@ -2800,7 +2800,7 @@ opt_locale( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), vo
 //! For the case where the boundary of the filled region is
 //! self-intersecting, use the even-odd fill rule rather than the
 //! default nonzero fill rule.
-//! 
+//!
 //! @param opt Not used.
 //! @param opt_arg Not used.
 //! @param client_data Not used.

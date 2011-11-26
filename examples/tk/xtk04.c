@@ -149,7 +149,7 @@ AppInit( Tcl_Interp *interp )
     return TCL_OK;
 }
 
-int   
+int
 get_dataCmd( ClientData PL_UNUSED( cd ), Tcl_Interp *interp, int PL_UNUSED( argc ), char **argv )
 {
     tclMatrix *pm, *matPtr;

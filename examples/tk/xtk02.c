@@ -37,7 +37,7 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp, int argc, const char *argv[] );
 //--------------------------------------------------------------------------
 
 int stuff( tclMatrix *pm, Tcl_Interp *interp,
-           int PL_UNUSED( argc ), const char * PL_UNUSED( argv []) )
+           int PL_UNUSED( argc ), const char * PL_UNUSED( argv [] ) )
 {
     int   i;
     PLFLT x, y;

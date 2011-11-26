@@ -135,8 +135,8 @@ cmap0_palette_read( const char *filename,
 // plcol0()
 //
 //! Set color, map 0.  Argument is a integer between 0 and plsc->ncol0.
-//! 
-//! @param icol0 The index of the color map 0 color to use as the current 
+//!
+//! @param icol0 The index of the color map 0 color to use as the current
 //! color. (0 - plsc->ncol0).
 
 void
@@ -169,8 +169,8 @@ c_plcol0( PLINT icol0 )
 // plcol1()
 //
 //! Set color, map 1.  Argument is a float between 0. and 1.
-//! 
-//! @param icol1 The index of the color map 1 color to use as the current 
+//!
+//! @param icol1 The index of the color map 1 color to use as the current
 //! color. (0.0 - 1.0)
 
 void
@@ -208,7 +208,7 @@ c_plcol1( PLFLT col1 )
 // plscolbg()
 //
 //! Set the background color (cmap0[0]) by 8 bit RGB value
-//! 
+//!
 //! @param r Red value of the background color (0 - 255).
 //! @param g Green value of the background color (0 - 255).
 //! @param b Blue value of the background color (0 - 255).
@@ -223,11 +223,11 @@ c_plscolbg( PLINT r, PLINT g, PLINT b )
 // plscolbga()
 //
 //! Set the background color (cmap0[0]) by 8 bit RGB value and alpha value
-//! 
+//!
 //! @param r Red value of the background color (0 - 255).
 //! @param g Green value of the background color (0 - 255).
 //! @param b Blue value of the background color (0 - 255).
-//! @param a Alpha (transparency) value of the background color 
+//! @param a Alpha (transparency) value of the background color
 //! (0.0 - 1.0).
 
 //--------------------------------------------------------------------------
@@ -274,7 +274,7 @@ c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
 //
 //! Set a given color from color map 0 by 8 bit RGB value
 //! Does not result in any additional cells to be allocated.
-//! 
+//!
 //! @param icol0 index of the color to set (0 - plsc->ncol0)
 //! @param r Red value of the color (0 - 255).
 //! @param g Green value of the color (0 - 255).
@@ -309,7 +309,7 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
 //
 //! Set a given color from color map 0 by 8 bit RGB value and alpha value.
 //! Does not result in any additional cells to be allocated.
-//! 
+//!
 //! @param icol0 index of the color to set (0 - plsc->ncol0)
 //! @param r Red value of the color (0 - 255).
 //! @param g Green value of the color (0 - 255).
@@ -351,7 +351,7 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
 //
 //! Returns 8 bit RGB values for given color from color map 0
 //! Values are negative if an invalid color id is given
-//! 
+//!
 //! @param icol0 Index of the color to be return (0 - plsc->ncol0).
 //! @param r Current red value of the color.
 //! @param g Current green value of the color.
@@ -2117,7 +2117,7 @@ pl_cmd( PLINT op, void *ptr )
 //! when finished with it.
 //!
 //! @param fn Name of the executable(?).
-//! 
+//!
 //! @returns The location of the executable file.
 //--------------------------------------------------------------------------
 
