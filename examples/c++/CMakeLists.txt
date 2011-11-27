@@ -138,7 +138,7 @@ if(BUILD_TEST)
         PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
     endif(CORE_BUILD)
     add_executable(wxPLplotDemo WIN32 wxPLplotDemo.cpp)
-    target_link_libraries(wxPLplotDemo plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${MATH_LIB})
+    target_link_libraries(wxPLplotDemo plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   endif(ENABLE_wxwidgets)
 
   if(ENABLE_qt)
