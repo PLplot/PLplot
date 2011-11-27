@@ -155,7 +155,7 @@ if(BUILD_TEST)
     add_executable(${TARGET_NAME} ${adasrcfile})
     
     set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS ${adalinkflags})
-    target_link_libraries(${TARGET_NAME} plplotada${LIB_TAG})
+    target_link_libraries(${TARGET_NAME} plplotada${LIB_TAG} plplot${LIB_TAG})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ada ${TARGET_NAME})
     list(APPEND ada_extra_clean_files "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.o;${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.ali")
   endforeach(STRING_INDEX ${ada_STRING_INDICES})
