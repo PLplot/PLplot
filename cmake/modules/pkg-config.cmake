@@ -60,10 +60,11 @@ else(PKG_CONFIG_EXECUTABLE)
 endif(PKG_CONFIG_EXECUTABLE)
 
 macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _version)
-  # Similar to legacy pkgconfig only these results are derived
-  # from pkg_check_modules and therefore are returned as lists rather than
+  # Similar to legacy pkgconfig only these results are derived from
+  # pkg_check_modules and therefore are returned as lists rather than
   # blank-delimited strings.  Also, the _link_FLAGS value is converted
-  # to the preferred CMake form via the cmake_link_flags macro.
+  # to the list of full library paths preferred by CMake via the
+  # cmake_link_flags macro.
 
   # N.B. if using this macro in more than one context, cache clashes will
   # occur unless optional trailing prefix argument is specified to distinguish
@@ -73,13 +74,27 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
     set(_prefix "_PKGCONFIG_TMP")
   endif(NOT _prefix)
   
+  if(FORCE_EXTERNAL_STATIC)
+    set(_xprefix ${_prefix}_STATIC)
+  else(FORCE_EXTERNAL_STATIC)
+    set(_xprefix ${_prefix})
+  endif(FORCE_EXTERNAL_STATIC)
+  
   _pkg_check_modules_internal(0 0 ${_prefix} "${_package}")
-  if (${_prefix}_FOUND)
-    set(${_include_DIR} ${${_prefix}_INCLUDE_DIRS})
-    set(${_link_DIR}    ${${_prefix}_LIBRARY_DIRS})
-    cmake_link_flags(${_link_FLAGS}  "${${_prefix}_LDFLAGS}")
-    set(${_cflags}      ${${_prefix}_CFLAGS})
-    set(${_version}     ${${_prefix}_VERSION})
+  if(${_prefix}_FOUND)
+    cmake_link_flags(${_link_FLAGS} "${${_xprefix}_LDFLAGS}")
+    # If libraries cannot be not found, then that is equivalent to whole
+    # pkg-config module not being found.
+    if(NOT ${_link_FLAGS})
+      set(${_prefix}_FOUND)
+    endif(NOT ${_link_FLAGS})
+  endif(${_prefix}_FOUND)
+
+  if(${_prefix}_FOUND)
+    set(${_include_DIR} ${${_xprefix}_INCLUDE_DIRS})
+    set(${_link_DIR}    ${${_xprefix}_LIBRARY_DIRS})
+    set(${_cflags}      ${${_xprefix}_CFLAGS})
+    set(${_version}     ${${_xprefix}_VERSION})
     set(_return_VALUE 0)
   else(${_prefix}_FOUND)
     set(${_include_DIR})
@@ -202,6 +217,7 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
     list(LENGTH _link_flags_list _link_flags_length)
     math(EXPR _link_flags_length "${_link_flags_length} - 1")
     set(${_link_flags_out})
+    set(_success ON)
     foreach(_list_index RANGE ${_link_flags_length})
       list(GET _link_flags_list ${_list_index} _list_element)
       string(REGEX REPLACE "^-l" "" _list_element1 "${_list_element}")
@@ -221,13 +237,7 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
          PATHS ${_link_directory_list}
         )
         if(NOT _library_pathname)
-          message(
-  	"Cannot find library corresponding to linker option ${_list_element}"
-  	)
-          message(
-  	"original link flags delivered by pkg-config = ${_link_flags_in}"
-  	)
-          message(FATAL_ERROR "FATAL ERROR in cmake_link_flags macro")
+	  set(_success OFF)
         endif(NOT _library_pathname)
         list(APPEND ${_link_flags_out} ${_library_pathname})
       else(_list_element STREQUAL "-L${_list_element1}")
@@ -237,6 +247,12 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
       endif(_list_element STREQUAL "-l${_list_element1}")
     endforeach(_list_index RANGE ${_link_flags_length})
     #message("${_link_flags_out} = ${${_link_flags_out}}")
+
+    # If one or more of the libraries cannot be found, then return an
+    # empty ${_link_flags_out} as a sign of that failure.
+    if(NOT _success)
+      set(${_link_flags_out})
+    endif(NOT _success)
   endif("${_link_flags_in}" STREQUAL "")
 endmacro(cmake_link_flags)
 
