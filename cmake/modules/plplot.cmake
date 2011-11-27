@@ -22,18 +22,20 @@
 # libraries are all shared by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-if(NOT BUILD_SHARED_LIBS)
-  option(FORCE_EXTERNAL_STATIC "Force external UNIX libraries to be static" OFF)
-endif(NOT BUILD_SHARED_LIBS)
-
 # CYGWIN eliminated here because .a suffix is not sufficient to guarantee a
 # static library on that platform.
-if(UNIX AND NOT CYGWIN AND FORCE_EXTERNAL_STATIC)
+if(UNIX AND NOT CYGWIN AND NOT BUILD_SHARED_LIBS)
+  option(FORCE_EXTERNAL_STATIC "Force external UNIX libraries to be static" OFF)
+else(UNIX AND NOT CYGWIN AND NOT BUILD_SHARED_LIBS)
+  set(FORCE_EXTERNAL_STATIC OFF CACHE BOOL "Force external UNIX libraries to be static" FORCE)
+endif(UNIX AND NOT CYGWIN AND NOT BUILD_SHARED_LIBS)
+
+if(FORCE_EXTERNAL_STATIC)
   # All find_library commands append this suffix to the searched name so
   # this always forces find_library to find only the Unix static library
   # if it exists or fail if it doesn't exist.
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-endif(UNIX AND NOT CYGWIN AND FORCE_EXTERNAL_STATIC)
+endif(FORCE_EXTERNAL_STATIC)
 
 # OFF means shared libraries (but never static libraries) are
 # transitively linked by default by CMake and also by pkg-config (used
