@@ -17,48 +17,46 @@ if(PKG_CONFIG_EXECUTABLE)
   #message(STATUS "_AGGCflags = ${_AGGCflags}")
 endif(PKG_CONFIG_EXECUTABLE)
 
-FIND_PATH(AGG_INCLUDE_DIR agg2/agg_pixfmt_gray.h
-  ${_AGGIncDir}
-  /usr/local/include
-  /usr/include
-  )
+if(_AGGLinkFlags)
+  find_path(AGG_INCLUDE_DIR agg2/agg_pixfmt_gray.h
+    ${_AGGIncDir}
+    )
 
-# Prefer _pic variant of library name for shared libraries case, and
-# plain name for static libraries case.
-if(BUILD_SHARED_LIBS)
-  set(AGGLIB_NAMES = "agg_pic;agg")
-  set(AGGFONTLIB_NAMES = "aggfontfreetype_pic;aggfontfreetype")
-else(BUILD_SHARED_LIBS)
-  set(AGGLIB_NAMES = "agg;agg_pic")
-  set(AGGFONTLIB_NAMES = "aggfontfreetype;aggfontfreetype_pic;")
-endif(BUILD_SHARED_LIBS)
-FIND_LIBRARY(AGG_LIBRARY NAMES ${AGGLIB_NAMES}
-  PATHS
-  ${_AGGLinkDir}
-  /usr/local/lib
-  /usr/lib
-  )
-FIND_LIBRARY(AGGFONT_LIBRARY NAMES ${AGGFONTLIB_NAMES}
-  PATHS
-  ${_AGGLinkDir}
-  /usr/local/lib
-  /usr/lib
-  )
+  # Prefer _pic variant of library name for shared libraries case, and
+  # plain name for static libraries case.
+  if(BUILD_SHARED_LIBS)
+    set(AGGLIB_NAMES = "agg_pic;agg")
+    set(AGGFONTLIB_NAMES = "aggfontfreetype_pic;aggfontfreetype")
+  else(BUILD_SHARED_LIBS)
+    set(AGGLIB_NAMES = "agg;agg_pic")
+    set(AGGFONTLIB_NAMES = "aggfontfreetype;aggfontfreetype_pic;")
+  endif(BUILD_SHARED_LIBS)
+  find_library(AGG_LIBRARY NAMES ${AGGLIB_NAMES}
+    PATHS
+    ${_AGGLinkDir}
+    )
+  find_library(AGGFONT_LIBRARY NAMES ${AGGFONTLIB_NAMES}
+    PATHS
+    ${_AGGLinkDir}
+    /usr/local/lib
+    /usr/lib
+    )
 
-MARK_AS_ADVANCED(AGG_INCLUDE_DIR AGG_LIBRARY AGGFONT_LIBRARY)
+  mark_as_advanced(AGG_INCLUDE_DIR AGG_LIBRARY AGGFONT_LIBRARY)
 
-# Set uncached variable AGG_LIBRARIES (needed by user and also
-# by FIND_PACKAGE_HANDLE_STANDARD_ARGS)
-if(AGG_LIBRARY AND AGGFONT_LIBRARY)
-  set(AGG_LIBRARIES ${AGG_LIBRARY} ${AGGFONT_LIBRARY})
-elseif(AGG_LIBRARY)
+  # Set uncached variable AGG_LIBRARIES (needed by user and also
+  # by FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+  if(AGG_LIBRARY AND AGGFONT_LIBRARY)
+    set(AGG_LIBRARIES ${AGG_LIBRARY} ${AGGFONT_LIBRARY})
+  elseif(AGG_LIBRARY)
     set(AGG_LIBRARIES ${AGG_LIBRARY})
-endif(AGG_LIBRARY AND AGGFONT_LIBRARY)
+  endif(AGG_LIBRARY AND AGGFONT_LIBRARY)
+endif(_AGGLinkFlags)
 
 # Standard 2.6.x method of handling QUIETLY and REQUIRED arguments and set
 # AGG_FOUND to TRUE if all listed variables are TRUE
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(AGG DEFAULT_MSG AGG_LIBRARIES AGG_INCLUDE_DIR)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(AGG DEFAULT_MSG AGG_LIBRARIES AGG_INCLUDE_DIR)
 
 if(AGG_FOUND)
   # Set additional uncached variables that users of this module should use.
