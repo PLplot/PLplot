@@ -94,7 +94,9 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
     set(${_include_DIR} ${${_xprefix}_INCLUDE_DIRS})
     set(${_link_DIR}    ${${_xprefix}_LIBRARY_DIRS})
     set(${_cflags}      ${${_xprefix}_CFLAGS})
-    set(${_version}     ${${_xprefix}_VERSION})
+    # N.B. must use ${_prefix}_VERSION} rather than ${_xprefix}_VERSION}
+    # because the latter is not defined.
+    set(${_version}     ${${_prefix}_VERSION})
     set(_return_VALUE 0)
   else(${_prefix}_FOUND)
     set(${_include_DIR})
@@ -109,6 +111,7 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
   #message("${_link_DIR} = ${${_link_DIR}}")
   #message("${_link_FLAGS} = ${${_link_FLAGS}}")
   #message("${_cflags} = ${${_cflags}}")
+  #message("${_version} = ${${_version}}")
 endmacro(pkg_check_pkgconfig)
 
 macro(pkg_config_link_flags _link_flags_out _link_flags_in)
