@@ -19,14 +19,15 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-   program x01f95
+program x01f95
    use plplot, PI => PL_PI
+   use plf95demolib
 
    implicit none
 
    real(plflt) :: xscale, yscale, xoff, yoff
-   character(len=80) version
-   integer digmax
+   character(len=80) :: version
+   integer :: digmax
 
 !  Process command-line arguments
    call plparseopts(PL_PARSE_FULL)
@@ -65,34 +66,27 @@
 
    call plot2()
    call plot3()
+
 !  Don't forget to call PLEND to finish off!
 
    call plend()
 
-   contains
+contains
 
 !======================================================================
-   subroutine plot1()
+subroutine plot1()
 
    real(plflt), dimension(1:60) :: x, y
-   real(plflt), dimension(1:6)  :: xs, ys
-   real(plflt) :: xmin, xmax, ymin, ymax 
+   real(plflt) :: xmin, xmax, ymin, ymax
    integer :: i
 
-   do i = 1, 60
-     x(i) = xoff + xscale * dble(i)/60.0_plflt
-     y(i) = yoff + yscale * x(i)**2
-   enddo
+   x = xoff + xscale * arange(1,size(x)+1) / real(size(x),plflt)
+   y = yoff + yscale * x ** 2
 
-   xmin = x(1)
-   xmax = x(60)
-   ymin = y(1)
-   ymax = y(60)
-
-   do i = 1, 6
-     xs(i) = x((i-1)*10+4)
-     ys(i) = y((i-1)*10+4)
-   enddo
+   xmin = minval(x)
+   xmax = maxval(x)
+   ymin = minval(y)
+   ymax = maxval(y)
 
 !   Set up the viewport and window using PLENV. The range in X is
 !   0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
@@ -105,19 +99,20 @@
    call pllab( '(x)', '(y)', '#frPLplot Example 1 - y=x#u2' )
 
 !   Plot the data points
+!   Only plot every tenth!
 
    call plcol0(4)
-   call plpoin( xs, ys, 9 )
+   call plpoin( x(4::10), y(4::10), 9 )
 
 !   Draw the line through the data
 
    call plcol0(3)
    call plline( x, y )
 
-   end subroutine plot1
+end subroutine plot1
 
 !======================================================================
-   subroutine plot2()
+subroutine plot2()
 
    real(plflt), dimension(1:100) :: x, y
    integer :: i
@@ -135,11 +130,9 @@
 
 !   Fill up the arrays
 
-   do i = 1, 100
-     x(i) = (i-20.0_plflt)/6.0_plflt
-     y(i) = 1.0_plflt
-     if (x(i) .ne. 0.0_plflt) y(i) = sin(x(i)) / x(i)
-   enddo
+
+   x = ( arange(size(x)) - 19 ) / 6.0_plflt
+   y = merge( sin(x) / x, 1.0_plflt, x /= 0.0_plflt )
 
 !   Draw the line
 
@@ -148,7 +141,7 @@
    call plline( x, y )
    call plwid(1)
 
-   end subroutine plot2
+end subroutine plot2
 
 !======================================================================
    subroutine plot3()
@@ -158,8 +151,8 @@
 !   and so do not use_ PLENV
 
    real(plflt), dimension(1:101) :: x, y
+   integer :: i
 
-   integer i
    call pladv(0)
 
 !   Use_ standard viewport, and define X range from 0 to 360 degrees,
@@ -184,14 +177,12 @@
    call plcol0(3)
    call pllab( 'Angle (degrees)', 'sine', '#frPLplot Example 1 - Sine function' )
 
-   do i = 1, 101
-     x(i) = 3.6_plflt * (i-1)
-     y(i) = sin( x(i) * PI/180.0_plflt )
-   enddo
+   x = 3.6_plflt * arange(size(x))
+   y = sin( x * PI/180.0_plflt )
 
    call plcol0(4)
    call plline( x, y )
 
-   end subroutine plot3
+end subroutine plot3
 
-   end program x01f95
+end program x01f95

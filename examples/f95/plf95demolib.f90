@@ -20,7 +20,6 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-
 !      Module containing auxiliary routines for the demo programs
 
 module plf95demolib
@@ -45,7 +44,7 @@ function arange_plflt_1( start, stop, step )
 
     integer             :: i
 
-    arange_plflt_1 = (/ (real(i, plflt), i = start, stop, step) /)
+    arange_plflt_1 = (/ (real(i, plflt), i = start, stop-step, step) /)
 end function arange_plflt_1
 
 function arange_plflt_2( start, stop )
