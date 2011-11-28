@@ -41,18 +41,23 @@ if(PLD_wxwidgets OR PLD_wxpng)
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(PLD_wxwidgets OR PLD_wxpng)
+  if(FORCE_EXTERNAL_STATIC)
+    set(wxWidgets_USE_STATIC ON)
+  endif(FORCE_EXTERNAL_STATIC)
   find_package(wxWidgets COMPONENTS base core QUIET)
-  if(NOT wxWidgets_FOUND)
+  # Convert wxWidgets_LIBRARIES to full pathname form.
+  cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
+  if(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)
     message(STATUS
-      "WARNING: wxWidgets not found so "
+      "WARNING: wxWidgets or its libraries not found so "
       "setting all wxwidgets devices to OFF."
       )
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
     set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
-  else(NOT wxWidgets_FOUND)  
+  else(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)  
     # Check if stdint.h can be used from c++ (PL_HAVE_CXX_STDINT_H)
     include(TestForStdintCXX)
-  endif(NOT wxWidgets_FOUND)  
+  endif(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)  
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(PLD_wxwidgets OR PLD_wxpng)
@@ -64,20 +69,18 @@ if(PLD_wxwidgets OR PLD_wxpng)
     wxWidgets_DEFINITIONS_wD
     "-D${wxWidgets_DEFINITIONS}"
     )
- 	set(wxWidgets_DEFINITIONS_DEBUG_wD "") 
+  set(wxWidgets_DEFINITIONS_DEBUG_wD "") 
   if(wxWidgets_DEFINITIONS_DEBUG)
-	  string(REGEX REPLACE ";" " -D" 
-	    wxWidgets_DEFINITIONS_DEBUG_wD
-	    "-D${wxWidgets_DEFINITIONS_DEBUG}"
-	    )
+    string(REGEX REPLACE ";" " -D" 
+      wxWidgets_DEFINITIONS_DEBUG_wD
+      "-D${wxWidgets_DEFINITIONS_DEBUG}"
+      )
   endif(wxWidgets_DEFINITIONS_DEBUG)
   string(REGEX REPLACE ";" " " 
     wxwidgets_COMPILE_FLAGS
     ${wxwidgets_COMPILE_FLAGS}
     " ${wxWidgets_DEFINITIONS_wD} ${wxWidgets_DEFINITIONS_DEBUG_wD}"
     )
-  # Convert wxWidgets_LIBRARIES to full pathname form.
-  cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
   message(STATUS "wxWidgets found")
   message(STATUS "wxwidgets_COMPILE_FLAGS = ${wxwidgets_COMPILE_FLAGS}")
   message(STATUS "wxwidgets_LINK_FLAGS = ${wxwidgets_LINK_FLAGS}")
