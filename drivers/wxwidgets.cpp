@@ -514,8 +514,8 @@ wxPLDevBase* common_init( PLStream *pls )
 void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
-    pdt->pl_MenuStr = "wxWidgets DC";
-    pdt->pl_DevName = "wxwidgets";
+    pdt->pl_MenuStr = (char *) "wxWidgets DC";
+    pdt->pl_DevName = (char *) "wxwidgets";
 #endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 51;
