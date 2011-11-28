@@ -49,19 +49,19 @@
 
 # Look for cairo headers and libraries with pkg-config
 if(
-   PLD_memcairo
-OR PLD_pdfcairo
-OR PLD_pngcairo
-OR PLD_pscairo
-OR PLD_svgcairo 
-OR PLD_xcairo
-OR PLD_extcairo
-OR PLD_wincairo
-)
+    PLD_memcairo
+    OR PLD_pdfcairo
+    OR PLD_pngcairo
+    OR PLD_pscairo
+    OR PLD_svgcairo 
+    OR PLD_xcairo
+    OR PLD_extcairo
+    OR PLD_wincairo
+    )
   if(NOT PKG_CONFIG_EXECUTABLE)
     message(STATUS 
-    "WARNING: pkg-config not found. Setting cairo drivers to OFF."
-    )
+      "WARNING: pkg-config not found. Setting cairo drivers to OFF."
+      )
     set(PLD_memcairo OFF CACHE BOOL "Enable memcairo device" FORCE)
     set(PLD_pdfcairo OFF CACHE BOOL "Enable pdfcairo device" FORCE)
     set(PLD_pngcairo OFF CACHE BOOL "Enable pngcairo device" FORCE)
@@ -72,35 +72,35 @@ OR PLD_wincairo
     set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
   endif(NOT PKG_CONFIG_EXECUTABLE)
 endif(
-   PLD_memcairo
-OR PLD_pdfcairo
-OR PLD_pngcairo
-OR PLD_pscairo
-OR PLD_svgcairo 
-OR PLD_xcairo
-OR PLD_extcairo
-OR PLD_wincairo
-)
+  PLD_memcairo
+  OR PLD_pdfcairo
+  OR PLD_pngcairo
+  OR PLD_pscairo
+  OR PLD_svgcairo 
+  OR PLD_xcairo
+  OR PLD_extcairo
+  OR PLD_wincairo
+  )
 
 if(
-   PLD_memcairo
-OR PLD_pdfcairo
-OR PLD_pngcairo
-OR PLD_pscairo
-OR PLD_svgcairo 
-OR PLD_xcairo
-OR PLD_extcairo
-OR PLD_wincairo
-)
+    PLD_memcairo
+    OR PLD_pdfcairo
+    OR PLD_pngcairo
+    OR PLD_pscairo
+    OR PLD_svgcairo 
+    OR PLD_xcairo
+    OR PLD_extcairo
+    OR PLD_wincairo
+    )
   pkg_check_pkgconfig(
-  pangocairo
-  includedir
-  linkdir
-  linkflags 
-  cflags
-  version
-  _CAIRO
-  )
+    pangocairo
+    includedir
+    linkdir
+    linkflags 
+    cflags
+    version
+    _CAIRO
+    )
   if(linkflags)
     # Check that the pangocairo library version is recent 
     # enough to efficiently handle text clipping.
@@ -115,13 +115,13 @@ OR PLD_wincairo
     if(PLD_xcairo AND X11_COMPILE_FLAGS)
       # Blank-delimited required.
       string(REGEX REPLACE ";" " " 
-      cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
-      )
+	cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
+	)
       set(cairo_LINK_FLAGS ${linkflags} ${X11_LIBRARIES})
     else(PLD_xcairo AND X11_COMPILE_FLAGS)
       message(STATUS 
-       "WARNING: X windows not found. Setting xcairo driver to OFF."
-      )
+	"WARNING: X windows not found. Setting xcairo driver to OFF."
+	)
       # Blank-delimited required.
       set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
       # now deal with remaining cairo devices.
@@ -139,11 +139,11 @@ OR PLD_wincairo
     message("linkflags = ${linkflags}")
     message("cflags = ${cflags}")
     message(STATUS
-       "WARNING: pango and/or cairo not found with pkg-config.\n"
-    "   Disabling cairo drivers.  To enable these drivers you must install\n"
-    "   development versions of pango and cairo and/or set\n"
-    "   the environment variable PKG_CONFIG_PATH appropriately."
-    )
+      "WARNING: pango and/or cairo not found with pkg-config.\n"
+      "   Disabling cairo drivers.  To enable these drivers you must install\n"
+      "   development versions of pango and cairo and/or set\n"
+      "   the environment variable PKG_CONFIG_PATH appropriately."
+      )
     set(PLD_memcairo OFF CACHE BOOL "Enable memcairo device" FORCE)
     set(PLD_pdfcairo OFF CACHE BOOL "Enable pdfcairo device" FORCE)
     set(PLD_pngcairo OFF CACHE BOOL "Enable pngcairo device" FORCE)
@@ -154,15 +154,15 @@ OR PLD_wincairo
     set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
   endif(linkflags)
 endif(
-   PLD_memcairo
-OR PLD_pdfcairo
-OR PLD_pngcairo
-OR PLD_pscairo
-OR PLD_svgcairo 
-OR PLD_xcairo
-OR PLD_extcairo
-OR PLD_wincairo
-)
+  PLD_memcairo
+  OR PLD_pdfcairo
+  OR PLD_pngcairo
+  OR PLD_pscairo
+  OR PLD_svgcairo 
+  OR PLD_xcairo
+  OR PLD_extcairo
+  OR PLD_wincairo
+  )
 
 if(NOT PLD_xcairo)
   set(extXdrawable_true "#")
