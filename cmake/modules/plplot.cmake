@@ -37,11 +37,15 @@ if(FORCE_EXTERNAL_STATIC)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 endif(FORCE_EXTERNAL_STATIC)
 
-# OFF means shared libraries (but never static libraries) are
-# transitively linked by default by CMake and also by pkg-config (used
-# to generate compile and link flags for the traditional build and
-# test system of the installed examples).
-option(NON_TRANSITIVE "Experimental option to try non-transitive linking" OFF)
+if(BUILD_SHARED_LIBS)
+  # OFF means shared libraries (but never static libraries) are
+  # transitively linked by default by CMake and also by pkg-config (used
+  # to generate compile and link flags for the traditional build and
+  # test system of the installed examples).
+  option(NON_TRANSITIVE "Experimental option to try non-transitive linking" OFF)
+else(BUILD_SHARED_LIBS)
+  set(NON_TRANSITIVE OFF CACHE BOOL "Experimental option to try non-transitive linking" FORCE)
+endif(BUILD_SHARED_LIBS)
 
 # Color maps (discrete and continuous) to use by default
 if(NOT DEFAULT_CMAP0_FILE)
