@@ -471,18 +471,15 @@ if(SH_EXECUTABLE)
       ${SH_EXECUTABLE} -c "./test_diff.sh"
       )
     # There is a bug in 2.8.x with x < 5 where tests are run out of
-    # the order in which they are declared by default.
-    # Also, 2.8.x can run repeat tests out of order due
-    # to some optimizations that have been implemented.  So for
-    # 2.8.x and above always force examples_compare to be run
-    # after the other tests it depends on.
-    if(CMAKE_MAJOR_VERSION EQUAL 2 AND NOT CMAKE_MINOR_VERSION LESS 8)
-      #message(STATUS "DEBUG: examples_compare_DEPENDS = ${examples_compare_DEPENDS}")
-      set_tests_properties(examples_compare
-	PROPERTIES
-	DEPENDS "${examples_compare_DEPENDS}"
-	)
-    endif(CMAKE_MAJOR_VERSION EQUAL 2 AND NOT CMAKE_MINOR_VERSION LESS 8)
+    # the order in which they are declared by default.  Also, 2.8.x
+    # can run repeat tests out of order due to some optimizations that
+    # have been implemented.  Thus, always force examples_compare to
+    # be run after the other tests it depends on.
+    #message(STATUS "DEBUG: examples_compare_DEPENDS = ${examples_compare_DEPENDS}")
+    set_tests_properties(examples_compare
+      PROPERTIES
+      DEPENDS "${examples_compare_DEPENDS}"
+      )
   endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
 
   if(BUILD_TEST)

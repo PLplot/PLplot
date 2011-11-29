@@ -182,15 +182,15 @@ if(CORE_BUILD)
   endif(NOT PLD_pdfqt)
 
   if(FORCE_EXTERNAL_STATIC)
-      # This experiment option untested, but it should work as well as
-      # FORCE_EXTERNAL_STATIC does for the CMake linking case for the
-      # core build in the build tree.  That is, not well at all (drivers
-      # limited to those without external dependencies and languages limited
-      # to C, C++, D, Fortran 77, and Fortran 95) because
-      # of severe limitations in static library support on Linux.
+    # This experiment option untested, but it should work as well as
+    # FORCE_EXTERNAL_STATIC does for the CMake linking case for the
+    # core build in the build tree.  That is, not well at all (drivers
+    # limited to those without external dependencies and languages limited
+    # to C, C++, D, Fortran 77, and Fortran 95) because
+    # of severe limitations in static library support on Linux.
 
-      # pkg-config does use --static option for traditional installed examples build.
-      set(PC_STATIC_OPTION "--static")
+    # pkg-config does use --static option for traditional installed examples build.
+    set(PC_STATIC_OPTION "--static")
   else(FORCE_EXTERNAL_STATIC)
     # pkg-config does not use --static option for traditional installed examples build.
     set(PC_STATIC_OPTION)
@@ -340,18 +340,6 @@ if(CORE_BUILD)
       )
   endif(ENABLE_d)
 
-  if(ENABLE_f77 OR ENABLE_f95)
-    if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-      set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
-	language_support/cmake-2.6:CMakeFortranInformation.cmake
-	language_support/cmake-2.6/Platform:Cygwin-GNU-Fortran.cmake
-	language_support/cmake-2.6/Platform:Windows-GNU-Fortran.cmake
-	language_support/cmake-2.6/Platform:Windows-df.cmake
-	language_support/cmake-2.6/Platform:Windows-f90.cmake
-	)
-    endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-  endif(ENABLE_f77 OR ENABLE_f95)
-
   if(LANG_SUPPORT_FILES)
     foreach(LANG_SUPPORT_info ${LANG_SUPPORT_FILES})
       string(REGEX REPLACE "^(.*):.*$" "\\1" LANG_SUPPORT_DIR ${LANG_SUPPORT_info})
@@ -366,21 +354,29 @@ if(CORE_BUILD)
 else(CORE_BUILD)
   project(installed_plplot_examples NONE)
 
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # We prefer to support only the latest CMake version because it
+    # tends to be more free of issues and more consistent with recent
+    # software releases of software that PLplot depends on than earlier versions.
+    # However, as a special concession to our modern (not enterprise or
+    # LTS) Linux distro users so they can avoid a download of recent CMake,
+    # we allow them to use the system version of
+    # CMake which at this time (2011-10) is typically 2.8.2 or later.
+    cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
+  else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # For non-Linux platforms we prefer to support only the most recent
+    # CMake version since that tends to be most free of issues and most
+    # consistent with releases of software that PLplot depends on.  The
+    # most recently released CMake is 2.8.6 at this time (2011-10).
+    cmake_minimum_required(VERSION 2.8.6 FATAL_ERROR)
+  endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+
   # Locations where PLplot cmake build system first looks for cmake modules.
-  if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-    set(CMAKE_MODULE_PATH
-      ${PROJECT_SOURCE_DIR}/cmake/modules
-      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
-      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.6
-      )
-  else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-    set(CMAKE_MODULE_PATH
-      ${PROJECT_SOURCE_DIR}/cmake/modules
-      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
-      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
-      )
-  endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+  set(CMAKE_MODULE_PATH
+    ${PROJECT_SOURCE_DIR}/cmake/modules
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
+    )
 
   #Configure variables and enable languages as needed.
   include(plplot_configure)
@@ -566,7 +562,7 @@ if(BUILD_TEST)
 	  )
       endif(ENABLE_DYNDRIVERS)
       #message("DEBUG:file_device_depends_${device} = ${file_device_depends_${device}}")
-	list_example_files(${CMAKE_CURRENT_BINARY_DIR} ${device} c output_list)
+      list_example_files(${CMAKE_CURRENT_BINARY_DIR} ${device} c output_list)
       add_custom_command(
 	OUTPUT ${output_list}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
@@ -620,13 +616,13 @@ if(BUILD_TEST)
 
     endif(ENABLE_DYNDRIVERS)
     if(PLD_extcairo)
-	add_custom_command(
-	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
-	  COMMAND ext-cairo-test -drvopt set_background=1
-	  DEPENDS 
-	  ext-cairo-test
-	  ${cairo_target}
-	  )
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
+	COMMAND ext-cairo-test -drvopt set_background=1
+	DEPENDS 
+	ext-cairo-test
+	${cairo_target}
+	)
       add_custom_target(test_extcairo
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
 	)
@@ -899,7 +895,7 @@ if(BUILD_TEST)
       add_dependencies(test_tk_01 test_xwin_dyndriver)
     endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_01)
-      
+    
     add_custom_target(test_tk_03
       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/tk03
       DEPENDS ${xwin_target}
@@ -995,7 +991,7 @@ if(BUILD_TEST)
       endif(FILE_DEPENDS_xwin)
       list(APPEND targets_examples_tk test_tk_04)
     endif(ENABLE_itk)
-      
+    
   endif(ENABLE_tk AND PLD_tk)
 
   if(targets_examples_tk)

@@ -14,20 +14,27 @@ if(ENABLE_workaround_9220)
     set(text
       "project(test C)
 # Locations where PLplot cmake build system first looks for cmake modules.
-if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-  set(CMAKE_MODULE_PATH
-    ${PROJECT_SOURCE_DIR}/cmake/modules
-    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
-    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.6
+set(CMAKE_MODULE_PATH
+  ${PROJECT_SOURCE_DIR}/cmake/modules
+  ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+  ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
   )
-else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-  set(CMAKE_MODULE_PATH
-    ${PROJECT_SOURCE_DIR}/cmake/modules
-    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
-    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
-  )
-endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-cmake_minimum_required(VERSION 2.6.0)
+if(CMAKE_SYSTEM_NAME STREQUAL \"Linux\")
+  # We prefer to support only the latest CMake version because it
+  # tends to be more free of issues and more consistent with recent
+  # software releases of software that PLplot depends on than earlier versions.
+  # However, as a special concession to our modern (not enterprise or
+  # LTS) Linux distro users so they can avoid a download of recent CMake,
+  # we allow them to use the system version of
+  # CMake which at this time (2011-10) is typically 2.8.2 or later.
+  cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
+else(CMAKE_SYSTEM_NAME STREQUAL \"Linux\")
+  # For non-Linux platforms we prefer to support only the most recent
+  # CMake version since that tends to be most free of issues and most
+  # consistent with releases of software that PLplot depends on.  The
+  # most recently released CMake is 2.8.6 at this time (2011-10).
+  cmake_minimum_required(VERSION 2.8.6 FATAL_ERROR)
+endif(CMAKE_SYSTEM_NAME STREQUAL \"Linux\")
 message(STATUS \"CMAKE_GENERATOR = ${CMAKE_GENERATOR}\")
 #enable_language(${language} OPTIONAL)
 enable_language(${language})
@@ -62,18 +69,7 @@ enable_language(${language})
 	language_support/cmake/Platform/Windows-gdc.cmake
 	)
     elseif(language STREQUAL "Fortran")
-      if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-	set(language_special ON)
-	set(language_files
-	  language_support/cmake-2.6/CMakeFortranInformation.cmake
-	  language_support/cmake-2.6/Platform/Cygwin-GNU-Fortran.cmake
-	  language_support/cmake-2.6/Platform/Windows-GNU-Fortran.cmake
-	  language_support/cmake-2.6/Platform/Windows-df.cmake
-	  language_support/cmake-2.6/Platform/Windows-f90.cmake
-	  )
-      else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-	set(language_special OFF)
-      endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+      set(language_special OFF)
     else(language STREQUAL "Ada")
       set(language_special OFF)
     endif(language STREQUAL "Ada")
@@ -129,5 +125,3 @@ endif(ENABLE_workaround_9220)
 #message("Java_language_works = ${Java_language_works}")
 # Just to terminate temporary test for convenience.
 #message(FATAL_ERROR "")
-
-
