@@ -302,7 +302,6 @@ if(CORE_BUILD)
   # pkg-config support for CMake-based build system for installed examples.
   install(FILES
     ${CMAKE_SOURCE_DIR}/cmake/modules/pkg-config.cmake
-    ${CMAKE_SOURCE_DIR}/cmake/modules/FindPkgConfig.cmake
     DESTINATION ${DATA_DIR}/examples/cmake/modules
     )
 
