@@ -66,6 +66,6 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .d$(EXEEXT):
-@pkg_config_true@	$(DC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION_D@ --cflags --libs plplot$(LIB_TAG)-d`
+@pkg_config_true@	$(DC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-d`
 
 .SUFFIXES: .d $(EXEEXT)
