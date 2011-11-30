@@ -169,6 +169,9 @@ if(ENABLE_wxwidgets)
     string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
     set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
     set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
+    if(NON_TRANSITIVE)
+      set(PC_LINK_FLAGS "-lplplotcxx${LIB_TAG} ${PC_LINK_FLAGS}")
+    endif(NON_TRANSITIVE)
     set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
     set(PC_CONFIGURED_FILE
       ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
