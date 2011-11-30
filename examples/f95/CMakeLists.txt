@@ -61,9 +61,29 @@ set(f95_STRING_INDICES
   )
 
 if(CORE_BUILD)
+  # For CMake-2.6.0 and above, the module files are created by
+  # default during the library build in the bindings/f95 directory.
+  include_directories(${CMAKE_BINARY_DIR}/bindings/f95)
+else(CORE_BUILD)
+  include_directories(${INCLUDE_DIR} ${F95_MOD_DIR})
+endif(CORE_BUILD)
+
+if(CORE_BUILD)
   set(plf95demolib${LIB_TAG}_LIB_SRCS plf95demolib.f90)
 
   add_library(plf95demolib${LIB_TAG} STATIC ${plf95demolib${LIB_TAG}_LIB_SRCS})
+  target_link_libraries(plf95demolib${LIB_TAG} plplotf95${LIB_TAG})
+
+  install(TARGETS plf95demolib${LIB_TAG}
+    EXPORT export_plplot
+    ARCHIVE DESTINATION ${LIB_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    RUNTIME DESTINATION ${BIN_DIR}
+    )
+  install(FILES
+    ${CMAKE_BINARY_DIR}/examples/f95/plf95demolib.mod
+    DESTINATION ${F95_MOD_DIR}
+    )
 
   set(f95_SRCS)
   foreach(STRING_INDEX ${f95_STRING_INDICES})
@@ -111,14 +131,6 @@ if(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
-  if(CORE_BUILD)
-
-    # For CMake-2.6.0 and above, the module files are created by
-    # default during the library build in the bindings/f95 directory.
-    include_directories(${CMAKE_BINARY_DIR}/bindings/f95)
-  else(CORE_BUILD)
-    include_directories(${INCLUDE_DIR} ${F95_MOD_DIR})
-  endif(CORE_BUILD)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_f95)
   foreach(STRING_INDEX ${f95_STRING_INDICES})
@@ -136,4 +148,3 @@ if(BUILD_TEST)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f95 x${STRING_INDEX}f95)
   endforeach(STRING_INDEX ${f95_STRING_INDICES})
 endif(BUILD_TEST)
-
