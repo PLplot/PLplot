@@ -52,7 +52,7 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
         pm->fdata[i] = y;
     }
 
-    interp->result = "Things are cool in gumbyville.";
+    Tcl_SetResult( interp, (char *) "Things are cool in gumbyville.", TCL_STATIC );
     return TCL_OK;
 }
 

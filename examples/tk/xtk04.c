@@ -33,12 +33,14 @@ int mat_max( tclMatrix *pm, Tcl_Interp *interp,
              int PL_UNUSED( argc ), const char *PL_UNUSED( argv[] ) )
 {
     PLFLT max = pm->fdata[0];
+    char  res[30];
     int   i;
     for ( i = 1; i < pm->len; i++ )
         if ( pm->fdata[i] > max )
             max = pm->fdata[i];
 
-    sprintf( interp->result, "%f", max );
+    sprintf( res, "%f", max );
+    Tcl_SetResult( interp, res, TCL_VOLATILE );
     return TCL_OK;
 }
 
@@ -46,12 +48,14 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
              int PL_UNUSED( argc ), const char *PL_UNUSED( argv[] ) )
 {
     PLFLT min = pm->fdata[0];
+    char  res[30];
     int   i;
     for ( i = 1; i < pm->len; i++ )
         if ( pm->fdata[i] < min )
             min = pm->fdata[i];
 
-    sprintf( interp->result, "%f", min );
+    sprintf( res, "%f", min );
+    Tcl_SetResult( interp, res, TCL_VOLATILE );
     return TCL_OK;
 }
 
@@ -162,7 +166,7 @@ get_dataCmd( ClientData PL_UNUSED( cd ), Tcl_Interp *interp, int PL_UNUSED( argc
 
     if ( pm->dim != 2 )
     {
-        interp->result = "must use 2-d matrix.";
+        Tcl_SetResult( interp, (char *) "must use 2-d matrix.", TCL_STATIC );
         return TCL_ERROR;
     }
 
