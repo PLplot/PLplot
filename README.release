@@ -1218,7 +1218,7 @@ as well.
 Previous releases had an implicit limitation with respect to the
 number of vertices in a polygon. This was due to the use of statically
 defined arrays (to avoid allocating and freeing memory for each polygon
-to be drawn). José Luis García Pallero found this limitation and
+to be drawn). JosÃ© Luis GarcÃ­a Pallero found this limitation and
 provided patches to eliminate this limitation. The strategy is
 that for small polygons, the original statically defined arrays
 are used and for large polygons new arrays are allocated and freed.
