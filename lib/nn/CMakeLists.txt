@@ -45,6 +45,14 @@ if(PL_HAVE_QHULL)
     target_link_libraries(csironn LINK_INTERFACE_LIBRARIES)
   endif(NON_TRANSITIVE)
 
+  if(MATH_LIB)
+    set(
+      csironn_LINK_LIBRARIES
+      ${csironn_LINK_LIBRARIES}
+      ${MATH_LIB}
+      )
+  endif(MATH_LIB)
+
   set_target_properties(
     csironn
     PROPERTIES
