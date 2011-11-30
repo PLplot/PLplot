@@ -103,7 +103,7 @@ if(ENABLE_tk)
   endif(BUILD_SHARED_LIBS)
 
   add_executable(plserver plserver.c)
-  target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG})
+  target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG} ${TK_LIBRARY} ${TCL_LIBRARY})
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
