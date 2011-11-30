@@ -407,7 +407,7 @@ static tclMatrixXtnsnDescr *head = (tclMatrixXtnsnDescr *) NULL;
 static tclMatrixXtnsnDescr *tail = (tclMatrixXtnsnDescr *) NULL;
 
 int
-Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
+Tcl_MatrixInstallXtnsn( const char *cmd, tclMatrixXtnsnProc proc )
 {
 //
 // My goodness how I hate primitive/pathetic C.  With C++ this

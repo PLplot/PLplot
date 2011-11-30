@@ -353,7 +353,7 @@ typedef struct tclMatrixXtnsnDescr
     struct tclMatrixXtnsnDescr *next;
 } tclMatrixXtnsnDescr;
 
-int PLDLLIMPEXP_TCLMAT Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc );
+int PLDLLIMPEXP_TCLMAT Tcl_MatrixInstallXtnsn( const char *cmd, tclMatrixXtnsnProc proc );
 
 #ifdef __cplusplus
 }
