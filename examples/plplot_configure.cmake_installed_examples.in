@@ -145,6 +145,8 @@ if(ENABLE_tk)
   set(ENABLE_itk @ENABLE_itk@)
   set(TCL_INCLUDE_PATH @TCL_INCLUDE_PATH@)
   set(TK_INCLUDE_PATH @TK_INCLUDE_PATH@)
+  set(TCL_LIBRARY @TCL_LIBRARY@)
+  set(TK_LIBRARY @TK_LIBRARY@)
 endif(ENABLE_tk)
 
 if(ENABLE_wxwidgets)
