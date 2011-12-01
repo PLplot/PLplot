@@ -355,7 +355,7 @@ Depends: libplplot11 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libplplot-ada0 (= ${binary:Version})
 Recommends: libplplot-dev
 Breaks: libplplot-ada (<< 5.9.8-2), libplplot-dev (<< 5.9.8-2)
-Description: Scientific plotting library (development files)
+Description: Ada support for PLplot, a plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
  line (linear, log), contour, 3D, fill, and almost 1000 characters
