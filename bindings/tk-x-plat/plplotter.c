@@ -37,8 +37,8 @@
 //  Library General Public License for more details.
 //
 //  You should have received a copy of the GNU Library General Public
-//  License along with this library; if not, write to the Free
-//  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 //
 //  Based upon tkFrame.c from the TK 3.2 distribution:
 //
