@@ -765,7 +765,7 @@ tk_start( PLStream *pls )
 
     if ( Tcl_Init( dev->interp ) != TCL_OK )
     {
-        fprintf( stderr, "%s\n", dev->interp->result );
+        fprintf( stderr, "%s\n", Tcl_GetStringResult( dev->interp ) );
         abort_session( pls, "Unable to initialize Tcl" );
     }
 
@@ -1572,7 +1572,7 @@ link_init( PLStream *pls )
                  0, 1, ( ClientData ) & iodev->file ) != TCL_OK )
         {
             fprintf( stderr, "Cannot get file info:\n\t %s\n",
-                dev->interp->result );
+                Tcl_GetStringResult( dev->interp ) );
             abort_session( pls, "" );
         }
         iodev->fd = fileno( iodev->file );
@@ -1677,7 +1677,7 @@ flush_output( PLStream *pls )
         if ( pl_PacketSend( dev->interp, dev->iodev, pls->pdfs ) )
         {
             fprintf( stderr, "Packet send failed:\n\t %s\n",
-                dev->interp->result );
+                Tcl_GetStringResult( dev->interp ) );
             abort_session( pls, "" );
         }
         pdfs->bp = 0;
@@ -2135,7 +2135,7 @@ pltk_toplevel( Tk_Window *PL_UNUSED( w ), Tcl_Interp *interp )
 
     if ( Tk_Init( interp ) )
     {
-        fprintf( stderr, "tk_init:%s\n", interp->result );
+        fprintf( stderr, "tk_init:%s\n", Tcl_GetStringResult( interp ) );
         return 1;
     }
 
@@ -2169,7 +2169,7 @@ tk_wait( PLStream *pls, const char *cmd )
         if ( Tcl_ExprBoolean( dev->interp, dev->cmdbuf, &result ) )
         {
             fprintf( stderr, "tk_wait command \"%s\" failed:\n\t %s\n",
-                cmd, dev->interp->result );
+                cmd, Tcl_GetStringResult( dev->interp ) );
             break;
         }
         if ( result )
@@ -2229,7 +2229,7 @@ server_cmd( PLStream *pls, const char *cmd, int nowait )
     if ( result != TCL_OK )
     {
         fprintf( stderr, "Server command \"%s\" failed:\n\t %s\n",
-            cmd, dev->interp->result );
+            cmd, Tcl_GetStringResult( dev->interp ) );
         abort_session( pls, "" );
     }
 }
@@ -2251,7 +2251,7 @@ tcl_cmd( PLStream *pls, const char *cmd )
     if ( Tcl_VarEval( dev->interp, cmd, (char **) NULL ) != TCL_OK )
     {
         fprintf( stderr, "TCL command \"%s\" failed:\n\t %s\n",
-            cmd, dev->interp->result );
+            cmd, Tcl_GetStringResult( dev->interp ) );
         abort_session( pls, "" );
     }
 }

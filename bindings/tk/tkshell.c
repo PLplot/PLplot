@@ -115,7 +115,7 @@ plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
         if ( Tcl_ExprBoolean( interp, argv[1], &result ) )
         {
             fprintf( stderr, "wait_until command \"%s\" failed:\n\t %s\n",
-                argv[1], interp->result );
+                argv[1], Tcl_GetStringResult( interp ) );
             break;
         }
         if ( result )

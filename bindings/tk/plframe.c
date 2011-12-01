@@ -484,7 +484,7 @@ plFrameCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         Tk_DestroyWindow( plFramePtr->tkwin );
         return TCL_ERROR;
     }
-    interp->result = Tk_PathName( plFramePtr->tkwin );
+    Tcl_SetResult( interp, Tk_PathName( plFramePtr->tkwin ), TCL_VOLATILE );
 
     return TCL_OK;
 }
@@ -515,6 +515,7 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
     int  result = TCL_OK;
     int  length;
     char c;
+    char res[20];
 
     dbug_enter( "PlFrameWidgetCmd" );
 
@@ -616,7 +617,8 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
             {
                 bcb.cmd = PLESC_DOUBLEBUFFERING_QUERY;
                 pl_cmd( PLESC_DOUBLEBUFFERING, &bcb );
-                sprintf( interp->result, "%d", bcb.result );
+                snprintf( res, 20, "%d", bcb.result );
+                Tcl_SetResult( interp, res, TCL_VOLATILE );
             }
         }
 
@@ -2676,7 +2678,7 @@ process_data( Tcl_Interp *interp, register PlFrame *plFramePtr )
         plr->at_bop = 0;
         if ( Tcl_Eval( interp, plFramePtr->bopCmd ) != TCL_OK )
             fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-                plFramePtr->bopCmd, interp->result );
+                plFramePtr->bopCmd, Tcl_GetStringResult( interp ) );
     }
 
 // Signal eop if necessary
@@ -2686,7 +2688,7 @@ process_data( Tcl_Interp *interp, register PlFrame *plFramePtr )
         plr->at_eop = 0;
         if ( Tcl_Eval( interp, plFramePtr->eopCmd ) != TCL_OK )
             fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-                plFramePtr->eopCmd, interp->result );
+                plFramePtr->eopCmd, Tcl_GetStringResult( interp ) );
     }
 
     return result;
@@ -3272,11 +3274,12 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
         int argc, const char **argv )
 {
     PLFLT x, y;
+    char tmpstring[50];
 //    fprintf( stdout, "Made it into report, argc=%d\n", argc );
 
     if ( argc == 0 )
     {
-        interp->result = "report what?";
+        Tcl_SetResult( interp, "report what?", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -3287,7 +3290,7 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
         if ( argc != 3 )
         {
-            interp->result = "Wrong # of args: report wc x y";
+            Tcl_SetResult( interp, "Wrong # of args: report wc x y", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -3301,15 +3304,16 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
         if ( plTranslateCursor( gin ) )
         {
-            sprintf( interp->result, "%f %f", gin->wX, gin->wY );
+            snprintf( tmpstring, 50, "%f %f", gin->wX, gin->wY );
+            Tcl_SetResult( interp, tmpstring, TCL_VOLATILE );
             return TCL_OK;
         }
 
-        interp->result = "Cannot locate";
+        Tcl_SetResult( interp, "Cannot locate", TCL_STATIC );
         return TCL_OK;
     }
 
-    interp->result = "nonsensical request.";
+    Tcl_SetResult( interp, "nonsensical request.", TCL_STATIC );
     return TCL_ERROR;
 }
 
@@ -3325,7 +3329,7 @@ process_bop( void *clientData, int * PL_UNUSED( skip_driver_bop ) )
 
     if ( Tcl_Eval( plFramePtr->interp, plFramePtr->bopCmd ) != TCL_OK )
         fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-            plFramePtr->bopCmd, plFramePtr->interp->result );
+            plFramePtr->bopCmd, Tcl_GetStringResult( plFramePtr->interp ) );
 }
 
 //--------------------------------------------------------------------------
@@ -3340,7 +3344,7 @@ process_eop( void *clientData, int * PL_UNUSED( skip_driver_eop ) )
 
     if ( Tcl_Eval( plFramePtr->interp, plFramePtr->eopCmd ) != TCL_OK )
         fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-            plFramePtr->eopCmd, plFramePtr->interp->result );
+            plFramePtr->eopCmd, Tcl_GetStringResult( plFramePtr->interp ) );
 }
 
 //--------------------------------------------------------------------------

@@ -127,12 +127,11 @@ main( int argc, const char **argv )
     if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv,
              argTable, TK_ARGV_NO_DEFAULTS ) != TCL_OK )
     {
-        fprintf( stderr, "\n(plserver) %s\n\n", interp->result );
+        fprintf( stderr, "\n(plserver) %s\n\n", Tcl_GetStringResult( interp ) );
         fprintf( stderr, "\
 The client_<xxx> and -child options should not be used except via the\n\
 PLplot/Tk driver.\n\n(wish) " );
-        if ( strncmp( interp->result, helpmsg, strlen( helpmsg ) ) )
-            exit( 1 );
+        Tcl_SetResult( interp, helpmsg, TCL_VOLATILE );
     }
 
 // No longer need interpreter
@@ -254,12 +253,14 @@ AppInit( Tcl_Interp *interp )
 static int
 plExitCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp, int argc, char **argv )
 {
-    int value = 0;
+    int  value = 0;
+    char *res;
 
 // Print error message if one given
-
-    if ( interp->result != NULL && interp->result[0] != '\0' )
-        fprintf( stderr, "%s\n", interp->result );
+ 
+    res = Tcl_GetStringResult( interp );
+    if ( res[0] != '\0' )
+        fprintf( stderr, "%s\n", res );
 
 // Best to check the syntax before proceeding
 

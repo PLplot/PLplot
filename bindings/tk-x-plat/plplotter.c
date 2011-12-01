@@ -463,7 +463,7 @@ plPlotterCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PlPlotterFirstInit( (ClientData) plPlotterPtr );
     Tk_GeometryRequest( plPlotterPtr->tkwin, 200, 200 );
 
-    interp->result = Tk_PathName( plPlotterPtr->tkwin );
+    Tcl_SetResult( interp, Tk_PathName( plPlotterPtr->tkwin ), TCL_VOLATILE );
 
     return TCL_OK;
 }
@@ -2475,7 +2475,7 @@ process_data( Tcl_Interp *interp, register PlPlotter *plPlotterPtr )
         plr->at_bop = 0;
         if ( Tcl_Eval( interp, plPlotterPtr->bopCmd ) != TCL_OK )
             fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-                plPlotterPtr->bopCmd, interp->result );
+                plPlotterPtr->bopCmd, Tcl_GetStringResult( interp ) );
     }
 
 // Signal eop if necessary
@@ -2485,7 +2485,7 @@ process_data( Tcl_Interp *interp, register PlPlotter *plPlotterPtr )
         plr->at_eop = 0;
         if ( Tcl_Eval( interp, plPlotterPtr->eopCmd ) != TCL_OK )
             fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-                plPlotterPtr->eopCmd, interp->result );
+                plPlotterPtr->eopCmd, Tcl_GetStringResult( interp ) );
     }
 
     return result;
@@ -2497,7 +2497,7 @@ void PlplotterAtEop( Tcl_Interp *interp, register PlPlotter *plPlotterPtr )
     {
         if ( Tcl_Eval( interp, plPlotterPtr->eopCmd ) != TCL_OK )
             fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-                plPlotterPtr->eopCmd, interp->result );
+                plPlotterPtr->eopCmd, Tcl_GetStringResult( interp ) );
     }
 }
 
@@ -2507,7 +2507,7 @@ void PlplotterAtBop( Tcl_Interp *interp, register PlPlotter *plPlotterPtr )
     {
         if ( Tcl_Eval( interp, plPlotterPtr->bopCmd ) != TCL_OK )
             fprintf( stderr, "Command \"%s\" failed:\n\t %s\n",
-                plPlotterPtr->bopCmd, interp->result );
+                plPlotterPtr->bopCmd, Tcl_GetStringResult( interp ) );
     }
 }
 
@@ -2542,7 +2542,7 @@ ReadData( ClientData clientData, int mask )
         {
         #endif
             Tcl_AppendResult( interp, "Packet receive failed:\n\t %s\n",
-                interp->result, (char *) NULL );
+                Tcl_GetStringResult( interp ), (char *) NULL );
             return TCL_ERROR;
         }
 
@@ -3084,11 +3084,12 @@ report( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         int argc, CONST char **argv )
 {
     PLFLT x, y;
+    char  res[40];
 //    fprintf( stdout, "Made it into report, argc=%d\n", argc );
 
     if ( argc == 0 )
     {
-        interp->result = "report what?";
+        Tcl_SetResult( interp, "report what?", TCL_STATIC );
         return TCL_ERROR;
     }
 
@@ -3099,7 +3100,7 @@ report( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
         if ( argc != 3 )
         {
-            interp->result = "Wrong # of args: report wc x y";
+            Tcl_SetResult( interp, "Wrong # of args: report wc x y", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -3113,15 +3114,16 @@ report( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
         if ( plTranslateCursor( gin ) )
         {
-            sprintf( interp->result, "%f %f", gin->wX, gin->wY );
+            snprintf( res, 40, "%f %f", gin->wX, gin->wY );
+            Tcl_SetResult( interp, res, TCL_VOLATILE );
             return TCL_OK;
         }
 
-        interp->result = "Cannot locate";
+        Tcl_SetResult( interp, "Cannot locate", TCL_STATIC );
         return TCL_OK;
     }
 
-    interp->result = "nonsensical request.";
+    Tcl_SetResult( interp, "nonsensical request.", TCL_STATIC );
     return TCL_ERROR;
 }
 

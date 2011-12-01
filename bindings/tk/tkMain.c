@@ -202,7 +202,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv, argTable, 0 )
          != TCL_OK )
     {
-        fprintf( stderr, "%s\n", interp->result );
+        fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
         exit( 1 );
     }
     if ( name == NULL )
@@ -331,7 +331,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
 
     if ( ( *AppInit )( interp ) != TCL_OK )
     {
-        fprintf( stderr, "(*AppInit) failed: %s\n", interp->result );
+        fprintf( stderr, "(*AppInit) failed: %s\n", Tcl_GetStringResult( interp ) );
     }
 
     //
@@ -343,7 +343,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
         code = Tcl_VarEval( interp, "wm geometry . ", geometry, (char *) NULL );
         if ( code != TCL_OK )
         {
-            fprintf( stderr, "%s\n", interp->result );
+            fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
         }
     }
 
@@ -393,7 +393,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
             fullName = Tcl_TildeSubst( interp, RcFileName, &buffer );
             if ( fullName == NULL )
             {
-                fprintf( stderr, "%s\n", interp->result );
+                fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
             }
             else
             {
@@ -403,7 +403,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
                     code = Tcl_EvalFile( interp, fullName );
                     if ( code != TCL_OK )
                     {
-                        fprintf( stderr, "%s\n", interp->result );
+                        fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
                     }
                     fclose( f );
                 }
@@ -442,7 +442,7 @@ error:
     msg = Tcl_GetVar( interp, "errorInfo", TCL_GLOBAL_ONLY );
     if ( msg == NULL )
     {
-        msg = interp->result;
+        msg = Tcl_GetStringResult( interp );
     }
     fprintf( stderr, "%s\n", msg );
     Tcl_Eval( interp, errorExitCmd );
@@ -478,6 +478,7 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
     static int gotPartial = 0;
     char       *cmd;
     int        code, count;
+    const char *res;
 
     count = (int) read( fileno( stdin ), input, BUFFER_SIZE );
     if ( count <= 0 )
@@ -533,11 +534,12 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
     Tk_CreateFileHandler( 0, TK_READABLE, StdinProc, (ClientData) 0 );
 #endif
     Tcl_DStringFree( &command );
-    if ( *interp->result != 0 )
+    res = Tcl_GetStringResult( interp );
+    if ( *res != 0 )
     {
         if ( ( code != TCL_OK ) || ( tty ) )
         {
-            printf( "%s\n", interp->result );
+            printf( "%s\n", res );
         }
     }
 
