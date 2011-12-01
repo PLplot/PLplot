@@ -2,8 +2,10 @@ plplot (5.9.9-2) unstable; urgency=low
 
   * debian/control.in: Add recommends on cmake for libplplot-dev since
     this provides a better way of building the examples.
+  * Force rebuild to fix dependency problems with ada development library
+    and gnat-4.6 which make libplplot-ada0-dev uninstallable.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 31 Oct 2011 15:10:57 +0000
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 30 Nov 2011 12:48:13 +0000
 
 plplot (5.9.9-1) unstable; urgency=low
 
