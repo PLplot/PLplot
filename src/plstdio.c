@@ -53,8 +53,6 @@
 void
 plio_fwrite( void *buf, size_t size, size_t nmemb, FILE *stream )
 {
-    size_t bytes;
-
     dbug_enter( "plio_fwrite" );
 
     // Exit if there is nothing to write
@@ -64,7 +62,7 @@ plio_fwrite( void *buf, size_t size, size_t nmemb, FILE *stream )
     // Clear the error flag for this steam
     clearerr( stream );
 
-    bytes = fwrite( buf, size, nmemb, stream );
+    fwrite( buf, size, nmemb, stream );
 
     if ( ferror( stream ) )
     {
@@ -85,8 +83,6 @@ plio_fwrite( void *buf, size_t size, size_t nmemb, FILE *stream )
 void
 plio_fread( void *buf, size_t size, size_t nmemb, FILE *stream )
 {
-    size_t bytes;
-
     dbug_enter( "plio_fread" );
 
     // If the buffer has a size of zero, we should complain
@@ -99,7 +95,7 @@ plio_fread( void *buf, size_t size, size_t nmemb, FILE *stream )
     // Clear the error flag for this steam
     clearerr( stream );
 
-    bytes = fread( buf, size, nmemb, stream );
+    fread( buf, size, nmemb, stream );
 
     if ( ferror( stream ) )
     {

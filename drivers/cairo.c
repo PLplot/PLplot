@@ -522,9 +522,6 @@ void plD_state_cairo( PLStream * PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 
 void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
 {
-    PLCairo *aStream;
-
-    aStream = (PLCairo *) pls->dev;
 
     switch ( op )
     {
@@ -2030,7 +2027,7 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
 
 void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
 {
-    int          number_chars;
+    //int          number_chars;
     const char   *ksname;
     char         str[257];
     KeySym       keysym;
@@ -2065,7 +2062,7 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     // Get key pressed (if any)
     if ( event.type == KeyPress || event.type == KeyRelease )
     {
-        number_chars = XLookupString( (XKeyEvent *) &event, str, 100, &keysym, NULL );
+        //number_chars = XLookupString( (XKeyEvent *) &event, str, 100, &keysym, NULL );
         if ( keysym == NoSymbol )
             ksname = "NoSymbol";
         else if ( !( ksname = XKeysymToString( keysym ) ) )

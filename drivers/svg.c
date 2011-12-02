@@ -354,9 +354,6 @@ void plD_eop_svg( PLStream *pls )
 
 void plD_tidy_svg( PLStream *pls )
 {
-    SVG *aStream;
-
-    aStream = pls->dev;
     if ( svg_family_check( pls ) )
     {
         return;
