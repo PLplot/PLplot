@@ -38,7 +38,7 @@ program x04f95
 contains
 
 subroutine plot1(type)
-    integer           :: i, type
+    integer           :: type
     integer           :: nlegend
 
     real(kind=plflt)  :: legend_width, legend_height

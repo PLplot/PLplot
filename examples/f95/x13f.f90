@@ -59,7 +59,7 @@
         j = j + 1
 !        n.b. the theta quantities multiplied by 2*pi/500 afterward so
 !        in fact per is interpreted as a percentage.
-        theta1 = theta0 + 5*per(i+1)
+        theta1 = int(theta0 + 5*per(i+1))
         if (i .eq. 4) theta1 = 500
         do theta = theta0, theta1, dthet
           x(j+1) = 5 + 3*cos((2._plflt*pi/500._plflt)*theta)
