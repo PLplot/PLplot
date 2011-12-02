@@ -176,7 +176,9 @@ pl_create_tempfile( char **fname )
     const char *tmpdir;
     char       *template;
     const char *tmpname = "plplot_XXXXXX";
+#if !defined PL_HAVE_MKSTEMP
     int        flags;
+#endif
 
 #if defined ( MSDOS ) || defined ( WIN32 )
     tmpdir = getenv( "TEMP" );

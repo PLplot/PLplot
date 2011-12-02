@@ -1925,7 +1925,7 @@ c_plsdiori( PLFLT rot )
 static void
 calc_diori( void )
 {
-    PLFLT r11, r21, r12, r22, cost, sint;
+    PLFLT cost, sint;
     PLFLT x0, y0, lx, ly, aspect;
     PLFLT affine_result[NAFFINE], affine_left[NAFFINE];
 
@@ -1948,15 +1948,10 @@ calc_diori( void )
     x0 = ( plsc->phyxma + plsc->phyxmi ) / 2.;
     y0 = ( plsc->phyyma + plsc->phyymi ) / 2.;
 
-// Rotation matrix
+// Rotation 
 
-    r11 = cos( plsc->diorot * PI / 2. );
-    r21 = sin( plsc->diorot * PI / 2. );
-    r12 = -r21;
-    r22 = r11;
-
-    cost = ABS( r11 );
-    sint = ABS( r21 );
+    cost = ABS( cos( plsc->diorot * PI / 2. ) );
+    sint = ABS( sin( plsc->diorot * PI / 2. ) );
 
 // Flip aspect ratio as necessary.  Grungy but I don't see a better way
 

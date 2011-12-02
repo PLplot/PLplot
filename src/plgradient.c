@@ -77,7 +77,7 @@ c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
     else
     {
       #define NGRAD    2
-        int   i, irot_min, irot_max;
+        int   i, irot_min;
         PLINT _xpoly[PL_MAXPOLY], _ypoly[PL_MAXPOLY];
         PLINT *xpoly, *ypoly;
         PLINT xgrad[NGRAD], ygrad[NGRAD], clpxmi, clpxma, clpymi, clpyma;
@@ -92,7 +92,6 @@ c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
         xrot_min = xrot;
         xrot_max = xrot;
         irot_min = 0;
-        irot_max = 0;
         for ( i = 1; i < n; i++ )
         {
             xrot = x[i] * cosangle + y[i] * sinangle;
@@ -104,7 +103,6 @@ c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
             else if ( xrot > xrot_max )
             {
                 xrot_max = xrot;
-                irot_max = i;
             }
         }
         // xrot_min and xrot_max are the minimum and maximum rotated x

@@ -1,4 +1,4 @@
-// $Id$
+g/ $Id$
 //
 //  Copyright 1993, 1994, 1995
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
@@ -1917,7 +1917,7 @@ opt_bg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
     else
         rgb = opt_arg;
 
-    strncpy( opttmp, opt_arg, OPTMAX - 1 );
+    strncpy( opttmp, rgb, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
 
     if ( strchr( opttmp, '_' ) )
