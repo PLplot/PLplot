@@ -2959,7 +2959,7 @@ plInitDispatchTable()
         }
     }
 
-// Make sure that the temporary file containing the driversr database
+// Make sure that the temporary file containing the drivers database
 // is ready to read and close the directory handle
     fflush( fp_drvdb );
     closedir( dp_drvdir );
