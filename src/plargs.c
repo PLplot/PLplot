@@ -1,4 +1,4 @@
-g/ $Id$
+// $Id$
 //
 //  Copyright 1993, 1994, 1995
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
