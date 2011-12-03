@@ -473,7 +473,7 @@ PLIMAGE( PLFLT *idata, PLINT *nx, PLINT *ny,
         }
     }
 
-    c_plimage( (const PLFLT **) pidata, *nx, *ny,
+    c_plimage( (const PLFLT * const *) pidata, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
         *Dxmin, *Dxmax, *Dymin, *Dymax );
 
@@ -574,13 +574,13 @@ void PLLEGEND(
         *nlegend, opt_array,
         *text_offset, *text_scale, *text_spacing,
         *text_justification,
-        text_colors, (const char **) pllegend_text,
+        text_colors, (const char * const *) pllegend_text,
         box_colors, box_patterns,
         box_scales, box_line_widths,
         line_colors, line_styles,
         line_widths,
         symbol_colors, symbol_scales,
-        symbol_numbers, (const char **) pllegend_symbols );
+        symbol_numbers, (const char * const *) pllegend_symbols );
 
     free( *pllegend_text );
     free( pllegend_text );

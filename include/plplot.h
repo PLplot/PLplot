@@ -884,7 +884,7 @@ c_plconfigtime( PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOO
 //
 
 PLDLLIMPEXP void
-c_plcont( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+c_plcont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
           PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data );
@@ -1237,13 +1237,13 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             PLINT nlegend, const PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLFLT text_justification,
-            const PLINT *text_colors, const char **text,
+            const PLINT *text_colors, const char * const *text,
             const PLINT *box_colors, const PLINT *box_patterns,
             const PLFLT *box_scales, const PLINT *box_line_widths,
             const PLINT *line_colors, const PLINT *line_styles,
             const PLINT *line_widths,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
-            const PLINT *symbol_numbers, const char **symbols );
+            const PLINT *symbol_numbers, const char * const *symbols );
 
 // Routine for drawing continous colour legends
 PLDLLIMPEXP void
@@ -1292,7 +1292,7 @@ c_plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 // Plots a mesh representation of the function z[x][y].
 
 PLDLLIMPEXP void
-c_plmesh( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt );
+c_plmesh( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt );
 
 // Like plmesh, but uses an evaluator function to access z data from zp
 
@@ -1303,7 +1303,7 @@ plfmesh( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 // Plots a mesh representation of the function z[x][y] with contour
 
 PLDLLIMPEXP void
-c_plmeshc( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+c_plmeshc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt,
            const PLFLT *clevel, PLINT nlevel );
 
 // Like plmeshc, but uses an evaluator function to access z data from zp
@@ -1332,7 +1332,7 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 // Plots a 3-d representation of the function z[x][y].
 
 PLDLLIMPEXP void
-c_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+c_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
           PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
 
 // Like plot3d, but uses an evaluator function to access z data from zp
@@ -1344,7 +1344,7 @@ plfplot3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 // Plots a 3-d representation of the function z[x][y] with contour.
 
 PLDLLIMPEXP void
-c_plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+c_plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
            PLINT nx, PLINT ny, PLINT opt,
            const PLFLT *clevel, PLINT nlevel );
 
@@ -1358,7 +1358,7 @@ plfplot3dc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 // y index limits.
 
 PLDLLIMPEXP void
-c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
             PLINT nx, PLINT ny, PLINT opt,
             const PLFLT *clevel, PLINT nlevel,
             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
@@ -1616,7 +1616,7 @@ c_plsfont( PLINT family, PLINT style, PLINT weight );
 // Shade region.
 
 PLDLLIMPEXP void
-c_plshade( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
            PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
            PLFLT shade_min, PLFLT shade_max,
            PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -1638,7 +1638,7 @@ c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
             PLPointer pltr_data );
 
 PLDLLIMPEXP void
-c_plshades( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+c_plshades( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
             const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
             PLINT cont_color, PLINT cont_width,
@@ -1811,7 +1811,7 @@ c_plstripd( PLINT id );
 // plots a 2d image (or a matrix too large for plshade() )
 
 PLDLLIMPEXP void
-c_plimagefr( const PLFLT **idata, PLINT nx, PLINT ny,
+c_plimagefr( const PLFLT * const *idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
              PLFLT valuemin, PLFLT valuemax,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
@@ -1833,7 +1833,7 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
 // automatically scaled
 
 PLDLLIMPEXP void
-c_plimage( const PLFLT **idata, PLINT nx, PLINT ny,
+c_plimage( const PLFLT * const *idata, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
            PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
 
@@ -1855,7 +1855,7 @@ c_plstyl( PLINT nms, const PLINT *mark, const PLINT *space );
 // Plots the 3d surface representation of the function z[x][y].
 
 PLDLLIMPEXP void
-c_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny,
+c_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
             PLINT opt, const PLFLT *clevel, PLINT nlevel );
 
 // Like plsurf3d, but uses an evaluator function to access z data from zp
@@ -1868,7 +1868,7 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 // index limits.
 
 PLDLLIMPEXP void
-c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny,
+c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
              PLINT opt, const PLFLT *clevel, PLINT nlevel,
              PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
 
@@ -1934,7 +1934,7 @@ c_plvasp( PLFLT aspect );
 // simple arrow plotter.
 
 PLDLLIMPEXP void
-c_plvect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+c_plvect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data );
 
@@ -2272,7 +2272,7 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT ny );
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
 
 PLDLLIMPEXP void
-plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
+plMinMax2dGrid( const PLFLT * const *f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
 
 // Wait for graphics input event and translate to world coordinates
 

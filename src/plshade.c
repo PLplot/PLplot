@@ -202,7 +202,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 // (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
 //--------------------------------------------------------------------------
 
-void c_plshades( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+void c_plshades( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
                  PLINT cont_color, PLINT cont_width,
@@ -210,7 +210,7 @@ void c_plshades( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data )
 {
-    plfshades( plf2ops_c(), a, nx, ny, defined,
+    plfshades( plf2ops_c(), (PLPointer) a, nx, ny, defined,
         xmin, xmax, ymin, ymax,
         clevel, nlevel, fill_width,
         cont_color, cont_width,
@@ -318,7 +318,7 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 // via a (PLFLT **), and is column-dominant (normal C ordering).
 //--------------------------------------------------------------------------
 
-void c_plshade( const PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+void c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                 PLFLT shade_min, PLFLT shade_max,
                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,

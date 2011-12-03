@@ -724,7 +724,7 @@ typedef struct cont_level
 } CONT_LEVEL;
 
 void
-cont_store( const PLFLT **f, PLINT nx, PLINT ny,
+cont_store( const PLFLT * const *f, PLINT nx, PLINT ny,
             PLINT kx, PLINT lx, PLINT ky, PLINT ly,
             const PLFLT *clevel, PLINT nlevel,
             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),

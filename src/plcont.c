@@ -489,7 +489,7 @@ plf2evalr( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 //--------------------------------------------------------------------------
 
 void
-cont_store( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+cont_store( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
             PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
             PLPointer pltr_data,
@@ -512,7 +512,7 @@ cont_store( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 //--------------------------------------------------------------------------
 
 void
-c_plcont( const PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+c_plcont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
           PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )

@@ -191,7 +191,7 @@ grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny )
 //
 //--------------------------------------------------------------------------
 void
-c_plimagefr( const PLFLT **idata, PLINT nx, PLINT ny,
+c_plimagefr( const PLFLT * const *idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
              PLFLT valuemin, PLFLT valuemax,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
@@ -330,7 +330,7 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
 //
 //--------------------------------------------------------------------------
 void
-c_plimage( const PLFLT **idata, PLINT nx, PLINT ny,
+c_plimage( const PLFLT * const *idata, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
            PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax )
 {

@@ -532,13 +532,13 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             PLINT nlegend, const PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLFLT text_justification,
-            const PLINT *text_colors, const char **text,
+            const PLINT *text_colors, const char * const *text,
             const PLINT *box_colors, const PLINT *box_patterns,
             const PLFLT *box_scales, const PLINT *box_line_widths,
             const PLINT *line_colors, const PLINT *line_styles,
             const PLINT *line_widths,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
-            const PLINT *symbol_numbers, const char **symbols )
+            const PLINT *symbol_numbers, const char * const *symbols )
 
 {
     // Legend position
@@ -1962,7 +1962,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
             }
         }
         // Draw the color bar
-        plimage( (const PLFLT **) color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
+        plimage( (const PLFLT * const *) color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
             min_value, max_value, wx_min, wx_max, wy_min, wy_max );
         plFree2dGrid( color_data, ni, nj );
     }
@@ -2051,7 +2051,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         }
 
         // Draw the color bar
-        plshades( (const PLFLT **) color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
+        plshades( (const PLFLT * const *) color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
             values, n_steps, 0, cont_color, cont_width, plfill, TRUE,
             pltr1, (void *) ( &grid ) );
         plFree2dGrid( color_data, ni, nj );

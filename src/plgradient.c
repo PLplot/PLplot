@@ -253,7 +253,7 @@ plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
     for ( i = 0; i < NEDGE; i++ )
         edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 
-    plshades( (const PLFLT **) z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
+    plshades( (const PLFLT * const *) z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
         edge, NEDGE, 0, 0, 0, plfill, 1, NULL, NULL );
     free( (void *) edge );
     plFree2dGrid( z, NX, NY );

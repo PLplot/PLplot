@@ -115,7 +115,7 @@ c_pllightsource( PLFLT x, PLFLT y, PLFLT z )
 //--------------------------------------------------------------------------
 
 void
-c_plmesh( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
+c_plmesh( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, NULL, 0 );
 }
@@ -147,7 +147,7 @@ plfmesh( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plmeshc( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+c_plmeshc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt,
            const PLFLT *clevel, PLINT nlevel )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, clevel, nlevel );
@@ -323,7 +323,7 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
 //--------------------------------------------------------------------------
 
 void
-c_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny,
+c_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
             PLINT opt, const PLFLT *clevel, PLINT nlevel )
 {
     plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
@@ -386,7 +386,7 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT **z, PLINT nx, PLINT ny,
+c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
              PLINT opt, const PLFLT *clevel, PLINT nlevel,
              PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
 {
@@ -617,7 +617,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
             }
         }
         // Fill cont structure with contours.
-        cont_store( (const PLFLT **) zstore, nx, ny, ixstart + 1, ixn, 1, ny,
+        cont_store( (const PLFLT * const *) zstore, nx, ny, ixstart + 1, ixn, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         // Free the 2D input arrays to cont_store since not needed any more.
@@ -854,7 +854,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
 //--------------------------------------------------------------------------
 
 void
-c_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+c_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
           PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
@@ -877,7 +877,7 @@ plfplot3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+c_plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT * const*z,
            PLINT nx, PLINT ny, PLINT opt,
            const PLFLT *clevel, PLINT nlevel )
 {
@@ -915,7 +915,7 @@ plfplot3dc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT **z,
+c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
             PLINT nx, PLINT ny, PLINT opt,
             const PLFLT *clevel, PLINT nlevel,
             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
@@ -1323,7 +1323,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         pl3upv = 0;
 
         // Fill cont structure with contours.
-        cont_store( (const PLFLT **) zstore, nx, ny, 1, nx, 1, ny,
+        cont_store( (const PLFLT * const *) zstore, nx, ny, 1, nx, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         // Free the 2D input arrays to cont_store since not needed any more.

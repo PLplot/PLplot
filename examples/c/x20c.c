@@ -140,7 +140,7 @@ main( int argc, const char *argv[] )
 
         pllab( "...around a blue square.", " ", "A red border should appear..." );
 
-        plimage( (const PLFLT **) z, XDIM, YDIM,
+        plimage( (const PLFLT * const *) z, XDIM, YDIM,
             1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 0., 0.,
             1., (PLFLT) XDIM, 1., (PLFLT) YDIM );
     }
@@ -166,7 +166,7 @@ main( int argc, const char *argv[] )
 
         pllab( "No, an amplitude clipped \"sombrero\"", "", "Saturn?" );
         plptex( 2., 2., 3., 4., 0., "Transparent image" );
-        plimage( (const PLFLT **) z, XDIM, YDIM, 0., 2. * M_PI, 0., 3. * M_PI, 0.05, 1.,
+        plimage( (const PLFLT * const *) z, XDIM, YDIM, 0., 2. * M_PI, 0., 3. * M_PI, 0.05, 1.,
             0., 2. * M_PI, 0., 3. * M_PI );
         plFree2dGrid( r, XDIM, YDIM );
 
@@ -201,7 +201,7 @@ main( int argc, const char *argv[] )
     else
         pllab( "", " ", "Lena..." );
 
-    plimage( (const PLFLT **) img_f, width, height, 1., width, 1., height, 0., 0.,
+    plimage( (const PLFLT * const *) img_f, width, height, 1., width, 1., height, 0., 0.,
         1., width, 1., height );
 
     // plend();exit(0);
@@ -242,24 +242,24 @@ main( int argc, const char *argv[] )
         pladv( 0 );
 
         // display selection only
-        plimage( (const PLFLT **) img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
+        plimage( (const PLFLT * const *) img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
 
         plspause( 1 );
 
         // zoom in selection
         plenv( xi, xe, ye, yi, 1, -1 );
-        plimage( (const PLFLT **) img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
+        plimage( (const PLFLT * const *) img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi );
     }
 
     // Base the dynamic range on the image contents.
-    plMinMax2dGrid( (const PLFLT **) img_f, width, height, &img_max, &img_min );
+    plMinMax2dGrid( (const PLFLT * const *) img_f, width, height, &img_max, &img_min );
 
     // Draw a saturated version of the original image.  Only use the middle 50%
     // of the image's full dynamic range.
     plcol0( 2 );
     plenv( 0, width, 0, height, 1, -1 );
     pllab( "", "", "Reduced dynamic range image example" );
-    plimagefr( (const PLFLT **) img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL );
+    plimagefr( (const PLFLT * const *) img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL );
 
     // Draw a distorted version of the original image, showing its full dynamic range.
     plenv( 0, width, 0, height, 1, -1 );
@@ -292,7 +292,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-    plimagefr( (const PLFLT **) img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2 );
+    plimagefr( (const PLFLT * const *) img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2 );
 
     plFree2dGrid( cgrid2.xg, width + 1, height + 1 );
     plFree2dGrid( cgrid2.yg, width + 1, height + 1 );

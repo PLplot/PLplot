@@ -231,7 +231,7 @@ main( int argc, const char *argv[] )
 
     plpsty( 0 );
 
-    plshades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    plshades( (const PLFLT * const *) z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plfill, 1, NULL, NULL );
@@ -278,7 +278,7 @@ main( int argc, const char *argv[] )
 
     plpsty( 0 );
 
-    plshades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    plshades( (const PLFLT * const *) z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plfill, 1, pltr1, (void *) &cgrid1 );
@@ -325,7 +325,7 @@ main( int argc, const char *argv[] )
 
     plpsty( 0 );
 
-    plshades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    plshades( (const PLFLT * const *) z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plfill, 0, pltr2, (void *) &cgrid2 );
@@ -353,7 +353,7 @@ main( int argc, const char *argv[] )
     plcol0( 1 );
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     plcol0( 2 );
-    plcont( (const PLFLT **) w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2 );
+    plcont( (const PLFLT * const *) w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2 );
 
     pllab( "distance", "altitude", "Bogon density, with streamlines" );
 
@@ -371,7 +371,7 @@ main( int argc, const char *argv[] )
 
     plpsty( 0 );
 
-    plshades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    plshades( (const PLFLT * const *) z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         2, 3,
         plfill, 0, pltr2, (void *) &cgrid2 );
@@ -421,7 +421,7 @@ main( int argc, const char *argv[] )
 
         plpsty( 0 );
 
-        plshades( (const PLFLT **) z, nx, ny, zdefined, -1., 1., -1., 1.,
+        plshades( (const PLFLT * const *) z, nx, ny, zdefined, -1., 1., -1., 1.,
             shedge, ns + 1, fill_width,
             cont_color, cont_width,
             plfill, 0, pltr2, (void *) &cgrid2 );
@@ -468,7 +468,7 @@ main( int argc, const char *argv[] )
         shedge[i] = zmin + ( zmax - zmin ) * (PLFLT) i / (PLFLT) ns;
 
     //  Now we can shade the interior region.
-    plshades( (const PLFLT **) z, nx, ny, NULL, -1., 1., -1., 1.,
+    plshades( (const PLFLT * const *) z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plfill, 0, pltr2, (void *) &cgrid2 );

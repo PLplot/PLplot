@@ -335,7 +335,7 @@ plstream::vect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT 
 {
     set_stream();
 
-    plvect( (const PLFLT **) u, (const PLFLT **) v, nx, ny, scale, pltr, pltr_data );
+    plvect( u, v, nx, ny, scale, pltr, pltr_data );
 }
 
 void
@@ -502,7 +502,7 @@ void plstream::cont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT
 {
     set_stream();
 
-    plcont( (const PLFLT **) f, nx, ny, kx, lx, ky, ly, clevel, nlevel,
+    plcont( f, nx, ny, kx, lx, ky, ly, clevel, nlevel,
         pltr, pltr_data );
 }
 
@@ -1095,7 +1095,7 @@ void plstream::mesh( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLI
 {
     set_stream();
 
-    plmesh( x, y, (const PLFLT **) z, nx, ny, opt );
+    plmesh( x, y, z, nx, ny, opt );
 }
 
 // Plots a mesh representation of the function z[x][y] with contour.
@@ -1105,7 +1105,7 @@ void plstream::meshc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PL
 {
     set_stream();
 
-    plmeshc( x, y, (const PLFLT **) z, nx, ny, opt, clevel, nlevel );
+    plmeshc( x, y, z, nx, ny, opt, clevel, nlevel );
 }
 
 //  Creates a new stream and makes it the default.
@@ -1145,7 +1145,7 @@ void plstream::surf3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 {
     set_stream();
 
-    plsurf3d( x, y, (const PLFLT **) z, nx, ny, opt, clevel, nlevel );
+    plsurf3d( x, y, z, nx, ny, opt, clevel, nlevel );
 }
 
 // Plots a 3-d shaded representation of the function z[x][y] with
@@ -1159,7 +1159,7 @@ void plstream::surf3dl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 {
     set_stream();
 
-    plsurf3dl( x, y, (const PLFLT **) z, nx, ny, opt, clevel, nlevel, ixstart, ixn,
+    plsurf3dl( x, y, z, nx, ny, opt, clevel, nlevel, ixstart, ixn,
         indexymin, indexymax );
 }
 
@@ -1170,7 +1170,7 @@ void plstream::plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 {
     set_stream();
 
-    ::plot3d( x, y, (const PLFLT **) z, nx, ny, opt, (PLBOOL) side );
+    ::plot3d( x, y, z, nx, ny, opt, (PLBOOL) side );
 }
 
 // Deprecated version using PLINT not bool
@@ -1179,7 +1179,7 @@ void plstream::plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 {
     set_stream();
 
-    ::plot3d( x, y, (const PLFLT **) z, nx, ny, opt, (PLBOOL) side );
+    ::plot3d( x, y, z, nx, ny, opt, (PLBOOL) side );
 }
 
 // Plots a 3-d representation of the function z[x][y] with contour.
@@ -1190,7 +1190,7 @@ void plstream::plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 {
     set_stream();
 
-    ::plot3dc( x, y, (const PLFLT **) z, nx, ny, opt, clevel, nlevel );
+    ::plot3dc( x, y, z, nx, ny, opt, clevel, nlevel );
 }
 
 // Plots a 3-d representation of the function z[x][y] with contour
@@ -1204,7 +1204,7 @@ void plstream::plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 {
     set_stream();
 
-    ::plot3dcl( x, y, (const PLFLT **) z, nx, ny, opt, clevel, nlevel, ixstart, ixn,
+    ::plot3dcl( x, y, z, nx, ny, opt, clevel, nlevel, ixstart, ixn,
         indexymin, indexymax );
 }
 
@@ -1698,7 +1698,7 @@ plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
 {
     set_stream();
 
-    plshade( (const PLFLT **) a, nx, ny, defined, left, right, bottom, top,
+    plshade( a, nx, ny, defined, left, right, bottom, top,
         shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -1720,7 +1720,7 @@ plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
 {
     set_stream();
 
-    plshade( (const PLFLT **) a, nx, ny, defined, left, right, bottom, top,
+    plshade( a, nx, ny, defined, left, right, bottom, top,
         shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -1739,7 +1739,7 @@ plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
 {
     set_stream();
 
-    plshades( (const PLFLT **) a, nx, ny, defined, xmin, xmax, ymin, ymax,
+    plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax,
         clevel, nlevel, fill_width, cont_color, cont_width,
         fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
@@ -1757,7 +1757,7 @@ plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
 {
     set_stream();
 
-    plshades( (const PLFLT **) a, nx, ny, defined, xmin, xmax, ymin, ymax,
+    plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax,
         clevel, nlevel, fill_width, cont_color, cont_width,
         fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
@@ -2161,7 +2161,7 @@ void plstream::image( const PLFLT * const *data, PLINT nx, PLINT ny,
 {
     set_stream();
 
-    plimage( (const PLFLT **) data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+    plimage( data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
         Dxmin, Dxmax, Dymin, Dymax );
 }
 
@@ -2175,7 +2175,7 @@ void plstream::imagefr( const PLFLT * const *data, PLINT nx, PLINT ny, PLFLT xmi
 {
     set_stream();
 
-    plimagefr( (const PLFLT **) data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+    plimagefr( data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
         valuemin, valuemax, pltr, pltr_data );
 }
 
@@ -2690,7 +2690,7 @@ void plstream::MinMax2dGrid( const PLFLT * const *f, PLINT nx, PLINT ny,
 {
     set_stream();
 
-    ::plMinMax2dGrid( (const PLFLT **) f, nx, ny, fmax, fmin );
+    ::plMinMax2dGrid( f, nx, ny, fmax, fmin );
 }
 
 // Functions for converting between HLS and RGB color space

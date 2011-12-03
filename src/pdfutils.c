@@ -1152,7 +1152,7 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT PL_UNUSED( ny ) )
 //--------------------------------------------------------------------------
 
 void
-plMinMax2dGrid( const PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmax, PLFLT *fnmin )
+plMinMax2dGrid( const PLFLT * const*f, PLINT nx, PLINT ny, PLFLT *fnmax, PLFLT *fnmin )
 {
     int   i, j;
     PLFLT m, M;
