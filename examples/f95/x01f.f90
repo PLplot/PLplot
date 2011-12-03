@@ -78,7 +78,6 @@ subroutine plot1()
 
    real(plflt), dimension(1:60) :: x, y
    real(plflt) :: xmin, xmax, ymin, ymax
-   integer :: i
 
    x = xoff + xscale * arange(1,size(x)+1) / real(size(x),plflt)
    y = yoff + yscale * x ** 2
@@ -115,7 +114,6 @@ end subroutine plot1
 subroutine plot2()
 
    real(plflt), dimension(1:100) :: x, y
-   integer :: i
 
 !
 !   Set up the viewport and window using PLENV. The range in X is
@@ -151,7 +149,6 @@ end subroutine plot2
 !   and so do not use_ PLENV
 
    real(plflt), dimension(1:101) :: x, y
-   integer :: i
 
    call pladv(0)
 

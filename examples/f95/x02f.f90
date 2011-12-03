@@ -92,9 +92,9 @@ subroutine demo2
 
         call plhlsrgb(h, l, s, r1, g1, b1)
 
-        r(i+17) = r1*255.001
-        g(i+17) = g1*255.001
-        b(i+17) = b1*255.001
+        r(i+17) = int(r1*255.001)
+        g(i+17) = int(g1*255.001)
+        b(i+17) = int(b1*255.001)
     enddo
 
     do i=1,16
