@@ -254,7 +254,7 @@ static int
 plExitCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp, int argc, char **argv )
 {
     int  value = 0;
-    char *res;
+    const char *res;
 
 // Print error message if one given
  

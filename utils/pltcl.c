@@ -69,6 +69,9 @@ static int
 plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
     const char *tmp = Tcl_GetStringResult( interp );
+    (void) argc;
+    (void) argv;
+    (void) clientData;
 
 // Print error message if one given
     if ( tmp != NULL && tmp != '\0' )
@@ -95,6 +98,9 @@ prPromptCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
     PLStream *pls;
     char     prompt[80];
+    (void) argc;
+    (void) argv;
+    (void) clientData;
 
     plgpls( &pls );
 

@@ -74,7 +74,7 @@ EXTERN int TclObjCommandComplete _ANSI_ARGS_( ( Tcl_Obj * cmdPtr ) );
 // linked into the application.
 //
 
-//EXTERN int Tcl_LinkVar( );
+EXTERN int Tcl_LinkVar( );
 int ( *tclDummyLinkVarPtr )() = Tcl_LinkVar;
 
 //

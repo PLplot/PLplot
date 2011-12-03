@@ -68,7 +68,7 @@ main( int argc, char *argv[] )
     start[0] = 0;
     for ( i = 0; i < MAXPAGES; i++ )
     {
-        nb = fread( buf, 1, BUFSZ, fd );
+        nb = (int) fread( buf, 1, BUFSZ, fd );
         if ( nb <= 0 )
             break;
         ifirst = 0;
@@ -171,7 +171,7 @@ main( int argc, char *argv[] )
                 }
                 xtra = '\0';
             }
-            nb = fread( buf, 1, BUFSZ, fd );
+            nb = (int) fread( buf, 1, BUFSZ, fd );
             if ( nb <= 0 )
                 break;
             ifirst = 0;
@@ -179,7 +179,7 @@ main( int argc, char *argv[] )
             {
                 if ( buf[j] == '\f' )
                 {
-                    if ( fwrite( &buf[ifirst], 1, j - ifirst, stdout ) != j - ifirst )
+                    if ( (int) fwrite( &buf[ifirst], 1, j - ifirst, stdout ) != j - ifirst )
                     {
                         fprintf( stderr, "Error writing to stdout\n" );
                         exit( 1 );
@@ -196,7 +196,7 @@ main( int argc, char *argv[] )
                 xtra = ESC;
                 j--;
             }
-            if ( fwrite( &buf[ifirst], 1, j - ifirst, stdout ) != j - ifirst )
+            if ( (int) fwrite( &buf[ifirst], 1, j - ifirst, stdout ) != j - ifirst )
             {
                 fprintf( stderr, "Error writing to stdout\n" );
                 exit( 1 );

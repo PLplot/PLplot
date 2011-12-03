@@ -9,6 +9,8 @@ int
 main( int argc, char *argv[] )
 {
     int c;
+    (void) argc;
+    (void) argv;
     while ( ( c = getchar() ) != EOF )
     {
         if ( c & 0x80 )
