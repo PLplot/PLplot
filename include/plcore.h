@@ -362,8 +362,9 @@ typedef struct
 
 static PLLoadableDevice *loadable_device_list;
 static PLLoadableDriver *loadable_driver_list;
-#endif
 
 static int nloadabledrivers = 0;
+
+#endif
 
 #endif  // __PLCORE_H__
