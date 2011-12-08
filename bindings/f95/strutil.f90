@@ -18,64 +18,51 @@
 ! along with PLplot; if not, write to the Free Software
 ! Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-      subroutine plstrf2c(string1, string2, maxlen)
+module plplot_strutils
 
-      integer :: maxlen
-      character*(*) :: string1, string2
+    implicit none
 
-      integer :: limit, islen
-      external islen
+contains
 
-      limit = min0(islen(string1),maxlen-1)
-      do 100 i = 1,limit
-         string2(i:i) = string1(i:i)
- 100  continue
-      string2(limit+1:limit+1) = char(0)
+!--------------------------------------------------------------------------
+! plstrf2c()
+!
+! Converts Fortran string to C format
+!--------------------------------------------------------------------------
 
-      return
-      end subroutine plstrf2c
+subroutine plstrf2c(string1, string2, maxlen)
 
+    integer :: maxlen
+    character(len=*) :: string1, string2
 
-      subroutine plstrc2f(string1, string2)
+    integer :: limit
 
-      character*(*) string1, string2
+    string2 = string1
+    limit = len_trim(string2)
+    string2(limit+1:limit+1) = char(0)
 
-      integer :: limit
-      character (len=300) :: stringbuf
-
-      limit = 1
- 10   if (ichar(string1(limit:limit)) .eq. 0) goto 20
-      stringbuf(limit:limit) = string1(limit:limit)
-      limit = limit + 1
-      goto 10
-
- 20   if(limit.gt.1) then
-        string2 = stringbuf(1:limit-1)
-      else
-        string2 = ''
-      endif
-
-      return
-      end subroutine plstrc2f
+end subroutine plstrf2c
 
 
-      integer function islen(string)
-      character*(*) string
-      integer :: i
+!--------------------------------------------------------------------------
+! plstrc2f()
+!
+! Converts C string to Fortran conventions
+!--------------------------------------------------------------------------
 
-      do 100 i = len(string),1,-1
-         if (string(i:i) .ne. ' ') then
-            islen = i
-            return
-         endif
- 100  continue
+subroutine plstrc2f(string1, string2)
 
-      if(len(string).eq.0) then
-!        If string is length 0, return length 0
-        islen = 0
-      else
-!        If string is blank, return length of 1
-        islen = 1
-      endif
-      return
-      end function islen
+    character(len=*) :: string1, string2
+
+    integer :: limit
+
+    string2 = string1
+
+    limit = index( achar(0), string2 )
+    if ( limit > 0 ) then
+        string2(limit:) = ' '
+    endif
+
+end subroutine plstrc2f
+
+end module plplot_strutils

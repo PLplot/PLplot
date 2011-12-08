@@ -22,7 +22,7 @@
       use plplot
       implicit none
       integer :: mode
-      integer :: maxargs, iargs, numargs, index, maxindex, iargc, islen
+      integer :: maxargs, iargs, numargs, index, maxindex, iargc
       parameter(maxindex = maxlen/4)
       parameter (maxargs=20)
       character (len=maxlen) :: arg
@@ -41,7 +41,7 @@
       endif
       do 10 iargs = 0, numargs
         call getarg(iargs, arg)
-        call plstrf2c(arg(:islen(arg)), string1, maxlen)
+        call plstrf2c(trim(arg), string1, maxlen)
         s1 = transfer( string1, s1 )
         do 5 index = 1, maxindex
           iargsarr(index, iargs+1) = s1(index)
