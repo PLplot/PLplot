@@ -31,7 +31,8 @@ int
 main( int argc, char *argv[] )
 {
     FILE *fd;
-    int  i, j, nb, npage, ipage, ifirst, oldpage;
+    int  i, npage, ipage, ifirst, oldpage;
+    size_t j, nb;
     int  istop;
     long start[MAXPAGES];               // start (offset) of each page
     char buf[BUFSZ], xtra, lastchar = '\0';
@@ -68,15 +69,15 @@ main( int argc, char *argv[] )
     start[0] = 0;
     for ( i = 0; i < MAXPAGES; i++ )
     {
-        nb = (int) fread( buf, 1, BUFSZ, fd );
-        if ( nb <= 0 )
+        nb = fread( buf, 1, BUFSZ, fd );
+        if ( nb == 0 )
             break;
         ifirst = 0;
         for ( j = 0; j < nb; j++ )
         {
             if ( ( lastchar = buf[j] ) == '\f' )
             {
-                ifirst = j - 1;
+                ifirst = (int) j - 1;
                 ipage++;
                 start[ipage] = BUFSZ * i + ifirst + 2;
             }
@@ -171,15 +172,14 @@ main( int argc, char *argv[] )
                 }
                 xtra = '\0';
             }
-            nb = (int) fread( buf, 1, BUFSZ, fd );
-            if ( nb <= 0 )
+            nb = fread( buf, 1, BUFSZ, fd );
+            if ( nb == 0 )
                 break;
-            ifirst = 0;
             for ( j = 0; j < nb; j++ )
             {
                 if ( buf[j] == '\f' )
                 {
-                    if ( (int) fwrite( &buf[ifirst], 1, j - ifirst, stdout ) != j - ifirst )
+                    if ( fwrite( &buf[0], 1, j, stdout ) != j )
                     {
                         fprintf( stderr, "Error writing to stdout\n" );
                         exit( 1 );
@@ -196,7 +196,7 @@ main( int argc, char *argv[] )
                 xtra = ESC;
                 j--;
             }
-            if ( (int) fwrite( &buf[ifirst], 1, j - ifirst, stdout ) != j - ifirst )
+            if ( fwrite( &buf[0], 1, j, stdout ) != j )
             {
                 fprintf( stderr, "Error writing to stdout\n" );
                 exit( 1 );
