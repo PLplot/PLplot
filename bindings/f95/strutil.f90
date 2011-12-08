@@ -30,9 +30,8 @@ contains
 ! Converts Fortran string to C format
 !--------------------------------------------------------------------------
 
-subroutine plstrf2c(string1, string2, maxlen)
+subroutine plstrf2c(string1, string2)
 
-    integer :: maxlen
     character(len=*) :: string1, string2
 
     integer :: limit

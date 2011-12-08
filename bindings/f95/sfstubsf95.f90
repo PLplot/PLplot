@@ -64,7 +64,7 @@ end module
 ! string conversion
 !
 module plplot_str
-   integer :: maxleni, maxlen
+   integer :: maxleni
    parameter (maxlen = 320)
    parameter (maxleni = 80)
    character (len = maxlen) :: string1, string2, string3
@@ -1188,7 +1188,7 @@ contains
       character*(*) mapname
       external mapform
 
-      call plstrf2c(mapname, string1, maxlen)
+      call plstrf2c(mapname, string1)
 
       call plsetmapformc(mapform)
       s1 = transfer( string1, s1 )
@@ -1203,7 +1203,7 @@ contains
       real(kind=plflt) minx, maxx, miny, maxy
       character*(*) mapname
 
-      call plstrf2c(mapname, string1, maxlen)
+      call plstrf2c(mapname, string1)
 
       call plclearmapformc()
       s1 = transfer( string1, s1 )
@@ -1423,15 +1423,15 @@ contains
     integer iy_ascl, iacc
 
 
-    call plstrf2c(xspec, string1, maxlen)
-    call plstrf2c(yspec, string2, maxlen)
-    call plstrf2c(legline(1), string3, maxlen)
-    call plstrf2c(legline(2), string4, maxlen)
-    call plstrf2c(legline(3), string5, maxlen)
-    call plstrf2c(legline(4), string6, maxlen)
-    call plstrf2c(labx, string7, maxlen)
-    call plstrf2c(laby, string8, maxlen)
-    call plstrf2c(labtop, string9, maxlen)
+    call plstrf2c(xspec, string1)
+    call plstrf2c(yspec, string2)
+    call plstrf2c(legline(1), string3)
+    call plstrf2c(legline(2), string4)
+    call plstrf2c(legline(3), string5)
+    call plstrf2c(legline(4), string6)
+    call plstrf2c(labx, string7)
+    call plstrf2c(laby, string8)
+    call plstrf2c(labtop, string9)
 
     iy_ascl = convert_to_int( y_ascl )
     iacc = convert_to_int( acc )

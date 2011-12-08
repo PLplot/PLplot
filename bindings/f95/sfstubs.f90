@@ -41,8 +41,8 @@
       implicit none
       character*(*) opt, optarg
 
-      call plstrf2c(opt, string1, maxlen)
-      call plstrf2c(optarg, string2, maxlen)
+      call plstrf2c(opt, string1)
+      call plstrf2c(optarg, string2)
       s1 = transfer( string1, s1 )
       s2 = transfer( string2, s2 )
       call plsetopt7(s1, s2)
@@ -56,7 +56,7 @@
       implicit none
       character*(*) text
 
-      call plstrf2c(text, string1, maxlen)
+      call plstrf2c(text, string1)
       s1 = transfer( string1, s1 )
       call plabort7(s1)
 
@@ -69,7 +69,7 @@
       implicit none
       character*(*) dnam
 
-      call plstrf2c(dnam, string1, maxlen)
+      call plstrf2c(dnam, string1)
       s1 = transfer( string1, s1 )
       call plsdev7(s1)
 
@@ -94,7 +94,7 @@
       implicit none
       character*(*) fnam
 
-      call plstrf2c(fnam, string1, maxlen)
+      call plstrf2c(fnam, string1)
       s1 = transfer( string1, s1 )
       call plsfnam7(s1)
 
@@ -134,8 +134,8 @@
       integer nxsub, nysub
       character*(*) xopt,yopt
 
-      call plstrf2c(xopt, string1, maxlen)
-      call plstrf2c(yopt, string2, maxlen)
+      call plstrf2c(xopt, string1)
+      call plstrf2c(yopt, string2)
 
       s1 = transfer( string1, s1 )
       s2 = transfer( string2, s2 )
@@ -152,8 +152,8 @@
       integer nxsub, nysub
       character*(*) xopt,yopt
 
-      call plstrf2c(xopt, string1, maxlen)
-      call plstrf2c(yopt, string2, maxlen)
+      call plstrf2c(xopt, string1)
+      call plstrf2c(yopt, string2)
 
       s1 = transfer( string1, s1 )
       s2 = transfer( string2, s2 )
@@ -171,12 +171,12 @@
       character*(*) xopt,xlabel,yopt,ylabel,zopt,zlabel
       integer nxsub, nysub, nzsub
 
-      call plstrf2c(xopt, string1, maxlen)
-      call plstrf2c(xlabel, string2, maxlen)
-      call plstrf2c(yopt, string3, maxlen)
-      call plstrf2c(ylabel, string4, maxlen)
-      call plstrf2c(zopt, string5, maxlen)
-      call plstrf2c(zlabel, string6, maxlen)
+      call plstrf2c(xopt, string1)
+      call plstrf2c(xlabel, string2)
+      call plstrf2c(yopt, string3)
+      call plstrf2c(ylabel, string4)
+      call plstrf2c(zopt, string5)
+      call plstrf2c(zlabel, string6)
 
       s1 = transfer( string1, s1 )
       s2 = transfer( string2, s2 )
@@ -316,7 +316,7 @@
 
       n = size(x)
 
-      call plstrf2c(string, string1, maxlen)
+      call plstrf2c(string, string1)
       s1 = transfer( string1, s1 )
       call plstring7(n,x,y,s1)
 
@@ -334,7 +334,7 @@
 
       n = size(x)
 
-      call plstrf2c(string, string1, maxlen)
+      call plstrf2c(string, string1)
       s1 = transfer( string1, s1 )
       call plstring37(n,x,y,z,s1)
 
@@ -401,7 +401,7 @@
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
-!	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
       call plshade07(z, size(z,1), size(z,2), s1, &
@@ -428,7 +428,7 @@
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:), yg(:)
 
-!	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
       call plshade17(z, size(z,1), size(z,2), s1, &
@@ -456,7 +456,7 @@
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:,:), yg(:,:)
 
-!	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
       call plshade27(z, size(z,1), size(z,2), s1, &
@@ -506,7 +506,7 @@
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
-!	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
       call plshades07(z, size(z,1), size(z,2), s1, &
@@ -530,7 +530,7 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
                        xg1(:), yg1(:)
 
-!	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
       call plshades17(z, size(z,1), size(z,2), s1, &
@@ -554,7 +554,7 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
         xg2(:,:), yg2(:,:)
 
-!	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
       call plshades27(z, size(z,1), size(z,2), s1, &
@@ -578,7 +578,7 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
 
-!	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
       call plshades7(z, size(z,1), size(z,2), s1, &
@@ -652,9 +652,9 @@
       implicit none
       character*(*) xlab,ylab,title
 
-      call plstrf2c(xlab, string1, maxlen)
-      call plstrf2c(ylab, string2, maxlen)
-      call plstrf2c(title, string3, maxlen)
+      call plstrf2c(xlab, string1)
+      call plstrf2c(ylab, string2)
+      call plstrf2c(title, string3)
 
       s1 = transfer( string1, s1 )
       s2 = transfer( string2, s2 )
@@ -670,7 +670,7 @@
       implicit none
       character*(*) filename
 
-      call plstrf2c(filename, string1, maxlen)
+      call plstrf2c(filename, string1)
 
       s1 = transfer( string1, s1 )
       call plspal07(s1)
@@ -685,7 +685,7 @@
       character*(*) filename
       integer interpolate
 
-      call plstrf2c(filename, string1, maxlen)
+      call plstrf2c(filename, string1)
 
       s1 = transfer( string1, s1 )
       call plspal17(s1,interpolate)
@@ -700,8 +700,8 @@
       real(kind=plflt) disp, pos, xjust
       character*(*) side, text
 
-      call plstrf2c(side, string1, maxlen)
-      call plstrf2c(text, string2, maxlen)
+      call plstrf2c(side, string1)
+      call plstrf2c(text, string2)
 
       s1 = transfer( string1, s1 )
       s2 = transfer( string2, s2 )
@@ -717,8 +717,8 @@
       real(kind=plflt) disp, pos, xjust
       character*(*) side, text
 
-      call plstrf2c(side, string1, maxlen)
-      call plstrf2c(text, string2, maxlen)
+      call plstrf2c(side, string1)
+      call plstrf2c(text, string2)
 
       s1 = transfer( string1, s1 )
       s2 = transfer( string2, s2 )
@@ -734,7 +734,7 @@
       real(kind=plflt) x, y, dx, dy, xjust
       character*(*) text
 
-      call plstrf2c(text, string1, maxlen)
+      call plstrf2c(text, string1)
 
       s1 = transfer( string1, s1 )
       call plptex7(x,y,dx,dy,xjust,s1)
@@ -749,7 +749,7 @@
       real(kind=plflt) x, y, z, dx, dy, dz, sx, sy, sz, xjust
       character*(*) text
 
-      call plstrf2c(text, string1, maxlen)
+      call plstrf2c(text, string1)
 
       s1 = transfer( string1, s1 )
       call plptex37(x,y,z,dx,dy,dz,sx,sy,sz,xjust,s1)
@@ -764,7 +764,7 @@
       character*(*) devname
       integer nx, ny
 
-      call plstrf2c(devname, string1, maxlen)
+      call plstrf2c(devname, string1)
 
       s1 = transfer( string1, s1 )
       call plstart7(s1, nx, ny)
@@ -778,7 +778,7 @@
       implicit none
       character*(*) fmt
 
-      call plstrf2c(fmt, string1, maxlen)
+      call plstrf2c(fmt, string1)
       s1 = transfer( string1, s1 )
       call pltimefmt7(s1)
 
