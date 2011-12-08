@@ -859,12 +859,9 @@ proc_str( PLStream *pls, EscText *args )
     double  lineSpacing, xAdvance, ymintmp, ymaxtmp, ymin, ymax, xmin, xmax;
     PLINT   xx[4], yy[4];
 
-    FT_Data *FT;
-
     // unicode only! so test for it.
     if ( args->unicode_array_len > 0 )
     {
-        FT = (FT_Data *) pls->FT;
         int             j, s, f;
         char            *fonts[PROC_STR_STRING_LENGTH];
         FontStyle       styles[PROC_STR_STRING_LENGTH];
