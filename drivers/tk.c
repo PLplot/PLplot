@@ -39,12 +39,12 @@
 
 #define NEED_PLDEBUG
 #include "pltkd.h"
-#include "plxwd.h"
 #include "pltcl.h"
 #include "tcpip.h"
 #include "drivers.h"
 #include "metadefs.h"
 #include "plevent.h"
+#include <X11/keysym.h>
 
 #if PL_HAVE_UNISTD_H
 # include <unistd.h>
