@@ -45,18 +45,10 @@ private:
 
     const static int   XPTS;
     const static int   YPTS;
-    // calculated constants and array that depends on them
-    const static PLFLT XSPA;
-    const static PLFLT YSPA;
-    const static PLFLT tr[];
 };
 
 const int   x15::  XPTS = 35;
 const int   x15::  YPTS = 46;
-// calculated constants and array that depends on them
-const PLFLT x15::XSPA = 2. / ( XPTS - 1 );
-const PLFLT x15::YSPA = 2. / ( YPTS - 1 );
-const PLFLT x15::tr[] = { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
 
 x15::x15( int argc, const char ** argv )
@@ -65,8 +57,6 @@ x15::x15( int argc, const char ** argv )
 
     PLFLT xx;
     PLFLT yy;
-    PLFLT x;
-    PLFLT y;
     PLFLT **z;
     PLFLT zmin, zmax;
 
@@ -93,8 +83,6 @@ x15::x15( int argc, const char ** argv )
         {
             yy      = ( (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 ) ) - 1.;
             z[i][j] = xx * xx - yy * yy + ( xx - yy ) / ( xx * xx + yy * yy + 0.1 );
-            x       = tr[0] * i + tr[1] * j + tr[2];
-            y       = tr[3] * i + tr[4] * j + tr[5];
         }
     }
 
