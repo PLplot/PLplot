@@ -74,7 +74,7 @@ plio_fwrite( void *buf, size_t size, size_t nmemb, FILE *stream )
 }
 
 //
-// plio_read()
+// plio_fread()
 //
 // Read from stream into buf.  Like plio_write(), this function will
 // handle any I/O error conditions.
@@ -83,21 +83,23 @@ plio_fwrite( void *buf, size_t size, size_t nmemb, FILE *stream )
 void
 plio_fread( void *buf, size_t size, size_t nmemb, FILE *stream )
 {
+    size_t bytes;
+
     dbug_enter( "plio_fread" );
 
     // If the buffer has a size of zero, we should complain
     if ( size == 0 || nmemb == 0 )
     {
-        plwarn( "Zero length buffer size in plio_read, returning" );
+        plwarn( "Zero length buffer size in plio_fread, returning" );
         return;
     }
 
     // Clear the error flag for this steam
     clearerr( stream );
 
-    fread( buf, size, nmemb, stream );
+    bytes = fread( buf, size, nmemb, stream );
 
-    if ( ferror( stream ) )
+    if ( (bytes < nmemb) && ferror( stream ) )
     {
         // The read resulted in an error
         plabort( "Error reading from file" );
