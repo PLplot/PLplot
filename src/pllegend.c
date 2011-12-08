@@ -572,7 +572,8 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
           legend_width, legend_height, legend_width_ac, legend_height_ac;
     PLFLT x_legend_position, y_legend_position, xsign, ysign;
 
-    PLINT some_boxes         = 0, some_lines = 0, some_symbols = 0;
+    //PLINT some_boxes = 0, some_lines = 0;
+    PLINT some_symbols = 0;
     PLINT max_symbol_numbers = 0;
     PLINT irow = 0, icolumn = 0;
 
@@ -658,10 +659,10 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
     for ( i = 0; i < nlegend; i++ )
     {
-        if ( opt_array[i] & PL_LEGEND_COLOR_BOX )
-            some_boxes = 1;
-        if ( opt_array[i] & PL_LEGEND_LINE )
-            some_lines = 1;
+        //if ( opt_array[i] & PL_LEGEND_COLOR_BOX )
+        //    some_boxes = 1;
+        //if ( opt_array[i] & PL_LEGEND_LINE )
+        //    some_lines = 1;
         if ( opt_array[i] & PL_LEGEND_SYMBOL )
         {
             max_symbol_numbers = MAX( max_symbol_numbers, symbol_numbers[i] );
