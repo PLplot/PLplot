@@ -104,7 +104,7 @@ CFLAGS='-O3 -std=c99 -pedantic -D_POSIX_C_SOURCE=200112L -Wall  \
 -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs \
 -Wconversion -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings'
 
-CCFLAGS='-O3 -fvisibility=hidden -std=c++98 -pedantic -Wall -Wextra '
+CXXFLAGS='-O3 -fvisibility=hidden -std=c++98 -pedantic -Wall -Wextra '
 
 FFLAGS='-std=f95 -O3 -fall-intrinsics -fvisibility=hidden -pedantic \
 -Wall -Wextra '
