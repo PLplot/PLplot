@@ -1132,7 +1132,6 @@ void QtPLWidget::keyPressEvent( QKeyEvent* event )
 {
     if ( locate_mode )
     {
-        Qt::KeyboardModifiers modifiers = event->modifiers();
         QPoint p = QCursor::pos();
         gin.pX = p.x();
         gin.pY = height() - p.y();
