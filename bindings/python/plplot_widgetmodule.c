@@ -23,7 +23,7 @@ static char doc_Pltk_init[] = "Initialize the Pltk Tcl extension.";
 // the Tcl interpreter into which the Pltk extension is to be injected.
 //--------------------------------------------------------------------------
 
-static PyObject *pl_Pltk_init( PyObject *self, PyObject *args )
+static PyObject *pl_Pltk_init( PyObject * PL_UNUSED( self ), PyObject *args )
 {
     printf( "in pl_Pltk_init()\n" );
     long x = 0;
