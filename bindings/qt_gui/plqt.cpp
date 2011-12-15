@@ -1267,8 +1267,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
         painter->begin( m_pixPixmap );
 
         // Draw the margins and the background
-        painter->fillRect( 0, 0, width(), height(), QBrush( Qt::white ) );
-        painter->fillRect( 0, 0, width(), height(), QBrush( Qt::gray, Qt::Dense4Pattern ) );
+        painter->fillRect( 0, 0, width(), height(), QColor( bgColour.r, bgColour.g, bgColour.b ) );
 
         // Re-initialise pens etc.
         resetPensAndBrushes( painter );
