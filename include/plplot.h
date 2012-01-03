@@ -770,9 +770,11 @@ typedef plf2ops_t * PLF2OPS;
 #define    plpage          plbop
 #define    plcol           plcol0
 #define    plcontf         plfcont
-#define    Alloc2dGrid     plAlloc2dGrid
-#define    Free2dGrid      plFree2dGrid
-#define    MinMax2dGrid    plMinMax2dGrid
+// Comment out these as they can upset the C++ bindings since the C++
+// bindings use the function names without the pl prefix. 
+//#define    Alloc2dGrid     plAlloc2dGrid
+//#define    Free2dGrid      plFree2dGrid
+//#define    MinMax2dGrid    plMinMax2dGrid
 #define    plP_gvpd        plgvpd
 #define    plP_gvpw        plgvpw
 #define    plotsh3d( x, y, z, nx, ny, opt )    plsurf3d( x, y, z, nx, ny, opt, NULL, 0 )
