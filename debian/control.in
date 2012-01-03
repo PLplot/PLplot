@@ -14,7 +14,7 @@ Build-Depends: cmake (>= 2.6.3), debhelper (>= 7),
  fastjar, swig, gnat [!sh4], libqt4-dev, python-sip-dev, 
  python-qt4, python-qt4-dev,
  ocaml-nox, camlidl, ocaml-findlib, libcairo-ocaml-dev,
- liblablgtk2-ocaml-dev, liblua5.1-0-dev, lua5.1, gdc
+ liblablgtk2-ocaml-dev, liblua5.1-0-dev, lua5.1, gdc-v1
 Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex, ghostscript
 Build-Conflicts: libplplot5, octave3.0-headers

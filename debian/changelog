@@ -4,8 +4,10 @@ plplot (5.9.9-2) unstable; urgency=low
     this provides a better way of building the examples.
   * Force rebuild to fix dependency problems with ada development library
     and gnat-4.6 which make libplplot-ada0-dev uninstallable.
+  * Add explicit dependency on gdc-v1 as package is not yet ready for gdc
+    version 2 which is the new defaulyt (closes: #653088).
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 30 Nov 2011 12:48:13 +0000
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 03 Jan 2012 16:09:55 +0000
 
 plplot (5.9.9-1) unstable; urgency=low
 

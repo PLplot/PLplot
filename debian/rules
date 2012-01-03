@@ -34,6 +34,7 @@ CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
 #CXXFLAGS += -fvisibility=hidden
 LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
 LDFLAGS += -Wl,--as-needed
+DC = gdc-v1
 
 
 JAVA_HOME = /usr/lib/jvm/default-java
