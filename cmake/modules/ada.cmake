@@ -43,7 +43,13 @@ if(ENABLE_ada)
 endif(ENABLE_ada)
 
 if(ENABLE_ada)
-  find_library(GNAT_LIB NAMES gnat gnat-4.5 gnat-4.4 gnat-4.3 gnat-4.2 gnat-4.1)
+  # Find the gnat version used in order to search for the right version of libgnat 
+  execute_process(COMMAND ${CMAKE_Ada_COMPILER} --version OUTPUT_VARIABLE ADA_OUTPUT)
+  string(REGEX MATCH "gnatgcc [(][^)]*[)] ([0-9]*[.][0-9]*)[.][0-9]" ADA_OUTPUT_TRIM ${ADA_OUTPUT})
+  set(GNATVERSION ${CMAKE_MATCH_1})
+  message(STATUS "DEBUG: gnat output ${ADA_OUTPUT}")
+  message(STATUS "DEBUG: gnat version ${GNATVERSION}")
+  find_library(GNAT_LIB NAMES gnat gnat-${GNATVERSION})
   if(NOT GNAT_LIB)
     message(STATUS "WARNING: "
       "gnat library not found. Disabling ada bindings")
