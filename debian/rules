@@ -93,6 +93,7 @@ config-stamp: control
 	(cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
 	JAVA_HOME=$(JAVA_HOME) \
+	DC=$(DC) \
 	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) )
 	touch config-stamp
 
