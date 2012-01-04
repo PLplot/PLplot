@@ -260,4 +260,10 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   #message(STATUS "DEBUG: DEVICE = ${DEVICE}")
   #message(STATUS "DEBUG: DEFAULT= ${DEFAULT}")
   option(PLD_${DEVICE} "Enable ${DEVICE} device" ${DEFAULT})
+  if(PLD_${DEVICE} AND NOT ${DEFAULT})
+    message(STATUS 
+      "WARNING: You have enabled the PLD_${DEVICE} device which is disabled by "
+      "default either because it is deprecated, or because there are know issues "
+      "with it. Please check the documentation / release notes for details.") 
+  endif(PLD_${DEVICE} AND NOT ${DEFAULT})
 endforeach(DRIVERS_DEVICE)
