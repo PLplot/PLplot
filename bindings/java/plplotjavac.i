@@ -330,6 +330,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     static PLINT Xlen = 0, Ylen = 0;
     static PLFLT **xg;
     static PLFLT **yg;
+    static PLcGrid2 *cgrid;
 %}
 
 // The following typemaps take care of marshaling values into and out of PLplot functions. The
@@ -1536,7 +1537,6 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int      nx = ( *jenv )->GetArrayLength( jenv, $input );
     int      ny = -1;
     int      i, j;
-    PLcGrid2 cgrid;
     ai   = (jobject *) malloc( nx * sizeof ( jobject ) );
     adat = (jPLFLT **) malloc( nx * sizeof ( jPLFLT * ) );
 
@@ -1580,16 +1580,18 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
     free( adat );
     free( ai );
-    cgrid.xg = xg;
-    cgrid.yg = yg;
-    cgrid.nx = nx;
-    cgrid.ny = ny;
-    $1       = &cgrid;
+    cgrid = (PLcGrid2 *) malloc( sizeof ( PLcGrid2 ) );
+    cgrid->xg = xg;
+    cgrid->yg = yg;
+    cgrid->nx = nx;
+    cgrid->ny = ny;
+    $1       = cgrid;
 }
 
 %typemap( freearg ) PLPointer OBJECT_DATA {
     free( yg[0] );
     free( yg );
+    free( cgrid );
 }
 %typemap( jni ) PLPointer OBJECT_DATA "jobjectArray"
 %typemap( jtype ) PLPointer OBJECT_DATA jPLFLTbracket2
@@ -1679,7 +1681,6 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int      nx = ( *jenv )->GetArrayLength( jenv, $input );
     int      ny = -1;
     int      i, j;
-    PLcGrid2 cgrid;
     ai   = (jobject *) malloc( nx * sizeof ( jobject ) );
     adat = (jPLFLT **) malloc( nx * sizeof ( jPLFLT * ) );
 
@@ -1723,16 +1724,18 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
     free( adat );
     free( ai );
-    cgrid.xg = xg;
-    cgrid.yg = yg;
-    cgrid.nx = nx;
-    cgrid.ny = ny;
-    $1       = &cgrid;
+    cgrid = (PLcGrid2 *) malloc( sizeof ( PLcGrid2 ) );
+    cgrid->xg = xg;
+    cgrid->yg = yg;
+    cgrid->nx = nx;
+    cgrid->ny = ny;
+    $1        = cgrid;
 }
 
 %typemap( freearg ) PLPointer OBJECT_DATA_img {
     free( yg[0] );
     free( yg );
+    free( cgrid );
 }
 %typemap( jni ) PLPointer OBJECT_DATA_img "jobjectArray"
 %typemap( jtype ) PLPointer OBJECT_DATA_img jPLFLTbracket2
