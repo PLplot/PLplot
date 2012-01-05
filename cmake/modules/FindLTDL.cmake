@@ -40,40 +40,44 @@ if(LTDL_INCLUDE_DIR)
       endif(${_lib})
     endmacro(_find_check_libs)
 
-    # Find and check platform-dependent libraries which
-    # libltdl depends upon using model given
-    # for determining LIBADD_DL in $prefix/share/libtool/libltdl/acinclude.m4
+    if(NOT NON_TRANSITIVE)
+      # Find and check platform-dependent libraries which
+      # libltdl depends upon using model given
+      # for determining LIBADD_DL in $prefix/share/libtool/libltdl/acinclude.m4
 
-    # Look for three exclusive alternatives:
-    # (dld shl_load; dl dlopen; svdl dlopen)
-    # N.B. all the different ADDLIB variables have to be different because
-    # of caching of results in the macro.
-    _find_check_libs(dld shl_load LTDL_LTDL_ADDLIB0 LTDL_LTDL_HAVE_ADDLIB0)
-    if(LTDL_LTDL_HAVE_ADDLIB0)
-      set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB0})
-      set(LTDL_FOUND ON)
-    else(LTDL_LTDL_HAVE_ADDLIB0)
-      _find_check_libs(dl dlopen LTDL_LTDL_ADDLIB1 LTDL_LTDL_HAVE_ADDLIB1)
-      if(LTDL_LTDL_HAVE_ADDLIB1)
-        set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB1})
+      # Look for three exclusive alternatives:
+      # (dld shl_load; dl dlopen; svdl dlopen)
+      # N.B. all the different ADDLIB variables have to be different because
+      # of caching of results in the macro.
+      _find_check_libs(dld shl_load LTDL_LTDL_ADDLIB0 LTDL_LTDL_HAVE_ADDLIB0)
+      if(LTDL_LTDL_HAVE_ADDLIB0)
+        set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB0})
         set(LTDL_FOUND ON)
-      else(LTDL_LTDL_HAVE_ADDLIB1)
-        _find_check_libs(svdl dlopen LTDL_LTDL_ADDLIB2 LTDL_LTDL_HAVE_ADDLIB2)
-        if(LTDL_LTDL_HAVE_ADDLIB2)
-          set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB2})
+      else(LTDL_LTDL_HAVE_ADDLIB0)
+        _find_check_libs(dl dlopen LTDL_LTDL_ADDLIB1 LTDL_LTDL_HAVE_ADDLIB1)
+        if(LTDL_LTDL_HAVE_ADDLIB1)
+          set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB1})
           set(LTDL_FOUND ON)
-        else(LTDL_LTDL_HAVE_ADDLIB2)
-	  set(LTDL_FOUND OFF)
-        endif(LTDL_LTDL_HAVE_ADDLIB2)
-      endif(LTDL_LTDL_HAVE_ADDLIB1)
-    endif(LTDL_LTDL_HAVE_ADDLIB0)
+        else(LTDL_LTDL_HAVE_ADDLIB1)
+          _find_check_libs(svdl dlopen LTDL_LTDL_ADDLIB2 LTDL_LTDL_HAVE_ADDLIB2)
+          if(LTDL_LTDL_HAVE_ADDLIB2)
+            set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB2})
+            set(LTDL_FOUND ON)
+          else(LTDL_LTDL_HAVE_ADDLIB2)
+	    set(LTDL_FOUND OFF)
+          endif(LTDL_LTDL_HAVE_ADDLIB2)
+        endif(LTDL_LTDL_HAVE_ADDLIB1)
+      endif(LTDL_LTDL_HAVE_ADDLIB0)
 
-    # (dld dld_link) appended to any that have been found before.
-    _find_check_libs(dld dld_link LTDL_LTDL_ADDLIB3 LTDL_LTDL_HAVE_ADDLIB3)
-    if(LTDL_LTDL_HAVE_ADDLIB3)
-      set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB3})
+      # (dld dld_link) appended to any that have been found before.
+      _find_check_libs(dld dld_link LTDL_LTDL_ADDLIB3 LTDL_LTDL_HAVE_ADDLIB3)
+      if(LTDL_LTDL_HAVE_ADDLIB3)
+        set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB3})
+        set(LTDL_FOUND ON)
+      endif(LTDL_LTDL_HAVE_ADDLIB3)
+    else(NOT NON_TRANSITIVE)
       set(LTDL_FOUND ON)
-    endif(LTDL_LTDL_HAVE_ADDLIB3)
+    endif(NOT NON_TRANSITIVE)
 
   endif(LTDL_LIBRARIES)
 endif(LTDL_INCLUDE_DIR)
