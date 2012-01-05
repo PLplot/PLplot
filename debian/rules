@@ -159,7 +159,6 @@ install-arch-stamp: build-arch-stamp
 	install --mode=644 examples/perl/x* examples/perl/README* \
 		$(debex)/perl
 	mv $(debex) $(debdoc)/$(libpkg)
-	rm -f $(debtmp)/usr/bin/plplot-config
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot11-driver-gd plplot11-driver-xwin octave-plplot	\

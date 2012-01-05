@@ -30,12 +30,6 @@
 # PKG_CONFIG_EXECUTABLE	  - name of pkg-config executable, but can also be
 # 			    used for logical control with, e.g.,
 # 			    if(PKG_CONFIG_EXECUTABLE)
-# pkg_config_true	  - if null string, then example builds done with
-#  			    pkg-config method.  if "#" then that method is
-#			    commented out.
-# pkg_config_false	  - always "#" to comment out example builds with
-#  			    plplot_config method which does not exist for
-#			    cmake build system.
 # PKG_CONFIG_DIR	  - install location for configured PLplot
 #  			    pkg-config files.
 # PKG_CONFIG_ENV	  - the string PKG_CONFIG_PATH=${PKG_CONFIG_DIR} which
@@ -43,20 +37,14 @@
 
 include(FindPkgConfig)
 
-set(pkg_config_false "#")
-
 if(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - found")
-  set(pkg_config_true "")
   set(PKG_CONFIG_DIR ${LIB_DIR}/pkgconfig)
   set(PKG_CONFIG_ENV PKG_CONFIG_PATH=${PKG_CONFIG_DIR})
 else(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - not found")
   message(STATUS
-  "WARNING: Makefile+pkg-config version of examples build in the install tree will be disabled.")
-  # Turn off pkg-config build.  (This means both build methods will be
-  # commented out.)
-  set(pkg_config_true "#")
+  "WARNING: Makefile+pkg-config version of examples build in the install tree will not work.")
 endif(PKG_CONFIG_EXECUTABLE)
 
 macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _version)

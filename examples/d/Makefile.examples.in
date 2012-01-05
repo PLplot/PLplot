@@ -22,9 +22,9 @@
 DC = @DC@
 EXEEXT = @EXEEXT@
 
-@pkg_config_true@LIB_TAG = @LIB_TAG@
-@pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-@pkg_config_true@RPATHCMD = @RPATHCMD@
+LIB_TAG = @LIB_TAG@
+PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
 		 x01d$(EXEEXT) \
@@ -66,6 +66,6 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .d$(EXEEXT):
-@pkg_config_true@	$(DC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-d`
+	$(DC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-d`
 
 .SUFFIXES: .d $(EXEEXT)

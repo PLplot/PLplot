@@ -91,7 +91,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     url="http://plplot.sourceforge.net/resources/index.html">Resources
     area</ulink> of the PLplot web site for locations of debs and rpms.)
     Build the application on the build machine using the results of the
-    <userinput>plplot-config --cflags --libs</userinput> command, and copy
+    <userinput>pkg-config --cflags --libs plplotd</userinput> command, and copy
     the resulting executable(s) to the users' machines.
   </para>
 
@@ -129,7 +129,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <listitem>
 	<para>
 	  Build the application(s) on the build machine using the results
-	  of the <userinput>plplot-config --cflags --libs</userinput>
+	  of the <userinput>pkg-config --cflags --libs plplotd</userinput>
 	  command, and copy the resulting executable(s) to the users'
 	  machines.  Since the PLplot install location is consistent on all
 	  machines, the application should work the same way on all

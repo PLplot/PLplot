@@ -24,9 +24,9 @@
 F77 = @F77@
 EXEEXT = @EXEEXT@
 
-@pkg_config_true@LIB_TAG = @LIB_TAG@
-@pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-@pkg_config_true@RPATHCMD = @RPATHCMD@
+LIB_TAG = @LIB_TAG@
+PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
 		 x01f$(EXEEXT) \
@@ -70,7 +70,6 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .f$(EXEEXT):
-@pkg_config_true@	$(F77) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-f77`
-@pkg_config_false@	$(F77) $< -o $@ `plplot-config --cflags --libs --with-f77`
+	$(F77) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-f77`
 
 .SUFFIXES: .f $(EXEEXT)
