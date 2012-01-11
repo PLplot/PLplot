@@ -4,7 +4,7 @@
 
 # This script will run uncrustify on all source files registered in
 # the lists below (and scripts/convert_comment.py on all C source
-# files registerd below) and summarize which uncrustified or
+# files registered below) and summarize which uncrustified or
 # comment-converted files would be different.  (convert_comment.py
 # converts /* ... */ style comments to the c99-acceptable // form of
 # comments because uncrustify does not (yet) have that configuration
@@ -37,7 +37,7 @@ Usage: ./style_source.sh [OPTIONS]
 
 Options:
    [--diff [diff options]]  Show detailed style differences in source code
-                            with optional concatanated diff options headed
+                            with optional concatenated diff options headed
                             by a single hyphen.  If no diff options are
                             specified, then -auw is used by default.
    [--nodiff]               Summarize style differences in source code (default).
@@ -47,6 +47,85 @@ Options:
 
 '
    exit $1
+}
+
+transform_source()
+{
+    # $1 is a list of source files of a particular language.
+    # $2 is the language identification string for those source files in
+    # the form needed by uncrustify.  From the uncrustify man page those
+    # language id forms are C, CPP, D, CS, JAVA, PAWN, VALA, OC, OC+
+    u_command="uncrustify -c uncrustify.cfg -q -l $2"
+    # $3 is either "comments" to indicate comments will be transformed
+    # using scripts/convert_comment.py or any other string (or
+    # nothing) to indicate comment style processing will not be used.
+    if [ "$3" = "comments" ] ; then
+        c_command="scripts/convert_comment.py"
+	# Check all files for run-time errors with the python script.
+	# These run-time errors signal that there is some comment
+	# style which the script cannot handle.  The reason we do this
+	# complete independent check here is that run-time errors can
+	# be lost in the noise if a large conversion is being done.
+	# Also, run-time errors will not occur for the usual case
+	# below where cmp finds an early difference.
+	for language_source in $1 ; do
+	    $c_command < $language_source >/dev/null
+	    c_command_rc=$?
+	    if [ $c_command_rc -ne 0 ] ; then
+		echo "ERROR: $c_command failed for file $language_source"
+		exit 1
+	    fi
+	done
+    else
+        c_command="cat -"
+    fi
+
+    # Swig-language *.i files are approximately the same as C or C++
+    # other than the %whatever swig directives.  $4 is either "swig"
+    # to indicate a sed script should be applied to get rid of issues
+    # imposed by uncrustify and which is not acceptable in swig
+    # directives or any other string (or nothing) to indicate that
+    # this swig correction should not be applied.
+    if [ "$4" = "swig" ] ; then
+	# Splitting s_command into multiple invocations of sed is
+        # required (for reasons I have not figured out) in order for
+        # the changes to be done as designed.
+	# The first two stanzas are to deal with uncrustify
+        # splitting both %} and %{ by newline characters and
+        # also getting rid of any surrounding blanks.
+        # The next two stanzas are to take care of blanks inserted by
+        # uncrustify after % and to get rid of any
+        # uncrustify-generated indentation for all % swig directives.
+	# The next two stanzas are to place %} and %{ on individually
+	# separate lines.
+	# The next two stanzas are to deal with $ variables.
+        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "s?\$ \* ?\$\*?g" -e "s?\$ & ?\$\&?g"'
+    else
+        s_command="cat -"
+    fi
+
+    # Process $c_command after $u_command so that comments will be rendered
+    # in standard form by uncrustify before scripts/convert_comment.py
+    # is run.  Process the $s_command (with eval because of the
+    # quotes) after the $c_command to correct introduced swig styling
+    # errors (if in fact you are styling swig source).
+
+    for language_source in $1 ; do
+	$u_command < $language_source | $c_command | eval $s_command | \
+	    cmp --quiet $language_source -
+	if [ "$?" -ne 0 ] ; then
+	    ls $language_source
+	    if [ "$apply" = "ON" ] ; then
+		$u_command < $language_source | $c_command | eval $s_command >| /tmp/temporary.file
+		mv -f /tmp/temporary.file $language_source
+	    fi
+
+	    if [ "$diff" = "ON" ] ; then
+		$u_command < $language_source | $c_command | eval $s_command | \
+		diff $diff_options $language_source -
+	    fi
+	fi
+    done
 }
 
 # Figure out what script options were specified by the user.
@@ -98,22 +177,6 @@ fi
 if [ ! -f src/plcore.c ] ; then 
     echo "This script can only be run from PLplot top-level source tree."
     exit 1
-fi
-
-if [ "$apply" = "ON" ] ; then
-    echo '
-The --apply option is POWERFUL and will replace _all_ files mentioned in
-previous runs of style_source.sh with their uncrustified versions.
-'
-    ANSWER=
-    while [ "$ANSWER" != "yes" -a "$ANSWER" != "no" ] ; do
-	echo -n "Continue (yes/no)? "
-	read ANSWER
-    done
-    if [ "$ANSWER" = "no" ] ; then
-	echo "Immediate exit specified!"
-	exit
-    fi
 fi
 
 export csource_LIST
@@ -201,84 +264,30 @@ for source in $csource_LIST $cppsource_LIST $javasource_LIST $dsource_LIST $swig
     fi
 done
 
-transform_source()
-{
-    # $1 is a list of source files of a particular language.
-    # $2 is the language identification string for those source files in
-    # the form needed by uncrustify.  From the uncrustify man page those
-    # language id forms are C, CPP, D, CS, JAVA, PAWN, VALA, OC, OC+
-    u_command="uncrustify -c uncrustify.cfg -q -l $2"
-    # $3 is either "comments" to indicate comments will be transformed
-    # using scripts/convert_comment.py or any other string (or
-    # nothing) to indicate comment style processing will not be used.
-    if [ "$3" = "comments" ] ; then
-        c_command="scripts/convert_comment.py"
-	# Check all files for run-time errors with the python script.
-	# These run-time errors signal that there is some comment
-	# style which the script cannot handle.  The reason we do this
-	# complete independent check here is that run-time errors can
-	# be lost in the noise if a large conversion is being done.
-	# Also, run-time errors will not occur for the usual case
-	# below where cmp finds an early difference.
-	for language_source in $1 ; do
-	    $c_command < $language_source >/dev/null
-	    c_command_rc=$?
-	    if [ $c_command_rc -ne 0 ] ; then
-		echo "ERROR: $c_command failed for file $language_source"
-		exit 1
-	    fi
-	done
-    else
-        c_command="cat -"
-    fi
-
-    # Swig-language *.i files are approximately the same as C or C++
-    # other than the %whatever swig directives.  $4 is either "swig"
-    # to indicate a sed script should be applied to get rid of issues
-    # imposed by uncrustify and which is not acceptable in swig
-    # directives or any other string (or nothing) to indicate that
-    # this swig correction should not be applied.
-    if [ "$4" = "swig" ] ; then
-	# Splitting s_command into multiple invocations of sed is
-        # required (for reasons I have not figured out) in order for
-        # the changes to be done as designed.
-	# The first two stanzas are to deal with uncrustify
-        # splitting both %} and %{ by newline characters and
-        # also getting rid of any surrounding blanks.
-        # The next two stanzas are to take care of blanks inserted by
-        # uncrustify after % and to get rid of any
-        # uncrustify-generated indentation for all % swig directives.
-	# The next two stanzas are to place %} and %{ on individually
-	# separate lines.
-	# The next two stanzas are to deal with $ variables.
-        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "s?\$ \* ?\$\*?g" -e "s?\$ & ?\$\&?g"'
-    else
-        s_command="cat -"
-    fi
-
-    # Process $c_command after $u_command so that comments will be rendered
-    # in standard form by uncrustify before scripts/convert_comment.py
-    # is run.  Process the $s_command (with eval because of the
-    # quotes) after the $c_command to correct introduced swig styling
-    # errors (if in fact you are styling swig source).
-
-    for language_source in $1 ; do
-	$u_command < $language_source | $c_command | eval $s_command | \
-	    cmp --quiet $language_source -
-	if [ "$?" -ne 0 ] ; then
-	    ls $language_source
-	    if [ "$diff" = "ON" ] ; then
-		$u_command < $language_source | $c_command | eval $s_command | \
-		diff $diff_options $language_source -
-	    fi
-
-	    if [ "$apply" = "ON" ] ; then
-		$u_command < $language_source | $c_command | eval $s_command >| /tmp/temporary.file
-		mv -f /tmp/temporary.file $language_source
-	    fi
-	fi
+if [ "$apply" = "ON" ] ; then
+    apply=OFF
+    # Should be the exact same transform_source commands as below.
+    transform_source "$csource_LIST" C "comments"
+    transform_source "$cppsource_LIST" CPP "comments"
+    transform_source "$javasource_LIST" JAVA "comments"
+    transform_source "$dsource_LIST" D "comments"
+    transform_source "$swig_csource_LIST" C "comments" "swig"
+    transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
+    apply=ON
+    echo '
+The --apply option is POWERFUL and will replace _all_ files mentioned above
+(if any) with their styled versions.
+'
+    ANSWER=
+    while [ "$ANSWER" != "yes" -a "$ANSWER" != "no" ] ; do
+	echo -n "Continue (yes/no)? "
+	read ANSWER
     done
-}
+    if [ "$ANSWER" = "no" ] ; then
+	echo "Immediate exit specified!"
+	exit
+    fi
+fi
 
 transform_source "$csource_LIST" C "comments"
 transform_source "$cppsource_LIST" CPP "comments"
