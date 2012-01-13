@@ -110,16 +110,28 @@ transform_source()
     # quotes) after the $c_command to correct introduced swig styling
     # errors (if in fact you are styling swig source).
 
+    # N.B. for the --apply option, transform_source is called twice;
+    # once with apply=OFF and once with it on.  For the first call
+    # with apply=OFF the logic below lists all files (and diffs all
+    # files if that option is used) that will be changed.  For the
+    # second call with apply=ON, the logic below changes the source
+    # files and then lists (and diffs if that option is set) any
+    # remaining changes that still have to be done. (On rare
+    # occasions, uncrustify has to be applied iteratively.)
+
     for language_source in $1 ; do
+	if [ "$apply" = "ON" ] ; then
+	    $u_command < $language_source | $c_command | eval $s_command | \
+		cmp --quiet $language_source -
+	    if [ "$?" -ne 0 ] ; then
+		$u_command < $language_source | $c_command | eval $s_command >| /tmp/temporary.file
+		mv -f /tmp/temporary.file $language_source
+	    fi
+	fi
 	$u_command < $language_source | $c_command | eval $s_command | \
 	    cmp --quiet $language_source -
 	if [ "$?" -ne 0 ] ; then
 	    ls $language_source
-	    if [ "$apply" = "ON" ] ; then
-		$u_command < $language_source | $c_command | eval $s_command >| /tmp/temporary.file
-		mv -f /tmp/temporary.file $language_source
-	    fi
-
 	    if [ "$diff" = "ON" ] ; then
 		$u_command < $language_source | $c_command | eval $s_command | \
 		diff $diff_options $language_source -
