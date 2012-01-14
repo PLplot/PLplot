@@ -114,7 +114,7 @@ main( int argc, const char *argv[] )
         }
     }
 
-    plMinMax2dGrid( (const PLFLT * const*) z, XPTS, YPTS, &zmax, &zmin );
+    plMinMax2dGrid( (const PLFLT * const *) z, XPTS, YPTS, &zmax, &zmin );
     step = ( zmax - zmin ) / ( nlevel + 1 );
     for ( i = 0; i < nlevel; i++ )
         clevel[i] = zmin + step + step * i;
