@@ -5017,6 +5017,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    Perl/PDL: Not available?
 	  </para>
 	</listitem>
+	<listitem>
+	  <para>
+	    Python: <literal><parameter>zg</parameter>=<function>plgriddata(x, y, z, xg, yg, type, data)</function>
+	  </para>
+	</listitem>
       </itemizedlist>
     </para>
 

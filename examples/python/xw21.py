@@ -113,8 +113,7 @@ def main():
     for k in range(2):
         pladv(0)
         for alg in range(1,7):
-            zg = reshape(zeros(xp*yp),(xp,yp))
-            plgriddata(x, y, z, xg, yg, zg, alg, opt[alg-1])
+            zg = plgriddata(x, y, z, xg, yg, alg, opt[alg-1])
 
             if alg == GRID_CSA or alg == GRID_DTLI or alg == GRID_NNLI or alg == GRID_NNI:
                 for i in range(xp):

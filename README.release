@@ -89,6 +89,19 @@ detected
 
 OFFICIAL NOTICES FOR USERS
 
+(5.9.10) Those who use the Python version of plgriddata will have to
+change their use of this function for this release as follows (see
+examples/xw21.py)
+
+# old version (which overwrites preexisting zg in place):
+zg = reshape(zeros(xp*yp),(xp,yp))
+plgriddata(x, y, z, xg, yg, zg, alg, opt[alg-1])
+
+# new version (which uses a properly returned newly created NumPy array
+# as per the normal Python expectations):
+
+zg = plgriddata(x, y, z, xg, yg, alg, opt[alg-1])
+
 (5.9.10) Significant efforts have been made to ensure the PLplot code
 is standards compliant and free from warnings. Compilance has been
 tested using the gcc compiler suite -std, -pedantic and -W  flags. The

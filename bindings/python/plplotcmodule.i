@@ -555,7 +555,8 @@ typedef PLINT          PLBOOL;
     free( $1 );
 }
 
-// 2D array, check for consistency input / output version
+// 2D array, check for consistency and modify in place version (no longer used
+// in favor of correct output version in the combined typemap below).
 %typemap( in ) PLFLT * *OutMatrixCk( PyArrayObject * tmp )
 {
     int i, size;
@@ -575,6 +576,41 @@ typedef PLINT          PLBOOL;
 %typemap( freearg ) PLFLT * *OutMatrixCk {
     Py_DECREF( tmp$argnum );
     free( $1 );
+}
+
+// Combined typemap useful for specialized case of plgriddata.
+// Set Y length for consistency checking, with trailing count
+// combined with 2D output array, check for consistency
+%typemap( in ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk ) ( PyArrayObject * tmp, PyObject * array = NULL )
+{
+    int      i, size;
+    npy_intp dims[2];
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    if ( tmp == NULL )
+        return NULL;
+    Ylen = tmp->dimensions[0];
+    $2   = Ylen;
+    $1   = (PLFLT *) tmp->data;
+    // Make created 2D array have dimensions from prior ArrayX in the argument
+    // list and this ArrayY.
+    dims[0] = Xlen;
+    dims[1] = Ylen;
+    array   = PyArray_SimpleNew( 2, dims, NPY_DOUBLE );
+    if ( !array )
+        return NULL;
+    size = (int) ( sizeof ( double ) * Ylen );
+    $3   = (double **) malloc( sizeof ( double * ) * Xlen );
+    for ( i = 0; i < Xlen; i++ )
+        $3[i] = (double *) ( ( (PyArrayObject *) array )->data + i * size );
+}
+%typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk )
+{
+    Py_DECREF( tmp$argnum );
+    free( $3 );
+}
+%typemap( argout ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk )
+{
+    $result = SWIG_Python_AppendOutput( $result, array$argnum );
 }
 
 //**************************
