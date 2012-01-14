@@ -41,14 +41,14 @@ public:
 
 private:
     // Class data
-    plstream           *pls;
+    plstream         *pls;
 
-    const static int   XPTS;
-    const static int   YPTS;
+    const static int XPTS;
+    const static int YPTS;
 };
 
-const int   x15::  XPTS = 35;
-const int   x15::  YPTS = 46;
+const int x15::  XPTS = 35;
+const int x15::  YPTS = 46;
 
 
 x15::x15( int argc, const char ** argv )

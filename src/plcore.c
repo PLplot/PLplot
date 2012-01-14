@@ -1948,7 +1948,7 @@ calc_diori( void )
     x0 = ( plsc->phyxma + plsc->phyxmi ) / 2.;
     y0 = ( plsc->phyyma + plsc->phyymi ) / 2.;
 
-// Rotation 
+// Rotation
 
     cost = ABS( cos( plsc->diorot * PI / 2. ) );
     sint = ABS( sin( plsc->diorot * PI / 2. ) );

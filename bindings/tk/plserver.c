@@ -253,11 +253,11 @@ AppInit( Tcl_Interp *interp )
 static int
 plExitCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp, int argc, char **argv )
 {
-    int  value = 0;
+    int        value = 0;
     const char *res;
 
 // Print error message if one given
- 
+
     res = Tcl_GetStringResult( interp );
     if ( res[0] != '\0' )
         fprintf( stderr, "%s\n", res );

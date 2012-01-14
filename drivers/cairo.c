@@ -522,7 +522,6 @@ void plD_state_cairo( PLStream * PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 
 void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
 {
-
     switch ( op )
     {
     case PLESC_FILL:     // filled polygon

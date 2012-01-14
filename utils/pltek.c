@@ -30,13 +30,13 @@ enum { unknown, xterm, tekterm } termtype = unknown;
 int
 main( int argc, char *argv[] )
 {
-    FILE *fd;
-    int  i, npage, ipage, ifirst, oldpage;
+    FILE   *fd;
+    int    i, npage, ipage, ifirst, oldpage;
     size_t j, nb;
-    int  istop;
-    long start[MAXPAGES];               // start (offset) of each page
-    char buf[BUFSZ], xtra, lastchar = '\0';
-    char c, ibuf[128], *t;
+    int    istop;
+    long   start[MAXPAGES];             // start (offset) of each page
+    char   buf[BUFSZ], xtra, lastchar = '\0';
+    char   c, ibuf[128], *t;
 
     if ( argc < 2 )
     {

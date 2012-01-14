@@ -99,7 +99,7 @@ plio_fread( void *buf, size_t size, size_t nmemb, FILE *stream )
 
     bytes = fread( buf, size, nmemb, stream );
 
-    if ( (bytes < nmemb) && ferror( stream ) )
+    if ( ( bytes < nmemb ) && ferror( stream ) )
     {
         // The read resulted in an error
         plabort( "Error reading from file" );

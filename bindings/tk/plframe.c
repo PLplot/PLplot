@@ -3274,7 +3274,7 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
         int argc, const char **argv )
 {
     PLFLT x, y;
-    char tmpstring[50];
+    char  tmpstring[50];
 //    fprintf( stdout, "Made it into report, argc=%d\n", argc );
 
     if ( argc == 0 )

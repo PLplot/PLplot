@@ -848,16 +848,16 @@ proc_str( PLStream *pls, EscText *args )
     // Be generous.  Used to store lots of font changes which take
     // 3 characters per change.
   #define PROC_STR_STRING_LENGTH    1000
-    char    *strp, str[PROC_STR_STRING_LENGTH], *cur_strp,
-             cur_str[PROC_STR_STRING_LENGTH];
-    float   font_factor = 1.4;
-    PLINT   clxmin, clxmax, clymin, clymax; // Clip limits
-    PLINT   clipx[4], clipy[4];             // Current clip limits
+    char   *strp, str[PROC_STR_STRING_LENGTH], *cur_strp,
+            cur_str[PROC_STR_STRING_LENGTH];
+    float  font_factor = 1.4;
+    PLINT  clxmin, clxmax, clymin, clymax;  // Clip limits
+    PLINT  clipx[4], clipy[4];              // Current clip limits
 
-    PLFLT   scale = 1., up = 0.;            // Font scaling and shifting parameters
+    PLFLT  scale = 1., up = 0.;             // Font scaling and shifting parameters
 
-    double  lineSpacing, xAdvance, ymintmp, ymaxtmp, ymin, ymax, xmin, xmax;
-    PLINT   xx[4], yy[4];
+    double lineSpacing, xAdvance, ymintmp, ymaxtmp, ymin, ymax, xmin, xmax;
+    PLINT  xx[4], yy[4];
 
     // unicode only! so test for it.
     if ( args->unicode_array_len > 0 )
