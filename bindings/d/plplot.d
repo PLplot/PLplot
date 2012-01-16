@@ -12,6 +12,7 @@ alias PLINT function( PLFLT, PLFLT ) def_func;
 alias void function( PLINT, PLFLT*, PLFLT* ) fill_func;
 alias void function( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ) pltr_func;
 alias void function( PLINT, PLFLT*, PLFLT* ) mapform_func;
+alias void function( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ) ct_func;
 }
 
 // D definition of PLcGrid and PLcGrid2
@@ -2082,7 +2083,7 @@ void c_plstar( PLINT nx, PLINT ny );
 void c_plstart( char *devname, PLINT nx, PLINT ny );
 
 // Set the coordinate transform
-void c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
+void c_plstransform( ct_func coordinate_transform = null , PLPointer coordinate_transform_data = null);
 
 // Add a point to a stripchart.
 void c_plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );
