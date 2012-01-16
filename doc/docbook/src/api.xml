@@ -5019,7 +5019,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
 	<listitem>
 	  <para>
-	    Python: <literal>PLFLT **</literal><parameter>zg</parameter>=<function>plgriddata(x, y, z, xg, yg, type, data)</function>
+	    Python: <literal><parameter>zg</parameter>=<function>plgriddata(x, y, z, xg, yg, type, data)</function></literal>
 	  </para>
 	</listitem>
       </itemizedlist>
