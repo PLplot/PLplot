@@ -148,17 +148,18 @@ years now. Its successor gfortran supports Fortran 95 and later standards
 as well all g77's legacy features).
 
 An important consequence is that we can not test the implementation for
-compliance to the FORTRAN 77 standard. Current Fortran compilers do
-allow this for the Fortran 95 standard.
+compliance to the FORTRAN 77 standard. 
+Furthermore, we would prefer to concentrate all our Fortran
+development effort on our f95 bindings and strongly encourage all our
+Fortran users to use those bindings if they haven't switched from the
+f77 version already. Therefore, as of this release we are deprecating
+the f77 bindings and examples and plan no further support for them.
+We signal this deprecation by disabling f77 by default (although our
+users can still get access to these unsupported bindings and examples
+for now by specifying the -DENABLE_f77=ON cmake option).
 
-We therefore want to encourage anyone who uses PLplot with Fortran programs
-to use the Fortran 95 bindings. In the next release we will turn off
-the FORTRAN 77 bindings by default. That is, you can still build them
-and use them but you will need to specify that explicitly via the
-CMake options.
-
-In some future release we will deprecate these bindings. When this
-will happen has not been decided yet.
+We plan to completely remove the f77 bindings and examples
+two releases after this one.
 
 (5.9.10) We have found that some distributions of the Windows
 MinGW/gfortran compiler (i.e., MinGW/gfortran 4.6.1 and 4.6.2 from
