@@ -451,7 +451,7 @@ writeHeader( PLStream *pls )
 
     doc->osHeader() << "PSDict begin\n";
     doc->osHeader() << "@start\n";
-    doc->osHeader() << "%d @copies\n" << COPIES;
+    doc->osHeader() << COPIES << " @copies\n" ;
     doc->osHeader() << "@line\n";
     doc->osHeader() << YSIZE << " @hsize\n";
     doc->osHeader() << XSIZE << " @vsize\n";
