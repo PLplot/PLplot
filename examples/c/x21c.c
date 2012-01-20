@@ -205,6 +205,17 @@ main( int argc, const char *argv[] )
     pllab( "X", "Y", "The original data sampling" );
     plcol0( 2 );
     plpoin( pts, x, y, 5 );
+
+   // Same as previous page, but with points colored according
+   // to value.
+    plcol0( 1 );
+    plenv( xm, xM, ym, yM, 2, 0 );
+    plcol0( 15 );
+    pllab( "X", "Y", "The original data sampling" );
+    for ( i = 0 ; i < pts ; i++ ) {
+        plcol1( (z[i]-zmin)/(zmax-zmin) );
+        plpoin( 1, &x[i], &y[i], 5 );
+    }
     pladv( 0 );
 
     plssub( 3, 2 );
