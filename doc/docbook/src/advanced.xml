@@ -1403,14 +1403,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     of globally turning off the color (and subsequently turning it on again
     if so desired) using &plscolor;. </para>
 
-    <para> The PLplot color model utilizes two color maps which can be used
-    interchangeably.  However, color map0 (discussed in <xref
-    linkend="color-map-0"/>) has discrete colors with no particular order
-    and is most suited to coloring the background, axes, lines, and labels,
-    and color map1 (discussed in <xref linkend="color-map-1"/>) has
-    continuously changing colors and is most suited to plots (see <xref
-    linkend="contour-plots"/>) in which data values are represented by
-    colors. </para>
+    <para> The PLplot color model allows the user to set the current
+    color from a wide range of colours using two distinct color maps.
+    Color map0 (discussed in <xref linkend="color-map-0"/>) has discrete
+    colors with no particular order and is most suited to coloring the
+    background, axes, lines, and labels, and color map1 (discussed in
+    <xref linkend="color-map-1"/>) has continuously changing colors and is
+    most suited to plots (see <xref linkend="contour-plots"/>) in which
+    data values are represented by colors.  Setting the background color
+    is a special case that is handled exclusively by color map 0 (as
+    discussed in <xref linkend="color-map-0"/>).  The user can change the
+    current color (as opposed to the background color) at any point in the
+    plot by selecting any of the colors from either color map 0 or 1 using
+    calls to &plcol0; or &plcol1;. When the current color is changed all
+    subsequent drawing actions will utilise the new color until it is
+    changed again.
+</para>
 
     <sect2 id="color-map-0">
       <title>Color Map0</title>
