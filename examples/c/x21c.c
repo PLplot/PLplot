@@ -307,7 +307,6 @@ main( int argc, const char *argv[] )
                 for ( i = 0; i < nl; i++ )
                     clev[i] = lzm + ( lzM - lzm ) / ( nl - 1 ) * i;
 
-                cmap1_init();
                 plvpor( 0.0, 1.0, 0.0, 0.9 );
                 plwind( -1.1, 0.75, -0.65, 1.20 );
                 //

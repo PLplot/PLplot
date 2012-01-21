@@ -190,6 +190,8 @@ x21::x21( int argc, const char ** argv )
 
     pls = new plstream();
 
+    cmap1_init();
+
     pls->seed( 5489 );
 
     // Parse and process command line arguments.
@@ -222,8 +224,22 @@ x21::x21( int argc, const char ** argv )
     pls->env( xm, xM, ym, yM, 2, 0 );
     pls->col0( 15 );
     pls->lab( "X", "Y", "The original data sampling" );
-    pls->col0( 2 );
-    pls->poin( pts, x, y, 5 );
+    for ( i = 0; i < pts; i++ )
+    {
+        pls->col1( ( z[i] - zmin ) / ( zmax - zmin ) );
+        // The following plstring call should be the the equivalent of
+        // plpoin( 1, &x[i], &y[i], 5 ); Use plstring because it is
+        // not deprecated like plpoin and has much more powerful
+        // capabilities.  N.B. symbol 141 works for Hershey devices
+        // (e.g., -dev xwin) only if plfontld( 0 ) has been called
+        // while symbol 727 works only if plfontld( 1 ) has been
+        // called.  The latter is the default which is why we use 727
+        // here to represent a centred X (multiplication) symbol.
+        // This dependence on plfontld is one of the limitations of
+        // the Hershey escapes for PLplot, but the upside is you get
+        // reasonable results for both Hershey and Unicode devices.
+        pls->string( 1, &x[i], &y[i], "#(727)" );
+    }
     pls->adv( 0 );
 
     pls->ssub( 3, 2 );
@@ -308,7 +324,6 @@ x21::x21( int argc, const char ** argv )
                 for ( i = 0; i < nl; i++ )
                     clev[i] = lzm + ( lzM - lzm ) / ( nl - 1 ) * i;
 
-                cmap1_init();
                 pls->vpor( 0.0, 1.0, 0.0, 0.9 );
                 pls->wind( -1.1, 0.75, -0.65, 1.20 );
                 //

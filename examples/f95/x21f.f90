@@ -81,6 +81,8 @@
 
       call plinit
 
+      call cmap1_init
+
       call plseed(5489)
 
       do i=1,pts
@@ -119,8 +121,21 @@
       call plenv(xmin, xmax, ymin, ymax, 2, 0)
       call plcol0(15)
       call pllab("X", "Y", "The original data sampling")
-      call plcol0(2)
-      call plpoin(x, y, 5)
+      do i=1,pts
+         call plcol1( ( z(i) - zmin ) / ( zmax - zmin ) )
+!     The following plstring call should be the the equivalent of
+!     plpoin( 1, &x[i], &y[i], 5 ); Use plstring because it is
+!     not deprecated like plpoin and has much more powerful
+!     capabilities.  N.B. symbol 141 works for Hershey devices
+!     (e.g., -dev xwin) only if plfontld( 0 ) has been called
+!     while symbol 727 works only if plfontld( 1 ) has been
+!     called.  The latter is the default which is why we use 727
+!     here to represent a centred X (multiplication) symbol.
+!     This dependence on plfontld is one of the limitations of
+!     the Hershey escapes for PLplot, but the upside is you get
+!     reasonable results for both Hershey and Unicode devices.
+        call plstring( x(i:i), y(i:i), '#(727)' );
+      enddo
       call pladv(0)
 
       call plssub(3,2)
@@ -207,7 +222,6 @@
                do i = 1,nl
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
                enddo
-               call cmap1_init()
                call plvpor(0._plflt, 1._plflt, 0._plflt, 0.9_plflt)
                call plwind(-1.1_plflt, 0.75_plflt, -0.65_plflt, 1.20_plflt)
 !     

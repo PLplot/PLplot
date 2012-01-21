@@ -81,6 +81,8 @@ function ix21c
 
   plinit;
 
+  cmap1_init;
+
   plseed(5489);
 
   [x, y, z] = create_data(pts, xm, xM, ym, yM, randn, rosen); ## the sampled data
@@ -93,8 +95,10 @@ function ix21c
   plenv(xm, xM, ym, yM, 2, 0);
   plcol0(15);
   pllab("X", "Y", "The original data sampling");
-  plcol0(2);
-  plpoin(x, y, 5);
+  for i=1:pts
+    plcol1( ( z(i) - zmin ) / ( zmax - zmin ) );
+    plstring( x(i), y(i), "#(727)" );
+  end
   pladv(0);
 
   plssub(3,2);
@@ -170,7 +174,6 @@ function ix21c
 	i=(0:nl-1)';
 	clev = lzm + (lzM-lzm)/(nl-1)*i;
 
-	cmap1_init;
 	plvpor(0.0, 1.0, 0.0, 0.9);
 	plwind(-1.1, 0.75, -0.65, 1.20);
 	##
