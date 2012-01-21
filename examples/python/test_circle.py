@@ -16,6 +16,7 @@ title = [
   "Plplot Encoded Hershey Indexed Asterisk with plptex",
   "Asterisk with plsym",
   "Asterisk with plpoin",
+  "Plplot Encoded Hershey Indexed Asterisk with plstring",
 ]
   
 ifunicode = True
@@ -25,7 +26,7 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 
 # Initialize plplot
 plinit()
-for kind in range(6):
+for kind in range(7):
   pladv(0)
   plvpor(0.1, 0.9, 0.1, 0.9)
   plwind(0., 1., 0., 1.)
@@ -71,6 +72,10 @@ for kind in range(6):
       # Print an asterisk using plpoin
       plssym(0., 8.*size)
       plpoin(x, y, 3)
+    elif kind ==6:
+      # Print a (PLplot encoded) Hershey indexed asterisk using plstring
+      plschr(0., 8.*size)
+      plstring(x, y, "#(728)")
 # Terminate plplot
 plend()
 
