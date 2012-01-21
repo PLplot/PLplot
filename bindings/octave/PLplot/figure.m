@@ -49,12 +49,11 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
   global pl_automatic_replot
 
   if (!exist("__pl") || !struct_contains (__pl,"inited"))
-    v = split(version ,'.');
-    if (! ((str2num(v(1,:)) > 2) ||
-           (str2num(v(1,:)) == 2 && str2num(v(2,:)) == 9 &&
-            str2num(v(3,:)) >= 0)))
+    v = char(strsplit(version ,'.'));
+    if (! ((str2num(v(1,:)) > 3) ||
+           (str2num(v(1,:)) == 3 && str2num(v(2,:)) >= 2))) 
         error("The PLplot-Octave scripts need an Octave version \n\
-               greater than or equal to 2.9.0.\n");
+               greater than or equal to 3.2.0.\n");
     endif
 
     plplot_stub;
