@@ -208,10 +208,17 @@ main( int argc, const char *argv[] )
     {
         plcol1( ( z[i] - zmin ) / ( zmax - zmin ) );
         // The following plstring call should be the the equivalent of
-        // plpoin( 1, &x[i], &y[i], 5 );
-        // Use plstring because it is not deprecated like plpoin and
-        // has much more powerful capabilities.
-        plstring( 1, &x[i], &y[i], "#(141)" );
+        // plpoin( 1, &x[i], &y[i], 5 ); Use plstring because it is
+        // not deprecated like plpoin and has much more powerful
+        // capabilities.  N.B. symbol 141 works for Hershey devices
+        // (e.g., -dev xwin) only if plfontld( 0 ) has been called
+        // while symbol 727 works only if plfontld( 1 ) has been
+        // called.  The latter is the default which is why we use 727
+        // here to represent a centred X (multiplication) symbol.
+        // This dependence on plfontld is one of the limitations of
+        // the Hershey escapes for PLplot, but the upside is you get
+        // reasonable results for both Hershey and Unicode devices.
+        plstring( 1, &x[i], &y[i], "#(727)" );
     }
     pladv( 0 );
 
