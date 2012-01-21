@@ -180,6 +180,8 @@ main( int argc, const char *argv[] )
 
     plinit();
 
+    // Use a colour map with no black band in the middle.
+    cmap1_init();
     // Initialise random number generator
     plseed( 5489 );
 
@@ -198,23 +200,18 @@ main( int argc, const char *argv[] )
     plAlloc2dGrid( &zg, xp, yp );    // the output grided data
     clev = (PLFLT *) malloc( (size_t) nl * sizeof ( PLFLT ) );
 
-    // printf("Npts=%d gridx=%d gridy=%d", pts, xp, yp);
     plcol0( 1 );
     plenv( xm, xM, ym, yM, 2, 0 );
     plcol0( 15 );
     pllab( "X", "Y", "The original data sampling" );
-    plcol0( 2 );
-    plpoin( pts, x, y, 5 );
-
-   // Same as previous page, but with points colored according
-   // to value.
-    plcol0( 1 );
-    plenv( xm, xM, ym, yM, 2, 0 );
-    plcol0( 15 );
-    pllab( "X", "Y", "The original data sampling" );
-    for ( i = 0 ; i < pts ; i++ ) {
-        plcol1( (z[i]-zmin)/(zmax-zmin) );
-        plpoin( 1, &x[i], &y[i], 5 );
+    for ( i = 0; i < pts; i++ )
+    {
+        plcol1( ( z[i] - zmin ) / ( zmax - zmin ) );
+        // The following plstring call should be the the equivalent of
+        // plpoin( 1, &x[i], &y[i], 5 );
+        // Use plstring because it is not deprecated like plpoin and
+        // has much more powerful capabilities.
+        plstring( 1, &x[i], &y[i], "#(141)" );
     }
     pladv( 0 );
 
