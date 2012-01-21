@@ -2,7 +2,7 @@
         Grid data demo
 
    Copyright (C) 2004  Joao Cardoso
-   Copyright (C) 2008  Hezekiah M. Carty
+   Copyright (C) 2008, 2012  Hezekiah M. Carty
 
    This file is part of PLplot.
 
@@ -107,6 +107,10 @@ let () =
   (* Initialize plplot *)
   plinit ();
 
+  (* Use a locally defined continuous color map *)
+  cmap1_init ();
+
+  (* Initialize the random number generator with a common seed *)
   plseed (5489L);
 
   (* The sampled data *)
@@ -121,8 +125,10 @@ let () =
   plenv xm xM ym yM 2 0;
   plcol0 15;
   pllab "X" "Y" "The original data sampling";
-  plcol0 2;
-  plpoin x y 5;
+  for i = 0 to pts - 1 do
+    plcol1 ((z.(i) -. zmin) /. (zmax -. zmin));
+    plstring [|x.(i)|] [|y.(i)|] "#(727)";
+  done;
   pladv 0;
 
   plssub 3 2;
