@@ -103,7 +103,7 @@ endif(ENABLE_octave)
 if(ENABLE_octave)
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
   # Logic that depends on octave version
-  transform_version(NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION "2.9.0")
+  transform_version(NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION "3.2.0")
   transform_version(NUMERICAL_OCTAVE_VERSION "${OCTAVE_VERSION}")
   if(
    NUMERICAL_OCTAVE_VERSION
@@ -111,7 +111,7 @@ if(ENABLE_octave)
    "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
    )
     message(STATUS "WARNING: "
-    "plplot require octave version 2.9 or greater. Disabling octave bindings")
+    "plplot require octave version 3.2 or greater. Disabling octave bindings")
     set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
   endif(
    NUMERICAL_OCTAVE_VERSION
