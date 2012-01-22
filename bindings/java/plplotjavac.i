@@ -326,10 +326,10 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 // I hate global variables but this is the best way I can think of to manage consistency
 //   checking among function arguments.
 %{
-    static PLINT Alen = 0;
-    static PLINT Xlen = 0, Ylen = 0;
-    static PLFLT **xg;
-    static PLFLT **yg;
+    static PLINT    Alen = 0;
+    static PLINT    Xlen = 0, Ylen = 0;
+    static PLFLT    **xg;
+    static PLFLT    **yg;
     static PLcGrid2 *cgrid;
 %}
 
@@ -1532,11 +1532,11 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
 // Second of two object arrays, where we check X and Y with previous object.
 %typemap( in ) PLPointer OBJECT_DATA {
-    jPLFLT   **adat;
-    jobject  *ai;
-    int      nx = ( *jenv )->GetArrayLength( jenv, $input );
-    int      ny = -1;
-    int      i, j;
+    jPLFLT  **adat;
+    jobject *ai;
+    int     nx = ( *jenv )->GetArrayLength( jenv, $input );
+    int     ny = -1;
+    int     i, j;
     ai   = (jobject *) malloc( nx * sizeof ( jobject ) );
     adat = (jPLFLT **) malloc( nx * sizeof ( jPLFLT * ) );
 
@@ -1580,12 +1580,12 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
     free( adat );
     free( ai );
-    cgrid = (PLcGrid2 *) malloc( sizeof ( PLcGrid2 ) );
+    cgrid     = (PLcGrid2 *) malloc( sizeof ( PLcGrid2 ) );
     cgrid->xg = xg;
     cgrid->yg = yg;
     cgrid->nx = nx;
     cgrid->ny = ny;
-    $1       = cgrid;
+    $1        = cgrid;
 }
 
 %typemap( freearg ) PLPointer OBJECT_DATA {
@@ -1676,11 +1676,11 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 // This is the version for plimagefr where size is 1 larger than previous
 // array
 %typemap( in ) PLPointer OBJECT_DATA_img {
-    jPLFLT   **adat;
-    jobject  *ai;
-    int      nx = ( *jenv )->GetArrayLength( jenv, $input );
-    int      ny = -1;
-    int      i, j;
+    jPLFLT  **adat;
+    jobject *ai;
+    int     nx = ( *jenv )->GetArrayLength( jenv, $input );
+    int     ny = -1;
+    int     i, j;
     ai   = (jobject *) malloc( nx * sizeof ( jobject ) );
     adat = (jPLFLT **) malloc( nx * sizeof ( jPLFLT * ) );
 
@@ -1724,7 +1724,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
     free( adat );
     free( ai );
-    cgrid = (PLcGrid2 *) malloc( sizeof ( PLcGrid2 ) );
+    cgrid     = (PLcGrid2 *) malloc( sizeof ( PLcGrid2 ) );
     cgrid->xg = xg;
     cgrid->yg = yg;
     cgrid->nx = nx;

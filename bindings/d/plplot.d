@@ -2083,7 +2083,7 @@ void c_plstar( PLINT nx, PLINT ny );
 void c_plstart( char *devname, PLINT nx, PLINT ny );
 
 // Set the coordinate transform
-void c_plstransform( ct_func coordinate_transform = null , PLPointer coordinate_transform_data = null);
+void c_plstransform( ct_func coordinate_transform = null, PLPointer coordinate_transform_data = null );
 
 // Add a point to a stripchart.
 void c_plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );
