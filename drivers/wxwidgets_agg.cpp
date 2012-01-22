@@ -399,10 +399,10 @@ void wxPLDevAGG::SetWidth( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevAGG::SetColor0( PLStream *pls )
 {
-    mColorRedStroke   = pls->cmap0[pls->icol0].r;
-    mColorGreenStroke = pls->cmap0[pls->icol0].g;
-    mColorBlueStroke  = pls->cmap0[pls->icol0].b;
-    mStrokeOpacity    = (wxUint8) ( pls->cmap0[pls->icol0].a * 255 );
+    mColorRedStroke   = pls->curcolor.r;
+    mColorGreenStroke = pls->curcolor.g;
+    mColorBlueStroke  = pls->curcolor.b;
+    mStrokeOpacity    = (wxUint8) ( pls->curcolor.a * 255 );
 }
 
 

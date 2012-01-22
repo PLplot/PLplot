@@ -267,13 +267,13 @@ void wxPLDevGC::SetColor0( PLStream *pls )
 {
     // Log_Verbose( "%s", __FUNCTION__ );
 
-    mColorRedStroke   = pls->cmap0[pls->icol0].r;
-    mColorGreenStroke = pls->cmap0[pls->icol0].g;
-    mColorBlueStroke  = pls->cmap0[pls->icol0].b;
-    mColorRedFill     = pls->cmap0[pls->icol0].r;
-    mColorGreenFill   = pls->cmap0[pls->icol0].g;
-    mColorBlueFill    = pls->cmap0[pls->icol0].b;
-    mStrokeOpacity    = (unsigned char) ( pls->cmap0[pls->icol0].a * 255 );
+    mColorRedStroke   = pls->curcolor.r;
+    mColorGreenStroke = pls->curcolor.g;
+    mColorBlueStroke  = pls->curcolor.b;
+    mColorRedFill     = pls->curcolor.r;
+    mColorGreenFill   = pls->curcolor.g;
+    mColorBlueFill    = pls->curcolor.b;
+    mStrokeOpacity    = (unsigned char) ( pls->curcolor.a * 255 );
 
     m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( mColorRedStroke, mColorGreenStroke,
                                   mColorBlueStroke, mStrokeOpacity ),
@@ -452,9 +452,9 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
 #endif
 
     // text color
-    textRed   = pls->cmap0[pls->icol0].r;
-    textGreen = pls->cmap0[pls->icol0].g;
-    textBlue  = pls->cmap0[pls->icol0].b;
+    textRed   = pls->curcolor.r;
+    textGreen = pls->curcolor.g;
+    textBlue  = pls->curcolor.b;
 
     // calculate rotation of text
     plRotationShear( args->xform, &rotation, &shear, &stride );

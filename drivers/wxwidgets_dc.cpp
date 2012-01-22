@@ -227,8 +227,7 @@ void wxPLDevDC::CreateCanvas()
 //--------------------------------------------------------------------------
 void wxPLDevDC::SetWidth( PLStream *pls )
 {
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                             pls->cmap0[pls->icol0].b ),
+    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
                          pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
 }
 
@@ -240,10 +239,9 @@ void wxPLDevDC::SetWidth( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevDC::SetColor0( PLStream *pls )
 {
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                             pls->cmap0[pls->icol0].b ),
+    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
                          pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
-    m_dc->SetBrush( wxBrush( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g, pls->cmap0[pls->icol0].b ) ) );
+    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) ) );
 }
 
 
@@ -254,8 +252,7 @@ void wxPLDevDC::SetColor0( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevDC::SetColor1( PLStream *pls )
 {
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g,
-                             pls->curcolor.b ),
+    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
                          pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
     m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) ) );
 }
@@ -422,8 +419,7 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
     sin_rot   = sin( rotation );
 
     // Set font color
-    m_dc->SetTextForeground( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-            pls->cmap0[pls->icol0].b ) );
+    m_dc->SetTextForeground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
     m_dc->SetTextBackground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
 
     posX = args->x;

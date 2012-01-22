@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2002, 2004, 2005  Andrew Roach
 // Copyright (C) 2002  Maurice LeBrun
-// Copyright (C) 2002, 2004, 2005  Alan W. Irwin
+// Copyright (C) 2002-2012  Alan W. Irwin
 // Copyright (C) 2003, 2004  Joao Cardoso
 // Copyright (C) 2003, 2004, 2005  Rafael Laboissiere
 // Copyright (C) 2004  Andrew Ross
@@ -541,9 +541,9 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                             alpha_a = (float) FT->shade / 255.0;
 
                             // alpha_b=1.0-alpha_a;
-                            // R=(plsc->cmap0[pls->icol0].r*alpha_a)+(R*alpha_b);
-                            // G=(plsc->cmap0[pls->icol0].g*alpha_a)+(G*alpha_b);
-                            // B=(plsc->cmap0[pls->icol0].b*alpha_a)+(B*alpha_b);
+                            // R=(plsc->curcolor.r*alpha_a)+(R*alpha_b);
+                            // G=(plsc->curcolor.g*alpha_a)+(G*alpha_b);
+                            // B=(plsc->curcolor.b*alpha_a)+(B*alpha_b);
                             //
 
                             //  This next bit of code is, I *think*, computationally
@@ -555,9 +555,9 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                             //  Is one faster than the other so that you'd ever notice ?
                             //
 
-                            R = (int) ( ( ( plsc->cmap0[pls->icol0].r - R ) * alpha_a ) + R );
-                            G = (int) ( ( ( plsc->cmap0[pls->icol0].g - G ) * alpha_a ) + G );
-                            B = (int) ( ( ( plsc->cmap0[pls->icol0].b - B ) * alpha_a ) + B );
+                            R = (int) ( ( ( plsc->curcolor.r - R ) * alpha_a ) + R );
+                            G = (int) ( ( ( plsc->curcolor.g - G ) * alpha_a ) + G );
+                            B = (int) ( ( ( plsc->curcolor.b - B ) * alpha_a ) + B );
 
                             FT->set_pixel( pls, x + k, y + i, RGB( R > 255 ? 255 : R, G > 255 ? 255 : G, B > 255 ? 255 : B ) );
                         }
