@@ -68,6 +68,8 @@ proc x21 {{w loopback}} {
 
     $w cmd plseed 5489
 
+    cmap1_init $w
+
     for {set i 0} {$i < $pts} {incr i} {
         set xt [expr {($xmax-$xmin)*[$w cmd plrandd]}]
         set yt [expr {($ymax-$ymin)*[$w cmd plrandd]}]
@@ -108,8 +110,27 @@ proc x21 {{w loopback}} {
     $w cmd plenv $xmin $xmax $ymin $ymax 2 0
     $w cmd plcol0 15
     $w cmd pllab "X" "Y" "The original data sampling"
-    $w cmd plcol0 2
-    $w cmd plpoin $pts x y 5
+
+    matrix xstr f 1 = {0.0}
+    matrix ystr f 1 = {0.0}
+
+    for {set i 0} {$i < $pts} {incr i} {
+        $w cmd plcol1 [expr {([z $i] - $zmin ) / ( $zmax - $zmin )}]
+        # The following plstring call should be the the equivalent of
+        # plpoin( 1, &x[i], &y[i], 5 ); Use plstring because it is
+        # not deprecated like plpoin and has much more powerful
+        # capabilities.  N.B. symbol 141 works for Hershey devices
+        # (e.g., -dev xwin) only if plfontld( 0 ) has been called
+        # while symbol 727 works only if plfontld( 1 ) has been
+        # called.  The latter is the default which is why we use 727
+        # here to represent a centred X (multiplication) symbol.
+        # This dependence on plfontld is one of the limitations of
+        # the Hershey escapes for PLplot, but the upside is you get
+        # reasonable results for both Hershey and Unicode devices.
+        xstr 0 = [x $i]
+        ystr 0 = [y $i]
+        $w cmd plstring  1 xstr ystr "#(727)"
+    }
     $w cmd pladv 0
 
     $w cmd plssub 3 2
@@ -195,7 +216,6 @@ proc x21 {{w loopback}} {
                 for {set i 0} {$i < $nl} {incr i} {
                     clev $i = [expr {$lzmin + ($lzmax-$lzmin)/double($nl-1.)*$i}]
                 }
-                cmap1_init $w
                 $w cmd plvpor 0. 1. 0. 0.9
                 $w cmd plwind -1.1 0.75 -0.65 1.20
 #
