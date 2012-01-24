@@ -37,9 +37,8 @@ subroutine plstrf2c(string1, string2)
     integer :: limit
 
     string2 = string1
-    limit = len_trim(string2)
+    limit = min(len(string2), len(string1))
     string2(limit+1:limit+1) = char(0)
-
 end subroutine plstrf2c
 
 
