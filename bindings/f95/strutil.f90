@@ -57,7 +57,7 @@ subroutine plstrc2f(string1, string2)
 
     string2 = string1
 
-    limit = index( achar(0), string2 )
+    limit = index( string2, achar(0) )
     if ( limit > 0 ) then
         string2(limit:) = ' '
     endif
