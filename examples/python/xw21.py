@@ -70,6 +70,7 @@ def main():
     opt[3] = knn_order
     opt[4] = threshold
  
+    cmap1_init()
     plseed(5489)
 
     # Create the sampled data
@@ -100,12 +101,18 @@ def main():
     xg = xm + (xM-xm)*arange(xp)/(xp-1.)
     yg = ym + (yM-ym)*arange(yp)/(yp-1.)
 
+    xx = zeros(1)
+    yy = zeros(1)
+
     plcol0(1)
     plenv(xm,xM,ym,yM,2,0)
     plcol0(15)
     pllab('X','Y','The original data sampling')
-    plcol0(2)
-    plpoin(x,y,5)
+    for i in range(pts):
+        plcol1( ( z[i] - zmin )/( zmax - zmin ) )
+        xx[0] = x[i]
+        yy[0] = y[i]
+        plstring( xx, yy, '#(727)' )
     pladv(0)
 
     plssub(3,2)
@@ -157,7 +164,6 @@ def main():
                 plcol0(2)
             else:
                 clev = lzm + (lzM-lzm)*arange(nl)/(nl-1)
-                cmap1_init()
                 plvpor(0.0, 1.0, 0.0, 0.9)
                 plwind(-1.1, 0.75, -0.65, 1.20)
                 plw3d(1.0, 1.0, 1.0, xm, xM, ym, yM, lzm, lzM, 30.0, -40.0)
