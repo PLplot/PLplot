@@ -128,6 +128,8 @@ opt = { 0, 0, wmin, knn_order, threshold, 0 }
 -- Initialize plplot 
 pl.init()
 
+cmap1_init()
+
 -- Initialise random number generator 
 pl.seed(5489)
 
@@ -141,13 +143,19 @@ end
 
 xg, yg = create_grid(xp, yp) -- grid the data at 
 clev = {}
+xx = {}
+yy = {}
 
 pl.col0(1)
 pl.env(xm, xM, ym, yM, 2, 0)
 pl.col0(15)
 pl.lab("X", "Y", "The original data sampling")
-pl.col0(2)
-pl.poin(x, y, 5)
+for i=1, pts do
+  pl.col1( (z[i]-zmin)/(zmax-zmin) )
+  xx[1] = x[i]
+  yy[1] = y[i]
+  pl.string( xx, yy, "#(727)" )
+end
 pl.adv(0)
 
 pl.ssub(3, 2)
@@ -231,7 +239,6 @@ for k = 1, 2 do
         clev[i] = lzm + (lzM-lzm)/(nl-1)*(i-1)
       end
 
-      cmap1_init()
       pl.vpor(0, 1, 0, 0.9)
       pl.wind(-1.1, 0.75, -0.65, 1.20)
       
