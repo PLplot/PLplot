@@ -164,6 +164,8 @@ begin
     -- Initialize plplot
     plinit;
 
+    cmap1_init;
+
     plseed(5489);
 
     create_data(x, y, z); -- the sampled data
@@ -176,8 +178,10 @@ begin
     plenv(xm, xMM, ym, yMM, 2, 0);
     plcol0(15);
     pllab("X", "Y", "The original data sampling");
-    plcol0(2);
-    plpoin(x, y, 5);
+    for i in 0 .. (pts-1) loop
+        plcol1( (z(i)-zmin)/(zmax-zmin) );
+        plstring(x(i .. i), y(i .. i), "#(727)");
+    end loop;
     pladv(0);
 
     plssub(3, 2);
@@ -261,7 +265,6 @@ begin
                     clev(i) := lzm + (lzMM - lzm) / Long_Float(nl - 1) * Long_Float(i);
                 end loop;
 
-                cmap1_init;
                 plvpor(0.0, 1.0, 0.0, 0.9);
                 plwind(-1.1, 0.75, -0.65, 1.20);
 

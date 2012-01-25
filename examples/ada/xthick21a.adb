@@ -164,6 +164,8 @@ begin
     -- Initialize plplot
     Initialize_PLplot;
 
+    cmap1_init;
+
     Random_Number_Seed(5489);
 
     create_data(x, y, z); -- the sampled data
@@ -176,8 +178,10 @@ begin
     Set_Environment(xm, xMM, ym, yMM, Justified_Square_Box, Linear_Box_Plus);
     Set_Pen_Color(White);
     Write_Labels("X", "Y", "The original data sampling");
-    Set_Pen_Color(Yellow);
-    Draw_Points(x, y, 5);
+    for i in 0 .. (pts-1) loop
+        Set_Color_Map_1( (z(i)-zmin)/(zmax-zmin) );
+        Draw_String( x(i .. i), y(i .. i), "#(727)" );
+    end loop;
     Advance_To_Subpage(Next_Subpage);
 
     Set_Number_Of_Subpages(3, 2);
@@ -261,7 +265,6 @@ begin
                     clev(i) := lzm + (lzMM - lzm) / Long_Float(nl - 1) * Long_Float(i);
                 end loop;
 
-                cmap1_init;
                 Set_Viewport_Normalized(0.0, 1.0, 0.0, 0.9);
                 Set_Viewport_World(-1.1, 0.75, -0.65, 1.20);
 
