@@ -59,6 +59,8 @@ int main( char[][] args )
     // Initialize plplot
     plinit();
 
+    cmap1_init();
+
     // Initialise random number generator
     plseed( 5489 );
 
@@ -86,12 +88,20 @@ int main( char[][] args )
 
     PLFLT[] clev = new PLFLT[nl];
 
+    PLFLT[] xx = new PLFLT[1];
+    PLFLT[] yy = new PLFLT[1];
+
     plcol0( 1 );
     plenv( xm, xM, ym, yM, 2, 0 );
     plcol0( 15 );
     pllab( "X", "Y", "The original data sampling" );
-    plcol0( 2 );
-    plpoin( x, y, 5 );
+    for ( int i = 0; i < pts ; i++ )
+    {
+        plcol1( ( z[i] - zmin ) / ( zmax - zmin ) );
+        xx[0] = x[i];
+        yy[0] = y[i];
+        plstring( xx, yy, "#(727)" );
+    }
     pladv( 0 );
 
     plssub( 3, 2 );
@@ -178,7 +188,6 @@ int main( char[][] args )
                 for ( int i = 0; i < nl; i++ )
                     clev[i] = lzm + ( lzM - lzm ) / ( nl - 1 ) * i;
 
-                cmap1_init();
                 plvpor( 0.0, 1.0, 0.0, 0.9 );
                 plwind( -1.1, 0.75, -0.65, 1.20 );
                 //
