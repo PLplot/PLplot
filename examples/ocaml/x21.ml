@@ -225,7 +225,6 @@ let () =
                 lzm +. (lzM -. lzm) /. float_of_int (nl - 1) *. float_of_int i
             )
         in
-        cmap1_init ();
         plvpor 0.0 1.0 0.0 0.9;
         plwind (-1.1) 0.75 (-0.65) 1.20;
         (* For the comparison to be fair, all plots should have the
