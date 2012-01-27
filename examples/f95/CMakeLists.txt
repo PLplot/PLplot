@@ -140,11 +140,7 @@ if(BUILD_TEST)
       x${STRING_INDEX}f95 PROPERTIES
       OUTPUT_NAME x${STRING_INDEX}f
       )
-    if(STATIC_OPTS)
-      target_link_libraries(x${STRING_INDEX}f95 plf95demolib${LIB_TAG} plplotf95opts${LIB_TAG} plplotf95${LIB_TAG} plplotf95c${LIB_TAG})
-    else(STATIC_OPTS)
-      target_link_libraries(x${STRING_INDEX}f95 plf95demolib${LIB_TAG} plplotf95${LIB_TAG} plplotf95c${LIB_TAG})
-    endif(STATIC_OPTS)
+    target_link_libraries(x${STRING_INDEX}f95 plf95demolib${LIB_TAG} plplotf95${LIB_TAG} plplotf95c${LIB_TAG})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f95 x${STRING_INDEX}f95)
   endforeach(STRING_INDEX ${f95_STRING_INDICES})
 endif(BUILD_TEST)

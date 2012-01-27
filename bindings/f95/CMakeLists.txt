@@ -125,21 +125,11 @@ if(ENABLE_f95)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     )
 
-  if(STATIC_OPTS)
-    set(plplotf95opts${LIB_TAG}_LIB_SRCS
-      configurable.f90
-      )
-    set(plplotf95${LIB_TAG}_LIB_SRCS
-      strutil.f90
-      sfstubsf95.f90
-      )
-  else(STATIC_OPTS)
-    set(plplotf95${LIB_TAG}_LIB_SRCS
-      strutil.f90
-      configurable.f90
-      sfstubsf95.f90
-      )
-  endif(STATIC_OPTS)
+  set(plplotf95${LIB_TAG}_LIB_SRCS
+    strutil.f90
+    configurable.f90
+    sfstubsf95.f90
+    )
 
   if(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT CYGWIN)
     SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95${DEFFILE}.def)
@@ -159,13 +149,7 @@ if(ENABLE_f95)
     set(PC_REQUIRES_TAG "Requires")
   endif(NON_TRANSITIVE)
 
-  if(STATIC_OPTS)
-    add_library(plplotf95opts${LIB_TAG} STATIC ${plplotf95opts${LIB_TAG}_LIB_SRCS})
-    target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
-    target_link_libraries(plplotf95opts${LIB_TAG}  plplotf95${LIB_TAG} plplotf95c${LIB_TAG})
-  else(STATIC_OPTS)
-    target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
-  endif(STATIC_OPTS)
+  target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
 
   if(USE_RPATH)
     set_target_properties(plplotf95${LIB_TAG}
@@ -200,15 +184,6 @@ if(ENABLE_f95)
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
-
-  if(STATIC_OPTS)
-    install(TARGETS plplotf95opts${LIB_TAG}
-      EXPORT export_plplot
-      ARCHIVE DESTINATION ${LIB_DIR}
-      LIBRARY DESTINATION ${LIB_DIR}
-      RUNTIME DESTINATION ${BIN_DIR}
-      )
-  endif(STATIC_OPTS)
 
   # For CMake-2.6.0 and above, the module files are created by
   # default during the library build in the bindings/f95 directory.

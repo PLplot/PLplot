@@ -22,16 +22,14 @@
       use plplot
       implicit none
       integer :: mode
-      integer :: maxargs, iargs, numargs, index, maxindex, iargc
+      integer :: maxargs, iargs, numargs, index, maxindex
       parameter(maxindex = maxlen/4)
       parameter (maxargs=20)
       character (len=maxlen) :: arg
       integer, dimension(maxindex, maxargs) :: iargsarr
-!       write(0,'(a)') 'plparseopts not implemented on this fortran'//
-!      & ' platform because iargc or getarg are not available'
-      numargs = iargc()
+      numargs = command_argument_count()
       if(numargs.lt.0) then
-!       This actually happened on badly linked Cygwin platform.
+!       This actually happened historically on a badly linked Cygwin platform.
         write(0,'(a)') 'plparseopts: negative number of arguments'
         return
       endif
@@ -40,7 +38,7 @@
         return
       endif
       do 10 iargs = 0, numargs
-        call getarg(iargs, arg)
+        call get_command_argument(iargs, arg)
         call plstrf2c(trim(arg), string1)
         s1 = transfer( string1, s1 )
         do 5 index = 1, maxindex
