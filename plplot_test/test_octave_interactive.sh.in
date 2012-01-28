@@ -42,7 +42,7 @@ else
 endif
 
 plplot_stub;
-t = split("$options", "-"); 
+t = char(strsplit("$options", "-")); 
 if (t); t(1,:)=""; endif;
 for i=1:rows(t)
   tt = deblank (t(i,:)); len = length(tt);

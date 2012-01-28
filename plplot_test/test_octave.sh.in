@@ -45,7 +45,7 @@ else
 endif
 
 plplot_stub;
-t = split("$options", "-"); 
+t = char(strsplit("$options", "-")); 
 if (t); t(1,:)=""; endif;
 for i=1:rows(t)
     tt = deblank (t(i,:)); len = length(tt);
@@ -83,7 +83,7 @@ failed = [] ;
     if (verbose_test)
 	printf("%s\n",cmd);
     endif
-    t = split("$options", "-"); 
+    t = char(strsplit("$options", "-")); 
     if (t) ; t(1,:)=""; endif
     for j=1:rows(t)
         tt = deblank (t(j,:)); len = length(tt);
