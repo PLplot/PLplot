@@ -63,8 +63,8 @@ program x09f95
 !   Build the 1-d coord arrays.
     distort = 0.4_plflt
 
-    xg1 = coord_function( arange(0,nptsx) / dble(nptsx-1),  distort )
-    yg1 = coord_function( arange(0,nptsy) / dble(nptsy-1), -distort )
+    xg1(1:nptsx) = coord_function( arange(0,nptsx) / dble(nptsx-1),  distort )
+    yg1(1:nptsy) = coord_function( arange(0,nptsy) / dble(nptsy-1), -distort )
 
 !   Build the 2-d coord arrays.
     do i=1,nptsx
