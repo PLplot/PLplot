@@ -57,7 +57,9 @@
    integer     :: i, j
    real(PLFLT) :: radius, pitch, xpos, ypos, zpos
 
-   character(len=1)  :: p1string = "O"
+   ! N.B. Need to append PL_END_OF_STRING so spaces get
+   ! properly plotted.
+   character(len=2)  :: p1string = "O"//PL_END_OF_STRING
    character(len=80) :: pstring  = &
      "The future of our civilization depends on software freedom."
 
@@ -343,7 +345,7 @@
       x_shear = 0.
       y_shear = 0.
       z_shear = 1.
-      p1string = pstring(i:i)
+      p1string(1:1) = pstring(i:i)
       call plptex3( &
          xpos, ypos, zpos, &
          x_inclination, y_inclination, z_inclination, &
