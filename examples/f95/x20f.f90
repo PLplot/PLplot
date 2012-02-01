@@ -144,7 +144,7 @@
               z(XDIM,i) = 1._plflt
           enddo
 
-          call pllab('...around a blue square.',' ', &
+          call pllab('...around a blue square.',' '//PL_END_OF_STRING, &
               'A red border should appear...')
 
           call plimage(z, 1._plflt, XDIMR, 1._plflt, YDIMR, 0._plflt, 0._plflt, &
@@ -207,9 +207,9 @@
 
       if (.not. nointeractive) then
           call pllab('Set and drag Button 1 to (re)set selection, Butto'// &
-               'n 2 to finish.',' ','Lena...')
+               'n 2 to finish.',' '//PL_END_OF_STRING,'Lena...')
       else
-          call pllab('',' ','Lena...')
+          call pllab('',' '//PL_END_OF_STRING,'Lena...')
       endif
 
       call plimage(img_f, 1._plflt, width_r, 1._plflt, &
@@ -499,9 +499,9 @@
       real(kind=plflt) sx(5), sy(5)
 
       integer PLK_Return
-      data PLK_Return / Z'0D' / 
+      data PLK_Return / Z'0D' /
       integer hex100
-      data hex100 / Z'100' / 
+      data hex100 / Z'100' /
 
       xxi = xi
       yyi = yi

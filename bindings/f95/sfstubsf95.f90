@@ -71,6 +71,8 @@ module plplot_str
    character (len = maxlen) :: string4, string5, string6
    character (len = maxlen) :: string7, string8, string9
    integer, dimension(maxleni) :: s1, s2, s3, s4, s5, s6, s7, s8, s9
+
+   character(len=1), parameter :: PL_END_OF_STRING = achar(0)
 end module
 
 module plplotp
