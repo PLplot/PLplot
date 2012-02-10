@@ -42,9 +42,13 @@ if(BUILD_SHARED_LIBS)
   # transitively linked by default by CMake and also by pkg-config (used
   # to generate compile and link flags for the traditional build and
   # test system of the installed examples).
-  option(NON_TRANSITIVE "Experimental option to try non-transitive linking" OFF)
+  if(WIN32)
+    option(NON_TRANSITIVE "Option to use non-transitive linking" OFF)
+  else(WIN32)
+    option(NON_TRANSITIVE "Option to use non-transitive linking" ON)
+  endif(WIN32)
 else(BUILD_SHARED_LIBS)
-  set(NON_TRANSITIVE OFF CACHE BOOL "Experimental option to try non-transitive linking" FORCE)
+  set(NON_TRANSITIVE OFF CACHE BOOL "Option to use non-transitive linking" FORCE)
 endif(BUILD_SHARED_LIBS)
 
 # Color maps (discrete and continuous) to use by default
