@@ -1147,8 +1147,6 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
     PLFLT parallel_height_mm = 0.0, perpendicular_height_mm = 0.0,
           default_mm, char_height_mm;
 
-    plgchr( &default_mm, &char_height_mm );
-
     // Only honor first bit in list of
     // PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).
     if ( opt & PL_COLORBAR_LABEL_RIGHT )
@@ -1176,6 +1174,11 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
         else
             nlabel = 1;
     }
+    // If no label wanted, then return.
+    if ( nlabel == 0 )
+        return;
+
+    plgchr( &default_mm, &char_height_mm );
 
     // Start preparing data to help plot the label or
     // calculate the corresponding bounding box changes.
