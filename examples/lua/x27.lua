@@ -34,7 +34,7 @@ function gcd (a,  b)
     b = math.floor(math.abs(b))
     while b~=0 do
         t = b
-        b = math.mod(a,b)
+        b = a % b
         a = t
     end 
     return a

@@ -71,7 +71,7 @@ for i = 1, 5 do
       thetasave=theta
 	end
 	pl.col0(i)
-	pl.psty(math.mod((i + 2), 8) + 1)
+	pl.psty(((i + 2) % 8) + 1)
 	pl.fill(x, y)
 	pl.col0(1)
 	pl.line(x, y)

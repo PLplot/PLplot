@@ -59,7 +59,7 @@ pl.box("", 1, 0, "", 1, 0)
 
 -- Draw the boxes
 for i = 0, 8 do
-  icol = math.mod(i, 3) + 1
+  icol = (i % 3) + 1
 
   -- Get a color, change its transparency and
   -- set it as the current color.
@@ -100,7 +100,7 @@ for i = 0, 4 do
   -- We don't want the boxes to be transparent, so since we changed 
   -- the colors transparencies in the first example we have to change
   -- the transparencies back to completely opaque.
-  icol = math.mod(i, 3) + 1
+  icol = (i % 3) + 1
   r, g, b, a = pl.gcol0a(icol)
   pl.scol0a(icol, r, g, b, 1)
   pl.col0(icol)

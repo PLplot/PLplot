@@ -107,10 +107,10 @@ for n = 0, nsteps-1 do
 
   -- There is no need for all pens to have the same number of
   -- points or beeing equally time spaced. 
-	if math.mod(n, 2)~=0 then pl.stripa(id1, 0, t, y1) end
-	if math.mod(n, 3)~=0 then pl.stripa(id1, 1, t, y2) end
-	if math.mod(n, 4)~=0 then pl.stripa(id1, 2, t, y3) end
-	if math.mod(n, 5)~=0 then pl.stripa(id1, 3, t, y4) end
+	if (n % 2)~=0 then pl.stripa(id1, 0, t, y1) end
+	if (n % 3)~=0 then pl.stripa(id1, 1, t, y2) end
+	if (n % 4)~=0 then pl.stripa(id1, 2, t, y3) end
+	if (n % 5)~=0 then pl.stripa(id1, 3, t, y4) end
 end
 
 -- Destroy strip chart and it's memory 

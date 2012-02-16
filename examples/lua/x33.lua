@@ -32,7 +32,7 @@ dofile("plplot_examples.lua")
 
 -- return single bit (for OR)
 function bit(x,b)
-  return (math.mod(x, 2^b) - math.mod(x,2^(b-1)) > 0)
+  return ((x % 2^b) - (x % 2^(b-1)) > 0)
 end
 
 -- logic OR for number values

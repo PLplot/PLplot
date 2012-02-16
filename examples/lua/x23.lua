@@ -296,9 +296,9 @@ for page=12, 16 do
   
   pl.schr(0, 0.75)
   for i=1, FCI_COMBINATIONS do
-    family_index = math.mod(i-1, 5)+1
-    style_index = math.mod(math.floor((i-1)/5), 3)+1
-    weight_index = math.mod(math.floor((i-1)/5/3), 2)+1
+    family_index = ((i-1) %  5) +1
+    style_index = (math.floor((i-1)/5) % 3)+1
+    weight_index = (math.floor((i-1)/5/3) % 2)+1
     if page==12 then
       pl.sfci(fci[i])
       str = string.format("Page 12, %s, %s, %s:  The quick brown fox jumps over the lazy dog",

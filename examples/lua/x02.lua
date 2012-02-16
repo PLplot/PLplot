@@ -102,7 +102,7 @@ function demo2()
     --	saturation	[0., 1.]	magnitude
    
     -- Vary hue uniformly from left to right 
-    h = (360/10) * math.mod(i, 10)
+    h = (360/10) * (i % 10)
     
     -- Vary lightness uniformly from top to bottom, between min & max 
     l = lmin + (lmax - lmin) * math.floor(i/10)/9
