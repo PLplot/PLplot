@@ -59,16 +59,13 @@ if(ENABLE_lua)
   # Check for Lua libraries which defines
   #  LUA_LIBRARIES    = path to the Lua library
   #  LUA_INCLUDE_DIR  = path to where lua.h is found
-  #  and LUA51_FOUND and LUA50_FOUND consistently.
-  find_package(Lua51)
-  if(NOT LUA51_FOUND)
-    find_package(Lua50)
-  endif(NOT LUA51_FOUND)
-  if(NOT LUA51_FOUND AND NOT LUA51_FOUND)
+  #  and LUA_FOUND consistently.
+  find_package(Lua)
+  if(NOT LUA_FOUND)
     message(STATUS "WARNING: "
       "Lua library and/or header not found. Disabling Lua bindings")
     set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
-  endif(NOT LUA51_FOUND AND NOT LUA51_FOUND)
+  endif(NOT LUA_FOUND)
 endif(ENABLE_lua)
 
 if(ENABLE_lua)
@@ -81,40 +78,11 @@ if(ENABLE_lua)
 endif(ENABLE_lua)
 
 if(ENABLE_lua)
-  # Check whether you have found a Lua executable that is consistent 
-  # with the library version.
-  execute_process(COMMAND ${LUA_EXECUTABLE} -v
-    OUTPUT_VARIABLE LUA_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_VARIABLE LUA_VERSION
-    ERROR_STRIP_TRAILING_WHITESPACE
-    )
-  #message("(preliminary) LUA_VERSION = ${LUA_VERSION}")
-  string(REGEX MATCH "[0-9]\\.[0-9]\\.[0-9]" LUA_VERSION "${LUA_VERSION}")
-  #message("(dotted triplet) LUA_VERSION = ${LUA_VERSION}")
-  # Reduce to just major.minor for purposes of comparison.
-  string(SUBSTRING "${LUA_VERSION}" 0 3 LUA_VERSION)
-  message(STATUS "LUA_VERSION = ${LUA_VERSION}")
-  set(LUA_VERSION_VALID)
-  if(${LUA_VERSION} STREQUAL "5.0" AND LUA50_FOUND)
-    set(LUA_VERSION_VALID ON)
-  elseif(${LUA_VERSION} STREQUAL "5.1" AND LUA51_FOUND)
-    set(LUA_VERSION_VALID ON)
-  endif(${LUA_VERSION} STREQUAL "5.0" AND LUA50_FOUND)
-
-  if(NOT LUA_VERSION_VALID)
-    message(STATUS "WARNING: "
-      "Lua executable found but version not consistent with library. Disabling Lua bindings")
-    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
-  endif(NOT LUA_VERSION_VALID)
-endif(ENABLE_lua)
-
-if(ENABLE_lua)
   # Unless some better convention comes along, follow what Debian does for
   # install location of Lua wrapper shared object.
-  if(LUA51_FOUND)
-    set(LUA_DIR ${LIB_DIR}/lua/5.1/plplot)
-  else(LUA51_FOUND)
+  if(LUA_VERSION MATCHES "5\\.0")
     set(LUA_DIR ${LIB_DIR}/lua/50/plplot)
-  endif(LUA51_FOUND)
+  else(LUA_VERSION MATCHES "5\\.0")
+    set(LUA_DIR ${LIB_DIR}/lua/${LUA_VERSION}/plplot)
+  endif(LUA_VERSION MATCHES "5\\.0")
 endif(ENABLE_lua)
