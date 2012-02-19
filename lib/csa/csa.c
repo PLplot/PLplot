@@ -672,10 +672,11 @@ static void thindata( triangle* t, int npmax )
 
     for ( ii = 0; ii < t->npoints; ++ii )
     {
+        square* s;
         point * p = t->points[ii];
         i = (int) floor( ( p->x - xmin ) / h );
         j = (int) floor( ( p->y - ymin ) / h );
-        square* s = squares[j][i];
+        s = squares[j][i];
 
         if ( s->npoints == 0 )
             square_addpoint( s, p );
