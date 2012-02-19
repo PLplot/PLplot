@@ -7,6 +7,7 @@
 @pltcl_LOCATION@ $* <<EOF
 source tcldemos.tcl
 plinit
+0
 1
 2
 3
@@ -37,5 +38,6 @@ plspause 0
 28
 29
 30
+33
 exit
 EOF

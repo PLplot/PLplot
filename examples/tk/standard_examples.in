@@ -8,6 +8,7 @@
 # \
 @plserver_LOCATION@ <<EOF
 source tkdemos.tcl
+0
 1
 2
 3
@@ -37,5 +38,6 @@ source tkdemos.tcl
 28
 29
 30
+33
 exit
 EOF
