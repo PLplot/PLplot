@@ -35,6 +35,7 @@ tcldemos.tcl
 )
 
 set(tcl_STRING_INDICES
+"00"
 "01"
 "02"
 "03"
@@ -119,7 +120,7 @@ if(CORE_BUILD)
     )
 
   install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-  install(PROGRAMS ${tcl_SCRIPTS} standard_examples.in 
+  install(PROGRAMS ${tcl_SCRIPTS} standard_examples.in
     DESTINATION ${DATA_DIR}/examples/tcl
     )
 
