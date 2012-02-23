@@ -1,3 +1,9 @@
+plplot (5.9.9-3) unstable; urgency=low
+
+  * debian/control.in: Bump standards version to 3.9.3.
+
+ -- Andrew Ross <andrew@andrew-laptop>  Thu, 23 Feb 2012 19:33:34 +0000
+
 plplot (5.9.9-2) unstable; urgency=low
 
   * debian/control.in: Add recommends on cmake for libplplot-dev since
