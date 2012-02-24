@@ -14,5 +14,5 @@ cstdlib. In this case you may need to include stdlib.h instead.
 
 If you encounter any other problems please report them.
 
-Andrew Ross <andrewross@users.sourceforge.net>
+Andrew Ross
 March 2004.

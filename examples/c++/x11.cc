@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------
 //
 //--------------------------------------------------------------------------
-// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross
 // Copyright (C) 2004  Alan W. Irwin
 //
 // This file is part of PLplot.

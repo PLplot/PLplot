@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------
 //
 //--------------------------------------------------------------------------
-// Copyright (C) 2004  Andrew Ross <andrewross@users.sourceforge.net>
+// Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.
 //
