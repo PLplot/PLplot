@@ -27,6 +27,7 @@
 
 set(cxx_STRING_INDICES
   "01cc"
+  "00"
   "01"
   "02"
   "03"

@@ -25,6 +25,7 @@
 # BUILD_TEST ON and CORE_BUILD OFF.
 
 set(ada_STRING_INDICES
+  "00"
   "01"
   "02"
   "03"
@@ -57,6 +58,7 @@ set(ada_STRING_INDICES
   "30"
   "31"
   "33"
+  "thick00"
   "thick01"
   "thick02"
   "thick03"

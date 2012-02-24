@@ -27,6 +27,7 @@
 # N.B. examples 14, 17, and 31 handled independently while 32 has
 # not yet been implemented.
 set(python_STRING_INDICES
+  "00"
   "01"
   "02"
   "03"

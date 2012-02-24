@@ -25,6 +25,7 @@
 # BUILD_TEST ON and CORE_BUILD OFF.
 
 set(lua_STRING_INDICES
+  "00"
   "01"
   "02"
   "03"

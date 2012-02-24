@@ -47,6 +47,7 @@ set(examples_octave
   p19.m
   p20.m
   p21.m
+  x00c.m
   x01c.m
   x02c.m
   x03c.m

@@ -14,9 +14,6 @@ exec pltcl -f "$0" ${1+"$@"}
 
 source x00.tcl
 
-plgver ver
-puts [format "PLplot library version: %s" $ver ]
-
 plinit
 x00
 plend

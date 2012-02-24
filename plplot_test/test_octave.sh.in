@@ -73,10 +73,10 @@ endfor
 # Example 32 not implemented because there has been no call for propagation
 # and it exercises no new API.
 failed = [] ;
-@swig_octave_comment@for i=[1:18 19 20:31 33] ;
+@swig_octave_comment@for i=[0:18 19 20:31 33] ;
 # Drop 4, 18, 26, and 33 because deprecated matwrap does not include plstring,
 # plstring3, pllegend, or plcolorbar.
-@matwrap_octave_comment@for i=[1:3 5:17 20:25 27:31 ] ;
+@matwrap_octave_comment@for i=[0:3 5:17 20:25 27:31 ] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
     cmd = sprintf("x%.2dc",i);
