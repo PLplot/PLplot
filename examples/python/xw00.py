@@ -1,4 +1,4 @@
-# $Id:$
+# $Id$
 #
 # Simple demo of a 2D line plot.
 #
