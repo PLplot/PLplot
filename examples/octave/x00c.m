@@ -1,4 +1,4 @@
-## $Id: x00c.c 12001 2011-10-27 05:26:31Z airwin $
+## $Id$
 ##
 ## Simple demo of a 2D line plot.
 ##
