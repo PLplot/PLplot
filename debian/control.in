@@ -351,7 +351,7 @@ Architecture: any
 Section: libdevel
 Suggests: plplot-doc
 Depends: libplplot11 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev, libqsastime-dev, ada-compiler, gnat, gnat-4.6, ${misc:Depends}, 
+ libltdl3-dev, libqsastime-dev, gnat, gnat-4.6, ${misc:Depends}, 
  libplplot-ada0 (= ${binary:Version})
 Recommends: libplplot-dev
 Breaks: libplplot-ada (<< 5.9.8-2), libplplot-dev (<< 5.9.8-2)

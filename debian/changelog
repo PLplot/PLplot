@@ -3,8 +3,10 @@ plplot (5.9.9-3) unstable; urgency=low
   * debian/control.in: 
     + Bump standards version to 3.9.3.
     + Fix broken suggests package plplot11-tcl for libplplot11.
+    + Remove reference to ada-compiler in libplplot-ada0-dev package as per new 
+      Debian Ada policy. Fixes lintian warning.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Sun, 26 Feb 2012 21:46:32 +0000
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Sun, 26 Feb 2012 22:29:21 +0000
 
 plplot (5.9.9-2) unstable; urgency=low
 
