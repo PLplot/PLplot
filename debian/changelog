@@ -1,8 +1,10 @@
 plplot (5.9.9-3) unstable; urgency=low
 
-  * debian/control.in: Bump standards version to 3.9.3.
+  * debian/control.in: 
+    + Bump standards version to 3.9.3.
+    + Fix broken suggests package plplot11-tcl for libplplot11.
 
- -- Andrew Ross <andrew@andrew-laptop>  Thu, 23 Feb 2012 19:33:34 +0000
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Sun, 26 Feb 2012 21:46:32 +0000
 
 plplot (5.9.9-2) unstable; urgency=low
 

@@ -29,7 +29,7 @@ Section: libs
 Conflicts: libplplot9
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: plplot11-driver-xwin, plplot11-driver-gd,
- plplot11-driver-cairo, plplot11-driver-qt, plplot11-driver-wxwidgets, plplot11-tcl
+ plplot11-driver-cairo, plplot11-driver-qt, plplot11-driver-wxwidgets, plplot-tcl
 Replaces: plplot-bin (<< 5.9.6-1)
 Breaks: plplot-bin (<<5.9.6-1)
 Description: Scientific plotting library
