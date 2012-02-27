@@ -1,0 +1,23 @@
+#
+# Patch from upstream to ensure nn library is linked against the maths library.
+#
+Index: plplot-5.9.9/lib/nn/CMakeLists.txt
+===================================================================
+--- plplot-5.9.9.orig/lib/nn/CMakeLists.txt	2012-02-27 21:27:23.839569576 +0000
++++ plplot-5.9.9/lib/nn/CMakeLists.txt	2012-02-27 21:28:06.623570811 +0000
+@@ -38,6 +38,15 @@
+   endif(BUILD_SHARED_LIBS)
+ 
+   add_library(csironn ${csironn_LIB_SRCS})
++
++  if(MATH_LIB)
++    set(
++      csironn_LINK_LIBRARIES
++      ${csironn_LINK_LIBRARIES}
++      ${MATH_LIB}
++      )
++  endif(MATH_LIB)
++
+   set_target_properties(
+     csironn
+     PROPERTIES

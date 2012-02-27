@@ -101,7 +101,9 @@ Description: Scientific plotting library (fortran bindings)
  virtually all aspects of plotting are configurable.
  .
  This package contains the Fortran 77 and Fortran 95 bindings for
- PLplot.
+ PLplot. Note: the Fortran 77 bindings have been deprecated in the latest
+ version of PLplot, and will be dropped from a future release. New code
+ should use the Fortran 95 bindings.
 
 Package: libplplot-java
 Architecture: any
