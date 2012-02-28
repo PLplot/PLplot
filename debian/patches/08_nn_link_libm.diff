@@ -3,12 +3,27 @@
 #
 Index: plplot-5.9.9/lib/nn/CMakeLists.txt
 ===================================================================
---- plplot-5.9.9.orig/lib/nn/CMakeLists.txt	2012-02-27 21:27:23.839569576 +0000
-+++ plplot-5.9.9/lib/nn/CMakeLists.txt	2012-02-27 21:28:06.623570811 +0000
-@@ -38,6 +38,15 @@
+--- plplot-5.9.9.orig/lib/nn/CMakeLists.txt	2012-02-28 11:40:08.000000000 +0000
++++ plplot-5.9.9/lib/nn/CMakeLists.txt	2012-02-28 11:45:48.000000000 +0000
+@@ -38,6 +38,7 @@
    endif(BUILD_SHARED_LIBS)
  
    add_library(csironn ${csironn_LIB_SRCS})
++
+   set_target_properties(
+     csironn
+     PROPERTIES
+@@ -46,7 +47,22 @@
+     COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
+     INSTALL_NAME_DIR "${LIB_DIR}"
+     )
+-  target_link_libraries(csironn ${QHULL_LIBRARIES})
++
++  set(
++    csironn_LINK_LIBRARIES
++    ${csironn_LINK_LIBRARIES}
++    ${QHULL_LIBRARIES}
++  )
 +
 +  if(MATH_LIB)
 +    set(
@@ -18,6 +33,7 @@ Index: plplot-5.9.9/lib/nn/CMakeLists.txt
 +      )
 +  endif(MATH_LIB)
 +
-   set_target_properties(
-     csironn
-     PROPERTIES
++  target_link_libraries(csironn ${csironn_LINK_LIBRARIES})
+   install(TARGETS csironn
+     EXPORT export_plplot
+     ARCHIVE DESTINATION ${LIB_DIR}

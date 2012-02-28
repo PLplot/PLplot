@@ -7,12 +7,14 @@
 
 @DPATCH@
 
---- plplot/examples/python/CMakeLists.txt.old
-+++ plplot/examples/python/CMakeLists.txt
-@@ -214,7 +214,7 @@
+Index: plplot-5.9.9/examples/python/CMakeLists.txt
+===================================================================
+--- plplot-5.9.9.orig/examples/python/CMakeLists.txt	2012-02-28 11:40:09.000000000 +0000
++++ plplot-5.9.9/examples/python/CMakeLists.txt	2012-02-28 11:42:31.000000000 +0000
+@@ -241,7 +241,7 @@
      @ONLY
      )
-
+ 
 -  set(python_location1 ${PYTHON_INSTDIR})
 +  set(python_location1)
    set(python_location2)
