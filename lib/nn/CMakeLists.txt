@@ -45,14 +45,6 @@ if(PL_HAVE_QHULL)
     target_link_libraries(csironn LINK_INTERFACE_LIBRARIES)
   endif(NON_TRANSITIVE)
 
-  if(MATH_LIB)
-    set(
-      csironn_LINK_LIBRARIES
-      ${csironn_LINK_LIBRARIES}
-      ${MATH_LIB}
-      )
-  endif(MATH_LIB)
-
   set_target_properties(
     csironn
     PROPERTIES
@@ -61,7 +53,22 @@ if(PL_HAVE_QHULL)
     COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
     INSTALL_NAME_DIR "${LIB_DIR}"
     )
-  target_link_libraries(csironn ${QHULL_LIBRARIES})
+
+  set(
+    csironn_LINK_LIBRARIES
+    ${csironn_LINK_LIBRARIES}
+    ${QHULL_LIBRARIES}
+  )
+
+  if(MATH_LIB)
+    set(
+      csironn_LINK_LIBRARIES
+      ${csironn_LINK_LIBRARIES}
+      ${MATH_LIB}
+      )
+  endif(MATH_LIB)
+
+  target_link_libraries(csironn ${csironn_LINK_LIBRARIES})
 
   install(TARGETS csironn
     EXPORT export_plplot
