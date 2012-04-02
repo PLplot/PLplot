@@ -5,7 +5,7 @@ Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
 Standards-Version: 3.9.3
 Build-Depends: cmake (>= 2.6.3), debhelper (>= 7), 
  tcl8.5-dev, tk8.5-dev, itcl3-dev, libx11-dev, libxext-dev,
- libxi-dev, gfortran, itk3-dev, octave3.2-headers,
+ libxi-dev, gfortran, itk3-dev, liboctave-dev,
  libgd2-noxpm-dev | libgd2-xpm-dev, m4, libqhull-dev (>= 2003.1-8), 
  libxml-parser-perl, libxml-dom-perl, libltdl3-dev, pkg-config, 
  quilt, slice, python-gtk2-dev, libwxgtk2.8-dev, 
@@ -17,7 +17,7 @@ Build-Depends: cmake (>= 2.6.3), debhelper (>= 7),
  liblablgtk2-ocaml-dev, liblua5.1-0-dev, lua5.1, gdc-v1
 Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex, ghostscript
-Build-Conflicts: libplplot5, octave3.0-headers
+Build-Conflicts: libplplot5
 X-Python-Version: >=2.4
 Homepage: http://www.plplot.org
 Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
@@ -316,7 +316,7 @@ Description: Scientific plotting library (python qt GUI)
 
 Package: octave-plplot
 Architecture: any
-Depends: libplplot11 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends},
+Depends: libplplot11 (= ${binary:Version}), octave (>= 3.6.1), ${shlibs:Depends},
  ${misc:Depends}
 Description: Octave support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich

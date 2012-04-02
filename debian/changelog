@@ -1,5 +1,6 @@
 plplot (5.9.9-3) unstable; urgency=low
 
+  [ Andrew Ross ]
   * debian/control.in: 
     + Bump standards version to 3.9.3.
     + Fix broken suggests package plplot11-tcl for libplplot11.
@@ -18,8 +19,30 @@ plplot (5.9.9-3) unstable; urgency=low
     warning.
   * Rebuild python-plplot package against new version of numpy as part of the 
     numpy transition.
+  
+  [ Rafael Laboissiere ]
+  * debian/control.in:
+    + Build-depend on liboctave-dev
+    + Drop build-conflict with octave3.0-headers
+    + Depend directly on octave, instead of using the substitution
+      variable ${octave:Depends}
+  * debian/rules:
+    + Set directly the Octave paths, instead of using defs.make
+    + Drop the call to octave-depends
+  * Adjust the upstream code for working with Octave 3.6.1, by adding the
+    following patches:
+    + debian/patches/replace-deprecated-split.diff
+    + debian/patches/proper-path-handling.diff
+    + debian/patches/fix-boolean-operators.diff
+  * debian/octave-plplot.files: The path in /usr/lib has now an
+    architecture triplet
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 27 Feb 2012 21:34:46 +0000
+  [ Andrew Ross ]
+  * debian/patches/replace-deprecated-split.diff:
+    + Fix use of split in the test_octave.sh test script as well. This plus
+      previous changes by Rafael fix octave-3.6 support (closes: #666708).
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 02 Apr 2012 15:30:25 +0100
 
 plplot (5.9.9-2) unstable; urgency=low
 

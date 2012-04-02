@@ -11,7 +11,10 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-include /usr/share/octave/debian/defs.make
+# Paths for Octave
+MDIR = $(shell octave-config --print LOCALAPIFCNFILEDIR)
+OCTDIR = $(shell octave-config --print LOCALAPIOCTFILEDIR)
+
 #include /usr/share/quilt/quilt.make
 
 version		:= $(shell perl debian/get-upstream-version.pl < cmake/modules/plplot_version.cmake)
@@ -241,7 +244,6 @@ binary-arch: build-arch install-arch
 	dh_shlibdeps -a --no-package=octave-plplot -L $(libpkg) \
           -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib 
 	dpkg-shlibdeps -Tdebian/octave-plplot.substvars -S$(debbase)/$(libpkg)/usr/lib/*.so* -S/usr/lib/$(octver)/*.so* $(debbase)/octave-plplot/$(OCTDIR)/plplot_octave.oct
-	octave-depends --package=octave-plplot
 	dh_installdeb -a
 	dh_lintian -a
 	dh_gencontrol -a -- -VF:OCamlABI="$(OCAMLABI)"
