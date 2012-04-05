@@ -51,9 +51,9 @@ OFILES := $(filter-out debian/control,$(patsubst %.in,%,$(wildcard debian/*.in))
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-# Disable Ada build on armel - gnat not available on armel at the moment.
+# Disable Ada build on armhf and sh4 - gnat not available on these at the moment.
 
-ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:sh4:))
+ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:armhf:sh4:))
 BUILD_ADA = no
 else
 BUILD_ADA = yes
