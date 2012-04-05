@@ -1,3 +1,11 @@
+plplot (5.9.9-4) unstable; urgency=low
+
+  * debian/rules: 
+    + Fix bug in building binary-arch target on autobuilders.  
+    + Remove workaround for executable permissions bug in 5.9.8.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 04 Apr 2012 21:27:11 +0100
+
 plplot (5.9.9-3) unstable; urgency=low
 
   [ Andrew Ross ]

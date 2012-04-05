@@ -92,9 +92,7 @@ endif
 
 config: config-stamp
 config-stamp: control 
-        # Temporary fix for perms problem in 5.9.8
-	chmod a+x $(SRC_DIR)/plplot_test/test_d.sh.in
-	mkdir $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
 	JAVA_HOME=$(JAVA_HOME) DC=$(DC) \
