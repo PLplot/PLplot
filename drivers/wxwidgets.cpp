@@ -250,7 +250,8 @@ void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
             if ( ucs4[i] != (PLUNICODE) plplotEsc ) // a character to display
             {
                 ucs4_to_utf8( ucs4[i], utf8 );
-                strncat( utf8_string, utf8, max_string_length );
+                strncat( utf8_string, utf8, 
+                  sizeof( utf8_string ) - strlen( utf8_string ) - 1 );
                 i++;
                 continue;
             }
@@ -258,7 +259,8 @@ void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
             if ( ucs4[i] == (PLUNICODE) plplotEsc ) // a escape character to display
             {
                 ucs4_to_utf8( ucs4[i], utf8 );
-                strncat( utf8_string, utf8, max_string_length );
+                strncat( utf8_string, utf8, 
+                  sizeof( utf8_string ) - strlen( utf8_string ) - 1 );
                 i++;
                 continue;
             }
