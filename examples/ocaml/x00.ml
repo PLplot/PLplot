@@ -27,11 +27,11 @@ open Plplot
 
 let nsize = 101
 
-let () = 
-  let xmin = 0.0;
-  let xmax = 1.0;
-  let ymin = 0.0;
-  let ymax = 100.0;
+let () =
+  let xmin = 0.0 in
+  let xmax = 1.0 in
+  let ymin = 0.0 in
+  let ymax = 100.0 in
 
   (* Prepare data to be plotted. *)
   let x = Array.init nsize (fun i -> float_of_int i /. ( float_of_int nsize -. 1.0)) in 
