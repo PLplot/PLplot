@@ -90,6 +90,7 @@ set(
   test_type1.py
   test_hebrew_diacritic.py
   test_style.py
+  test_linebreak.py
   )
 
 if(ENABLE_tk)
