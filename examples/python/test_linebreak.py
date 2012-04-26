@@ -11,18 +11,18 @@ from numpy import *
 # Taken from http://www.columbia.edu/~fdc/pace/
 
 peace = [
-    "(Mandarin) 和平",
-    "(Hindi) शांति",
-    "(English) Peace",
-    "(Hebrew) שלום",
-    "(Russian) Мир",
-    "(German) Friede",
-    "(Korean) 평화",
-    "(French) Paix",
-    "(Spanish) Paz",
-    "(Arabic) ﺳﻼم",
-    "(Turkish) Barış",
-    "(Kurdish) Hasîtî",
+    "和平 (Mandarin)",
+    "शांति (Hindi)",
+    "Peace (English)",
+    "שלום (Hebrew)",
+    "Мир (Russian)",
+    "Friede (German)",
+    "평화 (Korean)",
+    "Paix (French)",
+    "Paz (Spanish)",
+    "ﺳﻼم (Arabic)",
+    "Barış (Turkish)",
+    "Hasîtî (Kurdish)",
     ]
 
 # Parse and process command line arguments
@@ -37,7 +37,7 @@ plwind(0., 1., 0., 1.)
 # Just to show edges of viewport
 plbox("bc", 0., 0, "bc", 0., 0)
 plcol0(1)
-plschr(0., 1.5)
+plschr(0., 1.4)
 for i in arange(6):
-    plptex(0.05, 0.95 - 0.166*i, 1., 0., 0., peace[2*i] + "\n" + peace[2*i+1])
+    plptex(0.01, 0.90 - 0.16*i, 1., 0., 0., peace[2*i] + "\n" + peace[2*i+1])
 plend()
