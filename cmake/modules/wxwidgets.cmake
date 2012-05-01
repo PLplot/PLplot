@@ -91,12 +91,22 @@ if(PLD_wxwidgets OR PLD_wxpng)
 	wxwidgets_COMPILE_FLAGS
 	"${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
 	)
+      set(
+	wxwidgets_LINK_FLAGS
+	${wxwidgets_LINK_FLAGS}
+	${AGG_LIBRARIES}
+	)
     else(HAVE_AGG)
       message(STATUS "WARNING: wxwidgets driver and bindings components depending on AGG library have been dropped.")
     endif(HAVE_AGG)
     set(
       wxwidgets_COMPILE_FLAGS
       "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
+      )
+    set(
+      wxwidgets_LINK_FLAGS
+      ${wxwidgets_LINK_FLAGS}
+      ${FREETYPE_LIBRARIES}
       )
   endif(WITH_FREETYPE)
   set(DRIVERS_LINK_FLAGS
