@@ -103,8 +103,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <itemizedlist>
       <listitem>
 	<para>
-	  Use the <command>./configure</command> option
-	  <userinput>--prefix=/usr/local/plplot</userinput> (or some other
+	  Use the <command>cmake</command> option
+	  <userinput>-DCMAKE_INSTALL_PREFIX=/usr/local/plplot</userinput> (or some other
 	  unique but consistent directory that is available on the build
 	  machine and all users' machines).
 	</para>
@@ -128,9 +128,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </listitem>
       <listitem>
 	<para>
-	  Build the application(s) on the build machine using the results
-	  of the <userinput>pkg-config --cflags --libs plplotd</userinput>
-	  command, and copy the resulting executable(s) to the users'
+	  Build the application(s) on the build machine using either the
+	  make or cmake based build system in 
+	  /usr/local/plplot/share/plplotX.Y.Z/examples where X.Y.Z is 
+	  the plplot version, and copy the resulting executable(s) to the users'
 	  machines.  Since the PLplot install location is consistent on all
 	  machines, the application should work the same way on all
 	  machines.

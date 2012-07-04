@@ -106,11 +106,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    <filename>plplot.h</filename>.  If no prototype is changed,
 	    then the chances are high that no backwards compatibilities
 	    have been introduced.  If new functions has been added, then
-	    the library soname will be kept, although the libtool soversion
-	    string in <filename>configure.ac</filename> must be changed
-	    from <literal>x:y:z</literal> to
-	    <literal>(x+1):0:(z+1)</literal>.  See the
-	    <application>libtool</application> manual for details.
+	    the library soname will be kept, although the soversion
+	    strings in <filename>cmake/module/plplot_version.cmake</filename> 
+	    must be changed following the instructions in that file.
 	  </para>
 	</listitem>
 	<listitem>

@@ -1731,21 +1731,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	and the TrueType fonts that are actually used.  
       </para>
       <para>
-	On Unix/Linux systems, the TrueType fonts corresponding to the 30 possible
-	valid FCIs can be specified using ./configure options. (Use
-	./configure --help to see the possibilities and also the default
-	values for the fonts.) These ./configure defaults for the 30
-	possibilites are taken from fonts available from the ttf-freefont font
+	The TrueType fonts corresponding to the 30 possible
+	valid FCIs can be specified using cmake options. The defaults for the
+        30 cmake variables PL_FREETYPE_FONT[_MODIFIER] (where FONT is one of 
+        MONO, SANS, SCRIPT, SERIF or SYMBOL and the optional MODIFIER is one
+	of BOLD, BOLD_ITALIC, BOLD_OBLIQUE, ITALIC or OBLIQUE) are documented 
+	in cmake/modules/freetype.cmake. On Windows these defaults use standard
+	Windows fonts. On all other platforms defaults
+	are taken from fonts available from the ttf-freefont font
 	package.  We recommend this font package because it has a rather
 	complete set of glyphs for most unicode blocks.  (We also recommend
 	the gucharmap application for determining other unicode font
 	possibilities on your system that are available via the FreeType
 	library.)
-      </para>
-      <para>
-	On Windows systems, the fixed default TrueType fonts are specified in the
-	include/plfci.h file.  (NOT PROGRAMMED YET, so this statement
-	will probably NEED REVISION.)
       </para>
       <para>
 	For all systems, the 30 possible TrueType fonts can be specified at run
@@ -1904,9 +1902,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</itemizedlist>
 	On Unix/Linux systems if these environment variables are not specified
 	with an absolute path starting with "/", then the absolute path is
-	specified by the configured default (see ./configure --help) or at
-	run time with the
-	environment variable PLPLOT_FREETYPE_FONT_DIR.
+	specified by the cmake variable PL_FREETYPE_FONT_PATH or at
+	run time with the environment variable PLPLOT_FREETYPE_FONT_DIR.
       </para>
     </sect2>
 
