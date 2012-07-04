@@ -820,6 +820,11 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
                 if ( FT_New_Face( FT->library, font_name, 0, &FT->face ) )
                     plexit( "FT_SetFace: Error loading a font in freetype" );
             }
+
+                       //check if the charmap was loaded correctly - freetype only checks for a unicode charmap
+                       //if it is not set then use the first found charmap in the font
+                       if ( FT->face->charmap == NULL )
+                               FT_Select_Charmap( FT->face,FT->face->charmaps[0]->encoding );
         }
     }
     FT_Set_Char_Size( FT->face, 0,
