@@ -134,7 +134,7 @@ class x21 {
         double x[], y[], z[], clev[];
         double xg[], yg[], zg[][];
         double xg0[][], yg0[][];
-	double xx[], yy[];
+        double xx[], yy[];
         double zmin, zmax, lzm[], lzM[];
         int    i, j, k;
         int    alg;
@@ -167,11 +167,11 @@ class x21 {
 
         pls.seed( 5489 );
 
-        x = new double[pts];
-        y = new double[pts];
-        z = new double[pts];
-	xx = new double[1];
-	yy = new double[1];
+        x  = new double[pts];
+        y  = new double[pts];
+        z  = new double[pts];
+        xx = new double[1];
+        yy = new double[1];
 
         create_data( x, y, z ); // the sampled data
         zmin = z[0];
@@ -208,23 +208,24 @@ class x21 {
         pls.env( xm, xM, ym, yM, 2, 0 );
         pls.col0( 15 );
         pls.lab( "X", "Y", "The original data sampling" );
-	for ( i = 0; i < pts ; i++ ) {
-	    pls.col1( ( z[i] - zmin ) / ( zmax - zmin ) );
-	    // The following plstring call should be the the equivalent of
-	    // plpoin( 1, &x[i], &y[i], 5 ); Use plstring because it is
-	    // not deprecated like plpoin and has much more powerful
-	    // capabilities.  N.B. symbol 141 works for Hershey devices
-	    // (e.g., -dev xwin) only if plfontld( 0 ) has been called
-	    // while symbol 727 works only if plfontld( 1 ) has been
-	    // called.  The latter is the default which is why we use 727
-	    // here to represent a centred X (multiplication) symbol.
-	    // This dependence on plfontld is one of the limitations of
-	    // the Hershey escapes for PLplot, but the upside is you get
-	    // reasonable results for both Hershey and Unicode devices.
-	    xx[0] = x[i];
-	    yy[0] = y[i];
-	    pls.string( xx, yy, "#(727)" );
-	}
+        for ( i = 0; i < pts; i++ )
+        {
+            pls.col1( ( z[i] - zmin ) / ( zmax - zmin ) );
+            // The following plstring call should be the the equivalent of
+            // plpoin( 1, &x[i], &y[i], 5 ); Use plstring because it is
+            // not deprecated like plpoin and has much more powerful
+            // capabilities.  N.B. symbol 141 works for Hershey devices
+            // (e.g., -dev xwin) only if plfontld( 0 ) has been called
+            // while symbol 727 works only if plfontld( 1 ) has been
+            // called.  The latter is the default which is why we use 727
+            // here to represent a centred X (multiplication) symbol.
+            // This dependence on plfontld is one of the limitations of
+            // the Hershey escapes for PLplot, but the upside is you get
+            // reasonable results for both Hershey and Unicode devices.
+            xx[0] = x[i];
+            yy[0] = y[i];
+            pls.string( xx, yy, "#(727)" );
+        }
         pls.adv( 0 );
 
         pls.ssub( 3, 2 );

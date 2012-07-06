@@ -31,17 +31,17 @@ using namespace std;
 
 class x00 {
 public:
-    x00( int, const char **);
+    x00( int, const char ** );
 
 private:
     // Class data
-    plstream *pls;
+    plstream         *pls;
 
     static const int NSIZE;
 };
 
 const int x00::NSIZE = 101;
- 
+
 x00::x00( int argc, const char **argv )
 {
     PLFLT x[NSIZE], y[NSIZE];
@@ -54,9 +54,9 @@ x00::x00( int argc, const char **argv )
         x[i] = (PLFLT) ( i ) / (PLFLT) ( NSIZE - 1 );
         y[i] = ymax * x[i] * x[i];
     }
-    
+
     pls = new plstream();
-    
+
     // Parse and process command line arguments
     pls->parseopts( &argc, argv, PL_PARSE_FULL );
 

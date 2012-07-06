@@ -493,7 +493,7 @@ void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )
     //size_t len=wxConvUTF8.ToWChar( str, 512, utf8_string );
     size_t len   = strlen( utf8_string );
     char   * str = utf8_string;
-    printf( "len=%lu\n", ( unsigned long ) len );
+    printf( "len=%lu\n", (unsigned long) len );
 
     const agg::glyph_cache* glyph;
     if ( !drawText )

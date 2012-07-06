@@ -95,7 +95,7 @@ int main( char[][] args )
     plenv( xm, xM, ym, yM, 2, 0 );
     plcol0( 15 );
     pllab( "X", "Y", "The original data sampling" );
-    for ( int i = 0; i < pts ; i++ )
+    for ( int i = 0; i < pts; i++ )
     {
         plcol1( ( z[i] - zmin ) / ( zmax - zmin ) );
         xx[0] = x[i];

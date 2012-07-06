@@ -28,11 +28,10 @@ package plplot.examples;
 import plplot.core.*;
 
 class x00 {
-
-    PLStream pls = new PLStream();
+    PLStream   pls = new PLStream();
 
     static int NSIZE = 101;
-    
+
     public static void main( String[] args )
     {
         new x00( args );
@@ -40,32 +39,32 @@ class x00 {
 
     public x00( String[] args )
     {
-	double x[] = new double[NSIZE];
-	double y[] = new double[NSIZE];
-	double xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
-	int    i;
+        double x[]  = new double[NSIZE];
+        double y[]  = new double[NSIZE];
+        double xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
+        int    i;
 
-	// Prepare data to be plotted.
-	for ( i = 0; i < NSIZE; i++ )
-	{
-	    x[i] = (double)( i ) / (double) ( NSIZE - 1 );
-	    y[i] = ymax * x[i] * x[i];
-	}
-    
-	// Parse and process command line arguments
-	pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
-	// Initialize plplot
-	pls.init();
-	
-	// Create a labelled box to hold the plot.
-	pls.env( xmin, xmax, ymin, ymax, 0, 0 );
-	pls.lab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" );
+        // Prepare data to be plotted.
+        for ( i = 0; i < NSIZE; i++ )
+        {
+            x[i] = (double) ( i ) / (double) ( NSIZE - 1 );
+            y[i] = ymax * x[i] * x[i];
+        }
 
-	// Plot the data that was prepared above.
-	pls.line( x, y );
+        // Parse and process command line arguments
+        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        // Initialize plplot
+        pls.init();
 
-	// Close PLplot library
-	pls.end();
+        // Create a labelled box to hold the plot.
+        pls.env( xmin, xmax, ymin, ymax, 0, 0 );
+        pls.lab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" );
+
+        // Plot the data that was prepared above.
+        pls.line( x, y );
+
+        // Close PLplot library
+        pls.end();
     }
 }
 
