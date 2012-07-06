@@ -660,15 +660,16 @@ void plD_FreeType_init( PLStream *pls )
 
 #if defined ( MSDOS ) || defined ( WIN32 )
 
-//
-// Work out if we have Win95+ or Win3.?... sort of.
-// Actually, this just tries to find the place where the fonts live by looking
-// for arial, which should be on all windows machines.
-// At present, it only looks in two places, on one drive. I might change this
-// soon.
-//
-    if ( WINDIR_PATH == NULL )
+// First check for a user customised location and if
+// the fonts aren't found there try the default Windows
+// locations
+    if ( ( a = getenv( "PLPLOT_FREETYPE_FONT_DIR" ) ) != NULL )
+        strncpy( font_dir, a, PLPLOT_MAX_PATH - 1 );
+    else if ( strlen( PL_FREETYPE_FONT_DIR ) > 0 )
+        strncpy( font_dir, PL_FREETYPE_FONT_DIR, PLPLOT_MAX_PATH - 1 );
+    else if ( WINDIR_PATH == NULL )
     {
+        //try to guess the font location by looking for arial font on C:
         if ( access( "c:\\windows\\fonts\\arial.ttf", F_OK ) == 0 )
         {
             strcpy( font_dir, "c:/windows/fonts/" );
@@ -682,6 +683,7 @@ void plD_FreeType_init( PLStream *pls )
     }
     else
     {
+        //Try to guess the font location by looking for Arial font in the Windows Path
         strncat( WINDIR_PATH, "\\fonts\\arial.ttf", PLPLOT_MAX_PATH - 1 - strlen( WINDIR_PATH ) );
         if ( access( WINDIR_PATH, F_OK ) == 0 )
         {
@@ -694,6 +696,7 @@ void plD_FreeType_init( PLStream *pls )
         else
             plwarn( "Could not find font path; I sure hope you have defined fonts manually !" );
     }
+    font_dir[PLPLOT_MAX_PATH - 1] = '\0';
 
     if ( pls->debug )
         fprintf( stderr, "%s\n", font_dir );
@@ -821,10 +824,10 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
                     plexit( "FT_SetFace: Error loading a font in freetype" );
             }
 
-                       //check if the charmap was loaded correctly - freetype only checks for a unicode charmap
-                       //if it is not set then use the first found charmap in the font
-                       if ( FT->face->charmap == NULL )
-                               FT_Select_Charmap( FT->face,FT->face->charmaps[0]->encoding );
+            //check if the charmap was loaded correctly - freetype only checks for a unicode charmap
+            //if it is not set then use the first found charmap in the font
+            if ( FT->face->charmap == NULL )
+                FT_Select_Charmap( FT->face, FT->face->charmaps[0]->encoding );
         }
     }
     FT_Set_Char_Size( FT->face, 0,
