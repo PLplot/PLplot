@@ -40,25 +40,27 @@
 // Physical dimension constants used by the driver
 
 // Virtual coordinate scaling parameter, used to do calculations at
-// higher resolution.  Chosen to be 32 for consistency with the PLplot
-// metafile (see plplotP.h).
+// higher resolution.  Chosen so that maximum plP_setphy coordinate
+// is 32000 which is close to but still less than the maximum possible
+// which is 32767.
 //
 // The trick here is to do everything in device coordinates on the driver
 // side, but report/receive everything in virtual coordinates to/from the
 // PLplot core.
 //
-#define VSCALE                       ( 32. )
+#define VSCALE                       ( 40. )
 
-// pixels per mm
-#define DEVICE_PIXELS_PER_MM         ( 3.14961 )
-#define VIRTUAL_PIXELS_PER_MM        ( DEVICE_PIXELS_PER_MM * VSCALE )
+// pixels per inch
+#define DEVICE_PIXELS_PER_IN         ( 80. )
+#define VIRTUAL_PIXELS_PER_IN        ( DEVICE_PIXELS_PER_IN * VSCALE )
+
 
 // mm per inch
 #define MM_PER_IN                    ( 25.4 )
 
-// pixels per inch
-#define DEVICE_PIXELS_PER_IN         ( DEVICE_PIXELS_PER_MM * MM_PER_IN )
-#define VIRTUAL_PIXELS_PER_IN        ( VIRTUAL_PIXELS_PER_MM * MM_PER_IN )
+// pixels per mm
+#define DEVICE_PIXELS_PER_MM         ( DEVICE_PIXELS_PER_IN / MM_PER_IN )
+#define VIRTUAL_PIXELS_PER_MM        ( VIRTUAL_PIXELS_PER_IN / MM_PER_IN )
 
 // Default dimensions of the canvas (in inches)
 #define CANVAS_WIDTH                 ( 10.0 )
