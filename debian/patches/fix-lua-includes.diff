@@ -1,0 +1,21 @@
+Description: Fix for cmake lua support to work around problem that lua needs multiple include directories on Debian
+Author: Andrew Ross <andrewross@users.sourceforge.net>
+Last-Update: 2012-07-19
+
+===================================================================
+Index: plplot-5.9.9/cmake/modules/lua.cmake
+===================================================================
+--- plplot-5.9.9.orig/cmake/modules/lua.cmake	2011-10-13 01:43:01.000000000 +0100
++++ plplot-5.9.9/cmake/modules/lua.cmake	2012-07-20 00:11:55.295075888 +0100
+@@ -118,3 +118,11 @@
+     set(LUA_DIR ${LIB_DIR}/lua/50/plplot)
+   endif(LUA51_FOUND)
+ endif(ENABLE_lua)
++
++if(ENABLE_lua AND LUA51_FOUND)
++  pkg_check_pkgconfig(lua5.1 includedir libdir linkflags1 cflags1 version1 _LUA)
++  if(linkflags1)
++    set(LUA_INCLUDE_DIR ${includedir})
++  endif(linkflags1)
++endif(ENABLE_lua AND LUA51_FOUND)
++

@@ -1,9 +1,14 @@
 plplot (5.9.9-5) unstable; urgency=low
 
-  * debian/rules: Disable Ada support on armhf since gnat is not available on that
-    architecture at the moment.
+  * debian/patches/series, debian/patches/fix-cmake-ada-support.diff:
+    Add patch from upstream to fix cmake ada support with cmake 2.8.9 and later
+    (closes: #680841).
+  * debian/patches/series, debian/patches/fix-lua-includes.diff:
+    Add patch to work around problem with lua cmake support. Debian now requires 
+    multiple include paths which were not found correctly. This prevents a FTBFS 
+    with recent versions of lua5.1.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 05 Apr 2012 21:54:46 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 20 Jul 2012 00:05:51 +0100
 
 plplot (5.9.9-4) unstable; urgency=low
 
