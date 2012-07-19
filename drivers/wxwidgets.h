@@ -475,7 +475,7 @@ private:
         return new appname;                                          \
     }                                                                \
     wxAppInitializer                                                 \
-    wxAppInitializer( (wxAppInitializerFunction) wxPLCreateApp );    \
+    wxAppInitializer( (wxAppInitializerFunction) (wxApp::GetInitializerFunction()==NULL ? wxPLCreateApp : wxApp::GetInitializerFunction()) );    \
     DECLARE_PLAPP( appname )                                         \
     appname & wxPLGetApp() { return *wx_static_cast( appname *, wxApp::GetInstance() ); }
 
