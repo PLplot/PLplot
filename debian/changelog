@@ -1,3 +1,10 @@
+plplot (5.9.9-6) unstable; urgency=low
+
+  * debian/control.in: Remove build dependency on quilt since this is 
+    not required for 3.0 (quilt) source packages. Fixes lintian warning.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 08 Aug 2012 12:55:15 +0100
+
 plplot (5.9.9-5) unstable; urgency=low
 
   * debian/patches/series, debian/patches/fix-cmake-ada-support.diff:

@@ -15,8 +15,6 @@
 MDIR = $(shell octave-config --print LOCALAPIFCNFILEDIR)
 OCTDIR = $(shell octave-config --print LOCALAPIOCTFILEDIR)
 
-#include /usr/share/quilt/quilt.make
-
 version		:= $(shell perl debian/get-upstream-version.pl < cmake/modules/plplot_version.cmake)
 libpkg          := libplplot11
 docpkg          := plplot-doc
