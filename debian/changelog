@@ -7,8 +7,9 @@ plplot (5.9.9-5) unstable; urgency=low
     Add patch to work around problem with lua cmake support. Debian now requires 
     multiple include paths which were not found correctly. This prevents a FTBFS 
     with recent versions of lua5.1.
+  * Recompile with latest version of gfortran (closes: #683878). 
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 20 Jul 2012 00:05:51 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 08 Aug 2012 09:34:10 +0100
 
 plplot (5.9.9-4) unstable; urgency=low
 
