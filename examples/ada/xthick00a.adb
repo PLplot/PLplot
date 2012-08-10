@@ -33,7 +33,7 @@ use
     PLplot_Auxiliary,
     PLplot;
 
-procedure x00thicka is
+procedure xthick00a is
     x, y : Real_Vector(0 .. 100);
     x_Min, y_Min : Long_Float := 0.0;
     x_Max : Long_Float := 1.0;
@@ -65,4 +65,4 @@ begin
 
     -- Close PLplot library.
     End_PLplot;
-end x00thicka;
+end xthick00a;
