@@ -1240,7 +1240,7 @@ struct _N10
     PLFLT s;
     PLFLT p;
     PLFLT a;
-    int   rev;
+    int   alt_hue_path;
 }
 alias _N10 PLControlPt;
 

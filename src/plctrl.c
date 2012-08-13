@@ -694,9 +694,9 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
         plsc->cmap1cp[n].a = 1.0;
 
         if ( rev == NULL )
-            plsc->cmap1cp[n].rev = 0;
+            plsc->cmap1cp[n].alt_hue_path = 0;
         else
-            plsc->cmap1cp[n].rev = rev[n];
+            plsc->cmap1cp[n].alt_hue_path = rev[n];
     }
 
 // Calculate and set color map
@@ -775,9 +775,9 @@ c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
         plsc->cmap1cp[n].a = a[n];
 
         if ( rev == NULL )
-            plsc->cmap1cp[n].rev = 0;
+            plsc->cmap1cp[n].alt_hue_path = 0;
         else
-            plsc->cmap1cp[n].rev = rev[n];
+            plsc->cmap1cp[n].alt_hue_path = rev[n];
     }
 
 // Calculate and set color map
@@ -815,7 +815,7 @@ plcmap1_calc( void )
 
         // Adjust dh if we are to go around "the back side"
 
-        if ( plsc->cmap1cp[n].rev )
+        if ( plsc->cmap1cp[n].alt_hue_path )
             dh = ( dh > 0 ) ? dh - 360 : dh + 360;
 
         // Loop over all color cells.  Only interested in cells located (in

@@ -1897,13 +1897,13 @@ scol1( Tcl_Interp *interp, register PlFrame *plFramePtr,
          ( pls->cmap1cp[i].l != l ) ||
          ( pls->cmap1cp[i].s != s ) ||
          ( pls->cmap1cp[i].p != p ) ||
-         ( pls->cmap1cp[i].rev != reverse ) )
+         ( pls->cmap1cp[i].alt_hue_path != reverse ) )
     {
         pls->cmap1cp[i].h   = h;
         pls->cmap1cp[i].l   = l;
         pls->cmap1cp[i].s   = s;
         pls->cmap1cp[i].p   = p;
-        pls->cmap1cp[i].rev = reverse;
+        pls->cmap1cp[i].alt_hue_path = reverse;
         *p_changed          = 1;
     }
     return TCL_OK;
@@ -2023,7 +2023,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
             sprintf( str, "%02d", (int) ( 100 * pls->cmap1cp[i].p ) );
             Tcl_AppendElement( interp, str );
 
-            sprintf( str, "%01d", (int) ( pls->cmap1cp[i].rev ) );
+            sprintf( str, "%01d", (int) ( pls->cmap1cp[i].alt_hue_path ) );
             Tcl_AppendElement( interp, str );
         }
         result = TCL_OK;

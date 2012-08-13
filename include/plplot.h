@@ -466,7 +466,7 @@ typedef struct
     PLFLT s;                    // saturation
     PLFLT p;                    // position
     PLFLT a;                    // alpha (or transparency)
-    int   rev;                  // if set, interpolate through h=0
+    int   alt_hue_path;         // if set, interpolate through h=0
 } PLControlPt;
 
 // A PLBufferingCB is a control block for interacting with devices

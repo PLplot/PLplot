@@ -508,7 +508,7 @@ plr_state( PLRDev *plr )
             plsc->cmap1cp[i].h   = h;
             plsc->cmap1cp[i].l   = l;
             plsc->cmap1cp[i].s   = s;
-            plsc->cmap1cp[i].rev = rev;
+            plsc->cmap1cp[i].alt_hue_path = rev;
         }
         plP_state( PLSTATE_CMAP1 );
         break;

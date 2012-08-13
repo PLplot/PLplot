@@ -468,7 +468,7 @@ package PLplot_Thin is
             l   : PLFLT;   -- lightness 
             s   : PLFLT;   -- saturation 
             p   : PLFLT;   -- position 
-            rev : Integer; -- if set, interpolate through h=0 
+            alt_hue_path : Integer; -- if set, interpolate through h=0 
         end record;
 
     -- A PLBufferingCB is a control block for interacting with devices
