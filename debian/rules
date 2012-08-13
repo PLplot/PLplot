@@ -28,10 +28,12 @@ debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
 octver		:= $(shell octave-config -v)
 
-CFLAGS = $(shell dpkg-buildflags --get CFLAGS)
+# Note cmake ignores CPPFLAGS so add them to CFLAGS and CXXFLAGS as a work around
+CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS = $(shell dpkg-buildflags --get CFLAGS) $(CPPFLAGS)
 CFLAGS += -fvisibility=hidden
 #Don't add -fvisibility=hidden to CXXFLAGS for now as this breaks the octave bindings.
-CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
+CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS) $(CPPFLAGS)
 #CXXFLAGS += -fvisibility=hidden
 FFLAGS = $(shell dpkg-buildflags --get FFLAGS)
 FFLAGS += -fvisibility=hidden
@@ -49,9 +51,9 @@ OFILES := $(filter-out debian/control,$(patsubst %.in,%,$(wildcard debian/*.in))
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-# Disable Ada build on armhf and sh4 - gnat not available on these at the moment.
+# Disable Ada build on sh4 - gnat not available at the moment.
 
-ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:armhf:sh4:))
+ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:sh4:))
 BUILD_ADA = no
 else
 BUILD_ADA = yes
@@ -95,7 +97,7 @@ config-stamp: control
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
 	JAVA_HOME=$(JAVA_HOME) DC=$(DC) \
         CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" FFLAGS="$(FFLAGS)" \
-        LDFLAGS="$(LDFLAGS)" \
+        LDFLAGS="$(LDFLAGS)" CPPFLAGS="${CPPFLAGS)" \
 	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) )
 	touch config-stamp
 
