@@ -97,7 +97,7 @@ config-stamp: control
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
 	JAVA_HOME=$(JAVA_HOME) DC=$(DC) \
         CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" FFLAGS="$(FFLAGS)" \
-        LDFLAGS="$(LDFLAGS)" CPPFLAGS="${CPPFLAGS)" \
+        LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" \
 	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) )
 	touch config-stamp
 
