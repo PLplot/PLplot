@@ -1,0 +1,46 @@
+Description: Replace the calls to the deprecated split function
+Author: Rafael Laboissiere <rafael@laboissiere.net>
+Last-Update: 2012-03-31
+
+--- plplot-5.9.9.orig/bindings/octave/PLplot/figure.m
++++ plplot-5.9.9/bindings/octave/PLplot/figure.m
+@@ -49,7 +49,7 @@ function [n, driver, intp]= figure (n, d
+   global pl_automatic_replot
+ 
+   if (!exist("__pl") || !struct_contains (__pl,"inited"))
+-    v = split(version ,'.');
++    v = char(strsplit(version ,'.'));
+     if (! ((str2num(v(1,:)) > 2) ||
+            (str2num(v(1,:)) == 2 && str2num(v(2,:)) == 9 &&
+             str2num(v(3,:)) >= 0)))
+--- plplot-5.9.9.orig/bindings/octave/PLplot/toggle_plplot_use.m
++++ plplot-5.9.9/bindings/octave/PLplot/toggle_plplot_use.m
+@@ -32,7 +32,7 @@ else
+ endif
+ 
+ use_plplot_path = plplot_octave_path;
+-plplot_path_to_remove = split(genpath(use_plplot_path),pathsep);
++plplot_path_to_remove = strsplit(genpath(use_plplot_path),pathsep);
+ for use_plplot_i=1:size(plplot_path_to_remove)(1)
+   if (findstr(path,deblank(plplot_path_to_remove(use_plplot_i,:))) > 0)
+     rmpath(deblank(plplot_path_to_remove(use_plplot_i,:)));
+--- plplot-5.9.9.orig/plplot_test/test_octave.sh.in
++++ plplot-5.9.9/plplot_test/test_octave.sh.in
+@@ -45,7 +45,7 @@
+ endif
+ 
+ plplot_stub;
+-t = split("$options", "-"); 
++t = char(strsplit("$options", "-")); 
+ if (t); t(1,:)=""; endif;
+ for i=1:rows(t)
+     tt = deblank (t(i,:)); len = length(tt);
+@@ -83,7 +83,7 @@
+     if (verbose_test)
+ 	printf("%s\n",cmd);
+     endif
+-    t = split("$options", "-"); 
++    t = char(strsplit("$options", "-")); 
+     if (t) ; t(1,:)=""; endif
+     for j=1:rows(t)
+         tt = deblank (t(j,:)); len = length(tt);

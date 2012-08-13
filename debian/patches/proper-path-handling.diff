@@ -1,0 +1,17 @@
+Description: Proper use of the rmpath function
+Author: Rafael Laboissiere <rafael@laboissiere.net>
+Last-Update: 2012-03-31
+
+--- plplot-5.9.9.orig/bindings/octave/PLplot/toggle_plplot_use.m
++++ plplot-5.9.9/bindings/octave/PLplot/toggle_plplot_use.m
+@@ -34,9 +34,7 @@ endif
+ use_plplot_path = plplot_octave_path;
+ plplot_path_to_remove = strsplit(genpath(use_plplot_path),pathsep);
+ for use_plplot_i=1:size(plplot_path_to_remove)(1)
+-  if (findstr(path,deblank(plplot_path_to_remove(use_plplot_i,:))) > 0)
+-    rmpath(deblank(plplot_path_to_remove(use_plplot_i,:)));
+-  endif
++  rmpath(plplot_path_to_remove{use_plplot_i});
+ endfor
+ 
+ if (strcmp (use_plplot_state, "on"))
