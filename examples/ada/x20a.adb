@@ -227,7 +227,7 @@ procedure x20a is
         pos(1) := 1.0;
 
         plscmap1n(num_col);
-        plscmap1l(RGB, pos, r, g, b, Reverse_Hue_None);
+        plscmap1l(RGB, pos, r, g, b, Alt_Hue_Path_None);
     end gray_cmap;
 
 

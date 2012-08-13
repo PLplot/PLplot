@@ -1188,8 +1188,8 @@ void c_plscmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 ); //%name plscmap1 /
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 
 void c_plscmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
-                  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev );
-//%name plscmap1l //%input intensity(npts), coord1(npts), coord2(npts), coord3(npts), rev(npts)
+                  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *alt_hue_path );
+//%name plscmap1l //%input intensity(npts), coord1(npts), coord2(npts), coord3(npts), alt_hue_path(npts)
 
 // Set a given color from color map 0 by 8 bit RGB value
 
@@ -1212,8 +1212,8 @@ void c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 ); //%name
 // and alpha transparency value.
 
 void c_plscmap1la( PLINT itype, PLINT npts, PLFLT *intensity,
-                   PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev );
-//%name plscmap1la //%input intensity(npts), coord1(npts), coord2(npts), coord3(npts), a(npts), rev(npts)
+                   PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *alt_hue_path );
+//%name plscmap1la //%input intensity(npts), coord1(npts), coord2(npts), coord3(npts), a(npts), alt_hue_path(npts)
 
 // Set a given color from color map 0 by 8 bit RGB + alpha value
 

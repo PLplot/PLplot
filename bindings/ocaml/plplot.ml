@@ -399,10 +399,11 @@ module Plot = struct
   let set_color ?stream c =
     with_stream ?stream (fun () -> plcol0 (int_of_color c))
 
-  (** [set_color_scale ?stream ?pos ?rev colors] sets the color scale 1 (images
+  (** [set_color_scale ?stream ?pos ?alt_hue_path colors] sets the color scale 1 (images
       and shade plots) using a linear interpolation between the given list of
-      colors.  If [rev] is true then the scale goes in the reverse order. *)
-  let set_color_scale ?stream ?pos ?rev colors =
+      colors.  If [alt_hue_path] is true then the interpolation of any segment 
+      uses the alternative hue path which always includes the hue = 0 point. *)
+  let set_color_scale ?stream ?pos ?alt_hue_path colors =
     let cs = Array.map rgb_of_color colors in
     let r, g, b =
       Array.map (fun (r, _, _) -> float_of_int r /. 255.0) cs,
@@ -410,7 +411,7 @@ module Plot = struct
       Array.map (fun (_, _, b) -> float_of_int b /. 255.0) cs
     in
     let positions = pos |? Array_ext.range ~n:(Array.length cs) 0.0 1.0 in
-    with_stream ?stream (fun () -> plscmap1l true positions r g b rev);
+    with_stream ?stream (fun () -> plscmap1l true positions r g b alt_hue_path);
     ()
 
   (** Start a new page *)

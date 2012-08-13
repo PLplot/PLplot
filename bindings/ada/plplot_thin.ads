@@ -28,7 +28,7 @@
 -- I hope that this is wrong and that they are really PLINTs like the API says.
 -- I converted these as a : out PLINT. These are the only *-ed quantities that I set to "outs".
 
--- I made the final arg in plscmap1l, rev, an array of PLBOOLs, not an in out 
+-- I made the final arg in plscmap1l, alt_hue_path, an array of PLBOOLs, not an in out 
 -- parameter; impossible to tell from C syntax which is intended, but I think 
 -- this is right.
 
@@ -1373,7 +1373,7 @@ package PLplot_Thin is
     procedure
     plscmap1l(itype : PLINT; npts : PLINT; intensity : PL_Float_Array;
         coord1 : PL_Float_Array; coord2 : PL_Float_Array; coord3 : PL_Float_Array; 
-        rev : PL_Bool_Array);
+        alt_hue_path : PL_Bool_Array);
     pragma Import(C, plscmap1l, "c_plscmap1l");
 
 
@@ -1384,7 +1384,7 @@ package PLplot_Thin is
     procedure
     plscmap1la(itype : PLINT; npts : PLINT;
         intensity, coord1, coord2, coord3, a : PL_Float_Array; 
-        rev : PL_Bool_Array);
+        alt_hue_path : PL_Bool_Array);
     pragma Import(C, plscmap1la, "c_plscmap1la");
 
 

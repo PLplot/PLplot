@@ -1359,20 +1359,20 @@ contains
        call plscmap1af77( r, g, b, a, size(r) )
     end subroutine plscmap1a
 
-    subroutine plscmap1l( rgbtype, intensity, coord1, coord2, coord3, rev)
+    subroutine plscmap1l( rgbtype, intensity, coord1, coord2, coord3, alt_hue_path)
           logical                        :: rgbtype
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3
-          logical, dimension(:)          :: rev
+          logical, dimension(:)          :: alt_hue_path
 
-          integer, dimension(size(rev))  :: irev
+          integer, dimension(size(alt_hue_path))  :: ialt_hue_path
           integer                        :: i
           integer                        :: type
 
        type = convert_to_int( rgbtype )
-       do i = 1,size(rev)
-          irev(i) = convert_to_int( rev(i) )
+       do i = 1,size(alt_hue_path)
+          ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
-       call plscmap1lf77( type, size(intensity), intensity, coord1, coord2, coord3, irev )
+       call plscmap1lf77( type, size(intensity), intensity, coord1, coord2, coord3, ialt_hue_path )
     end subroutine plscmap1l
 
     subroutine plscmap1l2( rgbtype, intensity, coord1, coord2, coord3)
@@ -1385,20 +1385,20 @@ contains
        call plscmap1l2f77( type, size(intensity), intensity, coord1, coord2, coord3)
     end subroutine plscmap1l2
 
-    subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3, a, rev)
+    subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3, a, alt_hue_path)
           logical                        :: rgbtype
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3, a
-          logical, dimension(:)          :: rev
+          logical, dimension(:)          :: alt_hue_path
 
-          integer, dimension(size(rev))  :: irev
+          integer, dimension(size(alt_hue_path))  :: ialt_hue_path
           integer                        :: i
           integer                        :: type
 
        type = convert_to_int( rgbtype )
-       do i = 1,size(rev)
-          irev(i) = convert_to_int( rev(i) )
+       do i = 1,size(alt_hue_path)
+          ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
-       call plscmap1laf77( type, size(intensity), intensity, coord1, coord2, coord3, a, irev )
+       call plscmap1laf77( type, size(intensity), intensity, coord1, coord2, coord3, a, ialt_hue_path )
     end subroutine plscmap1la
 
     subroutine plscmap1la2( rgbtype, intensity, coord1, coord2, coord3, a)

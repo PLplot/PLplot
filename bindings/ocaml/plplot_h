@@ -411,11 +411,11 @@ c_plscmap1a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1);
 
  void
 c_plscmap1l(PLBOOL itype, PLINT npts, PLFLT *intensity,
-     PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev);
+     PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *alt_hue_path);
 
  void
 c_plscmap1la(PLBOOL itype, PLINT npts, PLFLT *intensity,
-      PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev);
+      PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *alt_hue_path);
 
  void
 c_plscmap1n(PLINT ncol1);

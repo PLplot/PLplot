@@ -227,7 +227,7 @@ procedure xthick20a is
         pos(1) := 1.0;
 
         Set_Number_Of_Colors_In_Color_Map_1(num_col);
-        Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Reverse_Hue_None);
+        Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Alt_Hue_Path_None);
     end gray_cmap;
 
 

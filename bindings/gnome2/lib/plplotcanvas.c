@@ -872,10 +872,10 @@ void plplot_canvas_scmap1( PlplotCanvas* self, PLINT *r, PLINT *g, PLINT *b, PLI
 // Set color map 1 colors using a piece-wise linear relationship between
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 
-void plplot_canvas_scmap1l( PlplotCanvas* self, PLINT itype, PLINT npts, PLFLT *intensity, PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev )
+void plplot_canvas_scmap1l( PlplotCanvas* self, PLINT itype, PLINT npts, PLFLT *intensity, PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *alt_hue_path )
 {
     plsstrm( self->Nstream );
-    plscmap1l( itype, npts, intensity, coord1, coord2, coord3, rev );
+    plscmap1l( itype, npts, intensity, coord1, coord2, coord3, alt_hue_path );
 }
 
 // Set number of colors in cmap 1

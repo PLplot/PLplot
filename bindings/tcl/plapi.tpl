@@ -708,7 +708,7 @@ intensity	PLFLT *
 coord1		PLFLT *
 coord2		PLFLT *
 coord3		PLFLT *
-rev		PLINT *
+alt_hue_path		PLINT *
 
 # Set color map 1 colors using a piece-wise linear relationship between
 # intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
@@ -722,7 +722,7 @@ coord1		PLFLT *
 coord2		PLFLT *
 coord3		PLFLT *
 a		PLFLT *
-rev		PLINT *
+alt_hue_path		PLINT *
 
 # Set number of colors in cmap 1.
 

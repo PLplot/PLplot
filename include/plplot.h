@@ -1498,7 +1498,7 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
 
 PLDLLIMPEXP void
 c_plscmap1l( PLBOOL itype, PLINT npts, const PLFLT *intensity,
-             const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLBOOL *rev );
+             const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLBOOL *alt_hue_path );
 
 // Set color map 1 colors using a piece-wise linear relationship between
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
@@ -1506,7 +1506,7 @@ c_plscmap1l( PLBOOL itype, PLINT npts, const PLFLT *intensity,
 
 PLDLLIMPEXP void
 c_plscmap1la( PLBOOL itype, PLINT npts, const PLFLT *intensity,
-              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a, const PLBOOL *rev );
+              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a, const PLBOOL *alt_hue_path );
 
 // Set number of colors in cmap 1
 

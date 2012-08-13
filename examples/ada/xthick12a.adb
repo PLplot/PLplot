@@ -95,7 +95,7 @@ procedure xthick12a is
     y0(8) := 12.0;
     y0(9) :=  3.0;
 
-    Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Reverse_Hue_None);
+    Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Alt_Hue_Path_None);
     
     for i in y0'range loop
         Set_Color_Map_1(Long_Float(i)/9.0);

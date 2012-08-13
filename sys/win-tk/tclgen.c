@@ -3551,14 +3551,14 @@ plscmap1lCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] 
     tclMatrix *matcoord2;
     PLFLT *coord3;
     tclMatrix *matcoord3;
-    PLINT *rev;
+    PLINT *alt_hue_path;
     tclMatrix *matrev;
 
     errcode = 0; errmsg[0] = '\0';
 
     if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
 	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plscmap1l itype npts intensity coord1 coord2 coord3 rev", "\"",
+			  "plscmap1l itype npts intensity coord1 coord2 coord3 alt_hue_path", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
@@ -3567,7 +3567,7 @@ plscmap1lCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] 
          (!0 && !0 && (argc != (7 + 1))) ||
          ( 0 && (argc != 1) && (argc != (7 + 1))) ) {
 	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plscmap1l itype npts intensity coord1 coord2 coord3 rev", "\"",
+			  "plscmap1l itype npts intensity coord1 coord2 coord3 alt_hue_path", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
@@ -3588,9 +3588,9 @@ plscmap1lCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] 
     coord3 = matcoord3->fdata;
     matrev = Tcl_GetMatrixPtr( interp, argv[1+6] );
     if (matrev == NULL) return TCL_ERROR;
-    rev = matrev->idata;
+    alt_hue_path = matrev->idata;
 
-    plscmap1l ( itype, npts, intensity, coord1, coord2, coord3, rev );
+    plscmap1l ( itype, npts, intensity, coord1, coord2, coord3, alt_hue_path );
 
 
     if (errcode != 0) {

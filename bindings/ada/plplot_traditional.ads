@@ -726,7 +726,7 @@ package PLplot_Traditional is
 
     type Color_Themes_For_Map_1_Type is (Gray, Blue_Green_Red, Red_Green_Blue, 
         Red_Cyan_Blue, Blue_Black_Red, Red_Blue_Green, Red_Yellow);
-    type Reverse_Hue_Type is (Reverse_Hue_None, Reverse_Hue_All);
+    type Alt_Hue_Path_Type is (Alt_Hue_Path_None, Alt_Hue_Path_All);
 
 
     -- Quick application of pre-fabricated color schemes to color map 1.
@@ -1465,7 +1465,7 @@ package PLplot_Traditional is
         H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Boolean_Array_1D);   -- False means red<->green<->blue<->red, True reverses
+        Alt_Hue_Path   : Boolean_Array_1D);   -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
     
     
     -- Overloaded version of plscmap1l which allows simplified (non-)reversal of 
@@ -1479,7 +1479,7 @@ package PLplot_Traditional is
                                               -- Note: Hue is 0.0 .. 360.0.
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Reverse_Hue_Type);
+        Alt_Hue_Path    : Alt_Hue_Path_Type);
 
 
     -- Set color map 1 colors using a piece-wise linear relationship between
@@ -1492,7 +1492,7 @@ package PLplot_Traditional is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Boolean_Array_1D);   -- False means red<->green<->blue<->red, True reverses
+        Alt_Hue_Path    : Boolean_Array_1D);   -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
     
     
     -- Overloaded version of plscmap1la which allows simplified (non-)reversal of 
@@ -1506,7 +1506,7 @@ package PLplot_Traditional is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Reverse_Hue_Type);
+        Alt_Hue_Path    : Alt_Hue_Path_Type);
 
 
     -- Set number of colors in cmap 1

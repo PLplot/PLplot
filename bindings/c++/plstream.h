@@ -620,7 +620,7 @@ public:
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 
     void scmap1l( bool itype, PLINT npts, const PLFLT *intensity,
-                  const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const bool *rev = NULL );
+                  const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const bool *alt_hue_path = NULL );
 
 //    void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
 //                PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
@@ -631,7 +631,7 @@ public:
 
     void scmap1la( bool itype, PLINT npts, const PLFLT *intensity,
                    const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a,
-                   const bool *rev = NULL );
+                   const bool *alt_hue_path = NULL );
 
 // Set a given color from color map 0 by 8 bit RGB value
 
@@ -1156,7 +1156,7 @@ public:
                  PLINT nx, PLINT ny, PLINT opt, PLINT side );
     void poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const PLINT *draw, PLINT ifcc );
     void scmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
-                  const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *rev );
+                  const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *alt_hue_path );
 
     void shade( const PLFLT * const *a, PLINT nx, PLINT ny,
                 PLINT ( *defined )( PLFLT, PLFLT ),

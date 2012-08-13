@@ -91,7 +91,7 @@ procedure xthick08a is
         end if;
 
         Set_Number_Of_Colors_In_Color_Map_1(256);
-        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Hue_None);
+        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Alt_Hue_Path_None);
 
     end cmap1_init;
 

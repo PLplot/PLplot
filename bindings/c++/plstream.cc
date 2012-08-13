@@ -1418,24 +1418,24 @@ void plstream::scmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PL
 
 void plstream::scmap1l( bool itype, PLINT npts, const PLFLT *intensity,
                         const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3,
-                        const bool *rev )
+                        const bool *alt_hue_path )
 {
-    PLBOOL *loc_rev = NULL;
-    if ( rev != NULL )
+    PLBOOL *loc_alt_hue_path = NULL;
+    if ( alt_hue_path != NULL )
     {
-        loc_rev = new PLBOOL[npts - 1];
+        loc_alt_hue_path = new PLBOOL[npts - 1];
         for ( int i = 0; i < npts - 1; i++ )
         {
-            loc_rev[i] = (PLBOOL) rev[i];
+            loc_alt_hue_path[i] = (PLBOOL) alt_hue_path[i];
         }
     }
 
     set_stream();
 
-    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
+    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_alt_hue_path );
 
-    if ( loc_rev != NULL )
-        delete [] loc_rev;
+    if ( loc_alt_hue_path != NULL )
+        delete [] loc_alt_hue_path;
 }
 
 // Set color map 1 colors using a piece-wise linear relationship between
@@ -1444,25 +1444,25 @@ void plstream::scmap1l( bool itype, PLINT npts, const PLFLT *intensity,
 
 void plstream::scmap1la( bool itype, PLINT npts, const PLFLT *intensity,
                          const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3,
-                         const PLFLT *a, const bool *rev )
+                         const PLFLT *a, const bool *alt_hue_path )
 {
-    PLBOOL *loc_rev = NULL;
-    if ( rev != NULL )
+    PLBOOL *loc_alt_hue_path = NULL;
+    if ( alt_hue_path != NULL )
     {
-        loc_rev = new PLBOOL[npts - 1];
+        loc_alt_hue_path = new PLBOOL[npts - 1];
         for ( int i = 0; i < npts - 1; i++ )
         {
-            loc_rev[i] = (PLBOOL) rev[i];
+            loc_alt_hue_path[i] = (PLBOOL) alt_hue_path[i];
         }
     }
 
     set_stream();
 
     plscmap1la( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3,
-        a, loc_rev );
+        a, loc_alt_hue_path );
 
-    if ( loc_rev != NULL )
-        delete [] loc_rev;
+    if ( loc_alt_hue_path != NULL )
+        delete [] loc_alt_hue_path;
 }
 
 //
@@ -1478,24 +1478,24 @@ void plstream::scmap1la( bool itype, PLINT npts, const PLFLT *intensity,
 // Deprecated version using PLINT instead of bool
 void plstream::scmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
                         const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3,
-                        const PLINT *rev )
+                        const PLINT *alt_hue_path )
 {
-    PLBOOL *loc_rev = NULL;
-    if ( rev != NULL )
+    PLBOOL *loc_alt_hue_path = NULL;
+    if ( alt_hue_path != NULL )
     {
-        loc_rev = new PLBOOL[npts - 1];
+        loc_alt_hue_path = new PLBOOL[npts - 1];
         for ( int i = 0; i < npts - 1; i++ )
         {
-            loc_rev[i] = (PLBOOL) rev[i];
+            loc_alt_hue_path[i] = (PLBOOL) alt_hue_path[i];
         }
     }
 
     set_stream();
 
-    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
+    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_alt_hue_path );
 
-    if ( loc_rev != NULL )
-        delete [] loc_rev;
+    if ( loc_alt_hue_path != NULL )
+        delete [] loc_alt_hue_path;
 }
 
 // Set a given color from color map 0 by 8 bit RGB value

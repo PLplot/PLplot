@@ -827,8 +827,8 @@ package body PLplot_Traditional is
         Red_4, Green_4, Blue_4 : Real_Vector (0..3); -- define 4
         Hue_3, Lightness_3, Saturation_3 : Real_Vector (0..2); -- define 3
         Hue_4, Lightness_4, Saturation_4 : Real_Vector (0..3); -- define 4
-        Reverse_Hue_3 : Boolean_Array_1D (0..2);
-        Reverse_Hue_4 : Boolean_Array_1D (0..3);
+        Alt_Hue_Path_3 : Boolean_Array_1D (0..2);
+        Alt_Hue_Path_4 : Boolean_Array_1D (0..3);
     begin
         plscmap1n(256);
 
@@ -900,10 +900,10 @@ package body PLplot_Traditional is
                     Saturation_3(0) := 0.0;
                     Saturation_3(1) := 0.0;
                     Saturation_3(2) := 0.0;
-                    Reverse_Hue_3(0) := False;
-                    Reverse_Hue_3(1) := False;
-                    Reverse_Hue_3(2) := False;
-                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Reverse_Hue_3);
+                    Alt_Hue_Path_3(0) := False;
+                    Alt_Hue_Path_3(1) := False;
+                    Alt_Hue_Path_3(2) := False;
+                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Alt_Hue_Path_3);
                 end;
             when Blue_Green_Red => -- This appears to be the PLplot default color theme.
                 begin
@@ -916,10 +916,10 @@ package body PLplot_Traditional is
                     Red_3(0) := 0.0;
                     Red_3(1) := 0.0;
                     Red_3(2) := 1.0;
-                    Reverse_Hue_3(0) := False;
-                    Reverse_Hue_3(1) := False;
-                    Reverse_Hue_3(2) := False;
-                    plscmap1l(RGB, Controls_3, Red_3, Green_3, Blue_3, Reverse_Hue_3);
+                    Alt_Hue_Path_3(0) := False;
+                    Alt_Hue_Path_3(1) := False;
+                    Alt_Hue_Path_3(2) := False;
+                    plscmap1l(RGB, Controls_3, Red_3, Green_3, Blue_3, Alt_Hue_Path_3);
                 end;
             when Red_Green_Blue =>
                 begin
@@ -932,10 +932,10 @@ package body PLplot_Traditional is
                     Red_3(0) := 1.0;
                     Red_3(1) := 0.0;
                     Red_3(2) := 0.0;
-                    Reverse_Hue_3(0) := False;
-                    Reverse_Hue_3(1) := False;
-                    Reverse_Hue_3(2) := False;
-                    plscmap1l(RGB, Controls_3, Red_3, Green_3, Blue_3, Reverse_Hue_3);
+                    Alt_Hue_Path_3(0) := False;
+                    Alt_Hue_Path_3(1) := False;
+                    Alt_Hue_Path_3(2) := False;
+                    plscmap1l(RGB, Controls_3, Red_3, Green_3, Blue_3, Alt_Hue_Path_3);
                 end;
             when Red_Cyan_Blue =>
                 begin
@@ -948,10 +948,10 @@ package body PLplot_Traditional is
                     Lightness_3(0) := 0.5;
                     Lightness_3(1) := 0.5;
                     Lightness_3(2) := 0.5;
-                    Reverse_Hue_3(0) := False;
-                    Reverse_Hue_3(1) := False;
-                    Reverse_Hue_3(2) := False;
-                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Reverse_Hue_3);
+                    Alt_Hue_Path_3(0) := False;
+                    Alt_Hue_Path_3(1) := False;
+                    Alt_Hue_Path_3(2) := False;
+                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Alt_Hue_Path_3);
                 end;
             when Blue_Black_Red =>
                 begin
@@ -967,11 +967,11 @@ package body PLplot_Traditional is
                     Lightness_4(1) := 0.0;
                     Lightness_4(2) := 0.0;
                     Lightness_4(3) := 0.5;
-                    Reverse_Hue_4(0) := False;
-                    Reverse_Hue_4(1) := False;
-                    Reverse_Hue_4(2) := False;
-                    Reverse_Hue_4(3) := False;
-                    plscmap1l(HLS, Controls_4, Hue_4, Lightness_4, Saturation_4, Reverse_Hue_4);
+                    Alt_Hue_Path_4(0) := False;
+                    Alt_Hue_Path_4(1) := False;
+                    Alt_Hue_Path_4(2) := False;
+                    Alt_Hue_Path_4(3) := False;
+                    plscmap1l(HLS, Controls_4, Hue_4, Lightness_4, Saturation_4, Alt_Hue_Path_4);
                 end;
             when Red_Blue_Green =>
                 begin
@@ -984,10 +984,10 @@ package body PLplot_Traditional is
                     Saturation_3(0) := 1.0;
                     Saturation_3(1) := 1.0;
                     Saturation_3(2) := 1.0;
-                    Reverse_Hue_3(0) := False;
-                    Reverse_Hue_3(1) := False;
-                    Reverse_Hue_3(2) := False;
-                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Reverse_Hue_3);
+                    Alt_Hue_Path_3(0) := False;
+                    Alt_Hue_Path_3(1) := False;
+                    Alt_Hue_Path_3(2) := False;
+                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Alt_Hue_Path_3);
                 end;
             when Red_Yellow =>
                 begin
@@ -1000,10 +1000,10 @@ package body PLplot_Traditional is
                     Saturation_3(0) := 1.0;
                     Saturation_3(1) := 1.0;
                     Saturation_3(2) := 1.0;
-                    Reverse_Hue_3(0) := False;
-                    Reverse_Hue_3(1) := False;
-                    Reverse_Hue_3(2) := False;
-                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Reverse_Hue_3);
+                    Alt_Hue_Path_3(0) := False;
+                    Alt_Hue_Path_3(1) := False;
+                    Alt_Hue_Path_3(2) := False;
+                    plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Alt_Hue_Path_3);
                 end;
         end case;
     end Quick_Set_Color_Map_1;
@@ -2273,15 +2273,15 @@ package body PLplot_Traditional is
                                               -- Note: Hue is 0.0 .. 360.0.
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Boolean_Array_1D) is -- False means red<->green<->blue<->red, True reverses
+        Alt_Hue_Path   : Boolean_Array_1D) is -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
         
         PL_Color_Model : PLBOOL;
-        PL_Reverse_Hue : PL_Bool_Array (Reverse_Hue'range);
+        PL_Alt_Hue_Path : PL_Bool_Array (Alt_Hue_Path'range);
         
     begin
         -- Check for consistent array lengths.
         if  Control_Points'length /= H_Or_R'length or Control_Points'length /= L_or_G'length or
-            Control_Points'length /= S_Or_B'length or Control_Points'length /= Reverse_Hue'length 
+            Control_Points'length /= S_Or_B'length or Control_Points'length /= Alt_Hue_Path'length 
         then
             Put_Line("*** WARNING: Inconsistent array lengths when setting color map 1 ***");
         end if;
@@ -2292,22 +2292,23 @@ package body PLplot_Traditional is
             PL_Color_Model := PLfalse;
         end if;
 
-        for i in Reverse_Hue'range loop
-            if Reverse_Hue(i) then
-                PL_Reverse_Hue(i) := PLtrue;
+        for i in Alt_Hue_Path'range loop
+            if Alt_Hue_Path(i) then
+                PL_Alt_Hue_Path(i) := PLtrue;
             else
-                PL_Reverse_Hue(i) := PLfalse;
+                PL_Alt_Hue_Path(i) := PLfalse;
             end if;
         end loop;
 
-        PLplot_Thin.plscmap1l(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, PL_Reverse_Hue);
+        PLplot_Thin.plscmap1l(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, PL_Alt_Hue_Path);
     end plscmap1l;
     
     
-    -- Overloaded version of plscmap1l which allows simplified (non-)reversal of 
-    -- the traversed hue range. This is an Ada-like way of doing what is described
+    -- Overloaded version of plscmap1l which allows simplified (alt_hue_path false) interpolation.
+    -- This is an Ada-like way of doing what is described
     -- in the PLplot documentation when a C user passes a null pointer as the
-    -- final argument instead of an array of booleans to indicate hue reversal.
+    -- final argument instead of an array of booleans to indicate which
+    -- of the two hue interpolation paths to take.
     procedure plscmap1l
        (Color_Model    : Color_Model_Type; -- HLS or RGB
         Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
@@ -2315,20 +2316,20 @@ package body PLplot_Traditional is
                                               -- Note: Hue is 0.0 .. 360.0.
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Reverse_Hue_Type) is
+        Alt_Hue_Path    : Alt_Hue_Path_Type) is
         
-        Reverse_Hue_Array : Boolean_Array_1D(Control_Points'range);
+        Alt_Hue_Path_Array : Boolean_Array_1D(Control_Points'range);
     begin
-        if Reverse_Hue = Reverse_Hue_All then
-            for i in Reverse_Hue_Array'range loop
-                Reverse_Hue_Array(i) := True;
+        if Alt_Hue_Path = Alt_Hue_Path_All then
+            for i in Alt_Hue_Path_Array'range loop
+                Alt_Hue_Path_Array(i) := True;
             end loop;
-        elsif Reverse_Hue = Reverse_Hue_None then
-            for i in Reverse_Hue_Array'range loop
-                Reverse_Hue_Array(i) := False;
+        elsif Alt_Hue_Path = Alt_Hue_Path_None then
+            for i in Alt_Hue_Path_Array'range loop
+                Alt_Hue_Path_Array(i) := False;
             end loop;
         end if;
-        plscmap1l(Color_Model, Control_Points, H_Or_R, L_Or_G, S_Or_B, Reverse_Hue_Array);
+        plscmap1l(Color_Model, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alt_Hue_Path_Array);
     end plscmap1l;
 
 
@@ -2342,15 +2343,15 @@ package body PLplot_Traditional is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Boolean_Array_1D) is   -- False means red<->green<->blue<->red, True reverses
+        Alt_Hue_Path    : Boolean_Array_1D) is -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
         
         PL_Color_Model : PLBOOL;
-        PL_Reverse_Hue : PL_Bool_Array (Reverse_Hue'range);
+        PL_Alt_Hue_Path : PL_Bool_Array (Alt_Hue_Path'range);
         
     begin
         -- Check for consistent array lengths.
         if  Control_Points'length /= H_Or_R'length or Control_Points'length /= L_or_G'length or
-            Control_Points'length /= S_Or_B'length or Control_Points'length /= Reverse_Hue'length 
+            Control_Points'length /= S_Or_B'length or Control_Points'length /= Alt_Hue_Path'length 
         then
             Put_Line("*** WARNING: Inconsistent array lengths when setting color map 1 ***");
         end if;
@@ -2361,22 +2362,23 @@ package body PLplot_Traditional is
             PL_Color_Model := PLfalse;
         end if;
 
-        for i in Reverse_Hue'range loop
-            if Reverse_Hue(i) then
-                PL_Reverse_Hue(i) := PLtrue;
+        for i in Alt_Hue_Path'range loop
+            if Alt_Hue_Path(i) then
+                PL_Alt_Hue_Path(i) := PLtrue;
             else
-                PL_Reverse_Hue(i) := PLfalse;
+                PL_Alt_Hue_Path(i) := PLfalse;
             end if;
         end loop;
 
-        PLplot_Thin.plscmap1la(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, PL_Reverse_Hue);
+        PLplot_Thin.plscmap1la(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, PL_Alt_Hue_Path);
     end plscmap1la;
     
     
-    -- Overloaded version of plscmap1la which allows simplified (non-)reversal of 
-    -- the traversed hue range. This is an Ada-like way of doing what is described
+    -- Overloaded version of plscmap1la which allows simplified (alt_hue_path false) interpolation.
+    -- This is an Ada-like way of doing what is described
     -- in the PLplot documentation when a C user passes a null pointer as the
-    -- final argument instead of an array of booleans to indicate hue reversal.
+    -- final argument instead of an array of booleans to indicate which
+    -- of the two hue interpolation paths to take.
     procedure plscmap1la
        (Color_Model    : Color_Model_Type; -- HLS or RGB
         Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
@@ -2384,20 +2386,20 @@ package body PLplot_Traditional is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
-        Reverse_Hue    : Reverse_Hue_Type) is
+        Alt_Hue_Path    : Alt_Hue_Path_Type) is
         
-        Reverse_Hue_Array : Boolean_Array_1D(Control_Points'range);
+        Alt_Hue_Path_Array : Boolean_Array_1D(Control_Points'range);
     begin
-        if Reverse_Hue = Reverse_Hue_All then
-            for i in Reverse_Hue_Array'range loop
-                Reverse_Hue_Array(i) := True;
+        if Alt_Hue_Path = Alt_Hue_Path_All then
+            for i in Alt_Hue_Path_Array'range loop
+                Alt_Hue_Path_Array(i) := True;
             end loop;
-        elsif Reverse_Hue = Reverse_Hue_None then
-            for i in Reverse_Hue_Array'range loop
-                Reverse_Hue_Array(i) := False;
+        elsif Alt_Hue_Path = Alt_Hue_Path_None then
+            for i in Alt_Hue_Path_Array'range loop
+                Alt_Hue_Path_Array(i) := False;
             end loop;
         end if;
-        plscmap1la(Color_Model, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, Reverse_Hue_Array);
+        plscmap1la(Color_Model, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, Alt_Hue_Path_Array);
     end plscmap1la;
 
 

@@ -773,10 +773,10 @@ public class PLStream implements plplotjavacConstants {
     }
 
     public void scmap1l( boolean itype, double[] intensity, double[] coord1,
-                         double[] coord2, double[] coord3, boolean[] rev )
+                         double[] coord2, double[] coord3, boolean[] alt_hue_path )
     {
         if ( set_stream() == -1 ) return;
-        plplotjavac.plscmap1l( itype, intensity, coord1, coord2, coord3, rev );
+        plplotjavac.plscmap1l( itype, intensity, coord1, coord2, coord3, alt_hue_path );
     }
 
     public void scmap1l( boolean itype, double[] intensity, double[] coord1,
@@ -787,10 +787,10 @@ public class PLStream implements plplotjavacConstants {
     }
 
     public void scmap1la( boolean itype, double[] intensity, double[] coord1,
-                          double[] coord2, double[] coord3, double[] a, boolean[] rev )
+                          double[] coord2, double[] coord3, double[] a, boolean[] alt_hue_path )
     {
         if ( set_stream() == -1 ) return;
-        plplotjavac.plscmap1la( itype, intensity, coord1, coord2, coord3, a, rev );
+        plplotjavac.plscmap1la( itype, intensity, coord1, coord2, coord3, a, alt_hue_path );
     }
 
     public void scmap1la( boolean itype, double[] intensity, double[] coord1,
@@ -1243,19 +1243,19 @@ public class PLStream implements plplotjavacConstants {
     }
 
     public void scmap1l( int itype, double[] intensity, double[] coord1,
-                         double[] coord2, double[] coord3, int[] rev )
+                         double[] coord2, double[] coord3, int[] alt_hue_path )
     {
         if ( set_stream() == -1 ) return;
-        boolean [] loc_rev = null;
-        if ( rev != null )
+        boolean [] loc_alt_hue_path = null;
+        if ( alt_hue_path != null )
         {
-            loc_rev = new boolean[rev.length];
-            for ( int i = 0; i < rev.length; i++ )
+            loc_alt_hue_path = new boolean[alt_hue_path.length];
+            for ( int i = 0; i < alt_hue_path.length; i++ )
             {
-                loc_rev[i] = ( rev[i] != 0 );
+                loc_alt_hue_path[i] = ( alt_hue_path[i] != 0 );
             }
         }
-        plplotjavac.plscmap1l( itype != 0, intensity, coord1, coord2, coord3, loc_rev );
+        plplotjavac.plscmap1l( itype != 0, intensity, coord1, coord2, coord3, loc_alt_hue_path );
     }
 
     public void shades( double[][] a, double xmin, double xmax, double ymin,

@@ -35,12 +35,12 @@ let manual_function_attributes =
     {
       function_name = "c_plscmap1l";
       function_attrs = None;
-      parameter_attrs = Some ["rev", ["in"; "size_is(npts)"; "unique"]];
+      parameter_attrs = Some ["alt_hue_path", ["in"; "size_is(npts)"; "unique"]];
     };
     {
       function_name = "c_plscmap1la";
       function_attrs = None;
-      parameter_attrs = Some ["rev", ["in"; "size_is(npts)"; "unique"]];
+      parameter_attrs = Some ["alt_hue_path", ["in"; "size_is(npts)"; "unique"]];
     };
     {
       function_name = "c_plxormod";

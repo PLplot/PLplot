@@ -75,7 +75,7 @@ procedure xthick15a is
         s(2) := 0.5;		-- center
         s(3) := 1.0;		-- high
 
-        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Hue_None);
+        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Alt_Hue_Path_None);
     end cmap1_init2;
 
     ----------------------------------------------------------------------------

@@ -75,7 +75,7 @@ procedure x15a is
         s(2) := 0.5;		-- center
         s(3) := 1.0;		-- high
 
-        plscmap1l(HLS, i, h, l, s, Reverse_Hue_None);
+        plscmap1l(HLS, i, h, l, s, Alt_Hue_Path_None);
     end cmap1_init2;
 
     ----------------------------------------------------------------------------

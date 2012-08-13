@@ -631,7 +631,7 @@ plshade.__doc__ = _plshade.__doc__
 # Redefine plscmap1l to have the user-friendly interface
 # Allowable syntaxes:
 
-# plscmap1l(itype, pos, coord1, coord2, coord3[, rev])
+# plscmap1l(itype, pos, coord1, coord2, coord3[, alt_hue_path])
  
 _plscmap1l = plscmap1l
 def plscmap1l(itype, pos, coord1, coord2, coord3, *args):
@@ -641,11 +641,11 @@ def plscmap1l(itype, pos, coord1, coord2, coord3, *args):
 	raise ValueError, "Expected 1D pos array"
 		
     if len(args) == 0:
-	# Default rev
-	rev = Numeric.zeros(pos.shape[0]-1)
+	# Default alt_hue_path
+	alt_hue_path = Numeric.zeros(pos.shape[0]-1)
     elif len(args) == 1:
-	rev = Numeric.asarray(args[0])
+	alt_hue_path = Numeric.asarray(args[0])
     else:
 	raise ValueError, "Too many arguments to plscmap1l"
-    _plscmap1l(itype, pos, coord1, coord2, coord3, rev)
+    _plscmap1l(itype, pos, coord1, coord2, coord3, alt_hue_path)
 plscmap1l.__doc__ = _plscmap1l.__doc__

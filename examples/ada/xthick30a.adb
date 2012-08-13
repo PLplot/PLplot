@@ -129,7 +129,7 @@ begin
     -- Create the color map with 128 colors and use Set_Color_Map_1_RGBla to initialize
     -- the color values with a linearly varying transparency (or alpha).
     Set_Number_Of_Colors_In_Color_Map_1(128);
-    Set_Color_Map_1_Piecewise_And_Alpha(RGB, pos, rcoord, gcoord, bcoord, acoord, Reverse_Hue_None);
+    Set_Color_Map_1_Piecewise_And_Alpha(RGB, pos, rcoord, gcoord, bcoord, acoord, Alt_Hue_Path_None);
 
     -- Use that cmap1 to create a transparent red gradient for the whole window.
     px(0) := 0.0;

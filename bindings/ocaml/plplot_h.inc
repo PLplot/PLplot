@@ -90,8 +90,8 @@
 [mlname(plscmap0n)] void c_plscmap0n ( int ncol0 );
 [mlname(plscmap1)] void c_plscmap1 ( [size_is(ncol1), in] int * r, [size_is(ncol1), in] int * g, [size_is(ncol1), in] int * b, int ncol1 );
 [mlname(plscmap1a)] void c_plscmap1a ( [size_is(ncol1), in] int * r, [size_is(ncol1), in] int * g, [size_is(ncol1), in] int * b, [size_is(ncol1), in] double * a, int ncol1 );
-[mlname(plscmap1l)] void c_plscmap1l ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [in, size_is(npts), in, size_is(npts), unique] boolean * rev );
-[mlname(plscmap1la)] void c_plscmap1la ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [size_is(npts), in, size_is(npts)] double * a, [in, size_is(npts), in, size_is(npts), unique] boolean * rev );
+[mlname(plscmap1l)] void c_plscmap1l ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [in, size_is(npts), in, size_is(npts), unique] boolean * alt_hue_path );
+[mlname(plscmap1la)] void c_plscmap1la ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [size_is(npts), in, size_is(npts)] double * a, [in, size_is(npts), in, size_is(npts), unique] boolean * alt_hue_path );
 [mlname(plscmap1n)] void c_plscmap1n ( int ncol1 );
 [mlname(plscmap1_range)] void c_plscmap1_range ( double min_color, double max_color );
 [mlname(plscol0)] void c_plscol0 ( int icol0, int r, int g, int b );

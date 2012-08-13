@@ -96,7 +96,7 @@ procedure x21a is
         s(1) := 0.8;
 
         plscmap1n(256);
-        plscmap1l(HLS, i, h, l, s, Reverse_Hue_None);
+        plscmap1l(HLS, i, h, l, s, Alt_Hue_Path_None);
     end cmap1_init;
 
 

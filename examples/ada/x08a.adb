@@ -91,7 +91,7 @@ procedure x08a is
         end if;
 
         plscmap1n(256);
-        plscmap1l(HLS, i, h, l, s, Reverse_Hue_None);
+        plscmap1l(HLS, i, h, l, s, Alt_Hue_Path_None);
 
     end cmap1_init;
 

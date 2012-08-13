@@ -582,16 +582,16 @@ void plscmap1a( PLINT[] r, PLINT[] g, PLINT[] b, PLFLT[] a )
 // Set color map 1 colors using a piece-wise linear relationship between
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 void plscmap1l( PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
-                PLFLT[] coord2, PLFLT[] coord3, PLBOOL[] rev = null )
+                PLFLT[] coord2, PLFLT[] coord3, PLBOOL[] alt_hue_path = null )
 {
     PLINT npts = intensity.length;
     assert( npts == coord1.length, "plscmap1l(): Arrays must be of same length!" );
     assert( npts == coord2.length, "plscmap1l(): Arrays must be of same length!" );
     assert( npts == coord3.length, "plscmap1l(): Arrays must be of same length!" );
-    if ( rev != null )
+    if ( alt_hue_path != null )
     {
-        assert( npts - 1 == rev.length, "plscmap1l(): Array rev must be of same length then other arrays minus 1!" );
-        c_plscmap1l( itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, rev.ptr );
+        assert( npts - 1 == alt_hue_path.length, "plscmap1l(): Array alt_hue_path must be of same length then other arrays minus 1!" );
+        c_plscmap1l( itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, alt_hue_path.ptr );
     }
     else
         c_plscmap1l( itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, null );
@@ -602,17 +602,17 @@ void plscmap1l( PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 // Will also linear interpolate alpha values.
 void plscmap1la( PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
-                 PLFLT[] coord2, PLFLT[] coord3, PLFLT[] a, PLBOOL[] rev = null )
+                 PLFLT[] coord2, PLFLT[] coord3, PLFLT[] a, PLBOOL[] alt_hue_path = null )
 {
     PLINT npts = intensity.length;
     assert( npts == coord1.length, "plscmap1la(): Arrays must be of same length!" );
     assert( npts == coord2.length, "plscmap1la(): Arrays must be of same length!" );
     assert( npts == coord3.length, "plscmap1la(): Arrays must be of same length!" );
     assert( npts == a.length, "plscmap1la(): Arrays must be of same length!" );
-    if ( rev != null )
+    if ( alt_hue_path != null )
     {
-        assert( npts - 1 == rev.length, "plscmap1la(): Array rev must be of same length then other arrays minus 1!" );
-        c_plscmap1la( itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, a.ptr, rev.ptr );
+        assert( npts - 1 == alt_hue_path.length, "plscmap1la(): Array alt_hue_path must be of same length then other arrays minus 1!" );
+        c_plscmap1la( itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, a.ptr, alt_hue_path.ptr );
     }
     else
         c_plscmap1la( itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, a.ptr, null );
@@ -1948,12 +1948,12 @@ void c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 );
 
 // Set color map 1 colors using a piece-wise linear relationship between
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
-void c_plscmap1l( PLBOOL itype, PLINT npts, PLFLT *intensity, PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev );
+void c_plscmap1l( PLBOOL itype, PLINT npts, PLFLT *intensity, PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *alt_hue_path );
 
 // Set color map 1 colors using a piece-wise linear relationship between
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 // Will also linear interpolate alpha values.
-void c_plscmap1la( PLBOOL itype, PLINT npts, PLFLT *intensity, PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev );
+void c_plscmap1la( PLBOOL itype, PLINT npts, PLFLT *intensity, PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *alt_hue_path );
 
 // Set number of colors in cmap 1
 void c_plscmap1n( PLINT ncol1 );

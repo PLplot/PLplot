@@ -615,10 +615,11 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
 //! coordinates in HLS or RGB space.  The first point MUST correspond to
 //! position = 0, and the last to position = 1.
 //!
-//! The hue is interpolated around the "front" of the color wheel
-//! (red<->green<->blue<->red) unless the "rev" flag is set, in which case
-//! interpolation proceeds around the back (reverse) side.  Specifying
-//! rev=NULL is equivalent to setting rev[]=0 for every control point.
+//! Every change in hue from one control point to the next can be linearly
+//! interpolated in two ways.  The usual (alt_hue_path[i] false) method for the ith interval
+//! uses the dh = h[i+1] - h[i] interval for interpolation.  The alternate (alt_hue_path true) method for the ith interval uses the dh = (h[i+1] - h[i]) - 360 if (h[i+1] - h[i]) is positive or dh = 360 - (h[i+1] - h[i]) if (h[i+1] - h[i]) is negative interval for the interpolation.  Thus, alt_hue_path true interpolation intervals always include hue = 0.
+//! Specifying
+//! alt_hue_path=NULL is equivalent to setting alt_hue_path[]=false for every control point.
 //!
 //! Bounds on RGB coordinates:
 //!	R,G,B		[0, 1]		magnitude
@@ -635,11 +636,12 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
 //! @param coord1[] first coordinate for each control point
 //! @param coord2[] second coordinate for each control point
 //! @param coord3[] third coordinate for each control point
-//! @param rev[] reverse flag for each control point
+//! @param alt_hue_path[] if true, use alternative hue interpolation path
+//! for the associated interval.
 
 void
 c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
-             const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *rev )
+             const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *alt_hue_path )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -693,10 +695,10 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
         plsc->cmap1cp[n].p = pos[n];
         plsc->cmap1cp[n].a = 1.0;
 
-        if ( rev == NULL )
+        if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
         else
-            plsc->cmap1cp[n].alt_hue_path = rev[n];
+            plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
     }
 
 // Calculate and set color map
@@ -716,11 +718,12 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
 //! @param coord2[] second coordinate for each control point
 //! @param coord3[] third coordinate for each control point
 //! @param a[] alpha value for each control point
-//! @param rev[] reverse flag for each control point
+//! @param alt_hue_path[] if true, use alternative hue interpolation path
+//! for the associated interval.
 
 void
 c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
-              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a, const PLINT *rev )
+              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a, const PLINT *alt_hue_path )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -774,10 +777,10 @@ c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
         plsc->cmap1cp[n].p = pos[n];
         plsc->cmap1cp[n].a = a[n];
 
-        if ( rev == NULL )
+        if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
         else
-            plsc->cmap1cp[n].alt_hue_path = rev[n];
+            plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
     }
 
 // Calculate and set color map
@@ -1600,11 +1603,11 @@ c_plspal1( const char *filename, PLBOOL interpolate )
     PLBOOL       rgb;
     char         color_info[PALLEN];
     unsigned int r_i, g_i, b_i;
-    int          pos_i, rev_i;
+    int          pos_i, alt_hue_path_i;
     double       r_d, g_d, b_d, a_d, pos_d;
     PLFLT        *r, *g, *b, *a, *pos;
     PLINT        *ri, *gi, *bi;
-    PLBOOL       *rev;
+    PLBOOL       *alt_hue_path;
     FILE         *fp;
     char         msgbuf[MSGLEN];
     char         * save_locale = plsave_set_locale();
@@ -1678,7 +1681,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
     bi  = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
     a   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
     pos = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
-    rev = (PLBOOL *) malloc( (size_t) number_colors * sizeof ( PLBOOL ) );
+    alt_hue_path = (PLBOOL *) malloc( (size_t) number_colors * sizeof ( PLBOOL ) );
 
     if ( format_version == 0 )
     {
@@ -1695,7 +1698,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             }
             // Ensure string is null terminated if > 160 characters
             color_info[PALLEN - 1] = '\0';
-            return_sscanf          = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i );
+            return_sscanf          = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &alt_hue_path_i );
             if ( return_sscanf < 4 || ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ) )
             {
                 snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n", color_info );
@@ -1717,20 +1720,20 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             fuzzy_range_check( pos[i], 0., 1., FUZZ_EPSILON, 4 );
             if ( return_sscanf == 5 )
             {
-                // Next to oldest tk format with rev specified.
-                rev[i] = (PLBOOL) rev_i;
+                // Next to oldest tk format with alt_hue_path specified.
+                alt_hue_path[i] = (PLBOOL) alt_hue_path_i;
             }
         }
         if ( return_sscanf == 4 )
         {
-            // Oldest tk format.  No rev specified.
-            free( rev );
-            rev = NULL;
+            // Oldest tk format.  No alt_hue_path specified.
+            free( alt_hue_path );
+            alt_hue_path = NULL;
         }
     }
     else
     {
-        // New floating point file version with support for alpha and rev values
+        // New floating point file version with support for alpha and alt_hue_path values
         for ( i = 0; i < number_colors; i++ )
         {
             if ( read_line( color_info, PALLEN, fp ) == NULL )
@@ -1740,7 +1743,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
                 fclose( fp );
                 goto finish;
             }
-            if ( sscanf( color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &rev_i ) != 6 )
+            if ( sscanf( color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &alt_hue_path_i ) != 6 )
             {
                 snprintf( msgbuf, MSGLEN, "Unrecognized cmap1 format (wrong number of items for version 2 of format) %s\n", color_info );
                 plwarn( msgbuf );
@@ -1769,7 +1772,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             fuzzy_range_check( a[i], 0., 1., FUZZ_EPSILON, 9 );
             fuzzy_range_check( pos[i], 0., 1., FUZZ_EPSILON, 10 );
 
-            rev[i] = (PLBOOL) rev_i;
+            alt_hue_path[i] = (PLBOOL) alt_hue_path_i;
         }
     }
     fclose( fp );
@@ -1778,7 +1781,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
     {
         if ( interpolate )
         {
-            c_plscmap1la( rgb, number_colors, pos, r, g, b, a, rev );
+            c_plscmap1la( rgb, number_colors, pos, r, g, b, a, alt_hue_path );
         }
         else
         {
@@ -1823,7 +1826,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
     free( bi );
     free( a );
     free( pos );
-    free( rev );
+    free( alt_hue_path );
 
 finish: plrestore_locale( save_locale );
 }

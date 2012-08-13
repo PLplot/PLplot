@@ -178,11 +178,11 @@ void PLSCMAP0N( PLINT *n );
 void PLSCMAP1( PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1 );
 void PLSCMAP1A( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT *ncol1 );
 void PLSCMAP1L( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-                PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev );
+                PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *alt_hue_path );
 void PLSCMAP1L2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
                  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
 void PLSCMAP1LA( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-                 PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev );
+                 PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *alt_hue_path );
 void PLSCMAP1LA2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
                   PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a );
 void PLSCMAP1N( PLINT *n );
@@ -1057,9 +1057,9 @@ PLSCMAP1A( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT *ncol1 )
 
 void
 PLSCMAP1L( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-           PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev )
+           PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *alt_hue_path )
 {
-    c_plscmap1l( *itype, *npts, intensity, coord1, coord2, coord3, rev );
+    c_plscmap1l( *itype, *npts, intensity, coord1, coord2, coord3, alt_hue_path );
 }
 
 void
@@ -1071,9 +1071,9 @@ PLSCMAP1L2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
 
 void
 PLSCMAP1LA( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
-            PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev )
+            PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *alt_hue_path )
 {
-    c_plscmap1la( *itype, *npts, intensity, coord1, coord2, coord3, a, rev );
+    c_plscmap1la( *itype, *npts, intensity, coord1, coord2, coord3, a, alt_hue_path );
 }
 
 void

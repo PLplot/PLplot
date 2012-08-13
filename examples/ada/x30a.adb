@@ -129,7 +129,7 @@ begin
     -- Create the color map with 128 colors and use plscmap1la to initialize
     -- the color values with a linearly varying transparency (or alpha).
     plscmap1n(128);
-    plscmap1la(RGB, pos, rcoord, gcoord, bcoord, acoord, Reverse_Hue_None);
+    plscmap1la(RGB, pos, rcoord, gcoord, bcoord, acoord, Alt_Hue_Path_None);
 
     -- Use that cmap1 to create a transparent red gradient for the whole window.
     px(0) := 0.0;
