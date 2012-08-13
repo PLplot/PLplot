@@ -375,7 +375,7 @@ x29::plot4()
         pls->box( "bcnstd", xlabel_step, 0, "bcnstv", 0., 0 );
         pls->col0( 3 );
         strncpy( title, "@frPLplot Example 29 - TAI-UTC ", 100 );
-        strncat( title, title_suffix, 100 - strlen( title ) );
+        strncat( title, title_suffix, 100 - strlen( title ) - 1 );
         pls->lab( xtitle, "TAI-UTC (sec)", title );
 
         pls->col0( 4 );
