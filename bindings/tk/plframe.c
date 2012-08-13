@@ -1899,12 +1899,12 @@ scol1( Tcl_Interp *interp, register PlFrame *plFramePtr,
          ( pls->cmap1cp[i].p != p ) ||
          ( pls->cmap1cp[i].alt_hue_path != reverse ) )
     {
-        pls->cmap1cp[i].h   = h;
-        pls->cmap1cp[i].l   = l;
-        pls->cmap1cp[i].s   = s;
-        pls->cmap1cp[i].p   = p;
+        pls->cmap1cp[i].h            = h;
+        pls->cmap1cp[i].l            = l;
+        pls->cmap1cp[i].s            = s;
+        pls->cmap1cp[i].p            = p;
         pls->cmap1cp[i].alt_hue_path = reverse;
-        *p_changed          = 1;
+        *p_changed = 1;
     }
     return TCL_OK;
 }

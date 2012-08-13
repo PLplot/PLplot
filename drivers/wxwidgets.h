@@ -48,11 +48,11 @@
 // side, but report/receive everything in virtual coordinates to/from the
 // PLplot core.
 //
-#define VSCALE                       ( 40. )
+#define VSCALE                   ( 40. )
 
 // pixels per inch
-#define DEVICE_PIXELS_PER_IN         ( 80. )
-#define VIRTUAL_PIXELS_PER_IN        ( DEVICE_PIXELS_PER_IN * VSCALE )
+#define DEVICE_PIXELS_PER_IN     ( 80. )
+#define VIRTUAL_PIXELS_PER_IN    ( DEVICE_PIXELS_PER_IN * VSCALE )
 
 
 // mm per inch
@@ -467,16 +467,16 @@ private:
 
 // Use this macro if you want to define your own main() or WinMain() function
 // and call wxEntry() from there.
-#define IMPLEMENT_PLAPP_NO_MAIN( appname )                           \
-    wxAppConsole * wxPLCreateApp()                                   \
-    {                                                                \
-        wxAppConsole::CheckBuildOptions( WX_BUILD_OPTIONS_SIGNATURE, \
-            "your program" );                                        \
-        return new appname;                                          \
-    }                                                                \
-    wxAppInitializer                                                 \
-    wxAppInitializer( (wxAppInitializerFunction) (wxApp::GetInitializerFunction()==NULL ? wxPLCreateApp : wxApp::GetInitializerFunction()) );    \
-    DECLARE_PLAPP( appname )                                         \
+#define IMPLEMENT_PLAPP_NO_MAIN( appname )                                                                                                        \
+    wxAppConsole * wxPLCreateApp()                                                                                                                \
+    {                                                                                                                                             \
+        wxAppConsole::CheckBuildOptions( WX_BUILD_OPTIONS_SIGNATURE,                                                                              \
+            "your program" );                                                                                                                     \
+        return new appname;                                                                                                                       \
+    }                                                                                                                                             \
+    wxAppInitializer                                                                                                                              \
+    wxAppInitializer( (wxAppInitializerFunction) ( wxApp::GetInitializerFunction() == NULL ? wxPLCreateApp : wxApp::GetInitializerFunction() ) ); \
+    DECLARE_PLAPP( appname )                                                                                                                      \
     appname & wxPLGetApp() { return *wx_static_cast( appname *, wxApp::GetInstance() ); }
 
 #define DECLARE_PLAPP( appname )    extern appname &wxPLGetApp();
