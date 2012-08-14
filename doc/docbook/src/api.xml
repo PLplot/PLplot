@@ -10199,7 +10199,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <paramdef><parameter>coord1</parameter></paramdef>
 	  <paramdef><parameter>coord2</parameter></paramdef>
 	  <paramdef><parameter>coord3</parameter></paramdef>
-	  <paramdef><parameter>rev</parameter></paramdef>
+	  <paramdef><parameter>alt_hue_path</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -10211,7 +10211,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       The idea here is to specify a number of control points that define
-      the mapping between palette 1 input positions (intensities) and HLS (or RGB).  Between
+      the mapping between palette 1 input positions (intensities) and 
+      HLS (or RGB).  Between
       these points, linear interpolation is used which
       gives a smooth variation of
       color with input position.  Any number of control points may be specified,
@@ -10234,12 +10235,37 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       position = 1.
     </para>
 
-    <para> The hue is interpolated around the "front" of the color wheel
-    (red&lt;->green&lt;->blue&lt;->red) unless the "rev" flag is set to true,
-    in which case interpolation (between the <literal>i</literal> and
-    <literal>i + 1</literal> control point for <literal>rev[i]</literal>)
-    proceeds around the back (reverse) side.  Specifying rev=NULL is
-    equivalent to setting rev[]= false for every control point. </para>
+    <para> 
+    The default behaviour is for the hue to be linearly interpolated 
+    between the control points. Since the hue lies in the range [0, 360] this
+    corresponds to interpolation around the "front" of the color wheel
+    (red&lt;->green&lt;->blue&lt;->red). If <literal>alt_hue_path[i]</literal> 
+    is true, then an alternative interpolation is used between control points
+    <literal>i</literal> and <literal>i+1</literal>. If 
+    <literal>hue[i+1]-hue[i] > 0</literal> then interpolation is between 
+    <literal>hue[i]</literal> and <literal>hue[i+1] - 360</literal>, otherwise 
+    between <literal>hue[i]</literal> and <literal>hue[i+1] + 360</literal>. 
+    You can consider this as interpolation around the "back" or "reverse" of 
+    the color wheel. Specifying <literal>alt_hue_path=NULL</literal> is
+    equivalent to setting <literal>alt_hue_path[] = false</literal> for 
+    every control point. 
+    </para>
+
+    <para>
+      <table frame="none"><title> Examples of interpolation </title>
+      <tgroup cols="3" align="center" colsep="0" rowsep="0">
+        <thead>
+          <row><entry>Hue</entry><entry>alt_hue_path</entry><entry>color scheme</entry></row>
+        </thead>
+	<tbody>
+	  <row><entry>[120 240]</entry><entry>false</entry><entry>green-cyan-blue</entry> </row>
+	  <row><entry>[240 120]</entry><entry>false</entry><entry>blue-cyan-green</entry> </row>
+	  <row><entry>[120 240]</entry><entry>true</entry><entry>green-yellow-red-magenta-blue</entry> </row>
+	  <row><entry>[240 120]</entry><entry>true</entry><entry>blue-magenta-red-yellow-green</entry> </row>
+	</tbody>
+      </tgroup>
+      </table>
+    </para>
 
     <para>
       <table frame="none"><title> Bounds on coordinates</title>
@@ -10326,13 +10352,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>rev</parameter>
+	  <parameter>alt_hue_path</parameter>
 	  (<literal>PLBOOL: *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    reverse flag for each control point. (<literal>rev[i]</literal> 
-	    refers
+	    alternative interpolation method flag for each control point. 
+            (<literal>alt_hue_path[i]</literal> refers
 	    to the interpolation interval between the <literal>i</literal> and
 	    <literal>i + 1</literal> control points).
 	  </para>
@@ -10341,7 +10367,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plscmap1l(itype, pos, coord1, coord2, coord3, rev)</function>
+      Redacted form: <function>plscmap1l(itype, pos, coord1, coord2, coord3, alt_hue_path)</function>
     </para>
 
     <para>
@@ -10369,7 +10395,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <paramdef><parameter>coord2</parameter></paramdef>
 	  <paramdef><parameter>coord3</parameter></paramdef>
 	  <paramdef><parameter>coord4</parameter></paramdef>	
-	  <paramdef><parameter>rev</parameter></paramdef>
+	  <paramdef><parameter>alt_hue_path</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -10463,13 +10489,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>rev</parameter>
+	  <parameter>alt_hue_path</parameter>
 	  (<literal>PLBOOL: *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    reverse flag for each control point. (<literal>rev[i]</literal> 
-	    refers
+	    alternative interpolation method flag for each control point. 
+            (<literal>alt_hue_path[i]</literal> refers
 	    to the interpolation interval between the <literal>i</literal> and
 	    <literal>i + 1</literal> control points).
 	  </para>
