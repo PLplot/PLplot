@@ -874,8 +874,8 @@ Note to self: Uncomment these lines when editing with Serna or XMLmind.
       behavior is as though a proper-length array of all
       <literal>False</literal> values was passed. In Ada, these procedures are
       overloaded to allow a last argument that can be either an array of
-      Boolean or a value of the enumerated type <literal>(Reverse_Hue_None,
-      Reverse_Hue_All)</literal>.</para>
+      Boolean or a value of the enumerated type <literal>type Alt_Hue_Path_Type is (Alt_Hue_Path_None,
+      Alt_Hue_Path_All)</literal>.</para>
     </sect2>
   </sect1>
 
