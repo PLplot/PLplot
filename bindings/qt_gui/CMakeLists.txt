@@ -60,7 +60,7 @@ if(ENABLE_qt)
   if(NON_TRANSITIVE)
     # empty list ==> non-transitive linking for everything that links to
     # libplplotqtd in the shared libraries case.
-    target_link_libraries(plplotqt${LIB_TAG} LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplotqt${LIB_TAG} LINK_INTERFACE_LIBRARIES QtCore)
     # This configures the pkg-config method to use non-transitive linking.
     set(PC_REQUIRES_TAG "Requires.private")
   else(NON_TRANSITIVE)
