@@ -58,17 +58,13 @@ if(ENABLE_qt)
     ${QT_LIBRARIES}
     )
   if(NON_TRANSITIVE)
-    message("QT_LIBRARIES = ${QT_LIBRARIES}")
-    set(QT_LINK_LIBS "")
-    foreach(l ${QT_LIBRARIES})
-      if(${l} MATCHES "QtCore")
-        set(QT_LINK_LIBS ${QT_LINK_LIBS} ${l})
-      endif(${l} MATCHES "QtCore")
-    endforeach(l ${QT_LIBRARIES})
-    message("QT_LINK_LIBS = ${QT_LINK_LIBS}")
+    # Note that there are implicit references to classes in QtCore, QtGui and QtSvg 
+    # so we need to add all three to the list of libraries to link to plplotqtd.
+    # This is just equivalent to adding QT_LIBRARIES.
+    # 
     # empty list ==> non-transitive linking for everything that links to
     # libplplotqtd in the shared libraries case.
-    target_link_libraries(plplotqt${LIB_TAG} LINK_INTERFACE_LIBRARIES ${QT_LINK_LIBS})
+    target_link_libraries(plplotqt${LIB_TAG} LINK_INTERFACE_LIBRARIES ${QT_LIBRARIES})
     # This configures the pkg-config method to use non-transitive linking.
     set(PC_REQUIRES_TAG "Requires.private")
   else(NON_TRANSITIVE)
