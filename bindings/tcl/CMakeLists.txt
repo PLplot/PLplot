@@ -138,6 +138,7 @@ plplottcltk${LIB_TAG}_link_libraries
 tclmatrix${LIB_TAG}
 plplot${LIB_TAG}
 ${TCL_LIBRARY}
+${X11_LIBRARIES}
 )
 set(
 libplplottcltk${LIB_TAG}_LINK_FLAGS
