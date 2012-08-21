@@ -119,7 +119,6 @@ if(ENABLE_DYNDRIVERS)
 	  ${MATH_LIB}
 	  ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	  ${${SOURCE_ROOT_NAME}_TARGETS}
-	  ${QT_LIBRARIES}
 	  )
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")

@@ -90,7 +90,7 @@ if(ANY_QT_DEVICE)
       set(qt_COMPILE_FLAGS "${qt_COMPILE_FLAGS} -I${DIR}")
     endforeach(DIR ${QT_INCLUDES})
     
-    set(qt_LINK_FLAGS)
+    set(qt_LINK_FLAGS ${QT_LIBRARIES})
     set(qt_RPATH ${QT_LIBRARY_DIR})
     filter_rpath(qt_RPATH)
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
