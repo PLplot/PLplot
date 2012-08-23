@@ -42,28 +42,30 @@ proc sourceUtf8 {sourceFile} {
 
 set  utf8_examples {4 18 24 26 33}
 
-for {set i 1} {$i <= 31} {incr i} {
-    set demo x[format "%02d" $i]
-
-    #
-    # If the source code contains UTF-8 characters (beyond the
-    # ASCII-7 encoding), take special measures
-    #
-
-    if { [lsearch $utf8_examples $i] < 0 } {
-        source $demo.tcl
-    } else {
-        sourceUtf8 $demo.tcl
+for {set i 0} {$i <= 33} {incr i} {
+    if {$i != 32} {
+	set demo x[format "%02d" $i]
+	
+	#
+	# If the source code contains UTF-8 characters (beyond the
+	# ASCII-7 encoding), take special measures
+	#
+	
+	if { [lsearch $utf8_examples $i] < 0 } {
+	    source $demo.tcl
+	} else {
+	    sourceUtf8 $demo.tcl
+	}
+	
+	# restore defaults
+	proc $i {} "
+            $demo
+            loopback cmd pleop
+            loopback cmd plcol0 1
+            loopback cmd plsori 0
+            loopback cmd plspal0 cmap0_default.pal
+            loopback cmd plspal1 cmap1_default.pal 1
+            loopback cmd plstransform NULL
+        "
     }
-
-    # restore defaults
-    proc $i {} "
-        $demo
-        loopback cmd pleop
-        loopback cmd plcol0 1
-        loopback cmd plsori 0
-        loopback cmd plspal0 cmap0_default.pal
-        loopback cmd plspal1 cmap1_default.pal 1
-        loopback cmd plstransform NULL
-    "
 }
