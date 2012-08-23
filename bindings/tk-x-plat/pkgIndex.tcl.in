@@ -38,7 +38,7 @@ proc load_pkg_Plplotter {dir} {
 	set buildDir "@BUILD_DIR@"
 	set bLen [string length $buildDir]
 	if {![string compare -length $bLen $buildDir $thisDir]}	then {
-		set searchdirs "../../drivers/.libs"} else {
+		set searchdirs "../../drivers"} else {
 		set searchdirs [list "@DRV_HARDDIR@"]}
 	#puts $searchdirs
 	set suf [info sharedlibextension]
