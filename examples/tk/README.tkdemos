@@ -61,6 +61,6 @@ plserver
 source runAllDemos.tcl
 
 wish
-lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk-x-plat
+lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk-x-plat ../../bindings/tk
 package require Plplotter
 source runAllDemos.tcl
