@@ -52,7 +52,7 @@
 // the Plbasicinit function called from here.
 //--------------------------------------------------------------------------
 
-EXTERN int
+PLDLLIMPEXP_DRIVER EXTERN int
 Plplotter_Init( Tcl_Interp *interp )
 {
 #ifdef USE_TCL_STUBS
