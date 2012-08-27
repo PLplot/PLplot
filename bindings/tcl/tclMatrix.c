@@ -642,7 +642,22 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", (size_t) length ) == 0 ) )
     {
         Tcl_AppendResult( interp,
-            "So you really thought there'd be help, eh?  Sucker.",
+            "Available subcommands:\n\
+dump   - return the values in the matrix as a string\n\
+delete - delete the matrix (including the matrix command)\n\
+filter - apply a three-point averaging (with a number of passes; ome-dimensional only)\n\
+help   - this information\n\
+info   - return the dimensions\n\
+max    - return the maximum value for the entire matrix or for the first N entries\n\
+min    - return the minimum value for the entire matrix or for the first N entries\n\
+redim  - resize the matrix (for one-dimensional matrices only)\n\
+scale  - scale the values by a given factor (for one-dimensional matrices only)\n\
+\n\
+Set and get values:\n\
+matrix m f 3 3 3 - define matrix command \"m\", three-dimensional, floating-point data\n\
+m 1 2 3          - return the value of matrix element [1,2,3]\n\
+m 1 2 3 = 2.0    - set the value of matrix element [1,2,3] to 2.0 (do not return the value)\n\
+m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 and third index 3 to 2.0",
             (char *) NULL );
         return TCL_OK;
     }
