@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <windows.h>
+#include <tchar.h>
 #ifdef _WIN64
 #define GWL_USERDATA    GWLP_USERDATA
 #define GCL_HCURSOR     GCLP_HCURSOR
@@ -145,8 +146,8 @@ static void init_freetype_lv2( PLStream *pls );
 //  Local Function definitions and function-like defines
 //--------------------------------------------------------------------------
 
-static int GetRegValue( char *key_name, char *key_word, char *buffer, int size );
-static int SetRegValue( char *key_name, char *key_word, char *buffer, int dwType, int size );
+static int GetRegValue( TCHAR *key_name, TCHAR *key_word, char *buffer, int size );
+static int SetRegValue( TCHAR *key_name, TCHAR *key_word, char *buffer, int dwType, int size );
 static void Resize( PLStream *pls );
 static void plD_fill_polygon_wingcc( PLStream *pls );
 static void CopySCRtoBMP( PLStream *pls );
@@ -226,7 +227,7 @@ void plD_dispatch_init_wingcc( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_wingcc;
 }
 
-static char* szWndClass = "PlplotWin";
+static TCHAR* szWndClass = _T("PlplotWin");
 
 
 //--------------------------------------------------------------------------
@@ -257,6 +258,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
     else
     {
 #ifndef _WIN64
+#undef GetWindowLongPtr
 #define GetWindowLongPtr    GetWindowLong
 #endif
         pls = (PLStream *) GetWindowLongPtr( hwnd, GWL_USERDATA ); // Try to get the address to pls for this window
@@ -301,7 +303,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                     if ( dev->ps.fErase )
                     {
                         dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
-                        ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
+                        ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, _T(""), 0, 0 );
                         SetBkColor( dev->hdc, dev->oldcolour );
                     }
 
@@ -372,7 +374,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                 //
 
                 dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
-                ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
+                ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, _T(""), 0, 0 );
                 SetBkColor( dev->hdc, dev->oldcolour );
 
                 dev->already_erased = 1;
@@ -416,9 +418,9 @@ plD_init_wingcc( PLStream *pls )
 //  Variables used for reading the registary keys
 //  might eventually add a user defined pallette here, but for now it just does freetype
 //
-    char key_name[]       = "Software\\PLplot\\wingcc";
-    char Keyword_text[]   = "freetype";
-    char Keyword_smooth[] = "smooth";
+    TCHAR key_name[]       = _T("Software\\PLplot\\wingcc");
+    TCHAR Keyword_text[]   = _T("freetype");
+    TCHAR Keyword_smooth[] = _T("smooth");
 #endif
 
     DrvOpt wingcc_options[] = {
@@ -430,6 +432,12 @@ plD_init_wingcc( PLStream *pls )
 #endif
         { NULL,     DRV_INT, NULL,         NULL                                    }
     };
+
+//
+// Variable for storing the program name
+//
+	TCHAR *program;
+	int programlength;
 
 // Allocate and initialize device-specific data
 
@@ -539,13 +547,24 @@ plD_init_wingcc( PLStream *pls )
 
     RegisterClassEx( &dev->wndclass );
 
+	//
+	//convert the program name to wide char if needed
+	//
 
+#ifdef UNICODE
+	printf(pls->program);
+	programlength=strlen(pls->program)+1;
+	program=malloc(programlength*sizeof(TCHAR));
+	MultiByteToWideChar(CP_UTF8,0,pls->program,programlength,program,programlength);
+#else
+	program=pls->program;
+#endif
     //
     // Create our main window using that window class.
     //
     dev->hwnd = CreateWindowEx( WS_EX_WINDOWEDGE + WS_EX_LEFT,
         szWndClass,                                         // Class name
-        pls->program,                                       // Caption
+        program,                                            // Caption
         WS_OVERLAPPEDWINDOW,                                // Style
         pls->xoffset,                                       // Initial x (use default)
         pls->yoffset,                                       // Initial y (use default)
@@ -557,6 +576,9 @@ plD_init_wingcc( PLStream *pls )
         NULL                                                // Creation parameters
         );
 
+#ifdef UNICODE
+	free(program);
+#endif
 
 //
 // Attach a pointer to the stream to the window's user area
@@ -577,9 +599,9 @@ plD_init_wingcc( PLStream *pls )
 //
 
     dev->PopupMenu = CreatePopupMenu();
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page" );
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, "Quit" );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, _T("Print") );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, _T("Next Page") );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, _T("Quit") );
 
 #ifdef HAVE_FREETYPE
 
@@ -1070,7 +1092,7 @@ static void Resize( PLStream *pls )
 //  that is is there !
 //--------------------------------------------------------------------------
 
-static int SetRegValue( char *key_name, char *key_word, char *buffer, int dwType, int size )
+static int SetRegValue( TCHAR *key_name, TCHAR *key_word, char *buffer, int dwType, int size )
 {
     int   j = 0;
 
@@ -1106,7 +1128,7 @@ static int SetRegValue( char *key_name, char *key_word, char *buffer, int dwType
 //  Return code is 1 for success, and 0 for failure.
 //--------------------------------------------------------------------------
 
-static int GetRegValue( char *key_name, char *key_word, char *buffer, int size )
+static int GetRegValue( TCHAR *key_name, TCHAR *key_word, char *buffer, int size )
 {
     int  ret = 0;
     HKEY hKey;
@@ -1375,7 +1397,7 @@ static void PrintPage( PLStream *pls )
 
     ZeroMemory( &docinfo, sizeof ( docinfo ) );
     docinfo.cbSize      = sizeof ( docinfo );
-    docinfo.lpszDocName = "Plplot Page";
+    docinfo.lpszDocName = _T("Plplot Page");
 
     //
     //   Reset out printer structure to zero and initialise it
