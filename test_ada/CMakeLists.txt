@@ -1,18 +1,16 @@
 # Top-level CMakeLists.txt for a simple Ada-language project.  See the README
 # file in this directory for the motivations behind this project.
-
-# Version 2.4.5 or above of cmake is required!
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
-# set CMake 2.6.x policy if the cmake_policy command exists, (i.e., if
-# the user is using CMake 2.6.0 or newer).
-if(COMMAND  cmake_policy)
-  # empty elements are not ignored in lists.
-  cmake_policy(SET CMP0007 NEW)
-endif(COMMAND  cmake_policy)
+cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
 
 # Ideally use "project(simple_ada_test Ada)", but that doesn't work
-# (at least for case where Ada support files are in user-specified location
-# below).  Therefore, specify project with C even though C is unused.
+# (at least for case where Ada support files are in user-specified
+# location below).  The only combination that appears to work
+# correctly is to specify C for the base language in the project
+# command (NONE does not work) and use "enable_language(Ada)" below in
+# ada.cmake.  This is obviously a workaround for some bug in our Ada language
+# support, but you would have to understand the inner workings of
+# CMake language support much better than I do to find and fix the
+# bug.
 
 project(simple_ada_test C)
 
