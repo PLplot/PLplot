@@ -380,12 +380,15 @@ if(SWIG_FOUND)
 endif(SWIG_FOUND)
 
 # Find Perl.  Required in several places in the build system (e.g.,
-# tcl and docbook).
+# tcl and docbook).  Also check for XML::Parser and XML::DOM which
+# are also used several places in the build system.
 find_package(Perl)
 if(PERL_FOUND)
     include(CheckPerlModules)
+    check_perl_modules(PERL_XML_PARSER XML::Parser)
+    check_perl_modules(PERL_XML_DOM XML::DOM)
 endif(PERL_FOUND)
-
+	    
 # =======================================================================
 # pkg-config support as well as macros to put link flags in standard
 # *.pc (pkg-config) form as well as standard fullpath form used by cmake.
