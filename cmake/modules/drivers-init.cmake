@@ -228,6 +228,9 @@ set(DRIVERS_DEVICE_LIST
   "xwin:xwin:ON:I:OFF"
   )
 
+# PRESET_DEFAULT keeps track of whether the DEFAULT value has been
+# preset.
+
 if(DEFAULT_ALL_DEVICES)
   set(DEFAULT ON)
   set(PRESET_DEFAULT ON)
@@ -248,22 +251,26 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
     message(FATAL_ERROR "Invalid combination of REQUIRE_FAMILYING = ${REQUIRE_FAMILYING} AND KIND = ${KIND} for DEVICE = ${DEVICE}")
   endif(REQUIRE_FAMILYING AND NOT KIND STREQUAL "F")
 
+  # DRIVERS_DEVICE only used in one case below:
+  set(USED_DRIVERS_DEVICE OFF)
   if(NOT PRESET_DEFAULT)
+    # must set DEFAULT value since it hasn't been preset.
     if(DEFAULT_NO_QT_DEVICES AND DEVICE MATCHES ".*qt.*" AND NOT DEVICE STREQUAL "aqt")
       set(DEFAULT OFF)
     elseif(DEFAULT_NO_CAIRO_DEVICES AND DEVICE MATCHES ".*cairo.*")
       set(DEFAULT OFF)
     else(DEFAULT_NO_QT_DEVICES AND DEVICE MATCHES ".*qt.*" AND NOT DEVICE STREQUAL "aqt")
       string(REGEX REPLACE "^.*:.*:(.*):.*:.*$" "\\1" DEFAULT ${DRIVERS_DEVICE})
+      set(USED_DRIVERS_DEVICE ON)
     endif(DEFAULT_NO_QT_DEVICES AND DEVICE MATCHES ".*qt.*" AND NOT DEVICE STREQUAL "aqt")
   endif(NOT PRESET_DEFAULT)
   #message(STATUS "DEBUG: DEVICE = ${DEVICE}")
   #message(STATUS "DEBUG: DEFAULT= ${DEFAULT}")
   option(PLD_${DEVICE} "Enable ${DEVICE} device" ${DEFAULT})
-  if(PLD_${DEVICE} AND NOT ${DEFAULT})
+  if(PLD_${DEVICE} AND USED_DRIVERS_DEVICE AND NOT ${DEFAULT})
     message(STATUS 
       "WARNING: You have enabled the PLD_${DEVICE} device which is disabled by "
-      "default either because it is deprecated, or because there are know issues "
+      "default either because it is deprecated or because there are know issues "
       "with it. Please check the documentation / release notes for details.") 
-  endif(PLD_${DEVICE} AND NOT ${DEFAULT})
+  endif(PLD_${DEVICE} AND USED_DRIVERS_DEVICE AND NOT ${DEFAULT})
 endforeach(DRIVERS_DEVICE)
