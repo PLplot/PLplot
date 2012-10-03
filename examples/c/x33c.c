@@ -160,10 +160,20 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     PLINT      sub_ticks;
     PLFLT      low_cap_color, high_cap_color;
     PLINT      vertical, ifn;
-    const char *axis_opts;
-    char       label[200];
+    PLINT      n_axes = 1;
+    const char *axis_opts[1];
+    PLINT      n_labels = 1;
+    PLINT      label_opts[1] = { 0 };
+    char       *label;
     char       title[200];
     PLFLT      colorbar_width, colorbar_height;
+    PLINT      n_values_array[1];
+    PLFLT      *values_array[1];
+
+    label = (char *)malloc(sizeof(char) * 200);
+
+    n_values_array[0] = n_values;
+    values_array[0] = values;
 
     ticks     = 0.0;
     sub_ticks = 0;
@@ -207,26 +217,26 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         {
             if ( cont_color == 0 || cont_width == 0 )
             {
-                axis_opts = "uwtivn";
-                //axis_opts = "uwtin";
+                axis_opts[0] = "uwtivn";
+                //axis_opts[0] = "uwtin";
             }
             else
             {
-                axis_opts = "uwxvn";
-                //axis_opts = "uwxn";
+                axis_opts[0] = "uwxvn";
+                //axis_opts[0] = "uwxn";
             }
         }
         else
         {
             if ( cont_color == 0 || cont_width == 0 )
             {
-                axis_opts = "uwtivm";
-                //axis_opts = "uwtim";
+                axis_opts[0] = "uwtivm";
+                //axis_opts[0] = "uwtim";
             }
             else
             {
-                axis_opts = "uwxvm";
-                //axis_opts = "uwxm";
+                axis_opts[0] = "uwxvm";
+                //axis_opts[0] = "uwxm";
             }
         }
 
@@ -251,8 +261,9 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
             low_cap_color, high_cap_color,
             cont_color, cont_width,
             ticks, sub_ticks,
-            axis_opts, label,
-            n_values, values );
+            n_labels, label_opts, (const char **)&label,
+            n_axes, axis_opts,
+            n_values_array, (const PLFLT * const *)values_array );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );
