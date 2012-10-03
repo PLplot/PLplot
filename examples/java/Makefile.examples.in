@@ -61,7 +61,7 @@ clean:
 	rm -rf plplot $(example_classes)
 
 .java.class:
-	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH) -encoding utf8
+	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH) -encoding utf-8
 	cp plplot/examples/$@ .
 
 .SUFFIXES: .java .class

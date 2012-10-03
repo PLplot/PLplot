@@ -101,7 +101,7 @@ if(CORE_BUILD)
     add_custom_command(
       OUTPUT ${out_file}
       COMMAND ${CMAKE_Java_COMPILER}
-      -classpath ${CMAKE_BINARY_DIR}/bindings/java ${in_file} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf8
+      -classpath ${CMAKE_BINARY_DIR}/bindings/java ${in_file} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf-8
       DEPENDS ${in_file} ${files_plplot_core}
       )
     add_custom_target(x${STRING_INDEX}j ALL DEPENDS ${out_file})
@@ -160,7 +160,7 @@ else(CORE_BUILD)
     add_custom_command(
       OUTPUT ${out_file}
       COMMAND ${CMAKE_Java_COMPILER}
-      -classpath ${INSTALLED_JAR_FILE} ${in_file} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf8
+      -classpath ${INSTALLED_JAR_FILE} ${in_file} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf-8
       DEPENDS ${in_file} ${INSTALLED_JAR_FILE}
       )
     add_custom_target(x${STRING_INDEX}j ALL DEPENDS ${out_file})
