@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -51,7 +52,7 @@ class x05 {
 
         // Parse and process command line arguments.
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot.
 
@@ -59,12 +60,12 @@ class x05 {
 
         // Fill up data points.
 
-        delta = 2.0 * Math.PI / (double) NPTS;
+        delta = 2.0 * Math.PI / NPTS;
         for ( i = 0; i < NPTS; i++ )
             data[i] = Math.sin( i * delta );
 
         pls.col0( 1 );
-        pls.hist( data, -1.1, 1.1, 44, PLStream.PL_HIST_DEFAULT );
+        pls.hist( data, -1.1, 1.1, 44, PL_HIST_DEFAULT );
         pls.col0( 2 );
         pls.lab( "#frValue", "#frFrequency",
             "#frPLplot Example 5 - Probability function of Oscillator" );

@@ -29,6 +29,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 
 class x30 {
@@ -57,7 +58,7 @@ class x30 {
         int[] b    = new int[1];
         double[] a = new double[1];
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         pls.init();
         pls.scmap0n( 4 );
@@ -85,7 +86,7 @@ class x30 {
             // Get a color, change its transparency and
             // set it as the current color.
             pls.gcol0a( icol, r, g, b, a );
-            pls.scol0a( icol, r[0], g[0], b[0], 1.0 - (double) i / 9.0 );
+            pls.scol0a( icol, r[0], g[0], b[0], 1.0 - i / 9.0 );
             pls.col0( icol );
 
             // Draw the rectangle

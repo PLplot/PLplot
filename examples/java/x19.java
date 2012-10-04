@@ -28,6 +28,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -66,7 +67,7 @@ class LabelFunc19 implements PLCallbackLabel {
         String direction_label = "";
         double label_val       = 0.0;
 
-        if ( axis == PLStream.PL_Y_AXIS )
+        if ( axis == PL_Y_AXIS )
         {
             label_val = value;
             if ( label_val > 0.0 )
@@ -82,7 +83,7 @@ class LabelFunc19 implements PLCallbackLabel {
                 direction_label = "Eq";
             }
         }
-        else if ( axis == PLStream.PL_X_AXIS )
+        else if ( axis == PL_X_AXIS )
         {
             label_val = normalize_longitude( value );
             if ( label_val > 0.0 )
@@ -98,7 +99,7 @@ class LabelFunc19 implements PLCallbackLabel {
                 direction_label = "";
             }
         }
-        if ( axis == PLStream.PL_Y_AXIS && value == 0.0 )
+        if ( axis == PL_Y_AXIS && value == 0.0 )
         {
             // A special case for the equator
             label = direction_label;
@@ -156,7 +157,7 @@ class x19 {
         double[] y = new double[1];
 
         // Parse and process command line arguments.
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Longitude (x) and latitude (y)
 

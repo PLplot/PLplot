@@ -29,6 +29,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 class x17 {
     // Class data
@@ -53,7 +54,7 @@ class x17 {
 
 
         // Parse and process command line arguments.
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // If db is used the plot is much more smooth. However, because of the
         // async X behaviour, one does not have a real-time scripcharter.
@@ -140,7 +141,7 @@ class x17 {
             }
             catch ( InterruptedException e ) {
             }
-            t     = (double) n * dt;
+            t     = n * dt;
             noise = pls.randd() - 0.5;
             y1    = y1 + noise;
             y2    = Math.sin( t * Math.PI / 18. );

@@ -29,6 +29,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -154,10 +155,10 @@ class x21 {
 
         // Parse and process command line arguments.
         // pls.MergeOpts(options, "x22c options", NULL);
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         opt[2] = wmin;
-        opt[3] = (double) knn_order;
+        opt[3] = knn_order;
         opt[4] = threshold;
 
         // Initialize PLplot.
@@ -248,8 +249,8 @@ class x21 {
                 // regions, a weighted average over the neighbors is done.
                 //
 
-                if ( alg == PLStream.GRID_CSA || alg == PLStream.GRID_DTLI ||
-                     alg == PLStream.GRID_NNLI || alg == PLStream.GRID_NNI )
+                if ( alg == GRID_CSA || alg == GRID_DTLI ||
+                     alg == GRID_NNLI || alg == GRID_NNI )
                 {
                     int    ii, jj;
                     double dist, d;
@@ -329,8 +330,8 @@ class x21 {
                         "bcdfntu", "Z", 0.5, 0 );
                     pls.col0( 15 );
                     pls.lab( "", "", title[alg - 1] );
-                    pls.plot3dc( xg, yg, zg, PLStream.DRAW_LINEXY |
-                        PLStream.MAG_COLOR | PLStream.BASE_CONT,
+                    pls.plot3dc( xg, yg, zg, DRAW_LINEXY |
+                        MAG_COLOR | BASE_CONT,
                         clev );
                 }
             }

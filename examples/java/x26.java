@@ -64,6 +64,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -121,7 +122,7 @@ class x26 {
 
         // Parse and process command line arguments.
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot.
 
@@ -221,7 +222,7 @@ class x26 {
         }
         // Draw a legend
         // First legend entry.
-        opt_array[0]   = PLStream.PL_LEGEND_LINE;
+        opt_array[0]   = PL_LEGEND_LINE;
         text_colors[0] = 2;
         line_colors[0] = 2;
         line_styles[0] = 1;
@@ -233,7 +234,7 @@ class x26 {
         symbols[0] = "";
 
         // Second legend entry.
-        opt_array[1]      = PLStream.PL_LEGEND_LINE | PLStream.PL_LEGEND_SYMBOL;
+        opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
         text_colors[1]    = 3;
         line_colors[1]    = 3;
         line_styles[1]    = 1;
@@ -247,7 +248,7 @@ class x26 {
 
         pls.scol0a( 15, 32, 32, 32, 0.70 );
         pls.legend( legend_width, legend_height,
-            PLStream.PL_LEGEND_BACKGROUND | PLStream.PL_LEGEND_BOUNDING_BOX, 0,
+            PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
             0.0, 0.0, 0.10, 15,
             1, 1, 0, 0, opt_array,
             1.0, 1.0, 2.0,

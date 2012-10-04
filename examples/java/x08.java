@@ -32,6 +32,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -124,7 +125,7 @@ class x08 {
 
         // Parse and process command line arguments.
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
         boolean rosen = true;
 
         // Initialize plplot.
@@ -210,17 +211,17 @@ class x08 {
                 else if ( ifshade == 1 )   // magnitude colored plot
                 {
                     cmap1_init( 0 );
-                    pls.surf3d( x, y, z, PLStream.MAG_COLOR, clev_null );
+                    pls.surf3d( x, y, z, MAG_COLOR, clev_null );
                 }
                 else if ( ifshade == 2 )   //  magnitude colored plot with faceted squares
                 {
                     cmap1_init( 0 );
-                    pls.surf3d( x, y, z, PLStream.MAG_COLOR | PLStream.FACETED, clev_null );
+                    pls.surf3d( x, y, z, MAG_COLOR | FACETED, clev_null );
                 }
                 else                     // magnitude colored plot with contours
                 {
                     cmap1_init( 0 );
-                    pls.surf3d( x, y, z, PLStream.MAG_COLOR | PLStream.SURF_CONT | PLStream.BASE_CONT, clevel );
+                    pls.surf3d( x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel );
                 }
             }
         }

@@ -24,6 +24,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.util.*;
 
@@ -50,7 +51,7 @@ class x29 {
     x29( String[] args )
     {
         // Parse command line arguments
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot
         pls.init();
@@ -204,7 +205,7 @@ class x29 {
         x = new double[npts];
         y = new double[npts];
 
-        xmin = (double) tstart;
+        xmin = tstart;
         xmax = xmin + npts * 60.0 * 60.0 * 24.0;
         ymin = 0.0;
         ymax = 5.0;
@@ -212,8 +213,8 @@ class x29 {
         for ( i = 0; i < npts; i++ )
         {
             x[i] = xmin + i * 60.0 * 60.0 * 24.0;
-            y[i] = 1.0 + Math.sin( 2 * Math.PI * ( (double) i ) / 7.0 ) +
-                   Math.exp( ( (double) Math.min( i, npts - i ) ) / 31.0 );
+            y[i] = 1.0 + Math.sin( 2 * Math.PI * ( i ) / 7.0 ) +
+                   Math.exp( ( Math.min( i, npts - i ) ) / 31.0 );
         }
         pls.adv( 0 );
 
@@ -357,7 +358,7 @@ class x29 {
             y = new double[npts];
             for ( i = 0; i < npts; i++ )
             {
-                x[i] = xmin[0] + i * ( xmax[0] - xmin[0] ) / ( (double) ( npts - 1 ) );
+                x[i] = xmin[0] + i * ( xmax[0] - xmin[0] ) / ( npts - 1 );
                 pls.configtime( scale, offset1, offset2, 0x0, false, 0, 0, 0, 0, 0, 0. );
                 tai = x[i];
                 pls.btime( tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai );

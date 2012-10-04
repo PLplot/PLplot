@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -90,7 +91,7 @@ class x16 {
         final int fill_width = 2, cont_color = 0, cont_width = 0;
 
         // Parse and process command line arguments.
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Load colour palettes
         pls.spal0( "cmap0_black_on_white.pal" );
@@ -121,10 +122,10 @@ class x16 {
         zmax = fmax;
 
         for ( i = 0; i < NSHADES; i++ )
-            clevel[i] = zmin + ( zmax - zmin ) * ( i + 0.5 ) / (double) NSHADES;
+            clevel[i] = zmin + ( zmax - zmin ) * ( i + 0.5 ) / NSHADES;
 
         for ( i = 0; i < NSHADES + 1; i++ )
-            shedge[i] = zmin + ( zmax - zmin ) * (double) i / (double) NSHADES;
+            shedge[i] = zmin + ( zmax - zmin ) * i / NSHADES;
 
         for ( i = 0; i < XPTS; i++ )
         {
@@ -290,7 +291,7 @@ class x16 {
         zmax = fmax;
 
         for ( i = 0; i < NSHADES + 1; i++ )
-            shedge[i] = zmin + ( zmax - zmin ) * (double) i / (double) NSHADES;
+            shedge[i] = zmin + ( zmax - zmin ) * i / NSHADES;
 
         pls.shades( z, -1., 1., -1., 1.,
             shedge, fill_width,
@@ -300,7 +301,7 @@ class x16 {
 // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
         for ( i = 0; i < PERIMETERPTS; i++ )
         {
-            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 ) ) * (double) i;
+            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 ) ) * i;
             px[i] = Math.cos( t );
             py[i] = Math.sin( t );
         }

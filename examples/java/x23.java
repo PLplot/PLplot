@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 //
 // Displays Greek letters and mathematically interesting Unicode ranges
@@ -228,7 +229,7 @@ class x23 {
         int    i, j, page, length, slice;
         String cmdString = null;
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         pls.init();
 
@@ -257,8 +258,8 @@ class x23 {
             // Draw the grid using PLStream.box
 
             pls.col0( 2 );
-            deltax = 1.0 / ( (double) nxcells[page] );
-            deltay = 1.0 / ( (double) nycells[page] );
+            deltax = 1.0 / ( nxcells[page] );
+            deltay = 1.0 / ( nycells[page] );
             pls.box( "bcg", deltax, 0, "bcg", deltay, 0 );
             pls.col0( 15 );
             length = hi[page] - lo[page];

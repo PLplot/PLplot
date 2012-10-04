@@ -32,6 +32,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -58,7 +59,7 @@ class x01 {
         // Parse and process command line arguments.
 
 //         plMergeOpts(options, "x01c options", notes);
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
 // Print out version number.
 

@@ -29,6 +29,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -70,7 +71,7 @@ class x27 {
         // plplot initialization
 
         // Parse and process command line arguments
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot
         pls.init();
@@ -174,14 +175,14 @@ class x27 {
         // http://mathforum.org/mathimages/index.php/Hypotrochoid.
         windings = (int) Math.abs( params[1] ) / gcd( (int) params[0], (int) params[1] );
         steps    = NPNT / windings;
-        dphi     = 2.0 * Math.PI / (double) steps;
+        dphi     = 2.0 * Math.PI / steps;
 
         xcoord = new double[windings * steps + 1];
         ycoord = new double[windings * steps + 1];
 
         for ( i = 0; i <= windings * steps; i++ )
         {
-            phi       = (double) i * dphi;
+            phi       = i * dphi;
             phiw      = ( params[0] - params[1] ) / params[1] * phi;
             xcoord[i] = ( params[0] - params[1] ) * Math.cos( phi ) + params[2] * Math.cos( phiw );
             ycoord[i] = ( params[0] - params[1] ) * Math.sin( phi ) - params[2] * Math.sin( phiw );

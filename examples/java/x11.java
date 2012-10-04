@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -102,17 +103,17 @@ class x11 {
 
         // Parse and process command line arguments.
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot.
 
         pls.init();
 
         for ( i = 0; i < XPTS; i++ )
-            x[i] = 3. * (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
+            x[i] = 3. * ( i - ( XPTS / 2 ) ) / ( XPTS / 2 );
 
         for ( j = 0; j < YPTS; j++ )
-            y[j] = 3. * (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 );
+            y[j] = 3. * ( j - ( YPTS / 2 ) ) / ( YPTS / 2 );
 
         for ( i = 0; i < XPTS; i++ )
         {
@@ -163,15 +164,15 @@ class x11 {
 
                 // magnitude colored wireframe plot
                 else if ( i == 1 )
-                    pls.mesh( x, y, z, opt[k] | PLStream.MAG_COLOR );
+                    pls.mesh( x, y, z, opt[k] | MAG_COLOR );
 
                 // magnitude colored wireframe plot with sides
                 else if ( i == 2 )
-                    pls.plot3d( x, y, z, opt[k] | PLStream.MAG_COLOR, true );
+                    pls.plot3d( x, y, z, opt[k] | MAG_COLOR, true );
 
                 // magnitude colored wireframe plot with base contour
                 else if ( i == 3 )
-                    pls.meshc( x, y, z, opt[k] | PLStream.MAG_COLOR | PLStream.BASE_CONT,
+                    pls.meshc( x, y, z, opt[k] | MAG_COLOR | BASE_CONT,
                         clevel );
 
 

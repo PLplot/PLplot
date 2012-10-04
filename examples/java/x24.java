@@ -39,6 +39,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 class x24 {
     PLStream pls = new PLStream();
@@ -114,7 +115,7 @@ class x24 {
     {
         int i, j;
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         pls.init();
 

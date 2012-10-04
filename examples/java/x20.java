@@ -34,6 +34,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.io.*;
 import java.util.*;
@@ -129,7 +130,7 @@ class x20 {
 
         // Parse and process command line arguments.
         //pls.MergeOpts(options, "x20c options", NULL);
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize PLplot.
         pls.init();
@@ -137,7 +138,7 @@ class x20 {
         // view image border pixels
         if ( dbg )
         {
-            pls.env( 1., (double) XDIM, 1., (double) YDIM, 1, 1 ); // no plot box
+            pls.env( 1., XDIM, 1., YDIM, 1, 1 ); // no plot box
 
             // build a one pixel square border, for diagnostics
             for ( i = 0; i < XDIM; i++ )
@@ -152,8 +153,8 @@ class x20 {
 
             pls.lab( "...around a blue square.", " ", "A red border should appear..." );
 
-            pls.image( z, 1., (double) XDIM, 1., (double) YDIM, 0., 0.,
-                1., (double) XDIM, 1., (double) YDIM );
+            pls.image( z, 1., XDIM, 1., YDIM, 0., 0.,
+                1., XDIM, 1., YDIM );
         }
 
         // sombrero-like demo
@@ -211,7 +212,7 @@ class x20 {
         else
             pls.lab( "", " ", "Lena..." );
 
-        pls.image( img_f, 1., (double) width, 1., (double) height, 0., 0.,
+        pls.image( img_f, 1., width, 1., height, 0., 0.,
             1., width, 1., height );
 
         // selection/expansion demo
@@ -250,13 +251,13 @@ class x20 {
             pls.adv( 0 );
 
             // display selection only
-            pls.image( img_f, 1., (double) width, 1., (double) height, 0., 0., xi[0], xe[0], ye[0], yi[0] );
+            pls.image( img_f, 1., width, 1., height, 0., 0., xi[0], xe[0], ye[0], yi[0] );
 
             pls.spause( true );
 
             // zoom in selection
             pls.env( xi[0], xe[0], ye[0], yi[0], 1, -1 );
-            pls.image( img_f, 1., (double) width, 1., (double) height, 0., 0., xi[0], xe[0], ye[0], yi[0] );
+            pls.image( img_f, 1., width, 1., height, 0., 0., xi[0], xe[0], ye[0], yi[0] );
         }
 
         // Base the dynamic range on the image contents.
@@ -273,8 +274,8 @@ class x20 {
         {
             for ( j = 0; j <= height; j++ )
             {
-                xg[i][j] = (double) i;
-                yg[i][j] = (double) j;
+                xg[i][j] = i;
+                yg[i][j] = j;
             }
         }
         // Draw a saturated version of the original image.  Only use
@@ -282,7 +283,7 @@ class x20 {
         pls.col0( 2 );
         pls.env( 0, width, 0, height, 1, -1 );
         pls.lab( "", "", "Reduced dynamic range image example" );
-        pls.imagefr( img_f, 0., (double) width, 0., (double) height, 0., 0.,
+        pls.imagefr( img_f, 0., width, 0., height, 0., 0.,
             img_min + img_max * 0.25,
             img_max - img_max * 0.25,
             xg, yg );
@@ -312,7 +313,7 @@ class x20 {
             }
         }
 
-        pls.imagefr( img_f, 0., (double) width, 0., (double) height, 0., 0., img_min, img_max, xg, yg );
+        pls.imagefr( img_f, 0., width, 0., height, 0., 0., img_min, img_max, xg, yg );
         pls.end();
     }
 
@@ -368,7 +369,7 @@ class x20 {
             {
                 for ( i = 0; i < w; i++ )
                 {
-                    img[i][h - j - 1] = (double) in2.readUnsignedByte();
+                    img[i][h - j - 1] = in2.readUnsignedByte();
                 }
             }
         }
@@ -424,7 +425,7 @@ class x20 {
                     sx[4] = xxi; sy[4] = yyi;
                 }
 
-                if ( ( gin.getState() & (long) 0x100 ) != 0 )
+                if ( ( gin.getState() & 0x100 ) != 0 )
                 {
                     xxe = gin.getWX(); yye = gin.getWY();
                     if ( start )

@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 class x15 {
     static final int    XPTS = 35;
@@ -81,7 +82,7 @@ class x15 {
 
         // Parse and process command line arguments.
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot.
 

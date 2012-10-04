@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 import java.text.*;
@@ -42,11 +43,11 @@ class x18 {
 
     double THETA( int a )
     {
-        return 2. * Math.PI * (double) a / 20.;
+        return 2. * Math.PI * a / 20.;
     }
     double PHI( int a )
     {
-        return Math.PI * (double) a / 20.1;
+        return Math.PI * a / 20.1;
     }
     void test_poly( int k )
     {
@@ -124,7 +125,7 @@ class x18 {
         double       r;
 
         // Parse and process command line arguments.
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot.
         pls.init();

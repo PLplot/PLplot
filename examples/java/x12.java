@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.text.*;
 
@@ -57,7 +58,7 @@ class x12 {
         DecimalFormat nf4 = new DecimalFormat( "####" );
         int           i;
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         pls.init();
 
@@ -73,7 +74,7 @@ class x12 {
         for ( i = 0; i < 10; i++ )
         {
 //            pls.col0(i + 1);
-            pls.col1( (double) i / 9.0 );
+            pls.col1( i / 9.0 );
             pls.psty( 0 );
             plfbox( ( 1980. + i ), y0[i] );
 //	   sprintf(string, "%.0f", y0[i]);

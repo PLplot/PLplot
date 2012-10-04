@@ -25,6 +25,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.text.*;
 
@@ -76,7 +77,7 @@ class x31 {
 
         // Parse and process command line arguments
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Test setting / getting familying parameters before plinit.
         // Save values set by plparseopts to be restored later.
@@ -233,7 +234,7 @@ class x31 {
             status = 1;
         }
 
-        pls.sdidev( 0.05, PLStream.PL_NOTSET, 0.1, 0.2 );
+        pls.sdidev( 0.05, PL_NOTSET, 0.1, 0.2 );
         pls.gdidev( mar, aspect, jx, jy );
         System.out.println( "device-space window parameters: mar, aspect, jx, jy = " + nf.format( mar[0] ) + " " + nf.format( aspect[0] ) + " " + nf.format( jx[0] ) + " " + nf.format( jy[0] ) );
         if ( mar[0] != 0.05 || jx[0] != 0.1 || jy[0] != 0.2 )

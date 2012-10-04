@@ -29,6 +29,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -159,7 +160,7 @@ class x22 {
         // Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
         // Also put in smoothing term at small distances.
 
-        rmax = (double) nr;
+        rmax = nr;
 
         eps = 2.;
 
@@ -177,10 +178,10 @@ class x22 {
 
         for ( i = 0; i < nr; i++ )
         {
-            r = 0.5 + (double) i;
+            r = 0.5 + i;
             for ( j = 0; j < ntheta; j++ )
             {
-                theta    = 2. * Math.PI / ( ntheta - 1 ) * ( 0.5 + (double) j );
+                theta    = 2. * Math.PI / ( ntheta - 1 ) * ( 0.5 + j );
                 x        = r * Math.cos( theta );
                 y        = r * Math.sin( theta );
                 xg[i][j] = x;
@@ -204,10 +205,10 @@ class x22 {
         pls.env( xmaxmin[1], xmaxmin[0], ymaxmin[1], ymaxmin[0], 0, 0 );
         pls.lab( "(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot" );
         // Plot contours of the potential
-        dz = ( zmaxmin[0] - zmaxmin[1] ) / (double) nlevel;
+        dz = ( zmaxmin[0] - zmaxmin[1] ) / nlevel;
         for ( i = 0; i < nlevel; i++ )
         {
-            clevel[i] = zmaxmin[1] + ( (double) i + 0.5 ) * dz;
+            clevel[i] = zmaxmin[1] + ( i + 0.5 ) * dz;
         }
         pls.col0( 3 );
         pls.lsty( 2 );
@@ -223,7 +224,7 @@ class x22 {
         // Plot the perimeter of the cylinder
         for ( i = 0; i < nper; i++ )
         {
-            theta = ( 2. * Math.PI / ( nper - 1 ) ) * (double) i;
+            theta = ( 2. * Math.PI / ( nper - 1 ) ) * i;
             px[i] = rmax * Math.cos( theta );
             py[i] = rmax * Math.sin( theta );
         }
@@ -261,7 +262,7 @@ class x22 {
 
         // Parse and process command line arguments
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot
 

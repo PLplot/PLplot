@@ -25,6 +25,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 class x25 {
     PLStream pls = new PLStream();
@@ -40,7 +41,7 @@ class x25 {
 
         // Parse and process command line arguments
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         // Initialize plplot
 

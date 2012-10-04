@@ -30,6 +30,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -87,7 +88,7 @@ class x09 {
 
         // Parse and process command line arguments.
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
         // Initialize plplot
 
         pls.init();
@@ -238,7 +239,7 @@ class x09 {
         // Perimeter
         for ( i = 0; i < PERIMETERPTS; i++ )
         {
-            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 ) ) * (double) i;
+            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 ) ) * i;
             px[i] = Math.cos( t );
             py[i] = Math.sin( t );
         }
@@ -251,7 +252,7 @@ class x09 {
             r = i / (double) ( RPTS - 1 );
             for ( j = 0; j < THETAPTS; j++ )
             {
-                theta    = ( 2. * Math.PI / (double) ( THETAPTS - 1 ) ) * (double) j;
+                theta    = ( 2. * Math.PI / ( THETAPTS - 1 ) ) * j;
                 xg[i][j] = r * Math.cos( theta );
                 yg[i][j] = r * Math.sin( theta );
                 z[i][j]  = r;
@@ -260,7 +261,7 @@ class x09 {
 
         for ( i = 0; i < 10; i++ )
         {
-            lev[i] = 0.05 + 0.10 * (double) i;
+            lev[i] = 0.05 + 0.10 * i;
         }
 
         pls.col0( 2 );
@@ -311,10 +312,10 @@ class x09 {
         r = 0.;
         for ( i = 0; i < PRPTS; i++ )
         {
-            r = 0.5 + (double) i;
+            r = 0.5 + i;
             for ( j = 0; j < PTHETAPTS; j++ )
             {
-                theta    = ( 2. * Math.PI / (double) ( PTHETAPTS - 1 ) ) * ( 0.5 + (double) j );
+                theta    = ( 2. * Math.PI / ( PTHETAPTS - 1 ) ) * ( 0.5 + j );
                 xg[i][j] = r * Math.cos( theta );
                 yg[i][j] = r * Math.sin( theta );
             }
@@ -385,12 +386,12 @@ class x09 {
         //  System.out.println(zmax);
 
         // Positive and negative contour levels.
-        dz        = ( zmax - zmin ) / (double) PNLEVEL;
+        dz        = ( zmax - zmin ) / PNLEVEL;
         nlevelneg = 0;
         nlevelpos = 0;
         for ( i = 0; i < PNLEVEL; i++ )
         {
-            clev = zmin + ( (double) i + 0.5 ) * dz;
+            clev = zmin + ( i + 0.5 ) * dz;
             if ( clev <= 0. )
                 clevelneg_store[nlevelneg++] = clev;
             else
@@ -435,7 +436,7 @@ class x09 {
         // Draw outer boundary
         for ( i = 0; i < PPERIMETERPTS; i++ )
         {
-            t     = ( 2. * Math.PI / ( PPERIMETERPTS - 1 ) ) * (double) i;
+            t     = ( 2. * Math.PI / ( PPERIMETERPTS - 1 ) ) * i;
             px[i] = x0 + rmax*Math.cos( t );
             py[i] = y0 + rmax*Math.sin( t );
         }

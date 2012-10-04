@@ -29,6 +29,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
@@ -49,13 +50,13 @@ class x28 {
                ysmin    = ymin + 0.1 * yrange,
                ysmax    = ymax - 0.1 * yrange,
                ysrange  = ysmax - ysmin,
-               dysrot   = ysrange / (double) ( NROTATION - 1 ),
-               dysshear = ysrange / (double) ( NSHEAR - 1 ),
+               dysrot   = ysrange / ( NROTATION - 1 ),
+               dysshear = ysrange / ( NSHEAR - 1 ),
                zsmin    = zmin + 0.1 * zrange,
                zsmax    = zmax - 0.1 * zrange,
                zsrange  = zsmax - zsmin,
-               dzsrot   = zsrange / (double) ( NROTATION - 1 ),
-               dzsshear = zsrange / (double) ( NSHEAR - 1 ),
+               dzsrot   = zsrange / ( NROTATION - 1 ),
+               dzsshear = zsrange / ( NSHEAR - 1 ),
                ys, zs,
                x_inclination, y_inclination, z_inclination,
                x_shear, y_shear, z_shear,
@@ -73,11 +74,11 @@ class x28 {
 
         for ( i = 0; i < XPTS; i++ )
         {
-            x[i] = xmin + (double) i * ( xmax - xmin ) / (double) ( XPTS - 1 );
+            x[i] = xmin + i * ( xmax - xmin ) / ( XPTS - 1 );
         }
 
         for ( j = 0; j < YPTS; j++ )
-            y[j] = ymin + (double) j * ( ymax - ymin ) / (double) ( YPTS - 1 );
+            y[j] = ymin + j * ( ymax - ymin ) / ( YPTS - 1 );
 
         for ( i = 0; i < XPTS; i++ )
         {
@@ -89,7 +90,7 @@ class x28 {
 
         // Parse and process command line arguments
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         pls.init();
 
@@ -166,7 +167,7 @@ class x28 {
                 0.0, "  revolution" );
         }
         // Draw minimal 3D grid to finish defining the 3D box.
-        pls.mesh( x, y, z, PLStream.DRAW_LINEXY );
+        pls.mesh( x, y, z, DRAW_LINEXY );
 
         // Page 2: Demonstrate rotation of string around its axis.
         pls.adv( 0 );
@@ -193,7 +194,7 @@ class x28 {
             cos_omega = Math.cos( omega );
             y_shear   = 0.5 * yrange * sin_omega;
             z_shear   = 0.5 * zrange * cos_omega;
-            zs        = zsmax - dzsrot * (double) i;
+            zs        = zsmax - dzsrot * i;
             pls.ptex3(
                 xmid, ymax, zs,
                 x_inclination, y_inclination, z_inclination,
@@ -214,7 +215,7 @@ class x28 {
             cos_omega = Math.cos( omega );
             x_shear   = 0.5 * xrange * sin_omega;
             z_shear   = 0.5 * zrange * cos_omega;
-            zs        = zsmax - dzsrot * (double) i;
+            zs        = zsmax - dzsrot * i;
             pls.ptex3(
                 xmax, ymid, zs,
                 x_inclination, y_inclination, z_inclination,
@@ -235,7 +236,7 @@ class x28 {
             cos_omega = Math.cos( omega );
             y_shear   = 0.5 * yrange * cos_omega;
             z_shear   = 0.5 * zrange * sin_omega;
-            ys        = ysmax - dysrot * (double) i;
+            ys        = ysmax - dysrot * i;
             pls.ptex3(
                 xmid, ys, zmin,
                 x_inclination, y_inclination, z_inclination,
@@ -243,7 +244,7 @@ class x28 {
                 0.5, "rotation for z = z#dmin#u" );
         }
         // Draw minimal 3D grid to finish defining the 3D box.
-        pls.mesh( x, y, z, PLStream.DRAW_LINEXY );
+        pls.mesh( x, y, z, DRAW_LINEXY );
 
         // Page 3: Demonstrate shear of string along its axis.
         // Work around xcairo and pngcairo (but not pscairo) problems for
@@ -274,7 +275,7 @@ class x28 {
             cos_omega = Math.cos( omega );
             x_shear   = 0.5 * xrange * sin_omega;
             z_shear   = 0.5 * zrange * cos_omega;
-            zs        = zsmax - dzsshear * (double) i;
+            zs        = zsmax - dzsshear * i;
             pls.ptex3(
                 xmid, ymax, zs,
                 x_inclination, y_inclination, z_inclination,
@@ -295,7 +296,7 @@ class x28 {
             cos_omega = Math.cos( omega );
             y_shear   = -0.5 * yrange * sin_omega;
             z_shear   = 0.5 * zrange * cos_omega;
-            zs        = zsmax - dzsshear * (double) i;
+            zs        = zsmax - dzsshear * i;
             pls.ptex3(
                 xmax, ymid, zs,
                 x_inclination, y_inclination, z_inclination,
@@ -316,7 +317,7 @@ class x28 {
             cos_omega = Math.cos( omega );
             y_shear   = 0.5 * yrange * cos_omega;
             x_shear   = 0.5 * xrange * sin_omega;
-            ys        = ysmax - dysshear * (double) i;
+            ys        = ysmax - dysshear * i;
             pls.ptex3(
                 xmid, ys, zmin,
                 x_inclination, y_inclination, z_inclination,
@@ -324,7 +325,7 @@ class x28 {
                 0.5, "shear for z = z#dmin#u" );
         }
         // Draw minimal 3D grid to finish defining the 3D box.
-        pls.mesh( x, y, z, PLStream.DRAW_LINEXY );
+        pls.mesh( x, y, z, DRAW_LINEXY );
 
         // Page 4: Demonstrate drawing a string on a 3D path.
         pls.adv( 0 );
@@ -373,7 +374,7 @@ class x28 {
             omega += domega;
         }
         // Draw minimal 3D grid to finish defining the 3D box.
-        pls.mesh( x, y, z, PLStream.DRAW_LINEXY );
+        pls.mesh( x, y, z, DRAW_LINEXY );
 
         // Page 5: Demonstrate plmtex3 axis labelling capability
         pls.adv( 0 );
@@ -401,7 +402,7 @@ class x28 {
         pls.mtex3( "zs", -2.5, 0.5, 0.5, "Arbitrarily displaced" );
         pls.mtex3( "zs", -1.0, 0.5, 0.5, "secondary Z-axis label" );
         // Draw minimal 3D grid to finish defining the 3D box.
-        pls.mesh( x, y, z, PLStream.DRAW_LINEXY );
+        pls.mesh( x, y, z, DRAW_LINEXY );
 
         pls.end();
     }

@@ -31,6 +31,7 @@
 package plplot.examples;
 
 import plplot.core.*;
+import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 import java.text.*;
@@ -61,7 +62,7 @@ class x14 {
 
         // Parse and process command line arguments.
 
-        pls1.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        pls1.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
 
         //      If valid geometry specified on command line, use it for both streams.
 
