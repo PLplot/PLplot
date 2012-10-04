@@ -123,11 +123,11 @@ class x11 {
                 z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * Math.exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. ) ) -
                           10. * ( xx / 5. - Math.pow( xx, 3. ) - Math.pow( yy, 5. ) ) * Math.exp( -xx * xx - yy * yy ) -
                           1. / 3. * Math.exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
-                if ( false ) // Jungfraujoch/Interlaken
-                {
-                    if ( z[i][j] < -1. )
-                        z[i][j] = -1.;
-                }
+                //if ( false ) // Jungfraujoch/Interlaken
+                //{
+                //    if ( z[i][j] < -1. )
+                //        z[i][j] = -1.;
+                //}
                 if ( zmin > z[i][j] )
                     zmin = z[i][j];
                 if ( zmax < z[i][j] )

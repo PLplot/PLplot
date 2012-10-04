@@ -149,7 +149,6 @@ class x26 {
         double[] ampl  = new double[101];
         double[] phase = new double[101];
         double f0, freq;
-        int    nlegend = 2;
         int[] opt_array        = new int[2];
         int[] text_colors      = new int[2];
         int[] line_colors      = new int[2];

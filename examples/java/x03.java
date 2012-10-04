@@ -45,7 +45,7 @@ class x03 {
         PLStream     pls = new PLStream();
         NumberFormat nf  = NumberFormat.getNumberInstance();
 
-        int          i, j;
+        int          i;
         double       dtr, theta, dx, dy, r, offset;
 
         double[] x0 = new double[361];
