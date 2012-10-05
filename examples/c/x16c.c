@@ -140,17 +140,17 @@ main( int argc, const char *argv[] )
     PLINT    fill_width = 2, cont_color = 0, cont_width = 0;
     PLFLT    colorbar_width, colorbar_height;
 
-#define NUM_AXES 1
-    PLINT n_axis_opts = NUM_AXES;
+#define NUM_AXES    1
+    PLINT      n_axis_opts  = NUM_AXES;
     const char *axis_opts[] = {
         "bcvtm",
     };
-    PLINT num_values[NUM_AXES];
-    PLFLT *values[NUM_AXES];
-    PLFLT filler_values[2] = { 0.0, 1.0 };
-#define NUM_LABELS 1
-    PLINT n_labels = NUM_LABELS;
-    PLINT label_opts[] = {
+    PLINT      num_values[NUM_AXES];
+    PLFLT      *values[NUM_AXES];
+    PLFLT      filler_values[2] = { 0.0, 1.0 };
+#define NUM_LABELS    1
+    PLINT      n_labels     = NUM_LABELS;
+    PLINT      label_opts[] = {
         PL_COLORBAR_LABEL_BOTTOM,
     };
     const char *labels[] = {
@@ -262,14 +262,14 @@ main( int argc, const char *argv[] )
         plsmin( 0.0, 0.5 );
 
         num_values[0] = ns + 1;
-        values[0] = shedge;
+        values[0]     = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width, 0.0, 0,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
-            num_values, (const PLFLT * const *)values );
+            num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );
@@ -313,14 +313,14 @@ main( int argc, const char *argv[] )
         plsmin( 0.0, 0.5 );
 
         num_values[0] = ns + 1;
-        values[0] = shedge;
+        values[0]     = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width, 0.0, 0,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
-            num_values, (const PLFLT * const *)values );
+            num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );
@@ -364,14 +364,14 @@ main( int argc, const char *argv[] )
         plsmin( 0.0, 0.5 );
 
         num_values[0] = ns + 1;
-        values[0] = shedge;
+        values[0]     = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width, 0.0, 0,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
-            num_values, (const PLFLT * const *)values );
+            num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );
@@ -414,14 +414,14 @@ main( int argc, const char *argv[] )
         plsmin( 0.0, 0.5 );
 
         num_values[0] = ns + 1;
-        values[0] = shedge;
+        values[0]     = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             2, 3, 0.0, 0,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
-            num_values, (const PLFLT * const *)values );
+            num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );
@@ -515,14 +515,14 @@ main( int argc, const char *argv[] )
         plsmin( 0.0, 0.5 );
 
         num_values[0] = ns + 1;
-        values[0] = shedge;
+        values[0]     = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width, 0.0, 0,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
-            num_values, (const PLFLT * const *)values );
+            num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );

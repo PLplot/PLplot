@@ -227,7 +227,7 @@ void plD_dispatch_init_wingcc( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_wingcc;
 }
 
-static TCHAR* szWndClass = _T("PlplotWin");
+static TCHAR* szWndClass = _T( "PlplotWin" );
 
 
 //--------------------------------------------------------------------------
@@ -303,7 +303,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                     if ( dev->ps.fErase )
                     {
                         dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
-                        ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, _T(""), 0, 0 );
+                        ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, _T( "" ), 0, 0 );
                         SetBkColor( dev->hdc, dev->oldcolour );
                     }
 
@@ -374,7 +374,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                 //
 
                 dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
-                ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, _T(""), 0, 0 );
+                ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, _T( "" ), 0, 0 );
                 SetBkColor( dev->hdc, dev->oldcolour );
 
                 dev->already_erased = 1;
@@ -418,9 +418,9 @@ plD_init_wingcc( PLStream *pls )
 //  Variables used for reading the registary keys
 //  might eventually add a user defined pallette here, but for now it just does freetype
 //
-    TCHAR key_name[]       = _T("Software\\PLplot\\wingcc");
-    TCHAR Keyword_text[]   = _T("freetype");
-    TCHAR Keyword_smooth[] = _T("smooth");
+    TCHAR key_name[]       = _T( "Software\\PLplot\\wingcc" );
+    TCHAR Keyword_text[]   = _T( "freetype" );
+    TCHAR Keyword_smooth[] = _T( "smooth" );
 #endif
 
     DrvOpt wingcc_options[] = {
@@ -436,8 +436,8 @@ plD_init_wingcc( PLStream *pls )
 //
 // Variable for storing the program name
 //
-	TCHAR *program;
-	int programlength;
+    TCHAR *program;
+    int   programlength;
 
 // Allocate and initialize device-specific data
 
@@ -547,17 +547,17 @@ plD_init_wingcc( PLStream *pls )
 
     RegisterClassEx( &dev->wndclass );
 
-	//
-	//convert the program name to wide char if needed
-	//
+    //
+    //convert the program name to wide char if needed
+    //
 
 #ifdef UNICODE
-	printf(pls->program);
-	programlength=strlen(pls->program)+1;
-	program=malloc(programlength*sizeof(TCHAR));
-	MultiByteToWideChar(CP_UTF8,0,pls->program,programlength,program,programlength);
+    printf( pls->program );
+    programlength = strlen( pls->program ) + 1;
+    program       = malloc( programlength * sizeof ( TCHAR ) );
+    MultiByteToWideChar( CP_UTF8, 0, pls->program, programlength, program, programlength );
 #else
-	program=pls->program;
+    program = pls->program;
 #endif
     //
     // Create our main window using that window class.
@@ -577,7 +577,7 @@ plD_init_wingcc( PLStream *pls )
         );
 
 #ifdef UNICODE
-	free(program);
+    free( program );
 #endif
 
 //
@@ -599,9 +599,9 @@ plD_init_wingcc( PLStream *pls )
 //
 
     dev->PopupMenu = CreatePopupMenu();
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, _T("Print") );
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, _T("Next Page") );
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, _T("Quit") );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, _T( "Print" ) );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, _T( "Next Page" ) );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, _T( "Quit" ) );
 
 #ifdef HAVE_FREETYPE
 
@@ -1397,7 +1397,7 @@ static void PrintPage( PLStream *pls )
 
     ZeroMemory( &docinfo, sizeof ( docinfo ) );
     docinfo.cbSize      = sizeof ( docinfo );
-    docinfo.lpszDocName = _T("Plplot Page");
+    docinfo.lpszDocName = _T( "Plplot Page" );
 
     //
     //   Reset out printer structure to zero and initialise it

@@ -1552,7 +1552,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLINT  i, j, ni = 0, nj = 0, n_steps;
     PLFLT  step_size;
 
-    PLBOOL if_edge = 0;
+    PLBOOL if_edge   = 0;
     PLBOOL if_edge_b = 0, if_edge_c = 0, if_edge_u = 0, if_edge_w = 0;
 
     // Ratio of normalized subpage coordinates to mm coordinates in
@@ -1647,7 +1647,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         if_edge_u = if_edge_u || plP_stsearch( axis_opts[i], 'u' );
         if_edge_w = if_edge_w || plP_stsearch( axis_opts[i], 'w' );
     }
-    if_edge = if_edge_b && if_edge_c && !(if_edge_u || if_edge_w);
+    if_edge = if_edge_b && if_edge_c && !( if_edge_u || if_edge_w );
 
     // Assumes that the colors array is sorted from smallest to largest.
     plgcmap1_range( &min_color, &max_color );

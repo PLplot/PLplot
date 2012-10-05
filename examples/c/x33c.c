@@ -162,7 +162,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     PLINT      vertical, ifn;
     PLINT      n_axes = 1;
     const char *axis_opts[1];
-    PLINT      n_labels = 1;
+    PLINT      n_labels      = 1;
     PLINT      label_opts[1] = { 0 };
     char       *label;
     char       title[200];
@@ -170,10 +170,10 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     PLINT      n_values_array[1];
     PLFLT      *values_array[1];
 
-    label = (char *)malloc(sizeof(char) * 200);
+    label = (char *) malloc( sizeof ( char ) * 200 );
 
     n_values_array[0] = n_values;
-    values_array[0] = values;
+    values_array[0]   = values;
 
     ticks     = 0.0;
     sub_ticks = 0;
@@ -261,9 +261,9 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
             low_cap_color, high_cap_color,
             cont_color, cont_width,
             ticks, sub_ticks,
-            n_labels, label_opts, (const char **)&label,
+            n_labels, label_opts, (const char **) &label,
             n_axes, axis_opts,
-            n_values_array, (const PLFLT * const *)values_array );
+            n_values_array, (const PLFLT * const *) values_array );
 
         // Reset text and tick sizes
         plschr( 0.0, 1.0 );

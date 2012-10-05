@@ -1673,14 +1673,14 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         goto finish;
     }
 
-    r   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
-    g   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
-    b   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
-    ri  = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
-    gi  = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
-    bi  = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
-    a   = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
-    pos = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    r            = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    g            = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    b            = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    ri           = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
+    gi           = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
+    bi           = (PLINT *) malloc( (size_t) number_colors * sizeof ( PLINT ) );
+    a            = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
+    pos          = (PLFLT *) malloc( (size_t) number_colors * sizeof ( PLFLT ) );
     alt_hue_path = (PLBOOL *) malloc( (size_t) number_colors * sizeof ( PLBOOL ) );
 
     if ( format_version == 0 )
