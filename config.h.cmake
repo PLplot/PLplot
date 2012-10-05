@@ -54,6 +54,9 @@
 // Define if [freetype] is available
 #cmakedefine HAVE_FREETYPE
 
+// Define if [shapelib] is available
+#cmakedefine HAVE_SHAPELIB
+
 // Define if [agg] is available
 #cmakedefine HAVE_AGG
 
