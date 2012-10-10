@@ -148,7 +148,7 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels );
 //
 
 static void FT_WriteStrW( PLStream *pls, const PLUNICODE  *text, short len, int x, int y );
-static void FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy );
+static void FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy, int *overyy, int *underyy );
 
 //--------------------------------------------------------------------------
 // FT_StrX_YW()
@@ -161,12 +161,12 @@ static void FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx
 //--------------------------------------------------------------------------
 
 void
-FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
+FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy, int *overyy, int *underyy )
 {
     FT_Data   *FT = (FT_Data *) pls->FT;
     short     i   = 0;
-    FT_Vector akerning;
-    int       x = 0, y = 0;
+    FT_Vector akerning, adjust;
+    int       x = 0, y = 0, startingy;
     char      esc;
 
     plgesc( &esc );
@@ -178,7 +178,13 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
 // and this is the best thing I could think of.
 //
 
-    y -= (int) FT->face->size->metrics.height;
+    y        -= (int) FT->face->size->metrics.height;
+    startingy = y;
+    *yy       = y; //note height is negative!
+    *overyy   = 0;
+    *underyy  = 0;
+    adjust.x  = 0;
+    adjust.y  = 0;
 
 // walk through the text character by character
     for ( i = 0; i < len; i++ )
@@ -191,9 +197,26 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
             switch ( text[i + 1] )
             {
             case 'u': // super script
+            case 'U': // super script
+                adjust.y = FT->face->size->metrics.height / 2;
+                adjust.x = 0;
+                FT_Vector_Transform( &adjust, &FT->matrix );
+                x += (int) adjust.x;
+                y -= (int) adjust.y;
+                //calculate excess height from superscripts, this will need changing if scale of sub/superscripts changes
+                *overyy = y - startingy < *overyy ? y - startingy : *overyy;
+                i++;
+                break;
+
             case 'd': // subscript
-            case 'U':
-            case 'D':
+            case 'D': // subscript
+                adjust.y = -FT->face->size->metrics.height / 2;
+                adjust.x = 0;
+                FT_Vector_Transform( &adjust, &FT->matrix );
+                x += (int) adjust.x;
+                y -= (int) adjust.y;
+                //calculate excess depth from subscripts, this will need changing if scale of sub/superscripts changes
+                *underyy = startingy - y < *underyy ? startingy - y : *underyy;
                 i++;
                 break;
             }
@@ -202,6 +225,7 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
         {
             // FCI in text stream; change font accordingly.
             FT_SetFace( pls, text[i] );
+            *yy = FT->face->size->metrics.height > -*yy  ? -FT->face->size->metrics.height : *yy;
         }
         else
         {
@@ -250,7 +274,6 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
 //yy=y>> 6;
 //xx=x>> 6;
 //
-    *yy = y;
     *xx = x;
 }
 
@@ -772,8 +795,11 @@ void plD_FreeType_init( PLStream *pls )
                 fclose( infile );
             }
         }
-        FontLookup[i].fci   = TrueTypeLookup[i].fci;
-        FontLookup[i].pfont = (unsigned char *) FT->font_name[i];
+        FontLookup[i].fci = TrueTypeLookup[i].fci;
+        if ( FT->font_name[i][0] == '\0' )
+            FontLookup[i].pfont = NULL;
+        else
+            FontLookup[i].pfont = (unsigned char *) FT->font_name[i];
     }
 //
 // Next, we check to see if -drvopt has been used on the command line to
@@ -847,11 +873,14 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 {
     FT_Data   *FT = (FT_Data *) pls->FT;
     int       x, y;
-    int       w  = 0, h = 0;
+    int       w  = 0, h = 0, overh = 0, underh = 0;
     PLFLT     *t = args->xform;
     FT_Matrix matrix;
     PLFLT     angle = PI * pls->diorot / 2;
-//
+    PLUNICODE *line = args->unicode_array;
+    int       linelen;
+    int       prevlineheights = 0;
+
 // Used later in a commented out section (See Rotate The Page), if that
 // section will never be used again, remove these as well.
 //      PLINT clxmin, clxmax, clymin, clymax;
@@ -862,7 +891,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
     FT_Fixed  height;
     PLFLT     height_factor;
 
-    if ( ( args->string != NULL ) || ( args->unicode_array_len > 0 ) )
+    if ( ( args->unicode_array_len > 0 ) )
     {
 //
 //   Work out if either the font size, the font face or the
@@ -885,6 +914,15 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 
 
 //
+// Split the text into lines based on the newline character
+//
+        while ( line < args->unicode_array + args->unicode_array_len )
+        {
+            linelen = 0;
+            while ( line[linelen] != '\n' && line + linelen < args->unicode_array + args->unicode_array_len )
+                ++linelen;
+
+//
 //  Now we work out how long the text is (for justification etc...) and how
 //  high the text is. This is done on UN-TRANSFORMED text, since we will
 //  apply our own transformations on it later, so it's necessary for us
@@ -892,15 +930,15 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 //  that calculates the text size.
 //
 
-        FT->matrix.xx = 0x10000;
-        FT->matrix.xy = 0x00000;
-        FT->matrix.yx = 0x00000;
-        FT->matrix.yy = 0x10000;
+            FT->matrix.xx = 0x10000;
+            FT->matrix.xy = 0x00000;
+            FT->matrix.yx = 0x00000;
+            FT->matrix.yy = 0x10000;
 
-        FT_Vector_Transform( &FT->pos, &FT->matrix );
-        FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+            FT_Vector_Transform( &FT->pos, &FT->matrix );
+            FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
-        FT_StrX_YW( pls, args->unicode_array, (short) args->unicode_array_len, &w, &h );
+            FT_StrX_YW( pls, line, (short) linelen, &w, &h, &overh, &underh );
 
 //
 //      Set up the transformation Matrix
@@ -925,20 +963,20 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 // always a negative quantity.
 //
 
-        height_factor = (PLFLT) ( FT->face->ascender - FT->face->descender )
-                        / FT->face->ascender;
-        height = (FT_Fixed) ( 0x10000 * height_factor );
+            height_factor = (PLFLT) ( FT->face->ascender - FT->face->descender )
+                            / FT->face->ascender;
+            height = (FT_Fixed) ( 0x10000 * height_factor );
 
 #ifdef DJGPP
-        FT->matrix.xx = (FT_Fixed) ( (PLFLT) height * t[0] );
-        FT->matrix.xy = (FT_Fixed) ( (PLFLT) height * t[2] );
-        FT->matrix.yx = (FT_Fixed) ( (PLFLT) height * t[1] );
-        FT->matrix.yy = (FT_Fixed) ( (PLFLT) height * t[3] );
+            FT->matrix.xx = (FT_Fixed) ( (PLFLT) height * t[0] );
+            FT->matrix.xy = (FT_Fixed) ( (PLFLT) height * t[2] );
+            FT->matrix.yx = (FT_Fixed) ( (PLFLT) height * t[1] );
+            FT->matrix.yy = (FT_Fixed) ( (PLFLT) height * t[3] );
 #else
-        FT->matrix.xx = (FT_Fixed) ( (PLFLT) height * t[0] );
-        FT->matrix.xy = (FT_Fixed) ( (PLFLT) height * t[1] );
-        FT->matrix.yx = (FT_Fixed) ( (PLFLT) height * t[2] );
-        FT->matrix.yy = (FT_Fixed) ( (PLFLT) height * t[3] );
+            FT->matrix.xx = (FT_Fixed) ( (PLFLT) height * t[0] );
+            FT->matrix.xy = (FT_Fixed) ( (PLFLT) height * t[1] );
+            FT->matrix.yx = (FT_Fixed) ( (PLFLT) height * t[2] );
+            FT->matrix.yy = (FT_Fixed) ( (PLFLT) height * t[3] );
 #endif
 
 
@@ -949,22 +987,22 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 //  will use freetypes matrix math stuff to do this for us.
 //
 
-        Cos_A = cos( angle );
-        Sin_A = sin( angle );
+            Cos_A = cos( angle );
+            Sin_A = sin( angle );
 
-        matrix.xx = (FT_Fixed) ( (PLFLT) 0x10000 * Cos_A );
+            matrix.xx = (FT_Fixed) ( (PLFLT) 0x10000 * Cos_A );
 
 #ifdef DJGPP
-        matrix.xy = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A * -1.0 );
-        matrix.yx = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A );
+            matrix.xy = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A * -1.0 );
+            matrix.yx = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A );
 #else
-        matrix.xy = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A );
-        matrix.yx = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A * -1.0 );
+            matrix.xy = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A );
+            matrix.yx = (FT_Fixed) ( (PLFLT) 0x10000 * Sin_A * -1.0 );
 #endif
 
-        matrix.yy = (FT_Fixed) ( (PLFLT) 0x10000 * Cos_A );
+            matrix.yy = (FT_Fixed) ( (PLFLT) 0x10000 * Cos_A );
 
-        FT_Matrix_Multiply( &matrix, &FT->matrix );
+            FT_Matrix_Multiply( &matrix, &FT->matrix );
 
 
 //       Calculate a Vector from the matrix
@@ -976,7 +1014,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 //
 
 
-        FT_Vector_Transform( &FT->pos, &FT->matrix );
+            FT_Vector_Transform( &FT->pos, &FT->matrix );
 
 
 //    Transform the font face
@@ -988,7 +1026,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 // it is asked for.
 //
 
-        FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+            FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
 
 //                            Rotate the Page
@@ -1004,51 +1042,51 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 //   Convert into normal coordinates from virtual coordinates
 //
 
-        if ( FT->scale != 0.0 ) // scale was set
-        {
-            x = (int) ( args->x / FT->scale );
+            if ( FT->scale != 0.0 )             // scale was set
+            {
+                x = (int) ( args->x / FT->scale );
 
-            if ( FT->invert_y == 1 )
-                y = (int) ( FT->ymax - ( args->y / FT->scale ) );
+                if ( FT->invert_y == 1 )
+                    y = (int) ( FT->ymax - ( args->y / FT->scale ) );
+                else
+                    y = (int) ( args->y / FT->scale );
+            }
             else
-                y = (int) ( args->y / FT->scale );
-        }
-        else
-        {
-            x = (int) ( args->x / FT->scalex );
+            {
+                x = (int) ( args->x / FT->scalex );
 
-            if ( FT->invert_y == 1 )
-                y = (int) ( FT->ymax - ( args->y / FT->scaley ) );
-            else
-                y = (int) ( args->y / FT->scaley );
-        }
+                if ( FT->invert_y == 1 )
+                    y = (int) ( FT->ymax - ( args->y / FT->scaley ) );
+                else
+                    y = (int) ( args->y / FT->scaley );
+            }
 
-        //          Adjust for the justification and character height
-        //
-        //  Eeeksss... this wasn't a nice bit of code to work out, let me tell you.
-        //  I could not work out an entirely satisfactory solution that made
-        //  logical sense, so came up with an "illogical" one as well.
-        //  The logical one works fine for text in the normal "portrait"
-        //  orientation, and does so for reasons you might expect it to work; But
-        //  for all other orientations, the text's base line is either a little
-        //  high, or a little low. This is because of the way the base-line pos
-        //  is calculated from the decender height. The "dodgie" way of calculating
-        //  the position is to use the character height here, then adjust for the
-        //  decender height by a three-fold factor later on. That approach seems to
-        //  work a little better for rotated pages, but why it should be so, I
-        //  don't understand. You can compile in or out which way you want it by
-        //  defining "DODGIE_DECENDER_HACK".
-        //
-        //  note: the logic of the page rotation coming up next is that we pump in
-        //  the justification factor and then use freetype to rotate and transform
-        //  the values, which we then use to change the plotting location.
-        //
+            //          Adjust for the justification and character height
+            //
+            //  Eeeksss... this wasn't a nice bit of code to work out, let me tell you.
+            //  I could not work out an entirely satisfactory solution that made
+            //  logical sense, so came up with an "illogical" one as well.
+            //  The logical one works fine for text in the normal "portrait"
+            //  orientation, and does so for reasons you might expect it to work; But
+            //  for all other orientations, the text's base line is either a little
+            //  high, or a little low. This is because of the way the base-line pos
+            //  is calculated from the decender height. The "dodgie" way of calculating
+            //  the position is to use the character height here, then adjust for the
+            //  decender height by a three-fold factor later on. That approach seems to
+            //  work a little better for rotated pages, but why it should be so, I
+            //  don't understand. You can compile in or out which way you want it by
+            //  defining "DODGIE_DECENDER_HACK".
+            //
+            //  note: the logic of the page rotation coming up next is that we pump in
+            //  the justification factor and then use freetype to rotate and transform
+            //  the values, which we then use to change the plotting location.
+            //
 
 
 #ifdef DODGIE_DECENDER_HACK
-        adjust.y = h;
+            adjust.y = h;
 #else
-        adjust.y = 0;
+            adjust.y = 0;
 #endif
 
 // (RL, on 2005-01-24) The code below uses floating point and division
@@ -1069,14 +1107,14 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 // only one glyph in the string in this case, we are okay here).
 //
 
-        if ( ( args->unicode_array_len == 2 )
-             && ( args->unicode_array[0] == ( PL_FCI_MARK | 0x004 ) ) )
-        {
-            adjust.x = (FT_Pos) ( args->just * ROUND( (PLFLT) FT->face->glyph->metrics.width / 64.0 ) );
-            adjust.y = (FT_Pos) ROUND( (PLFLT) FT->face->glyph->metrics.height / 128.0 );
-        }
-        else
-        {
+            if ( ( args->unicode_array_len == 2 )
+                 && ( args->unicode_array[0] == ( PL_FCI_MARK | 0x004 ) ) )
+            {
+                adjust.x = (FT_Pos) ( args->just * ROUND( (PLFLT) FT->face->glyph->metrics.width / 64.0 ) );
+                adjust.y = (FT_Pos) ROUND( (PLFLT) FT->face->glyph->metrics.height / 128.0 );
+            }
+            else
+            {
 // (RL, on 2005-01-21) The vertical adjustment is set below, making
 // the DODGIE conditional moot.  I use the value of h as return by FT_StrX_YW,
 // which should correspond to the total height of the text being
@@ -1086,17 +1124,24 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 // height_factor below.
 //
 
-            adjust.y = (FT_Pos)
-                       ROUND( (PLFLT) FT->face->size->metrics.height / height_factor / 128.0 );
-            adjust.x = (FT_Pos) ( args->just * ROUND( w / 64.0 ) );
+                adjust.y = (FT_Pos)
+                           ROUND( (PLFLT) FT->face->size->metrics.height / height_factor / 128.0 - ( prevlineheights + overh ) / 64.0 );
+                adjust.x = (FT_Pos) ( args->just * ROUND( w / 64.0 ) );
+            }
+
+            FT_Vector_Transform( &adjust, &FT->matrix );             // was /&matrix); -  was I using the wrong matrix all this time ?
+
+            x -= (int) adjust.x;
+            y += (int) adjust.y;
+
+            FT_WriteStrW( pls, line, (short) linelen, x, y );             // write it out
+
+//
+// Move to the next line
+//
+            line            += linelen + 1;
+            prevlineheights += h + overh + underh;
         }
-
-        FT_Vector_Transform( &adjust, &FT->matrix ); // was /&matrix); -  was I using the wrong matrix all this time ?
-
-        x -= (int) adjust.x;
-        y += (int) adjust.y;
-
-        FT_WriteStrW( pls, args->unicode_array, (short) args->unicode_array_len, x, y ); // write it out
     }
     else
     {

@@ -337,15 +337,65 @@ void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
     wxCoord  w, h, d, l;
 
     wxString str( wxConvUTF8.cMB2WC( utf8_string ), *wxConvCurrent );
+
     m_dc->GetTextExtent( str, &w, &h, &d, &l );
+
     if ( drawText )
-        m_dc->DrawRotatedText( str, (wxCoord) ( posX / scalex - yOffset / scaley * sin_rot ),
-            (wxCoord) ( height - ( posY + yOffset * cos_rot ) / scaley ),
+    {
+        m_dc->DrawRotatedText( str, (wxCoord) ( posX - yOffset / scaley * sin_rot ),
+            (wxCoord) ( height - (wxCoord) ( posY + yOffset * cos_rot / scaley ) ),
             rotation * 180.0 / M_PI );
-    posX      += (PLINT) ( w * scalex * cos_rot );
-    posY      += (PLINT) ( w * scaley * sin_rot );
+        posX += (PLINT) ( w * cos_rot );
+        posY += (PLINT) ( w * sin_rot );
+    }
+
     textWidth += w;
-    textHeight = (wxCoord) ( textHeight > ( h + yOffset / scaley ) ? textHeight : ( h + yOffset / scaley ) );
+
+    //keep track of the height of superscript text, the depth of subscript
+    //text and the height of regular text
+    if ( yOffset > 0.0001 )
+    {
+        //determine the height the text would have if it were full size
+        double currentOffset = yOffset;
+        double currentHeight = h;
+        while ( currentOffset > 0.0001 )
+        {
+            currentOffset -= scaley * fontSize * fontScale / 2.;
+            currentHeight *= 1.25;
+        }
+        textHeight = (wxCoord) textHeight > ( currentHeight )
+                     ? textHeight
+                     : currentHeight;
+        //work out the height including superscript
+        superscriptHeight = superscriptHeight > ( currentHeight + yOffset / scaley )
+                            ? superscriptHeight
+                            : static_cast<int>( ( currentHeight + yOffset / scaley ) );
+    }
+    else if ( yOffset < -0.0001 )
+    {
+        //determine the height the text would have if it were full size
+        double currentOffset = yOffset;
+        double currentHeight = h;
+        double currentDepth  = d;
+        while ( currentOffset < -0.0001 )
+        {
+            currentOffset += scaley * fontSize * fontScale * 1.25 / 2.;
+            currentHeight *= 1.25;
+            currentDepth  *= 1.25;
+        }
+        textHeight = (wxCoord) textHeight > currentHeight ? textHeight : currentHeight;
+        //work out the additional depth for subscript note an assumption has been made
+        //that the font size of (non-superscript and non-subscript) text is the same
+        //along a line. Currently there is no escape to change font size mid string
+        //so this should be fine
+        subscriptDepth = (wxCoord) subscriptDepth > ( ( -yOffset / scaley + h + d ) - ( currentDepth + textHeight ) )
+                         ? subscriptDepth
+                         : ( ( -yOffset / scaley + h + d ) - ( currentDepth + textHeight ) );
+        subscriptDepth = subscriptDepth > 0 ? subscriptDepth : 0;
+    }
+    else
+        textHeight = (wxCoord) textHeight > ( h ) ? textHeight : h;
+
     memset( utf8_string, '\0', max_string_length );
 }
 
@@ -422,13 +472,66 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
     m_dc->SetTextForeground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
     m_dc->SetTextBackground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
 
-    posX = args->x;
-    posY = args->y;
-    PSDrawText( args->unicode_array, args->unicode_array_len, false );
+    PLUNICODE *lineStart     = args->unicode_array;
+    int       lineLen        = 0;
+    bool      lineFeed       = false;
+    bool      carriageReturn = false;
+    wxCoord   paraHeight     = 0;
+    // Get the curent font
+    fontScale = 1.0;
+    yOffset   = 0.0;
+    plgfci( &fci );
+    PSSetFont( fci );
+    while ( lineStart != args->unicode_array + args->unicode_array_len )
+    {
+        while ( lineStart + lineLen != args->unicode_array + args->unicode_array_len
+                && *( lineStart + lineLen ) != (PLUNICODE) '\n' )
+        {
+            lineLen++;
+        }
+        //set line feed for the beginning of this line and
+        //carriage return for the end
+        lineFeed       = carriageReturn;
+        carriageReturn = lineStart + lineLen != args->unicode_array + args->unicode_array_len
+                         && *( lineStart + lineLen ) == (PLUNICODE) ( '\n' );
+        if ( lineFeed )
+            paraHeight += textHeight + subscriptDepth;
 
-    posX = (PLINT) ( args->x - ( ( args->just * textWidth ) * cos_rot + ( 0.5 * textHeight ) * sin_rot ) * scalex );
-    posY = (PLINT) ( args->y - ( ( args->just * textWidth ) * sin_rot - ( 0.5 * textHeight ) * cos_rot ) * scaley );
-    PSDrawText( args->unicode_array, args->unicode_array_len, true );
+        //remember the text parameters so they can be restored
+        double    startingFontScale = fontScale;
+        double    startingYOffset   = yOffset;
+        PLUNICODE startingFci       = fci;
+
+        // determine extent of text
+        posX = args->x / scalex;
+        posY = args->y / scaley;
+
+        PSDrawText( lineStart, lineLen, false );
+
+        if ( lineFeed && superscriptHeight > textHeight )
+            paraHeight += superscriptHeight - textHeight;
+
+        // actually draw text, resetting the font first
+        fontScale = startingFontScale;
+        yOffset   = startingYOffset;
+        fci       = startingFci;
+        PSSetFont( fci );
+        posX = (PLINT) ( args->x / scalex - ( args->just * textWidth ) * cos_rot - ( 0.5 * textHeight - paraHeight * lineSpacing ) * sin_rot ); //move to set alignment
+        posY = (PLINT) ( args->y / scaley - ( args->just * textWidth ) * sin_rot + ( 0.5 * textHeight - paraHeight * lineSpacing ) * cos_rot );
+        PSDrawText( lineStart, lineLen, true );                                                                                                 //draw text
+
+        lineStart += lineLen;
+        if ( carriageReturn )
+            lineStart++;
+        lineLen = 0;
+    }
+    //posX = args->x;
+    //posY = args->y;
+    //PSDrawText( args->unicode_array, args->unicode_array_len, false );
+
+    //posX = (PLINT) ( args->x - ( ( args->just * textWidth ) * cos_rot + ( 0.5 * textHeight ) * sin_rot ) * scalex );
+    //posY = (PLINT) ( args->y - ( ( args->just * textWidth ) * sin_rot - ( 0.5 * textHeight ) * cos_rot ) * scaley );
+    //PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
     AddtoClipRegion( 0, 0, width, height );
 }

@@ -36,6 +36,9 @@
 // std and driver headers
 #include "wxwidgets.h"
 
+#include <wx/string.h>
+#include <string>
+
 // only compile code if wxGraphicsContext available
 #if wxUSE_GRAPHICS_CONTEXT
 
@@ -370,7 +373,10 @@ void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
     wxDouble w, h, d, l;
 
     wxString str( wxConvUTF8.cMB2WC( utf8_string ), *wxConvCurrent );
+
+    w = 0;
     m_context->GetTextExtent( str, &w, &h, &d, &l );
+
     if ( drawText )
     {
         m_context->DrawText( str, 0, -yOffset / scaley );
@@ -378,9 +384,52 @@ void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
     }
 
     textWidth += static_cast<int>( w );
-    textHeight = textHeight > ( h + yOffset / scaley )
-                 ? textHeight
-                 : static_cast<int>( ( h + yOffset / scaley ) );
+
+    //keep track of the height of superscript text, the depth of subscript
+    //text and the height of regular text
+    if ( yOffset > 0.0001 )
+    {
+        //determine the height the text would have if it were full size
+        double currentOffset = yOffset;
+        double currentHeight = h;
+        while ( currentOffset > 0.0001 )
+        {
+            currentOffset -= scaley * fontSize * fontScale / 2.;
+            currentHeight *= 1.25;
+        }
+        textHeight = textHeight > ( currentHeight )
+                     ? textHeight
+                     : static_cast<int>( ( currentHeight ) );
+        //work out the height including superscript
+        superscriptHeight = superscriptHeight > ( currentHeight + yOffset / scaley )
+                            ? superscriptHeight
+                            : static_cast<int>( ( currentHeight + yOffset / scaley ) );
+    }
+    else if ( yOffset < -0.0001 )
+    {
+        //determine the height the text would have if it were full size
+        double currentOffset = yOffset;
+        double currentHeight = h;
+        double currentDepth  = d;
+        while ( currentOffset < -0.0001 )
+        {
+            currentOffset += scaley * fontSize * fontScale * 1.25 / 2.;
+            currentHeight *= 1.25;
+            currentDepth  *= 1.25;
+        }
+        textHeight = textHeight > currentHeight ? textHeight : static_cast<int>( ( currentHeight ) );
+        //work out the additional depth for subscript note an assumption has been made
+        //that the font size of (non-superscript and non-subscript) text is the same
+        //along a line. Currently there is no escape to change font size mid string
+        //so this should be fine
+        subscriptDepth = subscriptDepth > ( ( -yOffset / scaley + h + d ) - ( currentDepth + textHeight ) )
+                         ? subscriptDepth
+                         : static_cast<int>( ( -yOffset / scaley + h + d ) - ( currentDepth + textHeight ) );
+        subscriptDepth = subscriptDepth > 0 ? subscriptDepth : 0;
+    }
+    else
+        textHeight = textHeight > h ? textHeight : static_cast<int>( h );
+
     memset( utf8_string, '\0', max_string_length );
 }
 
@@ -416,9 +465,9 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
     }
 
     // Check that unicode string isn't longer then the max we allow
-    if ( args->unicode_array_len >= 500 )
+    if ( args->unicode_array_len >= max_string_length )
     {
-        printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", 500 );
+        printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", max_string_length );
         return;
     }
 
@@ -464,21 +513,66 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
     cos_shear = cos( shear );
     sin_shear = sin( shear );
 
-    // determine extend of text
-    PSDrawText( args->unicode_array, args->unicode_array_len, false );
 
-    // actually draw text
-    m_context->PushState();
-    m_context->Translate( args->x / scalex, height - args->y / scaley );
-    wxGraphicsMatrix matrix = m_context->CreateMatrix(
-        cos_rot * stride, -sin_rot * stride,
-        cos_rot * sin_shear + sin_rot * cos_shear,
-        -sin_rot * sin_shear + cos_rot * cos_shear,
-        0.0, 0.0 );
-    m_context->ConcatTransform( matrix );
-    m_context->Translate( -args->just * textWidth, -0.5 * textHeight );
-    PSDrawText( args->unicode_array, args->unicode_array_len, true );
-    m_context->PopState();
+    PLUNICODE *lineStart     = args->unicode_array;
+    int       lineLen        = 0;
+    bool      lineFeed       = false;
+    bool      carriageReturn = false;
+    wxCoord   paraHeight     = 0;
+    // Get the curent font
+    fontScale = 1.0;
+    yOffset   = 0.0;
+    plgfci( &fci );
+    PSSetFont( fci );
+    while ( lineStart != args->unicode_array + args->unicode_array_len )
+    {
+        while ( lineStart + lineLen != args->unicode_array + args->unicode_array_len
+                && *( lineStart + lineLen ) != (PLUNICODE) '\n' )
+        {
+            lineLen++;
+        }
+        //set line feed for the beginning of this line and
+        //carriage return for the end
+        lineFeed       = carriageReturn;
+        carriageReturn = lineStart + lineLen != args->unicode_array + args->unicode_array_len
+                         && *( lineStart + lineLen ) == (PLUNICODE) ( '\n' );
+        if ( lineFeed )
+            paraHeight += textHeight + subscriptDepth;
+
+        //remember the text parameters so they can be restored
+        double    startingFontScale = fontScale;
+        double    startingYOffset   = yOffset;
+        PLUNICODE startingFci       = fci;
+
+        // determine extent of text
+        PSDrawText( lineStart, lineLen, false );
+
+        if ( lineFeed && superscriptHeight > textHeight )
+            paraHeight += superscriptHeight - textHeight;
+
+        // actually draw text, resetting the font first
+        fontScale = startingFontScale;
+        yOffset   = startingYOffset;
+        fci       = startingFci;
+        PSSetFont( fci );
+        m_context->PushState();                                              //save current position
+        m_context->Translate( args->x / scalex, height - args->y / scaley ); //move to text starting position
+        wxGraphicsMatrix matrix = m_context->CreateMatrix(
+            cos_rot * stride, -sin_rot * stride,
+            cos_rot * sin_shear + sin_rot * cos_shear,
+            -sin_rot * sin_shear + cos_rot * cos_shear,
+            0.0, 0.0 );                                                                                //create rotation transformation matrix
+        m_context->ConcatTransform( matrix );                                                          //rotate
+        m_context->Translate( -args->just * textWidth, -0.5 * textHeight + paraHeight * lineSpacing ); //move to set alignment
+        PSDrawText( lineStart, lineLen, true );                                                        //draw text
+        m_context->PopState();                                                                         //return to original position
+
+        lineStart += lineLen;
+        if ( carriageReturn )
+            lineStart++;
+        lineLen = 0;
+    }
+
 
     AddtoClipRegion( 0, 0, width, height );
 

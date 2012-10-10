@@ -165,6 +165,10 @@ public: // variables
     double           fontSize;
     double           fontScale;
     wxCoord          textWidth, textHeight, textDescent, textLeading;
+    PLUNICODE        fci;
+    //the distance between the superscript top and subscript base from the baseline
+    wxCoord          superscriptHeight, subscriptDepth;
+    double           lineSpacing;
     double           yOffset;
     PLINT            posX, posY;
     PLFLT            rotation, cos_rot, sin_rot;

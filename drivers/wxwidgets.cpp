@@ -176,6 +176,8 @@ wxPLDevBase::wxPLDevBase( int bcknd ) : backend( bcknd )
     devDesc = (const char **) malloc( NDEV * sizeof ( char** ) );
     memset( devDesc, '\0', NDEV * sizeof ( char** ) );
     ndev = NDEV;
+
+    lineSpacing = 1.0;
 }
 
 
@@ -234,14 +236,11 @@ void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
     char plplotEsc;
     plgesc( &plplotEsc );
 
-    // Get the curent font
-    fontScale = 1.0;
-    yOffset   = 0.0;
-    PLUNICODE fci;
-    plgfci( &fci );
-    PSSetFont( fci );
-    textWidth  = 0;
-    textHeight = 0;
+    //Reset the size metrics
+    textWidth         = 0;
+    textHeight        = 0;
+    superscriptHeight = 0;
+    subscriptDepth    = 0;
 
     while ( i < ucs4Len )
     {
