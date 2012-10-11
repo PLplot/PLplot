@@ -305,6 +305,34 @@ if(WITH_FREETYPE)
     )
 endif(WITH_FREETYPE)
 
+if(HAVE_SHAPELIB)
+  get_source_file_property(PLMAP_COMPILE_PROPS plmap.c COMPILE_FLAGS)
+  # Deal with NOTFOUND case.
+  if(NOT PLMAP_COMPILE_PROPS)
+    set(PLMAP_COMPILE_PROPS)
+  endif(NOT PLMAP_COMPILE_PROPS)
+  set_source_files_properties(plmap.c PROPERTIES COMPILE_FLAGS "${PLMAP_COMPILE_PROPS} -I${SHAPELIB_INCLUDE_DIR}")
+  set(
+    libplplot${LIB_TAG}_LINK_LIBRARIES
+    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+    ${SHAPELIB_LIBRARIES}
+    )
+  
+  # Convert to -L... -l... form.
+  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
+    _SHAPELIB_LINK_FLAGS
+    ${SHAPELIB_LIBRARIES}
+    )
+  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
+    SHAPELIB_LINK_FLAGS
+    ${_SHAPELIB_LINK_FLAGS}
+    )
+  set(
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_FLAGS} ${SHAPELIB_LINK_FLAGS}"
+    )
+endif(HAVE_SHAPELIB)
+
 #message(STATUS
 #"libplplot${LIB_TAG}_LINK_LIBRARIES = ${libplplot${LIB_TAG}_LINK_LIBRARIES}"
 #)
