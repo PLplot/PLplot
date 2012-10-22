@@ -111,7 +111,7 @@ void
 plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
-    int i, j;
+    int       i, j;
     char      *filename;
     char      *warning;
     int       n = 200;
