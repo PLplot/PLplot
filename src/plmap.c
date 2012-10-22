@@ -39,7 +39,17 @@
 //
 //
 
+#define NEED_PLDEBUG    1
+
 #include "plplotP.h"
+
+#ifdef HAVE_SHAPELIB
+#include <shapefil.h>
+
+SHPHandle
+OpenShapeFile( const char *fn );
+
+#endif
 
 //--------------------------------------------------------------------------
 // void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
@@ -67,6 +77,10 @@
 //      "usa"		USA and state boundaries
 //      "cglobe"	continental outlines and countries
 //      "usaglobe"	USA, state boundaries and continental outlines
+// alternatively the filename of a shapefile can be passed if PLplot has
+// been compiled with shapelib. In this case either the base name of the
+// file can be passed or the filename including the .shp or .shx suffix.
+// Only the .shp and .shx files are used.
 //
 // minlong, maxlong are the values of the longitude on the left and right
 // side of the plot, respectively. The value of minlong must be less than
@@ -80,38 +94,149 @@
 // plotted.
 //--------------------------------------------------------------------------
 
+#ifdef HAVE_SHAPELIB
+#define MAP_FILE    ""
+#define OpenMap     OpenShapeFile
+#define CloseMap    SHPClose
+#else
 #define MAP_FILE    ".map"
+#define OpenMap     plLibOpenPdfstrm
+#define CloseMap    pdf_close
 #define OFFSET      ( 180 * 100 )
 #define SCALE       100.0
 #define W_BUFSIZ    ( 32 * 1024 )
+#endif
 
 void
 plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-       PLFLT minlong, PLFLT maxlong, PLFLT PL_UNUSED( minlat ), PLFLT PL_UNUSED( maxlat ) )
+       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
-    PLINT            wrap, sign;
-    int              i, j;
-    PLFLT            bufx[200], bufy[200], x[2], y[2];
-    short int        test[400];
-    register PDFstrm *in;
-    char             filename[100];
+    int i, j;
+    char      *filename;
+    char      *warning;
+    int       n = 200;
+    PLFLT     minsectlon, maxsectlon, minsectlat, maxsectlat;
+    const int ncopies = 5;          //must be odd - original plus copies shifted by multiples of +/- 360
+    const int mid     = ncopies / 2 + 1;
+    PLFLT     **bufx  = NULL, **bufy = NULL;
+    int       bufsize = 0;
 
+#ifdef HAVE_SHAPELIB
+    SHPHandle        in;
+    int              nentries;
+    int              nparts;
+    int              entrynumber = 0;
+    int              partnumber  = 0;
+    int              shapetype;
+    double           mins[4];
+    double           maxs[4];
+    SHPObject        *object = NULL;
+    double           *bufxraw;
+    double           *bufyraw;
+#else
+    register PDFstrm *in;
+    //PLFLT            bufx[ncopies][200], bufy[ncopies][200];
     unsigned char    n_buff[2], buff[800];
-    int              n;
     long int         t;
+    int              k;
+#endif
 
     //
     // read map outline
     //
-    strncpy( filename, type, 99 );
-    filename[99] = '\0';
-    strncat( filename, MAP_FILE, 99 - strlen( filename ) );
+    filename = malloc( strlen( type ) + strlen( MAP_FILE ) + 1 );
+    strcpy( filename, type );
+    strcat( filename, MAP_FILE );
 
-    if ( ( in = plLibOpenPdfstrm( filename ) ) == NULL )
+    warning = malloc( strlen( type ) + strlen( MAP_FILE ) + 50 );
+    strcpy( warning, "Could not find " );
+    strcat( warning, filename );
+    strcat( warning, " file." );
+#ifdef HAVE_SHAPELIB
+    if ( ( in = OpenShapeFile( filename ) ) == NULL )
+    {
+        plwarn( warning );
         return;
+    }
+    SHPGetInfo( in, &nentries, &shapetype, mins, maxs );
+#else
+    if ( ( in = plLibOpenPdfstrm( filename ) ) == NULL )
+    {
+        plwarn( warning );
+        return;
+    }
+#endif
+
+    bufx = malloc( ncopies * sizeof ( PLFLT* ) );
+    bufy = malloc( ncopies * sizeof ( PLFLT* ) );
+    for ( i = 0; i < ncopies; i++ )
+    {
+        bufx[i] = NULL;
+        bufy[i] = NULL;
+    }
 
     for (;; )
     {
+#ifdef HAVE_SHAPELIB
+        //break condition if we've reached the end of the file
+        if ( entrynumber == nentries )
+            break;
+        //if partnumber == 0 then we need to load the next object
+        if ( partnumber == 0 )
+        {
+            object = SHPReadObject( in, entrynumber );
+            nparts = object->nParts;
+        }
+
+        //work out how many points are in the current part
+        if ( partnumber == ( nparts - 1 ) )
+            n = object->nVertices - object->panPartStart[partnumber];
+        else
+            n = object->panPartStart[partnumber + 1] - object->panPartStart[partnumber];
+#endif
+        //allocate memory for the data
+        if ( n > bufsize )
+        {
+            bufsize = n;
+            for ( i = 0; i < ncopies; i++ )
+            {
+                if ( bufx[i] )
+                    free( bufx[i] );
+                if ( bufy[i] )
+                    free( bufy[i] );
+                bufx[i] = malloc( bufsize * sizeof ( double ) );
+                bufy[i] = malloc( bufsize * sizeof ( double ) );
+            }
+        }
+
+#ifdef HAVE_SHAPELIB
+        //point the plot buffer to the correct starting vertex
+        //and copy it to the PLFLT arrays
+        bufxraw = object->padfX + object->panPartStart[partnumber];
+        bufyraw = object->padfY + object->panPartStart[partnumber];
+        for ( i = 0; i < n; i++ )
+        {
+            bufx[mid][i] = (PLFLT) bufxraw[i];
+            for ( j = 0; j < ncopies; j++ )
+                bufy[j][i] = (PLFLT) bufyraw[i];
+        }
+
+        //set the minlat/lon of the object
+        minsectlon = object->dfXMin;
+        maxsectlon = object->dfXMax;
+        minsectlat = object->dfYMin;
+        maxsectlat = object->dfYMax;
+
+        //increment the partnumber or if we've reached the end of
+        //an entry increment the entrynumber and set partnumber to 0
+        if ( partnumber == nparts - 1 )
+        {
+            entrynumber++;
+            partnumber = 0;
+        }
+        else
+            partnumber++;
+#else
         // read in # points in segment
         if ( pdf_rdx( n_buff, (long) sizeof ( unsigned char ) * 2, in ) == 0 )
             break;
@@ -125,114 +250,101 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 
         for ( j = i = 0; i < n; i++, j += 2 )
         {
-            t       = ( buff[j] << 8 ) + buff[j + 1];
-            bufx[i] = ( (PLFLT) t - OFFSET ) / SCALE;
+            t            = ( buff[j] << 8 ) + buff[j + 1];
+            bufx[mid][i] = ( (PLFLT) t - OFFSET ) / SCALE;
         }
         for ( i = 0; i < n; i++, j += 2 )
         {
-            t       = ( buff[j] << 8 ) + buff[j + 1];
-            bufy[i] = ( (PLFLT) t - OFFSET ) / SCALE;
+            t          = ( buff[j] << 8 ) + buff[j + 1];
+            bufy[0][i] = ( (PLFLT) t - OFFSET ) / SCALE;
+            for ( k = 1; k < ncopies; k++ )
+                bufy[k][i] = bufy[0][i];
         }
+        //set the min/max section lat/lon with extreme values
+        //to be overwritten later
+        minsectlon = 1000.;
+        maxsectlon = -1000.;
+        minsectlat = 1000.;
+        maxsectlat = -1000.;
 
-        for ( i = 0; i < n; i++ )
-        {
-            while ( bufx[i] < minlong )
-            {
-                bufx[i] += 360.0;
-            }
-            while ( bufx[i] > maxlong )
-            {
-                bufx[i] -= 360.0;
-            }
-        }
+#endif
+        //two obvious issues exist here with plotting longitudes:
+        //
+        //1) wraparound causing lines which go the wrong way round
+        //   the globe
+        //2) some people plot lon from 0-360 deg, others from -180 - +180
+        //
+        //we can cure these problems by conditionally adding/subtracting
+        //360 degrees to each data point in order to ensure that the
+        //distance between adgacent points is always less than 180
+        //degrees, then plotting up to 2 out of 5 copies of the data
+        //each separated by 360 degrees.
 
-        // remove last 2 points if both outside of domain and won't plot
-
-// AR: 18/11/01
-//       I have commented out the next section which supposedly
-//       removes points that do not plot within the domain.
-//
-//       This code appears at any rate to be superseded by the next
-//       block of code that checks for wrapping problems. Removing
-//       this code seems to have fixed up the problems with mapping
-//       function, but I do not wish to delete it outright just now in
-//       case I have managed to miss something.
-//
-
-//	while (n > 1) {
-//          if ((bufx[n-1] < minlong && bufx[n-2] < minlong) ||
-//              (bufx[n-1] > maxlong && bufx[n-2] > maxlong) ||
-//              (bufy[n-1] < minlat && bufy[n-2] < minlat) ||
-//              (bufy[n-1] > maxlat && bufy[n-2] > maxlat)) {
-//              n--;
-//          }
-//          else {
-//              break;
-//          }
-//      }
-//      if (n <= 1) continue;
-//
-
-        if ( mapform != NULL )
-            ( *mapform )( n, bufx, bufy );                    // moved transformation to here
-                                                              // so bound-checking worked right
-
-        wrap = 0;
-        // check for wrap around problems
         for ( i = 0; i < n - 1; i++ )
         {
-            // jc: this code is wrong, as the bufx/y are floats that are
-            // converted to ints before abs() is called. Thus, small
-            // differences are masked off. The proof that it is wrong is
-            // that when replacing abs() with fabs(), as it should be,
-            // the code works the wrong way. What a proof :-)
-            //
-            // test[i] = abs((bufx[i]-bufx[i+1])) > abs(bufy[i]/3);
-            //
-            // If the intended behaviour is *really* that, than an
-            // explicit cast should be used to help other programmers, as
-            // is done bellow!!!
-            //
-
-            test[i] = abs( (int) ( bufx[i] - bufx[i + 1] ) ) > abs( (int) bufy[i] / 3 ); // Changed this from 30 degrees so it is now "polar sensitive"
-            if ( test[i] )
-                wrap = 1;
+            if ( bufx[mid][i] - bufx[mid][i + 1] > 180. )
+                bufx[mid][i + 1] += 360.;
+            else if ( bufx[mid][i] - bufx[mid][i + 1] < -180. )
+                bufx[mid][i + 1] -= 360.;
+        }
+        for ( i = 0; i < n; i++ )
+        {
+            for ( j = 0; j < mid; j++ )
+                bufx[j][i] = bufx[mid][i] + 360. * (PLFLT) ( j - mid );
+            for ( j = mid + 1; j < ncopies; j++ )
+                bufx[j][i] = bufx[mid][i] + 360. * (PLFLT) ( j - mid );
+#ifndef HAVE_SHAPELIB
+            minsectlon = MIN( minsectlon, bufx[mid][i] );
+            maxsectlon = MAX( minsectlon, bufx[mid][i] );
+            minsectlat = MIN( minsectlat, bufy[mid][i] );
+            maxsectlat = MAX( minsectlat, bufy[mid][i] );
+#endif
         }
 
-        if ( wrap == 0 )
+        //check if the latitude range means we need to plot this section
+        if ( ( maxsectlat > minlat ) && ( minsectlat < maxlat ) )
         {
-            plline( n, bufx, bufy );
-        }
-        else
-        {
-            for ( i = 0; i < n - 1; i++ )
+            //check which of the translated maps fall within the
+            //range and transform and plot them - note more than one
+            //map may be needed due to wrapping
+            for ( j = 0; j < ncopies; j++ )
             {
-                x[0] = bufx[i];
-                x[1] = bufx[i + 1];
-                y[0] = bufy[i];
-                y[1] = bufy[i + 1];
-                if ( test[i] == 0 )
+                if ( ( minsectlon + 360. * (PLFLT) ( j - mid ) < maxlong )
+                     && ( maxsectlon + 360. * (PLFLT) ( j - mid ) > minlong ) )
                 {
-                    plline( 2, x, y );
-                }
-                else    // this code seems to supercede the block commented out above
-                {
-                    // segment goes off the edge
-                    sign  = ( x[1] > x[0] ) ? 1 : -1;
-                    x[1] -= sign * 360.0;
-                    plline( 2, x, y );
-                    x[0]  = bufx[i];
-                    x[1]  = bufx[i + 1];
-                    y[0]  = bufy[i];
-                    y[1]  = bufy[i + 1];
-                    x[0] += sign * 360.0;
-                    plline( 2, x, y );
+                    if ( mapform != NULL )
+                        ( *mapform )( n, bufx[j], bufy[j] );
+                    plline( n, bufx[j], bufy[j] );
                 }
             }
         }
+
+
+
+#ifdef HAVE_SHAPELIB
+        if ( partnumber == 0 )
+            SHPDestroyObject( object );
+#endif
     }
     // Close map file
+#ifdef HAVE_SHAPELIB
+    SHPClose( in );
+#else
     pdf_close( in );
+#endif
+
+    //free memory
+    for ( i = 0; i < ncopies; i++ )
+    {
+        if ( bufx[i] )
+            free( bufx[i] );
+        if ( bufy[i] )
+            free( bufy[i] );
+    }
+    free( bufx );
+    free( bufy );
+    free( filename );
+    free( warning );
 }
 
 //--------------------------------------------------------------------------
@@ -333,3 +445,102 @@ plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
         }
     }
 }
+
+//--------------------------------------------------------------------------
+// SHPHandle OpenShapeFile(fn)
+//
+//! Returns a handle to a shapefile from the filename fn. Content based on
+//! plLibOpenPdfstrm in plctrl.c
+//! Locations checked:
+//!	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
+//!	current directory
+//!	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
+//!	DATA_DIR
+//!	PLLIBDEV
+//!
+//! @param fn Name of the file.
+//!
+//! @Return handle to a shapefile on success or NULL if the file cannot be
+//! found
+//--------------------------------------------------------------------------
+#ifdef HAVE_SHAPELIB
+SHPHandle
+OpenShapeFile( const char *fn )
+{
+    SHPHandle file;
+    char      *fs = NULL, *dn = NULL;
+
+//***   search build tree               ***
+
+    if ( plInBuildTree() == 1 )
+    {
+        plGetName( SOURCE_DIR, "data", fn, &fs );
+
+        if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+            goto done;
+    }
+
+//***	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	***
+
+#if defined ( PLPLOT_LIB_ENV )
+    if ( ( dn = getenv( PLPLOT_LIB_ENV ) ) != NULL )
+    {
+        plGetName( dn, "", fn, &fs );
+
+        if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+            goto done;
+        fprintf( stderr, PLPLOT_LIB_ENV "=\"%s\"\n", dn ); // what IS set?
+    }
+#endif  // PLPLOT_LIB_ENV
+
+//***	search current directory	***
+
+    if ( ( file = SHPOpen( fn, "rb" ) ) != NULL )
+    {
+        pldebug( "OpenShapeFile", "Found file %s in current directory.\n", fn );
+        free_mem( fs );
+        return ( file );
+    }
+
+//***	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	***
+
+#if defined ( PLPLOT_HOME_ENV )
+    if ( ( dn = getenv( PLPLOT_HOME_ENV ) ) != NULL )
+    {
+        plGetName( dn, "lib", fn, &fs );
+
+        if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+            goto done;
+        fprintf( stderr, PLPLOT_HOME_ENV "=\"%s\"\n", dn ); // what IS set?
+    }
+#endif  // PLPLOT_HOME_ENV/lib
+
+//***   search installed location	***
+
+#if defined ( DATA_DIR )
+    plGetName( DATA_DIR, "", fn, &fs );
+
+    if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+        goto done;
+#endif  // DATA_DIR
+
+//***   search hardwired location	***
+
+#ifdef PLLIBDEV
+    plGetName( PLLIBDEV, "", fn, &fs );
+
+    if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+        goto done;
+#endif  // PLLIBDEV
+
+//***   not found, give up      ***
+    pldebug( "OpenShapeFile", "File %s not found.\n", fn );
+    free_mem( fs );
+    return NULL;
+
+done:
+    pldebug( "OpenShapeFile", "Found file %s\n", fs );
+    free_mem( fs );
+    return ( file );
+}
+#endif

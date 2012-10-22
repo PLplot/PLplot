@@ -20,12 +20,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(data_DATAFILES
-cglobe.map
-globe.map
 plstnd5.fnt
 plxtnd5.fnt
-usa.map
-usaglobe.map
 cmap0_default.pal
 cmap0_alternate.pal
 cmap0_white_bg.pal
@@ -38,5 +34,27 @@ cmap1_radar.pal
 cmap1_highfreq.pal
 cmap1_lowfreq.pal
 )
+
+if(HAVE_SHAPELIB)
+  set(data_DATAFILES
+  ${data_DATAFILES}
+  cglobe.shx
+  cglobe.shp
+  globe.shx
+  globe.shp
+  usa.shx
+  usa.shp
+  usaglobe.shx
+  usaglobe.shp
+  )
+else(HAVE_SHAPELIB)
+  set(data_DATAFILES
+  ${data_DATAFILES}
+  cglobe.map
+  globe.map
+  usa.map
+  usaglobe.map
+  )
+endif(HAVE_SHAPELIB)
 
 install(FILES ${data_DATAFILES} DESTINATION ${DATA_DIR})

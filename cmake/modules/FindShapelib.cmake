@@ -3,9 +3,8 @@
 
 # This module defines the following uncached variables:
 #  SHAPELIB_FOUND, if false, do not try to use shapelib.
-#  SHAPELIB_INCLUDE_DIRS, where to find shapefil.h.
+#  SHAPELIB_INCLUDE_DIR, where to find shapefil.h.
 #  SHAPELIB_LIBRARIES, the libraries to link against to use shapelib
-#  SHAPELIB_LIBRARY_DIRS, the directory where libshp (either shared or static)
 #  is found.
 
 find_path(SHAPELIB_INCLUDE_DIR shapefil.h /usr/local/include /usr/include)
@@ -16,11 +15,8 @@ if(SHAPELIB_INCLUDE_DIR)
   PATHS /usr/local/lib /usr/lib
   )
   if(SHAPELIB_LIBRARY)
-    set(SHAPELIB_LIBRARY_DIR "")
-    get_filename_component(SHAPELIB_LIBRARY_DIRS ${SHAPELIB_LIBRARY} PATH)
     # Set uncached variables as per standard.
     set(SHAPELIB_FOUND ON)
-    set(SHAPELIB_INCLUDE_DIRS ${SHAPELIB_INCLUDE_DIR})
     set(SHAPELIB_LIBRARIES ${SHAPELIB_LIBRARY})
   endif(SHAPELIB_LIBRARY)
 endif(SHAPELIB_INCLUDE_DIR)
