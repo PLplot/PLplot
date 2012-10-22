@@ -47,6 +47,9 @@ if(HAVE_SHAPELIB)
   usaglobe.shx
   usaglobe.shp
   )
+  set(data_DOCFILES
+  README.shapefiles
+  )
 else(HAVE_SHAPELIB)
   set(data_DATAFILES
   ${data_DATAFILES}
@@ -58,3 +61,7 @@ else(HAVE_SHAPELIB)
 endif(HAVE_SHAPELIB)
 
 install(FILES ${data_DATAFILES} DESTINATION ${DATA_DIR})
+
+if(HAVE_SHAPELIB)
+  install(FILES ${data_DOCFILES} DESTINATION ${DOC_DIR})
+endif(HAVE_SHAPELIB)
