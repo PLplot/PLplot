@@ -442,11 +442,16 @@ public:
                  const PLINT *symbol_colors, const PLFLT *symbol_scales,
                  const PLINT *symbol_numbers, const char **symbols );
 
-    void colorbar( PLINT position, PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width, PLINT cont_color, PLINT cont_width,
+    void colorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+                   PLINT opt, PLINT position, PLFLT x, PLFLT y,
+                   PLFLT x_length, PLFLT y_length,
+                   PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                   PLFLT low_cap_color, PLFLT high_cap_color,
+                   PLINT cont_color, PLINT cont_width,
                    PLFLT ticks, PLINT sub_ticks,
-                   const char *axis_opts, const char *label,
-                   PLINT n_colors, const PLFLT *colors, const PLFLT *values );
-
+                   PLINT n_labels, PLINT *label_opts, const char *label[],
+                   PLINT n_axes, const char *axis_opts[],
+                   PLINT *n_values, const PLFLT * const *values );
 
 // Sets position of the light source
 

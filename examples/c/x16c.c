@@ -20,7 +20,7 @@ static int exclude = 0;         // By default do not plot a page illustrating
                                 // front end other than the C one.
 
 // For now, don't show the colorbars while we are working out the API.
-static int colorbar = 0;
+static int colorbar = 1;
 
 // polar plot data
 #define PERIMETERPTS    100

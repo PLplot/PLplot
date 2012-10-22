@@ -46,6 +46,7 @@ private:
     static int           nx;
     static int           ny;
     static int           exclude;
+    static int           colorbar;
     const static int     PERIMETERPTS;
 public:
     static PLFLT         tr[];
@@ -54,11 +55,12 @@ public:
     static const char    *notes[];
 };
 
-int       x16::      ns      = 20;
-int       x16::      nx      = 35;
-int       x16::      ny      = 46;
-int       x16::      exclude = 0;
-const int x16::PERIMETERPTS  = 100;
+int       x16::      ns       = 20;
+int       x16::      nx       = 35;
+int       x16::      ny       = 46;
+int       x16::      exclude  = 0;
+int       x16::      colorbar = 1;
+const int x16::PERIMETERPTS   = 100;
 
 PLFLT     x16::    tr[] = { 2. / ( nx - 1 ), 0.0, -1.0, 0.0, 2. / ( ny - 1 ), -1.0 };
 
@@ -150,7 +152,24 @@ x16::x16( int argc, const char ** argv )
     PLFLT     *clevel    = new PLFLT[ns];
     PLFLT     *shedge    = new PLFLT[ns + 1];
     const int fill_width = 2, cont_color = 0, cont_width = 0;
+    PLFLT     colorbar_width, colorbar_height;
 
+#define NUM_AXES    1
+    PLINT      n_axis_opts  = NUM_AXES;
+    const char *axis_opts[] = {
+        "bcvtm",
+    };
+    PLINT      num_values[NUM_AXES];
+    PLFLT      *values[NUM_AXES];
+    PLFLT      filler_values[2] = { 0.0, 1.0 };
+#define NUM_LABELS    1
+    PLINT      n_labels     = NUM_LABELS;
+    PLINT      label_opts[] = {
+        PL_COLORBAR_LABEL_BOTTOM,
+    };
+    const char *labels[] = {
+        "Magnitude",
+    };
 
     // plplot initialization
 
@@ -240,6 +259,30 @@ x16::x16( int argc, const char ** argv )
         cont_color, cont_width,
         plstream::fill, true, NULL, NULL );
 
+    if ( colorbar )
+    {
+        // Smaller text
+        pls->schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls->smaj( 0.0, 0.5 );
+        pls->smin( 0.0, 0.5 );
+
+        num_values[0] = ns + 1;
+        values[0]     = shedge;
+        pls->colorbar( &colorbar_width, &colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width, 0.0, 0,
+            n_labels, label_opts, labels,
+            n_axis_opts, axis_opts,
+            num_values, (const PLFLT * const *) values );
+
+        // Reset text and tick sizes
+        pls->schr( 0.0, 1.0 );
+        pls->smaj( 0.0, 1.0 );
+        pls->smin( 0.0, 1.0 );
+    }
+
     pls->col0( 1 );
     pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     pls->col0( 2 );
@@ -261,6 +304,30 @@ x16::x16( int argc, const char ** argv )
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plstream::fill, true, plstream::tr1, (void *) &cgrid1 );
+
+    if ( colorbar )
+    {
+        // Smaller text
+        pls->schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls->smaj( 0.0, 0.5 );
+        pls->smin( 0.0, 0.5 );
+
+        num_values[0] = ns + 1;
+        values[0]     = shedge;
+        pls->colorbar( &colorbar_width, &colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width, 0.0, 0,
+            n_labels, label_opts, labels,
+            n_axis_opts, axis_opts,
+            num_values, (const PLFLT * const *) values );
+
+        // Reset text and tick sizes
+        pls->schr( 0.0, 1.0 );
+        pls->smaj( 0.0, 1.0 );
+        pls->smin( 0.0, 1.0 );
+    }
 
     pls->col0( 1 );
     pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -285,6 +352,30 @@ x16::x16( int argc, const char ** argv )
         cont_color, cont_width,
         plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
 
+    if ( colorbar )
+    {
+        // Smaller text
+        pls->schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls->smaj( 0.0, 0.5 );
+        pls->smin( 0.0, 0.5 );
+
+        num_values[0] = ns + 1;
+        values[0]     = shedge;
+        pls->colorbar( &colorbar_width, &colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width, 0.0, 0,
+            n_labels, label_opts, labels,
+            n_axis_opts, axis_opts,
+            num_values, (const PLFLT * const *) values );
+
+        // Reset text and tick sizes
+        pls->schr( 0.0, 1.0 );
+        pls->smaj( 0.0, 1.0 );
+        pls->smin( 0.0, 1.0 );
+    }
+
     pls->col0( 1 );
     pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     pls->col0( 2 );
@@ -308,6 +399,30 @@ x16::x16( int argc, const char ** argv )
         shedge, ns + 1, fill_width,
         2, 3,
         plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
+
+    if ( colorbar )
+    {
+        // Smaller text
+        pls->schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls->smaj( 0.0, 0.5 );
+        pls->smin( 0.0, 0.5 );
+
+        num_values[0] = ns + 1;
+        values[0]     = shedge;
+        pls->colorbar( &colorbar_width, &colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            2, 3, 0.0, 0,
+            n_labels, label_opts, labels,
+            n_axis_opts, axis_opts,
+            num_values, (const PLFLT * const *) values );
+
+        // Reset text and tick sizes
+        pls->schr( 0.0, 1.0 );
+        pls->smaj( 0.0, 1.0 );
+        pls->smin( 0.0, 1.0 );
+    }
 
     pls->col0( 1 );
     pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -378,6 +493,30 @@ x16::x16( int argc, const char ** argv )
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
         plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
+
+    if ( colorbar )
+    {
+        // Smaller text
+        pls->schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls->smaj( 0.0, 0.5 );
+        pls->smin( 0.0, 0.5 );
+
+        num_values[0] = ns + 1;
+        values[0]     = shedge;
+        pls->colorbar( &colorbar_width, &colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width, 0.0, 0,
+            n_labels, label_opts, labels,
+            n_axis_opts, axis_opts,
+            num_values, (const PLFLT * const *) values );
+
+        // Reset text and tick sizes
+        pls->schr( 0.0, 1.0 );
+        pls->smaj( 0.0, 1.0 );
+        pls->smin( 0.0, 1.0 );
+    }
 
     // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
     for ( i = 0; i < PERIMETERPTS; i++ )

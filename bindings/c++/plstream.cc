@@ -1013,18 +1013,24 @@ void plstream::legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 }
 
-void plstream::colorbar( PLINT /*position*/, PLINT /*opt*/, PLFLT /*x*/, PLFLT /*y*/, PLFLT /*length*/, PLFLT /*width*/, PLINT /*cont_color*/, PLINT /*cont_width*/,
-                         PLFLT /*ticks*/, PLINT /*sub_ticks*/,
-                         const char * /*axis_opts*/, const char * /*label*/,
-                         PLINT /*n_colors*/, const PLFLT * /*colors*/, const PLFLT * /*values*/ )
+void plstream::colorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+                         PLINT opt, PLINT position, PLFLT x, PLFLT y,
+                         PLFLT x_length, PLFLT y_length,
+                         PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                         PLFLT low_cap_color, PLFLT high_cap_color,
+                         PLINT cont_color, PLINT cont_width,
+                         PLFLT ticks, PLINT sub_ticks,
+                         PLINT n_labels, PLINT *label_opts, const char *label[],
+                         PLINT n_axes, const char *axis_opts[],
+                         PLINT *n_values, const PLFLT * const *values )
 {
     set_stream();
 
-#if 0
-    plcolorbar( position, opt, x, y, length, width,
-        cont_color, cont_width, ticks, sub_ticks, axis_opts,
-        label, n_colors, colors, values );
-#endif
+    plcolorbar( p_colorbar_width, p_colorbar_height, opt, position, x, y,
+        x_length, y_length, bg_color, bb_color, bb_style,
+        low_cap_color, high_cap_color, cont_color, cont_width,
+        ticks, sub_ticks, n_labels, label_opts, label,
+        n_axes, axis_opts, n_values, values );
 }
 
 
