@@ -1,0 +1,57 @@
+The ndiff application is a really useful fuzzy diff that can be used
+to analyze, say, the most significant differences between the C and
+Python PostScript results without having those important differences
+obscured by minor numerical difference.
+
+ndiff was last released in 2000, and its build system is beginning
+to show the results of bit-rot.  For example, building from a separate build
+tree does not work, and you must create _all_ the required subdirectories
+of the install tree using repeated runs of mkdir before "make install"
+will work.
+
+I got tired of dealing with these issues so I made a rudimentary
+CMake-based build system consisting of the two other files in this
+directory whose names are CMakeLists.txt and config.h.cmake.  Here
+is the recommended way to use these files:
+
+
+download, verify, and signature check
+the last (2000) release of ndiff using
+
+wget ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz
+wget ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz.sig
+gpg --verify ndiff-2.00.tar.gz.sig
+
+Copy CMakeLists.txt and config.h.cmake into the top
+of the ndiff-2.0.0 source tree then build ndiff using
+
+mkdir build_dir
+cmake ../ndiff-2.0.0
+make
+
+This creates the newly compiled ndiff executable in the separate build
+tree which is really all I needed so I stopped there.
+
+If you have any CMake skills at all and an interest in ndiff, I
+encourage you to expand this build system to allow installation of the
+ndiff executable and man page and perhaps even run some of the tests
+that are implemented by the traditional ndiff build system.  (I
+believe those tests compare the C version of the ndiff executable with
+an awk-based version that is much slower but thought to be of good
+reliability.)
+
+However, note I have recently been in touch with the ndiff author, and
+he appears to be the kind of developer that likes to muck with
+machine language because you know exactly what you get than
+rather than actually using compilers which might produce obfuscated
+machine language.  So he has absolutely no use for CMake because
+it is difficult to debug the resulting Makefiles (!)  To be fair,
+he also has some advantages of perfectionism which is why he
+goes to the trouble (above) of testing the C ndiff against
+an alternative implementation.
+
+So this CMake-based build system will likely always be external to the ndiff
+project.  Nevertheless, ndiff is extremely useful to PLplot
+developers who are all fairly expert with CMake so I think it is
+worthwhile pursuing this CMake-based build system for ndiff a bit
+further if someone feels the urge.
