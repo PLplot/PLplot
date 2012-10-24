@@ -6,7 +6,32 @@
 
 # Top-level CMakeLists.txt boilerplate.
 project(ndiff C)
-cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
+
+# Set paths for installation
+set(
+CMAKE_INSTALL_EXEC_PREFIX
+${CMAKE_INSTALL_PREFIX}
+CACHE PATH "install location for architecture-dependent files"
+)
+
+set(
+CMAKE_INSTALL_BINDIR
+${CMAKE_INSTALL_EXEC_PREFIX}/bin
+CACHE PATH "install location for user executables"
+)
+
+set(
+CMAKE_INSTALL_DATADIR
+${CMAKE_INSTALL_PREFIX}/share
+CACHE PATH "install location for read-only architecture-independent data"
+)
+
+set(
+CMAKE_INSTALL_MANDIR
+${CMAKE_INSTALL_DATADIR}/man
+CACHE PATH "install location for man documentation"
+)
 
 # Configure everything in config.h which must have
 # specific values of 1 or 0
@@ -68,6 +93,13 @@ configure_file(
   @ONLY
 )
 
+if(HAVE_GMP)
+  set(ndiff_LINK_LIBRARIES
+  ${ndiff_LINK_LIBRARIES}
+  gmp
+  )
+endif(HAVE_GMP)
+
 # Build the ndiff executable:
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -83,5 +115,13 @@ set(ndiff_SRC
   )
 
 add_executable(ndiff ${ndiff_SRC}) 
+
+target_link_libraries(
+  ndiff
+  ${ndiff_LINK_LIBRARIES}
+)
+
+install(TARGETS ndiff DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES ndiff.man DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 RENAME ndiff.1)
 
 # That wasn't so hard, was it?
