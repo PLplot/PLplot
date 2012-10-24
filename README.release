@@ -29,6 +29,8 @@ CHANGES
 
 1. Changes relative to PLplot 5.9.9 (the previous development release)
 
+1.1 The format for map data used by plmap has changed
+
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
 2.1 All autotools-related files have now been removed
@@ -86,8 +88,17 @@ detected
 2.50 Support large polygons
 2.51 Complete set of PLplot parameters now available for Fortran
 2.52 The plarc function has been added
+2.53 The format for map data used by plmap has changed
 
 OFFICIAL NOTICES FOR USERS
+
+(5.9.10) The current format for maps used by plmap has been deprecated in
+favour of using shapefiles (a standard format widely used for GIS and with
+suitable free data sources available). This requires the shapelib library 
+to be installed. If this library is not installed then by default no map
+support will be available. Support for the old binary format is still 
+available by setting the cmake variable PL_DEPRECATED, however this 
+support will be removed in a future release of PLplot.
 
 (5.9.10) Those who use the Python version of plgriddata will have to
 change their use of this function for this release as follows (see
@@ -449,8 +460,18 @@ good).
 
 1. Changes relative to PLplot 5.9.9 (the previous development release)
 
-No notable new features.  This is a bug fix release.  See the above
-announcements.
+1.1 The format for map data used by plmap has changed
+
+The format for map data used by plmap is now the shapefile format. 
+This is a widely used standard format and there are many sources of data
+in this format. This replaces the custom binary format that PLplot used
+to use. The support for reading shapefiles is provided by the shapelib 
+library, which is a new dependency for PLplot. If users do not have this
+installed then, by default, they will not get any map capabilites with 
+PLplot. Support for the old format can still be enabled by setting the
+PL_DEPRECATED cmake variable, but this support will be removed in a 
+subsequent PLplot release.
+
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -1275,3 +1296,15 @@ announcement XX above for the details).
 
 The plarc function allows drawing filled and outlined arcs in PLplot.
 Standard example 3 uses plarc.
+
+2.53 The format for map data used by plmap has changed
+
+The format for map data used by plmap is now the shapefile format.  
+This is a widely used standard format and there are many sources of data
+in this format. This replaces the custom binary format that PLplot used
+to use. The support for reading shapefiles is provided by the shapelib
+library, which is a new dependency for PLplot. If users do not have this
+installed then, by default, they will not get any map capabilites with
+PLplot. Support for the old format can still be enabled by setting the
+PL_DEPRECATED cmake variable, but this support will be removed in a 
+subsequent PLplot release.
