@@ -147,7 +147,12 @@ main( int argc, const char *argv[] )
     };
     PLINT      num_values[NUM_AXES];
     PLFLT      *values[NUM_AXES];
-    PLFLT      filler_values[2] = { 0.0, 1.0 };
+    PLFLT      axis_ticks[NUM_AXES] = {
+        0.0,
+    };
+    PLINT      axis_subticks[NUM_AXES] = {
+        0,
+    };
 #define NUM_LABELS    1
     PLINT      n_labels     = NUM_LABELS;
     PLINT      label_opts[] = {
@@ -266,9 +271,10 @@ main( int argc, const char *argv[] )
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
-            cont_color, cont_width, 0.0, 0,
+            cont_color, cont_width,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
+            axis_ticks, axis_subticks,
             num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
@@ -317,9 +323,10 @@ main( int argc, const char *argv[] )
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
-            cont_color, cont_width, 0.0, 0,
+            cont_color, cont_width,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
+            axis_ticks, axis_subticks,
             num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
@@ -368,9 +375,10 @@ main( int argc, const char *argv[] )
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
-            cont_color, cont_width, 0.0, 0,
+            cont_color, cont_width,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
+            axis_ticks, axis_subticks,
             num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
@@ -418,9 +426,10 @@ main( int argc, const char *argv[] )
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
-            2, 3, 0.0, 0,
+            2, 3,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
+            axis_ticks, axis_subticks,
             num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes
@@ -519,9 +528,10 @@ main( int argc, const char *argv[] )
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
-            cont_color, cont_width, 0.0, 0,
+            cont_color, cont_width,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
+            axis_ticks, axis_subticks,
             num_values, (const PLFLT * const *) values );
 
         // Reset text and tick sizes

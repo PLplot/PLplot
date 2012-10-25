@@ -1437,8 +1437,6 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! @param cont_width Contour width for PL_COLORBAR_SHADE plots.  This is
 //! passed directly to plshades, so it will be interpreted according to the
 //! design of plshades.
-//! @param ticks Spacing of major ticks, as for plbox.
-//! @param sub_ticks Number of subticks, as for plbox.
 //! @param n_labels Number of labels to place around the colorbar
 //! @param label_opts Options for each label.  n_label total values.
 //! @param labels Text labels for the colorbar. No label is drawn if no
@@ -1448,6 +1446,10 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! @param n_axes Number of axis definitions provided.  Must be >= 1.
 //! @param axis_opts Axis options for the colorbar's major axis, as for plbox.
 //! n_axes values in the array.
+//! @param ticks Spacing of major ticks, as for plbox.  n_axes values in the
+//! array.
+//! @param sub_ticks Number of subticks, as for plbox.  n_axes values in the
+//! array.
 //! @param n_values Number of elements in each values array.
 //! @param values Numeric values for the data range represented by the
 //! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
@@ -1464,9 +1466,9 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
               PLINT bg_color, PLINT bb_color, PLINT bb_style,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLINT cont_width,
-              PLFLT ticks, PLINT sub_ticks,
               PLINT n_labels, PLINT *label_opts, const char *labels[],
               PLINT n_axes, const char *axis_opts[],
+              PLFLT *ticks, PLINT *sub_ticks,
               PLINT *n_values, const PLFLT * const *values )
 {
     // Min and max values
@@ -1724,7 +1726,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         // Calculate the bounding box for decorated (i.e., including tick
         // marks + numerical tick labels) box.
         draw_box( TRUE, opt, axis_opts[i], if_edge,
-            ticks, sub_ticks, n_values[i], values[i] );
+            ticks[i], sub_ticks[i], n_values[i], values[i] );
 
         if ( opt & PL_COLORBAR_CAP_LOW )
         {
@@ -2237,7 +2239,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         // draw decorated (i.e., including tick marks + numerical tick
         // labels) box.
         draw_box( FALSE, opt, axis_opts[i], if_edge,
-            ticks, sub_ticks, n_values[i], values[i] );
+            ticks[i], sub_ticks[i], n_values[i], values[i] );
     }
 
     // Viewport and world coordinate ranges for bounding-box.
