@@ -1019,9 +1019,9 @@ void plstream::colorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                          PLINT bg_color, PLINT bb_color, PLINT bb_style,
                          PLFLT low_cap_color, PLFLT high_cap_color,
                          PLINT cont_color, PLINT cont_width,
-                         PLFLT ticks, PLINT sub_ticks,
                          PLINT n_labels, PLINT *label_opts, const char *label[],
                          PLINT n_axes, const char *axis_opts[],
+                         PLFLT *ticks, PLINT *sub_ticks,
                          PLINT *n_values, const PLFLT * const *values )
 {
     set_stream();
@@ -1029,8 +1029,8 @@ void plstream::colorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plcolorbar( p_colorbar_width, p_colorbar_height, opt, position, x, y,
         x_length, y_length, bg_color, bb_color, bb_style,
         low_cap_color, high_cap_color, cont_color, cont_width,
-        ticks, sub_ticks, n_labels, label_opts, label,
-        n_axes, axis_opts, n_values, values );
+        n_labels, label_opts, label,n_axes, axis_opts,  
+        ticks, sub_ticks, n_values, values );
 }
 
 

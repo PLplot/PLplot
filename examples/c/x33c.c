@@ -156,8 +156,8 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     // Parameters for the colorbars on this page
     PLINT      position_i, position, opt;
     PLFLT      x, y, x_length, y_length;
-    PLFLT      ticks;
-    PLINT      sub_ticks;
+    PLFLT      ticks[1] = { 0.0 };
+    PLINT      sub_ticks[1] = { 0 };
     PLFLT      low_cap_color, high_cap_color;
     PLINT      vertical, ifn;
     PLINT      n_axes = 1;
@@ -174,9 +174,6 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
 
     n_values_array[0] = n_values;
     values_array[0]   = values;
-
-    ticks     = 0.0;
-    sub_ticks = 0;
 
     low_cap_color  = 0.0;
     high_cap_color = 1.0;
@@ -260,9 +257,9 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
             15, 1, 1,
             low_cap_color, high_cap_color,
             cont_color, cont_width,
-            ticks, sub_ticks,
             n_labels, label_opts, (const char **) &label,
             n_axes, axis_opts,
+            ticks, sub_ticks,
             n_values_array, (const PLFLT * const *) values_array );
 
         // Reset text and tick sizes
