@@ -347,7 +347,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
     free( filename );
     free( warning );
 #else   // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED) 
-    plwarn( "Use of the old plplot map file format is deprecated.\nIt is recommended that the shapelib library is used to provide map support.\n" );
+    plwarn( "Use of the old plplot map file format is deprecated.\nIt is recommended that the shapelib library be used to provide map support.\n" );
 #endif   // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED) 
 }
 
