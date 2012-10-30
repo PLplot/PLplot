@@ -54,9 +54,8 @@ ENDIF(NOT CMAKE_RANLIB)
 MARK_AS_ADVANCED(CMAKE_RANLIB)
 
 # configure variables set in this file for fast reload later on
-#CONFIGURE_FILE(${CMAKE_ROOT}/Modules/CMakeAdaCompiler.cmake.in 
-CONFIGURE_FILE(${CMAKE_MODULE_PATH}/CMakeAdaCompiler.cmake.in 
-               "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeAdaCompiler.cmake" IMMEDIATE)
+CONFIGURE_FILE(${CMAKE_MODULE_PATH}/CMakeAdaCompiler.cmake.in
+               "${CMAKE_PLATFORM_INFO_DIR}/CMakeAdaCompiler.cmake" IMMEDIATE)
 MARK_AS_ADVANCED(CMAKE_AR)
 
 SET(CMAKE_Ada_COMPILER_ENV_VAR "ADA")
