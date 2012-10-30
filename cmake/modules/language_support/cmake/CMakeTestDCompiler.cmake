@@ -68,10 +68,10 @@ ELSE(NOT CMAKE_D_COMPILER_WORKS)
   # a different location.
   IF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
   	CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in 
-  	  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeDCompiler.cmake IMMEDIATE)
+  	  ${CMAKE_PLATFORM_INFO_DIR}/CMakeDCompiler.cmake IMMEDIATE)
   ELSE(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
   	CONFIGURE_FILE(${CMAKE_ROOT}/Modules/CMakeDCompiler.cmake.in 
-	  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeDCompiler.cmake IMMEDIATE)
+	  ${CMAKE_PLATFORM_INFO_DIR}/CMakeDCompiler.cmake IMMEDIATE)
   ENDIF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
 ENDIF(NOT CMAKE_D_COMPILER_WORKS)
 

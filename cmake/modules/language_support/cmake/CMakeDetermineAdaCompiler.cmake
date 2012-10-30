@@ -55,8 +55,11 @@ MARK_AS_ADVANCED(CMAKE_RANLIB)
 
 # configure variables set in this file for fast reload later on
 #CONFIGURE_FILE(${CMAKE_ROOT}/Modules/CMakeAdaCompiler.cmake.in 
+#message(STATUS "DEBUG: CMAKE_BINARY_DIR = ${CMAKE_BINARY_DIR}")
+#message(STATUS "DEBUG: CMAKE_FILES_DIRECTORY = ${CMAKE_FILES_DIRECTORY}")
+#message(STATUS "DEBUG: CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeAdaCompiler.cmake.in 
-               "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeAdaCompiler.cmake" IMMEDIATE)
+               "${CMAKE_PLATFORM_INFO_DIR}/CMakeAdaCompiler.cmake" IMMEDIATE)
 MARK_AS_ADVANCED(CMAKE_AR)
 
 SET(CMAKE_Ada_COMPILER_ENV_VAR "ADA")

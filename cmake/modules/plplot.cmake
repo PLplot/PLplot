@@ -448,6 +448,13 @@ option(DEFAULT_NO_BINDINGS
 "All language bindings are disabled by default"
 OFF
 )
+
+# Need to define CMAKE_PLATFORM_INFO_DIR for all CMake versions less than 2.8.10
+if(NOT CMAKE_PLATFORM_INFO_DIR)
+  set(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
+  message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
+endif(NOT CMAKE_PLATFORM_INFO_DIR)
+
 # Temporary workaround for language support that is required.
 include(language_support)
 

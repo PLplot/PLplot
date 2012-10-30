@@ -19,6 +19,13 @@ set(CMAKE_MODULE_PATH
   ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
   ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
   )
+
+# Need to define CMAKE_PLATFORM_INFO_DIR for all CMake versions less than 2.8.10
+if(NOT CMAKE_PLATFORM_INFO_DIR)
+  set(CMAKE_PLATFORM_INFO_DIR \${CMAKE_BINARY_DIR}\${CMAKE_FILES_DIRECTORY})
+  message(STATUS 'CMAKE_PLATFORM_INFO_DIR = \${CMAKE_PLATFORM_INFO_DIR}')
+endif(NOT CMAKE_PLATFORM_INFO_DIR)
+
 if(CMAKE_SYSTEM_NAME STREQUAL \"Linux\")
   # We prefer to support only the latest CMake version because it
   # tends to be more free of issues and more consistent with recent
