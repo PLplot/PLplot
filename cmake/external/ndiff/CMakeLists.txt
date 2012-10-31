@@ -119,3 +119,68 @@ target_link_libraries(
 
 install(TARGETS ndiff DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES ndiff.man DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 RENAME ndiff.1)
+
+# Implement test system.
+find_program(BASH_EXECUTABLE bash)
+find_program(CAT_EXECUTABLE cat)
+find_program(CMP_EXECUTABLE cmp)
+if(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE)
+  set(BUILD_TEST ON)
+else(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE)
+  message(STATUS "WARNING: bash, cat, or cmp not available so disabling testing")
+endif(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE)
+
+if(BUILD_TEST)
+  enable_testing()
+  set(check_LIST)
+  foreach(index RANGE 1 26)
+    if(index LESS "10")
+      list(APPEND check_LIST "check00${index}")
+    else(index LESS "10")
+      list(APPEND check_LIST "check0${index}")
+    endif(index LESS "10")
+  endforeach(index RANGE 1 26)
+  #message(STATUS "DEBUG: check_LIST = ${check_LIST}")
+
+  set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+  if(HAVE_GMP)
+    message(STATUS "Configuring tests using gmp precision")
+    set(CHECK_DIR ${TEST_DIR}/okay-gmp)
+  elseif(HAVE_LONG_DOUBLE)
+    message(STATUS 
+      "Configuring tests using long double precision. For this case, many tests\n   will fail on platforms where long double corresponds to 80-bit (rather than\n   128-bit) floating point."
+      )
+    set(CHECK_DIR ${TEST_DIR}/okay-ldb)
+  else(HAVE_GMP)
+    message(STATUS "Configuring tests using double precision")
+    set(CHECK_DIR ${TEST_DIR}/okay-dbl)
+  endif(HAVE_GMP)
+
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_area)
+
+  get_target_property(ndiff_LOC ndiff LOCATION)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/test_area/ndiff_check.sh
+    "${ndiff_LOC} --quick --logfile \$1.err --outfile \$1.out \$(${CAT_EXECUTABLE} ${TEST_DIR}/\$1.opt) ${TEST_DIR}/\$1.in1 ${TEST_DIR}/\$1.in2\n"
+    )
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/test_area/ndiff_check.sh
+    "${CMP_EXECUTABLE} -s \$1.err ${CHECK_DIR}/\$1.err && ${CMP_EXECUTABLE} -s \$1.out ${CHECK_DIR}/\$1.out\n"
+    )
+
+  foreach(check ${check_LIST})
+    add_test(
+      NAME ${check}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_area
+      COMMAND ${BASH_EXECUTABLE} ndiff_check.sh ${check}
+      )
+  endforeach(check ${check_LIST})
+
+  # N.B. AWI briefly considered testing ndiff.awk as well, but that is
+  # not done in the original build system.  Furthermore, it would take
+  # considerable effort to translate from the C version option list to
+  # the form of option list acceptable to awk and ndiff.awk. But the
+  # dealbreaker is the C version has some extra options (such as
+  # -author, -copyright, -copyleft, -www) which the awk version
+  # doesn't know about so the first 6 tests and the 26th test that
+  # test these "extra" options would fail unless you faked it.
+
+endif(BUILD_TEST)

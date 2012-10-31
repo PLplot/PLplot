@@ -1,5 +1,11 @@
-// Note that ndiff code uses old-fashioned #defines with values 
-// which must be either true or false, rather than the #ifdef style.
+// These macros must be set to these specific values in order to
+// pass all tests for ndiff-2.0.0.
+#define VERSION "2.00"
+#define DATE "10-Dec-2000"
+
+// Note that ndiff code uses #if style rather than #ifdef style to
+// test the macros below which therefore must be #defined
+// to be either true or false.
 
 // Define if the `long double' type works.
 #define HAVE_LONG_DOUBLE @HAVE_LONG_DOUBLE@
