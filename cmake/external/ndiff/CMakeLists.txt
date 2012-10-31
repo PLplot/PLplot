@@ -1,37 +1,33 @@
-# The autoconf-based build of ndiff is beginning to break down so this
-# is the start of the implementation of an equivalent build system
-# using CMake.  This is just a first proof-of-concept attempt to build
-# ndiff and not even bother to test or install it.  But at least the
-# build appears to work and so does the resulting ndiff executable.
+# Top-level CMakeLists.txt file to help (along with config.h.cmake) to
+# implement a complete CMake-based build system for ndiff.
 
-# Top-level CMakeLists.txt boilerplate.
 project(ndiff C)
 cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 
 # Set paths for installation
 set(
-CMAKE_INSTALL_EXEC_PREFIX
-${CMAKE_INSTALL_PREFIX}
-CACHE PATH "install location for architecture-dependent files"
-)
+  CMAKE_INSTALL_EXEC_PREFIX
+  ${CMAKE_INSTALL_PREFIX}
+  CACHE PATH "install location for architecture-dependent files"
+  )
 
 set(
-CMAKE_INSTALL_BINDIR
-${CMAKE_INSTALL_EXEC_PREFIX}/bin
-CACHE PATH "install location for user executables"
-)
+  CMAKE_INSTALL_BINDIR
+  ${CMAKE_INSTALL_EXEC_PREFIX}/bin
+  CACHE PATH "install location for user executables"
+  )
 
 set(
-CMAKE_INSTALL_DATADIR
-${CMAKE_INSTALL_PREFIX}/share
-CACHE PATH "install location for read-only architecture-independent data"
-)
+  CMAKE_INSTALL_DATADIR
+  ${CMAKE_INSTALL_PREFIX}/share
+  CACHE PATH "install location for read-only architecture-independent data"
+  )
 
 set(
-CMAKE_INSTALL_MANDIR
-${CMAKE_INSTALL_DATADIR}/man
-CACHE PATH "install location for man documentation"
-)
+  CMAKE_INSTALL_MANDIR
+  ${CMAKE_INSTALL_DATADIR}/man
+  CACHE PATH "install location for man documentation"
+  )
 
 # Configure everything in config.h which must have
 # specific values of 1 or 0
@@ -91,13 +87,13 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
   @ONLY
-)
+  )
 
 if(HAVE_GMP)
   set(ndiff_LINK_LIBRARIES
-  ${ndiff_LINK_LIBRARIES}
-  gmp
-  )
+    ${ndiff_LINK_LIBRARIES}
+    gmp
+    )
 endif(HAVE_GMP)
 
 # Build the ndiff executable:
@@ -119,9 +115,7 @@ add_executable(ndiff ${ndiff_SRC})
 target_link_libraries(
   ndiff
   ${ndiff_LINK_LIBRARIES}
-)
+  )
 
 install(TARGETS ndiff DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES ndiff.man DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 RENAME ndiff.1)
-
-# That wasn't so hard, was it?
