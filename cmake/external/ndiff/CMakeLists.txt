@@ -124,11 +124,29 @@ install(FILES ndiff.man DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 RENAME ndiff.1)
 find_program(BASH_EXECUTABLE bash)
 find_program(CAT_EXECUTABLE cat)
 find_program(CMP_EXECUTABLE cmp)
-if(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE)
+find_program(DIFF_EXECUTABLE diff)
+if(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE AND DIFF_EXECUTABLE)
   set(BUILD_TEST ON)
-else(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE)
-  message(STATUS "WARNING: bash, cat, or cmp not available so disabling testing")
-endif(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE)
+else(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE AND DIFF_EXECUTABLE)
+  message(STATUS "WARNING: bash, cat, cmp, or diff not available so disabling testing")
+  set(BUILD_TEST OFF CACHE BOOL "Enable testing" FORCE)
+endif(BASH_EXECUTABLE AND CAT_EXECUTABLE AND CMP_EXECUTABLE AND DIFF_EXECUTABLE)
+
+if(BUILD_TEST)
+  if(WIN32)
+    find_program(TR_EXECUTABLE tr)
+    find_program(SED_EXECUTABLE sed)
+    if(TR_EXECUTABLE AND SED_EXECUTABLE)
+      set(FILTER "| ${TR_EXECUTABLE} -d $'\\r' | sed -e's?\\([0-9]e[+-]*\\)0\\([0-9][0-9]\\)?\\1\\2?'")
+      #message(STATUS "DEBUG: FILTER = ${FILTER}")
+    else(TR_EXECUTABLE AND SED_EXECUTABLE)
+      message(STATUS "WARNING: tr or sed not available so disabling testing on a Windows platform")
+      set(BUILD_TEST OFF CACHE BOOL "Enable testing" FORCE)
+    endif(TR_EXECUTABLE AND SED_EXECUTABLE)
+  else(WIN32)
+    set(FILTER)
+  endif(WIN32)
+endif(BUILD_TEST)
 
 if(BUILD_TEST)
   enable_testing()
@@ -163,7 +181,9 @@ if(BUILD_TEST)
     "${ndiff_LOC} --quick --logfile \$1.err --outfile \$1.out \$(${CAT_EXECUTABLE} ${TEST_DIR}/\$1.opt) ${TEST_DIR}/\$1.in1 ${TEST_DIR}/\$1.in2\n"
     )
   file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/test_area/ndiff_check.sh
-    "${CMP_EXECUTABLE} -s \$1.err ${CHECK_DIR}/\$1.err && ${CMP_EXECUTABLE} -s \$1.out ${CHECK_DIR}/\$1.out\n"
+# Use diff instead of cmp to give more details about the differences.
+#    "${CAT_EXECUTABLE} < \$1.err ${FILTER} | ${CMP_EXECUTABLE} -s - ${CHECK_DIR}/\$1.err && ${CAT_EXECUTABLE} < \$1.out ${FILTER} | ${CMP_EXECUTABLE} -s - ${CHECK_DIR}/\$1.out\n"
+    "${CAT_EXECUTABLE} < \$1.err ${FILTER} | ${DIFF_EXECUTABLE} - ${CHECK_DIR}/\$1.err && ${CAT_EXECUTABLE} < \$1.out ${FILTER} | ${DIFF_EXECUTABLE} - ${CHECK_DIR}/\$1.out\n"
     )
 
   foreach(check ${check_LIST})
