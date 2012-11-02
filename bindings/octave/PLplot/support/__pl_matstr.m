@@ -20,7 +20,7 @@
 function out = __pl_matstr(mat, str, n)
 
   ## Octave damned string arrays are defective!
-  if (ischar(str) & ischar(mat) & rows(str) == 1)
+  if (ischar(str) && ischar(mat) && rows(str) == 1)
     if (isempty(mat))
       out(n,:) = str;
     else

@@ -1,3 +1,6 @@
+# Disable warnings about shadowed functions - PLplot is _supposed_ to shadow the core functions
+warning("off","Octave:shadowed-function");
+
 addpath("@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/","@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/support/","@CMAKE_SOURCE_DIR@/examples/octave/","@CMAKE_SOURCE_DIR@/bindings/octave/misc/","@CMAKE_BINARY_DIR@/bindings/octave/","@CMAKE_BINARY_DIR@/bindings/octave/PLplot");
 putenv("PLPLOT_LIB","@CMAKE_SOURCE_DIR@/data/");
 global pl_automatic_replot

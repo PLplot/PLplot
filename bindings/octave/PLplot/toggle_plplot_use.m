@@ -23,11 +23,16 @@
 if ! exist ("use_plplot_state")
   global use_plplot_state
   use_plplot_state = "on";
+  global default_shadow_warning
+  default_shadow_warning = warning("query","Octave:shadowed-function");
+  warning("off","Octave:shadowed-function");
 else
   if strcmp (use_plplot_state, "on")
     use_plplot_state = "off";
+    warning(default_shadow_warning.state,"Octave:shadowed-function");
   else
     use_plplot_state = "on";
+    warning("off","Octave:shadowed-function");
   endif
 endif
 
