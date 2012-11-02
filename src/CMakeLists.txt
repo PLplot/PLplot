@@ -318,6 +318,8 @@ if(HAVE_SHAPELIB)
     ${SHAPELIB_LIBRARIES}
     )
   
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${SHAPELIB_RPATH})
+
   # Convert to -L... -l... form.
   string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
     _SHAPELIB_LINK_FLAGS

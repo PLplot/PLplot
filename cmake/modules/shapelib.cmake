@@ -1,6 +1,7 @@
 # cmake/modules/shapefil.cmake
 #
 # Copyright (C) 2012  Andrew Ross
+# Copyright (C) 2012  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -28,7 +29,10 @@ ON
 # Look for shapelib libraries
 if (HAVE_SHAPELIB)
   find_package(Shapelib)
-  if(NOT SHAPELIB_FOUND)
+  if(SHAPELIB_FOUND)
+    set(SHAPELIB_RPATH ${SHAPELIB_LIBRARY_DIRS})
+    filter_rpath(SHAPELIB_RPATH)
+  else(SHAPELIB_FOUND)
     message(STATUS 
     "WARNING: SHAPELIB not found.  Setting HAVE_SHAPELIB to OFF."
     )
@@ -36,5 +40,5 @@ if (HAVE_SHAPELIB)
     CACHE BOOL "Enable driver options for using SHAPELIB library for reading shapefile map data"
     FORCE
     )
-  endif(NOT SHAPELIB_FOUND)
+  endif(SHAPELIB_FOUND)
 endif (HAVE_SHAPELIB)
