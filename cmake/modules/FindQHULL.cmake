@@ -21,7 +21,6 @@ if( QHULL_INCLUDE_DIR )
     PATHS /usr/local/lib /usr/lib
   )
   if( QHULL_LIBRARY )
-    set(QHULL_LIBRARY_DIR "")
     get_filename_component(QHULL_LIBRARY_DIRS ${QHULL_LIBRARY} PATH)
     # Set uncached variables as per standard.
     set(QHULL_FOUND ON)
