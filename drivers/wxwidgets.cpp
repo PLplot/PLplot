@@ -331,6 +331,7 @@ wxPLDevBase* common_init( PLStream *pls )
     // Log_Verbose( "common_init()" );
 
     wxPLDevBase* dev;
+    PLFLT downscale, downscale2;
 
     // default options
     static PLINT freetype    = -1;
@@ -480,8 +481,12 @@ wxPLDevBase* common_init( PLStream *pls )
     plP_setpxl( (PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
 
     // Set up physical limits of plotting device (in drawing units)
-    plP_setphy( (PLINT) 0, (PLINT) ( CANVAS_WIDTH * VIRTUAL_PIXELS_PER_IN ),
-        (PLINT) 0, (PLINT) ( CANVAS_HEIGHT * VIRTUAL_PIXELS_PER_IN ) );
+    downscale = (double) dev->width / (double) ( PIXELS_X - 1 );
+    downscale2 = (double) dev->height / (double) PIXELS_Y;
+    if ( downscale < downscale2 )
+        downscale = downscale2;
+    plP_setphy( (PLINT) 0, (PLINT) ( dev->width / downscale ),
+        (PLINT) 0, (PLINT) ( dev->height / downscale ) );
 
     // get physical device limits coordinates
     plP_gphy( &dev->xmin, &dev->xmax, &dev->ymin, &dev->ymax );
