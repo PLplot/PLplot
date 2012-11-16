@@ -3180,7 +3180,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <literal><parameter>n</parameter></literal> points
       <literal>(<parameter>x</parameter>[i],
       <parameter>y</parameter>[i])</literal> using the pattern defined by
-      &plpsty; or &plpat;.  The routine will automatically close the
+      &plpsty; or &plpat;.  The default fill style is a solid fill. 
+      The routine will automatically close the
       polygon between the last and first vertices.  If multiple closed
       polygons are passed in <literal><parameter>x</parameter></literal>
       and <literal><parameter>y</parameter></literal> then &plfill; will
@@ -9148,7 +9149,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Select one of eight predefined area fill patterns to use (also see
-      &plpat;).
+      &plpat;). Setting the fill style to 0 gives a solid fill.
     </para>
 
     <variablelist>
