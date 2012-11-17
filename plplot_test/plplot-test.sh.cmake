@@ -310,6 +310,7 @@ PLD_ps=@PLD_ps@
 # special case
 PLD_psc=@PLD_ps@
 PLD_pscairo=@PLD_pscairo@
+PLD_epscairo=@PLD_epscairo@
 PLD_pstex=@PLD_pstex@
 PLD_psttf=@PLD_psttf@
 # special case

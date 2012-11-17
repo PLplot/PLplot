@@ -27,6 +27,7 @@
 # PLD_pdfcairo		  - ON means the pdfcairo device is enabled.
 # PLD_pngcairo		  - ON means the pngcairo device is enabled.
 # PLD_pscairo		  - ON means the pscairo device is enabled.
+# PLD_epscairo		  - ON means the epscairo device is enabled.
 # PLD_svgcairo		  - ON means the svgcairo device is enabled.
 # PLD_xcairo		  - ON means the xcairo device is enabled.
 # PLD_wincairo            - ON means the wincairo device is enabled.
@@ -53,6 +54,7 @@ if(
     OR PLD_pdfcairo
     OR PLD_pngcairo
     OR PLD_pscairo
+    OR PLD_epscairo
     OR PLD_svgcairo 
     OR PLD_xcairo
     OR PLD_extcairo
@@ -66,6 +68,7 @@ if(
     set(PLD_pdfcairo OFF CACHE BOOL "Enable pdfcairo device" FORCE)
     set(PLD_pngcairo OFF CACHE BOOL "Enable pngcairo device" FORCE)
     set(PLD_pscairo OFF CACHE BOOL "Enable pscairo device" FORCE)
+    set(PLD_epscairo OFF CACHE BOOL "Enable epscairo device" FORCE)
     set(PLD_svgcairo OFF CACHE BOOL "Enable svgcairo device" FORCE)
     set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
     set(PLD_extcairo OFF CACHE BOOL "Enable extcairo device" FORCE)
@@ -76,6 +79,7 @@ endif(
   OR PLD_pdfcairo
   OR PLD_pngcairo
   OR PLD_pscairo
+  OR PLD_epscairo
   OR PLD_svgcairo 
   OR PLD_xcairo
   OR PLD_extcairo
@@ -87,6 +91,7 @@ if(
     OR PLD_pdfcairo
     OR PLD_pngcairo
     OR PLD_pscairo
+    OR PLD_epscairo
     OR PLD_svgcairo 
     OR PLD_xcairo
     OR PLD_extcairo
@@ -148,6 +153,7 @@ if(
     set(PLD_pdfcairo OFF CACHE BOOL "Enable pdfcairo device" FORCE)
     set(PLD_pngcairo OFF CACHE BOOL "Enable pngcairo device" FORCE)
     set(PLD_pscairo OFF CACHE BOOL "Enable pscairo device" FORCE)
+    set(PLD_epscairo OFF CACHE BOOL "Enable epscairo device" FORCE)
     set(PLD_svgcairo OFF CACHE BOOL "Enable svgcairo device" FORCE)
     set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
     set(PLD_extcairo OFF CACHE BOOL "Enable extcairo device" FORCE)
@@ -158,6 +164,7 @@ endif(
   OR PLD_pdfcairo
   OR PLD_pngcairo
   OR PLD_pscairo
+  OR PLD_epscairo
   OR PLD_svgcairo 
   OR PLD_xcairo
   OR PLD_extcairo

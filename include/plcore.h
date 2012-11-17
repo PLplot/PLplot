@@ -285,6 +285,9 @@ static PLDispatchInit  static_device_initializers[] = {
 #if defined ( PLD_pscairo ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_pscairo,
 #endif
+#if defined ( PLD_epscairo ) && !defined ( ENABLE_DYNDRIVERS )
+    plD_dispatch_init_epscairo,
+#endif
 #if defined ( PLD_svgcairo ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_svgcairo,
 #endif

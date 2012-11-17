@@ -167,6 +167,9 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_cairo =
 #if defined ( PLD_wincairo )
     "wincairo:Cairo Microscoft Windows Driver:0:cairo:107:wincairo\n"
 #endif
+#if defined ( PLD_epscairo )
+    "epscairo:Cairo EPS Driver:0:cairo:108:epscairo\n"
+#endif
 ;
 
 //
@@ -2231,6 +2234,110 @@ void plD_init_pscairo( PLStream *pls )
     // Dimension units are pts = 1/72 inches from cairo documentation.
     aStream->cairoSurface = cairo_ps_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->ylength, (double) pls->xlength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
+
+    // Save the pointer to the structure in the PLplot stream
+    pls->dev = aStream;
+
+    // Handle portrait or landscape
+    if ( pls->portrait )
+    {
+        plsdiori( 1 );
+        pls->freeaspect = 1;
+    }
+    rotate_cairo_surface( pls, 0.0, -1.0, -1.0, 0.0, (float) pls->ylength, (float) pls->xlength, FALSE );
+
+    // Set fill rule for the case of self-intersecting boundaries.
+    if ( pls->dev_eofill )
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_EVEN_ODD );
+    else
+        cairo_set_fill_rule( aStream->cairoContext, CAIRO_FILL_RULE_WINDING );
+}
+
+#endif
+
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//
+// That which is specific to the cairo EPS driver.
+//
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
+#if defined ( PLD_epscairo )
+
+void plD_dispatch_init_epscairo( PLDispatchTable *pdt );
+void plD_init_epscairo( PLStream * );
+
+//--------------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+//--------------------------------------------------------------------------
+
+// epscairo
+void plD_dispatch_init_epscairo( PLDispatchTable *pdt )
+{
+#ifndef ENABLE_DYNDRIVERS
+    pdt->pl_MenuStr = "Cairo EPS Driver";
+    pdt->pl_DevName = "epscairo";
+#endif
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 102;
+    pdt->pl_init     = (plD_init_fp) plD_init_epscairo;
+    pdt->pl_line     = (plD_line_fp) plD_line_cairo;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+    pdt->pl_eop      = (plD_eop_fp) plD_eop_cairo;
+    pdt->pl_bop      = (plD_bop_fp) plD_bop_famcairo;
+    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_cairo;
+    pdt->pl_state    = (plD_state_fp) plD_state_cairo;
+    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
+}
+
+//--------------------------------------------------------------------------
+// plD_init_epscairo()
+//
+// Initialize Cairo EPS device
+//--------------------------------------------------------------------------
+
+void plD_init_epscairo( PLStream *pls )
+{
+    PLCairo *aStream;
+
+    // Setup the PLStream and the font lookup table and allocate a cairo
+    // stream structure.
+    //
+    // NOTE: The check below is necessary since, in family mode, this function
+    //  will be called multiple times. While you might think that it is
+    //  sufficient to update what *should* be the only pointer to the contents
+    //  of pls->dev, i.e. the pointer pls->dev itself, it appears that
+    //  something else somewhere else is also pointing to pls->dev. If you
+    //  change what pls->dev points to then you will get a "bus error", from
+    //  which I infer the existence of said bad stale pointer.
+    //
+    if ( pls->dev == NULL )
+    {
+        aStream = stream_and_font_setup( pls, 0 );
+    }
+    else
+    {
+        stream_and_font_setup( pls, 0 );
+        aStream = pls->dev;
+    }
+
+    // Initialize family file info
+    plFamInit( pls );
+
+    // Prompt for a file name if not already set.
+    plOpenFile( pls );
+
+    // Create an cairo surface & context for EPS file.
+    // Dimension units are pts = 1/72 inches from cairo documentation.
+    aStream->cairoSurface = cairo_ps_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->ylength, (double) pls->xlength );
+    aStream->cairoContext = cairo_create( aStream->cairoSurface );
+    
+    // Set the PS surface to be EPS.
+    cairo_ps_surface_set_eps ( aStream->cairoSurface , 1 );
 
     // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;

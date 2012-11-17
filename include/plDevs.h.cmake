@@ -81,6 +81,7 @@
 #cmakedefine PLD_xcairo
 #cmakedefine PLD_pdfcairo
 #cmakedefine PLD_pscairo
+#cmakedefine PLD_epscairo
 #cmakedefine PLD_svgcairo
 #cmakedefine PLD_pngcairo
 #cmakedefine PLD_memcairo

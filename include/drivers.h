@@ -93,6 +93,7 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdf( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_xcairo( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfcairo( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_pscairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_epscairo( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgcairo( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_pngcairo( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_memcairo( PLDispatchTable *pdt );

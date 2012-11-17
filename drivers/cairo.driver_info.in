@@ -6,3 +6,4 @@ pngcairo:Cairo PNG Driver:0:cairo:104:pngcairo
 memcairo:Cairo Memory Driver:0:cairo:105:memcairo
 extcairo:Cairo External Context Driver:0:cairo:106:extcairo
 wincairo:Cairo Microscoft Windows Driver:0:cairo:107:wincairo
+epscairo:Cairo EPS Driver:0:cairo:108:epscairo

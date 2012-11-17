@@ -29,7 +29,7 @@ colon-separated fields:
 This should be the exact duplicate of the corresponding entry in the
 driver source code for plD_DEVICE_INFO_<driver>.
 
-2. Add the following line to plplot_cmake/modules/drivers-init.cmake in
+2. Add the following line to plplot/cmake/modules/drivers-init.cmake in
 set(DRIVERS_DEVICE_LIST... 
 
 "<dev>:<driver>:ON:<kind>:<familied>"

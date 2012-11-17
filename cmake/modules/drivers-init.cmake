@@ -132,6 +132,7 @@ set(DRIVERS_DEVICE_LIST
   "pdfcairo:cairo:ON:F:OFF"
   "pngcairo:cairo:ON:F:ON"
   "pscairo:cairo:ON:F:OFF"
+  "epscairo:cairo:ON:F:ON"
   "svgcairo:cairo:ON:F:ON"
   "xcairo:cairo:ON:I:OFF"
   "wincairo:cairo:ON:I:OFF"
