@@ -32,6 +32,12 @@ www/examples.php to reflect the forthcoming release version number and
 any changes to the examples themselves (i.e. pages added or removed
 from an existing example or entirely new examples).
 
+You also need to install "xmlto" (in the xmlto debian package).
+xmlto is used to generate some of our older release announcements for
+the website, and could also be used to generate present release
+announcements for the website if desired.  See www/announce/README for
+just how easy this step would be.
+
 Run (on a Linux host that is capable of building the documentation
 for the source tree that has all local changes)
 
@@ -69,7 +75,10 @@ from some google results I found that editing of that file is also
 necessary on modern versions of Ubuntu in order to allow php-based websites
 like that of PLplot to work when installed in local user directories.
 
-You will also need to install "xml-to" (in the xml-to debian package).
+After the above changes, you must restart the apache server.  On
+Debian this is done with
+
+service apache2 restart
 
 (When user directories are enabled this way, for the above case
 /home/irwin/public_html/plplot/htdocs, browses as
