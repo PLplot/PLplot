@@ -152,23 +152,23 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_cairo =
 #if defined ( PLD_pscairo )
     "pscairo:Cairo PS Driver:0:cairo:102:pscairo\n"
 #endif
+#if defined ( PLD_epscairo )
+    "epscairo:Cairo EPS Driver:0:cairo:103:epscairo\n"
+#endif
 #if defined ( PLD_svgcairo )
-    "svgcairo:Cairo SVG Driver:0:cairo:103:svgcairo\n"
+    "svgcairo:Cairo SVG Driver:0:cairo:104:svgcairo\n"
 #endif
 #if defined ( PLD_pngcairo )
-    "pngcairo:Cairo PNG Driver:0:cairo:104:pngcairo\n"
+    "pngcairo:Cairo PNG Driver:0:cairo:105:pngcairo\n"
 #endif
 #if defined ( PLD_memcairo )
-    "memcairo:Cairo Memory Driver:0:cairo:105:memcairo\n"
+    "memcairo:Cairo Memory Driver:0:cairo:106:memcairo\n"
 #endif
 #if defined ( PLD_extcairo )
-    "extcairo:Cairo External Context Driver:0:cairo:106:extcairo\n"
+    "extcairo:Cairo External Context Driver:0:cairo:107:extcairo\n"
 #endif
 #if defined ( PLD_wincairo )
-    "wincairo:Cairo Microscoft Windows Driver:0:cairo:107:wincairo\n"
-#endif
-#if defined ( PLD_epscairo )
-    "epscairo:Cairo EPS Driver:0:cairo:108:epscairo\n"
+    "wincairo:Cairo Microscoft Windows Driver:0:cairo:108:wincairo\n"
 #endif
 ;
 
