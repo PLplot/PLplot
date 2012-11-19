@@ -755,6 +755,10 @@ void plD_eop_svgqt( PLStream *pls )
     double downscale;
     QSize  s;
 
+    if ( qt_family_check( pls ) )
+    {
+        return;
+    }
     ( (QtSVGDevice *) pls->dev )->savePlot();
     // Once saved, we have to create a new device with the same properties
     // to be able to plot another page.
