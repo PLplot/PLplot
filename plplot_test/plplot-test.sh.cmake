@@ -356,7 +356,7 @@ fi
 
 # Some devices require special options others do not.
 case "$device" in
-   png|pngcairo|jpeg|xfig|svg|svgcairo|bmpqt|jpgqt|pngqt|ppmqt|tiffqt|svgqt|epsqt|pdfqt)
+   png|pngcairo|epscairo|jpeg|xfig|svg|svgcairo|bmpqt|jpgqt|pngqt|ppmqt|tiffqt|svgqt|epsqt|pdfqt)
       options="-fam -fflen 2"
       ;;
    gif)

@@ -107,6 +107,10 @@ if(CORE_BUILD)
     set(PSCAIRO_COMMENT "#")
   endif(NOT PLD_pscairo)
 
+  if(NOT PLD_epscairo)
+    set(EPSCAIRO_COMMENT "#")
+  endif(NOT PLD_epscairo)
+
   if(NOT PLD_svgcairo)
     set(SVGCAIRO_COMMENT "#")
   endif(NOT PLD_svgcairo)
@@ -1037,6 +1041,7 @@ if(BUILD_TEST)
     test_c_pdfcairo
     test_c_pngcairo
     test_c_pscairo
+    test_c_epscairo
     test_c_svgcairo
     test_extcairo
     test_c_xcairo
@@ -1065,6 +1070,7 @@ Noninteractive device drivers:
 PLD_pdfcairo:		${PLD_pdfcairo}
 PLD_pngcairo:		${PLD_pngcairo}
 PLD_pscairo:		${PLD_pscairo}
+PLD_epscairo:		${PLD_epscairo}
 PLD_svgcairo:		${PLD_svgcairo}
 PLD_cgm:		${PLD_cgm}
 PLD_dg300:		${PLD_dg300}

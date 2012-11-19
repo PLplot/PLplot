@@ -54,6 +54,7 @@ function(list_example_files path device suffix output_list)
   if(
       ${device} STREQUAL "png" OR
       ${device} STREQUAL "pngcairo" OR
+      ${device} STREQUAL "epscairo" OR
       ${device} STREQUAL "jpeg" OR
       ${device} STREQUAL "xfig" OR
       ${device} STREQUAL "svg" OR
@@ -72,6 +73,7 @@ function(list_example_files path device suffix output_list)
   else(
       ${device} STREQUAL "png" OR
       ${device} STREQUAL "pngcairo" OR
+      ${device} STREQUAL "epscairo" OR
       ${device} STREQUAL "jpeg" OR
       ${device} STREQUAL "xfig" OR
       ${device} STREQUAL "svg" OR
@@ -90,6 +92,7 @@ function(list_example_files path device suffix output_list)
   endif(
       ${device} STREQUAL "png" OR
       ${device} STREQUAL "pngcairo" OR
+      ${device} STREQUAL "epscairo" OR
       ${device} STREQUAL "jpeg" OR
       ${device} STREQUAL "xfig" OR
       ${device} STREQUAL "svg" OR
