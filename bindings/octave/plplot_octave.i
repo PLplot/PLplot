@@ -34,7 +34,6 @@
 %module plplot_octave
 
 %{
-
 // #undef PACKAGE and VERSION macros which are leaked out by the octave headers
 #undef PACKAGE
 #undef VERSION
@@ -671,12 +670,12 @@ typedef PLINT          PLBOOL;
 %typemap( in, numinputs = 0 ) char *OUTPUT( octave_value_list retval )
 {
 // Check if version >= 3.4.0
-%#if OCTAVE_API_VERSION_NUMBER < 45
+%# if OCTAVE_API_VERSION_NUMBER < 45
     retval( 0 ) = octave_value( charMatrix( 80, 1 ), true );
-%#else
-    retval( 0 ) = octave_value( charMatrix( 80, 1 ) );
-%#endif
-    $1          = (char *) retval( 0 ).char_matrix_value().data();
+%# else
+        retval( 0 ) = octave_value( charMatrix( 80, 1 ) );
+%# endif
+    $1 = (char *) retval( 0 ).char_matrix_value().data();
 }
 %typemap( argout ) char *OUTPUT {
     $result = SWIG_Octave_AppendOutput( $result, retval$argnum( 0 ) );

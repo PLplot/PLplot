@@ -331,7 +331,7 @@ wxPLDevBase* common_init( PLStream *pls )
     // Log_Verbose( "common_init()" );
 
     wxPLDevBase* dev;
-    PLFLT downscale, downscale2;
+    PLFLT      downscale, downscale2;
 
     // default options
     static PLINT freetype    = -1;
@@ -481,7 +481,7 @@ wxPLDevBase* common_init( PLStream *pls )
     plP_setpxl( (PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
 
     // Set up physical limits of plotting device (in drawing units)
-    downscale = (double) dev->width / (double) ( PIXELS_X - 1 );
+    downscale  = (double) dev->width / (double) ( PIXELS_X - 1 );
     downscale2 = (double) dev->height / (double) PIXELS_Y;
     if ( downscale < downscale2 )
         downscale = downscale2;

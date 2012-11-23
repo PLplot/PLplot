@@ -1029,7 +1029,7 @@ void plstream::colorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     plcolorbar( p_colorbar_width, p_colorbar_height, opt, position, x, y,
         x_length, y_length, bg_color, bb_color, bb_style,
         low_cap_color, high_cap_color, cont_color, cont_width,
-        n_labels, label_opts, label,n_axes, axis_opts,  
+        n_labels, label_opts, label, n_axes, axis_opts,
         ticks, sub_ticks, n_values, values );
 }
 

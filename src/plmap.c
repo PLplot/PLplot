@@ -111,7 +111,7 @@ void
 plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
-#if defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED)
+#if defined ( HAVE_SHAPELIB ) || defined ( PL_DEPRECATED )
     int       i, j;
     char      *filename;
     char      *warning;
@@ -346,9 +346,9 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
     free( bufy );
     free( filename );
     free( warning );
-#else   // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED) 
+#else   // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED)
     plwarn( "Use of the old plplot map file format is deprecated.\nIt is recommended that the shapelib library be used to provide map support.\n" );
-#endif   // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED) 
+#endif  // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED)
 }
 
 //--------------------------------------------------------------------------

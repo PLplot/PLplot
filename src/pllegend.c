@@ -1660,8 +1660,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                      adopted_to_subpage_x( 0. );
     colorbar_height = adopted_to_subpage_y( y_length ) -
                       adopted_to_subpage_y( 0. );
-    colorbar_width_d = colorbar_width;
-    colorbar_height_d = colorbar_height;
+    colorbar_width_d   = colorbar_width;
+    colorbar_height_d  = colorbar_height;
     colorbar_width_mm  = colorbar_width / spxpmm;
     colorbar_height_mm = colorbar_height / spypmm;
     // Extent of cap in normalized subpage coordinates in either X or Y
@@ -1775,7 +1775,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     }
 
     // Capture the current bounding box dimensions
-    colorbar_width_l = colorbar_width_d;
+    colorbar_width_l  = colorbar_width_d;
     colorbar_height_l = colorbar_height_d;
 
     for ( i = 0; i < n_labels; i++ )
