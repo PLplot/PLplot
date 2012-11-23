@@ -774,66 +774,67 @@ void text_end_cairo( PLStream *pls, EscText *args )
     if ( pls->get_string_length )
     {
         pls->string_length = (PLFLT) textXExtent * 25.4 / DPI;
-        return;
     }
-
-    // Set font aliasing
-    context          = pango_layout_get_context( layout );
-    cairoFontOptions = cairo_font_options_create();
-    cairo_font_options_set_antialias( cairoFontOptions, aStream->text_anti_aliasing );
-    pango_cairo_context_set_font_options( context, cairoFontOptions );
-    pango_layout_context_changed( layout );
-    cairo_font_options_destroy( cairoFontOptions );
-
-    // Save current transform matrix & clipping region
-    cairo_save( aStream->cairoContext );
-
-    // Set up the clipping region if we are doing text clipping
-    if ( aStream->text_clipping )
+    else
     {
-        set_clip( pls );
+        // Set font aliasing
+        context          = pango_layout_get_context( layout );
+        cairoFontOptions = cairo_font_options_create();
+        cairo_font_options_set_antialias( cairoFontOptions, aStream->text_anti_aliasing );
+        pango_cairo_context_set_font_options( context, cairoFontOptions );
+        pango_layout_context_changed( layout );
+        cairo_font_options_destroy( cairoFontOptions );
+
+        // Save current transform matrix & clipping region
+        cairo_save( aStream->cairoContext );
+
+        // Set up the clipping region if we are doing text clipping
+        if ( aStream->text_clipping )
+        {
+            set_clip( pls );
+        }
+
+        // Move to the string reference point
+        cairo_move_to( aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y );
+
+        // Invert the coordinate system so that the text is drawn right side up
+        cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
+        cairo_matrix_init( cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
+        cairo_transform( aStream->cairoContext, cairoTransformMatrix );
+
+        // Extract rotation angle and shear from the PLplot tranformation matrix.
+        // Compute sines and cosines of the angles as an optimization.
+        plRotationShear( args->xform, &rotation, &shear, &stride );
+        rotation -= pls->diorot * PI / 2.0;
+        cos_rot   = cos( rotation );
+        sin_rot   = sin( rotation );
+        cos_shear = cos( shear );
+        sin_shear = sin( shear );
+
+        // Apply the transform matrix
+        cairo_matrix_init( cairoTransformMatrix,
+            cos_rot * stride,
+            -sin_rot * stride,
+            cos_rot * sin_shear + sin_rot * cos_shear,
+            -sin_rot * sin_shear + cos_rot * cos_shear,
+            0, 0 );
+        cairo_transform( aStream->cairoContext, cairoTransformMatrix );
+        free( cairoTransformMatrix );
+
+        // Move to the text starting point
+        // printf("baseline %d %d\n", baseline, textYExtent);
+        cairo_rel_move_to( aStream->cairoContext,
+            (double) ( -1.0 * args->just * (double) textXExtent ),
+            (double) 0.5 * aStream->fontSize - baseline / 1024.0 );
+
+        // Render the text
+        pango_cairo_show_layout( aStream->cairoContext, layout );
+
+        // Restore the transform matrix to its state prior to the text transform.
+        cairo_restore( aStream->cairoContext );
     }
 
-    // Move to the string reference point
-    cairo_move_to( aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y );
-
-    // Invert the coordinate system so that the text is drawn right side up
-    cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
-    cairo_matrix_init( cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
-    cairo_transform( aStream->cairoContext, cairoTransformMatrix );
-
-    // Extract rotation angle and shear from the PLplot tranformation matrix.
-    // Compute sines and cosines of the angles as an optimization.
-    plRotationShear( args->xform, &rotation, &shear, &stride );
-    rotation -= pls->diorot * PI / 2.0;
-    cos_rot   = cos( rotation );
-    sin_rot   = sin( rotation );
-    cos_shear = cos( shear );
-    sin_shear = sin( shear );
-
-    // Apply the transform matrix
-    cairo_matrix_init( cairoTransformMatrix,
-        cos_rot * stride,
-        -sin_rot * stride,
-        cos_rot * sin_shear + sin_rot * cos_shear,
-        -sin_rot * sin_shear + cos_rot * cos_shear,
-        0, 0 );
-    cairo_transform( aStream->cairoContext, cairoTransformMatrix );
-    free( cairoTransformMatrix );
-
-    // Move to the text starting point
-    // printf("baseline %d %d\n", baseline, textYExtent);
-    cairo_rel_move_to( aStream->cairoContext,
-        (double) ( -1.0 * args->just * (double) textXExtent ),
-        (double) 0.5 * aStream->fontSize - baseline / 1024.0 );
-
-    // Render the text
-    pango_cairo_show_layout( aStream->cairoContext, layout );
-
-    // Restore the transform matrix to its state prior to the text transform.
-    cairo_restore( aStream->cairoContext );
-
-    // Free the layout object and the markup string.
+    // Free the layout object and the markup string
     g_object_unref( layout );
     free( aStream->pangoMarkupString );
 }
@@ -2335,9 +2336,9 @@ void plD_init_epscairo( PLStream *pls )
     // Dimension units are pts = 1/72 inches from cairo documentation.
     aStream->cairoSurface = cairo_ps_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->ylength, (double) pls->xlength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
-    
+
     // Set the PS surface to be EPS.
-    cairo_ps_surface_set_eps ( aStream->cairoSurface , 1 );
+    cairo_ps_surface_set_eps( aStream->cairoSurface, 1 );
 
     // Save the pointer to the structure in the PLplot stream
     pls->dev = aStream;
