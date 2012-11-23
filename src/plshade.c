@@ -822,6 +822,8 @@ set_cond( register int *cond, register PLFLT *a, register PLINT n )
             *cond++ = NEG;
         else if ( *a > sh_max )
             *cond++ = POS;
+        else if ( isnan(*a) )	//check for nans and set cond to undefined
+            *cond++ = UNDEF;
         else
             *cond++ = OK;
         a++;
