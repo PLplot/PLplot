@@ -80,6 +80,7 @@ static int    external_drawable;
 static int    rasterize_image;
 static int    set_background;
 static int    image_buffering;
+static int    already_warned = 0;
 
 static DrvOpt cairo_options[] = { { "text_clipping",          DRV_INT, &text_clipping,          "Use text clipping (text_clipping=0|1)"                                                                                                                                                                                          },
                                   { "text_anti_aliasing",     DRV_INT, &text_anti_aliasing,     "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"        },
@@ -223,7 +224,6 @@ const char *styleLookup[3] = {
     "oblique"
 };
 
-
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //
@@ -241,6 +241,7 @@ const char *styleLookup[3] = {
 PLCairo *stream_and_font_setup( PLStream *, int );
 cairo_status_t write_to_stream( void *, unsigned char *, unsigned int );
 void set_clip( PLStream *pls );
+int cairo_family_check( PLStream *pls);
 
 // String processing
 
@@ -525,6 +526,10 @@ void plD_state_cairo( PLStream * PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 
 void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
 {
+    PLCairo *aStream;
+
+    aStream = (PLCairo *) pls->dev;
+
     switch ( op )
     {
     case PLESC_FILL:     // filled polygon
@@ -1516,6 +1521,30 @@ void set_clip( PLStream *pls )
 }
 
 //--------------------------------------------------------------------------
+// cairo_family_check ()
+//
+// support function to help supress more than one page if family file
+// output not specified by the user  (e.g., with the -fam command-line option).
+//--------------------------------------------------------------------------
+
+int cairo_family_check( PLStream *pls )
+{
+    if ( pls->family || pls->page == 1 )
+    {
+        return 0;
+    }
+    else
+    {
+        if ( !already_warned )
+        {
+            already_warned = 1;
+            plwarn( "All pages after the first skipped because family file output not specified.\n" );
+        }
+        return 1;
+    }
+}
+
+//--------------------------------------------------------------------------
 // arc()
 //
 // Draws an arc, possibly filled.
@@ -1610,25 +1639,40 @@ void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
-#if defined ( PLD_pngcairo ) || defined ( PLD_svgcairo )
+#if defined ( PLD_pngcairo ) || defined ( PLD_svgcairo ) || defined ( PLD_epscairo )
 
-void plD_bop_famcairo( PLStream * );
+void plD_bop_cairo_fam( PLStream *);
+void plD_eop_cairo_fam( PLStream *);
+void plD_state_cairo_fam( PLStream *, PLINT );
+void plD_esc_cairo_fam( PLStream *, PLINT, void *);
+void plD_tidy_cairo_fam( PLStream *);
+void plD_line_cairo_fam( PLStream *, short, short, short, short);
+void plD_polyline_cairo_fam( PLStream *, short *, short *, PLINT);
+
 //--------------------------------------------------------------------------
-// plD_bop_famcairo()
+// plD_bop_cairo_fam()
 //
 // Familying Devices: Set up for the next page.
 //--------------------------------------------------------------------------
 
-void plD_bop_famcairo( PLStream *pls )
+void plD_bop_cairo_fam( PLStream *pls )
 {
     PLCairo *aStream;
 
-    aStream = (PLCairo *) pls->dev;
-
     // Plot familying stuff. Not really understood, just copying gd.c
     plGetFam( pls );
+
+    aStream = (PLCairo *) pls->dev;
+
     pls->famadv = 1;
     pls->page++;
+
+    // Suppress multi-page output if family file output is not
+    // specified by the user.
+    if ( cairo_family_check( pls) )
+    {
+        return;
+    }
 
     // Fill in the window with the background color.
     cairo_rectangle( aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength );
@@ -1638,6 +1682,97 @@ void plD_bop_famcairo( PLStream *pls )
         (double) pls->cmap0[0].b / 255.0,
         (double) pls->cmap0[0].a );
     cairo_fill( aStream->cairoContext );
+}
+
+//--------------------------------------------------------------------------
+// plD_eop_cairo()
+//
+// End of page.
+//--------------------------------------------------------------------------
+
+void plD_eop_cairo_fam( PLStream *pls )
+{
+    if ( cairo_family_check( pls) )
+    {
+        return;
+    }
+
+    plD_eop_cairo(pls);
+}
+
+//--------------------------------------------------------------------------
+// plD_state_cairo_fam()
+//
+// Handle change in PLStream state (color, pen width, fill attribute, etc).
+//--------------------------------------------------------------------------
+
+void plD_state_cairo_fam( PLStream *pls, PLINT op )
+{
+    if ( cairo_family_check( pls) )
+    {
+        return;
+    }
+    
+    plD_state_cairo(pls, op);
+}
+
+//--------------------------------------------------------------------------
+// plD_esc_cairo_fam()
+//
+// Generic escape function.
+//--------------------------------------------------------------------------
+
+void plD_esc_cairo_fam( PLStream *pls, PLINT op , void *ptr )
+{
+    if ( cairo_family_check( pls) )
+    {
+        return;
+    }
+    
+    plD_esc_cairo(pls, op, ptr);
+}
+
+//--------------------------------------------------------------------------
+// plD_tidy_cairo_fam()
+//
+// Close graphics file or otherwise clean up.
+//--------------------------------------------------------------------------
+
+void plD_tidy_cairo_fam( PLStream *pls )
+{
+    plD_tidy_cairo( pls );
+}
+
+//--------------------------------------------------------------------------
+// plD_line_cairo_fam()
+//
+// Draw a line.
+//--------------------------------------------------------------------------
+
+void plD_line_cairo_fam( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
+{
+    if ( cairo_family_check( pls) )
+    {
+        return;
+    }
+    
+    plD_line_cairo(pls, x1a, y1a, x2a, y2a);
+}
+
+//--------------------------------------------------------------------------
+// plD_polyline_cairo_fam()
+//
+// Draw a polyline in the current color.
+//--------------------------------------------------------------------------
+
+void plD_polyline_cairo_fam( PLStream *pls, short *xa, short *ya, PLINT npts )
+{
+    if ( cairo_family_check( pls) )
+    {
+        return;
+    }
+    
+    plD_polyline_cairo(pls, xa, ya, npts);
 }
 
 #endif
@@ -2286,13 +2421,13 @@ void plD_dispatch_init_epscairo( PLDispatchTable *pdt )
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 102;
     pdt->pl_init     = (plD_init_fp) plD_init_epscairo;
-    pdt->pl_line     = (plD_line_fp) plD_line_cairo;
-    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
-    pdt->pl_eop      = (plD_eop_fp) plD_eop_cairo;
-    pdt->pl_bop      = (plD_bop_fp) plD_bop_famcairo;
-    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_cairo;
-    pdt->pl_state    = (plD_state_fp) plD_state_cairo;
-    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
+    pdt->pl_line     = (plD_line_fp) plD_line_cairo_fam;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo_fam;
+    pdt->pl_eop      = (plD_eop_fp) plD_eop_cairo_fam;
+    pdt->pl_bop      = (plD_bop_fp) plD_bop_cairo_fam;
+    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_cairo_fam;
+    pdt->pl_state    = (plD_state_fp) plD_state_cairo_fam;
+    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo_fam;
 }
 
 //--------------------------------------------------------------------------
@@ -2390,13 +2525,13 @@ void plD_dispatch_init_svgcairo( PLDispatchTable *pdt )
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 103;
     pdt->pl_init     = (plD_init_fp) plD_init_svgcairo;
-    pdt->pl_line     = (plD_line_fp) plD_line_cairo;
-    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
-    pdt->pl_eop      = (plD_eop_fp) plD_eop_cairo;
-    pdt->pl_bop      = (plD_bop_fp) plD_bop_famcairo;
-    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_cairo;
-    pdt->pl_state    = (plD_state_fp) plD_state_cairo;
-    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
+    pdt->pl_line     = (plD_line_fp) plD_line_cairo_fam;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo_fam;
+    pdt->pl_eop      = (plD_eop_fp) plD_eop_cairo_fam;
+    pdt->pl_bop      = (plD_bop_fp) plD_bop_cairo_fam;
+    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_cairo_fam;
+    pdt->pl_state    = (plD_state_fp) plD_state_cairo_fam;
+    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo_fam;
 }
 
 //--------------------------------------------------------------------------
@@ -2490,13 +2625,13 @@ void plD_dispatch_init_pngcairo( PLDispatchTable *pdt )
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 104;
     pdt->pl_init     = (plD_init_fp) plD_init_pngcairo;
-    pdt->pl_line     = (plD_line_fp) plD_line_cairo;
-    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+    pdt->pl_line     = (plD_line_fp) plD_line_cairo_fam;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo_fam;
     pdt->pl_eop      = (plD_eop_fp) plD_eop_pngcairo;
-    pdt->pl_bop      = (plD_bop_fp) plD_bop_famcairo;
-    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_cairo;
-    pdt->pl_state    = (plD_state_fp) plD_state_cairo;
-    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
+    pdt->pl_bop      = (plD_bop_fp) plD_bop_cairo_fam;
+    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_cairo_fam;
+    pdt->pl_state    = (plD_state_fp) plD_state_cairo_fam;
+    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo_fam;
 }
 
 //--------------------------------------------------------------------------
@@ -2566,6 +2701,11 @@ void plD_init_pngcairo( PLStream *pls )
 void plD_eop_pngcairo( PLStream *pls )
 {
     PLCairo *aStream;
+
+    if ( cairo_family_check( pls) )
+    {
+        return;
+    }
 
     aStream = (PLCairo *) pls->dev;
     cairo_surface_write_to_png_stream( aStream->cairoSurface, (cairo_write_func_t) write_to_stream, pls->OutFile );
