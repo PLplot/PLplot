@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2012 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -37,7 +37,7 @@ set(
 # examples are disabled.  
 project(plplot C)
 
-message(STATUS "CMake version = ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
+message(STATUS "CMake version = ${CMAKE_VERSION}")
 message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
