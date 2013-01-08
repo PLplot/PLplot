@@ -114,7 +114,10 @@ if(BUILD_DOX_DOC)
     add_dependencies(build_doxygen plplot_octave)
   endif(ENABLE_octave)
 
-  install(CODE "message(STATUS \"Installing: ${DOC_DIR}/doxygen tree\")\nexecute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/doxygen ${DOC_DIR}/doxygen)")
+  install(CODE "
+message(STATUS \"Installing: \$ENV{DESTDIR}${DOC_DIR}/doxygen tree\")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/doxygen \$ENV{DESTDIR}${DOC_DIR}/doxygen)
+")
   if(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
     add_custom_target(
       www-install-doxygen
