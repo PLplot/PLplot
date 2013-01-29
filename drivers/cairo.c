@@ -241,7 +241,7 @@ const char *styleLookup[3] = {
 PLCairo *stream_and_font_setup( PLStream *, int );
 cairo_status_t write_to_stream( void *, unsigned char *, unsigned int );
 void set_clip( PLStream *pls );
-int cairo_family_check( PLStream *pls);
+int cairo_family_check( PLStream *pls );
 
 // String processing
 
@@ -1641,13 +1641,13 @@ void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float
 //--------------------------------------------------------------------------
 #if defined ( PLD_pngcairo ) || defined ( PLD_svgcairo ) || defined ( PLD_epscairo )
 
-void plD_bop_cairo_fam( PLStream *);
-void plD_eop_cairo_fam( PLStream *);
+void plD_bop_cairo_fam( PLStream * );
+void plD_eop_cairo_fam( PLStream * );
 void plD_state_cairo_fam( PLStream *, PLINT );
-void plD_esc_cairo_fam( PLStream *, PLINT, void *);
-void plD_tidy_cairo_fam( PLStream *);
-void plD_line_cairo_fam( PLStream *, short, short, short, short);
-void plD_polyline_cairo_fam( PLStream *, short *, short *, PLINT);
+void plD_esc_cairo_fam( PLStream *, PLINT, void * );
+void plD_tidy_cairo_fam( PLStream * );
+void plD_line_cairo_fam( PLStream *, short, short, short, short );
+void plD_polyline_cairo_fam( PLStream *, short *, short *, PLINT );
 
 //--------------------------------------------------------------------------
 // plD_bop_cairo_fam()
@@ -1669,7 +1669,7 @@ void plD_bop_cairo_fam( PLStream *pls )
 
     // Suppress multi-page output if family file output is not
     // specified by the user.
-    if ( cairo_family_check( pls) )
+    if ( cairo_family_check( pls ) )
     {
         return;
     }
@@ -1692,12 +1692,12 @@ void plD_bop_cairo_fam( PLStream *pls )
 
 void plD_eop_cairo_fam( PLStream *pls )
 {
-    if ( cairo_family_check( pls) )
+    if ( cairo_family_check( pls ) )
     {
         return;
     }
 
-    plD_eop_cairo(pls);
+    plD_eop_cairo( pls );
 }
 
 //--------------------------------------------------------------------------
@@ -1708,12 +1708,12 @@ void plD_eop_cairo_fam( PLStream *pls )
 
 void plD_state_cairo_fam( PLStream *pls, PLINT op )
 {
-    if ( cairo_family_check( pls) )
+    if ( cairo_family_check( pls ) )
     {
         return;
     }
-    
-    plD_state_cairo(pls, op);
+
+    plD_state_cairo( pls, op );
 }
 
 //--------------------------------------------------------------------------
@@ -1722,14 +1722,14 @@ void plD_state_cairo_fam( PLStream *pls, PLINT op )
 // Generic escape function.
 //--------------------------------------------------------------------------
 
-void plD_esc_cairo_fam( PLStream *pls, PLINT op , void *ptr )
+void plD_esc_cairo_fam( PLStream *pls, PLINT op, void *ptr )
 {
-    if ( cairo_family_check( pls) )
+    if ( cairo_family_check( pls ) )
     {
         return;
     }
-    
-    plD_esc_cairo(pls, op, ptr);
+
+    plD_esc_cairo( pls, op, ptr );
 }
 
 //--------------------------------------------------------------------------
@@ -1751,12 +1751,12 @@ void plD_tidy_cairo_fam( PLStream *pls )
 
 void plD_line_cairo_fam( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
-    if ( cairo_family_check( pls) )
+    if ( cairo_family_check( pls ) )
     {
         return;
     }
-    
-    plD_line_cairo(pls, x1a, y1a, x2a, y2a);
+
+    plD_line_cairo( pls, x1a, y1a, x2a, y2a );
 }
 
 //--------------------------------------------------------------------------
@@ -1767,12 +1767,12 @@ void plD_line_cairo_fam( PLStream *pls, short x1a, short y1a, short x2a, short y
 
 void plD_polyline_cairo_fam( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    if ( cairo_family_check( pls) )
+    if ( cairo_family_check( pls ) )
     {
         return;
     }
-    
-    plD_polyline_cairo(pls, xa, ya, npts);
+
+    plD_polyline_cairo( pls, xa, ya, npts );
 }
 
 #endif
@@ -2702,7 +2702,7 @@ void plD_eop_pngcairo( PLStream *pls )
 {
     PLCairo *aStream;
 
-    if ( cairo_family_check( pls) )
+    if ( cairo_family_check( pls ) )
     {
         return;
     }
