@@ -599,7 +599,7 @@ defaultPrompt:
         {
             Tcl_AddErrorInfo( intp,
                 "\n    (script that generates prompt)" );
-            fprintf( stderr, "%s\n", intp->result );
+            fprintf( stderr, "%s\n", Tcl_GetStringResult(intp) );
             goto defaultPrompt;
         }
     }
