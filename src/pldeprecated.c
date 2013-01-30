@@ -121,5 +121,18 @@ c_plhls( PLFLT h, PLFLT l, PLFLT s )
     plrgb( r, g, b );
 }
 
+//--------------------------------------------------------------------------
+// void plwid()
+//
+// Set pen width using a deprecated integer width value rather than
+// the recommended plwidth call with floating-point width value.
+//--------------------------------------------------------------------------
+
+void
+c_plwid( PLINT width )
+{
+    plwarn( "plwid: function deprecated. Use plwidth instead" );
+    plwidth( (PLFLT) width );
+}
 
 #endif // PL_DEPRECATED

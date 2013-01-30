@@ -1974,6 +1974,11 @@ c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
          PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
          PLFLT zmax0, PLFLT alt, PLFLT az );
 
+// Set pen width with deprecated integer width
+
+PLDLLIMPEXP void
+c_plwid( PLINT width );
+
 // Set pen width.
 
 PLDLLIMPEXP void
