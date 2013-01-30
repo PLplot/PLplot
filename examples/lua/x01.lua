@@ -87,9 +87,9 @@ function plot2()
 
   -- Draw the line 
   pl.col0(3)
-  pl.wid(2)
+  pl.width(2)
   pl.line(x, y)
-  pl.wid(1)
+  pl.width(1)
 end
 
 

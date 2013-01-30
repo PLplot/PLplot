@@ -353,7 +353,7 @@
 #define    PLVPOR                    FNAME( PLVPOR, plvpor )
 #define    PLVSTA                    FNAME( PLVSTA, plvsta )
 #define    PLW3D                     FNAME( PLW3D, plw3d )
-#define    PLWID                     FNAME( PLWID, plwid )
+#define    PLWIDTH                   FNAME( PLWIDTH, plwidth )
 #define    PLWIND                    FNAME( PLWIND, plwind )
 #define    PLXORMOD                  FNAME( PLXORMOD, plxormod )
 

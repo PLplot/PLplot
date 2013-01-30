@@ -96,11 +96,11 @@ void PlotWindow::plotCurves()
     plbox( "bcnst", 0., 0, "bcnst", 0., 0 );
 
     plcol0( 1 );
-    plwid( 2 );
+    plwidth( 2 );
     plline( 360, indexes, sine );
 
     plcol0( 3 );
-    plwid( 1 );
+    plwidth( 1 );
     pllsty( 2 );
     plline( 360, indexes, cosine );
     pllsty( 1 );
@@ -125,11 +125,11 @@ void PlotWindow::plotCurves()
     plbox( "bcnst", 0., 0, "bcnst", 0., 0 );
 
     plcol0( 1 );
-    plwid( 2 );
+    plwidth( 2 );
     plline( 360, indexes, square );
 
     plcol0( 3 );
-    plwid( 1 );
+    plwidth( 1 );
     pllsty( 2 );
     plline( 360, indexes, cubic );
     pllsty( 1 );

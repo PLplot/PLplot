@@ -2320,11 +2320,11 @@ void plstream::w3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
 
 // Set pen width.
 
-void plstream::wid( PLINT width )
+void plstream::width( PLFLT width )
 {
     set_stream();
 
-    plwid( width );
+    plwidth( width );
 }
 
 // Set up world coordinates of the viewport boundaries (2d plots).

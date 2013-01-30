@@ -73,7 +73,7 @@ package body PLplot_Traditional is
     Default_Pen_Width : constant Integer := 1;
     procedure Set_Default_Pen_Width is
     begin
-        plwid(Default_Pen_Width);
+        plwidth(Default_Pen_Width);
     end Set_Default_Pen_Width;
 
 
@@ -3147,10 +3147,10 @@ package body PLplot_Traditional is
 
 
     -- Set pen width.
-    procedure plwid(Pen_Width : Integer) is
+    procedure plwidth(Pen_Width : Integer) is
     begin
-        PLplot_Thin.plwid(Pen_Width);
-    end plwid;
+        PLplot_Thin.plwidth(Pen_Width);
+    end plwidth;
 
 
     -- Set up world coordinates of the viewport boundaries (2d plots).

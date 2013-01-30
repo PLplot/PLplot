@@ -272,7 +272,7 @@ void MyFrame::Plot()
     pls->lab( "x", "y", "sin(x)/x" );
 
     pls->col0( 3 );
-    pls->wid( 2 );
+    pls->width( 2 );
     pls->line( np, x, y );
 
     plotwindow->RenewPlot();

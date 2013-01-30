@@ -959,7 +959,7 @@ public:
 
 // Set pen width.
 
-    void wid( PLINT width );
+    void width( PLFLT width );
 
 // Set up world coordinates of the viewport boundaries (2d plots).
 

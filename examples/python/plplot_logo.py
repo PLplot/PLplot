@@ -83,7 +83,7 @@ def main():
     step = (zmax-zmin)/(nlevel+1)
     clevel = zmin + step + arange(nlevel)*step
     plschr(0., 1.8)
-    plwid(1)
+    plwidth(1)
     pladv(0)
     plvpor(0.0, 1.0, 0.0, 1.0)
     plwind(-0.43, 0.840, 0.05, 0.48)

@@ -135,9 +135,9 @@ subroutine plot2()
 !   Draw the line
 
    call plcol0(3)
-   call plwid(2)
+   call plwidth(2._plflt)
    call plline( x, y )
-   call plwid(1)
+   call plwidth(1._plflt)
 
 end subroutine plot2
 

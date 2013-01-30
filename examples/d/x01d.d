@@ -254,10 +254,10 @@ class plot {
 
         // Draw the line
         plcol0( 3 );
-        plwid( 2 );
+        plwidth( 2 );
         plline( x, y );
         plflush();
-        plwid( 1 );
+        plwidth( 1 );
     }
 
     public void plot3()

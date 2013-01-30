@@ -16252,16 +16252,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
-  <sect1 id="plwid" renderas="sect3">
+  <sect1 id="plwidth" renderas="sect3">
     <title>
-      <function>plwid</function>: Set pen width
+      <function>plwidth</function>: Set pen width
     </title>
 
     <para>
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>
-	    <function>plwid</function>
+	    <function>plwidth</function>
 	  </funcdef>
 	  <paramdef><parameter>width</parameter></paramdef>
 	</funcprototype>
@@ -16292,7 +16292,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plwid(width)</function>
+      Redacted form: <function>plwidth(width)</function>
     </para>
 
     <para>

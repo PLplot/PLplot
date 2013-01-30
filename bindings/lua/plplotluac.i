@@ -1456,7 +1456,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %rename( vpor ) plvpor;
 %rename( vsta ) plvsta;
 %rename( w3d ) plw3d;
-%rename( wid ) plwid;
+%rename( width ) plwidth;
 %rename( wind ) plwind;
 %rename( xormod ) plxormod;
 %rename( warn ) plwarn;

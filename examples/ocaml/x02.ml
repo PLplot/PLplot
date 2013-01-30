@@ -39,13 +39,13 @@ let draw_windows nw cmap0_offset =
     let vmin = 0.1 in
     let vmax = 0.9 in
     for j = 0 to 2 do
-      plwid (j + 1);
+      plwidth (j + 1);
       let j' = float_of_int j *. 0.1 in
       plvpor (vmin +. j') (vmax -. j') (vmin +. j') (vmax -. j');
       plwind 0.0 1.0 0.0 1.0;
       plbox "bc" 0.0 0 "bc" 0.0 0;
     done;
-    plwid 1;
+    plwidth 1;
     plptex 0.5 0.5 1.0 0.0 0.5 text;
   done;
   ()

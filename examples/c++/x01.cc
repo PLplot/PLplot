@@ -327,9 +327,9 @@ void x01::plot2()
     // Draw the line.
 
     pls->col0( 3 );
-    pls->wid( 2 );
+    pls->width( 2 );
     pls->line( 100, x, y );
-    pls->wid( 1 );
+    pls->width( 1 );
 
     delete[] x;
     delete[] y;

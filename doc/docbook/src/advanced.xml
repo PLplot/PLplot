@@ -1318,7 +1318,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Line width is set using &plwid;.  This option is not supported by
+      Line width is set using &plwidth;.  This option is not supported by
       all devices.
     </para>
 

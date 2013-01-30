@@ -249,7 +249,7 @@ plr_init( PLRDev *plr )
         if ( !strcmp( tag, "width" ) )
         {
             plr_rd( pdf_rd_1byte( plr->pdfs, &dum_uchar ) );
-            plwid( dum_uchar );
+            plwidth( dum_uchar );
             continue;
         }
 
@@ -425,7 +425,7 @@ plr_state( PLRDev *plr )
 
         plr_rd( pdf_rd_2bytes( plr->pdfs, &width ) );
 
-        plwid( width );
+        plwidth( width );
         break;
     }
 

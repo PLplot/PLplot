@@ -753,6 +753,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plvsta                   c_plvsta
 #define    plw3d                    c_plw3d
 #define    plwid                    c_plwid
+#define    plwidth                  c_plwidth
 #define    plwind                   c_plwind
 #define    plxormod                 c_plxormod
 
@@ -1976,7 +1977,7 @@ c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
 // Set pen width.
 
 PLDLLIMPEXP void
-c_plwid( PLINT width );
+c_plwidth( PLFLT width );
 
 // Set up world coordinates of the viewport boundaries (2d plots).
 

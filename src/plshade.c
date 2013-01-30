@@ -272,7 +272,7 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         init_color = plsc->icol0;
         init_width = plsc->width;
         plcol0( cont_color );
-        plwid( cont_width );
+        plwidth( cont_width );
         if ( pltr )
         {
             plfcont( zops->f2eval, zp, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data );
@@ -306,7 +306,7 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             free( y );
         }
         plcol0( init_color );
-        plwid( init_width );
+        plwidth( init_width );
     }
 }
 
@@ -520,7 +520,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     pen_wd_max = max_width;
 
     plstyl( (PLINT) 0, NULL, NULL );
-    plwid( sh_width );
+    plwidth( sh_width );
     if ( fill != NULL )
     {
         switch ( sh_cmap )
@@ -788,7 +788,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
             if ( fill != NULL )
             {
-                plwid( sh_width );
+                plwidth( sh_width );
                 if ( sh_cmap == 0 )
                     plcol0( (PLINT) sh_color );
                 else if ( sh_cmap == 1 )
@@ -804,7 +804,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
     free( c );
     free( a );
-    plwid( init_width );
+    plwidth( init_width );
 }
 
 //--------------------------------------------------------------------------
@@ -1166,7 +1166,7 @@ draw_boundary( PLINT slope, PLFLT *x, PLFLT *y )
     if ( pen_col_min != 0 && pen_wd_min != 0 && min_points != 0 )
     {
         plcol0( pen_col_min );
-        plwid( pen_wd_min );
+        plwidth( pen_wd_min );
         if ( min_points == 4 && slope == 0 )
         {
             // swap points 1 and 3
@@ -1184,7 +1184,7 @@ draw_boundary( PLINT slope, PLFLT *x, PLFLT *y )
     if ( pen_col_max != 0 && pen_wd_max != 0 && max_points != 0 )
     {
         plcol0( pen_col_max );
-        plwid( pen_wd_max );
+        plwidth( pen_wd_max );
         if ( max_points == 4 && slope == 0 )
         {
             // swap points 1 and 3

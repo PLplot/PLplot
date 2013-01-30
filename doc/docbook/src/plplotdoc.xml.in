@@ -254,7 +254,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plvpor '<link linkend="plvpor"><function>plvpor</function></link>'>
 <!ENTITY plvsta '<link linkend="plvsta"><function>plvsta</function></link>'>
 <!ENTITY plw3d '<link linkend="plw3d"><function>plw3d</function></link>'>
-<!ENTITY plwid '<link linkend="plwid"><function>plwid</function></link>'>
+<!ENTITY plwidth '<link linkend="plwidth"><function>plwidth</function></link>'>
 <!ENTITY plwind '<link linkend="plwind"><function>plwind</function></link>'>
 <!ENTITY PLGraphicsIn '<link linkend="PLGraphicsIn"><structname>PLGraphicsIn</structname></link>'>
 <!ENTITY PLOptionTable '<link linkend="PLOptionTable"><structname>PLOptionTable</structname></link>'>

@@ -260,7 +260,7 @@ void PLW3D( PLFLT *basex, PLFLT *basey, PLFLT *height,
             PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
             PLFLT *zmin, PLFLT *zmax,
             PLFLT *alt, PLFLT *az );
-void PLWID( PLINT *width );
+void PLWIDTH( PLFLT *width );
 void PLWIND( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
 void PLXORMOD( PLBOOL *mode, PLBOOL *status );
 
@@ -1519,9 +1519,9 @@ PLW3D( PLFLT *basex, PLFLT *basey, PLFLT *height,
 }
 
 void
-PLWID( PLINT *width )
+PLWIDTH( PLFLT *width )
 {
-    c_plwid( *width );
+    c_plwidth( *width );
 }
 
 void

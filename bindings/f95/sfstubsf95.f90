@@ -944,9 +944,10 @@ module plplot
     end interface
 
     interface
-        subroutine plwid( width )
-            integer :: width
-        end subroutine plwid
+        subroutine plwidth( width )
+            use plplot_flt
+            real(kind=plflt) :: width
+        end subroutine plwidth
     end interface
 
     interface

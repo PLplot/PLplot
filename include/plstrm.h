@@ -554,7 +554,7 @@ typedef struct
 
 // Variables governing pen width
 
-    PLINT width;
+    PLFLT width;
     PLINT widthset, widthlock;
 
 // Variables governing arrow

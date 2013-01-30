@@ -1163,10 +1163,10 @@ public class PLStream implements plplotjavacConstants {
             zmin0, zmax0, alt, az );
     }
 
-    public void wid( int width )
+    public void width( int width )
     {
         if ( set_stream() == -1 ) return;
-        plplotjavac.plwid( width );
+        plplotjavac.plwidth( width );
     }
 
     public void wind( double xmin, double xmax, double ymin, double ymax )

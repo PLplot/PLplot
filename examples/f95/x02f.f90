@@ -118,7 +118,7 @@ subroutine draw_windows( nw, cmap0_offset )
 
     integer :: nw, cmap0_offset
     integer :: i,j
-    real(kind=plflt) :: vmin, vmax
+    real(kind=plflt) :: vmin, vmax, xj
     character (len=3) :: text
 
     call plschr(0.0_plflt, 3.5_plflt)
@@ -132,14 +132,15 @@ subroutine draw_windows( nw, cmap0_offset )
         vmin = 0.1_plflt
         vmax = 0.9_plflt
         do j=1,3
-            call plwid(j)
+            xj = j
+            call plwidth(xj)
             call plvpor(vmin,vmax,vmin,vmax)
             call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
             call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0)
             vmin = vmin + 0.1_plflt
             vmax = vmax - 0.1_plflt
         enddo
-        call plwid(1)
+        call plwidth(1._plflt)
         call plptex(0.5_plflt, 0.5_plflt, 1.0_plflt, 0.0_plflt, 0.5_plflt, text)
     enddo
 

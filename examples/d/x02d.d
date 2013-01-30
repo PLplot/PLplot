@@ -125,14 +125,14 @@ class plot {
             PLFLT vmax = 0.9;
             for ( int j = 0; j < 3; j++ )
             {
-                plwid( j + 1 );
+                plwidth( j + 1 );
                 plvpor( vmin, vmax, vmin, vmax );
                 plwind( 0.0, 1.0, 0.0, 1.0 );
                 plbox( "bc", 0.0, 0, "bc", 0.0, 0 );
                 vmin = vmin + 0.1;
                 vmax = vmax - 0.1;
             }
-            plwid( 1 );
+            plwidth( 1 );
             plptex( 0.5, 0.5, 1.0, 0.0, 0.5, std.string.toString( i ) );
         }
     }

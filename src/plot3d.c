@@ -553,7 +553,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
         bx[2] = ( ixOrigin != ixmin && ixSlow == 0 ) || ixSlow > 0 ? xmax : xmin;
         by[2] = ( iyOrigin != iymin && iySlow == 0 ) || iySlow > 0 ? ymax : ymin;
 
-        plwid( zbwidth );
+        plwidth( zbwidth );
         plcol0( zbcol );
         for ( tp = tick * floor( zmin / tick ) + tick; tp <= zmax; tp += tick )
         {
@@ -565,7 +565,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
         by[0] = by[1];
         bz[0] = zmin;
         plline3( 2, bx, by, bz );
-        plwid( width );
+        plwidth( width );
         plcol0( color );
     }
 
@@ -1432,10 +1432,10 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     {
         color = plsc->icol0;
         width = plsc->width;
-        plwid( zbwidth );
+        plwidth( zbwidth );
         plcol0( zbcol );
         plgrid3( zbtck );
-        plwid( width );
+        plwidth( width );
         plcol0( color );
     }
 

@@ -165,14 +165,14 @@ class x02 {
             vmax = 0.9;
             for ( j = 0; j <= 2; j++ )
             {
-                pls.wid( j + 1 );
+                pls.width( j + 1 );
                 pls.vpor( vmin, vmax, vmin, vmax );
                 pls.wind( 0.0, 1.0, 0.0, 1.0 );
                 pls.box( "bc", 0.0, 0, "bc", 0.0, 0 );
                 vmin = vmin + 0.1;
                 vmax = vmax - 0.1;
             }
-            pls.wid( 1 );
+            pls.width( 1 );
             pls.ptex( 0.5, 0.5, 1.0, 0.0, 0.5, text );
         }
     }

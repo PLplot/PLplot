@@ -146,7 +146,7 @@ void plsxwin ( int window_id );
 [mlname(plvpor)] void c_plvpor ( double xmin, double xmax, double ymin, double ymax );
 [mlname(plvsta)] void c_plvsta ( void );
 [mlname(plw3d)] void c_plw3d ( double basex, double basey, double height, double xmin0, double xmax0, double ymin0, double ymax0, double zmin0, double zmax0, double alt, double az );
-[mlname(plwid)] void c_plwid ( int width );
+[mlname(plwidth)] void c_plwidth ( double width );
 [mlname(plwind)] void c_plwind ( double xmin, double xmax, double ymin, double ymax );
 [mlname(plxormod)] void c_plxormod ( boolean mode, [out] boolean * status );
 [mlname(plsetopt)] nonzero_error_int c_plsetopt ( [string] const char * opt, [string] const char * optarg );

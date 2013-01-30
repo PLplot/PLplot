@@ -2103,7 +2103,7 @@ package PLplot is
 
 
     -- Set pen width.
-    -- plwid
+    -- plwidth
     procedure Set_Pen_Width(Pen_Width : Integer);
 
 

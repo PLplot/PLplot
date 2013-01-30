@@ -99,6 +99,6 @@
     {"plvpor",          plvporCmd},
     {"plvsta",          plvstaCmd},
     {"plw3d",          plw3dCmd},
-    {"plwid",          plwidCmd},
+    {"plwidth",          plwidthCmd},
     {"plwind",          plwindCmd},
     {"plxormod",          plxormodCmd},

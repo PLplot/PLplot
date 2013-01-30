@@ -89,11 +89,11 @@ class QPlot(QtGui.QMainWindow):
 	plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
 	
 	plplot.plcol0(1)
-	plplot.plwid(2)
+	plplot.plwidth(2)
 	plplot.plline(indexes, sine)
 	
 	plplot.plcol0(3)
-	plplot.plwid(1)
+	plplot.plwidth(1)
 	plplot.pllsty(2)
 	plplot.plline(indexes, cosine)
 	plplot.pllsty(1)
@@ -114,11 +114,11 @@ class QPlot(QtGui.QMainWindow):
 	plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
 	
 	plplot.plcol0(1)
-	plplot.plwid(2)
+	plplot.plwidth(2)
 	plplot.plline(indexes, square)
 	
 	plplot.plcol0(3)
-	plplot.plwid(1)
+	plplot.plwidth(1)
 	plplot.pllsty(2)
 	plplot.plline(indexes, cubic)
 	plplot.pllsty(1)

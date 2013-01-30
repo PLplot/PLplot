@@ -1361,7 +1361,7 @@ void set_current_context( PLStream *pls )
         (double) pls->curcolor.b / 255.0,
         (double) pls->curcolor.a );
     // In Cairo, zero width lines are not hairlines, they are completely invisible.
-    if ( pls->width < 1 )
+    if ( pls->width <= 0. )
     {
         cairo_set_line_width( aStream->cairoContext, 1.0 );
     }

@@ -1867,17 +1867,17 @@ opt_portrait( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), 
 static int
 opt_width( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
 {
-    int width;
+    double width;
 
-    width = atoi( opt_arg );
-    if ( width < 0 )
+    width = atof( opt_arg );
+    if ( width < 0. )
     {
         fprintf( stderr, "?invalid width\n" );
         return 1;
     }
     else
     {
-        plwid( width );
+        plwidth( width );
         plsc->widthlock = 1;
     }
     return 0;

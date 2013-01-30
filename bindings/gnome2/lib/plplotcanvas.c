@@ -1263,7 +1263,7 @@ void plplot_canvas_w3d( PlplotCanvas* self, PLFLT basex, PLFLT basey, PLFLT heig
 void plplot_canvas_wid( PlplotCanvas* self, PLINT width )
 {
     plsstrm( self->Nstream );
-    plwid( width );
+    plwidth( width );
 }
 
 // Set up world coordinates of the viewport boundaries (2d plots).

@@ -1875,8 +1875,8 @@ package PLplot_Thin is
     -- Set pen width. 
 
     procedure
-    plwid(width : PLINT);
-    pragma Import(C, plwid, "c_plwid");
+    plwidth(width : PLFLT);
+    pragma Import(C, plwidth, "c_plwidth");
 
 
     -- Set up world coordinates of the viewport boundaries (2d plots). 

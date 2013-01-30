@@ -130,14 +130,14 @@ sub draw_windows
 	my $vmin = 0.1;
 	my $vmax = 0.9;
 	for (my $j = 0; $j <= 2; $j++) {
-	    plwid($j + 1);
+	    plwidth($j + 1);
 	    plvpor($vmin, $vmax, $vmin, $vmax);
 	    plwind(0.0, 1.0, 0.0, 1.0);
 	    plbox(0,0,0,0,"bc","bc");
 	    $vmin += 0.1;
 	    $vmax -= 0.1;
 	}
-	plwid(1);
+	plwidth(1);
 	plptex(0.5, 0.5, 1.0, 0.0, 0.5, $text);
     }
 }

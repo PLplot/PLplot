@@ -958,7 +958,7 @@ float plg_current_col1( void )
 
 // Get the current pen width. TODO: Remove this, as I think this information
 // can be retrieved from another proper PLplot function.
-int plgwid( void )
+float plgwidth( void )
 {
     return plsc->width;
 }

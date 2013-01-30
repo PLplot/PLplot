@@ -972,7 +972,7 @@ plr_state( U_CHAR op )
 
         plm_rd( pdf_rd_2bytes( pdfs, &width ) );
 
-        plwid( width );
+        plwidth( width );
         break;
     }
 
@@ -1931,7 +1931,7 @@ ReadFileHeader( void )
         if ( !strcmp( tag, "width" ) )
         {
             plm_rd( pdf_rd_1byte( pdfs, &dum_uchar ) );
-            plwid( dum_uchar );
+            plwidth( dum_uchar );
             continue;
         }
 

@@ -402,8 +402,8 @@ itcl::class PLWin {
         eval $plwin cmd plw3d $args
     }
 
-    method plwid {args} {
-        eval $plwin cmd plwid $args
+    method plwidth {args} {
+        eval $plwin cmd plwidth $args
     }
 
     method plwind {args} {

@@ -201,7 +201,7 @@ quote(h, "void plplot_check_nonzero_result(int result);");
 // information from PLplot.
 int plg_current_col0(void);
 float plg_current_col1(void);
-int plgwid(void);
+float plgwidth(void);
 float plgchrht(void);
 
 #define QUOTEME(x) #x

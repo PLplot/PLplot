@@ -1472,7 +1472,7 @@ alias c_plvpas   plvpas;
 alias c_plvpor   plvpor;
 alias c_plvsta   plvsta;
 alias c_plw3d    plw3d;
-alias c_plwid    plwid;
+alias c_plwidth  plwidth;
 alias c_plwind   plwind;
 
 alias c_plxormod plxormod;
@@ -2167,7 +2167,7 @@ void  c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0, PLFLT xmax0,
 
 // Set pen width.
 
-void  c_plwid( PLINT width );
+void  c_plwidth( PLFLT width );
 
 // Set up world coordinates of the viewport boundaries (2d plots).
 

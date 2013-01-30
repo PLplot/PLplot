@@ -973,14 +973,14 @@ module Plot = struct
     let plot_axes (color, xopt, yopt, width, style, labelfunc) =
       set_color_in color (
         fun () ->
-          let old_width = plgwid () in
-          plwid width;
+          let old_width = plgwidth () in
+          plwidth width;
           set_line_style style;
           Option.may plslabelfunc labelfunc;
           plot_axes xopt yopt;
           Option.may (fun _ -> plunset_labelfunc ()) labelfunc;
           set_line_style Solid_line;
-          plwid old_width;
+          plwidth old_width;
       )
     in
     let plot_contours (color, pltr, contours, data) =
@@ -1008,12 +1008,12 @@ module Plot = struct
     let plot_join (color, x0, y0, x1, y1, width, style) =
       set_color_in color (
         fun () ->
-          let old_width = plgwid () in
-          plwid width;
+          let old_width = plgwidth () in
+          plwidth width;
           set_line_style style;
           pljoin x0 y0 x1 y1;
           set_line_style Solid_line;
-          plwid old_width;
+          plwidth old_width;
       )
     in
     let plot_labels (color, x, y, title) =
@@ -1024,12 +1024,12 @@ module Plot = struct
     let plot_lines (label, color, xs, ys, width, style) =
       set_color_in color (
         fun () ->
-          let old_width = plgwid () in
-          plwid width;
+          let old_width = plgwidth () in
+          plwidth width;
           set_line_style style;
           plline xs ys;
           set_line_style Solid_line;
-          plwid old_width;
+          plwidth old_width;
       )
     in
     let plot_map (color, outline, x0, y0, x1, y1) =

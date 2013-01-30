@@ -5150,13 +5150,13 @@ plw3dCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 }
 
 /*--------------------------------------------------------------------------*\
- * plwidCmd
+ * plwidthCmd
  *
- * Processes plwid Tcl command.
+ * Processes plwidth Tcl command.
 \*--------------------------------------------------------------------------*/
 
 static int
-plwidCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+plwidthCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 {
     PLINT width;
 
@@ -5164,7 +5164,7 @@ plwidCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 
     if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
 	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plwid width", "\"",
+			  "plwidth width", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
@@ -5173,14 +5173,14 @@ plwidCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
          (!0 && !0 && (argc != (1 + 1))) ||
          ( 0 && (argc != 1) && (argc != (1 + 1))) ) {
 	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plwid width", "\"",
+			  "plwidth width", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
 
     width = atoi(argv[1+0]);
 
-    plwid ( width );
+    plwidth ( width );
 
 
     if (errcode != 0) {

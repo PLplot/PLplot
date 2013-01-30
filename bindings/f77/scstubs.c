@@ -1225,7 +1225,7 @@ PLW3D( PLFLT *basex, PLFLT *basey, PLFLT *height,
 void
 PLWID( PLINT *width )
 {
-    c_plwid( *width );
+    c_plwidth( *width );
 }
 
 void

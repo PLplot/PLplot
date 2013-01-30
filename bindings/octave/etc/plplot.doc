@@ -111,7 +111,7 @@ plvpas	--  Creates the largest viewport of the specified aspect ratio that fits 
 plvpor	--  Creates a viewport with the specified normalized subpage coordinates.  
 plvsta	--  Defines a "standard" viewport with seven character heights for  the left margin and four character heights everywhere else.  
 plw3d	--  Set up a window for three-dimensional plotting.  
-plwid	--  Set pen width.  
+plwidth	--  Set pen width.  
 plwind	--  Set up world coordinates of the viewport boundaries -2d plots-.  
 
  Functions for use from C or C++ only

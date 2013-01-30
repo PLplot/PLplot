@@ -235,9 +235,9 @@ class x01 {
         // Draw the line.
 
         pls.col0( 3 );
-        pls.wid( 2 );
+        pls.width( 2 );
         pls.line( x, y );
-        pls.wid( 1 );
+        pls.width( 1 );
     }
 
     void plot3()

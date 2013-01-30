@@ -820,7 +820,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             {
                 plcol0( box_colors[i] );
                 plpsty( box_patterns[i] );
-                plwid( box_line_widths[i] );
+                plwidth( box_line_widths[i] );
                 xbox[0] = plot_x_subpage + xshift;
                 xbox[1] = xbox[0];
                 xbox[2] = plot_x_end_subpage + xshift;
@@ -831,20 +831,20 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                 ybox[3] = ty + 0.5 * drow * box_scales[i];
                 plfill( 4, xbox, ybox );
                 pllsty( line_style_save );
-                plwid( line_width_save );
+                plwidth( line_width_save );
             }
             if ( opt_array[i] & PL_LEGEND_LINE )
             {
                 plcol0( line_colors[i] );
                 pllsty( line_styles[i] );
-                plwid( line_widths[i] );
+                plwidth( line_widths[i] );
                 xl[0] = plot_x_subpage + xshift;
                 xl[1] = plot_x_end_subpage + xshift;
                 yl[0] = ty;
                 yl[1] = ty;
                 plline( 2, xl, yl );
                 pllsty( line_style_save );
-                plwid( line_width_save );
+                plwidth( line_width_save );
             }
 
             if ( opt_array[i] & PL_LEGEND_SYMBOL )

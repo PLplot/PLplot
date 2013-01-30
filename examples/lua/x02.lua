@@ -40,14 +40,14 @@ function draw_windows(nw, cmap0_offset)
     vmin = 0.1
     vmax = 0.9
     for j = 0, 2 do
-      pl.wid(j + 1)
+      pl.width(j + 1)
       pl.vpor(vmin, vmax, vmin, vmax)
       pl.wind(0, 1, 0, 1)
       pl.box("bc", 0, 0, "bc", 0, 0)
       vmin = vmin + 0.1
       vmax = vmax - 0.1
     end
-    pl.wid(1)
+    pl.width(1)
     pl.ptex(0.5, 0.5, 1, 0, 0.5, tostring(i))
   end
 end

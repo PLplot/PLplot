@@ -99,6 +99,6 @@ static int plvpasCmd( ClientData, Tcl_Interp *, int, char **);
 static int plvporCmd( ClientData, Tcl_Interp *, int, char **);
 static int plvstaCmd( ClientData, Tcl_Interp *, int, char **);
 static int plw3dCmd( ClientData, Tcl_Interp *, int, char **);
-static int plwidCmd( ClientData, Tcl_Interp *, int, char **);
+static int plwidthCmd( ClientData, Tcl_Interp *, int, char **);
 static int plwindCmd( ClientData, Tcl_Interp *, int, char **);
 static int plxormodCmd( ClientData, Tcl_Interp *, int, char **);
