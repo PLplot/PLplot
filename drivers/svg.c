@@ -1031,8 +1031,6 @@ void svg_indent( SVG *aStream )
 // svg_stroke_width ()
 //
 // sets the stroke width based on the current width
-// N.B. a stroke width of 0 in SVG means no stroke is painted so
-// we make sure the minimum value is 1.
 //--------------------------------------------------------------------------
 
 void svg_stroke_width( PLStream *pls )
@@ -1041,7 +1039,7 @@ void svg_stroke_width( PLStream *pls )
 
     aStream = pls->dev;
     svg_indent( aStream );
-    fprintf( aStream->svgFile, "stroke-width=\"%d\"\n", MAX( 1, pls->width ) );
+    fprintf( aStream->svgFile, "stroke-width=\"%e\"\n", pls->width );
 }
 
 //--------------------------------------------------------------------------
