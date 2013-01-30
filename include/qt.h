@@ -135,7 +135,7 @@ public:
     virtual void setGradient( int x1, int x2, int y1, int y2,
                               unsigned char *r, unsigned char *g,
                               unsigned char *b, PLFLT *alpha, PLINT ncol1 );
-    virtual void setWidth( PLINT w );
+    virtual void setWidthF( PLFLT w );
     // Set pen to draw solid strokes (called after drawing dashed strokes)
     virtual void setSolid();
     // Conversion factor from internal plplot coordinates to device coordinates
@@ -328,7 +328,7 @@ public:
     void setGradient( int x1, int x2, int y1, int y2,
                       unsigned char *r, unsigned char *g,
                       unsigned char *b, PLFLT *alpha, PLINT ncol1 );
-    void setWidth( PLINT r );
+    void setWidthF( PLFLT r );
     void drawText( EscText* txt );
     void flush();
     void getCursorCmd( PLGraphicsIn *ptr );

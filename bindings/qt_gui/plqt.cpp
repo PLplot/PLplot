@@ -452,13 +452,13 @@ void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
     m_painterP->setBrush( linear_gradient );
 }
 
-void QtPLDriver::setWidth( PLINT w )
+void QtPLDriver::setWidthF( PLFLT w )
 {
     if ( !m_painterP->isActive() )
         return;
 
     QPen p = m_painterP->pen();
-    p.setWidth( w );
+    p.setWidthF( w );
     m_painterP->setPen( p );
 }
 
@@ -928,11 +928,11 @@ void QtPLWidget::setBackgroundColor( int r, int g, int b, double alpha )
     redrawFromLastFlush = true;
 }
 
-void QtPLWidget::setWidth( PLINT w )
+void QtPLWidget::setWidthF( PLFLT w )
 {
     BufferElement el;
     el.Element       = SET_WIDTH;
-    el.Data.intParam = w;
+    el.Data.fltParam = w;
     m_listBuffer.append( el );
 //     redrawFromLastFlush=true;
 }
@@ -1412,7 +1412,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
             break;
 
         case SET_WIDTH:
-            SolidPen.setWidthF( i->Data.intParam );
+            SolidPen.setWidthF( i->Data.fltParam );
             if ( hasPen )
             {
                 p->setPen( SolidPen );

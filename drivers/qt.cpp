@@ -450,7 +450,7 @@ void plD_state_rasterqt( PLStream * pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        widget->setWidth( pls->width );
+        widget->setWidthF( pls->width );
         break;
 
     case PLSTATE_COLOR0:
@@ -893,7 +893,7 @@ void plD_state_svgqt( PLStream * pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        widget->setWidth( pls->width );
+        widget->setWidthF( pls->width );
         break;
 
     case PLSTATE_COLOR0:
@@ -1186,7 +1186,7 @@ void plD_state_epspdfqt( PLStream * pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        widget->setWidth( pls->width );
+        widget->setWidthF( pls->width );
         break;
 
     case PLSTATE_COLOR0:
@@ -1446,7 +1446,7 @@ void plD_state_qtwidget( PLStream * pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        widget->setWidth( pls->width );
+        widget->setWidthF( pls->width );
         break;
 
     case PLSTATE_COLOR0:
@@ -1648,7 +1648,7 @@ void plD_state_extqt( PLStream * pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        widget->setWidth( pls->width );
+        widget->setWidthF( pls->width );
         break;
 
     case PLSTATE_COLOR0:
