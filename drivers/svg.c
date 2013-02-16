@@ -568,6 +568,7 @@ void proc_str( PLStream *pls, EscText *args )
     double       ftHt, scaled_offset, scaled_ftHt;
     PLUNICODE    fci;
     PLINT        rcx[4], rcy[4];
+    static PLINT prev_rcx[4], prev_rcy[4];
     PLFLT        rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
     PLFLT        t[4];
     int          glyph_size, sum_glyph_size;
@@ -577,6 +578,7 @@ void proc_str( PLStream *pls, EscText *args )
     SVG          *aStream;
     PLFLT        old_sscale, sscale, old_soffset, soffset, old_dup, ddup;
     PLINT        level;
+    PLINT        same_clip;
 
     // check that we got unicode
     if ( ucs4Len == 0 )
@@ -596,35 +598,56 @@ void proc_str( PLStream *pls, EscText *args )
     aStream = (SVG *) pls->dev;
     if ( aStream->textClipping )
     {
-        svg_open( aStream, "clipPath" );
-        svg_attr_values( aStream, "id", "text-clipping%d", which_clip );
-        svg_general( aStream, ">\n" );
-
         // Use PLplot core routine difilt_clip to appropriately
         // transform the coordinates of the clipping rectangle
         difilt_clip( rcx, rcy );
+        same_clip = TRUE;
+        if ( which_clip == 0 )
+        {
+            same_clip = FALSE;
+        }
+        else
+        {
+            for ( i = 0; i < 4; i++ )
+            {
+                if ( rcx[i] != prev_rcx[i] ||
+                     rcy[i] != prev_rcy[i] )
+                    same_clip = FALSE;
+            }
+        }
+        if ( !same_clip )
+        {
+            svg_open( aStream, "clipPath" );
+            svg_attr_values( aStream, "id", "text-clipping%d", which_clip );
+            svg_general( aStream, ">\n" );
 
-        // Output a polygon to represent the clipping region.
-        svg_open( aStream, "polygon" );
-        svg_attr_values( aStream,
-            "points",
-            "%f,%f %f,%f %f,%f %f,%f",
-            ( (PLFLT) rcx[0] ) / aStream->scale,
-            ( (PLFLT) rcy[0] ) / aStream->scale,
-            ( (PLFLT) rcx[1] ) / aStream->scale,
-            ( (PLFLT) rcy[1] ) / aStream->scale,
-            ( (PLFLT) rcx[2] ) / aStream->scale,
-            ( (PLFLT) rcy[2] ) / aStream->scale,
-            ( (PLFLT) rcx[3] ) / aStream->scale,
-            ( (PLFLT) rcy[3] ) / aStream->scale );
-        svg_open_end( aStream );
+            // Output a polygon to represent the clipping region.
+            svg_open( aStream, "polygon" );
+            svg_attr_values( aStream,
+                "points",
+                "%f,%f %f,%f %f,%f %f,%f",
+                ( (PLFLT) rcx[0] ) / aStream->scale,
+                ( (PLFLT) rcy[0] ) / aStream->scale,
+                ( (PLFLT) rcx[1] ) / aStream->scale,
+                ( (PLFLT) rcy[1] ) / aStream->scale,
+                ( (PLFLT) rcx[2] ) / aStream->scale,
+                ( (PLFLT) rcy[2] ) / aStream->scale,
+                ( (PLFLT) rcx[3] ) / aStream->scale,
+                ( (PLFLT) rcy[3] ) / aStream->scale );
+            svg_open_end( aStream );
 
-        svg_close( aStream, "clipPath" );
+            svg_close( aStream, "clipPath" );
+            for ( i = 0; i < 4; i++ )
+            {
+                prev_rcx[i] = rcx[i];
+                prev_rcy[i] = rcy[i];
+            }
+            which_clip++;
+        }
         svg_open( aStream, "g" );
-        svg_attr_values( aStream, "clip-path", "url(#text-clipping%d)", which_clip );
+        svg_attr_values( aStream, "clip-path",
+            "url(#text-clipping%d)", which_clip - 1 );
         svg_general( aStream, ">\n" );
-
-        which_clip++;
     }
 
     // This draws the clipping region on the screen which can
@@ -665,16 +688,6 @@ void proc_str( PLStream *pls, EscText *args )
     t[2]      = cos_rot * sin_shear + sin_rot * cos_shear;
     t[3]      = -sin_rot * sin_shear + cos_rot * cos_shear;
 
-    // Apply coordinate transform for text display.
-    // The transformation also defines the location of the text in x and y.
-    svg_open( aStream, "g" );
-    svg_attr_values( aStream, "transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double) ( args->x / aStream->scale ), (double) ( args->y / aStream->scale ) );
-    svg_general( aStream, ">\n" );
-
-    svg_open( aStream, "g" );
-    svg_attr_values( aStream, "transform", "matrix(1.0 0.0 0.0 1.0 0.0 %f)", FONT_SHIFT_RATIO * 0.5 * ftHt + FONT_SHIFT_OFFSET );
-    svg_general( aStream, ">\n" );
-
     //--------------
     // open text tag
     // --------------
@@ -691,6 +704,14 @@ void proc_str( PLStream *pls, EscText *args )
 
     // set the font size
     svg_attr_values( aStream, "font-size", "%d", (int) ftHt );
+
+    // Apply coordinate transform for text display.
+    // The transformation also defines the location of the text in x and y.
+    svg_attr_values( aStream, "transform", "matrix(%f %f %f %f %f %f)",
+        t[0], t[1], t[2], t[3],
+        (double) ( args->x / aStream->scale ),
+        (double) ( args->y / aStream->scale ) );
+
 
     //----------------------------------------------------------
     // Write the text with formatting
@@ -738,7 +759,10 @@ void proc_str( PLStream *pls, EscText *args )
 
             // The text goes at zero in y since the above
             // coordinate transform defines the y position of the text
-            svg_attr_value( aStream, "y", "0" );
+            svg_attr_values( aStream, "y", "%f",
+                FONT_SHIFT_RATIO * 0.5 * ftHt +
+                FONT_SHIFT_OFFSET );
+
             fprintf( aStream->svgFile, ">" );
 
             // specify the initial font
@@ -876,8 +900,6 @@ void proc_str( PLStream *pls, EscText *args )
     // svg_close("text");
     fprintf( aStream->svgFile, "</text>\n" );
     aStream->svgIndent -= 2;
-    svg_close( aStream, "g" );
-    svg_close( aStream, "g" );
     if ( aStream->textClipping )
     {
         svg_close( aStream, "g" );
