@@ -68,19 +68,19 @@ main( int PL_UNUSED( argc ), char* argv[] )
     {
         fprintf( stderr, "Could not open driver module %s\n"
             "libltdl error: %s\n", drvspec, lt_dlerror() );
-        return 1;
+        exit( 1 );
     }
     snprintf( sym, SYM_LEN, "plD_DEVICE_INFO_%s", drvnam );
     info = (char **) lt_dlsym( dlhand, sym );
     if ( info != NULL )
     {
         printf( "%s", *info );
-        return 0;
+        exit( 0 );
     }
     else
     {
         fprintf( stderr, "Could not read symbol %s in driver module %s\n"
             "libltdl error: %s\n", sym, drvspec, lt_dlerror() );
-        return 1;
+        exit( 1 );
     }
 }
