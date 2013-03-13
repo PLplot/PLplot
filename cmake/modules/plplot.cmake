@@ -474,6 +474,39 @@ include(lua)
 include(d)
 
 # =======================================================================
+# Option to change to static run-time support for Microsoft C and
+# C++ compilers.  This method should only work after those
+# compilers are enabled (C is already enabled for the whole project
+# and C++ should be enabled above).
+# =======================================================================
+if(WIN32 AND NOT MINGW)
+  # MinGW excluded because it does not enable a static runtime according
+  # to http://lists-archives.com/mingw-users/00126-mingw-msvc-md-mt-ml.html .
+  option(STATIC_RUNTIME "Set Windows non-MinGW compiler static runtime linkage if requested" OFF)
+  if(STATIC_RUNTIME)
+    set(flag_vars
+      CMAKE_C_FLAGS
+      CMAKE_C_FLAGS_DEBUG
+      CMAKE_C_FLAGS_RELEASE
+      CMAKE_C_FLAGS_MINSIZEREL
+      CMAKE_C_FLAGS_RELWITHDEBINFO
+      CMAKE_CXX_FLAGS
+      CMAKE_CXX_FLAGS_DEBUG
+      CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_MINSIZEREL
+      CMAKE_CXX_FLAGS_RELWITHDEBINFO
+      )
+
+    foreach(flag_var ${flag_vars})
+      if(${flag_var} MATCHES "/MD")
+	string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+	set(${flag_var} "${${flag_var}}" CACHE STRING "Flags used by the compiler" FORCE)
+      endif(${flag_var} MATCHES "/MD")
+    endforeach(flag_var ${flag_vars})
+  endif(STATIC_RUNTIME)
+endif(WIN32 AND NOT MINGW)
+
+# =======================================================================
 # additional library support
 # =======================================================================
 include(freetype)
