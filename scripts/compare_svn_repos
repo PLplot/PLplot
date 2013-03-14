@@ -45,13 +45,7 @@ else
     ## depending on how nsample divides into number_of_revisions
     nsample=100
     ((revision_increment = number_of_revisions/nsample))
-    ## trinary operator would have have been cleaner with ((...)) arithmetic
-    ## evaluation, but I could not get it to work.  (It always picked the
-    ## last false clause regardless of whether the condition was true
-    ## or false.)
-    if [ "$revision_increment" -le 0 ] ; then
-	revision_increment=1	
-    fi
+    ((revision_increment = revision_increment <=0 ? 1 : revision_increment))
     echo "Revision increment used for detailed comparisons = $revision_increment"
 fi
 
@@ -61,8 +55,9 @@ rm -rf /tmp/new_source_tree
 svn checkout --quiet file://localhost/$(pwd)/$oldrepo /tmp/old_source_tree
 svn checkout --quiet file://localhost/$(pwd)/$newrepo /tmp/new_source_tree
 
-## Compare detailed log file for each repo
-pushd /tmp
+## Compare detailed log file for each local directory tree created above.
+old_dir=$(pwd)
+cd /tmp
 
 svn log --verbose old_source_tree >| old_detailed_log
 svn log --verbose new_source_tree >| new_detailed_log
@@ -75,11 +70,47 @@ else
     echo "Old and new repos have identical detailed logs"
 fi
 
-## Compare local directory trees for each repo for substantial sample of revisions.
+## Compare local directory trees for substantial sample of revisions
+## including both first and last revision.
 for revision in $(seq 1 $revision_increment $number_of_revisions) $number_of_revisions ; do
     svn update --quiet --revision=$revision old_source_tree
     svn update --quiet --revision=$revision new_source_tree
-    diff -Naur --exclude=".svn" --brief old_source_tree new_source_tree
+    ## Find and eliminate identical broken links from the diff
+    ## because otherwise such broken links cause a non-zero
+    ## diff return code.  The code below does not deal with
+    ## cyclical links, but I don't think any of the repos to be
+    ## checked with this script have those.
+
+    ## The find -L option makes find follow symlinks if possible, and
+    ## the subsequent -type l ordinarily should find no symlinks at
+    ## all, except for the case of broken links which point to
+    ## non-existent files.  Those remain as symlinks (despite the -L)
+    ## because it is impossible to follow them.  Thus, the following
+    ## combination of options and flags always finds just the broken
+    ## symlinks.
+    cd old_source_tree; find -L . -type l >| ../old_broken_symlinks; cd ..
+    cd new_source_tree; find -L . -type l >| ../new_broken_symlinks; cd ..
+
+    ## Check that both directories have identical sets of broken symlinks.
+    diff --brief old_broken_symlinks new_broken_symlinks
+    diff_rc=$?
+    if [ "$diff_rc" -ne 0 ] ; then
+	echo "Error: old and new repos have different sets of broken symlinks for revision = $revision"
+	exit $diff_rc
+    fi
+
+    ## Convert list of broken symlinks to the basename form.  This
+    ## form is an unfortunate choice because basename collisions can
+    ## occur causing additional good files that are not broken
+    ## symlinks to be ignored by the diff check.  However, the
+    ## basename form is the only form that is acceptable to exclude
+    ## files from the diff so we are stuck with this problematic logic.
+    rm -f basename_broken_symlinks; touch  basename_broken_symlinks
+    for BROKEN_LINK in $(cat new_broken_symlinks); do
+	basename $BROKEN_LINK >> basename_broken_symlinks
+    done
+
+    diff -Naur --exclude=".svn" --exclude-from=basename_broken_symlinks --brief old_source_tree new_source_tree
     diff_rc=$?
     if [ "$diff_rc" -ne 0 ] ; then
 	echo "Error: old and new repos have different (aside from .svn) checked-out directory trees for revision = $revision"
@@ -89,3 +120,5 @@ for revision in $(seq 1 $revision_increment $number_of_revisions) $number_of_rev
     fi
 done
 
+# Return to starting directory
+cd $old_dir
