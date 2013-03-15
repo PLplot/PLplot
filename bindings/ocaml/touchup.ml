@@ -79,6 +79,7 @@ let manual_function_attributes =
       function_attrs = None;
       parameter_attrs = Some ["ctime", ["out"]];
     };
+    (* For now, this will be wrapped by hand...
     {
       function_name = "c_plcolorbar";
       function_attrs = None;
@@ -86,7 +87,6 @@ let manual_function_attributes =
                               "p_colorbar_width", ["out"];
                               "p_colorbar_height", ["out"]];
     };
-    (* For now, this will be wrapped by hand...
     {
       function_name = "c_plgriddata";
       function_attrs = None;

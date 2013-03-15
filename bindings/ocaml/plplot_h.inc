@@ -61,7 +61,6 @@
 [mlname(plinit)] void c_plinit ( void );
 [mlname(pljoin)] void c_pljoin ( double x1, double y1, double x2, double y2 );
 [mlname(pllab)] void c_pllab ( [string] const char * xlabel, [string] const char * ylabel, [string] const char * tlabel );
-[mlname(plcolorbar)] void c_plcolorbar ( [out] double * p_colorbar_width, [out] double * p_colorbar_height, plplot_colorbar_opt opt, plplot_position_opt position, double x, double y, double x_length, double y_length, int bg_color, int bb_color, int bb_style, double low_cap_color, double high_cap_color, int cont_color, int cont_width, double ticks, int sub_ticks, [string] const char * axis_opts, [string] const char * label, int n_values, [in, size_is(n_values)] double * values );
 [mlname(pllightsource)] void c_pllightsource ( double x, double y, double z );
 [mlname(plline)] void c_plline ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y );
 [mlname(plline3)] void c_plline3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z );

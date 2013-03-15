@@ -135,7 +135,7 @@ let plot2 stream =
 
   (* Draw the line *)
   P.plot ~stream [
-    P.lines ~width:2 P.Red x y;
+    P.lines ~width:2.0 P.Red x y;
     P.axes x_axis y_axis;
     P.label "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function";
   ];

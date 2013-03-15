@@ -173,15 +173,15 @@ module Plot = struct
     | Arc of
       (color_t * float * float * float * float * float * float * float * bool)
     | Axes of
-      (color_t * axis_options_t list * axis_options_t list * int *
+      (color_t * axis_options_t list * axis_options_t list * float *
        line_style_t * (plplot_axis_type -> float -> string) option)
     | Contours of (color_t * pltr_t * float array * float array array)
     | Image of image_t
     | Image_fr of (image_t * (float * float))
-    | Join of (color_t * float * float * float * float * int * line_style_t)
+    | Join of (color_t * float * float * float * float * float * line_style_t)
     | Labels of (color_t * string * string * string)
     | Lines of
-      (string option * color_t * float array * float array * int * line_style_t)
+      (string option * color_t * float array * float array * float * line_style_t)
     | Map of (color_t * map_t * float * float * float * float)
     | Points of
       (string option * color_t * float array * float array * string * float)
@@ -497,7 +497,7 @@ module Plot = struct
     Arc (color, x, y, a, b, angle1, angle2, rotation, fill)
 
   (** [axes ?color ?style ?width xopt yopt] *)
-  let axes ?(color = Black) ?(style = Solid_line) ?(width = 1) ?labelfunc xopt yopt =
+  let axes ?(color = Black) ?(style = Solid_line) ?(width = 1.0) ?labelfunc xopt yopt =
     Axes (color, xopt, yopt, width, style, labelfunc)
 
   (** Default axes *)
@@ -519,7 +519,7 @@ module Plot = struct
 
   (** [join color (x0, y0) (x1, y1)] *)
   let join ?style ?width color (x0, y0) (x1, y1) =
-    Join (color, x0, y0, x1, y1, width |? 1, style |? Solid_line)
+    Join (color, x0, y0, x1, y1, width |? 1.0, style |? Solid_line)
 
   (** [label x y title] labels the axes and adds plot title *)
   let label ?(color = Black) x y title =
@@ -527,7 +527,7 @@ module Plot = struct
 
   (** [lines ?label color xs ys] *)
   let lines ?label ?style ?width color xs ys =
-    Lines (label, color, xs, ys, width |? 1, style |? Solid_line)
+    Lines (label, color, xs, ys, width |? 1.0, style |? Solid_line)
 
   (** [map ?sw ?ne color outline] *)
   let map ?sw ?ne color outline =
@@ -840,17 +840,28 @@ module Plot = struct
         )
     )
 
-  type colorbar_kind_t =
-    | Gradient_colorbar of float array
-    | Image_colorbar of float array
-    | Shade_colorbar of (bool * float array)
+  type colorbar_axis_t = {
+    axis_def : axis_options_t list;
+    axis_values : float array;
+  }
 
-  let gradient_colorbar vs = Gradient_colorbar vs
-  let image_colorbar vs = Image_colorbar vs
-  let shade_colorbar ?(custom = true) vs = Shade_colorbar (custom, vs)
+  type colorbar_kind_t =
+    | Gradient_colorbar of colorbar_axis_t
+    | Image_colorbar of colorbar_axis_t
+    | Shade_colorbar of (bool * colorbar_axis_t)
 
   let default_colorbar_axis =
     [Frame0; Frame1; Invert_ticks; Unconventional_label; Major_ticks; Vertical_label]
+
+  let colorbar_axis ?(axis = default_colorbar_axis) vs =
+    { axis_def = axis; axis_values = vs }
+
+  let gradient_colorbar ?axis vs =
+    Gradient_colorbar (colorbar_axis ?axis vs)
+  let image_colorbar ?axis vs =
+    Image_colorbar (colorbar_axis ?axis vs)
+  let shade_colorbar ?(custom = true) ?axis vs =
+    Shade_colorbar (custom, colorbar_axis ?axis vs)
 
   let colorbar ?pos ?bg ?bb ?cap ?contour ?orient ?axis ?label ?color ?scale kind =
     (* Colorbar position *)
@@ -904,39 +915,76 @@ module Plot = struct
             (* Default to vertical *)
             default_width, default_length, []
     in
-    (* Axis *)
-    let axis = axis |? default_colorbar_axis in
-    let axis_string, tick_spacing, sub_ticks =
-      string_ticks_of_axis_options axis
+    (* Extra axis definitions *)
+    let extra_axes = axis |? [] in
+    (* Labels *)
+    let labels, label_opts =
+      let result =
+        match label with
+        | Some l -> begin
+          List.map (
+            fun p ->
+              match p with
+              | Right l -> l, [PL_COLORBAR_LABEL_RIGHT]
+              | Left l -> l, [PL_COLORBAR_LABEL_LEFT]
+              | Top l -> l, [PL_COLORBAR_LABEL_TOP]
+              | Bottom l -> l, [PL_COLORBAR_LABEL_BOTTOM]
+          ) l
+        end
+        | None -> ["", []]
+      in
+      List.split result
     in
-    (* Label *)
-    let label, label_opt =
-      match label with
-      | Some p -> begin
-        match p with
-        | Right l -> l, [PL_COLORBAR_LABEL_RIGHT]
-        | Left l -> l, [PL_COLORBAR_LABEL_LEFT]
-        | Top l -> l, [PL_COLORBAR_LABEL_TOP]
-        | Bottom l -> l, [PL_COLORBAR_LABEL_BOTTOM]
-      end
-      | None -> "", []
-    in
+    let labels = Array.of_list labels in
+    let label_opts = Array.of_list label_opts in
     (* Color for labels, axes, etc. *)
     let color = color |? Black in
     (* Values and colorbar type *)
-    let values, kind_opt =
+    let { axis_def = main_axis; axis_values = values}, kind_opt =
       match kind with
-      | Gradient_colorbar vs -> vs, [PL_COLORBAR_GRADIENT]
-      | Image_colorbar vs -> vs, [PL_COLORBAR_IMAGE]
-      | Shade_colorbar (custom, vs) ->
-          vs, (
+      | Gradient_colorbar a -> a, [PL_COLORBAR_GRADIENT]
+      | Image_colorbar a -> a, [PL_COLORBAR_IMAGE]
+      | Shade_colorbar (custom, a) ->
+          a, (
             PL_COLORBAR_SHADE ::
                 if custom then [PL_COLORBAR_SHADE_LABEL] else []
           )
     in
+    let main_axis_string, tick_spacing, sub_ticks =
+      string_ticks_of_axis_options main_axis
+    in
+    let extra_axis_strings, extra_axis_tick_spacing, extra_axis_sub_ticks, extra_values =
+      let axes =
+        Array.of_list (
+          List.map (
+            fun { axis_def; axis_values } ->
+              let str, tick_spacing, sub_ticks =
+                string_ticks_of_axis_options axis_def
+              in
+              str, tick_spacing, sub_ticks, axis_values
+          ) extra_axes
+        )
+      in
+      Array.to_list (Array.map (fun (x, _, _, _) -> x) axes),
+      Array.to_list (Array.map (fun (_, x, _, _) -> x) axes),
+      Array.to_list (Array.map (fun (_, _, x, _) -> x) axes),
+      Array.to_list (Array.map (fun (_, _, _, x) -> x) axes)
+    in
+    let axis_strings =
+      Array.of_list (main_axis_string :: extra_axis_strings)
+    in
+    let tick_spacing =
+      Array.of_list (tick_spacing :: extra_axis_tick_spacing)
+    in
+    let sub_ticks =
+      Array.of_list (sub_ticks :: extra_axis_sub_ticks)
+    in
+    let values =
+      Array.of_list (values :: extra_values)
+    in
     (* Combine all of the options *)
     let opt =
-      List.concat [bg_opt; bb_opt; cap_opt; orient_opt; label_opt; kind_opt]
+      List.concat [bg_opt; bb_opt; cap_opt; orient_opt; kind_opt]
     in
     (* Call the (wrapped) core plcolorbar function *)
     custom (
@@ -949,11 +997,11 @@ module Plot = struct
                 bg bb bb_style
                 cap_low_color cap_high_color
                 cont_color cont_width
-                tick_spacing sub_ticks axis_string
-                label values
+                label_opts labels
+                axis_strings tick_spacing sub_ticks values
             )
         );
-        Option.may (fun _ -> plsmaj 0.0 0.0; plsmin 0.0 0.0; plschr 0.0 0.0) scale;
+        Option.may (fun _ -> plsmaj 0.0 1.0; plsmin 0.0 1.0; plschr 0.0 1.0) scale;
     )
 
   (** An easier to deduce alternative to {Plplot.plbox} *)
@@ -1041,9 +1089,9 @@ module Plot = struct
     let plot_points (label, color, xs, ys, symbol, scale) =
       set_color_in color (
         fun () ->
-          plssym 0.0 scale;
+          plschr 0.0 scale;
           plstring xs ys symbol;
-          plssym 0.0 1.0;
+          plschr 0.0 1.0;
       )
     in
     let plot_polygon (color, xs, ys, fill) =
@@ -1301,8 +1349,8 @@ module Quick_plot = struct
       image (xmin, ymin) (xmax, ymax) m;
       default_axes;
       maybe (Option.map (fun (x, y, t) -> label x y t) labels);
-      colorbar ~axis ~scale:0.75 ~pos:(viewport_pos 0.05 0.0)
-        (image_colorbar [|m_min; m_max|]);
+      colorbar ~scale:0.75 ~pos:(viewport_pos 0.05 0.0)
+        (image_colorbar ~axis [|m_min; m_max|]);
     ];
     end_stream ~stream ();
     ()
@@ -1374,8 +1422,8 @@ module Quick_plot = struct
       shades (xmin, ymin) (xmax, ymax) contours m;
       default_axes;
       maybe (Option.map (fun (x, y, t) -> label x y t) labels);
-      colorbar ~axis ~scale:0.75 ~pos:(viewport_pos 0.05 0.0)
-        (shade_colorbar contours);
+      colorbar ~scale:0.75 ~pos:(viewport_pos 0.05 0.0)
+        (shade_colorbar ~axis contours);
     ];
     end_stream ~stream ();
     ()

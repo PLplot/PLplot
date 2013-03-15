@@ -259,7 +259,6 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             const PLINT *line_widths,
             const PLINT *symbol_colors, const PLFLT *symbol_scales,
             const PLINT *symbol_numbers, const char **symbols );
-*/
 
  void
 c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
@@ -270,7 +269,8 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
               PLINT cont_color, PLINT cont_width,
               PLFLT ticks, PLINT sub_ticks,
               const char *axis_opts, const char *label,
-              PLINT n_values, /*const*/ PLFLT *values );
+              PLINT n_values, const PLFLT *values );
+*/
 
  void
 c_pllightsource(PLFLT x, PLFLT y, PLFLT z);
