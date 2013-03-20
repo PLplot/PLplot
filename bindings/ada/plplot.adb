@@ -71,7 +71,7 @@ package body PLplot is
     
     -- Set default pen width. Docs don't say, so I'll make it 1.
     -- I could make this depend on the type of outut device used.
-    Default_Pen_Width : constant Integer := 1;
+    Default_Pen_Width : constant Long_Float := 1.0;
     procedure Set_Default_Pen_Width is
     begin
         Set_Pen_Width(Default_Pen_Width);
@@ -3312,7 +3312,7 @@ package body PLplot is
 
     -- Set pen width.
     -- plwidth
-    procedure Set_Pen_Width(Pen_Width : Integer) is
+    procedure Set_Pen_Width(Pen_Width : Long_Float) is
     begin
         plwidth(Pen_Width);
     end Set_Pen_Width;
