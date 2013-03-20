@@ -520,6 +520,19 @@ package PLplot_Traditional is
 
 --------- Simple plotters requiring minimal arguments -----
     
+
+    -- Quick plotter requires no x-axis as input; makes x up from indices of first of multiple y's.
+    procedure Quick_Plot
+       (y1 : Real_Vector := Dont_Plot_This;
+        y2 : Real_Vector := Dont_Plot_This;
+        y3 : Real_Vector := Dont_Plot_This;
+        y4 : Real_Vector := Dont_Plot_This;
+        y5 : Real_Vector := Dont_Plot_This;
+        X_Label     : String := To_String(Default_Label_String);
+        Y_Label     : String := To_String(Default_Label_String);
+        Title_Label : String := To_String(Default_Label_String));
+
+
     -- fix this Add x, y, title labels; make default " " or see predefined default.
     -- Simple plotter for single x array and multiple y arrays
     procedure Simple_Plot 

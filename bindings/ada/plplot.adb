@@ -246,6 +246,38 @@ package body PLplot is
 
 --------- Simple plotters requiring minimal arguments -----
 
+
+    -- Quick plotter requires no x-axis as input; makes x up from indices of first of multiple y's.
+    procedure Quick_Plot
+       (y1 : Real_Vector := Dont_Plot_This;
+        y2 : Real_Vector := Dont_Plot_This;
+        y3 : Real_Vector := Dont_Plot_This;
+        y4 : Real_Vector := Dont_Plot_This;
+        y5 : Real_Vector := Dont_Plot_This;
+        X_Label     : String := To_String(Default_Label_String);
+        Y_Label     : String := To_String(Default_Label_String);
+        Title_Label : String := To_String(Default_Label_String))
+    is
+        x : Real_Vector(y1'range);
+        X_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
+        Y_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
+        Title_Label_String_Array : Label_String_Array_Type := Default_Label_String_Array;
+    begin
+        for i in x'range loop
+            x(i) := Long_Float(i);
+        end loop;
+    
+        X_Label_String_Array(1)     := TUB(X_Label);     -- First slot only; others not used.
+        Y_Label_String_Array(1)     := TUB(Y_Label);     -- First slot only; others not used.
+        Title_Label_String_Array(1) := TUB(Title_Label); -- First slot only; others not used.
+
+        Multiplot_Pairs(x, y1, x, y2, x, y3, x, y4, x, y5, 
+            X_Labels     => X_Label_String_Array,
+            Y_Labels     => Y_Label_String_Array,
+            Title_Labels => Title_Label_String_Array,
+            Axis_Style   => Linear_Major_Grid);
+    end Quick_Plot;
+
     
     -- Simple plotter for single x array and multiple y arrays
     procedure Simple_Plot 
