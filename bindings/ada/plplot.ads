@@ -2104,7 +2104,7 @@ package PLplot is
 
     -- Set pen width.
     -- plwidth
-    procedure Set_Pen_Width(Pen_Width : Integer);
+    procedure Set_Pen_Width(Pen_Width : Long_Float);
 
 
     -- Set up world coordinates of the viewport boundaries (2d plots).

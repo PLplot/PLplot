@@ -98,9 +98,9 @@ procedure x01a is
         
         -- Draw the line
         plcol0(3);
-        plwidth(2);
+        plwidth(2.0);
         plline(x, y);
-        plwidth(1);
+        plwidth(1.0);
     end plot2;
 
 

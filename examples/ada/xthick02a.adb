@@ -62,14 +62,14 @@ procedure xthick02a is
             vmin := 0.1;
             vmax := 0.9;
             for j in 0..2 loop
-                Set_Pen_Width(j + 1);
+                Set_Pen_Width(Long_Float(j + 1));
                 Set_Viewport_Normalized(vmin, vmax, vmin, vmax);
                 Set_Viewport_World(0.0, 1.0, 0.0, 1.0);
                 Box_Around_Viewport("bc", 0.0, 0, "bc", 0.0, 0);
                 vmin := vmin + 0.1;
                 vmax := vmax - 0.1;
             end loop;
-            Set_Pen_Width(1);
+            Set_Pen_Width(1.0);
             Write_Text_World(0.5, 0.5, 1.0, 0.0, 0.5, Trim(Integer'image(i), Left));
         end loop;
     end draw_windows;

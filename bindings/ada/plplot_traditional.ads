@@ -1932,7 +1932,7 @@ package PLplot_Traditional is
 
 
     -- Set pen width.
-    procedure plwidth(Pen_Width : Integer);
+    procedure plwidth(Pen_Width : Long_Float);
 
 
     -- Set up world coordinates of the viewport boundaries (2d plots).

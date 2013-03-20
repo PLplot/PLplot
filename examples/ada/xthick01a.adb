@@ -98,9 +98,9 @@ procedure xthick01a is
         
         -- Draw the line
         Set_Pen_Color(Green);
-        Set_Pen_Width(2);
+        Set_Pen_Width(2.0);
         Draw_Curve(x, y);
-        Set_Pen_Width(1);
+        Set_Pen_Width(1.0);
     end plot2;
 
 

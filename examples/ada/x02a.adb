@@ -62,14 +62,14 @@ procedure x02a is
             vmin := 0.1;
             vmax := 0.9;
             for j in 0..2 loop
-                plwidth(j + 1);
+                plwidth(Long_Float(j + 1));
                 plvpor(vmin, vmax, vmin, vmax);
                 plwind(0.0, 1.0, 0.0, 1.0);
                 plbox("bc", 0.0, 0, "bc", 0.0, 0);
                 vmin := vmin + 0.1;
                 vmax := vmax - 0.1;
             end loop;
-            plwidth(1);
+            plwidth(1.0);
             plptex(0.5, 0.5, 1.0, 0.0, 0.5, Trim(Integer'image(i), Left));
         end loop;
     end draw_windows;
