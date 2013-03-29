@@ -1509,7 +1509,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
         {
             // Assume label data is for placement of exponents if no custom
             // label function is provided.
-            if ( plsc->label_data )
+            if ( !plsc->label_func && plsc->label_data )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -1751,7 +1751,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
         if ( !lly && !ldy && !loy && ymode )
         {
             snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
-            if ( plsc->label_data )
+            if ( !plsc->label_func && plsc->label_data )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -2026,7 +2026,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
         {
             // Assume label data is for placement of exponents if no custom
             // label function is provided.
-            if ( plsc->label_data )
+            if ( !plsc->label_func && plsc->label_data )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -2282,7 +2282,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
         if ( !lly && !ldy && !loy && ymode )
         {
             snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
-            if ( plsc->label_data )
+            if ( !plsc->label_func && plsc->label_data )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -2453,6 +2453,7 @@ static void
 plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo )
 {
     // Check to see if a custom labeling function is defined.  If not,
+    // use default.
     if ( lo && plsc->label_func )
     {
         ( *plsc->label_func )( axis, value, string, len, plsc->label_data );
