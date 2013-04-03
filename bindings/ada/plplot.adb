@@ -628,6 +628,14 @@ package body PLplot is
         x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local : Long_Float;
         
     begin
+        -- Check for compatible lengths in x, y, and z.
+        if x'length /= z'length(1) then
+            Put_Line("*** WARNING: Mismatached x-lengths in Simple_Mesh_3D");
+        end if;
+        if y'length /= z'length(2) then
+            Put_Line("*** WARNING: Mismatached y-lengths in Simple_Mesh_3D");
+        end if;
+        
         -- Set min and max for x and y if they are not the defaults.
         if x_Min = 0.0 and x_Max = 0.0 then -- override
             x_Min_Local := Vector_Min(x);
@@ -678,6 +686,14 @@ package body PLplot is
         Contour_Levels_Dummy : Real_Vector(0..1) := (others => 0.0);
         
     begin
+        -- Check for compatible lengths in x, y, and z.
+        if x'length /= z'length(1) then
+            Put_Line("*** WARNING: Mismatached x-lengths in Simple_Mesh_3D");
+        end if;
+        if y'length /= z'length(2) then
+            Put_Line("*** WARNING: Mismatached y-lengths in Simple_Mesh_3D");
+        end if;
+        
         -- Set min and max for x and y if they are not the defaults.
         if x_Min = 0.0 and x_Max = 0.0 then -- override
             x_Min_Local := Vector_Min(x);
