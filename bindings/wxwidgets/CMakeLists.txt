@@ -22,19 +22,19 @@ if(ENABLE_wxwidgets)
   set(plplotwxwidgets${LIB_TAG}_LIB_SRCS
     wxPLplotstream.cpp
     wxPLplotwindow.cpp
-  )
+    )
 
   # configure header file - we need to make sure, that the user of the bindings
   # can't set the wrong options (use freetype/agg)
   CONFIGURE_FILE(
     ${CMAKE_CURRENT_SOURCE_DIR}/wxPLplotstream.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/wxPLplotstream.h
-  )
+    )
 
   set(plplotwxwidgets${LIB_TAG}_INSTALLED_HEADERS
     ${CMAKE_CURRENT_BINARY_DIR}/wxPLplotstream.h
     wxPLplotwindow.h
-  )
+    )
 
   # Set the include path
   include_directories(
@@ -44,7 +44,7 @@ if(ENABLE_wxwidgets)
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}
-  )
+    )
 
   # Create plplotwxwidgets[d] library
   add_library(plplotwxwidgets${LIB_TAG} ${plplotwxwidgets${LIB_TAG}_LIB_SRCS})
@@ -62,7 +62,12 @@ if(ENABLE_wxwidgets)
 
   if(BUILD_SHARED_LIBS)
     SET_SOURCE_FILES_PROPERTIES(${plplotwxwidgets${LIB_TAG}_LIB_SRCS}
-        PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+      PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS} -DUSINGDLL"
+      )
+  else(BUILD_SHARED_LIBS)
+    SET_SOURCE_FILES_PROPERTIES(${plplotwxwidgets${LIB_TAG}_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
+      )
   endif(BUILD_SHARED_LIBS)
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
@@ -77,27 +82,27 @@ if(ENABLE_wxwidgets)
   ENDIF(wxWidgets_DEFINITIONS_DEBUG)
 
   target_link_libraries(
-  plplotwxwidgets${LIB_TAG}
-  plplotcxx${LIB_TAG} 
-  ${wxwidgets_LINK_FLAGS}
-  )
+    plplotwxwidgets${LIB_TAG}
+    plplotcxx${LIB_TAG} 
+    ${wxwidgets_LINK_FLAGS}
+    )
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
     set_target_properties(plplotwxwidgets${LIB_TAG}
-    PROPERTIES
-    SOVERSION ${plplotwxwidgets_SOVERSION}
-    VERSION ${plplotwxwidgets_VERSION}
-    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
+      PROPERTIES
+      SOVERSION ${plplotwxwidgets_SOVERSION}
+      VERSION ${plplotwxwidgets_VERSION}
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      INSTALL_NAME_DIR "${LIB_DIR}"
+      )
   else(USE_RPATH)
     set_target_properties(plplotwxwidgets${LIB_TAG}
-    PROPERTIES
-    SOVERSION ${plplotwxwidgets_SOVERSION}
-    VERSION ${plplotwxwidgets_VERSION}
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
+      PROPERTIES
+      SOVERSION ${plplotwxwidgets_SOVERSION}
+      VERSION ${plplotwxwidgets_VERSION}
+      INSTALL_NAME_DIR "${LIB_DIR}"
+      )
   endif(USE_RPATH)
 
   # Install library in lib/
@@ -106,12 +111,12 @@ if(ENABLE_wxwidgets)
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
-  )
+    )
 
   install(FILES
     ${plplotwxwidgets${LIB_TAG}_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}
-  )
+    )
 
   # Configure pkg-config *.pc file corresponding to libplplotwxwidgets${LIB_TAG}
   if(PKG_CONFIG_EXECUTABLE)
@@ -122,28 +127,28 @@ if(ENABLE_wxwidgets)
     endif(LIB_TAG)
     
     # Determine libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
-  	set(wxWidgets_DEFINITIONS_all "${wxWidgets_DEFINITIONS}")
-  	if(wxWidgets_DEFINITIONS_DEBUG)
- 	  	set(wxWidgets_DEFINITIONS_all "${wxWidgets_DEFINITIONS};${wxWidgets_DEFINITIONS_DEBUG}")
-	  endif(wxWidgets_DEFINITIONS_DEBUG)
+    set(wxWidgets_DEFINITIONS_all "${wxWidgets_DEFINITIONS}")
+    if(wxWidgets_DEFINITIONS_DEBUG)
+      set(wxWidgets_DEFINITIONS_all "${wxWidgets_DEFINITIONS};${wxWidgets_DEFINITIONS_DEBUG}")
+    endif(wxWidgets_DEFINITIONS_DEBUG)
 
     STRING(REGEX REPLACE ";" " -D"
-    libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
-    "-D${wxWidgets_DEFINITIONS_all}"
-    )
+      libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
+      "-D${wxWidgets_DEFINITIONS_all}"
+      )
     STRING(REGEX REPLACE ";" " -I"
-    wxWidgets_IFLAGS
-    "-I${wxWidgets_INCLUDE_DIRS}"
-    )
+      wxWidgets_IFLAGS
+      "-I${wxWidgets_INCLUDE_DIRS}"
+      )
     set(libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
-    "${libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS} ${wxWidgets_IFLAGS}"
-    )
+      "${libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS} ${wxWidgets_IFLAGS}"
+      )
     
     # Determine libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
     pkg_config_link_flags(
-    libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
-    "${wxwidgets_LINK_FLAGS}"
-    )
+      libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
+      "${wxwidgets_LINK_FLAGS}"
+      )
 
     # Each list element must consist of a colon-separated string with the
     # following fields which are parsed out in the foreach loop below and
@@ -175,12 +180,12 @@ if(ENABLE_wxwidgets)
     set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
     set(PC_CONFIGURED_FILE
       ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-    )
+      )
     configure_file(
       ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
       ${PC_CONFIGURED_FILE}
       @ONLY
-    )
+      )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
 endif(ENABLE_wxwidgets)
