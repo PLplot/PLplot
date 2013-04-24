@@ -228,3 +228,6 @@ set(PLD_extqt @PLD_extqt@)
 set(DIFF_EXECUTABLE @DIFF_EXECUTABLE@)
 set(TAIL_EXECUTABLE @TAIL_EXECUTABLE@)
 set(CMP_EXECUTABLE @CMP_EXECUTABLE@)
+
+# ocaml examples build needs this.
+set(USE_RPATH @USE_RPATH@)
