@@ -64,6 +64,7 @@ EXECUTABLES_list = \
 	x31a$(EXEEXT) \
 	x33a$(EXEEXT) \
 	xthick00a$(EXEEXT) \
+	xthick01a$(EXEEXT) \
 	xthick02a$(EXEEXT) \
 	xthick03a$(EXEEXT) \
 	xthick04a$(EXEEXT) \
