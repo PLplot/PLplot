@@ -30,6 +30,7 @@ PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
+	x00a$(EXEEXT) \
 	x01a$(EXEEXT) \
 	x02a$(EXEEXT) \
 	x03a$(EXEEXT) \
@@ -62,7 +63,7 @@ EXECUTABLES_list = \
 	x30a$(EXEEXT) \
 	x31a$(EXEEXT) \
 	x33a$(EXEEXT) \
-	xthick01a$(EXEEXT) \
+	xthick00a$(EXEEXT) \
 	xthick02a$(EXEEXT) \
 	xthick03a$(EXEEXT) \
 	xthick04a$(EXEEXT) \

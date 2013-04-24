@@ -23,6 +23,7 @@ JAVAC = @JAVAC@
 PLPLOT_CLASSPATH = @JAVADATA_HARDDIR@/plplot.jar
 
 example_classes = \
+	x00.class \
 	x01.class \
 	x02.class \
 	x03.class \

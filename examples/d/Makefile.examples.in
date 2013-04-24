@@ -27,6 +27,7 @@ PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
+		 x00d$(EXEEXT) \
 		 x01d$(EXEEXT) \
 		 x02d$(EXEEXT) \
 		 x03d$(EXEEXT) \

@@ -32,6 +32,7 @@ OCAML_CFLAGS = -g -I @OCAML_INSTALL_DIR@/plplot
 OCAML_LIBS = $(RPATHCMD) -ccopt "-L@CMAKE_INSTALL_LIBDIR@" plplot.@OCAML_EXAMPLE_LIBEXT@ unix.@OCAML_EXAMPLE_LIBEXT@
 
 EXECUTABLES_list = \
+		 x00ocaml$(EXEEXT) \
 		 x01ocaml$(EXEEXT) \
 		 x02ocaml$(EXEEXT) \
 		 x03ocaml$(EXEEXT) \
