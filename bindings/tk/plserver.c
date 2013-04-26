@@ -131,7 +131,7 @@ main( int argc, const char **argv )
         fprintf( stderr, "\
 The client_<xxx> and -child options should not be used except via the\n\
 PLplot/Tk driver.\n\n(wish) " );
-        Tcl_SetResult( interp, helpmsg, TCL_VOLATILE );
+        Tcl_SetResult( interp, (char *) helpmsg, TCL_VOLATILE );
     }
 
 // No longer need interpreter
