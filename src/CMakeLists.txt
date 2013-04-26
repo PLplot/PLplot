@@ -215,10 +215,70 @@ endif(MATH_LIB)
 
 # Transform "${libplplot${LIB_TAG}_LINK_LIBRARIES}" string to the 
 # standard pkg-config form.
-pkg_config_link_flags(
-  libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_LIBRARIES}"
+
+set(libstdcxx_full_path)
+if(NOT BUILD_SHARED_LIBS)
+  # For this special case where the plplot library is a static C++
+  # library, pkg-config needs to add -L and -l options corresponding
+  # to libstd++.so to the link flags it delivers.  Another alternative
+  # is to have the plplot library link statically to libstd++.a, but
+  # static linking is not well-supported in CMake, and I am attempting
+  # to keep this fix limited to just the configuration of the
+  # plplotd.pc pkg-config file.  N.B. the logic below for finding the
+  # C++ library is extremely specific to GNU g++ (either Unix or MinGW
+  # version), but it is good to get at least this compiler to work for
+  # the special case of a static C++ plplot library.
+  if(EXISTS "${CMAKE_CXX_COMPILER}")
+    execute_process(
+      COMMAND ${CMAKE_CXX_COMPILER} --verbose --version
+      RESULT_VARIABLE CXX_rc
+      ERROR_VARIABLE CXX_string
+      ERROR_STRIP_TRAILING_WHITESPACE
+      OUTPUT_QUIET
+      )
+  else(EXISTS "${CMAKE_CXX_COMPILER}")
+    set(CXX_rc 2)
+  endif(EXISTS "${CMAKE_CXX_COMPILER}")
+  if(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
+    string(REGEX REPLACE "^.*(LIBRARY_PATH=.*)\nCOLLECT_GCC_OPTIONS.*$" "\\1"
+      CXX_library_path_string ${CXX_string}
+      )
+    #message(STATUS "CXX_library_path_string = ${CXX_library_path_string}")
+    if(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
+      string(REGEX REPLACE "^LIBRARY_PATH=" "" CXX_library_path ${CXX_library_path_string})
+      # This converts native path delimiters to a semicolon-delimited
+      #(cmake) list of directories.
+      file(TO_CMAKE_PATH ${CXX_library_path} CXX_library_path)
+      message(STATUS "CXX_library_path = ${CXX_library_path}")
+      find_library(libstdcxx_full_path NAMES stdc++ PATHS ${CXX_library_path})
+      message(STATUS "libstdcxx_full_path = ${libstdcxx_full_path}")
+    else(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
+      message(STATUS "WARNING: execute_process failed to obtain C++ library needed for pkg-config")
+      message(STATUS "CXX_string = ${CXX_string}")
+      message(STATUS "CXX_library_path_string = ${CXX_library_path_string}")
+    endif(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
+  else(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
+    message(STATUS "WARNING: execute_process failed to obtain C++ library needed for pkg-config")
+    message(STATUS "CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")
+    message(STATUS "CXX_rc = ${CXX_rc}")
+    message(STATUS "CXX_string = ${CXX_string}")
+  endif(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
+  if(NOT libstdcxx_full_path)
+    message(STATUS "WARNING: failed to find viable C++ compiler library so pkg-config link flags will be incomplete") 
+  endif(NOT libstdcxx_full_path)
+endif(NOT BUILD_SHARED_LIBS)
+
+if(libstdcxx_full_path)
+  pkg_config_link_flags(
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_LIBRARIES};${libstdcxx_full_path}"
   )
+else(libstdcxx_full_path)
+  pkg_config_link_flags(
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_LIBRARIES}"
+  )
+endif(libstdcxx_full_path)
 
 if(WITH_CSA)
   set(
