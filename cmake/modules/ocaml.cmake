@@ -119,7 +119,15 @@ if(ENABLE_ocaml)
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   message(STATUS "OCAML_LIB_PATH = ${OCAML_LIB_PATH}")
-  find_path(CAMLIDL_LIB_DIR libcamlidl.a PATHS ${OCAML_LIB_PATH} )
+  if(OCAMLFIND)
+    execute_process(COMMAND ${OCAMLFIND} query camlidl
+      OUTPUT_VARIABLE CAMLIDL_LIB_PATH
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    find_path(CAMLIDL_LIB_DIR libcamlidl.a PATHS ${CAMLIDL_LIB_PATH} ${OCAML_LIB_PATH} )
+  else(OCAMLFIND)
+    find_path(CAMLIDL_LIB_DIR libcamlidl.a PATHS ${OCAML_LIB_PATH} )
+  endif(OCAMLFIND)
   if(CAMLIDL_LIB_DIR)
     message(STATUS "CAMLIDL_LIB_DIR = ${CAMLIDL_LIB_DIR}")
   else(CAMLIDL_LIB_DIR)
