@@ -1424,7 +1424,14 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 
         // These line properties make for a nicer looking polygon mesh
         set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
-        cairo_set_line_width( aStream->cairoContext, 1.0 );
+        // Comment out the following call to cairo_set_line width
+        // since the hard-coded width value of 1.0 is not appropriate
+        // for fills of small areas.  Instead, use the line width that
+        // has already been set by the user via the above call of
+        // poly_line which in turn calls set_current_context which in
+        // turn calls cairo_set_line_width for the user-specified
+        // width.
+        // cairo_set_line_width( aStream->cairoContext, 1.0 );
         cairo_stroke( aStream->cairoContext );
     }
     else
