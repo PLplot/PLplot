@@ -34,8 +34,8 @@
 static PLINT pl3mode = 0;       // 0 3d solid; 1 mesh plot
 static PLINT pl3upv  = 1;       // 1 update view; 0 no update
 
-static PLINT zbflg = 0, zbcol, zbwidth;
-static PLFLT zbtck;
+static PLINT zbflg = 0, zbcol;
+static PLFLT zbtck, zbwidth;
 
 static PLINT *oldhiview = NULL;
 static PLINT *oldloview = NULL;
@@ -412,7 +412,8 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
     CONT_LEVEL *cont, *clev;
     CONT_LINE  *cline;
     int        ct, ix, iy, iftriangle;
-    PLINT      color = plsc->icol0, width = plsc->width;
+    PLINT      color = plsc->icol0;
+    PLFLT      width = plsc->width;
     PLFLT      ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
 
     if ( plsc->level < 3 )
@@ -972,7 +973,8 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
              PLINT PL_UNUSED( ixstart ), PLINT PL_UNUSED( ixn ), const PLINT * PL_UNUSED( indexymin ), const PLINT * PL_UNUSED( indexymax ) )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT init, ix, iy, color, width;
+    PLINT init, ix, iy, color;
+    PLFLT width;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLINT ixmin   = 0, ixmax = nx - 1, iymin = 0, iymax = ny - 1;
     PLINT clipped = 0, base_cont = 0, side = 0;
@@ -1546,7 +1548,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-plP_gzback( PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw )
+plP_gzback( PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLFLT **zbw )
 {
     *zbf = &zbflg;
     *zbc = &zbcol;

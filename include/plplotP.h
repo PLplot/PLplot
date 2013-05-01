@@ -798,7 +798,7 @@ plP_setpxl( PLFLT xpmm0, PLFLT ypmm0 );
 // Get background parameters (including line width) for 3d plot.
 
 void
-plP_gzback( PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw );
+plP_gzback( PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLFLT **zbw );
 
 // Move to physical coordinates (x,y).
 

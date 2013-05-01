@@ -315,10 +315,10 @@ main( int argc, const char *argv[] )
     PLINT      box_colors[MAX_NLEGEND];
     PLINT      box_patterns[MAX_NLEGEND];
     PLFLT      box_scales[MAX_NLEGEND];
-    PLINT      box_line_widths[MAX_NLEGEND];
+    PLFLT      box_line_widths[MAX_NLEGEND];
     PLINT      line_colors[MAX_NLEGEND];
     PLINT      line_styles[MAX_NLEGEND];
-    PLINT      line_widths[MAX_NLEGEND];
+    PLFLT      line_widths[MAX_NLEGEND];
     PLINT      symbol_numbers[MAX_NLEGEND], symbol_colors[MAX_NLEGEND];
     PLFLT      symbol_scales[MAX_NLEGEND];
     char       *text[MAX_NLEGEND];

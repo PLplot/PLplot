@@ -598,7 +598,8 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT ln;
-    PLINT *zbflg, *zbcol, *zbwidth;
+    PLINT *zbflg, *zbcol;
+    PLFLT *zbwidth;
     PLFLT *zbtck;
     PLINT xdigmax, xdigits;
     PLINT ydigmax, ydigits;

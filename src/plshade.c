@@ -30,8 +30,8 @@
 // void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined,
 //	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 //      PLFLT shade_min, PLFLT shade_max,
-//      PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
-//      PLINT max_color, PLINT max_width, void (*fill)(), PLINT
+//      PLINT sh_color, PLFLT sh_width, PLINT min_color, PLFLT min_width,
+//      PLINT max_color, PLFLT max_width, void (*fill)(), PLINT
 //      rectangular, ...)
 //
 // arguments:
@@ -68,11 +68,11 @@
 // Defines the interval to be shaded. If shade_max <= shade_min, plshade
 // does nothing.
 //
-//	PLINT sh_cmap, PLFLT sh_color, PLINT sh_width
+//	PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width
 //
 // Defines color map, color map index, and width used by the fill pattern.
 //
-//      PLINT min_color, min_width, max_color, max_width
+//      PLINT min_color, PLFLT min_width, PLINT max_color, PLFLT max_width
 //
 // Defines pen color, width used by the boundary of shaded region. The min
 // values are used for the shade_min boundary, and the max values are used
@@ -138,7 +138,7 @@ static PLFLT sh_max, sh_min;
 static int   min_points, max_points, n_point;
 static int   min_pts[4], max_pts[4];
 static PLINT pen_col_min, pen_col_max;
-static PLINT pen_wd_min, pen_wd_max;
+static PLFLT pen_wd_min, pen_wd_max;
 static PLFLT int_val;
 
 // Function prototypes
@@ -182,9 +182,9 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
              PLFLT shade_min, PLFLT shade_max,
-             PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-             PLINT min_color, PLINT min_width,
-             PLINT max_color, PLINT max_width,
+             PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+             PLINT min_color, PLFLT min_width,
+             PLINT max_color, PLFLT max_width,
              void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data );
@@ -204,8 +204,8 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
 void c_plshades( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
-                 PLINT cont_color, PLINT cont_width,
+                 const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+                 PLINT cont_color, PLFLT cont_width,
                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data )
@@ -235,15 +235,15 @@ void
 plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
            PLINT ( *defined )( PLFLT, PLFLT ),
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-           const PLFLT *clevel, PLINT nlevel, PLINT fill_width,
-           PLINT cont_color, PLINT cont_width,
+           const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+           PLINT cont_color, PLFLT cont_width,
            void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
            PLPointer pltr_data )
 {
     PLFLT shade_min, shade_max, shade_color;
-    PLINT i, init_color, init_width;
-    PLFLT color_min, color_max, color_range;
+    PLINT i, init_color;
+    PLFLT init_width, color_min, color_max, color_range;
 
     // Color range to use
     color_min   = plsc->cmap1_min;
@@ -321,9 +321,9 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 void c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                 PLFLT shade_min, PLFLT shade_max,
-                PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-                PLINT min_color, PLINT min_width,
-                PLINT max_color, PLINT max_width,
+                PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                PLINT min_color, PLFLT min_width,
+                PLINT max_color, PLFLT max_width,
                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data )
@@ -349,9 +349,9 @@ void c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( 
 void c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  PLFLT shade_min, PLFLT shade_max,
-                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-                 PLINT min_color, PLINT min_width,
-                 PLINT max_color, PLINT max_width,
+                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                 PLINT min_color, PLFLT min_width,
+                 PLINT max_color, PLFLT max_width,
                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data )
@@ -387,9 +387,9 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
           PLINT nx, PLINT ny,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
           PLFLT shade_min, PLFLT shade_max,
-          PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-          PLINT min_color, PLINT min_width,
-          PLINT max_color, PLINT max_width,
+          PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+          PLINT min_color, PLFLT min_width,
+          PLINT max_color, PLFLT max_width,
           void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )
@@ -418,9 +418,9 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
            PLINT ( *defined )( PLFLT, PLFLT ),
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            PLFLT shade_min, PLFLT shade_max,
-           PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-           PLINT min_color, PLINT min_width,
-           PLINT max_color, PLINT max_width,
+           PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+           PLINT min_color, PLFLT min_width,
+           PLINT max_color, PLFLT max_width,
            void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
            PLPointer pltr_data )
@@ -474,17 +474,17 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
              PLFLT shade_min, PLFLT shade_max,
-             PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-             PLINT min_color, PLINT min_width,
-             PLINT max_color, PLINT max_width,
+             PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+             PLINT min_color, PLFLT min_width,
+             PLINT max_color, PLFLT max_width,
              void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data )
 {
-    PLINT init_width, n, slope = 0, ix, iy;
+    PLINT n, slope = 0, ix, iy;
     int   count, i, j, nxny;
     PLFLT *a, *a0, *a1, dx, dy;
-    PLFLT x[8], y[8], xp[2], tx, ty;
+    PLFLT x[8], y[8], xp[2], tx, ty, init_width;
     int   *c, *c0, *c1;
 
     (void) c2eval;   // Cast to void to silence compiler warning about unused parameter

@@ -52,7 +52,7 @@ plot1( int type )
     PLINT        text_colors[2];
     PLINT        line_colors[2];
     PLINT        line_styles[2];
-    PLINT        line_widths[2];
+    PLFLT        line_widths[2];
     PLINT        symbol_numbers[2], symbol_colors[2];
     PLFLT        symbol_scales[2];
     PLFLT        legend_width, legend_height;
