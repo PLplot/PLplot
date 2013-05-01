@@ -655,12 +655,12 @@ int translate_parse_option( int parse_option )
     for ( i = 0; i < ( o ## _length ); i++ ) { ( c_ ## o )[i] = Int_val( Field( ( o ), i ) ); }
 
 // Copy an int array, o, of n element to the C array c
-#define INIT_INT_ARRAYS( o )        \
-    int o ## _length, o ## _inner;  \
-    o ## _length = Wosize_val( o ); \
-    int *c_ ## o[o ## _length];     \
+#define INIT_INT_ARRAYS( o )                   \
+    int o ## _length, o ## _inner;             \
+    o ## _length = Wosize_val( o );            \
+    int *c_ ## o[o ## _length];                \
     for ( i = 0; i < ( o ## _length ); i++ ) { \
-        INIT_INT_ARRAY( o ## _subarray ); \
+        INIT_INT_ARRAY( o ## _subarray );      \
         ( c_ ## o )[i] = c_ ## o ## _subarray; \
     }
 
@@ -768,16 +768,16 @@ int translate_colorbar_option( int colorbar_option )
     int translated_option;
     switch ( colorbar_option )
     {
-    case 0: translated_option = PL_COLORBAR_LABEL_LEFT; break;
-    case 1: translated_option = PL_COLORBAR_LABEL_RIGHT; break;
-    case 2: translated_option = PL_COLORBAR_LABEL_TOP; break;
-    case 3: translated_option = PL_COLORBAR_LABEL_BOTTOM; break;
-    case 4: translated_option = PL_COLORBAR_IMAGE; break;
-    case 5: translated_option = PL_COLORBAR_SHADE; break;
-    case 6: translated_option = PL_COLORBAR_GRADIENT; break;
-    case 7: translated_option = PL_COLORBAR_CAP_NONE; break;
-    case 8: translated_option = PL_COLORBAR_CAP_LOW; break;
-    case 9: translated_option = PL_COLORBAR_CAP_HIGH; break;
+    case 0: translated_option  = PL_COLORBAR_LABEL_LEFT; break;
+    case 1: translated_option  = PL_COLORBAR_LABEL_RIGHT; break;
+    case 2: translated_option  = PL_COLORBAR_LABEL_TOP; break;
+    case 3: translated_option  = PL_COLORBAR_LABEL_BOTTOM; break;
+    case 4: translated_option  = PL_COLORBAR_IMAGE; break;
+    case 5: translated_option  = PL_COLORBAR_SHADE; break;
+    case 6: translated_option  = PL_COLORBAR_GRADIENT; break;
+    case 7: translated_option  = PL_COLORBAR_CAP_NONE; break;
+    case 8: translated_option  = PL_COLORBAR_CAP_LOW; break;
+    case 9: translated_option  = PL_COLORBAR_CAP_HIGH; break;
     case 10: translated_option = PL_COLORBAR_SHADE_LABEL; break;
     case 11: translated_option = PL_COLORBAR_ORIENT_RIGHT; break;
     case 12: translated_option = PL_COLORBAR_ORIENT_TOP; break;
@@ -928,7 +928,7 @@ value ml_plcolorbar( value opt, value position, value x, value y,
     n_axes = Wosize_val( axis_opts );
 
     // Translate configuration options
-    c_opt = lor_ml_list( opt, translate_colorbar_option );
+    c_opt      = lor_ml_list( opt, translate_colorbar_option );
     c_position = lor_ml_list( position, translate_position_option );
 
     // Assume that the dimensions all line up on the OCaml side, so we don't
@@ -948,8 +948,8 @@ value ml_plcolorbar( value opt, value position, value x, value y,
 
     // Copy the axis/range values
     double **c_values;
-    int n_values[ n_axes ];
-    c_values = malloc( n_axes * sizeof( double * ) );
+    int    n_values[ n_axes ];
+    c_values = malloc( n_axes * sizeof ( double * ) );
     // TODO: Add allocation failure check
     for ( i = 0; i < n_axes; i++ )
     {
@@ -961,15 +961,15 @@ value ml_plcolorbar( value opt, value position, value x, value y,
     PLFLT width, height;
 
     plcolorbar( &width, &height,
-                c_opt, c_position, Double_val( x ), Double_val( y ),
-                Double_val( x_length ), Double_val( y_length ),
-                Int_val( bg_color ), Int_val( bb_color ), Int_val( bb_style ),
-                Double_val( low_cap_color ), Double_val( high_cap_color ),
-                Int_val( cont_color ), Double_val( cont_width ),
-                n_labels, c_label_opts, c_label,
-                n_axes, c_axis_opts,
-                (double *)ticks, c_sub_ticks,
-                n_values, (const PLFLT * const *)c_values );
+        c_opt, c_position, Double_val( x ), Double_val( y ),
+        Double_val( x_length ), Double_val( y_length ),
+        Int_val( bg_color ), Int_val( bb_color ), Int_val( bb_style ),
+        Double_val( low_cap_color ), Double_val( high_cap_color ),
+        Int_val( cont_color ), Double_val( cont_width ),
+        n_labels, c_label_opts, c_label,
+        n_axes, c_axis_opts,
+        (double *) ticks, c_sub_ticks,
+        n_values, (const PLFLT * const *) c_values );
 
     // Return a tuple with the colorbar's size
     Store_field( result, 0, caml_copy_double( width ) );
