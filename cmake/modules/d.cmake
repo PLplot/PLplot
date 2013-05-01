@@ -25,7 +25,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_d "Enable D bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_d "Enable D bindings" ON)
+  option(ENABLE_d "Enable D bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_d AND NOT PLPLOT_D_COMPILER_WORKS)

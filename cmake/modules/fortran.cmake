@@ -27,7 +27,7 @@ if(DEFAULT_NO_BINDINGS)
   option(ENABLE_f95 "Enable f95 bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_f77 "Enable f77 bindings" OFF)
-  option(ENABLE_f95 "Enable f95 bindings" ON)
+  option(ENABLE_f95 "Enable f95 bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_f77 OR ENABLE_f95)
