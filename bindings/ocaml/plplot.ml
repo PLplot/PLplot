@@ -114,6 +114,8 @@ module Plot = struct
       it does nothing. *)
   let verify_arg x s = if x then () else (invalid_arg s)
 
+  type axis_t = [`x | `y | `z]
+
   type side_t = [`top | `bottom | `left | `right]
   type 'a tagged_side_t =
     [`top of 'a | `bottom of 'a | `left of 'a | `right of 'a]
@@ -174,7 +176,7 @@ module Plot = struct
       (color_t * float * float * float * float * float * float * float * bool)
     | Axes of
       (color_t * axis_options_t list * axis_options_t list * float *
-       line_style_t * (plplot_axis_type -> float -> string) option)
+       line_style_t * (axis_t -> float -> string) option)
     | Contours of (color_t * pltr_t * float array * float array array)
     | Image of image_t
     | Image_fr of (image_t * (float * float))
@@ -226,6 +228,13 @@ module Plot = struct
   type color_palette_t =
     | Indexed_palette of string
     | Continuous_palette of (string * bool)
+
+  let axis_of_axis = function
+    | PL_X_AXIS -> `x
+    | PL_Y_AXIS -> `y
+    | PL_Z_AXIS -> `z
+  let convert_labelfunc f axis v =
+    f (axis_of_axis axis) v
 
   let indexed_palette filename = Indexed_palette filename
   let continuous_palette ?(interpolate = true) filename =
@@ -1024,7 +1033,9 @@ module Plot = struct
           let old_width = plgwidth () in
           plwidth width;
           set_line_style style;
-          Option.may plslabelfunc labelfunc;
+          Option.may (
+            fun f -> plslabelfunc (convert_labelfunc f)
+          ) labelfunc;
           plot_axes xopt yopt;
           Option.may (fun _ -> plunset_labelfunc ()) labelfunc;
           set_line_style `solid;

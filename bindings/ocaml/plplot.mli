@@ -24,11 +24,6 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 
     {!core} is {b not} expected to change. *)
 
-type plplot_axis_type =
-    PL_X_AXIS
-  | PL_Y_AXIS
-  | PL_Z_AXIS
-
 (** {3 A higher-level OCaml interface to PLplot} *)
 module Plot :
   sig
@@ -255,7 +250,7 @@ module Plot :
       ?color:color_t ->
       ?style:line_style_t ->
       ?width:float ->
-      ?labelfunc:(plplot_axis_type -> float -> string) ->
+      ?labelfunc:([`x | `y | `z] -> float -> string) ->
       axis_options_t list -> axis_options_t list -> plot_t
 
     (** [default_axes] is equivalent to
@@ -571,7 +566,11 @@ module Quick_plot :
 (** See the main PLplot documentation for the description and documentation of
     these functions. *)
 
-type plplot3d_style_enum =
+type plplot_axis_type =
+    PL_X_AXIS
+  | PL_Y_AXIS
+  | PL_Z_AXIS
+and plplot3d_style_enum =
     PL_DIFFUSE
   | PL_DRAW_LINEX
   | PL_DRAW_LINEY
