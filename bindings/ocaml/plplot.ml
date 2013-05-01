@@ -114,59 +114,59 @@ module Plot = struct
       it does nothing. *)
   let verify_arg x s = if x then () else (invalid_arg s)
 
-  type 'a plot_side_t =
-    | Top of 'a | Bottom of 'a
-    | Left of 'a | Right of 'a
+  type side_t = [`top | `bottom | `left | `right]
+  type 'a tagged_side_t =
+    [`top of 'a | `bottom of 'a | `left of 'a | `right of 'a]
 
   type axis_options_t =
-    | Axis
-    | Frame0 | Frame1
-    | Time
-    | Fixed_point
-    | Major_grid | Minor_grid
-    | Invert_ticks
-    | Log
-    | Unconventional_label
-    | Label
-    | Custom_label
-    | Minor_ticks
-    | Minor_tick_count of int
-    | Major_ticks
-    | Major_tick_spacing of float
-    | Vertical_label
+    [ `axis
+    | `frame0 | `frame1
+    | `time
+    | `fixed_point
+    | `major_grid | `minor_grid
+    | `invert_ticks
+    | `log
+    | `unconventional_label
+    | `label
+    | `custom_label
+    | `minor_ticks
+    | `minor_tick_count of int
+    | `major_ticks
+    | `major_tick_spacing of float
+    | `vertical_label ]
 
   type stream_t = {
     stream : int;
   }
 
   type color_t =
-    | White
-    | Red
-    | Yellow
-    | Green
-    | Gray
-    | Blue
-    | Light_blue
-    | Purple
-    | Pink
-    | Black
-    | Brown
-    | Index_color of int
+    [ `white
+    | `red
+    | `yellow
+    | `green
+    | `gray
+    | `blue
+    | `light_blue
+    | `purple
+    | `pink
+    | `black
+    | `brown
+    | `index of int ]
 
   type map_t =
-    | Globe_outline
-    | USA_outline
-    | Countries_outline
-    | All_outline
+    [ `globe
+    | `usa
+    | `countries
+    | `all ]
 
   type pltr_t = float -> float -> float * float
 
   (** Line plotting styles/patterns. *)
   type line_style_t =
-    | Solid_line
-    | Line1 | Line2 | Line3 | Line4
-    | Line5 | Line6 | Line7 | Line8
-    | Custom_line of ((int * int) list)
+    [ `solid
+    | `line1 | `line2 | `line3 | `line4
+    | `line5 | `line6 | `line7 | `line8
+    | `custom of ((int * int) list) ]
 
   type plot_t =
     (* Standard plot elements *)
@@ -192,7 +192,7 @@ module Plot = struct
     )
     | Text of (color_t * string * float * float * float * float * float)
     | Text_outside of
-      (color_t * string * float plot_side_t * float * float * bool)
+      (color_t * string * float tagged_side_t * float * float * bool)
     (* Set/clear UNIVERSAL coordinate transforms *)
     | Set_transform of pltr_t
     | Clear_transform
@@ -208,20 +208,20 @@ module Plot = struct
   and image_t = (float * float) option * float * float * float * float * float array array
 
   type plot_device_family_t =
-    | Cairo
-    | Qt
-    | Core
-    | Wx
+    [ `cairo
+    | `qt
+    | `core
+    | `wx ]
   type plot_device_t =
-    | Pdf of plot_device_family_t
-    | Png of plot_device_family_t
-    | Ps of plot_device_family_t
-    | Svg of plot_device_family_t
-    | Window of plot_device_family_t
-    | Prompt_user
-    | External of int
-    | Other_device of string
-  type plot_scaling_t = Preset | Greedy | Equal | Equal_square
+    [ `pdf of plot_device_family_t
+    | `png of plot_device_family_t
+    | `ps of plot_device_family_t
+    | `svg of plot_device_family_t
+    | `window of plot_device_family_t
+    | `prompt
+    | `stream of int (* Existing stream *)
+    | `other_device of string ]
+  type plot_scaling_t = [ `preset | `greedy | `equal | `equal_square ]
 
   type color_palette_t =
     | Indexed_palette of string
@@ -232,7 +232,7 @@ module Plot = struct
     Continuous_palette (filename, interpolate)
 
   let default_axis_options =
-    [Frame0; Frame1; Major_ticks; Minor_ticks; Invert_ticks; Label]
+    [`frame0; `frame1; `major_ticks; `minor_ticks; `invert_ticks; `label]
 
   let string_ticks_of_axis_options ol =
     let tick = ref 0.0 in
@@ -240,91 +240,91 @@ module Plot = struct
     let translated_list =
       List.map (
         function
-        | Axis -> "a"
-        | Frame0 -> "b"
-        | Frame1 -> "c"
-        | Time -> "d"
-        | Fixed_point -> "f"
-        | Major_grid -> "g"
-        | Minor_grid -> "h"
-        | Invert_ticks -> "i"
-        | Log -> "l"
-        | Unconventional_label -> "m"
-        | Label -> "n"
-        | Custom_label -> "o"
-        | Minor_ticks -> "s"
-        | Minor_tick_count t_sub -> sub := t_sub; "s"
-        | Major_ticks -> "t"
-        | Major_tick_spacing t_space -> tick := t_space; "t"
-        | Vertical_label -> "v"
+        | `axis -> "a"
+        | `frame0 -> "b"
+        | `frame1 -> "c"
+        | `time -> "d"
+        | `fixed_point -> "f"
+        | `major_grid -> "g"
+        | `minor_grid -> "h"
+        | `invert_ticks -> "i"
+        | `log -> "l"
+        | `unconventional_label -> "m"
+        | `label -> "n"
+        | `custom_label -> "o"
+        | `minor_ticks -> "s"
+        | `minor_tick_count t_sub -> sub := t_sub; "s"
+        | `major_ticks -> "t"
+        | `major_tick_spacing t_space -> tick := t_space; "t"
+        | `vertical_label -> "v"
       ) ol
     in
     String.concat "" translated_list, !tick, !sub
 
   (** Convert a color to a (red, green, blue) triple *)
   let rgb_of_color = function
-    | White -> 255, 255, 255
-    | Red -> 255, 0, 0
-    | Yellow -> 255, 255, 0
-    | Green -> 0, 255, 0
-    | Gray -> 200, 200, 200
-    | Blue -> 0, 0, 255
-    | Light_blue -> 0, 255, 255
-    | Purple -> 160, 0, 213
-    | Pink -> 255, 0, 255
-    | Black -> 0, 0, 0
-    | Brown -> 165, 42, 42
-    | Index_color i -> plgcol0 i
+    | `white -> 255, 255, 255
+    | `red -> 255, 0, 0
+    | `yellow -> 255, 255, 0
+    | `green -> 0, 255, 0
+    | `gray -> 200, 200, 200
+    | `blue -> 0, 0, 255
+    | `light_blue -> 0, 255, 255
+    | `purple -> 160, 0, 213
+    | `pink -> 255, 0, 255
+    | `black -> 0, 0, 0
+    | `brown -> 165, 42, 42
+    | `index i -> plgcol0 i
 
   let string_of_map_t = function
-    | Globe_outline -> "globe"
-    | USA_outline -> "usa"
-    | Countries_outline -> "cglobe"
-    | All_outline -> "usaglobe"
+    | `globe -> "globe"
+    | `usa -> "usa"
+    | `countries -> "cglobe"
+    | `all -> "usaglobe"
 
   (** An internal function for converting a scaling variant value to the
       associated PLplot integer value. *)
   let int_of_scaling = function
-    | Preset -> -1     (* Scaling must be set beforehand *)
-    | Greedy -> 0      (* Use as much of the plot space as possible *)
-    | Equal -> 1       (* Square aspect ratio *)
-    | Equal_square -> 2 (* Square aspect ratio and square plot area *)
+    | `preset -> -1     (* Scaling must be set beforehand *)
+    | `greedy -> 0      (* Use as much of the plot space as possible *)
+    | `equal -> 1       (* Square aspect ratio *)
+    | `equal_square -> 2 (* Square aspect ratio and square plot area *)
 
 
   (** Get the suffix string which matches the given device family *)
   let string_of_device_family = function
-    | Cairo -> "cairo"
-    | Qt -> "qt"
-    | Core -> ""
-    | Wx -> ""
+    | `cairo -> "cairo"
+    | `qt -> "qt"
+    | `core -> ""
+    | `wx -> ""
 
   (** Returns the string to pass to plsdev and a boolean value indicating if
       the device is interactive or not. *)
   let devstring_of_plot_device = function
-    | Prompt_user -> "", false
-    | External _ -> invalid_arg "External device"
-    | Other_device s -> s, false
-    | Pdf family -> "pdf" ^ string_of_device_family family, false
-    | Png family -> "png" ^ string_of_device_family family , false
-    | Ps family -> "ps" ^ string_of_device_family family, false
-    | Svg family -> "svg" ^ string_of_device_family family, false
-    | Window family -> (
+    | `prompt -> "", false
+    | `stream _ -> invalid_arg "External stream"
+    | `other_device s -> s, false
+    | `pdf family -> "pdf" ^ string_of_device_family family, false
+    | `png family -> "png" ^ string_of_device_family family , false
+    | `ps family -> "ps" ^ string_of_device_family family, false
+    | `svg family -> "svg" ^ string_of_device_family family, false
+    | `window family -> (
       match family with
-      | Cairo -> "xcairo"
-      | Qt -> "qtwidget"
-      | Core -> "xwin"
-      | Wx -> "wxwidgets"
+      | `cairo -> "xcairo"
+      | `qt -> "qtwidget"
+      | `core -> "xwin"
+      | `wx -> "wxwidgets"
       ), true
 
   let recommended_extension = function
-    | Png _ -> ".png"
-    | Ps _ -> ".ps"
-    | Pdf _ -> ".pdf"
-    | Svg _ -> ".svg"
-    | Window _ -> invalid_arg "interactive plot device, no extension"
-    | External _ -> invalid_arg "external plot device, unknown extension"
-    | Other_device _ -> invalid_arg "other device, unknown extension"
-    | Prompt_user -> invalid_arg "user prompted for device, unknown extension"
+    | `png _ -> ".png"
+    | `ps _ -> ".ps"
+    | `pdf _ -> ".pdf"
+    | `svg _ -> ".svg"
+    | `window _ -> invalid_arg "interactive plot device, no extension"
+    | `stream _ -> invalid_arg "external stream, unknown extension"
+    | `other_device _ -> invalid_arg "other device, unknown extension"
+    | `prompt -> invalid_arg "user prompted for device, unknown extension"
 
   (** Make a new stream, without disturbing the current plot state. *)
   let make_stream ?stream () =
@@ -354,23 +354,23 @@ module Plot = struct
 
   (** Get the integer representation of the line style for use with pllsty *)
   let int_of_line_style = function
-    | Solid_line -> 1
-    | Line1 -> 1
-    | Line2 -> 2
-    | Line3 -> 3
-    | Line4 -> 4
-    | Line5 -> 5
-    | Line6 -> 6
-    | Line7 -> 7
-    | Line8 -> 8
-    | Custom_line _ -> assert false
+    | `solid -> 1
+    | `line1 -> 1
+    | `line2 -> 2
+    | `line3 -> 3
+    | `line4 -> 4
+    | `line5 -> 5
+    | `line6 -> 6
+    | `line7 -> 7
+    | `line8 -> 8
+    | `custom _ -> assert false
 
   (** Set the line drawing style *)
   let set_line_style ?stream style =
     with_stream ?stream (
       fun () ->
         match style with
-        | Custom_line l ->
+        | `custom l ->
             let marks, spaces = List.split l in
             let marks = Array.of_list marks in
             let spaces = Array.of_list spaces in
@@ -381,18 +381,18 @@ module Plot = struct
   (** NOTE that these are for the ALTERNATE color palette, not the DEFAULT
       color palette. *)
   let int_of_color = function
-    | White -> 0
-    | Red -> 3
-    | Yellow -> 13
-    | Green -> 12
-    | Gray -> 10
-    | Blue -> 2
-    | Light_blue -> 11
-    | Purple -> 15
-    | Pink -> 14
-    | Black -> 1
-    | Brown -> 4
-    | Index_color i -> i
+    | `white -> 0
+    | `red -> 3
+    | `yellow -> 13
+    | `green -> 12
+    | `gray -> 10
+    | `blue -> 2
+    | `light_blue -> 11
+    | `purple -> 15
+    | `pink -> 14
+    | `black -> 1
+    | `brown -> 4
+    | `index i -> i
 
   (** Set the plotting color (color scale 0). NOTE that these are for the
       ALTERNATE color palette, not the DEFAULT color palette. *)
@@ -419,7 +419,7 @@ module Plot = struct
     with_stream ?stream (
       fun () ->
         (* Start with a black plotting color. *)
-        set_color Black;
+        set_color `black;
         plenv x0 x1 y0 y1 (int_of_scaling axis_scaling) (-2);
     )
 
@@ -437,7 +437,7 @@ module Plot = struct
     (* Make a new plot stream. *)
     let stream, init =
       match device with
-      | External stream -> make_stream ~stream (), false
+      | `stream stream -> make_stream ~stream (), false
       | _ -> make_stream (), true
     in
     (* If an external stream is provided, assume all initialization has been
@@ -497,7 +497,7 @@ module Plot = struct
     Arc (color, x, y, a, b, angle1, angle2, rotation, fill)
 
   (** [axes ?color ?style ?width xopt yopt] *)
-  let axes ?(color = Black) ?(style = Solid_line) ?(width = 1.0) ?labelfunc xopt yopt =
+  let axes ?(color = `black) ?(style = `solid) ?(width = 1.0) ?labelfunc xopt yopt =
     Axes (color, xopt, yopt, width, style, labelfunc)
 
   (** Default axes *)
@@ -519,15 +519,15 @@ module Plot = struct
 
   (** [join color (x0, y0) (x1, y1)] *)
   let join ?style ?width color (x0, y0) (x1, y1) =
-    Join (color, x0, y0, x1, y1, width |? 1.0, style |? Solid_line)
+    Join (color, x0, y0, x1, y1, width |? 1.0, style |? `solid)
 
   (** [label x y title] labels the axes and adds plot title *)
-  let label ?(color = Black) x y title =
+  let label ?(color = `black) x y title =
     Labels (color, x, y, title)
 
   (** [lines ?label color xs ys] *)
   let lines ?label ?style ?width color xs ys =
-    Lines (label, color, xs, ys, width |? 1.0, style |? Solid_line)
+    Lines (label, color, xs, ys, width |? 1.0, style |? `solid)
 
   (** [map ?sw ?ne color outline] *)
   let map ?sw ?ne color outline =
@@ -550,7 +550,7 @@ module Plot = struct
   let shades ?fill_width ?contour ?(rect = true)
              (x0, y0) (x1, y1) contours data =
     let cont_color, cont_width =
-      contour |? (Index_color 0, 0.0)
+      contour |? (`index 0, 0.0)
     in
     Shades (
       fill_width |? 1.0, cont_color, cont_width, rect, x0, y0, x1, y1,
@@ -642,17 +642,17 @@ module Plot = struct
   let no_legend = No_legend
 
   let box_legend ?(pattern = 0) ?(scale = 1.0) ?(line_width = 1.0)
-                 ?(label_color = Black) ~label color =
+                 ?(label_color = `black) ~label color =
     let label_color = int_of_color label_color in
     let color = int_of_color color in
     Box_legend (color, pattern, scale, line_width, label_color, label)
 
-  let line_legend ?(style = 1) ?(width = 1.0) ?(label_color = Black) ~label color =
+  let line_legend ?(style = 1) ?(width = 1.0) ?(label_color = `black) ~label color =
     let label_color = int_of_color label_color in
     let color = int_of_color color in
     Line_legend (color, style, width, label_color, label)
 
-  let symbol_legend ?(scale = 1.0) ?(number = 3) ?(label_color = Black) ~label
+  let symbol_legend ?(scale = 1.0) ?(number = 3) ?(label_color = `black) ~label
                     color symbol =
     let label_color = int_of_color label_color in
     let color = int_of_color color in
@@ -663,8 +663,8 @@ module Plot = struct
   let column_major x y = Column_major (x, y)
 
   type position_t =
-    | Viewport of unit plot_side_t option * unit plot_side_t option * float * float * bool option
-    | Subpage of unit plot_side_t option * unit plot_side_t option * float * float * bool option
+    | Viewport of side_t option * side_t option * float * float * bool option
+    | Subpage of side_t option * side_t option * float * float * bool option
 
   let viewport_pos ?side1 ?side2 ?inside x y =
     Viewport (side1, side2, x, y, inside)
@@ -673,10 +673,10 @@ module Plot = struct
     Subpage (side1, side2, x, y, inside)
 
   let pos_opt_of_side = function
-    | Right _ -> PL_POSITION_RIGHT
-    | Left _ -> PL_POSITION_LEFT
-    | Top _ -> PL_POSITION_TOP
-    | Bottom _ -> PL_POSITION_BOTTOM
+    | `right -> PL_POSITION_RIGHT
+    | `left -> PL_POSITION_LEFT
+    | `top -> PL_POSITION_TOP
+    | `bottom -> PL_POSITION_BOTTOM
 
   (** Convert a position_t to a low-level position definition. *)
   let convert_position pos_maybe =
@@ -758,7 +758,7 @@ module Plot = struct
           0, 0, []
     in
     (* Default drawing color *)
-    let color = color |? Black in
+    let color = color |? `black in
     (* Text on the left? *)
     let text_left_opt =
       if text_left then [PL_LEGEND_TEXT_LEFT]
@@ -851,7 +851,7 @@ module Plot = struct
     | Shade_colorbar of (bool * colorbar_axis_t)
 
   let default_colorbar_axis =
-    [Frame0; Frame1; Invert_ticks; Unconventional_label; Major_ticks; Vertical_label]
+    [`frame0; `frame1; `invert_ticks; `unconventional_label; `major_ticks; `vertical_label]
 
   let colorbar_axis ?(axis = default_colorbar_axis) vs =
     { axis_def = axis; axis_values = vs }
@@ -891,10 +891,10 @@ module Plot = struct
       | Some o -> begin
         (* TODO: Pick something better to use as a type here... *)
         match o with
-        | Right (l, w) -> w, l, [PL_COLORBAR_ORIENT_RIGHT]
-        | Left (l, w) -> w, l, [PL_COLORBAR_ORIENT_LEFT]
-        | Top (l, w) -> l, w, [PL_COLORBAR_ORIENT_TOP]
-        | Bottom (l, w) -> l, w, [PL_COLORBAR_ORIENT_BOTTOM]
+        | `right (l, w) -> w, l, [PL_COLORBAR_ORIENT_RIGHT]
+        | `left (l, w) -> w, l, [PL_COLORBAR_ORIENT_LEFT]
+        | `top (l, w) -> l, w, [PL_COLORBAR_ORIENT_TOP]
+        | `bottom (l, w) -> l, w, [PL_COLORBAR_ORIENT_BOTTOM]
       end
       | None ->
           let default_length = 0.75 in
@@ -925,10 +925,10 @@ module Plot = struct
           List.map (
             fun p ->
               match p with
-              | Right l -> l, [PL_COLORBAR_LABEL_RIGHT]
-              | Left l -> l, [PL_COLORBAR_LABEL_LEFT]
-              | Top l -> l, [PL_COLORBAR_LABEL_TOP]
-              | Bottom l -> l, [PL_COLORBAR_LABEL_BOTTOM]
+              | `right l -> l, [PL_COLORBAR_LABEL_RIGHT]
+              | `left l -> l, [PL_COLORBAR_LABEL_LEFT]
+              | `top l -> l, [PL_COLORBAR_LABEL_TOP]
+              | `bottom l -> l, [PL_COLORBAR_LABEL_BOTTOM]
           ) l
         end
         | None -> ["", []]
@@ -938,7 +938,7 @@ module Plot = struct
     let labels = Array.of_list labels in
     let label_opts = Array.of_list label_opts in
     (* Color for labels, axes, etc. *)
-    let color = color |? Black in
+    let color = color |? `black in
     (* Values and colorbar type *)
     let { axis_def = main_axis; axis_values = values}, kind_opt =
       match kind with
@@ -1027,7 +1027,7 @@ module Plot = struct
           Option.may plslabelfunc labelfunc;
           plot_axes xopt yopt;
           Option.may (fun _ -> plunset_labelfunc ()) labelfunc;
-          set_line_style Solid_line;
+          set_line_style `solid;
           plwidth old_width;
       )
     in
@@ -1060,7 +1060,7 @@ module Plot = struct
           plwidth width;
           set_line_style style;
           pljoin x0 y0 x1 y1;
-          set_line_style Solid_line;
+          set_line_style `solid;
           plwidth old_width;
       )
     in
@@ -1076,7 +1076,7 @@ module Plot = struct
           plwidth width;
           set_line_style style;
           plline xs ys;
-          set_line_style Solid_line;
+          set_line_style `solid;
           plwidth old_width;
       )
     in
@@ -1143,10 +1143,10 @@ module Plot = struct
     let plot_text_outside (color, s, side, displacement, just, perp) =
       let side_string, position =
         match side with
-        | Right p -> "r", p
-        | Left p -> "l", p
-        | Top p -> "t", p
-        | Bottom p -> "b", p
+        | `right p -> "r", p
+        | `left p -> "l", p
+        | `top p -> "t", p
+        | `bottom p -> "b", p
       in
       let side_string = side_string ^ if perp then "v" else "" in
       set_color_in color
@@ -1234,8 +1234,8 @@ module Quick_plot = struct
     let y_axis = default_axis_options in
     Option.map_default (
       fun (x_log, y_log) ->
-        (if x_log then Log :: x_axis else x_axis),
-        (if y_log then Log :: y_axis else y_axis)
+        (if x_log then `log :: x_axis else x_axis),
+        (if y_log then `log :: y_axis else y_axis)
     ) (x_axis, y_axis) log
 
   let maybe_line_legend names colors =
@@ -1267,14 +1267,14 @@ module Quick_plot = struct
 
   (** [points [xs, ys; ...] plots the points described by the coordinates [xs]
       and [ys]. *)
-  let points ?filename ?size ?(device = Window Cairo) ?labels ?names ?log xs_ys_list =
+  let points ?filename ?size ?(device = `window `cairo) ?labels ?names ?log xs_ys_list =
     let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
     let stream =
-      init ?filename ?size (xmin, ymin) (xmax, ymax) Greedy device
+      init ?filename ?size (xmin, ymin) (xmax, ymax) `greedy device
     in
-    let colors = Array.mapi (fun i _ -> Index_color (i + 1)) ys_array in
+    let colors = Array.mapi (fun i _ -> `index (i + 1)) ys_array in
     let symbols =
       Array.init (Array.length ys_array) (fun i -> sprintf "#(%03d)" (i + 135))
     in
@@ -1301,13 +1301,13 @@ module Quick_plot = struct
   (** [lines [xs, ys; ...] plots the line segments described by the coordinates
       [xs] and [ys]. *)
   let lines
-        ?filename ?size ?(device = Window Cairo) ?labels ?names ?log
+        ?filename ?size ?(device = `window `cairo) ?labels ?names ?log
         xs_ys_list =
     let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
-    let stream = init ?filename ?size (xmin, ymin) (xmax, ymax) Greedy device in
-    let colors = Array.mapi (fun i _ -> Index_color (i + 1)) ys_array in
+    let stream = init ?filename ?size (xmin, ymin) (xmax, ymax) `greedy device in
+    let colors = Array.mapi (fun i _ -> `index (i + 1)) ys_array in
     let plottable_lines =
       Array.to_list (
         Array.mapi (
@@ -1327,7 +1327,7 @@ module Quick_plot = struct
 
   (** [image ?log m] plots the image [m] with a matching colorbar.  If [log] is
       true then the data in [m] are assumed to be log10(x) values. *)
-  let image ?filename ?size ?(device = Window Cairo) ?labels ?log ?palette m =
+  let image ?filename ?size ?(device = `window `cairo) ?labels ?log ?palette m =
     let m_max, m_min = plMinMax2dGrid m in
     let xmin, ymin = 0.0, 0.0 in
     let xmax, ymax = Array_ext.matrix_dims m in
@@ -1336,13 +1336,13 @@ module Quick_plot = struct
       Option.map_default (
         fun l ->
           if l then
-            Log :: default_colorbar_axis
+            `log :: default_colorbar_axis
           else
             default_colorbar_axis
       ) default_colorbar_axis log
     in
     let stream =
-      init ?filename ?size (xmin, ymin) (xmax, ymax) Equal_square device
+      init ?filename ?size (xmin, ymin) (xmax, ymax) `equal_square device
     in
     Option.may (load_palette ~stream) palette;
     plot ~stream [
@@ -1359,10 +1359,10 @@ module Quick_plot = struct
       to [x = max].  [step] can be used to tighten or coarsen the sampling of
       plot points. *)
   let func
-        ?filename ?size ?(device = Window Cairo) ?labels ?names ?symbol ?step
+        ?filename ?size ?(device = `window `cairo) ?labels ?names ?symbol ?step
         fs (xmin, xmax) =
     let fs_array = Array.of_list fs in
-    let colors = Array.mapi (fun i _ -> Index_color (i + 1)) fs_array in
+    let colors = Array.mapi (fun i _ -> `index (i + 1)) fs_array in
     let plot_content =
       Array.to_list (
         Array.mapi (
@@ -1383,7 +1383,7 @@ module Quick_plot = struct
     in
     let ymax, ymin = plMinMax2dGrid ys in
     let stream =
-      init ?filename ?size (xmin, ymin) (xmax, ymax) Greedy device
+      init ?filename ?size (xmin, ymin) (xmax, ymax) `greedy device
     in
     plot ~stream [
       list plot_content;
@@ -1394,7 +1394,7 @@ module Quick_plot = struct
     end_stream ~stream ();
     ()
 
-  let shades ?filename ?size ?(device = Window Cairo) ?labels ?log ?palette
+  let shades ?filename ?size ?(device = `window `cairo) ?labels ?log ?palette
         ?contours m =
     let xmin, ymin = 0.0, 0.0 in
     let xmax, ymax = Array_ext.matrix_dims m in
@@ -1403,13 +1403,13 @@ module Quick_plot = struct
       Option.map_default (
         fun l ->
           if l then
-            Log :: default_colorbar_axis
+            `log :: default_colorbar_axis
           else
             default_colorbar_axis
       ) default_colorbar_axis log
     in
     let stream =
-      init ?filename ?size (xmin, ymin) (xmax, ymax) Equal_square device
+      init ?filename ?size (xmin, ymin) (xmax, ymax) `equal_square device
     in
     Option.may (load_palette ~stream) palette;
     let contours =

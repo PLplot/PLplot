@@ -69,7 +69,7 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
           (* plplot initialization *)
           let stream =
             P.init ~pre ~pages:(2, 2) (xmin, ymin) (xmax, ymax)
-              P.Greedy P.Prompt_user
+              `greedy `prompt
           in
 
           (* Select font set as per input flag *)
@@ -80,8 +80,8 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
           (* Set up the viewport and window. The range in X is
              0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
              scaled separately, and we just draw a labelled box. *)
-          P.set_color ~stream:s P.Black;
-          P.start_page ~stream:s (xmin, ymin) (xmax, ymax) P.Greedy;
+          P.set_color ~stream:s `black;
+          P.start_page ~stream:s (xmin, ymin) (xmax, ymax) `greedy;
           s
         )
     | _ -> invalid_arg "Provide a stream or font option, not both"
@@ -90,13 +90,13 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
   let xs = Array.init 6 (fun i -> x.(i * 10 + 3)) in
   let ys = Array.init 6 (fun i -> y.(i * 10 + 3)) in
 
-  P.set_color ~stream P.Blue;
+  P.set_color ~stream `blue;
 
   P.plot ~stream [
     (* Plot the data points *)
-    P.points ~symbol:"⊙" P.Green xs ys;
+    P.points ~symbol:"⊙" `green xs ys;
     (* Draw the line through the data *)
-    P.lines P.Red x y;
+    P.lines `red x y;
     (* Show the axes *)
     P.default_axes;
     (* Title and axis labels *)
@@ -110,10 +110,10 @@ let plot2 stream =
   (* Set up the viewport and window. The range in X is -2.0 to
      10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately,
      and we draw a box with axes. *)
-  P.set_color ~stream P.Black;
-  P.start_page ~stream (-2.0, -0.4) (10.0, 1.2) P.Greedy;
+  P.set_color ~stream `black;
+  P.start_page ~stream (-2.0, -0.4) (10.0, 1.2) `greedy;
 
-  P.set_color ~stream P.Blue;
+  P.set_color ~stream `blue;
 
   (* Fill up the arrays *)
   let x = Array.init 100 (fun i -> (float_of_int i -. 19.0) /. 6.0) in
@@ -129,13 +129,13 @@ let plot2 stream =
 
   (* Show the axes *)
   let x_axis, y_axis =
-    P.Axis :: P.default_axis_options,
-    P.Axis :: P.default_axis_options
+    `axis :: P.default_axis_options,
+    `axis :: P.default_axis_options
   in
 
   (* Draw the line *)
   P.plot ~stream [
-    P.lines ~width:2.0 P.Red x y;
+    P.lines ~width:2.0 `red x y;
     P.axes x_axis y_axis;
     P.label "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function";
   ];
@@ -149,9 +149,9 @@ let plot3 stream =
 
   (* Use standard viewport, and define X range from 0 to 360 degrees, Y range
      from -1.2 to 1.2.*)
-  P.start_page ~stream  (0.0, -1.2) (360.0, 1.2) P.Greedy;
+  P.start_page ~stream  (0.0, -1.2) (360.0, 1.2) `greedy;
 
-  P.set_color ~stream P.Red;
+  P.set_color ~stream `red;
 
   let x = Array.init 101 (fun i -> 3.6 *. float_of_int i) in
   let y = Array.init 101 (fun i -> sin (x.(i) *. pi /. 180.0)) in
@@ -161,20 +161,20 @@ let plot3 stream =
      Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. *)
   let x_axis, y_axis =
     (* x-axis *)
-    [P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_tick_spacing 60.0],
+    [`frame0; `frame1; `label; `minor_ticks; `major_tick_spacing 60.0],
     (* y-axis *)
     [
-      P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_tick_spacing 0.2;
-      P.Vertical_label
+      `frame0; `frame1; `label; `minor_ticks; `major_tick_spacing 0.2;
+      `vertical_label
     ]
   in
 
   P.plot ~stream [
     (* Superimpose a dashed line grid, with 1.5 mm marks and spaces. *)
-    P.axes ~color:P.Yellow ~style:(P.Custom_line [mark1, space1])
-      [P.Major_grid; P.Major_tick_spacing 30.0]
-      [P.Major_grid; P.Major_tick_spacing 0.2];
-    P.lines P.Brown x y;
+    P.axes ~color:`yellow ~style:(`custom [mark1, space1])
+      [`major_grid; `major_tick_spacing 30.0]
+      [`major_grid; `major_tick_spacing 0.2];
+    P.lines `brown x y;
     (* The normal plot axes *)
     P.axes x_axis y_axis;
     (* Plot title and axis labels *)
