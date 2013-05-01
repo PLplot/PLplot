@@ -57,11 +57,11 @@ let plot1 z zmin zmax =
   let shade_min = zmin +. (zmax -. zmin) *. 0.4 in
   let shade_max = zmin +. (zmax -. zmin) *. 0.6 in
   let sh_color = 7.0 in
-  let sh_width = 2 in
+  let sh_width = 2.0 in
   let min_color = 9 in
   let max_color = 2 in
-  let min_width = 2 in
-  let max_width = 2 in
+  let min_width = 2.0 in
+  let max_width = 2.0 in
 
   plpsty 8;
   plshade
@@ -86,10 +86,10 @@ let plot1 z zmin zmax =
 let plot2 z zmin zmax =
   let sh_cmap = 0 in
   let min_color = 0 in
-  let min_width = 0 in
+  let min_width = 0.0 in
   let max_color = 0 in
-  let max_width = 0 in
-  let sh_width = 2 in
+  let max_width = 0.0 in
+  let sh_width = 2.0 in
 
   let inc =
     [|

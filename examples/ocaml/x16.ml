@@ -51,9 +51,9 @@ let f2mnmx f =
  * Does several shade plots using different coordinate mappings.
 \*--------------------------------------------------------------------------*)
 let () =
-  let fill_width = 2 in
+  let fill_width = 2.0 in
   let cont_color = 0 in
-  let cont_width = 0 in
+  let cont_width = 0.0 in
 
   (* Parse and process command line arguments *)
   plparseopts Sys.argv [PL_PARSE_FULL];
@@ -193,7 +193,7 @@ let () =
 
   plpsty 0;
 
-  plshades z (-1.0) 1.0 (-1.) 1.0 shedge fill_width 2 3 false;
+  plshades z (-1.0) 1.0 (-1.) 1.0 shedge fill_width 2 3.0 false;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;

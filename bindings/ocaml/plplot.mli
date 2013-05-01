@@ -319,8 +319,8 @@ module Plot :
 
     (** [shades ?fill_width ?contour ?rect (x0, y0) (x1, y1) contours data] *)
     val shades :
-      ?fill_width:int ->
-      ?contour:color_t * int ->
+      ?fill_width:float ->
+      ?contour:color_t * float ->
       ?rect:bool ->
       float * float -> float * float ->
       float array -> float array array -> plot_t
@@ -413,13 +413,13 @@ module Plot :
     val box_legend :
       ?pattern:int ->
       ?scale:float ->
-      ?line_width:int ->
+      ?line_width:float ->
       ?label_color:color_t -> label:string -> color_t -> legend_entry_t
 
     (** Line legend entry *)
     val line_legend :
       ?style:int ->
-      ?width:int ->
+      ?width:float ->
       ?label_color:color_t -> label:string -> color_t -> legend_entry_t
 
     (** Symbol/point legend entry *)
@@ -486,7 +486,7 @@ module Plot :
       ?bg:color_t ->
       ?bb:color_t * line_style_t ->
       ?cap:float option * float option ->
-      ?contour:color_t * int ->
+      ?contour:color_t * float ->
       ?orient:(float * float) plot_side_t ->
       ?axis:colorbar_axis_t list ->
       ?label:string plot_side_t list ->
@@ -777,7 +777,7 @@ external pllab : string -> string -> string -> unit
   = "camlidl_plplot_core_c_pllab"
 external plcolorbar : plplot_colorbar_opt -> plplot_position_opt -> float ->
   float -> float -> float -> int -> int -> int -> float -> float -> int ->
-  int -> plplot_colorbar_opt array -> string array ->
+  float -> plplot_colorbar_opt array -> string array ->
   string array -> float array -> int array -> float array array ->
   float * float
   = "ml_plcolorbar_byte" "ml_plcolorbar"
@@ -785,7 +785,7 @@ external pllegend : plplot_legend_opt -> plplot_position_opt ->
   float -> float -> float -> int -> int -> int -> int -> int ->
   plplot_legend_opt array -> float -> float ->
   float -> float -> int array -> string array -> int array -> int array ->
-  float array -> int array -> int array -> int array -> int array ->
+  float array -> float array -> int array -> int array -> float array ->
   int array -> float array -> int array -> string array -> float * float
   = "ml_pllegend_byte" "ml_pllegend"
 external pllightsource : float -> float -> float -> unit
@@ -975,13 +975,13 @@ external plshade :
   float ->
   float ->
   float ->
-  float -> int -> float -> int -> int -> int -> int -> int -> bool -> unit
+  float -> int -> float -> float -> int -> float -> int -> float -> bool -> unit
   = "camlidl_plplot_core_ml_plshade_bytecode"
   "camlidl_plplot_core_ml_plshade"
 external plshades :
   float array array ->
   float ->
-  float -> float -> float -> float array -> int -> int -> int -> bool -> unit
+  float -> float -> float -> float array -> float -> int -> float -> bool -> unit
   = "camlidl_plplot_core_ml_plshades_bytecode"
   "camlidl_plplot_core_ml_plshades"
 external plimagefr :

@@ -410,9 +410,9 @@ void ml_plcont( const PLFLT **f, PLINT nx, PLINT ny,
 void ml_plshade( const PLFLT **a, PLINT nx, PLINT ny,
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
-                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-                 PLINT min_color, PLINT min_width,
-                 PLINT max_color, PLINT max_width,
+                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                 PLINT min_color, PLFLT min_width,
+                 PLINT max_color, PLFLT max_width,
                  PLBOOL rectangular )
 {
     c_plshade( a, nx, ny,
@@ -449,7 +449,7 @@ void ml_plshade( const PLFLT **a, PLINT nx, PLINT ny,
 //
 void ml_plshades( const PLFLT **a, PLINT nx, PLINT ny,
                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                  PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
                   PLINT cont_color, PLINT cont_width,
                   PLBOOL rectangular )
 {
@@ -848,10 +848,8 @@ value ml_pllegend( value opt, value position, value x, value y, value plot_width
     INIT_INT_ARRAY( text_colors )
     INIT_INT_ARRAY( box_colors )
     INIT_INT_ARRAY( box_patterns )
-    INIT_INT_ARRAY( box_line_widths )
     INIT_INT_ARRAY( line_colors )
     INIT_INT_ARRAY( line_styles )
-    INIT_INT_ARRAY( line_widths )
     INIT_INT_ARRAY( symbol_colors )
     INIT_INT_ARRAY( symbol_numbers )
     INIT_STRING_ARRAY( symbols )
@@ -879,8 +877,8 @@ value ml_pllegend( value opt, value position, value x, value y, value plot_width
         Double_val( text_justification ),
         c_text_colors, c_text,
         c_box_colors, c_box_patterns, (double *) box_scales,
-        c_box_line_widths,
-        c_line_colors, c_line_styles, c_line_widths,
+        (double *) box_line_widths,
+        c_line_colors, c_line_styles, (double *) line_widths,
         c_symbol_colors, (double *) symbol_scales, c_symbol_numbers,
         c_symbols );
 
@@ -967,7 +965,7 @@ value ml_plcolorbar( value opt, value position, value x, value y,
                 Double_val( x_length ), Double_val( y_length ),
                 Int_val( bg_color ), Int_val( bb_color ), Int_val( bb_style ),
                 Double_val( low_cap_color ), Double_val( high_cap_color ),
-                Int_val( cont_color ), Int_val( cont_width ),
+                Int_val( cont_color ), Double_val( cont_width ),
                 n_labels, c_label_opts, c_label,
                 n_axes, c_axis_opts,
                 (double *)ticks, c_sub_ticks,
@@ -1075,14 +1073,14 @@ int plg_current_col0( void )
 }
 
 // Get the current color map 1 color index
-float plg_current_col1( void )
+PLFLT plg_current_col1( void )
 {
     return plsc->icol1;
 }
 
 // Get the current pen width. TODO: Remove this, as I think this information
 // can be retrieved from another proper PLplot function.
-float plgwidth( void )
+PLFLT plgwidth( void )
 {
     return plsc->width;
 }
@@ -1090,7 +1088,7 @@ float plgwidth( void )
 // Get the current character (text) height in mm.  TODO: Remove this, as I
 // think this information can be retrieved from another proper PLplot
 // function
-float plgchrht( void )
+PLFLT plgchrht( void )
 {
     return plsc->chrht;
 }

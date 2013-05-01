@@ -159,16 +159,16 @@ quote(h, "void plplot_check_nonzero_result(int result);");
     [size_is(nx,ny)] PLFLT **a, PLINT nx, PLINT ny,
     PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
     PLFLT shade_min, PLFLT shade_max,
-    PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-    PLINT min_color, PLINT min_width,
-    PLINT max_color, PLINT max_width,
+    PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+    PLINT min_color, PLFLT min_width,
+    PLINT max_color, PLFLT max_width,
     PLBOOL rectangular);
 
 [mlname(plshades)] void ml_plshades(
     [size_is(nx,ny)] PLFLT **a, PLINT nx, PLINT ny,
     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-    [size_is(nlevel)] PLFLT *clevel, PLINT nlevel, PLINT fill_width,
-    PLINT cont_color, PLINT cont_width,
+    [size_is(nlevel)] PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+    PLINT cont_color, PLFLT cont_width,
     PLBOOL rectangular);
 
 [mlname(plimagefr)] void ml_plimagefr(
@@ -200,9 +200,9 @@ quote(h, "void plplot_check_nonzero_result(int result);");
 // XXX The following are non-standard functions which help retrieve some extra
 // information from PLplot.
 int plg_current_col0(void);
-float plg_current_col1(void);
-float plgwidth(void);
-float plgchrht(void);
+PLFLT plg_current_col1(void);
+PLFLT plgwidth(void);
+PLFLT plgchrht(void);
 
 #define QUOTEME(x) #x
 #define RAW_ML(x) quote(mlmli, QUOTEME(x));
@@ -329,6 +329,6 @@ quote(mli, "val plunset_exit : unit -> unit");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
 RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> unit = "ml_plparseopts")
-RAW_ML(external pllegend : plplot_legend_opt -> plplot_position_opt -> float -> float -> float -> int -> int -> int -> int -> int -> plplot_legend_opt array -> float -> float -> float -> float -> int array -> string array -> int array -> int array -> float array -> int array -> int array -> int array -> int array -> int array -> float array -> int array -> string array -> float * float = "ml_pllegend_byte" "ml_pllegend")
-RAW_ML(external plcolorbar : plplot_colorbar_opt -> plplot_position_opt -> float -> float -> float -> float -> int -> int -> int -> float -> float -> int -> int -> plplot_colorbar_opt array -> string array -> string array -> float array -> int array -> float array array -> float * float = "ml_plcolorbar_byte" "ml_plcolorbar")
+RAW_ML(external pllegend : plplot_legend_opt -> plplot_position_opt -> float -> float -> float -> int -> int -> int -> int -> int -> plplot_legend_opt array -> float -> float -> float -> float -> int array -> string array -> int array -> int array -> float array -> float array -> int array -> int array -> float array -> int array -> float array -> int array -> string array -> float * float = "ml_pllegend_byte" "ml_pllegend")
+RAW_ML(external plcolorbar : plplot_colorbar_opt -> plplot_position_opt -> float -> float -> float -> float -> int -> int -> int -> float -> float -> int -> float -> plplot_colorbar_opt array -> string array -> string array -> float array -> int array -> float array array -> float * float = "ml_plcolorbar_byte" "ml_plcolorbar")
 

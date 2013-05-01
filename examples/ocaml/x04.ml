@@ -74,7 +74,7 @@ let plot1 plot_type =
     let text = [| "Amplitude"; "Phase shift" |] in
     let line_colors = [| 2; 3 |] in
     let line_styles = [| 1; 1 |] in
-    let line_widths = [| 1; 1 |] in
+    let line_widths = [| 1.0; 1.0 |] in
     (* note from the above opt_array the first symbol (and box) indices
        do not matter *)
 
@@ -108,7 +108,7 @@ let plot1 plot_type =
     let text = [| "Amplitude" |] in
     let line_colors = [| 2 |] in
     let line_styles = [| 1 |] in
-    let line_widths = [| 1 |] in
+    let line_widths = [| 1.0 |] in
     (* note from the above opt_array the first symbol (and box) indices
        do not matter *)
 

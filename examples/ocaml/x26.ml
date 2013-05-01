@@ -169,7 +169,7 @@ let plot1 label_type x_label y_label alty_label legend_text title_label line_lab
   let text_colors = [| 2; 3 |] in
   let line_colors = [| 2; 3 |] in
   let line_styles = [| 1; 1 |] in
-  let line_widths = [| 1; 1 |] in
+  let line_widths = [| 1.0; 1.0 |] in
   (* note from the above opt_array the first symbol (and box) indices
      do not matter *)
 

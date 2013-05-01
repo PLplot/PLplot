@@ -187,7 +187,7 @@ module Plot = struct
       (string option * color_t * float array * float array * string * float)
     | Polygon of (color_t * float array * float array * bool)
     | Shades of (
-      int * color_t * int * bool * float * float * float * float * float array
+      float * color_t * float * bool * float * float * float * float * float array
       array * float array
     )
     | Text of (color_t * string * float * float * float * float * float)
@@ -550,10 +550,10 @@ module Plot = struct
   let shades ?fill_width ?contour ?(rect = true)
              (x0, y0) (x1, y1) contours data =
     let cont_color, cont_width =
-      contour |? (Index_color 0, 0)
+      contour |? (Index_color 0, 0.0)
     in
     Shades (
-      fill_width |? 1, cont_color, cont_width, rect, x0, y0, x1, y1,
+      fill_width |? 1.0, cont_color, cont_width, rect, x0, y0, x1, y1,
       data, contours
     )
 
@@ -625,8 +625,8 @@ module Plot = struct
 
   type legend_entry_t =
     | No_legend (** An empty entry *)
-    | Box_legend of (int * int * float * int * int * string)
-    | Line_legend of (int * int * int * int * string)
+    | Box_legend of (int * int * float * float * int * string)
+    | Line_legend of (int * int * float * int * string)
     | Symbol_legend of (int * float * int * string * int * string)
 
   let opt_of_entry = function
@@ -641,13 +641,13 @@ module Plot = struct
 
   let no_legend = No_legend
 
-  let box_legend ?(pattern = 0) ?(scale = 1.0) ?(line_width = 1)
+  let box_legend ?(pattern = 0) ?(scale = 1.0) ?(line_width = 1.0)
                  ?(label_color = Black) ~label color =
     let label_color = int_of_color label_color in
     let color = int_of_color color in
     Box_legend (color, pattern, scale, line_width, label_color, label)
 
-  let line_legend ?(style = 1) ?(width = 1) ?(label_color = Black) ~label color =
+  let line_legend ?(style = 1) ?(width = 1.0) ?(label_color = Black) ~label color =
     let label_color = int_of_color label_color in
     let color = int_of_color color in
     Line_legend (color, style, width, label_color, label)
@@ -787,10 +787,10 @@ module Plot = struct
     let box_colors = Array.make n_entries 0 in
     let box_patterns = Array.make n_entries 0 in
     let box_scales = Array.make n_entries 0.0 in
-    let box_line_widths = Array.make n_entries 0 in
+    let box_line_widths = Array.make n_entries 0.0 in
     let line_colors = Array.make n_entries 0 in
     let line_styles = Array.make n_entries 0 in
-    let line_widths = Array.make n_entries 0 in
+    let line_widths = Array.make n_entries 0.0 in
     let symbol_colors = Array.make n_entries 0 in
     let symbol_scales = Array.make n_entries 0.0 in
     let symbol_numbers = Array.make n_entries 0 in
@@ -882,7 +882,7 @@ module Plot = struct
     (* Contours *)
     let cont_color, cont_width =
       match contour with
-      | None -> 0, 0
+      | None -> 0, 0.0
       | Some (col, wid) -> int_of_color col, wid
     in
     (* Orientation *)
