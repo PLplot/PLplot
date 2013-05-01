@@ -555,8 +555,8 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     // Active attributes to be saved and restored afterward.
     PLINT col0_save       = plsc->icol0,
           line_style_save = plsc->line_style,
-          line_width_save = plsc->width,
           pattern_save    = plsc->patt;
+    PLFLT line_width_save = plsc->width;
     PLFLT text_scale_save = plsc->chrht / plsc->chrdef;
     // Saved external world coordinates of viewport.
     PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
