@@ -166,8 +166,9 @@ static void
 plot1( void )
 {
     PLFLT shade_min, shade_max, sh_color;
-    PLINT sh_cmap   = 0, sh_width;
-    PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0;
+    PLINT sh_cmap   = 0;
+    PLINT min_color = 0, max_color = 0;
+    PLFLT sh_width, min_width = 0., max_width = 0.;
 
     pladv( 0 );
     plvpor( 0.1, 0.9, 0.1, 0.9 );
@@ -178,11 +179,11 @@ plot1( void )
     shade_min = zmin + ( zmax - zmin ) * 0.4;
     shade_max = zmin + ( zmax - zmin ) * 0.6;
     sh_color  = 7;
-    sh_width  = 2;
+    sh_width  = 2.;
     min_color = 9;
     max_color = 2;
-    min_width = 2;
-    max_width = 2;
+    min_width = 2.;
+    max_width = 2.;
 
     plpsty( 8 );
     plshade1( &z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1.,
@@ -208,8 +209,9 @@ static void
 plot2( void )
 {
     PLFLT        shade_min, shade_max, sh_color;
-    PLINT        sh_cmap   = 0, sh_width;
-    PLINT        min_color = 0, min_width = 0, max_color = 0, max_width = 0;
+    PLINT        sh_cmap   = 0;
+    PLINT        min_color = 0, max_color = 0;
+    PLFLT        sh_width, min_width = 0., max_width = 0.;
     int          i;
     static PLINT nlin[10]   = { 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 };
     static PLINT inc[10][2] = { { 450,    0 }, { -450,    0 }, { 0,   0 }, { 900,   0 },
@@ -220,7 +222,7 @@ plot2( void )
                                 { 2000, 2000 }, { 2000, 2000 }, { 4000, 4000 },
                                 { 4000, 2000 } };
 
-    sh_width = 2;
+    sh_width = 2.;
 
     pladv( 0 );
     plvpor( 0.1, 0.9, 0.1, 0.9 );

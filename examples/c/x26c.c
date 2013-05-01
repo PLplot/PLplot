@@ -225,7 +225,7 @@ plot1( int type, const char *x_label, const char *y_label, const char *alty_labe
     text_colors[0] = 2;
     line_colors[0] = 2;
     line_styles[0] = 1;
-    line_widths[0] = 1;
+    line_widths[0] = 1.;
     // note from the above opt_array the first symbol (and box) indices
     // do not have to be specified
 
@@ -234,7 +234,7 @@ plot1( int type, const char *x_label, const char *y_label, const char *alty_labe
     text_colors[1]    = 3;
     line_colors[1]    = 3;
     line_styles[1]    = 1;
-    line_widths[1]    = 1;
+    line_widths[1]    = 1.;
     symbol_colors[1]  = 3;
     symbol_scales[1]  = 1.;
     symbol_numbers[1] = 4;

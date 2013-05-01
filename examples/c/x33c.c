@@ -32,8 +32,8 @@
 
 #include "plcdemos.h"
 
-void plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, PLINT cont_width, PLINT n_values, PLFLT *values );
-void plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLINT cont_width, PLINT n_values, PLFLT *values );
+void plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, PLFLT cont_width, PLINT n_values, PLFLT *values );
+void plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLFLT cont_width, PLINT n_values, PLFLT *values );
 
 static PLINT position_options[16] = {
     PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
@@ -151,7 +151,7 @@ static PLOptionTable options[] = {
 const char           *notes[] = { "Make sure you get it right!", NULL };
 
 void
-plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, PLINT cont_width, PLINT n_values, PLFLT *values )
+plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, PLFLT cont_width, PLINT n_values, PLFLT *values )
 {
     // Parameters for the colorbars on this page
     PLINT      position_i, position, opt;
@@ -212,7 +212,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         // Set appropriate labelling options.
         if ( ifn )
         {
-            if ( cont_color == 0 || cont_width == 0 )
+            if ( cont_color == 0 || cont_width == 0. )
             {
                 axis_opts[0] = "uwtivn";
                 //axis_opts[0] = "uwtin";
@@ -225,7 +225,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
         }
         else
         {
-            if ( cont_color == 0 || cont_width == 0 )
+            if ( cont_color == 0 || cont_width == 0. )
             {
                 axis_opts[0] = "uwtivm";
                 //axis_opts[0] = "uwtim";
@@ -278,7 +278,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
 }
 
 void
-plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLINT cont_width, PLINT n_values, PLFLT *values )
+plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLFLT cont_width, PLINT n_values, PLFLT *values )
 {
     int label_i, cap_i;
 
@@ -353,7 +353,7 @@ main( int argc, const char *argv[] )
     opt_base          = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX;
     opt_array[0]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
     line_styles[0]    = 1;
-    line_widths[0]    = 1;
+    line_widths[0]    = 1.;
     symbol_scales[0]  = 1.;
     symbol_numbers[0] = 4;
     symbols[0]        = "*";
@@ -399,7 +399,7 @@ main( int argc, const char *argv[] )
     {
         opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
         line_styles[k]    = 1;
-        line_widths[k]    = 1;
+        line_widths[k]    = 1.;
         symbol_scales[k]  = 1.;
         symbol_numbers[k] = 2;
         symbols[k]        = "*";
@@ -539,7 +539,7 @@ main( int argc, const char *argv[] )
         {
             opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
             line_styles[k]    = 1;
-            line_widths[k]    = 1;
+            line_widths[k]    = 1.;
             symbol_scales[k]  = 1.;
             symbol_numbers[k] = 2;
             symbols[k]        = "*";
@@ -608,14 +608,14 @@ main( int argc, const char *argv[] )
     box_colors[1]      = 2;
     box_patterns[1]    = 0;
     box_scales[1]      = 0.8;
-    box_line_widths[1] = 1;
+    box_line_widths[1] = 1.;
 
     opt_array[2] = PL_LEGEND_LINE;
     sprintf( text[2], "%s", "Line" );
     text_colors[2] = 3;
     line_colors[2] = 3;
     line_styles[2] = 1;
-    line_widths[2] = 1;
+    line_widths[2] = 1.;
 
     opt_array[3] = PL_LEGEND_SYMBOL;
     sprintf( text[3], "%s", "Symbol" );
@@ -630,7 +630,7 @@ main( int argc, const char *argv[] )
     text_colors[4]    = 5;
     line_colors[4]    = 5;
     line_styles[4]    = 1;
-    line_widths[4]    = 1;
+    line_widths[4]    = 1.;
     symbol_colors[4]  = 5;
     symbol_scales[4]  = text_scale;
     symbol_numbers[4] = 4;
@@ -707,7 +707,7 @@ main( int argc, const char *argv[] )
         box_colors[i]      = i + 1;
         box_patterns[i]    = 0;
         box_scales[i]      = 0.8;
-        box_line_widths[i] = 1;
+        box_line_widths[i] = 1.;
     }
 
     opt = opt_base;
@@ -735,7 +735,7 @@ main( int argc, const char *argv[] )
         box_colors[i]      = 2;
         box_patterns[i]    = i;
         box_scales[i]      = 0.8;
-        box_line_widths[i] = 1;
+        box_line_widths[i] = 1.;
     }
 
     opt = opt_base;
@@ -760,7 +760,7 @@ main( int argc, const char *argv[] )
         box_colors[i]      = 2;
         box_patterns[i]    = 3;
         box_scales[i]      = 0.8;
-        box_line_widths[i] = i + 1;
+        box_line_widths[i] = (PLFLT) ( i + 1 );
     }
 
     opt = opt_base;
@@ -784,7 +784,7 @@ main( int argc, const char *argv[] )
         text_colors[i] = i + 1;
         line_colors[i] = i + 1;
         line_styles[i] = 1;
-        line_widths[i] = 1;
+        line_widths[i] = 1.;
     }
 
     opt = opt_base;
@@ -811,7 +811,7 @@ main( int argc, const char *argv[] )
         text_colors[i] = 2;
         line_colors[i] = 2;
         line_styles[i] = i + 1;
-        line_widths[i] = 1;
+        line_widths[i] = 1.;
     }
 
     opt = opt_base;
@@ -835,7 +835,7 @@ main( int argc, const char *argv[] )
         text_colors[i] = 2;
         line_colors[i] = 2;
         line_styles[i] = 1;
-        line_widths[i] = i + 1;
+        line_widths[i] = (PLFLT) ( i + 1 );
     }
 
     opt = opt_base;

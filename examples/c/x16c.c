@@ -128,18 +128,18 @@ zdefined( PLFLT x, PLFLT y )
 int
 main( int argc, const char *argv[] )
 {
-    int      i, j;
-    PLFLT    x, y, argx, argy, distort, r, t;
-    PLFLT    px[PERIMETERPTS], py[PERIMETERPTS];
+    int        i, j;
+    PLFLT      x, y, argx, argy, distort, r, t;
+    PLFLT      px[PERIMETERPTS], py[PERIMETERPTS];
 
-    PLFLT    **z, **w, zmin, zmax;
-    PLFLT    *clevel, *shedge, *xg1, *yg1;
-    PLcGrid  cgrid1;
-    PLcGrid2 cgrid2;
+    PLFLT      **z, **w, zmin, zmax;
+    PLFLT      *clevel, *shedge, *xg1, *yg1;
+    PLcGrid    cgrid1;
+    PLcGrid2   cgrid2;
 
-    PLINT    fill_width = 2, cont_color = 0, cont_width = 0;
-    PLFLT    colorbar_width, colorbar_height;
-
+    PLFLT      fill_width = 2., cont_width = 0.;
+    PLFLT      colorbar_width, colorbar_height;
+    PLINT      cont_color = 0;
 #define NUM_AXES    1
     PLINT      n_axis_opts  = NUM_AXES;
     const char *axis_opts[] = {
@@ -410,7 +410,7 @@ main( int argc, const char *argv[] )
 
     plshades( (const PLFLT * const *) z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
-        2, 3,
+        2, 3.,
         plfill, 0, pltr2, (void *) &cgrid2 );
 
     if ( colorbar )
