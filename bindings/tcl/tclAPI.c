@@ -2597,7 +2597,7 @@ plshadeCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
     PLINT      sh_cmap   = 1;
     PLFLT      sh_wid    = 2.;
-    PLINT      min_col   = 1,  max_col = 0;
+    PLINT      min_col   = 1, max_col = 0;
     PLFLT      min_wid   = 0., max_wid = 0.;
     PLINT      rect      = 1;
     const char *pltrname = "pltr0";
