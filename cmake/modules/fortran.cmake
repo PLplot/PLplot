@@ -27,7 +27,7 @@ if(DEFAULT_NO_BINDINGS)
   option(ENABLE_f95 "Enable f95 bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_f77 "Enable f77 bindings" OFF)
-  option(ENABLE_f95 "Enable f95 bindings" OFF)
+  option(ENABLE_f95 "Enable f95 bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_f77 OR ENABLE_f95)
@@ -63,12 +63,12 @@ if(ENABLE_f77 OR ENABLE_f95)
   endif(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 
   # Set installation location for f77 include files
-  set(F77_INCLUDE_DIR ${LIB_DIR}/fortran/include/${PACKAGE} 
+  set(F77_INCLUDE_DIR ${LIB_DIR}/fortran/include/${PACKAGE}
     CACHE PATH "installation location for f95 modules"
     )
 
   # Set installation location for f95 modules.
-  set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/${PACKAGE} 
+  set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/${PACKAGE}
     CACHE PATH "installation location for f95 modules"
     )
 
