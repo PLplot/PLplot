@@ -468,18 +468,24 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
           PLFLT text_justification,
           const PLINT *ArrayCk, const char **ArrayCk,
           const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
-          const PLFLT *ArrayCkNull, const PLINT *ArrayCkNull,
+          const PLFLT *ArrayCkNull, const PLFLT *ArrayCkNull,
           const PLINT *ArrayCkNull, const PLINT *ArrayCkNull,
-          const PLINT *ArrayCkNull,
+          const PLFLT *ArrayCkNull,
           const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
           const PLINT *ArrayCkNull, const char **ArrayCk );
 
 #if 0
 void
-plcolorbar( PLINT opt, PLFLT x, PLFLT y, PLFLT length, PLFLT width,
-            PLFLT ticks, PLFLT sub_ticks,
-            const char *axis_opts, const char *label,
-            PLINT n, const PLFLT *Array, const PLFLT *ArrayCk );
+plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
+            PLINT opt, PLFLT x, PLFLT y,
+            PLFLT x_length, PLFLT y_length,
+            PLINT bg_color, PLINT bb_color, PLINT bb_style,
+            PLFLT low_cap_color, PLFLT high_cap_color,
+            PLINT cont_color, PLFLT cont_width,
+            PLINT n_labels, PLINT *label_opts, const char *label[],
+            PLINT n_axes, const char *axis_opts[],
+            PLFLT *ticks, PLINT *sub_ticks,
+            PLINT *n_values, const PLFLT * const *values );
 #endif
 
 void
@@ -664,8 +670,8 @@ plsfont( PLINT family, PLINT style, PLINT weight );
 void
 plshades( const PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-          const PLFLT *Array, PLINT n, PLINT fill_width,
-          PLINT cont_color, PLINT cont_width,
+          const PLFLT *Array, PLINT n, PLFLT fill_width,
+          PLINT cont_color, PLFLT cont_width,
           fill_func ff, PLBOOL rectangular,
           pltr_func pltr,
           PLPointer SWIG_OBJECT_DATA );
@@ -674,9 +680,9 @@ void
 plshade( const PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
          PLFLT shade_min, PLFLT shade_max,
-         PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-         PLINT min_color, PLINT min_width,
-         PLINT max_color, PLINT max_width,
+         PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+         PLINT min_color, PLFLT min_width,
+         PLINT max_color, PLFLT max_width,
          fill_func ff, PLBOOL rectangular,
          pltr_func pltr,
          PLPointer SWIG_OBJECT_DATA );

@@ -178,10 +178,10 @@ def main():
     box_colors = zeros(nlegend, "int")
     box_patterns = zeros(nlegend, "int")
     box_scales = zeros(nlegend)
-    box_line_widths = zeros(nlegend, "int")
+    box_line_widths = zeros(nlegend)
     line_colors = zeros(nlegend, "int")
     line_styles = zeros(nlegend, "int")
-    line_widths = zeros(nlegend, "int")
+    line_widths = zeros(nlegend)
     symbol_colors = zeros(nlegend, "int")
     symbol_scales = zeros(nlegend)
     symbol_numbers = zeros(nlegend, "int")
@@ -192,7 +192,7 @@ def main():
     opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX
     opt_array[0] = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
     line_styles[0] = 1
-    line_widths[0] = 1
+    line_widths[0] = 1.
     symbol_scales[0] = 1.
     symbol_numbers[0] = 4
     symbols[0] = "*"
@@ -235,10 +235,10 @@ def main():
     box_colors = zeros(nlegend, "int")
     box_patterns = zeros(nlegend, "int")
     box_scales = zeros(nlegend)
-    box_line_widths = zeros(nlegend, "int")
+    box_line_widths = zeros(nlegend)
     line_colors = zeros(nlegend, "int")
     line_styles = zeros(nlegend, "int")
-    line_widths = zeros(nlegend, "int")
+    line_widths = zeros(nlegend)
     symbol_colors = zeros(nlegend, "int")
     symbol_scales = zeros(nlegend)
     symbol_numbers = zeros(nlegend, "int")
@@ -250,7 +250,7 @@ def main():
     for k in range(nlegend):
         opt_array[k] = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
         line_styles[k] = 1
-        line_widths[k] = 1
+        line_widths[k] = 1.
         symbol_scales[k] = 1.
         symbol_numbers[k] = 2
         symbols[k] = "*"
@@ -388,10 +388,10 @@ def main():
         box_colors = zeros(nlegend, "int")
         box_patterns = zeros(nlegend, "int")
         box_scales = zeros(nlegend)
-        box_line_widths = zeros(nlegend, "int")
+        box_line_widths = zeros(nlegend)
         line_colors = zeros(nlegend, "int")
         line_styles = zeros(nlegend, "int")
-        line_widths = zeros(nlegend, "int")
+        line_widths = zeros(nlegend)
         symbol_colors = zeros(nlegend, "int")
         symbol_scales = zeros(nlegend)
         symbol_numbers = zeros(nlegend, "int")
@@ -402,7 +402,7 @@ def main():
         for k in range(nlegend):
             opt_array[k] = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
             line_styles[k] = 1
-            line_widths[k] = 1
+            line_widths[k] = 1.
             symbol_scales[k] = 1.
             symbol_numbers[k] = 2
             symbols[k] = "*"
@@ -456,10 +456,10 @@ def main():
     box_colors = zeros(nlegend, "int")
     box_patterns = zeros(nlegend, "int")
     box_scales = zeros(nlegend)
-    box_line_widths = zeros(nlegend, "int")
+    box_line_widths = zeros(nlegend)
     line_colors = zeros(nlegend, "int")
     line_styles = zeros(nlegend, "int")
-    line_widths = zeros(nlegend, "int")
+    line_widths = zeros(nlegend)
     symbol_colors = zeros(nlegend, "int")
     symbol_scales = zeros(nlegend)
     symbol_numbers = zeros(nlegend, "int")
@@ -481,14 +481,14 @@ def main():
     box_colors[1] = 2
     box_patterns[1] = 0
     box_scales[1] = 0.8
-    box_line_widths[1] = 1
+    box_line_widths[1] = 1.
 
     opt_array[2] = PL_LEGEND_LINE
     text[2] = "Line"
     text_colors[2] = 3
     line_colors[2] = 3
     line_styles[2] = 1
-    line_widths[2] = 1
+    line_widths[2] = 1.
 
     opt_array[3] = PL_LEGEND_SYMBOL
     text[3] = "Symbol"
@@ -503,7 +503,7 @@ def main():
     text_colors[4] = 5
     line_colors[4] = 5
     line_styles[4] = 1
-    line_widths[4] = 1
+    line_widths[4] = 1.
     symbol_colors[4] = 5
     symbol_scales[4] = text_scale
     symbol_numbers[4] = 4
@@ -572,7 +572,7 @@ def main():
         box_colors[i] = i+1
         box_patterns[i] = 0
         box_scales[i] = 0.8
-        box_line_widths[i] = 1
+        box_line_widths[i] = 1.
 
     opt = opt_base
     # Use new origin
@@ -597,7 +597,7 @@ def main():
         box_colors[i] = 2
         box_patterns[i] = i
         box_scales[i] = 0.8
-        box_line_widths[i] = 1
+        box_line_widths[i] = 1.
 
     opt = opt_base
     x += legend_width
@@ -619,7 +619,7 @@ def main():
         box_colors[i] = 2
         box_patterns[i] = 3
         box_scales[i] = 0.8
-        box_line_widths[i] = i+1
+        box_line_widths[i] = float(i+1)
 
     opt = opt_base
     x += legend_width
@@ -640,7 +640,7 @@ def main():
         text_colors[i] = i+1
         line_colors[i] = i+1
         line_styles[i] = 1
-        line_widths[i] = 1
+        line_widths[i] = 1.
 
     opt = opt_base
     # Use new origin
@@ -664,7 +664,7 @@ def main():
         text_colors[i] = 2
         line_colors[i] = 2
         line_styles[i] = i+1
-        line_widths[i] = 1
+        line_widths[i] = 1.
 
     opt = opt_base
     x += legend_width
@@ -685,7 +685,7 @@ def main():
         text_colors[i] = 2
         line_colors[i] = 2
         line_styles[i] = 1
-        line_widths[i] = i+1
+        line_widths[i] = float(i+1)
 
     opt = opt_base
     x += legend_width

@@ -386,22 +386,22 @@ def plshades(z, *args):
 	raise ValueError, "Missing clev argument"
 
     # fill_width must be present
-    if len(args) > 0 and type(args[0]) == types.IntType:
+    if len(args) > 0 and (type(args[0]) == types.FloatType or type(args[0]) == numpy.float64):
 	fill_width = args[0]
 	args = args[1:]
     else:
-	raise ValueError, "Missing fill_width argument"
+	raise ValueError, "fill_width argument must be present and of types.FloatType or numpy.float64 type"
 
     # cont_color and cont_width are optional.
     if len(args) > 2 and \
     type(args[0]) == types.IntType and \
-    type(args[1]) == types.IntType:
+    (type(args[1]) == types.FloatType or type(args[1]) == numpy.float64):
 	# These 2 args are 
 	cont_color, cont_width = args[0:2]
 	args = args[2:]
     else:
 	# Turn off contouring.
-	cont_color, cont_width = (0,0)
+	cont_color, cont_width = (0,0.)
 
     # rect must be present.
     if len(args) > 0 and type(args[0]) == types.IntType:
@@ -492,10 +492,6 @@ plshades.__doc__ = _plshades.__doc__
 # [min_color, min_width, max_color, max_width,] rect, \
 # [pltr, [pltr_data] or [xg, yg, [wrap]]])
 
-# plshade(z,  [xmin, xmax, ymin, ymax,] clev, \
-# fill_width, [cont_color, cont_width,], rect, \
-# [pltr, [pltr_data] or [xg, yg, [wrap]]])
- 
 _plshade = plshade
 def plshade(z, *args):
     z = numpy.asarray(z)
@@ -528,25 +524,25 @@ def plshade(z, *args):
     (type(args[1]) == types.FloatType or type(args[1]) == numpy.float64) and \
     type(args[2]) == types.IntType and \
     (type(args[3]) == types.FloatType or type(args[3]) == numpy.float64 or type(args[3]) == types.IntType) and \
-    type(args[4]) == types.IntType:
+    (type(args[4]) == types.FloatType or type(args[4]) == numpy.float64):
 	shade_min, shade_max, sh_cmap, sh_color, sh_width = args[0:5]
 	args = args[5:]
     else:
 	raise ValueError, \
-	"shade_min, shade_max, sh_cmap, sh_color, sh_width, must be present"
+	"shade_min, shade_max, sh_cmap, sh_color, sh_width, must be present with sh_cmap of types.IntType type and the rest of types.FloatType or numpy.float64 type"
 
     # min_color, min_width, max_color, max_width are optional.
     if len(args) > 4 and \
     type(args[0]) == types.IntType and \
-    type(args[1]) == types.IntType and \
+    (type(args[1]) == types.FloatType or type(args[1]) == numpy.float64) and \
     type(args[2]) == types.IntType and \
-    type(args[3]) == types.IntType:
+    (type(args[3]) == types.FloatType or type(args[3]) == numpy.float64):
 	# These 4 args are 
 	min_color, min_width, max_color, max_width = args[0:4]
 	args = args[4:]
     else:
 	# Turn off boundary colouring
-	min_color, min_width, max_color, max_width = (0,0,0,0)
+	min_color, min_width, max_color, max_width = (0,0.,0,0.)
 
     # rect must be present.
     if len(args) > 0 and type(args[0]) == types.IntType:

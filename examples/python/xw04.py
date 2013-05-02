@@ -89,10 +89,10 @@ def plot1(type):
     box_colors = zeros(nlegend, "int")
     box_patterns = zeros(nlegend, "int")
     box_scales = zeros(nlegend)
-    box_line_widths = zeros(nlegend, "int")
+    box_line_widths = zeros(nlegend)
     line_colors = zeros(nlegend, "int")
     line_styles = zeros(nlegend, "int")
-    line_widths = zeros(nlegend, "int")
+    line_widths = zeros(nlegend)
     symbol_colors = zeros(nlegend, "int")
     symbol_scales = zeros(nlegend)
     symbol_numbers = zeros(nlegend, "int")
@@ -106,7 +106,7 @@ def plot1(type):
     text[0] = "Amplitude"
     line_colors[0] = 2
     line_styles[0] = 1
-    line_widths[0] = 1
+    line_widths[0] = 1.
 
     # Data for second legend entry.
     if nlegend > 1:
@@ -115,7 +115,7 @@ def plot1(type):
         text[1]           = "Phase shift"
         line_colors[1]    = 3
         line_styles[1]    = 1
-        line_widths[1]    = 1
+        line_widths[1]    = 1.
         symbol_colors[1]  = 3
         symbol_scales[1]  = 1.
         symbol_numbers[1] = 4

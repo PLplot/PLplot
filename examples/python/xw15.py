@@ -60,11 +60,11 @@ def plot1(z, zmin, zmax):
     shade_max = zmin + (zmax-zmin)*0.6
     sh_cmap = 0
     sh_color = 7
-    sh_width = 2
+    sh_width = 2.
     min_color = 9
-    min_width = 2
+    min_width = 2.
     max_color = 2
-    max_width = 2
+    max_width = 2.
     
     plpsty(8)
     
@@ -97,11 +97,11 @@ def plot2(z, zmin, zmax):
     plwind(-1.0, 1.0, -1.0, 1.0)
     
     sh_cmap = 0
-    sh_width = 2
+    sh_width = 2.
     min_color = 0
-    min_width = 0
+    min_width = 0.
     max_color = 0
-    max_width = 0
+    max_width = 0.
     
     for i in range(10):
 	shade_min = zmin + (zmax - zmin) * i / 10.0

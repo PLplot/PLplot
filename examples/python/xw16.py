@@ -40,9 +40,9 @@ def mypltr(x, y, data):
 		
 def main():
 
-    fill_width = 2
+    fill_width = 2.
     cont_color = 2
-    cont_width = 3
+    cont_width = 3.
 
     # Set up data array
 
