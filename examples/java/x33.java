@@ -219,10 +219,10 @@ class x33 {
         int[]      box_colors;
         int[]      box_patterns;
         double[]      box_scales;
-        int[]      box_line_widths;
+        double[]      box_line_widths;
         int[]      line_colors;
         int[]      line_styles;
-        int[]      line_widths;
+        double[]      line_widths;
         int[]      symbol_numbers;
         int[]      symbol_colors;
         double[]      symbol_scales;
@@ -274,7 +274,7 @@ class x33 {
         text_colors    = new int[nlegend];
         line_colors    = new int[nlegend];
         line_styles    = new int[nlegend];
-        line_widths    = new int[nlegend];
+        line_widths    = new double[nlegend];
         symbol_numbers = new int[nlegend];
         symbol_colors  = new int[nlegend];
         symbol_scales  = new double[nlegend];
@@ -285,7 +285,7 @@ class x33 {
         opt_base          = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX;
         opt_array[0]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
         line_styles[0]    = 1;
-        line_widths[0]    = 1;
+        line_widths[0]    = 1.;
         symbol_scales[0]  = 1.;
         symbol_numbers[0] = 4;
         symbols[0]        = "*";
@@ -327,11 +327,11 @@ class x33 {
         text_colors     = new int[nlegend];
         line_colors     = new int[nlegend];
         line_styles     = new int[nlegend];
-        line_widths     = new int[nlegend];
+        line_widths     = new double[nlegend];
         box_colors      = new int[nlegend];
         box_patterns    = new int[nlegend];
         box_scales      = new double[nlegend];
-        box_line_widths = new int[nlegend];
+        box_line_widths = new double[nlegend];
         symbol_numbers  = new int[nlegend];
         symbol_colors   = new int[nlegend];
         symbol_scales   = new double[nlegend];
@@ -345,7 +345,7 @@ class x33 {
         {
             opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
             line_styles[k]    = 1;
-            line_widths[k]    = 1;
+            line_widths[k]    = 1.;
             symbol_scales[k]  = 1.;
             symbol_numbers[k] = 2;
             symbols[k]        = "*";
@@ -483,11 +483,11 @@ class x33 {
             text_colors     = new int[nlegend];
             line_colors     = new int[nlegend];
             line_styles     = new int[nlegend];
-            line_widths     = new int[nlegend];
+            line_widths     = new double[nlegend];
             box_colors      = new int[nlegend];
             box_patterns    = new int[nlegend];
             box_scales      = new double[nlegend];
-            box_line_widths = new int[nlegend];
+            box_line_widths = new double[nlegend];
             symbol_numbers  = new int[nlegend];
             symbol_colors   = new int[nlegend];
             symbol_scales   = new double[nlegend];
@@ -500,7 +500,7 @@ class x33 {
             {
                 opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
                 line_styles[k]    = 1;
-                line_widths[k]    = 1;
+                line_widths[k]    = 1.;
                 symbol_scales[k]  = 1.;
                 symbol_numbers[k] = 2;
                 symbols[k]        = "*";
@@ -557,11 +557,11 @@ class x33 {
         text_colors     = new int[nlegend];
         line_colors     = new int[nlegend];
         line_styles     = new int[nlegend];
-        line_widths     = new int[nlegend];
+        line_widths     = new double[nlegend];
         box_colors      = new int[nlegend];
         box_patterns    = new int[nlegend];
         box_scales      = new double[nlegend];
-        box_line_widths = new int[nlegend];
+        box_line_widths = new double[nlegend];
         symbol_numbers  = new int[nlegend];
         symbol_colors   = new int[nlegend];
         symbol_scales   = new double[nlegend];
@@ -588,14 +588,14 @@ class x33 {
         box_colors[1]      = 2;
         box_patterns[1]    = 0;
         box_scales[1]      = 0.8;
-        box_line_widths[1] = 1;
+        box_line_widths[1] = 1.;
 
         opt_array[2]   = PL_LEGEND_LINE;
         text[2]        = "Line";
         text_colors[2] = 3;
         line_colors[2] = 3;
         line_styles[2] = 1;
-        line_widths[2] = 1;
+        line_widths[2] = 1.;
 
         opt_array[3]      = PL_LEGEND_SYMBOL;
         text[3]           = "Symbol";
@@ -610,7 +610,7 @@ class x33 {
         text_colors[4]    = 5;
         line_colors[4]    = 5;
         line_styles[4]    = 1;
-        line_widths[4]    = 1;
+        line_widths[4]    = 1.;
         symbol_colors[4]  = 5;
         symbol_scales[4]  = text_scale;
         symbol_numbers[4] = 4;
@@ -687,7 +687,7 @@ class x33 {
             box_colors[i]      = i + 1;
             box_patterns[i]    = 0;
             box_scales[i]      = 0.8;
-            box_line_widths[i] = 1;
+            box_line_widths[i] = 1.;
         }
 
         opt = opt_base;
@@ -715,7 +715,7 @@ class x33 {
             box_colors[i]      = 2;
             box_patterns[i]    = i;
             box_scales[i]      = 0.8;
-            box_line_widths[i] = 1;
+            box_line_widths[i] = 1.;
         }
 
         opt = opt_base;
@@ -764,7 +764,7 @@ class x33 {
             text_colors[i] = i + 1;
             line_colors[i] = i + 1;
             line_styles[i] = 1;
-            line_widths[i] = 1;
+            line_widths[i] = 1.;
         }
 
         opt = opt_base;
@@ -791,7 +791,7 @@ class x33 {
             text_colors[i] = 2;
             line_colors[i] = 2;
             line_styles[i] = i + 1;
-            line_widths[i] = 1;
+            line_widths[i] = 1.;
         }
 
         opt = opt_base;

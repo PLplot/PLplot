@@ -88,7 +88,8 @@ class x16 {
         double[][] yg2  = new double[XPTS][YPTS];
         double[] clevel = new double[NSHADES];
         double[] shedge = new double[NSHADES + 1];
-        final int fill_width = 2, cont_color = 0, cont_width = 0;
+        final int cont_color = 0;
+        final double fill_width = 2., cont_width = 0.;
 
         // Parse and process command line arguments.
         pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
@@ -242,7 +243,7 @@ class x16 {
 
         pls.shades( z, -1., 1., -1., 1.,
             shedge, fill_width,
-            2, 3,
+            2, 3.,
             false, xg2, yg2 );
 
         pls.col0( 1 );

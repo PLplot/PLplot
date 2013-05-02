@@ -305,7 +305,7 @@ class x21 {
                     pls.col0( 15 );
                     pls.lab( "X", "Y", title[alg - 1] );
                     pls.shades( zg, xm, xM, ym, yM,
-                        clev, 1, 0, 1, true, xg0, yg0 );
+                        clev, 1., 0, 1., true, xg0, yg0 );
                     pls.col0( 2 );
                 }
                 else

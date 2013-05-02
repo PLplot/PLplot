@@ -536,9 +536,9 @@ public class PLStream implements plplotjavacConstants {
                         double text_spacing, double text_justification,
                         int[] text_colors, String[] text,
                         int[] box_colors, int[] box_patterns,
-                        double[] box_scales, int[] box_line_widths,
+                        double[] box_scales, double[] box_line_widths,
                         int[] line_colors, int[] line_styles,
-                        int[] line_widths,
+                        double[] line_widths,
                         int[] symbol_colors, double[] symbol_scales,
                         int[] symbol_numbers, String[] symbols )
     {
@@ -922,8 +922,8 @@ public class PLStream implements plplotjavacConstants {
     }
 
     public void shades( double[][] a, double xmin, double xmax, double ymin,
-                        double ymax, double[] clevel, int fill_width, int cont_color,
-                        int cont_width, boolean rectangular,
+                        double ymax, double[] clevel, double fill_width, int cont_color,
+                        double cont_width, boolean rectangular,
                         double[][] pltr, double[][] OBJECT_DATA )
     {
         if ( set_stream() == -1 ) return;
@@ -933,8 +933,8 @@ public class PLStream implements plplotjavacConstants {
 
     public void shade( double[][] a, double left, double right, double bottom,
                        double top, double shade_min, double shade_max, int sh_cmap,
-                       double sh_color, int sh_width, int min_color, int min_width,
-                       int max_color, int max_width, boolean rectangular,
+                       double sh_color, double sh_width, int min_color, double min_width,
+                       int max_color, double max_width, boolean rectangular,
                        double[][] pltr, double[][] OBJECT_DATA )
     {
         if ( set_stream() == -1 ) return;
@@ -1259,8 +1259,8 @@ public class PLStream implements plplotjavacConstants {
     }
 
     public void shades( double[][] a, double xmin, double xmax, double ymin,
-                        double ymax, double[] clevel, int fill_width, int cont_color,
-                        int cont_width, int rectangular,
+                        double ymax, double[] clevel, double fill_width, int cont_color,
+                        double cont_width, int rectangular,
                         double[][] pltr, double[][] OBJECT_DATA )
     {
         if ( set_stream() == -1 ) return;
@@ -1270,8 +1270,8 @@ public class PLStream implements plplotjavacConstants {
 
     public void shade( double[][] a, double left, double right, double bottom,
                        double top, double shade_min, double shade_max, int sh_cmap,
-                       double sh_color, int sh_width, int min_color, int min_width,
-                       int max_color, int max_width, int rectangular,
+                       double sh_color, double sh_width, int min_color, double min_width,
+                       int max_color, double max_width, int rectangular,
                        double[][] pltr, double[][] OBJECT_DATA )
     {
         if ( set_stream() == -1 ) return;

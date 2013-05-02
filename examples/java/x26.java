@@ -154,7 +154,7 @@ class x26 {
         int[] text_colors      = new int[2];
         int[] line_colors      = new int[2];
         int[] line_styles      = new int[2];
-        int[] line_widths      = new int[2];
+        double[] line_widths      = new double[2];
         int[] symbol_numbers   = new int[2];
         int[] symbol_colors    = new int[2];
         double[] symbol_scales = new double[2];
@@ -226,7 +226,7 @@ class x26 {
         text_colors[0] = 2;
         line_colors[0] = 2;
         line_styles[0] = 1;
-        line_widths[0] = 1;
+        line_widths[0] = 1.;
         // note from the above opt_array the first symbol (and box) indices
         // do not have to be specified EXCEPT for symbols.
         // Although this is unused, it can't be undefined as the String
@@ -238,7 +238,7 @@ class x26 {
         text_colors[1]    = 3;
         line_colors[1]    = 3;
         line_styles[1]    = 1;
-        line_widths[1]    = 1;
+        line_widths[1]    = 1.;
         symbol_colors[1]  = 3;
         symbol_scales[1]  = 1.;
         symbol_numbers[1] = 4;

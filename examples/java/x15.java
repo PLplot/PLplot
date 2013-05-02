@@ -126,8 +126,9 @@ class x15 {
     void plot1( double[][] xg0, double[][] yg0, double[][] z, double zmin, double zmax )
     {
         double shade_min, shade_max, sh_color;
-        int    sh_cmap   = 0, sh_width;
-        int    min_color = 0, min_width = 0, max_color = 0, max_width = 0;
+        int    sh_cmap   = 0;
+        int    min_color = 0, max_color = 0;
+        double sh_width, min_width = 0., max_width = 0.;
 
         pls.adv( 0 );
         pls.vpor( 0.1, 0.9, 0.1, 0.9 );
@@ -138,11 +139,11 @@ class x15 {
         shade_min = zmin + ( zmax - zmin ) * 0.4;
         shade_max = zmin + ( zmax - zmin ) * 0.6;
         sh_color  = 7;
-        sh_width  = 2;
+        sh_width  = 2.;
         min_color = 9;
         max_color = 2;
-        min_width = 2;
-        max_width = 2;
+        min_width = 2.;
+        max_width = 2.;
 
         pls.psty( 8 );
 
@@ -164,8 +165,9 @@ class x15 {
     void plot2( double[][] xg0, double[][] yg0, double[][] z, double zmin, double zmax )
     {
         double shade_min, shade_max, sh_color;
-        int    sh_cmap   = 0, sh_width;
-        int    min_color = 0, min_width = 0, max_color = 0, max_width = 0;
+        int    sh_cmap   = 0;
+        int    min_color = 0, max_color = 0;
+        double sh_width, min_width = 0., max_width = 0.;
         int    i;
         int[][] inc = { {  450 }, { -450 }, {   0 }, { 900 }, { 300 },
                         {450, -450 }, { 0, 900 }, { 0, 450 },
@@ -173,7 +175,7 @@ class x15 {
         int[][] del = { { 2000 }, { 2000 }, { 2000 }, { 2000 }, { 2000 },
                         {2000, 2000 }, { 2000, 2000 }, { 2000, 2000 },
                         {4000, 4000 }, { 4000, 2000 } };
-        sh_width = 2;
+        sh_width = 2.;
 
         pls.adv( 0 );
         pls.vpor( 0.1, 0.9, 0.1, 0.9 );

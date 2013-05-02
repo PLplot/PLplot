@@ -77,7 +77,7 @@ class x04 {
         int[] text_colors;
         int[] line_colors;
         int[] line_styles;
-        int[] line_widths;
+        double[] line_widths;
         int[] symbol_numbers;
         int[] symbol_colors;
         double[] symbol_scales;
@@ -150,7 +150,7 @@ class x04 {
         text_colors    = new int[nlegend];
         line_colors    = new int[nlegend];
         line_styles    = new int[nlegend];
-        line_widths    = new int[nlegend];
+        line_widths    = new double[nlegend];
         symbol_numbers = new int[nlegend];
         symbol_colors  = new int[nlegend];
         symbol_scales  = new double[nlegend];
@@ -162,7 +162,7 @@ class x04 {
         text[0]        = "Amplitude";
         line_colors[0] = 2;
         line_styles[0] = 1;
-        line_widths[0] = 1;
+        line_widths[0] = 1.;
         // note from the above opt_array the first symbol (and box) indices
         // do not have to be specified EXCEPT for symbols.
         // Although this is unused, it can't be undefined as the String
@@ -177,7 +177,7 @@ class x04 {
             text[1]           = "Phase shift";
             line_colors[1]    = 3;
             line_styles[1]    = 1;
-            line_widths[1]    = 1;
+            line_widths[1]    = 1.;
             symbol_colors[1]  = 3;
             symbol_scales[1]  = 1.;
             symbol_numbers[1] = 4;
