@@ -6339,8 +6339,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </funcdef>
 	  <paramdef><parameter>p_legend_width</parameter></paramdef>
 	  <paramdef><parameter>p_legend_height</parameter></paramdef>
-	  <paramdef><parameter>position</parameter></paramdef>
 	  <paramdef><parameter>opt</parameter></paramdef>
+	  <paramdef><parameter>position</parameter></paramdef>
 	  <paramdef><parameter>x</parameter></paramdef>
 	  <paramdef><parameter>y</parameter></paramdef>
 	  <paramdef><parameter>plot_width</parameter></paramdef>
@@ -6423,6 +6423,31 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    <literal><parameter>opt</parameter></literal> contains
+	    bits controlling the overall legend. If the
+	    <literal>PL_LEGEND_TEXT_LEFT</literal> bit is set, put the text area
+	    on the left of the legend and the plotted area on the
+	    right. Otherwise, put the text area on the right of the legend and the
+	    plotted area on the left. If the
+	    <literal>PL_LEGEND_BACKGROUND</literal> bit is set, plot a
+	    (semi-transparent) background for the legend. If the
+	    <literal>PL_LEGEND_BOUNDING_BOX</literal> bit is set, plot a bounding
+	    box for the legend. If the <literal>PL_LEGEND_ROW_MAJOR</literal> bit
+	    is set and (both of the possibly internally transformed)
+	    <literal><parameter>nrow</parameter></literal> &gt; 1 and
+	    <literal><parameter>ncolumn</parameter></literal> &gt; 1, then plot
+	    the resulting array of legend entries in row-major order.
+	    Otherwise, plot the legend entries in column-major order.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
 	  <parameter>position</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
@@ -6455,31 +6480,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    <literal>PL_POSITION_VIEWPORT</literal> or
 	    <literal>PL_POSITION_SUBPAGE</literal> is set, use
 	    <literal>PL_POSITION_VIEWPORT</literal>.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>opt</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    <literal><parameter>opt</parameter></literal> contains
-	    bits controlling the overall legend. If the
-	    <literal>PL_LEGEND_TEXT_LEFT</literal> bit is set, put the text area
-	    on the left of the legend and the plotted area on the
-	    right. Otherwise, put the text area on the right of the legend and the
-	    plotted area on the left. If the
-	    <literal>PL_LEGEND_BACKGROUND</literal> bit is set, plot a
-	    (semi-transparent) background for the legend. If the
-	    <literal>PL_LEGEND_BOUNDING_BOX</literal> bit is set, plot a bounding
-	    box for the legend. If the <literal>PL_LEGEND_ROW_MAJOR</literal> bit
-	    is set and (both of the possibly internally transformed)
-	    <literal><parameter>nrow</parameter></literal> &gt; 1 and
-	    <literal><parameter>ncolumn</parameter></literal> &gt; 1, then plot
-	    the resulting array of legend entries in row-major order.
-	    Otherwise, plot the legend entries in column-major order.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6751,13 +6751,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>box_line_widths</parameter>
-	  (<literal>const PLINT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Array of nlegend scales (units of fraction of character height) for
-	    the height of the discrete colored boxes 
-	    (<parameter>PL_LEGEND_COLOR_BOX</parameter>).
+	    Array of nlegend line widths for the patterns specified by
+            box_patterns (<parameter>PL_LEGEND_COLOR_BOX</parameter>).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6788,7 +6787,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>line_widths</parameter>
-	  (<literal>const PLINT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -6848,11 +6847,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>pllegend(opt, x, y, plot_width,
-      bg_color, opt_array, text_offset, text_scale, text_spacing,
-      test_justification, text_colors, text, box_colors, box_patterns,
-      box_scales, line_colors, line_styles, line_widths, symbol_colors,
-      symbol_scales, symbol_numbers, symbols)</function>
+      Redacted form: <function>pllegend(p_legend_width, p_legend_height, 
+      opt, position, x, y, plot_width,
+      bg_color, bb_color, bb_style,
+      nrow, ncolumn,
+      opt_array, 
+      text_offset, text_scale, text_spacing, test_justification,
+      text_colors, text, 
+      box_colors, box_patterns,
+      box_scales, box_line_widths,
+      line_colors, line_styles, line_widths,
+      symbol_colors, symbol_scales, 
+      symbol_numbers, symbols)</function>
     </para>
 
     <para>
