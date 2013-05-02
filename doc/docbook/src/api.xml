@@ -12136,11 +12136,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>fill_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Defines width used by the fill pattern.
+	    Defines line width used by the fill pattern.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12160,11 +12160,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>cont_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Defines pen width used for contours defining edges of shaded
+	    Defines line width used for contours defining edges of shaded
 	    regions.  This value may not be honored by all drivers.
 	    The pen width is only temporary set for the
 	    contour drawing.  Set this value to zero or less if no shade edge contours are wanted.
@@ -12432,7 +12432,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>sh_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12452,7 +12452,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>min_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12472,7 +12472,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>max_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12756,7 +12756,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>sh_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12781,7 +12781,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>min_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12809,7 +12809,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>max_width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
