@@ -33,7 +33,8 @@
         z(xdim,ydim), w(xdim,ydim), xg1(xdim), yg1(ydim), &
         xg2(xdim,ydim), yg2(xdim,ydim), zmin, zmax, &
         px(PERIMETERPTS), py(PERIMETERPTS)
-      integer fill_width, cont_color, cont_width
+      integer cont_color
+      real(kind=plflt) fill_width, cont_width
       integer i, j
 !      dummy to fill argument list with something not currently used.
       character(len=1) defined

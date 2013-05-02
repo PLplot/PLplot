@@ -47,47 +47,47 @@ void PLVECT7( PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
 void PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
                 PLFLT *shade_min, PLFLT *shade_max,
-                PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-                PLINT *min_color, PLINT *min_width,
-                PLINT *max_color, PLINT *max_width, PLINT *lx );
+                PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+                PLINT *min_color, PLFLT *min_width,
+                PLINT *max_color, PLFLT *max_width, PLINT *lx );
 void PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
                 PLFLT *shade_min, PLFLT *shade_max,
-                PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-                PLINT *min_color, PLINT *min_width,
-                PLINT *max_color, PLINT *max_width,
+                PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+                PLINT *min_color, PLFLT *min_width,
+                PLINT *max_color, PLFLT *max_width,
                 PLFLT *xg1, PLFLT *yg1, PLINT *lx );
 void PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
                 PLFLT *shade_min, PLFLT *shade_max,
-                PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-                PLINT *min_color, PLINT *min_width,
-                PLINT *max_color, PLINT *max_width,
+                PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+                PLINT *min_color, PLFLT *min_width,
+                PLINT *max_color, PLFLT *max_width,
                 PLFLT *xg2, PLFLT *yg2, PLINT *lx );
 void PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
                PLFLT *shade_min, PLFLT *shade_max,
-               PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-               PLINT *min_color, PLINT *min_width,
-               PLINT *max_color, PLINT *max_width, PLFLT *ftr, PLINT *lx );
+               PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+               PLINT *min_color, PLFLT *min_width,
+               PLINT *max_color, PLFLT *max_width, PLFLT *ftr, PLINT *lx );
 void PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-                 PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-                 PLINT *cont_color, PLINT *cont_width, PLINT *lx );
+                 PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+                 PLINT *cont_color, PLFLT *cont_width, PLINT *lx );
 void PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-                 PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-                 PLINT *cont_color, PLINT *cont_width,
+                 PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+                 PLINT *cont_color, PLFLT *cont_width,
                  PLFLT *xg1, PLFLT *yg1, PLINT *lx );
 void PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-                 PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-                 PLINT *cont_color, PLINT *cont_width,
+                 PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+                 PLINT *cont_color, PLFLT *cont_width,
                  PLFLT *xg2, PLFLT *yg2, PLINT *lx );
 void PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-                PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-                PLINT *cont_color, PLINT *cont_width, PLFLT *ftr, PLINT *lx );
+                PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+                PLINT *cont_color, PLFLT *cont_width, PLFLT *ftr, PLINT *lx );
 void PLGRIDDATA( PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts, PLFLT *xg,
                  PLINT *nx, PLFLT *yg, PLINT *ny, PLFLT *zg, PLINT *type,
                  PLFLT *data );
@@ -356,9 +356,9 @@ void
 PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *PL_UNUSED( defined ),
            PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
            PLFLT *shade_min, PLFLT *shade_max,
-           PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-           PLINT *min_color, PLINT *min_width,
-           PLINT *max_color, PLINT *max_width, PLINT *lx )
+           PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+           PLINT *min_color, PLFLT *min_width,
+           PLINT *max_color, PLFLT *max_width, PLINT *lx )
 {
     PLINT rect = 1;
     PLFLT ** a;
@@ -392,9 +392,9 @@ void
 PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
            PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
            PLFLT *shade_min, PLFLT *shade_max,
-           PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-           PLINT *min_color, PLINT *min_width,
-           PLINT *max_color, PLINT *max_width,
+           PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+           PLINT *min_color, PLFLT *min_width,
+           PLINT *max_color, PLFLT *max_width,
            PLFLT *xg1, PLFLT *yg1, PLINT *lx )
 {
     PLINT   rect = 1;
@@ -433,9 +433,9 @@ void
 PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
            PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
            PLFLT *shade_min, PLFLT *shade_max,
-           PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-           PLINT *min_color, PLINT *min_width,
-           PLINT *max_color, PLINT *max_width,
+           PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+           PLINT *min_color, PLFLT *min_width,
+           PLINT *max_color, PLFLT *max_width,
            PLFLT *xg2, PLFLT *yg2, PLINT *lx )
 {
     PLINT    rect = 0;
@@ -476,9 +476,9 @@ void
 PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
           PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
           PLFLT *shade_min, PLFLT *shade_max,
-          PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
-          PLINT *min_color, PLINT *min_width,
-          PLINT *max_color, PLINT *max_width, PLFLT *ftr, PLINT *lx )
+          PLINT *sh_cmap, PLFLT *sh_color, PLFLT *sh_width,
+          PLINT *min_color, PLFLT *min_width,
+          PLINT *max_color, PLFLT *max_width, PLFLT *ftr, PLINT *lx )
 {
     PLINT rect = 1;
     PLFLT ** a;
@@ -518,8 +518,8 @@ PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
 void
 PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
             PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-            PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-            PLINT *cont_color, PLINT *cont_width, PLINT *lx )
+            PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+            PLINT *cont_color, PLFLT *cont_width, PLINT *lx )
 {
     PLINT rect = 1;
     PLFLT ** a;
@@ -548,8 +548,8 @@ PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
 void
 PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
             PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-            PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-            PLINT *cont_color, PLINT *cont_width,
+            PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+            PLINT *cont_color, PLFLT *cont_width,
             PLFLT *xg1, PLFLT *yg1, PLINT *lx )
 {
     PLINT   rect = 1;
@@ -585,8 +585,8 @@ PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
 void
 PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
             PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-            PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-            PLINT *cont_color, PLINT *cont_width,
+            PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+            PLINT *cont_color, PLFLT *cont_width,
             PLFLT *xg2, PLFLT *yg2, PLINT *lx )
 {
     PLINT    rect = 0;
@@ -625,8 +625,8 @@ PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
 void
 PLSHADES7( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
            PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-           PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
-           PLINT *cont_color, PLINT *cont_width, PLFLT *ftr, PLINT *lx )
+           PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
+           PLINT *cont_color, PLFLT *cont_width, PLFLT *ftr, PLINT *lx )
 {
     PLINT rect = 1;
     PLFLT ** a;

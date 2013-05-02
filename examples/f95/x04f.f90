@@ -43,11 +43,10 @@ subroutine plot1(type)
 
     real(kind=plflt)  :: legend_width, legend_height
     integer           :: opt_array(2), text_colors(2), line_colors(2), &
-                         line_styles(2), line_widths(2), symbol_colors(2), &
-                         symbol_numbers(2)
-    real(kind=plflt)  :: symbol_scales(2), box_scales(0)
+                         line_styles(2), symbol_colors(2), symbol_numbers(2)
+    real(kind=plflt)  :: line_widths(2), symbol_scales(2), box_scales(0)
     integer           :: box_colors(0), box_patterns(0)
-    integer           :: box_line_widths(0)
+    real(kind=plflt)  :: box_line_widths(0)
     character(len=20) :: text(2)
     character(len=1)  :: symbols(2)
 

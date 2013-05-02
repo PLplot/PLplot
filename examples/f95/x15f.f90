@@ -160,8 +160,9 @@
 
       character(len=1) undefined
       real(kind=plflt)  shade_min, shade_max, sh_color
-      integer sh_cmap, sh_width
-      integer min_color, min_width, max_color, max_width
+      integer sh_cmap
+      integer min_color, max_color
+      real(kind=plflt) sh_width, min_width, max_width
 
       sh_cmap   = 0
       min_color = 0
@@ -216,22 +217,23 @@
 
       character(len=1) undefined
       real(kind=plflt)  shade_min, shade_max, sh_color
-      integer sh_cmap, sh_width
-      integer min_color, min_width, max_color, max_width
+      integer sh_cmap
+      integer min_color, max_color
+      real(kind=plflt) sh_width, min_width, max_width
       integer i, j
 
       integer nlin(10), inc(2,10), del(2,10)
       data nlin /1, 1, 1, 1, 1, 2, 2, 2, 2, 2/
       data ( (inc(i,j), i=1,2), j=1,10) / &
            450, 0, -450, 0, 0, 0, 900, 0, &
-           300, 0, 450,-450, 0, 900, 0, 450, & 
+           300, 0, 450,-450, 0, 900, 0, 450, &
            450, -450, 0, 900/
       data ( (del(i,j), i=1,2), j=1,10) / &
            2000, 2000, 2000, 2000, 2000, 2000, &
            2000, 2000, 2000, 2000, 2000, 2000, &
            2000, 2000, 2000, 2000, 4000, 4000, &
            4000, 2000/
-      
+
       sh_cmap   = 0
       min_color = 0
       min_width = 0
@@ -267,8 +269,8 @@
 !--------------------------------------------------------------------------
 !     plot3
 !
-!     Illustrates shaded regions in 3d, using a different fill pattern for 
-!     each region.  
+!     Illustrates shaded regions in 3d, using a different fill pattern for
+!     each region.
 !--------------------------------------------------------------------------
 
       subroutine plot3
@@ -289,8 +291,8 @@
       call plw3d(1._plflt, 1._plflt, 1._plflt, -1.0_plflt, 1.0_plflt, &
            -1.0_plflt, 1.0_plflt, 0.0_plflt,1.5_plflt, 30._plflt, -40._plflt)
 
-!     Plot using identity transform 
-    
+!     Plot using identity transform
+
       call plcol0(1)
       call plbox3("bntu", "X", 0.0_plflt, 0, "bntu", "Y", 0.0_plflt, 0, &
            "bcdfntu", "Z", 0.5_plflt, 0)

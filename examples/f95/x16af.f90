@@ -57,8 +57,9 @@
       real(kind=plflt)    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
       real(kind=plflt)    xmin, xmax, ymin, ymax, zmin, zmax, x, y
       real(kind=plflt)    shade_min, shade_max, sh_color
-      integer   i, j, sh_cmap, sh_width
-      integer   min_color, min_width, max_color, max_width
+      integer   i, j, sh_cmap
+      integer   min_color, max_color
+      real(kind=plflt)    sh_width, min_width, max_width
 
       xmin = -1._plflt
       ymin = -1._plflt
@@ -145,8 +146,9 @@
       integer   nxsub, nysub
       integer   ncolbox, ncollab
       integer   i, j, kx, lx, ky, ly
-      integer   sh_cmap, sh_width
-      integer   min_color, min_width, max_color, max_width
+      integer   sh_cmap
+      integer   min_color, max_color
+      real(kind=plflt) sh_width, min_width, max_width
       character(len=8) xopt, yopt
 
 !      Set up for plshade call

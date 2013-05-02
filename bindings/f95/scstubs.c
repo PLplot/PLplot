@@ -138,9 +138,9 @@ void PLLEGEND( PLFLT *p_legend_width, PLFLT *p_legend_height,
                PLFLT *text_justification,
                const PLINT *text_colors,
                const PLINT *box_colors, const PLINT *box_patterns,
-               const PLFLT *box_scales, const PLINT *box_line_widths,
+               const PLFLT *box_scales, const PLFLT *box_line_widths,
                const PLINT *line_colors, const PLINT *line_styles,
-               const PLINT *line_widths,
+               const PLFLT *line_widths,
                const PLINT *symbol_colors, const PLFLT *symbol_scales,
                const PLINT *symbol_numbers );
 void PLLIGHTSOURCE( PLFLT *x, PLFLT *y, PLFLT *z );
@@ -816,9 +816,9 @@ void PLLEGEND(
     PLFLT *text_justification,
     const PLINT *text_colors,
     const PLINT *box_colors, const PLINT *box_patterns,
-    const PLFLT *box_scales, const PLINT *box_line_widths,
+    const PLFLT *box_scales, const PLFLT *box_line_widths,
     const PLINT *line_colors, const PLINT *line_styles,
-    const PLINT *line_widths,
+    const PLFLT *line_widths,
     const PLINT *symbol_colors, const PLFLT *symbol_scales,
     const PLINT *symbol_numbers )
 {

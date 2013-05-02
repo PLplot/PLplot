@@ -1099,8 +1099,10 @@ contains
     character(len=*), dimension(:) :: text, symbols
 
     integer, dimension(:)          :: opt_array, text_colors, box_colors
-    integer, dimension(:)          :: box_patterns, box_line_widths
-    integer, dimension(:)          :: line_colors, line_styles, line_widths
+    integer, dimension(:)          :: box_patterns
+    real(kind=plflt), dimension(:) :: box_line_widths
+    integer, dimension(:)          :: line_colors, line_styles
+    real(kind=plflt), dimension(:) :: line_widths
     integer, dimension(:)          :: symbol_colors, symbol_numbers
     real(kind=plflt), dimension(:) :: box_scales, symbol_scales
 
@@ -1145,8 +1147,10 @@ contains
     character(len=*), dimension(:) :: text, symbols
 
     integer, dimension(:)          :: opt_array, text_colors, box_colors
-    integer, dimension(:)          :: box_patterns, box_line_widths
-    integer, dimension(:)          :: line_colors, line_styles, line_widths
+    integer, dimension(:)          :: box_patterns
+    real(kind=plflt), dimension(:) :: box_line_widths
+    integer, dimension(:)          :: line_colors, line_styles
+    real(kind=plflt), dimension(:) :: line_widths
     integer, dimension(:)          :: symbol_colors, symbol_numbers
     real(kind=plflt), dimension(:) :: box_scales, symbol_scales
 

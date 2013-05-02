@@ -40,7 +40,7 @@
       parameter (rosen = 0)
 
       real(kind=plflt) xmin, xmax, ymin, ymax
-      
+
       real(kind=plflt) x(pts), y(pts), z(pts), clev(nl)
       real(kind=plflt) xg(xp), yg(yp), zg(xp,yp)
       real(kind=plflt) zmin, zmax, lzmin, lzmax
@@ -102,7 +102,7 @@
             z(i) = log((1._plflt-x(i))**2 + 100._plflt*(y(i)-x(i)**2)**2)
          endif
       enddo
-      
+
       zmin = z(1)
       zmax = z(1)
       do i=2,pts
@@ -116,7 +116,7 @@
       do i=1,yp
          yg(i) = ymin + (ymax-ymin)*(i-1._plflt)/(yp-1._plflt)
       enddo
-      
+
       call plcol0(1)
       call plenv(xmin, xmax, ymin, ymax, 2, 0)
       call plcol0(15)
@@ -158,15 +158,15 @@
 
             if ((alg.eq.GRID_CSA).or.(alg.eq.GRID_DTLI).or. &
                  (alg.eq.GRID_NNLI).or.(alg.eq.GRID_NNI)) then
-               
+
                do i=1,xp
                   do j=1,yp
                      if (myisnan(zg(i,j))) then
 !     average (IDW) over the 8 neighbors
-                        
+
                         zg(i,j) = 0._plflt
                         dist = 0._plflt
-                        
+
                         ii=i-1
                         do while ((ii.le.i+1).and.(ii.le.xp))
                            jj = j-1
@@ -194,7 +194,7 @@
                   enddo
                enddo
             endif
-            
+
             call a2mnmx(zg, xp, yp, lzmin, lzmax, xp)
 
             lzmin = min(lzmin, zmin)
@@ -205,9 +205,9 @@
 
             call plcol0(1)
             call pladv(alg)
-            
+
             if (k.eq.1) then
-               
+
                do i=1,nl
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
                enddo
@@ -215,23 +215,23 @@
                call plcol0(15)
                call pllab("X", "Y", title(alg))
                call plshades(zg, defined, xmin, xmax, ymin, &
-                    ymax, clev, 1, 0, 1)
+                    ymax, clev, 1._plflt, 0, 1._plflt)
                call plcol0(2)
             else
-               
+
                do i = 1,nl
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
                enddo
                call plvpor(0._plflt, 1._plflt, 0._plflt, 0.9_plflt)
                call plwind(-1.1_plflt, 0.75_plflt, -0.65_plflt, 1.20_plflt)
-!     
+!
 !     For the comparison to be fair, all plots should have the
 !     same z values, but to get the max/min of the data generated
 !     by all algorithms would imply two passes. Keep it simple.
 !
 !     plw3d(1., 1., 1., xmin, xmax, ymin, ymax, zmin, zmax, 30, -60);
 !
-               
+
                call plw3d(1._plflt, 1._plflt, 1._plflt, xmin, xmax, ymin, ymax,  &
                     lzmin, lzmax, 30._plflt, -40._plflt)
                call plbox3("bntu", "X", 0._plflt, 0, &
@@ -246,26 +246,26 @@
       enddo
 
       call plend
-            
+
       end
 
       subroutine cmap1_init
         use plplot
         implicit none
         real(kind=plflt) i(2), h(2), l(2), s(2)
-        
+
         i(1) = 0._plflt
         i(2) = 1._plflt
-        
+
         h(1) = 240._plflt
         h(2) = 0._plflt
-        
+
         l(1) = 0.6_plflt
         l(2) = 0.6_plflt
-        
+
         s(1) = 0.8_plflt
         s(2) = 0.8_plflt
-        
+
         call plscmap1n(256)
         call plscmap1l(.false., i, h, l, s)
       end subroutine cmap1_init
@@ -281,7 +281,7 @@
 
         integer   i, j, nx, ny, xdim
         real(kind=plflt) f(xdim, ny), fmin, fmax
-        
+
         fmax = f(1, 1)
         fmin = fmax
         do j = 1, ny

@@ -396,8 +396,9 @@
 
       implicit none
       character defined*(*)
-      integer sh_cmap, sh_width
-      integer min_color, min_width, max_color, max_width
+      integer sh_cmap
+      integer min_color, max_color
+      real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
@@ -423,8 +424,9 @@
 
       implicit none
       character defined*(*)
-      integer sh_cmap, sh_width
-      integer min_color, min_width, max_color, max_width
+      integer sh_cmap
+      integer min_color, max_color
+      real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:), yg(:)
 
@@ -451,8 +453,9 @@
 
       implicit none
       character defined*(*)
-      integer sh_cmap, sh_width
-      integer min_color, min_width, max_color, max_width
+      integer sh_cmap
+      integer min_color, max_color
+      real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:,:), yg(:,:)
 
@@ -478,8 +481,9 @@
 
       implicit none
       character(len=*) defined
-      integer sh_cmap, sh_width
-      integer min_color, min_width, max_color, max_width
+      integer sh_cmap
+      integer min_color, max_color
+      real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
@@ -502,7 +506,8 @@
 
       implicit none
       character defined*(*)
-      integer fill_width, cont_color, cont_width
+      integer cont_color
+      real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
@@ -525,7 +530,8 @@
 
       implicit none
       character defined*(*)
-      integer fill_width, cont_color, cont_width
+      integer cont_color
+      real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
                        xg1(:), yg1(:)
@@ -549,7 +555,8 @@
 
       implicit none
       character defined*(*)
-      integer fill_width, cont_color, cont_width
+      integer cont_color
+      real(kind=plflt)fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
         xg2(:,:), yg2(:,:)
@@ -573,7 +580,8 @@
 
       implicit none
       character defined*(*)
-      integer fill_width, cont_color, cont_width
+      integer cont_color
+      real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
