@@ -1061,7 +1061,7 @@ az	PLFLT
 # Set pen width.
 
 pltclcmd plwidth void
-width	PLINT
+width	PLFLT
 
 # Set up world coordinates of the viewport boundaries (2d plots).
 

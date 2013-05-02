@@ -111,7 +111,7 @@ proc x33 {{w loopback}} {
     set opt_base       [expr {$::PLPLOT::PL_LEGEND_BACKGROUND | $::PLPLOT::PL_LEGEND_BOUNDING_BOX}]
     set opt_array      [list [expr {$::PLPLOT::PL_LEGEND_LINE | $::PLPLOT::PL_LEGEND_SYMBOL}]]
     set line_styles    [list 1]
-    set line_widths    [list 1]
+    set line_widths    [list 1.]
     set symbol_scales  [list 1.]
     set symbol_numbers [list 4]
     set symbols        [list "*"]
@@ -165,7 +165,7 @@ proc x33 {{w loopback}} {
     for {set k 0} {$k < $nlegend} {incr k} {
         lappend opt_array      [expr {$::PLPLOT::PL_LEGEND_LINE | $::PLPLOT::PL_LEGEND_SYMBOL}]
         lappend line_styles    1
-        lappend line_widths    1
+        lappend line_widths    1.
         lappend symbol_scales  1.
         lappend symbol_numbers 2
         lappend symbols        "*"
@@ -314,7 +314,7 @@ proc x33 {{w loopback}} {
         for {set k 0} {$k < $nlegend} {incr k} {
             lappend opt_array      [expr {$::PLPLOT::PL_LEGEND_LINE | $::PLPLOT::PL_LEGEND_SYMBOL}]
             lappend line_styles    1
-            lappend line_widths    1
+            lappend line_widths    1.
             lappend symbol_scales  1.
             lappend symbol_numbers 2
             lappend symbols        "*"

@@ -209,7 +209,7 @@ proc x21 {{w loopback}} {
                 $w cmd plenv0 $xmin $xmax $ymin $ymax 2 0
                 $w cmd plcol0 15
                 $w cmd pllab "X" "Y" [lindex $title $alg]
-                $w cmd plshades zg $xmin $xmax $ymin $ymax clev 1 0 1 1 "NULL"
+                $w cmd plshades zg $xmin $xmax $ymin $ymax clev 1. 0 1. 1 "NULL"
                 $w cmd plcol0 2
             } else {
 

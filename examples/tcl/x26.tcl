@@ -192,7 +192,7 @@ proc plot261 { w type x_label y_label alty_label legend_text title_label line_la
   set text_colors [list 2]
   set line_colors [list 2]
   set line_styles [list 1]
-  set line_widths [list 1]
+  set line_widths [list 1.]
   # note from the above opt_array the first symbol (and box) indices
   # will not be used, but they have to be specified anyway!
   # (make sure the values are reasonable)
@@ -202,7 +202,7 @@ proc plot261 { w type x_label y_label alty_label legend_text title_label line_la
   lappend text_colors    3
   lappend line_colors    3
   lappend line_styles    1
-  lappend line_widths    1
+  lappend line_widths    1.
   set     symbol_colors  [list 0   3]
   set     symbol_scales  [list 0.0 1.]
   set     symbol_numbers [list 0   4]

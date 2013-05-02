@@ -73,8 +73,8 @@ proc plot151 { w z zmin zmax } {
   set sh_width 2
   set min_color 9
   set max_color 2
-  set min_width 2
-  set max_width 2
+  set min_width 2.
+  set max_width 2.
   # N.B. this flag set to use cmap0
   set sh_cmap 0
 
@@ -101,8 +101,8 @@ proc plot152 { w z zmin zmax } {
   set sh_width 2
   set min_color 0
   set max_color 0
-  set min_width 0
-  set max_width 0
+  set min_width 0.
+  set max_width 0.
   # N.B. this flag set to use cmap0
   set sh_cmap 0
 

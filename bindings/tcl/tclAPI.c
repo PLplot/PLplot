@@ -2595,8 +2595,10 @@ plshadeCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLFLT      **z, **zused, **zwrapped;
     PLFLT      xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
 
-    PLINT      sh_cmap   = 1, sh_wid = 2;
-    PLINT      min_col   = 1, min_wid = 0, max_col = 0, max_wid = 0;
+    PLINT      sh_cmap   = 1;
+    PLFLT      sh_wid    = 2.;
+    PLINT      min_col   = 1,  max_col = 0;
+    PLFLT      min_wid   = 0., max_wid = 0.;
     PLINT      rect      = 1;
     const char *pltrname = "pltr0";
     void       ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
@@ -2647,11 +2649,11 @@ plshadeCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     sh_max  = atof( argv[7] );
     sh_cmap = atoi( argv[8] );
     sh_col  = atof( argv[9] );
-    sh_wid  = atoi( argv[10] );
+    sh_wid  = atof( argv[10] );
     min_col = atoi( argv[11] );
     min_wid = atoi( argv[12] );
     max_col = atoi( argv[13] );
-    max_wid = atoi( argv[14] );
+    max_wid = atof( argv[14] );
     rect    = atoi( argv[15] );
 
     argc -= 16, argv += 16;
@@ -2916,7 +2918,8 @@ plshadesCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix  *matclevel = NULL;
     PLFLT      **z, **zused, **zwrapped;
     PLFLT      xmin, xmax, ymin, ymax;
-    PLINT      fill_width = 0, cont_color = 0, cont_width = 0;
+    PLINT      cont_color = 0;
+    PLFLT      fill_width = 0., cont_width = 0.;
     PLINT      rect       = 1;
     const char *pltrname  = "pltr0";
     void       ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
@@ -2974,9 +2977,9 @@ plshadesCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    fill_width = atoi( argv[7] );
+    fill_width = atof( argv[7] );
     cont_color = atoi( argv[8] );
-    cont_width = atoi( argv[9] );
+    cont_width = atof( argv[9] );
     rect       = atoi( argv[10] );
 
     argc -= 11, argv += 11;
@@ -4134,7 +4137,8 @@ pllegendCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLINT   *text_colors;
     PLINT   *box_colors, *box_patterns;
     PLFLT   *box_scales;
-    PLINT   *box_line_widths, *line_colors, *line_styles, *line_widths;
+    PLINT   *line_colors, *line_styles;
+    PLFLT   *box_line_widths, *line_widths;
     PLINT   *symbol_colors, *symbol_numbers;
     PLFLT   *symbol_scales;
     char    **text;
@@ -4175,10 +4179,10 @@ pllegendCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     box_colors      = argv_to_ints( interp, argv[18], &dummy );
     box_patterns    = argv_to_ints( interp, argv[19], &dummy );
     box_scales      = argv_to_doubles( interp, argv[20], &dummy );
-    box_line_widths = argv_to_ints( interp, argv[21], &dummy );
+    box_line_widths = argv_to_doubles( interp, argv[21], &dummy );
     line_colors     = argv_to_ints( interp, argv[22], &dummy );
     line_styles     = argv_to_ints( interp, argv[23], &dummy );
-    line_widths     = argv_to_ints( interp, argv[24], &dummy );
+    line_widths     = argv_to_doubles( interp, argv[24], &dummy );
     symbol_colors   = argv_to_ints( interp, argv[25], &dummy );
     symbol_scales   = argv_to_doubles( interp, argv[26], &dummy );
     symbol_numbers  = argv_to_ints( interp, argv[27], &dummy );

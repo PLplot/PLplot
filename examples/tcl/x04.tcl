@@ -79,7 +79,7 @@ proc plot41 {w type} {
     set text        [list Amplitude]
     set line_colors [list 2]
     set line_styles [list 1]
-    set line_widths [list 1]
+    set line_widths [list 1.0]
 
     # note from the above opt_array the first symbol (and box) indices
     # will not be used, but they have to be specified anyway!

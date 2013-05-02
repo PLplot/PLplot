@@ -10,7 +10,7 @@ proc x16 {{w loopback}} {
     set nx 35
     set ny 46
 
-    set fill_width 2; set cont_color 0; set cont_width 0
+    set fill_width 2.; set cont_color 0; set cont_width 0.
 
     matrix clevel f $ns
     matrix shedge f [expr $ns+1]
