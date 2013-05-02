@@ -299,7 +299,7 @@ main( int argc, const char *argv[] )
                 plcol0( 15 );
                 pllab( "X", "Y", title[alg - 1] );
                 plshades( (const PLFLT * const *) zg, xp, yp, NULL, xm, xM, ym, yM,
-                    clev, nl, 1, 0, 1, plfill, 1, NULL, NULL );
+                    clev, nl, 1., 0, 1., plfill, 1, NULL, NULL );
                 plcol0( 2 );
             }
             else
