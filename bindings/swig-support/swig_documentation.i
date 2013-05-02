@@ -2379,11 +2379,12 @@ DESCRIPTION:
     coordinate system used for some of the parameters is defined in the
     documentation of the position parameter.) 
 
-    Redacted form: pllegend(opt, x, y, plot_width, bg_color, opt_array,
-    text_offset, text_scale, text_spacing, test_justification,
-    text_colors, text, box_colors, box_patterns, box_scales, line_colors,
-    line_styles, line_widths, symbol_colors, symbol_scales,
-    symbol_numbers, symbols)
+    Redacted form: pllegend(p_legend_width, p_legend_height,  opt,
+    position, x, y, plot_width, bg_color, bb_color, bb_style, nrow,
+    ncolumn, opt_array,  text_offset, text_scale, text_spacing,
+    test_justification, text_colors, text,  box_colors, box_patterns,
+    box_scales, box_line_widths, line_colors, line_styles, line_widths,
+    symbol_colors, symbol_scales,  symbol_numbers, symbols)
 
     This function is used in examples 4 and 26. 
 
@@ -2391,7 +2392,7 @@ DESCRIPTION:
 
 SYNOPSIS:
 
-pllegend(p_legend_width, p_legend_height, position, opt, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, nlegend, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
+pllegend(p_legend_width, p_legend_height, opt, position, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, nlegend, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
 
 ARGUMENTS:
 
@@ -2407,6 +2408,18 @@ ARGUMENTS:
     coordinates. This quantity is calculated from text_scale,
     text_spacing, and nrow (possibly modified inside the routine
     depending on nlegend and nrow). 
+
+    opt (PLINT, input) :    opt contains bits controlling the overall
+    legend. If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
+    on the left of the legend and the plotted area on the right.
+    Otherwise, put the text area on the right of the legend and the
+    plotted area on the left. If the PL_LEGEND_BACKGROUND bit is set,
+    plot a (semi-transparent) background for the legend. If the
+    PL_LEGEND_BOUNDING_BOX bit is set, plot a bounding box for the
+    legend. If the PL_LEGEND_ROW_MAJOR bit is set and (both of the
+    possibly internally transformed) nrow > 1 and ncolumn > 1, then
+    plot the resulting array of legend entries in row-major order.
+    Otherwise, plot the legend entries in column-major order. 
 
     position (PLINT, input) :     position contains bits controlling the
     overall position of the legend and the definition of the adopted
@@ -2425,18 +2438,6 @@ ARGUMENTS:
     PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set, use
     PL_POSITION_INSIDE. If neither of PL_POSITION_VIEWPORT or
     PL_POSITION_SUBPAGE is set, use PL_POSITION_VIEWPORT. 
-
-    opt (PLINT, input) :    opt contains bits controlling the overall
-    legend. If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
-    on the left of the legend and the plotted area on the right.
-    Otherwise, put the text area on the right of the legend and the
-    plotted area on the left. If the PL_LEGEND_BACKGROUND bit is set,
-    plot a (semi-transparent) background for the legend. If the
-    PL_LEGEND_BOUNDING_BOX bit is set, plot a bounding box for the
-    legend. If the PL_LEGEND_ROW_MAJOR bit is set and (both of the
-    possibly internally transformed) nrow > 1 and ncolumn > 1, then
-    plot the resulting array of legend entries in row-major order.
-    Otherwise, plot the legend entries in column-major order. 
 
     x (PLFLT, input) :      X offset of the legend position in adopted
     coordinates from the specified standard position of the legend.
@@ -2539,9 +2540,8 @@ ARGUMENTS:
     colored boxes  (
     PL_LEGEND_COLOR_BOX). 
 
-    box_line_widths (const PLINT *, input) :    Array of nlegend scales
-    (units of fraction of character height) for the height of the
-    discrete colored boxes    (
+    box_line_widths (const PLFLT *, input) :    Array of nlegend line
+    widths for the patterns specified by box_patterns (
     PL_LEGEND_COLOR_BOX). 
 
     line_colors (const PLINT *, input) :    Array of nlegend line colors
@@ -2552,7 +2552,7 @@ ARGUMENTS:
     (plsty indices)  (
     PL_LEGEND_LINE). 
 
-    line_widths (const PLINT *, input) :    Array of nlegend line widths (
+    line_widths (const PLFLT *, input) :    Array of nlegend line widths (
     PL_LEGEND_LINE). 
 
     symbol_colors (const PLINT *, input) :    Array of nlegend symbol
@@ -4709,14 +4709,15 @@ ARGUMENTS:
     nlevel (PLINT, input) :    Number of shades plus 1 (i.e., the number
     of shade edge values in clevel). 
 
-    fill_width (PLINT, input) :    Defines width used by the fill pattern. 
+    fill_width (PLFLT, input) :    Defines line width used by the fill
+    pattern. 
 
     cont_color (PLINT, input) :    Defines pen color used for contours
     defining edges of shaded regions.  The pen color is only temporary
     set for the contour drawing.  Set this value to zero or less if no
     shade edge contours are wanted. 
 
-    cont_width (PLINT, input) :    Defines pen width used for contours
+    cont_width (PLFLT, input) :    Defines line width used for contours
     defining edges of shaded regions.  This value may not be honored
     by all drivers. The pen width is only temporary set for the
     contour drawing.  Set this value to zero or less if no shade edge
@@ -4800,15 +4801,15 @@ ARGUMENTS:
 
     sh_color (PLFLT, input) :     
 
-    sh_width (PLINT, input) :     
+    sh_width (PLFLT, input) :     
 
     min_color (PLINT, input) :      
 
-    min_width (PLINT, input) :      
+    min_width (PLFLT, input) :      
 
     max_color (PLINT, input) :      
 
-    max_width (PLINT, input) :      
+    max_width (PLFLT, input) :      
 
     fill (void (*) (PLINT, PLFLT *, PLFLT *), input) :      
 
@@ -4897,14 +4898,14 @@ ARGUMENTS:
     sh_color (PLFLT, input) :     Defines color map index if cmap0 or color
     map input value (ranging from 0. to 1.) if cmap1. 
 
-    sh_width (PLINT, input) :     Defines width used by the fill pattern. 
+    sh_width (PLFLT, input) :     Defines width used by the fill pattern. 
 
     min_color (PLINT, input) :      Defines pen color, width used by the
     boundary of shaded region. The min values are used for the
     shade_min boundary, and the max values are used on the shade_max
     boundary.  Set color and width to zero for no plotted boundaries. 
 
-    min_width (PLINT, input) :      Defines pen color, width used by the
+    min_width (PLFLT, input) :      Defines pen color, width used by the
     boundary of shaded region. The min values are used for the
     shade_min boundary, and the max values are used on the shade_max
     boundary.  Set color and width to zero for no plotted boundaries. 
@@ -4914,7 +4915,7 @@ ARGUMENTS:
     shade_min boundary, and the max values are used on the shade_max
     boundary.  Set color and width to zero for no plotted boundaries. 
 
-    max_width (PLINT, input) :      Defines pen color, width used by the
+    max_width (PLFLT, input) :      Defines pen color, width used by the
     boundary of shaded region. The min values are used for the
     shade_min boundary, and the max values are used on the shade_max
     boundary.  Set color and width to zero for no plotted boundaries. 
