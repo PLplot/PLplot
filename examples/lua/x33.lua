@@ -67,10 +67,10 @@ function initialize_pllegend_arrays(nlegend)
     box_colors[i] = 0
     box_patterns[i] = 0
     box_scales[i] = 0.0
-    box_line_widths[i] = 0
+    box_line_widths[i] = 0.
     line_colors[i] = 0
     line_styles[i] = 0
-    line_widths[i] = 0
+    line_widths[i] = 0.
     symbol_colors[i] = 0
     symbol_scales[i] = 0.0
     symbol_numbers[i] = 0
@@ -135,7 +135,7 @@ initialize_pllegend_arrays(nlegend)
 opt_base = lor(pl.PL_LEGEND_BACKGROUND, pl.PL_LEGEND_BOUNDING_BOX)
 opt_array[1] = lor(pl.PL_LEGEND_LINE, pl.PL_LEGEND_SYMBOL)
 line_styles[1] = 1
-line_widths[1] = 1
+line_widths[1] = 1.
 symbol_scales[1] = 1.0
 symbol_numbers[1] = 4
 symbols[1] = "*"
@@ -180,7 +180,7 @@ opt_base = lor(pl.PL_LEGEND_BACKGROUND, pl.PL_LEGEND_BOUNDING_BOX)
 for k = 0, nlegend-1 do
   opt_array[k+1] = lor(pl.PL_LEGEND_LINE, pl.PL_LEGEND_SYMBOL)
   line_styles[k+1] = 1
-  line_widths[k+1] = 1
+  line_widths[k+1] = 1.
   symbol_scales[k+1] = 1.0
   symbol_numbers[k+1] = 2
   symbols[k+1] = "*"
@@ -320,7 +320,7 @@ for i=0,8 do
   for k = 0, nlegend-1 do
     opt_array[k+1] = lor(pl.PL_LEGEND_LINE, pl.PL_LEGEND_SYMBOL)
     line_styles[k+1] = 1
-    line_widths[k+1] = 1
+    line_widths[k+1] = 1.
     symbol_scales[k+1] = 1.0
     symbol_numbers[k+1] = 2
     symbols[k+1] = "*"
@@ -387,14 +387,14 @@ text_colors[2] = 2
 box_colors[2] = 2
 box_patterns[2] = 0
 box_scales[2] = 0.8
-box_line_widths[2] = 1
+box_line_widths[2] = 1.
 
 opt_array[3] = pl.PL_LEGEND_LINE
 text[3] = "Line"
 text_colors[3] = 3
 line_colors[3] = 3
 line_styles[3] = 1
-line_widths[3] = 1
+line_widths[3] = 1.
 
 opt_array[4] = pl.PL_LEGEND_SYMBOL
 text[4] = "Symbol"
@@ -409,7 +409,7 @@ text[5] = "L & S"
 text_colors[5] = 5
 line_colors[5] = 5
 line_styles[5] = 1
-line_widths[5] = 1
+line_widths[5] = 1.
 symbol_colors[5] = 5
 symbol_scales[5] = text_scale
 symbol_numbers[5] = 4
@@ -479,7 +479,7 @@ for i=0,nlegend-1 do
   box_colors[i+1] = i+1
   box_patterns[i+1] = 0
   box_scales[i+1] = 0.8
-  box_line_widths[i+1] = 1
+  box_line_widths[i+1] = 1.
 end
 
 opt = opt_base
@@ -505,7 +505,7 @@ for i=0,nlegend-1 do
   box_colors[i+1] = 2
   box_patterns[i+1] = i
   box_scales[i+1] = 0.8
-  box_line_widths[i+1] = 1
+  box_line_widths[i+1] = 1.
 end
 
 opt = opt_base
@@ -550,7 +550,7 @@ for i=0,nlegend-1 do
   text_colors[i+1] = i+1
   line_colors[i+1] = i+1
   line_styles[i+1] = 1
-  line_widths[i+1] = 1
+  line_widths[i+1] = 1.
 end
 
 opt = opt_base
@@ -575,7 +575,7 @@ for i=0,nlegend-1 do
   text_colors[i+1] = 2
   line_colors[i+1] = 2
   line_styles[i+1] = i+1
-  line_widths[i+1] = 1
+  line_widths[i+1] = 1.
 end
 
 opt = opt_base

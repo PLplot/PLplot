@@ -87,11 +87,11 @@ function plot1()
   shade_min = zmin + (zmax-zmin)*0.4
   shade_max = zmin + (zmax-zmin)*0.6
   sh_color = 7
-  sh_width = 2
+  sh_width = 2.
   min_color = 9
   max_color = 2
-  min_width = 2
-  max_width = 2
+  min_width = 2.
+  max_width = 2.
 
   pl.psty(8)
   pl.shade(z, -1, 1, -1, 1, shade_min, shade_max, sh_cmap, sh_color, sh_width,
@@ -114,16 +114,16 @@ end
 function plot2()
   sh_cmap = 0
   min_color = 0
-  min_width = 0
+  min_width = 0.
   max_color = 0
-  max_width = 0
+  max_width = 0.
 
   inc = { {450}, {-450}, {0}, {900}, {300},
           {450,-450}, {0, 900}, {0, 450}, {450, -450}, {0, 900} }
   del = { {2000}, {2000}, {2000}, {2000}, {2000}, 
           {2000, 2000}, {2000, 2000}, {2000, 2000}, {4000, 4000}, {4000, 2000} }
 
-  sh_width = 2
+  sh_width = 2.
 
   pl.adv(0)
   pl.vpor(0.1, 0.9, 0.1, 0.9)

@@ -177,10 +177,10 @@ function plot1(type, x_label, y_label, alty_label, title_label, line_label, lege
   box_colors[1] = 0
   box_patterns[1] = 0
   box_scales[1] = 0
-  box_line_widths[1] = 0
+  box_line_widths[1] = 0.
   line_colors[1] = 2
   line_styles[1] = 1
-  line_widths[1] = 1
+  line_widths[1] = 1.
   -- unused arbitrary data
   symbol_colors[1]  = 0
   symbol_scales[1]  = 0
@@ -196,10 +196,10 @@ function plot1(type, x_label, y_label, alty_label, title_label, line_label, lege
     box_colors[2] = 0
     box_patterns[2] = 0
     box_scales[2] = 0
-    box_line_widths[2] = 0
+    box_line_widths[2] = 0.
     line_colors[2]    = 3
     line_styles[2]    = 1
-    line_widths[2]    = 1
+    line_widths[2]    = 1.
     symbol_colors[2]  = 3
     symbol_scales[2]  = 1.
     symbol_numbers[2] = 4

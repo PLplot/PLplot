@@ -232,7 +232,7 @@ for k = 1, 2 do
       pl.env0(xm, xM, ym, yM, 2, 0)
       pl.col0(15)
       pl.lab("X", "Y", title[alg])
-      pl.shades(zg, xm, xM, ym, yM, clev, 1, 0, 1, 1)
+      pl.shades(zg, xm, xM, ym, yM, clev, 1., 0, 1., 1)
       pl.col0(2)
     else 
       for i = 1, nl do

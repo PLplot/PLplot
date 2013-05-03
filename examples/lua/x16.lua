@@ -82,9 +82,9 @@ end
 px = {}
 py = {}
 
-fill_width = 2
+fill_width = 2.
 cont_color = 0
-cont_width = 0
+cont_width = 0.
 
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
@@ -237,7 +237,7 @@ pl.wind(-1, 1, -1, 1)
 
 pl.psty(0)
 
-pl.shades(z, -1, 1, -1, 1, shedge, fill_width, 2, 3, 0, "pltr2", cgrid2)
+pl.shades(z, -1, 1, -1, 1, shedge, fill_width, 2, 3., 0, "pltr2", cgrid2)
 
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)

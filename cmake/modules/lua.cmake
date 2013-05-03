@@ -25,7 +25,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_lua "Enable Lua bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_lua "Enable Lua bindings" OFF)
+  option(ENABLE_lua "Enable Lua bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_lua AND NOT BUILD_SHARED_LIBS)
