@@ -193,10 +193,10 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
   box_colors = 0;
   box_patterns = 0;
   box_scales = 0.;
-  box_line_widths = 0;
+  box_line_widths = 0.;
   line_colors = 0;
   line_styles = 0;
-  line_widths = 0;
+  line_widths = 0.;
   symbol_colors = 0;
   symbol_scales = 0.;
   symbol_numbers = 0;
@@ -208,10 +208,10 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
   box_colors(nlegend,1) = 0;
   box_patterns(nlegend,1) = 0;
   box_scales(nlegend,1) = 0.;
-  box_line_widths(nlegend,1) = 0;
+  box_line_widths(nlegend,1) = 0.;
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
-  line_widths(nlegend,1) = 0;
+  line_widths(nlegend,1) = 0.;
   symbol_colors(nlegend,1) = 0;
   symbol_scales(nlegend,1) = 0.;
   symbol_numbers(nlegend,1) = 0;
@@ -226,7 +226,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
   text(1,1:length(legend_text(1,:))) = legend_text(1,:);
   line_colors(1) = 2;
   line_styles(1) = 1;
-  line_widths(1) = 1;
+  line_widths(1) = 1.;
 
   ## Data for second legend entry.
   if(nlegend > 1)
@@ -235,7 +235,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
     text(2,1:length(legend_text(1,:))) = legend_text(2,:);
     line_colors(2) = 3;
     line_styles(2) = 1;
-    line_widths(2) = 1;
+    line_widths(2) = 1.;
     symbol_colors(2) = 3;
     symbol_scales(2) = 1.;
     symbol_numbers(2) = 4;

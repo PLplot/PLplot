@@ -206,10 +206,10 @@ function ix33c()
   box_colors = 0;
   box_patterns = 0;
   box_scales = 0.;
-  box_line_widths = 0;
+  box_line_widths = 0.;
   line_colors = 0;
   line_styles = 0;
-  line_widths = 0;
+  line_widths = 0.;
   symbol_colors = 0;
   symbol_scales = 0.;
   symbol_numbers = 0;
@@ -220,7 +220,7 @@ function ix33c()
   text(nlegend,1:length(" ")) = " ";
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
-  line_widths(nlegend,1) = 0;
+  line_widths(nlegend,1) = 0.;
   symbol_colors(nlegend,1) = 0;
   symbol_scales(nlegend,1) = 0.;
   symbol_numbers(nlegend,1) = 0;
@@ -231,7 +231,7 @@ function ix33c()
   opt_base = bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX);
   opt_array(1) = bitor(PL_LEGEND_LINE, PL_LEGEND_SYMBOL);
   line_styles(1) = 1;
-  line_widths(1) = 1;
+  line_widths(1) = 1.;
   symbol_scales(1) = 1.;  symbol_numbers(1) = 4;
   symbols(1,1:length("*")) = "*";
 
@@ -281,10 +281,10 @@ function ix33c()
   box_colors = 0;
   box_patterns = 0;
   box_scales = 0.;
-  box_line_widths = 0;
+  box_line_widths = 0.;
   line_colors = 0;
   line_styles = 0;
-  line_widths = 0;
+  line_widths = 0.;
   symbol_colors = 0;
   symbol_scales = 0.;
   symbol_numbers = 0;
@@ -295,7 +295,7 @@ function ix33c()
   text(nlegend,1:length(" ")) = " ";
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
-  line_widths(nlegend,1) = 0;
+  line_widths(nlegend,1) = 0.;
   symbol_colors(nlegend,1) = 0;
   symbol_scales(nlegend,1) = 0.;
   symbol_numbers(nlegend,1) = 0;
@@ -307,7 +307,7 @@ function ix33c()
   for k=0:nlegend-1
     opt_array(k+1) = bitor(PL_LEGEND_LINE, PL_LEGEND_SYMBOL);
     line_styles(k+1) = 1;
-    line_widths(k+1) = 1;
+    line_widths(k+1) = 1.;
     symbol_scales(k+1) = 1.;
     symbol_numbers(k+1) = 2;
     symbols(k+1,1:length("*")) = "*";
@@ -456,10 +456,10 @@ function ix33c()
     box_colors = 0;
     box_patterns = 0;
     box_scales = 0.;
-    box_line_widths = 0;
+    box_line_widths = 0.;
     line_colors = 0;
     line_styles = 0;
-    line_widths = 0;
+    line_widths = 0.;
     symbol_colors = 0;
     symbol_scales = 0.;
     symbol_numbers = 0;
@@ -471,10 +471,10 @@ function ix33c()
     box_colors(nlegend,1) = 0;
     box_patterns(nlegend,1) = 0;
     box_scales(nlegend,1) = 0.;
-    box_line_widths(nlegend,1) = 0;
+    box_line_widths(nlegend,1) = 0.;
     line_colors(nlegend,1) = 0;
     line_styles(nlegend,1) = 0;
-    line_widths(nlegend,1) = 0;
+    line_widths(nlegend,1) = 0.;
     symbol_colors(nlegend,1) = 0;
     symbol_scales(nlegend,1) = 0.;
     symbol_numbers(nlegend,1) = 0;
@@ -485,7 +485,7 @@ function ix33c()
     for k=0:nlegend-1
       opt_array(k+1) = bitor(PL_LEGEND_LINE, PL_LEGEND_SYMBOL);
       line_styles(k+1) = 1;
-      line_widths(k+1) = 1;
+      line_widths(k+1) = 1.;
       symbol_scales(k+1) = 1.;
       symbol_numbers(k+1) = 2;
       symbols(k+1,1:length("*")) = "*";
@@ -550,10 +550,10 @@ function ix33c()
   box_colors = 0;
   box_patterns = 0;
   box_scales = 0.;
-  box_line_widths = 0;
+  box_line_widths = 0.;
   line_colors = 0;
   line_styles = 0;
-  line_widths = 0;
+  line_widths = 0.;
   symbol_colors = 0;
   symbol_scales = 0.;
   symbol_numbers = 0;
@@ -565,10 +565,10 @@ function ix33c()
   box_colors(nlegend,1) = 0;
   box_patterns(nlegend,1) = 0;
   box_scales(nlegend,1) = 0.;
-  box_line_widths(nlegend,1) = 0;
+  box_line_widths(nlegend,1) = 0.;
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
-  line_widths(nlegend,1) = 0;
+  line_widths(nlegend,1) = 0.;
   symbol_colors(nlegend,1) = 0;
   symbol_scales(nlegend,1) = 0.;
   symbol_numbers(nlegend,1) = 0;
@@ -590,14 +590,14 @@ function ix33c()
   box_colors(2) = 2;
   box_patterns(2) = 0;
   box_scales(2) = 0.8;
-  box_line_widths(2) = 1;
+  box_line_widths(2) = 1.;
 
   opt_array(3) = PL_LEGEND_LINE;
   text(3,1:length("Line")) = "Line";
   text_colors(3) = 3;
   line_colors(3) = 3;
   line_styles(3) = 1;
-  line_widths(3) = 1;
+  line_widths(3) = 1.;
 
   opt_array(4) = PL_LEGEND_SYMBOL;
   text(4,1:length("Symbol")) = "Symbol";
@@ -612,7 +612,7 @@ function ix33c()
   text_colors(5) = 5;
   line_colors(5) = 5;
   line_styles(5) = 1;
-  line_widths(5) = 1;
+  line_widths(5) = 1.;
   symbol_colors(5) = 5;
   symbol_scales(5) = text_scale;
   symbol_numbers(5) = 4;
@@ -707,7 +707,7 @@ function ix33c()
     box_colors(i+1) = i+1;
     box_patterns(i+1) = 0;
     box_scales(i+1) = 0.8;
-    box_line_widths(i+1) = 1;
+    box_line_widths(i+1) = 1.;
   endfor
 
   opt = opt_base;
@@ -741,7 +741,7 @@ function ix33c()
     box_colors(i+1) = 2;
     box_patterns(i+1) = i;
     box_scales(i+1) = 0.8;
-    box_line_widths(i+1) = 1;
+    box_line_widths(i+1) = 1.;
   endfor
 
   opt = opt_base;
@@ -772,7 +772,7 @@ function ix33c()
     box_colors(i+1) = 2;
     box_patterns(i+1) = 3;
     box_scales(i+1) = 0.8;
-    box_line_widths(i+1) = i+1;
+    box_line_widths(i+1) = double(i+1);
   endfor
 
   opt = opt_base;

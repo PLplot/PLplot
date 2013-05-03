@@ -42,8 +42,7 @@ function ix16c
 	   "test results from ns around 5 and nx, ny around 25."];
 
   sh_cmap = 1;
-  fill_width = 2; cont_color = 0;  cont_width = 0;
-  min_color = 1; min_width = 0; max_color = 0; max_width = 0;
+  fill_width = 2.; cont_color = 0;  cont_width = 0.;
 
   ## Parse and process command line arguments 
 
@@ -185,7 +184,7 @@ function ix16c
 
   plshades2(z, -1., 1., -1., 1., 
 	    shedge', fill_width,
-	    2, 3,
+	    2, 3.,
 	    0, xg2, yg2);
 
   plcol0(1);

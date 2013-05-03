@@ -135,7 +135,7 @@ endfunction
 function plot1(z,zmin,zmax)
   global tr
   sh_cmap = 0;
-  min_color = 0; min_width = 0; max_color = 0; max_width = 0;
+  min_color = 0; min_width = 0.; max_color = 0; max_width = 0.;
 
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
@@ -146,11 +146,11 @@ function plot1(z,zmin,zmax)
   shade_min = zmin + (zmax-zmin)*0.4;
   shade_max = zmin + (zmax-zmin)*0.6;
   sh_color = 7;
-  sh_width = 2;
+  sh_width = 2.;
   min_color = 9;
   max_color = 2;
-  min_width = 2;
-  max_width = 2;
+  min_width = 2.;
+  max_width = 2.;
 
   plpsty(8);
   plshade(z, 0, -1., 1., -1., 1., 
@@ -169,7 +169,7 @@ endfunction
 function plot2(z,zmin,zmax)
   global tr
   sh_cmap = 0;
-  min_color = 0; min_width = 0; max_color = 0; max_width = 0;
+  min_color = 0; min_width = 0.; max_color = 0; max_width = 0.;
 
   nlin = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
   inc = [450, 0; -450, 0; 0, 0; 900, 0; 300, 0;
@@ -187,7 +187,7 @@ function plot2(z,zmin,zmax)
     shade_min = zmin + (zmax - zmin) * i / 10.0;
     shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
     sh_color = i+6;
-    sh_width = 2;
+    sh_width = 2.;
     n = nlin(i+1);
     plpat(inc(i+1,1:n)',del(i+1,1:n)');
 

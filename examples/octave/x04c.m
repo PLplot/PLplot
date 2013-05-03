@@ -111,7 +111,7 @@ function plot1(type)
   text = " ";
   line_colors = 0;
   line_styles = 0;
-  line_widths = 0;
+  line_widths = 0.;
   symbol_colors = 0;
   symbol_scales = 0.;
   symbol_numbers = 0;
@@ -122,7 +122,7 @@ function plot1(type)
   text(nlegend,1:length(" ")) = " ";
   line_colors(nlegend,1) = 0;
   line_styles(nlegend,1) = 0;
-  line_widths(nlegend,1) = 0;
+  line_widths(nlegend,1) = 0.;
   symbol_colors(nlegend,1) = 0;
   symbol_scales(nlegend,1) = 0.;
   symbol_numbers(nlegend,1) = 0;
@@ -137,7 +137,7 @@ function plot1(type)
   text(1,1:length("Amplitude")) = "Amplitude";
   line_colors(1) = 2;
   line_styles(1) = 1;
-  line_widths(1) = 1;
+  line_widths(1) = 1.;
 
   ## Data for second legend entry.
   if(nlegend > 1)
@@ -146,7 +146,7 @@ function plot1(type)
     text(2,1:length("Phase shift")) = "Phase shift";
     line_colors(2) = 3;
     line_styles(2) = 1;
-    line_widths(2) = 1;
+    line_widths(2) = 1.;
     symbol_colors(2) = 3;
     symbol_scales(2) = 1.;
     symbol_numbers(2) = 4;
