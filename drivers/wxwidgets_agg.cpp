@@ -442,7 +442,7 @@ void wxPLDevAGG::SetExternalBuffer( void* image )
 }
 
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //--------------------------------------------------------------------------
 //  void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
@@ -478,7 +478,7 @@ PLINT wxPLDevAGG::GetPixel( short x, short y )
     return RGB( mBuffer->GetRed( x, y ), mBuffer->GetGreen( x, y ), mBuffer->GetBlue( x, y ) );
 }
 
-#endif // HAVE_FREETYPE
+#endif // PL_HAVE_FREETYPE
 
 
 void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )

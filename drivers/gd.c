@@ -145,12 +145,12 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gd =
 ;
 
 #if GD2_VERS >= 2
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 #define SMOOTH_LINES_OK
 #endif
 #endif
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //
 //  Freetype support has been added to the GD family of drivers using the
@@ -159,7 +159,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gd =
 //  "PLESC_HAS_TEXT" command for rendering within the driver.
 //
 //  Freetype support is turned on/off at compile time by defining
-//  "HAVE_FREETYPE".
+//  "PL_HAVE_FREETYPE".
 //
 //  To give the user some level of control over the fonts that are used,
 //  environmental variables can be set to over-ride the definitions used by
@@ -185,7 +185,7 @@ static void     plD_red15_gd( PLStream *pls );
 static void     plD_init_gif_Dev( PLStream *pls );
 #endif
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 static void plD_pixel_gd( PLStream *pls, short x, short y );
 static PLINT plD_read_pixel_gd( PLStream *pls, short x, short y );
@@ -368,7 +368,7 @@ plD_init_png_Dev( PLStream *pls )
     static int palette     = 0;
     static int smooth_line = 0;
 #endif
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     static int freetype    = 1;
     static int smooth_text = 1;
     FT_Data    *FT;
@@ -382,7 +382,7 @@ plD_init_png_Dev( PLStream *pls )
                             { "24bit",       DRV_INT, &truecolour,  "Truecolor (24 bit) mode"                                                                                                               },
                             { "smoothlines", DRV_INT, &smooth_line, "Turn line Anti Aliasing on (1) or off (0)"                                                                                             },
 #endif
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
                             { "text",        DRV_INT, &freetype,    "Use driver text (FreeType)"                                                                                                            },
                             { "smooth",      DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"                                                                                                 },
 #endif
@@ -432,7 +432,7 @@ plD_init_png_Dev( PLStream *pls )
 
 #endif
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( freetype )
     {
         pls->dev_text    = 1; // want to draw text
@@ -529,7 +529,7 @@ void plD_init_png( PLStream *pls )
 
     plP_setphy( 0, dev->scale * dev->pngx, 0, dev->scale * dev->pngy );
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( pls->dev_text )
     {
         init_freetype_lv2( pls );
@@ -558,7 +558,7 @@ plD_init_gif_Dev( PLStream *pls )
 
     static int black15 = 0;
     static int red15   = 0;
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     static int freetype    = 1;
     static int smooth_text = 0;
     FT_Data    *FT;
@@ -566,7 +566,7 @@ plD_init_gif_Dev( PLStream *pls )
 
     DrvOpt gd_options[] = { { "def_black15", DRV_INT, &black15,     "Define idx 15 as black. If the background is \"whiteish\" (from \"-bg\" option), force index 15 (traditionally white) to be \"black\"" },
                             { "swp_red15",   DRV_INT, &red15,       "Swap index 1 (usually red) and 1 (usually white); always done after \"black15\"; quite useful for quick changes to web pages"          },
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
                             { "text",        DRV_INT, &freetype,    "Use driver text (FreeType)"                                                                                                            },
                             { "smooth",      DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"                                                                                                 },
 #endif
@@ -597,7 +597,7 @@ plD_init_gif_Dev( PLStream *pls )
     dev->palette    = 1;  // Always use palette mode for GIF files
     dev->truecolour = 0;  // Never have truecolour in GIFS
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( freetype )
     {
         pls->dev_text    = 1; // want to draw text
@@ -684,7 +684,7 @@ void plD_init_gif( PLStream *pls )
 
     plP_setphy( 0, dev->scale * dev->pngx, 0, dev->scale * dev->pngy );
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( pls->dev_text )
     {
         init_freetype_lv2( pls );
@@ -1046,7 +1046,7 @@ void plD_esc_png( PLStream *pls, PLINT op, void *ptr )
         fill_polygon( pls );
         break;
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     case PLESC_HAS_TEXT:
         plD_render_freetype_text( pls, (EscText *) ptr );
         break;
@@ -1145,7 +1145,7 @@ plD_state_png( pls, PLSTATE_WIDTH );
 
 void plD_tidy_png( PLStream *pls )
 {
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( pls->dev_text )
     {
         plD_FreeType_Destroy( pls );
@@ -1352,7 +1352,7 @@ void plD_eop_png( PLStream *pls )
 
 #endif
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //--------------------------------------------------------------------------
 //  void plD_pixel_gd (PLStream *pls, short x, short y)

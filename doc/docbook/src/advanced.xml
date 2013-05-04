@@ -766,7 +766,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <filename>gd.c</filename> driver.  Here we make some notes to accompany
     this driver which should make it easier to migrate other drivers to
     use the FreeType library.  Every code fragment we mention below should be surrounded
-    with a <literal>#ifdef HAVE_FREETYPE...#endif</literal> to quarantine these
+    with a <literal>#ifdef PL_HAVE_FREETYPE...#endif</literal> to quarantine these
     fragments for systems without the FreeType library.  For interactive devices that
     need caching of text drawing, reference should also be made to
     <filename>wingcc.c</filename>.</para>
@@ -938,7 +938,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	if (dev->waiting==1)
 	{
 	plRemakePlot(pls);
-	#ifdef HAVE_FREETYPE
+	#ifdef PL_HAVE_FREETYPE
 	pl_RemakeFreeType_text_from_buffer(pls);
 	#endif
 	}
@@ -978,7 +978,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	{
 	fclose(pls->OutFile);
 
-	#ifdef HAVE_FREETYPE
+	#ifdef PL_HAVE_FREETYPE
 	FT_Data *FT=(FT_Data *)pls->FT;
 	plscmap0n(FT->ncol0_org);
 

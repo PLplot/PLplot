@@ -28,7 +28,7 @@
 #ifndef __PLFREETY_H__
 #define __PLFREETY_H__
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

@@ -1208,7 +1208,7 @@ PLDLLIMPEXP const char*
 plGetDrvDir( void );
 #endif
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 PLDLLIMPEXP void
 plD_FreeType_init( PLStream * );
 

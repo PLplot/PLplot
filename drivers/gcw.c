@@ -75,7 +75,7 @@
 #include "gcw.h"
 #include "plplotcanvas-hacktext.h"
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 #include "plfreetype.h"
 #include "plfci-truetype.h"
@@ -83,7 +83,7 @@
 // Font lookup table that is constructed in plD_FreeType_init
 extern FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
 
-#endif // HAVE_FREETYPE
+#endif // PL_HAVE_FREETYPE
 
 
 // Device info
@@ -91,7 +91,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:
 
 // Global driver options
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 static PLINT text = 1;
 #else
 static PLINT text = 0;
@@ -204,7 +204,7 @@ void plD_init_gcw( PLStream *pls )
     pls->dev = dev;
 
     // Set text handling
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( text )
     {
         pls->dev_text    = TRUE;
@@ -724,7 +724,7 @@ void plD_tidy_gcw( PLStream *pls )
     gcw_debug( "<plD_tidy_gcw>\n" );
 #endif
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( pls->dev_text )
     {
         FT_Data *FT = (FT_Data *) pls->FT;
@@ -952,7 +952,7 @@ static void fill_polygon( PLStream* pls )
     }
 }
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 //--------------------------------------------------------------------------
 // proc_str()
 //
@@ -1252,7 +1252,7 @@ static void proc_str( PLStream *pls, EscText *args )
     gcw_debug( "</proc_str>\n" );
 #endif
 }
-#endif //HAVE_FREETYPE
+#endif //PL_HAVE_FREETYPE
 
 
 //--------------------------------------------------------------------------
@@ -1298,7 +1298,7 @@ void plD_esc_gcw( PLStream *pls, PLINT op, void *ptr )
         fill_polygon( pls );
         break;
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     case PLESC_HAS_TEXT:
         proc_str( pls, ptr ); // Draw the text
         break;

@@ -272,7 +272,7 @@ void wxPLDevDC::SetExternalBuffer( void* dc )
 }
 
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //--------------------------------------------------------------------------
 //  void wxPLDevDC::PutPixel( short x, short y, PLINT color )
@@ -323,7 +323,7 @@ PLINT wxPLDevDC::GetPixel( short x, short y )
 #endif
 }
 
-#endif // HAVE_FREETYPE
+#endif // PL_HAVE_FREETYPE
 
 
 //--------------------------------------------------------------------------

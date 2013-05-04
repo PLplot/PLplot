@@ -32,7 +32,7 @@ class wxDC;
 // if freetype is available - in the code we have checks
 // for the WX_TEMP_...._IS_ON macros (otherwise WX_TEMP_...._IS_OFF
 // is defined)
-#define WX_TEMP_HAVE_FREETYPE_IS_@HAVE_FREETYPE@
+#define WX_TEMP_PL_HAVE_FREETYPE_IS_@PL_HAVE_FREETYPE@
 
 //! Style options for wxPLplotstream:
 //  wxPLPLOT_NONE: no option
@@ -47,7 +47,7 @@ class wxDC;
 enum
 {
     wxPLPLOT_NONE                = 0,
-#ifdef WX_TEMP_HAVE_FREETYPE_IS_ON
+#ifdef WX_TEMP_PL_HAVE_FREETYPE_IS_ON
     wxPLPLOT_FREETYPE            = 1 << 0,
     wxPLPLOT_SMOOTH_TEXT         = 1 << 1,
 #endif

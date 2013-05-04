@@ -59,7 +59,7 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     // use freetype, antialized canvas?
     char drvopt[bufferSize], buffer[bufferSize];
     drvopt[0] = '\0';
-#ifdef WX_TEMP_HAVE_FREETYPE_IS_ON
+#ifdef WX_TEMP_PL_HAVE_FREETYPE_IS_ON
     sprintf( buffer, "freetype=%d,smooth=%d,",
         m_style & wxPLPLOT_FREETYPE ? 1 : 0,
         m_style & wxPLPLOT_SMOOTH_TEXT ? 1 : 0 );

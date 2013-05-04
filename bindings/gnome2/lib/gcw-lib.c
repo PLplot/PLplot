@@ -886,7 +886,7 @@ void gcw_use_text( PLINT use_text )
     gcw_debug( "<gcw_use_text>\n" );
 #endif
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
     if ( use_text )
         plsc->dev_text = 1;             // Allow text handling

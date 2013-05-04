@@ -91,7 +91,7 @@ int access( char *filename, int flag )
 #include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 #include "plfreetype.h"
 #include "plfci-truetype.h"
 

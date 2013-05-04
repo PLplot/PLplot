@@ -37,7 +37,7 @@
 #include "drivers.h"
 #include "plevent.h"
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //
 //  Freetype support has been added to the wingcc driver using the
@@ -46,7 +46,7 @@
 //  "PLESC_HAS_TEXT" command for rendering within the driver.
 //
 //  Freetype support is turned on/off at compile time by defining
-//  "HAVE_FREETYPE".
+//  "PL_HAVE_FREETYPE".
 //
 //  To give the user some level of control over the fonts that are used,
 //  environmental variables can be set to over-ride the definitions used by
@@ -129,7 +129,7 @@ void plD_tidy_wingcc( PLStream * );
 void plD_state_wingcc( PLStream *, PLINT );
 void plD_esc_wingcc( PLStream *, PLINT, void * );
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 static void plD_pixel_wingcc( PLStream *pls, short x, short y );
 static void plD_pixelV_wingcc( PLStream *pls, short x, short y );
@@ -408,7 +408,7 @@ plD_init_wingcc( PLStream *pls )
 {
     wingcc_Dev *dev;
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     static int freetype    = 0;
     static int smooth_text = 0;
     static int save_reg    = 0;
@@ -424,7 +424,7 @@ plD_init_wingcc( PLStream *pls )
 #endif
 
     DrvOpt wingcc_options[] = {
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
         { "text",   DRV_INT, &freetype,    "Use driver text (FreeType)"            },
         { "smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)" },
         { "save",   DRV_INT, &save_reg,    "Save defaults to registary"            },
@@ -464,7 +464,7 @@ plD_init_wingcc( PLStream *pls )
         pls->color = 1;
 
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //
 //  Read registry to see if the user has set up default values
@@ -482,7 +482,7 @@ plD_init_wingcc( PLStream *pls )
 
     plParseDrvOpts( wingcc_options );
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //
 //  We will now save the settings to the registary if the user wants
@@ -603,7 +603,7 @@ plD_init_wingcc( PLStream *pls )
     AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, _T( "Next Page" ) );
     AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, _T( "Quit" ) );
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
     if ( freetype )
     {
@@ -674,7 +674,7 @@ plD_init_wingcc( PLStream *pls )
     else
         SetPolyFillMode( dev->hdc, WINDING );
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( pls->dev_text )
     {
         init_freetype_lv2( pls );
@@ -900,7 +900,7 @@ void
 plD_bop_wingcc( PLStream *pls )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     FT_Data    *FT = (FT_Data *) pls->FT;
 #endif
     Debug( "Start of Page\t" );
@@ -922,7 +922,7 @@ plD_tidy_wingcc( PLStream *pls )
 {
     wingcc_Dev *dev = NULL;
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( pls->dev_text )
     {
         FT_Data *FT = (FT_Data *) pls->FT;
@@ -1010,7 +1010,7 @@ plD_esc_wingcc( PLStream *pls, PLINT op, void *ptr )
             SetROP2( dev->hdc, R2_XORPEN );
         break;
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     case PLESC_HAS_TEXT:
         plD_render_freetype_text( pls, (EscText *) ptr );
         break;
@@ -1039,7 +1039,7 @@ plD_esc_wingcc( PLStream *pls, PLINT op, void *ptr )
 static void Resize( PLStream *pls )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     FT_Data    *FT = (FT_Data *) pls->FT;
 #endif
     Debug( "Resizing" );
@@ -1066,7 +1066,7 @@ static void Resize( PLStream *pls )
                     dev->scale = (PLFLT) PIXELS_Y / dev->height;
                 }
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
                 if ( FT )
                 {
                     FT->scale = dev->scale;
@@ -1146,7 +1146,7 @@ static int GetRegValue( TCHAR *key_name, TCHAR *key_word, char *buffer, int size
     return ( ret );
 }
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //--------------------------------------------------------------------------
 //  void plD_pixel_wingcc (PLStream *pls, short x, short y)
@@ -1330,7 +1330,7 @@ static void init_freetype_lv2( PLStream *pls )
 static void UpdatePageMetrics( PLStream *pls, char flag )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
-  #ifdef HAVE_FREETYPE
+  #ifdef PL_HAVE_FREETYPE
     FT_Data    *FT = (FT_Data *) pls->FT;
   #endif
 
@@ -1355,7 +1355,7 @@ static void UpdatePageMetrics( PLStream *pls, char flag )
         dev->scale = (PLFLT) PIXELS_Y / dev->height;
     }
 
-  #ifdef HAVE_FREETYPE
+  #ifdef PL_HAVE_FREETYPE
     if ( FT )           // If we are using freetype, then set it up next
     {
         FT->scale = dev->scale;
@@ -1384,7 +1384,7 @@ static void UpdatePageMetrics( PLStream *pls, char flag )
 static void PrintPage( PLStream *pls )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
-  #ifdef HAVE_FREETYPE
+  #ifdef PL_HAVE_FREETYPE
     FT_Data    *FT = (FT_Data *) pls->FT;
   #endif
     PRINTDLG   Printer;
@@ -1435,7 +1435,7 @@ static void PrintPage( PLStream *pls )
 
             UpdatePageMetrics( pls, 1 );
 
-          #ifdef HAVE_FREETYPE
+          #ifdef PL_HAVE_FREETYPE
             if ( FT )                                  // If we are using freetype, then set it up next
             {
                 dev->FT_smooth_text = FT->smooth_text; // When printing, we don't want smoothing
@@ -1458,7 +1458,7 @@ static void PrintPage( PLStream *pls )
             dev->hdc = dev->SCRN_hdc;  // Reset the screen HDC to the default
             UpdatePageMetrics( pls, 0 );
 
-          #ifdef HAVE_FREETYPE
+          #ifdef PL_HAVE_FREETYPE
             if ( FT )           // If we are using freetype, then set it up next
             {
                 FT->smooth_text = dev->FT_smooth_text;

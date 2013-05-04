@@ -52,7 +52,7 @@
 #cmakedefine HAVE_DLFCN_H 1
 
 // Define if [freetype] is available
-#cmakedefine HAVE_FREETYPE
+#cmakedefine PL_HAVE_FREETYPE
 
 // Define if [shapelib] is available
 #cmakedefine HAVE_SHAPELIB

@@ -42,7 +42,7 @@
 #include "wxwidgets.h"
 
 // Static function prototypes
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 static void plD_pixel_wxwidgets( PLStream *pls, short x, short y );
 static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y );
 static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour );
@@ -352,7 +352,7 @@ wxPLDevBase* common_init( PLStream *pls )
         #endif
 
     DrvOpt wx_options[] = {
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
         { "freetype", DRV_INT, &freetype,    "Use FreeType library"                                                             },
         { "smooth",   DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"                                            },
 #endif
@@ -431,7 +431,7 @@ wxPLDevBase* common_init( PLStream *pls )
             pls->dev_hrshsym = 1;
     }
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     // own text routines have higher priority over freetype
     // if text and freetype option are set to 1
     if ( !text )
@@ -498,7 +498,7 @@ wxPLDevBase* common_init( PLStream *pls )
     // set dpi
     plspage( VIRTUAL_PIXELS_PER_IN / dev->scalex, VIRTUAL_PIXELS_PER_IN / dev->scaley, 0, 0, 0, 0 );
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( dev->freetype )
         init_freetype_lv2( pls );
 #endif
@@ -781,7 +781,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
 
     wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( dev->freetype )
     {
         FT_Data *FT = (FT_Data *) pls->FT;
@@ -886,7 +886,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 
         if ( dev->freetype )
         {
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
             plD_render_freetype_text( pls, (EscText *) ptr );
 #endif
         }
@@ -1001,7 +1001,7 @@ void wx_set_size( PLStream* pls, int width, int height )
     }
 
     // freetype parameters must also be changed
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
     if ( dev->freetype )
     {
         FT_Data *FT = (FT_Data *) pls->FT;
@@ -1049,7 +1049,7 @@ void plD_erroraborthandler_wxwidgets( const char *errormessage )
 
 
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 //--------------------------------------------------------------------------
 //  static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )

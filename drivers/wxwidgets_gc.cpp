@@ -321,7 +321,7 @@ void wxPLDevGC::SetExternalBuffer( void* dc )
 }
 
 
-#ifdef HAVE_FREETYPE
+#ifdef PL_HAVE_FREETYPE
 
 void wxPLDevGC::PutPixel( short x, short y, PLINT color )
 {
@@ -363,7 +363,7 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
 #endif
 }
 
-#endif // HAVE_FREETYPE
+#endif // PL_HAVE_FREETYPE
 
 
 void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
