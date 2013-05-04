@@ -88,7 +88,7 @@ class x16 {
         double[][] yg2  = new double[XPTS][YPTS];
         double[] clevel = new double[NSHADES];
         double[] shedge = new double[NSHADES + 1];
-        final int cont_color = 0;
+        final int    cont_color = 0;
         final double fill_width = 2., cont_width = 0.;
 
         // Parse and process command line arguments.

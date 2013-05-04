@@ -154,7 +154,7 @@ class x26 {
         int[] text_colors      = new int[2];
         int[] line_colors      = new int[2];
         int[] line_styles      = new int[2];
-        double[] line_widths      = new double[2];
+        double[] line_widths   = new double[2];
         int[] symbol_numbers   = new int[2];
         int[] symbol_colors    = new int[2];
         double[] symbol_scales = new double[2];
