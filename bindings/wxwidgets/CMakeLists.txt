@@ -18,7 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-if(ENABLE_wxwidgets)
+if(ENABLE_wxwidgets AND ENABLE_cxx)
   set(plplotwxwidgets${LIB_TAG}_LIB_SRCS
     wxPLplotstream.cpp
     wxPLplotwindow.cpp
@@ -188,4 +188,4 @@ if(ENABLE_wxwidgets)
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
-endif(ENABLE_wxwidgets)
+endif(ENABLE_wxwidgets AND ENABLE_cxx)
