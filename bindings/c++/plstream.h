@@ -434,11 +434,11 @@ public:
                  PLINT nlegend, const PLINT *opt_array,
                  PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
                  PLFLT text_justification,
-                 const PLINT *text_colors, const char **text,
+                 const PLINT *text_colors, const char * const *text,
                  const PLINT *box_colors, const PLINT *box_patterns,
-                 const PLFLT *box_scales, const PLINT *box_line_widths,
+                 const PLFLT *box_scales, const PLFLT *box_line_widths,
                  const PLINT *line_colors, const PLINT *line_styles,
-                 const PLINT *line_widths,
+                 const PLFLT *line_widths,
                  const PLINT *symbol_colors, const PLFLT *symbol_scales,
                  const PLINT *symbol_numbers, const char **symbols );
 

@@ -259,10 +259,10 @@ x33::x33( int argc, const char **argv )
     PLINT      box_colors[MAX_NLEGEND];
     PLINT      box_patterns[MAX_NLEGEND];
     PLFLT      box_scales[MAX_NLEGEND];
-    PLINT      box_line_widths[MAX_NLEGEND];
+    PLFLT      box_line_widths[MAX_NLEGEND];
     PLINT      line_colors[MAX_NLEGEND];
     PLINT      line_styles[MAX_NLEGEND];
-    PLINT      line_widths[MAX_NLEGEND];
+    PLFLT      line_widths[MAX_NLEGEND];
     PLINT      symbol_numbers[MAX_NLEGEND], symbol_colors[MAX_NLEGEND];
     PLFLT      symbol_scales[MAX_NLEGEND];
     char       *text[MAX_NLEGEND];
@@ -298,7 +298,7 @@ x33::x33( int argc, const char **argv )
     opt_base          = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX;
     opt_array[0]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
     line_styles[0]    = 1;
-    line_widths[0]    = 1;
+    line_widths[0]    = 1.0;
     symbol_scales[0]  = 1.;
     symbol_numbers[0] = 4;
     symbols[0]        = "*";
@@ -344,7 +344,7 @@ x33::x33( int argc, const char **argv )
     {
         opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
         line_styles[k]    = 1;
-        line_widths[k]    = 1;
+        line_widths[k]    = 1.0;
         symbol_scales[k]  = 1.;
         symbol_numbers[k] = 2;
         symbols[k]        = "*";
@@ -484,7 +484,7 @@ x33::x33( int argc, const char **argv )
         {
             opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
             line_styles[k]    = 1;
-            line_widths[k]    = 1;
+            line_widths[k]    = 1.0;
             symbol_scales[k]  = 1.;
             symbol_numbers[k] = 2;
             symbols[k]        = "*";
@@ -553,14 +553,14 @@ x33::x33( int argc, const char **argv )
     box_colors[1]      = 2;
     box_patterns[1]    = 0;
     box_scales[1]      = 0.8;
-    box_line_widths[1] = 1;
+    box_line_widths[1] = 1.0;
 
     opt_array[2] = PL_LEGEND_LINE;
     sprintf( text[2], "%s", "Line" );
     text_colors[2] = 3;
     line_colors[2] = 3;
     line_styles[2] = 1;
-    line_widths[2] = 1;
+    line_widths[2] = 1.0;
 
     opt_array[3] = PL_LEGEND_SYMBOL;
     sprintf( text[3], "%s", "Symbol" );
@@ -575,7 +575,7 @@ x33::x33( int argc, const char **argv )
     text_colors[4]    = 5;
     line_colors[4]    = 5;
     line_styles[4]    = 1;
-    line_widths[4]    = 1;
+    line_widths[4]    = 1.0;
     symbol_colors[4]  = 5;
     symbol_scales[4]  = text_scale;
     symbol_numbers[4] = 4;
@@ -652,7 +652,7 @@ x33::x33( int argc, const char **argv )
         box_colors[i]      = i + 1;
         box_patterns[i]    = 0;
         box_scales[i]      = 0.8;
-        box_line_widths[i] = 1;
+        box_line_widths[i] = 1.0;
     }
 
     opt = opt_base;
@@ -680,7 +680,7 @@ x33::x33( int argc, const char **argv )
         box_colors[i]      = 2;
         box_patterns[i]    = i;
         box_scales[i]      = 0.8;
-        box_line_widths[i] = 1;
+        box_line_widths[i] = 1.0;
     }
 
     opt = opt_base;
@@ -705,7 +705,7 @@ x33::x33( int argc, const char **argv )
         box_colors[i]      = 2;
         box_patterns[i]    = 3;
         box_scales[i]      = 0.8;
-        box_line_widths[i] = i + 1;
+        box_line_widths[i] = i + 1.0;
     }
 
     opt = opt_base;
@@ -729,7 +729,7 @@ x33::x33( int argc, const char **argv )
         text_colors[i] = i + 1;
         line_colors[i] = i + 1;
         line_styles[i] = 1;
-        line_widths[i] = 1;
+        line_widths[i] = 1.0;
     }
 
     opt = opt_base;
@@ -756,7 +756,7 @@ x33::x33( int argc, const char **argv )
         text_colors[i] = 2;
         line_colors[i] = 2;
         line_styles[i] = i + 1;
-        line_widths[i] = 1;
+        line_widths[i] = 1.0;
     }
 
     opt = opt_base;
@@ -780,7 +780,7 @@ x33::x33( int argc, const char **argv )
         text_colors[i] = 2;
         line_colors[i] = 2;
         line_styles[i] = 1;
-        line_widths[i] = i + 1;
+        line_widths[i] = i + 1.0;
     }
 
     opt = opt_base;

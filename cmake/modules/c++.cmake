@@ -25,7 +25,7 @@
 if(DEFAULT_NO_BINDINGS)
   OPTION(ENABLE_cxx "Enable C++ bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  OPTION(ENABLE_cxx "Enable C++ bindings" OFF)
+  OPTION(ENABLE_cxx "Enable C++ bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(NOT PLPLOT_CXX_COMPILER_WORKS)
