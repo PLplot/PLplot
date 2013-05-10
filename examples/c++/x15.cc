@@ -105,8 +105,10 @@ x15::x15( int argc, const char ** argv )
 void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
 {
     PLFLT shade_min, shade_max, sh_color;
-    int   sh_cmap   = 0, sh_width;
-    int   min_color = 0, min_width = 0, max_color = 0, max_width = 0;
+    int   sh_cmap   = 0;
+    PLFLT sh_width;
+    int   min_color = 0, max_color = 0;
+    PLFLT min_width = 0.0, max_width = 0.0;
 
     pls->adv( 0 );
     pls->vpor( 0.1, 0.9, 0.1, 0.9 );
@@ -117,11 +119,11 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
     shade_min = zmin + ( zmax - zmin ) * 0.4;
     shade_max = zmin + ( zmax - zmin ) * 0.6;
     sh_color  = 7;
-    sh_width  = 2;
+    sh_width  = 2.0;
     min_color = 9;
     max_color = 2;
-    min_width = 2;
-    max_width = 2;
+    min_width = 2.0;
+    max_width = 2.0;
 
     pls->psty( 8 );
 
@@ -143,8 +145,10 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
 void x15::plot2( PLFLT **z, PLFLT zmin, PLFLT zmax )
 {
     PLFLT        shade_min, shade_max, sh_color;
-    int          sh_cmap   = 0, sh_width;
-    int          min_color = 0, min_width = 0, max_color = 0, max_width = 0;
+    int          sh_cmap   = 0;
+    PLFLT        sh_width;
+    int          min_color = 0, max_color = 0;
+    PLFLT        min_width = 0.0, max_width = 0.0;
     int          i;
     static PLINT nlin[10]   = { 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 };
     static PLINT inc[10][2] = { { 450,    0 }, { -450,    0 }, { 0,   0 }, { 900,   0 },
@@ -154,7 +158,7 @@ void x15::plot2( PLFLT **z, PLFLT zmin, PLFLT zmax )
                                 { 2000, 2000 }, { 2000, 2000 }, { 2000, 2000 },
                                 { 2000, 2000 }, { 2000, 2000 }, { 4000, 4000 },
                                 { 4000, 2000 } };
-    sh_width = 2;
+    sh_width = 2.0;
 
     pls->adv( 0 );
     pls->vpor( 0.1, 0.9, 0.1, 0.9 );
