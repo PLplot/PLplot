@@ -176,21 +176,11 @@ if(ENABLE_pygcw)
   transform_version(MININUM_NUMERICAL_NUMPY_PYGCW_VERSION "2.13.0")
   transform_version(NUMERICAL_NUMPY_PYGCW_VERSION "${_GCW4_VERSION}")
   if(NUMERICAL_NUMPY_PYGCW_VERSION LESS "${MININUM_NUMERICAL_NUMPY_PYGCW_VERSION}")
-    if(HAVE_NUMPY)
       message(STATUS
-      "WARNING: Must specify HAVE_NUMPY=OFF for pygcw to work with version\n"
-      "${_GCW4_VERSION} of pygtk-2.0.  Setting ENABLE_gcw to OFF."
+      "WARNING: Required version of pygtk-2.0 to work with NumPy is ${MINIMUM_NUMPY_PYGCW_VERSION}\n"
+      "Installed version is ${_GCW4_VERSION}.  Setting ENABLE_gcw to OFF."
       )
       set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
-    endif(HAVE_NUMPY)
-  else(NUMERICAL_NUMPY_PYGCW_VERSION LESS "${MININUM_NUMERICAL_NUMPY_PYGCW_VERSION}")
-    if(NOT HAVE_NUMPY)
-      message(STATUS
-      "WARNING: Must specify HAVE_NUMPY=ON for pygcw to work with version\n"
-      "${_GCW4_VERSION} of pygtk-2.0.  Setting ENABLE_gcw to OFF."
-      )
-      set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
-    endif(NOT HAVE_NUMPY)
   endif(NUMERICAL_NUMPY_PYGCW_VERSION LESS "${MININUM_NUMERICAL_NUMPY_PYGCW_VERSION}")
 endif(ENABLE_pygcw)
     

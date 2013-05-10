@@ -79,6 +79,7 @@ set(
   xw17.py
   xw31.py
   plplot_logo.py
+  plplot_py_demos.py
   test_circle.py
   test_axis_precision.py
   test_symbol_clip.py
@@ -230,13 +231,14 @@ if(CORE_BUILD)
 
   set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
   set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
+  set(python_location3 ${CMAKE_BINARY_DIR}/examples/python)
   if(WIN32 AND NOT CYGWIN)
-    set(python_location3 ${CMAKE_BINARY_DIR}/dll)
+    set(python_location4 ${CMAKE_BINARY_DIR}/dll)
   else(WIN32 AND NOT CYGWIN)
     set(python_location3)
   endif(WIN32 AND NOT CYGWIN)
-  set(python_location4 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
-  set(python_location5 ${CMAKE_BINARY_DIR}/bindings/gnome2/python)
+  set(python_location5 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
+  set(python_location6 ${CMAKE_BINARY_DIR}/bindings/gnome2/python)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
@@ -259,12 +261,6 @@ if(CORE_BUILD)
     PERMISSIONS ${PERM_DATA}
     RENAME plplot_python_start.py
     )
-
-  if (HAVE_NUMPY)
-    configure_file(plplot_py_demos.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
-  else (HAVE_NUMPY)
-    configure_file(plplot_py_demos.py.numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
-  endif (HAVE_NUMPY)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py
     DESTINATION ${DATA_DIR}/examples/python

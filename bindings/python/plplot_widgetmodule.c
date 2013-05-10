@@ -1,9 +1,7 @@
 // C code to create dynamically loaded library to implement plplot_widget module
 
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
-// Change this to the recommended
-// #include <Numeric/arrayobject.h>
-//  once we no longer support python1.5
 #include <arrayobject.h>
 #include "plplot.h"
 #include "plplotP.h"

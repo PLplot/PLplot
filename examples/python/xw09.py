@@ -135,27 +135,8 @@ def potential():
     nlevel = 20
     dz = (zmax-zmin)/float(nlevel)
     clevel = zmin + (arange(20)+0.5)*dz
-    try:
-	#This works with Numeric 20.3
-	clevelpos = compress(clevel > 0., clevel)
-	clevelneg = compress(clevel <= 0., clevel)
-    except:
-	#Eventually eliminate this as we quit supporting old Numeric versions.
-	print "Calculate negative and positive contours the old-fashioned way"
-	clevelpos = zeros(20,"double")
-	clevelneg = zeros(20,"double")
-	nclevelpos = 0
-	nclevelneg = 0
-	for i in range(20):
-	    if clevel[i] > 0.:
-		clevelpos[nclevelpos] = clevel[i]
-		nclevelpos = nclevelpos+1
-	    else:
-		clevelneg[nclevelneg] = clevel[i]
-		nclevelneg = nclevelneg+1
-
-	clevelpos = clevelpos[0:nclevelpos]
-	clevelneg = clevelneg[0:nclevelneg]
+    clevelpos = compress(clevel > 0., clevel)
+    clevelneg = compress(clevel <= 0., clevel)
 
     #Colours!
     ncollin = 11
@@ -219,13 +200,7 @@ def main():
     yg1 = yg0 - distort*cos_y
     # Need independent copy here so the shape changes for xg0t do not affect
     # xg0.
-    try:
-	xg0t = xg0.copy()
-    except:
-	# old versions of Numpy bundled with python-1.5 do not have the
-	# copy method for arrays.  So if the above fails, do it another way
-	# (which we will remove as soon as we quit supporting python-1.5)
-	xg0t = array(xg0)
+    xg0t = xg0.copy()
     cos_x.shape = (-1,1)
     xg0t.shape = (-1,1)
     xg2 = xg0t + distort*cos_x*cos_y

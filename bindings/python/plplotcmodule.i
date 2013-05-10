@@ -45,31 +45,19 @@
 %include typemaps.i
 
 %{
-// Change this to the recommended
-//#include <Numeric/arrayobject.h>
-// once we no longer support python1.5
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <arrayobject.h>
 #include "plplot.h"
 #include "plplotP.h"
 
-#ifdef PL_DOUBLE
-#define  PyArray_PLFLT    PyArray_DOUBLE
-#else
-#define  PyArray_PLFLT    PyArray_FLOAT
-#endif
-
-#ifdef HAVE_NUMPY
-#define  PyArray_PLINT    PyArray_INT32
+#define  NPY_PLINT    NPY_INT32
 
 #ifdef PL_DOUBLE
-#define  NPY_PLFLT        NPY_DOUBLE
+#define  NPY_PLFLT    NPY_DOUBLE
 #else
-#define  NPY_PLFLT        NPY_FLOAT
+#define  NPY_PLFLT    NPY_FLOAT
 #endif
 
-#else  // HAVE_NUMPY
-#define  PyArray_PLINT    PyArray_INT
-#endif
 // python-1.5 compatibility mode?
 #if !defined ( PySequence_Fast_GET_ITEM )
   #define PySequence_Fast_GET_ITEM    PySequence_GetItem
@@ -128,7 +116,7 @@ typedef PLINT          PLBOOL;
 // some really twisted stuff to allow calling a single precision library from python
     PyArrayObject* myIntArray_ContiguousFromObject( PyObject* in, int type, int mindims, int maxdims )
     {
-        PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, PyArray_PLINT,
+        PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, NPY_PLINT,
             mindims, maxdims );
         if ( !tmp )
         {
@@ -136,7 +124,7 @@ typedef PLINT          PLBOOL;
             if ( PyArray_Check( in ) )
             {
                 PyErr_Clear();
-                tmp = (PyArrayObject *) PyArray_Cast( (PyArrayObject *) in, PyArray_PLINT );
+                tmp = (PyArrayObject *) PyArray_Cast( (PyArrayObject *) in, NPY_PLINT );
             }
         }
         return tmp;
@@ -152,11 +140,11 @@ typedef PLINT          PLBOOL;
 // With preceding count
 %typemap( in ) ( PLINT n, const PLINT * Array ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, PyArray_PLINT, 1, 1 );
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    $1 = Alen = tmp->dimensions[0];
-    $2 = (PLINT *) tmp->data;
+    $1 = Alen = PyArray_DIMS(tmp)[0];
+    $2 = (PLINT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) ( PLINT n, const PLINT * Array )
 {
@@ -166,16 +154,16 @@ typedef PLINT          PLBOOL;
 // Trailing count and check consistency with previous
 %typemap( in ) ( const PLINT * ArrayCk, PLINT n ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, PyArray_PLINT, 1, 1 );
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Alen )
+    if ( PyArray_DIMS(tmp)[0] != Alen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $2 = tmp->dimensions[0];
-    $1 = (PLINT *) tmp->data;
+    $2 = PyArray_DIMS(tmp)[0];
+    $1 = (PLINT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) ( const PLINT * ArrayCk, PLINT n )
 {
@@ -185,70 +173,70 @@ typedef PLINT          PLBOOL;
 // No count but check consistency with previous
 %typemap( in ) const PLINT * ArrayCk( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, PyArray_PLINT, 1, 1 );
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Alen )
+    if ( PyArray_DIMS(tmp)[0] != Alen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLINT *) tmp->data;
+    $1 = (PLINT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLINT * ArrayCk { Py_DECREF( tmp$argnum );}
 
 // No count but check consistency with previous or NULL
 %typemap( in ) const PLINT * ArrayCkNull( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, PyArray_PLINT, 1, 1 );
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Alen )
+    if ( PyArray_DIMS(tmp)[0] != Alen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLINT *) tmp->data;
+    $1 = (PLINT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLINT * ArrayCkNull { Py_DECREF( tmp$argnum );}
 
 // Weird case to allow argument to be one shorter than others
 %typemap( in ) const PLINT * ArrayCkMinus1( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, PyArray_PLINT, 1, 1 );
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] < Alen - 1 )
+    if ( PyArray_DIMS(tmp)[0] < Alen - 1 )
     {
         PyErr_SetString( PyExc_ValueError, "Vector must be at least length of others minus 1." );
         return NULL;
     }
-    $1 = (PLINT *) tmp->data;
+    $1 = (PLINT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLINT * ArrayCkMinus1 { Py_DECREF( tmp$argnum );}
 
 %typemap( in ) const PLINT * ArrayCkMinus1Null( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, PyArray_PLINT, 1, 1 );
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] < Alen - 1 )
+    if ( PyArray_DIMS(tmp)[0] < Alen - 1 )
     {
         PyErr_SetString( PyExc_ValueError, "Vector must be at least length of others minus 1." );
         return NULL;
     }
-    $1 = (PLINT *) tmp->data;
+    $1 = (PLINT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLINT * ArrayCkMinus1Null { Py_DECREF( tmp$argnum );}
 
 // No length but remember size to check others
 %typemap( in ) const PLINT * Array( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, PyArray_PLINT, 1, 1 );
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    Alen = tmp->dimensions[0];
-    $1   = (PLINT *) tmp->data;
+    Alen = PyArray_DIMS(tmp)[0];
+    $1   = (PLINT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLINT * Array { Py_DECREF( tmp$argnum );}
 
@@ -286,11 +274,11 @@ typedef PLINT          PLBOOL;
 // with preceding count
 %typemap( in ) ( PLINT n, const PLFLT * Array ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    $1 = Alen = tmp->dimensions[0];
-    $2 = (PLFLT *) tmp->data;
+    $1 = Alen = PyArray_DIMS(tmp)[0];
+    $2 = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) ( PLINT n, const PLFLT * Array )
 {
@@ -300,16 +288,16 @@ typedef PLINT          PLBOOL;
 // trailing count and check consistency with previous
 %typemap( in ) ( const PLFLT * ArrayCk, PLINT n ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Alen )
+    if ( PyArray_DIMS(tmp)[0] != Alen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT *) tmp->data;
-    $2 = tmp->dimensions[0];
+    $1 = (PLFLT *) PyArray_DATA(tmp);
+    $2 = PyArray_DIMS(tmp)[0];
 }
 %typemap( freearg ) ( const PLFLT * ArrayCk, PLINT n )
 {
@@ -319,72 +307,72 @@ typedef PLINT          PLBOOL;
 // no count, but check consistency with previous
 %typemap( in ) const PLFLT * ArrayCk( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Alen )
+    if ( PyArray_DIMS(tmp)[0] != Alen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT *) tmp->data;
+    $1 = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLFLT * ArrayCk { Py_DECREF( tmp$argnum );}
 
 // no count, but check consistency with previous, or NULL
 %typemap( in ) const PLFLT * ArrayCkNull( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Alen )
+    if ( PyArray_DIMS(tmp)[0] != Alen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT *) tmp->data;
+    $1 = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLFLT * ArrayCkNull { Py_DECREF( tmp$argnum );}
 
 // check consistency with X dimension of previous
 %typemap( in ) const PLFLT * ArrayCkX( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Xlen )
+    if ( PyArray_DIMS(tmp)[0] != Xlen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT *) tmp->data;
+    $1 = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLFLT * ArrayCkX { Py_DECREF( tmp$argnum );}
 
 // check consistency with Y dimension of previous
 %typemap( in ) const PLFLT * ArrayCkY( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Ylen )
+    if ( PyArray_DIMS(tmp)[0] != Ylen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (PLFLT *) tmp->data;
+    $1 = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLFLT * ArrayCkY { Py_DECREF( tmp$argnum );}
 
 // set X length for later consistency checking, with trailing count
 %typemap( in ) ( const PLFLT * ArrayX, PLINT nx ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    Xlen = tmp->dimensions[0];
+    Xlen = PyArray_DIMS(tmp)[0];
     $2   = Xlen;
-    $1   = (PLFLT *) tmp->data;
+    $1   = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) ( const PLFLT * ArrayX, PLINT nx )
 {
@@ -394,23 +382,23 @@ typedef PLINT          PLBOOL;
 // set X length for later consistency checking
 %typemap( in ) const PLFLT * ArrayX( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    Xlen = tmp->dimensions[0];
-    $1   = (PLFLT *) tmp->data;
+    Xlen = PyArray_DIMS(tmp)[0];
+    $1   = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLFLT * ArrayX { Py_DECREF( tmp$argnum );}
 
 // Set Y length for later consistency checking, with trailing count
 %typemap( in ) ( const PLFLT * ArrayY, PLINT ny ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    Ylen = tmp->dimensions[0];
+    Ylen = PyArray_DIMS(tmp)[0];
     $2   = Ylen;
-    $1   = (PLFLT *) tmp->data;
+    $1   = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny )
 {
@@ -420,11 +408,11 @@ typedef PLINT          PLBOOL;
 // set Y length for later consistency checking
 %typemap( in ) const PLFLT * ArrayY( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    Ylen = tmp->dimensions[0];
-    $1   = (PLFLT *) tmp->data;
+    Ylen = PyArray_DIMS(tmp)[0];
+    $1   = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLFLT * ArrayY { Py_DECREF( tmp$argnum );}
 
@@ -432,11 +420,11 @@ typedef PLINT          PLBOOL;
 // with trailing count
 %typemap( in ) ( const PLFLT * Array, PLINT n ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    $2 = tmp->dimensions[0];
-    $1 = (PLFLT *) tmp->data;
+    $2 = PyArray_DIMS(tmp)[0];
+    $1 = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) ( const PLFLT * Array, PLINT n )
 {
@@ -446,11 +434,11 @@ typedef PLINT          PLBOOL;
 // with no count
 %typemap( in ) const PLFLT * Array( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    Alen = tmp->dimensions[0];
-    $1   = (PLFLT *) tmp->data;
+    Alen = PyArray_DIMS(tmp)[0];
+    $1   = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) const PLFLT * Array { Py_DECREF( tmp$argnum );}
 
@@ -458,20 +446,20 @@ typedef PLINT          PLBOOL;
 %typemap( in ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) ( PyArrayObject * tmp )
 {
     int i, size;
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 2, 2 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
     if ( tmp == NULL )
         return NULL;
-    if ( Xlen != tmp->dimensions[0] || Ylen != tmp->dimensions[1] )
+    if ( Xlen != PyArray_DIMS(tmp)[0] || Ylen != PyArray_DIMS(tmp)[1] )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must match matrix." );
         return NULL;
     }
-    $2   = tmp->dimensions[0];
-    $3   = tmp->dimensions[1];
+    $2   = PyArray_DIMS(tmp)[0];
+    $3   = PyArray_DIMS(tmp)[1];
     size = sizeof ( PLFLT ) * $3;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
     for ( i = 0; i < $2; i++ )
-        $1[i] = (PLFLT *) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( PyArray_DATA(tmp) + i * size );
 }
 %typemap( freearg ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny )
 {
@@ -483,15 +471,15 @@ typedef PLINT          PLBOOL;
 %typemap( in ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny ) ( PyArrayObject * tmp )
 {
     int i, size;
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 2, 2 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
     if ( tmp == NULL )
         return NULL;
-    Xlen = $2 = tmp->dimensions[0];
-    Ylen = $3 = tmp->dimensions[1];
+    Xlen = $2 = PyArray_DIMS(tmp)[0];
+    Ylen = $3 = PyArray_DIMS(tmp)[1];
     size = sizeof ( PLFLT ) * $3;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
     for ( i = 0; i < $2; i++ )
-        $1[i] = (PLFLT *) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( PyArray_DATA(tmp) + i * size );
 }
 %typemap( freearg ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny )
 {
@@ -503,15 +491,15 @@ typedef PLINT          PLBOOL;
 %typemap( in ) const PLFLT * *Matrix( PyArrayObject * tmp )
 {
     int i, size;
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 2, 2 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
     if ( tmp == NULL )
         return NULL;
-    Xlen = tmp->dimensions[0];
-    Ylen = tmp->dimensions[1];
+    Xlen = PyArray_DIMS(tmp)[0];
+    Ylen = PyArray_DIMS(tmp)[1];
     size = sizeof ( PLFLT ) * Ylen;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT *) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( PyArray_DATA(tmp) + i * size );
 }
 %typemap( freearg ) const PLFLT * *Matrix {
     Py_DECREF( tmp$argnum );
@@ -521,12 +509,12 @@ typedef PLINT          PLBOOL;
 // for plshade1, note the difference in the type for the first arg
 %typemap( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( PyArrayObject * tmp )
 {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 2, 2 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
     if ( tmp == NULL )
         return NULL;
-    Xlen = $2 = tmp->dimensions[0];
-    Ylen = $3 = tmp->dimensions[1];
-    $1   = (PLFLT *) tmp->data;
+    Xlen = $2 = PyArray_DIMS(tmp)[0];
+    Ylen = $3 = PyArray_DIMS(tmp)[1];
+    $1   = (PLFLT *) PyArray_DATA(tmp);
 }
 %typemap( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
 {
@@ -537,10 +525,10 @@ typedef PLINT          PLBOOL;
 %typemap( in ) const PLFLT * *MatrixCk( PyArrayObject * tmp )
 {
     int i, size;
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 2, 2 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Xlen || tmp->dimensions[1] != Ylen )
+    if ( PyArray_DIMS(tmp)[0] != Xlen || PyArray_DIMS(tmp)[1] != Ylen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must match matrix." );
         return NULL;
@@ -548,7 +536,7 @@ typedef PLINT          PLBOOL;
     size = sizeof ( PLFLT ) * Ylen;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT *) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( PyArray_DATA(tmp) + i * size );
 }
 %typemap( freearg ) const PLFLT * *MatrixCk {
     Py_DECREF( tmp$argnum );
@@ -560,10 +548,10 @@ typedef PLINT          PLBOOL;
 %typemap( in ) PLFLT * *OutMatrixCk( PyArrayObject * tmp )
 {
     int i, size;
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 2, 2 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Xlen || tmp->dimensions[1] != Ylen )
+    if ( PyArray_DIMS(tmp)[0] != Xlen || PyArray_DIMS(tmp)[1] != Ylen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must match matrix." );
         return NULL;
@@ -571,7 +559,7 @@ typedef PLINT          PLBOOL;
     size = sizeof ( PLFLT ) * Ylen;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT *) ( tmp->data + i * size );
+        $1[i] = (PLFLT *) ( PyArray_DATA(tmp) + i * size );
 }
 %typemap( freearg ) PLFLT * *OutMatrixCk {
     Py_DECREF( tmp$argnum );
@@ -585,12 +573,12 @@ typedef PLINT          PLBOOL;
 {
     int      i, size;
     npy_intp dims[2];
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, PyArray_PLFLT, 1, 1 );
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    Ylen = tmp->dimensions[0];
+    Ylen = PyArray_DIMS(tmp)[0];
     $2   = Ylen;
-    $1   = (PLFLT *) tmp->data;
+    $1   = (PLFLT *) PyArray_DATA(tmp);
     // Make created 2D array have dimensions from prior ArrayX in the argument
     // list and this ArrayY.
     dims[0] = Xlen;
@@ -601,7 +589,7 @@ typedef PLINT          PLBOOL;
     size = (int) ( sizeof ( double ) * Ylen );
     $3   = (double **) malloc( sizeof ( double * ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $3[i] = (double *) ( ( (PyArrayObject *) array )->data + i * size );
+        $3[i] = (double *) ( PyArray_DATA( (PyArrayObject *) array ) + i * size );
 }
 %typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk )
 {
@@ -623,7 +611,7 @@ typedef PLINT          PLBOOL;
     tmp = (PyArrayObject *) PyArray_ContiguousFromObject( $input, NPY_STRING, 1, 1 );
     if ( tmp == NULL )
         return NULL;
-    if ( tmp->dimensions[0] != Alen )
+    if ( PyArray_DIMS(tmp)[0] != Alen )
     {
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
@@ -631,7 +619,7 @@ typedef PLINT          PLBOOL;
     $1 = (char **) malloc( sizeof ( char* ) * Alen );
     for ( i = 0; i < Alen; i++ )
     {
-        $1[i] = tmp->data + i * tmp->strides[0];
+        $1[i] = PyArray_DATA(tmp) + i * PyArray_STRIDES(tmp)[0];
         if ( $1[i] == NULL )
         {
             free( $1 );
@@ -694,16 +682,16 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             return NULL;
         }
         pltr_xg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 0 ),
-            PyArray_PLFLT, 1, 1 );
+            NPY_PLFLT, 1, 1 );
         pltr_yg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 1 ),
-            PyArray_PLFLT, 1, 1 );
+            NPY_PLFLT, 1, 1 );
         if ( pltr_xg == 0 || pltr_yg == 0 )
         {
             PyErr_SetString( PyExc_ValueError, "Expected a sequence to two 1D arrays." );
             return NULL;
         }
-        tmpGrid1.nx = pltr_xg->dimensions[0];
-        tmpGrid1.ny = pltr_yg->dimensions[0];
+        tmpGrid1.nx = PyArray_DIMS(pltr_xg)[0];
+        tmpGrid1.ny = PyArray_DIMS(pltr_yg)[0];
         if ( isimg == 0 )
         {
             if ( Xlen != tmpGrid1.nx || Ylen != tmpGrid1.ny )
@@ -720,8 +708,8 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
                 return NULL;
             }
         }
-        tmpGrid1.xg = (PLFLT *) pltr_xg->data;
-        tmpGrid1.yg = (PLFLT *) pltr_yg->data;
+        tmpGrid1.xg = (PLFLT *) PyArray_DATA(pltr_xg);
+        tmpGrid1.yg = (PLFLT *) PyArray_DATA(pltr_yg);
         return &tmpGrid1;
     }
 
@@ -742,22 +730,22 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             return NULL;
         }
         pltr_xg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 0 ),
-            PyArray_PLFLT, 2, 2 );
+            NPY_PLFLT, 2, 2 );
         pltr_yg = (PyArrayObject *) myArray_ContiguousFromObject( PySequence_Fast_GET_ITEM( input, 1 ),
-            PyArray_PLFLT, 2, 2 );
+            NPY_PLFLT, 2, 2 );
         if ( pltr_xg == 0 || pltr_yg == 0 )
         {
             PyErr_SetString( PyExc_ValueError, "Expected a sequence of two 2D arrays." );
             return NULL;
         }
-        if ( pltr_xg->dimensions[0] != pltr_yg->dimensions[0] ||
-             pltr_xg->dimensions[1] != pltr_yg->dimensions[1] )
+        if ( PyArray_DIMS(pltr_xg)[0] != PyArray_DIMS(pltr_yg)[0] ||
+             PyArray_DIMS(pltr_xg)[1] != PyArray_DIMS(pltr_yg)[1] )
         {
             PyErr_SetString( PyExc_ValueError, "Arrays must be same size." );
             return NULL;
         }
-        tmpGrid2.nx = pltr_xg->dimensions[0];
-        tmpGrid2.ny = pltr_xg->dimensions[1];
+        tmpGrid2.nx = PyArray_DIMS(pltr_xg)[0];
+        tmpGrid2.ny = PyArray_DIMS(pltr_xg)[1];
         if ( isimg == 0 )
         {
             if ( Xlen != tmpGrid2.nx || Ylen != tmpGrid2.ny )
@@ -777,10 +765,10 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
         size        = sizeof ( PLFLT ) * tmpGrid2.ny;
         tmpGrid2.xg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
-            tmpGrid2.xg[i] = (PLFLT *) ( pltr_xg->data + i * size );
+            tmpGrid2.xg[i] = (PLFLT *) ( PyArray_DATA(pltr_xg) + i * size );
         tmpGrid2.yg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
-            tmpGrid2.yg[i] = (PLFLT *) ( pltr_yg->data + i * size );
+            tmpGrid2.yg[i] = (PLFLT *) ( PyArray_DATA(pltr_yg) + i * size );
         return &tmpGrid2;
     }
 
@@ -929,8 +917,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             }
             else
             {
-                tmp = (PyArrayObject *) myArray_ContiguousFromObject( result, PyArray_PLFLT, 1, 1 );
-                if ( tmp == 0 || tmp->dimensions[0] != 2 )
+                tmp = (PyArrayObject *) myArray_ContiguousFromObject( result, NPY_PLFLT, 1, 1 );
+                if ( tmp == 0 || PyArray_DIMS(tmp)[0] != 2 )
                 {
                     fprintf( stderr, "pltr callback must return a 2 element array or sequence\n" );
                     PyErr_SetString( PyExc_RuntimeError, "pltr callback must return a 2-sequence." );
@@ -938,7 +926,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 }
                 else
                 {
-                    PLFLT* t = (PLFLT *) tmp->data;
+                    PLFLT* t = (PLFLT *) PyArray_DATA(tmp);
                     *tx = t[0];
                     *ty = t[1];
                     Py_XDECREF( tmp );
@@ -1041,11 +1029,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     void do_ct_callback( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
     {
         PyObject *px, *py, *pdata, *arglist, *result;
-#ifdef HAVE_NUMPY
         npy_intp n;
-#else
-        PLINT    n;
-#endif
         n = 1;
 
         // the data argument is acutally a pointer to a python object
@@ -1060,13 +1044,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             // grab the Global Interpreter Lock to be sure threads don't mess us up
             MY_BLOCK_THREADS
             // build the argument list
-#ifdef HAVE_NUMPY
             px = PyArray_SimpleNewFromData( 1, &n, NPY_PLFLT, (void *) xt );
             py = PyArray_SimpleNewFromData( 1, &n, NPY_PLFLT, (void *) yt );
-#else
-            px = PyArray_FromDimsAndData( 1, &n, PyArray_PLFLT, (char *) xt );
-            py = PyArray_FromDimsAndData( 1, &n, PyArray_PLFLT, (char *) yt );
-#endif
             arglist = Py_BuildValue( "(ddOOO)", x, y, px, py, pdata );
             // call the python function
             result = PyEval_CallObject( python_ct, arglist );
@@ -1094,10 +1073,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         // PyArrayObject *tmpx, *tmpy;
 //        PLFLT *xx, *yy;
 //        PLINT i;
-#ifdef HAVE_NUMPY
         npy_intp nn;
         nn = n;
-#endif
 
         if ( python_mapform ) // if not something is terribly wrong
         {                     // grab the Global Interpreter Lock to be sure threads don't mess us up

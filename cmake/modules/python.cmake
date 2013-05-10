@@ -60,18 +60,14 @@ if(ENABLE_python)
   endif(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
 endif(ENABLE_python)
 
-option(HAVE_NUMPY "Use numpy rather than deprecated Numeric" ON)
-option(FORCE_NUMERIC "Force use of deprecated Numeric" OFF)
-if(FORCE_NUMERIC)
-  set(HAVE_NUMPY OFF CACHE BOOL "Use numpy rather than deprecated Numeric" FORCE)
-endif(FORCE_NUMERIC)
+option(HAVE_NUMPY "Have the numpy package" ON)
 
 if(ENABLE_python)
-  # NUMERIC_INCLUDE_PATH = path to arrayobject.h for either Numeric or numpy.
+  # NUMERIC_INCLUDE_PATH = path to arrayobject.h for numpy.
   #message(STATUS "DEBUG: NUMERIC_INCLUDE_PATH = ${NUMERIC_INCLUDE_PATH}") 
   if(NOT NUMERIC_INCLUDE_PATH)
     if(HAVE_NUMPY)
-      # First check for new version of numpy (replaces Numeric)
+      # First check for new version of numpy 
       execute_process(
 	COMMAND
 	${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"
@@ -80,7 +76,7 @@ if(ENABLE_python)
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 	)
       if(NUMPY_ERR)
-	set(HAVE_NUMPY OFF CACHE BOOL "Use numpy rather than deprecated Numeric" FORCE)
+	set(HAVE_NUMPY OFF CACHE BOOL "Have the numpy package" FORCE)
       endif(NUMPY_ERR)
     endif(HAVE_NUMPY)
 
@@ -95,29 +91,13 @@ if(ENABLE_python)
       if(NUMERIC_INCLUDE_PATH)
 	set(PYTHON_NUMERIC_NAME numpy CACHE INTERNAL "")
       endif(NUMERIC_INCLUDE_PATH)
-    else(HAVE_NUMPY)
-      # Check for Python Numeric header in same include path or Numeric
-      # subdirectory of that path to avoid version mismatch.
-      find_path(
-	NUMERIC_INCLUDE_PATH
-	arrayobject.h
-	${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_PATH}/Numeric
-	)
-      if(NUMERIC_INCLUDE_PATH)
-	set(PYTHON_NUMERIC_NAME Numeric CACHE INTERNAL "")
-      endif (NUMERIC_INCLUDE_PATH)
     endif(HAVE_NUMPY)
 
   endif(NOT NUMERIC_INCLUDE_PATH)
 
   if(NOT NUMERIC_INCLUDE_PATH)
-    if(HAVE_NUMPY)
-      message(STATUS "WARNING: "
+    message(STATUS "WARNING: "
 	"NumPy header not found. Disabling Python bindings")
-    else(HAVE_NUMPY)
-      message(STATUS "WARNING: "
-	"Numeric header not found. Disabling Python bindings")
-    endif(HAVE_NUMPY)
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NOT NUMERIC_INCLUDE_PATH)
 endif(ENABLE_python)
@@ -129,23 +109,6 @@ if(ENABLE_python AND HAVE_NUMPY)
     set(PYTHON_LIBRARIES)
   endif(EXCLUDE_PYTHON_LIBRARIES)
 endif(ENABLE_python AND HAVE_NUMPY)
-
-if(ENABLE_python AND NOT HAVE_NUMPY)
-  message(STATUS 
-"WARNING: The Numeric extension for Python is deprecated.  Support for
-Numeric will be dropped in a future PLplot release. Please switch to numpy
-by installing that Python extension and/or specifying HAVE_NUMPY ON and
-FORCE_NUMERIC OFF.")
-  if(NOT FORCE_NUMERIC)
-    message(STATUS 
-"WARNING: Disabling Python. If you really wish to enable the deprecated
-Numeric support set FORCE_NUMERIC ON.")
-    set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
-    # Allow further modifications.
-    set(NUMERIC_INCLUDE_PATH "NUMERIC_INCLUDE_PATH-NOTFOUND"
-      CACHE FILEPATH "Path to Numeric or numpy header" FORCE)
-  endif(NOT FORCE_NUMERIC)
-endif(ENABLE_python AND NOT HAVE_NUMPY)
 
 if(ENABLE_python)
   # N.B. This is a nice way to obtain all sorts of Python information
