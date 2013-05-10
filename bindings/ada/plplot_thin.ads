@@ -1078,9 +1078,9 @@ package PLplot_Thin is
         text_colors : PL_Integer_Array; -- fixme these are actually colors; map to them in Ada
         text : PL_Legend_String_Array;
         box_colors : PL_Integer_Array; box_patterns : PL_Integer_Array;
-        box_scales : PL_Float_Array; box_line_widths : PL_Integer_Array;
+        box_scales : PL_Float_Array; box_line_widths : PL_Float_Array;
         line_colors : PL_Integer_Array; line_styles : PL_Integer_Array;
-        line_widths : PL_Integer_Array;
+        line_widths : PL_Float_Array;
         symbol_colors : PL_Integer_Array; symbol_scales : PL_Float_Array;
         symbol_numbers : PL_Integer_Array;
         symbols : PL_Legend_String_Array);
@@ -1529,9 +1529,9 @@ package PLplot_Thin is
     plshade(a : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
           left : PLFLT; right : PLFLT; bottom : PLFLT; top : PLFLT;
           shade_min : PLFLT; shade_max : PLFLT;
-          sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLINT;
-          min_color : PLINT; min_width : PLINT;
-          max_color : PLINT; max_width : PLINT;
+          sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLFLT;
+          min_color : PLINT; min_width : PLFLT;
+          max_color : PLINT; max_width : PLFLT;
           fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
           pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
     pragma Import(C, plshade, "c_plshade");
@@ -1541,9 +1541,9 @@ package PLplot_Thin is
     plshade1(a : PL_Float_Array_2D; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
           left : PLFLT; right : PLFLT; bottom : PLFLT; top : PLFLT;
           shade_min : PLFLT; shade_max : PLFLT;
-          sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLINT;
-          min_color : PLINT; min_width : PLINT;
-          max_color : PLINT; max_width : PLINT;
+          sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLFLT;
+          min_color : PLINT; min_width : PLFLT;
+          max_color : PLINT; max_width : PLFLT;
           fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
           pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
     pragma Import(C, plshade1, "c_plshade1");
@@ -1552,8 +1552,8 @@ package PLplot_Thin is
     procedure
     plshades(z : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
           xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT;
-          clevel : PL_Float_Array; nlevel : PLINT; fill_width : PLINT;
-          cont_color : PLINT; cont_width : PLINT;
+          clevel : PL_Float_Array; nlevel : PLINT; fill_width : PLFLT;
+          cont_color : PLINT; cont_width : PLFLT;
           fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
           pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
     pragma Import(C, plshades, "c_plshades");

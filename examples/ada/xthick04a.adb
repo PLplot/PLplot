@@ -94,14 +94,13 @@ procedure xthick04a is
             declare
                 text, symbols : Legend_String_Array_Type(0 .. 1);
                 opt_array : Integer_Array_1D(0 .. 1);
-                text_colors, line_colors, line_styles, line_widths : Integer_Array_1D(0..1);
+                text_colors, line_colors, line_styles : Integer_Array_1D(0..1);
                 symbol_numbers, symbol_colors : Integer_Array_1D(0 .. 1);
-                symbol_scales : Real_Vector(0 .. 1);
+                line_widths, symbol_scales : Real_Vector(0 .. 1);
                 legend_width, legend_height  : Long_Float;
                 -- Dummy arrays for unused entities. C uses null arguments but we can't.
-                Box_Colors, Box_Patterns, Box_Line_Widths : Integer_Array_1D(0 .. 1)
-                    := (others => 0);
-                Box_Scales : Real_Vector(0 .. 1):= (others => 1.0);
+                Box_Colors, Box_Patterns : Integer_Array_1D(0 .. 1):= (others => 0);
+                Box_Scales, Box_Line_Widths : Real_Vector(0 .. 1):= (others => 1.0);
             begin
                 -- First legend entry.
                 opt_array(0)   := Legend_Line;
@@ -109,7 +108,7 @@ procedure xthick04a is
                 text(0)        := To_Unbounded_String("Amplitude");
                 line_colors(0) := Yellow; -- fixme Use declared constants, not integers.
                 line_styles(0) := 1;
-                line_widths(0) := 1;
+                line_widths(0) := 1.0;
                 symbol_colors(0)  := 3;   -- Don't care; not used.
                 symbol_scales(0)  := 1.0; -- Don't care; not used.
                 symbol_numbers(0) := 4;   -- Don't care; not used.
@@ -121,7 +120,7 @@ procedure xthick04a is
                 text(1)           := To_Unbounded_String("Phase shift");
                 line_colors(1)    := Green;
                 line_styles(1)    := 1;
-                line_widths(1)    := 1;
+                line_widths(1)    := 1.0;
                 symbol_colors(1)  := Green;
                 symbol_scales(1)  := 1.0;
                 symbol_numbers(1) := 4;
@@ -144,13 +143,13 @@ procedure xthick04a is
             declare
                 text, symbols : Legend_String_Array_Type(0 .. 0);
                 opt_array : Integer_Array_1D(0 .. 0);
-                text_colors, line_colors, line_styles, line_widths : Integer_Array_1D(0..0);
+                text_colors, line_colors, line_styles : Integer_Array_1D(0..0);
                 symbol_numbers, symbol_colors : Integer_Array_1D(0 .. 0);
-                symbol_scales : Real_Vector(0 .. 0);
+                line_widths, symbol_scales : Real_Vector(0 .. 0);
                 legend_width, legend_height  : Long_Float;
                 -- Dummy arrays for unused entities. C uses null arguments but we can't.
-                Box_Colors, Box_Patterns, Box_Line_Widths : Integer_Array_1D(0 .. 0);
-                Box_Scales : Real_Vector(0 .. 0);
+                Box_Colors, Box_Patterns : Integer_Array_1D(0 .. 0);
+                Box_Scales, Box_Line_Widths : Real_Vector(0 .. 0);
             begin
                 -- First legend entry.
                 opt_array(0)   := Legend_Line;
@@ -158,14 +157,14 @@ procedure xthick04a is
                 text(0)        := To_Unbounded_String("Amplitude");
                 line_colors(0) := Yellow; -- fixme Use declared constants, not integers.
                 line_styles(0) := 1;
-                line_widths(0) := 1;
+                line_widths(0) := 1.0;
                 symbol_colors(0)  := 3;   -- Don't care; not used.
                 symbol_scales(0)  := 1.0; -- Don't care; not used.
                 symbol_numbers(0) := 4;   -- Don't care; not used.
                 symbols(0) := To_Unbounded_String("*"); -- Don't care; not used.
                 Box_Colors(0)      := 0;
                 Box_Patterns(0)    := 0;
-                Box_Line_Widths(0) := 0;
+                Box_Line_Widths(0) := 0.0;
                 Box_Scales(0)      := 0.0;
 
                 Create_Legend(legend_width, legend_height,

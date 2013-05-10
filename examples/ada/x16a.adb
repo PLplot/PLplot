@@ -64,9 +64,9 @@ procedure x16a is
        (x_Last => nx - 1, 
         y_Last => ny - 1);
 
-    fill_width : Integer := 2;
-    cont_color : Integer := 0;
-    cont_width : Integer := 0;
+    fill_width : Long_Float := 2.0;
+    cont_color : Integer    := 0;
+    cont_width : Long_Float := 0.0;
 
     -- Transformation function
     tr : Real_Vector(0 .. 5);
@@ -254,7 +254,7 @@ begin
 
     plshades(z, Null, -1.0, 1.0, -1.0, 1.0, 
          shedge, fill_width,
-         2, 3,
+         2, 3.0,
          plfill'access, False, pltr2'access, cgrid2'Address);
 
     plcol0(1);

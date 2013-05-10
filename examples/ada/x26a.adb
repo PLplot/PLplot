@@ -129,15 +129,14 @@ procedure x26a is
         freql, ampl, phase : Real_Vector(0 .. 100);
         f0, freq : Long_Float;
         opt_array : Integer_Array_1D(0 .. 1);
-        text_colors, line_colors, line_styles, line_widths : Integer_Array_1D(0..1);
+        text_colors, line_colors, line_styles : Integer_Array_1D(0..1);
         symbol_numbers, symbol_colors : Integer_Array_1D(0 .. 1);
-        symbol_scales : Real_Vector(0 .. 1);
+        line_widths, symbol_scales : Real_Vector(0 .. 1);
         symbols : Legend_String_Array_Type(0 .. 1);
         legend_width, legend_height  : Long_Float;
         -- Dummy arrays for unused entities. C uses null arguments but we can't.
-        Box_Colors, Box_Patterns, Box_Line_Widths : Integer_Array_1D(0 .. 1)
-            := (others => 0);
-        Box_Scales : Real_Vector(0 .. 1):= (others => 1.0);
+        Box_Colors, Box_Patterns : Integer_Array_1D(0 .. 1):= (others => 0);
+        Box_Scales, Box_Line_Widths : Real_Vector(0 .. 1):= (others => 1.0);
     begin
         pladv(0);
         f0 := 1.0;
@@ -185,7 +184,7 @@ procedure x26a is
         text_colors(0) := 2;
         line_colors(0) := 2;
         line_styles(0) := 1;
-        line_widths(0) := 1;
+        line_widths(0) := 1.0;
         symbol_colors(0)  := 3;   -- Don't care; not used.
         symbol_scales(0)  := 1.0; -- Don't care; not used.
         symbol_numbers(0) := 4;   -- Don't care; not used.
@@ -196,7 +195,7 @@ procedure x26a is
         text_colors(1)    := 3;
         line_colors(1)    := 3;
         line_styles(1)    := 1;
-        line_widths(1)    := 1;
+        line_widths(1)    := 1.0;
         symbol_colors(1)  := 3;
         symbol_scales(1)  := 1.0;
         symbol_numbers(1) := 4;

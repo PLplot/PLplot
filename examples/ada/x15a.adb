@@ -85,8 +85,9 @@ procedure x15a is
     procedure plot1 is
         shade_min, shade_max, sh_color : Long_Float;
         sh_cmap  : Integer := 0;
-        sh_width : Integer;
-        min_color, min_width, max_color, max_width : Integer;
+        sh_width : Long_Float;
+        min_color, max_color : Integer;
+        min_width, max_width : Long_Float;
     begin
         pladv(0);
         plvpor(0.1, 0.9, 0.1, 0.9);
@@ -96,11 +97,11 @@ procedure x15a is
         shade_min := zmin + (zmax-zmin) * 0.4;
         shade_max := zmin + (zmax-zmin) * 0.6;
         sh_color := 7.0;
-        sh_width := 2;
+        sh_width := 2.0;
         min_color := 9;
         max_color := 2;
-        min_width := 2;
-        max_width := 2;
+        min_width := 2.0;
+        max_width := 2.0;
 
         plpsty(8);
 
@@ -124,8 +125,9 @@ procedure x15a is
     procedure plot2 is
         shade_min, shade_max, sh_color : Long_Float;
         sh_cmap  : Integer := 0;
-        sh_width : Integer;
-        min_color, min_width, max_color, max_width : Integer := 0;
+        sh_width : Long_Float;
+        min_color, max_color : Integer := 0;
+        min_width, max_width : Long_Float := 0.0;
 
         -- C run amok. The following arrays are made to accommodate the 
         -- original example which is written in perverse C.
@@ -150,7 +152,7 @@ procedure x15a is
         del_0_To_4(3)(0) := 2000;
         del_0_To_4(4)(0) := 2000;
 
-        sh_width := 2;
+        sh_width := 2.0;
 
         pladv(0);
         plvpor(0.1, 0.9, 0.1, 0.9);

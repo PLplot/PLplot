@@ -285,10 +285,10 @@ begin -- main
         box_colors      :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         box_patterns    :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         box_scales      :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
-        box_line_widths :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+        box_line_widths :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
         line_colors     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         line_styles     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
-        line_widths     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+        line_widths     :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
         symbol_numbers  :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         symbol_colors   :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         symbol_scales   :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
@@ -308,7 +308,7 @@ begin -- main
         opt_base          := PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX;
         opt_array(0)      := PL_LEGEND_LINE + PL_LEGEND_SYMBOL;
         line_styles(0)    := 1;
-        line_widths(0)    := 1;
+        line_widths(0)    := 1.0;
         symbol_scales(0)  := 1.0;
         symbol_numbers(0) := 4;
         symbols(0)        := TUB("*");
@@ -349,10 +349,10 @@ begin -- main
         box_colors      :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         box_patterns    :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         box_scales      :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
-        box_line_widths :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+        box_line_widths :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
         line_colors     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         line_styles     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
-        line_widths     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+        line_widths     :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
         symbol_numbers  :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         symbol_colors   :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         symbol_scales   :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
@@ -373,7 +373,7 @@ begin -- main
         for k in 0 .. nlegend - 1 loop
             opt_array(k)      := PL_LEGEND_LINE + PL_LEGEND_SYMBOL;
             line_styles(k)    := 1;
-            line_widths(k)    := 1;
+            line_widths(k)    := 1.0;
             symbol_scales(k)  := 1.0;
             symbol_numbers(k) := 2;
             symbols(k)        := TUB("*");
@@ -527,10 +527,10 @@ begin -- main
             box_colors      :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
             box_patterns    :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
             box_scales      :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
-            box_line_widths :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+            box_line_widths :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
             line_colors     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
             line_styles     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
-            line_widths     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+            line_widths     :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
             symbol_numbers  :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
             symbol_colors   :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
             symbol_scales   :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
@@ -542,7 +542,7 @@ begin -- main
             for k in 0 .. nlegend - 1 loop
                 opt_array(k)      := PL_LEGEND_LINE + PL_LEGEND_SYMBOL;
                 line_styles(k)    := 1;
-                line_widths(k)    := 1;
+                line_widths(k)    := 1.0;
                 symbol_scales(k)  := 1.0;
                 symbol_numbers(k) := 2;
                 symbols(k)        := TUB("*");
@@ -593,10 +593,10 @@ begin -- main
         box_colors      :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         box_patterns    :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         box_scales      :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
-        box_line_widths :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+        box_line_widths :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
         line_colors     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         line_styles     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
-        line_widths     :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
+        line_widths     :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
         symbol_numbers  :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         symbol_colors   :         Integer_Array_1D(0 .. nlegend - 1) := (others => 0);
         symbol_scales   :         Real_Vector     (0 .. nlegend - 1) := (others => 0.0);
@@ -631,14 +631,14 @@ begin -- main
         box_colors(1)      := 2;
         box_patterns(1)    := 0;
         box_scales(1)      := 0.8;
-        box_line_widths(1) := 1;
+        box_line_widths(1) := 1.0;
 
         opt_array(2) := PL_LEGEND_LINE;
         text(2) := TUB("Line");
         text_colors(2) := 3;
         line_colors(2) := 3;
         line_styles(2) := 1;
-        line_widths(2) := 1;
+        line_widths(2) := 1.0;
 
         opt_array(3) := PL_LEGEND_SYMBOL;
         text(3) := TUB("Symbol");
@@ -653,7 +653,7 @@ begin -- main
         text_colors(4)    := 5;
         line_colors(4)    := 5;
         line_styles(4)    := 1;
-        line_widths(4)    := 1;
+        line_widths(4)    := 1.0;
         symbol_colors(4)  := 5;
         symbol_scales(4)  := text_scale;
         symbol_numbers(4) := 4;
@@ -729,7 +729,7 @@ begin -- main
             box_colors(i)      := i + 1;
             box_patterns(i)    := 0;
             box_scales(i)      := 0.8;
-            box_line_widths(i) := 1;
+            box_line_widths(i) := 1.0;
         end loop;
 
         opt := opt_base;
@@ -756,7 +756,7 @@ begin -- main
             box_colors(i)      := 2;
             box_patterns(i)    := i;
             box_scales(i)      := 0.8;
-            box_line_widths(i) := 1;
+            box_line_widths(i) := 1.0;
         end loop;
 
         opt := opt_base;
@@ -780,7 +780,7 @@ begin -- main
             box_colors(i)      := 2;
             box_patterns(i)    := 3;
             box_scales(i)      := 0.8;
-            box_line_widths(i) := i + 1;
+            box_line_widths(i) := Long_Float(i) + 1.0;
         end loop;
 
         opt := opt_base;
@@ -803,7 +803,7 @@ begin -- main
             text_colors(i) := i + 1;
             line_colors(i) := i + 1;
             line_styles(i) := 1;
-            line_widths(i) := 1;
+            line_widths(i) := 1.0;
         end loop;
 
         opt := opt_base;
@@ -829,7 +829,7 @@ begin -- main
             text_colors(i) := 2;
             line_colors(i) := 2;
             line_styles(i) := i + 1;
-            line_widths(i) := 1;
+            line_widths(i) := 1.0;
         end loop;
 
         opt := opt_base;
@@ -852,7 +852,7 @@ begin -- main
             text_colors(i) := 2;
             line_colors(i) := 2;
             line_styles(i) := 1;
-            line_widths(i) := i + 1;
+            line_widths(i) := Long_Float(i) + 1.0;
         end loop;
 
         opt := opt_base;

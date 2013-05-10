@@ -258,7 +258,7 @@ begin
                 plcol0(15);
                 pllab("X", "Y", title(alg - 1));
                 plshades(zg, null, xm, xMM, ym, yMM,
-                 clev, 1, 0, 1, plfill'access, True, null, System.Null_Address);
+                 clev, 1.0, 0, 1.0, plfill'access, True, null, System.Null_Address);
                 plcol0(2);
             else
                 for i in clev'range loop

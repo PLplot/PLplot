@@ -139,8 +139,8 @@ package PLplot is
     type Color_Array_Type      is array (1..Max_Lines_For_Multiplot) of Plot_Color_Type;
     Default_Color_Array : Color_Array_Type := (Red, Blue, Green, Salmon, BlueViolet);
 
-    type Line_Width_Array_Type is array (1..Max_Lines_For_Multiplot) of Integer;
-    Default_Line_Width_Array : Line_Width_Array_Type := (1, 1, 1, 1, 1);
+    type Line_Width_Array_Type is array (1..Max_Lines_For_Multiplot) of Long_Float;
+    Default_Line_Width_Array : Line_Width_Array_Type := (1.0, 1.0, 1.0, 1.0, 1.0);
 
     type Line_Style_Array_Type is array (1..Max_Lines_For_Multiplot) of Line_Style_Type;
     Default_Line_Style_Array : Line_Style_Array_Type := (1, 1, 1, 1, 1);
@@ -614,7 +614,7 @@ package PLplot is
         Title_Label   : String             := To_String(Default_Label_String);
         Axis_Style    : Axis_Style_Type    := Linear_Major_Grid;
         Color         : Plot_Color_Type    := Red;
-        Line_Width    : Integer            := 1;
+        Line_Width    : Long_Float         := 1.0;
         Line_Style    : Line_Style_Type    := 1;
         Justification : Justification_Type := Not_Justified;
         x_Min_Zoom    : Long_Float         := Long_Float'small;
@@ -1308,8 +1308,9 @@ package PLplot is
         Label_Text                            : Legend_String_Array_Type;
         Box_Colors, Box_Patterns              : Integer_Array_1D;
         Box_Scales                            : Real_Vector;
-        Box_Line_Widths                       : Integer_Array_1D;
-        Line_Colors, Line_Styles, Line_Widths : Integer_Array_1D;
+        Box_Line_Widths                       : Real_Vector;
+        Line_Colors, Line_Styles              : Integer_Array_1D;
+        Line_Widths                           : Real_Vector;
         Symbol_Colors                         : Integer_Array_1D;
         Symbol_Scales                         : Real_Vector;
         Symbol_Numbers                        : Integer_Array_1D;
@@ -1767,9 +1768,11 @@ package PLplot is
         Shade_Min, Shade_Max                     : Long_Float;
         Select_Color_Map                         : Natural; -- should be 0 or 1
         Color                                    : Long_Float;
-        Fill_Pattern_Pen_Width                   : Positive;
-        Shade_Min_Pen_Color, Shade_Min_Pen_Width : Natural;
-        Shade_Max_Pen_Color, Shade_Max_Pen_Width : Natural;
+        Fill_Pattern_Pen_Width                   : Long_Float;
+        Shade_Min_Pen_Color                      : Natural;
+        Shade_Min_Pen_Width                      : Long_Float;
+        Shade_Max_Pen_Color                      : Natural;
+        Shade_Max_Pen_Width                      : Long_Float;
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
@@ -1784,9 +1787,11 @@ package PLplot is
         Shade_Min, Shade_Max                     : Long_Float;
         Select_Color_Map                         : Natural; -- should be 0 or 1
         Color                                    : Long_Float;
-        Fill_Pattern_Pen_Width                   : Positive;
-        Shade_Min_Pen_Color, Shade_Min_Pen_Width : Natural;
-        Shade_Max_Pen_Color, Shade_Max_Pen_Width : Natural;
+        Fill_Pattern_Pen_Width                   : Long_Float;
+        Shade_Min_Pen_Color                      : Natural;
+        Shade_Min_Pen_Width                      : Long_Float;
+        Shade_Max_Pen_Color                      : Natural;
+        Shade_Max_Pen_Width                      : Long_Float;
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
@@ -1799,9 +1804,9 @@ package PLplot is
         Mask_Function_Pointer            : Mask_Function_Pointer_Type;
         x_Min, x_Max, y_Min, y_Max       : Long_Float; -- world mins and maxes
         Contour_Levels                   : Real_Vector;
-        Fill_Pattern_Pen_Width           : Natural; -- 0 is allowed
+        Fill_Pattern_Pen_Width           : Long_Float; -- 0 is allowed
         Contour_Pen_Color                : Natural; -- 0 for no contours
-        Contour_Pen_Width                : Natural; -- 0 for no contours
+        Contour_Pen_Width                : Long_Float; -- 0 for no contours
         Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles              : Boolean;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;

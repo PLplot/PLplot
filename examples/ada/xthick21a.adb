@@ -258,7 +258,7 @@ begin
                 Set_Pen_Color(White);
                 Write_Labels("X", "Y", title(alg - 1));
                 Shade_Regions(zg, null, xm, xMM, ym, yMM,
-                 clev, 1, 0, 1, Fill_Polygon'access, True, null, System.Null_Address);
+                 clev, 1.0, 0, 1.0, Fill_Polygon'access, True, null, System.Null_Address);
                 Set_Pen_Color(Yellow);
             else
                 for i in clev'range loop
