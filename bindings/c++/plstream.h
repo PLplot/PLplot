@@ -440,7 +440,7 @@ public:
                  const PLINT *line_colors, const PLINT *line_styles,
                  const PLFLT *line_widths,
                  const PLINT *symbol_colors, const PLFLT *symbol_scales,
-                 const PLINT *symbol_numbers, const char **symbols );
+                 const PLINT *symbol_numbers, const char * const *symbols );
 
     void colorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                    PLINT opt, PLINT position, PLFLT x, PLFLT y,
@@ -448,8 +448,8 @@ public:
                    PLINT bg_color, PLINT bb_color, PLINT bb_style,
                    PLFLT low_cap_color, PLFLT high_cap_color,
                    PLINT cont_color, PLINT cont_width,
-                   PLINT n_labels, PLINT *label_opts, const char *label[],
-                   PLINT n_axes, const char *axis_opts[],
+                   PLINT n_labels, PLINT *label_opts, const char * const *label,
+                   PLINT n_axes, const char * const *axis_opts,
                    PLFLT *ticks, PLINT *sub_ticks,
                    PLINT *n_values, const PLFLT * const *values );
 
@@ -604,6 +604,14 @@ public:
 // Set number of colors in cmap 1
 
     void scmap1n( PLINT ncol1 );
+
+// Set the color map 1 range used in continuous plots
+
+    void scmap1_range( PLFLT min_color, PLFLT max_color );
+
+// Get the color map 1 range used in continuous plots
+
+    void gcmap1_range( PLFLT &min_color, PLFLT &max_color );
 
 // Set color map 0 colors by 8 bit RGB values
 

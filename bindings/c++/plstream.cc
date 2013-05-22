@@ -1001,7 +1001,7 @@ void plstream::legend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                        const PLINT *line_colors, const PLINT *line_styles,
                        const PLFLT *line_widths,
                        const PLINT *symbol_colors, const PLFLT *symbol_scales,
-                       const PLINT *symbol_numbers, const char **symbols )
+                       const PLINT *symbol_numbers, const char * const *symbols )
 {
     set_stream();
 
@@ -1019,8 +1019,8 @@ void plstream::colorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                          PLINT bg_color, PLINT bb_color, PLINT bb_style,
                          PLFLT low_cap_color, PLFLT high_cap_color,
                          PLINT cont_color, PLINT cont_width,
-                         PLINT n_labels, PLINT *label_opts, const char *label[],
-                         PLINT n_axes, const char *axis_opts[],
+                         PLINT n_labels, PLINT *label_opts, const char * const *label,
+                         PLINT n_axes, const char * const *axis_opts,
                          PLFLT *ticks, PLINT *sub_ticks,
                          PLINT *n_values, const PLFLT * const *values )
 {
@@ -1381,6 +1381,24 @@ void plstream::scmap1n( PLINT ncol1 )
     set_stream();
 
     plscmap1n( ncol1 );
+}
+
+// Set number of colors in cmap 1
+
+void plstream::scmap1_range( PLFLT min_color, PLFLT max_color )
+{
+    set_stream();
+
+    plscmap1_range( min_color, max_color );
+}
+
+// Set number of colors in cmap 1
+
+void plstream::gcmap1_range( PLFLT & min_color, PLFLT & max_color )
+{
+    set_stream();
+
+    plgcmap1_range( &min_color, &max_color);
 }
 
 // Set color map 0 colors by 8 bit RGB values
