@@ -117,16 +117,23 @@ typedef void*  PLPointer;
 #define PL_LEGEND_ROW_MAJOR         128
 
 // Flags for plcolorbar
-#define PL_COLORBAR_LABEL_LEFT      1
-#define PL_COLORBAR_LABEL_RIGHT     2
-#define PL_COLORBAR_LABEL_TOP       4
-#define PL_COLORBAR_LABEL_BOTTOM    8
-#define PL_COLORBAR_IMAGE           16
-#define PL_COLORBAR_SHADE           32
-#define PL_COLORBAR_GRADIENT        64
-#define PL_COLORBAR_CAP_LOW         128
-#define PL_COLORBAR_CAP_HIGH        256
-#define PL_COLORBAR_SHADE_LABEL     512
+#define PL_COLORBAR_LABEL_LEFT       0x1
+#define PL_COLORBAR_LABEL_RIGHT      0x2
+#define PL_COLORBAR_LABEL_TOP        0x4
+#define PL_COLORBAR_LABEL_BOTTOM     0x8
+#define PL_COLORBAR_IMAGE            0x10
+#define PL_COLORBAR_SHADE            0x20
+#define PL_COLORBAR_GRADIENT         0x40
+#define PL_COLORBAR_CAP_NONE         0x80
+#define PL_COLORBAR_CAP_LOW          0x100
+#define PL_COLORBAR_CAP_HIGH         0x200
+#define PL_COLORBAR_SHADE_LABEL      0x400
+#define PL_COLORBAR_ORIENT_RIGHT     0x800
+#define PL_COLORBAR_ORIENT_TOP       0x1000
+#define PL_COLORBAR_ORIENT_LEFT      0x2000
+#define PL_COLORBAR_ORIENT_BOTTOM    0x4000
+#define PL_COLORBAR_BACKGROUND       0x8000
+#define PL_COLORBAR_BOUNDING_BOX     0x10000
 
 // Window parameter tags
 
@@ -474,18 +481,18 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
           const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
           const PLINT *ArrayCkNull, const char **ArrayCk );
 
-#if 0
+#if defined (SWIG_PYTHON) || defined(SWIG_JAVA)
 void
 plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
-            PLINT opt, PLFLT x, PLFLT y,
+            PLINT opt, PLINT position, PLFLT x, PLFLT y,
             PLFLT x_length, PLFLT y_length,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLFLT low_cap_color, PLFLT high_cap_color,
             PLINT cont_color, PLFLT cont_width,
-            PLINT n_labels, PLINT *label_opts, const char *label[],
-            PLINT n_axes, const char *axis_opts[],
-            PLFLT *ticks, PLINT *sub_ticks,
-            PLINT *n_values, const PLFLT * const *values );
+            PLINT n, const PLINT *Array, const char **ArrayCk,
+            PLINT n, const char **Array,
+            const PLFLT *ArrayCk, const PLINT *ArrayCk,
+            const PLINT *ArrayN , const PLFLT **MatrixCk );
 #endif
 
 void
@@ -608,6 +615,12 @@ plscmap1la( PLBOOL itype, PLINT n, const PLFLT *Array,
 
 void
 plscmap1n( PLINT ncol1 );
+
+void
+plscmap1_range( PLFLT min_color, PLFLT max_color );
+
+void
+plgcmap1_range( PLFLT *OUTPUT, PLFLT *OUTPUT );
 
 void
 plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b );

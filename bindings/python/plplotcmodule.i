@@ -240,6 +240,26 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) const PLINT * Array { Py_DECREF( tmp$argnum );}
 
+// set X and Y length for later consistency checking
+%typemap( in ) const PLINT * ArrayN( PyArrayObject * tmp )
+{
+    int i;
+    tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
+    if ( tmp == NULL )
+        return NULL;
+    if ( PyArray_DIMS(tmp)[0] != Alen )
+    {
+        PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
+        return NULL;
+    }
+    Xlen = PyArray_DIMS(tmp)[0];
+    $1   = (PLINT *) PyArray_DATA(tmp);
+    Ylen = -1;
+    for ( i = 0; i < Xlen; i++ )
+        if ( $1[i] > Ylen ) Ylen = $1[i];
+}
+%typemap( freearg ) const PLINT * ArrayN { Py_DECREF( tmp$argnum );}
+
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
 //--------------------------------------------------------------------------
@@ -602,7 +622,7 @@ typedef PLINT          PLBOOL;
 }
 
 //**************************
-//        special for pllegend, char ** ArrayCk
+//        special for pllegend / plcolorbar, char ** ArrayCk
 //***************************
 // no count, but check consistency with previous. Always allow NULL strings.
 %typemap( in ) const char **ArrayCk( PyArrayObject * tmp )
@@ -628,6 +648,28 @@ typedef PLINT          PLBOOL;
     }
 }
 %typemap( freearg ) const char **ArrayCk { Py_DECREF( tmp$argnum ); free( $1 );}
+
+// With count. Always allow NULL strings.
+%typemap( in ) (PLINT n, const char **Array) ( PyArrayObject * tmp )
+{
+    int i;
+    tmp = (PyArrayObject *) PyArray_ContiguousFromObject( $input, NPY_STRING, 1, 1 );
+    if ( tmp == NULL )
+        return NULL;
+    Alen = PyArray_DIMS(tmp)[0];
+    $1   = Alen;
+    $2 = (char **) malloc( sizeof ( char* ) * Alen );
+    for ( i = 0; i < Alen; i++ )
+    {
+        $2[i] = PyArray_DATA(tmp) + i * PyArray_STRIDES(tmp)[0];
+        if ( $2[i] == NULL )
+        {
+            free( $2 );
+            return NULL;
+        }
+    }
+}
+%typemap( freearg ) (PLINT n, const char **Array) { Py_DECREF( tmp$argnum ); free( $2 );}
 
 //**************************
 //        String returning functions

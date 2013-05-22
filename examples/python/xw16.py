@@ -27,6 +27,8 @@ NS = 20
 NX = 35
 NY = 46
 PERIMETERPTS = 100
+NUM_AXES = 1
+NUM_LABELS = 1
 
 XSPA = 2./(NX-1)
 YSPA = 2./(NY-1)
@@ -41,8 +43,22 @@ def mypltr(x, y, data):
 def main():
 
     fill_width = 2.
-    cont_color = 2
-    cont_width = 3.
+    cont_color = 0
+    cont_width = 0.
+
+    n_axis_opts  = NUM_AXES
+    axis_opts = zeros(NUM_AXES,"S100")
+    axis_opts[0] = "bcvtm"
+    num_values = zeros(NUM_AXES,"int");
+    values = reshape(zeros(NUM_AXES*(NS+1)),[NUM_AXES,NS+1])
+    axis_ticks = zeros(NUM_AXES)
+    axis_subticks = zeros(NUM_AXES,"int")
+
+    n_labels = NUM_LABELS
+    label_opts = zeros(NUM_LABELS,"int")
+    labels = zeros(NUM_LABELS,"S100")
+    label_opts[0] = PL_COLORBAR_LABEL_BOTTOM
+    labels[0] = "Magnitude"
 
     # Set up data array
 
@@ -86,7 +102,6 @@ def main():
     plwind(-1.0, 1.0, -1.0, 1.0)
     plpsty(0)
 
-
 #   Note another alternative to produce the identical result in a different way
 #   is to use the command:
 #   plshades(zz, -1.0, 1.0, -1.0, 1.0, shedge, fill_width, 1)
@@ -99,6 +114,21 @@ def main():
 #   defined, xmin, xmax, ymin, ymax are completely ignored so we can drop 
 #   them from the argument list.
     plshades(zz, shedge, fill_width, 1, mypltr, tr)
+
+    # Smaller text
+    plschr(0.0, 0.75 )
+    # Small ticks on the vertical axis
+    plsmaj( 0.0, 0.5 )
+    plsmin( 0.0, 0.5 )
+
+    num_values[0] = NS + 1
+    values[0] = shedge
+    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+
+    # Reset text and tick sizes
+    plschr( 0.0, 1.0 )
+    plsmaj( 0.0, 1.0 )
+    plsmin( 0.0, 1.0 )
 
     plcol0(1)
     plbox( "bcnst", 0., 0, "bcnstv", 0., 0 )
@@ -119,6 +149,21 @@ def main():
 
     plshades(zz, shedge, fill_width, 1, pltr1, xg1, yg1)
 
+    # Smaller text
+    plschr(0.0, 0.75 )
+    # Small ticks on the vertical axis
+    plsmaj( 0.0, 0.5 )
+    plsmin( 0.0, 0.5 )
+
+    num_values[0] = NS + 1
+    values[0] = shedge
+    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+
+    # Reset text and tick sizes
+    plschr( 0.0, 1.0 )
+    plsmaj( 0.0, 1.0 )
+    plsmin( 0.0, 1.0 )
+
     plcol0(1)
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
     plcol0(2)
@@ -137,6 +182,21 @@ def main():
     plpsty(0)
 
     plshades(zz, shedge, fill_width, 0, pltr2, xg2, yg2)
+
+    # Smaller text
+    plschr(0.0, 0.75 )
+    # Small ticks on the vertical axis
+    plsmaj( 0.0, 0.5 )
+    plsmin( 0.0, 0.5 )
+
+    num_values[0] = NS + 1
+    values[0] = shedge
+    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+
+    # Reset text and tick sizes
+    plschr( 0.0, 1.0 )
+    plsmaj( 0.0, 1.0 )
+    plsmin( 0.0, 1.0 )
 
     plcol0(1)
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
@@ -159,8 +219,22 @@ def main():
     # Note default cont_color and cont_width are zero so that no contours
     # are done with other calls to plshades.  But for this call we specify
     # non-zero values so that contours are drawn.
-    plshades(zz, shedge, fill_width, cont_color, cont_width,\
-    0, pltr2, xg2, yg2)
+    plshades(zz, shedge, fill_width, 2, 3.0, 0, pltr2, xg2, yg2)
+
+    # Smaller text
+    plschr(0.0, 0.75 )
+    # Small ticks on the vertical axis
+    plsmaj( 0.0, 0.5 )
+    plsmin( 0.0, 0.5 )
+
+    num_values[0] = NS + 1
+    values[0] = shedge
+    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, 2, 3.0, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+
+    # Reset text and tick sizes
+    plschr( 0.0, 1.0 )
+    plsmaj( 0.0, 1.0 )
+    plsmin( 0.0, 1.0 )
 
     plcol0(1)
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
@@ -199,6 +273,21 @@ def main():
     # Now we can shade the interior region.  Use wrap=2 to simulate additional
     # point at t = 2 pi.
     plshades(z, shedge, fill_width, 0, pltr2, xg, yg, 2)
+
+    # Smaller text
+    plschr(0.0, 0.75 )
+    # Small ticks on the vertical axis
+    plsmaj( 0.0, 0.5 )
+    plsmin( 0.0, 0.5 )
+
+    num_values[0] = NS + 1
+    values[0] = shedge
+    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+
+    # Reset text and tick sizes
+    plschr( 0.0, 1.0 )
+    plsmaj( 0.0, 1.0 )
+    plsmin( 0.0, 1.0 )
 
     # Now we can draw the perimeter.  (If do before, plshades may overlap.)
     t = 2.*pi*arange(PERIMETERPTS)/(PERIMETERPTS-1.)

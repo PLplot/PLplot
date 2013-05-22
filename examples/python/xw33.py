@@ -57,108 +57,157 @@ special_symbols = [
 "✦",
 ]
 
-def plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title ):
+# Colorbar type options
+COLORBAR_KINDS =  4
+colorbar_option_kinds = [
+    PL_COLORBAR_SHADE,
+    PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+    PL_COLORBAR_IMAGE,
+    PL_COLORBAR_GRADIENT
+]
+colorbar_option_kind_labels = [
+    "Shade colorbars",
+    "Shade colorbars with custom labels",
+    "Image colorbars",
+    "Gradient colorbars"
+]
+
+# Which side of the page are we positioned relative to?
+COLORBAR_POSITIONS = 4
+colorbar_position_options = [
+    PL_POSITION_LEFT,
+    PL_POSITION_RIGHT,
+    PL_POSITION_TOP,
+    PL_POSITION_BOTTOM
+]
+colorbar_position_option_labels = [
+    "Left",
+    "Right",
+    "Top",
+    "Bottom"
+]
+
+# Colorbar label positioning options
+COLORBAR_LABELS = 4
+colorbar_label_options = [
+    PL_COLORBAR_LABEL_LEFT,
+    PL_COLORBAR_LABEL_RIGHT,
+    PL_COLORBAR_LABEL_TOP,
+    PL_COLORBAR_LABEL_BOTTOM
+]
+colorbar_label_option_labels = [
+    "Label left",
+    "Label right",
+    "Label top",
+    "Label bottom"
+]
+
+# Colorbar cap options
+COLORBAR_CAPS = 4
+colorbar_cap_options = [
+    PL_COLORBAR_CAP_NONE,
+    PL_COLORBAR_CAP_LOW,
+    PL_COLORBAR_CAP_HIGH,
+    PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
+]
+colorbar_cap_option_labels = [
+    "No caps",
+    "Low cap",
+    "High cap",
+    "Low and high caps"
+]
+
+def plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, values ):
+    n_axes = 1
+    axis_opts = zeros(n_axes,"S100")
+    ticks = zeros(n_axes)
+    sub_ticks = zeros(n_axes,"int")
+    label_opts = zeros(n_axes,"int")
+    label_opts[0] = PL_COLORBAR_LABEL_BOTTOM
+    label = zeros(n_axes,"S100")
+    n_values_array = zeros(n_axes,"int")
+    n_values_array[0] = len(values)
+    values_array = reshape(values,[1,len(values)])
+
+    low_cap_color = 0.0
+    high_cap_color = 1.0
+
+    # Start a new page
     pladv( 0 )
-    # Setup color palette 1
-    plspal1( "cmap1_blue_red.pal", 1 )
 
-    n = len(values)
-    color_step = 1.0 / float(n - 1)
-    colors = color_step*arange(n)
+    # Draw one colorbar relative to each side of the page
+    for position_i in range(COLORBAR_POSITIONS):
+        position = colorbar_position_options[position_i]
+        opt = colorbar_option_kinds[kind_i] | colorbar_label_options[label_i] | colorbar_cap_options[cap_i]
 
-    opt = PL_POSITION_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_HIGH
+        vertical = (position & PL_POSITION_LEFT) or (position & PL_POSITION_RIGHT)
+        ifn      = position & PL_POSITION_LEFT or position & PL_POSITION_BOTTOM
 
-    if bar_type & PL_COLORBAR_SHADE_LABEL:
-        axis_opts_1 = "iv"
-        axis_opts_2 = "i"
-    else:
-        if sub_ticks != 0:
-            axis_opts_1 = "stv"
-            axis_opts_2 = "st"
+        # Set the offset position on the page
+        if vertical:
+            x        = 0.0
+            y        = 0.0
+            x_length = 0.05
+            y_length = 0.5
         else:
-            axis_opts_1 = "tv"
-            axis_opts_2 = "t"
+            x        = 0.0
+            y        = 0.0
+            x_length = 0.5
+            y_length = 0.05
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Left, High Cap",
-                colors, values )
+        # Set appropriate labelling options.
+        if ifn:
+            if ( cont_color == 0 or cont_width == 0. ):
+                axis_opts[0] = "uwtivn"
+            else:
+                axis_opts[0] = "uwxvn";
+        else:
+            if ( cont_color == 0 or cont_width == 0. ):
+                axis_opts[0] = "uwtivm"
+            else:
+                axis_opts[0] = "uwxvm"
 
-    opt = PL_POSITION_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_LOW
+        label[0] =  "%s, %s" % (colorbar_position_option_labels[position_i] , colorbar_label_option_labels[label_i])
 
-    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Right, Low Cap",
-                colors, values )
+        # Smaller text
+        plschr( 0.0, 0.75 )
+        # Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 )
+        plsmin( 0.0, 0.5 )
 
-    opt = PL_POSITION_TOP | bar_type | PL_COLORBAR_LABEL_TOP | PL_COLORBAR_CAP_HIGH
+        plvpor( 0.20, 0.80, 0.20, 0.80 )
+        plwind( 0.0, 1.0, 0.0, 1.0 )
+        # Set interesting background colour.
+        plscol0a( 15, 0, 0, 0, 0.20 )
+        (colorbar_width, colorbar_height) = plcolorbar( \
+            opt | PL_COLORBAR_BOUNDING_BOX | PL_COLORBAR_BACKGROUND, position, \
+            x, y, x_length, y_length, \
+            15, 1, 1, \
+            low_cap_color, high_cap_color, \
+            cont_color, cont_width, \
+            label_opts, label, \
+            axis_opts, ticks, sub_ticks, \
+            n_values_array, values_array )
 
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Upper, High Cap",
-                colors, values )
+        # Reset text and tick sizes
+        plschr( 0.0, 1.0 )
+        plsmaj( 0.0, 1.0 )
+        plsmin( 0.0, 1.0 )
 
-    opt = PL_POSITION_BOTTOM | bar_type | PL_COLORBAR_LABEL_BOTTOM | PL_COLORBAR_CAP_LOW
-
-    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Lower, Low Cap",
-                colors, values )
-
+    # Draw a page title
+    title  = "%s - %s" % (colorbar_option_kind_labels[kind_i] , colorbar_cap_option_labels[cap_i])
     plvpor( 0.0, 1.0, 0.0, 1.0 )
     plwind( 0.0, 1.0, 0.0, 1.0 )
     plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title )
 
-def plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title ):
-    pladv( 0 )
-    # Setup color palette 1
-    plspal1( "cmap1_blue_yellow.pal", 1 )
+def plcolorbar_example( palette, kind_i, cont_color, cont_width, values ):
+    # Load the color palette
+    plspal1( palette, 1 )
 
-    n = len(values)
-    color_step = 1.0 / float(n - 1)
-    colors = color_step*arange(n)
-    opt = PL_POSITION_LEFT | bar_type | PL_COLORBAR_LABEL_LEFT | PL_COLORBAR_CAP_LOW
+    for label_i in arange(COLORBAR_LABELS):
+        for cap_i in arange(COLORBAR_CAPS):
+            plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, values )
 
-    if bar_type == PL_COLORBAR_SHADE_LABEL:
-        axis_opts_1 = ""
-        axis_opts_2 = ""
-    else:
-        if sub_ticks != 0:
-            axis_opts_1 = "stv"
-            axis_opts_2 = "st"
-        else:
-            axis_opts_1 = "tv"
-            axis_opts_2 = "t"
-
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Left, Low Cap",
-                colors, values )
-
-    opt = PL_POSITION_RIGHT | bar_type | PL_COLORBAR_LABEL_RIGHT | PL_COLORBAR_CAP_HIGH
-
-    plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_1, "Test label - Right, High Cap",
-                colors, values )
-
-    opt = PL_POSITION_TOP | bar_type | PL_COLORBAR_LABEL_TOP | PL_COLORBAR_CAP_LOW
-
-    plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Upper, Low Cap",
-                colors, values )
-
-    opt = PL_POSITION_BOTTOM | bar_type | PL_COLORBAR_LABEL_BOTTOM | PL_COLORBAR_CAP_HIGH
-
-    plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
-                ticks, sub_ticks,
-                axis_opts_2, "Test label - Lower, High Cap",
-                colors, values )
-
-    plvpor( 0.0, 1.0, 0.0, 1.0 )
-    plwind( 0.0, 1.0, 0.0, 1.0 )
-    plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title )
 
 def main():
     # First page illustrating the 16 standard positions.
@@ -699,15 +748,24 @@ def main():
               symbol_colors, symbol_scales, symbol_numbers, symbols )
     max_height = max(max_height, legend_height)
 
-    if False:
-        # Color bar examples
-        values_small = [ 0.0, 1.0 ]
-        values_uneven = [ 0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0 ]
-        values_even = [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0 ]
-        plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
-        plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
-        plcolorbar_example_1( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0.0, 0, values_uneven, "Shade Color Bars - Uneven Steps" )
-        plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0, 3, values_even, "Shade Color Bars - Even Steps" )
-        plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
-        plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" )
+    # Color bar examples
+    values_small  = [ -1.0e-200, 1.0e-200 ]
+    values_uneven = [ -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 ]
+    values_even   = [ -2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200 ]
+
+    # Use unsaturated green background colour to contrast with black caps.
+    plscolbg( 70, 185, 70 )
+    # Cut out the greatest and smallest bits of the color spectrum to
+    # leave colors for the end caps.
+    plscmap1_range( 0.01, 0.99 )
+
+    # We can only test image and gradient colorbars with two element arrays
+    for i in arange(COLORBAR_KINDS-2)+2:
+        plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_small )
+    # Test shade colorbars with larger arrays
+    for i in arange(2):
+        plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, values_even )
+    for i in arange(2):
+        plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_uneven )
+
 main()
