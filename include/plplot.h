@@ -1256,10 +1256,10 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
               PLINT bg_color, PLINT bb_color, PLINT bb_style,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLFLT cont_width,
-              PLINT n_labels, PLINT *label_opts, const char *label[],
-              PLINT n_axes, const char *axis_opts[],
-              PLFLT *ticks, PLINT *sub_ticks,
-              PLINT *n_values, const PLFLT * const *values );
+              PLINT n_labels, const PLINT *label_opts, const char * const *label,
+              PLINT n_axes, const char * const * axis_opts,
+              const PLFLT *ticks, const PLINT *sub_ticks,
+              const PLINT *n_values, const PLFLT * const *values );
 
 // Sets position of the light source
 PLDLLIMPEXP void
