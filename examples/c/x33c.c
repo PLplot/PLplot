@@ -125,7 +125,7 @@ static const char    *colorbar_cap_option_labels[COLORBAR_CAPS] = {
     "Low and high caps"
 };
 
-static int           colorbar = 0; // By default do not plot plcolorbar pages
+static int           colorbar = 1; // By default do not plot plcolorbar pages
                                    // for now while we are working out the API.
 static PLOptionTable options[] = {
     {
