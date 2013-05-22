@@ -426,7 +426,7 @@ main( int argc, const char *argv[] )
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
-            2, 3,
+            2, 3.,
             n_labels, label_opts, labels,
             n_axis_opts, axis_opts,
             axis_ticks, axis_subticks,
