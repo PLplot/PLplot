@@ -40,6 +40,8 @@ class x16 {
     static final int XPTS         = 35;
     static final int YPTS         = 46;
     static final int PERIMETERPTS = 100;
+    static final int NUM_AXES     = 1;
+    static final int NUM_LABELS   = 1;
 
     // calculated constants and array that depends on them
     static final double XSPA = 2. / ( XPTS - 1 );
@@ -90,6 +92,20 @@ class x16 {
         double[] shedge = new double[NSHADES + 1];
         final int    cont_color = 0;
         final double fill_width = 2., cont_width = 0.;
+	double[] colorbar_width = new double[1];
+	double[] colorbar_height = new double[1];
+
+	int n_axis_opts = NUM_AXES;
+	int[] num_values = new int[NUM_AXES];
+	double[][] values = new double[NUM_AXES][NSHADES+1];
+	String axis_opts[] = { "bcvtm" };
+	double axis_ticks[] = { 0.0 };
+	int axis_subticks[] = { 0 };
+	double filler_values[] = { 0.0, 1.0 };
+	
+	int n_labels = NUM_LABELS;
+	int label_opts[] = { PL_COLORBAR_LABEL_BOTTOM };
+	String labels[] = { "Magnitude" };
 
         // Parse and process command line arguments.
         pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
@@ -168,6 +184,30 @@ class x16 {
             cont_color, cont_width,
             true, xg0, yg0 );
 
+        // Smaller text
+        pls.schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls.smaj( 0.0, 0.5 );
+        pls.smin( 0.0, 0.5 );
+
+        num_values[0] = NSHADES + 1;
+	for ( i = 0; i < NSHADES + 1; i++ ) {
+	    values[0][i] = shedge[i];
+	}
+        pls.colorbar( colorbar_width, colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels,
+            axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+        // Reset text and tick sizes
+        pls.schr( 0.0, 1.0 );
+        pls.smaj( 0.0, 1.0 );
+        pls.smin( 0.0, 1.0 );
+
         pls.col0( 1 );
         pls.box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
         pls.col0( 2 );
@@ -192,6 +232,30 @@ class x16 {
             shedge, fill_width,
             cont_color, cont_width,
             true, xg1, yg1 );
+
+        // Smaller text
+        pls.schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls.smaj( 0.0, 0.5 );
+        pls.smin( 0.0, 0.5 );
+
+        num_values[0] = NSHADES + 1;
+	for ( i = 0; i < NSHADES + 1; i++ ) {
+	    values[0][i] = shedge[i];
+	}
+        pls.colorbar( colorbar_width, colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels,
+            axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+        // Reset text and tick sizes
+        pls.schr( 0.0, 1.0 );
+        pls.smaj( 0.0, 1.0 );
+        pls.smin( 0.0, 1.0 );
 
         pls.col0( 1 );
         pls.box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -219,6 +283,30 @@ class x16 {
             cont_color, cont_width,
             false, xg2, yg2 );
 
+        // Smaller text
+        pls.schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls.smaj( 0.0, 0.5 );
+        pls.smin( 0.0, 0.5 );
+
+        num_values[0] = NSHADES + 1;
+	for ( i = 0; i < NSHADES + 1; i++ ) {
+	    values[0][i] = shedge[i];
+	}
+        pls.colorbar( colorbar_width, colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels,
+            axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+        // Reset text and tick sizes
+        pls.schr( 0.0, 1.0 );
+        pls.smaj( 0.0, 1.0 );
+        pls.smin( 0.0, 1.0 );
+
         pls.col0( 1 );
         pls.box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
         pls.col0( 2 );
@@ -245,6 +333,30 @@ class x16 {
             shedge, fill_width,
             2, 3.,
             false, xg2, yg2 );
+
+        // Smaller text
+        pls.schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls.smaj( 0.0, 0.5 );
+        pls.smin( 0.0, 0.5 );
+
+        num_values[0] = NSHADES + 1;
+	for ( i = 0; i < NSHADES + 1; i++ ) {
+	    values[0][i] = shedge[i];
+	}
+        pls.colorbar( colorbar_width, colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+	    2, 3.0,
+            label_opts, labels,
+            axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+        // Reset text and tick sizes
+        pls.schr( 0.0, 1.0 );
+        pls.smaj( 0.0, 1.0 );
+        pls.smin( 0.0, 1.0 );
 
         pls.col0( 1 );
         pls.box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -298,6 +410,30 @@ class x16 {
             shedge, fill_width,
             cont_color, cont_width,
             false, xg2, yg2 );
+
+        // Smaller text
+        pls.schr( 0.0, 0.75 );
+        // Small ticks on the vertical axis
+        pls.smaj( 0.0, 0.5 );
+        pls.smin( 0.0, 0.5 );
+
+        num_values[0] = NSHADES + 1;
+	for ( i = 0; i < NSHADES + 1; i++ ) {
+	    values[0][i] = shedge[i];
+	}
+        pls.colorbar( colorbar_width, colorbar_height,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels,
+            axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+        // Reset text and tick sizes
+        pls.schr( 0.0, 1.0 );
+        pls.smaj( 0.0, 1.0 );
+        pls.smin( 0.0, 1.0 );
 
 // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
         for ( i = 0; i < PERIMETERPTS; i++ )

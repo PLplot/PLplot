@@ -554,17 +554,30 @@ public class PLStream implements plplotjavacConstants {
             symbol_numbers, symbols );
     }
 
-    //
-//      public void colorbar( int opt, double x, double y, double length,
-//                            double width, double ticks, double subticks,
-//                            String axis_opts, String label,
-//                            double[] colors, double[] values )
-//      {
-//          if ( set_stream() == -1 ) return;
-//          plplotjavac.plcolorbar( opt, x, y, length, width, ticks, subticks,
-//              axis_opts, label, colors, values );
-//      }
-//
+
+    public void colorbar( double[] p_colorbar_width, 
+			  double[] p_colorbar_height, 
+			  int opt, int position, double x, double y, 
+			  double x_length, double y_length,
+			  int bg_color, int bb_color, int bb_style,
+			  double low_cap_color, double high_cap_color,
+			  int cont_color, double cont_width, 
+			  int[] label_opts, String[] labels,
+			  String[] axis_opts,
+			  double[] ticks, int[] sub_ticks,
+			  int[] n_values, double[][] values )
+      {
+          if ( set_stream() == -1 ) return;
+          plplotjavac.plcolorbar( p_colorbar_width, p_colorbar_height,
+				  opt, position, x, y, x_length, y_length,
+				  bg_color, bb_color, bb_style,
+				  low_cap_color, high_cap_color, 
+				  cont_color, cont_width,
+				  label_opts, labels, axis_opts,
+				  ticks, sub_ticks,
+				  n_values, values );
+      }
+
 
     public void lightsource( double x, double y, double z )
     {
@@ -804,6 +817,18 @@ public class PLStream implements plplotjavacConstants {
     {
         if ( set_stream() == -1 ) return;
         plplotjavac.plscmap1n( ncol1 );
+    }
+
+    public void scmap1_range( double min_color, double max_color )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plscmap1_range( min_color, max_color );
+    }
+
+    public void gcmap1_range( double[] min_color, double[] max_color )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plgcmap1_range( min_color, max_color );
     }
 
     public void scol0( int icol0, int r, int g, int b )

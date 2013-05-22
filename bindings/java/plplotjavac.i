@@ -580,6 +580,33 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     return $jnicall;
 }
 
+// Set X and Y length for later consistency checking
+%typemap( in ) const PLINT * ArrayN {
+    int i;
+    jint *jydata = ( *jenv )->GetIntArrayElements( jenv, $input, 0 );
+    if ( ( *jenv )->GetArrayLength( jenv, $input ) != Alen )
+    {
+	printf( "Vectors must be same length.\n" );
+	return;
+    }
+    Xlen = ( *jenv )->GetArrayLength( jenv, $input );
+    Ylen = -1;
+    for ( i = 0; i < Xlen ; i++ )
+      if (jydata[i] > Ylen) Ylen = jydata[i];
+    setup_array_1d_i( &$1, jydata, Alen );
+    ( *jenv )->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
+}
+%typemap( freearg ) const PLINT * ArrayN {
+    free( $1 );
+}
+%typemap( jni ) const PLINT * ArrayN "jintArray"
+%typemap( jtype ) const PLINT * ArrayN "int[]"
+%typemap( jstype ) const PLINT * ArrayN "int[]"
+%typemap( javain ) const PLINT * ArrayN "$javainput"
+%typemap( javaout ) const PLINT * ArrayN {
+    return $jnicall;
+}
+
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
 //--------------------------------------------------------------------------
@@ -1933,6 +1960,53 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 %typemap( jstype ) ( const char **ArrayCk ) "String[]"
 %typemap( javain ) ( const char **ArrayCk ) "$javainput"
 %typemap( javaout ) ( const char **ArrayCk )
+{
+    return $jnicall;
+}
+
+%typemap( in ) ( PLINT n, const char **Array )
+{
+    int i = 0;
+    if ( $input != NULL )
+    {
+        int size = ( *jenv )->GetArrayLength( jenv, $input );
+        Alen = size;
+	$1 = size;
+        $2 = (char **) malloc( Alen * sizeof ( char * ) );
+        // make a copy of each string
+        for ( i = 0; i < Alen; i++ )
+        {
+            jstring    j_string   = (jstring) ( *jenv )->GetObjectArrayElement( jenv, $input, i );
+            const char * c_string = (char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
+            $2[i] = malloc( ( strlen( c_string ) + 1 ) * sizeof ( const char * ) );
+            strcpy( $2[i], c_string );
+            ( *jenv )->ReleaseStringUTFChars( jenv, j_string, c_string );
+            ( *jenv )->DeleteLocalRef( jenv, j_string );
+        }
+    }
+    else
+    {
+        $1 = 0;
+        $2 = NULL;
+    }
+}
+
+// This cleans up the memory we malloc'd before the function call
+%typemap( freearg ) ( PLINT n, const char **Array )
+{
+    int i;
+    if ( $2 != NULL )
+    {
+        for ( i = 0; i < Alen; i++ )
+            free( $2[i] );
+        free( $2 );
+    }
+}
+%typemap( jni ) ( PLINT n, const char **Array ) "jobjectArray"
+%typemap( jtype ) ( PLINT n, const char **Array ) "String[]"
+%typemap( jstype ) ( PLINT n, const char **Array ) "String[]"
+%typemap( javain ) ( PLINT n, const char **Array ) "$javainput"
+%typemap( javaout ) ( PLINT n, const char **Array )
 {
     return $jnicall;
 }
