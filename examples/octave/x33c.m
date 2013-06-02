@@ -29,7 +29,9 @@
 
 1;
 
-global position_options special_symbols
+global position_options special_symbols colorbar_option_kinds colorbar_option_kind_labels colorbar_position_options colorbar_position_option_labels colorbar_label_options colorbar_label_option_labels colorbar_cap_options colorbar_cap_option_labels 
+global COLORBAR_KINDS COLORBAR_POSITIONS COLORBAR_LABELS COLORBAR_CAPS
+
 position_options = [
 		    bitor(PL_POSITION_LEFT, bitor(PL_POSITION_TOP, PL_POSITION_OUTSIDE));
                     bitor(PL_POSITION_TOP, PL_POSITION_OUTSIDE);
@@ -58,116 +60,178 @@ special_symbols = [
 		   "✦"
 		   ];
 
-function plcolorbar_example_1( bar_type, ticks, sub_ticks, values, title )
-  global PL_POSITION_LEFT PL_COLORBAR_LABEL_LEFT PL_COLORBAR_CAP_HIGH PL_COLORBAR_SHADE_LABEL PL_POSITION_RIGHT PL_COLORBAR_LABEL_RIGHT PL_COLORBAR_CAP_LOW PL_POSITION_TOP PL_COLORBAR_LABEL_TOP PL_COLORBAR_CAP_HIGH PL_POSITION_BOTTOM PL_COLORBAR_LABEL_BOTTOM PL_COLORBAR_CAP_LOW 
-  pladv( 0 );
-  ## Setup color palette 1
-  plspal1( "cmap1_blue_red.pal", 1 );
+# plcolorbar options
 
-  n = length(values);
-  color_step = 1.0 / (n - 1);
-  colors = (0:n-1)'*color_step;
+# Colorbar type options
+COLORBAR_KINDS = 4;
+colorbar_option_kinds = [
+    PL_COLORBAR_SHADE;
+    bitor(PL_COLORBAR_SHADE,PL_COLORBAR_SHADE_LABEL);
+    PL_COLORBAR_IMAGE;
+    PL_COLORBAR_GRADIENT
+];
 
-  opt = bitor(PL_POSITION_LEFT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LEFT, PL_COLORBAR_CAP_HIGH)));
+colorbar_option_kind_labels = {
+    "Shade colorbars";
+    "Shade colorbars with custom labels";
+    "Image colorbars";
+    "Gradient colorbars"
+};
 
-  if (bitand(bar_type, PL_COLORBAR_SHADE_LABEL))
-    axis_opts_1 = "iv";
-    axis_opts_2 = "i";
-  else
-    if (sub_ticks != 0)
-      axis_opts_1 = "stv";
-      axis_opts_2 = "st";
-    else
-      axis_opts_1 = "tv";
-      axis_opts_2 = "t";
-    endif
-  endif
+# Which side of the page are we positioned relative to?
+COLORBAR_POSITIONS = 4;
+colorbar_position_options = [
+    PL_POSITION_LEFT;
+    PL_POSITION_RIGHT;
+    PL_POSITION_TOP;
+    PL_POSITION_BOTTOM
+];
 
-  plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_1, "Test label - Left, High Cap",
-             colors, values );
+colorbar_position_option_labels = {
+    "Left",
+    "Right",
+    "Top",
+    "Bottom"
+};
 
-  opt = bitor(PL_POSITION_RIGHT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_CAP_LOW)));
+# Colorbar label positioning options
+COLORBAR_LABELS = 4;
+colorbar_label_options = [
+    PL_COLORBAR_LABEL_LEFT;
+    PL_COLORBAR_LABEL_RIGHT;
+    PL_COLORBAR_LABEL_TOP;
+    PL_COLORBAR_LABEL_BOTTOM
+];
 
-  plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_1, "Test label - Right, Low Cap",
-             colors, values );
+colorbar_label_option_labels = {
+    "Label left",
+    "Label right",
+    "Label top",
+    "Label bottom"
+};
 
-  opt = bitor(PL_POSITION_TOP, bitor(bar_type, bitor(PL_COLORBAR_LABEL_TOP, PL_COLORBAR_CAP_HIGH)));
+# Colorbar cap options
+COLORBAR_CAPS = 4;
+colorbar_cap_options = [
+    PL_COLORBAR_CAP_NONE;
+    PL_COLORBAR_CAP_LOW;
+    PL_COLORBAR_CAP_HIGH;
+    bitor(PL_COLORBAR_CAP_LOW, PL_COLORBAR_CAP_HIGH)
+];
 
-  plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_2, "Test label - Upper, High Cap",
-             colors, values );
+colorbar_cap_option_labels = {
+    "No caps";
+    "Low cap";
+    "High cap";
+    "Low and high caps"
+};
 
-  opt = bitor(PL_POSITION_BOTTOM, bitor(bar_type, bitor(PL_COLORBAR_LABEL_BOTTOM, PL_COLORBAR_CAP_LOW)));
+function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, values )
+  
+    global COLORBAR_POSITIONS colorbar_option_kinds colorbar_option_kind_labels colorbar_position_options colorbar_position_option_labels colorbar_label_options colorbar_label_option_labels colorbar_cap_options colorbar_cap_option_labels
+    global PL_POSITION_LEFT PL_POSITION_RIGHT PL_POSITION_BOTTOM PL_COLORBAR_BOUNDING_BOX PL_COLORBAR_BACKGROUND
 
-  plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_2, "Test label - Lower, Low Cap",
-             colors, values );
+    label_opts = zeros(1,1);
+    ticks = zeros(1,1);
+    sub_ticks = zeros(1,1);
+  
+    n_values_array(1,:) = length(values);
+    values_array(1,:)   = values;
 
-  plvpor( 0.0, 1.0, 0.0, 1.0 );
-  plwind( 0.0, 1.0, 0.0, 1.0 );
-  plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+    low_cap_color  = 0.0;
+    high_cap_color = 1.0;
+
+    # Start a new page
+    pladv( 0 );
+
+    # Draw one colorbar relative to each side of the page
+    for position_i = 1:COLORBAR_POSITIONS
+        position = colorbar_position_options(position_i);
+        opt      = bitor( 
+            colorbar_option_kinds(kind_i), bitor(
+            colorbar_label_options(label_i),
+            colorbar_cap_options(cap_i) ) );
+
+        vertical = bitand(position, PL_POSITION_LEFT) || bitand(position, PL_POSITION_RIGHT);
+        ifn      = bitand(position, PL_POSITION_LEFT) || bitand(position, PL_POSITION_BOTTOM);
+
+        # Set the offset position on the page
+        if ( vertical )
+            x        = 0.0;
+            y        = 0.0;
+            x_length = 0.05;
+            y_length = 0.5;
+        else
+            x        = 0.0;
+            y        = 0.0;
+            x_length = 0.5;
+            y_length = 0.05;
+	endif
+	  
+        # Set appropriate labelling options.
+        if ( ifn )
+            if ( cont_color == 0 || cont_width == 0. )
+                axis_opts(1,:) = "uwtivn";
+            else
+                axis_opts(1,:) = "uwxvn";
+	    endif
+        else
+            if ( cont_color == 0 || cont_width == 0. )
+                axis_opts(1,:) = "uwtivm";
+            else
+                axis_opts(1,:) = "uwxvm";
+            endif
+        endif
+
+        label =  cstrcat(char(colorbar_position_option_labels(position_i)), ", ", char(colorbar_label_option_labels(label_i)) );
+
+        # Smaller text
+        plschr( 0.0, 0.75 );
+        # Small ticks on the vertical axis
+        plsmaj( 0.0, 0.5 );
+        plsmin( 0.0, 0.5 );
+
+        plvpor( 0.20, 0.80, 0.20, 0.80 );
+        plwind( 0.0, 1.0, 0.0, 1.0 );
+        # Set interesting background colour.
+        plscol0a( 15, 0, 0, 0, 0.20 );
+        [colorbar_width, colorbar_height] = plcolorbar( \
+            bitor(opt, bitor(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)), \
+            position, x, y, x_length, y_length, \
+            15, 1, 1, low_cap_color, high_cap_color, \
+            cont_color, cont_width, label_opts, label, \
+            axis_opts, ticks, sub_ticks, \
+            n_values_array, values_array );
+
+        # Reset text and tick sizes
+        plschr( 0.0, 1.0 );
+        plsmaj( 0.0, 1.0 );
+        plsmin( 0.0, 1.0 );
+    endfor
+
+    # Draw a page title
+    title = cstrcat(char(colorbar_option_kind_labels(kind_i)), " - ", char(colorbar_cap_option_labels(cap_i)) );
+    plvpor( 0.0, 1.0, 0.0, 1.0 );
+    plwind( 0.0, 1.0, 0.0, 1.0 );
+    plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
 endfunction
 
-function plcolorbar_example_2( bar_type, ticks, sub_ticks, values, title )
-  global PL_POSITION_LEFT PL_COLORBAR_LABEL_LEFT PL_COLORBAR_CAP_HIGH PL_COLORBAR_SHADE_LABEL PL_POSITION_RIGHT PL_COLORBAR_LABEL_RIGHT PL_COLORBAR_CAP_LOW PL_POSITION_TOP PL_COLORBAR_LABEL_TOP PL_COLORBAR_CAP_HIGH PL_POSITION_BOTTOM PL_COLORBAR_LABEL_BOTTOM PL_COLORBAR_CAP_LOW 
-  pladv( 0 );
-  ## Setup color palette 1
-  plspal1( "cmap1_blue_yellow.pal", 1 );
+function plcolorbar_example( palette, kind_i, cont_color, cont_width, values )
 
-  n = length(values);
-  color_step = 1.0 / (n - 1);
-  colors = (0:n-1)'*color_step;
-  opt = bitor(PL_POSITION_LEFT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_LEFT, PL_COLORBAR_CAP_LOW)));
+  global COLORBAR_LABELS COLORBAR_CAPS
 
-  if (bar_type == PL_COLORBAR_SHADE_LABEL)
-    axis_opts_1 = "";
-    axis_opts_2 = "";
-  else
-    if( sub_ticks != 0)
-      axis_opts_1 = "stv";
-      axis_opts_2 = "st";
-    else
-      axis_opts_1 = "tv";
-      axis_opts_2 = "t";
-    endif
-  endif
+    # Load the color palette
+    plspal1( palette, 1 );
 
-  plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_1, "Test label - Left, Low Cap",
-             colors, values );
-
-  opt = bitor(PL_POSITION_RIGHT, bitor(bar_type, bitor(PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_CAP_HIGH)));
-
-  plcolorbar( opt, 0.1, 0.4, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_1, "Test label - Right, High Cap",
-             colors, values );
-
-  opt = bitor(PL_POSITION_TOP, bitor(bar_type, bitor(PL_COLORBAR_LABEL_TOP, PL_COLORBAR_CAP_LOW)));
-
-  plcolorbar( opt, 0.1, 0.1, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_2, "Test label - Upper, Low Cap",
-             colors, values );
-
-  opt = bitor(PL_POSITION_BOTTOM, bitor(bar_type, bitor(PL_COLORBAR_LABEL_BOTTOM, PL_COLORBAR_CAP_HIGH)));
-
-  plcolorbar( opt, 0.4, 0.1, 0.5, 0.1,
-             ticks, sub_ticks,
-             axis_opts_2, "Test label - Lower, High Cap",
-             colors, values );
-
-  plvpor( 0.0, 1.0, 0.0, 1.0 );
-  plwind( 0.0, 1.0, 0.0, 1.0 );
-  plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+    for label_i = 1:COLORBAR_LABELS
+        for cap_i = 1:COLORBAR_CAPS
+            plcolorbar_example_page( kind_i, label_i, cap_i,
+                cont_color, cont_width, values );
+        endfor
+    endfor
 endfunction
+
+
 
 function ix33c()
   ## Parse and process command line arguments
@@ -180,6 +244,7 @@ function ix33c()
   global PL_POSITION_LEFT PL_POSITION_RIGHT PL_POSITION_TOP PL_POSITION_BOTTOM PL_POSITION_INSIDE PL_POSITION_OUTSIDE PL_POSITION_SUBPAGE
   global PL_COLORBAR_IMAGE PL_COLORBAR_SHADE PL_COLORBAR_GRADIENT PL_COLORBAR_SHADE_LABEL
   global position_options special_symbols
+  global COLORBAR_KINDS
   plinit();
 
   ## First page illustrating the 16 standard positions.
@@ -877,18 +942,28 @@ function ix33c()
 	       [], [], [], [] );
   max_height = max(max_height, legend_height);
 
-if(0== 1)
-  ## Color bar examples
-  values_small = [ 0.0; 1.0 ];
-  values_uneven = [ 0.0; 2.0; 2.6; 3.4; 6.0; 7.0; 8.0; 9.0; 10.0 ];
-  values_even = [ 0.0; 1.0; 2.0; 3.0; 4.0; 5.0; 6.0; 7.0; 8.0 ];
-  plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" );
-  plcolorbar_example_2( PL_COLORBAR_IMAGE, 0.0, 0, values_small, "Image Color Bars" )
-  plcolorbar_example_1( bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0.0, 0, values_uneven, "Shade Color Bars - Uneven Steps" );
-  plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0, 3, values_even, "Shade Color Bars - Even Steps" );
-  plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" );
-  plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5, 5, values_small, "Gradient Color Bars" );
-endif
+  # Color bar examples
+  values_small  = [ -1.0e-200, 1.0e-200 ];
+  values_uneven = [ -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 ];
+  values_even   = [ -2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200 ];
+
+  # Use unsaturated green background colour to contrast with black caps.
+  plscolbg( 70, 185, 70 );
+  # Cut out the greatest and smallest bits of the color spectrum to
+  # leave colors for the end caps.
+  plscmap1_range( 0.01, 0.99 );
+
+  # We can only test image and gradient colorbars with two element arrays
+  for i = 3:COLORBAR_KINDS
+      plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_small );
+  endfor
+  # Test shade colorbars with larger arrays
+  for i = 1:2
+      plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, values_even );
+  endfor
+  for i = 1:2
+      plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_uneven );
+  endfor
   plend1();
 endfunction
 

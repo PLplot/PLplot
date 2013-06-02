@@ -481,7 +481,7 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
           const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
           const PLINT *ArrayCkNull, const char **ArrayCk );
 
-#if defined (SWIG_PYTHON) || defined(SWIG_JAVA)
+#if defined (SWIG_PYTHON) || defined(SWIG_JAVA) || defined(SWIG_OCTAVE)
 void
 plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
             PLINT opt, PLINT position, PLFLT x, PLFLT y,

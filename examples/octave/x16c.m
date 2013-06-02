@@ -32,6 +32,9 @@ endfunction
 function ix16c
 
   global tr; global nx; global ny;
+  global PL_COLORBAR_LABEL_BOTTOM;
+  global PL_COLORBAR_SHADE;
+  global PL_COLORBAR_SHADE_LABEL;
   ## Fundamental settings.  See notes[] for more info. 
 
   ns = 20;		## Default number of shade levels 
@@ -43,6 +46,18 @@ function ix16c
 
   sh_cmap = 1;
   fill_width = 2.; cont_color = 0;  cont_width = 0.;
+  
+  num_axes = 1;
+  n_axis_opts = num_axes;
+  axis_opts = { "bcvtm" };
+  values = zeros(num_axes,ns+1);
+  axis_ticks = zeros(1,1);
+  axis_subticks = zeros(1,1);
+
+  num_labels = 1;
+  label_opts = [ PL_COLORBAR_LABEL_BOTTOM ];
+  labels = { "Magnitude" };
+
 
   ## Parse and process command line arguments 
 
@@ -110,6 +125,28 @@ function ix16c
 	   cont_color, cont_width,
 	   1);
 
+  # Smaller text
+  plschr( 0.0, 0.75 );
+  # Small ticks on the vertical axis
+  plsmaj( 0.0, 0.5 );
+  plsmin( 0.0, 0.5 );
+
+  num_values(1) = ns + 1;
+  values(1,:) = shedge;
+
+  [colorbar_width, colorbar_height] = plcolorbar( 
+            bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels, axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+  # Reset text and tick sizes
+  plschr( 0.0, 1.0 );
+  plsmaj( 0.0, 1.0 );
+  plsmin( 0.0, 1.0 );
+
   plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
   plcol0(2);
@@ -135,6 +172,28 @@ function ix16c
 	    shedge', fill_width,
 	    cont_color, cont_width,
 	    1, xg1, yg1);
+
+  # Smaller text
+  plschr( 0.0, 0.75 );
+  # Small ticks on the vertical axis
+  plsmaj( 0.0, 0.5 );
+  plsmin( 0.0, 0.5 );
+
+  num_values(1) = ns + 1;
+  values(1,:) = shedge;
+
+  [colorbar_width, colorbar_height] = plcolorbar( 
+            bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels, axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+  # Reset text and tick sizes
+  plschr( 0.0, 1.0 );
+  plsmaj( 0.0, 1.0 );
+  plsmin( 0.0, 1.0 );
 
   plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -162,6 +221,28 @@ function ix16c
 	    cont_color, cont_width,
 	    0, xg2, yg2);
 
+  # Smaller text
+  plschr( 0.0, 0.75 );
+  # Small ticks on the vertical axis
+  plsmaj( 0.0, 0.5 );
+  plsmin( 0.0, 0.5 );
+
+  num_values(1) = ns + 1;
+  values(1,:) = shedge;
+
+  [colorbar_width, colorbar_height] = plcolorbar( 
+            bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels, axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+  # Reset text and tick sizes
+  plschr( 0.0, 1.0 );
+  plsmaj( 0.0, 1.0 );
+  plsmin( 0.0, 1.0 );
+
   plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
   plcol0(2);
@@ -186,6 +267,28 @@ function ix16c
 	    shedge', fill_width,
 	    2, 3.,
 	    0, xg2, yg2);
+
+  # Smaller text
+  plschr( 0.0, 0.75 );
+  # Small ticks on the vertical axis
+  plsmaj( 0.0, 0.5 );
+  plsmin( 0.0, 0.5 );
+
+  num_values(1) = ns + 1;
+  values(1,:) = shedge;
+
+  [colorbar_width, colorbar_height] = plcolorbar( 
+            bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            2, 3,
+            label_opts, labels, axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+  # Reset text and tick sizes
+  plschr( 0.0, 1.0 );
+  plsmaj( 0.0, 1.0 );
+  plsmin( 0.0, 1.0 );
 
   plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -258,6 +361,28 @@ function ix16c
 	    shedge', fill_width,
 	    cont_color, cont_width,
 	    0, xg2, yg2);
+
+  # Smaller text
+  plschr( 0.0, 0.75 );
+  # Small ticks on the vertical axis
+  plsmaj( 0.0, 0.5 );
+  plsmin( 0.0, 0.5 );
+
+  num_values(1) = ns + 1;
+  values(1,:) = shedge;
+
+  [colorbar_width, colorbar_height] = plcolorbar( 
+            bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
+            0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+            cont_color, cont_width,
+            label_opts, labels, axis_opts,
+            axis_ticks, axis_subticks,
+            num_values, values );
+
+  # Reset text and tick sizes
+  plschr( 0.0, 1.0 );
+  plsmaj( 0.0, 1.0 );
+  plsmin( 0.0, 1.0 );
 
   ## Now we can draw the perimeter.  (If do before, shade stuff may overlap.) 
   i = 0:PERIMETERPTS-1;

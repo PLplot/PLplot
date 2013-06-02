@@ -337,6 +337,30 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) const PLINT * ArrayCkMinus1Null { delete [] $1;}
 
+// Set X and Y lengths for later consistency checking
+%typemap( in ) const PLINT * ArrayN( Matrix temp )
+{
+    int i;
+    if ( _n_dims( $input ) > 1 )
+    {
+        error( "argument must be a scalar or vector" ); SWIG_fail;
+    }
+    if ( _dim( $input, 0 ) != Alen )
+    {
+        error( "argument vectors must be same length" ); SWIG_fail;
+    }
+    Xlen = Alen;
+    temp = $input.matrix_value();
+    $1   = new PLINT[Alen];
+    _cvt_double_to( $1, &temp( 0, 0 ), Alen );
+    Ylen = -1;
+    for ( i = 0; i < Xlen; i++ )
+        if ( $1[i] > Ylen ) Ylen = $1[i];
+}
+%typemap( freearg ) ( const PLINT * ArrayN )
+{
+    delete [] $1;
+}
 
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
@@ -875,6 +899,239 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         $1 = NULL;
     }
 }
+
+// This test function should be removed when we are confident of our
+// dealings with all types of octave string arrays.
+%{
+    void testppchar( PLINT nlegend, const PLINT *opt_array, const char ** text )
+    {
+        PLINT i;
+        printf( "nlegend =%d\n", nlegend );
+        for ( i = 0; i < nlegend; i++ )
+        {
+            printf( "opt_array[%d] =%d\n", i, opt_array[i] );
+            printf( "strlen(text[%d]) =%d\n", i, (int) strlen( text[i] ) );
+            printf( "text[%d] =%s\n", i, text[i] );
+        }
+    }
+%}
+
+// No count but check consistency with previous
+%typemap( in ) const char **ArrayCk {
+    charMatrix  temp_matrix;
+    Cell        temp_cell;
+    char        *tmp_cstring;
+    std::string str;
+    size_t      max_length, non_blank_length;
+    int         i, ifcell;
+    if ( _n_dims( $input ) > 2 )
+    {
+        error( "argument must be a scalar or vector or matrix" ); SWIG_fail;
+    }
+    if ( !$input.is_empty() )
+    {
+        if ( _dim( $input, 0 ) != Alen )
+        {
+            error( "first dimension must be same length as previous vector" ); SWIG_fail;
+        }
+        $1     = new char*[Alen];
+        ifcell = $input.is_cell();
+        if ( ifcell )
+        {
+            temp_cell = $input.cell_value();
+        }
+        else
+        {
+            temp_matrix = $input.char_matrix_value();
+            // Allow one extra space for null termination.
+            max_length = _dim( $input, 1 ) + 1;
+        }
+
+        for ( i = 0; i < Alen; i++ )
+        {
+            // Must copy string to "permanent" location because the string
+            // location corresponding to tmp_cstring gets
+            // overwritten for each iteration of loop.
+            if ( ifcell )
+            {
+                if ( temp_cell.elem( i ).is_string() )
+                {
+                    str = temp_cell.elem( i ).string_value();
+                    // leave room for null termination.
+                    max_length  = str.size() + 1;
+                    tmp_cstring = (char *) str.c_str();
+                }
+                else
+                {
+                    // Use null string if user attempts to pass a cell array
+                    // with a non-string element (likely an empty element
+                    // since that should be allowed by the PLplot interface
+                    // if that element is going to be unused).
+                    // leave room for null termination.
+                    max_length  = 1;
+                    tmp_cstring = (char *) "";
+                }
+            }
+            else
+            {
+                tmp_cstring = (char *) temp_matrix.row_as_string( i ).c_str();
+            }
+            $1[i] = new char[max_length];
+            strncpy( $1[i], tmp_cstring, max_length - 1 );
+            $1[i][max_length - 1] = '\0';
+            // All the trailing blank crapola should not be needed for
+            // string cell arrays.
+            if ( !ifcell )
+            {
+                // remove trailing-blank padding that is used by the
+                // charMatrix class to insure all strings in a given
+                // charMatrix instance have the same length.
+                // This transformation also removes legitimate trailing
+                // blanks but there is nothing we can do about that
+                // for the charMatrix class.
+
+                // Look for trailing nulls first (just in case, although that
+                // shouldn't happen if charMatrix implemented as documented)
+                // before looking for trailing blanks.
+                non_blank_length = max_length - 2;
+                while ( non_blank_length >= 0 && $1[i][non_blank_length] == '\0' )
+                {
+                    non_blank_length--;
+                }
+                while ( non_blank_length >= 0 && $1[i][non_blank_length] == ' ' )
+                {
+                    non_blank_length--;
+                }
+                $1[i][non_blank_length + 1] = '\0';
+            }
+        }
+    }
+    else
+    {
+        $1 = NULL;
+    }
+}
+%typemap( freearg ) const char **ArrayCk {
+    int i;
+    if ( $1 != NULL )
+    {
+        for ( i = 0; i < Alen; i++ )
+        {
+            delete[] $1[i];
+        }
+        delete[] $1;
+    }
+}
+
+// No count but check consistency with previous
+%typemap( in ) (PLINT n, const char **Array) {
+    charMatrix  temp_matrix;
+    Cell        temp_cell;
+    char        *tmp_cstring;
+    std::string str;
+    size_t      max_length, non_blank_length;
+    int         i, ifcell;
+    if ( _n_dims( $input ) > 2 )
+    {
+        error( "argument must be a scalar or vector or matrix" ); SWIG_fail;
+    }
+    if ( !$input.is_empty() )
+    {
+        Alen   = _dim( $input, 0 );
+	$1     = Alen;
+        $2     = new char*[Alen];
+        ifcell = $input.is_cell();
+        if ( ifcell )
+        {
+            temp_cell = $input.cell_value();
+        }
+        else
+        {
+            temp_matrix = $input.char_matrix_value();
+            // Allow one extra space for null termination.
+            max_length = _dim( $input, 1 ) + 1;
+        }
+
+        for ( i = 0; i < Alen; i++ )
+        {
+            // Must copy string to "permanent" location because the string
+            // location corresponding to tmp_cstring gets
+            // overwritten for each iteration of loop.
+            if ( ifcell )
+            {
+                if ( temp_cell.elem( i ).is_string() )
+                {
+                    str = temp_cell.elem( i ).string_value();
+                    // leave room for null termination.
+                    max_length  = str.size() + 1;
+                    tmp_cstring = (char *) str.c_str();
+                }
+                else
+                {
+                    // Use null string if user attempts to pass a cell array
+                    // with a non-string element (likely an empty element
+                    // since that should be allowed by the PLplot interface
+                    // if that element is going to be unused).
+                    // leave room for null termination.
+                    max_length  = 1;
+                    tmp_cstring = (char *) "";
+                }
+            }
+            else
+            {
+                tmp_cstring = (char *) temp_matrix.row_as_string( i ).c_str();
+            }
+            $2[i] = new char[max_length];
+            strncpy( $2[i], tmp_cstring, max_length - 1 );
+            $2[i][max_length - 1] = '\0';
+            // All the trailing blank crapola should not be needed for
+            // string cell arrays.
+            if ( !ifcell )
+            {
+                // remove trailing-blank padding that is used by the
+                // charMatrix class to insure all strings in a given
+                // charMatrix instance have the same length.
+                // This transformation also removes legitimate trailing
+                // blanks but there is nothing we can do about that
+                // for the charMatrix class.
+
+                // Look for trailing nulls first (just in case, although that
+                // shouldn't happen if charMatrix implemented as documented)
+                // before looking for trailing blanks.
+                non_blank_length = max_length - 2;
+                while ( non_blank_length >= 0 && $2[i][non_blank_length] == '\0' )
+                {
+                    non_blank_length--;
+                }
+                while ( non_blank_length >= 0 && $2[i][non_blank_length] == ' ' )
+                {
+                    non_blank_length--;
+                }
+                $2[i][non_blank_length + 1] = '\0';
+            }
+        }
+    }
+    else
+    {
+        $1 = 0;
+        $2 = NULL;
+    }
+}
+%typemap( freearg ) (PLINT n, const char **Array) {
+    int i;
+    if ( $2 != NULL )
+    {
+        for ( i = 0; i < Alen; i++ )
+        {
+            delete[] $2[i];
+        }
+        delete[] $2;
+    }
+}
+
+// This test function should be removed when we are confident of our
+// dealings with all types of octave string arrays.
+void testppchar( PLINT n, const PLINT *Array, const char **ArrayCk );
 
 // The octave bindings started out as an independent project with a
 // historical API that does not match up that well with the PLplot API
@@ -1521,132 +1778,52 @@ void my_plimagefr2( const PLFLT *Matrix, PLINT nx, PLINT ny,
                     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
                     PLFLT valuemin, PLFLT valuemax, const PLFLT *Matrix, const PLFLT *Matrix );
 
-// This test function should be removed when we are confident of our
-// dealings with all types of octave string arrays.
+// plcolorbar-related wrappers.
+%ignore plcolorbar;
+%rename( plcolorbar ) my_plcolorbar;
+
 %{
-    void testppchar( PLINT nlegend, const PLINT *opt_array, const char ** text )
+    void my_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+			PLINT opt, PLINT position, PLFLT x, PLFLT y,
+			PLFLT x_length, PLFLT y_length,
+			PLINT bg_color, PLINT bb_color, PLINT bb_style,
+			PLFLT low_cap_color, PLFLT high_cap_color,
+			PLINT cont_color, PLFLT cont_width,
+			PLINT n_labels, const PLINT *label_opts, const char **label,
+			PLINT n_axes, const char ** axis_opts,
+			const PLFLT *ticks, const PLINT *sub_ticks,
+			const PLINT *n_values, const PLFLT *a ) 
     {
-        PLINT i;
-        printf( "nlegend =%d\n", nlegend );
-        for ( i = 0; i < nlegend; i++ )
-        {
-            printf( "opt_array[%d] =%d\n", i, opt_array[i] );
-            printf( "strlen(text[%d]) =%d\n", i, (int) strlen( text[i] ) );
-            printf( "text[%d] =%s\n", i, text[i] );
-        }
+        PLINT nx, ny, i;
+	nx = n_axes;
+	ny = -1;
+	for ( i = 0; i < nx ; i++ )
+	  if ( n_values[i] > ny ) ny = n_values[i];
+	f2c( a, aa, nx, ny );
+	c_plcolorbar(p_colorbar_width, p_colorbar_height,
+		     opt, position, x, y,
+		     x_length, y_length,
+		     bg_color, bb_color, bb_style,
+		     low_cap_color, high_cap_color,
+		     cont_color, cont_width,
+		     n_labels, label_opts, label,
+		     n_axes, axis_opts,
+		     ticks, sub_ticks,
+		     n_values, aa);
     }
+
 %}
 
-// No count but check consistency with previous
-%typemap( in ) const char **ArrayCk {
-    charMatrix  temp_matrix;
-    Cell        temp_cell;
-    char        *tmp_cstring;
-    std::string str;
-    size_t      max_length, non_blank_length;
-    int         i, ifcell;
-    if ( _n_dims( $input ) > 2 )
-    {
-        error( "argument must be a scalar or vector or matrix" ); SWIG_fail;
-    }
-    if ( !$input.is_empty() )
-    {
-        if ( _dim( $input, 0 ) != Alen )
-        {
-            error( "first dimension must be same length as previous vector" ); SWIG_fail;
-        }
-        $1     = new char*[Alen];
-        ifcell = $input.is_cell();
-        if ( ifcell )
-        {
-            temp_cell = $input.cell_value();
-        }
-        else
-        {
-            temp_matrix = $input.char_matrix_value();
-            // Allow one extra space for null termination.
-            max_length = _dim( $input, 1 ) + 1;
-        }
-
-        for ( i = 0; i < Alen; i++ )
-        {
-            // Must copy string to "permanent" location because the string
-            // location corresponding to tmp_cstring gets
-            // overwritten for each iteration of loop.
-            if ( ifcell )
-            {
-                if ( temp_cell.elem( i ).is_string() )
-                {
-                    str = temp_cell.elem( i ).string_value();
-                    // leave room for null termination.
-                    max_length  = str.size() + 1;
-                    tmp_cstring = (char *) str.c_str();
-                }
-                else
-                {
-                    // Use null string if user attempts to pass a cell array
-                    // with a non-string element (likely an empty element
-                    // since that should be allowed by the PLplot interface
-                    // if that element is going to be unused).
-                    // leave room for null termination.
-                    max_length  = 1;
-                    tmp_cstring = (char *) "";
-                }
-            }
-            else
-            {
-                tmp_cstring = (char *) temp_matrix.row_as_string( i ).c_str();
-            }
-            $1[i] = new char[max_length];
-            strncpy( $1[i], tmp_cstring, max_length - 1 );
-            $1[i][max_length - 1] = '\0';
-            // All the trailing blank crapola should not be needed for
-            // string cell arrays.
-            if ( !ifcell )
-            {
-                // remove trailing-blank padding that is used by the
-                // charMatrix class to insure all strings in a given
-                // charMatrix instance have the same length.
-                // This transformation also removes legitimate trailing
-                // blanks but there is nothing we can do about that
-                // for the charMatrix class.
-
-                // Look for trailing nulls first (just in case, although that
-                // shouldn't happen if charMatrix implemented as documented)
-                // before looking for trailing blanks.
-                non_blank_length = max_length - 2;
-                while ( non_blank_length >= 0 && $1[i][non_blank_length] == '\0' )
-                {
-                    non_blank_length--;
-                }
-                while ( non_blank_length >= 0 && $1[i][non_blank_length] == ' ' )
-                {
-                    non_blank_length--;
-                }
-                $1[i][non_blank_length + 1] = '\0';
-            }
-        }
-    }
-    else
-    {
-        $1 = NULL;
-    }
-}
-%typemap( freearg ) const char **ArrayCk {
-    int i;
-    if ( $1 != NULL )
-    {
-        for ( i = 0; i < Alen; i++ )
-        {
-            delete[] $1[i];
-        }
-        delete[] $1;
-    }
-}
-
-// This test function should be removed when we are confident of our
-// dealings with all types of octave string arrays.
-void testppchar( PLINT n, const PLINT *Array, const char **ArrayCk );
+void my_plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
+            PLINT opt, PLINT position, PLFLT x, PLFLT y,
+            PLFLT x_length, PLFLT y_length,
+            PLINT bg_color, PLINT bb_color, PLINT bb_style,
+            PLFLT low_cap_color, PLFLT high_cap_color,
+            PLINT cont_color, PLFLT cont_width,
+            PLINT n, const PLINT *Array, const char **ArrayCk,
+            PLINT n, const char **Array,
+            const PLFLT *ArrayCk, const PLINT *ArrayCk,
+            const PLINT *ArrayN , const PLFLT *MatrixCk );
 
 // Probably never deal with this one.
 %ignore plMinMax2dGrid;
