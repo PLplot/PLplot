@@ -76,3 +76,4 @@ endif(MSYS)
 
 include(shapelib/ep.cmake)
 include(ndiff/ep.cmake)
+include(libqhull/ep.cmake)
