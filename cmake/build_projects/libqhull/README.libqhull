@@ -16,9 +16,10 @@ src/unix.c
 (1) copy this directory and all subdirectories on top of a pre-existing
 freshly unpacked version of qhull-2010.1, e.g.,
 
-cp -a * ~/qhull/qhull-2010.1_patched
+cp -a CMakeLists.txt ~/qhull/qhull-2010.1_patched
+cp src/CMakeLists.txt src/libqhull.h src/mem.h src/unix.c ~/qhull/qhull-2010.1_patched/src
 
-(2) configure, build, and install libharu starting with an empty build tree
+(2) configure, build, and install libqhull starting with an empty build tree
 and empty install tree, e.g.,
 
 rm -rf /home/software/qhull/build_dir/* /home/software/qhull/install
