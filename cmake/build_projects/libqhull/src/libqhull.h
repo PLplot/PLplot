@@ -58,8 +58,7 @@
 #ifdef USINGDLL
   #if defined ( WIN32 )
 /* Visual C/C++, Borland, MinGW and Watcom */
-    #if defined ( __VISUALC__ ) || defined ( _MSC_VER ) || defined ( __BORLANDC_
-_ ) || defined ( __GNUC__ ) || defined ( __WATCOMC__ )
+    #if defined ( __VISUALC__ ) || defined ( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __GNUC__ ) || defined ( __WATCOMC__ )
       #define QHULLDLLEXPORT    __declspec( dllexport )
       #define QHULLDLLIMPORT    __declspec( dllimport )
     #else
