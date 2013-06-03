@@ -41,6 +41,10 @@ if(NOT ${CMAKE_GENERATOR} STREQUAL "Unix Makefiles" AND NOT ${CMAKE_GENERATOR} S
   message(FATAL_ERROR "This project only works with either the \"Unix Makefiles\" or \"MSYS Makefiles\" generators")
 endif(NOT ${CMAKE_GENERATOR} STREQUAL "Unix Makefiles" AND NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
   
+# Propagate the overall CMake generator and install prefix to all CMake-based
+# software project builds.
+set(BP_CMAKE_COMMAND cmake "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
+ 
 # The non-parallel versions are for build systems that
 # apparently have race conditions for parallel builds.
 set(BP_PARALLEL_BUILD_COMMAND make -j4)

@@ -24,6 +24,7 @@
 # used below that configure how the External_Project functions
 # operate.
 
+# Data that is related to downloads.
 set(ndiff_URL ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz)
 # TEMPORARY local version for debugging
 set(ndiff_URL /home/software/ndiff/ndiff-2.00.tar.gz)
@@ -33,11 +34,19 @@ set(ndiff_URL /home/software/ndiff/ndiff-2.00.tar.gz)
 # In any case, gpg is not available for the MSYS case.
 set(ndiff_URL_MD5 885548b4dc26e72c5455bebb5ba6c16d)
 
+# Data that is related to the PATH that must be used.
+if(MSYS)
+  #set(BP_PATH_NODLL "${BP_PATH}")
+  #set(BP_PATH "${EP_BASE}/Build/build_ndiff/dll;${BP_PATH_NODLL}")
+  determine_msys_path(BP_PATH "${BP_PATH}")
+endif(MSYS)
+#message(STATUS "modified BP_PATH for ndiff = ${BP_PATH}")
+
 ExternalProject_Add(
   build_ndiff
   URL ${ndiff_URL}
   URL_MD5 ${ndiff_URL_MD5} 
-  CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${EP_BASE}/Install/build_ndiff
+  CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_ndiff
   BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   TEST_BEFORE_INSTALL ON
   TEST_COMMAND ${BP_PARALLEL_CTEST_COMMAND}
@@ -66,3 +75,7 @@ ExternalProject_Add_Step(build_ndiff update_build_system
   ${EP_BASE}/Source/build_ndiff/config.h.cmake
   ALWAYS OFF
   )
+
+# Restore BP_PATH to original state.
+set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
+#message(STATUS "shapelib restored original BP_PATH = ${BP_PATH}")

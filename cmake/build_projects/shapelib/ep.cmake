@@ -24,6 +24,18 @@
 # used below that configure how the External_Project functions
 # operate.
 
+# Data that is related to downloads.
+set(shapelib_URL http://download.osgeo.org/shapelib/shapelib-1.3.0.tar.gz)
+# TEMPORARY local version for debugging
+set(shapelib_URL /home/software/shapelib/shapelib-1.3.0.tar.gz)
+set(shapelib_URL_MD5 2ff7d0b21d4b7506b452524492795f77)
+
+set(shape_eg_data_URL http://dl.maptools.org/dl/shapelib/shape_eg_data.zip)
+# TEMPORARY local version for debugging
+set(shape_eg_data_URL file:///home/software/shapelib/eg_data/shape_eg_data.zip)
+set(shape_eg_data_URL_MD5 36208abd5d34c5c80101d8b214109f0d)
+
+# Data that is related to the PATH that must be used.
 if(MSYS)
   set(BP_PATH_NODLL "${BP_PATH}")
   set(BP_PATH "${EP_BASE}/Build/build_shapelib/dll;${BP_PATH_NODLL}")
@@ -31,35 +43,11 @@ if(MSYS)
 endif(MSYS)
 #message(STATUS "modified BP_PATH for shapelib = ${BP_PATH}")
 
-set(shapelib_URL http://download.osgeo.org/shapelib/shapelib-1.3.0.tar.gz)
-# TEMPORARY local version for debugging
-set(shapelib_URL /home/software/shapelib/shapelib-1.3.0.tar.gz)
-
-set(shapelib_URL_MD5 2ff7d0b21d4b7506b452524492795f77)
-
-set(shape_eg_data_URL http://dl.maptools.org/dl/shapelib/shape_eg_data.zip)
-# TEMPORARY local version for debugging
-set(shape_eg_data_URL file:///home/software/shapelib/eg_data/shape_eg_data.zip)
-
-set(shape_eg_data_URL_MD5 36208abd5d34c5c80101d8b214109f0d)
-
-# Must implement command as a list to get -G quotes propagated correctly.
-set(BP_CONFIGURE_COMMAND
-  env
-  PATH=${BP_PATH}
-  cmake 
-  "-G${CMAKE_GENERATOR}"
-  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
-  -DEG_DATA:PATH=${EP_BASE}/Source/build_shapelib/eg_data
-  ${EP_BASE}/Source/build_shapelib
-  )
-
 ExternalProject_Add(
   build_shapelib
   URL ${shapelib_URL}
   URL_MD5 ${shapelib_URL_MD5}
-  CONFIGURE_COMMAND env PATH=${BP_PATH} cmake "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX} -DEG_DATA:PATH=${EP_BASE}/Source/build_shapelib/eg_data
-  ${EP_BASE}/Source/build_shapelib
+  CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DEG_DATA:PATH=${EP_BASE}/Source/build_shapelib/eg_data ${EP_BASE}/Source/build_shapelib
   BUILD_COMMAND env PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
   TEST_BEFORE_INSTALL ON
   TEST_COMMAND env PATH=${BP_PATH} ${BP_PARALLEL_CTEST_COMMAND}
