@@ -1,45 +1,80 @@
-# CMakeLists.txt for the agg library
+# Top-level CMakeLists.txt for the CMake-based build and test system
+# of the AGG (Anti-Grain Geometry) library.
+
+# Copyright (C) 2006 Werner Smekal
+# Copyright (C) 2013 Alan W. Irwin
+
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this file; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+# CMakeLists.txt for the agg 2.5 library.  (AWI has double-checked that
+# the agg_LIB_SRCS and agg_LIB_HDRS lists below are consistent with that
+# version of agg.)
+# This build system currently
 # only makes the agg library (static/shared) but no executables
 # Put this file in the main directory, create and cd into a build directory,
 # and run this cmake command:
 #    cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=../local ..
 # or similar.
 
+# It is a fatal error if no working C++ compiler is available to build
+# the shapelib library and utilities
+project(shapelib CXX)
+
+message(STATUS "CMake version = ${CMAKE_VERSION}")
+message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
+message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
+
+cmake_minimum_required(VERSION 2.8.10.2 FATAL_ERROR)
+
+# libraries are all shared by default.
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
 set(
   agg_LIB_SRCS
     src/agg_arc.cpp
-    src/agg_arrowhead.cpp 
+    src/agg_arrowhead.cpp
     src/agg_bezier_arc.cpp
-    src/agg_bspline.cpp 
-    src/agg_curves.cpp 
-    src/agg_vcgen_contour.cpp 
-    src/agg_vcgen_dash.cpp 
-    src/agg_vcgen_markers_term.cpp 
-    src/agg_vcgen_smooth_poly1.cpp 
-    src/agg_vcgen_stroke.cpp 
-    src/agg_vcgen_bspline.cpp 
-    src/agg_gsv_text.cpp 
-    src/agg_image_filters.cpp 
-    src/agg_line_aa_basics.cpp 
-    src/agg_line_profile_aa.cpp 
-    src/agg_rounded_rect.cpp 
-    src/agg_sqrt_tables.cpp 
-    src/agg_embedded_raster_fonts.cpp 
-    src/agg_trans_affine.cpp 
-    src/agg_trans_warp_magnifier.cpp 
-    src/agg_trans_single_path.cpp 
-    src/agg_trans_double_path.cpp 
-    src/agg_vpgen_clip_polygon.cpp 
-    src/agg_vpgen_clip_polyline.cpp 
-    src/agg_vpgen_segmentator.cpp 
-    src/ctrl/agg_cbox_ctrl.cpp 
-    src/ctrl/agg_gamma_ctrl.cpp 
-    src/ctrl/agg_gamma_spline.cpp 
-    src/ctrl/agg_rbox_ctrl.cpp 
-    src/ctrl/agg_slider_ctrl.cpp 
-    src/ctrl/agg_spline_ctrl.cpp 
-    src/ctrl/agg_scale_ctrl.cpp 
-    src/ctrl/agg_polygon_ctrl.cpp 
+    src/agg_bspline.cpp
+    src/agg_curves.cpp
+    src/agg_vcgen_contour.cpp
+    src/agg_vcgen_dash.cpp
+    src/agg_vcgen_markers_term.cpp
+    src/agg_vcgen_smooth_poly1.cpp
+    src/agg_vcgen_stroke.cpp
+    src/agg_vcgen_bspline.cpp
+    src/agg_gsv_text.cpp
+    src/agg_image_filters.cpp
+    src/agg_line_aa_basics.cpp
+    src/agg_line_profile_aa.cpp
+    src/agg_rounded_rect.cpp
+    src/agg_sqrt_tables.cpp
+    src/agg_embedded_raster_fonts.cpp
+    src/agg_trans_affine.cpp
+    src/agg_trans_warp_magnifier.cpp
+    src/agg_trans_single_path.cpp
+    src/agg_trans_double_path.cpp
+    src/agg_vpgen_clip_polygon.cpp
+    src/agg_vpgen_clip_polyline.cpp
+    src/agg_vpgen_segmentator.cpp
+    src/ctrl/agg_cbox_ctrl.cpp
+    src/ctrl/agg_gamma_ctrl.cpp
+    src/ctrl/agg_gamma_spline.cpp
+    src/ctrl/agg_rbox_ctrl.cpp
+    src/ctrl/agg_slider_ctrl.cpp
+    src/ctrl/agg_spline_ctrl.cpp
+    src/ctrl/agg_scale_ctrl.cpp
+    src/ctrl/agg_polygon_ctrl.cpp
     src/ctrl/agg_bezier_ctrl.cpp
     gpc/gpc.c
 )
