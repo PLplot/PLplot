@@ -22,6 +22,9 @@
 
 /* include/hpdf_config.h.in.  Generated from configure.in by autoheader.  */
 
+#ifndef _HPDF_CONFIG_H
+#define _HPDF_CONFIG_H
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine LIBHPDF_HAVE_DLFCN_H
 
@@ -29,10 +32,10 @@
 #cmakedefine LIBHPDF_HAVE_INTTYPES_H
 
 /* Define to 1 if you have the `png' library (-lpng). */
-#cmakedefine LIBHPDF_HAVE_LIBPNG
+#cmakedefine HAVE_LIBPNG
 
 /* Define to 1 if you have the `z' library (-lz). */
-#cmakedefine LIBHPDF_HAVE_LIBZ
+#cmakedefine HAVE_LIBZ
 
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine LIBHPDF_HAVE_MEMORY_H
@@ -65,10 +68,10 @@
 #cmakedefine LIBHPDF_DEBUG_TRACE
 
 /* libpng is not available */
-#cmakedefine LIBHPDF_HAVE_NOPNGLIB
+#cmakedefine HPDF_NOPNGLIB
 
 /* zlib is not available */
-#cmakedefine LIBHPDF_HAVE_NOZLIB
+#cmakedefine HPDF_NOZLIB
 
 /* Define to the address where bug reports for this package should be sent. */
 #cmakedefine LIBHPDF_PACKAGE_BUGREPORT
@@ -90,3 +93,5 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #cmakedefine LIBHPDF_size_t
+
+#endif /* _HPDF_CONFIG_H */
