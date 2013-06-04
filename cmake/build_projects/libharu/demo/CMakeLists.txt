@@ -112,6 +112,23 @@ if(LIBHARU_EXAMPLES)
     endif(USE_RPATH)
   endforeach(demo)
   
+  if(MATH_LIB)
+    # These are a subset of the demos above which include math.h and which
+    # therefore require linking with ${MATH_LIB}.
+    set(
+      demos_requiring_MATH_LIB
+      text_demo2
+      text_demo
+      raw_image_demo
+      image_demo
+      make_rawimage
+      )
+
+    foreach(demo ${demos_requiring_MATH_LIB})
+      target_link_libraries(${demo} ${MATH_LIB})
+    endforeach(demo ${demos_requiring_MATH_LIB})
+  endif(MATH_LIB)
+
   add_executable(grid_sheet grid_sheet.c)
   # the grid_sheet demo needs extra define, but cannot use add_definitions
   # for that because that command affects all source files in the directory.
