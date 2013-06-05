@@ -26,13 +26,9 @@
 
 # Data that is related to downloads.
 set(shapelib_URL http://download.osgeo.org/shapelib/shapelib-1.3.0.tar.gz)
-# TEMPORARY local version for debugging
-set(shapelib_URL /home/software/shapelib/shapelib-1.3.0.tar.gz)
 set(shapelib_URL_MD5 2ff7d0b21d4b7506b452524492795f77)
 
 set(shape_eg_data_URL http://dl.maptools.org/dl/shapelib/shape_eg_data.zip)
-# TEMPORARY local version for debugging
-set(shape_eg_data_URL file:///home/software/shapelib/eg_data/shape_eg_data.zip)
 set(shape_eg_data_URL_MD5 36208abd5d34c5c80101d8b214109f0d)
 
 # Data that is related to the PATH that must be used.

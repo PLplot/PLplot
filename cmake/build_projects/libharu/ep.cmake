@@ -26,8 +26,6 @@
 
 # Data that is related to downloads.
 set(libharu_URL http://libharu.org/files/libharu-2.1.0.tar.gz)
-# TEMPORARY local version for debugging
-set(libharu_URL /home/software/libharu/libharu-2.1.0.tar.gz)
 set(libharu_URL_MD5 0623b8fb08ae1b28af08b2cdbd66b662)
 
 # Data that is related to the PATH that must be used.
@@ -46,9 +44,7 @@ ExternalProject_Add(
   # should drop this option for anything after 2.1.0.  Also note that
   # -DLIBHARU_EXAMPLES=ON builds the demos, but does not test them.
   CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DPOST_2.1.0=OFF -DLIBHARU_EXAMPLES=ON ${EP_BASE}/Source/build_libharu
-  # TEMPORARY
-  #BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
-  BUILD_COMMAND ${BP_NON_PARALLEL_BUILD_COMMAND}
+  BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
   STEP_TARGETS download update_build_system configure build install test
   )

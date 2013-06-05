@@ -74,8 +74,13 @@ if(MSYS)
   endfunction(determine_msys_path)
 endif(MSYS)
 
-include(shapelib/ep.cmake)
+# Now include the build configurations for certain targets and their
+# dependencies.
+
+# Configure a build of ndiff.  The ndiff application is not a a PLplot
+# dependency, but still this fuzzy diff is quite useful for PLplot
+# developers.
 include(ndiff/ep.cmake)
-include(libqhull/ep.cmake)
-include(libharu/ep.cmake)
-include(libagg/ep.cmake)
+
+# Configure a build of PLplot and its dependencies.
+include(plplot/ep.cmake)

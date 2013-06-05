@@ -26,8 +26,6 @@
 
 # Data that is related to downloads.
 set(libagg_URL http://www.antigrain.com/agg-2.5.tar.gz)
-# TEMPORARY local version for debugging
-set(libagg_URL /home/software/libagg/agg-2.5.tar.gz)
 set(libagg_URL_MD5 0229a488bc47be10a2fee6cf0b2febd6)
 
 # Data that is related to the PATH that must be used.

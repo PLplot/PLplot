@@ -26,10 +26,7 @@
 
 # Data that is related to downloads.
 set(libqhull_URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
-# TEMPORARY local version for debugging
-set(libqhull_URL /home/software/qhull/qhull-2010.1-src.tgz)
-
-set(libqhull_URL_MD5 4cda99e10a9a41365021db7eb1e79b91)
+set(libqhull_URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
 
 # Data that is related to the PATH that must be used.
 if(MSYS)

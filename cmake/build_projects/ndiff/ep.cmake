@@ -26,8 +26,6 @@
 
 # Data that is related to downloads.
 set(ndiff_URL ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz)
-# TEMPORARY local version for debugging
-set(ndiff_URL /home/software/ndiff/ndiff-2.00.tar.gz)
 
 # The MD5 value below is correct for the gpg --verified version
 # Use URL_MD5 because ExternalProject_Add doesn't deal with gpg --version.
