@@ -455,7 +455,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
                 if ( ldy )
                 {
                     pldtfac( vpwymi, vpwyma, &factor, &tstart );
-                    tp = ytick1 * ( floor( ( vpwymi - tstart ) / ytick1 ) + 1 ) + tstart;
+                    tp = ytick1 * ( floor( ( vpwyma - tstart ) / ytick1 ) + 1 ) + tstart;
                 }
                 else
                     tp = ytick1 * ( floor( vpwyma / ytick1 ) + 1 );
@@ -1259,11 +1259,12 @@ static void
 grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
           const char *yopt, PLFLT ytick1, PLINT nysub1 )
 {
-    PLINT lgx, lhx, llx;
-    PLINT lgy, lhy, lly;
+    PLINT lgx, lhx, llx, ldx;
+    PLINT lgy, lhy, lly, ldy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT tn, temp, tcrit, tspace = 0.1;
+    PLFLT tstart, factor;
     PLINT i;
 
 // Set plot options from input
@@ -1271,10 +1272,12 @@ grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
     lgx = plP_stsearch( xopt, 'g' );
     lhx = plP_stsearch( xopt, 'h' );
     llx = plP_stsearch( xopt, 'l' );
+    ldx = plP_stsearch( xopt, 'd' );
 
     lgy = plP_stsearch( yopt, 'g' );
     lhy = plP_stsearch( yopt, 'h' );
     lly = plP_stsearch( yopt, 'l' );
+    ldy = plP_stsearch( yopt, 'd' );
 
     plP_xgvpw( &vpwxmin, &vpwxmax, &vpwymin, &vpwymax );
 // n.b. large change; vpwxmi always numerically less than vpwxma, and
@@ -1288,8 +1291,16 @@ grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
 
     if ( lgx )
     {
-        for ( tn = xtick1 * floor( vpwxmi / xtick1 );
-              tn <= vpwxma; tn += xtick1 )
+        if ( ldx )
+	{
+	    pldtfac( vpwxmi, vpwxma, &factor, &tstart);
+	    tn = xtick1*( floor((vpwxmi-tstart )/xtick1 )) + tstart;
+	}
+	else
+	{
+	    tn = xtick1*floor( vpwxmi / xtick1 );
+	}
+        for ( ; tn <= vpwxma; tn += xtick1 )
         {
             if ( lhx )
             {
@@ -1326,9 +1337,16 @@ grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
 
     if ( lgy )
     {
-        tn = ytick1 * floor( vpwymi / ytick1 + tspace );
-        for ( tn = ytick1 * floor( vpwymi / ytick1 );
-              tn <= vpwyma; tn += ytick1 )
+        if ( ldy )
+	{
+	    pldtfac( vpwymi, vpwyma, &factor, &tstart);
+	    tn = ytick1*( floor((vpwymi-tstart )/ytick1 )) + tstart;
+	}
+	else
+	{
+	    tn = ytick1*floor( vpwymi / ytick1 );
+	}
+        for ( ; tn <= vpwyma; tn += ytick1 )
         {
             if ( lhy )
             {
