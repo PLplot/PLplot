@@ -1020,7 +1020,7 @@ function(ExternalProject_Add_Step name step)
     set_property(SOURCE ${stamp_file} PROPERTY SYMBOLIC 1)
     set(touch)
   else()
-    set(touch touch ${stamp_file})
+    set(touch ${TOUCH_EXECUTABLE} ${stamp_file})
   endif()
 
   # Wrap with log script?
@@ -1676,8 +1676,8 @@ function(ExternalProject_Add name)
     OUTPUT ${complete_outputs}
     COMMENT "Completed '${name}'"
     COMMAND ${CMAKE_COMMAND} -E make_directory ${cmf_dir}${cfgdir}
-    COMMAND touch ${complete_stamp_file}
-    COMMAND touch ${done_stamp_file}
+    COMMAND ${TOUCH_EXECUTABLE} ${complete_stamp_file}
+    COMMAND ${TOUCH_EXECUTABLE} ${done_stamp_file}
     DEPENDS ${install_stamp_file}
     VERBATIM
     )

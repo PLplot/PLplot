@@ -44,7 +44,7 @@ ExternalProject_Add(
   build_ndiff
   URL ${ndiff_URL}
   URL_MD5 ${ndiff_URL_MD5} 
-  CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_ndiff
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_ndiff
   BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   TEST_BEFORE_INSTALL ON
   TEST_COMMAND ${BP_PARALLEL_CTEST_COMMAND}
@@ -58,7 +58,12 @@ add_custom_command(
   OUTPUT
   ${EP_BASE}/Source/build_ndiff/CMakeLists.txt
   ${EP_BASE}/Source/build_ndiff/config.h.cmake
-  COMMAND cp -f ${CMAKE_SOURCE_DIR}/ndiff/CMakeLists.txt ${CMAKE_SOURCE_DIR}/ndiff/config.h.cmake ${EP_BASE}/Source/build_ndiff
+  COMMAND ${CMAKE_COMMAND} -E copy 
+  ${CMAKE_SOURCE_DIR}/ndiff/CMakeLists.txt
+  ${EP_BASE}/Source/build_ndiff/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E copy 
+  ${CMAKE_SOURCE_DIR}/ndiff/config.h.cmake
+  ${EP_BASE}/Source/build_ndiff/config.h.cmake
   COMMENT "Updating of ndiff build system"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/ndiff/CMakeLists.txt

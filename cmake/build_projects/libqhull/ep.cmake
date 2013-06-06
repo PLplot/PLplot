@@ -40,7 +40,7 @@ ExternalProject_Add(
   build_libqhull
   URL ${libqhull_URL}
   URL_MD5 ${libqhull_URL_MD5} 
-  CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_libqhull
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_libqhull
   BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
   STEP_TARGETS download update_build_system configure build install test
@@ -55,8 +55,21 @@ add_custom_command(
   ${EP_BASE}/Source/build_libqhull/src/libqhull.h
   ${EP_BASE}/Source/build_libqhull/src/mem.h
   ${EP_BASE}/Source/build_libqhull/src/unix.c
-  COMMAND cp -f ${CMAKE_SOURCE_DIR}/libqhull/CMakeLists.txt ${EP_BASE}/Source/build_libqhull
-  COMMAND cp -f ${CMAKE_SOURCE_DIR}/libqhull/src/CMakeLists.txt ${CMAKE_SOURCE_DIR}/libqhull/src/libqhull.h ${CMAKE_SOURCE_DIR}/libqhull/src/mem.h ${CMAKE_SOURCE_DIR}/libqhull/src/unix.c ${EP_BASE}/Source/build_libqhull/src
+  COMMAND ${CMAKE_COMMAND} -E copy 
+  ${CMAKE_SOURCE_DIR}/libqhull/CMakeLists.txt
+  ${EP_BASE}/Source/build_libqhull/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/libqhull/src/CMakeLists.txt 
+  ${EP_BASE}/Source/build_libqhull/src/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/libqhull/src/libqhull.h
+  ${EP_BASE}/Source/build_libqhull/src/libqhull.h
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/libqhull/src/mem.h
+  ${EP_BASE}/Source/build_libqhull/src/mem.h
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/libqhull/src/unix.c
+  ${EP_BASE}/Source/build_libqhull/src/unix.c
   COMMENT "Updating of libqhull build system"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/libqhull/CMakeLists.txt

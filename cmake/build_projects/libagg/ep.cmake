@@ -40,7 +40,7 @@ ExternalProject_Add(
   build_libagg
   URL ${libagg_URL}
   URL_MD5 ${libagg_URL_MD5} 
-  CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_libagg
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_libagg
   BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
   STEP_TARGETS download update_build_system configure build install
@@ -51,8 +51,9 @@ ExternalProject_Add(
 add_custom_command(
   OUTPUT
   ${EP_BASE}/Source/build_libagg/CMakeLists.txt
-  COMMAND cp -f ${CMAKE_SOURCE_DIR}/libagg/CMakeLists.txt
-  ${EP_BASE}/Source/build_libagg
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/libagg/CMakeLists.txt
+  ${EP_BASE}/Source/build_libagg/CMakeLists.txt
   COMMENT "Updating of libagg build system"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/libagg/CMakeLists.txt

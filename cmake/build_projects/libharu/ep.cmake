@@ -43,7 +43,7 @@ ExternalProject_Add(
   # Note -DPOST_2.1.0=OFF is essential for the 2.1.0 version, but you
   # should drop this option for anything after 2.1.0.  Also note that
   # -DLIBHARU_EXAMPLES=ON builds the demos, but does not test them.
-  CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DPOST_2.1.0=OFF -DLIBHARU_EXAMPLES=ON ${EP_BASE}/Source/build_libharu
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DPOST_2.1.0=OFF -DLIBHARU_EXAMPLES=ON ${EP_BASE}/Source/build_libharu
   BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
   STEP_TARGETS download update_build_system configure build install test
@@ -65,28 +65,38 @@ add_custom_command(
   ${EP_BASE}/Source/build_libharu/include/CMakeLists.txt
   # File that is patched.
   ${EP_BASE}/Source/build_libharu/src/hpdf_streams.c
-  COMMAND mkdir -p ${EP_BASE}/Source/build_libharu/cmake/modules
-  COMMAND cp -f 
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${EP_BASE}/Source/build_libharu/cmake/modules
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/CMakeLists.txt
-  ${EP_BASE}/Source/build_libharu
-  COMMAND cp -f
+  ${EP_BASE}/Source/build_libharu/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/demo/CMakeLists.txt
-  ${EP_BASE}/Source/build_libharu/demo
-  COMMAND cp -f
+  ${EP_BASE}/Source/build_libharu/demo/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/src/hpdf_page_operator.c
+  ${EP_BASE}/Source/build_libharu/src/hpdf_page_operator.c
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_libharu/src
-  COMMAND cp -f
+  ${EP_BASE}/Source/build_libharu/src/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/cmake/modules/haru.cmake
+  ${EP_BASE}/Source/build_libharu/cmake/modules/haru.cmake
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/cmake/modules/summary.cmake
-  ${EP_BASE}/Source/build_libharu/cmake/modules
-  COMMAND cp -f
+  ${EP_BASE}/Source/build_libharu/cmake/modules/summary.cmake
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/include/hpdf_consts.h
+  ${EP_BASE}/Source/build_libharu/include/hpdf_consts.h
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/include/hpdf_config.h.cmake
+  ${EP_BASE}/Source/build_libharu/include/hpdf_config.h.cmake
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/include/hpdf.h
+  ${EP_BASE}/Source/build_libharu/include/hpdf.h
+  COMMAND ${CMAKE_COMMAND} -E copy 
   ${CMAKE_SOURCE_DIR}/libharu/include/CMakeLists.txt
-  ${EP_BASE}/Source/build_libharu/include
-  COMMAND patch -d ${EP_BASE}/Source/build_libharu -p1 < ${CMAKE_SOURCE_DIR}/libharu/include_hpdf_config.h.patch
+  ${EP_BASE}/Source/build_libharu/include/CMakeLists.txt
+  COMMAND ${PATCH_EXECUTABLE} -d ${EP_BASE}/Source/build_libharu -p1 < ${CMAKE_SOURCE_DIR}/libharu/include_hpdf_config.h.patch
   COMMENT "Updating of libharu build system"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/libharu/CMakeLists.txt

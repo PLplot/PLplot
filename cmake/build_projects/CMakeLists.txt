@@ -26,11 +26,6 @@ message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 cmake_minimum_required(VERSION 2.8.10.2 FATAL_ERROR)
 
-# Use modified version of ExternalProject where cmake -E touch has
-# been replaced with the touch command (to work around cmake bug 14020)
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
-include(ExternalProject)
-
 set(EP_BASE ${CMAKE_BINARY_DIR}/build_projects)
 message(STATUS "EP_BASE = ${EP_BASE}")
 set_directory_properties(PROPERTIES EP_BASE ${EP_BASE})
@@ -48,14 +43,13 @@ set_directory_properties(PROPERTIES EP_BASE ${EP_BASE})
 # making sure unzip (necessary for some build configurations to unpack
 # their packages) is installed (using mingw-get).
 
-set(MSYS_PLATFORM)
 find_program(MINGW_GET_EXECUTABLE mingw-get)
-if(MINGW_GET_EXECUTABLE)
-  find_program(BASH_EXECUTABLE bash)
-  if(BASH_EXECUTABLE)
-    set(MSYS_PLATFORM ON)
-  endif(BASH_EXECUTABLE)
-endif(MINGW_GET_EXECUTABLE)
+find_program(BASH_EXECUTABLE bash)
+if(MINGW_GET_EXECUTABLE AND BASH_EXECUTABLE)
+  set(MSYS_PLATFORM ON)
+else(MINGW_GET_EXECUTABLE AND BASH_EXECUTABLE)
+  set(MSYS_PLATFORM OFF)
+endif(MINGW_GET_EXECUTABLE AND BASH_EXECUTABLE)
 message(STATUS "WIN32 = ${WIN32}")
 message(STATUS "MINGW = ${MINGW}")
 message(STATUS "MSYS = ${MSYS}")
@@ -70,13 +64,40 @@ if(WIN32 AND NOT MSYS_PLATFORM)
   message(FATAL_ERROR "build_projects does not work correctly on Windows without the MSYS platform.  Install the MSYS platform (perhaps without sh.exe depending on CMake generator) on Windows.")
 endif(WIN32 AND NOT MSYS_PLATFORM)
 
-find_program(UNZIP_EXECUTABLE unzip)
-if(NOT UNZIP_EXECUTABLE)
-  if(MSYS_PLATFORM)
-    message(STATUS "unzip missing from your MSYS platform.  Use mingw-get to install it.")
-  endif(MSYS_PLATFORM)
-  message(FATAL_ERROR "unzip must be on your PATH in order for build_projects to work correctly")  
-endif(NOT UNZIP_EXECUTABLE) 
+# List of executables required by build_projects CMake logic.
+set(executables_LIST
+  # ExternalProject
+  touch
+  # Unpacking
+  unzip
+  # Updating
+  mkdir
+  cp
+  patch
+  # General
+  env
+  # Not specifically required by build_projects (yet), but some
+  # individual project configurations will not work unless this is
+  # available so might as well check it here.
+  bash
+  )
+
+foreach(executable ${executables_LIST})
+  string(TOUPPER ${executable} EXECUTABLE)
+  find_program(${EXECUTABLE}_EXECUTABLE ${executable})
+  if(NOT ${EXECUTABLE}_EXECUTABLE)
+    if(MSYS_PLATFORM)
+      message(STATUS "${executable} missing from your MSYS platform.  Use mingw-get to install it.")
+    endif(MSYS_PLATFORM)
+    message(FATAL_ERROR "${executable} must be on your PATH in order for build_projects to work correctly")  
+  endif(NOT ${EXECUTABLE}_EXECUTABLE)
+endforeach(executable ${executables_LIST})
+
+# Use modified version of ExternalProject where cmake -E touch has
+# been replaced with the TOUCH_EXECUTABLE command (to work around
+# cmake bug 14020)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
+include(ExternalProject)
 
 # Propagate the overall CMake generator and install prefix to all CMake-based
 # software project builds.

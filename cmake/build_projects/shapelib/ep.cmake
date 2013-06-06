@@ -43,11 +43,11 @@ ExternalProject_Add(
   build_shapelib
   URL ${shapelib_URL}
   URL_MD5 ${shapelib_URL_MD5}
-  CONFIGURE_COMMAND env PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DEG_DATA:PATH=${EP_BASE}/Source/build_shapelib/eg_data ${EP_BASE}/Source/build_shapelib
-  BUILD_COMMAND env PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DEG_DATA:PATH=${EP_BASE}/Source/build_shapelib/eg_data ${EP_BASE}/Source/build_shapelib
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
   TEST_BEFORE_INSTALL ON
-  TEST_COMMAND env PATH=${BP_PATH} ${BP_PARALLEL_CTEST_COMMAND}
-  INSTALL_COMMAND env PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
+  TEST_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_CTEST_COMMAND}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
   STEP_TARGETS download update_build_system get_eg_data configure build install test
   )
 
@@ -56,7 +56,9 @@ ExternalProject_Add(
 add_custom_command(
   OUTPUT
   ${EP_BASE}/Source/build_shapelib/CMakeLists.txt
-  COMMAND cp -f ${CMAKE_SOURCE_DIR}/shapelib/CMakeLists.txt ${EP_BASE}/Source/build_shapelib
+  COMMAND ${CMAKE_COMMAND} -E copy 
+  ${CMAKE_SOURCE_DIR}/shapelib/CMakeLists.txt 
+  ${EP_BASE}/Source/build_shapelib/CMakeLists.txt
   COMMENT "Updating of shapelib build system"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/shapelib/CMakeLists.txt
@@ -75,7 +77,7 @@ add_custom_command(
   ${EP_BASE}/Download/build_shapelib/shape_eg_data.zip
   COMMAND ${CMAKE_COMMAND} -DURL:STRING=${shape_eg_data_URL} -DFILE:FILEPATH=${EP_BASE}/Download/build_shapelib/shape_eg_data.zip -DMD5:STRING=${shape_eg_data_URL_MD5} -P ${CMAKE_SOURCE_DIR}/download_check.cmake
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${EP_BASE}/Source/build_shapelib/eg_data
-  COMMAND unzip -q ${EP_BASE}/Download/build_shapelib/shape_eg_data.zip -d ${EP_BASE}/Source/build_shapelib/eg_data
+  COMMAND ${UNZIP_EXECUTABLE} -q ${EP_BASE}/Download/build_shapelib/shape_eg_data.zip -d ${EP_BASE}/Source/build_shapelib/eg_data
   COMMENT "getting eg_data for shapelib test"
   )
 ExternalProject_Add_Step(build_shapelib get_eg_data
