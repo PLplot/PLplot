@@ -107,14 +107,14 @@ typedef void*  PLPointer;
 
 
 // Flags for pllegend.
-#define PL_LEGEND_NONE              1
-#define PL_LEGEND_COLOR_BOX         2
-#define PL_LEGEND_LINE              4
-#define PL_LEGEND_SYMBOL            8
-#define PL_LEGEND_TEXT_LEFT         16
-#define PL_LEGEND_BACKGROUND        32
-#define PL_LEGEND_BOUNDING_BOX      64
-#define PL_LEGEND_ROW_MAJOR         128
+#define PL_LEGEND_NONE               1
+#define PL_LEGEND_COLOR_BOX          2
+#define PL_LEGEND_LINE               4
+#define PL_LEGEND_SYMBOL             8
+#define PL_LEGEND_TEXT_LEFT          16
+#define PL_LEGEND_BACKGROUND         32
+#define PL_LEGEND_BOUNDING_BOX       64
+#define PL_LEGEND_ROW_MAJOR          128
 
 // Flags for plcolorbar
 #define PL_COLORBAR_LABEL_LEFT       0x1
@@ -481,7 +481,7 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
           const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
           const PLINT *ArrayCkNull, const char **ArrayCk );
 
-#if defined (SWIG_PYTHON) || defined(SWIG_JAVA) || defined(SWIG_OCTAVE)
+#if defined ( SWIG_PYTHON ) || defined ( SWIG_JAVA ) || defined ( SWIG_OCTAVE )
 void
 plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
             PLINT opt, PLINT position, PLFLT x, PLFLT y,
@@ -492,7 +492,7 @@ plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
             PLINT n, const PLINT *Array, const char **ArrayCk,
             PLINT n, const char **Array,
             const PLFLT *ArrayCk, const PLINT *ArrayCk,
-            const PLINT *ArrayN , const PLFLT **MatrixCk );
+            const PLINT *ArrayN, const PLFLT **MatrixCk );
 #endif
 
 void

@@ -355,7 +355,8 @@ typedef PLINT          PLBOOL;
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
     Ylen = -1;
     for ( i = 0; i < Xlen; i++ )
-        if ( $1[i] > Ylen ) Ylen = $1[i];
+        if ( $1[i] > Ylen )
+            Ylen = $1[i];
 }
 %typemap( freearg ) ( const PLINT * ArrayN )
 {
@@ -1024,7 +1025,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 }
 
 // No count but check consistency with previous
-%typemap( in ) (PLINT n, const char **Array) {
+%typemap( in ) ( PLINT n, const char **Array )
+{
     charMatrix  temp_matrix;
     Cell        temp_cell;
     char        *tmp_cstring;
@@ -1038,7 +1040,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     if ( !$input.is_empty() )
     {
         Alen   = _dim( $input, 0 );
-	$1     = Alen;
+        $1     = Alen;
         $2     = new char*[Alen];
         ifcell = $input.is_cell();
         if ( ifcell )
@@ -1117,7 +1119,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         $2 = NULL;
     }
 }
-%typemap( freearg ) (PLINT n, const char **Array) {
+%typemap( freearg ) ( PLINT n, const char **Array )
+{
     int i;
     if ( $2 != NULL )
     {
@@ -1784,46 +1787,47 @@ void my_plimagefr2( const PLFLT *Matrix, PLINT nx, PLINT ny,
 
 %{
     void my_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
-			PLINT opt, PLINT position, PLFLT x, PLFLT y,
-			PLFLT x_length, PLFLT y_length,
-			PLINT bg_color, PLINT bb_color, PLINT bb_style,
-			PLFLT low_cap_color, PLFLT high_cap_color,
-			PLINT cont_color, PLFLT cont_width,
-			PLINT n_labels, const PLINT *label_opts, const char **label,
-			PLINT n_axes, const char ** axis_opts,
-			const PLFLT *ticks, const PLINT *sub_ticks,
-			const PLINT *n_values, const PLFLT *a ) 
+                        PLINT opt, PLINT position, PLFLT x, PLFLT y,
+                        PLFLT x_length, PLFLT y_length,
+                        PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                        PLFLT low_cap_color, PLFLT high_cap_color,
+                        PLINT cont_color, PLFLT cont_width,
+                        PLINT n_labels, const PLINT *label_opts, const char **label,
+                        PLINT n_axes, const char ** axis_opts,
+                        const PLFLT *ticks, const PLINT *sub_ticks,
+                        const PLINT *n_values, const PLFLT *a )
     {
         PLINT nx, ny, i;
-	nx = n_axes;
-	ny = -1;
-	for ( i = 0; i < nx ; i++ )
-	  if ( n_values[i] > ny ) ny = n_values[i];
-	f2c( a, aa, nx, ny );
-	c_plcolorbar(p_colorbar_width, p_colorbar_height,
-		     opt, position, x, y,
-		     x_length, y_length,
-		     bg_color, bb_color, bb_style,
-		     low_cap_color, high_cap_color,
-		     cont_color, cont_width,
-		     n_labels, label_opts, label,
-		     n_axes, axis_opts,
-		     ticks, sub_ticks,
-		     n_values, aa);
+        nx = n_axes;
+        ny = -1;
+        for ( i = 0; i < nx; i++ )
+            if ( n_values[i] > ny )
+                ny = n_values[i];
+        f2c( a, aa, nx, ny );
+        c_plcolorbar( p_colorbar_width, p_colorbar_height,
+            opt, position, x, y,
+            x_length, y_length,
+            bg_color, bb_color, bb_style,
+            low_cap_color, high_cap_color,
+            cont_color, cont_width,
+            n_labels, label_opts, label,
+            n_axes, axis_opts,
+            ticks, sub_ticks,
+            n_values, aa );
     }
 
 %}
 
 void my_plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
-            PLINT opt, PLINT position, PLFLT x, PLFLT y,
-            PLFLT x_length, PLFLT y_length,
-            PLINT bg_color, PLINT bb_color, PLINT bb_style,
-            PLFLT low_cap_color, PLFLT high_cap_color,
-            PLINT cont_color, PLFLT cont_width,
-            PLINT n, const PLINT *Array, const char **ArrayCk,
-            PLINT n, const char **Array,
-            const PLFLT *ArrayCk, const PLINT *ArrayCk,
-            const PLINT *ArrayN , const PLFLT *MatrixCk );
+                    PLINT opt, PLINT position, PLFLT x, PLFLT y,
+                    PLFLT x_length, PLFLT y_length,
+                    PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                    PLFLT low_cap_color, PLFLT high_cap_color,
+                    PLINT cont_color, PLFLT cont_width,
+                    PLINT n, const PLINT *Array, const char **ArrayCk,
+                    PLINT n, const char **Array,
+                    const PLFLT *ArrayCk, const PLINT *ArrayCk,
+                    const PLINT *ArrayN, const PLFLT *MatrixCk );
 
 // Probably never deal with this one.
 %ignore plMinMax2dGrid;

@@ -555,28 +555,28 @@ public class PLStream implements plplotjavacConstants {
     }
 
 
-    public void colorbar( double[] p_colorbar_width, 
-			  double[] p_colorbar_height, 
-			  int opt, int position, double x, double y, 
-			  double x_length, double y_length,
-			  int bg_color, int bb_color, int bb_style,
-			  double low_cap_color, double high_cap_color,
-			  int cont_color, double cont_width, 
-			  int[] label_opts, String[] labels,
-			  String[] axis_opts,
-			  double[] ticks, int[] sub_ticks,
-			  int[] n_values, double[][] values )
-      {
-          if ( set_stream() == -1 ) return;
-          plplotjavac.plcolorbar( p_colorbar_width, p_colorbar_height,
-				  opt, position, x, y, x_length, y_length,
-				  bg_color, bb_color, bb_style,
-				  low_cap_color, high_cap_color, 
-				  cont_color, cont_width,
-				  label_opts, labels, axis_opts,
-				  ticks, sub_ticks,
-				  n_values, values );
-      }
+    public void colorbar( double[] p_colorbar_width,
+                          double[] p_colorbar_height,
+                          int opt, int position, double x, double y,
+                          double x_length, double y_length,
+                          int bg_color, int bb_color, int bb_style,
+                          double low_cap_color, double high_cap_color,
+                          int cont_color, double cont_width,
+                          int[] label_opts, String[] labels,
+                          String[] axis_opts,
+                          double[] ticks, int[] sub_ticks,
+                          int[] n_values, double[][] values )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plcolorbar( p_colorbar_width, p_colorbar_height,
+            opt, position, x, y, x_length, y_length,
+            bg_color, bb_color, bb_style,
+            low_cap_color, high_cap_color,
+            cont_color, cont_width,
+            label_opts, labels, axis_opts,
+            ticks, sub_ticks,
+            n_values, values );
+    }
 
 
     public void lightsource( double x, double y, double z )

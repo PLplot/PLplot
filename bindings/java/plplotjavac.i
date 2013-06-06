@@ -582,17 +582,18 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
 // Set X and Y length for later consistency checking
 %typemap( in ) const PLINT * ArrayN {
-    int i;
+    int  i;
     jint *jydata = ( *jenv )->GetIntArrayElements( jenv, $input, 0 );
     if ( ( *jenv )->GetArrayLength( jenv, $input ) != Alen )
     {
-	printf( "Vectors must be same length.\n" );
-	return;
+        printf( "Vectors must be same length.\n" );
+        return;
     }
     Xlen = ( *jenv )->GetArrayLength( jenv, $input );
     Ylen = -1;
-    for ( i = 0; i < Xlen ; i++ )
-      if (jydata[i] > Ylen) Ylen = jydata[i];
+    for ( i = 0; i < Xlen; i++ )
+        if ( jydata[i] > Ylen )
+            Ylen = jydata[i];
     setup_array_1d_i( &$1, jydata, Alen );
     ( *jenv )->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
 }
@@ -1971,8 +1972,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     {
         int size = ( *jenv )->GetArrayLength( jenv, $input );
         Alen = size;
-	$1 = size;
-        $2 = (char **) malloc( Alen * sizeof ( char * ) );
+        $1   = size;
+        $2   = (char **) malloc( Alen * sizeof ( char * ) );
         // make a copy of each string
         for ( i = 0; i < Alen; i++ )
         {

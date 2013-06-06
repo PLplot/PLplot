@@ -1398,7 +1398,7 @@ void plstream::gcmap1_range( PLFLT & min_color, PLFLT & max_color )
 {
     set_stream();
 
-    plgcmap1_range( &min_color, &max_color);
+    plgcmap1_range( &min_color, &max_color );
 }
 
 // Set color map 0 colors by 8 bit RGB values

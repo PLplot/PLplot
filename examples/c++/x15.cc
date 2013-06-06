@@ -105,7 +105,7 @@ x15::x15( int argc, const char ** argv )
 void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
 {
     PLFLT shade_min, shade_max, sh_color;
-    int   sh_cmap   = 0;
+    int   sh_cmap = 0;
     PLFLT sh_width;
     int   min_color = 0, max_color = 0;
     PLFLT min_width = 0.0, max_width = 0.0;
@@ -145,7 +145,7 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
 void x15::plot2( PLFLT **z, PLFLT zmin, PLFLT zmax )
 {
     PLFLT        shade_min, shade_max, sh_color;
-    int          sh_cmap   = 0;
+    int          sh_cmap = 0;
     PLFLT        sh_width;
     int          min_color = 0, max_color = 0;
     PLFLT        min_width = 0.0, max_width = 0.0;

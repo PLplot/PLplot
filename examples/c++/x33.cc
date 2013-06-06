@@ -37,10 +37,10 @@
 using namespace std;
 #endif
 
-#define COLORBAR_KINDS    4
+#define COLORBAR_KINDS        4
 #define COLORBAR_POSITIONS    4
-#define COLORBAR_LABELS    4
-#define COLORBAR_CAPS    4
+#define COLORBAR_LABELS       4
+#define COLORBAR_CAPS         4
 
 class x33 {
 public:
@@ -53,13 +53,13 @@ private:
     static const PLINT position_options[16];
     static const char  *special_symbols[5];
     static const PLINT colorbar_option_kinds[COLORBAR_KINDS];
-    static const char *colorbar_option_kind_labels[COLORBAR_KINDS];
+    static const char  *colorbar_option_kind_labels[COLORBAR_KINDS];
     static const PLINT colorbar_position_options[COLORBAR_POSITIONS];
-    static const char *colorbar_position_option_labels[COLORBAR_POSITIONS];
+    static const char  *colorbar_position_option_labels[COLORBAR_POSITIONS];
     static const PLINT colorbar_label_options[COLORBAR_LABELS];
-    static const char *colorbar_label_option_labels[COLORBAR_LABELS];
+    static const char  *colorbar_label_option_labels[COLORBAR_LABELS];
     static const PLINT colorbar_cap_options[COLORBAR_CAPS];
-    static const char *colorbar_cap_option_labels[COLORBAR_CAPS];
+    static const char  *colorbar_cap_option_labels[COLORBAR_CAPS];
 
     void plcolorbar_example_page( int, int, int, PLINT, PLFLT, PLINT, PLFLT * );
     void plcolorbar_example( const char *, int, PLINT, PLFLT, PLINT, PLFLT * );
@@ -105,7 +105,7 @@ const PLINT x33::colorbar_option_kinds[COLORBAR_KINDS] = {
     PL_COLORBAR_IMAGE,
     PL_COLORBAR_GRADIENT
 };
-const char *x33::colorbar_option_kind_labels[COLORBAR_KINDS] = {
+const char  *x33::colorbar_option_kind_labels[COLORBAR_KINDS] = {
     "Shade colorbars",
     "Shade colorbars with custom labels",
     "Image colorbars",
@@ -119,7 +119,7 @@ const PLINT x33::colorbar_position_options[COLORBAR_POSITIONS] = {
     PL_POSITION_TOP,
     PL_POSITION_BOTTOM
 };
-const char *x33::colorbar_position_option_labels[COLORBAR_POSITIONS] = {
+const char  *x33::colorbar_position_option_labels[COLORBAR_POSITIONS] = {
     "Left",
     "Right",
     "Top",
@@ -133,7 +133,7 @@ const PLINT x33::colorbar_label_options[COLORBAR_LABELS] = {
     PL_COLORBAR_LABEL_TOP,
     PL_COLORBAR_LABEL_BOTTOM
 };
-const char *x33::colorbar_label_option_labels[COLORBAR_LABELS] = {
+const char  *x33::colorbar_label_option_labels[COLORBAR_LABELS] = {
     "Label left",
     "Label right",
     "Label top",
@@ -147,7 +147,7 @@ const PLINT x33::colorbar_cap_options[COLORBAR_CAPS] = {
     PL_COLORBAR_CAP_HIGH,
     PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
 };
-const char *x33::colorbar_cap_option_labels[COLORBAR_CAPS] = {
+const char  *x33::colorbar_cap_option_labels[COLORBAR_CAPS] = {
     "No caps",
     "Low cap",
     "High cap",
@@ -859,7 +859,7 @@ x33::x33( int argc, const char **argv )
     // Free space that contained legend text.
     for ( k = 0; k < MAX_NLEGEND; k++ )
         delete [] text[k];
-    
+
     // Color bar examples
     PLFLT values_small[2]  = { -1.0e-200, 1.0e-200 };
     PLFLT values_uneven[9] = { -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 };
@@ -873,18 +873,18 @@ x33::x33( int argc, const char **argv )
 
     // We can only test image and gradient colorbars with two element arrays
     for ( i = 2; i < COLORBAR_KINDS; i++ )
-      {
-	plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 2, values_small );
-      }
+    {
+        plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 2, values_small );
+    }
     // Test shade colorbars with larger arrays
     for ( i = 0; i < 2; i++ )
-      {
-	plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, 9, values_even );
-      }
+    {
+        plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, 9, values_even );
+    }
     for ( i = 0; i < 2; i++ )
-      {
-	plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 9, values_uneven );
-      }
+    {
+        plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 9, values_uneven );
+    }
 
     //plend();
     delete pls;

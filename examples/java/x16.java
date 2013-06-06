@@ -92,20 +92,20 @@ class x16 {
         double[] shedge = new double[NSHADES + 1];
         final int    cont_color = 0;
         final double fill_width = 2., cont_width = 0.;
-	double[] colorbar_width = new double[1];
-	double[] colorbar_height = new double[1];
+        double[] colorbar_width  = new double[1];
+        double[] colorbar_height = new double[1];
 
-	int n_axis_opts = NUM_AXES;
-	int[] num_values = new int[NUM_AXES];
-	double[][] values = new double[NUM_AXES][NSHADES+1];
-	String axis_opts[] = { "bcvtm" };
-	double axis_ticks[] = { 0.0 };
-	int axis_subticks[] = { 0 };
-	double filler_values[] = { 0.0, 1.0 };
-	
-	int n_labels = NUM_LABELS;
-	int label_opts[] = { PL_COLORBAR_LABEL_BOTTOM };
-	String labels[] = { "Magnitude" };
+        int n_axis_opts = NUM_AXES;
+        int[] num_values  = new int[NUM_AXES];
+        double[][] values = new double[NUM_AXES][NSHADES + 1];
+        String axis_opts[]     = { "bcvtm" };
+        double axis_ticks[]    = { 0.0 };
+        int    axis_subticks[] = { 0 };
+        double filler_values[] = { 0.0, 1.0 };
+
+        int    n_labels     = NUM_LABELS;
+        int    label_opts[] = { PL_COLORBAR_LABEL_BOTTOM };
+        String labels[]     = { "Magnitude" };
 
         // Parse and process command line arguments.
         pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
@@ -191,9 +191,10 @@ class x16 {
         pls.smin( 0.0, 0.5 );
 
         num_values[0] = NSHADES + 1;
-	for ( i = 0; i < NSHADES + 1; i++ ) {
-	    values[0][i] = shedge[i];
-	}
+        for ( i = 0; i < NSHADES + 1; i++ )
+        {
+            values[0][i] = shedge[i];
+        }
         pls.colorbar( colorbar_width, colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
@@ -240,9 +241,10 @@ class x16 {
         pls.smin( 0.0, 0.5 );
 
         num_values[0] = NSHADES + 1;
-	for ( i = 0; i < NSHADES + 1; i++ ) {
-	    values[0][i] = shedge[i];
-	}
+        for ( i = 0; i < NSHADES + 1; i++ )
+        {
+            values[0][i] = shedge[i];
+        }
         pls.colorbar( colorbar_width, colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
@@ -290,9 +292,10 @@ class x16 {
         pls.smin( 0.0, 0.5 );
 
         num_values[0] = NSHADES + 1;
-	for ( i = 0; i < NSHADES + 1; i++ ) {
-	    values[0][i] = shedge[i];
-	}
+        for ( i = 0; i < NSHADES + 1; i++ )
+        {
+            values[0][i] = shedge[i];
+        }
         pls.colorbar( colorbar_width, colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
@@ -341,13 +344,14 @@ class x16 {
         pls.smin( 0.0, 0.5 );
 
         num_values[0] = NSHADES + 1;
-	for ( i = 0; i < NSHADES + 1; i++ ) {
-	    values[0][i] = shedge[i];
-	}
+        for ( i = 0; i < NSHADES + 1; i++ )
+        {
+            values[0][i] = shedge[i];
+        }
         pls.colorbar( colorbar_width, colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
-	    2, 3.0,
+            2, 3.0,
             label_opts, labels,
             axis_opts,
             axis_ticks, axis_subticks,
@@ -418,9 +422,10 @@ class x16 {
         pls.smin( 0.0, 0.5 );
 
         num_values[0] = NSHADES + 1;
-	for ( i = 0; i < NSHADES + 1; i++ ) {
-	    values[0][i] = shedge[i];
-	}
+        for ( i = 0; i < NSHADES + 1; i++ )
+        {
+            values[0][i] = shedge[i];
+        }
         pls.colorbar( colorbar_width, colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,

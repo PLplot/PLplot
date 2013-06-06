@@ -58,205 +58,205 @@ class x33 {
 
     // plcolorbar options
 
-    static String[] colorbar_option_kind_labels = {
-	"Shade colorbars",
-	"Shade colorbars with custom labels",
-	"Image colorbars",
-	"Gradient colorbars"
+    static           String[] colorbar_option_kind_labels = {
+        "Shade colorbars",
+        "Shade colorbars with custom labels",
+        "Image colorbars",
+        "Gradient colorbars"
     };
 
-    static String[] colorbar_position_option_labels = {
-	"Left",
-	"Right",
-	"Top",
-	"Bottom"
-    };
-    
-    static String[] colorbar_label_option_labels = {
-	"Label left",
-	"Label right",
-	"Label top",
-	"Label bottom"
+    static           String[] colorbar_position_option_labels = {
+        "Left",
+        "Right",
+        "Top",
+        "Bottom"
     };
 
-    static String[] colorbar_cap_option_labels = {
-	"No caps",
-	"Low cap",
-	"High cap",
-	"Low and high caps"
+    static           String[] colorbar_label_option_labels = {
+        "Label left",
+        "Label right",
+        "Label top",
+        "Label bottom"
     };
 
-    final static int COLORBAR_KINDS = 4;
+    static           String[] colorbar_cap_option_labels = {
+        "No caps",
+        "Low cap",
+        "High cap",
+        "Low and high caps"
+    };
+
+    final static int COLORBAR_KINDS     = 4;
     final static int COLORBAR_POSITIONS = 4;
-    final static int COLORBAR_LABELS = 4;
-    final static int COLORBAR_CAPS = 4;
+    final static int COLORBAR_LABELS    = 4;
+    final static int COLORBAR_CAPS      = 4;
 
 
     void plcolorbar_example_page( int kind_i, int label_i, int cap_i, int cont_color, double cont_width, double[] values )
     {
-	int i;
-	// Parameters for the colorbars on this page
-	int  position_i, position, opt;
-	double x, y, x_length, y_length;
-	double[] ticks = { 0.0 };
-	int[] sub_ticks = { 0 };
-	double low_cap_color, high_cap_color;
-	boolean vertical, ifn;
-	int n_axes = 1;
-	String[] axis_opts = new String[1];
-	int n_labels = 1;
-	int[] label_opts = { 0 };
-	String[] label = new String[1];
-	String title;
-	double[] colorbar_width = new double[1];
-	double[] colorbar_height = new double[1];
-	int[] n_values_array = new int[1];
-	double[][] values_array = new double[1][values.length];
+        int    i;
+        // Parameters for the colorbars on this page
+        int    position_i, position, opt;
+        double x, y, x_length, y_length;
+        double[] ticks  = { 0.0 };
+        int[] sub_ticks = { 0 };
+        double  low_cap_color, high_cap_color;
+        boolean vertical, ifn;
+        int     n_axes = 1;
+        String[] axis_opts = new String[1];
+        int     n_labels = 1;
+        int[] label_opts = { 0 };
+        String[] label   = new String[1];
+        String title;
+        double[] colorbar_width  = new double[1];
+        double[] colorbar_height = new double[1];
+        int[] n_values_array     = new int[1];
+        double[][] values_array  = new double[1][values.length];
 
-	// Colorbar type options
-	int[] colorbar_option_kinds = {
-	    PL_COLORBAR_SHADE,
-	    PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
-	    PL_COLORBAR_IMAGE,
-	    PL_COLORBAR_GRADIENT
-	};    
-	// Which side of the page are we positioned relative to?
-	int[] colorbar_position_options = {
-	    PL_POSITION_LEFT,
-	    PL_POSITION_RIGHT,
-	    PL_POSITION_TOP,
-	    PL_POSITION_BOTTOM
-	};
-	// Colorbar label positioning options
-	int[] colorbar_label_options = {
-	    PL_COLORBAR_LABEL_LEFT,
-	    PL_COLORBAR_LABEL_RIGHT,
-	    PL_COLORBAR_LABEL_TOP,
-	    PL_COLORBAR_LABEL_BOTTOM
-	};
-	// Colorbar cap options
-	int[] colorbar_cap_options = {
-	    PL_COLORBAR_CAP_NONE,
-	    PL_COLORBAR_CAP_LOW,
-	    PL_COLORBAR_CAP_HIGH,
-	    PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
-	};
+        // Colorbar type options
+        int[] colorbar_option_kinds = {
+            PL_COLORBAR_SHADE,
+            PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
+            PL_COLORBAR_IMAGE,
+            PL_COLORBAR_GRADIENT
+        };
+        // Which side of the page are we positioned relative to?
+        int[] colorbar_position_options = {
+            PL_POSITION_LEFT,
+            PL_POSITION_RIGHT,
+            PL_POSITION_TOP,
+            PL_POSITION_BOTTOM
+        };
+        // Colorbar label positioning options
+        int[] colorbar_label_options = {
+            PL_COLORBAR_LABEL_LEFT,
+            PL_COLORBAR_LABEL_RIGHT,
+            PL_COLORBAR_LABEL_TOP,
+            PL_COLORBAR_LABEL_BOTTOM
+        };
+        // Colorbar cap options
+        int[] colorbar_cap_options = {
+            PL_COLORBAR_CAP_NONE,
+            PL_COLORBAR_CAP_LOW,
+            PL_COLORBAR_CAP_HIGH,
+            PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
+        };
 
-	n_values_array[0] = values.length;
-	for ( i = 0; i < n_values_array[0]; i++ )
-	    values_array[0][i] = values[i];
+        n_values_array[0] = values.length;
+        for ( i = 0; i < n_values_array[0]; i++ )
+            values_array[0][i] = values[i];
 
-	low_cap_color  = 0.0;
-	high_cap_color = 1.0;
+        low_cap_color  = 0.0;
+        high_cap_color = 1.0;
 
-	// Start a new page
-	pls.adv( 0 );
+        // Start a new page
+        pls.adv( 0 );
 
-	// Draw one colorbar relative to each side of the page
-	for ( position_i = 0; position_i < COLORBAR_POSITIONS; position_i++ )
-	{
-	    position = colorbar_position_options[position_i];
-	    opt      =
-		colorbar_option_kinds[kind_i] |
-		colorbar_label_options[label_i] |
-		colorbar_cap_options[cap_i];
-	    
-	    vertical = ((position & PL_POSITION_LEFT) != 0) || ((position & PL_POSITION_RIGHT) != 0);
-	    ifn      = ((position & PL_POSITION_LEFT) != 0) || ((position & PL_POSITION_BOTTOM) != 0);
+        // Draw one colorbar relative to each side of the page
+        for ( position_i = 0; position_i < COLORBAR_POSITIONS; position_i++ )
+        {
+            position = colorbar_position_options[position_i];
+            opt      =
+                colorbar_option_kinds[kind_i] |
+                colorbar_label_options[label_i] |
+                colorbar_cap_options[cap_i];
 
-	    // Set the offset position on the page
-	    if ( vertical )
-	    {
-		x        = 0.0;
-		y        = 0.0;
-		x_length = 0.05;
-		y_length = 0.5;
-	    }
-	    else
-	    {
-		x        = 0.0;
-		y        = 0.0;
-		x_length = 0.5;
-		y_length = 0.05;
-	    }
+            vertical = ( ( position & PL_POSITION_LEFT ) != 0 ) || ( ( position & PL_POSITION_RIGHT ) != 0 );
+            ifn      = ( ( position & PL_POSITION_LEFT ) != 0 ) || ( ( position & PL_POSITION_BOTTOM ) != 0 );
 
-	    // Set appropriate labelling options.
-	    if ( ifn )
+            // Set the offset position on the page
+            if ( vertical )
             {
-		if ( cont_color == 0 || cont_width == 0. )
-                {
-		    axis_opts[0] = "uwtivn";
-		}
-		else
-		{
-		    axis_opts[0] = "uwxvn";
-		}
-	    }
-	    else
+                x        = 0.0;
+                y        = 0.0;
+                x_length = 0.05;
+                y_length = 0.5;
+            }
+            else
             {
-		if ( cont_color == 0 || cont_width == 0. )
-		    {
-			axis_opts[0] = "uwtivm";
-		    }
-		else
+                x        = 0.0;
+                y        = 0.0;
+                x_length = 0.5;
+                y_length = 0.05;
+            }
+
+            // Set appropriate labelling options.
+            if ( ifn )
+            {
+                if ( cont_color == 0 || cont_width == 0. )
                 {
-		    axis_opts[0] = "uwxvm";
-		}
-	    }
-	    
-	    label[0] = colorbar_position_option_labels[position_i] + ", " + 
-		colorbar_label_option_labels[label_i];
+                    axis_opts[0] = "uwtivn";
+                }
+                else
+                {
+                    axis_opts[0] = "uwxvn";
+                }
+            }
+            else
+            {
+                if ( cont_color == 0 || cont_width == 0. )
+                {
+                    axis_opts[0] = "uwtivm";
+                }
+                else
+                {
+                    axis_opts[0] = "uwxvm";
+                }
+            }
 
-	    // Smaller text
-	    pls.schr( 0.0, 0.75 );
-	    // Small ticks on the vertical axis
-	    pls.smaj( 0.0, 0.5 );
-	    pls.smin( 0.0, 0.5 );
+            label[0] = colorbar_position_option_labels[position_i] + ", " +
+                       colorbar_label_option_labels[label_i];
 
-	    pls.vpor( 0.20, 0.80, 0.20, 0.80 );
-	    pls.wind( 0.0, 1.0, 0.0, 1.0 );
-	    // Set interesting background colour.
-	    pls.scol0a( 15, 0, 0, 0, 0.20 );
-	    pls.colorbar( colorbar_width, colorbar_height,
-			  opt | PL_COLORBAR_BOUNDING_BOX | PL_COLORBAR_BACKGROUND, position,
-			  x, y, x_length, y_length,
-			  15, 1, 1,
-			  low_cap_color, high_cap_color,
-			  cont_color, cont_width,
-			  label_opts, label, axis_opts,
-			  ticks, sub_ticks,
-			  n_values_array, values_array );
+            // Smaller text
+            pls.schr( 0.0, 0.75 );
+            // Small ticks on the vertical axis
+            pls.smaj( 0.0, 0.5 );
+            pls.smin( 0.0, 0.5 );
 
-	    // Reset text and tick sizes
-	    pls.schr( 0.0, 1.0 );
-	    pls.smaj( 0.0, 1.0 );
-	    pls.smin( 0.0, 1.0 );
-	}
+            pls.vpor( 0.20, 0.80, 0.20, 0.80 );
+            pls.wind( 0.0, 1.0, 0.0, 1.0 );
+            // Set interesting background colour.
+            pls.scol0a( 15, 0, 0, 0, 0.20 );
+            pls.colorbar( colorbar_width, colorbar_height,
+                opt | PL_COLORBAR_BOUNDING_BOX | PL_COLORBAR_BACKGROUND, position,
+                x, y, x_length, y_length,
+                15, 1, 1,
+                low_cap_color, high_cap_color,
+                cont_color, cont_width,
+                label_opts, label, axis_opts,
+                ticks, sub_ticks,
+                n_values_array, values_array );
 
-	// Draw a page title
-	title = colorbar_option_kind_labels[kind_i] + " - " + 
-	    colorbar_cap_option_labels[cap_i];
-	pls.vpor( 0.0, 1.0, 0.0, 1.0 );
-	pls.wind( 0.0, 1.0, 0.0, 1.0 );
-	pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+            // Reset text and tick sizes
+            pls.schr( 0.0, 1.0 );
+            pls.smaj( 0.0, 1.0 );
+            pls.smin( 0.0, 1.0 );
+        }
+
+        // Draw a page title
+        title = colorbar_option_kind_labels[kind_i] + " - " +
+                colorbar_cap_option_labels[cap_i];
+        pls.vpor( 0.0, 1.0, 0.0, 1.0 );
+        pls.wind( 0.0, 1.0, 0.0, 1.0 );
+        pls.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
     }
 
     void plcolorbar_example( String palette, int kind_i, int cont_color, double cont_width, double[] values )
     {
-	int label_i, cap_i;
-	
-	// Load the color palette
-	pls.spal1( palette, true );
-	
-	for ( label_i = 0; label_i < COLORBAR_LABELS; label_i++ )
-	{
-	    for ( cap_i = 0; cap_i < COLORBAR_CAPS; cap_i++ )
+        int label_i, cap_i;
+
+        // Load the color palette
+        pls.spal1( palette, true );
+
+        for ( label_i = 0; label_i < COLORBAR_LABELS; label_i++ )
+        {
+            for ( cap_i = 0; cap_i < COLORBAR_CAPS; cap_i++ )
             {
-		plcolorbar_example_page( kind_i, label_i, cap_i,
-					 cont_color, cont_width,
-					 values );
-	    }
-	}
+                plcolorbar_example_page( kind_i, label_i, cap_i,
+                    cont_color, cont_width,
+                    values );
+            }
+        }
     }
 
 
@@ -888,31 +888,31 @@ class x33 {
             null, null, null, null );
         max_height = Math.max( max_height, legend_height[0] );
 
-	// Color bar examples
-	double[] values_small  = { -1.0e-200, 1.0e-200 };
-	double[] values_uneven = { -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 };
-	double[] values_even   = { -2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200 };
+        // Color bar examples
+        double[] values_small  = { -1.0e-200, 1.0e-200 };
+        double[] values_uneven = { -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 };
+        double[] values_even   = { -2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200 };
 
-	// Use unsaturated green background colour to contrast with black caps.
-	pls.scolbg( 70, 185, 70 );
-	// Cut out the greatest and smallest bits of the color spectrum to
-	// leave colors for the end caps.
-	pls.scmap1_range( 0.01, 0.99 );
+        // Use unsaturated green background colour to contrast with black caps.
+        pls.scolbg( 70, 185, 70 );
+        // Cut out the greatest and smallest bits of the color spectrum to
+        // leave colors for the end caps.
+        pls.scmap1_range( 0.01, 0.99 );
 
-	// We can only test image and gradient colorbars with two element arrays
-	for ( i = 2; i < COLORBAR_KINDS; i++ )
-	{
-	    plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_small );
-	}
-	// Test shade colorbars with larger arrays
-	for ( i = 0; i < 2; i++ )
+        // We can only test image and gradient colorbars with two element arrays
+        for ( i = 2; i < COLORBAR_KINDS; i++ )
         {
-	    plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, values_even );
-	}
-	for ( i = 0; i < 2; i++ )
+            plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_small );
+        }
+        // Test shade colorbars with larger arrays
+        for ( i = 0; i < 2; i++ )
         {
-	    plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_uneven );
-	}
+            plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, values_even );
+        }
+        for ( i = 0; i < 2; i++ )
+        {
+            plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_uneven );
+        }
 
         pls.end();
     }

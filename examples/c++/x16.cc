@@ -139,21 +139,21 @@ PLINT zdefined( PLFLT x, PLFLT y )
 
 x16::x16( int argc, const char ** argv )
 {
-    int        i, j;
-    PLFLT      x, y, argx, argy, distort, r, t, zmin, zmax;
-    PLFLT      *px  = new PLFLT[PERIMETERPTS];
-    PLFLT      *py  = new PLFLT[PERIMETERPTS];
-    PLFLT      *xg1 = new PLFLT[nx];
-    PLFLT      *yg1 = new PLFLT[ny];
-    PLFLT      **z;
-    PLFLT      **w;
-    PLcGrid    cgrid1;
-    PLcGrid2   cgrid2;
-    PLFLT      *clevel    = new PLFLT[ns];
-    PLFLT      *shedge    = new PLFLT[ns + 1];
+    int         i, j;
+    PLFLT       x, y, argx, argy, distort, r, t, zmin, zmax;
+    PLFLT       *px  = new PLFLT[PERIMETERPTS];
+    PLFLT       *py  = new PLFLT[PERIMETERPTS];
+    PLFLT       *xg1 = new PLFLT[nx];
+    PLFLT       *yg1 = new PLFLT[ny];
+    PLFLT       **z;
+    PLFLT       **w;
+    PLcGrid     cgrid1;
+    PLcGrid2    cgrid2;
+    PLFLT       *clevel    = new PLFLT[ns];
+    PLFLT       *shedge    = new PLFLT[ns + 1];
     const int   cont_color = 0;
     const PLFLT fill_width = 2.0, cont_width = 0.0;
-    PLFLT      colorbar_width, colorbar_height;
+    PLFLT       colorbar_width, colorbar_height;
 
 #define NUM_AXES    1
     PLINT      n_axis_opts  = NUM_AXES;
