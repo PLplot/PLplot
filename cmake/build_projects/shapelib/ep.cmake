@@ -32,11 +32,11 @@ set(shape_eg_data_URL http://dl.maptools.org/dl/shapelib/shape_eg_data.zip)
 set(shape_eg_data_URL_MD5 36208abd5d34c5c80101d8b214109f0d)
 
 # Data that is related to the PATH that must be used.
-if(MSYS)
+if(MSYS_PLATFORM)
   set(BP_PATH_NODLL "${BP_PATH}")
   set(BP_PATH "${EP_BASE}/Build/build_shapelib/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
-endif(MSYS)
+endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for shapelib = ${BP_PATH}")
 
 ExternalProject_Add(

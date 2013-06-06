@@ -29,15 +29,15 @@ set(ndiff_URL ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz)
 
 # The MD5 value below is correct for the gpg --verified version
 # Use URL_MD5 because ExternalProject_Add doesn't deal with gpg --version.
-# In any case, gpg is not available for the MSYS case.
+# In any case, gpg is not available for the MSYS_PLATFORM case.
 set(ndiff_URL_MD5 885548b4dc26e72c5455bebb5ba6c16d)
 
 # Data that is related to the PATH that must be used.
-if(MSYS)
+if(MSYS_PLATFORM)
   #set(BP_PATH_NODLL "${BP_PATH}")
   #set(BP_PATH "${EP_BASE}/Build/build_ndiff/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
-endif(MSYS)
+endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for ndiff = ${BP_PATH}")
 
 ExternalProject_Add(

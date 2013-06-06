@@ -29,11 +29,11 @@ set(libqhull_URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
 set(libqhull_URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
 
 # Data that is related to the PATH that must be used.
-if(MSYS)
+if(MSYS_PLATFORM)
   #set(BP_PATH_NODLL "${BP_PATH}")
   #set(BP_PATH "${EP_BASE}/Build/build_libqhull/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
-endif(MSYS)
+endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for libqhull = ${BP_PATH}")
 
 ExternalProject_Add(

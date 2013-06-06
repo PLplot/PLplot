@@ -29,11 +29,11 @@ set(libagg_URL http://www.antigrain.com/agg-2.5.tar.gz)
 set(libagg_URL_MD5 0229a488bc47be10a2fee6cf0b2febd6)
 
 # Data that is related to the PATH that must be used.
-if(MSYS)
+if(MSYS_PLATFORM)
   #set(BP_PATH_NODLL "${BP_PATH}")
   #set(BP_PATH "${EP_BASE}/Build/build_libagg/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
-endif(MSYS)
+endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for libagg = ${BP_PATH}")
 
 ExternalProject_Add(

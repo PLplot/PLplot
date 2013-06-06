@@ -29,11 +29,11 @@ set(libharu_URL http://libharu.org/files/libharu-2.1.0.tar.gz)
 set(libharu_URL_MD5 0623b8fb08ae1b28af08b2cdbd66b662)
 
 # Data that is related to the PATH that must be used.
-if(MSYS)
+if(MSYS_PLATFORM)
   #set(BP_PATH_NODLL "${BP_PATH}")
   #set(BP_PATH "${EP_BASE}/Build/build_libharu/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
-endif(MSYS)
+endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for libharu = ${BP_PATH}")
 
 ExternalProject_Add(
