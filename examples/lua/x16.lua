@@ -72,6 +72,18 @@ function zdefined(x, y)
   return z<0.4 or z>0.6
 end
 
+-- return single bit (for OR)
+function bit(x,b)
+  return ((x % 2^b) - (x % 2^(b-1)) > 0)
+end
+
+-- logic OR for number values
+function lor(x,y)
+  result = 0
+  for p=1,16 do result = result + (((bit(x,p) or bit(y,p)) == true) and 2^(p-1) or 0) end
+  return result
+end
+
 
 ----------------------------------------------------------------------------
 -- main
@@ -85,6 +97,14 @@ py = {}
 fill_width = 2.
 cont_color = 0
 cont_width = 0.
+
+axis_opts = { "bcvtm" }
+num_values = {}
+values = {}
+axis_ticks = { 0.0 }
+axis_subticks = { 0 }
+label_opts = { pl.PL_COLORBAR_LABEL_BOTTOM }
+labels = { "Magnitude" }
 
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
@@ -169,6 +189,21 @@ pl.psty(0)
 
 pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 1)
 
+-- Smaller text
+pl.schr( 0.0, 0.75 )
+-- Small ticks on the vertical axis
+pl.smaj( 0.0, 0.5 )
+pl.smin( 0.0, 0.5 )
+
+num_values[1] = ns + 1
+values[1] = shedge
+colorbar_width, colorbar_height = pl.colorbar( lor(pl.PL_COLORBAR_SHADE, pl.PL_COLORBAR_SHADE_LABEL), 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values )
+
+-- Reset text and tick sizes
+pl.schr( 0.0, 1.0 )
+pl.smaj( 0.0, 1.0 )
+pl.smin( 0.0, 1.0 )
+
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
 pl.col0(2)
@@ -193,6 +228,22 @@ pl.psty(0)
 
 pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 1, "pltr1", cgrid1)
 
+-- Smaller text
+pl.schr( 0.0, 0.75 )
+-- Small ticks on the vertical axis
+pl.smaj( 0.0, 0.5 )
+pl.smin( 0.0, 0.5 )
+
+num_values[1] = ns + 1
+values[1] = shedge
+
+colorbar_width, colorbar_height = pl.colorbar( lor(pl.PL_COLORBAR_SHADE, pl.PL_COLORBAR_SHADE_LABEL), 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values )
+
+-- Reset text and tick sizes
+pl.schr( 0.0, 1.0 )
+pl.smaj( 0.0, 1.0 )
+pl.smin( 0.0, 1.0 )
+
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
 pl.col0(2)
@@ -214,6 +265,21 @@ pl.wind(-1, 1, -1, 1)
 pl.psty(0)
 
 pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
+
+-- Smaller text
+pl.schr( 0.0, 0.75 )
+-- Small ticks on the vertical axis
+pl.smaj( 0.0, 0.5 )
+pl.smin( 0.0, 0.5 )
+
+num_values[1] = ns + 1
+values[1]     = shedge
+colorbar_width, colorbar_height = pl.colorbar( lor(pl.PL_COLORBAR_SHADE, pl.PL_COLORBAR_SHADE_LABEL), 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values )
+
+-- Reset text and tick sizes
+pl.schr( 0.0, 1.0 )
+pl.smaj( 0.0, 1.0 )
+pl.smin( 0.0, 1.0 )
 
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
@@ -238,6 +304,21 @@ pl.wind(-1, 1, -1, 1)
 pl.psty(0)
 
 pl.shades(z, -1, 1, -1, 1, shedge, fill_width, 2, 3., 0, "pltr2", cgrid2)
+
+-- Smaller text
+pl.schr( 0.0, 0.75 )
+-- Small ticks on the vertical axis
+pl.smaj( 0.0, 0.5 )
+pl.smin( 0.0, 0.5 )
+
+num_values[1] = ns + 1
+values[1]     = shedge
+colorbar_width, colorbar_height = pl.colorbar( lor(pl.PL_COLORBAR_SHADE, pl.PL_COLORBAR_SHADE_LABEL), 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, 2, 3., label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values )
+
+-- Reset text and tick sizes
+pl.schr( 0.0, 1.0 )
+pl.smaj( 0.0, 1.0 )
+pl.smin( 0.0, 1.0 )
 
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
@@ -307,6 +388,21 @@ end
 
 --  Now we can shade the interior region. 
 pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
+
+-- Smaller text
+pl.schr( 0.0, 0.75 )
+-- Small ticks on the vertical axis
+pl.smaj( 0.0, 0.5 )
+pl.smin( 0.0, 0.5 )
+
+num_values[1] = ns + 1
+values[1]     = shedge
+colorbar_width, colorbar_height = pl.colorbar( lor(pl.PL_COLORBAR_SHADE, pl.PL_COLORBAR_SHADE_LABEL), 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values )
+
+-- Reset text and tick sizes
+pl.schr( 0.0, 1.0 )
+pl.smaj( 0.0, 1.0 )
+pl.smin( 0.0, 1.0 )
 
 -- Now we can draw the perimeter.  (If do before, shade stuff may overlap.) 
 for i = 1, PERIMETERPTS do

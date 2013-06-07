@@ -230,6 +230,31 @@ typedef PLINT          PLBOOL;
     LUA_FREE_ARRAY( $1 );
 }
 
+// No length but remember size to check others
+%typemap( in ) const PLINT * ArrayN( int temp )
+{
+    int i;
+
+    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
+    if ( !$1 )
+        SWIG_fail;
+    if (temp != Alen) 
+    {
+        lua_pushfstring( L, "Tables must be of same length." );
+        SWIG_fail;
+    }
+
+    Xlen = temp;
+    Ylen = -1;
+    for ( i = 0; i < Xlen; i++ )
+        if ( $1[i] > Ylen ) Ylen = $1[i];
+
+}
+%typemap( freearg ) ( const PLINT * ArrayN )
+{
+    LUA_FREE_ARRAY( $1 );
+}
+
 
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
@@ -1240,6 +1265,36 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     }
 }
 
+%typemap( in ) ( PLINT n, const char **Array )
+{
+    int i;
+    $1 = SWIG_table_size( L, $input );
+    Alen = $1;
+
+    $2 = malloc( sizeof ( char* ) * Alen );
+    for ( i = 1; i <= Alen; i++ )
+    {
+        lua_rawgeti( L, $input, i );
+        if ( lua_isstring( L, -1 ) )
+        {
+            $2[i - 1] = (char *) lua_tostring( L, -1 );
+        }
+        else
+        {
+            lua_pop( L, 1 );
+            lua_pushfstring( L, "Requires a sequence of strings." );
+            SWIG_fail;
+        }
+        lua_pop( L, 1 );
+    }
+}
+%typemap( freearg ) ( PLINT n, const char **Array )
+{
+    if ( $2 )
+    {
+        free( $2 ); $2 = NULL;
+    }
+}
 
 
 // Process options list using current options info.
@@ -1308,6 +1363,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %rename( clear ) plclear;
 %rename( col0 ) plcol0;
 %rename( col1 ) plcol1;
+%rename( colorbar ) plcolorbar;
 %rename( configtime ) plconfigtime;
 %rename( cont ) plcont;
 %rename( cpstrm ) plcpstrm;
@@ -1398,6 +1454,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %rename( scmap1l ) plscmap1l;
 %rename( scmap1la ) plscmap1la;
 %rename( scmap1n ) plscmap1n;
+%rename( scmap1_range ) plscmap1_range;
 %rename( scol0 ) plscol0;
 %rename( scol0a ) plscol0a;
 %rename( scolbg ) plscolbg;

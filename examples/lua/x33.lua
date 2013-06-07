@@ -1,4 +1,4 @@
---[[ $Id: x04.lua 11667 2011-03-21 03:35:08Z airwin $
+--[[ $Id: x33.lua 11667 2011-03-21 03:35:08Z airwin $
 
   Demonstrate most pllegend capability including unicode symbols.
 
@@ -24,22 +24,22 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
-----------------------------------------------------------------------------
--- plot1
---
--- Log-linear plot.
-----------------------------------------------------------------------------
-
 -- return single bit (for OR)
 function bit(x,b)
   return ((x % 2^b) - (x % 2^(b-1)) > 0)
 end
 
 -- logic OR for number values
-
 function lor(x,y)
   result = 0
-  for p=1,8 do result = result + (((bit(x,p) or bit(y,p)) == true) and 2^(p-1) or 0) end
+  for p=1,32 do result = result + (((bit(x,p) or bit(y,p)) == true) and 2^(p-1) or 0) end
+  return result
+end
+
+-- logic AND for number values
+function land(x,y)
+  result = 0
+  for p=1,32 do result = result + (((bit(x,p) and bit(y,p)) == true) and 2^(p-1) or 0) end
   return result
 end
 
@@ -78,6 +78,116 @@ function initialize_pllegend_arrays(nlegend)
   end
 end
 
+function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, n_values, values )
+    -- Parameters for the colorbars on this page
+    ticks = { 0.0 }
+    sub_ticks = { 0 }
+    axis_opts = {}
+    label_opts = { 0 }
+    n_values_array = {}
+    values_array = {}
+    label = {}
+
+    n_values_array[1] = n_values
+    values_array[1]   = values
+
+    low_cap_color  = 0.0
+    high_cap_color = 1.0
+
+    -- Start a new page
+    pl.adv( 0 )
+
+    -- Draw one colorbar relative to each side of the page
+    for position_i = 0,COLORBAR_POSITIONS-1 do
+        position = colorbar_position_options[position_i+1]
+        opt      =
+            lor(colorbar_option_kinds[kind_i+1],
+            lor(colorbar_label_options[label_i+1],
+            colorbar_cap_options[cap_i+1]))
+
+        vertical = lor(land(position,pl.PL_POSITION_LEFT), land(position,pl.PL_POSITION_RIGHT))
+        ifn      = lor(land(position, pl.PL_POSITION_LEFT), land(position, pl.PL_POSITION_BOTTOM))
+
+        -- Set the offset position on the page
+        if vertical > 0 then
+            x        = 0.0
+            y        = 0.0
+            x_length = 0.05
+            y_length = 0.5
+        else
+            x        = 0.0
+            y        = 0.0
+            x_length = 0.5
+            y_length = 0.05
+        end
+
+        -- Set appropriate labelling options.
+        if ifn > 0 then
+            if ( cont_color == 0 ) or ( cont_width == 0. ) then
+                axis_opts[1] = "uwtivn"
+            else
+                axis_opts[1] = "uwxvn"
+            end
+        else
+            if ( cont_color == 0 ) or ( cont_width == 0. ) then
+                axis_opts[1] = "uwtivm"
+            else
+                axis_opts[1] = "uwxvm"
+            end
+        end
+
+        label[1] = string.format( "%s, %s",
+            colorbar_position_option_labels[position_i+1],
+            colorbar_label_option_labels[label_i+1] )
+
+        -- Smaller text
+        pl.schr( 0.0, 0.75 )
+        -- Small ticks on the vertical axis
+        pl.smaj( 0.0, 0.5 )
+        pl.smin( 0.0, 0.5 )
+
+        pl.vpor( 0.20, 0.80, 0.20, 0.80 )
+        pl.wind( 0.0, 1.0, 0.0, 1.0 )
+        -- Set interesting background colour.
+        pl.scol0a( 15, 0, 0, 0, 0.20 );
+        colorbar_width, colorbar_height = pl.colorbar( 
+            lor(opt, lor(pl.PL_COLORBAR_BOUNDING_BOX, pl.PL_COLORBAR_BACKGROUND)),  position,
+            x, y, x_length, y_length,
+            15, 1, 1,
+            low_cap_color, high_cap_color,
+            cont_color, cont_width,
+            label_opts, label,
+            axis_opts, ticks, sub_ticks,
+            n_values_array, values_array )
+
+        -- Reset text and tick sizes
+        pl.schr( 0.0, 1.0 )
+        pl.smaj( 0.0, 1.0 )
+        pl.smin( 0.0, 1.0 )
+    end
+
+    -- Draw a page title
+    title = string.format( "%s - %s",
+        colorbar_option_kind_labels[kind_i+1],
+        colorbar_cap_option_labels[cap_i+1] )
+    pl.vpor( 0.0, 1.0, 0.0, 1.0 )
+    pl.wind( 0.0, 1.0, 0.0, 1.0 )
+    pl.ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title )
+end
+
+function plcolorbar_example( palette, kind_i, cont_color, cont_width, n_values, values )
+    -- Load the color palette
+    pl.spal1( palette, 1 )
+
+    for label_i = 0, COLORBAR_LABELS-1 do
+        for cap_i = 0, COLORBAR_CAPS-1 do
+            plcolorbar_example_page( kind_i, label_i, cap_i,
+                cont_color, cont_width,
+                n_values, values )
+        end
+    end
+end
+
 ----------------------------------------------------------------------------
 -- main
 ----------------------------------------------------------------------------
@@ -108,6 +218,69 @@ special_symbols = {
 "✱",
 "✽",
 "✦"
+}
+
+-- plcolorbar options
+COLORBAR_KINDS = 4
+-- Colorbar type options
+colorbar_option_kinds = {
+    pl.PL_COLORBAR_SHADE,
+    lor(pl.PL_COLORBAR_SHADE, pl.PL_COLORBAR_SHADE_LABEL),
+    pl.PL_COLORBAR_IMAGE,
+    pl.PL_COLORBAR_GRADIENT
+}
+
+colorbar_option_kind_labels = {
+    "Shade colorbars",
+    "Shade colorbars with custom labels",
+    "Image colorbars",
+    "Gradient colorbars"
+}
+
+-- Which side of the page are we positioned relative to?
+COLORBAR_POSITIONS = 4
+colorbar_position_options = {
+    pl.PL_POSITION_LEFT,
+    pl.PL_POSITION_RIGHT,
+    pl.PL_POSITION_TOP,
+    pl.PL_POSITION_BOTTOM
+}
+
+colorbar_position_option_labels = {
+    "Left",
+    "Right",
+    "Top",
+    "Bottom"
+}
+
+-- Colorbar label positioning options
+COLORBAR_LABELS = 4
+colorbar_label_options = {
+    pl.PL_COLORBAR_LABEL_LEFT,
+    pl.PL_COLORBAR_LABEL_RIGHT,
+    pl.PL_COLORBAR_LABEL_TOP,
+    pl.PL_COLORBAR_LABEL_BOTTOM
+}
+colorbar_label_option_labels = {
+    "Label left",
+    "Label right",
+    "Label top",
+    "Label bottom"
+}
+
+-- Colorbar cap options
+COLORBAR_CAPS = 4
+colorbar_cap_options = {
+    pl.PL_COLORBAR_CAP_NONE,
+    pl.PL_COLORBAR_CAP_LOW,
+    pl.PL_COLORBAR_CAP_HIGH,
+    lor(pl.PL_COLORBAR_CAP_LOW, pl.PL_COLORBAR_CAP_HIGH)
+}
+colorbar_cap_option_labels = {
+    "No caps",
+    "Low cap",
+    "High cap",
+    "Low and high caps"
 }
 
 -- Parse and process command line arguments 
@@ -611,5 +784,28 @@ legend_width, legend_height = pl.legend(
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
+
+-- Color bar examples
+values_small  = { -1.0e-200, 1.0e-200 }
+values_uneven = { -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 }
+values_even   = { -2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200 }
+
+-- Use unsaturated green background colour to contrast with black caps.
+pl.scolbg( 70, 185, 70 )
+-- Cut out the greatest and smallest bits of the color spectrum to
+-- leave colors for the end caps.
+pl.scmap1_range( 0.01, 0.99 )
+
+-- We can only test image and gradient colorbars with two element arrays
+for i = 2, COLORBAR_KINDS-1 do
+    plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 2, values_small )
+end
+-- Test shade colorbars with larger arrays
+for i = 0,1 do
+    plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, 9, values_even )
+end
+for i = 0,1 do
+    plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, 9, values_uneven )
+end
 
 pl.plend()

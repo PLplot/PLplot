@@ -481,7 +481,6 @@ pllegend( PLFLT *OUTPUT, PLFLT *OUTPUT,
           const PLINT *ArrayCkNull, const PLFLT *ArrayCkNull,
           const PLINT *ArrayCkNull, const char **ArrayCk );
 
-#if defined ( SWIG_PYTHON ) || defined ( SWIG_JAVA ) || defined ( SWIG_OCTAVE )
 void
 plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
             PLINT opt, PLINT position, PLFLT x, PLFLT y,
@@ -493,7 +492,6 @@ plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
             PLINT n, const char **Array,
             const PLFLT *ArrayCk, const PLINT *ArrayCk,
             const PLINT *ArrayN, const PLFLT **MatrixCk );
-#endif
 
 void
 pllightsource( PLFLT x, PLFLT y, PLFLT z );
