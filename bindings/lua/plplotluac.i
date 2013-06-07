@@ -1382,6 +1382,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %rename( font ) plfont;
 %rename( fontld ) plfontld;
 %rename( gchr ) plgchr;
+%rename( gcmap1_range ) plgcmap1_range;
 %rename( gcol0 ) plgcol0;
 %rename( gcolbg ) plgcolbg;
 %rename( gcol0a ) plgcol0a;
