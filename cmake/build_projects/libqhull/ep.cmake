@@ -1,6 +1,6 @@
 # libqhull/ep.cmake
 # This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build and test of libqhull.
+# CMakeLists.txt file to configure the build of libqhull.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -24,23 +24,25 @@
 # used below that configure how the External_Project functions
 # operate.
 
+set(BP_PACKAGE libqhull)
+
 # Data that is related to downloads.
-set(libqhull_URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
-set(libqhull_URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
+set(${BP_PACKAGE}_URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
+set(${BP_PACKAGE}_URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
   #set(BP_PATH_NODLL "${BP_PATH}")
-  #set(BP_PATH "${EP_BASE}/Build/build_libqhull/dll;${BP_PATH_NODLL}")
+  #set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for libqhull = ${BP_PATH}")
+#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
 ExternalProject_Add(
-  build_libqhull
-  URL ${libqhull_URL}
-  URL_MD5 ${libqhull_URL_MD5} 
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_libqhull
+  build_${BP_PACKAGE}
+  URL ${${BP_PACKAGE}_URL}
+  URL_MD5 ${${BP_PACKAGE}_URL_MD5} 
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
   BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
   STEP_TARGETS download update_build_system configure build install test
@@ -50,47 +52,47 @@ ExternalProject_Add(
 # rather than time stamps alone.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Source/build_libqhull/CMakeLists.txt
-  ${EP_BASE}/Source/build_libqhull/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_libqhull/src/libqhull.h
-  ${EP_BASE}/Source/build_libqhull/src/mem.h
-  ${EP_BASE}/Source/build_libqhull/src/unix.c
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/${BP_PACKAGE}.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/mem.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
   COMMAND ${CMAKE_COMMAND} -E copy 
-  ${CMAKE_SOURCE_DIR}/libqhull/CMakeLists.txt
-  ${EP_BASE}/Source/build_libqhull/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/libqhull/src/CMakeLists.txt 
-  ${EP_BASE}/Source/build_libqhull/src/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt 
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/libqhull/src/libqhull.h
-  ${EP_BASE}/Source/build_libqhull/src/libqhull.h
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/${BP_PACKAGE}.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/libqhull/src/mem.h
-  ${EP_BASE}/Source/build_libqhull/src/mem.h
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/mem.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/libqhull/src/unix.c
-  ${EP_BASE}/Source/build_libqhull/src/unix.c
-  COMMENT "Updating of libqhull build system"
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
+  COMMENT "Updating of ${BP_PACKAGE} build system"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/libqhull/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/libqhull/src/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/libqhull/src/libqhull.h
-  ${CMAKE_SOURCE_DIR}/libqhull/src/mem.h
-  ${CMAKE_SOURCE_DIR}/libqhull/src/unix.c
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
   )
-ExternalProject_Add_Step(build_libqhull update_build_system
-  COMMENT "Updated libqhull build system"
+ExternalProject_Add_Step(build_${BP_PACKAGE} update_build_system
+  COMMENT "Updated ${BP_PACKAGE} build system"
   DEPENDEES download
   DEPENDERS configure
   DEPENDS
-  ${EP_BASE}/Source/build_libqhull/CMakeLists.txt
-  ${EP_BASE}/Source/build_libqhull/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_libqhull/src/libqhull.h
-  ${EP_BASE}/Source/build_libqhull/src/mem.h
-  ${EP_BASE}/Source/build_libqhull/src/unix.c
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/${BP_PACKAGE}.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/mem.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
   ALWAYS OFF
   )
 
 # Restore BP_PATH to original state.
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "shapelib restored original BP_PATH = ${BP_PATH}")
+#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")

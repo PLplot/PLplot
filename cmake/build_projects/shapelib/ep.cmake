@@ -1,6 +1,6 @@
 # shapelib/ep.cmake
 # This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build and test of shapelib.
+# CMakeLists.txt file to configure the build of shapelib.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -24,26 +24,28 @@
 # used below that configure how the External_Project functions
 # operate.
 
-# Data that is related to downloads.
-set(shapelib_URL http://download.osgeo.org/shapelib/shapelib-1.3.0.tar.gz)
-set(shapelib_URL_MD5 2ff7d0b21d4b7506b452524492795f77)
+set(BP_PACKAGE shapelib)
 
-set(shape_eg_data_URL http://dl.maptools.org/dl/shapelib/shape_eg_data.zip)
+# Data that is related to downloads.
+set(${BP_PACKAGE}_URL http://download.osgeo.org/${BP_PACKAGE}/${BP_PACKAGE}-1.3.0.tar.gz)
+set(${BP_PACKAGE}_URL_MD5 2ff7d0b21d4b7506b452524492795f77)
+
+set(shape_eg_data_URL http://dl.maptools.org/dl/${BP_PACKAGE}/shape_eg_data.zip)
 set(shape_eg_data_URL_MD5 36208abd5d34c5c80101d8b214109f0d)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
   set(BP_PATH_NODLL "${BP_PATH}")
-  set(BP_PATH "${EP_BASE}/Build/build_shapelib/dll;${BP_PATH_NODLL}")
+  set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for shapelib = ${BP_PATH}")
+#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
 ExternalProject_Add(
-  build_shapelib
-  URL ${shapelib_URL}
-  URL_MD5 ${shapelib_URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DEG_DATA:PATH=${EP_BASE}/Source/build_shapelib/eg_data ${EP_BASE}/Source/build_shapelib
+  build_${BP_PACKAGE}
+  URL ${${BP_PACKAGE}_URL}
+  URL_MD5 ${${BP_PACKAGE}_URL_MD5}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DEG_DATA:PATH=${EP_BASE}/Source/build_${BP_PACKAGE}/eg_data ${EP_BASE}/Source/build_${BP_PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
   TEST_BEFORE_INSTALL ON
   TEST_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_CTEST_COMMAND}
@@ -55,40 +57,40 @@ ExternalProject_Add(
 # generate real file dependencies rather than time stamps alone.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Source/build_shapelib/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy 
-  ${CMAKE_SOURCE_DIR}/shapelib/CMakeLists.txt 
-  ${EP_BASE}/Source/build_shapelib/CMakeLists.txt
-  COMMENT "Updating of shapelib build system"
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt 
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
+  COMMENT "Updating of ${BP_PACKAGE} build system"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/shapelib/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
   )
-ExternalProject_Add_Step(build_shapelib update_build_system
-  COMMENT "Updated shapelib build system"
+ExternalProject_Add_Step(build_${BP_PACKAGE} update_build_system
+  COMMENT "Updated ${BP_PACKAGE} build system"
   DEPENDEES download
   DEPENDERS configure
   DEPENDS
-  ${EP_BASE}/Source/build_shapelib/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   ALWAYS OFF
   )
 
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Download/build_shapelib/shape_eg_data.zip
-  COMMAND ${CMAKE_COMMAND} -DURL:STRING=${shape_eg_data_URL} -DFILE:FILEPATH=${EP_BASE}/Download/build_shapelib/shape_eg_data.zip -DMD5:STRING=${shape_eg_data_URL_MD5} -P ${CMAKE_SOURCE_DIR}/download_check.cmake
-  COMMAND ${CMAKE_COMMAND} -E remove_directory ${EP_BASE}/Source/build_shapelib/eg_data
-  COMMAND ${UNZIP_EXECUTABLE} -q ${EP_BASE}/Download/build_shapelib/shape_eg_data.zip -d ${EP_BASE}/Source/build_shapelib/eg_data
-  COMMENT "getting eg_data for shapelib test"
+  ${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip
+  COMMAND ${CMAKE_COMMAND} -DURL:STRING=${shape_eg_data_URL} -DFILE:FILEPATH=${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip -DMD5:STRING=${shape_eg_data_URL_MD5} -P ${CMAKE_SOURCE_DIR}/download_check.cmake
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${EP_BASE}/Source/build_${BP_PACKAGE}/eg_data
+  COMMAND ${UNZIP_EXECUTABLE} -q ${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip -d ${EP_BASE}/Source/build_${BP_PACKAGE}/eg_data
+  COMMENT "getting eg_data for ${BP_PACKAGE} test"
   )
-ExternalProject_Add_Step(build_shapelib get_eg_data
-  COMMENT "got eg_data for shapelib test"
+ExternalProject_Add_Step(build_${BP_PACKAGE} get_eg_data
+  COMMENT "got eg_data for ${BP_PACKAGE} test"
   DEPENDEES download
   DEPENDERS configure
   DEPENDS
-  ${EP_BASE}/Download/build_shapelib/shape_eg_data.zip
+  ${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip
   ALWAYS OFF
   )
 
 # Restore BP_PATH to original state.
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "shapelib restored original BP_PATH = ${BP_PATH}")
+#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")

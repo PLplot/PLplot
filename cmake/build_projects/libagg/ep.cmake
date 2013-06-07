@@ -1,6 +1,6 @@
 # libagg/ep.cmake
 # This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build and test of libagg.
+# CMakeLists.txt file to configure the build of libagg.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -24,23 +24,25 @@
 # used below that configure how the External_Project functions
 # operate.
 
+set(BP_PACKAGE libagg)
+
 # Data that is related to downloads.
-set(libagg_URL http://www.antigrain.com/agg-2.5.tar.gz)
-set(libagg_URL_MD5 0229a488bc47be10a2fee6cf0b2febd6)
+set(${BP_PACKAGE}_URL http://www.antigrain.com/agg-2.5.tar.gz)
+set(${BP_PACKAGE}_URL_MD5 0229a488bc47be10a2fee6cf0b2febd6)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
   #set(BP_PATH_NODLL "${BP_PATH}")
-  #set(BP_PATH "${EP_BASE}/Build/build_libagg/dll;${BP_PATH_NODLL}")
+  #set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
   determine_msys_path(BP_PATH "${BP_PATH}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for libagg = ${BP_PATH}")
+#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
 ExternalProject_Add(
-  build_libagg
-  URL ${libagg_URL}
-  URL_MD5 ${libagg_URL_MD5} 
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_libagg
+  build_${BP_PACKAGE}
+  URL ${${BP_PACKAGE}_URL}
+  URL_MD5 ${${BP_PACKAGE}_URL_MD5} 
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
   BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
   STEP_TARGETS download update_build_system configure build install
@@ -50,23 +52,23 @@ ExternalProject_Add(
 # rather than time stamps alone.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Source/build_libagg/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/libagg/CMakeLists.txt
-  ${EP_BASE}/Source/build_libagg/CMakeLists.txt
-  COMMENT "Updating of libagg build system"
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
+  COMMENT "Updating of ${BP_PACKAGE} build system"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/libagg/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
   )
-ExternalProject_Add_Step(build_libagg update_build_system
-  COMMENT "Updated libagg build system"
+ExternalProject_Add_Step(build_${BP_PACKAGE} update_build_system
+  COMMENT "Updated ${BP_PACKAGE} build system"
   DEPENDEES download
   DEPENDERS configure
   DEPENDS
-  ${EP_BASE}/Source/build_libagg/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   ALWAYS OFF
   )
 
 # Restore BP_PATH to original state.
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "libagg restored original BP_PATH = ${BP_PATH}")
+#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")
