@@ -1,29 +1,23 @@
 # Configurable items here.
 option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 
-# libraries are all shared by default
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-
 # Change before each release whenever there has been an API change of any
 # kind.
 set(qhull_SOVERSION 5)
 set(qhull_VERSION ${qhull_SOVERSION}.0.0)
 
-# no shared library support for win32 compilers except cygwin, mingw
-if(WIN32 AND NOT CYGWIN AND NOT MINGW)
-  if(BUILD_SHARED_LIBS)
-    set(BUILD_SHARED_LIBS OFF)
-    message( " >> There is no shared library support for your Windows compiler!\n >> Turning option off." )
-  endif(BUILD_SHARED_LIBS)
-endif(WIN32 AND NOT CYGWIN AND NOT MINGW)
+# libraries are all shared by default
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-# find math library
-if(NOT WIN32)
-  find_library(MATH_LIB NAMES m PATHS /usr/local/lib /usr/lib)
-  if(NOT MATH_LIB)
-    message(FATAL_ERROR "Cannot find required math library")
-  endif(NOT MATH_LIB)
-endif(NOT WIN32)
+# Use static build for now on Windows for the
+# "Ninga" generator case since that case appears to
+# be broken for the shared library build
+# _AND_ using the same name kernel ("qhull") for the library
+# and executable.
+if(WIN32 AND CMAKE_GENERATOR STREQUAL "Ninja")
+  message(STATUS "Force static library build for qhull as temporary workaround for Ninja bug.")
+  set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared libraries" FORCE)
+endif(WIN32 AND CMAKE_GENERATOR STREQUAL "Ninja")
 
 # some extra flags for Borland C++ Compiler 5.5
 if(BORLAND)
@@ -82,10 +76,17 @@ if(BUILD_SHARED_LIBS)
     )
 endif(BUILD_SHARED_LIBS)
 
-target_link_libraries(
-  qhull 
-  ${MATH_LIB}
-  )
+# find math library
+if(NOT WIN32)
+  find_library(MATH_LIB NAMES m PATHS /usr/local/lib /usr/lib)
+  if(NOT MATH_LIB)
+    message(FATAL_ERROR "Cannot find required math library")
+  endif(NOT MATH_LIB)
+  target_link_libraries(
+    qhull 
+    ${MATH_LIB}
+    )
+endif(NOT WIN32)
 
 # qh_QHpointer=1 is the value used by Debian packagers for qhull_2003.1
 # but comment it out since it causes segfaults for PLplot for qhull_2010.1,
