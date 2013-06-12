@@ -1,6 +1,6 @@
-# libharu/ep.cmake
+# libqhull/bp.cmake
 # This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of libharu.
+# CMakeLists.txt file to configure the build of libqhull.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -24,11 +24,11 @@
 # used below that configure how the External_Project functions
 # operate.
 
-set(BP_PACKAGE libharu)
+set(BP_PACKAGE libqhull)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL http://${BP_PACKAGE}.org/files/${BP_PACKAGE}-2.1.0.tar.gz)
-set(${BP_PACKAGE}_URL_MD5 0623b8fb08ae1b28af08b2cdbd66b662)
+set(${BP_PACKAGE}_URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
+set(${BP_PACKAGE}_URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
@@ -42,10 +42,7 @@ ExternalProject_Add(
   build_${BP_PACKAGE}
   URL ${${BP_PACKAGE}_URL}
   URL_MD5 ${${BP_PACKAGE}_URL_MD5}
-  # Note -DPOST_2.1.0=OFF is essential for the 2.1.0 version, but you
-  # should drop this option for anything after 2.1.0.  Also note that
-  # -DLIBHARU_EXAMPLES=ON builds the demos, but does not test them.
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DPOST_2.1.0=OFF -DLIBHARU_EXAMPLES=ON ${EP_BASE}/Source/build_${BP_PACKAGE}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
   )
@@ -54,51 +51,28 @@ ExternalProject_Add(
 add_custom_command(
   OUTPUT
   ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules
   COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/demo/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/demo/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/hpdf_page_operator.c
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/hpdf_page_operator.c
-  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/haru.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/haru.cmake
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/${BP_PACKAGE}.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/summary.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/summary.cmake
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/mem.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_consts.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_consts.h
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_config.h.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_config.h.cmake
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf.h
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/CMakeLists.txt
-  COMMAND ${PATCH_EXECUTABLE} -d ${EP_BASE}/Source/build_${BP_PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include_hpdf_config.h.patch
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
   COMMENT "Custom updating of ${BP_PACKAGE}"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/demo/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/hpdf_page_operator.c
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/haru.cmake
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/summary.cmake
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_consts.h
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_config.h.cmake
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf.h
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include_hpdf_config.h.patch
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
   APPEND
   )
 

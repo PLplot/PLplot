@@ -126,7 +126,7 @@ set(BP_CTEST_COMMAND "${CMAKE_CTEST_COMMAND}")
 
 if(MSYS_PLATFORM)
   # On the MSYS platform, the env command (used to set relevant
-  # environment variables for the commands below in the */ep.cmake
+  # environment variables for the commands below in the */bp.cmake
   # scripts) requires all full paths be in the MSYS platform form.
   determine_msys_path(BP_CMAKE_COMMAND "${BP_CMAKE_COMMAND}")
   determine_msys_path(BP_BUILD_COMMAND "${BP_BUILD_COMMAND}")
@@ -170,13 +170,13 @@ set(build_target_LIST)
 # Configure a build of ndiff.  The ndiff application is not a a PLplot
 # dependency, but still this fuzzy diff is quite useful for PLplot
 # developers.
-include(ndiff/ep.cmake)
+include(ndiff/bp.cmake)
 
 # Configure wxwidgets, a soft (optional) PLplot dependency
-#include(wxwidgets/ep.cmake)
+#include(wxwidgets/bp.cmake)
 
 # Configure a build of PLplot and its dependencies.
-include(plplot/ep.cmake)
+include(plplot/bp.cmake)
 
 add_custom_target(build_all)
 add_dependencies(build_all ${build_target_LIST})

@@ -1,4 +1,4 @@
-# libagg/ep.cmake
+# libagg/bp.cmake
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build of libagg.
 

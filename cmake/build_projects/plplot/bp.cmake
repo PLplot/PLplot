@@ -1,4 +1,4 @@
-# plplot/ep.cmake
+# plplot/bp.cmake
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build and test of PLplot.
 
@@ -25,10 +25,10 @@
 # operate.
 # Configure build of PLplot dependencies.
 
-include(shapelib/ep.cmake)
-include(libqhull/ep.cmake)
-include(libharu/ep.cmake)
-include(libagg/ep.cmake)
+include(shapelib/bp.cmake)
+include(libqhull/bp.cmake)
+include(libharu/bp.cmake)
+include(libagg/bp.cmake)
 
 # Build PLplot itself.
 # (Not implemented yet, but create empty custom target with correct
