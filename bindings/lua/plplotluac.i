@@ -238,7 +238,7 @@ typedef PLINT          PLBOOL;
     $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
     if ( !$1 )
         SWIG_fail;
-    if (temp != Alen) 
+    if ( temp != Alen )
     {
         lua_pushfstring( L, "Tables must be of same length." );
         SWIG_fail;
@@ -247,8 +247,8 @@ typedef PLINT          PLBOOL;
     Xlen = temp;
     Ylen = -1;
     for ( i = 0; i < Xlen; i++ )
-        if ( $1[i] > Ylen ) Ylen = $1[i];
-
+        if ( $1[i] > Ylen )
+            Ylen = $1[i];
 }
 %typemap( freearg ) ( const PLINT * ArrayN )
 {
@@ -1268,7 +1268,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %typemap( in ) ( PLINT n, const char **Array )
 {
     int i;
-    $1 = SWIG_table_size( L, $input );
+    $1   = SWIG_table_size( L, $input );
     Alen = $1;
 
     $2 = malloc( sizeof ( char* ) * Alen );

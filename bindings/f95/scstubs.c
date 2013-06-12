@@ -74,16 +74,16 @@ void PLCALC_WORLDa( PLFLT *rx, PLFLT *ry, PLFLT *wx, PLFLT *wy, PLINT *window );
 void PLCLEAR( void );
 void PLCOL0( PLINT *icol );
 void PLCOL1( PLFLT *col );
-void PLCOLORBAR(PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
-		PLINT *opt, PLINT *position, PLFLT *x, PLFLT *y,
-		PLFLT *x_length, PLFLT *y_length,
-		PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
-		PLFLT *low_cap_color, PLFLT *high_cap_color,
-		PLINT *cont_color, PLFLT *cont_width,
-		PLINT *n_labels, const PLINT *label_opts, 
-		PLINT *n_axes, 
-		const PLFLT *ticks, const PLINT *sub_ticks,
-		const PLINT *n_values, const PLFLT *values);
+void PLCOLORBAR( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+                 PLINT *opt, PLINT *position, PLFLT *x, PLFLT *y,
+                 PLFLT *x_length, PLFLT *y_length,
+                 PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
+                 PLFLT *low_cap_color, PLFLT *high_cap_color,
+                 PLINT *cont_color, PLFLT *cont_width,
+                 PLINT *n_labels, const PLINT *label_opts,
+                 PLINT *n_axes,
+                 const PLFLT *ticks, const PLINT *sub_ticks,
+                 const PLINT *n_values, const PLFLT *values );
 void PLCONFIGTIME( PLFLT *scale, PLFLT *offset1, PLFLT *offset2, PLINT *ccontrol, PLBOOL *ifbtime_offset, PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec );
 void PLCPSTRM( PLINT *iplsr, PLBOOL *flags );
 void PLCTIME( PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT *ctime );
@@ -398,49 +398,49 @@ PLCOL1( PLFLT *col )
 
 void
 PLCOLORBAR( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
-	    PLINT *opt, PLINT *position, PLFLT *x, PLFLT *y,
-	    PLFLT *x_length, PLFLT *y_length,
-	    PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
-	    PLFLT *low_cap_color, PLFLT *high_cap_color,
-	    PLINT *cont_color, PLFLT *cont_width,
-	    PLINT *n_labels, const PLINT *label_opts, 
- 	    PLINT *n_axes, 
-	    const PLFLT *ticks, const PLINT *sub_ticks,
-	    const PLINT *n_values, const PLFLT *values )
+            PLINT *opt, PLINT *position, PLFLT *x, PLFLT *y,
+            PLFLT *x_length, PLFLT *y_length,
+            PLINT *bg_color, PLINT *bb_color, PLINT *bb_style,
+            PLFLT *low_cap_color, PLFLT *high_cap_color,
+            PLINT *cont_color, PLFLT *cont_width,
+            PLINT *n_labels, const PLINT *label_opts,
+            PLINT *n_axes,
+            const PLFLT *ticks, const PLINT *sub_ticks,
+            const PLINT *n_values, const PLFLT *values )
 {
     // Need to allocate 2d C array for values
     PLFLT **a;
-    int i,j;
-      
-    a = (PLFLT **) malloc( sizeof(PLFLT *) * (*n_axes) );
-    for (i=0;i<*n_axes;i++) 
+    int   i, j;
+
+    a = (PLFLT **) malloc( sizeof ( PLFLT * ) * ( *n_axes ) );
+    for ( i = 0; i < *n_axes; i++ )
     {
-      a[i] = (PLFLT *) malloc( sizeof(PLFLT)*n_values[i] );
-      for (j=0;j<n_values[i];j++) 
-      {
-	a[i][j] = values[i + j * (*n_axes)];
-      }
+        a[i] = (PLFLT *) malloc( sizeof ( PLFLT ) * n_values[i] );
+        for ( j = 0; j < n_values[i]; j++ )
+        {
+            a[i][j] = values[i + j * ( *n_axes )];
+        }
     }
 
-    c_plcolorbar(p_colorbar_width, p_colorbar_height,
-		 *opt, *position, *x, *y,
-		 *x_length, *y_length,
-		 *bg_color, *bb_color, *bb_style,
-		 *low_cap_color, *high_cap_color,
-		 *cont_color, *cont_width,
-		 *n_labels, label_opts, (const char * const *) plcolorbar_labels,
-		 *n_axes, (const char * const *) plcolorbar_axisopts,
-		 ticks, sub_ticks,
-		 n_values, (const PLFLT * const *)a);
+    c_plcolorbar( p_colorbar_width, p_colorbar_height,
+        *opt, *position, *x, *y,
+        *x_length, *y_length,
+        *bg_color, *bb_color, *bb_style,
+        *low_cap_color, *high_cap_color,
+        *cont_color, *cont_width,
+        *n_labels, label_opts, (const char * const *) plcolorbar_labels,
+        *n_axes, (const char * const *) plcolorbar_axisopts,
+        ticks, sub_ticks,
+        n_values, (const PLFLT * const *) a );
     free( *plcolorbar_labels );
     free( plcolorbar_labels );
     free( *plcolorbar_axisopts );
     free( plcolorbar_axisopts );
-    for (i=0;i<*n_axes;i++) 
+    for ( i = 0; i < *n_axes; i++ )
     {
-      free(a[i]);
+        free( a[i] );
     }
-    free(a);
+    free( a );
 }
 
 void
@@ -861,24 +861,25 @@ PLLEGEND_CNV_TEXT( PLINT *id, PLINT *number, char *string, PLINT length )
         p_string[j][i + 1] = '\0';
     }
 
-    switch( *id ) {
+    switch ( *id )
+    {
     case 1:
-      pllegend_text = p_string;
-      break;
+        pllegend_text = p_string;
+        break;
     case 2:
-      pllegend_symbols = p_string;
-      break;
+        pllegend_symbols = p_string;
+        break;
     case 3:
-      plcolorbar_labels = p_string;
-      break;
+        plcolorbar_labels = p_string;
+        break;
     case 4:
-      plcolorbar_axisopts = p_string;
-      break;
+        plcolorbar_axisopts = p_string;
+        break;
     default:
-      // Unknown 
-      free(data);
-      free(p_string);
-      break;
+        // Unknown
+        free( data );
+        free( p_string );
+        break;
     }
 }
 
