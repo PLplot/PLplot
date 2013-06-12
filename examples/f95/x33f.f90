@@ -70,6 +70,21 @@
       real(kind=plflt)   :: values_uneven(9)
       real(kind=plflt)   :: values_even(9)
 
+      integer, parameter :: COLORBAR_KINDS = 4
+      integer            :: colorbar_option_kinds(COLORBAR_KINDS)
+      character(len=100) :: colorbar_option_kind_labels(COLORBAR_KINDS)
+
+      integer, parameter :: COLORBAR_POSITIONS = 4
+      integer            :: colorbar_position_options(COLORBAR_POSITIONS)
+      character(len=100) :: colorbar_position_option_labels(COLORBAR_POSITIONS)
+
+      integer, parameter :: COLORBAR_LABELS = 4
+      integer            :: colorbar_label_options(COLORBAR_LABELS)
+      character(len=100) :: colorbar_label_option_labels(COLORBAR_LABELS)
+
+      integer, parameter :: COLORBAR_CAPS = 4
+      integer            :: colorbar_cap_options(COLORBAR_CAPS)
+      character(len=100) :: colorbar_cap_option_labels(COLORBAR_CAPS)
 
 !     Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
       data special_symbols / &
@@ -79,11 +94,15 @@
           '✽',             &
           '✦'              /
 
-      data values_small   / 0.0_plflt, 1.0_plflt /
+      data values_small   / -1.0e-200_plflt, 1.0e-200_plflt /
       data values_uneven &
-      / 0.0_plflt, 2.0_plflt, 2.6_plflt, 3.4_plflt, 6.0_plflt, 7.0_plflt, 8.0_plflt, 9.0_plflt, 10.0_plflt /
+      / -1.0e-200_plflt, 2.0e-200_plflt, 2.6e-200_plflt, 3.4e-200_plflt, &
+      6.0e-200_plflt, 7.0e-200_plflt, 8.0e-200_plflt, 9.0e-200_plflt, &
+      10.0e-200_plflt /
       data values_even &
-      / 0.0_plflt, 1.0_plflt, 2.0_plflt, 3.0_plflt, 4.0_plflt, 5.0_plflt, 6.0_plflt, 7.0_plflt, 8.0_plflt /
+      / -2.0e-200_plflt, -1.0e-200_plflt, 0.0e-200_plflt, 1.0e-200_plflt, &
+      2.0e-200_plflt, 3.0e-200_plflt, 4.0e-200_plflt, 5.0e-200_plflt, &
+      6.0e-200_plflt /
 
       position_options(1) = PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_OUTSIDE
       position_options(2) = PL_POSITION_TOP + PL_POSITION_OUTSIDE
@@ -101,6 +120,52 @@
       position_options(14) = PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       position_options(15) = PL_POSITION_LEFT + PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       position_options(16) = PL_POSITION_LEFT + PL_POSITION_INSIDE
+
+      ! plcolorbar options
+
+      ! Colorbar type options
+      colorbar_option_kinds(1) = PL_COLORBAR_SHADE
+      colorbar_option_kinds(2) = PL_COLORBAR_SHADE + PL_COLORBAR_SHADE_LABEL
+      colorbar_option_kinds(3) = PL_COLORBAR_IMAGE
+      colorbar_option_kinds(4) = PL_COLORBAR_GRADIENT
+
+      colorbar_option_kind_labels(1) = "Shade colorbars"
+      colorbar_option_kind_labels(2) = "Shade colorbars with custom labels"
+      colorbar_option_kind_labels(3) = "Image colorbars"
+      colorbar_option_kind_labels(4) = "Gradient colorbars"
+
+      ! Which side of the page are we positioned relative to?
+      colorbar_position_options(1) = PL_POSITION_LEFT
+      colorbar_position_options(2) = PL_POSITION_RIGHT
+      colorbar_position_options(3) = PL_POSITION_TOP
+      colorbar_position_options(4) = PL_POSITION_BOTTOM
+
+      colorbar_position_option_labels(1) = "Left"
+      colorbar_position_option_labels(2) = "Right"
+      colorbar_position_option_labels(3) = "Top"
+      colorbar_position_option_labels(4) = "Bottom"
+
+      ! Colorbar label positioning options
+      colorbar_label_options(1) = PL_COLORBAR_LABEL_LEFT
+      colorbar_label_options(2) = PL_COLORBAR_LABEL_RIGHT
+      colorbar_label_options(3) = PL_COLORBAR_LABEL_TOP
+      colorbar_label_options(4) = PL_COLORBAR_LABEL_BOTTOM
+
+      colorbar_label_option_labels(1) = "Label left"
+      colorbar_label_option_labels(2) = "Label right"
+      colorbar_label_option_labels(3) = "Label top"
+      colorbar_label_option_labels(4) = "Label bottom"
+
+      ! Colorbar cap options
+      colorbar_cap_options(1) = PL_COLORBAR_CAP_NONE
+      colorbar_cap_options(2) = PL_COLORBAR_CAP_LOW
+      colorbar_cap_options(3) = PL_COLORBAR_CAP_HIGH
+      colorbar_cap_options(4) = PL_COLORBAR_CAP_LOW + PL_COLORBAR_CAP_HIGH
+
+      colorbar_cap_option_labels(1) = "No caps"
+      colorbar_cap_option_labels(2) = "Low cap"
+      colorbar_cap_option_labels(3) = "High cap"
+      colorbar_cap_option_labels(4) = "Low and high caps"
 
 !     Parse and process command line arguments
 
@@ -644,186 +709,165 @@
 
 !     Color bar examples
 
-!
-!     Note: commented until plcolorbar is ready!
-!
-!     call plcolorbar_example_1( PL_COLORBAR_IMAGE, 0.0_plflt, 0, 2,
-!    &         values_small, 'Image Color Bars' )
-!     call plcolorbar_example_1(
-!    &         PL_COLORBAR_SHADE + PL_COLORBAR_SHADE_LABEL,
-!    &         0.0_plflt, 0, 9, values_uneven,
-!    &         'Shade Color Bars - Uneven Steps' )
-!     call plcolorbar_example_2( PL_COLORBAR_SHADE, 3.0_plflt, 3, 9,
-!    &         values_even, 'Shade Color Bars - Even Steps' )
-!     call plcolorbar_example_1( PL_COLORBAR_GRADIENT, 0.5_plflt, 5, 2,
-!    &         values_small, 'Gradient Color Bars' )
-!     call plcolorbar_example_2( PL_COLORBAR_GRADIENT, 0.5_plflt, 5, 2,
-!    &         values_small, 'Gradient Color Bars' )
+      ! Use unsaturated green background colour to contrast with black caps.
+      call plscolbg( 70, 185, 70 )
+      ! Cut out the greatest and smallest bits of the color spectrum to
+      ! leave colors for the end caps.
+      call plscmap1_range( 0.01_plflt, 0.99_plflt )
+
+      ! We can only test image and gradient colorbars with two element arrays
+      do i = 2,COLORBAR_KINDS-1
+         call plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0._plflt, 2, values_small )
+      enddo
+      ! Test shade colorbars with larger arrays
+      do i = 0,1
+         call plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2._plflt, 9, values_even )
+      enddo
+      do i = 0,1
+         call plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0._plflt, 9, values_uneven )
+      enddo
 
       call plend()
 
-!     contains
+     contains
 
+       subroutine plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, n_values, values )
 
-! Color bar routines
-!
-!     subroutine plcolorbar_example_1( bar_type, ticks, sub_ticks, n,
-!    &               values, title )
-!
-!     integer bar_type, position
-!     real(kind=plflt) ticks
-!     integer sub_ticks
-!     integer n
-!     real(kind=plflt) values(*)
-!     character(*) title
-!
-!
-!     FORTRAN 77: array fixed
-!
-!     real(kind=plflt) colors(20)
-!     real(kind=plflt) color_step
-!     integer i
-!     integer opt
-!     character(10) axis_opts_1, axis_opts_2
-!
-!     call pladv( 0 )
-!
-!     Setup color palette 1
-!     call plspal1( 'cmap1_blue_red.pal', 1 )
-!
-!     color_step = 1.0_plflt / ( n - 1 )
-!     do 110 i = 1,n
-!         colors(i) = 0.0_plflt + color_step * i
-! 110 continue
-!
-!     position = PL_POSITION_LEFT
-!     opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
-!    &           PL_COLORBAR_CAP_HIGH
-!
-!     if ( mod( bar_type, 2*PL_COLORBAR_SHADE_LABEL ) /
-!    &         PL_COLORBAR_SHADE_LABEL .eq. 1 ) then
-!         axis_opts_1 = 'iv'
-!         axis_opts_2 = 'i'
-!     else
-!             axis_opts_1 = 'stv'
-!             axis_opts_2 = 'st'
-!         else
-!             axis_opts_1 = 'tv'
-!             axis_opts_2 = 't'
-!         endif
-!     endif
-!
-!     call plcolorbar( opt, 0.1_plflt, 0.1_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    axis_opts_1, 'Test label - Left, High Cap',
-!
-!     position = PL_POSITION_RIGHT
-!     opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
-!    &           PL_COLORBAR_CAP_LOW
-!
-!     call plcolorbar( opt, 0.1_plflt, 0.4_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    n, colors, values )
-!
-!     position = PL_POSITION_TOP
-!     opt      = bar_type + PL_COLORBAR_LABEL_TOP +
-!    &           PL_COLORBAR_CAP_HIGH
-!
-!     call plcolorbar( opt, 0.1_plflt, 0.1_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    axis_opts_2, 'Test label - Upper, High Cap',
-!    &    n, colors, values )
-!
-!     position = PL_POSITION_TOP
-!     opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
-!    &           PL_COLORBAR_CAP_LOW
-!
-!     call plcolorbar( opt, 0.4_plflt, 0.1_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    axis_opts_2, 'Test label - Lower, Low Cap',
-!    &    n, colors, values )
-!
-!     call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-!     call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-!     call plptex( 0.5_plflt, 0.5_plflt, 0.0_plflt, 0.0_plflt, 0.5_plflt, title )
-!     end
-!
-!     subroutine plcolorbar_example_2( bar_type, ticks, sub_ticks, n,
-!    &               values, title )
-!
-!     integer bar_type, position
-!     real(kind=plflt) ticks
-!     integer sub_ticks
-!     integer n
-!     real(kind=plflt) values(*)
-!     character(*) title
-!
-!     real(kind=plflt) colors(20)
-!     integer i
-!     real(kind=plflt) color_step
-!     integer opt
-!     character(10) axis_opts_1, axis_opts_2
-!
-!     call pladv( 0 )
-!     Setup color palette 1
-!     call plspal1( 'cmap1_blue_yellow.pal', 1 )
-!
-!     color_step = 1.0_plflt / ( n - 1 )
-!     do 110 i = 1,n
-!         colors(i) = 0.0_plflt + color_step * i
-! 110 continue
-!
-!     position = PL_POSITION_LEFT
-!     opt      = bar_type + PL_COLORBAR_LABEL_LEFT +
-!    &           PL_COLORBAR_CAP_LOW
-!
-!     if ( bar_type .eq. PL_COLORBAR_SHADE_LABEL ) then
-!         axis_opts_1 = ''
-!         axis_opts_2 = ''
-!     else
-!         if ( sub_ticks .ne. 0 ) then
-!             axis_opts_1 = 'stv'
-!             axis_opts_2 = 'st'
-!         else
-!             axis_opts_1 = 'tv'
-!             axis_opts_2 = 't'
-!         endif
-!     endif
-!
-!     call plcolorbar( opt, 0.1_plflt, 0.1_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    axis_opts_1, 'Test label - Left, Low Cap',
-!    &    n, colors, values )
-!
-!     position = PL_POSITION_RIGHT
-!     opt      = bar_type + PL_COLORBAR_LABEL_RIGHT +
-!    &           PL_COLORBAR_CAP_HIGH
-!
-!     call plcolorbar( opt, 0.1_plflt, 0.4_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    axis_opts_1, 'Test label - Right, High Cap',
-!    &    n, colors, values )
-!
-!     position = PL_POSITION_TOP
-!     opt      = bar_type + PL_COLORBAR_LABEL_TOP +
-!    &           PL_COLORBAR_CAP_LOW
-!
-!     call plcolorbar( opt, 0.1_plflt, 0.1_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    axis_opts_2, 'Test label - Upper, Low Cap',
-!    &    n, colors, values )
-!
-!     position = PL_POSITION_BOTTOM
-!     opt      = bar_type + PL_COLORBAR_LABEL_BOTTOM +
-!    &           PL_COLORBAR_CAP_HIGH
-!
-!     call plcolorbar( opt, 0.4_plflt, 0.1_plflt, 0.5_plflt, 0.1_plflt,
-!    &    ticks, sub_ticks,
-!    &    axis_opts_2, 'Test label - Lower, High Cap',
-!    &    n, colors, values )
-!
-!     call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-!     call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-!     call plptex( 0.5_plflt, 0.5_plflt, 0.0_plflt, 0.0_plflt, 0.5_plflt, title )
-!     end
+         use plplot
+         
+         implicit none
+
+         integer  :: kind_i, label_i, cap_i, cont_color, n_values
+         real(kind=plflt)   :: cont_width
+         real(kind=plflt), dimension(:)   :: values
+         
+         ! Parameters for the colorbars on this page
+         integer            :: position_i, position, opt
+         real(kind=plflt)   :: x, y, x_length, y_length;
+         real(kind=plflt)   :: ticks(1)
+         integer            :: sub_ticks(1)
+         real(kind=plflt)   :: low_cap_color, high_cap_color
+         logical            :: vertical, ifn
+         integer, parameter :: n_axes = 1
+         character(len=20)  :: axis_opts(1)
+         integer, parameter :: n_labels = 1
+         integer            :: label_opts(1)
+         character(len=200) :: labels(1)
+         character(len=200) :: title
+         real(kind=plflt)   :: colorbar_width, colorbar_height
+         integer            :: n_values_array(1);
+         real(kind=plflt), allocatable, dimension(:,:) :: values_array
+
+         ticks(1) = 0.0_plflt
+         sub_ticks(1) = 0
+         label_opts(1) = 0
+
+         n_values_array(1) = n_values
+         allocate(values_array(1,n_values))
+         values_array(1,:) = values(:)
+
+         low_cap_color  = 0.0_plflt;
+         high_cap_color = 1.0_plflt;
+
+         ! Start a new page
+         call pladv( 0 )
+
+         ! Draw one colorbar relative to each side of the page
+         do position_i = 0,COLORBAR_POSITIONS-1
+            position = colorbar_position_options(position_i+1);
+            opt      = ior( &
+                 colorbar_option_kinds(kind_i+1), &
+                 ior(colorbar_label_options(label_i+1), &
+                 colorbar_cap_options(cap_i+1) ) )
+
+            vertical = (iand(position, PL_POSITION_LEFT) > 0 .or. iand(position, PL_POSITION_RIGHT) > 0 )
+            ifn      = (iand(position, PL_POSITION_LEFT) > 0 .or. iand(position, PL_POSITION_BOTTOM) > 0 )
+            
+            ! Set the offset position on the page
+            if (vertical .eqv. .true.) then
+               x        = 0.0_plflt
+               y        = 0.0_plflt
+               x_length = 0.05_plflt
+               y_length = 0.5_plflt
+            else
+               x        = 0.0_plflt
+               y        = 0.0_plflt
+               x_length = 0.5_plflt
+               y_length = 0.05_plflt
+            endif
+
+            ! Set appropriate labelling options.
+            if (ifn .eqv. .true.) then
+               if ( cont_color .eq. 0 .or. cont_width .eq. 0._plflt ) then
+                  axis_opts(1) = "uwtivn"
+               else
+                  axis_opts(1) = "uwxvn"
+               endif
+            else
+               if ( cont_color .eq. 0 .or. cont_width .eq. 0._plflt ) then
+                  axis_opts(1) = "uwtivm"
+               else
+                  axis_opts(1) = "uwxvm"
+               endif
+            endif
+            
+            write(labels(1), '(3A)') trim(colorbar_position_option_labels(position_i+1)), &
+                 ', ', trim(colorbar_label_option_labels(label_i+1))
+
+            ! Smaller text
+            call plschr( 0.0_plflt, 0.75_plflt )
+            ! Small ticks on the vertical axis
+            call plsmaj( 0.0_plflt, 0.5_plflt )
+            call plsmin( 0.0_plflt, 0.5_plflt )
+
+            call plvpor( 0.20_plflt, 0.80_plflt, 0.20_plflt, 0.80_plflt )
+            call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
+            ! Set interesting background colour.
+            call plscol0a( 15, 0, 0, 0, 0.20_plflt )
+            call plcolorbar( colorbar_width, colorbar_height, &
+                 ior(opt, ior(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)), position, &
+                 x, y, x_length, y_length, &
+                 15, 1, 1, &
+                 low_cap_color, high_cap_color, &
+                 cont_color, cont_width, &
+                 label_opts, labels, &
+                 axis_opts, ticks, sub_ticks, &
+                 n_values_array, values_array )
+
+            ! Reset text and tick sizes
+            call plschr( 0.0_plflt, 1.0_plflt )
+            call plsmaj( 0.0_plflt, 1.0_plflt )
+            call plsmin( 0.0_plflt, 1.0_plflt )
+         enddo
+            
+
+         ! Draw a page title
+         write(title, '(3A)') trim(colorbar_option_kind_labels(kind_i+1)), ' - ', &
+              trim(colorbar_cap_option_labels(cap_i+1))
+         call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
+         call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
+         call plptex( 0.5_plflt, 0.5_plflt, 0.0_plflt, 0.0_plflt, 0.5_plflt, title )
+
+         deallocate(values_array)
+         
+       end subroutine plcolorbar_example_page
+       
+       subroutine plcolorbar_example( palette, kind_i, cont_color, cont_width, n_values, values )
+         character(*) :: palette
+         integer  :: kind_i, label_i, cap_i, cont_color, n_values
+         real(kind=plflt)   :: cont_width
+         real(kind=plflt), dimension(:)   :: values
+
+         ! Load the color palette
+         call plspal1( palette, 1 )
+
+         do label_i = 0,COLORBAR_LABELS-1
+            do cap_i = 0,COLORBAR_CAPS-1
+               call plcolorbar_example_page( kind_i, label_i, cap_i, &
+                    cont_color, cont_width, &
+                    n_values, values )
+            enddo
+         enddo
+       end subroutine plcolorbar_example
+
       end program

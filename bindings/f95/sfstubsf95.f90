@@ -202,6 +202,11 @@ module plplot
         end subroutine plcol1
     end interface
 
+    interface plcolorbar
+        module procedure plcolorbar_1
+        module procedure plcolorbar_2
+    end interface
+
     interface plcpstrm
          module procedure plcpstrm
     end interface
@@ -272,6 +277,13 @@ module plplot
             use plplot_flt
             real(kind=plflt) :: chrdef, chrht
         end subroutine plgchr
+    end interface
+
+    interface
+        subroutine plgcmap1_range( min_color, max_color )
+            use plplot_flt
+            real(kind=plflt) :: min_color, max_color
+        end subroutine plgcmap1_range
     end interface
 
     interface
@@ -615,6 +627,13 @@ module plplot
         subroutine plscmap1n( n )
             integer :: n
         end subroutine plscmap1n
+    end interface
+
+    interface
+       subroutine plscmap1_range( min_color, max_color )
+         use plplot_flt
+         real(kind=plflt) :: min_color, max_color
+       end subroutine plscmap1_range
     end interface
 
     interface
@@ -988,6 +1007,80 @@ contains
 
        call plbinf77( size(x), x, y, center )
     end subroutine plbin
+
+    subroutine plcolorbar_1( p_colorbar_width, p_colorbar_height, &
+         opt, position, x, y, &
+         x_length, y_length, &
+         bg_color, bb_color, bb_style, &
+         low_cap_color, high_cap_color, &
+         cont_color, cont_width, &
+         n_labels, label_opts, labels, &
+         n_axes, axis_opts, ticks, sub_ticks, &
+         n_values, values)
+      real (kind=plflt) :: p_colorbar_width, p_colorbar_height
+      integer :: opt, position, bg_color, bb_color, bb_style, cont_color
+      integer :: n_labels, n_axes
+      real (kind=plflt) :: x, y, x_length, y_length, low_cap_color, high_cap_color, cont_width
+      integer, dimension(:) :: label_opts, sub_ticks, n_values
+      real (kind=plflt), dimension(:) :: ticks
+      real (kind=plflt), dimension(:,:) :: values
+      character(len=*), dimension(:) :: labels, axis_opts
+
+      !
+      ! Convert the text arrays and store the results in a convenient
+      ! albeit global location. This way we avoid all manner of complications.
+      ! (Though introducing a potentially nasty one: non-threadsafety)
+      !
+      call pllegend07_cnv_text( 3, n_labels, labels )
+      call pllegend07_cnv_text( 4, n_axes, axis_opts )
+
+      call plcolorbar07(p_colorbar_width, p_colorbar_height, &
+           opt, position, x, y, &
+           x_length, y_length, &
+           bg_color, bb_color, bb_style, &
+           low_cap_color, high_cap_color, &
+           cont_color, cont_width, &
+           n_labels, label_opts, n_axes, ticks, sub_ticks, &
+           n_values, values)
+    end subroutine plcolorbar_1
+
+    subroutine plcolorbar_2( p_colorbar_width, p_colorbar_height, &
+         opt, position, x, y, &
+         x_length, y_length, &
+         bg_color, bb_color, bb_style, &
+         low_cap_color, high_cap_color, &
+         cont_color, cont_width, &
+         label_opts, labels, axis_opts, ticks, sub_ticks, &
+         n_values, values)
+      real (kind=plflt) :: p_colorbar_width, p_colorbar_height
+      integer :: opt, position, bg_color, bb_color, bb_style, cont_color
+      real (kind=plflt) :: x, y, x_length, y_length, low_cap_color, high_cap_color, cont_width
+      integer, dimension(:) :: label_opts, sub_ticks, n_values
+      real (kind=plflt), dimension(:) :: ticks
+      real (kind=plflt), dimension(:,:) :: values
+      character(len=*), dimension(:) :: labels, axis_opts
+
+      integer :: n_labels, n_axes
+
+      n_labels = size(label_opts,1)
+      n_axes = size(axis_opts,1)
+      !
+      ! Convert the text arrays and store the results in a convenient
+      ! albeit global location. This way we avoid all manner of complications.
+      ! (Though introducing a potentially nasty one: non-threadsafety)
+      !
+      call pllegend07_cnv_text( 3, n_labels, labels )
+      call pllegend07_cnv_text( 4, n_axes, axis_opts )
+
+      call plcolorbar07(p_colorbar_width, p_colorbar_height, &
+           opt, position, x, y, &
+           x_length, y_length, &
+           bg_color, bb_color, bb_style, &
+           low_cap_color, high_cap_color, &
+           cont_color, cont_width, &
+           n_labels, label_opts, n_axes, ticks, sub_ticks, &
+           n_values, values)
+    end subroutine plcolorbar_2      
 
     subroutine plcpstrm( iplsr, flags )
        integer                        :: iplsr

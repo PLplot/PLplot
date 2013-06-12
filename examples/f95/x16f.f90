@@ -35,6 +35,17 @@
         px(PERIMETERPTS), py(PERIMETERPTS)
       integer cont_color
       real(kind=plflt) fill_width, cont_width
+      real(kind=plflt) colorbar_width, colorbar_height
+      integer NUM_AXES, NUM_LABELS
+      parameter(NUM_AXES=1, NUM_LABELS=1)
+      character(len=20) :: axis_opts(NUM_AXES)
+      integer num_values(NUM_AXES)
+      real(kind=plflt) values(NUM_AXES,NLEVEL+1)
+      real(kind=plflt) axis_ticks(NUM_AXES)
+      integer axis_subticks(NUM_AXES)
+      character(len=100) :: labels(NUM_LABELS)
+      integer label_opts(NUM_LABELS)
+
       integer i, j
 !      dummy to fill argument list with something not currently used.
       character(len=1) defined
@@ -114,10 +125,39 @@
       fill_width = 2
       cont_color = 0
       cont_width = 0
+      axis_opts(1) = 'bcvtm'
+      axis_ticks(1) = 0.0_plflt
+      axis_subticks(1) = 0
+      label_opts(1) = PL_COLORBAR_LABEL_BOTTOM
+      labels(1) = 'Magnitude'
+
       call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
         cont_color, cont_width )
+
+      ! Smaller text
+      call  plschr( 0.0_plflt, 0.75_plflt )
+      ! Small ticks on the vertical axis
+      call plsmaj( 0.0_plflt, 0.5_plflt )
+      call plsmin( 0.0_plflt, 0.5_plflt )
+
+      num_values(1) = NLEVEL + 1;
+      values(1,:)   = shedge;
+      call plcolorbar( colorbar_width, colorbar_height, &
+            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+            0.0_plflt, 0.0_plflt, &
+            cont_color, cont_width, &
+            label_opts, labels, &
+            axis_opts, &
+            axis_ticks, axis_subticks, &
+            num_values, values )
+
+      ! Reset text and tick sizes
+      call plschr( 0.0_plflt, 1.0_plflt )
+      call plsmaj( 0.0_plflt, 1.0_plflt )
+      call plsmin( 0.0_plflt, 1.0_plflt )
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
@@ -144,6 +184,29 @@
         shedge, fill_width, &
         cont_color, cont_width, xg1(:NX), yg1(:NY))
 
+      ! Smaller text
+      call  plschr( 0.0_plflt, 0.75_plflt )
+      ! Small ticks on the vertical axis
+      call plsmaj( 0.0_plflt, 0.5_plflt )
+      call plsmin( 0.0_plflt, 0.5_plflt )
+
+      num_values(1) = NLEVEL + 1;
+      values(1,:)   = shedge;
+      call plcolorbar( colorbar_width, colorbar_height, &
+            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+            0.0_plflt, 0.0_plflt, &
+            cont_color, cont_width, &
+            label_opts, labels, &
+            axis_opts, &
+            axis_ticks, axis_subticks, &
+            num_values, values )
+
+      ! Reset text and tick sizes
+      call plschr( 0.0_plflt, 1.0_plflt )
+      call plsmaj( 0.0_plflt, 1.0_plflt )
+      call plsmin( 0.0_plflt, 1.0_plflt )
+
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
       call plcol0(2)
@@ -168,6 +231,29 @@
         1._plflt, &
         shedge, fill_width, &
         cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
+
+      ! Smaller text
+      call  plschr( 0.0_plflt, 0.75_plflt )
+      ! Small ticks on the vertical axis
+      call plsmaj( 0.0_plflt, 0.5_plflt )
+      call plsmin( 0.0_plflt, 0.5_plflt )
+
+      num_values(1) = NLEVEL + 1;
+      values(1,:)   = shedge;
+      call plcolorbar( colorbar_width, colorbar_height, &
+            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+            0.0_plflt, 0.0_plflt, &
+            cont_color, cont_width, &
+            label_opts, labels, &
+            axis_opts, &
+            axis_ticks, axis_subticks, &
+            num_values, values )
+
+      ! Reset text and tick sizes
+      call plschr( 0.0_plflt, 1.0_plflt )
+      call plsmaj( 0.0_plflt, 1.0_plflt )
+      call plsmin( 0.0_plflt, 1.0_plflt )
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
@@ -194,6 +280,29 @@
         1._plflt, &
         shedge, fill_width, &
         cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
+
+      ! Smaller text
+      call  plschr( 0.0_plflt, 0.75_plflt )
+      ! Small ticks on the vertical axis
+      call plsmaj( 0.0_plflt, 0.5_plflt )
+      call plsmin( 0.0_plflt, 0.5_plflt )
+
+      num_values(1) = NLEVEL + 1;
+      values(1,:)   = shedge;
+      call plcolorbar( colorbar_width, colorbar_height, &
+            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+            0.0_plflt, 0.0_plflt, &
+            2, 3._plflt, &
+            label_opts, labels, &
+            axis_opts, &
+            axis_ticks, axis_subticks, &
+            num_values, values )
+
+      ! Reset text and tick sizes
+      call plschr( 0.0_plflt, 1.0_plflt )
+      call plsmaj( 0.0_plflt, 1.0_plflt )
+      call plsmin( 0.0_plflt, 1.0_plflt )
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
@@ -236,6 +345,29 @@
         1._plflt, &
         shedge, fill_width, &
         cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
+
+      ! Smaller text
+      call  plschr( 0.0_plflt, 0.75_plflt )
+      ! Small ticks on the vertical axis
+      call plsmaj( 0.0_plflt, 0.5_plflt )
+      call plsmin( 0.0_plflt, 0.5_plflt )
+
+      num_values(1) = NLEVEL + 1;
+      values(1,:)   = shedge;
+      call plcolorbar( colorbar_width, colorbar_height, &
+            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+            0.0_plflt, 0.0_plflt, &
+            cont_color, cont_width, &
+            label_opts, labels, &
+            axis_opts, &
+            axis_ticks, axis_subticks, &
+            num_values, values )
+
+      ! Reset text and tick sizes
+      call plschr( 0.0_plflt, 1.0_plflt )
+      call plsmaj( 0.0_plflt, 1.0_plflt )
+      call plsmin( 0.0_plflt, 1.0_plflt )
 
 !      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
       do i = 1, PERIMETERPTS
