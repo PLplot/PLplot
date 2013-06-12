@@ -41,27 +41,21 @@ endif(MSYS_PLATFORM)
 ExternalProject_Add(
   build_${BP_PACKAGE}
   URL ${${BP_PACKAGE}_URL}
-  URL_MD5 ${${BP_PACKAGE}_URL_MD5} 
+  URL_MD5 ${${BP_PACKAGE}_URL_MD5}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
-  BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
-  INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
-  STEP_TARGETS download update_build_system configure build install test
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
   )
 
-# Use custom command approach to generate real file dependencies
-# rather than time stamps alone.
+# Add custom commands to the current no-command update step.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/${BP_PACKAGE}.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/mem.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt 
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
@@ -72,27 +66,17 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
   ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
-  COMMENT "Updating of ${BP_PACKAGE} build system"
+  COMMENT "Custom updating of ${BP_PACKAGE}"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
-  )
-ExternalProject_Add_Step(build_${BP_PACKAGE} update_build_system
-  COMMENT "Updated ${BP_PACKAGE} build system"
-  DEPENDEES download
-  DEPENDERS configure
-  DEPENDS
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/${BP_PACKAGE}.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/mem.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
-  ALWAYS OFF
+  APPEND
   )
 
+list(APPEND build_target_LIST build_${BP_PACKAGE})
 # Restore BP_PATH to original state.
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 #message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")

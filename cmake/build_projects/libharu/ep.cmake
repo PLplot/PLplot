@@ -44,62 +44,49 @@ ExternalProject_Add(
   URL_MD5 ${${BP_PACKAGE}_URL_MD5}
   # Note -DPOST_2.1.0=OFF is essential for the 2.1.0 version, but you
   # should drop this option for anything after 2.1.0.  Also note that
-  # -D${BP_PACKAGE}_EXAMPLES=ON builds the demos, but does not test them.
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DPOST_2.1.0=OFF -D${BP_PACKAGE}_EXAMPLES=ON ${EP_BASE}/Source/build_${BP_PACKAGE}
-  BUILD_COMMAND ${BP_PARALLEL_BUILD_COMMAND}
-  INSTALL_COMMAND ${BP_PARALLEL_BUILD_COMMAND} install
-  STEP_TARGETS download update_build_system configure build install test
+  # -DLIBHARU_EXAMPLES=ON builds the demos, but does not test them.
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DPOST_2.1.0=OFF -DLIBHARU_EXAMPLES=ON ${EP_BASE}/Source/build_${BP_PACKAGE}
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
   )
 
-# Use custom command approach to generate real file dependencies
-# rather than time stamps alone.
+# Add custom commands to the current no-command update step.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/demo/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/hpdf_page_operator.c
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/haru.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/summary.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_consts.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_config.h.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/CMakeLists.txt
-  # File that is patched.
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/hpdf_streams.c
+  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
   COMMAND ${CMAKE_COMMAND} -E make_directory ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/demo/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/demo/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/hpdf_page_operator.c
   ${EP_BASE}/Source/build_${BP_PACKAGE}/src/hpdf_page_operator.c
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/haru.cmake
   ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/haru.cmake
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/summary.cmake
   ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/summary.cmake
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_consts.h
   ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_consts.h
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_config.h.cmake
   ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_config.h.cmake
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf.h
   ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf.h
-  COMMAND ${CMAKE_COMMAND} -E copy 
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/include/CMakeLists.txt
   COMMAND ${PATCH_EXECUTABLE} -d ${EP_BASE}/Source/build_${BP_PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include_hpdf_config.h.patch
-  COMMENT "Updating of ${BP_PACKAGE} build system"
+  COMMENT "Custom updating of ${BP_PACKAGE}"
   DEPENDS
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/demo/CMakeLists.txt
@@ -112,26 +99,10 @@ add_custom_command(
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf.h
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/CMakeLists.txt
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include_hpdf_config.h.patch
-  )
-ExternalProject_Add_Step(build_${BP_PACKAGE} update_build_system
-  COMMENT "Updated ${BP_PACKAGE} build system"
-  DEPENDEES download
-  DEPENDERS configure
-  DEPENDS
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/demo/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/hpdf_page_operator.c
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/haru.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/summary.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_consts.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_config.h.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/hpdf_streams.c
-  ALWAYS OFF
+  APPEND
   )
 
+list(APPEND build_target_LIST build_${BP_PACKAGE})
 # Restore BP_PATH to original state.
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 #message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")

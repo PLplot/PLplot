@@ -50,47 +50,28 @@ ExternalProject_Add(
   TEST_BEFORE_INSTALL ON
   TEST_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_CTEST_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
-  STEP_TARGETS download update_build_system get_eg_data configure build install test
   )
 
-# Use custom command approach to allow more than one COMMAND and/or
-# generate real file dependencies rather than time stamps alone.
+# Add custom commands to the current no-command update step.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy 
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt 
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  COMMENT "Updating of ${BP_PACKAGE} build system"
-  DEPENDS
+  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
-  )
-ExternalProject_Add_Step(build_${BP_PACKAGE} update_build_system
-  COMMENT "Updated ${BP_PACKAGE} build system"
-  DEPENDEES download
-  DEPENDERS configure
-  DEPENDS
   ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  ALWAYS OFF
-  )
-
-add_custom_command(
-  OUTPUT
-  ${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip
   COMMAND ${CMAKE_COMMAND} -DURL:STRING=${shape_eg_data_URL} -DFILE:FILEPATH=${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip -DMD5:STRING=${shape_eg_data_URL_MD5} -P ${CMAKE_SOURCE_DIR}/download_check.cmake
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${EP_BASE}/Source/build_${BP_PACKAGE}/eg_data
   COMMAND ${UNZIP_EXECUTABLE} -q ${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip -d ${EP_BASE}/Source/build_${BP_PACKAGE}/eg_data
-  COMMENT "getting eg_data for ${BP_PACKAGE} test"
-  )
-ExternalProject_Add_Step(build_${BP_PACKAGE} get_eg_data
-  COMMENT "got eg_data for ${BP_PACKAGE} test"
-  DEPENDEES download
-  DEPENDERS configure
+  COMMENT "Custom updating of ${BP_PACKAGE}"
   DEPENDS
-  ${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip
-  ALWAYS OFF
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/download_check.cmake
+  # N.B. no file dependencies are worthwhile for the eg_data
+  # chain above since it all starts with a download.
+  APPEND
   )
 
+list(APPEND build_target_LIST build_${BP_PACKAGE})
 # Restore BP_PATH to original state.
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 #message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")

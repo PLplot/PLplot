@@ -22,6 +22,7 @@ project(build_projects NONE)
 
 message(STATUS "CMake version = ${CMAKE_VERSION}")
 message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
+message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
 message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 cmake_minimum_required(VERSION 2.8.10.2 FATAL_ERROR)
@@ -99,24 +100,6 @@ endforeach(executable ${executables_LIST})
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 include(ExternalProject)
 
-# Propagate the overall CMake generator and install prefix to all CMake-based
-# software project builds.
-set(BP_CMAKE_COMMAND cmake "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
- 
-# The non-parallel versions are for build systems that
-# apparently have race conditions for parallel builds.
-if(CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
-  set(BP_BUILD_COMMAND mingw32-make)
-else(CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
-  set(BP_BUILD_COMMAND make)
-endif(CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
-set(BP_PARALLEL_BUILD_COMMAND ${BP_BUILD_COMMAND} -j4)
-set(BP_CTEST_COMMAND ctest)
-set(BP_PARALLEL_CTEST_COMMAND ctest -j4)
-
-set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH}")
-set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-
 if(MSYS_PLATFORM)
   # Useful function to convert Windows list of semicolon-delimited
   # PATHs to the equivalent list of MSYS PATHs (exactly like the
@@ -135,13 +118,65 @@ if(MSYS_PLATFORM)
   endfunction(determine_msys_path)
 endif(MSYS_PLATFORM)
 
+# This works for at least Linux make, ninja, MinGW mingw32_make, MSYS make,
+# and jom.
+set(BP_BUILD_COMMAND "${CMAKE_MAKE_PROGRAM}")
+
+set(BP_CTEST_COMMAND "${CMAKE_CTEST_COMMAND}")
+
+if(MSYS_PLATFORM)
+  # On the MSYS platform, the env command (used to set relevant
+  # environment variables for the commands below in the */ep.cmake
+  # scripts) requires all full paths be in the MSYS platform form.
+  determine_msys_path(BP_CMAKE_COMMAND "${BP_CMAKE_COMMAND}")
+  determine_msys_path(BP_BUILD_COMMAND "${BP_BUILD_COMMAND}")
+  determine_msys_path(BP_CTEST_COMMAND "${BP_CTEST_COMMAND}")
+  determine_msys_path(MSYS_CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+  determine_msys_path(MSYS_CMAKE_COMMAND "${CMAKE_COMMAND}")
+  # Propagate the overall CMake generator and install prefix to all CMake-based
+  # software project builds.
+  set(BP_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${MSYS_CMAKE_INSTALL_PREFIX})
+else(MSYS_PLATFORM)
+  # Propagate the overall CMake generator and install prefix to all CMake-based
+  # software project builds.
+  set(BP_CMAKE_COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
+endif(MSYS_PLATFORM)
+
+
+# The parallel versions are for software packages that
+# do not have race conditions for parallel builds or tests.
+set(BP_PARALLEL_BUILD_COMMAND "${BP_BUILD_COMMAND}" -j4)
+set(BP_PARALLEL_CTEST_COMMAND "${BP_CTEST_COMMAND}" -j4)
+
+message(STATUS "BP_CMAKE_COMMAND = ${BP_CMAKE_COMMAND}")
+message(STATUS "BP_BUILD_COMMAND = ${BP_BUILD_COMMAND}")
+message(STATUS "BP_PARALLEL_BUILD_COMMAND = ${BP_PARALLEL_BUILD_COMMAND}")
+message(STATUS "BP_CTEST_COMMAND = ${BP_CTEST_COMMAND}")
+message(STATUS "BP_PARALLEL_CTEST_COMMAND = ${BP_PARALLEL_CTEST_COMMAND}")
+
+
+set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH}")
+set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
+
 # Now include the build configurations for certain targets and their
 # dependencies.
+
+# Each (directly or indirectly) included build configuration
+# that is judged to be working should append its target to build_target_LIST
+# so that in the logic below we can creat a "build_all" target that depends
+# on those individual build targets
+set(build_target_LIST)
 
 # Configure a build of ndiff.  The ndiff application is not a a PLplot
 # dependency, but still this fuzzy diff is quite useful for PLplot
 # developers.
 include(ndiff/ep.cmake)
 
+# Configure wxwidgets, a soft (optional) PLplot dependency
+#include(wxwidgets/ep.cmake)
+
 # Configure a build of PLplot and its dependencies.
 include(plplot/ep.cmake)
+
+add_custom_target(build_all)
+add_dependencies(build_all ${build_target_LIST})
