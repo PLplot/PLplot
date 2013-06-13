@@ -26,6 +26,12 @@
 
 set(BP_PACKAGE libagg)
 
+# Protect against configuring a build twice in one CMake call
+if(${BP_PACKAGE}_configured)
+  return()
+endif(${BP_PACKAGE}_configured)
+set(${BP_PACKAGE}_configured ON)
+
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL http://www.antigrain.com/agg-2.5.tar.gz)
 set(${BP_PACKAGE}_URL_MD5 0229a488bc47be10a2fee6cf0b2febd6)

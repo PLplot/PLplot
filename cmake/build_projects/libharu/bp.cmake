@@ -26,6 +26,12 @@
 
 set(BP_PACKAGE libharu)
 
+# Protect against configuring a build twice in one CMake call
+if(${BP_PACKAGE}_configured)
+  return()
+endif(${BP_PACKAGE}_configured)
+set(${BP_PACKAGE}_configured ON)
+
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL http://${BP_PACKAGE}.org/files/${BP_PACKAGE}-2.1.0.tar.gz)
 set(${BP_PACKAGE}_URL_MD5 0623b8fb08ae1b28af08b2cdbd66b662)

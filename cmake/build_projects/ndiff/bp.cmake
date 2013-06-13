@@ -26,6 +26,12 @@
 
 set(BP_PACKAGE ndiff)
 
+# Protect against configuring a build twice in one CMake call
+if(${BP_PACKAGE}_configured)
+  return()
+endif(${BP_PACKAGE}_configured)
+set(${BP_PACKAGE}_configured ON)
+
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL ftp://ftp.math.utah.edu/pub/misc/${BP_PACKAGE}-2.00.tar.gz)
 

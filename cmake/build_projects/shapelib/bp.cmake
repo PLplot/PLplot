@@ -26,6 +26,12 @@
 
 set(BP_PACKAGE shapelib)
 
+# Protect against configuring a build twice in one CMake call
+if(${BP_PACKAGE}_configured)
+  return()
+endif(${BP_PACKAGE}_configured)
+set(${BP_PACKAGE}_configured ON)
+
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL http://download.osgeo.org/${BP_PACKAGE}/${BP_PACKAGE}-1.3.0.tar.gz)
 set(${BP_PACKAGE}_URL_MD5 2ff7d0b21d4b7506b452524492795f77)

@@ -26,6 +26,12 @@
 
 set(BP_PACKAGE libqhull)
 
+# Protect against configuring a build twice in one CMake call
+if(${BP_PACKAGE}_configured)
+  return()
+endif(${BP_PACKAGE}_configured)
+set(${BP_PACKAGE}_configured ON)
+
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
 set(${BP_PACKAGE}_URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)

@@ -26,6 +26,12 @@
 
 set(BP_PACKAGE wxwidgets)
 
+# Protect against configuring a build twice in one CMake call
+if(${BP_PACKAGE}_configured)
+  return()
+endif(${BP_PACKAGE}_configured)
+set(${BP_PACKAGE}_configured ON)
+
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.8.12.tar.gz)
 set(${BP_PACKAGE}_URL_MD5 2fa39da14bc06ea86fe902579fedc5b1)

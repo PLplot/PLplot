@@ -25,6 +25,14 @@
 # operate.
 # Configure build of PLplot dependencies.
 
+set(BP_PACKAGE plplot)
+
+# Protect against configuring a build twice in one CMake call
+if(${BP_PACKAGE}_configured)
+  return()
+endif(${BP_PACKAGE}_configured)
+set(${BP_PACKAGE}_configured ON)
+
 include(shapelib/bp.cmake)
 include(libqhull/bp.cmake)
 include(libharu/bp.cmake)
