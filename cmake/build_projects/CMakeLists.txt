@@ -81,6 +81,7 @@ set(executables_LIST
   # individual project configurations will not work unless this is
   # available so might as well check it here.
   bash
+  make
   )
 
 foreach(executable ${executables_LIST})
@@ -118,9 +119,13 @@ if(MSYS_PLATFORM)
   endfunction(determine_msys_path)
 endif(MSYS_PLATFORM)
 
-# This works for at least Linux make, ninja, MinGW mingw32_make, MSYS make,
-# and jom.
+# This gives the full pathname of the associated build tool for at
+# least the "Unix Makefiles", "Ninja", "MSYS Makefiles", "MinGW
+# Makefiles", and "NMake Makefiles JOM" CMake generators.
 set(BP_BUILD_COMMAND "${CMAKE_MAKE_PROGRAM}")
+
+# Actual make programme used for autotools builds.
+set(BP_MAKE_COMMAND ${MAKE_EXECUTABLE})
 
 set(BP_CTEST_COMMAND "${CMAKE_CTEST_COMMAND}")
 
@@ -130,30 +135,38 @@ if(MSYS_PLATFORM)
   # scripts) requires all full paths be in the MSYS platform form.
   determine_msys_path(BP_CMAKE_COMMAND "${BP_CMAKE_COMMAND}")
   determine_msys_path(BP_BUILD_COMMAND "${BP_BUILD_COMMAND}")
+  determine_msys_path(BP_MAKE_COMMAND "${BP_MAKE_COMMAND}")
   determine_msys_path(BP_CTEST_COMMAND "${BP_CTEST_COMMAND}")
   determine_msys_path(MSYS_CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
   determine_msys_path(MSYS_CMAKE_COMMAND "${CMAKE_COMMAND}")
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
   set(BP_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${MSYS_CMAKE_INSTALL_PREFIX})
+  # Propagate the install prefix to autotools-based builds
+  set(BP_CONFIGURE_COMMAND configure --prefix=${MSYS_CMAKE_INSTALL_PREFIX})
 else(MSYS_PLATFORM)
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
   set(BP_CMAKE_COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
+  # Propagate the install prefix to autotools-based builds
+  set(BP_CONFIGURE_COMMAND configure --prefix=${CMAKE_INSTALL_PREFIX})
 endif(MSYS_PLATFORM)
-
 
 # The parallel versions are for software packages that
 # do not have race conditions for parallel builds or tests.
 set(BP_PARALLEL_BUILD_COMMAND "${BP_BUILD_COMMAND}" -j4)
 set(BP_PARALLEL_CTEST_COMMAND "${BP_CTEST_COMMAND}" -j4)
+# For autotools based builds.
+set(BP_PARALLEL_MAKE_COMMAND "${BP_MAKE_COMMAND}" -j4)
 
 message(STATUS "BP_CMAKE_COMMAND = ${BP_CMAKE_COMMAND}")
+message(STATUS "BP_CONFIGURE_COMMAND = ${BP_CONFIGURE_COMMAND}")
 message(STATUS "BP_BUILD_COMMAND = ${BP_BUILD_COMMAND}")
 message(STATUS "BP_PARALLEL_BUILD_COMMAND = ${BP_PARALLEL_BUILD_COMMAND}")
+message(STATUS "BP_MAKE_COMMAND = ${BP_MAKE_COMMAND}")
+message(STATUS "BP_PARALLEL_MAKE_COMMAND = ${BP_PARALLEL_MAKE_COMMAND}")
 message(STATUS "BP_CTEST_COMMAND = ${BP_CTEST_COMMAND}")
 message(STATUS "BP_PARALLEL_CTEST_COMMAND = ${BP_PARALLEL_CTEST_COMMAND}")
-
 
 set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH}")
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
@@ -172,8 +185,8 @@ set(build_target_LIST)
 # developers.
 include(ndiff/bp.cmake)
 
-# Configure wxwidgets, a soft (optional) PLplot dependency
-#include(wxwidgets/bp.cmake)
+# Configure a build of wxwidgets, a soft (optional) PLplot dependency
+include(wxwidgets/bp.cmake)
 
 # Configure a build of PLplot and its dependencies.
 include(plplot/bp.cmake)
