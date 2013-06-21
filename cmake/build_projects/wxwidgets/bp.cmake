@@ -43,23 +43,29 @@ if(MSYS_PLATFORM)
   determine_msys_path(BP_PATH "${BP_PATH}")
   # Must have all elements of env command in MSYS platform form
   determine_msys_path(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
+  # This flag is still necessary to keep ld step from exhausting
+  # memory with MinGW.  See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43601
+  # for discussion of this.  Apparently the issue was fixed for
+  # MinGW-4.6, but it appears to be back for 4.7.2.
+  set(${BP_PACKAGE}_SET_CXXFLAGS "CXXFLAGS=-fno-keep-inline-dllexport")
 else(MSYS_PLATFORM)
   set(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
+  set(${BP_PACKAGE}_SET_CXXFLAGS)
 endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
-# The fno-keep-inline-dllexport flag required to work around
-# the memory exhaustion issue discussed in
-# http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43601
-# Still have memory exhaustion issues if you combine that
-# with -O3 so do not use the -O3 optimization flag.
+# Got intermittent failures using ${BP_PARALLEL_MAKE} both
+# historically and recently which are likely due to a parallel make
+# race condition for wxwidgets.  So I have decided to use
+# slow but sure ${BP_MAKE_COMMAND} instead.
+
 ExternalProject_Add(
   build_${BP_PACKAGE}
   URL ${${BP_PACKAGE}_URL}
   URL_MD5 ${${BP_PACKAGE}_URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} CXXFLAGS=-fno-keep-inline-dllexport ${source_PATH}/${BP_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND} install
   )
 
 list(APPEND build_target_LIST build_${BP_PACKAGE})
