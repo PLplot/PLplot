@@ -133,7 +133,6 @@ if(MSYS_PLATFORM)
   # On the MSYS platform, the env command (used to set relevant
   # environment variables for the commands below in the */bp.cmake
   # scripts) requires all full paths be in the MSYS platform form.
-  determine_msys_path(BP_CMAKE_COMMAND "${BP_CMAKE_COMMAND}")
   determine_msys_path(BP_BUILD_COMMAND "${BP_BUILD_COMMAND}")
   determine_msys_path(BP_MAKE_COMMAND "${BP_MAKE_COMMAND}")
   determine_msys_path(BP_CTEST_COMMAND "${BP_CTEST_COMMAND}")
@@ -142,6 +141,16 @@ if(MSYS_PLATFORM)
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
   set(BP_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${MSYS_CMAKE_INSTALL_PREFIX})
+  # Propagate CMAKE_C_COMPILER and CMAKE_RC_COMPILER to all CMake-based
+  # software project builds.  (jom currently requires this as a workaround).
+  if(CMAKE_C_COMPILER)
+    determine_msys_path(MSYS_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}")
+    list(APPEND BP_CMAKE_COMMAND -DCMAKE_C_COMPILER:FILEPATH=${MSYS_CMAKE_C_COMPILER})
+  endif(CMAKE_C_COMPILER)
+  if(CMAKE_RC_COMPILER)
+    determine_msys_path(MSYS_CMAKE_RC_COMPILER "${CMAKE_RC_COMPILER}")
+    list(APPEND BP_CMAKE_COMMAND -DCMAKE_RC_COMPILER:FILEPATH=${MSYS_CMAKE_RC_COMPILER})
+  endif(CMAKE_RC_COMPILER)
   # Propagate the install prefix to autotools-based builds
   set(BP_CONFIGURE_COMMAND configure --prefix=${MSYS_CMAKE_INSTALL_PREFIX})
 else(MSYS_PLATFORM)
@@ -168,7 +177,14 @@ message(STATUS "BP_PARALLEL_MAKE_COMMAND = ${BP_PARALLEL_MAKE_COMMAND}")
 message(STATUS "BP_CTEST_COMMAND = ${BP_CTEST_COMMAND}")
 message(STATUS "BP_PARALLEL_CTEST_COMMAND = ${BP_PARALLEL_CTEST_COMMAND}")
 
-set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH}")
+# Put ${CMAKE_INSTALL_PREFIX}/bin on the PATH as well for those cases
+# where some executable built and installed by build_projects needs
+# to be found by another project being configured by build_projects.
+if(MSYS_PLATFORM)
+  set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH};${CMAKE_INSTALL_PREFIX}/bin")
+else(MSYS_PLATFORM)
+  set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH}:${CMAKE_INSTALL_PREFIX}/bin")
+endif(MSYS_PLATFORM)
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 
 # Now include the build configurations for certain targets and their
@@ -180,16 +196,21 @@ set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 # on those individual build targets
 set(build_target_LIST)
 
-# Configure a build of ndiff.  The ndiff application is not a a PLplot
-# dependency, but still this fuzzy diff is quite useful for PLplot
-# developers.
-include(ndiff/bp.cmake)
+# List of all configurations.  Order doesn't matter because multiple
+# attempts to include the same configuration (via dependencies) are ignored.
+set(build_configuration_LIST
+  libagg
+  libharu
+  libqhull
+  ndiff
+  plplot
+  shapelib
+  wxwidgets
+)
 
-# Configure a build of wxwidgets, a soft (optional) PLplot dependency
-include(wxwidgets/bp.cmake)
-
-# Configure a build of PLplot and its dependencies.
-include(plplot/bp.cmake)
+foreach(build_configuration ${build_configuration_LIST})
+  include(${build_configuration}/bp.cmake)
+endforeach(build_configuration ${build_configuration_LIST})
 
 add_custom_target(build_all)
 add_dependencies(build_all ${build_target_LIST})
