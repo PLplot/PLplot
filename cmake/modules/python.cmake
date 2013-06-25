@@ -111,11 +111,20 @@ if(ENABLE_python AND HAVE_NUMPY)
 endif(ENABLE_python AND HAVE_NUMPY)
 
 if(ENABLE_python)
+  # if CMAKE_INSTALL_EXEC_PREFIX is an empty string, must replace
+  # it with "/" to make PYTHON_INSTALL_TEMPLATE an absolute path to be
+  # consistent with all other installation paths.
+  if(CMAKE_INSTALL_EXEC_PREFIX)
+    set(PYTHON_INSTALL_TEMPLATE "${CMAKE_INSTALL_EXEC_PREFIX}")
+  else(CMAKE_INSTALL_EXEC_PREFIX)
+    set(PYTHON_INSTALL_TEMPLATE "/")
+  endif(CMAKE_INSTALL_EXEC_PREFIX)
+
   # N.B. This is a nice way to obtain all sorts of Python information
   # using distutils.
   execute_process(
     COMMAND
-    ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_EXEC_PREFIX}')"
+    ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${PYTHON_INSTALL_TEMPLATE}')"
     OUTPUT_VARIABLE PYTHON_INSTDIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
