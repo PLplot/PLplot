@@ -262,11 +262,6 @@ if(CORE_BUILD)
     RENAME plplot_python_start.py
     )
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py
-    DESTINATION ${DATA_DIR}/examples/python
-    PERMISSIONS ${PERM_DATA}
-    )
-
   install(FILES CMakeLists.txt 
     DESTINATION ${DATA_DIR}/examples/python
     )
