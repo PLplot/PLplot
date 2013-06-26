@@ -7,3 +7,4 @@ proper-path-handling.diff
 fix-boolean-operators.diff
 fix-cmake-ada-support.diff
 fix-lua-includes.diff
+fix-cmake-d-support.diff

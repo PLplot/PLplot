@@ -91,9 +91,9 @@ else
 endif
 
 config: config-stamp
-config-stamp: control 
+config-stamp: control
 	mkdir -p $(BUILD_DIR)
-	(cd $(BUILD_DIR) ; \
+	( cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
 	JAVA_HOME=$(JAVA_HOME) DC=$(DC) \
         CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" FFLAGS="$(FFLAGS)" \
@@ -201,7 +201,7 @@ install-python: $(PYVERS:%=install-python%)
 
 install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy;/usr/lib/pyshared/python$*/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=`python-config --config-dir`/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy;/usr/lib/pyshared/python$*/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
 	  for d in python qt_gui/pyqt4 ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
