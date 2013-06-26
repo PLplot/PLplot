@@ -141,12 +141,17 @@ if(MSYS_PLATFORM)
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
   set(BP_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${MSYS_CMAKE_INSTALL_PREFIX})
-  # Propagate CMAKE_C_COMPILER and CMAKE_RC_COMPILER to all CMake-based
-  # software project builds.  (jom currently requires this as a workaround).
+  # Propagate CMAKE_C_COMPILER, CMAKE_CXX_COMPILER, and
+  # CMAKE_RC_COMPILER to all CMake-based software project builds.
+  # (jom currently requires this as a workaround).
   if(CMAKE_C_COMPILER)
     determine_msys_path(MSYS_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}")
     list(APPEND BP_CMAKE_COMMAND -DCMAKE_C_COMPILER:FILEPATH=${MSYS_CMAKE_C_COMPILER})
   endif(CMAKE_C_COMPILER)
+  if(CMAKE_CXX_COMPILER)
+    determine_msys_path(MSYS_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}")
+    list(APPEND BP_CMAKE_COMMAND -DCMAKE_CXX_COMPILER:FILEPATH=${MSYS_CMAKE_CXX_COMPILER})
+  endif(CMAKE_CXX_COMPILER)
   if(CMAKE_RC_COMPILER)
     determine_msys_path(MSYS_CMAKE_RC_COMPILER "${CMAKE_RC_COMPILER}")
     list(APPEND BP_CMAKE_COMMAND -DCMAKE_RC_COMPILER:FILEPATH=${MSYS_CMAKE_RC_COMPILER})
@@ -203,9 +208,9 @@ set(build_configuration_LIST
   libharu
   libqhull
   ndiff
-  plplot
+#  plplot
   shapelib
-  wxwidgets
+#  wxwidgets
 )
 
 foreach(build_configuration ${build_configuration_LIST})
