@@ -27,7 +27,12 @@
 
 #include <string.h>
 #include <windows.h>
+#if !defined( __CYGWIN__ )
 #include <tchar.h>
+#else
+#include <winnt.h>
+#define _T(a) __TEXT(a)
+#endif
 #ifdef _WIN64
 #define GWL_USERDATA    GWLP_USERDATA
 #define GCL_HCURSOR     GCLP_HCURSOR
