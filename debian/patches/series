@@ -8,3 +8,4 @@ fix-boolean-operators.diff
 fix-cmake-ada-support.diff
 fix-lua-includes.diff
 fix-cmake-d-support.diff
+java-pltr2-fix.diff

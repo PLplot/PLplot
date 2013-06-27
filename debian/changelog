@@ -1,12 +1,14 @@
-plplot (5.9.9-7ubuntu2) UNRELEASED; urgency=low
+plplot (5.9.9-7) UNRELEASED; urgency=low
 
   * debian/patches/fix-cmake-ada-support.diff: Update ada support from 
     upstream to ensure plplot builds with latest Ada compiler in unstable.
   * debian/rules: Update python library path.
   * debian/patches/fix-cmake-d-support.diff: Add patch from upstream to
     fix D language support.
+  * debian/patches/java-pltr2-fix.diff: Add patch from upstream to fix 
+    crash in java examples using pltr2 (closes: #713309).
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 26 Jun 2013 22:29:59 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 27 Jun 2013 08:44:20 +0100
 
 plplot (5.9.9-6) unstable; urgency=low
 
