@@ -4,6 +4,7 @@
 //
 
 import std.string;
+import std.conv;
 
 import plplot;
 
@@ -133,7 +134,7 @@ class plot {
                 vmax = vmax - 0.1;
             }
             plwidth( 1 );
-            plptex( 0.5, 0.5, 1.0, 0.0, 0.5, std.string.toString( i ) );
+            plptex( 0.5, 0.5, 1.0, 0.0, 0.5, to!string( i ) );
         }
     }
 }

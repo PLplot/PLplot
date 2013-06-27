@@ -29,28 +29,7 @@ import std.string;
 import std.math;
 import std.c.stdlib;
 
-int             sombrero;
-
-PLOptionTable[] options = [
-    {
-        "sombrero",             // Turns on use of Sombrero function
-        null,
-        null,
-        &sombrero,
-        PL_OPT_BOOL,
-        "-sombrero",
-        "Use the \"sombrero\" function."
-    },
-    {
-        null,                   // option
-        null,                   // handler
-        null,                   // client data
-        null,                   // address of variable to set
-        0,                      // mode flag
-        null,                   // short syntax
-        null
-    }                           // long syntax
-];
+int sombrero = 0;
 
 //--------------------------------------------------------------------------
 // cmap1_init1
@@ -104,8 +83,8 @@ int main( char[][] args )
     PLFLT[] alt = [ 60.0, 20.0 ];
     PLFLT[] az  = [ 30.0, 60.0 ];
 
-    char[]  title[] = [ "#frPLplot Example 8 - Alt=60, Az=30",
-                        "#frPLplot Example 8 - Alt=20, Az=60" ];
+    string title[] = [ "#frPLplot Example 8 - Alt=60, Az=30",
+                       "#frPLplot Example 8 - Alt=20, Az=60" ];
 
     // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );

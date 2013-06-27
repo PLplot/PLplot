@@ -217,8 +217,8 @@ int main( char[][] args )
 
 void create_grid( PLFLT[] x, PLFLT[] y )
 {
-    int px = x.length;
-    int py = y.length;
+    int px = cast(int) x.length;
+    int py = cast(int) y.length;
 
     for ( int i = 0; i < px; i++ )
         x[i] = xm + ( xM - xm ) * i / ( px - 1.0 );
@@ -230,7 +230,7 @@ void create_grid( PLFLT[] x, PLFLT[] y )
 
 void create_data( PLFLT[] x, PLFLT[] y, PLFLT[] z )
 {
-    int pts = x.length;
+    int pts = cast(int) x.length;
     assert( pts == y.length, "create_data(): Arrays must be of same length" );
     assert( pts == z.length, "create_data(): Arrays must be of same length" );
 

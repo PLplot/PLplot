@@ -46,10 +46,10 @@ void plot1( int type )
     PLINT[]  box_colors;
     PLINT[]  box_patterns;
     PLFLT[]  box_scales;
-    PLINT[]  box_line_widths;
+    PLFLT[]  box_line_widths;
     PLINT[]  line_colors;
     PLINT[]  line_styles;
-    PLINT[]  line_widths;
+    PLFLT[]  line_widths;
     PLINT[]  symbol_numbers, symbol_colors;
     PLFLT[]  symbol_scales;
     PLFLT    legend_width, legend_height;
@@ -79,6 +79,8 @@ void plot1( int type )
         break;
     case 1:
         plbox( "bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0 );
+        break;
+    default:
         break;
     }
 
@@ -136,7 +138,7 @@ void plot1( int type )
     text[0]        = "Amplitude";
     line_colors[0] = 2;
     line_styles[0] = 1;
-    line_widths[0] = 1;
+    line_widths[0] = 1.;
     // Note from the above opt_array the first symbol (and box) indices
     // do not have to be specified
 
@@ -147,7 +149,7 @@ void plot1( int type )
         text[1]           = "Phase shift";
         line_colors[1]    = 3;
         line_styles[1]    = 1;
-        line_widths[1]    = 1;
+        line_widths[1]    = 1.;
         symbol_colors[1]  = 3;
         symbol_scales[1]  = 1.;
         symbol_numbers[1] = 4;

@@ -62,7 +62,7 @@ int main( char[][] args )
                     // Display the symbols (plpoin expects that x and y
                     // are arrays so pass pointers)
                     if ( k < 128 )
-                        plpoin( x, y, k );
+                        plpoin( x, y, cast(PLINT) k );
                     k = k + 1;
                 }
             }

@@ -2,6 +2,10 @@
 module plplot;
 
 private import std.string;
+private import std.array;
+private import std.algorithm;
+private import std.stdio;
+private import std.conv;
 
 // improved D interface
 
@@ -53,16 +57,16 @@ int plparseopts( char[][] args, PLINT mode )
 {
     char*[] c_args = new char*[args.length];
     foreach ( size_t i, char[] arg; args )
-        c_args[i] = toStringz( arg );
-    int argc = c_args.length;
+        c_args[i] = cast(char *) toStringz( arg );
+    int argc = cast(int) c_args.length;
     return c_plparseopts( &argc, cast(char**) c_args, mode );
 }
 
 // simple arrow plotter.
 void plvect( PLFLT[][] u, PLFLT[][] v, PLFLT scale, pltr_func pltr = null, PLPointer pltr_data = null )
 {
-    PLINT nx = u.length;
-    PLINT ny = u[0].length;
+    PLINT nx = cast(PLINT) u.length;
+    PLINT ny = cast(PLINT) u[0].length;
     assert( nx == v.length, "plvect(): Arrays must be of same length!" );
     assert( ny == v[0].length, "plvect(): Arrays must be of same length!" );
 
@@ -71,26 +75,26 @@ void plvect( PLFLT[][] u, PLFLT[][] v, PLFLT scale, pltr_func pltr = null, PLPoi
 
 void plvect( PLFLT[][] u, PLFLT[][] v, PLFLT scale, ref PLcGrid cgrid )
 {
-    PLINT nx = u.length;
-    PLINT ny = u[0].length;
+    PLINT nx = cast(PLINT) u.length;
+    PLINT ny = cast(PLINT) u[0].length;
     assert( nx == v.length, "plvect(): Arrays must be of same length!" );
     assert( ny == v[0].length, "plvect(): Arrays must be of same length!" );
 
     c_PLcGrid c;
     c.xg = cgrid.xg.ptr;
-    c.nx = cgrid.xg.length;
+    c.nx = cast(PLINT) cgrid.xg.length;
     c.yg = cgrid.yg.ptr;
-    c.ny = cgrid.yg.length;
+    c.ny = cast(PLINT) cgrid.yg.length;
     c.zg = cgrid.zg.ptr;
-    c.nz = cgrid.zg.length;
+    c.nz = cast(PLINT) cgrid.zg.length;
 
     c_plvect( convert_array( u ), convert_array( v ), nx, ny, scale, &pltr1, &c );
 }
 
 void plvect( PLFLT[][] u, PLFLT[][] v, PLFLT scale, ref PLcGrid2 cgrid2 )
 {
-    PLINT nx = u.length;
-    PLINT ny = u[0].length;
+    PLINT nx = cast(PLINT) u.length;
+    PLINT ny = cast(PLINT) u[0].length;
     assert( nx == v.length, "plvect(): Arrays must be of same length!" );
     assert( ny == v[0].length, "plvect(): Arrays must be of same length!" );
 
@@ -98,17 +102,17 @@ void plvect( PLFLT[][] u, PLFLT[][] v, PLFLT scale, ref PLcGrid2 cgrid2 )
     c2.xg = convert_array( cgrid2.xg );
     c2.yg = convert_array( cgrid2.yg );
     c2.zg = convert_array( cgrid2.zg );
-    c2.nx = cgrid2.xg.length;
-    c2.ny = cgrid2.xg[0].length;
+    c2.nx = cast(PLINT) cgrid2.xg.length;
+    c2.ny = cast(PLINT) cgrid2.xg[0].length;
     if ( cgrid2.yg )
     {
-        assert( c2.nx == cgrid2.yg.length, "plcont(): Arrays must be of same length!" );
-        assert( c2.ny == cgrid2.yg[0].length, "plcont(): Arrays must be of same length!" );
+        assert( c2.nx == cgrid2.yg.length, "plvect(): Arrays must be of same length!" );
+        assert( c2.ny == cgrid2.yg[0].length, "plvect(): Arrays must be of same length!" );
     }
     if ( cgrid2.zg )
     {
-        assert( c2.nx == cgrid2.zg.length, "plcont(): Arrays must be of same length!" );
-        assert( c2.ny == cgrid2.zg[0].length, "plcont(): Arrays must be of same length!" );
+        assert( c2.nx == cgrid2.zg.length, "plvect(): Arrays must be of same length!" );
+        assert( c2.ny == cgrid2.zg[0].length, "plvect(): Arrays must be of same length!" );
     }
 
     c_plvect( convert_array( u ), convert_array( v ), nx, ny, scale, &pltr2, &c2 );
@@ -116,7 +120,7 @@ void plvect( PLFLT[][] u, PLFLT[][] v, PLFLT scale, ref PLcGrid2 cgrid2 )
 
 void plsvect( PLFLT[] arrowx, PLFLT[] arrowy, PLBOOL fill )
 {
-    PLINT npts = arrowx.length;
+    PLINT npts = cast(PLINT) arrowx.length;
     assert( npts == arrowy.length, "plsvect(): Arrays must be of same length!" );
     c_plsvect( arrowx.ptr, arrowy.ptr, npts, fill );
 }
@@ -132,7 +136,7 @@ void plaxes( PLFLT x0, PLFLT y0, string xopt, PLFLT xtick, PLINT nxsub,
 // Plot a histogram using x to store data values and y to store frequencies
 void plbin( PLFLT[] x, PLFLT[] y, PLINT opt )
 {
-    PLINT nbin = x.length;
+    PLINT nbin = cast(PLINT) x.length;
     assert( nbin == y.length, "plbin(): Arrays must be of same length!" );
     c_plbin( nbin, x.ptr, y.ptr, opt );
 }
@@ -159,43 +163,43 @@ void plbox3( string xopt, string xlabel, PLFLT xtick, PLINT nsubx,
 void plcont( PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel,
              pltr_func pltr, PLPointer pltr_data = null )
 {
-    PLINT nx = f.length;
-    PLINT ny = f[0].length;
+    PLINT nx = cast(PLINT) f.length;
+    PLINT ny = cast(PLINT) f[0].length;
 
-    c_plcont( convert_array( f ), nx, ny, kx, lx, ky, ly, clevel.ptr, clevel.length,
+    c_plcont( convert_array( f ), nx, ny, kx, lx, ky, ly, clevel.ptr, cast(PLINT) clevel.length,
         pltr, pltr_data );
 }
 
 void plcont( PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel,
              ref PLcGrid cgrid )
 {
-    PLINT     nx = f.length;
-    PLINT     ny = f[0].length;
+    PLINT     nx = cast(PLINT) f.length;
+    PLINT     ny = cast(PLINT) f[0].length;
 
     c_PLcGrid c;
     c.xg = cgrid.xg.ptr;
-    c.nx = cgrid.xg.length;
+    c.nx = cast(PLINT) cgrid.xg.length;
     c.yg = cgrid.yg.ptr;
-    c.ny = cgrid.yg.length;
+    c.ny = cast(PLINT) cgrid.yg.length;
     c.zg = cgrid.zg.ptr;
-    c.nz = cgrid.zg.length;
+    c.nz = cast(PLINT) cgrid.zg.length;
 
-    c_plcont( convert_array( f ), nx, ny, kx, lx, ky, ly, clevel.ptr, clevel.length,
+    c_plcont( convert_array( f ), nx, ny, kx, lx, ky, ly, clevel.ptr, cast(PLINT) clevel.length,
         &pltr1, &c );
 }
 
 void plcont( PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel,
              ref PLcGrid2 cgrid2 )
 {
-    PLINT      nx = f.length;
-    PLINT      ny = f[0].length;
+    PLINT      nx = cast(PLINT) f.length;
+    PLINT      ny = cast(PLINT) f[0].length;
 
     c_PLcGrid2 c2;
     c2.xg = convert_array( cgrid2.xg );
     c2.yg = convert_array( cgrid2.yg );
     c2.zg = convert_array( cgrid2.zg );
-    c2.nx = cgrid2.xg.length;
-    c2.ny = cgrid2.xg[0].length;
+    c2.nx = cast(PLINT) cgrid2.xg.length;
+    c2.ny = cast(PLINT) cgrid2.xg[0].length;
     if ( cgrid2.yg )
     {
         assert( c2.nx == cgrid2.yg.length, "plcont(): Arrays must be of same length!" );
@@ -207,7 +211,7 @@ void plcont( PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel
         assert( c2.ny == cgrid2.zg[0].length, "plcont(): Arrays must be of same length!" );
     }
 
-    c_plcont( convert_array( f ), nx, ny, kx, lx, ky, ly, clevel.ptr, clevel.length,
+    c_plcont( convert_array( f ), nx, ny, kx, lx, ky, ly, clevel.ptr, cast(PLINT) clevel.length,
         &pltr2, &c2 );
 }
 
@@ -220,7 +224,7 @@ void plcont( PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel
 // Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i))
 void plerrx( PLFLT[] xmin, PLFLT[] xmax, PLFLT[] y )
 {
-    PLINT n = y.length;
+    PLINT n = cast(PLINT) y.length;
     assert( n == xmin.length, "plerrx(): Arrays must be of same length!" );
     assert( n == xmax.length, "plerrx(): Arrays must be of same length!" );
     c_plerrx( n, xmin.ptr, xmax.ptr, y.ptr );
@@ -229,7 +233,7 @@ void plerrx( PLFLT[] xmin, PLFLT[] xmax, PLFLT[] y )
 // Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i))
 void plerry( PLFLT[] x, PLFLT[] ymin, PLFLT[] ymax )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == ymin.length, "plerry(): Arrays must be of same length!" );
     assert( n == ymax.length, "plerry(): Arrays must be of same length!" );
     c_plerry( n, x.ptr, ymin.ptr, ymax.ptr );
@@ -238,7 +242,7 @@ void plerry( PLFLT[] x, PLFLT[] ymin, PLFLT[] ymax )
 // Pattern fills the polygon bounded by the input points.
 void plfill( PLFLT[] x, PLFLT[] y )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plfill(): Arrays must be of same length!" );
     c_plfill( n, x.ptr, y.ptr );
 }
@@ -246,7 +250,7 @@ void plfill( PLFLT[] x, PLFLT[] y )
 // Pattern fills the 3d polygon bounded by the input points.
 void plfill3( PLFLT[] x, PLFLT[] y, PLFLT[] z )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plfill3(): Arrays must be of same length!" );
     assert( n == z.length, "plfill3(): Arrays must be of same length!" );
     c_plfill3( n, x.ptr, y.ptr, z.ptr );
@@ -255,23 +259,23 @@ void plfill3( PLFLT[] x, PLFLT[] y, PLFLT[] z )
 // Get the current device (keyword) name
 void plgdev( out string p_dev )
 {
-    p_dev.length = 1024;
-    c_plgdev( p_dev.ptr );
-    p_dev = toString( p_dev.ptr );
+    char cdev[1024];
+    c_plgdev( cdev.ptr );
+    p_dev = to!string( cdev.ptr );
 }
 
 // Get the (current) output file name.  Must be preallocated to >80 bytes
 void plgfnam( out string fnam )
 {
-    fnam.length = 1024;
-    c_plgfnam( fnam.ptr );
-    fnam = toString( fnam.ptr );
+    char cfnam[1024];
+    c_plgfnam( cfnam.ptr );
+    fnam = to!string( cfnam.ptr );
 }
 
 // Draw gradient in polygon.
 void plgradient( PLFLT[] x, PLFLT[] y, PLFLT angle )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plgradient(): Arrays must be of same length!" );
     c_plgradient( n, x.ptr, y.ptr, angle );
 }
@@ -279,12 +283,12 @@ void plgradient( PLFLT[] x, PLFLT[] y, PLFLT angle )
 // grid irregularly sampled data
 void  plgriddata( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLFLT[] xg, PLFLT[] yg, PLFLT[][] zg, PLINT type, PLFLT data )
 {
-    PLINT npts = x.length;
+    PLINT npts = cast(PLINT) x.length;
     assert( npts == y.length, "plgriddata(): Arrays must be of same length!" );
     assert( npts == z.length, "plgriddata(): Arrays must be of same length!" );
 
-    PLINT nxg = xg.length;
-    PLINT nyg = yg.length;
+    PLINT nxg = cast(PLINT) xg.length;
+    PLINT nyg = cast(PLINT) yg.length;
     assert( nxg == zg.length, "plgriddata(): Arrays must be of same length!" );
     assert( nyg == zg[0].length, "plgriddata(): Arrays must be of same length!" );
 
@@ -294,15 +298,15 @@ void  plgriddata( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLFLT[] xg, PLFLT[] yg, PLFLT
 // Get the current library version number
 void plgver( out string p_ver )
 {
-    p_ver.length = 1024;
-    c_plgver( p_ver.ptr );
-    p_ver = toString( p_ver.ptr );
+    char cver[1024];
+    c_plgver( cver.ptr );
+    p_ver = to!string( cver.ptr );
 }
 
 // Draws a histogram of n values of a variable in array data[0..n-1]
 void plhist( PLFLT[] data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt )
 {
-    c_plhist( data.length, data.ptr, datmin, datmax, nbin, opt );
+    c_plhist( cast(PLINT) data.length, data.ptr, datmin, datmax, nbin, opt );
 }
 
 // Simple routine for labelling graphs.
@@ -321,21 +325,15 @@ void pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                PLFLT text_justification,
                PLINT[] text_colors, string[] text,
                PLINT[] box_colors, PLINT[] box_patterns,
-               PLFLT[] box_scales, PLINT[] box_line_widths,
+               PLFLT[] box_scales, PLFLT[] box_line_widths,
                PLINT[] line_colors, PLINT[] line_styles,
-               PLINT[] line_widths,
+               PLFLT[] line_widths,
                PLINT[] symbol_colors, PLFLT[] symbol_scales,
                PLINT[] symbol_numbers, string[] symbols )
 {
-    PLINT   nlegend = opt_array.length;
-    char*[] textz, symbolsz;
-    textz.length    = nlegend;
-    symbolsz.length = nlegend;
-    for ( int i = 0; i < nlegend; i++ )
-    {
-        textz[i]    = toStringz( text[i] );
-        symbolsz[i] = toStringz( symbols[i] );
-    }
+    PLINT nlegend = cast(PLINT) opt_array.length;
+    immutable( char ) * *textz    = array( map!toStringz( text ) ).ptr;
+    immutable( char ) * *symbolsz = array( map!toStringz( symbols ) ).ptr;
     assert( nlegend == text_colors.length, "pllegend(): Arrays must be of same length!" );
     assert( nlegend == text.length, "pllegend(): Arrays must be of same length!" );
     assert( nlegend == box_colors.length, "pllegend(): Arrays must be of same length!" );
@@ -356,19 +354,19 @@ void pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
         nlegend, opt_array.ptr,
         text_offset, text_scale, text_spacing,
         text_justification,
-        text_colors.ptr, textz.ptr,
+        text_colors.ptr, textz,
         box_colors.ptr, box_patterns.ptr,
         box_scales.ptr, box_line_widths.ptr,
         line_colors.ptr, line_styles.ptr,
         line_widths.ptr,
         symbol_colors.ptr, symbol_scales.ptr,
-        symbol_numbers.ptr, symbolsz.ptr );
+        symbol_numbers.ptr, symbolsz );
 }
 
 // Draws line segments connecting a series of points.
 void plline( PLFLT[] x, PLFLT[] y )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plline(): Arrays must be of same length!" );
     c_plline( n, x.ptr, y.ptr );
 }
@@ -376,7 +374,7 @@ void plline( PLFLT[] x, PLFLT[] y )
 // Draws a line in 3 space.
 void plline3( PLFLT[] x, PLFLT[] y, PLFLT[] z )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plline3(): Arrays must be of same length!" );
     assert( n == z.length, "plline3(): Arrays must be of same length!" );
     c_plline3( n, x.ptr, y.ptr, z.ptr );
@@ -392,8 +390,8 @@ void plmap( mapform_func mapform, string type, PLFLT minlong, PLFLT maxlong,
 // Plots a mesh representation of the function z[x][y].
 void plmesh( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt )
 {
-    PLINT nx = z.length;
-    PLINT ny = z[0].length;
+    PLINT nx = cast(PLINT) z.length;
+    PLINT ny = cast(PLINT) z[0].length;
 
     assert( nx == x.length, "plmesh(): Arrays must be of same length!" );
     assert( ny == y.length, "plmesh(): Arrays must be of same length!" );
@@ -404,13 +402,13 @@ void plmesh( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt )
 // Plots a mesh representation of the function z[x][y] with contour
 void plmeshc( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel )
 {
-    PLINT nx = z.length;
-    PLINT ny = z[0].length;
+    PLINT nx = cast(PLINT) z.length;
+    PLINT ny = cast(PLINT) z[0].length;
 
     assert( nx == x.length, "plmeshc(): Arrays must be of same length!" );
     assert( ny == y.length, "plmeshc(): Arrays must be of same length!" );
 
-    c_plmeshc( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, clevel.length );
+    c_plmeshc( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, cast(PLINT) clevel.length );
 }
 
 // Prints out "text" at specified position relative to viewport
@@ -428,8 +426,8 @@ void plmtex3( string side, PLFLT disp, PLFLT pos, PLFLT just, string text )
 // Plots a 3-d representation of the function z[x][y].
 void plot3d( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLBOOL side )
 {
-    PLINT nx = z.length;
-    PLINT ny = z[0].length;
+    PLINT nx = cast(PLINT) z.length;
+    PLINT ny = cast(PLINT) z[0].length;
 
     assert( nx == x.length, "plot3d(): Arrays must be of same length!" );
     assert( ny == y.length, "plot3d(): Arrays must be of same length!" );
@@ -440,13 +438,13 @@ void plot3d( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLBOOL side )
 // Plots a 3-d representation of the function z[x][y] with contour.
 void plot3dc( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel )
 {
-    PLINT nx = z.length;
-    PLINT ny = z[0].length;
+    PLINT nx = cast(PLINT) z.length;
+    PLINT ny = cast(PLINT) z[0].length;
 
     assert( nx == x.length, "plot3dc(): Arrays must be of same length!" );
     assert( ny == y.length, "plot3dc(): Arrays must be of same length!" );
 
-    c_plot3dc( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, clevel.length );
+    c_plot3dc( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, cast(PLINT) clevel.length );
 }
 
 // Plots a 3-d representation of the function z[x][y] with contour and
@@ -454,20 +452,20 @@ void plot3dc( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel )
 void plot3dcl( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel,
                PLINT ixstart, PLINT ixn, PLINT[] indexymin, PLINT[] indexymax )
 {
-    PLINT nx = z.length;
-    PLINT ny = z[0].length;
+    PLINT nx = cast(PLINT) z.length;
+    PLINT ny = cast(PLINT) z[0].length;
 
     assert( nx == x.length, "plot3dcl(): Arrays must be of same length!" );
     assert( ny == y.length, "plot3dcl(): Arrays must be of same length!" );
 
-    c_plot3dcl( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, clevel.length,
+    c_plot3dcl( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, cast(PLINT) clevel.length,
         ixstart, ixn, indexymin.ptr, indexymax.ptr );
 }
 
 // Set fill pattern directly.
 void plpat( PLINT[] inc, PLINT[] del )
 {
-    PLINT nlin = inc.length;
+    PLINT nlin = cast(PLINT) inc.length;
     assert( nlin == del.length, "plpat(): Arrays must be of same length!" );
     c_plpat( nlin, inc.ptr, del.ptr );
 }
@@ -475,7 +473,7 @@ void plpat( PLINT[] inc, PLINT[] del )
 // Plots array y against x for n points using ASCII code "code".
 void plpoin( PLFLT[] x, PLFLT[] y, PLINT code )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plpoin(): Arrays must be of same length!" );
     c_plpoin( n, x.ptr, y.ptr, code );
 }
@@ -483,7 +481,7 @@ void plpoin( PLFLT[] x, PLFLT[] y, PLINT code )
 // Draws a series of points in 3 space.
 void plpoin3( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLINT code )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plpoin3(): Arrays must be of same length!" );
     assert( n == z.length, "plpoin3(): Arrays must be of same length!" );
     c_plpoin3( n, x.ptr, y.ptr, z.ptr, code );
@@ -492,7 +490,7 @@ void plpoin3( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLINT code )
 // Plots array y against x for n points using (UTF-8) text string
 void plstring( PLFLT[] x, PLFLT[] y, string text )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plstring(): Arrays must be of same length!" );
     c_plstring( n, x.ptr, y.ptr, toStringz( text ) );
 }
@@ -500,7 +498,7 @@ void plstring( PLFLT[] x, PLFLT[] y, string text )
 // Draws a series of points (described by [UTF8] text string) in 3 space.
 void plstring3( PLFLT[] x, PLFLT[] y, PLFLT[] z, string text )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plstring3(): Arrays must be of same length!" );
     assert( n == z.length, "plstring3(): Arrays must be of same length!" );
     c_plstring3( n, x.ptr, y.ptr, z.ptr, toStringz( text ) );
@@ -509,7 +507,7 @@ void plstring3( PLFLT[] x, PLFLT[] y, PLFLT[] z, string text )
 // Draws a polygon in 3 space.
 void plpoly3( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLBOOL[] draw, PLBOOL ifcc )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plpoly3(): Arrays must be of same length!" );
     assert( n == z.length, "plpoly3(): Arrays must be of same length!" );
     assert( n - 1 == draw.length, "plpoly3(): Array draw must be of same length then other arrays minus 1!" );
@@ -544,7 +542,7 @@ void plspal1( string filename, PLBOOL interpolate )
 // Set color map 0 colors by 8 bit RGB values
 void plscmap0( PLINT[] r, PLINT[] g, PLINT[] b )
 {
-    PLINT ncol0 = r.length;
+    PLINT ncol0 = cast(PLINT) r.length;
     assert( ncol0 == g.length, "plscmap0(): Arrays must be of same length!" );
     assert( ncol0 == b.length, "plscmap0(): Arrays must be of same length!" );
     c_plscmap0( r.ptr, g.ptr, b.ptr, ncol0 );
@@ -553,7 +551,7 @@ void plscmap0( PLINT[] r, PLINT[] g, PLINT[] b )
 // Set color map 0 colors by 8 bit RGB values and alpha values
 void plscmap0a( PLINT[] r, PLINT[] g, PLINT[] b, PLFLT[] a )
 {
-    PLINT ncol0 = r.length;
+    PLINT ncol0 = cast(PLINT) r.length;
     assert( ncol0 == g.length, "plscmap0a(): Arrays must be of same length!" );
     assert( ncol0 == b.length, "plscmap0a(): Arrays must be of same length!" );
     assert( ncol0 == a.length, "plscmap0a(): Arrays must be of same length!" );
@@ -563,7 +561,7 @@ void plscmap0a( PLINT[] r, PLINT[] g, PLINT[] b, PLFLT[] a )
 // Set color map 1 colors by 8 bit RGB values
 void plscmap1( PLINT[] r, PLINT[] g, PLINT[] b )
 {
-    PLINT ncol1 = r.length;
+    PLINT ncol1 = cast(PLINT) r.length;
     assert( ncol1 == g.length, "plscmap1(): Arrays must be of same length!" );
     assert( ncol1 == b.length, "plscmap1(): Arrays must be of same length!" );
     c_plscmap1( r.ptr, g.ptr, b.ptr, ncol1 );
@@ -572,7 +570,7 @@ void plscmap1( PLINT[] r, PLINT[] g, PLINT[] b )
 // Set color map 1 colors by 8 bit RGB and alpha values
 void plscmap1a( PLINT[] r, PLINT[] g, PLINT[] b, PLFLT[] a )
 {
-    PLINT ncol1 = r.length;
+    PLINT ncol1 = cast(PLINT) r.length;
     assert( ncol1 == g.length, "plscmap1a(): Arrays must be of same length!" );
     assert( ncol1 == b.length, "plscmap1a(): Arrays must be of same length!" );
     assert( ncol1 == a.length, "plscmap1a(): Arrays must be of same length!" );
@@ -584,7 +582,7 @@ void plscmap1a( PLINT[] r, PLINT[] g, PLINT[] b, PLFLT[] a )
 void plscmap1l( PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
                 PLFLT[] coord2, PLFLT[] coord3, PLBOOL[] alt_hue_path = null )
 {
-    PLINT npts = intensity.length;
+    PLINT npts = cast(PLINT) intensity.length;
     assert( npts == coord1.length, "plscmap1l(): Arrays must be of same length!" );
     assert( npts == coord2.length, "plscmap1l(): Arrays must be of same length!" );
     assert( npts == coord3.length, "plscmap1l(): Arrays must be of same length!" );
@@ -604,7 +602,7 @@ void plscmap1l( PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
 void plscmap1la( PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
                  PLFLT[] coord2, PLFLT[] coord3, PLFLT[] a, PLBOOL[] alt_hue_path = null )
 {
-    PLINT npts = intensity.length;
+    PLINT npts = cast(PLINT) intensity.length;
     assert( npts == coord1.length, "plscmap1la(): Arrays must be of same length!" );
     assert( npts == coord2.length, "plscmap1la(): Arrays must be of same length!" );
     assert( npts == coord3.length, "plscmap1la(): Arrays must be of same length!" );
@@ -633,12 +631,12 @@ void plsfnam( string fnam )
 // Shade region.
 void plshade( PLFLT[][] a, def_func defined, PLFLT left, PLFLT right,
               PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap,
-              PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color,
-              PLINT max_width, PLBOOL rectangular,
+              PLFLT sh_color, PLFLT sh_width, PLINT min_color, PLFLT min_width, PLINT max_color,
+              PLFLT max_width, PLBOOL rectangular,
               pltr_func pltr = null, PLPointer pltr_data = null )
 {
-    PLINT nx = a.length;
-    PLINT ny = a[0].length;
+    PLINT nx = cast(PLINT) a.length;
+    PLINT ny = cast(PLINT) a[0].length;
 
     c_plshade( convert_array( a ), nx, ny, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap,
         sh_color, sh_width, min_color, min_width, max_color, max_width, &c_plfill,
@@ -646,48 +644,48 @@ void plshade( PLFLT[][] a, def_func defined, PLFLT left, PLFLT right,
 }
 
 void plshades( PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-               PLFLT[] clevel, PLINT fill_width, PLINT cont_color, PLINT cont_width,
+               PLFLT[] clevel, PLFLT fill_width, PLINT cont_color, PLFLT cont_width,
                PLBOOL rectangular, pltr_func pltr = null, PLPointer pltr_data = null )
 {
-    PLINT nx = a.length;
-    PLINT ny = a[0].length;
+    PLINT nx = cast(PLINT) a.length;
+    PLINT ny = cast(PLINT) a[0].length;
 
-    c_plshades( convert_array( a ), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, clevel.length,
+    c_plshades( convert_array( a ), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, cast(PLINT) clevel.length,
         fill_width, cont_color, cont_width, &c_plfill, rectangular, pltr, pltr_data );
 }
 
 void plshades( PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-               PLFLT[] clevel, PLINT fill_width, PLINT cont_color, PLINT cont_width,
+               PLFLT[] clevel, PLFLT fill_width, PLINT cont_color, PLFLT cont_width,
                PLBOOL rectangular, ref PLcGrid cgrid )
 {
-    PLINT     nx = a.length;
-    PLINT     ny = a[0].length;
+    PLINT     nx = cast(PLINT) a.length;
+    PLINT     ny = cast(PLINT) a[0].length;
 
     c_PLcGrid c;
     c.xg = cgrid.xg.ptr;
-    c.nx = cgrid.xg.length;
+    c.nx = cast(PLINT) cgrid.xg.length;
     c.yg = cgrid.yg.ptr;
-    c.ny = cgrid.yg.length;
+    c.ny = cast(PLINT) cgrid.yg.length;
     c.zg = cgrid.zg.ptr;
-    c.nz = cgrid.zg.length;
+    c.nz = cast(PLINT) cgrid.zg.length;
 
-    c_plshades( convert_array( a ), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, clevel.length,
+    c_plshades( convert_array( a ), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, cast(PLINT) clevel.length,
         fill_width, cont_color, cont_width, &c_plfill, rectangular, &pltr1, &c );
 }
 
 void plshades( PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-               PLFLT[] clevel, PLINT fill_width, PLINT cont_color, PLINT cont_width,
+               PLFLT[] clevel, PLFLT fill_width, PLINT cont_color, PLFLT cont_width,
                PLBOOL rectangular, ref PLcGrid2 cgrid2 )
 {
-    PLINT      nx = a.length;
-    PLINT      ny = a[0].length;
+    PLINT      nx = cast(PLINT) a.length;
+    PLINT      ny = cast(PLINT) a[0].length;
 
     c_PLcGrid2 c2;
     c2.xg = convert_array( cgrid2.xg );
     c2.yg = convert_array( cgrid2.yg );
     c2.zg = convert_array( cgrid2.zg );
-    c2.nx = cgrid2.xg.length;
-    c2.ny = cgrid2.xg[0].length;
+    c2.nx = cast(PLINT) cgrid2.xg.length;
+    c2.ny = cast(PLINT) cgrid2.xg[0].length;
     if ( cgrid2.yg )
     {
         assert( c2.nx == cgrid2.yg.length, "plcont(): Arrays must be of same length!" );
@@ -699,7 +697,7 @@ void plshades( PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin
         assert( c2.ny == cgrid2.zg[0].length, "plcont(): Arrays must be of same length!" );
     }
 
-    c_plshades( convert_array( a ), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, clevel.length,
+    c_plshades( convert_array( a ), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, cast(PLINT) clevel.length,
         fill_width, cont_color, cont_width, &c_plfill, rectangular, &pltr2, &c2 );
 }
 
@@ -719,14 +717,14 @@ void plstripc( PLINT* id, string xspec, string yspec, PLFLT xmin, PLFLT xmax, PL
     assert( 4 == styline.length, "plstripc(): Arrays must be of length 4!" );
     assert( 4 == legline.length, "plstripc(): Arrays must be of length 4!" );
 
-    char*[4] leglinez;
-    for ( int i = 0; i < 4; i++ )
-    {
-        leglinez[i] = toStringz( legline[i] );
-    }
+    immutable( char ) * *leglinez = array( map!toStringz( legline ) ).ptr;
+    //for ( int i = 0; i < 4; i++ )
+    //{
+    //    leglinez[i] = toStringz( legline[i] );
+    //}
 
     c_plstripc( id, toStringz( xspec ), toStringz( yspec ), xmin, xmax, xjump, ymin, ymax,
-        xlpos, ylpos, y_ascl, acc, colbox, collab, colline.ptr, styline.ptr, leglinez.ptr,
+        xlpos, ylpos, y_ascl, acc, colbox, collab, colline.ptr, styline.ptr, leglinez,
         toStringz( labx ), toStringz( laby ), toStringz( labtop ) );
 }
 
@@ -735,8 +733,8 @@ void plimagefr( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                 PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax,
                 pltr_func pltr = null, PLPointer pltr_data = null )
 {
-    PLINT nx = idata.length;
-    PLINT ny = idata[0].length;
+    PLINT nx = cast(PLINT) idata.length;
+    PLINT ny = cast(PLINT) idata[0].length;
 
     c_plimagefr( convert_array( idata ), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
         valuemin, valuemax, pltr, pltr_data );
@@ -746,16 +744,16 @@ void plimagefr( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 void plimagefr( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                 PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax, PLcGrid cgrid )
 {
-    PLINT     nx = idata.length;
-    PLINT     ny = idata[0].length;
+    PLINT     nx = cast(PLINT) idata.length;
+    PLINT     ny = cast(PLINT) idata[0].length;
 
     c_PLcGrid c;
     c.xg = cgrid.xg.ptr;
-    c.nx = cgrid.xg.length;
+    c.nx = cast(PLINT) cgrid.xg.length;
     c.yg = cgrid.yg.ptr;
-    c.ny = cgrid.yg.length;
+    c.ny = cast(PLINT) cgrid.yg.length;
     c.zg = cgrid.zg.ptr;
-    c.nz = cgrid.zg.length;
+    c.nz = cast(PLINT) cgrid.zg.length;
 
     c_plimagefr( convert_array( idata ), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
         valuemin, valuemax, &pltr1, &c );
@@ -765,15 +763,15 @@ void plimagefr( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 void plimagefr( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                 PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax, PLcGrid2 cgrid2 )
 {
-    PLINT      nx = idata.length;
-    PLINT      ny = idata[0].length;
+    PLINT      nx = cast(PLINT) idata.length;
+    PLINT      ny = cast(PLINT) idata[0].length;
 
     c_PLcGrid2 c2;
     c2.xg = convert_array( cgrid2.xg );
     c2.yg = convert_array( cgrid2.yg );
     c2.zg = convert_array( cgrid2.zg );
-    c2.nx = cgrid2.xg.length;
-    c2.ny = cgrid2.xg[0].length;
+    c2.nx = cast(PLINT) cgrid2.xg.length;
+    c2.ny = cast(PLINT) cgrid2.xg[0].length;
     if ( cgrid2.yg )
     {
         assert( c2.nx == cgrid2.yg.length, "plcont(): Arrays must be of same length!" );
@@ -794,8 +792,8 @@ void plimagefr( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 void plimage( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
               PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax )
 {
-    PLINT nx = idata.length;
-    PLINT ny = idata[0].length;
+    PLINT nx = cast(PLINT) idata.length;
+    PLINT ny = cast(PLINT) idata[0].length;
 
     c_plimage( convert_array( idata ), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax,
         Dymin, Dymax );
@@ -804,7 +802,7 @@ void plimage( PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 // Set up a new line style
 void plstyl( PLINT[] mark, PLINT[] space )
 {
-    PLINT nms = mark.length;
+    PLINT nms = cast(PLINT) mark.length;
     assert( nms == space.length, "plstyl(): Arrays must be of same length!" );
     c_plstyl( nms, mark.ptr, space.ptr );
 }
@@ -812,13 +810,13 @@ void plstyl( PLINT[] mark, PLINT[] space )
 // Plots the 3d surface representation of the function z[x][y].
 void plsurf3d( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel = null )
 {
-    PLINT nx = z.length;
-    PLINT ny = z[0].length;
+    PLINT nx = cast(PLINT) z.length;
+    PLINT ny = cast(PLINT) z[0].length;
     assert( nx == x.length, "plsurf3d(): Arrays must be of same length!" );
     assert( ny == y.length, "plsurf3d(): Arrays must be of same length!" );
 
     if ( clevel )
-        c_plsurf3d( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, clevel.length );
+        c_plsurf3d( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, cast(PLINT) clevel.length );
     else
         c_plsurf3d( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, null, 0 );
 }
@@ -828,19 +826,19 @@ void plsurf3d( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel = nu
 void plsurf3dl( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel,
                 PLINT ixstart, PLINT ixn, PLINT[] indexymin, PLINT[] indexymax )
 {
-    PLINT nx = z.length;
-    PLINT ny = z[0].length;
+    PLINT nx = cast(PLINT) z.length;
+    PLINT ny = cast(PLINT) z[0].length;
     assert( nx == x.length, "plsurf3d(): Arrays must be of same length!" );
     assert( ny == y.length, "plsurf3d(): Arrays must be of same length!" );
 
-    c_plsurf3dl( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, clevel.length,
+    c_plsurf3dl( x.ptr, y.ptr, convert_array( z ), nx, ny, opt, clevel.ptr, cast(PLINT) clevel.length,
         ixstart, ixn, indexymin.ptr, indexymax.ptr );
 }
 
 // Plots array y against x for n points using Hershey symbol "code"
 void plsym( PLFLT[] x, PLFLT[] y, PLINT code )
 {
-    PLINT n = x.length;
+    PLINT n = cast(PLINT) x.length;
     assert( n == y.length, "plsym(): Arrays must be of same length!" );
     c_plsym( n, x.ptr, y.ptr, code );
 }
@@ -941,7 +939,7 @@ int plsetopt( string opt, string optarg )
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
 void plMinMax2dGrid( PLFLT[][] f, out PLFLT fmax, out PLFLT fmin )
 {
-    plMinMax2dGrid( convert_array( f ), f.length, f[0].length, &fmax, &fmin );
+    plMinMax2dGrid( convert_array( f ), cast(PLINT) f.length, cast(PLINT) f[0].length, &fmax, &fmin );
 }
 
 // Wait for graphics input event and translate to world coordinates
@@ -1081,13 +1079,13 @@ const PL_FCI_OBLIQUE = 0x2;
 
 struct _N1
 {
-    char *opt;
+    string opt;
     int  function( char *, char *, void * ) handler;
-    void *client_data;
-    void *var;
-    int  mode;
-    char *syntax;
-    char *desc;
+    void   *client_data;
+    void   *var;
+    int    mode;
+    string syntax;
+    string desc;
 }
 alias _N1 PLOptionTable;
 
@@ -1515,8 +1513,8 @@ void c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill );
 
 // This functions similarly to plbox() except that the origin of the axes
 // is placed at the user-specified point (x0, y0).
-void c_plaxes( PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
-               char *yopt, PLFLT ytick, PLINT nysub );
+void c_plaxes( PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
+               const char *yopt, PLFLT ytick, PLINT nysub );
 
 // Flags for plbin() - opt argument
 const PL_BIN_DEFAULT  = 0;
@@ -1531,11 +1529,11 @@ void c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT opt );
 void c_plbop();
 
 // This draws a box around the current viewport.
-void c_plbox( char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub );
+void c_plbox( const char *xopt, PLFLT xtick, PLINT nxsub, const char *yopt, PLFLT ytick, PLINT nysub );
 
 // This is the 3-d analogue of plbox().
-void c_plbox3( char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt,
-               char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel,
+void c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx, const char *yopt,
+               const char *ylabel, PLFLT ytick, PLINT nsuby, const char *zopt, const char *zlabel,
                PLFLT ztick, PLINT nsubz );
 
 // Calculate broken-down time from continuous time for current stream.
@@ -1752,7 +1750,7 @@ void c_plinit();
 void c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 
 // Simple routine for labelling graphs.
-void c_pllab( char *xlabel, char *ylabel, char *tlabel );
+void c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
 // Flags used for position argument of both pllegend and plcolorbar
 const PL_POSITION_LEFT     = 1;
@@ -1794,13 +1792,13 @@ void c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                  PLINT nlegend, PLINT *opt_array,
                  PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
                  PLFLT text_justification,
-                 PLINT *text_colors, char **text,
+                 PLINT *text_colors, const char **text,
                  PLINT *box_colors, PLINT *box_patterns,
-                 PLFLT *box_scales, PLINT *box_line_widths,
+                 PLFLT *box_scales, PLFLT *box_line_widths,
                  PLINT *line_colors, PLINT *line_styles,
-                 PLINT *line_widths,
+                 PLFLT *line_widths,
                  PLINT *symbol_colors, PLFLT *symbol_scales,
-                 PLINT *symbol_numbers, char **symbols );
+                 PLINT *symbol_numbers, const char **symbols );
 
 // Sets position of the light source
 void c_pllightsource( PLFLT x, PLFLT y, PLFLT z );
@@ -1815,7 +1813,7 @@ void c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z );
 void c_pllsty( PLINT lin );
 
 // plot continental outline in world coordinates
-void c_plmap( void function( PLINT, PLFLT *, PLFLT* ) mapform, char *type, PLFLT minlong,
+void c_plmap( void function( PLINT, PLFLT *, PLFLT* ) mapform, const char *type, PLFLT minlong,
               PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 // Plot the latitudes and longitudes on the background.
@@ -1833,10 +1831,10 @@ void c_plmeshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
 void c_plmkstrm( PLINT *p_strm );
 
 // Prints out "text" at specified position relative to viewport
-void c_plmtex( char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text );
+void c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text );
 
 // Prints out "text" at specified position relative to viewport (3D)
-void c_plmtex3( char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text );
+void c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text );
 
 // Plots a 3-d representation of the function z[x][y].
 void c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
@@ -1891,10 +1889,10 @@ void c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code );
 void c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc );
 
 // Plots array y against x for n points using (UTF-8) text string
-void c_plstring( PLINT n, PLFLT *x, PLFLT *y, char *text );
+void c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *text );
 
 // Draws a series of points (described by [UTF8] text string) in 3 space.
-void c_plstring3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, char * text );
+void c_plstring3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, const char * text );
 
 // Set the floating point precision (in number of places) in numeric labels.
 void c_plprec( PLINT setp, PLINT prec );
@@ -1903,10 +1901,10 @@ void c_plprec( PLINT setp, PLINT prec );
 void c_plpsty( PLINT patt );
 
 // Prints out "text" at world cooordinate (x,y).
-void c_plptex( PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, char *text );
+void c_plptex( PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text );
 
 // Prints out "text" at world cooordinate (x,y,z).
-void c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, char *text );
+void c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text );
 
 // Random number generator based on Mersenne Twister.
 // Obtain real random number in range [0,1].
@@ -1978,7 +1976,7 @@ void c_plscolor( PLINT color );
 void  c_plscompression( PLINT compression );
 
 // Set the device (keyword) name
-void c_plsdev( char *devname );
+void c_plsdev( const char *devname );
 
 // Set window into device space using margin, aspect ratio, and
 // justification
@@ -2015,7 +2013,7 @@ void  c_plsfam( PLINT fam, PLINT num, PLINT bmax );
 void  c_plsfci( PLUNICODE fci );
 
 // Set the output file name.
-void c_plsfnam( char *fnam );
+void c_plsfnam( const char *fnam );
 
 // Set the current font family, style and weight
 
@@ -2024,17 +2022,17 @@ void  c_plsfont( PLINT family, PLINT style, PLINT weight );
 // Shade region.
 void c_plshade( PLFLT **a, PLINT nx, PLINT ny, PLINT function( PLFLT, PLFLT ) defined, PLFLT left,
                 PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap,
-                PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color,
-                PLINT max_width, void function( PLINT, PLFLT *, PLFLT* ) fill, PLBOOL rectangular,
+                PLFLT sh_color, PLFLT sh_width, PLINT min_color, PLFLT min_width, PLINT max_color,
+                PLFLT max_width, void function( PLINT, PLFLT *, PLFLT* ) fill, PLBOOL rectangular,
                 void function( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ) pltr, PLPointer pltr_data );
 
 void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT function( PLFLT, PLFLT ) defined, PLFLT xmin,
-                 PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT *clevel, PLINT nlevel, PLINT fill_width,
-                 PLINT cont_color, PLINT cont_width, void function( PLINT, PLFLT *, PLFLT* ) fill,
+                 PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+                 PLINT cont_color, PLFLT cont_width, void function( PLINT, PLFLT *, PLFLT* ) fill,
                  PLBOOL rectangular, void function( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ) pltr,
                  PLPointer pltr_data );
 
-void  plfshade( PLFLT function( PLINT, PLINT, PLPointer ) f2eval, PLPointer f2eval_data, PLFLT function( PLINT, PLINT, PLPointer ) c2eval, PLPointer c2eval_data, PLINT nx, PLINT ny, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color, PLINT max_width, void function( PLINT, PLFLT *, PLFLT * ) fill, PLBOOL rectangular, void function( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ) pltr, PLPointer pltr_data );
+void  plfshade( PLFLT function( PLINT, PLINT, PLPointer ) f2eval, PLPointer f2eval_data, PLFLT function( PLINT, PLINT, PLPointer ) c2eval, PLPointer c2eval_data, PLINT nx, PLINT ny, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width, PLINT min_color, PLFLT min_width, PLINT max_color, PLFLT max_width, void function( PLINT, PLFLT *, PLFLT * ) fill, PLBOOL rectangular, void function( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ) pltr, PLPointer pltr_data );
 
 // Set up lengths of major tick marks.
 
@@ -2056,10 +2054,10 @@ void  c_plsori( PLINT ori );
 void c_plspage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff );
 
 // Set the colors for color table 0 from a cmap0 file
-void c_plspal0( char* filename );
+void c_plspal0( const char* filename );
 
 // Set the colors for color table 1 from a cmap1 file
-void c_plspal1( char *filename, PLBOOL interpolate );
+void c_plspal1( const char *filename, PLBOOL interpolate );
 
 // Set the pause (on end-of-page) status
 void c_plspause( PLBOOL pause );
@@ -2080,7 +2078,7 @@ void  c_plssym( PLFLT def, PLFLT scale );
 void c_plstar( PLINT nx, PLINT ny );
 
 // Initialize PLplot, passing the device name and windows/page settings.
-void c_plstart( char *devname, PLINT nx, PLINT ny );
+void c_plstart( const char *devname, PLINT nx, PLINT ny );
 
 // Set the coordinate transform
 void c_plstransform( ct_func coordinate_transform = null, PLPointer coordinate_transform_data = null );
@@ -2089,7 +2087,7 @@ void c_plstransform( ct_func coordinate_transform = null, PLPointer coordinate_t
 void c_plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );
 
 // Create 1d stripchart
-void c_plstripc( PLINT *id, char *xspec, char *yspec, PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos, PLBOOL y_ascl, PLBOOL acc, PLINT colbox, PLINT collab, PLINT *colline, PLINT *styline, char **legline, char *labx, char *laby, char *labtop );
+void c_plstripc( PLINT *id, const char *xspec, const char *yspec, PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos, PLBOOL y_ascl, PLBOOL acc, PLINT colbox, PLINT collab, PLINT *colline, PLINT *styline, const char **legline, const char *labx, const char *laby, const char *labtop );
 
 // Deletes and releases memory used by a stripchart.
 void c_plstripd( PLINT id );
@@ -2140,7 +2138,7 @@ void  c_plszax( PLINT digmax, PLINT digits );
 void  c_pltext();
 
 // Set the format for date / time labels
-void c_pltimefmt( char *fmt );
+void c_pltimefmt( const char *fmt );
 
 // Sets the edges of the viewport with the given aspect ratio, leaving
 // room for labels.
@@ -2206,15 +2204,15 @@ void  plseopH( void function( void *, int * ) handler, void *handler_data );
 
 // Set the variables to be used for storing error info
 
-void  plsError( PLINT *errcode, char *errmsg );
+void  plsError( PLINT *errcode, const char *errmsg );
 
 // Sets an optional user exit handler.
 
-void  plsexit( int function( char * ) handler );
+void  plsexit( int function( const char * ) handler );
 
 // Sets an optional user abort handler.
 
-void  plsabort( void function( char * ) handler );
+void  plsabort( void function( const char * ) handler );
 
 // Transformation routines
 
@@ -2265,21 +2263,21 @@ void plResetOpts();
 
 // Merge user option table into internal info structure.
 
-int  plMergeOpts( PLOptionTable *options, char *name, char **notes );
+int  plMergeOpts( PLOptionTable *options, const char *name, const char **notes );
 
 // Set the strings used in usage and syntax messages.
 
-void  plSetUsage( char *program_string, char *usage_string );
+void  plSetUsage( const char *program_string, const char *usage_string );
 
 // Process input strings, treating them as an option and argument pair.
 // The first is for the external API, the second the work routine declared
 // here for backward compatibilty.
-int c_plsetopt( char *opt, char *optarg );
+int c_plsetopt( const char *opt, const char *optarg );
 
-int plSetOpt( char *opt, char *optarg );
+int plSetOpt( const char *opt, const char *optarg );
 
 // Process options list using current options info.
-int c_plparseopts( int *p_argc, char **argv, PLINT mode );
+int c_plparseopts( int *p_argc, const char **argv, PLINT mode );
 
 // Print usage & syntax message.
 
@@ -2301,20 +2299,20 @@ int  plFindName( char *p );
 
 // Looks for the specified executable file according to usual search path.
 
-char * plFindCommand( char *fn );
+char * plFindCommand( const char *fn );
 
 // Gets search name for file by concatenating the dir, subdir, and file
 // name, allocating memory as needed.
 
-void  plGetName( char *dir, char *subdir, char *filename, char **filespec );
+void  plGetName( const char *dir, const char *subdir, const char *filename, char **filespec );
 
 // Prompts human to input an integer in response to given message.
 
-PLINT  plGetInt( char *s );
+PLINT  plGetInt( const char *s );
 
 // Prompts human to input a float in response to given message.
 
-PLFLT  plGetFlt( char *s );
+PLFLT  plGetFlt( const char *s );
 
 // Nice way to allocate space for a vectored 2d grid
 

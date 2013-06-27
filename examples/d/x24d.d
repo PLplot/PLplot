@@ -78,7 +78,7 @@ static PLFLT[] sy = [
 
 // Taken from http://www.columbia.edu/~fdc/pace/
 
-static char[][] peace = [
+static string[] peace = [
     // Mandarin
     "#<0x00>和平",
     // Hindi

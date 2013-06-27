@@ -50,10 +50,10 @@ int main( char[][] args )
     PLINT[]  box_colors;
     PLINT[]  box_patterns;
     PLFLT[]  box_scales;
-    PLINT[]  box_line_widths;
+    PLFLT[]  box_line_widths;
     PLINT[]  line_colors;
     PLINT[]  line_styles;
-    PLINT[]  line_widths;
+    PLFLT[]  line_widths;
     PLINT[]  symbol_numbers, symbol_colors;
     PLFLT[]  symbol_scales;
     string[] text, symbols;
@@ -126,7 +126,7 @@ int main( char[][] args )
     opt_base          = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX;
     opt_array[0]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
     line_styles[0]    = 1;
-    line_widths[0]    = 1;
+    line_widths[0]    = 1.;
     symbol_scales[0]  = 1.;
     symbol_numbers[0] = 4;
     symbols[0]        = "*";
@@ -187,7 +187,7 @@ int main( char[][] args )
     {
         opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
         line_styles[k]    = 1;
-        line_widths[k]    = 1;
+        line_widths[k]    = 1.;
         symbol_scales[k]  = 1.;
         symbol_numbers[k] = 2;
         symbols[k]        = "*";
@@ -343,7 +343,7 @@ int main( char[][] args )
         {
             opt_array[k]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
             line_styles[k]    = 1;
-            line_widths[k]    = 1;
+            line_widths[k]    = 1.;
             symbol_scales[k]  = 1.;
             symbol_numbers[k] = 2;
             symbols[k]        = "*";
@@ -473,8 +473,8 @@ int main( char[][] args )
     {
         opt_array[i]      = PL_LEGEND_SYMBOL;
         text[i]           = format( "%s%s", "Symbol ", special_symbols[i] );
-        text_colors[i]    = i + 1;
-        symbol_colors[i]  = i + 1;
+        text_colors[i]    = cast(PLINT) ( i + 1 );
+        symbol_colors[i]  = cast(PLINT) ( i + 1 );
         symbol_scales[i]  = text_scale;
         symbol_numbers[i] = 4;
         symbols[i]        = special_symbols[i];
@@ -498,10 +498,10 @@ int main( char[][] args )
     {
         opt_array[i]      = PL_LEGEND_SYMBOL;
         text[i]           = format( "%s %d", "Symbol Number", i + 2 );
-        text_colors[i]    = i + 1;
-        symbol_colors[i]  = i + 1;
+        text_colors[i]    = cast(PLINT) ( i + 1 );
+        symbol_colors[i]  = cast(PLINT) ( i + 1 );
         symbol_scales[i]  = text_scale;
-        symbol_numbers[i] = i + 2;
+        symbol_numbers[i] = cast(PLINT) ( i + 2 );
         symbols[i]        = special_symbols[2];
     }
 
@@ -523,8 +523,8 @@ int main( char[][] args )
     {
         opt_array[i]       = PL_LEGEND_COLOR_BOX;
         text[i]            = format( "%s %d", "Box Color", i + 1 );
-        text_colors[i]     = i + 1;
-        box_colors[i]      = i + 1;
+        text_colors[i]     = cast(PLINT) ( i + 1 );
+        box_colors[i]      = cast(PLINT) ( i + 1 );
         box_patterns[i]    = 0;
         box_scales[i]      = 0.8;
         box_line_widths[i] = 1;
@@ -553,7 +553,7 @@ int main( char[][] args )
         text[i]            = format( "%s %d", "Box Pattern", i );
         text_colors[i]     = 2;
         box_colors[i]      = 2;
-        box_patterns[i]    = i;
+        box_patterns[i]    = cast(PLINT) i;
         box_scales[i]      = 0.8;
         box_line_widths[i] = 1;
     }
@@ -580,7 +580,7 @@ int main( char[][] args )
         box_colors[i]      = 2;
         box_patterns[i]    = 3;
         box_scales[i]      = 0.8;
-        box_line_widths[i] = i + 1;
+        box_line_widths[i] = cast(PLINT) ( i + 1 );
     }
 
     opt = opt_base;
@@ -601,8 +601,8 @@ int main( char[][] args )
     {
         opt_array[i]   = PL_LEGEND_LINE;
         text[i]        = format( "%s %d", "Line Color", i + 1 );
-        text_colors[i] = i + 1;
-        line_colors[i] = i + 1;
+        text_colors[i] = cast(PLINT) ( i + 1 );
+        line_colors[i] = cast(PLINT) ( i + 1 );
         line_styles[i] = 1;
         line_widths[i] = 1;
     }
@@ -630,7 +630,7 @@ int main( char[][] args )
         text[i]        = format( "%s %d", "Line Style", i + 1 );
         text_colors[i] = 2;
         line_colors[i] = 2;
-        line_styles[i] = i + 1;
+        line_styles[i] = cast(PLINT) ( i + 1 );
         line_widths[i] = 1;
     }
 
@@ -655,7 +655,7 @@ int main( char[][] args )
         text_colors[i] = 2;
         line_colors[i] = 2;
         line_styles[i] = 1;
-        line_widths[i] = i + 1;
+        line_widths[i] = cast(PLINT) ( i + 1 );
     }
 
     opt = opt_base;

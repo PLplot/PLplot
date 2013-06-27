@@ -120,12 +120,12 @@ class plot {
         PLFLT shade_min = zmin + ( zmax - zmin ) * 0.4;
         PLFLT shade_max = zmin + ( zmax - zmin ) * 0.6;
         PLFLT sh_color  = 7;
-        PLINT sh_width  = 2;
+        PLFLT sh_width  = 2.;
         PLINT sh_cmap   = 0;
         PLINT min_color = 9;
         PLINT max_color = 2;
-        PLINT min_width = 2;
-        PLINT max_width = 2;
+        PLFLT min_width = 2.;
+        PLFLT max_width = 2.;
 
         plpsty( 8 );
         plshade( z, null, -1., 1., -1., 1.,

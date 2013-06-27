@@ -65,7 +65,7 @@ int main( char[][] args )
             y[j++] = 5.0 + 3.0 * sin( ( 2.0 * PI / 500. ) * theta );
         }
 
-        plcol0( i + 1 );
+        plcol0( cast(PLINT) ( i + 1 ) );
         plpsty( ( i + 3 ) % 8 + 1 );
         plfill( x, y );
         plcol0( 1 );

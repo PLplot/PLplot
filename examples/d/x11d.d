@@ -60,8 +60,8 @@ int main( char[][] args )
     PLFLT[] alt = [ 33.0, 17.0 ];
     PLFLT[] az  = [ 24.0, 115.0 ];
 
-    char[]  title[] = [ "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
-                        "#frPLplot Example 11 - Alt=17, Az=115, Opt=3" ];
+    string title[] = [ "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
+                       "#frPLplot Example 11 - Alt=17, Az=115, Opt=3" ];
 
     PLFLT xx, yy;
 
@@ -142,6 +142,8 @@ int main( char[][] args )
             case 3:
                 // magnitude colored wireframe plot with base contour
                 plmeshc( x, y, z, opt[k] | MAG_COLOR | BASE_CONT, clevel );
+                break;
+            default:
                 break;
             }
 

@@ -62,7 +62,7 @@ int main( char[][] args )
                 y[0] = 0.95 - 0.1 * i;
 
                 // Display the symbols
-                plsym( x, y, base[l] + k );
+                plsym( x, y, cast(PLINT) ( base[l] + k ) );
                 k = k + 1;
             }
         }

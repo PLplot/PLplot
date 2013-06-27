@@ -6,7 +6,6 @@
 
 import std.math;
 import std.stdio;
-import std.stream;
 
 import plplot;
 
@@ -83,7 +82,6 @@ int main( char[][] args )
             z[XDIM - 1][i] = 1.0; // botton
 
         pllab( "...around a blue square.", " ", "A red border should appear..." );
-
         plimage( z, 1.0, XDIM, 1.0, YDIM, 0., 0., 1.0, XDIM, 1.0, YDIM );
     }
 
@@ -131,7 +129,7 @@ int main( char[][] args )
     {
         if ( read_img( "../lena.pgm", img_f, width, height, num_col ) )
         {
-            fwritefln( stderr, "No such file" );
+            stderr.writeln( "No such file" );
             plend();
             return 1;
         }
@@ -141,7 +139,7 @@ int main( char[][] args )
     gray_cmap( num_col );
 
     // display Lena
-    plenv( 1.0, width, 1.0, height, 1, -1 );
+    plenv( 1.0, cast(PLFLT) width, 1.0, cast(PLFLT) height, 1, -1 );
 
     if ( !nointeractive )
         pllab( "Set and drag Button 1 to (re)set selection, Button 2 to finish.", " ", "Lena..." );
@@ -211,31 +209,34 @@ int main( char[][] args )
 // read image from file in binary ppm format
 int read_img( string fname, out PLFLT[][] img_f, out int width, out int height, out int num_col )
 {
-    ubyte[]      img;
+    ubyte[] img;
 
-    BufferedFile input = new BufferedFile;
+    if ( !std.file.exists( fname ) )
+        return 1;
+
+    File input;
     try {
-        input.open( fname, FileMode.In );
+        input.open( fname );
 
         string ver;
-        input.readf( "%s", &ver );
+        ver = input.readln();
 
-        if ( ver != "P5" )      // I only understand this!
+        if ( ver != "P5\n" )      // I only understand this!
             return 1;
 
         char   dummy;
-        char[] result;
-        input.read( dummy );
+        string result;
+        input.readf( "%c", &dummy );
         while ( dummy == '#' )
         {
-            result = input.readLine();
+            result = input.readln();
             if ( result.length == 0 )
-                result = input.readLine();               // workaround: for some reason the first call returns empty string
-            input.read( dummy );
+                result = input.readln();               // workaround: for some reason the first call returns empty string
+            input.readf( "%c", &dummy );
         }
-        input.seek( -1, SeekPos.Current );
+        input.seek( -1, SEEK_CUR );
 
-        if ( input.readf( "%d %d %d", &width, &height, &num_col ) != 9 )    // width, height num colors
+        if ( input.readf( "%d %d %d\n", &width, &height, &num_col ) != 3 )    // width, height num colors
             return 1;
 
         img = new ubyte[width * height];
@@ -244,9 +245,10 @@ int read_img( string fname, out PLFLT[][] img_f, out int width, out int height, 
         for ( int i = 0; i < width; i++ )
             img_f[i] = new PLFLT[height];
 
-        if ( input.read( img ) != width * height )
+        if ( input.rawRead( img ).length != ( width * height ) )
             return 1;
     } catch ( Exception except ) {
+        stderr.writeln( "Caught exception reading " ~ fname );
         return 1;
     } finally {
         input.close();
