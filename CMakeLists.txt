@@ -34,7 +34,7 @@ set(
 # the PLplot core C library and core C examples.  All other compilers
 # required by our bindings are optional in that if no working compiler
 # of the kind needed is available, the associated bindings and
-# examples are disabled.  
+# examples are disabled.
 project(plplot C)
 
 message(STATUS "CMake version = ${CMAKE_VERSION}")
@@ -124,9 +124,9 @@ endif(MSVC_VERSION GREATER 1399)
 
 # in windows all created dlls are gathered in the dll directory
 # if you add this directory to your PATH all shared libraries are available
-if(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
+if(BUILD_SHARED_LIBS AND WIN32)
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
-endif(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
+endif(BUILD_SHARED_LIBS AND WIN32)
 
 # Borland Compiler must compile in ANSII mode
 if(BORLAND)

@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 install(
-  FILES README.drivers README.wxwidgets 
+  FILES README.drivers README.wxwidgets
   DESTINATION ${DOC_DIR}
   )
 
@@ -41,7 +41,7 @@ if(ENABLE_DYNDRIVERS)
       test-drv-info.c
       PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR} -DUSINGDLL"
       )
-    
+
     add_executable(test-drv-info test-drv-info.c)
     target_link_libraries(test-drv-info
       plplot${LIB_TAG}
@@ -50,12 +50,12 @@ if(ENABLE_DYNDRIVERS)
 
     # in windows we move test-drv-info to the dll directory
     # otherwise we use the RPATH functionality
-    if(WIN32 AND NOT CYGWIN)
+    if(WIN32)
       set_target_properties(
 	test-drv-info
 	PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dll
 	)
-    else(WIN32 AND NOT CYGWIN)
+    else(WIN32)
       set(test-drv-info_RPATH
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_BINARY_DIR}/src
@@ -64,19 +64,19 @@ if(ENABLE_DYNDRIVERS)
         ${CMAKE_BINARY_DIR}/lib/qsastime
         ${libplplot${LIB_TAG}_RPATH}
         )
-    
+
       set_target_properties(
         test-drv-info
         PROPERTIES
         INSTALL_RPATH "${test-drv-info_RPATH}"
         BUILD_WITH_INSTALL_RPATH ON
         )
-    endif(WIN32 AND NOT CYGWIN)
+    endif(WIN32)
     get_target_property(test-drv-info_LOCATION test-drv-info LOCATION)
     set(test_dyndrivers_TDEPENDS test-drv-info)
 
   endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
-  
+
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
@@ -100,7 +100,7 @@ if(ENABLE_DYNDRIVERS)
     # for non-standard locations with the -L and -l forms.
     #message("${SOURCE_ROOT_NAME}_LINK_FLAGS = ${${SOURCE_ROOT_NAME}_LINK_FLAGS}")
     # ${SOURCE_ROOT_NAME}_TARGETS is a list of PLplot CMake targets that the
-    # device driver depends on.  
+    # device driver depends on.
     #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
 
     if(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
@@ -135,7 +135,7 @@ if(ENABLE_DYNDRIVERS)
     endif(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
 
     # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
-    # each driver in ${DRIVERS_LIST}.  This is only used for the 
+    # each driver in ${DRIVERS_LIST}.  This is only used for the
     # install-tree rpath since cmake handles the build-tree rpath
     # automatically (so long as full pathnames to libraries are used).
     # Order is important here because of /usr/lib concerns.
@@ -157,7 +157,7 @@ if(ENABLE_DYNDRIVERS)
       # Mac OS X have been tested so far.
       set(DYNAMIC_SUFFIX ".so")
     endif(WIN32)
-    
+
     #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
     if(USE_RPATH)
       set_target_properties(
@@ -180,7 +180,7 @@ if(ENABLE_DYNDRIVERS)
     if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
       get_target_property(
 	${SOURCE_ROOT_NAME}_LOCATION
-	${SOURCE_ROOT_NAME} 
+	${SOURCE_ROOT_NAME}
 	LOCATION
 	)
       add_custom_command(
@@ -200,7 +200,7 @@ if(ENABLE_DYNDRIVERS)
 	DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	)
-      set_property(GLOBAL  
+      set_property(GLOBAL
 	PROPERTY FILE_DEPENDS_${SOURCE_ROOT_NAME}_dyndriver
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	)
@@ -210,13 +210,13 @@ if(ENABLE_DYNDRIVERS)
 	)
       list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME}_dyndriver)
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
-    
-    install(TARGETS ${SOURCE_ROOT_NAME} 
+
+    install(TARGETS ${SOURCE_ROOT_NAME}
       EXPORT export_plplot
       DESTINATION ${DRV_DIR}
       )
     install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info 
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info
       DESTINATION ${DRV_DIR}
       )
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})

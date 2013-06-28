@@ -38,9 +38,9 @@ endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
 # In windows all created dlls are gathered in the dll directory
 # if you add this directory to your PATH all shared libraries are available
-if(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
+if(BUILD_SHARED_LIBS AND WIN32)
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
-endif(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
+endif(BUILD_SHARED_LIBS AND WIN32)
 
 set(PACKAGE shp)
 
