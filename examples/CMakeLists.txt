@@ -421,19 +421,21 @@ if(BUILD_TEST)
     )
 
   if(CORE_BUILD)
-    set(custom_test_command ${CMAKE_BINARY_DIR}/plplot_test/plplot-test.sh)
+    set(custom_test_script ${CMAKE_BINARY_DIR}/plplot_test/plplot-test.sh)
     set(custom_env EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples)
     set(java_custom_env ${custom_env} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar)
-    set(compare_command ${CMAKE_BINARY_DIR}/plplot_test/test_diff.sh)
+    set(compare_script ${CMAKE_BINARY_DIR}/plplot_test/test_diff.sh)
   else(CORE_BUILD)
-    set(custom_test_command ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh)
+    set(custom_test_script ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh)
     set(custom_env SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR})
     set(java_custom_env ${custom_env})
-    set(compare_command ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
+    set(compare_script ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
   endif(CORE_BUILD)
+  set(custom_test_command ${SH_EXECUTABLE} ${custom_test_script})
+  set(compare_command ${SH_EXECUTABLE} ${compare_script})
 
   if(PLD_psc)
-    set(compare_file_depends ${custom_test_command})
+    set(compare_file_depends ${custom_test_script})
     if(ENABLE_DYNDRIVERS)
       # The ps shared object implements both the psc (and ps) devices.
       get_property(FILE_DEPENDS_ps GLOBAL PROPERTY FILE_DEPENDS_ps_dyndriver)
@@ -532,7 +534,7 @@ if(BUILD_TEST)
   # ENABLE_c is always ON by construction, but test it anyway for
   # consistency sake.
   if(ENABLE_c)
-    set(device_depends ${custom_test_command})
+    set(device_depends ${custom_test_script})
     # See explanation above about what to do with files_examples_c and
     # targets_examples_c.
     if(files_examples_c)
