@@ -1,0 +1,135 @@
+The build_projects project should work out of the box for
+Linux or Mac OS X systems with a full development tool-chain installed.
+
+But the situation is different on Windows where you have to download
+and install specific toolchain software before you start.  
+
+===============================================================================
+Installing the Required Windows Toolchain:
+
+N.B. There is a good possibility that build_projects will work with the
+Microsoft proprietary toolchain, and I would be happy to accept
+patches to make that so (including a patch for this file), but my only
+experience is with free software so until I receive such patches, the
+instructions below refer only to free software toolchains.
+
+1. Install latest MinGW/MSYS using the automatic installer
+
+Use the latest automatic installer (currently
+mingw-get-inst-20120426.exe which can be obtained from
+http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/mingw-get-inst-20120426/).
+Specify obtaining the latest updates, all relevant compilers,
+(everythiing except objc) and also specify the MSYS development
+software.  This should install, for example, version 4.7.2 of gcc,
+g++, Ada, and gfortran.
+
+2. Downgrade one component of MSYS.
+N.B. This must be done from the cmd environment since
+if you run this from bash.exe, that executable's use of MSYS
+libraries will screw up the downgrade.
+
+MinGW-4.7.2\bin\mingw-get.exe upgrade msys-core-bin=1.0.17-1
+
+This downgrade is necessary and quite important, see
+http://sourceforge.net/p/mingw/bugs/1950.  Otherwise, you
+will get an infinite hang from any attempt to do parallel
+builds (which build_projects automatically uses for many
+of its builds) using the MSYS make.exe command.
+
+3. Install additional needed MSYS software that is not installed by
+the automatic installer.
+
+mingw-get.exe --recursive install msys-unzip
+
+4. Copy the MinGW-4.7.2/msys/1.0/bin directory to 
+MinGW-4.7.2/msys/1.0/bin_without_sh and remove sh.exe from that latter
+PATH (This works around a CMake issue with the "MinGW Makefiles" generator.)
+
+5. Put both MinGW-4.7.2/bin and either MinGW-4.7.2/msys/1.0/bin (for
+any Windows CMake generator you are going to use other than "MinGW
+Makefiles) or MinGW-4.7.2/msys/1.0/bin_without_sh (for the case of
+"MinGW Makefiles" on your PATH.
+
+6. Download a recent cmake.exe version from
+http://www.cmake.org/files.  I am currently using
+v2.8/cmake-2.8.10.2-win32-x86.zip.  Unpack this using the unzip
+command you just installed.  Put the resulting
+cmake-2.8.10.2-win32-x86/bin on your PATH.
+
+7. If you are going to try the "NMake Makefiles JOM" generator, download
+the latest jom_VERSION.zip from http://releases.qt-project.org/jom, unpack
+it with unzip.exe just just installed and put jom.exe on your PATH.
+
+8. If you are going to try the "Ninja" generator, then follow the
+build instructions for that tool at
+http://www.cmake.org/pipermail/cmake/2013-June/055038.html + one
+correction in a following post in that thread.
+===============================================================================
+
+Build instructions:
+
+1. Adjust the local path to the PLplot source tree in plplot/bp.cmake
+(this will only necessary until build_projects is updated to configure
+a build of an svn client that works on Windows).  The alternative is
+to download and test a released version of PLplot, but I prefer the
+trunk version.
+
+2. Examples of configuring a build and test of PLplot and some of its
+soft dependencies on several different systems with various generators
+and build tools.  Adjust these for your own paths, and note the first
+three commands in each group are to insure you start with a clean
+build directory
+
+Linux "Unix Makefiles"
+
+wine@raven> mkdir -p /home/wine/newstart/build_script/build_dir-linux
+wine@raven> cd /home/wine/newstart/build_script/build_dir-linux
+wine@raven> rm -rf /home/wine/newstart/build_script/build_dir-linux/*
+wine@raven> cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
+wine@raven> make VERBOSE=1 build_plplot >& build_plplot.out
+
+Windows "MinGW Makefiles"
+
+bash.exe-3.1$ mkdir -p /z/home/wine/newstart/build_script/build_dir-git_mingw
+bash.exe-3.1$ cd /z/home/wine/newstart/build_script/build_dir-git_mingw
+bash.exe-3.1$ rm -rf /z/home/wine/newstart/build_script/build_dir-git_mingw/*
+bash.exe-3.1$ cmake -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_mingw /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
+bash.exe-3.1$ mingw32-make.exe VERBOSE=1 build_plplot >& build_plplot.out
+
+Other combinations that have been successfully tested in part by building
+all the C and C++ PLplot dependencies with the "build_all" target.
+
+Note, the "build_all" target does not include PLplot itself yet
+(which has additional languages needs such as Fortran, and Ada which
+are known to not work for "Ninja" and which might not work for "NMake Makefiles JOM" ).  Also note, we assume something similar to the first three commands
+given above has been used to start with a clean build tree.
+
+On Linux:
+
+# "Ninja" generator
+irwin@raven> cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux_ninja ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
+irwin@raven> ninja -v build_all >& build_all.out
+
+On Windows:
+
+# "MSYS Makefiles" generator
+# This one should work for the build_plplot target as well, but I
+# haven't tested it yet.
+bash.exe-3.1$ cmake -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
+bash.exe-3.1$ make.exe VERBOSE=1 build_all >& build_all.out
+
+# "Ninja" generator
+bash.exe-3.1$ cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_ninja /z/home/software/plplot_svn/HEAD/pl
+plot_allura/cmake/build_projects >& cmake.out
+bash.exe-3.1$ ninja -v build_all >& build_all.out
+
+# "NMake Makefiles JOM" generator
+# This CMake generator currently has some issues with using the MinGW suite
+# of compilers by default that must be worked around by being specific about
+# what compilers you want.
+bash.exe-3.1$ cmake -G"NMake Makefiles JOM" -DCMAKE_C_COMPILER:FILEPATH=/z/home/wine/newstart/MinGW-4.7.2/bin/gcc.exe -DCMAKE_CXX_COMPILER:FILEPATH=/z/home/wine/newstart/MinGW-4.7.2/bin/g++.exe -DCMAKE_RC_COMPILER:FILEPATH=/z/home/wine/newstart/MinGW-4.7.2/bin/windres.exe -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_jom /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
+bash.exe-3.1$ jom build_all >& build_all.out
+
+N.B. All of the above have been run without issues on a Wine platform
+(wine-git close to wine-1.6-rc1) and therefore should also work for
+the Microsoft version of Windows.
