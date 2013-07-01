@@ -82,23 +82,6 @@ else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
-# Set macros to define visibility for various Windows platforms.
-# (gcc visibility support happens by default if none of these
-# are defined).
-# N.B. something slightly different must be done for the demo
-# visibility, but at this stage this CMake-based build system ignores
-# building the demos so don't worry about this issue for now.
-
-if(WIN32)
-  if(CYGWIN)
-    # Special Cygwin visibility support.
-    add_definitions(-DHPDF_DLL_MAKE_CDECL)
-  else(CYGWIN)
-    # proprietary and Mingw compilers for Windows without Cygwin.
-    add_definitions(-DHPDF_DLL_MAKE)
-  endif(CYGWIN)
-endif(WIN32)
-
 # Description of libharu for cpack.
 set(LIBHARU_DESCRIPTION "libHaru is a free, cross platform, open source library for generating PDF files.")
 set(LIBHARU_PACKAGE_NAME "libHaru-${LIBHARU_VERSION}-${COMPILER_LABEL}")

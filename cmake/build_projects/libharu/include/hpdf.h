@@ -20,36 +20,32 @@
 #include "hpdf_config.h"
 #include "hpdf_version.h"
 
-#ifdef HPDF_DLL_MAKE
-#    define HPDF_EXPORT(A)  __declspec(dllexport) A  __stdcall
+#if defined ( hpdf_EXPORTS )
+    #if defined ( HPDF_DLL_MAKE )
+        #define HPDF_EXPORT(A)  __declspec(dllexport) A  __stdcall
+    #elif defined ( HPDF_DLL_MAKE_CDECL )
+        #define HPDF_EXPORT(A)  __declspec(dllexport) A
+    #elif defined ( __GNUC__ ) && __GNUC__ > 3
+     // Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
+        #define HPDF_EXPORT(A)  __attribute__ ((visibility("default"))) A
+    #elif defined ( HPDF_SHARED_MAKE )
+        #define HPDF_EXPORT(A) extern A
+    #else
+        #define HPDF_EXPORT(A) extern A
+    #endif
 #else
-#    ifdef HPDF_DLL_MAKE_CDECL
-#        define HPDF_EXPORT(A)  __declspec(dllexport) A
-#    else
-#        ifdef HPDF_SHARED_MAKE
-#            define HPDF_EXPORT(A)  extern A
-#        elif defined ( __GNUC__ ) && __GNUC__ > 3
-/* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x */
-#            define HPDF_EXPORT(A)  __attribute__ ((visibility("default"))) A
-#        endif
-#    endif /* HPDF_DLL_MAKE_CDECL */
-#endif /* HPDF_DLL_MAKE */
-
-#ifdef HPDF_DLL
-#    define HPDF_SHARED
-#    define HPDF_EXPORT(A)  __declspec(dllimport) A  __stdcall
-#else
-#    ifdef HPDF_DLL_CDECL
-#        define HPDF_SHARED
-#        define HPDF_EXPORT(A)  __declspec(dllimport) A
-#    endif /* HPDF_DLL_CDECL */
-#endif /* HPDF_DLL */
+    #if defined ( HPDF_DLL)
+        #define HPDF_SHARED
+        #define HPDF_EXPORT(A)  __declspec(dllimport) A  __stdcall
+    #elif defined ( HPDF_DLL_CDECL )
+        #define HPDF_SHARED
+        #define HPDF_EXPORT(A)  __declspec(dllimport) A
+    #else
+        #define HPDF_EXPORT(A) extern A
+    #endif
+#endif
 
 #ifdef HPDF_SHARED
-
-#ifndef HPDF_EXPORT
-#define HPDF_EXPORT(A) extern A
-#endif /* HPDF_EXPORT */
 
 #include "hpdf_consts.h"
 #include "hpdf_types.h"
@@ -67,12 +63,10 @@ typedef HPDF_HANDLE   HPDF_Destination;
 typedef HPDF_HANDLE   HPDF_XObject;
 typedef HPDF_HANDLE   HPDF_Annotation;
 typedef HPDF_HANDLE   HPDF_ExtGState;
+typedef HPDF_HANDLE   HPDF_FontDef;
+typedef HPDF_HANDLE   HPDF_U3D;
 
 #else
-
-#ifndef HPDF_EXPORT
-#define HPDF_EXPORT(A)  A
-#endif /* HPDF_EXPORT  */
 
 #include "hpdf_consts.h"
 #include "hpdf_doc.h"

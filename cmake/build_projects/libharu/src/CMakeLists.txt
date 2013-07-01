@@ -86,6 +86,16 @@ if(POST_2.1.0)
     )
 endif(POST_2.1.0)
 
+# Set macros to define visibility for various Windows platforms.
+# (gcc visibility support happens by default if none of these
+# are defined).
+
+if(CYGWIN OR MINGW)
+  add_definitions(-DHPDF_DLL_MAKE_CDECL)
+elseif(WIN32)
+  add_definitions(-DHPDF_DLL_MAKE)
+endif(CYGWIN OR MINGW)
+
 # =======================================================================
 # create static and shared haru library
 # =======================================================================
