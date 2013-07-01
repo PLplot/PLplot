@@ -208,9 +208,9 @@ set(build_configuration_LIST
   libharu
   libqhull
   ndiff
-#  plplot
+  plplot
   shapelib
-#  wxwidgets
+  wxwidgets
 )
 
 foreach(build_configuration ${build_configuration_LIST})
