@@ -54,7 +54,9 @@ Makefiles) or MinGW-4.7.2/msys/1.0/bin_without_sh (for the case of
 http://www.cmake.org/files.  I am currently using
 v2.8/cmake-2.8.10.2-win32-x86.zip.  Unpack this using the unzip
 command you just installed.  Put the resulting
-cmake-2.8.10.2-win32-x86/bin on your PATH.
+cmake-2.8.10.2-win32-x86/bin on your PATH.  This downloadable binary
+(which poses a security concern like all downloadable binaries)
+is only used once.
 
 7. If you are going to try the "NMake Makefiles JOM" generator, download
 the latest jom_VERSION.zip from http://releases.qt-project.org/jom, unpack
@@ -66,15 +68,57 @@ http://www.cmake.org/pipermail/cmake/2013-June/055038.html + one
 correction in a following post in that thread.
 ===============================================================================
 
-Build instructions:
+Build instructions for the buildtools (such as cmake):
 
-1. Adjust the local path to the PLplot source tree in plplot/bp.cmake
-(this will only necessary until build_projects is updated to configure
+Note that when cmake is built this way it is configured by the
+bootstrap script (which demands sh is on the PATH) rather than cmake
+itself so the downloaded binary version of cmake used to configure the
+build_tools build is not actually used to build cmake which provides a
+slight increase in security for the paranoid.  And you should be
+paranoid about security (i.e., you should build your own
+version of CMake from source, in my opinion rather than relying
+on a downloaded binary) since crackers are always
+trying it on.
+
+Note the special paths below which have a _buildtools suffix, and also
+note the special option -DBUILD_THE_BUILDTOOLS=ON which configures
+builds of _only_ the build tools such as cmake that are used for the
+other software projects.
+
+Linux "Unix Makefiles"
+
+wine@raven> mkdir -p /home/wine/newstart/build_script/build_dir-linux_buildtools
+wine@raven> cd /home/wine/newstart/build_script/build_dir-linux_buildtools
+wine@raven> rm -rf /home/wine/newstart/build_script/build_dir-linux_buildtools/*
+wine@raven> cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux_buildtools -DBUILD_THE_BUILDTOOLS=ON ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
+wine@raven> make VERBOSE=1 build_all >& build_all.out
+
+Windows "MSYS Makefiles" (This is a special case that requires sh.exe to
+be on the PATH so the "MinGW Makefiles" generator cannot be used.
+
+bash.exe-3.1$ mkdir -p /z/home/wine/newstart/build_script/build_dir-git_buildtools
+bash.exe-3.1$ cd /z/home/wine/newstart/build_script/build_dir-git_buildtools
+bash.exe-3.1$ rm -rf /z/home/wine/newstart/build_script/build_dir-git_buildtools/*
+bash.exe-3.1$ cmake -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_buildtools -DBUILD_THE_BUILDTOOLS=ON /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
+bash.exe-3.1$ mingw32-make.exe VERBOSE=1 build_all >& build_all.out
+
+Build instructions for everything else which is not a build tool but
+which uses those (such as cmake) which have been built above:
+
+1. Put the bin directory contained in the install tree created above
+at the top of the PATH. In my case this directory is either
+/home/wine/newstart/build_script/install-linux_buildtools/bin (Linux)
+or /z/home/wine/newstart/build_script/install-git_buildtool/bin
+(Windows).  This step insures you will be using the buildtools you
+built yourself from source from now on rather than some downloaded binary.
+
+2. Adjust the local path to the PLplot source tree in plplot/bp.cmake
+(this will only be necessary until build_projects is updated to configure
 a build of an svn client that works on Windows).  The alternative is
 to download and test a released version of PLplot, but I prefer the
-trunk version.
+svn trunk version because that is much more up to date.
 
-2. Examples of configuring a build and test of PLplot and some of its
+3. Examples of configuring a build and test of PLplot and some of its
 soft dependencies on several different systems with various generators
 and build tools.  Adjust these for your own paths, and note the first
 three commands in each group are to insure you start with a clean

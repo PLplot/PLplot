@@ -201,17 +201,39 @@ set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 # on those individual build targets
 set(build_target_LIST)
 
-# List of all configurations.  Order doesn't matter because multiple
-# attempts to include the same configuration (via dependencies) are ignored.
-set(build_configuration_LIST
-  libagg
-  libharu
-  libqhull
-  ndiff
-  plplot
-  shapelib
-  wxwidgets
-)
+option(BUILD_THE_BUILDTOOLS "Build the buildtools (such as cmake) used for the rest of the builds" OFF)
+
+if(BUILD_THE_BUILDTOOLS)
+  set(executables_LIST
+    sh
+    )
+  foreach(executable ${executables_LIST})
+    string(TOUPPER ${executable} EXECUTABLE)
+    find_program(${EXECUTABLE}_EXECUTABLE ${executable})
+    if(NOT ${EXECUTABLE}_EXECUTABLE)
+      if(MSYS_PLATFORM)
+	message(STATUS "${executable} missing from your MSYS platform.  If sh is missing, use a generator other than 'MinGW Makefiles'.  If something else is missing use mingw-get to install it.")
+      endif(MSYS_PLATFORM)
+      message(FATAL_ERROR "${executable} must be on your PATH in order for build_projects to work correctly")  
+    endif(NOT ${EXECUTABLE}_EXECUTABLE)
+  endforeach(executable ${executables_LIST})
+
+  set(build_configuration_LIST
+    cmake
+    )
+else(BUILD_THE_BUILDTOOLS)
+  # List of all configurations.  Order doesn't matter because multiple
+  # attempts to include the same configuration (via dependencies) are ignored.
+  set(build_configuration_LIST
+    libagg
+    libharu
+    libqhull
+    ndiff
+    plplot
+    shapelib
+    wxwidgets
+    )
+endif(BUILD_THE_BUILDTOOLS)
 
 foreach(build_configuration ${build_configuration_LIST})
   include(${build_configuration}/bp.cmake)
