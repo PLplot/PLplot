@@ -199,14 +199,14 @@ static void UpdatePageMetrics( PLStream *pls, char flag );
         SetClassLong( dev->hwnd, GCL_HCURSOR, (long) dev->cursor ); \
         SetCursor( dev->cursor ); } while ( 0 )
 
-#define NormalCursor()       do {                                   \
-        dev->cursor = LoadCursor( NULL, IDC_ARROW );                \
-        SetClassLong( dev->hwnd, GCL_HCURSOR, (long) dev->cursor ); \
+#define NormalCursor()       do {                                          \
+        dev->cursor = LoadCursor( NULL, IDC_ARROW );                       \
+        SetClassLongPtr( dev->hwnd, GCL_HCURSOR, (LONG_PTR) dev->cursor ); \
         SetCursor( dev->cursor ); } while ( 0 )
 
-#define BusyCursor()         do {                                   \
-        dev->cursor = LoadCursor( NULL, IDC_WAIT );                 \
-        SetClassLong( dev->hwnd, GCL_HCURSOR, (long) dev->cursor ); \
+#define BusyCursor()         do {                                          \
+        dev->cursor = LoadCursor( NULL, IDC_WAIT );                        \
+        SetClassLongPtr( dev->hwnd, GCL_HCURSOR, (LONG_PTR) dev->cursor ); \
         SetCursor( dev->cursor ); } while ( 0 )
 
 #define PopupPrint       0x08A1
