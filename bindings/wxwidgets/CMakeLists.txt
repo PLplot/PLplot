@@ -182,7 +182,7 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
       ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
       )
     configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
+      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
       ${PC_CONFIGURED_FILE}
       @ONLY
       )

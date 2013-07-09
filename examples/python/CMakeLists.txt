@@ -240,7 +240,7 @@ if(CORE_BUILD)
   set(python_location5 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
   set(python_location6 ${CMAKE_BINARY_DIR}/bindings/gnome2/python)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
     @ONLY
     )
@@ -251,7 +251,7 @@ if(CORE_BUILD)
   set(python_location4)
   set(python_location5)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
     @ONLY
     )

@@ -97,7 +97,7 @@ if(CORE_BUILD)
     set(HAVE_F77_ISNAN_TRUE C)
   endif(FORTRAN_HAVE_ISNAN)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/plf77demos.inc.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/plf77demos.inc.in
     ${CMAKE_CURRENT_BINARY_DIR}/plf77demos.inc
     )
 

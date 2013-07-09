@@ -37,7 +37,7 @@ if(SH_EXECUTABLE)
   #Build-tree configuration
   set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
   configure_file(
-    plplot-test.sh.cmake
+    plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
     @ONLY
     )
@@ -45,7 +45,7 @@ if(SH_EXECUTABLE)
   #Install-tree configuration
   set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
   configure_file(
-    plplot-test.sh.cmake
+    plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install
     @ONLY
     )

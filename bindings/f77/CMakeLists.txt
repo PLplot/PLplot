@@ -97,7 +97,7 @@ if(ENABLE_f77)
   endif(F77_CMD_LINE)
 
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/configurable.f.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/configurable.f.in
     ${CMAKE_CURRENT_BINARY_DIR}/configurable.f
     )
 
@@ -268,7 +268,7 @@ if(ENABLE_f77)
       ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
       )
     configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
+      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
       ${PC_CONFIGURED_FILE}
       @ONLY
       )
