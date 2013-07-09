@@ -14,11 +14,11 @@ find_path(GD_INCLUDE_DIR gd.h
 /usr/include
 )
 
-if(WIN32 AND NOT CYGWIN)
+if(WIN32_AND_NOT_CYGWIN)
   set(GD_NAMES ${GD_NAMES} bgd)
 else(WIN32)
   set(GD_NAMES ${GD_NAMES} gd)
-endif(WIN32 AND NOT CYGWIN)
+endif(WIN32_AND_NOT_CYGWIN)
 
 find_library(GD_LIBRARY
   NAMES ${GD_NAMES}
@@ -33,12 +33,12 @@ else(GD_LIBRARY AND GD_INCLUDE_DIR)
 endif(GD_LIBRARY AND GD_INCLUDE_DIR)
 
 if(GD_FOUND)
-  if(WIN32 AND NOT CYGWIN)
+  if(WIN32_AND_NOT_CYGWIN)
     set(GD_SUPPORTS_PNG ON)
     set(GD_SUPPORTS_JPEG ON)
     set(GD_SUPPORTS_GIF ON)
     get_filename_component(GD_LIBRARY_DIR ${GD_LIBRARY} PATH)
-  else(WIN32 AND NOT CYGWIN)
+  else(WIN32_AND_NOT_CYGWIN)
     include(CheckLibraryExists)
     get_filename_component(GD_LIB_PATH ${GD_LIBRARY} PATH)
     get_filename_component(GD_LIB ${GD_LIBRARY} NAME)
@@ -110,7 +110,7 @@ if(GD_FOUND)
         set(GD_LIBRARY_DIR "${GD_LIBRARY_DIR}" "${GD_NEXTLIBDIR}")
       endif(NOT GD_TMP_FOUND)
     endforeach(GD_LIB ${GD_LIBRARIES})
-  endif(WIN32 AND NOT CYGWIN)
+  endif(WIN32_AND_NOT_CYGWIN)
 endif(GD_FOUND)
 
 if(GD_FOUND)

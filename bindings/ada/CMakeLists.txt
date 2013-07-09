@@ -70,7 +70,7 @@ if(ENABLE_ada)
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed
   # at the Ada language support level and not worked around here.
-  if(WIN32 AND NOT CYGWIN)
+  if(WIN32_AND_NOT_CYGWIN)
     add_custom_command(
       TARGET plplotada${LIB_TAG} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different 
@@ -78,7 +78,7 @@ if(ENABLE_ada)
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll
       VERBATIM
       )
-  endif(WIN32 AND NOT CYGWIN)
+  endif(WIN32_AND_NOT_CYGWIN)
 
   target_link_libraries(plplotada${LIB_TAG}
     plplot${LIB_TAG} ${GNAT_LIB}

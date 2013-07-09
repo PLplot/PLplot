@@ -57,6 +57,15 @@ else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   cmake_minimum_required(VERSION 2.8.6 FATAL_ERROR)
 endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
+# Force CMake to _NOT_ define 'WIN32' on Cygwin
+set(CMAKE_LEGACY_CYGWIN_WIN32 OFF)
+set(WIN32_AND_NOT_CYGWIN ${WIN32})
+if(WIN32 OR CYGWIN)
+  set(WIN32_OR_CYGWIN ON)
+else(WIN32 OR CYGWIN)
+  set(WIN32_OR_CYGWIN OFF)
+endif(WIN32 OR CYGWIN)
+
 #foreach(policy RANGE 0 9)
 #  cmake_policy(GET CMP000${policy} policy_result)
 #  message(STATUS "Policy CMP000${policy} is ${policy_result}")
