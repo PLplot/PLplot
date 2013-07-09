@@ -20,12 +20,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/plConfig.h.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/plConfig.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/plDevs.h.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/plDevs.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
   )
 
