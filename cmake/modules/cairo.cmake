@@ -179,9 +179,9 @@ if(NOT PLD_extcairo)
   set(extcairo_true "#")
 endif(NOT PLD_extcairo)
 
-if(NOT WIN32)
+if(NOT WIN32_OR_CYGWIN)
   message(STATUS 
     "Not a Windows platform so setting wincairo driver to OFF."
     )
   set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
-endif(NOT WIN32)
+endif(NOT WIN32_OR_CYGWIN)

@@ -69,16 +69,16 @@ if(ENABLE_pyqt4)
     ${plplot_pyqt4_SRC}
     )
 
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     set_target_properties(
       plplot_pyqt4
       PROPERTIES
       PREFIX ""
       SUFFIX ".pyd"
       )
-  else(WIN32)
+  else(WIN32_OR_CYGWIN)
     set_target_properties(plplot_pyqt4 PROPERTIES PREFIX "")
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
 
   target_link_libraries(
     plplot_pyqt4

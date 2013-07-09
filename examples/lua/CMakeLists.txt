@@ -102,11 +102,11 @@ if(CORE_BUILD)
     set_property(GLOBAL PROPERTY FILES_examples_lua ${command_DEPENDS})
   endif(BUILD_TEST)
 
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     set(lua_lib_location ${CMAKE_BINARY_DIR}/dll)
-  else(WIN32)
+  else(WIN32_OR_CYGWIN)
     set(lua_lib_location ${CMAKE_BINARY_DIR}/bindings/lua)
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua

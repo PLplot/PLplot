@@ -95,10 +95,10 @@ if(ENABLE_f77 OR ENABLE_f95)
     set(TARGET_FORTRAN "CVF" CACHE STRING "Target Fortran Compiler")
   endif(CMAKE_Fortran_COMPILER MATCHES ".*/DF.*")
 
-  if(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32)
+  if(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32_OR_CYGWIN)
     # Compaq Visual Fortran - alternative name
     message(STATUS "NOTICE: " "Found Compaq Visual Fortran")
     set(TARGET_FORTRAN "CVF" CACHE STRING "Target Fortran Compiler")
-  endif(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32)
+  endif(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32_OR_CYGWIN)
 
 endif(ENABLE_f77 OR ENABLE_f95)

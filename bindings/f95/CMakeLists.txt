@@ -45,7 +45,7 @@ if(ENABLE_f95)
     )
 
   ## Build C part of F95 bindings
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     # Set the flags for the C compiler. The C stubs need to have the
     # correct case and calling convention for the Fortran compiler
     IF(TARGET_FORTRAN MATCHES "IVF")
@@ -55,7 +55,7 @@ if(ENABLE_f95)
       SET(DEFFILE "")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
 
   set(plplotf95c${LIB_TAG}_LIB_SRCS
     sc3d.c

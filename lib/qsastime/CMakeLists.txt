@@ -138,9 +138,9 @@ if(TEST_QSASTIME)
   # Don't bother with building qsastime_testlib on Windows because its 
   # C library is incapable of providing useful time routines to act
   # as comparisons with qsastime library results.
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     set(BUILD_QSASTIME_TESTLIB OFF CACHE BOOL "Build qsastime_testlib application which is used to test the qsastime library against the C library time routines" FORCE)
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
 
   # qsastime_extra.[ch] provides helper functions for qsastime_test that should
   # not be part of the library.

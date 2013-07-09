@@ -50,12 +50,12 @@ if(ENABLE_DYNDRIVERS)
 
     # in windows we move test-drv-info to the dll directory
     # otherwise we use the RPATH functionality
-    if(WIN32)
+    if(WIN32_OR_CYGWIN)
       set_target_properties(
 	test-drv-info
 	PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dll
 	)
-    else(WIN32)
+    else(WIN32_OR_CYGWIN)
       set(test-drv-info_RPATH
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_BINARY_DIR}/src
@@ -71,7 +71,7 @@ if(ENABLE_DYNDRIVERS)
         INSTALL_RPATH "${test-drv-info_RPATH}"
         BUILD_WITH_INSTALL_RPATH ON
         )
-    endif(WIN32)
+    endif(WIN32_OR_CYGWIN)
     get_target_property(test-drv-info_LOCATION test-drv-info LOCATION)
     set(test_dyndrivers_TDEPENDS test-drv-info)
 
@@ -149,14 +149,14 @@ if(ENABLE_DYNDRIVERS)
     # the prefix should always be nothing (rather than lib) and the suffix
     # should be set in a platform-dependent manner in order for libltdl
     # to find the dynamic device.
-    if(WIN32)
+    if(WIN32_OR_CYGWIN)
       # strace showed that .dll was a must for libltdl on Cygwin.
       set(DYNAMIC_SUFFIX ".dll")
-    else(WIN32)
+    else(WIN32_OR_CYGWIN)
       # So far this works on all non-Cygwin systems, but only Linux and
       # Mac OS X have been tested so far.
       set(DYNAMIC_SUFFIX ".so")
-    endif(WIN32)
+    endif(WIN32_OR_CYGWIN)
 
     #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
     if(USE_RPATH)

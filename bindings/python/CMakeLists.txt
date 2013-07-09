@@ -86,14 +86,14 @@ if(ENABLE_python)
       )
   endif(USE_RPATH)
 
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     set_target_properties(
       _plplotcmodule
       PROPERTIES
       SUFFIX ".pyd"
       OUTPUT_NAME "_plplotc"
       )
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
 
   add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
   set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")

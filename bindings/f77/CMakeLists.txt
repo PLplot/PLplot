@@ -78,7 +78,7 @@ if(ENABLE_f77)
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     PROPERTIES GENERATED ON)
 
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     # Set the flags for the C compiler. The C stubs need to have the
     # correction case and calling convention for the Fortran compiler
     IF(TARGET_FORTRAN MATCHES "IVF")
@@ -88,7 +88,7 @@ if(ENABLE_f77)
       SET(DEFFILE "")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
 
   if(F77_CMD_LINE)
     set(HAVE_F77PARSE_CL_FALSE C)

@@ -41,19 +41,19 @@ endif (WITH_FREETYPE)
 
 if (WITH_FREETYPE)
 
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     set(
       PL_FREETYPE_FONT_PATH
       "c:/windows/fonts"
       CACHE PATH "Path for TrueType fonts"
       )
-  else(WIN32)
+  else(WIN32_OR_CYGWIN)
     set(
       PL_FREETYPE_FONT_PATH
       "/usr/share/fonts/truetype/freefont"
       CACHE PATH "Path for TrueType fonts"
       )
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
   # PLplot internally needs a trailing slash for this path. 
   set(PL_FREETYPE_FONT_DIR "${PL_FREETYPE_FONT_PATH}/")
 
@@ -92,11 +92,11 @@ if (WITH_FREETYPE)
 
   foreach(FONT_ENTRY ${PL_FREETYPE_FONT_LIST}) 
     string(REGEX REPLACE "^(.*):.*:.*$" "\\1" NAME ${FONT_ENTRY})
-    if (WIN32)
+    if (WIN32_OR_CYGWIN)
       string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" FONT ${FONT_ENTRY})
-    else (WIN32)
+    else (WIN32_OR_CYGWIN)
       string(REGEX REPLACE "^.*:(.*):.*$" "\\1" FONT ${FONT_ENTRY})
-    endif (WIN32)
+    endif (WIN32_OR_CYGWIN)
     set(${NAME} ${FONT}
       CACHE FILEPATH "Font file for ${NAME}"
       )

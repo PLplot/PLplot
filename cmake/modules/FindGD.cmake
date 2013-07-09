@@ -16,7 +16,7 @@ find_path(GD_INCLUDE_DIR gd.h
 
 if(WIN32_AND_NOT_CYGWIN)
   set(GD_NAMES ${GD_NAMES} bgd)
-else(WIN32)
+else(WIN32_AND_NOT_CYGWIN)
   set(GD_NAMES ${GD_NAMES} gd)
 endif(WIN32_AND_NOT_CYGWIN)
 

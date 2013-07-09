@@ -42,11 +42,11 @@ if(BUILD_SHARED_LIBS)
   # transitively linked by default by CMake and also by pkg-config (used
   # to generate compile and link flags for the traditional build and
   # test system of the installed examples).
-  if(WIN32)
+  if(WIN32_OR_CYGWIN)
     option(NON_TRANSITIVE "Option to use non-transitive linking" OFF)
-  else(WIN32)
+  else(WIN32_OR_CYGWIN)
     option(NON_TRANSITIVE "Option to use non-transitive linking" ON)
-  endif(WIN32)
+  endif(WIN32_OR_CYGWIN)
 else(BUILD_SHARED_LIBS)
   set(NON_TRANSITIVE OFF CACHE BOOL "Option to use non-transitive linking" FORCE)
 endif(BUILD_SHARED_LIBS)
@@ -85,10 +85,10 @@ include(plplot_functions)
 # Note, must come before java since that depends on, e.g., LIB_DIR.
 # =======================================================================
 
-# WIN32 covers CYGWIN as well (and possibly MINGW, but we will make sure).
-if(WIN32 OR MINGW)
+# WIN32_OR_CYGWIN covers CYGWIN as well (and possibly MINGW, but we will make sure).
+if(WIN32_OR_CYGWIN OR MINGW)
   set(EXEEXT .exe)
-endif(WIN32 OR MINGW)
+endif(WIN32_OR_CYGWIN OR MINGW)
 
 include(double)
 include(instdirs)
@@ -143,10 +143,10 @@ endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 # create a devpackage file
 option(DEVPAK "Create DevPackage" NO)
-if(DEVPAK AND NOT WIN32)
+if(DEVPAK AND NOT WIN32_OR_CYGWIN)
   message( STATUS "DevPackage only available for Win32. Set DEVPAK to OFF." )
   set(DEVPAK OFF)
-endif(DEVPAK AND NOT WIN32)
+endif(DEVPAK AND NOT WIN32_OR_CYGWIN)
 if(DEVPAK AND BUILD_TEST)
   message( STATUS "Examples are not build for DevPackage. Set BUILD_TEST to OFF." )
   set(BUILD_TEST OFF)
@@ -479,7 +479,7 @@ include(d)
 # compilers are enabled (C is already enabled for the whole project
 # and C++ should be enabled above).
 # =======================================================================
-if(WIN32 AND NOT MINGW)
+if(WIN32_OR_CYGWIN AND NOT MINGW)
   # MinGW excluded because it does not enable a static runtime according
   # to http://lists-archives.com/mingw-users/00126-mingw-msvc-md-mt-ml.html .
   option(STATIC_RUNTIME "Set Windows non-MinGW compiler static runtime linkage if requested" OFF)
@@ -504,7 +504,7 @@ if(WIN32 AND NOT MINGW)
       endif(${flag_var} MATCHES "/MD")
     endforeach(flag_var ${flag_vars})
   endif(STATIC_RUNTIME)
-endif(WIN32 AND NOT MINGW)
+endif(WIN32_OR_CYGWIN AND NOT MINGW)
 
 # =======================================================================
 # additional library support
@@ -512,12 +512,12 @@ endif(WIN32 AND NOT MINGW)
 include(freetype)
 # On windows systems the math library is not separated so do not specify
 # it unless you are on a non-windows system.
-if(NOT WIN32)
+if(NOT WIN32_OR_CYGWIN)
   find_library(MATH_LIB NAMES m PATHS /usr/local/lib /usr/lib)
   if(NOT MATH_LIB)
     message(FATAL_ERROR "Cannot find required math library")
   endif(NOT MATH_LIB)
-endif(NOT WIN32)
+endif(NOT WIN32_OR_CYGWIN)
 # Must come after MATH_LIB is defined (or not).
 include(csiro)
 
