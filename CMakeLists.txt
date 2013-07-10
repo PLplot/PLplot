@@ -59,6 +59,8 @@ endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 # Force CMake to _NOT_ define 'WIN32' on Cygwin
 set(CMAKE_LEGACY_CYGWIN_WIN32 OFF)
+
+# Set unambiguous names for these variables as a reminder.
 set(WIN32_AND_NOT_CYGWIN ${WIN32})
 if(WIN32 OR CYGWIN)
   set(WIN32_OR_CYGWIN ON)
@@ -133,9 +135,9 @@ endif(MSVC_VERSION GREATER 1399)
 
 # in windows all created dlls are gathered in the dll directory
 # if you add this directory to your PATH all shared libraries are available
-if(BUILD_SHARED_LIBS AND WIN32)
+if(BUILD_SHARED_LIBS AND WIN32_AND_NOT_CYGWIN)
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
-endif(BUILD_SHARED_LIBS AND WIN32)
+endif(BUILD_SHARED_LIBS AND WIN32_AND_NOT_CYGWIN)
 
 # Borland Compiler must compile in ANSII mode
 if(BORLAND)
@@ -247,11 +249,11 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Scientific Plotting Library PLplot")
 set(CPACK_PACKAGE_VENDOR "PLplot development team")
 set(CPACK_PACKAGE_DESCRIPTION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/README)
 set(CPACK_SET_DESTDIR ON)
-if(WIN32)
+if(WIN32_AND_NOT_CYGWIN)
   set(CPACK_GENERATOR ZIP)
-else(WIN32)
+else(WIN32_AND_NOT_CYGWIN)
   set(CPACK_GENERATOR TGZ)
-endif(WIN32)
+endif(WIN32_AND_NOT_CYGWIN)
 set(
   CPACK_SOURCE_PACKAGE_FILE_NAME
   "plplot-${VERSION}"
