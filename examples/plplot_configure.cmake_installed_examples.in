@@ -231,3 +231,7 @@ set(CMP_EXECUTABLE @CMP_EXECUTABLE@)
 
 # ocaml examples build needs this.
 set(USE_RPATH @USE_RPATH@)
+
+# WIN32 and CYGWIN derived variables
+set(WIN32_AND_NOT_CYGWIN @WIN32_AND_NOT_CYGWIN@)
+set(WIN32_OR_CYGWIN @WIN32_OR_CYGWIN@)
