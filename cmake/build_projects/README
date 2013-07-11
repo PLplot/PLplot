@@ -196,6 +196,13 @@ popd
 Where GNOME-3.4.1 comes fairly close to the individual
 package versions that currently work well together for Debian wheezy.
 
+To create the schema for gtk_packages.xml use
+
+trang -I xml gtk_packages.xml gtk_packages_xml.rnc
+
+# That resulting schema file is quite helpful in figuring out
+# how to process gtk_packages.xml as below.
+
 # Transform the xml form to a form that can be used by a cmake script.
 # Note, there will be some information messages sent to stderr by this
 # script that typically relate to good packages (ones that can be
@@ -212,9 +219,10 @@ package versions that currently work well together for Debian wheezy.
 # (hard) dependencies to a minimum.
 ./gtk_transform.py "pango" 1 <gtk_packages.xml 1>| pango_packages.data
 
-# N.B. there are no plans to keep gtk_packages.xml or pango_packages.data
-# under version control.  However, if a patch is necessary for gtk_packages.xml
-# created as above, we will keep that patch under version control.
+# N.B. there are no plans to keep gtk_packages.xml, gtk_packages.rnc,
+# or pango_packages.data under version control.  However, if a patch
+# is necessary for gtk_packages.xml created as above, we will keep
+# that patch under version control.
 
 # Finally to actually generate build configurations for build_packages run
 # the following command.
