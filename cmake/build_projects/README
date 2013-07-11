@@ -177,3 +177,47 @@ bash.exe-3.1$ jom build_all >& build_all.out
 N.B. All of the above have been run without issues on a Wine platform
 (wine-git close to wine-1.6-rc1) and therefore should also work for
 the Microsoft version of Windows.
+
+===============================================================================
+Build configuration for the special case of GTK.  The GNOME Tool Kit stack
+of libraries is normally built by jhbuild which keeps its configuration
+files in xml form.  Here is how you convert that form of build-configuration
+data to the build_projects form.
+
+pushd <tmpdir>
+# This downloads all the relevant xml build configuration files
+# for the given version of GTK
+wget -nd  ftp://ftp.acc.umu.se/pub/GNOME/teams/releng/3.4.1/*
+popd
+./gtk_xml_recursive_process.py \
+<tmpdir>/gnome-apps-3.4.1.modules \
+>gtk_packages.xml
+
+Where GNOME-3.4.1 comes fairly close to the individual
+package versions that currently work well together for Debian wheezy.
+
+# Transform the xml form to a form that can be used by a cmake script.
+# Note, there will be some information messages sent to stderr by this
+# script that typically relate to good packages (ones that can be
+# transformed by this script) and bad packages. Currently the list of
+# bad packages are confined just to those which are completely missing
+# from the jhbuild data for gtk.  The first command-line argument is
+# the starting package name and the second command-line argument is a
+# control variable where the least significant bit is ON for following (hard)
+# "dependencies" dependencies, the next least significant bit is ON
+# for following (soft) "suggests", dependencies, and the next least
+# significant bit is ON for following (would be nice) "after"
+# dependencies.  Currently I use a command variable of 1 to keep
+# the number of packages configured for building pango and
+# (hard) dependencies to a minimum.
+./gtk_transform.py "pango" 1 <gtk_packages.xml 1>| pango_packages.data
+
+# N.B. there are no plans to keep gtk_packages.xml or pango_packages.data
+# under version control.  However, if a patch is necessary for gtk_packages.xml
+# created as above, we will keep that patch under version control.
+
+# Finally to actually generate build configurations for build_packages run
+# the following command.
+
+cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
+
