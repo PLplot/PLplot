@@ -50,12 +50,12 @@ if(ENABLE_DYNDRIVERS)
 
     # in windows we move test-drv-info to the dll directory
     # otherwise we use the RPATH functionality
-    if(WIN32_AND_NOT_CYGWIN)
+    if(USE_DLL_SUBDIRECTORY)
       set_target_properties(
 	test-drv-info
 	PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dll
 	)
-    else(WIN32_AND_NOT_CYGWIN)
+    else(USE_DLL_SUBDIRECTORY)
       set(test-drv-info_RPATH
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_BINARY_DIR}/src
@@ -71,7 +71,7 @@ if(ENABLE_DYNDRIVERS)
         INSTALL_RPATH "${test-drv-info_RPATH}"
         BUILD_WITH_INSTALL_RPATH ON
         )
-    endif(WIN32_AND_NOT_CYGWIN)
+    endif(USE_DLL_SUBDIRECTORY)
     get_target_property(test-drv-info_LOCATION test-drv-info LOCATION)
     set(test_dyndrivers_TDEPENDS test-drv-info)
 

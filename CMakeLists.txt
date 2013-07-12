@@ -118,12 +118,6 @@ if(MSVC_VERSION GREATER 1399)
   add_definitions("/D_CRT_SECURE_NO_DEPRECATE")
 endif(MSVC_VERSION GREATER 1399)
 
-# in windows all created dlls are gathered in the dll directory
-# if you add this directory to your PATH all shared libraries are available
-if(BUILD_SHARED_LIBS AND WIN32_AND_NOT_CYGWIN)
-  set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
-endif(BUILD_SHARED_LIBS AND WIN32_AND_NOT_CYGWIN)
-
 # Borland Compiler must compile in ANSII mode
 if(BORLAND)
   add_definitions(-A)
@@ -143,6 +137,22 @@ set(top_level_DOCFILES
   README.testing
   )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
+
+if(BUILD_SHARED_LIBS AND WIN32_OR_CYGWIN)
+  # For platforms (currently WIN32 or Cygwin, although the Cygwin version
+  # of CMake may support this in future since -rpath apparently does work
+  # on that platform) where CMake does not use -rpath, use a workaround
+  # where all dll's are collected in the dll subdirectory of the build tree.
+  set(USE_DLL_SUBDIRECTORY ON)
+else(BUILD_SHARED_LIBS AND WIN32_OR_CYGWIN)
+  set(USE_DLL_SUBDIRECTORY OFF)
+endif(BUILD_SHARED_LIBS AND WIN32_OR_CYGWIN)
+
+# in windows all created dlls are gathered in the dll directory
+# if you add this directory to your PATH all shared libraries are available
+if(USE_DLL_SUBDIRECTORY)
+  set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
+endif(USE_DLL_SUBDIRECTORY)
 
 # Process other directories including using configured variables to
 # process configurable files in those directories.
