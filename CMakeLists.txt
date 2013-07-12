@@ -30,6 +30,11 @@ set(
   ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
   )
 
+cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
+
+# Force CMake to _NOT_ define 'WIN32' on Cygwin
+set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
 # required by our bindings are optional in that if no working compiler
@@ -39,26 +44,6 @@ project(plplot C)
 
 message(STATUS "CMake version = ${CMAKE_VERSION}")
 message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  # We prefer to support only the latest CMake version because it
-  # tends to be more free of issues and more consistent with recent
-  # software releases of software that PLplot depends on than earlier versions.
-  # However, as a special concession to our modern (not enterprise or
-  # LTS) Linux distro users so they can avoid a download of recent CMake,
-  # we allow them to use the system version of
-  # CMake which at this time (2011-10) is typically 2.8.2 or later.
-  cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
-else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  # For non-Linux platforms we prefer to support only the most recent
-  # CMake version since that tends to be most free of issues and most
-  # consistent with releases of software that PLplot depends on.  The
-  # most recently released CMake is 2.8.6 at this time (2011-10).
-  cmake_minimum_required(VERSION 2.8.6 FATAL_ERROR)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-
-# Force CMake to _NOT_ define 'WIN32' on Cygwin
-set(CMAKE_LEGACY_CYGWIN_WIN32 OFF)
 
 # Set unambiguous names for these variables as a reminder.
 set(WIN32_AND_NOT_CYGWIN ${WIN32})
