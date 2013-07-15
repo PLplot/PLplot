@@ -136,11 +136,11 @@ if(MSYS_PLATFORM)
   determine_msys_path(BP_BUILD_COMMAND "${BP_BUILD_COMMAND}")
   determine_msys_path(BP_MAKE_COMMAND "${BP_MAKE_COMMAND}")
   determine_msys_path(BP_CTEST_COMMAND "${BP_CTEST_COMMAND}")
-  determine_msys_path(MSYS_CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+  determine_msys_path(BP_CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
   determine_msys_path(MSYS_CMAKE_COMMAND "${CMAKE_COMMAND}")
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
-  set(BP_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${MSYS_CMAKE_INSTALL_PREFIX})
+  set(BP_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${BP_CMAKE_INSTALL_PREFIX})
   # Propagate CMAKE_C_COMPILER, CMAKE_CXX_COMPILER, and
   # CMAKE_RC_COMPILER to all CMake-based software project builds.
   # (jom currently requires this as a workaround).
@@ -157,14 +157,25 @@ if(MSYS_PLATFORM)
     list(APPEND BP_CMAKE_COMMAND -DCMAKE_RC_COMPILER:FILEPATH=${MSYS_CMAKE_RC_COMPILER})
   endif(CMAKE_RC_COMPILER)
   # Propagate the install prefix to autotools-based builds
-  set(BP_CONFIGURE_COMMAND configure --prefix=${MSYS_CMAKE_INSTALL_PREFIX})
+  set(BP_CONFIGURE_COMMAND configure --prefix=${BP_CMAKE_INSTALL_PREFIX})
 else(MSYS_PLATFORM)
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
   set(BP_CMAKE_COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
+  set(BP_CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
   # Propagate the install prefix to autotools-based builds
-  set(BP_CONFIGURE_COMMAND configure --prefix=${CMAKE_INSTALL_PREFIX})
+  set(BP_CONFIGURE_COMMAND configure --prefix=${BP_CMAKE_INSTALL_PREFIX})
 endif(MSYS_PLATFORM)
+
+if(CMAKE_VERBOSE_MAKEFILE)
+  # Not sure whether all contemplated back-ends support this or not, but
+  # most should.
+  list(APPEND BP_CMAKE_COMMAND -DCMAKE_VERBOSE_MAKEFILE=ON)
+  # Some autotools build projects give verbose make results when V=1
+  # and I don't think it will interfere with the rest.
+  list(APPEND BP_MAKE_COMMAND V=1)
+endif(CMAKE_VERBOSE_MAKEFILE)
+
 
 # The parallel versions are for software packages that
 # do not have race conditions for parallel builds or tests.
@@ -220,6 +231,8 @@ if(BUILD_THE_BUILDTOOLS)
 
   set(build_configuration_LIST
     cmake
+    pkg-config
+    #subversion
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
@@ -232,6 +245,7 @@ else(BUILD_THE_BUILDTOOLS)
     plplot
     shapelib
     wxwidgets
+    #glib
     )
 endif(BUILD_THE_BUILDTOOLS)
 
