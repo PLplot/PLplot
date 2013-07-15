@@ -21,6 +21,14 @@ proc x16 {{w loopback}} {
     matrix zz f $nx $ny
     matrix ww f $nx $ny
 
+# Colorbar - note: single values, as we have only one bar
+    set n_axis_opts    1
+    set axis_opts      "bcvtm"
+    set axis_ticks     0.0
+    set axis_subticks  0
+    set label_opts     $::PLPLOT::PL_COLORBAR_LABEL_BOTTOM
+    set labels         "Magnitude"
+
 # Set up data array
 
     for {set i 0} {$i < $nx} {incr i} {
@@ -90,6 +98,31 @@ proc x16 {{w loopback}} {
     $w cmd plshades zz -1. 1. -1. 1. \
       shedge $fill_width $cont_color $cont_width \
       1 "NULL"
+
+
+    # Colorbar:
+    # We draw only one bar, so use single values, not lists
+    #
+    # Smaller text
+    $w cmd plschr 0.0 0.75
+    # Small ticks on the vertical axis
+    $w cmd plsmaj 0.0 0.5
+    $w cmd plsmin 0.0 0.5
+
+    $w cmd plcolorbar \
+        [expr {$::PLPLOT::PL_COLORBAR_SHADE | $::PLPLOT::PL_COLORBAR_SHADE_LABEL}] 0 \
+        0.005 0.0 0.0375 0.875 0 1 1 0.0 0.0 \
+        $cont_color $cont_width \
+        $label_opts $labels \
+        $axis_opts \
+        $axis_ticks $axis_subticks \
+        shedge
+
+    # Reset text and tick sizes
+    $w cmd plschr 0.0 1.0
+    $w cmd plsmaj 0.0 1.0
+    $w cmd plsmin 0.0 1.0
+
 
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
