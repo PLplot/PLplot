@@ -50,6 +50,7 @@
 // PLplot/Tcl API handlers.  Prototypes must come before Cmds struct
 
 static int loopbackCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plcolorbarCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plcontCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int pllegendCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmeshCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -100,6 +101,7 @@ typedef struct
 static CmdInfo Cmds[] = {
     { "loopback",     loopbackCmd     },
 #include "tclgen_s.h"
+    { "plcolorbar",   plcolorbarCmd   },
     { "plcont",       plcontCmd       },
     { "pllegend",     pllegendCmd     },
     { "plmap",        plmapCmd        },
@@ -4242,6 +4244,159 @@ pllegendCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
     data[0] = Tcl_NewDoubleObj( legend_width );
     data[1] = Tcl_NewDoubleObj( legend_height );
+    Tcl_SetObjResult( interp, Tcl_NewListObj( 2, data ) );
+
+    return TCL_OK;
+}
+
+//--------------------------------------------------------------------------
+// plcolorbarCmd
+//
+// Processes plcolorbar Tcl command.
+//--------------------------------------------------------------------------
+
+static int
+plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
+             int argc, const char *argv[] )
+{
+    PLFLT   colorbar_width, colorbar_height;
+    PLINT   opt, position;
+    PLFLT   x, y, x_length, y_length;
+    PLINT   bg_color, bb_color, bb_style;
+    PLFLT   low_cap_color, high_cap_color;
+    PLINT   cont_color;
+    PLFLT   cont_width;
+    PLINT   n_label_opts;
+    PLINT   n_labels;
+    PLINT   *label_opts;
+    char    **labels;
+    PLINT   n_axis_opts;
+    PLINT   n_ticks;
+    PLINT   n_sub_ticks;
+    PLINT   n_axes;
+    char    **axis_opts;
+    PLFLT   *ticks;
+    PLINT   *sub_ticks;
+    Tcl_Obj *list_vectors;
+    int     n_vectors;
+    PLINT   *vector_sizes;
+    PLFLT   **vector_values;
+    int     retcode;
+    int     i;
+    int     length;
+    Tcl_Obj *vector;
+    tclMatrix *vectorPtr;
+
+    double  value;
+
+    Tcl_Obj *data[2];
+
+    if ( argc != 20 )
+    {
+        Tcl_AppendResult( interp, "bogus syntax for plcolorbar, see doc.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    // The first two arguments, the resulting width and height are returned via Tcl_SetObjResult()
+    sscanf( argv[1], "%d", &opt );
+    sscanf( argv[2], "%d", &position );
+    sscanf( argv[3], "%lg", &value ); x        = (PLFLT) value;
+    sscanf( argv[4], "%lg", &value ); y        = (PLFLT) value;
+    sscanf( argv[5], "%lg", &value ); x_length = (PLFLT) value;
+    sscanf( argv[6], "%lg", &value ); y_length = (PLFLT) value;
+    sscanf( argv[7], "%d", &bg_color );
+    sscanf( argv[8], "%d", &bb_color );
+    sscanf( argv[9], "%d", &bb_style );
+    sscanf( argv[10], "%lg", &value ); low_cap_color  = (PLFLT) value;
+    sscanf( argv[11], "%lg", &value ); high_cap_color = (PLFLT) value;
+    sscanf( argv[12], "%d", &cont_color );
+    sscanf( argv[13], "%lg", &value ); cont_width     = (PLFLT) value;
+    label_opts   = argv_to_ints( interp, argv[14], &n_label_opts );
+    labels       = argv_to_chars( interp, argv[15], &n_labels );
+    axis_opts    = argv_to_chars( interp, argv[16], &n_axis_opts );
+    ticks        = argv_to_doubles( interp, argv[17], &n_ticks );
+    sub_ticks    = argv_to_ints( interp, argv[18], &n_sub_ticks );
+    list_vectors = Tcl_NewStringObj( argv[19], ( -1 ) );
+
+    // Check consistency
+    if ( n_label_opts != n_labels )
+    {
+        Tcl_AppendResult( interp, "number of label options must equal number of labels.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+    if ( n_axis_opts != n_ticks || n_axis_opts != n_sub_ticks )
+    {
+        Tcl_AppendResult( interp, "number of axis, tick and subtick options must be equal.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+    n_axes = n_axis_opts;
+
+    retcode = Tcl_ListObjLength( interp, list_vectors, &n_vectors );
+    if ( retcode != TCL_OK || n_vectors == 0 )
+    {
+        Tcl_AppendResult( interp, "malformed list of vectors or no vector at all.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+    else
+    {
+        vector_sizes  = (int *) malloc( sizeof( int ) * (size_t) n_vectors );
+        vector_values = (PLFLT **) malloc( sizeof( PLFLT * ) * (size_t) n_vectors );
+        for ( i = 0; i < n_vectors; i++ )
+        {
+            Tcl_ListObjIndex( interp, list_vectors, i, &vector );
+            vectorPtr = Tcl_GetMatrixPtr( interp, Tcl_GetStringFromObj( vector, &length ) );
+            if ( vectorPtr == NULL || vectorPtr->dim != 1 )
+            {
+                Tcl_AppendResult( interp, "element in list of vectors is not a vector.",
+                    (char *) NULL );
+                return TCL_ERROR;
+            }
+            vector_sizes[i]  = vectorPtr->n[0];
+            vector_values[i] = vectorPtr->fdata;
+        }
+    }
+
+    c_plcolorbar( &colorbar_width, &colorbar_height,
+                  opt, position, x, y,
+                  x_length, y_length,
+                  bg_color, bb_color, bb_style,
+                  low_cap_color, high_cap_color,
+                  cont_color, cont_width,
+                  n_labels, label_opts, (const char * const *)labels,
+                  n_axes, (const char * const *)axis_opts,
+                  ticks, sub_ticks,
+                  vector_sizes, (const PLFLT * const *)vector_values );
+
+    if ( label_opts != NULL )
+        free( label_opts );
+    if ( labels != NULL )
+    {
+        free( labels[0] ) ;
+        free( labels ) ;
+    }
+    if ( axis_opts != NULL )
+    {
+        free( axis_opts[0] ) ;
+        free( axis_opts ) ;
+    }
+    if ( ticks != NULL )
+        free( ticks ) ;
+    if ( sub_ticks != NULL )
+        free( sub_ticks ) ;
+    if ( vector_values != NULL )
+    {
+        free( vector_sizes ) ;
+        free( vector_values ) ;
+    }
+
+    Tcl_DecrRefCount( list_vectors );
+
+    data[0] = Tcl_NewDoubleObj( colorbar_width );
+    data[1] = Tcl_NewDoubleObj( colorbar_height );
     Tcl_SetObjResult( interp, Tcl_NewListObj( 2, data ) );
 
     return TCL_OK;
