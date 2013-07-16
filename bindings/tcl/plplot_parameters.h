@@ -186,34 +186,55 @@ variable PL_LEGEND_BOUNDING_BOX 64\n\
 variable PL_LEGEND_ROW_MAJOR 128\n\
 \n\
 \n\
-variable PL_COLORBAR_LABEL_LEFT 1\n\
+variable PL_COLORBAR_LABEL_LEFT 0x1\n\
 \n\
 \n\
-variable PL_COLORBAR_LABEL_RIGHT 2\n\
+variable PL_COLORBAR_LABEL_RIGHT 0x2\n\
 \n\
 \n\
-variable PL_COLORBAR_LABEL_TOP 4\n\
+variable PL_COLORBAR_LABEL_TOP 0x4\n\
 \n\
 \n\
-variable PL_COLORBAR_LABEL_BOTTOM 8\n\
+variable PL_COLORBAR_LABEL_BOTTOM 0x8\n\
 \n\
 \n\
-variable PL_COLORBAR_IMAGE 16\n\
+variable PL_COLORBAR_IMAGE 0x10\n\
 \n\
 \n\
-variable PL_COLORBAR_SHADE 32\n\
+variable PL_COLORBAR_SHADE 0x20\n\
 \n\
 \n\
-variable PL_COLORBAR_GRADIENT 64\n\
+variable PL_COLORBAR_GRADIENT 0x40\n\
 \n\
 \n\
-variable PL_COLORBAR_CAP_LOW 128\n\
+variable PL_COLORBAR_CAP_NONE 0x80\n\
 \n\
 \n\
-variable PL_COLORBAR_CAP_HIGH 256\n\
+variable PL_COLORBAR_CAP_LOW 0x100\n\
 \n\
 \n\
-variable PL_COLORBAR_SHADE_LABEL 512\n\
+variable PL_COLORBAR_CAP_HIGH 0x200\n\
+\n\
+\n\
+variable PL_COLORBAR_SHADE_LABEL 0x400\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_RIGHT 0x800\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_TOP 0x1000\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_LEFT 0x2000\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_BOTTOM 0x4000\n\
+\n\
+\n\
+variable PL_COLORBAR_BACKGROUND 0x8000\n\
+\n\
+\n\
+variable PL_COLORBAR_BOUNDING_BOX 0x10000\n\
 \n\
 # device coordinates\n\
 variable PLSWIN_DEVICE 1\n\

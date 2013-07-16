@@ -99,7 +99,6 @@ proc x16 {{w loopback}} {
       shedge $fill_width $cont_color $cont_width \
       1 "NULL"
 
-
     # Colorbar:
     # We draw only one bar, so use single values, not lists
     #
@@ -122,7 +121,6 @@ proc x16 {{w loopback}} {
     $w cmd plschr 0.0 1.0
     $w cmd plsmaj 0.0 1.0
     $w cmd plsmin 0.0 1.0
-
 
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
@@ -147,6 +145,29 @@ proc x16 {{w loopback}} {
       shedge $fill_width $cont_color $cont_width \
       1 pltr1 xg1 yg1
 
+    # Colorbar:
+    # We draw only one bar, so use single values, not lists
+    #
+    # Smaller text
+    $w cmd plschr 0.0 0.75
+    # Small ticks on the vertical axis
+    $w cmd plsmaj 0.0 0.5
+    $w cmd plsmin 0.0 0.5
+
+    $w cmd plcolorbar \
+        [expr {$::PLPLOT::PL_COLORBAR_SHADE | $::PLPLOT::PL_COLORBAR_SHADE_LABEL}] 0 \
+        0.005 0.0 0.0375 0.875 0 1 1 0.0 0.0 \
+        $cont_color $cont_width \
+        $label_opts $labels \
+        $axis_opts \
+        $axis_ticks $axis_subticks \
+        shedge
+
+    # Reset text and tick sizes
+    $w cmd plschr 0.0 1.0
+    $w cmd plsmaj 0.0 1.0
+    $w cmd plsmin 0.0 1.0
+
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
     $w cmd plcol0 2
@@ -170,6 +191,29 @@ proc x16 {{w loopback}} {
       shedge $fill_width $cont_color $cont_width \
       0 pltr2 xg2 yg2
 
+    # Colorbar:
+    # We draw only one bar, so use single values, not lists
+    #
+    # Smaller text
+    $w cmd plschr 0.0 0.75
+    # Small ticks on the vertical axis
+    $w cmd plsmaj 0.0 0.5
+    $w cmd plsmin 0.0 0.5
+
+    $w cmd plcolorbar \
+        [expr {$::PLPLOT::PL_COLORBAR_SHADE | $::PLPLOT::PL_COLORBAR_SHADE_LABEL}] 0 \
+        0.005 0.0 0.0375 0.875 0 1 1 0.0 0.0 \
+        $cont_color $cont_width \
+        $label_opts $labels \
+        $axis_opts \
+        $axis_ticks $axis_subticks \
+        shedge
+
+    # Reset text and tick sizes
+    $w cmd plschr 0.0 1.0
+    $w cmd plsmaj 0.0 1.0
+    $w cmd plsmin 0.0 1.0
+
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
     $w cmd plcol0 2
@@ -191,6 +235,29 @@ proc x16 {{w loopback}} {
     $w cmd plshades zz -1. 1. -1. 1. \
       shedge $fill_width 2 3 \
       0 pltr2 xg2 yg2
+
+    # Colorbar:
+    # We draw only one bar, so use single values, not lists
+    #
+    # Smaller text
+    $w cmd plschr 0.0 0.75
+    # Small ticks on the vertical axis
+    $w cmd plsmaj 0.0 0.5
+    $w cmd plsmin 0.0 0.5
+
+    $w cmd plcolorbar \
+        [expr {$::PLPLOT::PL_COLORBAR_SHADE | $::PLPLOT::PL_COLORBAR_SHADE_LABEL}] 0 \
+        0.005 0.0 0.0375 0.875 0 1 1 0.0 0.0 \
+        $cont_color $cont_width \
+        $label_opts $labels \
+        $axis_opts \
+        $axis_ticks $axis_subticks \
+        shedge
+
+    # Reset text and tick sizes
+    $w cmd plschr 0.0 1.0
+    $w cmd plsmaj 0.0 1.0
+    $w cmd plsmin 0.0 1.0
 
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
@@ -246,6 +313,29 @@ proc x16 {{w loopback}} {
     $w cmd plshades z -1. 1. -1. 1. \
       shedge $fill_width $cont_color $cont_width \
       0 pltr2 xg yg $wrap
+
+    # Colorbar:
+    # We draw only one bar, so use single values, not lists
+    #
+    # Smaller text
+    $w cmd plschr 0.0 0.75
+    # Small ticks on the vertical axis
+    $w cmd plsmaj 0.0 0.5
+    $w cmd plsmin 0.0 0.5
+
+    $w cmd plcolorbar \
+        [expr {$::PLPLOT::PL_COLORBAR_SHADE | $::PLPLOT::PL_COLORBAR_SHADE_LABEL}] 0 \
+        0.005 0.0 0.0375 0.875 0 1 1 0.0 0.0 \
+        $cont_color $cont_width \
+        $label_opts $labels \
+        $axis_opts \
+        $axis_ticks $axis_subticks \
+        shedge
+
+    # Reset text and tick sizes
+    $w cmd plschr 0.0 1.0
+    $w cmd plsmaj 0.0 1.0
+    $w cmd plsmin 0.0 1.0
 
 # Hold perimeter
     matrix px f 100; matrix py f 100
