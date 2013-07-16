@@ -32,9 +32,6 @@ set(
 
 cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 
-# Force CMake to _NOT_ define 'WIN32' on Cygwin
-set(CMAKE_LEGACY_CYGWIN_WIN32 0)
-
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
 # required by our bindings are optional in that if no working compiler
