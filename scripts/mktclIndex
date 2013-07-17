@@ -20,7 +20,7 @@ if {$argc > 0} {
 }
 
 # Catch errors in case there are no tcl files, although this shouldn't happen
-catch {
+if { [catch {
     if { $HAVE_ITCL && ![catch {package require Itcl}] } {
     # Include all itcl, itk files.
 	auto_mkindex . *.tcl *.itcl *.itk *.ith *.itm
@@ -28,6 +28,8 @@ catch {
     # Just include tcl files
 	auto_mkindex . *.tcl
     }
+} msg] } {
+    puts "An error occurred, generating the tclIndex file: $msg"
 }
 
 exit
