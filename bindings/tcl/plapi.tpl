@@ -272,6 +272,12 @@ pltclcmd plgchr void
 def	PLFLT&
 ht	PLFLT&
 
+# Get the range for cmap1
+
+pltclcmd plgcmap1_range void
+min_color PLFLT&
+max_color PLFLT&
+
 # Returns 8 bit RGB values for given color from color map 0.
 
 pltclcmd plgcol0 void
@@ -728,6 +734,13 @@ alt_hue_path		PLINT *
 
 pltclcmd plscmap1n void
 ncol1	PLINT
+
+# Set the range for cmap1
+
+pltclcmd plscmap1_range void
+min_color PLFLT
+max_color PLFLT
+
 
 # Set a given color from color map 0 by 8 bit RGB value.
 
