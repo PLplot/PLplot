@@ -86,7 +86,59 @@ proc x33 {{w loopback}} {
         "✽" \
         "✦" ]
 
-    set colorbar 0 ;# By default do not plot plcolorbar pages
+    # plcolorbar options
+
+    # Colorbar type options
+
+    set ::colorbar_option_kinds [list \
+        $::PLPLOT::PL_COLORBAR_SHADE \
+        [expr {$::PLPLOT::PL_COLORBAR_SHADE | $::PLPLOT::PL_COLORBAR_SHADE_LABEL}] \
+        $::PLPLOT::PL_COLORBAR_IMAGE \
+        $::PLPLOT::PL_COLORBAR_GRADIENT]
+
+    set ::colorbar_option_kind_labels [list \
+    "Shade colorbars" \
+    "Shade colorbars with custom labels" \
+    "Image colorbars" \
+    "Gradient colorbars"]
+
+    # Which side of the page are we positioned relative to?
+    set ::colorbar_position_options [list \
+    $::PLPLOT::PL_POSITION_LEFT \
+    $::PLPLOT::PL_POSITION_RIGHT \
+    $::PLPLOT::PL_POSITION_TOP \
+    $::PLPLOT::PL_POSITION_BOTTOM]
+    set ::colorbar_position_option_labels [list \
+    "Left" \
+    "Right" \
+    "Top" \
+    "Bottom"]
+
+    # Colorbar label positioning options
+    set ::colorbar_label_options [list \
+    $::PLPLOT::PL_COLORBAR_LABEL_LEFT \
+    $::PLPLOT::PL_COLORBAR_LABEL_RIGHT \
+    $::PLPLOT::PL_COLORBAR_LABEL_TOP \
+    $::PLPLOT::PL_COLORBAR_LABEL_BOTTOM]
+    set ::colorbar_label_option_labels [list \
+    "Label left" \
+    "Label right" \
+    "Label top" \
+    "Label bottom"]
+
+    # Colorbar cap options
+    set ::colorbar_cap_options [list \
+    $::PLPLOT::PL_COLORBAR_CAP_NONE \
+    $::PLPLOT::PL_COLORBAR_CAP_LOW \
+    $::PLPLOT::PL_COLORBAR_CAP_HIGH \
+    [expr {$::PLPLOT::PL_COLORBAR_CAP_LOW | $::PLPLOT::PL_COLORBAR_CAP_HIGH}]]
+    set ::colorbar_cap_option_labels [list \
+    "No caps" \
+    "Low cap" \
+    "High cap" \
+    "Low and high caps"]
+
+    set colorbar 1 ;# By default do not plot plcolorbar pages
                     # for now while we are working out the API.
 
     set notes { "Make sure you get it right!" NULL }
@@ -775,6 +827,151 @@ proc x33 {{w loopback}} {
         {} {} {} {}]
     foreach {legend_width legend_height} $legend_data {break}
     set max_height [max $max_height $legend_height]
+
+    if {$colorbar} {
+        # Color bar examples
+        matrix values_small  f 2
+        matrix values_uneven f 9
+        matrix values_even   f 9
+        foreach i {0 1} v {-1.0e-200 1.0e-200 } {
+            values_small $i = $v
+        }
+        foreach i {0 1 2 3 4 5 6 7 8} vu {-1.0e-200 2.0e-200 2.6e-200 3.4e-200 6.0e-200 7.0e-200 8.0e-200 9.0e-200 10.0e-200 } \
+                                      ve {-2.0e-200 -1.0e-200 0.0e-200 1.0e-200 2.0e-200 3.0e-200 4.0e-200 5.0e-200 6.0e-200 } {
+            values_uneven $i = $vu
+            values_even $i = $ve
+        }
+
+        # Use unsaturated green background colour to contrast with black caps.
+        $w cmd plscolbg 70 185 70
+        # Cut out the greatest and smallest bits of the color spectrum to
+        # leave colors for the end caps.
+        $w cmd plscmap1_range 0.01 0.99
+
+        # We can only test image and gradient colorbars with two element arrays
+        #
+        # Note: we pass the name of the matrices!
+        #
+        for {set i 2} {$i < [llength $::colorbar_option_kinds]} {incr i} {
+            plcolorbar_example $w "cmap1_blue_yellow.pal" $i 0 0 values_small
+        }
+        # Test shade colorbars with larger arrays
+        for {set i 0} {$i < 2} {incr i} {
+            plcolorbar_example $w "cmap1_blue_yellow.pal" $i 4 2 values_even
+        }
+        for {set i 0} {$i < 2} {incr i} {
+            plcolorbar_example $w "cmap1_blue_yellow.pal"  $i 0 0 values_uneven
+        }
+    }
+}
+
+proc plcolorbar_example_page {w kind_i label_i cap_i cont_color cont_width values} {
+
+    global colorbar_position
+    global colorbar_position_options
+    global colorbar_position_option_labels
+    global colorbar_option_kinds
+    global colorbar_option_kind_labels
+    global colorbar_label_options
+    global colorbar_label_option_labels
+    global colorbar_cap_options
+    global colorbar_cap_option_labels
+
+    # Parameters for the colorbars on this page
+    set ticks { 0.0 }
+    set sub_ticks { 0 }
+    set label_opts { 0 }
+
+    set low_cap_color  0.0
+    set high_cap_color 1.0
+
+    # Start a new page
+    $w cmd pladv 0
+
+    # Draw one colorbar relative to each side of the page
+    for {set position_i 0} {$position_i < [llength $colorbar_position_options]} {incr position_i} {
+        set position  [lindex $colorbar_position_options $position_i]
+        set opt       [expr {[lindex $colorbar_option_kinds $kind_i] |
+                             [lindex $colorbar_label_options $label_i] |
+                             [lindex $colorbar_cap_options $cap_i]}]
+
+        set vertical  [expr {($position & $::PLPLOT::PL_POSITION_LEFT) || ($position & $::PLPLOT::PL_POSITION_RIGHT) }]
+        set ifn       [expr {($position & $::PLPLOT::PL_POSITION_LEFT) || ($position & $::PLPLOT::PL_POSITION_BOTTOM)}]
+
+        # Set the offset position on the page
+        if {$vertical} {
+            set x        0.0
+            set y        0.0
+            set x_length 0.05
+            set y_length 0.5
+        } else {
+            set x        0.0
+            set y        0.0
+            set x_length 0.5
+            set y_length 0.05
+        }
+
+        # Set appropriate labelling options.
+        if {$ifn} {
+            if {$cont_color == 0 || $cont_width == 0.} {
+                set axis_opts [list "uwtivn"]
+            } else {
+                set axis_opts [list "uwxvn"]
+            }
+        } else {
+            if {$cont_color == 0 || $cont_width == 0.} {
+                set axis_opts [list "uwtivm"]
+            } else {
+                set axis_opts [list "uwxvm"]
+            }
+        }
+
+        set label [list "[lindex $colorbar_position_option_labels $position_i], [lindex $colorbar_label_option_labels $label_i]"]
+
+        # Smaller text
+        $w cmd plschr 0.0 0.75
+        # Small ticks on the vertical axis
+        $w cmd plsmaj 0.0 0.5
+        $w cmd plsmin 0.0 0.5
+
+        $w cmd plvpor 0.20 0.80 0.20 0.80
+        $w cmd plwind 0.0 1.0, 0.0, 1.0
+        # Set interesting background colour.
+        $w cmd plscol0a 15 0 0 0 0.20
+        $w cmd plcolorbar \
+            [expr {$opt | $::PLPLOT::PL_COLORBAR_BOUNDING_BOX | $::PLPLOT::PL_COLORBAR_BACKGROUND}] $position \
+            $x $y $x_length $y_length \
+            15 1 1 \
+            $low_cap_color $high_cap_color \
+            $cont_color $cont_width \
+            $label_opts $label \
+            $axis_opts \
+            $ticks $sub_ticks \
+            $values
+
+        # Reset text and tick sizes
+        $w cmd plschr 0.0 1.0
+        $w cmd plsmaj 0.0 1.0
+        $w cmd plsmin 0.0 1.0
+    }
+
+    # Draw a page title
+    set title "[lindex $colorbar_option_kind_labels $kind_i] - [lindex $colorbar_cap_option_labels $cap_i]"
+    $w cmd plvpor 0.0 1.0 0.0 1.0
+    $w cmd plwind 0.0 1.0 0.0 1.0
+    $w cmd plptex 0.5 0.5 0.0 0.0 0.5 $title
+}
+
+proc plcolorbar_example {w palette kind_i cont_color cont_width values} {
+
+    # Load the color palette
+    $w cmd plspal1 $palette 1
+
+    for { set label_i 0} { $label_i < [llength $::colorbar_label_options] } { incr label_i } {
+        for { set cap_i 0 } { $cap_i < [llength $::colorbar_cap_options] } { incr cap_i } {
+            plcolorbar_example_page $w $kind_i $label_i $cap_i $cont_color $cont_width $values
+        }
+    }
 }
 
 # Auxiliary routines
