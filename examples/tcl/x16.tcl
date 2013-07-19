@@ -248,7 +248,7 @@ proc x16 {{w loopback}} {
     $w cmd plcolorbar \
         [expr {$::PLPLOT::PL_COLORBAR_SHADE | $::PLPLOT::PL_COLORBAR_SHADE_LABEL}] 0 \
         0.005 0.0 0.0375 0.875 0 1 1 0.0 0.0 \
-        $cont_color $cont_width \
+        2 3.0 \
         $label_opts $labels \
         $axis_opts \
         $axis_ticks $axis_subticks \
