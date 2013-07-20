@@ -246,6 +246,7 @@ else(BUILD_THE_BUILDTOOLS)
     shapelib
     wxwidgets
     #glib
+    ffi
     )
 endif(BUILD_THE_BUILDTOOLS)
 
