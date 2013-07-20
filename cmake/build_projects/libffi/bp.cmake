@@ -1,6 +1,6 @@
-# ffi/bp.cmake
+# libffi/bp.cmake
 # This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of ffi.
+# CMakeLists.txt file to configure the build of libffi.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -24,7 +24,7 @@
 # used below that configure how the External_Project functions
 # operate.
 
-set(BP_PACKAGE ffi)
+set(BP_PACKAGE libffi)
 
 # Protect against configuring a build twice in one CMake call
 if(${BP_PACKAGE}_configured)
