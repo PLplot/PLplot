@@ -141,6 +141,14 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         for dep_element in package.findall("after/dep"):
             after[dep_element.get("package")] = None
     
+    # As a temporary? measure drop all references to gtk-doc
+    if dependencies.has_key("gtk-doc"):
+        del dependencies["gtk-doc"]
+    if suggests.has_key("gtk-doc"):
+        del suggests["gtk-doc"]
+    if after.has_key("gtk-doc"):
+        del after["gtk-doc"]
+
     if if_dependencies:
         overall_dependencies = {}
         overall_dependencies.update(dependencies)
