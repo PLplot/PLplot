@@ -24,13 +24,25 @@
 # used below that configure how the External_Project functions
 # operate.
 
+# Protect against configuring a build twice in one CMake call
+if(libffi_configured)
+  return()
+endif(libffi_configured)
+set(libffi_configured ON)
+
+set(libffi_dependencies_LIST )
+
+foreach(build_configuration ${libffi_dependencies_LIST})
+  include(${build_configuration}/bp.cmake)
+endforeach(build_configuration ${libffi_dependences_LIST})
+
+# This can be safely done only after above includes.
 set(BP_PACKAGE libffi)
 
-# Protect against configuring a build twice in one CMake call
-if(${BP_PACKAGE}_configured)
-  return()
-endif(${BP_PACKAGE}_configured)
-set(${BP_PACKAGE}_configured ON)
+set(${BP_PACKAGE}_dependencies_targets)
+foreach(build_configuration ${${BP_PACKAGE}_dependencies_LIST})
+  list(APPEND ${BP_PACKAGE}_dependencies_targets build_${build_configuration})
+endforeach(build_configuration ${${BP_PACKAGE}_dependences_LIST})
 
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL ftp://sourceware.org/pub/libffi/libffi-3.0.13.tar.gz)
@@ -44,16 +56,19 @@ if(MSYS_PLATFORM)
   determine_msys_path(BP_PATH "${BP_PATH}")
   # Must have all elements of env command in MSYS platform form
   determine_msys_path(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
+  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
 else(MSYS_PLATFORM)
   set(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
+  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
 endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
 ExternalProject_Add(
   build_${BP_PACKAGE}
+  DEPENDS ${${BP_PACKAGE}_dependencies_targets}
   URL ${${BP_PACKAGE}_URL}
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
   )
