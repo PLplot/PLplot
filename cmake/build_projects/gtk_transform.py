@@ -48,14 +48,42 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
     config_type = package.tag
     if config_type == "autotools":
         config_arguments = package.get("autogenargs")
+
+        make_arguments = package.get("makeargs")
+        if make_arguments == None:
+            make_arguments = ""
+
+        supports_non_srcdir_builds = package.get("supports-non-srcdir-builds")
+        if supports_non_srcdir_builds == "no":
+           supports_non_srcdir_builds = "OFF"
+        else:
+           supports_non_srcdir_builds = "ON" 
+
+        supports_parallel_builds = package.get("supports-parallel-builds")
+        if supports_parallel_builds == "no":
+           supports_parallel_builds = "OFF"
+        else:
+           supports_parallel_builds = "ON" 
     elif config_type == "cmake":
         config_arguments = package.get("cmakeargs")
+        make_arguments = ""
+        # Assume both non-source builds and parallel builds work for
+        # CMake-based build systems.
+        supports_non_srcdir_builds = "ON" 
+        supports_parallel_builds = "ON" 
     elif config_type == "tarball":
         config_arguments = ""
+        make_arguments = ""
+        # Assume both non-source builds and parallel builds work for
+        # the tarball config type.  This may require review.
+        supports_non_srcdir_builds = "ON" 
+        supports_parallel_builds = "ON" 
     else:
         return None
+
     if config_arguments == None:
         config_arguments = ""
+
     # Parse branch or source element of package
     if config_type == "tarball":
         branch = package.findall("source[@hash]")
@@ -98,8 +126,16 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         # Make sure there is a trailing "/" on the repo
         index = download_repo.rfind("/")
         if len(download_repo)-1 != index:
-            download_repo = download_rep + "/"
+            download_repo = download_repo + "/"
         download_href = download_repo + download_module
+    
+    # Replace ${version} string that is sometimes in download_href
+    index = download_href.find("${version}")
+    if index >=0:
+        version = branch.get("version")
+        if version == None:
+            return None
+        download_href = download_href.replace("${version}", version)
     
     # Parse various kinds of jhbuild dependencies.
     # Note from 
@@ -141,14 +177,6 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         for dep_element in package.findall("after/dep"):
             after[dep_element.get("package")] = None
     
-    # As a temporary? measure drop all references to gtk-doc
-    if dependencies.has_key("gtk-doc"):
-        del dependencies["gtk-doc"]
-    if suggests.has_key("gtk-doc"):
-        del suggests["gtk-doc"]
-    if after.has_key("gtk-doc"):
-        del after["gtk-doc"]
-
     if if_dependencies:
         overall_dependencies = {}
         overall_dependencies.update(dependencies)
@@ -178,7 +206,10 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
     else:
         sys.stdout.write(id + "\n")
         sys.stdout.write(config_type + "\n")
+        sys.stdout.write(supports_non_srcdir_builds + "\n")
+        sys.stdout.write(supports_parallel_builds + "\n")
         sys.stdout.write(config_arguments + "\n")
+        sys.stdout.write(make_arguments + "\n")
         sys.stdout.write(download_hash_type + "\n")
         sys.stdout.write(download_hash + "\n")
         sys.stdout.write(download_href + "\n")
