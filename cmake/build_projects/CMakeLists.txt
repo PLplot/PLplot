@@ -82,6 +82,7 @@ set(executables_LIST
   # available so might as well check it here.
   bash
   make
+  python
   )
 
 foreach(executable ${executables_LIST})
@@ -94,6 +95,15 @@ foreach(executable ${executables_LIST})
     message(FATAL_ERROR "${executable} must be on your PATH in order for build_projects to work correctly")  
   endif(NOT ${EXECUTABLE}_EXECUTABLE)
 endforeach(executable ${executables_LIST})
+
+# Get the Python version.
+execute_process(
+  COMMAND
+  ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_version())"
+  OUTPUT_VARIABLE PYTHON_VERSION
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+message(STATUS "PYTHON_VERSION = ${PYTHON_VERSION}")
 
 # Use modified version of ExternalProject where cmake -E touch has
 # been replaced with the TOUCH_EXECUTABLE command (to work around
