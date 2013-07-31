@@ -54,18 +54,13 @@ else(MSYS_PLATFORM)
 endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
-# Got intermittent failures using ${BP_PARALLEL_MAKE} both
-# historically and recently which are likely due to a parallel make
-# race condition for wxwidgets.  So I have decided to use
-# slow but sure ${BP_MAKE_COMMAND} instead.
-
 ExternalProject_Add(
   build_${BP_PACKAGE}
   URL ${${BP_PACKAGE}_URL}
   URL_MD5 ${${BP_PACKAGE}_URL_MD5}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND}
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND} install
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
   )
 
 list(APPEND build_target_LIST build_${BP_PACKAGE})
