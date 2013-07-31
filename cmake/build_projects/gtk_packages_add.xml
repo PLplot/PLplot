@@ -4,10 +4,10 @@
     <branch hash="sha256:1dddde1400c3bcb7749d398071af88c3e4754058d2d4c0b3696c2f82dc5cf11c" module="libffi/libffi-3.0.13.tar.gz" repo="ftp://sourceware.org/pub/" size="845747" version="3.0.13"/>
   </autotools>
   <autotools id="intltool">
-    <branch hash="md5:23fbd879118253cb99aeac067da5f591" module="intltool/trunk/0.50.2/+download/intltool-0.50.2.tar.gz" repo="http://launchpad.net/" version="0.50.2"/>
+    <branch hash="md5:23fbd879118253cb99aeac067da5f591" module="intltool/trunk/0.50.2/+download/intltool-0.50.2.tar.gz" repo="http://launchpad.net/" size="189483" version="0.50.2"/>
   </autotools>
   <autotools autogenargs="--disable-gtk" id="pixman">
     <pkg-config/>
-    <branch hash="sha256:1d812f9f60215099355f5c13c6f06d7db1135c99f34ff03535b71b64435125fd" module="releases/pixman-0.30.0.tar.gz" repo="http://cairographics.org/" size="542724" version="0.20.2"/>
+    <branch hash="sha256:1d812f9f60215099355f5c13c6f06d7db1135c99f34ff03535b71b64435125fd" module="releases/pixman-0.30.0.tar.gz" repo="http://cairographics.org/" size="801692" version="0.30.0"/>
   </autotools>
 </moduleset>
