@@ -67,7 +67,7 @@ endif(WIN32 AND NOT MSYS_PLATFORM)
 
 # List of executables required by build_projects CMake logic.
 set(executables_LIST
-  # ExternalProject
+  # ExternalProject workarounds
   touch
   # Unpacking
   unzip
@@ -182,7 +182,12 @@ endif(CMAKE_VERBOSE_MAKEFILE)
 set(BP_PARALLEL_BUILD_COMMAND "${BP_BUILD_COMMAND}" -j4)
 set(BP_PARALLEL_CTEST_COMMAND "${BP_CTEST_COMMAND}" -j4)
 # For autotools based builds.
-set(BP_PARALLEL_MAKE_COMMAND "${BP_MAKE_COMMAND}" -j4)
+option(AUTOTOOLS_PARALLEL_BUILD "Build autotools projects using parallel make unless a specific project is expressely configured otherwise" ON)
+if(AUTOTOOLS_PARALLEL_BUILD)
+  set(BP_PARALLEL_MAKE_COMMAND "${BP_MAKE_COMMAND}" -j4)
+else(AUTOTOOLS_PARALLEL_BUILD)
+  set(BP_PARALLEL_MAKE_COMMAND "${BP_MAKE_COMMAND}")
+endif(AUTOTOOLS_PARALLEL_BUILD)
 
 message(STATUS "BP_CMAKE_COMMAND = ${BP_CMAKE_COMMAND}")
 message(STATUS "BP_CONFIGURE_COMMAND = ${BP_CONFIGURE_COMMAND}")
@@ -238,15 +243,11 @@ else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
   # attempts to include the same configuration (via dependencies) are ignored.
   set(build_configuration_LIST
-    libagg
-    libharu
-    libqhull
     ndiff
     plplot
-    shapelib
     wxwidgets
-    #glib
-    ffi
+    glib
+    pango
     )
 endif(BUILD_THE_BUILDTOOLS)
 
