@@ -1,11 +1,11 @@
 --- gtk_packages_3.9.4.xml_original	2013-07-30 14:52:57.038048491 -0700
-+++ gtk_packages_3.9.4.xml	2013-07-30 15:06:23.922792828 -0700
++++ gtk_packages_3.9.4.xml	2013-07-31 08:06:20.965414047 -0700
 @@ -925,7 +925,7 @@
      </suggests>
    </autotools>
    <autotools autogenargs="" id="harfbuzz">
 -    <branch hash="sha256:fef0fbbc6d6492cb4074a5e26a699d87d88bef8adc25dda62af6077735a7d908" module="harfbuzz-0.9.18.tar.bz2" repo="http://www.freedesktop.org/software/harfbuzz/release/" size="902395" version="0.9.18"/>
-+    <branch hash="sha256:d2da0f060d47f6ad9de8c8781bb21fa4b9eae8ea1cd1e956b814095baa002f35" module="harfbuzz-0.9.19.tar.bz2" repo="http://www.freedesktop.org/software/harfbuzz/release/" size="902395" version="0.9.19"/>
++    <branch hash="sha256:d2da0f060d47f6ad9de8c8781bb21fa4b9eae8ea1cd1e956b814095baa002f35" module="harfbuzz-0.9.19.tar.bz2" repo="http://www.freedesktop.org/software/harfbuzz/release/" size="926632" version="0.9.19"/>
      <branch checkoutdir="harfbuzz" module="harfbuzz" repo="git.freedesktop.org"/>
      <dependencies>
        <dep package="glib"/>
