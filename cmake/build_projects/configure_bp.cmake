@@ -9,7 +9,9 @@ set(ignored_dependencies_LIST
   flex
   python2-devel
   # dependencies which we want to ignore
-  # (none so far).
+  # ignore libXft since that is an X library that
+  # presumably won't be needed on Windows systems.
+  libXft
 )
 
 file(STRINGS ${FILENAME} lines)
