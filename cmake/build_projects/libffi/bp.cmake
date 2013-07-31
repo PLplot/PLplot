@@ -30,19 +30,28 @@ if(libffi_configured)
 endif(libffi_configured)
 set(libffi_configured ON)
 
-set(libffi_dependencies_LIST )
+# List of dependencies (most of which are build tools) which should be
+# ignored.
+set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel)
 
+set(libffi_dependencies_LIST )
+# Remove dependencies that should be ignored.
+if(libffi_dependencies_LIST)
+  list(REMOVE_ITEM libffi_dependencies_LIST ${BP_ignored_dependencies_LIST})
+endif(libffi_dependencies_LIST)
+
+set(libffi_dependencies_targets)
 foreach(build_configuration ${libffi_dependencies_LIST})
-  include(${build_configuration}/bp.cmake)
+  if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
+    include(${build_configuration}/bp.cmake)
+    list(APPEND libffi_dependencies_targets build_${build_configuration})
+  else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
+    message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of libffi has been installed another way.")
+  endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
 endforeach(build_configuration ${libffi_dependences_LIST})
 
 # This can be safely done only after above includes.
 set(BP_PACKAGE libffi)
-
-set(${BP_PACKAGE}_dependencies_targets)
-foreach(build_configuration ${${BP_PACKAGE}_dependencies_LIST})
-  list(APPEND ${BP_PACKAGE}_dependencies_targets build_${build_configuration})
-endforeach(build_configuration ${${BP_PACKAGE}_dependences_LIST})
 
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL ftp://sourceware.org/pub/libffi/libffi-3.0.13.tar.gz)
@@ -69,8 +78,9 @@ ExternalProject_Add(
   URL ${${BP_PACKAGE}_URL}
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
+  BUILD_IN_SOURCE OFF
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}  install
   )
 
 list(APPEND build_target_LIST build_${BP_PACKAGE})
