@@ -184,24 +184,27 @@ of libraries is normally built by jhbuild which keeps its configuration
 files in xml form.  Here is how you convert that form of build-configuration
 data to the build_projects form.
 
-pushd <tmpdir>
+# Chose this latest version (as of August 2013) because it probably has
+# improved build and dependency instructions compared to previous versions.
+# For example, the glib version (2.37.4) is known to solve a build issue
+# that I ran into for earlier glib versions.
+export GTK_VERSION=3.9.4
+mkdir -p $GTK_VERSION
+cd $GTK_VERSION
 # This downloads all the relevant xml build configuration files
 # for the given version of GTK
-wget -nd  ftp://ftp.acc.umu.se/pub/GNOME/teams/releng/3.4.1/*
-popd
+wget -nd  ftp://ftp.acc.umu.se/pub/GNOME/teams/releng/$GTK_VERSION/*
+cd ..
 ./gtk_xml_recursive_process.py \
-<tmpdir>/gnome-apps-3.4.1.modules \
->gtk_packages.xml
-
-Where GNOME-3.4.1 comes fairly close to the individual
-package versions that currently work well together for Debian wheezy.
+$GTK_VERSION/gnome-apps-$GTK_VERSION.modules \
+>gtk_packages_$GTK_VERSION.xml
 
 To create the schema for gtk_packages.xml use
 
-trang -I xml gtk_packages.xml gtk_packages_xml.rnc
+trang -I xml gtk_packages_$GTK_VERSION.xml gtk_packages_$GTK_VERSION.rnc
 
 # That resulting schema file is quite helpful in figuring out
-# how to process gtk_packages.xml as below.
+# how to process gtk_packages_$GTK_VERSION.xml as below.
 
 # Transform the xml form to a form that can be used by a cmake script.
 # Note, there will be some information messages sent to stderr by this
@@ -217,7 +220,7 @@ trang -I xml gtk_packages.xml gtk_packages_xml.rnc
 # dependencies.  Currently I use a command variable of 1 to keep
 # the number of packages configured for building pango and
 # (hard) dependencies to a minimum.
-./gtk_transform.py "pango" 1 <gtk_packages.xml 1>| pango_packages.data
+./gtk_transform.py "pango" 1 <gtk_packages_$GTK_VERSION.xml 1>| pango_packages.data
 
 # N.B. there are no plans to keep gtk_packages.xml, gtk_packages.rnc,
 # or pango_packages.data under version control.  However, if a patch
@@ -229,3 +232,13 @@ trang -I xml gtk_packages.xml gtk_packages_xml.rnc
 
 cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
 
+# One known issue with the gtk+ stack is certain package dependencies
+# are completely missing such as pkg-config and libffi which have to
+# be built independently.  For pkg-config we use a hand-generated
+# configuration, pkg-config/bp.cmake.  Other missing packages that
+# can be configured with a template such as libffi, we use gtk_packages_add.xml
+# (under version control) as follows:
+
+./gtk_transform.py "libffi" 1 <gtk_packages_add.xml 1>| add_packages.data
+./gtk_transform.py "intltool" 1 <gtk_packages_add.xml 1>> add_packages.data
+cmake -DFILENAME:FILEPATH=add_packages.data -P configure_bp.cmake
