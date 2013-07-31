@@ -10,4 +10,7 @@
     <pkg-config/>
     <branch hash="sha256:1d812f9f60215099355f5c13c6f06d7db1135c99f34ff03535b71b64435125fd" module="releases/pixman-0.30.0.tar.gz" repo="http://cairographics.org/" size="801692" version="0.30.0"/>
   </autotools>
-</moduleset>
+ <autotools id="gperf">
+    <branch hash="sha256:767112a204407e62dbc3106647cf839ed544f3cf5d0f0523aaa2508623aad63e" module="gnu/gperf/gperf-3.0.4.tar.gz" repo="http://ftp.gnu.org/" size="983500" version="3.0.4"/>
+  </autotools>
+ </moduleset>
