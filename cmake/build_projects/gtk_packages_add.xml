@@ -1,4 +1,9 @@
 <?xml version="1.0" ?>
+<!--
+Most of these data derived from http://www.linuxfromscratch.org, a
+wonderful site that provides fundamental build information for a lot
+of different free software packages.
+-->
 <moduleset>
   <autotools id="libffi">
     <branch hash="sha256:1dddde1400c3bcb7749d398071af88c3e4754058d2d4c0b3696c2f82dc5cf11c" module="libffi/libffi-3.0.13.tar.gz" repo="ftp://sourceware.org/pub/" size="845747" version="3.0.13"/>
@@ -10,7 +15,19 @@
     <pkg-config/>
     <branch hash="sha256:1d812f9f60215099355f5c13c6f06d7db1135c99f34ff03535b71b64435125fd" module="releases/pixman-0.30.0.tar.gz" repo="http://cairographics.org/" size="801692" version="0.30.0"/>
   </autotools>
- <autotools id="gperf">
+  <autotools id="gperf">
     <branch hash="sha256:767112a204407e62dbc3106647cf839ed544f3cf5d0f0523aaa2508623aad63e" module="gnu/gperf/gperf-3.0.4.tar.gz" repo="http://ftp.gnu.org/" size="983500" version="3.0.4"/>
+  </autotools>
+<!-- without these python shenanigans the python components of libxml2 are
+installed with the system prefix rather than desired special prefix
+-->
+  <autotools id="libxml2" makeargs="PYTHON_SITE_PACKAGES=${BP_CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION}/site-packages">
+    <branch hash="md5:9c0cfef285d5c4a5c80d00904ddab380" module="sources/libxml2-2.9.1.tar.gz" repo="http://xmlsoft.org/" size="983500" version="2.9.1"/>
+  </autotools>
+  <autotools id="libxslt">
+    <branch hash="md5:9667bf6f9310b957254fdcf6596600b7" module="sources/libxslt-1.1.28.tar.gz" repo="http://xmlsoft.org/" size="983500" version="1.1.28"/>
+    <dependencies>
+      <dep package="libxml2"/>
+    </dependencies>
   </autotools>
  </moduleset>
