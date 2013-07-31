@@ -5,7 +5,7 @@
 rm -f add_packages.data
 touch add_packages.data
 # Ignore libxml2 since that is sucked in by the libxslt dependency.
-PACKAGE_LIST="libffi intltool pixman gperf libxslt"
+PACKAGE_LIST="libffi intltool pixman gperf libxslt ragel"
 for PACKAGE in $PACKAGE_LIST; do
   ./gtk_transform.py $PACKAGE 1 <gtk_packages_add.xml 1>> add_packages.data
 done
