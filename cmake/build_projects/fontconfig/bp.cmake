@@ -32,7 +32,7 @@ set(fontconfig_configured ON)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel)
+set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft)
 
 set(fontconfig_dependencies_LIST gperf)
 # Remove dependencies that should be ignored.

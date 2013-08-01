@@ -32,7 +32,7 @@ set(gtk-doc_configured ON)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel)
+set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft)
 
 set(gtk-doc_dependencies_LIST libxslt;yelp-tools)
 # Remove dependencies that should be ignored.
