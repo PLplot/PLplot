@@ -1,6 +1,6 @@
-# gtk-doc/bp.cmake
+# docbook-xml/bp.cmake
 # This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of gtk-doc.
+# CMakeLists.txt file to configure the build of docbook-xml.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -25,38 +25,38 @@
 # operate.
 
 # Protect against configuring a build twice in one CMake call
-if(gtk-doc_configured)
+if(docbook-xml_configured)
   return()
-endif(gtk-doc_configured)
-set(gtk-doc_configured ON)
+endif(docbook-xml_configured)
+set(docbook-xml_configured ON)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
 set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft)
 
-set(gtk-doc_dependencies_LIST libxslt;yelp-tools;docbook-xml;docbook-xsl)
+set(docbook-xml_dependencies_LIST libxml2)
 # Remove dependencies that should be ignored.
-if(gtk-doc_dependencies_LIST)
-  list(REMOVE_ITEM gtk-doc_dependencies_LIST ${BP_ignored_dependencies_LIST})
-endif(gtk-doc_dependencies_LIST)
+if(docbook-xml_dependencies_LIST)
+  list(REMOVE_ITEM docbook-xml_dependencies_LIST ${BP_ignored_dependencies_LIST})
+endif(docbook-xml_dependencies_LIST)
 
-set(gtk-doc_dependencies_targets)
-foreach(build_configuration ${gtk-doc_dependencies_LIST})
+set(docbook-xml_dependencies_targets)
+foreach(build_configuration ${docbook-xml_dependencies_LIST})
   if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
     include(${build_configuration}/bp.cmake)
-    list(APPEND gtk-doc_dependencies_targets build_${build_configuration})
+    list(APPEND docbook-xml_dependencies_targets build_${build_configuration})
   else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
-    message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of gtk-doc has been installed another way.")
+    message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of docbook-xml has been installed another way.")
   endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
-endforeach(build_configuration ${gtk-doc_dependences_LIST})
+endforeach(build_configuration ${docbook-xml_dependences_LIST})
 
 # This can be safely done only after above includes.
-set(BP_PACKAGE gtk-doc)
+set(BP_PACKAGE docbook-xml)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL http://download.gnome.org/sources/gtk-doc/1.19/gtk-doc-1.19.tar.xz)
-set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE SHA256)
-set(${BP_PACKAGE}_DOWNLOAD_HASH 27df247fa828433a9390368e2088cc22f954f2ce1f255ddbd12ab6e027b12e68)
+set(${BP_PACKAGE}_URL http://www.docbook.org/xml/4.5/docbook-xml-4.5.zip)
+set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
+set(${BP_PACKAGE}_DOWNLOAD_HASH 03083e288e87a7e829e437358da7ef9e)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
@@ -77,10 +77,23 @@ ExternalProject_Add(
   DEPENDS ${${BP_PACKAGE}_dependencies_targets}
   URL ${${BP_PACKAGE}_URL}
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --with-xml-catalog=${BP_CMAKE_INSTALL_PREFIX}/etc/xml/catalog
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
   BUILD_IN_SOURCE OFF
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}  install
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
+  )
+
+# Add custom commands to the current no-command update step.
+add_custom_command(
+  OUTPUT
+  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
+  COMMAND ${CMAKE_COMMAND} -E copy
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
+  COMMENT "Custom updating of ${BP_PACKAGE}"
+  DEPENDS
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  APPEND
   )
 
 list(APPEND build_target_LIST build_${BP_PACKAGE})
