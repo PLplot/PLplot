@@ -23,6 +23,18 @@ message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 cmake_minimum_required(VERSION 2.8.10.2 FATAL_ERROR)
 
+# CATALOG_CMAKE_INSTALL_PREFIX prepends a "/" to CMAKE_INSTALL_PREFIX if the
+# latter doesn't start with "/", (i.e, the drive letter
+# on Microsoft systems).  This makes the URI file:/// form come out
+# right for catalog entries.
+if(CMAKE_INSTALL_PREFIX MATCHES "^[^/]")
+  set(CATALOG_CMAKE_INSTALL_PREFIX /${CMAKE_INSTALL_PREFIX})
+else(CMAKE_INSTALL_PREFIX MATCHES "^[^/]")
+  set(CATALOG_CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+endif(CMAKE_INSTALL_PREFIX MATCHES "^[^/]")
+message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
+message(STATUS "CATALOG_CMAKE_INSTALL_PREFIX=${CATALOG_CMAKE_INSTALL_PREFIX}")
+
 # Define useful function.
 find_program(XMLCATALOG_EXECUTABLE xmlcatalog)
 function(install_xml_catalog arguments_LIST3 catalog)
@@ -105,24 +117,24 @@ COMMAND ${INSTALL_EXECUTABLE} -v -d -m755
 
 set(commands
 "public" "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"
-"public" "-//OASIS//DTD DocBook XML CALS Table Model V4.5//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/calstblx.dtd"
-"public" "-//OASIS//DTD XML Exchange Table Model 19990315//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/soextblx.dtd"
-"public" "-//OASIS//ELEMENTS DocBook XML Information Pool V4.5//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbpoolx.mod"
-"public" "-//OASIS//ELEMENTS DocBook XML Document Hierarchy V4.5//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbhierx.mod"
-"public" "-//OASIS//ELEMENTS DocBook XML HTML Tables V4.5//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/htmltblx.mod"
-"public" "-//OASIS//ENTITIES DocBook XML Notations V4.5//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbnotnx.mod"
-"public" "-//OASIS//ENTITIES DocBook XML Character Entities V4.5//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbcentx.mod"
-"public" "-//OASIS//ENTITIES DocBook XML Additional General Entities V4.5//EN" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbgenent.mod"
-"rewriteSystem" "http://www.oasis-open.org/docbook/xml/4.5" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5"
-"rewriteURI" "http://www.oasis-open.org/docbook/xml/4.5" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5")
+"public" "-//OASIS//DTD DocBook XML CALS Table Model V4.5//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/calstblx.dtd"
+"public" "-//OASIS//DTD XML Exchange Table Model 19990315//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/soextblx.dtd"
+"public" "-//OASIS//ELEMENTS DocBook XML Information Pool V4.5//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbpoolx.mod"
+"public" "-//OASIS//ELEMENTS DocBook XML Document Hierarchy V4.5//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbhierx.mod"
+"public" "-//OASIS//ELEMENTS DocBook XML HTML Tables V4.5//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/htmltblx.mod"
+"public" "-//OASIS//ENTITIES DocBook XML Notations V4.5//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbnotnx.mod"
+"public" "-//OASIS//ENTITIES DocBook XML Character Entities V4.5//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbcentx.mod"
+"public" "-//OASIS//ENTITIES DocBook XML Additional General Entities V4.5//EN" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5/dbgenent.mod"
+"rewriteSystem" "http://www.oasis-open.org/docbook/xml/4.5" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5"
+"rewriteURI" "http://www.oasis-open.org/docbook/xml/4.5" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5")
 
 install_xml_catalog(commands "docbook")
 
 set(commands
-"delegatePublic" "-//OASIS//ENTITIES DocBook XML" "file://\${CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
-"delegatePublic" "-//OASIS//DTD DocBook XML" "file://\${CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
-"delegateSystem" "http://www.oasis-open.org/docbook/" "file://\${CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
-"delegateURI" "http://www.oasis-open.org/docbook/" "file://\${CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+"delegatePublic" "-//OASIS//ENTITIES DocBook XML" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+"delegatePublic" "-//OASIS//DTD DocBook XML" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+"delegateSystem" "http://www.oasis-open.org/docbook/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+"delegateURI" "http://www.oasis-open.org/docbook/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
 )
 
 install_xml_catalog(commands "catalog")
@@ -145,14 +157,14 @@ set(previous_versions
 foreach(DTDVERSION ${previous_versions})
   set(commands
     "public" "-//OASIS//DTD DocBook XML V${DTDVERSION}//EN" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}/docbookx.dtd"
-    "rewriteSystem" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5"
-    "rewriteURI" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}" "file://\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5"
+    "rewriteSystem" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5"
+    "rewriteURI" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5"
     )
   install_xml_catalog(commands "docbook")
 
   set(commands
-    "delegateSystem" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}/" "file://\${CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
-    "delegateURI" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}/" "file://\${CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+    "delegateSystem" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+    "delegateURI" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
     )
   install_xml_catalog(commands "catalog")
 

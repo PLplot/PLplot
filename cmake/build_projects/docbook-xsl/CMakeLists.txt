@@ -23,6 +23,18 @@ message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 cmake_minimum_required(VERSION 2.8.10.2 FATAL_ERROR)
 
+# CATALOG_CMAKE_INSTALL_PREFIX prepends a "/" to CMAKE_INSTALL_PREFIX if the
+# latter doesn't start with "/", (i.e, the drive letter
+# on Microsoft systems).  This makes the URI file:/// form come out
+# right for catalog entries.
+if(CMAKE_INSTALL_PREFIX MATCHES "^[^/]")
+  set(CATALOG_CMAKE_INSTALL_PREFIX /${CMAKE_INSTALL_PREFIX})
+else(CMAKE_INSTALL_PREFIX MATCHES "^[^/]")
+  set(CATALOG_CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+endif(CMAKE_INSTALL_PREFIX MATCHES "^[^/]")
+message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
+message(STATUS "CATALOG_CMAKE_INSTALL_PREFIX=${CATALOG_CMAKE_INSTALL_PREFIX}")
+
 # Define useful function.
 find_program(XMLCATALOG_EXECUTABLE xmlcatalog)
 function(install_xml_catalog arguments_LIST3 catalog)
@@ -148,10 +160,10 @@ COMMAND ${INSTALL_EXECUTABLE} -v -d -m755
   )
 
 set(commands
-  "rewriteSystem" "http://docbook.sourceforge.net/release/xsl/1.78.1" "\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
-  "rewriteURI" "http://docbook.sourceforge.net/release/xsl/1.78.1" "\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
-  "rewriteSystem" "http://docbook.sourceforge.net/release/xsl/current" "\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
-  "rewriteURI" "http://docbook.sourceforge.net/release/xsl/current" "\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
+  "rewriteSystem" "http://docbook.sourceforge.net/release/xsl/1.78.1" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
+  "rewriteURI" "http://docbook.sourceforge.net/release/xsl/1.78.1" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
+  "rewriteSystem" "http://docbook.sourceforge.net/release/xsl/current" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
+  "rewriteURI" "http://docbook.sourceforge.net/release/xsl/current" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1"
 )
 
 install_xml_catalog(commands "catalog")
