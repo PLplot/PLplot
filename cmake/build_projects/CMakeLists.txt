@@ -166,16 +166,16 @@ if(MSYS_PLATFORM)
     determine_msys_path(MSYS_CMAKE_RC_COMPILER "${CMAKE_RC_COMPILER}")
     list(APPEND BP_CMAKE_COMMAND -DCMAKE_RC_COMPILER:FILEPATH=${MSYS_CMAKE_RC_COMPILER})
   endif(CMAKE_RC_COMPILER)
-  # Propagate the install prefix to autotools-based builds
-  set(BP_CONFIGURE_COMMAND configure --prefix=${BP_CMAKE_INSTALL_PREFIX})
 else(MSYS_PLATFORM)
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
   set(BP_CMAKE_COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
   set(BP_CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
-  # Propagate the install prefix to autotools-based builds
-  set(BP_CONFIGURE_COMMAND configure --prefix=${BP_CMAKE_INSTALL_PREFIX})
 endif(MSYS_PLATFORM)
+
+# Propagate the install prefix to autotools-based builds
+set(BP_CONFIGURE_COMMAND configure --prefix=${BP_CMAKE_INSTALL_PREFIX})
+
 
 if(CMAKE_VERBOSE_MAKEFILE)
   # Not sure whether all contemplated back-ends support this or not, but
