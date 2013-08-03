@@ -100,7 +100,9 @@ foreach(tag IN LISTS tags)
     # TEMPORARY (already in the _required_ native form for the cmake -E
     # copy_directory command below except for the drive letter which is
     # z: for this local result.)
-    set(PLPLOT_LOCAL_SOURCE_DIR z:${PLPLOT_LOCAL_SOURCE_DIR})
+    set(MODIFIED_PLPLOT_LOCAL_SOURCE_DIR z:${PLPLOT_LOCAL_SOURCE_DIR})
+  else(MSYS_PLATFORM)
+    set(MODIFIED_PLPLOT_LOCAL_SOURCE_DIR ${PLPLOT_LOCAL_SOURCE_DIR})
   endif(MSYS_PLATFORM)
   message(STATUS "modified BP_PATH for ${BP_PACKAGE}${tag} = ${BP_PATH}")
 
@@ -110,7 +112,7 @@ foreach(tag IN LISTS tags)
     build_${BP_PACKAGE}${tag}
     DEPENDS "${${BP_PACKAGE}${tag}_dependencies_targets}"
     #TEMPORARY
-    DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLPLOT_LOCAL_SOURCE_DIR} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
+    DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODIFIED_PLPLOT_LOCAL_SOURCE_DIR} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
     CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON -DPLD_pdf=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
     BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
     INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
