@@ -12,8 +12,9 @@ wget -nd  ftp://ftp.acc.umu.se/pub/GNOME/teams/releng/$GTK_VERSION/*
 cd ..
 ./gtk_xml_recursive_process.py \
 $GTK_VERSION/gnome-apps-$GTK_VERSION.modules \
->|gtk_packages_$GTK_VERSION.xml
+>|gtk_packages_$GTK_VERSION.xml_original
 rm -rf $GTK_VERSION
+cp gtk_packages_$GTK_VERSION.xml_original gtk_packages_$GTK_VERSION.xml 
 patch --no-backup-if-mismatch gtk_packages_$GTK_VERSION.xml patch_gtk_packages.xml
 
 ./gtk_transform.py pango 1 <gtk_packages_$GTK_VERSION.xml 1>| pango_packages.data
