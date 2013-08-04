@@ -41,7 +41,7 @@ set(gtk-doc_configured ON)
 # ignored.
 set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
 
-set(gtk-doc_dependencies_LIST libxslt;yelp-tools;docbook-xml;docbook-xsl)
+set(gtk-doc_dependencies_LIST docbook-xml;docbook-xsl;libxslt;yelp-tools)
 # Remove dependencies that should be ignored.
 if(gtk-doc_dependencies_LIST)
   list(REMOVE_ITEM gtk-doc_dependencies_LIST ${BP_ignored_dependencies_LIST})
