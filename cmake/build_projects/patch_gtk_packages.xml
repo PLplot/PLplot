@@ -1,6 +1,21 @@
---- gtk_packages_3.9.4.xml_original	2013-07-30 14:52:57.038048491 -0700
-+++ gtk_packages_3.9.4.xml	2013-07-31 08:06:20.965414047 -0700
-@@ -925,7 +925,7 @@
+--- gtk_packages_3.9.4.xml_original	2013-08-04 10:48:34.157911200 -0700
++++ gtk_packages_3.9.4.xml	2013-08-04 10:59:20.797600533 -0700
+@@ -640,11 +640,13 @@
+   <autotools id="gnome-common">
+     <branch hash="sha256:2af2d97010d2a9aeb3b99dd2ce07d1ef023e15a27b412ffe4f067f016ff7117b" module="gnome-common/3.7/gnome-common-3.7.4.tar.xz" repo="http://download.gnome.org/sources/" size="151864" version="3.7.4"/>
+   </autotools>
+-  <autotools id="gtk-doc">
++  <autotools autogenargs="--with-xml-catalog=${BP_CMAKE_INSTALL_PREFIX}/etc/xml/catalog" id="gtk-doc">
+     <branch hash="sha256:27df247fa828433a9390368e2088cc22f954f2ce1f255ddbd12ab6e027b12e68" module="gtk-doc/1.19/gtk-doc-1.19.tar.xz" repo="http://download.gnome.org/sources/" size="597880" version="1.19"/>
+     <dependencies>
+       <dep package="libxslt"/>
+       <dep package="yelp-tools"/>
++      <dep package="docbook-xml"/>
++      <dep package="docbook-xsl"/>
+     </dependencies>
+   </autotools>
+   <autotools id="iso-codes">
+@@ -925,7 +927,7 @@
      </suggests>
    </autotools>
    <autotools autogenargs="" id="harfbuzz">
