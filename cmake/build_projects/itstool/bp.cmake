@@ -1,4 +1,11 @@
 # itstool/bp.cmake
+# N.B. this file is generated so if you edit it you will lose all your
+# changes the next time it is generated (typically by running
+# either/both the update_added_packages.sh or update_pango_packages.sh
+# scripts).  If those scripts do not provide good results, then
+# consider changing their source files (e.g., by editing the files
+# used in those scripts) or add a patch to be run by those scripts).
+
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build of itstool.
 
@@ -32,7 +39,7 @@ set(itstool_configured ON)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft)
+set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
 
 set(itstool_dependencies_LIST )
 # Remove dependencies that should be ignored.
