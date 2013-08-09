@@ -707,7 +707,9 @@ RECURSIVE              = YES
 
 EXCLUDE                = "@CMAKE_BINARY_DIR@/bindings/f77/plplot_parameters.h" \
                          "@CMAKE_SOURCE_DIR@/bindings/f95/plplot_parameters.h" \
-                         "@CMAKE_BINARY_DIR@/bindings/f95/plplot_parameters.h"
+                         "@CMAKE_BINARY_DIR@/bindings/f95/plplot_parameters.h" \
+                         "@CMAKE_SOURCE_DIR@/bindings/python/plplot.py" \
+                         "@CMAKE_BINARY_DIR@/bindings/python/plplot.py"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
