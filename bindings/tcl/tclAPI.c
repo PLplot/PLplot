@@ -4257,39 +4257,39 @@ pllegendCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
 static int
 plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
-             int argc, const char *argv[] )
+               int argc, const char *argv[] )
 {
-    PLFLT   colorbar_width, colorbar_height;
-    PLINT   opt, position;
-    PLFLT   x, y, x_length, y_length;
-    PLINT   bg_color, bb_color, bb_style;
-    PLFLT   low_cap_color, high_cap_color;
-    PLINT   cont_color;
-    PLFLT   cont_width;
-    PLINT   n_label_opts;
-    PLINT   n_labels;
-    PLINT   *label_opts;
-    char    **labels;
-    PLINT   n_axis_opts;
-    PLINT   n_ticks;
-    PLINT   n_sub_ticks;
-    PLINT   n_axes;
-    char    **axis_opts;
-    PLFLT   *ticks;
-    PLINT   *sub_ticks;
-    Tcl_Obj *list_vectors;
-    int     n_vectors;
-    PLINT   *vector_sizes;
-    PLFLT   **vector_values;
-    int     retcode;
-    int     i;
-    int     length;
-    Tcl_Obj *vector;
+    PLFLT     colorbar_width, colorbar_height;
+    PLINT     opt, position;
+    PLFLT     x, y, x_length, y_length;
+    PLINT     bg_color, bb_color, bb_style;
+    PLFLT     low_cap_color, high_cap_color;
+    PLINT     cont_color;
+    PLFLT     cont_width;
+    PLINT     n_label_opts;
+    PLINT     n_labels;
+    PLINT     *label_opts;
+    char      **labels;
+    PLINT     n_axis_opts;
+    PLINT     n_ticks;
+    PLINT     n_sub_ticks;
+    PLINT     n_axes;
+    char      **axis_opts;
+    PLFLT     *ticks;
+    PLINT     *sub_ticks;
+    Tcl_Obj   *list_vectors;
+    int       n_vectors;
+    PLINT     *vector_sizes;
+    PLFLT     **vector_values;
+    int       retcode;
+    int       i;
+    int       length;
+    Tcl_Obj   *vector;
     tclMatrix *vectorPtr;
 
-    double  value;
+    double    value;
 
-    Tcl_Obj *data[2];
+    Tcl_Obj   *data[2];
 
     if ( argc != 20 )
     {
@@ -4311,7 +4311,7 @@ plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     sscanf( argv[10], "%lg", &value ); low_cap_color  = (PLFLT) value;
     sscanf( argv[11], "%lg", &value ); high_cap_color = (PLFLT) value;
     sscanf( argv[12], "%d", &cont_color );
-    sscanf( argv[13], "%lg", &value ); cont_width     = (PLFLT) value;
+    sscanf( argv[13], "%lg", &value ); cont_width = (PLFLT) value;
     label_opts   = argv_to_ints( interp, argv[14], &n_label_opts );
     labels       = argv_to_chars( interp, argv[15], &n_labels );
     axis_opts    = argv_to_chars( interp, argv[16], &n_axis_opts );
@@ -4343,8 +4343,8 @@ plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
     else
     {
-        vector_sizes  = (int *) malloc( sizeof( int ) * (size_t) n_vectors );
-        vector_values = (PLFLT **) malloc( sizeof( PLFLT * ) * (size_t) n_vectors );
+        vector_sizes  = (int *) malloc( sizeof ( int ) * (size_t) n_vectors );
+        vector_values = (PLFLT **) malloc( sizeof ( PLFLT * ) * (size_t) n_vectors );
         for ( i = 0; i < n_vectors; i++ )
         {
             Tcl_ListObjIndex( interp, list_vectors, i, &vector );
@@ -4361,36 +4361,36 @@ plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
 
     c_plcolorbar( &colorbar_width, &colorbar_height,
-                  opt, position, x, y,
-                  x_length, y_length,
-                  bg_color, bb_color, bb_style,
-                  low_cap_color, high_cap_color,
-                  cont_color, cont_width,
-                  n_labels, label_opts, (const char * const *)labels,
-                  n_axes, (const char * const *)axis_opts,
-                  ticks, sub_ticks,
-                  vector_sizes, (const PLFLT * const *)vector_values );
+        opt, position, x, y,
+        x_length, y_length,
+        bg_color, bb_color, bb_style,
+        low_cap_color, high_cap_color,
+        cont_color, cont_width,
+        n_labels, label_opts, (const char * const *) labels,
+        n_axes, (const char * const *) axis_opts,
+        ticks, sub_ticks,
+        vector_sizes, (const PLFLT * const *) vector_values );
 
     if ( label_opts != NULL )
         free( label_opts );
     if ( labels != NULL )
     {
-        free( labels[0] ) ;
-        free( labels ) ;
+        free( labels[0] );
+        free( labels );
     }
     if ( axis_opts != NULL )
     {
-        free( axis_opts[0] ) ;
-        free( axis_opts ) ;
+        free( axis_opts[0] );
+        free( axis_opts );
     }
     if ( ticks != NULL )
-        free( ticks ) ;
+        free( ticks );
     if ( sub_ticks != NULL )
-        free( sub_ticks ) ;
+        free( sub_ticks );
     if ( vector_values != NULL )
     {
-        free( vector_sizes ) ;
-        free( vector_values ) ;
+        free( vector_sizes );
+        free( vector_values );
     }
 
     Tcl_DecrRefCount( list_vectors );
