@@ -165,6 +165,8 @@ void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
 void wxPLDevDC::FillPolygon( PLStream *pls )
 {
     wxPoint *points = new wxPoint[pls->dev_npts];
+    wxCoord xoffset = 0;
+    wxCoord yoffset = 0;
 
     for ( int i = 0; i < pls->dev_npts; i++ )
     {
@@ -176,11 +178,11 @@ void wxPLDevDC::FillPolygon( PLStream *pls )
 
     if ( pls->dev_eofill )
     {
-        m_dc->DrawPolygon( pls->dev_npts, points, wxODDEVEN_RULE );
+        m_dc->DrawPolygon( pls->dev_npts, points, xoffset, yoffset, wxODDEVEN_RULE );
     }
     else
     {
-        m_dc->DrawPolygon( pls->dev_npts, points, wxWINDING_RULE );
+        m_dc->DrawPolygon( pls->dev_npts, points, xoffset, yoffset, wxWINDING_RULE );
     }
     delete[] points;
 }
