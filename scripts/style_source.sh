@@ -193,13 +193,13 @@ fi
 
 export csource_LIST
 # Top level directory.
-csource_LIST="config.h.cmake"
+csource_LIST="config.h.in"
 
 # src directory
 csource_LIST="$csource_LIST src/*.[ch]"
 
 # All C source (i.e., exclude qt.h) in include directory.
-csource_LIST="$csource_LIST $(ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h)" 
+csource_LIST="$csource_LIST $(ls include/*.h include/*.h.in |grep -v qt.h)" 
 
 # Every subdirectory of lib.
 csource_LIST="$csource_LIST lib/*/*.[ch] lib/qsastime/qsastimeP.h.in"
