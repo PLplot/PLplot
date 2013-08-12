@@ -51,6 +51,8 @@ set(PLPLOT_WEBSITE "plplot.sourceforge.net" CACHE STRING "PLplot web site")
 # Required for validation regardless of whether BUILD_DOC is set
 set(XML_DECL "/usr/share/xml/declaration/xml.dcl" CACHE STRING "Full path to xml.dcl file.")
 set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.5//EN")
+set(DOCBOOK_DTD_SYSID "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd")
+
 find_program(ONSGMLS onsgmls)
 
 if(ONSGMLS )

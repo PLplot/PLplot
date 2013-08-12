@@ -2321,17 +2321,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <literal>(X, Y, Z)</literal> in terms of some meaningful
       user-specified coordinate system.  These are called
       <emphasis>three-dimensional world coordinates</emphasis>.  We need to
-      specify the ranges of these coordinates, so that the entire surface
-      is contained within the cuboid defined by <literal>xmin &less; x &less;
-      xmax</literal>, <literal>ymin &less; y &less; ymax</literal>, and
-      <literal>zmin &less; z &less; zmax</literal>.  Typically, we shall want
-      to view the surface from a variety of angles, and to facilitate this,
-      a two-stage mapping of the enclosing cuboid is performed.  Firstly,
-      it is mapped into another cuboid called the <emphasis>normalized
-      box</emphasis> whose size must also be specified by the user, and
-      secondly this normalized box is viewed from a particular azimuth and
-      elevation so that it can be projected onto the two-dimensional
-      window.
+      specify the ranges of these coordinates, so that the entire surface is
+      contained within the cuboid defined by <literal>xmin</literal> &lt;
+      <literal>x</literal> &lt; <literal>xmax</literal>,
+      <literal>ymin</literal> &lt; <literal>y</literal> &lt;
+      <literal>ymax</literal>, and <literal>zmin</literal> &lt;
+      <literal>z</literal> &lt; <literal>zmax</literal>.  Typically, we
+      shall want to view the surface from a variety of angles, and to
+      facilitate this, a two-stage mapping of the enclosing cuboid is
+      performed.  Firstly, it is mapped into another cuboid called the
+      <emphasis>normalized box</emphasis> whose size must also be specified
+      by the user, and secondly this normalized box is viewed from a
+      particular azimuth and elevation so that it can be projected onto the
+      two-dimensional window.
     </para>
 
     <para>
