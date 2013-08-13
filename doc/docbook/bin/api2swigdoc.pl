@@ -70,7 +70,7 @@ $api = "";
 open (MASTER, "< $ARGV[0]");
 while (<MASTER>) {
   if (/^(<!DOCTYPE.*)\[/) {
-    $api .= "$1 \"\" [\n";
+    $api .= "$1 [\n";
   }
   elsif (/^<\?xml/) {
     $api .= '<?xml version="1.0" standalone="yes"?>
