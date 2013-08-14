@@ -47,8 +47,7 @@ while (<>) {
   if (m{(.*)%([^;]+);(.*)}) {
     print "$1";
     $tmp = "$3\n";
-    print `cat $sysent{$2}`
-      if (not m{%Math-Entities;});
+    print `cat $sysent{$2}`;
     $_ = $tmp;
     redo
   }

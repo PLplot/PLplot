@@ -375,7 +375,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
 
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
-    COMMAND ${DB2X_TEXIXML} ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
+    COMMAND ${DB2X_TEXIXML} --encoding=utf-8 ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi_raw
     COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
     COMMAND sed "s?The PLplot Plotting Library: (plplotdoc)?PLplot: (plplotdoc)?" < ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi_raw > ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
