@@ -63,19 +63,11 @@ endif(ONSGMLS )
 
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
-  # EC_PDFTEX needed to configure pdftex.map which is used in general for
-  # the documentation build.  The specific location in
-  # /usr/share/texmf/dvips/base is used in Debian sarge and may cover other
-  # distributions which still use tetex.
-  find_file(EC_ENC_NAME EC.enc /usr/share/texmf/dvips/base)
-  if(EC_ENC_NAME)
-    # Value appropriate for tetex
-    set(EC_PDFTEX EC)
-  else(EC_ENC_NAME)
-    # Value appropriate for texlive
-    set(EC_PDFTEX ec)
-  endif(EC_ENC_NAME)
-    
+
+  option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" OFF)
+
+  # The info backend is implemented only with perl and XML/XSLT regardless of
+  # DOCBOOK_XML_BACKEND.
   find_program(DB2X_TEXIXML db2x_texixml)
   if(NOT DB2X_TEXIXML)
     message(STATUS "WARNING: db2x_texixml not found")
@@ -84,147 +76,169 @@ if(BUILD_DOC)
   if(NOT DB2X_XSLTPROC)
     message(STATUS "WARNING: db2x_xsltproc not found")
   endif(NOT DB2X_XSLTPROC)
-  find_program(OPENJADE openjade)
-  if(NOT OPENJADE)
-    message(STATUS "WARNING: openjade not found")
-  endif(NOT OPENJADE)
-  find_program(JADETEX jadetex)
-  if(NOT JADETEX)
-    message(STATUS "WARNING: jadetex not found")
-  endif(NOT JADETEX)
-  find_program(PDFJADETEX pdfjadetex)
-  if(NOT PDFJADETEX)
-    message(STATUS "WARNING: pdfjadetex not found")
-  endif(NOT PDFJADETEX)
-  find_program(DVIPS dvips)
-  if(NOT DVIPS)
-    message(STATUS "WARNING: dvips not found")
-  endif(NOT DVIPS)
   find_program(MAKEINFO makeinfo)
   if(NOT MAKEINFO)
     message(STATUS "WARNING: makeinfo not found")
   endif(NOT MAKEINFO)
-  # Use include style here since FindUnixCommands is a simple module and
-  # clearly not meant to be an official FindXXX module.
-  include(FindUnixCommands)
-  find_program(MKDIR mkdir)
-
-  # Check requirements for different doc types
-  set(BUILD_INFO ON)
-  set(BUILD_MAN ON)
-  set(BUILD_HTML ON)
-  set(BUILD_PRINT ON)
-
-  if(NOT PERL_FOUND OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
+  if(PERL_FOUND AND DB2X_TEXIXML AND DB2X_XSLTPROC AND MAKEINFO)
+    set(BUILD_INFO ON)
+  else(PERL_FOUND AND DB2X_TEXIXML AND DB2X_XSLTPROC AND MAKEINFO)
     set(BUILD_INFO OFF)
     message(STATUS
     "WARNING: Not building info documentation - "
     "required programs are missing"
     )
-  endif(NOT PERL_FOUND OR NOT DB2X_TEXIXML OR NOT DB2X_XSLTPROC OR NOT MAKEINFO)
-    
-  if(NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
+  endif(PERL_FOUND AND DB2X_TEXIXML AND DB2X_XSLTPROC AND MAKEINFO)
+
+  # The man backend is implemented only with perl and XML regardless of
+  # DOCBOOK_XML_BACKEND.
+  if(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
+    set(BUILD_MAN ON)
+  else(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
     set(BUILD_MAN OFF)
     message(STATUS
     "WARNING: Not building man documentation - "
     "required programs are missing"
     )
-  endif(NOT PERL_FOUND OR NOT PERL_XML_PARSER OR NOT PERL_XML_DOM)
+  endif(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
 
-  if(NOT OPENJADE) 
-    set(BUILD_HTML OFF)
-    message(STATUS
-    "WARNING: Not building html documentation - "
-    "required programs are missing"
-    )
-  endif(NOT OPENJADE)
+  if(DOCBOOK_XML_BACKEND)
+    message(STATUS "DOCBOOK_XML_BACKEND not implemented yet")
+  else(DOCBOOK_XML_BACKEND)
+    # Deprecated SGML/DSSSL backends to generate html and print documentation.
 
-  if(NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
-    set(BUILD_PRINT OFF)
-    message(STATUS
-    "WARNING: Not building print documentation - "
-    "required programs are missing"
-    )
-  endif(NOT OPENJADE OR NOT JADETEX OR NOT PDFJADETEX OR NOT DVIPS OR NOT GZIP)
-    
-  set(JADELOG "jadeout.log")
+    # These JADELOG and EC_PDFTEX variables used during course of
+    # SGML/DSSSL builds
+    set(JADELOG "jadeout.log")
 
-  # DTD definitions
-  set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
-  set(DB_SS_HTML_PUBID "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN")
-  set(DB_SS_PRINT_PUBID "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN")
+    # EC_PDFTEX needed to configure pdftex.map which is used in general for
+    # the documentation build.  The specific location in
+    # /usr/share/texmf/dvips/base is used in Debian sarge and may cover other
+    # distributions which still use tetex.
+    find_file(EC_ENC_NAME EC.enc /usr/share/texmf/dvips/base)
+    if(EC_ENC_NAME)
+      # Value appropriate for tetex
+      set(EC_PDFTEX EC)
+    else(EC_ENC_NAME)
+      # Value appropriate for texlive
+      set(EC_PDFTEX ec)
+    endif(EC_ENC_NAME)
 
-  # Check public identifiers
-  include(CheckDTD)
+    # Find programmes required for SGML/DSSSL builds.
+    find_program(OPENJADE openjade)
+    if(NOT OPENJADE)
+      message(STATUS "WARNING: openjade not found")
+    endif(NOT OPENJADE)
+    find_program(JADETEX jadetex)
+    if(NOT JADETEX)
+      message(STATUS "WARNING: jadetex not found")
+    endif(NOT JADETEX)
+    find_program(PDFJADETEX pdfjadetex)
+    if(NOT PDFJADETEX)
+      message(STATUS "WARNING: pdfjadetex not found")
+    endif(NOT PDFJADETEX)
+    find_program(DVIPS dvips)
+    if(NOT DVIPS)
+      message(STATUS "WARNING: dvips not found")
+    endif(NOT DVIPS)
+    # Use include style here since FindUnixCommands is a simple module and
+    # clearly not meant to be an official FindXXX module.
+    include(FindUnixCommands)
+    find_program(MKDIR mkdir)
 
-  CheckDTD(HAVE_DSSSL_DTD  
-  "DSSSL Style Sheet DTD" 
-  "" 
-  "" 
-  "" 
-  "[<!ELEMENT book - O (#PCDATA)>]" 
-  "sgml" 
-  "\"${DSSSL_DTD_PUBID}\"" 
-  "style-sheet.dtd" 
-  "jade"
-  )
+    # These DSSSL stylesheets needed for SGML/DSSSL builds.
+    set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
+    set(DB_SS_HTML_PUBID "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN")
+    set(DB_SS_PRINT_PUBID "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN")
 
-  CheckDTD(HAVE_HTML_SS
-  "DocBook HTML Stylesheet"
-  "[<!ENTITY dbstyle PUBLIC \"${DB_SS_HTML_PUBID}\" CDATA DSSSL>]"
-  "use=\"docbook\""
-  "<external-specification id=\"docbook\" document=\"dbstyle\">"
-  "[<!ELEMENT book - O (#PCDATA)>]"
-  "sgml"
-  "\"${DB_SS_HTML_PUBID}\""
-  "html/docbook.dsl"
-  "docbook-stylesheets"
-  )
+    # Check public identifiers
+    include(CheckDTD)
 
-  CheckDTD(HAVE_PRINT_SS
-  "DocBook Print Stylesheet"
-  "[<!ENTITY dbstyle PUBLIC \"${DB_SS_PRINT_PUBID}\" CDATA DSSSL>]"
-  "use=\"docbook\""
-  "<external-specification id=\"docbook\" document=\"dbstyle\">"
-  "[<!ELEMENT book - O (#PCDATA)>]"
-  "tex"
-  "\"${DB_SS_PRINT_PUBID}\""
-  "print/docbook.dsl"
-  "docbook-stylesheets"
-  )
-
-  CheckDTD(HAVE_DB_DTD
-  "DocBook DTD"
-  ""
-  ""
-  ""
-  "PUBLIC \"${DOCBOOK_DTD_PUBID}\""
-  "sgml"
-  "\"${DOCBOOK_DTD_PUBID}\""
-  "docbookx.dtd"
-  "docbook-xml (DTD version 3.1.3)"
-  )
-
-  if(BUILD_PRINT)
-    if(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
-      set(BUILD_PRINT OFF)
-      message(STATUS
-      "WARNING: Not building print documentation - "
-      "dtd files / style sheets are missing"
+    CheckDTD(HAVE_DSSSL_DTD  
+      "DSSSL Style Sheet DTD" 
+      "" 
+      "" 
+      "" 
+      "[<!ELEMENT book - O (#PCDATA)>]" 
+      "sgml" 
+      "\"${DSSSL_DTD_PUBID}\"" 
+      "style-sheet.dtd" 
+      "jade"
       )
-    endif(NOT HAVE_DSSSL_DTD OR NOT HAVE_PRINT_SS OR NOT HAVE_DB_DTD)
-  endif(BUILD_PRINT)
 
-  if(BUILD_HTML)
-    if(NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
+    CheckDTD(HAVE_HTML_SS
+      "DocBook HTML Stylesheet"
+      "[<!ENTITY dbstyle PUBLIC \"${DB_SS_HTML_PUBID}\" CDATA DSSSL>]"
+      "use=\"docbook\""
+      "<external-specification id=\"docbook\" document=\"dbstyle\">"
+      "[<!ELEMENT book - O (#PCDATA)>]"
+      "sgml"
+      "\"${DB_SS_HTML_PUBID}\""
+      "html/docbook.dsl"
+      "docbook-stylesheets"
+      )
+
+    CheckDTD(HAVE_PRINT_SS
+      "DocBook Print Stylesheet"
+      "[<!ENTITY dbstyle PUBLIC \"${DB_SS_PRINT_PUBID}\" CDATA DSSSL>]"
+      "use=\"docbook\""
+      "<external-specification id=\"docbook\" document=\"dbstyle\">"
+      "[<!ELEMENT book - O (#PCDATA)>]"
+      "tex"
+      "\"${DB_SS_PRINT_PUBID}\""
+      "print/docbook.dsl"
+      "docbook-stylesheets"
+      )
+
+    CheckDTD(HAVE_DB_DTD
+      "DocBook DTD"
+      ""
+      ""
+      ""
+      "PUBLIC \"${DOCBOOK_DTD_PUBID}\""
+      "sgml"
+      "\"${DOCBOOK_DTD_PUBID}\""
+      "docbookx.dtd"
+      "docbook-xml (DTD version 3.1.3)"
+      )
+
+    if(OPENJADE) 
+      if(HAVE_DSSSL_DTD AND HAVE_HTML_SS AND HAVE_DB_DTD)
+	set(BUILD_HTML ON)
+      else(HAVE_DSSSL_DTD AND HAVE_HTML_SS AND HAVE_DB_DTD)
+	set(BUILD_HTML OFF)
+	message(STATUS
+	  "WARNING: Not building html documentation - "
+	  "dtd files / style sheets are missing"
+	  )
+      endif(HAVE_DSSSL_DTD AND HAVE_HTML_SS AND HAVE_DB_DTD)
+    else(OPENJADE) 
       set(BUILD_HTML OFF)
       message(STATUS
-      "WARNING: Not building html documentation - "
-      "dtd files / style sheets are missing"
-      )
-    endif(NOT HAVE_DSSSL_DTD OR NOT HAVE_HTML_SS OR NOT HAVE_DB_DTD)
-  endif(BUILD_HTML)
+	"WARNING: Not building html documentation - "
+	"required programs are missing"
+	)
+    endif(OPENJADE)
 
+    if(OPENJADE AND JADETEX AND PDFJADETEX AND DVIPS AND GZIP)
+      if(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
+	set(BUILD_PRINT ON)
+      else(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
+	set(BUILD_PRINT OFF)
+	message(STATUS
+	  "WARNING: Not building print documentation - "
+	  "dtd files / style sheets are missing"
+	  )
+      endif(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
+    else(OPENJADE AND JADETEX AND PDFJADETEX AND DVIPS AND GZIP)
+      set(BUILD_PRINT OFF)
+      message(STATUS
+	"WARNING: Not building print documentation - "
+	"required programs are missing"
+	)
+    endif(OPENJADE AND JADETEX AND PDFJADETEX AND DVIPS AND GZIP)
+
+  endif(DOCBOOK_XML_BACKEND)
 endif(BUILD_DOC)
 
 if(BUILD_DOC OR PREBUILT_DOC)
