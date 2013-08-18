@@ -19,15 +19,15 @@
 # You should have received a copy of the GNU Library General Public License
 # along with PLplot; if not, write to the Free Software
 
-set(MASTER_XML plplotdoc.xml)
-set(MASTER_XML_IN ${MASTER_XML}.in)
-
 set(BINDIR ${CMAKE_CURRENT_SOURCE_DIR}/../bin)
 
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/${MASTER_XML_IN}
-${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
-)
+foreach(suffix info html print)
+  set(inline_entities ${CMAKE_CURRENT_SOURCE_DIR}/inline-${suffix}.ent)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplotdoc.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-${suffix}.xml
+    )
+endforeach(suffix info html print)
 
 set(
 SOURCE_FILES
@@ -48,8 +48,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/fortran95.xml
 ${CMAKE_CURRENT_SOURCE_DIR}/cplus.xml
 ${CMAKE_CURRENT_SOURCE_DIR}/drivers.xml
 ${CMAKE_CURRENT_SOURCE_DIR}/gui.xml
-${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
-${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
 ${CMAKE_CURRENT_SOURCE_DIR}/intro.xml
 ${CMAKE_CURRENT_SOURCE_DIR}/libraries.xml
 ${CMAKE_CURRENT_SOURCE_DIR}/ocaml.xml
@@ -62,27 +60,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/wish.xml
 ${CMAKE_CURRENT_SOURCE_DIR}/math.ent
 )
 
-if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
-  foreach(
-  file 
-  ${SOURCE_FILES}
+execute_process(
+  COMMAND
+  ${CMAKE_COMMAND} -E copy_if_different 
   ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
-  )
-    get_filename_component(filename ${file} NAME)
-    if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
-      execute_process(
-      COMMAND
-      ${CMAKE_COMMAND} -E create_symlink 
-      ${CMAKE_CURRENT_SOURCE_DIR}/${filename}
-      ${CMAKE_CURRENT_BINARY_DIR}/${filename}
-      )
-    endif(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
-  endforeach(
-  file 
-  ${SOURCE_FILES}
-  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
-  )
-endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+  ${CMAKE_CURRENT_BINARY_DIR}/jadetex.cfg
+)
 
 if(
 PREBUILT_DOC
@@ -112,14 +95,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
 
     # Custom target for validating xml file
     add_custom_target(validate
-    ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-    COMMAND ${CMAKE_COMMAND} -E create_symlink 
-    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
-    ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-    COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} > ${VALIDATE_OUTPUT}
-    DEPENDS 
-    ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
-    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
+      COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-html.xml > ${VALIDATE_OUTPUT}
     )
     add_dependencies(validate copy_prebuiltdoc)
   endif(ONSGMLS)
@@ -141,75 +117,69 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
   # used to help build the documentation.  Of course, these files are
   # required for validation as well.
   # N.B. if PERL_FOUND is false, then BUILD_DOC is false.
-  if(PERL_FOUND)
-    add_custom_command(
+  add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
     COMMAND ${PERL_EXECUTABLE}
     ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
     DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
     )
-    # For parallel builds to work must have all file dependency chains of
-    # targets independent of each other.  Thus, since several targets
-    # need plplot-symbols.txt, must create the target 
-    # docbook_plplot-symbols_txt and have the targets depend on that target
-    # rather than have each target file depend directly on 
-    # ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt.
-    add_custom_target(
+  # For parallel builds to work must have all file dependency chains of
+  # targets independent of each other.  Thus, since several targets
+  # need plplot-symbols.txt, must create the target 
+  # docbook_plplot-symbols_txt and have the targets depend on that target
+  # rather than have each target file depend directly on 
+  # ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt.
+  add_custom_target(
     docbook_plplot-symbols_txt
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
     )
-    # libplplot should be created before plplot-symbols.txt since
-    # get-library-symbols.pl depends upon libplplot.
-    add_dependencies(docbook_plplot-symbols_txt plplot${LIB_TAG})
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+  # libplplot should be created before plplot-symbols.txt since
+  # get-library-symbols.pl depends upon libplplot.
+  add_dependencies(docbook_plplot-symbols_txt plplot${LIB_TAG})
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
     "plplot-symbols.txt\n"
     )
 
-    add_custom_command(
+  add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
     COMMAND ${PERL_EXECUTABLE}
     ${BINDIR}/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
     DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
     )
-    # For parallel builds to work must have all file dependency chains of
-    # targets independent of each other.  Thus, since several targets
-    # need plplot-structs.txt, must use target dependencies rather than
-    # file dependencies to build this file.
-    add_custom_target(
+  # For parallel builds to work must have all file dependency chains of
+  # targets independent of each other.  Thus, since several targets
+  # need plplot-structs.txt, must use target dependencies rather than
+  # file dependencies to build this file.
+  add_custom_target(
     docbook_plplot-structs_txt
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
     )
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
     "plplot-structs.txt\n"
     )
-  endif(PERL_FOUND)
   
   # Custom command for validating xml file
-  if(PERL_FOUND AND ONSGMLS)
+  # This one different from alternative above used in PREBUILT_DOC case
+  # because this one has dependencies which have to be built first.
+  if(ONSGMLS)
 
     set(VALIDATE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/validate.out)
 
     add_custom_target(validate
-    ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-    COMMAND ${CMAKE_COMMAND} -E create_symlink 
-    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
-    ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-    COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} > ${VALIDATE_OUTPUT}
-    DEPENDS 
-    ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
-    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
+      COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-html.xml > ${VALIDATE_OUTPUT}
     )
     add_dependencies(validate
     docbook_plplot-symbols_txt
     docbook_plplot-structs_txt
     )
-  else(PERL_FOUND AND ONSGMLS)
+  else(ONSGMLS)
     add_custom_target(validate
     ${CMAKE_COMMAND} -E echo "Unable to validate xml file - missing dependencies"
     )
-  endif(PERL_FOUND AND ONSGMLS)
+  endif(ONSGMLS)
+
   # N.B. if PERL_FOUND is false, then BUILD_DOC is false.
   if(BUILD_DOC)
     set(STYLESHEET_HTML plplotdoc-html.dsl)
@@ -234,17 +204,13 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     # Custom commands for building print version of documentation
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-    COMMAND ${CMAKE_COMMAND} -E create_symlink 
-    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
-    ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
     COMMAND ${OPENJADE} -b utf-8
     ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} 
     -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-    ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+    ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.xml
     DEPENDS
     ${SOURCE_FILES}
-    ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.xml
     ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
     ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
     )
@@ -324,8 +290,6 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
     )
 
-    # Use this variable to serialize inline.ent use in parallel builds.
-    set(SERIALIZE_INLINE_DEPENDS)
     if(BUILD_PRINT)
       add_custom_target(
       print ALL 
@@ -345,32 +309,25 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       add_dependencies(print
       docbook_plplot-symbols_txt
       docbook_plplot-structs_txt
-      ${SERIALIZE_INLINE_DEPENDS}
       )
-      list(APPEND SERIALIZE_INLINE_DEPENDS print)
     endif(BUILD_PRINT)
 
     # Custom commands for building info version of documentation
     add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
-    COMMAND ${CMAKE_COMMAND} 
-    -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-    COMMAND ${CMAKE_COMMAND} -E create_symlink 
-    ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
-    ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-clean.xml
     COMMAND ${PERL_EXECUTABLE} 
-    ${BINDIR}/info-clean.pl ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} > ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+    ${BINDIR}/info-clean.pl ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-info.xml > ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-clean.xml
     DEPENDS
     ${SOURCE_FILES} 
-    ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-info.xml
     ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
     )
 
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml
     COMMAND ${DB2X_XSLTPROC}
-    -s texi -o ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml-info
+    -s texi -o ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.txml ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-clean.xml
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-clean.xml
     )
 
     add_custom_command(
@@ -395,9 +352,10 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     --force -o ${INFO_TMPDIR}/plplotdoc.info ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
     COMMAND ${CMAKE_COMMAND}
     -E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
-    COMMAND ${MV}
+    COMMAND mv
     ${INFO_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.texi
+    COMMAND rmdir ${INFO_TMPDIR}
     )
 
     if(BUILD_INFO)
@@ -405,7 +363,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       info ALL 
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST})
       file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-      "plplotdoc.xml-info\n"
+      "plplotdoc-clean.xml\n"
       "plplotdoc.txml\n"
       "plplotdoc.texi\n"
       "${INFO_MANIFEST}\n"
@@ -416,9 +374,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       add_dependencies(info
       docbook_plplot-symbols_txt
       docbook_plplot-structs_txt
-      ${SERIALIZE_INLINE_DEPENDS}
       )
-      list(APPEND SERIALIZE_INLINE_DEPENDS info)
     endif(BUILD_INFO)
 
     # Custom commands for building man version of documentation
@@ -426,8 +382,11 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
     COMMAND ${PERL_EXECUTABLE}
-    ${CMAKE_CURRENT_BINARY_DIR}/../bin/api2man.pl ${MASTER_XML} api.xml ${MANVOL} > ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} api.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/../bin/api2man.pl plplotdoc-info.xml ${CMAKE_CURRENT_SOURCE_DIR}/api.xml ${MANVOL} > ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-info.xml
+    ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
+    ${CMAKE_CURRENT_SOURCE_DIR}/api.xml
     )
 
     if(BUILD_MAN)
@@ -443,18 +402,13 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
 
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
-    COMMAND ${CMAKE_COMMAND} 
-    -E remove ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
-    COMMAND ${CMAKE_COMMAND} -E create_symlink 
-    ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent 
-    ${CMAKE_CURRENT_BINARY_DIR}/inline.ent
     COMMAND ${OPENJADE} -b utf-8
-    ${SGML_CATALOGS} -d ${STYLESHEET_HTML} -t sgml ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+    ${SGML_CATALOGS} -d ${STYLESHEET_HTML} -t sgml ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-html.xml
     COMMAND ${PERL_EXECUTABLE}
     -pi -e 's/&\#13;//g' `cat ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}`
     DEPENDS
     ${SOURCE_FILES} 
-    ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-html.xml
     ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
     )
 
@@ -471,9 +425,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       add_dependencies(html
       docbook_plplot-symbols_txt
       docbook_plplot-structs_txt
-      ${SERIALIZE_INLINE_DEPENDS}
       )
-      list(APPEND SERIALIZE_INLINE_DEPENDS html)
     endif(BUILD_HTML)
   endif(BUILD_DOC)
 endif(

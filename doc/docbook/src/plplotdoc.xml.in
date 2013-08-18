@@ -46,34 +46,34 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY Project-Date "$Date$">
 <!ENTITY Release-Date "@RELEASE_DATE@">
 
-<!ENTITY chap-intro SYSTEM "intro.xml">
-<!ENTITY chap-simple SYSTEM "simple.xml">
-<!ENTITY chap-advanced SYSTEM "advanced.xml">
-<!ENTITY chap-deploying SYSTEM "deploying.xml">
-<!ENTITY chap-drivers SYSTEM "drivers.xml">
-<!ENTITY chap-ada SYSTEM "ada.xml">
-<!ENTITY chap-c SYSTEM "c.xml">
-<!ENTITY chap-cplus SYSTEM "cplus.xml">
-<!ENTITY chap-fortran77 SYSTEM "fortran77.xml">
-<!ENTITY chap-fortran95 SYSTEM "fortran95.xml">
-<!ENTITY chap-ocaml SYSTEM "ocaml.xml">
-<!ENTITY chap-perl SYSTEM "perl.xml">
-<!ENTITY chap-python SYSTEM "python.xml">
-<!ENTITY chap-tcl SYSTEM "tcl.xml">
-<!ENTITY chap-wish SYSTEM "wish.xml">
-<!ENTITY chap-gui SYSTEM "gui.xml">
-<!ENTITY chap-bibliography SYSTEM "bibliography.xml">
-<!ENTITY chap-api SYSTEM "api.xml">
-<!ENTITY chap-api-c SYSTEM "api-c.xml">
-<!ENTITY chap-api-fortran95 SYSTEM "api-fortran95.xml">
-<!ENTITY chap-api-fortran77 SYSTEM "api-fortran77.xml">
-<!ENTITY chap-api-compat SYSTEM "api-compat.xml">
-<!ENTITY chap-api-obsolete SYSTEM "api-obsolete.xml">
-<!ENTITY chap-api-internal SYSTEM "api-internal.xml">
-<!ENTITY chap-libraries SYSTEM "libraries.xml">
+<!ENTITY chap-intro SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/intro.xml">
+<!ENTITY chap-simple SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/simple.xml">
+<!ENTITY chap-advanced SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/advanced.xml">
+<!ENTITY chap-deploying SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/deploying.xml">
+<!ENTITY chap-drivers SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/drivers.xml">
+<!ENTITY chap-ada SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ada.xml">
+<!ENTITY chap-c SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/c.xml">
+<!ENTITY chap-cplus SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/cplus.xml">
+<!ENTITY chap-fortran77 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/fortran77.xml">
+<!ENTITY chap-fortran95 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/fortran95.xml">
+<!ENTITY chap-ocaml SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ocaml.xml">
+<!ENTITY chap-perl SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/perl.xml">
+<!ENTITY chap-python SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/python.xml">
+<!ENTITY chap-tcl SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/tcl.xml">
+<!ENTITY chap-wish SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/wish.xml">
+<!ENTITY chap-gui SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/gui.xml">
+<!ENTITY chap-bibliography SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/bibliography.xml">
+<!ENTITY chap-api SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api.xml">
+<!ENTITY chap-api-c SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-c.xml">
+<!ENTITY chap-api-fortran95 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-fortran95.xml">
+<!ENTITY chap-api-fortran77 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-fortran77.xml">
+<!ENTITY chap-api-compat SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-compat.xml">
+<!ENTITY chap-api-obsolete SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-obsolete.xml">
+<!ENTITY chap-api-internal SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-internal.xml">
+<!ENTITY chap-libraries SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/libraries.xml">
 <!ENTITY plplot-symbols SYSTEM "plplot-symbols.txt">
 <!ENTITY plplot-structs SYSTEM "plplot-structs.txt">
-<!ENTITY chap-os-notes SYSTEM "os_notes.xml">
+<!ENTITY chap-os-notes SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/os_notes.xml">
 <!ENTITY plP_checkdriverinit '<link linkend="plP_checkdriverinit"><function>plP_checkdriverinit</function></link>'>
 <!ENTITY plP_getinitdriverlist '<link linkend="plP_getinitdriverlist"><function>plP_getinitdriverlist</function></link>'>
 <!ENTITY pl_setcontlabelformat '<link linkend="pl_setcontlabelformat"><function>pl_setcontlabelformat</function></link>'>
@@ -259,9 +259,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY PLGraphicsIn '<link linkend="PLGraphicsIn"><structname>PLGraphicsIn</structname></link>'>
 <!ENTITY PLOptionTable '<link linkend="PLOptionTable"><structname>PLOptionTable</structname></link>'>
 <!ENTITY PLplot-website '@PLPLOT_WEBSITE@'>
-<!ENTITY % Math-Entities SYSTEM "math.ent">
+<!ENTITY % Math-Entities SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/math.ent">
 %Math-Entities;
-<!ENTITY % Inline-Entities SYSTEM "inline.ent">
+<!ENTITY % Inline-Entities SYSTEM "@inline_entities@">
 %Inline-Entities;
 ]
 >
