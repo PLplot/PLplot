@@ -104,6 +104,7 @@ if(BUILD_DOC)
 
   if(DOCBOOK_XML_BACKEND)
     message(STATUS "DOCBOOK_XML_BACKEND not implemented yet")
+    option(BUILD_DVI "BUILD dvi form of documentation" OFF)
   else(DOCBOOK_XML_BACKEND)
     # Deprecated SGML/DSSSL backends to generate html and print documentation.
 
@@ -223,6 +224,7 @@ if(BUILD_DOC)
     if(OPENJADE AND JADETEX AND PDFJADETEX AND DVIPS AND GZIP)
       if(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
 	set(BUILD_PRINT ON)
+	set(BUILD_DVI ON CACHE BOOL "Build dvi form of documentation" FORCE)
       else(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
 	set(BUILD_PRINT OFF)
 	message(STATUS

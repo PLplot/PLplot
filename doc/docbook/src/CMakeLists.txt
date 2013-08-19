@@ -507,17 +507,55 @@ endif(
   )
 
 ########### install files ###############
+# Where appropriate, use contents of manifest files rather than
+# file(GLOB... for best consistency.
 
-# We use file(GLOB ...) to generate lists of html, info and man files 
-# to install. These need to be generated at install time, not at 
-# Makefile creation time and so we also need to use the install(CODE ...)
-# command. This makes for slightly ugly looking code. 
+if(BUILD_INFO OR PREBUILT_DOC)
+  install(CODE "
+# Suppress empty element warning.
+cmake_policy(SET CMP0007 NEW)
+file(READ ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST} INFO_FILES)
+# Convert to list with trailing empty element
+string(REGEX REPLACE \"\n\" \";\" INFO_FILES \"\${INFO_FILES}\")
+# Delete trailing empty element
+list(REMOVE_ITEM INFO_FILES \"\")
+foreach(file \${INFO_FILES})
+  # INSTALL_DESTINATION signature automatically honors DESTDIR.
+  file(INSTALL DESTINATION ${INFO_DIR} TYPE FILE FILES \"\${file}\")
+endforeach (file \"\${INFO_FILES}\")
+"
+    )
+endif(BUILD_INFO OR PREBUILT_DOC)
+
+if(BUILD_MAN OR PREBUILT_DOC)
+  install(CODE "
+# Suppress empty element warning.
+cmake_policy(SET CMP0007 NEW)
+file(READ ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST} MAN_FILES)
+# Convert to list with trailing empty element
+string(REGEX REPLACE \"\n\" \";\" MAN_FILES \"\${MAN_FILES}\")
+# Delete trailing empty element
+list(REMOVE_ITEM MAN_FILES \"\")
+foreach(file \${MAN_FILES})
+  # INSTALL_DESTINATION signature automatically honors DESTDIR.
+  file(INSTALL DESTINATION ${MAN_DIR}/man3 TYPE FILE FILES \"\${file}\")
+endforeach (file \"\${MAN_FILES}\")
+"
+    )
+endif(BUILD_MAN OR PREBUILT_DOC)
 
 if(BUILD_HTML OR PREBUILT_DOC)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} stylesheet.css DESTINATION ${DOC_DIR}/html )
   install(CODE "
-file(GLOB HTML_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.${HTML_EXT})
+# Suppress empty element warning.
+cmake_policy(SET CMP0007 NEW)
+file(READ ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} HTML_FILES)
+# Convert to list with trailing empty element
+string(REGEX REPLACE \"\n\" \";\" HTML_FILES \"\${HTML_FILES}\")
+# Delete trailing empty element
+list(REMOVE_ITEM HTML_FILES \"\")
 foreach(file \${HTML_FILES})
+  # INSTALL_DESTINATION signature automatically honors DESTDIR.
   file(INSTALL DESTINATION ${DOC_DIR}/html TYPE FILE FILES \"\${file}\")
 endforeach (file \"\${HTML_FILES}\")
 "
@@ -525,30 +563,11 @@ endforeach (file \"\${HTML_FILES}\")
 endif(BUILD_HTML OR PREBUILT_DOC)
 
 if(BUILD_PRINT OR PREBUILT_DOC)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz DESTINATION ${DOC_DIR})
+  if(BUILD_DVI)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi DESTINATION ${DOC_DIR})
+  endif(BUILD_DVI)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz DESTINATION ${DOC_DIR})
 endif(BUILD_PRINT OR PREBUILT_DOC)
-
-if(BUILD_MAN OR PREBUILT_DOC)
-  #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST} DESTINATION ${MAN_DIR}/man3 )
-  install(CODE "
-file(GLOB MAN_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.${MANVOL})
-foreach(file \${MAN_FILES})
-  file(INSTALL DESTINATION ${MAN_DIR}/man3 TYPE FILE FILES \"\${file}\")
-endforeach(file \"\${MAN_FILES}\")
-"
-    )
-endif(BUILD_MAN OR PREBUILT_DOC)
-
-if(BUILD_INFO OR PREBUILT_DOC)
-  #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST} DESTINATION ${INFO_DIR} )
-  install(CODE "
-file(GLOB INFO_FILES ${CMAKE_CURRENT_BINARY_DIR}/*.info*)
-foreach(file \${INFO_FILES})
-  file(INSTALL DESTINATION ${INFO_DIR} TYPE FILE FILES \"\${file}\")
-endforeach (file \"\${INFO_FILES}\")
-"
-    )
-endif(BUILD_INFO OR PREBUILT_DOC)
 
 # Everything below here has to do with the custom target www-install
 if((BUILD_DOC OR PREBUILT_DOC) AND (WWW_USER AND WWW_GROUP AND WWW_HOST AND WWW_DIR))
