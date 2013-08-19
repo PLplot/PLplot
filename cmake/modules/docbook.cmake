@@ -141,10 +141,10 @@ if(BUILD_DOC)
     if(NOT DVIPS)
       message(STATUS "WARNING: dvips not found")
     endif(NOT DVIPS)
-    # Use include style here since FindUnixCommands is a simple module and
-    # clearly not meant to be an official FindXXX module.
-    include(FindUnixCommands)
-    find_program(MKDIR mkdir)
+    find_program(GZIP gzip)
+    if(NOT GZIP)
+      message(STATUS "WARNING: gzip not found")
+    endif(NOT GZIP)
 
     # These DSSSL stylesheets needed for SGML/DSSSL builds.
     set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
@@ -241,21 +241,16 @@ if(BUILD_DOC)
   endif(DOCBOOK_XML_BACKEND)
 endif(BUILD_DOC)
 
+# The "BASE" variables needed for www/documentation.php.in configuration and
+# in doc/docbook/src/CMakeLists.txt.
+# The "MANIFEST" variables needed in top-level CMakeLists.txt and
+# in doc/docbook/src/CMakeLists.txt.
 if(BUILD_DOC OR PREBUILT_DOC)
   set(BASE "${PACKAGE}-${VERSION}")
-
-  set(HTML_MANIFEST "HTML-MANIFEST")
-  set(BASE_HTML "${PACKAGE}-html-${VERSION}")
-
-  if(NOT DEFINED HTML_EXT)
-    set(HTML_EXT "html")
-  endif(NOT DEFINED HTML_EXT)
-
   set(INFO_MANIFEST "INFO-MANIFEST")
   set(BASE_INFO "${PACKAGE}-info-${VERSION}")
-
   set(MAN_MANIFEST "MAN-MANIFEST")
   set(BASE_MAN "${PACKAGE}-man-${VERSION}")
-
-  set(MANVOL "3plplot")
+  set(HTML_MANIFEST "HTML-MANIFEST")
+  set(BASE_HTML "${PACKAGE}-html-${VERSION}")
 endif(BUILD_DOC OR PREBUILT_DOC)
