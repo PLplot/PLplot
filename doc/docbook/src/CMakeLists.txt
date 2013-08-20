@@ -297,11 +297,19 @@ else(
 
     if(DOCBOOK_XML_BACKEND)
       if(BUILD_HTML)
+	# Custom commands for building html version of documentation
+	set(STYLESHEET_HTML ${PLPLOTDOC}-html.xsl)
+	set(STYLESHEET_HTML_IN ${STYLESHEET_HTML}.in)
+	configure_file(
+	  ${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_HTML_IN}
+	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
+	  @ONLY
+	  )
 	set(HTML_TMPDIR ${CMAKE_CURRENT_BINARY_DIR}/html)
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
 	  COMMAND ${CMAKE_COMMAND} -E remove_directory ${HTML_TMPDIR}
-	  COMMAND ${XMLTO} -vv -o ${HTML_TMPDIR} html ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
+	  COMMAND ${XMLTO} -vv -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML} -o ${HTML_TMPDIR} html ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
 	  COMMAND ${CMAKE_COMMAND}
 	  -E chdir ${HTML_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
 	  COMMAND mv ${HTML_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
@@ -310,6 +318,7 @@ else(
 	  ${SOURCE_FILES} 
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
 	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
+	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
 	  )
 	add_custom_target(
 	  html ALL
@@ -395,7 +404,6 @@ else(
     else(DOCBOOK_XML_BACKEND)
       if(BUILD_HTML)
 	# Custom commands for building html version of documentation
-
 	set(STYLESHEET_HTML ${PLPLOTDOC}-html.dsl)
 	set(STYLESHEET_HTML_IN ${STYLESHEET_HTML}.in)
 	configure_file(
