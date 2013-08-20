@@ -305,6 +305,12 @@ else(
 	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
 	  @ONLY
 	  )
+
+	configure_file(
+	  ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css.xsl.in
+	  ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css
+	  )
+
 	set(HTML_TMPDIR ${CMAKE_CURRENT_BINARY_DIR}/html)
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
@@ -410,6 +416,12 @@ else(
 	  ${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_HTML_IN}
 	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
 	  )
+
+	configure_file(
+	  ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css.dsssl.in
+	  ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css
+	  )
+
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
 	  COMMAND ${OPENJADE} -b utf-8
@@ -652,7 +664,7 @@ endforeach (file \"\${MAN_FILES}\")
 endif(BUILD_MAN OR PREBUILT_DOC)
 
 if(BUILD_HTML OR PREBUILT_DOC)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} stylesheet.css DESTINATION ${DOC_DIR}/html )
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css DESTINATION ${DOC_DIR}/html )
   install(CODE "
 # Suppress empty element warning.
 cmake_policy(SET CMP0007 NEW)
@@ -713,10 +725,12 @@ if((BUILD_DOC OR PREBUILT_DOC) AND (WWW_USER AND WWW_GROUP AND WWW_HOST AND WWW_
     COMMAND rm -rf ${BASE_HTML}
     COMMAND mkdir ${BASE_HTML}
     COMMAND cp `cat ${HTML_MANIFEST}` ${BASE_HTML}
-    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css ${BASE_HTML}
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css ${BASE_HTML}
     COMMAND tar cfz ${HTML_TARBALL} ${BASE_HTML}
     COMMAND rm -rf ${BASE_HTML}
-    DEPENDS ${HTML_MANIFEST} ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css
+    DEPENDS
+    ${HTML_MANIFEST}
+    ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css
     )
 
   set(tarball_list
