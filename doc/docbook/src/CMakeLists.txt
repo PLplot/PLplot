@@ -241,8 +241,8 @@ else(
 	-E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
 	COMMAND mv
 	${INFO_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}.texi
 	COMMAND rmdir ${INFO_TMPDIR}
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}.texi
 	)
 
       add_custom_target(
@@ -295,208 +295,307 @@ else(
       "${MAN_MANIFEST}\n"
       )
 
-    if(BUILD_HTML)
-      # Custom commands for building html version of documentation
-
-      set(STYLESHEET_HTML ${PLPLOTDOC}-html.dsl)
-      set(STYLESHEET_HTML_IN ${STYLESHEET_HTML}.in)
-      configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_HTML_IN}
-	${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
-	)
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
-	COMMAND ${OPENJADE} -b utf-8
-	${SGML_CATALOGS} -d ${STYLESHEET_HTML} -t sgml ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
-	COMMAND ${PERL_EXECUTABLE}
-	-pi -e 's/&\#13;//g' `cat ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}`
-	DEPENDS
-	${SOURCE_FILES} 
-	${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
-	)
-
-      add_custom_target(
-	html ALL
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
-	)
-      # These files used for more than one target.  Therefore must
-      # use target dependencies rather than file dependencies to build
-      # them.  Otherwise, parallel builds won't work.
-      add_dependencies(html
-	docbook_plplot-symbols_txt
-	docbook_plplot-structs_txt
-	)
-    else(BUILD_HTML)
-      add_custom_target(
-	html ALL
-	COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
-	COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
-	)
-    endif(BUILD_HTML)
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-      "${HTML_MANIFEST}\n"
-      )
-
-    if(BUILD_PRINT)
-      set(STYLESHEET_PRINT ${PLPLOTDOC}-print.dsl)
-      set(STYLESHEET_PRINT_IN ${STYLESHEET_PRINT}.in)
-
-      configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_PRINT_IN}
-	${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
-	)
-
-      configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map.in
-	${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
-	)
-
-      # Custom commands for building print version of documentation
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
-	COMMAND ${OPENJADE} -b utf-8
-	${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} 
-	-t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-	${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	DEPENDS
-	${SOURCE_FILES}
-	${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
-	${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
-	)
-
-      # Following approach used in our ABS, use shell commands to recurse
-      # ${PDFJADETEX} ${BASE}.jadetex five times or until the *.aux file that is
-      # produced doesn't change.
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	COMMAND ${PDFJADETEX} ${BASE}.jadetex
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-pdf.aux \; 
-	${PDFJADETEX} ${BASE}.jadetex \; 
-	fi
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-pdf.aux \; 
-	${PDFJADETEX} ${BASE}.jadetex \; 
-	fi
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-pdf.aux \; 
-	${PDFJADETEX} ${BASE}.jadetex \; 
-	fi
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-pdf.aux \; 
-	${PDFJADETEX} ${BASE}.jadetex \; 
-	fi
-	DEPENDS 
-	${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-	${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
-	${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
-	)
-
-      # Following approach used in our ABS, use shell commands to recurse
-      # ${JADETEX} ${BASE}.jadetex five times or until the *.aux file that is
-      # produced doesn't change.
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
-	COMMAND ${JADETEX} ${BASE}.jadetex
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-dvi.aux \; 
-	${JADETEX} ${BASE}.jadetex \; 
-	fi
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-dvi.aux \; 
-	${JADETEX} ${BASE}.jadetex \; 
-	fi
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-dvi.aux \; 
-	${JADETEX} ${BASE}.jadetex \; 
-	fi
-	COMMAND 
-	if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	cp -pf ${BASE}.aux prior-dvi.aux \; 
-	${JADETEX} ${BASE}.jadetex \; 
-	fi
-	DEPENDS 
-	${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-	${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
-	${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
-	)
-
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
-	COMMAND ${DVIPS} ${BASE}.dvi
-	COMMAND ${GZIP} -f ${BASE}.ps
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
-	)
-
-      add_custom_target(
-	dvi_target ALL 
-	DEPENDS 
-	${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
-	)
-      # These files used for more than one target.  Therefore must
-      # use target dependencies rather than file dependencies to build
-      # them.  Otherwise, parallel builds won't work.
-      add_dependencies(dvi_target
-	docbook_plplot-symbols_txt
-	docbook_plplot-structs_txt
-	)
-
+    if(DOCBOOK_XML_BACKEND)
+      if(BUILD_HTML)
+	set(HTML_TMPDIR ${CMAKE_CURRENT_BINARY_DIR}/html)
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  COMMAND ${CMAKE_COMMAND} -E remove_directory ${HTML_TMPDIR}
+	  COMMAND ${XMLTO} -vv -o ${HTML_TMPDIR} html ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
+	  COMMAND ${CMAKE_COMMAND}
+	  -E chdir ${HTML_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  COMMAND mv ${HTML_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
+	  COMMAND ${CMAKE_COMMAND} -E remove_directory ${HTML_TMPDIR}
+	  DEPENDS
+	  ${SOURCE_FILES} 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
+	  )
+	add_custom_target(
+	  html ALL
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  )
+	# These files used for more than one target.  Therefore must
+	# use target dependencies rather than file dependencies to build
+	# them.  Otherwise, parallel builds won't work.
+	add_dependencies(html
+	  docbook_plplot-symbols_txt
+	  docbook_plplot-structs_txt
+	  )
+      else(BUILD_HTML)
+	add_custom_target(
+	  html ALL
+	  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  )
+      endif(BUILD_HTML)
       file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	"${BASE}.dvi\n"
-	)
-      add_custom_target(
-	ps_target ALL 
-	DEPENDS 
-	${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
-	)
-      # These files used for more than one target.  Therefore must
-      # use target dependencies rather than file dependencies to build
-      # them.  Otherwise, parallel builds won't work.
-      add_dependencies(ps_target
-	docbook_plplot-symbols_txt
-	docbook_plplot-structs_txt
+	"${HTML_MANIFEST}\n"
 	)
 
-      # dvi_target must complete before ps_target is executed for parallel builds.
-      add_dependencies(ps_target dvi_target)
+      if(BUILD_PRINT)
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	  COMMAND ${XMLTO} -vv --with-fop ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.ps ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
+	  COMMAND ${GZIP} -f ${BASE}.ps
+	  DEPENDS
+	  ${SOURCE_FILES} 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
+	  )
+	add_custom_target(
+	  ps_target ALL 
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	  )
+	# These files used for more than one target.  Therefore must
+	# use target dependencies rather than file dependencies to build
+	# them.  Otherwise, parallel builds won't work.
+	add_dependencies(ps_target
+	  docbook_plplot-symbols_txt
+	  docbook_plplot-structs_txt
+	  )
 
+	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	  "${BASE}.ps.gz\n"
+	  )
+
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	  COMMAND ${XMLTO} -vv --with-fop pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	  DEPENDS
+	  ${SOURCE_FILES} 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
+	  )
+	add_custom_target(
+	  pdf_target ALL 
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	  )
+	# These files used for more than one target.  Therefore must
+	# use target dependencies rather than file dependencies to build
+	# them.  Otherwise, parallel builds won't work.
+	add_dependencies(pdf_target
+	  docbook_plplot-symbols_txt
+	  docbook_plplot-structs_txt
+	  )
+
+	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	  "${BASE}.pdf\n"
+	  )
+	add_custom_target(
+	  print ALL 
+	  )
+	add_dependencies(print ps_target pdf_target)
+      endif(BUILD_PRINT)
+    else(DOCBOOK_XML_BACKEND)
+      if(BUILD_HTML)
+	# Custom commands for building html version of documentation
+
+	set(STYLESHEET_HTML ${PLPLOTDOC}-html.dsl)
+	set(STYLESHEET_HTML_IN ${STYLESHEET_HTML}.in)
+	configure_file(
+	  ${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_HTML_IN}
+	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
+	  )
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  COMMAND ${OPENJADE} -b utf-8
+	  ${SGML_CATALOGS} -d ${STYLESHEET_HTML} -t sgml ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
+	  COMMAND ${PERL_EXECUTABLE}
+	  -pi -e 's/&\#13;//g' `cat ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}`
+	  DEPENDS
+	  ${SOURCE_FILES} 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
+	  )
+
+	add_custom_target(
+	  html ALL
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  )
+	# These files used for more than one target.  Therefore must
+	# use target dependencies rather than file dependencies to build
+	# them.  Otherwise, parallel builds won't work.
+	add_dependencies(html
+	  docbook_plplot-symbols_txt
+	  docbook_plplot-structs_txt
+	  )
+      else(BUILD_HTML)
+	add_custom_target(
+	  html ALL
+	  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
+	  )
+      endif(BUILD_HTML)
       file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	"${BASE}.ps.gz\n"
-	)
-      add_custom_target(
-	pdf_target ALL 
-	DEPENDS 
-	${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	)
-      # These files used for more than one target.  Therefore must
-      # use target dependencies rather than file dependencies to build
-      # them.  Otherwise, parallel builds won't work.
-      add_dependencies(pdf_target
-	docbook_plplot-symbols_txt
-	docbook_plplot-structs_txt
+	"${HTML_MANIFEST}\n"
 	)
 
-      # dvi_target must complete before pdf_target is executed for parallel builds.
-      add_dependencies(pdf_target dvi_target)
+      if(BUILD_PRINT)
+	set(STYLESHEET_PRINT ${PLPLOTDOC}-print.dsl)
+	set(STYLESHEET_PRINT_IN ${STYLESHEET_PRINT}.in)
 
-      file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	"${BASE}.pdf\n"
-	)
-      add_custom_target(
-	print ALL 
-	)
-      add_dependencies(print dvi_target ps_target pdf_target)
+	configure_file(
+	  ${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_PRINT_IN}
+	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
+	  )
 
-    endif(BUILD_PRINT)
+	configure_file(
+	  ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map.in
+	  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
+	  )
+
+	# Custom commands for building print version of documentation
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
+	  COMMAND ${OPENJADE} -b utf-8
+	  ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} 
+	  -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
+	  ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  DEPENDS
+	  ${SOURCE_FILES}
+	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
+	  )
+
+	# Following approach used in our ABS, use shell commands to recurse
+	# ${PDFJADETEX} ${BASE}.jadetex five times or until the *.aux file that is
+	# produced doesn't change.
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	  COMMAND ${PDFJADETEX} ${BASE}.jadetex
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-pdf.aux \; 
+	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  fi
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-pdf.aux \; 
+	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  fi
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-pdf.aux \; 
+	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  fi
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-pdf.aux \; 
+	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  fi
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
+	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
+	  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
+	  )
+
+	# Following approach used in our ABS, use shell commands to recurse
+	# ${JADETEX} ${BASE}.jadetex five times or until the *.aux file that is
+	# produced doesn't change.
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
+	  COMMAND ${JADETEX} ${BASE}.jadetex
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-dvi.aux \; 
+	  ${JADETEX} ${BASE}.jadetex \; 
+	  fi
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-dvi.aux \; 
+	  ${JADETEX} ${BASE}.jadetex \; 
+	  fi
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-dvi.aux \; 
+	  ${JADETEX} ${BASE}.jadetex \; 
+	  fi
+	  COMMAND 
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
+	  cp -pf ${BASE}.aux prior-dvi.aux \; 
+	  ${JADETEX} ${BASE}.jadetex \; 
+	  fi
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
+	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
+	  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
+	  )
+
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	  COMMAND ${DVIPS} ${BASE}.dvi
+	  COMMAND ${GZIP} -f ${BASE}.ps
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
+	  )
+
+	add_custom_target(
+	  dvi_target ALL 
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
+	  )
+	# These files used for more than one target.  Therefore must
+	# use target dependencies rather than file dependencies to build
+	# them.  Otherwise, parallel builds won't work.
+	add_dependencies(dvi_target
+	  docbook_plplot-symbols_txt
+	  docbook_plplot-structs_txt
+	  )
+
+	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	  "${BASE}.dvi\n"
+	  )
+	add_custom_target(
+	  ps_target ALL 
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	  )
+	# These files used for more than one target.  Therefore must
+	# use target dependencies rather than file dependencies to build
+	# them.  Otherwise, parallel builds won't work.
+	add_dependencies(ps_target
+	  docbook_plplot-symbols_txt
+	  docbook_plplot-structs_txt
+	  )
+
+	# dvi_target must complete before ps_target is executed for parallel builds.
+	add_dependencies(ps_target dvi_target)
+
+	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	  "${BASE}.ps.gz\n"
+	  )
+	add_custom_target(
+	  pdf_target ALL 
+	  DEPENDS 
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	  )
+	# These files used for more than one target.  Therefore must
+	# use target dependencies rather than file dependencies to build
+	# them.  Otherwise, parallel builds won't work.
+	add_dependencies(pdf_target
+	  docbook_plplot-symbols_txt
+	  docbook_plplot-structs_txt
+	  )
+
+	# dvi_target must complete before pdf_target is executed for parallel builds.
+	add_dependencies(pdf_target dvi_target)
+
+	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	  "${BASE}.pdf\n"
+	  )
+	add_custom_target(
+	  print ALL 
+	  )
+	add_dependencies(print dvi_target ps_target pdf_target)
+
+      endif(BUILD_PRINT)
+    endif(DOCBOOK_XML_BACKEND)
   endif(BUILD_DOC)
 endif(
   PREBUILT_DOC
@@ -582,17 +681,6 @@ if((BUILD_DOC OR PREBUILT_DOC) AND (WWW_USER AND WWW_GROUP AND WWW_HOST AND WWW_
   set(RSH_COMMAND ${RSH} ${WWW_USERAT}${WWW_HOST})
 
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
-    COMMAND rm -rf ${BASE_HTML}
-    COMMAND mkdir ${BASE_HTML}
-    COMMAND cp `cat ${HTML_MANIFEST}` ${BASE_HTML}
-    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css ${BASE_HTML}
-    COMMAND tar cfz ${HTML_TARBALL} ${BASE_HTML}
-    COMMAND rm -rf ${BASE_HTML}
-    DEPENDS ${HTML_MANIFEST} ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css
-    )
-
-  add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${INFO_TARBALL}
     COMMAND rm -rf ${BASE_INFO}
     COMMAND mkdir ${BASE_INFO}
@@ -613,22 +701,50 @@ if((BUILD_DOC OR PREBUILT_DOC) AND (WWW_USER AND WWW_GROUP AND WWW_HOST AND WWW_
     )
 
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TARBALL}
-    COMMAND tar cfz ${TARBALL}
-    ${HTML_TARBALL}
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
+    COMMAND rm -rf ${BASE_HTML}
+    COMMAND mkdir ${BASE_HTML}
+    COMMAND cp `cat ${HTML_MANIFEST}` ${BASE_HTML}
+    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css ${BASE_HTML}
+    COMMAND tar cfz ${HTML_TARBALL} ${BASE_HTML}
+    COMMAND rm -rf ${BASE_HTML}
+    DEPENDS ${HTML_MANIFEST} ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css
+    )
+
+  set(tarball_list
     ${INFO_TARBALL}
     ${MAN_TARBALL}
-    ${BASE}.ps.gz
-    ${BASE}.pdf
-    ${BASE}.dvi
-    -C ${CMAKE_CURRENT_SOURCE_DIR}/.. COPYING
-    DEPENDS
+    ${HTML_TARBALL}
+    )
+
+  set(tarball_depends_list
     ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
     ${CMAKE_CURRENT_BINARY_DIR}/${INFO_TARBALL}
     ${CMAKE_CURRENT_BINARY_DIR}/${MAN_TARBALL}
-    ${BASE}.ps.gz
-    ${BASE}.pdf
-    ${BASE}.dvi
+    )
+
+  if(BUILD_PRINT)
+    list(APPEND tarball_list
+      ${BASE}.ps.gz
+      ${BASE}.pdf
+      )
+    list(APPEND tarball_depends_list
+      ${BASE}.ps.gz
+      ${BASE}.pdf
+      )
+    if(BUILD_DVI)
+      list(APPEND tarball_list ${BASE}.dvi)
+      list(APPEND tarball_depends_list ${BASE}.dvi)
+    endif(BUILD_DVI)
+  endif(BUILD_PRINT)
+
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TARBALL}
+    COMMAND tar cfz ${TARBALL}
+    ${tarball_list}
+    -C ${CMAKE_CURRENT_SOURCE_DIR}/.. COPYING
+    DEPENDS
+    ${tarball_depends_list}
     ${CMAKE_CURRENT_SOURCE_DIR}/../COPYING
     )
 

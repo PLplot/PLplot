@@ -64,7 +64,7 @@ endif(ONSGMLS )
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
 
-  option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" OFF)
+  option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" YES)
 
   # The info backend is implemented only with perl and XML/XSLT regardless of
   # DOCBOOK_XML_BACKEND.
@@ -103,8 +103,46 @@ if(BUILD_DOC)
   endif(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
 
   if(DOCBOOK_XML_BACKEND)
-    message(STATUS "DOCBOOK_XML_BACKEND not implemented yet")
-    option(BUILD_DVI "BUILD dvi form of documentation" OFF)
+    # For this case only use xmlto.  That tool does its own warnings at
+    # run time when components are missing so don't bother with looking
+    # for missing components at cmake time.
+    find_program(XMLTO xmlto)
+    if(NOT XMLTO)
+      message(STATUS "WARNING: xmlto not found")
+    endif(NOT XMLTO)
+    find_program(GZIP gzip)
+    if(NOT GZIP)
+      message(STATUS "WARNING: gzip not found")
+    endif(NOT GZIP)
+
+    if(XMLTO)
+      set(BUILD_HTML ON)
+      if(GZIP)
+	set(BUILD_PRINT ON)
+	option(BUILD_DVI "BUILD dvi form of documentation" OFF)
+	if(NOT BUILD_DVI)
+	  message(STATUS
+	    "WARNING: Not building dvi documentation - "
+	    "Bugs in xmlto for this case."
+	    )
+	endif(NOT BUILD_DVI)
+      else(GZIP)
+	set(BUILD_PRINT OFF)
+	message(STATUS
+	  "WARNING: Not building print documentation - "
+	  "gzip is not installed"
+	  )
+      endif(GZIP)
+    else(XMLTO)
+      set(BUILD_HTML OFF)
+      set(BUILD_PRINT OFF)
+      message(STATUS
+	"WARNING: Not building html or print documentation - "
+	"xmlto script is not installed"
+	)
+    endif(XMLTO)
+
+
   else(DOCBOOK_XML_BACKEND)
     # Deprecated SGML/DSSSL backends to generate html and print documentation.
 
