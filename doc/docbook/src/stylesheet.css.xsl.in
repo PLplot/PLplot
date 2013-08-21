@@ -1,7 +1,7 @@
 /*
     HTML Cascade Style Sheet file for the PLplot documentation in Docbook
 
-    Copyright (C) 2004  Rafael Laboissiere
+    Copyright (C) 2013  Alan W. Irwin
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -35,7 +35,7 @@ SPAN.underline { text-decoration: underline }
 SPAN.overline  { text-decoration: overline  }
 
 TABLE.funcprototype-table {
-  width: 90%;
+  width: auto;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-left: 5%;
@@ -46,7 +46,7 @@ TABLE.funcprototype-table {
 }
 
 .variablelist {
-  width: 90%;
+  width: auto;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-left: 5%;
@@ -57,7 +57,7 @@ TABLE.funcprototype-table {
 }
 
 .verbatim {
-  width: 90%;
+  width: auto;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-left: 5%;
