@@ -350,9 +350,18 @@ else(
 	)
 
       if(BUILD_PRINT)
+	# Custom commands for building html version of documentation
+	set(STYLESHEET_PRINT ${PLPLOTDOC}-print.xsl)
+	set(STYLESHEET_PRINT_IN ${STYLESHEET_PRINT}.in)
+	configure_file(
+	  ${CMAKE_CURRENT_SOURCE_DIR}/${STYLESHEET_PRINT_IN}
+	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
+	  @ONLY
+	  )
+
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
-	  COMMAND ${XMLTO} -vv --with-fop ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  COMMAND ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.ps ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
 	  COMMAND ${GZIP} -f ${BASE}.ps
 	  DEPENDS
@@ -379,7 +388,7 @@ else(
 
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	  COMMAND ${XMLTO} -vv --with-fop pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  COMMAND ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	  DEPENDS
 	  ${SOURCE_FILES} 
