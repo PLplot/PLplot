@@ -27,7 +27,13 @@ endif(NOT DEFINED HTML_EXT)
 set(MANVOL "3plplot")
 
 foreach(suffix info html print)
-  set(inline_entities ${CMAKE_CURRENT_SOURCE_DIR}/inline-${suffix}.ent)
+  if(suffix STREQUAL "print" AND DOCBOOK_XML_BACKEND)
+    set(inline_entities ${CMAKE_CURRENT_SOURCE_DIR}/inline-${suffix}_xsl.ent)
+  elseif(suffix STREQUAL "print" AND NOT DOCBOOK_XML_BACKEND)
+    set(inline_entities ${CMAKE_CURRENT_SOURCE_DIR}/inline-${suffix}_dsl.ent)
+  else(suffix STREQUAL "print" AND DOCBOOK_XML_BACKEND)
+    set(inline_entities ${CMAKE_CURRENT_SOURCE_DIR}/inline-${suffix}.ent)
+  endif(suffix STREQUAL "print" AND DOCBOOK_XML_BACKEND)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${PLPLOTDOC}.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-${suffix}.xml
@@ -359,6 +365,37 @@ else(
 	  @ONLY
 	  )
 
+	if(BUILD_DVI)
+	  add_custom_command(
+	    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
+	    # Drop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} option
+            # since it doesn't appear to work with --with-dblatex
+	    COMMAND ${XMLTO} -vv --with-dblatex dvi ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.dvi ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
+	    DEPENDS
+	    ${SOURCE_FILES} 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
+	    )
+	  add_custom_target(
+	    dvi_target ALL 
+	    DEPENDS 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
+	    )
+	  # These files used for more than one target.  Therefore must
+	  # use target dependencies rather than file dependencies to build
+	  # them.  Otherwise, parallel builds won't work.
+	  add_dependencies(dvi_target
+	    docbook_plplot-symbols_txt
+	    docbook_plplot-structs_txt
+	    )
+
+	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	    "${BASE}.ps.gz\n"
+	    )
+
+	endif(BUILD_DVI)
+
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
 	  COMMAND ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
@@ -367,7 +404,7 @@ else(
 	  DEPENDS
 	  ${SOURCE_FILES} 
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
 	  )
 	add_custom_target(
 	  ps_target ALL 
@@ -393,7 +430,7 @@ else(
 	  DEPENDS
 	  ${SOURCE_FILES} 
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
 	  )
 	add_custom_target(
 	  pdf_target ALL 
@@ -415,6 +452,9 @@ else(
 	  print ALL 
 	  )
 	add_dependencies(print ps_target pdf_target)
+	if(BUILD_DVI)
+	  add_dependencies(print dvi_target)
+	endif(BUILD_DVI)
       endif(BUILD_PRINT)
     else(DOCBOOK_XML_BACKEND)
       if(BUILD_HTML)
@@ -490,7 +530,7 @@ else(
 	  ${SOURCE_FILES}
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
-	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
+	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
 	  )
 
 	# Following approach used in our ABS, use shell commands to recurse

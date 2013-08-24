@@ -119,13 +119,7 @@ if(BUILD_DOC)
       set(BUILD_HTML ON)
       if(GZIP)
 	set(BUILD_PRINT ON)
-	option(BUILD_DVI "BUILD dvi form of documentation" OFF)
-	if(NOT BUILD_DVI)
-	  message(STATUS
-	    "WARNING: Not building dvi documentation - "
-	    "Bugs in xmlto for this case."
-	    )
-	endif(NOT BUILD_DVI)
+	option(BUILD_DVI "BUILD dvi form of documentation" ON)
       else(GZIP)
 	set(BUILD_PRINT OFF)
 	message(STATUS
