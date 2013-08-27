@@ -1014,8 +1014,8 @@ draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! decorations of that box or else (when if_bb TRUE) calculate
 //! bounding box of that decorated box.
 //!
-//! @param If if_bb is TRUE evaluate bounding box of decorated box.
-//! If if_bb is FALSE draw the decorated box.
+//! @param if_bb If if_bb is TRUE evaluate bounding box of decorated
+//! box.  If if_bb is FALSE draw the decorated box.
 //! @param opt Can contain the same control bits as the opt argument
 //! for plcolorbar.  However, the only bits that are relevant here are
 //! PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL, and
@@ -1104,8 +1104,6 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM), and
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).  For full documentation
 //! of these bits, see the documentation of opt for plcolorbar.
-//! @param cap_extent Extent of cap in normalized subpage coordinates
-//! in either X or Y direction as appropriate.
 //! @param label Text label for the colorbar.  No label is drawn if no
 //! label position is specified with one of the
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in opt.
@@ -1370,6 +1368,12 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //--------------------------------------------------------------------------
 //! Plot color bar for image, shade or gradient plots.
 //!
+//! @param p_colorbar_width Pointer to a location which contains
+//! (after the call) the labelled and decorated colorbar width in
+//! adopted coordinates.
+//! @param p_colorbar_height Pointer to a location which contains
+//! (after the call) the labelled and decorated colorbar height in
+//! adopted coordinates.
 //! @param opt This variable contains bits which control the overall
 //! colorbar.  The orientation (direction of the maximum value) of the
 //! colorbar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
@@ -1425,6 +1429,12 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! or bottom positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
 //! bit is set in position.  For the standard left or right positions,
 //! the direction of motion for positive y is toward positive Y.
+//! @param bg_color The cmap0 index of the background color for the colorbar
+//! (PL_COLORBAR_BACKGROUND).
+//! @param bb_color The cmap0 index of the color of the bounding-box
+//! line for the colorbar (PL_COLORBAR_BOUNDING_BOX).
+//! @param bb_style The pllsty style number for the bounding-box line
+//! for the colorbar (PL_COLORBAR_BOUNDING_BOX).
 //! @param x_length Length of the body of the colorbar in the X
 //! direction in adopted coordinates.
 //! @param y_length Length of the body of the colorbar in the Y
