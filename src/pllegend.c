@@ -1009,7 +1009,7 @@ draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 }
 
 //--------------------------------------------------------------------------
-//! Draw box (when if_bb FALSE) around colorbar with possible tick
+//! Draw box (when if_bb FALSE) around color bar with possible tick
 //! marks, numerical labels of those tick marks, and exponent
 //! decorations of that box or else (when if_bb TRUE) calculate
 //! bounding box of that decorated box.
@@ -1022,7 +1022,7 @@ draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM).  For full
 //! documentation of these bits, see the documentation of opt for
 //! plcolorbar.
-//! @param axis_opts Axis options for the colorbar's major axis, as
+//! @param axis_opts Axis options for the color bar's major axis, as
 //! for plcolorbar.
 //! @param if_edge If if_edge is TRUE (FALSE) do (do not) draw the edge of
 //! the colorbox.
@@ -1071,7 +1071,7 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
         remove_characters( local_axis_opts, "TtXx" );
     }
 
-    // Draw the outline for the entire colorbar, tick marks, tick labels.
+    // Draw the outline for the entire color bar, tick marks, tick labels.
 
     if ( if_edge )
         edge_string = "bc";
@@ -1092,7 +1092,7 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 
 //--------------------------------------------------------------------------
 //! Draw label (when if_bb FALSE) with appropriate position relative to the
-//! "inner" bounding-box of the decorated box around the colorbar
+//! "inner" bounding-box of the decorated box around the color bar
 //! or else (when if_bb TRUE) calculate combined bounding box of that label
 //! + decorated box.
 //!
@@ -1104,7 +1104,7 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM), and
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).  For full documentation
 //! of these bits, see the documentation of opt for plcolorbar.
-//! @param label Text label for the colorbar.  No label is drawn if no
+//! @param label Text label for the color bar.  No label is drawn if no
 //! label position is specified with one of the
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in opt.
 
@@ -1305,7 +1305,7 @@ draw_label( PLBOOL if_bb, PLINT opt, const char *label )
 }
 
 //--------------------------------------------------------------------------
-//! Calculate important positional limits for colorbar as a function
+//! Calculate important positional limits for color bar as a function
 //! of the current bounding box limits and prior bounding-box height.
 //! plvpor(0, prior_bb_width, 0, prior_bb_height) is called before
 //! each bounding-box calculation and this calculate_limits call,
@@ -1369,33 +1369,35 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! Plot color bar for image, shade or gradient plots.
 //!
 //! @param p_colorbar_width Pointer to a location which contains
-//! (after the call) the labelled and decorated colorbar width in
+//! (after the call) the labelled and decorated color bar width in
 //! adopted coordinates.
 //! @param p_colorbar_height Pointer to a location which contains
-//! (after the call) the labelled and decorated colorbar height in
+//! (after the call) the labelled and decorated color bar height in
 //! adopted coordinates.
 //! @param opt This variable contains bits which control the overall
-//! colorbar.  The orientation (direction of the maximum value) of the
-//! colorbar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
+//! color bar.  The orientation (direction of the maximum value) of the
+//! color bar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
 //! BOTTOM).  If none of those bits are specified, the default
-//! orientation is toward the top, i.e., a vertical colorbar.  The
-//! type of colorbar must be specified with one of PL_COLORBAR_IMAGE,
+//! orientation is toward the top, i.e., a vertical color bar.  If the
+//! PL_COLORBAR_BACKGROUND bit is set, plot a (semi-transparent)
+//! background for the color bar.  If the PL_COLORBAR_BOUNDING_BOX bit
+//! is set, plot a bounding box for the color bar.  The type of
+//! color bar must be specified with one of PL_COLORBAR_IMAGE,
 //! PL_COLORBAR_SHADE or PL_COLORBAR_GRADIENT.  If more than one of
 //! those bits is set only the first one in the above list is honored.
 //! The position of the (optional) label/title can be specified with
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).  If no label position
 //! bit is set then no label will be drawn.  If more than one of this
 //! list of bits is specified, only the first one on the list is
-//! honored.  End-caps for the colorbar can added with
+//! honored.  End-caps for the color bar can added with
 //! PL_COLORBAR_CAP_LOW and PL_COLORBAR_CAP_HIGH.  If a particular
-//! colorbar cap option is not specified then no cap will be drawn for
+//! color bar cap option is not specified then no cap will be drawn for
 //! that end.  As a special case for PL_COLORBAR_SHADE, the option
 //! PL_COLORBAR_SHADE_LABEL can be specified.  If this option is
 //! provided then any tick marks and tick labels will be placed at the
-//! breaks between shaded segments.
-//! TODO: This should be expanded to support custom placement of tick
-//! marks and tick labels at custom value locations for any colorbar
-//! type.
+//! breaks between shaded segments.  TODO: This should be expanded to
+//! support custom placement of tick marks and tick labels at custom
+//! value locations for any color bar type.
 //! @param position This variable contains bits which control the
 //! overall position of the legend and the definition of the adopted
 //! coordinates used for positions just like what is done for the
@@ -1429,15 +1431,15 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! or bottom positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
 //! bit is set in position.  For the standard left or right positions,
 //! the direction of motion for positive y is toward positive Y.
-//! @param bg_color The cmap0 index of the background color for the colorbar
+//! @param bg_color The cmap0 index of the background color for the color bar
 //! (PL_COLORBAR_BACKGROUND).
 //! @param bb_color The cmap0 index of the color of the bounding-box
-//! line for the colorbar (PL_COLORBAR_BOUNDING_BOX).
+//! line for the color bar (PL_COLORBAR_BOUNDING_BOX).
 //! @param bb_style The pllsty style number for the bounding-box line
-//! for the colorbar (PL_COLORBAR_BOUNDING_BOX).
-//! @param x_length Length of the body of the colorbar in the X
+//! for the color bar (PL_COLORBAR_BOUNDING_BOX).
+//! @param x_length Length of the body of the color bar in the X
 //! direction in adopted coordinates.
-//! @param y_length Length of the body of the colorbar in the Y
+//! @param y_length Length of the body of the color bar in the Y
 //! direction in adopted coordinates.
 //! @param low_cap_color Color of the low-end color bar cap, if it is drawn.
 //! @param high_cap_color Color of the high-end color bar cap, if it is drawn.
@@ -1447,14 +1449,14 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! @param cont_width Contour width for PL_COLORBAR_SHADE plots.  This is
 //! passed directly to plshades, so it will be interpreted according to the
 //! design of plshades.
-//! @param n_labels Number of labels to place around the colorbar
+//! @param n_labels Number of labels to place around the color bar
 //! @param label_opts Options for each label.  n_label total values.
-//! @param labels Text labels for the colorbar. No label is drawn if no
+//! @param labels Text labels for the color bar. No label is drawn if no
 //! label position is specified with one of the
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in the corresponding
 //! label_opts field.
 //! @param n_axes Number of axis definitions provided.  Must be >= 1.
-//! @param axis_opts Axis options for the colorbar's major axis, as for plbox.
+//! @param axis_opts Axis options for the color bar's major axis, as for plbox.
 //! n_axes values in the array.
 //! @param ticks Spacing of major ticks, as for plbox.  n_axes values in the
 //! array.
@@ -1462,10 +1464,10 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! array.
 //! @param n_values Number of elements in each values array.
 //! @param values Numeric values for the data range represented by the
-//! colorbar.  For PL_COLORBAR_SHADE, this should include one value per break
+//! color bar.  For PL_COLORBAR_SHADE, this should include one value per break
 //! between segments.  For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT this
 //! includes two values, one for the maximum value on the scale and one for the
-//! minimum value.  The first entry will be used to render the colorbar
+//! minimum value.  The first entry will be used to render the color bar
 //! contents.  All other entries will be used only for axis rendering.
 //!
 
@@ -1489,7 +1491,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // coordinates and mm.
     PLFLT cap_extent, cap_extent_mm;
 
-    // The colorbar cap is an equilateral triangle with cap_angle
+    // The color bar cap is an equilateral triangle with cap_angle
     // the angle (in degrees) of the unequal angle pointing in the
     // direction of the orientation of the cap.  In other words,
     // cap_angle completely controls the shape of the triangle, but
@@ -1525,16 +1527,16 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Normalized subpage coordinates of top left of the bounding box.
     PLFLT plot_x_subpage_bb, plot_y_subpage_bb;
 
-    // colorbar width and height in normalized subpage coordinates.
-    // No suffix refers to bonding box of undecorated colorbar, d
-    // suffix refers to bounding box of decorated colorbar, and l
+    // color bar width and height in normalized subpage coordinates.
+    // No suffix refers to bonding box of undecorated color bar, d
+    // suffix refers to bounding box of decorated color bar, and l
     // suffix refers to bounding box of labelled and decorated
-    // colorbar.
+    // color bar.
     PLFLT colorbar_width, colorbar_height,
           colorbar_width_d, colorbar_height_d,
           colorbar_width_l, colorbar_height_l;
 
-    // ac suffix refers to latest colorbar_width (d or l suffix) converted to
+    // ac suffix refers to latest color bar_width (d or l suffix) converted to
     // adopted coordinates.
     // mm suffix refers to colorbar_width and colorbar_height (with no suffix)
     // converted from normalized subpage coordinates to mm.
@@ -1542,19 +1544,19 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
           colorbar_width_mm, colorbar_height_mm;
 
     // Change in normalized subpage coordinates of the top left of
-    // undecorated colorbar.  (The omd suffix refers to original
-    // colorbar minus decorated colorbar, and the dml suffix refers to
-    // decorated colorbar minus labelled and decorated colorbar.)
+    // undecorated color bar.  (The omd suffix refers to original
+    // color bar minus decorated color bar, and the dml suffix refers to
+    // decorated color bar minus labelled and decorated color bar.)
     PLFLT dx_subpage_omd, dy_subpage_omd, dx_subpage_dml, dy_subpage_dml;
     PLFLT dx_subpage_omd_accu = 0.0, dy_subpage_omd_accu = 0.0, dx_subpage_dml_accu = 0.0, dy_subpage_dml_accu = 0.0;
     // Normalized subpage coordinates of the top left of undecorated
-    // colorbar,
+    // color bar,
     PLFLT plot_x_subpage, plot_y_subpage;
 
-    // Position of the undecorated colorbar in normalized subpage coordinates.
+    // Position of the undecorated color bar in normalized subpage coordinates.
     PLFLT vx_min = 0.0, vx_max = 0.0, vy_min = 0.0, vy_max = 0.0;
 
-    // World coordinate limits describing undecorated colorbar.
+    // World coordinate limits describing undecorated color bar.
     PLFLT wx_min = 0.0, wx_max = 0.0, wy_min = 0.0, wy_max = 0.0;
 
     // The data to plot
@@ -1664,7 +1666,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Assumes that the colors array is sorted from smallest to largest.
     plgcmap1_range( &min_color, &max_color );
 
-    // Width and height of the undecorated colorbar in normalized
+    // Width and height of the undecorated color bar in normalized
     // subpage coordinates and mm.
     colorbar_width = adopted_to_subpage_x( x_length ) -
                      adopted_to_subpage_x( 0. );
@@ -1693,7 +1695,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         max_value = values[i][ n_values[i] - 1 ];
         max_abs   = MAX( fabs( min_value ), fabs( max_value ) );
 
-        // Specify the proper window ranges for colorbar depending on
+        // Specify the proper window ranges for color bar depending on
         // orientation.
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
@@ -1814,22 +1816,22 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     }
 
     // Normalized subpage coordinates (top-left corner) for undecorated
-    // colorbar
+    // color bar
     plot_x_subpage = plot_x_subpage_bb + dx_subpage_omd_accu + dx_subpage_dml_accu;
     plot_y_subpage = plot_y_subpage_bb + dy_subpage_omd_accu + dy_subpage_dml_accu;
 
-    // Coordinates of bounding box for decorated colorbar (without overall label).
+    // Coordinates of bounding box for decorated color bar (without overall label).
     label_vpor_xmin = plot_x_subpage_bb + dx_subpage_dml_accu;
     label_vpor_xmax = label_vpor_xmin + colorbar_width_d;
     label_vpor_ymax = plot_y_subpage_bb + dy_subpage_dml_accu;
     label_vpor_ymin = label_vpor_ymax - colorbar_height_d;
 
     // Return bounding box width and height in adopted coordinates for
-    // labelled and decorated colorbar.
+    // labelled and decorated color bar.
     *p_colorbar_width  = colorbar_width_ac;
     *p_colorbar_height = colorbar_height_ac;
 
-    // Specify the proper viewport ranges for colorbar depending on
+    // Specify the proper viewport ranges for color bar depending on
     // orientation.
     if ( opt & PL_COLORBAR_ORIENT_RIGHT )
     {
@@ -1888,7 +1890,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         plcol0( col0_save );
     }
 
-    // Viewport and world coordinate ranges for colorbar.
+    // Viewport and world coordinate ranges for color bar.
     plvpor( vx_min, vx_max, vy_min, vy_max );
     plwind( wx_min, wx_max, wy_min, wy_max );
 
@@ -2223,7 +2225,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         max_value = values[i][ n_values[i] - 1 ];
         max_abs   = MAX( fabs( min_value ), fabs( max_value ) );
 
-        // Specify the proper window ranges for colorbar depending on
+        // Specify the proper window ranges for color bar depending on
         // orientation.
         if ( opt & PL_COLORBAR_ORIENT_RIGHT )
         {
