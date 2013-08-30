@@ -682,6 +682,9 @@ if(BUILD_INFO OR PREBUILT_DOC)
   install(CODE "
 # Suppress empty element warning.
 cmake_policy(SET CMP0007 NEW)
+# Suppress warning about setting the above policy!
+cmake_policy(SET CMP0011 NEW)
+
 file(READ ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST} INFO_FILES)
 # Convert to list with trailing empty element
 string(REGEX REPLACE \"\n\" \";\" INFO_FILES \"\${INFO_FILES}\")
@@ -689,7 +692,7 @@ string(REGEX REPLACE \"\n\" \";\" INFO_FILES \"\${INFO_FILES}\")
 list(REMOVE_ITEM INFO_FILES \"\")
 foreach(file \${INFO_FILES})
   # INSTALL_DESTINATION signature automatically honors DESTDIR.
-  file(INSTALL DESTINATION ${INFO_DIR} TYPE FILE FILES \"\${file}\")
+  file(INSTALL \"${CMAKE_CURRENT_BINARY_DIR}/\${file}\" DESTINATION ${INFO_DIR})
 endforeach (file \"\${INFO_FILES}\")
 "
     )
@@ -699,6 +702,8 @@ if(BUILD_MAN OR PREBUILT_DOC)
   install(CODE "
 # Suppress empty element warning.
 cmake_policy(SET CMP0007 NEW)
+# Suppress warning about setting the above policy!
+cmake_policy(SET CMP0011 NEW)
 file(READ ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST} MAN_FILES)
 # Convert to list with trailing empty element
 string(REGEX REPLACE \"\n\" \";\" MAN_FILES \"\${MAN_FILES}\")
@@ -706,7 +711,7 @@ string(REGEX REPLACE \"\n\" \";\" MAN_FILES \"\${MAN_FILES}\")
 list(REMOVE_ITEM MAN_FILES \"\")
 foreach(file \${MAN_FILES})
   # INSTALL_DESTINATION signature automatically honors DESTDIR.
-  file(INSTALL DESTINATION ${MAN_DIR}/man3 TYPE FILE FILES \"\${file}\")
+  file(INSTALL \"${CMAKE_CURRENT_BINARY_DIR}/\${file}\" DESTINATION ${MAN_DIR}/man3)
 endforeach (file \"\${MAN_FILES}\")
 "
     )
@@ -717,6 +722,8 @@ if(BUILD_HTML OR PREBUILT_DOC)
   install(CODE "
 # Suppress empty element warning.
 cmake_policy(SET CMP0007 NEW)
+# Suppress warning about setting the above policy!
+cmake_policy(SET CMP0011 NEW)
 file(READ ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} HTML_FILES)
 # Convert to list with trailing empty element
 string(REGEX REPLACE \"\n\" \";\" HTML_FILES \"\${HTML_FILES}\")
@@ -724,7 +731,7 @@ string(REGEX REPLACE \"\n\" \";\" HTML_FILES \"\${HTML_FILES}\")
 list(REMOVE_ITEM HTML_FILES \"\")
 foreach(file \${HTML_FILES})
   # INSTALL_DESTINATION signature automatically honors DESTDIR.
-  file(INSTALL DESTINATION ${DOC_DIR}/html TYPE FILE FILES \"\${file}\")
+  file(INSTALL \"${CMAKE_CURRENT_BINARY_DIR}/\${file}\" DESTINATION ${DOC_DIR}/html)
 endforeach (file \"\${HTML_FILES}\")
 "
     )
