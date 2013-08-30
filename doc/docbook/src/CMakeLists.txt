@@ -71,13 +71,6 @@ set(
   ${CMAKE_CURRENT_SOURCE_DIR}/math.ent
   )
 
-execute_process(
-  COMMAND
-  ${CMAKE_COMMAND} -E copy_if_different 
-  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
-  ${CMAKE_CURRENT_BINARY_DIR}/jadetex.cfg
-  )
-
 if(
     PREBUILT_DOC
     AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/static_built_files
@@ -247,7 +240,6 @@ else(
 	-E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
 	COMMAND mv
 	${INFO_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
-	COMMAND rmdir ${INFO_TMPDIR}
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}.texi
 	)
 
@@ -398,13 +390,16 @@ else(
 
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
-	  COMMAND ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  # xmlto --with-fop is currently (at least on Debian) craps out
+          # if DESTDIR is specified so make sure it is NOT specified.
+	  COMMAND env DESTDIR= ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.ps ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
 	  COMMAND ${GZIP} -f ${BASE}.ps
 	  DEPENDS
 	  ${SOURCE_FILES} 
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
+	  VERBATIM
 	  )
 	add_custom_target(
 	  ps_target ALL 
@@ -425,12 +420,15 @@ else(
 
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	  COMMAND ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	  # xmlto --with-fop is currently (at least on Debian) craps out
+          # if DESTDIR is specified so make sure it is NOT specified.
+	  COMMAND env DESTDIR= ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	  DEPENDS
 	  ${SOURCE_FILES} 
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
+          VERBATIM
 	  )
 	add_custom_target(
 	  pdf_target ALL 
@@ -517,6 +515,13 @@ else(
 	configure_file(
 	  ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map.in
 	  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
+	  )
+
+	execute_process(
+	  COMMAND
+	  ${CMAKE_COMMAND} -E copy_if_different 
+	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
+	  ${CMAKE_CURRENT_BINARY_DIR}/jadetex.cfg
 	  )
 
 	# Custom commands for building print version of documentation
