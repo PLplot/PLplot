@@ -36,7 +36,7 @@
 # cairo_LINK_FLAGS	  - list of full path names of libraries and
 # 			    linker flags for dynamic cairo device driver.
 # cairo_RPATH	       	  - RPATH directory list for cairo device driver.
-# 			    current assumption is the list only has one 
+# 			    current assumption is the list only has one
 #			    element corresponding to the pkg-config libdir
 #			    variable for pangocairo.
 # DRIVERS_LINK_FLAGS	  - list of device LINK_FLAGS for case
@@ -55,13 +55,13 @@ if(
     OR PLD_pngcairo
     OR PLD_pscairo
     OR PLD_epscairo
-    OR PLD_svgcairo 
+    OR PLD_svgcairo
     OR PLD_xcairo
     OR PLD_extcairo
     OR PLD_wincairo
     )
   if(NOT PKG_CONFIG_EXECUTABLE)
-    message(STATUS 
+    message(STATUS
       "WARNING: pkg-config not found. Setting cairo drivers to OFF."
       )
     set(PLD_memcairo OFF CACHE BOOL "Enable memcairo device" FORCE)
@@ -80,7 +80,7 @@ endif(
   OR PLD_pngcairo
   OR PLD_pscairo
   OR PLD_epscairo
-  OR PLD_svgcairo 
+  OR PLD_svgcairo
   OR PLD_xcairo
   OR PLD_extcairo
   OR PLD_wincairo
@@ -92,7 +92,7 @@ if(
     OR PLD_pngcairo
     OR PLD_pscairo
     OR PLD_epscairo
-    OR PLD_svgcairo 
+    OR PLD_svgcairo
     OR PLD_xcairo
     OR PLD_extcairo
     OR PLD_wincairo
@@ -101,13 +101,13 @@ if(
     pangocairo
     includedir
     linkdir
-    linkflags 
+    linkflags
     cflags
     version
     _CAIRO
     )
   if(linkflags)
-    # Check that the pangocairo library version is recent 
+    # Check that the pangocairo library version is recent
     # enough to efficiently handle text clipping.
     # If it is not then we print a warning.
     transform_version(NUMERICAL_PANGOCAIRO_MINIMUM_VERSION "1.20.5")
@@ -119,12 +119,12 @@ if(
     filter_rpath(cairo_RPATH)
     if(PLD_xcairo AND X11_COMPILE_FLAGS)
       # Blank-delimited required.
-      string(REGEX REPLACE ";" " " 
+      string(REGEX REPLACE ";" " "
 	cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
 	)
       set(cairo_LINK_FLAGS ${linkflags} ${X11_LIBRARIES})
     else(PLD_xcairo AND X11_COMPILE_FLAGS)
-      message(STATUS 
+      message(STATUS
 	"WARNING: X windows not found. Setting xcairo driver to OFF."
 	)
       # Blank-delimited required.
@@ -133,7 +133,7 @@ if(
       string(REGEX REPLACE ";" " " cairo_COMPILE_FLAGS "${cflags}")
       set(cairo_LINK_FLAGS ${linkflags})
     endif(PLD_xcairo AND X11_COMPILE_FLAGS)
-    
+
     #message("cairo_COMPILE_FLAGS = ${cairo_COMPILE_FLAGS}")
     #message("cairo_LINK_FLAGS = ${cairo_LINK_FLAGS}")
 
@@ -165,7 +165,7 @@ endif(
   OR PLD_pngcairo
   OR PLD_pscairo
   OR PLD_epscairo
-  OR PLD_svgcairo 
+  OR PLD_svgcairo
   OR PLD_xcairo
   OR PLD_extcairo
   OR PLD_wincairo
@@ -180,8 +180,15 @@ if(NOT PLD_extcairo)
 endif(NOT PLD_extcairo)
 
 if(NOT WIN32_OR_CYGWIN)
-  message(STATUS 
+  message(STATUS
     "Not a Windows platform so setting wincairo driver to OFF."
     )
   set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
+else(NOT WIN32_OR_CYGWIN)
+  if(CYGWIN)
+    message(STATUS
+      "Cygwin does not currently provide support for the wincairo driver - turning this OFF."
+      )
+    set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
+  endif(CYGWIN)
 endif(NOT WIN32_OR_CYGWIN)

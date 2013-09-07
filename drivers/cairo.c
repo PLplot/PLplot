@@ -41,6 +41,9 @@
 #include "drivers.h"
 
 // Driver-dependent includes
+#if defined ( PLD_wincairo )
+#include <windows.h>
+#endif
 #if defined ( PLD_xcairo )
 #include <cairo-xlib.h>
 #include <X11/X.h>
@@ -58,9 +61,7 @@
 #if defined ( PLD_svgcairo )
 #include <cairo-svg.h>
 #endif
-#if defined ( PLD_wincairo )
-#include <windows.h>
-#endif
+
 
 //--------------------------------------------------------------------------
 // Constants & global (to this file) variables
