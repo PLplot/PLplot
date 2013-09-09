@@ -157,6 +157,44 @@ void plbox3( string xopt, string xlabel, PLFLT xtick, PLINT nsubx,
         toStringz( zopt ), toStringz( zlabel ), ztick, nsubz );
 }
 
+// Routine for drawing continous colour legends
+void plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+              PLINT opt, PLINT position, PLFLT x, PLFLT y,
+              PLFLT x_length, PLFLT y_length,
+              PLINT bg_color, PLINT bb_color, PLINT bb_style,
+              PLFLT low_cap_color, PLFLT high_cap_color,
+              PLINT cont_color, PLFLT cont_width,
+              PLINT[] label_opts, string[] label,
+              string[] axis_opts,
+              PLFLT[] ticks, PLINT[] sub_ticks,
+              PLFLT[][] values )
+{
+    PLINT n_labels = cast(PLINT) label_opts.length;
+    PLINT n_axes = cast(PLINT) axis_opts.length;
+    PLINT[] n_values = new PLINT[values.length];
+    for (size_t i=0; i<values.length;i++) {
+        n_values[i] = cast(PLINT) values[i].length;
+    }
+    immutable( char ) * *labelz    = array( map!toStringz( label ) ).ptr;
+    immutable( char ) * *axis_optsz    = array( map!toStringz( axis_opts ) ).ptr;
+    assert( n_labels == label.length, "plcolorbar(): Arrays must be of same length!" );
+    assert( n_labels == label_opts.length, "plcolorbar(): Arrays must be of same length!" );
+    assert( n_axes == axis_opts.length, "plcolorbar(): Arrays must be of same length!" );
+    assert( n_axes == ticks.length, "plcolorbar(): Arrays must be of same length!" );
+    assert( n_axes == sub_ticks.length, "plcolorbar(): Arrays must be of same length!" );
+
+    c_plcolorbar(p_colorbar_width, p_colorbar_height,
+              opt, position, x, y,
+              x_length, y_length,
+              bg_color, bb_color, bb_style,
+              low_cap_color, high_cap_color,
+              cont_color, cont_width,
+              n_labels, label_opts.ptr, labelz,
+              n_axes, axis_optsz,
+              ticks.ptr, sub_ticks.ptr,
+              n_values.ptr, convert_array(values) );
+}
+
 // Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 // plfcont, with a particular choice for f2eval and f2eval_data.
 //
@@ -1323,6 +1361,7 @@ alias c_plarc        plarc;
 alias c_plclear      plclear;
 alias c_plcol0       plcol0;
 alias c_plcol1       plcol1;
+//alias c_plcolorbar   plcolorbar;
 alias c_plconfigtime plconfigtime;
 //alias c_plcont plcont;
 alias c_plcpstrm     plcpstrm;
@@ -1413,6 +1452,7 @@ alias c_plscmap0n plscmap0n;
 //alias c_plscmap1l plscmap1l;
 //alias c_plscmap1la plscmap1la;
 alias c_plscmap1n      plscmap1n;
+alias c_plscmap1_range      plscmap1_range;
 alias c_plscol0        plscol0;
 alias c_plscol0a       plscol0a;
 alias c_plscolbg       plscolbg;
@@ -1558,6 +1598,7 @@ void c_plcol0( PLINT icol0 );
 
 // Set color, map 1.  Argument is a float between 0. and 1.
 void c_plcol1( PLFLT col1 );
+
 
 // Configure transformation between continuous and broken-down time (and
 // vice versa) for current stream.
@@ -1780,9 +1821,17 @@ const PL_COLORBAR_LABEL_BOTTOM = 8;
 const PL_COLORBAR_IMAGE        = 16;
 const PL_COLORBAR_SHADE        = 32;
 const PL_COLORBAR_GRADIENT     = 64;
-const PL_COLORBAR_CAP_LOW      = 128;
-const PL_COLORBAR_CAP_HIGH     = 256;
-const PL_COLORBAR_SHADE_LABEL  = 512;
+const PL_COLORBAR_CAP_NONE      = 128;
+const PL_COLORBAR_CAP_LOW      = 256;
+const PL_COLORBAR_CAP_HIGH     = 512;
+const PL_COLORBAR_SHADE_LABEL  = 1024;
+const PL_COLORBAR_ORIENT_RIGHT = 2048;
+const PL_COLORBAR_ORIENT_TOP   = 4096;
+const PL_COLORBAR_ORIENT_LEFT  = 8192;
+const PL_COLORBAR_ORIENT_BOTTOM = 16384;
+const PL_COLORBAR_BACKGROUND   = 32768;
+const PL_COLORBAR_BOUNDING_BOX = 65536;
+
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 void c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
@@ -1799,6 +1848,18 @@ void c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                  PLFLT *line_widths,
                  PLINT *symbol_colors, PLFLT *symbol_scales,
                  PLINT *symbol_numbers, const char **symbols );
+
+// Routine for drawing continous colour legends
+void c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+              PLINT opt, PLINT position, PLFLT x, PLFLT y,
+              PLFLT x_length, PLFLT y_length,
+              PLINT bg_color, PLINT bb_color, PLINT bb_style,
+              PLFLT low_cap_color, PLFLT high_cap_color,
+              PLINT cont_color, PLFLT cont_width,
+              PLINT n_labels, const PLINT *label_opts, const char **label,
+              PLINT n_axes, const char ** axis_opts,
+              const PLFLT *ticks, const PLINT *sub_ticks,
+              const PLINT *n_values, const PLFLT **values );
 
 // Sets position of the light source
 void c_pllightsource( PLFLT x, PLFLT y, PLFLT z );
@@ -1955,6 +2016,12 @@ void c_plscmap1la( PLBOOL itype, PLINT npts, PLFLT *intensity, PLFLT *coord1, PL
 
 // Set number of colors in cmap 1
 void c_plscmap1n( PLINT ncol1 );
+
+// Set the color map 1 range used in continuous plots
+void c_plscmap1_range( PLFLT min_color, PLFLT max_color );
+
+// Get the color map 1 range used in continuous plots
+void c_plgcmap1_range( PLFLT *min_color, PLFLT *max_color );
 
 // Set a given color from color map 0 by 8 bit RGB value
 void c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b );
