@@ -1922,10 +1922,13 @@ void plD_init_xcairo( PLStream *pls )
     {
         // X Windows setup
         aStream->XDisplay = NULL;
-        aStream->XDisplay = XOpenDisplay( NULL );
+	if (pls->FileName != NULL) 
+	  aStream->XDisplay = XOpenDisplay( pls->FileName );
+	else
+	  aStream->XDisplay = XOpenDisplay( NULL );
         if ( aStream->XDisplay == NULL )
         {
-            printf( "Failed to open X Windows display\n" );
+            plexit( "Failed to open X Windows display\n" );
             // some sort of error here
         }
         XScreen    = DefaultScreen( aStream->XDisplay );
