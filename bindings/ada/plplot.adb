@@ -1,6 +1,6 @@
 -- $Id$
 
--- Thick Ada binding to PLplot
+-- Thick Ada binding to PLplot 
 
 -- Copyright (C) 2006-2011 Jerry Bauck
 
