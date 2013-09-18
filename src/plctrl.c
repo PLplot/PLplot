@@ -7,7 +7,7 @@
 // Copyright (C) 2004  Joao Cardoso
 // Copyright (C) 2004  Rafael Laboissiere
 // Copyright (C) 2008  Hazen Babcock
-// Copyright (C) 2009  Alan W. Irwin
+// Copyright (C) 2009-2013  Alan W. Irwin
 // Copyright (C) 2011  Hezekiah M. Carty
 //
 // This file is part of PLplot.
@@ -170,7 +170,7 @@ c_plcol0( PLINT icol0 )
 //
 //! Set color, map 1.  Argument is a float between 0. and 1.
 //!
-//! @param icol1 The index of the color map 1 color to use as the current
+//! @param col1 The index of the color map 1 color to use as the current
 //! color. (0.0 - 1.0)
 
 void
