@@ -957,13 +957,11 @@ c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 //! or any bitwise OR'd combination, e.g. "MAG_COLOR | DRAW_LINEX"
 //! @param clevel z values at which to draw contours
 //! @param nlevel Number of values in clevels
-//! @param ixstart Index of first x coordinate to include in plot
-//! @param ixn Number of x coordinates to include in plot
-//! @param indexymin Array which specifies the min y index for each x
-//! index in range ixstart, ixn.
-//! @param indexymax Array which specifies the max y index for each x
-//! coordinate (following the convention that the upper range limit is one more
-//! than actual index limit) for an x index range of ixstart, ixn.
+//! @param PL_UNUSED( ixstart ) Not used.
+//! @param PL_UNUSED( ixn ) Not used.
+//! @param PL_UNUSED( indexymin ) Not used.
+//! @param PL_UNUSED( indexymax ) Not used.
+//!
 //--------------------------------------------------------------------------
 
 void

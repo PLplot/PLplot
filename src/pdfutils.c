@@ -1122,8 +1122,7 @@ plAlloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 //!
 //! @param f The [][] to the storage.
 //! @param nx Size of the grid in x.
-//! @param ny Size of the grid in y (not used).
-//!
+//! @param PL_UNUSED( ny) Not used.
 //--------------------------------------------------------------------------
 
 void
