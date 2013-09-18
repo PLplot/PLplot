@@ -2,8 +2,8 @@
 // All routines that help to create a discrete legend (pllegend) or
 // a continuous legend (plcolorbar).
 //
-// Copyright (C) 2010-2011  Hezekiah M. Carty
-// Copyright (C) 2010-2011  Alan W. Irwin
+// Copyright (C) 2010-2013  Hezekiah M. Carty
+// Copyright (C) 2010-2013  Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -421,17 +421,21 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param position This variable contains bits which control the
 //! overall position of the legend and the definition of the adopted
 //! coordinates used for positions just like what is done for the
-//! position argument for plcolorbar.  Note, however, that the defaults
-//! for the position bits (see below) are different than the plcolorbar
-//! case.  The combination of the PL_POSITION_LEFT, PL_POSITION_RIGHT,
-//! PL_POSITION_TOP, PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and
-//! PL_POSITION_OUTSIDE bits specifies one of the 16 possible standard
-//! positions (the 4 corners and 4 side centers for both the inside
-//! and outside cases) of the legend relative to the adopted
-//! coordinate system.  The adopted coordinates are normalized
-//! viewport coordinates if the PL_POSITION_VIEWPORT bit is set or
-//! normalized subpage coordinates if the PL_POSITION_SUBPAGE bit is
-//! set.  Default position bits: If none of PL_POSITION_LEFT,
+//! position argument for plcolorbar.  However, note that the
+//! defaults for the position bits (see below) are different than the
+//! plcolorbar case.  The combination of the PL_POSITION_LEFT,
+//! PL_POSITION_RIGHT, PL_POSITION_TOP, PL_POSITION_BOTTOM,
+//! PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE bits specifies one of
+//! the 16 possible standard positions (the 4 corners and 4 centers of
+//! the sides for both the inside and outside cases) of the legend
+//! relative to the adopted coordinate system.  The corner positions
+//! are specified by the appropriate combination of two of the
+//! PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP, and
+//! PL_POSITION_BOTTOM bits while the sides are specified by a single
+//! value of one of those bits.  The adopted coordinates are
+//! normalized viewport coordinates if the PL_POSITION_VIEWPORT bit is
+//! set or normalized subpage coordinates if the PL_POSITION_SUBPAGE
+//! bit is set.  Default position bits: If none of PL_POSITION_LEFT,
 //! PL_POSITION_RIGHT, PL_POSITION_TOP, or PL_POSITION_BOTTOM are set,
 //! then the combination of PL_POSITION_RIGHT and PL_POSITION_TOP.  If
 //! neither of PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set, use
@@ -454,9 +458,9 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param plot_width Horizontal width in adopted coordinates of the
 //! plot area (where colored boxes, lines, and/or symbols are drawn in
 //! the legend).
-//! @param bg_color The cmap0 index of the background color for the legend
+//! @param bg_color The cmap0 color of the background for the legend
 //! (PL_LEGEND_BACKGROUND).
-//! @param bb_color The cmap0 index of the color of the bounding-box
+//! @param bb_color The cmap0 color of the bounding-box
 //! line for the legend (PL_LEGEND_BOUNDING_BOX).
 //! @param bb_style The pllsty style number for the bounding-box line
 //! for the legend (PL_LEGEND_BOUNDING_BOX).
@@ -492,12 +496,12 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! 0., 0.5, or 1. corresponding to a text that is left justified,
 //! centred, or right justified within the text area, but other values
 //! are allowed as well.
-//! @param text_colors Array of nlegend text colors (cmap0 indices).
+//! @param text_colors Array of nlegend cmap0 text colors.
 //! @param text Array of nlegend pointers to null-terminated text
 //! annotation strings.  Like other PLplot strings specified by the
 //! user, the string must be UTF-8 (including its ascii subset) and
 //! may include any of the PLplot text escapes.
-//! @param box_colors Array of nlegend colors (cmap0 indices) for
+//! @param box_colors Array of nlegend cmap0 colors for
 //! the discrete colored boxes (PL_LEGEND_COLOR_BOX).
 //! @param box_patterns Array of nlegend patterns (plpsty indices)
 //! for the discrete colored boxes (PL_LEGEND_COLOR_BOX).
@@ -506,13 +510,13 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! (PL_LEGEND_COLOR_BOX).
 //! @param box_line_widths Array of nlegend line widths for the
 //! patterns specified by box_patterns (PL_LEGEND_COLOR_BOX).
-//! @param line_colors Array of nlegend line colors (cmap0 indices)
+//! @param line_colors Array of nlegend cmap0 line colors
 //! (PL_LEGEND_LINE).
 //! @param line_styles Array of nlegend line styles (pllsty indices)
 //! (PL_LEGEND_LINE).
 //! @param line_widths Array of nlegend line widths (PL_LEGEND_LINE).
-//! @param symbol_colors Array of nlegend symbol colors (cmap0
-//! indices) (PL_LEGEND_SYMBOL).
+//! @param symbol_colors Array of nlegend cmap0 symbol colors
+//! (PL_LEGEND_SYMBOL).
 //! @param symbol_scales Array of nlegend scale values for the
 //! symbol height (PL_LEGEND_SYMBOL).
 //! @param symbol_numbers Array of nlegend numbers of symbols to be
@@ -939,7 +943,7 @@ remove_characters( char *string, const char *characters )
 //! inscribing the triangle.
 //! @param ymax Maximum world Y coordinate of rectangle
 //! inscribing the triangle.
-//! @param color Color (color palette 1) used to fill the end cap.
+//! @param color The cmap1 color used to fill the end cap.
 //!
 
 static void
@@ -1100,7 +1104,6 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! decorated box + label.  If if_bb is FALSE draw the label.
 //! @param opt Can contain the same control bits as the opt argument
 //! for plcolorbar.  However, the only bits that are relevant here are
-//! PL_COLORBAR_CAP_LOW, PL_COLORBAR_CAP_HIGH,
 //! PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM), and
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).  For full documentation
 //! of these bits, see the documentation of opt for plcolorbar.
@@ -1375,15 +1378,15 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! (after the call) the labelled and decorated color bar height in
 //! adopted coordinates.
 //! @param opt This variable contains bits which control the overall
-//! color bar.  The orientation (direction of the maximum value) of the
-//! color bar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP, LEFT,
-//! BOTTOM).  If none of those bits are specified, the default
+//! color bar.  The orientation (direction of the maximum value) of
+//! the color bar is specified with PL_COLORBAR_ORIENT_(RIGHT, TOP,
+//! LEFT, BOTTOM).  If none of those bits are specified, the default
 //! orientation is toward the top, i.e., a vertical color bar.  If the
 //! PL_COLORBAR_BACKGROUND bit is set, plot a (semi-transparent)
 //! background for the color bar.  If the PL_COLORBAR_BOUNDING_BOX bit
-//! is set, plot a bounding box for the color bar.  The type of
-//! color bar must be specified with one of PL_COLORBAR_IMAGE,
-//! PL_COLORBAR_SHADE or PL_COLORBAR_GRADIENT.  If more than one of
+//! is set, plot a bounding box for the color bar.  The type of color
+//! bar must be specified with one of PL_COLORBAR_IMAGE,
+//! PL_COLORBAR_SHADE, or PL_COLORBAR_GRADIENT.  If more than one of
 //! those bits is set only the first one in the above list is honored.
 //! The position of the (optional) label/title can be specified with
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM).  If no label position
@@ -1391,84 +1394,106 @@ calculate_limits( PLINT position, PLFLT x, PLFLT y,
 //! list of bits is specified, only the first one on the list is
 //! honored.  End-caps for the color bar can added with
 //! PL_COLORBAR_CAP_LOW and PL_COLORBAR_CAP_HIGH.  If a particular
-//! color bar cap option is not specified then no cap will be drawn for
-//! that end.  As a special case for PL_COLORBAR_SHADE, the option
+//! color bar cap option is not specified then no cap will be drawn
+//! for that end.  As a special case for PL_COLORBAR_SHADE, the option
 //! PL_COLORBAR_SHADE_LABEL can be specified.  If this option is
 //! provided then any tick marks and tick labels will be placed at the
 //! breaks between shaded segments.  TODO: This should be expanded to
 //! support custom placement of tick marks and tick labels at custom
 //! value locations for any color bar type.
 //! @param position This variable contains bits which control the
-//! overall position of the legend and the definition of the adopted
-//! coordinates used for positions just like what is done for the
-//! position argument for pllegend.  Note, however, that the defaults
-//! for the position bits (see below) are different than the pllegend
-//! case.  The combination of the PL_POSITION_LEFT, PL_POSITION_RIGHT,
-//! PL_POSITION_TOP, PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and
-//! PL_POSITION_OUTSIDE bits specifies one of the 16 possible standard
-//! positions (the 4 corners and 4 side centers for both the inside
-//! and outside cases) of the legend relative to the adopted
-//! coordinate system.  The adopted coordinates are normalized
-//! viewport coordinates if the PL_POSITION_VIEWPORT bit is set or
-//! normalized subpage coordinates if the PL_POSITION_SUBPAGE bit is
-//! set.  Default position bits: If none of PL_POSITION_LEFT,
+//! overall position of the color bar and the definition of the
+//! adopted coordinates used for positions just like what is done for
+//! the position argument for pllegend.  However, note that the
+//! defaults for the position bits (see below) are different than the
+//! pllegend case.  The combination of the PL_POSITION_LEFT,
+//! PL_POSITION_RIGHT, PL_POSITION_TOP, PL_POSITION_BOTTOM,
+//! PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE bits specifies one of
+//! the 16 possible standard positions (the 4 corners and centers of
+//! the 4 sides for both the inside and outside cases) of the color
+//! bar relative to the adopted coordinate system.  The corner
+//! positions are specified by the appropriate combination of two of
+//! the PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP, and
+//! PL_POSITION_BOTTOM bits while the sides are specified by a single
+//! value of one of those bits.  The adopted coordinates are
+//! normalized viewport coordinates if the PL_POSITION_VIEWPORT bit is
+//! set or normalized subpage coordinates if the PL_POSITION_SUBPAGE
+//! bit is set.  Default position bits: If none of PL_POSITION_LEFT,
 //! PL_POSITION_RIGHT, PL_POSITION_TOP, or PL_POSITION_BOTTOM are set,
 //! then use PL_POSITION_RIGHT.  If neither of PL_POSITION_INSIDE or
 //! PL_POSITION_OUTSIDE is set, use PL_POSITION_OUTSIDE.  If neither
 //! of PL_POSITION_VIEWPORT or PL_POSITION_SUBPAGE is set, use
 //! PL_POSITION_VIEWPORT.
-//! @param x X offset of the legend position in adopted coordinates
-//! from the specified standard position of the legend.  For positive
+//! @param x X offset of the color bar position in adopted coordinates
+//! from the specified standard position of the color bar.  For positive
 //! x, the direction of motion away from the standard position is
 //! inward/outward from the standard corner positions or standard left
 //! or right positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
 //! bit is set in position.  For the standard top or bottom positions,
 //! the direction of motion for positive x is toward positive X.
-//! @param y Y offset of the legend position in adopted coordinates
-//! from the specified standard position of the legend.  For positive
+//! @param y Y offset of the color bar position in adopted coordinates
+//! from the specified standard position of the color bar.  For positive
 //! y, the direction of motion away from the standard position is
 //! inward/outward from the standard corner positions or standard top
 //! or bottom positions if the PL_POSITION_INSIDE/PL_POSITION_OUTSIDE
 //! bit is set in position.  For the standard left or right positions,
 //! the direction of motion for positive y is toward positive Y.
-//! @param bg_color The cmap0 index of the background color for the color bar
-//! (PL_COLORBAR_BACKGROUND).
-//! @param bb_color The cmap0 index of the color of the bounding-box
-//! line for the color bar (PL_COLORBAR_BOUNDING_BOX).
-//! @param bb_style The pllsty style number for the bounding-box line
-//! for the color bar (PL_COLORBAR_BOUNDING_BOX).
 //! @param x_length Length of the body of the color bar in the X
 //! direction in adopted coordinates.
 //! @param y_length Length of the body of the color bar in the Y
 //! direction in adopted coordinates.
-//! @param low_cap_color Color of the low-end color bar cap, if it is drawn.
-//! @param high_cap_color Color of the high-end color bar cap, if it is drawn.
-//! @param cont_color Contour color for PL_COLORBAR_SHADE plots.  This is
-//! passed directly to plshades, so it will be interpreted according to the
-//! design of plshades.
+//! @param bg_color The cmap0 color of the background for the color bar
+//! (PL_COLORBAR_BACKGROUND).
+//! @param bb_color The cmap0 color of the bounding-box
+//! line for the color bar (PL_COLORBAR_BOUNDING_BOX).
+//! @param bb_style The pllsty style number for the bounding-box line
+//! for the color bar (PL_COLORBAR_BOUNDING_BOX).
+//! @param low_cap_color The cmap1 color of the low-end color bar cap, if it is drawn (PL_COLORBAR_CAP_LOW).
+//! @param high_cap_color The cmap1 color of the high-end color bar cap, if it is drawn (PL_COLORBAR_CAP_HIGH).
+//! @param cont_color The cmap0 contour color for PL_COLORBAR_SHADE
+//! plots.  This value is passed directly to plshades, so it will be
+//! interpreted according to the design of plshades.
 //! @param cont_width Contour width for PL_COLORBAR_SHADE plots.  This is
 //! passed directly to plshades, so it will be interpreted according to the
 //! design of plshades.
-//! @param n_labels Number of labels to place around the color bar
-//! @param label_opts Options for each label.  n_label total values.
-//! @param labels Text labels for the color bar. No label is drawn if no
-//! label position is specified with one of the
-//! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in the corresponding
-//! label_opts field.
-//! @param n_axes Number of axis definitions provided.  Must be >= 1.
-//! @param axis_opts Axis options for the color bar's major axis, as for plbox.
-//! n_axes values in the array.
-//! @param ticks Spacing of major ticks, as for plbox.  n_axes values in the
-//! array.
-//! @param sub_ticks Number of subticks, as for plbox.  n_axes values in the
-//! array.
-//! @param n_values Number of elements in each values array.
-//! @param values Numeric values for the data range represented by the
-//! color bar.  For PL_COLORBAR_SHADE, this should include one value per break
-//! between segments.  For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT this
-//! includes two values, one for the maximum value on the scale and one for the
-//! minimum value.  The first entry will be used to render the color bar
-//! contents.  All other entries will be used only for axis rendering.
+//! @param n_labels Number of labels to place around the color bar.
+//! @param label_opts An array of n_labels opt values to help calculate the
+//! combined opt value for each of the labels.  For each
+//! different label the combined opt value is the bitwise OR of the
+//! overall opt value and the relevant label_opts array element.  The
+//! only bits that are relevant in a combined opt value for a label
+//! are PL_COLORBAR_ORIENT_(RIGHT|TOP|LEFT|BOTTOM) and
+//! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) (which are documented in
+//! the documentation of the overall opt value).
+//! @param labels n_labels text labels for the color bar. No label is
+//! drawn if no label position is specified with one of the
+//! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in the bitwise OR
+//! of the opt value with the relevant label_opts array element.
+//! @param n_axes Number of axis definitions provided.  This value
+//! must be greater than 0.  It is typically 1 (numerical axis labels
+//! are provided for one of the long edges of the color bar), but it
+//! can be larger if multiple numerical axis labels for the long edges
+//! of the color bar are desired.
+//! @param axis_opts An array of n_axes axis options (interpreted as for
+//! plbox) for the color bar's axis definitions.
+//! @param ticks An array of n_axes values of the spacing of the major
+//! tick marks (interpreted as for plbox) for the color bar's axis
+//! definitions.
+//! @param sub_ticks An array of n_axes values of the number of
+//! subticks (interpreted as for plbox) for the color bar's axis
+//! definitions.
+//! @param n_values An array containing the number of elements in each of the
+//! n_axes rows of the two-dimensional values array.
+//! @param values A two-dimensional array containing the numeric
+//! values for the data range represented by the color bar.  For a row
+//! index of i_axis (where 0 < i_axis < n_axes), the number of
+//! elements in the row is specified by n_values[i_axis].  For
+//! PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT the number of elements
+//! is 2, and the corresponding row elements of the values array are
+//! the minimum and maximum value represented by the colorbar.  For
+//! PL_COLORBAR_SHADE, the number and values of the elements of a
+//! row of the values array is interpreted the same
+//! as the nlevel and clevel arguments of plshades.
 //!
 
 void
