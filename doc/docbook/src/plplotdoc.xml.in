@@ -92,6 +92,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plClearOpts '<link linkend="plClearOpts"><function>plClearOpts</function></link>'>
 <!ENTITY plcol0 '<link linkend="plcol0"><function>plcol0</function></link>'>
 <!ENTITY plcol1 '<link linkend="plcol1"><function>plcol1</function></link>'>
+<!ENTITY plcolorbar '<link linkend="plcolorbar"><function>plcolorbar</function></link>'>
 <!ENTITY plcon0 '<link linkend="plcon0"><function>plcon0</function></link>'>
 <!ENTITY plcon1 '<link linkend="plcon1"><function>plcon1</function></link>'>
 <!ENTITY plcon2 '<link linkend="plcon2"><function>plcon2</function></link>'>
@@ -149,6 +150,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plinit '<link linkend="plinit"><function>plinit</function></link>'>
 <!ENTITY pljoin '<link linkend="pljoin"><function>pljoin</function></link>'>
 <!ENTITY pllab '<link linkend="pllab"><function>pllab</function></link>'>
+<!ENTITY pllegend '<link linkend="pllegend"><function>pllegend</function></link>'>
 <!ENTITY pllightsource '<link linkend="pllightsource"><function>pllightsource</function></link>'>
 <!ENTITY plline '<link linkend="plline"><function>plline</function></link>'>
 <!ENTITY plline3 '<link linkend="plline3"><function>plline3</function></link>'>
