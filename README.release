@@ -32,6 +32,7 @@ CHANGES
 1.1 The format for map data used by plmap has changed
 1.2 Python support for Numeric has been dropped
 1.3 Non-integer line widths allowed
+1.4 Improvements to the build system for the Cygwin case
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -93,6 +94,7 @@ detected
 2.53 The format for map data used by plmap has changed
 2.54 Python support for Numeric has been dropped
 2.55 Non-integer line widths allowed
+2.56 Improvements to the build system for the Cygwin case
 
 OFFICIAL NOTICES FOR USERS
 
@@ -494,6 +496,25 @@ All functions which take line width arguments (plwid, plshade*, pllegend)
 now support PLFLT values for the line width. This allows drivers which
 support this to take advantage of fine line widths. This is an API change 
 from previous releases.
+
+1.4 Improvements to the build system for the Cygwin case
+
+The Cygwin platform provides a full-featured Unix environment on
+Windows.  CMake has recently been changed (at the request of Cygwin
+developers) to emphasize the Unix aspects of the Cygwin platform and
+deemphasize the Windows aspects of that platform.  It was argued this
+change would tend to make CMake builds of software much more reliable
+on Cygwin, and after some small but important changes to our
+CMake-based build system to adjust for these recent CMake changes for
+Cygwin, we have indeed confirmed that prediction for the PLplot case.
+There are still some Cygwin platform issues left which are being
+discussed on our Wiki at http://www.miscdebris.net/plplot_wiki/, but
+some fundamental breakthroughs have also been made for the Cygwin case
+that should interest all our Windows users.  For example, for the
+first time ever we have been able to build our cairo and qt device
+drivers on the Cygwin platform giving our Windows users convenient
+access to the many high-quality PLplot devices that are available with
+these two different device drivers.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -1345,3 +1366,21 @@ now support PLFLT values for the line width. This allows drivers which
 support this to take advantage of fine line widths. This is an API change 
 from previous releases.
 
+2.56 Improvements to the build system for the Cygwin case
+
+The Cygwin platform provides a full-featured Unix environment on
+Windows.  CMake has recently been changed (at the request of Cygwin
+developers) to emphasize the Unix aspects of the Cygwin platform and
+deemphasize the Windows aspects of that platform.  It was argued this
+change would tend to make CMake builds of software much more reliable
+on Cygwin, and after some small but important changes to our
+CMake-based build system to adjust for these recent CMake changes for
+Cygwin, we have indeed confirmed that prediction for the PLplot case.
+There are still some Cygwin platform issues left which are being
+discussed on our Wiki at http://www.miscdebris.net/plplot_wiki/, but
+some fundamental breakthroughs have also been made for the Cygwin case
+that should interest all our Windows users.  For example, for the
+first time ever we have been able to build our cairo and qt device
+drivers on the Cygwin platform giving our Windows users convenient
+access to the many high-quality PLplot devices that are available with
+these two different device drivers.
