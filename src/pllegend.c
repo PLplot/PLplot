@@ -1659,6 +1659,13 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         return;
     }
 
+    // Sanity check for NULL label arrays.
+    if ( n_labels > 0 && ( label_opts == NULL || labels == NULL ) )
+    {
+        plabort( "plcolorbar: label_opts and labels arrays must be defined when n_labels > 0." );
+        return;
+    }
+
     if ( n_axes < 1 )
     {
         plabort( "plcolorbar: At least one axis must be specified" );
