@@ -159,40 +159,41 @@ void plbox3( string xopt, string xlabel, PLFLT xtick, PLINT nsubx,
 
 // Routine for drawing continous colour legends
 void plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
-              PLINT opt, PLINT position, PLFLT x, PLFLT y,
-              PLFLT x_length, PLFLT y_length,
-              PLINT bg_color, PLINT bb_color, PLINT bb_style,
-              PLFLT low_cap_color, PLFLT high_cap_color,
-              PLINT cont_color, PLFLT cont_width,
-              PLINT[] label_opts, string[] label,
-              string[] axis_opts,
-              PLFLT[] ticks, PLINT[] sub_ticks,
-              PLFLT[][] values )
+                 PLINT opt, PLINT position, PLFLT x, PLFLT y,
+                 PLFLT x_length, PLFLT y_length,
+                 PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                 PLFLT low_cap_color, PLFLT high_cap_color,
+                 PLINT cont_color, PLFLT cont_width,
+                 PLINT[] label_opts, string[] label,
+                 string[] axis_opts,
+                 PLFLT[] ticks, PLINT[] sub_ticks,
+                 PLFLT[][] values )
 {
-    PLINT n_labels = cast(PLINT) label_opts.length;
-    PLINT n_axes = cast(PLINT) axis_opts.length;
+    PLINT   n_labels = cast(PLINT) label_opts.length;
+    PLINT   n_axes   = cast(PLINT) axis_opts.length;
     PLINT[] n_values = new PLINT[values.length];
-    for (size_t i=0; i<values.length;i++) {
+    for ( size_t i = 0; i < values.length; i++ )
+    {
         n_values[i] = cast(PLINT) values[i].length;
     }
-    immutable( char ) * *labelz    = array( map!toStringz( label ) ).ptr;
-    immutable( char ) * *axis_optsz    = array( map!toStringz( axis_opts ) ).ptr;
+    immutable( char ) * *labelz     = array( map!toStringz( label ) ).ptr;
+    immutable( char ) * *axis_optsz = array( map!toStringz( axis_opts ) ).ptr;
     assert( n_labels == label.length, "plcolorbar(): Arrays must be of same length!" );
     assert( n_labels == label_opts.length, "plcolorbar(): Arrays must be of same length!" );
     assert( n_axes == axis_opts.length, "plcolorbar(): Arrays must be of same length!" );
     assert( n_axes == ticks.length, "plcolorbar(): Arrays must be of same length!" );
     assert( n_axes == sub_ticks.length, "plcolorbar(): Arrays must be of same length!" );
 
-    c_plcolorbar(p_colorbar_width, p_colorbar_height,
-              opt, position, x, y,
-              x_length, y_length,
-              bg_color, bb_color, bb_style,
-              low_cap_color, high_cap_color,
-              cont_color, cont_width,
-              n_labels, label_opts.ptr, labelz,
-              n_axes, axis_optsz,
-              ticks.ptr, sub_ticks.ptr,
-              n_values.ptr, convert_array(values) );
+    c_plcolorbar( p_colorbar_width, p_colorbar_height,
+        opt, position, x, y,
+        x_length, y_length,
+        bg_color, bb_color, bb_style,
+        low_cap_color, high_cap_color,
+        cont_color, cont_width,
+        n_labels, label_opts.ptr, labelz,
+        n_axes, axis_optsz,
+        ticks.ptr, sub_ticks.ptr,
+        n_values.ptr, convert_array( values ) );
 }
 
 // Draws a contour plot from data in f(nx,ny).  Is just a front-end to
@@ -1452,7 +1453,7 @@ alias c_plscmap0n plscmap0n;
 //alias c_plscmap1l plscmap1l;
 //alias c_plscmap1la plscmap1la;
 alias c_plscmap1n      plscmap1n;
-alias c_plscmap1_range      plscmap1_range;
+alias c_plscmap1_range plscmap1_range;
 alias c_plscol0        plscol0;
 alias c_plscol0a       plscol0a;
 alias c_plscolbg       plscolbg;
@@ -1814,23 +1815,23 @@ const PL_LEGEND_BOUNDING_BOX = 64;
 const PL_LEGEND_ROW_MAJOR    = 128;
 
 // Flags for plcolorbar
-const PL_COLORBAR_LABEL_LEFT   = 1;
-const PL_COLORBAR_LABEL_RIGHT  = 2;
-const PL_COLORBAR_LABEL_TOP    = 4;
-const PL_COLORBAR_LABEL_BOTTOM = 8;
-const PL_COLORBAR_IMAGE        = 16;
-const PL_COLORBAR_SHADE        = 32;
-const PL_COLORBAR_GRADIENT     = 64;
+const PL_COLORBAR_LABEL_LEFT    = 1;
+const PL_COLORBAR_LABEL_RIGHT   = 2;
+const PL_COLORBAR_LABEL_TOP     = 4;
+const PL_COLORBAR_LABEL_BOTTOM  = 8;
+const PL_COLORBAR_IMAGE         = 16;
+const PL_COLORBAR_SHADE         = 32;
+const PL_COLORBAR_GRADIENT      = 64;
 const PL_COLORBAR_CAP_NONE      = 128;
-const PL_COLORBAR_CAP_LOW      = 256;
-const PL_COLORBAR_CAP_HIGH     = 512;
-const PL_COLORBAR_SHADE_LABEL  = 1024;
-const PL_COLORBAR_ORIENT_RIGHT = 2048;
-const PL_COLORBAR_ORIENT_TOP   = 4096;
-const PL_COLORBAR_ORIENT_LEFT  = 8192;
+const PL_COLORBAR_CAP_LOW       = 256;
+const PL_COLORBAR_CAP_HIGH      = 512;
+const PL_COLORBAR_SHADE_LABEL   = 1024;
+const PL_COLORBAR_ORIENT_RIGHT  = 2048;
+const PL_COLORBAR_ORIENT_TOP    = 4096;
+const PL_COLORBAR_ORIENT_LEFT   = 8192;
 const PL_COLORBAR_ORIENT_BOTTOM = 16384;
-const PL_COLORBAR_BACKGROUND   = 32768;
-const PL_COLORBAR_BOUNDING_BOX = 65536;
+const PL_COLORBAR_BACKGROUND    = 32768;
+const PL_COLORBAR_BOUNDING_BOX  = 65536;
 
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
@@ -1851,15 +1852,15 @@ void c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
 // Routine for drawing continous colour legends
 void c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
-              PLINT opt, PLINT position, PLFLT x, PLFLT y,
-              PLFLT x_length, PLFLT y_length,
-              PLINT bg_color, PLINT bb_color, PLINT bb_style,
-              PLFLT low_cap_color, PLFLT high_cap_color,
-              PLINT cont_color, PLFLT cont_width,
-              PLINT n_labels, const PLINT *label_opts, const char **label,
-              PLINT n_axes, const char ** axis_opts,
-              const PLFLT *ticks, const PLINT *sub_ticks,
-              const PLINT *n_values, const PLFLT **values );
+                   PLINT opt, PLINT position, PLFLT x, PLFLT y,
+                   PLFLT x_length, PLFLT y_length,
+                   PLINT bg_color, PLINT bb_color, PLINT bb_style,
+                   PLFLT low_cap_color, PLFLT high_cap_color,
+                   PLINT cont_color, PLFLT cont_width,
+                   PLINT n_labels, const PLINT *label_opts, const char **label,
+                   PLINT n_axes, const char ** axis_opts,
+                   const PLFLT *ticks, const PLINT *sub_ticks,
+                   const PLINT *n_values, const PLFLT **values );
 
 // Sets position of the light source
 void c_pllightsource( PLFLT x, PLFLT y, PLFLT z );

@@ -189,26 +189,27 @@ int main( char[][] args )
     }
 
     // Plot using identity transform
-    PLFLT fill_width = 2., cont_width = 0.;
-    PLFLT colorbar_width, colorbar_height;
-    PLINT cont_color = 0;
+    PLFLT     fill_width = 2., cont_width = 0.;
+    PLFLT     colorbar_width, colorbar_height;
+    PLINT     cont_color = 0;
 
-    const int NUM_AXES = 1;
-    string[] axis_opts = [
+    const int NUM_AXES  = 1;
+    string[]  axis_opts = [
         "bcvtm",
     ];
     PLFLT[] values[NUM_AXES];
-    for (size_t i = 0; i<NUM_AXES;i++) {
-      values[i] = new PLFLT[ns];
+    for ( size_t i = 0; i < NUM_AXES; i++ )
+    {
+        values[i] = new PLFLT[ns];
     }
-    PLFLT[]      axis_ticks = [
+    PLFLT[] axis_ticks = [
         0.0,
     ];
-    PLINT[]      axis_subticks = [
+    PLINT[] axis_subticks = [
         0,
     ];
     const int NUM_LABELS = 1;
-    PLINT      label_opts[] = [
+    PLINT label_opts[] = [
         PL_COLORBAR_LABEL_BOTTOM,
     ];
     string[] labels = [
@@ -233,7 +234,7 @@ int main( char[][] args )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        values[0]     = shedge;
+        values[0] = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
@@ -279,7 +280,7 @@ int main( char[][] args )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        values[0]     = shedge;
+        values[0] = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
@@ -327,7 +328,7 @@ int main( char[][] args )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        values[0]     = shedge;
+        values[0] = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
@@ -376,7 +377,7 @@ int main( char[][] args )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        values[0]     = shedge;
+        values[0] = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
@@ -472,7 +473,7 @@ int main( char[][] args )
         plsmaj( 0.0, 0.5 );
         plsmin( 0.0, 0.5 );
 
-        values[0]     = shedge;
+        values[0] = shedge;
         plcolorbar( &colorbar_width, &colorbar_height,
             PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
