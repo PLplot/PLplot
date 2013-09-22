@@ -576,10 +576,10 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
           legend_width, legend_height, legend_width_ac, legend_height_ac;
     PLFLT x_legend_position, y_legend_position, xsign, ysign;
 
-    //PLINT some_boxes = 0, some_lines = 0;
     PLINT some_symbols       = 0;
     PLINT max_symbol_numbers = 0;
-    PLINT irow = 0, icolumn = 0;
+    PLINT irow       = 0, icolumn = 0;
+    int   some_boxes = 0, some_lines = 0;
 
     // Default nrow, ncolumn.
     nrow    = MAX( nrow, 1 );
@@ -663,15 +663,35 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
     for ( i = 0; i < nlegend; i++ )
     {
-        //if ( opt_array[i] & PL_LEGEND_COLOR_BOX )
-        //    some_boxes = 1;
-        //if ( opt_array[i] & PL_LEGEND_LINE )
-        //    some_lines = 1;
+        if ( opt_array[i] & PL_LEGEND_COLOR_BOX )
+            some_boxes = 1;
+        if ( opt_array[i] & PL_LEGEND_LINE )
+            some_lines = 1;
         if ( opt_array[i] & PL_LEGEND_SYMBOL )
         {
-            max_symbol_numbers = MAX( max_symbol_numbers, symbol_numbers[i] );
-            some_symbols       = 1;
+            if ( symbol_numbers != NULL )
+                max_symbol_numbers = MAX( max_symbol_numbers, symbol_numbers[i] );
+            some_symbols = 1;
         }
+    }
+
+    // Sanity checks on NULL arrays:
+    if ( some_boxes && ( box_colors == NULL || box_patterns == NULL || box_scales == NULL || box_line_widths == NULL ) )
+    {
+        plabort( "pllegend: all box_* arrays must be defined when the PL_LEGEND_COLOR_BOX bit is set." );
+        return;
+    }
+
+    if ( some_lines && ( line_colors == NULL || line_styles == NULL || line_widths == NULL ) )
+    {
+        plabort( "pllegend: all line_* arrays must be defined when the PL_LEGEND_LINE bit is set." );
+        return;
+    }
+
+    if ( some_symbols && ( symbol_colors == NULL || symbol_scales == NULL || symbol_numbers == NULL ) )
+    {
+        plabort( "pllegend: all symbol_* arrays must be defined when the PL_LEGEND_SYMBOL bit is set." );
+        return;
     }
 
     // Get character height and width in normalized subpage coordinates.
