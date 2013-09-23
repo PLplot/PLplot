@@ -92,11 +92,10 @@ $date =~ s/\n.*//;
 $opening = ".\\\" This page was automatically generated.  Do not edit!\n.\\\" \n";
 $closing = "
 .SH AUTHORS
-Geoffrey Furnish and Maurice LeBrun wrote and maintain PLplot.  This man page
-was automatically generated from the DocBook source of the PLplot
-documentation, maintained by Alan W. Irwin and Rafael Laboissiere.
+Many developers (who are credited at http://@PLPLOT_WEBSITE@/credits.php)
+have contributed to PLplot over its long history.
 .SH SEE ALSO
-PLplot documentation at http://@PLPLOT_WEBSITE@/resources.
+PLplot documentation at http://@PLPLOT_WEBSITE@/documentation.php.
 ";
 $manifest = "";
 
