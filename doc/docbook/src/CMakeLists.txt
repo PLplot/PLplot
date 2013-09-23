@@ -382,11 +382,11 @@ else(
 	    docbook_plplot-structs_txt
 	    )
 
-	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	    "${BASE}.ps.gz\n"
-	    )
-
 	endif(BUILD_DVI)
+
+	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	  "${BASE}.ps.gz\n"
+	  )
 
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
@@ -801,9 +801,9 @@ if((BUILD_DOC OR PREBUILT_DOC) AND (WWW_USER AND WWW_GROUP AND WWW_HOST AND WWW_
     )
 
   set(tarball_depends_list
-    ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
     ${CMAKE_CURRENT_BINARY_DIR}/${INFO_TARBALL}
     ${CMAKE_CURRENT_BINARY_DIR}/${MAN_TARBALL}
+    ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
     )
 
   if(BUILD_PRINT)

@@ -119,7 +119,7 @@ if(BUILD_DOC)
       set(BUILD_HTML ON)
       if(GZIP)
 	set(BUILD_PRINT ON)
-	option(BUILD_DVI "BUILD dvi form of documentation" ON)
+	set(BUILD_DVI OFF CACHE BOOL "Build dvi form of documentation" FORCE)
       else(GZIP)
 	set(BUILD_PRINT OFF)
 	message(STATUS
