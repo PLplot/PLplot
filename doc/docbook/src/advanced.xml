@@ -3,7 +3,7 @@
     advanced.xml: "Advanced Use of PLplot" chapter
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999, 2000, 2001, 2002, 2005 Alan W. Irwin
+Copyright (C) 1999-2013 Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003 Rafael Laboissiere
 Copyright (C) 2004 Andrew Roach
 Copyright (C) 2005 Thomas J. Duck
@@ -776,7 +776,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <para>First, write a call back function, of type
       <literal>plD_pixel_fp</literal>, which specifies how a single pixel is set
-      in the current colour. This can be of type static void. For example, in the
+      in the current color. This can be of type static void. For example, in the
       <filename>gd.c</filename> driver it looks like this:
 
       <programlisting>
@@ -914,8 +914,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <para>We also do some computational gymnastics to "expand" cmap0 if the user
       wants anti-aliased text.  Basically, you have to work out how many spare
-      colours there are in the driver after cmap0 and cmap1 are done, then set a
-      few variables in FT to let the render know how many colours it's going to
+      colors there are in the driver after cmap0 and cmap1 are done, then set a
+      few variables in FT to let the render know how many colors it's going to
       have at its disposal, and call plscmap0n to resize cmap0.  The call to
       <literal>pl_set_extended_cmap0</literal> does the remaining part of the
       work.  Note it essential to protect that call by the
@@ -1404,7 +1404,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if so desired) using &plscolor;. </para>
 
     <para> The PLplot color model allows the user to set the current
-    color from a wide range of colours using two distinct color maps.
+    color from a wide range of colors using two distinct color maps.
     Color map0 (discussed in <xref linkend="color-map-0"/>) has discrete
     colors with no particular order and is most suited to coloring the
     background, axes, lines, and labels, and color map1 (discussed in
@@ -2774,8 +2774,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       provide users with the capability of visually annotating their plots
       with a legend (a series of patterned boxes, lines, or symbols with
       associated explanatory UTF-8 text) or a color bar (an annotated
-      subplot representing a continuous range of colours within the main
-      plot and typically identifying certain colours with certain numerical
+      subplot representing a continuous range of colors within the main
+      plot and typically identifying certain colors with certain numerical
       values using an axis). &pllegend; is useful for visually annotating
       most two-dimensional plots.  See standard examples 4 and 26 for some
       examples.  &plcolorbar; is especially useful for annotating continous
