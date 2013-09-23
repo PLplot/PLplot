@@ -33,6 +33,8 @@ CHANGES
 1.2 Python support for Numeric has been dropped
 1.3 Non-integer line widths allowed
 1.4 Improvements to the build system for the Cygwin case
+1.5 The plcolorbar API has been finalized
+1.6 Documentation of the new legend and color bar capabilities of PLplot
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -95,12 +97,14 @@ detected
 2.54 Python support for Numeric has been dropped
 2.55 Non-integer line widths allowed
 2.56 Improvements to the build system for the Cygwin case
+2.57 The plcolorbar API has been finalized
+2.58 Documentation of the new legend and color bar capabilities of PLplot
 
 OFFICIAL NOTICES FOR USERS
 
 (5.9.10) The long deprecated support for the python Numeric package has been
 dropped. This is no longer supported and is superceded by numpy. Support for
-numpy has been the default in plplot for a number of years so most users
+numpy has been the default in PLplot for a number of years so most users
 should notice no difference.
 
 (5.9.10) The current format for maps used by plmap has been deprecated in
@@ -291,7 +295,7 @@ poorly maintained. It ignores unicode fonts (i.e., uses the Hershey
 font fallback), falls back to ugly software fills, doesn't support
 alpha transparency, etc.  It also has a serious run-time issue with
 example 2 (double free detected by glibc) which probably indicates
-some fundamental issue with the 100 colours in cmap0 for that
+some fundamental issue with the 100 colors in cmap0 for that
 example. For those who really need portable pixmap results, we suggest
 using the ImageMagick convert programme, e.g., "convert
 examples/x24c01.pngqt test.ppm" or "convert examples/x24c01.pngcairo
@@ -307,7 +311,7 @@ root, and svgalib (the library used by linuxsvga) is not supported by
 some mainstream (e.g., Intel) chipsets.  All of these characteristics
 make it difficult to even test this device much less use it for
 anything serious.  Finally, it has had a well-known issue for years
-(incorrect colours) which has never been fixed indicating nobody is
+(incorrect colors) which has never been fixed indicating nobody is
 interested in maintaining this device.
 
 (5.9.6) We have retired our platform support of djgpp that used to
@@ -492,10 +496,15 @@ of years so most users should notice no difference.
 
 1.3 Non-integer line widths allowed
 
-All functions which take line width arguments (plwid, plshade*, pllegend)
-now support PLFLT values for the line width. This allows drivers which
-support this to take advantage of fine line widths. This is an API change
-from previous releases.
+All functions which take line width arguments (plwidth, plshade*,
+pllegend) now use PLFLT values for the line width. This allows device
+drivers which are based on modern graphics libraries such as Qt4 and
+pango/cairo to make full use (e.g., extremely fine line widths) of the
+floating-point line width capabilities of those libraries.  The
+replacement of plwid by plwidth, and the change in argument lists for
+plshade* and pllegend constitute a backwards incompatible API change
+from previous releases and the soname of libraries has been bumped
+accordingly (which forces a recompile).
 
 1.4 Improvements to the build system for the Cygwin case
 
@@ -515,6 +524,36 @@ first time ever we have been able to build our cairo and qt device
 drivers on the Cygwin platform giving our Windows users convenient
 access to the many high-quality PLplot devices that are available with
 these two different device drivers.
+
+1.5 The plcolorbar API has been finalized
+
+The function plcolorbar allows users to create a color bar (an
+annotated subplot representing a continuous range of colors within the
+main plot and typically identifying certain colors with certain
+numerical values using an axis).  The plcolorbar capabilities are
+documented in our DocBook (and doxygen) documentation and demonstrated
+in standard examples 16 and 33.
+
+N.B. The previous two releases (5.9.8 and 5.9.9) contained
+unadvertised experimental versions of plcolorbar.  Any PLplot user who
+found and tried those capabilities will have to reprogramme their
+plcolorbar calls to be compatible with the argument list of the latest
+version.
+
+1.6. Documentation of the new legend and color bar capabilities of PLplot
+
+The pllegend and plcolorbar API has been documented in both doxygen
+and DocBook forms.  In addition, the "advanced use" chapter of the
+DocBook form of documentation now contains a section giving an
+overview of pllegend and plcolorbar.
+
+N.B. Although we feel the pllegend and plcolorbar API has now been
+finalized with regard to the PLplot core developers own interests and
+needs, we also realize that as more and more PLplot users take
+advantage of these new PLplot capabilities there will likely be calls
+to add additional features to pllegend or plcolorbar based on
+additional experience with these powerful capabilities.  In general,
+we would welcome such feature requests.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -1049,7 +1088,7 @@ use the -locale option to specifically ask for a given separator for plots
 (e.g., axis labels) will then use it for command-line input of
 floating-point values as well.
 
-Certain critical areas of the PLplot library (e.g., our colour palette file
+Certain critical areas of the PLplot library (e.g., our color palette file
 reading routines and much of the code in our device drivers) absolutely
 require a period for the decimal separator.  We now protect those critical
 areas by saving the normal PLplot LC_NUMERIC locale (established with the
@@ -1064,7 +1103,7 @@ correctly for the critical areas.
 2.37 Linear gradients have been implemented
 
 The new plgradient routine draws a linear gradient (based on the
-current colour map 1) at a specified angle with the x axis for a
+current color map 1) at a specified angle with the x axis for a
 specified polygon.  Standard examples 25 and 30 now demonstrate use of
 plgradient.  Some devices use a software fallback to render the
 gradient.  This fallback is implemented with plshades which uses a
@@ -1200,7 +1239,6 @@ control over the location and size of the legend within the current
 subpage as well as the location and characteristics of the elements
 (most of which are optional) within that legend. The resulting legend
 is clipped at the boundaries of the current subpage
-
 
 2.45 Add full bindings and examples for the D language.
 
@@ -1361,10 +1399,15 @@ of years so most users should notice no difference.
 
 2.55 Non-integer line widths allowed
 
-All functions which take line width arguments (plwid, plshade*, pllegend)
-now support PLFLT values for the line width. This allows drivers which
-support this to take advantage of fine line widths. This is an API change
-from previous releases.
+All functions which take line width arguments (plwidth, plshade*,
+pllegend) now use PLFLT values for the line width. This allows device
+drivers which are based on modern graphics libraries such as Qt4 and
+pango/cairo to make full use (e.g., extremely fine line widths) of the
+floating-point line width capabilities of those libraries.  The
+replacement of plwid by plwidth, and the change in argument lists for
+plshade* and pllegend constitute a backwards incompatible API change
+from previous releases and the soname of libraries has been bumped
+accordingly (which forces a recompile).
 
 2.56 Improvements to the build system for the Cygwin case
 
@@ -1384,3 +1427,34 @@ first time ever we have been able to build our cairo and qt device
 drivers on the Cygwin platform giving our Windows users convenient
 access to the many high-quality PLplot devices that are available with
 these two different device drivers.
+
+2.57 The plcolorbar API has been finalized
+
+The function plcolorbar allows users to create a color bar (an
+annotated subplot representing a continuous range of colors within the
+main plot and typically identifying certain colors with certain
+numerical values using an axis).  The plcolorbar capabilities are
+documented in our DocBook (and doxygen) documentation and demonstrated
+in standard examples 16 and 33.
+
+N.B. The previous two releases (5.9.8 and 5.9.9) contained
+unadvertised experimental versions of plcolorbar.  Any PLplot user who
+found and tried those capabilities will have to reprogramme their
+plcolorbar calls to be compatible with the argument list of the latest
+version.
+
+2.58 Documentation of the new legend and color bar capabilities of PLplot
+
+The pllegend and plcolorbar API has been documented in both doxygen
+and DocBook forms.  In addition, the "advanced use" chapter of the
+DocBook form of documentation now contains a section giving an
+overview of pllegend and plcolorbar.
+
+N.B. Although we feel the pllegend and plcolorbar API has now been
+finalized with regard to the PLplot core developers own interests and
+needs, we also realize that as more and more PLplot users take
+advantage of these new PLplot capabilities there will likely be calls
+to add additional features to pllegend or plcolorbar based on
+additional experience with these powerful capabilities.  In general,
+we would welcome such feature requests.
+
