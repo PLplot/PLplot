@@ -118,11 +118,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <para>
     The one additional complicating factor concerns the use of stub routines to
     interface with Fortran (see the following section for more explanation).  On
-    some systems, the Fortran and C namespaces are set up to clobber each other.
+    some systems, the Fortran and C name spaces are set up to clobber each other.
     More reasonable (from our viewpoint) is to agree on a standard map between
-    namespaces, such as the appending of an underscore to Fortran routine names
+    name spaces, such as the appending of an underscore to Fortran routine names
     as is common on many Unix-like systems.  The only case where the shared
-    Fortran/C namespaces do any good is when passing a pointer to a like data
+    Fortran/C name spaces do any good is when passing a pointer to a like data
     type, which represents only a small fraction of the cases that need to
     be handled (which includes constant values passed on the stack, strings, and
     two-dimensional arrays).

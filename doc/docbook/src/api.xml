@@ -52,8 +52,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </para>
 
   <para>
-    What follows is a list of all common API functions of the current 
-    CVS HEAD with their arguments except for obsolete/deprecated API 
+    What follows is a list of all common API functions of the latest
+    PLplot version with their arguments except for obsolete/deprecated API 
     functions which are listed in <xref linkend="API-OBSOLETE"/>. The
     following information is provided for each function:
     <orderedlist>
@@ -632,9 +632,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>o</literal>: Use custom labeling function to
-		  generate axis label text.  The custom labeling function
-		  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labelling function to
+		  generate axis label text.  The custom labelling function
+		  can be defined with the &plslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -1072,9 +1072,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>o</literal>: Use custom labeling function to
-		  generate axis label text.  The custom labeling function
-		  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labelling function to
+		  generate axis label text.  The custom labelling function
+		  can be defined with the &plslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -1290,9 +1290,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>o</literal>: Use custom labeling function to
-		  generate axis label text.  The custom labeling function
-		  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labelling function to
+		  generate axis label text.  The custom labelling function
+		  can be defined with the &plslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -1472,9 +1472,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>o</literal>: Use custom labeling function to
-		  generate axis label text.  The custom labeling function
-		  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labelling function to
+		  generate axis label text.  The custom labelling function
+		  can be defined with the &plslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -1676,7 +1676,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    and possibly more than one window (set of world coordinates) per
 	    viewport, <literal><parameter>window</parameter></literal>
 	    and the corresponding output world coordinates
-	    corresponds to the last window created that fulfils the criterion
+	    corresponds to the last window created that fulfills the criterion
 	    that the relative device coordinates are inside it.  Finally, in
 	    all cases where the input relative device coordinates are not
 	    inside any viewport/window, then
@@ -6557,7 +6557,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Plot coordinates to strecth the image data to.  idata[0][0]
+	    Plot coordinates to stretch the image data to.  idata[0][0]
 	    corresponds to (xmin, ymin) and idata[nx - 1][ny - 1] corresponds
 	    to (xmax, ymax).
 	  </para>
@@ -8207,7 +8207,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<para>
 		  <literal><parameter>opt</parameter>=MAG_COLOR</literal>: Each line
 		  in the mesh is colored according to the z value being plotted. The
-		  color is used from the current colormap 1.
+		  color is used from the current color map 1.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -13434,8 +13434,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    This is the custom label function.  In order to reset to the
-	    default labeling, set this to <literal>NULL</literal>.
-	    The labeling function parameters are, in order:
+	    default labelling, set this to <literal>NULL</literal>.
+	    The labelling function parameters are, in order:
 	    <variablelist>
 	      <varlistentry>
 		<term><parameter>axis</parameter></term>
@@ -13452,7 +13452,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<term><parameter>value</parameter></term>
 		<listitem>
 		  <para>
-		    This is the value along the axis which is being labeled.
+		    This is the value along the axis which is being labelled.
 		  </para>
 		</listitem>
 	      </varlistentry>
@@ -14325,7 +14325,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       desired output device must be supplied as an argument.  The device
       keywords are the same as those printed out by &plstar;.  If the
       requested device is not available, or if the input string is empty or
-      begins with ``?'', the prompted startup of &plstar; is used.  This
+      begins with ``?'', the prompted start up of &plstar; is used.  This
       routine also divides the output device into
       <literal><parameter>nx</parameter></literal> by
       <literal><parameter>ny</parameter></literal> subpages, each of which
@@ -14343,7 +14343,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    Device name (keyword) of the required output device.  If NULL
 	    or if the first character is a ``?'', the normal (prompted)
-	    startup is used.
+	    start up is used.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -14433,7 +14433,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
             Pointer to a function that defines a transformation from the
-            input (x, y) coordinate to a new plot world coordiante.
+            input (x, y) coordinate to a new plot world coordinate.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -14668,7 +14668,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plstripa" renderas="sect3">
     <title>
-      <function>plstripa</function>: Add a point to a stripchart
+      <function>plstripa</function>: Add a point to a strip chart
     </title>
 
     <para>
@@ -14686,7 +14686,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Add a point to a given pen of a given stripchart.
+      Add a point to a given pen of a given strip chart.
       There is no need for all pens to have the same number of
       points or to be equally sampled in the x coordinate.
       Allocates memory and rescales as
@@ -14701,7 +14701,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Identification number (set up in &plstripc;) of the stripchart.
+	    Identification number (set up in &plstripc;) of the strip chart.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -14752,7 +14752,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plstripc" renderas="sect3">
     <title>
-      <function>plstripc</function>: Create a 4-pen stripchart
+      <function>plstripc</function>: Create a 4-pen strip chart
     </title>
 
     <para>
@@ -14786,7 +14786,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Create a 4-pen stripchart, to be used afterwards by &plstripa;
+      Create a 4-pen strip chart, to be used afterwards by &plstripa;
     </para>
 
     <variablelist>
@@ -14797,7 +14797,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Identification number of stripchart to use on &plstripa; and &plstripd;.
+	    Identification number of strip chart to use on &plstripa; and &plstripd;.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -15047,7 +15047,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="plstripd" renderas="sect3">
     <title>
       <function>plstripd</function>: Deletes and releases memory used by a
-      stripchart
+      strip chart
     </title>
 
     <para>
@@ -15062,7 +15062,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Deletes and releases memory used by a stripchart.
+      Deletes and releases memory used by a strip chart.
     </para>
 
     <variablelist>
@@ -15073,7 +15073,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Identification number of stripchart to delete.
+	    Identification number of strip chart to delete.
 	  </para>
 	</listitem>
       </varlistentry>

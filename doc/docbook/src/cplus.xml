@@ -190,7 +190,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>
 	The <literal>plstream</literal> class will provide an abstract interface to the
 	2-d drawing functions.  Instead of forcing the C++ user to organize
-	data in one of a small set of generally braindead data layouts with
+	data in one of a small set of generally brain dead data layouts with
 	poor memory management properties, potentially forcing the C++ user to
 	not use a superior method, or to copy data computed in one layout
 	format to another for plotting (with consequent bug production), the

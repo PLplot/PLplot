@@ -74,7 +74,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       package.  Sze Tan writes:
       <blockquote>
 	<para>
-	  I'm rather amazed how far PLPLOT has traveled given its origins
+	  I'm rather amazed how far PLPLOT has travelled given its origins
 	  etc. I first used PGPLOT on the Starlink VAX computers while I was
 	  a graduate student at the Mullard Radio Astronomy Observatory in
 	  Cambridge from 1983-1987. At the beginning of 1986, I was to give a
@@ -86,7 +86,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  able to draw a line or a dot on the screen in order to do arbitrary
 	  graphics.  The application programmer's interface was made as
 	  similar as possible to PGPLOT so that I could easily port my
-	  programs from the VAX to the PC.  The kernel of PLPLOT was modeled
+	  programs from the VAX to the PC.  The kernel of PLPLOT was modelled
 	  on PGPLOT but the code is not derived from it.
 	</para>
       </blockquote>
@@ -127,7 +127,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       several new routines to enhance usage from Fortran and design of a
       portable C to Fortran interface.  Additional support was added for
       coordinate mappings in contour plots and some bugs fixed.  New
-      labeling options were added.  The font handling code was made more
+      labelling options were added.  The font handling code was made more
       flexible and portable.  A portable PLplot metafile driver and
       renderer was developed, allowing one to create a generic graphics
       file and do the actual rendering later (even on a different
@@ -161,7 +161,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       We welcome suggestions on how to improve this code, especially in
       the form of user-contributed enhancements or bug fixes.  If PLplot
-      is used in any published papers, please include an acknowledgment
+      is used in any published papers, please include an acknowledgement
       or citation of our work, which will help us to continue improving
       PLplot.  Please direct all communication to the general PLplot
       mailing list, plplot-general@lists.sourceforge.net.
@@ -175,7 +175,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       the PLplot is by electronic transmission over the Internet.  We
       encourage others to make it available to users without Internet
       access.  PLplot is a SourceForge project and may be obtained by
-      the usual SourceForge file release and anonymous cvs access that is made
+      the usual SourceForge file release and anonymous svn repository access that is made
       available from links at
       <ulink url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>.
     </para>
@@ -296,7 +296,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <sect2 id="additional-copyrights">
       <title>Additional Copyrights</title>
       <para>
-	The startup code used in argument handling
+	The start up code used in argument handling
 	(<filename>utils/plrender.c</filename> and
 	<filename>src/plargs.c</filename>) is partially derived from
 	<filename>xterm.c</filename> of the X11R5 distribution, and its

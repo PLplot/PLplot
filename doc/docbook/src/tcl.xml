@@ -860,7 +860,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      So, the point is, do your heavy numerics in a compiled language, and
+      So, the point is, do your heavy numerical calculations in a compiled language, and
       feel free to use Tcl for the plotting, if you want to.  You can of
       course mix it up so that some plotting is done from Tcl and some from
       a compiled language.  

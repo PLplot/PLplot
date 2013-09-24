@@ -91,7 +91,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Since PLplot is developed by so many people, the task of checking for
-      backwards compatiblity of the library is very hard.  As for the 5.3.1
+      backwards compatibility of the library is very hard.  As for the 5.3.1
       release, we do not have any rigorous regression test for check
       whether the library is really backwards compatible.
     </para>
@@ -104,7 +104,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    Check if there are any changes in
 	    <filename>plplot.h</filename>.  If no prototype is changed,
-	    then the chances are high that no backwards compatibilities
+	    then the chances are high that no backwards incompatibilities
 	    have been introduced.  If new functions has been added, then
 	    the library soname will be kept, although the soversion
 	    strings in <filename>cmake/module/plplot_version.cmake</filename> 

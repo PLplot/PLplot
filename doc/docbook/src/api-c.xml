@@ -40,7 +40,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <title>The Specialized C API for PLplot</title>
 
   <para>
-    The purpose of this chapter is to document the PLPlot C functions that are
+    The purpose of this chapter is to document the PLplot C functions that are
     currently not part of the common API, 
     either because they are C/C++ specific utility 
     functions (e.g. &plAlloc2dGrid;, &plFree2dGrid;) or because they are not
@@ -636,7 +636,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     <para>
       Resets the internal command line options table to the default 
-      builtin value. Any user options added with &plMergeOpts; will be 
+      built in value. Any user options added with &plMergeOpts; will be 
       cleared. See &plparseopts; for details of how to parse these 
       options in a program. 
     </para>
@@ -952,7 +952,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="pltr1" renderas="sect3">
     <title>
       <function>pltr1</function>: Linear interpolation for grid to world
-      mapping using singly dimensioned coord arrays
+      mapping using singly dimensioned coordinate arrays
     </title>
 
     <para>
@@ -972,7 +972,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Linear interpolation for grid to world mapping using singly
-      dimensioned coord arrays.
+      dimensioned coordinate arrays.
       This routine can be used both for &plcont; and &plshade;.
       See also <xref linkend="contour-plots-c"/> and
       <xref linkend="shade-plots-c"/>.
@@ -1052,7 +1052,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="pltr2" renderas="sect3">
     <title>
       <function>pltr2</function>: Linear interpolation for grid to world
-      mapping using doubly dimensioned coord arrays (column
+      mapping using doubly dimensioned coordinate arrays (column
       dominant, as per normal C 2d arrays)
     </title>
 
@@ -1073,7 +1073,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Linear interpolation for grid to world mapping using doubly
-      dimensioned coord arrays (column dominant, as per normal C 2d arrays).
+      dimensioned coordinate arrays (column dominant, as per normal C 2d arrays).
       This routine can be used both for &plcont; and &plshade;.
       See also <xref linkend="contour-plots-c"/> and
       <xref linkend="shade-plots-c"/>.

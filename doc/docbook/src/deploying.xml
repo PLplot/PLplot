@@ -54,7 +54,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     environment that you use, but that is in general only an option if your
     user is comfortable with making programs themselves. A more common
     situation is that your user just wants the executable programs and
-    wants to get using them rightaway. We will focus on this particular
+    wants to get using them right away. We will focus on this particular
     solution, as there are a few non-trivial issues.
   </para>
 
@@ -306,7 +306,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </para>
 
   <para>
-    To summarise the case where you don't have a deb or rpm option, and
+    To summarize the case where you don't have a deb or rpm option, and
     you must use inconsistent install locations on your users' machines:
     <itemizedlist>
       <listitem>
@@ -369,7 +369,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <envar>LD_LIBRARY_PATH</envar> and equivalents, can be set within
     the program (by using a small configuration file or by determining the
     position of the files relative to the program's location). They just
-    have be set before PLplot is initialised.
+    have be set before PLplot is initialized.
   </para>
 
 </chapter>

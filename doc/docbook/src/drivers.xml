@@ -59,7 +59,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Plots are displayed one page at a time.  The pager is advanced by 
-      pressing the Enter key, and may only be advanced in the foreward
+      pressing the Enter key, and may only be advanced in the forward
       direction.
     </para> 
 
@@ -206,7 +206,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       The available driver options are:
       <itemizedlist>
 	<listitem><para>
-	  optimise: Optimise PNG palette when possible
+	  optimize: Optimize PNG palette when possible
 	</para></listitem>
 	<listitem><para>
 	  def_black15: Define idx 15 as black. If the background is 
@@ -241,7 +241,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       is based on the libharu library see:
       <ulink url="http://libharu.sourceforge.net/">
 	http://libharu.sourceforge.net/</ulink>.
-	At present only the hershey fonts are used and there is no support for 
+	At present only the Hershey fonts are used and there is no support for 
 	pdf or ttf fonts. Compression of the pdf output is not enabled and the 
 	paper size can't be chosen. All these issues will be addressed in 
 	later releases.

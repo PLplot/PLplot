@@ -664,7 +664,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
       <para>
-	Additional startup routines &plstar; and &plstart; are available but
+	Additional start up routines &plstar; and &plstart; are available but
 	these are simply front-ends to &plinit;, and should be avoided.  It
 	is preferable to call &plinit; directly, along with the appropriate
 	setup calls, for the greater amount of control this provides (see the
@@ -791,13 +791,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
 
     <sect2>
-      <title>Initialise FreeType</title>
+      <title>Initialize FreeType</title>
 
-      <para>Next, we have to initialise the FreeType library. For the
+      <para>Next, we have to initialize the FreeType library. For the
       <filename>gd.c</filename> driver this is done via two separate functions due
-      to the order that dependent information is initialised in the driver.</para>
+      to the order that dependent information is initialized in the driver.</para>
 
-      <para>The "level 1" initialisation of FreeType does two things: 1) calls
+      <para>The "level 1" initialization of FreeType does two things: 1) calls
       <literal>plD_FreeType_init(pls)</literal>, which in turn allocates memory to
       the pls->FT structure; and 2) stores the location of the call back routine.
       </para>
@@ -817,7 +817,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</programlisting>
       </para>
 
-      <para>This initialisation routine is called at the end of 
+      <para>This initialization routine is called at the end of 
       <literal>plD_init_png_Dev(PLStream *pls)</literal> in the
       <filename>gd.c</filename> driver:</para>
 
@@ -845,7 +845,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       smoothing. Since there is nothing in PLStream to track smoothing, we have to
       set the FT->smooth_text flag as well at this time.</para>
 
-      <para>The "level 2" initialisation function initialises everything else
+      <para>The "level 2" initialization function initializes everything else
       required for using the FreeType library but has to be called after the
       screen resolution and dpi have been set. Therefore, it is called at the end
       of <literal>plD_init_png()</literal>, where it looks like:
@@ -902,7 +902,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <para>Some coordinate systems have zero on the bottom, others have zero on
       the top. FreeType does it one way, and most everything else does it the
-      other. To make sure everything is working ok, we have to "flip" the
+      other. To make sure everything is working OK, we have to "flip" the
       coordinates, and to do this we need to know how big in the Y dimension the
       page is, and whether we have to invert the page or leave it alone.</para>
 
@@ -1416,7 +1416,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     current color (as opposed to the background color) at any point in the
     plot by selecting any of the colors from either color map 0 or 1 using
     calls to &plcol0; or &plcol1;. When the current color is changed all
-    subsequent drawing actions will utilise the new color until it is
+    subsequent drawing actions will utilize the new color until it is
     changed again.
 </para>
 
@@ -1479,7 +1479,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para> There is a one-to-one correspondence between RGB and HLS color
       spaces.  RGB space is characterized by three 8-bit unsigned integers
       corresponding to the intensity of the red, green, and blue colors. Thus,
-      in hexidecimal notation with the 3 bytes concatanated together the RGB
+      in hexadecimal notation with the 3 bytes concatenated together the RGB
       values of FF0000, FFFF00, 00FF00, 00FFFF, 0000FF, FF00FF, 000000, and
       FFFFFF correspond to red, yellow, green, cyan, blue, magenta, black, and
       white. </para>
@@ -1504,7 +1504,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <para> Here are some C-code fragments which use &plscmap1l; to set the
       map1 color palette. This first example illustrates how to set up a
-      gray-scale pallette using linear interpolation in RGB space.
+      gray-scale palette using linear interpolation in RGB space.
 
       <programlisting>    i[0] = 0.;
       i[1] = 1.;
@@ -1537,7 +1537,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
       <para> This final example using &plscmap1l; illustrates how the default
-      map1 color pallette is set with just 4 control points (taken from
+      map1 color palette is set with just 4 control points (taken from
       <filename>src/plctrl.c</filename>).
 
       <programlisting>/*--------------------------------------------------------------------------*\
@@ -1565,7 +1565,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       i[3] = 1;		/* right boundary */
 
       /* For center control points, pick black or white, whichever is closer to bg */
-      /* Be carefult to pick just short of top or bottom else hue info is lost */
+      /* Be careful to pick just short of top or bottom else hue info is lost */
 
       if (plsc->cmap0 != NULL)
       vertex = ((float) plsc->cmap0[0].r +
@@ -1607,7 +1607,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       &plscmap1; so it is the programmer's responsibility to make sure that
       the colors vary smoothly.  Here is an example of the method taken from
       <filename>examples/c/x08c.c</filename> which sets (yet again) the
-      gray-scale color pallette.
+      gray-scale color palette.
 
       <programlisting>    for (i=0;i&lt;n_col;i++)
       rr[i] = gg[i] = bb[i] = i*256/n_col;
@@ -2455,11 +2455,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Labeling a three-dimensional or mesh plot is somewhat more
+      Labelling a three-dimensional or mesh plot is somewhat more
       complicated than a two dimensional plot due to the need for skewing
       the characters in the label so that they are parallel to the
       coordinate axes.  The routine &plbox3; thus combines the functions of
-      box drawing and labeling.
+      box drawing and labelling.
     </para>
     
   </sect1>
@@ -2778,7 +2778,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       plot and typically identifying certain colors with certain numerical
       values using an axis). &pllegend; is useful for visually annotating
       most two-dimensional plots.  See standard examples 4 and 26 for some
-      examples.  &plcolorbar; is especially useful for annotating continous
+      examples.  &plcolorbar; is especially useful for annotating continuous
       shade plots generated by &plshades;.  See standard example 16 for an
       example.
     </para>

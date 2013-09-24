@@ -183,7 +183,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	these limitations are not acceptable for plotting of scientific time
 	series and are addressed by the qsastime library which was originally
 	donated under the LGPL to the PLplot project in early 2009 by Anthony
-	J. Allen of the QSAS team and substantially modifed after that by a
+	J. Allen of the QSAS team and substantially modified after that by a
 	PLplot developer, Alan W. Irwin (e.g., to add leap-second
 	functionality).
       </para>
