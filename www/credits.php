@@ -28,7 +28,7 @@
       <h4>PLplot device-driver dependencies</h4>
 <p> N.B. each device driver is an optional component of PLplot.</p>
       <ul class="arrowlist">
-      <li>The aquaterm device driver depends on <a href="http://aquaterm.sourceforge.net/">AquaTerm.app</a>; a Mac OS X plotting front end (grahics terminal) written using Objective-C and the Cocoa API.</li>
+      <li>The aquaterm device driver depends on <a href="http://aquaterm.sourceforge.net/">AquaTerm.app</a>; a Mac OS X plotting front end (graphics terminal) written using Objective-C and the Cocoa API.</li>
       <li>The cairo device driver depends on <a href="http://www.pango.org/">Pango</a>; a library for laying out and rendering of text, with an emphasis on internationalization.</li>
       <li>The cairo device driver depends on <a href="http://www.cairographics.org/">cairo</a>; a 2D graphics library with support for multiple output devices. Currently supported output targets include the X Window System, Quartz, Win32, image buffers, PostScript, PDF, and SVG file output.</li>
       <li>The gcw device driver depends on <a href="http://www.gtk.org/">GTK+</a>; a multi-platform toolkit library for creating graphical user interfaces.</li>

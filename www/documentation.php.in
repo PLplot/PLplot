@@ -46,7 +46,7 @@ then this on-line book, <a
 href="http://www.docbook.org/tdg/en/html/docbook.html">"DocBook: The
 Definitive Guide"</a>, is an excellent reference.  For the doxygen
 case, the documentation is controlled by a special form of comments in
-our source files.  See src/plllegend.c for a good example of how to
+our source files.  See src/pllegend.c for a good example of how to
 document arguments of PLplot functions.  Note there are many other
 files in src without this argument documentation at the present time
 so there is plenty of scope to help out here.

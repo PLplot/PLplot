@@ -17,7 +17,7 @@
          information on where new developers should start.</p>
 
       <h3>Information</h3>
-      <p>Apart from this webpage there are some other sources where the developer
+      <p>Apart from this web page there are some other sources where the developer
          can get some information on the PLplot library.
          <ul class="arrowlist">
          <li>The source code itself is well commented and it's always worth have
@@ -41,7 +41,7 @@
          Functions" and "Adding FreeType Library Support to Bitmap Drivers"
          in Chapter 3) that you should look at. If the new driver provides
          the functions needed and is working you can extend the driver e.g.
-         by processing the font or your own (drivers/cairco.c or
+         by processing the font on your own (drivers/cairo.c or
          drivers/wxwidgets.cpp) and handle key and mouse inputs (drivers/xwin.c).
          </p>
 			<h3>Extending the PLplot core</h3>
