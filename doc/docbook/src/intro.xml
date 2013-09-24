@@ -195,7 +195,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       to make the desired PLplot calls.  Example programs in C, C++,
       Fortran77, Fortran95 and Java are included as a guide.
       Plots generated from the example programs are shown
-      <ulink url="http://&PLplot-website;/examples/index.html">here</ulink>.
+      <ulink url="http://&PLplot-website;/examples.php">here</ulink>.
     </para>
     <para>
       You will then need to compile your program and link it with the

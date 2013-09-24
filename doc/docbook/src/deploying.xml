@@ -88,7 +88,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     user's machine is to use PLplot deb binary packages for the <ulink
     url="http://www.debian.org">Debian</ulink> distribution, and PLplot rpm
     binary packages for rpm-based distributions. (See the <ulink
-    url="http://plplot.sourceforge.net/resources/index.html">Resources
+    url="http://plplot.sourceforge.net/download.php">download
     area</ulink> of the PLplot web site for locations of debs and rpms.)
     Build the application on the build machine using the results of the
     <userinput>pkg-config --cflags --libs plplotd</userinput> command, and copy

@@ -239,8 +239,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       A basic version of a pdf driver has been added to PLplot. This driver 
       is based on the libharu library see:
-      <ulink url="http://libharu.sourceforge.net/">
-	http://libharu.sourceforge.net/</ulink>.
+      <ulink url="http://libharu.org/">
+	libharu.org</ulink>.
 	At present only the Hershey fonts are used and there is no support for 
 	pdf or ttf fonts. Compression of the pdf output is not enabled and the 
 	paper size can't be chosen. All these issues will be addressed in 
@@ -312,8 +312,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       to work. The pango and pangoft2 libraries are widely distributed 
       with most Linux distributions and give the psttf driver full complex 
       text layout (CTL) capability (see 
-      <ulink url="http://plplot.sourceforge.net/examples/demo24.php">
-      http://plplot.sourceforge.net/examples/demo24.php</ulink>
+      <ulink url="http://plplot.sourceforge.net/examples.php?demo=24">
+      http://plplot.sourceforge.net/examples.php?demo=24</ulink>
       for an example of this capability).  The LASi library is not part of 
       most distributions at this time. The source code can be downloaded 
       from http://www.unifont.org/lasi/. The library is small and easy to 

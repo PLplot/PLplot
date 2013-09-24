@@ -957,10 +957,10 @@ Note to self: Uncomment these lines when editing with Serna or XMLmind.
       using OS X and is supported by PLplot. It is a native Cocoa graphics
       "terminal" that is highly recommended. All output is antialiased and is
       easily cut-and-pasted in OS X's native PDF format. Get it <ulink
-      url="http://sourceforge.net/project/showfiles.php?group_id=39915">here</ulink>.
+      url="http://sourceforge.net/projects/aquaterm/files">here</ulink>.
       It can also be installed from either the <ulink
-      url="http://www.finkproject.org/">Fink</ulink> or <ulink
-      url="http://www.macports.org/projects.">MacPorts</ulink>
+      url="http://fink.thetis.ig42.org/">Fink</ulink> or <ulink
+      url="http://www.macports.org/">MacPorts</ulink>
       projects.</para>
     </sect2>
 
@@ -982,7 +982,7 @@ Note to self: Uncomment these lines when editing with Serna or XMLmind.
       GNAT that comes packaged using the usual Apple software installer and is
       strongly recommended. This compiler is available for both PowerPC and
       Intel Macintoshes at <ulink
-      url="http://www.macada.org/macada/Welcome.html.">www.macada.org</ulink>.
+      url="http://www.macada.org/macada/Welcome.html">www.macada.org</ulink>.
       This site is traditionally rather confusing but the mailing list is
       extremely helpful. The installer also includes an Ada-specific plug-in
       for Apple's Xcode IDE which is strongly recommended if you plan to work

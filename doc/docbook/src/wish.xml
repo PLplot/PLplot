@@ -141,27 +141,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       
       <para>
 	There are several important sources of info and code for Tcl.
-	Definitely get the book mentioned above.  The Tcl and Tk toolkits
-	are distributed by anonymous <command>ftp</command> at <ulink
-	url="ftp://sprite.berkeley.edu/tcl"><filename>sprite.berkeley.edu:/tcl</filename></ulink>.
-	There are several files in there corresponding to Tcl, Tk, and
-	various forms of documentation.  At the time of this writing, the
-	current versions of Tcl and Tk are 7.3 and 3.6 respectively.
-	Retrieve those files, and install using the instructions provided
-	therein.
-      </para>
-      
-      <para>
-	The other major anonymous <command>ftp</command> site for Tcl is
-	<ulink
-	    url="ftp://harbor.ecn.purdue.edu/pub/tcl"><filename>harbor.ecn.purdue.edu:/pub/tcl</filename></ulink>.
-	Harbor contains a mirror of <literal>sprite</literal> as well as
-	innumerable extensions, Tcl/Tk packages, tutorials, documentation,
-	etc.  The level of excitement in the Tcl community is
-	extraordinarily high, and this is reflected by the great plethora
-	of available, high quality, packages and extensions available for
-	use with Tcl and Tk.  Explore&mdash;there is definitely something
-	for everyone.
+	Definitely get the book mentioned above, and the source code for the
+	Tcl and Tk toolkits can be downloaded from <ulink
+	url="http://www.tcl.tk/software/tcltk/download.html">The Tcl developer
+	Xchange</ulink>.
       </para>
       
       <para>
