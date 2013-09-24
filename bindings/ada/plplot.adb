@@ -1,8 +1,8 @@
 -- $Id$
 
--- Thick Ada binding to PLplot 
+-- Thick Ada binding to PLplot
 
--- Copyright (C) 2006-2011 Jerry Bauck
+-- Copyright (C) 2006-2013 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -1909,7 +1909,7 @@ package body PLplot is
         X_Offset, Y_Offset                    : Long_Float;
         Plot_Area_Width                       : Long_Float;
         Background_Color, Bounding_Box_Color  : Plot_Color_Type;
-        Bounding_Box_Style                    : Legend_Flag_Type;
+        Bounding_Box_Style                    : Line_Style_Type;
         Number_Rows, Number_Columns           : Integer;
         Entry_Options                         : Integer_Array_1D;
         Text_Offset, Text_Scale, Text_Spacing : Long_Float;
@@ -1931,7 +1931,7 @@ package body PLplot is
         PL_Label_Text, PL_Symbols : PL_Legend_String_Array(Label_Text'range);
         C_Legend_String_Array  : array(Label_Text'range) of PL_Legend_String;
         C_Symbols_String_Array : array(Symbols'range)    of PL_Legend_String;
-        Dum_Text : Legend_String_Array_Type(Label_Text'range);
+        Dum_Text : Legend_String_Array_Type(Label_Text'range); --Could be a single unbounded string.
     begin
         -- Check that all array lengths in the argument list are the same.
         L := Entry_Options'length;
@@ -1995,6 +1995,100 @@ package body PLplot is
             Box_Line_Widths, Line_Colors, Line_Styles, Line_Widths, Symbol_Colors,
             Symbol_Scales, Symbol_Numbers, PL_Symbols);
     end Create_Legend;
+
+
+    -- Routine for drawing continous colour legends
+    -- plcolorbar
+    procedure Create_Colorbar
+       (Colorbar_Width, Colorbar_Height      : out Long_Float;
+        Options, Position                    : Integer;
+        X_Offset, Y_Offset                   : Long_Float;
+        X_Length, Y_Length                   : Long_Float;
+        Background_Color, Bounding_Box_Color : Plot_Color_Type;
+        Bounding_Box_Style                   : Line_Style_Type;
+        Low_Cap_Color, High_Cap_Color        : Long_Float;
+        Contour_Color_For_Shade              : Plot_Color_Type;
+        Contour_Width_For_Shade              : Long_Float;
+        Label_Options                        : Integer_Array_1D; 
+        Label_Text                           : Legend_String_Array_Type;
+        Axis_Options                         : Legend_String_Array_Type;
+        Tick_Spacing                         : Real_Vector;
+        Number_Subticks                      : Integer_Array_1D;
+        Number_Values                        : Integer_Array_1D;
+        Values                               : Real_Matrix)
+    is
+        Number_Labels : Integer := Label_Options'length;
+        Number_Axes : Integer := Axis_Options'length;
+        PL_Label_Text : PL_Legend_String_Array(Label_Text'range);
+        C_Legend_String_Array  : array(Label_Text'range) of PL_Legend_String;
+        PL_Axis_Options : PL_Legend_String_Array(Axis_Options'range);
+        C_Axis_Options_String_Array  : array(Axis_Options'range) of PL_Legend_String;
+        Dum_Text : Legend_String_Array_Type(Label_Text'range);
+        PL_Values : Long_Float_Pointer_Array(values'range(2));
+    begin
+        -- Check some array lengths.
+        if Number_Labels /= Label_Text'length then
+            Put_Line("*** WARNING: Mismatched array lengths at plcolorbar labels");
+        end if;
+        if Number_Axes /= Tick_Spacing'length or Number_Axes /= Number_Subticks'length
+            or Number_Axes /= Values'length(1) then
+            Put_Line("*** WARNING: Mismatched array lengths at plcolorbar values");
+        end if;
+
+        -- Adapt Label_Text and Axis_Options to C. See the comment at Create_Stripchart.
+        -- Adapt Label_Text first.
+        for I in Label_Text'range loop
+
+            -- Check length and adjust if necessary.
+            if Length(Label_Text(I)) >= Max_Legend_Label_Length then
+                Put_Line("*** Warning: Colorbar label was truncated to" 
+                    & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
+                Dum_Text(I) := Head(Label_Text(I), Max_Legend_Label_Length);
+            else
+                Dum_Text(I) := Label_Text(I);
+            end if;
+
+            -- Make the C-style string with null character and spaces immediately after the text.
+            C_Legend_String_Array(I) := To_C(To_String(Dum_Text(I) 
+                & Character'val(0) 
+                & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
+
+            -- Set the I-th pointer in the array of pointers.
+            PL_Label_Text(I) := C_Legend_String_Array(I)'Address;
+        end loop;
+
+        -- Adapt Axis_Options next.
+        for I in Axis_Options'range loop
+
+            -- Check length and adjust if necessary.
+            if Length(Axis_Options(I)) >= Max_Legend_Label_Length then
+                Put_Line("*** Warning: Colorbar asix options label was truncated to" 
+                    & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
+                Dum_Text(I) := Head(Axis_Options(I), Max_Legend_Label_Length);
+            else
+                Dum_Text(I) := Axis_Options(I);
+            end if;
+
+            -- Make the C-style string with null character and spaces immediately after the text.
+            C_Axis_Options_String_Array(I) := To_C(To_String(Dum_Text(I) 
+                & Character'val(0) 
+                & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
+
+            -- Set the I-th pointer in the array of pointers.
+            PL_Axis_Options(I) := C_Axis_Options_String_Array(I)'Address;
+        end loop;            
+
+        -- Adapt values in a similar way as Label_Text: make an array of pointers to Real_Vector.
+        -- We need to transpose because we present the Values matrix to the user as described in the
+        -- PLplot documentation for plcolorbar as rows indexing axes and columns indexing the axis
+        -- values, and Matrix_To_Pointers wants things the other way.
+        PL_Values := Matrix_To_Pointers(PLplot_Thin.PL_Transpose(Values));
+        PLplot_Thin.plcolorbar(Colorbar_Width, Colorbar_Height, Options, Position, X_Offset, 
+            Y_Offset, X_Length, Y_Length, Background_Color, Bounding_Box_Color, Bounding_Box_Style,
+            Low_Cap_Color, High_Cap_Color, Contour_Color_For_Shade, Contour_Width_For_Shade,
+            Number_Labels, Label_Options, PL_Label_Text, Number_Axes, 
+            PL_Axis_Options, Tick_Spacing, Number_Subticks, Number_Values, PL_Values);
+    end Create_Colorbar;
 
 
     -- Sets position of the light source
@@ -2562,6 +2656,22 @@ package body PLplot is
     begin
         plscmap1n(Number_Of_Colors);
     end Set_Number_Of_Colors_In_Color_Map_1;
+
+
+    -- Set the color map 1 range used in continuous plots.
+    -- plscmap1_range
+    procedure Set_Color_Map_1_Range(Min_Color, Max_Color : Long_Float) is
+    begin
+        plscmap1_range(Min_Color, Max_Color);
+    end Set_Color_Map_1_Range;
+
+
+    -- Get the color map 1 range used in continuous plots
+    -- plgcmap1_range
+    procedure Get_Color_Map_1_Range(Min_Color : out Long_Float; Max_Color : out Long_Float) is
+    begin
+        plgcmap1_range(Min_Color, Max_Color);
+    end Get_Color_Map_1_Range;
     
 
     -- Set a given color from color map 0 by 8 bit RGB value

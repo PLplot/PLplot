@@ -6,7 +6,7 @@
 --  IFS, University of Texas at Austin
 --  20 Mar 1994
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008-2013 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -36,8 +36,6 @@ use
     PLplot,
     PLplot_Auxiliary;
 
-
-
 procedure xthick16a is
     -- Fundamental settings. See notes() for more info.
     ns : Integer := 20;		    -- Default number of shade levels
@@ -65,8 +63,20 @@ procedure xthick16a is
         y_Last => ny - 1);
 
     fill_width : Long_Float := 2.0;
+    colorbar_width, colorbar_height : Long_Float;
     cont_color : Integer    := 0;
     cont_width : Long_Float := 0.0;
+    num_axes : constant Integer := 1;
+    n_axis_opts : constant Integer := num_axes;
+    -- TUB is renamed To_Unbounded_String.
+    axis_opts : Legend_String_Array_Type(0 .. n_axis_opts - 1) := (others => TUB("bcvtm"));
+    num_values : Integer_Array_1D(0 .. num_axes - 1);
+    values : Real_Matrix(0 .. num_axes - 1, 0 .. ns); --SWAP THESE???
+    axis_ticks : Real_Vector(0 .. num_axes - 1) := (others => 0.0);
+    axis_subticks : Integer_Array_1D(0 .. num_axes - 1) := (others => 0);
+    num_labels : constant Integer := 1;
+    label_opts : Integer_Array_1D(0 .. num_labels - 1);
+    labels : Legend_String_Array_Type(0 .. num_labels - 1) := (others => TUB("Magnitude"));
 
     -- Transformation function
     tr : Real_Vector(0 .. 5);
@@ -77,6 +87,7 @@ procedure xthick16a is
         pltr_data : PLpointer);
     pragma Convention(Convention => C, Entity => mypltr);
 
+
     procedure mypltr
        (x, y : Long_Float; 
         tx, ty : out Long_Float; 
@@ -84,7 +95,7 @@ procedure xthick16a is
     begin
         tx := tr(0) * x + tr(1) * y + tr(2);
         ty := tr(3) * x + tr(4) * y + tr(5);
-    end;
+    end mypltr;
 
 
     -- Masking function
@@ -101,8 +112,9 @@ procedure xthick16a is
         end if;
     end zdefined;
 
-
 begin
+    label_opts(0) := Colorbar_Label_Bottom;
+
     ----------------------------------------------------------------------------
     -- Does several shade plots using different coordinate mappings.
     ----------------------------------------------------------------------------
@@ -157,7 +169,7 @@ begin
             argy := y * pi / 2.0;
             distort := 0.4;
 
-            cgrid1.xg(i) := x + distort * cos(argx);
+            cgrid1.xg(i) := x + distort * cos(argx); -- This gets assigned j times.
             cgrid1.yg(j) := y - distort * cos(argy);
 
             cgrid2.xg(i, j) := x + distort * cos(argx) * cos(argy);
@@ -177,6 +189,30 @@ begin
          shedge, fill_width,
          cont_color, cont_width,
          Fill_Polygon'access, True, Null, System.Null_Address);
+
+    -- Smaller text
+    Set_Character_Height(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    Set_Major_Tick_Length(0.0, 0.5);
+    Set_Minor_Tick_Length(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    Create_Colorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    Set_Character_Height(0.0, 1.0);
+    Set_Major_Tick_Length(0.0, 1.0);
+    Set_Minor_Tick_Length(0.0, 1.0);
 
     Set_Pen_Color(Red);
     Box_Around_Viewport("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -204,6 +240,30 @@ begin
          cont_color, cont_width,
          Fill_Polygon'access, True, Plot_Transformation_1'access, cgrid1'Address);
 
+    -- Smaller text
+    Set_Character_Height(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    Set_Major_Tick_Length(0.0, 0.5);
+    Set_Minor_Tick_Length(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    Create_Colorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    Set_Character_Height(0.0, 1.0);
+    Set_Major_Tick_Length(0.0, 1.0);
+    Set_Minor_Tick_Length(0.0, 1.0);
+
     Set_Pen_Color(Red);
     Box_Around_Viewport("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     Set_Pen_Color(Yellow);
@@ -229,6 +289,30 @@ begin
          shedge, fill_width,
          cont_color, cont_width,
          Fill_Polygon'access, False, Plot_Transformation_2'access, cgrid2'Address);
+
+    -- Smaller text
+    Set_Character_Height(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    Set_Major_Tick_Length(0.0, 0.5);
+    Set_Minor_Tick_Length(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    Create_Colorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    Set_Character_Height(0.0, 1.0);
+    Set_Major_Tick_Length(0.0, 1.0);
+    Set_Minor_Tick_Length(0.0, 1.0);
 
     Set_Pen_Color(Red);
     Box_Around_Viewport("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -257,6 +341,30 @@ begin
          2, 3.0,
          Fill_Polygon'access, False, Plot_Transformation_2'access, cgrid2'Address);
 
+    -- Smaller text
+    Set_Character_Height(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    Set_Major_Tick_Length(0.0, 0.5);
+    Set_Minor_Tick_Length(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    Create_Colorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        2, 3.0,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    Set_Character_Height(0.0, 1.0);
+    Set_Major_Tick_Length(0.0, 1.0);
+    Set_Minor_Tick_Length(0.0, 1.0);
+
     Set_Pen_Color(Red);
     Box_Around_Viewport("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     Set_Pen_Color(Yellow);
@@ -270,7 +378,7 @@ begin
     -- Ada note: This "exclusion" part works if exclude is set to True.
     -- In the C original example, the setting of exclude was handled by the 
     -- the input parser which handling is not implemented in this Ada example.
-    exclude := False;
+    --    exclude := False;
     if exclude then
 
         -- Load colour palettes.
@@ -336,6 +444,30 @@ begin
          shedge, fill_width,
          cont_color, cont_width,
          Fill_Polygon'access, False, Plot_Transformation_2'access, cgrid2'Address);
+
+    -- Smaller text
+    Set_Character_Height(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    Set_Major_Tick_Length(0.0, 0.5);
+    Set_Minor_Tick_Length(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    Create_Colorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    Set_Character_Height(0.0, 1.0);
+    Set_Major_Tick_Length(0.0, 1.0);
+    Set_Minor_Tick_Length(0.0, 1.0);
 
     -- Now we can draw the perimeter. (If do before, shade stuff may overlap.)
       for i in px'range loop

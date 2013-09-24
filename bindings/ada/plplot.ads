@@ -2,7 +2,7 @@
 
 -- Thick Ada binding to PLplot
 
--- Copyright (C) 2006-2011 Jerry Bauck
+-- Copyright (C) 2006-2013 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -201,28 +201,42 @@ package PLplot is
     Legend_Row_Major    : constant Legend_Flag_Type := PL_Legend_Row_Major;
 
     -- Flags for plcolorbar (duplicated from plplot_thin.ads)
-    PL_Colorbar_Label_Left   : constant Colorbar_Flag_Type := 1;
-    PL_Colorbar_Label_Right  : constant Colorbar_Flag_Type := 2;
-    PL_Colorbar_Label_Top    : constant Colorbar_Flag_Type := 4;
-    PL_Colorbar_Label_Bottom : constant Colorbar_Flag_Type := 8;
-    PL_Colorbar_Image        : constant Colorbar_Flag_Type := 16;
-    PL_Colorbar_Shade        : constant Colorbar_Flag_Type := 32;
-    PL_Colorbar_Gradient     : constant Colorbar_Flag_Type := 64;
-    PL_Colorbar_Cap_Low      : constant Colorbar_Flag_Type := 128;
-    PL_Colorbar_Cap_High     : constant Colorbar_Flag_Type := 256;
-    PL_Colorbar_Shade_Label  : constant Colorbar_Flag_Type := 512;
+    PL_Colorbar_Label_Left    : constant Colorbar_Flag_Type := 1;
+    PL_Colorbar_Label_Right   : constant Colorbar_Flag_Type := 2;
+    PL_Colorbar_Label_Top     : constant Colorbar_Flag_Type := 4;
+    PL_Colorbar_Label_Bottom  : constant Colorbar_Flag_Type := 8;
+    PL_Colorbar_Image         : constant Colorbar_Flag_Type := 16;
+    PL_Colorbar_Shade         : constant Colorbar_Flag_Type := 32;
+    PL_Colorbar_Gradient      : constant Colorbar_Flag_Type := 64;
+    PL_Colorbar_Cap_None      : constant Colorbar_Flag_Type := 128;
+    PL_Colorbar_Cap_Low       : constant Colorbar_Flag_Type := 256;
+    PL_Colorbar_Cap_High      : constant Colorbar_Flag_Type := 512;
+    PL_Colorbar_Shade_Label   : constant Colorbar_Flag_Type := 1024;
+    PL_Colorbar_Orient_Right  : constant Colorbar_Flag_Type := 2048;
+    PL_Colorbar_Orient_Top    : constant Colorbar_Flag_Type := 4096;
+    PL_Colorbar_Orient_Left   : constant Colorbar_Flag_Type := 8192;
+    PL_Colorbar_Orient_Bottom : constant Colorbar_Flag_Type := 16384;
+    PL_Colorbar_Background    : constant Colorbar_Flag_Type := 32768;
+    PL_Colorbar_Bounding_Box  : constant Colorbar_Flag_Type := 65536;
 
     -- Renamed flags for plcolorbar
-    Colorbar_Label_Left   : constant Colorbar_Flag_Type := PL_Colorbar_Label_Left;
-    Colorbar_Label_Right  : constant Colorbar_Flag_Type := PL_Colorbar_Label_Right;
-    Colorbar_Label_Top    : constant Colorbar_Flag_Type := PL_Colorbar_Label_Top;
-    Colorbar_Label_Bottom : constant Colorbar_Flag_Type := PL_Colorbar_Label_Bottom;
-    Colorbar_Image        : constant Colorbar_Flag_Type := PL_Colorbar_Image;
-    Colorbar_Shade        : constant Colorbar_Flag_Type := PL_Colorbar_Shade;
-    Colorbar_Gradient     : constant Colorbar_Flag_Type := PL_Colorbar_Gradient;
-    Colorbar_Cap_Low      : constant Colorbar_Flag_Type := PL_Colorbar_Cap_Low;
-    Colorbar_Cap_High     : constant Colorbar_Flag_Type := PL_Colorbar_Cap_High;
-    Colorbar_Shade_Label  : constant Colorbar_Flag_Type := PL_Colorbar_Shade_Label;
+    Colorbar_Label_Left    : constant Colorbar_Flag_Type := PL_Colorbar_Label_Left;
+    Colorbar_Label_Right   : constant Colorbar_Flag_Type := PL_Colorbar_Label_Right;
+    Colorbar_Label_Top     : constant Colorbar_Flag_Type := PL_Colorbar_Label_Top; 
+    Colorbar_Label_Bottom  : constant Colorbar_Flag_Type := PL_Colorbar_Label_Bottom;
+    Colorbar_Image         : constant Colorbar_Flag_Type := PL_Colorbar_Image;
+    Colorbar_Shade         : constant Colorbar_Flag_Type := PL_Colorbar_Shade;
+    Colorbar_Gradient      : constant Colorbar_Flag_Type := PL_Colorbar_Gradient;
+    Colorbar_Cap_None      : constant Colorbar_Flag_Type := PL_Colorbar_Cap_None;
+    Colorbar_Cap_Low       : constant Colorbar_Flag_Type := PL_Colorbar_Cap_Low;
+    Colorbar_Cap_High      : constant Colorbar_Flag_Type := PL_Colorbar_Cap_High;
+    Colorbar_Shade_Label   : constant Colorbar_Flag_Type := PL_Colorbar_Shade_Label;
+    Colorbar_Orient_Right  : constant Colorbar_Flag_Type := PL_Colorbar_Orient_Right;
+    Colorbar_Orient_Top    : constant Colorbar_Flag_Type := PL_Colorbar_Orient_Top;
+    Colorbar_Orient_Left   : constant Colorbar_Flag_Type := PL_Colorbar_Orient_Left;
+    Colorbar_Orient_Bottom : constant Colorbar_Flag_Type := PL_Colorbar_Orient_Bottom;
+    Colorbar_Background    : constant Colorbar_Flag_Type := PL_Colorbar_Background;
+    Colorbar_Bounding_Box  : constant Colorbar_Flag_Type := PL_Colorbar_Bounding_Box;
 
     -- Justification for plots
     subtype Justification_Type is Integer range -1..2;
@@ -1299,7 +1313,7 @@ package PLplot is
         X_Offset, Y_Offset                    : Long_Float;
         Plot_Area_Width                       : Long_Float;
         Background_Color, Bounding_Box_Color  : Plot_Color_Type;
-        Bounding_Box_Style                    : Legend_Flag_Type;
+        Bounding_Box_Style                    : Line_Style_Type;
         Number_Rows, Number_Columns           : Integer;
         Entry_Options                         : Integer_Array_1D;
         Text_Offset, Text_Scale, Text_Spacing : Long_Float;
@@ -1315,6 +1329,27 @@ package PLplot is
         Symbol_Scales                         : Real_Vector;
         Symbol_Numbers                        : Integer_Array_1D;
         Symbols                               : Legend_String_Array_Type);
+
+
+    -- Routine for drawing continous colour legends
+    -- plcolorbar
+    procedure Create_Colorbar
+        (Colorbar_Width, Colorbar_Height      : out Long_Float;
+         Options, Position                    : Integer;
+         X_Offset, Y_Offset                   : Long_Float;
+         X_Length, Y_Length                   : Long_Float;
+         Background_Color, Bounding_Box_Color : Plot_Color_Type;
+         Bounding_Box_Style                   : Line_Style_Type;
+         Low_Cap_Color, High_Cap_Color        : Long_Float;
+         Contour_Color_For_Shade              : Plot_Color_Type;
+         Contour_Width_For_Shade              : Long_Float;
+         Label_Options                        : Integer_Array_1D; 
+         Label_Text                           : Legend_String_Array_Type;
+         Axis_Options                         : Legend_String_Array_Type;
+         Tick_Spacing                         : Real_Vector;
+         Number_Subticks                      : Integer_Array_1D;
+         Number_Values                        : Integer_Array_1D;
+         Values                               : Real_Matrix);
 
 
     -- Sets position of the light source
@@ -1637,6 +1672,16 @@ package PLplot is
     -- Set number of colors in cmap 1
     -- plscmap1n
     procedure Set_Number_Of_Colors_In_Color_Map_1(Number_Of_Colors : Integer);
+
+
+    -- Set the color map 1 range used in continuous plots.
+    -- plscmap1_range
+    procedure Set_Color_Map_1_Range(Min_Color, Max_Color : Long_Float);
+
+
+    -- Get the color map 1 range used in continuous plots
+    -- plgcmap1_range
+    procedure Get_Color_Map_1_Range(Min_Color, Max_Color : out Long_Float);
 
 
     -- Set a given color from color map 0 by 8 bit RGB value

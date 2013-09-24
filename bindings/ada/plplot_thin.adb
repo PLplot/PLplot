@@ -65,6 +65,22 @@ package body PLplot_Thin is
     end Matrix_To_Pointers;
 
 
+    --------------------------------------------------------------------------------
+    -- Transpose a Matrix.                                                        --
+    --------------------------------------------------------------------------------
+
+    function PL_Transpose(A : Real_Matrix) return Real_Matrix is
+        B : Real_Matrix(A'range(2), A'range(1));
+    begin
+        for i in A'range(1) loop
+            for j in A'range(2) loop
+                B(j, i) := A(i, j);
+            end loop;
+        end loop;
+        return B;
+    end PL_Transpose;
+
+
 --------------------------------------------------------------------------------
 --         Functions for use from C or C++ only                               --
 --         (Not really ;).                                                    --

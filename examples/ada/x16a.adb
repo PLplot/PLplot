@@ -6,7 +6,7 @@
 --  IFS, University of Texas at Austin
 --  20 Mar 1994
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008-2013 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -36,8 +36,6 @@ use
     PLplot_Traditional,
     PLplot_Auxiliary;
 
-
-
 procedure x16a is
     -- Fundamental settings. See notes() for more info.
     ns : Integer := 20;		    -- Default number of shade levels
@@ -65,8 +63,20 @@ procedure x16a is
         y_Last => ny - 1);
 
     fill_width : Long_Float := 2.0;
+    colorbar_width, colorbar_height : Long_Float;
     cont_color : Integer    := 0;
     cont_width : Long_Float := 0.0;
+    num_axes : constant Integer := 1;
+    n_axis_opts : constant Integer := num_axes;
+    -- TUB is renamed To_Unbounded_String.
+    axis_opts : Legend_String_Array_Type(0 .. n_axis_opts - 1) := (others => TUB("bcvtm"));
+    num_values : Integer_Array_1D(0 .. num_axes - 1);
+    values : Real_Matrix(0 .. num_axes - 1, 0 .. ns);
+    axis_ticks : Real_Vector(0 .. num_axes - 1) := (others => 0.0);
+    axis_subticks : Integer_Array_1D(0 .. num_axes - 1) := (others => 0);
+    num_labels : constant Integer := 1;
+    label_opts : Integer_Array_1D(0 .. num_labels - 1);
+    labels : Legend_String_Array_Type(0 .. num_labels - 1) := (others => TUB("Magnitude"));
 
     -- Transformation function
     tr : Real_Vector(0 .. 5);
@@ -76,6 +86,7 @@ procedure x16a is
         tx, ty : out Long_Float; 
         pltr_data : PLpointer);
     pragma Convention(Convention => C, Entity => mypltr);
+
 
     procedure mypltr
        (x, y : Long_Float; 
@@ -101,14 +112,15 @@ procedure x16a is
         end if;
     end zdefined;
 
-
 begin
+    label_opts(0) := COLORBAR_LABEL_BOTTOM;
+
     ----------------------------------------------------------------------------
     -- Does several shade plots using different coordinate mappings.
     ----------------------------------------------------------------------------
 
     -- Parse and process command line arguments.
-    plparseopts(PL_PARSE_FULL);
+    plparseopts(Parse_Full);
 
     -- Load colour palettes
     plspal0("cmap0_black_on_white.pal");
@@ -178,6 +190,30 @@ begin
          cont_color, cont_width,
          plfill'access, True, Null, System.Null_Address);
 
+    -- Smaller text
+    plschr(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    plsmaj(0.0, 0.5);
+    plsmin(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    plcolorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    plschr(0.0, 1.0);
+    plsmaj(0.0, 1.0);
+    plsmin(0.0, 1.0);
+
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol0(2);
@@ -204,6 +240,30 @@ begin
          cont_color, cont_width,
          plfill'access, True, pltr1'access, cgrid1'Address);
 
+    -- Smaller text
+    plschr(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    plsmaj(0.0, 0.5);
+    plsmin(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    plcolorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    plschr(0.0, 1.0);
+    plsmaj(0.0, 1.0);
+    plsmin(0.0, 1.0);
+
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol0(2);
@@ -229,6 +289,30 @@ begin
          shedge, fill_width,
          cont_color, cont_width,
          plfill'access, False, pltr2'access, cgrid2'Address);
+
+    -- Smaller text
+    plschr(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    plsmaj(0.0, 0.5);
+    plsmin(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    plcolorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    plschr(0.0, 1.0);
+    plsmaj(0.0, 1.0);
+    plsmin(0.0, 1.0);
 
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -257,6 +341,30 @@ begin
          2, 3.0,
          plfill'access, False, pltr2'access, cgrid2'Address);
 
+    -- Smaller text
+    plschr(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    plsmaj(0.0, 0.5);
+    plsmin(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    plcolorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        2, 3.0,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    plschr(0.0, 1.0);
+    plsmaj(0.0, 1.0);
+    plsmin(0.0, 1.0);
+
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol0(2);
@@ -270,7 +378,7 @@ begin
     -- Ada note: This "exclusion" part works if exclude is set to True.
     -- In the C original example, the setting of exclude was handled by the 
     -- the input parser which handling is not implemented in this Ada example.
---    exclude := False;
+    --    exclude := False;
     if exclude then
 
         -- Load colour palettes.
@@ -336,6 +444,30 @@ begin
          shedge, fill_width,
          cont_color, cont_width,
          plfill'access, False, pltr2'access, cgrid2'Address);
+
+    -- Smaller text
+    plschr(0.0, 0.75);
+    -- Small ticks on the vertical axis
+    plsmaj(0.0, 0.5);
+    plsmin(0.0, 0.5);
+
+    num_values(0) := ns + 1;
+    for i in values'range(2) loop
+        values(0, i) := shedge(i);
+    end loop;
+    plcolorbar(colorbar_width, colorbar_height,
+        Colorbar_Shade + Colorbar_Shade_Label, 0,
+        0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
+        cont_color, cont_width,
+        label_opts, labels,
+        axis_opts,
+        axis_ticks, axis_subticks,
+        num_values, values);
+
+    -- Reset text and tick sizes
+    plschr(0.0, 1.0);
+    plsmaj(0.0, 1.0);
+    plsmin(0.0, 1.0);
 
     -- Now we can draw the perimeter. (If do before, shade stuff may overlap.)
       for i in px'range loop

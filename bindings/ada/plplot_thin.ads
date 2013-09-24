@@ -80,6 +80,13 @@ package PLplot_Thin is
 
 
 --------------------------------------------------------------------------------
+-- Transpose a Matrix.                                                        --
+--------------------------------------------------------------------------------
+
+    function PL_Transpose(A : Real_Matrix) return Real_Matrix;
+
+
+--------------------------------------------------------------------------------
 -- PLplot-specific things                                                     --
 --------------------------------------------------------------------------------
 
@@ -1048,24 +1055,34 @@ package PLplot_Thin is
     PL_Legend_Row_Major    : constant Legend_Flag_Type := 128;
 
     -- Colorbar characteristics are chosen by adding flag values.
-    subtype Colorbar_Flag_Type is Integer 
-        range 1 .. 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 ;
+    subtype Colorbar_Flag_Type is Integer range 1 .. 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 
+        512 + 1024 + 2048 + 4096 + 8192 + 16384 + 32768 + 65536;
 
     -- Flags for plcolorbar
-    PL_Colorbar_Label_Left   : constant Integer := 1;
-    PL_Colorbar_Label_Right  : constant Integer := 2;
-    PL_Colorbar_Label_Top    : constant Integer := 4;
-    PL_Colorbar_Label_Bottom : constant Integer := 8;
-    PL_Colorbar_Image        : constant Integer := 16;
-    PL_Colorbar_Shade        : constant Integer := 32;
-    PL_Colorbar_Gradient     : constant Integer := 64;
-    PL_Colorbar_Cap_Low      : constant Integer := 128;
-    PL_Colorbar_Cap_High     : constant Integer := 256;
-    PL_Colorbar_Shade_Label  : constant Integer := 512;
+    PL_Colorbar_Label_Left    : constant Colorbar_Flag_Type := 1;
+    PL_Colorbar_Label_Right   : constant Colorbar_Flag_Type := 2;
+    PL_Colorbar_Label_Top     : constant Colorbar_Flag_Type := 4;
+    PL_Colorbar_Label_Bottom  : constant Colorbar_Flag_Type := 8;
+    PL_Colorbar_Image         : constant Colorbar_Flag_Type := 16;
+    PL_Colorbar_Shade         : constant Colorbar_Flag_Type := 32;
+    PL_Colorbar_Gradient      : constant Colorbar_Flag_Type := 64;
+    PL_Colorbar_Cap_Low       : constant Colorbar_Flag_Type := 256;
+    PL_Colorbar_Cap_High      : constant Colorbar_Flag_Type := 512;
+    PL_Colorbar_Shade_Label   : constant Colorbar_Flag_Type := 1024;
+    PL_Colorbar_Orient_Right  : constant Colorbar_Flag_Type := 2048;
+    PL_Colorbar_Orient_Top    : constant Colorbar_Flag_Type := 4096;
+    PL_Colorbar_Orient_Left   : constant Colorbar_Flag_Type := 8192;
+    PL_Colorbar_Orient_Bottom : constant Colorbar_Flag_Type := 16384;
+    PL_Colorbar_Background    : constant Colorbar_Flag_Type := 32768;
+    PL_Colorbar_Bounding_Box  : constant Colorbar_Flag_Type := 65536;
 
+     -- Flags for drawing mode
+    PL_Drawmode_Unknown : constant Integer := 0;
+    PL_Drawmode_Default : constant Integer := 1;
+    PL_Drawmode_Replace : constant Integer := 2;
+    PL_Drawmode_Xor     : constant Integer := 4;
 
     -- Routine for drawing discrete line, symbol, or cmap0 legends
-
     procedure
     pllegend
        (p_legend_width : out PLFLT; p_legend_height : out PLFLT;
@@ -1088,15 +1105,19 @@ package PLplot_Thin is
 
 
     -- Routine for drawing continous colour legends
-    -- procedure
-    -- plcolorbar
-    --    (PLINT position, PLINT opt,
-    --     PLFLT x, PLFLT y, PLFLT length, PLFLT width,
-    --     PLINT cont_color, PLINT cont_width,
-    --     PLFLT ticks, PLINT sub_ticks,
-    --     const char *axis_opts, const char *label,
-    --     PLINT n_colors, PLFLT *colors, PLFLT *values);
-    -- pragma Import(C, plcolorbar, "c_pllegend");
+    procedure
+    plcolorbar
+       (p_colorbar_width : out PLFLT; p_colorbar_height : out PLFLT;
+        opt : PLINT; position : PLINT; x : PLFLT; y : PLFLT;
+        x_length : PLFLT; y_length : PLFLT;
+        bg_color : PLINT; bb_color : PLINT; bb_style : PLINT;
+        low_cap_color : PLFLT; high_cap_color : PLFLT;
+        cont_color : PLINT; cont_width : PLFLT;
+        n_labels : PLINT; label_opts : PL_Integer_Array; labels : PL_Legend_String_Array;
+        n_axes : PLINT; axis_opts : PL_Legend_String_Array;
+        ticks : PL_Float_Array; sub_ticks : PL_Integer_Array;
+        n_values : PL_Integer_Array; values : Long_Float_Pointer_Array);
+    pragma Import(C, plcolorbar, "c_plcolorbar");
 
 
     -- Sets position of the light source 
@@ -1393,6 +1414,20 @@ package PLplot_Thin is
     procedure
     plscmap1n(ncol1 : PLINT);
     pragma Import(C, plscmap1n, "c_plscmap1n");
+
+
+    -- Set the color map 1 range used in continuous plots.
+
+    procedure
+    plscmap1_range(min_color : PLFLT; max_color : PLFLT);
+    pragma Import(C, plscmap1_range, "c_plscmap1_range");
+
+
+    -- Get the color map 1 range used in continuous plots
+
+    procedure
+    plgcmap1_range(min_color, max_color : out PLFLT);
+    pragma Import(C, plgcmap1_range, "c_plgcmap1_range");
 
 
     -- Set a given color from color map 0 by 8 bit RGB value 

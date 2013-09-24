@@ -4,7 +4,7 @@
 --
 -- Demonstrate most pllegend capability including unicode symbols.
 --
--- Copyright (C) 2011 Jerry Bauck
+-- Copyright (C) 2011-2013 Jerry Bauck
 --
 -- This file is part of PLplot.
 --
@@ -46,224 +46,221 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-procedure x33a is
-    position_options : Integer_Array_1D(0 .. 15) := 
-       (PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_OUTSIDE,
-        PL_POSITION_TOP + PL_POSITION_OUTSIDE,
-        PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_OUTSIDE,
-        PL_POSITION_RIGHT + PL_POSITION_OUTSIDE,
-        PL_POSITION_RIGHT + PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE,
-        PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE,
-        PL_POSITION_LEFT + PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE,
-        PL_POSITION_LEFT + PL_POSITION_OUTSIDE,
-        PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_INSIDE,
-        PL_POSITION_TOP + PL_POSITION_INSIDE,
-        PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_INSIDE,
-        PL_POSITION_RIGHT + PL_POSITION_INSIDE,
-        PL_POSITION_RIGHT + PL_POSITION_BOTTOM + PL_POSITION_INSIDE,
-        PL_POSITION_BOTTOM + PL_POSITION_INSIDE,
-        PL_POSITION_LEFT + PL_POSITION_BOTTOM + PL_POSITION_INSIDE,
-        PL_POSITION_LEFT + PL_POSITION_INSIDE);
-
-    -- Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
-    special_symbols : Legend_String_Array_Type(0 .. 4) := 
-       (TUB("✰"), TUB("✴"), TUB("✱"), TUB("✽"), TUB("✦"));
-
-    colorbar : Boolean := False; -- By default do not plot plcolorbar pages
-                                   -- for now while we are working out the API.
-
--- static PLOptionTable options() := {
---     {
---         "colorbar",              -- Turns on pages showing colorbars
---         NULL,
---         NULL,
---         &colorbar,
---         PL_OPT_BOOL,
---         "-colorbar",
---         "Plot the \"color bar\" pages."
---     },
---     {
---         NULL,                   -- option
---         NULL,                   -- handler
---         NULL,                   -- client data
---         NULL,                   -- address of variable to set
---         0,                      -- mode flag
---         NULL,                   -- short syntax
---         NULL
---     }                           -- long syntax
--- };
-
---const char           *notes() := { "Make sure you get it right!", NULL };
-
-    --procedure plcolorbar_example_1(PLINT bar_type, PLINT cont_color, PLINT cont_width, PLFLT ticks, PLINT sub_ticks, PLINT n, PLFLT *values, const char *title)
-
-
-    -- procedure plcolorbar_example_1
-    --    (bar_type, cont_color, cont_width : Integer;
-    --     ticks : Long_Float;
-    --     sub_ticks, n : Integer;
-    --     values : Real_Vector;
-    --     title : Unbounded_String)
-    -- is
-    --     colors : Real_Vector(0 .. n - 1);
-    --     i : Integer;
-    --     color_step, color_offset : Long_Float;
-    --     opt, position : Integer;
-    --     axis_opts_1, axis_opts_2 : Unbounded_String;
-    -- begin
-    --     pladv(0);
-    --     
-    --     -- Set up color palette 1.
-    --     plspal1("cmap1_blue_red.pal", True);
-    -- 
-    --     color_step := 1.0 / Long_Float(n - 1);
-    --     for i in 0 .. n - 1 loop
-    --         colors(i) := color_offset + color_step * Long_Float(i); -- COLOR_OFFSET NOT DEFINED!
-    --     end loop;
-    -- 
-    --     position := PL_POSITION_LEFT;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_LEFT + PL_COLORBAR_CAP_HIGH;
-    -- 
-    --     if bar_type and PL_COLORBAR_SHADE_LABEL then
-    --         axis_opts_1 := To_Unbounded_String("iv");
-    --         axis_opts_2 := To_Unbounded_String("i");
-    --     else
-    --         if sub_ticks /= 0 then
-    --             axis_opts_1 := To_Unbounded_String("stv");
-    --             axis_opts_2 := To_Unbounded_String("st");
-    --         else
-    --             axis_opts_1 := To_Unbounded_String("tv");
-    --             axis_opts_2 := To_Unbounded_String("t");
-    --         end if;
-    --     end if;
-    -- 
-    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1, -- fixme
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_1, "Test label - Left, High Cap",
-    --         n, colors, values);
-    -- 
-    --     position := PL_POSITION_RIGHT;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_RIGHT + PL_COLORBAR_CAP_LOW;
-    -- 
-    --     plcolorbar(opt, position, 0.1, 0.4, 0.5, 0.1, -- fixme etc.
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_1, "Test label - Right, Low Cap",
-    --         n, colors, values);
-    -- 
-    --     position := PL_POSITION_TOP;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_TOP + PL_COLORBAR_CAP_HIGH;
-    -- 
-    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1,
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_2, "Test label - Top, High Cap",
-    --         n, colors, values);
-    -- 
-    --     position := PL_POSITION_BOTTOM;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_BOTTOM + PL_COLORBAR_CAP_LOW;
-    -- 
-    --     plcolorbar(opt, position, 0.4, 0.1, 0.5, 0.1,
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_2, "Test label - Bottom, Low Cap",
-    --         n, colors, values);
-    -- 
-    --     plvpor(0.0, 1.0, 0.0, 1.0);
-    --     plwind(0.0, 1.0, 0.0, 1.0);
-    --     plptex(0.5, 0.5, 0.0, 0.0, 0.5, To_String(title));
-    -- end plcolorbar_example_1;
-    -- 
-    -- 
-    -- procedure plcolorbar_example_2
-    --    (bar_type, cont_color, cont_width : Integer;
-    --     ticks, sub_ticks : Long_Float;
-    --     n : Integer; 
-    --     values : Real_Vector;
-    --     title : Unbounded_String)
-    -- is
-    --     colors : Long_Float(0 .. n - 1);
-    --     i : Integer;
-    --     color_step, color_offset : Long_Float;
-    --     opt, position : Integer;
-    --     axis_opts_1, axis_opts_2 : Unbounded_String;
-    -- begin
-    --     pladv(0);
-    --     
-    --     -- Set up color palette 1.
-    --     plspal1("cmap1_blue_yellow.pal", True);
-    -- 
-    --     color_step := 1.0 / Long_Float(n - 1);
-    --     for i in 0 .. n - 1 loop
-    --         if i = 0 then
-    --             color_offset := 0.01;
-    --         elsif i = n - 1 then
-    --             color_offset := -0.01;
-    --         else
-    --             color_offset := 0.0;
-    --         end if;
-    --         colors(i) := color_offset + color_step * Long_Float(i);
-    --     end loop;
-    -- 
-    --     position := PL_POSITION_LEFT;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_LEFT + PL_COLORBAR_CAP_LOW;
-    -- 
-    --     if bar_type = PL_COLORBAR_SHADE_LABEL then
-    --         axis_opts_1 := "";
-    --         axis_opts_2 := "";
-    --     else
-    --         if sub_ticks /= 0 then
-    --             axis_opts_1 := "stv";
-    --             axis_opts_2 := "st";
-    --         else
-    --             axis_opts_1 := "tv";
-    --             axis_opts_2 := "t";
-    --         end if;
-    --     end if;
-    -- 
-    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1,
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_1, "Test label - Left, Low Cap",
-    --         n, colors, values);
-    -- 
-    --     position := PL_POSITION_RIGHT;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_RIGHT + PL_COLORBAR_CAP_HIGH;
-    -- 
-    --     plcolorbar(opt, position, 0.1, 0.4, 0.5, 0.1,
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_1, "Test label - Right, High Cap",
-    --         n, colors, values);
-    -- 
-    --     position := PL_POSITION_TOP;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_TOP + PL_COLORBAR_CAP_LOW;
-    -- 
-    --     plcolorbar(opt, position, 0.1, 0.1, 0.5, 0.1,
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_2, "Test label - Top, Low Cap",
-    --         n, colors, values);
-    -- 
-    --     position := PL_POSITION_BOTTOM;
-    --     opt      := bar_type + PL_COLORBAR_LABEL_BOTTOM + PL_COLORBAR_CAP_HIGH;
-    -- 
-    --     plcolorbar(opt, position, 0.4, 0.1, 0.5, 0.1,
-    --         cont_color, cont_width,
-    --         ticks, sub_ticks,
-    --         axis_opts_2, "Test label - Bottom, High Cap",
-    --         n, colors, values);
-    -- 
-    --     plvpor(0.0, 1.0, 0.0, 1.0);
-    --     plwind(0.0, 1.0, 0.0, 1.0);
-    --     plptex(0.5, 0.5, 0.0, 0.0, 0.5, To_String(title));
-    -- end plcolorbar_example_2;
-
 ----------------------------------------------------------------------------
 -- Demonstrate most pllegend capability including unicode symbols.
 ----------------------------------------------------------------------------
 
+procedure x33a is
+    position_options : Integer_Array_1D(0 .. 15) := 
+       (Pl_Position_Left + Pl_Position_Top + Pl_Position_Outside,
+        Pl_Position_Top + Pl_Position_Outside,
+        Pl_Position_Right + Pl_Position_Top + Pl_Position_Outside,
+        Pl_Position_Right + Pl_Position_Outside,
+        Pl_Position_Right + Pl_Position_Bottom + Pl_Position_Outside,
+        Pl_Position_Bottom + Pl_Position_Outside,
+        Pl_Position_Left + Pl_Position_Bottom + Pl_Position_Outside,
+        Pl_Position_Left + Pl_Position_Outside,
+        Pl_Position_Left + Pl_Position_Top + Pl_Position_Inside,
+        Pl_Position_Top + Pl_Position_Inside,
+        Pl_Position_Right + Pl_Position_Top + Pl_Position_Inside,
+        Pl_Position_Right + Pl_Position_Inside,
+        Pl_Position_Right + Pl_Position_Bottom + Pl_Position_Inside,
+        Pl_Position_Bottom + Pl_Position_Inside,
+        Pl_Position_Left + Pl_Position_Bottom + Pl_Position_Inside,
+        Pl_Position_Left + Pl_Position_Inside);
+
+    -- Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
+    special_symbols : Legend_String_Array_Type(0 .. 4) := 
+       (TUB("✰"), TUB("✴"), TUB("✱"), TUB("✽"), TUB("✦")); -- TUB is renamed To_Unbounded_String.
+
+    -- plcolorbar options
+
+    -- Colorbar type options
+    Colorbar_Kinds : constant Integer := 4;
+    colorbar_option_kinds : Integer_Array_1D(0 .. Colorbar_Kinds - 1) := (
+        Pl_Colorbar_Shade,
+        Pl_Colorbar_Shade + Pl_Colorbar_Shade_Label,
+        Pl_Colorbar_Image,
+        Pl_Colorbar_Gradient);
+    colorbar_option_kind_labels : Legend_String_Array_Type(0 .. Colorbar_Kinds - 1) :=
+       (TUB("Shade colorbars"),
+        TUB("Shade colorbars with custom labels"),
+        TUB("Image colorbars"),
+        TUB("Gradient colorbars"));
+
+    -- Which side of the page are we positioned relative to?
+    Colorbar_Positions :constant Integer := 4;
+    colorbar_position_options : Integer_Array_1D(0 .. Colorbar_Positions - 1) :=
+       (Pl_Position_Left,
+        Pl_Position_Right,
+        Pl_Position_Top,
+        Pl_Position_Bottom);
+    
+    colorbar_position_option_labels : Legend_String_Array_Type(0 .. Colorbar_Positions - 1) :=
+       (TUB("Left"),
+        TUB("Right"),
+        TUB("Top"),
+        TUB("Bottom"));
+    
+    -- Colorbar label positioning options
+    Colorbar_Labels : constant Integer := 4;
+    colorbar_label_options : Integer_Array_1D(0 .. Colorbar_Labels - 1) :=
+       (Pl_Colorbar_Label_Left,
+        Pl_Colorbar_Label_Right,
+        Pl_Colorbar_Label_Top,
+        Pl_Colorbar_Label_Bottom);
+
+    colorbar_label_option_labels : Legend_String_Array_Type(0 .. Colorbar_Labels - 1) :=
+       (TUB("Label left"),
+        TUB("Label right"),
+        TUB("Label top"),
+        TUB("Label bottom"));
+    
+    -- Colorbar cap options
+    Colorbar_Caps : constant Integer := 4;
+    colorbar_cap_options : Integer_Array_1D(0 .. Colorbar_Caps - 1) :=
+       (Pl_Colorbar_Cap_None,
+        Pl_Colorbar_Cap_Low,
+        Pl_Colorbar_Cap_High,
+        Pl_Colorbar_Cap_Low + Pl_Colorbar_Cap_High);
+    colorbar_cap_option_labels : Legend_String_Array_Type(0 .. Colorbar_Caps - 1) :=
+       (TUB("No caps"),
+        TUB("Low cap"),
+        TUB("High cap"),
+        TUB("Low and high caps"));
+
+
+    procedure plcolorbar_example_page(kind_i : Integer; label_i : Integer; cap_i : Integer;
+        cont_color : Integer; cont_width : Long_Float; n_values : Integer; values : Real_Vector) 
+    is
+        -- Parameters for the colorbars on this page
+        position, opt : Integer;
+        x, y, x_length, y_length : Long_Float;
+        ticks : Real_Vector(0 .. 0) := (others => 0.0);
+        sub_ticks : Integer_Array_1D(0 .. 0) := (others => 0);
+        low_cap_color, high_cap_color : Long_Float;
+        vertical, ifn : Boolean;
+        n_axes : Integer := 1;
+        axis_opts : Legend_String_Array_Type(0 .. 0);
+        n_labels : Integer := 1;
+        label_opts : Integer_Array_1D(0 .. 0) := (others => 0);
+        label : Legend_String_Array_Type(0 .. 0);
+        title : Unbounded_String;
+        colorbar_width, colorbar_height : Long_Float;
+        n_values_array : Integer_Array_1D(0 .. 0);
+        values_array : Real_Matrix(0 .. 0, values'first .. values'last);
+        type Stupid is mod 2**7; -- To cover Legend_Colorbar_Position_Type in plplot_thin.ads.
+    begin
+        n_values_array(0) := n_values;
+        for i in values'range loop
+           values_array(0, i) := values(i);
+        end loop;
+
+        low_cap_color := 0.0;
+        high_cap_color := 1.0;
+
+        -- Start a new page.
+        pladv(0);
+
+        -- Draw one colorbar relative to each side of the page.
+        for position_i in 0 .. Colorbar_Positions - 1 loop
+            position := colorbar_position_options(position_i);
+            opt := colorbar_option_kinds(kind_i) + 
+                colorbar_label_options(label_i) + colorbar_cap_options(cap_i);
+
+            -- We have to convert these integers to modular type Stupid before and-ing the bits.
+            -- That's because manipulating bits of non-modular types is nonsense but other
+            -- languages seem to not care about stuff like this.
+            vertical := ((Stupid(position) and Stupid(Pl_Position_Left)) > 0) or 
+                        ((Stupid(position) and Stupid(Pl_Position_Right)) > 0);
+            
+            ifn := ((Stupid(position) and Stupid(Pl_Position_Left)) > 0) or 
+                ((Stupid(position) and Stupid(Pl_Position_Bottom)) > 0);
+
+            -- Set the offset position on the page.
+            if vertical then
+                x        := 0.0;
+                y        := 0.0;
+                x_length := 0.05;
+                y_length := 0.5;
+            else
+                x        := 0.0;
+                y        := 0.0;
+                x_length := 0.5;
+                y_length := 0.05;
+            end if;
+            
+            -- Set appropriate labelling options.
+            if ifn then
+                if cont_color = 0 or cont_width = 0.0 then
+                    axis_opts(0) := TUB("uwtivn"); -- TUB is renamed To_Unbounded_String.
+                else
+                    axis_opts(0) := TUB("uwxvn");
+                end if;
+            else
+                if cont_color = 0 or cont_width = 0.0 then
+                    axis_opts(0) := TUB("uwtivm");
+                else
+                    axis_opts(0) := TUB("uwxvm");
+                end if;
+            end if;
+            
+            label(0) := colorbar_position_option_labels(position_i) & ", " 
+                & colorbar_label_option_labels(label_i);
+                
+            -- Smaller text
+            plschr(0.0, 0.75);
+            -- Small ticks on the vertical axis
+            plsmaj(0.0, 0.5);
+            plsmin(0.0, 0.5);
+            
+            plvpor(0.20, 0.80, 0.20, 0.80);
+            plwind(0.0, 1.0, 0.0, 1.0);
+            -- Set interesting background colour.
+            plscol0a(15, 0, 0, 0, 0.20);
+            plcolorbar(colorbar_width, colorbar_height,
+                opt + Pl_Colorbar_Bounding_Box + Pl_Colorbar_Background, position,
+                x, y, x_length, y_length,
+                15, 1, 1,
+                low_cap_color, high_cap_color,
+                cont_color, cont_width,
+                label_opts, label,
+                axis_opts,
+                ticks, sub_ticks,
+                n_values_array, values_array);
+            
+            -- Reset text and tick sizes
+            plschr(0.0, 1.0);
+            plsmaj(0.0, 1.0);
+            plsmin(0.0, 1.0);
+        end loop;
+
+        -- Draw a page title
+        title := colorbar_option_kind_labels(kind_i) & " - " 
+            & colorbar_cap_option_labels(cap_i);
+        plvpor(0.0, 1.0, 0.0, 1.0);
+        plwind(0.0, 1.0, 0.0, 1.0);
+        plptex(0.5, 0.5, 0.0, 0.0, 0.5, To_String(title));
+    end plcolorbar_example_page;
+
+
+    procedure plcolorbar_example(palette : String; kind_i : Integer; cont_color : Integer;
+        cont_width : Long_Float; n_values : Integer; values : Real_Vector) is
+    begin
+        -- Load the color palette
+        plspal1(palette, True);
+
+        for label_i in 0 .. Colorbar_Labels - 1 loop
+            for cap_i in 0 .. Colorbar_Caps - 1 loop
+                plcolorbar_example_page(kind_i, label_i, cap_i, cont_color, cont_width,
+                    n_values, values );
+            end loop;
+        end loop;
+    end plcolorbar_example;
+
+
+    colorbar : Boolean := True; -- By default do not plot plcolorbar pages
+                                -- for now while we are working out the API.
     opt : Integer;
     nlegend : Integer;
     nturn : Integer;
@@ -272,7 +269,7 @@ procedure x33a is
     position, opt_base, nrow, ncolumn : Integer;
 
 begin -- main
-    plparseopts(PL_PARSE_FULL); 
+    plparseopts(Pl_Parse_Full); 
 
     -- Initialize plplot
     plinit;
@@ -305,8 +302,8 @@ begin -- main
 
         -- Only specify legend data that are required according to the
         -- value of opt_array for that entry.
-        opt_base          := PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX;
-        opt_array(0)      := PL_LEGEND_LINE + PL_LEGEND_SYMBOL;
+        opt_base          := Pl_Legend_Background + Pl_Legend_Bounding_Box;
+        opt_array(0)      := Pl_Legend_Line + Pl_Legend_Symbol;
         line_styles(0)    := 1;
         line_widths(0)    := 1.0;
         symbol_scales(0)  := 1.0;
@@ -369,9 +366,9 @@ begin -- main
 
         -- Only specify legend data that are required according to the
         -- value of opt_array for that entry.
-        opt_base := PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX;
+        opt_base := Pl_Legend_Background + Pl_Legend_Bounding_Box;
         for k in 0 .. nlegend - 1 loop
-            opt_array(k)      := PL_LEGEND_LINE + PL_LEGEND_SYMBOL;
+            opt_array(k)      := Pl_Legend_Line + Pl_Legend_Symbol;
             line_styles(k)    := 1;
             line_widths(k)    := 1.0;
             symbol_scales(k)  := 1.0;
@@ -392,7 +389,7 @@ begin -- main
         plsfont(PL_FCI_MONO, -1, -1);
         plscol0a(15, 32, 32, 32, 0.70);
 
-        position := PL_POSITION_TOP + PL_POSITION_OUTSIDE;
+        position := Pl_Position_Top + Pl_Position_Outside;
         opt      := opt_base;
         x        := 0.0;
         y        := 0.1;
@@ -407,7 +404,7 @@ begin -- main
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
 
-        position := PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE;
+        position := Pl_Position_Bottom + Pl_Position_Outside;
         opt      := opt_base;
         x        := 0.0;
         y        := 0.1;
@@ -422,7 +419,7 @@ begin -- main
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
 
-        position := PL_POSITION_LEFT + PL_POSITION_OUTSIDE;
+        position := Pl_Position_Left + Pl_Position_Outside;
         opt      := opt_base;
         x        := 0.1;
         y        := 0.0;
@@ -437,7 +434,7 @@ begin -- main
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
 
-        position := PL_POSITION_RIGHT + PL_POSITION_OUTSIDE;
+        position := Pl_Position_Right + Pl_Position_Outside;
         opt      := opt_base;
         x        := 0.1;
         y        := 0.0;
@@ -452,7 +449,7 @@ begin -- main
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
 
-        position := PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_INSIDE;
+        position := Pl_Position_Left + Pl_Position_Top + Pl_Position_Inside;
         opt      := opt_base;
         x        := 0.0;
         y        := 0.0;
@@ -467,8 +464,8 @@ begin -- main
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
 
-        position := PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_INSIDE;
-        opt      := opt_base + PL_LEGEND_ROW_MAJOR;
+        position := Pl_Position_Right + Pl_Position_Top + Pl_Position_Inside;
+        opt      := opt_base + Pl_Legend_Row_Major;
         x        := 0.0;
         y        := 0.0;
         nrow     := 6;
@@ -482,8 +479,8 @@ begin -- main
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
 
-        position := PL_POSITION_BOTTOM + PL_POSITION_INSIDE;
-        opt      := opt_base + PL_LEGEND_ROW_MAJOR;
+        position := Pl_Position_Bottom + Pl_Position_Inside;
+        opt      := opt_base + Pl_Legend_Row_Major;
         x        := 0.0;
         y        := 0.0;
         nrow     := 3;
@@ -502,15 +499,15 @@ begin -- main
     pladv(0);
     plvpor(0.0, 1.0, 0.0, 0.9);
     plwind(0.0, 1.0, 0.0, 1.0);
-    plsfont(PL_FCI_SANS, -1, -1);
+    plsfont(Pl_Fci_Sans, -1, -1);
     plmtex("t", 2.0, 0.5, 0.5, "Demonstrate legend alignment");
 
     x        := 0.1;
     y        := 0.1;
     nturn    := 4;
     nlegend  := 0;
-    position := PL_POSITION_TOP + PL_POSITION_LEFT + PL_POSITION_SUBPAGE;
-    opt_base := PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX;
+    position := Pl_Position_Top + Pl_Position_Left + Pl_Position_Subpage;
+    opt_base := Pl_Legend_Background + Pl_Legend_Bounding_Box;
     opt      := opt_base;
     for i in 0 .. 8 loop
 
@@ -540,7 +537,7 @@ begin -- main
             -- Only specify legend data that are required according to the
             -- value of opt_array for that entry.
             for k in 0 .. nlegend - 1 loop
-                opt_array(k)      := PL_LEGEND_LINE + PL_LEGEND_SYMBOL;
+                opt_array(k)      := Pl_Legend_Line + Pl_Legend_Symbol;
                 line_styles(k)    := 1;
                 line_widths(k)    := 1.0;
                 symbol_scales(k)  := 1.0;
@@ -558,7 +555,7 @@ begin -- main
             end loop; -- k
 
             -- Use monotype fonts so that all legends are the same size.
-            plsfont(PL_FCI_MONO, -1, -1);
+            plsfont(Pl_Fci_Mono, -1, -1);
             plscol0a(15, 32, 32, 32, 0.70);
 
             nrow    := Integer'min(3, nlegend);
@@ -574,7 +571,7 @@ begin -- main
                 symbol_colors, symbol_scales, symbol_numbers, symbols);
 
             if i = nturn then
-                position := PL_POSITION_TOP + PL_POSITION_RIGHT + PL_POSITION_SUBPAGE;
+                position := Pl_Position_Top + Pl_Position_Right + Pl_Position_Subpage;
                 opt      := opt_base;
                 x        := 1.0 - x;
                 y        := y + legend_height;
@@ -612,20 +609,20 @@ begin -- main
         pladv(0);
         plvpor(0.0, 1.0, 0.0, 0.90);
         plwind(0.0, 1.0, 0.0, 1.0);
-        plsfont(PL_FCI_SANS, -1, -1);
+        plsfont(Pl_Fci_Sans, -1, -1);
         plmtex("t", 2.0, 0.5, 0.5, "Demonstrate Various Kinds of Legends");
 
         -- Only specify legend data that are required according to the
         -- value of opt_array for that entry.
-        position := PL_POSITION_LEFT + PL_POSITION_TOP;
-        opt_base := PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX + PL_LEGEND_TEXT_LEFT;
+        position := Pl_Position_Left + Pl_Position_Top;
+        opt_base := Pl_Legend_Background + Pl_Legend_Bounding_Box + Pl_Legend_Text_Left;
 
         -- Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
-        opt_array(0) := PL_LEGEND_NONE;
+        opt_array(0) := Pl_Legend_None;
         text(0) := TUB("None");
         text_colors(0) := 1;
 
-        opt_array(1) := PL_LEGEND_COLOR_BOX;
+        opt_array(1) := Pl_Legend_Color_Box;
         text(1) := TUB("Box");
         text_colors(1)     := 2;
         box_colors(1)      := 2;
@@ -633,14 +630,14 @@ begin -- main
         box_scales(1)      := 0.8;
         box_line_widths(1) := 1.0;
 
-        opt_array(2) := PL_LEGEND_LINE;
+        opt_array(2) := Pl_Legend_Line;
         text(2) := TUB("Line");
         text_colors(2) := 3;
         line_colors(2) := 3;
         line_styles(2) := 1;
         line_widths(2) := 1.0;
 
-        opt_array(3) := PL_LEGEND_SYMBOL;
+        opt_array(3) := Pl_Legend_Symbol;
         text(3) := TUB("Symbol");
         text_colors(3)    := 4;
         symbol_colors(3)  := 4;
@@ -648,7 +645,7 @@ begin -- main
         symbol_numbers(3) := 4;
         symbols(3)        := special_symbols(2);
 
-        opt_array(4) := PL_LEGEND_SYMBOL + PL_LEGEND_LINE;
+        opt_array(4) := Pl_Legend_Symbol + Pl_Legend_Line;
         text(4) := TUB("L & S");
         text_colors(4)    := 5;
         line_colors(4)    := 5;
@@ -673,7 +670,7 @@ begin -- main
 
         -- Set up symbol legend entries with various symbols.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_SYMBOL;
+            opt_array(i) := Pl_Legend_Symbol;
             text(i) := TUB("Symbol ") & special_symbols(i);
             text_colors(i)    := i + 1;
             symbol_colors(i)  := i + 1;
@@ -698,7 +695,7 @@ begin -- main
 
         -- Set up symbol legend entries with various numbers of symbols.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_SYMBOL;
+            opt_array(i) := Pl_Legend_Symbol;
             text(i) := TUB("Symbol Number" & Integer'image(i + 2));
             text_colors(i)    := i + 1;
             symbol_colors(i)  := i + 1;
@@ -723,7 +720,7 @@ begin -- main
 
         -- Set up box legend entries with various colours.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_COLOR_BOX;
+            opt_array(i) := Pl_Legend_Color_Box;
             text(i) := TUB("Box Color" & Integer'image(i + 1));
             text_colors(i)     := i + 1;
             box_colors(i)      := i + 1;
@@ -750,7 +747,7 @@ begin -- main
 
         -- Set up box legend entries with various patterns.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_COLOR_BOX;
+            opt_array(i) := Pl_Legend_Color_Box;
             text(i) := TUB("Box Pattern" & Integer'image(i));
             text_colors(i)     := 2;
             box_colors(i)      := 2;
@@ -774,7 +771,7 @@ begin -- main
 
         -- Set up box legend entries with various box pattern line widths.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_COLOR_BOX;
+            opt_array(i) := Pl_Legend_Color_Box;
             text(i) := TUB("Box Line Width" & Integer'image(i + 1));
             text_colors(i)     := 2;
             box_colors(i)      := 2;
@@ -798,7 +795,7 @@ begin -- main
 
         -- Set up line legend entries with various colours.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_LINE;
+            opt_array(i) := Pl_Legend_Line;
             text(i) := TUB("Line Color" & Integer'image(i + 1));
             text_colors(i) := i + 1;
             line_colors(i) := i + 1;
@@ -808,8 +805,8 @@ begin -- main
 
         opt := opt_base;
         -- Use new origin
-        x          := xstart;
-        y         := y + max_height;
+        x := xstart;
+        y := y + max_height;
         max_height := 0.0;
         plscol0a(15, 32, 32, 32, 0.70);
 
@@ -824,7 +821,7 @@ begin -- main
 
         -- Set up line legend entries with various styles.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_LINE;
+            opt_array(i) := Pl_Legend_Line;
             text(i) := TUB("Line Style" & Integer'image(i + 1));
             text_colors(i) := 2;
             line_colors(i) := 2;
@@ -847,7 +844,7 @@ begin -- main
 
         -- Set up line legend entries with various widths.
         for i in 0 .. nlegend - 1 loop
-            opt_array(i) := PL_LEGEND_LINE;
+            opt_array(i) := Pl_Legend_Line;
             text(i) := TUB("Line Width" & Integer'image(i + 1));
             text_colors(i) := 2;
             line_colors(i) := 2;
@@ -869,27 +866,34 @@ begin -- main
         max_height := Long_Float'max(max_height, legend_height);
     end; -- declare
 
---    if colorbar then
-        -- -- Color bar examples
-        -- values_small : Real_Vector(0 .. 1)  := (0.0, 1.0);
-        -- values_uneven : Real_Vector(0 .. 8) := (0.0, 2.0, 2.6, 3.4, 6.0, 7.0, 8.0, 9.0, 10.0);
-        -- values_even : Real_Vector(0 .. 8)   := (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
-        -- plcolorbar_example_1(PL_COLORBAR_IMAGE, 0, 0, 0.0, 0, 2, values_small, "Image Color Bars");
-        -- plcolorbar_example_2(PL_COLORBAR_IMAGE, 0, 0, 0.0, 0, 2, values_small, "Image Color Bars");
-        -- plcolorbar_example_1(PL_COLORBAR_SHADE + PL_COLORBAR_SHADE_LABEL, 0, 0, 0.0, 0, 9, values_uneven,
-        --     "Shade Color Bars - Uneven Steps");
-        -- plcolorbar_example_2(PL_COLORBAR_SHADE, 0, 0, 3.0, 3, 9, values_even,
-        --     "Shade Color Bars - Even Steps");
-        -- plcolorbar_example_1(PL_COLORBAR_SHADE + PL_COLORBAR_SHADE_LABEL, 2, 1, 0.0, 0, 9, values_uneven,
-        --     "Shade Color Bars - Uneven Steps, Contours");
-        -- plcolorbar_example_2(PL_COLORBAR_SHADE, 2, 3, 3.0, 3, 9, values_even,
-        --     "Shade Color Bars - Even Steps, Contours");
-        -- plcolorbar_example_1(PL_COLORBAR_GRADIENT, 0, 0, 0.5, 5, 2, values_small,
-        --     "Gradient Color Bars");
-        -- plcolorbar_example_2(PL_COLORBAR_GRADIENT, 0, 0, 0.5, 5, 2, values_small,
-        --     "Gradient Color Bars");
---    end if;
+    if colorbar then
+        -- Color bar examples
+        declare
+            values_small : Real_Vector(0 .. 1)  := (-1.0e-200, 1.0e-200);
+            values_uneven : Real_Vector(0 .. 8) := (-1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 
+                6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200);
+            values_even : Real_Vector(0 .. 8)   := (-2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 
+                2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200);
+        begin
+            -- Use unsaturated green background colour to contrast with black caps.
+            plscolbg(70, 185, 70);
+            -- Cut out the greatest and smallest bits of the color spectrum to
+            -- leave colors for the end caps.
+            plscmap1_range(0.01, 0.99);
 
+            -- We can only test image and gradient colorbars with two element arrays
+            for i in 2 .. COLORBAR_KINDS - 1 loop
+                plcolorbar_example("cmap1_blue_yellow.pal", i, 0, 0.0, 2, values_small);
+            end loop;
+            -- Test shade colorbars with larger arrays
+            for i in 0 .. 1 loop
+                plcolorbar_example("cmap1_blue_yellow.pal", i, 4, 2.0, 9, values_even);
+            end loop;
+            for i in 0 .. 1 loop
+                plcolorbar_example("cmap1_blue_yellow.pal", i, 0, 0.0, 9, values_uneven);
+            end loop;
+        end;
+    end if;
     plend;
 end x33a;
 
