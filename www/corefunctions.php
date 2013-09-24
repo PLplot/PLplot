@@ -141,14 +141,14 @@ END;
 				<li><a href="http://www.miscdebris.net/plplot_wiki">Wiki</a></li>
 				<li><a href="http://sourceforge.net/projects/plplot">SourceForge Project Page</a></li>
 				<li><a href="http://sourceforge.net/projects/plplot/support">Project Support Page</a></li>
-				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
-				<li><a href="http://sourceforge.net/tracker/?group_id=2915&amp;tid=102915">Bug Tracker</a></li>
+				<li><a href="http://sourceforge.net/p/plplot/mailman/">Mailing Lists</a></li>
+				<li><a href="http://sourceforge.net/p/plplot/bugs/">Bug Tracker</a></li>
 			</ul>
 			<h3>Source Code</h3>
 			<ul class="arrowlist">
-				<li><a href="http://sourceforge.net/project/showfiles.php?group_id=2915&amp;package_id=2865">Download</a></li>
-				<li><a href="http://sourceforge.net/svn/?group_id=2915">SVN Repository</a></li>
-				<li><a href="http://plplot.svn.sourceforge.net/viewvc/plplot/">Browse SVN</a></li>
+				<li><a href="http://sourceforge.net/projects/plplot/files/plplot/">Download</a></li>
+				<li><a href="http://svn.code.sf.net/p/plplot/code/trunk/">SVN Repository</a></li>
+				<li><a href="http://sourceforge.net/p/plplot/code/HEAD/tree/">Browse SVN</a></li>
 			</ul>
 
 		</div>

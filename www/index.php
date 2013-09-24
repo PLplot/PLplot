@@ -45,7 +45,7 @@
 				  <li>Lua</li>
 				  <li>OCaml</li>
 				  <li>Octave</li>
-				  <li><a href="http://search.cpan.org/~dhunt/PDL-Graphics-PLplot-0.47/plplot.pd">Perl</a></li>
+				  <li><a href="http://search.cpan.org/~dhunt/PDL-Graphics-PLplot">Perl</a></li>
 				  <li>Python</li>
 				  <li>Tcl/Tk</li>
 				</ul>
