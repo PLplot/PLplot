@@ -375,17 +375,17 @@ void pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
     immutable( char ) * *symbolsz = array( map!toStringz( symbols ) ).ptr;
     assert( nlegend == text_colors.length, "pllegend(): Arrays must be of same length!" );
     assert( nlegend == text.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == box_colors.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == box_patterns.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == box_scales.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == box_line_widths.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == line_colors.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == line_styles.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == line_widths.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == symbol_colors.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == symbol_scales.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == symbol_numbers.length, "pllegend(): Arrays must be of same length!" );
-    assert( nlegend == symbols.length, "pllegend(): Arrays must be of same length!" );
+    assert( box_colors == null || nlegend == box_colors.length, "pllegend(): Arrays must be of same length!" );
+    assert( box_patterns == null || nlegend == box_patterns.length, "pllegend(): Arrays must be of same length!" );
+    assert( box_scales == null || nlegend == box_scales.length, "pllegend(): Arrays must be of same length!" );
+    assert( box_line_widths == null || nlegend == box_line_widths.length, "pllegend(): Arrays must be of same length!" );
+    assert( line_colors == null || nlegend == line_colors.length, "pllegend(): Arrays must be of same length!" );
+    assert( line_styles == null || nlegend == line_styles.length, "pllegend(): Arrays must be of same length!" );
+    assert( line_widths == null || nlegend == line_widths.length, "pllegend(): Arrays must be of same length!" );
+    assert( symbol_colors == null || nlegend == symbol_colors.length, "pllegend(): Arrays must be of same length!" );
+    assert( symbol_scales == null || nlegend == symbol_scales.length, "pllegend(): Arrays must be of same length!" );
+    assert( symbol_numbers == null || nlegend == symbol_numbers.length, "pllegend(): Arrays must be of same length!" );
+    assert( symbols == null || nlegend == symbols.length, "pllegend(): Arrays must be of same length!" );
     c_pllegend( p_legend_width, p_legend_height,
         opt, position, x, y, plot_width,
         bg_color, bb_color, bb_style,
