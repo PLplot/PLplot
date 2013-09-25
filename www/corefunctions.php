@@ -65,7 +65,7 @@ END;
 		echo '	<div id="menubar">';
 		echo '		<ul>';
 		echo '		  <li><a href="index.php" ' . (($item=='index') ? ('id="selected"') : ('')) .'>Home</a></li>';
-		echo '		  <li><a href="http://sourceforge.net/news/?group_id=2915" ' . (($item=='news') ? ('id="selected"') : ('')) .'>News</a></li>';
+		echo '		  <li><a href="http://sourceforge.net/p/plplot/news" ' . (($item=='news') ? ('id="selected"') : ('')) .'>News</a></li>';
 		echo '		  <li><a href="download.php" ' . (($item=='download') ? ('id="selected"') : ('')) .'>Download</a></li>';
 		echo '		  <li><a href="examples.php" ' . (($item=='examples') ? ('id="selected"') : ('')) .'>Examples</a></li>';
 		echo '		  <li><a href="documentation.php" ' . (($item=='documentation') ? ('id="selected"') : ('')) .'>Documentation</a></li>';
@@ -98,7 +98,10 @@ END;
 		// Open the PLplot News RSS feed and parse it
 		$feed = new SimplePie();
 		$feed->enable_cache(false);  // disable cache
-		$url = sprintf("http://sourceforge.net/export/rss2_projnews.php?group_id=2915&rss_limit=%d", $newscount);
+//		This old url just redirects to the correct one below (without
+//		rss_limit).
+//		$url = sprintf("http://sourceforge.net/export/rss2_projnews.php?group_id=2915&rss_limit=%d", $newscount);
+		$url = sprintf("http://sourceforge.net/p/plplot/news/feed");
 		$feed->set_feed_url($url);
 		$feed->init();
 		$feed->handle_content_type();
