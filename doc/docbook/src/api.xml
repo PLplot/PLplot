@@ -2308,7 +2308,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plcolorbar(p_legend_width, p_legend_height, 
+      Redacted form: <function>plcolorbar(p_colorbar_width, p_colorbar_height, 
       opt, position, x, y, x_length, y_length, bg_color,
       bb_color, bb_style, low_cap_color, high_cap_color, cont_color, cont_width, label_opts, labels, axis_opts, ticks, sub_ticks, values)</function>
     </para>
