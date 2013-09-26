@@ -62,9 +62,8 @@ if [ "$build" = "true" ] ; then
     rm -rf htdocsgen/build_dir htdocsgen/install
     mkdir -p htdocsgen/build_dir htdocsgen/install
     cd htdocsgen/build_dir
-    # Specifically enable f77 and Ada so that examples will be generated.
     cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../install \
-	-DDEFAULT_NO_BINDINGS=ON -DENABLE_f77=ON -DENABLE_ada=ON\
+	-DDEFAULT_NO_BINDINGS=ON \
     -DDEFAULT_NO_DEVICES=ON -DPLD_pngcairo=ON \
 	../../
     make -j3
@@ -81,7 +80,7 @@ popd
 # hack, x20c needs lena in the current directory
 $CP examples/c/lena.pgm .
 
-for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
+for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
     23 24 25 26 27 28 29 30 31 32 33; do
 
     if [ $exe = "08" -o $exe = "16" -o $exe = "20" -o $exe = "30" ] ; then
@@ -129,20 +128,17 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
     echo populating www directory demo${exe}
     rm -rf $EXDIR/demo${exe}
     mkdir -p $EXDIR/demo${exe}
-    mv *${exe}.??.png $EXDIR/demo${exe}
-    # Note configured fortran 77 examples must be grabbed from the installed
-    # examples.
+    # page number is two digits or more.
+    mv *${exe}.*[0-9][0-9].png $EXDIR/demo${exe}
     for f in \
 	examples/ada/x${exe}a.adb \
 	examples/ada/xthick${exe}a.adb \
         examples/c/x${exe}c.c \
 	examples/c++/x${exe}.cc \
-	$cexamples_dir/../f77/x${exe}f.f \
 	examples/f95/x${exe}f.f90 \
         examples/java/x${exe}.java \
         examples/ocaml/x${exe}.ml \
         examples/octave/x${exe}c.m \
-        examples/perl/x${exe}.pl \
         examples/python/xw${exe}.py \
         examples/tcl/x${exe}.tcl \
 	; do
@@ -161,12 +157,10 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
 	    *.adb \
             *.c \
 	    *.cc \
-	    *.f \
 	    *.f90 \
 	    *.java \
 	    *.ml \
 	    *.m \
-	    *.pl \
 	    *.py \
 	    *.tcl \
 	    ; do
