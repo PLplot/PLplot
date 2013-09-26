@@ -40,7 +40,7 @@
 	\n", array_fill( 0, 1, 1)),
 	  array(11,  8, 1, "
 	<p>Mesh plot demo.</p>
-	\n, array_fill( 0, 8, 1)"),
+	\n", array_fill( 0, 8, 1)),
 	  array(12,  1, 1, "
 	<p>Bar chart demo.</p>
 	\n", array_fill( 0, 1, 1)),
@@ -119,8 +119,20 @@ filled).
 	<p>Demo of how to draw box-whisker / candlestick plots using PLplot. These are commonly used for financial data.</p>
 	\n", array_fill( 0, 1, 1)),
 	  array(33,  100, 1, "
-	<p>Demo of legends and colorbars.</p>
-	\n", array_fill( 0, 100, 1)));
+	<p>Subset of the results from the demo of legends and colorbars.</p>
+	\n", array_fill( 0, 100, 0)));
+	# Overwrite the example 33 pages (currently none) that will be displayed
+	$demoArray[33][4][0] = 1;
+	$demoArray[33][4][1] = 1;
+	$demoArray[33][4][2] = 1;
+	$demoArray[33][4][3] = 1;
+	$demoArray[33][4][4] = 1;
+	$demoArray[33][4][20] = 1;
+	$demoArray[33][4][36] = 1;
+	$demoArray[33][4][52] = 1;
+	$demoArray[33][4][68] = 1;
+	for($ndx = 84; $ndx <= 99; ++$ndx)
+          $demoArray[33][4][$ndx] = 1;
 ?>
 
 <!-- include the html header -->
@@ -189,9 +201,11 @@ END;
 	  echo "<p>Select to view full-size image</p>\n";
 		echo "<p>\n";
 	  for($ndx = 1; $ndx <= $nplots; ++$ndx) {
+	  if($demoArray[$demoID-0][4][$ndx-1]==1){
 	    $ndx_str = sprintf ("%02d", $ndx);
 			echo "<a href=\"$demo_dir/x$demo_str.$ndx_str.png\" rel=\"lightbox[plplot]\" title=\"x$demo_str.$ndx_str\">
 					<img src=\"$demo_dir/prev-x$demo_str.$ndx_str.png\" border=\"1\" alt=\"x$demo_str.$ndx_str\"/></a>\n";
+	  }
 	  }
 		echo "</p>\n";
 
