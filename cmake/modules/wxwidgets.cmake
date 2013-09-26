@@ -70,12 +70,12 @@ if(PLD_wxwidgets OR PLD_wxpng)
     "-D${wxWidgets_DEFINITIONS}"
     )
   set(wxWidgets_DEFINITIONS_DEBUG_wD "") 
-  if(wxWidgets_DEFINITIONS_DEBUG)
+  if(wxWidgets_DEFINITIONS_DEBUG AND CMAKE_BUILD_TYPE MATCHES "Debug")
     string(REGEX REPLACE ";" " -D" 
       wxWidgets_DEFINITIONS_DEBUG_wD
       "-D${wxWidgets_DEFINITIONS_DEBUG}"
       )
-  endif(wxWidgets_DEFINITIONS_DEBUG)
+  endif(wxWidgets_DEFINITIONS_DEBUG AND CMAKE_BUILD_TYPE MATCHES "Debug")
   string(REGEX REPLACE ";" " " 
     wxwidgets_COMPILE_FLAGS
     ${wxwidgets_COMPILE_FLAGS}
