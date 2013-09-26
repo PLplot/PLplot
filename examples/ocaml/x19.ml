@@ -105,8 +105,8 @@ let () =
   (* Cartesian plots *)
   (* Most of world *)
 
-  let minx = 190.0 in
-  let maxx = 190.0 +. 360.0 in
+  let minx = -170.0 in
+  let maxx = minx +. 360.0 in
 
   (* Setup a custom latitude and longitude-based scaling function. *)
   plslabelfunc geolocation_labeler;

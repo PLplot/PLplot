@@ -48,8 +48,8 @@ plinit ();
 # Cartesian plots
 # Most of world
 
-my $minx = 190;
-my $maxx = 190 + 360;
+my $minx = -170;
+my $maxx = $minx + 360;
 
 # Setup a custom latitude and longitude-based scaling function.
 plslabelfunc(\&geolocation_labeler);

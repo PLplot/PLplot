@@ -170,8 +170,8 @@ x19::x19( int argc, const char ** argv )
     // Cartesian plots
     // Most of world
 
-    minx = 190;
-    maxx = 190 + 360;
+    minx = -170;
+    maxx = minx + 360;
 
     // Setup a custom latitude and longitude-based scaling function.
     pls->slabelfunc( geolocation_labeler, NULL );

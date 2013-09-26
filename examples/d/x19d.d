@@ -114,8 +114,8 @@ int main( char[][] args )
 
     // Cartesian plots
     // Most of world
-    PLFLT minx = 190;
-    PLFLT maxx = 190 + 360;
+    PLFLT minx = -170;
+    PLFLT maxx = minx + 360;
 
     // Setup a custom latitude and longitude-based scaling function.
     plslabelfunc( &geolocation_labeler, null );

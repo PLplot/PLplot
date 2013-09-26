@@ -116,6 +116,8 @@
       if (axis .eq. 2 .and. value .eq. 0.0_plflt) then
 !     A special case for the equator
          label = direction_label    
+      else if (abs(label_val) .lt. 10.0_plflt) then
+         write(label,'(I1.1,A2)') iabs(int(label_val)),direction_label
       else if (abs(label_val) .lt. 100.0_plflt) then
          write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
       else
@@ -151,8 +153,8 @@
 ! Cartesian plots
 ! Most of world
 
-      minx = 190._plflt
-      maxx = 190._plflt+360._plflt
+      minx = -170._plflt
+      maxx = minx+360._plflt
 
 ! Setup a custom latitude and longitude-based scaling function.
       call plslabelfunc(geolocation_labeler)

@@ -207,8 +207,8 @@ begin
 
     -- Cartesian plots 
     -- Most of world 
-    minx := 190.0;
-    maxx := 190.0 + 360.0;
+    minx := -170.0;
+    maxx := minx + 360.0;
 
     -- Setup a custom latitude and longitude-based scaling function.
     Set_Custom_Label(geolocation_labeler'Unrestricted_Access, System.Null_Address);

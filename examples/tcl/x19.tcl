@@ -113,8 +113,8 @@ proc x19 {{w loopback}} {
 #   Cartesian plots
 #   Most of the world
 
-    set minx 190
-    set maxx 550
+    set minx -170
+    set maxx 190
 
     # Setup a custom latitude and longitude-based scaling function.
     $w cmd plslabelfunc "geolocation_labeler"
