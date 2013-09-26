@@ -2,7 +2,7 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Build-Depends: cmake (>= 2.6.3), debhelper (>= 7), 
  tcl8.5-dev, tk8.5-dev, itcl3-dev, libx11-dev, libxext-dev,
  libxi-dev, gfortran, itk3-dev, liboctave-dev,

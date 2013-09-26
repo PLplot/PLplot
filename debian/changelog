@@ -7,8 +7,9 @@ plplot (5.9.9-7) UNRELEASED; urgency=low
     fix D language support.
   * debian/patches/java-pltr2-fix.diff: Add patch from upstream to fix 
     crash in java examples using pltr2 (closes: #713309).
+  * debian/control.in: Bump standards version to 3.9.4.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 27 Jun 2013 08:44:20 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 28 Jun 2013 21:15:24 +0100
 
 plplot (5.9.9-6) unstable; urgency=low
 
