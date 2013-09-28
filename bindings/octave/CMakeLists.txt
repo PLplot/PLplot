@@ -120,26 +120,27 @@ if(ENABLE_octave)
     @ONLY
     )
 
-  # Add (Unix) custom target to check that plplot_oct_def is up to date.
-  # This check only relevant for legacy matwrapped octave bindings since
-  # swig-based bindings don't use plplot_oct_def.
-  add_custom_target(
-    check_plplot_octave_def
-    COMMAND ${CMAKE_COMMAND} -E remove -f 
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
-    COMMAND
-    sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed < 
-    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
-    COMMAND
-    ${CMAKE_COMMAND} -E echo Check that plplot_octave_def is up to date.
-    COMMAND
-    cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
-    )
-
   # Build octave interface.
   if(ENABLE_matwrapped_octave)
+
+    # Add (Unix) custom target to check that plplot_oct_def (used only
+    # when ENABLE_matwrapped_octave is ON) is consistent
+    # with swig-support/plplotcapi.i.
+    add_custom_target(
+      check_plplot_octave_def
+      COMMAND ${CMAKE_COMMAND} -E remove -f 
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
+      COMMAND
+      sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed < 
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
+      COMMAND
+      ${CMAKE_COMMAND} -E echo "Check that plplot_octave_def is consistent with bindings/swig-support/plplotcapi.i"
+      COMMAND
+      cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_compare
+      )
+
     set(octave_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_BINARY_DIR}
