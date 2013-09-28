@@ -74,23 +74,40 @@
       integer, parameter :: PL_LEGEND_BACKGROUND = 32 
       integer, parameter :: PL_LEGEND_BOUNDING_BOX = 64 
       integer, parameter :: PL_LEGEND_ROW_MAJOR = 128 
-      integer, parameter :: PL_COLORBAR_LABEL_LEFT = 1 
-      integer, parameter :: PL_COLORBAR_LABEL_RIGHT = 2 
-      integer, parameter :: PL_COLORBAR_LABEL_TOP = 4 
-      integer, parameter :: PL_COLORBAR_LABEL_BOTTOM = 8 
-      integer, parameter :: PL_COLORBAR_IMAGE = 16 
-      integer, parameter :: PL_COLORBAR_SHADE = 32 
-      integer, parameter :: PL_COLORBAR_GRADIENT = 64 
-      integer, parameter :: PL_COLORBAR_CAP_NONE = 128 
-      integer, parameter :: PL_COLORBAR_CAP_LOW = 256
-      integer, parameter :: PL_COLORBAR_CAP_HIGH = 512 
-      integer, parameter :: PL_COLORBAR_SHADE_LABEL = 1024
-      integer, parameter :: PL_COLORBAR_ORIENT_RIGHT = 2048
-      integer, parameter :: PL_COLORBAR_ORIENT_TOP = 4096
-      integer, parameter :: PL_COLORBAR_ORIENT_LEFT = 8192
-      integer, parameter :: PL_COLORBAR_ORIENT_BOTTOM = 16384
-      integer, parameter :: PL_COLORBAR_BACKGROUND = 32768
-      integer, parameter :: PL_COLORBAR_BOUNDING_BOX = 65536
+      integer :: PL_COLORBAR_LABEL_LEFT 
+      data PL_COLORBAR_LABEL_LEFT / z'1' /
+      integer :: PL_COLORBAR_LABEL_RIGHT 
+      data PL_COLORBAR_LABEL_RIGHT / z'2' /
+      integer :: PL_COLORBAR_LABEL_TOP 
+      data PL_COLORBAR_LABEL_TOP / z'4' /
+      integer :: PL_COLORBAR_LABEL_BOTTOM 
+      data PL_COLORBAR_LABEL_BOTTOM / z'8' /
+      integer :: PL_COLORBAR_IMAGE 
+      data PL_COLORBAR_IMAGE / z'10' /
+      integer :: PL_COLORBAR_SHADE 
+      data PL_COLORBAR_SHADE / z'20' /
+      integer :: PL_COLORBAR_GRADIENT 
+      data PL_COLORBAR_GRADIENT / z'40' /
+      integer :: PL_COLORBAR_CAP_NONE 
+      data PL_COLORBAR_CAP_NONE / z'80' /
+      integer :: PL_COLORBAR_CAP_LOW 
+      data PL_COLORBAR_CAP_LOW / z'100' /
+      integer :: PL_COLORBAR_CAP_HIGH 
+      data PL_COLORBAR_CAP_HIGH / z'200' /
+      integer :: PL_COLORBAR_SHADE_LABEL 
+      data PL_COLORBAR_SHADE_LABEL / z'400' /
+      integer :: PL_COLORBAR_ORIENT_RIGHT 
+      data PL_COLORBAR_ORIENT_RIGHT / z'800' /
+      integer :: PL_COLORBAR_ORIENT_TOP 
+      data PL_COLORBAR_ORIENT_TOP / z'1000' /
+      integer :: PL_COLORBAR_ORIENT_LEFT 
+      data PL_COLORBAR_ORIENT_LEFT / z'2000' /
+      integer :: PL_COLORBAR_ORIENT_BOTTOM 
+      data PL_COLORBAR_ORIENT_BOTTOM / z'4000' /
+      integer :: PL_COLORBAR_BACKGROUND 
+      data PL_COLORBAR_BACKGROUND / z'8000' /
+      integer :: PL_COLORBAR_BOUNDING_BOX 
+      data PL_COLORBAR_BOUNDING_BOX / z'10000' /
       integer, parameter :: PLSWIN_DEVICE = 1 ! device coordinates
       integer, parameter :: PLSWIN_WORLD = 2 ! world coordinates
       integer, parameter :: PL_X_AXIS = 1 ! The x-axis
