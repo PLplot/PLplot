@@ -192,12 +192,17 @@ ARGUMENTS:
         unconventional location (above box for X, right of box for Y). 
         n: Writes numeric labels at major tick intervals in the
         conventional location (below box for X, left of box for Y). 
-        o: Use custom labeling function to generate axis label text. 
-        The custom labeling function can be defined with the
-        plslabelfuncplslabelfunc; command. 
+        o: Use custom labelling function to generate axis label text. 
+        The custom labelling function can be defined with the
+        plslabelfunc command. 
         s: Enables subticks between major ticks, only valid if t is
         also specified. 
         t: Draws major ticks. 
+        u: Exactly like \"b\" except don't draw edge line. 
+        w: Exactly like \"c\" except don't draw edge line. 
+        x: Exactly like \"t\" (including the side effect of the
+        numerical labels for the major ticks) except exclude drawing
+        the major and minor tick marks. 
 
 
     xtick (PLFLT, input) :    World coordinate interval between major
@@ -352,14 +357,17 @@ ARGUMENTS:
         unconventional location (above box for X, right of box for Y). 
         n: Writes numeric labels at major tick intervals in the
         conventional location (below box for X, left of box for Y). 
-        o: Use custom labeling function to generate axis label text. 
-        The custom labeling function can be defined with the
-        plslabelfuncplslabelfunc; command. 
+        o: Use custom labelling function to generate axis label text. 
+        The custom labelling function can be defined with the
+        plslabelfunc command. 
         s: Enables subticks between major ticks, only valid if t is
         also specified. 
         t: Draws major ticks. 
         u: Exactly like \"b\" except don't draw edge line. 
         w: Exactly like \"c\" except don't draw edge line. 
+        x: Exactly like \"t\" (including the side effect of the
+        numerical labels for the major ticks) except exclude drawing
+        the major and minor tick marks. 
 
 
     xtick (PLFLT, input) :    World coordinate interval between major
@@ -425,9 +433,9 @@ ARGUMENTS:
         of data points before passing them to any of the drawing
         routines. 
         n: Writes numeric labels at major tick intervals. 
-        o: Use custom labeling function to generate axis label text. 
-        The custom labeling function can be defined with the
-        plslabelfuncplslabelfunc; command. 
+        o: Use custom labelling function to generate axis label text. 
+        The custom labelling function can be defined with the
+        plslabelfunc command. 
         s: Enables subticks between major ticks, only valid if t is
         also specified. 
         t: Draws major ticks. 
@@ -481,9 +489,9 @@ ARGUMENTS:
         right-hand vertical axis. 
         n: Writes numeric labels at major tick intervals on the
         left-hand vertical axis. 
-        o: Use custom labeling function to generate axis label text. 
-        The custom labeling function can be defined with the
-        plslabelfuncplslabelfunc; command. 
+        o: Use custom labelling function to generate axis label text. 
+        The custom labelling function can be defined with the
+        plslabelfunc command. 
         s: Enables subticks between major ticks, only valid if t is
         also specified. 
         t: Draws major ticks. 
@@ -554,10 +562,10 @@ ARGUMENTS:
     with potentially overlapping viewports and possibly more than one
     window (set of world coordinates) per viewport, window and the
     corresponding output world coordinates corresponds to the last
-    window created that fulfils the criterion that the relative device
-    coordinates are inside it.  Finally, in all cases where the input
-    relative device coordinates are not inside any viewport/window,
-    then window is set to -1. 
+    window created that fulfills the criterion that the relative
+    device coordinates are inside it.  Finally, in all cases where the
+    input relative device coordinates are not inside any
+    viewport/window, then window is set to -1. 
 ")
 plcalc_world;
 
@@ -653,6 +661,186 @@ ARGUMENTS:
     with plscmap1 or plscmap1l. 
 ")
 plcol1;
+
+%feature( "docstring", "Plot color bar for image, shade or gradient plots 
+
+DESCRIPTION:
+
+    Routine for creating a continuous color bar for image, shade, or
+    gradient plots. (See pllegend for similar functionality for creating
+    legends with discrete elements). The arguments of plcolorbar provide
+    control over the location and size of the color bar as well as the
+    location and characteristics of the elements (most of which are
+    optional) within that color bar.  The resulting color bar is clipped
+    at the boundaries of the current subpage. (N.B. the adopted coordinate
+    system used for some of the parameters is defined in the documentation
+    of the position parameter.) 
+
+    Redacted form: plcolorbar(p_colorbar_width, p_colorbar_height,  opt,
+    position, x, y, x_length, y_length, bg_color, bb_color, bb_style,
+    low_cap_color, high_cap_color, cont_color, cont_width, label_opts,
+    labels, axis_opts, ticks, sub_ticks, values)
+
+    This function is used in examples 16 and 33. 
+
+
+
+SYNOPSIS:
+
+plcolorbar(p_colorbar_width, p_colorbar_height, opt, position, x, y, x_length, y_length, bg_color, bb_color, bb_style, low_cap_color, high_cap_color, cont_color, cont_width, n_labels, label_opts, labels, naxes, axis_opts, ticks, sub_ticks, n_values, values)
+
+ARGUMENTS:
+
+    p_colorbar_width (PLFLT *, output) :    Pointer to a location which
+    contains (after the call) the labelled and decorated color bar
+    width in adopted coordinates. 
+
+    p_colorbar_height (PLFLT *, output) :    Pointer to a location which
+    contains (after the call) the labelled and decorated color bar
+    height in adopted coordinates. 
+
+    opt (PLINT, input) :    opt contains bits controlling the overall
+    color bar.  The orientation (direction of the maximum value) of
+    the color bar is specified with PL_ORIENT_RIGHT, PL_ORIENT_TOP,
+    PL_ORIENT_LEFT, or PL_ORIENT_BOTTOM.  If none of those bits are
+    specified, the default orientation is toward the top, i.e., a
+    vertical color bar. If the PL_COLORBAR_BACKGROUND bit is set, plot
+    a (semi-transparent) background for the color bar. If the
+    PL_COLORBAR_BOUNDING_BOX bit is set, plot a bounding box for the
+    color bar. The type of color bar must be specified with one of
+    PL_COLORBAR_IMAGE, PL_COLORBAR_SHADE, or PL_COLORBAR_GRADIENT. If
+    more than one of those bits is set only the first one in the above
+    list is honored. The position of the (optional) label/title can be
+    specified with PL_LABEL_RIGHT, PL_LABEL_TOP, PL_LABEL_LEFT, or
+    PL_LABEL_BOTTOM.  If no label position bit is set then no label
+    will be drawn. If more than one of this list of bits is specified,
+    only the first one on the list is honored. End-caps for the color
+    bar can added with PL_COLORBAR_CAP_LOW and PL_COLORBAR_CAP_HIGH.
+    If a particular color bar cap option is not specified then no cap
+    will be drawn for that end. As a special case for
+    PL_COLORBAR_SHADE, the option PL_COLORBAR_SHADE_LABEL can be
+    specified. If this option is provided then any tick marks and tick
+    labels will be placed at the breaks between shaded segments. TODO:
+    This should be expanded to support custom placement of tick marks
+    and tick labels at custom value locations for any color bar type. 
+
+    position (PLINT, input) :     position contains bits which control the
+    overall position of the color bar and the definition of the
+    adopted coordinates used for positions just like what is done for
+    the position argument for pllegend. However, note that the
+    defaults for the position bits (see below) are different than the
+    pllegend case. The combination of the PL_POSITION_LEFT,
+    PL_POSITION_RIGHT, PL_POSITION_TOP, PL_POSITION_BOTTOM,
+    PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE bits specifies one of
+    the 16 possible standard positions (the 4 corners and centers of
+    the 4 sides for both the inside and outside cases) of the color
+    bar relative to the adopted coordinate system. The corner
+    positions are specified by the appropriate combination of two of
+    the PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP, and
+    PL_POSITION_BOTTOM bits while the sides are specified by a single
+    value of one of those bits.  The adopted coordinates are
+    normalized viewport coordinates if the PL_POSITION_VIEWPORT bit is
+    set or normalized subpage coordinates if the PL_POSITION_SUBPAGE
+    bit is set. Default position bits: If none of PL_POSITION_LEFT,
+    PL_POSITION_RIGHT, PL_POSITION_TOP, or PL_POSITION_BOTTOM are set,
+    then use PL_POSITION_RIGHT. If neither of PL_POSITION_INSIDE or
+    PL_POSITION_OUTSIDE is set, use PL_POSITION_OUTSIDE. If neither of
+    PL_POSITION_VIEWPORT or PL_POSITION_SUBPAGE is set, use
+    PL_POSITION_VIEWPORT. 
+
+    x (PLFLT, input) :      X offset of the color bar position in adopted
+    coordinates from the specified standard position of the color bar.
+    For positive x, the direction of motion away from the standard
+    position is inward/outward from the standard corner positions or
+    standard left or right positions if the
+    PL_POSITION_INSIDE/PL_POSITION_OUTSIDE bit is set in position. 
+    For the standard top or bottom positions, the direction of motion
+    is toward positive X. 
+
+    y (PLFLT, input) :      Y offset of the color bar position in adopted
+    coordinates from the specified standard position of the color bar.
+    For positive y, the direction of motion away from the standard
+    position is inward/outward from the standard corner positions or
+    standard top or bottom positions if the
+    PL_POSITION_INSIDE/PL_POSITION_OUTSIDE bit is set in position. 
+    For the standard left or right positions, the direction of motion
+    is toward positive Y. 
+
+    x_length (PLFLT, input) :     Length of the body of the color bar in
+    the X direction in adopted coordinates. 
+
+    y_length (PLFLT, input) :     Length of the body of the color bar in
+    the Y direction in adopted coordinates. 
+
+    bg_color (PLINT, input) :     The cmap0 color of the background for the
+    color bar (PL_COLORBAR_BACKGROUND). 
+
+    bb_color (PLINT, input) :     The cmap0 color of the bounding-box line
+    for the color bar (PL_COLORBAR_BOUNDING_BOX). 
+
+    bb_style (PLINT, input) :     The pllsty style number for the
+    bounding-box line for the color bar (PL_COLORBAR_BACKGROUND). 
+
+    low_cap_color (PLFLT, input) :    The cmap1 color of the low-end color
+    bar cap, if it is drawn (PL_COLORBAR_CAP_LOW). 
+
+    high_cap_color (PLFLT, input) :    The cmap1 color of the high-end
+    color bar cap, if it is drawn  (PL_COLORBAR_CAP_HIGH). 
+
+    cont_color (PLINT, input) :    The cmap0 contour color for
+    PL_COLORBAR_SHADE plots. This is passed directly to plshades, so
+    it will be interpreted according to the design of plshades. 
+
+    cont_width (PLFLT, input) :    Contour width for PL_COLORBAR_SHADE
+    plots. This is passed directly to plshades, so it will be
+    interpreted according to the design of plshades. 
+
+    n_labels (PLINT, input) :     Number of labels to place around the
+    color bar. 
+
+    label_opts (const PLINT *, input) :    Options for each of 
+    n_labels labels. 
+
+    labels (const char *const *, input) :    n_labels text labels for the
+    color bar. No label is drawn if no label position is specified
+    with one of the PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_LABEL_TOP,
+    PL_COLORBAR_LABEL_LEFT, or PL_COLORBAR_LABEL_BOTTOM bits in the
+    corresponding label_opts field. 
+
+    n_axes (PLINT, input) :    Number of axis definitions provided. This
+    value must be greater than 0. It is typically 1 (numerical axis
+    labels are provided for one of the long edges of the color bar),
+    but it can be larger if multiple numerical axis labels for the
+    long edges of the color bar are desired. 
+
+    axis_opts (const char *const *, input) :    An array of n_axes axis
+    options (interpreted as for plbox) for the color bar's axis
+    definitions. 
+
+    ticks (PLFLT *, input) :    An array of n_axes values of the spacing
+    of the major tick marks (interpreted as for plbox) for the color
+    bar's axis definitions. 
+
+    sub_ticks (PLINT *, input) :    An array of n_axes values of the
+    number of subticks (interpreted as for plbox) for the color bar's
+    axis definitions. 
+
+    n_values (PLINT, input) :     An array containing the number of
+    elements in each of the n_axes rows of the two-dimensional values
+    array. 
+
+    values (PLFLT *const *, input) :    A two-dimensional array containing
+    the numeric values for the data range represented by the color
+    bar. For a row index of i_axis (where 0 < i_axis < n_axes), the
+    number of elements in the row is specified by n_values[i_axis].
+    For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT the number of
+    elements is 2, and the corresponding row elements of the values
+    array are the minimum and maximum value represented by the
+    colorbar.  For PL_COLORBAR_SHADE, the number and values of the
+    elements of a row of the values array is interpreted the same as
+    the nlevel and clevel arguments of plshades. 
+")
+plcolorbar;
 
 %feature( "docstring", "Contour plot 
 
@@ -2267,7 +2455,7 @@ ARGUMENTS:
 
     nx, ny (PLINT, input) :    Dimensions of idata 
 
-    xmin, xmax, ymin, ymax (PLFLT, input) :    Plot coordinates to strecth
+    xmin, xmax, ymin, ymax (PLFLT, input) :    Plot coordinates to stretch
     the image data to.  idata[0][0] corresponds to (xmin, ymin) and
     idata[nx - 1][ny - 1] corresponds to (xmax, ymax). 
 
@@ -2371,13 +2559,14 @@ pllab;
 DESCRIPTION:
 
     Routine for creating a discrete plot legend with a plotted filled box,
-    line, and/or line of symbols for each annotated legend entry.  The
-    arguments of pllegend provide control over the location and size of
-    the legend as well as the location and characteristics of the elements
-    (most of which are optional) within that legend.  The resulting legend
-    is clipped at the boundaries of the current subpage. (N.B. the adopted
-    coordinate system used for some of the parameters is defined in the
-    documentation of the position parameter.) 
+    line, and/or line of symbols for each annotated legend entry.  (See
+    plcolorbar for similar functionality for creating continuous color
+    bars.)  The arguments of pllegend provide control over the location
+    and size of the legend as well as the location and characteristics of
+    the elements (most of which are optional) within that legend.  The
+    resulting legend is clipped at the boundaries of the current subpage. 
+    (N.B. the adopted coordinate system used for some of the parameters is
+    defined in the documentation of the position parameter.) 
 
     Redacted form: pllegend(p_legend_width, p_legend_height,  opt,
     position, x, y, plot_width, bg_color, bb_color, bb_style, nrow,
@@ -2386,7 +2575,7 @@ DESCRIPTION:
     box_scales, box_line_widths, line_colors, line_styles, line_widths,
     symbol_colors, symbol_scales,  symbol_numbers, symbols)
 
-    This function is used in examples 4 and 26. 
+    This function is used in examples 4, 26, and 33. 
 
 
 
@@ -2421,22 +2610,28 @@ ARGUMENTS:
     plot the resulting array of legend entries in row-major order.
     Otherwise, plot the legend entries in column-major order. 
 
-    position (PLINT, input) :     position contains bits controlling the
+    position (PLINT, input) :     position contains bits which control the
     overall position of the legend and the definition of the adopted
-    coordinates used for positions. The combination of the
-    PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP,
-    PL_POSITION_BOTTOM, PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE
-    bits specifies one of the 16 possible standard positions (the 4
-    corners and 4 side centers for both the inside and outside cases)
-    of the legend relative to the adopted coordinate system. The
-    adopted coordinates are normalized viewport coordinates if the
-    PL_POSITION_VIEWPORT bit is set or normalized subpage coordinates
-    if the PL_POSITION_SUBPAGE bit is set. Default position bits: If
-    none of PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP, or
-    PL_POSITION_BOTTOM are set, then use the combination of
-    PL_POSITION_RIGHT and PL_POSITION_TOP. If neither of
-    PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set, use
-    PL_POSITION_INSIDE. If neither of PL_POSITION_VIEWPORT or
+    coordinates used for positions just like what is done for the
+    position argument for plcolorbar. However, note that the defaults
+    for the position bits (see below) are different than the
+    plcolorbar case.  The combination of the PL_POSITION_LEFT,
+    PL_POSITION_RIGHT, PL_POSITION_TOP, PL_POSITION_BOTTOM,
+    PL_POSITION_INSIDE, and PL_POSITION_OUTSIDE bits specifies one of
+    the 16 possible standard positions (the 4 corners and centers of
+    the 4 sides for both the inside and outside cases) of the legend
+    relative to the adopted coordinate system. The corner positions
+    are specified by the appropriate combination of two of the
+    PL_POSITION_LEFT, PL_POSITION_RIGHT, PL_POSITION_TOP, and
+    PL_POSITION_BOTTOM bits while the sides are specified by a single
+    value of one of those bits.  The adopted coordinates are
+    normalized viewport coordinates if the PL_POSITION_VIEWPORT bit is
+    set or normalized subpage coordinates if the PL_POSITION_SUBPAGE
+    bit is set. Default position bits: If none of PL_POSITION_LEFT,
+    PL_POSITION_RIGHT, PL_POSITION_TOP, or PL_POSITION_BOTTOM are set,
+    then use the combination of PL_POSITION_RIGHT and PL_POSITION_TOP.
+    If neither of PL_POSITION_INSIDE or PL_POSITION_OUTSIDE is set,
+    use PL_POSITION_INSIDE. If neither of PL_POSITION_VIEWPORT or
     PL_POSITION_SUBPAGE is set, use PL_POSITION_VIEWPORT. 
 
     x (PLFLT, input) :      X offset of the legend position in adopted
@@ -2461,14 +2656,14 @@ ARGUMENTS:
     of the plot area (where the colored boxes, lines, and/or lines of
     symbols are drawn) of the legend. 
 
-    bg_color (PLINT, input) :     The cmap0 index of the background color
-    for the legend (PL_LEGEND_BACKGROUND). 
+    bg_color (PLINT, input) :     The cmap0 color of the background for the
+    legend (PL_LEGEND_BACKGROUND). 
 
-    bb_color (PLINT, input) :     The cmap0 index of the color of the
-    bounding-box line for the legend (PL_LEGEND_BOUNDING_BOX). 
+    bb_color (PLINT, input) :     The cmap0 color of the bounding-box line
+    for the legend (PL_LEGEND_BOUNDING_BOX). 
 
-    bb_style (PLINT, input) :     The cmap0 index of the background color
-    for the legend (PL_LEGEND_BACKGROUND). 
+    bb_style (PLINT, input) :     The pllsty style number for the
+    bounding-box line for the legend (PL_LEGEND_BACKGROUND). 
 
     nrow (PLINT, input) :    The cmap0 index of the background color for
     the legend (PL_LEGEND_BACKGROUND). 
@@ -2521,14 +2716,14 @@ ARGUMENTS:
     is left justified, centred, or right justified within the text
     area, but other values are allowed as well. 
 
-    text_colors (const PLINT *, input) :    Array of nlegend text colors
-    (cmap0 indices). 
+    text_colors (const PLINT *, input) :    Array of nlegend cmap0 text
+    colors. 
 
-    text (const char **, input) :    Array of nlegend text string
+    text (const char *const *, input) :    Array of nlegend text string
     annotations. 
 
-    box_colors (const PLINT *, input) :    Array of nlegend colors (cmap0
-    indices) for the discrete colored boxes (
+    box_colors (const PLINT *, input) :    Array of nlegend cmap0 colors
+    for the discrete colored boxes (
     PL_LEGEND_COLOR_BOX). 
 
     box_patterns (const PLINT *, input) :    Array of nlegend patterns
@@ -2544,8 +2739,8 @@ ARGUMENTS:
     widths for the patterns specified by box_patterns (
     PL_LEGEND_COLOR_BOX). 
 
-    line_colors (const PLINT *, input) :    Array of nlegend line colors
-    (cmap0 indices) (
+    line_colors (const PLINT *, input) :    Array of nlegend cmap0 line
+    colors (
     PL_LEGEND_LINE). 
 
     line_styles (const PLINT *, input) :    Array of nlegend line styles
@@ -2555,8 +2750,8 @@ ARGUMENTS:
     line_widths (const PLFLT *, input) :    Array of nlegend line widths (
     PL_LEGEND_LINE). 
 
-    symbol_colors (const PLINT *, input) :    Array of nlegend symbol
-    colors (cmap0 indices)    (
+    symbol_colors (const PLINT *, input) :    Array of nlegend cmap0
+    symbol colors  (
     PL_LEGEND_SYMBOL). 
 
     symbol_scales (const PLFLT *, input) :    Array of nlegend scale
@@ -2567,8 +2762,8 @@ ARGUMENTS:
     symbols to be drawn across the width of the plotted area (
     PL_LEGEND_SYMBOL). 
 
-    symbols (const char **, input) :    Array of nlegend symbols (plpoin
-    indices)  (
+    symbols (const char *const *, input) :    Array of nlegend symbols
+    (plpoin indices)  (
     PL_LEGEND_SYMBOL). 
 ")
 pllegend;
@@ -2898,7 +3093,7 @@ ARGUMENTS:
         at which function is defined. 
         opt=MAG_COLOR: Each line in the mesh is colored according to
         the z value being plotted. The color is used from the current
-        colormap 1. 
+        color map 1. 
         opt=BASE_CONT: A contour plot is drawn at the base XY plane
         using parameters 
     nlevel and 
@@ -4971,12 +5166,12 @@ ARGUMENTS:
 
     label_func (void (*) (PLINT, PLFLT, char *, PLINT, void *), input) :  
      This is the custom label function.  In order to reset to the
-    default labeling, set this to NULL. The labeling function
+    default labelling, set this to NULL. The labelling function
     parameters are, in order: axis:    This indicates which axis a
     label is being requested for. The value will be one of PL_X_AXIS,
     PL_Y_AXIS or PL_Z_AXIS. 
 
-    value:    This is the value along the axis which is being labeled. 
+    value:    This is the value along the axis which is being labelled. 
 
     label_text:    The string representation of the label value. 
 
@@ -5369,7 +5564,7 @@ DESCRIPTION:
     device name keyword for the desired output device must be supplied as
     an argument.  The device keywords are the same as those printed out by
     plstar.  If the requested device is not available, or if the input
-    string is empty or begins with ``?'', the prompted startup of plstar
+    string is empty or begins with ``?'', the prompted start up of plstar
     is used.  This routine also divides the output device into nx by ny
     subpages, each of which may be used independently.	The subroutine
     pladv is used to advance from one subpage to the next. 
@@ -5390,7 +5585,7 @@ ARGUMENTS:
 
     device (const char *, input) :    Device name (keyword) of the
     required output device.  If NULL or if the first character is a
-    ``?'', the normal (prompted) startup is used. 
+    ``?'', the normal (prompted) start up is used. 
 
     nx (PLINT, input) :    Number of subpages to divide output page in the
     horizontal direction. 
@@ -5425,7 +5620,7 @@ ARGUMENTS:
 
     transform_fun (void (*) (PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) ,
     input) :    Pointer to a function that defines a transformation
-    from the input (x, y) coordinate to a new plot world coordiante. 
+    from the input (x, y) coordinate to a new plot world coordinate. 
 
     data (PLPointer, input) :     Optional extra data for 
     transform_fun. 
@@ -5514,13 +5709,14 @@ ARGUMENTS:
 ")
 plstring3;
 
-%feature( "docstring", "Add a point to a stripchart 
+%feature( "docstring", "Add a point to a strip chart 
 
 DESCRIPTION:
 
-    Add a point to a given pen of a given stripchart. There is no need for
-    all pens to have the same number of points or to be equally sampled in
-    the x coordinate. Allocates memory and rescales as necessary. 
+    Add a point to a given pen of a given strip chart. There is no need
+    for all pens to have the same number of points or to be equally
+    sampled in the x coordinate. Allocates memory and rescales as
+    necessary. 
 
     Redacted form: plstripa(id, p, x, y)
 
@@ -5535,7 +5731,7 @@ plstripa(id, p, x, y)
 ARGUMENTS:
 
     id (PLINT, input) :    Identification number (set up in plstripc) of
-    the stripchart. 
+    the strip chart. 
 
     p (PLINT, input) :      Pen number (ranges from 0 to 3). 
 
@@ -5545,11 +5741,11 @@ ARGUMENTS:
 ")
 plstripa;
 
-%feature( "docstring", "Create a 4-pen stripchart 
+%feature( "docstring", "Create a 4-pen strip chart 
 
 DESCRIPTION:
 
-    Create a 4-pen stripchart, to be used afterwards by plstripa
+    Create a 4-pen strip chart, to be used afterwards by plstripa
 
     Redacted form:  General: plstripc(id, xspec, yspec, xmin, xmax, xjump,
     ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline,
@@ -5569,7 +5765,7 @@ plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, 
 
 ARGUMENTS:
 
-    id (PLINT *, output) :    Identification number of stripchart to use
+    id (PLINT *, output) :    Identification number of strip chart to use
     on plstripa and plstripd. 
 
     xspec (char *, input) :    X-axis specification as in plbox. 
@@ -5623,11 +5819,11 @@ ARGUMENTS:
 ")
 plstripc;
 
-%feature( "docstring", "Deletes and releases memory used by a stripchart 
+%feature( "docstring", "Deletes and releases memory used by a strip chart 
 
 DESCRIPTION:
 
-    Deletes and releases memory used by a stripchart. 
+    Deletes and releases memory used by a strip chart. 
 
     Redacted form: plstripd(id)
 
@@ -5641,7 +5837,7 @@ plstripd(id)
 
 ARGUMENTS:
 
-    id (PLINT, input) :    Identification number of stripchart to delete. 
+    id (PLINT, input) :    Identification number of strip chart to delete. 
 ")
 plstripd;
 
