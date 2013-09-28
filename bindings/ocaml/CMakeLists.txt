@@ -53,21 +53,19 @@ if(ENABLE_ocaml)
     endforeach(DEP ${plplotd_LIB_DEPENDS})
   endif(NOT BUILD_SHARED_LIBS)
 
-  # optional command to generate generated_plplot_h.inc.  This generated
-  # version of the file should be identical to plplot_h.inc.
+  # optional command to check consistency of plplot_h.inc.
   if(GENERATE_PLPLOT_H_INC)
-    add_custom_command(
-      OUTPUT
-      ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
-      COMMAND ${OCAML} ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
-      DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml
-      ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h
+    add_custom_target(
+      check_plplot_h.inc
+      COMMAND 
+      ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
+      COMMAND
+      ${OCAML} ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
+      COMMAND
+      ${CMAKE_COMMAND} -E echo "Check that plplot_h.inc is consistent with touchup.ml and plplot_h"
+      COMMAND
+      cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h.inc ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      )
-    add_custom_target(generate_plplot_h.inc
-      DEPENDS
-      ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
       )
   endif(GENERATE_PLPLOT_H_INC)
 
