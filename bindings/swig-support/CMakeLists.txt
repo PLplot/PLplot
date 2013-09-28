@@ -31,6 +31,7 @@ if(PERL_XML_DOM AND PERL_XML_PARSER)
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
+    COMMAND ${CMAKE_COMMAND} -E echo "Check that swig_documentation.i is consistent with doc/docbook/src/api.xml"
     COMMAND cmp 
     ${CMAKE_CURRENT_SOURCE_DIR}/swig_documentation.i
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
