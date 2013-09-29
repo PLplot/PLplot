@@ -483,6 +483,34 @@ CHANGES
 
 0. Tests made for release 5.9.10
 
+Comprehensive testing that showed no non-zero return codes or other
+obvious run-time issues such as segfaults was done for the Debian
+Wheezy platform.  These tests were done with the
+scripts/comprehensive_test.sh which does 21 major tests.  Those tests
+consist of seven tests (ctest, and "make test_noninteractive" and make
+"test_interactive" results for the build tree, and "make
+test_noninteractive" and make "test_interactive" results for both the
+traditional and CMake-based build systems for the installed examples
+tree) for each of our three major configurations (shared
+libraries/dynamic devices, shared libraries/non-dynamic devices,
+static libraries/non-dynamic devices).
+
+More limited testing that showed no non-zero return codes or other
+obvious run-time issues such as segfaults was done on a large number
+of different platforms including the following:
+
+Fedora with "Unix Makefiles" generator
+Ubuntu with "Unix Makefiles" generator
+Debian unstable with "Unix Makefiles" generator
+Debian wheezy with "Ninja" generator
+Wine version of Windows with "MSYS Makefiles" generator
+Wine version of Windows with "MinGW Makefiles" generator
+Wine version of Windows with "NMake Makefiles JOM" generator
+Microsoft version of Windows with Cygwin and with "Unix Makefiles" generator
+Microsoft version of Windows with "MinGW Makefiles" generator
+Microsoft version of Windows with "MSYS Makefiles" generator
+Microsoft version of Windows with "NMake Makefiles" generator
+
 1. Changes relative to PLplot 5.9.9 (the previous development release)
 
 N.B. This release includes many code cleanups and fixes relative to
