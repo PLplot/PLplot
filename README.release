@@ -6,9 +6,9 @@ releases in the 5.9.x series will be available every few months. The next
 stable release will be 5.10.0.
 
      If you encounter a problem that is not already documented in the
-PROBLEMS file or on our bugtracker, then please send bug reports to PLplot
+PROBLEMS file or on our bug tracker, then please send bug reports to PLplot
 developers via the mailing lists at
-http://sourceforge.net/mail/?group_id=2915 (preferred) or on our bugtracker
+http://sourceforge.net/mail/?group_id=2915 (preferred) or on our bug tracker
 at http://sourceforge.net/tracker/?group_id=2915&atid=102915.
 
      Please see the license under which this software is distributed
@@ -31,10 +31,21 @@ CHANGES
 
 1.1 The format for map data used by plmap has changed
 1.2 Python support for Numeric has been dropped
-1.3 Non-integer line widths allowed
+1.3 Backwards-incompatible API change to non-integer line widths
 1.4 Improvements to the build system for the Cygwin case
 1.5 The plcolorbar API has been finalized
 1.6 Documentation of the new legend and color bar capabilities of PLplot
+1.7 The D bindings and examples have been converted from the
+old version of D (D1) to the new version of D (D2)
+1.8 The DocBook documentation for PLplot is now generated using modern
+XML/XSL backend tools for DocBook
+1.9 Implement experimental build_projects sub-project
+1.10 Implement extremely simple "00" example
+1.11 Convert to using the Allura form of SourceForge software
+1.12 Use NON_TRANSITIVE linking by default for the shared libraries case for
+all non-windows systems
+1.13 Update f95 examples to take larger advantage of Fortran 95 capabilities
+1.14 Substantial additions to the doxygen documentation
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -78,7 +89,7 @@ detected
 2.36 Make PLplot aware of LC_NUMERIC locale
 2.37 Linear gradients have been implemented
 2.38 Cairo Windows driver implemented
-2.39 Custom axis labeling implemented
+2.39 Custom axis labelling implemented
 2.40 Universal coordinate transform implemented
 2.41 Support for arbitrary storage of 2D user data
 2.42 Font improvements
@@ -95,15 +106,34 @@ detected
 2.52 The plarc function has been added
 2.53 The format for map data used by plmap has changed
 2.54 Python support for Numeric has been dropped
-2.55 Non-integer line widths allowed
+2.55 Backwards-incompatible API change to non-integer line widths
 2.56 Improvements to the build system for the Cygwin case
 2.57 The plcolorbar API has been finalized
 2.58 Documentation of the new legend and color bar capabilities of PLplot
+2.59 The D bindings and examples have been converted from the
+old version of D (D1) to the new version of D (D2)
+2.60 The DocBook documentation for PLplot is now generated using modern
+XML/XSL backend tools for DocBook
+2.61 Implement experimental build_projects sub-project
+2.62 Implement extremely simple "00" example
+2.63 Convert to using the Allura form of SourceForge software
+2.64 Use NON_TRANSITIVE linking by default for the shared libraries case for
+all non-windows systems
+2.65 Update f95 examples to take larger advantage of Fortran 95 capabilities
+2.66 Substantial additions to the doxygen documentation
+
 
 OFFICIAL NOTICES FOR USERS
 
+(5.9.10) The minimum version of CMake has been bumped to 2.8.9.  This
+change allows our build system to take advantage of CMake features
+introduced in later versions of CMake.  Even more importantly it also
+updates user's builds to the CMake policy conventions (important
+backwards-incompatible changes in CMake behaviour introduced in later
+versions of CMake) to the default CMake policy used for 2.8.9.
+
 (5.9.10) The long deprecated support for the python Numeric package has been
-dropped. This is no longer supported and is superceded by numpy. Support for
+dropped. This is no longer supported and is superseded by numpy. Support for
 numpy has been the default in PLplot for a number of years so most users
 should notice no difference.
 
@@ -129,7 +159,7 @@ plgriddata(x, y, z, xg, yg, zg, alg, opt[alg-1])
 zg = plgriddata(x, y, z, xg, yg, alg, opt[alg-1])
 
 (5.9.10) Significant efforts have been made to ensure the PLplot code
-is standards compliant and free from warnings. Compilance has been
+is standards compliant and free from warnings. Compliance has been
 tested using the gcc compiler suite -std, -pedantic and -W  flags. The
 language standards adopted are
 C: ISO C99 with POSIX.1-2001 base specification (required for a number
@@ -151,7 +181,7 @@ FFLAGS='-std=f95 -O3 -fall-intrinsics -fvisibility=hidden -pedantic \
 Note that the code is not yet quite standards compliant or warning free,
 but this is our aim. We know that a number of common compilers do not
 support these standards "out of the box", so we will continue to develop
-and support work arounds to ensure that PLplot remains easily built on
+and support workarounds to ensure that PLplot remains easily built on
 a variety of platforms and compilers. Standards compliance should make
 it easier to port to new systems in the future. Using aggressive
 warnings flags will help to detect and eliminate errors or problems in
@@ -451,29 +481,12 @@ stream variables directly (only possible in C/C++) or use plgvpw.
 
 CHANGES
 
--1. Important changes we should have mentioned in previous release announcements.
-
--1.1 Add full bindings and examples for the D language.
-
-As of release 5.9.5 we added full bindings and examples for the D
-language.  The results for the D examples are generally consistent
-with the corresponding C examples which helps to verify the D
-bindings.
-
-Since the release of 5.9.5 it has come to our attention that the
-version of gdc supplied with several recent versions of Ubuntu has a
-very serious bug on 64-bit systems (see
-https://bugs.launchpad.net/ubuntu/+source/gdc-4.2/+bug/235955) which
-causes several of the plplot D examples to crash. If this affects you,
-you are recommended to disable the d bindings or switch to an
-alternative d compiler (the Digital Mars compiler is reported to be
-good).
-
-
 0. Tests made for release 5.9.10
 
-
 1. Changes relative to PLplot 5.9.9 (the previous development release)
+
+N.B. This release includes many code cleanups and fixes relative to
+5.9.9 that are not mentioned in the list below.
 
 1.1 The format for map data used by plmap has changed
 
@@ -482,7 +495,7 @@ This is a widely used standard format and there are many sources of data
 in this format. This replaces the custom binary format that PLplot used
 to use. The support for reading shapefiles is provided by the shapelib
 library, which is a new dependency for PLplot. If users do not have this
-installed then, by default, they will not get any map capabilites with
+installed then, by default, they will not get any map capabilities with
 PLplot. Support for the old format can still be enabled by setting the
 PL_DEPRECATED cmake variable, but this support will be removed in a
 subsequent PLplot release.
@@ -490,11 +503,11 @@ subsequent PLplot release.
 1.2 Python support for Numeric has been dropped
 
 Support for the python Numeric package has been dropped. This has been
-deprecated since 5.9.6. Numeric is no longer supported and is superceded
+deprecated since 5.9.6. Numeric is no longer supported and is superseded
 by numpy. Support for numpy has been the default in plplot for a number
 of years so most users should notice no difference.
 
-1.3 Non-integer line widths allowed
+1.3 Backwards-incompatible API change to non-integer line widths
 
 All functions which take line width arguments (plwidth, plshade*,
 pllegend) now use PLFLT values for the line width. This allows device
@@ -504,7 +517,7 @@ floating-point line width capabilities of those libraries.  The
 replacement of plwid by plwidth, and the change in argument lists for
 plshade* and pllegend constitute a backwards incompatible API change
 from previous releases and the soname of libraries has been bumped
-accordingly (which forces a recompile).
+accordingly (which forces users to recompile PLplot).
 
 1.4 Improvements to the build system for the Cygwin case
 
@@ -540,7 +553,7 @@ found and tried those capabilities will have to reprogramme their
 plcolorbar calls to be compatible with the argument list of the latest
 version.
 
-1.6. Documentation of the new legend and color bar capabilities of PLplot
+1.6 Documentation of the new legend and color bar capabilities of PLplot
 
 The pllegend and plcolorbar API has been documented in both doxygen
 and DocBook forms.  In addition, the "advanced use" chapter of the
@@ -555,7 +568,80 @@ to add additional features to pllegend or plcolorbar based on
 additional experience with these powerful capabilities.  In general,
 we would welcome such feature requests.
 
+1.7 The D bindings and examples have been converted from the
+old version of D (D1) to the new version of D (D2)
+
+This change should make PLplot much more relevant for D users
+going forward.
+
+See http://en.wikipedia.org/wiki/D_(programming_language)#History for
+a discussion of the differences between these two variants of D.
+
+1.8 The DocBook documentation for PLplot is now generated using modern
+XML/XSL backend tools for DocBook
+
+These modern backend tools (such as xmlto) replace the
+deprecated/unmaintained SGML/DSSL tools we have used before.  For
+developers this means generation of our DocBook generation is much
+easier. much faster, and much less error-prone.  End users will notice
+some improvements in the results (e.g., the table of Greek letters) as
+well as some minor style changes.
+
+1.9 Implement experimental build_projects sub-project
+
+The idea here (see cmake/build_projects) is to automate the build of
+all PLplot dependencies and the build and test of PLplot itself for
+platforms (such as Linux enterprise distributions and all forms of
+Windows platforms other than Cygwin) that do not come with modern
+versions of PLplot soft dependencies such as Pango/Cairo and Qt.
+This project is beginning to work properly for the Linux case, but
+still needs lots of work for the Windows case.
+
+1.10 Implement extremely simple "00" example
+
+The point of this standard example is to give the users an extremely
+simple tutorial example to help them to get started with 2D plotting
+with PLplot.
+
+1.11 Convert to using the Allura form of SourceForge software
+
+We use sourceforge.net as our software hosting facility.  Early in
+2013 Sourceforge updated essentially all their support software as
+part of the so-called Allura project.  This made it necessary to make
+some minor internal PLplot changes such as script changes and different URL's
+in the website referring to SourceForge facilities.  The most important
+change from the user perspective is the URL for the Allura form
+of the svn repository that we use now:
+
+http://svn.code.sf.net/p/plplot/code/trunk/
+
+1.12 Use NON_TRANSITIVE linking by default for the shared libraries case for
+all non-windows systems
+
+The point of this change is to reduce overlinking and therefore
+the problems caused by overlinking that are mentioned
+at http://en.altlinux.org/UnderOverLinkProblems.
+
+Non-transitive linking means link only to libraries that directly
+resolve undefined symbols, i.e., do not link to a library just because
+it is a dependency of a dependency.
+
+1.13 Update f95 examples to take larger advantage of Fortran 95 capabilities
+
+Previously our f95 examples tended to use legacy Fortran capabilities, but
+that situation has substantially changed for this release.
+
+1.14 Substantial additions to the doxygen documentation
+
+One of the on-going documentation projects is to create doxygen
+documentation of every single argument of the public API for PLplot.
+A substantial increase in such documentation has been implemented
+in this release cycle.
+
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
+
+N.B. This release includes many code cleanups and fixes relative to
+5.8.0 that are not mentioned in the list below.
 
 2.1 All autotools-related files have now been removed
 
@@ -681,7 +767,7 @@ into a user supplied cairo context.
 
 Complete reorganization of the driver code. A new backend was added, based
 on the wxGraphicsContext class, which is available for wxWidgets 2.8.4
-and later. This backend produces antialized output similar to the
+and later. This backend produces antialiased output similar to the
 AGG backend but has no dependency on the AGG library. The basic wxDC
 backend and the wxGraphicsContext backend process the text output
 on their own, which results in much nicer plots than with the standard
@@ -810,7 +896,7 @@ stdout output (especially important for example 31 which tests most of our
 set and get functions) and PostScript output for different languages as a
 check.  Thanks to the addition of example 31, the inclusion of examples 14
 and 17 in the test suite and other recent extensions of the other
-examples we now have rigourous testing in place for almost the entirety
+examples we now have rigorous testing in place for almost the entirety
 of our common API.  This extensive testing framework has already helped
 us track down a number of bugs, and it should make it much easier for us
 to maintain high quality for our ongoing PLplot releases.
@@ -1121,12 +1207,12 @@ A cairo Windows driver has been implemented. This provides an
 interactive cairo driver for Windows similar to xcairo on Linux.
 Work to improve its functionality is ongoing.
 
-2.39 Custom axis labeling implemented
+2.39 Custom axis labelling implemented
 
 Axis text labels can now be customized using the new plslabelfunc function.
 This allows a user to specify what text should be draw at a given position
 along a plot axis.  Example 19 has been updated to illustrate this function's
-use through labeling geographic coordinates in degrees North, South, East and
+use through labelling geographic coordinates in degrees North, South, East and
 West.
 
 2.40 Universal coordinate transform implemented
@@ -1385,7 +1471,7 @@ This is a widely used standard format and there are many sources of data
 in this format. This replaces the custom binary format that PLplot used
 to use. The support for reading shapefiles is provided by the shapelib
 library, which is a new dependency for PLplot. If users do not have this
-installed then, by default, they will not get any map capabilites with
+installed then, by default, they will not get any map capabilities with
 PLplot. Support for the old format can still be enabled by setting the
 PL_DEPRECATED cmake variable, but this support will be removed in a
 subsequent PLplot release.
@@ -1393,11 +1479,11 @@ subsequent PLplot release.
 2.54 Python support for Numeric has been dropped
 
 Support for the python Numeric package has been dropped. This has been
-deprecated since 5.9.6. Numeric is no longer supported and is superceded
+deprecated since 5.9.6. Numeric is no longer supported and is superseded
 by numpy. Support for numpy has been the default in plplot for a number
 of years so most users should notice no difference.
 
-2.55 Non-integer line widths allowed
+2.55 Backwards-incompatible API change to non-integer line widths
 
 All functions which take line width arguments (plwidth, plshade*,
 pllegend) now use PLFLT values for the line width. This allows device
@@ -1407,7 +1493,7 @@ floating-point line width capabilities of those libraries.  The
 replacement of plwid by plwidth, and the change in argument lists for
 plshade* and pllegend constitute a backwards incompatible API change
 from previous releases and the soname of libraries has been bumped
-accordingly (which forces a recompile).
+accordingly (which forces users to recompile PLplot).
 
 2.56 Improvements to the build system for the Cygwin case
 
@@ -1457,4 +1543,75 @@ advantage of these new PLplot capabilities there will likely be calls
 to add additional features to pllegend or plcolorbar based on
 additional experience with these powerful capabilities.  In general,
 we would welcome such feature requests.
+
+2.59 The D bindings and examples have been converted from the
+old version of D (D1) to the new version of D (D2)
+
+This change should make PLplot much more relevant for D users
+going forward.
+
+See http://en.wikipedia.org/wiki/D_(programming_language)#History for
+a discussion of the differences between these two variants of D.
+
+2.60 The DocBook documentation for PLplot is now generated using modern
+XML/XSL backend tools for DocBook
+
+These modern backend tools (such as xmlto) replace the
+deprecated/unmaintained SGML/DSSL tools we have used before.  For
+developers this means generation of our DocBook generation is much
+easier. much faster, and much less error-prone.  End users will notice
+some improvements in the results (e.g., the table of Greek letters) as
+well as some minor style changes.
+
+2.61 Implement experimental build_projects sub-project
+
+The idea here (see cmake/build_projects) is to automate the build of
+all PLplot dependencies and the build and test of PLplot itself for
+platforms (such as Linux enterprise distributions and all forms of
+Windows platforms other than Cygwin) that do not come with modern
+versions of PLplot soft dependencies such as Pango/Cairo and Qt.
+This project is beginning to work properly for the Linux case, but
+still needs lots of work for the Windows case.
+
+2.62 Implement extremely simple "00" example
+
+The point of this standard example is to give the users an extremely
+simple tutorial example to help them to get started with 2D plotting
+with PLplot.
+
+2.63 Convert to using the Allura form of SourceForge software
+
+We use sourceforge.net as our software hosting facility.  Early in
+2013 Sourceforge updated essentially all their support software as
+part of the so-called Allura project.  This made it necessary to make
+some minor internal PLplot changes such as script changes and different URL's
+in the website referring to SourceForge facilities.  The most important
+change from the user perspective is the URL for the Allura form
+of the svn repository that we use now:
+
+http://svn.code.sf.net/p/plplot/code/trunk/
+
+2.64 Use NON_TRANSITIVE linking by default for the shared libraries case for
+all non-windows systems
+
+The point of this change is to reduce overlinking and therefore
+the problems caused by overlinking that are mentioned
+at http://en.altlinux.org/UnderOverLinkProblems.
+
+Non-transitive linking means link only to libraries that directly
+resolve undefined symbols, i.e., do not link to a library just because
+it is a dependency of a dependency.
+
+2.65 Update f95 examples to take larger advantage of Fortran 95 capabilities
+
+Previously our f95 examples tended to use legacy Fortran capabilities, but
+that situation has substantially changed for this release.
+
+2.66 Substantial additions to the doxygen documentation
+
+One of the on-going documentation projects is to create doxygen
+documentation of every single argument of the public API for PLplot.
+A substantial increase in such documentation has been implemented
+in this release cycle.
+
 
