@@ -64,6 +64,7 @@ set(BP_PACKAGE itstool)
 set(${BP_PACKAGE}_URL http://files.itstool.org/itstool/itstool-1.2.0.tar.bz2)
 set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE SHA256)
 set(${BP_PACKAGE}_DOWNLOAD_HASH 46fed63fb89c72dbfc03097b4477084ff05ad6f171212d8f1f1546ea543978aa)
+set(${BP_PACKAGE}_PATCH itstool-1.2.0-python-location-fixes.patch)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
@@ -84,6 +85,7 @@ ExternalProject_Add(
   DEPENDS ${${BP_PACKAGE}_dependencies_targets}
   URL ${${BP_PACKAGE}_URL}
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
+  PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/itstool/${${BP_PACKAGE}_PATCH}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
   BUILD_IN_SOURCE OFF
