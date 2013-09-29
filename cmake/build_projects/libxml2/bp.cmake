@@ -41,7 +41,7 @@ set(libxml2_configured ON)
 # ignored.
 set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
 
-set(libxml2_dependencies_LIST )
+set(libxml2_dependencies_LIST xmlcatalog-wrapper)
 # Remove dependencies that should be ignored.
 if(libxml2_dependencies_LIST)
   list(REMOVE_ITEM libxml2_dependencies_LIST ${BP_ignored_dependencies_LIST})

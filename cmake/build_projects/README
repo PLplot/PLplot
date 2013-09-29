@@ -126,11 +126,40 @@ build directory
 
 Linux "Unix Makefiles"
 
+--------------
+# Source this file to setup a Linux build_packages build.
+# Put latest CMake on PATH
+PATH=/home/software/cmake/install/bin:$PATH
+
+# Put buildtools that have been built and installed by build_packages on PATH.
+PATH=/home/wine/newstart/build_script/install-linux_buildtools/bin:$PATH
+
+# Put Linux install directory on PATH (so that, e.g., the wxwidgets 
+# configuration tool will be found.
+PATH=/home/wine/newstart/build_script/install-linux/bin:$PATH
+
+# Make *.pc files that are installed by a build_packages build accessible to
+# pkg-config
+export PKG_CONFIG_PATH=/home/wine/newstart/build_script/install-linux/lib/pkgconfig/:/home/wine/newstart/build_script/install-linux/share/pkgconfig
+
+# As temporary measure also use system-installed *.pc files for dependencies
+# which are currently not built.  Put these at the end of PKG_CONFIG_PATH
+# so they are only used as a last resort.
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig
+--------------
+
 wine@raven> mkdir -p /home/wine/newstart/build_script/build_dir-linux
 wine@raven> cd /home/wine/newstart/build_script/build_dir-linux
 wine@raven> rm -rf /home/wine/newstart/build_script/build_dir-linux/*
+wine@raven> cmake -G"Unix Makefiles" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
 wine@raven> cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-wine@raven> make VERBOSE=1 build_plplot >& build_plplot.out
+# wxwidgets and pango are soft dependencies of PLplot which add value to
+# its build.
+wine@raven> make build_wxwidgets >& build_wxwidgets.out
+wine@raven> make build_pango >& build_pango.out
+# Build plplot using the above soft dependencies as well as some hard
+# dependencies it knows about.
+wine@raven> make build_plplot >& build_plplot.out
 
 Windows "MinGW Makefiles"
 
@@ -239,6 +268,10 @@ cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
 # can be configured with a template such as libffi, we use gtk_packages_add.xml
 # (under version control) as follows:
 
-./gtk_transform.py "libffi" 1 <gtk_packages_add.xml 1>| add_packages.data
-./gtk_transform.py "intltool" 1 <gtk_packages_add.xml 1>> add_packages.data
+rm -f add_packages.data
+touch add_packages.data
+PACKAGE_LIST="libffi intltool pixman gperf"
+for PACKAGE in $PACKAGE_LIST; do
+  ./gtk_transform.py $PACKAGE 1 <gtk_packages_add.xml 1>> add_packages.data
+done
 cmake -DFILENAME:FILEPATH=add_packages.data -P configure_bp.cmake

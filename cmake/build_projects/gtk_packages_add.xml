@@ -23,6 +23,14 @@ installed with the system prefix rather than desired special prefix
 -->
   <autotools id="libxml2" makeargs="PYTHON_SITE_PACKAGES=${BP_CMAKE_INSTALL_PREFIX}/lib/python${PYTHON_VERSION}/site-packages">
     <branch hash="md5:9c0cfef285d5c4a5c80d00904ddab380" module="sources/libxml2-2.9.1.tar.gz" repo="http://xmlsoft.org/" size="983500" version="2.9.1"/>
+<!-- This package (which installs nothing on Unix platforms) is
+required as a workaround for the xmlcatalog argument mangling that
+occurs when xmlcatalog (linked with the MinGW runtime as per this
+build of libxml2) is called from a programme (e.g., bash.exe) which is
+linked with the MSYS runtime -->
+    <dependencies>
+      <dep package="xmlcatalog-wrapper"/>
+    </dependencies>
   </autotools>
   <autotools id="libxslt">
     <branch hash="md5:9667bf6f9310b957254fdcf6596600b7" module="sources/libxslt-1.1.28.tar.gz" repo="http://xmlsoft.org/" size="983500" version="1.1.28"/>

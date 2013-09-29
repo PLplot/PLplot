@@ -32,7 +32,7 @@ set(docbook-xml_configured ON)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft)
+set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
 
 set(docbook-xml_dependencies_LIST libxml2)
 # Remove dependencies that should be ignored.

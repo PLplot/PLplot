@@ -130,9 +130,13 @@ set(commands
 
 install_xml_catalog(commands "docbook")
 
+# Do this for every pattern above so using the catalog file as the catalog
+# is equivalent to using the docbook file as the catalog.
 set(commands
-"delegatePublic" "-//OASIS//ENTITIES DocBook XML" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
 "delegatePublic" "-//OASIS//DTD DocBook XML" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+"delegatePublic" "-//OASIS//DTD XML Exchange" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+"delegatePublic" "-//OASIS//ENTITIES DocBook XML" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
+"delegatePublic" "-//OASIS//ELEMENTS DocBook XML" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
 "delegateSystem" "http://www.oasis-open.org/docbook/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
 "delegateURI" "http://www.oasis-open.org/docbook/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
 )
@@ -162,6 +166,9 @@ foreach(DTDVERSION ${previous_versions})
     )
   install_xml_catalog(commands "docbook")
 
+  # Do this for every pattern above except the "public" one which has already
+  # been taken care of so using the catalog file as the catalog
+  # is equivalent to using the docbook file as the catalog.
   set(commands
     "delegateSystem" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
     "delegateURI" "http://www.oasis-open.org/docbook/xml/${DTDVERSION}/" "file://${CATALOG_CMAKE_INSTALL_PREFIX}/etc/xml/docbook"
