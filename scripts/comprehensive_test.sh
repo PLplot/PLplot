@@ -138,7 +138,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    # Use this logic to be as version-independent as possible.
 	    current_dir=$(pwd)
 	    # Wild cards must not be inside quotes.
-	    cd "$INSTALL_TREE"/lib/plplot?.?.?*/drivers*
+	    cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
 	    PATH="$(pwd):$PATH"
 	    cd $current_dir
 	fi
@@ -156,7 +156,7 @@ Each of the steps in this comprehensive test may take a while...."
                 # that excludes MSYS.
 		PATH=$path_excluding_msys
 	    fi
-	    cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot?.?.?/examples >& "$output"
+	    cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
 	    PATH=$PATH_AFTER_CMAKE
 	    if [ "$do_test_noninteractive" = "yes" ] ; then
 		output="$OUTPUT_TREE"/installed_make_noninteractive.out
@@ -173,7 +173,7 @@ Each of the steps in this comprehensive test may take a while...."
 	fi
 
 	if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
-	    cd "$INSTALL_TREE"/share/plplot?.?.?/examples
+	    cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
 	    output="$OUTPUT_TREE"/traditional_make_noninteractive.out
 	    rm -f "$output"
 	    echo "Traditional $build_command test_noninteractive in the installed examples tree"
@@ -217,7 +217,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    fi
 	fi
 	if [ "$do_test_traditional_install_tree" = "yes" ] ; then
-	    cd "$INSTALL_TREE"/share/plplot?.?.?/examples
+	    cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
 	    output="$OUTPUT_TREE"/traditional_make_interactive.out
 	    rm -f "$output"
 	    echo "Traditional $build_command test_interactive in the installed examples tree"
