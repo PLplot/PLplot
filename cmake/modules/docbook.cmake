@@ -61,10 +61,12 @@ else(ONSGMLS )
   message(STATUS "WARNING: validate target will not be available to check for syntax issues in the PLplot DocBook documentation because onsgmls was not found.")
 endif(ONSGMLS )
 
+# This option is used for the BUILD_DOC case below and elsewhere and also
+# for the PREBUILT_DOC case elsewhere (when stylesheet.css is configured).
+option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" YES)
+
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
-
-  option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" YES)
 
   # The info backend is implemented only with perl and XML/XSLT regardless of
   # DOCBOOK_XML_BACKEND.

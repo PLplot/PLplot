@@ -723,6 +723,18 @@ endforeach (file \"\${MAN_FILES}\")
 endif(BUILD_MAN OR PREBUILT_DOC)
 
 if(BUILD_HTML OR PREBUILT_DOC)
+  if(DOCBOOK_XML_BACKEND)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css.xsl.in
+      ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css
+      )
+  else(DOCBOOK_XML_BACKEND)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css.dsssl.in
+      ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css
+      )
+  endif(DOCBOOK_XML_BACKEND)
+
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST} ${CMAKE_CURRENT_BINARY_DIR}/stylesheet.css DESTINATION ${DOC_DIR}/html )
   install(CODE "
 # Suppress empty element warning.
