@@ -1,33 +1,38 @@
 INDEX
-(1) Prepare documentation
+(1) Prepare and test the documentation
 (2) Check and potentially fix internal consistency
 (3) Update website-related files
-(4) Preliminary install and test of a local copy of the PLplot website
-(5) Prepare a preliminary version of the ChangeLog file for this release
-(6) Prepare the README.release file or press those who have made
-(7) Version changes.
-(8) Install and test a local copy of the PLplot website
-(9) Comprehensive test of PLplot.
-(10) Upload the local website to SourceForge:
-(5) Prepare a file release:
-(4) Publicity for the release announcement.
-(5) Immediate preparation for next release cycle
-
+(4) Install and test a (preliminary) local copy of the PLplot website
+(5) Prepare a (preliminary) version of the ChangeLog file for this release
+(6) Prepare the README.release file and/or press those who have made
+(7) Update Release date and versions
+(8) Create (a preliminary version of) the release tarball and check the result
+(9) Do comprehensive test of PLplot.
+(10) Install and test a local copy of the PLplot website
+(11) Create ChangeLog.release
+(12) Create the PLplot Release
+(13) Upload the local website to SourceForge
+(14) Prepare a file release
+(15) Publicize the release announcement
+(16) Prepare immediately for the next release cycle
 
 (A1) GNU Privacy Guard (gpg)
 (A2) Creating a test tarball from trunk
 (A3) Correct computer time
 
-N.B. the order of steps below is important because of the
-dependencies between the steps.
+N.B. the order of steps below is important because of the dependencies
+between the steps which are noted (except for the generation of the
+final release tarball and ChangeLog which depend on virtually all
+prior steps).
 
-(1) Prepare documentation
+(1) Prepare and test the documentation
 
 This step does not depend on other steps.
 
 The steps below entitled 
 
 "Check and potentially fix internal consistency" and
+"Install and test a (preliminary) local copy of the PLplot website"
 "Install and test a local copy of the PLplot website"
 
 depend on this step.
@@ -36,23 +41,22 @@ Update the doxygen documentation (in our source code) and DocBook
 documentation (in doc/docbook/src) to reflect any changes (new drivers
 or new PLplot functionality) in the current release cycle.  Or
 alternatively, press those who made the changes to update the
-documentation.
+documentation.  Generate and test our doxygen form of documentation
+following the instructions in doc/README.doxygen.
 
-Generate and test our doxygen form of documentation following the
-instructions in doc/README.doxygen.  Generate and test our Docbook
-documentation following the instructions in
-doc/docbook/README.developers.
+Update, generate and test our Docbook documentation following the
+instructions in doc/docbook/README.developers.
 
 (2) Check and potentially fix internal consistency
 
 This step depends on the step above entitled 
 
-"Prepare documentation".
+"Prepare and test the documentation".
 
 This step potentially affects the swig-generated bindings and
-the f95, tcl, and ocaml bindings.  Thus, the steps below entitled
+the f95, tcl, and ocaml bindings.  Thus, the step below entitled
 
-""
+"Comprehensive test of PLplot"
 
 may depend on this step.
 
@@ -106,9 +110,12 @@ Built target check_plplot_h.inc
 
 This step does not depend on other steps.
 
-The step below entitled
+The steps below entitled
 
+"Install and test a (preliminary) local copy of the PLplot website"
 "Install and test a local copy of the PLplot website"
+"Create (a preliminary version of) the release tarball and check the result"
+"Create the release tarball and check the result"
 
 depends on this step.
 
@@ -121,9 +128,9 @@ example thumbnails are generated.  The list also automatically
 controls what examples-related files are copied to the website.
 
 Update the project web page, including the examples: edit
-www/examples.php to reflect the forthcoming release version number and
-any changes to the examples themselves (i.e. pages added or removed
-from an existing example or entirely new examples).
+www/examples.php to reflect any changes to the examples themselves
+(i.e. pages added or removed from an existing example or entirely new
+examples).
 
 Note, the xmlto package that must be installed in order to generate
 the DocBook documentation (see doc/docbook/README.developers referred
@@ -132,65 +139,14 @@ announcements for the website, and could also be used to generate
 present release announcements for the website if desired.  See
 www/announce/README for just how easy this step would be.
 
-(4) Preliminary install and test of a local copy of the PLplot website
+(4) Install and test a (preliminary) local copy of the PLplot website
 
 This step depends on the steps above entitled
 
-"Prepare documentation" and
+"Prepare and test the documentation" and
 "Update website-related files"
 
 but does not depend on any steps below.
-
-Follow the directions in the step below entitled
-
-"Install and test a local copy of the PLplot website"
-
-exactly which should produce a final tested local version of the
-website except that the RELEASE_DATE might be wrong.
-
-(5) Prepare a preliminary version of the ChangeLog file for this release
-
-# This makes the BASE used below correct.
-svn update
-
-svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release_preliminary
-
-where <LAST_RELEASE_REVISION> stands for the last revision number of
-the previous release which can be determined e.g., by viewing the
-ChangeLog.release file from the previous release.  Note the "_preliminary"
-suffix to distinguish this from the final result below.
-
-
-(6) Prepare the README.release file or press those who have made
-changes in this release cycle to update that file.
-
-To double-check that file is complete with regards to all major
-developments during this release cycle, skim all the commit messages in
-ChangeLog.release_preliminary determined above.
-
-(7) Version changes.
-
-Version of PLplot updated above in www/examples.php.  In addition,
-update cmake/modules/plplot_version.cmake to reflect the current
-RELEASE_DATE (which affects the documentation build) and
-version. Also, follow the instructions in that file for updating the
-SOVERSION, the minor number and the patch number for each versioned
-library created by the PLplot build.
-
-(8) Install and test a local copy of the PLplot website
-
-This step depends on the steps above entitled
-
-"Prepare documentation",
-"Update website-related files", and
-"Version changes" (since the documentation build depends on the
-release date).
-
-The step below entitled
-
-""
-
-depends on this one.
 
 To build the local form of the website (including both the doxygen and
 DocBook forms of our documentation) run (on a Linux host that is
@@ -246,7 +202,7 @@ complete and look good and the source code for each language for
 examples is accessible, etc.  Some iterations with the
 steps above entitled
 
-"Prepare documentation" and
+"Prepare and test the documentation" and
 "Update website-related files"
 
 will likely be required.
@@ -259,9 +215,98 @@ with the local website.  But after you _are_ satisfied with the
 local website you should commit all your changes so they are available
 for generating the tarball and ChangeLog (see below) for this release.
 
-(9) Comprehensive test of PLplot.
+N.B. The iterated result should be identical to the final result (see
+below) except that the release date (configured as RELEASE_DATE) and
+the PLplot version in www/example.php will be wrong.  Those
+issues are addressed in "Update release date and versions" below.
 
-Do comprehensive test of the interactive results then the noninteractive
+(5) Prepare a (preliminary) version of the ChangeLog file for this release
+
+# This makes the BASE used below correct.
+svn update
+
+svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release_preliminary
+
+where <LAST_RELEASE_REVISION> stands for the last revision number of
+the previous release which can be determined e.g., by viewing the
+ChangeLog.release file from the previous release.  Note the
+"_preliminary" suffix to distinguish this from the final result below
+which will contain (if all goes well in the steps below) a record of
+all but the last commit (of the ChangeLog itself) for this release.
+
+(6) Prepare the README.release file and/or press those who have made
+changes in this release cycle to update that file.
+
+This step depends on the step above entitled
+
+"Prepare a (preliminary) version of the ChangeLog file for this release".
+
+To double-check that file is complete with regards to all major
+developments during this release cycle, skim all the commit messages in
+ChangeLog.release_preliminary determined above.
+
+(7) Update Release date and versions
+
+This step depends on no others.
+
+The following steps entitled
+
+"Create (a preliminary version of) the release tarball and check the result
+for errors."
+"Install and test a local copy of the PLplot website"
+"Comprehensive test of PLplot"
+
+depend on this step.
+
+Update PLplot version in www/examples.php.  In addition,
+update cmake/modules/plplot_version.cmake to reflect the current
+RELEASE_DATE (which affects the documentation build) and
+version. Also, follow the instructions in that file for updating the
+SOVERSION, the minor number and the patch number for each versioned
+library created by the PLplot build.
+
+(8) Create (a preliminary version of) the release tarball and check the result
+for errors.
+
+This step depends on the steps above entitled
+
+"Prepare and test documentation"
+"Check and potentially fix internal consistency"
+
+The -c option runs ctest on the directory tree unpacked from the
+release tarball, and the -i option installs a build from that
+directory tree
+
+scripts/make_tarball.sh -c -i /tmp/plplot_install
+
+find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error
+
+If the above find command discovers any errors, then those errors
+need to be fixed and this step needs to be repeated.
+
+Browse the following install locations that were generated from the
+tarball:
+
+/tmp/plplot_install/share/doc/plplot/html/index.html
+/tmp/plplot_install/share/doc/plplot/plplot-5.9.10.pdf
+/tmp/plplot_install/share/doc/plplot/plplot-5.9.10.ps.gz
+
+Look at a few man pages that were generated from the tarball, e.g.,
+
+nroff -man /tmp/plplot_install/share/man/man3/pllegend.3plplot |less
+
+Look at the info pages that were generated from the tarball using
+
+info /tmp/plplot_install/share/info/plplotdoc.info
+
+(9) Do comprehensive test of PLplot.
+
+This step depends on the steps above entitled
+
+"Check and potentially fix internal consistency"
+"Update date/versions"
+
+Do a comprehensive test of the interactive and noninteractive
 results.
 
 scripts/comprehensive_test.sh --do_ctest no --do_test_noninteractive no
@@ -270,15 +315,32 @@ scripts/comprehensive_test.sh  --do_test_interactive no
 Enter results of these and all other tests of this release into
 README.release.
 
-(10) Create ChangeLog.release
+(10) Install and test a local copy of the PLplot website
+
+This step depends on the steps above entitled
+
+"Prepare and test the documentation"
+"Update website-related files"
+"Update release date and versions"
+
+The step below entitled
+
+"Upload the local website to SourceForge"
+
+depends on this one.
+
+Follow the exact steps given above in "Install and test a
+(preliminary) local copy of the PLplot website" but this time with the
+correct RELEASE_DATE and VERSION.
+
+(11) Create ChangeLog.release
 
 N.B. commit all local changes to the repository so they will be
-reflected in the ChangeLog, tagged version of the release, and release
-tarball.  And if there are committed changes after this one (except
-possibly for commits of this file, README.Release_Manager_Cookbook),
+reflected in the ChangeLog, tagged version of the release, and the release
+tarball.  And if there are committed changes after this one
 repeat this step so the ChangeLog.release commit is the last trunk
-commit for this release cycle (with the exception of the current
-file).
+commit for this release cycle (with the possible exception of the current
+file, README.Release_Manager_Cookbook).
 
 Prepare the ChangeLog.release file to keep track of all changes
 made for the release.  Use the following commands:
@@ -299,7 +361,8 @@ release version, the release tarball, etc.  This should be the
 last commit for the trunk version of PLplot (see remarks above
 about when it is necessary to repeat this step).
 
-(11) Creating a PLplot Release:
+(12) Create the PLplot Release
+
 Based on suggestions in the svn manual, the PLplot svn archive is configured
 as follows:
 
@@ -340,8 +403,6 @@ svn commit -m "Adding a tag for the X.Y.Z release."
 
 cd to tags/ and enter the following commands: 
 
-export WWW_USER=your_sf_user_name
-../trunk/scripts/make_tarball.sh -c -i /tmp/vX_Y_Z -t vX_Y_Z 2>&1 | tee build.log
 
 This script will take a several minutes to execute and does not otherwise
 provide a lot of feedback so it will appear as if it is doing nothing for
@@ -378,7 +439,7 @@ gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.
 
 A list of your GPG keys can be obtained using the command "gpg --list-keys".
 
-(2) Upload the local website to SourceForge:
+(13) Upload the local website to SourceForge
 
 Once you are satisfied with the local website, you should upload it to
 SourceForge with rsync.
@@ -404,7 +465,7 @@ directory which is not what you want to do.
 N.B. the --dry-run option for rsync is a god-send and tells you exactly what
 will happen without actually doing it.
 
-(5) Prepare a file release:
+(14) Prepare a file release
 
 Login to sf.net.
 Go to the PLplot SourceForge project page.
@@ -433,21 +494,19 @@ Click "Submit"
     the release numbers.
 
 
-(4) Publicity for the release announcement.
+(15) Publicize the release announcement
 
 Jerry: macresearch.org
 
 Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
-(5) Immediate preparation for next release cycle
+(16) Prepare immediately for the next release cycle
 
   a. Append the README.release file from the current release onto the front of
      the OLD-README.release file. This is done to preserve a record of the
      significant changes between versions of PLplot.
   b. Update README.release file to reflect significant changes made between
      the current release and the last release.
-
-
 
 --- Appendix ---
 
