@@ -1,6 +1,6 @@
 # For now, must set this by hand before each release.  This value affects
 # at least the documentation build and perhaps other parts of the release.
-set(RELEASE_DATE "2013-09-29")
+set(RELEASE_DATE "2013-09-30")
 
 # Version data that need review and possible modification for each release.
 
