@@ -1,51 +1,207 @@
 INDEX
-(1) Install and test a local copy of the PLplot website.
-(2) Upload the local website to SourceForge.
-(3) Creating a PLplot Release.
+(1) Prepare documentation
+(2) Check and potentially fix internal consistency
+(3) Update website-related files
+(4) Preliminary install and test of a local copy of the PLplot website
+(5) Prepare a preliminary version of the ChangeLog file for this release
+(6) Prepare the README.release file or press those who have made
+(7) Version changes.
+(8) Install and test a local copy of the PLplot website
+(9) Comprehensive test of PLplot.
+(10) Upload the local website to SourceForge:
+(5) Prepare a file release:
 (4) Publicity for the release announcement.
 (5) Immediate preparation for next release cycle
+
 
 (A1) GNU Privacy Guard (gpg)
 (A2) Creating a test tarball from trunk
 (A3) Correct computer time
 
-(1) Install and test a local copy of the PLplot website:
+N.B. the order of steps below is important because of the
+dependencies between the steps.
 
-(N.B. this step needs to be done first to insure the associated source tree
-updates get into the release tarball, the svn tags version of the release,
-and associated commit messages get into the ChangeLog for the
-release.)
+(1) Prepare documentation
 
-You should always generate and install from scratch a local copy of the
-PLplot website on some ssh-accessible machine (normally your local machine).
+This step does not depend on other steps.
+
+The steps below entitled 
+
+"Check and potentially fix internal consistency" and
+"Install and test a local copy of the PLplot website"
+
+depend on this step.
+
+Update the doxygen documentation (in our source code) and DocBook
+documentation (in doc/docbook/src) to reflect any changes (new drivers
+or new PLplot functionality) in the current release cycle.  Or
+alternatively, press those who made the changes to update the
+documentation.
+
+Generate and test our doxygen form of documentation following the
+instructions in doc/README.doxygen.  Generate and test our Docbook
+documentation following the instructions in
+doc/docbook/README.developers.
+
+(2) Check and potentially fix internal consistency
+
+This step depends on the step above entitled 
+
+"Prepare documentation".
+
+This step potentially affects the swig-generated bindings and
+the f95, tcl, and ocaml bindings.  Thus, the steps below entitled
+
+""
+
+may depend on this step.
+
+Some of the files in the source tree are generated from other files
+in the source tree using build-system targets.  All targets that
+have "check" in the name prefix are these kind of targets.  So to get
+a complete list of such targets, execute
+
+make help |grep '... check'
+
+in the build tree.  The current such list of targets is
+
+... check_swig_documentation
+... check_f95_parameters
+... check_tcl_parameters
+... check_plplot_h.inc
+
+Note, one of these targets (check_plplot_h.inc) only exists if the
+-DGENERATE_PLPLOT_H_INC=ON cmake option is used which in turn requires
+that at least the OCaml version of the Perl regular expression library
+be installed.  (On debian the associated package name is
+libpcre-ocaml-dev.)  Normally, GENERATE_PLPLOT_H_INC is OFF by default
+to reduce build dependencies, but to make the complete list of such
+targets available you should run the cmake command with the
+-DGENERATE_PLPLOT_H_INC=ON option and make sure there are no
+OCaml-related warnings in the results.
+
+To actually do the internal consistency checks, run each of the above
+targets which typically generate a file in the build tree which is
+then compared (using the Unix cmp command) with the file that is being
+checked in the source tree.  If the two files are inconsistent (which
+can be caused by documentation updates, for example), the cmp command
+complains, and you should follow up by doing a diff between the two
+files to confirm that the changes are reasonable followed by copying
+the build-tree version of the file on top of the source-tree version
+and committing the source-tree version.  When this process is completed,
+all the above targets should run with no cmp or other errors/warnings
+at all, e.g.,
+
+software@raven> make check_swig_documentation check_f95_parameters check_tcl_parameters check_plplot_h.inc
+Check that swig_documentation.i is consistent with doc/docbook/src/api.xml
+Built target check_swig_documentation
+Check that plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i
+Built target check_f95_parameters
+Check that plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i
+Built target check_tcl_parameters
+Check that plplot_h.inc is consistent with touchup.ml and plplot_h
+Built target check_plplot_h.inc
+
+(3) Update website-related files
+
+This step does not depend on other steps.
+
+The step below entitled
+
+"Install and test a local copy of the PLplot website"
+
+depends on this step.
 
 If necessary, update the examples list in
 scripts/htdocs-gen_plot-examples.sh. That list is used to generate the
-website example-related files and copy the results to the website. The list
-automatically controls what example source code is configured (for source
-code that needs that), as well as what example plots and example thumbnails
-are generated.  The list also automatically controls what examples-related
-files are copied to the website.
+website example-related files and copy the results to the website. The
+list automatically controls what example source code is configured
+(for source code that needs that), as well as what example plots and
+example thumbnails are generated.  The list also automatically
+controls what examples-related files are copied to the website.
 
 Update the project web page, including the examples: edit
 www/examples.php to reflect the forthcoming release version number and
 any changes to the examples themselves (i.e. pages added or removed
 from an existing example or entirely new examples).
 
-You also need to install "xmlto" (in the xmlto debian package).
-xmlto is used to generate some of our older release announcements for
-the website, and could also be used to generate present release
-announcements for the website if desired.  See www/announce/README for
-just how easy this step would be.
+Note, the xmlto package that must be installed in order to generate
+the DocBook documentation (see doc/docbook/README.developers referred
+to above) is also used to generate some of our older release
+announcements for the website, and could also be used to generate
+present release announcements for the website if desired.  See
+www/announce/README for just how easy this step would be.
 
-Run (on a Linux host that is capable of building the documentation
-for the source tree that has all local changes)
+(4) Preliminary install and test of a local copy of the PLplot website
+
+This step depends on the steps above entitled
+
+"Prepare documentation" and
+"Update website-related files"
+
+but does not depend on any steps below.
+
+Follow the directions in the step below entitled
+
+"Install and test a local copy of the PLplot website"
+
+exactly which should produce a final tested local version of the
+website except that the RELEASE_DATE might be wrong.
+
+(5) Prepare a preliminary version of the ChangeLog file for this release
+
+# This makes the BASE used below correct.
+svn update
+
+svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release_preliminary
+
+where <LAST_RELEASE_REVISION> stands for the last revision number of
+the previous release which can be determined e.g., by viewing the
+ChangeLog.release file from the previous release.  Note the "_preliminary"
+suffix to distinguish this from the final result below.
+
+
+(6) Prepare the README.release file or press those who have made
+changes in this release cycle to update that file.
+
+To double-check that file is complete with regards to all major
+developments during this release cycle, skim all the commit messages in
+ChangeLog.release_preliminary determined above.
+
+(7) Version changes.
+
+Version of PLplot updated above in www/examples.php.  In addition,
+update cmake/modules/plplot_version.cmake to reflect the current
+RELEASE_DATE (which affects the documentation build) and
+version. Also, follow the instructions in that file for updating the
+SOVERSION, the minor number and the patch number for each versioned
+library created by the PLplot build.
+
+(8) Install and test a local copy of the PLplot website
+
+This step depends on the steps above entitled
+
+"Prepare documentation",
+"Update website-related files", and
+"Version changes" (since the documentation build depends on the
+release date).
+
+The step below entitled
+
+""
+
+depends on this one.
+
+To build the local form of the website (including both the doxygen and
+DocBook forms of our documentation) run (on a Linux host that is
+capable of building the documentation for the source tree that has all
+local changes)
 
 scripts/generate_website.sh
 
 with no arguments.  The script asks you four questions, gives you a chance
 to verify your answers, then does all the rest of it (downloading a
-throwaway copy of the PLplot source code, building the documentation,
+throwaway copy of the PLplot source code, building the doxygen and DocBook documentation,
 generating the announcements that are part of the base website, uploading
 the base website, uploading the documentation, building the examples,
 running the examples, uploading the example source code and example results)
@@ -63,8 +219,8 @@ to missing commands that need to be installed) by running
 
 find /tmp/plplotdoc -name '*.out' |xargs grep -i error
 
-You should install both apache and PHP on your computer.  For Debian Testing
-(a.k.a. squeeze) that is done (as root) by installing libapache2-mod-php5
+You should install both apache and PHP on your computer.  For Debian stable
+(a.k.a. wheezy) that is done (as root) by installing libapache2-mod-php5
 and enabling user directories using the command
 
 a2enmod userdir
@@ -84,77 +240,66 @@ service apache2 restart
 /home/irwin/public_html/plplot/htdocs, browses as
 http://raven/~irwin/plplot/htdocs/.)
 
-I test http://raven/~irwin/plplot/htdocs/ by clicking on most links, checking
-the documentation looks good, checking the examples look good and the
-source code for each language for examples is accessible, etc.
+I test http://raven/~irwin/plplot/htdocs/ by clicking on most links,
+checking the documentation looks good, checking the examples are
+complete and look good and the source code for each language for
+examples is accessible, etc.  Some iterations with the
+steps above entitled
+
+"Prepare documentation" and
+"Update website-related files"
+
+will likely be required.
 
 N.B. scripts/generate_website.sh uses the local source tree where that
 script resides (including all local changes) as the source tree for
 generating the local website.  So there is no need to commit every
-above example and version change until you are completely satisfied
+documentation, example, and version change until you are completely satisfied
 with the local website.  But after you _are_ satisfied with the
 local website you should commit all your changes so they are available
 for generating the tarball and ChangeLog (see below) for this release.
 
-(2) Upload the local website to SourceForge:
+(9) Comprehensive test of PLplot.
 
-Once you are satisfied with the local website, you should upload it to
-SourceForge with rsync.
+Do comprehensive test of the interactive results then the noninteractive
+results.
 
-For the above WEBSITE_PREFIX, here is what worked for me from my computer
-with the hostname of raven where that WEBSITE_PREFIX directory was
-created.
+scripts/comprehensive_test.sh --do_ctest no --do_test_noninteractive no
+scripts/comprehensive_test.sh  --do_test_interactive no
 
-rsync -av --delete \
-/home/irwin/public_html/plplot/htdocs/ \
-airwin,plplot@web.sourceforge.net:htdocs 
+Enter results of these and all other tests of this release into
+README.release.
 
-Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
-username makes sure you have the right group permissions and default website
-directory location for PLplot.  
+(10) Create ChangeLog.release
 
-N.B. the trailing slash on the source directory is essential and means rsync
-the contents of this directory with the contents of the destination htdocs
-directory.  Without the trailing slash you would rsync the the contents of
-the source directory with the contents of the htdocs/htdocs destination
-directory which is not what you want to do.  
-
-N.B. the --dry-run option for rsync is a god-send and tells you exactly what
-will happen without actually doing it.
-
-(3) Creating a PLplot Release:
-
-Update the README.release file.
-
-Update the docbook documentation to reflect any new drivers or new 
-functionality that has been added to PLplot. Or alternatively, press those
-who made the changes to update the documentation.
-
-Update cmake/module/plplot_version.cmake to reflect the current version. Also,
-follow the instructions in this file for updating the SOVERSION, the minor
-number and the patch number.
-
-IMPORTANT: commit all local changes to the repository so they
-will be reflected in the ChangeLog, tagged version of the release,
-and release tarball.
+N.B. commit all local changes to the repository so they will be
+reflected in the ChangeLog, tagged version of the release, and release
+tarball.  And if there are committed changes after this one (except
+possibly for commits of this file, README.Release_Manager_Cookbook),
+repeat this step so the ChangeLog.release commit is the last trunk
+commit for this release cycle (with the exception of the current
+file).
 
 Prepare the ChangeLog.release file to keep track of all changes
-made for the release.  (This destroys the ChangeLog.release file
-from the previous release.)
+made for the release.  Use the following commands:
 
 # This makes the BASE used below correct.
 svn update
+
 svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release
 
-where <LAST_RELEASE_REVISION> stands for the last revision number of
-the previous release which can be found, e.g., by browsing
-http://plplot.svn.sourceforge.net/viewvc/plplot/tags
+(This destroys the ChangeLog.release file
+from the previous release.)  LAST_REVISION should be the same as in
+the generation of the preliminary version of this file above.
 
 Check that ChangeLog.release is in the appropriate date range (i.e. only the
 changes that were made since the last release should be included) then
 (IMPORTANT) commit it so it will also be available for the tagged
-release version, the release tarball, etc.
+release version, the release tarball, etc.  This should be the
+last commit for the trunk version of PLplot (see remarks above
+about when it is necessary to repeat this step).
 
+(11) Creating a PLplot Release:
 Based on suggestions in the svn manual, the PLplot svn archive is configured
 as follows:
 
@@ -233,7 +378,33 @@ gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.
 
 A list of your GPG keys can be obtained using the command "gpg --list-keys".
 
-Prepare a file release:
+(2) Upload the local website to SourceForge:
+
+Once you are satisfied with the local website, you should upload it to
+SourceForge with rsync.
+
+For the above WEBSITE_PREFIX, here is what worked for me from my computer
+with the hostname of raven where that WEBSITE_PREFIX directory was
+created.
+
+rsync -av --delete \
+/home/irwin/public_html/plplot/htdocs/ \
+airwin,plplot@web.sourceforge.net:htdocs 
+
+Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
+username makes sure you have the right group permissions and default website
+directory location for PLplot.  
+
+N.B. the trailing slash on the source directory is essential and means rsync
+the contents of this directory with the contents of the destination htdocs
+directory.  Without the trailing slash you would rsync the the contents of
+the source directory with the contents of the htdocs/htdocs destination
+directory which is not what you want to do.  
+
+N.B. the --dry-run option for rsync is a god-send and tells you exactly what
+will happen without actually doing it.
+
+(5) Prepare a file release:
 
 Login to sf.net.
 Go to the PLplot SourceForge project page.
