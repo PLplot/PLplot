@@ -96,12 +96,11 @@ END;
 	function pageNews($newscount, $contentlength)
 	{
 		// Open the PLplot News RSS feed and parse it
+		// Options for sourceforge news feed can be looked up at this link:
+		//      http://sourceforge.net/apps/trac/sourceforge/wiki/API
 		$feed = new SimplePie();
 		$feed->enable_cache(false);  // disable cache
-//		This old url just redirects to the correct one below (without
-//		rss_limit).
-//		$url = sprintf("http://sourceforge.net/export/rss2_projnews.php?group_id=2915&rss_limit=%d", $newscount);
-		$url = sprintf("http://sourceforge.net/p/plplot/news/feed");
+		$url = sprintf("http://sourceforge.net/api/news/index/project-id/2915/limit/%d/rss", $newscount);
 		$feed->set_feed_url($url);
 		$feed->init();
 		$feed->handle_content_type();
