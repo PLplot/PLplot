@@ -105,6 +105,7 @@ if(
     # Custom target for validating xml file
     add_custom_target(validate
       COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml > ${VALIDATE_OUTPUT}
+      VERBATIM
       )
     add_dependencies(validate copy_prebuiltdoc)
   endif(ONSGMLS)
@@ -179,6 +180,7 @@ else(
 
     add_custom_target(validate
       COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml > ${VALIDATE_OUTPUT}
+      VERBATIM
       )
     add_dependencies(validate
       docbook_plplot-symbols_txt

@@ -54,12 +54,17 @@ set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.5//EN")
 set(DOCBOOK_DTD_SYSID "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd")
 
 find_program(ONSGMLS onsgmls)
+find_program(ENV_FOR_ONSGMLS env)
 
-if(ONSGMLS )
-  message(STATUS "validate target will be available to check for syntax issues in the PLplot DocBook documentation using ${ONSGMLS}.")
-else(ONSGMLS )
-  message(STATUS "WARNING: validate target will not be available to check for syntax issues in the PLplot DocBook documentation because onsgmls was not found.")
-endif(ONSGMLS )
+if(ONSGMLS AND ENV_FOR_ONSGMLS)
+  message(STATUS "validate target will be available to check for syntax issues in the PLplot DocBook documentation using ${ENV_FOR_ONSGMLS} SP_CHARSET_FIXED=yes SP_ENCODING=xml ${ONSGMLS}.")
+  # Note, these environment variables have to be set to use onsgml with
+  # UTF-8 documents, see https://bugzilla.redhat.com/show_bug.cgi?id=66179
+  set(ONSGMLS ${ENV_FOR_ONSGMLS} SP_CHARSET_FIXED=yes SP_ENCODING=xml ${ONSGMLS})
+else(ONSGMLS AND ENV_FOR_ONSGMLS)
+  message(STATUS "WARNING: validate target will not be available to check for syntax issues in the PLplot DocBook documentation because onsgmls (or env) was not found.")
+  set(ONSGMLS NOTFOUND)
+endif(ONSGMLS AND ENV_FOR_ONSGMLS)
 
 # This option is used for the BUILD_DOC case below and elsewhere and also
 # for the PREBUILT_DOC case elsewhere (when stylesheet.css is configured).
