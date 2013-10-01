@@ -1,4 +1,4 @@
-PLplot Release 5.9.10
+PLplot Release 5.9.11
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development
@@ -21,31 +21,9 @@ OFFICIAL NOTICES FOR USERS
 
 CHANGES
 
--1. Important changes we should have mentioned in previous release announcements.
+0. Tests made for release 5.9.11
 
--1.1 Add full bindings and examples for the D language.
-
-0. Tests made for release 5.9.10
-
-1. Changes relative to PLplot 5.9.9 (the previous development release)
-
-1.1 The format for map data used by plmap has changed
-1.2 Python support for Numeric has been dropped
-1.3 Backwards-incompatible API change to non-integer line widths
-1.4 Improvements to the build system for the Cygwin case
-1.5 The plcolorbar API has been finalized
-1.6 Documentation of the new legend and color bar capabilities of PLplot
-1.7 The D bindings and examples have been converted from the
-old version of D (D1) to the new version of D (D2)
-1.8 The DocBook documentation for PLplot is now generated using modern
-XML/XSL backend tools for DocBook
-1.9 Implement experimental build_projects sub-project
-1.10 Implement extremely simple "00" example
-1.11 Convert to using the Allura form of SourceForge software
-1.12 Use NON_TRANSITIVE linking by default for the shared libraries case for
-all non-windows systems
-1.13 Update f95 examples to take larger advantage of Fortran 95 capabilities
-1.14 Substantial additions to the doxygen documentation
+1. Changes relative to PLplot 5.9.10 (the previous development release)
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -481,190 +459,9 @@ stream variables directly (only possible in C/C++) or use plgvpw.
 
 CHANGES
 
-0. Tests made for release 5.9.10
+0. Tests made for release 5.9.11
 
-Comprehensive testing that showed no non-zero return codes or other
-obvious run-time issues such as segfaults was done for the Debian
-Wheezy platform.  These tests were done with the
-scripts/comprehensive_test.sh which does 21 major tests.  Those tests
-consist of seven tests (ctest, and "make test_noninteractive" and make
-"test_interactive" results for the build tree, and "make
-test_noninteractive" and make "test_interactive" results for both the
-traditional and CMake-based build systems for the installed examples
-tree) for each of our three major configurations (shared
-libraries/dynamic devices, shared libraries/non-dynamic devices,
-static libraries/non-dynamic devices).
-
-More limited testing that showed no non-zero return codes or other
-obvious run-time issues such as segfaults was done on a large number
-of different platforms including the following:
-
-Fedora with "Unix Makefiles" generator
-Ubuntu with "Unix Makefiles" generator
-Debian unstable with "Unix Makefiles" generator
-Debian wheezy with "Ninja" generator
-Wine version of Windows with "MSYS Makefiles" generator
-Wine version of Windows with "MinGW Makefiles" generator
-Wine version of Windows with "NMake Makefiles JOM" generator
-Microsoft version of Windows with Cygwin and with "Unix Makefiles" generator
-Microsoft version of Windows with "MinGW Makefiles" generator
-Microsoft version of Windows with "MSYS Makefiles" generator
-Microsoft version of Windows with "NMake Makefiles" generator
-
-1. Changes relative to PLplot 5.9.9 (the previous development release)
-
-N.B. This release includes many code cleanups and fixes relative to
-5.9.9 that are not mentioned in the list below.
-
-1.1 The format for map data used by plmap has changed
-
-The format for map data used by plmap is now the shapefile format.
-This is a widely used standard format and there are many sources of data
-in this format. This replaces the custom binary format that PLplot used
-to use. The support for reading shapefiles is provided by the shapelib
-library, which is a new dependency for PLplot. If users do not have this
-installed then, by default, they will not get any map capabilities with
-PLplot. Support for the old format can still be enabled by setting the
-PL_DEPRECATED cmake variable, but this support will be removed in a
-subsequent PLplot release.
-
-1.2 Python support for Numeric has been dropped
-
-Support for the python Numeric package has been dropped. This has been
-deprecated since 5.9.6. Numeric is no longer supported and is superseded
-by numpy. Support for numpy has been the default in plplot for a number
-of years so most users should notice no difference.
-
-1.3 Backwards-incompatible API change to non-integer line widths
-
-All functions which take line width arguments (plwidth, plshade*,
-pllegend) now use PLFLT values for the line width. This allows device
-drivers which are based on modern graphics libraries such as Qt4 and
-pango/cairo to make full use (e.g., extremely fine line widths) of the
-floating-point line width capabilities of those libraries.  The
-replacement of plwid by plwidth, and the change in argument lists for
-plshade* and pllegend constitute a backwards incompatible API change
-from previous releases and the soname of libraries has been bumped
-accordingly (which forces users to recompile PLplot).
-
-1.4 Improvements to the build system for the Cygwin case
-
-The Cygwin platform provides a full-featured Unix environment on
-Windows.  CMake has recently been changed (at the request of Cygwin
-developers) to emphasize the Unix aspects of the Cygwin platform and
-deemphasize the Windows aspects of that platform.  It was argued this
-change would tend to make CMake builds of software much more reliable
-on Cygwin, and after some small but important changes to our
-CMake-based build system to adjust for these recent CMake changes for
-Cygwin, we have indeed confirmed that prediction for the PLplot case.
-There are still some Cygwin platform issues left which are being
-discussed on our Wiki at http://www.miscdebris.net/plplot_wiki/index.php?title=Setup_cygwin,
-but some fundamental breakthroughs have also been made for the Cygwin case
-that should interest all our Windows users.  For example, for the
-first time ever we have been able to build our cairo and qt device
-drivers on the Cygwin platform giving our Windows users convenient
-access to the many high-quality PLplot devices that are available with
-these two different device drivers.
-
-1.5 The plcolorbar API has been finalized
-
-The function plcolorbar allows users to create a color bar (an
-annotated subplot representing a continuous range of colors within the
-main plot and typically identifying certain colors with certain
-numerical values using an axis).  The plcolorbar capabilities are
-documented in our DocBook (and doxygen) documentation and demonstrated
-in standard examples 16 and 33.
-
-N.B. The previous two releases (5.9.8 and 5.9.9) contained
-unadvertised experimental versions of plcolorbar.  Any PLplot user who
-found and tried those capabilities will have to reprogramme their
-plcolorbar calls to be compatible with the argument list of the latest
-version.
-
-1.6 Documentation of the new legend and color bar capabilities of PLplot
-
-The pllegend and plcolorbar API has been documented in both doxygen
-and DocBook forms.  In addition, the "advanced use" chapter of the
-DocBook form of documentation now contains a section giving an
-overview of pllegend and plcolorbar.
-
-N.B. Although we feel the pllegend and plcolorbar API has now been
-finalized with regard to the PLplot core developers own interests and
-needs, we also realize that as more and more PLplot users take
-advantage of these new PLplot capabilities there will likely be calls
-to add additional features to pllegend or plcolorbar based on
-additional experience with these powerful capabilities.  In general,
-we would welcome such feature requests.
-
-1.7 The D bindings and examples have been converted from the
-old version of D (D1) to the new version of D (D2)
-
-This change should make PLplot much more relevant for D users
-going forward.
-
-See http://en.wikipedia.org/wiki/D_(programming_language)#History for
-a discussion of the differences between these two variants of D.
-
-1.8 The DocBook documentation for PLplot is now generated using modern
-XML/XSL backend tools for DocBook
-
-These modern backend tools (such as xmlto) replace the
-deprecated/unmaintained SGML/DSSL tools we have used before.  For
-developers this means generation of our DocBook generation is much
-easier. much faster, and much less error-prone.  End users will notice
-some improvements in the results (e.g., the table of Greek letters) as
-well as some minor style changes.
-
-1.9 Implement experimental build_projects sub-project
-
-The idea here (see cmake/build_projects) is to automate the build of
-all PLplot dependencies and the build and test of PLplot itself for
-platforms (such as Linux enterprise distributions and all forms of
-Windows platforms other than Cygwin) that do not come with modern
-versions of PLplot soft dependencies such as Pango/Cairo and Qt.
-This project is beginning to work properly for the Linux case, but
-still needs lots of work for the Windows case.
-
-1.10 Implement extremely simple "00" example
-
-The point of this standard example is to give the users an extremely
-simple tutorial example to help them to get started with 2D plotting
-with PLplot.
-
-1.11 Convert to using the Allura form of SourceForge software
-
-We use sourceforge.net as our software hosting facility.  Early in
-2013 Sourceforge updated essentially all their support software as
-part of the so-called Allura project.  This made it necessary to make
-some minor internal PLplot changes such as script changes and different URL's
-in the website referring to SourceForge facilities.  The most important
-change from the user perspective is the URL for the Allura form
-of the svn repository that we use now:
-
-http://svn.code.sf.net/p/plplot/code/trunk/
-
-1.12 Use NON_TRANSITIVE linking by default for the shared libraries case for
-all non-windows systems
-
-The point of this change is to reduce overlinking and therefore
-the problems caused by overlinking that are mentioned
-at http://en.altlinux.org/UnderOverLinkProblems.
-
-Non-transitive linking means link only to libraries that directly
-resolve undefined symbols, i.e., do not link to a library just because
-it is a dependency of a dependency.
-
-1.13 Update f95 examples to take larger advantage of Fortran 95 capabilities
-
-Previously our f95 examples tended to use legacy Fortran capabilities, but
-that situation has substantially changed for this release.
-
-1.14 Substantial additions to the doxygen documentation
-
-One of the on-going documentation projects is to create doxygen
-documentation of every single argument of the public API for PLplot.
-A substantial increase in such documentation has been implemented
-in this release cycle.
+1. Changes relative to PLplot 5.9.10 (the previous development release)
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
