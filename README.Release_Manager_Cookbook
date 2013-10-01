@@ -266,7 +266,7 @@ SOVERSION, the minor number and the patch number for each versioned
 library created by the PLplot build.
 
 (8) Create (a preliminary version of) the release tarball and check the result
-for errors.
+for errors
 
 This step depends on the steps above entitled
 
@@ -315,25 +315,7 @@ scripts/comprehensive_test.sh  --do_test_interactive no
 Enter results of these and all other tests of this release into
 README.release.
 
-(10) Install and test a local copy of the PLplot website
-
-This step depends on the steps above entitled
-
-"Prepare and test the documentation"
-"Update website-related files"
-"Update release date and versions"
-
-The step below entitled
-
-"Upload the local website to SourceForge"
-
-depends on this one.
-
-Follow the exact steps given above in "Install and test a
-(preliminary) local copy of the PLplot website" but this time with the
-correct RELEASE_DATE and VERSION.
-
-(11) Create ChangeLog.release
+(10) Create ChangeLog.release
 
 N.B. commit all local changes to the repository so they will be
 reflected in the ChangeLog, tagged version of the release, and the release
@@ -361,69 +343,37 @@ release version, the release tarball, etc.  This should be the
 last commit for the trunk version of PLplot (see remarks above
 about when it is necessary to repeat this step).
 
-(12) Create the PLplot Release
+(11) Create the PLplot Release
 
 Based on suggestions in the svn manual, the PLplot svn archive is configured
 as follows:
 
-/trunk/plplot
+/trunk
 /tags/older_plplot_versions
 /branches/??
 
-For the release, you will be creating (and eventually committing) what is
-essentially a branch of PLplot that is a record of the project at the time
-of the release. This branch will be located in the /tags directory and
-should follow the current naming convention, vX_Y_Z (v5_7_0 for example).
+For the release, you will be using svn to copy the /trunk version to
+/tags/vX_Y_Z (v5_9_10 for example to follow the previous naming
+conventions).
 
-The easiest way to get started is to make a directory on your computer
-called, for example plplot_releases. Then in this directory enter the
-following command:
+To do this strictly on the server side with no local files involved at all
+use the following commands:
 
-svn co https://plplot.svn.sourceforge.net/svnroot/plplot plplot
-
-This will check out the *entire* plplot project, including all the old
-versions. Strictly speaking this is not necessary, all you really need
-are the trunk and the tags directories, but you'll only have to do this
-once and hard drives are pretty big these days.
-
-If you already have this directory, you will need to make sure that
-trunk is up to date. In the trunk directory, type:
-
+# Check that you have committed everything and there are no other updates you
+# are unaware of.
 svn update
+svn status
+# Complete server side copy using new SourceForge Allura version of repository.
+# This is _much_ faster than copying from the local version.
+svn copy https://svn.code.sf.net/p/plplot/code/trunk https://svn.code.sf.net/p/plplot/code/tags/v5_9_10
 
-Now to create the branch for the new PLplot release, type the following
-command in the root plplot directory:
+# Check out this release tag
 
-svn copy trunk/ tags/vX_Y_Z
+svn checkout https://svn.code.sf.net/p/plplot/code/tags/v5_9_10 plplot_tags_5.9.10
 
-The commit the new tag:
-
-cd tags/vX_Y_Z
-svn commit -m "Adding a tag for the X.Y.Z release."
-
-cd to tags/ and enter the following commands: 
-
-
-This script will take a several minutes to execute and does not otherwise
-provide a lot of feedback so it will appear as if it is doing nothing for
-long periods of time (at least on a slower computer). Be patient. When the
-script is finished, the release tarball will be available in the directory
-/tmp/plplot-dist-prep/
-
-The "-c" option says to unpack the created tarball, build it with "cmake" and
-"make", then test that result with ctest.
-
-The "-i /tmp/vX_Y_Z" specifies the install prefix for the tarball
-test configure and runs "make install" after cmake, make and ctest. When the
-above command finishes executing you should go to this directory and verify
-that the examples build and that plplot_test.sh executes without errors.
-
-The build will fail (without any warning messages on the console) if you 
-do not have the necessary tools to build the documentation. It is a good 
-idea to verify that you can build the documentation (-DBUILD_DOC=ON).
-
-In the event that problems are found in PLplot during the release
-process, corrections should be made to trunk/, the ChangeLog.release
+In the event that problems are found in the release tarball generated
+from the release tag, then trunk should be fixed, the trunk
+ChangeLog.release
 file recreated and committed (see instructions above).  Then merge the
 trunk version into the tags/vX_Y_Z branch as follows:
 
@@ -434,12 +384,30 @@ Where A and B specify the range of revisions in trunk to be applied
 to tags/vX_Y_Z in the merge process. These can be determined by commit
 messages.
 
-Sign the release with your plplot Release Manager gpg key:
-gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.X.X.tar.gz
 
-A list of your GPG keys can be obtained using the command "gpg --list-keys".
+# IMPORTANT: use this tagged version to create the website and tarball
+cd plplot_tags_5.9.10
 
-(13) Upload the local website to SourceForge
+(11a) Install and test a local copy of the PLplot website
+
+This step depends on the steps above entitled
+
+"Prepare and test the documentation"
+"Update website-related files"
+"Update release date and versions"
+
+The step below entitled
+
+"Upload the local website to SourceForge"
+
+depends on this one.
+
+Follow the exact steps given above in "Install and test a
+(preliminary) local copy of the PLplot website" but this time with the
+correct RELEASE_DATE and VERSION and also do this
+using the files from the tagged release directory, e.g., plplot_tags_5.9.10
+
+(11b) Upload the local website to SourceForge
 
 Once you are satisfied with the local website, you should upload it to
 SourceForge with rsync.
@@ -465,33 +433,97 @@ directory which is not what you want to do.
 N.B. the --dry-run option for rsync is a god-send and tells you exactly what
 will happen without actually doing it.
 
-(14) Prepare a file release
+Note that when changing release managers, the SF permissions are not set
+up correctly to delete files belonging to the old release manager
+using rsync.  (Or else we need to learn more about how to change
+ownership using rsync.)
 
-Login to sf.net.
-Go to the PLplot SourceForge project page.
+So you need to use sftp to do that, e.g.,
 
-Upload the Release:
-Select Files.
-Click on the plplot folder & select "Add folder".
-Enter the release name as the "New folder name:", e.g. X.Y.Z Source.
-Click on the release folder pop-up menu & select "upload", upload the
-release and the gpg signature file from /tmp/plplot-dist-prep/. This can
-take a few minutes without much feedback.
-Concatenate the README.release and ChangeLog.release files into a single 
-README.release file.
-Upload the concatenated README.release file.
-Click on the "i" or "info" button to mark the tar.gz file as the default 
-file to download for all platforms.
+sftp airwin,plplot@web.sourceforge.net
 
+Then use the 
 
-Create a news item for the Release:
-Select Develop / News
-Click "Admin", select any older News Item and copy the test.
-Click "Submit"
-  Enter "PLplot Release X.Y.Z" as the subject.
-  Paste in the text from the older release as the Details.
-    Be sure to update the text as appropriate, particularly
-    the release numbers.
+ls -l
+
+command to figure out who owns what and the
+
+rm *
+
+command on the _file_ contents of each subdirectory of htdocs, and use
+the
+
+rmdir <directory name>
+
+command on empty directories.
+
+Note, sftp has no recursive feature so you have to figure out the
+directory structure and cd to the correct directory levels to remove
+the files in each directory, ugh.  I did try the sftp chown command,
+but that did not work so the only possibility I could find was the above
+commands to remove htdocs and everything below it in a piece-meal fashion.
+
+(11c) Create a final release tarball and check the result for errors
+
+Follow the above step entitled 
+
+"Create (a preliminary version of) the release tarball and check the result for errors"
+
+but this time for the tagged release to make sure the tarball is exactly
+consistent with the release tag.
+
+(11d) Sign the release with your plplot Release Manager gpg key:
+gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.Y.Z.tar.gz
+
+A list of your GPG keys can be obtained using the command "gpg --list-keys <name>".
+
+(11e) Verify the release tarball signing
+gpg --verify /tmp/plplot-dist-prep/plplot-X.Y.Z.tar.gz.asc
+
+(11f) Prepare a file release
+
+#IMPORTANT
+cd /tmp/plplot-dist-prep/
+
+sftp airwin,plplot@frs.sourceforge.net
+cd /home/frs/project/p/pl/plplot/plplot
+mkdir 5.9.10\ Source
+cd 5.9.10\ Source
+put plplot-5.9.10.tar.gz.asc
+put plplot-5.9.10.tar.gz
+exit
+
+# Save a local copy of the release tarball for future reference.
+cd /home/software/plplot_svn/HEAD/export #(or wherever)
+cp -a /tmp/plplot-dist-prep/plplot-5.9.10.tar.gz* .
+gpg --verify plplot-5.9.10.tar.gz.asc
+
+cd plplot_tags_5.9.10
+echo "
+
+DETAILED CHANGELOG FOR THIS RELEASE
+
+" | cat README.release - ChangeLog.release >| /tmp/README.release
+
+cd /tmp
+sftp airwin,plplot@frs.sourceforge.net
+cd /home/frs/project/p/pl/plplot/plplot/5.9.10\ Source
+put /tmp/README.release
+exit
+
+Create a news item for this release largely following previous
+news items (or even identical to them but with a changed title).
+
+Point your browser to http://sf.net/projects/plplot and login.  A
+news item will then be available on the menu bar.  Click that, then
+"new post".
+
+Enter the title (e.g., PLplot Release 5.9.10) and the text.  Surround
+the URL's in the text with angle brackets, e.g.
+<http://sourceforge.net/projects/plplot/files/plplot>.
+
+For now I simply make all paragraphs one giant line which seems
+to give reasonable default results.
 
 
 (15) Publicize the release announcement
@@ -502,9 +534,14 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
 (16) Prepare immediately for the next release cycle
 
-  a. Append the README.release file from the current release onto the front of
-     the OLD-README.release file. This is done to preserve a record of the
-     significant changes between versions of PLplot.
+  a. Preserve the historical record of the
+     significant changes between versions of PLplot in one file by
+     prepending README.release for 5.9.10 to OLD-README.release
+
+cat README.release OLD-README.release > OLD-README.release_new
+mv OLD-README.release_new OLD-README.release
+
+
   b. Update README.release file to reflect significant changes made between
      the current release and the last release.
 
