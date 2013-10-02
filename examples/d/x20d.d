@@ -6,6 +6,7 @@
 
 import std.math;
 import std.stdio;
+import std.file;
 
 import plplot;
 
