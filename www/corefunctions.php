@@ -41,7 +41,7 @@ Copyright 2008-2013 Alan W. Irwin
 
 <head>
   <title>PLplot Home Page - $title</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="description" content="Homepage of the open source PLplot project" />
   <meta name="keywords" content="plot,library,c++,python" />
   <link rel="stylesheet" title="liquid" href="css/style_liquid.css" type="text/css" media="screen,projection" />
