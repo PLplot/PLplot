@@ -463,6 +463,11 @@ the files in each directory, ugh.  I did try the sftp chown command,
 but that did not work so the only possibility I could find was the above
 commands to remove htdocs and everything below it in a piece-meal fashion.
 
+Once you have a proper upload of the local website to SourceForge, test
+it as before.  Also, click the xhtml and css validate buttons on each of
+index.php, download.php, examples.php, documentation.php, and credits.php
+to validate those pages.
+
 (11c) Create a final release tarball and check the result for errors
 
 Follow the above step entitled 
