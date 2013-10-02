@@ -95,13 +95,10 @@ END;
 	//
 	function pageNews($newscount, $contentlength)
 	{
-		// Open the PLplot News RSS feed and parse it
-		// Options for sourceforge news feed can be looked up at this link:
-		//      http://sourceforge.net/apps/trac/sourceforge/wiki/API
+		// Open the PLplot News RSS feed and parse it (rss link taken from the plplot project page)
 		$feed = new SimplePie();
 		$feed->enable_cache(false);  // disable cache
-		$url = sprintf("http://sourceforge.net/api/news/index/project-id/2915/limit/%d/rss", $newscount);
-		$feed->set_feed_url($url);
+		$feed->set_feed_url("http://sourceforge.net/p/plplot/news/feed");
 		$feed->init();
 		$feed->handle_content_type();
 
@@ -112,10 +109,15 @@ END;
 		// show news items
 		if($feed->data) {
 			$items = $feed->get_items();
+			$i = 0;
 			foreach($items as $item) {
-				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>'; 
-				echo '<p>' . _substr($item->get_content(), $contentlength) . ' ';
-				echo '<a href="' . $item->get_permalink() . '">Read more</a> (' . $item->get_date('j M Y') . ')</p>';
+				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>' . "\n"; 
+				echo '<p>' . _substr(strip_tags($item->get_content()), $contentlength) . ' ';
+				echo '<a href="' . $item->get_permalink() . '">Read more</a> (' . $item->get_date('j M Y') . ')</p>' . "\n";
+				
+				$i = $i + 1;
+				if( $i >= $newscount )
+					break;
 			}
 		} else 
 			echo '<p>Could not open <a href="' . $url . '">News feed</a>!</p>';
