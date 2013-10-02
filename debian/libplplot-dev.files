@@ -4,6 +4,6 @@ usr/lib/lib*.la
 usr/lib/lib*.so
 usr/lib/fortran
 usr/lib/pkgconfig
-usr/share/doc/libplplot11/examples
-usr/share/doc/libplplot11/README.pkg-config
+usr/share/doc/libplplot12/examples
+usr/share/doc/libplplot12/README.pkg-config
 usr/share/doc/libplplot-dev

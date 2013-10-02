@@ -1,3 +1,24 @@
+plplot (5.9.10-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/patches/series: Remove backported patches no longer need with 
+    current release and update remaining patches.
+  * debian/control.in: Update dependencies for new documentation build system and to 
+    include shapelib (needed for new map support).
+  * debian/control.in, debian/rules, debian/*.files:
+    Rename packages to reflect bump in SONAME version.
+  * debian/control.in: Drop support for f77 bindings (deprecated upstream 
+    and replaced by the better f95 bindings).
+  * debian/libplplot12.files: Ensure shape file versions of the maps are installed.
+  * debian/control.in, debian/rule: Drop the gd driver support and the 
+    plplot11-driver-gd package. No longer supported upstream and superceded by cairo 
+    and qt drivers.
+  * debian/patches/series, debian/patches/fix-d-examples.diff: Fix from upstream for
+    D example 20 so it compiles with latest gdc.
+  * debian/rules: Fix command line options for python-config to prevent an error.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 01 Oct 2013 12:44:20 +0100
+
 plplot (5.9.9-7) UNRELEASED; urgency=low
 
   * debian/patches/fix-cmake-ada-support.diff: Update ada support from 
@@ -161,6 +182,7 @@ plplot (5.9.8-1) unstable; urgency=low
   * debian/rules, debian/control.in, debian/python-plplot-qt.files:
     Add new python-plplot-qt package which includes the python bindings to
     allow use of the plplot API in qt applications. 
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 30 Sep 2013 09:47:30 +0100
   * debian/control.in: 
     + Remove dependency of libplplot-java on default-jre as per policy. 
       Java libraries do not need to depend on a java runtime. Fixes 

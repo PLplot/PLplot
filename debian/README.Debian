@@ -14,45 +14,41 @@ plplot for Debian
     The original PLplot distribution was broken down in several Debian
     packages:
 
-      * libplplot11: Contains the shared C libraries, as well as the
+      * libplplot12: Contains the shared C libraries, as well as the
 	data files and the driver modules that do not depend on other
 	libraries.
 
       * libplplot-dev: Headers and static libraries for developing programs
-        using the PLplot API, as well as many examples in C, C++, and
-        Fortran77.
+        using the PLplot API, as well as many examples in C, C++ and F95.
 
       * plplot-doc: HTML, PS and PDF formats of the PLplot manual.
 
-      * plplot11-driver-xwin: Provides the xwin driver module.
+      * plplot12-driver-xwin: Provides the xwin driver module.
 
-      * plplot11-driver-gd: Provides the GD driver module, which allows
-        direct generation of PNG and JPEG files.
-
-      * plplot11-driver-cairo: Provides the cairo driver module. This uses
+      * plplot12-driver-cairo: Provides the cairo driver module. This uses
 	the cairo library to produce higher quality text using truetype
         fonts. It produces postscript, pdf, svg, png, mem and X output.
         This replaces the plplot9-driver-psttf package in previous
         releases. The cairo driver provides similar results for postscript
         and more functionality.
 
-      * plplot11-driver-wxwidgets: Provides the WXWidgets driver module.
+      * plplot12-driver-wxwidgets: Provides the WXWidgets driver module.
 
-      * plplot11-driver-qt: Provides the qt driver module.
+      * plplot12-driver-qt: Provides the qt driver module.
 
-      * libplplot-c++10: Contains the library for using the C++ PLplot
+      * libplplot-c++11: Contains the library for using the C++ PLplot
 	classes.
 
-      * libplplot-fortran9: Contains the F77 and F90 bindings for
-	the PLplot functions.
+      * libplplot-fortran10: Contains the F95 bindings for the PLplot 
+        functions.
 
       * libplplot-java: Contains the bindings for using the PLplot
 	functions from java. 
 
-      * libplplot-ada0: Contains the runtiem Ada bindings library for the 
+      * libplplot-ada1: Contains the runtime Ada bindings library for the 
         PLplot functions.
 
-      * libplplot-ada0-dev: Development files for the Ada bindings for 
+      * libplplot-ada1-dev: Development files for the Ada bindings for 
         the PLplot functions.
 
       * libplplot-ocaml: Contains the OCaml bindings for the PLplot functions.
@@ -95,7 +91,7 @@ plplot for Debian
 
     A lot of examples were included in the libplplot-dev, plplot-tcl,
     python-plplot, and octave-plplot packages.  They can be found under
-    /usr/share/doc/libplplot11/examples/. Makefiles are available along the
+    /usr/share/doc/libplplot12/examples/. Makefiles are available along the
     sources.
 
     For development of C programs with the PLplot library, there is a

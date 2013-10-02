@@ -2,6 +2,8 @@ usr/lib
 usr/share/plplot*/*.map
 usr/share/plplot*/*.fnt
 usr/share/plplot*/*.pal
-usr/share/doc/libplplot11
+usr/share/plplot*/*.shp
+usr/share/plplot*/*.shx
+usr/share/doc/libplplot12
 
 

@@ -16,7 +16,7 @@ MDIR = $(shell octave-config --print LOCALAPIFCNFILEDIR)
 OCTDIR = $(shell octave-config --print LOCALAPIOCTFILEDIR)
 
 version		:= $(shell perl debian/get-upstream-version.pl < cmake/modules/plplot_version.cmake)
-libpkg          := libplplot11
+libpkg          := libplplot12
 docpkg          := plplot-doc
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
@@ -39,7 +39,6 @@ FFLAGS = $(shell dpkg-buildflags --get FFLAGS)
 FFLAGS += -fvisibility=hidden
 LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
 LDFLAGS += -Wl,--as-needed
-DC = gdc-v1
 
 
 JAVA_HOME = /usr/lib/jvm/default-java
@@ -94,7 +93,7 @@ config: config-stamp
 config-stamp: control
 	mkdir -p $(BUILD_DIR)
 	( cd $(BUILD_DIR) ; \
-	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
+	PKG_CONFIG_ENV=" " FC=gfortran \
 	JAVA_HOME=$(JAVA_HOME) DC=$(DC) \
         CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" FFLAGS="$(FFLAGS)" \
         LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" \
@@ -127,9 +126,9 @@ clean:
 install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
 		     --no-package=python-plplot --no-package=python-plplot-qt   \
-		     --no-package=libplplot-java --no-package=libplplot-ada0 \
+		     --no-package=libplplot-java --no-package=libplplot-ada1 \
 	             --no-package=libplplot-ocaml --no-package=libplplot-lua \
-	             --no-package=libplplot-d --no-package=libplplot-ada0-dev
+	             --no-package=libplplot-d --no-package=libplplot-ada1-dev
 	dh_movefiles --package=python-plplot-qt
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-java
@@ -137,8 +136,8 @@ install-arch: install-arch-stamp install-python
 	dh_movefiles --package=libplplot-lua
 	dh_movefiles --package=libplplot-d
 ifeq ($(BUILD_ADA),yes)
-	dh_movefiles --package=libplplot-ada0
-	dh_movefiles --package=libplplot-ada0-dev 
+	dh_movefiles --package=libplplot-ada1
+	dh_movefiles --package=libplplot-ada1-dev 
 endif
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=$(libpkg)
@@ -155,7 +154,7 @@ install-arch-stamp: build-arch-stamp
 	  $(MAKE) DESTDIR=$(debtmp) install )
 
 	( cd $(debdoc)/plplot ; \
-	  rm -f COPYING.LIB *.dvi ; \
+	  rm -f COPYING.LIB ; \
 	  mv ChangeLog.release changelog )
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
 
@@ -165,11 +164,11 @@ install-arch-stamp: build-arch-stamp
 	mv $(debex) $(debdoc)/$(libpkg)
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
-		plplot11-driver-gd plplot11-driver-xwin octave-plplot	\
+		plplot12-driver-xwin octave-plplot			\
 		python-plplot-qt                                        \
-		python-plplot libplplot-c++10 plplot11-driver-wxwidgets \
-		plplot11-driver-qt libplplot-java			\
-		plplot11-driver-cairo libplplot-fortran9			\
+		python-plplot libplplot-c++11 plplot12-driver-wxwidgets \
+		plplot12-driver-qt libplplot-java			\
+		plplot12-driver-cairo libplplot-fortran10			\
 		libplplot-ocaml libplplot-lua libplplot-d ; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
@@ -179,8 +178,8 @@ install-arch-stamp: build-arch-stamp
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
 
 ifeq ($(BUILD_ADA),yes)
-	ln -s $(libpkg) $(debdoc)/libplplot-ada0
-	ln -s $(libpkg) $(debdoc)/libplplot-ada0-dev
+	ln -s $(libpkg) $(debdoc)/libplplot-ada1
+	ln -s $(libpkg) $(debdoc)/libplplot-ada1-dev
 endif
 
 	touch install-arch-stamp
@@ -201,7 +200,7 @@ install-python: $(PYVERS:%=install-python%)
 
 install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=`python-config --config-dir`/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy;/usr/lib/pyshared/python$*/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=`python-config --configdir`/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy;/usr/lib/pyshared/python$*/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
 	  for d in python qt_gui/pyqt4 ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
