@@ -493,6 +493,14 @@ put plplot-5.9.10.tar.gz.asc
 put plplot-5.9.10.tar.gz
 exit
 
+Make, e.g., plplot-5.9.10.tar.gz, the "latest" version.
+
+login to SF website
+files ==> plplot ==> 5.9.10 Source ==> view details (the "i" icon) for
+plplot-5.9.10.tar.gz ==> select "all" for the default
+
+The above spins indefinitely with iceweasel, but it does work.
+
 # Save a local copy of the release tarball for future reference.
 cd /home/software/plplot_svn/HEAD/export #(or wherever)
 cp -a /tmp/plplot-dist-prep/plplot-5.9.10.tar.gz* .
@@ -526,6 +534,8 @@ For now I simply make all paragraphs one giant line which seems
 to give reasonable default results.
 
 
+
+
 (15) Publicize the release announcement
 
 Jerry: macresearch.org
@@ -549,21 +559,132 @@ mv OLD-README.release_new OLD-README.release
 
 (A1) GNU Privacy Guard (gpg)
 A brief summary of developer relevant gpg commands, see also:
-http://dewinter.com/gnupg_howto/english/GPGMiniHowto.html
-man gpg
+http://dewinter.com/gnupg_howto/english/GPGMiniHowto.html,
+man gpg, and http://www.gnupg.org/faq/GnuPG-FAQ.html.
 
-create a new key:
+* Configure key-server (if you haven't done that already) by editing
+  $HOME/.gnupg/gpg.conf.  Also specify the auto-key-retrieve option
+  for convenience.
+
+* List keys on your keyring that have been retrieved or generated so far:
+
+gpg --list-keys irwin
+
+* Search for any previously published keys that you might want to
+  revoke.  (Note the search phrase is case insensitive but the search
+  is done on the Boolean AND of the terms so the following search would
+  miss any key generated in the past by Alan Irwin because of the
+  middle initial "W." that is specified for the search).  OTOH, I
+  always use my middle initial for publications to reduce name clashes.
+
+gpg --search-keys Alan W. Irwin
+
+* Create a new key:
+
 gpg --gen-key
 
-list keys so that you can find the ID of the key you created:
-gpg --list-keys
+  With gnupg 1.4.10, I chose the following options when creating a new key:
+  
+Please select what kind of key you want:
+  (1) RSA and RSA (default)
 
-upload your (public) key to GPG key server so that others can obtain it to
+What keysize do you want?
+2048 (default)
+5-year expiration date.
+
+....
+
+Real name: Alan W. Irwin
+Email address: airwin@users.sourceforge.net
+Comment: Time Ephemerides key
+You selected this USER-ID:
+    "Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>"
+
+
+N.B. nameofkey below is the name of the key, usually specified by the
+second number after the slash for the first pub line given by
+"gpg --list-keys".  For example, the above key gives the following
+result:
+
+software@raven> gpg --list-keys irwin
+pub   2048R/BB159E92 2011-08-19 [expires: 2016-08-17]
+uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
+sub   2048R/C5ECCF77 2011-08-19 [expires: 2016-08-17]
+
+So the name could be BB159E92.  Other possibilities exist as well such
+as "irwin", but that might not be unique.
+
+Here is a complete recording of the gpg --edit-keys commands where I
+added an additional user ID with the different comment "PLplot key" to my
+existing key.  Note  this technique
+could be used to add an additional user ID with a different
+Real name or Email address as well.
+
+gpg --edit-key irwin
+gpg> adduid
+Real name: Alan W. Irwin
+Email address: airwin@users.sourceforge.net
+Comment: PLplot key
+Okay # to accept this added subkey
+... need to enter passphrase
+
+gpg> uid 5 # to select the new user ID for additional changes
+gpg> trust # select ultimate since you ultimately trust yourself.  :-)
+Your decision? 5
+Do you really want to set this key to ultimate trust? (y/N) y
+
+# Do to a gpg bug, the trust value looks like it is not updated, but
+# it is so if you
+
+gpg > save  # To save your changes, the trust value listed by
+
+gpg --list-keys irwin
+
+is correct.
+
+If you make a mistake in adding a new user id.... (which happened to
+me when I put down a wrong e-mail address).
+
+gpg --edit-key irwin
+
+adduid  (fill in correct e-mail address this time)
+uid number (to select uid to work on for further commands
+revuid  (revoke bad e-mail one)
+primary (to make the new one the primary one, I am not sure that is necessary)
+trust  (to make the new one ultimately trusted, again, not sure that is necessary.  N.B. didn't seem to change trust value, but that was just bad output)
+
+save  (to get out again)
+
+When edited the next time showed ultimate trust value for correct id, but
+I don't know whether that was the above primary/trust subcommands or
+whether those were necessary at all.  It turned out those were not
+necessary at all as I later used the above sequence to generate
+a libLASi key and a FreeEOS uid key.
+
+* Generate a revocation certificate.  Note this requires the pass phrase
+  specified at the time of key generation so keep that pass phrase in
+  a safe place or else generate the revocation certificate right after
+  generating the key, and keep that certificate in a safe place.  I chose
+  the former course (keep the pass phrase safe).  N.B. the options should
+  appear below in the order given!
+
+gpg --armor -o nameofkey-revocation.asc --gen-revoke nameofkey
+
+* Publicly revoke old key (from FAQ):
+
+gpg --import old-revocation.asc
+gpg --send-keys nameofkey
+
+* Upload your (public) key to GPG key server so that others can obtain it to
 verify your signature on the release tarball.
-gpg --send-keys 6C58D1AC
-(where 6C58D1AC is replaced with the appropriate value from the list-keys
-command)
+gpg --send-keys nameofkey
 
+gpg --refresh-keys  (to update from the server all keys including your own).
+
+This verified that the bad irwin address was revoked even though
+gpg --search-keys Alan W. Irwin
+
+still shows revoked uid as the #1 uid.
 
 (A2) (Optional) Creating a test tarball from trunk
 
