@@ -96,3 +96,8 @@ if(ENABLE_java)
   # it appears this CMake variable is defined on Mac OS X and other platforms.
   set(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif(ENABLE_java)
+
+# Set up java compiler flags and turn into a list suitable for add_custom_command
+set(DEFAULT_JAVACFLAGS "")
+set(JAVACFLAGS ${DEFAULT_JAVACFLAGS} CACHE STRING "Java compiler flags")
+string(REGEX REPLACE " " ";" JAVACFLAGS "${JAVACFLAGS}")

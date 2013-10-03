@@ -200,8 +200,9 @@ if(ENABLE_java)
     add_custom_command(
       OUTPUT ${output_file}
       COMMAND ${CMAKE_Java_COMPILER} 
-      -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
+      ${JAVACFLAGS} -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
       DEPENDS ${srcfile} ${${output_file}_DEPENDS}
+      VERBATIM
       )
   endforeach( srcfile ${JAVA_FILES_FULL} )
   add_custom_target(plplot_core ALL DEPENDS ${JAVA_CLASSES})

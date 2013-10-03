@@ -101,8 +101,9 @@ if(CORE_BUILD)
     add_custom_command(
       OUTPUT ${out_file}
       COMMAND ${CMAKE_Java_COMPILER}
-      -classpath ${CMAKE_BINARY_DIR}/bindings/java -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
+      ${JAVACFLAGS} -classpath ${CMAKE_BINARY_DIR}/bindings/java -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
       DEPENDS ${in_file} ${files_plplot_core}
+      VERBATIM
       )
     add_custom_target(x${STRING_INDEX}j ALL DEPENDS ${out_file})
     add_dependencies(x${STRING_INDEX}j plplot_core)
@@ -160,8 +161,9 @@ else(CORE_BUILD)
     add_custom_command(
       OUTPUT ${out_file}
       COMMAND ${CMAKE_Java_COMPILER}
-      -classpath ${INSTALLED_JAR_FILE} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
+      ${JAVACFLAGS} -classpath ${INSTALLED_JAR_FILE} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
       DEPENDS ${in_file} ${INSTALLED_JAR_FILE}
+      VERBATIM
       )
     add_custom_target(x${STRING_INDEX}j ALL DEPENDS ${out_file})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_java x${STRING_INDEX}j)
