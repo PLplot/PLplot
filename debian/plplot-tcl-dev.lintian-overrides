@@ -2,6 +2,6 @@
 # by CMake and so the interpreter is replaced before the script is 
 # acutally run.
 
-plplot-tcl-dev binary: example-interpreter-not-absolute usr/share/doc/libplplot21/examples/tk/tk01.in #!@xtk01_LOCATION@
-plplot-tcl-dev binary: example-interpreter-not-absolute usr/share/doc/libplplot21/examples/tk/tk02.in #!@xtk02_LOCATION@
-plplot-tcl-dev binary: example-interpreter-not-absolute usr/share/doc/libplplot21/examples/tk/tk04.in #!@xtk04_LOCATION@
+plplot-tcl-dev binary: example-interpreter-not-absolute usr/share/doc/libplplot12/examples/tk/tk01.in #!@xtk01_LOCATION@
+plplot-tcl-dev binary: example-interpreter-not-absolute usr/share/doc/libplplot12/examples/tk/tk02.in #!@xtk02_LOCATION@
+plplot-tcl-dev binary: example-interpreter-not-absolute usr/share/doc/libplplot12/examples/tk/tk04.in #!@xtk04_LOCATION@

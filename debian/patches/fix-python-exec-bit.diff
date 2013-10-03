@@ -1,0 +1,23 @@
+Description: Fix incorrect executable bit on python script
+Author: Andrew Ross <andrewross@users.sourceforge.net>
+Origin: upstream
+Index: plplot-5.9.10/examples/python/CMakeLists.txt
+===================================================================
+--- plplot-5.9.10.orig/examples/python/CMakeLists.txt	2013-10-01 13:10:53.000000000 +0100
++++ plplot-5.9.10/examples/python/CMakeLists.txt	2013-10-03 09:21:13.601454559 +0100
+@@ -79,7 +79,6 @@
+   xw17.py
+   xw31.py
+   plplot_logo.py
+-  plplot_py_demos.py
+   test_circle.py
+   test_axis_precision.py
+   test_symbol_clip.py
+@@ -142,6 +141,7 @@
+ set(
+   python_DATA
+   ${python_DATA}
++  plplot_py_demos.py
+   README.pythondemos
+   README.rendering_tests
+   README.logo

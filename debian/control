@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
 Standards-Version: 3.9.4
-Build-Depends: cmake (>= 2.6.3), debhelper (>= 7), 
+Build-Depends: cmake (>= 2.6.3), debhelper (>= 9), 
  tcl8.5-dev, tk8.5-dev, itcl3-dev, libx11-dev, libxext-dev,
  libxi-dev, gfortran, itk3-dev, liboctave-dev,
  m4, libqhull-dev (>= 2003.1-8), 
@@ -26,6 +26,8 @@ Package: libplplot12
 Architecture: any
 Section: libs
 Conflicts: libplplot11
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: plplot12-driver-xwin, plplot12-driver-gd,
  plplot12-driver-cairo, plplot12-driver-qt, plplot12-driver-wxwidgets, plplot-tcl
@@ -48,6 +50,8 @@ Architecture: any
 Section: libdevel
 Recommends: pkg-config, cmake, libplplot-ocaml, libplplot-lua, libplplot-d
 Suggests: plplot-doc
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, libqsastime-dev, ${misc:Depends}, 
  libplplot-c++11 (= ${binary:Version}), libplplot-fortran10 (= ${binary:Version})
@@ -73,6 +77,8 @@ Package: libplplot-c++11
 Architecture: any
 Section: libs
 Conflicts: libplplot5, libplplot-c++9, libplplot-c++9c2, libplplot-c++10
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (C++ binding)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -88,6 +94,8 @@ Description: Scientific plotting library (C++ binding)
 Package: libplplot-fortran10
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${shlibs:Depends}  , ${misc:Depends}
 Description: Scientific plotting library (fortran bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -122,6 +130,8 @@ Description: Scientific plotting library (Java bindings)
 Package: libcsiro0
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (CSIRO libraries)
  This package contains two libraries developed by Pavel Sakov, from the
@@ -137,6 +147,8 @@ Package: libqsastime0
 Architecture: any
 Section: libs
 Conflicts: libplplot9
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Time format conversion library
  The qsastime library is a simple library for handling time format
@@ -153,6 +165,8 @@ Package: libqsastime-dev
 Architecture: any
 Section: libdevel
 Breaks: libplplot-dev (<< 5.9.8-1)
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libqsastime0 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Time format conversion library (development files)
  The qsastime library is a simple library for handling time format
@@ -170,6 +184,8 @@ Package: plplot12-driver-xwin
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Conflicts: plplot9-driver-xwin
 Replaces: plplot9-driver-xwin
 Description: Scientific plotting library (X11 driver)
@@ -186,6 +202,8 @@ Description: Scientific plotting library (X11 driver)
 Package: plplot12-driver-wxwidgets
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12, ${shlibs:Depends}, ${misc:Depends}
 Conflicts: plplot9-driver-wxwidgets
 Replaces: plplot9-driver-wxwidgets
@@ -202,6 +220,8 @@ Description: Scientific plotting library (wxWidgets driver)
 
 Package: plplot-tcl
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: plplot12-driver-xwin, iwidgets4, ${shlibs:Depends}, ${misc:Depends}
 Description: Tcl/Tk support for PLplot, a plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -213,11 +233,27 @@ Description: Tcl/Tk support for PLplot, a plotting library
  virtually all aspects of plotting are configurable.
  .
  This package contains the Tcl/Tk support for PLplot: shared libraries,
- Tcl modules, the Tk driver, and some programs for interactive use of
- PLplot (plserver and pltcl). 
+ Tcl modules and the Tk driver.
+
+Package: plplot-tcl-bin
+Architecture: any
+Depends: plplot-tcl, ${shlibs:Depends}, ${misc:Depends}
+Description: Tcl/Tk support for PLplot, a plotting library
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package contains the pltcl program for interactive use of the Tcl/Tk 
+ support for PLplot. 
 
 Package: plplot-tcl-dev
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12 (= ${binary:Version}), plplot-tcl, ${misc:Depends}
 Breaks: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library
@@ -235,6 +271,8 @@ Description: Tcl/Tk development support for PLplot, a plotting library
 Package: plplot12-driver-cairo
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: plplot9-driver-cairo
 Replaces: plplot9-driver-cairo
@@ -291,6 +329,8 @@ Description: Scientific plotting library (python qt GUI)
 
 Package: octave-plplot
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12 (= ${binary:Version}), octave (>= 3.6.1), ${shlibs:Depends},
  ${misc:Depends}
 Description: Octave support for PLplot, a plotting library
@@ -308,6 +348,8 @@ Description: Octave support for PLplot, a plotting library
 
 Package: libplplot-ada1
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Breaks: libplplot-ada (<< 5.9.8-2)
 Replaces: libplplot-ada (<< 5.9.8-2)
@@ -327,6 +369,8 @@ Package: libplplot-ada1-dev
 Architecture: any
 Section: libdevel
 Suggests: plplot-doc
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, libqsastime-dev, gnat, gnat-4.6, ${misc:Depends}, 
  libplplot-ada1 (= ${binary:Version})
@@ -366,6 +410,8 @@ Description: Documentation for PLplot, a plotting library
 Package: plplot12-driver-qt
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (qt driver)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -399,6 +445,8 @@ Description: Scientific plotting library (OCaml bindings)
 Package: libplplot-lua
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12, ${shlibs:Depends}, ${misc:Depends}, lua5.1
 Description: Scientific plotting library (lua bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
@@ -415,6 +463,8 @@ Description: Scientific plotting library (lua bindings)
 Package: libplplot-d
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: libplplot12, ${shlibs:Depends}, ${misc:Depends}
 Description: Scientific plotting library (D language bindings)
  PLplot is relatively small, portable, freely distributable, and is rich

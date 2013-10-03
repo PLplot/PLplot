@@ -3,19 +3,36 @@ plplot (5.9.10-1) unstable; urgency=low
   * New upstream release
   * debian/patches/series: Remove backported patches no longer need with 
     current release and update remaining patches.
-  * debian/control.in: Update dependencies for new documentation build system and to 
-    include shapelib (needed for new map support).
+  * debian/control.in: Update dependencies for new documentation build system 
+    and to include shapelib (needed for new map support).
   * debian/control.in, debian/rules, debian/*.files:
     Rename packages to reflect bump in SONAME version.
   * debian/control.in: Drop support for f77 bindings (deprecated upstream 
     and replaced by the better f95 bindings).
-  * debian/libplplot12.files: Ensure shape file versions of the maps are installed.
+  * debian/libplplot12.files: Ensure shape file versions of the maps are 
+    installed.
   * debian/control.in, debian/rule: Drop the gd driver support and the 
-    plplot11-driver-gd package. No longer supported upstream and superceded by cairo 
-    and qt drivers.
-  * debian/patches/series, debian/patches/fix-d-examples.diff: Fix from upstream for
-    D example 20 so it compiles with latest gdc.
-  * debian/rules: Fix command line options for python-config to prevent an error.
+    plplot11-driver-gd package. No longer supported upstream and superceded 
+    by cairo and qt drivers.
+  * debian/patches/series, debian/patches/fix-d-examples.diff: Fix from 
+    upstream for D example 20 so it compiles with latest gdc.
+  * debian/rules: Fix command line options for python-config to prevent an 
+    error.
+  * debian/control.in, debian/rules, debian/*.files: Update package to be 
+    multiarch compatible. (Fixes some lintian warnings).
+  * debian/rules: Force compatibility with java 5 (default on some platforms). 
+    Fixes lintian warning.
+  * debian/patches/series, debian/patches/fix_python_exec_bit.diff: Fix 
+    incorrect executable bit on python script. Fixes lintian warning. 
+  * debian/libplplot-ada1.lintian-overrides, 
+    debian/libplplot-fortran10.lintian-overrides,
+    libplplot-ocaml.lintian-overrides: Suppress hardening warnings for ada, 
+    fortran and ocaml compiled code since they are not relevant.
+  * debian/control.in, debian/plplot-tcl-bin.files, debian/plplot-tcl.files, 
+    debian/patches/series, debian/patches/add-tcl-multiarch.diff: Move
+    pltcl to a new plplot-tcl-bin package and move plserver to a location in
+    the library path (executable by the library not the user). Required to make
+    the tcl packages multiarch compliant.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 01 Oct 2013 12:44:20 +0100
 
@@ -182,7 +199,6 @@ plplot (5.9.8-1) unstable; urgency=low
   * debian/rules, debian/control.in, debian/python-plplot-qt.files:
     Add new python-plplot-qt package which includes the python bindings to
     allow use of the plplot API in qt applications. 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 30 Sep 2013 09:47:30 +0100
   * debian/control.in: 
     + Remove dependency of libplplot-java on default-jre as per policy. 
       Java libraries do not need to depend on a java runtime. Fixes 

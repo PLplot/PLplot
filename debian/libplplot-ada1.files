@@ -1,2 +1,2 @@
-usr/lib/libplplotada*.so.*
+usr/lib/*/libplplotada*.so.*
 usr/share/doc/libplplot-ada1

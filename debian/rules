@@ -15,13 +15,15 @@
 MDIR = $(shell octave-config --print LOCALAPIFCNFILEDIR)
 OCTDIR = $(shell octave-config --print LOCALAPIOCTFILEDIR)
 
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH) 
+
 version		:= $(shell perl debian/get-upstream-version.pl < cmake/modules/plplot_version.cmake)
 libpkg          := libplplot12
 docpkg          := plplot-doc
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
 debusr		:= $(debtmp)/usr
-deblib		:= $(debusr)/lib
+deblib		:= $(debusr)/lib/$(DEB_HOST_MULTIARCH)
 debshr		:= $(debusr)/share
 debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
@@ -69,13 +71,13 @@ endif
 JAVA_OPTIONS = \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
-	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
+	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar 
 
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH) \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
 	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON \
-	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
         -DTCL_TCLSH=/usr/bin/tclsh8.5 \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
 
@@ -163,12 +165,12 @@ install-arch-stamp: build-arch-stamp
 		$(debex)/perl
 	mv $(debex) $(debdoc)/$(libpkg)
 
-	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
+	for i in libplplot-dev plplot-tcl plplot-tcl-bin plplot-tcl-dev	\
 		plplot12-driver-xwin octave-plplot			\
 		python-plplot-qt                                        \
 		python-plplot libplplot-c++11 plplot12-driver-wxwidgets \
 		plplot12-driver-qt libplplot-java			\
-		plplot12-driver-cairo libplplot-fortran10			\
+		plplot12-driver-cairo libplplot-fortran10		\
 		libplplot-ocaml libplplot-lua libplplot-d ; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
@@ -192,7 +194,7 @@ install-indep-stamp: build-indep-stamp
 	  $(MAKE) DESTDIR=$(debtmp) install )
 
 	mkdir -p $(debdoc)/$(docpkg)
-	(cd $(debdoc)/plplot ; mv html *.pdf *.ps.gz $(debdoc)/$(docpkg))
+	(cd $(debdoc)/plplot ; rm -f html/plplotdoc-html.proc ; mv html *.pdf *.ps.gz $(debdoc)/$(docpkg))
 	touch install-indep-stamp
 
 install-python: $(PYVERS:%=install-python%)
@@ -239,7 +241,7 @@ binary-arch: build-arch install-arch
 	dh_fixperms -a
 	dh_makeshlibs -V -a
 	dh_shlibdeps -a --no-package=octave-plplot -L $(libpkg) \
-          -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib 
+          -l $(debbase)/$(libpkg)/usr/lib/$(DEB_HOST_MULTIARCH):$(debbase)/plplot-tcl/usr/lib/$(DEB_HOST_MULTIARCH)
 	dpkg-shlibdeps -Tdebian/octave-plplot.substvars -S$(debbase)/$(libpkg)/usr/lib/*.so* -S/usr/lib/$(octver)/*.so* $(debbase)/octave-plplot/$(OCTDIR)/plplot_octave.oct
 	dh_installdeb -a
 	dh_lintian -a

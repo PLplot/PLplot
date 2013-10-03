@@ -1,0 +1,3 @@
+libplplot-ocaml binary: hardening-no-relro usr/lib/ocaml/stublibs/dllplcairo_stubs.so
+libplplot-ocaml binary: hardening-no-relro usr/lib/ocaml/stublibs/dllplplot_stubs.so
+libplplot-ocaml binary: hardening-no-fortify-functions usr/lib/ocaml/stublibs/dllplplot_stubs.so

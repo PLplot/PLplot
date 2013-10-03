@@ -1,5 +1,5 @@
-usr/lib/ada
+usr/lib/*/ada
 usr/share/ada
-usr/lib/libplplotada*.so
+usr/lib/*/libplplotada*.so
 usr/share/doc/libplplot12/examples/ada
 usr/share/doc/libplplot-ada1-dev

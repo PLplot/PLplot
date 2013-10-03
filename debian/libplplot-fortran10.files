@@ -1,2 +1,2 @@
-usr/lib/libplplotf*.so.*
+usr/lib/*/libplplotf*.so.*
 usr/share/doc/libplplot-fortran10

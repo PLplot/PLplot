@@ -1,4 +1,4 @@
-usr/lib/lib*tcl*
+usr/lib/*/lib*tcl*
 usr/include/plplot/pltcl.h
 usr/include/plplot/pltk.h
 usr/include/plplot/tclMatrix.h
