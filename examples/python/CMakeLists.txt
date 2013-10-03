@@ -79,7 +79,6 @@ set(
   xw17.py
   xw31.py
   plplot_logo.py
-  plplot_py_demos.py
   test_circle.py
   test_axis_precision.py
   test_symbol_clip.py
@@ -142,6 +141,7 @@ endif(ENABLE_pygcw)
 set(
   python_DATA
   ${python_DATA}
+  plplot_py_demos.py
   README.pythondemos
   README.rendering_tests
   README.logo
