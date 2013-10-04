@@ -108,6 +108,7 @@ typedef struct
     char            *pangoMarkupString;
     short           upDown;
     float           fontSize;
+    short           uline;
 
     // These are arguments for plP_script_scale which must be retained
     // in aStream for the alt_unicode approach.  level has an
@@ -648,6 +649,7 @@ void text_begin_cairo( PLStream *pls, EscText *args )
 
     aStream                    = (PLCairo *) pls->dev;
     aStream->upDown            = 0;
+    aStream->uline             = 0;
     aStream->level             = 0;
     aStream->pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
     // Calculate the font size (in points since DPI = 72).
@@ -741,6 +743,23 @@ void text_esc_cairo( PLStream *pls, EscText *args )
                 MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown--;
+        break;
+    case PLTEXT_UNDERLINE:
+        if ( aStream->uline == 1 )
+        {
+            strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            aStream->level++;
+        }
+	else 
+	{
+            strncat( aStream->pangoMarkupString, "<span underline=\"single\">", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
+            aStream->level++;
+	}
+	aStream->uline = !aStream->uline;
+        break;
+    case PLTEXT_BACKCHAR:
+    case PLTEXT_OVERLINE:
+        plwarn( "'-', and 'b/B' text escape sequences not processed." );
         break;
     }
 }
@@ -970,7 +989,7 @@ void proc_str( PLStream *pls, EscText *args )
 // http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html
 //--------------------------------------------------------------------------
 
-char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize )
+char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize)
 {
     char      plplotEsc;
     int       i;
@@ -979,7 +998,8 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
     char      utf8[5];
     char      *pangoMarkupString;
     PLFLT     old_sscale, sscale, old_soffset, soffset;
-    PLINT     level = 0.;
+    PLINT     level = 0;
+    short     uline = 0;
 
     // Will this be big enough? We might have lots of markup.
     pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
@@ -1070,6 +1090,21 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                             MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown--;
+                }
+                if ( ucs4[i] == (PLUNICODE) '-' ) // Superscript
+                {
+                    if ( uline == 1 )
+                    {
+                        strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                        level++;
+                    }
+                    else
+                    {
+                        strncat( pangoMarkupString,
+                            "<span underline=\"single\">",
+                            MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
+                    }
+                    uline = uline;
                 }
                 i++;
             }

@@ -250,6 +250,9 @@ typedef void*    PLPointer;
 #define PLTEXT_FONTCHANGE        0      // font change in the text stream
 #define PLTEXT_SUPERSCRIPT       1      // superscript in the text stream
 #define PLTEXT_SUBSCRIPT         2      // subscript in the text stream
+#define PLTEXT_BACKCHAR          3      // back-char in the text stream
+#define PLTEXT_OVERLINE          4      // toggle overline in the text stream
+#define PLTEXT_UNDERLINE         5      // toggle underline in the text stream
 
 // image operations
 #define ZEROW2B                  1

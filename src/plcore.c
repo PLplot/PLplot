@@ -1070,6 +1070,24 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 i   += 1;
                                 skip = 1;
                                 break;
+                            case 'b':
+                                args.n_ctrl_char = PLTEXT_BACKCHAR;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+                                i   += 1;
+                                skip = 1;
+                                break;
+                            case '+':
+                                args.n_ctrl_char = PLTEXT_OVERLINE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+                                i   += 1;
+                                skip = 1;
+                                break;
+                            case '-':
+                                args.n_ctrl_char = PLTEXT_UNDERLINE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+                                i   += 1;
+                                skip = 1;
+                                break;
                             }
                         }
 
