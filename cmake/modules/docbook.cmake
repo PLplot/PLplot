@@ -68,7 +68,14 @@ endif(ONSGMLS AND ENV_FOR_ONSGMLS)
 
 # This option is used for the BUILD_DOC case below and elsewhere and also
 # for the PREBUILT_DOC case elsewhere (when stylesheet.css is configured).
-option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" ON)
+# option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" ON)
+
+# N.B., DOCBOOK_XML_BACKEND ON is mandatory now rather than an option
+# which effectively disables the old SGML/DSSSL backend tools that
+# were deprecated but still available for 5.9.10 and which were the
+# default for releases prior to 5.9.10.
+set(DOCBOOK_XML_BACKEND ON CACHE BOOL "" FORCE)
+
 
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
