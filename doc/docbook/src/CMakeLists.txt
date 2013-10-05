@@ -391,7 +391,7 @@ else(
 	if(DOCBOOK_DBLATEX_BACKEND)
 	  add_custom_command(
 	    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	    COMMAND ${DBLATEX} --verbose --backend=xetex --type=pdf -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    COMMAND ${DBLATEX} --xsl-user=${CMAKE_CURRENT_SOURCE_DIR}/dblatex_stylesheet.xsl --backend=xetex --type=pdf -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    DEPENDS
 	    ${SOURCE_FILES} 
 	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
