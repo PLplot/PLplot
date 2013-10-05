@@ -68,7 +68,7 @@ endif(ONSGMLS AND ENV_FOR_ONSGMLS)
 
 # This option is used for the BUILD_DOC case below and elsewhere and also
 # for the PREBUILT_DOC case elsewhere (when stylesheet.css is configured).
-option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" YES)
+option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" ON)
 
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
@@ -110,39 +110,78 @@ if(BUILD_DOC)
   endif(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
 
   if(DOCBOOK_XML_BACKEND)
-    # For this case only use xmlto.  That tool does its own warnings at
-    # run time when components are missing so don't bother with looking
-    # for missing components at cmake time.
+
+    # For this case never build dvi form of documentation.
+    set(BUILD_DVI OFF CACHE BOOL "Build dvi form of documentation" FORCE)
+
+    # For this case use xmlto for just html
+    # (DOCBOOK_DBLATEX_BACKEND=ON) or both html and print
+    # (DOCBOOK_DBLATEX_BACKEND=OFF).  The xml tool does its own
+    # warnings at run time when components are missing so don't bother
+    # with looking for missing components at cmake time.
     find_program(XMLTO xmlto)
     if(NOT XMLTO)
       message(STATUS "WARNING: xmlto not found")
     endif(NOT XMLTO)
-    find_program(GZIP gzip)
-    if(NOT GZIP)
-      message(STATUS "WARNING: gzip not found")
-    endif(NOT GZIP)
 
     if(XMLTO)
       set(BUILD_HTML ON)
-      if(GZIP)
-	set(BUILD_PRINT ON)
-	set(BUILD_DVI OFF CACHE BOOL "Build dvi form of documentation" FORCE)
-      else(GZIP)
-	set(BUILD_PRINT OFF)
-	message(STATUS
-	  "WARNING: Not building print documentation - "
-	  "gzip is not installed"
-	  )
-      endif(GZIP)
     else(XMLTO)
-      set(BUILD_HTML OFF)
-      set(BUILD_PRINT OFF)
       message(STATUS
-	"WARNING: Not building html or print documentation - "
-	"xmlto script is not installed"
+	"WARNING: xmlto script is not installed so not building html documentation"
 	)
+      set(BUILD_HTML OFF)
     endif(XMLTO)
 
+    # Deal with configuration of build of print documentation.
+
+    # For this case never build dvi form of print documentation.
+    set(BUILD_DVI OFF CACHE BOOL "Build dvi form of documentation" FORCE)
+
+    find_program(GZIP gzip)
+    if(GZIP)
+      set(BUILD_PRINT ON)
+    else(GZIP)
+      message(STATUS "WARNING: gzip not found so not building print documentation")
+      set(BUILD_PRINT OFF)
+    endif(GZIP)
+
+    if(BUILD_PRINT)
+      option(DOCBOOK_DBLATEX_BACKEND "Use \"dblatex --backend=xetex\" XML/XSLT backend tool to generate our print documentation from DocBook source" ON)
+      
+      if(DOCBOOK_DBLATEX_BACKEND)
+	find_program(DBLATEX dblatex)
+	if(NOT DBLATEX)
+	  message(STATUS "WARNING: dblatex not found so not building print documentation")
+	  set(BUILD_PRINT OFF)
+	endif(NOT DBLATEX)
+
+	if(BUILD_PRINT)
+	  # Note that the "dblatex --backend=xetex" command must have
+          # some sort of xetex or xelatex python dependency.  I
+          # haven't tracked down those details, but it is likely that
+          # the xelatex is called as part of that processing (or if
+          # not some dependency of xelatex is called) so if xelatex is
+          # present it is likely that "dblatex --backend=xetex" will
+          # work.
+	  find_program(XELATEX xelatex)
+	  if(NOT XELATEX)
+	    message(STATUS "WARNING: xelatex not found so not building print documentation")
+	    set(BUILD_PRINT OFF)
+	  endif(NOT XELATEX)
+	endif(BUILD_PRINT)
+
+	if(BUILD_PRINT)
+	  # Need pdf2ps to provide PostScript from the PDF results.
+	  find_program(PDF2PS pdf2ps)
+	  if(NOT PDF2PS)
+	    message(STATUS "WARNING: pdf2ps not found so not building print documentation")
+	    set(BUILD_PRINT OFF)
+	  endif(NOT PDF2PS)
+	endif(BUILD_PRINT)
+
+      endif(DOCBOOK_DBLATEX_BACKEND)
+    endif(BUILD_PRINT)
 
   else(DOCBOOK_XML_BACKEND)
     # Deprecated SGML/DSSSL backends to generate html and print documentation.

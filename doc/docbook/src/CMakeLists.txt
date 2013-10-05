@@ -350,7 +350,7 @@ else(
 	)
 
       if(BUILD_PRINT)
-	# Custom commands for building html version of documentation
+	# Custom commands for building print version of documentation
 	set(STYLESHEET_PRINT ${PLPLOTDOC}-print.xsl)
 	set(STYLESHEET_PRINT_IN ${STYLESHEET_PRINT}.in)
 	configure_file(
@@ -383,75 +383,131 @@ else(
 	    docbook_plplot-symbols_txt
 	    docbook_plplot-structs_txt
 	    )
-
+	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	  "${BASE}.dvi\n"
+	  )
 	endif(BUILD_DVI)
 
-	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	  "${BASE}.ps.gz\n"
-	  )
+	if(DOCBOOK_DBLATEX_BACKEND)
+	  add_custom_command(
+	    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	    COMMAND ${DBLATEX} --verbose --backend=xetex --type=pdf -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    DEPENDS
+	    ${SOURCE_FILES} 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
+            VERBATIM
+	    )
+	  add_custom_target(
+	    pdf_target ALL 
+	    DEPENDS 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	    )
+	  # These files used for more than one target.  Therefore must
+	  # use target dependencies rather than file dependencies to build
+	  # them.  Otherwise, parallel builds won't work.
+	  add_dependencies(pdf_target
+	    docbook_plplot-symbols_txt
+	    docbook_plplot-structs_txt
+	    )
 
-	add_custom_command(
-	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
-	  # xmlto --with-fop is currently (at least on Debian) craps out
-          # if DESTDIR is specified so make sure it is NOT specified.
-	  COMMAND env DESTDIR= ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.ps ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
-	  COMMAND ${GZIP} -f ${BASE}.ps
-	  DEPENDS
-	  ${SOURCE_FILES} 
-	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
-	  VERBATIM
-	  )
-	add_custom_target(
-	  ps_target ALL 
-	  DEPENDS 
-	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
-	  )
-	# These files used for more than one target.  Therefore must
-	# use target dependencies rather than file dependencies to build
-	# them.  Otherwise, parallel builds won't work.
-	add_dependencies(ps_target
-	  docbook_plplot-symbols_txt
-	  docbook_plplot-structs_txt
-	  )
+	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	    "${BASE}.pdf\n"
+	    )
 
-	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	  "${BASE}.ps.gz\n"
-	  )
+	  add_custom_target(
+	    print ALL 
+	    )
+	  add_dependencies(print pdf_target)
 
-	add_custom_command(
-	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	  # xmlto --with-fop is currently (at least on Debian) craps out
-          # if DESTDIR is specified so make sure it is NOT specified.
-	  COMMAND env DESTDIR= ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	  COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	  DEPENDS
-	  ${SOURCE_FILES} 
-	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
-	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
-          VERBATIM
-	  )
-	add_custom_target(
-	  pdf_target ALL 
-	  DEPENDS 
-	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
-	  )
-	# These files used for more than one target.  Therefore must
-	# use target dependencies rather than file dependencies to build
-	# them.  Otherwise, parallel builds won't work.
-	add_dependencies(pdf_target
-	  docbook_plplot-symbols_txt
-	  docbook_plplot-structs_txt
-	  )
+	  # Disable this because the result is big (50 (!) times larger
+          # than corresponding pdf), takes a long time to generate, and
+          # is really ugly looking.
+	  if(0)
+	    add_custom_command(
+	      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	      COMMAND ${PDF2PS} -dLanguageLevel=3 ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
+	      COMMAND ${GZIP} -f ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
+	      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	      )
+	    
+	    add_custom_target(
+	      ps_target ALL 
+	      DEPENDS 
+	      ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	      )
+	    add_dependencies(ps_target pdf_target)
+	  add_dependencies(print ps_target)
+	    
+	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	    "${BASE}.ps.gz\n"
+	    )
+	  endif(0)
+	else(DOCBOOK_DBLATEX_BACKEND)
+	  add_custom_command(
+	    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	    # xmlto --with-fop is currently (at least on Debian) craps out
+            # if DESTDIR is specified so make sure it is NOT specified.
+	    COMMAND env DESTDIR= ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} ps ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.ps ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
+	    COMMAND ${GZIP} -f ${BASE}.ps
+	    DEPENDS
+	    ${SOURCE_FILES} 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
+	    VERBATIM
+	    )
+	  add_custom_target(
+	    ps_target ALL 
+	    DEPENDS 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
+	    )
+	  # These files used for more than one target.  Therefore must
+	  # use target dependencies rather than file dependencies to build
+	  # them.  Otherwise, parallel builds won't work.
+	  add_dependencies(ps_target
+	    docbook_plplot-symbols_txt
+	    docbook_plplot-structs_txt
+	    )
+	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	    "${BASE}.ps.gz\n"
+	    )
 
-	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	  "${BASE}.pdf\n"
-	  )
-	add_custom_target(
-	  print ALL 
-	  )
-	add_dependencies(print ps_target pdf_target)
+	  add_custom_command(
+	    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	    # xmlto --with-fop is currently (at least on Debian) craps out
+            # if DESTDIR is specified so make sure it is NOT specified.
+	    COMMAND env DESTDIR= ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	    DEPENDS
+	    ${SOURCE_FILES} 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
+	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
+            VERBATIM
+	    )
+	  add_custom_target(
+	    pdf_target ALL 
+	    DEPENDS 
+	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
+	    )
+	  # These files used for more than one target.  Therefore must
+	  # use target dependencies rather than file dependencies to build
+	  # them.  Otherwise, parallel builds won't work.
+	  add_dependencies(pdf_target
+	    docbook_plplot-symbols_txt
+	    docbook_plplot-structs_txt
+	    )
+
+	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	    "${BASE}.pdf\n"
+	    )
+
+	  add_custom_target(
+	    print ALL 
+	    )
+	  add_dependencies(print ps_target pdf_target)
+	endif(DOCBOOK_DBLATEX_BACKEND)
+
 	if(BUILD_DVI)
 	  add_dependencies(print dvi_target)
 	endif(BUILD_DVI)
