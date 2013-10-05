@@ -2106,7 +2106,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <para>
 	Sections of text can have an underline or overline appended.  For
-	example, the string &over-under; is obtained by specifying
+	example, the string S̅(f̲r̲e̲q̲) is obtained by specifying
 	<literal>"#+S#+(#-freq#-)"</literal>. 
       </para>
 
@@ -2272,6 +2272,85 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<literal>#&lt;0x8nnnnnnn&gt;</literal>,
 	<literal>#&lt;0xmn&gt;</literal>, or <literal>#&lt;FCI COMMAND
 	STRING/&gt;</literal> as appropriate.
+      </para>
+
+      <para>
+	It should be emphasized that the unicode escape sequences
+	above only work properly for modern unicode-aware devices such as the
+	svg device or the very large set of cairo and qt devices.  And for
+	those devices the alternative of simply specifying the unicode symbols
+	using UTF-8 encoding of PLplot input strings is much more convenient
+	for users than using the above escape sequences.  For example, we
+        use UTF-8 strings rather than escape sequences in example 24
+	to render the word "Peace" in several different languages.
+      </para>
+
+      <table frame="all" id="peace">
+	<title>The word "peace" expressed in several different languages in example 24 using UTF-8</title>
+	<tgroup align="center" cols="2">
+	  <colspec align="center" colnum="1" colwidth="2*"/>
+	  <tbody valign="top">
+	    <row>
+	      <entry>Hebrew</entry>
+	      <entry>שלום</entry>
+	    </row>
+	    <row>
+	      <entry>French</entry>
+	      <entry>Paix</entry>
+	    </row>
+	    <row>
+	      <entry>Kurdish</entry>
+	      <entry>Hasîtî</entry>
+	    </row>
+	    <row>
+	      <entry>English</entry>
+	      <entry>Peace</entry>
+	    </row>
+	    <row>
+	      <entry>Korean</entry>
+	      <entry>평화</entry>
+	    </row>
+	    <row>
+	      <entry>Turkish</entry>
+	      <entry>Barış</entry>
+	    </row>
+	    <row>
+	      <entry>Hindi</entry>
+	      <entry>शांति</entry>
+	    </row>
+	    <row>
+	      <entry>German</entry>
+	      <entry>Friede</entry>
+	    </row>
+	    <row>
+	      <entry>Arabic</entry>
+	      <entry>ﺳﻼم</entry>
+	    </row>
+	    <row>
+	      <entry>Mandarin</entry>
+	      <entry>和平</entry>
+	    </row>
+	    <row>
+	      <entry>Russian</entry>
+	      <entry>Мир</entry>
+	    </row>
+	    <row>
+	      <entry>Spanish</entry>
+	      <entry>Paz</entry>
+	    </row>
+	  </tbody>
+	</tgroup>
+      </table>
+
+      <para>
+	For unicode-aware devices it is possible as well to specify
+	mathematical glyphs (such as ∂, ∇, ∑, ∫, and ∰) using UTF-8 encoding
+	of PLplot input strings.  A typical input method in this case is
+	simply to cut and paste the desired mathematical glyph from, e.g.,
+	gucharmap to source code being edited by a unicode-aware editor such
+	as emacs.  Such input methods may be conveniently used, for example,
+	to specify the very wide range of mathematical symbols that are
+	typically desired for scentific plots.
       </para>
 
     </sect2>
