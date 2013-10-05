@@ -12,7 +12,7 @@ DocBook 4.1 XML format.  You will find in the current file
 (README.developers) instructions for building the documentation from the
 DocBook source files in this directory. The documentation that is built
 includes man pages of the API as well as complete versions of the
-documentation in HTML, dvi, PostScript, PDF, and info form.
+documentation in info, HTML, and PDF forms.
 
 Configuring and Building
 ========================
@@ -24,12 +24,24 @@ evaluate the results of your efforts.
 Here is how.  Simply add the cmake option -DBUILD_DOC=ON to your
 normal cmake command-line options for the PLplot build.  The resulting
 cmake step looks for all the tools required for the documentation
-build and turns off the documentation build and gives WARNING messages
-if any of those required tools are missing.  Furthermore, at run-time
-xmlto (used below) checks for required backend tools.  So cmake
-messages with the -DBUILD_DOC=ON option _and_ run time messages from
-xmlto should be sufficient for you to figure out what DocBook/XML
-related tools you need to install in order to build the documentation.
+build and generates a WARNING message and turns off all or some
+component of the documentation build if any of those required tools
+are missing.  Currently, the tools searched for by our build system
+are xmlto, dblatex, and xelatex.  Furthermore, at run-time xmlto and
+dblatex (used below) automatically check for required tools, and
+dblatex checks for missing fonts when generating the pdf results.
+(Those required fonts are chosen by
+doc/docbook/source/dblatex_stylesheet.xsl and are currently FreeSans,
+FreeSerif, and FreeMono).
+
+In sum, cmake WARNING messages with the -DBUILD_DOC=ON option _and_
+run time messages from xmlto and dblatex should be sufficient for you
+to figure out what DocBook/XML related tools and fonts you need to
+install in order to build the documentation.  As far as we know
+installation of the xmlto, dblatex, xelatex tools and the FreeSans,
+FreeSerif, and FreeMono fonts should be sufficient, but if not, run-time
+warnings should be generated.
+
 N.B. As far as we know, the complete set of required tools is only
 available on Linux so you will need a Linux system to do a
 documentation build.
@@ -60,102 +72,21 @@ can tell from reading comments in it) to get around some of the
 db2x_xsltproc limitations.  db2x_xsltproc and db2x_texixml are from
 the docbook2x package.
 
-3. Our HTML and print(dvi, PostScript, and PDF) results are all generated
-with xmlto using respectively no special options and the html subcommand,
-the experimental --with-dblatex option and dvi subcommand, and
-the experiemtnal --with-fop option and the ps and pdf subcommands.
+3. Our HTML results are generated with xmlto and configured at run
+time with a CSS stylesheet, see doc/docbook/src/stylesheet.css.xsl.in.
+The xmlto application is actually a convenience script that uses
+XML/XSL to generate the HTML results as opposed to the previous
+SGML/DSSSL approach used to create the HTML results for plplot-5.9.9
+and previous.
 
-N.B. for the dvi results to work as of this date (2013-08) it is
-necessary to apply the dblatex patch given at
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=720624
+4. Our PDF results are generated with "dblatex --backend=xetex" using
+a combination of XML/XSL and xelatex to generate the PDF results (in
+contrast to the SGML/DSSL tools used for that job for plplot-5.9.9 and
+previous, and the XML/XSL "xmlto --with-fop" method used with
+PLplot-5.9.10 to do that job.
 
-The backend tools that the xmlto convenience script selects are
-all XML/XSL as opposed to the previous set of SGML/DSSSL backend
-tools used to create the HTML and print results.  For more information
-see "Further notes on the backend tools" below.
-
-
-Further notes on the backend tools
-==================================
-
-Note from AWI on the project he just completed (as of 2013-08) to use
-xmlto (a shell script that gives convenient access to a wide variety
-of XML/XSL DocBook backend tools) as the DocBook backend generator for
-HTML and print (dvi, PostScript, and PDF) forms of our documentation.
-(The man and info forms of our documentation are already prepared
-using XML/XSL DocBook backend tools.)
-
-One immediate advantage of xmlto is that it detects
-(at run time) whether all the software components it needs are installed
-so this substantantially reduces the testing for DocBook backend components
-required of our build system.
-
-The use of the old/deprecated SGML/DSSSL backend tools for HTML and
-print are still available (as of 2013-08) if the developer
-specifies the PLplot cmake option -DDOCBOOK_XML_BACKEND=OFF along with
--DBUILD_DOC=ON.  However, the HTML results from that option are not
-very good (the Greek characters in the table giving Roman-Greek
-equivalents are gibberish) presumably because bit-rot has set in for
-the SGML/DSSSL tools in the decade since there has been any upstream
-development for those tools.  So at the start of the next release
-cycle the plan is to drop use of the SGML/DSSSL backend tools
-altogether.
-
-The only limitation of the current xmlto backend results that I am
-aware of is the representation of S̅(f̲r̲e̲q̲) is not done very well in
-HTML (an empty string is used rather than S̅(f̲r̲e̲q̲)) or the print
-results (S(freq) is used rather S̅(f̲r̲e̲q̲)).  Note that overlining and
-underlining do not work at all for modern PLplot device drivers such
-as cairo and qt so a much higher priority should be given to fixing
-those issues rather than fixing the issue of representing overlining
-and underlining in the generation of the documentation!  Furthermore,
-instead of using special tricks for dealing with the representation of
-overlining/underlining (as was done for the SGML/DSSSL backend tools),
-the correct thing to do in the long term (i.e., after the use of
-SGML/DSSSL backend tools is completely removed since SGML is not
-compatible with UTF-8) is to make the tool chain used to convert our
-DocBook documentation to various formats completely UTF-8 aware so
-that, for example, UTF-8 glyphs for underlining overlining as well
-as UTF-8 strings such as occur in our unicode examples
-23, 24, and 26 could be included directly in the DocBook source of
-our documentation.
-
-As if this date (2013-08) it appears to me the best UTF-8 way forward
-for html is the current html method (which should be transparent
-to UTF-8 strings although I haven't tested that in detail with
-truly exotic UTF-8 strings).  And the best UTF-8 way forward for
-print results is the experimental --backend=xetex option for the
-dblatex command.  
-
-To demonstrate the UTF-8 power of xelatex try the xelatex command on
-the example given at http://en.wikipedia.org/wiki/XeTeX.  All those
-non-Western glyphs _and_ scripts seem to come out fine in the
-resulting pdf and conversion to an equivalent PostScript result with
-pdf2ps seemed to preserve all those glyph and script results as well.
-Furthermore, I recently tried
-
-dblatex --backend=xetex -o plplotdoc.xetex.pdf --pdf plplotdoc-print.xml
-
-and the resulting plplotdoc.xetex.pdf document looked good (both Greek
-table and function API) with the default style.  Although currently
-unnecessary from my perspective, it looks like the dblatex -p option
-is what you should use to style such results further if anyone feels
-the need.  (Note that the --backend=xetex dblatex option is not
-accessible from the xmlto --with-dblatex command.)
-
-The only drawback of this xetex approach that I can determine at the
-present time is you can only produce PDF with it.  PostScript could
-then be generated using pdf2ps, but there is absolutely no way to
-produce dvi results using xelatex or the --backend=xetex option for
-the dblatex command.  So if we do start inserting general UTF-8
-strings into our DocBook source (say a table of Math symbols or
-comments concerning our multilingual Peace flag example), we would
-have to complete drop dvi, but I think that is an acceptable price to
-pay for the huge range of glyphs that are available with UTF-8.  So I
-believe that dropping dvi and moving to the above command to generate
-our PDF documentation is something we should consider for the near
-future (when the possibility of using of the SGML backend tools is
-completely removed from our build system).
+5. Generation of dvi and PostScript forms of our documentation is
+no longer available.
 
 Validation
 ==========
@@ -187,12 +118,18 @@ situations where xmlto's call to xmllint will segfault.
 Testing the documentation that has been built.
 ==============================================
 
-All tests are performed in the doc/dockbook/src subdirectory _of the build
-tree_.  The given test commands are for the bash shell, and $version is
-currently 5.9.0.  There are no known DocBook back-end issues revealed by the
-following tests.
+All tests are performed in the doc/dockbook/src subdirectory _of the
+build tree_.  The given test commands are for the bash shell, and
+$version is currently 5.9.10.  For the man pages, look carefully at
+the style of the results.  For the rest, look carefully at the style
+of the api chapter and the style/results near Table-3.4 in the
+advanced chapter.  In particular look at how the following examples
+render: the overline-underline example just prior to Table-3.4,
+Table-3.4 of Greek symbols, Table-3.5 of the "Peace" word expressed in
+various languages, and the mathematical symbols occurring in the
+paragraph just after Table-3.5.
 
-1.  man pages.
+1. man pages.
 
 (for MANPAGE in *.3plplot; do nroff -man $MANPAGE ; done) |less
 
@@ -202,25 +139,108 @@ info --file plplotdoc.info
 
 3. web pages.
 
-Browse with your favorite browser the index.html file within the current src
-directory.  konqueror and mozilla/firefox/iceweasel give good looking
-results including the Greek letters in Table 3-4.
+Browse with your favorite browser the index.html file that is generated
+by xmlto.
 
-4. dvi file
+4. pdf file
 
-xdvi plplot-$version.dvi
+Browse with your favorite browser the plplot-$version.pdf file that
+is generated by dblatex.
 
-5. PostScript file
+UTF-8 limitations of the current set of backend tools
+=====================================================
 
-gv plplot-$version.ps.gz
+The above set of DocBook backend tools has been chosen with the goal
+of allowing essentially arbitrary UTF-8 strings into our DocBook
+source.  And the advanced.xml part of our DocBook source constitutes a
+simple test of how close we have come to that goal by including the
+"Peace" word in all the human languages expressed in example 24 and by
+also including some UTF-8 forms of math symbols.  Here are the current
+results for how well those UTF-8 strings render for our various
+backends.
 
-6. pdf file
+Man pages.
 
-xpdf plplot-$version.pdf
+These results are not affected since the man pages ignore the advanced
+chapter, and the api.xml file currently contains only the ascii
+subset of UTF-8.
 
-Installing the generated documentation (and the rest of the 
-generated website) at plplot.sf.net
-===========================================================
+Info files.
+
+These results are reasonably good.  All math glyphs and all but the
+glyphs occurring in the Korean, Hindi, and Mandarin "Peace" words are
+rendered correctly.  That's exactly the same set of missing glyphs
+that occurs when I use "less" on advanced.xml so it is possible some
+configuration adjustment for the non-GUI component of my system will
+fix the missing glyphs that occur both for the info form of our
+documentation and when using "less".
+
+HTML results.
+
+These are outstanding results with no issues that we are aware of.
+All math glyphs and all the glyphs occurring in the set of "Peace"
+words render without issues including the CTL languages like Hebrew,
+Arabic, and Hindi.
+
+PDF results.
+
+These results are reasonably good.  All math glyphs and all but the
+glyphs occurring in the Korean and Mandarin "Peace" words are present.
+I attribute the missing glyph issues to missing Korean and Mandarin
+glyphs in the chosen FreeSans, FreeSerif, and FreeMono fonts (more
+about that choice below). The order of the glyphs in the Hindi Peace
+word is not correct (last two glyphs switched) which is a common
+complex text layout (CTL) issue when using unsophisticated software to
+render Hindi.  However, the the Peace word is laid out in the correct
+(right-to-left) order for Arabic and Hebrew so there is some CTL
+sophistication in the xelatex layout engine, and probably hope that
+further layout issues such as the one for Hindi will be fixed.
+
+More on the reason for the missing PDF glyphs.
+
+It was a huge step forward in the tex world for the combination of
+xelatex and the fontspec tex package to make a very large number of
+UTF-8 glyphs potentially available in pdf results.  So I think the
+above method of using dblatex with the xetex backend (which uses
+xelatex and fontspec internally) is the best we can do to generate the
+pdf form of our documentation as free as possible from unicode issues.
+For example, the situation is much improved over the previous xmlto
+method which severely limited the glyphs in the PDF form of our
+results.
+
+However, the fontspec package still has a fundamental limitation which
+is you must use a specific rather than generic font for the sans,
+serif, and mono cases. Specific fonts are never a good way to go for
+documents containing different languages (such as the table of "Peace"
+words I recently introduced into advanced.xml) since no single font
+contains all needed glyphs for a multilanguage document.  The most
+comprehensive fonts I am aware of in this regard are FreeSans,
+FreeSerif, and FreeMono fonts so those are what I have configured (in
+doc/docbook/src/dblatex_stylesheet.xsl) as the specific fonts to use
+for the PDF form of our documentation.  Of course, these specific
+fonts are not completely comprehensive so the (inevitable) result is
+missing glyphs in the PDF results for the Korean and Mandarin cases.
+
+The proper way to solve this issue (which would bring tex completely
+into the modern unicode world) would be to modify fontspec so that
+certain given font names are considered generic, (e.g., the
+"sans-serif", "serif", and "mono-space" font names could be adopted
+for this purpose to follow what is done in the SVG world).  For those
+generic font names, the fontspec package should simply hand off font
+selection to fontconfig which does a very nice job of automatically
+selecting the ideal sans, serif, or mono system font to render a
+particular UTF-8 glyph.  I have asked the fontspec maintainer about
+this potential feature two days before the current writing, but so far
+he has not replied.  Therefore, it appears at this time there will be
+no quick fixes to fontspec with regard to automatic selection of fonts
+for the generic case, and we will be stuck for the foreseeable future
+with the specific font approach.  Until the lack of generic font
+support in xelatex/fontspec is addressed there will inevitably be
+missing glyphs in our pdf results.
+
+
+Installing the generated documentation (and the rest of the generated website) at plplot.sf.net
+===============================================================================================
 
 Follow the directions in README.Release_Manager_Cookbook.  That file is
 located in the top-level source tree.
