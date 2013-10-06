@@ -396,6 +396,7 @@ else(
 	    ${SOURCE_FILES} 
 	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
+	    ${CMAKE_CURRENT_SOURCE_DIR}/dblatex_stylesheet.xsl
             VERBATIM
 	    )
 	  add_custom_target(
