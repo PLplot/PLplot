@@ -212,32 +212,37 @@ However, the fontspec package still has a fundamental limitation which
 is you must use a specific rather than generic font for the sans,
 serif, and mono cases. Specific fonts are never a good way to go for
 documents containing different languages (such as the table of "Peace"
-words I recently introduced into advanced.xml) since no single font
-contains all needed glyphs for a multilanguage document.  The most
-comprehensive fonts I am aware of in this regard are FreeSans,
-FreeSerif, and FreeMono fonts so those are what I have configured (in
-doc/docbook/src/dblatex_stylesheet.xsl) as the specific fonts to use
-for the PDF form of our documentation.  Of course, these specific
-fonts are not completely comprehensive so the (inevitable) result is
-missing glyphs in the PDF results for the Korean and Mandarin cases.
+words I recently introduced into advanced.xml) since since the user is
+forced to compromise between font quality and comprehensiveness.  For
+example, I have tried using the unifont font (which gives complete
+coverage of glyphs for the basic multilingual plane), and the
+resulting pdf form of our documentation has no missing glyphs.
+However, that font is of extremely poor quality (scaled,
+low-resolution bitmapped, monospaced fonts) which makes our
+documentation look ugly so I am not going to use it.  Instead, I have
+chosen (via doc/docbook/src/dblatex_stylesheet.xsl) to use FreeSans,
+FreeSerif, and FreeMono fonts which have reasonable quality but which
+have some missing glyphs (notably CJK glyphs that leave our Korean and
+Mandarin "peace" words empty in the documentation).
 
 The proper way to solve this issue (which would bring tex completely
 into the modern unicode world) would be to modify fontspec so that
 certain given font names are considered generic, (e.g., the
 "sans-serif", "serif", and "mono-space" font names could be adopted
 for this purpose to follow what is done in the SVG world).  For those
-generic font names, the fontspec package should simply hand off font
-selection to fontconfig which does a very nice job of automatically
-selecting the ideal sans, serif, or mono system font to render a
-particular UTF-8 glyph.  I have asked the fontspec maintainer about
-this potential feature two days before the current writing, but so far
-he has not replied.  Therefore, it appears at this time there will be
-no quick fixes to fontspec with regard to automatic selection of fonts
-for the generic case, and we will be stuck for the foreseeable future
-with the specific font approach.  Until the lack of generic font
-support in xelatex/fontspec is addressed there will inevitably be
-missing glyphs in our pdf results.
-
+generic font names, the idea is the fontspec package would simply hand
+off font selection to fontconfig which does a very nice job of
+automatically selecting the ideal sans, serif, or mono system font to
+provide a particular UTF-8 glyph.  I have asked the fontspec
+maintainer about this potential feature several days before the
+current writing, but so far he has not replied.  Therefore, it appears
+at this time there will be no quick fixes to xelatex/fontspec with
+regard to automatic selection of fonts for the generic case, and we
+will be stuck for the foreseeable future with the specific font
+approach.  That approach forces a compromise between complete glyph
+coverage and reasonable quality.  Thus, as a result of avoiding truly
+ugly fonts in our generated pdf documentation there are missing CJK
+glyphs in the results.
 
 Installing the generated documentation (and the rest of the generated website) at plplot.sf.net
 ===============================================================================================
