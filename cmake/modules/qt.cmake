@@ -212,5 +212,5 @@ if(ENABLE_pyqt4)
   endif(PYQT_SIP_FLAGS_ERR)
   # Must change from blank-delimited string to CMake list so that sip
   # COMMAND will work properly with these flags later on.
-  string(REGEX REPLACE " " ";"PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
+  string(REGEX REPLACE " " ";" PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
 endif(ENABLE_pyqt4)
