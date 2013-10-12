@@ -8,7 +8,7 @@
 #  hpdf_LIBRARY_DIRS, the directory where libhpdf (either shared or static)
 #  is found.
 
-find_path(hpdf_INCLUDE_DIR hpdf/hpdf.h /usr/local/include /usr/include)
+find_path(hpdf_INCLUDE_DIR hpdf.h /usr/local/include/hpdf /usr/local/include /usr/include/hpdf /usr/include)
 
 if(hpdf_INCLUDE_DIR)
   find_library(hpdf_LIBRARY

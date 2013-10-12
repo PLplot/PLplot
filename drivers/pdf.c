@@ -38,7 +38,7 @@
 #include <math.h>
 #include <setjmp.h>
 
-#include "hpdf/hpdf.h"
+#include "hpdf.h"
 
 // PLplot header files
 #define DEBUG
