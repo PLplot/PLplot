@@ -105,9 +105,8 @@ execute_process(
   )
 message(STATUS "PYTHON_VERSION = ${PYTHON_VERSION}")
 
-# Use modified version of ExternalProject where cmake -E touch has
-# been replaced with the TOUCH_EXECUTABLE command (to work around
-# cmake bug 14020)
+# Use modified version of the CMake 2.8.12 ExternalProject module
+# where the tar.xz processing has been fixed.
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 include(ExternalProject)
 
@@ -250,9 +249,10 @@ if(BUILD_THE_BUILDTOOLS)
   endforeach(executable ${executables_LIST})
 
   set(build_configuration_LIST
-    cmake
+    #cmake
     pkg-config
     #subversion
+    libpcre
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
