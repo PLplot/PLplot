@@ -76,19 +76,6 @@ set(plplot_cmake_args)
 # This can be safely done only after above includes.
 set(BP_PACKAGE plplot)
 
-# Note could retrieve the latest release, but that is pretty dated.
-# So ideally, would use a subversion client to get the trunk version,
-# but that means (on Windows) you must build a subversion client.
-# That build (of the apache version of subversion) should be
-# straightforward assuming wget (available both for Unix and MSYS) is
-# installed.  So I think ultimately a build of a subversion client
-# will be configured and available for all platforms.  But for now
-# just use a local directory where the trunk version of PLplot has
-# been recently updated.
-# TEMPORARY
-set(PLPLOT_LOCAL_SOURCE_DIR /home/software/${BP_PACKAGE}_svn/HEAD/${BP_PACKAGE}_allura)
-file(TO_NATIVE_PATH ${PLPLOT_LOCAL_SOURCE_DIR} PLPLOT_LOCAL_SOURCE_DIR)
-
 set(tags "" "_lite")
 foreach(tag IN LISTS tags)
   # Data that is related to the PATH that must be used.
@@ -97,12 +84,6 @@ foreach(tag IN LISTS tags)
     set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}${tag}/dll;${BP_PATH_NODLL}")
     message(STATUS "Original BP_PATH for ${BP_PACKAGE}${tag} = ${BP_PATH}")
     determine_msys_path(BP_PATH "${BP_PATH}")
-    # TEMPORARY (already in the _required_ native form for the cmake -E
-    # copy_directory command below except for the drive letter which is
-    # z: for this local result.)
-    set(MODIFIED_PLPLOT_LOCAL_SOURCE_DIR z:${PLPLOT_LOCAL_SOURCE_DIR})
-  else(MSYS_PLATFORM)
-    set(MODIFIED_PLPLOT_LOCAL_SOURCE_DIR ${PLPLOT_LOCAL_SOURCE_DIR})
   endif(MSYS_PLATFORM)
   message(STATUS "modified BP_PATH for ${BP_PACKAGE}${tag} = ${BP_PATH}")
 
@@ -111,8 +92,7 @@ foreach(tag IN LISTS tags)
   ExternalProject_Add(
     build_${BP_PACKAGE}${tag}
     DEPENDS "${${BP_PACKAGE}${tag}_dependencies_targets}"
-    #TEMPORARY
-    DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODIFIED_PLPLOT_LOCAL_SOURCE_DIR} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
+    SVN_REPOSITORY http://svn.code.sf.net/p/plplot/code/trunk
     CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON -DPLD_pdf=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
     BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
     INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
