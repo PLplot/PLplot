@@ -25,7 +25,7 @@ message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
 message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
 message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.11.2 FATAL_ERROR)
 
 set(EP_BASE ${CMAKE_BINARY_DIR}/build_projects)
 message(STATUS "EP_BASE = ${EP_BASE}")
