@@ -8,7 +8,12 @@
 #  hpdf_LIBRARY_DIRS, the directory where libhpdf (either shared or static)
 #  is found.
 
-find_path(hpdf_INCLUDE_DIR hpdf.h /usr/local/include/hpdf /usr/local/include /usr/include/hpdf /usr/include)
+# Give preference to header found in hpdf subdirectory (which is the
+# result of a build and install of upstream libharu), then if not
+# found look for the case of no such subdirectory (which is how the
+# Debian system version of libharu headers is installed).
+find_path(hpdf_INCLUDE_DIR hpdf.h PATHS /usr/local/include /usr/include PATH_SUFFIXES hpdf)
+find_path(hpdf_INCLUDE_DIR hpdf.h PATHS /usr/local/include /usr/include)
 
 if(hpdf_INCLUDE_DIR)
   find_library(hpdf_LIBRARY
