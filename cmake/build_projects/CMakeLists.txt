@@ -252,7 +252,7 @@ if(BUILD_THE_BUILDTOOLS)
     #cmake
     pkg-config
     #subversion
-    libpcre
+    swig
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
