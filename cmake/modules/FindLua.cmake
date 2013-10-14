@@ -73,19 +73,9 @@
 # 
 #  * Kitware, Inc.
 
+# No PATHS or anything else to make sure to not find Linux version
+# on Wine.
 find_program(LUA_EXECUTABLE lua
-  HINTS
-  $ENV{LUA_DIR}
-  PATH_SUFFIXES bin
-  PATHS
-  ~/Library/Frameworks
-  /Library/Frameworks
-  /usr/local
-  /usr
-  /sw # Fink
-  /opt/local # DarwinPorts
-  /opt/csw # Blastwave
-  /opt
   )
 
 if(LUA_EXECUTABLE)
