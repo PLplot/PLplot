@@ -76,6 +76,19 @@ set(plplot_cmake_args)
 # This can be safely done only after above includes.
 set(BP_PACKAGE plplot)
 
+if(PREFER_DOWNLOAD)
+  set(PLPLOT_DOWNLOAD_UPDATE 
+    URL http://prdownloads.sourceforge.net/plplot/plplot/5.9.10%20Source/plplot-5.9.10.tar.gz
+    URL_HASH SHA256=6be3e20d6992cb2afd132a00cbc812aa5db170abe5855c44eb01481ac4b0b723
+    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/plplot/plplot.patch
+    )
+else(PREFER_DOWNLOAD)
+  set(PLPLOT_DOWNLOAD_UPDATE 
+    SVN_REPOSITORY http://svn.code.sf.net/p/plplot/code/trunk
+    )
+endif(PREFER_DOWNLOAD)
+
+
 set(tags "" "_lite")
 foreach(tag IN LISTS tags)
   # Data that is related to the PATH that must be used.
@@ -92,7 +105,7 @@ foreach(tag IN LISTS tags)
   ExternalProject_Add(
     build_${BP_PACKAGE}${tag}
     DEPENDS "${${BP_PACKAGE}${tag}_dependencies_targets}"
-    SVN_REPOSITORY http://svn.code.sf.net/p/plplot/code/trunk
+    ${PLPLOT_DOWNLOAD_UPDATE}
     CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON -DPLD_pdf=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
     BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
     INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install

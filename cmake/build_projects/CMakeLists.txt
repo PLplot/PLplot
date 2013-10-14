@@ -222,6 +222,8 @@ else(MSYS_PLATFORM)
 endif(MSYS_PLATFORM)
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 
+option(PREFER_DOWNLOAD "Prefer to obtain source code for projects using a simple download of tarball rather than via svn, git, hg, or bzr repository access" ON)
+
 # Now include the build configurations for certain targets and their
 # dependencies.
 

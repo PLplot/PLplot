@@ -1,0 +1,318 @@
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/bindings/java/CMakeLists.txt plplot_allura/bindings/java/CMakeLists.txt
+--- export/plplot-5.9.10/bindings/java/CMakeLists.txt	2010-05-14 14:19:09.000000000 -0700
++++ plplot_allura/bindings/java/CMakeLists.txt	2013-10-04 17:39:27.731052638 -0700
+@@ -200,8 +200,9 @@
+     add_custom_command(
+       OUTPUT ${output_file}
+       COMMAND ${CMAKE_Java_COMPILER} 
+-      -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
++      ${JAVACFLAGS} -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
+       DEPENDS ${srcfile} ${${output_file}_DEPENDS}
++      VERBATIM
+       )
+   endforeach( srcfile ${JAVA_FILES_FULL} )
+   add_custom_target(plplot_core ALL DEPENDS ${JAVA_CLASSES})
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/cmake/modules/FindLua.cmake plplot_allura/cmake/modules/FindLua.cmake
+--- export/plplot-5.9.10/cmake/modules/FindLua.cmake	2012-02-17 14:39:16.000000000 -0800
++++ plplot_allura/cmake/modules/FindLua.cmake	2013-10-13 16:52:51.709359625 -0700
+@@ -73,19 +73,9 @@
+ # 
+ #  * Kitware, Inc.
+ 
++# No PATHS or anything else to make sure do not find Linux version
++# on Wine.
+ find_program(LUA_EXECUTABLE lua
+-  HINTS
+-  $ENV{LUA_DIR}
+-  PATH_SUFFIXES bin
+-  PATHS
+-  ~/Library/Frameworks
+-  /Library/Frameworks
+-  /usr/local
+-  /usr
+-  /sw # Fink
+-  /opt/local # DarwinPorts
+-  /opt/csw # Blastwave
+-  /opt
+   )
+ 
+ if(LUA_EXECUTABLE)
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/cmake/modules/Findhpdf.cmake plplot_allura/cmake/modules/Findhpdf.cmake
+--- export/plplot-5.9.10/cmake/modules/Findhpdf.cmake	2013-06-30 21:22:35.000000000 -0700
++++ plplot_allura/cmake/modules/Findhpdf.cmake	2013-10-12 22:06:38.628179635 -0700
+@@ -8,7 +8,12 @@
+ #  hpdf_LIBRARY_DIRS, the directory where libhpdf (either shared or static)
+ #  is found.
+ 
+-find_path(hpdf_INCLUDE_DIR hpdf/hpdf.h /usr/local/include /usr/include)
++# Give preference to header found in hpdf subdirectory (which is the
++# result of a build and install of upstream libharu), then if not
++# found look for the case of no such subdirectory (which is how the
++# Debian system version of libharu headers is installed).
++find_path(hpdf_INCLUDE_DIR hpdf.h PATHS /usr/local/include /usr/include PATH_SUFFIXES hpdf)
++find_path(hpdf_INCLUDE_DIR hpdf.h PATHS /usr/local/include /usr/include)
+ 
+ if(hpdf_INCLUDE_DIR)
+   find_library(hpdf_LIBRARY
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/cmake/modules/drivers-init.cmake plplot_allura/cmake/modules/drivers-init.cmake
+--- export/plplot-5.9.10/cmake/modules/drivers-init.cmake	2012-11-17 14:49:34.000000000 -0800
++++ plplot_allura/cmake/modules/drivers-init.cmake	2013-10-11 12:52:27.712350616 -0700
+@@ -196,7 +196,7 @@
+   # no alpha transparency) and poorly maintained (the double free for
+   # example 2 has not been fixed).  Therefore retire this device.
+   # "pbm:pbm:OFF:F:OFF"
+-  "pdf:pdf:OFF:F:OFF"
++  "pdf:pdf:ON:F:OFF"
+   # (2007-09-01) As discussed on list, don't enable plmeta until we sort
+   # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
+   # This is going to take time/energy for some volunteer who has not volunteered
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/cmake/modules/java.cmake plplot_allura/cmake/modules/java.cmake
+--- export/plplot-5.9.10/cmake/modules/java.cmake	2013-05-02 15:44:50.000000000 -0700
++++ plplot_allura/cmake/modules/java.cmake	2013-10-04 17:39:27.107064998 -0700
+@@ -96,3 +96,8 @@
+   # it appears this CMake variable is defined on Mac OS X and other platforms.
+   set(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap${CMAKE_SHARED_LIBRARY_SUFFIX})
+ endif(ENABLE_java)
++
++# Set up java compiler flags and turn into a list suitable for add_custom_command
++set(DEFAULT_JAVACFLAGS "")
++set(JAVACFLAGS ${DEFAULT_JAVACFLAGS} CACHE STRING "Java compiler flags")
++string(REGEX REPLACE " " ";" JAVACFLAGS "${JAVACFLAGS}")
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/cmake/modules/pkg-config.cmake plplot_allura/cmake/modules/pkg-config.cmake
+--- export/plplot-5.9.10/cmake/modules/pkg-config.cmake	2012-01-05 05:59:36.000000000 -0800
++++ plplot_allura/cmake/modules/pkg-config.cmake	2013-10-10 21:43:09.958581690 -0700
+@@ -175,7 +175,7 @@
+ 
+   if("${_link_flags_in}" STREQUAL "")
+     set(${_link_flags_out})
+-  else("${_link_flags_in}" STREQUAL ""})
++  else("${_link_flags_in}" STREQUAL "")
+     #message("(original link flags) = ${_link_flags_in}")
+     # Convert link flags to a list.  Note some link flags are blank-delimited
+     # (such as "-framework whatever") so preserve those by splitting into
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/cmake/modules/qt.cmake plplot_allura/cmake/modules/qt.cmake
+--- export/plplot-5.9.10/cmake/modules/qt.cmake	2012-08-21 04:45:29.000000000 -0700
++++ plplot_allura/cmake/modules/qt.cmake	2013-10-10 21:55:38.160255690 -0700
+@@ -212,5 +212,5 @@
+   endif(PYQT_SIP_FLAGS_ERR)
+   # Must change from blank-delimited string to CMake list so that sip
+   # COMMAND will work properly with these flags later on.
+-  string(REGEX REPLACE " " ";"PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
++  string(REGEX REPLACE " " ";" PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
+ endif(ENABLE_pyqt4)
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/drivers/cairo.c plplot_allura/drivers/cairo.c
+--- export/plplot-5.9.10/drivers/cairo.c	2013-09-21 19:20:12.000000000 -0700
++++ plplot_allura/drivers/cairo.c	2013-10-04 17:39:27.899049313 -0700
+@@ -108,6 +108,7 @@
+     char            *pangoMarkupString;
+     short           upDown;
+     float           fontSize;
++    short           uline;
+ 
+     // These are arguments for plP_script_scale which must be retained
+     // in aStream for the alt_unicode approach.  level has an
+@@ -648,6 +649,7 @@
+ 
+     aStream                    = (PLCairo *) pls->dev;
+     aStream->upDown            = 0;
++    aStream->uline             = 0;
+     aStream->level             = 0;
+     aStream->pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
+     // Calculate the font size (in points since DPI = 72).
+@@ -742,6 +744,23 @@
+         }
+         aStream->upDown--;
+         break;
++    case PLTEXT_UNDERLINE:
++        if ( aStream->uline == 1 )
++        {
++            strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
++            aStream->level++;
++        }
++	else 
++	{
++            strncat( aStream->pangoMarkupString, "<span underline=\"single\">", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
++            aStream->level++;
++	}
++	aStream->uline = !aStream->uline;
++        break;
++    case PLTEXT_BACKCHAR:
++    case PLTEXT_OVERLINE:
++        plwarn( "'-', and 'b/B' text escape sequences not processed." );
++        break;
+     }
+ }
+ 
+@@ -970,7 +989,7 @@
+ // http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html
+ //--------------------------------------------------------------------------
+ 
+-char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize )
++char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize)
+ {
+     char      plplotEsc;
+     int       i;
+@@ -979,7 +998,8 @@
+     char      utf8[5];
+     char      *pangoMarkupString;
+     PLFLT     old_sscale, sscale, old_soffset, soffset;
+-    PLINT     level = 0.;
++    PLINT     level = 0;
++    short     uline = 0;
+ 
+     // Will this be big enough? We might have lots of markup.
+     pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
+@@ -1071,6 +1091,21 @@
+                     }
+                     upDown--;
+                 }
++                if ( ucs4[i] == (PLUNICODE) '-' ) // Superscript
++                {
++                    if ( uline == 1 )
++                    {
++                        strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
++                        level++;
++                    }
++                    else
++                    {
++                        strncat( pangoMarkupString,
++                            "<span underline=\"single\">",
++                            MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
++                    }
++                    uline = uline;
++                }
+                 i++;
+             }
+         }
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/drivers/pdf.c plplot_allura/drivers/pdf.c
+--- export/plplot-5.9.10/drivers/pdf.c	2013-06-30 21:22:35.000000000 -0700
++++ plplot_allura/drivers/pdf.c	2013-10-11 17:45:07.713536623 -0700
+@@ -1,4 +1,4 @@
+-// $Id: pdf.c 12401 2013-07-01 04:22:35Z airwin $
++// $Id: pdf.c 12589 2013-10-12 00:45:01Z airwin $
+ //
+ //      PLplot driver for PDF based on the haru library http://www.libharu.org.
+ //
+@@ -38,7 +38,7 @@
+ #include <math.h>
+ #include <setjmp.h>
+ 
+-#include "hpdf/hpdf.h"
++#include "hpdf.h"
+ 
+ // PLplot header files
+ #define DEBUG
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/examples/d/x20d.d plplot_allura/examples/d/x20d.d
+--- export/plplot-5.9.10/examples/d/x20d.d	2013-06-27 12:49:07.000000000 -0700
++++ plplot_allura/examples/d/x20d.d	2013-10-02 13:15:11.891948211 -0700
+@@ -1,4 +1,4 @@
+-// $Id: x20d.d 12393 2013-06-27 19:49:07Z andrewross $
++// $Id: x20d.d 12568 2013-10-02 09:23:08Z andrewross $
+ //
+ //      plimage demo
+ //
+@@ -6,6 +6,7 @@
+ 
+ import std.math;
+ import std.stdio;
++import std.file;
+ 
+ import plplot;
+ 
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/examples/java/CMakeLists.txt plplot_allura/examples/java/CMakeLists.txt
+--- export/plplot-5.9.10/examples/java/CMakeLists.txt	2012-10-03 14:16:31.000000000 -0700
++++ plplot_allura/examples/java/CMakeLists.txt	2013-10-04 17:39:27.843050422 -0700
+@@ -101,8 +101,9 @@
+     add_custom_command(
+       OUTPUT ${out_file}
+       COMMAND ${CMAKE_Java_COMPILER}
+-      -classpath ${CMAKE_BINARY_DIR}/bindings/java -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
++      ${JAVACFLAGS} -classpath ${CMAKE_BINARY_DIR}/bindings/java -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
+       DEPENDS ${in_file} ${files_plplot_core}
++      VERBATIM
+       )
+     add_custom_target(x${STRING_INDEX}j ALL DEPENDS ${out_file})
+     add_dependencies(x${STRING_INDEX}j plplot_core)
+@@ -160,8 +161,9 @@
+     add_custom_command(
+       OUTPUT ${out_file}
+       COMMAND ${CMAKE_Java_COMPILER}
+-      -classpath ${INSTALLED_JAR_FILE} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
++      ${JAVACFLAGS} -classpath ${INSTALLED_JAR_FILE} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding UTF-8 ${in_file}
+       DEPENDS ${in_file} ${INSTALLED_JAR_FILE}
++      VERBATIM
+       )
+     add_custom_target(x${STRING_INDEX}j ALL DEPENDS ${out_file})
+     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_java x${STRING_INDEX}j)
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/examples/python/CMakeLists.txt plplot_allura/examples/python/CMakeLists.txt
+--- export/plplot-5.9.10/examples/python/CMakeLists.txt	2013-07-12 12:22:25.000000000 -0700
++++ plplot_allura/examples/python/CMakeLists.txt	2013-10-04 17:39:27.863050025 -0700
+@@ -79,7 +79,6 @@
+   xw17.py
+   xw31.py
+   plplot_logo.py
+-  plplot_py_demos.py
+   test_circle.py
+   test_axis_precision.py
+   test_symbol_clip.py
+@@ -142,6 +141,7 @@
+ set(
+   python_DATA
+   ${python_DATA}
++  plplot_py_demos.py
+   README.pythondemos
+   README.rendering_tests
+   README.logo
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/include/plplot.h plplot_allura/include/plplot.h
+--- export/plplot-5.9.10/include/plplot.h	2013-05-22 15:35:01.000000000 -0700
++++ plplot_allura/include/plplot.h	2013-10-04 17:39:27.827050738 -0700
+@@ -1,4 +1,4 @@
+-// $Id: plplot.h 12343 2013-05-22 22:35:01Z andrewross $
++// $Id: plplot.h 12577 2013-10-04 21:43:12Z andrewross $
+ //
+ //  Macros and prototypes for the PLplot package.  This header file must
+ //  be included by all user codes.
+@@ -250,6 +250,9 @@
+ #define PLTEXT_FONTCHANGE        0      // font change in the text stream
+ #define PLTEXT_SUPERSCRIPT       1      // superscript in the text stream
+ #define PLTEXT_SUBSCRIPT         2      // subscript in the text stream
++#define PLTEXT_BACKCHAR          3      // back-char in the text stream
++#define PLTEXT_OVERLINE          4      // toggle overline in the text stream
++#define PLTEXT_UNDERLINE         5      // toggle underline in the text stream
+ 
+ // image operations
+ #define ZEROW2B                  1
+diff -Naur '--exclude=doc' '--exclude=plplot_octave_txt' '--exclude=build_projects' '--exclude=.svn' '--exclude=*README*' '--exclude=#*#' '--exclude=debian' '--exclude=*.pyc' '--exclude=sys' '--exclude=www' '--exclude=docbook.cmake' export/plplot-5.9.10/src/plcore.c plplot_allura/src/plcore.c
+--- export/plplot-5.9.10/src/plcore.c	2013-01-29 20:40:35.000000000 -0800
++++ plplot_allura/src/plcore.c	2013-10-04 17:39:27.667053907 -0700
+@@ -1,4 +1,4 @@
+-// $Id: plcore.c 12288 2013-01-30 04:40:35Z airwin $
++// $Id: plcore.c 12577 2013-10-04 21:43:12Z andrewross $
+ //
+ //      Central dispatch facility for PLplot.
+ //      Also contains the PLplot main data structures, external access
+@@ -1069,6 +1069,24 @@
+                                 plP_esc( PLESC_CONTROL_CHAR, &args );
+                                 i   += 1;
+                                 skip = 1;
++                                break;
++                            case 'b':
++                                args.n_ctrl_char = PLTEXT_BACKCHAR;
++                                plP_esc( PLESC_CONTROL_CHAR, &args );
++                                i   += 1;
++                                skip = 1;
++                                break;
++                            case '+':
++                                args.n_ctrl_char = PLTEXT_OVERLINE;
++                                plP_esc( PLESC_CONTROL_CHAR, &args );
++                                i   += 1;
++                                skip = 1;
++                                break;
++                            case '-':
++                                args.n_ctrl_char = PLTEXT_UNDERLINE;
++                                plP_esc( PLESC_CONTROL_CHAR, &args );
++                                i   += 1;
++                                skip = 1;
+                                 break;
+                             }
+                         }
