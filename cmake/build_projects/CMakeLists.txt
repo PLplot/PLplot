@@ -222,7 +222,10 @@ else(MSYS_PLATFORM)
 endif(MSYS_PLATFORM)
 set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 
-option(PREFER_DOWNLOAD "Prefer to obtain source code for projects using a simple download of tarball rather than via svn, git, hg, or bzr repository access" ON)
+# This option not used currently, but instead of removing it, comment
+# it out because it might be useful later if we ever configure a project
+# where we want a choice between an ordinary download and repository access.
+# option(PREFER_DOWNLOAD "Prefer to obtain source code for projects using a simple download of tarball rather than via svn, git, hg, or bzr repository access" ON)
 
 # Now include the build configurations for certain targets and their
 # dependencies.

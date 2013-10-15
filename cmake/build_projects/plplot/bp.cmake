@@ -76,18 +76,38 @@ set(plplot_cmake_args)
 # This can be safely done only after above includes.
 set(BP_PACKAGE plplot)
 
-if(PREFER_DOWNLOAD)
-  set(PLPLOT_DOWNLOAD_UPDATE 
-    URL http://prdownloads.sourceforge.net/plplot/plplot/5.9.10%20Source/plplot-5.9.10.tar.gz
-    URL_HASH SHA256=6be3e20d6992cb2afd132a00cbc812aa5db170abe5855c44eb01481ac4b0b723
-    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/plplot/plplot.patch
-    )
-else(PREFER_DOWNLOAD)
-  set(PLPLOT_DOWNLOAD_UPDATE 
-    SVN_REPOSITORY http://svn.code.sf.net/p/plplot/code/trunk
-    )
-endif(PREFER_DOWNLOAD)
+# Now use better method of accessing the latest PLplot so comment out
+# the choices below.
+#if(PREFER_DOWNLOAD)
+#  set(PLPLOT_DOWNLOAD_UPDATE 
+#    URL http://prdownloads.sourceforge.net/plplot/plplot/5.9.10%20Source/plplot-5.9.10.tar.gz
+#    URL_HASH SHA256=6be3e20d6992cb2afd132a00cbc812aa5db170abe5855c44eb01481ac4b0b723
+#    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/plplot/plplot.patch
+#    )
+#else(PREFER_DOWNLOAD)
+#  set(PLPLOT_DOWNLOAD_UPDATE 
+#    SVN_REPOSITORY http://svn.code.sf.net/p/plplot/code/trunk
+#    )
+#endif(PREFER_DOWNLOAD)
 
+# Assumption that the top-level local PLplot source tree is two directories
+# up from the present top-level directory for build_projects.
+# This assumption is correct if you are accessing build_projects as
+# a subset of the PLplot source tree so that its location is in
+# cmake/build_projects within that source tree.
+# But it is not the case if you have independently
+# checked out just the build_projects subset of the normal PLplot source
+# tree so check that the result really is a plplot source tree.
+get_filename_component(PLPLOT_LOCAL_SOURCE_DIR ${CMAKE_SOURCE_DIR} PATH)
+get_filename_component(PLPLOT_LOCAL_SOURCE_DIR ${PLPLOT_LOCAL_SOURCE_DIR} PATH)
+find_file(IS_PLPLOT_SOURCE_TREE plcore.c 
+  HINTS ${PLPLOT_LOCAL_SOURCE_DIR}/src 
+  NO_DEFAULT_PATH
+)
+
+if(NOT IS_PLPLOT_SOURCE_TREE)
+  message(FATAL_ERROR "build_projects not located in cmake/build_projects in a PLplot source tree")
+endif(NOT IS_PLPLOT_SOURCE_TREE)
 
 set(tags "" "_lite")
 foreach(tag IN LISTS tags)
@@ -105,23 +125,24 @@ foreach(tag IN LISTS tags)
   ExternalProject_Add(
     build_${BP_PACKAGE}${tag}
     DEPENDS "${${BP_PACKAGE}${tag}_dependencies_targets}"
-    ${PLPLOT_DOWNLOAD_UPDATE}
-    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON -DPLD_pdf=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
+    DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLPLOT_LOCAL_SOURCE_DIR} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
+    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} CFLAGS=-g ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON -DPLD_pdf=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
     BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
     INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
     TEST_BEFORE_INSTALL OFF
     TEST_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} test_noninteractive
-    #STEP_TARGETS configure build install test
+    STEP_TARGETS configure build install test
     )
 
   # Add custom commands to the current test step.
-  add_custom_command(
-    OUTPUT
-    ${EP_BASE}/Stamp/build_${BP_PACKAGE}${tag}/build_${BP_PACKAGE}${tag}-test
-    COMMAND echo made_it_to_extra_test
-    COMMENT "Test installed examples from ${BP_PACKAGE}${tag}"
-    APPEND
-    )
+  # One commented-out fragment to show how to do it....
+#  add_custom_command(
+#    OUTPUT
+#    ${EP_BASE}/Stamp/build_${BP_PACKAGE}${tag}/build_${BP_PACKAGE}${tag}-test
+#    COMMAND echo made_it_to_extra_test
+#    COMMENT "Test installed examples from ${BP_PACKAGE}${tag}"
+#    APPEND
+#    )
 
   list(APPEND build_target_LIST build_${BP_PACKAGE}${tag})
 
