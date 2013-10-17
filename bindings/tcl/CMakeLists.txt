@@ -138,7 +138,6 @@ if(ENABLE_tcl)
     tclmatrix${LIB_TAG}
     plplot${LIB_TAG}
     ${TCL_LIBRARY}
-    ${X11_LIBRARIES}
     )
   set(
     libplplottcltk${LIB_TAG}_LINK_FLAGS
@@ -187,6 +186,7 @@ if(ENABLE_tcl)
     set(plplottcltk${LIB_TAG}_link_libraries
       ${plplottcltk${LIB_TAG}_link_libraries}
       ${TK_LIBRARY}
+      ${X11_X11_LIB}
       )
     set(
       libplplottcltk${LIB_TAG}_LINK_FLAGS
