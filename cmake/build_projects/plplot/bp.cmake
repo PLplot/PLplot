@@ -120,13 +120,11 @@ foreach(tag IN LISTS tags)
   endif(MSYS_PLATFORM)
   message(STATUS "modified BP_PATH for ${BP_PACKAGE}${tag} = ${BP_PATH}")
 
-  # Build PLplot (or PLplot-lite). The pdf device is turned on since the
-  # haru library is built with a fix to avoid segfaults for example 24.
   ExternalProject_Add(
     build_${BP_PACKAGE}${tag}
     DEPENDS "${${BP_PACKAGE}${tag}_dependencies_targets}"
     DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLPLOT_LOCAL_SOURCE_DIR} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
-    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} CFLAGS=-g ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON -DPLD_pdf=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
+    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
     BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
     INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
     TEST_BEFORE_INSTALL OFF
