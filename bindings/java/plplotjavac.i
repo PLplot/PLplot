@@ -441,7 +441,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     }
     else
     {
-        $1 == NULL;
+        $1 = NULL;
     }
 }
 %typemap( freearg ) const PLINT * ArrayCkNull {
@@ -1368,6 +1368,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         jdouble    jvalue;
         JNIEnv     *cbenv;
         jmethodID  labelID = 0;
+        jclass     cls;
 
         jaxis  = (jint) axis;
         jvalue = (jdouble) value;
@@ -1399,7 +1400,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
             fprintf( stderr, "Error - callback undefined\n" );
             return;
         }
-        jclass cls = ( *cbenv )->GetObjectClass( cbenv, labelClass );
+        cls = ( *cbenv )->GetObjectClass( cbenv, labelClass );
         if ( cls == 0 )
         {
             fprintf( stderr, "Error getting callback class\n" );
@@ -1468,6 +1469,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         jobject      jdata;
         JNIEnv       *cbenv;
         jmethodID    ctID = 0;
+        jclass       cls;
 
         jx    = (jdouble) x;
         jy    = (jdouble) y;
@@ -1495,7 +1497,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
             fprintf( stderr, "Error - callback undefined\n" );
             return;
         }
-        jclass cls = ( *cbenv )->GetObjectClass( cbenv, ctClass );
+        cls = ( *cbenv )->GetObjectClass( cbenv, ctClass );
         if ( cls == 0 )
         {
             fprintf( stderr, "Error getting callback class\n" );
