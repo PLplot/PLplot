@@ -477,10 +477,10 @@ typedef PLINT          PLBOOL;
     }
     $2   = PyArray_DIMS( tmp )[0];
     $3   = PyArray_DIMS( tmp )[1];
-    size = sizeof ( PLFLT ) * $3;
+    size = $3;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
     for ( i = 0; i < $2; i++ )
-        $1[i] = (PLFLT *) ( PyArray_DATA( tmp ) + i * size );
+        $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny )
 {
@@ -497,10 +497,10 @@ typedef PLINT          PLBOOL;
         return NULL;
     Xlen = $2 = PyArray_DIMS( tmp )[0];
     Ylen = $3 = PyArray_DIMS( tmp )[1];
-    size = sizeof ( PLFLT ) * $3;
+    size = $3;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
     for ( i = 0; i < $2; i++ )
-        $1[i] = (PLFLT *) ( PyArray_DATA( tmp ) + i * size );
+        $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny )
 {
@@ -517,10 +517,10 @@ typedef PLINT          PLBOOL;
         return NULL;
     Xlen = PyArray_DIMS( tmp )[0];
     Ylen = PyArray_DIMS( tmp )[1];
-    size = sizeof ( PLFLT ) * Ylen;
+    size = Ylen;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT *) ( PyArray_DATA( tmp ) + i * size );
+        $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) const PLFLT * *Matrix {
     Py_DECREF( tmp$argnum );
@@ -554,10 +554,10 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must match matrix." );
         return NULL;
     }
-    size = sizeof ( PLFLT ) * Ylen;
+    size = Ylen;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT *) ( PyArray_DATA( tmp ) + i * size );
+        $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) const PLFLT * *MatrixCk {
     Py_DECREF( tmp$argnum );
@@ -577,10 +577,10 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must match matrix." );
         return NULL;
     }
-    size = sizeof ( PLFLT ) * Ylen;
+    size = Ylen;
     $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $1[i] = (PLFLT *) ( PyArray_DATA( tmp ) + i * size );
+        $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) PLFLT * *OutMatrixCk {
     Py_DECREF( tmp$argnum );
@@ -607,10 +607,10 @@ typedef PLINT          PLBOOL;
     array   = PyArray_SimpleNew( 2, dims, NPY_FLOAT64 );
     if ( !array )
         return NULL;
-    size = (int) ( sizeof ( double ) * Ylen );
+    size = Ylen;
     $3   = (double **) malloc( sizeof ( double * ) * Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $3[i] = (double *) ( PyArray_DATA( (PyArrayObject *) array ) + i * size );
+        $3[i] = ( (double *) PyArray_DATA( (PyArrayObject *) array ) + i * size );
 }
 %typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk )
 {
@@ -640,7 +640,7 @@ typedef PLINT          PLBOOL;
     $1 = (char **) malloc( sizeof ( char* ) * Alen );
     for ( i = 0; i < Alen; i++ )
     {
-        $1[i] = PyArray_DATA( tmp ) + i * PyArray_STRIDES( tmp )[0];
+        $1[i] = (char *) PyArray_DATA( tmp ) + i * PyArray_STRIDES( tmp )[0];
         if ( $1[i] == NULL )
         {
             free( $1 );
@@ -662,7 +662,7 @@ typedef PLINT          PLBOOL;
     $2   = (char **) malloc( sizeof ( char* ) * Alen );
     for ( i = 0; i < Alen; i++ )
     {
-        $2[i] = PyArray_DATA( tmp ) + i * PyArray_STRIDES( tmp )[0];
+        $2[i] = (char *) PyArray_DATA( tmp ) + i * PyArray_STRIDES( tmp )[0];
         if ( $2[i] == NULL )
         {
             free( $2 );
@@ -808,13 +808,13 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
                 return NULL;
             }
         }
-        size        = sizeof ( PLFLT ) * tmpGrid2.ny;
+        size        = tmpGrid2.ny;
         tmpGrid2.xg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
-            tmpGrid2.xg[i] = (PLFLT *) ( PyArray_DATA( pltr_xg ) + i * size );
+            tmpGrid2.xg[i] = ( (PLFLT *) PyArray_DATA( pltr_xg ) + i * size );
         tmpGrid2.yg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
-            tmpGrid2.yg[i] = (PLFLT *) ( PyArray_DATA( pltr_yg ) + i * size );
+            tmpGrid2.yg[i] = ( (PLFLT *) PyArray_DATA( pltr_yg ) + i * size );
         return &tmpGrid2;
     }
 
