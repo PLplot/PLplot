@@ -53,9 +53,9 @@
 #define  NPY_PLINT    NPY_INT32
 
 #ifdef PL_DOUBLE
-#define  NPY_PLFLT    NPY_DOUBLE
+#define  NPY_PLFLT    NPY_FLOAT64
 #else
-#define  NPY_PLFLT    NPY_FLOAT
+#define  NPY_PLFLT    NPY_FLOAT32
 #endif
 
 // python-1.5 compatibility mode?
@@ -271,7 +271,7 @@ typedef PLINT          PLBOOL;
 // some really twisted stuff to allow calling a single precision library from python
     PyArrayObject* myArray_ContiguousFromObject( PyObject* in, int type, int mindims, int maxdims )
     {
-        PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, PyArray_FLOAT,
+        PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, NPY_FLOAT32,
             mindims, maxdims );
         if ( !tmp )
         {
@@ -279,7 +279,7 @@ typedef PLINT          PLBOOL;
             if ( PyArray_Check( in ) )
             {
                 PyErr_Clear();
-                tmp = (PyArrayObject *) PyArray_Cast( (PyArrayObject *) in, PyArray_FLOAT );
+                tmp = (PyArrayObject *) PyArray_Cast( (PyArrayObject *) in, NPY_FLOAT32 );
             }
         }
         return tmp;
@@ -604,7 +604,7 @@ typedef PLINT          PLBOOL;
     // list and this ArrayY.
     dims[0] = Xlen;
     dims[1] = Ylen;
-    array   = PyArray_SimpleNew( 2, dims, NPY_DOUBLE );
+    array   = PyArray_SimpleNew( 2, dims, NPY_FLOAT64 );
     if ( !array )
         return NULL;
     size = (int) ( sizeof ( double ) * Ylen );
@@ -1130,8 +1130,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             px = PyArray_SimpleNewFromData( 1, &nn, NPY_PLFLT, (void *) x );
             py = PyArray_SimpleNewFromData( 1, &nn, NPY_PLFLT, (void *) y );
 #else
-            px = PyArray_FromDimsAndData( 1, &n, PyArray_FLOAT, (char *) x );
-            py = PyArray_FromDimsAndData( 1, &n, PyArray_FLOAT, (char *) y );
+            px = PyArray_FromDimsAndData( 1, &n, NPY_PLFLT, (char *) x );
+            py = PyArray_FromDimsAndData( 1, &n, NPY_PLFLT, (char *) y );
 #endif
             arglist = Py_BuildValue( "(iOO)", n, px, py );
             // call the python function
