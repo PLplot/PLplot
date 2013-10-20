@@ -750,12 +750,12 @@ void text_esc_cairo( PLStream *pls, EscText *args )
             strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
             aStream->level++;
         }
-	else 
-	{
+        else
+        {
             strncat( aStream->pangoMarkupString, "<span underline=\"single\">", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
             aStream->level++;
-	}
-	aStream->uline = !aStream->uline;
+        }
+        aStream->uline = !aStream->uline;
         break;
     case PLTEXT_BACKCHAR:
     case PLTEXT_OVERLINE:
@@ -989,7 +989,7 @@ void proc_str( PLStream *pls, EscText *args )
 // http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html
 //--------------------------------------------------------------------------
 
-char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize)
+char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize )
 {
     char      plplotEsc;
     int       i;
