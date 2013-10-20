@@ -22,9 +22,9 @@
 #define PSX           XPSSIZE - 1
 #define PSY           YPSSIZE - 1
 #define OF            pls->OutFile
-#define MIN_WIDTH     1                 // Minimum pen width
-#define MAX_WIDTH     30                // Maximum pen width
-#define DEF_WIDTH     3                 // Default pen width
+#define MIN_WIDTH     1.  // Minimum pen width
+#define MAX_WIDTH     30. // Maximum pen width
+#define DEF_WIDTH     3.  // Default pen width
 
 // These are for covering the page with the background color
 

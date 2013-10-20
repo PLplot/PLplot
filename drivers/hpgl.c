@@ -78,9 +78,9 @@ void plD_esc_hpgl( PLStream *, PLINT, void * );
 #define LJIII_YMAX     7700
 
 #define OF             pls->OutFile
-#define MIN_WIDTH      1                // Minimum pen width
-#define MAX_WIDTH      10               // Maximum pen width
-#define DEF_WIDTH      1                // Default pen width
+#define MIN_WIDTH      1.  // Minimum pen width
+#define MAX_WIDTH      10. // Maximum pen width
+#define DEF_WIDTH      1.  // Default pen width
 
 static void hpgl_dispatch_init_helper( PLDispatchTable *pdt,
                                        char *menustr, char *devnam,
@@ -349,9 +349,9 @@ plD_state_hpgl( PLStream *pls, PLINT op )
     {
     case PLSTATE_WIDTH:
     case PLSTATE_COLOR0: {
-        int width =
+        int width = (int) (
             ( pls->width < MIN_WIDTH ) ? DEF_WIDTH :
-            ( pls->width > MAX_WIDTH ) ? MAX_WIDTH : pls->width;
+            ( pls->width > MAX_WIDTH ) ? MAX_WIDTH : pls->width );
 
         if ( pls->icol0 < 1 || pls->icol0 > 8 )
             fputs( "\nInvalid pen selection.", stderr );

@@ -670,9 +670,9 @@ plD_state_psttf( PLStream *pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH: {
-        int width =
+        int width = (int) (
             ( pls->width < MIN_WIDTH ) ? DEF_WIDTH :
-            ( pls->width > MAX_WIDTH ) ? MAX_WIDTH : pls->width;
+            ( pls->width > MAX_WIDTH ) ? MAX_WIDTH : pls->width );
 
         doc->osBody() << " S\n" << width << " W";
 
