@@ -138,7 +138,7 @@ typedef PLINT          PLBOOL;
 #endif
 
 // With preceding count
-%typemap( in ) ( PLINT n, const PLINT * Array ) ( PyArrayObject * tmp )
+%typemap( in ) ( PLINT n, const PLINT * Array ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
@@ -148,11 +148,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( PLINT n, const PLINT * Array )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // Trailing count and check consistency with previous
-%typemap( in ) ( const PLINT * ArrayCk, PLINT n ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLINT * ArrayCk, PLINT n ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
@@ -167,11 +167,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLINT * ArrayCk, PLINT n )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // No count but check consistency with previous
-%typemap( in ) const PLINT * ArrayCk( PyArrayObject * tmp )
+%typemap( in ) const PLINT * ArrayCk( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
@@ -183,10 +183,10 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLINT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLINT * ArrayCk { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLINT * ArrayCk { Py_CLEAR( tmp$argnum );}
 
 // No count but check consistency with previous or NULL
-%typemap( in ) const PLINT * ArrayCkNull( PyArrayObject * tmp )
+%typemap( in ) const PLINT * ArrayCkNull( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
@@ -198,10 +198,10 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLINT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLINT * ArrayCkNull { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLINT * ArrayCkNull { Py_CLEAR( tmp$argnum );}
 
 // Weird case to allow argument to be one shorter than others
-%typemap( in ) const PLINT * ArrayCkMinus1( PyArrayObject * tmp )
+%typemap( in ) const PLINT * ArrayCkMinus1( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
@@ -213,9 +213,9 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLINT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLINT * ArrayCkMinus1 { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLINT * ArrayCkMinus1 { Py_CLEAR( tmp$argnum );}
 
-%typemap( in ) const PLINT * ArrayCkMinus1Null( PyArrayObject * tmp )
+%typemap( in ) const PLINT * ArrayCkMinus1Null( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
@@ -227,10 +227,10 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLINT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLINT * ArrayCkMinus1Null { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLINT * ArrayCkMinus1Null { Py_CLEAR( tmp$argnum );}
 
 // No length but remember size to check others
-%typemap( in ) const PLINT * Array( PyArrayObject * tmp )
+%typemap( in ) const PLINT * Array( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
     if ( tmp == NULL )
@@ -238,10 +238,10 @@ typedef PLINT          PLBOOL;
     Alen = PyArray_DIMS( tmp )[0];
     $1   = (PLINT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLINT * Array { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLINT * Array { Py_CLEAR( tmp$argnum );}
 
 // set X and Y length for later consistency checking
-%typemap( in ) const PLINT * ArrayN( PyArrayObject * tmp )
+%typemap( in ) const PLINT * ArrayN( PyArrayObject * tmp = NULL )
 {
     int i;
     tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
@@ -259,7 +259,7 @@ typedef PLINT          PLBOOL;
         if ( $1[i] > Ylen )
             Ylen = $1[i];
 }
-%typemap( freearg ) const PLINT * ArrayN { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLINT * ArrayN { Py_CLEAR( tmp$argnum );}
 
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
@@ -293,7 +293,7 @@ typedef PLINT          PLBOOL;
 #endif
 
 // with preceding count
-%typemap( in ) ( PLINT n, const PLFLT * Array ) ( PyArrayObject * tmp )
+%typemap( in ) ( PLINT n, const PLFLT * Array ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -303,11 +303,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( PLINT n, const PLFLT * Array )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // trailing count and check consistency with previous
-%typemap( in ) ( const PLFLT * ArrayCk, PLINT n ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLFLT * ArrayCk, PLINT n ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -322,11 +322,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * ArrayCk, PLINT n )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // no count, but check consistency with previous
-%typemap( in ) const PLFLT * ArrayCk( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * ArrayCk( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -338,10 +338,10 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLFLT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLFLT * ArrayCk { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLFLT * ArrayCk { Py_CLEAR( tmp$argnum );}
 
 // no count, but check consistency with previous, or NULL
-%typemap( in ) const PLFLT * ArrayCkNull( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * ArrayCkNull( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -353,10 +353,10 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLFLT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLFLT * ArrayCkNull { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLFLT * ArrayCkNull { Py_CLEAR( tmp$argnum );}
 
 // check consistency with X dimension of previous
-%typemap( in ) const PLFLT * ArrayCkX( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * ArrayCkX( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -368,10 +368,10 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLFLT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLFLT * ArrayCkX { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLFLT * ArrayCkX { Py_CLEAR( tmp$argnum );}
 
 // check consistency with Y dimension of previous
-%typemap( in ) const PLFLT * ArrayCkY( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * ArrayCkY( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -383,10 +383,10 @@ typedef PLINT          PLBOOL;
     }
     $1 = (PLFLT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLFLT * ArrayCkY { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLFLT * ArrayCkY { Py_CLEAR( tmp$argnum );}
 
 // set X length for later consistency checking, with trailing count
-%typemap( in ) ( const PLFLT * ArrayX, PLINT nx ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLFLT * ArrayX, PLINT nx ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -397,11 +397,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * ArrayX, PLINT nx )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // set X length for later consistency checking
-%typemap( in ) const PLFLT * ArrayX( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * ArrayX( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -409,10 +409,10 @@ typedef PLINT          PLBOOL;
     Xlen = PyArray_DIMS( tmp )[0];
     $1   = (PLFLT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLFLT * ArrayX { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLFLT * ArrayX { Py_CLEAR( tmp$argnum );}
 
 // Set Y length for later consistency checking, with trailing count
-%typemap( in ) ( const PLFLT * ArrayY, PLINT ny ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLFLT * ArrayY, PLINT ny ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -423,11 +423,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // set Y length for later consistency checking
-%typemap( in ) const PLFLT * ArrayY( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * ArrayY( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -435,11 +435,11 @@ typedef PLINT          PLBOOL;
     Ylen = PyArray_DIMS( tmp )[0];
     $1   = (PLFLT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLFLT * ArrayY { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLFLT * ArrayY { Py_CLEAR( tmp$argnum );}
 
 
 // with trailing count
-%typemap( in ) ( const PLFLT * Array, PLINT n ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLFLT * Array, PLINT n ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -449,11 +449,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * Array, PLINT n )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // with no count
-%typemap( in ) const PLFLT * Array( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * Array( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
@@ -461,10 +461,10 @@ typedef PLINT          PLBOOL;
     Alen = PyArray_DIMS( tmp )[0];
     $1   = (PLFLT *) PyArray_DATA( tmp );
 }
-%typemap( freearg ) const PLFLT * Array { Py_DECREF( tmp$argnum );}
+%typemap( freearg ) const PLFLT * Array { Py_CLEAR( tmp$argnum );}
 
 // 2D array with trailing dimensions, check consistency with previous
-%typemap( in ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) ( PyArrayObject * tmp = NULL )
 {
     int i, size;
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
@@ -484,12 +484,12 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
     free( $1 );
 }
 
 // 2D array with trailing dimensions, set the X, Y size for later checking
-%typemap( in ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny ) ( PyArrayObject * tmp = NULL )
 {
     int i, size;
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
@@ -504,12 +504,12 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
     free( $1 );
 }
 
 // 2D array with no dimensions, set the X, Y size for later checking
-%typemap( in ) const PLFLT * *Matrix( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * *Matrix( PyArrayObject * tmp = NULL )
 {
     int i, size;
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
@@ -523,12 +523,12 @@ typedef PLINT          PLBOOL;
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) const PLFLT * *Matrix {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
     free( $1 );
 }
 
 // for plshade1, note the difference in the type for the first arg
-%typemap( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( PyArrayObject * tmp )
+%typemap( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( PyArrayObject * tmp = NULL )
 {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
     if ( tmp == NULL )
@@ -539,11 +539,11 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
 }
 
 // 2D array, check for consistency
-%typemap( in ) const PLFLT * *MatrixCk( PyArrayObject * tmp )
+%typemap( in ) const PLFLT * *MatrixCk( PyArrayObject * tmp = NULL )
 {
     int i, size;
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
@@ -560,13 +560,13 @@ typedef PLINT          PLBOOL;
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) const PLFLT * *MatrixCk {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
     free( $1 );
 }
 
 // 2D array, check for consistency and modify in place version (no longer used
 // in favor of correct output version in the combined typemap below).
-%typemap( in ) PLFLT * *OutMatrixCk( PyArrayObject * tmp )
+%typemap( in ) PLFLT * *OutMatrixCk( PyArrayObject * tmp = NULL )
 {
     int i, size;
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
@@ -583,14 +583,14 @@ typedef PLINT          PLBOOL;
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
 %typemap( freearg ) PLFLT * *OutMatrixCk {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
     free( $1 );
 }
 
 // Combined typemap useful for specialized case of plgriddata.
 // Set Y length for consistency checking, with trailing count
 // combined with 2D output array, check for consistency
-%typemap( in ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk ) ( PyArrayObject * tmp, PyObject * array = NULL )
+%typemap( in ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk ) ( PyArrayObject * tmp = NULL, PyObject * array = NULL )
 {
     int      i, size;
     npy_intp dims[2];
@@ -614,7 +614,7 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk )
 {
-    Py_DECREF( tmp$argnum );
+    Py_CLEAR( tmp$argnum );
     free( $3 );
 }
 %typemap( argout ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * *OutMatrixCk )
@@ -626,7 +626,7 @@ typedef PLINT          PLBOOL;
 //        special for pllegend / plcolorbar, char ** ArrayCk
 //***************************
 // no count, but check consistency with previous. Always allow NULL strings.
-%typemap( in ) const char **ArrayCk( PyArrayObject * tmp )
+%typemap( in ) const char **ArrayCk( PyArrayObject * tmp = NULL )
 {
     int i;
     tmp = (PyArrayObject *) PyArray_ContiguousFromObject( $input, NPY_STRING, 1, 1 );
@@ -648,10 +648,10 @@ typedef PLINT          PLBOOL;
         }
     }
 }
-%typemap( freearg ) const char **ArrayCk { Py_DECREF( tmp$argnum ); free( $1 );}
+%typemap( freearg ) const char **ArrayCk { Py_CLEAR( tmp$argnum ); free( $1 );}
 
 // With count. Always allow NULL strings.
-%typemap( in ) ( PLINT n, const char **Array ) ( PyArrayObject * tmp )
+%typemap( in ) ( PLINT n, const char **Array ) ( PyArrayObject * tmp = NULL )
 {
     int i;
     tmp = (PyArrayObject *) PyArray_ContiguousFromObject( $input, NPY_STRING, 1, 1 );
@@ -672,7 +672,7 @@ typedef PLINT          PLBOOL;
 }
 %typemap( freearg ) ( PLINT n, const char **Array )
 {
-    Py_DECREF( tmp$argnum ); free( $2 );
+    Py_CLEAR( tmp$argnum ); free( $2 );
 }
 
 //**************************
@@ -762,8 +762,8 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
     void cleanup_PLcGrid1( void )
     {
         // fprintf(stderr, "cleanup PLcGrid1\n");
-        Py_DECREF( pltr_xg );
-        Py_DECREF( pltr_yg );
+        Py_CLEAR( pltr_xg );
+        Py_CLEAR( pltr_yg );
     }
 
     PLcGrid2* marshal_PLcGrid2( PyObject* input, int isimg )
@@ -823,8 +823,8 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
         // fprintf(stderr, "cleanup PLcGrid2\n");
         free( tmpGrid2.xg );
         free( tmpGrid2.yg );
-        Py_DECREF( pltr_xg );
-        Py_DECREF( pltr_yg );
+        Py_CLEAR( pltr_xg );
+        Py_CLEAR( pltr_yg );
     }
 %}
 
@@ -953,7 +953,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             // call the python function
             result = PyEval_CallObject( python_pltr, arglist );
             // release the argument list
-            Py_XDECREF( arglist );
+            Py_CLEAR( arglist );
             // check and unpack the result
             if ( result == NULL )
             {
@@ -975,11 +975,11 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                     PLFLT* t = (PLFLT *) PyArray_DATA( tmp );
                     *tx = t[0];
                     *ty = t[1];
-                    Py_XDECREF( tmp );
+                    Py_CLEAR( tmp );
                 }
             }
             // release the result
-            Py_XDECREF( result );
+            Py_CLEAR( result );
             // release the global interpreter lock
             MY_UNBLOCK_THREADS
         }
@@ -1002,7 +1002,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             // call the python function
             result = PyEval_CallObject( python_f2eval, arglist );
             // release the argument list
-            Py_DECREF( arglist );
+            Py_CLEAR( arglist );
             // check and unpack the result
             if ( !PyFloat_Check( result ) )
             {
@@ -1015,7 +1015,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 fresult = (PLFLT) PyFloat_AsDouble( result );
             }
             // release the result
-            Py_XDECREF( result );
+            Py_CLEAR( result );
             // release the global interpreter lock
             MY_UNBLOCK_THREADS
         }
@@ -1047,7 +1047,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             // call the python function
             result = PyEval_CallObject( python_label, arglist );
             // release the argument list
-            //Py_DECREF(arglist);
+            //Py_CLEAR(arglist);
             // check and unpack the result
             if ( result == NULL )
             {
@@ -1066,7 +1066,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 strncpy( string, pystring, len );
             }
             // release the result
-            Py_XDECREF( result );
+            Py_CLEAR( result );
             // release the global interpreter lock
             MY_UNBLOCK_THREADS
         }
@@ -1096,10 +1096,10 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             // call the python function
             result = PyEval_CallObject( python_ct, arglist );
             // release the argument list
-            Py_DECREF( arglist );
-            Py_DECREF( px );
-            Py_DECREF( py );
-            Py_DECREF( pdata );
+            Py_CLEAR( arglist );
+            Py_CLEAR( px );
+            Py_CLEAR( py );
+            Py_CLEAR( pdata );
             // check and unpack the result
             if ( result == NULL )
             {
@@ -1107,7 +1107,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 PyErr_SetString( PyExc_RuntimeError, "coordinate transform callback must take 5 arguments." );
             }
             // release the result
-            Py_XDECREF( result );
+            Py_CLEAR( result );
             // release the global interpreter lock
             MY_UNBLOCK_THREADS
         }
@@ -1137,9 +1137,9 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             // call the python function
             result = PyEval_CallObject( python_mapform, arglist );
             // release the argument list
-            Py_DECREF( arglist );
-            Py_DECREF( px );
-            Py_DECREF( py );
+            Py_CLEAR( arglist );
+            Py_CLEAR( px );
+            Py_CLEAR( py );
             // check and unpack the result
             if ( result == NULL )
             {
@@ -1147,7 +1147,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 PyErr_SetString( PyExc_RuntimeError, "mapform callback must take 3 arguments." );
             }
             // release the result
-            Py_XDECREF( result );
+            Py_CLEAR( result );
             // release the global interpreter lock
             MY_UNBLOCK_THREADS
         }
@@ -1185,7 +1185,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 pltr_type   = CB_Python;
                 Py_XINCREF( input );
             }
-            Py_DECREF( rep );
+            Py_CLEAR( rep );
         }
         else
         {
@@ -1198,7 +1198,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 
     void cleanup_pltr( void )
     {
-        Py_XDECREF( python_pltr );
+        Py_CLEAR( python_pltr );
         python_pltr = 0;
     }
 
@@ -1213,7 +1213,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 
     void cleanup_ct( void )
     {
-        Py_XDECREF( python_ct );
+        Py_CLEAR( python_ct );
         python_ct = 0;
     }
 
@@ -1228,7 +1228,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 
     void cleanup_mapform( void )
     {
-        Py_XDECREF( python_mapform );
+        Py_CLEAR( python_mapform );
         python_mapform = 0;
     }
 
@@ -1270,7 +1270,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             cleanup_PLcGrid2();
             break;
         case CB_Python:
-            Py_XDECREF( python_pltr );
+            Py_CLEAR( python_pltr );
             break;
         default:
             fprintf( stderr, "pltr_type is invalid\n" );
@@ -1417,7 +1417,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     }
 }
 %typemap( freearg ) f2eval_func f2eval {
-    Py_XDECREF( python_f2eval );
+    Py_CLEAR( python_f2eval );
     python_f2eval = 0;
 }
 // marshall the label function pointer argument
@@ -1425,7 +1425,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     // Release reference to previous function if applicable
     if ( python_label )
     {
-        Py_XDECREF( python_label );
+        Py_CLEAR( python_label );
         python_label = 0;
     }
     // it must be a callable or None
