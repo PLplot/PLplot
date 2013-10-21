@@ -33,8 +33,8 @@ endif(${BP_PACKAGE}_configured)
 set(${BP_PACKAGE}_configured ON)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL http://${BP_PACKAGE}.org/files/${BP_PACKAGE}-2.1.0.tar.gz)
-set(${BP_PACKAGE}_URL_MD5 0623b8fb08ae1b28af08b2cdbd66b662)
+set(${BP_PACKAGE}_URL http://${BP_PACKAGE}.org/files/${BP_PACKAGE}-2.2.1.tar.gz)
+set(${BP_PACKAGE}_URL_MD5 63da8e087744f1d6cf16f9501b1cb766)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
@@ -48,63 +48,27 @@ ExternalProject_Add(
   build_${BP_PACKAGE}
   URL ${${BP_PACKAGE}_URL}
   URL_MD5 ${${BP_PACKAGE}_URL_MD5}
-  # Note -DPOST_2.1.0=OFF is essential for the 2.1.0 version, but you
-  # should drop this option for anything after 2.1.0.  Also note that
-  # -DLIBHARU_EXAMPLES=ON builds the demos, but does not test them.
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DPOST_2.1.0=OFF -DLIBHARU_EXAMPLES=ON ${EP_BASE}/Source/build_${BP_PACKAGE}
+  PATCH_COMMAND ""
+  # Do not use -DLIBHARU_EXAMPLES=ON (which builds the demos, but does
+  # not test them) because latest release does not include demos.
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
   )
 
-# Add custom commands to the current no-command update step.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/demo/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/demo/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/hpdf_page_operator.c
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/hpdf_page_operator.c
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/haru.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/haru.cmake
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/summary.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/cmake/modules/summary.cmake
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_consts.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_consts.h
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_config.h.cmake
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf_config.h.cmake
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/hpdf.h
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/include/CMakeLists.txt
-  COMMAND ${PATCH_EXECUTABLE} -d ${EP_BASE}/Source/build_${BP_PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include_hpdf_config.h.patch
-  COMMENT "Custom updating of ${BP_PACKAGE}"
+  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-patch
+  COMMAND ${CMAKE_COMMAND} -E echo "Apply all patches"
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/cmake.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/large_font.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/missing_zlib_headers.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/visibility.patch
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/demo/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/hpdf_page_operator.c
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/haru.cmake
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/cmake/modules/summary.cmake
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_consts.h
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf_config.h.cmake
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/hpdf.h
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/include_hpdf_config.h.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/cmake.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/large_font.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/missing_zlib_headers.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/visibility.patch
   APPEND
   )
 

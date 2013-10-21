@@ -1,0 +1,11 @@
+diff -Naur libharu-2.2.1_pristine/src/hpdf_streams.c libharu-2.2.1/src/hpdf_streams.c
+--- libharu-2.2.1_pristine/src/hpdf_streams.c	2010-02-08 01:49:57.000000000 -0800
++++ libharu-2.2.1/src/hpdf_streams.c	2013-10-21 11:47:12.026846086 -0700
+@@ -23,6 +23,7 @@
+ #include "hpdf_consts.h"
+ #include "hpdf_utils.h"
+ #include "hpdf_streams.h"
++#include "hpdf_config.h"
+ 
+ #ifndef LIBHPDF_HAVE_NOZLIB
+ #include <zlib.h>
