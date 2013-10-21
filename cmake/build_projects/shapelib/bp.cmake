@@ -49,7 +49,7 @@ endif(MSYS_PLATFORM)
 
 set(${BP_PACKAGE}_CFLAGS $ENV{CFLAGS})
 # Eliminate this option which is not allowed for shapelib
-string(REGEX REPLACE "-fvisibility=hidden" "" ${BP_PACKAGE}_CFLAGS ${${BP_PACKAGE}_CFLAGS}) 
+string(REGEX REPLACE "-fvisibility=hidden" "" ${BP_PACKAGE}_CFLAGS "${${BP_PACKAGE}_CFLAGS}") 
 
 ExternalProject_Add(
   build_${BP_PACKAGE}
