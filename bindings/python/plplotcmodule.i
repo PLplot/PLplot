@@ -1456,7 +1456,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 // this typemap takes a sequence of strings and converts them for plstripc
 //   also checks that previous Arrays were of length 4
 //
-%typemap( in ) const char *legline[4] {
+%typemap( in ) const char *legline[4] ( char** tmp = NULL )
+{
     int i;
     if ( !PySequence_Check( $input ) || PySequence_Size( $input ) != 4 )
     {
@@ -1468,19 +1469,21 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         PyErr_SetString( PyExc_ValueError, "colline and styline args must be length 4." );
         return NULL;
     }
-    $1 = malloc( sizeof ( char* ) * 4 );
+    tmp = (char **) malloc( sizeof ( char* ) * 4 );
+    if ( tmp == NULL ) return NULL;
+    $1 = tmp;
     for ( i = 0; i < 4; i++ )
     {
         $1[i] = PyString_AsString( PySequence_Fast_GET_ITEM( $input, i ) );
         if ( $1[i] == NULL )
         {
-            free( $1 );
+            free( tmp );
             return NULL;
         }
     }
 }
 %typemap( freearg ) const char *legline[4] {
-    free( $1 );
+    free( tmp$argnum );
 }
 
 // End of all code associated with special call-back functions.
