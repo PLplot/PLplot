@@ -420,6 +420,18 @@ if(BUILD_TEST)
     ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
     )
 
+  find_program(VALGRIND_EXECUTABLE valgrind)
+  if(VALGRIND_EXECUTABLE)
+    option(VALGRIND_ALL_TESTS "Apply valgrind to all runs of plplot_test/plplot-test.sh" OFF)
+    if(VALGRIND_ALL_TESTS)
+      set(plplot_test_debug --debug)
+    else(VALGRIND_ALL_TESTS)
+      set(plplot_test_debug)
+    endif(VALGRIND_ALL_TESTS)
+  else(VALGRIND_EXECUTABLE)
+      set(plplot_test_debug)
+  endif(VALGRIND_EXECUTABLE)
+
   if(CORE_BUILD)
     set(custom_test_script ${CMAKE_BINARY_DIR}/plplot_test/plplot-test.sh)
     set(custom_env EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples)
@@ -492,7 +504,7 @@ if(BUILD_TEST)
 	add_custom_command(
 	  OUTPUT ${output_list}
 	  COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
-	  COMMAND env ${environment} ${custom_test_command} --verbose --front-end=${language} --device=psc
+	  COMMAND env ${environment} ${custom_test_command} --verbose --front-end=${language} --device=psc ${plplot_test_debug}
 	  DEPENDS ${compare_file_depends_${language}}
 	  VERBATIM
 	  )
@@ -574,7 +586,7 @@ if(BUILD_TEST)
       add_custom_command(
 	OUTPUT ${output_list}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
-	COMMAND env ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device}
+	COMMAND env ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device} ${plplot_test_debug}
 	DEPENDS
 	${file_device_depends_${device}}
 	VERBATIM
@@ -682,7 +694,7 @@ if(BUILD_TEST)
       endif(ENABLE_DYNDRIVERS)
       add_custom_target(test_c_${device}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} interactive device"
-	COMMAND env ${custom_env} ${custom_test_command} --verbose --interactive --device=${device}
+	COMMAND env ${custom_env} ${custom_test_command} --verbose --interactive --device=${device} ${plplot_test_debug}
 	DEPENDS
 	${interactive_device_depends_${device}}
 	VERBATIM
@@ -711,7 +723,7 @@ if(BUILD_TEST)
 	get_property(files_examples_octave GLOBAL PROPERTY FILES_examples_octave)
 	add_custom_target(test_octave_${device}
 	  COMMAND ${CMAKE_COMMAND} -E echo "Generate interactive octave results for ${device} interactive device"
-	  COMMAND env ${custom_env} ${custom_test_command} --verbose --interactive_octave --device=${device}
+	  COMMAND env ${custom_env} ${custom_test_command} --verbose --interactive_octave --device=${device} ${plplot_test_debug}
 	  DEPENDS
 	  ${interactive_device_depends_${device}}
 	  ${files_examples_octave}
