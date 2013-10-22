@@ -544,4 +544,34 @@ include(docbook)
 include(doxygen)
 include(summary)
 
+# Calculate permissions that should be used for shared objects that
+# are created by custom commands to be consistent with the permissions
+# automatically used for shared objects created as targets.  The
+# result (whether execute permissions are set) depends on
+# CMAKE_INSTALL_SO_NO_EXE that is set in
+# $prefix/share/cmake-2.8/Modules/Platform/Linux.cmake, where $prefix
+# is the installation prefix for cmake itself, and the value depends
+# on Linux platform.
+if(CMAKE_INSTALL_SO_NO_EXE)
+  # Permissions for shared objects are (rw-r--r--).
+  set(SO_PERMISSIONS
+    OWNER_READ
+    OWNER_WRITE
+    GROUP_READ
+    WORLD_READ
+    )
+else(CMAKE_INSTALL_SO_NO_EXE)
+  # Permissions for shared objects are (rwxr-xr-x).
+  set(SO_PERMISSIONS
+    OWNER_READ
+    OWNER_WRITE
+    OWNER_EXECUTE
+    GROUP_READ
+    GROUP_EXECUTE
+    WORLD_READ
+    WORLD_EXECUTE
+    )
+endif(CMAKE_INSTALL_SO_NO_EXE)
+
+
 

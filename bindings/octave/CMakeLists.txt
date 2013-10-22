@@ -311,19 +311,15 @@ if(ENABLE_octave)
       )
   endif(USE_RPATH)
 
-  # Have to be specific about permissions for some reason (probably oct suffix).
-  set(PERM_MODULES
-    OWNER_READ
-    OWNER_WRITE
-    GROUP_READ
-    WORLD_READ
-    )
+  # Have to be specific about permissions for some reason (probably
+  # oct suffix).  Use SO_PERMISSIONS to be consistent with permissions
+  # used for other shared objects created by the add_library command.
 
   install(TARGETS plplot_octave
     EXPORT export_plplot
     LIBRARY
     DESTINATION ${OCTAVE_OCT_DIR}
-    PERMISSIONS ${PERM_MODULES}
+    PERMISSIONS ${SO_PERMISSIONS}
     )
 
 endif(ENABLE_octave)
