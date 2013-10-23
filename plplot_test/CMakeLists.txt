@@ -170,12 +170,6 @@ if(SH_EXECUTABLE)
   endif(ENABLE_octave)
 
   if(ENABLE_python)
-    if(HAVE_NUMPY)
-      # The following examples only work with numpy
-      set(NUMPY_EXAMPLES "21")
-    else(HAVE_NUMPY)
-      set(NUMPY_EXAMPLES)
-    endif(HAVE_NUMPY)
     configure_file(
       test_python.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_python.sh

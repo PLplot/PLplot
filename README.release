@@ -23,6 +23,8 @@ INDEX
 
 3. Changes relative to PLplot 5.9.10 (the previous development release)
 
+3.1 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
+
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
 5. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -99,6 +101,7 @@ XML/XSL backend tools for DocBook
 all non-windows systems
 5.65 Update f95 examples to take larger advantage of Fortran 95 capabilities
 5.66 Substantial additions to the doxygen documentation
+5.67 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
 
 1. OFFICIAL NOTICES FOR USERS SINCE 5.9.10 (the previous development release)
 
@@ -110,7 +113,21 @@ None at this time.
 
 3. Changes relative to PLplot 5.9.10 (the previous development release)
 
-None at this time.
+3.1 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
+
+We have long since dropped support for the Numeric Python module and
+are now exclusively using the numpy Python modules instead.
+Therefore, we have changed the CMake variable name used in our build
+system that holds the location of the numpy headers from the confusing
+misnomer, NUMERIC_INCLUDE_PATH, to NUMPY_INCLUDE_PATH.  This change
+only impacts PLplot users who in the past have used the cmake option
+-DNUMERIC_INCLUDE_PATH to set the CMake variable NUMERIC_INCLUDE_PATH
+to the location of the numpy header directory.  Note we discourage
+that method since without that user intervention, the build system
+uses python and numpy to find the location which should normally be
+foolproof and not subject to the inconsistencies or errors possible
+with setting the variable.  But if some users still insist on setting
+the variable, that variable's name should now be NUMPY_INCLUDE_PATH.
 
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
@@ -1443,3 +1460,20 @@ One of the on-going documentation projects is to create doxygen
 documentation of every single argument of the public API for PLplot.
 A substantial increase in such documentation has been implemented
 in this release cycle.
+
+5.67 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
+
+We have long since dropped support for the Numeric Python module and
+are now exclusively using the numpy Python modules instead.
+Therefore, we have changed the CMake variable name used in our build
+system that holds the location of the numpy headers from the confusing
+misnomer, NUMERIC_INCLUDE_PATH, to NUMPY_INCLUDE_PATH.  This change
+only impacts PLplot users who in the past have used the cmake option
+-DNUMERIC_INCLUDE_PATH to set the CMake variable NUMERIC_INCLUDE_PATH
+to the location of the numpy header directory.  Note we discourage
+that method since without that user intervention, the build system
+uses python and numpy to find the location which should normally be
+foolproof and not subject to the inconsistencies or errors possible
+with setting the variable.  But if some users still insist on setting
+the variable, that variable's name should now be NUMPY_INCLUDE_PATH.
+

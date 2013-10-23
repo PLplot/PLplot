@@ -33,7 +33,7 @@ if(ENABLE_python)
       ${CMAKE_CURRENT_BINARY_DIR}
       ${TCL_INCLUDE_PATH}
       ${PYTHON_INCLUDE_PATH}
-      ${NUMERIC_INCLUDE_PATH}
+      ${NUMPY_INCLUDE_PATH}
       ${CMAKE_SOURCE_DIR}/bindings/swig-support
       )
   else(ENABLE_tk)
@@ -44,7 +44,7 @@ if(ENABLE_python)
       ${CMAKE_BINARY_DIR}/include
       ${CMAKE_CURRENT_BINARY_DIR}
       ${PYTHON_INCLUDE_PATH}
-      ${NUMERIC_INCLUDE_PATH}
+      ${NUMPY_INCLUDE_PATH}
       ${CMAKE_SOURCE_DIR}/bindings/swig-support
       )
   endif(ENABLE_tk)

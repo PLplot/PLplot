@@ -60,55 +60,46 @@ if(ENABLE_python)
   endif(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
 endif(ENABLE_python)
 
-option(HAVE_NUMPY "Have the numpy package" ON)
-
 if(ENABLE_python)
-  # NUMERIC_INCLUDE_PATH = path to arrayobject.h for numpy.
-  #message(STATUS "DEBUG: NUMERIC_INCLUDE_PATH = ${NUMERIC_INCLUDE_PATH}") 
-  if(NOT NUMERIC_INCLUDE_PATH)
-    if(HAVE_NUMPY)
-      # First check for new version of numpy 
-      execute_process(
-	COMMAND
-	${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"
-	OUTPUT_VARIABLE NUMPY_INCLUDE_PATH
-	RESULT_VARIABLE NUMPY_ERR
-	OUTPUT_STRIP_TRAILING_WHITESPACE
-	)
-      if(NUMPY_ERR)
-	set(HAVE_NUMPY OFF CACHE BOOL "Have the numpy package" FORCE)
-      endif(NUMPY_ERR)
-    endif(HAVE_NUMPY)
-
-    if(HAVE_NUMPY)
+  # NUMPY_INCLUDE_PATH = path to arrayobject.h for numpy.
+  #message(STATUS "DEBUG: NUMPY_INCLUDE_PATH = ${NUMPY_INCLUDE_PATH}") 
+  if(NOT NUMPY_INCLUDE_PATH)
+    # Check for numpy installation. 
+    execute_process(
+      COMMAND
+      ${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"
+      OUTPUT_VARIABLE NUMPY_INCLUDE_PATH_PARENT
+      RESULT_VARIABLE NUMPY_ERR
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    if(NUMPY_ERR)
+      set(NUMPY_INCLUDE_PATH)
+    else(NUMPY_ERR)
       # We use the full path name (including numpy on the end), but
       # Double-check that all is well with that choice.
       find_path(
-	NUMERIC_INCLUDE_PATH
+	NUMPY_INCLUDE_PATH
 	arrayobject.h
-	${NUMPY_INCLUDE_PATH}/numpy
+	${NUMPY_INCLUDE_PATH_PARENT}/numpy
 	)
-      if(NUMERIC_INCLUDE_PATH)
-	set(PYTHON_NUMERIC_NAME numpy CACHE INTERNAL "")
-      endif(NUMERIC_INCLUDE_PATH)
-    endif(HAVE_NUMPY)
+    endif(NUMPY_ERR)
 
-  endif(NOT NUMERIC_INCLUDE_PATH)
+  endif(NOT NUMPY_INCLUDE_PATH)
 
-  if(NOT NUMERIC_INCLUDE_PATH)
+  if(NOT NUMPY_INCLUDE_PATH)
     message(STATUS "WARNING: "
 	"NumPy header not found. Disabling Python bindings")
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
-  endif(NOT NUMERIC_INCLUDE_PATH)
+  endif(NOT NUMPY_INCLUDE_PATH)
 endif(ENABLE_python)
 
-if(ENABLE_python AND HAVE_NUMPY)
+if(ENABLE_python)
   # This numpy installation bug found by Geoff.
   option(EXCLUDE_PYTHON_LIBRARIES "Linux temporary workaround for numpy installation bug for non-system Python install prefix" OFF)
   if(EXCLUDE_PYTHON_LIBRARIES)
     set(PYTHON_LIBRARIES)
   endif(EXCLUDE_PYTHON_LIBRARIES)
-endif(ENABLE_python AND HAVE_NUMPY)
+endif(ENABLE_python)
 
 if(ENABLE_python)
   # if CMAKE_INSTALL_EXEC_PREFIX is an empty string, must replace
