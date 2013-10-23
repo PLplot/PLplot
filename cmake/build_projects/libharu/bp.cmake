@@ -62,12 +62,12 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E echo "Apply all patches"
   COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/cmake.patch
   COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/large_font.patch
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/missing_zlib_headers.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/remove_configured.patch
   COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/visibility.patch
   DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/cmake.patch
   ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/large_font.patch
-  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/missing_zlib_headers.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/remove_configured.patch
   ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/visibility.patch
   APPEND
   )

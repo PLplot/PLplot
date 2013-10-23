@@ -1,6 +1,6 @@
 diff -Naur libharu-2.2.1_pristine/CMakeLists.txt libharu-2.2.1/CMakeLists.txt
 --- libharu-2.2.1_pristine/CMakeLists.txt	1969-12-31 16:00:00.000000000 -0800
-+++ libharu-2.2.1/CMakeLists.txt	2013-10-21 10:51:25.543121062 -0700
++++ libharu-2.2.1/CMakeLists.txt	2013-10-22 15:55:30.205030236 -0700
 @@ -0,0 +1,216 @@
 +# CMakeLists.txt
 +#
@@ -136,7 +136,7 @@ diff -Naur libharu-2.2.1_pristine/CMakeLists.txt libharu-2.2.1/CMakeLists.txt
 +  include_directories(${ZLIB_INCLUDE_DIR})
 +  list(APPEND ADDITIONAL_LIBRARIES ${ZLIB_LIBRARIES})
 +else(ZLIB_FOUND)
-+  set(HPDF_NOZLIB ON)  
++  set(LIBHPDF_HAVE_NOZLIB ON)  
 +endif(ZLIB_FOUND)
 +
 +# check png availibility
@@ -147,7 +147,7 @@ diff -Naur libharu-2.2.1_pristine/CMakeLists.txt libharu-2.2.1/CMakeLists.txt
 +  add_definitions(${PNG_DEFINITIONS})
 +  list(APPEND ADDITIONAL_LIBRARIES ${PNG_LIBRARIES})
 +else(PNG_FOUND)
-+  set(HPDF_NOPNGLIB ON)  
++  set(LIBHPDF_HAVE_NOPNGLIB ON)  
 +endif(PNG_FOUND)
 +
 +# =======================================================================
@@ -220,7 +220,7 @@ diff -Naur libharu-2.2.1_pristine/CMakeLists.txt libharu-2.2.1/CMakeLists.txt
 +INCLUDE( CPack )
 diff -Naur libharu-2.2.1_pristine/cmake/modules/haru.cmake libharu-2.2.1/cmake/modules/haru.cmake
 --- libharu-2.2.1_pristine/cmake/modules/haru.cmake	1969-12-31 16:00:00.000000000 -0800
-+++ libharu-2.2.1/cmake/modules/haru.cmake	2013-10-21 10:52:11.838244974 -0700
++++ libharu-2.2.1/cmake/modules/haru.cmake	2013-10-22 15:55:30.205030236 -0700
 @@ -0,0 +1,54 @@
 +# cmake/modules/haru.cmake
 +#
@@ -278,7 +278,7 @@ diff -Naur libharu-2.2.1_pristine/cmake/modules/haru.cmake libharu-2.2.1/cmake/m
 +endif(NOT WIN32)
 diff -Naur libharu-2.2.1_pristine/cmake/modules/summary.cmake libharu-2.2.1/cmake/modules/summary.cmake
 --- libharu-2.2.1_pristine/cmake/modules/summary.cmake	1969-12-31 16:00:00.000000000 -0800
-+++ libharu-2.2.1/cmake/modules/summary.cmake	2013-10-21 10:52:36.297782032 -0700
++++ libharu-2.2.1/cmake/modules/summary.cmake	2013-10-22 15:55:30.213030083 -0700
 @@ -0,0 +1,66 @@
 +# cmake/modules/summary.cmake
 +#
@@ -348,7 +348,7 @@ diff -Naur libharu-2.2.1_pristine/cmake/modules/summary.cmake libharu-2.2.1/cmak
 +endmacro(summary)
 diff -Naur libharu-2.2.1_pristine/demo/CMakeLists.txt libharu-2.2.1/demo/CMakeLists.txt
 --- libharu-2.2.1_pristine/demo/CMakeLists.txt	1969-12-31 16:00:00.000000000 -0800
-+++ libharu-2.2.1/demo/CMakeLists.txt	2013-10-21 10:54:41.939403569 -0700
++++ libharu-2.2.1/demo/CMakeLists.txt	2013-10-22 15:55:30.213030083 -0700
 @@ -0,0 +1,183 @@
 +# demo/CMakeLists.txt
 +#
@@ -535,7 +535,7 @@ diff -Naur libharu-2.2.1_pristine/demo/CMakeLists.txt libharu-2.2.1/demo/CMakeLi
 +endif(LIBHARU_EXAMPLES)
 diff -Naur libharu-2.2.1_pristine/include/CMakeLists.txt libharu-2.2.1/include/CMakeLists.txt
 --- libharu-2.2.1_pristine/include/CMakeLists.txt	1969-12-31 16:00:00.000000000 -0800
-+++ libharu-2.2.1/include/CMakeLists.txt	2013-10-21 10:53:43.508509852 -0700
++++ libharu-2.2.1/include/CMakeLists.txt	2013-10-22 15:55:30.213030083 -0700
 @@ -0,0 +1,63 @@
 +# include/CMakeLists.txt for libharu.
 +###
@@ -602,8 +602,8 @@ diff -Naur libharu-2.2.1_pristine/include/CMakeLists.txt libharu-2.2.1/include/C
 +install(FILES ${include_INSTALLED_HEADERS} DESTINATION include/hpdf)
 diff -Naur libharu-2.2.1_pristine/include/hpdf_config.h.cmake libharu-2.2.1/include/hpdf_config.h.cmake
 --- libharu-2.2.1_pristine/include/hpdf_config.h.cmake	1969-12-31 16:00:00.000000000 -0800
-+++ libharu-2.2.1/include/hpdf_config.h.cmake	2013-10-21 10:55:06.162944881 -0700
-@@ -0,0 +1,97 @@
++++ libharu-2.2.1/include/hpdf_config.h.cmake	2013-10-22 15:56:31.771881667 -0700
+@@ -0,0 +1,91 @@
 +/* 
 + * Copyright (C) 2008  Werner Smekal
 + * Copyright (C) 2010  Alan W. Irwin
@@ -637,12 +637,6 @@ diff -Naur libharu-2.2.1_pristine/include/hpdf_config.h.cmake libharu-2.2.1/incl
 +/* Define to 1 if you have the <inttypes.h> header file. */
 +#cmakedefine LIBHPDF_HAVE_INTTYPES_H
 +
-+/* Define to 1 if you have the `png' library (-lpng). */
-+#cmakedefine HAVE_LIBPNG
-+
-+/* Define to 1 if you have the `z' library (-lz). */
-+#cmakedefine HAVE_LIBZ
-+
 +/* Define to 1 if you have the <memory.h> header file. */
 +#cmakedefine LIBHPDF_HAVE_MEMORY_H
 +
@@ -674,10 +668,10 @@ diff -Naur libharu-2.2.1_pristine/include/hpdf_config.h.cmake libharu-2.2.1/incl
 +#cmakedefine LIBHPDF_DEBUG_TRACE
 +
 +/* libpng is not available */
-+#cmakedefine HPDF_NOPNGLIB
++#cmakedefine LIBHPDF_HAVE_NOPNGLIB
 +
 +/* zlib is not available */
-+#cmakedefine HPDF_NOZLIB
++#cmakedefine LIBHPDF_HAVE_NOZLIB
 +
 +/* Define to the address where bug reports for this package should be sent. */
 +#cmakedefine LIBHPDF_PACKAGE_BUGREPORT
@@ -703,7 +697,7 @@ diff -Naur libharu-2.2.1_pristine/include/hpdf_config.h.cmake libharu-2.2.1/incl
 +#endif /* _HPDF_CONFIG_H */
 diff -Naur libharu-2.2.1_pristine/src/CMakeLists.txt libharu-2.2.1/src/CMakeLists.txt
 --- libharu-2.2.1_pristine/src/CMakeLists.txt	1969-12-31 16:00:00.000000000 -0800
-+++ libharu-2.2.1/src/CMakeLists.txt	2013-10-21 10:53:23.164894950 -0700
++++ libharu-2.2.1/src/CMakeLists.txt	2013-10-22 15:55:30.213030083 -0700
 @@ -0,0 +1,150 @@
 +# src/CMakeLists.txt
 +#
