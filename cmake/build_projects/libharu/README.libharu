@@ -12,7 +12,7 @@ file:
 bp.cmake
 
 Improved build system (Werner's build system culled from the
-git version of libharu with additional improvements by me):
+git version of libharu in 2010 or so with additional improvements by me):
 
 cmake.patch
 
@@ -24,9 +24,14 @@ Support for gcc visibility:
 
 visibility.patch
 
-Bug fix for the case where zlib is not available.
+This patch is to remove a configured file from the tarball that made a
+build with a separate build tree impossible since it's name was the
+same as the configured file include/hpdf_config.h in the build tree,
+but its location in the source tree took precedence in the header
+search path thus incorrectly imposing the configuration of the
+computer that created the tarball.
 
-missing_zlib_headers.patch
+remove_configured.patch
 
 (1) Patch a pre-existing freshly unpacked version of libharu-2.2.1,
 with these patches, e.g.,
@@ -34,7 +39,7 @@ with these patches, e.g.,
 patch -d /home/software/libharu/libharu-2.2.1 -p1 < cmake.patch
 patch -d /home/software/libharu/libharu-2.2.1 -p1 < large_font.patch
 patch -d /home/software/libharu/libharu-2.2.1 -p1 < visibility.patch
-patch -d /home/software/libharu/libharu-2.2.1 -p1 < missing_zlib_headers.patch
+patch -d /home/software/libharu/libharu-2.2.1 -p1 < remove_configured.patch
 
 (2) configure, build, and install libharu starting with an empty build tree
 and empty install tree, e.g.,
