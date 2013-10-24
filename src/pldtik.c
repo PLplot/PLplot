@@ -39,7 +39,8 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
 {
     PLFLT t1, t2, tick_reasonable;
     PLINT np, ns;
-    PLFLT factor;
+    // Unnecessarily set factor to quiet -O3 -Wuninitialized warnings.
+    PLFLT factor = 0.0;
 
 
     if ( ld )

@@ -1394,7 +1394,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     PLBOOL      ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy, lxy;
     PLFLT       vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
-    PLFLT       pos, tn, tp, offset, height, just;
+    PLFLT       tn, tp, offset;
     PLFLT       factor, tstart;
     const char  *timefmt = NULL;
     PLFLT       default_mm, char_height_mm, height_mm;
@@ -1403,6 +1403,12 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     // Assume label data is for placement of exponents if no custom
     // label function is provided.
     PLBOOL custom_exponent_placement = !plsc->label_func && plsc->label_data;
+
+    // pos, height, and just are unnecessarily set to quiet
+    // -O3 -Wuninitialized warnings that are obvious false alarms from
+    // the clarity of the code associated with the true or false
+    // result for custom_exponent_placement.
+    PLFLT pos = 0.0, height = 0.0, just = 0.0;
 
     plgchr( &default_mm, &char_height_mm );
 
@@ -1880,7 +1886,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     PLBOOL      ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy, lxy;
     PLFLT       vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
-    PLFLT       pos, tn, offset, height, just;
+    PLFLT       tn, offset;
     const char  *timefmt;
     PLINT       i;
     PLINT       xdigmax, xdigits, xdigmax_old, xdigits_old;
@@ -1893,6 +1899,12 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     // Assume label data is for placement of exponents if no custom
     // label function is provided.
     PLBOOL custom_exponent_placement = !plsc->label_func && plsc->label_data;
+
+    // pos, height, and just are unnecessarily set to quiet
+    // -O3 -Wuninitialized warnings that are obvious false alarms from
+    // the clarity of the code associated with the true or false
+    // result for custom_exponent_placement.
+    PLFLT pos = 0.0, height = 0.0, just = 0.0;
 
     plgchr( &default_mm, &char_height_mm );
 

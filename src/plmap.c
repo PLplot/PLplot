@@ -125,7 +125,8 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 #ifdef HAVE_SHAPELIB
     SHPHandle        in;
     int              nentries;
-    int              nparts;
+    // Unnecessarily set nparts to quiet -O3 -Wuninitialized warnings.
+    int              nparts      = 0;
     int              entrynumber = 0;
     int              partnumber  = 0;
     int              shapetype;
