@@ -1470,7 +1470,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         return NULL;
     }
     tmp = (char **) malloc( sizeof ( char* ) * 4 );
-    if ( tmp == NULL ) return NULL;
+    if ( tmp == NULL )
+        return NULL;
     $1 = tmp;
     for ( i = 0; i < 4; i++ )
     {
