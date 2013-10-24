@@ -173,6 +173,12 @@ subroutine spiro( params, fill )
 
   n = windings*steps+1
 
+  ! Initialize variables to prevent compiler warnings
+  xmin = 0.0
+  xmax = 0.0
+  ymin = 0.0
+  ymax = 0.0
+
   do i = 1,n
      phi       = dble(i-1) * dphi
      phiw      = (params(1)-params(2))/params(2)*phi

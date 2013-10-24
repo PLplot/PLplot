@@ -257,7 +257,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
             15, 1, 1,
             low_cap_color, high_cap_color,
             cont_color, cont_width,
-            n_labels, label_opts, (const char **) &label,
+            n_labels, label_opts, (const char * const *) &label,
             n_axes, axis_opts,
             ticks, sub_ticks,
             n_values_array, (const PLFLT * const *) values_array );

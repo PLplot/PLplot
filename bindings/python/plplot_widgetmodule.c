@@ -8,8 +8,11 @@
 
 #ifdef ENABLE_tk
 #include <tcl.h>
+#include "pltk.h"
 #endif
 
+void initplplot_widget( void );
+ 
 #define TRY( E )    if ( !( E ) ) return NULL
 
 #ifdef ENABLE_tk
@@ -66,13 +69,13 @@ static PyMethodDef plplot_widget_methods[] = {
 PLDLLIMPEXP_PLPLOT_WIDGETMODULE void initplplot_widget( void )
 {
     PyObject *m;
-    PyObject *d;
+    //PyObject *d;
 
     import_array();
 
     // Create the module and add the functions
     m = Py_InitModule( "plplot_widget", plplot_widget_methods );
-    d = PyModule_GetDict( m );
+    PyModule_GetDict( m );
 
     // Check for errors
     if ( PyErr_Occurred() )

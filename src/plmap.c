@@ -169,8 +169,8 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
     }
 #endif
 
-    bufx = malloc( ncopies * sizeof ( PLFLT* ) );
-    bufy = malloc( ncopies * sizeof ( PLFLT* ) );
+    bufx = malloc( ( size_t ) ncopies * sizeof ( PLFLT* ) );
+    bufy = malloc( ( size_t ) ncopies * sizeof ( PLFLT* ) );
     for ( i = 0; i < ncopies; i++ )
     {
         bufx[i] = NULL;
@@ -206,8 +206,8 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
                     free( bufx[i] );
                 if ( bufy[i] )
                     free( bufy[i] );
-                bufx[i] = malloc( bufsize * sizeof ( double ) );
-                bufy[i] = malloc( bufsize * sizeof ( double ) );
+                bufx[i] = malloc( ( size_t ) bufsize * sizeof ( double ) );
+                bufy[i] = malloc( ( size_t ) bufsize * sizeof ( double ) );
             }
         }
 

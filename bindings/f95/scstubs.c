@@ -106,6 +106,7 @@ void PLGCOL0A( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
 void PLGCOLBG( PLINT *r, PLINT *g, PLINT *b );
 void PLGCOLBGA( PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
 void PLGCOMPRESSION( PLINT *compression );
+void PLGCMAP1_RANGE( PLFLT *min_color, PLFLT *max_color );
 void PLGDEV7( char *dev, int length );
 void PLGDIDEV( PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy );
 void PLGDIORI( PLFLT *p_rot );
@@ -198,6 +199,7 @@ void PLSCMAP1LA( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
 void PLSCMAP1LA2( PLBOOL *itype, PLINT *npts, PLFLT *intensity,
                   PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a );
 void PLSCMAP1N( PLINT *n );
+void PLSCMAP1_RANGE( PLFLT *min_color, PLFLT *max_color );
 void PLSCOL0( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b );
 void PLSCOL0A( PLINT *icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
 void PLSCOLBG( PLINT *r, PLINT *g, PLINT *b );
@@ -412,10 +414,10 @@ PLCOLORBAR( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLFLT **a;
     int   i, j;
 
-    a = (PLFLT **) malloc( sizeof ( PLFLT * ) * ( *n_axes ) );
+    a = (PLFLT **) malloc( sizeof ( PLFLT * ) * ( size_t ) ( *n_axes ) );
     for ( i = 0; i < *n_axes; i++ )
     {
-        a[i] = (PLFLT *) malloc( sizeof ( PLFLT ) * n_values[i] );
+        a[i] = (PLFLT *) malloc( sizeof ( PLFLT ) * ( size_t ) n_values[i] );
         for ( j = 0; j < n_values[i]; j++ )
         {
             a[i][j] = values[i + j * ( *n_axes )];

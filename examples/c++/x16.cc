@@ -168,7 +168,6 @@ x16::x16( int argc, const char ** argv )
     PLINT      axis_subticks[NUM_AXES] = {
         0,
     };
-    PLFLT      filler_values[2] = { 0.0, 1.0 };
 #define NUM_LABELS    1
     PLINT      n_labels     = NUM_LABELS;
     PLINT      label_opts[] = {

@@ -208,7 +208,7 @@
 #define    PLFONT                    FNAME( PLFONT, plfont )
 #define    PLFONTLD                  FNAME( PLFONTLD, plfontld )
 #define    PLGCHR                    FNAME( PLGCHR, plgchr )
-#define    PLGCMAP1_RANGE            FNAME( PLFCMAP1_RANGE, plgcmap1_range )
+#define    PLGCMAP1_RANGE            FNAME( PLGCMAP1_RANGE, plgcmap1_range )
 #define    PLGCOL0                   FNAME( PLGCOL0, plgcol0 )
 #define    PLGCOL0A                  FNAME( PLGCOL0A, plgcol0a )
 #define    PLGCOLBG                  FNAME( PLGCOLBG, plgcolbg )

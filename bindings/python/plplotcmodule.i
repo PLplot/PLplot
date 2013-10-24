@@ -113,8 +113,11 @@ typedef PLINT          PLBOOL;
 #if SIZEOF_LONG != 4
 %wrapper
 %{
+ 
+  PyArrayObject* myIntArray_ContiguousFromObject( PyObject* in, int type, int mindims, int maxdims );
+
 // some really twisted stuff to allow calling a single precision library from python
-    PyArrayObject* myIntArray_ContiguousFromObject( PyObject* in, int type, int mindims, int maxdims )
+    PyArrayObject* myIntArray_ContiguousFromObject( PyObject* in, int PL_UNUSED( type ), int mindims, int maxdims )
     {
         PyArrayObject* tmp = (PyArrayObject *) PyArray_ContiguousFromObject( in, NPY_PLINT,
             mindims, maxdims );
@@ -478,7 +481,7 @@ typedef PLINT          PLBOOL;
     $2   = PyArray_DIMS( tmp )[0];
     $3   = PyArray_DIMS( tmp )[1];
     size = $3;
-    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * ( size_t ) $2 );
     for ( i = 0; i < $2; i++ )
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
@@ -498,7 +501,7 @@ typedef PLINT          PLBOOL;
     Xlen = $2 = PyArray_DIMS( tmp )[0];
     Ylen = $3 = PyArray_DIMS( tmp )[1];
     size = $3;
-    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * $2 );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * ( size_t ) $2 );
     for ( i = 0; i < $2; i++ )
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
@@ -518,7 +521,7 @@ typedef PLINT          PLBOOL;
     Xlen = PyArray_DIMS( tmp )[0];
     Ylen = PyArray_DIMS( tmp )[1];
     size = Ylen;
-    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * ( size_t ) Xlen );
     for ( i = 0; i < Xlen; i++ )
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
@@ -555,7 +558,7 @@ typedef PLINT          PLBOOL;
         return NULL;
     }
     size = Ylen;
-    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * ( size_t ) Xlen );
     for ( i = 0; i < Xlen; i++ )
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
@@ -578,7 +581,7 @@ typedef PLINT          PLBOOL;
         return NULL;
     }
     size = Ylen;
-    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * Xlen );
+    $1   = (PLFLT **) malloc( sizeof ( PLFLT* ) * ( size_t ) Xlen );
     for ( i = 0; i < Xlen; i++ )
         $1[i] = ( (PLFLT *) PyArray_DATA( tmp ) + i * size );
 }
@@ -608,7 +611,7 @@ typedef PLINT          PLBOOL;
     if ( !array )
         return NULL;
     size = Ylen;
-    $3   = (double **) malloc( sizeof ( double * ) * Xlen );
+    $3   = (double **) malloc( sizeof ( double * ) * ( size_t ) Xlen );
     for ( i = 0; i < Xlen; i++ )
         $3[i] = ( (double *) PyArray_DATA( (PyArrayObject *) array ) + i * size );
 }
@@ -637,7 +640,7 @@ typedef PLINT          PLBOOL;
         PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
         return NULL;
     }
-    $1 = (char **) malloc( sizeof ( char* ) * Alen );
+    $1 = (char **) malloc( sizeof ( char* ) * ( size_t ) Alen );
     for ( i = 0; i < Alen; i++ )
     {
         $1[i] = (char *) PyArray_DATA( tmp ) + i * PyArray_STRIDES( tmp )[0];
@@ -659,7 +662,7 @@ typedef PLINT          PLBOOL;
         return NULL;
     Alen = PyArray_DIMS( tmp )[0];
     $1   = Alen;
-    $2   = (char **) malloc( sizeof ( char* ) * Alen );
+    $2   = (char **) malloc( sizeof ( char* ) * ( size_t ) Alen );
     for ( i = 0; i < Alen; i++ )
     {
         $2[i] = (char *) PyArray_DATA( tmp ) + i * PyArray_STRIDES( tmp )[0];
@@ -719,6 +722,11 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
     static PLcGrid  tmpGrid1;
     static PLcGrid2 tmpGrid2;
 
+    PLcGrid* marshal_PLcGrid1( PyObject* input, int isimg );
+    void cleanup_PLcGrid1( void );
+    PLcGrid2* marshal_PLcGrid2( PyObject* input, int isimg );
+    void cleanup_PLcGrid2( void );
+
     PLcGrid* marshal_PLcGrid1( PyObject* input, int isimg )
     {
         // fprintf(stderr, "marshal PLcGrid1\n");
@@ -736,8 +744,8 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             PyErr_SetString( PyExc_ValueError, "Expected a sequence to two 1D arrays." );
             return NULL;
         }
-        tmpGrid1.nx = PyArray_DIMS( pltr_xg )[0];
-        tmpGrid1.ny = PyArray_DIMS( pltr_yg )[0];
+        tmpGrid1.nx = ( PLINT ) PyArray_DIMS( pltr_xg )[0];
+        tmpGrid1.ny = ( PLINT ) PyArray_DIMS( pltr_yg )[0];
         if ( isimg == 0 )
         {
             if ( Xlen != tmpGrid1.nx || Ylen != tmpGrid1.ny )
@@ -790,8 +798,8 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             PyErr_SetString( PyExc_ValueError, "Arrays must be same size." );
             return NULL;
         }
-        tmpGrid2.nx = PyArray_DIMS( pltr_xg )[0];
-        tmpGrid2.ny = PyArray_DIMS( pltr_xg )[1];
+        tmpGrid2.nx = ( PLINT ) PyArray_DIMS( pltr_xg )[0];
+        tmpGrid2.ny = ( PLINT ) PyArray_DIMS( pltr_xg )[1];
         if ( isimg == 0 )
         {
             if ( Xlen != tmpGrid2.nx || Ylen != tmpGrid2.ny )
@@ -809,10 +817,10 @@ pltr0( PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE );
             }
         }
         size        = tmpGrid2.ny;
-        tmpGrid2.xg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
+        tmpGrid2.xg = (PLFLT **) malloc( sizeof ( PLFLT* ) * ( size_t ) tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
             tmpGrid2.xg[i] = ( (PLFLT *) PyArray_DATA( pltr_xg ) + i * size );
-        tmpGrid2.yg = (PLFLT **) malloc( sizeof ( PLFLT* ) * tmpGrid2.nx );
+        tmpGrid2.yg = (PLFLT **) malloc( sizeof ( PLFLT* ) * ( size_t ) tmpGrid2.nx );
         for ( i = 0; i < tmpGrid2.nx; i++ )
             tmpGrid2.yg[i] = ( (PLFLT *) PyArray_DATA( pltr_yg ) + i * size );
         return &tmpGrid2;
@@ -920,6 +928,22 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 #define MY_UNBLOCK_THREADS
 #endif
 
+// Function prototypes
+    void do_pltr_callback( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data );
+    PLFLT do_f2eval_callback( PLINT x, PLINT y, PLPointer data );
+    void do_label_callback( PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data );
+    void do_ct_callback( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data );
+    void do_mapform_callback( PLINT n, PLFLT *x, PLFLT *y );
+    pltr_func marshal_pltr( PyObject* input );
+    void cleanup_pltr( void );
+    ct_func marshal_ct( PyObject* input );
+    void cleanup_ct( void );
+    mapform_func marshal_mapform( PyObject* input );
+    void cleanup_mapform( void );
+    PLPointer marshal_PLPointer( PyObject* input, int isimg );
+    void cleanup_PLPointer( void );
+
+
 // This is the callback that gets handed to the C code. It, in turn, calls the Python callback
 
     void do_pltr_callback( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data )
@@ -1026,7 +1050,6 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     {
         PyObject *pdata, *arglist, *result;
         char     *pystring;
-        PLFLT    fresult = 0.0;
 
         // the data argument is acutally a pointer to a python object
         if ( data )
@@ -1500,7 +1523,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     }
     tmp = PyList_Size( $input );
     $1  = &tmp;
-    $2  = (char **) malloc( ( tmp + 1 ) * sizeof ( char * ) );
+    $2  = (char **) malloc( ( size_t ) ( tmp + 1 ) * sizeof ( char * ) );
     for ( i = 0; i < tmp; i++ )
     {
         PyObject *s = PyList_GetItem( $input, i );

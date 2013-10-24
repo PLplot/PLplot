@@ -748,9 +748,7 @@
          integer            :: sub_ticks(1)
          real(kind=plflt)   :: low_cap_color, high_cap_color
          logical            :: vertical, ifn
-         integer, parameter :: n_axes = 1
          character(len=20)  :: axis_opts(1)
-         integer, parameter :: n_labels = 1
          integer            :: label_opts(1)
          character(len=200) :: labels(1)
          character(len=200) :: title

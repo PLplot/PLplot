@@ -28,7 +28,7 @@ program x00f95
     real(kind=plflt), dimension(NSIZE) :: x, y
 
     real(kind=plflt) :: xmin = 0._plflt, xmax = 1._plflt, ymin = 0._plflt, ymax = 100._plflt
-    integer          :: i
+    ! integer          :: i
 
     ! Prepare data to be plotted.
     x = arange(0, NSIZE) / real(NSIZE-1,plflt)

@@ -149,7 +149,7 @@ subroutine polar()
     integer            :: i,j
     real(kind=plflt)   :: xg(xdim, ydim),  yg(xdim, ydim), &
         z(xdim, ydim), px(PERIMETERPTS), py(PERIMETERPTS), &
-        lev(NLEVEL), t, r, theta, delta
+        lev(NLEVEL), r, theta, delta
 
     call plenv(-1._plflt, 1._plflt, -1._plflt, 1._plflt, 0, -2)
     call plcol0(1)

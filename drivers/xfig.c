@@ -123,7 +123,7 @@ plD_init_xfig( PLStream *pls )
 
     dev = (xfig_Dev *) pls->dev;
 
-    dev->curwid    = pls->width < 1 ? 1 : pls->width;
+    dev->curwid    = pls->width < 1 ? 1 : (int) pls->width;
     dev->firstline = 1;
 
     dev->xold       = PL_UNDEFINED;
@@ -390,7 +390,7 @@ plD_state_xfig( PLStream *pls, PLINT op )
     case PLSTATE_WIDTH:
         flushbuffer( pls );
         dev->firstline = 1;
-        dev->curwid    = pls->width < 1 ? 1 : pls->width;
+        dev->curwid    = pls->width < 1 ? 1 : (int) pls->width;
         break;
 
     case PLSTATE_COLOR0:
