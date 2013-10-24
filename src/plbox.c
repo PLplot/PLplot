@@ -1400,6 +1400,10 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     PLFLT       default_mm, char_height_mm, height_mm;
     PLFLT       string_length_mm = 0.0, pos_mm = 0.0;
 
+    // Assume label data is for placement of exponents if no custom
+    // label function is provided.
+    PLBOOL custom_exponent_placement = !plsc->label_func && plsc->label_data;
+
     plgchr( &default_mm, &char_height_mm );
 
 // Set plot options from input
@@ -1526,9 +1530,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
 
         if ( !llx && !ldx && !lox && xmode )
         {
-            // Assume label data is for placement of exponents if no custom
-            // label function is provided.
-            if ( !plsc->label_func && plsc->label_data )
+            if ( custom_exponent_placement )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -1770,7 +1772,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
         if ( !lly && !ldy && !loy && ymode )
         {
             snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
-            if ( !plsc->label_func && plsc->label_data )
+            if ( custom_exponent_placement )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -1787,7 +1789,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
             // Left axis exponent
             if ( lny )
             {
-                if ( !plsc->label_data )
+                if ( !custom_exponent_placement )
                 {
                     height = 3.2;
                     pos    = 1.0 + offset;
@@ -1825,7 +1827,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
             // Right axis exponent.
             if ( lmy )
             {
-                if ( !plsc->label_data )
+                if ( !custom_exponent_placement )
                 {
                     height = 3.4;   // Extra space for superscript
                     pos    = 1.0 + offset;
@@ -1887,6 +1889,10 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     PLINT       pxmin, pxmax, pymin, pymax;
     PLFLT       default_mm, char_height_mm, height_mm;
     PLFLT       string_length_mm = 0.0, pos_mm = 0.0;
+
+    // Assume label data is for placement of exponents if no custom
+    // label function is provided.
+    PLBOOL custom_exponent_placement = !plsc->label_func && plsc->label_data;
 
     plgchr( &default_mm, &char_height_mm );
 
@@ -2068,9 +2074,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
 
         if ( !llx && !ldx && !lox && xmode )
         {
-            // Assume label data is for placement of exponents if no custom
-            // label function is provided.
-            if ( !plsc->label_func && plsc->label_data )
+            if ( custom_exponent_placement )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -2326,7 +2330,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
         if ( !lly && !ldy && !loy && ymode )
         {
             snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
-            if ( !plsc->label_func && plsc->label_data )
+            if ( custom_exponent_placement )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
                 pos    = ( (PLLabelDefaults *) plsc->label_data )->exp_label_pos;
@@ -2343,7 +2347,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
             // Left axis exponent.
             if ( lny )
             {
-                if ( !plsc->label_data )
+                if ( !custom_exponent_placement )
                 {
                     height = 3.2;
                     pos    = 1.0 + offset;
@@ -2381,7 +2385,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
             // Right axis exponent.
             if ( lmy )
             {
-                if ( !plsc->label_data )
+                if ( !custom_exponent_placement )
                 {
                     height = 3.4;   // Extra space for superscript
                     pos    = 1.0 + offset;
