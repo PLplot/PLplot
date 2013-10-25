@@ -288,6 +288,7 @@ if(BUILD_THE_BUILDTOOLS)
     #subversion
     swig
     tcl
+    tk
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
