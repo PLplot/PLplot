@@ -83,6 +83,10 @@ set(executables_LIST
   bash
   make
   python
+  uname
+  sed
+  ln
+  chmod
   )
 
 foreach(executable ${executables_LIST})
@@ -104,6 +108,31 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 message(STATUS "PYTHON_VERSION = ${PYTHON_VERSION}")
+
+# Determine whether OS is 64-bits from uname -m "machine name" field.
+
+execute_process(
+  COMMAND
+  ${UNAME_EXECUTABLE} -m
+  OUTPUT_VARIABLE UNAME_MACHINE
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+# Determine desired install permissions on shared objects.
+if(CMAKE_INSTALL_SO_NO_EXE)
+  set(SO_NUMERICAL_PERMISSIONS 644)
+else(CMAKE_INSTALL_SO_NO_EXE)
+  set(SO_NUMERICAL_PERMISSIONS 755)
+endif(CMAKE_INSTALL_SO_NO_EXE)
+
+# This will need refinement as more platforms tested, but it works on
+# Intel/AMD Linux hardware and also MinGW/MSYS on 32-bit Windows for
+# now.
+if(UNAME_MACHINE STREQUAL x86_64)
+  set(BP_HAVE_64_BIT_OS ON)
+else(UNAME_MACHINE STREQUAL x86_64)
+  set(BP_HAVE_64_BIT_OS OFF)
+endif(UNAME_MACHINE STREQUAL x86_64)
 
 # Use modified version of the CMake 2.8.12 ExternalProject module
 # where the tar.xz processing has been fixed.
@@ -258,6 +287,7 @@ if(BUILD_THE_BUILDTOOLS)
     pkg-config
     #subversion
     swig
+    tcl
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
