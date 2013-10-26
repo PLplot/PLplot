@@ -1531,7 +1531,11 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     // Min and max values
     // Assumes that the values array is sorted from smallest to largest
     // OR from largest to smallest.
-    PLFLT min_value, max_value, max_abs;
+    // Unnecessarily initialize min_value, max_value, and max_abs
+    // to quiet -O1 -Wuninitialized warnings that are false alarms.
+    // (n_axes is guaranteed to be 1 or greater so that the loops that
+    // define these values must be executed at least once.)
+    PLFLT min_value = 0., max_value = 0., max_abs = 0.;
     // Length of cap in orientation direction in normalized subpage
     // coordinates and mm.
     PLFLT cap_extent, cap_extent_mm;

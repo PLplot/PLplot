@@ -68,7 +68,10 @@ static void
 plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
 {
     PLFLT uu, vv, px0, py0, dpx, dpy;
-    PLINT *a_x, *a_y;
+    // Unnecessarily initialize a_y to quiet a -O1 -Wuninitialized warning
+    // which is a false alarm.  (If something goes wrong with the
+    // a_x malloc below any further use of a_y does not occur.)
+    PLINT *a_x, *a_y = NULL;
     int   j;
 
     uu = scale * u;

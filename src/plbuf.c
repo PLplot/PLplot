@@ -771,8 +771,14 @@ rdbuf_fill( PLStream *pls )
 static void
 rdbuf_image( PLStream *pls )
 {
+    // Unnecessarily initialize dev_iy and dev_z to quiet -O1
+    // -Wuninitialized warnings which are false alarms.  (If something
+    // goes wrong with the dev_ix malloc below any further use of
+    // dev_iy and dev_z does not occur.  Similarly, if something goes
+    // wrong with the dev_iy malloc below any further use of dev_z
+    // does not occur.)
     short          *dev_ix, *dev_iy = NULL;
-    unsigned short *dev_z, dev_zmin, dev_zmax;
+    unsigned short *dev_z = NULL, dev_zmin, dev_zmax;
     PLINT          nptsX, nptsY, npts;
     PLFLT          xmin, ymin, dx, dy;
 
