@@ -85,7 +85,8 @@ EXTERN int Itk_Init _ANSI_ARGS_( ( Tcl_Interp * interp ) );
 
 // From tclIntDecls.h
 
-#ifndef Tcl_Import_TCL_DECLARED
+//#ifndef Tcl_Import_TCL_DECLARED
+#if 0
 EXTERN int Tcl_Import _ANSI_ARGS_( ( Tcl_Interp * interp,
                                      Tcl_Namespace * nsPtr, char * pattern,
                                      int allowOverwrite ) );
