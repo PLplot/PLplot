@@ -102,6 +102,36 @@ if(ANY_QT_DEVICE)
   endif(QT4_FOUND)
 endif(ANY_QT_DEVICE)
 
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_qt "Enable Qt bindings" OFF)
+  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_qt "Enable Qt bindings" ON)
+  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
+endif(DEFAULT_NO_BINDINGS)
+
+# ENABLE_qt depends on PLD_extqt
+if(NOT ANY_QT_DEVICE)
+    set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+endif(NOT ANY_QT_DEVICE)
+
+if(ENABLE_qt AND NOT PLD_extqt)
+  message(STATUS
+    "WARNING: PLD_extqt is OFF so "
+    "setting ENABLE_qt to OFF."
+    )
+  set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
+endif(ENABLE_qt AND NOT PLD_extqt)
+
+# All qt devices depend on ENABLE_qt
+if(NOT ENABLE_qt)
+  message(STATUS
+    "WARNING: ENABLE_qt is OFF so "
+    "setting all qt devices to OFF."
+    )
+  set(ANY_QT_DEVICE OFF)
+endif(ENABLE_qt AND NOT PLD_extqt)
+
 if(NOT ANY_QT_DEVICE)
     set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
     set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
@@ -115,22 +145,6 @@ if(NOT ANY_QT_DEVICE)
     set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
     set(PLD_memqt OFF CACHE BOOL "Enable Qt mem device" FORCE)
 endif(NOT ANY_QT_DEVICE)
-
-if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_qt "Enable Qt bindings" OFF)
-  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
-else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_qt "Enable Qt bindings" ON)
-  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
-endif(DEFAULT_NO_BINDINGS)
-
-if(ENABLE_qt AND NOT PLD_extqt)
-  message(STATUS
-    "WARNING: PLD_extqt is OFF so "
-    "setting ENABLE_qt to OFF."
-    )
-  set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
-endif(ENABLE_qt AND NOT PLD_extqt)
 
 if(ENABLE_pyqt4 AND NOT ENABLE_python)
   message(STATUS
