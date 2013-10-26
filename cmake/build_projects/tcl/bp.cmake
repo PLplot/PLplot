@@ -55,8 +55,15 @@ endforeach(build_configuration ${tcl_dependences_LIST})
 # This can be safely done only after above includes.
 set(BP_PACKAGE tcl)
 
+# These variables are also used by tk and itk (and accessible to those
+# build configurations because they both depend on this one in any case).
+set(TCL_TK_VERSION 8.6.1)
+string(REGEX REPLACE "\\.[0-9]$" "" TCL_TK_LIBVERSION ${TCL_TK_VERSION})
+set(ITCL_ITK_VERSION 4.0.0)
+set(ITCL_ITK_LIBVERSION ${ITCL_ITK_VERSION})
+
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL  http://downloads.sourceforge.net/tcl/tcl8.6.1-src.tar.gz)
+set(${BP_PACKAGE}_URL http://downloads.sourceforge.net/project/tcl/Tcl/${TCL_TK_VERSION}/tcl${TCL_TK_VERSION}-src.tar.gz)
 set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
 set(${BP_PACKAGE}_DOWNLOAD_HASH aae4b701ee527c6e4e1a6f9c7399882e)
 
@@ -110,8 +117,8 @@ add_custom_command(
   ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-install
   COMMAND echo "Install-tree fixups"
   COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install-private-headers
-  COMMAND ${LN_EXECUTABLE} -v -sf tclsh8.6 ${BP_CMAKE_INSTALL_PREFIX}/bin/tclsh
-  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${BP_CMAKE_INSTALL_PREFIX}/lib/libtcl8.6.so
+  COMMAND ${LN_EXECUTABLE} -v -sf tclsh${TCL_TK_LIBVERSION} ${BP_CMAKE_INSTALL_PREFIX}/bin/tclsh
+  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${BP_CMAKE_INSTALL_PREFIX}/lib/libtcl${TCL_TK_LIBVERSION}.so
   APPEND
   )
 
