@@ -275,6 +275,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     plvpor( 0.0, 1.0, 0.0, 1.0 );
     plwind( 0.0, 1.0, 0.0, 1.0 );
     plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+    free( label );
 }
 
 void
