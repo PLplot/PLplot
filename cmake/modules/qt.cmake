@@ -130,7 +130,7 @@ if(NOT ENABLE_qt)
     "setting all qt devices to OFF."
     )
   set(ANY_QT_DEVICE OFF)
-endif(ENABLE_qt AND NOT PLD_extqt)
+endif(NOT ENABLE_qt)
 
 if(NOT ANY_QT_DEVICE)
     set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
