@@ -56,7 +56,7 @@ endforeach(build_configuration ${tk_dependences_LIST})
 set(BP_PACKAGE tk)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL  http://downloads.sourceforge.net/tcl/tk8.6.1-src.tar.gz)
+set(${BP_PACKAGE}_URL http://downloads.sourceforge.net/project/tcl/Tcl/${TCL_TK_VERSION}/tk${TCL_TK_VERSION}-src.tar.gz)
 set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
 set(${BP_PACKAGE}_DOWNLOAD_HASH 63f21c3a0e0cefbd854b4eb29b129ac6)
 
@@ -110,8 +110,8 @@ add_custom_command(
   ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-install
   COMMAND echo "Install-tree fixups"
   COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install-private-headers
-  COMMAND ${LN_EXECUTABLE} -v -sf wish8.6 ${BP_CMAKE_INSTALL_PREFIX}/bin/wish
-  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${BP_CMAKE_INSTALL_PREFIX}/lib/libtk8.6.so
+  COMMAND ${LN_EXECUTABLE} -v -sf wish${TCL_TK_LIBVERSION} ${BP_CMAKE_INSTALL_PREFIX}/bin/wish
+  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${BP_CMAKE_INSTALL_PREFIX}/lib/libtk${TCL_TK_LIBVERSION}.so
   APPEND
   )
 
