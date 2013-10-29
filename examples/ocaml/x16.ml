@@ -9,6 +9,33 @@
 
 open Plplot
 
+let colorbar ?color ?contour values =
+  (* Smaller text *)
+  plschr 0.0 0.75;
+  (* Small ticks on the vertical axis *)
+  plsmaj 0.0 0.5;
+  plsmin 0.0 0.5;
+
+  let axis =
+    [
+      `frame0;
+      `frame1;
+      `vertical_label;
+      `unconventional_label;
+      `major_ticks;
+    ]
+  in
+  let shade = Plot.shade_colorbar ~custom:true ~axis values in
+  let pos = Plot.viewport_pos ~inside:false 0.005 0.0 in
+  Plot.plot [
+    Plot.colorbar ?color ?contour ~orient:(`top (0.0375, 0.875)) ~label:[`bottom "Magnitude"] ~pos shade;
+  ];
+
+  (* Reset text and tick sizes *)
+  plschr 0.0 1.0;
+  plsmaj 0.0 1.0;
+  plsmin 0.0 1.0
+
 let pi = atan 1.0 *. 4.0
 
 (* Fundamental settings.  See notes[] for more info. *)
@@ -133,6 +160,8 @@ let () =
 
   plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width true;
 
+  colorbar shedge;
+
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
   plcol0 2;
@@ -152,6 +181,8 @@ let () =
 
   plset_pltr (pltr1 xg1 yg1);
   plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width true;
+
+  colorbar shedge;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -174,6 +205,8 @@ let () =
   plshades
     z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
 
+  colorbar shedge;
+
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
   plcol0 2;
@@ -195,6 +228,8 @@ let () =
 
   plshades z (-1.0) 1.0 (-1.) 1.0 shedge fill_width 2 3.0 false;
 
+  colorbar ~color:(`index 2) ~contour:(`index 2, 3.0) shedge;
+
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
   plcol0 2;
@@ -214,6 +249,8 @@ let () =
     plset_defined zdefined;
     plshades
       z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
+
+    colorbar shedge;
     plunset_defined ();
 
     plcol0 1;
@@ -256,6 +293,8 @@ let () =
   (*  Now we can shade the interior region. *)
   plshades
     z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
+
+  colorbar shedge;
 
   (* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) *)
   let px = Array.make perimeterpts 0.0 in

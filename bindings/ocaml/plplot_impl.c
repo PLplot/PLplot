@@ -450,7 +450,7 @@ void ml_plshade( const PLFLT **a, PLINT nx, PLINT ny,
 void ml_plshades( const PLFLT **a, PLINT nx, PLINT ny,
                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                   PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
-                  PLINT cont_color, PLINT cont_width,
+                  PLINT cont_color, PLFLT cont_width,
                   PLBOOL rectangular )
 {
     c_plshades( a, nx, ny,
