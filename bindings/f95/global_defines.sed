@@ -40,6 +40,25 @@
 
 /^#define/ s?^#define *\(PL_NOTSET\)[ (]*\([^ ]*\)[ )]*\(.*\)$?      real(kind=plflt), parameter :: \1 = \2.0_plflt\3\n      real(kind=plflt), parameter :: PL_PI = 3.1415926535897932384_plflt\n      real(kind=plflt), parameter :: PL_TWOPI = 2.0_plflt*PL_PI?
 
+# Replace all hexadecimal BOZ constants by their decimal equivalents to maintain
+# standards compliance rather than relying on an extension from the
+# Fortran standards which allows BOZ constants in this context.
+# (This extension is likely implemented by each different Fortran
+# compiler, but you can never be sure.)
+
+/^#define/ s?z'0*\([0-9]\)'?\1?
+/^#define/ s?z'0*f'?15?
+/^#define/ s?z'0*\([0-9]\)0'?\1*16?
+/^#define/ s?z'0*\([0-9]\)00'?\1*16*16?
+/^#define/ s?z'0*\([0-9]\)000'?\1*16*16*16?
+/^#define/ s?z'0*\([0-9]\)0000'?\1*16*16*16*16?
+# This last one is one more than we currently need.
+/^#define/ s?z'0*\([0-9]\)00000'?\1*16*16*16*16*16?
+
+# Note we could do the same transformation for octal BOZ constants, but we
+# don't have any at present.
+
+
 # Comment the following line so that we do not use a special form for BOZ constants.
 #/^#define/ s?^#define *\([^ ]*\)[ (]*\([oz][^ ]*\)[ )]*\(.*\)$?      integer :: \1 \3\n      data \1 / \2 /?
 /^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?      integer, parameter :: \1 = \2 \3?
