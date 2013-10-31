@@ -55,12 +55,10 @@ endforeach(build_configuration ${tcl_dependences_LIST})
 # This can be safely done only after above includes.
 set(BP_PACKAGE tcl)
 
-# These variables are also used by tk and itk (and accessible to those
-# build configurations because they both depend on this one in any case).
+# These variables are also used by tk (and accessible to that
+# build configuration because it depends on this one).
 set(TCL_TK_VERSION 8.6.1)
 string(REGEX REPLACE "\\.[0-9]$" "" TCL_TK_LIBVERSION ${TCL_TK_VERSION})
-set(ITCL_ITK_VERSION 4.0.0)
-set(ITCL_ITK_LIBVERSION ${ITCL_ITK_VERSION})
 
 # Data that is related to downloads.
 set(${BP_PACKAGE}_URL http://downloads.sourceforge.net/project/tcl/Tcl/${TCL_TK_VERSION}/tcl${TCL_TK_VERSION}-src.tar.gz)

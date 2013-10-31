@@ -56,6 +56,8 @@ endforeach(build_configuration ${itk_dependences_LIST})
 set(BP_PACKAGE itk)
 
 # Data that is related to downloads.
+set(ITCL_ITK_VERSION 4.0.0)
+set(ITCL_ITK_LIBVERSION ${ITCL_ITK_VERSION})
 set(${BP_PACKAGE}_URL http://downloads.sourceforge.net/project/incrtcl/%5bincr%20Tcl_Tk%5d-4-source/Itcl%20${ITCL_ITK_VERSION}/itk${ITCL_ITK_VERSION}.tar.gz)
 set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
 set(${BP_PACKAGE}_DOWNLOAD_HASH e3600a9ad0fcdcbbc4138af5a4893b7e)

@@ -56,6 +56,8 @@ endforeach(build_configuration ${tk_dependences_LIST})
 set(BP_PACKAGE tk)
 
 # Data that is related to downloads.
+# Note that TCL_TK_VERSION and TCL_TK_LIBVERSION variables supplied
+# by tcl/bp.cmake which is included above.
 set(${BP_PACKAGE}_URL http://downloads.sourceforge.net/project/tcl/Tcl/${TCL_TK_VERSION}/tk${TCL_TK_VERSION}-src.tar.gz)
 set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
 set(${BP_PACKAGE}_DOWNLOAD_HASH 63f21c3a0e0cefbd854b4eb29b129ac6)
