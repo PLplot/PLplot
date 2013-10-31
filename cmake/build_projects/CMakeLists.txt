@@ -287,11 +287,13 @@ if(BUILD_THE_BUILDTOOLS)
     pkg-config
     #subversion
     swig
-    # itcl is integrated into tcl
     tcl
     tk
+    # itcl is integrated into tcl
     # itk is not integrated into tk (or tcl).
     itk
+    # iwidgets is not integrated into itcl
+    iwidgets
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
