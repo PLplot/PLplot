@@ -289,11 +289,13 @@ if(BUILD_THE_BUILDTOOLS)
     swig
     tcl
     tk
-    # itcl is integrated into tcl
-    # itk is not integrated into tk (or tcl).
+    # itcl version 4 is integrated into tcl
+    # itk version 4 is not integrated into tk (or tcl).
     itk
-    # iwidgets is not integrated into itcl
+    # iwidgets version 4.1 is not integrated into itcl
     iwidgets
+    # itcl version 3 is an independent project
+    itcl3
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
