@@ -76,16 +76,21 @@ else(MSYS_PLATFORM)
 endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
+# Eliminate this option which gives bad results for this package.
+string(REGEX REPLACE "-fvisibility=hidden" "" ${BP_PACKAGE}_SET_CFLAGS "${${BP_PACKAGE}_SET_CFLAGS}")
+
 if(BP_HAVE_64_BIT_OS)
   set(ITCL3_ENABLE_64_BIT --enable-64bit)
 endif(BP_HAVE_64_BIT_OS)
+
+set(INCRTCL3_PREFIX ${BP_CMAKE_INSTALL_PREFIX}_incrtcl3)
 
 ExternalProject_Add(
   build_${BP_PACKAGE}
   DEPENDS ${${BP_PACKAGE}_dependencies_targets}
   URL ${${BP_PACKAGE}_URL}
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --mandir=${BP_CMAKE_INSTALL_PREFIX}/share/man ${ITCL3_ENABLE_64_BIT} --with-tcl=${BP_CMAKE_INSTALL_PREFIX}/lib --with-tclinclude=${BP_CMAKE_INSTALL_PREFIX}/include 
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/configure --prefix=${INCRTCL3_PREFIX} --exec-prefix=${INCRTCL3_PREFIX}   --mandir=${INCRTCL3_PREFIX}/share/man ${ITCL3_ENABLE_64_BIT} --with-tcl=${BP_CMAKE_INSTALL_PREFIX}/lib --with-tclinclude=${BP_CMAKE_INSTALL_PREFIX}/include 
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
   )
@@ -96,11 +101,11 @@ add_custom_command(
   COMMAND echo "Replace build-tree locations by install-tree locations"
   COMMAND ${SED_EXECUTABLE}
   # Cover two different patterns of uppercasing.
-  -e "s@^\\(itcl_SRC_DIR='\\).*@\\1${BP_CMAKE_INSTALL_PREFIX}/include'@"
-  -e "s@^\\(ITCL_SRC_DIR='\\).*@\\1${BP_CMAKE_INSTALL_PREFIX}/include'@"
+  -e "s@^\\(itcl_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include'@"
+  -e "s@^\\(ITCL_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include'@"
   # Cover two different patterns of uppercasing.
-  -e "/itcl_B/s@='\\(-L\\)\\?.*build_itcl3@='\\1${BP_CMAKE_INSTALL_PREFIX}/lib/itcl${ITCL3_LIBVERSION}@"
-  -e "/ITCL_B/s@='\\(-L\\)\\?.*build_itcl3@='\\1${BP_CMAKE_INSTALL_PREFIX}/lib/itcl${ITCL3_LIBVERSION}@"
+  -e "/itcl_B/s@='\\(-L\\)\\?.*build_itcl3@='\\1${INCRTCL3_PREFIX}/lib/itcl${ITCL3_LIBVERSION}@"
+  -e "/ITCL_B/s@='\\(-L\\)\\?.*build_itcl3@='\\1${INCRTCL3_PREFIX}/lib/itcl${ITCL3_LIBVERSION}@"
   # Overwrite original file.
   -i itclConfig.sh
   APPEND
@@ -110,7 +115,7 @@ add_custom_command(
   OUTPUT
   ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-install
   COMMAND echo "Install-tree fixups"
-  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${BP_CMAKE_INSTALL_PREFIX}/lib/itcl${ITCL3_LIBVERSION}/libitcl${ITCL3_LIBVERSION}.so
+  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${INCRTCL3_PREFIX}/lib/itcl${ITCL3_LIBVERSION}/libitcl${ITCL3_LIBVERSION}.so
   APPEND
   )
 
