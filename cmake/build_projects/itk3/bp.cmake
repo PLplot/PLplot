@@ -90,7 +90,7 @@ ExternalProject_Add(
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
   # Order of CPPFLAGS is important since want to access the version 3
   # itcl header.
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} "CPPFLAGS=-I${INCRTCL3_PREFIX}/include -I${BP_CMAKE_INSTALL_PREFIX}/include" ${source_PATH}/configure --prefix=${INCRTCL3_PREFIX} --exec-prefix=${INCRTCL3_PREFIX} --mandir=${INCRTCL3_PREFIX}/share/man ${ITK3_ENABLE_64_BIT} --with-tcl=${BP_CMAKE_INSTALL_PREFIX}/lib --with-tk=${BP_CMAKE_INSTALL_PREFIX}/lib --with-itcl=${INCRTCL3_PREFIX}/lib 
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} "CPPFLAGS=-I${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION} -I${BP_CMAKE_INSTALL_PREFIX}/include" ${source_PATH}/configure --prefix=${INCRTCL3_PREFIX} --exec-prefix=${INCRTCL3_PREFIX} --includedir=${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION} --mandir=${INCRTCL3_PREFIX}/share/man ${ITK3_ENABLE_64_BIT} --with-tcl=${BP_CMAKE_INSTALL_PREFIX}/lib --with-tk=${BP_CMAKE_INSTALL_PREFIX}/lib --with-itcl=${INCRTCL3_PREFIX}/lib/itcl${ITCL3_LIBVERSION}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
   )
@@ -101,8 +101,8 @@ add_custom_command(
   COMMAND echo "Replace build-tree locations by install-tree locations"
   COMMAND ${SED_EXECUTABLE}
   # Cover two different patterns of uppercasing.
-  -e "s@^\\(itk_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include'@"
-  -e "s@^\\(ITK_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include'@"
+  -e "s@^\\(itk_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION}'@"
+  -e "s@^\\(ITK_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION}'@"
   # Cover two different patterns of uppercasing.
   -e "/itk_B/s@='\\(-L\\)\\?.*build_itk3@='\\1${INCRTCL3_PREFIX}/lib/itk${ITK3_LIBVERSION}@"
   -e "/ITK_B/s@='\\(-L\\)\\?.*build_itk3@='\\1${INCRTCL3_PREFIX}/lib/itk${ITK3_LIBVERSION}@"
