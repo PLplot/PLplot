@@ -68,6 +68,7 @@ static void
 plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
 {
     PLFLT uu, vv, px0, py0, dpx, dpy;
+    PLFLT xt, yt;
     // Unnecessarily initialize a_y to quiet a -O1 -Wuninitialized warning
     // which is a false alarm.  (If something goes wrong with the
     // a_x malloc below any further use of a_y does not occur.)
@@ -86,13 +87,16 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
         plexit( "plP_plotvect: Insufficient memory" );
     }
 
-    px0 = plP_wcpcx( x );
-    py0 = plP_wcpcy( y );
+    TRANSFORM( x, y, &xt, &yt );
+    px0 = plP_wcpcx( xt );
+    py0 = plP_wcpcy( yt );
 
     pldebug( "plP_plotvect", "%f %f %d %d\n", x, y, px0, py0 );
 
-    dpx = plP_wcpcx( x + 0.5 * uu ) - px0;
-    dpy = plP_wcpcy( y + 0.5 * vv ) - py0;
+    TRANSFORM( x + 0.5 * uu, y + 0.5 * vv, &xt, &yt );
+    //printf("plvect: %f %f %f %f %f %f %f\n",scale, x,0.5*uu, y,0.5*vv, xt, yt);
+    dpx = plP_wcpcx( xt ) - px0;
+    dpy = plP_wcpcy( yt ) - py0;
 
     // transform arrow -> a
 
@@ -187,10 +191,7 @@ void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
                 vmax = ( v[i][j] > vmax ) ? v[i][j] : vmax;
             }
         }
-        umax   = umax / dxmin;
-        vmax   = vmax / dymin;
-        lscale = ( umax < vmax ) ? umax : vmax;
-        lscale = 1.5 / lscale;
+        lscale = 1.5*MIN(dxmin / umax, dymin / vmax);
         if ( scale < 0.0 )
         {
             scale = -scale * lscale;
