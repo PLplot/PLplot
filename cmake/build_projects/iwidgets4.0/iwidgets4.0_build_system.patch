@@ -1,0 +1,263 @@
+--- iwidgets4-4.0.1.orig/mkinstalldirs
++++ iwidgets4-4.0.1/mkinstalldirs
+@@ -0,0 +1,32 @@
++#! /bin/sh
++# mkinstalldirs --- make directory hierarchy
++# Author: Noah Friedman <friedman@prep.ai.mit.edu>
++# Created: 1993-05-16
++# Last modified: 1994-03-25
++# Public domain
++
++errstatus=0
++
++for file in ${1+"$@"} ; do 
++   set fnord `echo ":$file" | sed -ne 's/^:\//#/;s/^://;s/\// /g;s/^#/\//;p'`
++   shift
++
++   pathcomp=
++   for d in ${1+"$@"} ; do
++     pathcomp="$pathcomp$d"
++     case "$pathcomp" in
++       -* ) pathcomp=./$pathcomp ;;
++     esac
++
++     if test ! -d "$pathcomp"; then
++        echo "mkdir $pathcomp" 1>&2
++        mkdir "$pathcomp" || errstatus=$?
++     fi
++
++     pathcomp="$pathcomp/"
++   done
++done
++
++exit $errstatus
++
++# mkinstalldirs ends here
+--- iwidgets4-4.0.1.orig/configure.in
++++ iwidgets4-4.0.1/configure.in
+@@ -63,18 +63,18 @@
+ ITCL_LIB_DIR=""
+ if test -r $itcl_search/itcl/library/itcl.tcl; then
+     if test -r $itcl_search/itk/library/itk.tcl; then
+-        if test -r $itcl_search/config/mkinstalldirs; then
+-            ITCL_LIB_DIR=$itcl_search/itcl/library
+-            ITCL_SRC_DIR=$itcl_search/itcl
+-            ITK_LIB_DIR=$itcl_search/itk/library
+-            ITK_SRC_DIR=$itcl_search/itk
+-        fi
++        ITCL_LIB_DIR=$itcl_search/itcl/library
++        ITCL_SRC_DIR=$itcl_search/itcl
++        ITK_LIB_DIR=$itcl_search/itk/library
++        ITK_SRC_DIR=$itcl_search/itk
+     fi
+ fi
+ 
+-if test -z "$ITCL_LIB_DIR"; then
+-    AC_MSG_ERROR(Can't find Itcl source.  Use --with-itcl to specify the the toplevel [incr Tcl] directory on your system.  (This directory should contain itcl/library/itcl.tcl, itk/library/itk.tcl, and config/mkinstalldirs.))
+-fi
++# Quick hack, comment out following, breaks tests, but oh well.
++#if test -z "$ITCL_LIB_DIR"; then
++#    AC_MSG_ERROR(Can't find Itcl source.  Use --with-itcl to specify the the toplevel [incr Tcl] directory on your system.  (This directory should contain itcl/library/itcl.tcl, itk/library/itk.tcl.))
++#fi
++
+ 
+ 
+ #--------------------------------------------------------------------
+--- iwidgets4-4.0.1.orig/configure
++++ iwidgets4-4.0.1/configure
+@@ -808,18 +808,18 @@
+ ITCL_LIB_DIR=""
+ if test -r $itcl_search/itcl/library/itcl.tcl; then
+     if test -r $itcl_search/itk/library/itk.tcl; then
+-        if test -r $itcl_search/config/mkinstalldirs; then
+-            ITCL_LIB_DIR=$itcl_search/itcl/library
+-            ITCL_SRC_DIR=$itcl_search/itcl
+-            ITK_LIB_DIR=$itcl_search/itk/library
+-            ITK_SRC_DIR=$itcl_search/itk
+-        fi
++        ITCL_LIB_DIR=$itcl_search/itcl/library
++        ITCL_SRC_DIR=$itcl_search/itcl
++        ITK_LIB_DIR=$itcl_search/itk/library
++        ITK_SRC_DIR=$itcl_search/itk
+     fi
+ fi
+ 
+-if test -z "$ITCL_LIB_DIR"; then
+-    { echo "configure: error: Can't find Itcl source.  Use --with-itcl to specify the the toplevel incr Tcl directory on your system.  (This directory should contain itcl/library/itcl.tcl, itk/library/itk.tcl, and config/mkinstalldirs.)" 1>&2; exit 1; }
+-fi
++# Quick hack, comment out following, breaks tests, but oh well.
++#if test -z "$ITCL_LIB_DIR"; then
++#    AC_MSG_ERROR(Can't find Itcl source.  Use --with-itcl to specify the the toplevel [incr Tcl] directory on your system.  (This directory should contain itcl/library/itcl.tcl, itk/library/itk.tcl.))
++#fi
++
+ 
+ 
+ #--------------------------------------------------------------------
+--- iwidgets4-4.0.1.orig/Makefile.in
++++ iwidgets4-4.0.1/Makefile.in
+@@ -50,12 +50,6 @@
+ # Top-level directory in which to install manual entries:
+ MAN_INSTALL_DIR = $(INSTALL_ROOT)$(prefix)/man/mann
+ 
+-# Directory containing Tcl source code (for library used during test):
+-TCL_SRC_DIR = @TCL_SRC_DIR@
+-
+-# Directory containing Tk source code (for library used during test):
+-TK_SRC_DIR = @TK_SRC_DIR@
+-
+ # Itcl libraries can be found here:
+ ITCL_LIB_DIR = @ITCL_LIB_DIR@
+ 
+@@ -78,11 +72,11 @@
+ # modify any of this stuff by hand.
+ #----------------------------------------------------------------
+ 
+-INSTALL =		$(TCLSH_PROG) `$(CYGPATH) $(ITCL_SRC_DIR)/../config/installFile.tcl` -c
++INSTALL =		$(TCLSH_PROG) `$(CYGPATH) $(srcdir)/installFile.tcl` -c
+ INSTALL_PROGRAM =	$(INSTALL)
+ INSTALL_DATA =		$(INSTALL) -m 644
+ INSTALL_SCRIPT =	$(INSTALL) -m 555
+-MKINSTALLDIRS =		$(ITCL_SRC_DIR)/../config/mkinstalldirs
++MKINSTALLDIRS =		$(srcdir)/mkinstalldirs
+ RANLIB =		@RANLIB@
+ LN_S =			ln -s
+ TOP_DIR =		$(srcdir)
+@@ -109,14 +103,11 @@
+ install: install-libraries install-doc install-demos
+ 
+ test:
+-	LD_LIBRARY_PATH=$(ITCL_LIB_DIR):$(ITK_LIB_DIR):$(LD_LIBRARY_PATH); export LD_LIBRARY_PATH ; \
+-	TCL_LIBRARY=$(TCL_SRC_DIR)/library; export TCL_LIBRARY; \
++# removed LD_LIBRARY_PATH - if you have to set that, your system is broken
+ 	ITCL_LIBRARY=$(ITCL_LIB_DIR); export ITCL_LIBRARY; \
+-	TK_LIBRARY=$(TK_SRC_DIR)/library; export TK_LIBRARY; \
+ 	ITK_LIBRARY=$(ITK_LIB_DIR); export ITK_LIBRARY; \
+ 	IWIDGETS_LIBRARY=@IWIDGETS_SRC_DIR@; export IWIDGETS_LIBRARY; \
+-	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl` \
+-		-exedir `@CYGPATH@ $(TK_SRC_DIR)/unix` $(TESTFLAGS)
++	$(TCLSH_PROG) `@CYGPATH@ $(srcdir)/tests/all.tcl`  $(TESTFLAGS)
+ 
+ install-libraries:
+ 	@$(MKINSTALLDIRS) $(SCRIPT_INSTALL_DIR) $(LIB_INSTALL_DIR)
+--- iwidgets4-4.0.1.orig/installFile.tcl
++++ iwidgets4-4.0.1/installFile.tcl
+@@ -0,0 +1,119 @@
++#!/bin/sh
++#
++# installFile.tcl - a Tcl version of install-sh
++#	that copies a file and preserves its permission bits.
++#	This also optimizes out installation of existing files
++#	that have the same size and time stamp as the source.
++#
++# \
++exec tclsh "$0" ${1+"$@"}
++
++set doCopy 0	;# Rename files instead of copy
++set doStrip 0	;# Strip the symbols from installed copy
++set verbose 0
++set src ""
++set dst ""
++
++# Process command line arguments, compatible with install-sh
++
++for {set i 0} {$i < $argc} {incr i} {
++    set arg [lindex $argv $i]
++    switch -- $arg {
++	-c {
++	    set doCopy 1
++	}
++	-m  {
++	    incr i
++	    # Assume UNIX standard "644", etc, so force Tcl to think octal
++	    set permissions 0[lindex $argv $i]
++	}
++	-o  {
++	    incr i
++	    set owner [lindex $argv $i]
++	}
++	-g  {
++	    incr i
++	    set group [lindex $argv $i]
++	}
++	-s {
++	    set doStrip 1
++	}
++	-v {
++	    set verbose 1
++	}
++	default {
++	    set src $arg
++	    incr i
++	    set dst [lindex $argv $i]
++	    break
++	}
++    }
++}
++if {[string length $src] == 0} {
++    puts stderr "$argv0: no input file specified"
++    exit 1
++}
++if {[string length $dst] == 0} {
++    puts stderr "$argv0: no destination file specified"
++    exit 1
++}
++
++# Compatibility with CYGNUS-style pathnames
++regsub {^/(cygdrive)?/(.)/(.*)} $src {\2:/\3} src
++regsub {^/(cygdrive)?/(.)/(.*)} $dst {\2:/\3} dst
++
++if {$verbose && $doStrip} {
++    puts stderr "Ignoring -s (strip) option for $dst"
++}
++if {[file isdirectory $dst]} {
++    set dst [file join $dst [file tail $src]]
++}
++
++# Temporary file name
++
++set dsttmp [file join [file dirname $dst] #inst.[pid]#]
++
++# Optimize out install if the file already exists
++
++set actions ""
++if {[file exists $dst] &&
++	([file mtime $src] == [file mtime $dst]) &&
++	([file size $src] == [file size $dst])} {
++
++    # Looks like the same file, so don't bother to copy.
++    # Set dsttmp in case we still need to tweak mode, group, etc.
++
++    set dsttmp $dst
++    lappend actions "already installed"
++} else {
++    file copy -force $src $dsttmp
++    lappend actions copied
++}
++
++# At this point "$dsttmp" is installed, but might not have the
++# right permissions and may need to be renamed.
++
++
++foreach attrName {owner group permissions} {
++    upvar 0 $attrName attr
++
++    if {[info exists attr]} {
++	if {![catch {file attributes $dsttmp -$attrName} dstattr]} {
++
++	    # This system supports "$attrName" kind of attributes
++
++	    if {($attr != $dstattr)} {
++		file attributes $dsttmp -$attrName $attr
++		lappend actions "set $attrName to $attr"
++	    }
++	}
++    }
++}
++
++if {[string compare $dst $dsttmp] != 0} {
++    file rename -force $dsttmp $dst
++}
++if {$verbose} {
++    puts stderr "$dst: [join $actions ", "]"
++}
++exit 0

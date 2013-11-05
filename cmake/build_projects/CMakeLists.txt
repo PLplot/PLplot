@@ -298,6 +298,8 @@ if(BUILD_THE_BUILDTOOLS)
     itcl3
     # itk version 3 is an independent project
     itk3
+    # iwidgets version 4.0 is an independent project
+    iwidgets4.0
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
