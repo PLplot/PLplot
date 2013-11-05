@@ -42,8 +42,18 @@ proc sourceUtf8 {sourceFile} {
 
 set  utf8_examples {4 18 24 26 33}
 
-plstdwin .
-plxframe .plw
+# This is hacked logic for distinguishing between the plserver
+# and wish cases which requires an extra directory be lappended in
+# the build tree for the Pltk case.  FIXME.
+if {[catch {package require Plplotter}]} {
+    # use 'plserver' method
+    plstdwin .
+    plxframe .plw
+    set plwin .plw.plwin
+} else {
+    plframe .plw
+    set plwin .plw
+}
 pack append . .plw {left expand fill}
 
 for {set i 0} {$i <= 33} {incr i} {
@@ -62,13 +72,14 @@ for {set i 0} {$i <= 33} {incr i} {
 	}
 	
 	proc $i {} "
-            .plw.plwin cmd plspause 0
-            $demo .plw.plwin
-            .plw.plwin cmd plcol0 1
-            .plw.plwin cmd plsori 0
-            .plw.plwin cmd plspal0 cmap0_default.pal
-            .plw.plwin cmd plspal1 cmap1_default.pal 1
-            .plw.plwin cmd plstransform NULL
+            global plwin
+            $plwin cmd plspause 0
+            $demo $plwin
+            $plwin cmd plcol0 1
+            $plwin cmd plsori 0
+            $plwin cmd plspal0 cmap0_default.pal
+            $plwin cmd plspal1 cmap1_default.pal 1
+            $plwin cmd plstransform NULL
         "
     }
 }

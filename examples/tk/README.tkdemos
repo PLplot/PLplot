@@ -20,10 +20,19 @@ following way:
 		# from "plserver" to "../../bindings/plserver"
 ./xtk04 -f tk04
 
-There are two ways to run tkdemos.tcl which exercises all the x??.tcl
+There are two ways to run the examples below, where the alternatives
+are indicated by "|".  The first alternative should only be used if
+you have changed directories to
+$prefix/share/plplot$VERSION/examples/tk where $prefix is the PLplot
+install prefix and $VERSION is the PLplot release version, e.g.,
+5.9.10.  (That is, the first alternative should be used if you have
+changed directories to the installed tk examples directory.)  The
+second alternative should only be used if you have changed directories
+to bindings/examples/tk in the build tree.
+
+(1) Run tkdemos.tcl from plserver.  This potentially exercises all the x??.tcl
 examples using the plframe widget:
 
-(1) 
 plserver | ../../bindings/tk/plserver
 source tkdemos.tcl
 1
@@ -33,32 +42,39 @@ source tkdemos.tcl
 Note the plserver command has normal PLplot command-line options (run
 plserver -h to find out what they are).
 
-(2) Note, fill in $prefix below with whatever you configured for the install
-prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION
-you are running at this time (5.2.0 or whatever).
+(2) Run tkdemos.tcl from wish.
 
-wish
-lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk
+wish -geometry 600x400
+lappend auto_path $prefix/share/plplot$VERSION ../../bindings/tk-x-plat ../../bindings/tk 
 package require Pltk
 source tkdemos.tcl
 1
 2
 ....
 
+FIXME: Note the ../../bindings/tk-x-plat in auto_path is a temporary
+measure to support the hacked tkdemos.tcl logic which invokes package
+require Plplotter to distinguish between the plserver case (where that
+package is not available) and the current wish case (where that
+package can be successfully loaded because of ../../bindings/tk-x-plat
+in auto_path).
+
+FIXME: Try examples 10 and 12 which should work. Most of the rest
+(e.g., 1, 2,) currently do not work because PLplot library constants
+are not available under wish for some unknown reason.
+
 To find out more about the wish command (which comes as part of the Tk
 package) use man wish.
 
 Both the plserver and wish methods execute the various x??.tcl examples
-corresponding to the numbers specified by the user. A few of the x??.tcl
-examples will return the message that they have not been implemented, but
-the rest should work smoothly without problems.
+corresponding to the numbers specified by the user.
 
+(3) Run runAllDemos.tcl from plserver.
 
-runAllDemos.tcl now works both under plserver 
-and wish
-
-plserver
+plserver | ../../bindings/tk/plserver
 source runAllDemos.tcl
+
+(4) Run runAllDemos.tcl from wish.
 
 wish
 lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk-x-plat ../../bindings/tk
