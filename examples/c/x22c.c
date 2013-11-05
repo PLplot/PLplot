@@ -201,6 +201,7 @@ constriction2( void )
     const int nx = 20;
     const int ny = 20;
     const int nc = 11;
+    const int nseg = 20;
     PLFLT     clev[nc];
 
     dx = 1.0;
@@ -248,6 +249,9 @@ constriction2( void )
 	      clev, nc, 0, 1, 1.0, plfill, 1, NULL, NULL);
     plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny, 
 	    -0.5, pltr2, (void *) &cgrid2 );
+    // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
+    plpath(nseg,xmin,ymax,xmax,ymax);
+    plpath(nseg,xmin,ymin,xmax,ymin);
     plcol0( 1 );
 
     plFree2dGrid( cgrid2.xg, nx, ny );
