@@ -1376,11 +1376,12 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     cleanup_mapform();
 }
 
-// you can omit the mapform func
-%typemap( default ) mapform_func mapform {
-    python_mapform = 0;
-    $1             = NULL;
-}
+
+// you cannot omit the mapform func since it appears at the beginning of API calls, before compulsory arguments
+//%typemap( default ) mapform_func mapform {
+//    python_mapform = 0;
+//    $1             = NULL;
+//}
 
 // convert an arbitrary Python object into the void* pointer they want
 %typemap( in ) PLPointer PYOBJECT_DATA {
