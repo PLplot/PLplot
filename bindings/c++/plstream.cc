@@ -1232,6 +1232,15 @@ void plstream::pat( PLINT nlin, const PLINT *inc, const PLINT *del )
     plpat( nlin, inc, del );
 }
 
+// Draw a line connecting two points, accounting for coordinate transforms
+
+void plstream::path( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
+{
+    set_stream();
+
+    plpath( n, x1, y1, x2, y2 );
+}
+
 // Plots array y against x for n points using ASCII code "code".
 
 void plstream::poin( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )

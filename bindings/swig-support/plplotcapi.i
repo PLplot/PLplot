@@ -553,6 +553,9 @@ void
 plpat( PLINT n, const PLINT *Array, const PLINT *ArrayCk );
 
 void
+plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
+
+void
 plpoin( PLINT n, const PLFLT *Array, const PLFLT *ArrayCk, PLINT code );
 
 void
