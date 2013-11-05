@@ -1,4 +1,16 @@
-plplot (5.9.10-1) unstable; urgency=low
+plplot (5.9.10-2) experimental; urgency=low
+
+  * debian/changelog: Upload to experimental not unstable.
+  * debian/compat, debian/control.in: Update to compatibility version 9 
+    for debhelper to remove lintian warning.
+  * debian/rules: Fix bug in rules for case where ada is not supported.
+  * debian/control.in: Fix short description for plplot-tcl-bin package.
+  * debian/rules: For tcl scripts in the tk examples then make symlinks rather
+    than duplicating files in the tck examples.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 05 Nov 2013 08:56:45 +0000
+
+plplot (5.9.10-1) UNRELEASED; urgency=low
 
   * New upstream release
   * debian/patches/series: Remove backported patches no longer need with 

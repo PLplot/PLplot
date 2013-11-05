@@ -238,7 +238,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
 Package: plplot-tcl-bin
 Architecture: any
 Depends: plplot-tcl, ${shlibs:Depends}, ${misc:Depends}
-Description: Tcl/Tk support for PLplot, a plotting library
+Description: Tcl/Tk tools for PLplot, a plotting library 
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
  line (linear, log), contour, 3D, fill, and almost 1000 characters

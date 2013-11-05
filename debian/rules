@@ -86,7 +86,7 @@ SRC_DIR = $(shell pwd)
 
 control:
 ifeq ($(BUILD_ADA),no)
-	slice -o UNDEF+ADA:debian/control debian/control.in
+	slice -o UNDEF:debian/control debian/control.in
 else
 	slice -o UNDEF+ADA:debian/control debian/control.in
 endif
@@ -244,6 +244,10 @@ binary-arch: build-arch install-arch
           -l $(debbase)/$(libpkg)/usr/lib/$(DEB_HOST_MULTIARCH):$(debbase)/plplot-tcl/usr/lib/$(DEB_HOST_MULTIARCH)
 	dpkg-shlibdeps -Tdebian/octave-plplot.substvars -S$(debbase)/$(libpkg)/usr/lib/*.so* -S/usr/lib/$(octver)/*.so* $(debbase)/octave-plplot/$(OCTDIR)/plplot_octave.oct
 	dh_installdeb -a
+
+        # Replace tk copied files with symlinks
+	(cd $(debbase)/plplot-tcl-dev/usr/share/doc/${libpkg}/examples/tk ; for file in x??.tcl plgrid.tcl ; do rm -f $${file} ; ln -s ../tcl/$${file} . ; done)
+
 	dh_lintian -a
 	dh_gencontrol -a -- -VF:OCamlABI="$(OCAMLABI)"
 	dh_md5sums -a
