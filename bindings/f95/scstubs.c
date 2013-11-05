@@ -1019,6 +1019,12 @@ PLPAT( PLINT *nlin, PLINT *inc, PLINT *del )
 }
 
 void
+PLPATH( PLINT *n, PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2  )
+{
+    c_plpath( *n, *x1, *y1, *x2, *y2 );
+}
+
+void
 PLPOIN( PLINT *n, PLFLT *x, PLFLT *y, PLINT *code )
 {
     c_plpoin( *n, x, y, *code );

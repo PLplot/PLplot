@@ -524,6 +524,14 @@ module plplot
         end subroutine plpat
     end interface
 
+    interface
+        subroutine plpath( n, x1, y1, x2, y2 )
+            use plplot_flt
+            integer :: n
+            real(kind=plflt) :: x1, y1, x2, y2
+        end subroutine plpath
+    end interface
+
     interface plot3d
         module procedure plot3d
     end interface

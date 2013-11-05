@@ -272,6 +272,7 @@
 
 #define    PLPARSEOPTS7              FNAME( PLPARSEOPTS7, plparseopts7 )
 #define    PLPAT                     FNAME( PLPAT, plpat )
+#define    PLPATH                    FNAME( PLPATH, plpath )
 #define    PLPOIN                    FNAME( PLPOINF77, plpoinf77 )
 #define    PLPOIN3                   FNAME( PLPOIN3F77, plpoin3f77 )
 #define    PLPOLY3                   FNAME( PLPOLY3F77, plpoly3f77 )
