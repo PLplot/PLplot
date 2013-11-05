@@ -414,10 +414,10 @@ PLCOLORBAR( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLFLT **a;
     int   i, j;
 
-    a = (PLFLT **) malloc( sizeof ( PLFLT * ) * ( size_t ) ( *n_axes ) );
+    a = (PLFLT **) malloc( sizeof ( PLFLT * ) * (size_t) ( *n_axes ) );
     for ( i = 0; i < *n_axes; i++ )
     {
-        a[i] = (PLFLT *) malloc( sizeof ( PLFLT ) * ( size_t ) n_values[i] );
+        a[i] = (PLFLT *) malloc( sizeof ( PLFLT ) * (size_t) n_values[i] );
         for ( j = 0; j < n_values[i]; j++ )
         {
             a[i][j] = values[i + j * ( *n_axes )];
@@ -1019,7 +1019,7 @@ PLPAT( PLINT *nlin, PLINT *inc, PLINT *del )
 }
 
 void
-PLPATH( PLINT *n, PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2  )
+PLPATH( PLINT *n, PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2 )
 {
     c_plpath( *n, *x1, *y1, *x2, *y2 );
 }

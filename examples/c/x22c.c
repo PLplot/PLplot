@@ -143,7 +143,7 @@ constriction( void )
             if ( fabs( y ) < b )
             {
                 dbdx = ymax / 4.0 * sin( M_PI * x / xmax ) *
-                        M_PI / xmax * y / b;
+                       M_PI / xmax * y / b;
                 u[i][j] = Q * ymax / b;
                 v[i][j] = dbdx * u[i][j];
             }
@@ -175,14 +175,14 @@ constriction( void )
 void
 transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 {
-  PLFLT *trdata;
-  PLFLT xmax;
+    PLFLT *trdata;
+    PLFLT xmax;
 
-  trdata = (PLFLT *) data;
-  xmax = *trdata;
+    trdata = (PLFLT *) data;
+    xmax   = *trdata;
 
-  *xt = x;
-  *yt = y / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
+    *xt = x;
+    *yt = y / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
 }
 
 //
@@ -198,9 +198,9 @@ constriction2( void )
     PLFLT     Q, b, dbdx;
     PLcGrid2  cgrid2;
     PLFLT     **u, **v;
-    const int nx = 20;
-    const int ny = 20;
-    const int nc = 11;
+    const int nx   = 20;
+    const int ny   = 20;
+    const int nc   = 11;
     const int nseg = 20;
     PLFLT     clev[nc];
 
@@ -212,7 +212,7 @@ constriction2( void )
     ymin = -ny / 2 * dy;
     ymax = ny / 2 * dy;
 
-    plstransform(transform, (PLPointer) &xmax);
+    plstransform( transform, ( PLPointer ) & xmax );
 
     plAlloc2dGrid( &cgrid2.xg, nx, ny );
     plAlloc2dGrid( &cgrid2.yg, nx, ny );
@@ -231,27 +231,28 @@ constriction2( void )
             y = ( j - ny / 2 + 0.5 ) * dy;
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
-            b = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
-	    u[i][j] = Q * ymax / b;
-	    v[i][j] = 0.0;
+            b       = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
+            u[i][j] = Q * ymax / b;
+            v[i][j] = 0.0;
         }
     }
 
-    for ( i=0; i<nc; i++ ) {
-      clev[i] = Q + i * Q / (nc-1);
+    for ( i = 0; i < nc; i++ )
+    {
+        clev[i] = Q + i * Q / ( nc - 1 );
     }
-    
+
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
     pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction" );
     plcol0( 2 );
-    plshades( (const PLFLT * const *) u, nx, ny, NULL, 
-	      xmin+dx/2, xmax-dx/2, ymin+dy/2, ymax-dy/2, 
-	      clev, nc, 0, 1, 1.0, plfill, 1, NULL, NULL);
-    plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny, 
-	    -0.5, pltr2, (void *) &cgrid2 );
+    plshades( (const PLFLT * const *) u, nx, ny, NULL,
+        xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
+        clev, nc, 0, 1, 1.0, plfill, 1, NULL, NULL );
+    plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
+        -0.5, pltr2, (void *) &cgrid2 );
     // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
-    plpath(nseg,xmin,ymax,xmax,ymax);
-    plpath(nseg,xmin,ymin,xmax,ymin);
+    plpath( nseg, xmin, ymax, xmax, ymax );
+    plpath( nseg, xmin, ymin, xmax, ymin );
     plcol0( 1 );
 
     plFree2dGrid( cgrid2.xg, nx, ny );
@@ -259,8 +260,7 @@ constriction2( void )
     plFree2dGrid( u, nx, ny );
     plFree2dGrid( v, nx, ny );
 
-    plstransform(NULL, NULL);
-
+    plstransform( NULL, NULL );
 }
 
 

@@ -197,7 +197,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     setup_array_1d_b( PLBOOL **pa, jboolean *adat, int n )
     {
         int i;
-        *pa = (PLBOOL *) malloc( ( size_t ) n * sizeof ( PLBOOL ) );
+        *pa = (PLBOOL *) malloc( (size_t) n * sizeof ( PLBOOL ) );
         for ( i = 0; i < n; i++ )
         {
             ( *pa )[i] = adat[i] ? 1 : 0;
@@ -210,7 +210,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     setup_array_1d_i( PLINT **pa, jint *adat, int n )
     {
         int i;
-        *pa = (PLINT *) malloc( ( size_t ) n * sizeof ( PLINT ) );
+        *pa = (PLINT *) malloc( (size_t) n * sizeof ( PLINT ) );
         for ( i = 0; i < n; i++ )
         {
             ( *pa )[i] = adat[i];
@@ -223,7 +223,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     setup_array_1d_f( PLFLT **pa, jfloat *adat, int n )
     {
         int i;
-        *pa = (PLFLT *) malloc( ( size_t ) n * sizeof ( PLFLT ) );
+        *pa = (PLFLT *) malloc( (size_t) n * sizeof ( PLFLT ) );
         for ( i = 0; i < n; i++ )
         {
             ( *pa )[i] = adat[i];
@@ -236,7 +236,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     setup_array_1d_d( PLFLT **pa, jdouble *adat, int n )
     {
         int i;
-        *pa = (PLFLT *) malloc( ( size_t ) n * sizeof ( PLFLT ) );
+        *pa = (PLFLT *) malloc( (size_t) n * sizeof ( PLFLT ) );
         for ( i = 0; i < n; i++ )
         {
             ( *pa )[i] = adat[i];
@@ -251,8 +251,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     {
         int i, j;
 
-        *pa        = (PLFLT **) malloc( ( size_t ) nx * sizeof ( PLFLT * ) );
-        ( *pa )[0] = (PLFLT *) malloc( ( size_t ) ( nx * ny ) * sizeof ( PLFLT ) );
+        *pa        = (PLFLT **) malloc( (size_t) nx * sizeof ( PLFLT * ) );
+        ( *pa )[0] = (PLFLT *) malloc( (size_t) ( nx * ny ) * sizeof ( PLFLT ) );
 
         for ( i = 0; i < nx; i++ )
         {
@@ -270,8 +270,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     {
         int i, j;
 
-        *pa        = (PLFLT **) malloc( ( size_t ) nx * sizeof ( PLFLT * ) );
-        ( *pa )[0] = (PLFLT *) malloc( ( size_t ) ( nx * ny ) * sizeof ( PLFLT ) );
+        *pa        = (PLFLT **) malloc( (size_t) nx * sizeof ( PLFLT * ) );
+        ( *pa )[0] = (PLFLT *) malloc( (size_t) ( nx * ny ) * sizeof ( PLFLT ) );
 
         for ( i = 0; i < nx; i++ )
         {
@@ -292,7 +292,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 #ifdef PL_DOUBLE
         x = (double *) dat;
 #else
-        x = (double *) malloc( ( size_t ) n * sizeof ( double ) );
+        x = (double *) malloc( (size_t) n * sizeof ( double ) );
         for ( i = 0; i < n; i++ )
         {
             x[i] = (double) dat[i];
@@ -915,8 +915,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -982,8 +982,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -1040,8 +1040,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -1094,8 +1094,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -1178,8 +1178,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         return;
     }
 
-    ptr    = (PLFLT **) malloc( ( size_t ) nx * sizeof ( PLFLT * ) );
-    ptr[0] = (PLFLT *) malloc( ( size_t ) nx * ny * sizeof ( PLFLT ) );
+    ptr    = (PLFLT **) malloc( (size_t) nx * sizeof ( PLFLT * ) );
+    ptr[0] = (PLFLT *) malloc( (size_t) nx * ny * sizeof ( PLFLT ) );
     for ( i = 0; i < nx; i++ )
     {
         ptr[i] = ptr[0] + i * ny;
@@ -1197,8 +1197,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
     ptr = $1;
 
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     for ( i = 0; i < nx; i++ )
     {
@@ -1254,8 +1254,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -1569,8 +1569,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -1645,8 +1645,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -1713,8 +1713,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
     int     ny = -1;
     int     i, j;
-    ai   = (jobject *) malloc( ( size_t ) nx * sizeof ( jobject ) );
-    adat = (jPLFLT **) malloc( ( size_t ) nx * sizeof ( jPLFLT * ) );
+    ai   = (jobject *) malloc( (size_t) nx * sizeof ( jobject ) );
+    adat = (jPLFLT **) malloc( (size_t) nx * sizeof ( jPLFLT * ) );
 
     ( *jenv )->EnsureLocalCapacity( jenv, nx );
 
@@ -1807,7 +1807,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         // Take a copy of the C string as the typemap is for a non const C string
         jmethodID capacityID = ( *jenv )->GetMethodID( jenv, sbufClass, "capacity", "()I" );
         jint      capacity   = ( *jenv )->CallIntMethod( jenv, $input, capacityID );
-        $1 = (char *) malloc( ( size_t ) ( capacity + 1 ) );
+        $1 = (char *) malloc( (size_t) ( capacity + 1 ) );
 
         // Zero the original StringBuffer, so we can replace it with the result
         setLengthID = ( *jenv )->GetMethodID( jenv, sbufClass, "setLength", "(I)V" );
@@ -1852,7 +1852,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     int i = 0;
     size = (int) ( ( *jenv )->GetArrayLength( jenv, $input ) );
     $1   = &size;
-    $2   = (char **) malloc( ( size_t ) ( size + 1 ) * sizeof ( char * ) );
+    $2   = (char **) malloc( (size_t) ( size + 1 ) * sizeof ( char * ) );
     // make a copy of each string
     for ( i = 0; i < size; i++ )
     {
@@ -1931,7 +1931,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
             printf( "Arrays must be the same length\n" );
             return;
         }
-        $1 = (char **) malloc( ( size_t ) Alen * sizeof ( char * ) );
+        $1 = (char **) malloc( (size_t) Alen * sizeof ( char * ) );
         // make a copy of each string
         for ( i = 0; i < Alen; i++ )
         {
@@ -1977,7 +1977,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         int size = ( *jenv )->GetArrayLength( jenv, $input );
         Alen = size;
         $1   = size;
-        $2   = (char **) malloc( ( size_t ) Alen * sizeof ( char * ) );
+        $2   = (char **) malloc( (size_t) Alen * sizeof ( char * ) );
         // make a copy of each string
         for ( i = 0; i < Alen; i++ )
         {

@@ -225,7 +225,7 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy, i
         {
             // FCI in text stream; change font accordingly.
             FT_SetFace( pls, text[i] );
-            *yy = (int) (FT->face->size->metrics.height > -*yy  ? -FT->face->size->metrics.height : *yy);
+            *yy = (int) ( FT->face->size->metrics.height > -*yy  ? -FT->face->size->metrics.height : *yy );
         }
         else
         {

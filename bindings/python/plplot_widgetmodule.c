@@ -12,7 +12,7 @@
 #endif
 
 void initplplot_widget( void );
- 
+
 #define TRY( E )    if ( !( E ) ) return NULL
 
 #ifdef ENABLE_tk
