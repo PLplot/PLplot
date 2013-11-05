@@ -143,7 +143,7 @@ constriction( void )
             if ( fabs( y ) < b )
             {
                 dbdx = ymax / 4.0 * sin( M_PI * x / xmax ) *
-                       y / b;
+                        M_PI / xmax * y / b;
                 u[i][j] = Q * ymax / b;
                 v[i][j] = dbdx * u[i][j];
             }
@@ -167,6 +167,97 @@ constriction( void )
     plFree2dGrid( v, nx, ny );
 }
 
+
+//
+// Global transform function for a constriction using data passed in
+// This is the same transformation used in constriction.
+//
+void
+transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+{
+  PLFLT *trdata;
+  PLFLT xmax;
+
+  trdata = (PLFLT *) data;
+  xmax = *trdata;
+
+  *xt = x;
+  *yt = y / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
+}
+
+//
+// Vector plot of flow through a constricted pipe
+// with a coordinate transform
+//
+void
+constriction2( void )
+{
+    int       i, j;
+    PLFLT     dx, dy, x, y;
+    PLFLT     xmin, xmax, ymin, ymax;
+    PLFLT     Q, b, dbdx;
+    PLcGrid2  cgrid2;
+    PLFLT     **u, **v;
+    const int nx = 20;
+    const int ny = 20;
+    const int nc = 11;
+    PLFLT     clev[nc];
+
+    dx = 1.0;
+    dy = 1.0;
+
+    xmin = -nx / 2 * dx;
+    xmax = nx / 2 * dx;
+    ymin = -ny / 2 * dy;
+    ymax = ny / 2 * dy;
+
+    plstransform(transform, (PLPointer) &xmax);
+
+    plAlloc2dGrid( &cgrid2.xg, nx, ny );
+    plAlloc2dGrid( &cgrid2.yg, nx, ny );
+    plAlloc2dGrid( &u, nx, ny );
+    plAlloc2dGrid( &v, nx, ny );
+
+    cgrid2.nx = nx;
+    cgrid2.ny = ny;
+
+    Q = 2.0;
+    for ( i = 0; i < nx; i++ )
+    {
+        x = ( i - nx / 2 + 0.5 ) * dx;
+        for ( j = 0; j < ny; j++ )
+        {
+            y = ( j - ny / 2 + 0.5 ) * dy;
+            cgrid2.xg[i][j] = x;
+            cgrid2.yg[i][j] = y;
+            b = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
+	    u[i][j] = Q * ymax / b;
+	    v[i][j] = 0.0;
+        }
+    }
+
+    for ( i=0; i<nc; i++ ) {
+      clev[i] = Q + i * Q / (nc-1);
+    }
+    
+    plenv( xmin, xmax, ymin, ymax, 0, 0 );
+    pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction" );
+    plcol0( 2 );
+    plshades( (const PLFLT * const *) u, nx, ny, NULL, 
+	      xmin+dx/2, xmax-dx/2, ymin+dy/2, ymax-dy/2, 
+	      clev, nc, 0, 1, 1.0, plfill, 1, NULL, NULL);
+    plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny, 
+	    -0.5, pltr2, (void *) &cgrid2 );
+    plcol0( 1 );
+
+    plFree2dGrid( cgrid2.xg, nx, ny );
+    plFree2dGrid( cgrid2.yg, nx, ny );
+    plFree2dGrid( u, nx, ny );
+    plFree2dGrid( v, nx, ny );
+
+    plstransform(NULL, NULL);
+
+}
 
 
 void
@@ -335,6 +426,8 @@ main( int argc, const char *argv[] )
     fill = 1;
     plsvect( arrow2_x, arrow2_y, narr, fill );
     constriction();
+
+    constriction2();
 
     potential();
 
