@@ -91,7 +91,7 @@
 // plplot_tkwin_ccmap is statically defined in pltkwd.h.  Note that
 // tkwin.c also includes that header and uses that variable.
 
-#define NDEV    20              // Max number of output device types
+#define NDEV    100              // Max number of output device types
 
 //
 // A data structure of the following type is kept for each
