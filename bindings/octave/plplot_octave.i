@@ -923,7 +923,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     Cell        temp_cell;
     char        *tmp_cstring;
     std::string str;
-    size_t      max_length, non_blank_length;
+    size_t      max_length = 0, non_blank_length;
     int         i, ifcell;
     if ( _n_dims( $input ) > 2 )
     {
@@ -1031,7 +1031,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     Cell        temp_cell;
     char        *tmp_cstring;
     std::string str;
-    size_t      max_length, non_blank_length;
+    size_t      max_length = 0, non_blank_length;
     int         i, ifcell;
     if ( _n_dims( $input ) > 2 )
     {
