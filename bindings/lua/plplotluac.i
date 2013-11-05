@@ -1229,6 +1229,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         free( $1 ); $1 = NULL;
     }
 }
+%typemap( default ) const char *legline[4] { $1 = NULL; }
 
 // No count but check consistency with previous
 %typemap( in, checkfn = "lua_istable" ) const char **ArrayCk {
