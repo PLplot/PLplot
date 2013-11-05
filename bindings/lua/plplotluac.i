@@ -1434,6 +1434,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %rename( plot3dcl ) plot3dcl;
 %rename( parseopts ) plparseopts;
 %rename( pat ) plpat;
+%rename( path ) plpath;
 %rename( poin ) plpoin;
 %rename( poin3 ) plpoin3;
 %rename( poly3 ) plpoly3;

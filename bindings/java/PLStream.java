@@ -695,6 +695,12 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.plpat( inc, del );
     }
 
+    public void path( int n, double x1, double y1, double x2, double y2 )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plpath( n, x1, y1, x2, y2 );
+    }
+
     public void poin( double[] x, double[] y, int code )
     {
         if ( set_stream() == -1 ) return;

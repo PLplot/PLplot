@@ -222,6 +222,10 @@ itcl::class PLWin {
         eval $plwin cmd plpat $args
     }
 
+    method plpath {args} {
+        eval $plwin cmd plpath $args
+    }
+
     method plpoin {args} {
         eval $plwin cmd plpoin $args
     }

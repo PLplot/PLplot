@@ -560,6 +560,15 @@ nlin	PLINT
 inc	PLINT *
 del	PLINT *
 
+# Draw a line connecting two points, accounting for coordinate transforms
+
+pltclcmd plpath void
+n       PLINT
+x1      PLFLT
+y1      PLFLT
+x2      PLFLT
+y2      PLFLT
+
 # Plots array y against x for n points using ASCII code "code".
 # The original tclAPI.c version of this had a defaultable n capability,
 # which we don't have...
