@@ -89,8 +89,9 @@ ExternalProject_Add(
   # itcl header.
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} "CPPFLAGS=-I${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION} -I${BP_CMAKE_INSTALL_PREFIX}/include" ${source_PATH}/configure --prefix=${INCRTCL3_PREFIX} --exec-prefix=${INCRTCL3_PREFIX} --includedir=${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION} --mandir=${INCRTCL3_PREFIX}/share/man --with-tcl=${BP_CMAKE_INSTALL_PREFIX}/lib --with-tk=${BP_CMAKE_INSTALL_PREFIX}/lib
   # Possible make race conditions so use non-parallel make
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND}
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND} install
+  # Also, above --mandir option is ignored, so must specify MAN_INSTALL_DIR
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND} MAN_INSTALL_DIR=${INCRTCL3_PREFIX}/share/man/mann
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_MAKE_COMMAND} MAN_INSTALL_DIR=${INCRTCL3_PREFIX}/share/man/mann install
   )
 
 add_custom_command(
