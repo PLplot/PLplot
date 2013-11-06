@@ -83,7 +83,11 @@ if(BP_HAVE_64_BIT_OS)
   set(ITCL3_ENABLE_64_BIT --enable-64bit)
 endif(BP_HAVE_64_BIT_OS)
 
-set(INCRTCL3_PREFIX ${BP_CMAKE_INSTALL_PREFIX}/lib/incrtcl3)
+# This variable provides the opportunity to set an alternative install
+# prefix to distinguish what files are installed by version 3 of itcl
+# and friends from what is installed by version 4 of itcl and friends.
+# But currently just use the ordinary install location.
+set(INCRTCL3_PREFIX ${BP_CMAKE_INSTALL_PREFIX})
 
 ExternalProject_Add(
   build_${BP_PACKAGE}
