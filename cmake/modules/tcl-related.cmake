@@ -32,6 +32,8 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_itk "Enable incr TK interface code" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+option(USE_INCRTCL_VERSION_4 "Use [incr Tcl] version 4" OFF)
+
 # Depending on these above options and system resources may also determine
 # the following variables which are largely self-explanatory unless documented
 # further.
@@ -94,7 +96,10 @@ if(ENABLE_tcl)
           message(STATUS "Looking for itcl.h - found")
           message(STATUS "Looking for itcl library")
           get_filename_component(TCL_LIBRARY_PATH ${TCL_LIBRARY} PATH)
-          set(itcl_library_versions 4.0.0 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
+          set(itcl_library_versions 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
+	  if(USE_INCRTCL_VERSION_4)
+	    set(itcl_library_versions 4.0.0 ${itcl_library_versions})
+	  endif(USE_INCRTCL_VERSION_4)
           foreach(version ${itcl_library_versions})
             find_library(ITCL_LIBRARY itcl${version} PATHS ${TCL_LIBRARY_PATH}
               PATH_SUFFIXES itcl${version})
@@ -161,7 +166,10 @@ if(ENABLE_tcl)
       if(ITK_INCLUDE_PATH)
         message(STATUS "Looking for itk.h - found")
         message(STATUS "Looking for itk library")
-        set(itk_library_versions 4.0.0 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
+        set(itk_library_versions 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
+	if(USE_INCRTCL_VERSION_4)
+	  set(itk_library_versions 4.0.0 ${itk_library_versions})
+	endif(USE_INCRTCL_VERSION_4)
         foreach(version ${itk_library_versions})
           find_library(ITK_LIBRARY itk${version} PATHS ${TCL_LIBRARY_PATH}
             PATH_SUFFIXES itk${version})
