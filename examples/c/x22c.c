@@ -200,9 +200,10 @@ constriction2( void )
     PLFLT     **u, **v;
     const int nx   = 20;
     const int ny   = 20;
-    const int nc   = 11;
+#define NC 11
+    const int nc   = NC;
     const int nseg = 20;
-    PLFLT     clev[nc];
+    PLFLT     clev[NC];
 
     dx = 1.0;
     dy = 1.0;
