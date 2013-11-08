@@ -292,14 +292,13 @@ if(BUILD_THE_BUILDTOOLS)
     # itcl version 4 is integrated into tcl
     # itk version 4 is not integrated into tk (or tcl).
     itk
-    # iwidgets version 4.1 is not integrated into itcl
-    iwidgets
     # itcl version 3 is an independent project
     itcl3
     # itk version 3 is an independent project
     itk3
-    # iwidgets version 4.0 is an independent project
-    iwidgets4.0
+    # iwidgets subdirectory contains build configurations for both
+    # iwidgets (version 4.1) and iwidgets4.0 (version 4.0).
+    iwidgets
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
