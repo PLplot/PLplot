@@ -85,12 +85,24 @@ ExternalProject_Add(
   DEPENDS ${${BP_PACKAGE}_dependencies_targets}
   URL ${${BP_PACKAGE}_URL}
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  # Provide an exactly equivalent "Itk" and "itk" form of the package name to
-  # follow what is implemented for itcl version 4.
-  PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/itk4_case.patch
+  PATCH_COMMAND ""
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} CPPFLAGS=-I${BP_CMAKE_INSTALL_PREFIX}/include ${source_PATH}/${BP_CONFIGURE_COMMAND} --mandir=${BP_CMAKE_INSTALL_PREFIX}/share/man ${ITK_ENABLE_64_BIT} --with-itcl=${BP_CMAKE_INSTALL_PREFIX}/lib/itcl${ITCL_ITK_LIBVERSION}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
+  )
+
+add_custom_command(
+  OUTPUT
+  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-patch
+  COMMAND ${CMAKE_COMMAND} -E echo 
+  "Provide an exactly equivalent \"Itk\" and \"itk\" form of the package name to follow what is implemented for itcl version 4."
+  # This patch has been publicly distributed at https://sourceforge.net/p/incrtcl/patches/52/
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EP_BASE}/Source/build_${BP_PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/itk4_case.patch
+  COMMAND ${CMAKE_COMMAND} -E echo
+  "Add generic/itkDecls.h to the list of itk headers that must be installed."
+  # This patch has been publicly distributed at https://sourceforge.net/p/incrtcl/patches/53/
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EP_BASE}/Source/build_${BP_PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/itk4_header_list.patch
+  APPEND
   )
 
 add_custom_command(
