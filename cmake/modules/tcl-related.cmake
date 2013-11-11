@@ -42,7 +42,7 @@ option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwi
 #TCL_LIBRARY
 #ITCL_INCLUDE_PATH
 #ITCL_LIBRARY
-#HAVE_ITCL   		(On when itcl header and library has been found.
+#HAVE_ITCL   		(On when itcl header and library have been found.
 #			 Otherwise, undefined.
 #			 Used for source file configuration.)
 #HAVE_ITCLDECLS_H 	(defined [actually as a path, but we don't use that]
@@ -52,9 +52,12 @@ option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwi
 #TK_LIBRARY
 #ITK_INCLUDE_PATH
 #ITK_LIBRARY
-#HAVE_ITK   		(On when itcl header and library has been found.
+#HAVE_ITK   		(On when itcl header and library have been found.
 #			 Otherwise, undefined.
 #			 Used for source file configuration.)
+#PLPLOT_ITCL_VERSION     (Consistent Itcl version number found by PLplot).
+#PLPLOT_ITK_VERSION      (Consistent Itk version number found by PLplot).
+#PLPLOT_IWIDGETS_VERSION (Consistent Iwidgets version number found by PLplot).
 
 if(ENABLE_tcl)
   message(STATUS "Start determining consistent system data for Tcl and friends")
@@ -75,8 +78,11 @@ if(ENABLE_tcl)
   else(TCL_FOUND)
     message(STATUS "Looking for include paths and libraries for Tcl - not found")
   endif(TCL_FOUND)
+
+  # Initially mark various quantities as as unfound in case that turns out to be the case.
   set(HAVE_ITCL OFF)
   set(HAVE_ITK OFF)
+
   if(TCL_FOUND AND TCL_TCLSH)
     if(ENABLE_itcl)
       if(USE_INCRTCL_VERSION_4)
@@ -89,16 +95,14 @@ if(ENABLE_tcl)
       execute_process(
 	COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl
 	RESULT_VARIABLE ITCL_RC
-	OUTPUT_VARIABLE ITCL_VERSION
+	OUTPUT_VARIABLE PLPLOT_ITCL_VERSION
 	ERROR_VARIABLE ITCL_STDERR
 	)
       if(NOT ITCL_RC)
-	set(ITCL_PACKAGE_NAME "Itcl ${ITCL_VERSION}")
-	message(STATUS "ITCL_PACKAGE_NAME = ${ITCL_PACKAGE_NAME}")
         message(STATUS "Looking for itcl.h")
 	if(NOT USE_INCRTCL_VERSION_4)
 	  # Search first for epa_build install location.
-          find_path(ITCL_INCLUDE_PATH itcl.h HINTS ${TCL_INCLUDE_PATH}/itcl${ITCL_VERSION})
+          find_path(ITCL_INCLUDE_PATH itcl.h HINTS ${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION})
 	endif(NOT USE_INCRTCL_VERSION_4)
         find_path(ITCL_INCLUDE_PATH itcl.h HINTS ${TCL_INCLUDE_PATH})
 
@@ -107,8 +111,8 @@ if(ENABLE_tcl)
 	  message(STATUS "ITCL_INCLUDE_PATH = ${ITCL_INCLUDE_PATH}")
 
 	  message(STATUS "Checking for Itcl header version consistency")
-	  string(REGEX REPLACE "^([0-9]*)\\.[0-9]*.*$" "\\1" ITCL_MAJOR_VERSION  "${ITCL_VERSION}")
-	  string(REGEX REPLACE "^[0-9]*\\.([0-9]*).*$" "\\1" ITCL_MINOR_VERSION  "${ITCL_VERSION}")
+	  string(REGEX REPLACE "^([0-9]*)\\.[0-9]*.*$" "\\1" ITCL_MAJOR_VERSION  "${PLPLOT_ITCL_VERSION}")
+	  string(REGEX REPLACE "^[0-9]*\\.([0-9]*).*$" "\\1" ITCL_MINOR_VERSION  "${PLPLOT_ITCL_VERSION}")
 	  message(STATUS "ITCL_MAJOR_VERSION = ${ITCL_MAJOR_VERSION}")
 	  message(STATUS "ITCL_MINOR_VERSION = ${ITCL_MINOR_VERSION}")
 	  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_VERSION.c
@@ -142,8 +146,8 @@ void main(void){}
         if(ENABLE_itcl)
           message(STATUS "Looking for itcl library")
 	  # Search first for epa_build install location.
-          find_library(ITCL_LIBRARY itcl${ITCL_VERSION} HINTS ${TCL_LIBRARY_PATH}/itcl${ITCL_VERSION})
-          find_library(ITCL_LIBRARY itcl${ITCL_VERSION} HINTS ${TCL_LIBRARY_PATH})
+          find_library(ITCL_LIBRARY itcl${PLPLOT_ITCL_VERSION} HINTS ${TCL_LIBRARY_PATH}/itcl${PLPLOT_ITCL_VERSION})
+          find_library(ITCL_LIBRARY itcl${PLPLOT_ITCL_VERSION} HINTS ${TCL_LIBRARY_PATH})
           if(ITCL_LIBRARY)
             message(STATUS "Looking for itcl library - found")
 	    message(STATUS "ITCL_LIBRARY = ${ITCL_LIBRARY}")
@@ -160,16 +164,6 @@ void main(void){}
         message(STATUS "WARNING: Disabling Itcl interface code")
         set(ENABLE_itcl OFF CACHE BOOL "Enable Itcl interface code" FORCE)
       endif(NOT ITCL_RC)
-    endif(ENABLE_itcl)
-
-    # ------------------------------------------------------------------------
-    # figure out how to build tclIndex
-    # ------------------------------------------------------------------------
-    set(MKTCLINDEX ${CMAKE_SOURCE_DIR}/scripts/mktclIndex)
-    if(ENABLE_itcl)
-      set(MKTCLINDEX_ARGS "-itcl")
-    else(ENABLE_itcl)
-      set(MKTCLINDEX_ARGS "-tcl")
     endif(ENABLE_itcl)
 
     if(ENABLE_tk AND NOT TK_FOUND)
@@ -209,17 +203,14 @@ void main(void){}
       execute_process(
 	COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl
 	RESULT_VARIABLE ITK_RC
-	OUTPUT_VARIABLE ITK_VERSION
+	OUTPUT_VARIABLE PLPLOT_ITK_VERSION
 	ERROR_VARIABLE ITK_STDERR
 	)
       if(NOT ITK_RC)
-	set(ITK_PACKAGE_NAME "Itk ${ITK_VERSION}")
-	message(STATUS "ITK_PACKAGE_NAME = ${ITK_PACKAGE_NAME}")
-
 	message(STATUS "Looking for itk.h")
 	if(NOT USE_INCRTCL_VERSION_4)
 	  # Search first for epa_build install location.
-          find_path(ITK_INCLUDE_PATH itk.h HINTS ${TCL_INCLUDE_PATH}/itcl${ITCL_VERSION})
+          find_path(ITK_INCLUDE_PATH itk.h HINTS ${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION})
 	endif(NOT USE_INCRTCL_VERSION_4)
 	find_path(ITK_INCLUDE_PATH itk.h HINTS ${TCL_INCLUDE_PATH})
 
@@ -228,8 +219,8 @@ void main(void){}
 	  message(STATUS "ITK_INCLUDE_PATH = ${ITK_INCLUDE_PATH}")
 
 	  message(STATUS "Checking for Itk header version consistency")
-	  string(REGEX REPLACE "^([0-9]*)\\.[0-9]*.*$" "\\1" ITK_MAJOR_VERSION  "${ITK_VERSION}")
-	  string(REGEX REPLACE "^[0-9]*\\.([0-9]*).*$" "\\1" ITK_MINOR_VERSION  "${ITK_VERSION}")
+	  string(REGEX REPLACE "^([0-9]*)\\.[0-9]*.*$" "\\1" ITK_MAJOR_VERSION  "${PLPLOT_ITK_VERSION}")
+	  string(REGEX REPLACE "^[0-9]*\\.([0-9]*).*$" "\\1" ITK_MINOR_VERSION  "${PLPLOT_ITK_VERSION}")
 	  message(STATUS "ITK_MAJOR_VERSION = ${ITK_MAJOR_VERSION}")
 	  message(STATUS "ITK_MINOR_VERSION = ${ITK_MINOR_VERSION}")
 	  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_VERSION.c
@@ -264,8 +255,8 @@ void main(void){}
 	if(ENABLE_itk)
           message(STATUS "Looking for itk library")
 	  # Search first for epa_build install location.
-          find_library(ITK_LIBRARY itk${ITK_VERSION} HINTS ${TCL_LIBRARY_PATH}/itk${ITK_VERSION})
-          find_library(ITK_LIBRARY itk${ITK_VERSION} HINTS ${TCL_LIBRARY_PATH})
+          find_library(ITK_LIBRARY itk${PLPLOT_ITK_VERSION} HINTS ${TCL_LIBRARY_PATH}/itk${PLPLOT_ITK_VERSION})
+          find_library(ITK_LIBRARY itk${PLPLOT_ITK_VERSION} HINTS ${TCL_LIBRARY_PATH})
           if(ITK_LIBRARY)
             message(STATUS "Looking for itk library - found")
 	    message(STATUS "ITK_LIBRARY = ${ITK_LIBRARY}")
@@ -309,30 +300,19 @@ void main(void){}
 	      list(GET IWIDGETS_VERSIONS_LIST 1 CONSISTENT_ITK_VERSION)
 	      list(GET IWIDGETS_VERSIONS_LIST 2 CONSISTENT_ITCL_VERSION)
 	      message(STATUS "Checking that the Iwidgets, Itk, and Itcl packages are consistent")
-	      if(CONSISTENT_ITCL_VERSION STREQUAL ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL ITK_VERSION)
-		if(USE_INCRTCL_VERSION_4)
-		  set(IWIDGETS_PACKAGE_NAME "Iwidgets ${IWIDGETS_VERSION}")
-		else(USE_INCRTCL_VERSION_4)
-		  # Must use exact to distinguish from 4.1 version with
-                  # the same major version number.  This should not be
-                  # an issue after install since it is rare/nonexistent to
-                  # change the patch number of this really old version of
-                  # iwidgets between the build and post-install eras.
-		  set(IWIDGETS_PACKAGE_NAME "-exact Iwidgets ${IWIDGETS_VERSION}")
-		endif(USE_INCRTCL_VERSION_4)
+	      if(CONSISTENT_ITCL_VERSION STREQUAL PLPLOT_ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL PLPLOT_ITK_VERSION)
 		message(STATUS "Checking that the Iwidgets, Itk, and Itcl packages are consistent - true")
-		message(STATUS "IWIDGETS_PACKAGE_NAME = ${IWIDGETS_PACKAGE_NAME}")
-	      else(CONSISTENT_ITCL_VERSION STREQUAL ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL ITK_VERSION)
+	      else(CONSISTENT_ITCL_VERSION STREQUAL PLPLOT_ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL PLPLOT_ITK_VERSION)
 		message(STATUS "IWIDGETS_VERSION = ${IWIDGETS_VERSION}")
-		message(STATUS "ITK_VERSION = ${ITK_VERSION}")
+		message(STATUS "PLPLOT_ITK_VERSION = ${PLPLOT_ITK_VERSION}")
 		message(STATUS "CONSISTENT_ITK_VERSION = ${CONSISTENT_ITK_VERSION}")
-		message(STATUS "ITCL_VERSION = ${ITCL_VERSION}")
+		message(STATUS "PLPLOT_ITCL_VERSION = ${PLPLOT_ITCL_VERSION}")
 		message(STATUS "CONSISTENT_ITCL_VERSION = ${CONSISTENT_ITCL_VERSION}")
 		message(STATUS "Checking that the Iwidgets, Itk, and Itcl packages are consistent - false")
 		message(STATUS "WARNING: Consistent combination of Iwidgets, Itk, and Itcl not found so disabling Itcl and Itk")
 		set(ENABLE_itcl OFF CACHE BOOL "Enable Itcl interface code" FORCE)
 		set(ENABLE_itk OFF CACHE BOOL "Enable Itk interface code" FORCE)
-	      endif(CONSISTENT_ITCL_VERSION STREQUAL ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL ITK_VERSION)
+	      endif(CONSISTENT_ITCL_VERSION STREQUAL PLPLOT_ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL PLPLOT_ITK_VERSION)
 	    else(NOT IWIDGETS_RC)
 	      message(STATUS "WARNING: Iwidgets could not be found so disabling Itcl and Itk")
 	      set(ENABLE_itcl OFF CACHE BOOL "Enable Itcl interface code" FORCE)
@@ -351,6 +331,16 @@ void main(void){}
       endif(NOT ITK_RC)
     endif(ENABLE_itk)
 
+    # ------------------------------------------------------------------------
+    # figure out how to build tclIndex
+    # ------------------------------------------------------------------------
+    set(MKTCLINDEX ${CMAKE_SOURCE_DIR}/scripts/mktclIndex)
+    if(ENABLE_itcl)
+      set(MKTCLINDEX_ARGS "-itcl")
+    else(ENABLE_itcl)
+      set(MKTCLINDEX_ARGS "-tcl")
+    endif(ENABLE_itcl)
+
   else(TCL_FOUND AND TCL_TCLSH)
     message(STATUS "Tcl not found OR tclsh not found")
     message(STATUS "WARNING: Disabling everything that is Tcl/Tk related")
@@ -366,6 +356,13 @@ else(ENABLE_tcl)
   set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
   set(ENABLE_itk OFF CACHE BOOL "Enable Itk interface code" FORCE)
 endif(ENABLE_tcl)
+
+if(NOT ENABLE_itcl)
+  set(PLPLOT_ITCL_VERSION 0.0.0)
+endif(NOT ENABLE_itcl)
+
 if(NOT ENABLE_itk)
   set(itk_true "#")
+  set(PLPLOT_ITK_VERSION 0.0.0)
+  set(PLPLOT_IWIDGETS_VERSION 0.0.0)
 endif(NOT ENABLE_itk)
