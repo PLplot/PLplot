@@ -198,9 +198,9 @@ constriction2( void )
     PLFLT     Q, b, dbdx;
     PLcGrid2  cgrid2;
     PLFLT     **u, **v;
-    const int nx   = 20;
-    const int ny   = 20;
-#define NC 11
+    const int nx = 20;
+    const int ny = 20;
+#define NC    11
     const int nc   = NC;
     const int nseg = 20;
     PLFLT     clev[NC];
