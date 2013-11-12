@@ -830,10 +830,10 @@ c_plaxes( PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 // Plot a histogram using x to store data values and y to store frequencies
 
 // Flags for plbin() - opt argument
-#define PL_BIN_DEFAULT     0
-#define PL_BIN_CENTRED     1
-#define PL_BIN_NOEXPAND    2
-#define PL_BIN_NOEMPTY     4
+#define PL_BIN_DEFAULT     0x0
+#define PL_BIN_CENTRED     0x1
+#define PL_BIN_NOEXPAND    0x2
+#define PL_BIN_NOEMPTY     0x4
 
 PLDLLIMPEXP void
 c_plbin( PLINT nbin, const PLFLT *x, const PLFLT *y, PLINT opt );
@@ -1159,11 +1159,11 @@ c_plgzax( PLINT *p_digmax, PLINT *p_digits );
 
 // Flags for plhist() - opt argument; note: some flags are passed to
 // plbin() for the actual plotting
-#define PL_HIST_DEFAULT            0
-#define PL_HIST_NOSCALING          1
-#define PL_HIST_IGNORE_OUTLIERS    2
-#define PL_HIST_NOEXPAND           8
-#define PL_HIST_NOEMPTY            16
+#define PL_HIST_DEFAULT            0x00
+#define PL_HIST_NOSCALING          0x01
+#define PL_HIST_IGNORE_OUTLIERS    0x02
+#define PL_HIST_NOEXPAND           0x08
+#define PL_HIST_NOEMPTY            0x10
 
 PLDLLIMPEXP void
 c_plhist( PLINT n, const PLFLT *data, PLFLT datmin, PLFLT datmax,
@@ -1384,16 +1384,16 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 // DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
 //
 
-#define DRAW_LINEX     ( 1 << 0 )                  // draw lines parallel to the X axis
-#define DRAW_LINEY     ( 1 << 1 )                  // draw lines parallel to the Y axis
-#define DRAW_LINEXY    ( DRAW_LINEX | DRAW_LINEY ) // draw lines parallel to both the X and Y axis
-#define MAG_COLOR      ( 1 << 2 )                  // draw the mesh with a color dependent of the magnitude
-#define BASE_CONT      ( 1 << 3 )                  // draw contour plot at bottom xy plane
-#define TOP_CONT       ( 1 << 4 )                  // draw contour plot at top xy plane
-#define SURF_CONT      ( 1 << 5 )                  // draw contour plot at surface
-#define DRAW_SIDES     ( 1 << 6 )                  // draw sides
-#define FACETED        ( 1 << 7 )                  // draw outline for each square that makes up the surface
-#define MESH           ( 1 << 8 )                  // draw mesh
+#define DRAW_LINEX     0x001  // draw lines parallel to the X axis
+#define DRAW_LINEY     0x002  // draw lines parallel to the Y axis
+#define DRAW_LINEXY    0x003  // draw lines parallel to both the X and Y axis
+#define MAG_COLOR      0x004  // draw the mesh with a color dependent of the magnitude
+#define BASE_CONT      0x008  // draw contour plot at bottom xy plane
+#define TOP_CONT       0x010  // draw contour plot at top xy plane
+#define SURF_CONT      0x020  // draw contour plot at surface
+#define DRAW_SIDES     0x040  // draw sides
+#define FACETED        0x080  // draw outline for each square that makes up the surface
+#define MESH           0x100  // draw mesh
 
 //
 //  valid options for plot3dc():
