@@ -1,15 +1,25 @@
 Running the Tcl Demos.
 
-PLplot doesn't need to be installed to run these demos.
-However, different commands might be needed to run the demos when PLplot
-is installed or not; in these cases, the first command must be used for
-the installed situation, while the second, separeted by a '|', is for the
-uninstalled situation.
+There are two ways to run the examples below, where the alternatives
+are indicated by "|".  The first alternative should only be used if
+you have changed directories to
+$prefix/share/plplot$VERSION/examples/tcl where $prefix is the PLplot
+install prefix and $VERSION is the PLplot release version, e.g.,
+5.9.10.  (That is, the first alternative should be used if you have
+changed directories to the installed tk examples directory.)  The
+second alternative should only be used if you have changed directories
+to bindings/examples/tk in the build tree.
+
 
 To run individual examples, run the x?? script corresponding to the x??.tcl
-example, where ?? is 01 through 19.  To find out all the possible command-line
-options run pltcl -h (every x?? script runs pltcl).
-For the uninstalled situation, do PATH=../../utils:$PATH x??
+example, where ?? is 00 through 33 (except for 32), e.g.,
+
+./x00 -dev xwin |  env PATH=../../utils:$PATH ./x00 -dev xwin
+
+Note, -dev xwin is just one possible PLplot driver, and there are many others.
+
+To find out all the possible command-line
+options run pltcl -h or x?? -h (every x?? script runs pltcl).
 
 To run the plot.tcl demo follow the directions in that file to run it
 under pltcl with the various standard devices.
@@ -17,7 +27,7 @@ under pltcl with the various standard devices.
 To run the plgrid.tcl demo follow the directions in that file to run it
 under pltcl with the various standard devices.
 
-tcldemos.tcl runs all 19 examples.
+tcldemos.tcl runs all the standard examples except for example 32.
 
 There are two ways to run tcldemos.tcl:
 
@@ -25,12 +35,15 @@ There are two ways to run tcldemos.tcl:
 pltcl | ../../utils/pltcl
 plinit
 source tcldemos.tcl
+0
 1
 2
 ....
 
 Note the pltcl command has normal PLplot command-line options (run pltcl -h
-to find out what they are).
+to find out what they are).  In fact, you can specify, e.g., -dev tk or
+-dev xwin, but since plinit has to be run in any case, you might as
+well use the device driver chooser in that case.
 
 (2) Note, fill in $prefix below with whatever you configured for the install
 prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION 
@@ -41,6 +54,7 @@ lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tcl
 package require Pltcl
 plinit
 source tcldemos.tcl
+0
 1
 2
 ....
@@ -49,6 +63,5 @@ To find out more about the tclsh command (which comes as part of the tcl
 package) use man tclsh.
 
 Both the pltcl and tclsh methods execute the various x??.tcl examples
-corresponding to the numbers specified by the user. A few of the x??.tcl
-examples will return the message that they have not been implemented, but
-the rest should work smoothly without problems.
+corresponding to the numbers (in the range from 0 to 33, except for 32)
+specified by the user.
