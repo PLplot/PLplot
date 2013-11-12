@@ -46,3 +46,14 @@ else(PERL_XML_DOM AND PERL_XML_PARSER)
     "   so cannot check that swig_documentation.i is up to date."
     )
 endif(PERL_XML_DOM AND PERL_XML_PARSER)
+
+# Add (Unix) custom target to check numerical #defines in plplotcapi.i.
+add_custom_target(
+  check_plplotcapi_defines
+  COMMAND ${CMAKE_COMMAND} -E remove -f
+  ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
+  COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_SOURCE_DIR}/include/plplot.h | grep -v plotsh3d > ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
+  COMMAND ${CMAKE_COMMAND} -E echo "Non-NULL diff results below (which will be accompanied by an error for this target) imply the numerical #defines section of bindings/swig-support/plplotcapi.i needs updating following the directions in that file"
+  COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_CURRENT_SOURCE_DIR}/plplotcapi.i | diff -auw - ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
+  VERBATIM
+)
