@@ -51,7 +51,7 @@
 
 package require Tk 8.0
 package require Plplotter
-package require Itk 3.0
+eval package require $pl_itk_package_name
 
 #
 # Usual options.

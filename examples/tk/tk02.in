@@ -8,7 +8,8 @@
 # @> A script for using Tk to control xtk01, using the PLplot itcl interface.
 ###############################################################################
 
-package require Itk
+package require Pltk
+eval package require $pl_itk_package_name
 
 wm title . "x01c -- TK version"
 plstdwin .

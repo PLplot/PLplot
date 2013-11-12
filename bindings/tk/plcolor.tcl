@@ -69,7 +69,7 @@ proc plfile_open {op} {
 
 set colorSpace hsl
 
-package require Itcl 
+eval package require $pl_itcl_package_name
 
 itcl::class ColorEditor {
     private variable r 255

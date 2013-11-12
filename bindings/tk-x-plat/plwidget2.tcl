@@ -533,11 +533,11 @@ proc plw::create_pmenu_options {w} {
     $m add checkbutton -label "Doublebuffer" -variable \
       plotopts($w,dbl) -command "$w.plwin configure -doublebuffer \$plotopts($w,dbl)"
 
-    global plopt_static_redraw plopt_dynamic_redraw
+    global plopt_static_redraw plopt_dynamic_redraw pl_itcl_package_name
 
 # The palette tools require Itcl 3.0 or later.
 
-    if [catch {package require Itcl 3.0}] { return }
+    if [catch {eval package require $pl_itcl_package_name}] { return }
 
 # Set up redraw variables.  Basically if you have r/w colorcells (e.g.
 # PseudoColor visual, not sure if any others), you don't need either of

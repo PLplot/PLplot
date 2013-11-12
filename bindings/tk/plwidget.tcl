@@ -560,7 +560,7 @@ proc plw::create_pmenu_palettes {w} {
 
 # The palette tools require Itcl 3.0 or later.
 
-    if [catch {package require Itcl 3.0}] { return }
+    if [catch {eval package require $pl_itcl_package_name}] { return }
 
     $pmenu($w) add cascade -label "Palettes" -menu $m
     menu $m

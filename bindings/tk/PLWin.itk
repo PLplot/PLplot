@@ -7,7 +7,7 @@
 # $Id$
 ###############################################################################
 
-package require Itk
+eval package require $pl_itk_package_name
 
 itcl::class PLWin {
     inherit itk::Widget

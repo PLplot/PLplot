@@ -7,8 +7,8 @@
 # @> A script illustrating use of 2-d tcl api (plframe).
 ###############################################################################
 
-package require Itk
-
+package require Pltk
+eval package require $pl_itk_package_name
 wm title . "tk04"
 plstdwin .
 

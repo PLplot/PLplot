@@ -17,8 +17,7 @@
  ##
 
 package require Plplotter
-package require Itk 
-
+eval package require $pl_itk_package_name
 proc plbarchart {args} {uplevel Plbarchart $args}
 
 itcl::class Plbarchart {

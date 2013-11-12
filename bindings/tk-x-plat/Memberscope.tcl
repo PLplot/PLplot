@@ -2,7 +2,7 @@
 # Use, copy, sell, rewrite, improve however you like.
 # Vince Darley.
 
-package require Itcl
+eval package require $pl_itcl_package_name
 
 itcl::class Memberscope {
     protected method memberscope {var}

@@ -36,9 +36,7 @@
 # We don't need	version	numbers	because	we use the first versions
 # which	actually use the 'package' mechanism.
 package	require	Pltk
-package	require	Itcl
-package	require	Itk
-package require Iwidgets
+eval package require $pl_iwidgets_package_name
 
 itcl::class Pltkwin {
     inherit PLWin

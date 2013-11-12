@@ -13,9 +13,8 @@
 option add *Plwindow.width 250 widgetDefault
 option add *Plwindow.height 250 widgetDefault
 
-package require Itk 3.0
 package require Plplotter
-
+eval package require $pl_itk_package_name
 #
 # Usual options.
 #
