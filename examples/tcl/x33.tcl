@@ -975,10 +975,18 @@ proc plcolorbar_example {w palette kind_i cont_color cont_width values} {
 }
 
 # Auxiliary routines
-proc max {a b} {
-    expr {$a > $b? $a : $b}
+proc min {args} {
+    set x [lindex $args 0]
+    foreach i $args {
+	if {$i<$x} {set x $i}
+    }
+    return $x
 }
 
-proc min {a b} {
-    expr {$a < $b? $a : $b}
+proc max {args} {
+    set x [lindex $args 0]
+    foreach i $args {
+	if {$i>$x} {set x $i}
+    }
+    return $x
 }

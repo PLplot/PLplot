@@ -269,13 +269,21 @@ proc isnan {x} {
 
 #----------------------------------------------------------------------------
 #      proc max and min
-proc max {x y} {
-    expr {$x > $y? $x : $y}
-}
-proc min {x y} {
-    expr {$x > $y? $y : $x}
+proc min {args} {
+    set x [lindex $args 0]
+    foreach i $args {
+	if {$i<$x} {set x $i}
+    }
+    return $x
 }
 
+proc max {args} {
+    set x [lindex $args 0]
+    foreach i $args {
+	if {$i>$x} {set x $i}
+    }
+    return $x
+}
 
 #----------------------------------------------------------------------------
 #      proc cmap1_init

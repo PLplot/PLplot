@@ -514,11 +514,20 @@ proc gray_cmap {w num_col} {
 
 #----------------------------------------------------------------------------
 #      proc max and min
-proc max {x y} {
-    expr {$x > $y? $x : $y}
+proc min {args} {
+    set x [lindex $args 0]
+    foreach i $args {
+	if {$i<$x} {set x $i}
+    }
+    return $x
 }
-proc min {x y} {
-    expr {$x > $y? $y : $x}
+
+proc max {args} {
+    set x [lindex $args 0]
+    foreach i $args {
+	if {$i>$x} {set x $i}
+    }
+    return $x
 }
 
 
