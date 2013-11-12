@@ -256,6 +256,7 @@ proc max {args} {
 #----------------------------------------------------------------------------
 
 proc fileSelect {{filter {}}} {
+    global pl_iwidgets_package_name
 
     # Use the Iwidgets file selector if available
     if ![catch {eval package require $pl_iwidgets_package_name}] {

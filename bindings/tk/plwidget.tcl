@@ -556,7 +556,7 @@ proc plw::create_pmenu_redraw {w} {
 
 proc plw::create_pmenu_palettes {w} {
     global pmenu; set m $pmenu($w).palettes
-    global plopt_static_redraw plopt_dynamic_redraw
+    global plopt_static_redraw plopt_dynamic_redraw pl_itcl_package_name
 
 # The palette tools require Itcl 3.0 or later.
 
