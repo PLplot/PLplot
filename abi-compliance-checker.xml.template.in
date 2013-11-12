@@ -1,4 +1,4 @@
-<version>${VERSION}</version>
+<version>${PLPLOT_VERSION}</version>
 <headers>
   ${PREFIX}/include/plplot
 </headers>

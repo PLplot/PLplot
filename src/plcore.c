@@ -3823,7 +3823,7 @@ plP_fci2hex( PLUNICODE fci, unsigned char *phexdigit, unsigned char hexpower )
 void
 c_plgver( char *p_ver )
 {
-    strcpy( p_ver, VERSION );
+    strcpy( p_ver, PLPLOT_VERSION );
 }
 
 // Set inferior X window

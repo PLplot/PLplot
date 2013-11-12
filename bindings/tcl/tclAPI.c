@@ -398,10 +398,10 @@ PlbasicInit( Tcl_Interp *interp )
     int         debug        = plsc->debug;
     const char  *libDir      = NULL;
     static char initScript[] =
-        "tcl_findLibrary plplot " VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
+        "tcl_findLibrary plplot " PLPLOT_VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
 #ifdef PLPLOT_EXTENDED_SEARCH
     static char initScriptExtended[] =
-        "tcl_findLibrary plplot " VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
+        "tcl_findLibrary plplot " PLPLOT_VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
 
 #ifdef USE_TCL_STUBS
@@ -441,7 +441,7 @@ PlbasicInit( Tcl_Interp *interp )
 #endif
 #endif
 
-    Tcl_SetVar( interp, "plversion", VERSION, TCL_GLOBAL_ONLY );
+    Tcl_SetVar( interp, "plversion", PLPLOT_VERSION, TCL_GLOBAL_ONLY );
 
 // Begin search for init script
 // Each search begins with a test of libDir, so rearrangement is easy.
@@ -606,7 +606,7 @@ environment variable PL_LIBRARY to the directory containing that file",
 // We really need this so the TEA based 'make install' can
 // properly determine the package we have installed
 
-    Tcl_PkgProvide( interp, "Pltcl", VERSION );
+    Tcl_PkgProvide( interp, "Pltcl", PLPLOT_VERSION );
     return TCL_OK;
 }
 

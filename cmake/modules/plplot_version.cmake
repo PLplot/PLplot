@@ -4,15 +4,8 @@ set(RELEASE_DATE "2013-09-30")
 
 # Version data that need review and possible modification for each release.
 
-set(VERSION 5.9.10)
-
-# According to man package, PLPLOT_TCL_VERSION (used in the various
-# pkgIndex.tcl scripts) should be strictly numbers alternating with
-# decimal points with the first number (the major number) signifying
-# incompatible changes in the scripts.  To keep our life simple, let us
-# use the same as the VERSION above so long as it is strictly numerical.
-
-set(PLPLOT_TCL_VERSION ${VERSION})
+# Overall PLplot version number.
+set(PLPLOT_VERSION 5.9.10)
 
 # CPack version numbers for release tarball name.
 set(CPACK_PACKAGE_VERSION_MAJOR 5)

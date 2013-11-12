@@ -75,7 +75,7 @@ CACHE PATH "install location for man documentation"
 # cached values above.
 
 # Data.
-set(DATA_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${VERSION})
+set(DATA_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${PLPLOT_VERSION})
 
 # Libraries.
 set(LIB_DIR ${CMAKE_INSTALL_LIBDIR})
@@ -90,7 +90,7 @@ set(BIN_DIR ${CMAKE_INSTALL_BINDIR})
 set(SHLIB_DIR ${CMAKE_INSTALL_LIBDIR})
 
 # Tcl files.
-set(TCL_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${VERSION}/tcl)
+set(TCL_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${PLPLOT_VERSION}/tcl)
 
 # Ada source files (*.adb, *.ads) (following recommendations in
 # http://www.ada-france.org/debian/debian-ada-policy.html
@@ -101,7 +101,7 @@ set(ADA_INCLUDE_DIR ${CMAKE_INSTALL_DATADIR}/ada/adainclude/plplotada${LIB_TAG})
 set(ADA_LIB_DIR ${CMAKE_INSTALL_LIBDIR}/ada/adalib/plplotada${LIB_TAG})
 
 # Drivers.
-set(DRV_DIR ${CMAKE_INSTALL_LIBDIR}/${PACKAGE}${VERSION}/drivers${LIB_TAG})
+set(DRV_DIR ${CMAKE_INSTALL_LIBDIR}/${PACKAGE}${PLPLOT_VERSION}/drivers${LIB_TAG})
 
 # Documentation.
 set(DOC_DIR ${CMAKE_INSTALL_DATADIR}/doc/${PACKAGE})

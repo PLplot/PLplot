@@ -73,5 +73,5 @@ proc load_pkg_Pltcl {dir} {
     rename load_pkg_Pltcl {}
 }
 
-package ifneeded Pltcl @PLPLOT_TCL_VERSION@ [list load_pkg_Pltcl $dir]
+package ifneeded Pltcl @PLPLOT_VERSION@ [list load_pkg_Pltcl $dir]
 

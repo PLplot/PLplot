@@ -90,7 +90,7 @@ Plplotter_Init( Tcl_Interp *interp )
     Tcl_CreateCommand( interp, "plframe", (Tcl_CmdProc *) plPlotterCmd,
         (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
 
-    Tcl_PkgProvide( interp, "Plplotter", VERSION );
+    Tcl_PkgProvide( interp, "Plplotter", PLPLOT_VERSION );
     return TCL_OK;
 }
 

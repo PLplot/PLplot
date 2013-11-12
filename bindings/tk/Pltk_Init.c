@@ -101,7 +101,7 @@ Pltk_Init( Tcl_Interp *interp )
     }
 #endif
 
-    Tcl_PkgProvide( interp, "Pltk", VERSION );
+    Tcl_PkgProvide( interp, "Pltk", PLPLOT_VERSION );
 
     return TCL_OK;
 }

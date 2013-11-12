@@ -1578,7 +1578,7 @@ static int
 opt_v( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     if ( !mode_quiet )
-        fprintf( stderr, "PLplot library version: %s\n", VERSION );
+        fprintf( stderr, "PLplot library version: %s\n", PLPLOT_VERSION );
 
     return 2;
 }

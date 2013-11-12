@@ -33,7 +33,7 @@
 # (e.g., gv for postscript files and kview or a browser for png, gif,
 # or jpeg files on Linux systems) to make sure they display properly.
 
-version=@VERSION@
+version=@PLPLOT_VERSION@
 
 EXAMPLES_DIR=${EXAMPLES_DIR:-.}
 SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}

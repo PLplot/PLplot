@@ -319,7 +319,7 @@ writeHeader( PLStream *pls )
     doc->osHeader() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
 
     doc->osHeader() << "%%Title: PLplot Graph\n";
-    doc->osHeader() << "%%Creator: PLplot Version " << VERSION << "\n";
+    doc->osHeader() << "%%Creator: PLplot Version " << PLPLOT_VERSION << "\n";
     doc->osHeader() << "%%CreationDate: " << ps_getdate() << "\n";
     doc->osHeader() << "%%Pages: (atend)\n";
     doc->osHeader() << "%%EndComments\n\n";

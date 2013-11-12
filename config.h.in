@@ -276,11 +276,16 @@
 // Define to 1 if you have the ANSI C header files.
 #cmakedefine STDC_HEADERS 1
 
-// Location of Tcl stuff
-#define TCL_DIR    "@TCL_DIR@"
+// Overall PLplot version number
+#define PLPLOT_VERSION             "@PLPLOT_VERSION@"
 
-// Version number of package
-#define VERSION    "@VERSION@"
+// Location of Tcl stuff
+#define TCL_DIR                    "@TCL_DIR@"
+// Consistent package versions for Itcl and friends found by PLplot
+// If PLplot could not find consistent values these are set to 0.0.0
+#define PLPLOT_ITCL_VERSION        "@PLPLOT_ITCL_VERSION@"
+#define PLPLOT_ITK_VERSION         "@PLPLOT_ITK_VERSION@"
+#define PLPLOT_IWIDGETS_VERSION    "@PLPLOT_IWIDGETS_VERSION@"
 
 // Define if csa is desired
 #cmakedefine WITH_CSA
