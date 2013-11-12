@@ -37,7 +37,7 @@ proc load_pkg_Pltcl {dir} {
 	set buildDir "@BUILD_DIR@"
 	set bLen [string length $buildDir]
 	if {![string compare -length $bLen $buildDir $thisDir]}	then {
-		set searchdirs ".libs"} else {
+		set searchdirs "."} else {
 		set searchdirs [list "@LIB_HARDDIR@"]}
 	#puts $searchdirs
 	# prefer double precision version
@@ -74,4 +74,3 @@ proc load_pkg_Pltcl {dir} {
 }
 
 package ifneeded Pltcl @PLPLOT_VERSION@ [list load_pkg_Pltcl $dir]
-
