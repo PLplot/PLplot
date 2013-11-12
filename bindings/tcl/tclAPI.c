@@ -444,36 +444,36 @@ PlbasicInit( Tcl_Interp *interp )
     Tcl_SetVar( interp, "plversion", PLPLOT_VERSION, TCL_GLOBAL_ONLY );
 
     if ( strcmp( PLPLOT_ITCL_VERSION, "4.0.0" ) >= 0 )
-      Tcl_SetVar( interp, "pl_itcl_package_name", "Itcl 4", TCL_GLOBAL_ONLY );
+        Tcl_SetVar( interp, "pl_itcl_package_name", "Itcl 4", TCL_GLOBAL_ONLY );
     else if ( strcmp( PLPLOT_ITCL_VERSION, "3.0.0" ) >= 0 )
-      Tcl_SetVar( interp, "pl_itcl_package_name", "Itcl 3", TCL_GLOBAL_ONLY );
+        Tcl_SetVar( interp, "pl_itcl_package_name", "Itcl 3", TCL_GLOBAL_ONLY );
     else
-      // Mark invalid package name in such a way as to cause an error
-      // when, for example, itcl has been disabled by PLplot, yet one
-      // of the PLplot Tcl scripts attempts to load Itcl.
-      Tcl_SetVar( interp, "pl_itcl_package_name", "Itcl(because_not_found_by_PLplot)", TCL_GLOBAL_ONLY );
-      
+        // Mark invalid package name in such a way as to cause an error
+        // when, for example, itcl has been disabled by PLplot, yet one
+        // of the PLplot Tcl scripts attempts to load Itcl.
+        Tcl_SetVar( interp, "pl_itcl_package_name", "Itcl(because_not_found_by_PLplot)", TCL_GLOBAL_ONLY );
+
     if ( strcmp( PLPLOT_ITK_VERSION, "4.0.0" ) >= 0 )
-      Tcl_SetVar( interp, "pl_itk_package_name", "Itk 4", TCL_GLOBAL_ONLY );
+        Tcl_SetVar( interp, "pl_itk_package_name", "Itk 4", TCL_GLOBAL_ONLY );
     else if ( strcmp( PLPLOT_ITK_VERSION, "3.0.0" ) >= 0 )
-      Tcl_SetVar( interp, "pl_itk_package_name", "Itk 3", TCL_GLOBAL_ONLY );
+        Tcl_SetVar( interp, "pl_itk_package_name", "Itk 3", TCL_GLOBAL_ONLY );
     else
-      // Mark invalid package name in such a way as to cause an error
-      // when, for example, itk has been disabled by PLplot, yet one
-      // of the PLplot Tcl scripts attempts to load Itk.
-      Tcl_SetVar( interp, "pl_itk_package_name", "Itk(because_not_found_by_PLplot)", TCL_GLOBAL_ONLY );
-      
+        // Mark invalid package name in such a way as to cause an error
+        // when, for example, itk has been disabled by PLplot, yet one
+        // of the PLplot Tcl scripts attempts to load Itk.
+        Tcl_SetVar( interp, "pl_itk_package_name", "Itk(because_not_found_by_PLplot)", TCL_GLOBAL_ONLY );
+
     if ( strcmp( PLPLOT_IWIDGETS_VERSION, "4.1.0" ) >= 0 )
-      Tcl_SetVar( interp, "pl_iwidgets_package_name", "Iwidgets 4", TCL_GLOBAL_ONLY );
+        Tcl_SetVar( interp, "pl_iwidgets_package_name", "Iwidgets 4", TCL_GLOBAL_ONLY );
     else if ( strcmp( PLPLOT_IWIDGETS_VERSION, "4.0.0" ) >= 0 )
-      Tcl_SetVar( interp, "pl_iwidgets_package_name", "-exact Iwidgets " PLPLOT_IWIDGETS_VERSION, TCL_GLOBAL_ONLY );
+        Tcl_SetVar( interp, "pl_iwidgets_package_name", "-exact Iwidgets " PLPLOT_IWIDGETS_VERSION, TCL_GLOBAL_ONLY );
     else
-      // Mark invalid package name in such a way as to cause an error
-      // when, for example, itk has been disabled by PLplot, yet one
-      // of the PLplot Tcl scripts attempts to load Iwidgets.
-      Tcl_SetVar( interp, "pl_iwidgets_package_name", "Iwidgets(because_not_found_by_PLplot)", TCL_GLOBAL_ONLY );
-      
-      
+        // Mark invalid package name in such a way as to cause an error
+        // when, for example, itk has been disabled by PLplot, yet one
+        // of the PLplot Tcl scripts attempts to load Iwidgets.
+        Tcl_SetVar( interp, "pl_iwidgets_package_name", "Iwidgets(because_not_found_by_PLplot)", TCL_GLOBAL_ONLY );
+
+
 // Begin search for init script
 // Each search begins with a test of libDir, so rearrangement is easy.
 // If search is successful, both libDir (C) and pllibrary (tcl) are set
