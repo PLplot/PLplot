@@ -105,7 +105,26 @@ all non-windows systems
 
 1. OFFICIAL NOTICES FOR USERS SINCE 5.9.10 (the previous development release)
 
-None at this time.
+((5.9.11) Backwards-incompatible API change.  The numerical symbolic
+constants that are #defined as macros in plplot.h have been
+repropagated to the Python, Java, Lua, Octave, Fortran 95, and Tcl
+language bindings using scripts.  Previously, this propagation was
+done by hand in a piece-meal manner so use of the scripts has created
+a number of changes in the PLplot symbolic constants for these
+languages.  These changes are the addition of 25 symbolic constants
+that were previously only available for C, no deletions of symbolic
+constants, no changes to numerical values, but the following
+backwards-incompatible name changes:
+
+PLESC_PLFLTBUFFERING ==> PLESC_DOUBLEBUFFERING
+PLESPLFLTBUFFERING_DISABLE ==> PLESC_DOUBLEBUFFERING_ENABLE
+PLESPLFLTBUFFERING_ENABLE ==> PLESC_DOUBLEBUFFERING_ENABLE
+PLESPLFLTBUFFERING_QUERY ==> PLESC_DOUBLEBUFFERING_QUERY
+
+So those users who were using the symbolic constants on the left for
+the above languages will have to change their source code or scripts
+to use the constants on the right.  No changes in source code or
+scripts should be required of other users.
 
 2. Tests made for release 5.9.11
 
@@ -130,6 +149,27 @@ with setting the variable.  But if some users still insist on setting
 the variable, that variable's name should now be NUMPY_INCLUDE_PATH.
 
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
+
+(5.9.11) Backwards-incompatible API change.  The numerical symbolic
+constants that are #defined as macros in plplot.h have been
+repropagated to the Python, Java, Lua, Octave, Fortran 95, and Tcl
+language bindings using scripts.  Previously, this propagation was
+done by hand in a piece-meal manner so use of the scripts has created
+a number of changes in the PLplot symbolic constants for these
+languages.  These changes are the addition of 25 symbolic constants
+that were previously only available for C, no deletions of symbolic
+constants, no changes to numerical values, but the following
+backwards-incompatible name changes:
+
+PLESC_PLFLTBUFFERING ==> PLESC_DOUBLEBUFFERING
+PLESPLFLTBUFFERING_DISABLE ==> PLESC_DOUBLEBUFFERING_ENABLE
+PLESPLFLTBUFFERING_ENABLE ==> PLESC_DOUBLEBUFFERING_ENABLE
+PLESPLFLTBUFFERING_QUERY ==> PLESC_DOUBLEBUFFERING_QUERY
+
+So those users who were using the symbolic constants on the left for
+the above languages will have to change their source code or scripts
+to use the constants on the right.  No changes in source code or
+scripts should be required of other users.
 
 (5.9.10) The minimum version of CMake has been bumped to 5.8.9.  This
 change allows our build system to take advantage of CMake features

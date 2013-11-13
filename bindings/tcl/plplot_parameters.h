@@ -56,8 +56,8 @@ variable PLESC_GETC 13\n\
 # set window parameters\n\
 variable PLESC_SWIN 14\n\
 \n\
-# configure PLFLT buffering\n\
-variable PLESC_PLFLTBUFFERING 15\n\
+# configure double buffering\n\
+variable PLESC_DOUBLEBUFFERING 15\n\
 \n\
 # set xor mode\n\
 variable PLESC_XORMOD 16\n\
@@ -80,161 +80,68 @@ variable PLESC_IMAGE 21\n\
 # plimage related operations\n\
 variable PLESC_IMAGEOPS 22\n\
 \n\
-# draw lines parallel to the X axis\n\
-variable DRAW_LINEX 0x01\n\
+# convert PLColor to device color\n\
+variable PLESC_PL2DEVCOL 23\n\
 \n\
-# draw lines parallel to the Y axis\n\
-variable DRAW_LINEY 0x02\n\
+# convert device color to PLColor\n\
+variable PLESC_DEV2PLCOL 24\n\
 \n\
-# draw lines parallel to both the X and Y axes\n\
-variable DRAW_LINEXY 0x03\n\
+# set BG, FG colors\n\
+variable PLESC_SETBGFG 25\n\
 \n\
-# draw the mesh with a color dependent of the magnitude\n\
-variable MAG_COLOR 0x04\n\
+# alternate device initialization\n\
+variable PLESC_DEVINIT 26\n\
 \n\
-# draw contour plot at bottom xy plane\n\
-variable BASE_CONT 0x08\n\
+# get used backend of (wxWidgets) driver\n\
+variable PLESC_GETBACKEND 27\n\
 \n\
-# draw contour plot at top xy plane\n\
-variable TOP_CONT 0x10\n\
+# get ready to draw a line of text\n\
+variable PLESC_BEGIN_TEXT 28\n\
 \n\
-# draw contour plot at surface\n\
-variable SURF_CONT 0x20\n\
+# render a character of text\n\
+variable PLESC_TEXT_CHAR 29\n\
 \n\
-# draw sides\n\
-variable DRAW_SIDES 0x40\n\
+# handle a text control character (super/subscript, etc.)\n\
+variable PLESC_CONTROL_CHAR 30\n\
 \n\
-# draw outline for each square that makes up the surface\n\
-variable FACETED 0x80\n\
+# finish a drawing a line of text\n\
+variable PLESC_END_TEXT 31\n\
 \n\
-# draw mesh\n\
-variable MESH 0x100\n\
+# start rasterized rendering\n\
+variable PLESC_START_RASTERIZE 32\n\
 \n\
+# end rasterized rendering\n\
+variable PLESC_END_RASTERIZE 33\n\
 \n\
-variable PL_BIN_DEFAULT 0\n\
+# render an arc\n\
+variable PLESC_ARC 34\n\
 \n\
+# render a gradient\n\
+variable PLESC_GRADIENT 35\n\
 \n\
-variable PL_BIN_CENTRED 1\n\
+# set drawing mode\n\
+variable PLESC_MODESET 36\n\
 \n\
+# get drawing mode\n\
+variable PLESC_MODEGET 37\n\
 \n\
-variable PL_BIN_NOEXPAND 2\n\
+# font change in the text stream\n\
+variable PLTEXT_FONTCHANGE 0\n\
 \n\
+# superscript in the text stream\n\
+variable PLTEXT_SUPERSCRIPT 1\n\
 \n\
-variable PL_BIN_NOEMPTY 4\n\
+# subscript in the text stream\n\
+variable PLTEXT_SUBSCRIPT 2\n\
 \n\
+# back-char in the text stream\n\
+variable PLTEXT_BACKCHAR 3\n\
 \n\
-variable PL_HIST_DEFAULT 0\n\
+# toggle overline in the text stream\n\
+variable PLTEXT_OVERLINE 4\n\
 \n\
-\n\
-variable PL_HIST_NOSCALING 1\n\
-\n\
-\n\
-variable PL_HIST_IGNORE_OUTLIERS 2\n\
-\n\
-\n\
-variable PL_HIST_NOEXPAND 8\n\
-\n\
-\n\
-variable PL_HIST_NOEMPTY 16\n\
-\n\
-\n\
-variable PL_POSITION_LEFT 1\n\
-\n\
-\n\
-variable PL_POSITION_RIGHT 2\n\
-\n\
-\n\
-variable PL_POSITION_TOP 4\n\
-\n\
-\n\
-variable PL_POSITION_BOTTOM 8\n\
-\n\
-\n\
-variable PL_POSITION_INSIDE 16\n\
-\n\
-\n\
-variable PL_POSITION_OUTSIDE 32\n\
-\n\
-\n\
-variable PL_POSITION_VIEWPORT 64\n\
-\n\
-\n\
-variable PL_POSITION_SUBPAGE 128\n\
-\n\
-\n\
-variable PL_LEGEND_NONE 1\n\
-\n\
-\n\
-variable PL_LEGEND_COLOR_BOX 2\n\
-\n\
-\n\
-variable PL_LEGEND_LINE 4\n\
-\n\
-\n\
-variable PL_LEGEND_SYMBOL 8\n\
-\n\
-\n\
-variable PL_LEGEND_TEXT_LEFT 16\n\
-\n\
-\n\
-variable PL_LEGEND_BACKGROUND 32\n\
-\n\
-\n\
-variable PL_LEGEND_BOUNDING_BOX 64\n\
-\n\
-\n\
-variable PL_LEGEND_ROW_MAJOR 128\n\
-\n\
-\n\
-variable PL_COLORBAR_LABEL_LEFT 0x1\n\
-\n\
-\n\
-variable PL_COLORBAR_LABEL_RIGHT 0x2\n\
-\n\
-\n\
-variable PL_COLORBAR_LABEL_TOP 0x4\n\
-\n\
-\n\
-variable PL_COLORBAR_LABEL_BOTTOM 0x8\n\
-\n\
-\n\
-variable PL_COLORBAR_IMAGE 0x10\n\
-\n\
-\n\
-variable PL_COLORBAR_SHADE 0x20\n\
-\n\
-\n\
-variable PL_COLORBAR_GRADIENT 0x40\n\
-\n\
-\n\
-variable PL_COLORBAR_CAP_NONE 0x80\n\
-\n\
-\n\
-variable PL_COLORBAR_CAP_LOW 0x100\n\
-\n\
-\n\
-variable PL_COLORBAR_CAP_HIGH 0x200\n\
-\n\
-\n\
-variable PL_COLORBAR_SHADE_LABEL 0x400\n\
-\n\
-\n\
-variable PL_COLORBAR_ORIENT_RIGHT 0x800\n\
-\n\
-\n\
-variable PL_COLORBAR_ORIENT_TOP 0x1000\n\
-\n\
-\n\
-variable PL_COLORBAR_ORIENT_LEFT 0x2000\n\
-\n\
-\n\
-variable PL_COLORBAR_ORIENT_BOTTOM 0x4000\n\
-\n\
-\n\
-variable PL_COLORBAR_BACKGROUND 0x8000\n\
-\n\
-\n\
-variable PL_COLORBAR_BOUNDING_BOX 0x10000\n\
+# toggle underline in the text stream\n\
+variable PLTEXT_UNDERLINE 5\n\
 \n\
 # device coordinates\n\
 variable PLSWIN_DEVICE 1\n\
@@ -375,13 +282,25 @@ variable PL_NOTSET -42\n\
 variable PL_PI 3.1415926535897932384\n\
 \n\
 \n\
-variable PLESPLFLTBUFFERING_ENABLE 1\n\
+variable PLESC_DOUBLEBUFFERING_ENABLE 1\n\
 \n\
 \n\
-variable PLESPLFLTBUFFERING_DISABLE 2\n\
+variable PLESC_DOUBLEBUFFERING_DISABLE 2\n\
 \n\
 \n\
-variable PLESPLFLTBUFFERING_QUERY 3\n\
+variable PLESC_DOUBLEBUFFERING_QUERY 3\n\
+\n\
+\n\
+variable PL_BIN_DEFAULT 0x0\n\
+\n\
+\n\
+variable PL_BIN_CENTRED 0x1\n\
+\n\
+\n\
+variable PL_BIN_NOEXPAND 0x2\n\
+\n\
+\n\
+variable PL_BIN_NOEMPTY 0x4\n\
 \n\
 # Bivariate Cubic Spline approximation\n\
 variable GRID_CSA 1\n\
@@ -400,5 +319,161 @@ variable GRID_NNLI 5\n\
 \n\
 # Nearest Neighbors Around Inverse Distance Weighted\n\
 variable GRID_NNAIDW 6\n\
+\n\
+\n\
+variable PL_HIST_DEFAULT 0x00\n\
+\n\
+\n\
+variable PL_HIST_NOSCALING 0x01\n\
+\n\
+\n\
+variable PL_HIST_IGNORE_OUTLIERS 0x02\n\
+\n\
+\n\
+variable PL_HIST_NOEXPAND 0x08\n\
+\n\
+\n\
+variable PL_HIST_NOEMPTY 0x10\n\
+\n\
+\n\
+variable PL_POSITION_LEFT 0x1\n\
+\n\
+\n\
+variable PL_POSITION_RIGHT 0x2\n\
+\n\
+\n\
+variable PL_POSITION_TOP 0x4\n\
+\n\
+\n\
+variable PL_POSITION_BOTTOM 0x8\n\
+\n\
+\n\
+variable PL_POSITION_INSIDE 0x10\n\
+\n\
+\n\
+variable PL_POSITION_OUTSIDE 0x20\n\
+\n\
+\n\
+variable PL_POSITION_VIEWPORT 0x40\n\
+\n\
+\n\
+variable PL_POSITION_SUBPAGE 0x80\n\
+\n\
+\n\
+variable PL_LEGEND_NONE 0x1\n\
+\n\
+\n\
+variable PL_LEGEND_COLOR_BOX 0x2\n\
+\n\
+\n\
+variable PL_LEGEND_LINE 0x4\n\
+\n\
+\n\
+variable PL_LEGEND_SYMBOL 0x8\n\
+\n\
+\n\
+variable PL_LEGEND_TEXT_LEFT 0x10\n\
+\n\
+\n\
+variable PL_LEGEND_BACKGROUND 0x20\n\
+\n\
+\n\
+variable PL_LEGEND_BOUNDING_BOX 0x40\n\
+\n\
+\n\
+variable PL_LEGEND_ROW_MAJOR 0x80\n\
+\n\
+\n\
+variable PL_COLORBAR_LABEL_LEFT 0x1\n\
+\n\
+\n\
+variable PL_COLORBAR_LABEL_RIGHT 0x2\n\
+\n\
+\n\
+variable PL_COLORBAR_LABEL_TOP 0x4\n\
+\n\
+\n\
+variable PL_COLORBAR_LABEL_BOTTOM 0x8\n\
+\n\
+\n\
+variable PL_COLORBAR_IMAGE 0x10\n\
+\n\
+\n\
+variable PL_COLORBAR_SHADE 0x20\n\
+\n\
+\n\
+variable PL_COLORBAR_GRADIENT 0x40\n\
+\n\
+\n\
+variable PL_COLORBAR_CAP_NONE 0x80\n\
+\n\
+\n\
+variable PL_COLORBAR_CAP_LOW 0x100\n\
+\n\
+\n\
+variable PL_COLORBAR_CAP_HIGH 0x200\n\
+\n\
+\n\
+variable PL_COLORBAR_SHADE_LABEL 0x400\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_RIGHT 0x800\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_TOP 0x1000\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_LEFT 0x2000\n\
+\n\
+\n\
+variable PL_COLORBAR_ORIENT_BOTTOM 0x4000\n\
+\n\
+\n\
+variable PL_COLORBAR_BACKGROUND 0x8000\n\
+\n\
+\n\
+variable PL_COLORBAR_BOUNDING_BOX 0x10000\n\
+\n\
+\n\
+variable PL_DRAWMODE_UNKNOWN 0x0\n\
+\n\
+\n\
+variable PL_DRAWMODE_DEFAULT 0x1\n\
+\n\
+\n\
+variable PL_DRAWMODE_REPLACE 0x2\n\
+\n\
+\n\
+variable PL_DRAWMODE_XOR 0x4\n\
+\n\
+# draw lines parallel to the X axis\n\
+variable DRAW_LINEX 0x001\n\
+\n\
+# draw lines parallel to the Y axis\n\
+variable DRAW_LINEY 0x002\n\
+\n\
+# draw lines parallel to both the X and Y axis\n\
+variable DRAW_LINEXY 0x003\n\
+\n\
+# draw the mesh with a color dependent of the magnitude\n\
+variable MAG_COLOR 0x004\n\
+\n\
+# draw contour plot at bottom xy plane\n\
+variable BASE_CONT 0x008\n\
+\n\
+# draw contour plot at top xy plane\n\
+variable TOP_CONT 0x010\n\
+\n\
+# draw contour plot at surface\n\
+variable SURF_CONT 0x020\n\
+\n\
+# draw sides\n\
+variable DRAW_SIDES 0x040\n\
+\n\
+# draw outline for each square that makes up the surface\n\
+variable FACETED 0x080\n\
+\n\
+# draw mesh\n\
+variable MESH 0x100\n\
 }" );
 }
