@@ -45,6 +45,9 @@ proc x29 {{w loopback}} {
 
     x29_plot4 $w
 
+    # Restore escape character back to default so we don't affect
+    # later plots made after this one.
+    $w cmd plsesc "#"
 }
 
 # Plot a model diurnal cycle of temperature
