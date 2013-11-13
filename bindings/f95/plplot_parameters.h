@@ -50,6 +50,10 @@
       integer, parameter :: PLTEXT_BACKCHAR = 3 ! back-char in the text stream
       integer, parameter :: PLTEXT_OVERLINE = 4 ! toggle overline in the text stream
       integer, parameter :: PLTEXT_UNDERLINE = 5 ! toggle underline in the text stream
+      integer, parameter :: ZEROW2B = 1 
+      integer, parameter :: ZEROW2D = 2 
+      integer, parameter :: ONEW2B = 3 
+      integer, parameter :: ONEW2D = 4 
       integer, parameter :: PLSWIN_DEVICE = 1 ! device coordinates
       integer, parameter :: PLSWIN_WORLD = 2 ! world coordinates
       integer, parameter :: PL_X_AXIS = 1 ! The x-axis

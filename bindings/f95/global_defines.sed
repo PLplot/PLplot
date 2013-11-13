@@ -18,8 +18,6 @@
 
 # Drop specific #defines from the file that are not available
 # because of specific #if statements.
-/^#define ZEROW/ d
-/^#define ONEW/ d
 /OBJECT_DATA/ d
 /^#define pltr_img/ d
 
