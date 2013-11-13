@@ -1954,10 +1954,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    the maximum value) of the color bar is specified with
 	    <literal>PL_ORIENT_RIGHT</literal>, <literal>PL_ORIENT_TOP</literal>,
 	    <literal>PL_ORIENT_LEFT</literal>, or
-	    <literal>PL_ORIENT_BOTTOM</literal>.  If none of those bits are
-	    specified, the default orientation is toward the top, i.e., a vertical
-	    color bar. If the <literal>PL_COLORBAR_BACKGROUND</literal> bit is
-	    set, plot a (semi-transparent) background for the color bar. If the
+	    <literal>PL_ORIENT_BOTTOM</literal>.  If none of these bits are
+	    specified, the default orientation is toward the top if the colorbar
+	    is placed on the left or right of the viewport or toward the right if
+	    the colorbar is placed on the top or bottom of the viewport. If the
+	    <literal>PL_COLORBAR_BACKGROUND</literal> bit is set, plot a
+	    (semi-transparent) background for the color bar. If the
 	    <literal>PL_COLORBAR_BOUNDING_BOX</literal> bit is set, plot a
 	    bounding box for the color bar. The type of color bar must be
 	    specified with one of <literal>PL_COLORBAR_IMAGE</literal>,

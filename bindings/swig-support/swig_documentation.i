@@ -702,10 +702,12 @@ ARGUMENTS:
     opt (PLINT, input) :    opt contains bits controlling the overall
     color bar.  The orientation (direction of the maximum value) of
     the color bar is specified with PL_ORIENT_RIGHT, PL_ORIENT_TOP,
-    PL_ORIENT_LEFT, or PL_ORIENT_BOTTOM.  If none of those bits are
-    specified, the default orientation is toward the top, i.e., a
-    vertical color bar. If the PL_COLORBAR_BACKGROUND bit is set, plot
-    a (semi-transparent) background for the color bar. If the
+    PL_ORIENT_LEFT, or PL_ORIENT_BOTTOM.  If none of these bits are
+    specified, the default orientation is toward the top if the
+    colorbar is placed on the left or right of the viewport or toward
+    the right if the colorbar is placed on the top or bottom of the
+    viewport. If the PL_COLORBAR_BACKGROUND bit is set, plot a
+    (semi-transparent) background for the color bar. If the
     PL_COLORBAR_BOUNDING_BOX bit is set, plot a bounding box for the
     color bar. The type of color bar must be specified with one of
     PL_COLORBAR_IMAGE, PL_COLORBAR_SHADE, or PL_COLORBAR_GRADIENT. If
