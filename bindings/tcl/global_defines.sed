@@ -29,8 +29,6 @@ $ a\
 
 # Drop specific #defines from the file that are not available
 # because of specific #if statements.
-/^#define ZEROW/ d
-/^#define ONEW/ d
 /OBJECT_DATA/ d
 /^#define pltr_img/ d
 
@@ -38,8 +36,9 @@ $ a\
 /^#define/ s?//?#?
 
 # Parse what is left while preserving trailing comments.  Watch out
-# for parentheses around value as well.
-/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?\\n\\\n\3\\n\\\nvariable \1 \2\\n\\?
+# for parentheses around value as well.  Use the expr syntax to
+# convert all hexadecimal constants to integers.
+/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?\\n\\\n\3\\n\\\nvariable \1 [expr \2]\\n\\?
 
 # Append extra constants not #defined in plplotcapi.i after PL_NOTSET
 # is processed.
