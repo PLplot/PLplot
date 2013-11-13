@@ -386,7 +386,7 @@ loopbackCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 //--------------------------------------------------------------------------
 // PlbasicInit
 //
-// Used by both Pltcl and Pltk.  Ensures we have been correctly loaded
+// Used by Pltcl_Init, Pltk_Init(.c), and Plplotter_Init(.c).  Ensures we have been correctly loaded
 // into a Tcl/Tk interpreter, that the plplot.tcl startup file can be
 // found and sourced, and that the Matrix library can be found and used,
 // and that it correctly exports a stub table.
@@ -593,6 +593,9 @@ PlbasicInit( Tcl_Interp *interp )
     Tcl_CreateCommand( interp, "wait_until", (Tcl_CmdProc *) plWait_Until,
         (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
 
+// Define the flags as variables in the PLPLOT namespace
+    set_plplot_parameters( interp );
+
     return TCL_OK;
 }
 
@@ -629,10 +632,6 @@ environment variable PL_LIBRARY to the directory containing that file",
         Tcl_CreateCommand( interp, cmdInfoPtr->name, cmdInfoPtr->proc,
             (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
     }
-
-// Define the flags as variables in the PLPLOT namespace
-
-    set_plplot_parameters( interp );
 
 // We really need this so the TEA based 'make install' can
 // properly determine the package we have installed
