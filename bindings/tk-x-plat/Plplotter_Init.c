@@ -55,24 +55,22 @@
 PLDLLIMPEXP_DRIVER EXTERN int
 Plplotter_Init( Tcl_Interp *interp )
 {
-#ifdef USE_TCL_STUBS
-    //
-    // We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
-    // we really don't mind which version of Tcl, Tk we use as long as it
-    // is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
-    // be loaded into 8.1
-    //
-    Tcl_InitStubs( interp, "8.1", 0 );
-#endif
-#ifdef USE_TK_STUBS
-    Tk_InitStubs( interp, "8.1", 0 );
-#endif
     // This must be before any other Tcl related calls
     if ( PlbasicInit( interp ) != TCL_OK )
     {
         return TCL_ERROR;
     }
 
+#ifdef USE_TK_STUBS
+    //
+    // We hard-wire 8.1 here (as is done for the USE_TCL_STUBS case in
+    // PlbasisInit above) rather than TK_VERSION because we really don't
+    // mind which version of Tcl, Tk we use as long as it is 8.1 or
+    // newer.  Otherwise if we compiled against 8.2, we couldn't be
+    // loaded into 8.1
+    //
+    Tk_InitStubs( interp, "8.1", 0 );
+#endif
     //
     // Note, the old technique of:
     //    main = Tk_MainWindow(interp);
