@@ -895,7 +895,7 @@ if(BUILD_TEST)
     if(FILE_DEPENDS_xwin)
       add_dependencies(test_tcl_standard_examples test_xwin_dyndriver)
     endif(FILE_DEPENDS_xwin)
-    list(APPEND interactive_targets_LIST ${test_tcl_standard_examples})
+    list(APPEND interactive_targets_LIST test_tcl_standard_examples)
 
   endif(ENABLE_tcl AND PLD_xwin)
 
