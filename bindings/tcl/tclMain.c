@@ -52,13 +52,7 @@
 // Required for definition of PL_UNUSED macro
 #include "plplotP.h"
 
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 5
-// From (private) tclInt.h in tcl8.5
 #define TclFormatInt( buf, n )    sprintf( ( buf ), "%ld", (long) ( n ) )
-#else
-// From (private) tclIntDecls.h in tcl8.4 and before
-EXTERN int TclFormatInt _ANSI_ARGS_( ( char * buffer, long n ) );
-#endif
 
 #ifndef TclObjCommandComplete_TCL_DECLARED
 EXTERN int TclObjCommandComplete _ANSI_ARGS_( ( Tcl_Obj * cmdPtr ) );
