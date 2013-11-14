@@ -73,7 +73,6 @@ for {set i 0} {$i <= 33} {incr i} {
 	
 	proc $i {} "
             global plwin
-            $plwin cmd plspause 0
             $demo $plwin
             $plwin cmd plcol0 1
             $plwin cmd plsori 0
