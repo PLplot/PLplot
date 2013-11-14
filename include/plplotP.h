@@ -1227,6 +1227,10 @@ pl_set_extended_cmap0( PLStream *, int, int );
 PLDLLIMPEXP FILE *
 pl_create_tempfile( char **fname );
 
+// Create a temporary fifo securely
+PLDLLIMPEXP char *
+pl_create_tempfifo( char **p_fifoname, char **p_dirname );
+
 #ifdef __cplusplus
 }
 #endif

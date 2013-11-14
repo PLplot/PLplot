@@ -253,6 +253,8 @@ include(CheckFunctionExists)
 check_function_exists(popen HAVE_POPEN)
 check_function_exists(usleep PL_HAVE_USLEEP)
 check_function_exists(mkstemp PL_HAVE_MKSTEMP)
+check_function_exists(mkdtemp PL_HAVE_MKDTEMP)
+check_function_exists(mkfifo PL_HAVE_MKFIFO)
 check_function_exists(unlink PL_HAVE_UNLINK)
 check_function_exists(_NSGetArgc HAVE_NSGETARGC)
 

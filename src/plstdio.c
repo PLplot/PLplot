@@ -27,9 +27,11 @@
 
 #if defined ( MSDOS ) || defined ( WIN32 )
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #endif
+
+// This is needed for mode flags for mkfifo as well sa for MSDOS / WIN32
+#include <sys/stat.h>
 
 // For Visual C++ 2005 and later mktemp() and open() are deprecated (see
 // http://msdn.microsoft.com/en-us/library/ms235413.aspx and
@@ -252,5 +254,93 @@ pl_create_tempfile( char **fname )
     }
 
     return fd;
+}
+
+//
+// pl_create_tempfifo()
+//
+// Securely create a temporary fifo and return the file name.
+// This only works on POSIX compliant platforms at the moment. 
+// It creates a secure directory first using mkdtemp, then 
+// creates the named fifo in this directory. The combination of 
+// a private directory and mkfifo failing if the file name already exists
+// makes this secure against race conditions / DoS attacks. This function
+// includes additional functionality over mkdtemp in that it honours the 
+// TMP / TMPDIR / TEMP environment variables.
+//
+// The function returns the file name of the fifo.
+//
+char *
+pl_create_tempfifo( char **p_fifoname, char **p_dirname )
+{
+#if !defined PL_HAVE_MKDTEMP || !defined PL_HAVE_MKFIFO
+    plwarn("Creating fifos not supported on this platform");
+    return NULL;
+#else 
+    FILE       *fd;
+    const char *tmpdir;
+    char *template;
+    char *dirname;
+    const char *tmpname = "plplot_dir_XXXXXX";
+    const char *fifoname = "plplot_fifo";
+    int        flags;
+
+#if defined ( MSDOS ) || defined ( WIN32 )
+    tmpdir = getenv( "TEMP" );
+#else
+    tmpdir = getenv( "TMPDIR" );
+#endif
+
+// The P_TMPDIR macro is defined in stdio.h on many UNIX systems - try that
+#ifdef P_TMPDIR
+    if ( tmpdir == NULL )
+        tmpdir = P_TMPDIR;
+#endif
+
+    if ( tmpdir == NULL )
+    {
+#if defined ( MSDOS ) || defined ( WIN32 )
+        tmpdir = "c:\\windows\\Temp";
+#else
+        tmpdir = "/tmp";
+#endif
+    }
+
+    // N.B. Malloc ensures template is long enough so strcpy and strcat are safe here
+    dirname = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ) );
+    strcpy( dirname, tmpdir );
+#if defined ( MSDOS ) || defined ( WIN32 )
+    strcat( dirname, "\\" );
+#else
+    strcat( dirname, "/" );
+#endif
+    strcat( dirname, tmpname );
+    // Create the temporary directory
+    dirname = mkdtemp( dirname );
+    *p_dirname = dirname;
+
+    // Now create the fifo in the directory
+    template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + strlen(fifoname) + 4 ) );
+    strcpy( template, dirname );
+#if defined ( MSDOS ) || defined ( WIN32 )
+    strcat( template, "\\" );
+#else
+    strcat( template, "/" );
+#endif
+    strcat( template, fifoname );
+    *p_fifoname = template;
+
+    // Check that mkfifo succeeds safely
+    if ( mkfifo( template, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) < 0 ) {
+         plwarn( "mkfifo error" );
+         free( template );
+         *p_fifoname = NULL;
+         free( dirname );
+         *p_dirname = NULL;
+         return NULL;
+    }
+
+    return template;
+#endif
 }
 

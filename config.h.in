@@ -109,6 +109,12 @@
 // Define to 1 if the function mkstemp is available.
 #cmakedefine PL_HAVE_MKSTEMP 1
 
+// Define to 1 if the function mkdtemp is available.
+#cmakedefine PL_HAVE_MKDTEMP 1
+
+// Define to 1 if the function mkfifo is available.
+#cmakedefine PL_HAVE_MKFIFO 1
+
 // Define to 1 if you have the <ndir.h> header file, and it defines `DIR'.
 #cmakedefine HAVE_NDIR_H 1
 
