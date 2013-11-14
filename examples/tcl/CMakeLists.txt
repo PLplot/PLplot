@@ -85,6 +85,21 @@ configure_file(
   @ONLY
 )
 
+# tclsh_standard_examples is a configured shell script that runs all
+# the standard examples under tclsh use a TEA-based approach.
+# pkgIndex_LOCATION is the directory where the relevant pkgIndex.tcl
+# file is located.
+if(CORE_BUILD)
+    set(pkgIndex_LOCATION ${CMAKE_BINARY_DIR}/bindings/tcl)
+else(CORE_BUILD)
+    set(pkgIndex_LOCATION ${DATA_DIR})
+endif(CORE_BUILD)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/tclsh_standard_examples.in
+  ${CMAKE_CURRENT_BINARY_DIR}/tclsh_standard_examples
+  @ONLY
+  )
+
 # Copy file and scripts to the binary directory if different to the
 # source directory. Needed for ctest, but also so the tclIndex file
 # is generated in the binary tree not the source tree.
@@ -120,7 +135,7 @@ if(CORE_BUILD)
     )
 
   install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-  install(PROGRAMS ${tcl_SCRIPTS} standard_examples.in
+  install(PROGRAMS ${tcl_SCRIPTS} standard_examples.in tclsh_standard_examples.in
     DESTINATION ${DATA_DIR}/examples/tcl
     )
 

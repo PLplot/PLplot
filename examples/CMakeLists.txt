@@ -873,19 +873,11 @@ if(BUILD_TEST)
   endif(ENABLE_pygcw)
 
   if(ENABLE_tcl AND PLD_xwin)
-    if(CORE_BUILD)
-      add_custom_target(test_tcl_standard_examples
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/standard_examples -dev xwin -np
-	DEPENDS ${xwin_target}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
-	)
-    else(CORE_BUILD)
-      add_custom_target(test_tcl_standard_examples
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/standard_examples -dev xwin -np
-	DEPENDS ${xwin_target}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
-	)
-    endif(CORE_BUILD)
+    add_custom_target(test_tcl_standard_examples
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/standard_examples -dev xwin -np
+      DEPENDS ${xwin_target}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+      )
     add_dependencies(test_tcl_standard_examples
       pltcl
       tcl_examples
@@ -896,6 +888,22 @@ if(BUILD_TEST)
       add_dependencies(test_tcl_standard_examples test_xwin_dyndriver)
     endif(FILE_DEPENDS_xwin)
     list(APPEND interactive_targets_LIST test_tcl_standard_examples)
+
+    add_custom_target(test_tclsh_standard_examples
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
+      DEPENDS ${xwin_target}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+      )
+    add_dependencies(test_tclsh_standard_examples
+      pltcl
+      tcl_examples
+      tclIndex_tcl
+      xwin
+      )
+    if(FILE_DEPENDS_xwin)
+      add_dependencies(test_tclsh_standard_examples test_xwin_dyndriver)
+    endif(FILE_DEPENDS_xwin)
+    list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
 
   endif(ENABLE_tcl AND PLD_xwin)
 
