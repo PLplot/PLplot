@@ -59,8 +59,7 @@ endfor
 
 # Remove 7, 16 until plshade1 fix is done.
 
-@swig_octave_comment@for i=[1:6 8 9 13 15 21] ;
-@matwrap_octave_comment@for i=[1:6 8 9 13 15 21] ;
+for i=[1:6 8 9 13 15 21] ;
     if (verbose_test)
 	printf("p%d\n",i);
     endif
@@ -73,10 +72,7 @@ endfor
 # Example 32 not implemented because there has been no call for propagation
 # and it exercises no new API.
 failed = [] ;
-@swig_octave_comment@for i=[0:18 19 20:31 33] ;
-# Drop 4, 18, 26, and 33 because deprecated matwrap does not include plstring,
-# plstring3, pllegend, or plcolorbar.
-@matwrap_octave_comment@for i=[0:3 5:17 20:25 27:31 ] ;
+for i=[0:18 19 20:31 33] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
     cmd = sprintf("x%.2dc",i);
