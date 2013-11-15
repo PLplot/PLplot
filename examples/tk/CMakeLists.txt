@@ -142,7 +142,7 @@ endif(ENABLE_itk)
 
 # standard_examples is a configured shell script that runs all the standard
 # examples under plserver.
-set(tk_SCRIPTS tk01 tk03 plgrid standard_examples)
+set(tk_SCRIPTS tk01 tk03 plgrid standard_examples wish_standard_examples)
 # The second and fourth Tk examples depend on Itk to work.
 if(ENABLE_itk)
   list(APPEND tk_SCRIPTS tk02 tk04)
@@ -181,6 +181,19 @@ if(BUILD_TEST)
 
   # Provide locations for several tk-related targets that will be used
   # to configure the tk_SCRIPTS.
+
+  # wish_standard_examples is a configured shell script that runs all
+  # the standard examples under wish using a TEA-based approach.
+  # pkgIndex_LOCATION is the directory where the relevant pkgIndex.tcl
+  # file is located.  FIXME!  use two directories temporarily as
+  # part of the horrible hack currently allowing tkdemos to distinguish
+  # between the plserver and wish environments.
+  if(CORE_BUILD)
+    set(pkgIndex_LOCATION "${CMAKE_BINARY_DIR}/bindings/tk-x-plat ${CMAKE_BINARY_DIR}/bindings/tk")
+  else(CORE_BUILD)
+    set(pkgIndex_LOCATION ${DATA_DIR})
+  endif(CORE_BUILD)
+
   foreach(tk_related_target xtk01 plserver xtk02 xtk04)
     if(TARGET ${tk_related_target})
       get_target_property(${tk_related_target}_LOCATION

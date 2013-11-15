@@ -964,19 +964,11 @@ if(BUILD_TEST)
     endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_plgrid)
 
-    if(CORE_BUILD)
-      add_custom_target(test_tk_standard_examples
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
-	DEPENDS ${xwin_target}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
-	)
-    else(CORE_BUILD)
-      add_custom_target(test_tk_standard_examples
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
-	DEPENDS ${xwin_target}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
-	)
-    endif(CORE_BUILD)
+    add_custom_target(test_tk_standard_examples
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
+      DEPENDS ${xwin_target}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+      )
     add_dependencies(test_tk_standard_examples
       plserver
       tcl_examples
@@ -989,6 +981,24 @@ if(BUILD_TEST)
       add_dependencies(test_tk_standard_examples test_xwin_dyndriver)
     endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_standard_examples)
+
+    add_custom_target(test_wish_standard_examples
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+      )
+    add_dependencies(test_wish_standard_examples
+      plplottcltk${LIB_TAG}
+      tk
+      # FIXME, the tkwin dependency is part of the horrible hack to
+      # allow tkdemos.tcl to distinguish between the plserver and wish
+      # environments.
+      tkwin
+      tcl_examples
+      tclIndex_tcl
+      tclIndex_tk
+      tclIndex_examples_tk
+      )
+    list(APPEND targets_examples_tk test_wish_standard_examples)
 
     if(ENABLE_itk)
       add_custom_target(test_tk_02
