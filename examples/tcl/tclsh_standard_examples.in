@@ -1,16 +1,17 @@
 #!@SH_EXECUTABLE@
-# Examples 14 and 31 left out - see Tk standard_examples.in
-# Choose the xwin device below (after plinit)
-# Note the backslash at the end - this causes Tcl to ignore
-# the next line. It becomes a valid Tcl script as well as
-# valid shell script
-# \
-@TCL_TCLSH@  <<EOF
+# Examples 14 and 31 commented out - see Tk standard_examples.in
+# Choose the xwin device below although any other interactive
+# device would work.  
+# The following exec command reexecutes the script under tclsh.  This
+# is possible because all comment lines are ignored by tclsh including
+# continued ones with a trailing backslash like this one \
+exec @TCL_TCLSH@ "$0" "$@"
 lappend auto_path @pkgIndex_LOCATION@
 package require Pltcl
 source tcldemos.tcl
 plsdev "xwin"
 plinit
+# Disable pausing.
 plspause 0
 0
 1
@@ -26,12 +27,14 @@ plspause 0
 11
 12
 13
+#14
 15
 16
 17
 18
 19
 20
+# example 20 enables plspause so must disable it again.
 plspause 0
 21
 22
@@ -43,6 +46,6 @@ plspause 0
 28
 29
 30
+#31
 33
 exit
-EOF
