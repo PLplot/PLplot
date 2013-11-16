@@ -1,10 +1,27 @@
 Running the Tk Demos.
 
-PLplot doesn't need to be installed to run these demos.
-However, different commands might be needed to run the demos when PLplot
-is installed or not; in these cases, the first command must be used for
-the installed situation, while the second, separated by a '|', is for the
-uninstalled situation.
+Note these directions (aside from runAllDemos.tcl) as well as taking
+proper care of all the dependencies have been incorporated into our
+CMake-based build systems for the core build and the installed
+examples build.  So with the exception of runAllDemos.tcl the tests
+below of the Tcl, Tk, Itcl, Itk, and Iwidgets components of PLplot can
+be done by simply running
+
+make test_interactive
+
+However, we preserve the directions below for historical reasons and
+in case you want to do any of these commands by hand.
+
+There are two ways to run the examples below, where the alternatives
+are indicated by "|".  The first alternative should only be used if
+you have changed directories to
+$prefix/share/plplot$VERSION/examples/tk where $prefix is the PLplot
+install prefix and $VERSION is the PLplot release version, e.g.,
+5.9.10.  (That is, the first alternative should be used if you have
+changed directories to the installed tk examples directory.)  The
+second alternative should only be used if you have changed directories
+to bindings/examples/tk in the build tree.
+
 
 To run the plot.tcl demo follow the directions in that file to run it
 under plserver using the plframe widget.
@@ -19,16 +36,6 @@ following way:
 ./tk03 		# to run this demo in the build tree, change line 11
 		# from "plserver" to "../../bindings/plserver"
 ./xtk04 -f tk04
-
-There are two ways to run the examples below, where the alternatives
-are indicated by "|".  The first alternative should only be used if
-you have changed directories to
-$prefix/share/plplot$VERSION/examples/tk where $prefix is the PLplot
-install prefix and $VERSION is the PLplot release version, e.g.,
-5.9.10.  (That is, the first alternative should be used if you have
-changed directories to the installed tk examples directory.)  The
-second alternative should only be used if you have changed directories
-to bindings/examples/tk in the build tree.
 
 (1) Run tkdemos.tcl from plserver.  This potentially exercises all the x??.tcl
 examples using the plframe widget:
@@ -45,23 +52,12 @@ plserver -h to find out what they are).
 (2) Run tkdemos.tcl from wish.
 
 wish -geometry 600x400
-lappend auto_path $prefix/share/plplot$VERSION ../../bindings/tk-x-plat ../../bindings/tk 
+lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk 
 package require Pltk
 source tkdemos.tcl
 1
 2
 ....
-
-FIXME: Note the ../../bindings/tk-x-plat in auto_path is a temporary
-measure to support the hacked tkdemos.tcl logic which invokes package
-require Plplotter to distinguish between the plserver case (where that
-package is not available) and the current wish case (where that
-package can be successfully loaded because of ../../bindings/tk-x-plat
-in auto_path).
-
-FIXME: Try examples 10 and 12 which should work. Most of the rest
-(e.g., 1, 2,) currently do not work because PLplot library constants
-are not available under wish for some unknown reason.
 
 To find out more about the wish command (which comes as part of the Tk
 package) use man wish.

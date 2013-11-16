@@ -1,5 +1,15 @@
 Running the Tcl Demos.
 
+Note these directions as well as taking proper care of all the
+dependencies have been incorporated into our CMake-based build systems
+for the core build and the installed examples build.  So the tests
+below of the Tcl component of PLplot can be done by simply running
+
+make test_interactive
+
+However, we preserve the directions below for historical reasons and
+in case you want to do any of these commands by hand.
+
 There are two ways to run the examples below, where the alternatives
 are indicated by "|".  The first alternative should only be used if
 you have changed directories to
