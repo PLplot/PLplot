@@ -74,6 +74,9 @@ plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT len, v
 static void
 plP_default_label( PLINT axis, PLFLT value, char *string, PLINT len, void *data );
 
+static const char *
+plgesc_string( void );
+
 //--------------------------------------------------------------------------
 // void plbox()
 //
@@ -793,7 +796,8 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
     PLFLT       pos, tn, tp, temp, height, tick1, vmin, vmax;
 // Note that 'tspace' is the minimim distance away (in fractional number
 // of ticks) from the boundary that an X or Y numerical label can be drawn.
-    PLFLT dwx, dwy, lambda, tcrit, tspace = 0.1;
+    PLFLT      dwx, dwy, lambda, tcrit, tspace = 0.1;
+    const char * esc_string = plgesc_string();
 
     vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
     vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
@@ -927,7 +931,7 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
         *digits = 2;
         if ( !ll && !lo && mode )
         {
-            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) scale );
+            snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) scale, esc_string );
             plxytx( wx1, wy1, wx2, wy2, height, 1.0, 0.5, string );
         }
     }
@@ -1020,6 +1024,7 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     PLFLT       pos, tn, tp, temp, height, tick1;
     PLFLT       dwy, lambda, diag, major, minor, xmajor, xminor;
     PLFLT       ymajor, yminor, dxm, dym, vmin, vmax;
+    const char  * esc_string = plgesc_string();
 
     vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
     vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
@@ -1163,7 +1168,7 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
         }
         if ( !ll && !lo && mode )
         {
-            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) scale );
+            snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) scale, esc_string );
             pos    = 1.15;
             height = 0.5;
             if ( ln && !right )
@@ -1408,7 +1413,8 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     // -O3 -Wuninitialized warnings that are obvious false alarms from
     // the clarity of the code associated with the true or false
     // result for custom_exponent_placement.
-    PLFLT pos = 0.0, height = 0.0, just = 0.0;
+    PLFLT      pos          = 0.0, height = 0.0, just = 0.0;
+    const char * esc_string = plgesc_string();
 
     plgchr( &default_mm, &char_height_mm );
 
@@ -1548,7 +1554,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
                 pos    = 1.0;
                 just   = 0.5;
             }
-            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
+            snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) xscale, esc_string );
             if ( lnx )
             {
                 // Bottom axis exponent.
@@ -1777,7 +1783,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
 
         if ( !lly && !ldy && !loy && ymode )
         {
-            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
+            snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) yscale, esc_string );
             if ( custom_exponent_placement )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
@@ -1904,7 +1910,8 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     // -O3 -Wuninitialized warnings that are obvious false alarms from
     // the clarity of the code associated with the true or false
     // result for custom_exponent_placement.
-    PLFLT pos = 0.0, height = 0.0, just = 0.0;
+    PLFLT      pos          = 0.0, height = 0.0, just = 0.0;
+    const char * esc_string = plgesc_string();
 
     plgchr( &default_mm, &char_height_mm );
 
@@ -2098,7 +2105,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
                 pos    = 1.0;
                 just   = 0.5;
             }
-            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
+            snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) xscale, esc_string );
             if ( lnx )
             {
                 // Bottom axis exponent.
@@ -2341,7 +2348,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
 
         if ( !lly && !ldy && !loy && ymode )
         {
-            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
+            snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) yscale, esc_string );
             if ( custom_exponent_placement )
             {
                 height = ( (PLLabelDefaults *) plsc->label_data )->exp_label_disp;
@@ -2456,8 +2463,9 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
 //--------------------------------------------------------------------------
 void plP_default_label_log( PLINT PL_UNUSED( axis ), PLFLT value, char *string, PLINT len, void * PL_UNUSED( data ) )
 {
+    const char * esc_string = plgesc_string();
     // Exponential, i.e. 10^-1, 10^0, 10^1, etc
-    snprintf( string, (size_t) len, "10#u%d", (int) ROUND( value ) );
+    snprintf( string, (size_t) len, "10%su%d", esc_string, (int) ROUND( value ) );
 }
 
 void plP_default_label_log_fixed( PLINT PL_UNUSED( axis ), PLFLT value, char *string, PLINT len, void * PL_UNUSED( data ) )
@@ -2601,4 +2609,46 @@ c_plslabelfunc( void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer ), 
 {
     plsc->label_func = label_func;
     plsc->label_data = label_data;
+}
+
+static const char *
+plgesc_string( void )
+{
+    static const char *esc_strings = { "!\0#\0$\0%\0&\0*\0@\0^\0~\0" };
+    int d;
+    switch ( plsc->esc )
+    {
+    case '!':
+        d = 0;
+        break;
+    case '#':
+        d = 1;
+        break;
+    case '$':
+        d = 2;
+        break;
+    case '%':
+        d = 3;
+        break;
+    case '&':
+        d = 4;
+        break;
+    case '*':
+        d = 5;
+        break;
+    case '@':
+        d = 6;
+        break;
+    case '^':
+        d = 7;
+        break;
+    case '~':
+        d = 8;
+        break;
+    default:
+        plwarn( "plgesc_string: Invalid escape character, assuming '#' instead" );
+        d = 1;
+        break;
+    }
+    return &( esc_strings[d * 2] );
 }
