@@ -42,17 +42,25 @@ proc sourceUtf8 {sourceFile} {
 
 set  utf8_examples {4 18 24 26 33}
 
-# This is hacked logic for distinguishing between the plserver
-# and wish cases which requires an extra directory be lappended in
-# the build tree for the Pltk case.  FIXME.
-if {[catch {package require Plplotter}]} {
+# In order to distinguish whether this is a plserver or wish
+# environment we assume that $argv0 has the string "plserver" or
+# "wish" in it.  Some contrived examples can be figured out where this
+# assumption is not correct, and for those cases we simply emit an
+# error message and return.  But normally this assumption is correct,
+# and it is certainly correct for our tests.
+if { [string first "plserver" $argv0] >= 0 } {
     # use 'plserver' method
     plstdwin .
     plxframe .plw
     set plwin .plw.plwin
-} else {
+} elseif { [string first "wish" $argv0] >= 0 } {
+    # use 'wish" method
     plframe .plw
     set plwin .plw
+} else {
+    puts stderr "Error: argv0 = \"$argv0\"\ndoes not contain either the substrings \"plserver\" or \"wish\""
+    puts stderr "Therefore cannot decide how to proceed with tkdemos.tcl so giving up"
+    return
 }
 pack append . .plw {left expand fill}
 

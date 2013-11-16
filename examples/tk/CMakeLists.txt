@@ -185,11 +185,9 @@ if(BUILD_TEST)
   # wish_standard_examples is a configured shell script that runs all
   # the standard examples under wish using a TEA-based approach.
   # pkgIndex_LOCATION is the directory where the relevant pkgIndex.tcl
-  # file is located.  FIXME!  use two directories temporarily as
-  # part of the horrible hack currently allowing tkdemos to distinguish
-  # between the plserver and wish environments.
+  # file is located.
   if(CORE_BUILD)
-    set(pkgIndex_LOCATION "${CMAKE_BINARY_DIR}/bindings/tk-x-plat ${CMAKE_BINARY_DIR}/bindings/tk")
+    set(pkgIndex_LOCATION ${CMAKE_BINARY_DIR}/bindings/tk)
   else(CORE_BUILD)
     set(pkgIndex_LOCATION ${DATA_DIR})
   endif(CORE_BUILD)
