@@ -2616,6 +2616,11 @@ plgesc_string( void )
 {
     static const char *esc_strings = { "!\0#\0$\0%\0&\0*\0@\0^\0~\0" };
     int d;
+    // Follow plgesc logic here which is to set the default escape
+    // if plsc->esc is in its initial state.
+    if ( plsc->esc == '\0' )
+        plsc->esc = '#';
+
     switch ( plsc->esc )
     {
     case '!':
