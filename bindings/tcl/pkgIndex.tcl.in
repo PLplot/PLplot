@@ -34,9 +34,14 @@ proc load_pkg_Pltcl {dir} {
 
     if {$tcl_platform(platform) == "unix"} {
 	set thisDir [pwd]
+	# Find absolute path of $dir 
+	cd $dir
+	set pkgIndexDir [pwd]
+	cd $thisDir
 	set buildDir "@BUILD_DIR@"
 	set bLen [string length $buildDir]
-	if {![string compare -length $bLen $buildDir $thisDir]}	then {
+	# If pkgIndexDir is in the build tree...
+	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
 		set searchdirs "."} else {
 		set searchdirs [list "@LIB_HARDDIR@"]}
 	#puts $searchdirs

@@ -35,9 +35,14 @@ proc load_pkg_Plplotter {dir} {
     if {$tcl_platform(platform) == "unix"} {
 	set stem tkwin
 	set thisDir [pwd]
+	# Find absolute path of $dir 
+	cd $dir
+	set pkgIndexDir [pwd]
+	cd $thisDir
 	set buildDir "@BUILD_DIR@"
 	set bLen [string length $buildDir]
-	if {![string compare -length $bLen $buildDir $thisDir]}	then {
+	# If pkgIndexDir is in the build tree...
+	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
 		set searchdirs "../../drivers"} else {
 		set searchdirs [list "@DRV_HARDDIR@"]}
 	#puts $searchdirs
