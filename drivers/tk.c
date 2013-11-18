@@ -1518,10 +1518,10 @@ set_windowname( PLStream *pls )
 static void
 link_init( PLStream *pls )
 {
-    TkDev   *dev   = (TkDev *) pls->dev;
-    PLiodev *iodev = (PLiodev *) dev->iodev;
-    size_t  bufmax = (size_t) ( pls->bufmax * 1.2 );
-    char *dirname = NULL;
+    TkDev   *dev     = (TkDev *) pls->dev;
+    PLiodev *iodev   = (PLiodev *) dev->iodev;
+    size_t  bufmax   = (size_t) ( pls->bufmax * 1.2 );
+    char    *dirname = NULL;
 
     dbug_enter( "link_init" );
 
@@ -1529,11 +1529,11 @@ link_init( PLStream *pls )
 
     if ( !pls->dp )
     {
-        // This uses the pl_create_tempfifo function to create 
+        // This uses the pl_create_tempfifo function to create
         // the fifo in a safe manner by first creating a private
         // temporary directory.
         iodev->fileName = pl_create_tempfifo( (char **) &iodev->fileName, &dirname );
-        if ( dirname == NULL || iodev->fileName == NULL ) 
+        if ( dirname == NULL || iodev->fileName == NULL )
             abort_session( pls, "mkfifo error" );
 
         // Tell plframe widget to open FIFO (for reading).
@@ -1556,7 +1556,7 @@ link_init( PLStream *pls )
 // Unlink FIFO so that it isn't left around if program crashes.
 // This also ensures no other program can mess with it.
 
-        if ( unlink( iodev->fileName) == -1 )
+        if ( unlink( iodev->fileName ) == -1 )
             abort_session( pls, "Error removing fifo" );
         if ( rmdir( dirname ) == -1 )
             abort_session( pls, "Error removing temporary directory" );

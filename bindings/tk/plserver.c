@@ -115,7 +115,7 @@ main( int argc, const char **argv )
 
 // Save arglist to get around Tk_ParseArgv limitations
 
-    myargv = (const char **) malloc( argc * sizeof(char *) );
+    myargv = (const char **) malloc( argc * sizeof ( char * ) );
     for ( i = 0; i < argc; i++ )
     {
         myargv[i] = argv[i];

@@ -260,12 +260,12 @@ pl_create_tempfile( char **fname )
 // pl_create_tempfifo()
 //
 // Securely create a temporary fifo and return the file name.
-// This only works on POSIX compliant platforms at the moment. 
-// It creates a secure directory first using mkdtemp, then 
-// creates the named fifo in this directory. The combination of 
+// This only works on POSIX compliant platforms at the moment.
+// It creates a secure directory first using mkdtemp, then
+// creates the named fifo in this directory. The combination of
 // a private directory and mkfifo failing if the file name already exists
 // makes this secure against race conditions / DoS attacks. This function
-// includes additional functionality over mkdtemp in that it honours the 
+// includes additional functionality over mkdtemp in that it honours the
 // TMP / TMPDIR / TEMP environment variables.
 //
 // The function returns the file name of the fifo.
@@ -274,14 +274,14 @@ char *
 pl_create_tempfifo( char **p_fifoname, char **p_dirname )
 {
 #if !defined PL_HAVE_MKDTEMP || !defined PL_HAVE_MKFIFO
-    plwarn("Creating fifos not supported on this platform");
+    plwarn( "Creating fifos not supported on this platform" );
     return NULL;
-#else 
+#else
     FILE       *fd;
     const char *tmpdir;
-    char *template;
-    char *dirname;
-    const char *tmpname = "plplot_dir_XXXXXX";
+    char       *template;
+    char       *dirname;
+    const char *tmpname  = "plplot_dir_XXXXXX";
     const char *fifoname = "plplot_fifo";
     int        flags;
 
@@ -316,11 +316,11 @@ pl_create_tempfifo( char **p_fifoname, char **p_dirname )
 #endif
     strcat( dirname, tmpname );
     // Create the temporary directory
-    dirname = mkdtemp( dirname );
+    dirname    = mkdtemp( dirname );
     *p_dirname = dirname;
 
     // Now create the fifo in the directory
-    template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + strlen(fifoname) + 4 ) );
+    template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + strlen( fifoname ) + 4 ) );
     strcpy( template, dirname );
 #if defined ( MSDOS ) || defined ( WIN32 )
     strcat( template, "\\" );
@@ -331,13 +331,14 @@ pl_create_tempfifo( char **p_fifoname, char **p_dirname )
     *p_fifoname = template;
 
     // Check that mkfifo succeeds safely
-    if ( mkfifo( template, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) < 0 ) {
-         plwarn( "mkfifo error" );
-         free( template );
-         *p_fifoname = NULL;
-         free( dirname );
-         *p_dirname = NULL;
-         return NULL;
+    if ( mkfifo( template, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) < 0 )
+    {
+        plwarn( "mkfifo error" );
+        free( template );
+        *p_fifoname = NULL;
+        free( dirname );
+        *p_dirname = NULL;
+        return NULL;
     }
 
     return template;
