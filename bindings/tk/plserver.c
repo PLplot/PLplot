@@ -96,7 +96,7 @@ int
 main( int argc, const char **argv )
 {
     int        i, myargc = argc;
-    const char *myargv[20];
+    const char **myargv;
     Tcl_Interp *interp;
     const char *helpmsg = "Command-specific options:";
 
@@ -113,8 +113,9 @@ main( int argc, const char **argv )
 
     interp = Tcl_CreateInterp();
 
-// Save arglist to get around tk_ParseArgv limitations
+// Save arglist to get around Tk_ParseArgv limitations
 
+    myargv = (const char **) malloc( argc * sizeof(char *) );
     for ( i = 0; i < argc; i++ )
     {
         myargv[i] = argv[i];
@@ -224,7 +225,7 @@ AppInit( Tcl_Interp *interp )
     if ( auto_path != NULL )
     {
         Tcl_SetVar( interp, "dir", auto_path, 0 );
-        tcl_cmd( interp, "set auto_path [list $dir $auto_path]" );
+        tcl_cmd( interp, "lappend auto_path $dir" );
     }
 
 // Rename "exit" to "tkexit", and insert custom exit handler
@@ -277,8 +278,17 @@ plExitCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp, int argc, cha
     Tcl_VarEval( interp, "plserver_link_end", (char **) NULL );
 
 // Now really exit
+// (Note: this function is actually deprecated, but as it is only used here
+// at the end of the program, let's leave it.)
 
-    return Tcl_VarEval( interp, "tkexit", argv[1], (char **) NULL );
+    if ( argc == 1 )
+    {
+        return Tcl_VarEval( interp, "tkexit", (char **) NULL );
+    }
+    else
+    {
+        return Tcl_VarEval( interp, "tkexit", argv[1], (char **) NULL );
+    }
 }
 
 //--------------------------------------------------------------------------

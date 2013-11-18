@@ -251,21 +251,25 @@ pltkMain( int argc, const char **argv, char *RcFileName,
 
     if ( Tcl_Init( interp ) == TCL_ERROR )
     {
+        fprintf( stderr, "Tcl initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
     if ( Tk_Init( interp ) == TCL_ERROR )
     {
+        fprintf( stderr, "Tk initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
 #ifdef HAVE_ITCL
     if ( Itcl_Init( interp ) == TCL_ERROR )
     {
+        fprintf( stderr, "Itcl initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
 #endif
 #ifdef HAVE_ITK
     if ( Itk_Init( interp ) == TCL_ERROR )
     {
+        fprintf( stderr, "Itk initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
 
@@ -281,17 +285,20 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     if ( Tcl_Import( interp, Tcl_GetGlobalNamespace( interp ),
              "::itk::*", /* allowOverwrite */ 1 ) != TCL_OK )
     {
+        fprintf( stderr, "Itk initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
 
     if ( Tcl_Import( interp, Tcl_GetGlobalNamespace( interp ),
              "::itcl::*", /* allowOverwrite */ 1 ) != TCL_OK )
     {
+        fprintf( stderr, "Itk initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
 
     if ( Tcl_Eval( interp, "auto_mkindex_parser::slavehook { _%@namespace import -force ::itcl::* ::itk::* }" ) != TCL_OK )
     {
+        fprintf( stderr, "Itk initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
 #endif
@@ -333,6 +340,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     if ( ( *AppInit )( interp ) != TCL_OK )
     {
         fprintf( stderr, "(*AppInit) failed: %s\n", Tcl_GetStringResult( interp ) );
+        return TCL_ERROR;
     }
 
     //
@@ -412,7 +420,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
             Tcl_DStringFree( &buffer );
         }
 // Exclude UNIX-only feature
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
         Tk_CreateFileHandler( 0, TK_READABLE, StdinProc, (ClientData) 0 );
 #endif
         if ( tty )
@@ -493,7 +501,7 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
             }
             else
             {
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
                 Tk_DeleteFileHandler( 0 );
 #endif
             }
@@ -527,11 +535,11 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
     // finished.  Among other things, this will trash the text of the
     // command being evaluated.
     //
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
     Tk_CreateFileHandler( 0, 0, StdinProc, (ClientData) 0 );
 #endif
     code = Tcl_RecordAndEval( interp, cmd, 0 );
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
     Tk_CreateFileHandler( 0, TK_READABLE, StdinProc, (ClientData) 0 );
 #endif
     Tcl_DStringFree( &command );
@@ -574,8 +582,8 @@ prompt:
 //
 
 static void
-Prompt( intp, partial )
-Tcl_Interp * intp;                    // Interpreter to use for prompting.
+Prompt( interp, partial )
+Tcl_Interp * interp;                  // Interpreter to use for prompting.
 int partial;                          // Non-zero means there already
                                       // exists a partial command, so use
                                       // the secondary prompt.
@@ -583,7 +591,7 @@ int partial;                          // Non-zero means there already
     const char *promptCmd;
     int        code;
 
-    promptCmd = Tcl_GetVar( intp,
+    promptCmd = Tcl_GetVar( interp,
         partial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY );
     if ( promptCmd == NULL )
     {
@@ -595,12 +603,12 @@ defaultPrompt:
     }
     else
     {
-        code = Tcl_Eval( intp, promptCmd );
+        code = Tcl_Eval( interp, promptCmd );
         if ( code != TCL_OK )
         {
-            Tcl_AddErrorInfo( intp,
+            Tcl_AddErrorInfo( interp,
                 "\n    (script that generates prompt)" );
-            fprintf( stderr, "%s\n", Tcl_GetStringResult( intp ) );
+            fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
             goto defaultPrompt;
         }
     }
