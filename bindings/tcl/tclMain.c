@@ -54,10 +54,6 @@
 
 #define TclFormatInt( buf, n )    sprintf( ( buf ), "%ld", (long) ( n ) )
 
-#ifndef TclObjCommandComplete_TCL_DECLARED
-EXTERN int TclObjCommandComplete _ANSI_ARGS_( ( Tcl_Obj * cmdPtr ) );
-#endif
-
 # undef TCL_STORAGE_CLASS
 # define TCL_STORAGE_CLASS    DLLEXPORT
 
@@ -68,8 +64,10 @@ EXTERN int TclObjCommandComplete _ANSI_ARGS_( ( Tcl_Obj * cmdPtr ) );
 // linked into the application.
 //
 
-EXTERN int Tcl_LinkVar( );
-int ( *tclDummyLinkVarPtr )() = Tcl_LinkVar;
+// Experiments show this is no longer required, and in any case
+// it screws up using the Tcl stub library. So comment out (AWI).
+//EXTERN int Tcl_LinkVar( );
+//int ( *tclDummyLinkVarPtr )() = Tcl_LinkVar;
 
 //
 // Declarations for various library procedures and variables (don't want
@@ -90,7 +88,7 @@ static const char *tclStartupScriptFileName = NULL;
 static void
 plPrepOutputHandler( Tcl_Interp *interp, int code, int tty );
 
-// Other functio prototypes
+// Other function prototypes
 void TclSetStartupScriptFileName( char *fileName );
 const char *TclGetStartupScriptFileName( void );
 
@@ -423,7 +421,7 @@ defaultPrompt:
         //
 
         Tcl_AppendToObj( commandPtr, "\n", 1 );
-        if ( !TclObjCommandComplete( commandPtr ) )
+        if ( !Tcl_CommandComplete( Tcl_GetString( commandPtr ) ) )
         {
             gotPartial = 1;
             continue;
