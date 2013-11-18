@@ -34,12 +34,15 @@ endif(DEFAULT_NO_BINDINGS)
 
 option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwidgets" OFF)
 
+option(USE_TCL_TK_STUBS "Use Tcl/Tk stubs libraries" OFF)
+
 # Depending on these above options and system resources may also determine
 # the following variables which are largely self-explanatory unless documented
 # further.
 
 #TCL_INCLUDE_PATH
-#TCL_LIBRARY
+#TCL_LIBRARY            (Always the non-stub version)
+#TCL_STUB_LIBRARY       (Always the stub version)
 #ITCL_INCLUDE_PATH
 #ITCL_LIBRARY
 #HAVE_ITCL   		(On when itcl header and library have been found.
@@ -49,7 +52,8 @@ option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwi
 #			 when itclDecls.h.  Otherwise, undefined.
 #			 Used for source file configuration.)
 #TK_INCLUDE_PATH
-#TK_LIBRARY
+#TK_LIBRARY             (Always the non-stub version)
+#TK_STUB_LIBRARY        (Always the stub version)
 #ITK_INCLUDE_PATH
 #ITK_LIBRARY
 #HAVE_ITK   		(On when itcl header and library have been found.
@@ -61,11 +65,13 @@ option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwi
 
 if(ENABLE_tcl)
   message(STATUS "Start determining consistent system data for Tcl and friends")
-  find_package(TCL QUIET)
+  find_package(TclStub QUIET)
   if(TCL_FOUND)
     message(STATUS "Looking for include paths and libraries for Tcl - found")
     message(STATUS "TCL_INCLUDE_PATH = ${TCL_INCLUDE_PATH}")
     message(STATUS "TCL_LIBRARY = ${TCL_LIBRARY}")
+    message(STATUS "TCL_STUB_LIBRARY = ${TCL_STUB_LIBRARY}")
+
     get_filename_component(TCL_LIBRARY_PATH ${TCL_LIBRARY} PATH)
     message(STATUS "TCL_LIBRARY_PATH = ${TCL_LIBRARY_PATH}")
 
@@ -182,6 +188,7 @@ void main(void){}
       set(TK_INCLUDE_PATH ${TK_INCLUDE_PATH} ${X11_INCLUDE_DIR})
       message(STATUS "TK_INCLUDE_PATH = ${TK_INCLUDE_PATH}")
       message(STATUS "TK_LIBRARY = ${TK_LIBRARY}")
+      message(STATUS "TK_STUB_LIBRARY = ${TK_STUB_LIBRARY}")
 
       get_filename_component(TK_LIBRARY_PATH ${TK_LIBRARY} PATH)
       message(STATUS "TK_LIBRARY_PATH = ${TK_LIBRARY_PATH}")

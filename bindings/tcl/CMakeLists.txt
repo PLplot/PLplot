@@ -61,8 +61,20 @@ if(ENABLE_tcl)
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
 
+  if(USE_TCL_TK_STUBS)
+    set_source_files_properties(
+      ${tclmatrix${LIB_TAG}_LIB_SRCS}
+      PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
+      )
+  endif(USE_TCL_TK_STUBS)
+
   add_library(tclmatrix${LIB_TAG} ${tclmatrix${LIB_TAG}_LIB_SRCS})
-  target_link_libraries(tclmatrix${LIB_TAG} ${TCL_LIBRARY})
+
+  if(USE_TCL_TK_STUBS)
+    target_link_libraries(tclmatrix${LIB_TAG} ${TCL_STUB_LIBRARY})
+  else(USE_TCL_TK_STUBS)
+    target_link_libraries(tclmatrix${LIB_TAG} ${TCL_LIBRARY})
+  endif(USE_TCL_TK_STUBS)
 
   if(USE_RPATH)
     set(LIB_INSTALL_RPATH ${LIB_DIR})
@@ -125,7 +137,7 @@ if(ENABLE_tcl)
 
   set(plplottcltk${LIB_TAG}_LIB_SRCS
     tclAPI.c
-    tclMain.c
+    #tclMain.c
     )
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(${plplottcltk${LIB_TAG}_LIB_SRCS}
@@ -133,17 +145,31 @@ if(ENABLE_tcl)
       )
   endif(BUILD_SHARED_LIBS)
 
-  set(
-    plplottcltk${LIB_TAG}_link_libraries
-    tclmatrix${LIB_TAG}
-    plplot${LIB_TAG}
-    ${TCL_LIBRARY}
-    )
-  set(
-    libplplottcltk${LIB_TAG}_LINK_FLAGS
-    -ltclmatrix${LIB_TAG}
-    ${TCL_LIBRARY}
-    )
+  if(USE_TCL_TK_STUBS)
+    set(
+      plplottcltk${LIB_TAG}_link_libraries
+      tclmatrix${LIB_TAG}
+      plplot${LIB_TAG}
+      ${TCL_STUB_LIBRARY}
+      )
+    set(
+      libplplottcltk${LIB_TAG}_LINK_FLAGS
+      -ltclmatrix${LIB_TAG}
+      ${TCL_STUB_LIBRARY}
+      )
+  else(USE_TCL_TK_STUBS)
+    set(
+      plplottcltk${LIB_TAG}_link_libraries
+      tclmatrix${LIB_TAG}
+      plplot${LIB_TAG}
+      ${TCL_LIBRARY}
+      )
+    set(
+      libplplottcltk${LIB_TAG}_LINK_FLAGS
+      -ltclmatrix${LIB_TAG}
+      ${TCL_LIBRARY}
+      )
+  endif(USE_TCL_TK_STUBS)
 
   if(ENABLE_itcl)
     include_directories(${ITCL_INCLUDE_PATH})
@@ -217,6 +243,13 @@ if(ENABLE_tcl)
     libplplottcltk${LIB_TAG}_LINK_FLAGS
     "${libplplottcltk${LIB_TAG}_LINK_FLAGS}"
     )
+
+  if(USE_TCL_TK_STUBS)
+    set_source_files_properties(
+      ${plplottcltk${LIB_TAG}_LIB_SRCS}
+      PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
+      )
+  endif(USE_TCL_TK_STUBS)
 
   add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
 

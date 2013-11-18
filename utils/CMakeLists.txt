@@ -78,7 +78,7 @@ if(ENABLE_tcl)
     include_directories(${ITCL_INCLUDE_PATH})
   endif(HAVE_ITCL)
 
-  add_executable(pltcl pltcl.c)
+  add_executable(pltcl pltcl.c ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMain.c)
 
   target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk${LIB_TAG} ${ITCL_LIBRARY} ${TCL_LIBRARY})
 

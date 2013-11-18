@@ -28,6 +28,15 @@
 
 int Matrix_Init( Tcl_Interp *interp )
 {
+#ifdef USE_TCL_STUBS
+//
+// We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
+// we really don't mind which version of Tcl, Tk we use as long as it
+// is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
+// be loaded into 8.1
+//
+    Tcl_InitStubs( interp, "8.1", 0 );
+#endif
     // matrix -- matrix	support	command
     Tcl_CreateCommand( interp, "matrix", (Tcl_CmdProc *) Tcl_MatrixCmd,
         (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
