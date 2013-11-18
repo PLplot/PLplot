@@ -895,7 +895,7 @@ if(BUILD_TEST)
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
       )
     add_dependencies(test_tclsh_standard_examples
-      pltcl
+      plplottcltk${LIB_TAG}
       tcl_examples
       tclIndex_tcl
       xwin
