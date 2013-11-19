@@ -174,7 +174,7 @@ if(BUILD_TEST)
       set_source_files_properties(${TK_SRC_FILE}
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(BUILD_SHARED_LIBS AND CORE_BUILD)
-    target_link_libraries(${TK_EXE} plplottcltk${LIB_TAG} tclmatrix${LIB_TAG} plplot${LIB_TAG} ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
+    target_link_libraries(${TK_EXE} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} tclmatrix${LIB_TAG} plplot${LIB_TAG} ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
   endforeach(TK_SRC_FILE ${tk_SRC})
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk tclIndex_examples_tk)

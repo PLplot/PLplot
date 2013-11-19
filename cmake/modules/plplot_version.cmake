@@ -67,6 +67,9 @@ set(tclmatrix_VERSION ${tclmatrix_SOVERSION}.2.0)
 set(plplottcltk_SOVERSION 10)
 set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.0.0)
 
+set(plplottcltk_Main_SOVERSION 0)
+set(plplottcltk_Main_VERSION ${plplottcltk_Main_SOVERSION}.0.0)
+
 set(plplotwxwidgets_SOVERSION 0)
 set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.0.0)
 
