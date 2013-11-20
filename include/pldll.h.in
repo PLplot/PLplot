@@ -107,7 +107,7 @@
   #define PLDLLIMPEXP_TCLMAT_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplottcltk@LIB_TAG@_EXPORTS )
+#if defined ( plplottcltk_Main@LIB_TAG@_EXPORTS ) | defined ( plplottcltk@LIB_TAG@_EXPORTS )
   #define PLDLLIMPEXP_TCLTK    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLEXPORT type
 #else
