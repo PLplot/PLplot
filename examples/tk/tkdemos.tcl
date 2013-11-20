@@ -43,11 +43,11 @@ proc sourceUtf8 {sourceFile} {
 set  utf8_examples {4 18 24 26 33}
 
 # In order to distinguish whether this is a plserver or wish
-# environment we assume that [info nameofexecutable] has the string "plserver",
-# "wish" or "tclsh" in it.  Some contrived examples can be figured out where this
-# assumption is not correct, and for those cases we simply emit an
-# error message and return.  But normally this assumption is correct,
-# and it is certainly correct for our tests.
+# environment we assume that [info nameofexecutable] has the string
+# "plserver", "wish" or "tclsh" in it.  Some contrived examples can be
+# figured out where this assumption is not correct, and for those
+# cases we simply emit an error message and return.  But normally this
+# assumption is correct, and it is certainly correct for our tests.
 switch -glob -- [info nameofexecutable] {
     "*plserver*" {
         # use 'plserver' method
@@ -62,7 +62,7 @@ switch -glob -- [info nameofexecutable] {
         set plwin .plw
     }
     default {
-        puts stderr "Error: argv0 = \"$argv0\"\ndoes not contain either the substrings \"plserver\" or \"wish\""
+        puts stderr "Error: argv0 = \"$argv0\"\ndoes not contain either the substrings \"plserver\", \"tclsh\", or \"wish\""
         puts stderr "Therefore cannot decide how to proceed with tkdemos.tcl so giving up"
         return
     }
