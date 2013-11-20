@@ -11,17 +11,35 @@ if {[catch {file readlink [info script]} path]} {
     set path [info script]
 }
 lappend auto_path [file join [file dirname $path] .. tcl]
-if {[catch {package require Plplotter}]} {
-    # use non shared-lib way e.g. 'plserver'
-    plstdwin .
-    plxframe .p
-    set plwin .p.plwin
-    button .bnextpage -text "Page" -command [list event generate $plwin <Enter>]
-} else {
-    plframe .p
-    set plwin .p
-    button .bnextpage -text "Page" -command [list $plwin nextpage]
+
+# In order to distinguish whether this is a plserver or wish
+# environment we assume that [info nameofexecutable] has the string
+# "plserver", "wish" or "tclsh" in it.  Some contrived examples can be
+# figured out where this assumption is not correct, and for those
+# cases we simply emit an error message and return.  But normally this
+# assumption is correct, and it is certainly correct for our tests.
+switch -glob -- [info nameofexecutable] {
+    "*plserver*" {
+        # use 'plserver' method
+        plstdwin .
+        plxframe .p
+        set plwin .p.plwin
+        button .bnextpage -text "Page" -command [list event generate $plwin <Enter>]
+    }
+    "*wish*" -
+    "*tclsh*" {
+        # use 'wish" method
+        plframe .p
+        set plwin .p
+        button .bnextpage -text "Page" -command [list $plwin nextpage]
+    }
+    default {
+        puts stderr "Error: argv0 = \"$argv0\"\ndoes not contain either the substrings \"plserver\", \"tclsh\", or \"wish\""
+        puts stderr "Therefore cannot decide how to proceed with runAllDemos.tcl so giving up"
+        return
+    }
 }
+
 grid .p -columnspan 5 -sticky news
 grid rowconfigure . 0 -weight 1
 for {set i 0} {$i < 5} {incr i} {
