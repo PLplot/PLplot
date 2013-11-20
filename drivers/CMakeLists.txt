@@ -220,6 +220,14 @@ if(ENABLE_DYNDRIVERS)
       DESTINATION ${DRV_DIR}
       )
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
+
+  if(PLD_tkwin AND USE_TCL_TK_STUBS)
+    set_target_properties(
+      tkwin
+      PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
+      )
+  endif(PLD_tkwin AND USE_TCL_TK_STUBS)
+
   if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     add_custom_target(test_dyndrivers ALL
       )

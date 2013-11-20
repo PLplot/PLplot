@@ -54,6 +54,16 @@ if(NOT ENABLE_tk)
   endif(PLD_tk OR PLD_ntk OR PLD_tkwin)
 endif(NOT ENABLE_tk)
 
+# tkwin "device" (the shared object dynamically loaded by the
+# "package require Plplotter" command from a Tk wish environment) only
+# makes sense for the case of dynamical devices.
+
+if(NOT ENABLE_DYNDRIVERS)
+  message(STATUS "WARNING: ENABLE_DYNDRIVERS OFF.  Setting PLD_tkwin OFF.")
+  set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
+endif(NOT ENABLE_DYNDRIVERS)
+
+
 # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
 string(REGEX REPLACE ";" " -I" TKLIB_COMPILE_FLAGS "-I${TK_INCLUDE_PATH}")
 	
@@ -68,12 +78,10 @@ if(PLD_tk)
     set(
     tk_SOURCE
     ${CMAKE_SOURCE_DIR}/bindings/tcl/tclAPI.c
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMain.c
     ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
     ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
     ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
     ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
-    ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
     )
     # All source that is in libtclmatrix
     set(
@@ -105,46 +113,19 @@ endif(PLD_ntk)
 
 if(PLD_tkwin)
   set(tkwin_COMPILE_FLAGS 
-  "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk-x-plat -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
-  )
-  set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY} ${X11_LIBRARIES})
+    "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk-x-plat -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
+    )
+
+  if(USE_TCL_TK_STUBS)
+    set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_STUB_LIBRARY} ${TK_STUB_LIBRARY} ${X11_LIBRARIES})
+  else(USE_TCL_TK_STUBS)
+    set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY} ${X11_LIBRARIES})
+  endif(USE_TCL_TK_STUBS)
+
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
   set(
   tkwin_SOURCE
   ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/Plplotter_Init.c
   ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/plplotter.c
   )
-  if(NOT ENABLE_DYNDRIVERS AND NOT PLD_tk)
-    # All source that is in libplplottcltk
-    set(
-    tkwin_SOURCE
-    ${tkwin_SOURCE}
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclAPI.c
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMain.c
-    ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
-    ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
-    ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
-    ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
-    ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
-    )
-    # All source that is in libtclmatrix
-    set(
-    tkwin_SOURCE
-    ${tkwin_SOURCE}
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMatrix.c
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/matrixInit.c
-    )
-    if(ENABLE_itcl)
-      set(tkwin_COMPILE_FLAGS
-      "${tkwin_COMPILE_FLAGS} -I${ITCL_INCLUDE_PATH}"
-      )
-      set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITCL_LIBRARY})
-    endif(ENABLE_itcl)
-    if(ENABLE_itk)
-      set(tkwin_COMPILE_FLAGS
-      "${tkwin_COMPILE_FLAGS} -I${ITK_INCLUDE_PATH}"
-      )
-      set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITK_LIBRARY})
-    endif(ENABLE_itk)
-  endif(NOT ENABLE_DYNDRIVERS AND NOT PLD_tk)
 endif(PLD_tkwin)

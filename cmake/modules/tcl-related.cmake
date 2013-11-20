@@ -34,7 +34,7 @@ endif(DEFAULT_NO_BINDINGS)
 
 option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwidgets" OFF)
 
-option(USE_TCL_TK_STUBS "Use Tcl/Tk stubs libraries" OFF)
+option(USE_TCL_TK_STUBS "Use Tcl/Tk stubs libraries" ON)
 
 # Depending on these above options and system resources may also determine
 # the following variables which are largely self-explanatory unless documented
