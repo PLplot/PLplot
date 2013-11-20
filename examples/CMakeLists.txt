@@ -743,7 +743,9 @@ if(BUILD_TEST)
 	    add_dependencies(test_octave_tk plserver)
 	  endif(CORE_BUILD)
 	endif(device STREQUAL "tk")
-	# Comment this out until interactive octave tests work better.
+	message(STATUS "WARNING: The test_octave_${device} target can be run independently but does not
+   work reliably so it is temporarily excluded from being a dependency of other
+   more general interactive test targets") 
 	#list(APPEND interactive_targets_LIST test_octave_${device})
       endif(ENABLE_octave)
     endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
@@ -1006,6 +1008,9 @@ if(BUILD_TEST)
     # compatible with how we have implemented the Tcl plframe command
     # that is run by tkdemos.tcl in the wish case, but that is as much
     # as we know at this stage.
+    message(STATUS "WARNING: The test_wish_standard_examples target can be run independently but
+   it segfaults at the end so it is temporarily excluded from being a dependency
+   of other more general interactive test targets") 
     # list(APPEND targets_examples_tk test_wish_standard_examples)
 
     if(ENABLE_itk)
@@ -1021,8 +1026,15 @@ if(BUILD_TEST)
       if(FILE_DEPENDS_xwin)
 	add_dependencies(test_tk_02 test_xwin_dyndriver)
       endif(FILE_DEPENDS_xwin)
-      list(APPEND targets_examples_tk test_tk_02)
-      
+
+      if(USE_INCRTCL_VERSION_4)
+	message(STATUS "WARNING: The test_tk_02 target can be run independently but it currently
+   does not work for version 4 of Itcl and friends so it is temporarily excluded
+   from being a dependency of other more general interactive test targets") 
+      else(USE_INCRTCL_VERSION_4)
+	list(APPEND targets_examples_tk test_tk_02)
+      endif(USE_INCRTCL_VERSION_4)
+
       add_custom_target(test_tk_04
 	COMMAND xtk04 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk04
 	DEPENDS ${xwin_target}
@@ -1035,9 +1047,14 @@ if(BUILD_TEST)
       if(FILE_DEPENDS_xwin)
 	add_dependencies(test_tk_04 test_xwin_dyndriver)
       endif(FILE_DEPENDS_xwin)
-      list(APPEND targets_examples_tk test_tk_04)
+      if(USE_INCRTCL_VERSION_4)
+	message(STATUS "WARNING: The test_tk_04 target can be run independently but it currently
+   does not work for version 4 of Itcl and friends so it is temporarily excluded
+   from being a dependency of other more general interactive test targets") 
+      else(USE_INCRTCL_VERSION_4)
+	list(APPEND targets_examples_tk test_tk_04)
+      endif(USE_INCRTCL_VERSION_4)
     endif(ENABLE_itk)
-    
   endif(ENABLE_tk AND PLD_tk)
 
   if(targets_examples_tk)
