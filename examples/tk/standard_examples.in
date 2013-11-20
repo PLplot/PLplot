@@ -2,11 +2,10 @@
 # Run plserver example for standard examples.
 # Drop examples 14 and 31 because querying for devices does not
 # seem to work in this context.
-# Note the backslash at the end - this causes Tcl to ignore
-# the next line. It becomes a valid Tcl script as well as
-# valid shell script
-# \
-@plserver_LOCATION@ <<EOF
+# The following exec command reexecutes the script under wish.  This
+# is possible because all comment lines are ignored by wish including
+# continued ones with a trailing backslash like this one \
+exec @plserver_LOCATION@ -f "$0" "$@"
 source tkdemos.tcl
 0
 1
@@ -40,4 +39,3 @@ source tkdemos.tcl
 30
 33
 exit
-EOF
