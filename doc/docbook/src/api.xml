@@ -12031,7 +12031,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Set the escape character for text strings.  From C (in contrast to
-      Fortran 77, see &plsescfortran77;) you pass
+      Fortran 95, see &plsescfortran95;) you pass
       <literal><parameter>esc</parameter></literal> as a character.
       Only selected characters are allowed to prevent the user from shooting
       himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
