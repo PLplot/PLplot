@@ -95,14 +95,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</row>
 	<row>
 	  <entry>
-	    Fortran 77
-	  </entry>
-	  <entry>
-	    libplplotf77, libplplotf77c
-	  </entry>
-	</row>
-	<row>
-	  <entry>
 	    Fortran 95
 	  </entry>
 	  <entry>

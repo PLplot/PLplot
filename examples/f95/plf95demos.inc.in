@@ -5,8 +5,8 @@
       logical :: myisnan
       real (kind=plflt) :: x
 
-@HAVE_F77_ISNAN_FALSE@      myisnan = (x.ne.x)
-@HAVE_F77_ISNAN_TRUE@      myisnan = isnan(x)
+@HAVE_F95_ISNAN_FALSE@      myisnan = (x.ne.x)
+@HAVE_F95_ISNAN_TRUE@      myisnan = isnan(x)
 
       return
 

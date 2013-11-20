@@ -93,9 +93,9 @@ if(CORE_BUILD)
 
   # Process fortran header file to define isnan
   if(FORTRAN_HAVE_ISNAN)
-    set(HAVE_F77_ISNAN_FALSE !)
+    set(HAVE_F95_ISNAN_FALSE !)
   else(FORTRAN_HAVE_ISNAN)
-    set(HAVE_F77_ISNAN_TRUE !)
+    set(HAVE_F95_ISNAN_TRUE !)
   endif(FORTRAN_HAVE_ISNAN)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plf95demos.inc.in

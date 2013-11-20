@@ -36,15 +36,6 @@ IF( PLplot_INCLUDE_DIR )
     set( PLplot_LIBRARIES ${PLplot_LIBRARIES} ${PLplot_cxx_LIBRARY} )
   endif( PLplot_cxx_LIBRARY )
   
-  # find f77 bindings
-  find_library( PLplot_f77_LIBRARY
-    NAMES plplotf77d
-    PATHS /usr/local/lib /usr/lib
-  )
-  if( PLplot_f77_LIBRARY )
-    set( PLplot_LIBRARIES ${PLplot_LIBRARIES} ${PLplot_f77_LIBRARY} )
-  endif( PLplot_f77_LIBRARY )
-
   # find f90 bindings
   find_library( PLplot_f90_LIBRARY
     NAMES plplotf90d

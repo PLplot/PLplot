@@ -48,7 +48,7 @@ Usage: plplot-test.sh [OPTIONS]
 
 Options:
    [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
-   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, pdl, ada, ocaml, lua or d)
+   [--front-end=FE]  (FE = one of c, cxx, f95 java, octave, python, tcl, pdl, ada, ocaml, lua or d)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
@@ -116,7 +116,6 @@ while test $# -gt 0; do
          for i in $FRONT_END ; do
            [ $i = "c"         \
              -o $i = "cxx"    \
-             -o $i = "f77"    \
              -o $i = "f95"    \
              -o $i = "java"   \
              -o $i = "octave" \
@@ -242,7 +241,6 @@ fi
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
 cdir="$EXAMPLES_DIR"/c
 cxxdir="$EXAMPLES_DIR"/c++
-f77dir="$EXAMPLES_DIR"/f77
 f95dir="$EXAMPLES_DIR"/f95
 pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
 tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl
@@ -263,7 +261,7 @@ octavedir=\
 "@PLPLOT_OCTAVE_DIR@"/support:\
 "@OCTAVE_M_DIR@"/PLplot:\
 "@OCTAVE_OCT_DIR@":
-export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir
+export cdir cxxdir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir
 
 fe=""
 
@@ -376,7 +374,6 @@ export dsuffix options
 if [ -z "$FRONT_END" ] ; then
    FRONT_END=c
    test "@ENABLE_cxx@" = "ON" && FRONT_END="$FRONT_END cxx"
-   test "@ENABLE_f77@" = "ON"    && FRONT_END="$FRONT_END f77"
    test "@ENABLE_f95@" = "ON"    && FRONT_END="$FRONT_END f95"
    test "@ENABLE_java@" = "ON"   && FRONT_END="$FRONT_END java"
    test "@ENABLE_octave@" = "ON" && FRONT_END="$FRONT_END octave"

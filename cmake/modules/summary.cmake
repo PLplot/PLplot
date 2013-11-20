@@ -74,13 +74,13 @@ _output_results
 CMAKE_CXX_COMPILER CMAKE_CXX_FLAGS:		${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS}")
 endif(CMAKE_CXX_COMPILER_WORKS)
 
-if(ENABLE_f77 OR ENABLE_f95)
+if(ENABLE_f95)
 set(
 _output_results
 "${_output_results}
 CMAKE_Fortran_COMPILER CMAKE_Fortran_FLAGS:	${CMAKE_Fortran_COMPILER} ${CMAKE_Fortran_FLAGS}
 Target Fortran:	${TARGET_FORTRAN}")
-endif(ENABLE_f77 OR ENABLE_f95)
+endif(ENABLE_f95)
 
 if(ENABLE_python)
 set(
@@ -110,15 +110,23 @@ PL_HAVE_FREETYPE:	${PL_HAVE_FREETYPE}		PL_HAVE_PTHREAD:	${PL_HAVE_PTHREAD}
 HAVE_AGG:		${HAVE_AGG}		HAVE_SHAPELIB:	${HAVE_SHAPELIB}
 
 Language Bindings:
-ENABLE_f77:		${ENABLE_f77}		ENABLE_f95:		${ENABLE_f95}
-ENABLE_cxx:		${ENABLE_cxx}		ENABLE_java:		${ENABLE_java}
-ENABLE_python:		${ENABLE_python}		ENABLE_octave:		${ENABLE_octave}
-ENABLE_tcl:		${ENABLE_tcl}		ENABLE_itcl:		${ENABLE_itcl}
-ENABLE_tk:		${ENABLE_tk}		ENABLE_itk:		${ENABLE_itk}
-ENABLE_pdl:		${ENABLE_pdl}		ENABLE_wxwidgets:	${ENABLE_wxwidgets}
-ENABLE_ada:		${ENABLE_ada}		ENABLE_d:		${ENABLE_d}
-ENABLE_ocaml:		${ENABLE_ocaml}		ENABLE_lua:		${ENABLE_lua}
-ENABLE_qt:		${ENABLE_qt}		ENABLE_pyqt4:		${ENABLE_pyqt4}
+ENABLE_ada:		${ENABLE_ada}
+ENABLE_cxx:		${ENABLE_cxx}
+ENABLE_d:		${ENABLE_d}
+ENABLE_f95:		${ENABLE_f95}
+ENABLE_java:		${ENABLE_java}
+ENABLE_lua:		${ENABLE_lua}
+ENABLE_ocaml:		${ENABLE_ocaml}
+ENABLE_octave:		${ENABLE_octave}
+ENABLE_pdl:		${ENABLE_pdl}
+ENABLE_python:		${ENABLE_python}
+ENABLE_qt:		${ENABLE_qt}
+ENABLE_pyqt4:		${ENABLE_pyqt4}
+ENABLE_tcl:		${ENABLE_tcl}
+ENABLE_itcl:		${ENABLE_itcl}
+ENABLE_tk:		${ENABLE_tk}
+ENABLE_itk:		${ENABLE_itk}
+ENABLE_wxwidgets:	${ENABLE_wxwidgets}
 ")
 message("${_output_results}")
 endmacro(summary)

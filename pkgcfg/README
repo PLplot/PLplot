@@ -19,7 +19,6 @@ pkg-config files for the different libraries shipped with PLplot.  They are:
 
     plplot.pc
     plplot-c++.pc
-    plplot-f77.pc
     plplot-f95.pc
     plplot-tcl.pc
 
@@ -27,7 +26,6 @@ for the single precision case, and:
 
     plplotd.pc
     plplotd-c++.pc
-    plplotd-f77.pc
     plplotd-f95.pc
     plplotd-tcl.pc
 
@@ -43,9 +41,6 @@ In my current system, this is what I obtain now:
     -lplplotd -lfreetype -lz -lcsirocsa -lcsironn -lqhull -lm -ldl  
     $ pkg-config plplotd-c++ --libs
     -lplplotcxxd -lplplotd -lfreetype -lz -lcsirocsa -lcsironn -lqhull -ldl  
-    $ pkg-config plplotd-f77 --libs
-    -lplplotf77d -lplplotd -lfreetype -lz -lcsirocsa -lcsironn -lqhull -lm
-    -ldl  
     $ pkg-config plplotd-tcl --libs
     -lplplottcltkd -lplplotd -lfreetype -lz -lcsirocsa -lcsironn -lqhull -ldl
     -ltclmatrixd -litk3.2 -ltk8.4 -litcl3.2 -ltcl8.4 L/usr/X11R6/lib -lX11 

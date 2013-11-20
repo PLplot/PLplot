@@ -96,50 +96,18 @@ case $1 in
     diff -au /tmp/plplot_api.txt -
   ;;
   
-  f77)
-    # Prepare API list from bindings/f77/plstubs.h
-    # and compare with previous
-    echo "f77 API differences (if any)"
-    # After obtaining the basic name with paranthesis appended, we get rid of
-    # that paranthesis and any trailing underscores or "7"s.  We then do a unique
-    # sort to get rid of duplicates, and specifically exclude some added special
-    # fortran functions (whose original form may have had a "7" appended).
-    # We also remove the plhls, plrgb, and plrgb1 deprecated functions.
-    grep 'FNAME.*,pl.*)' bindings/f77/plstubs.h |\
-    cut --delimiter="," --fields=2 |\
-    sed -e 's?)??' -e 's?_$??' -e 's?7$??' |\
-    sort -u |\
-    grep -v plclr |\
-    grep -v 'plcol$' |\
-    grep -v plcon0 |\
-    grep -v plcon1 |\
-    grep -v plcon2 |\
-    grep -v plshade0 |\
-    grep -v plshade2 |\
-    grep -v plshades0 |\
-    grep -v plshades1 |\
-    grep -v plshades2 |\
-    grep -v plvec0 |\
-    grep -v plvec1 |\
-    grep -v plvec2 |\
-    grep -v 'plhls$' |\
-    grep -v 'plrgb$' |\
-    grep -v 'plrgb1$' |\
-    diff -au /tmp/plplot_api.txt - 
-  ;;
-
   f95)
     # Prepare API list from bindings/f95/plstubs.h
     # and compare with previous
     echo "f95 API differences (if any)"
     # After obtaining the basic name with paranthesis appended, we get rid of
-    # that paranthesis and any trailing "_", "f77", and "7".  We then do a unique
+    # that paranthesis and any trailing "_", and "7".  We then do a unique
     # sort to get rid of duplicates, and specifically exclude some added special
     # fortran functions (whose original form may have had a "7" appended).
     # We also remove the plhls, plrgb, and plrgb1 deprecated functions.
     grep 'FNAME.*,pl.*)' bindings/f95/plstubs.h |\
     cut --delimiter="," --fields=2 |\
-    sed -e 's?)??' -e 's?_$??' -e 's?f77$??' -e 's?7$??' |\
+    sed -e 's?)??' -e 's?_$??' -e 's?7$??' |\
     sort -u |\
     grep -v plclr |\
     grep -v 'plcol$' |\
@@ -194,7 +162,6 @@ case $1 in
     $0 swig
     $0 java
     $0 octave
-    $0 f77
     $0 f95
     $0 c++
     $0 tcl
@@ -203,7 +170,7 @@ case $1 in
   *)
   echo "First argument was $1"
   echo "Instead, it must be one of the following:"
-  echo "docbook, swig, java, octave, f77, f95, c++, tcl or all"
+  echo "docbook, swig, java, octave, f95, c++, tcl or all"
   ;;
 esac
 #rm /tmp/plplot_api.txt

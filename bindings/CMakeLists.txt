@@ -23,7 +23,6 @@
 # python, java, lua, and octave).
 add_subdirectory(swig-support)
 add_subdirectory(c++)
-add_subdirectory(f77)
 add_subdirectory(f95)
 add_subdirectory(tcl)
 add_subdirectory(tk)

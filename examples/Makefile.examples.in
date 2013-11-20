@@ -81,19 +81,6 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_D_COMMENT@test_noninteractive: x01d.psc
 @PSC_D_COMMENT@@COMPARE_COMMENT@compare: x01d.psc
 
-@PSC_F77_COMMENT@all: f77/x01f@EXEEXT@
-@PSC_F77_COMMENT@f77/x01f@EXEEXT@:
-@PSC_F77_COMMENT@	cd f77; $(MAKE)
-@PSC_F77_COMMENT@f77_clean:
-@PSC_F77_COMMENT@	cd f77; $(MAKE) clean
-@PSC_F77_COMMENT@.PHONY: f77_clean
-@PSC_F77_COMMENT@clean: f77_clean
-@PSC_F77_COMMENT@x01f.psc: f77/x01f@EXEEXT@
-@PSC_F77_COMMENT@	@echo Generate Fortran 77 results for psc device
-@PSC_F77_COMMENT@	./plplot-test.sh --verbose --front-end=f77 --device=psc
-@PSC_F77_COMMENT@test_noninteractive: x01f.psc
-@PSC_F77_COMMENT@@COMPARE_COMMENT@compare: x01f.psc
-
 @PSC_F95_COMMENT@all: f95/x01f@EXEEXT@
 @PSC_F95_COMMENT@f95/x01f@EXEEXT@:
 @PSC_F95_COMMENT@	cd f95; $(MAKE)

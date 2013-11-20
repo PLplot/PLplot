@@ -75,14 +75,6 @@
   #define PLDLLIMPEXP_CXX_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotf77c@LIB_TAG@_EXPORTS )
-  #define PLDLLIMPEXP_F77C    PLDLLEXPORT
-  #define PLDLLIMPEXP_F77C_DATA( type )    PLDLLEXPORT type
-#else
-  #define PLDLLIMPEXP_F77C    PLDLLIMPORT
-  #define PLDLLIMPEXP_F77C_DATA( type )    PLDLLIMPORT type
-#endif
-
 #if defined ( plplotf95c@LIB_TAG@_EXPORTS )
   #define PLDLLIMPEXP_F95C    PLDLLEXPORT
   #define PLDLLIMPEXP_F95C_DATA( type )    PLDLLEXPORT type

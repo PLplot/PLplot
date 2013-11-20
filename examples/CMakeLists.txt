@@ -40,10 +40,6 @@ if(CORE_BUILD)
       set(PSC_D_COMMENT "#")
     endif(NOT ENABLE_d)
 
-    if(NOT ENABLE_f77)
-      set(PSC_F77_COMMENT "#")
-    endif(NOT ENABLE_f77)
-
     if(NOT ENABLE_f95)
       set(PSC_F95_COMMENT "#")
     endif(NOT ENABLE_f95)
@@ -81,7 +77,6 @@ if(CORE_BUILD)
     set(PSC_C_COMMENT "#")
     set(PSC_CXX_COMMENT "#")
     set(PSC_D_COMMENT "#")
-    set(PSC_F77_COMMENT "#")
     set(PSC_F95_COMMENT "#")
     set(PSC_JAVA_COMMENT "#")
     set(PSC_OCAML_COMMENT "#")
@@ -190,7 +185,7 @@ if(CORE_BUILD)
     # FORCE_EXTERNAL_STATIC does for the CMake linking case for the
     # core build in the build tree.  That is, not well at all (drivers
     # limited to those without external dependencies and languages limited
-    # to C, C++, D, Fortran 77, and Fortran 95) because
+    # to C, C++, D, and Fortran 95) because
     # of severe limitations in static library support on Linux.
 
     # pkg-config does use --static option for traditional installed examples build.
@@ -273,7 +268,6 @@ if(CORE_BUILD)
     c:c:c
     cxx:c++:cxx
     d:d:d
-    f77:f77:f
     f95:f95:f95
     java:java:j
     lua:lua:lua
@@ -1186,7 +1180,6 @@ ENABLE_ada:		${ENABLE_ada}
 ENABLE_c:		${ENABLE_c}
 ENABLE_cxx:		${ENABLE_cxx}
 ENABLE_d:		${ENABLE_d}
-ENABLE_f77:		${ENABLE_f77}
 ENABLE_f95:		${ENABLE_f95}
 ENABLE_java:		${ENABLE_java}
 ENABLE_lua:		${ENABLE_lua}
@@ -1198,10 +1191,10 @@ ENABLE_tcl:		${ENABLE_tcl}
 
 Interactive bindings:
 
+ENABLE_qt:		${ENABLE_qt}
 ENABLE_tk:		${ENABLE_tk}
 ENABLE_gnome2:		${ENABLE_gnome2}
 ENABLE_wxwidgets:	${ENABLE_wxwidgets}
-ENABLE_qt:		${ENABLE_qt}
 ")
 
   message("${summary_results}")

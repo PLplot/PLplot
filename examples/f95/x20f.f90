@@ -379,11 +379,6 @@
       enddo
 
 !     Found the line with the sizes, copy this one and the next
-!     Note (AM):
-!     For reasons I have not been able to determine the original
-!     method (copied from the F77 example) did not work on my
-!     MinGW+gfortran platform - it caused an end-of-file error.
-!     So, instead use an internal read.
 
       count = count + 1
       read( 10, '(a)', iostat = ierr ) ver(2)

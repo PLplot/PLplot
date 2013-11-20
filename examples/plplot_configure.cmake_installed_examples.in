@@ -37,7 +37,6 @@ set(ENABLE_ada @ENABLE_ada@)
 set(ENABLE_c @ENABLE_c@)
 set(ENABLE_cxx @ENABLE_cxx@)
 set(ENABLE_d @ENABLE_d@)
-set(ENABLE_f77 @ENABLE_f77@)
 set(ENABLE_f95 @ENABLE_f95@)
 set(ENABLE_java @ENABLE_java@)
 set(ENABLE_lua @ENABLE_lua@)
@@ -71,7 +70,6 @@ set(COMPILED_LANGUAGE_INFO_LIST
 "ada:Ada:Ada:OFF"
 "cxx:CXX:C++:OFF"
 "d:D:D:OFF"
-"f77:Fortran:Fortran:OFF"
 "f95:Fortran:Fortran:OFF"
 "java:Java:Java:OFF"
 )
@@ -109,10 +107,6 @@ if(ENABLE_ada)
   set(ADA_INCLUDE_DIR "@ADA_INCLUDE_DIR@")
   set(ADA_LIB_DIR "@ADA_LIB_DIR@")
 endif(ENABLE_ada)
-
-if(ENABLE_f77)
-  set(F77_INCLUDE_DIR @F77_INCLUDE_DIR@)
-endif(ENABLE_f77)
 
 if(ENABLE_f95)
   set(F95_MOD_DIR "@F95_MOD_DIR@")

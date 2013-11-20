@@ -54,7 +54,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-ada SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ada.xml">
 <!ENTITY chap-c SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/c.xml">
 <!ENTITY chap-cplus SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/cplus.xml">
-<!ENTITY chap-fortran77 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/fortran77.xml">
 <!ENTITY chap-fortran95 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/fortran95.xml">
 <!ENTITY chap-ocaml SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ocaml.xml">
 <!ENTITY chap-perl SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/perl.xml">
@@ -66,7 +65,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-api SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api.xml">
 <!ENTITY chap-api-c SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-c.xml">
 <!ENTITY chap-api-fortran95 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-fortran95.xml">
-<!ENTITY chap-api-fortran77 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-fortran77.xml">
 <!ENTITY chap-api-compat SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-compat.xml">
 <!ENTITY chap-api-obsolete SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-obsolete.xml">
 <!ENTITY chap-api-internal SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/api-internal.xml">
@@ -100,7 +98,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plconfigtime '<link linkend="plconfigtime"><function>plconf</function></link>'>
 <!ENTITY plcont '<link linkend="plcont"><function>plcont</function></link>'>
 <!ENTITY plcontfortran95 '<link linkend="plcontfortran95"><function>plcontfortran95</function></link>'>
-<!ENTITY plcontfortran77 '<link linkend="plcontfortran77"><function>plcontfortran77</function></link>'>
 <!ENTITY plcpstrm '<link linkend="plcpstrm"><function>plcpstrm</function></link>'>
 <!ENTITY plctime '<link linkend="plctime"><function>plend</function></link>'>
 <!ENTITY plend '<link linkend="plend"><function>plend</function></link>'>
@@ -161,17 +158,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plmesh '<link linkend="plmesh"><function>plmesh</function></link>'>
 <!ENTITY plmeshc '<link linkend="plmeshc"><function>plmeshc</function></link>'>
 <!ENTITY plmeshfortran95 '<link linkend="plmeshfortran95"><function>plmeshfortran95</function></link>'>
-<!ENTITY plmeshfortran77 '<link linkend="plmeshfortran77"><function>plmeshfortran77</function></link>'>
 <!ENTITY plmkstrm '<link linkend="plmkstrm"><function>plmkstrm</function></link>'>
 <!ENTITY plmtex '<link linkend="plmtex"><function>plmtex</function></link>'>
 <!ENTITY plOptUsage '<link linkend="plOptUsage"><function>plOptUsage</function></link>'>
 <!ENTITY plot3d '<link linkend="plot3d"><function>plot3d</function></link>'>
 <!ENTITY plot3dc '<link linkend="plot3dc"><function>plot3dc</function></link>'>
 <!ENTITY plot3dfortran95 '<link linkend="plot3dfortran95"><function>plot3dfortran95</function></link>'>
-<!ENTITY plot3dfortran77 '<link linkend="plot3dfortran77"><function>plot3dfortran77</function></link>'>
 <!ENTITY plparseopts '<link linkend="plparseopts"><function>plparseopts</function></link>'>
 <!ENTITY plparseoptsfortran95 '<link linkend="plparseoptsfortran95"><function>plparseoptsfortran95</function></link>'>
-<!ENTITY plparseoptsfortran77 '<link linkend="plparseoptsfortran77"><function>plparseoptsfortran77</function></link>'>
 <!ENTITY plpat '<link linkend="plpat"><function>plpat</function></link>'>
 <!ENTITY plpath '<link linkend="plpath"><function>plpath</function></link>'>
 <!ENTITY plpoin '<link linkend="plpoin"><function>plpoin</function></link>'>
@@ -204,7 +198,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plseed '<link linkend="plseed"><function>plseed</function></link>'>
 <!ENTITY plsesc '<link linkend="plsesc"><function>plsesc</function></link>'>
 <!ENTITY plsescfortran95 '<link linkend="plsescfortran95"><function>plsescfortran95</function></link>'>
-<!ENTITY plsescfortran77 '<link linkend="plsescfortran77"><function>plsescfortran77</function></link>'>
 <!ENTITY plsetopt '<link linkend="plsetopt"><function>plsetopt</function></link>'>
 <!ENTITY plSetUsage '<link linkend="plSetUsage"><function>plSetUsage</function></link>'>
 <!ENTITY plsexit '<link linkend="plsexit"><function>plsexit</function></link>'>
@@ -251,7 +244,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plvec2 '<link linkend="plvec2"><function>plvec2</function></link>'>
 <!ENTITY plvect '<link linkend="plvect"><function>plvect</function></link>'>
 <!ENTITY plvectfortran95 '<link linkend="plvectfortran95"><function>plvectfortran95</function></link>'>
-<!ENTITY plvectfortran77 '<link linkend="plvectfortran77"><function>plvectfortran77</function></link>'>
 <!ENTITY plvpas '<link linkend="plvpas"><function>plvpas</function></link>'>
 <!ENTITY plvpor '<link linkend="plvpor"><function>plvpor</function></link>'>
 <!ENTITY plvsta '<link linkend="plvsta"><function>plvsta</function></link>'>
@@ -410,7 +402,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-ada;
     &chap-c;
     &chap-cplus;
-    &chap-fortran77;
     &chap-fortran95;
     &chap-ocaml;
     &chap-perl;
@@ -426,7 +417,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-api;
     &chap-api-c;
     &chap-api-fortran95;
-    &chap-api-fortran77;
     &chap-api-compat;
     &chap-api-obsolete;
     &chap-api-internal;

@@ -109,11 +109,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </listitem>
       <listitem>
 	<para>
-	  F77: <function>plline(n,x,y)</function>
-	</para>
-      </listitem>
-      <listitem>
-	<para>
 	  F95: <function>plline(x,y)</function>
 	</para>
       </listitem>

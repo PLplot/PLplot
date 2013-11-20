@@ -41,7 +41,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>The PLplot Plotting Library</title>
 
     <para> PLplot is a library of C functions that are useful for making
-    scientific plots from programs written in C, C++, Fortran77, Fortran95, Java, Octave, 
+    scientific plots from programs written in C, C++, Fortran95, Java, Octave, 
     Perl, Python, and Tcl/Tk. The PLplot project is being developed by a world-wide 
     team who interact via the facilities provided by SourceForge (<ulink
     url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>)
@@ -193,7 +193,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       After the library has been created, you can write your main program
       to make the desired PLplot calls.  Example programs in C, C++,
-      Fortran77, Fortran95 and Java are included as a guide.
+      Fortran95 and Java are included as a guide.
       Plots generated from the example programs are shown
       <ulink url="http://&PLplot-website;/examples.php">here</ulink>.
     </para>
@@ -232,7 +232,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       C (<xref linkend="c"/>), 
       C++ (<xref linkend="cplusplus"/>), 
       Fortran 95 (<xref linkend="fortran95"/>), 
-      Fortran 77 (<xref linkend="fortran77"/>),
       Java (???),
       Tcl (<xref linkend="tcl"/>),
       Perl (<xref linkend="perl"/>) and

@@ -136,11 +136,11 @@ program x17f95
     dt = 0.1_plflt
 
     do n = 0,nsteps-1
-!       wait a little (10 ms) to simulate time elapsing.
-!       g77 sleep has resolution of 1 sec so the call below is commented out
-!       because it is like watching paint dry.  In any case,
-!       I like the resulting speedier output when
-!       you drop sleep altogether from this loop.
+!       wait a little (10 ms) to simulate time elapsing.  gfortran
+!       sleep has resolution of 1 sec so the call below is commented
+!       out because it is like watching paint dry.  In any case, I
+!       like the resulting speedier output when you drop sleep
+!       altogether from this loop.
 !       call sleep(1)
 
         t = dble(n) * dt

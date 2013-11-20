@@ -37,7 +37,7 @@
 static void ( STDCALL *plmapform )( PLINT *, PLFLT *, PLFLT * ); // Note: slightly different prototype than
                                                                  // (*mapform)!
 // Slightly different to (*label_func) as we don't support PLPointer for
-// additional data in f77.
+// additional data in f95.
 // Note the hidden argument!
 static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT );
 
@@ -1347,7 +1347,6 @@ PLSLABELFUNC_OFFa( PLINT * PL_UNUSED( dummy ) )
     c_plslabelfunc( NULL, NULL );
 }
 
-// Provided for symmetry with FORTRAN 77
 void
 PLSLABELFUNC_NONE( void )
 {
@@ -1462,7 +1461,6 @@ PLSTRANSFORM2( PLINT * PL_UNUSED( dummy ) )
     c_plstransform( NULL, NULL );
 }
 
-// Provided for symmetry with FORTRAN 77
 void
 PLSTRANSFORM3( void )
 {

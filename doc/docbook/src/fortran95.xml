@@ -71,17 +71,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       end subroutine plline
       end interface
     </programlisting>
-    This is the way of calling PLplot routines in Fortran 95 - it is less
-    error-prone than the Fortran 77 way (see the chapter on Fortran 77).
-
-    <footnote>
-      <para>
-	The Fortran 77 way is still available: you can call the routine
-	<literal>pllinef77</literal> that has the same argument list as the
-	Fortran 77 routine <literal>plline</literal>. This is not documented,
-	however, other than by this note.
-      </para>
-    </footnote>
 
   </para>
   <para>
@@ -174,20 +163,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</programlisting>
 	where x and y are arrays with 6 elements and you want to plot symbol 9.
 	The routine <literal>plpoin</literal> calls the underlying routine
-	<literal>plpoinf77</literal>:
+	<literal>plpoinf95</literal>:
 	<programlisting>
 	  subroutine plpoin( x, y, code )
 	  integer                        :: code
 	  real(kind=plflt), dimension(:) :: x, y
 
-	  call plpoinf77( size(x), x, y, code )
+	  call plpoinf95( size(x), x, y, code )
 	  end subroutine plpoin
 	</programlisting>
 	This takes care of the size of the arrays - it is not possible to
 	transfer this information to C in an implicit way.
       </para>
       <para>
-	The routine plpoinf77 is implemented in C to take care of the question
+	The routine plpoinf95 is implemented in C to take care of the question
 	pass by value or pass by reference:
 
 	<footnote>
@@ -195,7 +184,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    <literal>PLPOIN</literal> is a macro that get translated into the correct name
 	    for this routine - various Fortran compilers use different conventions, such as
 	    adding an underscore or translating the name into capitals.
-	  </para>
+         </para>
 	</footnote>
 
 	<programlisting>

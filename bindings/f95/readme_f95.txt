@@ -7,7 +7,6 @@ Introduction
 ------------
 The Fortran 95 bindings for PLplot have been set up with the following
 considerations in mind:
-- reuse the bindings for FORTRAN 77 if possible
 - provide alternative calls for the various routines to take advantage
   of the features of Fortran 95, most notably, to simplify the interface
 - provide a module that takes care of all the details
@@ -90,7 +89,7 @@ PLBIN from Fortran 95:
    real(kind=plflt), dimension(:) :: x, y
 
    !
-   ! Fortran 95, method 1 (compatible with FORTRAN 77)
+   ! Fortran 95, method 1
    !
    icenter = 1
    nbin    = size(x)
@@ -115,8 +114,6 @@ PLBIN from Fortran 95:
    call plbin( nbin, x, y, center )  ! Use nbin, use a logical for center
 
 Method 2 is preferred, as it is most "Fortran 95" in character.
-
-
 
 Linking DLLs on Windows
 -----------------------

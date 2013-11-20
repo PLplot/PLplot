@@ -94,21 +94,6 @@ if(SH_EXECUTABLE)
     list(APPEND test_output_files_LIST ${output_list})
   endif(ENABLE_cxx)
 
-  if(ENABLE_f77)
-    configure_file(
-      test_f77.sh.in
-      ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh
-      @ONLY
-      )
-    list(APPEND SCRIPTS test_f77.sh)
-    add_test(examples_f77
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f77"
-      )
-    list(APPEND examples_compare_DEPENDS examples_f77)
-    list_example_files(. ${TEST_DEVICE} f output_list)
-    list(APPEND test_output_files_LIST ${output_list})
-  endif(ENABLE_f77)
-
   if(ENABLE_f95)
     configure_file(
       test_f95.sh.in

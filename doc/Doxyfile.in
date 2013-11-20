@@ -705,8 +705,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = "@CMAKE_BINARY_DIR@/bindings/f77/plplot_parameters.h" \
-                         "@CMAKE_SOURCE_DIR@/bindings/f95/plplot_parameters.h" \
+EXCLUDE                = "@CMAKE_SOURCE_DIR@/bindings/f95/plplot_parameters.h" \
                          "@CMAKE_BINARY_DIR@/bindings/f95/plplot_parameters.h" \
                          "@CMAKE_SOURCE_DIR@/bindings/python/plplot.py" \
                          "@CMAKE_BINARY_DIR@/bindings/python/plplot.py"

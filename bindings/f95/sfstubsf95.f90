@@ -23,15 +23,12 @@
 !
 !
 !  This file contains the interfaces for Fortran 95:
-!  - it includes the actual FORTRAN routines from the FORTRAN 77 bindings
+!  - it includes the actual FORTRAN routines from the FORTRAN 95 bindings
 !  - it includes interfaces to the C routines from these bindings
 !  - it defines a few Fortran 95 specific items and interfaces
 !
 !  NB
-!  This module is written in fixed form, because that way we can reuse
-!  the FORTRAN 77 bindings (including the original file is not possible:
-!  the "end" statement has to be replaced by the "end subroutine"
-!  statement)
+!  This module is written in fixed form.
 !  To enable a redefinition of certain interfaces, we actually have
 !  two modules.
 !
@@ -1013,7 +1010,7 @@ contains
        real(kind=plflt), dimension(:) :: x, y
        integer                        :: center
 
-       call plbinf77( size(x), x, y, center )
+       call plbinf95( size(x), x, y, center )
     end subroutine plbin
 
     subroutine plcolorbar_1( p_colorbar_width, p_colorbar_height, &
@@ -1097,38 +1094,38 @@ contains
        integer                        :: iflags
 
        iflags = convert_to_int( flags )
-       call plcpstrmf77( iplsr, iflags )
+       call plcpstrmf95( iplsr, iflags )
     end subroutine plcpstrm
 
     subroutine plerrx( xmin, xmax, y )
        real(kind=plflt), dimension(:) :: xmin, xmax, y
 
-       call plerrxf77( size(xmin), xmin, xmax, y )
+       call plerrxf95( size(xmin), xmin, xmax, y )
     end subroutine plerrx
 
     subroutine plerry( x, ymin, ymax )
        real(kind=plflt), dimension(:) :: x, ymin, ymax
 
-       call plerryf77( size(x), x, ymin, ymax )
+       call plerryf95( size(x), x, ymin, ymax )
     end subroutine plerry
 
     subroutine plfill( x, y )
        real(kind=plflt), dimension(:) :: x, y
 
-       call plfillf77( size(x), x, y )
+       call plfillf95( size(x), x, y )
     end subroutine plfill
 
     subroutine plfill3( x, y, z )
        real(kind=plflt), dimension(:) :: x, y, z
 
-       call plfill3f77( size(x), x, y, z )
+       call plfill3f95( size(x), x, y, z )
     end subroutine plfill3
 
     subroutine plgradient( x, y, angle )
        real(kind=plflt), dimension(:) :: x, y
        real(kind=plflt)               :: angle
 
-       call plgradientf77( size(x), x, y, angle )
+       call plgradientf95( size(x), x, y, angle )
     end subroutine plgradient
 
     subroutine plgriddata( x, y, z, xg, yg, zg, type, data )
@@ -1137,7 +1134,7 @@ contains
        real(kind=plflt)                 :: data
        integer                          :: type
 
-       call plgriddataf77( x, y, z, size(x), xg, size(xg), yg, size(yg), zg, &
+       call plgriddataf95( x, y, z, size(x), xg, size(xg), yg, size(yg), zg, &
           type, data )
 
        return
@@ -1148,7 +1145,7 @@ contains
        real(kind=plflt)               :: datmin, datmax
        integer                        :: nbin, oldwin
 
-       call plhistf77( size(data), data, datmin, datmax, nbin, oldwin )
+       call plhistf95( size(data), data, datmin, datmax, nbin, oldwin )
     end subroutine plhist
 
 !     subroutine plimagefr( idata, xmin, xmax, ymin, ymax, zmin, zmax, &
@@ -1162,7 +1159,7 @@ contains
 !
 !        nx = size(idata,1)
 !        ny = size(idata,2)
-!        call plimagefrf77( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
+!        call plimagefrf95( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
 !                           dxmin, dxmax, dymin, dymax, valuemin, valuemax )
 !     end subroutine plimagefr
 
@@ -1176,7 +1173,7 @@ contains
 
        nx = size(idata,1)
        ny = size(idata,2)
-       call plimagef77( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
+       call plimagef95( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
                         dxmin, dxmax, dymin, dymax )
     end subroutine plimage
 
@@ -1279,13 +1276,13 @@ contains
     subroutine plline( x, y )
        real(kind=plflt), dimension(:) :: x, y
 
-       call pllinef77( size(x), x, y )
+       call pllinef95( size(x), x, y )
     end subroutine plline
 
     subroutine plline3( x, y, z )
        real(kind=plflt), dimension(:) :: x, y, z
 
-       call plline3f77( size(x), x, y, z )
+       call plline3f95( size(x), x, y, z )
     end subroutine plline3
 
     subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy)
@@ -1347,7 +1344,7 @@ contains
        real(kind=plflt), dimension(:)   :: x, y
        real(kind=plflt), dimension(:,:) :: z
 
-       call plmeshf77( x, y, z, size(x), size(y), opt, size(x))
+       call plmeshf95( x, y, z, size(x), size(y), opt, size(x))
 
     end subroutine plmesh
 
@@ -1356,7 +1353,7 @@ contains
        real(kind=plflt), dimension(:)   :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
-       call plmeshcf77( x, y, z, size(x), size(y), opt, &
+       call plmeshcf95( x, y, z, size(x), size(y), opt, &
          clevel, size(clevel), size(x))
 
     end subroutine plmeshc
@@ -1369,7 +1366,7 @@ contains
        integer                          :: iside
 
        iside = convert_to_int(side)
-       call plot3df77( x, y, z, size(x), size(y), opt, iside, size(x))
+       call plot3df95( x, y, z, size(x), size(y), opt, iside, size(x))
 
     end subroutine plot3d
 
@@ -1378,7 +1375,7 @@ contains
        real(kind=plflt), dimension(:)   :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
-       call plot3dcf77( x, y, z, size(x), size(y), opt, clevel, &
+       call plot3dcf95( x, y, z, size(x), size(y), opt, clevel, &
          size(clevel), size(x))
 
     end subroutine plot3dc
@@ -1389,7 +1386,7 @@ contains
        integer                        :: ipause
 
        ipause = convert_to_int( lpause )
-       call plspausef77( ipause )
+       call plspausef95( ipause )
     end subroutine plspause
 
     subroutine plsurf3d( x, y, z, opt, clevel )
@@ -1397,7 +1394,7 @@ contains
        real(kind=plflt), dimension(:) :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
-       call plsurf3df77( x, y, z, size(x), size(y), opt, clevel, &
+       call plsurf3df95( x, y, z, size(x), size(y), opt, clevel, &
          size(clevel), size(x))
 
     end subroutine plsurf3d
@@ -1406,14 +1403,14 @@ contains
        integer                        :: code
        real(kind=plflt), dimension(:) :: x, y
 
-       call plpoinf77( size(x), x, y, code )
+       call plpoinf95( size(x), x, y, code )
     end subroutine plpoin
 
     subroutine plpoin3( x, y, z, code )
        integer                        :: code
        real(kind=plflt), dimension(:) :: x, y, z
 
-       call plpoin3f77( size(x), x, y, z, code )
+       call plpoin3f95( size(x), x, y, z, code )
     end subroutine plpoin3
 
     subroutine plpoly3( x, y, z, draw, ifcc )
@@ -1429,40 +1426,40 @@ contains
        do i = 1,size(draw)
           idraw(i) = convert_to_int( draw(i) )
        enddo
-       call plpoly3f77( size(x), x, y, z, idraw, iifcc )
+       call plpoly3f95( size(x), x, y, z, idraw, iifcc )
     end subroutine plpoly3
 
     real (kind=plflt) function plrandd()
-      external plranddf77
-      real(kind=plflt) :: plranddf77
+      external plranddf95
+      real(kind=plflt) :: plranddf95
 
-      plrandd = plranddf77()
+      plrandd = plranddf95()
     end function plrandd
 
     subroutine plscmap0( r, g, b )
        integer, dimension(:) :: r, g, b
 
-       call plscmap0f77( r, g, b, size(r) )
+       call plscmap0f95( r, g, b, size(r) )
     end subroutine plscmap0
 
     subroutine plscmap0a( r, g, b, a )
        integer, dimension(:) :: r, g, b
        real(kind=plflt), dimension(:) :: a
 
-       call plscmap0af77( r, g, b, a, size(r) )
+       call plscmap0af95( r, g, b, a, size(r) )
     end subroutine plscmap0a
 
     subroutine plscmap1( r, g, b )
        integer, dimension(:) :: r, g, b
 
-       call plscmap1f77( r, g, b, size(r) )
+       call plscmap1f95( r, g, b, size(r) )
     end subroutine plscmap1
 
     subroutine plscmap1a( r, g, b, a )
        integer, dimension(:) :: r, g, b
        real(kind=plflt), dimension(:) :: a
 
-       call plscmap1af77( r, g, b, a, size(r) )
+       call plscmap1af95( r, g, b, a, size(r) )
     end subroutine plscmap1a
 
     subroutine plscmap1l( rgbtype, intensity, coord1, coord2, coord3, alt_hue_path)
@@ -1478,7 +1475,7 @@ contains
        do i = 1,size(alt_hue_path)
           ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
-       call plscmap1lf77( type, size(intensity), intensity, coord1, coord2, coord3, ialt_hue_path )
+       call plscmap1lf95( type, size(intensity), intensity, coord1, coord2, coord3, ialt_hue_path )
     end subroutine plscmap1l
 
     subroutine plscmap1l2( rgbtype, intensity, coord1, coord2, coord3)
@@ -1488,7 +1485,7 @@ contains
           integer                        :: type
 
        type = convert_to_int( rgbtype )
-       call plscmap1l2f77( type, size(intensity), intensity, coord1, coord2, coord3)
+       call plscmap1l2f95( type, size(intensity), intensity, coord1, coord2, coord3)
     end subroutine plscmap1l2
 
     subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3, a, alt_hue_path)
@@ -1504,7 +1501,7 @@ contains
        do i = 1,size(alt_hue_path)
           ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
-       call plscmap1laf77( type, size(intensity), intensity, coord1, coord2, coord3, a, ialt_hue_path )
+       call plscmap1laf95( type, size(intensity), intensity, coord1, coord2, coord3, a, ialt_hue_path )
     end subroutine plscmap1la
 
     subroutine plscmap1la2( rgbtype, intensity, coord1, coord2, coord3, a)
@@ -1514,7 +1511,7 @@ contains
           integer                        :: type
 
        type = convert_to_int( rgbtype )
-       call plscmap1la2f77( type, size(intensity), intensity, coord1, coord2, coord3, a)
+       call plscmap1la2f95( type, size(intensity), intensity, coord1, coord2, coord3, a)
     end subroutine plscmap1la2
 
     subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump, &
@@ -1553,7 +1550,7 @@ contains
     s7 = transfer( string7, s7 )
     s8 = transfer( string8, s8 )
     s9 = transfer( string9, s9 )
-    call plstripcf77(id, s1, s2, xmin, xmax, xjump, &
+    call plstripcf95(id, s1, s2, xmin, xmax, xjump, &
       ymin, ymax, xlpos, ylpos, iy_ascl, iacc, &
       colbox, collab, colline, styline, &
       s3, s4, s5, s6, &
@@ -1567,21 +1564,21 @@ contains
          integer ifill
          ifill = convert_to_int(fill)
 
-       call plsvectf77( arrowx, arrowy, size(arrowx), ifill )
+       call plsvectf95( arrowx, arrowy, size(arrowx), ifill )
     end subroutine plsvect
 
     subroutine plsym( x, y, code )
        integer                        :: code
        real(kind=plflt), dimension(:) :: x, y
 
-       call plsymf77( size(x), x, y, code )
+       call plsymf95( size(x), x, y, code )
     end subroutine plsym
 
     subroutine plxormod( mode, status )
        logical :: mode, status
        integer :: imode, istatus
        imode = convert_to_int(mode)
-       call plxormodf77( imode, istatus)
+       call plxormodf95( imode, istatus)
        status = convert_to_log(istatus)
     end subroutine plxormod
 end module plplot
