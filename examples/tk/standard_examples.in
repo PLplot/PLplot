@@ -7,6 +7,16 @@
 # continued ones with a trailing backslash like this one \
 exec @plserver_LOCATION@ -f "$0" "$@"
 source tkdemos.tcl
+#
+# Turn off pausing - it has to be done in two ways, as the plxframe uses a visual
+# clue and bindings to key press events.
+# Note that the widget in question is .plw, not $plwin
+#
+$plwin cmd plspause 0
+plw::set_pause .plw 0
+#
+# Now run the examples one by one
+#
 0
 1
 2

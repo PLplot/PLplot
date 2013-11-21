@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
 # plplot window initialization procs
-# 
+#
 # Maurice LeBrun
 # IFS, University of Texas at Austin
 # 29-May-1993
@@ -10,7 +10,7 @@
 # Note: to keep namespace problems to a minimum, all procs defined here begin
 # with "pl".  These are further subdivided into "plw::" for button- or
 # menu-accessible commands, or "pl_" for utility commands.
-# 
+#
 # anything in 'plw::' should really be considered private.  If they are
 # needed externally (i.e. in user code) then we should rename them or expose
 # them.
@@ -131,6 +131,7 @@ proc plxframe {w {client_id {}}} {
 # Set up bop/eop handling when running tcl scripts from a plserver
 
 	global plstate_bopseen; set plstate_bopseen($w) 0
+	global plstate_pause; set plstate_pause($w) 1
 	$w.plwin configure -bopcmd "plw::bop $w"
 	$w.plwin configure -eopcmd "plw::eop $w"
     }
@@ -141,6 +142,7 @@ proc plxframe {w {client_id {}}} {
 #----------------------------------------------------------------------------
 # plw::setup_defaults
 # plw::set_zoom_handler
+# plw::set_pause
 #
 # Set up default settings.
 #----------------------------------------------------------------------------
@@ -221,6 +223,12 @@ proc plw::set_zoom_handler {w zoom_handler} {
     set user_zoom_handler($w) $zoom_handler
 }
 
+proc plw::set_pause {w pause} {
+    global plstate_pause
+
+    set plstate_pause($w) $pause
+}
+
 #----------------------------------------------------------------------------
 # plw::create_TopRow
 #
@@ -276,7 +284,7 @@ proc plw::create_TopRow {w} {
     label $w.ftop.lstat -anchor w -relief raised
     plw::label_push $w "[string range $w 1 end]"
     pack append $w.ftop $w.ftop.lstat \
-	{right expand fill} 
+	{right expand fill}
 }
 
 #----------------------------------------------------------------------------
@@ -423,7 +431,7 @@ proc plw::create_pmenu_save {w} {
 proc plw::create_pmenu_orient {w} {
     global pmenu; set m $pmenu($w).orient
 
-    $pmenu($w) add cascade -label "Orient" -menu $m 
+    $pmenu($w) add cascade -label "Orient" -menu $m
     menu $m
 
     $m configure -postcommand "plw::update_orient $w"
@@ -595,10 +603,10 @@ proc plw::create_pmenu_palettes {w} {
 # Set up palette tools
 
     $m add command -label "Palette 0" \
-	-command "plcmap0_edit $w.plwin $w" 
+	-command "plcmap0_edit $w.plwin $w"
 
     $m add command -label "Palette 1" \
-	-command "plcmap1_edit $w.plwin $w" 
+	-command "plcmap1_edit $w.plwin $w"
 
 # Palettes - options (another cascade)
 
@@ -696,7 +704,7 @@ proc plw::key_filter {w keycode state x y keyname ascii} {
     global key_resume
     global key_zoom_select
     global key_zoom_back
-    global key_zoom_forward    
+    global key_zoom_forward
     global key_zoom_reset
     global key_print
     global key_save_again
@@ -734,7 +742,7 @@ proc plw::key_filter {w keycode state x y keyname ascii} {
 	$key_scroll_right	"plw::view_scroll $w  1  0 $state" \
 	$key_scroll_left	"plw::view_scroll $w -1  0 $state" \
 	$key_scroll_up		"plw::view_scroll $w  0 -1 $state" \
-	$key_scroll_down	"plw::view_scroll $w  0  1 $state" 
+	$key_scroll_down	"plw::view_scroll $w  0  1 $state"
 
 # Pass keypress event info back to client.
 
@@ -823,11 +831,11 @@ proc plw::user_mouse {w button state x y} {
 proc plw::bop {w} {
     global plot_menu_on; if !$plot_menu_on return
 
-    global plstate_resume plstate_bopseen
+    global plstate_resume plstate_bopseen plstate_pause
 
 # There was a previous bop, deal with it.
 
-    if $plstate_bopseen($w) {
+    if {$plstate_bopseen($w)} {
 	update idletasks
 	plw::label_push $w "press <Enter> to continue."
 	tkwait variable plstate_resume($w)
@@ -847,7 +855,7 @@ proc plw::bop {w} {
 # i.e. control is returned to the interpreter before the next time this proc
 # is called, there will be no pause.
 
-    set plstate_bopseen($w) 1
+    set plstate_bopseen($w) $plstate_pause($w)
     set id2 [after idle "global plstate_bopseen; set plstate_bopseen($w) 0"]
 }
 
@@ -882,7 +890,7 @@ proc plw::flash {w col} {
 #
 # The closelink command was added in the hopes of making the dp driver
 # cleanup a bit more robust, but doesn't seem to have any effect except
-# to slow things down quite a bit.  
+# to slow things down quite a bit.
 #----------------------------------------------------------------------------
 
 proc plw::end {w} {
@@ -1195,7 +1203,7 @@ proc plw::zoom_start {w wx wy} {
 # zoomopts($w,1):
 #   0	first and last points specified determine opposite corners
 #	of zoom box.
-#   1	box is centered about the first point clicked on, 
+#   1	box is centered about the first point clicked on,
 #	perimeter follows mouse	(default)
 #
 #----------------------------------------------------------------------------
@@ -1438,7 +1446,7 @@ proc plw::zoom_mouse_end {w wx0 wy0 wx1 wy1} {
 #----------------------------------------------------------------------------
 
 proc plw::view_select {w x0 y0 x1 y1} {
-    
+
 # Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
 
     set xl [min $x0 $x1]
@@ -1504,7 +1512,7 @@ proc plw::view_zoom {w x0 y0 x1 y1} {
 	if { $nxl < 0.0 } then {
 	    set nxl 0.0
 	    set nxr [expr 2.0 * $xl]
-	} 
+	}
 	if { $nxr > 1.0 } then {
 	    set nxr 1.0
 	    set nxl [expr 2.0 * $xl - 1.0]
@@ -1700,7 +1708,7 @@ proc plw::view_scroll {w dx dy s} {
 #----------------------------------------------------------------------------
 
 proc plw::fixview {w hscroll vscroll} {
-    
+
 # Create scrollbars if they don't already exist.
 
     set created_sb 0
@@ -1825,11 +1833,11 @@ proc plw::label_push {w msg} {
     global plot_menu_on; if !$plot_menu_on return
 
     global plmenu_lstat plmenu_lstat_depth
-    if { ![info exists plmenu_lstat_depth] || ![info exists plmenu_lstat_depth($w)] } { 
+    if { ![info exists plmenu_lstat_depth] || ![info exists plmenu_lstat_depth($w)] } {
 	set plmenu_lstat_depth($w) -1
     }
     if {$plmenu_lstat_depth($w) < 9} {
-	incr plmenu_lstat_depth($w) 
+	incr plmenu_lstat_depth($w)
     } {
 	puts stderr "plw::label_push: you just hit the max stack depth"
     }
@@ -1848,7 +1856,7 @@ proc plw::label_pop {w} {
     global plot_menu_on; if !$plot_menu_on return
 
     global plmenu_lstat plmenu_lstat_depth
-    if ![info exists plmenu_lstat_depth] { 
+    if ![info exists plmenu_lstat_depth] {
 	puts stderr "plw::label_pop: no stack defined yet, strange.."
 	return
     }

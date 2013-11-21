@@ -57,7 +57,8 @@ switch -glob -- [info nameofexecutable] {
     }
     "*wish*" -
     "*tclsh*" {
-        # use 'wish" method
+        # use 'wish" method (size of the window is determined by plstdwin)
+        plstdwin .
         plframe .plw
         set plwin .plw
     }
