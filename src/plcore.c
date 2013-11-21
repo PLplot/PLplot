@@ -2224,8 +2224,6 @@ c_plstart( const char *devname, PLINT nx, PLINT ny )
 void
 c_plinit( void )
 {
-    PLFLT def_arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
-    PLFLT def_arrow_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
     PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new;
     PLINT inc = 0, del = 2000;
 
@@ -2350,7 +2348,8 @@ c_plinit( void )
     pllsty( 1 );
     plpat( 1, &inc, &del );
 
-    plsvect( def_arrow_x, def_arrow_y, 6, 0 );
+    // Set up default arrow style;
+    plsvect( NULL, NULL, 6, 0 );
 
 // Set clip limits.
 
