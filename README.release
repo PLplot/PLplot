@@ -24,6 +24,7 @@ INDEX
 3. Changes relative to PLplot 5.9.10 (the previous development release)
 
 3.1 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
+3.2 Major overhaul of the build system and bindings for Tcl and friends
 
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
@@ -102,10 +103,11 @@ all non-windows systems
 5.65 Update f95 examples to take larger advantage of Fortran 95 capabilities
 5.66 Substantial additions to the doxygen documentation
 5.67 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
+5.68 Major overhaul of the build system and bindings for Tcl and friends
 
 1. OFFICIAL NOTICES FOR USERS SINCE 5.9.10 (the previous development release)
 
-((5.9.11) Backwards-incompatible API change.  The numerical symbolic
+(5.9.11) Backwards-incompatible API change.  The numerical symbolic
 constants that are #defined as macros in plplot.h have been
 repropagated to the Python, Java, Lua, Octave, Fortran 95, and Tcl
 language bindings using scripts.  Previously, this propagation was
@@ -125,6 +127,28 @@ So those users who were using the symbolic constants on the left for
 the above languages will have to change their source code or scripts
 to use the constants on the right.  No changes in source code or
 scripts should be required of other users.
+
+(5.9.11) Backwards-incompatible API change.  Our Fortran 77 bindings
+and examples have been completely removed because Fortran 95 is just a
+much better language which we have been supporting for a long time,
+and our judgement call based on user feedback we have received is
+nobody is interested in plotting using strict Fortran 77 language
+constructs any more.  However, if there is still some Fortran 77
+source code out there that uses PLplot, typically the only change you
+should have to do to port it to our Fortran 95 bindings is to place
+the command "use plplot" as the first line of the source code of the
+main routine.
+
+(5.9.11) Backwards-incompatible API change.  The PLplot build system
+and bindings for Tcl and friends have had a major overhaul, see below.
+Part of this change was to split the former libplplottcltk into two
+components.  The new libplplottcltk is now a pure Tcl/Tk extension
+that can be linked to the stub versions of the Tcl/Tk libraries and
+dynamically loaded from a tclsh or wish environment using the
+appropriate "package require" command.  The new libplplottcltk_Main
+library contains code (e.g., pltclMain and pltkMain) required by C
+plotting applications (e.g., pltcl, plrender, and xtk0[124].c) that
+link to libplplottcltk.
 
 2. Tests made for release 5.9.11
 
@@ -148,6 +172,26 @@ foolproof and not subject to the inconsistencies or errors possible
 with setting the variable.  But if some users still insist on setting
 the variable, that variable's name should now be NUMPY_INCLUDE_PATH.
 
+3.2 Major overhaul of the build system and bindings for Tcl and friends
+
+After years of neglect we have worked very hard in the release cycle
+leading up to the release of 5.9.11 on our build system and code
+interfacing Tcl and friends (Tk, Itcl, Itk, and Iwidgets) with PLplot.
+The build system now does a much better job of finding a consistent
+set of components for Tcl and friends.  For example, switching from
+the system version of those components to a special build of those
+components is typically a matter of simply putting tclsh from the
+special build first on the PATH.  And after the components of Tcl and
+friends are found, the build system does extensive checking to make
+sure they are compatible with each other.  The plplottcktk library has
+now been split (see remarks in the above OFFICIAL NOTICES for more
+details).  Many bugs have been fixed, and all tests documented in
+examples/tcl/README.tcldemos and examples/tk/README.tkdemos have now
+been implemented as tests via the build system (FIXME.  Make sure
+Arjen has done this for the last runAllDemos.tcl test by the release
+or else rewrite this statment) to help avoid any regressions in the
+build system and bindings for Tcl and friends in the future.
+
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
 (5.9.11) Backwards-incompatible API change.  The numerical symbolic
@@ -170,6 +214,28 @@ So those users who were using the symbolic constants on the left for
 the above languages will have to change their source code or scripts
 to use the constants on the right.  No changes in source code or
 scripts should be required of other users.
+
+(5.9.11) Backwards-incompatible API change.  Our Fortran 77 bindings
+and examples have been completely removed because Fortran 95 is just a
+much better language which we have been supporting for a long time,
+and our judgement call based on user feedback we have received is
+nobody is interested in plotting using strict Fortran 77 language
+constructs any more.  However, if there is still some Fortran 77
+source code out there that uses PLplot, typically the only change you
+should have to do to port it to our Fortran 95 bindings is to place
+the command "use plplot" as the first line of the source code of the
+main routine.
+
+(5.9.11) Backwards-incompatible API change.  The PLplot build system
+and bindings for Tcl and friends have had a major overhaul, see below.
+Part of this change was to split the former libplplottcltk into two
+components.  The new libplplottcltk is now a pure Tcl/Tk extension
+that can be linked to the stub versions of the Tcl/Tk libraries and
+dynamically loaded from a tclsh or wish environment using the
+appropriate "package require" command.  The new libplplottcltk_Main
+library contains code (e.g., pltclMain and pltkMain) required by C
+plotting applications (e.g., pltcl, plrender, and xtk0[124].c) that
+link to libplplottcltk.
 
 (5.9.10) The minimum version of CMake has been bumped to 5.8.9.  This
 change allows our build system to take advantage of CMake features
@@ -1517,3 +1583,22 @@ foolproof and not subject to the inconsistencies or errors possible
 with setting the variable.  But if some users still insist on setting
 the variable, that variable's name should now be NUMPY_INCLUDE_PATH.
 
+5.68 Major overhaul of the build system and bindings for Tcl and friends
+
+After years of neglect we have worked very hard in the release cycle
+leading up to the release of 5.9.11 on our build system and code
+interfacing Tcl and friends (Tk, Itcl, Itk, and Iwidgets) with PLplot.
+The build system now does a much better job of finding a consistent
+set of components for Tcl and friends.  For example, switching from
+the system version of those components to a special build of those
+components is typically a matter of simply putting tclsh from the
+special build first on the PATH.  And after the components of Tcl and
+friends are found, the build system does extensive checking to make
+sure they are compatible with each other.  The plplottcktk library has
+now been split (see remarks in the above OFFICIAL NOTICES for more
+details).  Many bugs have been fixed, and all tests documented in
+examples/tcl/README.tcldemos and examples/tk/README.tkdemos have now
+been implemented as tests via the build system (FIXME.  Make sure
+Arjen has done this for the last runAllDemos.tcl test by the release
+or else rewrite this statment) to help avoid any regressions in the
+build system and bindings for Tcl and friends in the future.
