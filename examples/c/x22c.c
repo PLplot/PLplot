@@ -31,10 +31,10 @@ void potential( void );
 void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax );
 
 // Pairs of points making the line segments used to plot the user defined arrow
-static PLFLT arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
-static PLFLT arrow_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
-static PLFLT arrow2_x[6] = { -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 };
-static PLFLT arrow2_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
+static PLFLT arrow_x[6] = { -1.0, 1.0, 0.6, 1.0, 0.6, 1.0 };
+static PLFLT arrow_y[6] = { 0.0, 0.0, 0.4, 0.0, -0.4, 0.0 };
+static PLFLT arrow2_x[6] = { -1.0, 0.6, 0.6, 1.0, 0.6, 0.6 };
+static PLFLT arrow2_y[6] = { 0.0, 0.0, 0.4, 0.0, -0.4, 0.0 };
 
 //--------------------------------------------------------------------------
 // main
@@ -433,6 +433,10 @@ main( int argc, const char *argv[] )
     constriction();
 
     constriction2();
+
+    // Reset arrow style to the default by passing two 
+    // NULL arrays
+    plsvect( NULL, NULL, 0, 0);
 
     potential();
 
