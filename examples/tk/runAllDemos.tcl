@@ -1,10 +1,10 @@
 #----------------------------------------------------------------------------
 # Source this file into a working Tk interpreter to run all the Tcl demos
 # in a nice window with buttons for each demo you'd like to run.
-# 
+#
 # Vince Darley
 # vince@santafe.edu
-# 
+#
 #----------------------------------------------------------------------------
 
 if {[catch {file readlink [info script]} path]} {
@@ -29,6 +29,7 @@ switch -glob -- [info nameofexecutable] {
     "*wish*" -
     "*tclsh*" {
         # use 'wish" method
+        plstdwin .
         plframe .p
         set plwin .p
         button .bnextpage -text "Page" -command [list $plwin nextpage]
