@@ -5,13 +5,14 @@ of the community to improve the PLplot plotting package. Development
 releases in the 5.9.x series will be available every few months. The next
 stable release will be 5.10.0.
 
-     If you encounter a problem that is not already documented in the
-PROBLEMS file or on our bug tracker, then please send bug reports to PLplot
-developers via the mailing lists at
-http://sourceforge.net/mail/?group_id=2915 (preferred) or on our bug tracker
-at http://sourceforge.net/tracker/?group_id=2915&atid=102915.
+If you encounter a problem that is not already documented in the
+PROBLEMS file or on our bug tracker, then please send bug reports to
+PLplot developers via the mailing lists at
+<http://sourceforge.net/p/plplot/mailman/> (preferred for initial
+discussion of issues) and, if no quick resolution is possible, on our
+bug tracker at <http://sourceforge.net/p/plplot/bugs/>.
 
-     Please see the license under which this software is distributed
+Please see the license under which this software is distributed
 (LGPL), and the disclaimer of all warranties, given in the COPYING.LIB
 file.
 
