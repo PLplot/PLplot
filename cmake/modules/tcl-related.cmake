@@ -179,8 +179,14 @@ void main(void){}
     endif(ENABLE_tk AND NOT TK_FOUND)
 
     if(ENABLE_tk AND NOT X11_FOUND)
-      message(STATUS "WARNING: X11 not found so disabling Tk interface code")
-      set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
+      if(WIN32 AND NOT CYGWIN)
+        message(STATUS "WARNING: X11 not found, turning off Tk devices that depend on it")
+        set(PLD_tk OFF CACHE BOOL "Enable Tk device" FORCE)
+        set(PLD_tkwin OFF CACHE BOOL "Enable Tk device" FORCE)
+      else(WIN32 AND NOT CYGWIN)
+        message(STATUS "WARNING: X11 not found so disabling Tk interface code")
+        set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
+      endif(WIN32 AND NOT CYGWIN)
     endif(ENABLE_tk AND NOT X11_FOUND)
 
     if(ENABLE_tk)
