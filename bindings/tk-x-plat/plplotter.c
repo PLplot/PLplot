@@ -149,12 +149,12 @@ typedef struct PlPlotter
 
 // Support for save operations
 
-    char *SaveFnam;             // File name we are currently saving to.
+    char       *SaveFnam;       // File name we are currently saving to.
                                 // Malloc'ed.
-    const char **devDesc;             // Descriptive names for file-oriented
-                                // devices.  Malloc'ed.
-    const char **devName;             // Keyword names of file-oriented devices.
-                                // Malloc'ed.
+    const char **devDesc;       // Descriptive names for file-oriented
+    // devices.  Malloc'ed.
+    const char **devName;       // Keyword names of file-oriented devices.
+    // Malloc'ed.
 
 // Used in selecting & modifying plot or device area
 

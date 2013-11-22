@@ -39,7 +39,7 @@ static void plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale );
 void
 c_plsvect( const PLFLT *arrowx, const PLFLT *arrowy, PLINT npts, PLINT fill )
 {
-    int i;
+    int   i;
     PLFLT def_arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
     PLFLT def_arrow_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
 
@@ -49,12 +49,12 @@ c_plsvect( const PLFLT *arrowx, const PLFLT *arrowy, PLINT npts, PLINT fill )
         free_mem( plsc->arrow_y );
 
     // Reset default arrow if null pointers are passed.
-    if (arrowx == NULL && arrowy == NULL)
+    if ( arrowx == NULL && arrowy == NULL )
     {
-       arrowx = def_arrow_x;
-       arrowy = def_arrow_y;
-       npts = 6;
-       fill = 0;
+        arrowx = def_arrow_x;
+        arrowy = def_arrow_y;
+        npts   = 6;
+        fill   = 0;
     }
 
     if ( ( ( plsc->arrow_x = (PLFLT *) malloc( (size_t) npts * sizeof ( PLFLT ) ) ) == NULL ) ||

@@ -434,9 +434,9 @@ main( int argc, const char *argv[] )
 
     constriction2();
 
-    // Reset arrow style to the default by passing two 
+    // Reset arrow style to the default by passing two
     // NULL arrays
-    plsvect( NULL, NULL, 0, 0);
+    plsvect( NULL, NULL, 0, 0 );
 
     potential();
 

@@ -137,7 +137,7 @@ typedef struct
 
 // Support for save operations
 
-    char *SaveFnam;             // File name we are currently saving to.
+    char       *SaveFnam;       // File name we are currently saving to.
                                 // Malloc'ed.
     const char **devDesc;       // Descriptive names for file-oriented
                                 // devices.  Malloc'ed.
