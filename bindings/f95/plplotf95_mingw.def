@@ -4,6 +4,8 @@ EXPORTS
 	__plplotp_MOD_plaxes
 	__plplotp_MOD_plbox3
 	__plplotp_MOD_plbox
+	__plplotp_MOD_plcolorbar_1
+	__plplotp_MOD_plcolorbar_2
 	__plplotp_MOD_plcontour_0
 	__plplotp_MOD_plcontour_1
 	__plplotp_MOD_plcontour_2
