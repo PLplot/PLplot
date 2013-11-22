@@ -15600,7 +15600,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    which make up the arrow. The arrow is plotted by joining these
 	    points to form a polygon. The scaling assumes that the x and y
 	    points in the arrow lie in the range
-	    <literal>-0.5 &lt;= x,y &lt;= 0.5</literal>.
+	    <literal>-0.5 &lt;= x,y &lt;= 0.5</literal>. If both 
+            <literal><parameter>arrowx</parameter></literal> and
+            <literal><parameter>arrowy</parameter></literal> are NULL then
+            the arrow style will be reset to its default.
 	  </para>
 	</listitem>
       </varlistentry>
