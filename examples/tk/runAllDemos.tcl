@@ -88,7 +88,7 @@ proc setButtonState {state} {
     }
 }
 
-for {set i 1} {$i <= 19} {incr i} {
+for {set i 0} {$i <= 33} {incr i} {
     set demo x[format "%02d" $i]
     button .b$i -text "Demo $i" -command [list run $demo]
     lappend demos $demo
