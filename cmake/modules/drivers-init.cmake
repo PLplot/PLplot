@@ -190,7 +190,7 @@ set(DRIVERS_DEVICE_LIST
   #"ljii:ljii:OFF:F:OFF"
   #"ljiip:ljiip:OFF:F:OFF"
   "mem:mem:ON:M:OFF"
-  "ntk:ntk:OFF:I:OFF"
+  "ntk:ntk:ON:I:OFF"
   "null:null:ON:N:OFF"
   # The pbm device is primitive (e.g., Hershey fonts, software fills,
   # no alpha transparency) and poorly maintained (the double free for
