@@ -139,9 +139,9 @@ typedef struct
 
     char *SaveFnam;             // File name we are currently saving to.
                                 // Malloc'ed.
-    char **devDesc;             // Descriptive names for file-oriented
+    const char **devDesc;       // Descriptive names for file-oriented
                                 // devices.  Malloc'ed.
-    char **devName;             // Keyword names of file-oriented devices.
+    const char **devName;       // Keyword names of file-oriented devices.
                                 // Malloc'ed.
 
 // Used in selecting & modifying plot or device area
@@ -447,15 +447,15 @@ plFrameCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
 // Create list of valid device names and keywords for page dumps
 
-    plFramePtr->devDesc = (char **) ckalloc( NDEV * sizeof ( char ** ) );
-    plFramePtr->devName = (char **) ckalloc( NDEV * sizeof ( char ** ) );
+    plFramePtr->devDesc = (const char **) ckalloc( NDEV * sizeof ( char ** ) );
+    plFramePtr->devName = (const char **) ckalloc( NDEV * sizeof ( char ** ) );
     for ( i = 0; i < NDEV; i++ )
     {
         plFramePtr->devDesc[i] = NULL;
         plFramePtr->devName[i] = NULL;
     }
     ndev = NDEV;
-    plgFileDevs( (const char ***) &plFramePtr->devDesc, (const char ***) &plFramePtr->devName, &ndev );
+    plgFileDevs( &plFramePtr->devDesc, &plFramePtr->devName, &ndev );
 
 // Start up event handlers and other good stuff
 

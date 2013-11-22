@@ -151,9 +151,9 @@ typedef struct PlPlotter
 
     char *SaveFnam;             // File name we are currently saving to.
                                 // Malloc'ed.
-    char **devDesc;             // Descriptive names for file-oriented
+    const char **devDesc;             // Descriptive names for file-oriented
                                 // devices.  Malloc'ed.
-    char **devName;             // Keyword names of file-oriented devices.
+    const char **devName;             // Keyword names of file-oriented devices.
                                 // Malloc'ed.
 
 // Used in selecting & modifying plot or device area
@@ -433,15 +433,15 @@ plPlotterCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
 // Create list of valid device names and keywords for page dumps
 
-    plPlotterPtr->devDesc = (char **) malloc( (size_t) NDEV * sizeof ( char ** ) );
-    plPlotterPtr->devName = (char **) malloc( (size_t) NDEV * sizeof ( char ** ) );
+    plPlotterPtr->devDesc = (const char **) malloc( (size_t) NDEV * sizeof ( char ** ) );
+    plPlotterPtr->devName = (const char **) malloc( (size_t) NDEV * sizeof ( char ** ) );
     for ( i = 0; i < NDEV; i++ )
     {
         plPlotterPtr->devDesc[i] = NULL;
         plPlotterPtr->devName[i] = NULL;
     }
     ndev = NDEV;
-    plgFileDevs( (const char ***) &plPlotterPtr->devDesc, (const char ***) &plPlotterPtr->devName, &ndev );
+    plgFileDevs( &plPlotterPtr->devDesc, &plPlotterPtr->devName, &ndev );
 
 // Start up event handlers and other good stuff
 
