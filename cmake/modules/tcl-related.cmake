@@ -96,14 +96,28 @@ if(ENABLE_tcl)
       else(USE_INCRTCL_VERSION_4)
 	set(SUGGESTED_ITCL_VERSION 3)
       endif(USE_INCRTCL_VERSION_4)
-      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl "puts -nonewline [package require Itcl ${SUGGESTED_ITCL_VERSION}]; exit")
-      # Refine SUGGESTED_ITCL_VERSION to exact value or fail.
-      execute_process(
-	COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl
-	RESULT_VARIABLE ITCL_RC
-	OUTPUT_VARIABLE PLPLOT_ITCL_VERSION
-	ERROR_VARIABLE ITCL_STDERR
-	)
+      if(NOT PLPLOT_ITCL_VERSION)
+	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl "puts -nonewline [package require Itcl ${SUGGESTED_ITCL_VERSION}]; exit")
+	# Refine SUGGESTED_ITCL_VERSION to exact value or fail.
+	execute_process(
+	  COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl
+	  RESULT_VARIABLE ITCL_RC
+	  OUTPUT_VARIABLE _plplot_itcl_version
+	  )
+	if(NOT ITCL_RC)
+	  # Store result in cached variable so it will be remembered
+          # when cmake is re-run, but use type of STRING rather than
+          # INTERNAL to allow users to specify the value with a
+          # -DPLPLOT_ITCL_VERSION:STRING=<whatever> on the command
+          # line for those rare cases when "package require Itcl"
+          # would error out due to some tclsh issue.
+	  set(PLPLOT_ITCL_VERSION ${_plplot_itcl_version}
+	    CACHE STRING "Itcl version that will be used"
+	    )
+	endif(NOT ITCL_RC)
+      else(NOT PLPLOT_ITCL_VERSION)
+	set(ITCL_RC 0)
+      endif(NOT PLPLOT_ITCL_VERSION)
       if(NOT ITCL_RC)
         message(STATUS "Looking for itcl.h")
 	if(NOT USE_INCRTCL_VERSION_4)
@@ -212,14 +226,29 @@ void main(void){}
       else(USE_INCRTCL_VERSION_4)
 	set(SUGGESTED_ITK_VERSION 3)
       endif(USE_INCRTCL_VERSION_4)
-      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl "puts -nonewline [package require Itk ${SUGGESTED_ITK_VERSION}]; exit")
-      # Refine SUGGESTED_ITK_VERSION to exact value or fail.
-      execute_process(
-	COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl
-	RESULT_VARIABLE ITK_RC
-	OUTPUT_VARIABLE PLPLOT_ITK_VERSION
-	ERROR_VARIABLE ITK_STDERR
-	)
+      if(NOT PLPLOT_ITK_VERSION)
+	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl "puts -nonewline [package require Itk ${SUGGESTED_ITK_VERSION}]; exit")
+	# Refine SUGGESTED_ITK_VERSION to exact value or fail.
+	execute_process(
+	  COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl
+	  RESULT_VARIABLE ITK_RC
+	  OUTPUT_VARIABLE _plplot_itk_version
+	  )
+	if(NOT ITK_RC)
+	  # Store result in cached variable so it will be remembered
+          # when cmake is re-run, but use type of STRING rather than
+          # INTERNAL to allow users to specify the value with a
+          # -DPLPLOT_ITK_VERSION:STRING=<whatever> on the command line
+          # for those rare cases (e.g., autobuild environment without X)
+          # when "package require Itk" would error out due to the lack
+          # of X or some tclsh issue.
+	  set(PLPLOT_ITK_VERSION ${_plplot_itk_version}
+	    CACHE STRING "Itk version that will be used"
+	    )
+	endif(NOT ITK_RC)
+      else(NOT PLPLOT_ITK_VERSION)
+	set(ITCL_RC 0)
+      endif(NOT PLPLOT_ITK_VERSION)
       if(NOT ITK_RC)
 	message(STATUS "Looking for itk.h")
 	if(NOT USE_INCRTCL_VERSION_4)
@@ -278,39 +307,57 @@ void main(void){}
 	    set(HAVE_ITK ON)
 
 	    # Test version consistency between iwidgets, itk, and itcl.
-	    if(USE_INCRTCL_VERSION_4)
-	      set(SUGGESTED_IWIDGETS_VERSION 4.1)
-	      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl "puts -nonewline \"[package require Iwidgets ${SUGGESTED_IWIDGETS_VERSION}];[package require Itk];[package require Itcl]\";exit")
-	      execute_process(
-		COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl
-		RESULT_VARIABLE IWIDGETS_RC
-		OUTPUT_VARIABLE IWIDGETS_VERSIONS_LIST
-		ERROR_VARIABLE IWIDGETS_STDERR
-		)
-	    else(USE_INCRTCL_VERSION_4)
-	      # Find maximum 4.0 version of iwidgets that is
-	      # available.  4.0.1 (released in 2002) is the largest
-	      # version of iwidgets4.0 (as opposed to the recently
-	      # developed iwidgets4.1) I have found on the web in
-	      # tarball form, but I have seen one reference to 4.0.2
-	      # which may have been publicly released somewhere
-	      # inaccessible to my google searches or privately made
-	      # available before all development of iwidgets4.0
-	      # stopped. So add 4.0.2 to the list just in case.
-	      foreach(SUGGESTED_IWIDGETS_VERSION 4.0.2 4.0.1 4.0.0)
-		file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl "puts -nonewline \"[package require -exact Iwidgets ${SUGGESTED_IWIDGETS_VERSION}];[package require Itk];[package require Itcl]\";exit")
+	    if(NOT IWIDGETS_VERSIONS_LIST)
+	      if(USE_INCRTCL_VERSION_4)
+		set(SUGGESTED_IWIDGETS_VERSION 4.1)
+		file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl "puts -nonewline \"[package require Iwidgets ${SUGGESTED_IWIDGETS_VERSION}];[package require Itk];[package require Itcl]\";exit")
 		execute_process(
 		  COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl
 		  RESULT_VARIABLE IWIDGETS_RC
-		  OUTPUT_VARIABLE IWIDGETS_VERSIONS_LIST
-		  ERROR_VARIABLE IWIDGETS_STDERR
+		  OUTPUT_VARIABLE _iwidgets_versions_list
 		  )
-		if(NOT IWIDGETS_RC)
-		  break()
-		endif(NOT IWIDGETS_RC)
-	      endforeach(SUGGESTED_IWIDGETS_VERSION 4.0.2 4.0.1 4.0.0)
-	    endif(USE_INCRTCL_VERSION_4)
+	      else(USE_INCRTCL_VERSION_4)
+		# Find maximum 4.0 version of iwidgets that is
+		# available.  4.0.1 (released in 2002) is the largest
+		# version of iwidgets4.0 (as opposed to the recently
+		# developed iwidgets4.1) I have found on the web in
+		# tarball form, but I have seen one reference to 4.0.2
+		# which may have been publicly released somewhere
+		# inaccessible to my google searches or privately made
+		# available before all development of iwidgets4.0
+		# stopped. So add 4.0.2 to the list just in case.
+		foreach(SUGGESTED_IWIDGETS_VERSION 4.0.2 4.0.1 4.0.0)
+		  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl "puts -nonewline \"[package require -exact Iwidgets ${SUGGESTED_IWIDGETS_VERSION}];[package require Itk];[package require Itcl]\";exit")
+		  execute_process(
+		    COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl
+		    RESULT_VARIABLE IWIDGETS_RC
+		    OUTPUT_VARIABLE _iwidgets_versions_list
+		    ERROR_QUIET
+		    )
+		  if(NOT IWIDGETS_RC)
+		    break()
+		  endif(NOT IWIDGETS_RC)
+		endforeach(SUGGESTED_IWIDGETS_VERSION 4.0.2 4.0.1 4.0.0)
+	      endif(USE_INCRTCL_VERSION_4)
+	      if(NOT IWIDGETS_RC)
+		# Store result in cached variable so it will be
+		# remembered when cmake is re-run, but use type of
+		# STRING rather than INTERNAL to allow users to
+		# specify the value with a
+		# -DIWIDGETS_VERSIONS_LIST:STRING=<whatever> on the
+		# command line for those rare cases (e.g., autobuild
+		# environment without X) when "package require Itk (or
+		# Itcl or IWidgets)" would error out due to the lack of
+		# X or some tclsh issue
+		set(IWIDGETS_VERSIONS_LIST ${_iwidgets_versions_list}
+		  CACHE STRING "list of Iwidgets; Itk, and Itcl versions (in that order) that will be used"
+		  )
+	      endif(NOT IWIDGETS_RC)
+	    else(NOT IWIDGETS_VERSIONS_LIST)
+	      set(IWIDGETS_RC 0)
+	    endif(NOT IWIDGETS_VERSIONS_LIST)
 	    if(NOT IWIDGETS_RC)
+	      message(STATUS "IWIDGETS_VERSIONS_LIST = ${IWIDGETS_VERSIONS_LIST}")
 	      list(GET IWIDGETS_VERSIONS_LIST 0 PLPLOT_IWIDGETS_VERSION)
 	      list(GET IWIDGETS_VERSIONS_LIST 1 CONSISTENT_ITK_VERSION)
 	      list(GET IWIDGETS_VERSIONS_LIST 2 CONSISTENT_ITCL_VERSION)
