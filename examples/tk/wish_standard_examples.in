@@ -13,8 +13,8 @@ exec @TK_WISH@ "$0" "$@"
 lappend auto_path @pkgIndex_LOCATION@
 package require Pltk
 source tkdemos.tcl
-# disable pauses
-$plwin cmd plspause 0
+# Note wish currently disables pauses so no special method is
+# required to do that (unlike the plserver case).
 0
 1
 #2

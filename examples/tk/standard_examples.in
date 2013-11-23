@@ -8,11 +8,11 @@
 exec @plserver_LOCATION@ -f "$0" "$@"
 source tkdemos.tcl
 #
-# Turn off pausing - it has to be done in two ways, as the plxframe uses a visual
-# clue and bindings to key press events.
+# Turn off pausing - Note in the current plserver case, the plxframe
+# uses a visual clue and bindings to key press events so a different
+# method must be used to disable pausing than in the wish case.
 # Note that the widget in question is .plw, not $plwin
 #
-$plwin cmd plspause 0
 plw::set_pause .plw 0
 #
 # Now run the examples one by one

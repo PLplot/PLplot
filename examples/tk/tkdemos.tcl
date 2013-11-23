@@ -91,8 +91,6 @@ for {set i 0} {$i <= 33} {incr i} {
 	proc $i {} "
             global plwin
             $demo $plwin
-            # Disable pausing (currently only does that for the wish version)
-            $plwin cmd plspause 0
             $plwin cmd plcol0 1
             $plwin cmd plsori 0
             $plwin cmd plspal0 cmap0_default.pal
