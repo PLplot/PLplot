@@ -1048,6 +1048,41 @@ if(BUILD_TEST)
       else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_04)
       endif(USE_INCRTCL_VERSION_4)
+
+      add_custom_target(test_plserver_runAllDemos
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_runAllDemos
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+	)
+      add_dependencies(test_plserver_runAllDemos
+	plserver
+	tcl_examples
+	tclIndex_tcl
+	tclIndex_tk
+	tclIndex_examples_tk
+	)
+
+      message(STATUS "WARNING: The test_plserver_runAlldemos target can be run independently but 
+   there are several issues with this target so it is temporarily excluded from being a
+   dependency of other more general interactive test targets") 
+      #list(APPEND targets_examples_tk test_plserver_runAllDemos)
+
+      add_custom_target(test_wish_runAllDemos
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos -geometry 800x600
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+	)
+      add_dependencies(test_wish_runAllDemos
+	plplottcltk${LIB_TAG}
+	tkwin
+	tcl_examples
+	tclIndex_tcl
+	tclIndex_tk
+	tclIndex_examples_tk
+	)
+      message(STATUS "WARNING: The test_wish_runAlldemos target can be run independently but 
+   there are several issues with this target so it is temporarily excluded from being a
+   dependency of other more general interactive test targets") 
+      # list(APPEND targets_examples_tk test_wish_runAlldemos)
+
     endif(ENABLE_itk)
   endif(ENABLE_tk AND PLD_tk)
 

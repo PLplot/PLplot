@@ -142,10 +142,21 @@ endif(ENABLE_itk)
 
 # standard_examples is a configured shell script that runs all the standard
 # examples under plserver.
-set(tk_SCRIPTS tk01 tk03 plgrid standard_examples wish_standard_examples)
-# The second and fourth Tk examples depend on Itk to work.
+set(tk_SCRIPTS
+  tk01
+  tk03
+  plgrid
+  standard_examples
+  wish_standard_examples
+  )
+# These examples depend on Itk to work.
 if(ENABLE_itk)
-  list(APPEND tk_SCRIPTS tk02 tk04)
+  list(APPEND tk_SCRIPTS 
+    tk02
+    tk04
+    plserver_runAllDemos
+    wish_runAllDemos
+    )
 endif(ENABLE_itk)
 
 if(BUILD_TEST)
@@ -185,11 +196,15 @@ if(BUILD_TEST)
   # wish_standard_examples is a configured shell script that runs all
   # the standard examples under wish using a TEA-based approach.
   # pkgIndex_LOCATION is the directory where the relevant pkgIndex.tcl
-  # file is located.
+  # file is located.  In the Plplotter package case two build-tree
+  # locations must be given, and we use the pkgIndex_LOCATIONS variable
+  # to configure that case.
   if(CORE_BUILD)
     set(pkgIndex_LOCATION ${CMAKE_BINARY_DIR}/bindings/tk)
+    set(pkgIndex_LOCATIONS "${CMAKE_BINARY_DIR}/bindings/tk ${CMAKE_BINARY_DIR}/bindings/tk-x-plat")
   else(CORE_BUILD)
     set(pkgIndex_LOCATION ${DATA_DIR})
+    set(pkgIndex_LOCATIONS ${DATA_DIR})
   endif(CORE_BUILD)
 
   foreach(tk_related_target xtk01 plserver xtk02 xtk04)
