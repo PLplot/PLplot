@@ -26,7 +26,7 @@
 #include "plcdemos.h"
 
 void circulation( void );
-void constriction( void );
+void constriction( int );
 void potential( void );
 void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax );
 
@@ -103,7 +103,7 @@ circulation( void )
 // Vector plot of flow through a constricted pipe
 //
 void
-constriction( void )
+constriction( int astyle )
 {
     int       i, j;
     PLFLT     dx, dy, x, y;
@@ -113,6 +113,7 @@ constriction( void )
     PLFLT     **u, **v;
     const int nx = 20;
     const int ny = 20;
+    char      title[80];
 
     dx = 1.0;
     dy = 1.0;
@@ -156,7 +157,8 @@ constriction( void )
     }
 
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
-    pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction" );
+    sprintf( title, "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
+    pllab( "(x)", "(y)", title );
     plcol0( 2 );
     plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny, -0.5, pltr2, (void *) &cgrid2 );
     plcol0( 1 );
@@ -244,7 +246,7 @@ constriction2( void )
     }
 
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
-    pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction" );
+    pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
     plcol0( 2 );
     plshades( (const PLFLT * const *) u, nx, ny, NULL,
         xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
@@ -424,13 +426,13 @@ main( int argc, const char *argv[] )
     // Set arrow style using arrow_x and arrow_y then
     // plot using these arrows.
     plsvect( arrow_x, arrow_y, narr, fill );
-    constriction();
+    constriction( 1 );
 
     // Set arrow style using arrow2_x and arrow2_y then
     // plot using these filled arrows.
     fill = 1;
     plsvect( arrow2_x, arrow2_y, narr, fill );
-    constriction();
+    constriction( 2 );
 
     constriction2();
 
