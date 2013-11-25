@@ -157,7 +157,7 @@ x22::constriction( int astyle )
     sprintf( title, "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
     pls->lab( "(x)", "(y)", title );
     pls->col0( 2 );
-    pls->vect( u, v, nx, ny, -0.5, plstream::tr2, (void *) &cgrid2 );
+    pls->vect( u, v, nx, ny, -1.0, plstream::tr2, (void *) &cgrid2 );
     pls->col0( 1 );
 }
 
@@ -211,7 +211,7 @@ x22::constriction2( void )
         xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
 	clev, nc, 0, 1, 1.0, plstream::fill, 1, NULL, NULL );
     pls->vect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
-	-0.5, plstream::tr2, (void *) &cgrid2 );
+	-1.0, plstream::tr2, (void *) &cgrid2 );
     // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
     pls->path( nseg, xmin, ymax, xmax, ymax );
     pls->path( nseg, xmin, ymin, xmax, ymin );
@@ -343,10 +343,10 @@ x22::x22( int argc, const char ** argv )
     bool  fill;
 
     // Set of points making a polygon to use as the arrow
-    PLFLT arrow_x[6] = { -1.0, 1.0, 0.6, 1.0, 0.6, 1.0 };
-    PLFLT arrow_y[6] = { 0.0, 0.0, 0.4, 0.0, -0.4, 0.0 };
-    PLFLT arrow2_x[6] = { -1.0, 0.6, 0.6, 1.0, 0.6, 0.6 };
-    PLFLT arrow2_y[6] = { 0.0, 0.0, 0.4, 0.0, -0.4, 0.0 };
+    PLFLT arrow_x[6]  = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
+    PLFLT arrow_y[6]  = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
+    PLFLT arrow2_x[6] = { -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 };
+    PLFLT arrow2_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
 
     // Create new plstream
     pls = new plstream();

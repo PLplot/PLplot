@@ -30,11 +30,11 @@ void constriction( int );
 void potential( void );
 void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax );
 
-// Pairs of points making the line segments used to plot the user defined arrow
-static PLFLT arrow_x[6] = { -1.0, 1.0, 0.6, 1.0, 0.6, 1.0 };
-static PLFLT arrow_y[6] = { 0.0, 0.0, 0.4, 0.0, -0.4, 0.0 };
-static PLFLT arrow2_x[6] = { -1.0, 0.6, 0.6, 1.0, 0.6, 0.6 };
-static PLFLT arrow2_y[6] = { 0.0, 0.0, 0.4, 0.0, -0.4, 0.0 };
+// Pairs of points making the line segments used to plot the user defined arroW
+static PLFLT arrow_x[6]  = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
+static PLFLT arrow_y[6]  = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
+static PLFLT arrow2_x[6] = { -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 };
+static PLFLT arrow2_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
 
 //--------------------------------------------------------------------------
 // main
@@ -160,7 +160,7 @@ constriction( int astyle )
     sprintf( title, "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
     pllab( "(x)", "(y)", title );
     plcol0( 2 );
-    plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny, -0.5, pltr2, (void *) &cgrid2 );
+    plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny, -1.0, pltr2, (void *) &cgrid2 );
     plcol0( 1 );
 
     plFree2dGrid( cgrid2.xg, nx, ny );
@@ -252,7 +252,7 @@ constriction2( void )
         xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
         clev, nc, 0, 1, 1.0, plfill, 1, NULL, NULL );
     plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
-        -0.5, pltr2, (void *) &cgrid2 );
+        -1.0, pltr2, (void *) &cgrid2 );
     // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
     plpath( nseg, xmin, ymax, xmax, ymax );
     plpath( nseg, xmin, ymin, xmax, ymin );
