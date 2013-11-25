@@ -258,7 +258,8 @@ void PLSTRIPC( PLINT *id, const char *xspec, const char *yspec,
                const char *labx, const char *laby, const char *labtop );
 void PLSTRIPD( PLINT *id );
 void PLSTYL( PLINT *n, PLINT *mark, PLINT *space );
-void PLSVECT( PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill );
+void PLSVECT1( PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill );
+void PLSVECT2( void );
 void PLSVPA( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
 void PLSXAX( PLINT *digmax, PLINT *digits );
 void PLSYAX( PLINT *digmax, PLINT *digits );
@@ -1526,9 +1527,15 @@ PLSTYL( PLINT *n, PLINT *mark, PLINT *space )
 }
 
 void
-PLSVECT( PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill )
+PLSVECT1( PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill )
 {
     c_plsvect( arrowx, arrowy, *npts, *fill );
+}
+
+void
+PLSVECT2( void )
+{
+  c_plsvect( NULL, NULL, 0, 0 );
 }
 
 void

@@ -897,7 +897,11 @@ module plplot
     end interface
 
     interface plsvect
-        module procedure plsvect
+        module procedure plsvect1
+        
+        subroutine plsvect2
+        end subroutine plsvect2
+
     end interface
 
     interface
@@ -1558,14 +1562,14 @@ contains
 
     end subroutine plstripc
 
-    subroutine plsvect( arrowx, arrowy, fill )
+    subroutine plsvect1( arrowx, arrowy, fill )
          logical                        :: fill
          real(kind=plflt), dimension(:) :: arrowx, arrowy
          integer ifill
          ifill = convert_to_int(fill)
 
-       call plsvectf95( arrowx, arrowy, size(arrowx), ifill )
-    end subroutine plsvect
+       call plsvect1f95( arrowx, arrowy, size(arrowx), ifill )
+    end subroutine plsvect1
 
     subroutine plsym( x, y, code )
        integer                        :: code

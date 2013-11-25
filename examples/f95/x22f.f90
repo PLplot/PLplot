@@ -48,13 +48,17 @@
 !     Set arrow style using arrow_x and arrow_y the
 !     plot using these arrows
       call plsvect(arrow_x, arrow_y, fill)
-      call constriction
+      call constriction( 1 ) 
 
 !     Set arrow style using arrow_x and arrow_y the
 !     plot using these arrows
       fill = .true.
       call plsvect(arrow2_x, arrow2_y, fill)
-      call constriction
+      call constriction( 2 )
+
+      call constriction2
+
+      call plsvect
 
       call potential
 
@@ -105,12 +109,14 @@
       end
 
 !     vector plot of the flow through a constricted pipe
-      subroutine constriction()
+      subroutine constriction( astyle )
       use plplot, PI => PL_PI
       implicit none
 
-      integer i, j, nx, ny
+      integer i, j, nx, ny, astyle
       parameter (nx=20, ny=20)
+
+      character(len=80) :: title
 
       real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
 
@@ -134,7 +140,7 @@
           yg(i,j) = yy
           b = ymax/4.0_plflt*(3.0_plflt-cos(PI*xx/xmax))
           if (abs(yy).lt.b) then
-             dbdx = ymax/4.0_plflt*sin(PI*xx/xmax)*yy/b
+             dbdx = ymax/4.0_plflt*sin(PI*xx/xmax)*PI/xmax*yy/b
              u(i,j) = Q*ymax/b
              v(i,j) = u(i,j)*dbdx
           else
@@ -145,15 +151,94 @@
       enddo
 
       call plenv(xmin, xmax, ymin, ymax, 0, 0)
-      call pllab('(x)', '(y)',  &
-       '#frPLplot Example 22 - constriction')
+      write(title,'(A,I0,A)') '#frPLplot Example 22 - constriction (arrow style ', astyle,')'
+      call pllab('(x)', '(y)', title)
       call plcol0(2)
-      scaling = -0.5_plflt
+      scaling = -1.0_plflt
       call plvect(u,v,scaling,xg,yg)
       call plcol0(1)
 
       end
 
+! Global transform function for a constriction using data passed in
+! This is the same transformation used in constriction.
+      subroutine transform( x, y, xt, yt )
+      use plplot, PI => PL_PI
+      implicit none
+
+      real(kind=plflt) x, y, xt, yt
+
+      real(kind=plflt) xmax
+      common /transform_data/ xmax
+
+      xt = x
+      yt = y / 4.0_plflt * ( 3.0_plflt - cos( PI * x / xmax ) )
+      end subroutine transform
+
+! Vector plot of flow through a constricted pipe
+! with a coordinate transform
+      subroutine constriction2()
+      use plplot, PI => PL_PI
+      implicit none
+      
+      integer i, j, nx, ny, nc, nseg
+      parameter (nx=20, ny=20, nc=11, nseg=20)
+
+      real(kind=plflt) dx, dy, xx, yy
+      real(kind=plflt) xmin, xmax, ymin, ymax
+      real(kind=plflt) Q, b, dbdx, scaling
+      real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
+      real(kind=plflt) clev(nc);
+      common /transform_data/ ymax
+      character(len=1) defined
+      
+      external transform
+
+      dx = 1.0_plflt
+      dy = 1.0_plflt
+
+      xmin = -dble(nx)/2.0_plflt*dx
+      xmax = dble(nx)/2.0_plflt*dx
+      ymin = -dble(ny)/2.0_plflt*dy
+      ymax = dble(ny)/2.0_plflt*dy
+
+      
+      call plstransform( transform )
+    
+      Q = 2.0_plflt
+      do i=1,nx
+        xx = (dble(i)-dble(nx)/2.0_plflt-0.5_plflt)*dx
+        do j=1,ny
+          yy = (dble(j)-dble(ny)/2.0_plflt-0.5_plflt)*dy
+          xg(i,j) = xx
+          yg(i,j) = yy
+          b = ymax/4.0_plflt*(3.0_plflt-cos(PI*xx/xmax))
+          u(i,j) = Q*ymax/b
+          v(i,j) = 0.0_plflt
+        enddo
+      enddo
+
+      do i=1,nc
+         clev(i) = Q + dble(i-1) * Q / ( dble(nc) - 1.0_plflt )
+      enddo
+
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
+      call pllab('(x)', '(y)', &
+           '#frPLplot Example 22 - constriction with plstransform')
+      call plcol0(2)
+      call plshades(u, defined, xmin + dx / 2.0_plflt, &
+           xmax - dx / 2.0_plflt, & 
+           ymin + dy / 2.0_plflt, ymax - dy / 2.0_plflt, &
+           clev, 0.0_plflt, 1, 1.0_plflt)
+      scaling = -1.0_plflt
+      call plvect(u,v,scaling,xg,yg)
+      call plpath(nseg, xmin, ymax, xmax, ymax)
+      call plpath(nseg, xmin, ymin, xmax, ymin)
+      call plcol0(1)
+
+      call plstransform
+
+      end subroutine constriction2
 
       subroutine potential()
       use plplot, PI => PL_PI
