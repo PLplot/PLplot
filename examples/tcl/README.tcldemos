@@ -42,7 +42,7 @@ tcldemos.tcl runs all the standard examples except for example 32.
 There are two ways to run tcldemos.tcl:
 
 (1) 
-pltcl | ../../utils/pltcl
+pltcl | ../../bindings/tcl/pltcl
 plinit
 source tcldemos.tcl
 0

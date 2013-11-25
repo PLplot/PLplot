@@ -69,32 +69,6 @@ endif(USE_RPATH)
 
 install(TARGETS pltek DESTINATION ${BIN_DIR})
 
-if(ENABLE_tcl)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/bindings/tcl
-    ${TCL_INCLUDE_PATH}
-    )
-  if(HAVE_ITCL)
-    include_directories(${ITCL_INCLUDE_PATH})
-  endif(HAVE_ITCL)
-
-  add_executable(pltcl pltcl.c)
-
-  target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${ITCL_LIBRARY} ${TCL_LIBRARY})
-
-  if(USE_RPATH)
-    set_target_properties(pltcl
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-  endif(USE_RPATH)
-
-  install(TARGETS pltcl 
-    EXPORT export_plplot
-    DESTINATION ${BIN_DIR}
-    )
-endif(ENABLE_tcl)
-
 # Build simple executable to check parity bits of all characters read
 # by stdin.
 add_executable(parity_bit_check parity_bit_check.c)

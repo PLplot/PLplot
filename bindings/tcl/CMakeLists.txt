@@ -187,19 +187,11 @@ if(ENABLE_tcl)
 
   if(ENABLE_itcl)
     include_directories(${ITCL_INCLUDE_PATH})
-    set(
-      libplplottcltk${LIB_TAG}_COMPILE_FLAGS
-      "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} -I${ITCL_INCLUDE_PATH}"
-      )
-    set(plplottcltk${LIB_TAG}_link_libraries
-      ${plplottcltk${LIB_TAG}_link_libraries}
-      ${ITCL_LIBRARY}
-      )
-    set(
-      libplplottcltk${LIB_TAG}_LINK_FLAGS
-      ${libplplottcltk${LIB_TAG}_LINK_FLAGS}
-      ${ITCL_LIBRARY}
-      )
+
+    # tkMain.c is the only code that currently has a dependence on
+    # itcl library routines.  Since that code is now part of the source code
+    # for libplplottcltk_Main, only flags for that library (but not
+    # libplplottcltk any more) are modified below.
 
     set(
       libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS
@@ -289,19 +281,10 @@ if(ENABLE_tcl)
 
     if(ENABLE_itk)
       include_directories(${ITK_INCLUDE_PATH})
-      set(
-	libplplottcltk${LIB_TAG}_COMPILE_FLAGS
-	"${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} -I${ITK_INCLUDE_PATH}"
-	)
-      set(plplottcltk${LIB_TAG}_link_libraries
-	${plplottcltk${LIB_TAG}_link_libraries}
-	${ITK_LIBRARY}
-	)
-      set(
-	libplplottcltk${LIB_TAG}_LINK_FLAGS
-	${libplplottcltk${LIB_TAG}_LINK_FLAGS}
-	${ITK_LIBRARY}
-	)
+      # tkMain.c is the only code that currently has a dependence on
+      # itk library routines.  Since that code is now part of the source code
+      # for libplplottcltk_Main, only flags for that library (but not
+      # libplplottcltk any more) are modified below.
 
       set(
 	libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS
@@ -588,4 +571,20 @@ if(ENABLE_tcl)
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
+
+  add_executable(pltcl pltcl.c)
+
+  target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${ITCL_LIBRARY} ${TCL_LIBRARY})
+
+  if(USE_RPATH)
+    set_target_properties(pltcl
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
+  endif(USE_RPATH)
+
+  install(TARGETS pltcl 
+    EXPORT export_plplot
+    DESTINATION ${BIN_DIR}
+    )
 endif(ENABLE_tcl)
