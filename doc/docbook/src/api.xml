@@ -9211,7 +9211,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 22.
     </para>
 
   </sect1>
@@ -11127,7 +11127,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in any example 31.
     </para>
 
   </sect1>
@@ -14430,7 +14430,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
             Pointer to a function that defines a transformation from the
-            input (x, y) coordinate to a new plot world coordinate.
+            input (x, y) coordinate to a new plot world coordinate. A NULL pointer 
+            means that no transform is applied.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -14460,7 +14461,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in example 19.
+      This function is used in examples 19 and 22.
     </para>
 
   </sect1>
