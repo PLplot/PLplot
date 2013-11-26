@@ -135,7 +135,7 @@ public:
                PLPointer pltr_data );
 
 // Set the arrow style
-    void svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, bool fill );
+    void svect( const PLFLT *arrow_x = NULL, const PLFLT *arrow_y = NULL, PLINT npts = 0, bool fill = false );
 
 // This functions similarly to plbox() except that the origin of the axes is
 // placed at the user-specified point (x0, y0).

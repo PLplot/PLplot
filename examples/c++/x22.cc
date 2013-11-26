@@ -392,8 +392,8 @@ x22::x22( int argc, const char ** argv )
     constriction2();
 
     // Reset arrow style to the default by passing two
-    // NULL arrays
-    pls->svect( NULL, NULL, 0, 0 );
+    // NULL arrays (this are the default arguments)
+    pls->svect( );
 
     potential();
 
