@@ -39,7 +39,8 @@
 //
 //
 
-#define NEED_PLDEBUG    1
+#define DEBUG
+#define NEED_PLDEBUG
 
 #include "plplotP.h"
 
@@ -544,7 +545,7 @@ OpenShapeFile( const char *fn )
     return NULL;
 
 done:
-    pldebug( "OpenShapeFile", "Found file %s\n", fs );
+    pldebug( "OpenShapeFile", "SHPOpen successfully opened two files with basename %s\n", fs );
     free_mem( fs );
     return ( file );
 }
