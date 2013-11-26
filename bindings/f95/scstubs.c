@@ -1535,7 +1535,7 @@ PLSVECT1( PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLBOOL *fill )
 void
 PLSVECT2( void )
 {
-  c_plsvect( NULL, NULL, 0, 0 );
+    c_plsvect( NULL, NULL, 0, 0 );
 }
 
 void

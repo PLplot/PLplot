@@ -168,11 +168,11 @@ x22::constriction( int astyle )
 void
 x22::constriction2( void )
 {
-    int       i, j;
-    PLFLT     dx, dy, x, y;
-    PLFLT     xmin, xmax, ymin, ymax;
-    PLFLT     Q, b, dbdx;
-    PLFLT     clev[nc];
+    int   i, j;
+    PLFLT dx, dy, x, y;
+    PLFLT xmin, xmax, ymin, ymax;
+    PLFLT Q, b, dbdx;
+    PLFLT clev[nc];
 
     dx = 1.0;
     dy = 1.0;
@@ -209,9 +209,9 @@ x22::constriction2( void )
     pls->col0( 2 );
     pls->shades( (const PLFLT * const *) u, nx, ny, NULL,
         xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
-	clev, nc, 0, 1, 1.0, plstream::fill, 1, NULL, NULL );
+        clev, nc, 0, 1, 1.0, plstream::fill, 1, NULL, NULL );
     pls->vect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
-	-1.0, plstream::tr2, (void *) &cgrid2 );
+        -1.0, plstream::tr2, (void *) &cgrid2 );
     // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
     pls->path( nseg, xmin, ymax, xmax, ymax );
     pls->path( nseg, xmin, ymin, xmax, ymin );
@@ -359,9 +359,9 @@ x22::x22( int argc, const char ** argv )
 
     pls->init();
 
-    nx = 20;
-    ny = 20;
-    nc = 11;
+    nx   = 20;
+    ny   = 20;
+    nc   = 11;
     nseg = 20;
 
     // Allocate arrays
