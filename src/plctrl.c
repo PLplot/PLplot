@@ -2439,6 +2439,8 @@ plGetName( const char *dir, const char *subdir, const char *filename, char **fil
 // Malloc space for filespec
 
     free_mem( *filespec );
+    // Be slightly generous since 3 (two delimiters + NULL byte) should be
+    // enough.
     lfilespec = strlen( dir ) + strlen( subdir ) + strlen( filename ) + 10;
     if ( ( *filespec = (char *) malloc( lfilespec ) ) == NULL )
     {
@@ -2457,7 +2459,7 @@ plGetName( const char *dir, const char *subdir, const char *filename, char **fil
         strcat_delim( *filespec );
         strcat( *filespec, filename );
     }
-    pldebug( "plGetName", "Length of full pathname of file to be found is %zu\n", lfilespec );
+    pldebug( "plGetName", "Maximum length of full pathname of file to be found is %zu\n", lfilespec - 1 );
     pldebug( "plGetName", "Full pathname of file to be found is %s\n", *filespec );
 }
 
