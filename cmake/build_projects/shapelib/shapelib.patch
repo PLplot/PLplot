@@ -1,0 +1,23 @@
+diff -Naur '--exclude=CMakeLists.txt' '--exclude=*~' shapelib-1.3.0_pristine/shpopen.c shapelib-1.3.0/shpopen.c
+--- shapelib-1.3.0_pristine/shpopen.c	2012-01-24 14:33:01.000000000 -0800
++++ shapelib-1.3.0/shpopen.c	2013-11-26 11:46:43.215221421 -0800
+@@ -559,7 +559,9 @@
+         char *pszMessage = (char *) malloc(strlen(pszBasename)*2+256);
+         sprintf( pszMessage, "Unable to open %s.shp or %s.SHP.", 
+                   pszBasename, pszBasename );
++#ifndef SHP_DROP_UNABLE_TO_OPEN_MSG
+         psHooks->Error( pszMessage );
++#endif
+         free( pszMessage );
+ 
+         free( psSHP );
+@@ -582,7 +584,9 @@
+         char *pszMessage = (char *) malloc(strlen(pszBasename)*2+256);
+         sprintf( pszMessage, "Unable to open %s.shx or %s.SHX.", 
+                   pszBasename, pszBasename );
++#ifndef SHP_DROP_UNABLE_TO_OPEN_MSG
+         psHooks->Error( pszMessage );
++#endif
+         free( pszMessage );
+ 
+         psSHP->sHooks.FClose( psSHP->fpSHP );
