@@ -547,7 +547,7 @@ if(ENABLE_tcl)
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
 
-    set(PC_DATA "tcl:Tcl/Tk:Tcl/Tk bindings, :plplottcltk_Main${LIB_TAG}")
+    set(PC_DATA "tcl_Main:Tcl_Main/Tk_Main:Tcl_Main/Tk_Main bindings, :plplottcltk_Main${LIB_TAG}")
 
     string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
     set(PC_FILE_SUFFIX "-${BINDING}")

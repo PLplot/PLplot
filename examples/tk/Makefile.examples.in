@@ -37,6 +37,6 @@ clean:
 	rm -f $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
 .c$(EXEEXT):
-	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-tcl` -lm
+	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-tcl_Main plplot$(LIB_TAG)-tcl plplot$(LIB_TAG)` -lm
 
 .SUFFIXES: .c $(EXEEXT)
