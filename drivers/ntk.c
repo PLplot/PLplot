@@ -122,14 +122,17 @@ tk_cmd( char *cmd )
 static void
 create_canvas( PLStream *pls )
 {
+    int columnbreak;
+
     ccanv++;
+    columnbreak = (ccanv%30 == 0);
 
     // create new canvas
     sprintf( cmd, "set ccanv %d; canvas $plf.f2.c$ccanv -width $xmax -height $ymax -background #%02x%02x%02x -xscrollcommand \"$hs set\" -yscrollcommand \"$vs set\" -scrollregion \"0 0 $xmax $ymax\"", ccanv, pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b );
     tk_cmd( cmd );
 
     // add new canvas to option menu
-    sprintf( cmd, "$plf.f1.mb.menu add command -label \"Page $ccanv\" -command {\n"
+    sprintf( cmd, "$plf.f1.mb.menu add command -label \"Page $ccanv\" -columnbreak %d -command {\n"
         "set w $plf.f2.c%d;\n"
         "$hs configure -command \"$w xview\";\n"
         "$vs configure -command \"$w yview\";\n"
@@ -141,7 +144,7 @@ create_canvas( PLStream *pls )
         "$hs set $i $j;\n"
         "scan [$w yview] \"%%f %%f\" i j;\n"
         "$vs set $i $j;}",
-        ccanv, ccanv, ccanv );
+        columnbreak, ccanv, ccanv, ccanv );
     tk_cmd( cmd );
 
     sprintf( cmd, "set item(%d) 0", ccanv );
