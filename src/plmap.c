@@ -51,7 +51,7 @@ SHPHandle
 OpenShapeFile( const char *fn );
 
 static void
-CustomErrors(const char *message);
+CustomErrors( const char *message );
 
 #endif
 
@@ -476,9 +476,9 @@ plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 // Our thanks to Frank Warmerdam, the developer of shapelib for suggesting
 // this approach for quieting shapelib "Unable to open" error messages.
 static
-void CustomErrors(const char *message)
+void CustomErrors( const char *message )
 {
-    if (strstr(message,"Unable to open") == NULL)
+    if ( strstr( message, "Unable to open" ) == NULL )
         fprintf( stderr, "%s\n", message );
 }
 
@@ -487,8 +487,8 @@ OpenShapeFile( const char *fn )
 {
     SHPHandle file;
     char      *fs = NULL, *dn = NULL;
-#ifdef HAVE_SAHOOKS    
-    SAHooks sHooks;
+#ifdef HAVE_SAHOOKS
+    SAHooks   sHooks;
 
     SASetupDefaultHooks( &sHooks );
     sHooks.Error = CustomErrors;
@@ -497,7 +497,7 @@ OpenShapeFile( const char *fn )
     // For this case live with the misleading "Unable to open" error
     // messages.
     int sHooks;
-#define SHPOpenLL(a, b, c) SHPOpen(a, b)    
+#define SHPOpenLL( a, b, c )    SHPOpen( a, b )
 #endif
 
 //***   search build tree               ***
