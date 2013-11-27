@@ -371,7 +371,17 @@ if(HAVE_SHAPELIB)
   if(NOT PLMAP_COMPILE_PROPS)
     set(PLMAP_COMPILE_PROPS)
   endif(NOT PLMAP_COMPILE_PROPS)
-  set_source_files_properties(plmap.c PROPERTIES COMPILE_FLAGS "${PLMAP_COMPILE_PROPS} -I${SHAPELIB_INCLUDE_DIR}")
+  set_source_files_properties(plmap.c 
+    PROPERTIES
+    COMPILE_FLAGS "${PLMAP_COMPILE_PROPS} -I${SHAPELIB_INCLUDE_DIR}"
+    )
+  if(HAVE_SAHOOKS)
+  set_source_files_properties(plmap.c 
+    PROPERTIES
+    COMPILE_DEFINITIONS HAVE_SAHOOKS
+    )
+  endif(HAVE_SAHOOKS)
+
   set(
     libplplot${LIB_TAG}_LINK_LIBRARIES
     ${libplplot${LIB_TAG}_LINK_LIBRARIES}

@@ -1,7 +1,7 @@
 # cmake/modules/shapefil.cmake
 #
 # Copyright (C) 2012  Andrew Ross
-# Copyright (C) 2012  Alan W. Irwin
+# Copyright (C) 2012-2013  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -27,7 +27,7 @@ ON
 )
 
 # Look for shapelib libraries
-if (HAVE_SHAPELIB)
+if(HAVE_SHAPELIB)
   find_package(Shapelib)
   if(SHAPELIB_FOUND)
     set(SHAPELIB_RPATH ${SHAPELIB_LIBRARY_DIRS})
@@ -41,4 +41,24 @@ if (HAVE_SHAPELIB)
     FORCE
     )
   endif(SHAPELIB_FOUND)
-endif (HAVE_SHAPELIB)
+endif(HAVE_SHAPELIB)
+
+if(HAVE_SHAPELIB)
+  # See if shapelib is a modern version with access to SAHooks type.
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Check_SAHooks.c
+    "#include <shapefil.h>
+void main(void){SAHooks sHooks;}
+"
+    )
+  try_compile(HAVE_SAHOOKS ${CMAKE_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/Check_SAHooks.c
+    CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${SHAPELIB_INCLUDE_DIR}"
+    )
+  if(NOT HAVE_SAHOOKS)
+    message(STATUS "WARNING: the (rather ancient) version of shapelib that has been found does not
+   include the SAHooks type.  Therefore, the misleading \"Unable to open ...\"
+   error messages that shapelib generates as PLplot checks several directories
+   for specified shapefiles will not be quieted."
+      )
+  endif(NOT HAVE_SAHOOKS)
+endif(HAVE_SHAPELIB)
