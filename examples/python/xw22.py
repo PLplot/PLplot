@@ -27,7 +27,7 @@ arrow_x = [-0.5, 0.5, 0.3, 0.5, 0.3, 0.5]
 arrow_y = [0.0, 0.0, 0.2, 0.0, -0.2, 0.0]
 arrow2_x = [-0.5, 0.3, 0.3, 0.5, 0.3, 0.3]
 arrow2_y = [0.0, 0.0,   0.2, 0.0, -0.2, 0.0]
-
+xmax = 0.0
 
 def circulation():
 
@@ -62,7 +62,7 @@ def circulation():
 
 
 # Vector plot of flow through a constricted pipe
-def constriction():
+def constriction( astyle ):
 
     nx = 20
     ny = 20
@@ -85,17 +85,69 @@ def constriction():
     b = ymax/4.0*(3-cos(pi*x/xmax))
     b2 = multiply.outer(b,iy)
     mask = greater.outer(b,abs(y))
-    dbdx = ymax/4.0*(sin(pi*xg/xmax)*yg/b2)
+    dbdx = ymax/4.0*(sin(pi*xg/xmax)*pi/xmax*yg/b2)
     u = Q*ymax/b2*mask
     v = dbdx*u
 
     plenv(xmin, xmax, ymin, ymax, 0, 0)
-    pllab("(x)", "(y)", "#frPLplot Example 22 - constriction")
+    pllab("(x)", "(y)", "#frPLplot Example 22 - constriction (arrow style "+str(astyle)+")")
     plcol0(2)
-    scaling=-0.5
+    scaling=-1.0
     plvect(u,v,scaling,pltr2,xg,yg)
     plcol0(1)
 
+def transform( x, y, xt, yt, data ):
+
+    xt[0] = x
+    yt[0] = y / 4.0 * ( 3 - cos( pi * x / xmax ) )
+
+
+# Vector plot of flow through a constricted pipe
+def constriction2():
+
+    global xmax
+
+    nx = 20
+    ny = 20
+    nc = 11
+    nseg = 20
+
+    dx = 1.0
+    dy = 1.0
+
+    xmin = -nx/2*dx
+    xmax = nx/2*dx
+    ymin = -ny/2*dy
+    ymax = ny/2*dy
+
+    plstransform( transform, None )
+
+    Q = 2.0
+    ix = ones(nx)
+    iy = ones(ny)
+    x = (arange(nx)-nx/2+0.5)*dx
+    y = (arange(ny)-ny/2+0.5)*dy
+    xg = multiply.outer(x,iy)
+    yg = multiply.outer(ix,y)
+    b = ymax/4.0*(3-cos(pi*x/xmax))
+    b2 = multiply.outer(b,iy)
+    u = Q*ymax/b2
+    v = multiply.outer(zeros(nx),iy)
+
+    clev = Q + arange(nc)*Q/(nc-1)
+
+    plenv(xmin, xmax, ymin, ymax, 0, 0)
+    pllab("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform")
+
+    plcol0(2)
+    plshades(u,xmin+dx/2,xmax-dx/2,ymin+dy/2,ymax-dy/2,clev,0.0,1,1.0,0,None,None)
+    scaling=-1.0
+    plvect(u,v,scaling,pltr2,xg,yg)
+    plpath(nseg,xmin,ymax,xmax,ymax)
+    plpath(nseg,xmin,ymin,xmax,ymin)
+    plcol0(1)
+
+    plstransform(None,None)
 
 # Vector plot of the gradient of a shielded potential (see example 9)
 def potential():
@@ -199,13 +251,17 @@ def main():
 # Set arrow style using arrow_x and arrow_y then 
 # plot using these arrows.
     plsvect(arrow_x, arrow_y, fill)
-    constriction()
+    constriction(1)
 
 # Set arrow style using arrow2_x and arrow2_y then 
 # plot using these filled arrows.
     fill = 1
     plsvect(arrow2_x, arrow2_y, fill)
-    constriction()
+    constriction(2)
+
+    constriction2()
+
+    plsvect( None, None, 0)
 
     potential()
 
