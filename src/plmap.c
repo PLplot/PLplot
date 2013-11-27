@@ -50,6 +50,9 @@
 SHPHandle
 OpenShapeFile( const char *fn );
 
+static void
+CustomErrors(const char *message);
+
 #endif
 
 //--------------------------------------------------------------------------
@@ -470,11 +473,24 @@ plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //! found
 //--------------------------------------------------------------------------
 #ifdef HAVE_SHAPELIB
+// Our thanks to Frank Warmerdam, the developer of shapelib for suggesting
+// this approach for quieting shapelib "Unable to open" error messages.
+static
+void CustomErrors(const char *message)
+{
+    if (strstr(message,"Unable to open") == NULL)
+        fprintf( stderr, "%s\n", message );
+}
+
 SHPHandle
 OpenShapeFile( const char *fn )
 {
     SHPHandle file;
     char      *fs = NULL, *dn = NULL;
+    SAHooks sHooks;
+
+    SASetupDefaultHooks( &sHooks );
+    sHooks.Error = CustomErrors;
 
 //***   search build tree               ***
 
@@ -482,7 +498,7 @@ OpenShapeFile( const char *fn )
     {
         plGetName( SOURCE_DIR, "data", fn, &fs );
 
-        if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+        if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
             goto done;
     }
 
@@ -493,7 +509,7 @@ OpenShapeFile( const char *fn )
     {
         plGetName( dn, "", fn, &fs );
 
-        if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+        if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
             goto done;
         fprintf( stderr, PLPLOT_LIB_ENV "=\"%s\"\n", dn ); // what IS set?
     }
@@ -501,7 +517,7 @@ OpenShapeFile( const char *fn )
 
 //***	search current directory	***
 
-    if ( ( file = SHPOpen( fn, "rb" ) ) != NULL )
+    if ( ( file = SHPOpenLL( fn, "rb", &sHooks ) ) != NULL )
     {
         pldebug( "OpenShapeFile", "Found file %s in current directory.\n", fn );
         free_mem( fs );
@@ -515,7 +531,7 @@ OpenShapeFile( const char *fn )
     {
         plGetName( dn, "lib", fn, &fs );
 
-        if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+        if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
             goto done;
         fprintf( stderr, PLPLOT_HOME_ENV "=\"%s\"\n", dn ); // what IS set?
     }
@@ -526,7 +542,7 @@ OpenShapeFile( const char *fn )
 #if defined ( DATA_DIR )
     plGetName( DATA_DIR, "", fn, &fs );
 
-    if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+    if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
         goto done;
 #endif  // DATA_DIR
 
@@ -535,7 +551,7 @@ OpenShapeFile( const char *fn )
 #ifdef PLLIBDEV
     plGetName( PLLIBDEV, "", fn, &fs );
 
-    if ( ( file = SHPOpen( fs, "rb" ) ) != NULL )
+    if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
         goto done;
 #endif  // PLLIBDEV
 
