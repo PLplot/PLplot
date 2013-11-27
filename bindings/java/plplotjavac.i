@@ -716,6 +716,43 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     return $jnicall;
 }
 
+// trailing count, and check consistency with previous
+%typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+    if ( $input != NULL )
+    {
+        jPLFLT *jydata = ( *jenv )->GetPLFLTArrayElements( jenv, $input, 0 );
+        $2 = ( *jenv )->GetArrayLength( jenv, $input );
+        if ( ( *jenv )->GetArrayLength( jenv, $input ) != Alen )
+        {
+            printf( "Vectors must be same length.\n" );
+            return;
+        }
+        setup_array_1d_PLFLT( &$1, jydata, Alen );
+        ( *jenv )->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
+    }
+    else
+    {
+        $1 = NULL;
+        $2 = 0;
+    }
+}
+%typemap( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+    if ( $1 != NULL )
+        free( $1 );
+
+}
+%typemap( jni ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTArray
+%typemap( jtype ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTbracket
+%typemap( jstype ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTbracket
+%typemap( javain ) ( const PLFLT * ArrayCkNull, PLINT n ) "$javainput"
+%typemap( javaout ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+    return $jnicall;
+}
+
+
 // no count, but check consistency with previous or NULL
 %typemap( in ) const PLFLT * ArrayCkNull {
     if ( $input != NULL )
@@ -860,6 +897,34 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 %typemap( jstype ) const PLFLT * Array jPLFLTbracket
 %typemap( javain ) const PLFLT * Array "$javainput"
 %typemap( javaout ) const PLFLT * Array {
+    return $jnicall;
+}
+
+
+// with no trailing count
+%typemap( in ) const PLFLT * ArrayNull {
+    if ( $input != NULL )
+    {
+        jPLFLT *jxdata = ( *jenv )->GetPLFLTArrayElements( jenv, $input, 0 );
+        Alen = ( *jenv )->GetArrayLength( jenv, $input );
+        setup_array_1d_PLFLT( &$1, jxdata, Alen );
+        ( *jenv )->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
+    }
+    else
+    {
+        $1 = NULL;
+        Alen = 0;
+    }
+}
+%typemap( freearg ) const PLFLT * ArrayNull {
+    if ( $1 != NULL )
+        free( $1 );
+}
+%typemap( jni ) const PLFLT * ArrayNull jPLFLTArray
+%typemap( jtype ) const PLFLT * ArrayNull jPLFLTbracket
+%typemap( jstype ) const PLFLT * ArrayNull jPLFLTbracket
+%typemap( javain ) const PLFLT * ArrayNull "$javainput"
+%typemap( javaout ) const PLFLT * ArrayNull {
     return $jnicall;
 }
 

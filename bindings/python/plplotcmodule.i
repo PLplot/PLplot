@@ -327,6 +327,33 @@ typedef PLINT          PLBOOL;
     Py_CLEAR( tmp$argnum );
 }
 
+// trailing count and check consistency with previous
+%typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n ) ( PyArrayObject * tmp = NULL )
+{
+    if ( $input != Py_None ) 
+    {
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
+    if ( tmp == NULL )
+        return NULL;
+    if ( PyArray_DIMS( tmp )[0] != Alen )
+    {
+        PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
+        return NULL;
+    }
+    $1 = (PLFLT *) PyArray_DATA( tmp );
+    $2 = PyArray_DIMS( tmp )[0];
+    }
+    else 
+    {
+        $1 = NULL;
+        $2 = 0;
+    }
+}
+%typemap( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+    Py_CLEAR( tmp$argnum );
+}
+
 // no count, but check consistency with previous
 %typemap( in ) const PLFLT * ArrayCk( PyArrayObject * tmp = NULL )
 {
@@ -345,6 +372,8 @@ typedef PLINT          PLBOOL;
 // no count, but check consistency with previous, or NULL
 %typemap( in ) const PLFLT * ArrayCkNull( PyArrayObject * tmp = NULL )
 {
+    if ( $input != Py_None )
+    {
     tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
     if ( tmp == NULL )
         return NULL;
@@ -354,6 +383,11 @@ typedef PLINT          PLBOOL;
         return NULL;
     }
     $1 = (PLFLT *) PyArray_DATA( tmp );
+    }
+    else
+    {
+        $1 = NULL;
+    }
 }
 %typemap( freearg ) const PLFLT * ArrayCkNull { Py_CLEAR( tmp$argnum );}
 
@@ -464,6 +498,26 @@ typedef PLINT          PLBOOL;
     $1   = (PLFLT *) PyArray_DATA( tmp );
 }
 %typemap( freearg ) const PLFLT * Array { Py_CLEAR( tmp$argnum );}
+
+
+// with no count
+%typemap( in ) const PLFLT * ArrayNull( PyArrayObject * tmp = NULL )
+{
+    if ( $input != Py_None )
+    {
+    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
+    if ( tmp == NULL )
+        return NULL;
+    Alen = PyArray_DIMS( tmp )[0];
+    $1   = (PLFLT *) PyArray_DATA( tmp );
+    }
+    else 
+    {
+      $1 = NULL;
+      Alen = 0;
+    }
+}
+%typemap( freearg ) const PLFLT * ArrayNull { Py_CLEAR( tmp$argnum );}
 
 // 2D array with trailing dimensions, check consistency with previous
 %typemap( in ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) ( PyArrayObject * tmp = NULL )

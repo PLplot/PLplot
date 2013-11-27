@@ -176,13 +176,20 @@ typedef PLINT          PLBOOL;
 // No count but check consistency with previous, or NULL
 %typemap( in ) const PLINT * ArrayCkNull( int temp )
 {
-    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
-    if ( !$1 )
-        SWIG_fail;
-    if ( temp != Alen )
+    if ( lua_isnil( L, $input ) )
     {
-        lua_pushfstring( L, "Tables must be of same length." );
-        SWIG_fail;
+        $1 = NULL;
+    }
+    else
+    {
+        $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
+	if ( !$1 )
+	    SWIG_fail;
+	if ( temp != Alen )
+	{
+	    lua_pushfstring( L, "Tables must be of same length." );
+	    SWIG_fail;
+	}
     }
 }
 %typemap( freearg ) const PLINT * ArrayCkNull { LUA_FREE_ARRAY( $1 ); }
@@ -204,13 +211,20 @@ typedef PLINT          PLBOOL;
 
 %typemap( in ) const PLINT * ArrayCkMinus1Null( int temp )
 {
-    $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
-    if ( !$1 )
-        SWIG_fail;
-    if ( temp < Alen - 1 )
+    if ( lua_isnil( L, $input ) )
     {
-        lua_pushfstring( L, "Tables must be at least length of others minus 1." );
-        SWIG_fail;
+        $1 = NULL;
+    }
+    else
+    {
+        $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
+	if ( !$1 )
+            SWIG_fail;
+	if ( temp < Alen - 1 )
+	{
+	    lua_pushfstring( L, "Tables must be at least length of others minus 1." );
+	    SWIG_fail;
+	}
     }
 }
 %typemap( freearg ) const PLINT * ArrayCkMinus1Null { LUA_FREE_ARRAY( $1 ); }
@@ -295,6 +309,33 @@ typedef PLINT          PLBOOL;
 }
 
 
+// Trailing count and check consistency with previous
+%typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+    int temp = 0;
+    if ( lua_isnil( L, $input ) )
+    {
+        $1 = NULL;
+    }
+    else
+    {
+        $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
+	if ( !$1 )
+	    SWIG_fail;
+	if ( temp != Alen )
+	{
+	    lua_pushfstring( L, "Tables must be of same length." );
+	    SWIG_fail;
+	}
+    }
+    $2 = temp;
+}
+%typemap( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+    LUA_FREE_ARRAY( $1 );
+}
+
+
 // no count, but check consistency with previous
 %typemap( in ) const PLFLT * ArrayCk( int temp )
 {
@@ -313,13 +354,20 @@ typedef PLINT          PLBOOL;
 // no count, but check consistency with previous, or NULL
 %typemap( in ) const PLFLT * ArrayCkNull( int temp )
 {
-    $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
-    if ( !$1 )
-        SWIG_fail;
-    if ( temp != Alen )
+    if ( lua_isnil( L, $input ) )
     {
-        lua_pushfstring( L, "Tables must be of same length." );
-        SWIG_fail;
+        $1 = NULL;
+    }
+    else
+    {
+        $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
+	if ( !$1 )
+	    SWIG_fail;
+	if ( temp != Alen )
+	{
+	    lua_pushfstring( L, "Tables must be of same length." );
+	    SWIG_fail;
+	}
     }
 }
 %typemap( freearg ) const PLFLT * ArrayCkNull { LUA_FREE_ARRAY( $1 ); }
@@ -337,6 +385,28 @@ typedef PLINT          PLBOOL;
 {
     LUA_FREE_ARRAY( $1 );
 }
+
+// No length but remember size to check others
+%typemap( in ) const PLFLT * ArrayNull {
+    int temp;
+    if ( lua_isnil( L, $input ) )
+    {
+        $1 = NULL;
+	Alen = 0;
+    }
+    else
+    {
+        $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
+	if ( !$1 )
+	    SWIG_fail;
+	Alen = temp;
+    }
+}
+%typemap( freearg ) ( const PLFLT * Array )
+{
+    LUA_FREE_ARRAY( $1 );
+}
+
 %typemap( default ) const PLFLT * ArrayCkNull { $1 = NULL; }
 
 // with trailing count

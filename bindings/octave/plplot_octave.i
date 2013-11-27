@@ -401,6 +401,33 @@ typedef PLINT          PLBOOL;
 {
 }
 
+// With trailing count and check consistency with previous
+%typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n ) ( Matrix temp )
+{
+    if ( _n_dims( $input ) > 1 )
+    {
+        error( "argument must be a scalar or vector" ); SWIG_fail;
+    }
+    if ( !$input.is_empty() )
+    {
+        if ( _dim( $input, 0 ) != Alen )
+	{
+	    error( "argument vectors must be same length" ); SWIG_fail;
+	}
+	temp = $input.matrix_value();
+	$1   = &temp( 0, 0 );
+	$2   = (PLINT) ( _dim( $input, 0 ) );
+    }
+    else 
+    {
+        $1 = NULL;
+        $2 = 0;
+    }
+}
+%typemap( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+}
+
 // No count but check consistency with previous
 %typemap( in ) const PLFLT * ArrayCk( Matrix temp )
 {
@@ -469,6 +496,29 @@ typedef PLINT          PLBOOL;
     $1   = &temp( 0, 0 );
 }
 %typemap( freearg ) ( const PLFLT * Array )
+{
+}
+
+// No count but remember size to check others
+%typemap( in ) const PLFLT * ArrayNull( Matrix temp )
+{
+    if ( _n_dims( $input ) > 1 )
+    {
+        error( "argument must be a scalar or vector" ); SWIG_fail;
+    }
+    if ( !$input.is_empty() )
+    {
+        Alen = (PLINT) ( _dim( $input, 0 ) );
+	temp = $input.matrix_value();
+	$1   = &temp( 0, 0 );
+    }
+    else
+    {
+	$1 = NULL;
+	Alen = 0;
+    }
+}
+%typemap( freearg ) ( const PLFLT * ArrayNull )
 {
 }
 
