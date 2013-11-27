@@ -83,15 +83,6 @@ set(lib_SRC
   shptree.c
   )
 
-option(SHP_DROP_UNABLE_TO_OPEN_MSG "Drop \"unable to open\" error messages" ON)
-if(SHP_DROP_UNABLE_TO_OPEN_MSG)
-  #define the SHP_DROP_UNABLE_TO_OPEN_MSG C macro for this source file.
-  set_source_files_properties(shpopen.c
-    PROPERTIES
-    COMPILE_DEFINITIONS SHP_DROP_UNABLE_TO_OPEN_MSG
-    )
-endif(SHP_DROP_UNABLE_TO_OPEN_MSG)
-
 add_library(shp ${lib_SRC})
 
 if(WIN32 AND NOT CYGWIN)
