@@ -33,6 +33,18 @@ import static plplot.core.plplotjavacConstants.*;
 
 import java.lang.Math;
 
+class Transform implements PLCallbackCT {
+    public void coordTransform( double x, double y, double[] xt, double[] yt, Object data )
+    {
+        double xmax;
+
+        xmax = 10.0;
+
+        xt[0] = x;
+        yt[0] = y / 4.0 * ( 3 - Math.cos( Math.PI * x / xmax ) );
+    }
+}
+
 class x22 {
     double MIN( double x, double y ) { return ( x < y ? x : y ); }
     double MAX( double x, double y ) { return ( x > y ? x : y ); }
@@ -43,7 +55,7 @@ class x22 {
     double[][] v  = null;
     double[][] xg = null;
     double[][] yg = null;
-    int nx, ny;
+    int nx, ny, nc, nseg;
 
     // Vector plot of the circulation about the origin
     void circulation()
@@ -84,7 +96,7 @@ class x22 {
     }
 
     // Vector plot of flow through a constricted pipe
-    void constriction()
+    void constriction( int astyle )
     {
         int    i, j;
         double dx, dy, x, y;
@@ -112,7 +124,7 @@ class x22 {
                 if ( Math.abs( y ) < b )
                 {
                     dbdx = ymax / 4.0 * Math.sin( Math.PI * x / xmax ) *
-                           y / b;
+                           Math.PI / xmax * y / b;
                     u[i][j] = Q * ymax / b;
                     v[i][j] = dbdx * u[i][j];
                 }
@@ -125,11 +137,69 @@ class x22 {
         }
 
         pls.env( xmin, xmax, ymin, ymax, 0, 0 );
-        pls.lab( "(x)", "(y)", "#frPLplot Example 22 - constriction" );
+        pls.lab( "(x)", "(y)", "#frPLplot Example 22 - constriction (arrow style " + astyle + ")" );
         pls.col0( 2 );
-        pls.vect( u, v, -0.5, xg, yg );
+        pls.vect( u, v, -1.0, xg, yg );
         pls.col0( 1 );
     }
+
+//
+// Vector plot of flow through a constricted pipe
+// with a coordinate transform
+//
+    void constriction2( )
+    {
+        int   i, j;
+        double dx, dy, x, y;
+        double xmin, xmax, ymin, ymax;
+        double Q, b, dbdx;
+        double[] clev = new double[nc];
+        Transform transform = new Transform();
+
+        dx = 1.0;
+        dy = 1.0;
+
+        xmin = -nx / 2 * dx;
+        xmax = nx / 2 * dx;
+        ymin = -ny / 2 * dy;
+        ymax = ny / 2 * dy;
+
+        pls.stransform( transform, xmax );
+
+        Q = 2.0;
+        for ( i = 0; i < nx; i++ )
+        {
+            x = ( i - nx / 2 + 0.5 ) * dx;
+            for ( j = 0; j < ny; j++ )
+            {
+                y = ( j - ny / 2 + 0.5 ) * dy;
+                xg[i][j] = x;
+                yg[i][j] = y;
+                b       = ymax / 4.0 * ( 3 - Math.cos( Math.PI * x / xmax ) );
+                u[i][j] = Q * ymax / b;
+                v[i][j] = 0.0;
+            }
+        }
+
+        for ( i = 0; i < nc; i++ )
+        {
+            clev[i] = Q + i * Q / ( nc - 1 );
+        }
+
+        pls.env( xmin, xmax, ymin, ymax, 0, 0 );
+        pls.lab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
+        pls.col0( 2 );
+        pls.shades( u, xmin + dx / 2, xmax - dx / 2, 
+            ymin + dy / 2, ymax - dy / 2,
+            clev, 0, 1, 1.0, 0, xg, yg );
+        pls.vect( u, v, -1.0, xg, yg );
+        // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
+        pls.path( nseg, xmin, ymax, xmax, ymax );
+        pls.path( nseg, xmin, ymin, xmax, ymin );
+        pls.col0( 1 );
+
+        pls.stransform( null, null );
+}
 
     // Vector plot of the gradient of a shielded potential (see example 9)
     void potential()
@@ -270,6 +340,8 @@ class x22 {
 
         nx = 20;
         ny = 20;
+        nc = 11;
+        nseg = 20;
 
         // Allocate arrays
         u  = new double[nx][ny];
@@ -284,13 +356,17 @@ class x22 {
         // Set arrow style using arrow_x and arrow_y then
         // plot uMath.sing these arrows.
         pls.svect( arrow_x, arrow_y, fill );
-        constriction();
+        constriction( 1 );
 
         // Set arrow style using arrow2_x and arrow2_y then
         // plot using these filled arrows.
         fill = true;
         pls.svect( arrow2_x, arrow2_y, fill );
-        constriction();
+        constriction( 2 );
+
+        constriction2();
+
+        pls.svect(null,null,false);
 
         potential();
 
