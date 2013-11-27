@@ -127,6 +127,8 @@ function constriction( astyle )
 	pl.col0(1)
 end
 
+-- Note this function uses the global variable xmax rather than passing 
+-- data as in C.
 function transform(x,y)
 	 
 	xt = x
