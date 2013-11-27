@@ -43,7 +43,7 @@ function circulation()
 	ymin = -ny/2*dy
 	ymax = ny/2*dy
 
-  cgrid2 = {}
+	cgrid2 = {}
 	cgrid2["xg"] = {}
 	cgrid2["yg"] = {}
 	cgrid2["nx"] = nx
@@ -77,7 +77,7 @@ end
 
 
 -- Vector plot of flow through a constricted pipe
-function constriction()
+function constriction( astyle )
 	nx = 20
 	ny = 20
 	dx = 1
@@ -109,7 +109,7 @@ function constriction()
 	    cgrid2["yg"][i][j] = y
 	    b = ymax/4*(3-math.cos(math.pi*x/xmax))
 			if math.abs(y)<b then
-				dbdx = ymax/4*math.sin(math.pi*x/xmax)*y/b
+				dbdx = ymax/4*math.sin(math.pi*x/xmax)*math.pi/xmax*y/b
 				u[i][j] = Q*ymax/b
 				v[i][j] = dbdx*u[i][j]
 			else
@@ -120,10 +120,79 @@ function constriction()
 	end
 
 	pl.env(xmin, xmax, ymin, ymax, 0, 0)
-	pl.lab("(x)", "(y)", "#frPLplot Example 22 - constriction")
+	title = string.format( "#frPLplot Example 22 - constriction (arrow style %d)", astyle )
+	pl.lab("(x)", "(y)", title)
 	pl.col0(2)
-	pl.vect(u, v, -0.5, "pltr2", cgrid2)
+	pl.vect(u, v, -1.0, "pltr2", cgrid2)
 	pl.col0(1)
+end
+
+function transform(x,y)
+	 
+	xt = x
+	yt = y / 4.0 * ( 3 - math.cos( math.pi * x / xmax ))
+
+	return xt, yt
+end
+
+-- Vector plot of flow through a constricted pipe
+function constriction2()
+	nx = 20
+	ny = 20
+	nc = 11
+	nseg = 20
+
+	dx = 1
+	dy = 1
+
+	xmin = -nx/2*dx
+	xmax = nx/2*dx
+	ymin = -ny/2*dy
+	ymax = ny/2*dy
+
+	pl.stransform( "transform" )
+
+	cgrid2 = {}
+	cgrid2["xg"] = {}
+	cgrid2["yg"] = {}
+	cgrid2["nx"] = nx
+	cgrid2["ny"] = ny
+	u = {}
+	v = {}
+	
+	Q = 2
+	for i = 1, nx do	
+		x = (i-1-nx/2+0.5)*dx
+		cgrid2["xg"][i] = {}
+		cgrid2["yg"][i] = {}
+		u[i] = {}
+		v[i] = {}
+		for j = 1, ny do
+			y = (j-1-ny/2+0.5)*dy
+			cgrid2["xg"][i][j] = x
+			cgrid2["yg"][i][j] = y
+			b = ymax/4*(3-math.cos(math.pi*x/xmax))
+			u[i][j] = Q*ymax/b
+			v[i][j] = 0.0
+		end
+	end
+
+	clev = {}
+	for i = 1, nc do
+	    clev[i] = Q + (i-1)*Q/(nc-1)
+	end 
+
+	pl.env(xmin, xmax, ymin, ymax, 0, 0)
+	pl.lab("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform")
+	pl.col0(2)
+	pl.shades(u, xmin+dx/2, xmax-dx/2, ymin+dy/2, ymax-dy/2, clev, 0.0, 1, 1.0, 0 );
+	pl.vect(u, v, -1.0, "pltr2", cgrid2)
+	pl.path( nseg, xmin, ymax, xmax, ymax );
+	pl.path( nseg, xmin, ymin, xmax, ymin );
+	pl.col0(1)
+
+	pl.stransform()
+
 end
 
 
@@ -260,13 +329,17 @@ fill = 0
 -- Set arrow style using arrow_x and arrow_y then
 -- plot using these arrows.
 pl.svect(arrow_x, arrow_y, fill)
-constriction()
+constriction(1)
 
 -- Set arrow style using arrow2_x and arrow2_y then
 -- plot using these filled arrows. 
 fill = 1
 pl.svect(arrow2_x, arrow2_y, fill)
-constriction()
+constriction(2)
+
+constriction2()
+
+pl.svect(nil, nil, 0)
 
 potential()
 
