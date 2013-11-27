@@ -487,10 +487,18 @@ OpenShapeFile( const char *fn )
 {
     SHPHandle file;
     char      *fs = NULL, *dn = NULL;
+#ifdef HAVE_SAHOOKS    
     SAHooks sHooks;
 
     SASetupDefaultHooks( &sHooks );
     sHooks.Error = CustomErrors;
+#else
+    // Using ancient version of shapelib without SAHooks or SHPOpenLL.
+    // For this case live with the misleading "Unable to open" error
+    // messages.
+    int sHooks;
+#define SHPOpenLL(a, b, c) SHPOpen(a, b)    
+#endif
 
 //***   search build tree               ***
 
