@@ -250,7 +250,7 @@ constriction2( void )
     plcol0( 2 );
     plshades( (const PLFLT * const *) u, nx, ny, NULL,
         xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
-        clev, nc, 0, 1, 1.0, plfill, 1, NULL, NULL );
+        clev, nc, 0.0, 1, 1.0, plfill, 0, NULL, NULL );
     plvect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
         -1.0, pltr2, (void *) &cgrid2 );
     // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
