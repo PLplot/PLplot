@@ -18,6 +18,8 @@
 
 1;
 
+global xmax;
+
 function ix22c
 
   ## Parse and process command line arguments */
@@ -43,13 +45,17 @@ function ix22c
   ## Set arrow style using arrow_x and arrow_y then
   ## plot using these arrows.
   plsvect(arrow_x', arrow_y', fill);
-  constriction;
+  constriction(1);
 
   ## Set arrow style using arrow2_x and arrow2_y then
   ## plot using these filled arrows. */
   fill = 1;
   plsvect(arrow2_x', arrow2_y', fill);
-  constriction;
+  constriction(2);
+
+  constriction2;
+
+  plsvect([],[],0);
 
   potential;
 
@@ -86,7 +92,7 @@ function circulation
 end
 
 ## Vector plot of flow through a constricted pipe
-function constriction
+function constriction( astyle )
   nx = 20;
   ny = 20;
 
@@ -103,15 +109,72 @@ function constriction
   yg = ones(nx,1)*[ymin+dy/2:dy:ymax-dy/2];
 
   b = ymax/4.0.*(3-cos(pi*xg/xmax));
-  dbdx = ymax/4.0.*sin(pi*xg/xmax).*yg./b;
+  dbdx = ymax/4.0.*sin(pi*xg/xmax)*pi/xmax.*yg./b;
   u = Q*ymax./b.*(abs(yg)<b);
   v = dbdx.*u.*(abs(yg)<b);
 
   plenv(xmin, xmax, ymin, ymax, 0, 0);
-  pllab("(x)", "(y)", "#frPLplot Example 22 - constriction");
+  title = sprintf( "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
+
+  pllab("(x)", "(y)", title );
   plcol0(2);
-  plvect2(u,v,-0.5,xg,yg);
+  plvect2(u,v,-1.0,xg,yg);
   plcol0(1);
+
+end
+
+##
+## Global transform function for a constriction using data passed in
+## This is the same transformation used in constriction.
+##
+function [xt, yt] = transform( x, y, data )
+    global xmax;
+    xt = x;
+    yt = y / 4.0 * ( 3 - cos( pi * x / xmax ) );
+end
+
+## Vector plot of flow through a constricted pipe with
+## a coordinate transformation
+function constriction2()
+
+  global xmax;
+  
+  nx = 20;
+  ny = 20;
+  nc = 11;
+  nseg = 20;
+
+  dx = 1.0;
+  dy = 1.0;
+
+  xmin = -nx/2*dx;
+  xmax = nx/2*dx;
+  ymin = -ny/2*dy;
+  ymax = ny/2*dy;
+
+  plstransform( @transform, [] );
+
+  Q = 2.0;
+  xg = [xmin+dx/2:dx:xmax-dx/2]'*ones(1,ny);
+  yg = ones(nx,1)*[ymin+dy/2:dy:ymax-dy/2];
+
+  b = ymax/4.0.*(3.0-cos(pi*xg/xmax));
+  u = Q*ymax./b;
+  v = zeros(nx,ny);
+
+  clev = Q + (0:(nc-1))*Q/(nc-1);
+
+  plenv(xmin, xmax, ymin, ymax, 0, 0);
+  pllab("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
+  plcol0(2);
+  plshades(u, xmin+dx/2,xmax-dx/2,ymin+dy/2,ymax-dy/2,clev',0.0,1,1.0,0);
+  plvect2(u,v,-1.0,xg,yg);
+  ## Plot edges using plpath (which accounts for coordinate transformation) rather than plline
+  plpath( nseg, xmin, ymax, xmax, ymax );
+  plpath( nseg, xmin, ymin, xmax, ymin );
+  plcol0(1);
+
+  plstransform( [], [] );
 
 end
 
