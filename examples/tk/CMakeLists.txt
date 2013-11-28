@@ -140,13 +140,13 @@ endif(ENABLE_itk)
 # plgrid is a configured shell script that runs the plgrid.tcl example
 # (N.B., in the tcl directory) using plserver.
 
-# standard_examples is a configured shell script that runs all the standard
-# examples under plserver.
+# plserver_standard_examples is a configured shell script that runs
+# all the standard examples under plserver.
 set(tk_SCRIPTS
   tk01
   tk03
   plgrid
-  standard_examples
+  plserver_standard_examples
   wish_standard_examples
   )
 # These examples depend on Itk to work.

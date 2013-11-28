@@ -870,7 +870,7 @@ if(BUILD_TEST)
 
   if(ENABLE_tcl AND PLD_xwin)
     add_custom_target(test_pltcl_standard_examples
-      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/standard_examples -dev xwin -np
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev xwin -np
       DEPENDS ${xwin_target}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
       )
@@ -964,7 +964,7 @@ if(BUILD_TEST)
     list(APPEND targets_examples_tk test_tk_plgrid)
 
     add_custom_target(test_plserver_standard_examples
-      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_standard_examples
       DEPENDS ${xwin_target}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
       )
