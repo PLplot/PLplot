@@ -372,6 +372,9 @@ plPlotterCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     Tk_SetClass( tkwin, "Plframe" );
 
     plPlotterPtr            = (PlPlotter *) malloc( sizeof ( PlPlotter ) );
+
+    // Initialize in the same order as the members of the struct just
+    // to keep track of what is initialized and what not.
     plPlotterPtr->tkwin     = tkwin;
     plPlotterPtr->display   = Tk_Display( tkwin );
     plPlotterPtr->interp    = interp;
@@ -379,46 +382,57 @@ plPlotterCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         Tcl_CreateCommand( interp, Tk_PathName( plPlotterPtr->tkwin ),
             (Tcl_CmdProc *) PlPlotterWidgetCmd, (ClientData) plPlotterPtr,
             (Tcl_CmdDeleteProc *) NULL );
-    plPlotterPtr->xorGC          = NULL;
     plPlotterPtr->border         = NULL;
-    plPlotterPtr->cursor         = None;
-    plPlotterPtr->xhair_cursor   = None;
-    plPlotterPtr->flags          = 0;
+    //plPlotterPtr->borderWidth  = <uninitialized>;
+    //plPlotterPtr->relief       = <uninitialized>;
     plPlotterPtr->width          = Tk_Width( plPlotterPtr->tkwin );
     plPlotterPtr->height         = Tk_Height( plPlotterPtr->tkwin );
-    plPlotterPtr->prevWidth      = 0;
-    plPlotterPtr->prevHeight     = 0;
-    plPlotterPtr->continue_draw  = 0;
-    plPlotterPtr->ipls           = 0;
-    plPlotterPtr->ipls_save      = 0;
+    plPlotterPtr->cursor         = None;
+    plPlotterPtr->flags          = 0;
     plPlotterPtr->tkwin_initted  = 0;
+    // Associate new PLplot stream with this widget
+    plmkstrm( &plPlotterPtr->ipls );
+    plgpls( &plPlotterPtr->pls );
+    plPlotterPtr->ipls_save      = 0;
+    plPlotterPtr->plr = (PLRDev *) malloc( sizeof ( PLRDev ) );
     plPlotterPtr->plpr_cmd       = NULL;
-    plPlotterPtr->bopCmd         = NULL;
-    plPlotterPtr->eopCmd         = NULL;
-    plPlotterPtr->xhairs         = 0;
     plPlotterPtr->active_plot    = 1;
     plPlotterPtr->isActive       = 0;
-    plPlotterPtr->drawing_xhairs = 0;
-    plPlotterPtr->rband          = 0;
-    plPlotterPtr->drawing_rband  = 0;
-    plPlotterPtr->xScrollCmd     = NULL;
-    plPlotterPtr->yScrollCmd     = NULL;
+    plPlotterPtr->pldis.x        = 0;
+    plPlotterPtr->pldis.y        = 0;
+    plPlotterPtr->pldis.width    = 0;
+    plPlotterPtr->pldis.height   = 0;
+    plPlotterPtr->prevWidth      = 0;
+    plPlotterPtr->prevHeight     = 0;
+    plPlotterPtr->SaveFnam       = NULL;
+    // plPlotterPtr->devDesc     = <uninitialized, to be malloced?>;
+    // plPlotterPtr->devName     = <uninitialized, to be malloced?>;
+    plPlotterPtr->xorGC          = NULL;
+    // plPlotterPtr->pts         = <uninitialized array>;
+    plPlotterPtr->continue_draw  = 0;
+    plPlotterPtr->xhair_cursor   = None;
     plPlotterPtr->xl             = 0.;
     plPlotterPtr->yl             = 0.;
     plPlotterPtr->xr             = 1.;
     plPlotterPtr->yr             = 1.;
-    plPlotterPtr->SaveFnam       = NULL;
+    plPlotterPtr->xScrollCmd     = NULL;
+    plPlotterPtr->yScrollCmd     = NULL;
+    plPlotterPtr->bopCmd         = NULL;
+    plPlotterPtr->eopCmd         = NULL;
+    plPlotterPtr->xhairs         = 0;
+    plPlotterPtr->drawing_xhairs = 0;
+    // plPlotterPtr->xhair_x     = <uninitialized array>;
+    // plPlotterPtr->xhair_y     = <uninitialized array>;
+    plPlotterPtr->rband          = 0;
+    plPlotterPtr->drawing_rband  = 0;
+    // plPlotterPtr->rband_pt    = <uninitialized array>;
+    plPlotterPtr->double_buffer  = 1;
 
-    plPlotterPtr->plr = (PLRDev *) malloc( sizeof ( PLRDev ) );
     plr        = plPlotterPtr->plr;
     plr->pdfs  = NULL;
     plr->iodev = (PLiodev *) malloc( sizeof ( PLiodev ) );
     plr_start( plr );
 
-// Associate new PLplot stream with this widget
-
-    plmkstrm( &plPlotterPtr->ipls );
-    plgpls( &plPlotterPtr->pls );
     // Tell the stream about myself
     plPlotterPtr->pls->plPlotterPtr = plPlotterPtr;
 
