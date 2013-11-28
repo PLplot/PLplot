@@ -1418,6 +1418,7 @@ alias c_pljoin pljoin;
 //alias c_pllegend pllegend;
 alias c_pllightsource pllightsource;
 //alias c_plline plline;
+alias c_plpath plpath;
 //alias c_plline3 plline3;
 alias c_pllsty      pllsty;
 //alias c_plmap plmap;
@@ -1940,6 +1941,9 @@ const MESH        = 1 << 8;                  // draw mesh
 
 // Set fill pattern directly.
 void c_plpat( PLINT nlin, PLINT *inc, PLINT *del );
+
+// Draw a line connecting two points, accounting for coordinate transforms
+void c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 
 // Plots array y against x for n points using ASCII code "code".
 void c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code );
