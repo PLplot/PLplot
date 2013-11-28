@@ -23,8 +23,25 @@
 //
 
 import std.math;
+import std.string;
 
 import plplot;
+
+//
+// Global transform function for a constriction using data passed in
+// This is the same transformation used in constriction.
+//
+extern ( C ) {
+void
+transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+{
+    PLFLT *xmax = cast(PLFLT *) data;  
+    
+    *xt = x;
+    *yt = y / 4.0 * ( 3 - cos( PI * x / *xmax ) );
+}
+}
+
 
 //--------------------------------------------------------------------------
 // main
@@ -92,10 +109,11 @@ class plot {
     // Vector plot of flow through a constricted pipe
     //
     void
-    constriction()
+    constriction( int astyle )
     {
         const int nx = 20;
         const int ny = 20;
+        string title;
 
         PLFLT     dx = 1.0;
         PLFLT     dy = 1.0;
@@ -133,7 +151,7 @@ class plot {
                 b = ymax / 4.0 * ( 3 - cos( PI * x / xmax ) );
                 if ( fabs( y ) < b )
                 {
-                    dbdx    = ymax / 4.0 * sin( PI * x / xmax ) * y / b;
+                    dbdx    = ymax / 4.0 * sin( PI * x / xmax ) * PI / xmax * y / b;
                     u[i][j] = Q * ymax / b;
                     v[i][j] = dbdx * u[i][j];
                 }
@@ -146,10 +164,88 @@ class plot {
         }
 
         plenv( xmin, xmax, ymin, ymax, 0, 0 );
-        pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction" );
+        title = format("#frPLplot Example 22 - constriction (arrow style %d)", astyle);
+        pllab( "(x)", "(y)", title );
         plcol0( 2 );
-        plvect( u, v, -0.5, cgrid2 );
+        plvect( u, v, -1.0, cgrid2 );
         plcol0( 1 );
+    }
+
+
+    //
+    // Vector plot of flow through a constricted pipe 
+    // with a coordinate transform
+    //
+    void
+    constriction2()
+    {
+        const int nx = 20;
+        const int ny = 20;
+        const int nc = 11;
+        const int nseg = 20;
+
+        PLFLT []  clev = new PLFLT[nc];
+
+        PLFLT     dx = 1.0;
+        PLFLT     dy = 1.0;
+
+        PLFLT     xmin = -nx / 2 * dx;
+        PLFLT     xmax = nx / 2 * dx;
+        PLFLT     ymin = -ny / 2 * dy;
+        PLFLT     ymax = ny / 2 * dy;
+
+        plstransform( &transform, cast(PLPointer) &xmax );
+
+        PLcGrid2  cgrid2;
+        cgrid2.xg = new PLFLT[][nx];
+        for ( int i = 0; i < nx; i++ )
+            cgrid2.xg[i] = new PLFLT[ny];
+        cgrid2.yg = new PLFLT[][nx];
+        for ( int i = 0; i < nx; i++ )
+            cgrid2.yg[i] = new PLFLT[ny];
+
+        PLFLT[][] u = new PLFLT[][nx];
+        for ( int i = 0; i < nx; i++ )
+            u[i] = new PLFLT[ny];
+        PLFLT[][] v = new PLFLT[][nx];
+        for ( int i = 0; i < nx; i++ )
+            v[i] = new PLFLT[ny];
+
+        PLFLT Q = 2.0;
+        PLFLT x, y, b, dbdx;
+        for ( int i = 0; i < nx; i++ )
+        {
+            x = ( i - nx / 2 + 0.5 ) * dx;
+            for ( int j = 0; j < ny; j++ )
+            {
+                y = ( j - ny / 2 + 0.5 ) * dy;
+                cgrid2.xg[i][j] = x;
+                cgrid2.yg[i][j] = y;
+                b = ymax / 4.0 * ( 3 - cos( PI * x / xmax ) );
+                u[i][j] = Q * ymax / b;
+                v[i][j] = 0.0;
+            }
+        }
+
+        for ( int i = 0; i < nc; i++ )
+        {
+            clev[i] = Q + i * Q / ( nc - 1 );
+        }
+
+        plenv( xmin, xmax, ymin, ymax, 0, 0 );
+        pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
+        plcol0( 2 );
+        plshades( u, null, xmin + dx / 2, xmax - dx / 2, 
+            ymin + dy / 2, ymax - dy / 2,
+            clev, 0.0, 1, 1.0, 0 );
+        plvect( u, v, -1.0, cgrid2 );
+        // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
+        plpath( nseg, xmin, ymax, xmax, ymax );
+        plpath( nseg, xmin, ymin, xmax, ymin );
+        plcol0( 1 );
+
+        plstransform( null, null );
+
     }
 
     //--------------------------------------------------------------------------
@@ -307,7 +403,7 @@ int main( char[][] args )
     // Set arrow style using arrow_x and arrow_y then
     //       plot using these arrows.
     plsvect( arrow_x, arrow_y, fill );
-    myPlot.constriction();
+    myPlot.constriction( 1 );
 
     // Pairs of points making the line segments used to plot the user defined arrow
     PLFLT[] arrow2_x = [ -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 ];
@@ -317,7 +413,11 @@ int main( char[][] args )
     //       plot using these filled arrows.
     fill = 1;
     plsvect( arrow2_x, arrow2_y, fill );
-    myPlot.constriction();
+    myPlot.constriction( 2 );
+
+    myPlot.constriction2();
+
+    plsvect( null, null, 0);
 
     myPlot.potential();
 
