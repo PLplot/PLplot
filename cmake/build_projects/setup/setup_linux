@@ -1,0 +1,56 @@
+# Source this file to setup a Linux build_packages build.
+
+# Tailor these values.
+
+# Put latest CMake on PATH
+PATH=/home/software/cmake/install/bin:$PATH
+
+export INSTALL_PREFIX=/home/wine/newstart/build_script/install-linux
+
+export BUILD_PROJECTS_SOURCE_PATH=/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects
+
+# gcc, g++, and gfortran flags you might want to tailor to different values.
+export CFLAGS='-O3 -fvisibility=hidden -Wuninitialized'
+export CXXFLAGS='-O3 -fvisibility=hidden -Wuninitialized'
+export FFLAGS='-O3 -Wuninitialized'
+
+# End of tailored values.
+
+# Put buildtools that have been built and installed by build_packages on PATH.
+PATH=${INSTALL_PREFIX}_buildtools/bin:$PATH
+
+# Put Linux install directory on PATH (so that, e.g., the wxwidgets 
+# configuration tool will be found.
+PATH=${INSTALL_PREFIX}/bin:$PATH
+
+# Put appropriate buildtools areas on these.
+export CMAKE_INCLUDE_PATH
+export CMAKE_LIBRARY_PATH
+
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include
+CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}_buildtools/lib
+
+# Put version 3 of itcl and friends higher on CMAKE_INCLUDE_PATH then
+# the above default.
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include/itcl3.4:$CMAKE_INCLUDE_PATH
+
+# Put appropriate install areas on these.
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}/include:$CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}/lib:$CMAKE_LIBRARY_PATH
+
+# Put buildtools on LD_LIBRARY_PATH.  This is necessary for at least swig
+# build tool to find libpcre library that is part of the buildtools.
+export LD_LIBRARY_PATH=${INSTALL_PREFIX}_buildtools/lib
+
+# Put buildtools pkg-config directories at top of PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=${INSTALL_PREFIX}_buildtools/share/pkgconfig:${INSTALL_PREFIX}_buildtools/lib/pkgconfig
+
+# Put install-location pkg-config directories at top of PKG_CONFIG_PATH
+PKG_CONFIG_PATH=$INSTALL_PREFIX/share/pkgconfig:$INSTALL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
+
+# As temporary measure also use system-installed *.pc files for dependencies
+# which are currently not built.  Put these at the end of PKG_CONFIG_PATH
+# so they are only used as a last resort.
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig
+
+export GENERATOR_STRING="Unix Makefiles"
