@@ -50,6 +50,30 @@ if(SH_EXECUTABLE)
     @ONLY
     )
 
+  # Set up optional tests in the configured plplot-test-interactive.sh file.
+
+  set(pkgIndex_LOCATION ${DATA_DIR})
+  set(SHELL_TEST_PLTCL_STANDARD_EXAMPLES 1)
+  set(SHELL_TEST_PLSERVER_STANDARD_EXAMPLES 1)
+  # FIXME.  Currently plserver_runAllDemos needs work so drop it for now.
+  set(SHELL_TEST_PLSERVER_RUNALLDEMOS 0)
+
+  # All Tcl/Tk tests that use the "package require" approach only
+  # work with shared libraries.
+  if(BUILD_SHARED_LIBS)
+    set(SHELL_TEST_TCLSH_STANDARD_EXAMPLES 1)
+    # FIXME.  Currently wish_standard_examples segfaults on exit.  So
+    # drop it for now.
+    set(SHELL_TEST_WISH_STANDARD_EXAMPLES 0)
+    # FIXME.  Currently the wish_runAllDemos needs work and also has
+    # an intermittent bug (x?? not recognized as a command).
+    set(SHELL_TEST_WISH_RUNALLDEMOS 0)
+  else(BUILD_SHARED_LIBS)
+    set(SHELL_TEST_TCLSH_STANDARD_EXAMPLES 0)
+    set(SHELL_TEST_WISH_STANDARD_EXAMPLES 0)
+    set(SHELL_TEST_WISH_RUNALLDEMOS 0)
+  endif(BUILD_SHARED_LIBS)
+
   configure_file(
     plplot-test-interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
