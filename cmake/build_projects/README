@@ -1,5 +1,12 @@
-The build_projects project should work out of the box for
-Linux or Mac OS X systems with a full development tool-chain installed.
+This file contains directions for epa_build users.  If in addition you
+are interested in helping to develop that project, you should look at
+README.developers as well.
+
+The epa_build project should work out of the box for Linux or Mac OS X
+systems with a full development tool-chain installed including
+relevant compilers (gcc, g++, gfortran, Ada in the suite of gcc
+compilers), relevant scripting languages (Python, Lua, etc.), make,
+and cmake (at least version 2.8.11.2).
 
 But the situation is different on Windows where you have to download
 and install specific toolchain software before you start.  
@@ -7,7 +14,7 @@ and install specific toolchain software before you start.
 ===============================================================================
 Installing the Required Windows Toolchain:
 
-N.B. There is a good possibility that build_projects will work with the
+N.B. There is a good possibility that epa_build will work with the
 Microsoft proprietary toolchain, and I would be happy to accept
 patches to make that so (including a patch for this file), but my only
 experience is with free software so until I receive such patches, the
@@ -33,7 +40,7 @@ MinGW-4.7.2\bin\mingw-get.exe upgrade msys-core-bin=1.0.17-1
 This downgrade is necessary and quite important, see
 http://sourceforge.net/p/mingw/bugs/1950.  Otherwise, you
 will get an infinite hang from any attempt to do parallel
-builds (which build_projects automatically uses for many
+builds (which epa_build automatically uses for many
 of its builds) using the MSYS make.exe command.
 
 3. Install additional needed MSYS software that is not installed by
@@ -41,237 +48,114 @@ the automatic installer.
 
 mingw-get.exe --recursive install msys-unzip
 
-4. Copy the MinGW-4.7.2/msys/1.0/bin directory to 
-MinGW-4.7.2/msys/1.0/bin_without_sh and remove sh.exe from that latter
-PATH (This works around a CMake issue with the "MinGW Makefiles" generator.)
-
-5. Put both MinGW-4.7.2/bin and either MinGW-4.7.2/msys/1.0/bin (for
-any Windows CMake generator you are going to use other than "MinGW
-Makefiles) or MinGW-4.7.2/msys/1.0/bin_without_sh (for the case of
-"MinGW Makefiles" on your PATH.
-
-6. Download a recent cmake.exe version from
+4. Download a recent cmake.exe version from
 http://www.cmake.org/files.  I am currently using
 v2.8/cmake-2.8.10.2-win32-x86.zip.  Unpack this using the unzip
-command you just installed.  Put the resulting
-cmake-2.8.10.2-win32-x86/bin on your PATH.  This downloadable binary
-(which poses a security concern like all downloadable binaries)
-is only used once.
+command you just installed and put cmake.exe on your PATH.
 
-7. If you are going to try the "NMake Makefiles JOM" generator, download
-the latest jom_VERSION.zip from http://releases.qt-project.org/jom, unpack
-it with unzip.exe just just installed and put jom.exe on your PATH.
+5. [OPTIONAL] Copy the MinGW-4.7.2/msys/1.0/bin directory to
+MinGW-4.7.2/msys/1.0/bin_without_sh and remove sh.exe from that latter
+PATH (This works around an issue with the "MinGW Makefiles" generator
+which apparently processes path names differently if sh.exe is in the
+PATH.  Hopefully, that "MinGW Makefiles" kludge will disappear in the
+future.)
 
-8. If you are going to try the "Ninja" generator, then follow the
-build instructions for that tool at
+6. Put both MinGW-4.7.2/bin and either MinGW-4.7.2/msys/1.0/bin (for
+any Windows CMake generator you are going to use other than "MinGW
+Makefiles) or [OPTIONAL] MinGW-4.7.2/msys/1.0/bin_without_sh (for the case of
+"MinGW Makefiles") on your PATH.
+
+7. [OPTIONAL} If you are going to try the "NMake Makefiles JOM"
+generator, download the latest jom_VERSION.zip from
+http://releases.qt-project.org/jom, unpack it with unzip.exe just just
+installed and put jom.exe on your PATH.
+
+8. [OPTIONAL] If you are going to try the "Ninja" generator, then
+follow the build instructions for that tool at
 http://www.cmake.org/pipermail/cmake/2013-June/055038.html + one
 correction in a following post in that thread.
-===============================================================================
-
-Build instructions for the buildtools (such as cmake):
-
-Note that when cmake is built this way it is configured by the
-bootstrap script (which demands sh is on the PATH) rather than cmake
-itself so the downloaded binary version of cmake used to configure the
-build_tools build is not actually used to build cmake which provides a
-slight increase in security for the paranoid.  And you should be
-paranoid about security (i.e., you should build your own
-version of CMake from source, in my opinion rather than relying
-on a downloaded binary) since crackers are always
-trying it on.
-
-Note the special paths below which have a _buildtools suffix, and also
-note the special option -DBUILD_THE_BUILDTOOLS=ON which configures
-builds of _only_ the build tools such as cmake that are used for the
-other software projects.
-
-Linux "Unix Makefiles"
-
-wine@raven> mkdir -p /home/wine/newstart/build_script/build_dir-linux_buildtools
-wine@raven> cd /home/wine/newstart/build_script/build_dir-linux_buildtools
-wine@raven> rm -rf /home/wine/newstart/build_script/build_dir-linux_buildtools/*
-wine@raven> cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux_buildtools -DBUILD_THE_BUILDTOOLS=ON ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-wine@raven> make VERBOSE=1 build_all >& build_all.out
-
-Windows "MSYS Makefiles" (This is a special case that requires sh.exe to
-be on the PATH so the "MinGW Makefiles" generator cannot be used.
-
-bash.exe-3.1$ mkdir -p /z/home/wine/newstart/build_script/build_dir-git_buildtools
-bash.exe-3.1$ cd /z/home/wine/newstart/build_script/build_dir-git_buildtools
-bash.exe-3.1$ rm -rf /z/home/wine/newstart/build_script/build_dir-git_buildtools/*
-bash.exe-3.1$ cmake -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_buildtools -DBUILD_THE_BUILDTOOLS=ON /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-bash.exe-3.1$ mingw32-make.exe VERBOSE=1 build_all >& build_all.out
-
-Build instructions for everything else which is not a build tool but
-which uses those (such as cmake) which have been built above:
-
-1. Put the bin directory contained in the install tree created above
-at the top of the PATH. In my case this directory is either
-/home/wine/newstart/build_script/install-linux_buildtools/bin (Linux)
-or /z/home/wine/newstart/build_script/install-git_buildtool/bin
-(Windows).  This step insures you will be using the buildtools you
-built yourself from source from now on rather than some downloaded binary.
-
-2. Adjust the local path to the PLplot source tree in plplot/bp.cmake
-(this will only be necessary until build_projects is updated to configure
-a build of an svn client that works on Windows).  The alternative is
-to download and test a released version of PLplot, but I prefer the
-svn trunk version because that is much more up to date.
-
-3. Examples of configuring a build and test of PLplot and some of its
-soft dependencies on several different systems with various generators
-and build tools.  Adjust these for your own paths, and note the first
-three commands in each group are to insure you start with a clean
-build directory
-
-Linux "Unix Makefiles"
-
---------------
-# Source this file to setup a Linux build_packages build.
-# Put latest CMake on PATH
-PATH=/home/software/cmake/install/bin:$PATH
-
-# Put buildtools that have been built and installed by build_packages on PATH.
-PATH=/home/wine/newstart/build_script/install-linux_buildtools/bin:$PATH
-
-# Put Linux install directory on PATH (so that, e.g., the wxwidgets 
-# configuration tool will be found.
-PATH=/home/wine/newstart/build_script/install-linux/bin:$PATH
-
-# Make *.pc files that are installed by a build_packages build accessible to
-# pkg-config
-export PKG_CONFIG_PATH=/home/wine/newstart/build_script/install-linux/lib/pkgconfig/:/home/wine/newstart/build_script/install-linux/share/pkgconfig
-
-# As temporary measure also use system-installed *.pc files for dependencies
-# which are currently not built.  Put these at the end of PKG_CONFIG_PATH
-# so they are only used as a last resort.
-PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig
---------------
-
-wine@raven> mkdir -p /home/wine/newstart/build_script/build_dir-linux
-wine@raven> cd /home/wine/newstart/build_script/build_dir-linux
-wine@raven> rm -rf /home/wine/newstart/build_script/build_dir-linux/*
-wine@raven> cmake -G"Unix Makefiles" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-wine@raven> cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-# wxwidgets and pango are soft dependencies of PLplot which add value to
-# its build.
-wine@raven> make build_wxwidgets >& build_wxwidgets.out
-wine@raven> make build_pango >& build_pango.out
-# Build plplot using the above soft dependencies as well as some hard
-# dependencies it knows about.
-wine@raven> make build_plplot >& build_plplot.out
-
-Windows "MinGW Makefiles"
-
-bash.exe-3.1$ mkdir -p /z/home/wine/newstart/build_script/build_dir-git_mingw
-bash.exe-3.1$ cd /z/home/wine/newstart/build_script/build_dir-git_mingw
-bash.exe-3.1$ rm -rf /z/home/wine/newstart/build_script/build_dir-git_mingw/*
-bash.exe-3.1$ cmake -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_mingw /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-bash.exe-3.1$ mingw32-make.exe VERBOSE=1 build_plplot >& build_plplot.out
-
-Other combinations that have been successfully tested in part by building
-all the C and C++ PLplot dependencies with the "build_all" target.
-
-Note, the "build_all" target does not include PLplot itself yet
-(which has additional languages needs such as Fortran, and Ada which
-are known to not work for "Ninja" and which might not work for "NMake Makefiles JOM" ).  Also note, we assume something similar to the first three commands
-given above has been used to start with a clean build tree.
-
-On Linux:
-
-# "Ninja" generator
-irwin@raven> cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX:PATH=/home/wine/newstart/build_script/install-linux_ninja ~software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-irwin@raven> ninja -v build_all >& build_all.out
-
-On Windows:
-
-# "MSYS Makefiles" generator
-# This one should work for the build_plplot target as well, but I
-# haven't tested it yet.
-bash.exe-3.1$ cmake -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-bash.exe-3.1$ make.exe VERBOSE=1 build_all >& build_all.out
-
-# "Ninja" generator
-bash.exe-3.1$ cmake -G"Ninja" -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_ninja /z/home/software/plplot_svn/HEAD/pl
-plot_allura/cmake/build_projects >& cmake.out
-bash.exe-3.1$ ninja -v build_all >& build_all.out
-
-# "NMake Makefiles JOM" generator
-# This CMake generator currently has some issues with using the MinGW suite
-# of compilers by default that must be worked around by being specific about
-# what compilers you want.
-bash.exe-3.1$ cmake -G"NMake Makefiles JOM" -DCMAKE_C_COMPILER:FILEPATH=/z/home/wine/newstart/MinGW-4.7.2/bin/gcc.exe -DCMAKE_CXX_COMPILER:FILEPATH=/z/home/wine/newstart/MinGW-4.7.2/bin/g++.exe -DCMAKE_RC_COMPILER:FILEPATH=/z/home/wine/newstart/MinGW-4.7.2/bin/windres.exe -DCMAKE_INSTALL_PREFIX:PATH=/z/home/wine/newstart/build_script/install-git_jom /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/build_projects >& cmake.out
-bash.exe-3.1$ jom build_all >& build_all.out
-
-N.B. All of the above have been run without issues on a Wine platform
-(wine-git close to wine-1.6-rc1) and therefore should also work for
-the Microsoft version of Windows.
 
 ===============================================================================
-Build configuration for the special case of GTK.  The GNOME Tool Kit stack
-of libraries is normally built by jhbuild which keeps its configuration
-files in xml form.  Here is how you convert that form of build-configuration
-data to the build_projects form.
+Set up instructions for epa_build
 
-# Chose this latest version (as of August 2013) because it probably has
-# improved build and dependency instructions compared to previous versions.
-# For example, the glib version (2.37.4) is known to solve a build issue
-# that I ran into for earlier glib versions.
-export GTK_VERSION=3.9.4
-mkdir -p $GTK_VERSION
-cd $GTK_VERSION
-# This downloads all the relevant xml build configuration files
-# for the given version of GTK
-wget -nd  ftp://ftp.acc.umu.se/pub/GNOME/teams/releng/$GTK_VERSION/*
-cd ..
-./gtk_xml_recursive_process.py \
-$GTK_VERSION/gnome-apps-$GTK_VERSION.modules \
->gtk_packages_$GTK_VERSION.xml
+1. Linux or Mac OS X.
 
-To create the schema for gtk_packages.xml use
+Tailor the indicated values in setup/setup_linux for your own
+system, then source that file, e.g.,
 
-trang -I xml gtk_packages_$GTK_VERSION.xml gtk_packages_$GTK_VERSION.rnc
+source <Top directory of PLplot source tree>/cmake/epa_build/setup/setup_linux
 
-# That resulting schema file is quite helpful in figuring out
-# how to process gtk_packages_$GTK_VERSION.xml as below.
+2. Windows platforms
 
-# Transform the xml form to a form that can be used by a cmake script.
-# Note, there will be some information messages sent to stderr by this
-# script that typically relate to good packages (ones that can be
-# transformed by this script) and bad packages. Currently the list of
-# bad packages are confined just to those which are completely missing
-# from the jhbuild data for gtk.  The first command-line argument is
-# the starting package name and the second command-line argument is a
-# control variable where the least significant bit is ON for following (hard)
-# "dependencies" dependencies, the next least significant bit is ON
-# for following (soft) "suggests", dependencies, and the next least
-# significant bit is ON for following (would be nice) "after"
-# dependencies.  Currently I use a command variable of 1 to keep
-# the number of packages configured for building pango and
-# (hard) dependencies to a minimum.
-./gtk_transform.py "pango" 1 <gtk_packages_$GTK_VERSION.xml 1>| pango_packages.data
+Similar instructions about tailoring and sourcing relevant files to be
+done later after I update and test the files in question.
 
-# N.B. there are no plans to keep gtk_packages.xml, gtk_packages.rnc,
-# or pango_packages.data under version control.  However, if a patch
-# is necessary for gtk_packages.xml created as above, we will keep
-# that patch under version control.
+===============================================================================
+Build directions for epa_build
 
-# Finally to actually generate build configurations for build_packages run
-# the following command.
+1. Linux
 
-cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
+Note that setup_linux sets up all the important environment variables you
+need including GENERATOR_STRING, INSTALL_PREFIX, and BUILD_PROJECTS_SOURCE_PATH.
 
-# One known issue with the gtk+ stack is certain package dependencies
-# are completely missing such as pkg-config and libffi which have to
-# be built independently.  For pkg-config we use a hand-generated
-# configuration, pkg-config/bp.cmake.  Other missing packages that
-# can be configured with a template such as libffi, we use gtk_packages_add.xml
-# (under version control) as follows:
+A. [OPTIONAL] build necessary additional buildtools whose versions you
+prefer compared to the versions available on your Linux distro.
 
-rm -f add_packages.data
-touch add_packages.data
-PACKAGE_LIST="libffi intltool pixman gperf"
-for PACKAGE in $PACKAGE_LIST; do
-  ./gtk_transform.py $PACKAGE 1 <gtk_packages_add.xml 1>> add_packages.data
-done
-cmake -DFILENAME:FILEPATH=add_packages.data -P configure_bp.cmake
+# Insure you start with an empty build tree and vacant install tree
+# Set <Build tree prefix> to any convenient directory under your control
+# where you would like build results to be collected.
+mkdir -p <Build tree prefix>/build_dir-linux_buildtools
+rm -rf <Build tree prefix>/build_dir-linux_buildtools/* ${INSTALL_PREFIX}_buildtools
+cd <Build tree prefix>/build_dir-linux_buildtools
+
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}_buildtools -DBUILD_THE_BUILDTOOLS=ON $BUILD_PROJECTS_SOURCE_PATH >& cmake.out
+
+# Check cmake.out for any errors
+less cmake.out
+
+# Figure out which buildtools you want to build
+make help
+
+# I recommend building all of them on Linux.
+make all >& all.out
+
+# Check all.out for any errors
+less all.out
+
+B. Build and test a lite version of PLplot (without building or using
+major soft dependencies such as pango/cairo, Qt4, and wxwidgets)
+and [OPTIONAL] a fully configured PLplot version (where currently
+pango/cairo and wxwidgets are built and used and the system
+version of Qt4 is used).
+
+# Insure you start with an empty build tree and vacant install tree
+# Set <Build tree prefix> to any convenient directory under your control
+# where you would like build results to be collected.
+mkdir -p <Build tree prefix>/build_dir-linux
+rm -rf <Build tree prefix>/build_dir-linux/* ${INSTALL_PREFIX}
+cd <Build tree prefix>/build_dir-linux
+
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX} $BUILD_PROJECTS_SOURCE_PATH >& cmake.out
+
+# Check cmake.out for any errors
+less cmake.out
+
+# Figure out which packages you want to build
+make help
+
+# Build and test the "lite" version of PLplot
+make build_plplot_lite >& build_plplot_lite.out
+
+# Check build_plplot_lite.out for any errors
+less build_plplot_lite.out
+
+# [OPTIONAL] Build and test the complete version of PLplot.
+make build_plplot >& build_plplot.out
+
+# Check build_plplot.out for any errors
+less build_plplot.out
+
+2. Windows platforms
+
+Very similar to above, but I will fill in variations that I used
+on Wine when I get a chance to test them again.

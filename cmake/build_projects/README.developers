@@ -1,0 +1,76 @@
+This file contains directions for developers of the epa_build project.
+If you are only interested in using that project, you should be
+consulting the README file instead.
+
+The GNOME Tool Kit stack of libraries is normally built by jhbuild
+which keeps its configuration files in xml form.  Here is how you
+convert that form of build-configuration data to the epa_build form.
+
+# Chose this latest version (as of August 2013) because it probably has
+# improved build and dependency instructions compared to previous versions.
+# For example, the glib version (2.37.4) is known to solve a build issue
+# that I ran into for earlier glib versions.
+export GTK_VERSION=3.9.4
+mkdir -p $GTK_VERSION
+cd $GTK_VERSION
+# This downloads all the relevant xml build configuration files
+# for the given version of GTK
+wget -nd  ftp://ftp.acc.umu.se/pub/GNOME/teams/releng/$GTK_VERSION/*
+cd ..
+./gtk_xml_recursive_process.py \
+$GTK_VERSION/gnome-apps-$GTK_VERSION.modules \
+>gtk_packages_$GTK_VERSION.xml
+
+To create the schema for gtk_packages.xml use
+
+trang -I xml gtk_packages_$GTK_VERSION.xml gtk_packages_$GTK_VERSION.rnc
+
+# That resulting schema file is quite helpful in figuring out
+# how to process gtk_packages_$GTK_VERSION.xml as below.
+
+# Transform the xml form to a form that can be used by a cmake script.
+# Note, there will be some information messages sent to stderr by this
+# script that typically relate to good packages (ones that can be
+# transformed by this script) and bad packages. Currently the list of
+# bad packages are confined just to those which are completely missing
+# from the jhbuild data for gtk.  The first command-line argument is
+# the starting package name and the second command-line argument is a
+# control variable where the least significant bit is ON for following (hard)
+# "dependencies" dependencies, the next least significant bit is ON
+# for following (soft) "suggests", dependencies, and the next least
+# significant bit is ON for following (would be nice) "after"
+# dependencies.  Currently I use a command variable of 1 to keep
+# the number of packages configured for building pango and
+# (hard) dependencies to a minimum.
+./gtk_transform.py "pango" 1 <gtk_packages_$GTK_VERSION.xml 1>| pango_packages.data
+
+# N.B. there are no plans to keep gtk_packages.xml, gtk_packages.rnc,
+# or pango_packages.data under version control.  However, if a patch
+# is necessary for gtk_packages.xml created as above, we will keep
+# that patch under version control.
+
+# Finally to actually generate build configurations for build_packages run
+# the following command.
+
+cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
+
+# One known issue with the gtk+ stack and other software we build is
+# certain package dependencies are completely missing such as
+# pkg-config and libffi which have to be built independently.  For
+# some of those missing packages we use a hand-generated configuration
+# (e.g., pkg-config/bp.cmake).  For others that can be configured with
+# a template (e.g., libffi) we use add_packages.xml (under version
+# control) as follows:
+
+rm -f add_packages.data
+touch add_packages.data
+# PACKAGE_LIST only contains the package names in add_packages.xml
+# that do not depend on any other package in that file.  Thus,
+# PACKAGE_LIST contains a list of "starting" packages and the
+# dependencies of those should suck in the rest of the packages in
+# add_packages.xml.
+PACKAGE_LIST="libffi intltool pixman gperf swig"
+for PACKAGE in $PACKAGE_LIST; do
+  ./gtk_transform.py $PACKAGE 1 <add_packages.xml 1>> add_packages.data
+done
+cmake -DFILENAME:FILEPATH=add_packages.data -P configure_bp.cmake
