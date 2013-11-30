@@ -71,6 +71,19 @@ less  pango_packages.stderr
 
 cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
 
+# Patch generated configuration files.  This patch file contains
+# additional changes that cannot be done via a patch to the *.xml file.
+# Typically, these changes are hand edits which are tested then committed.
+# So typically the patch is created by rerunning the above cmake
+# command then using "svn diff" > configured_pango.patch" to generate
+# the reverse form of the patch to change the result created by the
+# above cmake command into the svn committed form which is done with
+# the following patch command.
+
+patch --reverse -p0 <configured_pango.patch
+
+N.B. configured_pango.patch is kept under version control.
+
 # One known issue with the gtk+ stack and other software we build is
 # certain package dependencies are completely missing (called "bad
 # packages above) such as pkg-config and libffi which have to be built
@@ -79,8 +92,8 @@ cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
 # others that can be configured with a template (e.g., libffi) we use
 # add_packages.xml (under version control) as follows:
 
-rm -f add_packages.data
-touch add_packages.data
+rm -f add_packages.data add_packages.stderr
+touch add_packages.data add_packages.stderr
 # PACKAGE_LIST only contains the package names in add_packages.xml
 # that do not depend on any other package in that file.  Thus,
 # PACKAGE_LIST contains a list of "starting" packages and the
@@ -88,6 +101,15 @@ touch add_packages.data
 # add_packages.xml.
 PACKAGE_LIST="libffi intltool pixman gperf swig"
 for PACKAGE in $PACKAGE_LIST; do
-  ./gtk_transform.py $PACKAGE 1 <add_packages.xml 1>> add_packages.data
+  ./gtk_transform.py $PACKAGE 1 <add_packages.xml 1>> add_packages.data 2>> add_packages.stderr
 done
+
+# Look for any bad results:
+less add_packages.stderr
+
+# It turns out there is one "bad" package, pkg-config which must be
+# configured with a hand-edited configuration.
+
+# Generate the "good" package configurations.
+
 cmake -DFILENAME:FILEPATH=add_packages.data -P configure_bp.cmake
