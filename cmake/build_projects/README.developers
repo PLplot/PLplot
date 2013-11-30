@@ -19,10 +19,14 @@ wget -nd  ftp://ftp.acc.umu.se/pub/GNOME/teams/releng/$GTK_VERSION/*
 cd ..
 ./gtk_xml_recursive_process.py \
 $GTK_VERSION/gnome-apps-$GTK_VERSION.modules \
->gtk_packages_$GTK_VERSION.xml
+>| gtk_packages_$GTK_VERSION.xml
 
-To create the schema for gtk_packages.xml use
+# Patch this result to correct errors I have discovered in the jhbuild
+# configuration or else to use new versions of packages.
 
+patch <patch_gtk_packages.xml
+
+# To create the schema for gtk_packages.xml use
 trang -I xml gtk_packages_$GTK_VERSION.xml gtk_packages_$GTK_VERSION.rnc
 
 # That resulting schema file is quite helpful in figuring out
@@ -42,12 +46,25 @@ trang -I xml gtk_packages_$GTK_VERSION.xml gtk_packages_$GTK_VERSION.rnc
 # dependencies.  Currently I use a command variable of 1 to keep
 # the number of packages configured for building pango and
 # (hard) dependencies to a minimum.
-./gtk_transform.py "pango" 1 <gtk_packages_$GTK_VERSION.xml 1>| pango_packages.data
+./gtk_transform.py "pango" 1 <gtk_packages_$GTK_VERSION.xml 1>| pango_packages.data 2>|pango_packages.stderr
+
+# Check for errors:
+less  pango_packages.stderr
+
+# That file currently shows there are 10 "good"
+# packages (ones found as a result of the pango package dependency
+# chain) and 14 "bad" packages (ones not found this way which have to
+# be configured another way).
 
 # N.B. there are no plans to keep gtk_packages.xml, gtk_packages.rnc,
-# or pango_packages.data under version control.  However, if a patch
-# is necessary for gtk_packages.xml created as above, we will keep
-# that patch under version control.
+# or pango_packages.data under version control.  However,
+# gtk_xml_recursive_process.py, patch_gtk_packages.xml, and
+# gtk_transform.py are all kept under version control so that
+# gtk_packages_$GTK_VERSION.xml, gtk_packages_$GTK_VERSION.rnc, and
+# pango_packages.data can be reproduced at any time for the current
+# $GTK_VERSION value or produced for some updated $GTK_VERSION value.
+# Note that in that latter case, it will be necessary to edit the file
+# names in patch_gtk_packages.xml to conform to the new version.
 
 # Finally to actually generate build configurations for build_packages run
 # the following command.
@@ -55,12 +72,12 @@ trang -I xml gtk_packages_$GTK_VERSION.xml gtk_packages_$GTK_VERSION.rnc
 cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
 
 # One known issue with the gtk+ stack and other software we build is
-# certain package dependencies are completely missing such as
-# pkg-config and libffi which have to be built independently.  For
-# some of those missing packages we use a hand-generated configuration
-# (e.g., pkg-config/bp.cmake).  For others that can be configured with
-# a template (e.g., libffi) we use add_packages.xml (under version
-# control) as follows:
+# certain package dependencies are completely missing (called "bad
+# packages above) such as pkg-config and libffi which have to be built
+# independently.  For some of those missing packages we use a
+# hand-generated configuration (e.g., pkg-config/bp.cmake).  For
+# others that can be configured with a template (e.g., libffi) we use
+# add_packages.xml (under version control) as follows:
 
 rm -f add_packages.data
 touch add_packages.data
