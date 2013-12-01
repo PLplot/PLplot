@@ -79,12 +79,20 @@ else(MSYS_PLATFORM)
 endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
 
+set(${BP_PACKAGE}_SET_CXXFLAGS "CXXFLAGS=$ENV{CXXFLAGS}")
+
+# Drop -fvisibility=hidden since that option does not work for a
+# number of software packages that are configured automatically using
+# this template.
+string(REGEX REPLACE "-fvisibility=hidden" "" ${BP_PACKAGE}_SET_CFLAGS "${${BP_PACKAGE}_SET_CFLAGS}")
+string(REGEX REPLACE "-fvisibility=hidden" "" ${BP_PACKAGE}_SET_CXXFLAGS "${${BP_PACKAGE}_SET_CXXFLAGS}")
+
 ExternalProject_Add(
   build_${BP_PACKAGE}
   DEPENDS ${${BP_PACKAGE}_dependencies_targets}
   URL ${${BP_PACKAGE}_URL}
   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --enable-unicode-properties --enable-pcre16 --enable-pcre32 --disable-static
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --enable-unicode-properties --enable-pcre16 --enable-pcre32 --disable-static
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
   BUILD_IN_SOURCE OFF
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}  install
