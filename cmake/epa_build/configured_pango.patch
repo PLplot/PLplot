@@ -1,6 +1,6 @@
 Index: itstool/bp.cmake
 ===================================================================
---- itstool/bp.cmake	(revision 12780)
+--- itstool/bp.cmake	(revision 12790)
 +++ itstool/bp.cmake	(working copy)
 @@ -64,7 +64,6 @@
  set(${BP_PACKAGE}_URL http://files.itstool.org/itstool/itstool-1.2.0.tar.bz2)
@@ -10,11 +10,11 @@ Index: itstool/bp.cmake
  
  # Data that is related to the PATH that must be used.
  if(MSYS_PLATFORM)
-@@ -85,7 +84,6 @@
+@@ -93,7 +92,6 @@
    DEPENDS ${${BP_PACKAGE}_dependencies_targets}
    URL ${${BP_PACKAGE}_URL}
    URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
 -  PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/itstool/${${BP_PACKAGE}_PATCH}
-   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
+   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
    BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
    BUILD_IN_SOURCE OFF
