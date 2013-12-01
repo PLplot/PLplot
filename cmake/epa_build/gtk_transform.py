@@ -2,7 +2,7 @@
 
 # Read gtk jhbuild xml module that has been produced by
 # gtk_xml_recursive_process.py from stdin and transform it into data
-# required for build_projects using the ElementTree XML API.
+# required for epa_build using the ElementTree XML API.
 
 # Copyright (C) 2013 Alan W. Irwin
 

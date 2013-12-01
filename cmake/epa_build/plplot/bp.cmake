@@ -91,12 +91,12 @@ set(BP_PACKAGE plplot)
 #endif(PREFER_DOWNLOAD)
 
 # Assumption that the top-level local PLplot source tree is two directories
-# up from the present top-level directory for build_projects.
-# This assumption is correct if you are accessing build_projects as
+# up from the present top-level directory for epa_build.
+# This assumption is correct if you are accessing epa_build as
 # a subset of the PLplot source tree so that its location is in
-# cmake/build_projects within that source tree.
+# cmake/epa_build within that source tree.
 # But it is not the case if you have independently
-# checked out just the build_projects subset of the normal PLplot source
+# checked out just the epa_build subset of the normal PLplot source
 # tree so check that the result really is a plplot source tree.
 get_filename_component(PLPLOT_LOCAL_SOURCE_DIR ${CMAKE_SOURCE_DIR} PATH)
 get_filename_component(PLPLOT_LOCAL_SOURCE_DIR ${PLPLOT_LOCAL_SOURCE_DIR} PATH)
@@ -106,7 +106,7 @@ find_file(IS_PLPLOT_SOURCE_TREE plcore.c
 )
 
 if(NOT IS_PLPLOT_SOURCE_TREE)
-  message(FATAL_ERROR "build_projects not located in cmake/build_projects in a PLplot source tree")
+  message(FATAL_ERROR "epa_build not located in cmake/epa_build in a PLplot source tree")
 endif(NOT IS_PLPLOT_SOURCE_TREE)
 
 set(tags "" "_lite")

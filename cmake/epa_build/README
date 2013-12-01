@@ -96,7 +96,7 @@ Build directions for epa_build
 1. Linux
 
 Note that setup_linux sets up all the important environment variables you
-need including GENERATOR_STRING, INSTALL_PREFIX, and BUILD_PROJECTS_SOURCE_PATH.
+need including GENERATOR_STRING, INSTALL_PREFIX, and EPA_BUILD_SOURCE_PATH.
 
 A. [OPTIONAL] build necessary additional buildtools whose versions you
 prefer compared to the versions available on your Linux distro.
@@ -108,7 +108,7 @@ mkdir -p <Build tree prefix>/build_dir-linux_buildtools
 rm -rf <Build tree prefix>/build_dir-linux_buildtools/* ${INSTALL_PREFIX}_buildtools
 cd <Build tree prefix>/build_dir-linux_buildtools
 
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}_buildtools -DBUILD_THE_BUILDTOOLS=ON $BUILD_PROJECTS_SOURCE_PATH >& cmake.out
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}_buildtools -DBUILD_THE_BUILDTOOLS=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
 
 # Check cmake.out for any errors
 less cmake.out
@@ -135,7 +135,7 @@ mkdir -p <Build tree prefix>/build_dir-linux
 rm -rf <Build tree prefix>/build_dir-linux/* ${INSTALL_PREFIX}
 cd <Build tree prefix>/build_dir-linux
 
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX} $BUILD_PROJECTS_SOURCE_PATH >& cmake.out
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX} $EPA_BUILD_SOURCE_PATH >& cmake.out
 
 # Check cmake.out for any errors
 less cmake.out

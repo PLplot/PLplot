@@ -18,7 +18,7 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-project(build_projects NONE)
+project(epa_build NONE)
 
 message(STATUS "CMake version = ${CMAKE_VERSION}")
 message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
@@ -27,11 +27,11 @@ message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 cmake_minimum_required(VERSION 2.8.11.2 FATAL_ERROR)
 
-set(EP_BASE ${CMAKE_BINARY_DIR}/build_projects)
+set(EP_BASE ${CMAKE_BINARY_DIR}/epa_build)
 message(STATUS "EP_BASE = ${EP_BASE}")
 set_directory_properties(PROPERTIES EP_BASE ${EP_BASE})
 
-# Set build_projects variables to control builds in general
+# Set epa_build variables to control builds in general
 
 # Test whether there is access to the MSYS platform on the PATH.  Note
 # this is a different question than whether you are using the "MSYS
@@ -58,14 +58,14 @@ message(STATUS "MSYS_PLATFORM = ${MSYS_PLATFORM}")
 message(STATUS "CYGWIN = ${CYGWIN}")
 
 if(CYGWIN)
-  message(FATAL_ERROR "build_projects does not work correctly on the Cygwin platform.  Use the MinGW compiler and MSYS platform instead.")
+  message(FATAL_ERROR "epa_build does not work correctly on the Cygwin platform.  Use the MinGW compiler and MSYS platform instead.")
 endif(CYGWIN)
 
 if(WIN32 AND NOT MSYS_PLATFORM)
-  message(FATAL_ERROR "build_projects does not work correctly on Windows without the MSYS platform.  Install the MSYS platform (perhaps without sh.exe depending on CMake generator) on Windows.")
+  message(FATAL_ERROR "epa_build does not work correctly on Windows without the MSYS platform.  Install the MSYS platform (perhaps without sh.exe depending on CMake generator) on Windows.")
 endif(WIN32 AND NOT MSYS_PLATFORM)
 
-# List of executables required by build_projects CMake logic.
+# List of executables required by epa_build CMake logic.
 set(executables_LIST
   # ExternalProject workarounds
   touch
@@ -77,7 +77,7 @@ set(executables_LIST
   patch
   # General
   env
-  # Not specifically required by build_projects (yet), but some
+  # Not specifically required by epa_build (yet), but some
   # individual project configurations will not work unless this is
   # available so might as well check it here.
   bash
@@ -96,7 +96,7 @@ foreach(executable ${executables_LIST})
     if(MSYS_PLATFORM)
       message(STATUS "${executable} missing from your MSYS platform.  Use mingw-get to install it.")
     endif(MSYS_PLATFORM)
-    message(FATAL_ERROR "${executable} must be on your PATH in order for build_projects to work correctly")  
+    message(FATAL_ERROR "${executable} must be on your PATH in order for epa_build to work correctly")  
   endif(NOT ${EXECUTABLE}_EXECUTABLE)
 endforeach(executable ${executables_LIST})
 
@@ -242,8 +242,8 @@ message(STATUS "BP_CTEST_COMMAND = ${BP_CTEST_COMMAND}")
 message(STATUS "BP_PARALLEL_CTEST_COMMAND = ${BP_PARALLEL_CTEST_COMMAND}")
 
 # Put ${CMAKE_INSTALL_PREFIX}/bin on the PATH as well for those cases
-# where some executable built and installed by build_projects needs
-# to be found by another project being configured by build_projects.
+# where some executable built and installed by epa_build needs
+# to be found by another project being configured by epa_build.
 if(MSYS_PLATFORM)
   set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH};${CMAKE_INSTALL_PREFIX}/bin")
 else(MSYS_PLATFORM)
@@ -278,7 +278,7 @@ if(BUILD_THE_BUILDTOOLS)
       if(MSYS_PLATFORM)
 	message(STATUS "${executable} missing from your MSYS platform.  If sh is missing, use a generator other than 'MinGW Makefiles'.  If something else is missing use mingw-get to install it.")
       endif(MSYS_PLATFORM)
-      message(FATAL_ERROR "${executable} must be on your PATH in order for build_projects to work correctly")  
+      message(FATAL_ERROR "${executable} must be on your PATH in order for epa_build to work correctly")  
     endif(NOT ${EXECUTABLE}_EXECUTABLE)
   endforeach(executable ${executables_LIST})
 
