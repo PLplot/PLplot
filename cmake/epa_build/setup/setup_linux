@@ -14,6 +14,17 @@ export CFLAGS='-O3 -fvisibility=hidden -Wuninitialized'
 export CXXFLAGS='-O3 -fvisibility=hidden -Wuninitialized'
 export FFLAGS='-O3 -Wuninitialized'
 
+# The debian gcj-4.7-jdk package (or its dependencies) has
+# some peculiar locations for java components so CMake needs
+# some help in finding those.
+export CMAKE_INCLUDE_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.7/include
+export CMAKE_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/gcj-4.7-13
+
+# In the past, CMake has needed help finding the Phobos library for D
+# for Debian stable.  I am not sure this is necessary anymore with D2,
+# but it apparently does not hurt.
+CMAKE_LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.6/:$CMAKE_LIBRARY_PATH
+
 # End of tailored values.
 
 # Put buildtools that have been built and installed by build_packages on PATH.
@@ -23,12 +34,8 @@ PATH=${INSTALL_PREFIX}_buildtools/bin:$PATH
 # configuration tool will be found.
 PATH=${INSTALL_PREFIX}/bin:$PATH
 
-# Put appropriate buildtools areas on these.
-export CMAKE_INCLUDE_PATH
-export CMAKE_LIBRARY_PATH
-
-CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include
-CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}_buildtools/lib
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include:$CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}_buildtools/lib:$CMAKE_LIBRARY_PATH
 
 # Put version 3 of itcl and friends higher on CMAKE_INCLUDE_PATH then
 # the above default.
