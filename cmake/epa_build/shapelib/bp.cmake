@@ -67,14 +67,14 @@ add_custom_command(
   OUTPUT
   ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -DURL:STRING=${shape_eg_data_URL} -DFILE:FILEPATH=${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip -DMD5:STRING=${shape_eg_data_URL_MD5} -P ${CMAKE_SOURCE_DIR}/download_check.cmake
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${EP_BASE}/Source/build_${BP_PACKAGE}/eg_data
   COMMAND ${UNZIP_EXECUTABLE} -q ${EP_BASE}/Download/build_${BP_PACKAGE}/shape_eg_data.zip -d ${EP_BASE}/Source/build_${BP_PACKAGE}/eg_data
   COMMENT "Custom updating of ${BP_PACKAGE}"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
   ${CMAKE_SOURCE_DIR}/download_check.cmake
   # N.B. no file dependencies are worthwhile for the eg_data
   # chain above since it all starts with a download.

@@ -12,7 +12,7 @@ subdirectories of the install tree using repeated runs of mkdir before
 AWI got tired of dealing with those issues so he implemented (with
 help from Andrew Ross) a comprehensive CMake-based build system for
 ndiff consisting of the two other files in this directory whose names
-are CMakeLists.txt and config.h.cmake.
+are ndiff_CMakeLists.txt and config.h.cmake.
 
 Here is the recommended way to use the ndiff build and test system
 that is implemented with these files:
@@ -24,8 +24,9 @@ wget ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz
 wget ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz.sig
 gpg --verify ndiff-2.00.tar.gz.sig
 
-Copy CMakeLists.txt and config.h.cmake into the top
-of the ndiff-2.0.0 source tree then build, test, and install ndiff using
+Copy ndiff_CMakeLists.txt and config.h.cmake into the top of the
+ndiff-2.0.0 source tree (with the names CMakeLists.txt and
+config.h.cmake) then build, test, and install ndiff using
 
 mkdir build_dir
 cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX

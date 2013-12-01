@@ -58,7 +58,7 @@ add_custom_command(
   OUTPUT
   ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
   ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
@@ -74,7 +74,7 @@ add_custom_command(
   ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
   COMMENT "Custom updating of ${BP_PACKAGE}"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
   ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h

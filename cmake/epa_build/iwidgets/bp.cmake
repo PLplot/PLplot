@@ -132,7 +132,7 @@ foreach(tag IN LISTS tags)
     ${EP_BASE}/Stamp/build_${BP_PACKAGE}${tag}/build_${BP_PACKAGE}${tag}-patch
     COMMAND echo "Add CMake-based build system"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-    ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/CMakeLists.txt
+    ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
     ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}/CMakeLists.txt
     APPEND
       )
