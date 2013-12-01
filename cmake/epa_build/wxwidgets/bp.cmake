@@ -47,18 +47,24 @@ if(MSYS_PLATFORM)
   # memory with MinGW.  See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=43601
   # for discussion of this.  Apparently the issue was fixed for
   # MinGW-4.6, but it appears to be back for 4.7.2.
-  set(${BP_PACKAGE}_SET_CXXFLAGS "CXXFLAGS=-fno-keep-inline-dllexport")
+  set(${BP_PACKAGE}_SET_CXXFLAGS "CXXFLAGS=-fno-keep-inline-dllexport $ENV{CXXFLAGS}")
 else(MSYS_PLATFORM)
   set(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
-  set(${BP_PACKAGE}_SET_CXXFLAGS)
+  set(${BP_PACKAGE}_SET_CXXFLAGS "CXXFLAGS=$ENV{CXXFLAGS}")
 endif(MSYS_PLATFORM)
 #message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
+
+set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
+
+# Drop -fvisibility=hidden since that option does not work for this package.
+string(REGEX REPLACE "-fvisibility=hidden" "" ${BP_PACKAGE}_SET_CFLAGS "${${BP_PACKAGE}_SET_CFLAGS}")
+string(REGEX REPLACE "-fvisibility=hidden" "" ${BP_PACKAGE}_SET_CXXFLAGS "${${BP_PACKAGE}_SET_CXXFLAGS}")
 
 ExternalProject_Add(
   build_${BP_PACKAGE}
   URL ${${BP_PACKAGE}_URL}
   URL_MD5 ${${BP_PACKAGE}_URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
   )
