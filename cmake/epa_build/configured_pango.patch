@@ -18,3 +18,41 @@ Index: itstool/CMakeLists.txt
    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
    BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
    BUILD_IN_SOURCE OFF
+Index: configured_pango.patch
+===================================================================
+--- configured_pango.patch	(revision 12800)
++++ configured_pango.patch	(working copy)
+@@ -1,20 +1,20 @@
+ Index: itstool/CMakeLists.txt
+ ===================================================================
+---- itstool/CMakeLists.txt	(revision 12790)
++--- itstool/CMakeLists.txt	(revision 12802)
+ +++ itstool/CMakeLists.txt	(working copy)
+-@@ -64,7 +64,6 @@
+- set(${BP_PACKAGE}_URL http://files.itstool.org/itstool/itstool-1.2.0.tar.bz2)
+- set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE SHA256)
+- set(${BP_PACKAGE}_DOWNLOAD_HASH 46fed63fb89c72dbfc03097b4477084ff05ad6f171212d8f1f1546ea543978aa)
+--set(${BP_PACKAGE}_PATCH itstool-1.2.0-python-location-fixes.patch)
++@@ -71,7 +71,6 @@
++ set(URL http://files.itstool.org/itstool/itstool-1.2.0.tar.bz2)
++ set(DOWNLOAD_HASH_TYPE SHA256)
++ set(DOWNLOAD_HASH 46fed63fb89c72dbfc03097b4477084ff05ad6f171212d8f1f1546ea543978aa)
++-set(PATCH itstool-1.2.0-python-location-fixes.patch)
+  
+  # Data that is related to the PATH that must be used.
+  if(MSYS_PLATFORM)
+-@@ -93,7 +92,6 @@
+-   DEPENDS ${${BP_PACKAGE}_dependencies_targets}
+-   URL ${${BP_PACKAGE}_URL}
+-   URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
+--  PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/itstool/${${BP_PACKAGE}_PATCH}
+-   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${${BP_PACKAGE}_SET_CXXFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} 
+-   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
++@@ -98,7 +97,6 @@
++   DEPENDS ${dependencies_targets}
++   URL ${URL}
++   URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
++-  PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/itstool/${PATCH}
++   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${SET_CFLAGS} ${SET_CXXFLAGS} ${source_PATH}/${EPA_CONFIGURE_COMMAND} 
++   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
+    BUILD_IN_SOURCE OFF
