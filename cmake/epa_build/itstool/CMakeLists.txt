@@ -71,6 +71,7 @@ set(EPA_needed_subdirectories_LIST ${EPA_needed_subdirectories_LIST} PARENT_SCOP
 set(URL http://files.itstool.org/itstool/itstool-1.2.0.tar.bz2)
 set(DOWNLOAD_HASH_TYPE SHA256)
 set(DOWNLOAD_HASH 46fed63fb89c72dbfc03097b4477084ff05ad6f171212d8f1f1546ea543978aa)
+set(PATCH itstool-1.2.0-python-location-fixes.patch)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
@@ -97,6 +98,7 @@ ExternalProject_Add(
   DEPENDS ${dependencies_targets}
   URL ${URL}
   URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
+  PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_SOURCE_DIR}/itstool/${PATCH}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${SET_CFLAGS} ${SET_CXXFLAGS} ${source_PATH}/${EPA_CONFIGURE_COMMAND} 
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BP_PARALLEL_MAKE_COMMAND} 
   BUILD_IN_SOURCE OFF
