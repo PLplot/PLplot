@@ -70,7 +70,7 @@ foreach(index RANGE 0 ${max_index})
 
   # Configure the package file using the appropriate template file.
   if(config_type STREQUAL "autotools" OR config_type STREQUAL "tarball" OR config_type STREQUAL "cmake")
-    set(template_file template.bp.in)
+    set(template_file epa_CMakeLists.txt.in)
   else(config_type STREQUAL "autotools" OR config_type STREQUAL "tarball" OR config_type STREQUAL "cmake")
     message(FATAL_ERROR "incorrect config_type = ${config_type}")
   endif(config_type STREQUAL "autotools" OR config_type STREQUAL "tarball" OR config_type STREQUAL "cmake")
@@ -80,6 +80,6 @@ foreach(index RANGE 0 ${max_index})
   endif(NOT package)
   
   file(MAKE_DIRECTORY ${package})
-  configure_file(${template_file} ${package}/bp.cmake @ONLY)
+  configure_file(${template_file} ${package}/CMakeLists.txt @ONLY)
   
 endforeach(index RANGE 0 ${max_index})
