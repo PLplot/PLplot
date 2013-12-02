@@ -1,7 +1,7 @@
-Index: itstool/bp.cmake
+Index: itstool/CMakeLists.txt
 ===================================================================
---- itstool/bp.cmake	(revision 12790)
-+++ itstool/bp.cmake	(working copy)
+--- itstool/CMakeLists.txt	(revision 12790)
++++ itstool/CMakeLists.txt	(working copy)
 @@ -64,7 +64,6 @@
  set(${BP_PACKAGE}_URL http://files.itstool.org/itstool/itstool-1.2.0.tar.bz2)
  set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE SHA256)
