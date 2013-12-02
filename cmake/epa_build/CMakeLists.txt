@@ -27,9 +27,9 @@ message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 cmake_minimum_required(VERSION 2.8.11.2 FATAL_ERROR)
 
-set(EP_BASE ${CMAKE_BINARY_DIR}/epa_build)
-message(STATUS "EP_BASE = ${EP_BASE}")
-set_directory_properties(PROPERTIES EP_BASE ${EP_BASE})
+set(EPA_BASE ${CMAKE_BINARY_DIR}/epa_build)
+message(STATUS "EPA_BASE = ${EPA_BASE}")
+set_directory_properties(PROPERTIES EPA_BASE ${EPA_BASE})
 
 # Set epa_build variables to control builds in general
 
@@ -129,9 +129,9 @@ endif(CMAKE_INSTALL_SO_NO_EXE)
 # Intel/AMD Linux hardware and also MinGW/MSYS on 32-bit Windows for
 # now.
 if(UNAME_MACHINE STREQUAL x86_64)
-  set(BP_HAVE_64_BIT_OS ON)
+  set(EPA_HAVE_64_BIT_OS ON)
 else(UNAME_MACHINE STREQUAL x86_64)
-  set(BP_HAVE_64_BIT_OS OFF)
+  set(EPA_HAVE_64_BIT_OS OFF)
 endif(UNAME_MACHINE STREQUAL x86_64)
 
 # Use modified version of the CMake 2.8.12 ExternalProject module
@@ -160,47 +160,47 @@ endif(MSYS_PLATFORM)
 # This gives the full pathname of the associated build tool for at
 # least the "Unix Makefiles", "Ninja", "MSYS Makefiles", "MinGW
 # Makefiles", and "NMake Makefiles JOM" CMake generators.
-set(BP_BUILD_COMMAND "${CMAKE_MAKE_PROGRAM}")
+set(EPA_BUILD_COMMAND "${CMAKE_MAKE_PROGRAM}")
 
 # Actual make programme used for autotools builds.
-set(BP_MAKE_COMMAND ${MAKE_EXECUTABLE})
+set(EPA_MAKE_COMMAND ${MAKE_EXECUTABLE})
 
-set(BP_CTEST_COMMAND "${CMAKE_CTEST_COMMAND}")
+set(EPA_CTEST_COMMAND "${CMAKE_CTEST_COMMAND}")
 
 if(MSYS_PLATFORM)
   # On the MSYS platform, the env command (used to set relevant
-  # environment variables for the commands below in the */bp.cmake
+  # environment variables for the commands below in the */CMakeLists.txt
   # scripts) requires all full paths be in the MSYS platform form.
-  determine_msys_path(BP_BUILD_COMMAND "${BP_BUILD_COMMAND}")
-  determine_msys_path(BP_MAKE_COMMAND "${BP_MAKE_COMMAND}")
-  determine_msys_path(BP_CTEST_COMMAND "${BP_CTEST_COMMAND}")
-  determine_msys_path(BP_CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+  determine_msys_path(EPA_BUILD_COMMAND "${EPA_BUILD_COMMAND}")
+  determine_msys_path(EPA_MAKE_COMMAND "${EPA_MAKE_COMMAND}")
+  determine_msys_path(EPA_CTEST_COMMAND "${EPA_CTEST_COMMAND}")
+  determine_msys_path(EPA_CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
   determine_msys_path(MSYS_CMAKE_COMMAND "${CMAKE_COMMAND}")
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
-  set(BP_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${BP_CMAKE_INSTALL_PREFIX})
+  set(EPA_CMAKE_COMMAND ${MSYS_CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${EPA_CMAKE_INSTALL_PREFIX})
   # Propagate CMAKE_C_COMPILER, CMAKE_CXX_COMPILER, and
   # CMAKE_RC_COMPILER to all CMake-based software project builds.
   # (jom currently requires this as a workaround).
   if(CMAKE_C_COMPILER)
     determine_msys_path(MSYS_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}")
-    list(APPEND BP_CMAKE_COMMAND -DCMAKE_C_COMPILER:FILEPATH=${MSYS_CMAKE_C_COMPILER})
+    list(APPEND EPA_CMAKE_COMMAND -DCMAKE_C_COMPILER:FILEPATH=${MSYS_CMAKE_C_COMPILER})
   endif(CMAKE_C_COMPILER)
   if(CMAKE_CXX_COMPILER)
     determine_msys_path(MSYS_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}")
-    list(APPEND BP_CMAKE_COMMAND -DCMAKE_CXX_COMPILER:FILEPATH=${MSYS_CMAKE_CXX_COMPILER})
+    list(APPEND EPA_CMAKE_COMMAND -DCMAKE_CXX_COMPILER:FILEPATH=${MSYS_CMAKE_CXX_COMPILER})
   endif(CMAKE_CXX_COMPILER)
   if(CMAKE_RC_COMPILER)
     determine_msys_path(MSYS_CMAKE_RC_COMPILER "${CMAKE_RC_COMPILER}")
-    list(APPEND BP_CMAKE_COMMAND -DCMAKE_RC_COMPILER:FILEPATH=${MSYS_CMAKE_RC_COMPILER})
+    list(APPEND EPA_CMAKE_COMMAND -DCMAKE_RC_COMPILER:FILEPATH=${MSYS_CMAKE_RC_COMPILER})
   endif(CMAKE_RC_COMPILER)
   # No extra dropped dependencies for the MSYS_PLATFORM case.
   set(extra_ignored_dependencies_list)
 else(MSYS_PLATFORM)
   # Propagate the overall CMake generator and install prefix to all CMake-based
   # software project builds.
-  set(BP_CMAKE_COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
-  set(BP_CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+  set(EPA_CMAKE_COMMAND ${CMAKE_COMMAND} "-G${CMAKE_GENERATOR}" -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX})
+  set(EPA_CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 
   # Drop xmlcatalog-wrapper dependency since that is only suitable for
   # the MSYS_PLATFORM case.
@@ -208,38 +208,38 @@ else(MSYS_PLATFORM)
 endif(MSYS_PLATFORM)
 
 # Propagate the install prefix to autotools-based builds
-set(BP_CONFIGURE_COMMAND configure --prefix=${BP_CMAKE_INSTALL_PREFIX})
+set(EPA_CONFIGURE_COMMAND configure --prefix=${EPA_CMAKE_INSTALL_PREFIX})
 
 if(CMAKE_VERBOSE_MAKEFILE)
   # Not sure whether all contemplated back-ends support this or not, but
   # most should.
-  list(APPEND BP_CMAKE_COMMAND -DCMAKE_VERBOSE_MAKEFILE=ON)
+  list(APPEND EPA_CMAKE_COMMAND -DCMAKE_VERBOSE_MAKEFILE=ON)
   # Some autotools build projects give verbose make results when V=1
   # and I don't think it will interfere with the rest.
-  list(APPEND BP_MAKE_COMMAND V=1)
+  list(APPEND EPA_MAKE_COMMAND V=1)
 endif(CMAKE_VERBOSE_MAKEFILE)
 
 
 # The parallel versions are for software packages that
 # do not have race conditions for parallel builds or tests.
-set(BP_PARALLEL_BUILD_COMMAND "${BP_BUILD_COMMAND}" -j4)
-set(BP_PARALLEL_CTEST_COMMAND "${BP_CTEST_COMMAND}" -j4)
+set(EPA_PARALLEL_BUILD_COMMAND "${EPA_BUILD_COMMAND}" -j4)
+set(EPA_PARALLEL_CTEST_COMMAND "${EPA_CTEST_COMMAND}" -j4)
 # For autotools based builds.
 option(AUTOTOOLS_PARALLEL_BUILD "Build autotools projects using parallel make unless a specific project is expressely configured otherwise" ON)
 if(AUTOTOOLS_PARALLEL_BUILD)
-  set(BP_PARALLEL_MAKE_COMMAND "${BP_MAKE_COMMAND}" -j4)
+  set(EPA_PARALLEL_MAKE_COMMAND "${EPA_MAKE_COMMAND}" -j4)
 else(AUTOTOOLS_PARALLEL_BUILD)
-  set(BP_PARALLEL_MAKE_COMMAND "${BP_MAKE_COMMAND}")
+  set(EPA_PARALLEL_MAKE_COMMAND "${EPA_MAKE_COMMAND}")
 endif(AUTOTOOLS_PARALLEL_BUILD)
 
-message(STATUS "BP_CMAKE_COMMAND = ${BP_CMAKE_COMMAND}")
-message(STATUS "BP_CONFIGURE_COMMAND = ${BP_CONFIGURE_COMMAND}")
-message(STATUS "BP_BUILD_COMMAND = ${BP_BUILD_COMMAND}")
-message(STATUS "BP_PARALLEL_BUILD_COMMAND = ${BP_PARALLEL_BUILD_COMMAND}")
-message(STATUS "BP_MAKE_COMMAND = ${BP_MAKE_COMMAND}")
-message(STATUS "BP_PARALLEL_MAKE_COMMAND = ${BP_PARALLEL_MAKE_COMMAND}")
-message(STATUS "BP_CTEST_COMMAND = ${BP_CTEST_COMMAND}")
-message(STATUS "BP_PARALLEL_CTEST_COMMAND = ${BP_PARALLEL_CTEST_COMMAND}")
+message(STATUS "EPA_CMAKE_COMMAND = ${EPA_CMAKE_COMMAND}")
+message(STATUS "EPA_CONFIGURE_COMMAND = ${EPA_CONFIGURE_COMMAND}")
+message(STATUS "EPA_BUILD_COMMAND = ${EPA_BUILD_COMMAND}")
+message(STATUS "EPA_PARALLEL_BUILD_COMMAND = ${EPA_PARALLEL_BUILD_COMMAND}")
+message(STATUS "EPA_MAKE_COMMAND = ${EPA_MAKE_COMMAND}")
+message(STATUS "EPA_PARALLEL_MAKE_COMMAND = ${EPA_PARALLEL_MAKE_COMMAND}")
+message(STATUS "EPA_CTEST_COMMAND = ${EPA_CTEST_COMMAND}")
+message(STATUS "EPA_PARALLEL_CTEST_COMMAND = ${EPA_PARALLEL_CTEST_COMMAND}")
 
 # Put ${CMAKE_INSTALL_PREFIX}/bin on the PATH as well for those cases
 # where some executable built and installed by epa_build needs
@@ -249,7 +249,7 @@ if(MSYS_PLATFORM)
 else(MSYS_PLATFORM)
   set(BP_ORIGINAL_NATIVE_PATH "$ENV{PATH}:${CMAKE_INSTALL_PREFIX}/bin")
 endif(MSYS_PLATFORM)
-set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
+set(EPA_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 
 # This option not used currently, but instead of removing it, comment
 # it out because it might be useful later if we ever configure a project
@@ -313,7 +313,7 @@ else(BUILD_THE_BUILDTOOLS)
 endif(BUILD_THE_BUILDTOOLS)
 
 foreach(build_configuration ${build_configuration_LIST})
-  include(${build_configuration}/bp.cmake)
+  include(${build_configuration}/CMakeLists.txt)
 endforeach(build_configuration ${build_configuration_LIST})
 
 add_custom_target(build_all)
