@@ -69,7 +69,7 @@ less  pango_packages.stderr
 # Finally to actually generate build configurations for build_packages run
 # the following command.
 
-cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_bp.cmake
+cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_epa.cmake
 
 # Patch generated configuration files.  This patch file contains
 # additional changes that cannot be done via a patch to the *.xml file.
@@ -112,4 +112,4 @@ less add_packages.stderr
 
 # Generate the "good" package configurations.
 
-cmake -DFILENAME:FILEPATH=add_packages.data -P configure_bp.cmake
+cmake -DFILENAME:FILEPATH=add_packages.data -P configure_epa.cmake
