@@ -1,4 +1,4 @@
-# pkg-config/bp.cmake
+# pkg-config/CMakeLists.txt
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build of pkg-config.
 
@@ -19,62 +19,62 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EP_BASE variable (and
-# corresponding directory property) as well as various BP variables
+# have run "include(ExternalProject)" and set EPA_BASE variable (and
+# corresponding directory property) as well as various EPA variables
 # used below that configure how the External_Project functions
 # operate.
 
-set(BP_PACKAGE pkg-config)
+set(PACKAGE pkg-config)
 
 # Protect against configuring a build twice in one CMake call
-if(${BP_PACKAGE}_configured)
+if(configured)
   return()
-endif(${BP_PACKAGE}_configured)
-set(${BP_PACKAGE}_configured ON)
+endif(configured)
+set(configured ON)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
-set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
-set(${BP_PACKAGE}_DOWNLOAD_HASH aa3c86e67551adc3ac865160e34a2a0d)
+set(URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
+set(${PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
+set(${PACKAGE}_DOWNLOAD_HASH aa3c86e67551adc3ac865160e34a2a0d)
 
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
-  #set(BP_PATH_NODLL "${BP_PATH}")
-  #set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
-  determine_msys_path(BP_PATH "${BP_PATH}")
+  #set(EPA_PATH_NODLL "${EPA_PATH}")
+  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
+  determine_msys_path(EPA_PATH "${EPA_PATH}")
   # Must have all elements of env command in MSYS platform form
-  determine_msys_path(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
+  determine_msys_path(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
   # configure (for glib subpackage) dies without this.
-  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=-march=native $ENV{CFLAGS}")
+  set(${PACKAGE}_SET_CFLAGS "CFLAGS=-march=native $ENV{CFLAGS}")
 else(MSYS_PLATFORM)
-  set(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
-  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
+  set(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
+  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
+#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
 
 ExternalProject_Add(
-  build_${BP_PACKAGE}
-  URL ${${BP_PACKAGE}_URL}
-  URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${${BP_PACKAGE}_SET_CFLAGS} ${source_PATH}/${BP_CONFIGURE_COMMAND} --with-internal-glib
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND}
+  build_${PACKAGE}
+  URL ${URL}
+  URL_HASH ${${PACKAGE}_DOWNLOAD_HASH_TYPE}=${${PACKAGE}_DOWNLOAD_HASH}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${${PACKAGE}_SET_CFLAGS} ${source_PATH}/${EPA_CONFIGURE_COMMAND} --with-internal-glib
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
 # 4 of 25 tests fail for the MinGW/MSYS/Wine platform so comment out
 # the next two lines for now.
 #  TEST_BEFORE_INSTALL ON
-#  TEST_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} check
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_MAKE_COMMAND} install
+#  TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} check
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
   )
 
 ExternalProject_Add_Step(
-  build_${BP_PACKAGE} preinstall_fix
+  build_${PACKAGE} preinstall_fix
   COMMENT "remove pkg-config binaries from the install tree"
   DEPENDEES build
   DEPENDERS install 
-  COMMAND ${CMAKE_COMMAND} -DFILE_WILDCARD:STRING=${BP_CMAKE_INSTALL_PREFIX}/bin/*-pkg-config* -P ${CMAKE_SOURCE_DIR}/wildcard_remove.cmake
+  COMMAND ${CMAKE_COMMAND} -DFILE_WILDCARD:STRING=${EPA_CMAKE_INSTALL_PREFIX}/bin/*-pkg-config* -P ${CMAKE_SOURCE_DIR}/wildcard_remove.cmake
   )
 
-list(APPEND build_target_LIST build_${BP_PACKAGE})
-# Restore BP_PATH to original state.
-set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")
+list(APPEND build_target_LIST build_${PACKAGE})
+# Restore EPA_PATH to original state.
+set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
+#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

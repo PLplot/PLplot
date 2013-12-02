@@ -1,4 +1,4 @@
-# docbook-xml/bp.cmake
+# docbook-xml/CMakeLists.txt
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build of docbook-xml.
 
@@ -19,8 +19,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EP_BASE variable (and
-# corresponding directory property) as well as various BP variables
+# have run "include(ExternalProject)" and set EPA_BASE variable (and
+# corresponding directory property) as well as various EPA variables
 # used below that configure how the External_Project functions
 # operate.
 
@@ -32,71 +32,71 @@ set(docbook-xml_configured ON)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
+set(EPA_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
 
 set(docbook-xml_dependencies_LIST libxml2)
 # Remove dependencies that should be ignored.
 if(docbook-xml_dependencies_LIST)
-  list(REMOVE_ITEM docbook-xml_dependencies_LIST ${BP_ignored_dependencies_LIST})
+  list(REMOVE_ITEM docbook-xml_dependencies_LIST ${EPA_ignored_dependencies_LIST})
 endif(docbook-xml_dependencies_LIST)
 
 set(docbook-xml_dependencies_targets)
 foreach(build_configuration ${docbook-xml_dependencies_LIST})
-  if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
-    include(${build_configuration}/bp.cmake)
+  if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
+    include(${build_configuration}/CMakeLists.txt)
     list(APPEND docbook-xml_dependencies_targets build_${build_configuration})
-  else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
+  else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
     message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of docbook-xml has been installed another way.")
-  endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
+  endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
 endforeach(build_configuration ${docbook-xml_dependences_LIST})
 
 # This can be safely done only after above includes.
-set(BP_PACKAGE docbook-xml)
+set(PACKAGE docbook-xml)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL http://www.docbook.org/xml/4.5/docbook-xml-4.5.zip)
-set(${BP_PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
-set(${BP_PACKAGE}_DOWNLOAD_HASH 03083e288e87a7e829e437358da7ef9e)
+set(URL http://www.docbook.org/xml/4.5/docbook-xml-4.5.zip)
+set(${PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
+set(${PACKAGE}_DOWNLOAD_HASH 03083e288e87a7e829e437358da7ef9e)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
-  #set(BP_PATH_NODLL "${BP_PATH}")
-  #set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
-  determine_msys_path(BP_PATH "${BP_PATH}")
+  #set(EPA_PATH_NODLL "${EPA_PATH}")
+  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
+  determine_msys_path(EPA_PATH "${EPA_PATH}")
   # Must have all elements of env command in MSYS platform form
-  determine_msys_path(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
-  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
+  determine_msys_path(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
+  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
 else(MSYS_PLATFORM)
-  set(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
-  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
+  set(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
+  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
+#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
 
 ExternalProject_Add(
-  build_${BP_PACKAGE}
-  DEPENDS ${${BP_PACKAGE}_dependencies_targets}
-  URL ${${BP_PACKAGE}_URL}
-  URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
+  build_${PACKAGE}
+  DEPENDS ${${PACKAGE}_dependencies_targets}
+  URL ${URL}
+  URL_HASH ${${PACKAGE}_DOWNLOAD_HASH_TYPE}=${${PACKAGE}_DOWNLOAD_HASH}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   BUILD_IN_SOURCE OFF
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
 
 # Add custom commands to the current no-command update step.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
+  ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-update
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
-  COMMENT "Custom updating of ${BP_PACKAGE}"
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
+  COMMENT "Custom updating of ${PACKAGE}"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
   APPEND
   )
 
-list(APPEND build_target_LIST build_${BP_PACKAGE})
-# Restore BP_PATH to original state.
-set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")
+list(APPEND build_target_LIST build_${PACKAGE})
+# Restore EPA_PATH to original state.
+set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
+#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

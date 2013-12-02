@@ -1,4 +1,4 @@
-# libqhull/bp.cmake
+# libqhull/CMakeLists.txt
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build of libqhull.
 
@@ -19,70 +19,70 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EP_BASE variable (and
-# corresponding directory property) as well as various BP variables
+# have run "include(ExternalProject)" and set EPA_BASE variable (and
+# corresponding directory property) as well as various EPA variables
 # used below that configure how the External_Project functions
 # operate.
 
-set(BP_PACKAGE libqhull)
+set(PACKAGE libqhull)
 
 # Protect against configuring a build twice in one CMake call
-if(${BP_PACKAGE}_configured)
+if(configured)
   return()
-endif(${BP_PACKAGE}_configured)
-set(${BP_PACKAGE}_configured ON)
+endif(configured)
+set(configured ON)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
-set(${BP_PACKAGE}_URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
+set(URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
+set(URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
-  #set(BP_PATH_NODLL "${BP_PATH}")
-  #set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
-  determine_msys_path(BP_PATH "${BP_PATH}")
+  #set(EPA_PATH_NODLL "${EPA_PATH}")
+  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
+  determine_msys_path(EPA_PATH "${EPA_PATH}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
+#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
 
 ExternalProject_Add(
-  build_${BP_PACKAGE}
-  URL ${${BP_PACKAGE}_URL}
-  URL_MD5 ${${BP_PACKAGE}_URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
+  build_${PACKAGE}
+  URL ${URL}
+  URL_MD5 ${URL_MD5}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
 
 # Add custom commands to the current no-command update step.
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-update
+  ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-update
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/CMakeLists.txt
+  ${EPA_BASE}/Source/build_${PACKAGE}/src/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/${BP_PACKAGE}.h
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/${PACKAGE}.h
+  ${EPA_BASE}/Source/build_${PACKAGE}/src/${PACKAGE}.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/mem.h
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/mem.h
+  ${EPA_BASE}/Source/build_${PACKAGE}/src/mem.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
-  ${EP_BASE}/Source/build_${BP_PACKAGE}/src/unix.c
-  COMMENT "Custom updating of ${BP_PACKAGE}"
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/unix.c
+  ${EPA_BASE}/Source/build_${PACKAGE}/src/unix.c
+  COMMENT "Custom updating of ${PACKAGE}"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/${BP_PACKAGE}_CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/${BP_PACKAGE}.h
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/mem.h
-  ${CMAKE_SOURCE_DIR}/${BP_PACKAGE}/src/unix.c
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/CMakeLists.txt
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/${PACKAGE}.h
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/mem.h
+  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/unix.c
   APPEND
   )
 
-list(APPEND build_target_LIST build_${BP_PACKAGE})
-# Restore BP_PATH to original state.
-set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")
+list(APPEND build_target_LIST build_${PACKAGE})
+# Restore EPA_PATH to original state.
+set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
+#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

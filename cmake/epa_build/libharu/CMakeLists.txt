@@ -1,4 +1,4 @@
-# libharu/bp.cmake
+# libharu/CMakeLists.txt
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build of libharu.
 
@@ -19,60 +19,60 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EP_BASE variable (and
-# corresponding directory property) as well as various BP variables
+# have run "include(ExternalProject)" and set EPA_BASE variable (and
+# corresponding directory property) as well as various EPA variables
 # used below that configure how the External_Project functions
 # operate.
 
-set(BP_PACKAGE libharu)
+set(PACKAGE libharu)
 
 # Protect against configuring a build twice in one CMake call
-if(${BP_PACKAGE}_configured)
+if(configured)
   return()
-endif(${BP_PACKAGE}_configured)
-set(${BP_PACKAGE}_configured ON)
+endif(configured)
+set(configured ON)
 
 # Data that is related to downloads.
-set(${BP_PACKAGE}_URL http://${BP_PACKAGE}.org/files/${BP_PACKAGE}-2.2.1.tar.gz)
-set(${BP_PACKAGE}_URL_MD5 63da8e087744f1d6cf16f9501b1cb766)
+set(URL http://${PACKAGE}.org/files/${PACKAGE}-2.2.1.tar.gz)
+set(URL_MD5 63da8e087744f1d6cf16f9501b1cb766)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
-  #set(BP_PATH_NODLL "${BP_PATH}")
-  #set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
-  determine_msys_path(BP_PATH "${BP_PATH}")
+  #set(EPA_PATH_NODLL "${EPA_PATH}")
+  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
+  determine_msys_path(EPA_PATH "${EPA_PATH}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
+#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
 
 ExternalProject_Add(
-  build_${BP_PACKAGE}
-  URL ${${BP_PACKAGE}_URL}
-  URL_MD5 ${${BP_PACKAGE}_URL_MD5}
+  build_${PACKAGE}
+  URL ${URL}
+  URL_MD5 ${URL_MD5}
   PATCH_COMMAND ""
   # Do not use -DLIBHARU_EXAMPLES=ON (which builds the demos, but does
   # not test them) because latest release does not include demos.
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
 
 add_custom_command(
   OUTPUT
-  ${EP_BASE}/Stamp/build_${BP_PACKAGE}/build_${BP_PACKAGE}-patch
+  ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
   COMMAND ${CMAKE_COMMAND} -E echo "Apply all patches"
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/cmake.patch
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/large_font.patch
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/remove_configured.patch
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/visibility.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/cmake.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/large_font.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/remove_configured.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/visibility.patch
   DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/cmake.patch
-  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/large_font.patch
-  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/remove_configured.patch
-  ${CMAKE_CURRENT_SOURCE_DIR}/${BP_PACKAGE}/visibility.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/cmake.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/large_font.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/remove_configured.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/visibility.patch
   APPEND
   )
 
-list(APPEND build_target_LIST build_${BP_PACKAGE})
-# Restore BP_PATH to original state.
-set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")
+list(APPEND build_target_LIST build_${PACKAGE})
+# Restore EPA_PATH to original state.
+set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
+#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

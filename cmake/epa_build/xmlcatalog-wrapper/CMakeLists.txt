@@ -1,4 +1,4 @@
-# xmlcatalog-wrapper/bp.cmake
+# xmlcatalog-wrapper/CMakeLists.txt
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build of xmlcatalog-wrapper.
 
@@ -19,8 +19,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EP_BASE variable (and
-# corresponding directory property) as well as various BP variables
+# have run "include(ExternalProject)" and set EPA_BASE variable (and
+# corresponding directory property) as well as various EPA variables
 # used below that configure how the External_Project functions
 # operate.
 
@@ -32,57 +32,57 @@ set(xmlcatalog-wrapper_configured ON)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(BP_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
+set(EPA_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
 
 set(xmlcatalog-wrapper_dependencies_LIST)
 # Remove dependencies that should be ignored.
 if(xmlcatalog-wrapper_dependencies_LIST)
-  list(REMOVE_ITEM xmlcatalog-wrapper_dependencies_LIST ${BP_ignored_dependencies_LIST})
+  list(REMOVE_ITEM xmlcatalog-wrapper_dependencies_LIST ${EPA_ignored_dependencies_LIST})
 endif(xmlcatalog-wrapper_dependencies_LIST)
 
 set(xmlcatalog-wrapper_dependencies_targets)
 foreach(build_configuration ${xmlcatalog-wrapper_dependencies_LIST})
-  if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
-    include(${build_configuration}/bp.cmake)
+  if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
+    include(${build_configuration}/CMakeLists.txt)
     list(APPEND xmlcatalog-wrapper_dependencies_targets build_${build_configuration})
-  else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
+  else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
     message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of xmlcatalog-wrapper has been installed another way.")
-  endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/bp.cmake)
+  endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
 endforeach(build_configuration ${xmlcatalog-wrapper_dependences_LIST})
 
 # This can be safely done only after above includes.
-set(BP_PACKAGE xmlcatalog-wrapper)
+set(PACKAGE xmlcatalog-wrapper)
 
 # Data that is related to downloads.
 # This directory is the source directory
-set(${BP_PACKAGE}_URL ${CMAKE_SOURCE_DIR}/xmlcatalog-wrapper)
+set(URL ${CMAKE_SOURCE_DIR}/xmlcatalog-wrapper)
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
-  #set(BP_PATH_NODLL "${BP_PATH}")
-  #set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}/dll;${BP_PATH_NODLL}")
-  determine_msys_path(BP_PATH "${BP_PATH}")
+  #set(EPA_PATH_NODLL "${EPA_PATH}")
+  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
+  determine_msys_path(EPA_PATH "${EPA_PATH}")
   # Must have all elements of env command in MSYS platform form
-  determine_msys_path(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
-  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
+  determine_msys_path(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
+  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
 else(MSYS_PLATFORM)
-  set(source_PATH "${EP_BASE}/Source/build_${BP_PACKAGE}")
-  set(${BP_PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
+  set(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
+  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified BP_PATH for ${BP_PACKAGE} = ${BP_PATH}")
+#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
 
 ExternalProject_Add(
-  build_${BP_PACKAGE}
-  DEPENDS ${${BP_PACKAGE}_dependencies_targets}
-  URL ${${BP_PACKAGE}_URL}
-  #URL_HASH ${${BP_PACKAGE}_DOWNLOAD_HASH_TYPE}=${${BP_PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} ${EP_BASE}/Source/build_${BP_PACKAGE}
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
+  build_${PACKAGE}
+  DEPENDS ${${PACKAGE}_dependencies_targets}
+  URL ${URL}
+  #URL_HASH ${${PACKAGE}_DOWNLOAD_HASH_TYPE}=${${PACKAGE}_DOWNLOAD_HASH}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   BUILD_IN_SOURCE OFF
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
 
-list(APPEND build_target_LIST build_${BP_PACKAGE})
-# Restore BP_PATH to original state.
-set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")
+list(APPEND build_target_LIST build_${PACKAGE})
+# Restore EPA_PATH to original state.
+set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
+#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

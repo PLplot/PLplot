@@ -1,4 +1,4 @@
-# plplot/bp.cmake
+# plplot/CMakeLists.txt
 # This file should be included directly or indirectly from a top-level
 # CMakeLists.txt file to configure the build and test of PLplot.
 
@@ -19,14 +19,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EP_BASE variable (and
-# corresponding directory property) as well as various BP variables
+# have run "include(ExternalProject)" and set EPA_BASE variable (and
+# corresponding directory property) as well as various EPA variables
 # used below that configure how the External_Project functions
 # operate.
 # Configure build of PLplot dependencies.
 
 # N.B. early stanzas of this logic before the includes
-# cannot set or use the BP_PACKAGE variable since the includes
+# cannot set or use the PACKAGE variable since the includes
 # reset that.
 
 # Protect against configuring a build twice in one CMake call
@@ -66,7 +66,7 @@ set(plplot_dependencies_LIST
 
 set(plplot_dependencies_targets)
 foreach(build_configuration ${plplot_dependencies_LIST})
-  include(${build_configuration}/bp.cmake)
+  include(${build_configuration}/CMakeLists.txt)
   list(APPEND plplot_dependencies_targets build_${build_configuration})
 endforeach(build_configuration ${plplot_dependences_LIST})
 
@@ -74,7 +74,7 @@ endforeach(build_configuration ${plplot_dependences_LIST})
 set(plplot_cmake_args)
 
 # This can be safely done only after above includes.
-set(BP_PACKAGE plplot)
+set(PACKAGE plplot)
 
 # Now use better method of accessing the latest PLplot so comment out
 # the choices below.
@@ -113,22 +113,22 @@ set(tags "" "_lite")
 foreach(tag IN LISTS tags)
   # Data that is related to the PATH that must be used.
   if(MSYS_PLATFORM)
-    set(BP_PATH_NODLL "${BP_PATH}")
-    set(BP_PATH "${EP_BASE}/Build/build_${BP_PACKAGE}${tag}/dll;${BP_PATH_NODLL}")
-    message(STATUS "Original BP_PATH for ${BP_PACKAGE}${tag} = ${BP_PATH}")
-    determine_msys_path(BP_PATH "${BP_PATH}")
+    set(EPA_PATH_NODLL "${EPA_PATH}")
+    set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}${tag}/dll;${EPA_PATH_NODLL}")
+    message(STATUS "Original EPA_PATH for ${PACKAGE}${tag} = ${EPA_PATH}")
+    determine_msys_path(EPA_PATH "${EPA_PATH}")
   endif(MSYS_PLATFORM)
-  message(STATUS "modified BP_PATH for ${BP_PACKAGE}${tag} = ${BP_PATH}")
+  message(STATUS "modified EPA_PATH for ${PACKAGE}${tag} = ${EPA_PATH}")
 
   ExternalProject_Add(
-    build_${BP_PACKAGE}${tag}
-    DEPENDS "${${BP_PACKAGE}${tag}_dependencies_targets}"
-    DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLPLOT_LOCAL_SOURCE_DIR} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
-    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_CMAKE_COMMAND} -DBUILD_TEST=ON ${${BP_PACKAGE}${tag}_cmake_args} ${EP_BASE}/Source/build_${BP_PACKAGE}${tag}
-    BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND}
-    INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} install
+    build_${PACKAGE}${tag}
+    DEPENDS "${${PACKAGE}${tag}_dependencies_targets}"
+    DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLPLOT_LOCAL_SOURCE_DIR} ${EPA_BASE}/Source/build_${PACKAGE}${tag}
+    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} -DBUILD_TEST=ON ${${PACKAGE}${tag}_cmake_args} ${EPA_BASE}/Source/build_${PACKAGE}${tag}
+    BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
+    INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
     TEST_BEFORE_INSTALL OFF
-    TEST_COMMAND ${ENV_EXECUTABLE} PATH=${BP_PATH} ${BP_PARALLEL_BUILD_COMMAND} test_noninteractive
+    TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} test_noninteractive
     STEP_TARGETS configure build install test
     )
 
@@ -136,15 +136,15 @@ foreach(tag IN LISTS tags)
   # One commented-out fragment to show how to do it....
 #  add_custom_command(
 #    OUTPUT
-#    ${EP_BASE}/Stamp/build_${BP_PACKAGE}${tag}/build_${BP_PACKAGE}${tag}-test
+#    ${EPA_BASE}/Stamp/build_${PACKAGE}${tag}/build_${PACKAGE}${tag}-test
 #    COMMAND echo made_it_to_extra_test
-#    COMMENT "Test installed examples from ${BP_PACKAGE}${tag}"
+#    COMMENT "Test installed examples from ${PACKAGE}${tag}"
 #    APPEND
 #    )
 
-  list(APPEND build_target_LIST build_${BP_PACKAGE}${tag})
+  list(APPEND build_target_LIST build_${PACKAGE}${tag})
 
-  # Restore BP_PATH to original state.
-  set(BP_PATH "${BP_ORIGINAL_NATIVE_PATH}")
-  #message(STATUS "${BP_PACKAGE} restored original BP_PATH = ${BP_PATH}")
+  # Restore EPA_PATH to original state.
+  set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
+  #message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")
 endforeach(tag IN LISTS tags)
