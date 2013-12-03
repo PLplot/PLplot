@@ -1,6 +1,7 @@
-# Top-level CMakeLists.txt file for a project that simply builds
-# and installs external projects using epa.cmake include fragments
-# representing the build and test instructions for several different projects.
+# Top-level CMakeLists.txt file for the epa_build project that simply builds
+# and installs external projects configured in the subdirectories
+# below this one using ExternalProject_Add commands configured with
+# the appropriate build, test, and dependency information.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -29,7 +30,11 @@ cmake_minimum_required(VERSION 2.8.11.2 FATAL_ERROR)
 
 set(EPA_BASE ${CMAKE_BINARY_DIR}/epa_build)
 message(STATUS "EPA_BASE = ${EPA_BASE}")
-set_directory_properties(PROPERTIES EPA_BASE ${EPA_BASE})
+# We keep the variable name as EPA_BASE (to be used in the subdirectories
+# along with all the other variables with EPA_ suffix.  But the property
+# name must be EP_BASE in order for ExternalProject_Add to work correctly.
+
+set_directory_properties(PROPERTIES EP_BASE ${EPA_BASE})
 
 # Set epa_build variables to control builds in general
 
@@ -56,10 +61,6 @@ message(STATUS "MINGW = ${MINGW}")
 message(STATUS "MSYS = ${MSYS}")
 message(STATUS "MSYS_PLATFORM = ${MSYS_PLATFORM}")
 message(STATUS "CYGWIN = ${CYGWIN}")
-
-if(CYGWIN)
-  message(FATAL_ERROR "epa_build does not work correctly on the Cygwin platform.  Use the MinGW compiler and MSYS platform instead.")
-endif(CYGWIN)
 
 if(WIN32 AND NOT MSYS_PLATFORM)
   message(FATAL_ERROR "epa_build does not work correctly on Windows without the MSYS platform.  Install the MSYS platform (perhaps without sh.exe depending on CMake generator) on Windows.")
@@ -156,6 +157,109 @@ if(MSYS_PLATFORM)
     set(${MSYS_PATH} ${PATH} PARENT_SCOPE)
   endfunction(determine_msys_path)
 endif(MSYS_PLATFORM)
+
+function(epa_boilerplate
+    _ignored_dependencies_LIST
+    _PACKAGE
+    _dependencies_LIST
+    _dependencies_targets
+    _EPA_visited_subdirectories_LIST
+    _EPA_processed_subdirectories_LIST
+    _EPA_needed_subdirectories_LIST
+    _EPA_build_target_LIST
+    _EPA_PATH
+    _source_PATH
+    _IF_RETURN
+    )
+
+  #message(STATUS "DEBUG: ${_ignored_dependencies_LIST} = ${${_ignored_dependencies_LIST}}")
+  #message(STATUS "DEBUG: ${_PACKAGE} = ${${_PACKAGE}}")
+  #message(STATUS "DEBUG: ${_dependencies_LIST} = ${${_dependencies_LIST}}")
+  #message(STATUS "DEBUG: ${_dependencies_targets} = ${${_dependencies_targets}}")
+  #message(STATUS "DEBUG: ${_EPA_visited_subdirectories_LIST} = ${${_EPA_visited_subdirectories_LIST}}")
+  #message(STATUS "DEBUG: ${_EPA_processed_subdirectories_LIST} = ${${_EPA_processed_subdirectories_LIST}}")
+  #message(STATUS "DEBUG: ${_EPA_needed_subdirectories_LIST} = ${${_EPA_needed_subdirectories_LIST}}")
+  #message(STATUS "DEBUG: ${_EPA_build_target_LIST} = ${${_EPA_build_target_LIST}}")
+  #message(STATUS "DEBUG: ${_EPA_PATH} = ${${_EPA_PATH}}")
+  #message(STATUS "DEBUG: ${_source_PATH} = ${${_source_PATH}}")
+  #message(STATUS "DEBUG: ${_IF_RETURN} = ${${_IF_RETURN}}")
+  list(APPEND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}})
+
+  # Remove dependencies that should be ignored.
+  if(${_dependencies_LIST} AND ${_ignored_dependencies_LIST})
+    list(REMOVE_ITEM ${_dependencies_LIST} ${${_ignored_dependencies_LIST}})
+  endif(${_dependencies_LIST} AND ${_ignored_dependencies_LIST})
+
+# Check for missing configurations and eliminate those from ${_dependencies_LIST}.
+  foreach(build_configuration ${${_dependencies_LIST}})
+    if(NOT EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
+      message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of ${${_PACKAGE}} has been installed on your platform by means other than epa_build.")
+      list(REMOVE_ITEM ${_dependencies_LIST} ${build_configuration})
+    endif(NOT EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
+  endforeach(build_configuration ${${_dependences_LIST}})
+
+  # remaining_dependencies_LIST are the dependencies left over from the above
+  # removals that have not already been processed.
+  set(remaining_dependencies_LIST ${${_dependencies_LIST}})
+  if(remaining_dependencies_LIST AND ${_EPA_processed_subdirectories_LIST})
+    list(REMOVE_ITEM remaining_dependencies_LIST ${${_EPA_processed_subdirectories_LIST}})
+  endif(remaining_dependencies_LIST AND ${_EPA_processed_subdirectories_LIST})
+
+  if(remaining_dependencies_LIST)
+    list(FIND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}} index)
+    if(index GREATER -1)
+      message(FATAL_ERROR "Circular dependency: ${_PACKAGE} = ${${_PACKAGE}} has been visited before without subsequently resolving all dependencies.")
+    endif(index GREATER -1)
+    # Put the remaining dependencies at the top of the list so they
+    # will be processed before the current subdirectory.
+    list(APPEND ${_EPA_needed_subdirectories_LIST} ${remaining_dependencies_LIST})
+    # Propagate changed output arguments to parent scope of function.
+    # There is no need to propagate ${_dependencies_LIST} for this case because
+    # there will be an immediate return from the calling subdirectory to
+    # the top-level directory where ${_dependencies_LIST} does not propagate.
+    set(${_EPA_visited_subdirectories_LIST} ${${_EPA_visited_subdirectories_LIST}} PARENT_SCOPE)
+    set(${_EPA_needed_subdirectories_LIST} ${${_EPA_needed_subdirectories_LIST}} PARENT_SCOPE)
+    # parent subdirectory should make immediate return to top-level directory.
+    set(${_IF_RETURN} ON PARENT_SCOPE)
+    return()
+  endif(remaining_dependencies_LIST)
+
+  # Add this subdirectory to the list of subdirectories that have
+  # already been processed by the top-level CMakeLists.txt logic.
+  list(APPEND ${_EPA_processed_subdirectories_LIST} ${${_PACKAGE}})
+
+  set(${_dependencies_targets})
+  foreach(build_configuration ${${_dependencies_LIST}})
+    list(APPEND ${_dependencies_targets} build_${build_configuration})
+  endforeach(build_configuration ${${_dependences_LIST}})
+
+  list(APPEND ${_EPA_build_target_LIST} build_${${_PACKAGE}})
+
+  # Data that is related to the PATH that must be used.
+  if(MSYS_PLATFORM)
+    determine_msys_path(${_EPA_PATH} "${${_EPA_PATH}}")
+    # Must have all elements of env command in MSYS platform form
+    determine_msys_path(${_source_PATH} "${EPA_BASE}/Source/build_${${_PACKAGE}}")
+  else(MSYS_PLATFORM)
+    set(${_source_PATH} "${EPA_BASE}/Source/build_${${_PACKAGE}}")
+  endif(MSYS_PLATFORM)
+  #message(STATUS "DEBUG: (modified for ${${_PACKAGE}}) ${_EPA_PATH} = ${${_EPA_PATH}}")
+
+  # Propagate changed output arguments to parent scope of function.
+  set(${_dependencies_LIST} ${${_dependencies_LIST}} PARENT_SCOPE)
+  set(${_dependencies_targets} ${${_dependencies_targets}} PARENT_SCOPE)
+  set(${_EPA_visited_subdirectories_LIST} ${${_EPA_visited_subdirectories_LIST}} PARENT_SCOPE)
+  set(${_EPA_processed_subdirectories_LIST} ${${_EPA_processed_subdirectories_LIST}} PARENT_SCOPE)
+  set(${_EPA_needed_subdirectories_LIST} ${${_EPA_needed_subdirectories_LIST}} PARENT_SCOPE)
+  set(${_EPA_build_target_LIST} ${${_EPA_build_target_LIST}} PARENT_SCOPE)
+  set(${_EPA_PATH} ${${_EPA_PATH}} PARENT_SCOPE)
+  set(${_source_PATH} ${${_source_PATH}} PARENT_SCOPE)
+  # Parent subdirectory should continue processing rather than immediately
+  # returning to top-level directory.
+  set(${_IF_RETURN} OFF PARENT_SCOPE)
+  message(STATUS "Processed ${${_PACKAGE}}")
+
+endfunction(epa_boilerplate)
 
 # This gives the full pathname of the associated build tool for at
 # least the "Unix Makefiles", "Ninja", "MSYS Makefiles", "MinGW
@@ -259,12 +363,6 @@ set(EPA_PATH "${BP_ORIGINAL_NATIVE_PATH}")
 # Now include the build configurations for certain targets and their
 # dependencies.
 
-# Each (directly or indirectly) included build configuration
-# that is judged to be working should append its target to build_target_LIST
-# so that in the logic below we can creat a "build_all" target that depends
-# on those individual build targets
-set(build_target_LIST)
-
 option(BUILD_THE_BUILDTOOLS "Build the buildtools (such as cmake) used for the rest of the builds" OFF)
 
 if(BUILD_THE_BUILDTOOLS)
@@ -282,39 +380,59 @@ if(BUILD_THE_BUILDTOOLS)
     endif(NOT ${EXECUTABLE}_EXECUTABLE)
   endforeach(executable ${executables_LIST})
 
-  set(build_configuration_LIST
-    #cmake
-    pkg-config
-    #subversion
-    swig
+  set(EPA_needed_subdirectories_LIST
+    ##cmake
+    #pkg-config
+    ##subversion
+    #swig
     tcl
-    tk
     # itcl version 4 is integrated into tcl
     # itk version 4 is not integrated into tk (or tcl).
-    itk
+    #itk
     # itcl version 3 is an independent project
-    itcl3
+    #itcl3
     # itk version 3 is an independent project
-    itk3
+    #itk3
     # iwidgets subdirectory contains build configurations for both
     # iwidgets (version 4.1) and iwidgets4.0 (version 4.0).
-    iwidgets
+    #iwidgets
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
   # attempts to include the same configuration (via dependencies) are ignored.
-  set(build_configuration_LIST
+  set(EPA_needed_subdirectories_LIST
     ndiff
-    plplot
-    wxwidgets
-    glib
-    pango
+    #plplot
+    #wxwidgets
+    #pango
     )
 endif(BUILD_THE_BUILDTOOLS)
 
-foreach(build_configuration ${build_configuration_LIST})
-  include(${build_configuration}/CMakeLists.txt)
-endforeach(build_configuration ${build_configuration_LIST})
+set(EPA_visited_subdirectories_LIST)
+set(EPA_processed_subdirectories_LIST)
+set(EPA_build_targets_LIST)
+
+message(STATUS "DEBUG: EPA_needed_subdirectories_LIST = ${EPA_needed_subdirectories_LIST}")
+message(STATUS "DEBUG: EPA_visited_subdirectories_LIST = ${EPA_visited_subdirectories_LIST}")
+message(STATUS "DEBUG: EPA_processed_subdirectories_LIST = ${EPA_processed_subdirectories_LIST}")
+message(STATUS "DEBUG: EPA_build_targets_LIST = ${EPA_build_targets_LIST}")
+# Use add_subdirectory on all directories in EPA_needed_subdirectories_LIST,
+# but the subdirectories have the potential to add to that list so use
+# a while loop to check on the length of that list.
+list(LENGTH EPA_needed_subdirectories_LIST LENGTH_EPA_needed_subdirectories_LIST)
+while(LENGTH_EPA_needed_subdirectories_LIST GREATER 0)
+  list(GET EPA_needed_subdirectories_LIST 0 subdirectory)
+  # This updates EPA_needed_subdirectories_LIST,
+  # EPA_processed_subdirectories_LIST, and EPA_build_targets_LIST.
+  add_subdirectory(${subdirectory})
+  list(REMOVE_ITEM EPA_needed_subdirectories_LIST ${EPA_processed_subdirectories_LIST})
+  message(STATUS "DEBUG: visited ${subdirectory}")
+  message(STATUS "DEBUG: EPA_needed_subdirectories_LIST = ${EPA_needed_subdirectories_LIST}")
+  message(STATUS "DEBUG: EPA_visited_subdirectories_LIST = ${EPA_visited_subdirectories_LIST}")
+  message(STATUS "DEBUG: EPA_processed_subdirectories_LIST = ${EPA_processed_subdirectories_LIST}")
+  message(STATUS "DEBUG: EPA_build_targets_LIST = ${EPA_build_targets_LIST}")
+  list(LENGTH EPA_needed_subdirectories_LIST LENGTH_EPA_needed_subdirectories_LIST)
+endwhile(LENGTH_EPA_needed_subdirectories_LIST GREATER 0)
 
 add_custom_target(build_all)
-add_dependencies(build_all ${build_target_LIST})
+add_dependencies(build_all ${EPA_build_targets_LIST})
