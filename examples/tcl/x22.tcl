@@ -15,12 +15,16 @@ proc x22 {{w loopback}} {
     set narr 6
     set fill 0
 
-    $w cmd plsvect arrow_x arrow_y $narr $fill
-    constriction $w
+    $w cmd plsvect arrow_x arrow_y $fill
+    constriction $w 1
 
     set fill 1
-    $w cmd plsvect arrow2_x  arrow2_y $narr $fill
-    constriction $w
+    $w cmd plsvect arrow2_x  arrow2_y $fill
+    constriction $w 2
+
+    constriction2 $w
+
+    $w cmd plsvect NULL NULL 0
 
     potential $w
 }
@@ -65,7 +69,7 @@ proc circulation {w} {
 }
 
 # Vector plot of flow through a constricted pipe
-proc constriction {w} {
+proc constriction {w astyle} {
 
     set nx 20
     set ny 20
@@ -93,7 +97,7 @@ proc constriction {w} {
 	    yg $i $j = $y
 	    set b [expr {$ymax/4.0*(3.0-cos($::PLPLOT::PL_PI*$x/$xmax))}]
 	    if {abs($y) < $b} {
-		set dbdx [expr {$ymax/4.0*sin($::PLPLOT::PL_PI*$x/$xmax)*$y/$b}]
+		set dbdx [expr {$ymax/4.0*sin($::PLPLOT::PL_PI*$x/$xmax)*$::PLPLOT::PL_PI/$xmax*$y/$b}]
 		u $i $j = [expr {$Q*$ymax/$b}]
 		v $i $j = [expr {$Q*$ymax/$b*$dbdx}]
 	    } else {
@@ -105,12 +109,84 @@ proc constriction {w} {
 
     # Plot vectors with default arrows
     $w cmd plenv $xmin $xmax $ymin $ymax 0 0
-    $w cmd pllab "(x)" "(y)" "#frPLplot Example 22 - constriction"
+    $w cmd pllab "(x)" "(y)" [format "#frPLplot Example 22 - constriction (arrow style %d)" $astyle]
     $w cmd plcol0 2
-    $w cmd plvect u v -0.5 "pltr2" xg yg
+    $w cmd plvect u v -1.0 "pltr2" xg yg
     $w cmd plcol0 1
 
 }
+
+proc transform { x y } {
+
+    global xmax
+
+    return [list \
+                [expr {$x}] \
+                [expr {$y / 4.0 * (3.0 - cos($::PLPLOT::PL_PI * $x / $xmax) ) }]]
+}
+
+# Vector plot of flow through a constricted pipe
+# with a coordinate transform
+proc constriction2 {w} {
+
+    set nx 20
+    set ny 20
+    set nc 11
+    set nseg 20
+
+    set dx 1.0
+    set dy 1.0
+
+    global xmax
+
+    set xmin [expr {-$nx/2*$dx}]
+    set xmax [expr {$nx/2*$dx}]
+    set ymin [expr {-$ny/2*$dy}]
+    set ymax [expr {$ny/2*$dy}]
+
+    $w cmd plstransform transform
+
+    matrix xg f $nx $ny
+    matrix yg f $nx $ny
+    matrix u f $nx $ny
+    matrix v f $nx $ny
+
+    set Q 2.0
+    # Create data - circulation around the origin.
+    for {set i 0} {$i < $nx} {incr i} {
+        set x [expr {($i-$nx/2+0.5)*$dx} ]
+        for {set j 0} {$j < $ny} {incr j} {
+            set y [expr {($j-$ny/2+0.5)*$dy}]
+            xg $i $j = $x
+            yg $i $j = $y
+            set b [expr {$ymax/4.0*(3.0-cos($::PLPLOT::PL_PI*$x/$xmax))}]
+            u $i $j = [expr {$Q*$ymax/$b}]
+            v $i $j = 0.0
+        }
+    }
+
+    matrix clev f $nc
+    for {set i 0} {$i < $nc} {incr i} {
+        clev $i = [expr {$Q + $i * $Q / ($nc - 1)}]
+    }
+
+    # Plot vectors with default arrows
+    $w cmd plenv $xmin $xmax $ymin $ymax 0 0
+    $w cmd pllab "(x)" "(y)" "#frPLplot Example 22 - constriction with plstransform"
+    $w cmd plcol0 2
+    $w cmd plshades u [expr {$xmin + $dx/2}] [expr {$xmax - $dx/2}] \
+        [expr {$ymin + $dy/2}]  [expr {$ymax - $dy/2}] \
+        clev 0.0 1 1.0 0 NULL
+    $w cmd plvect u v -1.0 "pltr2" xg yg
+    $w cmd plpath $nseg $xmin $ymax $xmax $ymax
+    $w cmd plpath $nseg $xmin $ymin $xmax $ymin
+    $w cmd plcol0 1
+
+    $w cmd plstransform NULL
+
+}
+
+
 
 # Vector plot of the gradient of a shielded potential (see example 9)
 proc potential {w} {
