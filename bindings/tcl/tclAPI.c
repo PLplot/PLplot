@@ -64,6 +64,7 @@ static int plshadesCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmapCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmeridiansCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plstransformCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plsvectCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plvectCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plranddCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plgriddataCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -115,6 +116,7 @@ static CmdInfo Cmds[] = {
     { "plsetopt",     plsetoptCmd     },
     { "plshade",      plshadeCmd      },
     { "plshades",     plshadesCmd     },
+    { "plsvect",      plsvectCmd      },
     { "plvect",       plvectCmd       },
     { "plrandd",      plranddCmd      },
     { "plgriddata",   plgriddataCmd   },
@@ -1226,6 +1228,69 @@ plcontCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     plflush();
     return TCL_OK;
 }
+
+//--------------------------------------------------------------------------
+// plsvect
+//
+// Implement Tcl-side setting of arrow style.
+//--------------------------------------------------------------------------
+
+static int
+plsvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
+                 int argc, const char *argv[] )
+{
+    tclMatrix *matx, *maty;
+    PLINT npts;
+    PLBOOL fill;
+
+    if ( argc == 1
+         || (strcmp( argv[1], "NULL" ) == 0 ) && ( strcmp( argv[2], "NULL" ) == 0 ) )
+    {
+        // The user has requested to clear the transform setting.
+        plsvect( NULL, NULL, 0, 0 );
+        return TCL_OK;
+    }
+    else if (argc != 4)
+    {
+        Tcl_AppendResult( interp, "wrong # args: see documentation for ",
+            argv[0], (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    matx = Tcl_GetMatrixPtr( interp, argv[1] );
+    if ( matx == NULL )
+        return TCL_ERROR;
+
+    if ( matx->dim != 1 )
+    {
+        Tcl_SetResult( interp, "plsvect: Must use 1-d data.", TCL_STATIC );
+        return TCL_ERROR;
+    }
+    npts = matx->n[0];
+
+    maty = Tcl_GetMatrixPtr( interp, argv[2] );
+    if ( maty == NULL )
+        return TCL_ERROR;
+
+    if ( maty->dim != 1 )
+    {
+        Tcl_SetResult( interp, "plsvect: Must use 1-d data.", TCL_STATIC );
+        return TCL_ERROR;
+    }
+
+    if ( maty->n[0] != npts )
+    {
+        Tcl_SetResult( interp, "plsvect: Arrays must be of equal length", TCL_STATIC );
+        return TCL_ERROR;
+    }
+
+    fill = (PLBOOL) atoi(argv[3]);
+
+    plsvect( matx->fdata, maty->fdata, npts, fill );
+
+    return TCL_OK;
+}
+
 
 //--------------------------------------------------------------------------
 // plvect implementation (based on plcont above)

@@ -983,14 +983,6 @@ nms	PLINT
 mark	PLINT *
 space	PLINT *
 
-# Set the vector arrow style
-
-pltclcmd plsvect void
-arrowx  PLFLT *
-arrowy  PLFLT *
-npts    PLINT
-fill    PLINT
-
 # Sets the edges of the viewport to the specified absolute coordinates.
 
 pltclcmd plsvpa void
