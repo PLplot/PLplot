@@ -7,6 +7,13 @@
 #
 #----------------------------------------------------------------------------
 
+#
+# Set of disabled examples:
+# examples 14 and 31 do not work properly
+# example 32 has deliberately (not yet) been propagated to all languages
+#
+set greyedOut {14 31 32}
+
 if {[catch {file readlink [info script]} path]} {
     set path [info script]
 }
@@ -54,7 +61,13 @@ button .cexit -text "Quit" -command exit
 if {$tcl_platform(platform) != "unix"} {
     button .cshell -text "Shell" -command "console show"
 }
-button .creload -text "Reload" -command reload
+
+#
+# The reload button is probably not very useful to most users
+# as it reloads the set of demos and commands. So disable it
+# at least the time being
+#
+button .creload -text "Reload" -command reload -state disabled
 
 set buttons [concat [info commands .c*] .bnextpage]
 
@@ -83,8 +96,13 @@ proc run {demo} {
 }
 
 proc setButtonState {state} {
+    global greyedOut
     foreach b [info commands .b*] {
-	$b configure -state $state
+	if { [lsearch $greyedOut [string range $b 2 end]] < 0 } {
+	    $b configure -state $state
+	} else {
+	    $b configure -state disabled
+	}
     }
 }
 
@@ -97,6 +115,10 @@ for {set i 0} {$i <= 33} {incr i} {
 	eval grid $buttons -sticky ew
 	set buttons {}
     }
+}
+
+foreach i $greyedOut {
+    .b$i configure -state disabled
 }
 
 if {[llength $buttons]} {
