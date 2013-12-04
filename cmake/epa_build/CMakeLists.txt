@@ -166,7 +166,7 @@ function(epa_boilerplate
     _EPA_visited_subdirectories_LIST
     _EPA_processed_subdirectories_LIST
     _EPA_needed_subdirectories_LIST
-    _EPA_build_target_LIST
+    _EPA_build_targets_LIST
     _EPA_PATH
     _source_PATH
     _IF_RETURN
@@ -179,11 +179,10 @@ function(epa_boilerplate
   #message(STATUS "DEBUG: ${_EPA_visited_subdirectories_LIST} = ${${_EPA_visited_subdirectories_LIST}}")
   #message(STATUS "DEBUG: ${_EPA_processed_subdirectories_LIST} = ${${_EPA_processed_subdirectories_LIST}}")
   #message(STATUS "DEBUG: ${_EPA_needed_subdirectories_LIST} = ${${_EPA_needed_subdirectories_LIST}}")
-  #message(STATUS "DEBUG: ${_EPA_build_target_LIST} = ${${_EPA_build_target_LIST}}")
+  #message(STATUS "DEBUG: ${_EPA_build_targets_LIST} = ${${_EPA_build_targets_LIST}}")
   #message(STATUS "DEBUG: ${_EPA_PATH} = ${${_EPA_PATH}}")
   #message(STATUS "DEBUG: ${_source_PATH} = ${${_source_PATH}}")
   #message(STATUS "DEBUG: ${_IF_RETURN} = ${${_IF_RETURN}}")
-  list(APPEND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}})
 
   # Remove dependencies that should be ignored.
   if(${_dependencies_LIST} AND ${_ignored_dependencies_LIST})
@@ -205,11 +204,17 @@ function(epa_boilerplate
     list(REMOVE_ITEM remaining_dependencies_LIST ${${_EPA_processed_subdirectories_LIST}})
   endif(remaining_dependencies_LIST AND ${_EPA_processed_subdirectories_LIST})
 
-  if(remaining_dependencies_LIST)
+  if(0 AND remaining_dependencies_LIST)
     list(FIND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}} index)
     if(index GREATER -1)
       message(FATAL_ERROR "Circular dependency: ${_PACKAGE} = ${${_PACKAGE}} has been visited before without subsequently resolving all dependencies.")
     endif(index GREATER -1)
+
+    # Mark this subdirectory as being visited so that the above circular
+    # dependency check will work if the next visit still has remaining
+    # dependencies.
+    list(APPEND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}})
+
     # Put the remaining dependencies at the top of the list so they
     # will be processed before the current subdirectory.
     list(APPEND ${_EPA_needed_subdirectories_LIST} ${remaining_dependencies_LIST})
@@ -222,7 +227,14 @@ function(epa_boilerplate
     # parent subdirectory should make immediate return to top-level directory.
     set(${_IF_RETURN} ON PARENT_SCOPE)
     return()
-  endif(remaining_dependencies_LIST)
+  endif(0 AND remaining_dependencies_LIST)
+
+  foreach(build_configuration ${remaining_dependencies_LIST})
+    add_subdirectory(
+      ${CMAKE_SOURCE_DIR}/${build_configuration}
+      ${CMAKE_BINARY_DIR}/${build_configuration}
+      )
+  endforeach(build_configuration ${remaining_dependencies_LIST})
 
   # Add this subdirectory to the list of subdirectories that have
   # already been processed by the top-level CMakeLists.txt logic.
@@ -233,7 +245,7 @@ function(epa_boilerplate
     list(APPEND ${_dependencies_targets} build_${build_configuration})
   endforeach(build_configuration ${${_dependences_LIST}})
 
-  list(APPEND ${_EPA_build_target_LIST} build_${${_PACKAGE}})
+  list(APPEND ${_EPA_build_targets_LIST} build_${${_PACKAGE}})
 
   # Data that is related to the PATH that must be used.
   if(MSYS_PLATFORM)
@@ -245,13 +257,17 @@ function(epa_boilerplate
   endif(MSYS_PLATFORM)
   #message(STATUS "DEBUG: (modified for ${${_PACKAGE}}) ${_EPA_PATH} = ${${_EPA_PATH}}")
 
+  # Mark this subdirectory as visited for no logical purpose other
+  # than to be less confusing for debugging.
+  list(APPEND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}})
+
   # Propagate changed output arguments to parent scope of function.
   set(${_dependencies_LIST} ${${_dependencies_LIST}} PARENT_SCOPE)
   set(${_dependencies_targets} ${${_dependencies_targets}} PARENT_SCOPE)
   set(${_EPA_visited_subdirectories_LIST} ${${_EPA_visited_subdirectories_LIST}} PARENT_SCOPE)
   set(${_EPA_processed_subdirectories_LIST} ${${_EPA_processed_subdirectories_LIST}} PARENT_SCOPE)
   set(${_EPA_needed_subdirectories_LIST} ${${_EPA_needed_subdirectories_LIST}} PARENT_SCOPE)
-  set(${_EPA_build_target_LIST} ${${_EPA_build_target_LIST}} PARENT_SCOPE)
+  set(${_EPA_build_targets_LIST} ${${_EPA_build_targets_LIST}} PARENT_SCOPE)
   set(${_EPA_PATH} ${${_EPA_PATH}} PARENT_SCOPE)
   set(${_source_PATH} ${${_source_PATH}} PARENT_SCOPE)
   # Parent subdirectory should continue processing rather than immediately
@@ -385,7 +401,7 @@ if(BUILD_THE_BUILDTOOLS)
     #pkg-config
     ##subversion
     #swig
-    tcl
+    tk
     # itcl version 4 is integrated into tcl
     # itk version 4 is not integrated into tk (or tcl).
     #itk
@@ -425,7 +441,9 @@ while(LENGTH_EPA_needed_subdirectories_LIST GREATER 0)
   # This updates EPA_needed_subdirectories_LIST,
   # EPA_processed_subdirectories_LIST, and EPA_build_targets_LIST.
   add_subdirectory(${subdirectory})
-  list(REMOVE_ITEM EPA_needed_subdirectories_LIST ${EPA_processed_subdirectories_LIST})
+  if(EPA_processed_subdirectories_LIST)
+    list(REMOVE_ITEM EPA_needed_subdirectories_LIST ${EPA_processed_subdirectories_LIST})
+  endif(EPA_processed_subdirectories_LIST)
   message(STATUS "DEBUG: visited ${subdirectory}")
   message(STATUS "DEBUG: EPA_needed_subdirectories_LIST = ${EPA_needed_subdirectories_LIST}")
   message(STATUS "DEBUG: EPA_visited_subdirectories_LIST = ${EPA_visited_subdirectories_LIST}")
