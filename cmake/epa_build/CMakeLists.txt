@@ -163,27 +163,14 @@ function(epa_boilerplate
     _PACKAGE
     _dependencies_LIST
     _dependencies_targets
-    _EPA_visited_subdirectories_LIST
-    _EPA_processed_subdirectories_LIST
-    _EPA_needed_subdirectories_LIST
-    _EPA_build_targets_LIST
     _EPA_PATH
     _source_PATH
-    _IF_RETURN
     )
 
-  #message(STATUS "DEBUG: ${_ignored_dependencies_LIST} = ${${_ignored_dependencies_LIST}}")
-  #message(STATUS "DEBUG: ${_PACKAGE} = ${${_PACKAGE}}")
-  #message(STATUS "DEBUG: ${_dependencies_LIST} = ${${_dependencies_LIST}}")
-  #message(STATUS "DEBUG: ${_dependencies_targets} = ${${_dependencies_targets}}")
-  #message(STATUS "DEBUG: ${_EPA_visited_subdirectories_LIST} = ${${_EPA_visited_subdirectories_LIST}}")
-  #message(STATUS "DEBUG: ${_EPA_processed_subdirectories_LIST} = ${${_EPA_processed_subdirectories_LIST}}")
-  #message(STATUS "DEBUG: ${_EPA_needed_subdirectories_LIST} = ${${_EPA_needed_subdirectories_LIST}}")
-  #message(STATUS "DEBUG: ${_EPA_build_targets_LIST} = ${${_EPA_build_targets_LIST}}")
-  #message(STATUS "DEBUG: ${_EPA_PATH} = ${${_EPA_PATH}}")
-  #message(STATUS "DEBUG: ${_source_PATH} = ${${_source_PATH}}")
-  #message(STATUS "DEBUG: ${_IF_RETURN} = ${${_IF_RETURN}}")
-
+  message(STATUS "DEBUG: entering ${_PACKAGE} = ${${_PACKAGE}}")
+  get_property(saved_started_subdirectories_LIST GLOBAL PROPERTY EPA_started_subdirectories_LIST)
+  set_property(GLOBAL APPEND PROPERTY EPA_started_subdirectories_LIST ${${_PACKAGE}})
+  get_property(started_subdirectories_LIST GLOBAL PROPERTY EPA_started_subdirectories_LIST)
   # Remove dependencies that should be ignored.
   if(${_dependencies_LIST} AND ${_ignored_dependencies_LIST})
     list(REMOVE_ITEM ${_dependencies_LIST} ${${_ignored_dependencies_LIST}})
@@ -197,55 +184,31 @@ function(epa_boilerplate
     endif(NOT EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
   endforeach(build_configuration ${${_dependences_LIST}})
 
-  # remaining_dependencies_LIST are the dependencies left over from the above
-  # removals that have not already been processed.
+  # remaining_dependencies_LIST contains the dependencies left over
+  # from the above removals that have not already been finished.
   set(remaining_dependencies_LIST ${${_dependencies_LIST}})
-  if(remaining_dependencies_LIST AND ${_EPA_processed_subdirectories_LIST})
-    list(REMOVE_ITEM remaining_dependencies_LIST ${${_EPA_processed_subdirectories_LIST}})
-  endif(remaining_dependencies_LIST AND ${_EPA_processed_subdirectories_LIST})
-
-  if(0 AND remaining_dependencies_LIST)
-    list(FIND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}} index)
-    if(index GREATER -1)
-      message(FATAL_ERROR "Circular dependency: ${_PACKAGE} = ${${_PACKAGE}} has been visited before without subsequently resolving all dependencies.")
-    endif(index GREATER -1)
-
-    # Mark this subdirectory as being visited so that the above circular
-    # dependency check will work if the next visit still has remaining
-    # dependencies.
-    list(APPEND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}})
-
-    # Put the remaining dependencies at the top of the list so they
-    # will be processed before the current subdirectory.
-    list(APPEND ${_EPA_needed_subdirectories_LIST} ${remaining_dependencies_LIST})
-    # Propagate changed output arguments to parent scope of function.
-    # There is no need to propagate ${_dependencies_LIST} for this case because
-    # there will be an immediate return from the calling subdirectory to
-    # the top-level directory where ${_dependencies_LIST} does not propagate.
-    set(${_EPA_visited_subdirectories_LIST} ${${_EPA_visited_subdirectories_LIST}} PARENT_SCOPE)
-    set(${_EPA_needed_subdirectories_LIST} ${${_EPA_needed_subdirectories_LIST}} PARENT_SCOPE)
-    # parent subdirectory should make immediate return to top-level directory.
-    set(${_IF_RETURN} ON PARENT_SCOPE)
-    return()
-  endif(0 AND remaining_dependencies_LIST)
+  get_property(finished_subdirectories_LIST GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
+  if(remaining_dependencies_LIST AND finished_subdirectories_LIST)
+    list(REMOVE_ITEM remaining_dependencies_LIST ${finished_subdirectories_LIST})
+  endif(remaining_dependencies_LIST AND finished_subdirectories_LIST)
 
   foreach(build_configuration ${remaining_dependencies_LIST})
+    list(FIND started_subdirectories_LIST ${build_configuration} index)
+    if(index GREATER -1)
+      message(FATAL_ERROR "Circular dependency: package ${build_configuration} depends on package ${${_PACKAGE}} which depends on package ${build_configuration}.")
+    endif(index GREATER -1)
     add_subdirectory(
       ${CMAKE_SOURCE_DIR}/${build_configuration}
       ${CMAKE_BINARY_DIR}/${build_configuration}
       )
   endforeach(build_configuration ${remaining_dependencies_LIST})
 
-  # Add this subdirectory to the list of subdirectories that have
-  # already been processed by the top-level CMakeLists.txt logic.
-  list(APPEND ${_EPA_processed_subdirectories_LIST} ${${_PACKAGE}})
+  set_property(GLOBAL PROPERTY EPA_started_subdirectories_LIST ${saved_started_subdirectories_LIST})
 
   set(${_dependencies_targets})
   foreach(build_configuration ${${_dependencies_LIST}})
     list(APPEND ${_dependencies_targets} build_${build_configuration})
   endforeach(build_configuration ${${_dependences_LIST}})
-
-  list(APPEND ${_EPA_build_targets_LIST} build_${${_PACKAGE}})
 
   # Data that is related to the PATH that must be used.
   if(MSYS_PLATFORM)
@@ -257,24 +220,15 @@ function(epa_boilerplate
   endif(MSYS_PLATFORM)
   #message(STATUS "DEBUG: (modified for ${${_PACKAGE}}) ${_EPA_PATH} = ${${_EPA_PATH}}")
 
-  # Mark this subdirectory as visited for no logical purpose other
-  # than to be less confusing for debugging.
-  list(APPEND ${_EPA_visited_subdirectories_LIST} ${${_PACKAGE}})
+  set_property(GLOBAL APPEND PROPERTY EPA_build_targets_LIST build_${${_PACKAGE}})
+  set_property(GLOBAL APPEND PROPERTY EPA_finished_subdirectories_LIST ${${_PACKAGE}})
 
   # Propagate changed output arguments to parent scope of function.
   set(${_dependencies_LIST} ${${_dependencies_LIST}} PARENT_SCOPE)
   set(${_dependencies_targets} ${${_dependencies_targets}} PARENT_SCOPE)
-  set(${_EPA_visited_subdirectories_LIST} ${${_EPA_visited_subdirectories_LIST}} PARENT_SCOPE)
-  set(${_EPA_processed_subdirectories_LIST} ${${_EPA_processed_subdirectories_LIST}} PARENT_SCOPE)
-  set(${_EPA_needed_subdirectories_LIST} ${${_EPA_needed_subdirectories_LIST}} PARENT_SCOPE)
-  set(${_EPA_build_targets_LIST} ${${_EPA_build_targets_LIST}} PARENT_SCOPE)
   set(${_EPA_PATH} ${${_EPA_PATH}} PARENT_SCOPE)
   set(${_source_PATH} ${${_source_PATH}} PARENT_SCOPE)
-  # Parent subdirectory should continue processing rather than immediately
-  # returning to top-level directory.
-  set(${_IF_RETURN} OFF PARENT_SCOPE)
-  message(STATUS "Processed ${${_PACKAGE}}")
-
+  message(STATUS "DEBUG: leaving ${_PACKAGE} = ${${_PACKAGE}}")
 endfunction(epa_boilerplate)
 
 # This gives the full pathname of the associated build tool for at
@@ -396,7 +350,7 @@ if(BUILD_THE_BUILDTOOLS)
     endif(NOT ${EXECUTABLE}_EXECUTABLE)
   endforeach(executable ${executables_LIST})
 
-  set(EPA_needed_subdirectories_LIST
+  set(subdirectories_LIST
     ##cmake
     #pkg-config
     ##subversion
@@ -416,7 +370,7 @@ if(BUILD_THE_BUILDTOOLS)
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
   # attempts to include the same configuration (via dependencies) are ignored.
-  set(EPA_needed_subdirectories_LIST
+  set(subdirectories_LIST
     ndiff
     #plplot
     #wxwidgets
@@ -424,33 +378,29 @@ else(BUILD_THE_BUILDTOOLS)
     )
 endif(BUILD_THE_BUILDTOOLS)
 
-set(EPA_visited_subdirectories_LIST)
-set(EPA_processed_subdirectories_LIST)
-set(EPA_build_targets_LIST)
+set_property(GLOBAL PROPERTY EPA_started_subdirectories_LIST)
+set_property(GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
+set_property(GLOBAL PROPERTY EPA_build_targets_LIST)
 
-message(STATUS "DEBUG: EPA_needed_subdirectories_LIST = ${EPA_needed_subdirectories_LIST}")
-message(STATUS "DEBUG: EPA_visited_subdirectories_LIST = ${EPA_visited_subdirectories_LIST}")
-message(STATUS "DEBUG: EPA_processed_subdirectories_LIST = ${EPA_processed_subdirectories_LIST}")
-message(STATUS "DEBUG: EPA_build_targets_LIST = ${EPA_build_targets_LIST}")
-# Use add_subdirectory on all directories in EPA_needed_subdirectories_LIST,
-# but the subdirectories have the potential to add to that list so use
-# a while loop to check on the length of that list.
-list(LENGTH EPA_needed_subdirectories_LIST LENGTH_EPA_needed_subdirectories_LIST)
-while(LENGTH_EPA_needed_subdirectories_LIST GREATER 0)
-  list(GET EPA_needed_subdirectories_LIST 0 subdirectory)
-  # This updates EPA_needed_subdirectories_LIST,
-  # EPA_processed_subdirectories_LIST, and EPA_build_targets_LIST.
+message(STATUS "DEBUG: subdirectories_LIST = ${subdirectories_LIST}")
+
+# Use while loop because each add_subdirectory command can generate others
+# so that several elements of the subdirectories list could be knocked
+# off per loop iteration.
+list(LENGTH subdirectories_LIST LENGTH_subdirectories_LIST)
+while(LENGTH_subdirectories_LIST GREATER 0)
+  list(GET subdirectories_LIST 0 subdirectory)
+  # This uses EPA_started_subdirectories_LIST internally to check for
+  # circular dependencies, and updates EPA_finished_subdirectories_LIST
+  # and EPA_build_targets_LIST that are used here.
   add_subdirectory(${subdirectory})
-  if(EPA_processed_subdirectories_LIST)
-    list(REMOVE_ITEM EPA_needed_subdirectories_LIST ${EPA_processed_subdirectories_LIST})
-  endif(EPA_processed_subdirectories_LIST)
+  get_property(finished_subdirectories_LIST GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
+  list(REMOVE_ITEM subdirectories_LIST ${finished_subdirectories_LIST})
   message(STATUS "DEBUG: visited ${subdirectory}")
-  message(STATUS "DEBUG: EPA_needed_subdirectories_LIST = ${EPA_needed_subdirectories_LIST}")
-  message(STATUS "DEBUG: EPA_visited_subdirectories_LIST = ${EPA_visited_subdirectories_LIST}")
-  message(STATUS "DEBUG: EPA_processed_subdirectories_LIST = ${EPA_processed_subdirectories_LIST}")
-  message(STATUS "DEBUG: EPA_build_targets_LIST = ${EPA_build_targets_LIST}")
-  list(LENGTH EPA_needed_subdirectories_LIST LENGTH_EPA_needed_subdirectories_LIST)
-endwhile(LENGTH_EPA_needed_subdirectories_LIST GREATER 0)
+  message(STATUS "DEBUG: subdirectories_LIST = ${subdirectories_LIST}")
+  list(LENGTH subdirectories_LIST LENGTH_subdirectories_LIST)
+endwhile(LENGTH_subdirectories_LIST GREATER 0)
 
 add_custom_target(build_all)
-add_dependencies(build_all ${EPA_build_targets_LIST})
+get_property(build_targets_LIST GLOBAL PROPERTY EPA_build_targets_LIST)
+add_dependencies(build_all ${build_targets_LIST})

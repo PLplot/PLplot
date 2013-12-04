@@ -36,24 +36,9 @@ epa_boilerplate(
   PACKAGE
   dependencies_LIST
   dependencies_targets
-  EPA_visited_subdirectories_LIST
-  EPA_processed_subdirectories_LIST
-  EPA_needed_subdirectories_LIST
-  EPA_build_targets_LIST
   EPA_PATH
   source_PATH
-  IF_RETURN
   ) 
-
-# Propagate list changes to parent scope.
-set(EPA_visited_subdirectories_LIST ${EPA_visited_subdirectories_LIST} PARENT_SCOPE)
-set(EPA_processed_subdirectories_LIST ${EPA_processed_subdirectories_LIST} PARENT_SCOPE)
-set(EPA_needed_subdirectories_LIST ${EPA_needed_subdirectories_LIST} PARENT_SCOPE)
-set(EPA_build_targets_LIST ${EPA_build_targets_LIST} PARENT_SCOPE)
-
-if(IF_RETURN)
-  return()
-endif(IF_RETURN)
 
 # Data that is related to the PATH that must be used.
 # N.B. note below that we always use the unix subdirectory of the
