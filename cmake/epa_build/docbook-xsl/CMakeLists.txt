@@ -1,6 +1,6 @@
 # docbook-xsl/CMakeLists.txt
-# This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of docbook-xsl.
+
+# Configure the build of docbook-xsl.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,65 +18,35 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EPA_BASE variable (and
-# corresponding directory property) as well as various EPA variables
-# used below that configure how the External_Project functions
-# operate.
-
-# Protect against configuring a build twice in one CMake call
-if(docbook-xsl_configured)
-  return()
-endif(docbook-xsl_configured)
-set(docbook-xsl_configured ON)
+set(PACKAGE docbook-xsl)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(EPA_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
+set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
 
-set(docbook-xsl_dependencies_LIST libxml2)
-# Remove dependencies that should be ignored.
-if(docbook-xsl_dependencies_LIST)
-  list(REMOVE_ITEM docbook-xsl_dependencies_LIST ${EPA_ignored_dependencies_LIST})
-endif(docbook-xsl_dependencies_LIST)
+set(dependencies_LIST libxml2)
 
-set(docbook-xsl_dependencies_targets)
-foreach(build_configuration ${docbook-xsl_dependencies_LIST})
-  if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
-    include(${build_configuration}/CMakeLists.txt)
-    list(APPEND docbook-xsl_dependencies_targets build_${build_configuration})
-  else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
-    message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of docbook-xsl has been installed another way.")
-  endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
-endforeach(build_configuration ${docbook-xsl_dependences_LIST})
-
-# This can be safely done only after above includes.
-set(PACKAGE docbook-xsl)
+# Do boilerplate tasks that must be done for each different project
+# that is configured as part of epa_build.
+epa_boilerplate(
+  ignored_dependencies_LIST
+  PACKAGE
+  dependencies_LIST
+  dependencies_targets
+  EPA_PATH
+  source_PATH
+  )
 
 # Data that is related to downloads.
-set(URL  http://downloads.sourceforge.net/docbook/docbook-xsl-1.78.1.tar.bz2)
-set(${PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
-set(${PACKAGE}_DOWNLOAD_HASH 6dd0f89131cc35bf4f2ed105a1c17771)
-
-# Data that is related to the PATH that must be used.
-if(MSYS_PLATFORM)
-  #set(EPA_PATH_NODLL "${EPA_PATH}")
-  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
-  determine_msys_path(EPA_PATH "${EPA_PATH}")
-  # Must have all elements of env command in MSYS platform form
-  determine_msys_path(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
-  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
-else(MSYS_PLATFORM)
-  set(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
-  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
-endif(MSYS_PLATFORM)
-#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
+set(URL http://downloads.sourceforge.net/docbook/docbook-xsl-1.78.1.tar.bz2)
+set(DOWNLOAD_HASH_TYPE MD5)
+set(DOWNLOAD_HASH 6dd0f89131cc35bf4f2ed105a1c17771)
 
 ExternalProject_Add(
   build_${PACKAGE}
-  DEPENDS ${${PACKAGE}_dependencies_targets}
+  DEPENDS ${dependencies_targets}
   URL ${URL}
-  URL_HASH ${${PACKAGE}_DOWNLOAD_HASH_TYPE}=${${PACKAGE}_DOWNLOAD_HASH}
+  URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   BUILD_IN_SOURCE OFF
@@ -95,8 +65,3 @@ add_custom_command(
   ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
   APPEND
   )
-
-list(APPEND build_target_LIST build_${PACKAGE})
-# Restore EPA_PATH to original state.
-set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

@@ -351,21 +351,22 @@ if(BUILD_THE_BUILDTOOLS)
   endforeach(executable ${executables_LIST})
 
   set(subdirectories_LIST
-    ##cmake
-    #pkg-config
+    cmake
+    pkg-config
     ##subversion
-    #swig
+    swig
     tk
     # itcl version 4 is integrated into tcl
     # itk version 4 is not integrated into tk (or tcl).
-    #itk
+    itk
+    # iwidgets (version 4.1.0)
+    iwidgets
     # itcl version 3 is an independent project
-    #itcl3
+    itcl3
     # itk version 3 is an independent project
-    #itk3
-    # iwidgets subdirectory contains build configurations for both
-    # iwidgets (version 4.1) and iwidgets4.0 (version 4.0).
-    #iwidgets
+    itk3
+    # iwidgets (version 4.0.1)
+    iwidgets4.0
     )
 else(BUILD_THE_BUILDTOOLS)
   # List of all configurations.  Order doesn't matter because multiple
@@ -373,6 +374,7 @@ else(BUILD_THE_BUILDTOOLS)
   set(subdirectories_LIST
     ndiff
     #plplot
+    #plplot_lite
     #wxwidgets
     #pango
     )
@@ -384,11 +386,17 @@ set_property(GLOBAL PROPERTY EPA_build_targets_LIST)
 
 message(STATUS "DEBUG: subdirectories_LIST = ${subdirectories_LIST}")
 
-# Use while loop because each add_subdirectory command can generate others
+# Using a while loop seems obvious here
+# because each add_subdirectory command can generate others
 # so that several elements of the subdirectories list could be knocked
-# off per loop iteration.
+# off per loop iteration.  However, that is not a good idea in
+# practice because it turns out that fatal CMake errors don't stop the
+# loop (which I presume is a bug) so it just continues indefinitely.  Ugh!
+# So use foreach RANGE loop instead with maximum number of loop
+# interations equal to LENGTH_subdirectories_LIST and break out of it 
+# early if necessary if the subdirectories_LIST has become exhausted.
 list(LENGTH subdirectories_LIST LENGTH_subdirectories_LIST)
-while(LENGTH_subdirectories_LIST GREATER 0)
+foreach(idummy RANGE ${LENGTH_subdirectories_LIST})
   list(GET subdirectories_LIST 0 subdirectory)
   # This uses EPA_started_subdirectories_LIST internally to check for
   # circular dependencies, and updates EPA_finished_subdirectories_LIST
@@ -399,7 +407,10 @@ while(LENGTH_subdirectories_LIST GREATER 0)
   message(STATUS "DEBUG: visited ${subdirectory}")
   message(STATUS "DEBUG: subdirectories_LIST = ${subdirectories_LIST}")
   list(LENGTH subdirectories_LIST LENGTH_subdirectories_LIST)
-endwhile(LENGTH_subdirectories_LIST GREATER 0)
+  if(LENGTH_subdirectories_LIST EQUAL 0)
+    break()
+  endif(LENGTH_subdirectories_LIST EQUAL 0)
+endforeach(idummy RANGE ${LENGTH_subdirectories_LIST})
 
 add_custom_target(build_all)
 get_property(build_targets_LIST GLOBAL PROPERTY EPA_build_targets_LIST)

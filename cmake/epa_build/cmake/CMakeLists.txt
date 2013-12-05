@@ -1,6 +1,6 @@
 # cmake/CMakeLists.txt
-# This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of cmake.
+
+# Configure the build of cmake.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,47 +18,59 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EPA_BASE variable (and
-# corresponding directory property) as well as various EPA variables
-# used below that configure how the External_Project functions
-# operate.
+# An external curl library (see --system-curl option below) is
+# required to build cmake because the cmake internal version of curl
+# is quite lame (no openssl capability, for example).  Also, we
+# haven't yet implemented a curl epa_build configuration because that
+# is going to be somewhat difficult due to the large number of
+# dependencies.  See
+# http://www.linuxfromscratch.org/blfs/view/svn/basicnet/curl.html for
+# a list of those dependencies.  There is some hope because
+# some of those are optional so I may tackle the curl epa_build configuration
+# sooner rather than later.
+
+# For now we are okay on Linux because we can just use the system curl
+# library for the cmake build, but on Windows it is unlikely curl is
+# installed so we will be unable to build a powerful cmake (until a
+# curl epa_build configuration is available).  Note, if the Windows
+# build of cmake fails, then either install curl (if that is possible)
+# or use the workaround of downloading a binary download from kitware
+# that apparently does use a powerful Windows version of curl.
 
 set(PACKAGE cmake)
 
-# Protect against configuring a build twice in one CMake call
-if(configured)
-  return()
-endif(configured)
-set(configured ON)
+# List of dependencies (most of which are build tools) which should be
+# ignored.
+set(ignored_dependencies_LIST curl ${extra_ignored_dependencies_list})
+
+set(dependencies_LIST curl)
+
+# Do boilerplate tasks that must be done for each different project
+# that is configured as part of epa_build.
+epa_boilerplate(
+  ignored_dependencies_LIST
+  PACKAGE
+  dependencies_LIST
+  dependencies_targets
+  EPA_PATH
+  source_PATH
+  )
+
+set(CFLAGS "$ENV{CFLAGS}")
+set(CXXFLAGS "$ENV{CXXFLAGS}")
 
 # Data that is related to downloads.
-set(EPA_CMAKE_DIR v2.8)
-set(EPA_CMAKE_VERSION 2.8.11.1)
-set(URL http://www.cmake.org/files/${EPA_CMAKE_DIR}/cmake-${EPA_CMAKE_VERSION}.tar.gz)
-set(URL_MD5 df5324a3b203373a9e0a04b924281a43)
-
-# Data that is related to the PATH that must be used.
-if(MSYS_PLATFORM)
-  set(EPA_PATH_NODLL "${EPA_PATH}")
-  set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
-  determine_msys_path(EPA_PATH "${EPA_PATH}")
-  determine_msys_path(${PACKAGE}_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
-else(MSYS_PLATFORM)
-  set(${PACKAGE}_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
-endif(MSYS_PLATFORM)
-#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
+set(DIR v2.8)
+set(VERSION 2.8.12.1)
+set(URL http://www.cmake.org/files/${DIR}/cmake-${VERSION}.tar.gz)
+set(DOWNLOAD_HASH_TYPE MD5)
+set(DOWNLOAD_HASH 9d38cd4e2c94c3cea97d0e2924814acc)
 
 ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
-  URL_MD5 ${URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} CFLAGS=-O3 CXXFLAGS=-O3 ${SH_EXECUTABLE} ${EPA_BASE}/Source/build_${PACKAGE}/bootstrap --prefix=${${PACKAGE}_INSTALL_PREFIX} --parallel=8
+  URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${SH_EXECUTABLE} ${EPA_BASE}/Source/build_${PACKAGE}/bootstrap --prefix=${EPA_CMAKE_INSTALL_PREFIX} --parallel=8 --verbose --system-curl --no-qt-gui
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
-
-list(APPEND build_target_LIST build_${PACKAGE})
-# Restore EPA_PATH to original state.
-set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

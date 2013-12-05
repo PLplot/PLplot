@@ -25,7 +25,7 @@ set(PACKAGE tcl)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(EPA_ignored_dependencies_LIST ${extra_ignored_dependencies_list})
+set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
 
 set(dependencies_LIST)
 

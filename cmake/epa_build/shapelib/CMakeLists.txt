@@ -1,7 +1,6 @@
 # shapelib/CMakeLists.txt
-# This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of shapelib.
 
+# Configure the shapelib build.
 # Copyright (C) 2013 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
@@ -26,11 +25,26 @@
 
 set(PACKAGE shapelib)
 
-# Protect against configuring a build twice in one CMake call
-if(configured)
-  return()
-endif(configured)
-set(configured ON)
+# List of dependencies (most of which are build tools) which should be
+# ignored.
+set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
+
+set(dependencies_LIST)
+
+# Do boilerplate tasks that must be done for each different project
+# that is configured as part of epa_build.
+epa_boilerplate(
+  ignored_dependencies_LIST
+  PACKAGE
+  dependencies_LIST
+  dependencies_targets
+  EPA_PATH
+  source_PATH
+  )
+
+set(CFLAGS "$ENV{CFLAGS}")
+# Drop -fvisibility=hidden since that option is known not to work for shapelib.
+string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 
 # Data that is related to downloads.
 set(URL http://download.osgeo.org/${PACKAGE}/${PACKAGE}-1.3.0.tar.gz)
@@ -45,17 +59,12 @@ if(MSYS_PLATFORM)
   set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
   determine_msys_path(EPA_PATH "${EPA_PATH}")
 endif(MSYS_PLATFORM)
-#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
-
-set(CFLAGS $ENV{CFLAGS})
-# Eliminate this option which is not allowed for shapelib
-string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}") 
 
 ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
   URL_MD5 ${URL_MD5}
-    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} CFLAGS=${CFLAGS} ${EPA_CMAKE_COMMAND} -DEG_DATA:PATH=${EPA_BASE}/Source/build_${PACKAGE}/eg_data ${EPA_BASE}/Source/build_${PACKAGE}
+    CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" ${EPA_CMAKE_COMMAND} -DEG_DATA:PATH=${EPA_BASE}/Source/build_${PACKAGE}/eg_data ${EPA_BASE}/Source/build_${PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   TEST_BEFORE_INSTALL ON
   TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_CTEST_COMMAND}
@@ -80,8 +89,3 @@ add_custom_command(
   # chain above since it all starts with a download.
   APPEND
   )
-
-list(APPEND build_target_LIST build_${PACKAGE})
-# Restore EPA_PATH to original state.
-set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

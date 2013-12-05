@@ -1,6 +1,6 @@
 # subversion/CMakeLists.txt
-# This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of subversion.
+
+# Configure the build of subversion
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,19 +18,29 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EPA_BASE variable (and
-# corresponding directory property) as well as various EPA variables
-# used below that configure how the External_Project functions
-# operate.
-
 set(PACKAGE subversion)
+message(FATAL_ERROR "Incomplete build configuration")
 
-# Protect against configuring a build twice in one CMake call
-if(configured)
-  return()
-endif(configured)
-set(configured ON)
+# List of dependencies (most of which are build tools) which should be
+# ignored.
+set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
+
+set(dependencies_LIST)
+
+# Do boilerplate tasks that must be done for each different project
+# that is configured as part of epa_build.
+epa_boilerplate(
+  ignored_dependencies_LIST
+  PACKAGE
+  dependencies_LIST
+  dependencies_targets
+  EPA_PATH
+  source_PATH
+  ) 
+
+set(CFLAGS "$ENV{CFLAGS}")
+# Drop -fvisibility=hidden since that option may not work for this package.
+#string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 
 # Data that is related to downloads.
 set(URL http://apache.parentingamerica.com/subversion/subversion-1.7.10.tar.bz2)
@@ -38,28 +48,15 @@ set(URL http://apache.parentingamerica.com/subversion/subversion-1.7.10.tar.bz2)
 set(URL /home/software/${PACKAGE}/${PACKAGE}-1.7.10.tar.bz2)
 set(URL_MD5 4088a77e14232876c9b4ff1541e6e200)
 
-# Data that is related to the PATH that must be used.
-if(MSYS_PLATFORM)
-  set(EPA_PATH_NODLL "${EPA_PATH}")
-  set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
-  determine_msys_path(EPA_PATH "${EPA_PATH}")
-  # Must have all elements of env command in MSYS platform form
-  determine_msys_path(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
-else(MSYS_PLATFORM)
-  set(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
-endif(MSYS_PLATFORM)
-#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
-
 ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
   URL_MD5 ${URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${source_PATH}/${EPA_CONFIGURE_COMMAND}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
   TEST_BEFORE_INSTALL OFF
   TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} check
-  # STEP_TARGETS download download_extra_source mkdir_fix configure build install test
   )
 
 # Add custom command to run the special get-deps.sh script
@@ -88,8 +85,3 @@ ExternalProject_Add_Step(
   COMMAND mkdir serf/auth
   WORKING_DIRECTORY "${EPA_BASE}/Build/build_${PACKAGE}"
   )
-
-list(APPEND build_target_LIST build_${PACKAGE})
-# Restore EPA_PATH to original state.
-set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

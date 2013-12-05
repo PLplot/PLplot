@@ -1,6 +1,6 @@
 # libagg/CMakeLists.txt
-# This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of libagg.
+
+# Configure the build of libagg.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,19 +18,26 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EPA_BASE variable (and
-# corresponding directory property) as well as various EPA variables
-# used below that configure how the External_Project functions
-# operate.
-
 set(PACKAGE libagg)
 
-# Protect against configuring a build twice in one CMake call
-if(configured)
-  return()
-endif(configured)
-set(configured ON)
+# List of dependencies (most of which are build tools) which should be
+# ignored.
+set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
+
+set(dependencies_LIST tcl)
+
+# Do boilerplate tasks that must be done for each different project
+# that is configured as part of epa_build.
+epa_boilerplate(
+  ignored_dependencies_LIST
+  PACKAGE
+  dependencies_LIST
+  dependencies_targets
+  EPA_PATH
+  source_PATH
+  )
+
+set(CXXFLAGS "$ENV{CXXFLAGS}")
 
 # Data that is related to downloads.
 set(URL http://www.antigrain.com/agg-2.5.tar.gz)
@@ -48,7 +55,7 @@ ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
   URL_MD5 ${URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CXXFLAGS=${CXXFLAGS}" ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
@@ -65,8 +72,3 @@ add_custom_command(
   ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
   APPEND
   )
-
-list(APPEND build_target_LIST build_${PACKAGE})
-# Restore EPA_PATH to original state.
-set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

@@ -1,6 +1,7 @@
-# plplot/CMakeLists.txt
+# plplot_lite/CMakeLists.txt
 
-# Configure the build of PLplot.
+# Configure the build of a "lite" version of PLplot (with fewer dependencies
+# but with fewer features as well).
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,7 +19,7 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-set(PACKAGE plplot)
+set(PACKAGE plplot_lite)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
@@ -29,8 +30,6 @@ set(dependencies_LIST
   libharu
   libqhull
   shapelib
-  wxwidgets
-  pango
   )
 
 # Do boilerplate tasks that must be done for each different project
@@ -48,8 +47,14 @@ set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
 set(FFLAGS "$ENV{FFLAGS}")
 
-# Leave everything ON by default for plplot.
-set(cmake_args)
+# Turn off wxwidgets, cairo, and qt for plplot_lite.
+set(cmake_args
+  -DPLD_wxwidgets=OFF
+  -DENABLE_wxwidgets=OFF
+  -DDEFAULT_NO_CAIRO_DEVICES:BOOL=ON
+  -DDEFAULT_NO_QT_DEVICES:BOOL=ON
+  -DENABLE_qt=OFF
+  )
 
 # Assumption that the top-level local PLplot source tree is two directories
 # up from the present top-level directory for epa_build.

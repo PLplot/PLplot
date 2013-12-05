@@ -1,6 +1,6 @@
 # pkg-config/CMakeLists.txt
-# This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of pkg-config.
+
+# Configure the build of pkg-config.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,52 +18,62 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EPA_BASE variable (and
-# corresponding directory property) as well as various EPA variables
-# used below that configure how the External_Project functions
-# operate.
-
 set(PACKAGE pkg-config)
 
-# Protect against configuring a build twice in one CMake call
-if(configured)
-  return()
-endif(configured)
-set(configured ON)
+# List of dependencies (most of which are build tools) which should be
+# ignored.
+set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
+
+set(dependencies_LIST)
+
+# Do boilerplate tasks that must be done for each different project
+# that is configured as part of epa_build.
+epa_boilerplate(
+  ignored_dependencies_LIST
+  PACKAGE
+  dependencies_LIST
+  dependencies_targets
+  EPA_PATH
+  source_PATH
+  ) 
 
 # Data that is related to downloads.
 set(URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
-set(${PACKAGE}_DOWNLOAD_HASH_TYPE MD5)
-set(${PACKAGE}_DOWNLOAD_HASH aa3c86e67551adc3ac865160e34a2a0d)
+set(DOWNLOAD_HASH_TYPE MD5)
+set(DOWNLOAD_HASH aa3c86e67551adc3ac865160e34a2a0d)
 
 
 # Data that is related to the PATH that must be used.
 if(MSYS_PLATFORM)
-  #set(EPA_PATH_NODLL "${EPA_PATH}")
-  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
-  determine_msys_path(EPA_PATH "${EPA_PATH}")
-  # Must have all elements of env command in MSYS platform form
-  determine_msys_path(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
   # configure (for glib subpackage) dies without this.
-  set(${PACKAGE}_SET_CFLAGS "CFLAGS=-march=native $ENV{CFLAGS}")
+  set(CFLAGS "-march=native $ENV{CFLAGS}")
+  # These changes cause improved test results (three failures rather than 4)
+  # on Wine, see <https://bugs.freedesktop.org/show_bug.cgi?id=66939>
+  set(BUILD_IN_SOURCE 1)
+  set(BUILD_COMMAND ${EPA_MAKE_COMMAND})
 else(MSYS_PLATFORM)
-  set(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
-  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
+  set(CFLAGS "$ENV{CFLAGS}")
+  # No changes from defaults required to get perfect test results
+  # on Linux.
+  set(BUILD_IN_SOURCE 0)
+  set(BUILD_COMMAND ${EPA_PARALLEL_MAKE_COMMAND})
 endif(MSYS_PLATFORM)
-#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
+
+# Drop -fvisibility=hidden since that option may not work for this package.
+string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 
 ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
-  URL_HASH ${${PACKAGE}_DOWNLOAD_HASH_TYPE}=${${PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${${PACKAGE}_SET_CFLAGS} ${source_PATH}/${EPA_CONFIGURE_COMMAND} --with-internal-glib
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
-# 4 of 25 tests fail for the MinGW/MSYS/Wine platform so comment out
-# the next two lines for now.
-#  TEST_BEFORE_INSTALL ON
-#  TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} check
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
+  URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --with-internal-glib
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BUILD_COMMAND}
+  # 4 of 25 tests fail for the MinGW/MSYS/Wine platform so comment out
+  # the next two lines for now.
+  #TEST_BEFORE_INSTALL ON
+  #TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BUILD_COMMAND} check
+  BUILD_IN_SOURCE ${BUILD_IN_SOURCE}
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BUILD_COMMAND} install
   )
 
 ExternalProject_Add_Step(
@@ -73,8 +83,3 @@ ExternalProject_Add_Step(
   DEPENDERS install 
   COMMAND ${CMAKE_COMMAND} -DFILE_WILDCARD:STRING=${EPA_CMAKE_INSTALL_PREFIX}/bin/*-pkg-config* -P ${CMAKE_SOURCE_DIR}/wildcard_remove.cmake
   )
-
-list(APPEND build_target_LIST build_${PACKAGE})
-# Restore EPA_PATH to original state.
-set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

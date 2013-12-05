@@ -1,6 +1,6 @@
 # xmlcatalog-wrapper/CMakeLists.txt
-# This file should be included directly or indirectly from a top-level
-# CMakeLists.txt file to configure the build of xmlcatalog-wrapper.
+
+# Configure the build of xmlcatalog-wrapper.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,71 +18,37 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# The top-level CMakeLists.txt file that includes this file should
-# have run "include(ExternalProject)" and set EPA_BASE variable (and
+# The top-level CMakeLists.txt file that adds this subdirectory should
+# have run "include(ExternalProject)" and set the EP_BASE variable (and
 # corresponding directory property) as well as various EPA variables
 # used below that configure how the External_Project functions
 # operate.
 
-# Protect against configuring a build twice in one CMake call
-if(xmlcatalog-wrapper_configured)
-  return()
-endif(xmlcatalog-wrapper_configured)
-set(xmlcatalog-wrapper_configured ON)
-
+set(PACKAGE xmlcatalog-wrapper)
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(EPA_ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
+set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
 
-set(xmlcatalog-wrapper_dependencies_LIST)
-# Remove dependencies that should be ignored.
-if(xmlcatalog-wrapper_dependencies_LIST)
-  list(REMOVE_ITEM xmlcatalog-wrapper_dependencies_LIST ${EPA_ignored_dependencies_LIST})
-endif(xmlcatalog-wrapper_dependencies_LIST)
+set(dependencies_LIST)
 
-set(xmlcatalog-wrapper_dependencies_targets)
-foreach(build_configuration ${xmlcatalog-wrapper_dependencies_LIST})
-  if(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
-    include(${build_configuration}/CMakeLists.txt)
-    list(APPEND xmlcatalog-wrapper_dependencies_targets build_${build_configuration})
-  else(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
-    message(STATUS "Warning: A build_configuration for ${build_configuration} does not exist so it is assumed this dependency of xmlcatalog-wrapper has been installed another way.")
-  endif(EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
-endforeach(build_configuration ${xmlcatalog-wrapper_dependences_LIST})
-
-# This can be safely done only after above includes.
-set(PACKAGE xmlcatalog-wrapper)
-
-# Data that is related to downloads.
-# This directory is the source directory
-set(URL ${CMAKE_SOURCE_DIR}/xmlcatalog-wrapper)
-
-# Data that is related to the PATH that must be used.
-if(MSYS_PLATFORM)
-  #set(EPA_PATH_NODLL "${EPA_PATH}")
-  #set(EPA_PATH "${EPA_BASE}/Build/build_${PACKAGE}/dll;${EPA_PATH_NODLL}")
-  determine_msys_path(EPA_PATH "${EPA_PATH}")
-  # Must have all elements of env command in MSYS platform form
-  determine_msys_path(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
-  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
-else(MSYS_PLATFORM)
-  set(source_PATH "${EPA_BASE}/Source/build_${PACKAGE}")
-  set(${PACKAGE}_SET_CFLAGS "CFLAGS=$ENV{CFLAGS}")
-endif(MSYS_PLATFORM)
-#message(STATUS "modified EPA_PATH for ${PACKAGE} = ${EPA_PATH}")
+# Do boilerplate tasks that must be done for each different project
+# that is configured as part of epa_build.
+epa_boilerplate(
+  ignored_dependencies_LIST
+  PACKAGE
+  dependencies_LIST
+  dependencies_targets
+  EPA_PATH
+  source_PATH
+  ) 
 
 ExternalProject_Add(
   build_${PACKAGE}
-  DEPENDS ${${PACKAGE}_dependencies_targets}
-  URL ${URL}
-  #URL_HASH ${${PACKAGE}_DOWNLOAD_HASH_TYPE}=${${PACKAGE}_DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
+  DEPENDS ${dependencies_targets}
+  # The entire source code is just one CMakeLists.txt file.
+  DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EP_BASE}/Source/build_${PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   BUILD_IN_SOURCE OFF
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
-
-list(APPEND build_target_LIST build_${PACKAGE})
-# Restore EPA_PATH to original state.
-set(EPA_PATH "${EPA_ORIGINAL_NATIVE_PATH}")
-#message(STATUS "${PACKAGE} restored original EPA_PATH = ${EPA_PATH}")

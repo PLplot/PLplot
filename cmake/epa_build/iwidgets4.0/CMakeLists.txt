@@ -1,6 +1,6 @@
-# libqhull/CMakeLists.txt
+# iwidgets4.0/CMakeLists.txt
 
-# Configure the build of libqhull.
+# Configure the build of iwidgets4.0.
 
 # Copyright (C) 2013 Alan W. Irwin
 
@@ -18,13 +18,13 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-set(PACKAGE libqhull)
+set(PACKAGE iwidgets4.0)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
 set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
 
-set(dependencies_LIST)
+set(dependencies_LIST itk3 itcl3 tk tcl)
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
@@ -35,48 +35,34 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
-set(CFLAGS "$ENV{CFLAGS}")
+set(VERSION 4.0.1)
+set(LIBVERSION 4.0)
+set(CMAKE_OPTION -DBUILD_IWIDGETS_4.1=OFF)
 
 # Data that is related to downloads.
-set(URL http://www.qhull.org/download/qhull-2010.1-src.tgz)
-set(URL_MD5 e64138470acdeb18f752a0bc2a11ceb4)
+set(URL http://downloads.sourceforge.net/project/incrtcl/%5bIncr%20Widgets%5d/${VERSION}/iwidgets${VERSION}.tar.gz)
+set(DOWNLOAD_HASH_TYPE MD5)
+set(DOWNLOAD_HASH 0e9c140e81ea6015b56130127c7deb03)
 
 ExternalProject_Add(
   build_${PACKAGE}
+  DEPENDS ${dependencies_targets}
   URL ${URL}
-  URL_MD5 ${URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
+  URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
+  PATCH_COMMAND ""
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${CMAKE_OPTION} ${EPA_BASE}/Source/build_${PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   )
 
-# Add custom commands to the current no-command update step.
 add_custom_command(
   OUTPUT
-  ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-update
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
+  COMMAND echo "Add CMake-based build system"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+  ${CMAKE_SOURCE_DIR}/iwidgets/iwidgets_CMakeLists.txt
   ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/CMakeLists.txt
-  ${EPA_BASE}/Source/build_${PACKAGE}/src/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/${PACKAGE}.h
-  ${EPA_BASE}/Source/build_${PACKAGE}/src/${PACKAGE}.h
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/mem.h
-  ${EPA_BASE}/Source/build_${PACKAGE}/src/mem.h
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/unix.c
-  ${EPA_BASE}/Source/build_${PACKAGE}/src/unix.c
-  COMMENT "Custom updating of ${PACKAGE}"
-  DEPENDS
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/${PACKAGE}.h
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/mem.h
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/unix.c
   APPEND
   )
