@@ -59,14 +59,14 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
   COMMAND ${CMAKE_COMMAND} -E echo "Apply all patches"
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/cmake.patch
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/large_font.patch
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/remove_configured.patch
-  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/visibility.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/cmake.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/large_font.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/remove_configured.patch
+  COMMAND ${PATCH_EXECUTABLE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/visibility.patch
   DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/cmake.patch
-  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/large_font.patch
-  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/remove_configured.patch
-  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}/visibility.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/large_font.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/remove_configured.patch
+  ${CMAKE_CURRENT_SOURCE_DIR}/visibility.patch
   APPEND
   )
