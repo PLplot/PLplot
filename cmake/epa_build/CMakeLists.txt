@@ -167,7 +167,7 @@ function(epa_boilerplate
     _source_PATH
     )
 
-  message(STATUS "DEBUG: entering ${_PACKAGE} = ${${_PACKAGE}}")
+  #message(STATUS "DEBUG DEPENDENCY HANDLING: entering ${_PACKAGE} = ${${_PACKAGE}}")
   get_property(saved_started_subdirectories_LIST GLOBAL PROPERTY EPA_started_subdirectories_LIST)
   set_property(GLOBAL APPEND PROPERTY EPA_started_subdirectories_LIST ${${_PACKAGE}})
   get_property(started_subdirectories_LIST GLOBAL PROPERTY EPA_started_subdirectories_LIST)
@@ -184,26 +184,31 @@ function(epa_boilerplate
     endif(NOT EXISTS ${CMAKE_SOURCE_DIR}/${build_configuration}/CMakeLists.txt)
   endforeach(build_configuration ${${_dependences_LIST}})
 
-  # remaining_dependencies_LIST contains the dependencies left over
-  # from the above removals that have not already been finished.
-  set(remaining_dependencies_LIST ${${_dependencies_LIST}})
-  get_property(finished_subdirectories_LIST GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
-  if(remaining_dependencies_LIST AND finished_subdirectories_LIST)
-    list(REMOVE_ITEM remaining_dependencies_LIST ${finished_subdirectories_LIST})
-  endif(remaining_dependencies_LIST AND finished_subdirectories_LIST)
+  #message(STATUS "DEBUG DEPENDENCY HANDLING: ${_PACKAGE} = ${${_PACKAGE}} has the following list of expurgated dependencies: ${${_dependencies_LIST}}")
 
-  foreach(build_configuration ${remaining_dependencies_LIST})
+  # Initial value of finished_subdirectories_LIST required for following
+  # loop logic to work correctly.
+  get_property(finished_subdirectories_LIST GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
+  foreach(build_configuration ${${_dependencies_LIST}})
     list(FIND started_subdirectories_LIST ${build_configuration} index)
     if(index GREATER -1)
       message(FATAL_ERROR "Circular dependency: package ${build_configuration} depends on package ${${_PACKAGE}} which depends on package ${build_configuration}.")
     endif(index GREATER -1)
-    add_subdirectory(
-      ${CMAKE_SOURCE_DIR}/${build_configuration}
-      ${CMAKE_BINARY_DIR}/${build_configuration}
-      )
-  endforeach(build_configuration ${remaining_dependencies_LIST})
 
-  set_property(GLOBAL PROPERTY EPA_started_subdirectories_LIST ${saved_started_subdirectories_LIST})
+    list(FIND finished_subdirectories_LIST ${build_configuration} index)
+    if(index LESS 0)
+      # Only if build_configuration is not in finished_subdirectories_LIST.
+      add_subdirectory(
+	${CMAKE_SOURCE_DIR}/${build_configuration}
+	${CMAKE_BINARY_DIR}/${build_configuration}
+	)
+      # GLOBAL property EPA_finished_subdirectories_LIST has the subdirectory
+      # name appended to it for the above add_subdirectory call.
+      # So must update finished_subdirectories_LIST
+      # in order for the next test of build_configuration to be valid.
+      get_property(finished_subdirectories_LIST GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
+    endif(index LESS 0)
+  endforeach(build_configuration ${${_dependencies_LIST}})
 
   set(${_dependencies_targets})
   foreach(build_configuration ${${_dependencies_LIST}})
@@ -220,15 +225,22 @@ function(epa_boilerplate
   endif(MSYS_PLATFORM)
   #message(STATUS "DEBUG: (modified for ${${_PACKAGE}}) ${_EPA_PATH} = ${${_EPA_PATH}}")
 
+  # Update global properties consistent with a successful conclusion of this
+  # function call.
+  set_property(GLOBAL PROPERTY EPA_started_subdirectories_LIST ${saved_started_subdirectories_LIST})
+
   set_property(GLOBAL APPEND PROPERTY EPA_build_targets_LIST build_${${_PACKAGE}})
   set_property(GLOBAL APPEND PROPERTY EPA_finished_subdirectories_LIST ${${_PACKAGE}})
+  # Temporary debugging of dependencies.
+  #get_property(finished_subdirectories_LIST GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
+  #message(STATUS "DEBUG DEPENDENCY HANDLING: finished_subdirectories_LIST = ${finished_subdirectories_LIST}")
 
   # Propagate changed output arguments to parent scope of function.
   set(${_dependencies_LIST} ${${_dependencies_LIST}} PARENT_SCOPE)
   set(${_dependencies_targets} ${${_dependencies_targets}} PARENT_SCOPE)
   set(${_EPA_PATH} ${${_EPA_PATH}} PARENT_SCOPE)
   set(${_source_PATH} ${${_source_PATH}} PARENT_SCOPE)
-  message(STATUS "DEBUG: leaving ${_PACKAGE} = ${${_PACKAGE}}")
+  #message(STATUS "DEBUG DEPENDENCY HANDLING: leaving ${_PACKAGE} = ${${_PACKAGE}}")
 endfunction(epa_boilerplate)
 
 # This gives the full pathname of the associated build tool for at
@@ -350,6 +362,10 @@ if(BUILD_THE_BUILDTOOLS)
     endif(NOT ${EXECUTABLE}_EXECUTABLE)
   endforeach(executable ${executables_LIST})
 
+  # List sufficient buildtool configurations so they will suck in 
+  # the remaining buildtool configurations via dependencies.
+  # Order does not matter because the dependency logic takes
+  # care of any ordering issues.
   set(subdirectories_LIST
     cmake
     pkg-config
@@ -369,14 +385,16 @@ if(BUILD_THE_BUILDTOOLS)
     iwidgets4.0
     )
 else(BUILD_THE_BUILDTOOLS)
-  # List of all configurations.  Order doesn't matter because multiple
-  # attempts to include the same configuration (via dependencies) are ignored.
+  # List sufficient normal package configurations so they will suck in 
+  # the remaining configurations via dependencies.
+  # Order does not matter because the dependency logic takes
+  # care of any ordering issues.
   set(subdirectories_LIST
     ndiff
-    #plplot
-    #plplot_lite
-    #wxwidgets
-    #pango
+    plplot
+    plplot_lite
+    wxwidgets
+    pango
     )
 endif(BUILD_THE_BUILDTOOLS)
 
@@ -384,7 +402,7 @@ set_property(GLOBAL PROPERTY EPA_started_subdirectories_LIST)
 set_property(GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
 set_property(GLOBAL PROPERTY EPA_build_targets_LIST)
 
-message(STATUS "DEBUG: subdirectories_LIST = ${subdirectories_LIST}")
+#message(STATUS "DEBUG DEPENDENCY HANDLING (for outer subdirectories loop): subdirectories_LIST = ${subdirectories_LIST}")
 
 # Using a while loop seems obvious here
 # because each add_subdirectory command can generate others
@@ -404,8 +422,8 @@ foreach(idummy RANGE ${LENGTH_subdirectories_LIST})
   add_subdirectory(${subdirectory})
   get_property(finished_subdirectories_LIST GLOBAL PROPERTY EPA_finished_subdirectories_LIST)
   list(REMOVE_ITEM subdirectories_LIST ${finished_subdirectories_LIST})
-  message(STATUS "DEBUG: visited ${subdirectory}")
-  message(STATUS "DEBUG: subdirectories_LIST = ${subdirectories_LIST}")
+#  message(STATUS "DEBUG DEPENDENCY HANDLING (for outer subdirectories loop): visited ${subdirectory}")
+#  message(STATUS "DEBUG DEPENDENCY HANDLING (for outer subdirectories loop): subdirectories_LIST = ${subdirectories_LIST}")
   list(LENGTH subdirectories_LIST LENGTH_subdirectories_LIST)
   if(LENGTH_subdirectories_LIST EQUAL 0)
     break()
@@ -414,4 +432,5 @@ endforeach(idummy RANGE ${LENGTH_subdirectories_LIST})
 
 add_custom_target(build_all)
 get_property(build_targets_LIST GLOBAL PROPERTY EPA_build_targets_LIST)
+message(STATUS "The target build_all has the following dependent targets: ${build_targets_LIST}")
 add_dependencies(build_all ${build_targets_LIST})
