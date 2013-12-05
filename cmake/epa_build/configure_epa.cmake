@@ -44,9 +44,9 @@ foreach(index RANGE 0 ${max_index})
   endif(supports_non_srcdir_builds)
 
   if(supports_parallel_builds)
-    set(BUILD_COMMAND BP_PARALLEL_MAKE_COMMAND)
+    set(BUILD_COMMAND EPA_PARALLEL_MAKE_COMMAND)
   else(supports_parallel_builds)
-    set(BUILD_COMMAND BP_MAKE_COMMAND)
+    set(BUILD_COMMAND EPA_MAKE_COMMAND)
   endif(supports_parallel_builds)
 
   # Extra CFLAGS fixups for individual packages.
