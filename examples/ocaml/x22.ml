@@ -82,7 +82,7 @@ let circulation () =
 (*
  * Vector plot of flow through a constricted pipe
  *)
-let constriction () =
+let constriction astyle =
   let nx = 20 in
   let ny = 20 in
   let dx = 1.0 in
@@ -107,7 +107,7 @@ let constriction () =
       yg.(i).(j) <- y;
       let b = ymax /. 4.0 *. (3.0 -. cos (pi *. x /. xmax)) in
       if abs_float y < b then (
-        let dbdx = ymax /. 4.0 *. sin (pi *. x /. xmax) *. y /. b in
+        let dbdx = ymax /. 4.0 *. sin (pi *. x /. xmax) *. pi /. xmax *. y /. b in
         u.(i).(j) <- q *. ymax /. b;
         v.(i).(j) <- dbdx *. u.(i).(j);
       )
@@ -119,10 +119,11 @@ let constriction () =
   done;
 
   plenv xmin xmax ymin ymax 0 0;
-  pllab "(x)" "(y)" "#frPLplot Example 22 - constriction";
+  let title =Printf.sprintf "%s%d%s" "#frPLplot Example 22 - constriction (arrow style " astyle ")" in
+  pllab "(x)" "(y)" title;
   plcol0 2;
   plset_pltr (pltr2 xg yg);
-  plvect u v (-0.5);
+  plvect u v (-1.0);
   plcol0 1;
   ()
 
@@ -246,13 +247,17 @@ let () =
   (* Set arrow style using arrow_x and arrow_y then
      plot using these arrows. *)
   plsvect arrow_x arrow_y fill;
-  constriction ();
+  constriction ( 1 );
 
   (* Set arrow style using arrow2_x and arrow2_y then
      plot using these filled arrows. *)
   let fill = true in
   plsvect arrow2_x arrow2_y fill;
-  constriction ();
+  constriction ( 2 );
+
+  (* Need to be able to pass NULL arguments to plsvect to reset arrow style to default
+     Currently this doesn't work *)
+  (* plsvect [||] [||] fill; *)
 
   potential ();
 
