@@ -24,7 +24,7 @@ set(PACKAGE libharu)
 # ignored.
 set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
 
-set(dependencies_LIST tcl)
+set(dependencies_LIST)
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
