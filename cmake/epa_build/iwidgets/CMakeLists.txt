@@ -79,9 +79,9 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
   COMMAND echo "Apply iwidgets4.1 source code patch"
-  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}4.1.patch
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}4.1.patch
   COMMAND echo "Apply patch to support both iwidgets and Iwidgets package names"
-  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}4_case.patch
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}4_case.patch
   APPEND
   )
 
@@ -90,7 +90,7 @@ add_custom_command(
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
   COMMAND echo "Add CMake-based build system"
   COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}_CMakeLists.txt
   ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
   APPEND
   )

@@ -73,11 +73,11 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E echo 
   "Provide an exactly equivalent \"Itk\" and \"itk\" form of the package name to follow what is implemented for itcl version 4."
   # This patch has been publicly distributed at https://sourceforge.net/p/incrtcl/patches/52/
-  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${PACKAGE}/itk4_case.patch
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/itk4_case.patch
   COMMAND ${CMAKE_COMMAND} -E echo
   "Add generic/itkDecls.h to the list of itk headers that must be installed."
   # This patch has been publicly distributed at https://sourceforge.net/p/incrtcl/patches/53/
-  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_SOURCE_DIR}/${PACKAGE}/itk4_header_list.patch
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/itk4_header_list.patch
   APPEND
   )
 

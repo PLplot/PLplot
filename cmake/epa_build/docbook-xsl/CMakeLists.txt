@@ -58,10 +58,10 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-update
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}_CMakeLists.txt
   ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
   COMMENT "Custom updating of ${PACKAGE}"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}_CMakeLists.txt
   APPEND
   )

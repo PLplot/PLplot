@@ -46,7 +46,7 @@ ExternalProject_Add(
   build_${PACKAGE}
   DEPENDS ${dependencies_targets}
   # The entire source code is just one CMakeLists.txt file.
-  DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
+  DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}_CMakeLists.txt ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_CMAKE_COMMAND} ${EP_BASE}/Source/build_${PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   BUILD_IN_SOURCE OFF

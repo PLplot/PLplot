@@ -57,26 +57,26 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-update
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}_CMakeLists.txt
   ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/CMakeLists.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CMakeLists.txt
   ${EPA_BASE}/Source/build_${PACKAGE}/src/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/${PACKAGE}.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/${PACKAGE}.h
   ${EPA_BASE}/Source/build_${PACKAGE}/src/${PACKAGE}.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/mem.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/mem.h
   ${EPA_BASE}/Source/build_${PACKAGE}/src/mem.h
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/unix.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/unix.c
   ${EPA_BASE}/Source/build_${PACKAGE}/src/unix.c
   COMMENT "Custom updating of ${PACKAGE}"
   DEPENDS
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/${PACKAGE}_CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/CMakeLists.txt
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/${PACKAGE}.h
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/mem.h
-  ${CMAKE_SOURCE_DIR}/${PACKAGE}/src/unix.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}_CMakeLists.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/CMakeLists.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/${PACKAGE}.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/mem.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/unix.c
   APPEND
   )
