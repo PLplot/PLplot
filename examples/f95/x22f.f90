@@ -48,7 +48,7 @@
 !     Set arrow style using arrow_x and arrow_y the
 !     plot using these arrows
       call plsvect(arrow_x, arrow_y, fill)
-      call constriction( 1 ) 
+      call constriction( 1 )
 
 !     Set arrow style using arrow_x and arrow_y the
 !     plot using these arrows
@@ -180,7 +180,7 @@
       subroutine constriction2()
       use plplot, PI => PL_PI
       implicit none
-      
+
       integer i, j, nx, ny, nc, nseg
       parameter (nx=20, ny=20, nc=11, nseg=20)
 
@@ -191,7 +191,7 @@
       real(kind=plflt) clev(nc);
       common /transform_data/ ymax
       character(len=1) defined
-      
+
       external transform
 
       dx = 1.0_plflt
@@ -202,9 +202,9 @@
       ymin = -dble(ny)/2.0_plflt*dy
       ymax = dble(ny)/2.0_plflt*dy
 
-      
+
       call plstransform( transform )
-    
+
       Q = 2.0_plflt
       do i=1,nx
         xx = (dble(i)-dble(nx)/2.0_plflt-0.5_plflt)*dx
@@ -227,9 +227,9 @@
            '#frPLplot Example 22 - constriction with plstransform')
       call plcol0(2)
       call plshades(u, defined, xmin + dx / 2.0_plflt, &
-           xmax - dx / 2.0_plflt, & 
+           xmax - dx / 2.0_plflt, &
            ymin + dy / 2.0_plflt, ymax - dy / 2.0_plflt, &
-           clev, 0.0_plflt, 1, 1.0_plflt)
+           clev, 0.0_plflt, 1, 1.0_plflt, .false. )
       scaling = -1.0_plflt
       call plvect(u,v,scaling,xg,yg)
       call plpath(nseg, xmin, ymax, xmax, ymax)
