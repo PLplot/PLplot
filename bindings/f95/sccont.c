@@ -73,12 +73,12 @@ void PLSHADE7( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
 void PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
                  PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
-                 PLINT *cont_color, PLFLT *cont_width, PLINT *lx );
+                 PLINT *cont_color, PLFLT *cont_width, PLINT *lx, PLINT *rect );
 void PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
                  PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
                  PLINT *cont_color, PLFLT *cont_width,
-                 PLFLT *xg1, PLFLT *yg1, PLINT *lx );
+                 PLFLT *xg1, PLFLT *yg1, PLINT *lx, PLINT *rect );
 void PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
                  PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
                  PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
@@ -519,9 +519,8 @@ void
 PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
             PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
             PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
-            PLINT *cont_color, PLFLT *cont_width, PLINT *lx )
+            PLINT *cont_color, PLFLT *cont_width, PLINT *lx, PLINT *rect )
 {
-    PLINT rect = 1;
     PLFLT ** a;
     int   i, j;
 
@@ -539,7 +538,7 @@ PLSHADES07( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
         *xmin, *xmax, *ymin, *ymax,
         clevel, *nlevel, *fill_width,
         *cont_color, *cont_width,
-        c_plfill, rect, NULL, NULL );
+        c_plfill, *rect, NULL, NULL );
 
 // Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
@@ -550,9 +549,8 @@ PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
             PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
             PLFLT *clevel, PLINT *nlevel, PLFLT *fill_width,
             PLINT *cont_color, PLFLT *cont_width,
-            PLFLT *xg1, PLFLT *yg1, PLINT *lx )
+            PLFLT *xg1, PLFLT *yg1, PLINT *lx, PLINT *rect )
 {
-    PLINT   rect = 1;
     PLFLT   ** a;
     int     i, j;
     PLcGrid cgrid;
@@ -576,12 +574,15 @@ PLSHADES17( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
         *xmin, *xmax, *ymin, *ymax,
         clevel, *nlevel, *fill_width,
         *cont_color, *cont_width,
-        c_plfill, rect, pltr1, ( PLPointer ) & cgrid );
+        c_plfill, *rect, pltr1, ( PLPointer ) & cgrid );
 
 // Clean up memory allocated for a
     plFree2dGrid( a, *nx, *ny );
 }
 
+
+// Note that in this case the rectangular argument should always be 0,
+// it makes no sense to propagate it as an optional argument
 void
 PLSHADES27( PLFLT *z, PLINT *nx, PLINT *ny, const char * PL_UNUSED( defined ),
             PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,

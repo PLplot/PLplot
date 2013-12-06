@@ -502,22 +502,30 @@
       subroutine plshades_multiple_0(z, defined, &
         xmin, xmax, ymin, ymax, &
         clevel, fill_width, &
-        cont_color, cont_width )
+        cont_color, cont_width, rectangular)
 
       implicit none
       character defined*(*)
       integer cont_color
+      logical, optional :: rectangular
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
+      integer rect
+
 !	call plstrf2c(dnam, string1)
+
+      rect = 1
+      if ( present(rectangular) ) then
+          rect = merge( 1, 0, rectangular )
+      endif
 
       s1 = transfer( string1, s1 )
       call plshades07(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         clevel, size(clevel), fill_width, &
-        cont_color, cont_width, size(z,1))
+        cont_color, cont_width, size(z,1), rect)
 
       end subroutine
 
@@ -526,23 +534,31 @@
       subroutine plshades_multiple_1(z, defined, &
         xmin, xmax, ymin, ymax, &
         clevel, fill_width, &
-        cont_color, cont_width, xg1, yg1)
+        cont_color, cont_width, xg1, yg1, rectangular)
 
       implicit none
       character defined*(*)
       integer cont_color
+      logical, optional :: rectangular
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
                        xg1(:), yg1(:)
 
+      integer rect
+
 !	call plstrf2c(dnam, string1)
+
+      rect = 1
+      if ( present(rectangular) ) then
+          rect = merge( 1, 0, rectangular )
+      endif
 
       s1 = transfer( string1, s1 )
       call plshades17(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         clevel, size(clevel), fill_width, &
-        cont_color, cont_width, xg1, yg1, size(z,1))
+        cont_color, cont_width, xg1, yg1, size(z,1), rect)
 
       end subroutine
 
