@@ -117,10 +117,10 @@ less cmake.out
 make help
 
 # I recommend building all of them on Linux.
-make all >& all.out
+make build_all >& build_all.out
 
-# Check all.out for any errors
-less all.out
+# Check build_all.out for any errors
+less build_all.out
 
 B. Build and test a lite version of PLplot (without building or using
 major soft dependencies such as pango/cairo, Qt4, and wxwidgets)
