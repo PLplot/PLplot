@@ -84,7 +84,7 @@ procedure x22a is
 
 
     --Vector plot of flow through a constricted pipe
-    procedure constriction is
+    procedure constriction(astyle : Integer) is
         dx, dy, x, y : Long_Float;
         xmin, xmax, ymin, ymax : Long_Float;
         Q, b, dbdx : Long_Float;
@@ -112,7 +112,7 @@ procedure x22a is
                     cgrid2.yg(i, j) := y;
                     b := ymax / 4.0 * (3.0 - cos(pi * x / xmax));
                     if abs(y) < b then
-                        dbdx := ymax / 4.0 * sin(pi * x / xmax) * y / b;
+                        dbdx := ymax / 4.0 * sin(pi * x / xmax) * pi / xmax * y / b;
                         u(i, j) := Q * ymax / b;
                         v(i, j) := dbdx * u(i, j);
                     else 
@@ -123,9 +123,9 @@ procedure x22a is
         end loop;
 
         plenv(xmin, xmax, ymin, ymax, 0, 0);
-        pllab("(x)", "(y)", "#frPLplot Example 22 - constriction");
+        pllab("(x)", "(y)", "#frPLplot Example 22 - constriction (arrow style"&Integer'image(astyle)&")");
         plcol0(2);
-        plvect(u, v, -0.5, pltr2'access, cgrid2'Address);
+        plvect(u, v, -1.0, pltr2'access, cgrid2'Address);
         plcol0(1);
     end constriction;
 
@@ -249,11 +249,11 @@ begin
 
     -- Set arrow style using arrow_x and arrow_y then plot using these arrows.
     plsvect(arrow_x, arrow_y, False);
-    constriction;
+    constriction(1);
 
     -- Set arrow style using arrow2_x and arrow2_y then plot using these filled arrows. 
     plsvect(arrow2_x, arrow2_y, True);
-    constriction;
+    constriction(2);
 
     potential;
 
