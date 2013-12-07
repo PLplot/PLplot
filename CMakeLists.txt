@@ -32,6 +32,29 @@ set(
 
 cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 
+# cmake-2.8.12.1 (2.8.12 screwed up the implementation) introduced a
+# corrected implementation of keyword signatures for
+# target_link_libraries which are preferred now over the traditional
+# plain signatures.  There are a lot of implications concerning these
+# preferred keyword signatures which I don't understand at the moment,
+# but it is clear some modifications to our build system will be
+# required to start using keyword signatures appropriately.  But it is
+# also clear we can do nothing about this until we can guarantee that
+# all our users are running 2.8.12.1 or higher.  Therefore, until we
+# bump the actual minimum version to 2.8.12.1 in the above
+# cmake_minimum_required call and deal with all the errors in our
+# CMake code that will generate, quiet the warnings about this issue
+# by explicitly setting policies CMP0022 and CMP0023 (if they exist
+# for whatever CMake version the user is running) to OLD.
+if(POLICY CMP0022)
+  message(STATUS "Explicitly setting policy CMP0022 to OLD")
+  cmake_policy(SET CMP0022 OLD)
+endif(POLICY CMP0022)
+if(POLICY CMP0023)
+  message(STATUS "Explicitly setting policy CMP0023 to OLD")
+  cmake_policy(SET CMP0023 OLD)
+endif(POLICY CMP0023)
+
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
 # required by our bindings are optional in that if no working compiler
