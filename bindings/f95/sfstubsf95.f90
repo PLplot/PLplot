@@ -110,6 +110,7 @@ module plplotp
     interface plshades
         module procedure plshades_multiple_0
         module procedure plshades_multiple_1
+        module procedure plshades_multiple_1r
         module procedure plshades_multiple_2
         module procedure plshades_multiple_tr
     end interface
@@ -898,7 +899,7 @@ module plplot
 
     interface plsvect
         module procedure plsvect1
-        
+
         subroutine plsvect2
         end subroutine plsvect2
 
@@ -1089,7 +1090,7 @@ contains
            cont_color, cont_width, &
            n_labels, label_opts, n_axes, ticks, sub_ticks, &
            n_values, values)
-    end subroutine plcolorbar_2      
+    end subroutine plcolorbar_2
 
     subroutine plcpstrm( iplsr, flags )
        integer                        :: iplsr

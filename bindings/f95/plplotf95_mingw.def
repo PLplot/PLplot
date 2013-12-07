@@ -38,6 +38,7 @@ EXPORTS
 	__plplotp_MOD_plshade_single_tr
 	__plplotp_MOD_plshades_multiple_0
 	__plplotp_MOD_plshades_multiple_1
+	__plplotp_MOD_plshades_multiple_1r
 	__plplotp_MOD_plshades_multiple_2
 	__plplotp_MOD_plshades_multiple_tr
 	__plplotp_MOD_plspal0
