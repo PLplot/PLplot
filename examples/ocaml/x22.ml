@@ -233,6 +233,58 @@ let potential () =
   plline px py;
   ()
 
+let transform xmax x y =
+  x, y /. 4.0 *. (3.0 -. cos (pi *. x /. xmax))
+
+(* Vector plot of flow through a constricted pipe
+   with a coordinate transform *)
+let constriction2 () =
+  let nx, ny = 20, 20 in
+  let nc = 11 in
+  let nseg = 20 in
+  let dx, dy = 1.0, 1.0 in
+  let xmin = float ~-nx /. 2.0 *. dx in
+  let xmax = float nx /. 2.0 *. dx in
+  let ymin = float ~-ny /. 2.0 *. dy in
+  let ymax = float ny /. 2.0 *. dy in
+
+  plstransform (transform xmax);
+
+  let cgrid2_xg = Array.make_matrix nx ny 0.0 in
+  let cgrid2_yg = Array.make_matrix nx ny 0.0 in
+  let u = Array.make_matrix nx ny 0.0 in
+  let v = Array.make_matrix nx ny 0.0 in
+  let q = 2.0 in
+  for i = 0 to nx - 1 do
+    let x = (float i -. float nx /. 2.0 +. 0.5) *. dx in
+    for j = 0 to ny - 1 do
+      let y = (float j -. float ny /. 2.0 +. 0.5) *. dy in
+      cgrid2_xg.(i).(j) <- x;
+      cgrid2_yg.(i).(j) <- y;
+      let b = ymax /. 4.0 *. (3.0 -. cos (pi *. x /. xmax)) in
+      u.(i).(j) <- q *. ymax /. b;
+      v.(i).(j) <- 0.0
+    done
+  done;
+  let clev = Array.init nc (fun i -> q +. float i *. q /. float (nc - 1)) in
+
+  plenv xmin xmax ymin ymax 0 0;
+  pllab "(x)" "(y)" "#frPLplot Example 22 - constriction with plstransform";
+  plcol0 2;
+  plshades u
+    (xmin +. dx /. 2.0) (xmax -. dx /. 2.0)
+    (ymin +. dy /. 2.0) (ymax -. dy /. 2.0)
+    clev 0.0 1 1.0 false;
+  plset_pltr (pltr2 cgrid2_xg cgrid2_yg);
+  plvect u v ~-.1.0;
+  plunset_pltr ();
+  plpath nseg xmin ymax xmax ymax;
+  plpath nseg xmin ymin xmax ymin;
+  plcol0 1;
+
+  plunset_transform ();
+  ()
+
 let () =
   (* Parse and process command line arguments *)
   plparseopts Sys.argv [PL_PARSE_FULL];
@@ -255,9 +307,10 @@ let () =
   plsvect arrow2_x arrow2_y fill;
   constriction ( 2 );
 
-  (* Need to be able to pass NULL arguments to plsvect to reset arrow style to default
-     Currently this doesn't work *)
-  (* plsvect [||] [||] fill; *)
+  constriction2 ();
+
+  (* Reset arrow style to the default *)
+  plsvect_reset ();
 
   potential ();
 

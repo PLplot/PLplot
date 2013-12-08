@@ -498,6 +498,14 @@ void ml_plvect( const PLFLT **u, const PLFLT **v, PLINT nx, PLINT ny, PLFLT scal
 }
 
 //
+// Wrapper to reset vector rendering
+//
+void ml_plsvect_reset()
+{
+    c_plsvect( NULL, NULL, 0, 0 );
+}
+
+//
 // void
 // c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
 //       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );

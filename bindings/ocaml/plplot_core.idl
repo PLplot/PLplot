@@ -197,8 +197,8 @@ quote(h, "void plplot_check_nonzero_result(int result);");
 [mlname(pltr0)] void ml_pltr0(
     PLFLT x, PLFLT y, [out] PLFLT *tx, [out] PLFLT *ty);
 
-// XXX The following are non-standard functions which help retrieve some extra
-// information from PLplot.
+// XXX The following are non-standard functions
+[mlname(plsvect_reset)] void ml_plsvect_reset(void);
 int plg_current_col0(void);
 PLFLT plg_current_col1(void);
 PLFLT plgwidth(void);

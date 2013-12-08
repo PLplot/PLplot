@@ -1000,6 +1000,7 @@ external plpoly3 :
   = "camlidl_plplot_core_ml_plpoly3"
 external pltr0 : float -> float -> float * float
   = "camlidl_plplot_core_ml_pltr0"
+external plsvect_reset : unit -> unit = "camlidl_plplot_core_ml_plsvect_reset"
 external plg_current_col0 : unit -> int
   = "camlidl_plplot_core_plg_current_col0"
 external plg_current_col1 : unit -> float
