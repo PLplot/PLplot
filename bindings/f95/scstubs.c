@@ -169,6 +169,7 @@ void PLMTEX7( const char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, const char
 void PLMTEX37( const char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, const char *text );
 void PLPARSEOPTS7( int *numargs, const char *iargs, PLINT *mode, PLINT *maxindex );
 void PLPAT( PLINT *nlin, PLINT *inc, PLINT *del );
+void PLPATH( PLINT *n, PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2 );
 void PLPOIN( PLINT *n, PLFLT *x, PLFLT *y, PLINT *code );
 void PLPOIN3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *code );
 void PLPOLY3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL *ifcc );

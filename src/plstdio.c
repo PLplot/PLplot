@@ -277,13 +277,11 @@ pl_create_tempfifo( char **p_fifoname, char **p_dirname )
     plwarn( "Creating fifos not supported on this platform" );
     return NULL;
 #else
-    FILE       *fd;
     const char *tmpdir;
     char       *template;
     char       *dirname;
     const char *tmpname  = "plplot_dir_XXXXXX";
     const char *fifoname = "plplot_fifo";
-    int        flags;
 
 #if defined ( MSDOS ) || defined ( WIN32 )
     tmpdir = getenv( "TEMP" );

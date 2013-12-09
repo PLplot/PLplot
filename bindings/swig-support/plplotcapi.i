@@ -764,7 +764,7 @@ void
 plstyl( PLINT n, const PLINT *Array, const PLINT *ArrayCk );
 
 void
-plsvect( const PLFLT *ArrayNull, const PLFLT *ArrayCkNull, PLINT n, PLBOOL fill );
+plsvect( const PLFLT *ArrayNull, const PLFLT *ArrayCkNull, PLINT n, PLBOOL deffalse );
 
 void
 plsvpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );

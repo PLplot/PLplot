@@ -101,19 +101,19 @@ static PLINT ymax = YPIXELS;
 static PLGraphicsIn gin;
 
 static void
-tk_cmd( char *cmd )
+tk_cmd( const char *gcmd )
 {
     static char scmd[10000];
 
     if ( local )
-        Tcl_Eval( interp, cmd );
+        Tcl_Eval( interp, gcmd );
     else
     {
         // the -async option makes it block, some times! but is *much* faster!
         // and was working OK till now :(
         // sprintf(scmd, "send -async %s {%s}", rem_interp, cmd);
         //
-        sprintf( scmd, "send %s {%s}", rem_interp, cmd ); // mess! make it more efficient
+        sprintf( scmd, "send %s {%s}", rem_interp, gcmd ); // mess! make it more efficient
         if ( Tcl_Eval( interp, scmd ) != TCL_OK )
             fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
     }
@@ -306,7 +306,7 @@ plD_init_ntk( PLStream *pls )
     Tcl_Eval( interp, "tk scaling" ); // pixels per mm
     ppm = (PLFLT) atof( Tcl_GetStringResult( interp ) ) / ( 25.4 / 72. );
     plP_setpxl( ppm, ppm );
-    plP_setphy( xmin, xmax * scale, ymin, ymax * scale );
+    plP_setphy( xmin, (PLINT) ( xmax * scale ), ymin, (PLINT) ( ymax * scale ) );
 
     tk_cmd( "update" );
 }
@@ -344,7 +344,7 @@ plD_line_ntk( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 }
 
 void
-plD_polyline_ntk( PLStream *pls, short *xa, short *ya, PLINT npts )
+plD_polyline_ntk( PLStream * PL_UNUSED( pls ), short *xa, short *ya, PLINT npts )
 {
     PLINT i, j;
 
@@ -363,7 +363,7 @@ plD_polyline_ntk( PLStream *pls, short *xa, short *ya, PLINT npts )
 // an event loop has to be designed, getcursor() and waitforpage() are just experimental
 
 static void
-waitforpage( PLStream *pls )
+waitforpage( PLStream * PL_UNUSED( pls ) )
 {
     int key = 0, st = 0;
     // why can't I bind to the canvas? or even any frame?
@@ -426,7 +426,7 @@ plD_state_ntk( PLStream *pls, PLINT op )
 }
 
 static void
-getcursor( PLStream *pls, PLGraphicsIn *ptr )
+getcursor( PLStream * PL_UNUSED( pls ), PLGraphicsIn *ptr )
 {
     int st = 0;
 
@@ -462,9 +462,9 @@ getcursor( PLStream *pls, PLGraphicsIn *ptr )
     tk_cmd( "set yloc" );
     sscanf( Tcl_GetStringResult( interp ), "%d", &gin.pY );
     tk_cmd( "set bloc" );
-    sscanf( Tcl_GetStringResult( interp ), "%d", &gin.button );
+    sscanf( Tcl_GetStringResult( interp ), "%ud", &gin.button );
     tk_cmd( "set sloc" );
-    sscanf( Tcl_GetStringResult( interp ), "%d", &gin.state );
+    sscanf( Tcl_GetStringResult( interp ), "%ud", &gin.state );
 
     gin.dX = (PLFLT) gin.pX / xmax;
     gin.dY = 1. - (PLFLT) gin.pY / ymax;
@@ -486,8 +486,8 @@ plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
 {
     PLINT  i, j;
     short                *xa, *ya;
-    Pixmap bitmap;
-    static unsigned char bit_pat[] = {
+    //Pixmap bitmap;
+    static const unsigned char bit_pat[] = {
         0x24, 0x01, 0x92, 0x00, 0x49, 0x00, 0x24, 0x00, 0x12, 0x00, 0x09, 0x00,
         0x04, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff
@@ -496,8 +496,8 @@ plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_DASH:
-        xa = (short *) malloc( sizeof ( short ) * pls->dev_npts );
-        ya = (short *) malloc( sizeof ( short ) * pls->dev_npts );
+        xa = (short *) malloc( sizeof ( short ) * ( size_t ) pls->dev_npts );
+        ya = (short *) malloc( sizeof ( short ) * ( size_t ) pls->dev_npts );
         for ( i = 0; i < pls->dev_npts; i++ )
         {
             xa[i] = pls->dev_x[i];
@@ -547,8 +547,8 @@ plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
         {
             if ( pls->patt != 0 )
             {
-                Tk_DefineBitmap( interp, Tk_GetUid( "foo" ), bit_pat, 16, 16 );
-                bitmap = Tk_GetBitmap( interp, mainw, Tk_GetUid( "patt" ) );
+                Tk_DefineBitmap( interp, Tk_GetUid( "foo" ), (const char *) bit_pat, 16, 16 );
+                //bitmap = Tk_GetBitmap( interp, mainw, Tk_GetUid( "patt" ) );
             }
             j = sprintf( cmd, "$plf.f2.c%d create polygon ", ccanv );
             for ( i = 0; i < pls->dev_npts; i++ )

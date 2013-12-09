@@ -186,7 +186,7 @@
 
       real(kind=plflt) dx, dy, xx, yy
       real(kind=plflt) xmin, xmax, ymin, ymax
-      real(kind=plflt) Q, b, dbdx, scaling
+      real(kind=plflt) Q, b, scaling
       real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
       real(kind=plflt) clev(nc);
       common /transform_data/ ymax

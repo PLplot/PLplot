@@ -154,7 +154,7 @@ static Tk_ArgvInfo argTable[] = {
 // Forward declarations for procedures defined later in this file:
 //
 
-static void Prompt _ANSI_ARGS_( ( Tcl_Interp * interp, int partial ) );
+static void Prompt _ANSI_ARGS_( ( Tcl_Interp * interploc, int partial ) );
 static void StdinProc _ANSI_ARGS_( ( ClientData clientData,
                                      int mask ) );
 
@@ -582,8 +582,8 @@ prompt:
 //
 
 static void
-Prompt( interp, partial )
-Tcl_Interp * interp;                  // Interpreter to use for prompting.
+Prompt( interploc, partial )
+Tcl_Interp * interploc;                  // Interpreter to use for prompting.
 int partial;                          // Non-zero means there already
                                       // exists a partial command, so use
                                       // the secondary prompt.
@@ -591,7 +591,7 @@ int partial;                          // Non-zero means there already
     const char *promptCmd;
     int        code;
 
-    promptCmd = Tcl_GetVar( interp,
+    promptCmd = Tcl_GetVar( interploc,
         partial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY );
     if ( promptCmd == NULL )
     {
@@ -603,12 +603,12 @@ defaultPrompt:
     }
     else
     {
-        code = Tcl_Eval( interp, promptCmd );
+        code = Tcl_Eval( interploc, promptCmd );
         if ( code != TCL_OK )
         {
-            Tcl_AddErrorInfo( interp,
+            Tcl_AddErrorInfo( interploc,
                 "\n    (script that generates prompt)" );
-            fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
+            fprintf( stderr, "%s\n", Tcl_GetStringResult( interploc ) );
             goto defaultPrompt;
         }
     }

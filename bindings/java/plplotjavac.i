@@ -56,7 +56,7 @@ typedef PLINT          PLBOOL;
 %{
     static JavaVM *cached_jvm = NULL;
 
-    SWIGEXPORT JNIEXPORT jint JNICALL JNI_OnLoad( JavaVM *jvm, void *reserved )
+    SWIGEXPORT JNIEXPORT jint JNICALL JNI_OnLoad( JavaVM *jvm, void * PL_UNUSED( reserved ) )
     {
         cached_jvm = jvm;
         return JNI_VERSION_1_2;
@@ -1424,10 +1424,12 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     jobject labelClass    = 0;
     jobject labelClassRef = 0;
 
+    void label_java( PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data );
+
     // C label plotting callback function which calls the java
     // label function in a PLCallbackLabel labelClassobelID
 // bject.
-    void label_java( PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data )
+    void label_java( PLINT axis, PLFLT value, char *string, PLINT len, PLPointer PL_UNUSED( data ) )
     {
         jstring    javaString;
         const char *nativeString;
@@ -1478,7 +1480,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         {
             javaString   = (jstring) ( *cbenv )->CallObjectMethod( cbenv, labelClass, labelID, jaxis, jvalue );
             nativeString = ( *cbenv )->GetStringUTFChars( cbenv, javaString, 0 );
-            strncpy( string, nativeString, len );
+            strncpy( string, nativeString, (size_t) len );
             ( *cbenv )->ReleaseStringUTFChars( cbenv, javaString, nativeString );
         }
         else
@@ -1524,6 +1526,8 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 %{
     jobject ctClass    = 0;
     jobject ctClassRef = 0;
+    
+    void ct_java( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data );
 
     // C coordinate transform callback function which calls the java
     // coordinate transform function in a PLCallbackCoordTrans object.

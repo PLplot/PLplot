@@ -334,6 +334,7 @@ typedef PLINT          PLBOOL;
 {
     LUA_FREE_ARRAY( $1 );
 }
+%typemap( default ) ( const PLFLT * ArrayCkNull, PLINT n ) { $1 = NULL; $2 = 0; }
 
 
 // no count, but check consistency with previous
@@ -371,6 +372,7 @@ typedef PLINT          PLBOOL;
     }
 }
 %typemap( freearg ) const PLFLT * ArrayCkNull { LUA_FREE_ARRAY( $1 ); }
+%typemap( default ) const PLFLT * ArrayCkNull { $1 = NULL; }
 
 
 // No length but remember size to check others
@@ -407,7 +409,6 @@ typedef PLINT          PLBOOL;
     LUA_FREE_ARRAY( $1 );
 }
 
-%typemap( default ) const PLFLT * ArrayCkNull { $1 = NULL; }
 
 // with trailing count
 %typemap( in ) ( const PLFLT * Array, PLINT n )
@@ -510,6 +511,8 @@ typedef PLINT          PLBOOL;
 
 
 %{
+    PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny );
+
     PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
     {
         int  i, j;
@@ -779,6 +782,8 @@ typedef PLINT          PLBOOL;
 //--------------------------------------------------------------------------
 
 %{
+    void mapform( PLINT n, PLFLT* x, PLFLT* y );
+
     static lua_State* myL = NULL;
     static char     mapform_funcstr[255];
 
@@ -859,11 +864,16 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     typedef PLFLT ( *f2eval_func )( PLINT, PLINT, PLPointer );
     typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
+// Function prototypes 
+    void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * pltr_data );
+    void myct( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * pltr_data );
+    void mylabel( PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data );
+
     static char mypltr_funcstr[255];
 
 // This is the callback that gets handed to the C code.
 //   It, in turn, calls the Lua callback
-    void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+    void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * PL_UNUSED( pltr_data ) )
     {
         *tx = 0;
         *ty = 0;
@@ -907,7 +917,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
 // This is the callback that gets handed to the C code.
 //   It, in turn, calls the Lua callback
-    void myct( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+    void myct( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * PL_UNUSED( pltr_data ) )
     {
         *tx = 0;
         *ty = 0;
@@ -947,12 +957,10 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         return;
     }
 
-    static char label_funcstr[255];
+    static char mylabel_funcstr[255];
 
-    void mylabel( PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data )
+    void mylabel( PLINT axis, PLFLT value, char* label, PLINT length, PLPointer PL_UNUSED( data ) )
     {
-        PLFLT *xtemp, *ytemp;
-        int   len, i;
 
         // check Lua state
         if ( myL == NULL )
@@ -962,19 +970,19 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         }
 
         // push functions and arguments
-        lua_getglobal( myL, label_funcstr ); // function to be called
+        lua_getglobal( myL, mylabel_funcstr ); // function to be called
         lua_pushnumber( myL, axis );         // push 1st argument
         lua_pushnumber( myL, value );        // push 1st argument
 
         // do the call (2 arguments, 1 result)
         if ( lua_pcall( myL, 2, 1, 0 ) != 0 )
             fprintf( stderr, "error running function `%s':%s",
-                label_funcstr, lua_tostring( myL, -1 ) );
+                mylabel_funcstr, lua_tostring( myL, -1 ) );
 
         // retrieve results
         if ( !lua_isstring( myL, -1 ) )
         {
-            fprintf( stderr, "function `%s' must return a string as result", label_funcstr );
+            fprintf( stderr, "function `%s' must return a string as result", mylabel_funcstr );
             return;
         }
         strncpy( label, lua_tostring( myL, -1 ), length );
@@ -1021,7 +1029,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
 %typemap( in ) label_func lf {
     $1 = NULL;
-    label_funcstr[0] = '\0';
+    mylabel_funcstr[0] = '\0';
 
     if ( lua_isnil( L, $input ) )
     {
@@ -1030,7 +1038,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     else if ( lua_isstring( L, $input ) )
     {
         $1 = mylabel;
-        strncpy( label_funcstr, lua_tostring( L, $input ), 255 );
+        strncpy( mylabel_funcstr, lua_tostring( L, $input ), 255 );
         myL = L;
     }
     else
@@ -1414,6 +1422,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 {
     LUA_FREE_ARRAY( $2 );
 }
+
+%typemap( default ) ( PLBOOL deffalse ) { $1 = 0; }
 
 
 //--------------------------------------------------------------------------

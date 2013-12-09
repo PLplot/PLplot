@@ -171,7 +171,7 @@ x22::constriction2( void )
     int   i, j;
     PLFLT dx, dy, x, y;
     PLFLT xmin, xmax, ymin, ymax;
-    PLFLT Q, b, dbdx;
+    PLFLT Q, b;
 #define NC 11
     int   nc = NC;
     PLFLT clev[NC];

@@ -26,7 +26,9 @@
 #include "plcdemos.h"
 
 void circulation( void );
-void constriction( int );
+void constriction( int astyle );
+void transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data );
+void constriction2( void );
 void potential( void );
 void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax );
 
@@ -197,7 +199,7 @@ constriction2( void )
     int       i, j;
     PLFLT     dx, dy, x, y;
     PLFLT     xmin, xmax, ymin, ymax;
-    PLFLT     Q, b, dbdx;
+    PLFLT     Q, b;
     PLcGrid2  cgrid2;
     PLFLT     **u, **v;
     const int nx = 20;

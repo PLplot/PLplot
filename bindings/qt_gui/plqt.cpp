@@ -1118,12 +1118,12 @@ void QtPLWidget::mousePressEvent( QMouseEvent * event )
     mouseEvent( event );
 }
 
-void QtPLWidget::mouseReleaseEvent( QMouseEvent * event )
+void QtPLWidget::mouseReleaseEvent( QMouseEvent * PL_UNUSED( event ) )
 {
     //mouseEvent( event );
 }
 
-void QtPLWidget::mouseMoveEvent( QMouseEvent * event )
+void QtPLWidget::mouseMoveEvent( QMouseEvent * PL_UNUSED ( event ) )
 {
     //mouseEvent( event );
 }
