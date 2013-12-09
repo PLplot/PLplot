@@ -31,6 +31,10 @@
 #include "plevent.h"
 #include <cctype>
 
+#ifdef PL_HAVE_NANOSLEEP
+#include <time.h>
+#endif
+
 #ifdef PL_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -274,22 +278,25 @@ void x01::plot1( int do_test )
 
     if ( do_test && test_xor )
     {
-#ifdef PL_HAVE_USLEEP
+#ifdef PL_HAVE_NANOLEEP
         bool st;
+        struct timespec ts;
+        ts.tv_sec = 0;
+        ts.tv_nsec = 50000000;
         pls->xormod( true, &st ); // enter xor mode
         if ( st )
         {
             for ( i = 0; i < 60; i++ )
             {
                 pls->poin( 1, x + i, y + i, 9 );   // draw a point
-                usleep( 50000 );                   // wait a little
+                nanosleep( &ts, NULL );            // wait a little
                 pls->flush();                      // force an update of the tk driver
                 pls->poin( 1, x + i, y + i, 9 );   // erase point
             }
             pls->xormod( false, &st );             // leave xor mode
         }
 #else
-        cout << "The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen." << endl;
+        cout << "The -xor command line option can only be exercised if your system has nanosleep(), which does not seems to happen." << endl;
 #endif
     }
 

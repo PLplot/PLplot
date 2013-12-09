@@ -27,6 +27,9 @@
 //--------------------------------------------------------------------------
 
 #include "plc++demos.h"
+#ifdef PL_HAVE_NANOSLEEP
+# include <time.h>
+#endif
 #ifdef PL_HAVE_UNISTD_H
 # include <unistd.h>
 #else
@@ -63,6 +66,9 @@ x17::x17( int argc, const char ** argv )
     PLFLT      t, tmin, tmax, tjump, dt, noise;
     PLINT      colbox, collab, colline[4], styline[4];
     const char *legline[4];
+#ifdef PL_HAVE_NANOSLEEP
+    struct timespec ts;
+#endif
 
     // plplot initialization
 
@@ -149,10 +155,14 @@ x17::x17( int argc, const char ** argv )
     y1 = y2 = y3 = y4 = 0.0;
     dt = 0.1;
 
+#ifdef PL_HAVE_NANOSLEEP
+    ts.tv_sec = 0;
+    ts.tv_nsec = 10000000;
+#endif
     for ( n = 0; n < nsteps; n++ )
     {
-#ifdef PL_HAVE_USLEEP
-        usleep( 10000 ); // wait a little (10 ms) to simulate time elapsing
+#ifdef PL_HAVE_NANOSLEEP
+        nanosleep( &ts, NULL ); // wait a little (10 ms) to simulate time elapsing
 #else
 # ifdef PL_HAVE_POLL
         poll( 0, 0, 10 );

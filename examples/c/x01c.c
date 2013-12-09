@@ -24,6 +24,9 @@
 
 #include "plcdemos.h"
 #include "plevent.h"
+#ifdef PL_HAVE_NANOSLEEP
+#include <time.h>
+#endif
 #ifdef PL_HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -270,15 +273,18 @@ plot1( int do_test )
 
     if ( do_test && test_xor )
     {
-#ifdef PL_HAVE_USLEEP
+#ifdef PL_HAVE_NANOSLEEP
         PLINT st;
+        struct timespec ts;
+        ts.tv_sec = 0;
+        ts.tv_nsec = 50000000;
         plxormod( 1, &st ); // enter xor mode
         if ( st )
         {
             for ( i = 0; i < 60; i++ )
             {
                 plpoin( 1, x + i, y + i, 9 );   // draw a point
-                usleep( 50000 );                // wait a little
+                nanosleep( &ts, NULL );          // wait a little
                 plflush();                      // force an update of the tk driver
                 plpoin( 1, x + i, y + i, 9 );   // erase point
             }
@@ -286,7 +292,7 @@ plot1( int do_test )
         }
 #else
         printf( "The -xor command line option can only be exercised if your "
-            "system\nhas usleep(), which does not seem to happen.\n" );
+            "system\nhas nanosleep(), which does not seem to happen.\n" );
 #endif
     }
 }

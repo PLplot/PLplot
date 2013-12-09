@@ -93,8 +93,8 @@
 // Define to 1 if you have the <unistd.h> header file.
 #cmakedefine PL_HAVE_UNISTD_H 1
 
-// Define if usleep is available
-#cmakedefine PL_HAVE_USLEEP
+// Define if nanosleep is available
+#cmakedefine PL_HAVE_NANOSLEEP
 
 // Define if you want PLplot's float type to be double
 #cmakedefine PL_DOUBLE
