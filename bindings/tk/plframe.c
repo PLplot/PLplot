@@ -382,40 +382,40 @@ plFrameCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    plFramePtr                 = (PlFrame *) ckalloc( sizeof ( PlFrame ) );
+    plFramePtr = (PlFrame *) ckalloc( sizeof ( PlFrame ) );
 
     // Initialize in the same order as the members of the struct just
     // to keep track of what is initialized and what not.
 
-    plFramePtr->tkwin          = new;
-    plFramePtr->display        = Tk_Display( new );
-    plFramePtr->interp         = interp;
+    plFramePtr->tkwin   = new;
+    plFramePtr->display = Tk_Display( new );
+    plFramePtr->interp  = interp;
     //plFramePtr->widgetCMD    = <initialized below for HAVE_ITCL case>
-    plFramePtr->border         = NULL;
+    plFramePtr->border = NULL;
     //plFramePtr->borderWidth  = <uninitialized>
     //plFramePtr->relief       = <uninitialized>
-    plFramePtr->width          = Tk_Width( plFramePtr->tkwin );
-    plFramePtr->height         = Tk_Height( plFramePtr->tkwin );
-    plFramePtr->cursor         = None;
-    plFramePtr->flags          = 0;
-    plFramePtr->tkwin_initted  = 0;
+    plFramePtr->width         = Tk_Width( plFramePtr->tkwin );
+    plFramePtr->height        = Tk_Height( plFramePtr->tkwin );
+    plFramePtr->cursor        = None;
+    plFramePtr->flags         = 0;
+    plFramePtr->tkwin_initted = 0;
     // Associate new PLplot stream with this widget
     plmkstrm( &plFramePtr->ipls );
     plgpls( &plFramePtr->pls );
-    plFramePtr->ipls_save      = 0;
-    plFramePtr->plr = (PLRDev *) ckalloc( sizeof ( PLRDev ) );
-    plFramePtr->bgColor        = NULL;
-    plFramePtr->plpr_cmd       = NULL;
-    plFramePtr->pldis.x        = 0;
-    plFramePtr->pldis.y        = 0;
-    plFramePtr->pldis.width    = 0;
-    plFramePtr->pldis.height   = 0;
-    plFramePtr->prevWidth      = 0;
-    plFramePtr->prevHeight     = 0;
-    plFramePtr->SaveFnam       = NULL;
+    plFramePtr->ipls_save    = 0;
+    plFramePtr->plr          = (PLRDev *) ckalloc( sizeof ( PLRDev ) );
+    plFramePtr->bgColor      = NULL;
+    plFramePtr->plpr_cmd     = NULL;
+    plFramePtr->pldis.x      = 0;
+    plFramePtr->pldis.y      = 0;
+    plFramePtr->pldis.width  = 0;
+    plFramePtr->pldis.height = 0;
+    plFramePtr->prevWidth    = 0;
+    plFramePtr->prevHeight   = 0;
+    plFramePtr->SaveFnam     = NULL;
     // plFramePtr->devDesc     = <uninitialized, to be malloced?>;
     // plFramePtr->devName     = <uninitialized, to be malloced?>;
-    plFramePtr->xorGC          = NULL;
+    plFramePtr->xorGC = NULL;
     // plFram Ptr->pts         = <uninitialized array>;
     plFramePtr->continue_draw  = 0;
     plFramePtr->xhair_cursor   = None;
@@ -431,15 +431,15 @@ plFrameCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     plFramePtr->drawing_xhairs = 0;
     // plFram Ptr->xhair_x     = <uninitialized array>;
     // plFram Ptr->xhair_y     = <uninitialized array>;
-    plFramePtr->rband          = 0;
-    plFramePtr->drawing_rband  = 0;
+    plFramePtr->rband         = 0;
+    plFramePtr->drawing_rband = 0;
     // plFram Ptr->rband_pt    = <uninitialized array>;
 
-    plr             = plFramePtr->plr;
-    plr->pdfs       = NULL;
-    plr->at_bop     = 0;
-    plr->at_eop     = 0;
-    plr->iodev      = (PLiodev *) ckalloc( sizeof ( PLiodev ) );
+    plr         = plFramePtr->plr;
+    plr->pdfs   = NULL;
+    plr->at_bop = 0;
+    plr->at_eop = 0;
+    plr->iodev  = (PLiodev *) ckalloc( sizeof ( PLiodev ) );
     plr_start( plr );
 
 // Set up stuff for rubber-band drawing

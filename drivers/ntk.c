@@ -125,7 +125,7 @@ create_canvas( PLStream *pls )
     int columnbreak;
 
     ccanv++;
-    columnbreak = (ccanv%30 == 0);
+    columnbreak = ( ccanv % 30 == 0 );
 
     // create new canvas
     sprintf( cmd, "set ccanv %d; canvas $plf.f2.c$ccanv -width $xmax -height $ymax -background #%02x%02x%02x -xscrollcommand \"$hs set\" -yscrollcommand \"$vs set\" -scrollregion \"0 0 $xmax $ymax\"", ccanv, pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b );
@@ -484,8 +484,8 @@ getcursor( PLStream * PL_UNUSED( pls ), PLGraphicsIn *ptr )
 void
 plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
 {
-    PLINT  i, j;
-    short                *xa, *ya;
+    PLINT i, j;
+    short *xa, *ya;
     //Pixmap bitmap;
     static const unsigned char bit_pat[] = {
         0x24, 0x01, 0x92, 0x00, 0x49, 0x00, 0x24, 0x00, 0x12, 0x00, 0x09, 0x00,
@@ -496,8 +496,8 @@ plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_DASH:
-        xa = (short *) malloc( sizeof ( short ) * ( size_t ) pls->dev_npts );
-        ya = (short *) malloc( sizeof ( short ) * ( size_t ) pls->dev_npts );
+        xa = (short *) malloc( sizeof ( short ) * (size_t) pls->dev_npts );
+        ya = (short *) malloc( sizeof ( short ) * (size_t) pls->dev_npts );
         for ( i = 0; i < pls->dev_npts; i++ )
         {
             xa[i] = pls->dev_x[i];

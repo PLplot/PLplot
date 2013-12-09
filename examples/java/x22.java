@@ -149,10 +149,10 @@ class x22 {
 //
     void constriction2( )
     {
-        int   i, j;
-        double dx, dy, x, y;
-        double xmin, xmax, ymin, ymax;
-        double Q, b, dbdx;
+        int       i, j;
+        double    dx, dy, x, y;
+        double    xmin, xmax, ymin, ymax;
+        double    Q, b, dbdx;
         double[] clev = new double[nc];
         Transform transform = new Transform();
 
@@ -172,12 +172,12 @@ class x22 {
             x = ( i - nx / 2 + 0.5 ) * dx;
             for ( j = 0; j < ny; j++ )
             {
-                y = ( j - ny / 2 + 0.5 ) * dy;
+                y        = ( j - ny / 2 + 0.5 ) * dy;
                 xg[i][j] = x;
                 yg[i][j] = y;
-                b       = ymax / 4.0 * ( 3 - Math.cos( Math.PI * x / xmax ) );
-                u[i][j] = Q * ymax / b;
-                v[i][j] = 0.0;
+                b        = ymax / 4.0 * ( 3 - Math.cos( Math.PI * x / xmax ) );
+                u[i][j]  = Q * ymax / b;
+                v[i][j]  = 0.0;
             }
         }
 
@@ -189,7 +189,7 @@ class x22 {
         pls.env( xmin, xmax, ymin, ymax, 0, 0 );
         pls.lab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
         pls.col0( 2 );
-        pls.shades( u, xmin + dx / 2, xmax - dx / 2, 
+        pls.shades( u, xmin + dx / 2, xmax - dx / 2,
             ymin + dy / 2, ymax - dy / 2,
             clev, 0, 1, 1.0, 0, xg, yg );
         pls.vect( u, v, -1.0, xg, yg );
@@ -199,7 +199,7 @@ class x22 {
         pls.col0( 1 );
 
         pls.stransform( null, null );
-}
+    }
 
     // Vector plot of the gradient of a shielded potential (see example 9)
     void potential()
@@ -338,9 +338,9 @@ class x22 {
 
         pls.init();
 
-        nx = 20;
-        ny = 20;
-        nc = 11;
+        nx   = 20;
+        ny   = 20;
+        nc   = 11;
         nseg = 20;
 
         // Allocate arrays
@@ -366,7 +366,7 @@ class x22 {
 
         constriction2();
 
-        pls.svect(null,null,false);
+        pls.svect( null, null, false );
 
         potential();
 

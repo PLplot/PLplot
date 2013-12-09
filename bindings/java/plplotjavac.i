@@ -741,7 +741,6 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 {
     if ( $1 != NULL )
         free( $1 );
-
 }
 %typemap( jni ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTArray
 %typemap( jtype ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTbracket
@@ -912,7 +911,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     }
     else
     {
-        $1 = NULL;
+        $1   = NULL;
         Alen = 0;
     }
 }
@@ -1526,7 +1525,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 %{
     jobject ctClass    = 0;
     jobject ctClassRef = 0;
-    
+
     void ct_java( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data );
 
     // C coordinate transform callback function which calls the java

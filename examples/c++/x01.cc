@@ -279,9 +279,9 @@ void x01::plot1( int do_test )
     if ( do_test && test_xor )
     {
 #ifdef PL_HAVE_NANOLEEP
-        bool st;
+        bool            st;
         struct timespec ts;
-        ts.tv_sec = 0;
+        ts.tv_sec  = 0;
         ts.tv_nsec = 50000000;
         pls->xormod( true, &st ); // enter xor mode
         if ( st )

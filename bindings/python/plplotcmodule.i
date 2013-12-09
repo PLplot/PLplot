@@ -330,20 +330,20 @@ typedef PLINT          PLBOOL;
 // trailing count and check consistency with previous
 %typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n ) ( PyArrayObject * tmp = NULL )
 {
-    if ( $input != Py_None ) 
+    if ( $input != Py_None )
     {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
-    if ( tmp == NULL )
-        return NULL;
-    if ( PyArray_DIMS( tmp )[0] != Alen )
-    {
-        PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
-        return NULL;
+        tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
+        if ( tmp == NULL )
+            return NULL;
+        if ( PyArray_DIMS( tmp )[0] != Alen )
+        {
+            PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
+            return NULL;
+        }
+        $1 = (PLFLT *) PyArray_DATA( tmp );
+        $2 = PyArray_DIMS( tmp )[0];
     }
-    $1 = (PLFLT *) PyArray_DATA( tmp );
-    $2 = PyArray_DIMS( tmp )[0];
-    }
-    else 
+    else
     {
         $1 = NULL;
         $2 = 0;
@@ -374,15 +374,15 @@ typedef PLINT          PLBOOL;
 {
     if ( $input != Py_None )
     {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
-    if ( tmp == NULL )
-        return NULL;
-    if ( PyArray_DIMS( tmp )[0] != Alen )
-    {
-        PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
-        return NULL;
-    }
-    $1 = (PLFLT *) PyArray_DATA( tmp );
+        tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
+        if ( tmp == NULL )
+            return NULL;
+        if ( PyArray_DIMS( tmp )[0] != Alen )
+        {
+            PyErr_SetString( PyExc_ValueError, "Vectors must be same length." );
+            return NULL;
+        }
+        $1 = (PLFLT *) PyArray_DATA( tmp );
     }
     else
     {
@@ -505,16 +505,16 @@ typedef PLINT          PLBOOL;
 {
     if ( $input != Py_None )
     {
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
-    if ( tmp == NULL )
-        return NULL;
-    Alen = PyArray_DIMS( tmp )[0];
-    $1   = (PLFLT *) PyArray_DATA( tmp );
+        tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 1, 1 );
+        if ( tmp == NULL )
+            return NULL;
+        Alen = PyArray_DIMS( tmp )[0];
+        $1   = (PLFLT *) PyArray_DATA( tmp );
     }
-    else 
+    else
     {
-      $1 = NULL;
-      Alen = 0;
+        $1   = NULL;
+        Alen = 0;
     }
 }
 %typemap( freearg ) const PLFLT * ArrayNull { Py_CLEAR( tmp$argnum );}

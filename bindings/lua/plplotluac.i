@@ -183,13 +183,13 @@ typedef PLINT          PLBOOL;
     else
     {
         $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
-	if ( !$1 )
-	    SWIG_fail;
-	if ( temp != Alen )
-	{
-	    lua_pushfstring( L, "Tables must be of same length." );
-	    SWIG_fail;
-	}
+        if ( !$1 )
+            SWIG_fail;
+        if ( temp != Alen )
+        {
+            lua_pushfstring( L, "Tables must be of same length." );
+            SWIG_fail;
+        }
     }
 }
 %typemap( freearg ) const PLINT * ArrayCkNull { LUA_FREE_ARRAY( $1 ); }
@@ -218,13 +218,13 @@ typedef PLINT          PLBOOL;
     else
     {
         $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
-	if ( !$1 )
+        if ( !$1 )
             SWIG_fail;
-	if ( temp < Alen - 1 )
-	{
-	    lua_pushfstring( L, "Tables must be at least length of others minus 1." );
-	    SWIG_fail;
-	}
+        if ( temp < Alen - 1 )
+        {
+            lua_pushfstring( L, "Tables must be at least length of others minus 1." );
+            SWIG_fail;
+        }
     }
 }
 %typemap( freearg ) const PLINT * ArrayCkMinus1Null { LUA_FREE_ARRAY( $1 ); }
@@ -320,13 +320,13 @@ typedef PLINT          PLBOOL;
     else
     {
         $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
-	if ( !$1 )
-	    SWIG_fail;
-	if ( temp != Alen )
-	{
-	    lua_pushfstring( L, "Tables must be of same length." );
-	    SWIG_fail;
-	}
+        if ( !$1 )
+            SWIG_fail;
+        if ( temp != Alen )
+        {
+            lua_pushfstring( L, "Tables must be of same length." );
+            SWIG_fail;
+        }
     }
     $2 = temp;
 }
@@ -334,7 +334,10 @@ typedef PLINT          PLBOOL;
 {
     LUA_FREE_ARRAY( $1 );
 }
-%typemap( default ) ( const PLFLT * ArrayCkNull, PLINT n ) { $1 = NULL; $2 = 0; }
+%typemap( default ) ( const PLFLT * ArrayCkNull, PLINT n )
+{
+    $1 = NULL; $2 = 0;
+}
 
 
 // no count, but check consistency with previous
@@ -362,13 +365,13 @@ typedef PLINT          PLBOOL;
     else
     {
         $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
-	if ( !$1 )
-	    SWIG_fail;
-	if ( temp != Alen )
-	{
-	    lua_pushfstring( L, "Tables must be of same length." );
-	    SWIG_fail;
-	}
+        if ( !$1 )
+            SWIG_fail;
+        if ( temp != Alen )
+        {
+            lua_pushfstring( L, "Tables must be of same length." );
+            SWIG_fail;
+        }
     }
 }
 %typemap( freearg ) const PLFLT * ArrayCkNull { LUA_FREE_ARRAY( $1 ); }
@@ -393,15 +396,15 @@ typedef PLINT          PLBOOL;
     int temp;
     if ( lua_isnil( L, $input ) )
     {
-        $1 = NULL;
-	Alen = 0;
+        $1   = NULL;
+        Alen = 0;
     }
     else
     {
         $1 = (PLFLT *) LUA_get_double_num_array_var( L, $input, &temp );
-	if ( !$1 )
-	    SWIG_fail;
-	Alen = temp;
+        if ( !$1 )
+            SWIG_fail;
+        Alen = temp;
     }
 }
 %typemap( freearg ) ( const PLFLT * Array )
@@ -864,7 +867,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     typedef PLFLT ( *f2eval_func )( PLINT, PLINT, PLPointer );
     typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
-// Function prototypes 
+// Function prototypes
     void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * pltr_data );
     void myct( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void * pltr_data );
     void mylabel( PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data );
@@ -961,7 +964,6 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
     void mylabel( PLINT axis, PLFLT value, char* label, PLINT length, PLPointer PL_UNUSED( data ) )
     {
-
         // check Lua state
         if ( myL == NULL )
         {
@@ -971,8 +973,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
         // push functions and arguments
         lua_getglobal( myL, mylabel_funcstr ); // function to be called
-        lua_pushnumber( myL, axis );         // push 1st argument
-        lua_pushnumber( myL, value );        // push 1st argument
+        lua_pushnumber( myL, axis );           // push 1st argument
+        lua_pushnumber( myL, value );          // push 1st argument
 
         // do the call (2 arguments, 1 result)
         if ( lua_pcall( myL, 2, 1, 0 ) != 0 )
@@ -1423,7 +1425,10 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     LUA_FREE_ARRAY( $2 );
 }
 
-%typemap( default ) ( PLBOOL deffalse ) { $1 = 0; }
+%typemap( default ) ( PLBOOL deffalse )
+{
+    $1 = 0;
+}
 
 
 //--------------------------------------------------------------------------

@@ -274,9 +274,9 @@ plot1( int do_test )
     if ( do_test && test_xor )
     {
 #ifdef PL_HAVE_NANOSLEEP
-        PLINT st;
+        PLINT           st;
         struct timespec ts;
-        ts.tv_sec = 0;
+        ts.tv_sec  = 0;
         ts.tv_nsec = 50000000;
         plxormod( 1, &st ); // enter xor mode
         if ( st )
@@ -284,7 +284,7 @@ plot1( int do_test )
             for ( i = 0; i < 60; i++ )
             {
                 plpoin( 1, x + i, y + i, 9 );   // draw a point
-                nanosleep( &ts, NULL );          // wait a little
+                nanosleep( &ts, NULL );         // wait a little
                 plflush();                      // force an update of the tk driver
                 plpoin( 1, x + i, y + i, 9 );   // erase point
             }

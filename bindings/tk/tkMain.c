@@ -583,7 +583,7 @@ prompt:
 
 static void
 Prompt( interploc, partial )
-Tcl_Interp * interploc;                  // Interpreter to use for prompting.
+Tcl_Interp * interploc;               // Interpreter to use for prompting.
 int partial;                          // Non-zero means there already
                                       // exists a partial command, so use
                                       // the secondary prompt.

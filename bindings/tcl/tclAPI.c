@@ -1237,20 +1237,20 @@ plcontCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
 static int
 plsvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
-                 int argc, const char *argv[] )
+            int argc, const char *argv[] )
 {
     tclMatrix *matx, *maty;
-    PLINT npts;
-    PLBOOL fill;
+    PLINT     npts;
+    PLBOOL    fill;
 
     if ( argc == 1
-         || (strcmp( argv[1], "NULL" ) == 0 ) && ( strcmp( argv[2], "NULL" ) == 0 ) )
+         || ( strcmp( argv[1], "NULL" ) == 0 ) && ( strcmp( argv[2], "NULL" ) == 0 ) )
     {
         // The user has requested to clear the transform setting.
         plsvect( NULL, NULL, 0, 0 );
         return TCL_OK;
     }
-    else if (argc != 4)
+    else if ( argc != 4 )
     {
         Tcl_AppendResult( interp, "wrong # args: see documentation for ",
             argv[0], (char *) NULL );
@@ -1284,7 +1284,7 @@ plsvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    fill = (PLBOOL) atoi(argv[3]);
+    fill = (PLBOOL) atoi( argv[3] );
 
     plsvect( matx->fdata, maty->fdata, npts, fill );
 

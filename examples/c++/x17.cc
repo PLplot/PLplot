@@ -60,12 +60,12 @@ char  x17:: errmsg[160] = "";
 
 x17::x17( int argc, const char ** argv )
 {
-    PLINT      id1, n, nsteps = 1000;
-    bool       autoy, acc;
-    PLFLT      y1, y2, y3, y4, ymin, ymax, xlab, ylab;
-    PLFLT      t, tmin, tmax, tjump, dt, noise;
-    PLINT      colbox, collab, colline[4], styline[4];
-    const char *legline[4];
+    PLINT           id1, n, nsteps = 1000;
+    bool            autoy, acc;
+    PLFLT           y1, y2, y3, y4, ymin, ymax, xlab, ylab;
+    PLFLT           t, tmin, tmax, tjump, dt, noise;
+    PLINT           colbox, collab, colline[4], styline[4];
+    const char      *legline[4];
 #ifdef PL_HAVE_NANOSLEEP
     struct timespec ts;
 #endif
@@ -156,7 +156,7 @@ x17::x17( int argc, const char ** argv )
     dt = 0.1;
 
 #ifdef PL_HAVE_NANOSLEEP
-    ts.tv_sec = 0;
+    ts.tv_sec  = 0;
     ts.tv_nsec = 10000000;
 #endif
     for ( n = 0; n < nsteps; n++ )

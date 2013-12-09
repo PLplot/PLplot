@@ -411,14 +411,14 @@ typedef PLINT          PLBOOL;
     if ( !$input.is_empty() )
     {
         if ( _dim( $input, 0 ) != Alen )
-	{
-	    error( "argument vectors must be same length" ); SWIG_fail;
-	}
-	temp = $input.matrix_value();
-	$1   = &temp( 0, 0 );
-	$2   = (PLINT) ( _dim( $input, 0 ) );
+        {
+            error( "argument vectors must be same length" ); SWIG_fail;
+        }
+        temp = $input.matrix_value();
+        $1   = &temp( 0, 0 );
+        $2   = (PLINT) ( _dim( $input, 0 ) );
     }
-    else 
+    else
     {
         $1 = NULL;
         $2 = 0;
@@ -509,13 +509,13 @@ typedef PLINT          PLBOOL;
     if ( !$input.is_empty() )
     {
         Alen = (PLINT) ( _dim( $input, 0 ) );
-	temp = $input.matrix_value();
-	$1   = &temp( 0, 0 );
+        temp = $input.matrix_value();
+        $1   = &temp( 0, 0 );
     }
     else
     {
-	$1 = NULL;
-	Alen = 0;
+        $1   = NULL;
+        Alen = 0;
     }
 }
 %typemap( freearg ) ( const PLFLT * ArrayNull )

@@ -35,8 +35,8 @@ extern ( C ) {
 void
 transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 {
-    PLFLT *xmax = cast(PLFLT *) data;  
-    
+    PLFLT *xmax = cast(PLFLT *) data;
+
     *xt = x;
     *yt = y / 4.0 * ( 3 - cos( PI * x / *xmax ) );
 }
@@ -113,7 +113,7 @@ class plot {
     {
         const int nx = 20;
         const int ny = 20;
-        string title;
+        string    title;
 
         PLFLT     dx = 1.0;
         PLFLT     dy = 1.0;
@@ -164,7 +164,7 @@ class plot {
         }
 
         plenv( xmin, xmax, ymin, ymax, 0, 0 );
-        title = format("#frPLplot Example 22 - constriction (arrow style %d)", astyle);
+        title = format( "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
         pllab( "(x)", "(y)", title );
         plcol0( 2 );
         plvect( u, v, -1.0, cgrid2 );
@@ -173,15 +173,15 @@ class plot {
 
 
     //
-    // Vector plot of flow through a constricted pipe 
+    // Vector plot of flow through a constricted pipe
     // with a coordinate transform
     //
     void
     constriction2()
     {
-        const int nx = 20;
-        const int ny = 20;
-        const int nc = 11;
+        const int nx   = 20;
+        const int ny   = 20;
+        const int nc   = 11;
         const int nseg = 20;
 
         PLFLT []  clev = new PLFLT[nc];
@@ -196,7 +196,7 @@ class plot {
 
         plstransform( &transform, cast(PLPointer) &xmax );
 
-        PLcGrid2  cgrid2;
+        PLcGrid2 cgrid2;
         cgrid2.xg = new PLFLT[][nx];
         for ( int i = 0; i < nx; i++ )
             cgrid2.xg[i] = new PLFLT[ny];
@@ -221,7 +221,7 @@ class plot {
                 y = ( j - ny / 2 + 0.5 ) * dy;
                 cgrid2.xg[i][j] = x;
                 cgrid2.yg[i][j] = y;
-                b = ymax / 4.0 * ( 3 - cos( PI * x / xmax ) );
+                b       = ymax / 4.0 * ( 3 - cos( PI * x / xmax ) );
                 u[i][j] = Q * ymax / b;
                 v[i][j] = 0.0;
             }
@@ -235,7 +235,7 @@ class plot {
         plenv( xmin, xmax, ymin, ymax, 0, 0 );
         pllab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
         plcol0( 2 );
-        plshades( u, null, xmin + dx / 2, xmax - dx / 2, 
+        plshades( u, null, xmin + dx / 2, xmax - dx / 2,
             ymin + dy / 2, ymax - dy / 2,
             clev, 0.0, 1, 1.0, 0 );
         plvect( u, v, -1.0, cgrid2 );
@@ -245,7 +245,6 @@ class plot {
         plcol0( 1 );
 
         plstransform( null, null );
-
     }
 
     //--------------------------------------------------------------------------
@@ -417,7 +416,7 @@ int main( char[][] args )
 
     myPlot.constriction2();
 
-    plsvect( null, null, 0);
+    plsvect( null, null, 0 );
 
     myPlot.potential();
 

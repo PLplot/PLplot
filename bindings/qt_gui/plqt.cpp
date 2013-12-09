@@ -1123,7 +1123,7 @@ void QtPLWidget::mouseReleaseEvent( QMouseEvent * PL_UNUSED( event ) )
     //mouseEvent( event );
 }
 
-void QtPLWidget::mouseMoveEvent( QMouseEvent * PL_UNUSED ( event ) )
+void QtPLWidget::mouseMoveEvent( QMouseEvent * PL_UNUSED( event ) )
 {
     //mouseEvent( event );
 }

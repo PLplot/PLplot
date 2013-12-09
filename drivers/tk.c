@@ -1518,9 +1518,9 @@ set_windowname( PLStream *pls )
 static void
 link_init( PLStream *pls )
 {
-    TkDev   *dev     = (TkDev *) pls->dev;
-    PLiodev *iodev   = (PLiodev *) dev->iodev;
-    size_t  bufmax   = (size_t) ( pls->bufmax * 1.2 );
+    TkDev      *dev     = (TkDev *) pls->dev;
+    PLiodev    *iodev   = (PLiodev *) dev->iodev;
+    size_t     bufmax   = (size_t) ( pls->bufmax * 1.2 );
     const char *dirname = NULL;
 
     dbug_enter( "link_init" );
