@@ -21,6 +21,11 @@
 #include <dp.h>
 #endif
 
+// Define the type pid_t - a dummy for the moment - for MS Windows
+#if defined(__WIN32__)
+typedef unsigned int pid_t;
+#endif
+
 // One of these holds the TK driver state information
 
 typedef struct
