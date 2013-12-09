@@ -112,10 +112,13 @@ module plplotp
         module procedure plshades_multiple_1
         module procedure plshades_multiple_1r
         module procedure plshades_multiple_2
+        module procedure plshades_multiple_2r
         module procedure plshades_multiple_tr
+        module procedure plshades_multiple_trr
     end interface
-    private :: plshades_multiple_0, plshades_multiple_1, &
-               plshades_multiple_2, plshades_multiple_tr
+    private :: plshades_multiple_0, plshades_multiple_1, plshades_multiple_1r, &
+               plshades_multiple_2, plshades_multiple_2r, &
+               plshades_multiple_tr, plshades_multiple_trr
 
     interface plimagefr
         module procedure plimagefr_0

@@ -603,6 +603,40 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
         xg2(:,:), yg2(:,:)
 
+      integer rect
+
+!	call plstrf2c(dnam, string1)
+
+      rect = 0
+
+      s1 = transfer( string1, s1 )
+      call plshades27(z, size(z,1), size(z,2), s1, &
+        xmin, xmax, ymin, ymax, &
+        clevel, size(clevel), fill_width, &
+        cont_color, cont_width, xg2, yg2, size(z,1), rect)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plshades_multiple_2r(z, defined, &
+        xmin, xmax, ymin, ymax, &
+        clevel, fill_width, &
+        cont_color, cont_width, rectangular, xg2, yg2)
+
+      implicit none
+      character defined*(*)
+      integer cont_color
+      logical rectangular
+      real(kind=plflt)fill_width, cont_width
+      real(kind=plflt) clevel(:)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
+        xg2(:,:), yg2(:,:)
+
+      integer rect
+
+      rect = merge( 1, 0, rectangular )
+
 !	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
@@ -628,13 +662,47 @@
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
 
+      integer rect
+
 !	call plstrf2c(dnam, string1)
+
+      rect = 0
 
       s1 = transfer( string1, s1 )
       call plshades7(z, size(z,1), size(z,2), s1, &
         xmin, xmax, ymin, ymax, &
         clevel, size(clevel), fill_width, &
-        cont_color, cont_width, tr, size(z,1))
+        cont_color, cont_width, tr, size(z,1), rect)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plshades_multiple_trr(z, defined, &
+        xmin, xmax, ymin, ymax, &
+        clevel, fill_width, &
+        cont_color, cont_width, rectangular, tr)
+
+      implicit none
+      character defined*(*)
+      integer cont_color
+      logical rectangular
+      real(kind=plflt) fill_width, cont_width
+      real(kind=plflt) clevel(:)
+      real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
+      real(kind=plflt) tr(6)
+
+      integer rect
+
+!	call plstrf2c(dnam, string1)
+
+      rect = merge(1, 0, rectangular)
+
+      s1 = transfer( string1, s1 )
+      call plshades7(z, size(z,1), size(z,2), s1, &
+        xmin, xmax, ymin, ymax, &
+        clevel, size(clevel), fill_width, &
+        cont_color, cont_width, tr, size(z,1), rect)
 
       end subroutine
 
