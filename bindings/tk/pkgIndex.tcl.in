@@ -33,9 +33,13 @@ proc load_pkg_Pltk {dir} {
     set pllibrary $dir
 
     if {$tcl_platform(platform) == "unix"} {
-	set stem tk
+	if {[string match "*CYGWIN*" $::tcl_platform(os)]} {
+	    set stem cygplplottcltk@LIB_TAG@-10
+	} else {
+	    set stem tk
+	}
 	set thisDir [pwd]
-	# Find absolute path of $dir 
+	# Find absolute path of $dir
 	cd $dir
 	set pkgIndexDir [pwd]
 	cd $thisDir
@@ -43,7 +47,7 @@ proc load_pkg_Pltk {dir} {
 	set bLen [string length $buildDir]
 	# If pkgIndexDir is in the build tree...
 	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
-		set searchdirs "../../drivers"} else {
+		set searchdirs [list "../../drivers" "../../dll"]} else {
 		set searchdirs [list "@DRV_HARDDIR@"]}
 	#puts $searchdirs
 	set suf [info sharedlibextension]
