@@ -271,7 +271,7 @@ pl_create_tempfile( char **fname )
 // The function returns the file name of the fifo.
 //
 char *
-pl_create_tempfifo( char **p_fifoname, char **p_dirname )
+pl_create_tempfifo( const char **p_fifoname, const char **p_dirname )
 {
 #if !defined PL_HAVE_MKDTEMP || !defined PL_HAVE_MKFIFO
     plwarn( "Creating fifos not supported on this platform" );

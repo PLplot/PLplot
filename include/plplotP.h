@@ -1229,7 +1229,7 @@ pl_create_tempfile( char **fname );
 
 // Create a temporary fifo securely
 PLDLLIMPEXP char *
-pl_create_tempfifo( char **p_fifoname, char **p_dirname );
+pl_create_tempfifo( const char **p_fifoname, const char **p_dirname );
 
 #ifdef __cplusplus
 }

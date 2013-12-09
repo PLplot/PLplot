@@ -1521,7 +1521,7 @@ link_init( PLStream *pls )
     TkDev   *dev     = (TkDev *) pls->dev;
     PLiodev *iodev   = (PLiodev *) dev->iodev;
     size_t  bufmax   = (size_t) ( pls->bufmax * 1.2 );
-    char    *dirname = NULL;
+    const char *dirname = NULL;
 
     dbug_enter( "link_init" );
 
@@ -1532,7 +1532,7 @@ link_init( PLStream *pls )
         // This uses the pl_create_tempfifo function to create
         // the fifo in a safe manner by first creating a private
         // temporary directory.
-        iodev->fileName = pl_create_tempfifo( (char **) &iodev->fileName, &dirname );
+        iodev->fileName = pl_create_tempfifo( (const char **) &iodev->fileName, &dirname );
         if ( dirname == NULL || iodev->fileName == NULL )
             abort_session( pls, "mkfifo error" );
 
