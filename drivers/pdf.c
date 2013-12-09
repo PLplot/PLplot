@@ -552,7 +552,7 @@ void PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawTex
 //--------------------------------------------------------------------------
 void PSSetFont( pdfdev* dev, PLUNICODE fci )
 {
-    char *font;
+    const char *font;
 
     // fci = 0 is a special value indicating the Type 1 Symbol font
     // is desired.  This value cannot be confused with a normal FCI value
