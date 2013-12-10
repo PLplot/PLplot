@@ -31,6 +31,7 @@ using namespace std;
 class x31 {
 public:
     x31( int, const char** );
+    int status;
 
 private:
     plstream *pls;
@@ -63,7 +64,6 @@ x31::x31( int argc, const char *argv[] )
     PLINT g1[] = { 255, 0 };
     PLINT b1[] = { 0, 0 };
     PLFLT a1[] = { 1.0, 1.0 };
-    int   status;
     char  fnam[256];
 
     pls = new plstream();
@@ -289,12 +289,15 @@ x31::x31( int argc, const char *argv[] )
 
     delete pls;
 
-    exit( status );
 }
 
 int main( int argc, const char **argv )
 {
+    int status;
+
     x31 *x = new x31( argc, argv );
+    status = x->status;
 
     delete x;
+    return status;
 }

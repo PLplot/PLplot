@@ -405,7 +405,6 @@ x22::x22( int argc, const char ** argv )
     pls->Free2dGrid( v, nx, ny );
 
     delete pls;
-    exit( 0 );
 }
 
 int main( int argc, const char ** argv )

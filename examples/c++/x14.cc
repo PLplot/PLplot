@@ -435,6 +435,10 @@ void x14::plot5( plstream *pls )
     pls->col0( 1 );
     pls->lab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
     pls->flush();
+
+// Clean up
+    pls->Free2dGrid( z, xpts, ypts );
+    pls->Free2dGrid( w, xpts, ypts );
 }
 
 

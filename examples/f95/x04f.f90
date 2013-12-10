@@ -102,7 +102,10 @@ subroutine plot1(type)
     line_styles(1) = 1
     line_widths(1) = 1
 !   note from the above opt_array the first symbol (and box) indices
-!   do not have to be specified
+!   do not have to be specified, at least in C. For Fortran we need 
+!   to set the symbols to be something, since the string is always 
+!   copied as part of the bindings.
+    symbols(1) = ''
 
 !   Second legend entry.
     opt_array(2)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
