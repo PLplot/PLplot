@@ -37,12 +37,13 @@
 #include <stdarg.h>
 #include <math.h>
 #include <setjmp.h>
+#include <strings.h>
 
 #include "hpdf.h"
 
 // PLplot header files
-#define DEBUG
-#define NEED_PLDEBUG
+//#define DEBUG
+//#define NEED_PLDEBUG
 #include "plplotP.h"
 #include "drivers.h"
 #include "plunicode-type1.h"
@@ -103,7 +104,7 @@ static jmp_buf env;
 //--------------------------------------------------------------------------
 
 // General
-static short desired_offset( short, double );
+//static short desired_offset( short, double );
 static void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill );
 
 // String processing
@@ -119,6 +120,10 @@ void plD_bop_pdf( PLStream * );
 void plD_tidy_pdf( PLStream * );
 void plD_state_pdf( PLStream *, PLINT );
 void plD_esc_pdf( PLStream *, PLINT, void * );
+void error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data );
+void PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawText );
+void PSSetFont( pdfdev* dev, PLUNICODE fci );
+void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText );
 
 //--------------------------------------------------------------------------
 // error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no,
@@ -131,7 +136,7 @@ void __stdcall
 #else
 void
 #endif
-error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data )
+error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void * PL_UNUSED( user_data ) )
 {
     // invoke longjmp() when an error has occurred
     printf( "ERROR: error_no=%04X, detail_no=%d\n", (unsigned int) error_no, (int) detail_no );
@@ -361,7 +366,7 @@ void plD_polyline_pdf( PLStream *pls, short *xa, short *ya, PLINT npts )
 //
 // End of page
 //--------------------------------------------------------------------------
-void plD_eop_pdf( PLStream *pls )
+void plD_eop_pdf( PLStream * PL_UNUSED( pls ) )
 {
     // nothing to be done here
 }
@@ -387,7 +392,8 @@ void plD_tidy_pdf( PLStream *pls )
     {
         HPDF_BYTE   buf[4096]; // TODO: not good
         HPDF_UINT32 size = 4096;
-        HPDF_STATUS ret  = HPDF_ReadFromStream( dev->pdf, buf, &size );
+        // HPDF_STATUS ret  = HPDF_ReadFromStream( dev->pdf, buf, &size );
+        HPDF_ReadFromStream( dev->pdf, buf, &size );
 
         if ( size == 0 )
             break;
@@ -411,7 +417,7 @@ void plD_tidy_pdf( PLStream *pls )
 // Nothing is done here because these attributes are aquired from
 // PLStream for each element that is drawn.
 //--------------------------------------------------------------------------
-void plD_state_pdf( PLStream *pls, PLINT op )
+void plD_state_pdf( PLStream * PL_UNUSED( pls ), PLINT PL_UNUSED( op ) )
 {
     // Nothing to be done here.
 }
@@ -537,7 +543,7 @@ void PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawTex
 
     // determine text width and height
     dev->textWidth += HPDF_Page_TextWidth( dev->page, (char *) type1_string ); // TODO: this conversion must be wrong
-    th              = (HPDF_REAL) ( HPDF_Font_GetCapHeight( dev->m_font ) * dev->fontSize * dev->fontScale / 1000.0 );
+    th              = (HPDF_REAL) ( (HPDF_REAL) HPDF_Font_GetCapHeight( dev->m_font ) * dev->fontSize * dev->fontScale / 1000.0 );
     dev->textHeight = dev->textHeight > ( th + dev->yOffset ) ? dev->textHeight : ( th + dev->yOffset );
 
     // clear string
@@ -742,9 +748,9 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
                     // for superscripts should be
                     // 0.5*(base font size - superscript/subscript font size).
                     dup            = 0.5 * ( 1.0 - sscale );
-                    dev->fontScale = sscale;
+                    dev->fontScale = (HPDF_REAL) sscale;
                     PSSetFont( dev, fci );
-                    dev->yOffset = dev->fontSize * ( soffset * RISE_FACTOR + dup );
+                    dev->yOffset = (HPDF_REAL) (dev->fontSize * ( soffset * RISE_FACTOR + dup ));
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {
@@ -759,9 +765,9 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
                     // for subcripts should be
                     // 0.5*(base font size - superscript/subscript font size).
                     dup            = -0.5 * ( 1.0 - sscale );
-                    dev->fontScale = sscale;
+                    dev->fontScale = (HPDF_REAL) sscale;
                     PSSetFont( dev, fci );
-                    dev->yOffset = -dev->fontSize * ( soffset * RISE_FACTOR + dup );
+                    dev->yOffset = (HPDF_REAL) ( -dev->fontSize * ( soffset * RISE_FACTOR + dup ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
                 {                                 // draw string so far
