@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2010 Alan W. Irwin
+# Copyright (C) 2006-2013 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -96,12 +96,15 @@ if(SH_EXECUTABLE)
 
   set(test_output_files_LIST)
   set(examples_compare_DEPENDS)
-  add_test(examples_c
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
-    )
-  list(APPEND examples_compare_DEPENDS examples_c)
-  list_example_files(. ${TEST_DEVICE} c output_list)
-  list(APPEND test_output_files_LIST ${output_list})
+
+  if(PLD_${TEST_DEVICE})
+    add_test(examples_c
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
+      )
+    list(APPEND examples_compare_DEPENDS examples_c)
+    list_example_files(. ${TEST_DEVICE} c output_list)
+    list(APPEND test_output_files_LIST ${output_list})
+  endif(PLD_${TEST_DEVICE})
 
   if(ENABLE_cxx)
     configure_file(
@@ -110,12 +113,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_cxx.sh)
-    add_test(examples_cxx
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
-      )
-    list(APPEND examples_compare_DEPENDS examples_cxx)
-    list_example_files(. ${TEST_DEVICE} cxx output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_cxx
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
+	)
+      list(APPEND examples_compare_DEPENDS examples_cxx)
+      list_example_files(. ${TEST_DEVICE} cxx output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_cxx)
 
   if(ENABLE_f95)
@@ -125,12 +130,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_f95.sh)
-    add_test(examples_f95
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
-      )
-    list(APPEND examples_compare_DEPENDS examples_f95)
-    list_example_files(. ${TEST_DEVICE} f95 output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_f95
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
+	)
+      list(APPEND examples_compare_DEPENDS examples_f95)
+      list_example_files(. ${TEST_DEVICE} f95 output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_f95)
 
   if(ENABLE_java)
@@ -140,12 +147,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_java.sh)
-    add_test(examples_java
-      ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
-      )
-    list(APPEND examples_compare_DEPENDS examples_java)
-    list_example_files(. ${TEST_DEVICE} j output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_java
+	${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
+	)
+      list(APPEND examples_compare_DEPENDS examples_java)
+      list_example_files(. ${TEST_DEVICE} j output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_java)
 
   if(ENABLE_octave)
@@ -163,12 +172,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_octave.sh)
-    add_test(examples_octave
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
-      )
-    list(APPEND examples_compare_DEPENDS examples_octave)
-    list_example_files(. ${TEST_DEVICE} o output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_octave
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
+	)
+      list(APPEND examples_compare_DEPENDS examples_octave)
+      list_example_files(. ${TEST_DEVICE} o output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_octave)
 
   if(ENABLE_python)
@@ -178,12 +189,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_python.sh)
-    add_test(examples_python
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
-      )
-    list(APPEND examples_compare_DEPENDS examples_python)
-    list_example_files(. ${TEST_DEVICE} p output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_python
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
+	)
+      list(APPEND examples_compare_DEPENDS examples_python)
+      list_example_files(. ${TEST_DEVICE} p output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_python)
 
   if(ENABLE_tcl)
@@ -202,12 +215,14 @@ if(SH_EXECUTABLE)
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh
       @ONLY
       )
-    add_test(examples_tcl
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
-      )
-    list(APPEND examples_compare_DEPENDS examples_tcl)
-    list_example_files(. ${TEST_DEVICE} t output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_tcl
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
+	)
+      list(APPEND examples_compare_DEPENDS examples_tcl)
+      list_example_files(. ${TEST_DEVICE} t output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
     set(PLTCL_DIR ${BIN_DIR})
     # Transform drive-letter form to leading-slash form, see comment above.
     string(REGEX REPLACE "^(.):" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
@@ -225,12 +240,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_pdl.sh)
-    add_test(examples_pdl
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
-      )
-    list(APPEND examples_compare_DEPENDS examples_pdl)
-    list_example_files(. ${TEST_DEVICE} pdl output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_pdl
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
+	)
+      list(APPEND examples_compare_DEPENDS examples_pdl)
+      list_example_files(. ${TEST_DEVICE} pdl output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_pdl)
 
   if(ENABLE_ada)
@@ -240,12 +257,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_ada.sh)
-    add_test(examples_ada
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
-      )
-    list(APPEND examples_compare_DEPENDS examples_ada)
-    list_example_files(. ${TEST_DEVICE} a output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_ada
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
+	)
+      list(APPEND examples_compare_DEPENDS examples_ada)
+      list_example_files(. ${TEST_DEVICE} a output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_ada)
 
   if(ENABLE_ocaml)
@@ -255,12 +274,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_ocaml.sh)
-    add_test(examples_ocaml
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
-      )
-    list(APPEND examples_compare_DEPENDS examples_ocaml)
-    list_example_files(. ${TEST_DEVICE} ocaml output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_ocaml
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
+	)
+      list(APPEND examples_compare_DEPENDS examples_ocaml)
+      list_example_files(. ${TEST_DEVICE} ocaml output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_ocaml)
 
   if(ENABLE_lua)
@@ -270,12 +291,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_lua.sh)
-    add_test(examples_lua
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=lua"
-      )
-    list(APPEND examples_compare_DEPENDS examples_lua)
-    list_example_files(. ${TEST_DEVICE} lua output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_lua
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=lua"
+	)
+      list(APPEND examples_compare_DEPENDS examples_lua)
+      list_example_files(. ${TEST_DEVICE} lua output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_lua)
 
   if(ENABLE_d)
@@ -285,12 +308,14 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_d.sh)
-    add_test(examples_d
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=d"
-      )
-    list(APPEND examples_compare_DEPENDS examples_d)
-    list_example_files(. ${TEST_DEVICE} d output_list)
-    list(APPEND test_output_files_LIST ${output_list})
+    if(PLD_${TEST_DEVICE})
+      add_test(examples_d
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=d"
+	)
+      list(APPEND examples_compare_DEPENDS examples_d)
+      list_example_files(. ${TEST_DEVICE} d output_list)
+      list(APPEND test_output_files_LIST ${output_list})
+    endif(PLD_${TEST_DEVICE})
   endif(ENABLE_d)
 
   # Run C examples with different drivers
