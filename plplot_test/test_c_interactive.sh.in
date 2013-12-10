@@ -27,9 +27,9 @@
 lang="c"
 export index lang
 
-if [ "$device" = "xcairo" ] ; then
-    # Temporarily drop example 17 for xcairo because that driver is
-    # so horribly slow such interactive plots.
+if [ "$device" = "xcairo" -o "$device" = "qtwidget" ] ; then
+    # Temporarily drop example 17 for xcairo and qtwidget because those drivers are
+    # so horribly slow for such interactive plots.
     INDEX="01 04 08 14 16 24 30"
 else
     INDEX="01 04 08 14 16 17 24 30"
