@@ -1177,8 +1177,44 @@ package body PLplot is
         end if;
         plsvect(X_Vertices, Y_Vertices, X_Vertices'length, fill);
     end Set_Arrow_Style_For_Vector_Plots;
+
+    
+    -- Set the default style for the arrow used by plvect to plot vectors.
+    -- plsvect (for setting default)
+    procedure Set_Arrow_Style_For_Vector_Plots
+       (X_Vertices, Y_Vertices : PLPointer;
+        Fill_Arrow : Boolean) is
         
+        fill : PLBOOL;
         
+    begin
+        if Fill_Arrow then
+            fill := PLtrue;
+        else
+            fill := PLfalse;
+        end if;
+        PLplot_Thin.plsvectdefault(X_Vertices, Y_Vertices, 0, fill);
+    end Set_Arrow_Style_For_Vector_Plots;
+
+    
+    -- Simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- This is not part of the C API and is Ada-specific.
+    -- plsvect (alternate for setting default)
+    procedure plsvect is -- We'll keep the "traditional" named version here.
+    begin
+        plsvectdefault(System.Null_Address, System.Null_Address, 0, PLfalse);
+    end plsvect;
+    
+ 
+    -- Another simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- This is not part of the C API and is Ada-specific.
+    -- plsvect (alternate for setting default)
+    procedure Reset_Vector_Arrow_Style is
+    begin
+        plsvectdefault(System.Null_Address, System.Null_Address, 0, PLfalse);
+    end Reset_Vector_Arrow_Style;
+
+
     -- This functions similarly to plbox() except that the origin of the axes
     -- is placed at the user-specified point (x0, y0).
     -- plaxes

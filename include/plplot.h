@@ -1886,6 +1886,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
             PLINT opt, const PLFLT *clevel, PLINT nlevel,
             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT * indexymax );
 
+// Set arrow style for vector plots.
 PLDLLIMPEXP void
 c_plsvect( const PLFLT *arrowx, const PLFLT *arrowy, PLINT npts, PLBOOL fill );
 

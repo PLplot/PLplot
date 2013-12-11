@@ -1153,7 +1153,8 @@ package body PLplot_Traditional is
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer      : PLpointer) is
     begin
-        PLplot_Thin.plvect(Matrix_To_Pointers(u), Matrix_To_Pointers(v), u'Length(1), u'Length(2), Scale, Transformation_Procedure_Pointer, Transformation_Data_Pointer);
+        PLplot_Thin.plvect(Matrix_To_Pointers(u), Matrix_To_Pointers(v), u'Length(1), u'Length(2), 
+            Scale, Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plvect;
        
 
@@ -1172,6 +1173,39 @@ package body PLplot_Traditional is
         end if;
         PLplot_Thin.plsvect(X_Vertices, Y_Vertices, X_Vertices'length, fill);
     end plsvect;
+
+    
+    -- Set the default style for the arrow used by plvect to plot vectors.
+    procedure plsvect
+       (X_Vertices, Y_Vertices : PLPointer;
+        Fill_Arrow : Boolean) is
+        
+        fill : PLBOOL;
+        
+    begin
+        if Fill_Arrow then
+            fill := PLtrue;
+        else
+            fill := PLfalse;
+        end if;
+        PLplot_Thin.plsvectdefault(X_Vertices, Y_Vertices, 0, fill);
+    end plsvect;
+
+    
+    -- Simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- This is not part of the C API and is Ada-specific.
+    procedure plsvect is
+    begin
+        PLplot_Thin.plsvectdefault(System.Null_Address, System.Null_Address, 0, PLfalse);
+    end plsvect;
+    
+ 
+    -- Another simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- This is not part of the C API and is Ada-specific.
+    procedure Reset_Vector_Arrow_Style is
+    begin
+        PLplot_Thin.plsvectdefault(System.Null_Address, System.Null_Address, 0, PLfalse);
+    end Reset_Vector_Arrow_Style;
         
         
     -- This functions similarly to plbox() except that the origin of the axes

@@ -255,6 +255,16 @@ begin
     Set_Arrow_Style_For_Vector_Plots(arrow2_x, arrow2_y, True);
     constriction(2);
 
+    -- Reset arrow style to the default by passing two NULL arrays.
+    -- This line uses the awkward method of the C API to reset the default arrow style.
+    Set_Arrow_Style_For_Vector_Plots(System.Null_Address, System.Null_Address, False);
+    
+    -- This method of resetting the default arrow style is a little more Ada-friendly...
+    -- plsvect;
+    
+    -- ... as is this one which is identical but for name.
+    -- Reset_Vector_Arrow_Style;
+
     potential;
 
     End_PLplot;

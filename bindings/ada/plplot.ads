@@ -831,7 +831,24 @@ package PLplot is
     procedure Set_Arrow_Style_For_Vector_Plots
        (X_Vertices, Y_Vertices : Real_Vector;
         Fill_Arrow             : Boolean);
-    
+
+
+    -- Set the default style for the arrow used by plvect to plot vectors.
+    -- plsvect (for setting default)
+    procedure Set_Arrow_Style_For_Vector_Plots
+       (X_Vertices, Y_Vertices : PLPointer;
+        Fill_Arrow : Boolean);
+
+
+    -- Simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- plsvect (alternate for setting default)
+    procedure plsvect;
+
+
+    -- Another simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- plsvect (alternate for setting default)
+    procedure Reset_Vector_Arrow_Style;
+
 
     -- This functions similarly to plbox() except that the origin of the axes
     -- is placed at the user-specified point (x0, y0).

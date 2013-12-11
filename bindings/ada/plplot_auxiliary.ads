@@ -29,7 +29,7 @@ use
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
     
---    with Ada.Numerics.Long_Real_Arrays;
+    with Ada.Numerics.Long_Real_Arrays;
 
 package PLplot_Auxiliary is
 
@@ -39,8 +39,8 @@ package PLplot_Auxiliary is
 
     -- Declarations for Ada 95 and Ada 2005 when it is desired to _not_ invoke
     -- the numerical capability of Annex G.3.
-    type Real_Vector is array (Integer range <>) of Long_Float;
-    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
+--   type Real_Vector is array (Integer range <>) of Long_Float;
+--   type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
 
 
     -- Declarations when using Ada 2005 and it is desired to invoke the numerics
@@ -50,8 +50,8 @@ package PLplot_Auxiliary is
     -- Using Annex G.3 requires linking to BLAS and LAPACK libraries or the
     -- PLplot build process will fail when attempting to link the Ada examples
     -- e.g. x01a.adb.
---    subtype Real_Vector is Ada.Numerics.Long_Real_Arrays.Real_Vector;
---    subtype Real_Matrix is Ada.Numerics.Long_Real_Arrays.Real_Matrix;
+    subtype Real_Vector is Ada.Numerics.Long_Real_Arrays.Real_Vector;
+    subtype Real_Matrix is Ada.Numerics.Long_Real_Arrays.Real_Matrix;
 
     ----------------------------------------------------------------------------
     -- Implementation note: The easy ability to switch to Ada 2005 Annex G.3

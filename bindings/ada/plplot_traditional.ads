@@ -823,7 +823,23 @@ package PLplot_Traditional is
     procedure plsvect
        (X_Vertices, Y_Vertices : Real_Vector;
         Fill_Arrow             : Boolean);
-    
+
+
+    -- Set the default style for the arrow used by plvect to plot vectors.
+    procedure plsvect
+       (X_Vertices, Y_Vertices : PLPointer;
+        Fill_Arrow : Boolean);
+            
+            
+    -- Simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- This is not part of the C API and is Ada-specific.
+    procedure plsvect;
+
+
+    -- Another simple method to set the default style for the arrow used by plvect to plot vectors.
+    -- This is not part of the C API and is Ada-specific.
+    procedure Reset_Vector_Arrow_Style;
+
 
     -- This functions similarly to plbox() except that the origin of the axes
     -- is placed at the user-specified point (x0, y0).

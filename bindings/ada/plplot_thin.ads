@@ -532,9 +532,21 @@ package PLplot_Thin is
     pragma Import(C, plvect, "c_plvect");
 
 
+    -- Set arrow style for vector plots.
+
     procedure
     plsvect(arrowx : PL_Float_Array; arrowy : PL_Float_Array; npts : PLINT; fill : PLINT);
     pragma Import(C, plsvect, "c_plsvect");
+    
+    
+-- Ada hack to accomodate the C API that allows this call in C
+-- plsvect( NULL, NULL, 0, 0 );
+-- to reset the arrow style to a default value.
+   
+procedure
+plsvectdefault(arrowx : PLPointer; arrowy : PLPointer; npts : PLINT; fill : PLINT);
+pragma Import(C, plsvectdefault, "c_plsvect");
+
 
 
     -- This functions similarly to plbox() except that the origin of the axes 
