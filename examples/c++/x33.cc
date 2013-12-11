@@ -279,6 +279,8 @@ x33::plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_col
     pls->vpor( 0.0, 1.0, 0.0, 1.0 );
     pls->wind( 0.0, 1.0, 0.0, 1.0 );
     pls->ptex( 0.5, 0.5, 0.0, 0.0, 0.5, title );
+
+    delete label;
 }
 
 void
