@@ -933,16 +933,20 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 static void
 remove_characters( char *string, const char *characters )
 {
-    size_t length        = strlen( string );
-    size_t prefix_length = strcspn( string, characters );
-    if ( prefix_length < length )
+    char *src, *dst; 
+    const char *ptr;
+    for(src=dst=string; *src != '\0'; src++) 
     {
-        // Remove first matching character by shifting tail of string
-        // (including null-terminator) down by one.
-        memmove( string + prefix_length, string + prefix_length + 1, length - prefix_length );
-        // Recurse to remove any remaining specified characters.
-        remove_characters( string, characters );
+        ptr = characters;
+        while ( (*ptr != '\0') && (*src != *ptr) )
+            ptr++;
+        if (*src != *ptr) 
+        {
+            *dst = *src;
+            dst++;
+        }
     }
+    *dst = '\0';
 }
 
 //--------------------------------------------------------------------------
