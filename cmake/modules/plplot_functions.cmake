@@ -186,16 +186,31 @@ if(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
   list(REMOVE_DUPLICATES CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
 endif(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
 
-# Filter all CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES list elements from
-# rpath_in list.
+# Filter all CMAKE_<LANG>_IMPLICIT_LINK_DIRECTORIES list elements from
+# rpath_in list.  Note, this uses variables that are only defined after
+# languages have been enabled but according to the documentation the
+# logic is only invoked when the function is invoked so this should be
+# OK _if care is used that this function is invoked only after the
+# languages have been enabled_.  C is enabled immediately so that will
+# serve most purposes, but CXX and Fortran are enabled later so if
+# you want those special system locations removed (unlikely but
+# possible) then you are going to have to be somewhat more careful
+# when this function is invoked.
+
 function(filter_rpath rpath)
   #message("DEBUG: ${rpath} = ${${rpath}}")
   set(internal_rpath ${${rpath}})
   if(internal_rpath)
     list(REMOVE_DUPLICATES internal_rpath)
-    if(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
-      list(REMOVE_ITEM internal_rpath ${CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES})
-    endif(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
+    set(directories_to_be_removed
+      ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}
+      ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES}
+      ${CMAKE_FORTRAN_IMPLICIT_LINK_DIRECTORIES}
+      )
+    list(REMOVE_DUPLICATES directories_to_be_removed)
+    if(directories_to_be_removed)
+      list(REMOVE_ITEM internal_rpath ${directories_to_be_removed})
+    endif(directories_to_be_removed)
   endif(internal_rpath)
   #message("DEBUG: (filtered) ${rpath} = ${internal_rpath}")
   set(${rpath} ${internal_rpath} PARENT_SCOPE)

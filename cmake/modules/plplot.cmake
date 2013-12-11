@@ -444,9 +444,6 @@ message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
 message(STATUS "X11_COMPILE_FLAGS = ${X11_COMPILE_FLAGS}")
 message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 
-# Support for shapelib library for reading shapefile map data
-include(shapelib)
-
 option(DEFAULT_NO_BINDINGS
 "All language bindings are disabled by default"
 OFF
@@ -512,6 +509,8 @@ endif(WIN32_OR_CYGWIN AND NOT MINGW)
 # =======================================================================
 # additional library support
 # =======================================================================
+# Support for shapelib library for reading shapefile map data
+include(shapelib)
 include(freetype)
 # On windows systems the math library is not separated so do not specify
 # it unless you are on a non-windows system.
