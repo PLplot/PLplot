@@ -1272,6 +1272,12 @@ pragma Import(C, plsvectdefault, "c_plsvect");
     plpat(nlin : PLINT; inc : PL_Integer_Array; del : PL_Integer_Array);
     pragma Import(C, plpat, "c_plpat");
 
+    -- Draw a line connecting two points, accounting for coordinate transforms.
+
+    procedure
+    plpath(n : PLINT; x1 : PLFLT; y1 : PLFLT; x2 : PLFLT; y2 : PLFLT);
+    pragma Import(C, plpath, "c_plpath");
+
 
     -- Plots array y against x for n points using ASCII code "code".
 

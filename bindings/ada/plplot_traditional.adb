@@ -2245,6 +2245,18 @@ package body PLplot_Traditional is
     end plpat;
 
 
+    -- Draw a line connecting two points, accounting for coordinate transform
+    procedure plpath
+       (n  : Integer;
+        x1 : Long_Float;
+        y1 : Long_Float;
+        x2 : Long_Float;
+        y2 : Long_Float) is
+    begin
+        PLplot_Thin.plpath(n, x1, y1, x2, y2);
+    end plpath;
+
+
     -- Plots array y against x for n points using ASCII code "code".
     procedure plpoin
        (x, y             : Real_Vector;

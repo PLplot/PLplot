@@ -41,7 +41,8 @@ procedure xthick22a is
     arrow_y  : Real_Vector(0 .. 5) := ( 0.0, 0.0, 0.2, 0.0, -0.2, 0.0);
     arrow2_x : Real_Vector(0 .. 5) := (-0.5, 0.3, 0.3, 0.5,  0.3, 0.3);
     arrow2_y : Real_Vector(0 .. 5) := ( 0.0, 0.0, 0.2, 0.0, -0.2, 0.0);
-
+    
+    xmax_data : Long_Float;
 
     -- Vector plot of the circulation about the origin
     procedure circulation is
@@ -128,8 +129,90 @@ procedure xthick22a is
         Vector_Plot(u, v, -1.0, Plot_Transformation_2'access, cgrid2'Address);
         Set_Pen_Color(Red);
     end constriction;
+    
+    
+    -- This spec is necessary in order to enforce C calling conventions, used 
+    -- in the callback by intervening C code.
+    procedure transform
+       (x, y   : Long_Float;
+        xt, yt : out Long_Float; 
+        data   : PLPointer);
+    pragma Convention(C, transform);
 
+    procedure transform
+       (x, y   : Long_Float;
+        xt, yt : out Long_Float; 
+        data   : PLPointer)
+    is
+    begin
+        xt := x;
+        yt := y / 4.0 * ( 3.0 - cos( pi * x / xmax_data ) );
+    end transform;
+    
 
+    -- Vector plot of flow through a constricted pipe
+    -- with a coordinate transformation
+    procedure constriction2 is
+        dx, dy, x, y : Long_Float;
+        xmin, xmax, ymin, ymax : Long_Float;
+        Q, b : Long_Float;
+        nx : constant Integer := 20;
+        ny : constant Integer := 20;
+	nc : constant Integer := 11;
+        nseg : constant Integer := 20;
+        u, v : Real_Matrix(0 .. nx - 1, 0 .. ny -1);
+	clev : Real_Vector(0 .. nc - 1);
+        cgrid2 : aliased Transformation_Data_Type_2
+           (x_Last => nx - 1,
+            y_Last => ny - 1);
+    begin
+        dx := 1.0;
+        dy := 1.0;
+
+        xmin := Long_Float(-nx / 2) * dx;
+        xmax := Long_Float( nx / 2) * dx;
+        ymin := Long_Float(-ny / 2) * dy;
+        ymax := Long_Float( ny / 2) * dy;
+
+	xmax_data := xmax;
+	
+	Set_Custom_Coordinate_Transform(transform'Unrestricted_Access, System.Null_Address);
+	
+        Q := 2.0;
+        for i in 0 .. nx - 1 loop
+            x := (Long_Float(i - nx / 2) + 0.5) * dx;
+                for j in 0 .. ny - 1 loop
+                    y := (Long_Float(j - ny / 2) + 0.5) * dy;
+                    cgrid2.xg(i, j) := x;
+                    cgrid2.yg(i, j) := y;
+                    b := ymax / 4.0 * (3.0 - cos(pi * x / xmax));
+		    u(i, j) := Q * ymax / b;
+		    v(i, j) := 0.0;
+            end loop;
+        end loop;
+
+	for i in 0 .. nc - 1 loop
+	   clev(i) := Q + Long_Float(i) * Q / Long_Float( nc - 1 );
+	end loop;
+
+        Set_Environment(xmin, xmax, ymin, ymax, Not_Justified, Linear_Box_Plus);
+        Write_Labels("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform");
+        Set_Pen_Color(Yellow);
+	Shade_Regions(u, Null, xmin + dx / 2.0, xmax - dx / 2.0, 
+		 ymin + dy / 2.0, ymax - dy / 2.0,
+		 clev, 0.0, 1, 1.0,
+		 Fill_Polygon'access, False, Null, System.Null_Address);
+        Vector_Plot(u, v, -1.0, Plot_Transformation_2'access, cgrid2'Address);
+	Draw_Line_Segment( nseg, xmin, ymax, xmax, ymax );
+	Draw_Line_Segment( nseg, xmin, ymin, xmax, ymin );
+        Set_Pen_Color(Red);
+	
+	-- Clear the global transform.
+	Clear_Custom_Coordinate_Transform;
+
+    end constriction2;
+    
+    
     -- Vector plot of the gradient of a shielded potential (see example 9)
     procedure potential is
         nper   : constant Integer := 100;
@@ -254,7 +337,9 @@ begin
     -- Set arrow style using arrow2_x and arrow2_y then plot using these filled arrows. 
     Set_Arrow_Style_For_Vector_Plots(arrow2_x, arrow2_y, True);
     constriction(2);
-
+    
+    constriction2;
+    
     -- Reset arrow style to the default by passing two NULL arrays.
     -- This line uses the awkward method of the C API to reset the default arrow style.
     Set_Arrow_Style_For_Vector_Plots(System.Null_Address, System.Null_Address, False);
