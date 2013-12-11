@@ -397,6 +397,7 @@ else(BUILD_THE_BUILDTOOLS)
     plplot_lite
     wxwidgets
     pango
+    qt4_lite
     )
 endif(BUILD_THE_BUILDTOOLS)
 

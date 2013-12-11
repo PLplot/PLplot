@@ -31,6 +31,7 @@ set(dependencies_LIST
   shapelib
   wxwidgets
   pango
+  qt4_lite
   )
 
 # Do boilerplate tasks that must be done for each different project
