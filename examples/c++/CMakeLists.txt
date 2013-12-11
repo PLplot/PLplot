@@ -145,8 +145,6 @@ if(BUILD_TEST)
   if(ENABLE_qt)
     if(CORE_BUILD)
       set(BUILD_qt_example ON)
-      # Set up Qt4-based build environment.
-      include(${QT_USE_FILE})
       if(NOT QT_LIBRARIES)
         message(FATAL_ERROR "include(${QT_USE_FILE}) failed in core build examples/c++ subdirectory.")
       endif(NOT QT_LIBRARIES)
@@ -154,16 +152,11 @@ if(BUILD_TEST)
       # Must find Qt4 all over again here rather than simply copying variables
       # from the core build to this installed examples build so that we can
       # access the qt4_wrap_cpp macro here.
-      find_package(Qt4)
+      find_package(Qt4 4.8.2 REQUIRED QtCore QtGui QtSvg)
       # To avoid Qt4 version mismatch make sure the Qt version matches that
       # used by the core build.
       if(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
-	if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
-	  set(QT_USE_QTSVG 1)
-	endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
-
-	# Set up Qt4-based build environment.
-	include(${QT_USE_FILE})
+	include(ndp_UseQt4)
 	if(NOT QT_LIBRARIES)
           message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
 	endif(NOT QT_LIBRARIES)
@@ -185,6 +178,8 @@ if(BUILD_TEST)
 	)
       add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
       target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt${LIB_TAG} plplot${LIB_TAG})
+      # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+      set_qt_target_properties(qt_example)
     endif(BUILD_qt_example)
   endif(ENABLE_qt)
 endif(BUILD_TEST)

@@ -103,27 +103,34 @@ if(ENABLE_DYNDRIVERS)
     # device driver depends on.
     #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
 
-    if(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
+    if(SOURCE_ROOT_NAME STREQUAL "qt")
       if(ANY_QT_DEVICE)
 	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-	add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
-	# Set up Qt4-based build environment.
-	include(${QT_USE_FILE})
+	if(NOT ENABLE_qt)
+	  # Note this code is never executed considering the way the
+          # build system is set up now (see cmake/modules/qt.cmake),
+          # but nevertheless keep it for the future in case we ever
+          # want to deal with the case where we want to build the qt
+          # device without building the plplotqtd library
+	  add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
+	endif(NOT ENABLE_qt)
 	if(NOT QT_LIBRARIES)
-	  message(FATAL_ERROR "include(${QT_USE_FILE}) failed in drivers subdirectory.")
+	  message(FATAL_ERROR "Internal build system inconsistency. QT_LIBRARIESis empty but it should be populated")
 	endif(NOT QT_LIBRARIES)
 	
 	target_link_libraries(
 	  ${SOURCE_ROOT_NAME}
 	  plplot${LIB_TAG}
 	  ${MATH_LIB}
-	  ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
+	  ${QT_LIBRARIES}
 	  ${${SOURCE_ROOT_NAME}_TARGETS}
 	  )
+	# Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+	set_qt_target_properties(${SOURCE_ROOT_NAME})
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)
-    else(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
+    else(SOURCE_ROOT_NAME STREQUAL "qt")
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
       target_link_libraries(
 	${SOURCE_ROOT_NAME}
@@ -132,7 +139,7 @@ if(ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	${${SOURCE_ROOT_NAME}_TARGETS}
 	)
-    endif(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
+    endif(SOURCE_ROOT_NAME STREQUAL "qt")
 
     # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
     # each driver in ${DRIVERS_LIST}.  This is only used for the

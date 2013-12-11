@@ -126,8 +126,6 @@ else(ENABLE_DYNDRIVERS)
 	# moc files generated in the binary include directory.
 	set(qt_dependency moc_outfile_generated)
 
-	# Set up Qt4-based build environment.
-	include(${QT_USE_FILE})
 	if(NOT QT_LIBRARIES)
 	  message(FATAL_ERROR "include(${QT_USE_FILE}) failed in src subdirectory.")
 	endif(NOT QT_LIBRARIES)
@@ -202,6 +200,8 @@ if(ENABLE_DYNDRIVERS)
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
+  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+  set_qt_target_properties(plplot${LIB_TAG})
 endif(ENABLE_DYNDRIVERS)
 #message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 

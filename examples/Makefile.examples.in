@@ -53,20 +53,20 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_ADA_COMMENT@test_noninteractive: x01a.psc
 @PSC_ADA_COMMENT@@COMPARE_COMMENT@compare: x01a.psc
 
-@PSC_CXX_COMMENT@all: c++/x01@EXEEXT@
-@PSC_CXX_COMMENT@c++/x01@EXEEXT@:
-@PSC_CXX_COMMENT@	cd c++; $(MAKE)
-@PSC_CXX_COMMENT@cxx_clean:
-@PSC_CXX_COMMENT@	cd c++; $(MAKE) clean
-@PSC_CXX_COMMENT@.PHONY: cxx_clean
-@PSC_CXX_COMMENT@clean: cxx_clean
-@PSC_CXX_COMMENT@x01cxx.psc: c++/x01@EXEEXT@
-@PSC_CXX_COMMENT@	@echo Generate C++ results for psc device
-@PSC_CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=psc
-@PSC_CXX_COMMENT@test_noninteractive: x01cxx.psc
-@PSC_CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx.psc
+@CXX_COMMENT@all: c++/x01@EXEEXT@
+@CXX_COMMENT@c++/x01@EXEEXT@:
+@CXX_COMMENT@	cd c++; $(MAKE)
+@CXX_COMMENT@cxx_clean:
+@CXX_COMMENT@	cd c++; $(MAKE) clean
+@CXX_COMMENT@.PHONY: cxx_clean
+@CXX_COMMENT@clean: cxx_clean
+@CXX_COMMENT@x01cxx.psc: c++/x01@EXEEXT@
+@CXX_COMMENT@	@echo Generate C++ results for psc device
+@CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=psc
+@CXX_COMMENT@test_noninteractive: x01cxx.psc
+@CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx.psc
 # Just for c, c++, and tk directories
-@PSC_CXX_COMMENT@test_interactive: c++/x01@EXEEXT@
+@CXX_COMMENT@test_interactive: c++/x01@EXEEXT@
 
 @PSC_D_COMMENT@all: d/x01d@EXEEXT@
 @PSC_D_COMMENT@d/x01d@EXEEXT@:

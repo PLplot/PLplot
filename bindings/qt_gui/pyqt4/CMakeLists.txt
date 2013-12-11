@@ -1,8 +1,8 @@
-# bindings/python/CMakeLists.txt
+# bindings/qt_gui/pyqt4/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2009 Hazen Babcock
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2013 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -84,10 +84,13 @@ if(ENABLE_pyqt4)
     plplot_pyqt4
     plplotqt${LIB_TAG}
     plplot${LIB_TAG}
-    ${QT_LIBRARIES}    
     ${PYTHON_LIBRARIES}
+    ${QT_LIBRARIES}
     )
   add_dependencies(plplot_pyqt4 generate_pyqt4_source)
+
+  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+  set_qt_target_properties(plplot_pyqt4)
 
   if(USE_RPATH)
     set_target_properties(

@@ -27,14 +27,12 @@
 if(CORE_BUILD)
   # Configure Makefile.examples with some specific variables for the
   # traditional Makefile + pkg-config installed examples build.
+
+  # cxx and tk subdirectories are special cases.
   if(PLD_ps)
     if(NOT ENABLE_ada)
       set(PSC_ADA_COMMENT "#")
     endif(NOT ENABLE_ada)
-
-    if(NOT ENABLE_cxx)
-      set(PSC_CXX_COMMENT "#")
-    endif(NOT ENABLE_cxx)
 
     if(NOT ENABLE_d)
       set(PSC_D_COMMENT "#")
@@ -75,7 +73,6 @@ if(CORE_BUILD)
   else(PLD_ps)
     set(PSC_ADA_COMMENT "#")
     set(PSC_C_COMMENT "#")
-    set(PSC_CXX_COMMENT "#")
     set(PSC_D_COMMENT "#")
     set(PSC_F95_COMMENT "#")
     set(PSC_JAVA_COMMENT "#")
@@ -85,6 +82,10 @@ if(CORE_BUILD)
     set(PSC_PYTHON_COMMENT "#")
     set(PSC_TCL_COMMENT "#")
   endif(PLD_ps)
+
+  if(NOT(ENABLE_cxx AND (PLD_ps OR ENABLE_qt)))
+    set(CXX_COMMENT "#")
+  endif(NOT(ENABLE_cxx AND (PLD_ps OR ENABLE_qt)))
 
   if(NOT ENABLE_tk)
     set(TK_COMMENT "#")
@@ -307,6 +308,14 @@ if(CORE_BUILD)
     ${CMAKE_SOURCE_DIR}/cmake/modules/language_support.cmake 
     DESTINATION ${DATA_DIR}/examples/cmake/modules
     )
+
+  # Install qt support file.
+  if(ANY_QT_DEVICE)
+    install(FILES
+    ${CMAKE_SOURCE_DIR}/cmake/modules/ndp_UseQt4.cmake 
+    DESTINATION ${DATA_DIR}/examples/cmake/modules
+    )
+  endif(ANY_QT_DEVICE)
 
   # Install PLplot-specific language support files needed for CMake-based
   # build of installed examples.

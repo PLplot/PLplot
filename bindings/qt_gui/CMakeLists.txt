@@ -1,7 +1,7 @@
 # bindings/qt_gui/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2013 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -20,7 +20,6 @@
 
 if(ENABLE_qt)
   # Set up Qt4-based build environment.
-  include(${QT_USE_FILE})
   if(NOT QT_LIBRARIES)
     message(FATAL_ERROR "include(${QT_USE_FILE}) failed in bindings/qt_gui subdirectory.")
   endif(NOT QT_LIBRARIES)
@@ -33,18 +32,11 @@ if(ENABLE_qt)
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
     )
-  if(qt_COMPILE_FLAGS)
-    set_source_files_properties(
-      ${qt_SOURCE}
-      PROPERTIES COMPILE_FLAGS "${qt_COMPILE_FLAGS} -DUSINGDLL"
-      )
-    #message("qt_COMPILE_FLAGS = ${qt_COMPILE_FLAGS}")
-  else(qt_COMPILE_FLAGS)
-    set_source_files_properties(
-      ${qt_SOURCE}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-      )
-  endif(qt_COMPILE_FLAGS)
+
+  set_source_files_properties(
+    ${qt_SOURCE}
+    PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+    )
   if(ANY_QT_DEVICE)
     add_library(plplotqt${LIB_TAG} ${qt_SOURCE})
     add_dependencies(plplotqt${LIB_TAG} moc_outfile_generated)
@@ -57,6 +49,9 @@ if(ENABLE_qt)
     ${MATH_LIB}
     ${QT_LIBRARIES}
     )
+  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+  set_qt_target_properties(plplotqt${LIB_TAG})
+
   if(NON_TRANSITIVE)
     # Note that there are implicit references to classes in QtCore, QtGui and QtSvg 
     # so we need to add all three to the list of libraries to link to plplotqtd.
@@ -142,7 +137,7 @@ if(ENABLE_qt)
     string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
     string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
     set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_COMPILE_FLAGS "${qt_COMPILE_FLAGS}")
+    set(PC_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS}")
     set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
     set(PC_CONFIGURED_FILE
       ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
