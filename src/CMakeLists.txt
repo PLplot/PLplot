@@ -200,8 +200,10 @@ if(ENABLE_DYNDRIVERS)
 else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
-  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-  set_qt_target_properties(plplot${LIB_TAG})
+  if(ANY_QT_DEVICE)
+    # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+    set_qt_target_properties(plplot${LIB_TAG})
+  endif(ANY_QT_DEVICE)
 endif(ENABLE_DYNDRIVERS)
 #message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
