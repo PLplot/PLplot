@@ -131,17 +131,6 @@ the above languages will have to change their source code or scripts
 to use the constants on the right.  No changes in source code or
 scripts should be required of other users.
 
-(5.9.11) Backwards-incompatible API change.  Our Fortran 77 bindings
-and examples have been completely removed because Fortran 95 is just a
-much better language which we have been supporting for a long time,
-and our judgement call based on user feedback we have received is
-nobody is interested in plotting using strict Fortran 77 language
-constructs any more.  However, if there is still some Fortran 77
-source code out there that uses PLplot, typically the only change you
-should have to do to port it to our Fortran 95 bindings is to place
-the command "use plplot" as the first line of the source code of the
-main routine.
-
 (5.9.11) Backwards-incompatible API change.  The PLplot build system
 and bindings for Tcl and friends have had a major overhaul, see below.
 Part of this change was to split the former libplplottcltk into two
@@ -152,6 +141,24 @@ appropriate "package require" command.  The new libplplottcltk_Main
 library contains code (e.g., pltclMain and pltkMain) required by C
 plotting applications (e.g., pltcl, plrender, and xtk0[124].c) that
 link to libplplottcltk.
+
+(5.9.11) Backwards-incompatible change.  Our Fortran 77 bindings
+and examples have been completely removed because Fortran 95 is just a
+much better language which we have been supporting for a long time,
+and our judgement call based on user feedback we have received is
+nobody is interested in plotting using strict Fortran 77 language
+constructs any more.  However, if there is still some Fortran 77
+source code out there that uses PLplot, typically the only change you
+should have to do to port it to our Fortran 95 bindings is to place
+the command "use plplot" as the first line of the source code of the
+main routine.
+
+(5.9.11) Deprecation.  The functionality of the AGG backend and
+FreeType option in the wxwidgets device driver is provided (and in
+some cases exceeded) by other backends and options that we have
+implemented for this device driver.  The AGG backend and Freetype
+option are therefore deprecated with the intention to remove them in a
+future release.
 
 2. Tests made for release 5.9.11
 
@@ -226,17 +233,6 @@ the above languages will have to change their source code or scripts
 to use the constants on the right.  No changes in source code or
 scripts should be required of other users.
 
-(5.9.11) Backwards-incompatible API change.  Our Fortran 77 bindings
-and examples have been completely removed because Fortran 95 is just a
-much better language which we have been supporting for a long time,
-and our judgement call based on user feedback we have received is
-nobody is interested in plotting using strict Fortran 77 language
-constructs any more.  However, if there is still some Fortran 77
-source code out there that uses PLplot, typically the only change you
-should have to do to port it to our Fortran 95 bindings is to place
-the command "use plplot" as the first line of the source code of the
-main routine.
-
 (5.9.11) Backwards-incompatible API change.  The PLplot build system
 and bindings for Tcl and friends have had a major overhaul, see below.
 Part of this change was to split the former libplplottcltk into two
@@ -247,6 +243,24 @@ appropriate "package require" command.  The new libplplottcltk_Main
 library contains code (e.g., pltclMain and pltkMain) required by C
 plotting applications (e.g., pltcl, plrender, and xtk0[124].c) that
 link to libplplottcltk.
+
+(5.9.11) Backwards-incompatible change.  Our Fortran 77 bindings
+and examples have been completely removed because Fortran 95 is just a
+much better language which we have been supporting for a long time,
+and our judgement call based on user feedback we have received is
+nobody is interested in plotting using strict Fortran 77 language
+constructs any more.  However, if there is still some Fortran 77
+source code out there that uses PLplot, typically the only change you
+should have to do to port it to our Fortran 95 bindings is to place
+the command "use plplot" as the first line of the source code of the
+main routine.
+
+(5.9.11) Deprecation.  The functionality of the AGG backend and
+FreeType option in the wxwidgets device driver is provided (and in
+some cases exceeded) by other backends and options that we have
+implemented for this device driver.  The AGG backend and Freetype
+option are therefore deprecated with the intention to remove them in a
+future release.
 
 (5.9.10) The minimum version of CMake has been bumped to 5.8.9.  This
 change allows our build system to take advantage of CMake features
