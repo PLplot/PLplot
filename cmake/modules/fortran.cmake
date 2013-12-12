@@ -28,13 +28,13 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_f95 "Enable f95 bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-if(Enable_f95 AND NOT PLPLOT_Fortran_COMPILER_WORKS)
+if(ENABLE_f95 AND NOT PLPLOT_Fortran_COMPILER_WORKS)
   workaround_9220(Fortran PLPLOT_Fortran_COMPILER_WORKS)
   if(NOT PLPLOT_Fortran_COMPILER_WORKS)
     message(STATUS "WARNING: no working Fortran compiler so disabling Fortran bindings and examples.")
     set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
   endif(NOT PLPLOT_Fortran_COMPILER_WORKS)
-endif(Enable_f95 AND NOT PLPLOT_Fortran_COMPILER_WORKS)
+endif(ENABLE_f95 AND NOT PLPLOT_Fortran_COMPILER_WORKS)
 
 if(ENABLE_f95)
   # Find and check Fortran compiler.
