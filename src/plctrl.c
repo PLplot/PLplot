@@ -3000,8 +3000,8 @@ plsnprintf( char *buffer, int n, const char *format, ... )
 
     va_list args;
     va_start( args, format );
-    ret = vsprintf( buffer, fmt, args );
-    va_end( argptr );
+    ret = vsprintf( buffer, format, args );
+    va_end( args );
 
     // Check if overrun occured
     if ( ret > n - 1 )
@@ -3030,10 +3030,10 @@ plsnscanf( const char *buffer, int n, const char *format, ... )
 {
     int     ret;
 
-    va_list argptr;
-    va_start( argptr, format );
-    ret = vsscanf( buffer, fmt, args );
-    va_end( argptr );
+    va_list args;
+    va_start( args, format );
+    ret = vsscanf( buffer, format, args );
+    va_end( args );
 
     return ret;
 }
