@@ -90,34 +90,12 @@ if(ENABLE_qt AND NOT PLD_extqt)
   set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
 endif(ENABLE_qt AND NOT PLD_extqt)
 
-# All qt devices depend on ENABLE_qt
-if(NOT ENABLE_qt)
-  message(STATUS
-    "WARNING: ENABLE_qt is OFF so "
-    "setting all qt devices to OFF."
-    )
-  set(ANY_QT_DEVICE OFF)
-endif(NOT ENABLE_qt)
-
-if(NOT ANY_QT_DEVICE)
-    set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
-    set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
-    set(PLD_pngqt OFF CACHE BOOL "Enable Qt png device" FORCE)
-    set(PLD_ppmqt OFF CACHE BOOL "Enable Qt ppm device" FORCE)
-    set(PLD_tiffqt OFF CACHE BOOL "Enable Qt tiff device" FORCE)
-    set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
-    set(PLD_pdfqt OFF CACHE BOOL "Enable Qt PDF device" FORCE)
-    set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
-    set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
-    set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
-    set(PLD_memqt OFF CACHE BOOL "Enable Qt mem device" FORCE)
-endif(NOT ANY_QT_DEVICE)
-
-if(ANY_QT_DEVICE)
+if(ENABLE_qt)
   # Use a minimum version corresponding to the version installed by
-  # Debian Wheezy.  I assume all other non-enterprise Linux distros
-  # have this version of Qt4 or later.
-  find_package(Qt4 4.8.2 REQUIRED QtCore QtGui QtSvg)
+  # Debian Wheezy.  I assume all other non-enterprise Linux distros,
+  # Mac OS X, and Windows platforms also give access to this version
+  # of Qt4 or later.
+  find_package(Qt4 4.8.2 COMPONENTS QtCore QtGui QtSvg)
 
   # QT4_FOUND is defined to be true or false by find_package(Qt4 ...)
   if(QT4_FOUND)
@@ -154,12 +132,34 @@ if(ANY_QT_DEVICE)
     filter_rpath(qt_RPATH)
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
   else(QT4_FOUND)
-    message(STATUS "WARNING: Qt4 development environment not found so "
-      "disabling all qt devices."
+    message(STATUS "WARNING: Suitable Qt4 development environment not found so disabling Qt bindings."
       )
-    set(ANY_QT_DEVICE OFF)
+    set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
   endif(QT4_FOUND)
-endif(ANY_QT_DEVICE)
+endif(ENABLE_qt)
+
+# All qt devices depend on ENABLE_qt
+if(NOT ENABLE_qt)
+  message(STATUS
+    "WARNING: ENABLE_qt is OFF so "
+    "setting all qt devices to OFF."
+    )
+  set(ANY_QT_DEVICE OFF)
+endif(NOT ENABLE_qt)
+
+if(NOT ANY_QT_DEVICE)
+    set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
+    set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
+    set(PLD_pngqt OFF CACHE BOOL "Enable Qt png device" FORCE)
+    set(PLD_ppmqt OFF CACHE BOOL "Enable Qt ppm device" FORCE)
+    set(PLD_tiffqt OFF CACHE BOOL "Enable Qt tiff device" FORCE)
+    set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
+    set(PLD_pdfqt OFF CACHE BOOL "Enable Qt PDF device" FORCE)
+    set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
+    set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
+    set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+    set(PLD_memqt OFF CACHE BOOL "Enable Qt mem device" FORCE)
+endif(NOT ANY_QT_DEVICE)
 
 if(ENABLE_pyqt4 AND NOT ENABLE_python)
   message(STATUS
