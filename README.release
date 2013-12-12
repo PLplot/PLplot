@@ -27,6 +27,8 @@ INDEX
 3.1 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
 3.2 Major overhaul of the build system and bindings for Tcl and friends
 3.3 Substantial overhaul of the build system for the Qt-components of PLplot
+3.4 The epa_build project has been implemented
+
 
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
@@ -107,6 +109,7 @@ all non-windows systems
 5.67 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
 5.68 Major overhaul of the build system and bindings for Tcl and friends
 5.69 Substantial overhaul of the build system for the Qt-components of PLplot
+5.70 The epa_build project has been implemented
 
 1. OFFICIAL NOTICES FOR USERS SINCE 5.9.10 (the previous development release)
 
@@ -197,10 +200,9 @@ sure they are compatible with each other.  The plplottcktk library has
 now been split (see remarks in the above OFFICIAL NOTICES for more
 details).  Many bugs have been fixed, and all tests documented in
 examples/tcl/README.tcldemos and examples/tk/README.tkdemos have now
-been implemented as tests via the build system (FIXME.  Make sure
-Arjen has done this for the last runAllDemos.tcl test by the release
-or else rewrite this statment) to help avoid any regressions in the
-build system and bindings for Tcl and friends in the future.
+been implemented as tests via the build system to help avoid any
+regressions in the build system and bindings for Tcl and friends in
+the future.
 
 3.3 Substantial overhaul of the build system for the Qt-components of PLplot
 
@@ -209,6 +211,49 @@ Qt-related components just got a lot more rational, and the
 long-standing memory management issues reported by valgrind for
 examples/c++/qt_example for the non-dynamic drivers case have been
 resolved.
+
+3.4 The epa_build project has been implemented
+
+The goal of this project is to make builds of recent versions of
+PLplot dependencies (and PLplot itself) much more convenient on all
+platforms.  Once this goal is realized, it should make the full power
+of PLplot (which depends on the existence and quality of its
+dependencies) readily available on all platforms.  The epa_build
+project uses the power of CMake (especially the ExternalProject_Add
+command which is why we chose to use the suffix "epa_" in the name of
+epa_build) to organize downloading, updating, configuring, building,
+testing, and installing of any kind (not just those with CMake-based
+build systems) of software project with full dependency support
+between all the various builds.  For those users who are not
+satisified with the PLplot dependencies on their systems, learn how to
+use the epa_build project by consulting cmake/epa_build/README.
+
+The epa_build project is in pretty good shape on Linux; epa_build
+configurations work properly for build tools such as Tcl/Tk8.6, Itcl,
+Itk, and Iwidgets and for regular packages such as pango (needed for
+the cairo device driver), qt4_lite (needed for the qt device driver),
+the wxwidgets software package (needed for the wxwidgets device
+driver), and many smaller, but useful PLplot dependencies such as
+shapelib, libqhull, and libharu.  The total build time is roughly an
+hour for an ordinary PC which is not much of a price to pay to get
+access to up-to-date versions of virtually all dependencies of PLplot.
+In fact, the only known dependency of PLplot not currently covered by
+epa_build is octave.  In principle, it should be straightforward to
+add an epa_build configurations for octave and its many dependencies,
+but that possibility has not been explored yet.
+
+In principle, epa_build should work out of the box on Mac OS X
+platforms, but we haven't tested on that platform yet.
+
+Our testing for MinGW/MSYS and Cygwin shows the epa_build project is
+still in fairly rough shape on Windows.  It is known that the "plplot"
+case (PLplot with all its dependencies) fails in various ways on all
+Windows platforms.  Those issues are being actively worked on.  Note,
+however, that the "plplot_lite" case (PLplot with all the minor
+dependencies but without Tcl etc., build tools and without the pango,
+qt4_lite, and wxwidgets dependencies) has been shown to work on
+MinGW/MSYS and should probably also work on Cygwin although we haven't
+tested that specific case yet.
 
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
@@ -1623,10 +1668,9 @@ sure they are compatible with each other.  The plplottcktk library has
 now been split (see remarks in the above OFFICIAL NOTICES for more
 details).  Many bugs have been fixed, and all tests documented in
 examples/tcl/README.tcldemos and examples/tk/README.tkdemos have now
-been implemented as tests via the build system (FIXME.  Make sure
-Arjen has done this for the last runAllDemos.tcl test by the release
-or else rewrite this statment) to help avoid any regressions in the
-build system and bindings for Tcl and friends in the future.
+been implemented as tests via the build system to help avoid any
+regressions in the build system and bindings for Tcl and friends in
+the future.
 
 5.69 Substantial overhaul of the build system for the Qt-components of PLplot
 
@@ -1636,3 +1680,45 @@ long-standing memory management issues reported by valgrind for
 examples/c++/qt_example for the non-dynamic drivers case have been
 resolved.
 
+5.70 The epa_build project has been implemented
+
+The goal of this project is to make builds of recent versions of
+PLplot dependencies (and PLplot itself) much more convenient on all
+platforms.  Once this goal is realized, it should make the full power
+of PLplot (which depends on the existence and quality of its
+dependencies) readily available on all platforms.  The epa_build
+project uses the power of CMake (especially the ExternalProject_Add
+command which is why we chose to use the suffix "epa_" in the name of
+epa_build) to organize downloading, updating, configuring, building,
+testing, and installing of any kind (not just those with CMake-based
+build systems) of software project with full dependency support
+between all the various builds.  For those users who are not
+satisified with the PLplot dependencies on their systems, learn how to
+use the epa_build project by consulting cmake/epa_build/README.
+
+The epa_build project is in pretty good shape on Linux; epa_build
+configurations work properly for build tools such as Tcl/Tk8.6, Itcl,
+Itk, and Iwidgets and for regular packages such as pango (needed for
+the cairo device driver), qt4_lite (needed for the qt device driver),
+the wxwidgets software package (needed for the wxwidgets device
+driver), and many smaller, but useful PLplot dependencies such as
+shapelib, libqhull, and libharu.  The total build time is roughly an
+hour for an ordinary PC which is not much of a price to pay to get
+access to up-to-date versions of virtually all dependencies of PLplot.
+In fact, the only known dependency of PLplot not currently covered by
+epa_build is octave.  In principle, it should be straightforward to
+add an epa_build configurations for octave and its many dependencies,
+but that possibility has not been explored yet.
+
+In principle, epa_build should work out of the box on Mac OS X
+platforms, but we haven't tested on that platform yet.
+
+Our testing for MinGW/MSYS and Cygwin shows the epa_build project is
+still in fairly rough shape on Windows.  It is known that the "plplot"
+case (PLplot with all its dependencies) fails in various ways on all
+Windows platforms.  Those issues are being actively worked on.  Note,
+however, that the "plplot_lite" case (PLplot with all the minor
+dependencies but without Tcl etc., build tools and without the pango,
+qt4_lite, and wxwidgets dependencies) has been shown to work on
+MinGW/MSYS and should probably also work on Cygwin although we haven't
+tested that specific case yet.
