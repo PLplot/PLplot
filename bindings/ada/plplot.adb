@@ -2332,15 +2332,12 @@ package body PLplot is
 
 
     -- Draw a line connecting two points, accounting for coordinate transform
-    procedure Draw_Line_Segment
-       (n  : Integer;
-        x1 : Long_Float;
-        y1 : Long_Float;
-        x2 : Long_Float;
-        y2 : Long_Float) is
+    procedure Draw_Line_With_Transform
+       (Num_Segments   : Integer;
+        x1, y1, x2, y2 : Long_Float) is
     begin
-        plpath(n, x1, y1, x2, y2);
-    end Draw_Line_Segment;
+        plpath(Num_Segments, x1, y1, x2, y2);
+    end Draw_Line_With_Transform;
 
 
     -- Plots array y against x for n points using ASCII code "code".

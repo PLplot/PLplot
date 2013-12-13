@@ -1272,6 +1272,7 @@ pragma Import(C, plsvectdefault, "c_plsvect");
     plpat(nlin : PLINT; inc : PL_Integer_Array; del : PL_Integer_Array);
     pragma Import(C, plpat, "c_plpat");
 
+
     -- Draw a line connecting two points, accounting for coordinate transforms.
 
     procedure

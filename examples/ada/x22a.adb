@@ -2,7 +2,7 @@
 
 -- Simple vector plot example
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008, 2013 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -22,6 +22,7 @@
 
 with
     System,
+    System.Address_To_Access_Conversions,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Traditional,
@@ -40,7 +41,6 @@ procedure x22a is
     arrow2_x : Real_Vector(0 .. 5) := (-0.5, 0.3, 0.3, 0.5,  0.3, 0.3);
     arrow2_y : Real_Vector(0 .. 5) := ( 0.0, 0.0, 0.2, 0.0, -0.2, 0.0);
 
-    xmax_data : Long_Float;
 
     -- Vector plot of the circulation about the origin
     procedure circulation is
@@ -122,7 +122,8 @@ procedure x22a is
         end loop;
 
         plenv(xmin, xmax, ymin, ymax, 0, 0);
-        pllab("(x)", "(y)", "#frPLplot Example 22 - constriction (arrow style"&Integer'image(astyle)&")");
+        pllab("(x)", "(y)", "#frPLplot Example 22 - constriction (arrow style" & 
+            Integer'image(astyle) & ")");
         plcol0(2);
         plvect(u, v, -1.0, pltr2'access, cgrid2'Address);
         plcol0(1);
@@ -136,79 +137,87 @@ procedure x22a is
         data   : PLPointer);
     pragma Convention(C, transform);
 
-    procedure transform
-       (x, y   : Long_Float;
-        xt, yt : out Long_Float; 
-        data   : PLPointer)
-    is
+    -- Global transform function for a constriction using data passed in
+    -- This is the same transformation used in constriction.
+    procedure transform(x, y : Long_Float; xt, yt : out Long_Float; Data : PLPointer) is
+
+        -- Convert the generic pointer represented as System.Address to a proper Ada pointer aka 
+        -- access variable. Recall that PLpointer is a subtype of System.Address.
+        package Data_Address_Conversions is new System.Address_To_Access_Conversions(Long_Float);
+        Data_Pointer : Data_Address_Conversions.Object_Pointer; -- An Ada access variable
+        xmax : Long_Float;
     begin
+        Data_Pointer := Data_Address_Conversions.To_Pointer(Data);
+        xmax   := Data_Pointer.all;
         xt := x;
-        yt := y / 4.0 * ( 3.0 - cos( pi * x / xmax_data ) );
+        yt := y / 4.0 * (3.0 - cos(Pi * x / xmax));
     end transform;
     
-    -- Vector plot of flow through a constricted pipe
-    -- with a coordinate transformation
+
+    -- Vector plot of flow through a constricted pipe with a coordinate transform
     procedure constriction2 is
         dx, dy, x, y : Long_Float;
         xmin, xmax, ymin, ymax : Long_Float;
         Q, b : Long_Float;
         nx : constant Integer := 20;
         ny : constant Integer := 20;
-        nc : constant Integer := 11;
-        nseg : constant Integer := 20;
-        u, v : Real_Matrix(0 .. nx - 1, 0 .. ny -1);
-	clev : Real_Vector(0 .. nc - 1);
         cgrid2 : aliased Transformation_Data_Type_2
            (x_Last => nx - 1,
             y_Last => ny - 1);
+        u, v : Real_Matrix(0 .. nx - 1, 0 .. ny - 1);
+        nc : constant Integer := 11;
+        nseg : constant Integer := 20;
+        clev : Real_Vector(0 .. nc - 1);
     begin
         dx := 1.0;
         dy := 1.0;
 
-        xmin := Long_Float(-nx / 2) * dx;
+        xmin := Long_Float(-nx / 2) * dx; -- Careful; Ada / rounds, C / truncates.
         xmax := Long_Float( nx / 2) * dx;
         ymin := Long_Float(-ny / 2) * dy;
         ymax := Long_Float( ny / 2) * dy;
-	
-	xmax_data := xmax;
 
-	plstransform( transform'Unrestricted_Access, System.Null_Address );
+        plstransform(transform'Unrestricted_Access, xmax'Address);
 
+        cgrid2.nx := nx;
+        cgrid2.ny := ny;
         Q := 2.0;
+
         for i in 0 .. nx - 1 loop
             x := (Long_Float(i - nx / 2) + 0.5) * dx;
-                for j in 0 .. ny - 1 loop
-                    y := (Long_Float(j - ny / 2) + 0.5) * dy;
-                    cgrid2.xg(i, j) := x;
-                    cgrid2.yg(i, j) := y;
-                    b := ymax / 4.0 * (3.0 - cos(pi * x / xmax));
-		    u(i, j) := Q * ymax / b;
-		    v(i, j) := 0.0;
+            for j in 0 .. ny - 1 loop
+                y := (Long_Float(j - ny / 2) + 0.5) * dy;
+                cgrid2.xg(i, j) := x;
+                cgrid2.yg(i, j) := y;
+                b := ymax / 4.0 * (3.0 - cos(Pi * x / xmax));
+                u(i, j) := Q * ymax / b;
+                v(i, j) := 0.0;
             end loop;
         end loop;
-	
-	for i in 0 .. nc - 1 loop
-	   clev(i) := Q + Long_Float(i) * Q / Long_Float( nc - 1 );
-	end loop;
+
+        for i in 0 .. nc - 1 loop
+            clev(i) := Q + Long_Float(i) * Q / Long_Float(nc - 1);
+        end loop;
 
         plenv(xmin, xmax, ymin, ymax, 0, 0);
         pllab("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform");
         plcol0(2);
-	plshades(u, Null, xmin + dx / 2.0, xmax - dx / 2.0, 
-		 ymin + dy / 2.0, ymax - dy / 2.0,
-		 clev, 0.0, 1, 1.0,
-		 plfill'access, False, Null, System.Null_Address);
-        plvect(u, v, -1.0, pltr2'access, cgrid2'Address);
-	plpath( nseg, xmin, ymax, xmax, ymax );
-	plpath( nseg, xmin, ymin, xmax, ymin );
+        plshades(u, Null,
+            xmin + dx / 2.0, xmax - dx / 2.0, ymin + dy / 2.0, ymax - dy / 2.0,
+            clev, 0.0, 1, 1.0, plfill'access, False, Null, System.Null_Address);
+        plvect(u, v,
+            -1.0, pltr2'access, cgrid2'Address);
+
+        -- Plot edges using plpath (which accounts for coordinate transformation) rather than plline
+        plpath(nseg, xmin, ymax, xmax, ymax);
+        plpath(nseg, xmin, ymin, xmax, ymin);
         plcol0(1);
-	
-	-- Clear the global transform.
-	Clear_Custom_Coordinate_Transform;
-	-- or...
-	-- plstransform(null, System.Null_Address);
-	
+
+        Clear_Custom_Coordinate_Transform;
+        -- or...
+        -- plstransform(null, System.Null_Address);
     end constriction2;
+    
 
     -- Vector plot of the gradient of a shielded potential (see example 9)
     procedure potential is
@@ -318,7 +327,6 @@ procedure x22a is
 -- Generates several simple vector plots.
 ----------------------------------------------------------------------------
 begin
-
     -- Parse and process command line arguments 
     plparseopts(PL_PARSE_FULL);
 
@@ -339,10 +347,10 @@ begin
 
     -- Reset arrow style to the default by passing two NULL arrays.
     -- This line uses the awkward method of the C API to reset the default arrow style.
-    plsvect(System.Null_Address, System.Null_Address, False);
+    -- plsvect(System.Null_Address, System.Null_Address, False);
     
     -- This method of resetting the default arrow style is a little more Ada-friendly...
-    -- plsvect;
+    plsvect;
     
     -- ... as is this one which is identical but for name.
     -- Reset_Vector_Arrow_Style;

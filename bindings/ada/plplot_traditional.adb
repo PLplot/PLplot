@@ -2247,13 +2247,10 @@ package body PLplot_Traditional is
 
     -- Draw a line connecting two points, accounting for coordinate transform
     procedure plpath
-       (n  : Integer;
-        x1 : Long_Float;
-        y1 : Long_Float;
-        x2 : Long_Float;
-        y2 : Long_Float) is
+       (Num_Segments   : Integer;
+        x1, y1, x2, y2 : Long_Float) is
     begin
-        PLplot_Thin.plpath(n, x1, y1, x2, y2);
+        PLplot_Thin.plpath(Num_Segments, x1, y1, x2, y2);
     end plpath;
 
 
