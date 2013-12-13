@@ -207,7 +207,11 @@ function(filter_rpath rpath)
       ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES}
       ${CMAKE_FORTRAN_IMPLICIT_LINK_DIRECTORIES}
       )
-    list(REMOVE_DUPLICATES directories_to_be_removed)
+
+    if(directories_to_be_removed)
+      list(REMOVE_DUPLICATES directories_to_be_removed)
+    endif(directories_to_be_removed)
+
     if(directories_to_be_removed)
       list(REMOVE_ITEM internal_rpath ${directories_to_be_removed})
     endif(directories_to_be_removed)
