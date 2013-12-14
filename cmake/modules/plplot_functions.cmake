@@ -205,7 +205,7 @@ function(filter_rpath rpath)
     set(directories_to_be_removed
       ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}
       ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES}
-      ${CMAKE_FORTRAN_IMPLICIT_LINK_DIRECTORIES}
+      ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
       )
 
     if(directories_to_be_removed)
