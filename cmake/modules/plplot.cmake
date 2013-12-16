@@ -464,6 +464,7 @@ include(fortran)
 include(java)
 include(python)
 include(octave)
+# tcl-related must come after c++ and fortran because of use of filter_rpath
 include(tcl-related)
 include(pdl)
 include(ada)
@@ -509,6 +510,7 @@ endif(WIN32_OR_CYGWIN AND NOT MINGW)
 # =======================================================================
 # additional library support
 # =======================================================================
+# shapelib must come after c++ and fortran because of use of filter_rpath
 # Support for shapelib library for reading shapefile map data
 include(shapelib)
 include(freetype)
@@ -520,7 +522,8 @@ if(NOT WIN32_OR_CYGWIN)
     message(FATAL_ERROR "Cannot find required math library")
   endif(NOT MATH_LIB)
 endif(NOT WIN32_OR_CYGWIN)
-# Must come after MATH_LIB is defined (or not).
+# csiro must come after MATH_LIB is defined (or not).
+# csiro must come after c++ and fortran because of use of filter_rpath
 include(csiro)
 
 
@@ -532,6 +535,7 @@ include(pango)
 # =======================================================================
 # Device drivers
 # =======================================================================
+# drivers must come after c++ and fortran because of use of filter_rpath
 include(drivers)
 
 # =======================================================================
