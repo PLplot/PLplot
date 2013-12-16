@@ -32,15 +32,20 @@
 # 			    if(PKG_CONFIG_EXECUTABLE)
 # PKG_CONFIG_DIR	  - install location for configured PLplot
 #  			    pkg-config files.
-# PKG_CONFIG_ENV	  - the string PKG_CONFIG_PATH=${PKG_CONFIG_DIR} which
+# PKG_CONFIG_ENV	  - the string PKG_CONFIG_PATH=
+#                           ${PKG_CONFIG_DIR}:$ENV{PKG_CONFIG_PATH} which
 #  			    is used in example builds.
-
 include(FindPkgConfig)
 
 if(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - found")
-  set(PKG_CONFIG_DIR ${LIB_DIR}/pkgconfig)
-  set(PKG_CONFIG_ENV PKG_CONFIG_PATH=${PKG_CONFIG_DIR})
+  set(PKG_CONFIG_DIR "${LIB_DIR}/pkgconfig")
+  set(env_PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
+  if(env_PKG_CONFIG_PATH)
+    set(PKG_CONFIG_ENV PKG_CONFIG_PATH="${PKG_CONFIG_DIR}:${env_PKG_CONFIG_PATH}")
+  else(env_PKG_CONFIG_PATH)
+    set(PKG_CONFIG_ENV PKG_CONFIG_PATH="${PKG_CONFIG_DIR}")
+  endif(env_PKG_CONFIG_PATH)
 else(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - not found")
   message(STATUS
