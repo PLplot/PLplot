@@ -155,6 +155,13 @@ make build_plplot >& build_plplot.out
 # Check build_plplot.out for any errors
 less build_plplot.out
 
+# N.B. add the option -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON to the
+# above cmake command to run a comprehensive test script just after
+# PLplot is built and installed for both the build_plplot and
+# build_plplot_lite targets.  This test script (familiar to PLplot
+# developers) requires substantial extra CPU time and ~4GB of extra
+# disk space to run.
+
 2. Windows platforms
 
 Very similar to above, but I will fill in variations that I used

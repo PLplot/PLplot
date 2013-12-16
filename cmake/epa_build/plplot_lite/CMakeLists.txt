@@ -82,6 +82,14 @@ if(MSYS_PLATFORM)
   determine_msys_path(EPA_PATH "${EPA_PATH}")
 endif(MSYS_PLATFORM)
 
+if(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
+  string(REGEX REPLACE ";" " " blank_delimited_cmake_args "${cmake_args}")
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/comprehensive_test.sh
+    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --cmake_added_options \"${blank_delimited_cmake_args}\""
+    )
+  set(TEST_COMMAND TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/comprehensive_test.sh)
+endif(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
+
 ExternalProject_Add(
   build_${PACKAGE}
   DEPENDS "${dependencies_targets}"
@@ -90,6 +98,6 @@ ExternalProject_Add(
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   TEST_BEFORE_INSTALL OFF
-  TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} test_noninteractive
+  ${TEST_COMMAND}
   STEP_TARGETS configure build install test
   )
