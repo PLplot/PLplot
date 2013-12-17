@@ -107,6 +107,8 @@ if(ENABLE_tk)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
+    filter_rpath(LIB_INSTALL_RPATH)
     set_target_properties(plserver
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
