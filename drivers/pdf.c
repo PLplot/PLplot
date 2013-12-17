@@ -750,7 +750,7 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
                     dup            = 0.5 * ( 1.0 - sscale );
                     dev->fontScale = (HPDF_REAL) sscale;
                     PSSetFont( dev, fci );
-                    dev->yOffset = (HPDF_REAL) (dev->fontSize * ( soffset * RISE_FACTOR + dup ));
+                    dev->yOffset = (HPDF_REAL) ( dev->fontSize * ( soffset * RISE_FACTOR + dup ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {

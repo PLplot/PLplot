@@ -105,16 +105,16 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <ctype.h>
-#if !defined( __WIN32__ )
+#if !defined ( __WIN32__ )
 #include <sys/uio.h>
 #endif
 #include <errno.h>
 
 // Supply dummy macros for the low-level I/O functions - Windows
-#if defined( __WIN32__ )
-#define read(a,b,c) 0
-#define close(a)
-#define write(a,b,c) 0
+#if defined ( __WIN32__ )
+#define read( a, b, c )     0
+#define close( a )
+#define write( a, b, c )    0
 #endif
 
 //extern int errno;

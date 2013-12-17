@@ -288,7 +288,6 @@ x31::x31( int argc, const char *argv[] )
     }
 
     delete pls;
-
 }
 
 int main( int argc, const char **argv )

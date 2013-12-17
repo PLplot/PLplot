@@ -125,8 +125,8 @@ plot1( int type )
     line_styles[0] = 1;
     line_widths[0] = 1.;
     // note from the above opt_array the first symbol (and box) indices
-    // do not have to be specified, at least in C. For Fortran we need 
-    // to set the symbols to be something, since the string is always 
+    // do not have to be specified, at least in C. For Fortran we need
+    // to set the symbols to be something, since the string is always
     // copied as part of the bindings.
     symbols[0] = "";
 

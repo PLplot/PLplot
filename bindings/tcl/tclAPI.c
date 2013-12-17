@@ -695,7 +695,7 @@ plWait_Until( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp, int PL_UNU
 int
 pls_auto_path( Tcl_Interp *interp )
 {
-    int         debug        = plsc->debug;
+    int  debug = plsc->debug;
     char *buf, *ptr = NULL, *dn;
     int  return_code = TCL_OK;
 #ifdef DEBUG
@@ -707,7 +707,7 @@ pls_auto_path( Tcl_Interp *interp )
 // Add TCL_DIR
 
 #ifdef TCL_DIR
-    if( debug )
+    if ( debug )
         fprintf( stderr, "adding %s to auto_path\n", TCL_DIR );
     Tcl_SetVar( interp, "dir", TCL_DIR, TCL_GLOBAL_ONLY );
     if ( tcl_cmd( interp, "set auto_path [linsert $auto_path 0 $dir]" ) == TCL_ERROR )

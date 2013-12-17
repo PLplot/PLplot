@@ -698,11 +698,11 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
         if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
         else
-            if ( n != npts-1 )
-                plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
-            else
-                // Note final element is unused, so we set to zero for completeness.
-                plsc->cmap1cp[n].alt_hue_path = 0;
+        if ( n != npts - 1 )
+            plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
+        else
+            // Note final element is unused, so we set to zero for completeness.
+            plsc->cmap1cp[n].alt_hue_path = 0;
     }
 
 // Calculate and set color map
@@ -784,11 +784,11 @@ c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
         if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
         else
-            if ( n != npts-1 )
-                plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
-            else
-                // Note final element is unused, so we set to zero for completeness.
-                plsc->cmap1cp[n].alt_hue_path = 0;
+        if ( n != npts - 1 )
+            plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
+        else
+            // Note final element is unused, so we set to zero for completeness.
+            plsc->cmap1cp[n].alt_hue_path = 0;
     }
 
 // Calculate and set color map
@@ -1726,7 +1726,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             fuzzy_range_check( g[i], 0., 1., FUZZ_EPSILON, 2 );
             fuzzy_range_check( b[i], 0., 1., FUZZ_EPSILON, 3 );
             fuzzy_range_check( pos[i], 0., 1., FUZZ_EPSILON, 4 );
-            if ( ( return_sscanf == 5 )  && ( i != number_colors - 1 ) )
+            if ( ( return_sscanf == 5 ) && ( i != number_colors - 1 ) )
             {
                 // Next to oldest tk format with alt_hue_path specified.
                 alt_hue_path[i] = (PLBOOL) alt_hue_path_i;

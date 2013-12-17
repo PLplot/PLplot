@@ -1195,8 +1195,8 @@ PlFrameKeyEH( ClientData clientData, register XEvent *eventPtr )
 
     dbug_enter( "PlFrameKeyEH" );
 
-#if !defined( __WIN32__ )
-    nchars         = XLookupString( event, string, 10, &keysym, &cs );
+#if !defined ( __WIN32__ )
+    nchars = XLookupString( event, string, 10, &keysym, &cs );
 #else
     nchars = 0;
 #endif
@@ -2548,7 +2548,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
                 (char *) NULL );
             return TCL_ERROR;
         }
-#if !defined( __WIN32__ )
+#if !defined ( __WIN32__ )
         if ( ( iodev->fd = open( argv[1], O_RDONLY ) ) == -1 )
 #else
         if ( 1 )
@@ -2560,10 +2560,10 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
         }
         iodev->type     = 0;
         iodev->typeName = "fifo";
-#if !defined( __WIN32__ )
-        iodev->file     = fdopen( iodev->fd, "rb" );
+#if !defined ( __WIN32__ )
+        iodev->file = fdopen( iodev->fd, "rb" );
 #else
-        iodev->file     = NULL;
+        iodev->file = NULL;
 #endif
     }
 
@@ -2875,7 +2875,7 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
     if ( plFramePtr->plpr_cmd == NULL )
         plFramePtr->plpr_cmd = plFindCommand( "plpr" );
 
-#if !defined( __WIN32__ )
+#if !defined ( __WIN32__ )
     if ( ( plFramePtr->plpr_cmd == NULL ) || ( pid = fork() ) < 0 )
 #else
     if ( 1 )
@@ -2888,7 +2888,7 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
     else if ( pid == 0 )
     {
-#if !defined( __WIN32__ )
+#if !defined ( __WIN32__ )
         if ( execl( plFramePtr->plpr_cmd, plFramePtr->plpr_cmd, sfnam,
                  (char *) 0 ) )
 #else

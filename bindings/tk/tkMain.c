@@ -108,11 +108,11 @@ EXTERN Tcl_Namespace * Tcl_GetGlobalNamespace _ANSI_ARGS_( (
 // extern int		isatty _ANSI_ARGS_((int fd));
 // extern int		read _ANSI_ARGS_((int fd, char *buf, size_t size));
 //
-#if !defined(__WIN32__)
+#if !defined ( __WIN32__ )
 extern char *           strrchr _ANSI_ARGS_( ( CONST char *string, int c ) );
 #else
 // On Windows we do not have a convenient console to work with
-#define isatty( a ) 0
+#define isatty( a )    0
 #endif
 
 //
@@ -204,7 +204,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     //
     // Parse command-line arguments.
     //
-    fprintf( stderr, "Before Tk_ParseArgv\n");
+    fprintf( stderr, "Before Tk_ParseArgv\n" );
 
     if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv, argTable, 0 )
          != TCL_OK )
@@ -212,7 +212,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
         fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
         exit( 1 );
     }
-    fprintf( stderr, "After Tk_ParseArgv\n");
+    fprintf( stderr, "After Tk_ParseArgv\n" );
     if ( name == NULL )
     {
         if ( fileName != NULL )
@@ -315,7 +315,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     // and "argv".  Also set the "geometry" variable from the geometry
     // specified on the command line.
     //
-    fprintf( stderr, "Before Tcl_Merge\n");
+    fprintf( stderr, "Before Tcl_Merge\n" );
 
     args = Tcl_Merge( argc - 1, ( CONST char * CONST * )argv + 1 );
     Tcl_SetVar( interp, "argv", args, TCL_GLOBAL_ONLY );
@@ -323,7 +323,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     sprintf( buf, "%d", argc - 1 );
     Tcl_SetVar( interp, "argc", buf, TCL_GLOBAL_ONLY );
 
-    fprintf( stderr, "After Tcl_Merge\n");
+    fprintf( stderr, "After Tcl_Merge\n" );
     if ( geometry != NULL )
     {
         Tcl_SetVar( interp, "geometry", geometry, TCL_GLOBAL_ONLY );
@@ -345,7 +345,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     //
     // Invoke application-specific initialization.
     //
-    fprintf( stderr, "Before AppInit\n");
+    fprintf( stderr, "Before AppInit\n" );
 
     if ( ( *AppInit )( interp ) != TCL_OK )
     {
@@ -369,7 +369,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     //
     // Process the startup script, if any.
     //
-    fprintf( stderr, "Before startup\n");
+    fprintf( stderr, "Before startup\n" );
 
     if ( script != NULL )
     {
@@ -384,7 +384,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     //
     // Invoke the script specified on the command line, if any.
     //
-    fprintf( stderr, "Before source\n");
+    fprintf( stderr, "Before source\n" );
 
     if ( fileName != NULL )
     {
@@ -448,7 +448,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     // are no windows left, Tk_MainLoop returns and we exit.
     //
 
-    fprintf( stderr, "Before Tk_MainLoop\n");
+    fprintf( stderr, "Before Tk_MainLoop\n" );
     Tk_MainLoop();
 
     //
@@ -502,10 +502,10 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
     int        code, count;
     const char *res;
 
-#if !defined(__WIN32__)
+#if !defined ( __WIN32__ )
     count = (int) read( fileno( stdin ), input, BUFFER_SIZE );
 #else
-    count = fread( input, BUFFER_SIZE, sizeof( char ), stdin );
+    count = fread( input, BUFFER_SIZE, sizeof ( char ), stdin );
 #endif
     if ( count <= 0 )
     {

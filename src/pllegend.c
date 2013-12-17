@@ -933,14 +933,14 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 static void
 remove_characters( char *string, const char *characters )
 {
-    char *src, *dst; 
+    char       *src, *dst;
     const char *ptr;
-    for(src=dst=string; *src != '\0'; src++) 
+    for ( src = dst = string; *src != '\0'; src++ )
     {
         ptr = characters;
-        while ( (*ptr != '\0') && (*src != *ptr) )
+        while ( ( *ptr != '\0' ) && ( *src != *ptr ) )
             ptr++;
-        if (*src != *ptr) 
+        if ( *src != *ptr )
         {
             *dst = *src;
             dst++;
