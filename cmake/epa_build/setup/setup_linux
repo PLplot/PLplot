@@ -45,10 +45,6 @@ CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include/itcl3.4:$CMAKE_INCLUDE_P
 CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}/include:$CMAKE_INCLUDE_PATH
 CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}/lib:$CMAKE_LIBRARY_PATH
 
-# Put buildtools on LD_LIBRARY_PATH.  This is necessary for at least swig
-# build tool to find libpcre library that is part of the buildtools.
-export LD_LIBRARY_PATH=${INSTALL_PREFIX}_buildtools/lib
-
 # Put buildtools pkg-config directories at top of PKG_CONFIG_PATH
 export PKG_CONFIG_PATH=${INSTALL_PREFIX}_buildtools/share/pkgconfig:${INSTALL_PREFIX}_buildtools/lib/pkgconfig
 
