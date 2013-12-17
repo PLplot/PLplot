@@ -74,7 +74,8 @@ if(ENABLE_tcl)
   endif(USE_TCL_TK_STUBS)
 
   if(USE_RPATH)
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
+    filter_rpath(LIB_INSTALL_RPATH)
     set_target_properties(tclmatrix${LIB_TAG}
       PROPERTIES
       SOVERSION ${tclmatrix_SOVERSION}
@@ -360,6 +361,8 @@ if(ENABLE_tcl)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
+    filter_rpath(LIB_INSTALL_RPATH)
     set_target_properties(plplottcltk${LIB_TAG}
       PROPERTIES
       SOVERSION ${plplottcltk_SOVERSION}
@@ -368,6 +371,9 @@ if(ENABLE_tcl)
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
 
+    # This version of LIB_INSTALL_RPATH also used below for pltcl.
+    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
+    filter_rpath(LIB_INSTALL_RPATH)
     set_target_properties(plplottcltk_Main${LIB_TAG}
       PROPERTIES
       SOVERSION ${plplottcltk_Main_SOVERSION}

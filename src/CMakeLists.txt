@@ -417,6 +417,7 @@ target_link_libraries(
   )
 
 if(USE_RPATH)
+  filter_rpath(LIB_INSTALL_RPATH)
   set_target_properties(
     plplot${LIB_TAG}
     PROPERTIES 

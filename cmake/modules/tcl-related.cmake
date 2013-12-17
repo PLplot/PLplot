@@ -41,27 +41,31 @@ option(USE_TCL_TK_STUBS "Use Tcl/Tk stubs libraries" OFF)
 # further.
 
 #TCL_INCLUDE_PATH
-#TCL_LIBRARY            (Always the non-stub version)
-#TCL_STUB_LIBRARY       (Always the stub version)
+#TCL_LIBRARY             (Always the non-stub version)
+#TCL_STUB_LIBRARY        (Always the stub version)
 #ITCL_INCLUDE_PATH
 #ITCL_LIBRARY
-#HAVE_ITCL   		(On when itcl header and library have been found.
-#			 Otherwise, undefined.
-#			 Used for source file configuration.)
-#HAVE_ITCLDECLS_H 	(defined [actually as a path, but we don't use that]
-#			 when itclDecls.h.  Otherwise, undefined.
-#			 Used for source file configuration.)
+#HAVE_ITCL               (On when itcl header and library have been found.
+#			  Otherwise, undefined.
+#			  Used for source file configuration.)
+#HAVE_ITCLDECLS_H 	 (defined [actually as a path, but we don't use that]
+#			  when itclDecls.h.  Otherwise, undefined.
+#			  Used for source file configuration.)
 #TK_INCLUDE_PATH
-#TK_LIBRARY             (Always the non-stub version)
-#TK_STUB_LIBRARY        (Always the stub version)
+#TK_LIBRARY              (Always the non-stub version)
+#TK_STUB_LIBRARY         (Always the stub version)
 #ITK_INCLUDE_PATH
 #ITK_LIBRARY
-#HAVE_ITK   		(On when itcl header and library have been found.
-#			 Otherwise, undefined.
-#			 Used for source file configuration.)
+#HAVE_ITK   		 (On when itcl header and library have been found.
+#			  Otherwise, undefined.
+#			  Used for source file configuration.)
 #PLPLOT_ITCL_VERSION     (Consistent Itcl version number found by PLplot).
 #PLPLOT_ITK_VERSION      (Consistent Itk version number found by PLplot).
 #PLPLOT_IWIDGETS_VERSION (Consistent Iwidgets version number found by PLplot).
+#TCL_RPATH               (rpath, if needed for non-system Tcl location)
+#TCL_TK_RPATH            (rpath, if needed for non-system Tcl/Tk location)
+#TCL_TK_ITCL_ITK_RPATH   (rpath, if needed for non-system Tcl/Tk/Itcl/Itk
+#                         location)
 
 if(ENABLE_tcl)
   message(STATUS "Start determining consistent system data for Tcl and friends")
@@ -74,6 +78,9 @@ if(ENABLE_tcl)
 
     get_filename_component(TCL_LIBRARY_PATH ${TCL_LIBRARY} PATH)
     message(STATUS "TCL_LIBRARY_PATH = ${TCL_LIBRARY_PATH}")
+    set(TCL_RPATH ${TCL_LIBRARY_PATH})
+    set(TCL_TK_RPATH ${TCL_RPATH})
+    set(TCL_TK_ITCL_ITK_RPATH ${TCL_RPATH})
 
     if(TCL_TCLSH)
       message(STATUS "Looking for tclsh - found")
@@ -172,6 +179,8 @@ void main(void){}
           if(ITCL_LIBRARY)
             message(STATUS "Looking for itcl library - found")
 	    message(STATUS "ITCL_LIBRARY = ${ITCL_LIBRARY}")
+	    get_filename_component(ITCL_LIBRARY_PATH ${ITCL_LIBRARY} PATH)
+	    list(APPEND TCL_TK_ITCL_ITK_RPATH ${ITCL_LIBRARY_PATH})
             set(HAVE_ITCL ON)
             find_path(HAVE_ITCLDECLS_H itclDecls.h HINTS ${ITCL_INCLUDE_PATH})
           else(ITCL_LIBRARY)
@@ -215,6 +224,8 @@ void main(void){}
       if(NOT ${TK_LIBRARY_PATH} STREQUAL ${TCL_LIBRARY_PATH})
 	message(STATUS "WARNING: the Tcl and Tk library locations are inconsistent so those libraries are likely not compatible")
       endif(NOT ${TK_LIBRARY_PATH} STREQUAL ${TCL_LIBRARY_PATH})
+      list(APPEND TCL_TK_RPATH  ${TK_LIBRARY_PATH})
+      list(APPEND TCL_TK_ITCL_ITK_RPATH  ${TK_LIBRARY_PATH})
     else(ENABLE_tk)
       message(STATUS "WARNING: Because Tk is disabled must disable Itk as well")
       set(ENABLE_itk OFF CACHE BOOL "Enable Itk interface code" FORCE)
@@ -305,6 +316,8 @@ void main(void){}
             message(STATUS "Looking for itk library - found")
 	    message(STATUS "ITK_LIBRARY = ${ITK_LIBRARY}")
 	    set(HAVE_ITK ON)
+	    get_filename_component(ITK_LIBRARY_PATH ${ITK_LIBRARY} PATH)
+	    list(APPEND TCL_TK_ITCL_ITK_RPATH ${ITK_LIBRARY_PATH})
 
 	    # Test version consistency between iwidgets, itk, and itcl.
 	    if(NOT IWIDGETS_VERSIONS_LIST)
@@ -412,6 +425,22 @@ void main(void){}
     set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
     set(ENABLE_itk OFF CACHE BOOL "Enable Itk interface code" FORCE)
   endif(TCL_FOUND AND TCL_TCLSH)
+
+  filter_rpath(TCL_RPATH)
+  if(TCL_RPATH)
+    message(STATUS "TCL_RPATH = ${TCL_RPATH}")
+  endif(TCL_RPATH)
+
+  filter_rpath(TCL_TK_RPATH)
+  if(TCL_TK_RPATH)
+    message(STATUS "TCL_TK_RPATH = ${TCL_TK_RPATH}")
+  endif(TCL_TK_RPATH)
+
+  filter_rpath(TCL_TK_ITCL_ITK_RPATH)
+  if(TCL_TK_ITCL_ITK_RPATH)
+    message(STATUS "TCL_TK_ITCL_ITK_RPATH = ${TCL_TK_ITCL_ITK_RPATH}")
+  endif(TCL_TK_ITCL_ITK_RPATH)
+
   message(STATUS "Finished determining consistent system data for Tcl and friends")
 else(ENABLE_tcl)
   message(STATUS "WARNING: ENABLE_tcl is OFF so disabling everything else that is Tcl/Tk related")

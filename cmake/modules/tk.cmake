@@ -25,6 +25,7 @@
 # tk_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile
 # 			    the tk device.
 # tk_LINK_FLAGS	  	  - individual LINK_FLAGS for the dynamic tk device.
+# tk_RPATH                - rpath for tk device driver.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 # tk_SOURCE		  - list of source files other than tk.c
 
@@ -33,6 +34,7 @@
 # ntk_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile
 # 			    the ntk device.
 # ntk_LINK_FLAGS	  - individual LINK_FLAGS for the dynamic ntk device.
+# ntk_RPATH               - rpath for ntk device driver.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
 # The following variables are set/modified for the tkwin device:
@@ -40,6 +42,7 @@
 # tkwin_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile
 # 			    the tkwin device.
 # tkwin_LINK_FLAGS	  - individual LINK_FLAGS for the dynamic tkwin device.
+# tkwin_RPATH             - rpath for tkwin device driver.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 # tkwin_SOURCE		  - list of source files other than tkwin.c
 
@@ -62,6 +65,7 @@ if(PLD_tk)
   "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
   )
   set(tk_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(tk_RPATH ${TCL_TK_RPATH})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
   if(NOT ENABLE_DYNDRIVERS)
     # All source that is in libplplottcltk
@@ -98,6 +102,7 @@ endif(PLD_tk)
 if(PLD_ntk)
   set(ntk_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS}")
   set(ntk_LINK_FLAGS ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(ntk_RPATH ${TCL_TK_RPATH})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ntk_LINK_FLAGS})
 endif(PLD_ntk)
 
@@ -108,8 +113,11 @@ if(PLD_tkwin)
 
   if(USE_TCL_TK_STUBS)
     set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_STUB_LIBRARY} ${TK_STUB_LIBRARY} ${X11_LIBRARIES})
+    # tkwin_RPATH should be undefined for this case since stubs versions
+    # of the libraries are static (in my experience so far).
   else(USE_TCL_TK_STUBS)
     set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY} ${X11_LIBRARIES})
+    set(tkwin_RPATH ${TCL_TK_RPATH})
   endif(USE_TCL_TK_STUBS)
 
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})

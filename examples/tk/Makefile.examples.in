@@ -25,7 +25,7 @@ EXEEXT = @EXEEXT@
 
 LIB_TAG = @LIB_TAG@
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATHCMD = @RPATHCMD@
+plplottcltk_Main_RPATHCMD = @plplottcltk_Main_RPATHCMD@
 
 EXECUTABLES_list = xtk01$(EXEEXT)
 # Second and fourth examples depend on itk.
@@ -37,6 +37,6 @@ clean:
 	rm -f $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
 .c$(EXEEXT):
-	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-tcl_Main plplot$(LIB_TAG)-tcl plplot$(LIB_TAG)` -lm
+	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-tcl_Main plplot$(LIB_TAG)-tcl plplot$(LIB_TAG)` -lm
 
 .SUFFIXES: .c $(EXEEXT)
