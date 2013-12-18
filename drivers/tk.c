@@ -1558,8 +1558,11 @@ link_init( PLStream *pls )
 
         if ( unlink( iodev->fileName ) == -1 )
             abort_session( pls, "Error removing fifo" );
+        free(iodev->fileName);
+        iodev->fileName = NULL;
         if ( rmdir( dirname ) == -1 )
             abort_session( pls, "Error removing temporary directory" );
+        free(dirname);
     }
 
 // Create socket for data transfer to the plframe widget
