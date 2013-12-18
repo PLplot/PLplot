@@ -201,7 +201,9 @@ function(filter_rpath rpath)
   #message("DEBUG: ${rpath} = ${${rpath}}")
   set(internal_rpath ${${rpath}})
   if(internal_rpath)
+    # Remove duplicates and empty elements.
     list(REMOVE_DUPLICATES internal_rpath)
+    list(REMOVE_ITEM internal_rpath "")
     set(directories_to_be_removed
       ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}
       ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES}
