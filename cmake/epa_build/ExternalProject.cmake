@@ -636,18 +636,9 @@ file(MAKE_DIRECTORY \"\${ut_dir}\")
 # Extract it:
 #
 message(STATUS \"extracting... [tar ${args}]\")
-if(filename MATCHES \"tar\\\\.xz$\")
-  # --force-local required so that drive-letter colon for filename on
-  # Windows platforms is not interpreted as a remote host.
-  find_program(TAR_EXECUTABLE tar)
-  execute_process(COMMAND \${TAR_EXECUTABLE} --force-local -Jxf \${filename}
-    WORKING_DIRECTORY \${ut_dir}
-    RESULT_VARIABLE rv)
-else(filename MATCHES \"tar\\\\.xz$\")
-  execute_process(COMMAND \${CMAKE_COMMAND} -E tar ${args} \${filename}
-    WORKING_DIRECTORY \${ut_dir}
-    RESULT_VARIABLE rv)
-endif(filename MATCHES \"tar\\\\.xz$\")
+execute_process(COMMAND \${CMAKE_COMMAND} -E tar ${args} \${filename}
+  WORKING_DIRECTORY \${ut_dir}
+  RESULT_VARIABLE rv)
 
 if(NOT rv EQUAL 0)
   message(STATUS \"extracting... [error clean up]\")
