@@ -41,6 +41,18 @@ if(MSYS_PLATFORM)
   set(CXXFLAGS "-fno-keep-inline-dllexport $ENV{CXXFLAGS}")
 else(MSYS_PLATFORM)
   set(CXXFLAGS "$ENV{CXXFLAGS}")
+  # To avoid having to build all of gtk with epa_build in a consistent
+  # manner I tried several alternatives to the gtk toolkit.  
+  # e.g., 
+  # set(toolkit_options --with-x11)
+  # set(toolkit_options --with-motif)
+  # But neither of those worked because they are not capable of
+  # supplying the unicode (see --enable-unicode below) capability
+  # that is provided by the default gtk toolkit and needed by the
+  # PLplot build of the wxwidgets device.
+  # The inevitable conclusion is that on Unix, we must use the gtk toolkit
+  # and therefore epa_build must provide a consistent version of that
+  # as a dependency of wxwidgets.
 endif(MSYS_PLATFORM)
 
 set(CFLAGS "$ENV{CFLAGS}")
@@ -57,7 +69,7 @@ ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
   URL_MD5 ${URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb ${toolkit_options}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
   )
