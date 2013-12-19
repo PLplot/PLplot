@@ -187,9 +187,13 @@ and octave PLplot components were dropped) epa_build environment on
 environment (only the wxwidgets and octave components of PLplot were
 dropped) on 64-bit Debian Wheezy Linux for AMD-64 hardware.
 
-* Alan W. Irwin ran comprehensive tests for a limited (qt, cairo, wxwidgets,
-and octave PLplot components were dropped) epa_build environment for
-32-bit MinGW/MSYS/Wine for AMD-64 hardware.
+* Alan W. Irwin ran comprehensive tests for a limited (qt, cairo,
+wxwidgets, and octave PLplot components were dropped) epa_build
+environment for 32-bit MinGW/MSYS/Wine for AMD-64 hardware.  The Wine
+version was a release candidate for Wine-1.6 that was built on Debian
+Wheezy Linux, the compiler was gcc-4.7.2, the CMake generator was
+"MSYS Makefiles", and the build command was "make" (i.e., the MSYS
+version, not the MinGW version).
 
 * Andrew Ross ran fairly comprehensive tests (i.e., for the shared
 library/dynamic drivers case use the test_noninteractive and
@@ -201,22 +205,55 @@ drivers case use the test_noninteractive and test_interactive targets
 in the build tree) for a complete system build environment on
 64-bit Ubuntu Saucy (13.10) Linux for AMD-64 hardware.
 
-* Phil Rosenberg ran build tests and limited run-time tests (checking
-by hand that some components of PLplot worked) for the static
-libraries/nondynamic devices case for a limited build environment
-(most PLplot components dropped other than wxwidgets 2.8) for the
-Visual Studio 2008 IDE (with associated MSVC compiler) on 32-bit
-Windows 7 for AMD-64 hardware.  The "Visual Studio 9 2008" generator
-yielded good results.  Only x86 builds were tested.
+* Arjen Markus ran a fairly comprehensive test (i.e., for the shared
+library/dynamic drivers case use the test_noninteractive target) for a
+incomplete system build environment (the Ada, D, itcl/itk, Lua, ocaml,
+octave, Java, and wxwidgets components of PLplot were dropped) on
+64-bit Cygwin with gcc-4.8.2.  That platform was installed on top of
+64-bit Windows 7, service pack 1 for AMD-64 hardware.  Java and
+wxwidgets were dropped because of build errors for those on Cygwin
+that have not been resolved yet.  The remaining components were
+dropped due to lack of time to investigate them so far.  There was
+close to complete success with the qt amd cairo (asided from wincairo)
+device drivers which is an excellent Windows result since those
+device drivers add a lot of important capability to PLplot.
+
+* Arjen Markus ran build tests and limited run-time tests (checking by
+hand that some components of PLplot worked) for the shared
+libraries/dynamic devices case for a limited build environment (the
+qt, cairo, wxwidgets, pdf and the components mentioned above of PLplot
+were dropped except for Java which was included in this test) on
+32-bit MinGW.  That platform was installed on top of 64-bit Windows 7,
+service pack 1 for AMD-64 hardware.  The compiler was gcc-4.7.0, the
+CMake generator was "MinGW Makefiles", and the build command was
+mingw32-make.
+
+* Arjen Markus ran build tests and limited run-time tests (checking by
+hand that some components of PLplot worked) for the shared
+libraries/dynamic devices case for a limited build environment (the
+same limitations as for his MinGW tests above) for MSVC/C++ 2010 and Intel
+Fortran 2011 compilers on 64-bit Windows 7, service pack 1 for AMD-64
+hardware.  In general, the CMake generator "NMake Makefiles" and
+the corresponding build command "nmake" worked well for this platform.
+The attempted use of Visual Studio generators combined with the
+Visual Studio 2010 IDE available on that platform was more problematic.
 
 * Phil Rosenberg ran build tests and limited run-time tests (checking
 by hand that some components of PLplot worked) for the static
 libraries/nondynamic devices case for a limited build environment
-(most PLplot components dropped other than wxwidgets 3.0) for the
-Visual Studio 2012 IDE (with associated MSVC compiler) on Windows 8
-for AMD-64 hardware.  Both x86 and x64 builds were tested.  The
-combination of "NMake Makefiles" generator and MSVC compiler yielded
-good build results if CMake patches (available at
+(virtually all PLplot components dropped other than C, C++ and
+wxwidgets 2.8) for the Visual Studio 2008 IDE (with associated MSVC
+compiler) on 32-bit Windows 7 for AMD-64 hardware.  The "Visual Studio
+9 2008" generator yielded good results.  Only x86 builds were tested.
+
+* Phil Rosenberg ran build tests and limited run-time tests (checking
+by hand that some components of PLplot worked) for the static
+libraries/nondynamic devices case for a limited build environment
+(virtually all PLplot components dropped other than C, CXX, and
+wxwidgets 3.0) for the Visual Studio 2012 IDE (with associated MSVC
+compiler) on Windows 8 for AMD-64 hardware.  Both x86 and x64 builds
+were tested.  The combination of "NMake Makefiles" generator and MSVC
+compiler yielded good build results if CMake patches (available at
 http://www.cmake.org/Bug/view.php?id=14587 and
 http://www.cmake.org/Bug/view.php?id=14642) to allow use of
 wxwidgets-3.0 were applied.  With those patches some run-time problems
@@ -226,6 +263,7 @@ fine.  The "Visual Studio 11" and "Visual Studio 11 Win64" generators
 had some additional issues which could be worked around but which
 nevertheless indicated there are some CMake bugs for those generators
 that need to be addressed.
+
 
 3. Changes relative to PLplot 5.9.10 (the previous development release)
 
