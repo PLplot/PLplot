@@ -63,7 +63,7 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 # Data that is related to downloads.
 set(URL http://download.qt-project.org/official_releases/qt/4.8/4.8.5/qt-everywhere-opensource-src-4.8.5.tar.gz)
 # Temporary to save download bandwidth/time while debugging this.
-set(URL /home/software/build_qt4/qt-everywhere-opensource-src-4.8.5.tar.gz)
+#set(URL /home/software/build_qt4/qt-everywhere-opensource-src-4.8.5.tar.gz)
 set(DOWNLOAD_HASH_TYPE MD5)
 set(DOWNLOAD_HASH 1864987bdbb2f58f8ae8b350dfdbe133)
 
