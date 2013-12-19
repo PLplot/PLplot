@@ -165,7 +165,65 @@ future release.
 
 2. Tests made for release 5.9.11
 
-None at this time.
+Note that "comprehensive tests" below refers to running
+scripts/comprehensive_test.sh in default mode (i.e., not dropping any
+tests).  For each of our three major configurations (shared
+libraries/dynamic devices, shared libraries/nondynamic devices, and
+static libraries/nondynamic devices) this test script runs ctest in
+the build tree and runs the test_noninteractive and test_interactive
+targets in the build tree, the installed examples tree configured with
+a CMake-based build system for the examples, and an installed examples
+tree configured with our traditional (Make + pkg-config) build system
+for the examples.
+
+2.1 Comprehensive tests were run for a complete system build
+environment on 64-bit Debian Wheezy Linux for AMD-64 hardware.
+
+2.2 Comprehensive tests were run for a limited (qt, cairo, wxwidgets,
+and octave PLplot components were dropped) epa_build environment on
+64-bit Debian Wheezy Linux for AMD-64 hardware.
+
+2.3 Comprehensive tests were run for an almost complete epa_build
+environment (only the wxwidgets and octave components of PLplot were
+dropped) on 64-bit Debian Wheezy Linux for AMD-64 hardware.
+
+2.4 Comprehensive tests were run for a limited (qt, cairo, wxwidgets,
+and octave PLplot components were dropped) epa_build environment for
+32-bit MinGW/MSYS/Wine for AMD-64 hardware.
+
+2.5 Fairly comprehensive tests (i.e., for the shared library/dynamic
+drivers case use the test_noninteractive and test_interactive targets
+in the build tree) were run for a complete system build environment on
+64-bit Debian unstable Linux for AMD-64 hardware.
+
+2.6 Fairly comprehensive tests (i.e., for the shared library/dynamic
+drivers case use the test_noninteractive and test_interactive targets
+in the build tree) were run for a complete system build environment on
+64-bit Ubuntu Saucy (13.10) Linux for AMD-64 hardware.
+
+2.7 Build tests and some limited run-time tests (checking a few things
+by hand) were run for the static libraries/nondynamic devices case for
+a limited build environment (most PLplot components dropped other than
+wxwidgets 2.8) for the Visual Studio 2008 IDE (with associated MSVC
+compiler) on 32-bit Windows 7 for AMD-64 hardware.  The "Visual Studio
+9 2008" generator yielded good results.  Only x86 builds were tested.
+
+2.8 Build tests and some limited run-time tests (checking a few things
+by hand) were run for the static libraries/nondynamic devices case for
+a limited build environment (most PLplot components dropped other than
+wxwidgets 3.0) for the Visual Studio 2012 IDE (with associated MSVC
+compiler) on Windows 8 for AMD-64 hardware.  Both x86 and x64 builds
+were tested.  The combination of "NMake Makefiles" generator and MSVC
+compiler yielded good build results if CMake patches (available at
+http://www.cmake.org/Bug/view.php?id=14587 and
+http://www.cmake.org/Bug/view.php?id=14642) to allow use of
+wxwidgets-3.0 were applied.  With those patches some run-time problems
+with the use of Plplot's wxWidgetsApp with wxWidgets 3.0 were observed
+in the examples, however plots embedded in wxWidgets apps seem to work
+fine.  The "Visual Studio 11" and "Visual Studio 11 Win64" generators
+had some additional issues which could be worked around but which
+nevertheless indicated there are some CMake bugs for those generators
+that need to be addressed.
 
 3. Changes relative to PLplot 5.9.10 (the previous development release)
 
