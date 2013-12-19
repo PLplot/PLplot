@@ -176,45 +176,47 @@ a CMake-based build system for the examples, and an installed examples
 tree configured with our traditional (Make + pkg-config) build system
 for the examples.
 
-2.1 Comprehensive tests were run for a complete system build
+* Alan W. Irwin ran comprehensive tests for a complete system build
 environment on 64-bit Debian Wheezy Linux for AMD-64 hardware.
 
-2.2 Comprehensive tests were run for a limited (qt, cairo, wxwidgets,
+* Alan W. Irwin ran comprehensive testsfor a limited (qt, cairo, wxwidgets,
 and octave PLplot components were dropped) epa_build environment on
 64-bit Debian Wheezy Linux for AMD-64 hardware.
 
-2.3 Comprehensive tests were run for an almost complete epa_build
+* Alan W. Irwin ran comprehensive tests for an almost complete epa_build
 environment (only the wxwidgets and octave components of PLplot were
 dropped) on 64-bit Debian Wheezy Linux for AMD-64 hardware.
 
-2.4 Comprehensive tests were run for a limited (qt, cairo, wxwidgets,
+* Alan W. Irwin ran comprehensive tests for a limited (qt, cairo, wxwidgets,
 and octave PLplot components were dropped) epa_build environment for
 32-bit MinGW/MSYS/Wine for AMD-64 hardware.
 
-2.5 Fairly comprehensive tests (i.e., for the shared library/dynamic
-drivers case use the test_noninteractive and test_interactive targets
-in the build tree) were run for a complete system build environment on
-64-bit Debian unstable Linux for AMD-64 hardware.
+* Andrew Ross ran fairly comprehensive tests (i.e., for the shared
+library/dynamic drivers case use the test_noninteractive and
+test_interactive targets in the build tree) for a complete system
+build environment on 64-bit Debian unstable Linux for AMD-64 hardware.
 
-2.6 Fairly comprehensive tests (i.e., for the shared library/dynamic
+* Andrew Ross ran fairly comprehensive tests (i.e., for the shared library/dynamic
 drivers case use the test_noninteractive and test_interactive targets
-in the build tree) were run for a complete system build environment on
+in the build tree) for a complete system build environment on
 64-bit Ubuntu Saucy (13.10) Linux for AMD-64 hardware.
 
-2.7 Build tests and some limited run-time tests (checking a few things
-by hand) were run for the static libraries/nondynamic devices case for
-a limited build environment (most PLplot components dropped other than
-wxwidgets 2.8) for the Visual Studio 2008 IDE (with associated MSVC
-compiler) on 32-bit Windows 7 for AMD-64 hardware.  The "Visual Studio
-9 2008" generator yielded good results.  Only x86 builds were tested.
+* Phil Rosenberg ran build tests and limited run-time tests (checking
+by hand that some components of PLplot worked) for the static
+libraries/nondynamic devices case for a limited build environment
+(most PLplot components dropped other than wxwidgets 2.8) for the
+Visual Studio 2008 IDE (with associated MSVC compiler) on 32-bit
+Windows 7 for AMD-64 hardware.  The "Visual Studio 9 2008" generator
+yielded good results.  Only x86 builds were tested.
 
-2.8 Build tests and some limited run-time tests (checking a few things
-by hand) were run for the static libraries/nondynamic devices case for
-a limited build environment (most PLplot components dropped other than
-wxwidgets 3.0) for the Visual Studio 2012 IDE (with associated MSVC
-compiler) on Windows 8 for AMD-64 hardware.  Both x86 and x64 builds
-were tested.  The combination of "NMake Makefiles" generator and MSVC
-compiler yielded good build results if CMake patches (available at
+* Phil Rosenberg ran build tests and limited run-time tests (checking
+by hand that some components of PLplot worked) for the static
+libraries/nondynamic devices case for a limited build environment
+(most PLplot components dropped other than wxwidgets 3.0) for the
+Visual Studio 2012 IDE (with associated MSVC compiler) on Windows 8
+for AMD-64 hardware.  Both x86 and x64 builds were tested.  The
+combination of "NMake Makefiles" generator and MSVC compiler yielded
+good build results if CMake patches (available at
 http://www.cmake.org/Bug/view.php?id=14587 and
 http://www.cmake.org/Bug/view.php?id=14642) to allow use of
 wxwidgets-3.0 were applied.  With those patches some run-time problems
