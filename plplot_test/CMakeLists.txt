@@ -521,7 +521,7 @@ if(SH_EXECUTABLE)
     # tree so that example 20 will run from there.
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-      COMMAND ${CMAKE_COMMAND} -E copy
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
       ${CMAKE_SOURCE_DIR}/examples/lena.pgm
       ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
       DEPENDS ${CMAKE_SOURCE_DIR}/examples/lena.pgm
@@ -531,7 +531,7 @@ if(SH_EXECUTABLE)
       # Also need a copy of lena.img for the octave bindings
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.img
-	COMMAND ${CMAKE_COMMAND} -E copy
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 	${CMAKE_SOURCE_DIR}/examples/octave/lena.img
 	${CMAKE_CURRENT_BINARY_DIR}/lena.img
 	DEPENDS ${CMAKE_SOURCE_DIR}/examples/octave/lena.img
