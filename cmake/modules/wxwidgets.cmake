@@ -25,6 +25,8 @@
 # 			    device.
 # wxwidgets_LINK_FLAGS	  - list of full path names of libraries and
 # 			    linker flags for dynamic wxwidgets device driver.
+# wxwidgets_RPATH	  - rpath (if needed) for anything linked to the
+#                           wxwidgets libraries.
 # DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
 # 			    when ENABLE_DYNDRIVERS OFF.
 
@@ -84,6 +86,12 @@ if(PLD_wxwidgets OR PLD_wxpng)
   message(STATUS "wxWidgets found")
   message(STATUS "wxwidgets_COMPILE_FLAGS = ${wxwidgets_COMPILE_FLAGS}")
   message(STATUS "wxwidgets_LINK_FLAGS = ${wxwidgets_LINK_FLAGS}")
+  set(wxwidgets_RPATH ${wxWidgets_LIBRARY_DIRS})
+  filter_rpath(wxwidgets_RPATH)
+  if(wxwidgets_RPATH)
+    message(STATUS "wxwidgets_RPATH = ${wxwidgets_RPATH}")
+  endif(wxwidgets_RPATH)
+
   if(WITH_FREETYPE)
     include(agg)
     if(HAVE_AGG)

@@ -89,6 +89,9 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
+    filter_rpath(LIB_INSTALL_RPATH)
+    
     set_target_properties(plplotwxwidgets${LIB_TAG}
       PROPERTIES
       SOVERSION ${plplotwxwidgets_SOVERSION}
