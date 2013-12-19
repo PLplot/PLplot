@@ -401,7 +401,6 @@ else(BUILD_THE_BUILDTOOLS)
     ndiff
     plplot
     plplot_lite
-    wxwidgets
     pango
     qt4_lite
     )

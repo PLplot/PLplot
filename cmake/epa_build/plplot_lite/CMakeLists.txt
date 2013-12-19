@@ -84,10 +84,15 @@ endif(MSYS_PLATFORM)
 
 if(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
   string(REGEX REPLACE ";" " " blank_delimited_cmake_args "${cmake_args}")
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/comprehensive_test.sh
-    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --cmake_added_options \"${blank_delimited_cmake_args}\""
+
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
+    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --cmake_added_options \"${blank_delimited_cmake_args}\" --do_test_interactive no"
     )
-  set(TEST_COMMAND TEST_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/comprehensive_test.sh)
+
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
+    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --cmake_added_options \"${blank_delimited_cmake_args}\" --do_ctest no --do_test_noninteractive no"
+    )
+
 endif(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
 
 ExternalProject_Add(
@@ -98,6 +103,25 @@ ExternalProject_Add(
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
   TEST_BEFORE_INSTALL OFF
-  ${TEST_COMMAND}
+  TEST_COMMAND ""
   STEP_TARGETS configure build install test
   )
+
+if(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
+  add_custom_command(
+    OUTPUT
+    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
+    COMMAND ${CMAKE_COMMAND} -E echo "comprehensive noninteractive tests"
+    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
+    APPEND
+    )
+
+  add_custom_command(
+    OUTPUT
+    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
+    COMMAND ${CMAKE_COMMAND} -E echo "comprehensive interactive tests"
+    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
+    APPEND
+    )
+
+endif(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
