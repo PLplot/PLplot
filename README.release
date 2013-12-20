@@ -214,7 +214,7 @@ octave, Java, and wxwidgets components of PLplot were dropped) on
 wxwidgets were dropped because of build errors for those on Cygwin
 that have not been resolved yet.  The remaining components were
 dropped due to lack of time to investigate them so far.  There was
-close to complete success with the qt amd cairo (asided from wincairo)
+close to complete success with the qt and cairo (asided from wincairo)
 device drivers which is an excellent Windows result since those
 device drivers add a lot of important capability to PLplot.
 
@@ -301,6 +301,9 @@ examples/tcl/README.tcldemos and examples/tk/README.tkdemos have now
 been implemented as tests via the build system to help avoid any
 regressions in the build system and bindings for Tcl and friends in
 the future.
+
+As a consequence of these activities the ntk device has been enabled
+under Windows. The xwin and tkwin devices work under Cygwin.
 
 3.3 Substantial overhaul of the build system for the Qt-components of PLplot
 
