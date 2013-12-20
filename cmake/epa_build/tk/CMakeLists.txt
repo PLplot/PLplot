@@ -48,7 +48,7 @@ epa_boilerplate(
 # version of configure may be good enough for our needs for all
 # platforms.
 if(MSYS_PLATFORM)
-  set(source_PATH ${source_PATH}\unix)
+  set(source_PATH ${source_PATH}\\unix)
 else(MSYS_PLATFORM)
   set(source_PATH ${source_PATH}/unix)
 endif(MSYS_PLATFORM)
