@@ -200,10 +200,31 @@ library/dynamic drivers case use the test_noninteractive and
 test_interactive targets in the build tree) for a complete system
 build environment on 64-bit Debian unstable Linux for AMD-64 hardware.
 
-* Andrew Ross ran fairly comprehensive tests (i.e., for the shared library/dynamic
-drivers case use the test_noninteractive and test_interactive targets
-in the build tree) for a complete system build environment on
-64-bit Ubuntu Saucy (13.10) Linux for AMD-64 hardware.
+* Andrew Ross ran comprehensive tests for a complete system build 
+environment on 64-bit Ubuntu Saucy (13.10) Linux for AMD-64 hardware.
+The only issue was a segmentation fault on the c++ qt_example for
+the nondynamic drivers case only. This is reproducible on this
+system, but not on other Linux platforms so may be specific to the
+Ubuntu version of the Qt libraries. This is unlikely to affect most
+users since the default is to use dynamically loaded drivers.
+
+* Andrew Ross ran limited tests with a limited number of nondynamic 
+drivers (mem, null, psc, svg, xfig, xwin) and limited language 
+bindings (C / C++ / F95) for a CentOS 5.10 system with AMD64 hardware. 
+The build passed "make test_diff psc". The java version was too old 
+and java support had to be disabled. Ada support had to be 
+disabled due to a bug (now fixed). Cairo support also had to be 
+disabled due to too old a version of the library being installed.
+
+* Andrew Ross ran limited tests for an epa_build environment on CentOS 
+5.10. The buildtools and plplot_lite targets were built (with 
+nondynamic drivers), again after disabling java, ada and cairo support. 
+This build added support for tcl / tk bindings and the pdf and tk based 
+drivers. The build passed make test_noninteractive in the install tree, 
+but failed make test_interactive due to missing rpath information for the 
+itcl and itk libraries. This bug can be worked around by setting 
+LD_LIBRARY_PATH to point to the libraries, in which case the interactive
+test works fine.
 
 * Arjen Markus ran a fairly comprehensive test (i.e., for the shared
 library/dynamic drivers case use the test_noninteractive target) for a
