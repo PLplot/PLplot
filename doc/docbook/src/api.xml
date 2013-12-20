@@ -16770,13 +16770,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>width</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    The desired pen width.  If <literal><parameter>width</parameter></literal>
 	    is negative or the same as the previous value no action is taken.
-	    <literal><parameter>width</parameter> = 0</literal> should be interpreted as
+	    <literal><parameter>width</parameter> = 0.</literal> should be interpreted as
 	    as the minimum valid pen width for the device.  The interpretation of positive
 	    <literal><parameter>width</parameter></literal> values is also device
 	    dependent.
