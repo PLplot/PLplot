@@ -264,6 +264,10 @@ had some additional issues which could be worked around but which
 nevertheless indicated there are some CMake bugs for those generators
 that need to be addressed.
 
+* Felipe Gonzalez ran successful build tests for the C, C++, Fortran
+95, and OCaml-4.01.0 PLplot bindings on Mac OS X Mountain Lion.  The
+report from Felipe stated the compiler suite used was probably from
+MacPorts, and did not state anything about the hardware type.
 
 3. Changes relative to PLplot 5.9.10 (the previous development release)
 
