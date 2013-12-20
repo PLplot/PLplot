@@ -32,7 +32,6 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --><!-- Note to self: Uncomment these lines when editing with Serna or XMLmind
      or whatever, a validity check doesn't always fail. --><!-- This document was created with Syntext Serna Free. -->
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
 <chapter id="ada">
   <title>Ada Language</title>
   <para>This document describes the Ada bindings to the PLplot technical
