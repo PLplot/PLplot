@@ -1,0 +1,58 @@
+# This script should be sourced from an MSYS bash environment.  Its
+# purpose is to setup environment variables controlling the tool chain
+# that is used for MinGW/MSYS builds on a Wine platform.
+
+# Tailor these values to be appropriate for your local Windows platform.
+
+CMAKE_VERSION=2.8.12.1
+
+# This is the downloaded version we are testing rather than a bootstrapped
+# version.
+CMAKE_PATH=/z/home/wine/newstart/cmake-${CMAKE_VERSION}-win32-x86/bin
+
+MINGW_VERSION=4.7.2
+MINGW_PREFIX=/z/home/wine/newstart/MinGW-$MINGW_VERSION
+
+# MinGW gcc, g++, and gfortran flags you might want to tailor to
+# different values.
+export CFLAGS='-O3 -fvisibility=hidden -Wuninitialized'
+export CXXFLAGS='-O3 -fvisibility=hidden -Wuninitialized'
+export FFLAGS='-O3 -Wuninitialized'
+
+# Note $WINEVERSION propagates as an environment
+# variable from the Linux to Wine environment.
+BUILDTOOLS_PREFIX=/z/home/wine/newstart/build_script/install-${WINEVERSION}_buildtools
+
+# Directory where python.exe can be found
+PYTHON_PATH=/z/home/wine/newstart/python/python-2.7.5
+
+# Directory for top of source tree for epa_build
+export EPA_BUILD_SOURCE_PATH=/z/home/software/plplot_svn/HEAD/plplot_allura/cmake/epa_build
+
+# End of tailored values.
+
+# For MinGW on Wine, set up CMAKE_INCLUDE_PATH to find the
+# the MinGW, MSYS, and standard system headers.
+# N.B. $MINGW_PREFIX/msys/1.0/include is equivalent to /usr/include on bash.
+export CMAKE_INCLUDE_PATH=$MINGW_PREFIX/msys/1.0/include:$MINGW_PREFIX/include:$MINGW_PREFIX/lib/gcc/mingw32/$MINGW_VERSION/include:/z/home/wine/wine_build/install-$WINEVERSION/include/wine/msvcrt:/z/home/wine/wine_build/install-$WINEVERSION/include/wine/windows
+
+# For MinGW on Wine, no help is required to find mingw, msys, or wine libraries
+# because the appropriate dll's are on the PATH.
+export CMAKE_LIBRARY_PATH=
+
+# Help CMake find Python headers and library.
+CMAKE_INCLUDE_PATH=$PYTHON_PATH/include:$CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH=$PYTHON_PATH/libs:$CMAKE_LIBRARY_PATH
+
+# Put CMake, Python, subversion and MinGW on the PATH.
+
+PATH=$CMAKE_PATH:$PATH
+PATH=$PYTHON_PATH:$PATH
+PATH=$CMAKE_PATH:$PATH
+PATH=$MINGW_PREFIX/bin/:$PATH
+
+# pkg-config setup.
+PATH=$BUILDTOOLS_PREFIX/bin:$PATH
+
+export PKG_CONFIG_PATH=/z/home/wine/newstart/MinGW-4.7.2/msys/1.0/lib/pkgconfig:$BUILDTOOLS_PREFIX/share/pkgconfig:$BUILDTOOLS_PREFIX/lib/pkgconfig
+

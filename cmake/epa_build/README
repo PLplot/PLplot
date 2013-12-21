@@ -15,10 +15,11 @@ and install specific toolchain software before you start.
 Installing the Required Windows Toolchain:
 
 N.B. There is a good possibility that epa_build will work with the
-Microsoft proprietary toolchain, and I would be happy to accept
-patches to make that so (including a patch for this file), but my only
-experience is with free software so until I receive such patches, the
-instructions below refer only to free software toolchains.
+Microsoft proprietary toolchain, and I (which refers to Alan W. Irwin
+throughout this file) would be happy to accept patches to make that so
+(including a patch for this file), but my only experience is with free
+software so until I receive such patches, the instructions below refer
+only to free software toolchains.
 
 1. Install latest MinGW/MSYS using the automatic installer
 
@@ -50,7 +51,7 @@ mingw-get.exe --recursive install msys-unzip
 
 4. Download a recent cmake.exe version from
 http://www.cmake.org/files.  I am currently using
-v2.8/cmake-2.8.10.2-win32-x86.zip.  Unpack this using the unzip
+v2.8/cmake-2.8.12.1-win32-x86.zip.  Unpack this using the unzip
 command you just installed and put cmake.exe on your PATH.
 
 5. [OPTIONAL] Copy the MinGW-4.7.2/msys/1.0/bin directory to
@@ -78,22 +79,72 @@ correction in a following post in that thread.
 ===============================================================================
 Set up instructions for epa_build
 
-1. Linux or Mac OS X.
+I. Unix platforms:
+
+* Linux
 
 Tailor the indicated values in setup/setup_linux for your own
 system, then source that file, e.g.,
 
 source <Top directory of PLplot source tree>/cmake/epa_build/setup/setup_linux
 
-2. Windows platforms
+* Mac OS X
 
-Similar instructions about tailoring and sourcing relevant files to be
-done later after I update and test the files in question.
+This has not been tried yet, but something similar to setup_linux should
+do the job.
+
+* Cygwin on Windows
+
+Some experiments with this have just been started with nothing written
+down with regards to setup.  But ultimately it should be very similar
+to the Linux case.
+
+II. Non-Cygwin Windows platforms:
+
+* MinGW/MSYS for the Wine version of Windows
+
+Tailor the indicated values in setup_mingw_msys_wine_toolchain and
+setup/setup_msys_makefiles for your own system.  Then execute something
+similar to the following from Linux to get into the bash.exe shell
+on Wine:
+
+wineserver -p
+nice -19 wineconsole --backend=curses MinGW-4.7.2/msys/1.0/bin/bash.exe
+
+Then from that bash.exe shell execute
+
+bash.exe-3.1$ pushd /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/epa_build/setup;source setup_msys_makefiles;popd
+
+(You need to pushd or cd above to the setup directory because the the
+setup_msys_makefiles file that is sourced, automatically executes
+"source setup_mingw_msys_wine_toolchain", and that only works if it is
+done from the setup directory.)
+
+* MinGW/MSYS for the Microsoft version of Windows
+
+This has not been tried yet but the setup should work very similarly
+to the MinGW/MSYS/Wine case above.
+
+* Other non-Cygwin Windows platforms:
+
+Non-Cygwin windows epa_builds absolutely rely on MSYS tools such as
+bash.exe.  But so long as Windows users download MSYS and put it on
+the PATH, then in theory epa_build should work.  For example, I have
+tried epa_build on Wine with some success for the "MSYS Makefiles"
+CMake generator (those results are referred to above) as well as the
+"MinGW Makefiles", "Ninja", and "NMake Makefiles JOM" generators.  All
+of these results were with the gcc compiler suite from the MinGW
+project.  I see no reason why that success could not be extended to
+other command-line generators as well such as "NMake Makefiles" and
+other compilers such as MSVC/Ifort, but the epa_build project needs
+more volunteers to debug the platforms that interest them.
 
 ===============================================================================
 Build directions for epa_build
 
-1. Linux
+I. Unix platforms
+
+* Linux
 
 Note that setup_linux sets up all the important environment variables you
 need including GENERATOR_STRING, INSTALL_PREFIX, and EPA_BUILD_SOURCE_PATH.
@@ -162,7 +213,46 @@ less build_plplot.out
 # developers) requires substantial extra CPU time and ~4GB of extra
 # disk space to run.
 
-2. Windows platforms
+* Mac OS X and Cygwin
 
-Very similar to above, but I will fill in variations that I used
-on Wine when I get a chance to test them again.
+These epa_builds should be very similar to the Linux case.  I suggest
+you use system versions of build tools (i.e., skip the
+-DBUILD_THE_BUILDTOOLS=ON case above) to start until you start having
+success with ordinary epa_builds.  And I would start small there with,
+e.g., attempting to build shapelib, then plplot_lite before moving on
+to a full plplot build (including builds of all its dependencies).
+
+II. Non-Cygwin Windows platforms
+
+For the MinGW/MSYS/Wine case, I (AWI) essentially followed the same
+instructions as above for the Linux case.  However, some of the
+buildtools (e.g., Tcl/Tk/Itcl/Itk/Iwidgets variants) don't yet build
+on Windows and although CMake builds fine on MinGW/MSYS, the result
+does not have the power (supplied only by a fully configured curl
+library and not by the internal curl alternative that the CMake build
+can use as a backup) to download from "https" archives which is
+essential for some of the epa_builds.  The Linux and Cygwin platforms
+do give the required access to a full-featured Curl library for the
+cmake build to link to, but on MinGW/MSYS the only alternative is to
+build your own curl library, and the epa_build configuration for that
+has not been implemented yet although it is on my ToDo list.  The net
+result of these considerations is I only built pkg-config and swig for
+the -DBUILD_THE_BUILDTOOLS=ON case which in turn implied I dropped
+everything that was Tcl related from the PLplot build and relied on
+the pre-built (and fully powered) binary version of CMake downloaded
+from Kitware (see above setup instructions).  Also, for ordinary
+epa_builds (with -DBUILD_THE_BUILDTOOLS=OFF), I only had success with
+plplot_lite and not plplot.  The reason was the extra pango and qt
+dependencies of plplot which had dependent packages of their own that
+could not yet be built on Windows.
+
+N.B. the tweaks required to make all epa_builds work on Windows should
+be few per project since many others have had success building all
+projects on Windows that are covered by epa_build.  But there are a
+lot of such projects in, for example, the dependency list for pango,
+and often the Windows build tweaks are not well publicized.  Thus,
+some substantial and sustained effort (but not an impossibly difficult
+effort) will be required to get all of the epa_build configurations to
+work for the Windows case, and the success I have achieved with a
+limited group of projects for the MinGW/MSYS/Wine case is a good
+start.

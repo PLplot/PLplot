@@ -1,0 +1,37 @@
+# This script should be sourced from an MSYS bash environment.  Its
+# purpose is to setup environment variables needed to run any standard
+# cmake "MSYS Makefiles" build on a Windows platform.
+
+source setup_mingw_msys_wine_toolchain
+
+# Tailor this install location for "MSYS Makefiles" builds to your local needs:
+export INSTALL_PREFIX=/z/home/wine/newstart/build_script/install-$WINEVERSION
+
+# End of tailored values.
+
+# Put buildtools that have been built and installed by build_packages on PATH.
+PATH=${INSTALL_PREFIX}_buildtools/bin:$PATH
+
+# Put install directory on PATH (so that, e.g., the wxwidgets 
+# configuration tool will be found.
+PATH=${INSTALL_PREFIX}/bin:$PATH
+
+# Put appropriate buildtools areas on these.
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include:$CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}_buildtools/lib:$CMAKE_LIBRARY_PATH
+
+# Put version 3 of itcl and friends higher on CMAKE_INCLUDE_PATH then
+# the above default.
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include/itcl3.4:$CMAKE_INCLUDE_PATH
+
+# Put appropriate install areas on these.
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}/include:$CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}/lib:$CMAKE_LIBRARY_PATH
+
+# Put install-location pkg-config directories at top of PKG_CONFIG_PATH
+PKG_CONFIG_PATH=$INSTALL_PREFIX/share/pkgconfig:$INSTALL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
+
+# Put MSYS at the top of the PATH
+PATH=$MINGW_PREFIX/msys/1.0/bin/:$PATH
+
+export GENERATOR_STRING="MSYS Makefiles"
