@@ -367,7 +367,7 @@ platforms.  Once this goal is realized, it should make the full power
 of PLplot (which depends on the existence and quality of its
 dependencies) readily available on all platforms.  The epa_build
 project uses the power of CMake (especially the ExternalProject_Add
-command which is why we chose to use the suffix "epa_" in the name of
+command which is why we chose to use the prefix "epa_" in the name of
 epa_build) to organize downloading, updating, configuring, building,
 testing, and installing of any kind (not just those with CMake-based
 build systems) of software project with full dependency support
@@ -1835,7 +1835,7 @@ platforms.  Once this goal is realized, it should make the full power
 of PLplot (which depends on the existence and quality of its
 dependencies) readily available on all platforms.  The epa_build
 project uses the power of CMake (especially the ExternalProject_Add
-command which is why we chose to use the suffix "epa_" in the name of
+command which is why we chose to use the prefix "epa_" in the name of
 epa_build) to organize downloading, updating, configuring, building,
 testing, and installing of any kind (not just those with CMake-based
 build systems) of software project with full dependency support
