@@ -71,9 +71,9 @@
 	  array(21,  3, 3, "
 	<p>Grid data demo.</p>
 	\n", array_fill( 0, 3, 1)),
-	  array(22,  4, 3, "
+	  array(22,  5, 4, "
 	<p>Demo of simple vector plotting.</p>
-	\n", array_fill( 0, 4, 1)),
+	\n", array_fill( 0, 5, 1)),
 	  array(23, 16, 1, "
 	<p>Font demo for unicode encodings which shows Greek letters and math symbols.</p>
 	\n", array_fill( 0, 16, 1)),
