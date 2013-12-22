@@ -3454,7 +3454,7 @@ DESCRIPTION:
 
     Redacted form: plpath(n,x1,y1,x2,y2)
 
-    This function is not used in any examples. 
+    This function is used in example 22. 
 
 
 
@@ -4249,7 +4249,7 @@ DESCRIPTION:
 
     Redacted form: plscol0(icol0, r, g, b)
 
-    This function is not used in any examples. 
+    This function is used in any example 31. 
 
 
 
@@ -4653,7 +4653,7 @@ plseed;
 DESCRIPTION:
 
     Set the escape character for text strings.	From C (in contrast to
-    Fortran 77, see plsescfortran77) you pass esc as a character. Only
+    Fortran 95, see plsescfortran95) you pass esc as a character. Only
     selected characters are allowed to prevent the user from shooting
     himself in the foot (For example, a \ isn't allowed since it conflicts
     with C's use of backslash as a character escape).  Here are the
@@ -5610,7 +5610,7 @@ DESCRIPTION:
     Redacted form:  General: plstransform(transform_fun, data)
 
 
-    This function is used in example 19. 
+    This function is used in examples 19 and 22. 
 
 
 
@@ -5622,7 +5622,8 @@ ARGUMENTS:
 
     transform_fun (void (*) (PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) ,
     input) :    Pointer to a function that defines a transformation
-    from the input (x, y) coordinate to a new plot world coordinate. 
+    from the input (x, y) coordinate to a new plot world coordinate. A
+    NULL pointer  means that no transform is applied. 
 
     data (PLPointer, input) :     Optional extra data for 
     transform_fun. 
@@ -6045,7 +6046,8 @@ ARGUMENTS:
     containing the x and y points which make up the arrow. The arrow
     is plotted by joining these points to form a polygon. The scaling
     assumes that the x and y points in the arrow lie in the range -0.5
-    <= x,y <= 0.5. 
+    <= x,y <= 0.5. If both    arrowx and arrowy are NULL then the arrow
+    style will be reset to its default. 
 
     npts (PLINT,input) :    Number of points in the arrays arrowx and
     arrowy. 
@@ -6537,8 +6539,8 @@ plwidth(width)
 
 ARGUMENTS:
 
-    width (PLINT, input) :    The desired pen width.  If width is negative
-    or the same as the previous value no action is taken. width = 0
+    width (PLFLT, input) :    The desired pen width.  If width is negative
+    or the same as the previous value no action is taken. width = 0.
     should be interpreted as as the minimum valid pen width for the
     device.  The interpretation of positive width values is also
     device dependent. 
