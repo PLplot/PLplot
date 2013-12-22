@@ -290,6 +290,10 @@ tarball:
 
 /tmp/plplot_install/share/doc/plplot/html/index.html
 /tmp/plplot_install/share/doc/plplot/plplot-5.9.11.pdf
+/tmp/plplot-dist-prep/plplot-5.9.11.tar.gz
+
+In the latter, look carefully for any files that should not be part
+of the source tarball.
 
 Look at a few man pages that were generated from the tarball, e.g.,
 
@@ -506,12 +510,17 @@ login to SF website
 files ==> plplot ==> 5.9.11 Source ==> view details (the "i" icon) for
 plplot-5.9.11.tar.gz ==> select "all" for the default
 
-The above spins indefinitely with iceweasel, but it does work.
+The above used to spin indefinitely with iceweasel.  Now it finishes
+with a "properties updated" message, but it doesn't appear to "take"
+immediately so check it later.
 
-# Save a local copy of the release tarball for future reference.
+# Save a local copy of the release tarball for future reference and
+# also check it.
 cd /home/software/plplot_svn/HEAD/export #(or wherever)
 cp -a /tmp/plplot-dist-prep/plplot-5.9.11.tar.gz* .
 gpg --verify plplot-5.9.11.tar.gz.asc
+
+Prepare concatanated release notes + Changelog.
 
 cd plplot_tags_5.9.11
 echo "
@@ -539,9 +548,6 @@ the URL's in the text with angle brackets, e.g.
 
 For now I simply make all paragraphs one giant line which seems
 to give reasonable default results.
-
-
-
 
 (15) Publicize the release announcement
 
