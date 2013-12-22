@@ -1,16 +1,16 @@
 # For now, must set this by hand before each release.  This value affects
 # at least the documentation build and perhaps other parts of the release.
-set(RELEASE_DATE "2013-09-30")
+set(RELEASE_DATE "2013-12-22")
 
 # Version data that need review and possible modification for each release.
 
 # Overall PLplot version number.
-set(PLPLOT_VERSION 5.9.10)
+set(PLPLOT_VERSION 5.9.11)
 
 # CPack version numbers for release tarball name.
 set(CPACK_PACKAGE_VERSION_MAJOR 5)
 set(CPACK_PACKAGE_VERSION_MINOR 9)
-set(CPACK_PACKAGE_VERSION_PATCH 10)
+set(CPACK_PACKAGE_VERSION_PATCH 11)
 
 # PLplot library version information.
 
@@ -52,7 +52,7 @@ set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.0.0)
 set(plplotdmd_SOVERSION 1)
 set(plplotdmd_VERSION ${plplotdmd_SOVERSION}.0.0)
 
-set(plplotf95_SOVERSION 10)
+set(plplotf95_SOVERSION 11)
 set(plplotf95_VERSION ${plplotf95_SOVERSION}.0.0)
 
 set(plplotgnome2_SOVERSION 0)
@@ -61,7 +61,7 @@ set(plplotgnome2_VERSION ${plplotgnome2_SOVERSION}.0.0)
 set(tclmatrix_SOVERSION 9)
 set(tclmatrix_VERSION ${tclmatrix_SOVERSION}.2.0)
 
-set(plplottcltk_SOVERSION 10)
+set(plplottcltk_SOVERSION 11)
 set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.0.0)
 
 set(plplottcltk_Main_SOVERSION 0)
