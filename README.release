@@ -1,9 +1,9 @@
-PLplot Release 5.9.11
+PLplot Release 5.10.0
 ~~~~~~~~~~~~~~~~~~~~
-This is a development release of PLplot. It represents the ongoing efforts
+This is a stable release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development
-releases in the 5.9.x series will be available every few months. The next
-stable release will be 5.10.0.
+releases in the 5.11.x series will be available every few months. The next
+stable release will be 5.12.0.
 
 If you encounter a problem that is not already documented in the
 PROBLEMS file or on our bug tracker, then please send bug reports to
@@ -18,17 +18,11 @@ file.
 
 INDEX
 
-1. OFFICIAL NOTICES FOR USERS SINCE 5.9.10 (the previous development release)
+1. OFFICIAL NOTICES FOR USERS SINCE 5.9.11 (the previous development release)
 
-2. Tests made for release 5.9.11
+2. Tests made for release 5.10.0
 
-3. Changes relative to PLplot 5.9.10 (the previous development release)
-
-3.1 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
-3.2 Major overhaul of the build system and bindings for Tcl and friends
-3.3 Substantial overhaul of the build system for the Qt-components of PLplot
-3.4 The epa_build project has been implemented
-
+3. Changes relative to PLplot 5.9.11 (the previous development release)
 
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
@@ -111,59 +105,17 @@ all non-windows systems
 5.69 Substantial overhaul of the build system for the Qt-components of PLplot
 5.70 The epa_build project has been implemented
 
-1. OFFICIAL NOTICES FOR USERS SINCE 5.9.10 (the previous development release)
+1. OFFICIAL NOTICES FOR USERS SINCE 5.9.11 (the previous development release)
 
-(5.9.11) Backwards-incompatible API change.  The numerical symbolic
-constants that are #defined as macros in plplot.h have been
-repropagated to the Python, Java, Lua, Octave, Fortran 95, and Tcl
-language bindings using scripts.  Previously, this propagation was
-done by hand in a piece-meal manner so use of the scripts has created
-a number of changes in the PLplot symbolic constants for these
-languages.  These changes are the addition of 25 symbolic constants
-that were previously only available for C, no deletions of symbolic
-constants, no changes to numerical values, but the following
-backwards-incompatible name changes:
+None at this time.
 
-PLESC_PLFLTBUFFERING ==> PLESC_DOUBLEBUFFERING
-PLESPLFLTBUFFERING_DISABLE ==> PLESC_DOUBLEBUFFERING_ENABLE
-PLESPLFLTBUFFERING_ENABLE ==> PLESC_DOUBLEBUFFERING_ENABLE
-PLESPLFLTBUFFERING_QUERY ==> PLESC_DOUBLEBUFFERING_QUERY
+2. Tests made for release 5.10.0
 
-So those users who were using the symbolic constants on the left for
-the above languages will have to change their source code or scripts
-to use the constants on the right.  No changes in source code or
-scripts should be required of other users.
+None at this time.  
 
-(5.9.11) Backwards-incompatible API change.  The PLplot build system
-and bindings for Tcl and friends have had a major overhaul, see below.
-Part of this change was to split the former libplplottcltk into two
-components.  The new libplplottcltk is now a pure Tcl/Tk extension
-that can be linked to the stub versions of the Tcl/Tk libraries and
-dynamically loaded from a tclsh or wish environment using the
-appropriate "package require" command.  The new libplplottcltk_Main
-library contains code (e.g., pltclMain and pltkMain) required by C
-plotting applications (e.g., pltcl, plrender, and xtk0[124].c) that
-link to libplplottcltk.
+However, to remind testers of what they did in the release cycle
+leading up to 5.9.11 here are the notes from those earlier tests:
 
-(5.9.11) Backwards-incompatible change.  Our Fortran 77 bindings
-and examples have been completely removed because Fortran 95 is just a
-much better language which we have been supporting for a long time,
-and our judgement call based on user feedback we have received is
-nobody is interested in plotting using strict Fortran 77 language
-constructs any more.  However, if there is still some Fortran 77
-source code out there that uses PLplot, typically the only change you
-should have to do to port it to our Fortran 95 bindings is to place
-the command "use plplot" as the first line of the source code of the
-main routine.
-
-(5.9.11) Deprecation.  The functionality of the AGG backend and
-FreeType option in the wxwidgets device driver is provided (and in
-some cases exceeded) by other backends and options that we have
-implemented for this device driver.  The AGG backend and Freetype
-option are therefore deprecated with the intention to remove them in a
-future release.
-
-2. Tests made for release 5.9.11
 
 Note that "comprehensive tests" below refers to running
 scripts/comprehensive_test.sh in default mode (i.e., not dropping any
@@ -311,96 +263,9 @@ Lion.  The report from Felipe stated the compiler suite used was
 probably from MacPorts, and did not state anything about the hardware
 type.
 
-3. Changes relative to PLplot 5.9.10 (the previous development release)
+3. Changes relative to PLplot 5.9.11 (the previous development release)
 
-3.1 NUMERIC_INCLUDE_PATH ==> NUMPY_INCLUDE_PATH
-
-We have long since dropped support for the Numeric Python module and
-are now exclusively using the numpy Python modules instead.
-Therefore, we have changed the CMake variable name used in our build
-system that holds the location of the numpy headers from the confusing
-misnomer, NUMERIC_INCLUDE_PATH, to NUMPY_INCLUDE_PATH.  This change
-only impacts PLplot users who in the past have used the cmake option
--DNUMERIC_INCLUDE_PATH to set the CMake variable NUMERIC_INCLUDE_PATH
-to the location of the numpy header directory.  Note we discourage
-that method since without that user intervention, the build system
-uses python and numpy to find the location which should normally be
-foolproof and not subject to the inconsistencies or errors possible
-with setting the variable.  But if some users still insist on setting
-the variable, that variable's name should now be NUMPY_INCLUDE_PATH.
-
-3.2 Major overhaul of the build system and bindings for Tcl and friends
-
-After years of neglect we have worked very hard in the release cycle
-leading up to the release of 5.9.11 on our build system and code
-interfacing Tcl and friends (Tk, Itcl, Itk, and Iwidgets) with PLplot.
-The build system now does a much better job of finding a consistent
-set of components for Tcl and friends.  For example, switching from
-the system version of those components to a special build of those
-components is typically a matter of simply putting tclsh from the
-special build first on the PATH.  And after the components of Tcl and
-friends are found, the build system does extensive checking to make
-sure they are compatible with each other.  The plplottcktk library has
-now been split (see remarks in the above OFFICIAL NOTICES for more
-details).  Many bugs have been fixed, and all tests documented in
-examples/tcl/README.tcldemos and examples/tk/README.tkdemos have now
-been implemented as tests via the build system to help avoid any
-regressions in the build system and bindings for Tcl and friends in
-the future.
-
-As a consequence of these activities the ntk device has been enabled
-under Windows. The xwin and tkwin devices work under Cygwin.
-
-3.3 Substantial overhaul of the build system for the Qt-components of PLplot
-
-As a result of these improvements compiling and linking of our
-Qt-related components just got a lot more rational, and the
-long-standing memory management issues reported by valgrind for
-examples/c++/qt_example for the non-dynamic devices case have been
-resolved.
-
-3.4 The epa_build project has been implemented
-
-The goal of this project is to make builds of recent versions of
-PLplot dependencies (and PLplot itself) much more convenient on all
-platforms.  Once this goal is realized, it should make the full power
-of PLplot (which depends on the existence and quality of its
-dependencies) readily available on all platforms.  The epa_build
-project uses the power of CMake (especially the ExternalProject_Add
-command which is why we chose to use the prefix "epa_" in the name of
-epa_build) to organize downloading, updating, configuring, building,
-testing, and installing of any kind (not just those with CMake-based
-build systems) of software project with full dependency support
-between all the various builds.  For those users who are not
-satisified with the PLplot dependencies on their systems, learn how to
-use the epa_build project by consulting cmake/epa_build/README.
-
-The epa_build project is in pretty good shape on Linux; epa_build
-configurations work properly for build tools such as Tcl/Tk8.6, Itcl,
-Itk, and Iwidgets and for regular packages such as pango (needed for
-the cairo device driver), qt4_lite (needed for the qt device driver),
-the wxwidgets software package (needed for the wxwidgets device
-driver), and many smaller, but useful PLplot dependencies such as
-shapelib, libqhull, and libharu.  The total build time is roughly an
-hour for an ordinary PC which is not much of a price to pay to get
-access to up-to-date versions of virtually all dependencies of PLplot.
-In fact, the only known dependency of PLplot not currently covered by
-epa_build is octave.  In principle, it should be straightforward to
-add an epa_build configurations for octave and its many dependencies,
-but that possibility has not been explored yet.
-
-In principle, epa_build should work out of the box on Mac OS X
-platforms, but we haven't tested on that platform yet.
-
-Our testing for MinGW/MSYS and Cygwin shows the epa_build project is
-still in fairly rough shape on Windows.  It is known that the "plplot"
-case (PLplot with all its dependencies) fails in various ways on all
-Windows platforms.  Those issues are being actively worked on.  Note,
-however, that the "plplot_lite" case (PLplot with all the minor
-dependencies but without Tcl etc., build tools and without the pango,
-qt4_lite, and wxwidgets dependencies) has been shown to work on
-MinGW/MSYS and should probably also work on Cygwin although we haven't
-tested that specific case yet.
+None at this time.
 
 4. OFFICIAL NOTICES FOR USERS SINCE 5.8.0 (the previous stable release)
 
