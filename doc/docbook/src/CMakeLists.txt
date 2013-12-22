@@ -884,13 +884,19 @@ if((BUILD_DOC OR PREBUILT_DOC) AND (WWW_USER AND WWW_GROUP AND WWW_HOST AND WWW_
 
   if(BUILD_PRINT)
     list(APPEND tarball_list
-      ${BASE}.ps.gz
       ${BASE}.pdf
       )
     list(APPEND tarball_depends_list
-      ${BASE}.ps.gz
       ${BASE}.pdf
       )
+    if(NOT DOCBOOK_XML_BACKEND)
+      list(APPEND tarball_list
+	${BASE}.ps.gz
+	)
+      list(APPEND tarball_depends_list
+	${BASE}.ps.gz
+	)
+    endif(NOT DOCBOOK_XML_BACKEND)
     if(BUILD_DVI)
       list(APPEND tarball_list ${BASE}.dvi)
       list(APPEND tarball_depends_list ${BASE}.dvi)

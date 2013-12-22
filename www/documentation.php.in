@@ -15,7 +15,6 @@
 			<h3>PLplot Documentation</h3>
 			<ul class="arrowlist">
 	      <li> <a href="docbook-manual/@BASE_HTML@">Browse the latest on-line documentation</a> </li>
-	      <li> <a href="docbook-manual/@BASE@.ps.gz">PostScript form of documentation (<?php $size = number_format((filesize("docbook-manual/@BASE@.ps.gz")/1024/1024),2); echo $size;?> MB)</a> </li>
 	      <li> <a href="docbook-manual/@BASE@.pdf">PDF form of documentation (<?php $size = number_format((filesize("docbook-manual/@BASE@.pdf")/1024/1024),2); echo $size;?> MB)</a> </li>
 	      <li> <a href="docbook-manual/@BASE_INFO@.tar.gz">Info documentation tarball (<?php $size = number_format((filesize("docbook-manual/@BASE_INFO@.tar.gz")/1024/1024),2); echo $size;?> MB)</a> </li>
 	      <li> <a href="docbook-manual/@BASE_MAN@.tar.gz">Man pages tarball (API chapter in nroff format) (<?php $size = number_format((filesize("docbook-manual/@BASE_MAN@.tar.gz")/1024/1024),2); echo $size;?> MB)</a> </li>
