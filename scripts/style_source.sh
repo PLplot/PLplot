@@ -193,7 +193,7 @@ fi
 
 export csource_LIST
 # Top level directory.
-csource_LIST="config.h.in"
+csource_LIST="plplot_config.h.in"
 
 # src directory
 csource_LIST="$csource_LIST src/*.[ch]"

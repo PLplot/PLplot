@@ -121,10 +121,10 @@ configure_file(
   )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/config.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_config.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/plplot_config.h
   )
-# Allow access to the generated config.h for this build.
+# Allow access to the generated plplot_config.h for this build.
 add_definitions("-DHAVE_CONFIG_H")
 # Install top-level files
 

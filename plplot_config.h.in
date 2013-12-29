@@ -1,20 +1,20 @@
 // Configured (by CMake) macros for PLplot that are required for the
 // core build but _not_ required for the build of the installed
 // examples (and presumably any user applications).  Therefore, the
-// configured config.h should not be installed.  In contrast,
-// include/plConfig.h.cmake (note, plConfig.h #includes config.h for
-// the core build because HAVE_CONFIG_H is #defined in that case)
-// contains configured macros that are required for the core build,
-// installed examples build, and build of user applications.
-// Therefore, in contrast to config.h, plConfig.h should be installed.
+// configured plplot_config.h should not be installed.  In contrast,
+// include/plConfig.h.in (note, the configured plConfig.h result
+// #includes plplot_config.h for the core build because HAVE_CONFIG_H
+// is #defined in that case) contains configured macros that are
+// required for the core build, installed examples build, and build of
+// user applications.  Therefore, in contrast to plplot_config.h,
+// plConfig.h should be installed.
 //
 // Maintenance issue: in makes no sense to configure duplicate macros
-// for both config.h and plConfig.h.  Therefore, when adding a macro
+// for both plplot_config.h and plConfig.h.  Therefore, when adding a macro
 // decide which file to put it in depending on whether the result is
 // needed for the installed examples build or not.  Furthermore, move
 // configured macros from one file to the other as needed depending on
 // that criterion, but do not copy them.
-//
 //
 
 // Location of executables

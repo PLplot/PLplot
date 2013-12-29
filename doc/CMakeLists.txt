@@ -60,7 +60,7 @@ if(BUILD_DOX_DOC)
   endforeach(directory ${doxygen_directories})
   # Must append one specific configured file to be consistent with
   # the INPUT parameter in Doxyfile(.in).
-  list(APPEND doxygen_globs ${CMAKE_BINARY_DIR}/config.h)
+  list(APPEND doxygen_globs ${CMAKE_BINARY_DIR}/plplot_config.h)
   #message(STATUS "DEBUG: doxygen_globs = ${doxygen_globs}")
 
   # RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} works (because that is the

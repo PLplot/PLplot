@@ -31,7 +31,7 @@
 // FIXME: TODO: Clipping
 //
 
-#include <config.h>
+#include <plplot_config.h>
 
 #include <math.h>
 #include <string.h>
