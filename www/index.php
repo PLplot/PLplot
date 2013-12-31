@@ -39,7 +39,7 @@
 				<ul class="arrowlist">
 				  <li>Ada</li>
 				  <li>C/C++/D</li>
-				  <li>Fortran 77/90</li>
+				  <li>Fortran 95</li>
 				  <li>Java</li>
 				  <li><a href="http://common-lisp.net/project/cl-plplot/">Lisp</a></li>
 				  <li>Lua</li>
