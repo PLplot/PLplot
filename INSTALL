@@ -65,7 +65,7 @@ invocation discussed below).
 
 export CC="gcc -O2"
 export CXX="g++ -O2"
-export FC="g77 -O2"
+export FC="gfortran -O2"
 
 If you don't set the environment variables above, then by default no
 compiler options (i.e., no optimization and no debugging symbols) are used
