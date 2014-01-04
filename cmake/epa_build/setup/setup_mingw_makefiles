@@ -1,11 +1,11 @@
 # This script should be sourced from an MSYS bash environment.  Its
 # purpose is to setup environment variables needed to run any standard
-# cmake "MSYS Makefiles" build on a Windows platform.
+# cmake "MinGW Makefiles" build on a Windows platform.
 
 source setup_mingw_msys_wine_toolchain
 
-# Tailor this install location for "MSYS Makefiles" builds to your local needs:
-export INSTALL_PREFIX=/z/home/wine/newstart/build_script/install-$WINEVERSION
+# Tailor this install location for "MinGW Makefiles" builds to your local needs:
+export INSTALL_PREFIX=/z/home/wine/newstart/build_script/install-$WINEVERSION_mingw
 
 # End of tailored values.
 
@@ -32,9 +32,11 @@ CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}/lib:$CMAKE_LIBRARY_PATH
 PKG_CONFIG_PATH=$INSTALL_PREFIX/share/pkgconfig:$INSTALL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
 
 # MAKE_COMMAND contains the appropriate make command for this generator.
-export MAKE_COMMAND=make
+export MAKE_COMMAND=mingw32-make
 
-# Put MSYS at the top of the PATH
-PATH=$MINGW_PREFIX/msys/1.0/bin/:$PATH
+# Apparently the presence of sh.exe on the PATH is a signal to
+# mingw32-make.exe to use different (incorrect from the CMake point of
+# view) PATH processing.  So make sure sh.exe is not on the PATH.
+PATH=$MINGW_PREFIX/msys/1.0/bin_without_sh/:$PATH
 
-export GENERATOR_STRING="MSYS Makefiles"
+export GENERATOR_STRING="MinGW Makefiles"
