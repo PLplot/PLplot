@@ -41,16 +41,18 @@ epa_boilerplate(
   ) 
 
 # Data that is related to the PATH that must be used.
-# N.B. note below that we always use the unix subdirectory of the
-# source tree to find the configure script.  Note, there is a macosx
-# and win subdirectory there as well that contain configure scripts
-# with additional options for those platforms, but for now the unix
-# version of configure may be good enough for our needs for all
-# platforms.
+# N.B. note below that we currently use the unix subdirectory for the
+# Mac OS X case.  There is also a Tcl macosx subdirectory we might
+# want to try in that case once an epa_build user with access to a Mac
+# OS X platform gives this a try.
 if(MSYS_PLATFORM)
-  set(source_PATH ${source_PATH}\\unix)
+  set(source_PATH ${source_PATH}/win)
+  set(executable_suffix .exe)
+  set(library_suffix .a)
 else(MSYS_PLATFORM)
   set(source_PATH ${source_PATH}/unix)
+  set(executable_suffix)
+  set(library_suffix .so)
 endif(MSYS_PLATFORM)
 
 set(CFLAGS "$ENV{CFLAGS}")
@@ -62,6 +64,9 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 
 set(TCL_TK_VERSION 8.6.1)
 string(REGEX REPLACE "\\.[0-9]$" "" TCL_TK_LIBVERSION ${TCL_TK_VERSION})
+if(MSYS_PLATFORM)
+  string(REGEX REPLACE "\\." "" TCL_TK_LIBVERSION ${TCL_TK_LIBVERSION})
+endif(MSYS_PLATFORM)
 
 # Data that is related to downloads.
 set(URL http://downloads.sourceforge.net/project/tcl/Tcl/${TCL_TK_VERSION}/tcl${TCL_TK_VERSION}-src.tar.gz)
@@ -98,7 +103,7 @@ add_custom_command(
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-install
   COMMAND echo "Install-tree fixups"
   COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install-private-headers
-  COMMAND ${LN_EXECUTABLE} -v -sf tclsh${TCL_TK_LIBVERSION} ${EPA_CMAKE_INSTALL_PREFIX}/bin/tclsh
-  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${EPA_CMAKE_INSTALL_PREFIX}/lib/libtcl${TCL_TK_LIBVERSION}.so
+  COMMAND ${LN_EXECUTABLE} -v -sf tclsh${TCL_TK_LIBVERSION}${executable_suffix} ${EPA_CMAKE_INSTALL_PREFIX}/bin/tclsh${executable_suffix}
+  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${EPA_CMAKE_INSTALL_PREFIX}/lib/libtcl${TCL_TK_LIBVERSION}${library_suffix}
   APPEND
   )
