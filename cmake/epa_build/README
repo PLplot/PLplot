@@ -83,15 +83,15 @@ I. Unix platforms:
 
 * Linux
 
-Tailor the indicated values in setup/setup_linux for your own
+Tailor the indicated values in setup/setup_linux_makefiles for your own
 system, then source that file, e.g.,
 
-source <Top directory of PLplot source tree>/cmake/epa_build/setup/setup_linux
+source <Top directory of PLplot source tree>/cmake/epa_build/setup/setup_linux_makefiles
 
 * Mac OS X
 
-This has not been tried yet, but something similar to setup_linux should
-do the job.
+This has not been tried yet, but something similar to
+setup_linux_makefiles should do the job.
 
 * Cygwin on Windows
 
@@ -146,8 +146,10 @@ I. Unix platforms
 
 * Linux
 
-Note that setup_linux sets up all the important environment variables you
-need including GENERATOR_STRING, INSTALL_PREFIX, and EPA_BUILD_SOURCE_PATH.
+Note that setup_linux_makefiles (which needs to be tailored by each
+individual who uses epa_build) sets up all the important environment
+variables you need including GENERATOR_STRING, INSTALL_PREFIX,
+EPA_BUILD_SOURCE_PATH, and BUILD_COMMAND.
 
 A. [OPTIONAL] build necessary additional buildtools whose versions you
 prefer compared to the versions available on your Linux distro.
@@ -165,7 +167,7 @@ cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:P
 less cmake.out
 
 # Figure out which buildtools you want to build
-make help
+${BUILD_COMMAND} help
 
 # I recommend building all of them on Linux.
 make build_all >& build_all.out
@@ -192,16 +194,16 @@ cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:P
 less cmake.out
 
 # Figure out which packages you want to build
-make help
+${BUILD_COMMAND} help
 
 # Build and test the "lite" version of PLplot
-make build_plplot_lite >& build_plplot_lite.out
+${BUILD_COMMAND} build_plplot_lite >& build_plplot_lite.out
 
 # Check build_plplot_lite.out for any errors
 less build_plplot_lite.out
 
 # [OPTIONAL] Build and test the complete version of PLplot.
-make build_plplot >& build_plplot.out
+${BUILD_COMMAND} build_plplot >& build_plplot.out
 
 # Check build_plplot.out for any errors
 less build_plplot.out
@@ -223,6 +225,15 @@ e.g., attempting to build shapelib, then plplot_lite before moving on
 to a full plplot build (including builds of all its dependencies).
 
 II. Non-Cygwin Windows platforms
+
+Note that setup_msys_makefiles and setup_mingw_makefiles (which need
+to be tailored by each individual who uses epa_build) are designed to
+set up for the "MSYS Makefiles" generator and the "MinGW Makefiles
+generator all the important environment variables you need including
+GENERATOR_STRING, INSTALL_PREFIX, EPA_BUILD_SOURCE_PATH, and
+BUILD_COMMAND.  Similarly, other setup files should be created for
+other Windows generators that I (AWI) have tried so far by hand such as
+"NMake Makefiles JOM" and "Ninja".
 
 For the MinGW/MSYS/Wine case, I (AWI) essentially followed the same
 instructions as above for the Linux case.  However, some of the
