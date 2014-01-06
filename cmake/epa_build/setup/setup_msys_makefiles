@@ -31,8 +31,8 @@ CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}/lib:$CMAKE_LIBRARY_PATH
 # Put install-location pkg-config directories at top of PKG_CONFIG_PATH
 PKG_CONFIG_PATH=$INSTALL_PREFIX/share/pkgconfig:$INSTALL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
 
-# MAKE_COMMAND contains the appropriate make command for this generator.
-export MAKE_COMMAND=make
+# BUILD_COMMAND contains the appropriate build command for this generator.
+export BUILD_COMMAND=make
 
 # Put MSYS at the top of the PATH
 PATH=$MINGW_PREFIX/msys/1.0/bin/:$PATH

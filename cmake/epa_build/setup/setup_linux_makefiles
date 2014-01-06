@@ -56,4 +56,7 @@ PKG_CONFIG_PATH=$INSTALL_PREFIX/share/pkgconfig:$INSTALL_PREFIX/lib/pkgconfig:$P
 # so they are only used as a last resort.
 PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig
 
+# BUILD_COMMAND contains the appropriate build command for this generator.
+export BUILD_COMMAND=make
+
 export GENERATOR_STRING="Unix Makefiles"
