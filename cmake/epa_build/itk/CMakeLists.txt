@@ -41,13 +41,27 @@ epa_boilerplate(
   source_PATH
   ) 
 
+if(MSYS_PLATFORM)
+  set(library_prefix)
+  set(library_suffix .dll)
+else(MSYS_PLATFORM)
+  set(library_prefix lib)
+  set(library_suffix .so)
+endif(MSYS_PLATFORM)
+
 set(CFLAGS "$ENV{CFLAGS}")
 # Drop -fvisibility=hidden since that option does not work for itk.
 string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 
-# Data that is related to downloads.
 set(VERSION 4.0.0)
-set(LIBVERSION ${VERSION})
+set(DIRVERSION 4.0.0)
+if(MSYS_PLATFORM)
+  string(REGEX REPLACE "\\." "" LIBVERSION ${DIRVERSION})
+else(MSYS_PLATFORM)
+  set(LIBVERSION ${DIRVERSION})
+endif(MSYS_PLATFORM)
+
+# Data that is related to downloads.
 set(URL http://downloads.sourceforge.net/project/incrtcl/%5bincr%20Tcl_Tk%5d-4-source/Itcl%20${VERSION}/itk${VERSION}.tar.gz)
 set(DOWNLOAD_HASH_TYPE MD5)
 set(DOWNLOAD_HASH e3600a9ad0fcdcbbc4138af5a4893b7e)
@@ -62,7 +76,7 @@ ExternalProject_Add(
   URL ${URL}
   URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
   PATCH_COMMAND ""
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CPPFLAGS=-I${EPA_CMAKE_INSTALL_PREFIX}/include" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --mandir=${EPA_CMAKE_INSTALL_PREFIX}/share/man ${ENABLE_64_BIT} --with-itcl=${EPA_CMAKE_INSTALL_PREFIX}/lib/itcl${LIBVERSION}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CPPFLAGS=-I${EPA_CMAKE_INSTALL_PREFIX}/include" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --mandir=${EPA_CMAKE_INSTALL_PREFIX}/share/man ${ENABLE_64_BIT} --with-itcl=${EPA_CMAKE_INSTALL_PREFIX}/lib/itcl${DIRVERSION}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
   )
@@ -78,6 +92,9 @@ add_custom_command(
   "Add generic/itkDecls.h to the list of itk headers that must be installed."
   # This patch has been publicly distributed at https://sourceforge.net/p/incrtcl/patches/53/
   COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/itk4_header_list.patch
+  COMMAND ${CMAKE_COMMAND} -E echo 
+  "Apply a patch for the results of \"autoreconf -i\" run on Linux."
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/autoreconf.patch
   APPEND
   )
 
@@ -98,6 +115,6 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-install
   COMMAND echo "Install-tree fixups"
-  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${EPA_CMAKE_INSTALL_PREFIX}/lib/itk${LIBVERSION}/libitk${LIBVERSION}.so
+  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${EPA_CMAKE_INSTALL_PREFIX}/lib/itk${DIRVERSION}/${library_prefix}itk${LIBVERSION}${library_suffix}
   APPEND
   )
