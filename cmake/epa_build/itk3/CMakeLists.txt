@@ -41,6 +41,14 @@ epa_boilerplate(
   source_PATH
   ) 
 
+if(MSYS_PLATFORM)
+  set(library_prefix)
+  set(library_suffix .dll)
+else(MSYS_PLATFORM)
+  set(library_prefix lib)
+  set(library_suffix .so)
+endif(MSYS_PLATFORM)
+
 set(CFLAGS "$ENV{CFLAGS}")
 # Drop -fvisibility=hidden since that option does not work for itk3.
 string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
@@ -51,10 +59,16 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 # But currently just use the ordinary install location.
 set(INCRTCL3_PREFIX ${EPA_CMAKE_INSTALL_PREFIX})
 
-# Data that is related to downloads.
 set(VERSION 3.3)
-set(LIBVERSION 3.3)
-set(ITCL3_LIBVERSION 3.4)
+set(DIRVERSION 3.3)
+set(ITCL3_DIRVERSION 3.4)
+if(MSYS_PLATFORM)
+  string(REGEX REPLACE "\\." "" LIBVERSION ${DIRVERSION})
+else(MSYS_PLATFORM)
+  set(LIBVERSION ${DIRVERSION})
+endif(MSYS_PLATFORM)
+
+# Data that is related to downloads.
 set(URL http://downloads.sourceforge.net/project/incrtcl/%5bIncr%20Tcl_Tk%5d-source/${VERSION}-RC/itk${VERSION}.tar.gz)
 set(DOWNLOAD_HASH_TYPE MD5)
 set(DOWNLOAD_HASH a97c17f3cfa5e377f43073c653c501b5)
@@ -70,9 +84,32 @@ ExternalProject_Add(
   URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
   # Order of CPPFLAGS is important since want to access the version 3
   # itcl header.
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CPPFLAGS=-I${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION} -I${EPA_CMAKE_INSTALL_PREFIX}/include" ${source_PATH}/configure --prefix=${INCRTCL3_PREFIX} --exec-prefix=${INCRTCL3_PREFIX} --includedir=${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION} --mandir=${INCRTCL3_PREFIX}/share/man ${ENABLE_64_BIT} --with-tcl=${EPA_CMAKE_INSTALL_PREFIX}/lib --with-tk=${EPA_CMAKE_INSTALL_PREFIX}/lib --with-itcl=${INCRTCL3_PREFIX}/lib/itcl${ITCL3_LIBVERSION}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CPPFLAGS=-I${INCRTCL3_PREFIX}/include/itcl${ITCL3_DIRVERSION} -I${EPA_CMAKE_INSTALL_PREFIX}/include" ${source_PATH}/configure --prefix=${INCRTCL3_PREFIX} --exec-prefix=${INCRTCL3_PREFIX} --includedir=${INCRTCL3_PREFIX}/include/itcl${ITCL3_DIRVERSION} --mandir=${INCRTCL3_PREFIX}/share/man ${ENABLE_64_BIT} --with-tcl=${EPA_CMAKE_INSTALL_PREFIX}/lib --with-tk=${EPA_CMAKE_INSTALL_PREFIX}/lib --with-itcl=${INCRTCL3_PREFIX}/lib/itcl${ITCL3_DIRVERSION}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
+  )
+
+add_custom_command(
+  OUTPUT
+  ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
+  COMMAND ${CMAKE_COMMAND} -E echo 
+  "Apply a patch for backporting the autotools changes for itk (version 4.0.0) to itk3"
+  # These changes are replacing the old contents of the tclconfig
+  # directory with the modern itk versions of those files and small
+  # edits to the itk3 versions of configure.in. In addition the
+  # "autoreconf -i" command was run on Linux to propagate these
+  # changes to the corresponding configure shell script.  This could
+  # not be done for each platform since the autoreconf command is
+  # broken on MSYS.  A final change in this patch is Makefile.in was
+  # edited to make it compatible with the itk version, and finally an
+  # additional edit was made to this file so that CPPFLAGS and CFLAGS
+  # take precedence over CONFIGS which contains the values derived
+  # from the tclConfig.sh, tkConfig.sh, and itclConfig.sh files.
+  # Without this final change the -I options come out in the wrong
+  # order so that the itcl4 version of headers is (incorrectly) used
+  # rather than the itcl3 version provided by CPPFLAGS.
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/autotools_backport.patch
+  APPEND
   )
 
 add_custom_command(
@@ -81,11 +118,11 @@ add_custom_command(
   COMMAND echo "Replace build-tree locations by install-tree locations"
   COMMAND ${SED_EXECUTABLE}
   # Cover two different patterns of uppercasing.
-  -e "s@^\\(itk_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION}'@"
-  -e "s@^\\(ITK_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include/itcl${ITCL3_LIBVERSION}'@"
+  -e "s@^\\(itk_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include/itcl${ITCL3_DIRVERSION}'@"
+  -e "s@^\\(ITK_SRC_DIR='\\).*@\\1${INCRTCL3_PREFIX}/include/itcl${ITCL3_DIRVERSION}'@"
   # Cover two different patterns of uppercasing.
-  -e "/itk_B/s@='\\(-L\\)\\?.*build_itk3@='\\1${INCRTCL3_PREFIX}/lib/itk${ITK3_LIBVERSION}@"
-  -e "/ITK_B/s@='\\(-L\\)\\?.*build_itk3@='\\1${INCRTCL3_PREFIX}/lib/itk${ITK3_LIBVERSION}@"
+  -e "/itk_B/s@='\\(-L\\)\\?.*build_itk3@='\\1${INCRTCL3_PREFIX}/lib/itk${DIRVERSION}@"
+  -e "/ITK_B/s@='\\(-L\\)\\?.*build_itk3@='\\1${INCRTCL3_PREFIX}/lib/itk${DIRVERSION}@"
   # Overwrite original file.
   -i itkConfig.sh
   APPEND
@@ -95,6 +132,6 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-install
   COMMAND echo "Install-tree fixups"
-  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${INCRTCL3_PREFIX}/lib/itk${LIBVERSION}/libitk${LIBVERSION}.so
+  COMMAND ${CHMOD_EXECUTABLE} -v ${SO_NUMERICAL_PERMISSIONS} ${INCRTCL3_PREFIX}/lib/itk${DIRVERSION}/${library_prefix}itk${LIBVERSION}${library_suffix}
   APPEND
   )
