@@ -70,8 +70,20 @@ itcl::class PLWin {
 # reason, then add the method name to the ignore list in plitclgen,
 # and provide an explicit coding, ABOVE THIS LINE.
 
+    method pl_setcontlabelformat {args} {
+        eval $plwin cmd pl_setcontlabelformat $args
+    }
+
+    method pl_setcontlabelparam {args} {
+        eval $plwin cmd pl_setcontlabelparam $args
+    }
+
     method pladv {args} {
         eval $plwin cmd pladv $args
+    }
+
+    method plarc {args} {
+        eval $plwin cmd plarc $args
     }
 
     method plaxes {args} {
@@ -94,12 +106,36 @@ itcl::class PLWin {
         eval $plwin cmd plbox3 $args
     }
 
+    method plbtime {args} {
+        eval $plwin cmd plbtime $args
+    }
+
+    method plcalc_world {args} {
+        eval $plwin cmd plcalc_world $args
+    }
+
+    method plclear {args} {
+        eval $plwin cmd plclear $args
+    }
+
     method plcol0 {args} {
         eval $plwin cmd plcol0 $args
     }
 
     method plcol1 {args} {
         eval $plwin cmd plcol1 $args
+    }
+
+    method plconfigtime {args} {
+        eval $plwin cmd plconfigtime $args
+    }
+
+    method plcpstrm {args} {
+        eval $plwin cmd plcpstrm $args
+    }
+
+    method plctime {args} {
+        eval $plwin cmd plctime $args
     }
 
     method pldid2pc {args} {
@@ -112,6 +148,10 @@ itcl::class PLWin {
 
     method plenv {args} {
         eval $plwin cmd plenv $args
+    }
+
+    method plenv0 {args} {
+        eval $plwin cmd plenv0 $args
     }
 
     method pleop {args} {
@@ -130,6 +170,14 @@ itcl::class PLWin {
         eval $plwin cmd plfill $args
     }
 
+    method plfill3 {args} {
+        eval $plwin cmd plfill3 $args
+    }
+
+    method plflush {args} {
+        eval $plwin cmd plflush $args
+    }
+
     method plfont {args} {
         eval $plwin cmd plfont $args
     }
@@ -142,8 +190,32 @@ itcl::class PLWin {
         eval $plwin cmd plgchr $args
     }
 
+    method plgcmap1_range {args} {
+        eval $plwin cmd plgcmap1_range $args
+    }
+
     method plgcol0 {args} {
         eval $plwin cmd plgcol0 $args
+    }
+
+    method plgcol0a {args} {
+        eval $plwin cmd plgcol0a $args
+    }
+
+    method plgcolbg {args} {
+        eval $plwin cmd plgcolbg $args
+    }
+
+    method plgcolbga {args} {
+        eval $plwin cmd plgcolbga $args
+    }
+
+    method plgcompression {args} {
+        eval $plwin cmd plgcompression $args
+    }
+
+    method plgdev {args} {
+        eval $plwin cmd plgdev $args
     }
 
     method plgdidev {args} {
@@ -158,6 +230,26 @@ itcl::class PLWin {
         eval $plwin cmd plgdiplt $args
     }
 
+    method plgesc {args} {
+        eval $plwin cmd plgesc $args
+    }
+
+    method plgfci {args} {
+        eval $plwin cmd plgfci $args
+    }
+
+    method plgfnam {args} {
+        eval $plwin cmd plgfnam $args
+    }
+
+    method plgfont {args} {
+        eval $plwin cmd plgfont $args
+    }
+
+    method plglevel {args} {
+        eval $plwin cmd plglevel $args
+    }
+
     method plgpage {args} {
         eval $plwin cmd plgpage $args
     }
@@ -166,12 +258,28 @@ itcl::class PLWin {
         eval $plwin cmd plgra $args
     }
 
+    method plgradient {args} {
+        eval $plwin cmd plgradient $args
+    }
+
     method plgspa {args} {
         eval $plwin cmd plgspa $args
     }
 
     method plgstrm {args} {
         eval $plwin cmd plgstrm $args
+    }
+
+    method plgver {args} {
+        eval $plwin cmd plgver $args
+    }
+
+    method plgvpd {args} {
+        eval $plwin cmd plgvpd $args
+    }
+
+    method plgvpw {args} {
+        eval $plwin cmd plgvpw $args
     }
 
     method plgxax {args} {
@@ -190,8 +298,12 @@ itcl::class PLWin {
         eval $plwin cmd plhist $args
     }
 
-    method plhls {args} {
-        eval $plwin cmd plhls $args
+    method plhlsrgb {args} {
+        eval $plwin cmd plhlsrgb $args
+    }
+
+    method plinit {args} {
+        eval $plwin cmd plinit $args
     }
 
     method pljoin {args} {
@@ -200,6 +312,10 @@ itcl::class PLWin {
 
     method pllab {args} {
         eval $plwin cmd pllab $args
+    }
+
+    method pllightsource {args} {
+        eval $plwin cmd pllightsource $args
     }
 
     method plline {args} {
@@ -214,8 +330,16 @@ itcl::class PLWin {
         eval $plwin cmd pllsty $args
     }
 
+    method plmkstrm {args} {
+        eval $plwin cmd plmkstrm $args
+    }
+
     method plmtex {args} {
         eval $plwin cmd plmtex $args
+    }
+
+    method plmtex3 {args} {
+        eval $plwin cmd plmtex3 $args
     }
 
     method plpat {args} {
@@ -250,52 +374,84 @@ itcl::class PLWin {
         eval $plwin cmd plptex $args
     }
 
+    method plptex3 {args} {
+        eval $plwin cmd plptex3 $args
+    }
+
     method plreplot {args} {
         eval $plwin cmd plreplot $args
     }
 
-    method plrgb {args} {
-        eval $plwin cmd plrgb $args
-    }
-
-    method plrgb1 {args} {
-        eval $plwin cmd plrgb1 $args
+    method plrgbhls {args} {
+        eval $plwin cmd plrgbhls $args
     }
 
     method plschr {args} {
         eval $plwin cmd plschr $args
     }
 
-    method plscmap0n {args} {
-        eval $plwin cmd plscmap0n $args
-    }
-
-    method plscmap1n {args} {
-        eval $plwin cmd plscmap1n $args
-    }
-
     method plscmap0 {args} {
         eval $plwin cmd plscmap0 $args
+    }
+
+    method plscmap0a {args} {
+        eval $plwin cmd plscmap0a $args
+    }
+
+    method plscmap0n {args} {
+        eval $plwin cmd plscmap0n $args
     }
 
     method plscmap1 {args} {
         eval $plwin cmd plscmap1 $args
     }
 
+    method plscmap1a {args} {
+        eval $plwin cmd plscmap1a $args
+    }
+
     method plscmap1l {args} {
         eval $plwin cmd plscmap1l $args
+    }
+
+    method plscmap1la {args} {
+        eval $plwin cmd plscmap1la $args
+    }
+
+    method plscmap1n {args} {
+        eval $plwin cmd plscmap1n $args
+    }
+
+    method plscmap1_range {args} {
+        eval $plwin cmd plscmap1_range $args
     }
 
     method plscol0 {args} {
         eval $plwin cmd plscol0 $args
     }
 
+    method plscol0a {args} {
+        eval $plwin cmd plscol0a $args
+    }
+
     method plscolbg {args} {
         eval $plwin cmd plscolbg $args
     }
 
+    method plscolbga {args} {
+        eval $plwin cmd plscolbga $args
+    }
+
     method plscolor {args} {
         eval $plwin cmd plscolor $args
+    }
+
+    method plscompression {args} {
+        eval $plwin cmd plscompression $args
+    }
+
+    method plsdev {args} {
+        eval $plwin cmd plsdev $args
     }
 
     method plsdidev {args} {
@@ -316,6 +472,22 @@ itcl::class PLWin {
 
     method plsdiplz {args} {
         eval $plwin cmd plsdiplz $args
+    }
+
+    method plseed {args} {
+        eval $plwin cmd plseed $args
+    }
+
+    method plsesc {args} {
+        eval $plwin cmd plsesc $args
+    }
+
+    method plsfci {args} {
+        eval $plwin cmd plsfci $args
+    }
+
+    method plsfont {args} {
+        eval $plwin cmd plsfont $args
     }
 
     method plsmaj {args} {
@@ -354,6 +526,30 @@ itcl::class PLWin {
         eval $plwin cmd plssym $args
     }
 
+    method plstar {args} {
+        eval $plwin cmd plstar $args
+    }
+
+    method plstart {args} {
+        eval $plwin cmd plstart $args
+    }
+
+    method plstring {args} {
+        eval $plwin cmd plstring $args
+    }
+
+    method plstring3 {args} {
+        eval $plwin cmd plstring3 $args
+    }
+
+    method plstripa {args} {
+        eval $plwin cmd plstripa $args
+    }
+
+    method plstripd {args} {
+        eval $plwin cmd plstripd $args
+    }
+
     method plstyl {args} {
         eval $plwin cmd plstyl $args
     }
@@ -364,10 +560,6 @@ itcl::class PLWin {
 
     method plsxax {args} {
         eval $plwin cmd plsxax $args
-    }
-
-    method plsxwin {args} {
-        eval $plwin cmd plsxwin $args
     }
 
     method plsyax {args} {
@@ -384,6 +576,10 @@ itcl::class PLWin {
 
     method pltext {args} {
         eval $plwin cmd pltext $args
+    }
+
+    method pltimefmt {args} {
+        eval $plwin cmd pltimefmt $args
     }
 
     method plvasp {args} {
@@ -413,4 +609,9 @@ itcl::class PLWin {
     method plwind {args} {
         eval $plwin cmd plwind $args
     }
+
+    method plxormod {args} {
+        eval $plwin cmd plxormod $args
+    }
+
 }
