@@ -128,7 +128,8 @@ if(ENABLE_tcl)
 
   # Sanity checking of Tcl version consistency _if_ a Tcl version string
   # can be extracted from the Tcl library name.
-  string(REGEX MATCH "[0-9]+[.]?[0-9]+" library_version ${TCL_LIBRARY})
+  get_filename_component(library_name ${TCL_LIBRARY} NAME)
+  string(REGEX MATCH "[0-9]+[.]?[0-9]+" library_version ${library_name})
   if(library_version)
     # If no decimal point in version insert as the second character.
     if(NOT library_version MATCHES "[.]")
@@ -226,8 +227,9 @@ void main(void){}
       if(ENABLE_itcl)
         message(STATUS "Looking for itcl library")
 	# Search first for epa_build install location.
-        find_library(ITCL_LIBRARY itcl${PLPLOT_ITCL_VERSION} HINTS ${TCL_LIBRARY_PATH}/itcl${PLPLOT_ITCL_VERSION})
-        find_library(ITCL_LIBRARY itcl${PLPLOT_ITCL_VERSION} HINTS ${TCL_LIBRARY_PATH})
+	string(REGEX REPLACE "\\." "" COMPACT_PLPLOT_ITCL_VERSION ${PLPLOT_ITCL_VERSION})
+        find_library(ITCL_LIBRARY NAMES itcl${PLPLOT_ITCL_VERSION} itcl${COMPACT_PLPLOT_ITCL_VERSION} itcl HINTS ${TCL_LIBRARY_PATH}/itcl${PLPLOT_ITCL_VERSION})
+        find_library(ITCL_LIBRARY NAMES itcl${PLPLOT_ITCL_VERSION} itcl${COMPACT_PLPLOT_ITCL_VERSION} itcl HINTS ${TCL_LIBRARY_PATH})
         if(ITCL_LIBRARY)
           message(STATUS "Looking for itcl library - found")
 	  message(STATUS "ITCL_LIBRARY = ${ITCL_LIBRARY}")
@@ -305,7 +307,8 @@ void main(void){}
 		# Sanity checking of Tk version consistency _if_ a Tk
 		# version string can be extracted from the Tk library
 		# name.
-		string(REGEX MATCH "[0-9]+[.]?[0-9]+" library_version ${TK_LIBRARY})
+		get_filename_component(library_name ${TK_LIBRARY} NAME)
+		string(REGEX MATCH "[0-9]+[.]?[0-9]+" library_version ${library_name})
 		if(library_version)
 		  # If no decimal point in version insert as the second character.
 		  if(NOT library_version MATCHES "[.]")
@@ -467,8 +470,9 @@ void main(void){}
       if(ENABLE_itk)
         message(STATUS "Looking for itk library")
 	# Search first for epa_build install location.
-        find_library(ITK_LIBRARY itk${PLPLOT_ITK_VERSION} HINTS ${TCL_LIBRARY_PATH}/itk${PLPLOT_ITK_VERSION})
-        find_library(ITK_LIBRARY itk${PLPLOT_ITK_VERSION} HINTS ${TCL_LIBRARY_PATH})
+	string(REGEX REPLACE "\\." "" COMPACT_PLPLOT_ITK_VERSION ${PLPLOT_ITK_VERSION})
+        find_library(ITK_LIBRARY NAMES itk${PLPLOT_ITK_VERSION} itk${COMPACT_PLPLOT_ITK_VERSION} itk HINTS ${TK_LIBRARY_PATH}/itk${PLPLOT_ITK_VERSION})
+        find_library(ITK_LIBRARY NAMES itk${PLPLOT_ITK_VERSION} itk${COMPACT_PLPLOT_ITK_VERSION} itk HINTS ${TK_LIBRARY_PATH})
         if(ITK_LIBRARY)
           message(STATUS "Looking for itk library - found")
 	  message(STATUS "ITK_LIBRARY = ${ITK_LIBRARY}")
