@@ -78,9 +78,6 @@ if(ENABLE_tcl)
 
     get_filename_component(TCL_LIBRARY_PATH ${TCL_LIBRARY} PATH)
     message(STATUS "TCL_LIBRARY_PATH = ${TCL_LIBRARY_PATH}")
-    set(TCL_RPATH ${TCL_LIBRARY_PATH})
-    set(TCL_TK_RPATH ${TCL_RPATH})
-    set(TCL_TK_ITCL_ITK_RPATH ${TCL_RPATH})
 
     if(TCL_TCLSH)
       message(STATUS "Looking for tclsh - found")
@@ -124,6 +121,10 @@ endif(ENABLE_tcl)
 
 if(ENABLE_tcl)
   message(STATUS "PLPLOT_TCL_VERSION = ${PLPLOT_TCL_VERSION}")
+
+  set(TCL_RPATH ${TCL_LIBRARY_PATH})
+  set(TCL_TK_RPATH ${TCL_RPATH})
+  set(TCL_TK_ITCL_ITK_RPATH ${TCL_RPATH})
 
   # Sanity checking of Tcl version consistency _if_ a Tcl version string
   # can be extracted from the Tcl library name.
@@ -256,10 +257,6 @@ void main(void){}
     message(STATUS "TK_LIBRARY = ${TK_LIBRARY}")
     message(STATUS "TK_STUB_LIBRARY = ${TK_STUB_LIBRARY}")
 
-    get_filename_component(TK_LIBRARY_PATH ${TK_LIBRARY} PATH)
-    list(APPEND TCL_TK_RPATH ${TK_LIBRARY_PATH})
-    list(APPEND TCL_TK_ITCL_ITK_RPATH ${TK_LIBRARY_PATH})
-
     message(STATUS "TK_LIBRARY_PATH = ${TK_LIBRARY_PATH}")
     if(NOT ${TK_LIBRARY_PATH} STREQUAL ${TCL_LIBRARY_PATH})
       message(STATUS "WARNING: the Tcl and Tk library locations are inconsistent so those libraries are likely not compatible")
@@ -382,10 +379,14 @@ void main(void){}
     endif(WIN32 AND NOT CYGWIN)
   endif(ENABLE_tk AND NOT X11_FOUND)
 
-  if(NOT ENABLE_tk)
+  if(ENABLE_tk)
+    get_filename_component(TK_LIBRARY_PATH ${TK_LIBRARY} PATH)
+    list(APPEND TCL_TK_RPATH ${TK_LIBRARY_PATH})
+    list(APPEND TCL_TK_ITCL_ITK_RPATH ${TK_LIBRARY_PATH})
+  else(ENABLE_tk)
     message(STATUS "WARNING: Because Tk is disabled must disable Itk as well")
     set(ENABLE_itk OFF CACHE BOOL "Enable Itk interface code" FORCE)
-  endif(NOT ENABLE_tk)
+  endif(ENABLE_tk)
 
   if(ENABLE_itk)
     if(USE_INCRTCL_VERSION_4)
@@ -472,8 +473,6 @@ void main(void){}
           message(STATUS "Looking for itk library - found")
 	  message(STATUS "ITK_LIBRARY = ${ITK_LIBRARY}")
 	  set(HAVE_ITK ON)
-	  get_filename_component(ITK_LIBRARY_PATH ${ITK_LIBRARY} PATH)
-	  list(APPEND TCL_TK_ITCL_ITK_RPATH ${ITK_LIBRARY_PATH})
 
 	  # Test version consistency between iwidgets, itk, and itcl.
 	  if(NOT IWIDGETS_VERSIONS_LIST)
@@ -535,6 +534,8 @@ void main(void){}
 	    message(STATUS "Checking that the Iwidgets, Itk, and Itcl packages are consistent")
 	    if(CONSISTENT_ITCL_VERSION STREQUAL PLPLOT_ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL PLPLOT_ITK_VERSION)
 	      message(STATUS "Checking that the Iwidgets, Itk, and Itcl packages are consistent - true")
+	      get_filename_component(ITK_LIBRARY_PATH ${ITK_LIBRARY} PATH)
+	      list(APPEND TCL_TK_ITCL_ITK_RPATH ${ITK_LIBRARY_PATH})
 	    else(CONSISTENT_ITCL_VERSION STREQUAL PLPLOT_ITCL_VERSION AND CONSISTENT_ITK_VERSION STREQUAL PLPLOT_ITK_VERSION)
 	      message(STATUS "PLPLOT_ITK_VERSION = ${PLPLOT_ITK_VERSION}")
 	      message(STATUS "CONSISTENT_ITK_VERSION = ${CONSISTENT_ITK_VERSION}")
