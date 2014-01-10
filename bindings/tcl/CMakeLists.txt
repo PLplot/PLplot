@@ -580,7 +580,11 @@ if(ENABLE_tcl)
 
   add_executable(pltcl pltcl.c)
 
-  target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${ITCL_LIBRARY} ${TCL_LIBRARY})
+  if(ENABLE_itcl)
+    target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${ITCL_LIBRARY} ${TCL_LIBRARY})
+  else(ENABLE_itcl)
+    target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${TCL_LIBRARY})
+  endif(ENABLE_itcl)
 
   if(USE_RPATH)
     set_target_properties(pltcl
