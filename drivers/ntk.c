@@ -342,7 +342,7 @@ plD_line_ntk( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     if ( curpts == NPTS )
     {
-        fprintf( stderr, "\nflush: %d ", curpts );
+        //fprintf( stderr, "\nflush: %d ", curpts );
         flushbuffer( pls );
     }
 }
