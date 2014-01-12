@@ -77,10 +77,14 @@ static Tcl_Interp *interp = NULL; // tcl interpreter
 static Tk_Window  mainw;          // tk main window
 
 static char       curcolor[80];   // current color in #rrggbb notation
-static char       cmd[10000];     // buffer to build command to interp
-static int        ccanv = 0;      // current canvas number
-static char       base[80];       // name of frame that contains the canvas
-static char       dash[80];       // dash string, as <mark space>*
+
+// 12000 is large enough to satisfy example 27 needs without
+// erroring out in plD_polyline_ntk.  Quadruple that to be conservative.
+#define PLPLOT_NTK_CMD_SIZE    48000
+static char cmd[PLPLOT_NTK_CMD_SIZE]; // buffer to build command to interp
+static int  ccanv = 0;                // current canvas number
+static char base[80];                 // name of frame that contains the canvas
+static char dash[80];                 // dash string, as <mark space>*
 
 // line buffering
 #define NPTS    1000
@@ -103,7 +107,7 @@ static PLGraphicsIn gin;
 static void
 tk_cmd( const char *gcmd )
 {
-    static char scmd[10000];
+    static char scmd[PLPLOT_NTK_CMD_SIZE];
 
     if ( local )
         Tcl_Eval( interp, gcmd );
@@ -351,8 +355,14 @@ plD_polyline_ntk( PLStream * PL_UNUSED( pls ), short *xa, short *ya, PLINT npts 
     // there must exist a way to code this using the tk C API
     j = sprintf( cmd, "$plf.f2.c%d create line ", ccanv );
     for ( i = 0; i < npts; i++ )
+    {
+        // To be completely safe, assume 5 characters to the left of the
+        // decimal point ==> 2*(5+3) characters written per sprintf
+        // call.
+        if ( ( j + 16 ) > PLPLOT_NTK_CMD_SIZE )
+            plexit( "plD_polyline_ntk: too many x, y values to hold in static cmd array" );
         j += sprintf( &cmd[j], "%.1f %.1f ", xa[i] / scale, ymax - ya[i] / scale );
-
+    }
     j += sprintf( &cmd[j], " -fill %s", curcolor );
     if ( dash[0] == '-' )
         j += sprintf( &cmd[j], " %s", dash );
@@ -526,7 +536,7 @@ plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
     case PLESC_FILL:
         if ( pls->patt != 0 )
         {
-            // this is a hack! The real solution is in the if(0) bellow
+            // this is a hack! The real solution is in the if(0) below
             pls->xpmm *= scale;
             pls->ypmm *= scale;
             plfill_soft( pls->dev_x, pls->dev_y, pls->dev_npts );
