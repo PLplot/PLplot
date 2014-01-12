@@ -18,6 +18,42 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+if(ENABLE_tkX)
+  include_directories(
+    ${TCL_INCLUDE_PATH}
+    ${TK_INCLUDE_PATH}
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/bindings/tcl
+    ${CMAKE_SOURCE_DIR}/lib/qsastime
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/include
+    )
+
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(plserver.c
+      PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
+  endif(BUILD_SHARED_LIBS)
+
+  add_executable(plserver plserver.c)
+  target_link_libraries(plserver plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${TK_LIBRARY} ${TCL_LIBRARY})
+
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
+    filter_rpath(LIB_INSTALL_RPATH)
+    set_target_properties(plserver
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
+  endif(USE_RPATH)
+
+  install(TARGETS plserver
+    EXPORT export_plplot
+    DESTINATION ${BIN_DIR}
+    )
+endif(ENABLE_tkX)
+
 if(ENABLE_tk)
 
   set(include_INSTALLED_HEADERS
@@ -83,41 +119,6 @@ if(ENABLE_tk)
   install(
     FILES ${tcldata} ${itkdata} ${paldata}
     DESTINATION ${TCL_DIR}
-    )
-
-  include_directories(
-    ${TCL_INCLUDE_PATH}
-    ${TK_INCLUDE_PATH}
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/bindings/tcl
-    ${CMAKE_SOURCE_DIR}/lib/qsastime
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/include
-    )
-
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(plserver.c
-      PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
-  endif(BUILD_SHARED_LIBS)
-
-  add_executable(plserver plserver.c)
-  target_link_libraries(plserver plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${TK_LIBRARY} ${TCL_LIBRARY})
-
-  if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
-    filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(plserver
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-  endif(USE_RPATH)
-
-  install(TARGETS plserver
-    EXPORT export_plplot
-    DESTINATION ${BIN_DIR}
     )
 
   add_custom_command(

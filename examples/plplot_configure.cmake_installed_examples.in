@@ -49,6 +49,7 @@ set(ENABLE_tcl @ENABLE_tcl@)
 
 # Interactive bindings
 set(ENABLE_tk @ENABLE_tk@)
+set(ENABLE_tkX @ENABLE_tkX@)
 set(ENABLE_gnome2 @ENABLE_gnome2@)
 set(ENABLE_wxwidgets @ENABLE_wxwidgets@)
 set(ENABLE_qt @ENABLE_qt@)
@@ -137,6 +138,7 @@ endif(ENABLE_tcl OR ENABLE_tk)
 
 if(ENABLE_tk)
   set(ENABLE_itk @ENABLE_itk@)
+  set(ENABLE_itkX @ENABLE_itkX@)
   set(TCL_INCLUDE_PATH @TCL_INCLUDE_PATH@)
   set(TK_INCLUDE_PATH @TK_INCLUDE_PATH@)
   set(TCL_LIBRARY @TCL_LIBRARY@)

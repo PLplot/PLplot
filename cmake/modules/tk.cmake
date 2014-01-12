@@ -46,16 +46,20 @@
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 # tkwin_SOURCE		  - list of source files other than tkwin.c
 
-if(NOT ENABLE_tk)
-  if(PLD_tk OR PLD_ntk OR PLD_tkwin)
-    message(STATUS 
-    "WARNING: ENABLE_tk OFF.  Setting PLD_tk, PLD_ntk, and PLD_tkwin OFF."
+if(NOT ENABLE_tk AND (PLD_tk OR PLD_ntk OR PLD_tkwin))
+  message(STATUS 
+    "WARNING: ENABLE_tk OFF.  Therefore turning off tk, tkwin, and ntk devices"
     )
-    set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
-    set(PLD_ntk OFF CACHE BOOL "Enable ntk device" FORCE)
-    set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
-  endif(PLD_tk OR PLD_ntk OR PLD_tkwin)
-endif(NOT ENABLE_tk)
+  set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
+  set(PLD_ntk OFF CACHE BOOL "Enable ntk device" FORCE)
+  set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
+endif(NOT ENABLE_tk AND (PLD_tk OR PLD_ntk OR PLD_tkwin))
+
+if(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
+  message(STATUS "WARNING: X11 not found.  Therefore turning off tk and tkwin devices that depend on it")
+  set(PLD_tk OFF CACHE BOOL "Enable Tk device" FORCE)
+  set(PLD_tkwin OFF CACHE BOOL "Enable Tk device" FORCE)
+endif(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
 
 # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
 string(REGEX REPLACE ";" " -I" TKLIB_COMPILE_FLAGS "-I${TK_INCLUDE_PATH}")

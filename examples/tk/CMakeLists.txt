@@ -122,13 +122,18 @@ add_custom_target(tclIndex_examples_tk ALL
   DEPENDS ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
   )
 
+set(tk_SRC)
+if(ENABLE_tkX)
+  list(APPEND tk_SRC xtk01.c)
+endif(ENABLE_tkX)
+
 # The third example is run using a configured shell script which invokes
 # plserver so there is no source code to be compiled.
-set(tk_SRC xtk01.c)
+
 # The second and fourth Tk examples depend on Itk to work.
-if(ENABLE_itk)
+if(ENABLE_itkX)
   list(APPEND tk_SRC xtk02.c xtk04.c)
-endif(ENABLE_itk)
+endif(ENABLE_itkX)
 
 # The first, second, and fourth tk examples depend on configured bang
 # scripts to work which depends directly on the executables, xtk01,
@@ -150,14 +155,14 @@ set(tk_SCRIPTS
   wish_standard_examples
   )
 # These examples depend on Itk to work.
-if(ENABLE_itk)
+if(ENABLE_itkX)
   list(APPEND tk_SCRIPTS 
     tk02
     tk04
     plserver_runAllDemos
     wish_runAllDemos
     )
-endif(ENABLE_itk)
+endif(ENABLE_itkX)
 
 if(BUILD_TEST)
   if(CORE_BUILD)

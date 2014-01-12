@@ -93,7 +93,7 @@ set(
   test_linebreak.py
   )
 
-if(ENABLE_tk)
+if(ENABLE_tkX)
   set(python_SCRIPTS ${python_SCRIPTS}
     pytkdemo
     x01.py
@@ -116,7 +116,7 @@ if(ENABLE_tk)
     x18.py
     x19.py
     )
-endif(ENABLE_tk)
+endif(ENABLE_tkX)
 
 if(ENABLE_pyqt4)
   set(

@@ -2,7 +2,7 @@
 # -*- mode: shell-script -*-
 # $Id$
 #
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -207,28 +207,28 @@ if [ "@ENABLE_pygcw@" = "ON" ] ; then
     COUNT=$(( $COUNT + 1 ))
 fi
 
-if [ "@ENABLE_tk@" = "ON" ] ; then
+if [ "@ENABLE_tkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="./xtk01 -f tk01"
     COUNT=$(( $COUNT + 1 ))
 fi
 
-if [ "@ENABLE_itk@" = "ON" ] ; then
+if [ "@ENABLE_itkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="./xtk02 -f tk02"
     COUNT=$(( $COUNT + 1 ))
 fi
 
-if [ "@ENABLE_tk@" = "ON" ] ; then
+if [ "@ENABLE_tkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="plserver -f tk03"
     COUNT=$(( $COUNT + 1 ))
 fi
 
-if [ "@ENABLE_itk@" = "ON" ] ; then
+if [ "@ENABLE_itkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="./xtk04 -f tk04"
@@ -256,7 +256,7 @@ for index in $INDEX_LIST ; do
     popd
 done
 
-if [ "@ENABLE_tk@" = "ON" ] ; then
+if [ "@ENABLE_tkX@" = "ON" ] ; then
 
     cd "${SRC_EXAMPLES_DIR}"/tcl
     plserver <<EOF

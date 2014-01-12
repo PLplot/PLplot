@@ -209,7 +209,7 @@ if(ENABLE_tcl)
       )
   endif(ENABLE_itcl)
 
-  if(ENABLE_tk)
+  if(ENABLE_tkX)
     set(plplottcltk${LIB_TAG}_LIB_SRCS
       ${plplottcltk${LIB_TAG}_LIB_SRCS}
       ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
@@ -280,7 +280,7 @@ if(ENABLE_tcl)
       ${TK_LIBRARY}
       )
 
-    if(ENABLE_itk)
+    if(ENABLE_itkX)
       include_directories(${ITK_INCLUDE_PATH})
       # tkMain.c is the only code that currently has a dependence on
       # itk library routines.  Since that code is now part of the source code
@@ -300,8 +300,8 @@ if(ENABLE_tcl)
 	${libplplottcltk_Main${LIB_TAG}_LINK_FLAGS}
 	${ITK_LIBRARY}
 	)
-    endif(ENABLE_itk)
-  endif(ENABLE_tk)
+    endif(ENABLE_itkX)
+  endif(ENABLE_tkX)
 
   # Transform "${libplplottcltk${LIB_TAG}_LINK_FLAGS}" string to the
   # standard pkg-config form.
@@ -319,17 +319,17 @@ if(ENABLE_tcl)
   add_library(plplottcltk_Main${LIB_TAG} ${plplottcltk_Main${LIB_TAG}_LIB_SRCS})
 
   if(USE_TCL_TK_STUBS)
-    if(ENABLE_tk)
+    if(ENABLE_tkX)
       set_target_properties(
 	plplottcltk${LIB_TAG}
 	PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
 	)
-    else(ENABLE_tk)
+    else(ENABLE_tkX)
       set_target_properties(
 	plplottcltk${LIB_TAG}
 	PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
 	)
-    endif(ENABLE_tk)
+    endif(ENABLE_tkX)
   endif(USE_TCL_TK_STUBS)
 
   if(NON_TRANSITIVE)

@@ -1,7 +1,5 @@
 #!@SH_EXECUTABLE@
 # Examples 14 and 31 commented out - see Tk standard_examples.in
-# Choose the xwin device below although any other interactive
-# device would work.  
 # The following exec command reexecutes the script under tclsh.  This
 # is possible because all comment lines are ignored by tclsh including
 # continued ones with a trailing backslash like this one \
@@ -9,7 +7,7 @@ exec @TCL_TCLSH@ "$0" "$@"
 lappend auto_path @pkgIndex_LOCATION@
 package require Pltcl
 source tcldemos.tcl
-plsdev "xwin"
+plsdev "@generic_interactive_device@"
 plinit
 # Disable pausing.
 plspause 0

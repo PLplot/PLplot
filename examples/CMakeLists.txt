@@ -87,9 +87,9 @@ if(CORE_BUILD)
     set(CXX_COMMENT "#")
   endif(NOT(ENABLE_cxx AND (PLD_ps OR ENABLE_qt)))
 
-  if(NOT ENABLE_tk)
+  if(NOT ENABLE_tkX)
     set(TK_COMMENT "#")
-  endif(NOT ENABLE_tk)
+  endif(NOT ENABLE_tkX)
 
   if(NOT PLD_pdfcairo)
     set(PDFCAIRO_COMMENT "#")
@@ -418,6 +418,22 @@ if(CORE_BUILD AND BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
 endif(CORE_BUILD AND BUILD_TEST)
 
+# Decide on device to be used for generic interactive tests.
+
+if(PLD_xwin)
+  # Typically for Unix with X
+  set(generic_interactive_device xwin)
+elseif(PLD_wingcc)
+  # Typically for Windows without X
+  set(generic_interactive_device wingcc)
+elseif(PLD_ntk)
+  # A special test case used on Unix for when we have deliberately not
+  # looked for X simply to test the non-X logic.
+  set(generic_interactive_device ntk)
+else(PLD_xwin)
+  set(generic_interactive_device)
+endif(PLD_xwin)
+
 # language_info_LIST excludes the tk subdirectly since noninteractive
 # tests and file results do not involve tk.  However, the tk
 # subdirectory does have to be processed just like the rest
@@ -466,6 +482,7 @@ if(BUILD_TEST)
     set(java_custom_env ${custom_env})
     set(compare_script ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
   endif(CORE_BUILD)
+
   set(custom_test_command ${SH_EXECUTABLE} ${custom_test_script})
   set(compare_command ${SH_EXECUTABLE} ${compare_script})
 
@@ -656,6 +673,13 @@ if(BUILD_TEST)
 	GLOBAL PROPERTY FILE_DEPENDS_xwin_dyndriver
 	)
       set(xwin_target ${FILE_DEPENDS_xwin} xwin)
+
+      if(generic_interactive_device)
+	get_property(FILE_DEPENDS_${generic_interactive_device}
+	  GLOBAL PROPERTY FILE_DEPENDS_${generic_interactive_device}_dyndriver
+	  )
+	set(${generic_interactive_device}_target ${FILE_DEPENDS_${generic_interactive_device}} ${generic_interactive_device})
+      endif(generic_interactive_device)
 
     endif(ENABLE_DYNDRIVERS)
     if(PLD_extcairo)
@@ -897,21 +921,21 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST test_pygcw)
   endif(ENABLE_pygcw)
 
-  if(ENABLE_tcl AND PLD_xwin)
+  if(ENABLE_tcl AND PLD_${generic_interactive_device})
     add_custom_target(test_pltcl_standard_examples
-      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev xwin -np
-      DEPENDS ${xwin_target}
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev ${generic_interactive_device} -np
+      DEPENDS ${${generic_interactive_device}_target}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
       )
     add_dependencies(test_pltcl_standard_examples
       pltcl
       tcl_examples
       tclIndex_tcl
-      xwin
+      ${generic_interactive_device}
       )
-    if(FILE_DEPENDS_xwin)
-      add_dependencies(test_pltcl_standard_examples test_xwin_dyndriver)
-    endif(FILE_DEPENDS_xwin)
+    if(FILE_DEPENDS_${generic_interactive_device})
+      add_dependencies(test_pltcl_standard_examples test_${generic_interactive_device}_dyndriver)
+    endif(FILE_DEPENDS_${generic_interactive_device})
     list(APPEND interactive_targets_LIST test_pltcl_standard_examples)
 
     if(BUILD_SHARED_LIBS)
@@ -919,23 +943,23 @@ if(BUILD_TEST)
       # BUILD_SHARED_LIBS is true.
       add_custom_target(test_tclsh_standard_examples
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
-	DEPENDS ${xwin_target}
+	DEPENDS ${${generic_interactive_device}_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
       add_dependencies(test_tclsh_standard_examples
 	plplottcltk${LIB_TAG}
 	tcl_examples
 	tclIndex_tcl
-	xwin
+	${generic_interactive_device}
 	)
-      if(FILE_DEPENDS_xwin)
-	add_dependencies(test_tclsh_standard_examples test_xwin_dyndriver)
-      endif(FILE_DEPENDS_xwin)
+      if(FILE_DEPENDS_${generic_interactive_device})
+	add_dependencies(test_tclsh_standard_examples test_${generic_interactive_device}_dyndriver)
+      endif(FILE_DEPENDS_${generic_interactive_device})
       list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
     endif(BUILD_SHARED_LIBS)
-  endif(ENABLE_tcl AND PLD_xwin)
+  endif(ENABLE_tcl AND PLD_${generic_interactive_device})
 
-  if(ENABLE_tk AND PLD_tk)
+  if(ENABLE_tkX AND PLD_tk)
     set(targets_examples_tk)
 
     add_custom_target(test_tk_01
@@ -1043,7 +1067,7 @@ if(BUILD_TEST)
       # list(APPEND targets_examples_tk test_wish_standard_examples)
     endif(BUILD_SHARED_LIBS)
 
-    if(ENABLE_itk)
+    if(ENABLE_itkX)
       add_custom_target(test_tk_02
 	COMMAND xtk02 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk02
 	DEPENDS ${xwin_target}
@@ -1124,8 +1148,8 @@ if(BUILD_TEST)
 	# list(APPEND targets_examples_tk test_wish_runAlldemos)
       endif(BUILD_SHARED_LIBS)
 
-    endif(ENABLE_itk)
-  endif(ENABLE_tk AND PLD_tk)
+    endif(ENABLE_itkX)
+  endif(ENABLE_tkX AND PLD_tk)
 
   if(targets_examples_tk)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})

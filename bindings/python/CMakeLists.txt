@@ -22,7 +22,7 @@ if(ENABLE_python)
 
   # This is currently the include list for swig, the C wrapper and the
   # the Python headers. Not particular pretty...
-  if(ENABLE_tk)
+  if(ENABLE_tkX)
     set(python_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_SOURCE_DIR}/lib/qsastime
@@ -36,7 +36,7 @@ if(ENABLE_python)
       ${NUMPY_INCLUDE_PATH}
       ${CMAKE_SOURCE_DIR}/bindings/swig-support
       )
-  else(ENABLE_tk)
+  else(ENABLE_tkX)
     set(python_interface_INCLUDE_PATHS
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_SOURCE_DIR}/lib/qsastime
@@ -47,7 +47,7 @@ if(ENABLE_python)
       ${NUMPY_INCLUDE_PATH}
       ${CMAKE_SOURCE_DIR}/bindings/swig-support
       )
-  endif(ENABLE_tk)
+  endif(ENABLE_tkX)
   include_directories(${python_interface_INCLUDE_PATHS})
 
   if(PL_DOUBLE)
@@ -110,18 +110,18 @@ if(ENABLE_python)
     "-DUSINGDLL"
     )
 
-  if(ENABLE_tk)
+  if(ENABLE_tkX)
     target_link_libraries( plplot_widgetmodule
       plplot${LIB_TAG}
       plplottcltk${LIB_TAG}
       ${PYTHON_LIBRARIES}
       )
-  else(ENABLE_tk)
+  else(ENABLE_tkX)
     target_link_libraries( plplot_widgetmodule
       plplot${LIB_TAG}
       ${PYTHON_LIBRARIES}
       )
-  endif(ENABLE_tk)
+  endif(ENABLE_tkX)
 
   if(USE_RPATH)
     set_target_properties(
@@ -158,12 +158,12 @@ if(ENABLE_python)
     FILES plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
     DESTINATION ${PYTHON_INSTDIR}
     )
-  if(ENABLE_tk)
+  if(ENABLE_tkX)
     install(
       FILES
       Plframe.py TclSup.py
       DESTINATION ${PYTHON_INSTDIR}
       )
-  endif(ENABLE_tk)
+  endif(ENABLE_tkX)
 
 endif(ENABLE_python)
