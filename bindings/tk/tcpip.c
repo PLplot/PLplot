@@ -110,6 +110,19 @@
 #endif
 #include <errno.h>
 
+#if defined ( __WIN32__ )
+// This is the source of the WSAEWOULDBLOCK macro on Windows platforms.
+  #include <winerror.h>
+#endif
+
+#if defined ( EWOULDBLOCK )
+  #define PLPLOT_EWOULDBLOCK    EWOULDBLOCK
+#elif defined ( WSAEWOULDBLOCK )
+  #define PLPLOT_EWOULDBLOCK    WSAEWOULDBLOCK
+#else
+  #error broken system where neither EWOULDBLOCK nor WSAEWOULDBLOCK macros are #defined
+#endif
+
 // Supply dummy macros for the low-level I/O functions - Windows
 #if defined ( __WIN32__ )
 #define read( a, b, c )     0
@@ -561,7 +574,7 @@ readError:
     // return a null string.
     //
 
-    if ( errno == EWOULDBLOCK || errno == EAGAIN )
+    if ( errno == PLPLOT_EWOULDBLOCK || errno == EAGAIN )
     {
         Tcl_ResetResult( interp );
         return TCL_OK;
@@ -686,7 +699,7 @@ pl_PacketSend( Tcl_Interp * interp, PLiodev *iodev, PDFstrm *pdfs )
 
     if ( (unsigned) numSent != packetLen )
     {
-        if ( ( errno == 0 ) || ( errno == EWOULDBLOCK || errno == EAGAIN ) )
+        if ( ( errno == 0 ) || ( errno == PLPLOT_EWOULDBLOCK || errno == EAGAIN ) )
         {
             //
             // Non-blocking I/O: return number of bytes actually sent.
