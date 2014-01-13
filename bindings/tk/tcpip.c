@@ -63,7 +63,7 @@
 #include "plDevs.h"
 #include "plConfig.h"
 
-#if defined ( PLD_tk ) || defined ( ENABLE_tk )
+#if defined ( PLD_tk ) || defined ( ENABLE_tkX )
 
 // This file is meant to be compiled with non-ANSI compilers ("cc").
 // The reason for doing it this way is to ensure that the full C
@@ -748,4 +748,4 @@ pldummy_tcpip()
     return 0;
 }
 
-#endif  // defined(PLD_tk) || defined (ENABLE_tk)
+#endif  // defined(PLD_tk) || defined (ENABLE_tkX)

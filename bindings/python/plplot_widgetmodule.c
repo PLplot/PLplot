@@ -6,7 +6,7 @@
 #include "plplot.h"
 #include "plplotP.h"
 
-#ifdef ENABLE_tk
+#ifdef ENABLE_tkX
 #include <tcl.h>
 #include "pltk.h"
 #endif
@@ -15,7 +15,7 @@ void initplplot_widget( void );
 
 #define TRY( E )    if ( !( E ) ) return NULL
 
-#ifdef ENABLE_tk
+#ifdef ENABLE_tkX
 static char doc_Pltk_init[] = "Initialize the Pltk Tcl extension.";
 
 //--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ static PyObject *pl_Pltk_init( PyObject * PL_UNUSED( self ), PyObject *args )
 
     if ( Pltk_Init( interp ) == TCL_ERROR )
     {
-        printf( "Initizlization of Pltk Tcl extension failed!\n" );
+        printf( "Initialization of Pltk Tcl extension failed!\n" );
         return NULL;
     }
 
@@ -59,7 +59,7 @@ static PyObject *pl_Pltk_init( PyObject * PL_UNUSED( self ), PyObject *args )
 //--------------------------------------------------------------------------
 
 static PyMethodDef plplot_widget_methods[] = {
-#ifdef ENABLE_tk
+#ifdef ENABLE_tkX
     { "Pltk_init", pl_Pltk_init, METH_VARARGS, doc_Pltk_init },
 #endif
 
