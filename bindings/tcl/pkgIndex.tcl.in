@@ -32,48 +32,48 @@ proc load_pkg_Pltcl {dir} {
     #puts "loading Pltcl, dir: $dir"
     set pllibrary $dir
 
+    set thisDir [pwd]
+    # Find absolute path of $dir 
+    cd $dir
+    set pkgIndexDir [pwd]
+    cd $thisDir
+    set buildDir "@BUILD_DIR@"
+    set bLen [string length $buildDir]
+    # If pkgIndexDir is in the build tree...
     if {$tcl_platform(platform) == "unix"} {
-	set thisDir [pwd]
-	# Find absolute path of $dir 
-	cd $dir
-	set pkgIndexDir [pwd]
-	cd $thisDir
-	set buildDir "@BUILD_DIR@"
-	set bLen [string length $buildDir]
-	# If pkgIndexDir is in the build tree...
 	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
-		set searchdirs "."} else {
-		set searchdirs [list "@LIB_HARDDIR@"]}
-	#puts $searchdirs
-	# prefer double precision version
-	set dlnames [list "@DLNAME_LIBPLPLOTTCLTKD@" "@DLNAME_LIBPLPLOTTCLTK@"]
-	set file ""
-	foreach reldir $searchdirs {
-	    foreach dlname $dlnames {
-		set driver [file join $dir $reldir $dlname]
-		#puts "looking for driver file: $driver"
-		if [file exists $driver] {
-		    set file $driver
-		    break
-		}
-	    }
-	    if { $file != "" } { break }
-	}
-	if { $file == "" } {
-	    error "load_pkg_Pltcl: could not find loadable driver"
-	}
-
-    } else {
-    # This is probably broken, someone should fix it.
-	if {[info exists tcl_platform(debug)]} {
-	    set file [file join $dir plplot510d[info sharedlibextension]]
+	    set searchdirs "."
 	} else {
-	    set file [file join $dir plplot510[info sharedlibextension]]
+	    set searchdirs [list "@LIB_HARDDIR@"]
 	}
+    } else {
+	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
+	    set searchdirs "../../dll"
+	} else {
+	    set searchdirs [list "@LIB_HARDDIR@../bin"]
+	}
+    }
+    #puts $searchdirs
+    # prefer double precision version
+    set dlnames [list "@DLNAME_LIBPLPLOTTCLTKD@" "@DLNAME_LIBPLPLOTTCLTK@"]
+    set file ""
+    foreach reldir $searchdirs {
+	foreach dlname $dlnames {
+	    set driver [file join $dir $reldir $dlname]
+	    #puts "looking for driver file: $driver"
+	    if [file exists $driver] {
+		set file $driver
+		break
+	    }
+	}
+	if { $file != "" } { break }
+    }
+    if { $file == "" } {
+	error "load_pkg_Pltcl: could not find loadable driver"
     }
 
     load $file Pltcl
-# put core tcl scripts in path
+    # put core tcl scripts in path
     lappend auto_path $dir/tcl
     rename load_pkg_Pltcl {}
 }
