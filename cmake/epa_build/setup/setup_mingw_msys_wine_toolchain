@@ -51,8 +51,11 @@ PATH=$PYTHON_PATH:$PATH
 PATH=$CMAKE_PATH:$PATH
 PATH=$MINGW_PREFIX/bin/:$PATH
 
-# pkg-config setup.
+# Allow using -DBUILD_THE_BUILDTOOLS=ON results from epa_build
+# pkg-config, tclsh, and wish setup.
 PATH=$BUILDTOOLS_PREFIX/bin:$PATH
 
-export PKG_CONFIG_PATH=/z/home/wine/newstart/MinGW-4.7.2/msys/1.0/lib/pkgconfig:$BUILDTOOLS_PREFIX/share/pkgconfig:$BUILDTOOLS_PREFIX/lib/pkgconfig
+# Allow using itcl3 and itk3 libraries:
+PATH=$BUILDTOOLS_PREFIX/lib/itcl3.4:$BUILDTOOLS_PREFIX/lib/itk3.3:$PATH
 
+export PKG_CONFIG_PATH=/z/home/wine/newstart/MinGW-4.7.2/msys/1.0/lib/pkgconfig:$BUILDTOOLS_PREFIX/share/pkgconfig:$BUILDTOOLS_PREFIX/lib/pkgconfig
