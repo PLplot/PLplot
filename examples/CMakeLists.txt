@@ -423,13 +423,12 @@ endif(CORE_BUILD AND BUILD_TEST)
 if(PLD_xwin)
   # Typically for Unix with X
   set(generic_interactive_device xwin)
-elseif(PLD_wingcc)
-  # Typically for Windows without X
-  set(generic_interactive_device wingcc)
 elseif(PLD_ntk)
-  # A special test case used on Unix for when we have deliberately not
-  # looked for X simply to test the non-X logic.
+  # Typically for all platforms if ntk is available but not xwin
   set(generic_interactive_device ntk)
+elseif(PLD_wingcc)
+  # Typically for Windows if -dev ntk is not available
+  set(generic_interactive_device wingcc)
 else(PLD_xwin)
   set(generic_interactive_device)
 endif(PLD_xwin)
