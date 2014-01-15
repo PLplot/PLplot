@@ -34,7 +34,7 @@ proc load_pkg_Pltk {dir} {
 
     if {$tcl_platform(platform) == "unix"} {
 	if {[string match "*CYGWIN*" $::tcl_platform(os)]} {
-	    set stem cygplplottcltk@LIB_TAG@-10
+	    set stem cygplplottcltk@LIB_TAG@-@plplottcltk_SOVERSION@
 	} else {
 	    set stem tk
 	}
