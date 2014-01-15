@@ -5,6 +5,10 @@
 # We use of the wish -colormap new option since it cannot hurt,
 # but this does not solve color issues
 # for both examples 2 ("Couldn't parse color 76") and 24 ("illegal number of colors in cmap0: red") so we comment out those examples for now.
+# N.B. recently that example 2 and example 24 error message has been
+# replaced by a segfault.  So presumably the issue all along has been
+# a memory management issue that (as typical with such issues)
+# manifests in a variety of ways depending on subtle details.
 # Example 20 enables plspause so comment out for now.
 # The following exec command reexecutes the script under wish.  This
 # is possible because all comment lines are ignored by wish including
