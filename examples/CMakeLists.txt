@@ -1037,7 +1037,7 @@ if(BUILD_TEST)
       # tests that use "package require Pltk" only work if
       # BUILD_SHARED_LIBS is true.
       add_custom_target(test_wish_standard_examples
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples -geometry 800x600
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
       add_dependencies(test_wish_standard_examples
@@ -1130,7 +1130,7 @@ if(BUILD_TEST)
 	# tests that use "package require Plplotter" only work if
 	# BUILD_SHARED_LIBS is true.
 	add_custom_target(test_wish_runAllDemos
-	  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos -geometry 800x600
+	  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	  )
 	add_dependencies(test_wish_runAllDemos
