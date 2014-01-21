@@ -77,7 +77,7 @@ Each of the steps in this comprehensive test may take a while...."
     if [ "$do_ctest" = "yes" ] ; then
 	output="$OUTPUT_TREE"/make.out
 	rm -f "$output"
-	echo "$build_command in the build tree"
+	echo "$build_command VERBOSE=1 in the build tree"
 	$build_command VERBOSE=1 >& "$output"
 	make_rc=$?
 	if [ "$make_rc" -eq 0 ] ; then
@@ -85,11 +85,22 @@ Each of the steps in this comprehensive test may take a while...."
 	    rm -f "$output"
 	    echo "$ctest_command in the build tree"
 	    $ctest_command --extra-verbose >& "$output"
-	    if [ "$do_clean_as_you_go" = "yes" ] ; then
-		output="$OUTPUT_TREE"/clean_ctest_plot_files.out
-		rm -f "$output"
-		echo "$build_command clean_ctest_plot_files in the build tree (since we are done with ctest)"
-		$build_command clean_ctest_plot_files >& "$output"
+	    ctest_rc=$?
+	    if [ "$ctest_rc" -eq 0 ] ; then
+		if [ "$do_clean_as_you_go" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/clean_ctest_plot_files.out
+		    rm -f "$output"
+		    echo "$build_command clean_ctest_plot_files in the build tree (since we are done with ctest)"
+		    $build_command clean_ctest_plot_files >& "$output"
+		    make_rc=$?
+		    if [ "$make_rc" -ne 0 ] ; then
+			echo "ERROR: $build_command clean_ctest_plot_files failed in the build tree"
+			exit 1
+		    fi
+		fi
+	    else
+		echo "ERROR: $ctest_command failed in the build tree"
+		exit 1
 	    fi
 	else
 	    echo "ERROR: $build_command failed in the build tree"
@@ -100,7 +111,7 @@ Each of the steps in this comprehensive test may take a while...."
     if [ "$do_test_build_tree" = "yes" -a  "$do_test_noninteractive" = "yes" ] ; then
 	output="$OUTPUT_TREE"/make_noninteractive.out
 	rm -f "$output"
-	echo "$build_command test_noninteractive in the build tree"
+	echo "$build_command VERBOSE=1 test_noninteractive in the build tree"
 	$build_command VERBOSE=1 test_noninteractive >& "$output"
 	make_test_noninteractive_rc=$?
 	if [ "$make_test_noninteractive_rc" -ne 0 ] ; then
@@ -114,7 +125,7 @@ Each of the steps in this comprehensive test may take a while...."
 	rm -rf "$INSTALL_TREE"
 	output="$OUTPUT_TREE"/make_install.out
 	rm -f "$output"
-	echo "$build_command install in the build tree"
+	echo "$build_command VERBOSE=1 install in the build tree"
 	$build_command VERBOSE=1 install >& "$output"
 	make_install_rc=$?
 	if [ "$make_install_rc" -ne 0 ] ; then
@@ -128,6 +139,11 @@ Each of the steps in this comprehensive test may take a while...."
 	rm -f "$output"
 	echo "$build_command clean in the build tree (since we are done with it at least for the non-interactive test case)"
 	$build_command clean >& "$output"
+	make_rc=$?
+	if [ "$make_rc" -ne 0 ] ; then
+	    echo "ERROR: $build_command clean failed in the build tree"
+	    exit 1
+	fi
     fi
 
     if [ "$do_test_install_tree" = "yes" -o \
@@ -161,13 +177,23 @@ Each of the steps in this comprehensive test may take a while...."
 	    if [ "$do_test_noninteractive" = "yes" ] ; then
 		output="$OUTPUT_TREE"/installed_make_noninteractive.out
 		rm -f "$output"
-		echo "$build_command test_noninteractive in the installed examples build tree"
+		echo "$build_command VERBOSE=1 test_noninteractive in the installed examples build tree"
 		$build_command VERBOSE=1 test_noninteractive >& "$output"
+		make_rc=$?
+		if [ "$make_rc" -ne 0 ] ; then
+		    echo "ERROR: $build_command test_noninteractive failed in the installed examples build tree"
+		    exit 1
+		fi
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
 		    output="$OUTPUT_TREE"/installed_clean.out
 		    rm -f "$output"
 		    echo "$build_command clean in the installed examples build tree (since we are done with it at least for the non-interactive test case)"
 		    $build_command clean >& "$output"
+		    make_rc=$?
+		    if [ "$make_rc" -ne 0 ] ; then
+			echo "ERROR: $build_command clean failed in the installed examples build tree"
+			exit 1
+		    fi
 		fi
 	    fi
 	fi
@@ -178,11 +204,21 @@ Each of the steps in this comprehensive test may take a while...."
 	    rm -f "$output"
 	    echo "Traditional $build_command test_noninteractive in the installed examples tree"
 	    $build_command test_noninteractive >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -ne 0 ] ; then
+		echo "ERROR: Traditional $build_command test_noninteractive failed in the installed examples tree"
+		exit 1
+	    fi
 	    if [ "$do_clean_as_you_go" = "yes" ] ; then
 		output="$OUTPUT_TREE"/traditional_clean.out
 		rm -f "$output"
 		echo "Traditional $build_command clean in the installed examples tree (since we are done with it at least for the non-interactive test case)"
 		$build_command clean >& "$output"
+		make_rc=$?
+		if [ "$make_rc" -ne 0 ] ; then
+		    echo "ERROR: Traditional $build_command clean failed in the installed examples tree"
+		    exit 1
+		fi
 	    fi
 	fi
     fi
@@ -193,27 +229,47 @@ Each of the steps in this comprehensive test may take a while...."
 	    cd "$BUILD_TREE"
 	    output="$OUTPUT_TREE"/make_interactive.out
 	    rm -f "$output"
-	    echo "$build_command test_interactive in the build tree"
+	    echo "$build_command VERBOSE=1 test_interactive in the build tree"
 	    $build_command VERBOSE=1 test_interactive >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -ne 0 ] ; then
+		echo "ERROR: $build_command test_interactive failed in the build tree"
+		exit 1
+	    fi
 	fi
 	if [ "$do_clean_as_you_go" = "yes" ] ; then
 	    output="$OUTPUT_TREE"/clean.out
 	    rm -f "$output"
 	    echo "$build_command clean in the build tree (since we are done with it)"
 	    $build_command clean >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -ne 0 ] ; then
+		echo "ERROR: $build_command clean failed in the build tree"
+		exit 1
+	    fi
 	fi
 	PATH="$INSTALL_TREE/bin":$PATH_SAVE
 	if [ "$do_test_install_tree" = "yes" ] ; then
 	    cd "$INSTALL_BUILD_TREE"
 	    output="$OUTPUT_TREE"/installed_make_interactive.out
 	    rm -f "$output"
-	    echo "$build_command test_interactive in the installed examples build tree"
+	    echo "$build_command VERBOSE=1 test_interactive in the installed examples build tree"
 	    $build_command VERBOSE=1 test_interactive >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -ne 0 ] ; then
+		echo "ERROR: $build_command test_interactive failed in the installed examples build tree"
+		exit 1
+	    fi
 	    if [ "$do_clean_as_you_go" = "yes" ] ; then
 		output="$OUTPUT_TREE"/installed_clean.out
 		rm -f "$output"
 		echo "$build_command clean in the installed examples build tree (since we are done with it)"
 		$build_command clean >& "$output"
+		make_rc=$?
+		if [ "$make_rc" -ne 0 ] ; then
+		    echo "ERROR: $build_command clean failed in the installed examples build tree"
+		    exit 1
+		fi
 	    fi
 	fi
 	if [ "$do_test_traditional_install_tree" = "yes" ] ; then
@@ -222,11 +278,21 @@ Each of the steps in this comprehensive test may take a while...."
 	    rm -f "$output"
 	    echo "Traditional $build_command test_interactive in the installed examples tree"
 	    $build_command test_interactive >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -ne 0 ] ; then
+		echo "ERROR: Traditional $build_command test_interactive failed in the installed exaples tree"
+		exit 1
+	    fi
 	    if [ "$do_clean_as_you_go" = "yes" ] ; then
 		output="$OUTPUT_TREE"/traditional_clean.out
 		rm -f "$output"
 		echo "Traditional $build_command clean in the installed examples tree (since we are done with it)"
 		$build_command clean >& "$output"
+		make_rc=$?
+		if [ "$make_rc" -ne 0 ] ; then
+		    echo "ERROR: Traditional $build_command clean failed in the installed examples tree"
+		    exit 1
+		fi
 	    fi
 	fi
     fi
