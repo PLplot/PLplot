@@ -316,12 +316,15 @@ option(ENABLE_COMPREHENSIVE_PLPLOT_TEST "Use comprehensive test for PLplot (whic
 
 # The parallel versions are for software packages that
 # do not have race conditions for parallel builds or tests.
-set(EPA_PARALLEL_BUILD_COMMAND "${EPA_BUILD_COMMAND}" -j4)
-set(EPA_PARALLEL_CTEST_COMMAND "${EPA_CTEST_COMMAND}" -j4)
+
+set(NUMBER_PARALLEL_JOBS 4 CACHE STRING "Number of parallel jobs")
+
+set(EPA_PARALLEL_BUILD_COMMAND "${EPA_BUILD_COMMAND}" -j${NUMBER_PARALLEL_JOBS})
+set(EPA_PARALLEL_CTEST_COMMAND "${EPA_CTEST_COMMAND}" -j${NUMBER_PARALLEL_JOBS})
 # For autotools based builds.
 option(AUTOTOOLS_PARALLEL_BUILD "Build autotools projects using parallel make unless a specific project is expressely configured otherwise" ON)
 if(AUTOTOOLS_PARALLEL_BUILD)
-  set(EPA_PARALLEL_MAKE_COMMAND "${EPA_MAKE_COMMAND}" -j4)
+  set(EPA_PARALLEL_MAKE_COMMAND "${EPA_MAKE_COMMAND}" -j${NUMBER_PARALLEL_JOBS})
 else(AUTOTOOLS_PARALLEL_BUILD)
   set(EPA_PARALLEL_MAKE_COMMAND "${EPA_MAKE_COMMAND}")
 endif(AUTOTOOLS_PARALLEL_BUILD)
