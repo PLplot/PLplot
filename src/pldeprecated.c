@@ -43,6 +43,9 @@
 //   plrgb1
 //   plhls
 
+// The following function was formally deprecated in 5.9.10.
+//   plwid
+
 //--------------------------------------------------------------------------
 // plrgb()
 //
