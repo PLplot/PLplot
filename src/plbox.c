@@ -593,9 +593,9 @@ c_plaxes( PLFLT x0, PLFLT y0,
 //--------------------------------------------------------------------------
 
 void
-c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
-          const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
-          const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz )
+c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nxsub,
+          const char *yopt, const char *ylabel, PLFLT ytick, PLINT nysub,
+          const char *zopt, const char *zlabel, PLFLT ztick, PLINT nzsub )
 {
     PLFLT dx, dy, tx, ty, ux, uy;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -646,26 +646,26 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         ux = plP_w3wcx( xmax, ymin, zmin );
         uy = plP_w3wcy( xmax, ymin, zmin );
         plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-            xmin, xmax, xtick, nsubx, 0, &xdigits );
+            xmin, xmax, xtick, nxsub, 0, &xdigits );
 
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmax, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymin, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
 
         tx = plP_w3wcx( xmin, ymax, zmin );
         ty = plP_w3wcy( xmin, ymax, zmin );
         ux = plP_w3wcx( xmin, ymin, zmin );
         uy = plP_w3wcy( xmin, ymin, zmin );
         plxybx( yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
-            ymax, ymin, ytick, nsuby, ln, &ydigits );
+            ymax, ymin, ytick, nysub, ln, &ydigits );
 
         dx = ux - tx;
         dy = uy - ty;
 // restore zdigits to initial value for second call
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmin, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymax, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
     }
     else if ( cxx <= 0.0 && cxy <= 0.0 )
     {
@@ -675,26 +675,26 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         ux = plP_w3wcx( xmin, ymin, zmin );
         uy = plP_w3wcy( xmin, ymin, zmin );
         plxybx( yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
-            ymax, ymin, ytick, nsuby, 0, &ydigits );
+            ymax, ymin, ytick, nysub, 0, &ydigits );
 
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmin, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymin, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
 
         tx = plP_w3wcx( xmax, ymax, zmin );
         ty = plP_w3wcy( xmax, ymax, zmin );
         ux = plP_w3wcx( xmin, ymax, zmin );
         uy = plP_w3wcy( xmin, ymax, zmin );
         plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-            xmax, xmin, xtick, nsubx, ln, &xdigits );
+            xmax, xmin, xtick, nxsub, ln, &xdigits );
 
         dx = ux - tx;
         dy = uy - ty;
 // restore zdigits to initial value for second call
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmax, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymax, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
     }
     else if ( cxx <= 0.0 && cxy >= 0.0 )
     {
@@ -704,26 +704,26 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         ux = plP_w3wcx( xmin, ymax, zmin );
         uy = plP_w3wcy( xmin, ymax, zmin );
         plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-            xmax, xmin, xtick, nsubx, 0, &xdigits );
+            xmax, xmin, xtick, nxsub, 0, &xdigits );
 
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmin, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymax, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
 
         tx = plP_w3wcx( xmax, ymin, zmin );
         ty = plP_w3wcy( xmax, ymin, zmin );
         ux = plP_w3wcx( xmax, ymax, zmin );
         uy = plP_w3wcy( xmax, ymax, zmin );
         plxybx( yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
-            ymin, ymax, ytick, nsuby, ln, &ydigits );
+            ymin, ymax, ytick, nysub, ln, &ydigits );
 
         dx = ux - tx;
         dy = uy - ty;
 // restore zdigits to initial value for second call
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmax, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymin, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
     }
     else if ( cxx >= 0.0 && cxy >= 0.0 )
     {
@@ -733,26 +733,26 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         ux = plP_w3wcx( xmax, ymax, zmin );
         uy = plP_w3wcy( xmax, ymax, zmin );
         plxybx( yopt, ylabel, PL_X_AXIS, tx, ty, ux, uy,
-            ymin, ymax, ytick, nsuby, 0, &ydigits );
+            ymin, ymax, ytick, nysub, 0, &ydigits );
 
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmax, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymax, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
 
         tx = plP_w3wcx( xmin, ymin, zmin );
         ty = plP_w3wcy( xmin, ymin, zmin );
         ux = plP_w3wcx( xmax, ymin, zmin );
         uy = plP_w3wcy( xmax, ymin, zmin );
         plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-            xmin, xmax, xtick, nsubx, ln, &xdigits );
+            xmin, xmax, xtick, nxsub, ln, &xdigits );
 
         dx = ux - tx;
         dy = uy - ty;
 // restore zdigits to initial value for second call
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmin, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymin, zmax ), zmin, zmax, ztick, nzsub, &zdigits );
     }
     plsxax( xdigmax, xdigits );
     plsyax( ydigmax, ydigits );

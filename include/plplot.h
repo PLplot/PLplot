@@ -856,9 +856,9 @@ c_plbox( const char *xopt, PLFLT xtick, PLINT nxsub,
 // This is the 3-d analogue of plbox().
 
 PLDLLIMPEXP void
-c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
-          const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
-          const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz );
+c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nxsub,
+          const char *yopt, const char *ylabel, PLFLT ytick, PLINT nysub,
+          const char *zopt, const char *zlabel, PLFLT ztick, PLINT nzsub );
 
 // Calculate world coordinates and subpage from relative device coordinates.
 
