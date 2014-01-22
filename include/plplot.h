@@ -646,7 +646,9 @@ typedef plf2ops_t * PLF2OPS;
 #define    plgyax                   c_plgyax
 #define    plgzax                   c_plgzax
 #define    plhist                   c_plhist
+#ifdef PL_DEPRECATED
 #define    plhls                    c_plhls
+#endif
 #define    plhlsrgb                 c_plhlsrgb
 #define    plimage                  c_plimage
 #define    plimagefr                c_plimagefr
@@ -680,8 +682,10 @@ typedef plf2ops_t * PLF2OPS;
 #define    plptex3                  c_plptex3
 #define    plrandd                  c_plrandd
 #define    plreplot                 c_plreplot
+#ifdef PL_DEPRECATED
 #define    plrgb                    c_plrgb
 #define    plrgb1                   c_plrgb1
+#endif
 #define    plrgbhls                 c_plrgbhls
 #define    plschr                   c_plschr
 #define    plscmap0                 c_plscmap0
@@ -755,7 +759,9 @@ typedef plf2ops_t * PLF2OPS;
 #define    plvpor                   c_plvpor
 #define    plvsta                   c_plvsta
 #define    plw3d                    c_plw3d
+#ifdef PL_DEPRECATED
 #define    plwid                    c_plwid
+#endif
 #define    plwidth                  c_plwidth
 #define    plwind                   c_plwind
 #define    plxormod                 c_plxormod
@@ -1978,10 +1984,12 @@ c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
          PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
          PLFLT zmax0, PLFLT alt, PLFLT az );
 
+#ifdef PL_DEPRECATED
 // Set pen width with deprecated integer width
 
 PLDLLIMPEXP void
 c_plwid( PLINT width );
+#endif
 
 // Set pen width.
 
