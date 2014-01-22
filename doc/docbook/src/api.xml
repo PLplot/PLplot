@@ -5245,7 +5245,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>
-	    <function>plggriddata</function>
+	    <function>plgriddata</function>
 	  </funcdef>
 	  <paramdef><parameter>x</parameter></paramdef>
 	  <paramdef><parameter>y</parameter></paramdef>
