@@ -293,7 +293,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>pladv</function>
 	  </funcdef>
-	  <paramdef><parameter>sub</parameter></paramdef>
+	  <paramdef><parameter>page</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -304,12 +304,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       advance if there are no remaining subpages on the current page.  If
       subpages aren't being used, <literal>&pladv;(0)</literal> will
       always advance the page.  If
-      <literal><parameter>sub</parameter>&gt;0</literal>, PLplot switches
+      <literal><parameter>page</parameter>&gt;0</literal>, PLplot switches
       to the specified subpage.  Note that this allows you to overwrite a
       plot on the specified subpage; if this is not what you intended, use
       &pleop; followed by &plbop; to first advance the page.  This routine
       is called automatically (with
-      <literal><parameter>sub</parameter>=0</literal>) by &plenv;, but if
+      <literal><parameter>page</parameter>=0</literal>) by &plenv;, but if
       &plenv; is not used, &pladv; must be called after initializing PLplot
       but before defining the viewport.
     </para>
@@ -317,21 +317,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>sub</parameter>
+	  <parameter>page</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Specifies the subpage number (starting from 1 in the top left
 	    corner and increasing along the rows) to which to advance.  Set
-	    to zero to advance to the next subpage.
+	    to zero to advance to the next subpage (or to the next page
+            if subpages are not being used).
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      Redacted form: <function>pladv(sub)</function>
+      Redacted form: <function>pladv(page)</function>
     </para>
 
     <para>
@@ -1760,19 +1761,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plcol0</function>
 	  </funcdef>
-	  <paramdef><parameter>color</parameter></paramdef>
+	  <paramdef><parameter>icol0</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      Sets the color for color map0 (see <xref linkend="color-map-0"/>).
+      Sets the color index for color map0 (see <xref linkend="color-map-0"/>).
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>color</parameter>
+	  <parameter>icol0</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -1806,7 +1807,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plcol0(color)</function>
+      Redacted form: <function>plcol0(icol0)</function>
     </para>
 
     <para>
@@ -2327,7 +2328,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plcont</function>
 	  </funcdef>
-	  <paramdef><parameter>z</parameter></paramdef>
+	  <paramdef><parameter>f</parameter></paramdef>
 	  <paramdef><parameter>nx</parameter></paramdef>
 	  <paramdef><parameter>ny</parameter></paramdef>
 	  <paramdef><parameter>kx</parameter></paramdef>
@@ -2344,7 +2345,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Draws a contour plot of the data in
-      <literal><parameter>z</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
+      <literal><parameter>f</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
       using the <literal><parameter>nlevel</parameter></literal> contour
       levels specified by <literal><parameter>clevel</parameter></literal>.
       Only the region of the array from
@@ -2364,7 +2365,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>z</parameter>
+	  <parameter>f</parameter>
 	  (<literal>PLFLT **</literal>, input)
 	</term>
 	<listitem>
@@ -2382,7 +2383,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Physical dimensions of array
-	    <literal><parameter>z</parameter></literal>.
+	    <literal><parameter>f</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2439,7 +2440,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Pointer to function that defines transformation between indices
-	    in array <literal><parameter>z</parameter></literal> and the
+	    in array <literal><parameter>f</parameter></literal> and the
 	    world coordinates (C only).  Transformation functions are
 	    provided in the PLplot library:
 	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
@@ -2479,23 +2480,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <itemizedlist>
 	<listitem>
 	  <para>
-	    F95: <function>plcont(z, kx, lx, ky, ly, clevel, tr?)</function> or
-	    <function>plcont(z, kx, lx, ky, ly, clevel, xgrid, ygrid)</function>
+	    F95: <function>plcont(f, kx, lx, ky, ly, clevel, tr?)</function> or
+	    <function>plcont(f, kx, lx, ky, ly, clevel, xgrid, ygrid)</function>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Java: <function>pls.cont(z, kx, lx, ky, ly, clevel, xgrid, ygrid)</function>
+	    Java: <function>pls.cont(f, kx, lx, ky, ly, clevel, xgrid, ygrid)</function>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Perl/PDL: <function>plcont(z, kx, lx, ky, ly, clevel, pltr, pltr_data)</function>
+	    Perl/PDL: <function>plcont(f, kx, lx, ky, ly, clevel, pltr, pltr_data)</function>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Python: <function>plcont2(z, kx, lx, ky, ly, clevel)</function>
+	    Python: <function>plcont2(f, kx, lx, ky, ly, clevel)</function>
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -3862,7 +3863,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plfont</function>
 	  </funcdef>
-	  <paramdef><parameter>font</parameter></paramdef>
+	  <paramdef><parameter>ifont</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -3876,7 +3877,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>font</parameter>
+	  <parameter>ifont</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -3910,7 +3911,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plfont(font)</function>
+      Redacted form: <function>plfont(ifont)</function>
     </para>
 
     <para>
@@ -3930,7 +3931,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plfontld</function>
 	  </funcdef>
-	  <paramdef><parameter>set</parameter></paramdef>
+	  <paramdef><parameter>fnt</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -3943,7 +3944,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>set</parameter>
+	  <parameter>fnt</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -3967,7 +3968,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plfontld(set)</function>
+      Redacted form: <function>plfontld(fnt)</function>
     </para>
 
     <para>
@@ -4693,9 +4694,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plgfam</function>
 	  </funcdef>
-	  <paramdef><parameter>fam</parameter></paramdef>
-	  <paramdef><parameter>num</parameter></paramdef>
-	  <paramdef><parameter>bmax</parameter></paramdef>
+	  <paramdef><parameter>p_fam</parameter></paramdef>
+	  <paramdef><parameter>p_num</parameter></paramdef>
+	  <paramdef><parameter>p_bmax</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -4708,7 +4709,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>fam</parameter>
+	  <parameter>p_fam</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -4720,7 +4721,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>num</parameter>
+	  <parameter>p_num</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -4731,7 +4732,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>bmax</parameter>
+	  <parameter>p_bmax</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -4744,7 +4745,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plgfam(fam, num, bmax)</function>
+      Redacted form: <function>plgfam(p_fam, p_num, p_bmax)</function>
     </para>
 
     <para>
@@ -4765,7 +4766,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plgfci</function>
 	  </funcdef>
-	  <paramdef><parameter>fci</parameter></paramdef>
+	  <paramdef><parameter>p_fci</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -4778,7 +4779,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>fci</parameter>
+	  <parameter>p_fci</parameter>
 	  (<literal>PLUNICODE *</literal>, output)
 	</term>
 	<listitem>
@@ -4791,7 +4792,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plgfci(fci)</function>
+      Redacted form: <function>plgfci(p_fci)</function>
     </para>
 
     <para>
@@ -5004,12 +5005,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plgpage</function>
 	  </funcdef>
-	  <paramdef><parameter>xp</parameter></paramdef>
-	  <paramdef><parameter>yp</parameter></paramdef>
-	  <paramdef><parameter>xleng</parameter></paramdef>
-	  <paramdef><parameter>yleng</parameter></paramdef>
-	  <paramdef><parameter>xoff</parameter></paramdef>
-	  <paramdef><parameter>yoff</parameter></paramdef>
+	  <paramdef><parameter>p_xp</parameter></paramdef>
+	  <paramdef><parameter>p_yp</parameter></paramdef>
+	  <paramdef><parameter>p_xleng</parameter></paramdef>
+	  <paramdef><parameter>p_yleng</parameter></paramdef>
+	  <paramdef><parameter>p_xoff</parameter></paramdef>
+	  <paramdef><parameter>p_yoff</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -5024,7 +5025,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>xp</parameter>
+	  <parameter>p_xp</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -5035,7 +5036,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>yp</parameter>
+	  <parameter>p_yp</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -5046,7 +5047,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xleng</parameter>
+	  <parameter>p_xleng</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5057,7 +5058,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>yleng</parameter>
+	  <parameter>p_yleng</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5068,7 +5069,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xoff</parameter>
+	  <parameter>p_xoff</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5079,7 +5080,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>yoff</parameter>
+	  <parameter>p_yoff</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5091,7 +5092,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plgpage(xp, yp, xleng, yleng, xoff, yoff)</function>
+      Redacted form: <function>plgpage(p_xp, p_yp, p_xleng, p_yleng, p_xoff, p_yoff)</function>
     </para>
 
     <para>
@@ -5603,7 +5604,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plgstrm</function>
 	  </funcdef>
-	  <paramdef><parameter>strm</parameter></paramdef>
+	  <paramdef><parameter>p_strm</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -5615,7 +5616,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>strm</parameter>
+	  <parameter>p_strm</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5626,9 +5627,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
     </variablelist>
 
-
     <para>
-      Redacted form: <function>plgstrm(strm)</function>
+      Redacted form: <function>plgstrm(p_strm)</function>
     </para>
 
     <para>
@@ -5878,17 +5878,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plgxax</function>
 	  </funcdef>
-	  <paramdef><parameter>digmax</parameter></paramdef>
-	  <paramdef><parameter>digits</parameter></paramdef>
+	  <paramdef><parameter>p_digmax</parameter></paramdef>
+	  <paramdef><parameter>p_digits</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
       Returns current values of the
-      <literal><parameter>digmax</parameter></literal> and
-      <literal><parameter>digits</parameter></literal> flags for the x
-      axis.  <literal><parameter>digits</parameter></literal> is updated
+      <literal><parameter>p_digmax</parameter></literal> and
+      <literal><parameter>p_digits</parameter></literal> flags for the x
+      axis.  <literal><parameter>p_digits</parameter></literal> is updated
       after the plot is drawn, so this routine should only be called
       <emphasis>after</emphasis> the call to &plbox; (or &plbox3;) is
       complete.  See <xref linkend="annotation"/> for more information.
@@ -5897,7 +5897,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>digmax</parameter>
+	  <parameter>p_digmax</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5905,13 +5905,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    Pointer to variable with the maximum number of digits for the x axis.  If
 	    nonzero, the printed label has been switched to a floating point
 	    representation when the number of digits exceeds
-	    <literal><parameter>digmax</parameter></literal>.
+	    <literal><parameter>p_digmax</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>digits</parameter>
+	  <parameter>p_digits</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5924,7 +5924,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plgxax(digmax, digits)</function>
+      Redacted form: <function>plgxax(p_digmax, p_digits)</function>
     </para>
 
     <para>
@@ -5944,8 +5944,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plgyax</function>
 	  </funcdef>
-	  <paramdef><parameter>digmax</parameter></paramdef>
-	  <paramdef><parameter>digits</parameter></paramdef>
+	  <paramdef><parameter>p_digmax</parameter></paramdef>
+	  <paramdef><parameter>p_digits</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -5958,7 +5958,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>digmax</parameter>
+	  <parameter>p_digmax</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5966,13 +5966,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    Pointer to variable with the maximum number of digits for the y axis.  If
 	    nonzero, the printed label has been switched to a floating point
 	    representation when the number of digits exceeds
-	    <literal><parameter>digmax</parameter></literal>.
+	    <literal><parameter>p_digmax</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>digits</parameter>
+	  <parameter>p_digits</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -5985,7 +5985,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plgyax(digmax, digits)</function>
+      Redacted form: <function>plgyax(p_digmax, p_digits)</function>
     </para>
 
     <para>
@@ -6005,8 +6005,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>plgzax</function>
 	  </funcdef>
-	  <paramdef><parameter>digmax</parameter></paramdef>
-	  <paramdef><parameter>digits</parameter></paramdef>
+	  <paramdef><parameter>p_digmax</parameter></paramdef>
+	  <paramdef><parameter>p_digits</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -6019,7 +6019,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>digmax</parameter>
+	  <parameter>p_digmax</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -6027,13 +6027,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    Pointer to variable with the maximum number of digits for the z axis.  If
 	    nonzero, the printed label has been switched to a floating point
 	    representation when the number of digits exceeds
-	    <literal><parameter>digmax</parameter></literal>.
+	    <literal><parameter>p_digmax</parameter></literal>.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>digits</parameter>
+	  <parameter>p_digits</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -6046,7 +6046,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plgzax(digmax, digits)</function>
+      Redacted form: <function>plgzax(p_digmax, p_digits)</function>
     </para>
 
     <para>
@@ -7589,7 +7589,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <funcdef>
 	    <function>pllsty</function>
 	  </funcdef>
-	  <paramdef><parameter>n</parameter></paramdef>
+	  <paramdef><parameter>lin</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -7602,7 +7602,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>n</parameter>
+	  <parameter>lin</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7617,7 +7617,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>pllsty(n)</function>
+      Redacted form: <function>pllsty(lin)</function>
     </para>
 
     <para>
@@ -8097,12 +8097,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Identical to <function>plmesh</function> but with extra functionalities:
+      A more powerful form of <function>&plmesh;</function>:
       the surface mesh can be colored accordingly to the current z value being plotted,
       a contour plot can be drawn at the base XY plane, and a curtain can be drawn between
       the plotted function border and the base XY plane.
     </para>
-
 
     <variablelist>
       <varlistentry>
@@ -8828,14 +8827,159 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Identical to <function>plot3d</function> but with extra functionalities:
+      Aside from dropping the <parameter>side</parameter>
+      functionality this is a more powerful form of <function>&plot3d;</function>:
       the surface mesh can be colored accordingly to the current z value being plotted,
       a contour plot can be drawn at the base XY plane, and a curtain can be drawn between
       the plotted function border and the base XY plane.
-      The arguments are identical to <function>plmeshc</function>. The only difference between
+      The arguments are identical to those of <function>&plmeshc;</function>. The only difference between
       &plmeshc; and &plot3dc; is that &plmeshc; draws the bottom side of the surface, while
       &plot3dc; only draws the surface as viewed from the top.
     </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of x coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of y coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a vectored two-dimensional array with set of
+	    function values.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>x</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>y</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Determines the way in which the surface is represented. To specify
+	    more than one option just add the options, e.g. DRAW_LINEXY + MAG_COLOR
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEX</literal>: Lines
+		  are drawn showing
+		  <literal><parameter>z</parameter></literal> as a function
+		  of <literal><parameter>x</parameter></literal> for each
+		  value of <literal><parameter>y</parameter>[j]</literal>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEY</literal>: Lines
+		  are drawn showing
+		  <literal><parameter>z</parameter></literal> as a function
+		  of <literal><parameter>y</parameter></literal> for each
+		  value of <literal><parameter>x</parameter>[i]</literal>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEXY</literal>: Network
+		  of lines is drawn connecting points at which function is
+		  defined.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=MAG_COLOR</literal>: Each line
+		  in the mesh is colored according to the z value being plotted. The
+		  color is used from the current color map 1.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
+		  plot is drawn at the base XY plane using parameters
+		  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
+		  between the base XY plane and the borders of the plotted function.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the array that defines the contour level spacing.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of elements in the <literal>clevel</literal> array.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
 
     <para>
       Redacted form: 
