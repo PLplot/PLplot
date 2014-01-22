@@ -40,8 +40,9 @@ Each of the steps in this comprehensive test may take a while...."
 	MINGW_OR_MSYS="false"
     fi
 
-    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$MINGW_OR_MSYS" = "true" ] ; then
-	PATH=$PATH_SAVE:$BUILD_TREE/dll
+    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$MINGW_OR_MSYS" = "true" ] ; then
+	echo "Prepend $BUILD_TREE/dll to the original PATH"
+	PATH=$BUILD_TREE/dll:$PATH
     fi
     mkdir -p "$OUTPUT_TREE"
     rm -rf "$BUILD_TREE"
@@ -58,12 +59,6 @@ Each of the steps in this comprehensive test may take a while...."
     # line below.
     set -- $cmake_added_options
     echo "cmake in the build tree"
-    PATH_AFTER_CMAKE=$PATH
-    if [ "$generator_string" = "MinGW Makefiles" ] ; then
-        # For this case must use PATH specified by the user 
-        # that excludes MSYS.
-	PATH=$path_excluding_msys
-    fi
     cmake "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
 	$* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
         "$SOURCE_TREE" >& "$output"
@@ -73,7 +68,6 @@ Each of the steps in this comprehensive test may take a while...."
 	exit 1
     fi
 
-    PATH=$PATH_AFTER_CMAKE
     if [ "$do_ctest" = "yes" ] ; then
 	output="$OUTPUT_TREE"/make.out
 	rm -f "$output"
@@ -148,13 +142,15 @@ Each of the steps in this comprehensive test may take a while...."
 
     if [ "$do_test_install_tree" = "yes" -o \
 	"$do_test_traditional_install_tree" = "yes" ] ; then
+	echo "Prepend $INSTALL_TREE/bin to the original PATH"
 	PATH="$INSTALL_TREE/bin":$PATH_SAVE
 
-	if [ "$MINGW_OR_MSYS" = "true" ] ; then
+	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$MINGW_OR_MSYS" = "true" ] ; then
 	    # Use this logic to be as version-independent as possible.
 	    current_dir=$(pwd)
 	    # Wild cards must not be inside quotes.
 	    cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
+	    echo "Prepend $(pwd) to the current PATH"
 	    PATH="$(pwd):$PATH"
 	    cd $current_dir
 	fi
@@ -166,14 +162,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    output="$OUTPUT_TREE"/installed_cmake.out
 	    rm -f "$output"
 	    echo "cmake in the installed examples build tree"
-	    PATH_AFTER_CMAKE=$PATH
-	    if [ "$generator_string" = "MinGW Makefiles" ] ; then
-                # For this case must use PATH specified by the user 
-                # that excludes MSYS.
-		PATH=$path_excluding_msys
-	    fi
 	    cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
-	    PATH=$PATH_AFTER_CMAKE
 	    if [ "$do_test_noninteractive" = "yes" ] ; then
 		output="$OUTPUT_TREE"/installed_make_noninteractive.out
 		rm -f "$output"
@@ -223,6 +212,7 @@ Each of the steps in this comprehensive test may take a while...."
 	fi
     fi
 
+    echo "Restore PATH to the original PATH"
     PATH=$PATH_SAVE
     if [ "$do_test_interactive" = "yes" ] ; then
 	if [ "$do_test_build_tree" = "yes" ] ; then
@@ -248,6 +238,7 @@ Each of the steps in this comprehensive test may take a while...."
 		exit 1
 	    fi
 	fi
+	echo "Prepend $INSTALL_TREE/bin to the original PATH"
 	PATH="$INSTALL_TREE/bin":$PATH_SAVE
 	if [ "$do_test_install_tree" = "yes" ] ; then
 	    cd "$INSTALL_BUILD_TREE"
@@ -296,6 +287,8 @@ Each of the steps in this comprehensive test may take a while...."
 	    fi
 	fi
     fi
+    echo "Restore PATH to the the original PATH"
+    PATH=$PATH_SAVE
 }
 
 usage () {
@@ -316,10 +309,6 @@ OPTIONS:
 
   The next four control how the builds and tests are done.
   [--generator_string (defaults to 'Unix Makefiles')]
-  [--path_excluding_msys (MUST be specified whenever the generator string is
-                          'MinGW Makefiles' where it is necessary to limit 
-                          the PATH for the cmake invocation to exclude MSYS.
-                          Otherwise this option is completely ignored)]
   [--ctest_command (defaults to 'ctest -j8')]
   [--build_command (defaults to 'make -j8')]
 
@@ -369,7 +358,6 @@ prefix="${SOURCE_TREE}/../comprehensive_test_disposeable"
 do_clean_as_you_go=yes
 
 generator_string="Unix Makefiles"
-path_excluding_msys=
 ctest_command="ctest -j8"
 build_command="make -j8"
 
@@ -408,10 +396,6 @@ while test $# -gt 0; do
 	    ;;
         --generator_string)
 	    generator_string=$2
-	    shift
-	    ;;
-        --path_excluding_msys)
-	    path_excluding_msys=$2
 	    shift
 	    ;;
         --ctest_command)
@@ -546,12 +530,6 @@ if [ $usage_reported -eq 1 ]; then
     exit 1
 fi
 
-if [ "$generator_string" = "MinGW Makefiles" -a -z "$path_excluding_msys" ] ; then
-    echo "ERROR: empty value of path_excluding_msys when generator is"
-    echo "'MinGW Makefiles'"
-    usage 1 1>&2
-fi
-
 echo "Summary of options used for these tests
 
 prefix=$prefix
@@ -559,9 +537,6 @@ prefix=$prefix
 do_clean_as_you_go=$do_clean_as_you_go
 
 generator_string=$generator_string"
-if [ "$generator_string"="MinGW Makefiles" ] ; then
-    echo "path_excluding_msys=$path_excluding_msys"
-fi
 echo "
 ctest_command=$ctest_command
 build_command=$build_command
