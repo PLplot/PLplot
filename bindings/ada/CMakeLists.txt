@@ -47,6 +47,22 @@ if(ENABLE_ada)
     ${ALI_PREFIX}/plplot_auxiliary.ali
     )
 
+  # I am pretty sure this is a workaround for a MinGW gnatmake bug
+  # since the installation of these files is not needed for Linux.
+  # However, without this workaround the standard examples build on
+  # MinGW/MSYS platforms without problems (so gnatmake is happy if the
+  # *.o files are not installed which is another indication we are
+  # dealing with a bug here), but at run-time the ada examples
+  # immediately return with a return code of 3.
+  if(MINGW)
+    list(APPEND ALI_LIST
+      ${ALI_PREFIX}/plplot.o
+      ${ALI_PREFIX}/plplot_thin.o
+      ${ALI_PREFIX}/plplot_traditional.o
+      ${ALI_PREFIX}/plplot_auxiliary.o
+      )
+  endif(MINGW)
+
   set(plplotada${LIB_TAG}_LIB_SRCS)
   foreach(SOURCE_FILE ${SOURCE_LIST})
     list(APPEND plplotada${LIB_TAG}_LIB_SRCS 
@@ -107,7 +123,7 @@ if(ENABLE_ada)
     )
   
   # Permissions of *.ali files in accordance with
-  # http://www.ada-france.org/debian/debian-ada-policy.html
+  # http://people.debian.org/~lbrenta/debian-ada-policy.html
   install(FILES ${ALI_LIST}
     DESTINATION ${ADA_LIB_DIR}
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
