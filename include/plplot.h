@@ -1056,7 +1056,7 @@ c_plgdrawmode( void );
 // Get FCI (font characterization integer)
 
 PLDLLIMPEXP void
-c_plgfci( PLUNICODE *pfci );
+c_plgfci( PLUNICODE *p_fci );
 
 // Get family file parameters
 
@@ -1259,7 +1259,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
               PLINT bg_color, PLINT bb_color, PLINT bb_style,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLFLT cont_width,
-              PLINT n_labels, const PLINT *label_opts, const char * const *label,
+              PLINT n_labels, const PLINT *label_opts, const char * const *labels,
               PLINT n_axes, const char * const * axis_opts,
               const PLFLT *ticks, const PLINT *sub_ticks,
               const PLINT *n_values, const PLFLT * const *values );

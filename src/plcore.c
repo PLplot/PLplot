@@ -3786,10 +3786,10 @@ c_plsfci( PLUNICODE fci )
 // drivers.
 //
 void
-c_plgfci( PLUNICODE *pfci )
+c_plgfci( PLUNICODE *p_fci )
 {
     // Always mark FCI as such.
-    *pfci = plsc->fci | PL_FCI_MARK;
+    *p_fci = plsc->fci | PL_FCI_MARK;
 }
 // Store hex digit value shifted to the left by hexdigit hexadecimal digits
 // into pre-existing FCI.
