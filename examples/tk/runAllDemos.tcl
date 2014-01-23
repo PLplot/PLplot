@@ -37,7 +37,7 @@ switch -glob -- [info nameofexecutable] {
     "*tclsh*" {
         # use 'wish" method
         plstdwin .
-        plframe .p
+        plframe .p -eopcmd waitForReturn
         set plwin .p
         button .bnextpage -text "Page" -command [list $plwin nextpage]
     }
@@ -46,6 +46,16 @@ switch -glob -- [info nameofexecutable] {
         puts stderr "Therefore cannot decide how to proceed with runAllDemos.tcl so giving up"
         return
     }
+}
+
+bind $plwin <Key-Return> stopWaiting
+
+proc stopWaiting {} {
+    set ::waitForReturn 1
+}
+proc waitForReturn {} {
+    .l configure -text "Press <enter> for the next page or complete the program"
+    vwait ::waitForReturn
 }
 
 grid .p -columnspan 5 -sticky news
@@ -81,7 +91,7 @@ proc reload {} {
 
 proc run {demo} {
     global plwin
-    $plwin configure -eopcmd [list .bnextpage configure -state normal]
+    $plwin configure -eopcmd waitForReturn
     .l configure -text "Starting $demo"
     setButtonState disabled
     update idletasks
@@ -89,6 +99,7 @@ proc run {demo} {
     if {[catch {$demo $plwin} err]} {
 	puts stderr $err
     }
+    $plwin configure -eopcmd [list .bnextpage configure -state normal]
     $plwin cmd pleop
     .l configure -text "$demo complete"
     setButtonState normal
