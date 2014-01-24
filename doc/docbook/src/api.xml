@@ -1565,6 +1565,154 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plbtime" renderas="sect3">
+    <title>
+      <function>plbtime</function>: Calculate broken-down time from
+      continuous time for the current stream
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plbtime</function>
+	  </funcdef>
+	  <paramdef><parameter>year</parameter></paramdef>
+	  <paramdef><parameter>month</parameter></paramdef>
+	  <paramdef><parameter>day</parameter></paramdef>
+	  <paramdef><parameter>hour</parameter></paramdef>
+	  <paramdef><parameter>min</parameter></paramdef>
+	  <paramdef><parameter>sec</parameter></paramdef>
+	  <paramdef><parameter>ctime</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    <para>
+      Calculate broken-down time; 
+      <literal><parameter>year</parameter></literal>,
+      <literal><parameter>month</parameter></literal>,
+      <literal><parameter>day</parameter></literal>,
+      <literal><parameter>hour</parameter></literal>,
+      <literal><parameter>min</parameter></literal>,
+      <literal><parameter>sec</parameter></literal>; from
+      continuous time, <literal><parameter>ctime</parameter></literal>
+      for the current stream.  This function is the inverse
+      of &plctime;.
+    </para>
+    <para>
+      The PLplot definition of broken-down time is a calendar time
+      that completely ignores all time zone offsets, i.e., it is the
+      user's responsibility to apply those offsets (if so desired)
+      before using the PLplot time API.  By default broken-down time
+      is defined using the proleptic Gregorian calendar without the
+      insertion of leap seconds and continuous time is defined as the
+      number of seconds since the Unix epoch of 1970-01-01T00:00:00Z.
+      However, other definitions of broken-down and continuous time
+      are possible, see &plconfigtime;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>year</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Output year.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>month</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Output month in range from 0 (January) to 11 (December).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>day</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Output day in range from 1 to 31.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>hour</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Output hour in range from 0 to 23.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>min</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Output minute in range from 0 to 59
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sec</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Output second in floating range from 0. to 60.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ctime</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Continous time from which the broken-down time is calculated.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    General: <function>plbtime(year, month, day, hour, min, sec, ctime)</function>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Perl/PDL: Not available?
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 29.
+    </para>
+
+  </sect1>
+
   <sect1 id="plcalc_world" renderas="sect3">
     <title>
       <function>plcalc_world</function>: Calculate world coordinates and
@@ -2317,6 +2465,233 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plconfigtime" renderas="sect3">
+    <title>
+      <function>plconfigtime</function>: Configure the transformation
+        between continuous and broken-down time for the current stream
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plconfigtime</function>
+	  </funcdef>
+	  <paramdef><parameter>scale</parameter></paramdef>
+	  <paramdef><parameter>offset1</parameter></paramdef>
+	  <paramdef><parameter>offset2</parameter></paramdef>
+	  <paramdef><parameter>ccontrol</parameter></paramdef>
+	  <paramdef><parameter>ifbtime_offset</parameter></paramdef>
+	  <paramdef><parameter>year</parameter></paramdef>
+	  <paramdef><parameter>month</parameter></paramdef>
+	  <paramdef><parameter>day</parameter></paramdef>
+	  <paramdef><parameter>hour</parameter></paramdef>
+	  <paramdef><parameter>min</parameter></paramdef>
+	  <paramdef><parameter>sec</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Configure the transformation
+      between continuous and broken-down time
+      for the current stream.  This transformation is
+      used by both &plbtime; and &plctime;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>scale</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The number of days per continuous time unit.  As a special
+	    case, if <parameter>scale</parameter> is 0., then all
+	    other arguments are ignored, and the result (the default
+	    used by PLplot) is the equivalent of a call to
+	    plconfigtime(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0.).
+	    That is, for this special case broken-down time is
+	    calculated with the proleptic Gregorian calendar with no
+	    leap seconds inserted, and the continuous time is defined
+            as the number of seconds since the Unix epoch of 
+	    1970-01-01T00:00:00Z.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>offset1</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            If <parameter>ifbtime_offset</parameter> is true, the
+	    parameters <parameter>offset1</parameter> and
+	    <parameter>offset2</parameter> are completely ignored.
+	    Otherwise, the sum of these parameters (with units in
+	    days) specify the epoch of the continuous time relative to
+	    the MJD epoch corresponding to the Gregorian calendar date
+	    of 1858-11-17T00:00:00Z or JD = 2400000.5.  Two PLFLT numbers
+	    are used to specify the origin to allow users (by
+	    specifying <parameter>offset1</parameter> as an integer
+	    that can be exactly represented by a
+	    floating-point variable and specifying
+	    <parameter>offset2</parameter> as a number in the range
+	    from 0. to 1) the chance to minimize the numerical errors of
+	    the continuous time representation.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>offset2</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    See documentation of <parameter>offset1</parameter>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ccontrol</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            <parameter>ccontrol</parameter> contains bits controlling
+	    the transformation.  If the 0x1 bit is set, then the
+	    proleptic Julian calendar is used for broken-down time
+	    rather than the proleptic Gregorian calendar.  If the 0x2
+	    bit is set, then leap seconds that have been historically
+	    used to define UTC are inserted into the broken-down time.
+	    Other possibilities for additional control bits for
+	    ccontrol exist such as making the historical time
+	    corrections in the broken-down time corresponding to ET
+	    (ephemeris time) or making the (slightly non-constant)
+	    corrections from international atomic time (TAI) to what
+	    astronomers define as terrestrial time (TT).  But those
+	    additional possibilities have not been implemented yet in
+	    the qsastime library (one of the PLplot utility
+	    libraries).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ifbzero_control</parameter>
+	  (<literal>PLBOOL</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            <parameter>ifbzero_control</parameter> controls how the
+	    epoch of the continuous time scale is specified by the
+	    user. If <parameter>ifbzero_control</parameter> is false,
+	    then <parameter>offset1</parameter> and
+	    <parameter>offset2</parameter> are used to specify the
+	    epoch, and the following broken-down time parameters are
+	    completely ignored.  If
+	    <parameter>ifbzero_control</parameter> is true, then
+	    <parameter>offset1</parameter> and
+	    <parameter>offset2</parameter> are completely ignored, and
+	    the following broken-down time parameters are used to
+	    specify the epoch.
+          </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>year</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Year of epoch.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>month</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Month of epoch in range from 0 (January) to 11 (December).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>day</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Day of epoch in range from 1 to 31.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>hour</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Hour of epoch in range from 0 to 23
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>min</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Minute of epoch in range from 0 to 59.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sec</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Second of epoch in floating range from 0. to 60.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    General: <function>plconfigtime(scale, offset1, offset2, ccontrol, ifbtime_offset, year, month, day, hour, min, sec)</function>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Perl/PDL: Not available?
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 29.
+    </para>
+
+  </sect1>
+
   <sect1 id="plcont" renderas="sect3">
     <title>
       <function>plcont</function>: Contour plot
@@ -2574,6 +2949,156 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       This function is used in example 1,20.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plctime" renderas="sect3">
+    <title>
+      <function>plctime</function>: Calculate continuous time from
+      broken-down time for the current stream
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plctime</function>
+	  </funcdef>
+	  <paramdef><parameter>year</parameter></paramdef>
+	  <paramdef><parameter>month</parameter></paramdef>
+	  <paramdef><parameter>day</parameter></paramdef>
+	  <paramdef><parameter>hour</parameter></paramdef>
+	  <paramdef><parameter>min</parameter></paramdef>
+	  <paramdef><parameter>sec</parameter></paramdef>
+	  <paramdef><parameter>ctime</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    <para>
+      Calculate continuous time, <literal><parameter>ctime</parameter></literal>,
+      from broken-down time for the current stream.  The broken-down
+time is specified by the following parameters:
+      <literal><parameter>year</parameter></literal>,
+      <literal><parameter>month</parameter></literal>,
+      <literal><parameter>day</parameter></literal>,
+      <literal><parameter>hour</parameter></literal>,
+      <literal><parameter>min</parameter></literal>, and
+      <literal><parameter>sec</parameter></literal>.
+      This function is the inverse of &plbtime;.
+    </para>
+    <para>
+      The PLplot definition of broken-down time is a calendar time
+      that completely ignores all time zone offsets, i.e., it is the
+      user's responsibility to apply those offsets (if so desired)
+      before using the PLplot time API.  By default broken-down time
+      is defined using the proleptic Gregorian calendar without the
+      insertion of leap seconds and continuous time is defined as the
+      number of seconds since the Unix epoch of 1970-01-01T00:00:00Z.
+      However, other definitions of broken-down and continuous time
+      are possible, see &plconfigtime; which specifies that
+      transformation for the current stream.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>year</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Input year.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>month</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Input month in range from 0 (January) to 11 (December).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>day</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Input day in range from 1 to 31.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>hour</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Input hour in range from 0 to 23
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>min</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Input minute in range from 0 to 59.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sec</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Input second in floating range from 0. to 60.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ctime</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Continous time calculated from the broken-down time
+            specified by the previous parameters.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    General: <function>plctime(year, month, day, hour, min, sec, ctime)</function>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Perl/PDL: Not available?
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 29.
     </para>
 
   </sect1>
