@@ -4559,6 +4559,64 @@ time is specified by the following parameters:
 
   </sect1>
 
+  <sect1 id="plgcmap1_range" renderas="sect3">
+    <title>
+      <function>plgcmap1_range</function>: Get the cmap1 argument
+      range for continuous color plots
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plgcmap1_range</function>
+	  </funcdef>
+	  <paramdef><parameter>min_color</parameter></paramdef>
+	  <paramdef><parameter>max_color</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Get the cmap1 argument range for continuous color plots.
+      (Use &plscmap1_range; to set the cmap1 argument range.)
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>min_color</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the current minimum cmap1 floating point argument.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>max_color</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the current maximum cmap1 floating point argument.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plgcmap1_range(min_color, max_color)</function>
+    </para>
+
+    <para>
+      This function is currently not used in any example.
+    </para>
+
+  </sect1>
+
   <sect1 id="plgcol0" renderas="sect3">
     <title>
       <function>plgcol0</function>: Returns 8-bit RGB values for given color
@@ -11153,6 +11211,69 @@ time is specified by the following parameters:
 
     <para>
       This function is used in examples 15,16,24.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plscmap1_range" renderas="sect3">
+    <title>
+      <function>plscmap1_range</function>: Set the cmap1 argument
+      range for continuous color plots
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plscmap1_range</function>
+	  </funcdef>
+	  <paramdef><parameter>min_color</parameter></paramdef>
+	  <paramdef><parameter>max_color</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set the cmap1 argument range for continuous color
+      plots. If <parameter>min_color</parameter> is greater than
+      <parameter>max_color</parameter> or
+      <parameter>max_color</parameter> is greater than 1.0 or
+      <parameter>min_color</parameter> is less than 0.0 then no change
+      is made.  (Use &plgcmap1_range; to get the cmap1
+      argument range.)
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>min_color</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The minimum cmap1 floating point argument.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>max_color</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The maximum cmap1 floating point argument.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plscmap1_range(min_color, max_color)</function>
+    </para>
+
+    <para>
+      This function is currently used in example 33.
     </para>
 
   </sect1>

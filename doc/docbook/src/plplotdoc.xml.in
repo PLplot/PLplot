@@ -116,6 +116,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plfontld '<link linkend="plfontld"><function>plfontld</function></link>'>
 <!ENTITY plFree2dGrid '<link linkend="plFree2dGrid"><function>plFree2dGrid</function></link>'>
 <!ENTITY plgch '<link linkend="plgch"><function>plgch</function></link>'>
+<!ENTITY plgcmap1_range '<link linkend="plgcmap1_range"><function>plgcmap1_range</function></link>'>
 <!ENTITY plgcol0 '<link linkend="plgcol0"><function>plgcol0</function></link>'>
 <!ENTITY plgcolbg '<link linkend="plgcolbg"><function>plgcolbg</function></link>'>
 <!ENTITY plgcompression '<link linkend="plgcompression"><function>plgcompression</function></link>'>
@@ -182,6 +183,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plschr '<link linkend="plschr"><function>plschr</function></link>'>
 <!ENTITY plscmap0 '<link linkend="plscmap0"><function>plscmap0</function></link>'>
 <!ENTITY plscmap0n '<link linkend="plscmap0n"><function>plscmap0n</function></link>'>
+<!ENTITY plscmap1_range '<link linkend="plscmap1_range"><function>plgsmap1_range</function></link>'>
 <!ENTITY plscmap1 '<link linkend="plscmap1"><function>plscmap1</function></link>'>
 <!ENTITY plscmap1l '<link linkend="plscmap1l"><function>plscmap1l</function></link>'>
 <!ENTITY plscmap1n '<link linkend="plscmap1n"><function>plscmap1n</function></link>'>
