@@ -125,6 +125,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plgdiori '<link linkend="plgdiori"><function>plgdiori</function></link>'>
 <!ENTITY plgdiplt '<link linkend="plgdiplt"><function>plgdiplt</function></link>'>
 <!ENTITY plGetCursor '<link linkend="plGetCursor"><function>plGetCursor</function></link>'>
+<!ENTITY plgdrawmode '<link linkend="plgdrawmode"><function>plgdrawmode</function></link>'>
 <!ENTITY plgfam '<link linkend="plgfam"><function>plgfam</function></link>'>
 <!ENTITY plgfci '<link linkend="plgfci"><function>plgfci</function></link>'>
 <!ENTITY plgfnam '<link linkend="plgfnam"><function>plgfnam</function></link>'>
@@ -197,6 +198,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plsdiori '<link linkend="plsdiori"><function>plsdiori</function></link>'>
 <!ENTITY plsdiplt '<link linkend="plsdiplt"><function>plsdiplt</function></link>'>
 <!ENTITY plsdiplz '<link linkend="plsdiplz"><function>plsdiplz</function></link>'>
+<!ENTITY plsdrawmode '<link linkend="plsdrawmode"><function>plsdrawmode</function></link>'>
 <!ENTITY plseed '<link linkend="plseed"><function>plseed</function></link>'>
 <!ENTITY plsesc '<link linkend="plsesc"><function>plsesc</function></link>'>
 <!ENTITY plsescfortran95 '<link linkend="plsescfortran95"><function>plsescfortran95</function></link>'>

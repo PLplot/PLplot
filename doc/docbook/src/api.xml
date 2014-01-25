@@ -5266,6 +5266,45 @@ time is specified by the following parameters:
 
   </sect1>
 
+  <sect1 id="plgdrawmode" renderas="sect3">
+    <title>
+      <function>plgdrawmode</function>: Get drawing mode (depends on
+device support!)
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plgdrawmode</function>
+	  </funcdef>
+	  <paramdef></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Get drawing mode.  Note only one device driver (cairo) currently
+      supports this at the moment, and for that case the PLINT value
+      returned by this function is one of
+      <literal>PL_DRAWMODE_DEFAULT</literal>,
+      <literal>PL_DRAWMODE_REPLACE</literal>,
+      <literal>PL_DRAWMODE_XOR</literal>, or
+      <literal>PL_DRAWMODE_UNKNOWN</literal>. This function returns
+      <literal>PL_DRAWMODE_UNKNOWN</literal> for the rest of the
+      device drivers.  See also &plsdrawmode;.
+    </para>
+
+    <para>
+      Redacted form: <function>plgdrawmode()</function>
+    </para>
+
+    <para>
+      This function is used in example 34.
+    </para>
+
+  </sect1>
+
   <sect1 id="plgfam" renderas="sect3">
     <title>
       <function>plgfam</function>: Get family file parameters
@@ -5336,7 +5375,6 @@ time is specified by the following parameters:
     </para>
 
   </sect1>
-
 
   <sect1 id="plgfci" renderas="sect3">
     <title>
@@ -12753,6 +12791,55 @@ time is specified by the following parameters:
 
     <para>
       This function is used in example 31.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plsdrawmode" renderas="sect3">
+    <title>
+      <function>plsdrawmode</function>: Set drawing mode (depends on
+device support!)
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plsdrawmode</function>
+	  </funcdef>
+	  <paramdef>mode</paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set drawing mode.  Note only one device driver (cairo) currently
+      supports this at the moment.  See also &plgdrawmode;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>mode</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Control variable which species the drawing mode (one of
+           <literal>PL_DRAWMODE_DEFAULT</literal>,
+	   <literal>PL_DRAWMODE_REPLACE</literal>, or
+	   <literal>PL_DRAWMODE_XOR</literal>) to use.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plsdrawmode(mode)</function>
+    </para>
+
+    <para>
+      This function is used in example 34.
     </para>
 
   </sect1>
