@@ -133,6 +133,14 @@ paragraph just after Table-3.5.
 
 (for MANPAGE in *.3plplot; do nroff -man $MANPAGE ; done) |less
 
+Two of our man pages (plot3dcl.3plplot and plsurf3dl.3plplot)
+currently contain utf8 symbols (for the math symbols ≤ and ≥).  Those
+symbols do not render correctly using nroff -man (or any other
+recommended nroff options such as -Tutf8).  However, they display
+without issues if viewed with man (by copying the files to a temporary
+directory man/man3 and viewing them with, e.g., "man -M./man
+plot3dcl").
+
 2. info pages.
 
 info --file plplotdoc.info
@@ -162,8 +170,13 @@ backends.
 Man pages.
 
 These results are not affected since the man pages ignore the advanced
-chapter, and the api.xml file currently contains only the ascii
-subset of UTF-8.
+chapter, but (see discussion above) the api.xml file currently
+contains two functions whose documentation uses UTF-8 math symbols,
+and for those man pages the man command renders those symbols without
+issues.  I assume what is going on here is the UTF-8 math symbols
+are just being cleanly passed through to the man viewer ("less" in
+this case) so with some exceptions (see comments on less below) good
+rendering of arbitrary UTF-8 symbols will occur.
 
 Info files.
 
@@ -191,7 +204,7 @@ glyphs in the chosen FreeSans, FreeSerif, and FreeMono fonts (more
 about that choice below). The order of the glyphs in the Hindi Peace
 word is not correct (last two glyphs switched) which is a common
 complex text layout (CTL) issue when using unsophisticated software to
-render Hindi.  However, the the Peace word is laid out in the correct
+render Hindi.  However, the Peace word is laid out in the correct
 (right-to-left) order for Arabic and Hebrew so there is some CTL
 sophistication in the xelatex layout engine, and probably hope that
 further layout issues such as the one for Hindi will be fixed.
@@ -212,7 +225,7 @@ However, the fontspec package still has a fundamental limitation which
 is you must use a specific rather than generic font for the sans,
 serif, and mono cases. Specific fonts are never a good way to go for
 documents containing different languages (such as the table of "Peace"
-words I recently introduced into advanced.xml) since since the user is
+words I recently introduced into advanced.xml) since the user is
 forced to compromise between font quality and comprehensiveness.  For
 example, I have tried using the unifont font (which gives complete
 coverage of glyphs for the basic multilingual plane), and the
