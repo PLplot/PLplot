@@ -9423,7 +9423,6 @@ device support!)
 
   </sect1>
 
-
   <sect1 id="plot3dc" renderas="sect3">
     <title>
       <function>plot3dc</function>: Magnitude colored plot surface with contour.
@@ -9620,6 +9619,286 @@ device support!)
 
     <para>
       This function is used in example 21.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plot3dcl" renderas="sect3">
+    <title>
+      <function>plot3dcl</function>: Magnitude colored plot surface
+      with contour for z[x][y] with y index limits
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plot3dcl</function>
+	  </funcdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>z</parameter></paramdef>
+	  <paramdef><parameter>nx</parameter></paramdef>
+	  <paramdef><parameter>ny</parameter></paramdef>
+	  <paramdef><parameter>opt</parameter></paramdef>
+	  <paramdef><parameter>clevel</parameter></paramdef>
+	  <paramdef><parameter>nlevel</parameter></paramdef>
+	  <paramdef><parameter>indexxmin</parameter></paramdef>
+	  <paramdef><parameter>indexxmax</parameter></paramdef>
+	  <paramdef><parameter>indexymin</parameter></paramdef>
+	  <paramdef><parameter>indexymax</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      When the implementation is completed this variant of &plot3dc;
+      (see that function's documentation for more details)
+      should be suitable for the case where the area of the
+      <literal><parameter>x</parameter></literal>,
+      <literal><parameter>y</parameter></literal> coordinate grid
+      where <literal><parameter>z</parameter></literal> is defined can
+      be non-rectangular. The implementation is incomplete so the last
+      4 parameters of plot3dcl;
+      <literal><parameter>indexxmin</parameter></literal>,
+      <literal><parameter>indexxmax</parameter></literal>,
+      <literal><parameter>indexymin</parameter></literal>, and
+      <literal><parameter>indexymax</parameter></literal>; are
+      currently ignored and the functionality is otherwise identical
+      to that of &plot3dc;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of x coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of y coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a vectored two-dimensional array with set of
+	    function values.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>x</parameter></literal> values at
+	    which the function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>y</parameter></literal> values at
+	    which the function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Determines the way in which the surface is represented. To specify
+	    more than one option just add the options, e.g. DRAW_LINEXY + MAG_COLOR
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEX</literal>: Lines
+		  are drawn showing
+		  <literal><parameter>z</parameter></literal> as a function
+		  of <literal><parameter>x</parameter></literal> for each
+		  value of <literal><parameter>y</parameter>[j]</literal>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEY</literal>: Lines
+		  are drawn showing
+		  <literal><parameter>z</parameter></literal> as a function
+		  of <literal><parameter>y</parameter></literal> for each
+		  value of <literal><parameter>x</parameter>[i]</literal>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEXY</literal>: Network
+		  of lines is drawn connecting points at which function is
+		  defined.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=MAG_COLOR</literal>: Each line
+		  in the mesh is colored according to the z value being plotted. The
+		  color is used from the current color map 1.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
+		  plot is drawn at the base XY plane using parameters
+		  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
+		  between the base XY plane and the borders of the plotted function.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the array that defines the contour level spacing.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of elements in the <literal>clevel</literal> array.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexxmin</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The index value (which must be ≥ 0) that corresponds to
+	    the first <literal><parameter>x</parameter></literal> index where
+	    <literal><parameter>z</parameter></literal> is defined.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexxmax</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The index value (which must be ≤
+	    <literal><parameter>nx</parameter></literal>) which corresponds (by
+	    convention) to one more than the last
+	    <literal><parameter>x</parameter></literal> index value where
+	    <literal><parameter>z</parameter></literal> is defined.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexymin</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of <literal><parameter>y</parameter></literal> index
+	    values which all must be ≥ 0.  These values are the first
+	    <literal><parameter>y</parameter></literal> index where
+	    <literal><parameter>z</parameter></literal> is defined for a
+	    particular <literal><parameter>x</parameter></literal> index in the
+	    range from <literal><parameter>indexxmin</parameter></literal> to
+	    <literal><parameter>indexxmax - 1</parameter></literal>.  The dimension of
+	    <literal><parameter>indexymin</parameter></literal> is
+	    <literal><parameter>indexxmax</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexymax</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of <literal><parameter>y</parameter></literal> index
+	    values which all must be ≤
+	    <literal><parameter>ny</parameter></literal>.  These values
+	    correspond (by convention) to one more than the last
+	    <literal><parameter>y</parameter></literal> index where
+	    <literal><parameter>z</parameter></literal> is defined for a
+	    particular <literal><parameter>x</parameter></literal> index in the
+	    range from <literal><parameter>indexxmin</parameter></literal> to
+	    <literal><parameter>indexxmax - 1</parameter></literal>.  The dimension of
+	    <literal><parameter>indexymax</parameter></literal> is
+	    <literal><parameter>indexxmax</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    General: <function>plot3dcl(x, y, z, opt, clevel, indexxmin,
+            indexymin, indexymax)</function>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Perl/PDL: Not available?
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any example.
     </para>
 
   </sect1>
@@ -16231,6 +16510,264 @@ device support!)
 
   </sect1>
 
+  <sect1 id="plsurf3dl" renderas="sect3">
+    <title>
+      <function>plsurf3dl</function>: Plot shaded 3-d surface plot for
+      z[x][y] with y index limits
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plsurf3dl</function>
+	  </funcdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>z</parameter></paramdef>
+	  <paramdef><parameter>nx</parameter></paramdef>
+	  <paramdef><parameter>ny</parameter></paramdef>
+	  <paramdef><parameter>opt</parameter></paramdef>
+	  <paramdef><parameter>clevel</parameter></paramdef>
+	  <paramdef><parameter>nlevel</parameter></paramdef>
+          <paramdef><parameter>indexxmin</parameter></paramdef>
+	  <paramdef><parameter>indexxmax</parameter></paramdef>
+	  <paramdef><parameter>indexymin</parameter></paramdef>
+	  <paramdef><parameter>indexymax</parameter></paramdef>
+	  </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+
+    This variant of &plsurf3d; (see that function's documentation for
+    more details) should be suitable for the case where the area of
+    the <literal><parameter>x</parameter></literal>,
+    <literal><parameter>y</parameter></literal> coordinate grid where
+    <literal><parameter>z</parameter></literal> is defined can be
+    non-rectangular.  The limits of that grid are provided by
+    the parameters <literal><parameter>indexxmin</parameter></literal>,
+    <literal><parameter>indexxmax</parameter></literal>,
+    <literal><parameter>indexymin</parameter></literal>,
+    and <literal><parameter>indexymax</parameter></literal>.
+
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of x coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of y coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a vectored two-dimensional array with set of
+	    function values.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>x</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>y</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Determines the way in which the surface is represented. To specify
+	    more than one option just add the options, e.g. FACETED + SURF_CONT
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=FACETED</literal>: Network
+		  of lines is drawn connecting points at which function is
+		  defined.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
+		  plot is drawn at the base XY plane using parameters
+		  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=SURF_CONT</literal>: A contour
+		  plot is drawn at the surface plane using parameters
+		  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
+		  between the base XY plane and the borders of the plotted function.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=MAG_COLOR</literal>:
+		  the surface is colored according to the value of Z; if
+		  <literal>MAG_COLOR</literal> is not used, then the default
+		  the surface is colored according to the intensity of the
+		  reflected light in the surface from a light source whose
+		  position is set using &pllightsource;.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the array that defines the contour level spacing.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of elements in the <literal>clevel</literal> array.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexxmin</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The index value (which must be ≥ 0) that corresponds to
+	    the first <literal><parameter>x</parameter></literal> index where
+	    <literal><parameter>z</parameter></literal> is defined.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexxmax</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The index value (which must be ≤
+	    <literal><parameter>nx</parameter></literal>) which corresponds (by
+	    convention) to one more than the last
+	    <literal><parameter>x</parameter></literal> index value where
+	    <literal><parameter>z</parameter></literal> is defined.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexymin</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of <literal><parameter>y</parameter></literal> index
+	    values which all must be ≥ 0.  These values are the first
+	    <literal><parameter>y</parameter></literal> index where
+	    <literal><parameter>z</parameter></literal> is defined for a
+	    particular <literal><parameter>x</parameter></literal> index in the
+	    range from <literal><parameter>indexxmin</parameter></literal> to
+	    <literal><parameter>indexxmax - 1</parameter></literal>.  The dimension of
+	    <literal><parameter>indexymin</parameter></literal> is
+	    <literal><parameter>indexxmax</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>indexymax</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of <literal><parameter>y</parameter></literal> index
+	    values which all must be ≤
+	    <literal><parameter>ny</parameter></literal>.  These values
+	    correspond (by convention) to one more than the last
+	    <literal><parameter>y</parameter></literal> index where
+	    <literal><parameter>z</parameter></literal> is defined for a
+	    particular <literal><parameter>x</parameter></literal> index in the
+	    range from <literal><parameter>indexxmin</parameter></literal> to
+	    <literal><parameter>indexxmax - 1</parameter></literal>.  The dimension of
+	    <literal><parameter>indexymax</parameter></literal> is
+	    <literal><parameter>indexxmax</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plsurf3dl(x, y, z, opt, clevel,
+      indexxmin, indexymin, indexymax)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
   <sect1 id="plfsurf3d" renderas="sect3">
     <title>
       <function>plfsurf3d</function>: Plot shaded 3-d surface plot
@@ -16240,7 +16777,7 @@ device support!)
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>
-	    <function>plsurf3d</function>
+	    <function>plfsurf3d</function>
 	  </funcdef>
 	  <paramdef><parameter>x</parameter></paramdef>
 	  <paramdef><parameter>y</parameter></paramdef>

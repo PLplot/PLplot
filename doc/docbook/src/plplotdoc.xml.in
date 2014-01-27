@@ -165,6 +165,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plOptUsage '<link linkend="plOptUsage"><function>plOptUsage</function></link>'>
 <!ENTITY plot3d '<link linkend="plot3d"><function>plot3d</function></link>'>
 <!ENTITY plot3dc '<link linkend="plot3dc"><function>plot3dc</function></link>'>
+<!ENTITY plot3dcl '<link linkend="plot3dcl"><function>plot3dcl</function></link>'>
 <!ENTITY plot3dfortran95 '<link linkend="plot3dfortran95"><function>plot3dfortran95</function></link>'>
 <!ENTITY plparseopts '<link linkend="plparseopts"><function>plparseopts</function></link>'>
 <!ENTITY plparseoptsfortran95 '<link linkend="plparseoptsfortran95"><function>plparseoptsfortran95</function></link>'>
@@ -231,6 +232,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plstransform '<link linkend="plstransform"><function>plstransform</function></link>'>
 <!ENTITY plstyl '<link linkend="plstyl"><function>plstyl</function></link>'>
 <!ENTITY plsurf3d '<link linkend="plsurf3d"><function>plsurf3d</function></link>'>
+<!ENTITY plsurf3dl '<link linkend="plsurf3dl"><function>plsurf3dl</function></link>'>
 <!ENTITY plsvect '<link linkend="plsvect"><function>plsvect</function></link>'>
 <!ENTITY plsvpa '<link linkend="plsvpa"><function>plsvpa</function></link>'>
 <!ENTITY plsxax '<link linkend="plsxax"><function>plsxax</function></link>'>

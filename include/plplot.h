@@ -1374,7 +1374,7 @@ PLDLLIMPEXP void
 c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
             PLINT nx, PLINT ny, PLINT opt,
             const PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
+            PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax );
 
 // Like plot3dcl, but uses an evaluator function to access z data from zp
 
@@ -1382,7 +1382,7 @@ PLDLLIMPEXP void
 plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
              PLINT nx, PLINT ny, PLINT opt,
              const PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
+             PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax );
 
 //
 // definitions for the opt argument in plot3dc() and plsurf3d()
@@ -1883,14 +1883,14 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 PLDLLIMPEXP void
 c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
              PLINT opt, const PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax );
+             PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax );
 
 // Like plsurf3dl, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
 plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             PLINT opt, const PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT * indexymax );
+            PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax );
 
 // Set arrow style for vector plots.
 PLDLLIMPEXP void

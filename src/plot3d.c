@@ -353,7 +353,7 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 
 //--------------------------------------------------------------------------
 // void plsurf3dl(x, y, z, nx, ny, opt, clevel, nlevel,
-// ixstart, ixn, indexymin, indexymax)
+// indexxmin, indexxmax, indexymin, indexymax)
 //
 // Plots the 3-d surface representation of the function z[x][y].
 // The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
@@ -374,7 +374,7 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //
 // indexymin and indexymax are arrays which specify the y index range
 // (following the convention that the upper range limit is one more than
-// actual index limit) for an x index range of ixstart, ixn.
+// actual index limit) for an x index range of indexxmin, indexxmax.
 // This code is a complete departure from the approach taken in the old version
 // of this routine. Formerly to code attempted to use the logic for the hidden
 // line algorithm to draw the hidden surface. This was really hard. This code
@@ -388,16 +388,16 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 void
 c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
              PLINT opt, const PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
+             PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax )
 {
     plfsurf3dl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
-        opt, clevel, nlevel, ixstart, ixn, indexymin, indexymax );
+        opt, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
 }
 
 void
 plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             PLINT opt, const PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
+            PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax )
 {
     PLFLT      cxx, cxy, cyx, cyy, cyz;
     PLINT      i, j, k;
@@ -596,7 +596,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
         plAlloc2dGrid( &cgrid2.yg, nx, ny );
         plAlloc2dGrid( &zstore, nx, ny );
 
-        for ( i = ixstart; i < ixn; i++ )
+        for ( i = indexxmin; i < indexxmax; i++ )
         {
             for ( j = 0; j < indexymin[i]; j++ )
             {
@@ -618,7 +618,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
             }
         }
         // Fill cont structure with contours.
-        cont_store( (const PLFLT * const *) zstore, nx, ny, ixstart + 1, ixn, 1, ny,
+        cont_store( (const PLFLT * const *) zstore, nx, ny, indexxmin + 1, indexxmax, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         // Free the 2D input arrays to cont_store since not needed any more.
@@ -683,7 +683,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
                     ix = ixFast * ( iFast + i ) + ixSlow * ( iSlow + j ) + ixOrigin;
                     iy = iyFast * ( iFast + i ) + iySlow * ( iSlow + j ) + iyOrigin;
 
-                    if ( ixstart <= ix && ix < ixn &&
+                    if ( indexxmin <= ix && ix < indexxmax &&
                          indexymin[ix] <= iy && iy < indexymax[ix] )
                     {
                         xm += px[2 * i + j] = x[ix];
@@ -778,7 +778,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
     {
         plcol0( 0 );
         plfplot3dcl( x, y, zops, zp, nx, ny, MESH | DRAW_LINEXY, NULL, 0,
-            ixstart, ixn, indexymin, indexymax );
+            indexxmin, indexxmax, indexymin, indexymax );
     }
 
     if ( opt & DRAW_SIDES ) // the sides look ugly !!!
@@ -793,7 +793,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
             {
                 ix = ixFast * ( iFast + i ) + ixSlow * iSlow + ixOrigin;
                 iy = iyFast * ( iFast + i ) + iySlow * iSlow + iyOrigin;
-                if ( ixstart <= ix && ix < ixn &&
+                if ( indexxmin <= ix && ix < indexxmax &&
                      indexymin[ix] <= iy && iy < indexymax[ix] )
                 {
                     px[2 * i] = x[ix];
@@ -822,7 +822,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
             {
                 ix = ixFast * iFast + ixSlow * ( iSlow + i ) + ixOrigin;
                 iy = iyFast * iFast + iySlow * ( iSlow + i ) + iyOrigin;
-                if ( ixstart <= ix && ix < ixn &&
+                if ( indexxmin <= ix && ix < indexxmax &&
                      indexymin[ix] <= iy && iy < indexymax[ix] )
                 {
                     px[2 * i] = x[ix];
@@ -894,7 +894,7 @@ plfplot3dc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 
 //--------------------------------------------------------------------------
 // void plot3dcl(x, y, z, nx, ny, opt, clevel, nlevel,
-//       ixstart, ixn, indexymin, indexymax)
+//       indexxmin, indexxmax, indexymin, indexymax)
 //
 // Plots a 3-d representation of the function z[x][y]. The x values
 // are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
@@ -912,17 +912,17 @@ plfplot3dc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 // or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
 // indexymin and indexymax are arrays which specify the y index limits
 // (following the convention that the upper range limit is one more than
-// actual index limit) for an x index range of ixstart, ixn.
+// actual index limit) for an x index range of indexxmin, indexxmax.
 //--------------------------------------------------------------------------
 
 void
 c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
             PLINT nx, PLINT ny, PLINT opt,
             const PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, const PLINT *indexymin, const PLINT *indexymax )
+            PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax )
 {
     plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
-        opt, clevel, nlevel, ixstart, ixn, indexymin, indexymax );
+        opt, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
 }
 
 //--------------------------------------------------------------------------
@@ -957,8 +957,8 @@ c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 //! or any bitwise OR'd combination, e.g. "MAG_COLOR | DRAW_LINEX"
 //! @param clevel z values at which to draw contours
 //! @param nlevel Number of values in clevels
-//! @param PL_UNUSED( ixstart ) Not used.
-//! @param PL_UNUSED( ixn ) Not used.
+//! @param PL_UNUSED( indexxmin ) Not used.
+//! @param PL_UNUSED( indexxmax ) Not used.
 //! @param PL_UNUSED( indexymin ) Not used.
 //! @param PL_UNUSED( indexymax ) Not used.
 //!
@@ -968,7 +968,7 @@ void
 plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
              PLINT nx, PLINT ny, PLINT opt,
              const PLFLT *clevel, PLINT nlevel,
-             PLINT PL_UNUSED( ixstart ), PLINT PL_UNUSED( ixn ), const PLINT * PL_UNUSED( indexymin ), const PLINT * PL_UNUSED( indexymax ) )
+             PLINT PL_UNUSED( indexxmin ), PLINT PL_UNUSED( indexxmax ), const PLINT * PL_UNUSED( indexymin ), const PLINT * PL_UNUSED( indexymax ) )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, ix, iy, color;
