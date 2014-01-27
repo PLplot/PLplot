@@ -2041,7 +2041,7 @@ c_plsdrawmode( PLINT mode )
 {
     if ( !plsc->dev_modeset )
     {
-        plwarn( "plsdrawmode: Mode setting is not supported" );
+        plwarn( "plsdrawmode: Mode setting is not supported by this device" );
     }
     else if ( plsc->level > 0 )
     {
@@ -2060,13 +2060,13 @@ c_plsdrawmode( PLINT mode )
 //! @returns Current drawing mode
 //!
 PLINT
-c_plgdrawmode()
+c_plgdrawmode( void )
 {
     PLINT mode;
 
     if ( !plsc->dev_modeset )
     {
-        plwarn( "plgdrawmode: Mode getting is not supported" );
+        plwarn( "plgdrawmode: Mode getting is not supported by this device" );
         mode = PL_DRAWMODE_UNKNOWN;
     }
     else if ( plsc->level > 0 )
