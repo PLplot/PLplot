@@ -19,6 +19,35 @@
 # You should have received a copy of the GNU Library General Public License
 # along with PLplot; if not, write to the Free Software
 
+if(ADD_SPECIAL_CONSISTENCY_CHECKING)
+  # For this special case, must have access to a build of Hǎiliàng Wang's
+  # "check" application.  To build that tool (written in the Go language)
+  # follow these simple directions (which worked fine on 2014-01-26):
+  # Install go-lang package from your distro (I used the Debian testing
+  # version, go-lang version 1.2).
+  # cd /home/software/golang_apps #(or wherever you like)
+  # export GOPATH=$(pwd)
+  # go get -u github.com/hailiang/go-plplot/c/check
+  # go build github.com/hailiang/go-plplot/c/check
+  ## The above creates the "check" executable in $GOPATH/bin
+  ## That is too generic a name so symlink a more individual name
+  # cd $GOPATH/bin; ln -s check api.xml_consistency_checker;
+  ## Now put $GOPATH/bin on your PATH and CMake should do the rest.
+  find_program(API_XML_CONSISTENCY_CHECKER api.xml_consistency_checker)
+  if(API_XML_CONSISTENCY_CHECKER)
+    add_custom_target(check_api_xml_consistency
+      # Currently the checker needs plplot.h to be in the same directory
+      # as the configured header files.
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+      ${CMAKE_SOURCE_DIR}/include/plplot.h
+      ${CMAKE_BINARY_DIR}/include/plplot.h
+      COMMAND ${API_XML_CONSISTENCY_CHECKER} -header=${CMAKE_BINARY_DIR}/include/plplot.h -apixml=${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
+      )
+  else(API_XML_CONSISTENCY_CHECKER)
+    message(STATUS "WARNING: cannot find the api.xml_consistency_checker application so cannot check the consistency of api.xml with plplot.h")
+  endif(API_XML_CONSISTENCY_CHECKER)
+endif(ADD_SPECIAL_CONSISTENCY_CHECKING)
+
 set(BINDIR ${CMAKE_CURRENT_SOURCE_DIR}/../bin)
 set(PLPLOTDOC plplotdoc)
 if(NOT DEFINED HTML_EXT)

@@ -19,6 +19,8 @@
 
 # Module for determining all configuration variables for PLplot.
 
+option(ADD_SPECIAL_CONSISTENCY_CHECKING "Add extra source-tree consistency checking targets that require special tools" OFF)
+
 # libraries are all shared by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
