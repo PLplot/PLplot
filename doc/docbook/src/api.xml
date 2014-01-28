@@ -820,7 +820,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -832,7 +832,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -1900,7 +1900,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plcol0" renderas="sect3">
     <title>
-      <function>plcol0</function>: Set color, map0
+      <function>plcol0</function>: Set color, cmap0
     </title>
 
     <para>
@@ -1915,7 +1915,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Sets the color index for color map0 (see <xref linkend="color-map-0"/>).
+      Sets the color index for cmap0 (see <xref linkend="color-map-0"/>).
     </para>
 
     <variablelist>
@@ -1966,7 +1966,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plcol1" renderas="sect3">
     <title>
-      <function>plcol1</function>: Set color, map1
+      <function>plcol1</function>: Set color, cmap1
     </title>
 
     <para>
@@ -1980,7 +1980,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </funcsynopsis>
     </para>
 
-    <para> Sets the color for color map1 (see <xref
+    <para> Sets the color for cmap1 (see <xref
     linkend="color-map-1"/>).  </para>
 
     <variablelist>
@@ -2390,7 +2390,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>ticks</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2402,7 +2402,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>sub_ticks</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2414,7 +2414,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>n_values</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2427,7 +2427,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>values</parameter>
-	  (<literal>PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2582,19 +2582,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ifbzero_control</parameter>
+	  <parameter>ifbtime_offset</parameter>
 	  (<literal>PLBOOL</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            <parameter>ifbzero_control</parameter> controls how the
+            <parameter>ifbtime_offset</parameter> controls how the
 	    epoch of the continuous time scale is specified by the
-	    user. If <parameter>ifbzero_control</parameter> is false,
+	    user. If <parameter>ifbtime_offset</parameter> is false,
 	    then <parameter>offset1</parameter> and
 	    <parameter>offset2</parameter> are used to specify the
 	    epoch, and the following broken-down time parameters are
 	    completely ignored.  If
-	    <parameter>ifbzero_control</parameter> is true, then
+	    <parameter>ifbtime_offset</parameter> is true, then
 	    <parameter>offset1</parameter> and
 	    <parameter>offset2</parameter> are completely ignored, and
 	    the following broken-down time parameters are used to
@@ -2741,7 +2741,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>f</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2787,7 +2787,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -3176,7 +3176,7 @@ time is specified by the following parameters:
   <sect1 id="plenv0" renderas="sect3">
     <title>
       <function>plenv0</function>: Same as &plenv; but if in multiplot
-      mode does not advance the subpage, instead clears it.
+      mode does not advance the subpage, instead clears it
     </title>
     <para>
       <funcsynopsis>
@@ -3954,7 +3954,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>xmin</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -3966,7 +3966,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>xmax</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -3978,7 +3978,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4062,7 +4062,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4073,7 +4073,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>ymin</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4085,7 +4085,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>ymax</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4204,7 +4204,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4215,7 +4215,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4286,7 +4286,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4297,7 +4297,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4308,7 +4308,7 @@ time is specified by the following parameters:
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -4620,7 +4620,7 @@ time is specified by the following parameters:
   <sect1 id="plgcol0" renderas="sect3">
     <title>
       <function>plgcol0</function>: Returns 8-bit RGB values for given color
-      from color map0
+      index from cmap0
     </title>
 
     <para>
@@ -4638,7 +4638,7 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Returns 8-bit RGB values (0-255) for given color from color map0 (see
+      Returns 8-bit RGB values (0-255) for given color from cmap0 (see
       <xref linkend="color-map-0"/>).  Values are
       negative if an invalid color id is given.
     </para>
@@ -4703,7 +4703,7 @@ time is specified by the following parameters:
   <sect1 id="plgcol0a" renderas="sect3">
     <title>
       <function>plgcol0a</function>: Returns 8-bit RGB values and double alpha
-      value for given color from color map0.
+      transparency value for given color index from cmap0
     </title>
 
     <para>
@@ -4716,14 +4716,14 @@ time is specified by the following parameters:
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
 	  <paramdef><parameter>b</parameter></paramdef>
-	  <paramdef><parameter>a</parameter></paramdef>
+	  <paramdef><parameter>alpha</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      Returns 8-bit RGB values (0-255) and double alpha value (0.0 - 1.0) for 
-      given color from color map0 (see <xref linkend="color-map-0"/>).  Values 
+      Returns 8-bit RGB values (0-255) and double alpha transparency value (0.0 - 1.0) for 
+      given color from cmap0 (see <xref linkend="color-map-0"/>).  Values 
       are negative if an invalid color id is given.
     </para>
 
@@ -4774,12 +4774,12 @@ time is specified by the following parameters:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter>
+	  <parameter>alpha</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to PLFLT alpha value.
+	    Pointer to PLFLT alpha transparency value.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4866,7 +4866,7 @@ time is specified by the following parameters:
   <sect1 id="plgcolbga" renderas="sect3">
     <title>
       <function>plgcolbga</function>:  Returns the background color (cmap0[0]) 
-      by 8-bit RGB value and double alpha value.
+      by 8-bit RGB value and double alpha transparency value
     </title>
 
     <para>
@@ -4878,14 +4878,14 @@ time is specified by the following parameters:
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
 	  <paramdef><parameter>b</parameter></paramdef>
-	  <paramdef><parameter>a</parameter></paramdef>
+	  <paramdef><parameter>alpha</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
       Returns the background color (cmap0[0]) by 8-bit RGB value and double
-      alpha value.
+      alpha transparency value.
     </para>
 
     <variablelist>
@@ -4927,12 +4927,12 @@ time is specified by the following parameters:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter>
+	  <parameter>alpha</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to PLFLT alpha value.
+	    Pointer to PLFLT alpha transparency value.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5815,7 +5815,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5826,7 +5826,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5902,7 +5902,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5913,7 +5913,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5924,7 +5924,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5949,7 +5949,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>xg</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -5974,7 +5974,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>yg</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -6727,7 +6727,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>data</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -6954,7 +6954,7 @@ device support!)
 
   <sect1 id="plimagefr" renderas="sect3">
     <title>
-      <function>plimagefr</function>: Plot a 2D matrix using color map1
+      <function>plimagefr</function>: Plot a 2D matrix using cmap1
     </title>
 
     <para>
@@ -6981,14 +6981,14 @@ device support!)
     </para>
 
     <para>
-      Plot a 2D matrix using color map1.
+      Plot a 2D matrix using cmap1.
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>idata</parameter>
-	  (<literal>PLFLT**</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7111,7 +7111,7 @@ device support!)
 
   <sect1 id="plimage" renderas="sect3">
     <title>
-      <function>plimage</function>: Plot a 2D matrix using color map1 with
+      <function>plimage</function>: Plot a 2D matrix using cmap1 with
       automatic colour adjustment
     </title>
 
@@ -7148,7 +7148,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>idata</parameter>
-	  (<literal>PLFLT**</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8081,7 +8081,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8092,7 +8092,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8157,7 +8157,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8168,7 +8168,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8179,7 +8179,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8249,7 +8249,7 @@ device support!)
 
   <sect1 id="plmap" renderas="sect3">
     <title>
-      <function>plmap</function>: Plot continental outline in world coordinates.
+      <function>plmap</function>: Plot continental outline in world coordinates
     </title>
 
     <para>
@@ -8296,7 +8296,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>type</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8405,7 +8405,7 @@ device support!)
 
   <sect1 id="plmeridians" renderas="sect3">
     <title>
-      <function>plmeridians</function>: Plot latitude and longitude lines.
+      <function>plmeridians</function>: Plot latitude and longitude lines
     </title>
 
     <para>
@@ -8586,7 +8586,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8598,7 +8598,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8610,7 +8610,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8696,7 +8696,7 @@ device support!)
 
   <sect1 id="plmeshc" renderas="sect3">
     <title>
-      <function>plmeshc</function>: Magnitude colored plot surface mesh with contour.
+      <function>plmeshc</function>: Magnitude colored plot surface mesh with contour
     </title>
 
     <para>
@@ -8728,7 +8728,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8740,7 +8740,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8752,7 +8752,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8847,7 +8847,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9107,7 +9107,7 @@ device support!)
   <sect1 id="plmtex3" renderas="sect3">
     <title>
       <function>plmtex3</function>: Write text relative to viewport boundaries
-      in 3D plots.
+      in 3D plots
     </title>
 
     <para>
@@ -9303,7 +9303,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9315,7 +9315,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9327,7 +9327,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9425,7 +9425,7 @@ device support!)
 
   <sect1 id="plot3dc" renderas="sect3">
     <title>
-      <function>plot3dc</function>: Magnitude colored plot surface with contour.
+      <function>plot3dc</function>: Magnitude colored plot surface with contour
     </title>
 
     <para>
@@ -9461,7 +9461,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9473,7 +9473,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9485,7 +9485,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9580,7 +9580,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9672,7 +9672,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9684,7 +9684,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9696,7 +9696,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT *const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9791,7 +9791,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9841,7 +9841,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>indexymin</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9860,7 +9860,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>indexymax</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9940,7 +9940,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>argv</parameter>
-	  (<literal>char **</literal>, input)
+	  (<literal>const char **</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10111,7 +10111,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>inc</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10125,7 +10125,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>del</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10163,7 +10163,7 @@ device support!)
   <sect1 id="plpath" renderas="sect3">
     <title>
       <function>plpath</function>: Draw a line between two points, accounting
-      for coordinate transforms.
+      for coordinate transforms
     </title>
 
     <para>
@@ -10311,7 +10311,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10322,7 +10322,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10407,7 +10407,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10418,7 +10418,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10429,7 +10429,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10530,7 +10530,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10541,7 +10541,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10552,7 +10552,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10563,7 +10563,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>draw</parameter>
-	  (<literal>PLBOOL *</literal>, input)
+	  (<literal>const PLBOOL *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -10613,7 +10613,7 @@ device support!)
 	  <funcdef>
 	    <function>plprec</function>
 	  </funcdef>
-	  <paramdef><parameter>set</parameter></paramdef>
+	  <paramdef><parameter>setp</parameter></paramdef>
 	  <paramdef><parameter>prec</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
@@ -10626,16 +10626,16 @@ device support!)
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>set</parameter>
+	  <parameter>setp</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    If <literal><parameter>set</parameter></literal> is equal to 0
+	    If <literal><parameter>setp</parameter></literal> is equal to 0
 	    then PLplot automatically determines the number of places to
 	    use after the decimal point in numeric labels (like those used
 	    to label axes).  If
-	    <literal><parameter>set</parameter></literal> is 1 then
+	    <literal><parameter>setp</parameter></literal> is 1 then
 	    <literal><parameter>prec</parameter></literal> sets the number
 	    of places.
 	  </para>
@@ -10656,7 +10656,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: <function>plprec(set, prec)</function>
+      Redacted form: <function>plprec(setp, prec)</function>
     </para>
 
     <para>
@@ -10676,7 +10676,7 @@ device support!)
 	  <funcdef>
 	    <function>plpsty</function>
 	  </funcdef>
-	  <paramdef><parameter>n</parameter></paramdef>
+	  <paramdef><parameter>patt</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -10689,7 +10689,7 @@ device support!)
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>n</parameter>
+	  <parameter>patt</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -10703,7 +10703,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: <function>plpsty(n)</function>
+      Redacted form: <function>plpsty(patt)</function>
     </para>
 
     <para>
@@ -10842,7 +10842,7 @@ device support!)
 
   <sect1 id="plptex3" renderas="sect3">
     <title>
-      <function>plptex3</function>: Write text inside the viewport of a 3D plot.
+      <function>plptex3</function>: Write text inside the viewport of a 3D plot
     </title>
 
     <para>
@@ -10851,9 +10851,9 @@ device support!)
 	  <funcdef>
 	    <function>plptex3</function>
 	  </funcdef>
-	  <paramdef><parameter>x</parameter></paramdef>
-	  <paramdef><parameter>y</parameter></paramdef>
-	  <paramdef><parameter>z</parameter></paramdef>
+	  <paramdef><parameter>wx</parameter></paramdef>
+	  <paramdef><parameter>wy</parameter></paramdef>
+	  <paramdef><parameter>wz</parameter></paramdef>
 	  <paramdef><parameter>dx</parameter></paramdef>
 	  <paramdef><parameter>dy</parameter></paramdef>
 	  <paramdef><parameter>dz</parameter></paramdef>
@@ -10874,8 +10874,8 @@ device support!)
       position of the reference point along this line is determined by
       <literal><parameter>just</parameter></literal>, and the reference
       point is placed at world coordinates
-      <literal>(<parameter>x</parameter>, <parameter>y</parameter>,
-      <parameter>z</parameter>)</literal> within the viewport. The
+      <literal>(<parameter>wx</parameter>, <parameter>wy</parameter>,
+      <parameter>wz</parameter>)</literal> within the viewport. The
       inclination and shear of the string is specified in terms of
       differences of world coordinates making it easy to write text parallel
       to a line in a graph.
@@ -10884,34 +10884,34 @@ device support!)
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>x</parameter>
+	  <parameter>wx</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    x coordinate of reference point of string.
+	    x world coordinate of reference point of string.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y</parameter>
+	  <parameter>wy</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    y coordinate of reference point of string.
+	    y world coordinate of reference point of string.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>z</parameter>
+	  <parameter>wz</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    z coordinate of reference point of string.
+	    z world coordinate of reference point of string.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -11051,7 +11051,7 @@ device support!)
   <sect1 id="plrandd" renderas="sect3">
     <title>
       <function>plrandd</function>: Random number generator 
-      returning a real random number in the range [0,1].
+      returning a real random number in the range [0,1]
     </title>
 
     <para>
@@ -11296,7 +11296,7 @@ device support!)
 
   <sect1 id="plscmap0" renderas="sect3">
     <title>
-      <function>plscmap0</function>: Set color map0 colors by 8-bit RGB values
+      <function>plscmap0</function>: Set cmap0 colors by 8-bit RGB values
     </title>
 
     <para>
@@ -11314,7 +11314,7 @@ device support!)
     </para>
 
     <para>
-      Set color map0 colors using 8-bit RGB values (see <xref linkend="color-map-0"/>).  This sets the entire color
+      Set cmap0 colors using 8-bit RGB values (see <xref linkend="color-map-0"/>).  This sets the entire color
       map &ndash; only as many colors as specified will be allocated.
     </para>
 
@@ -11322,7 +11322,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>r</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11334,7 +11334,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>g</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11346,7 +11346,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>b</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11372,7 +11372,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: <function>plscmap0(r, g, b, ncol0)</function>
+      Redacted form: <function>plscmap0(r, g, b)</function>
     </para>
 
     <para>
@@ -11383,8 +11383,8 @@ device support!)
 
   <sect1 id="plscmap0a" renderas="sect3">
     <title>
-      <function>plscmap0a</function>: Set color map0 colors by 8-bit RGB values and 
-      double alpha value.
+      <function>plscmap0a</function>: Set cmap0 colors by 8-bit RGB values and 
+      double alpha transparency value
     </title>
 
     <para>
@@ -11396,15 +11396,15 @@ device support!)
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
 	  <paramdef><parameter>b</parameter></paramdef>
-	  <paramdef><parameter>a</parameter></paramdef>
+	  <paramdef><parameter>alpha</parameter></paramdef>
 	  <paramdef><parameter>ncol0</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      Set color map0 colors using 8-bit RGB values (see <xref linkend="color-map-0"/>) 
-      and floating point alpha value.  This sets the entire color
+      Set cmap0 colors using 8-bit RGB values (see <xref linkend="color-map-0"/>) 
+      and floating point alpha transparency value.  This sets the entire color
       map &ndash; only as many colors as specified will be allocated.
     </para>
 
@@ -11412,7 +11412,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>r</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11424,7 +11424,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>g</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11436,7 +11436,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>b</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11447,13 +11447,13 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  <parameter>alpha</parameter>
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Pointer to array with set of PLFLT values (0.0 - 1.0)
-	    representing the transparency of the color.
+	    representing the alpha transparency of the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -11468,11 +11468,15 @@ device support!)
 	    <literal><parameter>r</parameter></literal>,
 	    <literal><parameter>g</parameter></literal>,
 	    <literal><parameter>b</parameter></literal>, and
-	    <literal><parameter>a</parameter></literal> arrays.
+	    <literal><parameter>alpha</parameter></literal> arrays.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plscmap0a(r, g, b, alpha)</function>
+    </para>
 
     <para>
       This function is used in examples 30.
@@ -11482,7 +11486,7 @@ device support!)
 
   <sect1 id="plscmap0n" renderas="sect3">
     <title>
-      <function>plscmap0n</function>: Set number of colors in color map0
+      <function>plscmap0n</function>: Set number of colors in cmap0
     </title>
 
     <para>
@@ -11597,7 +11601,7 @@ device support!)
 
   <sect1 id="plscmap1" renderas="sect3">
     <title>
-      <function>plscmap1</function>: Set color map1 colors using 8-bit RGB
+      <function>plscmap1</function>: Set cmap1 colors using 8-bit RGB
       values
     </title>
 
@@ -11615,7 +11619,7 @@ device support!)
       </funcsynopsis>
     </para>
 
-    <para> Set color map1 colors using 8-bit RGB values (see <xref
+    <para> Set cmap1 colors using 8-bit RGB values (see <xref
     linkend="color-map-1"/>).  This also sets the number of colors.
     </para>
 
@@ -11623,7 +11627,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>r</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11635,7 +11639,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>g</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11647,7 +11651,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>b</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11673,7 +11677,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: <function>plscmap1(r, g, b, ncol1)</function>
+      Redacted form: <function>plscmap1(r, g, b)</function>
     </para>
 
     <para>
@@ -11684,8 +11688,8 @@ device support!)
 
   <sect1 id="plscmap1a" renderas="sect3">
     <title>
-      <function>plscmap1a</function>: Set color map1 colors using 8-bit RGB values
-      and double alpha values.
+      <function>plscmap1a</function>: Set cmap1 colors using 8-bit RGB values
+      and double alpha transparency values
     </title>
 
     <para>
@@ -11697,21 +11701,21 @@ device support!)
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
 	  <paramdef><parameter>b</parameter></paramdef>
-	  <paramdef><parameter>a</parameter></paramdef>
+	  <paramdef><parameter>alpha</parameter></paramdef>
 	  <paramdef><parameter>ncol1</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
-    <para> Set color map1 colors using 8-bit RGB values (see <xref
-    linkend="color-map-1"/>) and double alpha values. This also sets 
-    the number of colors.</para>
+    <para> Set cmap1 colors using 8-bit RGB values (see <xref
+    linkend="color-map-1"/>) and double alpha transparency values.
+    This also sets the number of colors.</para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>r</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11723,7 +11727,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>g</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11735,7 +11739,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>b</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11746,13 +11750,13 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  <parameter>alpha</parameter>
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Pointer to array with set of double values (0.0-1.0)
-	    representing the alpha value of the color.
+	    representing the alpha transparency value of the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -11767,11 +11771,15 @@ device support!)
 	    <literal><parameter>r</parameter></literal>,
 	    <literal><parameter>g</parameter></literal>,
 	    <literal><parameter>b</parameter></literal>, and
-	    <literal><parameter>a</parameter></literal> arrays.
+	    <literal><parameter>alpha</parameter></literal> arrays.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      Redacted form: <function>plscmap1a(r, g, b, alpha)</function>
+    </para>
 
     <para>
       This function is used in example 31.
@@ -11781,7 +11789,7 @@ device support!)
 
   <sect1 id="plscmap1l" renderas="sect3">
     <title>
-      <function>plscmap1l</function>: Set color map1 colors using a
+      <function>plscmap1l</function>: Set cmap1 colors using a
       piece-wise linear relationship
     </title>
 
@@ -11793,7 +11801,7 @@ device support!)
 	  </funcdef>
 	  <paramdef><parameter>itype</parameter></paramdef>
 	  <paramdef><parameter>npts</parameter></paramdef>
-	  <paramdef><parameter>pos</parameter></paramdef>
+	  <paramdef><parameter>intensity</parameter></paramdef>
 	  <paramdef><parameter>coord1</parameter></paramdef>
 	  <paramdef><parameter>coord2</parameter></paramdef>
 	  <paramdef><parameter>coord3</parameter></paramdef>
@@ -11802,22 +11810,22 @@ device support!)
       </funcsynopsis>
     </para>
 
-    <para> Set color map1 colors using a piece-wise linear relationship
-    between position in the color map (from 0 to 1) and position in HLS or
+    <para> Set cmap1 colors using a piece-wise linear relationship
+    between intensity index (from 0. to 1.) of cmap1 and position in HLS or
     RGB color space (see <xref linkend="color-map-1"/>).  May be called at
     any time. </para>
 
     <para>
       The idea here is to specify a number of control points that define
-      the mapping between palette 1 input positions (intensities) and 
+      the mapping between input cmap1 intensity indices and 
       HLS (or RGB).  Between
       these points, linear interpolation is used which
       gives a smooth variation of
-      color with input position.  Any number of control points may be specified,
+      color with intensity index.  Any number of control points may be specified,
       located at arbitrary positions, although typically 2 - 4
       are enough. Another way of stating this is that we are traversing a
       given number of lines through HLS (or RGB) space as we move through
-      color map1 entries.  The control points at the minimum and maximum
+      cmap1 intensity indices.  The control points at the minimum and maximum
       position (0 and 1) must always be specified.  By adding more control
       points you can get more variation.  One good technique for plotting
       functions that vary about some expected average is to use an
@@ -11827,7 +11835,8 @@ device support!)
       allows the highs and lows to be very easily distinguished.
     </para>
     <para>
-      Each control point must specify the position in color map1 as well as
+      Each control point must specify the cmap1 intensity index and
+      the associated 
       three coordinates in HLS or RGB space.  The first point
       <emphasis>must</emphasis> correspond to position = 0, and the last to
       position = 1.
@@ -11905,12 +11914,12 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pos</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  <parameter>intensity</parameter>
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    position for each control point (between 0.0 and 1.0, in
+	    intensity index for each control point (between 0.0 and 1.0, in
 	    ascending order)
 	  </para>
 	</listitem>
@@ -11918,7 +11927,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>coord1</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11929,7 +11938,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>coord2</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11940,7 +11949,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>coord3</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11951,7 +11960,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>alt_hue_path</parameter>
-	  (<literal>PLBOOL: *</literal>, input)
+	  (<literal>const PLBOOL *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -11965,7 +11974,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: <function>plscmap1l(itype, pos, coord1, coord2, coord3, alt_hue_path)</function>
+      Redacted form: <function>plscmap1l(itype, intensity, coord1, coord2, coord3, alt_hue_path)</function>
     </para>
 
     <para>
@@ -11976,8 +11985,8 @@ device support!)
 
   <sect1 id="plscmap1la" renderas="sect3">
     <title>
-      <function>plscmap1la</function>: Set color map1 colors using a
-      piece-wise linear relationship
+      <function>plscmap1la</function>: Set cmap1 colors and alpha
+      transparency using a piece-wise linear relationship
     </title>
 
     <para>
@@ -11988,22 +11997,23 @@ device support!)
 	  </funcdef>
 	  <paramdef><parameter>itype</parameter></paramdef>
 	  <paramdef><parameter>npts</parameter></paramdef>
-	  <paramdef><parameter>pos</parameter></paramdef>
+	  <paramdef><parameter>intensity</parameter></paramdef>
 	  <paramdef><parameter>coord1</parameter></paramdef>
 	  <paramdef><parameter>coord2</parameter></paramdef>
 	  <paramdef><parameter>coord3</parameter></paramdef>
-	  <paramdef><parameter>coord4</parameter></paramdef>	
+	  <paramdef><parameter>alpha</parameter></paramdef>	
 	  <paramdef><parameter>alt_hue_path</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      This is a version of &plscmap1l; that supports alpha
-      transparency. It sets color map1 colors using a piece-wise linear
-      relationship between position in the color map (from 0 to 1) and
+      This is a variant of &plscmap1l; that supports alpha channel
+      transparency. It sets cmap1 colors using a piece-wise linear
+      relationship between cmap1 intensity index (from 0. to 1.) and
       position in HLS or RGB color space (see <xref linkend="color-map-1"/>)
-      with alpha value (0.0 - 1.0). It may be called at any time.
+      with <literal><parameter>alpha</parameter></literal> transparency value 
+      (0.0 - 1.0). It may be called at any time.
     </para>
 
     <variablelist>
@@ -12031,8 +12041,8 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pos</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  <parameter>intensity</parameter>
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12044,7 +12054,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>coord1</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12055,7 +12065,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>coord2</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12066,7 +12076,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>coord3</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12076,19 +12086,19 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>coord4</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  <parameter>alpha</parameter>
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    fourth coordinate, the alpha value for each control point
+	    the alpha transparency value for each control point
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>alt_hue_path</parameter>
-	  (<literal>PLBOOL: *</literal>, input)
+	  (<literal>const PLBOOL *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -12102,6 +12112,11 @@ device support!)
     </variablelist>
 
     <para>
+      Redacted form: <function>plscmap1la(itype, intensity, coord1,
+      coord2, coord3, alpha, alt_hue_path)</function>
+    </para>
+
+    <para>
       This function is used in example 30.
     </para>
 
@@ -12109,7 +12124,7 @@ device support!)
 
   <sect1 id="plscmap1n" renderas="sect3">
     <title>
-      <function>plscmap1n</function>: Set number of colors in color map1
+      <function>plscmap1n</function>: Set number of colors in cmap1
     </title>
 
     <para>
@@ -12123,7 +12138,7 @@ device support!)
       </funcsynopsis>
     </para>
 
-    <para> Set number of colors in color map1, (re-)allocate color map1, and
+    <para> Set number of colors in cmap1, (re-)allocate color map1, and
     set default values if this is the first allocation (see <xref
     linkend="color-map-1"/>). </para>
 
@@ -12156,8 +12171,8 @@ device support!)
 
   <sect1 id="plscol0" renderas="sect3">
     <title>
-      <function>plscol0</function>:  Set a given color from color map0 by 8
-      bit RGB value
+      <function>plscol0</function>:  Set 8-bit RGB values for given
+      cmap0 color index
     </title>
 
     <para>
@@ -12174,7 +12189,8 @@ device support!)
       </funcsynopsis>
     </para>
 
-    <para> Set a given color by 8-bit RGB value for color map0 (see <xref linkend="color-map-0"/>).  Overwrites
+    <para> Set 8-bit RGB values for given cmap0 (see <xref
+    linkend="color-map-0"/>) index.  Overwrites
     the previous color value for the given index and, thus, does
     not result in any additional allocation of space for colors. </para>
 
@@ -12241,8 +12257,9 @@ device support!)
 
   <sect1 id="plscol0a" renderas="sect3">
     <title>
-      <function>plscol0a</function>:  Set a given color from color map0 by 8
-      bit RGB value and double alpha value.
+      <function>plscol0a</function>:  Set 8-bit 
+      RGB values and double alpha transparency value for given
+      cmap0 color index
     </title>
 
     <para>
@@ -12255,13 +12272,13 @@ device support!)
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
 	  <paramdef><parameter>b</parameter></paramdef>
-	  <paramdef><parameter>a</parameter></paramdef>
+	  <paramdef><parameter>alpha</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
-    <para> Set a given color by 8-bit RGB value and double alpha value for color 
-    map0 (see <xref linkend="color-map-0"/>).  Overwrites the previous color value 
+    <para> Set 8-bit RGB value and double alpha transparency value for given
+    cmap0 (see <xref linkend="color-map-0"/>) index.  Overwrites the previous color value 
     for the given index and, thus, does not result in any additional allocation 
     of space for colors. </para>
 
@@ -12316,13 +12333,13 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter>
+	  <parameter>alpha</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    double value (0.0-1.0) representing the
-	    alpha value of the color.
+	    alpha transparency value of the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12410,7 +12427,7 @@ device support!)
   <sect1 id="plscolbga" renderas="sect3">
     <title>
       <function>plscolbga</function>: Set the background color
-      by 8-bit RGB value and double alpha value.
+      by 8-bit RGB value and double alpha transparency value.
     </title>
 
     <para>
@@ -12422,14 +12439,14 @@ device support!)
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
 	  <paramdef><parameter>b</parameter></paramdef>
-	  <paramdef><parameter>a</parameter></paramdef>
+	  <paramdef><parameter>alpha</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
       Set the background color (color 0 in color map 0) by 8-bit RGB value (see
-      <xref linkend="color-map-0"/>) and double alpha value.
+      <xref linkend="color-map-0"/>) and double alpha transparency value.
     </para>
 
     <variablelist>
@@ -12471,13 +12488,13 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter>
+	  <parameter>alpha</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    double value (0.0-1.0) representing the
-	    alpha value of the color.
+	    alpha transparency value of the color.
 	  </para>
 	</listitem>
       </varlistentry>
