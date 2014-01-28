@@ -1017,7 +1017,7 @@ c_plgcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b );
 // Returns 8 bit RGB values for given color from color map 0 and alpha value
 
 PLDLLIMPEXP void
-c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
+c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha );
 
 // Returns the background color by 8 bit RGB value
 
@@ -1027,7 +1027,7 @@ c_plgcolbg( PLINT *r, PLINT *g, PLINT *b );
 // Returns the background color by 8 bit RGB value and alpha value
 
 PLDLLIMPEXP void
-c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
+c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha );
 
 // Returns the current compression setting
 
@@ -1487,7 +1487,7 @@ c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 );
 // Set color map 0 colors by 8 bit RGB values and alpha values
 
 PLDLLIMPEXP void
-c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol0 );
+c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha, PLINT ncol0 );
 
 // Set number of colors in cmap 0
 
@@ -1502,7 +1502,7 @@ c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 );
 // Set color map 1 colors by 8 bit RGB and alpha values
 
 PLDLLIMPEXP void
-c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol1 );
+c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha, PLINT ncol1 );
 
 // Set color map 1 colors using a piece-wise linear relationship between
 // intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
@@ -1517,7 +1517,7 @@ c_plscmap1l( PLBOOL itype, PLINT npts, const PLFLT *intensity,
 
 PLDLLIMPEXP void
 c_plscmap1la( PLBOOL itype, PLINT npts, const PLFLT *intensity,
-              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a, const PLBOOL *alt_hue_path );
+              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *alpha, const PLBOOL *alt_hue_path );
 
 // Set number of colors in cmap 1
 
@@ -1542,7 +1542,7 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b );
 // Set a given color from color map 0 by 8 bit RGB value
 
 PLDLLIMPEXP void
-c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a );
+c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT alpha );
 
 // Set the background color by 8 bit RGB value
 
@@ -1552,7 +1552,7 @@ c_plscolbg( PLINT r, PLINT g, PLINT b );
 // Set the background color by 8 bit RGB value and alpha value
 
 PLDLLIMPEXP void
-c_plscolbga( PLINT r, PLINT g, PLINT b, PLFLT a );
+c_plscolbga( PLINT r, PLINT g, PLINT b, PLFLT alpha );
 
 // Used to globally turn color output on/off
 

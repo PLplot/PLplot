@@ -227,15 +227,15 @@ c_plscolbg( PLINT r, PLINT g, PLINT b )
 //! @param r Red value of the background color (0 - 255).
 //! @param g Green value of the background color (0 - 255).
 //! @param b Blue value of the background color (0 - 255).
-//! @param a Alpha (transparency) value of the background color
+//! @param alpha Alpha (transparency) value of the background color
 //! (0.0 - 1.0).
 
 //--------------------------------------------------------------------------
 
 void
-c_plscolbga( PLINT r, PLINT g, PLINT b, PLFLT a )
+c_plscolbga( PLINT r, PLINT g, PLINT b, PLFLT alpha )
 {
-    plscol0a( 0, r, g, b, a );
+    plscol0a( 0, r, g, b, alpha );
 }
 
 //--------------------------------------------------------------------------
@@ -261,12 +261,12 @@ c_plgcolbg( PLINT *r, PLINT *g, PLINT *b )
 //! @param r Current red value of the background color.
 //! @param g Current green value of the background color.
 //! @param b Current blue value of the background color.
-//! @param a Current alpha value of the background color.
+//! @param alpha Current alpha value of the background color.
 
 void
-c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
+c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha )
 {
-    plgcol0a( 0, r, g, b, a );
+    plgcol0a( 0, r, g, b, alpha );
 }
 
 //--------------------------------------------------------------------------
@@ -314,10 +314,10 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
 //! @param r Red value of the color (0 - 255).
 //! @param g Green value of the color (0 - 255).
 //! @param b Blue value of the color (0 - 255).
-//! @param a Alpha value of the color (0.0 - 1.0).
+//! @param alpha Alpha value of the color (0.0 - 1.0).
 
 void
-c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
+c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT alpha )
 {
     if ( plsc->cmap0 == NULL )
         plscmap0n( 0 );
@@ -328,11 +328,11 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
         plabort( buffer );
         return;
     }
-    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) || ( a < 0 || a > 1.0 ) )
+    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) || ( alpha < 0. || alpha > 1.0 ) )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
-            (int) r, (int) g, (int) b, (double) a );
+            (int) r, (int) g, (int) b, (double) alpha );
         plabort( buffer );
         return;
     }
@@ -340,7 +340,7 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
     plsc->cmap0[icol0].r = (unsigned char) r;
     plsc->cmap0[icol0].g = (unsigned char) g;
     plsc->cmap0[icol0].b = (unsigned char) b;
-    plsc->cmap0[icol0].a = a;
+    plsc->cmap0[icol0].a = alpha;
 
     if ( plsc->level > 0 )
         plP_state( PLSTATE_CMAP0 );
@@ -392,18 +392,18 @@ c_plgcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b )
 //! @param r Current red value of the color.
 //! @param g Current green value of the color.
 //! @param b Current blue value of the color.
-//! @param a Current alpha value of the color.
+//! @param alpha Current alpha value of the color.
 
 void
-c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
+c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha )
 {
     if ( plsc->cmap0 == NULL )
         plscmap0n( 0 );
 
-    *r = -1;
-    *g = -1;
-    *b = -1;
-    *a = -1.0;
+    *r     = -1;
+    *g     = -1;
+    *b     = -1;
+    *alpha = -1.0;
 
     if ( icol0 < 0 || icol0 > plsc->ncol0 )
     {
@@ -413,10 +413,10 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
         return;
     }
 
-    *r = plsc->cmap0[icol0].r;
-    *g = plsc->cmap0[icol0].g;
-    *b = plsc->cmap0[icol0].b;
-    *a = plsc->cmap0[icol0].a;
+    *r     = plsc->cmap0[icol0].r;
+    *g     = plsc->cmap0[icol0].g;
+    *b     = plsc->cmap0[icol0].b;
+    *alpha = plsc->cmap0[icol0].a;
 
     return;
 }
@@ -471,11 +471,11 @@ c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 )
 //! @param r Array of red values.
 //! @param g Array of green values.
 //! @param b Array of blue values.
-//! @param a Array of alpha values.
+//! @param alpha Array of alpha values.
 //! @param ncol0 Total number of RGBA values.
 
 void
-c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol0 )
+c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha, PLINT ncol0 )
 {
     int i;
 
@@ -486,11 +486,11 @@ c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
         if ( ( r[i] < 0 || r[i] > 255 ) ||
              ( g[i] < 0 || g[i] > 255 ) ||
              ( b[i] < 0 || b[i] > 255 ) ||
-             ( a[i] < 0.0 || a[i] > 1.0 ) )
+             ( alpha[i] < 0.0 || alpha[i] > 1.0 ) )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer, BUFFER_SIZE, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
-                (int) r[i], (int) g[i], (int) b[i], (double) a[i] );
+                (int) r[i], (int) g[i], (int) b[i], (double) alpha[i] );
             plabort( buffer );
             return;
         }
@@ -498,7 +498,7 @@ c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
         plsc->cmap0[i].r = (unsigned char) r[i];
         plsc->cmap0[i].g = (unsigned char) g[i];
         plsc->cmap0[i].b = (unsigned char) b[i];
-        plsc->cmap0[i].a = a[i];
+        plsc->cmap0[i].a = alpha[i];
     }
 
     if ( plsc->level > 0 )
@@ -554,11 +554,11 @@ c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 )
 //! @param r Array of red values.
 //! @param g Array of green values.
 //! @param b Array of blue values.
-//! @param a Array of alpha values.
+//! @param alpha Array of alpha values.
 //! @param ncol1 Total number of RGBA values.
 
 void
-c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLINT ncol1 )
+c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha, PLINT ncol1 )
 {
     int i;
 
@@ -569,18 +569,18 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *a, PLI
         if ( ( r[i] < 0 || r[i] > 255 ) ||
              ( g[i] < 0 || g[i] > 255 ) ||
              ( b[i] < 0 || b[i] > 255 ) ||
-             ( a[i] < 0.0 || a[i] > 1.0 ) )
+             ( alpha[i] < 0.0 || alpha[i] > 1.0 ) )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer, BUFFER_SIZE, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
-                (int) r[i], (int) g[i], (int) b[i], (double) a[i] );
+                (int) r[i], (int) g[i], (int) b[i], (double) alpha[i] );
             plabort( buffer );
             return;
         }
         plsc->cmap1[i].r = (unsigned char) r[i];
         plsc->cmap1[i].g = (unsigned char) g[i];
         plsc->cmap1[i].b = (unsigned char) b[i];
-        plsc->cmap1[i].a = a[i];
+        plsc->cmap1[i].a = alpha[i];
     }
 
     if ( plsc->level > 0 )
@@ -721,13 +721,13 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
 //! @param coord1[] first coordinate for each control point
 //! @param coord2[] second coordinate for each control point
 //! @param coord3[] third coordinate for each control point
-//! @param a[] alpha value for each control point
+//! @param alpha[] alpha value for each control point
 //! @param alt_hue_path[] if true, use alternative hue interpolation path
 //! for the associated interval.
 
 void
 c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
-              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *a, const PLINT *alt_hue_path )
+              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *alpha, const PLINT *alt_hue_path )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -779,7 +779,7 @@ c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
         plsc->cmap1cp[n].l = l;
         plsc->cmap1cp[n].s = s;
         plsc->cmap1cp[n].p = pos[n];
-        plsc->cmap1cp[n].a = a[n];
+        plsc->cmap1cp[n].a = alpha[n];
 
         if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
