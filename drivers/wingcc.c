@@ -981,8 +981,6 @@ plD_state_wingcc( PLStream *pls, PLINT op )
     case PLSTATE_CMAP0:
     case PLSTATE_CMAP1:
         dev->colour = RGB( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b );
-
-
         break;
     }
 

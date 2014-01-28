@@ -268,7 +268,7 @@ init( PLStream *pls )
     if ( dev->iodev == NULL )
         plexit( "plD_init_tk: Out of memory." );
 
-    dev->exit_eventloop = 0;
+    dev->exit_eventloop = FALSE;
 
 // Variables used in querying plserver for events
 

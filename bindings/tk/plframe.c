@@ -469,7 +469,7 @@ plFrameCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
 // Start up event handlers and other good stuff
 
-    Tk_SetClass( new, "Plframe" );
+    Tk_SetClass( plFramePtr->tkwin, "Plframe" );
 
     Tk_CreateEventHandler( plFramePtr->tkwin, StructureNotifyMask,
         PlFrameConfigureEH, (ClientData) plFramePtr );
