@@ -136,11 +136,11 @@ c_plwind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
 //--------------------------------------------------------------------------
 
 void
-c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
-         PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
-         PLFLT zmax0, PLFLT alt, PLFLT az )
+c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin,
+         PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin,
+         PLFLT zmax, PLFLT alt, PLFLT az )
 {
-    PLFLT xmin, xmax, ymin, ymax, zmin, zmax, d;
+    PLFLT xmin_adjusted, xmax_adjusted, ymin_adjusted, ymax_adjusted, zmin_adjusted, zmax_adjusted, d;
     PLFLT cx, cy, saz, caz, salt, calt, zscale;
 
     if ( plsc->level < 3 )
@@ -153,7 +153,7 @@ c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
         plabort( "plw3d: Invalid world coordinate boxsize" );
         return;
     }
-    if ( xmin0 == xmax0 || ymin0 == ymax0 || zmin0 == zmax0 )
+    if ( xmin == xmax || ymin == ymax || zmin == zmax )
     {
         plabort( "plw3d: Invalid axis range" );
         return;
@@ -164,40 +164,40 @@ c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
         return;
     }
 
-    d      = 1.0e-5 * ( xmax0 - xmin0 );
-    xmax   = xmax0 + d;
-    xmin   = xmin0 - d;
-    d      = 1.0e-5 * ( ymax0 - ymin0 );
-    ymax   = ymax0 + d;
-    ymin   = ymin0 - d;
-    d      = 1.0e-5 * ( zmax0 - zmin0 );
-    zmax   = zmax0 + d;
-    zmin   = zmin0 - d;
-    cx     = basex / ( xmax - xmin );
-    cy     = basey / ( ymax - ymin );
-    zscale = height / ( zmax - zmin );
-    saz    = sin( dtr * az );
-    caz    = cos( dtr * az );
-    salt   = sin( dtr * alt );
-    calt   = cos( dtr * alt );
+    d             = 1.0e-5 * ( xmax - xmin );
+    xmax_adjusted = xmax + d;
+    xmin_adjusted = xmin - d;
+    d             = 1.0e-5 * ( ymax - ymin );
+    ymax_adjusted = ymax + d;
+    ymin_adjusted = ymin - d;
+    d             = 1.0e-5 * ( zmax - zmin );
+    zmax_adjusted = zmax + d;
+    zmin_adjusted = zmin - d;
+    cx            = basex / ( xmax_adjusted - xmin_adjusted );
+    cy            = basey / ( ymax_adjusted - ymin_adjusted );
+    zscale        = height / ( zmax_adjusted - zmin_adjusted );
+    saz           = sin( dtr * az );
+    caz           = cos( dtr * az );
+    salt          = sin( dtr * alt );
+    calt          = cos( dtr * alt );
 
-    plsc->domxmi = xmin;
-    plsc->domxma = xmax;
-    plsc->domymi = ymin;
-    plsc->domyma = ymax;
+    plsc->domxmi = xmin_adjusted;
+    plsc->domxma = xmax_adjusted;
+    plsc->domymi = ymin_adjusted;
+    plsc->domyma = ymax_adjusted;
     plsc->zzscl  = zscale;
-    plsc->ranmi  = zmin;
-    plsc->ranma  = zmax;
+    plsc->ranmi  = zmin_adjusted;
+    plsc->ranma  = zmax_adjusted;
 
     plsc->base3x = basex;
     plsc->base3y = basey;
-    plsc->basecx = 0.5 * ( xmin + xmax );
-    plsc->basecy = 0.5 * ( ymin + ymax );
+    plsc->basecx = 0.5 * ( xmin_adjusted + xmax_adjusted );
+    plsc->basecy = 0.5 * ( ymin_adjusted + ymax_adjusted );
 // Mathematical explanation of the 3 transformations of coordinates:
 // (I) Scaling:
 //     x' = cx*(x-x_mid) = cx*(x-plsc->basecx)
 //     y' = cy*(y-y_mid) = cy*(y-plsc->basecy)
-//     z' = zscale*(z-zmin) = zscale*(z-plsc->ranmi)
+//     z' = zscale*(z-zmin_adjusted) = zscale*(z-plsc->ranmi)
 // (II) Rotation about z' axis clockwise by the angle of the azimut when
 //      looking from the top in a right-handed coordinate system.
 //     x''          x'

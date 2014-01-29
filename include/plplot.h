@@ -1980,9 +1980,9 @@ c_plvsta( void );
 // Set up a window for three-dimensional plotting.
 
 PLDLLIMPEXP void
-c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
-         PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
-         PLFLT zmax0, PLFLT alt, PLFLT az );
+c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin,
+         PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin,
+         PLFLT zmax, PLFLT alt, PLFLT az );
 
 #ifdef PL_DEPRECATED
 // Set pen width with deprecated integer width
