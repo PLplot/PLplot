@@ -287,7 +287,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    fi
 	fi
     fi
-    echo "Restore PATH to the the original PATH"
+    echo "Restore PATH to the original PATH"
     PATH=$PATH_SAVE
 }
 
