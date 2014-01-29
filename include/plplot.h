@@ -1630,7 +1630,7 @@ c_plsfont( PLINT family, PLINT style, PLINT weight );
 
 PLDLLIMPEXP void
 c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
-           PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            PLFLT shade_min, PLFLT shade_max,
            PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
            PLINT min_color, PLFLT min_width,
@@ -1641,7 +1641,7 @@ c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT
 
 PLDLLIMPEXP void
 c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
-            PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
             PLFLT shade_min, PLFLT shade_max,
             PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
             PLINT min_color, PLFLT min_width,
