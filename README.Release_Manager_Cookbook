@@ -1,20 +1,27 @@
 INDEX
-(1) Prepare and test the documentation
-(2) Check and potentially fix internal consistency
-(3) Update website-related files
-(4) Install and test a (preliminary) local copy of the PLplot website
-(5) Prepare a (preliminary) version of the ChangeLog file for this release
-(6) Prepare the README.release file and/or press those who have made
-(7) Update Release date and versions
-(8) Create (a preliminary version of) the release tarball and check the result
-(9) Do comprehensive test of PLplot.
-(10) Install and test a local copy of the PLplot website
-(11) Create ChangeLog.release
-(12) Create the PLplot Release
-(13) Upload the local website to SourceForge
-(14) Prepare a file release
-(15) Publicize the release announcement
-(16) Prepare immediately for the next release cycle
+** Prepare a (preliminary) version of the ChangeLog file for this release
+** Prepare the README.release file and/or press those who have made
+   changes in this release cycle to update that file
+** Prepare and test the documentation
+** Check and potentially fix internal consistency
+** Update website-related files
+** Install and test a (preliminary) local copy of the PLplot website
+** Update Release date and versions
+** Create (a preliminary version of) the release tarball and check the
+   result for errors
+** Do comprehensive test of PLplot
+** Install and test a local copy of the PLplot website
+** Create ChangeLog.release
+** Create the PLplot Release
+   ++ Preliminaries
+   ++ Install and test a local copy of the PLplot website
+   ++ Upload the local website to SourceForge
+   ++ Create a final release tarball and check the result for errors
+   ++ Sign the release with your plplot Release Manager gpg key
+   ++ Verify the release tarball signing
+   ++ Make a SourceForge file release
+** Publicize the release announcement
+** Prepare immediately for the next release cycle
 
 (A1) GNU Privacy Guard (gpg)
 (A2) Creating a test tarball from trunk
@@ -25,7 +32,34 @@ between the steps which are noted (except for the generation of the
 final release tarball and ChangeLog which depend on virtually all
 prior steps).
 
-(1) Prepare and test the documentation
+Prepare a (preliminary) version of the ChangeLog file for this release
+
+This step does not depend on other steps.
+
+# This makes the BASE used below correct.
+svn update
+
+svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release_preliminary
+
+where <LAST_RELEASE_REVISION> stands for the last revision number of
+the previous release which can be determined e.g., by viewing the
+ChangeLog.release file from the previous release.  Note the
+"_preliminary" suffix to distinguish this from the final result below
+which will contain (if all goes well in the steps below) a record of
+all but the last commit (of the ChangeLog itself) for this release.
+
+** Prepare the README.release file and/or press those who have made
+   changes in this release cycle to update that file
+
+This step depends on the step above entitled
+
+"Prepare a (preliminary) version of the ChangeLog file for this release".
+
+To double-check that file is complete with regards to all major
+developments during this release cycle, skim all the commit messages in
+ChangeLog.release_preliminary determined above.
+
+** Prepare and test the documentation
 
 This step does not depend on other steps.
 
@@ -47,7 +81,7 @@ following the instructions in doc/README.doxygen.
 Update, generate and test our Docbook documentation following the
 instructions in doc/docbook/README.developers.
 
-(2) Check and potentially fix internal consistency
+** Check and potentially fix internal consistency
 
 This step depends on the step above entitled 
 
@@ -107,7 +141,7 @@ Built target check_tcl_parameters
 Check that plplot_h.inc is consistent with touchup.ml and plplot_h
 Built target check_plplot_h.inc
 
-(3) Update website-related files
+** Update website-related files
 
 This step does not depend on other steps.
 
@@ -140,7 +174,7 @@ announcements for the website, and could also be used to generate
 present release announcements for the website if desired.  See
 www/announce/README for just how easy this step would be.
 
-(4) Install and test a (preliminary) local copy of the PLplot website
+** Install and test a (preliminary) local copy of the PLplot website
 
 This step depends on the steps above entitled
 
@@ -221,32 +255,7 @@ below) except that the release date (configured as RELEASE_DATE) and
 the PLplot version in www/example.php will be wrong.  Those
 issues are addressed in "Update release date and versions" below.
 
-(5) Prepare a (preliminary) version of the ChangeLog file for this release
-
-# This makes the BASE used below correct.
-svn update
-
-svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release_preliminary
-
-where <LAST_RELEASE_REVISION> stands for the last revision number of
-the previous release which can be determined e.g., by viewing the
-ChangeLog.release file from the previous release.  Note the
-"_preliminary" suffix to distinguish this from the final result below
-which will contain (if all goes well in the steps below) a record of
-all but the last commit (of the ChangeLog itself) for this release.
-
-(6) Prepare the README.release file and/or press those who have made
-changes in this release cycle to update that file.
-
-This step depends on the step above entitled
-
-"Prepare a (preliminary) version of the ChangeLog file for this release".
-
-To double-check that file is complete with regards to all major
-developments during this release cycle, skim all the commit messages in
-ChangeLog.release_preliminary determined above.
-
-(7) Update Release date and versions
+** Update Release date and versions
 
 This step depends on no others.
 
@@ -266,8 +275,8 @@ version. Also, follow the instructions in that file for updating the
 SOVERSION, the minor number and the patch number for each versioned
 library created by the PLplot build.
 
-(8) Create (a preliminary version of) the release tarball and check the result
-for errors
+** Create (a preliminary version of) the release tarball and check the
+   result for errors
 
 This step depends on the steps above entitled
 
@@ -303,7 +312,7 @@ Look at the info pages that were generated from the tarball using
 
 info /tmp/plplot_install/share/info/plplotdoc.info
 
-(9) Do comprehensive test of PLplot.
+** Do comprehensive test of PLplot
 
 This step depends on the steps above entitled
 
@@ -321,7 +330,7 @@ find ../comprehensive_test_disposeable -name "*.out" |grep -v a.out |xargs grep 
 Enter results of these and all other tests of this release into
 README.release.
 
-(10) Create ChangeLog.release
+** Create ChangeLog.release
 
 N.B. commit all local changes to the repository so they will be
 reflected in the ChangeLog, tagged version of the release, and the release
@@ -349,7 +358,9 @@ release version, the release tarball, etc.  This should be the
 last commit for the trunk version of PLplot (see remarks above
 about when it is necessary to repeat this step).
 
-(11) Create the PLplot Release
+** Create the PLplot Release
+
+   ++ Preliminaries
 
 Based on suggestions in the svn manual, the PLplot svn archive is configured
 as follows:
@@ -394,7 +405,7 @@ messages.
 # IMPORTANT: use this tagged version to create the website and tarball
 cd plplot_tags_5.9.11
 
-(11a) Install and test a local copy of the PLplot website
+   ++ Install and test a local copy of the PLplot website
 
 This step depends on the steps above entitled
 
@@ -413,7 +424,7 @@ Follow the exact steps given above in "Install and test a
 correct RELEASE_DATE and VERSION and also do this
 using the files from the tagged release directory, e.g., plplot_tags_5.9.11
 
-(11b) Upload the local website to SourceForge
+   ++ Upload the local website to SourceForge
 
 Once you are satisfied with the local website, you should upload it to
 SourceForge with rsync.
@@ -474,7 +485,7 @@ it as before.  Also, click the xhtml and css validate buttons on each of
 index.php, download.php, examples.php, documentation.php, and credits.php
 to validate those pages.
 
-(11c) Create a final release tarball and check the result for errors
+   ++ Create a final release tarball and check the result for errors
 
 Follow the above step entitled 
 
@@ -483,15 +494,16 @@ Follow the above step entitled
 but this time for the tagged release to make sure the tarball is exactly
 consistent with the release tag.
 
-(11d) Sign the release with your plplot Release Manager gpg key:
+   ++ Sign the release with your plplot Release Manager gpg key
+
 gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.Y.Z.tar.gz
 
 A list of your GPG keys can be obtained using the command "gpg --list-keys <name>".
 
-(11e) Verify the release tarball signing
+   ++ Verify the release tarball signing
 gpg --verify /tmp/plplot-dist-prep/plplot-X.Y.Z.tar.gz.asc
 
-(11f) Prepare a file release
+   ++ Make a SourceForge file release
 
 #IMPORTANT
 cd /tmp/plplot-dist-prep/
