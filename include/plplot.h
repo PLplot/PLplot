@@ -1599,7 +1599,7 @@ c_plsdiplz( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax );
 // Set seed for internal random number generator
 
 PLDLLIMPEXP void
-c_plseed( unsigned int s );
+c_plseed( unsigned int seed );
 
 // Set the escape character for text strings.
 

@@ -632,7 +632,7 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha,
 //! The inputs are:
 //! @param itype 0: HLS, 1: RGB
 //! @param npts	number of control points
-//! @param pos[] position for each control point
+//! @param intensity[] intensity index for each control point
 //! @param coord1[] first coordinate for each control point
 //! @param coord2[] second coordinate for each control point
 //! @param coord3[] third coordinate for each control point
@@ -640,7 +640,7 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha,
 //! for the associated interval.
 
 void
-c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
+c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *alt_hue_path )
 {
     int   n;
@@ -652,7 +652,7 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
         return;
     }
 
-    if ( ( pos[0] != 0 ) || ( pos[npts - 1] != 1 ) )
+    if ( ( intensity[0] != 0 ) || ( intensity[npts - 1] != 1 ) )
     {
         plabort( "plscmap1l: First, last control points must lie on boundary" );
         return;
@@ -692,7 +692,7 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
         plsc->cmap1cp[n].h = h;
         plsc->cmap1cp[n].l = l;
         plsc->cmap1cp[n].s = s;
-        plsc->cmap1cp[n].p = pos[n];
+        plsc->cmap1cp[n].p = intensity[n];
         plsc->cmap1cp[n].a = 1.0;
 
         if ( alt_hue_path == NULL )
@@ -717,7 +717,7 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
 //!
 //! @param itype 0: HLS, 1: RGB
 //! @param npts	number of control points
-//! @param pos[] position for each control point
+//! @param intensity[] intensity index for each control point
 //! @param coord1[] first coordinate for each control point
 //! @param coord2[] second coordinate for each control point
 //! @param coord3[] third coordinate for each control point
@@ -726,7 +726,7 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *pos,
 //! for the associated interval.
 
 void
-c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
+c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *intensity,
               const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *alpha, const PLINT *alt_hue_path )
 {
     int   n;
@@ -738,7 +738,7 @@ c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
         return;
     }
 
-    if ( ( pos[0] != 0 ) || ( pos[npts - 1] != 1 ) )
+    if ( ( intensity[0] != 0 ) || ( intensity[npts - 1] != 1 ) )
     {
         plabort( "plscmap1la: First, last control points must lie on boundary" );
         return;
@@ -778,7 +778,7 @@ c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *pos,
         plsc->cmap1cp[n].h = h;
         plsc->cmap1cp[n].l = l;
         plsc->cmap1cp[n].s = s;
-        plsc->cmap1cp[n].p = pos[n];
+        plsc->cmap1cp[n].p = intensity[n];
         plsc->cmap1cp[n].a = alpha[n];
 
         if ( alt_hue_path == NULL )
@@ -3045,13 +3045,13 @@ plsnscanf( const char *buffer, int n, const char *format, ... )
 //
 //! Set the seed for the random number generator included.
 //!
-//! @param s The random number generator seed value.
+//! @param seed The random number generator seed value.
 //--------------------------------------------------------------------------
 
 void
-c_plseed( unsigned int s )
+c_plseed( unsigned int seed )
 {
-    init_genrand( s );
+    init_genrand( seed );
 }
 
 //--------------------------------------------------------------------------
