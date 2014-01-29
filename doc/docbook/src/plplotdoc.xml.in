@@ -187,7 +187,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plscmap0n '<link linkend="plscmap0n"><function>plscmap0n</function></link>'>
 <!ENTITY plscmap1_range '<link linkend="plscmap1_range"><function>plgsmap1_range</function></link>'>
 <!ENTITY plscmap1 '<link linkend="plscmap1"><function>plscmap1</function></link>'>
+<!ENTITY plscmap1a '<link linkend="plscmap1a"><function>plscmap1a</function></link>'>
 <!ENTITY plscmap1l '<link linkend="plscmap1l"><function>plscmap1l</function></link>'>
+<!ENTITY plscmap1la '<link linkend="plscmap1la"><function>plscmap1la</function></link>'>
 <!ENTITY plscmap1n '<link linkend="plscmap1n"><function>plscmap1n</function></link>'>
 <!ENTITY plscol0 '<link linkend="plscol0"><function>plscol0</function></link>'>
 <!ENTITY plscolbg '<link linkend="plscolbg"><function>plscolbg</function></link>'>

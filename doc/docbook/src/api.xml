@@ -2347,7 +2347,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>labels</parameter>
-	  (<literal>const char *const *</literal>, input)
+	  (<literal>const char * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2378,7 +2378,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>axis_opts</parameter>
-	  (<literal>const char *const *</literal>, input)
+	  (<literal>const char * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2427,7 +2427,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>values</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2741,7 +2741,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>f</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -6988,7 +6988,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>idata</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7148,7 +7148,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>idata</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7808,7 +7808,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>text</parameter>
-	  (<literal>const char *const *</literal>, input)
+	  (<literal>const char * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7940,7 +7940,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>symbols</parameter>
-	  (<literal>const char *const *</literal>, input)
+	  (<literal>const char * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8610,7 +8610,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8752,7 +8752,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9327,7 +9327,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9485,7 +9485,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -9696,7 +9696,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>const PLFLT *const *</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -13667,7 +13667,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>a</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -13768,7 +13768,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -13831,7 +13831,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>fill</parameter>
-	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
+	  (<literal>void (*) (PLINT, const PLFLT *, const PLFLT *)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -13969,7 +13969,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>a</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -14139,7 +14139,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>fill</parameter>
-	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
+	  (<literal>void (*) (PLINT, const PLFLT *, const PLFLT *)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -14257,7 +14257,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>a</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -14480,7 +14480,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>fill</parameter>
-	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
+	  (<literal>void (*) (PLINT, const PLFLT *, const PLFLT *)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -14599,7 +14599,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>label_func</parameter>
-	  (<literal>void (*) (PLINT, PLFLT, char *, PLINT, void *)</literal>, input)
+	  (<literal>void (*) (PLINT, PLFLT, char *, PLINT, PLPointer)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -14651,7 +14651,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>label_data</parameter>
-	  (<literal>void *</literal>, input)
+	  (<literal>PLPointer</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -15152,10 +15152,10 @@ device support!)
 
   <sect1 id="plspal1" renderas="sect3">
     <title>
-      <function>plspal1</function>: Set the colors for color table 1
-      from a cmap1 file
+      <function>plspal1</function>: Set the palette for cmap1
+      using the specified cmap1*.pal format file
     </title>
-
+    
     <para>
       <funcsynopsis>
 	<funcprototype>
@@ -15163,12 +15163,13 @@ device support!)
 	    <function>plspal1</function>
 	  </funcdef>
 	  <paramdef><parameter>filename</parameter></paramdef>
+	  <paramdef><parameter>interpolate</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      Set the colors for color table 1 from a cmap1 file
+      Set the palette for cmap1 using the specified cmap1*.pal format file.
     </para>
 
     <variablelist>
@@ -15179,19 +15180,42 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    The name of the cmap1 file, or a empty to string to
-	    specify the default cmap1 file.
+	    The name of the cmap1*.pal file, or an empty string to
+	    specify the default cmap1.pal file.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>interpolate</parameter>
+	  (<literal>PLBOOL</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    If this parameter is true, the columns containing the
+	    intensity index, r, g, b, alpha and
+	    alt_hue_path in the cmap1*.pal file are used to set
+	    the cmap1 palette with a call to &plscmap1la;.
+	    (The cmap1*.pal header contains a flag which controls
+	    whether the r, g, b data sent to &plscmap1la; are
+	    interpreted as HLS or RGB.)
+	  </para>
+	  <para>
+	    If this parameter is false, the intensity index and alt_hue_path columns
+	    are ignored and the r, g, b (interpreted as RGB), and alpha columns of the
+	    cmap1*.pal file are used instead to set the cmap1 palette directly
+	    with a call to &plscmap1a;.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      Redacted form: <function>plspal1(filename)</function>
+      Redacted form: <function>plspal1(filename, interpolate)</function>
     </para>
 
     <para>
-      This function is in example 16.
+      This function is used in example 16.
     </para>
 
   </sect1>
@@ -15482,7 +15506,7 @@ device support!)
 	  <funcdef>
 	    <function>plstart</function>
 	  </funcdef>
-	  <paramdef><parameter>device</parameter></paramdef>
+	  <paramdef><parameter>devname</parameter></paramdef>
 	  <paramdef><parameter>nx</parameter></paramdef>
 	  <paramdef><parameter>ny</parameter></paramdef>
 	</funcprototype>
@@ -15491,12 +15515,12 @@ device support!)
 
     <para>
       Alternative to &plstar; for initializing the plotting package.  The
-      <literal><parameter>device</parameter></literal> name keyword for the
-      desired output device must be supplied as an argument.  The device
+      device name keyword for the
+      desired output device must be supplied as an argument.  These
       keywords are the same as those printed out by &plstar;.  If the
       requested device is not available, or if the input string is empty or
       begins with ``?'', the prompted start up of &plstar; is used.  This
-      routine also divides the output device into
+      routine also divides the output device page into
       <literal><parameter>nx</parameter></literal> by
       <literal><parameter>ny</parameter></literal> subpages, each of which
       may be used independently.  The subroutine &pladv; is used to advance
@@ -15506,12 +15530,12 @@ device support!)
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>device</parameter>
+	  <parameter>devname</parameter>
 	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Device name (keyword) of the required output device.  If NULL
+	    Device name keyword of the required output device.  If NULL
 	    or if the first character is a ``?'', the normal (prompted)
 	    start up is used.
 	  </para>
@@ -15548,12 +15572,12 @@ device support!)
       <itemizedlist>
 	<listitem>
 	  <para>
-	    General: <function>plstart(device, nx, ny)</function>
+	    General: <function>plstart(devname, nx, ny)</function>
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Perl/PDL: <function>plstart(nx, ny, device)</function>
+	    Perl/PDL: <function>plstart(nx, ny, devname)</function>
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -15577,27 +15601,28 @@ device support!)
 	  <funcdef>
 	    <function>plstransform</function>
 	  </funcdef>
-	  <paramdef><parameter>transform_fun</parameter></paramdef>
-	  <paramdef><parameter>data</parameter></paramdef>
+	  <paramdef><parameter>coordinate_transform</parameter></paramdef>
+	  <paramdef><parameter>coordinate_transform_data</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      This function can be used to define a coordinate transformation which
-      affects all elements drawn within the current plot window.  The
-      transformation function is similar to that provided for the &plmap;
-      and &plmeridians; functions.  The
-      <literal><parameter>data</parameter></literal> parameter may be used to
-      pass extra data to
-      <literal><parameter>transform_fun</parameter></literal>.
+      This function can be used to define a coordinate transformation
+      which affects all elements drawn within the current plot window.
+      The <literal><parameter>coordinate_transform</parameter></literal>
+      function is similar to that provided for the &plmap; and
+      &plmeridians; functions.  The
+      <literal><parameter>coordinate_transform_data</parameter></literal>
+      parameter may be used to pass extra data to
+      <literal><parameter>coordinate_transform</parameter></literal>.
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>transform_fun</parameter>
-          (<literal>void (*) (PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer)
+	  <parameter>coordinate_transform</parameter>
+          (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
           </literal>, input)
 	</term>
 	<listitem>
@@ -15610,13 +15635,13 @@ device support!)
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>data</parameter>
+	  <parameter>coordinate_transform_data</parameter>
 	  (<literal>PLPointer</literal>, input)
 	</term>
 	<listitem>
 	  <para>
             Optional extra data for
-            <parameter><literal>transform_fun</literal></parameter>.
+            <parameter><literal>coordinate_transform</literal></parameter>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -15627,7 +15652,7 @@ device support!)
       <itemizedlist>
 	<listitem>
 	  <para>
-	    General: <function>plstransform(transform_fun, data)</function>
+	    General: <function>plstransform(coordinate_transform, coordinate_transform_data)</function>
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -15687,7 +15712,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -15698,7 +15723,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -15782,7 +15807,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -15793,7 +15818,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -15804,7 +15829,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -15849,7 +15874,7 @@ device support!)
 	    <function>plstripa</function>
 	  </funcdef>
 	  <paramdef><parameter>id</parameter></paramdef>
-	  <paramdef><parameter>p</parameter></paramdef>
+	  <paramdef><parameter>pen</parameter></paramdef>
 	  <paramdef><parameter>x</parameter></paramdef>
 	  <paramdef><parameter>y</parameter></paramdef>
 	</funcprototype>
@@ -15872,13 +15897,13 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Identification number (set up in &plstripc;) of the strip chart.
+	    Identification number of the strip chart (set up in &plstripc;).
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p</parameter>
+	  <parameter>pen</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -15912,7 +15937,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: <function>plstripa(id, p, x, y)</function>
+      Redacted form: <function>plstripa(id, pen, x, y)</function>
     </para>
 
     <para>
@@ -15975,7 +16000,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>xspec</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -15986,7 +16011,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>yspec</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16128,7 +16153,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>colline</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16139,7 +16164,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>styline</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16150,7 +16175,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>legline</parameter>
-	  (<literal>char **</literal>, input)
+	  (<literal>const char **</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16161,7 +16186,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>labx</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16172,7 +16197,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>laby</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16183,7 +16208,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>labtop</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16271,7 +16296,7 @@ device support!)
 	  <funcdef>
 	    <function>plstyl</function>
 	  </funcdef>
-	  <paramdef><parameter>nels</parameter></paramdef>
+	  <paramdef><parameter>nms</parameter></paramdef>
 	  <paramdef><parameter>mark</parameter></paramdef>
 	  <paramdef><parameter>space</parameter></paramdef>
 	</funcprototype>
@@ -16285,16 +16310,16 @@ device support!)
       <literal><parameter>mark</parameter></literal> and
       <literal><parameter>space</parameter></literal> respectively.  The
       number of mark-space pairs is specified by
-      <literal><parameter>nels</parameter></literal>.  In order to return
+      <literal><parameter>nms</parameter></literal>.  In order to return
       the line style to the default continuous line, &plstyl; should be
-      called with <literal><parameter>nels</parameter>=0</literal>.(see
+      called with <literal><parameter>nms</parameter>=0</literal>.(see
       also &pllsty;)
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>nels</parameter>
+	  <parameter>nms</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -16302,16 +16327,16 @@ device support!)
 	    The number of <literal><parameter>mark</parameter></literal>
 	    and <literal><parameter>space</parameter></literal> elements in
 	    a line.  Thus a simple broken line can be obtained by setting
-	    <literal><parameter>nels</parameter>=1</literal>.  A continuous
+	    <literal><parameter>nms</parameter>=1</literal>.  A continuous
 	    line is specified by setting
-	    <literal><parameter>nels</parameter>=0</literal>.
+	    <literal><parameter>nms</parameter>=0</literal>.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>mark</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16323,7 +16348,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>space</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16384,7 +16409,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16396,7 +16421,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16408,7 +16433,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16496,7 +16521,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16574,7 +16599,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16586,7 +16611,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16598,7 +16623,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16685,7 +16710,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16735,7 +16760,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>indexymin</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16754,7 +16779,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>indexymax</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>const PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16812,7 +16837,7 @@ device support!)
     <para>
       Plots a three dimensional shaded surface plot within the environment set up
       by &plw3d;. The surface is defined by the data contained in the 2D 
-      <literal>PLFLT **</literal> matrix or the <literal>PLfGrid2</literal> structure
+      <literal>const PLFLT * const *</literal> matrix or the <literal>PLfGrid2</literal> structure
       <literal><parameter>zp</parameter></literal>. How the data in 
       <literal><parameter>zp</parameter></literal> is rendered is determined by the 
       <literal><parameter>zops</parameter></literal> parameter.
@@ -16821,7 +16846,7 @@ device support!)
       PLplot core will return an appropriate function pointer: 
       <literal>plf2ops_c()</literal> (use when 
       <literal><parameter>zp</parameter></literal> is of type 
-      <literal>PLFLT **</literal>),
+      <literal>const PLFLT * const *</literal>),
       <literal>plf2ops_grid_c()</literal> (use when 
       <literal><parameter>zp</parameter></literal> 
       is a pointer to a row-major <literal>PLfGrid2</literal> structure), 
@@ -16842,7 +16867,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16854,7 +16879,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16866,7 +16891,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>zops</parameter>
-	  (<literal>void (*) (?)</literal>, input)
+	  (<literal>PLF2OPS</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -16877,13 +16902,13 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>zp</parameter>
-	  (<literal>PLFLT ** or PLfGrid2 *</literal>, input)
+	  (<literal>PLPointer</literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Pointer to the data to be plotted, either as a vectored 
-	    two-dimensional array with set of function values, or as
-	    PLfGrid2 structure.
+	    two-dimensional array with set of function values or as
+	    a PLfGrid2 structure.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -16966,7 +16991,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -17024,7 +17049,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>arrowx, arrowy</parameter>
-	  (<literal>PLFLT *</literal>,input)
+	  (<literal>const PLFLT *</literal>,input)
 	</term>
 	<listitem>
 	  <para>
@@ -17334,7 +17359,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -17345,7 +17370,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
+	  (<literal>const PLFLT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -17669,7 +17694,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>u, v</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>const PLFLT * const *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
