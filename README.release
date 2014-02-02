@@ -43,7 +43,40 @@ likely to be 5.11.0, 5.12.0, etc.
 
 2. Changes relative to the previous release
 
-None at this time.
+2.1 Update the parts of the build system that find Tcl-related software.
+
+The build system now checks extensively for the consistency of the
+Tcl/Tk/Itcl/Itk/Iwidgets components that are found.
+
+2.2 Update the Tcl-related epa_build configurations.
+
+The epa_build subproject of PLplot design goal is to make it easy to
+build PLplot dependencies on all platforms.
+
+Previously version 8.6 of Tcl/Tk and version 3 of Itcl/Itk, version 4
+of Itcl/Itk, and versions 4.0 and 4.1 of Iwidgets could be epa_built
+on Linux, but now the epa_build configuration files have been updated
+so these builds also succeed on MinGW/MSYS.
+
+2.3 Update the PLplot build system so that the Tcl/Tk/Itcl/Itk/Iwidgets
+bindings and examples work on MinGW/MSYS.
+
+2.4 Update api.xml to be consistent with our public API defined by plplot.h.
+
+This substantial improvement to our DocBook documentation for our
+public API has been made possible by the "check" application written
+by Hǎiliàng Wáng (see
+https://github.com/hailiang/go-plplot/tree/master/c/check) which uses
+gccxml to convert the API information in plplot.h into XML and
+compares those results (names of functions in our public API, and for
+each of those functions, number of arguments, names of arguments, and
+types of arguments) with the corresponding information in api.xml.
+The original report from the check_api_xml_consistency target (which
+runs the check programme) showed ~150 inconsistencies between api.xml
+and our public API including several functions in our public API that
+were not documented at all in api.xml.  That number of inconsistencies
+has now been reduced to zero which constitutes a substantial upgrade
+in the quality of our API documentation.
 
 3. Tests made for the current release.
 
