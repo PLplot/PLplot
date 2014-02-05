@@ -191,15 +191,17 @@ else(NON_TRANSITIVE)
   set(PC_REQUIRES_TAG "Requires")
 endif(NON_TRANSITIVE)
 
+# Deal with external libraries.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
+set(libplplot${LIB_TAG}_LINK_LIBRARIES)
 if(ENABLE_DYNDRIVERS)
-  set(libplplot${LIB_TAG}_LINK_LIBRARIES ${LTDL_LIBRARIES})
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${LTDL_LIBRARIES})
   #message("libplplot${LIB_TAG}_LINK_LIBRARIES =  ${libplplot${LIB_TAG}_LINK_LIBRARIES}")
   #message("libplplot${LIB_TAG}_RPATH = ${libplplot${LIB_TAG}_RPATH}")
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${libplplot${LIB_TAG}_RPATH})
+  list(APPEND LIB_INSTALL_RPATH ${libplplot${LIB_TAG}_RPATH})
 else(ENABLE_DYNDRIVERS)
-  set(libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
+  list(APPEND LIB_INSTALL_RPATH ${DRIVERS_RPATH})
   if(ANY_QT_DEVICE)
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
     set_qt_target_properties(plplot${LIB_TAG})
@@ -208,18 +210,47 @@ endif(ENABLE_DYNDRIVERS)
 #message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
 if(MATH_LIB)
-  set(
-    libplplot${LIB_TAG}_LINK_LIBRARIES
-    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-    ${MATH_LIB}
-    )
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${MATH_LIB})
 endif(MATH_LIB)
 
 # Transform "${libplplot${LIB_TAG}_LINK_LIBRARIES}" string to the 
 # standard pkg-config form.
 
+if(HAVE_SHAPELIB)
+  get_source_file_property(PLMAP_COMPILE_PROPS plmap.c COMPILE_FLAGS)
+  # Deal with NOTFOUND case.
+  if(NOT PLMAP_COMPILE_PROPS)
+    set(PLMAP_COMPILE_PROPS)
+  endif(NOT PLMAP_COMPILE_PROPS)
+  set_source_files_properties(plmap.c 
+    PROPERTIES
+    COMPILE_FLAGS "${PLMAP_COMPILE_PROPS} -I${SHAPELIB_INCLUDE_DIR}"
+    )
+  if(HAVE_SAHOOKS)
+  set_source_files_properties(plmap.c 
+    PROPERTIES
+    COMPILE_DEFINITIONS HAVE_SAHOOKS
+    )
+  endif(HAVE_SAHOOKS)
+
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${SHAPELIB_LIBRARIES})
+  list(APPEND LIB_INSTALL_RPATH ${SHAPELIB_RPATH})
+
+endif(HAVE_SHAPELIB)
+
+if(WITH_FREETYPE)
+  get_source_file_property(PLFREETYPE_COMPILE_PROPS plfreetype.c COMPILE_FLAGS)
+  # Deal with NOTFOUND case.
+  if(NOT PLFREETYPE_COMPILE_PROPS)
+    set(PLFREETYPE_COMPILE_PROPS)
+  endif(NOT PLFREETYPE_COMPILE_PROPS)
+  set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "${PLFREETYPE_COMPILE_PROPS} -I${FREETYPE_INCLUDE_DIR}")
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${FREETYPE_LIBRARIES})
+  
+endif(WITH_FREETYPE)
+
 set(libstdcxx_full_path)
-if(NOT BUILD_SHARED_LIBS)
+if(ENABLE_cxx AND NOT BUILD_SHARED_LIBS)
   # For this special case where the plplot library is a static C++
   # library, pkg-config needs to add -L and -l options corresponding
   # to libstd++.so to the link flags it delivers.  Another alternative
@@ -243,15 +274,17 @@ if(NOT BUILD_SHARED_LIBS)
   endif(EXISTS "${CMAKE_CXX_COMPILER}")
   if(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
     string(REGEX REPLACE "^.*(LIBRARY_PATH=.*)\nCOLLECT_GCC_OPTIONS.*$" "\\1"
-      CXX_library_path_string ${CXX_string}
+      CXX_library_path_string "${CXX_string}"
       )
     #message(STATUS "CXX_library_path_string = ${CXX_library_path_string}")
     if(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
-      string(REGEX REPLACE "^LIBRARY_PATH=" "" CXX_library_path ${CXX_library_path_string})
-      # This converts native path delimiters to a semicolon-delimited
-      #(cmake) list of directories.
-      file(TO_CMAKE_PATH ${CXX_library_path} CXX_library_path)
-      message(STATUS "CXX_library_path = ${CXX_library_path}")
+      string(REGEX REPLACE "^LIBRARY_PATH=" "" CXX_library_path "${CXX_library_path_string}")
+      # For both Linux and MinGW, CXX_library_path is a semicolon
+      # delimited list which is identical to the form of a CMake list.
+      # Furthermore, for the MinGW case, the drive letters are in the
+      # colon form, but experiments show that is exactly the form
+      # required by find_library for the MinGW case.  Net result: no
+      # conversion necessary for either Linux or MinGW.
       find_library(libstdcxx_full_path NAMES stdc++ PATHS ${CXX_library_path})
       message(STATUS "libstdcxx_full_path = ${libstdcxx_full_path}")
     else(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
@@ -266,9 +299,15 @@ if(NOT BUILD_SHARED_LIBS)
     message(STATUS "CXX_string = ${CXX_string}")
   endif(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
   if(NOT libstdcxx_full_path)
-    message(STATUS "WARNING: failed to find viable C++ compiler library so pkg-config link flags will be incomplete") 
+    message(STATUS "WARNING: failed to find libstdc++ so pkg-config link flags will be incomplete") 
   endif(NOT libstdcxx_full_path)
-endif(NOT BUILD_SHARED_LIBS)
+endif(ENABLE_cxx AND NOT BUILD_SHARED_LIBS)
+
+# Transform current information in libplplot${LIB_TAG}_LINK_LIBRARIES
+# into pkg-config (libplplot${LIB_TAG}_LINK_FLAGS) form.  Both variables
+# will have data added to them afterward due to the internal PLplot libraries
+# which have a different pkg-config treatment than the external libraries
+# dealt with here.
 
 if(libstdcxx_full_path)
   pkg_config_link_flags(
@@ -282,12 +321,12 @@ else(libstdcxx_full_path)
   )
 endif(libstdcxx_full_path)
 
+# The above completes dealing with the external libraries.  Now
+# deal with the internal libraries that are built by the PLplot
+# build system.
+
 if(WITH_CSA)
-  set(
-    libplplot${LIB_TAG}_LINK_LIBRARIES
-    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-    csirocsa
-    )
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES csirocsa)
   set(
     libplplot${LIB_TAG}_LINK_FLAGS
     "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsirocsa"
@@ -295,11 +334,7 @@ if(WITH_CSA)
 endif(WITH_CSA)
 
 if(PL_HAVE_QHULL)
-  set(
-    libplplot${LIB_TAG}_LINK_LIBRARIES
-    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-    csironn
-    )
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES csironn)
   if(QHULL_RPATH)
     set(
       libplplot${LIB_TAG}_LINK_FLAGS
@@ -317,11 +352,11 @@ if(PL_HAVE_QHULL)
     )
   # Needed by the traditional pkg-config approach for installed examples
   # as well as the new CMake-based build system for the installed examples.
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${QHULL_RPATH})
+  list(APPEND LIB_INSTALL_RPATH ${QHULL_RPATH})
 endif(PL_HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
-  list(APPEND  libplplot${LIB_TAG}_LINK_LIBRARIES nistcd)
+  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES nistcd)
   set(
     libplplot${LIB_TAG}_LINK_FLAGS
     "${libplplot${LIB_TAG}_LINK_FLAGS} -lnistcd"
@@ -329,83 +364,11 @@ if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
   include_directories(${CMAKE_SOURCE_DIR}/lib/nistcd)
 endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 
-set(
-  libplplot${LIB_TAG}_LINK_LIBRARIES
-  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-  qsastime
-  )
+list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES qsastime)
 set(
   libplplot${LIB_TAG}_LINK_FLAGS
   "${libplplot${LIB_TAG}_LINK_FLAGS} -lqsastime"
   )
-
-if(WITH_FREETYPE)
-  get_source_file_property(PLFREETYPE_COMPILE_PROPS plfreetype.c COMPILE_FLAGS)
-  # Deal with NOTFOUND case.
-  if(NOT PLFREETYPE_COMPILE_PROPS)
-    set(PLFREETYPE_COMPILE_PROPS)
-  endif(NOT PLFREETYPE_COMPILE_PROPS)
-  set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "${PLFREETYPE_COMPILE_PROPS} -I${FREETYPE_INCLUDE_DIR}")
-  set(
-    libplplot${LIB_TAG}_LINK_LIBRARIES
-    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
-    )
-  
-  # Convert to -L... -l... form.
-  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
-    _FREETYPE_LINK_FLAGS
-    ${FREETYPE_LIBRARIES}
-    )
-  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
-    FREETYPE_LINK_FLAGS
-    ${_FREETYPE_LINK_FLAGS}
-    )
-  set(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_FLAGS} ${FREETYPE_LINK_FLAGS}"
-    )
-endif(WITH_FREETYPE)
-
-if(HAVE_SHAPELIB)
-  get_source_file_property(PLMAP_COMPILE_PROPS plmap.c COMPILE_FLAGS)
-  # Deal with NOTFOUND case.
-  if(NOT PLMAP_COMPILE_PROPS)
-    set(PLMAP_COMPILE_PROPS)
-  endif(NOT PLMAP_COMPILE_PROPS)
-  set_source_files_properties(plmap.c 
-    PROPERTIES
-    COMPILE_FLAGS "${PLMAP_COMPILE_PROPS} -I${SHAPELIB_INCLUDE_DIR}"
-    )
-  if(HAVE_SAHOOKS)
-  set_source_files_properties(plmap.c 
-    PROPERTIES
-    COMPILE_DEFINITIONS HAVE_SAHOOKS
-    )
-  endif(HAVE_SAHOOKS)
-
-  set(
-    libplplot${LIB_TAG}_LINK_LIBRARIES
-    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-    ${SHAPELIB_LIBRARIES}
-    )
-  
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${SHAPELIB_RPATH})
-
-  # Convert to -L... -l... form.
-  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
-    _SHAPELIB_LINK_FLAGS
-    ${SHAPELIB_LIBRARIES}
-    )
-  string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
-    SHAPELIB_LINK_FLAGS
-    ${_SHAPELIB_LINK_FLAGS}
-    )
-  set(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_FLAGS} ${SHAPELIB_LINK_FLAGS}"
-    )
-endif(HAVE_SHAPELIB)
 
 #message(STATUS
 #"libplplot${LIB_TAG}_LINK_LIBRARIES = ${libplplot${LIB_TAG}_LINK_LIBRARIES}"

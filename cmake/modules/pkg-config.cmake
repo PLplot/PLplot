@@ -42,10 +42,17 @@ if(PKG_CONFIG_EXECUTABLE)
   set(PKG_CONFIG_DIR "${LIB_DIR}/pkgconfig")
   set(env_PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
   if(env_PKG_CONFIG_PATH)
-    set(PKG_CONFIG_ENV PKG_CONFIG_PATH="${PKG_CONFIG_DIR}:${env_PKG_CONFIG_PATH}")
+    set(_pkg_config_path "${PKG_CONFIG_DIR};${env_PKG_CONFIG_PATH}")
   else(env_PKG_CONFIG_PATH)
-    set(PKG_CONFIG_ENV PKG_CONFIG_PATH="${PKG_CONFIG_DIR}")
+    set(_pkg_config_path "${PKG_CONFIG_DIR}")
   endif(env_PKG_CONFIG_PATH)
+
+  if(MINGW)
+    determine_msys_path(_pkg_config_path "${_pkg_config_path}")
+  endif(MINGW)
+
+  set(PKG_CONFIG_ENV PKG_CONFIG_PATH="${_pkg_config_path}")
+
 else(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - not found")
   message(STATUS
@@ -110,7 +117,8 @@ endmacro(pkg_check_pkgconfig)
 macro(pkg_config_link_flags _link_flags_out _link_flags_in)
   # Transform link flags into a form that is suitable to be used for
   # output pkg-config (*.pc) files.
-  # N.B. ${_link_flags_in} must be a string and not a list.
+  # N.B. ${_link_flags_in} must be in quoted "${list_variable}" form
+  # where list_variable is a CMake list.
 
   # First strip out optimized / debug options which are not needed
   # Currently only FindQt4 seems to need this.
@@ -135,28 +143,42 @@ macro(pkg_config_link_flags _link_flags_out _link_flags_in)
   # since it appears pkg-config handles that latter form much better (with
   # regard to keeping the correct order and eliminating duplicates).
 
-  # These REGEX REPLACE's won't actually replace anything on bare windows since
-  # library names are not of this form on that platform.  Something to be
-  # considered later if we decide to use pkg-config on bare windows.
-
-  # This logic will need to be expanded for Unix platforms other than
-  # Mac OS X and Linux.
-  if(APPLE)
-    set(suffix_list ".so" ".a" ".dylib")
-  else(APPLE)
-    set(suffix_list ".so" ".a")
-  endif(APPLE)
+  # This logic appears to work fine on Linux, Mac OS X, and MinGW/MSYS
+  # but it may need some generalization on other platforms such as
+  # Cygwin.
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(suffix_list "\\.so" "\\.a")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(suffix_list "\\.so" "\\.a" "\\.dylib")
+  elseif(WIN32_OR_CYGWIN)
+    # Order is important here.
+    set(suffix_list "\\.dll\\.a" "\\.a")
+  else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # Probably a non-Linux, non-Mac OS X, Unix platform
+    # For this case we assume the same as Linux.
+    set(suffix_list "\\.so" "\\.a")
+  endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
   foreach(suffix ${suffix_list})
+    if(WIN32_OR_CYGWIN)
+      # Look for colon-delimited drive-letter form on these platforms.
+      string(
+	REGEX REPLACE "([a-zA-Z]:/[^ ]*)/lib([^ ]*)${suffix}" "-L\\1 -l\\2"
+	${_link_flags_out}
+	"${${_link_flags_out}}"
+	)
+      #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
+    endif(WIN32_OR_CYGWIN)
+    # Look for form starting with "/" on all platforms.
     string(
-    REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\${suffix}" "-L\\1 -l\\2"
-    ${_link_flags_out}
-    "${${_link_flags_out}}"
-    )
+      REGEX REPLACE "(/[^ ]*)/lib([^ ]*)${suffix}" "-L\\1 -l\\2"
+      ${_link_flags_out}
+      "${${_link_flags_out}}"
+      )
     #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
   endforeach(suffix ${suffix_list})
 
-  if(APPLE)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     # For Mac OS X transform frameworks information into correct form.
     string(
     REGEX REPLACE
@@ -166,7 +188,7 @@ macro(pkg_config_link_flags _link_flags_out _link_flags_in)
     ${${_link_flags_out}}
     )
     #message("(frameworks) ${_link_flags_out} = ${${_link_flags_out}}")
-  endif(APPLE)
+  endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
 endmacro(pkg_config_link_flags)
 

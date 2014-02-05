@@ -221,3 +221,21 @@ function(filter_rpath rpath)
   #message("DEBUG: (filtered) ${rpath} = ${internal_rpath}")
   set(${rpath} ${internal_rpath} PARENT_SCOPE)
 endfunction(filter_rpath)
+
+if(MINGW)
+  # Useful function to convert Windows list of semicolon-delimited
+  # PATHs to the equivalent list of MSYS PATHs (exactly like the
+  # colon-delimited Unix list of PATHs except the driver letters are
+  # specified as the initial one-character component of each of the
+  # PATHs).  For example, this function will transform the Windows
+  # list of PATHs, "z:\path1;c:\path2" to "/z/path1:/c/path2".
+  function(determine_msys_path MSYS_PATH NATIVE_PATH)
+    #message(STATUS "NATIVE_PATH = ${NATIVE_PATH}")
+    string(REGEX REPLACE "^\([a-zA-z]\):" "/\\1" PATH  "${NATIVE_PATH}")
+    string(REGEX REPLACE ";\([a-zA-z]\):" ";/\\1" PATH  "${PATH}")
+    string(REGEX REPLACE ";" ":" PATH  "${PATH}")
+    file(TO_CMAKE_PATH "${PATH}" PATH)
+    #message(STATUS "MSYS_PATH = ${PATH}")
+    set(${MSYS_PATH} ${PATH} PARENT_SCOPE)
+  endfunction(determine_msys_path)
+endif(MINGW)
