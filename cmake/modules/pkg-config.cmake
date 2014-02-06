@@ -41,14 +41,28 @@ if(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - found")
   set(PKG_CONFIG_DIR "${LIB_DIR}/pkgconfig")
   set(env_PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
-  if(env_PKG_CONFIG_PATH)
-    set(_pkg_config_path "${PKG_CONFIG_DIR};${env_PKG_CONFIG_PATH}")
-  else(env_PKG_CONFIG_PATH)
-    set(_pkg_config_path "${PKG_CONFIG_DIR}")
-  endif(env_PKG_CONFIG_PATH)
 
+  # Will likely need WIN32 and CYGWIN stanzas as well
   if(MINGW)
+    if(env_PKG_CONFIG_PATH)
+      # On MinGW (and probably Cygwin and bare Windows) env_PKG_CONFIG_PATH
+      # is semi-colon delimited.
+      set(_pkg_config_path "${PKG_CONFIG_DIR};${env_PKG_CONFIG_PATH}")
+    else(env_PKG_CONFIG_PATH)
+      set(_pkg_config_path "${PKG_CONFIG_DIR}")
+    endif(env_PKG_CONFIG_PATH)
+    # Convert semi-colon delimited path string with colon drive
+    # letters to a colong delimited path form with slash drive letters
+    # that pkg-config configuration files can use.
     determine_msys_path(_pkg_config_path "${_pkg_config_path}")
+  else(MINGW)
+    # Only tested on Unix (Linux) so far where env_PKG_CONFIG_PATH
+    # is colon-delimited.
+    if(env_PKG_CONFIG_PATH)
+      set(_pkg_config_path "${PKG_CONFIG_DIR}:${env_PKG_CONFIG_PATH}")
+    else(env_PKG_CONFIG_PATH)
+      set(_pkg_config_path "${PKG_CONFIG_DIR}")
+    endif(env_PKG_CONFIG_PATH)
   endif(MINGW)
 
   set(PKG_CONFIG_ENV PKG_CONFIG_PATH="${_pkg_config_path}")
