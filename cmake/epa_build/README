@@ -1,5 +1,5 @@
-This file contains directions for epa_build users.  If in addition you
-are interested in helping to develop that project, you should look at
+This file contains directions for epa_build users.  If you are
+interested in helping to develop that project, you should look at
 README.developers as well.
 
 The epa_build project should work out of the box for Linux or Mac OS X
@@ -79,31 +79,52 @@ correction in a following post in that thread.
 ===============================================================================
 Set up instructions for epa_build
 
+Setup consists of setting the following environment variables
+in a way that is appropriate for your particular system.
+
+INSTALL_PREFIX
+EPA_BUILD_SOURCE_PATH
+CFLAGS
+CXXFLAGS
+FFLAGS
+CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH
+PATH
+PKG_CONFIG_PATH
+BUILD_COMMAND
+GENERATOR_STRING
+
+These environment variables are normally set by using
+the source command from bash.  See how this is done for
+various platforms below.
+
 I. Unix platforms:
 
 * Linux
 
-Tailor the indicated values in setup/setup_linux_makefiles for your own
-system, then source that file, e.g.,
+Tailor the indicated values (which are appropriate for my particular
+Linux system) in setup/setup_linux_makefiles for your own system, then
+source that file, i.e.,
 
 source <Top directory of PLplot source tree>/cmake/epa_build/setup/setup_linux_makefiles
 
 * Mac OS X
 
-This has not been tried yet, but something similar to
+This has not been tried yet, but a tailored version of
 setup_linux_makefiles should do the job.
 
 * Cygwin on Windows
 
 Some experiments with this have just been started with nothing written
-down with regards to setup.  But ultimately it should be very similar
-to the Linux case.
+down with regards to setup.  But ultimately it should be similar
+to a tailored form of the Linux case.
 
 II. Non-Cygwin Windows platforms:
 
 * MinGW/MSYS for the Wine version of Windows
 
-Tailor the indicated values in setup_mingw_msys_wine_toolchain and
+Tailor the indicated values (which are appropriate for my particular
+Wine system) in setup_mingw_msys_wine_toolchain and
 setup/setup_msys_makefiles for your own system.  Then execute something
 similar to the following from Linux to get into the bash.exe shell
 on Wine:
@@ -115,10 +136,11 @@ Then from that bash.exe shell execute
 
 bash.exe-3.1$ pushd /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/epa_build/setup;source setup_msys_makefiles;popd
 
-(You need to pushd or cd above to the setup directory because the the
-setup_msys_makefiles file that is sourced, automatically executes
-"source setup_mingw_msys_wine_toolchain", and that only works if it is
-done from the setup directory.)
+You need to pushd to the setup directory to run the source command on
+this platform, then popd back to the original directory as above.  The
+reason for this minor complication is setup_msys_makefiles excecutes "source
+setup_mingw_msys_wine_toolchain", and that only works if it is done
+from the setup directory (the location of that file).
 
 * MinGW/MSYS for the Microsoft version of Windows
 
@@ -148,8 +170,7 @@ I. Unix platforms
 
 Note that setup_linux_makefiles (which needs to be tailored by each
 individual who uses epa_build) sets up all the important environment
-variables you need including GENERATOR_STRING, INSTALL_PREFIX,
-EPA_BUILD_SOURCE_PATH, and BUILD_COMMAND.
+variables listed above.
 
 A. [OPTIONAL] build necessary additional buildtools whose versions you
 prefer compared to the versions available on your Linux distro.
@@ -170,7 +191,7 @@ less cmake.out
 ${BUILD_COMMAND} help
 
 # I recommend building all of them on Linux.
-make build_all >& build_all.out
+${BUILD_COMMAND} build_all >& build_all.out
 
 # Check build_all.out for any errors
 less build_all.out
@@ -178,8 +199,8 @@ less build_all.out
 B. Build and test a lite version of PLplot (without building or using
 major soft dependencies such as pango/cairo, Qt4, and wxwidgets)
 and [OPTIONAL] a fully configured PLplot version (where currently
-pango/cairo and wxwidgets are built and used and the system
-version of Qt4 is used).
+pango/cairo, wxwidgets, and Qt4 are built and used and the system
+version of octave is used).
 
 # Insure you start with an empty build tree and vacant install tree
 # Set <Build tree prefix> to any convenient directory under your control
@@ -188,7 +209,17 @@ mkdir -p <Build tree prefix>/build_dir-linux
 rm -rf <Build tree prefix>/build_dir-linux/* ${INSTALL_PREFIX}
 cd <Build tree prefix>/build_dir-linux
 
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX} $EPA_BUILD_SOURCE_PATH >& cmake.out
+
+# N.B. the -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON option below
+# configurues a run of the comprehensive test script just after PLplot
+# is built and installed for both the build_plplot and
+# build_plplot_lite targets.  This test script (familiar to PLplot
+# developers) requires substantial extra CPU time and ~4GB of extra
+# disk space to run.  If you prefer only to build and install PLplot
+# without doing any run-time testing of the results do not set this
+# option or else use -DENABLE_COMPREHENSIVE_PLPLOT_TEST=OFF
+
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
 
 # Check cmake.out for any errors
 less cmake.out
@@ -196,7 +227,10 @@ less cmake.out
 # Figure out which packages you want to build
 ${BUILD_COMMAND} help
 
-# Build and test the "lite" version of PLplot
+# Build and test the "lite" version of PLplot.
+# Comprehensive checks of PLplot will be performed if
+# you have set -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON above, but
+# they will take substantial time and disk space.
 ${BUILD_COMMAND} build_plplot_lite >& build_plplot_lite.out
 
 # Check build_plplot_lite.out for any errors
@@ -207,13 +241,6 @@ ${BUILD_COMMAND} build_plplot >& build_plplot.out
 
 # Check build_plplot.out for any errors
 less build_plplot.out
-
-# N.B. add the option -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON to the
-# above cmake command to run a comprehensive test script just after
-# PLplot is built and installed for both the build_plplot and
-# build_plplot_lite targets.  This test script (familiar to PLplot
-# developers) requires substantial extra CPU time and ~4GB of extra
-# disk space to run.
 
 * Mac OS X and Cygwin
 
@@ -227,43 +254,42 @@ to a full plplot build (including builds of all its dependencies).
 II. Non-Cygwin Windows platforms
 
 Note that setup_msys_makefiles and setup_mingw_makefiles (which need
-to be tailored by each individual who uses epa_build) are designed to
-set up for the "MSYS Makefiles" generator and the "MinGW Makefiles
-generator all the important environment variables you need including
-GENERATOR_STRING, INSTALL_PREFIX, EPA_BUILD_SOURCE_PATH, and
-BUILD_COMMAND.  Similarly, other setup files should be created for
-other Windows generators that I (AWI) have tried so far by hand such as
-"NMake Makefiles JOM" and "Ninja".
+to be tailored by each individual who uses epa_build) for these
+platforms are designed to set up for the "MSYS Makefiles" generator
+and the "MinGW Makefiles generator all the environment variables
+listed above.  Similarly, other setup files should be created for
+other Windows generators that I (AWI) have tried so far by hand such
+as "NMake Makefiles JOM" and "Ninja".
 
 For the MinGW/MSYS/Wine case, I (AWI) essentially followed the same
-instructions as above for the Linux case.  However, some of the
-buildtools (e.g., Tcl/Tk/Itcl/Itk/Iwidgets variants) don't yet build
-on Windows and although CMake builds fine on MinGW/MSYS, the result
-does not have the power (supplied only by a fully configured curl
-library and not by the internal curl alternative that the CMake build
-can use as a backup) to download from "https" archives which is
-essential for some of the epa_builds.  The Linux and Cygwin platforms
-do give the required access to a full-featured Curl library for the
-cmake build to link to, but on MinGW/MSYS the only alternative is to
-build your own curl library, and the epa_build configuration for that
-has not been implemented yet although it is on my ToDo list.  The net
-result of these considerations is I only built pkg-config and swig for
-the -DBUILD_THE_BUILDTOOLS=ON case which in turn implied I dropped
-everything that was Tcl related from the PLplot build and relied on
-the pre-built (and fully powered) binary version of CMake downloaded
-from Kitware (see above setup instructions).  Also, for ordinary
-epa_builds (with -DBUILD_THE_BUILDTOOLS=OFF), I only had success with
-plplot_lite and not plplot.  The reason was the extra pango and qt
-dependencies of plplot which had dependent packages of their own that
-could not yet be built on Windows.
+instructions as above for the Linux case, including building all the
+buildtools.  The run-time results for all those buildtools are fine
+except for cmake.  Although the epa_build of cmake has no build
+errors, the result does not have the power (supplied only by a fully
+configured curl library and not by the internal curl alternative that
+the cmake epa_build on Windows currently uses as a backup) to download
+from "https" archives which is essential for some of the epa_builds.
+The Linux and Cygwin platforms do give the required access to a
+full-featured Curl library for the cmake epa_build to link to, but on
+MinGW/MSYS the only alternative is to build your own curl library, and
+the epa_build configuration for that has not been implemented yet
+(although it is on my ToDo list).  The net result of these
+considerations is I placed (via the above setup files) the pre-built
+(and fully powered) binary version of CMake downloaded from Kitware
+higher on my PATH than the epa_build version of that buildtool.  Also,
+for ordinary epa_builds (with -DBUILD_THE_BUILDTOOLS=OFF), I only had
+success with plplot_lite and not plplot on MinGW/MSYS.  The reason was the extra
+pango and qt dependencies of plplot which had dependent packages of
+their own that have build errors on MinGW/MSYS.
 
-N.B. the tweaks required to make all epa_builds work on Windows should
-be few per project since many others have had success building all
-projects on Windows that are covered by epa_build.  But there are a
-lot of such projects in, for example, the dependency list for pango,
-and often the Windows build tweaks are not well publicized.  Thus,
-some substantial and sustained effort (but not an impossibly difficult
-effort) will be required to get all of the epa_build configurations to
-work for the Windows case, and the success I have achieved with a
-limited group of projects for the MinGW/MSYS/Wine case is a good
+N.B. the epa_build configuration tweaks required to make all epa_builds work on
+MinGW/MSYS (and other Windows platforms) should be few per project
+since many others have had success building all projects on Windows
+that are covered by epa_build.  But there are a lot of such projects
+in, for example, the dependency list for pango, and often the Windows
+build tweaks are not well publicized.  Thus, some substantial and
+sustained effort (but not an inherently difficult effort) will be
+required to get all of the epa_build configurations to work for the
+Windows case, and the success I have achieved with a limited group of
+projects for the plplot_lite case on MinGW/MSYS/Wine is a promising
 start.
