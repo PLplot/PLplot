@@ -83,38 +83,27 @@ if(MSYS_PLATFORM)
   determine_msys_path(EPA_PATH "${EPA_PATH}")
 endif(MSYS_PLATFORM)
 
-if(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
-  string(REGEX REPLACE ";" " " blank_delimited_cmake_args "${cmake_args}")
-
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
-    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --cmake_added_options \"${blank_delimited_cmake_args}\" --do_test_interactive no"
-    )
-
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
-    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --cmake_added_options \"${blank_delimited_cmake_args}\" --do_ctest no --do_test_noninteractive no"
-    )
-
-endif(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
-
 ExternalProject_Add(
   build_${PACKAGE}
   DEPENDS "${dependencies_targets}"
   DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E copy_directory ${PLPLOT_LOCAL_SOURCE_DIR} ${EPA_BASE}/Source/build_${PACKAGE}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" "FFLAGS=${FFLAGS}" ${EPA_CMAKE_COMMAND} -DBUILD_TEST=ON ${cmake_args} ${EPA_BASE}/Source/build_${PACKAGE}
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
   TEST_BEFORE_INSTALL OFF
   TEST_COMMAND ""
   STEP_TARGETS configure build install test
   )
 
 if(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
-  add_custom_command(
-    OUTPUT
-    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
-    COMMAND ${CMAKE_COMMAND} -E echo "comprehensive noninteractive tests"
-    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
-    APPEND
+  string(REGEX REPLACE ";" " " blank_delimited_cmake_args "${cmake_args}")
+
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
+    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --generator_string \"${CMAKE_GENERATOR}\" --cmake_added_options \"${blank_delimited_cmake_args}\" --build_command \"${EPA_BUILD_COMMAND} -j${NUMBER_PARALLEL_JOBS}\" --ctest_command \"${CMAKE_CTEST_COMMAND} -j${NUMBER_PARALLEL_JOBS} --timeout 15000 \" --do_ctest no --do_test_noninteractive no"
+    )
+
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
+    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --generator_string \"${CMAKE_GENERATOR}\" --cmake_added_options \"${blank_delimited_cmake_args}\" --build_command \"${EPA_BUILD_COMMAND} -j${NUMBER_PARALLEL_JOBS}\" --ctest_command \"${CMAKE_CTEST_COMMAND} -j${NUMBER_PARALLEL_JOBS} --timeout 15000 \" --do_test_interactive no"
     )
 
   add_custom_command(
@@ -122,6 +111,42 @@ if(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
     ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
     COMMAND ${CMAKE_COMMAND} -E echo "comprehensive interactive tests"
     COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
+    APPEND
+    )
+
+  add_custom_command(
+    OUTPUT
+    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
+    COMMAND ${CMAKE_COMMAND} -E echo "comprehensive noninteractive tests"
+    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
+    APPEND
+    )
+else(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
+
+  # If ENABLE_COMPREHENSIVE_PLPLOT_TEST is not true, then just
+  # configure a pure default case and build and install it.
+
+  add_custom_command(
+    OUTPUT
+    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-configure
+    COMMAND ${CMAKE_COMMAND} -E echo "configure"
+    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" "FFLAGS=${FFLAGS}" ${EPA_CMAKE_COMMAND} -DBUILD_TEST=ON ${cmake_args} ${EPA_BASE}/Source/build_${PACKAGE}
+    APPEND
+    )
+
+  add_custom_command(
+    OUTPUT
+    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-build
+    COMMAND ${CMAKE_COMMAND} -E echo "build"
+    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
+    APPEND
+    )
+
+  add_custom_command(
+    OUTPUT
+    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-install
+    COMMAND ${CMAKE_COMMAND} -E echo "install"
+    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install
     APPEND
     )
 
