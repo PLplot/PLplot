@@ -44,18 +44,19 @@ export CMAKE_LIBRARY_PATH=
 CMAKE_INCLUDE_PATH=$PYTHON_PATH/include:$CMAKE_INCLUDE_PATH
 CMAKE_LIBRARY_PATH=$PYTHON_PATH/libs:$CMAKE_LIBRARY_PATH
 
-# Put CMake, Python, subversion and MinGW on the PATH.
-
-PATH=$CMAKE_PATH:$PATH
-PATH=$PYTHON_PATH:$PATH
-PATH=$CMAKE_PATH:$PATH
-PATH=$MINGW_PREFIX/bin/:$PATH
-
 # Allow using -DBUILD_THE_BUILDTOOLS=ON results from epa_build
 # pkg-config, tclsh, and wish setup.
 PATH=$BUILDTOOLS_PREFIX/bin:$PATH
 
 # Allow using itcl3 and itk3 libraries:
 PATH=$BUILDTOOLS_PREFIX/lib/itcl3.4:$BUILDTOOLS_PREFIX/lib/itk3.3:$PATH
+
+# Put downloaded binary CMake (which overrides the buildtools result
+# for cmake which is weaker at the moment because of the lack of a
+# proper Curl library epa_build), Python, and MinGW on the PATH.
+
+PATH=$CMAKE_PATH:$PATH
+PATH=$PYTHON_PATH:$PATH
+PATH=$MINGW_PREFIX/bin/:$PATH
 
 export PKG_CONFIG_PATH=/z/home/wine/newstart/MinGW-4.7.2/msys/1.0/lib/pkgconfig:$BUILDTOOLS_PREFIX/share/pkgconfig:$BUILDTOOLS_PREFIX/lib/pkgconfig
