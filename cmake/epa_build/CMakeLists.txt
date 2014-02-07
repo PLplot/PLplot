@@ -378,7 +378,6 @@ if(BUILD_THE_BUILDTOOLS)
   # Order does not matter because the dependency logic takes
   # care of any ordering issues.
   set(subdirectories_LIST
-    cmake
     pkg-config
     ##subversion
     swig
@@ -395,6 +394,15 @@ if(BUILD_THE_BUILDTOOLS)
     # iwidgets (version 4.0.1)
     iwidgets4.0
     )
+  if(NOT MSYS_PLATFORM)
+    # Required system version of libcurl, an essential cmake build
+    # dependency, is not currently (until the epa_build project
+    # configures that build) available for the MSYS_PLATFORM.  So only
+    # allow the potential to build the cmake buildtool for the
+    # non-MSYS platform case.  And for the MSYS platform case use a
+    # binary version of CMake supplied by Kitware.
+    list(APPEND subdirectories_LIST cmake)
+  endif(NOT MSYS_PLATFORM)
 else(BUILD_THE_BUILDTOOLS)
   # List sufficient normal package configurations so they will suck in 
   # the remaining configurations via dependencies.
