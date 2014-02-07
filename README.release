@@ -25,6 +25,8 @@ INDEX
 
 3. Tests made for the current release
 
+4. Tests made for the prior release
+
 1. OFFICIAL NOTICES FOR USERS
 
 The distinction we made prior to 5.10.0 between stable and development
@@ -61,7 +63,10 @@ so these builds also succeed on MinGW/MSYS.
 2.3 Update the PLplot build system so that the Tcl/Tk/Itcl/Itk/Iwidgets
 bindings and examples work on MinGW/MSYS.
 
-2.4 Update api.xml to be consistent with our public API defined by plplot.h.
+2.4 Make many minor build-system fixes so that comprehensive tests (see
+test summaries below) finally work well on MinGW/MSYS.
+
+2.5 Update api.xml to be consistent with our public API defined by plplot.h.
 
 This substantial improvement to our DocBook documentation for our
 public API has been made possible by the "check" application written
@@ -80,12 +85,63 @@ in the quality of our API documentation.
 
 3. Tests made for the current release.
 
-None at this time.  
+Note that "comprehensive tests" below refers to running
+scripts/comprehensive_test.sh in default mode (i.e., not dropping any
+tests).  For each of our three major configurations (shared
+libraries/dynamic devices, shared libraries/nondynamic devices, and
+static libraries/nondynamic devices) this test script runs ctest in
+the build tree and runs the test_noninteractive and test_interactive
+targets in the build tree, the installed examples tree configured with
+a CMake-based build system for the examples, and an installed examples
+tree configured with our traditional (Make + pkg-config) build system
+for the examples.  Testers can run that script directly or there is a
+convenient option called -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON for
+epa_build (see cmake/epa_build/README) that automatically runs that
+script for the build_plplot_lite case (The cairo, qt, and wxwidgets
+device drivers are dropped) or the usual build_plplot case (no components
+of PLplot dropped).
 
-However, to remind testers of what they did in the latter
-stages of the release cycle for the previous release
-here are the notes from those earlier tests:
+Note that all tests mentioned below were successful ones unless
+noted differently.
 
+* Alan W. Irwin ran comprehensive tests via epa_build of plplot (as
+opposed to plplot_lite) on a 64-bit Debian Wheezy Linux platform on
+AMD-64 hardware.  That system has virtually every relevant PLplot
+dependency either epa_built or system-installed.  So these tests are
+virtually complete test of all aspects of PLplot.
+
+* Alan W. Irwin ran comprehensive tests via epa_build of plplot_lite (as
+opposed to plplot) on a 64-bit Debian Wheezy Linux platform on
+AMD-64 hardware.  These tests show that the remaining components
+of PLplot work well when some important components (i.e., cairo, qt, and
+wxwidgets device drivers) are dropped.
+
+* Alan W. Irwin ran comprehensive tests of plplot_lite on 32-bit
+MinGW/MSYS/Wine for AMD-64 hardware.  (This test is only for
+plplot_lite since currently some of the additional dependencies of
+plplot do not build on MinGW/MSYS/Wine.  It is not clear whether this
+is due to a Wine issue or an epa_build configuration issue for
+MinGW/MSYS.)  The language bindings and examples tested were ada, c,
+c++, f95, lua, python, tcl, tk, itcl, itk. and iwidgets.  The device
+drivers tested were ntk, pdf, ps, svg, wingcc, and xfig.  So this test
+is less complete than the equivalent Linux test above due to lack of
+PLplot dependencies on MinGW/MSYS.  But the epa_build project has
+already closed some of that dependency gap for this platform (e.g., by
+providing builds of pkg-config, swig, libagg, libharu, shapelib,
+libqhull, and everything Tcl-related), and it is hoped it will close
+even more of that dependency gap in the future.
+
+The Wine version for this test was 1.6.1 which was built on Debian
+Wheezy; the compiler was (MinGW) gcc-4.7.2; the Windows binary version
+of CMake was downloaded from Kitware and was version 2.8.12.1; the
+CMake generator was "MSYS Makefiles"; and the build command was "make"
+(i.e., the MSYS version, not the MinGW version).
+
+4. Tests made for the prior release
+
+To remind the test team of the tests that were run for the
+last release (5.9.11) here are the complete notes on
+those tests from the previous release announcement.
 
 Note that "comprehensive tests" below refers to running
 scripts/comprehensive_test.sh in default mode (i.e., not dropping any
@@ -104,7 +160,7 @@ noted differently.
 * Alan W. Irwin ran comprehensive tests for a complete system build
 environment on 64-bit Debian Wheezy Linux for AMD-64 hardware.
 
-* Alan W. Irwin ran comprehensive testsfor a limited (qt, cairo, wxwidgets,
+* Alan W. Irwin ran comprehensive tests for a limited (qt, cairo, wxwidgets,
 and octave PLplot components were dropped) epa_build environment on
 64-bit Debian Wheezy Linux for AMD-64 hardware.
 
