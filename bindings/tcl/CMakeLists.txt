@@ -23,11 +23,11 @@ if(ENABLE_tcl)
   # Check consistency of plplot_parameters.h.
   add_custom_target(
     check_tcl_parameters
-    COMMAND ${CMAKE_COMMAND} -E remove -f 
+    COMMAND ${CMAKE_COMMAND} -E remove -f
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
-    sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed < 
-    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
+    sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed <
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i >
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
     ${CMAKE_COMMAND} -E echo "Check that plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i"
@@ -186,6 +186,7 @@ if(ENABLE_tcl)
      ${TCL_LIBRARY}
     )
 
+  message(STATUS "ENABLE_itcl: ${ENABLE_itcl}")
   if(ENABLE_itcl)
     include_directories(${ITCL_INCLUDE_PATH})
 
@@ -208,6 +209,7 @@ if(ENABLE_tcl)
       ${ITCL_LIBRARY}
       )
   endif(ENABLE_itcl)
+  message(STATUS "Itcl libraries: ${plplottcltk_Main${LIB_TAG}_link_libraries}")
 
   if(ENABLE_tkX)
     set(plplottcltk${LIB_TAG}_LIB_SRCS
@@ -438,10 +440,10 @@ if(ENABLE_tcl)
   # _target suffix to avoid nameclash with filename plplot.tcl.  This
   # nameclash screwed up ../tk/configuration which had a non-generated file
   # of the same name which was a dependency of a custom target.
-  add_custom_target(plplot.tcl_target ALL 
+  add_custom_target(plplot.tcl_target ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
     )
-  set_property(GLOBAL PROPERTY 
+  set_property(GLOBAL PROPERTY
     FILES_plplot.tcl_target ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
     )
 
@@ -455,7 +457,7 @@ if(ENABLE_tcl)
   add_custom_target(tclIndex_tcl ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
     )
-  set_property(GLOBAL PROPERTY 
+  set_property(GLOBAL PROPERTY
     FILES_tclIndex_tcl ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
     )
 
@@ -593,7 +595,7 @@ if(ENABLE_tcl)
       )
   endif(USE_RPATH)
 
-  install(TARGETS pltcl 
+  install(TARGETS pltcl
     EXPORT export_plplot
     DESTINATION ${BIN_DIR}
     )

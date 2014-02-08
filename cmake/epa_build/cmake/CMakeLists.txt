@@ -61,10 +61,10 @@ set(CXXFLAGS "$ENV{CXXFLAGS}")
 
 # Data that is related to downloads.
 set(DIR v2.8)
-set(VERSION 2.8.12.1)
+set(VERSION 2.8.12.2)
 set(URL http://www.cmake.org/files/${DIR}/cmake-${VERSION}.tar.gz)
 set(DOWNLOAD_HASH_TYPE MD5)
-set(DOWNLOAD_HASH 9d38cd4e2c94c3cea97d0e2924814acc)
+set(DOWNLOAD_HASH 17c6513483d23590cbce6957ec6d1e66)
 
 ExternalProject_Add(
   build_${PACKAGE}
