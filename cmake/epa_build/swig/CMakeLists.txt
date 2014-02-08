@@ -46,6 +46,7 @@ epa_boilerplate(
 
 if(MSYS_PLATFORM)
   # Add two MSYS specific flags to avoid compile errors
+  # It is unclear if they have any unexpected effects
   set(CFLAGS "-D__NO_MINGW_LFS -U__STRICT_ANSI__ $ENV{CFLAGS}")
 else(MSYS_PLATFORM)
   set(CFLAGS "$ENV{CFLAGS}")
