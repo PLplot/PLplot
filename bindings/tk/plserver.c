@@ -115,7 +115,9 @@ main( int argc, const char **argv )
 
 // Save arglist to get around Tk_ParseArgv limitations
 
-    fprintf(stderr, "Before myargv\n");
+#ifdef DEBUG
+    fprintf( stderr, "Before myargv\n" );
+#endif
 
     myargv = (const char **) malloc( argc * sizeof ( char * ) );
     for ( i = 0; i < argc; i++ )
@@ -123,7 +125,9 @@ main( int argc, const char **argv )
         myargv[i] = argv[i];
     }
 
-    fprintf(stderr, "After myargv\n");
+#ifdef DEBUG
+    fprintf( stderr, "After myargv\n" );
+#endif
 
 // Parse args
 // Examine the result string to see if an error return is really an error
@@ -131,16 +135,18 @@ main( int argc, const char **argv )
     if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv,
              argTable, TK_ARGV_NO_DEFAULTS ) != TCL_OK )
     {
-    fprintf(stderr, "Error in Tk_ParseArgv\n");
+        fprintf( stderr, "Error in Tk_ParseArgv\n" );
         fprintf( stderr, "\n(plserver) %s\n\n", Tcl_GetStringResult( interp ) );
         fprintf( stderr, "\
 The client_<xxx> and -child options should not be used except via the\n\
 PLplot/Tk driver.\n\n(wish) " );
-    fprintf(stderr, "Before Tcl_SetResult\n");
+        fprintf( stderr, "Before Tcl_SetResult\n" );
         Tcl_SetResult( interp, (char *) helpmsg, TCL_VOLATILE );
     }
 
-    fprintf(stderr, "After Tk_ParseArgv\n");
+#ifdef DEBUG
+    fprintf( stderr, "After Tk_ParseArgv\n" );
+#endif
 
 // No longer need interpreter
 
