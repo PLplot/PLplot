@@ -42,12 +42,10 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  )
+  ) 
 
 if(MSYS_PLATFORM)
-  # Add two MSYS specific flags to avoid compile errors
-  # It is unclear if they have any unexpected effects
-  set(CFLAGS "-D__NO_MINGW_LFS -U__STRICT_ANSI__ $ENV{CFLAGS}")
+  set(CFLAGS "$ENV{CFLAGS}")
 else(MSYS_PLATFORM)
   set(CFLAGS "$ENV{CFLAGS}")
 endif(MSYS_PLATFORM)
@@ -72,7 +70,7 @@ ExternalProject_Add(
   URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
   PATCH_COMMAND ""
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" "LDFLAGS=-Wl,-rpath -Wl,${EPA_CMAKE_INSTALL_PREFIX}/lib" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --with-pcre-prefix=${EPA_CMAKE_INSTALL_PREFIX}
-  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
+  BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} 
   BUILD_IN_SOURCE OFF
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}  install
   )
@@ -80,7 +78,7 @@ ExternalProject_Add(
 add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
-  COMMAND ${CMAKE_COMMAND} -E echo
+  COMMAND ${CMAKE_COMMAND} -E echo 
   "Provide swig support for octave-3.8.0"
   COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/octave-3.8.0.patch
   APPEND
