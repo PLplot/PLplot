@@ -40,10 +40,6 @@ Each of the steps in this comprehensive test may take a while...."
 	MINGW_OR_MSYS="false"
     fi
 
-    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$MINGW_OR_MSYS" = "true" ] ; then
-	echo "Prepend $BUILD_TREE/dll to the original PATH"
-	PATH=$BUILD_TREE/dll:$PATH
-    fi
     mkdir -p "$OUTPUT_TREE"
     rm -rf "$BUILD_TREE"
     mkdir -p "$BUILD_TREE"
@@ -55,6 +51,12 @@ Each of the steps in this comprehensive test may take a while...."
     fi
     output="$OUTPUT_TREE"/cmake.out
     rm -f "$output"
+
+    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$MINGW_OR_MSYS" = "true" ] ; then
+	echo "Prepend $BUILD_TREE/dll to the original PATH"
+	PATH=$BUILD_TREE/dll:$PATH_SAVE
+    fi
+
     # Process $cmake_added_options into $* to be used on the cmake command
     # line below.
     set -- $cmake_added_options
@@ -212,10 +214,13 @@ Each of the steps in this comprehensive test may take a while...."
 	fi
     fi
 
-    echo "Restore PATH to the original PATH"
-    PATH=$PATH_SAVE
     if [ "$do_test_interactive" = "yes" ] ; then
 	if [ "$do_test_build_tree" = "yes" ] ; then
+	    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$MINGW_OR_MSYS" = "true" ] ; then
+		echo "Prepend $BUILD_TREE/dll to the original PATH"
+		PATH=$BUILD_TREE/dll:$PATH_SAVE
+	    fi
+
 	    cd "$BUILD_TREE"
 	    output="$OUTPUT_TREE"/make_interactive.out
 	    rm -f "$output"
@@ -240,6 +245,17 @@ Each of the steps in this comprehensive test may take a while...."
 	fi
 	echo "Prepend $INSTALL_TREE/bin to the original PATH"
 	PATH="$INSTALL_TREE/bin":$PATH_SAVE
+
+	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$MINGW_OR_MSYS" = "true" ] ; then
+	    # Use this logic to be as version-independent as possible.
+	    current_dir=$(pwd)
+	    # Wild cards must not be inside quotes.
+	    cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
+	    echo "Prepend $(pwd) to the current PATH"
+	    PATH="$(pwd):$PATH"
+	    cd $current_dir
+	fi
+
 	if [ "$do_test_install_tree" = "yes" ] ; then
 	    cd "$INSTALL_BUILD_TREE"
 	    output="$OUTPUT_TREE"/installed_make_interactive.out
