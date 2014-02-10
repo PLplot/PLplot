@@ -95,33 +95,37 @@ ExternalProject_Add(
   STEP_TARGETS configure build install test
   )
 
-if(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
+if(COMPREHENSIVE_PLPLOT_TEST_INTERACTIVE OR COMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE)
   string(REGEX REPLACE ";" " " blank_delimited_cmake_args "${cmake_args}")
 
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
-    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --generator_string \"${CMAKE_GENERATOR}\" --cmake_added_options \"${blank_delimited_cmake_args}\" --build_command \"${EPA_BUILD_COMMAND} -j${NUMBER_PARALLEL_JOBS}\" --ctest_command \"${CMAKE_CTEST_COMMAND} -j${NUMBER_PARALLEL_JOBS} --timeout 15000 \" --do_ctest no --do_test_noninteractive no"
-    )
+  if(COMPREHENSIVE_PLPLOT_TEST_INTERACTIVE)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
+      "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --generator_string \"${CMAKE_GENERATOR}\" --cmake_added_options \"${blank_delimited_cmake_args}\" --build_command \"${EPA_BUILD_COMMAND} -j${NUMBER_PARALLEL_JOBS}\" --ctest_command \"${CMAKE_CTEST_COMMAND} -j${NUMBER_PARALLEL_JOBS} --timeout 15000 \" --do_ctest no --do_test_noninteractive no"
+      )
 
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
-    "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --generator_string \"${CMAKE_GENERATOR}\" --cmake_added_options \"${blank_delimited_cmake_args}\" --build_command \"${EPA_BUILD_COMMAND} -j${NUMBER_PARALLEL_JOBS}\" --ctest_command \"${CMAKE_CTEST_COMMAND} -j${NUMBER_PARALLEL_JOBS} --timeout 15000 \" --do_test_interactive no"
-    )
+    add_custom_command(
+      OUTPUT
+      ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
+      COMMAND ${CMAKE_COMMAND} -E echo "comprehensive interactive tests"
+      COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
+      APPEND
+      )
+  endif(COMPREHENSIVE_PLPLOT_TEST_INTERACTIVE)
 
-  add_custom_command(
-    OUTPUT
-    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
-    COMMAND ${CMAKE_COMMAND} -E echo "comprehensive interactive tests"
-    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/interactive_comprehensive_test.sh
-    APPEND
-    )
+  if(COMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
+      "echo yes | ${EPA_BASE}/Source/build_${PACKAGE}/scripts/comprehensive_test.sh --generator_string \"${CMAKE_GENERATOR}\" --cmake_added_options \"${blank_delimited_cmake_args}\" --build_command \"${EPA_BUILD_COMMAND} -j${NUMBER_PARALLEL_JOBS}\" --ctest_command \"${CMAKE_CTEST_COMMAND} -j${NUMBER_PARALLEL_JOBS} --timeout 15000 \" --do_test_interactive no"
+      )
 
-  add_custom_command(
-    OUTPUT
-    ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
-    COMMAND ${CMAKE_COMMAND} -E echo "comprehensive noninteractive tests"
-    COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
-    APPEND
-    )
-else(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
+    add_custom_command(
+      OUTPUT
+      ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-test
+      COMMAND ${CMAKE_COMMAND} -E echo "comprehensive noninteractive tests"
+      COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/noninteractive_comprehensive_test.sh
+      APPEND
+      )
+  endif(COMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE)
+else(COMPREHENSIVE_PLPLOT_TEST_INTERACTIVE OR COMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE)
 
   # If ENABLE_COMPREHENSIVE_PLPLOT_TEST is not true, then just
   # configure a pure default case and build and install it.
@@ -150,4 +154,4 @@ else(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
     APPEND
     )
 
-endif(ENABLE_COMPREHENSIVE_PLPLOT_TEST)
+endif(COMPREHENSIVE_PLPLOT_TEST_INTERACTIVE OR COMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE)

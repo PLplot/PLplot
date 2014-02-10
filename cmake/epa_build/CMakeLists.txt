@@ -307,12 +307,15 @@ if(CMAKE_VERBOSE_MAKEFILE)
   list(APPEND EPA_MAKE_COMMAND V=1)
 endif(CMAKE_VERBOSE_MAKEFILE)
 
-# This option runs the PLplot comprehensive test script for
-# the exact same build environment (i.e., cmake options, environment
-# variables, buildtools that have been built, and dependencies that
-# have been built) as used for the epa_build of plplot and
-# plplot_lite.
-option(ENABLE_COMPREHENSIVE_PLPLOT_TEST "Use comprehensive test for PLplot (which requires substantial CPU time and ~4GB of disk space)" OFF)
+# These options run the PLplot comprehensive test script (for
+# either/both the noninteractive and interactive subsets of the tests)
+# for the exact same build environment (i.e., cmake options,
+# environment variables, buildtools that have been built, and
+# dependencies that have been built) as used for the epa_build of
+# plplot and plplot_lite.
+option(COMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE "Use comprehensive noninteractive test for PLplot (which requires no interaction by the user but does require substantial CPU time and ~4GB of disk space)" OFF)
+
+option(COMPREHENSIVE_PLPLOT_TEST_INTERACTIVE "Use comprehensive interactive test for PLplot (which requires interaction by the user to click through some of the tests)" OFF)
 
 # The parallel versions are for software packages that
 # do not have race conditions for parallel builds or tests.
