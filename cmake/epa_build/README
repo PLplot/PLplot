@@ -210,16 +210,20 @@ rm -rf <Build tree prefix>/build_dir-linux/* ${INSTALL_PREFIX}
 cd <Build tree prefix>/build_dir-linux
 
 
-# N.B. the -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON option below
-# configurues a run of the comprehensive test script just after PLplot
-# is built and installed for both the build_plplot and
-# build_plplot_lite targets.  This test script (familiar to PLplot
-# developers) requires substantial extra CPU time and ~4GB of extra
-# disk space to run.  If you prefer only to build and install PLplot
-# without doing any run-time testing of the results do not set this
-# option or else use -DENABLE_COMPREHENSIVE_PLPLOT_TEST=OFF
+# N.B. the -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON and
+# -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON options below
+# configure runs of the comprehensive test script (either for the
+# interactive case, the noninteractive case, or both) just after the
+# PLplot source tree is copied.  This test script (familiar to PLplot
+# developers) requires substantial interaction from the user for the
+# interactive case and substantial extra CPU time and ~4GB of extra
+# disk space to run for the noninteractive case.  If you prefer only
+# to build and install PLplot without doing any run-time testing of
+# the results do not set these options or else use
+# -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=OFF and
+# -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=OFF
 
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
 
 # Check cmake.out for any errors
 less cmake.out
@@ -228,13 +232,27 @@ less cmake.out
 ${BUILD_COMMAND} help
 
 # Build and test the "lite" version of PLplot.
-# Comprehensive checks of PLplot will be performed if
-# you have set -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON above, but
-# they will take substantial time and disk space.
+
+# Comprehensive interactive checks of PLplot will be performed if
+# you have set -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON above, but
+# that will require substantial interaction from you with those interactive
+# tests that are run.  
+
+# Comprehensive noninteractive checks of PLplot will be performed if
+# you have set -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON above, but
+# that will take substantial time and disk space to complete this
+# comprehensive check.
+
 ${BUILD_COMMAND} build_plplot_lite >& build_plplot_lite.out
 
 # Check build_plplot_lite.out for any errors
 less build_plplot_lite.out
+
+# Check detailed results from comprehensive tests by looking at the *.out
+# files in 
+# epa_build/Source/comprehensive_test_disposeable/shared/output_tree,
+# epa_build/Source/comprehensive_test_disposeable/nondynamic/output_tree, and
+# epa_build/Source/comprehensive_test_disposeable/static/output_tree,
 
 # [OPTIONAL] Build and test the complete version of PLplot.
 ${BUILD_COMMAND} build_plplot >& build_plplot.out
