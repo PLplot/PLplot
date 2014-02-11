@@ -44,6 +44,14 @@ will get an infinite hang from any attempt to do parallel
 builds (which epa_build automatically uses for many
 of its builds) using the MSYS make.exe command.
 
+N.B. Arjen Markus reports that for some versions of the automatic
+installer msys-core-bin=1.0.17-1 is no longer available.  For this
+case use the epa_build cmake option -DNUMBER_PARALLEL_JOBS:STRING=1
+which forces all builds to be non-parallel.  For hardware with more
+than one cpu this choice obviously leads to considerably less
+efficient builds than when the default value of 4 is used for this
+CMake variable.
+
 3. Install additional needed MSYS software that is not installed by
 the automatic installer.
 
@@ -182,6 +190,14 @@ mkdir -p <Build tree prefix>/build_dir-linux_buildtools
 rm -rf <Build tree prefix>/build_dir-linux_buildtools/* ${INSTALL_PREFIX}_buildtools
 cd <Build tree prefix>/build_dir-linux_buildtools
 
+# N.B. The epa_build system sets the CMake cache variable
+# NUMBER_PARALLEL_JOBS to 4 by default which is suitable for most
+# entry-level PC's.  However, users with a high-level computer with
+# more than say 2 cpu's may wish to increase this cache value by,
+# e.g., setting the cmake option
+# -DNUMBER_PARALLEL_JOBS:STRING=<some integer value larger than 4>
+# to make efficient use of all those different cpu's.
+
 cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}_buildtools -DBUILD_THE_BUILDTOOLS=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
 
 # Check cmake.out for any errors
@@ -222,6 +238,14 @@ cd <Build tree prefix>/build_dir-linux
 # the results do not set these options or else use
 # -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=OFF and
 # -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=OFF
+
+# N.B. The epa_build system sets the CMake cache variable
+# NUMBER_PARALLEL_JOBS to 4 by default which is suitable for most
+# entry-level PC's.  However, users with a high-level computer with
+# more than say 2 cpu's may wish to increase this cache value by,
+# e.g., setting the cmake option
+# -DNUMBER_PARALLEL_JOBS:STRING=<some integer value larger than 4>
+# to make efficient use of all those different cpu's.
 
 cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
 
@@ -300,14 +324,20 @@ success with plplot_lite and not plplot on MinGW/MSYS.  The reason was the extra
 pango and qt dependencies of plplot which had dependent packages of
 their own that have build errors on MinGW/MSYS.
 
-N.B. the epa_build configuration tweaks required to make all epa_builds work on
-MinGW/MSYS (and other Windows platforms) should be few per project
-since many others have had success building all projects on Windows
-that are covered by epa_build.  But there are a lot of such projects
-in, for example, the dependency list for pango, and often the Windows
-build tweaks are not well publicized.  Thus, some substantial and
-sustained effort (but not an inherently difficult effort) will be
-required to get all of the epa_build configurations to work for the
-Windows case, and the success I have achieved with a limited group of
-projects for the plplot_lite case on MinGW/MSYS/Wine is a promising
-start.
+N.B. The epa_build system sets the CMake cache variable
+NUMBER_PARALLEL_JOBS to 4 by default which is suitable for most
+entry-level PC's.  However, MSYS users who are unable to downgrade
+(see above) may need to set this value to 1 using the cmake option
+-DNUMBER_PARALLEL_JOBS:STRING=1
+
+N.B. the epa_build configuration tweaks required to make all
+epa_builds work on MinGW/MSYS (and other Windows platforms) should be
+few per project since many others have had success building all
+projects on Windows that are covered by epa_build.  But there are a
+lot of such projects in, for example, the dependency list for pango,
+and often the Windows build tweaks are not well publicized.  Thus,
+some substantial and sustained effort (but not an inherently difficult
+effort) will be required to get all of the epa_build configurations to
+work for the Windows case, and the success I have achieved with a
+limited group of projects for the plplot_lite case on MinGW/MSYS/Wine
+is a promising start.
