@@ -80,3 +80,34 @@ svn diff
 cmake -DFILENAME:FILEPATH=add_packages.data -P configure_epa.cmake
 svn diff
 
+OTHER NOTES:
+
+The epa_build configurations are still missing for certain packages.
+For example, a build of a strong-enough version of cmake so that it
+can support "https" downloads (sometimes required by epa_build itself)
+requires that cmake not use its weak internal curl library and instead
+use a fully configured external curl library.  So the cmake epa_build
+should be configured with an external libcurl epa_build dependency,
+but that dependency does not exist yet.  So I plan to use the
+directions (actually for the mingw-w64 fork of MinGW rather than for
+MinGW itself) in
+<http://www.gaia-gis.it/gaia-sins/mingw64_how_to.html> as a guide to
+create an epa_build configure for both libcurl and its openssl
+dependency.  Note, that URL contains mingw-w64 build directions for a
+large number of free software packages so it may also be useful to
+solve some epa_build problems for some packages for the pango/cairo
+stack of libraries that currently have epa_build configuration
+problems for MinGW/MSYS.
+
+Also, it is becoming clear that many users are switching from the
+classical combination of MinGW and MSYS to the combination of
+mingw-w64 and MSYS2 (see <http://sourceforge.net/p/msys2/wiki/MSYS2
+installation/> for install directions for that newer version).  Note
+that new platform cannot be currently tested on Wine because of
+<http://bugs.winehq.org/show_bug.cgi?id=35561> so my (AWI's)
+participation in such tests could only be indirect.  Nevertheless, I
+would encourage such tests since apparently MSYS2 (a simplification of
+modern Cygwin) has fewer bugs and uses more up-to-date versions of
+software than the traditional MSYS (a simplification of ancient
+Cygwin).
+
