@@ -1,8 +1,8 @@
 PLplot Release 5.10.0
 ~~~~~~~~~~~~~~~~~~~~
 This is a release of the PLplot plotting package. It represents the
-ongoing best efforts of the PLplot community to improve the PLplot
-plotting package, and it is the only version of PLplot that we attempt
+ongoing best efforts of the PLplot community to improve this
+package, and it is the only version of PLplot that we attempt
 to support. Releases in the 5.x.y series should be available several
 times per year.
 
@@ -10,7 +10,8 @@ If you encounter a problem that is not already documented in the
 PROBLEMS file or on our bug tracker, then please send bug reports to
 PLplot developers via the mailing lists at
 <http://sourceforge.net/p/plplot/mailman/> (preferred for initial
-discussion of issues) and, if no quick resolution is possible, on our
+discussion of issues) and, if no quick resolution is possible, then the
+issue should be placed on our
 bug tracker at <http://sourceforge.net/p/plplot/bugs/>.
 
 Please see the license under which this software is distributed
@@ -64,7 +65,7 @@ so these builds also succeed on MinGW/MSYS.
 bindings and examples work on MinGW/MSYS.
 
 2.4 Make many minor build-system fixes so that comprehensive tests (see
-test summaries below) finally work well on MinGW/MSYS.
+test summaries below) finally work almost completely on MinGW/MSYS.
 
 2.5 Update api.xml to be consistent with our public API defined by plplot.h.
 
@@ -85,7 +86,7 @@ in the quality of our API documentation.
 
 3. Tests made for the current release.
 
-Note that "comprehensive tests" below refers to running
+The "comprehensive tests" below refers to running
 scripts/comprehensive_test.sh in default mode (i.e., not dropping any
 tests).  For each of our three major configurations (shared
 libraries/dynamic devices, shared libraries/nondynamic devices, and
@@ -94,48 +95,82 @@ the build tree and runs the test_noninteractive and test_interactive
 targets in the build tree, the installed examples tree configured with
 a CMake-based build system for the examples, and an installed examples
 tree configured with our traditional (Make + pkg-config) build system
-for the examples.  Testers can run that script directly or there is a
-convenient option called -DENABLE_COMPREHENSIVE_PLPLOT_TEST=ON for
+for the examples.  Testers can run that script directly or there are
+convenient options called -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON 
+and -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON for
 epa_build (see cmake/epa_build/README) that automatically runs that
 script for the build_plplot_lite case (The cairo, qt, and wxwidgets
 device drivers are dropped) or the usual build_plplot case (no components
-of PLplot dropped).
+of PLplot dropped) for either/both the interactive and noninteractive
+subsets of the tests.
 
 Note that all tests mentioned below were successful ones unless
 noted differently.
 
-* Alan W. Irwin ran comprehensive tests via epa_build of plplot (as
-opposed to plplot_lite) on a 64-bit Debian Wheezy Linux platform on
-AMD-64 hardware.  That system has virtually every relevant PLplot
-dependency either epa_built or system-installed.  So these tests are
-virtually complete test of all aspects of PLplot.
+* Alan W. Irwin ran both interactive and noninteractive comprehensive
+tests via epa_build of plplot (as opposed to plplot_lite) on a 64-bit
+Debian Wheezy Linux platform on AMD-64 hardware.  That system has
+virtually every relevant PLplot dependency either epa_built or
+system-installed.  So these tests are virtually complete test of all
+aspects of PLplot.
 
-* Alan W. Irwin ran comprehensive tests via epa_build of plplot_lite (as
-opposed to plplot) on a 64-bit Debian Wheezy Linux platform on
-AMD-64 hardware.  These tests show that the remaining components
-of PLplot work well when some important components (i.e., cairo, qt, and
-wxwidgets device drivers) are dropped.
+* Alan W. Irwin ran both interactive and noninteractive comprehensive
+tests via epa_build of plplot_lite (as opposed to plplot) on a 64-bit
+Debian Wheezy Linux platform on AMD-64 hardware.  These tests show
+that the remaining components of PLplot work well when some important
+components (i.e., cairo, qt, and wxwidgets device drivers) are
+dropped.
 
-* Alan W. Irwin ran comprehensive tests of plplot_lite on 32-bit
-MinGW/MSYS/Wine for AMD-64 hardware.  (This test is only for
-plplot_lite since currently some of the additional dependencies of
-plplot do not build on MinGW/MSYS/Wine.  It is not clear whether this
-is due to a Wine issue or an epa_build configuration issue for
-MinGW/MSYS.)  The language bindings and examples tested were ada, c,
-c++, f95, lua, python, tcl, tk, itcl, itk. and iwidgets.  The device
-drivers tested were ntk, pdf, ps, svg, wingcc, and xfig.  So this test
-is less complete than the equivalent Linux test above due to lack of
-PLplot dependencies on MinGW/MSYS.  But the epa_build project has
-already closed some of that dependency gap for this platform (e.g., by
-providing builds of pkg-config, swig, libagg, libharu, shapelib,
-libqhull, and everything Tcl-related), and it is hoped it will close
-even more of that dependency gap in the future.
+* Alan W. Irwin ran both interactive and noninteractive comprehensive
+tests of plplot_lite on 32-bit MinGW/MSYS/Wine for AMD-64 hardware.
+(This test is only for plplot_lite since currently some of the
+additional dependencies of plplot do not build on MinGW/MSYS/Wine.  It
+is not clear whether this is due to a Wine issue or an epa_build
+configuration issue for MinGW/MSYS.)  The language bindings and
+examples tested were ada, c, c++, f95, lua, python, tcl, tk, itcl,
+itk. and iwidgets.  The device drivers tested were ntk, pdf, ps, svg,
+wingcc, and xfig.  So this test is less complete than the equivalent
+Linux test above due to lack of PLplot dependencies on MinGW/MSYS.
+But the epa_build project has already closed some of that dependency
+gap for this platform (e.g., by providing builds of pkg-config, swig,
+libagg, libharu, shapelib, libqhull, and everything Tcl-related), and
+it is hoped it will close even more of that dependency gap in the
+future.  
 
 The Wine version for this test was 1.6.1 which was built on Debian
 Wheezy; the compiler was (MinGW) gcc-4.7.2; the Windows binary version
 of CMake was downloaded from Kitware and was version 2.8.12.1; the
 CMake generator was "MSYS Makefiles"; and the build command was "make"
 (i.e., the MSYS version, not the MinGW version).
+
+The above noninteractive comprehensive tests finished without issues.
+
+In contrast the interactive comprehensive tests failed.  In
+particular, all interactive tests for the shared library/dynamic
+devices case for the build tree succeeded except for the
+test_pltcl_standard_examples target which failed close to Tcl exit
+from that particular test.  This failure near Tcl exit is similar to
+the Tcl exit issue reported at
+http://sourceforge.net/p/plplot/bugs/139/.  Because of this test
+failure, the remaining configurations are untested on MinGW/MSYS/Wine
+for the interactive case.
+
+* Arjen Markus was unable to confirm the good noninteractive test
+results obtained above for MinGW/MSYS on a 32-bit Windows system
+(Wine) on his Windows platform consisting of 64-bit Windows 7, service
+pack 1 for AMD-64 hardware.  The long-standing MSYS bug for parallel
+builds was worked around by using the epa_build
+-DNUMBER_PARALLEL_JOBS:STRING=1 cmake option.  However, the swig
+prerequsitie could not be epa_built because of what are probably
+64-bit issues in the Windows-relevant part of the swig code.  This
+hypothesis needs confirmation by replicating the above good
+MinGW/MSYS/32-bit Wine results with MinGW/MSYS/32-bit Microsoft
+Windows results, but that follow-up has not been done yet.  
+
+Arjen also feels he has found a solution for the swig 64-bit Windows
+epa_build issue, and he plans to investigate that further post-release
+(when we will have time to test that his proposed fix does not
+compromise the successful swig epa_builds on other platforms).
 
 4. Tests made for the prior release
 
