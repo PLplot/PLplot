@@ -7,6 +7,7 @@ INDEX
 ** Update website-related files
 ** Install and test a (preliminary) local copy of the PLplot website
 ** Update Release date and versions
+** Update this file (README.Release_Manager_CookBook)
 ** Create (a preliminary version of) the release tarball and check the
    result for errors
 ** Do comprehensive test of PLplot
@@ -23,23 +24,25 @@ INDEX
 ** Publicize the release announcement
 ** Prepare immediately for the next release cycle
 
-(A1) GNU Privacy Guard (gpg)
-(A2) Creating a test tarball from trunk
-(A3) Correct computer time
+INDEX for Appendix
+** GNU Privacy Guard (gpg)
+** Creating a test tarball from trunk
+** Correct computer time
 
 N.B. the order of steps below is important because of the dependencies
 between the steps which are noted (except for the generation of the
 final release tarball and ChangeLog which depend on virtually all
 prior steps).
+_________________________________________________________________________
 
-Prepare a (preliminary) version of the ChangeLog file for this release
+** Prepare a (preliminary) version of the ChangeLog file for this release
 
 This step does not depend on other steps.
 
 # This makes the BASE used below correct.
 svn update
 
-svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release_preliminary
+svn log --revision <LAST_RELEASE_REVISION>:BASE --verbose  >| ChangeLog.release_preliminary
 
 where <LAST_RELEASE_REVISION> stands for the last revision number of
 the previous release which can be determined e.g., by viewing the
@@ -47,6 +50,12 @@ ChangeLog.release file from the previous release.  Note the
 "_preliminary" suffix to distinguish this from the final result below
 which will contain (if all goes well in the steps below) a record of
 all but the last commit (of the ChangeLog itself) for this release.
+
+Note the order of the --revision components puts this preliminary version
+in chronological order.  But it is traditional for the final version
+to have the result in reverse chronological order (see below).
+
+_________________________________________________________________________
 
 ** Prepare the README.release file and/or press those who have made
    changes in this release cycle to update that file
@@ -58,6 +67,7 @@ This step depends on the step above entitled
 To double-check that file is complete with regards to all major
 developments during this release cycle, skim all the commit messages in
 ChangeLog.release_preliminary determined above.
+_________________________________________________________________________
 
 ** Prepare and test the documentation
 
@@ -80,6 +90,7 @@ following the instructions in doc/README.doxygen.
 
 Update, generate and test our Docbook documentation following the
 instructions in doc/docbook/README.developers.
+_________________________________________________________________________
 
 ** Check and potentially fix internal consistency
 
@@ -140,6 +151,7 @@ Check that plplot_parameters.h is consistent with the #defines in bindings/swig-
 Built target check_tcl_parameters
 Check that plplot_h.inc is consistent with touchup.ml and plplot_h
 Built target check_plplot_h.inc
+_________________________________________________________________________
 
 ** Update website-related files
 
@@ -173,6 +185,7 @@ to above) is also used to generate some of our older release
 announcements for the website, and could also be used to generate
 present release announcements for the website if desired.  See
 www/announce/README for just how easy this step would be.
+_________________________________________________________________________
 
 ** Install and test a (preliminary) local copy of the PLplot website
 
@@ -254,6 +267,7 @@ N.B. The iterated result should be identical to the final result (see
 below) except that the release date (configured as RELEASE_DATE) and
 the PLplot version in www/example.php will be wrong.  Those
 issues are addressed in "Update release date and versions" below.
+_________________________________________________________________________
 
 ** Update Release date and versions
 
@@ -274,7 +288,15 @@ RELEASE_DATE (which affects the documentation build) and
 version. Also, follow the instructions in that file for updating the
 SOVERSION, the minor number and the patch number for each versioned
 library created by the PLplot build.
+_________________________________________________________________________
 
+** Update this file (README.Release_Manager_CookBook)
+
+Edit this file to reflect latest practices by the release manager and
+also to update the many version numbers in it to the latest version
+value.
+
+_________________________________________________________________________
 ** Create (a preliminary version of) the release tarball and check the
    result for errors
 
@@ -298,8 +320,8 @@ Browse the following install locations that were generated from the
 tarball:
 
 /tmp/plplot_install/share/doc/plplot/html/index.html
-/tmp/plplot_install/share/doc/plplot/plplot-5.9.11.pdf
-/tmp/plplot-dist-prep/plplot-5.9.11.tar.gz
+/tmp/plplot_install/share/doc/plplot/plplot-5.10.0.pdf
+/tmp/plplot-dist-prep/plplot-5.10.0.tar.gz
 
 In the latter, look carefully for any files that should not be part
 of the source tarball.
@@ -311,6 +333,7 @@ nroff -man /tmp/plplot_install/share/man/man3/pllegend.3plplot |less
 Look at the info pages that were generated from the tarball using
 
 info /tmp/plplot_install/share/info/plplotdoc.info
+_________________________________________________________________________
 
 ** Do comprehensive test of PLplot
 
@@ -329,6 +352,7 @@ find ../comprehensive_test_disposeable -name "*.out" |grep -v a.out |xargs grep 
 
 Enter results of these and all other tests of this release into
 README.release.
+_________________________________________________________________________
 
 ** Create ChangeLog.release
 
@@ -358,6 +382,11 @@ release version, the release tarball, etc.  This should be the
 last commit for the trunk version of PLplot (see remarks above
 about when it is necessary to repeat this step).
 
+Note the order of the --revision components which puts this file in
+the traditional reverse chronological order (unlike the preliminary
+version above which is in chronological order). 
+_________________________________________________________________________
+
 ** Create the PLplot Release
 
    ++ Preliminaries
@@ -386,7 +415,7 @@ svn copy https://svn.code.sf.net/p/plplot/code/trunk https://svn.code.sf.net/p/p
 
 # Check out this release tag
 
-svn checkout https://svn.code.sf.net/p/plplot/code/tags/v5_9_11 plplot_tags_5.9.11
+svn checkout https://svn.code.sf.net/p/plplot/code/tags/v5_9_11 plplot_tags_5.10.0
 
 In the event that problems are found in the release tarball generated
 from the release tag, then trunk should be fixed, the trunk
@@ -403,7 +432,7 @@ messages.
 
 
 # IMPORTANT: use this tagged version to create the website and tarball
-cd plplot_tags_5.9.11
+cd plplot_tags_5.10.0
 
    ++ Install and test a local copy of the PLplot website
 
@@ -422,7 +451,7 @@ depends on this one.
 Follow the exact steps given above in "Install and test a
 (preliminary) local copy of the PLplot website" but this time with the
 correct RELEASE_DATE and VERSION and also do this
-using the files from the tagged release directory, e.g., plplot_tags_5.9.11
+using the files from the tagged release directory, e.g., plplot_tags_5.10.0
 
    ++ Upload the local website to SourceForge
 
@@ -510,17 +539,17 @@ cd /tmp/plplot-dist-prep/
 
 sftp airwin,plplot@frs.sourceforge.net
 cd /home/frs/project/p/pl/plplot/plplot
-mkdir 5.9.11\ Source
-cd 5.9.11\ Source
-put plplot-5.9.11.tar.gz.asc
-put plplot-5.9.11.tar.gz
+mkdir 5.10.0\ Source
+cd 5.10.0\ Source
+put plplot-5.10.0.tar.gz.asc
+put plplot-5.10.0.tar.gz
 exit
 
-Make, e.g., plplot-5.9.11.tar.gz, the "latest" version.
+Make, e.g., plplot-5.10.0.tar.gz, the "latest" version.
 
 login to SF website
-files ==> plplot ==> 5.9.11 Source ==> view details (the "i" icon) for
-plplot-5.9.11.tar.gz ==> select "all" for the default
+files ==> plplot ==> 5.10.0 Source ==> view details (the "i" icon) for
+plplot-5.10.0.tar.gz ==> select "all" for the default
 
 The above used to spin indefinitely with iceweasel.  Now it finishes
 with a "properties updated" message, but it doesn't appear to "take"
@@ -529,12 +558,12 @@ immediately so check it later.
 # Save a local copy of the release tarball for future reference and
 # also check it.
 cd /home/software/plplot_svn/HEAD/export #(or wherever)
-cp -a /tmp/plplot-dist-prep/plplot-5.9.11.tar.gz* .
-gpg --verify plplot-5.9.11.tar.gz.asc
+cp -a /tmp/plplot-dist-prep/plplot-5.10.0.tar.gz* .
+gpg --verify plplot-5.10.0.tar.gz.asc
 
 Prepare concatanated release notes + Changelog.
 
-cd plplot_tags_5.9.11
+cd plplot_tags_5.10.0
 echo "
 
 DETAILED CHANGELOG FOR THIS RELEASE
@@ -543,7 +572,7 @@ DETAILED CHANGELOG FOR THIS RELEASE
 
 cd /tmp
 sftp airwin,plplot@frs.sourceforge.net
-cd /home/frs/project/p/pl/plplot/plplot/5.9.11\ Source
+cd /home/frs/project/p/pl/plplot/plplot/5.10.0\ Source
 put /tmp/README.release
 exit
 
@@ -554,7 +583,7 @@ Point your browser to http://sf.net/projects/plplot and login.  A
 news item will then be available on the menu bar.  Click that, then
 "new post".
 
-Enter the title (e.g., PLplot Release 5.9.11) and the text.  Surround
+Enter the title (e.g., PLplot Release 5.10.0) and the text.  Surround
 the URL's in the text with angle brackets, e.g.
 <http://sourceforge.net/projects/plplot/files/plplot>.
 
@@ -571,31 +600,31 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
   a. Preserve the historical record of the
      significant changes between versions of PLplot in one file by
-     prepending README.release for 5.9.11 to OLD-README.release
+     prepending README.release for 5.10.0 to OLD-README.release
 
 cat README.release OLD-README.release > OLD-README.release_new
 mv OLD-README.release_new OLD-README.release
 
 
-  b. Update README.release file to reflect significant changes made between
-     the current release and the last release.
+  b. Update README.release file to reflect the start of a new release cycle.
 
 --- Appendix ---
+_________________________________________________________________________
 
-(A1) GNU Privacy Guard (gpg)
+** GNU Privacy Guard (gpg)
 A brief summary of developer relevant gpg commands, see also:
 http://dewinter.com/gnupg_howto/english/GPGMiniHowto.html,
 man gpg, and http://www.gnupg.org/faq/GnuPG-FAQ.html.
 
-* Configure key-server (if you haven't done that already) by editing
+   ++ Configure key-server (if you haven't done that already) by editing
   $HOME/.gnupg/gpg.conf.  Also specify the auto-key-retrieve option
   for convenience.
 
-* List keys on your keyring that have been retrieved or generated so far:
+   ++ List keys on your keyring that have been retrieved or generated so far:
 
 gpg --list-keys irwin
 
-* Search for any previously published keys that you might want to
+   ++Search for any previously published keys that you might want to
   revoke.  (Note the search phrase is case insensitive but the search
   is done on the Boolean AND of the terms so the following search would
   miss any key generated in the past by Alan Irwin because of the
@@ -604,7 +633,7 @@ gpg --list-keys irwin
 
 gpg --search-keys Alan W. Irwin
 
-* Create a new key:
+   ++ Create a new key:
 
 gpg --gen-key
 
@@ -686,7 +715,7 @@ whether those were necessary at all.  It turned out those were not
 necessary at all as I later used the above sequence to generate
 a libLASi key and a FreeEOS uid key.
 
-* Generate a revocation certificate.  Note this requires the pass phrase
+   ++ Generate a revocation certificate.  Note this requires the pass phrase
   specified at the time of key generation so keep that pass phrase in
   a safe place or else generate the revocation certificate right after
   generating the key, and keep that certificate in a safe place.  I chose
@@ -695,12 +724,12 @@ a libLASi key and a FreeEOS uid key.
 
 gpg --armor -o nameofkey-revocation.asc --gen-revoke nameofkey
 
-* Publicly revoke old key (from FAQ):
+   ++ Publicly revoke old key (from FAQ):
 
 gpg --import old-revocation.asc
 gpg --send-keys nameofkey
 
-* Upload your (public) key to GPG key server so that others can obtain it to
+   ++ Upload your (public) key to GPG key server so that others can obtain it to
 verify your signature on the release tarball.
 gpg --send-keys nameofkey
 
@@ -710,8 +739,9 @@ This verified that the bad irwin address was revoked even though
 gpg --search-keys Alan W. Irwin
 
 still shows revoked uid as the #1 uid.
+_________________________________________________________________________
 
-(A2) (Optional) Creating a test tarball from trunk
+** (Optional) Creating a test tarball from trunk
 
 This step is only required if you have some concerns about how
 recent changes may have affected the generated source tarball, and you want
@@ -766,8 +796,9 @@ display x08c.pscairo
 
 where "display" is the general image viewer from the imagemagick suite
 of programmes.
+_________________________________________________________________________
 
-(A3) Correct computer time
+** Correct computer time
 
 (While it is useful to have the correct time on your computer, this is no 
 longer strictly necessary).
@@ -782,8 +813,30 @@ have other apps running on your system that expect time to increase in a
 smooth and linear fashion.
 
 If you would like your computer to always have the correct time and date, you 
-can install the debian ntp package, which must be properly configured to work.
-Some notes about how to do this can be found in the PLplot mailing list 
-archive. Look for the thread titled "PLplot 5.7.2 is now available" dated 
-Jan 22/23 2007.
+can install the debian ntp package.  The default configuration appears
+to give good results.  You can check those results by the ntpq -pe command,
+e.g.,
 
+software@raven> ntpq -dp
+1 packets reassembled into response
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+2 packets reassembled into response
+ one.tariox.com  24.150.241.178   2 u   7d 1024    0   79.179   -6.028   0.000
+2 packets reassembled into response
+ tor-web-02.surr 97.107.129.217   3 u  33d 1024    0   79.696   -4.199   0.000
+2 packets reassembled into response
+*helliana.com    128.9.176.30     2 u  580 1024  177   82.416    0.120   0.518
+2 packets reassembled into response
+ chelsea.ii1.net 216.218.254.202  2 u  16d 1024    0   33.252    5.646   0.000
+
+The delay column is the round-trip travel time (in ms) to the indicated server.
+
+The offset column is the "combined time offset" (in ms) for the
+indicated server.  I assume this is the offset of that server clock from
+the weighted mean of all the clocks.
+
+The jitter column is the "exponentially-weighted rms average" for the
+indicated server.  I assume it is in ms so the above jitters of 0.000
+show a very small rms for those servers, i.e., a clock of extremely
+high quality.
