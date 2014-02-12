@@ -1,4 +1,28 @@
 ------------------------------------------------------------------------
+r13006 | airwin | 2014-02-12 14:02:43 -0800 (Wed, 12 Feb 2014) | 2 lines
+Changed paths:
+   M /trunk/README.Release_Manager_Cookbook
+
+More version tweaks to release process procedure.
+
+------------------------------------------------------------------------
+r13005 | airwin | 2014-02-12 14:01:26 -0800 (Wed, 12 Feb 2014) | 4 lines
+Changed paths:
+   M /trunk/scripts/htdocs-gen_plot-examples.sh
+   M /trunk/www/examples.php
+
+Use ".txt" suffix rather than "-" since that appears to give
+a better result with konqueror (which e.g., attempts to recognize
+x00c.c- as C code which should be downloaded rather than simply viewed).
+
+------------------------------------------------------------------------
+r13003 | airwin | 2014-02-12 11:40:32 -0800 (Wed, 12 Feb 2014) | 2 lines
+Changed paths:
+   M /trunk/ChangeLog.release
+
+Commit the ChangeLog for the 5.9.10 release.
+
+------------------------------------------------------------------------
 r13002 | airwin | 2014-02-12 11:36:50 -0800 (Wed, 12 Feb 2014) | 3 lines
 Changed paths:
    M /trunk/README.Release_Manager_Cookbook
