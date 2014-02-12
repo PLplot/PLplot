@@ -42,7 +42,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <!DOCTYPE book PUBLIC "@DOCBOOK_DTD_PUBID@" "@DOCBOOK_DTD_SYSID@" [
 
-<!ENTITY Project-Version "@VERSION@">
+<!ENTITY Project-Version "@PLPLOT_VERSION@">
 <!ENTITY Project-Date "$Date$">
 <!ENTITY Release-Date "@RELEASE_DATE@">
 
@@ -280,7 +280,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </subjectset>
     <abbrev>DocBook</abbrev>
     <subtitle>Programmer's Reference Manual</subtitle>
-    <releaseinfo>Version 5.0</releaseinfo>
+    <releaseinfo>Version &Project-Version;</releaseinfo>
     <authorgroup>
       <author>
 	<firstname>Maurice</firstname>
