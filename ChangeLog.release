@@ -1,4 +1,18 @@
 ------------------------------------------------------------------------
+r13009 | airwin | 2014-02-12 14:43:39 -0800 (Wed, 12 Feb 2014) | 2 lines
+Changed paths:
+   M /trunk/www/examples.php
+
+One additional website tweak
+
+------------------------------------------------------------------------
+r13007 | airwin | 2014-02-12 14:06:04 -0800 (Wed, 12 Feb 2014) | 2 lines
+Changed paths:
+   M /trunk/ChangeLog.release
+
+Second try at committing the ChangeLog for the 5.9.10 release.
+
+------------------------------------------------------------------------
 r13006 | airwin | 2014-02-12 14:02:43 -0800 (Wed, 12 Feb 2014) | 2 lines
 Changed paths:
    M /trunk/README.Release_Manager_Cookbook
