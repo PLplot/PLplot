@@ -156,21 +156,30 @@ failure, the remaining configurations are untested on MinGW/MSYS/Wine
 for the interactive case.
 
 * Arjen Markus was unable to confirm the good noninteractive test
-results obtained above for MinGW/MSYS on a 32-bit Windows system
-(Wine) on his Windows platform consisting of 64-bit Windows 7, service
-pack 1 for AMD-64 hardware.  The long-standing MSYS bug for parallel
-builds was worked around by using the epa_build
--DNUMBER_PARALLEL_JOBS:STRING=1 cmake option.  However, the swig
-prerequsitie could not be epa_built because of what are probably
-64-bit issues in the Windows-relevant part of the swig code.  This
-hypothesis needs confirmation by replicating the above good
-MinGW/MSYS/32-bit Wine results with MinGW/MSYS/32-bit Microsoft
-Windows results, but that follow-up has not been done yet.  
+results obtained above for MinGW/MSYS using his Windows platform
+consisting of MinGW-4.8.1 and MSYS on 64-bit
+Windows 7, service pack 1 for AMD-64 hardware.  The long-standing MSYS
+bug for parallel builds was worked around by using the epa_build
+-DNUMBER_PARALLEL_JOBS:STRING=1 cmake option.  The build failure occurred
+with an "undefined reference to `tclStubsPtr'" that occurred during
+the course of the Itk epa_build.  It is not clear at this point if his
+setup of epa_build (creating appropriate values for the
 
-Arjen also feels he has found a solution for the swig 64-bit Windows
-epa_build issue, and he plans to investigate that further post-release
-(when we will have time to test that his proposed fix does not
-compromise the successful swig epa_builds on other platforms).
+INSTALL_PREFIX
+EPA_BUILD_SOURCE_PATH
+CFLAGS
+CXXFLAGS
+FFLAGS
+CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH
+PATH
+PKG_CONFIG_PATH
+BUILD_COMMAND
+GENERATOR_STRING
+
+environment variables) or MinGW-4.8.1 (as opposed to MinGW-4.7.2 used
+in the above successful test), or some other issue is causing failure
+of the Itk build on this platform.
 
 4. Tests made for the prior release
 
