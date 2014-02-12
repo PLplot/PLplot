@@ -180,17 +180,17 @@ filled).
 END;
 
 	  switch($lbind) {
-	  case ("Ada(thick)"):    $fname = "xthick" . $demo_str . "a.adb-"; break;
-	  case ("Ada(thin)"):    $fname = "x" . $demo_str . "a.adb-"; break;
-	  case ("C"):      $fname = "x" . $demo_str . "c.c-"; break;
-	  case ("C++"):$fname = "x" . $demo_str . ".cc-"; break;
-	  case ("F95"):    $fname = "x" . $demo_str . "f.f90-"; break;
-	  case ("Java"):   $fname = "x" . $demo_str . ".java-"; break;
-	  case ("Ocaml"):  $fname = "x" . $demo_str . ".ml-"; break;
-	  case ("Octave"): $fname = "x" . $demo_str . "c.m-"; break;
-	  case ("Python"): $fname = "xw" . $demo_str . ".py-"; break;
-	  case ("Tcl"):    $fname = "x" . $demo_str . ".tcl-";  break;
-	  default:         $fname = "x" . $demo_str . "c.c-";
+	  case ("Ada(thick)"):    $fname = "xthick" . $demo_str . "a.adb.txt-"; break;
+	  case ("Ada(thin)"):    $fname = "x" . $demo_str . "a.adb.txt"; break;
+	  case ("C"):      $fname = "x" . $demo_str . "c.c.txt"; break;
+	  case ("C++"):$fname = "x" . $demo_str . ".cc.txt"; break;
+	  case ("F95"):    $fname = "x" . $demo_str . "f.f90.txt"; break;
+	  case ("Java"):   $fname = "x" . $demo_str . ".java.txt"; break;
+	  case ("Ocaml"):  $fname = "x" . $demo_str . ".ml.txt"; break;
+	  case ("Octave"): $fname = "x" . $demo_str . "c.m.txt"; break;
+	  case ("Python"): $fname = "xw" . $demo_str . ".py.txt"; break;
+	  case ("Tcl"):    $fname = "x" . $demo_str . ".tcl.txt";  break;
+	  default:         $fname = "x" . $demo_str . "c.c.txt";
 	  }
 
     // view code
