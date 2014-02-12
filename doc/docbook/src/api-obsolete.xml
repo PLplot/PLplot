@@ -42,10 +42,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <para>
     The purpose of this chapter is to provide minimal documentation for
     obsolete/deprecated API that appears in our C library to provide backwards
-    compatibility until our next major release, PLplot-6, where these functions
-    will disappear.  Do not use these functions, and if you already use them
+    compatibility until these functions
+    disappear.  Do not use these functions, and if you already use them
     in legacy PLplot applications, replace them by the suggested
-    equivalents so you won't be caught out by the next major PLplot release.
+    equivalents so you won't be caught out when they disappear.
   </para>
 
   <sect1 id="plclr" renderas="sect3">
@@ -410,6 +410,54 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+  </sect1>
+  <sect1 id="plwid" renderas="sect3">
+    <title>
+      <function>plwid</function>: Set pen width
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plwid</function>
+	  </funcdef>
+	  <paramdef><parameter>iwidth</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets the pen width to an obsolete integer value.  This function is deprecated.  Use &plwidth; instead which sets the pen width to a floating-point value.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>iwidth</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The desired pen width.  If <literal><parameter>width</parameter></literal>
+	    is negative or the same as the previous value no action is taken.
+	    <literal><parameter>width</parameter> = 0</literal> should be interpreted as
+	    as the minimum valid pen width for the device.  The interpretation of positive
+	    <literal><parameter>width</parameter></literal> values is also device
+	    dependent.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plwid(iwidth)</function>
+    </para>
+
+    <para>
+      This function is deprecated so not used in any of the standard examples.
+    </para>
 
   </sect1>
 
