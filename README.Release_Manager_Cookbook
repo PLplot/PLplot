@@ -385,6 +385,10 @@ about when it is necessary to repeat this step).
 Note the order of the --revision components which puts this file in
 the traditional reverse chronological order (unlike the preliminary
 version above which is in chronological order). 
+
+Commit the result which ideally should be the last commit of this release.
+
+svn commit ChangeLog.release
 _________________________________________________________________________
 
 ** Create the PLplot Release
@@ -399,7 +403,7 @@ as follows:
 /branches/??
 
 For the release, you will be using svn to copy the /trunk version to
-/tags/vX_Y_Z (v5_9_11 for example to follow the previous naming
+/tags/vX_Y_Z (v5_10_0 for example to follow the previous naming
 conventions).
 
 To do this strictly on the server side with no local files involved at all
@@ -411,11 +415,11 @@ svn update
 svn status
 # Complete server side copy using new SourceForge Allura version of repository.
 # This is _much_ faster than copying from the local version.
-svn copy https://svn.code.sf.net/p/plplot/code/trunk https://svn.code.sf.net/p/plplot/code/tags/v5_9_11
+svn copy https://svn.code.sf.net/p/plplot/code/trunk https://svn.code.sf.net/p/plplot/code/tags/v5_10_0
 
 # Check out this release tag
 
-svn checkout https://svn.code.sf.net/p/plplot/code/tags/v5_9_11 plplot_tags_5.10.0
+svn checkout https://svn.code.sf.net/p/plplot/code/tags/v5_10_0 plplot_tags_5.10.0
 
 In the event that problems are found in the release tarball generated
 from the release tag, then trunk should be fixed, the trunk
