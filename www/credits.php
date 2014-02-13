@@ -20,10 +20,11 @@
       the community.</p>
       <h4>PLplot core dependencies</h4>
       <ul class="arrowlist">
-      <li><a href="http://www.qhull.org/">Qhull</a>: computes the convex hull, Delaunay
+	<li><a href="http://www.qhull.org/">Qhull</a>: computes the convex hull, Delaunay
           triangulation, Voronoi diagram, halfspace intersection about a point,
           furthest-site Delaunay triangulation, and furthest-site Voronoi diagram.</li>
-			</ul>
+	<li><a href="http://shapelib.maptools.org/">shapelib</a>: allows the subset of our API concerned with maps to read maps in shapefile format.<li>
+      </ul>
 
       <h4>PLplot device-driver dependencies</h4>
 <p> N.B. each device driver is an optional component of PLplot.</p>
