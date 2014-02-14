@@ -341,3 +341,53 @@ effort) will be required to get all of the epa_build configurations to
 work for the Windows case, and the success I have achieved with a
 limited group of projects for the plplot_lite case on MinGW/MSYS/Wine
 is a promising start.
+
+===============================================================================
+Making good bug reports for epa_build
+
+Good bug reports need to include lots of details so that the developers
+of epa_build can figure out what is wrong.  Those details include the
+following:
+
+1. The modified setup files you sourced above to establish the environment
+variables needed by epa_build.
+
+2. The actual environment variables resulting from source(-ing) those files.
+You obtain such a list by executing the following command from bash
+
+printenv >printenv.out
+
+and including printenv.out in your bug report.
+
+3. For the -DBUILD_THE_BUILD_TOOLS=ON case that is started with an initially
+empty build tree that is kept separate from the -DBUILD_THE_BUILD_TOOLS=OFF
+build tree:
+
+a. The exact command you used to invoke cmake
+b. The resulting cmake.out
+c. The resulting CMakeCache.txt file
+d. The build_all.out file you get from
+
+make -k build_all >& build_all.out
+
+The -k option attempts to keep building every build tool possible even
+if there is an error for one or more of them.
+
+4. For the -DBUILD_THE_BUILD_TOOLS=OFF case that is started with an initially
+empty build tree that is kept separate from the -DBUILD_THE_BUILD_TOOLS=ON
+build tree:
+
+(Note this case should work even if no buildtools were successfully
+built for the -DBUILD_THE_BUILD_TOOLS=ON case since the PLplot build
+should simply adjust to the missing build tools by reducing what is
+built.  Of course, the result is a less powerful PLplot so ultimately
+you do want all the buildtools to build, but those buildtools are not
+a necessity.)
+
+a. The exact command you used to invoke cmake
+b. The resulting cmake.out
+c. The resulting CMakeCache.txt file
+d. The build_plplot_lite.out file you get from
+
+make build_plplot_lite >& build_plplot_lite.out
+
