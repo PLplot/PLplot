@@ -6,7 +6,7 @@
 # source tree (except those listed below) to discover which of those
 # files have any character with the eighth (parity) bit set.
 
-# Copyright (C) 2010 Alan W. Irwin
+# Copyright (C) 2010-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -50,9 +50,11 @@ SCRIPT_PATH="$(pwd)"
 # Assumption: top-level source tree is parent directory of where script
 # is located.
 SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
-cd "${SOURCE_TREE}"
 
 #List of all files in source tree other than .svn ones....
+rm -rf /tmp/parity_bit_check
+svn --quiet export ${SOURCE_TREE} /tmp/parity_bit_check
+cd /tmp/parity_bit_check
 find -type f >| /tmp/temporary_source_tree_list
 
 for FILE in $(grep -v -f "$SOURCE_TREE"/scripts/parity_bit_check.exclude /tmp/temporary_source_tree_list); do
