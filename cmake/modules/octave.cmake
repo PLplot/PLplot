@@ -274,10 +274,4 @@ if(ENABLE_octave)
   endif(NOT CMAKE_INSTALL_PREFIX STREQUAL "${OCTAVE_PREFIX}") 
   message(STATUS "OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
   
-  # Use DEFINE_PL_DOUBLE in bindings/octave/plplot_octave.h.in
-  # (I [AWI] presume this is to simplify the #include's).
-  if(PL_DOUBLE)
-    set(DEFINE_PL_DOUBLE "#define PL_DOUBLE")
-  endif(PL_DOUBLE)
-
 endif(ENABLE_octave)

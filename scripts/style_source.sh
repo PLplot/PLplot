@@ -216,7 +216,7 @@ csource_LIST="$csource_LIST fonts/*.c"
 # C source in utils.
 csource_LIST="$csource_LIST utils/*.c"
 
-csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/f95/*.c bindings/f95/plstubs.h bindings/gnome2/*/*.c bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch] bindings/octave/plplot_octave.h.in bindings/octave/plplot_octave_rej.h bindings/octave/massage.c"
+csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/f95/*.c bindings/f95/plstubs.h bindings/gnome2/*/*.c bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch] bindings/octave/massage.c"
 
 export cppsource_LIST
 

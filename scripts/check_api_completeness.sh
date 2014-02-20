@@ -83,19 +83,6 @@ case $1 in
     diff -au /tmp/plplot_api.txt -
   ;;
 
-  octave)
-    # Prepare API list from bindings/octave/plplot_octave.h.in
-    # and compare with previous.
-    echo "octave API differences (if any)"
-    grep '^#define.*pl.*c_pl' bindings/octave/plplot_octave.h.in |\
-    grep -v plParseInternalOpts |\
-    tr '\t' " " |\
-    tr -s " " |\
-    cut --delimiter=" " --fields=2 |\
-    sort |\
-    diff -au /tmp/plplot_api.txt -
-  ;;
-  
   f95)
     # Prepare API list from bindings/f95/plstubs.h
     # and compare with previous
@@ -161,7 +148,6 @@ case $1 in
     $0 docbook
     $0 swig
     $0 java
-    $0 octave
     $0 f95
     $0 c++
     $0 tcl
@@ -170,7 +156,7 @@ case $1 in
   *)
   echo "First argument was $1"
   echo "Instead, it must be one of the following:"
-  echo "docbook, swig, java, octave, f95, c++, tcl or all"
+  echo "docbook, swig, java, f95, c++, tcl or all"
   ;;
 esac
 #rm /tmp/plplot_api.txt
