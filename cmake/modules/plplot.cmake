@@ -21,6 +21,9 @@
 
 option(ADD_SPECIAL_CONSISTENCY_CHECKING "Add extra source-tree consistency checking targets that require special tools" OFF)
 
+# target that depends on all check targets.
+add_custom_target(check_all)
+
 # libraries are all shared by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 

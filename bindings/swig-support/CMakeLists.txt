@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2010 Alan W. Irwin
+# Copyright (C) 2010-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -24,6 +24,7 @@
 if(PERL_XML_DOM AND PERL_XML_PARSER)
   add_custom_target(
     check_swig_documentation
+    COMMAND ${CMAKE_COMMAND} -E echo "Check that bindings/swig-support/swig_documentation.i is consistent with doc/docbook/src/api.xml"
     COMMAND ${CMAKE_COMMAND} -E remove -f
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
     COMMAND ${PERL_EXECUTABLE}
@@ -31,12 +32,13 @@ if(PERL_XML_DOM AND PERL_XML_PARSER)
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
-    COMMAND ${CMAKE_COMMAND} -E echo "Check that swig_documentation.i is consistent with doc/docbook/src/api.xml"
     COMMAND cmp 
     ${CMAKE_CURRENT_SOURCE_DIR}/swig_documentation.i
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
     )
-  
+
+  add_dependencies(check_all check_swig_documentation)
+
   set(make_documentation_DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
     )
@@ -50,10 +52,13 @@ endif(PERL_XML_DOM AND PERL_XML_PARSER)
 # Add (Unix) custom target to check numerical #defines in plplotcapi.i.
 add_custom_target(
   check_plplotcapi_defines
+  COMMAND ${CMAKE_COMMAND} -E echo "Check that numerical #defines in bindings/swig-support/plplotcapi.i are consistent with the numerical #defines in include/plplot.h"
+  COMMAND ${CMAKE_COMMAND} -E echo "An error for this target implies the numerical #defines section of bindings/swig-support/plplotcapi.i needs updating following the directions in that file"
   COMMAND ${CMAKE_COMMAND} -E remove -f
   ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
   COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_SOURCE_DIR}/include/plplot.h | grep -v plotsh3d > ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
-  COMMAND ${CMAKE_COMMAND} -E echo "Non-NULL diff results below (which will be accompanied by an error for this target) imply the numerical #defines section of bindings/swig-support/plplotcapi.i needs updating following the directions in that file"
-  COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_CURRENT_SOURCE_DIR}/plplotcapi.i | diff -auw - ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
+  COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_CURRENT_SOURCE_DIR}/plplotcapi.i | diff -qw - ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
   VERBATIM
 )
+
+add_dependencies(check_all check_plplotcapi_defines)

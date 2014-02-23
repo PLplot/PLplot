@@ -57,16 +57,15 @@ if(ENABLE_ocaml)
   if(GENERATE_PLPLOT_H_INC)
     add_custom_target(
       check_plplot_h.inc
-      COMMAND 
-      ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
-      COMMAND
-      ${OCAML} ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
-      COMMAND
-      ${CMAKE_COMMAND} -E echo "Check that plplot_h.inc is consistent with touchup.ml and plplot_h"
-      COMMAND
-      cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h.inc ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
+      COMMAND ${CMAKE_COMMAND} -E echo "Check that bindings/ocaml/plplot_h.inc is consistent with bindings/ocaml/touchup.ml and bindings/ocaml/plplot_h"
+      COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
+      COMMAND ${OCAML} ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
+      COMMAND cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h.inc ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
+
+    add_dependencies(check_all check_plplot_h.inc)
+
   endif(GENERATE_PLPLOT_H_INC)
 
   #Detailed CMake logic to build ocaml bindings for PLplot.

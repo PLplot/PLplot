@@ -23,6 +23,7 @@ if(ENABLE_tcl)
   # Check consistency of plplot_parameters.h.
   add_custom_target(
     check_tcl_parameters
+    ${CMAKE_COMMAND} -E echo "Check that bindings/tcl/plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i"
     COMMAND ${CMAKE_COMMAND} -E remove -f
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
@@ -30,11 +31,12 @@ if(ENABLE_tcl)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i >
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
-    ${CMAKE_COMMAND} -E echo "Check that plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i"
     COMMAND
     cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.h
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     )
+
+  add_dependencies(check_all check_tcl_parameters)
 
   # tclmatrix
   set(tclmatrix${LIB_TAG}_LIB_SRCS
