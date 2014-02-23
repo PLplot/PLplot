@@ -8,12 +8,6 @@
 //  Department of Physics and Atmospheric Science,
 //  Dalhousie University, Halifax, Nova Scotia, Canada, B3H 3J5
 //
-//  $Author$
-//  $Revision$
-//  $Date$
-//  $Name$
-//
-//
 // NOTICE
 //
 //  This program is free software; you can redistribute it and/or modify

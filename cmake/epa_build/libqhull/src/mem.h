@@ -12,8 +12,6 @@
      qh_errexit(qhmem_ERRqhull, NULL, NULL) otherwise
 
    copyright (c) 1993-2010 The Geometry Center.
-   $Id$$Change: 1164 $
-   $DateTime: 2010/01/07 21:52:00 $$Author$
 */
 
 #ifndef qhDEFmem
