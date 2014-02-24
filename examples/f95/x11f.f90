@@ -1,4 +1,3 @@
-!   $Id$
 !   Mesh plot demo
 !
 !   Copyright (C) 2004  Alan W. Irwin

@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
     Displays Greek letters and mathematically interesting Unicode ranges
     
     Copyright (C) 2009  Werner Smekal

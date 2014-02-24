@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Plots a simple stripchart with four pens.
 
   Copyright (C) 2008  Werner Smekal

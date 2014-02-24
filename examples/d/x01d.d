@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Simple line plot and multiple windows demo.
 //
 // Copyright (C) 2009  Werner Smekal

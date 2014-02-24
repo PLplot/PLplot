@@ -1,4 +1,3 @@
-!      $Id$
 !      Grid data demo.
 !
 !      Copyright (C) 2004  Joao Cardoso

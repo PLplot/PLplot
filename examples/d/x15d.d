@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Shade plot demo.
 //
 //      Maurice LeBrun

@@ -1,5 +1,3 @@
--- $Id$
-
 -- Bar chart demo.
 
 -- Copyright (C) 2006 Jerry Bauck

@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot tektronix device & emulators driver.
 //
 #include "plDevs.h"

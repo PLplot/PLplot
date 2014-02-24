@@ -1,9 +1,8 @@
-// $Id$
 // All routines that help to create a discrete legend (pllegend) or
 // a continuous legend (plcolorbar).
 //
 // Copyright (C) 2010-2013  Hezekiah M. Carty
-// Copyright (C) 2010-2013  Alan W. Irwin
+// Copyright (C) 2010-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

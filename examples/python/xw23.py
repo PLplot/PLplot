@@ -1,5 +1,3 @@
-# $Id$
-
 #  Copyright (C) 2005, 2006, 2007, 2008 Alan W. Irwin
 
 #  Displays Greek letters and mathematically interesting Unicode ranges.

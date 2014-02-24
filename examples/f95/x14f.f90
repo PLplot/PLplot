@@ -1,4 +1,3 @@
-!      $Id$
 !      Demo of multiple stream/window capability
 !
 !      Copyright (C) 2004  Arjen Markus

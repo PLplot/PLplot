@@ -1,8 +1,6 @@
-# $Id$
-
 # Load PLplot tkwin extension
 
-# Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004-2014 Alan W. Irwin
 # Copyright (C) 2004  Joao Cardoso
 #
 # This file is part of PLplot.

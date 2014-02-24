@@ -1,5 +1,3 @@
-//  $Id$
-//
 //  Unicode Pace Flag
 //
 //  Copyright (C) 2009  Werner Smekal

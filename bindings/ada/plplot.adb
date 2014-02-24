@@ -1,5 +1,3 @@
--- $Id$
-
 -- Thick Ada binding to PLplot
 
 -- Copyright (C) 2006-2013 Jerry Bauck

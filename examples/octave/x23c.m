@@ -1,5 +1,3 @@
-## $Id$
-##
 ## Displays Greek letters and mathematically interesting Unicode ranges
 ## Copyright (C) 2005 Alan Irwin 
 ## Copyright (C) 2005 Andrew Ross 

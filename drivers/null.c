@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot Null device driver.
 //
 #include "plDevs.h"

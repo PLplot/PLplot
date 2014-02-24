@@ -1,6 +1,5 @@
 # -*- coding: utf-8; -*-
-# $Id$
-#
+
 #  Unicode Pace Flag
 #
 #  Copyright (C) 2005 Rafael Laboissiere

@@ -1,5 +1,3 @@
--- $Id$
-
 -- Font demo.
 
 -- Copyright (C) 2010 Jerry Bauck

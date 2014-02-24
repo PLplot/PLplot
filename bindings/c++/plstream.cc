@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-// $Id$
 // Geoffrey Furnish
 // Sep 21 1994
 //
 // Copyright (C) 2004,2005  Andrew Ross
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

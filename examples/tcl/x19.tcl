@@ -1,6 +1,4 @@
-# $Id$
-#
-#      Copyright (C) 2002  Alan W. Irwin
+#      Copyright (C) 2002-2014  Alan W. Irwin
 #      Copyright (C) 2009  Arjen Markus
 #
 #

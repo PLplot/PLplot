@@ -1,4 +1,3 @@
-!   $Id$
 !   Simple line plot and multiple windows demo.
 !
 !   Copyright (C) 2004  Alan W. Irwin

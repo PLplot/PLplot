@@ -1,5 +1,3 @@
--- $Id$
-
 -- plimage demo
 
 -- Copyright (C) 2008 Jerry Bauck

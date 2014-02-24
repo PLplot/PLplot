@@ -1,10 +1,3 @@
-// $Id$
-// $Log$
-// Revision 1.1  1992/05/20 21:33:23  furnish
-// Initial checkin of the whole PLPLOT project.
-//
-//
-
 short int subbuffer067[100] = {
     8384, 8255, 8127, 8000, 8001, 8130, 8258, 8385, 8383, 8253,
     8124,   64, 8129, 8128, 8256, 8257, 8129,    0,  -16, 7116,

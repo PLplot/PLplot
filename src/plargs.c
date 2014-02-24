@@ -1,10 +1,7 @@
-// $Id$
-//
-//  Copyright 1993, 1994, 1995
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 2004  Maurice LeBrun
+//  Copyright (C) 1993-2004  Maurice LeBrun
 //  Copyright (C) 2004  Andrew Ross
 //
 //  This file is part of PLplot.

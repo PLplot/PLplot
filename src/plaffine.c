@@ -1,8 +1,6 @@
-// $Id$
-//
 // Affine manipulation routines for PLplot.
 //
-// Copyright (C) 2009  Alan W. Irwin
+// Copyright (C) 2009-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

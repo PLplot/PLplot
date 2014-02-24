@@ -1,5 +1,3 @@
-# $Id$
-
 #  Copyright (C) Wesley Ebisuzaki
 #  Copyright (C) 2009 Andrew Ross
 #

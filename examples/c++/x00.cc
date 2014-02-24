@@ -1,8 +1,6 @@
-// $Id$
-//
 // Simple demo of a 2D line plot.
 //
-// Copyright (C) 2011  Alan W. Irwin
+// Copyright (C) 2011-2014 Alan W. Irwin
 // Copyright (C) 2012  Andrew Ross
 //
 // This file is part of PLplot.

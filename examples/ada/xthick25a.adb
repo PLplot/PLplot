@@ -1,5 +1,3 @@
--- $Id$
-
 -- Filling and clipping polygons.
 
 -- Copyright (C) 2008, 2010 Jerry Bauck

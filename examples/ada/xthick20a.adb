@@ -1,5 +1,3 @@
--- $Id$
-
 -- Draw_Image_Color_Map_1_Automatic demo
 
 -- Copyright (C) 2008 Jerry Bauck

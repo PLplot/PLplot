@@ -1,10 +1,8 @@
-// $Id$
-//
 //      Functions to shade regions on the basis of value.
 //      Can be used to shade contour plots or alone.
 //      Copyright 1993 Wesley Ebisuzaki
 //
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

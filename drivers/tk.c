@@ -1,5 +1,3 @@
-// $Id$
-//
 //	PLplot Tcl/Tk and Tcl-DP device drivers.
 //	Should be broken up somewhat better to allow use of DP w/o X.
 //

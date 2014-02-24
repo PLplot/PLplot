@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot ImPress device driver.
 //
 #include "plDevs.h"

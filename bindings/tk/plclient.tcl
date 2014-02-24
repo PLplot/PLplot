@@ -1,4 +1,3 @@
-# $Id$
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics client procs
 # Maurice LeBrun

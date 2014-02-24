@@ -1,5 +1,4 @@
-!   $Id$
-!   Illustration of logarithmic axes, and redefinition of window
+!   Illustration of logarithmic axes, and redefinition of window.
 !
 !   Copyright (C) 2004  Alan W. Irwin
 !

@@ -1,5 +1,3 @@
-// $Id$
-//
 //      plmtex3, plptex3 demo.
 //
 // Copyright (C) 2009 Werner Smekal

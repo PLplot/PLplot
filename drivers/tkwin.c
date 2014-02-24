@@ -1,5 +1,3 @@
-// $Id$
-//
 // PLplot Tk device driver.
 //
 // Copyright (C) 2004  Maurice LeBrun

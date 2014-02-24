@@ -1,5 +1,3 @@
--- $Id$
-
 -- Displays the entire "plpoin" symbol (font) set.
 
 -- Copyright (C) 2010 Jerry Bauck

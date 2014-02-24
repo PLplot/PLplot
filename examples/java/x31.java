@@ -1,9 +1,7 @@
-// $Id$
-//
 //   set/get tester
 //
 // Copyright (C) 2008 Andrew Ross
-// Copyright (C) 2008 Alan Irwin
+// Copyright (C) 2008-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

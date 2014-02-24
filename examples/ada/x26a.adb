@@ -1,5 +1,3 @@
--- $Id$
-
 -- Multi-lingual version of the first page of example 4.
 
 -- Copyright (C) 2008 - 2011 Jerry Bauck

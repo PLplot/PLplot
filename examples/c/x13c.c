@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Pie chart demo.
 //
 

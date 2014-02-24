@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# $Id$
+
 # Copyright 2010 Alan W. Irwin
 # This file is part of PLplot.
 

@@ -1,5 +1,3 @@
-// $Id$
-//
 //    Header file for Support routines for freetype font engine
 //
 //    See plfreetype.c for more details

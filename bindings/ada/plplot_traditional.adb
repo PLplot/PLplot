@@ -1,5 +1,3 @@
--- $Id$
-
 -- Ada binding to PLplot using the traditional PLplot subprogram names
 
 -- Copyright (C) 2006-2013 Jerry Bauck

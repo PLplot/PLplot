@@ -1,10 +1,6 @@
-// -*- coding: utf-8; -*-
-//
-// $Id$
-//
 // Demonstrate most pllegend capability including unicode symbols.
 //
-// Copyright (C) 2010 Alan Irwin
+// Copyright (C) 2010-2014 Alan W. Irwin
 // Copyright (C) 2011 Andrew Ross
 //
 // This file is part of PLplot.

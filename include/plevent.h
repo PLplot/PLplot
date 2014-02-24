@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Input event (especially keyboard) definitions for use from plplot
 //  event handlers.
 //

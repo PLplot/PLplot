@@ -1,5 +1,3 @@
-// $Id$
-//
 // Copyright (C) 2009 Werner Smekal
 //
 // set/get tester

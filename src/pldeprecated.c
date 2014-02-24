@@ -1,6 +1,4 @@
-// $Id$
-//
-//  Copyright (C) 2005  Alan W. Irwin
+//  Copyright (C) 2005-2014 Alan W. Irwin
 //
 //  This file is part of PLplot.
 //

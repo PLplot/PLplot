@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Log plot demo.
 //
 

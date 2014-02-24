@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
 //
 // Copyright (C) 2009  Werner Smekal

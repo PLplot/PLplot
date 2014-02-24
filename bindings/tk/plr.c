@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Copyright 1993, 1994, 1995
 //  Maurice LeBrun
 //  IFS, University of Texas at Austin

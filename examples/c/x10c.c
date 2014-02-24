@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Window positioning demo.
 //
 

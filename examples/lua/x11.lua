@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Mesh plot demo.
 
   Copyright (C) 2008  Werner Smekal

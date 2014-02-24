@@ -1,4 +1,3 @@
-!   $Id$
 !   Demonstration program for PLplot: Bar chart example.
 !
 !   Copyright (C) 2004  Alan W. Irwin

@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Tcl Matrix initializer.
 //  Vince Darley
 //

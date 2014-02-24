@@ -1,5 +1,4 @@
---[[ $Id: x33.lua 11667 2011-03-21 03:35:08Z airwin $
-
+--[[
   Demonstrate most pllegend capability including unicode symbols.
 
   Copyright (C) 2010 Alan W. Irwin

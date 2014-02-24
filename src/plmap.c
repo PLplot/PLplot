@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Continental Outline and Political Boundary Backgrounds
 //
 //      Some plots need a geographical background such as the global
@@ -14,7 +12,7 @@
 //      Copyright (C) 1991, 1993, 1994  Wesley Ebisuzaki
 //      Copyright (C) 1994, 2000, 2001  Maurice LeBrun
 //      Copyright (C) 1999  Geoffrey Furnish
-//      Copyright (C) 2000, 2001, 2002  Alan W. Irwin
+//      Copyright (C) 2000-2014 Alan W. Irwin
 //      Copyright (C) 2001  Andrew Roach
 //      Copyright (C) 2001, 2004  Rafael Laboissiere
 //      Copyright (C) 2002  Vincent Darley

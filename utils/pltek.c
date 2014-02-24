@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Review a Tektronix vector file.
 //  from 'scan', by Clair Nielsen, LANL.
 //  Modifications by Maurice LeBrun, IFS.

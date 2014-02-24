@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Macros and prototypes for the PLplot package.  This header file must
 //  be included by all user codes.
 //

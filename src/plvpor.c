@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Functions dealing with viewports.
 //
 // Copyright (C) 2004  Joao Cardoso

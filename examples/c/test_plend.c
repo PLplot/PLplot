@@ -1,5 +1,3 @@
-// $Id$
-//
 //      plend and plend1 testing demo.
 //
 

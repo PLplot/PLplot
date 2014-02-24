@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Everything needed by the C demo programs.
 //      Created to avoid junking up plplot.h with this stuff.
 //

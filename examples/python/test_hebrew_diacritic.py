@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; -*-
-# $Id$
-
 #  Copyright (C) 2010 Alan W. Irwin
 
 #  Displays Genesis Chapter 1 verse 3 "And God said: 'Let there be

@@ -1,7 +1,3 @@
-#----------------------------------------------------------------------------
-# $Id$
-#----------------------------------------------------------------------------
-
 # Does a series of mesh plots for a given data set, with different
 # viewing options in each plot.
 

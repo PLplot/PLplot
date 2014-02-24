@@ -1,7 +1,3 @@
--- -*- coding: utf-8; -*-
---
--- $Id$
---
 -- Demonstrate most Create_Legend capability including unicode symbols.
 --
 -- Copyright (C) 2011-2013 Jerry Bauck

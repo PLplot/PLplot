@@ -1,5 +1,3 @@
-## $Id$
-##
 ##	Bar chart demo.
 ##
 

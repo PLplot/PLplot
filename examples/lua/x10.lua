@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Window positioning demo.
 
   Copyright (C) 2008  Werner Smekal

@@ -1,6 +1,4 @@
 #----------------------------------------------------------------------------
-# $Id$
-#
 # Interactive plotting driver for pltcl (plplot-enhanced tclsh)
 # 
 # Maurice LeBrun

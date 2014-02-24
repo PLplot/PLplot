@@ -6,8 +6,6 @@
 #
 # @> [incr Tcl] interface to PLplot
 #
-# $Id$
-#
 ###############################################################################
 
 option add *Plwindow.width 250 widgetDefault

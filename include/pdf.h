@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Copyright (C) 1992 by Maurice J. LeBrun
 //
 //  Macros and prototypes for the PDF package.

@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot Laser Jet II device driver.
 //
 //      Note only the 150 dpi mode is supported.  The others (75,100,300)

@@ -1,5 +1,3 @@
-# $Id$
-
 #  Copyright (C) 2008 Hazen Babcock
 #  Copyright (C) 2008 Andrew Ross
 

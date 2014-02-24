@@ -1,6 +1,3 @@
-//
-// $Id$
-//
 // PLplot MEM (in user-supplied memory) device driver.
 // The idea here is that the user will specify the Y by X by RGB
 // area in which to plot using the plsmem function (added by me).

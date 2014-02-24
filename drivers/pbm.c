@@ -1,6 +1,3 @@
-//
-// $Id$
-//
 // PLplot PBM (PPM) device driver.
 //
 // Contributed by John C. Atkinson and Zulfi Cumali.

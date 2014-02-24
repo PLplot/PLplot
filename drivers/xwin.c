@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot X-windows device driver.
 //
 // Copyright (C) 2004  Maurice LeBrun

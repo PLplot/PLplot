@@ -1,5 +1,3 @@
-// $Id$
-//
 //	Main program for Tcl-interface to PLplot.  Allows interpretive
 //	execution of plotting primitives without regard to output driver.
 //

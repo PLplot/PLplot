@@ -1,5 +1,3 @@
--- $Id$
-
 -- Write_Text_Viewport3, Write_Text_World3 demo
 
 -- Copyright (C) 2008-2010 Jerry Bauck

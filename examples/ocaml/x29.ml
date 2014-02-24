@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
        Sample plots using date / time formatting for axes
 
   Copyright (C) 2007 Andrew Ross

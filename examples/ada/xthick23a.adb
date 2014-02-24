@@ -1,5 +1,3 @@
--- $Id$
-
 -- Displays Greek letters and mathematically interesting Unicode ranges.
 
 -- Copyright (C) 2008 Jerry Bauck

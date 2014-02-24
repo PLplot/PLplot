@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Unicode Pace Flag
 
   Copyright (C) 2008  Werner Smekal

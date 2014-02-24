@@ -1,10 +1,3 @@
-// $Id$
-// $Log$
-// Revision 1.1  1992/05/20 21:33:19  furnish
-// Initial checkin of the whole PLPLOT project.
-//
-//
-
 // buffer (defined by subbuffer??) contains coordinates describing the
 // Hershey glyphs; findex (defined by subindex??) indexes those glyphs
 // by Hershey index position; and hersh (defined by subhersh?)

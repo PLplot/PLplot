@@ -1,5 +1,3 @@
-// $Id$
-//
 // Copyright (C) 2005  Werner Smekal, Sjaak Verdoold
 // Copyright (C) 2005  Germain Carrera Corraleche
 // Copyright (C) 1999  Frank Huebner

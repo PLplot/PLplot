@@ -1,5 +1,3 @@
-// $Id$
-//
 // Copyright (C) 2008  Werner Smekal
 //
 // This file is part of PLplot.

@@ -1,7 +1,3 @@
-#----------------------------------------------------------------------------
-# $Id$
-#----------------------------------------------------------------------------
-
 # Does a simple bar chart, using color fill.  If color fill is
 # unavailable, pattern fill is used instead (automatic).
 

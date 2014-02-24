@@ -1,5 +1,3 @@
-# $Id$
-
 #  Copyright (C) 2004, 2005, 2006, 2007, 2008 Andrew Ross
 
 #  Simple vector plot example.

@@ -1,4 +1,3 @@
-# $Id$
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
 # plplot window initialization procs

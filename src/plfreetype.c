@@ -1,8 +1,6 @@
-// $Id$
-//
 // Copyright (C) 2002, 2004, 2005  Andrew Roach
 // Copyright (C) 2002  Maurice LeBrun
-// Copyright (C) 2002-2012  Alan W. Irwin
+// Copyright (C) 2002-2014 Alan W. Irwin
 // Copyright (C) 2003, 2004  Joao Cardoso
 // Copyright (C) 2003, 2004, 2005  Rafael Laboissiere
 // Copyright (C) 2004  Andrew Ross

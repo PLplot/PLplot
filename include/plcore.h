@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Contains declarations for core plplot data structures.  This file
 //      should be included only by plcore.c.
 //

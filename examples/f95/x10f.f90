@@ -1,4 +1,3 @@
-!   $Id$
 !   Demonstration program for PLplot illustrating absolute positioning
 !   of graphs on a page
 !

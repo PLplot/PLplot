@@ -1,8 +1,6 @@
-// $Id$
-//
 //	plmtex3, plptex3 demo.
 //
-// Copyright (C) 2007, 2008, 2009  Alan W. Irwin
+// Copyright (C) 2007-2014 Alan W. Irwin
 // Copyright (C) 2007  Andrew Ross
 //
 // This file is part of PLplot.

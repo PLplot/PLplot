@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
        Drawing mode setting and getting example.
 
   Copyright (C) 2011  Hezekiah M. Carty

@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
         Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
 
    Copyright (C) 2007  Arjen Markus

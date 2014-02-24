@@ -1,5 +1,3 @@
-// $Id$
-//
 // Tony Richardson
 //
 // This program is intended to be used as a template for creating simple

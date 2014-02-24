@@ -1,5 +1,3 @@
-// $Id$
-//
 //      3-d line and point plot demo.  Adapted from x08c.c.
 //
 

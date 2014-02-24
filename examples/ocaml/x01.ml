@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
    Simple line plot and multiple windows demo.  A fairly straightforward
    translation from the original C to OCaml.
 

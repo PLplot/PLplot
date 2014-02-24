@@ -1,5 +1,3 @@
-// $Id$
-//
 //      S. Fanchiotti (Using gnusvga.c by Geoffrey Furnish)
 //      4 May 1993
 //

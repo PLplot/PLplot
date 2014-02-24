@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Copyright (C) 1991, 1992, 1993, 1994, 1995  Geoffrey Furnish
 //  Copyright (C) 1991, 1992, 1993, 1994, 1995  Maurice LeBrun
 //

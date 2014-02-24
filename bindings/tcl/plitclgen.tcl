@@ -1,6 +1,4 @@
 #!/usr/local/bin/perl
-# $Id: plitclgen 2352 2001-01-02 03:17:35Z mlebrun $
-#
 # Arjen Markus
 # - translation of the original Perl script
 #

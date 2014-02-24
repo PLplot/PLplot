@@ -1,6 +1,4 @@
 /* -*-C-*- */
-/* $Id$
-
     Maurice LeBrun
     IFS, University of Texas at Austin
     18-Jul-1994

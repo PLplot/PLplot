@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Geoffrey Furnish
 //      5 May 1991
 //

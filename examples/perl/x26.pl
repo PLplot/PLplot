@@ -1,7 +1,5 @@
 #! /usr/bin/env perl
 #
-# $Id$
-#
 # -*- coding: utf-8; -*-
 # 
 # Demo x26 for the PLplot PDL binding

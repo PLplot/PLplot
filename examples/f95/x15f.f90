@@ -1,4 +1,3 @@
-!      $Id$
 !      Shade plot demo.
 !      Does a variety of shade plots.
 !

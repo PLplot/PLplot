@@ -1,5 +1,3 @@
-// $Id$
-//
 //        PLplot PostScript device driver using LASi to provide fonts
 //        based on original ps.c PostScript driver
 //

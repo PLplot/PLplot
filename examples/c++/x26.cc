@@ -1,12 +1,9 @@
-// -*- coding: utf-8; -*-
-//
 //--------------------------------------------------------------------------
-// $Id$
 // Multi-lingual version of the first page of example 4.
 //--------------------------------------------------------------------------
 //
 //--------------------------------------------------------------------------
-// Copyright (C) 2006  Alan W. Irwin
+// Copyright (C) 2006-2014 Alan W. Irwin
 // Copyright (C) 2006  Andrew Ross
 //
 // Thanks to the following for providing translated strings for this example:

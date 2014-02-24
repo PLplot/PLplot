@@ -1,6 +1,3 @@
-# $Id$
-#
-#
 # FileSelect
 # ----------------------------------------------------------------------
 # Implements a version of the OSF/Motif standard file selection dialog

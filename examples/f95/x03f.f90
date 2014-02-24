@@ -1,4 +1,3 @@
-!    $Id$
 !    Generates polar plot with, 1-1 scaling
 !
 !    Copyright (C) 2004  Alan W. Irwin

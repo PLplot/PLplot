@@ -1,4 +1,3 @@
-!      $Id$
 !      plshades demo, using color fill
 !
 !      Copyright (C) 2004  Alan W. Irwin

@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot driver for PDF based on the haru library http://www.libharu.org.
 //
 //      Copyright (C) 2006, 2008  Werner Smekal

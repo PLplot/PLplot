@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot cgm device driver.
 //
 

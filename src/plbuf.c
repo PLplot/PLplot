@@ -1,9 +1,7 @@
-// $Id$
-//
 //  Handle plot buffer.
 //
 //  Copyright (C) 1992  Maurice LeBrun
-//  Copyright (C) 2004  Alan W. Irwin
+//  Copyright (C) 2004-2014 Alan W. Irwin
 //  Copyright (C) 2005  Thomas J. Duck
 //  Copyright (C) 2006  Jim Dishaw
 //

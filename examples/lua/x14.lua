@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 
 	Maurice LeBrun

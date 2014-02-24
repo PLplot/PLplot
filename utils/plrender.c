@@ -1,11 +1,9 @@
-// $Id$
-//
 //  Copyright 1991, 1992, 1993, 1994, 1995
 //  Geoffrey Furnish			furnish@dino.ph.utexas.edu
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 2004  Alan W. Irwin
+//  Copyright (C) 2004-2014 Alan W. Irwin
 //  Copyright (C) 2004  Maurice LeBrun
 //  Copyright (C) 2004  Andrew Ross
 //
@@ -31,8 +29,6 @@
 //  This file contains the code to render a PLplot metafile, written by
 //  the metafile driver, plmeta.c.
 //
-
-char ident[] = "@(#) $Id$";
 
 #define DEBUG
 #define DEBUG_ENTER

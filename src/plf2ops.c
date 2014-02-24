@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Predefined 2-D data access functions.
 //
 // Copyright (C) 2010 David H. E. MacMahon

@@ -1,5 +1,3 @@
--- $Id$
-
 -- set/get tester
 
 -- Copyright (C) 2008 Jerry Bauck

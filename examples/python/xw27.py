@@ -1,5 +1,3 @@
-#  $Id$
-#
 #  Copyright (C) 2007 Arjen Markus
 #  Copyright (C) 2008 Andrew Ross
 

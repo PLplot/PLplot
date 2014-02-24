@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Contains all prototypes for driver functions.
 //
 //  Copyright (C) 2008  Werner Smekal

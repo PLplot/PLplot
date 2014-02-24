@@ -1,5 +1,3 @@
--- $Id$
-
 -- Grid data demo
 
 -- Copyright (C) 2007 Jerry Bauck

@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	plshade demo, using color fill.
 
   Copyright (C) 2008  Werner Smekal

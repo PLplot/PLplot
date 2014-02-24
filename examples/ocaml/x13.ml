@@ -1,4 +1,4 @@
-(* $Id$
+(*
   Pie chart demo.
 *)
 

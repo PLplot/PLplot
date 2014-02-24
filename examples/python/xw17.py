@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-# $Id$
+
 # Copyright 2002 Gary Bishop
-# Copyright 2004 Alan W. Irwin
+# Copyright 2004-2014 Alan W. Irwin
+
 # This file is part of PLplot.
 
 # PLplot is free software; you can redistribute it and/or modify

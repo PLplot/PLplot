@@ -1,6 +1,4 @@
 #----------------------------------------------------------------------------
-# $Id$
-#
 # Sets configuration options for plplot/TK driver.
 # This file contains a dummy proc.  You can customize plplot/TK by copying
 # settings from pldefaults.tcl into this file and modifying them to taste.  

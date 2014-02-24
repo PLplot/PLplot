@@ -1,10 +1,8 @@
-// $Id$
-//
 //      Contour plotter.
 //
 // Copyright (C) 1995, 2000, 2001 Maurice LeBrun
 // Copyright (C) 2000, 2002 Joao Cardoso
-// Copyright (C) 2000, 2001, 2002, 2004  Alan W. Irwin
+// Copyright (C) 2000-2014 Alan W. Irwin
 // Copyright (C) 2004  Andrew Ross
 //
 // This file is part of PLplot.

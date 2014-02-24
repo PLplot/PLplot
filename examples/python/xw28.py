@@ -1,5 +1,3 @@
-# $Id$
-
 #  Copyright (C) 2007 Alan W. Irwin
 
 # plmtex3, plptex3 demo.

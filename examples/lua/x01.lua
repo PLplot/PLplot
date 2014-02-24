@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Simple line plot and multiple windows demo.
 
   Copyright (C) 2008  Werner Smekal

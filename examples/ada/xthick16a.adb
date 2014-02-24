@@ -1,5 +1,3 @@
--- $Id$
-
 --  Shade_Region demo, using color fill.
 
 --  Maurice LeBrun

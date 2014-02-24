@@ -1,5 +1,3 @@
--- $Id$
---
 --	Log plot demo.
 
 -- Copyright (C) 2007 - 2011 Jerry Bauck

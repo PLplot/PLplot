@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Example linear transformation function for contour plotter.
 //
 

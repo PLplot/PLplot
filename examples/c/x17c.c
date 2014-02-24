@@ -1,5 +1,3 @@
-// $Id$
-//
 // Plots a simple stripchart with four pens.
 //
 

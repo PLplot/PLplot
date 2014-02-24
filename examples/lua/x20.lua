@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	plimage demo
 --]]
 

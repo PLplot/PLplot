@@ -1,5 +1,3 @@
--- $Id$
-
 -- Auxiliary types and subprograms to be with-ed and by all the Ada 
 -- bindings to PLplot
 

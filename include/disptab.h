@@ -1,5 +1,3 @@
-// $Id$
-//
 // Defines the data structure which holds the driver functions.
 //
 

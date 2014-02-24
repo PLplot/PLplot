@@ -1,5 +1,3 @@
-// $Id$
-//
 // PLplot pstex (Postscript/LaTeX) device driver.
 //
 

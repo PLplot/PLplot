@@ -1,7 +1,4 @@
-// $Id$
-//
 //      Utility to generate standard font set.
-//
 
 #include "plplotP.h"
 

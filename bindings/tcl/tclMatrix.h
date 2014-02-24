@@ -1,6 +1,4 @@
 // -*-C++-*-
-// $Id$
-//
 //  Copyright 1994, 1995
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# $Id$
 
 #  Copyright (C) 2008 Alan W. Irwin
 

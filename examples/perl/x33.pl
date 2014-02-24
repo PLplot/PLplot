@@ -1,8 +1,6 @@
 #! /usr/bin/env perl
 # -*- coding: utf-8; -*-
 #
-# $Id$
-#
 # Demonstrate most pllegend capability including unicode symbols.
 #
 # Copyright (C) 2010 Alan Irwin

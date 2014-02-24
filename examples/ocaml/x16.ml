@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
         plshade demo, using color fill.
 
         Maurice LeBrun

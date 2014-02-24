@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Filling and clipping polygons.
 
   Copyright (C) 2008  Werner Smekal

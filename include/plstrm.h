@@ -1,5 +1,3 @@
-// $Id$
-//
 //	Contains declarations for PLStream and PLDev structs.
 //	Also prototypes for stream & device utility functions.
 //

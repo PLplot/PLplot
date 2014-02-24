@@ -1,5 +1,3 @@
-// $Id$
-//
 // Copyright (C) 2004  Joao Cardoso
 //
 // This file is part of PLplot.

@@ -1,5 +1,3 @@
--- $Id$
-
 -- Multiple window and color map 0 demo.
 
 -- Copyright (C) 2007 Alan W. Irwin

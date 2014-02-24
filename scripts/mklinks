@@ -2,8 +2,6 @@
 
 #*************************************************************************
 #
-# $Id$
-#
 # mklinks - makes (or removes) soft-links from distribution directory to
 #           more appropriate places (typically under /usr/local).
 #

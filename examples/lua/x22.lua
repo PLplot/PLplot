@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Simple vector plot example
 
   Copyright (C) 2008  Werner Smekal

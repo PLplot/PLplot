@@ -1,5 +1,5 @@
 # -*- coding: utf-8; -*-
-# $Id$
+
 #  Copyright (C) 2006-2010 Alan W. Irwin
 
 #  Multi-lingual version of the first page of example 4.

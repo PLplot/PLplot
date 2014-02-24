@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Central dispatch facility for PLplot.
 //      Also contains the PLplot main data structures, external access
 //      routines, and initialization calls.
@@ -11,7 +9,7 @@
 // Copyright (C) 2004, 2005  Rafael Laboissiere
 // Copyright (C) 2004, 2006  Andrew Ross
 // Copyright (C) 2004  Andrew Roach
-// Copyright (C) 2005-2013  Alan W. Irwin
+// Copyright (C) 2005-2014 Alan W. Irwin
 // Copyright (C) 2005  Thomas J. Duck
 //
 // This file is part of PLplot.

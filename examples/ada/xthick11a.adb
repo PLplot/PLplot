@@ -1,5 +1,3 @@
--- $Id$
-
 -- Mesh plot demo.
 
 -- Copyright (C) 2008 Jerry Bauck

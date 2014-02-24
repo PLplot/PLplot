@@ -1,9 +1,7 @@
-// $Id$
-//
 //      Routines to set various plplot parameters, such as char height,
 //      symbol size, tick length, line and fill patterns, etc.
 //
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

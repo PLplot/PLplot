@@ -1,8 +1,6 @@
-// $Id$
-//
 //      Polygon pattern fill.
 //
-// Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
+// Copyright (C) 2004-2014 Alan W. Irwin
 // Copyright (C) 2005, 2006, 2007, 2008, 2009  Arjen Markus
 //
 // This file is part of PLplot.

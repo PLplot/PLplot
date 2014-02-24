@@ -1,6 +1,4 @@
 # --*-perl-*--
-# $Id$
-#
 # PLplot API template specification file.
 # Geoffrey Furnish
 # 28 June 1995

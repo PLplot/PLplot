@@ -1,5 +1,3 @@
-# $Id$
-
 #  Copyright (C) 2008 Andrew Ross
 
 #  Sample plots using date / time formatting for axes

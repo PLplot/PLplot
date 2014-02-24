@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Histogram demo.
 
   Copyright (C) 2008  Werner Smekal

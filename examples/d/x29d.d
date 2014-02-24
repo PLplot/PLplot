@@ -1,5 +1,3 @@
-// $Id$
-//
 //     Sample plots using date / time formatting for axes
 //
 // Copyright (C) 2009 Werner Smekal

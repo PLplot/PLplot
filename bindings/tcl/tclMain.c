@@ -1,5 +1,3 @@
-// $Id$
-//
 // Modified version of tclMain.c, from Tcl 8.3.2.
 // Maurice LeBrun
 // Jan 2 2001
@@ -44,8 +42,6 @@
 //
 // See the file "license.terms" for information on usage and redistribution
 // of this file, and for a DISCLAIMER OF ALL WARRANTIES.
-//
-// RCS: @(#) $Id$
 //
 
 #include "pltcl.h"

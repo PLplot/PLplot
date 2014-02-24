@@ -193,9 +193,7 @@ Go then to the upper directory and launch the uplaod-debs.pl script:
 The packages, as well as an automatically generated index.html will be
 uploaded to htdocs/debian.
 
-
  -- Rafael Laboissiere <rlaboiss@users.sf.net>
-    $Id$
 
 Local Variables:
 mode: indented-text

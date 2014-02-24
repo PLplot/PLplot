@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
         Window positioning demo.
 *)
 

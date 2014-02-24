@@ -1,8 +1,6 @@
-// $Id$
-//
 //      Histogram plotter.
 //
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

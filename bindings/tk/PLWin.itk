@@ -3,8 +3,6 @@
 # 18 September 1995
 #
 # @> [incr Tk] revamp of the old itcl PLWin class.
-#
-# $Id$
 ###############################################################################
 
 eval package require $pl_itk_package_name

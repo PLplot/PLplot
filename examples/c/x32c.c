@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Box plot demo.
 //
 // Copyright (C) 2008 by FLLL <http://www.flll.jku.at>

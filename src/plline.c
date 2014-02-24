@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Routines dealing with line generation.
 //
 // Copyright (C) 2004  Maurice LeBrun

@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Holds system header includes, prototypes of TK driver
 //      utility functions, and definition of the state structure.
 //

@@ -1,9 +1,8 @@
 !***********************************************************************
-!  $Id$
 !  sfstubsf95.f
 !
 !  Copyright (C) 2005, 2006  Arjen Markus
-!  Copyright (C) 2006  Alan W. Irwin
+!  Copyright (C) 2006-2014 Alan W. Irwin
 !
 !  This file is part of PLplot.
 !

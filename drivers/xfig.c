@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot xfig device driver.
 //
 #include "plDevs.h"

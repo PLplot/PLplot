@@ -1,6 +1,4 @@
-## -*- coding: utf-8; -*-
-## $Id$
-##  Copyright (C) 2010 Alan W. Irwin
+##  Copyright (C) 2010-2014 Alan W. Irwin
 ##
 ##  Demonstrate most pllegend capability including unicode symbols.
 ##

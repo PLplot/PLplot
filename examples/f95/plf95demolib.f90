@@ -1,4 +1,3 @@
-!      $Id: x02f.f90 11984 2011-10-19 23:26:23Z andrewross $
 !      Demonstrates multiple windows and color map 0
 !
 !      Copyright (C) 2011  Arjen Markus

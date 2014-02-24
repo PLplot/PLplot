@@ -1,4 +1,3 @@
-!   $Id$
 !   Displays the plotter symbols for PLSYM
 !
 !   Copyright (C) 2004  Alan W. Irwin

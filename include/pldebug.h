@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Copyright (C) 1995 by Maurice J. LeBrun
 //
 //  Debugging support for PLplot.

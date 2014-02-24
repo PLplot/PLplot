@@ -1,9 +1,7 @@
-// $Id$
-//
-//      Determines tick spacing and mode (fixed or floating) of
+//      Determine tick spacing and mode (fixed or floating) of
 //      numeric axis labels.
 //
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

@@ -1,5 +1,3 @@
-// $Id$
-//
 // Experimental tk driver using a plain "wish"
 //
 // Copyright (C) 2001  Joao Cardoso

@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Pie chart demo.
 
   Copyright (C) 2008  Werner Smekal

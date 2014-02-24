@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Misc. control routines, like begin, end, exit, change graphics/text
 //      mode, change color.  Includes some spillage from plcore.c.  If you
 //      don't know where it should go, put it here.
@@ -7,7 +5,7 @@
 // Copyright (C) 2004  Joao Cardoso
 // Copyright (C) 2004  Rafael Laboissiere
 // Copyright (C) 2008  Hazen Babcock
-// Copyright (C) 2009-2013  Alan W. Irwin
+// Copyright (C) 2009-2014 Alan W. Irwin
 // Copyright (C) 2011  Hezekiah M. Carty
 //
 // This file is part of PLplot.

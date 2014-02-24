@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# $Id$
-
 # This script will run uncrustify on all source files registered in
 # the lists below (and scripts/convert_comment.py on all C source
 # files registered below) and summarize which uncrustified or

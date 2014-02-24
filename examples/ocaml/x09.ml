@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
         Contour plot demo.
 
    Copyright (C) 2008  Hezekiah M. Carty

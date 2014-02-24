@@ -1,5 +1,3 @@
--- $Id$
-
 -- Plots a simple stripchart with four pens.
 
 -- Copyright (C) 2008 Jerry Bauck

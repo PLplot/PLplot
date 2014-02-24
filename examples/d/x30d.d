@@ -1,5 +1,3 @@
-// $Id$
-//
 // Alpha color values demonstration.
 //
 // Copyright (C) 2009  Werner Smekal

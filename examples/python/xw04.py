@@ -1,8 +1,6 @@
-# $Id$
-
-#  Copyright (C) 2001-1010 Alan W. Irwin
-
 #  Log plot demo.
+#
+# Copyright (C) 2001-2014 Alan W. Irwin
 #
 #  This file is part of PLplot.
 #

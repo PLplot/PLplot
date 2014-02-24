@@ -1,5 +1,3 @@
-// $Id$
-//
 // Standardized I/O handler for PLplot.
 //
 // Copyright (C) 2006  Jim Dishaw

@@ -1,5 +1,3 @@
--- $Id$
-
 -- Contour plot demo.
 
 -- Copyright (C) 2008 Jerry Bauck

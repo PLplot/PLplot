@@ -2,7 +2,6 @@
 # File: api2man.pl
 # Description: Convert the PLplot API chapter (file api.xml of the DocBook
 #              manual) into a swig documentation file.
-# $Id: api2text.pl 11276 2010-10-27 01:39:26Z airwin $
 #
 # Copyright (C) 2000, 2003  Rafael Laboissiere
 # Copyright (C) 2010 Alan W. Irwin

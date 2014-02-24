@@ -1,5 +1,3 @@
--- $Id$
-
 -- Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
 
 -- Copyright (C) 2008 Jerry Bauck

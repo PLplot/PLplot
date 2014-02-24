@@ -1,4 +1,4 @@
---[[ $Id$
+--[[
 	Grid data demo
 
    Copyright (C) 200  Werner Smekal

@@ -1,5 +1,3 @@
-!  $Id$
-!
 !   Demonstrates plotting text in 3D (plmtex3, plptex3)
 !
 !   Copyright (C) 2007  Alan W. Irwin

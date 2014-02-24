@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# $Id$
-
 # This script will run parity_bit_check on all files in the PLplot
 # source tree (except those listed below) to discover which of those
 # files have any character with the eighth (parity) bit set.

@@ -1,10 +1,9 @@
 //--------------------------------------------------------------------------
-// $Id$
 //    Displays Greek letters and mathematically interesting Unicode ranges
 //--------------------------------------------------------------------------
 //
 //--------------------------------------------------------------------------
-// Copyright (C) 2005,2008  Alan Irwin
+// Copyright (C) 2005-2014 Alan Irwin
 // Copyright (C) 2005,2008  Andrew Ross
 //
 // This file is part of PLplot.

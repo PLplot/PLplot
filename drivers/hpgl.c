@@ -1,5 +1,3 @@
-// $Id$
-//
 //  File:	hpgl.c
 //
 //  Descript:	hp7470, hp7580, and lj_hpgl drivers

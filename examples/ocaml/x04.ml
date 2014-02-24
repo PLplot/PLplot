@@ -1,5 +1,4 @@
-(* $Id$
-
+(*
         Log plot demo.
 *)
 

@@ -1,5 +1,3 @@
--- $Id$
-
 -- Pie chart demo.
 
 -- Copyright (C) 2008 Jerry Bauck

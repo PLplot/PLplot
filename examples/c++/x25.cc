@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Test program for filling polygons and proper clipping
 //
 //  Copyright (C) 2005 Arjen Markus

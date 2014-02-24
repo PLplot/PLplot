@@ -1,10 +1,8 @@
-// $Id$
-//
 //      PLplot PostScript device driver.
 //
 // Copyright (C) 1992, 2001  Geoffrey Furnish
 // Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
-// Copyright (C) 2000-2010  Alan W. Irwin
+// Copyright (C) 2000-2014  Alan W. Irwin
 // Copyright (C) 2001, 2002  Joao Cardoso
 // Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
 // Copyright (C) 2004, 2005  Thomas J. Duck

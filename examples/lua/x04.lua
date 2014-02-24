@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Log plot demo.
 	Simple line plot and multiple windows demo.
 

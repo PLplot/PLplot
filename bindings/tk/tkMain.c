@@ -1,5 +1,3 @@
-// $Id$
-//
 // Modified version of tkMain.c, from Tk 3.6.
 // Maurice LeBrun
 // 23-Jun-1994

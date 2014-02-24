@@ -1,5 +1,3 @@
--- $Id$
-
 -- Polar plot demo.
 -- Generates polar plot, with 1-1 scaling.
 

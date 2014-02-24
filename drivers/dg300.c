@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot dg300 device driver.
 //
 #include "plDevs.h"

@@ -1,5 +1,3 @@
--- $Id$
-
 -- Histogram demo.
 -- Draws a histogram from sample data.
 

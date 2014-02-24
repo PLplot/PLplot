@@ -1,5 +1,3 @@
-// $Id$
-//
 // Maurice LeBrun
 // 28-Apr-95
 //

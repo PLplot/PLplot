@@ -1,5 +1,3 @@
--- $Id$
-
 --	Illustrates backdrop plotting of world, US maps.
 --	Contributed by Wesley Ebisuzaki.
 

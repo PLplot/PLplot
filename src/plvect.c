@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Vector plotting routines.
 //
 // Copyright (C) 2004  Andrew Ross

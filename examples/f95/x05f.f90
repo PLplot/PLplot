@@ -1,4 +1,3 @@
-!   $Id$
 !   Draws a histogram from sample data
 !
 !   Copyright (C) 2004  Alan W. Irwin

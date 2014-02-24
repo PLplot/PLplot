@@ -1,4 +1,3 @@
-// $Id$
 //
 //      Holds system header includes, prototypes of xwin driver
 //      utility functions, and definition of the state structure.

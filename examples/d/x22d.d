@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Simple vector plot example
 //  Copyright (C) 2009  Werner Smekal
 //

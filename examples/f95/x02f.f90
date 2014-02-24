@@ -1,4 +1,3 @@
-!   $Id$
 !   Demonstrates multiple windows and color map 0
 !
 !   Copyright (C) 2004  Alan W. Irwin

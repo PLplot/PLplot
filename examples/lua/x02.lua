@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Multiple window and color map 0 demo.
 
   Copyright (C) 2008  Werner Smekal

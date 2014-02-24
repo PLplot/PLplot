@@ -1,5 +1,3 @@
-// $Id$
-//
 //	xtndfont.c
 //
 //      Utility to generate extended font set.

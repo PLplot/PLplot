@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Polar plot demo.
 //
 

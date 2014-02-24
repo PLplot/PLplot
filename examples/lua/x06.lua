@@ -1,5 +1,4 @@
---[[ $Id$
-
+--[[
 	Font demo.
 
   Copyright (C) 2008  Werner Smekal

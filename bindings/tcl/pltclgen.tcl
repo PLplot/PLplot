@@ -1,6 +1,4 @@
 #!/usr/local/bin/tclsh
-# $Id$
-#
 # Arjen Markus
 # - translation of the original Perl script
 #

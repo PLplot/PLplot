@@ -1,12 +1,10 @@
-// $Id$
-//
 //      Point, symbol, and string plotting routines.
 //      Also font management code.  See the description of plLibOpen() for
 //      the search path used in finding the font files.
 //
 // Copyright (C) 1992  Geoffrey Furnish
 // Copyright (C) 1993, 1994, 1995, 2000, 2001, 2002  Maurice LeBrun
-// Copyright (C) 2000-2010  Alan W. Irwin
+// Copyright (C) 2000-2014 Alan W. Irwin
 // Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
 // Copyright (C) 2002  Vincent Darley
 // Copyright (C) 2004  Andrew Ross

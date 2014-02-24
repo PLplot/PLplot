@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot Laser Jet IIp device driver.
 //      Based on old LJII driver, modifications by Wesley Ebisuzaki
 //

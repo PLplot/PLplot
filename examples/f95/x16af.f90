@@ -1,4 +1,3 @@
-!      $Id$
 !      Demonstration of plshade plotting
 !      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 !

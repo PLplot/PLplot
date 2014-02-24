@@ -1,4 +1,4 @@
-(* $Id$
+(*
   Copyright (C) 2009  Hezekiah M. Carty
 
   Plots a simple stripchart with four pens.

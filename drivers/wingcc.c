@@ -1,5 +1,3 @@
-// $Id$
-//
 //      PLplot WIN32 under GCC device driver.
 //
 // Copyright (C) 2004  Andrew Roach

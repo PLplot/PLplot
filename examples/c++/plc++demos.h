@@ -1,5 +1,3 @@
-// $Id$
-//
 //      All the common includes and constants needed by the C++ demo programs.
 //
 

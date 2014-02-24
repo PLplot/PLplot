@@ -1,5 +1,3 @@
-# $Id$
-
 #----------------------------------------------------------------------------
 # Color palette editors in iTcl for PLPlot.
 # Maurice LeBrun

@@ -1,5 +1,3 @@
-!   $Id$
-!
 !   Copyright (C) 2004  Alan W. Irwin
 !
 !   This file is part of PLplot.

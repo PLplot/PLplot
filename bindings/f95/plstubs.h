@@ -1,5 +1,3 @@
-// $Id$
-//
 // Maurice LeBrun
 // IFS, University of Texas
 //

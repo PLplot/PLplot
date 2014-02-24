@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Histogram demo.
 //
 

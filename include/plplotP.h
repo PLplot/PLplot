@@ -1,5 +1,3 @@
-// $Id$
-//
 //  Internal (private) macros and prototypes for the PLplot package.  This
 //  header file must be included before all others, including system header
 //  files.  This file is typically needed when including driver specific

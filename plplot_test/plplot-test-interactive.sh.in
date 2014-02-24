@@ -1,7 +1,5 @@
 #!@SH_EXECUTABLE@
 # -*- mode: shell-script -*-
-# $Id$
-#
 # Copyright (C) 2009-2014 Alan W. Irwin
 #
 # This file is part of PLplot.

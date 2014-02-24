@@ -1,5 +1,3 @@
-# $Id$
-
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer support procs
 # Maurice LeBrun

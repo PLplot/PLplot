@@ -1,5 +1,3 @@
-// $Id$
-//
 //       PNG, GIF, and JPEG device driver based on libgd
 //
 // Copyright (C) 2004  Joao Cardoso

@@ -1,9 +1,7 @@
-//
 // plgridd.c: Plot grids data from irregularly sampled data.
-// $Id$
-//
+
 // Copyright (C) 2004  Joao Cardoso
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2014 Alan W. Irwin
 //
 // This file is part of PLplot.
 //

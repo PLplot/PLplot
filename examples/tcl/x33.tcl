@@ -1,8 +1,6 @@
-# $Id$
-#
 # Demonstrate most pllegend capability including unicode symbols.
 #
-# Copyright (C) 2010 Alan Irwin
+# Copyright (C) 2010-2014 Alan Irwin
 #
 # This file is part of PLplot.
 #

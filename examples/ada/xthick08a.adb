@@ -1,5 +1,3 @@
--- $Id$
-
 -- 3-d plot demo.
 
 -- Copyright (C) 2008 Jerry Bauck

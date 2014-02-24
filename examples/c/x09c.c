@@ -1,5 +1,3 @@
-// $Id$
-//
 //      Contour plot demo.
 //
 // This file is part of PLplot.

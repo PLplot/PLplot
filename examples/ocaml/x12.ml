@@ -1,4 +1,4 @@
-(* $Id$
+(*
   Bar chart demo.
 *)
 
