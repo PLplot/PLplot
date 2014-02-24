@@ -1,42 +1,34 @@
-This instructions are somehow out of date. Read also the USAGE file.
+Read also the USAGE file.
 
+Build and install:
 
-Install:
+The Octave binding for PLplot is now automatically generated with swig.
 
-plplot_octave_org.h is the main important file. It is a massaged version
-of plplot's plplot.h file, ready for use with Holt's matwrap, which you
-can find at
+Simply use the normal cmake command to configure PLplot, then
 
-	http://lnc.usc.edu/~holt/matwrap/
+<build_tool> install
 
-As usual, you should get the last version, 0.57 at the time of this
-writing. You also need perl.
-If you don't have Holt's matwrap, don't worry, a copy is available
-in this distribution and will be automatically used.
+to build PLplot including its Octave binding, and install PLplot including 
+its Octave binding and associated Octave examples.
 
-You must compile PLplot with shared libraries, which 'configure' does
-by default if your OS is supported.
+N.B. <build_tool> is typically the make command, but CMake allows for
+many others.
 
-Make sure that you have octave-2.0.16 or latter, matwrap and perl.
-Make sure that you have a correctly installed octave, configured with
---enable-shared and --enable-dl. The command
+Automatic Testing:
 
-	ldd `which octave`
+In the build tree anytime after the cmake command is executed with
+the -DBUILD_TEST=ON option execute
 
-should report octave dynamic libs, liboctave.so, libcruft.so and
-liboctinterp.so
+<build_tool> help |grep octave
 
-Configure PLplot with the --enable-octave, which is the default,
-plus any other options in the main directory, e.g.,
+to find all test targets associated with octave.  Generally, those targets
+have names which remind what they do.  So, e.g., test_octave_psc tests
+all our standard Octave examples using -dev psc and
+test_octave_xwin tests some special interactive Octave examples using
+-dev xwin.
 
-	./configure --enable-octave
-
-and then type 'make'.
-
-Testing:
-
-Before installing, you can test plplot_octave:
-[you must install PLplot before, this will change soon]
+Hand Testing (these direction may be out of date because automatic testing is
+so convenient):
 
 'cd' to the directory bindings/octave within the build tree.
 
@@ -68,21 +60,19 @@ You can avoid it setting "empty_list_elements_ok = 1;" in your
 ~/.octaverc Octave startup file (see below). This is being corrected
 in plplot_octave, meanwhile keep remembering me :-).
 
-
 Using:
 
-After testing, type "make install". The default path to instalation is
-$prefix/share/plplot_octave. If you don't like it, reconfigure PLplot
-using the configure option --prefix=<preferred path> and rebuild and
-install, or try "make install PREFIX=<install path>"; this last option
-might not yet work. In the following discussion the default prefix of
-/usr/local is used.
+After testing, type "make install". The default path to installation
+is <installation prefix>/share/share/plplot_octave. If you don't like
+the default <installation prefix> which is /usr/local, reconfigure
+PLplot using your preferred -DCMAKE_INSTALL_PREFIX=<installation
+prefix> option for CMake.
 
 There are three paths that you can add to LOADPATH:
 
-1-The *needed* path is /usr/local/share/plplot_octave//
-2-The demos path is /usr/local/lib/plplotx.y.z/examples/octave//
-3-The path to switch between PLplot and gnuplot is /usr/local/share/octave//
+1-The *needed* path is <installation prefix>/share/plplot_octave//
+2-The demos path is <installation prefix>/lib/plplotx.y.z/examples/octave//
+3-The path to switch between PLplot and gnuplot is <installation prefix>/share/octave//
 
 Note: If you are using octave2.9 then LOADPATH is obsolete and you must 
 use addpath instead. Note also that a trailing // no longer includes 
@@ -92,8 +82,8 @@ the support subdirectory of plplot_octave.
 If you want to test the installation with the demos, call octave and
 set the LOADPATH as in
 
-LOADPATH ="/usr/local/lib/plplotx.y.z/examples/octave//:\
-/usr/local/share/plplot_octave//:"
+LOADPATH ="<installation prefix>/lib/plplotx.y.z/examples/octave//:\
+<installation prefix>/share/plplot_octave//:"
 
 You can now repeat the demos you already tried. Or just type 'p1'<CR>,
 'p2'<CR> ... my preferred test is "plot(sin(1:10),'-o')". As usual,
@@ -104,18 +94,18 @@ path *before* the standard Octave LOADPATH. The best way of doing it
 is to use the file ~/.octaverc to set it up. Add the following line to
 it, using of course the real install prefix:
 
-LOADPATH="/usr/local/share/plplot_octave//:<other path>:<other path>";
+LOADPATH="<installation prefix>/share/plplot_octave//:<other path>:<other path>";
 
 You can use the standard Octave plot commands if in the LOADPATH a
 ":" appears *before* the plplot_octave path, as in
 
-LOADPATH=":/usr/local/share/plplot_octave//:<other path>:<other path>";
+LOADPATH=":<installation prefix>/share/plplot_octave//:<other path>:<other path>";
 
 You can use the command toggle_plplot_use to change between the two
 sets of commands, but for this you must set an additional path in LOADPATH.
 It must be set as:
 
-LOADPATH="/usr/local/share/plplot_octave//:/usr/local/share/octave//:"
+LOADPATH="<installation prefix>/share/plplot_octave//:<installation prefix>/share/octave//:"
 
 You are done. You can now use almost all the standard Octave plot
 commands plus a whole bunch of new ones.
@@ -162,7 +152,7 @@ You have an etc directory where the "documentation" is (not anymore,
 documentation is built from the main documentation file, api.xml.
 
 You have the directory where the README, INSTALL, PROBLEMS,
-BUGS, ToDo, are, plus 'plplot_octave_org.h', massage.c, etc.
+BUGS, ToDo, are, plus 'plplot_octave_org.h', etc.
 
 As with every program, except D. Knuth ones, the programs in this
 package are not finished nor bug free. Please report bugs and send
@@ -173,3 +163,4 @@ Enjoy,
 Joao
 
 Update for octave 2.9 by Andrew Ross.
+Update for CMake by Alan W. Irwin.
