@@ -1,5 +1,4 @@
 #! /usr/bin/env perl
-# -*- coding: utf-8; -*-
 #
 # Demonstrate most pllegend capability including unicode symbols.
 #

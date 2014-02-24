@@ -1,5 +1,3 @@
-!     -*- coding: utf-8; -*-
-!
 !     Demonstrate most pllegend capability including unicode symbols.
 !
 !     Copyright (C) 2010 Alan Irwin
