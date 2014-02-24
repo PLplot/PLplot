@@ -39,9 +39,6 @@ if(PERL_XML_DOM AND PERL_XML_PARSER)
 
   add_dependencies(check_all check_swig_documentation)
 
-  set(make_documentation_DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
-    )
 else(PERL_XML_DOM AND PERL_XML_PARSER)
   message(STATUS 
     "WARNING: Perl modules XML::Parser and/or XML::DOM not available\n"

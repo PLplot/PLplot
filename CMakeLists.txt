@@ -206,10 +206,6 @@ if(PREBUILD_DIST)
   # List of targets that must be (pre-)built.
   set(DIST_TARGETS)
 
-  if(ENABLE_octave)
-    list(APPEND DIST_TARGETS make_documentation)
-  endif(ENABLE_octave)
-
   if(BUILD_PRINT)
     list(APPEND DIST_TARGETS print)
   endif(BUILD_PRINT)
@@ -238,11 +234,6 @@ if(PREBUILD_DIST)
     # error condition if the source directory does not exist.
     add_custom_target(
       prebuild_dist
-      COMMAND ${CMAKE_COMMAND} -E remove_directory
-      ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
-      COMMAND ${CMAKE_COMMAND} -E copy_directory
-      ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
-      ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
       COMMAND ${CMAKE_COMMAND} -E remove_directory
       ${CMAKE_SOURCE_DIR}/doc/doxygen
       COMMAND ${CMAKE_COMMAND} -E copy_directory

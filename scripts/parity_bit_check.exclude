@@ -26,7 +26,6 @@ qsastime.txt
 qsastime.xml
 README.deltaT.dat
 api2man.pl.in
-api2text.pl
 docbook/AUTHORS
 __pl_pltext.m
 plplot_auxiliary.adb
