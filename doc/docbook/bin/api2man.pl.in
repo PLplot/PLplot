@@ -202,7 +202,11 @@ for ($i = 0; $i < $ns; $i++) {
       }
     }
   }
+
   open (MAN, "> $name.$manvol");
+  # Suppress warnings about UTF-8 in MAN.
+  binmode MAN, ':utf8';
+
   print MAN $opening;
   print MAN ".TH " . uc ($name) . ' 3plplot  "' . $date . '" "" "PLplot API"' . "\n";
   $titles .= "\n.TP\n$title";
