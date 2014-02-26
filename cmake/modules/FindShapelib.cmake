@@ -8,12 +8,11 @@
 #  library.
 #  SHAPELIB_LIBRARY_DIRS, the directory where the shapelib library is found.
 
-find_path(SHAPELIB_INCLUDE_DIR shapefil.h /usr/local/include /usr/include)
+find_path(SHAPELIB_INCLUDE_DIR shapefil.h)
 
 if(SHAPELIB_INCLUDE_DIR)
   find_library(SHAPELIB_LIBRARY
-  NAMES shp
-  PATHS /usr/local/lib /usr/lib
+  NAMES shp shapelib
   )
   if(SHAPELIB_LIBRARY)
     # Set uncached variables as per standard.
