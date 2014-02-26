@@ -109,7 +109,7 @@ if(PLD_wxwidgets OR PLD_wxpng)
     endif(HAVE_AGG)
     set(
       wxwidgets_COMPILE_FLAGS
-      "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
+      "${wxwidgets_COMPILE_FLAGS} ${FREETYPE_INCLUDE_CFLAGS}"
       )
     set(
       wxwidgets_LINK_FLAGS

@@ -1,6 +1,7 @@
 # cmake/modules/freetype.cmake
 #
 # Copyright (C) 2006  Andrew Ross
+# Copyright (C) 2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -29,7 +30,10 @@ option(
 if (WITH_FREETYPE)
   find_package(Freetype)
   if (FREETYPE_FOUND)
-    message(STATUS "FREETYPE_INCLUDE_DIR = ${FREETYPE_INCLUDE_DIR}")
+    #message(STATUS "FREETYPE_INCLUDE_DIRS = ${FREETYPE_INCLUDE_DIRS}")
+    string(REGEX REPLACE ";" " -I" FREETYPE_INCLUDE_CFLAGS "-I${FREETYPE_INCLUDE_DIRS}")
+    message(STATUS "FREETYPE_CFLAGS = ${FREETYPE_INCLUDE_CFLAGS}")
+    
     message(STATUS "FREETYPE_LIBRARIES = ${FREETYPE_LIBRARIES}")
   else (FREETYPE_FOUND)
     set(WITH_FREETYPE OFF

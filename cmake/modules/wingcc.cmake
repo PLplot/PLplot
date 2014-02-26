@@ -44,7 +44,7 @@ if(PLD_wingcc)
     if(WITH_FREETYPE)
       set(
       wingcc_COMPILE_FLAGS
-      "${wingcc_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
+      "${wingcc_COMPILE_FLAGS} ${FREETYPE_INCLUDE_CFLAGS}"
       )
       set(
       wingcc_LINK_FLAGS
