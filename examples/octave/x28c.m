@@ -84,8 +84,8 @@ function ix28c
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
    
   plcol0(2);
-  plbox3("b", "", xrange, 0, 
-	 "b", "", yrange, 0, 
+  plbox3("b", "", xrange, 0,
+	 "b", "", yrange, 0,
 	 "bcd", "", zrange, 0);
 
   ## z = zmin. 
@@ -100,9 +100,9 @@ function ix28c
     x_shear = -0.5*xrange*sin_omega;
     y_shear = 0.5*yrange*cos_omega;
     z_shear = 0.;
-    plptex3(xmid, ymid, zmin, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(xmid, ymid, zmin,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.0, "  revolution");
   endfor
   ## x = xmax.
@@ -117,9 +117,9 @@ function ix28c
     x_shear = 0.;
     y_shear = 0.5*yrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
-    plptex3(xmax, ymid, zmid, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(xmax, ymid, zmid,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.0, "  revolution");
   endfor
 
@@ -135,10 +135,10 @@ function ix28c
     x_shear = -0.5*xrange*sin_omega;
     y_shear = 0.;
     z_shear = 0.5*zrange*cos_omega;
-    plptex3( 
-	    xmid, ymax, zmid, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(
+	    xmid, ymax, zmid,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.0, "  revolution");
   endfor
   ## Draw minimal 3D grid to finish defining the 3D box.
@@ -151,8 +151,8 @@ function ix28c
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
    
   plcol0(2);
-  plbox3("b", "", xrange, 0, 
-	 "b", "", yrange, 0, 
+  plbox3("b", "", xrange, 0,
+	 "b", "", yrange, 0,
 	 "bcd", "", zrange, 0);
 
   ## y = ymax.
@@ -168,10 +168,10 @@ function ix28c
     y_shear = 0.5*yrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
     zs = zsmax - dzsrot*i;
-    plptex3( 
-	    xmid, ymax, zs, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(
+	    xmid, ymax, zs,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.5, "rotation for y = y#dmax#u");
   endfor
 
@@ -188,10 +188,10 @@ function ix28c
     x_shear = 0.5*xrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
     zs = zsmax - dzsrot*i;
-    plptex3( 
-	    xmax, ymid, zs, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(
+	    xmax, ymid, zs,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.5, "rotation for x = x#dmax#u");
   endfor
 
@@ -208,10 +208,10 @@ function ix28c
     y_shear = 0.5*yrange*cos_omega;
     z_shear = 0.5*zrange*sin_omega;
     ys = ysmax - dysrot*i;
-    plptex3( 
-	    xmid, ys, zmin, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(
+	    xmid, ys, zmin,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.5, "rotation for z = z#dmin#u");
   endfor
   ## Draw minimal 3D grid to finish defining the 3D box.
@@ -228,8 +228,8 @@ function ix28c
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
    
   plcol0(2);
-  plbox3("b", "", xrange, 0, 
-	 "b", "", yrange, 0, 
+  plbox3("b", "", xrange, 0,
+	 "b", "", yrange, 0,
 	 "bcd", "", zrange, 0);
 
   ## y = ymax.
@@ -245,10 +245,10 @@ function ix28c
     x_shear = 0.5*xrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
     zs = zsmax-dzsshear*i;
-    plptex3( 
-	    xmid, ymax, zs, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(
+	    xmid, ymax, zs,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.5, "shear for y = y#dmax#u");
   endfor
 
@@ -265,10 +265,10 @@ function ix28c
     y_shear = -0.5*yrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
     zs = zsmax-dzsshear*i;
-    plptex3( 
-	    xmax, ymid, zs, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(
+	    xmax, ymid, zs,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.5, "shear for x = x#dmax#u");
   endfor
 
@@ -285,10 +285,10 @@ function ix28c
     y_shear = 0.5*yrange*cos_omega;
     x_shear = 0.5*xrange*sin_omega;
     ys = ysmax-dysshear*i;
-    plptex3( 
-	    xmid, ys, zmin, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3
+	    xmid, ys, zmin,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.5, "shear for z = z#dmin#u");
   endfor
   ## Draw minimal 3D grid to finish defining the 3D box.
@@ -301,8 +301,8 @@ function ix28c
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 40., -30.);
   
   plcol0(2);
-  plbox3("b", "", xrange, 0, 
-	 "b", "", yrange, 0, 
+  plbox3("b", "", xrange, 0,
+	 "b", "", yrange, 0,
 	 "bcd", "", zrange, 0);
 
   plschr(0., 1.2);
@@ -332,10 +332,10 @@ function ix28c
     y_shear = 0.;
     z_shear = 1.;
     p1string = pstring(i:i);
-    plptex3( 
-	    xpos, ypos, zpos, 
-	    x_inclination, y_inclination, z_inclination, 
-	    x_shear, y_shear, z_shear, 
+    plptex3(
+	    xpos, ypos, zpos,
+	    x_inclination, y_inclination, z_inclination,
+	    x_shear, y_shear, z_shear,
 	    0.5, p1string);
     omega += domega;
   endfor
@@ -349,8 +349,8 @@ function ix28c
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
   
   plcol0(2);
-  plbox3("b", "", xrange, 0, 
-	 "b", "", yrange, 0, 
+  plbox3("b", "", xrange, 0,
+	 "b", "", yrange, 0,
 	 "bcd", "", zrange, 0);
 
   plschr(0., 1.0);

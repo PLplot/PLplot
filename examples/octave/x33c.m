@@ -193,12 +193,12 @@ function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width
         plwind( 0.0, 1.0, 0.0, 1.0 );
         # Set interesting background colour.
         plscol0a( 15, 0, 0, 0, 0.20 );
-        [colorbar_width, colorbar_height] = plcolorbar( 
-            bitor(opt, bitor(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)), 
-            position, x, y, x_length, y_length, 
-            15, 1, 1, low_cap_color, high_cap_color, 
-            cont_color, cont_width, label_opts, label, 
-            axis_opts, ticks, sub_ticks, 
+        [colorbar_width, colorbar_height] = plcolorbar(
+            bitor(opt, bitor(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)),
+            position, x, y, x_length, y_length,
+            15, 1, 1, low_cap_color, high_cap_color,
+            cont_color, cont_width, label_opts, label,
+            axis_opts, ticks, sub_ticks,
             n_values_array, values_array );
 
         # Reset text and tick sizes
