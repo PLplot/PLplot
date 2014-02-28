@@ -200,7 +200,21 @@ void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
                 vmax = ( v[i][j] > vmax ) ? v[i][j] : vmax;
             }
         }
-        lscale = 1.5 * MIN( dxmin / umax, dymin / vmax );
+        if (umax != 0.0) 
+        {
+	    dxmin = dxmin / umax;
+        }
+        else {
+	    dxmin = 10E10;
+        }
+        if (vmax != 0.0) 
+        {
+	    dymin = dymin / vmax;
+        }
+        else {
+	    dymin = 10E10;
+        }
+        lscale = 1.5 * MIN( dxmin, dymin);
         if ( scale < 0.0 )
         {
             scale = -scale * lscale;
