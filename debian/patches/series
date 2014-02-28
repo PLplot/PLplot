@@ -2,7 +2,6 @@
 #04_use-mkoctfile.diff
 proper-path-handling.diff
 fix-lua-includes.diff
-fix-d-examples.diff
-fix-python-exec-bit.diff
 add-tcl-multiarch.diff
-support-javac-options.diff
+#support-javac-options.diff
+octave_3.8_support.diff

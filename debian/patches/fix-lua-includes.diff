@@ -3,10 +3,10 @@ Author: Andrew Ross <andrewross@users.sourceforge.net>
 Last-Update: 2012-07-19
 
 ===================================================================
-Index: plplot-5.9.10/cmake/modules/lua.cmake
+Index: plplot-5.10.0/cmake/modules/lua.cmake
 ===================================================================
---- plplot-5.9.10.orig/cmake/modules/lua.cmake	2013-10-01 13:10:33.183293316 +0100
-+++ plplot-5.9.10/cmake/modules/lua.cmake	2013-10-01 13:10:33.171293317 +0100
+--- plplot-5.10.0.orig/cmake/modules/lua.cmake	2013-05-03 03:41:21.000000000 +0100
++++ plplot-5.10.0/cmake/modules/lua.cmake	2014-02-28 09:52:40.000000000 +0000
 @@ -86,3 +86,11 @@
      set(LUA_DIR ${LIB_DIR}/lua/${LUA_VERSION}/plplot)
    endif(LUA_VERSION MATCHES "5\\.0")
