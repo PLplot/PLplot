@@ -35,7 +35,12 @@ echo "$TOPDIR"
 export LD_LIBRARY_PATH="$TOPDIR"/src:"$TOPDIR"/lib/csa:"$TOPDIR"/lib/nn
 
 # Launch an Octave script that exercises all the demos
-$octave -f -q -p "$octavedir" <<EOF 2> test.error
+$octave -f -q  <<EOF 2> test.error
+
+# Disable warnings about shadowed functions - PLplot is _supposed_ to shadow the core functions
+warning("off","Octave:shadowed-function");
+
+addpath(getenv("octavedir"));
 
 # Check verbose_test variable
 if (strcmp(getenv("verbose_test"),"on") == 1)
@@ -46,13 +51,15 @@ endif
 
 plplot_stub;
 t = char(strsplit("$options", "-")); 
-if (t); t(1,:)=""; endif;
-for i=1:rows(t)
-    tt = deblank (t(i,:)); len = length(tt);
-    ix = index(tt," ");
-    if (ix == 0); ix = len; len = 0; endif
-    plsetopt(tt(1:ix), tt(ix+1:len));
-endfor
+if (t)
+    t(1,:)="";
+    for i=1:rows(t)
+        tt = deblank (t(i,:)); len = length(tt);
+        ix = index(tt," ");
+        if (ix == 0); ix = len; len = 0; endif
+        plsetopt(tt(1:ix), tt(ix+1:len));
+    endfor
+endif
 
 # Subset of p examples selected that seem to work ok with noninteractive
 # devices.
@@ -80,13 +87,15 @@ for i=[0:18 19 20:31 33] ;
 	printf("%s\n",cmd);
     endif
     t = char(strsplit("$options", "-")); 
-    if (t) ; t(1,:)=""; endif
-    for j=1:rows(t)
-        tt = deblank (t(j,:)); len = length(tt);
-	ix = index(tt," ");
-	if (ix == 0); ix = len; len = 0; endif
-	plSetOpt(deblank(tt(1:ix)), tt(ix:len));
-    endfor
+    if (t) 
+        t(1,:)="";
+        for j=1:rows(t)
+            tt = deblank (t(j,:)); len = length(tt);
+       	    ix = index(tt," ");
+	    if (ix == 0); ix = len; len = 0; endif
+	    plSetOpt(deblank(tt(1:ix)), tt(ix:len));
+        endfor
+    endif
     device="$device";
     plSetOpt("dev", device);
 #o trailer on filename e.g., x01o.ps) to distinguish from other

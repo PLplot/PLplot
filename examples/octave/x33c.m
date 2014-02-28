@@ -193,12 +193,12 @@ function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width
         plwind( 0.0, 1.0, 0.0, 1.0 );
         # Set interesting background colour.
         plscol0a( 15, 0, 0, 0, 0.20 );
-        [colorbar_width, colorbar_height] = plcolorbar( \
-            bitor(opt, bitor(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)), \
-            position, x, y, x_length, y_length, \
-            15, 1, 1, low_cap_color, high_cap_color, \
-            cont_color, cont_width, label_opts, label, \
-            axis_opts, ticks, sub_ticks, \
+        [colorbar_width, colorbar_height] = plcolorbar( 
+            bitor(opt, bitor(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)), 
+            position, x, y, x_length, y_length, 
+            15, 1, 1, low_cap_color, high_cap_color, 
+            cont_color, cont_width, label_opts, label, 
+            axis_opts, ticks, sub_ticks, 
             n_values_array, values_array );
 
         # Reset text and tick sizes
@@ -311,7 +311,7 @@ function ix33c()
     line_colors(1) = 1 + mod(k, 8);
     symbol_colors(1) = 1 + mod(k, 8);
 
-    [legend_width, legend_height] = \
+    [legend_width, legend_height] = ...
 	pllegend( opt, position, 0.05, 0.05,
 		 0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
 		 1., text_colors, text,
@@ -391,7 +391,7 @@ function ix33c()
   y = 0.1;
   nrow = 1;
   ncolumn = nlegend;
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
@@ -405,7 +405,7 @@ function ix33c()
   y = 0.1;
   nrow = 1;
   ncolumn = nlegend;
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
@@ -420,7 +420,7 @@ function ix33c()
   y = 0.;
   nrow = nlegend;
   ncolumn = 1;
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
@@ -434,7 +434,7 @@ function ix33c()
   y = 0.;
   nrow = nlegend;
   ncolumn = 1;
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
@@ -448,7 +448,7 @@ function ix33c()
   y = 0.;
   nrow = 6;
   ncolumn = 2;
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
@@ -462,7 +462,7 @@ function ix33c()
   y = 0.;
   nrow = 6;
   ncolumn = 2;
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
@@ -476,7 +476,7 @@ function ix33c()
   y = 0.;
   nrow = 3;
   ncolumn = 3;
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
 	       1., text_colors, text,
@@ -566,7 +566,7 @@ function ix33c()
     nrow = min(3, nlegend);
     ncolumn = 0;
 
-    [legend_width, legend_height] = \
+    [legend_width, legend_height] = ...
         pllegend( opt, position, x, y,
                  0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
                  1., text_colors, text,
@@ -683,7 +683,7 @@ function ix33c()
 
   opt = opt_base;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
@@ -714,7 +714,7 @@ function ix33c()
   opt = opt_base;
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
 	       0., text_colors, text,
@@ -745,7 +745,7 @@ function ix33c()
   opt = opt_base;
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
 	       0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
 	       0., text_colors, text,
@@ -779,7 +779,7 @@ function ix33c()
   y += max_height;
   max_height = 0.;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
@@ -810,7 +810,7 @@ function ix33c()
   opt = opt_base;
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
@@ -841,7 +841,7 @@ function ix33c()
   opt = opt_base;
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text,
@@ -876,7 +876,7 @@ function ix33c()
   y += max_height;
   max_height = 0.;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
@@ -903,7 +903,7 @@ function ix33c()
   opt = opt_base;
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
@@ -931,7 +931,7 @@ function ix33c()
   opt = opt_base;
   x += legend_width;
   plscol0a( 15, 32, 32, 32, 0.70 );
-  [legend_width, legend_height] = \
+  [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
