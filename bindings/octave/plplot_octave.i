@@ -1182,8 +1182,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     }
 }
 
-// %feature commands supporting swig-generated documentation for the bindings.
-// Must occur before any %ignore directives or %rename directives.
+//%feature commands supporting swig-generated documentation for the bindings.
+// Must occur before any%ignore directives or%rename directives.
 %include swig_documentation.i
 
 // This test function should be removed when we are confident of our
@@ -1364,7 +1364,8 @@ void my_plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
                      PLINT ly, const PLFLT *clevel, PLINT nlevel, const PLFLT *xg, const PLFLT *yg )
     {
         PLcGrid2 grid2;
-        f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+        f2c( xg, xgg, nx, ny );
+        f2c( yg, ygg, nx, ny );
         grid2.nx = nx;  grid2.ny = ny;
         grid2.xg = xgg; grid2.yg = ygg;
         f2c( f, ff, nx, ny );
@@ -1377,7 +1378,8 @@ void my_plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
                       PLINT ly, const PLFLT *clevel, PLINT nlevel, const PLFLT *xg, const PLFLT *yg )
     {
         PLcGrid2 grid2;
-        f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+        f2c( xg, xgg, nx, ny );
+        f2c( yg, ygg, nx, ny );
         grid2.nx = nx;  grid2.ny = ny;
         grid2.xg = xgg; grid2.yg = ygg;
         f2c( f, ff, nx, ny );
@@ -1454,14 +1456,14 @@ void my_plmeshc( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk
 %ignore plot3dc;
 %rename( plot3dc ) my_plot3dc;
 %ignore plot3dcl;
-//unimplemented:%rename(plot3dcl) my_plot3dcl;
+%rename( plot3dcl ) my_plot3dcl;
 
 %{
 // Plots a 3-d representation of the function z[x][y].
     void my_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT *z,
                     PLINT nx, PLINT ny, PLINT opt, PLINT side )
     {
-        f2c( z, zz, nx, ny )
+        f2c( z, zz, nx, ny );
         c_plot3d( x, y, (const PLFLT **) zz, nx, ny, opt, side );
     }
 
@@ -1470,8 +1472,19 @@ void my_plmeshc( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk
                      PLINT nx, PLINT ny, PLINT opt,
                      const PLFLT *clevel, PLINT nlevel )
     {
-        f2c( z, zz, nx, ny )
+        f2c( z, zz, nx, ny );
         c_plot3dc( x, y, (const PLFLT **) zz, nx, ny, opt, clevel, nlevel );
+    }
+// Plots a 3-d representation of the function z[x][y] with contour with y
+// index limits
+    void my_plot3dcl( const PLFLT * x, const PLFLT * y, const PLFLT * z,
+                      PLINT nx, PLINT ny, PLINT opt,
+                      const PLFLT * clevel, PLINT nlevel,
+                      PLINT indexxmin, PLINT indexxmax, const PLINT * indexymin, const PLINT * indexymax )
+    {
+        f2c( z, zz, nx, ny );
+        c_plot3dcl( x, y, (const PLFLT **) zz, nx, ny, opt, clevel, nlevel,
+            indexxmin, indexxmax, indexymin, indexymax );
     }
 %}
 
@@ -1481,23 +1494,40 @@ void my_plot3d( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
 void my_plot3dc( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
                  PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
 
+void my_plot3dcl( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
+                  PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n,
+                  PLINT ixstart, PLINT n, const PLINT *Array, const PLINT *ArrayCk );
+
 // plsurf3d-related wrappings:
 %ignore plsurf3d;
 %rename( plsurf3d ) my_plsurf3d;
 %ignore plsurf3dl;
-//unimplemented:%rename(plsurf3d) my_plsurf3d;
+%rename( plsurf3dl ) my_plsurf3dl;
 
 %{
     void my_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT *z,
                       PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
     {
-        f2c( z, zz, nx, ny )
+        f2c( z, zz, nx, ny );
         c_plsurf3d( x, y, (const PLFLT **) zz, nx, ny, opt, clevel, nlevel );
+    }
+
+    void my_plsurf3dl( const PLFLT * x, const PLFLT * y, const PLFLT * z,
+                       PLINT nx, PLINT ny, PLINT opt, const PLFLT * clevel, PLINT nlevel,
+                       PLINT indexxmin, PLINT indexxmax, const PLINT * indexymin, const PLINT * indexymax )
+    {
+        f2c( z, zz, nx, ny );
+        c_plsurf3dl( x, y, (const PLFLT **) zz, nx, ny, opt, clevel, nlevel,
+            indexxmin, indexxmax, indexymin, indexymax );
     }
 %}
 
 void my_plsurf3d( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
                   PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n );
+
+void my_plsurf3dl( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixCk,
+                   PLINT nx, PLINT ny, PLINT opt, const PLFLT *Array, PLINT n,
+                   PLINT ixstart, PLINT n, const PLINT *Array, const PLINT *ArrayCk );
 
 // plshade-related wrappers.
 
@@ -1558,7 +1588,8 @@ void my_plsurf3d( const PLFLT *ArrayX, const PLFLT *ArrayY, const PLFLT *MatrixC
                       PLINT rectangular, const PLFLT *xg, const PLFLT *yg )
     {
         PLcGrid2 grid2;
-        f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+        f2c( xg, xgg, nx, ny );
+        f2c( yg, ygg, nx, ny );
         grid2.nx = nx;  grid2.ny = ny;
         grid2.xg = xgg; grid2.yg = ygg;
         f2c( a, aa, nx, ny );
@@ -1660,7 +1691,8 @@ void my_plshade2( const PLFLT *Matrix, PLINT nx, PLINT ny, const char *defined,
                        PLINT rectangular, const PLFLT *xg, const PLFLT *yg )
     {
         PLcGrid2 grid2;
-        f2c( xg, xgg, nx, ny ); f2c( yg, ygg, nx, ny );
+        f2c( xg, xgg, nx, ny );
+        f2c( yg, ygg, nx, ny );
         grid2.nx = nx;  grid2.ny = ny;
         grid2.xg = xgg; grid2.yg = ygg;
         f2c( a, aa, nx, ny );
@@ -1728,7 +1760,8 @@ void my_plshades2( const PLFLT *Matrix, PLINT nx, PLINT ny,
     void my_plvect2( const PLFLT *u, const PLFLT *v, PLINT nx, PLINT ny, PLFLT scale, const PLFLT *xg, const PLFLT *yg )
     {
         PLcGrid2 grid2;
-        f2c( xg, xgg, nx, ny );  f2c( yg, ygg, nx, ny );
+        f2c( xg, xgg, nx, ny );
+        f2c( yg, ygg, nx, ny );
         grid2.nx = nx;  grid2.ny = ny;
         grid2.xg = xgg;  grid2.yg = ygg;
         f2c( u, uu, nx, ny );
@@ -1806,7 +1839,8 @@ void my_plvect2( const PLFLT *Matrix, const PLFLT *MatrixCk, PLINT nx, PLINT ny,
                         PLFLT valuemin, PLFLT valuemax, const PLFLT *xg, const PLFLT *yg )
     {
         PLcGrid2 grid2;
-        f2c( xg, xgg, ( nx + 1 ), ( ny + 1 ) );  f2c( yg, ygg, ( nx + 1 ), ( ny + 1 ) );
+        f2c( xg, xgg, ( nx + 1 ), ( ny + 1 ) );
+        f2c( yg, ygg, ( nx + 1 ), ( ny + 1 ) );
         grid2.nx = nx + 1;  grid2.ny = ny + 1;
         grid2.xg = xgg;  grid2.yg = ygg;
         f2c( a, aa, nx, ny );

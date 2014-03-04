@@ -3749,7 +3749,11 @@ ARGUMENTS:
     index in the range from indexxmin to indexxmax - 1.  The dimension
     of indexymax is indexxmax. 
 ")
+#ifdef SWIG_OCTAVE
+my_plot3dcl;
+#else
 plot3dcl;
+#endif
 
 %feature( "docstring", "Parse command-line arguments 
 
@@ -6566,7 +6570,11 @@ ARGUMENTS:
     index in the range from indexxmin to indexxmax - 1.  The dimension
     of indexymax is indexxmax. 
 ")
+#ifdef SWIG_OCTAVE
+my_plsurf3dl;
+#else
 plsurf3dl;
+#endif
 
 %feature( "docstring", "Plot shaded 3-d surface plot 
 
