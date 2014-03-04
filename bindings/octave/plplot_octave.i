@@ -1182,6 +1182,10 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     }
 }
 
+// %feature commands supporting swig-generated documentation for the bindings.
+// Must occur before any %ignore directives or %rename directives.
+%include swig_documentation.i
+
 // This test function should be removed when we are confident of our
 // dealings with all types of octave string arrays.
 void testppchar( PLINT n, const PLINT *Array, const char **ArrayCk );
@@ -1881,7 +1885,6 @@ void my_plcolorbar( PLFLT *OUTPUT, PLFLT *OUTPUT,
 
 // Probably never deal with this one.
 %ignore plMinMax2dGrid;
-//%feature commands supporting swig-generated documentation for the bindings.
-%include swig_documentation.i
+
 // swig-compatible common PLplot API definitions from here on.
 %include plplotcapi.i

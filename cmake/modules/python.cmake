@@ -26,6 +26,14 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_python "Enable Python bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+find_program(SED_EXECUTABLE sed)
+
+if(ENABLE_python AND NOT SED_EXECUTABLE)
+  message(STATUS "WARNING: "
+    "Python bindings fixup requires sed which was not found. Disabling Python bindings")
+  set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+endif(ENABLE_python AND NOT SED_EXECUTABLE)
+
 if(ENABLE_python AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
     "Python requires shared libraries. Disabling Python bindings")

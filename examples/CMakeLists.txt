@@ -863,7 +863,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt4_example
 	plplot_pyqt4
 	python_examples
-	_plplotcmodule
+	_plplotcmodule_fixed
 	qt
 	)
       if(FILE_DEPENDS_qt)
@@ -893,7 +893,7 @@ if(BUILD_TEST)
 	gcwmodule
 	cplplotcanvasmodule
 	${gcw_target}
-	_plplotcmodule
+	_plplotcmodule_fixed
 	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_demo.py
 	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_animation.py
 	WORKING_DIRECTORY

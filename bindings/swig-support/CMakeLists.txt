@@ -29,6 +29,7 @@ if(PERL_XML_DOM AND PERL_XML_PARSER)
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
     COMMAND ${PERL_EXECUTABLE}
     ${CMAKE_SOURCE_DIR}/doc/docbook/bin/api2swigdoc.pl
+    ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave.i
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare

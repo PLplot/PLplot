@@ -102,6 +102,31 @@ if(ENABLE_python)
       )  
   endif(WIN32_AND_NOT_CYGWIN)
 
+  # Fixup required to deal with UTF-8 help strings.  Note the DEPENDS
+  # only brings in a file dependency on the shared object and
+  # not ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py that is also built
+  # by swig.  Therefore, when the _plplotcmodule_fixed target is run the
+  # following command is only executed if 
+  # ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py is outdated relative
+  # to the shared object and it ignores the dating of
+  # ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py.  Thus, that file
+  # can be overwritten by the command below without affecting whether
+  # the custom command is run or not.
+  add_custom_command(
+    OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
+    COMMAND ${SED_EXECUTABLE} -e "1s?^\\(.*\\)\$?\\1  It uses coding: utf-8?" < ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py > ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+    DEPENDS _plplotcmodule
+    VERBATIM
+    )
+  add_custom_target(
+    _plplotcmodule_fixed ALL
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
+    )
+  add_dependencies(_plplotcmodule_fixed _plplotcmodule)
+
   add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
   set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
   set_source_files_properties( 
