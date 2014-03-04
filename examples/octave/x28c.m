@@ -285,7 +285,7 @@ function ix28c
     y_shear = 0.5*yrange*cos_omega;
     x_shear = 0.5*xrange*sin_omega;
     ys = ysmax-dysshear*i;
-    plptex3
+    plptex3(
 	    xmid, ys, zmin,
 	    x_inclination, y_inclination, z_inclination,
 	    x_shear, y_shear, z_shear,
