@@ -132,6 +132,18 @@ main( int argc, const char *argv[] )
     PLINT    nlevel = LEVELS;
     int      rosen  = 1;
 
+    PLINT    indexxmin = 0;
+    PLINT    indexxmax = XPTS;
+    PLINT    *indexymin;
+    PLINT    *indexymax;
+    PLFLT    **zlimited;
+    // parameters of ellipse that limits the data.
+    PLFLT    x0 = 0.5*(PLFLT) (XPTS - 1);
+    PLFLT    a = x0;
+    PLFLT    y0 = 0.5*(PLFLT) (YPTS - 1);
+    PLFLT    b = y0;
+    PLFLT    square_root;
+
     // Parse and process command line arguments
     plMergeOpts( options, "x08c options", NULL );
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
@@ -200,6 +212,25 @@ main( int argc, const char *argv[] )
         }
     }
 
+    //  Allocate and alculate y index ranges and corresponding zlimited.
+    plAlloc2dGrid( &zlimited, XPTS, YPTS );
+    indexymin = (PLINT *) malloc( XPTS * sizeof ( PLINT ) );
+    indexymax = (PLINT *) malloc( XPTS * sizeof ( PLINT ) );
+    if ( !indexymin || !indexymax )
+        plexit( "Memory allocation error" );
+
+    for ( i = indexxmin; i < indexxmax; i++ )
+    {
+      square_root = sqrt(1. - MIN(1., pow(((PLFLT)i - x0)/a, 2.)));
+      indexymin[i] = MAX(0, (PLINT)(y0 - b*square_root));
+      indexymax[i] = MIN(YPTS, (PLINT)(y0 + b*square_root));
+      for ( j = indexymin[i]; j < indexymax[i]; j++ )
+      {
+        zlimited[i][j] = z[i][j];
+      }
+    }
+
+
     plMinMax2dGrid( (const PLFLT * const *) z, XPTS, YPTS, &zmax, &zmin );
     step = ( zmax - zmin ) / ( nlevel + 1 );
     for ( i = 0; i < nlevel; i++ )
@@ -209,7 +240,7 @@ main( int argc, const char *argv[] )
 
     for ( k = 0; k < 2; k++ )
     {
-        for ( ifshade = 0; ifshade < 4; ifshade++ )
+        for ( ifshade = 0; ifshade < 5; ifshade++ )
         {
             pladv( 0 );
             plvpor( 0.0, 1.0, 0.0, 0.9 );
@@ -242,10 +273,15 @@ main( int argc, const char *argv[] )
                 cmap1_init( 0 );
                 plfsurf3d( x, y, plf2ops_grid_row_major(), ( PLPointer ) & grid_row_major, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
             }
-            else                  // magnitude colored plot with contours
+            else if ( ifshade == 3 ) // magnitude colored plot with contours
             {
                 cmap1_init( 0 );
                 plfsurf3d( x, y, plf2ops_grid_col_major(), ( PLPointer ) & grid_col_major, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
+            }
+            else // magnitude colored plot with contours and index limits.
+            {
+                cmap1_init( 0 );
+                plsurf3dl( x, y, (const PLFLT * const*) zlimited, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
             }
         }
     }
@@ -257,6 +293,10 @@ main( int argc, const char *argv[] )
     plFree2dGrid( z, XPTS, YPTS );
     free( (void *) z_row_major );
     free( (void *) z_col_major );
+
+    plFree2dGrid( zlimited, XPTS, YPTS );
+    free( (void *) indexymin );
+    free( (void *) indexymax );
 
     plend();
 
