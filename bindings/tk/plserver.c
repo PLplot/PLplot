@@ -117,8 +117,11 @@ main( int argc, const char **argv )
     fprintf( stderr, "Before myargv\n" );
 #endif
 
-    myargv = (const char **) malloc( argc * sizeof ( char * ) );
-    for ( i = 0; i < argc; i++ )
+    // According to both Linux and Windows documentation,
+    // argv is actually argc+1 in length with the last element pointing
+    // to NULL.  So leave room for that.
+    myargv = (const char **) malloc( ( argc + 1 ) * sizeof ( char * ) );
+    for ( i = 0; i < argc + 1; i++ )
     {
         myargv[i] = argv[i];
     }
@@ -133,12 +136,16 @@ main( int argc, const char **argv )
     if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv,
              argTable, TK_ARGV_NO_DEFAULTS ) != TCL_OK )
     {
+#ifdef DEBUG
         fprintf( stderr, "Error in Tk_ParseArgv\n" );
+#endif
         fprintf( stderr, "\n(plserver) %s\n\n", Tcl_GetStringResult( interp ) );
         fprintf( stderr, "\
 The client_<xxx> and -child options should not be used except via the\n\
 PLplot/Tk driver.\n\n(wish) " );
+#ifdef DEBUG
         fprintf( stderr, "Before Tcl_SetResult\n" );
+#endif
         Tcl_SetResult( interp, (char *) helpmsg, TCL_VOLATILE );
     }
 
