@@ -29,9 +29,9 @@
 	  array( 7, 19, 1, "
 	<p>Font demo for Hershey encodings.</p>
 	\n", array_fill( 0, 19, 1)),
-	  array( 8,  8, 1, "
+	  array( 8,  10, 1, "
 	<p>3-d plot demo.</p>
-	\n", array_fill( 0, 8, 1)),
+	\n", array_fill( 0, 10, 1)),
 	  array( 9,  5, 1, "
 	<p>Contour plot demo.</p>
 	\n", array_fill( 0, 5, 1)),
