@@ -138,10 +138,10 @@ main( int argc, const char *argv[] )
     PLINT    *indexymax;
     PLFLT    **zlimited;
     // parameters of ellipse that limits the data.
-    PLFLT    x0 = 0.5*(PLFLT) (XPTS - 1);
-    PLFLT    a = x0;
-    PLFLT    y0 = 0.5*(PLFLT) (YPTS - 1);
-    PLFLT    b = y0;
+    PLFLT    x0 = 0.5 * (PLFLT) ( XPTS - 1 );
+    PLFLT    a  = x0;
+    PLFLT    y0 = 0.5 * (PLFLT) ( YPTS - 1 );
+    PLFLT    b  = y0;
     PLFLT    square_root;
 
     // Parse and process command line arguments
@@ -221,13 +221,13 @@ main( int argc, const char *argv[] )
 
     for ( i = indexxmin; i < indexxmax; i++ )
     {
-      square_root = sqrt(1. - MIN(1., pow(((PLFLT)i - x0)/a, 2.)));
-      indexymin[i] = MAX(0, (PLINT)(y0 - b*square_root));
-      indexymax[i] = MIN(YPTS, (PLINT)(y0 + b*square_root));
-      for ( j = indexymin[i]; j < indexymax[i]; j++ )
-      {
-        zlimited[i][j] = z[i][j];
-      }
+        square_root  = sqrt( 1. - MIN( 1., pow( ( (PLFLT) i - x0 ) / a, 2. ) ) );
+        indexymin[i] = MAX( 0, (PLINT) ( y0 - b * square_root ) );
+        indexymax[i] = MIN( YPTS, (PLINT) ( y0 + b * square_root ) );
+        for ( j = indexymin[i]; j < indexymax[i]; j++ )
+        {
+            zlimited[i][j] = z[i][j];
+        }
     }
 
 
@@ -281,7 +281,7 @@ main( int argc, const char *argv[] )
             else // magnitude colored plot with contours and index limits.
             {
                 cmap1_init( 0 );
-                plsurf3dl( x, y, (const PLFLT * const*) zlimited, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
+                plsurf3dl( x, y, (const PLFLT * const *) zlimited, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
             }
         }
     }
