@@ -2186,6 +2186,12 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
             &x, &y, &w, &h, &b, &d );
         pls->xlength = (PLINT) w;
         pls->ylength = (PLINT) h;
+        // Calculate ratio of (smaller) external coordinates used for cairo
+        // devices to (larger) internal PLplot coordinates.
+        if ( pls->xlength > pls->ylength )
+            aStream->downscale = (double) pls->xlength / (double) ( PIXELS_X - 1 );
+        else
+            aStream->downscale = (double) pls->ylength / (double) PIXELS_Y;
         plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / aStream->downscale ), (PLINT) 0,
             (PLINT) ( pls->ylength / aStream->downscale ) );
 
