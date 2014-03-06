@@ -509,15 +509,30 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
   #message(STATUS "MSVC_C_ARCHITECTURE_ID = ${MSVC_C_ARCHITECTURE_ID}")
   #message(STATUS "MSVC_CXX_ARCHITECTURE_ID = ${MSVC_CXX_ARCHITECTURE_ID}")
   #message(STATUS "CMAKE_CL_64 = ${CMAKE_CL_64}")
+  #message(STATUS "LIB = $ENV{LIB}")
+  #message(STATUS "GENERATOR = ${CMAKE_GENERATOR}")
   if(WX_ROOT_DIR)
     # Select one default tree inside the already determined wx tree.
     # Prefer static/shared order usually consistent with build
     # settings.
     if(MINGW)
       set(WX_LIB_DIR_PREFIX gcc)
+    #The following should check for compiling 64 bit with nmake or VS
     #Check for use of 64 bit NMake Makefile generator or a Visual Studio XX Win64 generator
-    elseif(CMAKE_CL_64 OR ${CMAKE_GENERATOR} MATCHES "Win64$")
+    elseif(CMAKE_CL_64)
       set(WX_LIB_DIR_PREFIX vc_x64)
+    #unfortunately the above doesn't work on my system - can't find why, but workaround below
+    #Check for vs64 bit
+    elseif(${CMAKE_GENERATOR} MATCHES "Win64$")
+      set(WX_LIB_DIR_PREFIX vc_x64)
+    #Check for nmake 64 bit
+    elseif(${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
+      set(WX_LIB_DIR_PREFIX vc)
+      foreach(ENVLIBDIR $ENV{LIB})
+        if( ENVLIBDIR MATCHES "amd64$")
+          set(WX_LIB_DIR_PREFIX vc_x64)
+        endif()
+      endforeach()
     else()
       set(WX_LIB_DIR_PREFIX vc)
     endif()
