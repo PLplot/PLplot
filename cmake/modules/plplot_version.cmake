@@ -4,13 +4,17 @@ set(RELEASE_DATE "2014-02-12")
 
 # Version data that need review and possible modification for each release.
 
+set(PLPLOT_VERSION_MAJOR 5)
+set(PLPLOT_VERSION_MINOR 10)
+set(PLPLOT_VERSION_PATCH 0)
+
 # Overall PLplot version number.
-set(PLPLOT_VERSION 5.10.0)
+set(PLPLOT_VERSION ${PLPLOT_VERSION_MAJOR}.${PLPLOT_VERSION_MINOR}.${PLPLOT_VERSION_PATCH})
 
 # CPack version numbers for release tarball name.
-set(CPACK_PACKAGE_VERSION_MAJOR 5)
-set(CPACK_PACKAGE_VERSION_MINOR 10)
-set(CPACK_PACKAGE_VERSION_PATCH 0)
+set(CPACK_PACKAGE_VERSION_MAJOR ${PLPLOT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PLPLOT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 
 # PLplot library version information.
 
