@@ -118,8 +118,8 @@ main( int argc, const char **argv )
 #endif
 
     // According to both Linux and Windows documentation,
-    // argv is actually argc+1 in length with the last element pointing
-    // to NULL.  So leave room for that.
+    // argv is actually argc+1 in length with the last element set to
+    // the NULL value.  So leave room for that last element.
     myargv = (const char **) malloc( ( argc + 1 ) * sizeof ( char * ) );
     for ( i = 0; i < argc + 1; i++ )
     {
