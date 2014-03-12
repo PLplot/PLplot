@@ -48,7 +48,7 @@ proc load_pkg_Pltcl {dir} {
 	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
 	    set searchdirs "../../dll"
 	} else {
-	    set searchdirs [list "@LIB_HARDDIR@../bin"]
+	    set searchdirs [list "@LIB_HARDDIR@/../bin"]
 	}
     }
     #puts $searchdirs
