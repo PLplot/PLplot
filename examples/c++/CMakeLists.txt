@@ -142,7 +142,8 @@ if(BUILD_TEST)
     target_link_libraries(wxPLplotDemo plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   endif(ENABLE_wxwidgets)
 
-  if(ENABLE_qt)
+## FIXME for the case when PLPLOT_USE_QT5 is ON.
+  if(ENABLE_qt AND NOT PLPLOT_USE_QT5)
     if(CORE_BUILD)
       set(BUILD_qt_example ON)
       if(NOT QT_LIBRARIES)
@@ -181,5 +182,5 @@ if(BUILD_TEST)
       # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
       set_qt_target_properties(qt_example)
     endif(BUILD_qt_example)
-  endif(ENABLE_qt)
+  endif(ENABLE_qt AND NOT PLPLOT_USE_QT5)
 endif(BUILD_TEST)

@@ -20,9 +20,6 @@
 
 if(ENABLE_qt)
   # Set up Qt4-based build environment.
-  if(NOT QT_LIBRARIES)
-    message(FATAL_ERROR "include(${QT_USE_FILE}) failed in bindings/qt_gui subdirectory.")
-  endif(NOT QT_LIBRARIES)
   set(qt_SOURCE plqt.cpp)
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
@@ -43,14 +40,31 @@ if(ENABLE_qt)
   else(ANY_QT_DEVICE)
     message(FATAL_ERROR "Internal build system inconsistency between ENABLE_qt true and ANY_QT_DEVICE false.")
   endif(ANY_QT_DEVICE)
-  target_link_libraries(
-    plplotqt${LIB_TAG}
-    plplot${LIB_TAG}
-    ${MATH_LIB}
-    ${QT_LIBRARIES}
-    )
-  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-  set_qt_target_properties(plplotqt${LIB_TAG})
+
+  if(PLPLOT_USE_QT5)
+    # According to advice from Steve Kelly on the Cmake list, QtGui
+    # is a dependency of QtSvg so is not needed here, but I will
+    # leave it in since it is informative.
+    qt5_use_modules(plplotqt${LIB_TAG} QtSvg QtGui)
+
+    target_link_libraries(
+      plplotqt${LIB_TAG}
+      plplot${LIB_TAG}
+      ${MATH_LIB}
+      )
+  else(PLPLOT_USE_QT5)
+    if(NOT QT_LIBRARIES)
+      message(FATAL_ERROR "PLplot build-system inconsistency in bindings/qt_gui subdirectory.")
+    endif(NOT QT_LIBRARIES)
+    target_link_libraries(
+      plplotqt${LIB_TAG}
+      plplot${LIB_TAG}
+      ${MATH_LIB}
+      ${QT_LIBRARIES}
+      )
+    # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+    set_qt_target_properties(plplotqt${LIB_TAG})
+  endif(PLPLOT_USE_QT5)
 
   if(NON_TRANSITIVE)
     # Note that there are implicit references to classes in QtCore, QtGui and QtSvg 

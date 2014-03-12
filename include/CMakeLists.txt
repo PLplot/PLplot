@@ -120,23 +120,29 @@ if(ANY_QT_DEVICE)
     list(APPEND MOC_OPTIONS -DPLD_extqt)
   endif(PLD_extqt)
   if(MOC_OPTIONS)
-    # This creates a custom command with OUTPUT ${QT_MOC_OUTFILES}.
-    qt4_wrap_cpp(
-      QT_MOC_OUTFILES
-      ${CMAKE_SOURCE_DIR}/include/qt.h
-      OPTIONS ${MOC_OPTIONS}
-      )
-    # Use custom target to force correct target dependencies in
-    # various directories.  This target is used in three possible
-    # places (qt_gui, drivers, or src) depending on build options.
-    # The CMake dependency parser creates the necessary file
-    # dependency on qt.h for all qt-related source code so there is no
-    # need to add the ${QT_MOC_OUTFILES} file dependencies for any
-    # target dependency on moc_outfiles_generated.
-    add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
+    # Use entirely different method for Qt5.
+    if(NOT PLPLOT_USE_QT5)
+      # This creates a custom command with OUTPUT ${QT_MOC_OUTFILES}.
+      qt4_wrap_cpp(
+	QT_MOC_OUTFILES
+	${CMAKE_SOURCE_DIR}/include/qt.h
+	OPTIONS ${MOC_OPTIONS}
+	)
+      # Use custom target to force correct target dependencies in
+      # various directories.  This target is used in three possible
+      # places (qt_gui, drivers, or src) depending on build options.
+      # The CMake dependency parser creates the necessary file
+      # dependency on qt.h for all qt-related source code so there is no
+      # need to add the ${QT_MOC_OUTFILES} file dependencies for any
+      # target dependency on moc_outfiles_generated.
+      add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
+    endif(NOT PLPLOT_USE_QT5)
 
     # #include ${QT_MOC_OUTFILES}) indirectly via the configured moc_files.h
     # header.
+    # This header is #included by plqt.cpp so must be configured regardless
+    # of whether Qt4 or Qt5 is being used although it is effectively empty
+    # in the latter case.
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/moc_files.h.in
       ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h

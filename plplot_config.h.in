@@ -306,3 +306,6 @@
 
 // Define as `fork' if `vfork' does not work.
 #cmakedefine vfork
+
+// Define if the PLplot build uses Qt5 (rather than Qt4).
+#cmakedefine PLPLOT_USE_QT5

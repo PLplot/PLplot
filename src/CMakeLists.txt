@@ -120,16 +120,20 @@ else(ENABLE_DYNDRIVERS)
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     list(APPEND plplot${LIB_TAG}_LIB_SRCS ${${SOURCE_ROOT_NAME}_SOURCE})
+
     if(SOURCE_ROOT_NAME STREQUAL "qt")
       if(ANY_QT_DEVICE)
 	# For this case libplot must have a target dependency on the
 	# moc files generated in the binary include directory.
 	set(qt_dependency moc_outfile_generated)
 
-	if(NOT QT_LIBRARIES)
-	  message(FATAL_ERROR "include(${QT_USE_FILE}) failed in src subdirectory.")
-	endif(NOT QT_LIBRARIES)
-	set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${QT_LIBRARIES})
+	# Qt5 handled a completely different way.
+	if(NOT PLPLOT_USE_QT5)
+	  if(NOT QT_LIBRARIES)
+	    message(FATAL_ERROR "include(${QT_USE_FILE}) failed in src subdirectory.")
+	  endif(NOT QT_LIBRARIES)
+	  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${QT_LIBRARIES})
+	endif(NOT PLPLOT_USE_QT5)
 	
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build static qt device when ANY_QT_DEVICE is false.")
@@ -179,6 +183,13 @@ include_directories(
   )
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built ${qt_dependency})
+
+if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+  # According to advice from Steve Kelly on the Cmake list, QtGui
+  # is a dependency of QtSvg so is not needed here, but I will
+  # leave it in since it is informative.
+  qt5_use_modules(plplot${LIB_TAG} QtSvg QtGui)
+endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 if(NON_TRANSITIVE)
   # empty list ==> non-transitive linking for everything that links to

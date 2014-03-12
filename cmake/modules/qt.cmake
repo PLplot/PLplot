@@ -91,51 +91,65 @@ if(ENABLE_qt AND NOT PLD_extqt)
 endif(ENABLE_qt AND NOT PLD_extqt)
 
 if(ENABLE_qt)
-  # Use a minimum version corresponding to the version installed by
-  # Debian Wheezy.  I assume all other non-enterprise Linux distros,
-  # Mac OS X, and Windows platforms also give access to this version
-  # of Qt4 or later.
-  find_package(Qt4 4.8.2 COMPONENTS QtCore QtGui QtSvg)
+  option(PLPLOT_USE_QT5 "Experimental (and currently quite limited) option to try Qt5" OFF)
 
-  # QT4_FOUND is defined to be true or false by find_package(Qt4 ...)
-  if(QT4_FOUND)
-    # Do not include(${QT_USE_FILE}) here because it contaminates ALL
-    # compile properties with Qt flags from (this) top-level directory
-    # on down.  Use this alternative instead which includes a function
-    # set_qt_target_properties which should be called with the
-    # appropriate target argument whenever a Qt4-related target is built.
-    include(ndp_UseQt4)
+  if(PLPLOT_USE_QT5)
+    find_package(Qt5Core 5.2.1)
+    if(NOT Qt5Core_FOUND)
+      message(STATUS
+	"WARNING: Qt5Core could not be found so falling back to Qt4"
+	)
+      set(PLPLOT_USE_QT5 OFF CACHE BOOL "Experimental (and currently quite limited) option to try Qt5" FORCE)
+    endif(NOT Qt5Core_FOUND)
+  endif(PLPLOT_USE_QT5)
 
-    # QT_COMPILE_DEFINITIONS (used only for pc_qt_COMPILE_FLAGS below),
-    # QT_INCLUDE_DIRECTORIES (used only for pc_qt_COMPILE_FLAGS below),
-    # NP_COMPILE_DEFINITIONS (used only in set_qt_properties function),
-    # NP_QT_INCLUDE_DIRECTORIES (used only in set_qt_properties function), and
-    # QT_LIBRARIES (used wherever link with qt libraries is needed)
-    # are now defined.
+  if(NOT PLPLOT_USE_QT5)
+    # Use a minimum version corresponding to the version installed by
+    # Debian Wheezy.  I assume all other non-enterprise Linux distros,
+    # Mac OS X, and Windows platforms also give access to this version
+    # of Qt4 or later.
+    find_package(Qt4 4.8.2 COMPONENTS QtCore QtGui QtSvg)
 
-    # Only used for pkg-config case.
-    set(pc_qt_COMPILE_FLAGS ${QT_COMPILE_DEFINES} ${QT_INCLUDE_DIRECTORIES})
-    string(REGEX REPLACE ";" " " pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS}")
-    # Work around pkg-config issues (see bug report
-    # <https://bugs.freedesktop.org/show_bug.cgi?id=72584>) with
-    # multiple -isystem tags by replacing them with "-I"
-    string(REGEX REPLACE "-isystem " "-I" pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS}")
-    message(STATUS "pc_qt_COMPILE_FLAGS = ${pc_qt_COMPILE_FLAGS}")
+    # QT4_FOUND is defined to be true or false by find_package(Qt4 ...)
+    if(QT4_FOUND)
+      # Do not include(${QT_USE_FILE}) here because it contaminates ALL
+      # compile properties with Qt flags from (this) top-level directory
+      # on down.  Use this alternative instead which includes a function
+      # set_qt_target_properties which should be called with the
+      # appropriate target argument whenever a Qt4-related target is built.
+      include(ndp_UseQt4)
 
-    # These two must be explicitly empty since other alternative means
-    # are used.
-    set(qt_COMPILE_FLAGS)
-    set(qt_LINK_FLAGS)
+      # QT_COMPILE_DEFINITIONS (used only for pc_qt_COMPILE_FLAGS below),
+      # QT_INCLUDE_DIRECTORIES (used only for pc_qt_COMPILE_FLAGS below),
+      # NP_COMPILE_DEFINITIONS (used only in set_qt_properties function),
+      # NP_QT_INCLUDE_DIRECTORIES (used only in set_qt_properties function), and
+      # QT_LIBRARIES (used wherever link with qt libraries is needed)
+      # are now defined.
 
-    # ${QT_LIBRARY_DIR} defined by above find_package(Qt4 ...) call.
-    set(qt_RPATH ${QT_LIBRARY_DIR})
-    filter_rpath(qt_RPATH)
-    #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
-  else(QT4_FOUND)
-    message(STATUS "WARNING: Suitable Qt4 development environment not found so disabling Qt bindings."
-      )
-    set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
-  endif(QT4_FOUND)
+      # Only used for pkg-config case.
+      set(pc_qt_COMPILE_FLAGS ${QT_COMPILE_DEFINES} ${QT_INCLUDE_DIRECTORIES})
+      string(REGEX REPLACE ";" " " pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS}")
+      # Work around pkg-config issues (see bug report
+      # <https://bugs.freedesktop.org/show_bug.cgi?id=72584>) with
+      # multiple -isystem tags by replacing them with "-I"
+      string(REGEX REPLACE "-isystem " "-I" pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS}")
+      message(STATUS "pc_qt_COMPILE_FLAGS = ${pc_qt_COMPILE_FLAGS}")
+
+      # These two must be explicitly empty since other alternative means
+      # are used.
+      set(qt_COMPILE_FLAGS)
+      set(qt_LINK_FLAGS)
+
+      # ${QT_LIBRARY_DIR} defined by above find_package(Qt4 ...) call.
+      set(qt_RPATH ${QT_LIBRARY_DIR})
+      filter_rpath(qt_RPATH)
+      #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
+    else(QT4_FOUND)
+      message(STATUS "WARNING: Suitable Qt4 development environment not found so disabling Qt bindings."
+	)
+      set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
+    endif(QT4_FOUND)
+  endif(NOT PLPLOT_USE_QT5)
 endif(ENABLE_qt)
 
 # All qt devices depend on ENABLE_qt
@@ -177,11 +191,22 @@ if(ENABLE_pyqt4 AND NOT ENABLE_qt)
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
 endif(ENABLE_pyqt4 AND NOT ENABLE_qt)
 
-if(ENABLE_qt)
+## FIXME if/when there is a way to make pyqt work with Qt5.
+if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
+  message(STATUS
+    "WARNING: PLPLOT_USE_QT5 is ON so "
+    "setting ENABLE_pyqt4 to OFF."
+    )
+  set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+endif(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
+
+## FIXME when a method has been found to use Qt5 with the traditional
+## Makefile + pkg-config build system for the installed examples.
+if(ENABLE_qt AND NOT PLPLOT_USE_QT5)
   set(qt_gui_true "")
-else(ENABLE_qt)
+else(ENABLE_qt AND NOT PLPLOT_USE_QT5)
   set(qt_gui_true "#")
-endif(ENABLE_qt)
+endif(ENABLE_qt AND NOT PLPLOT_USE_QT5)
 
 if(ANY_QT_DEVICE)
   if(ENABLE_DYNDRIVERS)
