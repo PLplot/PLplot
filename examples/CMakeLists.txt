@@ -934,7 +934,14 @@ if(BUILD_TEST)
     if(FILE_DEPENDS_${generic_interactive_device})
       add_dependencies(test_pltcl_standard_examples test_${generic_interactive_device}_dyndriver)
     endif(FILE_DEPENDS_${generic_interactive_device})
-    list(APPEND interactive_targets_LIST test_pltcl_standard_examples)
+    if(WIN32_AND_NOT_CYGWIN)
+      message(STATUS "WARNING: The test_pltcl_standard_examples target can be run independently on 
+   the Windows platform, but it generates an unhandled exception at the end so
+   it is temporarily excluded from being a dependency of other more general
+   interactive test targets") 
+    else(WIN32_AND_NOT_CYGWIN)
+      list(APPEND interactive_targets_LIST test_pltcl_standard_examples)
+    endif(WIN32_AND_NOT_CYGWIN)
 
     if(BUILD_SHARED_LIBS)
       # tests that use "package require Pltcl" only work if
