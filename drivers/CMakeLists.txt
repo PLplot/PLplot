@@ -107,10 +107,10 @@ if(ENABLE_DYNDRIVERS)
       if(ANY_QT_DEVICE)
 	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
 	if(PLPLOT_USE_QT5)
-	  # According to advice from Steve Kelly on the Cmake list, QtGui
-	  # is a dependency of QtSvg so is not needed here, but I will
-	  # leave it in since it is informative.
-	  qt5_use_modules(${SOURCE_ROOT_NAME} QtSvg QtGui)
+	  # According to advice from Steve Kelly on the Cmake list, the Qt5
+	  # Gui component is a dependency of the Qt5 Svg component so is not
+	  # needed here, but I will leave it in since it is informative.
+	  qt5_use_modules(${SOURCE_ROOT_NAME} Svg Gui)
 	  target_link_libraries(
 	    ${SOURCE_ROOT_NAME}
 	    plplot${LIB_TAG}

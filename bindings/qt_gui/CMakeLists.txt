@@ -42,10 +42,10 @@ if(ENABLE_qt)
   endif(ANY_QT_DEVICE)
 
   if(PLPLOT_USE_QT5)
-    # According to advice from Steve Kelly on the Cmake list, QtGui
-    # is a dependency of QtSvg so is not needed here, but I will
-    # leave it in since it is informative.
-    qt5_use_modules(plplotqt${LIB_TAG} QtSvg QtGui)
+    # According to advice from Steve Kelly on the Cmake list, the Qt5
+    # Gui component is a dependency of the Qt5 Svg component so is not
+    # needed here, but I will leave it in since it is informative.
+    qt5_use_modules(plplotqt${LIB_TAG} Svg Gui)
 
     target_link_libraries(
       plplotqt${LIB_TAG}
