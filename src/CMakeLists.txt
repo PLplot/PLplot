@@ -188,7 +188,7 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   # According to advice from Steve Kelly on the Cmake list, the Qt5
   # Gui component is a dependency of the Qt5 Svg component so is not
   # needed here, but I will leave it in since it is informative.
-  qt5_use_modules(plplot${LIB_TAG} Svg Gui)
+  qt5_use_modules(plplot${LIB_TAG} Svg Gui PrintSupport)
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 if(NON_TRANSITIVE)

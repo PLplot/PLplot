@@ -614,7 +614,9 @@ void QtEPSDevice::definePlotName( const char* fileName, int ifeps )
     setOutputFileName( QString( fileName ) );
     if ( ifeps )
     {
+#ifndef PLPLOT_USE_QT5
         setOutputFormat( QPrinter::PostScriptFormat );
+#endif
     }
     else
     {
