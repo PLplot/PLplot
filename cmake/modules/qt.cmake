@@ -56,6 +56,31 @@
 # PYQT_SIP_DIR		  - sip system directory
 # PYQT_SIP_FLAGS	  - sip command flags
 
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_qt "Enable Qt bindings" OFF)
+  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_qt "Enable Qt bindings" ON)
+  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
+endif(DEFAULT_NO_BINDINGS)
+
+if(ENABLE_qt)
+  option(PLPLOT_USE_QT5 "Experimental (and currently quite limited) option to try Qt5" OFF)
+
+  if(PLPLOT_USE_QT5)
+    find_package(Qt5Core 5.2.1)
+    if(Qt5Core_FOUND)
+      message(STATUS "Attempting to use Qt5 so have set PLD_epsqt to OFF since Qt5 does not support PostScript")
+      set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
+    else(Qt5Core_FOUND)
+      message(STATUS
+	"WARNING: Qt5Core could not be found so falling back to Qt4"
+	)
+      set(PLPLOT_USE_QT5 OFF CACHE BOOL "Experimental (and currently quite limited) option to try Qt5" FORCE)
+    endif(Qt5Core_FOUND)
+  endif(PLPLOT_USE_QT5)
+endif(ENABLE_qt)
+
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt OR PLD_memqt)
   set(ANY_QT_DEVICE ON)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt OR PLD_memqt)
@@ -68,14 +93,6 @@ if(ANY_QT_DEVICE)
     set(ANY_QT_DEVICE OFF)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
 endif(ANY_QT_DEVICE)
-
-if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_qt "Enable Qt bindings" OFF)
-  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
-else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_qt "Enable Qt bindings" ON)
-  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
-endif(DEFAULT_NO_BINDINGS)
 
 # ENABLE_qt depends on PLD_extqt
 if(NOT ANY_QT_DEVICE)
@@ -91,18 +108,6 @@ if(ENABLE_qt AND NOT PLD_extqt)
 endif(ENABLE_qt AND NOT PLD_extqt)
 
 if(ENABLE_qt)
-  option(PLPLOT_USE_QT5 "Experimental (and currently quite limited) option to try Qt5" OFF)
-
-  if(PLPLOT_USE_QT5)
-    find_package(Qt5Core 5.2.1)
-    if(NOT Qt5Core_FOUND)
-      message(STATUS
-	"WARNING: Qt5Core could not be found so falling back to Qt4"
-	)
-      set(PLPLOT_USE_QT5 OFF CACHE BOOL "Experimental (and currently quite limited) option to try Qt5" FORCE)
-    endif(NOT Qt5Core_FOUND)
-  endif(PLPLOT_USE_QT5)
-
   if(NOT PLPLOT_USE_QT5)
     # Use a minimum version corresponding to the version installed by
     # Debian Wheezy.  I assume all other non-enterprise Linux distros,
