@@ -2,6 +2,63 @@ This file contains directions for epa_build users.  If you are
 interested in helping to develop that project, you should look at
 README.developers as well.
 
+The epa_build project provides a coherent and internally consistent
+method for building software packages on Windows and Unix (including
+Linux and Mac OS X).  The epa_build is implemented in the CMake
+language and is fundamentally based on CMake's ExternalProject_Add
+command.  The fundamental advantage of this extra layer of indirection
+for building software is it makes it easy to implement software
+package dependencies (so that packages that depend on other packages
+will be built after those other packages) and to establish the correct
+software package configurations (e.g., locations of dependent
+packages) so the set of built packages work well together.  The extra
+layer of indirection is quite light and there are no limitations on
+the tools and build systems that can be used to build packages.
+Therefore, if you already know how to build a software package (i.e.,
+by downloading, and optionally checking the download, updating the
+download (e.g., by applying patches) and configuring, building,
+testing, and installing the software package represented by that
+download) it is extremely straightforward to do exactly the same thing
+with epa_build while at the same time taking advantage of the
+epa_build advantages listed above.
+
+The epa_build project has two fundamental modes of operation with
+-DBUILD_THE_BUILDTOOLS=ON or OFF (see the details below).  The two
+cases have completely independent dependency chains and completely
+independent build and install locations.  When that variable is ON,
+epa_build configures the build of buildtools (e.g., swig, and
+pkg-config) that are useful for building the software dependency chain
+that is available when that variable is OFF.  The decision about classifying
+a given software package as a buildtool or an ordinary package is somewhat
+arbitrary.  For example, I have decided that software packages that
+implement computer languages (e.g., all the Tcl-related software packages)
+are classified as part of the buildtools dependency chain.
+
+From the description above it is obvious that the epa_build idea could
+be used to bootstrap the build of essentially any free software
+package starting with just a C compiler.  So it could be used as the
+basis of a source-based distribution of an extremely comprehensive set
+of free software on _any_ platform. But currently that is just a dream
+for the future, and for now the epa_build project is focussed just on
+building and testing PLplot _and_ its fairly comprehensive set of
+software package dependencies.
+
+The advantage of using epa_build on Linux and Mac OS X is it gives
+PLplot developers and users access to the latest versions of dependent
+software that might not be available yet for their platform.  This
+Unix advantage is especially important for users of enterprise class
+Linux distributions which often are missing important PLplot
+dependencies or which have such ancient versions of PLplot
+dependencies, that PLplot does not work correctly with them.
+
+The advantage of using epa_build on Windows is it gives PLplot
+developers and users access to the free software dependencies of
+PLplot which are normally not installed on Windows.  This allows
+Windows users of PLplot to take advantage of the extra PLplot
+capabilities that become available when all (soft) PLplot dependencies
+are built and installed which in turn implies Windows users are no
+longer second-class citizens of the PLplot empire.  :-)
+
 The epa_build project should work out of the box for Linux or Mac OS X
 systems with a full development tool-chain installed including
 relevant compilers (gcc, g++, gfortran, Ada in the suite of gcc
