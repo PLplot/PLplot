@@ -28,14 +28,14 @@
 
 #define PLD_qtwidget
 
-#include <QtGui/QApplication>
-#include <QtGui/QMainWindow>
-#include <QtGui/QAction>
-#include <QtGui/QMenuBar>
-#include <QtGui/QFileDialog>
-#include <QtGui/QPrintDialog>
-#include <QtGui/QPrinter>
-#include <QtGui/QMessageBox>
+#include <QApplication>
+#include <QMainWindow>
+#include <QAction>
+#include <QMenuBar>
+#include <QFileDialog>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QMessageBox>
 #include "qt.h"
 
 class PlotWindow : public QMainWindow
