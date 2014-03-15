@@ -120,23 +120,28 @@ if(ANY_QT_DEVICE)
     list(APPEND MOC_OPTIONS -DPLD_extqt)
   endif(PLD_extqt)
   if(MOC_OPTIONS)
-    # Use entirely different method for Qt5.
-    if(NOT PLPLOT_USE_QT5)
-      # This creates a custom command with OUTPUT ${QT_MOC_OUTFILES}.
+    # This creates a custom command with OUTPUT ${QT_MOC_OUTFILES}.
+    if(PLPLOT_USE_QT5)
+      qt5_wrap_cpp(
+	QT_MOC_OUTFILES
+	${CMAKE_SOURCE_DIR}/include/qt.h
+	OPTIONS ${MOC_OPTIONS}
+	)
+    else(PLPLOT_USE_QT5)
       qt4_wrap_cpp(
 	QT_MOC_OUTFILES
 	${CMAKE_SOURCE_DIR}/include/qt.h
 	OPTIONS ${MOC_OPTIONS}
 	)
-      # Use custom target to force correct target dependencies in
-      # various directories.  This target is used in three possible
-      # places (qt_gui, drivers, or src) depending on build options.
-      # The CMake dependency parser creates the necessary file
-      # dependency on qt.h for all qt-related source code so there is no
-      # need to add the ${QT_MOC_OUTFILES} file dependencies for any
-      # target dependency on moc_outfiles_generated.
-      add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
-    endif(NOT PLPLOT_USE_QT5)
+    endif(PLPLOT_USE_QT5)
+    # Use custom target to force correct target dependencies in
+    # various directories.  This target is used in three possible
+    # places (qt_gui, drivers, or src) depending on build options.
+    # The CMake dependency parser creates the necessary file
+    # dependency on qt.h for all qt-related source code so there is no
+    # need to add the ${QT_MOC_OUTFILES} file dependencies for any
+    # target dependency on moc_outfiles_generated.
+    add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
 
     # #include ${QT_MOC_OUTFILES}) indirectly via the configured moc_files.h
     # header.

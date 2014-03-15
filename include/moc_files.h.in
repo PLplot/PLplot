@@ -1,7 +1,5 @@
 // Configured header file listing the moc-generated files to include in plqt.cpp.
 #ifndef __MOC_FILES_H__
 #define __MOC_FILES_H__
-#ifndef PLPLOT_USE_QT5
 #include "@QT_MOC_OUTFILES@"
-#endif
 #endif  // __MOC_FILES_H__
