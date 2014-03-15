@@ -68,7 +68,7 @@ if(ENABLE_qt)
   option(PLPLOT_USE_QT5 "Experimental (and currently quite limited) option to try Qt5" OFF)
 
   if(PLPLOT_USE_QT5)
-    find_package(Qt5Core 5.2.1)
+    find_package(Qt5Core 5.2.0)
     if(Qt5Core_FOUND)
       message(STATUS "Attempting to use Qt5 so have set PLD_epsqt to OFF since Qt5 does not support PostScript")
       set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
