@@ -118,14 +118,6 @@ if(ENABLE_DYNDRIVERS)
 	    ${${SOURCE_ROOT_NAME}_TARGETS}
 	    )
 	else(PLPLOT_USE_QT5)
-	  if(NOT ENABLE_qt)
-	    # Note this code is never executed considering the way the
-            # build system is set up now (see cmake/modules/qt.cmake),
-            # but nevertheless keep it for the future in case we ever
-            # want to deal with the case where we want to build the qt
-            # device without building the plplotqtd library
-	    add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
-	  endif(NOT ENABLE_qt)
 	  if(NOT QT_LIBRARIES)
 	    message(FATAL_ERROR "Internal build system inconsistency. QT_LIBRARIESis empty but it should be populated")
 	  endif(NOT QT_LIBRARIES)
@@ -140,6 +132,14 @@ if(ENABLE_DYNDRIVERS)
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
 	  set_qt_target_properties(${SOURCE_ROOT_NAME})
 	endif(PLPLOT_USE_QT5)
+	if(NOT ENABLE_qt)
+	  # Note this code is never executed considering the way the
+          # build system is set up now (see cmake/modules/qt.cmake),
+          # but nevertheless keep it for the future in case we ever
+          # want to deal with the case where we want to build the qt
+          # device without building the plplotqtd library
+	  add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
+	endif(NOT ENABLE_qt)
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)
