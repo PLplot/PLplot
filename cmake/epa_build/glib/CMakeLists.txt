@@ -29,9 +29,9 @@ set(PACKAGE glib)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
+set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libX11;libXft;xorg-kbproto;xorg-macros;xorg-xproto;dbus ${extra_ignored_dependencies_list})
 
-set(dependencies_LIST gtk-doc;libffi)
+set(dependencies_LIST libffi)
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
@@ -68,7 +68,7 @@ ExternalProject_Add(
   DEPENDS ${dependencies_targets}
   URL ${URL}
   URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-installed-tests
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-installed-tests --disable-gtk-doc --disable-gtk-doc-html --disable-gtk-doc-pdf
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} 
   BUILD_IN_SOURCE OFF
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}  install
