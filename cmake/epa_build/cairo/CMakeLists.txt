@@ -29,9 +29,9 @@ set(PACKAGE cairo)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
+set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libX11;libXft;xorg-kbproto;xorg-macros;xorg-xproto;dbus ${extra_ignored_dependencies_list})
 
-set(dependencies_LIST fontconfig;gtk-doc;pixman;pkg-config)
+set(dependencies_LIST fontconfig;glib;gtk-doc;pixman;pkg-config)
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
