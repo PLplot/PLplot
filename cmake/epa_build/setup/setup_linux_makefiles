@@ -51,6 +51,12 @@ export PKG_CONFIG_PATH=${INSTALL_PREFIX}_buildtools/share/pkgconfig:${INSTALL_PR
 # Put install-location pkg-config directories at top of PKG_CONFIG_PATH
 PKG_CONFIG_PATH=$INSTALL_PREFIX/share/pkgconfig:$INSTALL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
 
+# Some autotools package in the gtk+ superset (but not pango/cairo subset
+# of that stack) do not handle rpath properly for non-standard install
+# locations.  Therefore, must set LD_LIBRARY_PATH until those rpath issues
+# are sorted out.
+export LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib
+
 # As temporary measure also use system-installed *.pc files for dependencies
 # which are currently not built.  Put these at the end of PKG_CONFIG_PATH
 # so they are only used as a last resort.
