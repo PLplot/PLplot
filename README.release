@@ -1,9 +1,9 @@
-PLplot Release 5.10.0
+PLplot Release 5.11.0
 ~~~~~~~~~~~~~~~~~~~~
 This is a release of the PLplot plotting package. It represents the
 ongoing best efforts of the PLplot community to improve this
 package, and it is the only version of PLplot that we attempt
-to support. Releases in the 5.x.y series should be available several
+to support.  Releases in the 5.x.0 series should be available several
 times per year.
 
 If you encounter a problem that is not already documented in the
@@ -30,19 +30,31 @@ INDEX
 
 1. OFFICIAL NOTICES FOR USERS
 
-The distinction we made prior to 5.10.0 between stable and development
-releases was essentially completely artificial and has now been
-dropped.  In each case, the latest release was "stable" in the sense
-that it was the PLplot team's best effort with substantial testing on
-the computer platforms available to our test team.  And that tradition
-continues for the release of 5.10.0.  Note we have bumped the minor
-number in this release triplet compared to the previous 5.9.11 release
-because from now on we want to reserve the patch number in that
-triplet only for those (rare) releases that contain emergency fixes
-compared to the previous release.  Note especially that 5.10.0 is not
-that different from the prior release 5.9.11, and we don't ordinarily
-require such emergency releases so our forthcoming release numbers are
-likely to be 5.11.0, 5.12.0, etc.
+Backwards incompatible change.  We have forced the CMake variable
+LIB_TAG to always be the empty string.  The effect of this change is
+the "d" suffix has been dropped from our library names that had this
+suffix before (e.g, libplplotd ==> libplplot), dropped from the plplot
+pkg-config *.pc files used to produce pkg-config results (e.g.,
+plplotd.pc ==> plplot.pc), and dropped from the directory name where
+the device driver dll's are installed (i.e.,
+$INSTALL_PREFIX/lib/plplot$PLPLOT_VERSION/driversd ==>
+$INSTALL_PREFIX/lib/plplot$PLPLOT_VERSION/drivers).  This "d" suffix
+was a leftover from the days when we routinely built both
+single-precision and double-precision forms of the PLplot library,
+where the double-precision form was assigned the "d" suffix.  This
+suffix was confusing (many users assumed it meant "debug" rather than
+its actual meaning of "double precision"), did not normally
+distinguish from the single-precision case since that case was rarely
+built or tested, and was not uniformly applied to all our libraries
+(because we produced single- and double-precision variants for only a
+subset of our libraries).  Also, the single- or double-precision
+variants of our library builds are only a small subset of the possible
+build variations that can be produced with our build system so the
+only safe and reliable way we can recommend for users to explore these
+many different possible build variations is for them to use
+independent build trees and install prefixes for each of the
+variations rather than imposing a variety of easy-to-misinterpret
+library, pkg-config, and driver install location suffixes.
 
 2. Changes relative to the previous release
 
