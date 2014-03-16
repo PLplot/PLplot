@@ -29,7 +29,7 @@ set(PACKAGE gperf)
 
 # List of dependencies (most of which are build tools) which should be
 # ignored.
-set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libXft ${extra_ignored_dependencies_list})
+set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libX11;libXft;xorg-kbproto;xorg-macros;xorg-xproto;dbus ${extra_ignored_dependencies_list})
 
 set(dependencies_LIST )
 
