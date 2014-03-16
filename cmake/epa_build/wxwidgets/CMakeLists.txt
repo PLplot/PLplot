@@ -39,6 +39,7 @@ epa_boilerplate(
 
 if(MSYS_PLATFORM)
   set(CXXFLAGS "-fno-keep-inline-dllexport $ENV{CXXFLAGS}")
+  # No further dependencies required on Windows.
 else(MSYS_PLATFORM)
   set(CXXFLAGS "$ENV{CXXFLAGS}")
   # To avoid having to build all of gtk with epa_build in a consistent
@@ -51,8 +52,9 @@ else(MSYS_PLATFORM)
   # that is provided by the default gtk toolkit and needed by the
   # PLplot build of the wxwidgets device.
   # The inevitable conclusion is that on Unix, we must use the gtk toolkit
-  # and therefore epa_build must provide a consistent version of that
-  # as a dependency of wxwidgets.
+  # and therefore (now that epa_build has a gtk+ configuration)
+  # we must specificially add gtk+ as a dependency of wxwidgets.
+  list(APPEND dependencies_LIST gtk+)
 endif(MSYS_PLATFORM)
 
 set(CFLAGS "$ENV{CFLAGS}")

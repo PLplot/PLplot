@@ -416,6 +416,7 @@ else(BUILD_THE_BUILDTOOLS)
     plplot
     plplot_lite
     gtk+
+    wxwidgets
     qt4_lite
     )
 endif(BUILD_THE_BUILDTOOLS)
