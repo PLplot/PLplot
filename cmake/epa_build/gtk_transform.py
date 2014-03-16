@@ -183,9 +183,9 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         overall_dependencies.update(suggests)
         overall_dependencies.update(after)
 
-        good_packages = {}
-        good_packages[id] = None
-        bad_packages = {}
+        found_packages = {}
+        found_packages[id] = None
+        not_found_packages = {}
         dependencies_list = overall_dependencies.keys()
         for dep in dependencies_list:
             if called.has_key(dep):
@@ -197,12 +197,12 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
                 continue
             extra = parse_jhbuild(root, dep, depend_track, if_dependencies, called)
             if extra == None:
-                bad_packages[dep] = None
+                not_found_packages[dep] = None
             else:
-                good_packages.update(extra[0]) 
-                bad_packages.update(extra[1]) 
+                found_packages.update(extra[0]) 
+                not_found_packages.update(extra[1]) 
 
-        return (good_packages, bad_packages)
+        return (found_packages, not_found_packages)
     else:
         sys.stdout.write(id + "\n")
         sys.stdout.write(config_type + "\n")
@@ -254,15 +254,15 @@ dependency_dictionary = parse_jhbuild(root, start_package, depend_track, True, {
 if dependency_dictionary == None:
     sys.stderr.write("some failure for start_package = %s or else no dependencies for that start_package\n" % start_package)
 else:
-    good_packages_list = dependency_dictionary[0].keys()
-    bad_packages_list = dependency_dictionary[1].keys()
-    good_packages_list.sort()
-    bad_packages_list.sort()
-    sys.stderr.write("number of good packages = %s\n" % len(good_packages_list))
-    sys.stderr.write("good packages = " + ":".join(good_packages_list) + "\n")
-    sys.stderr.write("number of bad packages = %s\n" % len(bad_packages_list))
-    sys.stderr.write("bad packages = " + ":".join(bad_packages_list) + "\n")
+    found_packages_list = dependency_dictionary[0].keys()
+    not_found_packages_list = dependency_dictionary[1].keys()
+    found_packages_list.sort()
+    not_found_packages_list.sort()
+    sys.stderr.write("number of packages that are found = %s\n" % len(found_packages_list))
+    sys.stderr.write("packages that are found = " + ":".join(found_packages_list) + "\n")
+    sys.stderr.write("number of packages that are not found = %s\n" % len(not_found_packages_list))
+    sys.stderr.write("packages that are not found = " + ":".join(not_found_packages_list) + "\n")
 
-    # Output on stdout good package results.
-    for id in good_packages_list:
+    # Output on stdout results for the packages that have been found.
+    for id in found_packages_list:
        parse_jhbuild(root, id, depend_track, False, {}) 
