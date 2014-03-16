@@ -415,7 +415,7 @@ else(BUILD_THE_BUILDTOOLS)
     ndiff
     plplot
     plplot_lite
-    pango
+    gtk+
     qt4_lite
     )
 endif(BUILD_THE_BUILDTOOLS)
