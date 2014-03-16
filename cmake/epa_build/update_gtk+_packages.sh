@@ -1,6 +1,10 @@
 #!/bin/bash
-# Update build configurations of pango packages that are described by
+# Update build configurations of gtk+ packages that are described by
 # GTK+ jhbuild build configuration
+# Note the patch
+# below drops wayland and tests for the gtk+ package which should
+# greatly reduce the number of packages that are configured as direct
+# and indirect dependencies of gtk+.
 
 # Chose this latest version (as of August 2013) because it probably has
 # improved build and dependency instructions compared to previous versions.
@@ -43,22 +47,22 @@ trang -I xml gtk_packages_$GTK_VERSION.xml gtk_packages_$GTK_VERSION.rnc
 # for following (soft) "suggests", dependencies, and the next least
 # significant bit is ON for following (would be nice) "after"
 # dependencies.  Currently I use a command variable of 1 to keep
-# the number of packages configured for building pango and
+# the number of packages configured for building gtk+ and
 # (hard) dependencies to a minimum.
-./gtk_transform.py "pango" 1 <gtk_packages_$GTK_VERSION.xml 1>| pango_packages.data 2>|pango_packages.stderr
+./gtk_transform.py "gtk+" 1 <gtk_packages_$GTK_VERSION.xml 1>| gtk+_packages.data 2>|gtk+_packages.stderr
 
 # Finally to actually generate build configurations for build_packages run
 # the following command.
 
-cmake -DFILENAME:FILEPATH=pango_packages.data -P configure_epa.cmake
+cmake -DFILENAME:FILEPATH=gtk+_packages.data -P configure_epa.cmake
 
 # Patch generated configuration files.  This patch file contains
 # additional changes that cannot be done via a patch to the *.xml file.
 # Typically, these changes are hand edits which are tested then committed.
 # So typically the patch is created by rerunning the above cmake
-# command then using "svn diff" >| configured_pango.patch" to generate
+# command then using "svn diff" >| configured_gtk+.patch" to generate
 # the reverse form of the patch to change the result created by the
 # above cmake command into the svn committed form which is done with
 # the following patch command.
 
-patch --reverse --no-backup-if-mismatch -p0 <configured_pango.patch
+patch --reverse --no-backup-if-mismatch -p0 <configured_gtk+.patch

@@ -1,17 +1,31 @@
 cmake_policy(SET CMP0007 NEW)
 
-# List of dependencies (mostly these are build-tools) which should be
-# ignored.
+# List of dependencies which should be ignored.
 set(ignored_dependencies_LIST
-  # build tools
+  # build tools which are installed or built (-DBUILD_THE_BUILDTOOLS=ON)
+  # by other means.
   pkg-config
   bison
   flex
   python2-devel
-  # dependencies which we want to ignore
-  # ignore libXft since that is an X library that
-  # presumably won't be needed on Windows systems.
+  # Always ignore X11 dependencies since X11 is a difficult build.  In
+  # any case, X11 is either installed already (Unix and Cygwin) or not
+  # needed because other software handles the display (non-Cygwin
+  # Windows and also Cygwin for the case where the epa_build user
+  # might be trying to use the Windows display software directly
+  # rather than the slow X11).
+  libX11
   libXft
+  xorg-kbproto
+  xorg-macros
+  xorg-xproto
+  # Always ignore dbus.  It is really base system software.  For
+  # example, according to Linux from Scratch, you have to supply a
+  # UID, etc., for it to run background maintenance tasks.
+  # Furthermore, it is likely dbus will already be installed on
+  # platforms (e.g., Linux) where it is needed, and it is unlikely to
+  # be needed on platforms where it is not already installed.
+  dbus
 )
 
 file(STRINGS ${FILENAME} lines)
