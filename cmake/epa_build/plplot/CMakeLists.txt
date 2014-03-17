@@ -31,6 +31,7 @@ set(dependencies_LIST
   shapelib
   pango
   qt4_lite
+  wxwidgets
   )
 
 # Do boilerplate tasks that must be done for each different project
@@ -48,14 +49,11 @@ set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
 set(FFLAGS "$ENV{FFLAGS}")
 
-# Leave everything ON by default for plplot.
-# Except for turning off all wxwidgets dependencies temporarily because
-# of mixed linking issues until epa_build implements build configurations
-# for a consistent stack of libraries for all of gtk.
-set(cmake_args
-  -DPLD_wxwidgets=OFF
-  -DENABLE_wxwidgets=OFF
-  )
+# Leave everything ON by default for plplot.  Since octave currently
+# (and for a long time into the future) does not have an epa_build
+# configuration for octave, the system version of octave will be
+# used if it exists.
+set(cmake_args)
 
 # Assumption that the top-level local PLplot source tree is two directories
 # up from the present top-level directory for epa_build.
