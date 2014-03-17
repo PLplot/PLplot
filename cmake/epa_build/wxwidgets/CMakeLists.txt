@@ -55,6 +55,7 @@ else(MSYS_PLATFORM)
   # and therefore (now that epa_build has a gtk+ configuration)
   # we must specificially add gtk+ as a dependency of wxwidgets.
   list(APPEND dependencies_LIST gtk+)
+  set(toolkit_options --enable-debug --enable-debug_gdb --with-gtk=3)
 endif(MSYS_PLATFORM)
 
 set(CFLAGS "$ENV{CFLAGS}")
@@ -76,7 +77,7 @@ ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
   URL_HASH ${URL_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb --with-gtk=3 ${toolkit_options}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-shared --enable-unicode ${toolkit_options}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
   BUILD_IN_SOURCE 1
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
