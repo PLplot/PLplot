@@ -64,14 +64,20 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 
 # Data that is related to downloads.
-set(URL http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.8.12.tar.gz)
-set(URL_MD5 2fa39da14bc06ea86fe902579fedc5b1)
+# N.B. 2.8.12 does not work properly with gtk+ version 3.  At minimum
+# you need wxwidgets-2.9.4 (which is the first version to honor the
+# ---with-gtk=3 option below).
+#set(URL http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.8.12.tar.gz)
+#set(URL_HASH MD5=2fa39da14bc06ea86fe902579fedc5b1)
+set(URL http://prdownloads.sourceforge.net/wxwindows/3.0.0/wxWidgets-3.0.0.tar.bz2)
+set(URL_HASH SHA1=756a9c54d1f411e262f03bacb78ccef085a9880a)
 
 ExternalProject_Add(
   build_${PACKAGE}
   URL ${URL}
-  URL_MD5 ${URL_MD5}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb ${toolkit_options}
+  URL_HASH ${URL_HASH}
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-shared --enable-unicode --enable-debug --enable-debug_gdb --with-gtk=3 ${toolkit_options}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
+  BUILD_IN_SOURCE 1
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
   )
