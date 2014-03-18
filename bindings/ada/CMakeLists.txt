@@ -74,7 +74,7 @@ if(ENABLE_ada)
 
   if(NON_TRANSITIVE)
     # empty list ==> non-transitive linking for everything that links to
-    # libplplotadad in the shared libraries case.
+    # libplplotada${LIB_TAG} in the shared libraries case.
     target_link_libraries(plplotada${LIB_TAG} LINK_INTERFACE_LIBRARIES)
     # This configures the pkg-config method to use non-transitive linking.
     set(PC_REQUIRES_TAG "Requires.private")
@@ -90,7 +90,7 @@ if(ENABLE_ada)
     add_custom_command(
       TARGET plplotada${LIB_TAG} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-      libplplotadad.dll libplplotadad.dll.a
+      libplplotada${LIB_TAG}.dll libplplotada${LIB_TAG}.dll.a
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll
       VERBATIM
       )
