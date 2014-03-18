@@ -29,10 +29,19 @@ set(dependencies_LIST
   libharu
   libqhull
   shapelib
-  pango
-  qt4_lite
   wxwidgets
   )
+
+# For now only add in these dependencies for the Unix case because
+# these epa_builds do not yet work on Windows.
+
+if(NOT MSYS_PLATFORM)
+  list(APPEND dependencies_LIST
+    pango
+    qt4_lite
+    )
+endif(NOT MSYS_PLATFORM)
+
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
@@ -49,11 +58,22 @@ set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
 set(FFLAGS "$ENV{FFLAGS}")
 
-# Leave everything ON by default for plplot.  Since octave currently
-# (and for a long time into the future) does not have an epa_build
-# configuration for octave, the system version of octave will be
-# used if it exists.
-set(cmake_args)
+# Disable the octave binding for PLplot.  There is no epa_build of
+# octave yet.  Furthermore, non-epa_built versions of octave will have
+# many dependencies that are likely to clash with the versions of the
+# other PLplot dependencies that are epa_built.
+set(cmake_args -DENABLE_octave=OFF)
+
+if(MSYS_PLATFORM)
+  # Turn off the cairo and qt device drivers for plplot on Windows
+  # until the pango and qt4_lite packages and all their dependencies
+  # build properly on that platform
+  list(APPEND cmake_args
+    -DDEFAULT_NO_CAIRO_DEVICES:BOOL=ON
+    -DDEFAULT_NO_QT_DEVICES:BOOL=ON
+    -DENABLE_qt=OFF
+    )
+endif(MSYS_PLATFORM)
 
 # Assumption that the top-level local PLplot source tree is two directories
 # up from the present top-level directory for epa_build.
