@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Hezekiah M. Carty
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -195,21 +195,21 @@ if(ENABLE_ocaml)
   # Test for the availability of Cairo and Gtk+ bindings
   if(OCAMLFIND)
     if(PLD_extcairo)
-      set(text_cairo "module C = Cairo")
-      file(WRITE ${CMAKE_BINARY_DIR}/test_cairo.ml ${text_cairo})
-      execute_process(
-        COMMAND ${OCAMLFIND} c -package cairo -linkpkg test_cairo.ml -o test_cairo
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        RESULT_VARIABLE OCAML_HAS_CAIRO
-	OUTPUT_QUIET
-	ERROR_QUIET
-        )
-      # zero return code indicates no errors.  Thus, OCAML_HAS_CAIRO must have
-      # truth inverted.
+      option(OCAML_HAS_CAIRO "OCaml has the cairo package" ON)
       if(OCAML_HAS_CAIRO)
-	set(OCAML_HAS_CAIRO OFF)
-      else(OCAML_HAS_CAIRO)
-	set(OCAML_HAS_CAIRO ON)
+	set(text_cairo "module C = Cairo")
+	file(WRITE ${CMAKE_BINARY_DIR}/test_cairo.ml ${text_cairo})
+	execute_process(
+          COMMAND ${OCAMLFIND} c -package cairo -linkpkg test_cairo.ml -o test_cairo
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          RESULT_VARIABLE OCAML_HAS_CAIRO_RC
+	  OUTPUT_QUIET
+	  ERROR_QUIET
+          )
+	# non-zero return code indicates errors.
+	if(OCAML_HAS_CAIRO_RC)
+	  set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
+	endif(OCAML_HAS_CAIRO_RC)
       endif(OCAML_HAS_CAIRO)
 
       if(OCAML_HAS_CAIRO)
@@ -226,36 +226,43 @@ if(ENABLE_ocaml)
 	  else(linkflags)
             message(STATUS "WARNING:"
             "pkg-config could not find cairo module.  Disabling Plcairo module")
-	  set(OCAML_HAS_CAIRO OFF)
+	  set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
 	  endif(linkflags)
 	else(PKG_CONFIG_EXECUTABLE)
           message(STATUS "WARNING:"
             "pkg-config not found.  Disabling Plcairo module")
-	  set(OCAML_HAS_CAIRO OFF)
+	  set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
 	endif(PKG_CONFIG_EXECUTABLE)
       else(OCAML_HAS_CAIRO)
         message(STATUS "WARNING:"
           "Cairo OCaml library not found.  Disabling Plcairo module")
       endif(OCAML_HAS_CAIRO)
 
-      set(text_gtk
-  "module G = Gtk
-  module C = Cairo_lablgtk"
-        )
-      file (WRITE ${CMAKE_BINARY_DIR}/test_gtk.ml ${text_gtk})
-      execute_process(
-        COMMAND ${OCAMLFIND} c -package cairo.lablgtk2 -linkpkg test_gtk.ml -o test_gtk
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        RESULT_VARIABLE OCAML_HAS_GTK
-	OUTPUT_QUIET
-	ERROR_QUIET
-        )
-      # zero return code indicates no errors.  Thus, OCAML_HAS_CAIRO must have
-      # truth inverted.
+      if(OCAML_HAS_CAIRO)
+	option(OCAML_HAS_GTK "OCaml has the cairo.lablgtk2 package" ON)
+      else(OCAML_HAS_CAIRO)
+        message(STATUS "WARNING:"
+          "Cairo OCaml library not found.  Disabling lablgtk2 support")
+	  set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo.lablgtk2 package" FORCE)
+      endif(OCAML_HAS_CAIRO)
+      
       if(OCAML_HAS_GTK)
-	set(OCAML_HAS_GTK OFF)
-      else(OCAML_HAS_GTK)
-	set(OCAML_HAS_GTK ON)
+	set(text_gtk
+	  "module G = Gtk
+  module C = Cairo_lablgtk"
+          )
+	file (WRITE ${CMAKE_BINARY_DIR}/test_gtk.ml ${text_gtk})
+	execute_process(
+          COMMAND ${OCAMLFIND} c -package cairo.lablgtk2 -linkpkg test_gtk.ml -o test_gtk
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          RESULT_VARIABLE OCAML_HAS_GTK_RC
+	  OUTPUT_QUIET
+	  ERROR_QUIET
+          )
+	# non-zero return code indicates errors.
+	if(OCAML_HAS_GTK_RC)
+	  set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo.lablgtk2 package" FORCE)
+	endif(OCAML_HAS_GTK_RC)
       endif(OCAML_HAS_GTK)
 
       if(OCAML_HAS_GTK)
@@ -266,11 +273,13 @@ if(ENABLE_ocaml)
     endif (PLD_extcairo)
   else(OCAMLFIND)
     message(STATUS "WARNING:"
-      "ocamlfind not available.  Disabling Plcairo module and lablgtk support")
-    set(OCAML_HAS_CAIRO OFF)
-    set(OCAML_HAS_GTK OFF)
+      "ocamlfind not available.  Disabling Plcairo module and lablgtk2 support")
+    set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
+    set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo.lablgtk2 package" FORCE)
   endif(OCAMLFIND)
 else(ENABLE_ocaml)
-  set(OCAML_HAS_CAIRO OFF) 
-  set(OCAML_HAS_GTK OFF) 
+  message(STATUS "WARNING:"
+    "ENABLE_ocaml is OFF so disabling Plcairo module and lablgtk2 support")
+  set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
+  set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo.lablgtk2 package" FORCE)
 endif(ENABLE_ocaml)
