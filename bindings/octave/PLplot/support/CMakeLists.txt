@@ -50,6 +50,7 @@ __plt2vv__.m
 __plt__.m
 is_strmatrix.m
 is_strvector.m
+__makeinfo__.m
 )
 
 install(FILES ${m_files} DESTINATION ${PLPLOT_OCTAVE_DIR}/support)
