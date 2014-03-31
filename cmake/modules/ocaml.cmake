@@ -243,8 +243,12 @@ if(ENABLE_ocaml)
       else(OCAML_HAS_CAIRO)
         message(STATUS "WARNING:"
           "Cairo OCaml library not found.  Disabling lablgtk2 support")
-	  set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo.lablgtk2 package" FORCE)
+	set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo.lablgtk2 package" FORCE)
       endif(OCAML_HAS_CAIRO)
+
+      if(DROP_GTK_PLUS_2_BUILDS)
+	set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo.lablgtk2 package" FORCE)
+      endif(DROP_GTK_PLUS_2_BUILDS)
       
       if(OCAML_HAS_GTK)
 	set(text_gtk

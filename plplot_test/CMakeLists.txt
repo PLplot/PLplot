@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2013 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -63,7 +63,9 @@ if(SH_EXECUTABLE)
     @ONLY
     )
 
-  # Set up optional tests in the configured plplot-test-interactive.sh file.
+  # Set up optional tests in the configured plplot-test-interactive.sh file
+  # which is used by the traditional build system for the installed
+  # examples to do some interactive testing.
 
   set(pkgIndex_LOCATION ${DATA_DIR})
   set(SHELL_TEST_PLTCL_STANDARD_EXAMPLES 1)
@@ -86,6 +88,17 @@ if(SH_EXECUTABLE)
     set(SHELL_TEST_WISH_STANDARD_EXAMPLES 0)
     set(SHELL_TEST_WISH_RUNALLDEMOS 0)
   endif(BUILD_SHARED_LIBS)
+
+  if(WIN32_AND_NOT_CYGWIN)
+    set(SHELL_TEST_WXWIDGETS 1)
+  else(WIN32_AND_NOT_CYGWIN)
+    # FIXME.
+    # The wxwidgets device on Unix generates "forced mousing" screen
+    # refreshes for the wxwidgets-3.0.0 case so it is temporarily excluded
+    # from the interactive tests done for the traditional build system
+    # for the installed examples.
+    set(SHELL_TEST_WXWIDGETS 0)
+  endif(WIN32_AND_NOT_CYGWIN)
 
   configure_file(
     plplot-test-interactive.sh.in

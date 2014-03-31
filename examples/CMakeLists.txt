@@ -761,7 +761,17 @@ if(BUILD_TEST)
       if(files_examples_c AND targets_examples_c)
 	add_dependencies(test_c_${device} ${targets_examples_c})
       endif(files_examples_c AND targets_examples_c)
-      list(APPEND interactive_targets_LIST test_c_${device})
+      if(NOT device STREQUAL "wxwidgets")
+	list(APPEND interactive_targets_LIST test_c_${device})
+      elseif(WIN32_AND_NOT_CYGWIN)
+	list(APPEND interactive_targets_LIST test_c_${device})
+      else(NOT device STREQUAL "wxwidgets")
+	message(STATUS "WARNING: The test_c_wxwidgets target can be run independently on 
+   the Unix platform, but it generates \"forced mousing\" screen
+   refreshes for the wxwidgets-3.0.0 case so it is temporarily
+   excluded from being a dependency of other more general interactive
+   test targets")
+      endif(NOT device STREQUAL "wxwidgets")
 
       if(ENABLE_octave)
 	get_property(targets_examples_octave GLOBAL PROPERTY TARGETS_examples_octave)
@@ -836,7 +846,15 @@ if(BUILD_TEST)
       if(FILE_DEPENDS_wxwidgets)
 	add_dependencies(test_wxPLplotDemo test_wxwidgets_dyndriver)
       endif(FILE_DEPENDS_wxwidgets)
-      list(APPEND interactive_targets_LIST test_wxPLplotDemo)
+      if(WIN32_AND_NOT_CYGWIN)
+	list(APPEND interactive_targets_LIST test_wxPLplotDemo)
+      else(WIN32_AND_NOT_CYGWIN)
+	message(STATUS "WARNING: The test_wxPLplotDemo target can be run independently on 
+   the Unix platform, but it generates \"forced mousing\" screen
+   refreshes for the wxwidgets-3.0.0 case so it is temporarily
+   excluded from being a dependency of other more general interactive
+   test targets")
+      endif(WIN32_AND_NOT_CYGWIN)
     endif(ENABLE_wxwidgets)
 
     if(PLD_extqt)

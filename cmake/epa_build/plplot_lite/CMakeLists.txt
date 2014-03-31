@@ -53,6 +53,13 @@ set(FFLAGS "$ENV{FFLAGS}")
 # other PLplot dependencies that are epa_built.
 set(cmake_args -DENABLE_octave=OFF)
 
+# Drop gtk+2-only dependencies since those clash (at build time for static
+# device drivers and at run-time with dynamic device drivers) with
+# gtk+3 that is used with epa_build.
+list(APPEND cmake_args
+  -DDROP_GTK_PLUS_2_BUILDS=ON
+  )
+
 # In addition turn off wxwidgets, cairo, and qt for plplot_lite.
 list(APPEND cmake_args
   -DPLD_wxwidgets=OFF

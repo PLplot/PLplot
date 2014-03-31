@@ -48,6 +48,11 @@
 # set the environment variable CMAKE_LIBRARY_PATH.
 # See cmake documentation for further details.
 
+# Turn off PLD_xcairo if gtk+2 dependencies need to be dropped.
+if(DROP_GTK_PLUS_2_BUILDS)
+  set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
+endif(DROP_GTK_PLUS_2_BUILDS)
+
 # Look for cairo headers and libraries with pkg-config
 if(
     PLD_memcairo

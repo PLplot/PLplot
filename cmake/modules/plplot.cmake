@@ -21,6 +21,8 @@
 
 option(ADD_SPECIAL_CONSISTENCY_CHECKING "Add extra source-tree consistency checking targets that require special tools" OFF)
 
+option(DROP_GTK_PLUS_2_BUILDS "Drop builds of gtk+2-only targets that clash with gtk+3 dependencies" OFF)
+
 # target that depends on all check targets.
 add_custom_target(check_all)
 

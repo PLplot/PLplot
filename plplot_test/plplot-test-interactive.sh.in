@@ -107,7 +107,10 @@ PLD_extqt=@PLD_extqt@
 
 # These blank-delimited strings must be consistent with previous configured
 # list of devices.
-POSSIBLE_INTERACTIVE_DEVICES_LIST="xwin tk ntk xcairo gcw wxwidgets qtwidget"
+POSSIBLE_INTERACTIVE_DEVICES_LIST="xwin tk ntk xcairo gcw qtwidget"
+if [ "@SHELL_TEST_WXWIDGETS@" -ne 0 ] ; then
+    POSSIBLE_INTERACTIVE_DEVICES_LIST="$POSSIBLE_INTERACTIVE_DEVICES_LIST wxwidgets"
+fi
 POSSIBLE_DEVICES_LIST="$POSSIBLE_INTERACTIVE_DEVICES_LIST extcairo extqt"
 
 # Default DEVICES_LIST is all eligible devices if environment variable
@@ -167,7 +170,7 @@ if [ "@PLD_extcairo@" = "ON" ] ; then
     COUNT=$(( $COUNT + 1 ))
 fi
 
-if [ "@ENABLE_wxwidgets@" = "ON" -a "@ENABLE_cxx@" = "ON" ] ; then
+if [ "@ENABLE_wxwidgets@" = "ON" -a "@ENABLE_cxx@" = "ON" -a "@SHELL_TEST_WXWIDGETS@" -ne 0 ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
     COMMAND[$COUNT]="./wxPLplotDemo"

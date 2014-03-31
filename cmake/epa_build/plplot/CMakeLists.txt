@@ -64,6 +64,13 @@ set(FFLAGS "$ENV{FFLAGS}")
 # other PLplot dependencies that are epa_built.
 set(cmake_args -DENABLE_octave=OFF)
 
+# Drop gtk+2-only dependencies since those clash (at build time for static
+# device drivers and at run-time with dynamic device drivers) with
+# gtk+3 that is used with epa_build.
+list(APPEND cmake_args
+  -DDROP_GTK_PLUS_2_BUILDS=ON
+  )
+
 if(MSYS_PLATFORM)
   # Turn off the cairo and qt device drivers for plplot on Windows
   # until the pango and qt4_lite packages and all their dependencies
@@ -88,7 +95,7 @@ get_filename_component(PLPLOT_LOCAL_SOURCE_DIR ${PLPLOT_LOCAL_SOURCE_DIR} PATH)
 find_file(IS_PLPLOT_SOURCE_TREE plcore.c 
   HINTS ${PLPLOT_LOCAL_SOURCE_DIR}/src 
   NO_DEFAULT_PATH
-)
+  )
 
 if(NOT IS_PLPLOT_SOURCE_TREE)
   message(FATAL_ERROR "epa_build not located in cmake/epa_build in a PLplot source tree")
