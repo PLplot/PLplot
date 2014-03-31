@@ -418,6 +418,7 @@ else(BUILD_THE_BUILDTOOLS)
     gtk+
     wxwidgets
     qt4_lite
+    qt5_lite
     )
 endif(BUILD_THE_BUILDTOOLS)
 
