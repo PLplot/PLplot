@@ -810,7 +810,7 @@ plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
        PLFLT zmax0, PLFLT alt, PLFLT az );
 
 void
-plwidth( PLINT width );
+plwidth( PLFLT width );
 
 void
 plwind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
