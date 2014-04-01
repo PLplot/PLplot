@@ -249,8 +249,27 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
     PLFLT    old_sscale, sscale, old_soffset, soffset;
     PLINT    level    = 0;
     PLFLT    dyOffset = 0.;
-
-    yOffset = 0.;
+#ifdef PLPLOT_USE_QT5
+    // Empirical Y offset of text (needed for Qt5 for some reason).
+    // Note this was derived using the test_circle.py python script
+    // with the vertical alignment of the light diagonal cross
+    // optimized.  That example shows that other glyphs (except for
+    // the well-known asterisk case which is vertically misaligned by
+    // font design) do not have the best vertical alignment.  This is
+    // contrary to the results for cairo and qt with Qt4 which need no
+    // special empirical Y offset to get good vertical alignment for
+    // most glyphs of that example (other than the asterisk).  An
+    // additional issue which confuses the decision concerning the
+    // best vertical alignment for qt with Qt5 is the font selection
+    // for qt with Qt5 is quite different than that for qt with Qt4 or
+    // cairo.  I assume all these issues are due to Qt5 version 5.2.1
+    // font selection and font alignment bugs which will be addressed
+    // for future Qt5 versions.
+    PLFLT empirical_yOffset = -0.63 * chrht * POINTS_PER_INCH / 25.4;
+#else
+    PLFLT empirical_yOffset = 0.;
+#endif
+    yOffset = empirical_yOffset;
     xOffset = 0.;
 
     // Scaling factor of 1.45 determined empirically to make all qt results
@@ -292,7 +311,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
                 // dyOffset = -0.5 * currentFontSize * ( 1.0 - sscale );
                 // But empirically this change in offset should not be applied
                 // so leave it at its initial value of zero.
-                yOffset = -( currentFontSize * RISE_FACTOR * soffset + dyOffset );
+                yOffset = empirical_yOffset - ( currentFontSize * RISE_FACTOR * soffset + dyOffset );
 
                 p.setFont( getFont( fci ) );
                 break;
@@ -312,7 +331,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
                 // dyOffset = 0.5 * currentFontSize * ( 1.0 - sscale );
                 // But empirically this change in offset should not be applied
                 // so leave it at its initial value of zero.
-                yOffset = currentFontSize * RISE_FACTOR * soffset + dyOffset;
+                yOffset = empirical_yOffset + currentFontSize * RISE_FACTOR * soffset + dyOffset;
 
                 p.setFont( getFont( fci ) );
                 break;
