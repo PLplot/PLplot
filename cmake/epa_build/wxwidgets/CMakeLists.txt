@@ -24,7 +24,24 @@ set(PACKAGE wxwidgets)
 # ignored.
 set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
 
-set(dependencies_LIST)
+if(MSYS_PLATFORM)
+  # No dependencies required on Windows.
+  set(dependencies_LIST)
+else(MSYS_PLATFORM)
+  # To avoid having to build all of gtk with epa_build in a consistent
+  # manner I tried several alternatives to the gtk toolkit.  
+  # e.g., 
+  # set(toolkit_options --with-x11)
+  # set(toolkit_options --with-motif)
+  # But neither of those worked because they are not capable of
+  # supplying the unicode (see --enable-unicode below) capability
+  # that is provided by the default gtk toolkit and needed by the
+  # PLplot build of the wxwidgets device.
+  # The inevitable conclusion is that on Unix, we must use the gtk toolkit
+  # and therefore (now that epa_build has a gtk+ configuration)
+  # we must specificially add gtk+ as a dependency of wxwidgets.
+  set(dependencies_LIST gtk+)
+endif(MSYS_PLATFORM)
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
@@ -39,22 +56,9 @@ epa_boilerplate(
 
 if(MSYS_PLATFORM)
   set(CXXFLAGS "-fno-keep-inline-dllexport $ENV{CXXFLAGS}")
-  # No further dependencies required on Windows.
 else(MSYS_PLATFORM)
   set(CXXFLAGS "$ENV{CXXFLAGS}")
-  # To avoid having to build all of gtk with epa_build in a consistent
-  # manner I tried several alternatives to the gtk toolkit.  
-  # e.g., 
-  # set(toolkit_options --with-x11)
-  # set(toolkit_options --with-motif)
-  # But neither of those worked because they are not capable of
-  # supplying the unicode (see --enable-unicode below) capability
-  # that is provided by the default gtk toolkit and needed by the
-  # PLplot build of the wxwidgets device.
-  # The inevitable conclusion is that on Unix, we must use the gtk toolkit
-  # and therefore (now that epa_build has a gtk+ configuration)
-  # we must specificially add gtk+ as a dependency of wxwidgets.
-  list(APPEND dependencies_LIST gtk+)
+  # --with-gtk=3 because of gtk+ (version 3) dependency above
   set(toolkit_options --enable-debug --enable-debug_gdb --with-gtk=3)
 endif(MSYS_PLATFORM)
 
@@ -75,6 +79,7 @@ set(URL_HASH SHA1=756a9c54d1f411e262f03bacb78ccef085a9880a)
 
 ExternalProject_Add(
   build_${PACKAGE}
+  DEPENDS "${dependencies_targets}"
   URL ${URL}
   URL_HASH ${URL_HASH}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --enable-shared --enable-unicode ${toolkit_options}
