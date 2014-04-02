@@ -310,7 +310,7 @@ line_styles[1] = 1
 line_widths[1] = 1.
 symbol_scales[1] = 1.0
 symbol_numbers[1] = 4
-symbols[1] = "*"
+symbols[1] = "#(728)"
 
 -- Use monotype fonts so that all legends are the same size.
 pl.sfont(pl.PL_FCI_MONO, -1, -1)
@@ -355,7 +355,7 @@ for k = 0, nlegend-1 do
   line_widths[k+1] = 1.
   symbol_scales[k+1] = 1.0
   symbol_numbers[k+1] = 2
-  symbols[k+1] = "*"
+  symbols[k+1] = "#(728)"
   text[k+1] = string.format("%2.2d", k)
   text_colors[k+1] = 1 + (k % 8)
   line_colors[k+1] = 1 + (k % 8)
@@ -495,7 +495,7 @@ for i=0,8 do
     line_widths[k+1] = 1.
     symbol_scales[k+1] = 1.0
     symbol_numbers[k+1] = 2
-    symbols[k+1] = "*"
+    symbols[k+1] = "#(728)"
     text[k+1] = string.format("%2.2d", k)
     text_colors[k+1] = 1 + (k % 8)
     line_colors[k+1] = 1 + (k % 8)

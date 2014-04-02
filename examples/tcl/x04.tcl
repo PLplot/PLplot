@@ -61,7 +61,7 @@ proc plot41 {w type} {
        $w cmd plbox "" 0.0 0 "cmstv" 30.0 3
        $w cmd plcol0 3
        $w cmd plline 101 freql phase
-       $w cmd plstring 101 freql phase "*"
+       $w cmd plstring 101 freql phase "#(728)"
        $w cmd plcol0 3
        $w cmd plmtex "r" 5.0 0.5 0.5 "Phase shift (degrees)"
 
@@ -91,7 +91,7 @@ proc plot41 {w type} {
     set     symbol_colors  [list 0 3]
     set     symbol_scales  [list 0.0 1.0]
     set     symbol_numbers [list 0 4]
-    set     symbols        [list "" "*"]
+    set     symbols        [list "" "#(728)"]
 
     # from the above opt_arrays we can completely ignore everything
     # to do with boxes.

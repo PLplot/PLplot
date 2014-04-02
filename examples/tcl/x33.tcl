@@ -164,7 +164,7 @@ proc x33 {{w loopback}} {
     set line_widths    [list 1.]
     set symbol_scales  [list 1.]
     set symbol_numbers [list 4]
-    set symbols        [list "*"]
+    set symbols        [list "#(728)"]
 
     # Use monotype fonts so that all legends are the same size.
     $w cmd plsfont [expr {$::PLPLOT::PL_FCI_MONO}] -1 -1
@@ -218,7 +218,7 @@ proc x33 {{w loopback}} {
         lappend line_widths    1.
         lappend symbol_scales  1.
         lappend symbol_numbers 2
-        lappend symbols        "*"
+        lappend symbols        "#(728)"
         lappend text           [format "%2.2d" $k]
         lappend text_colors    [expr {1 +  $k % 8}]
         lappend line_colors    [expr {1 +  $k % 8}]
@@ -367,7 +367,7 @@ proc x33 {{w loopback}} {
             lappend line_widths    1.
             lappend symbol_scales  1.
             lappend symbol_numbers 2
-            lappend symbols        "*"
+            lappend symbols        "#(728)"
             lappend text           [format "%2.2d" $k]
             lappend text_colors    [expr {1 + $k % 8}]
             lappend line_colors    [expr {1 + $k % 8}]

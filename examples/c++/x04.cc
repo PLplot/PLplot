@@ -135,7 +135,7 @@ void x04::plot1( int type )
         pls->box( "", 0.0, 0, "cmstv", 30.0, 3 );
         pls->col0( 3 );
         pls->line( 101, freql, phase );
-        pls->string( 101, freql, phase, "*" );
+        pls->string( 101, freql, phase, "#(728)" );
         pls->col0( 3 );
         pls->mtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
         nlegend = 2;
@@ -162,7 +162,7 @@ void x04::plot1( int type )
     symbol_colors[1]  = 3;
     symbol_scales[1]  = 1.;
     symbol_numbers[1] = 4;
-    symbols[1]        = "*";
+    symbols[1]        = "#(728)";
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
 

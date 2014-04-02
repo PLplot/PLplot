@@ -142,7 +142,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
 	plbox("", 0.0, 0, "cmstv", 30.0, 3)
 	plcol0(3)
 	plline(freql, phase)
-	plstring(freql, phase, "*")
+	plstring(freql, phase, "#(728)")
 	plcol0(3)
 	plmtex("r", 5.0, 0.5, 0.5, alty_label)
         nlegend = 2
@@ -189,7 +189,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
         symbol_colors[1]  = 3
         symbol_scales[1]  = 1.
         symbol_numbers[1] = 4
-        symbols[1]        = "*"
+        symbols[1]        = "#(728)"
 
     plscol0a( 15, 32, 32, 32, 0.70 )
 

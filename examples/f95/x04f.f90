@@ -47,7 +47,7 @@ subroutine plot1(type)
     integer           :: box_colors(0), box_patterns(0)
     real(kind=plflt)  :: box_line_widths(0)
     character(len=20) :: text(2)
-    character(len=1)  :: symbols(2)
+    character(len=20)  :: symbols(2)
 
     call pladv(0)
 !    Set up data for log plot.
@@ -85,7 +85,7 @@ subroutine plot1(type)
       call plbox(' ', 0.0_plflt, 0, 'cmstv', 30.0_plflt, 3)
       call plcol0(3)
       call plline(freql, phase)
-      call plstring(freql, phase, '*')
+      call plstring(freql, phase, "#(728)")
       call plcol0(3)
       call plmtex('r', 5.0_plflt, 0.5_plflt, 0.5_plflt, &
                   'Phase shift (degrees)')
@@ -116,7 +116,7 @@ subroutine plot1(type)
     symbol_colors(2)  = 3
     symbol_scales(2)  = 1.0
     symbol_numbers(2) = 4
-    symbols(2)        = '*'
+    symbols(2)        = "#(728)"
 
 !   from the above opt_arrays we can completely ignore everything
 !   to do with boxes. (Hence the size 0 for the associated arrays)

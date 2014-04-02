@@ -155,7 +155,7 @@ let plot1 label_type x_label y_label alty_label legend_text title_label line_lab
     plbox "" 0.0 0 "cmstv" 30.0 3;
     plcol0 3;
     plline freql phase;
-    plstring freql phase "*";
+    plstring freql phase "#(728)";
     plcol0 3;
     plmtex "r" 5.0 0.5 0.5 alty_label;
   );
@@ -174,7 +174,7 @@ let plot1 label_type x_label y_label alty_label legend_text title_label line_lab
   let symbol_colors = [| 0; 3 |] in
   let symbol_scales = [| 0.0; 1.0 |] in
   let symbol_numbers = [| 0; 4 |] in
-  let symbols = [| ""; "*" |] in
+  let symbols = [| ""; "#(728)" |] in
   (* from the above opt_arrays we can completely ignore everything
      to do with boxes *)
 

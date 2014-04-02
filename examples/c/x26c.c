@@ -211,7 +211,7 @@ plot1( int type, const char *x_label, const char *y_label, const char *alty_labe
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( 101, freql, phase );
-        plstring( 101, freql, phase, "*" );
+        plstring( 101, freql, phase, "#(728)" );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
@@ -234,7 +234,7 @@ plot1( int type, const char *x_label, const char *y_label, const char *alty_labe
     symbol_colors[1]  = 3;
     symbol_scales[1]  = 1.;
     symbol_numbers[1] = 4;
-    symbols[1]        = "*";
+    symbols[1]        = "#(728)";
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
 

@@ -207,7 +207,7 @@ end program x26f
        call plbox("", 0.0_plflt, 0, "cmstv", 30.0_plflt, 3)
        call plcol0(3)
        call plline(freql, phase)
-       call plstring(freql, phase, '*')
+       call plstring(freql, phase, "#(728)")
        call plcol0(3)
        call plmtex("r", 5.0_plflt, 0.5_plflt, 0.5_plflt, alty_label)
     endif
@@ -239,7 +239,7 @@ end program x26f
     symbol_colors(2)  = 3
     symbol_scales(2)  = 1.
     symbol_numbers(2) = 4
-    symbols(2)        = "*"
+    symbols(2)        = "#(728)"
 
     !     from the above opt_arrays we can completely ignore everything
     !     to do with boxes.

@@ -92,7 +92,7 @@ function plot1(type)
     pl.box("", 0, 0, "cmstv", 30, 3)
     pl.col0(3)
     pl.line(freql, phase)
-    pl.string(freql, phase, "*")
+    pl.string(freql, phase, "#(728)")
     pl.col0(3)
     pl.mtex("r", 5, 0.5, 0.5, "Phase shift (degrees)")
     nlegend = 2
@@ -150,7 +150,7 @@ function plot1(type)
     symbol_colors[2]  = 3
     symbol_scales[2]  = 1.
     symbol_numbers[2] = 4
-    symbols[2]        = "*"
+    symbols[2]        = "#(728)"
   end
 
   pl.scol0a( 15, 32, 32, 32, 0.70 )

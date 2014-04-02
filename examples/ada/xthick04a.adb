@@ -80,7 +80,7 @@ procedure xthick04a is
             Box_Around_Viewport("", 0.0, 0, "cmstv", 30.0, 3);
             Set_Pen_Color(Green);
             Draw_Curve(freql, phase);
-            Draw_String(freql, phase, "*");
+            Draw_String(freql, phase, "#(728)");
             Set_Pen_Color(Green);
             Write_Text_Viewport("r", 5.0, 0.5, 0.5, "Phase shift (degrees)");
         end if;
@@ -110,7 +110,7 @@ procedure xthick04a is
                 symbol_colors(0)  := 3;   -- Don't care; not used.
                 symbol_scales(0)  := 1.0; -- Don't care; not used.
                 symbol_numbers(0) := 4;   -- Don't care; not used.
-                symbols(0) := To_Unbounded_String("*"); -- Don't care; not used.
+                symbols(0) := To_Unbounded_String("#(728)"); -- Don't care; not used.
 
                 -- Second legend entry.
                 opt_array(1)      := Legend_Line + Legend_Symbol;
@@ -122,7 +122,7 @@ procedure xthick04a is
                 symbol_colors(1)  := Green;
                 symbol_scales(1)  := 1.0;
                 symbol_numbers(1) := 4;
-                symbols(1)        := To_Unbounded_String("*");
+                symbols(1)        := To_Unbounded_String("#(728)");
 
                 Create_Legend(legend_width, legend_height,
                     Legend_Background + Legend_Bounding_Box, 0,
@@ -159,7 +159,7 @@ procedure xthick04a is
                 symbol_colors(0)  := 3;   -- Don't care; not used.
                 symbol_scales(0)  := 1.0; -- Don't care; not used.
                 symbol_numbers(0) := 4;   -- Don't care; not used.
-                symbols(0) := To_Unbounded_String("*"); -- Don't care; not used.
+                symbols(0) := To_Unbounded_String("#(728)"); -- Don't care; not used.
                 Box_Colors(0)      := 0;
                 Box_Patterns(0)    := 0;
                 Box_Line_Widths(0) := 0.0;

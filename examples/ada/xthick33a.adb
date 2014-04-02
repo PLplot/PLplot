@@ -304,7 +304,7 @@ begin -- main
         line_widths(0)    := 1.0;
         symbol_scales(0)  := 1.0;
         symbol_numbers(0) := 4;
-        symbols(0)        := TUB("*");
+        symbols(0)        := TUB("#(728)");
 
         -- Use monotype fonts so that all legends are the same size.
         Set_Font(PL_FCI_MONO, -1, -1);
@@ -369,7 +369,7 @@ begin -- main
             line_widths(k)    := 1.0;
             symbol_scales(k)  := 1.0;
             symbol_numbers(k) := 2;
-            symbols(k)        := TUB("*");
+            symbols(k)        := TUB("#(728)");
             -- Make 2-digit strings with leading 0 for 0 .. 9.
             if k >= 10 then
                 text(k) := To_Unbounded_String(Trim(Integer'image(k), Left));
@@ -538,7 +538,7 @@ begin -- main
                 line_widths(k)    := 1.0;
                 symbol_scales(k)  := 1.0;
                 symbol_numbers(k) := 2;
-                symbols(k)        := TUB("*");
+                symbols(k)        := TUB("#(728)");
                 -- Make 2-digit strings with leading 0 for 0 .. 9.
                 if k >= 10 then
                     text(k) := To_Unbounded_String(Trim(Integer'image(k), Left));

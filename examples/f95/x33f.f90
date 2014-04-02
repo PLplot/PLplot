@@ -54,7 +54,7 @@
       integer            :: symbol_numbers(MAX_NLEGEND), symbol_colors(MAX_NLEGEND)
       real(kind=plflt)   :: symbol_scales(MAX_NLEGEND)
       character(len=200) :: text(MAX_NLEGEND)
-      character(len=3)   :: symbols(MAX_NLEGEND)
+      character(len=20)  :: symbols(MAX_NLEGEND)
       real(kind=plflt)   :: legend_width, legend_height, x, y, xstart, ystart
       real(kind=plflt)   :: max_height, text_scale
       integer            :: opt_base, nrow, ncolumn
@@ -190,7 +190,7 @@
       line_widths(1)    = 1
       symbol_scales(1)  = 1._plflt
       symbol_numbers(1) = 4
-      symbols(1)        = '*'
+      symbols(1)        = "#(728)"
 
 !     Use monotype fonts so that all legends are the same size.
       call plsfont( PL_FCI_MONO, -1, -1 )
@@ -239,7 +239,7 @@
           line_widths(k)    = 1
           symbol_scales(k)  = 1._plflt
           symbol_numbers(k) = 2
-          symbols(k)        = '*'
+          symbols(k)        = "#(728)"
           write( text(k), '(i2.2)' ) k-1
           text_colors(k)   = 1 + mod( k-1, 8 )
           line_colors(k)   = 1 + mod( k-1, 8 )
@@ -385,7 +385,7 @@
               line_widths(k)    = 1
               symbol_scales(k)  = 1._plflt
               symbol_numbers(k) = 2
-              symbols(k)        = '*'
+              symbols(k)        = "#(728)"
               write( text(k), '(i2.2)' ) k-1
               text_colors(k)   = 1 + mod( k-1, 8 )
               line_colors(k)   = 1 + mod( k-1, 8 )

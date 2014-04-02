@@ -172,7 +172,7 @@ procedure x26a is
         plbox("", 0.0, 0, "cmstv", 30.0, 3);
         plcol0(3);
         plline(freql, phase);
-        plstring(freql, phase, "*");
+        plstring(freql, phase, "#(728)");
         plcol0(3);
         plmtex("r", 5.0, 0.5, 0.5, alty_label);
 
@@ -186,7 +186,7 @@ procedure x26a is
         symbol_colors(0)  := 3;   -- Don't care; not used.
         symbol_scales(0)  := 1.0; -- Don't care; not used.
         symbol_numbers(0) := 4;   -- Don't care; not used.
-        symbols(0) := To_Unbounded_String("*"); -- Don't care; not used.
+        symbols(0) := To_Unbounded_String("#(728)"); -- Don't care; not used.
 
         -- Second legend entry.
         opt_array(1)      := Legend_Line + Legend_Symbol;
@@ -197,7 +197,7 @@ procedure x26a is
         symbol_colors(1)  := 3;
         symbol_scales(1)  := 1.0;
         symbol_numbers(1) := 4;
-        symbols(1)        := To_Unbounded_String("*");
+        symbols(1)        := To_Unbounded_String("#(728)");
 
         plscol0a(15, 32, 32, 32, 0.70);
         pllegend(legend_width, legend_height,

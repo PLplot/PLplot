@@ -296,7 +296,7 @@ function ix33c()
   line_styles(1) = 1;
   line_widths(1) = 1.;
   symbol_scales(1) = 1.;  symbol_numbers(1) = 4;
-  symbols(1,1:length("*")) = "*";
+  symbols(1,1:length("#(728)")) = "#(728)";
 
   ## Use monotype fonts so that all legends are the same size.
   plsfont( PL_FCI_MONO , -1, -1);
@@ -373,7 +373,7 @@ function ix33c()
     line_widths(k+1) = 1.;
     symbol_scales(k+1) = 1.;
     symbol_numbers(k+1) = 2;
-    symbols(k+1,1:length("*")) = "*";
+    symbols(k+1,1:length("#(728)")) = "#(728)";
     string = sprintf("%2.2d",k);
     text(k+1,1:length(string)) = string;
     text_colors(k+1) = 1 + mod(k,8);
@@ -551,7 +551,7 @@ function ix33c()
       line_widths(k+1) = 1.;
       symbol_scales(k+1) = 1.;
       symbol_numbers(k+1) = 2;
-      symbols(k+1,1:length("*")) = "*";
+      symbols(k+1,1:length("#(728)")) = "#(728)";
       string = sprintf("%2.2d",k);
       text(k+1,1:length(string)) = string;
       text_colors(k+1) = 1 + mod(k,8);

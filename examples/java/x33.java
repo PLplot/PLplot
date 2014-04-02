@@ -341,7 +341,7 @@ class x33 {
         line_widths[0]    = 1.;
         symbol_scales[0]  = 1.;
         symbol_numbers[0] = 4;
-        symbols[0]        = "*";
+        symbols[0]        = "#(728)";
 
         // Use monotype fonts so that all legends are the same size.
         pls.sfont( PL_FCI_MONO, -1, -1 );
@@ -401,7 +401,7 @@ class x33 {
             line_widths[k]    = 1.;
             symbol_scales[k]  = 1.;
             symbol_numbers[k] = 2;
-            symbols[k]        = "*";
+            symbols[k]        = "#(728)";
             text[k]           = nf.format( k );
             text_colors[k]    = 1 + ( k % 8 );
             line_colors[k]    = 1 + ( k % 8 );
@@ -556,7 +556,7 @@ class x33 {
                 line_widths[k]    = 1.;
                 symbol_scales[k]  = 1.;
                 symbol_numbers[k] = 2;
-                symbols[k]        = "*";
+                symbols[k]        = "#(728)";
                 text[k]           = nf.format( k );
                 text_colors[k]    = 1 + ( k % 8 );
                 line_colors[k]    = 1 + ( k % 8 );

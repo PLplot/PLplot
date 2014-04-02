@@ -200,7 +200,7 @@ void plot1( int type, string x_label, string y_label, string alty_label,
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( freql, phase );
-        plstring( freql, phase, "*" );
+        plstring( freql, phase, "#(728)" );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
@@ -238,7 +238,7 @@ void plot1( int type, string x_label, string y_label, string alty_label,
     symbol_colors[1]  = 3;
     symbol_scales[1]  = 1.;
     symbol_numbers[1] = 4;
-    symbols[1]        = "*";
+    symbols[1]        = "#(728)";
     // Note from the above opt_array the second box array indices
     // do not have to be specified
 

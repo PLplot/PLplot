@@ -168,7 +168,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
     plbox("", 0.0, 0, "cmstv", 30.0, 3);
     plcol0(3);
     plline(freql', phase');
-    plstring(freql', phase', "*");
+    plstring(freql', phase', "#(728)");
     plcol0(3);
     plmtex("r", 5.0, 0.5, 0.5, alty_label);
     nlegend = 2;
@@ -235,7 +235,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
     symbol_colors(2) = 3;
     symbol_scales(2) = 1.;
     symbol_numbers(2) = 4;
-    symbols(2,1:length("*")) = "*";
+    symbols(2,1:length("#(728)")) = "#(728)";
   endif
 
   plscol0a( 15, 32, 32, 32, 0.70 );

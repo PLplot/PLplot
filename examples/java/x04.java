@@ -135,7 +135,7 @@ class x04 {
             pls.box( "", 0.0, 0, "cmstv", 30.0, 3 );
             pls.col0( 3 );
             pls.line( freql, phase );
-            pls.string( freql, phase, "*" );
+            pls.string( freql, phase, "#(728)" );
             pls.col0( 3 );
             pls.mtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
             nlegend = 2;
@@ -177,7 +177,7 @@ class x04 {
             symbol_colors[1]  = 3;
             symbol_scales[1]  = 1.;
             symbol_numbers[1] = 4;
-            symbols[1]        = "*";
+            symbols[1]        = "#(728)";
         }
 
         // from the above opt_arrays we can completely ignore everything

@@ -220,7 +220,7 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
         pls->box( "", 0.0, 0, "cmstv", 30.0, 3 );
         pls->col0( 3 );
         pls->line( 101, freql, phase );
-        pls->string( 101, freql, phase, "*" );
+        pls->string( 101, freql, phase, "#(728)" );
         pls->col0( 3 );
         pls->mtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
@@ -244,7 +244,7 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
     symbol_colors[1]  = 3;
     symbol_scales[1]  = 1.;
     symbol_numbers[1] = 4;
-    symbols[1]        = "*";
+    symbols[1]        = "#(728)";
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
 
