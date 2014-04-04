@@ -3,7 +3,7 @@
 // examples (and presumably any user applications).  Therefore, the
 // configured plplot_config.h should not be installed.  In contrast,
 // include/plConfig.h.in (note, the configured plConfig.h result
-// #includes plplot_config.h for the core build because HAVE_CONFIG_H
+// #includes plplot_config.h for the core build because PLPLOT_HAVE_CONFIG_H
 // is #defined in that case) contains configured macros that are
 // required for the core build, installed examples build, and build of
 // user applications.  Therefore, in contrast to plplot_config.h,

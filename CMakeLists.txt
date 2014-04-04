@@ -125,7 +125,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/plplot_config.h
   )
 # Allow access to the generated plplot_config.h for this build.
-add_definitions("-DHAVE_CONFIG_H")
+add_definitions("-DPLPLOT_HAVE_CONFIG_H")
 # Install top-level files
 
 # Enable testing framework for examples

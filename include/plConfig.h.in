@@ -29,7 +29,7 @@
 // any user applications).  Therefore, the configured plConfig.h
 // should be installed.  In contrast, plplot_config.h.in (note,
 // plConfig.h #includes plplot_config.h for the core build because
-// HAVE_CONFIG_H is #defined in that case) contains configured macros
+// PLPLOT_HAVE_CONFIG_H is #defined in that case) contains configured macros
 // that are only required for the core build.  Therefore, in contrast
 // to plConfig.h, plplot_config.h should not be installed.
 //
@@ -43,7 +43,7 @@
 #ifndef __PLCONFIG_H__
 #define __PLCONFIG_H__
 
-#ifdef HAVE_CONFIG_H
+#ifdef PLPLOT_HAVE_CONFIG_H
 #  include <plplot_config.h>
 #endif
 
