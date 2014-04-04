@@ -414,7 +414,7 @@ else(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(CORE_BUILD AND BUILD_TEST)
-  remove_definitions("-DHAVE_CONFIG_H")
+  remove_definitions("-DPLPLOT_HAVE_CONFIG_H")
 endif(CORE_BUILD AND BUILD_TEST)
 
 # Decide on device to be used for generic interactive tests.
