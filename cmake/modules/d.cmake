@@ -24,6 +24,11 @@
 # Options to enable D bindings
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_d "Enable D bindings" OFF)
+elseif(WIN32_AND_NOT_CYGWIN)
+  option(ENABLE_d "Enable D bindings" OFF)
+  if(ENABLE_d)
+    message(STATUS "WARNING: setting the -DENABLE_d=ON option is considered to be experimental on Windows because it has been found to interfere with wxwidgets linking for unknown reasons") 
+  endif(ENABLE_d)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_d "Enable D bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
