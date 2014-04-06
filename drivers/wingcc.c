@@ -84,6 +84,8 @@ typedef struct
     PLINT PRNT_width;
     PLINT PRNT_height;
 
+    PLGraphicsIn gin;
+
     char  FT_smooth_text;
 //
 // WIN32 API variables
@@ -987,14 +989,92 @@ plD_state_wingcc( PLStream *pls, PLINT op )
     dev->pen = CreatePen( PS_SOLID, pls->width, dev->colour );
 }
 
+//--------------------------------------------------------------------------
+// GetCursorCmd()
+//
+// Handle events connected to selecting points (modelled after xwin)
+//--------------------------------------------------------------------------
+
+static void
+GetCursorCmd( PLStream *pls, PLGraphicsIn *gin )
+{
+    wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
+
+    HCURSOR crosshair;
+    HCURSOR previous;
+
+    plGinInit( gin );
+
+    crosshair = LoadCursor( GetModuleHandle( NULL ), IDC_CROSS );
+    previous = SetCursor( crosshair );
+
+    while ( gin->pX < 0 )
+    {
+        GetMessage( &dev->msg, NULL, 0, 0 );
+        TranslateMessage( &dev->msg );
+        switch ( (int) dev->msg.message )
+        {
+        case WM_LBUTTONDOWN:
+            if ( dev->msg.wParam & MK_LBUTTON )
+            {
+                gin->pX = dev->msg.pt.x;
+                gin->pY = dev->msg.pt.y;
+                gin->dX = (PLFLT) gin->pX / ( dev->width - 1 );
+                gin->dY = 1.0 - (PLFLT) gin->pY / ( dev->height - 1 );
+
+                gin->button = 1; // AM: there is no macro to indicate the pressed button!
+                gin->state  = 0; // AM: is there an equivalent under Windows?
+                gin->keysym = 0x20;
+            }
+            break;
+        case WM_CHAR:
+            // Handle escape
+            if ( dev->msg.wParam == 0x1b )
+            {
+                gin->pX = 1; // This point is outside the window, but breaks the loop
+                gin->pY = -1;
+                gin->dX = (PLFLT) gin->pX / ( dev->width - 1 );
+                gin->dY = 1.0 - (PLFLT) gin->pY / ( dev->height - 1 );
+
+                gin->button = 0;
+                gin->state  = 0;
+                gin->keysym = 0x1a;
+            }
+            break;
+        }
+    }
+
+    // Restore the previous cursor
+    SetCursor( previous );
+
+//    if ( GetCursorPos(&p) )
+//    {
+//        if ( ScreenToClient( dev->hwnd, &p ) )
+//        {
+//            // Fill the fields, but actually we need to run the event loop
+//            // We need to call GetMessage() in a loop. Unclear as yet to the
+//            // actual interface: key/button presses?
+//        }
+//    }
+}
+
+//--------------------------------------------------------------------------
+// plD_esc_wingcc()
+//
+// Handle PLplot escapes
+//--------------------------------------------------------------------------
+
 void
 plD_esc_wingcc( PLStream *pls, PLINT op, void *ptr )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
+    PLGraphicsIn *gin = &( dev->gin );
+
 
     switch ( op )
     {
     case PLESC_GETC:
+        GetCursorCmd( pls, (PLGraphicsIn *) ptr );
         break;
 
     case PLESC_FILL:
