@@ -176,11 +176,6 @@ c_plaxes( PLFLT x0, PLFLT y0,
         plsc->boxbb_ymax = plsc->vppyma / plsc->ypmm;
     }
 
-// Convert world coordinates to physical
-
-    xp0 = plP_wcpcx( x0 );
-    yp0 = plP_wcpcy( y0 );
-
 // Set plot options from input
 
     lax = plP_stsearch( xopt, 'a' );
@@ -495,6 +490,8 @@ c_plaxes( PLFLT x0, PLFLT y0,
         // Draw the horizontal axis.
         if ( lax )
         {
+            // Convert world coordinates to physical
+            yp0 = plP_wcpcy( y0 );
             plP_movphy( vppxmi, (PLINT) yp0 );
             plP_draphy( vppxma, (PLINT) yp0 );
             if ( ltx && !lxx )
@@ -535,6 +532,8 @@ c_plaxes( PLFLT x0, PLFLT y0,
         // Draw the vertical axis.
         if ( lay )
         {
+            // Convert world coordinates to physical
+            xp0 = plP_wcpcx( x0 );
             plP_movphy( (PLINT) xp0, vppymi );
             plP_draphy( (PLINT) xp0, vppyma );
             if ( lty && !lxy )
