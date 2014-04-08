@@ -1028,18 +1028,15 @@ GetCursorCmd( PLStream *pls, PLGraphicsIn *gin )
             }
             break;
         case WM_CHAR:
-            // Handle escape
-            if ( dev->msg.wParam == 0x1b )
-            {
-                gin->pX = 1; // This point is outside the window, but breaks the loop
-                gin->pY = -1;
-                gin->dX = (PLFLT) gin->pX / ( dev->width - 1 );
-                gin->dY = 1.0 - (PLFLT) gin->pY / ( dev->height - 1 );
+            gin->pX = dev->msg.pt.x;
+            gin->pY = dev->msg.pt.y;
+            gin->dX = (PLFLT) gin->pX / ( dev->width - 1 );
+            gin->dY = 1.0 - (PLFLT) gin->pY / ( dev->height - 1 );
 
-                gin->button = 0;
-                gin->state  = 0;
-                gin->keysym = 0x1a;
-            }
+            gin->button = 0;
+            gin->state  = 0;
+            gin->keysym = dev->msg.wParam;
+
             break;
         }
     }
