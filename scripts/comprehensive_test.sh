@@ -287,7 +287,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    $build_command test_interactive >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
-		echo "ERROR: Traditional $build_command test_interactive failed in the installed exaples tree"
+		echo "ERROR: Traditional $build_command test_interactive failed in the installed examples tree"
 		exit 1
 	    fi
 	    if [ "$do_clean_as_you_go" = "yes" ] ; then
