@@ -420,7 +420,44 @@ install(TARGETS plplot${LIB_TAG}
 # This exports information for every target in the whole build that
 # has the EXPORT export_plplot signature (as above) for the 
 # install(TARGETS ... # command.
-install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
+install(EXPORT export_plplot DESTINATION ${LIB_DIR}/cmake/plplot)
+
+# Install associated CMake package config file.
+
+install(FILES plplotConfig.cmake DESTINATION ${LIB_DIR}/cmake/plplot)
+
+if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+  # For this special case QT_LIBRARIES is not populated so must
+  # this alternative method to add Qt(5) libraries to the pkg-config file
+  # for the plplot library.
+
+  # FIXME? This list will need revision whenever the PLplot qt device
+  # driver dependencies on the Qt5 components are revised.
+  set(Qt5_library_name_list
+    Core
+    Svg
+    Gui
+    Widgets
+    PrintSupport
+    )
+
+  set(Qt5_library_fullpath_list)
+  foreach(Qt5_library_name ${Qt5_library_name_list})
+    find_library(Qt5${Qt5_library_name}_fullpath Qt5${Qt5_library_name})
+    if(Qt5${Qt5_library_name}_fullpath)
+      list(APPEND Qt5_library_fullpath_list ${Qt5${Qt5_library_name}_fullpath})
+    else(Qt5${Qt5_library_name}_fullpath)
+      message(STATUS "Qt5${Qt5_library_name}_fullpath = ${Qt5${Qt5_library_name}_fullpath}")
+      message(FATAL_ERROR "Qt5${Qt5_library_name} library not found.")
+    endif(Qt5${Qt5_library_name}_fullpath)
+  endforeach(Qt5_library_name ${Qt5_library_name_list})
+
+  pkg_config_link_flags(Qt5_library_LINK_FLAGS "${Qt5_library_fullpath_list}")
+  set(
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_FLAGS} ${Qt5_library_LINK_FLAGS}"
+    )
+endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 #message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
 

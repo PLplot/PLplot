@@ -332,9 +332,9 @@ if(CORE_BUILD)
   # Install qt support file.
   if(ANY_QT_DEVICE)
     install(FILES
-    ${CMAKE_SOURCE_DIR}/cmake/modules/ndp_UseQt4.cmake 
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
-    )
+      ${CMAKE_SOURCE_DIR}/cmake/modules/ndp_UseQt4.cmake 
+      DESTINATION ${DATA_DIR}/examples/cmake/modules
+      )
   endif(ANY_QT_DEVICE)
 
   # Install PLplot-specific language support files needed for CMake-based
@@ -409,7 +409,7 @@ else(CORE_BUILD)
   #Configure variables and enable languages as needed.
   include(plplot_configure)
 
-  include(export_plplot)
+  find_package(plplot)
 
 endif(CORE_BUILD)
 
@@ -857,7 +857,7 @@ if(BUILD_TEST)
       endif(WIN32_AND_NOT_CYGWIN)
     endif(ENABLE_wxwidgets)
 
-    if(PLD_extqt)
+    if(PLD_extqt AND TARGET qt_example)
       add_custom_target(test_qt_example
 	COMMAND qt_example
 	DEPENDS 
@@ -868,7 +868,7 @@ if(BUILD_TEST)
 	add_dependencies(test_qt_example test_qt_dyndriver)
       endif(FILE_DEPENDS_qt)
       list(APPEND interactive_targets_LIST test_qt_example)
-    endif(PLD_extqt)
+    endif(PLD_extqt AND TARGET qt_example)
 
   endif(ENABLE_cxx)
 
