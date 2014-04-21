@@ -32,11 +32,11 @@ c_clean:
 	cd c; $(MAKE) clean
 .PHONY: c_clean
 clean: c_clean
-x01c.psc: c/x01c@EXEEXT@
-	@echo Generate C results for psc device
-	./plplot-test.sh --verbose --front-end=c --device=psc
-test_noninteractive: x01c.psc
-@COMPARE_COMMENT@compare: x01c.psc
+@PSC_C_COMMENT@x01c.psc: c/x01c@EXEEXT@
+@PSC_C_COMMENT@	@echo Generate C results for psc device
+@PSC_C_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psc
+@PSC_C_COMMENT@test_noninteractive: x01c.psc
+@PSC_C_COMMENT@@COMPARE_COMMENT@compare: x01c.psc
 # Just for c, c++, and tk directories
 test_interactive: c/x01c@EXEEXT@
 
@@ -60,11 +60,11 @@ test_interactive: c/x01c@EXEEXT@
 @CXX_COMMENT@	cd c++; $(MAKE) clean
 @CXX_COMMENT@.PHONY: cxx_clean
 @CXX_COMMENT@clean: cxx_clean
-@CXX_COMMENT@x01cxx.psc: c++/x01@EXEEXT@
-@CXX_COMMENT@	@echo Generate C++ results for psc device
-@CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=psc
-@CXX_COMMENT@test_noninteractive: x01cxx.psc
-@CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx.psc
+@PSC_CXX_COMMENT@x01cxx.psc: c++/x01@EXEEXT@
+@PSC_CXX_COMMENT@	@echo Generate C++ results for psc device
+@PSC_CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=psc
+@PSC_CXX_COMMENT@test_noninteractive: x01cxx.psc
+@PSC_CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx.psc
 # Just for c, c++, and tk directories
 @CXX_COMMENT@test_interactive: c++/x01@EXEEXT@
 
