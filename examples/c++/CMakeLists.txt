@@ -153,51 +153,51 @@ if(BUILD_TEST)
 	message(STATUS "WARNING: Not currently checking for Qt5 in install tree.  qt_example not built")
 	set(BUILD_qt_example OFF)
       else(PLPLOT_USE_QT5)
-      # Must find Qt4 all over again here rather than simply copying variables
-      # from the core build to this installed examples build so that we can
-      # access the qt4_wrap_cpp macro here.
-      find_package(Qt4 4.8.2 REQUIRED QtCore QtGui QtSvg)
-      # To avoid Qt4 version mismatch make sure the Qt version matches that
-      # used by the core build.
-      if(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
-	include(ndp_UseQt4)
-	if(NOT QT_LIBRARIES)
-          message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
-	endif(NOT QT_LIBRARIES)
-	set(BUILD_qt_example ON)
-      else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
-	message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
-	set(BUILD_qt_example OFF)
-      endif(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+	# Must find Qt4 all over again here rather than simply copying variables
+	# from the core build to this installed examples build so that we can
+	# access the qt4_wrap_cpp macro here.
+	find_package(Qt4 4.8.2 REQUIRED QtCore QtGui QtSvg)
+	# To avoid Qt4 version mismatch make sure the Qt version matches that
+	# used by the core build.
+	if(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+	  include(ndp_UseQt4)
+	  if(NOT QT_LIBRARIES)
+            message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
+	  endif(NOT QT_LIBRARIES)
+	  set(BUILD_qt_example ON)
+	else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+	  message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
+	  set(BUILD_qt_example OFF)
+	endif(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
       endif(PLPLOT_USE_QT5)
     endif(CORE_BUILD)
     if(BUILD_qt_example)
       if(PLPLOT_USE_QT5)
-      qt5_wrap_cpp(
-	QT_MOC_OUTFILES
-	${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
-	)
-      set_source_files_properties(
-	${QT_MOC_OUTFILES}
-	PROPERTIES GENERATED "ON"
-	)
-      add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
-      qt5_use_modules(qt_example Svg Gui PrintSupport)
-      target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt${LIB_TAG} plplot${LIB_TAG} ${qt_example_TARGETS})
+	qt5_wrap_cpp(
+	  QT_MOC_OUTFILES
+	  ${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
+	  )
+	set_source_files_properties(
+	  ${QT_MOC_OUTFILES}
+	  PROPERTIES GENERATED "ON"
+	  )
+	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
+	qt5_use_modules(qt_example Svg Gui PrintSupport)
+	target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt${LIB_TAG} plplot${LIB_TAG} ${qt_example_TARGETS})
       else(PLPLOT_USE_QT5)
-      qt4_wrap_cpp(
-	QT_MOC_OUTFILES
-	${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
-	)
-      # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-      set_source_files_properties(
-	${QT_MOC_OUTFILES}
-	PROPERTIES GENERATED "ON"
-	)
-      add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
-      target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt${LIB_TAG} plplot${LIB_TAG})
-      # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-      set_qt_target_properties(qt_example)
+	qt4_wrap_cpp(
+	  QT_MOC_OUTFILES
+	  ${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
+	  )
+	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
+	set_source_files_properties(
+	  ${QT_MOC_OUTFILES}
+	  PROPERTIES GENERATED "ON"
+	  )
+	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
+	target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt${LIB_TAG} plplot${LIB_TAG})
+	# Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+	set_qt_target_properties(qt_example)
       endif(PLPLOT_USE_QT5)
     endif(BUILD_qt_example)
   endif(ENABLE_qt)
