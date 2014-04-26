@@ -26,7 +26,7 @@ message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
 message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
 message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
-cmake_minimum_required(VERSION 2.8.11.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.12.1 FATAL_ERROR)
 
 set(EPA_BASE ${CMAKE_BINARY_DIR}/epa_build)
 message(STATUS "EPA_BASE = ${EPA_BASE}")
@@ -417,7 +417,11 @@ else(BUILD_THE_BUILDTOOLS)
     plplot_lite
     gtk+
     wxwidgets
-    qt4_lite
+    # qt4_lite install interferes with qt5_lite build and vice versa.
+    # Therefore, we have commented out the build configuration of
+    # qt4_lite and have chosen to use the build_configuration of
+    # qt5_lite instead.
+    # qt4_lite
     qt5_lite
     )
 endif(BUILD_THE_BUILDTOOLS)
