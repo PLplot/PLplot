@@ -2,7 +2,7 @@
 
 # Configure the build of PLplot.
 
-# Copyright (C) 2013 Alan W. Irwin
+# Copyright (C) 2013-2014 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,10 @@ set(PACKAGE plplot)
 set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
 
 set(dependencies_LIST
-  libagg
+  # agg website now (2014-04-13) a broken link, and this library only
+  # needed in any case for a purpose that may disappear (wxwidgets).
+  # So drop it.
+  #libagg
   libharu
   libqhull
   shapelib
@@ -38,7 +41,7 @@ set(dependencies_LIST
 if(NOT MSYS_PLATFORM)
   list(APPEND dependencies_LIST
     pango
-    qt4_lite
+    qt5_lite
     )
 endif(NOT MSYS_PLATFORM)
 
@@ -71,9 +74,14 @@ list(APPEND cmake_args
   -DDROP_GTK_PLUS_2_BUILDS=ON
   )
 
+# Only use Qt5 since that is all that is epa_built.
+list(APPEND cmake_args
+  -DPLPLOT_USE_QT5=ON
+  )
+
 if(MSYS_PLATFORM)
   # Turn off the cairo and qt device drivers for plplot on Windows
-  # until the pango and qt4_lite packages and all their dependencies
+  # until the pango and qt5_lite packages and all their dependencies
   # build properly on that platform
   list(APPEND cmake_args
     -DDEFAULT_NO_CAIRO_DEVICES:BOOL=ON
