@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006, 2007, 2008, 2009 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -150,8 +150,9 @@ if(BUILD_TEST)
       endif(NOT PLPLOT_USE_QT5 AND NOT QT_LIBRARIES)
     else(CORE_BUILD)
       if(PLPLOT_USE_QT5)
-	message(STATUS "WARNING: Not currently checking for Qt5 in install tree.  qt_example not built")
-	set(BUILD_qt_example OFF)
+	# qt_example build linking taken care of automatically by importing
+	# the plplotqt library.
+	set(BUILD_qt_example ON)
       else(PLPLOT_USE_QT5)
 	# Must find Qt4 all over again here rather than simply copying variables
 	# from the core build to this installed examples build so that we can

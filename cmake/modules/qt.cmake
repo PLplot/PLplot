@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -65,19 +65,88 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_qt)
-  option(PLPLOT_USE_QT5 "Experimental (and currently quite limited) option to try Qt5" OFF)
+  option(PLPLOT_USE_QT5 "Experimental option to try Qt5" OFF)
 
   if(PLPLOT_USE_QT5)
-    find_package(Qt5Core 5.2.0)
-    if(Qt5Core_FOUND)
+    find_package(Qt5 5.2.0 COMPONENTS Svg Gui PrintSupport)
+    if(Qt5_FOUND)
       message(STATUS "Attempting to use Qt5 so have set PLD_epsqt to OFF since Qt5 does not support PostScript")
       set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
-    else(Qt5Core_FOUND)
+    else(Qt5_FOUND)
       message(STATUS
 	"WARNING: Qt5Core could not be found so falling back to Qt4"
 	)
       set(PLPLOT_USE_QT5 OFF CACHE BOOL "Experimental (and currently quite limited) option to try Qt5" FORCE)
-    endif(Qt5Core_FOUND)
+    endif(Qt5_FOUND)
+  endif(PLPLOT_USE_QT5)
+
+  if(PLPLOT_USE_QT5)
+    # Calculate Qt5_library_COMPILE_FLAGS and Qt5_library_LINK_FLAGS
+    # to be used for the pkg-config case.  
+
+    # Note that theoretically you could use execute_process and cmake
+    # --find-package option to determine these flags, but
+    # --find-package is not maintained now and might well disappear in
+    # the future, there is currently a Qt5 CMake support file bug
+    # (badly named GL library) that needs to be addressed for
+    # --find-package to work even at the moment, and also there is a
+    # Qt5 CMake support file bug such that the required macro option
+    # settings are not returned by this approach.
+
+    # Another alternative would be to use the plplotqt target properties,
+    # but translating those into simple compile and link flags is non-trivial
+    # and in fact is the issue that still needs to be addressed
+    # in order for --find-package to work properly for all varieties
+    # of target properties.
+
+    # Therefore, use a brute-force approach (determined by looking at
+    # the compile flags and link flags that CMake finally figures out
+    # to build the plplotqt library).
+
+    # FIXME? This list will need revision whenever the PLplot dependencies
+    # on the Qt5 components are revised.
+    set(Qt5_library_name_list
+      Core
+      Gui
+      PrintSupport
+      Widgets
+      Svg
+      )
+
+    # Qt5 requires position-independent code.  Assume -fPIC will 
+    # create that although apparently that flag is not supported on
+    # all platforms even for gcc, and may not be supported by other
+    # compilers.
+    set(pc_qt_COMPILE_FLAGS "-fPIC")
+    foreach(Qt5_library_name ${Qt5_library_name_list})
+      string(TOUPPER ${Qt5_library_name} macro_core_name)
+      # Set required macros so headers will be found.
+      set(pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS} -DQT_${macro_core_name}_LIB")
+      find_file(${Qt5_library_name}_header_directory Qt${Qt5_library_name})
+      if(${Qt5_library_name}_header_directory)
+	if(${Qt5_library_name} STREQUAL "Core")
+	  get_filename_component(parent_directory ${${Qt5_library_name}_header_directory} DIRECTORY)
+	  set(pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS} -I${parent_directory}")
+	endif(${Qt5_library_name} STREQUAL "Core")
+	set(pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS} -I${${Qt5_library_name}_header_directory}")
+      else(${Qt5_library_name}_header_directory)
+	message(STATUS "${Qt5_library_name}_header_directory = ${${Qt5_library_name}_header_directory}")
+	message(FATAL_ERROR "${Qt${Qt5_library_name}} header_directory not found.")
+      endif(${Qt5_library_name}_header_directory)
+    endforeach(Qt5_library_name ${Qt5_library_name_list})
+
+    set(Qt5_library_fullpath_list)
+    foreach(Qt5_library_name ${Qt5_library_name_list})
+      find_library(Qt5${Qt5_library_name}_fullpath Qt5${Qt5_library_name})
+      if(Qt5${Qt5_library_name}_fullpath)
+	list(APPEND Qt5_library_fullpath_list ${Qt5${Qt5_library_name}_fullpath})
+      else(Qt5${Qt5_library_name}_fullpath)
+	message(STATUS "Qt5${Qt5_library_name}_fullpath = ${Qt5${Qt5_library_name}_fullpath}")
+	message(FATAL_ERROR "Qt5${Qt5_library_name} library not found.")
+      endif(Qt5${Qt5_library_name}_fullpath)
+    endforeach(Qt5_library_name ${Qt5_library_name_list})
+
+    pkg_config_link_flags(Qt5_library_LINK_FLAGS "${Qt5_library_fullpath_list}")
   endif(PLPLOT_USE_QT5)
 endif(ENABLE_qt)
 
@@ -205,13 +274,11 @@ if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
 endif(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
 
-## FIXME when a method has been found to use Qt5 with the traditional
-## Makefile + pkg-config build system for the installed examples.
-if(ENABLE_qt AND NOT PLPLOT_USE_QT5)
+if(ENABLE_qt)
   set(qt_gui_true "")
-else(ENABLE_qt AND NOT PLPLOT_USE_QT5)
+else(ENABLE_qt)
   set(qt_gui_true "#")
-endif(ENABLE_qt AND NOT PLPLOT_USE_QT5)
+endif(ENABLE_qt)
 
 if(ANY_QT_DEVICE)
   if(ENABLE_DYNDRIVERS)
@@ -228,6 +295,7 @@ if(ANY_QT_DEVICE)
     # instead to break circular linking.
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${qt_LINK_FLAGS})
     set(qt_SOURCE ${CMAKE_SOURCE_DIR}/bindings/qt_gui/plqt.cpp)
+
   endif(ENABLE_DYNDRIVERS)
 endif(ANY_QT_DEVICE)
 

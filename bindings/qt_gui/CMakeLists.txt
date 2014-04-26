@@ -114,15 +114,25 @@ if(ENABLE_qt)
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  # Transform "${QT_LIBRARIES}" to the standard pkg-config form.
-  pkg_config_link_flags(
-    libplplotqt${LIB_TAG}_LINK_FLAGS
-    "${QT_LIBRARIES}"
-    )
-
-  # Configure pkg-config *.pc file corresponding to the compile and link
-  # flags needed by a Qt GUI executable using extqt to gain access to PLplot.
   if(PKG_CONFIG_EXECUTABLE)
+    if(PLPLOT_USE_QT5)
+      # For this special case QT_LIBRARIES is not populated so must
+      # use this alternative method to add Qt(5) libraries to the pkg-config file
+      # for the plplotqt library.
+      set(
+	libplplotqt${LIB_TAG}_LINK_FLAGS
+	"${Qt5_library_LINK_FLAGS}"
+	)
+    else(PLPLOT_USE_QT5)
+      # Transform "${QT_LIBRARIES}" to the standard pkg-config form.
+      pkg_config_link_flags(
+	libplplotqt${LIB_TAG}_LINK_FLAGS
+	"${QT_LIBRARIES}"
+	)
+    endif(PLPLOT_USE_QT5)
+
+    # Configure pkg-config *.pc file corresponding to the compile and link
+    # flags needed by a Qt GUI executable using extqt to gain access to PLplot.
     if(LIB_TAG)
       set(PC_PRECISION "double")
     else(LIB_TAG)
