@@ -3,7 +3,7 @@
 # Configure the build of a "lite" version of PLplot (with fewer dependencies
 # but with fewer features as well).
 
-# Copyright (C) 2013 Alan W. Irwin
+# Copyright (C) 2013-2014 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,10 @@ set(PACKAGE plplot_lite)
 set(ignored_dependencies_LIST ${extra_ignored_dependencies_list})
 
 set(dependencies_LIST
-  libagg
+  # agg website now (2014-04-13) a broken link, and this library only
+  # needed in any case for a purpose that may disappear (wxwidgets).
+  # So drop it.
+  #libagg
   libharu
   libqhull
   shapelib
