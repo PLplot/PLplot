@@ -76,17 +76,17 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wi
 
 typedef struct
 {
-    PLFLT scale;                     // scaling factor to "blow up" to the "virtual" page in removing hidden lines
-    PLINT width;                     // Window width (which can change)
-    PLINT height;                    // Window Height
+    PLFLT        scale;              // scaling factor to "blow up" to the "virtual" page in removing hidden lines
+    PLINT        width;              // Window width (which can change)
+    PLINT        height;             // Window Height
 
-    PLFLT PRNT_scale;
-    PLINT PRNT_width;
-    PLINT PRNT_height;
+    PLFLT        PRNT_scale;
+    PLINT        PRNT_width;
+    PLINT        PRNT_height;
 
     PLGraphicsIn gin;
 
-    char  FT_smooth_text;
+    char         FT_smooth_text;
 //
 // WIN32 API variables
 //
@@ -1000,13 +1000,13 @@ GetCursorCmd( PLStream *pls, PLGraphicsIn *gin )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
 
-    HCURSOR crosshair;
-    HCURSOR previous;
+    HCURSOR    crosshair;
+    HCURSOR    previous;
 
     plGinInit( gin );
 
     crosshair = LoadCursor( GetModuleHandle( NULL ), IDC_CROSS );
-    previous = SetCursor( crosshair );
+    previous  = SetCursor( crosshair );
 
     while ( gin->pX < 0 )
     {
@@ -1064,7 +1064,7 @@ GetCursorCmd( PLStream *pls, PLGraphicsIn *gin )
 void
 plD_esc_wingcc( PLStream *pls, PLINT op, void *ptr )
 {
-    wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
+    wingcc_Dev   *dev = (wingcc_Dev *) pls->dev;
     PLGraphicsIn *gin = &( dev->gin );
 
 
