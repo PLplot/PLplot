@@ -24,23 +24,23 @@
 #
 # PLD_extcairo            - ON means the extcairo device is enabled.
 # PLD_memcairo            - ON means the memcairo device is enabled.
-# PLD_pdfcairo		  - ON means the pdfcairo device is enabled.
-# PLD_pngcairo		  - ON means the pngcairo device is enabled.
-# PLD_pscairo		  - ON means the pscairo device is enabled.
-# PLD_epscairo		  - ON means the epscairo device is enabled.
-# PLD_svgcairo		  - ON means the svgcairo device is enabled.
-# PLD_xcairo		  - ON means the xcairo device is enabled.
+# PLD_pdfcairo            - ON means the pdfcairo device is enabled.
+# PLD_pngcairo            - ON means the pngcairo device is enabled.
+# PLD_pscairo             - ON means the pscairo device is enabled.
+# PLD_epscairo            - ON means the epscairo device is enabled.
+# PLD_svgcairo            - ON means the svgcairo device is enabled.
+# PLD_xcairo              - ON means the xcairo device is enabled.
 # PLD_wincairo            - ON means the wincairo device is enabled.
-# cairo_COMPILE_FLAGS	  - Blank-delimited COMPILE_FLAGS required to
-# 			    compile cairo device drivers.
-# cairo_LINK_FLAGS	  - list of full path names of libraries and
-# 			    linker flags for dynamic cairo device driver.
-# cairo_RPATH	       	  - RPATH directory list for cairo device driver.
-# 			    current assumption is the list only has one
-#			    element corresponding to the pkg-config libdir
-#			    variable for pangocairo.
-# DRIVERS_LINK_FLAGS	  - list of device LINK_FLAGS for case
-# 			    when ENABLE_DYNDRIVERS OFF.
+# cairo_COMPILE_FLAGS     - Blank-delimited COMPILE_FLAGS required to
+#                           compile cairo device drivers.
+# cairo_LINK_FLAGS        - list of full path names of libraries and
+#                           linker flags for dynamic cairo device driver.
+# cairo_RPATH             - RPATH directory list for cairo device driver.
+#                           current assumption is the list only has one
+#                           element corresponding to the pkg-config libdir
+#                           variable for pangocairo.
+# DRIVERS_LINK_FLAGS      - list of device LINK_FLAGS for case
+#                           when ENABLE_DYNDRIVERS OFF.
 
 # Include file searches use FindPath. To add extra search directories
 # set the environment variable CMAKE_INCLUDE_PATH.
@@ -125,13 +125,13 @@ if(
     if(PLD_xcairo AND X11_COMPILE_FLAGS)
       # Blank-delimited required.
       string(REGEX REPLACE ";" " "
-	cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
-	)
+        cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
+        )
       set(cairo_LINK_FLAGS ${linkflags} ${X11_LIBRARIES})
     else(PLD_xcairo AND X11_COMPILE_FLAGS)
       message(STATUS
-	"WARNING: X windows not found. Setting xcairo driver to OFF."
-	)
+        "WARNING: X windows not found. Setting xcairo driver to OFF."
+        )
       # Blank-delimited required.
       set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
       # now deal with remaining cairo devices.
@@ -184,16 +184,18 @@ if(NOT PLD_extcairo)
   set(extcairo_true "#")
 endif(NOT PLD_extcairo)
 
-if(NOT WIN32_OR_CYGWIN)
-  message(STATUS
-    "Not a Windows platform so setting wincairo driver to OFF."
-    )
-  set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
-else(NOT WIN32_OR_CYGWIN)
-  if(CYGWIN)
+if(PLD_wincairo)
+  if(NOT WIN32_OR_CYGWIN)
     message(STATUS
-      "Cygwin does not currently provide support for the wincairo driver - turning this OFF."
+      "Not a Windows platform so setting wincairo driver to OFF."
       )
     set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
-  endif(CYGWIN)
-endif(NOT WIN32_OR_CYGWIN)
+  else(NOT WIN32_OR_CYGWIN)
+    if(CYGWIN)
+      message(STATUS
+        "Cygwin does not currently provide support for the wincairo driver - turning this OFF."
+        )
+      set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
+    endif(CYGWIN)
+  endif(NOT WIN32_OR_CYGWIN)
+endif(PLD_wincairo)
