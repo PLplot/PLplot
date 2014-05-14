@@ -222,6 +222,16 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
     # (such as "-framework whatever") so preserve those by splitting into
     # separate list elements only if the next element starts with a hyphen.
     string(REGEX REPLACE " -" ";-" _link_flags_list "${_link_flags_in}")
+    if(NOT MATH_LIB)
+      # On systems (normally Windows) where MATH_LIB is not defined
+      # filter out -lm from link flags.  This works around a pkg-config
+      # configuration bug on Windows for the GTK+ stack of libraries where
+      # -lm is supplied as a required library flag when that library does
+      # not exist on Windows platforms.
+      list(REMOVE_ITEM _link_flags_list "-lm")
+    endif(NOT MATH_LIB)
+    #message("_link_flags_list = ${_link_flags_list}")
+
     # Extract list of directories from -L options.
     list(LENGTH _link_flags_list _link_flags_length)
     math(EXPR _link_flags_length "${_link_flags_length} - 1")
@@ -236,11 +246,10 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
       endif(_list_element STREQUAL "-L${_list_element1}")
     endforeach(_list_index RANGE ${_link_flags_length})
     #message("_index_list = ${_index_list}")
-    if("${_index_list}" STREQUAL "")
-    else("${_index_list}" STREQUAL "")
+    if(NOT "${_index_list}" STREQUAL "")
       # Remove -L options from list.
       list(REMOVE_AT _link_flags_list ${_index_list})
-    endif("${_index_list}" STREQUAL "")
+    endif(NOT "${_index_list}" STREQUAL "")
     #message("_link_directory_list = ${_link_directory_list}")
     #message("_link_flags_list (without -L options) = ${_link_flags_list}")
   

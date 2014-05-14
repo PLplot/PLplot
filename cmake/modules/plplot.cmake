@@ -398,7 +398,20 @@ if(PERL_FOUND)
     check_perl_modules(PERL_XML_PARSER XML::Parser)
     check_perl_modules(PERL_XML_DOM XML::DOM)
 endif(PERL_FOUND)
-	    
+
+# =======================================================================
+# MATH_LIB must be defined (or not) before pkg-config.
+# =======================================================================
+
+# On windows systems the math library is not separated so do not specify
+# it unless you are on a non-windows system.
+if(NOT WIN32_OR_CYGWIN)
+  find_library(MATH_LIB NAMES m PATHS /usr/local/lib /usr/lib)
+  if(NOT MATH_LIB)
+    message(FATAL_ERROR "Cannot find required math library")
+  endif(NOT MATH_LIB)
+endif(NOT WIN32_OR_CYGWIN)
+
 # =======================================================================
 # pkg-config support as well as macros to put link flags in standard
 # *.pc (pkg-config) form as well as standard fullpath form used by cmake.
@@ -521,14 +534,6 @@ endif(WIN32_OR_CYGWIN AND NOT MINGW)
 # Support for shapelib library for reading shapefile map data
 include(shapelib)
 include(freetype)
-# On windows systems the math library is not separated so do not specify
-# it unless you are on a non-windows system.
-if(NOT WIN32_OR_CYGWIN)
-  find_library(MATH_LIB NAMES m PATHS /usr/local/lib /usr/lib)
-  if(NOT MATH_LIB)
-    message(FATAL_ERROR "Cannot find required math library")
-  endif(NOT MATH_LIB)
-endif(NOT WIN32_OR_CYGWIN)
 # csiro must come after MATH_LIB is defined (or not).
 # csiro must come after c++ and fortran because of use of filter_rpath
 include(csiro)
