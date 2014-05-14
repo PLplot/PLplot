@@ -36,9 +36,11 @@ export EPA_BUILD_SOURCE_PATH=/z/home/software/plplot_svn/HEAD/plplot_allura/cmak
 # N.B. $MINGW_PREFIX/msys/1.0/include is equivalent to /usr/include on bash.
 export CMAKE_INCLUDE_PATH=$MINGW_PREFIX/msys/1.0/include:$MINGW_PREFIX/include:$MINGW_PREFIX/lib/gcc/mingw32/$MINGW_VERSION/include:/z/home/wine/wine_build/install-$WINEVERSION/include/wine/msvcrt:/z/home/wine/wine_build/install-$WINEVERSION/include/wine/windows
 
-# For MinGW on Wine, no help is required to find mingw, msys, or wine libraries
-# because the appropriate dll's are on the PATH.
-export CMAKE_LIBRARY_PATH=
+# For MinGW on Wine, normally no help is required to find mingw, msys,
+# or wine libraries because the appropriate dll's are on the PATH.
+# However, gdi is an exception where for some reason the Wine version
+# is not the appropriate format so use the MinGW version instead.
+export CMAKE_LIBRARY_PATH=$MINGW_PREFIX/lib
 
 # Help CMake find Python headers and library.
 CMAKE_INCLUDE_PATH=$PYTHON_PATH/include:$CMAKE_INCLUDE_PATH
