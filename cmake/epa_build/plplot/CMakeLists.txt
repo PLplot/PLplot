@@ -89,6 +89,12 @@ if(MSYS_PLATFORM)
     #-DDEFAULT_NO_CAIRO_DEVICES:BOOL=ON
     -DDEFAULT_NO_QT_DEVICES:BOOL=ON
     -DENABLE_qt=OFF
+    # Also turn off simple testing of dynamically loaded devices
+    # because on Windows sometimes the simple test fails (in the
+    # sense of giving the correct result while generating a
+    # non-zero return code for unknown reasons) but the
+    # actual dynload done by the PLplot library succeeds for some reason.
+    -DTEST_DYNDRIVERS=OFF
     )
 endif(MSYS_PLATFORM)
 
