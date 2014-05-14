@@ -84,7 +84,9 @@ if(MSYS_PLATFORM)
   # until the pango and qt5_lite packages and all their dependencies
   # build properly on that platform
   list(APPEND cmake_args
-    -DDEFAULT_NO_CAIRO_DEVICES:BOOL=ON
+    # Except as a trial possibility we use a binary downloaded version
+    # of gtk+ on Windows.
+    #-DDEFAULT_NO_CAIRO_DEVICES:BOOL=ON
     -DDEFAULT_NO_QT_DEVICES:BOOL=ON
     -DENABLE_qt=OFF
     )

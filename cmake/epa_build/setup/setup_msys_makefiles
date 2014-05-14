@@ -37,4 +37,11 @@ export BUILD_COMMAND=make
 # Put MSYS at the top of the PATH
 PATH=$MINGW_PREFIX/msys/1.0/bin/:$PATH
 
+# Temporary until epa_build of pango and its dependencies works on either
+# MinGW or MinGW/MSYS
+# N.B. put all PATH additions at the bottom so the epa_build versions prevail
+# (such as pkg-config) if they are available.
+PATH=$PATH:/z/home/wine/gtkplus/3.6.4/bin
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/z/home/wine/gtkplus/3.6.4/lib/pkgconfig
+
 export GENERATOR_STRING="MSYS Makefiles"
