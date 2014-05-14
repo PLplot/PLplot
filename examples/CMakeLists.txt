@@ -945,7 +945,7 @@ if(BUILD_TEST)
 
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
     add_custom_target(test_pltcl_standard_examples
-      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev ${generic_interactive_device} -np
+      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev ${generic_interactive_device} -np
       DEPENDS ${${generic_interactive_device}_target}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
       )
@@ -971,7 +971,7 @@ if(BUILD_TEST)
       # tests that use "package require Pltcl" only work if
       # BUILD_SHARED_LIBS is true.
       add_custom_target(test_tclsh_standard_examples
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
+	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
 	DEPENDS ${${generic_interactive_device}_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
@@ -1046,7 +1046,7 @@ if(BUILD_TEST)
     list(APPEND targets_examples_tk test_tk_plgrid)
 
     add_custom_target(test_plserver_standard_examples
-      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_standard_examples
+      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_standard_examples
       DEPENDS ${xwin_target}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
       )
@@ -1067,7 +1067,7 @@ if(BUILD_TEST)
       # tests that use "package require Pltk" only work if
       # BUILD_SHARED_LIBS is true.
       add_custom_target(test_wish_standard_examples
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples
+	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
       add_dependencies(test_wish_standard_examples
@@ -1139,7 +1139,7 @@ if(BUILD_TEST)
       endif(USE_INCRTCL_VERSION_4)
 
       add_custom_target(test_plserver_runAllDemos
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_runAllDemos
+	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_runAllDemos
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
       add_dependencies(test_plserver_runAllDemos
@@ -1160,7 +1160,7 @@ if(BUILD_TEST)
 	# tests that use "package require Plplotter" only work if
 	# BUILD_SHARED_LIBS is true.
 	add_custom_target(test_wish_runAllDemos
-	  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos
+	  COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	  )
 	add_dependencies(test_wish_runAllDemos
