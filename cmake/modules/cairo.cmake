@@ -145,7 +145,7 @@ if(
     list(APPEND DRIVERS_LINK_FLAGS ${cairo_LINK_FLAGS})
   else(linkflags)
     message("includedir = ${includedir}")
-    message("libdir = ${libdir}")
+    message("linkdir = ${linkdir}")
     message("linkflags = ${linkflags}")
     message("cflags = ${cflags}")
     message(STATUS

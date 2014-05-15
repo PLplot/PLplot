@@ -292,8 +292,10 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
     # If one or more of the libraries cannot be found, then return an
     # empty ${_link_flags_out} as a sign of that failure.
     if(NOT _success)
+      message(STATUS "cmake_link_flags WARNING: (original link flags) = ${_link_flags_in}")
+      message(STATUS "cmake_link_flags WARNING: ${_link_flags_out} = ${${_link_flags_out}}")
+      message(STATUS "cmake_link_flags WARNING: ${_link_flags_out} is invalid so it is set to nothing to signal the failure of cmake_link_flags for the original link flags printed out above.")
       set(${_link_flags_out})
     endif(NOT _success)
   endif("${_link_flags_in}" STREQUAL "")
 endmacro(cmake_link_flags)
-
