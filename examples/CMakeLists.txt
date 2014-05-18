@@ -475,14 +475,16 @@ if(BUILD_TEST)
     set(plplot_test_debug)
   endif(VALGRIND_EXECUTABLE)
 
+  set(TEST_EXAMPLES_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_examples_output_dir)
+  file(MAKE_DIRECTORY ${TEST_EXAMPLES_OUTPUT_DIR})
   if(CORE_BUILD)
     set(custom_test_script ${CMAKE_BINARY_DIR}/plplot_test/plplot-test.sh)
-    set(custom_env EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples)
+    set(custom_env EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples OUTPUT_DIR=${TEST_EXAMPLES_OUTPUT_DIR})
     set(java_custom_env ${custom_env} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar)
     set(compare_script ${CMAKE_BINARY_DIR}/plplot_test/test_diff.sh)
   else(CORE_BUILD)
     set(custom_test_script ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh)
-    set(custom_env SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR})
+    set(custom_env SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_DIR=${TEST_EXAMPLES_OUTPUT_DIR})
     set(java_custom_env ${custom_env})
     set(compare_script ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
   endif(CORE_BUILD)
@@ -544,7 +546,7 @@ if(BUILD_TEST)
 	  set(environment ${custom_env})
 	endif(language STREQUAL "java")
 
-	list_example_files(${CMAKE_CURRENT_BINARY_DIR} psc ${suffix} output_list)
+	list_example_files(${TEST_EXAMPLES_OUTPUT_DIR} psc ${suffix} output_list)
 	add_custom_command(
 	  OUTPUT ${output_list}
 	  COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
@@ -577,6 +579,7 @@ if(BUILD_TEST)
       # a comparison of stdout and PostScript results.
       add_custom_target(test_diff_psc COMMAND ${compare_command}
 	DEPENDS ${diff_files_LIST}
+	WORKING_DIRECTORY ${TEST_EXAMPLES_OUTPUT_DIR}
 	)
       add_dependencies(test_diff_psc ${diff_targets_LIST})
       set(noninteractive_targets_LIST test_diff_psc)
@@ -626,7 +629,7 @@ if(BUILD_TEST)
 	  )
       endif(ENABLE_DYNDRIVERS)
       #message("DEBUG:file_device_depends_${device} = ${file_device_depends_${device}}")
-      list_example_files(${CMAKE_CURRENT_BINARY_DIR} ${device} c output_list)
+      list_example_files(${TEST_EXAMPLES_OUTPUT_DIR} ${device} c output_list)
       add_custom_command(
 	OUTPUT ${output_list}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
@@ -984,7 +987,15 @@ if(BUILD_TEST)
       if(FILE_DEPENDS_${generic_interactive_device})
 	add_dependencies(test_tclsh_standard_examples test_${generic_interactive_device}_dyndriver)
       endif(FILE_DEPENDS_${generic_interactive_device})
-      list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
+      if(WIN32_AND_NOT_CYGWIN)
+	message(STATUS "WARNING: The test_tclsh_standard_examples target can be run independently on 
+   the Windows platform, but for the nondynamic drivers case the exit
+   command generates a non-zero return code so until this issue is
+   dealt with this target is excluded from being a dependency of other
+   more general interactive test targets")
+      else(WIN32_AND_NOT_CYGWIN)
+	list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
+      endif(WIN32_AND_NOT_CYGWIN)
     endif(BUILD_SHARED_LIBS)
   endif(ENABLE_tcl AND PLD_${generic_interactive_device})
 
