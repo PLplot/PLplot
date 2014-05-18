@@ -23,9 +23,13 @@
 # a shell is available.
 
 if(SH_EXECUTABLE)
+
+  set(CTEST_EXAMPLES_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ctest_examples_output_dir)
+  file(MAKE_DIRECTORY ${CTEST_EXAMPLES_OUTPUT_DIR})
+  
   set(SCRIPTS)
   set(TEST_ENVIRONMENT
-    "EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples"
+    "EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples OUTPUT_DIR=${CTEST_EXAMPLES_OUTPUT_DIR}"
     )
 
   set(TEST_DEVICE psc CACHE STRING "device used for ctest")
@@ -120,16 +124,14 @@ if(SH_EXECUTABLE)
     )
   list(APPEND SCRIPTS test_c_interactive.sh)
 
-  set(test_output_files_LIST)
   set(examples_compare_DEPENDS)
 
   if(PLD_TEST_DEVICE)
-    add_test(examples_c
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
+    add_test(NAME examples_c
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
       )
     list(APPEND examples_compare_DEPENDS examples_c)
-    list_example_files(. ${TEST_DEVICE} c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_TEST_DEVICE)
 
   if(ENABLE_cxx)
@@ -140,12 +142,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_cxx.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_cxx
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
+      add_test(NAME examples_cxx
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
 	)
       list(APPEND examples_compare_DEPENDS examples_cxx)
-      list_example_files(. ${TEST_DEVICE} cxx output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_cxx)
 
@@ -157,12 +158,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_f95.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_f95
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
+      add_test(NAME examples_f95
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
 	)
       list(APPEND examples_compare_DEPENDS examples_f95)
-      list_example_files(. ${TEST_DEVICE} f95 output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_f95)
 
@@ -174,12 +174,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_java.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_java
-	${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
+      add_test(NAME examples_java
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
 	)
       list(APPEND examples_compare_DEPENDS examples_java)
-      list_example_files(. ${TEST_DEVICE} j output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_java)
 
@@ -199,12 +198,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_octave.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_octave
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
+      add_test(NAME examples_octave
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
 	)
       list(APPEND examples_compare_DEPENDS examples_octave)
-      list_example_files(. ${TEST_DEVICE} o output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_octave)
 
@@ -216,12 +214,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_python.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_python
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
+      add_test(NAME examples_python
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
 	)
       list(APPEND examples_compare_DEPENDS examples_python)
-      list_example_files(. ${TEST_DEVICE} p output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_python)
 
@@ -242,12 +239,11 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     if(PLD_TEST_DEVICE)
-      add_test(examples_tcl
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
+      add_test(NAME examples_tcl
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
 	)
       list(APPEND examples_compare_DEPENDS examples_tcl)
-      list_example_files(. ${TEST_DEVICE} t output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
     set(PLTCL_DIR ${BIN_DIR})
     # Transform drive-letter form to leading-slash form, see comment above.
@@ -267,12 +263,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_pdl.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_pdl
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
+      add_test(NAME examples_pdl
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
 	)
       list(APPEND examples_compare_DEPENDS examples_pdl)
-      list_example_files(. ${TEST_DEVICE} pdl output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_pdl)
 
@@ -284,12 +279,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_ada.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_ada
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
+      add_test(NAME examples_ada
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
 	)
       list(APPEND examples_compare_DEPENDS examples_ada)
-      list_example_files(. ${TEST_DEVICE} a output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_ada)
 
@@ -301,12 +295,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_ocaml.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_ocaml
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
+      add_test(NAME examples_ocaml
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
 	)
       list(APPEND examples_compare_DEPENDS examples_ocaml)
-      list_example_files(. ${TEST_DEVICE} ocaml output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_ocaml)
 
@@ -318,12 +311,11 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_lua.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_lua
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=lua"
+      add_test(NAME examples_lua
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=lua"
 	)
       list(APPEND examples_compare_DEPENDS examples_lua)
-      list_example_files(. ${TEST_DEVICE} lua output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_lua)
 
@@ -335,176 +327,155 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_d.sh)
     if(PLD_TEST_DEVICE)
-      add_test(examples_d
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=d"
+      add_test(NAME examples_d
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=d"
 	)
       list(APPEND examples_compare_DEPENDS examples_d)
-      list_example_files(. ${TEST_DEVICE} d output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_d)
 
   # Run C examples with different drivers
   if(PLD_ps)
     if (NOT TEST_DEVICE STREQUAL "psc")
-      add_test(examples_psc
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psc"
+      add_test(NAME examples_psc
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psc"
 	)
-      list_example_files(. psc c output_list)
-      list(APPEND test_output_files_LIST ${output_list})
     endif(NOT TEST_DEVICE STREQUAL "psc")
   endif(PLD_ps)
 
   if(PLD_psttf)
-    add_test(examples_psttfc
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
+    add_test(NAME examples_psttfc
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
       )
-    list_example_files(. psttfc c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_psttf)
 
   if(PLD_pstex)
-    add_test(examples_pstex
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pstex"
+    add_test(NAME examples_pstex
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pstex"
       )
-    list_example_files(. pstex c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pstex)
 
   if(PLD_png)
-    add_test(examples_png
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=png"
+    add_test(NAME examples_png
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=png"
       )
-    list_example_files(. png c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_png)
 
   if(PLD_svg)
-    add_test(examples_svg
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
+    add_test(NAME examples_svg
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
       )
-    list_example_files(. svg c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_svg)
 
   if(PLD_plmeta)
-    add_test(examples_plmeta
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=plmeta"
+    add_test(NAME examples_plmeta
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=plmeta"
       )
-    list_example_files(. plmeta c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_plmeta)
 
   if(PLD_pscairo)
-    add_test(examples_pscairo
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pscairo"
+    add_test(NAME examples_pscairo
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pscairo"
       )
-    list_example_files(. pscairo c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pscairo)
 
   if(PLD_pngcairo)
-    add_test(examples_pngcairo
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngcairo"
+    add_test(NAME examples_pngcairo
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngcairo"
       )
-    list_example_files(. pngcairo c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pngcairo)
 
   if(PLD_xfig)
-    add_test(examples_xfig
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=xfig"
+    add_test(NAME examples_xfig
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=xfig"
       )
-    list_example_files(. xfig c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_xfig)
 
   if(PLD_gif)
-    add_test(examples_gif
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=gif"
+    add_test(NAME examples_gif
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=gif"
       )
-    list_example_files(. gif c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_gif)
 
   if(PLD_cgm)
-    add_test(examples_cgm
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=cgm"
+    add_test(NAME examples_cgm
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=cgm"
       )
-    list_example_files(. cgm c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_cgm)
 
   if(PLD_bmpqt)
-    add_test(examples_bmpqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=bmpqt"
+    add_test(NAME examples_bmpqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=bmpqt"
       )
-    list_example_files(. bmpqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_bmpqt)
 
   if(PLD_jpgqt)
-    add_test(examples_jpgqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=jpgqt"
+    add_test(NAME examples_jpgqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=jpgqt"
       )
-    list_example_files(. jpgqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_jpgqt)
 
   if(PLD_pngqt)
-    add_test(examples_pngqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngqt"
+    add_test(NAME examples_pngqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngqt"
       )
-    list_example_files(. pngqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pngqt)
 
   if(PLD_ppmqt)
-    add_test(examples_ppmqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=ppmqt"
+    add_test(NAME examples_ppmqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=ppmqt"
       )
-    list_example_files(. ppmqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_ppmqt)
 
   if(PLD_tiffqt)
-    add_test(examples_tiffqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=tiffqt"
+    add_test(NAME examples_tiffqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=tiffqt"
       )
-    list_example_files(. tiffqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_tiffqt)
 
   if(PLD_svgqt)
-    add_test(examples_svgqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svgqt"
+    add_test(NAME examples_svgqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svgqt"
       )
-    list_example_files(. svgqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_svgqt)
 
   if(PLD_epsqt)
-    add_test(examples_epsqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=epsqt"
+    add_test(NAME examples_epsqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=epsqt"
       )
-    list_example_files(. epsqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_epsqt)
 
   if(PLD_pdfqt)
-    add_test(examples_pdfqt
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdfqt"
+    add_test(NAME examples_pdfqt
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdfqt"
       )
-    list_example_files(. pdfqt c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pdfqt)
 
   if(PLD_pdf)
-    add_test(examples_pdf
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdf"
+    add_test(NAME examples_pdf
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdf"
       )
-    list_example_files(. pdf c output_list)
-    list(APPEND test_output_files_LIST ${output_list})
   endif(PLD_pdf)
 
   if(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
@@ -514,8 +485,9 @@ if(SH_EXECUTABLE)
       @ONLY
       )
     list(APPEND SCRIPTS test_diff.sh)
-    add_test(examples_compare
-      ${SH_EXECUTABLE} -c "./test_diff.sh"
+    add_test(NAME examples_compare
+      WORKING_DIRECTORY ${CTEST_EXAMPLES_OUTPUT_DIR}
+      COMMAND ${SH_EXECUTABLE} -c "${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh"
       )
     # There is a bug in 2.8.x with x < 5 where tests are run out of
     # the order in which they are declared by default.  Also, 2.8.x
@@ -552,13 +524,14 @@ if(SH_EXECUTABLE)
       add_custom_target(lena_octave_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.img)
     endif(ENABLE_octave)
 
-    # Custom target to remove everything created by ctest
-    # N.B. the test_output_files_LIST is extremely long and
-    # overflows the maximum line length of the shell if you
-    # replace "." above with ${CMAKE_CURRENT_BINARY_DIR}
+    # Implement custom target to remove all examples output files
+    # created by ctest in a convenient way. Use special directory to
+    # store these files since otherwise an attempt to remove these
+    # files by name from a multi-use directory can exceed the maximum
+    # command-line length for the "MinGW Makefiles" cmd environment.
     add_custom_target(clean_ctest_plot_files
-      COMMAND ${CMAKE_COMMAND} -E remove ${test_output_files_LIST}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${CTEST_EXAMPLES_OUTPUT_DIR}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CTEST_EXAMPLES_OUTPUT_DIR}
       )
 
   endif(BUILD_TEST)
