@@ -25,6 +25,7 @@
 # It combines building all the examples that need to be built along
 # with testing all examples.
 
+SHELL = @SH_EXECUTABLE@
 all: c/x01c@EXEEXT@
 c/x01c@EXEEXT@:
 	cd c; $(MAKE)

@@ -21,6 +21,7 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+SHELL = @SH_EXECUTABLE@
 GNAT_EXECUTABLE_BUILDER = @GNAT_EXECUTABLE_BUILDER@ \
 	-aI@ADA_INCLUDE_DIR@ -aL@ADA_LIB_DIR@
 EXEEXT = @EXEEXT@
