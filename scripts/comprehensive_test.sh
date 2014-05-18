@@ -193,21 +193,21 @@ Each of the steps in this comprehensive test may take a while...."
 	    cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
 	    output="$OUTPUT_TREE"/traditional_make_noninteractive.out
 	    rm -f "$output"
-	    echo "Traditional $build_command test_noninteractive in the installed examples tree"
-	    $build_command test_noninteractive >& "$output"
+	    echo "Traditional $traditional_build_command test_noninteractive in the installed examples tree"
+	    $traditional_build_command test_noninteractive >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
-		echo "ERROR: Traditional $build_command test_noninteractive failed in the installed examples tree"
+		echo "ERROR: Traditional $traditional_build_command test_noninteractive failed in the installed examples tree"
 		exit 1
 	    fi
 	    if [ "$do_clean_as_you_go" = "yes" ] ; then
 		output="$OUTPUT_TREE"/traditional_clean.out
 		rm -f "$output"
-		echo "Traditional $build_command clean in the installed examples tree (since we are done with it at least for the non-interactive test case)"
-		$build_command clean >& "$output"
+		echo "Traditional $traditional_build_command clean in the installed examples tree (since we are done with it at least for the non-interactive test case)"
+		$traditional_build_command clean >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo "ERROR: Traditional $build_command clean failed in the installed examples tree"
+		    echo "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
 		    exit 1
 		fi
 	    fi
@@ -283,21 +283,21 @@ Each of the steps in this comprehensive test may take a while...."
 	    cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
 	    output="$OUTPUT_TREE"/traditional_make_interactive.out
 	    rm -f "$output"
-	    echo "Traditional $build_command test_interactive in the installed examples tree"
-	    $build_command test_interactive >& "$output"
+	    echo "Traditional $traditional_build_command test_interactive in the installed examples tree"
+	    $traditional_build_command test_interactive >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
-		echo "ERROR: Traditional $build_command test_interactive failed in the installed examples tree"
+		echo "ERROR: Traditional $traditional_build_command test_interactive failed in the installed examples tree"
 		exit 1
 	    fi
 	    if [ "$do_clean_as_you_go" = "yes" ] ; then
 		output="$OUTPUT_TREE"/traditional_clean.out
 		rm -f "$output"
-		echo "Traditional $build_command clean in the installed examples tree (since we are done with it)"
-		$build_command clean >& "$output"
+		echo "Traditional $traditional_build_command clean in the installed examples tree (since we are done with it)"
+		$traditional_build_command clean >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo "ERROR: Traditional $build_command clean failed in the installed examples tree"
+		    echo "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
 		    exit 1
 		fi
 	    fi
@@ -325,8 +325,8 @@ OPTIONS:
 
   The next four control how the builds and tests are done.
   [--generator_string (defaults to 'Unix Makefiles')]
-  [--ctest_command (defaults to 'ctest -j8')]
-  [--build_command (defaults to 'make -j8')]
+  [--ctest_command (defaults to 'ctest -j4')]
+  [--build_command (defaults to 'make -j4')]
 
   The next four control what kind of builds and tests are done.
   [--cmake_added_options (defaults to none, but can be used to specify any
@@ -374,8 +374,8 @@ prefix="${SOURCE_TREE}/../comprehensive_test_disposeable"
 do_clean_as_you_go=yes
 
 generator_string="Unix Makefiles"
-ctest_command="ctest -j8"
-build_command="make -j8"
+ctest_command="ctest -j4"
+build_command="make -j4"
 
 cmake_added_options=
 do_shared=yes
@@ -546,6 +546,21 @@ if [ $usage_reported -eq 1 ]; then
     exit 1
 fi
 
+# The question of what to use for the traditional build command is a
+# tricky one that depends on platform.  Therefore, we hard code the
+# value of this variable rather than allowing the user to change it.
+if [ "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" ] ; then
+    # For both these cases the MSYS make command should be used rather than
+    # the MinGW mingw32-make command.  But a
+    # parallel version of the MSYS make command is problematic.
+    # Therefore, specify no -j option.
+    traditional_build_command="make"
+else
+    # For all other cases, the traditional build command should be the
+    # same as the build command.
+    traditional_build_command="$build_command"
+fi
+
 echo "Summary of options used for these tests
 
 prefix=$prefix
@@ -556,6 +571,7 @@ generator_string=$generator_string"
 echo "
 ctest_command=$ctest_command
 build_command=$build_command
+traditional_build_command=$traditional_build_command
 
 cmake_added_options=$cmake_added_options
 do_shared=$do_shared
