@@ -2466,7 +2466,14 @@ plGetName( const char *dir, const char *subdir, const char *filename, char **fil
         strcat_delim( *filespec );
         strcat( *filespec, filename );
     }
+#ifdef WIN32
+    // According to http://msdn.microsoft.com/en-us/library/vstudio/tcxf1dw6.aspx
+    // and also Wine tests, Microsoft does not support the c99 standard %zu
+    // format.  Instead, %lu is recommended for size_t.
+    pldebug( "plGetName", "Maximum length of full pathname of file to be found is %lu\n", lfilespec - 1 );
+#else
     pldebug( "plGetName", "Maximum length of full pathname of file to be found is %zu\n", lfilespec - 1 );
+#endif
     pldebug( "plGetName", "Full pathname of file to be found is %s\n", *filespec );
 }
 
