@@ -2786,15 +2786,17 @@ pllib_devinit()
     plsc->dispatch_table = dispatch_table[plsc->device - 1];
 }
 
-PLDLLIMPEXP int plInBuildTree()
+int plInBuildTree()
 {
     static int inited      = 0;
     static int inBuildTree = 0;
 
     if ( inited == 0 )
     {
-        char currdir[PLPLOT_MAX_PATH];
-        char builddir[PLPLOT_MAX_PATH];
+        int  len_currdir, len_builddir;
+        char currdir[PLPLOT_MAX_PATH], *pcurrdir = currdir;
+        char builddir[PLPLOT_MAX_PATH], *pbuilddir = builddir;
+
 
         if ( getcwd( currdir, PLPLOT_MAX_PATH ) == NULL )
         {
@@ -2813,9 +2815,29 @@ PLDLLIMPEXP int plInBuildTree()
                 }
                 else
                 {
-                    // On Windows the first character is the drive letter - it is case-insensitive
-                    if ( strncmp( builddir + 1, currdir + 1, strlen( builddir + 1 ) ) == 0 &&
-                         tolower( builddir[0] ) == tolower( currdir[0] ) )
+                    len_currdir  = strlen( currdir );
+                    len_builddir = strlen( builddir );
+#if defined ( _MSC_VER )
+                    // On Windows all parts of the path are case insensitive
+                    // so convert to lower case for the comparison.
+                    for (; *pcurrdir; ++pcurrdir )
+                        *pcurrdir = tolower( *pcurrdir );
+                    for (; *pbuilddir; ++pbuilddir )
+                        *pbuilddir = tolower( *pbuilddir );
+#define PLPLOT_PATH_DELIMITER    '\\'
+#else
+#define PLPLOT_PATH_DELIMITER    '/'
+#endif
+                    // builddir does not have trailing path delimiter
+                    // so the strncmp comparison checks if currdir is
+                    // exactly the builddir or builddir with a string
+                    // appended.  So if that test succeeds, then check
+                    // further if the currdir is exactly the build_dir
+                    // or the appended string starts with the path
+                    // delimiter, i.e., whether currdir is the builddir or
+                    // a subdirectory of that directory.
+                    if ( strncmp( builddir, currdir, len_builddir ) == 0 &&
+                         ( len_currdir == len_builddir || currdir[len_builddir] == PLPLOT_PATH_DELIMITER ) )
                     {
                         inBuildTree = 1;
                     }
@@ -2887,11 +2909,11 @@ plInitDispatchTable()
     int n;
 
 #ifdef ENABLE_DYNDRIVERS
-    char         buf[BUFFER2_SIZE];
+    char buf[BUFFER2_SIZE];
     const char   * drvdir;
     char         *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
-    int          seq;
-    int          i, j, driver_found, done = 0;
+    int seq;
+    int i, j, driver_found, done = 0;
     FILE         *fp_drvdb   = NULL;
     DIR          * dp_drvdir = NULL;
     struct dirent* entry;
@@ -3129,9 +3151,9 @@ plInitDispatchTable()
 static void
 plSelectDev()
 {
-    int    dev, i, count;
+    int dev, i, count;
     size_t length;
-    char   response[80];
+    char response[80];
     char   * devname_env;
 
 // If device name is not already specified, try to get it from environment
@@ -3239,11 +3261,11 @@ static void
 plLoadDriver( void )
 {
 #ifdef ENABLE_DYNDRIVERS
-    int  i, drvidx;
+    int i, drvidx;
     char sym[BUFFER_SIZE];
     char *tag;
 
-    int  n = plsc->device - 1;
+    int n = plsc->device - 1;
     PLDispatchTable  *dev    = dispatch_table[n];
     PLLoadableDriver *driver = 0;
 
@@ -4240,7 +4262,7 @@ plP_image( PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT
 #if 0   // BEGIN dev_fastimg COMMENT
     PLINT i, npts;
     short *xscl, *yscl;
-    int   plbuf_write;
+    int plbuf_write;
 
     plsc->page_status = DRAWING;
 
