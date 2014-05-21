@@ -423,6 +423,7 @@ else(BUILD_THE_BUILDTOOLS)
     # qt5_lite instead.
     # qt4_lite
     qt5_lite
+    freetype
     )
 endif(BUILD_THE_BUILDTOOLS)
 
