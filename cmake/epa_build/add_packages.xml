@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!--
-Most of these data derived from http://www.linuxfromscratch.org, a
-wonderful site that provides fundamental build information for a lot
+Most of these data derived from http://www.linuxfromscratch.org/blfs/view/svn/
+a wonderful site that provides fundamental build information for a lot
 of different free software packages.
 -->
 <moduleset>
