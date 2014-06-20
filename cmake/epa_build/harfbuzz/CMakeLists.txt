@@ -31,7 +31,7 @@ set(PACKAGE harfbuzz)
 # ignored.
 set(ignored_dependencies_LIST pkg-config;bison;flex;python2-devel;libX11;libXft;xorg-kbproto;xorg-macros;xorg-xproto;dbus ${extra_ignored_dependencies_list})
 
-set(dependencies_LIST glib;ragel)
+set(dependencies_LIST glib;ragel;freetype_nohb)
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
