@@ -424,6 +424,7 @@ else(BUILD_THE_BUILDTOOLS)
     # qt4_lite
     qt5_lite
     freetype
+    libLASi
     )
 endif(BUILD_THE_BUILDTOOLS)
 
