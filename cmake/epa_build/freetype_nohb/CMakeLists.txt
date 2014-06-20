@@ -44,6 +44,8 @@ epa_boilerplate(
   ) 
 
 set(CFLAGS "$ENV{CFLAGS}")
+# Drop -fvisibility=hidden since that option does not work for this package.
+string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 
 # Data that is related to downloads.
 set(URL http://downloads.sourceforge.net/freetype/freetype-2.5.3.tar.bz2)
