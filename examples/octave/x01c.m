@@ -85,7 +85,7 @@ function ix01c(strm)
     printf("\n\nYou are in Locate mode. Click any mouse button or press any key\n\
 and the current cursor position will be printed.\n\
 Please keep <NumLock> and <CapsLock> off.\n\
-Terminate locate mode with the <Enter> key.\n\ 
+Terminate locate mode with the <Enter> key.\n\
 Finish the plot with the <Enter> or <ESC> key or the 3d mouse button\n");
 
     fflush(stdout);

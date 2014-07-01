@@ -120,8 +120,8 @@ function plot2
   i = 0:npts-1;
   x = i*60.0*60.0*24.0;
   p = asin(0.39795*cos(0.2163108 + 2*atan(0.9671396*tan(0.00860*(i-186)))));
-  d = 24.0 - (24.0/pi)*acos( (sin(0.8333*pi/180.0) + \
-			      sin(lat*pi/180.0)*sin(p)) \
+  d = 24.0 - (24.0/pi)*acos( (sin(0.8333*pi/180.0) + ...
+			      sin(lat*pi/180.0)*sin(p)) ...
 			    ./(cos(lat*pi/180.0)*cos(p)) ); 
   y = d;
   
