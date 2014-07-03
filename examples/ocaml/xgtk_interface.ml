@@ -47,6 +47,7 @@ let redraw widget plcairo _ =
   true
 
 let () =
+  ignore (GtkMain.Main.init ());
   (* Make a simple plot. *)
   let plcairo =
     plinit_cairo ~clear:true (plot_width, plot_height) plimagecairo
