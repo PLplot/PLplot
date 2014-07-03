@@ -56,7 +56,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
     # ocamlc *.mli source file must be in ${CMAKE_CURRENT_BINARY_DIR}.
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
-    COMMAND ${OCAMLFIND} ocamlc -package cairo -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
+    COMMAND ${OCAMLFIND} ocamlc -package cairo2 -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -74,7 +74,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     # ocamlc and ocamlopt *.ml source file must be in
     # ${CMAKE_CURRENT_BINARY_DIR}.
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
-    COMMAND ${OCAMLFIND} ocamlc -package cairo -I ${PATH_TO_PLPLOT_CMA} plplot.cma -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
+    COMMAND ${OCAMLFIND} ocamlc -package cairo2 -I ${PATH_TO_PLPLOT_CMA} plplot.cma -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
@@ -118,7 +118,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
       # ocamlc and ocamlopt *.ml source file must be in
       # ${CMAKE_CURRENT_BINARY_DIR}.
       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
-      COMMAND ${OCAMLFIND} ocamlopt -package cairo -I ${PATH_TO_PLPLOT_CMXA} -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
+      COMMAND ${OCAMLFIND} ocamlopt -package cairo2 -I ${PATH_TO_PLPLOT_CMXA} -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
       DEPENDS
       ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
@@ -193,7 +193,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     # comments in the source file.  Source can be a .ml or a .mli.
     add_custom_command(
       OUTPUT ${OCAMLDOC_FILES}
-      COMMAND ${OCAMLFIND} doc -package cairo -html ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
+      COMMAND ${OCAMLFIND} doc -package cairo2 -html ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

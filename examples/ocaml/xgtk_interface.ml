@@ -34,7 +34,7 @@ let gui_height = plot_height / 2
 
 (** Get a Cairo context from the Gtk drawing area. *)
 let get_cairo w =
-  Cairo_lablgtk.create w#misc#window
+  Cairo_gtk.create w#misc#window
 
 (** Callback to redraw the plot contents.  If the window is resized then the
     plot will be stretched to fit the new window dimensions. *)

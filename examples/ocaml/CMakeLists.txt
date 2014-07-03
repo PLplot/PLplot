@@ -254,7 +254,7 @@ if(OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
 	COMMAND ${OCAMLFIND} ${ocaml_compiler}
-	-package cairo.lablgtk2
+	-package cairo2.lablgtk2
 	-linkpkg
 	-g
 	-I ${I_OPTION_PLPLOT}
