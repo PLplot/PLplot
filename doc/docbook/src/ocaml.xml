@@ -176,11 +176,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         from <ulink url="http://caml.inria.fr/">caml.inria.fr</ulink>. Several
         Linux distributions including Debian, Ubuntu and Fedora have OCaml
         binary packages available.  Another route to obtaining OCaml is by
-        using GODI, a source-based distribution of OCaml and a number of OCaml
-        libraries.  GODI can be retrieved from
-        <ulink url="http://godi.camlcity.org/">godi.camlcity.org</ulink>.
-        GODI has support for building and installing under Linux, Apple's OS X
-        and MS Windows.
+        using opam, a source-based distribution of OCaml and a number of OCaml
+        libraries.  opam can be retrieved from
+        <ulink url="http://opam.ocaml.org/">opam.ocaml.org</ulink>.
       </para>
     </sect2>
   </sect1>
@@ -277,11 +275,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           (* Initialize a new plot, using the windowed Cairo device
              ("xcairo") *)
           let p =
-            P.init (-10.0, 0.0) (10.0, 100.0) P.Greedy (P.Window P.Cairo)
+            P.init (-10.0, 0.0) (10.0, 100.0) `greedy (`window `cairo)
           in
 
           (* Draw the parabola *)
-          P.plot ~stream:p [P.func P.Blue (fun x -> x ** 2.0) (-10.0, 10.0)];
+          P.plot ~stream:p [P.func `blue (fun x -> x ** 2.0) (-10.0, 10.0)];
 
           (* Draw the plot axes and close up the plot stream using the default
              spacing between tick marks. *)
