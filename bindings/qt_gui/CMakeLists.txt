@@ -175,4 +175,5 @@ if(ENABLE_qt)
   endif(PKG_CONFIG_EXECUTABLE)
 
   add_subdirectory(pyqt4)
+  add_subdirectory(smoke)
 endif(ENABLE_qt)

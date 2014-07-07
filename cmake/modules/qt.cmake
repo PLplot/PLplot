@@ -52,6 +52,7 @@
 # ENABLE_qt		  - ON means the plplot_qt library is enabled.
 # ENABLE_pyqt4		  - ON means the plplot_pyqt4 Python extension module
 # 			    is enabled.
+# ENABLE_smoke            - ON means the smoke plplotqt library is enabled.
 # SIP_EXECUTABLE	  - full path for sip
 # PYQT_SIP_DIR		  - sip system directory
 # PYQT_SIP_FLAGS	  - sip command flags
@@ -59,9 +60,11 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_qt "Enable Qt bindings" OFF)
   option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
+  option(ENABLE_smoke "Enable smoke Qt bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_qt "Enable Qt bindings" ON)
   option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
+  option(ENABLE_smoke "Enable smoke Qt bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_qt)
@@ -341,3 +344,17 @@ if(ENABLE_pyqt4)
   # COMMAND will work properly with these flags later on.
   string(REGEX REPLACE " " ";" PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
 endif(ENABLE_pyqt4)
+
+if(ENABLE_smoke)
+  find_package(Smoke)
+  if(NOT SMOKE_GEN_BIN)
+    message(STATUS
+      "WARNING: smoke not found so setting ENABLE_smoke to OFF."
+      )
+    set(ENABLE_smoke OFF CACHE BOOL "Enable smoke Qt extension module " FORCE)
+  endif(NOT SMOKE_GEN_BIN)
+
+  # Doesn't work so disable.
+  set(ENABLE_smoke OFF CACHE BOOL "Enable smoke Qt extension module " FORCE)
+  
+endif(ENABLE_smoke)
