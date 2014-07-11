@@ -674,7 +674,12 @@ QtPLWidget::QtPLWidget( int i_iWidth, int i_iHeight, QWidget* parent ) :
     resize( i_iWidth, i_iHeight );
     lastColour.r = -1;
     setVisible( true );
-    QApplication::processEvents();
+    // Dropping this appears to give more reliable results
+    // (QColor::setRgb: RGB parameters out of range warnings go away)
+    // according to Jonathan Woithe <jwoithe@just42.net> and according
+    // to my own tests does not affect results from the
+    // test_interactive target.
+    // QApplication::processEvents();
     redrawFromLastFlush = false;
     redrawAll           = true;
 
