@@ -660,6 +660,10 @@ typedef plf2ops_t * PLF2OPS;
 #define    plline3                  c_plline3
 #define    pllsty                   c_pllsty
 #define    plmap                    c_plmap
+#define    plmapline                c_plmapline
+#define    plmapstring              c_plmapstring
+#define    plmaptex                 c_plmaptex
+#define    plmapfill                c_plmapfill
 #define    plmeridians              c_plmeridians
 #define    plmesh                   c_plmesh
 #define    plmeshc                  c_plmeshc
@@ -1287,11 +1291,41 @@ c_plline3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z );
 PLDLLIMPEXP void
 c_pllsty( PLINT lin );
 
-// plot continental outline in world coordinates
+// Plot continental outline in world coordinates
 
 PLDLLIMPEXP void
 c_plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+
+// Plot map outlines
+
+PLDLLIMPEXP void
+c_plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
+       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+	   int* plotentries, int nplotentries);
+
+// Plot map points
+
+PLDLLIMPEXP void 
+c_plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, const char *string,
+		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+		int* plotentries, int nplotentries);
+
+// Plot map text
+
+PLDLLIMPEXP void 
+c_plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+		int plotentry);
+
+// Plot map fills
+
+PLDLLIMPEXP void 
+c_plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, 
+		PLFLT maxlat, int* plotentries, int nplotentries);
 
 // Plot the latitudes and longitudes on the background.
 

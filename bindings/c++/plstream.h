@@ -468,10 +468,36 @@ public:
 
     void lsty( PLINT lin );
 
-// plot continental outline in world coordinates
+// Plot continental outline in world coordinates
 
     void map( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
               PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+
+// Plot map lines
+
+	void mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
+       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+	   int* plotentries, int nplotentries);
+
+// Plot map points
+
+	void mapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, const char *string,
+		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+		int* plotentries, int nplotentries);
+
+// Plot map text
+
+	void maptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+		int plotentry);
+
+// Plot map fills
+
+	void mapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, 
+		PLFLT maxlat, int* plotentries, int nplotentries);
 
 // Plot the latitudes and longitudes on the background.
 

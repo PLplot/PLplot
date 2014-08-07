@@ -51,9 +51,601 @@ OpenShapeFile( const char *fn );
 #ifdef HAVE_SAHOOKS
 static void
 CustomErrors( const char *message );
+#endif //HAVE_SAHOOKS
+
+#define MAP_FILE    ""
+#define OpenMap     OpenShapeFile
+#define CloseMap    SHPClose
+
+#else //HAVE_SHAPELIB
+
+#define MAP_FILE    ".map"
+#define OpenMap     plLibOpenPdfstrm
+#define CloseMap    pdf_close
+#define OFFSET      ( 180 * 100 )
+#define SCALE       100.0
+#define W_BUFSIZ    ( 32 * 1024 )
+#define SHPT_ARC     1
+#define SHPT_POINT   2
+#define SHPT_POLYGON 3
+
+#endif //HAVE_SHAPELIB
+
+//redistributes the lon value onto either 0-360 or -180-180 for wrapping
+//purposes.
+void
+rebaselon( PLFLT *lon, PLFLT midlon )
+{
+	if( *lon > midlon + 180.0 )
+		*lon -= floor( ( *lon - midlon - 180.0 ) / 360.0 + 1.0 ) * 360.0;
+	else if( *lon < midlon - 180.0 )
+		*lon += floor( ( midlon - 180.0 - *lon ) / 360.0 + 1.0 ) * 360.0;
+	
+}
+
+//append a PLFLT to an array of PLFLTs. array is a pointer to the array,
+//n is the current size of the array, val is the value to append.
+//returns 0 for success, 1 for could not allocate new memory. If memory
+//could not be allocated then the previous array remains intact
+int appendflt( PLFLT **array, size_t n, PLFLT val )
+{
+	size_t i;
+	PLFLT *temp = ( PLFLT* ) malloc( ( n + 1 ) * sizeof( PLFLT ) );
+	if( !temp)
+		return 1;
+	for( i = 0; i < n; ++i )
+		temp[i]=(*array)[i];
+	temp[n] = val;
+	free ( *array );
+	*array = temp;
+	return 0;
+}
+
+//As for appendflt, but for an array of ints
+int appendint( int **array, size_t n, int val )
+{
+	size_t i;
+	int *temp = ( int* ) malloc( ( n + 1 ) * sizeof( int ) );
+	if( !temp)
+		return 1;
+	for( i = 0; i < n; ++i )
+		temp[i]=(*array)[i];
+	temp[n] = val;
+	free ( *array );
+	*array = temp;
+	return 0;
+}
+
+//As for appendflt, but for an array of pointers to PLFLTs
+int appendfltptr( PLFLT ***array, size_t n, PLFLT *val )
+{
+	size_t i;
+	PLFLT **temp = ( PLFLT** ) malloc( ( n + 1 ) * sizeof( PLFLT *) );
+	if( !temp)
+		return 1;
+	for(i = 0; i < n; ++i)
+		temp[i]=(*array)[i];
+	temp[n] = val;
+	free ( *array );
+	*array = temp;
+	return 0;
+}
+
+//Check to see if the mapform wraps round longitudes. For example, a polar
+// projection wraps round longitudes, but a cylindrical projection does not.
+//Returns 1 if the mapform wraps or 0 if not.
+char
+checkwrap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), PLFLT lon, PLFLT lat )
+{
+	PLFLT x[]={lon};
+	PLFLT y[]={lat};
+	PLFLT resultx;
+	PLFLT resulty;
+
+	if( !mapform )
+		return 0;
+
+	mapform( 1, x, y );
+	resultx = x[0];
+	resulty = y[0];
+	x[0] = lon + 360;
+	y[0] = lat;
+	return ( ( ABS( x[0] - resultx ) < 1.0e-12 ) && ( ABS( y[0] - resulty ) < 1.0e-12 ) );
+}
+
+//-------------------------------------------------------------------------------------
+//Actually draw the map lines points and text.
+//-------------------------------------------------------------------------------------
+void
+drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
+{
+	PLINT i;
+
+	//do the transform if needed
+	if ( mapform != NULL )
+		( *mapform )( n, x, y );
+	
+	if ( shapetype == SHPT_ARC )
+		plline( n, x, y );
+	else if ( shapetype == SHPT_POINT )
+		for ( i = 0; i < n; ++i )
+			plptex( x[i], y[i], dx, dy, just, text );
+	else if ( shapetype == SHPT_POLYGON )
+		plfill( n, x, y );
+#ifdef HAVE_SHAPELIB
+	else if( shapetype == SHPT_ARCZ || shapetype == SHPT_ARCM )
+		plline( n, x, y );
+	else if( shapetype == SHPT_POLYGON || shapetype == SHPT_POLYGONZ || shapetype == SHPT_POLYGONM )
+		plfill( n, x, y );
+	else if( shapetype == SHPT_POINT || shapetype ==SHPT_POINTM || shapetype == SHPT_POINTZ )
+		for ( i = 0; i < n; ++i )
+			plptex( x[i], y[i], dx, dy, just, text );
+#endif //HAVE_SHAPELIB
+}
+
+
+//-------------------------------------------------------------------------------------
+//This is a function called by the front end map functions to do the map drawing. Its
+//parameters are:
+//mapform: The transform used to convert the data in raw coordinates to x, y positions
+//on the plot
+//type: either one of the plplot provided lat/lon maps or the path/file name of a 
+//shapefile
+//dx/dy: the gradient of text/symbols drawn if text is non-null
+//shapetype: one of ARC, SHPT_ARCZ, SHPT_ARCM, SHPT_POLYGON, SHPT_POLYGONZ, 
+//SHPT_POLYGONM, SHPT_POINT, SHPT_POINTM, SHPT_POINTZ. See drawmapdata() for the
+//how each type is rendered. But Basically the ARC options are lines, the POLYGON
+//options are filled polygons, the POINT options are points/text. Options beginning
+//SHPT will only be defined if HAVE_SHAPELIB is true
+//text: The text (which can be actual text or a unicode symbol) to be drawn at
+//each point
+//minlong/maxlong: The min/max longitude when using a plplot provided map or x value if
+//using a shapefile
+//minlat/maxlat: The min/max latitude when using a plplot provided map or y value if
+//using a shapefile
+//plotentries: used only for shapefiles, as one shapefile contains multiple vectors
+//each representing a different item (e.g. multiple boundaries, multiple height
+//contours etc. plotentries is an array containing the indices of the
+//entries within the shapefile that you wish to plot. if plotentries is null all 
+//entries are plotted
+//nplotentries: the number of elements in plotentries. Ignored if plplot was not built
+//with shapefile support or if plotentries is null
+//-------------------------------------------------------------------------------------
+void
+drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
+       PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
+       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, int* plotentries, int nplotentries )
+{
+#if defined ( HAVE_SHAPELIB ) || defined ( PL_DEPRECATED )
+    int       i, j;
+    char      *filename = NULL;
+    char      truncatedfilename[900];
+    char      warning[1024];
+    int       nVertices = 200;
+    PLFLT     minsectlon, maxsectlon, minsectlat, maxsectlat;
+     PLFLT     *bufx  = NULL, *bufy = NULL;
+    int       bufsize = 0;
+	int       filenamelen;
+	PLFLT     **splitx = NULL;
+	PLFLT     **splity = NULL;
+	int       *splitsectionlengths = NULL;
+	int       nsplitsections;
+	PLFLT     lastsplitpointx;
+	PLFLT     lastsplitpointy;
+	PLFLT     penultimatesplitpointx;
+	PLFLT     penultimatesplitpointy;
+	char      islatlon = 1;
+
+
+#ifdef HAVE_SHAPELIB
+    SHPHandle        in;
+    int              nentries;
+	int              entryindex=0;
+    // Unnecessarily set nparts to quiet -O3 -Wuninitialized warnings.
+    //int              nparts      = 0;
+    int              entrynumber = 0;
+    int              partnumber  = 0;
+    double           mins[4];
+    double           maxs[4];
+    SHPObject        *object = NULL;
+    double           *bufxraw;
+    double           *bufyraw;
+	char             *prjfilename = NULL;
+	PDFstrm          *prjfile;
+	char             prjtype[]={0, 0, 0, 0, 0, 0, 0};
+	int              appendresult=0;
+#else
+    PDFstrm          *in;
+    //PLFLT            bufx[ncopies][200], bufy[ncopies][200];
+    unsigned char    n_buff[2], buff[800];
+    long int         t;
 #endif
 
+    //
+    // read map outline
+    //
+
+	//strip the .shp extension if a shapefile has been provided and add
+	//the needed map file extension if we are not using shapefile
+	if( strstr( type, ".shp" ) )
+		filenamelen=( int )( type-strstr( type, ".shp" ) );
+	else
+		filenamelen = ( int )strlen( type );
+    filename = ( char* )malloc( filenamelen + strlen( MAP_FILE ) + 1 );
+	if(!filename)
+	{
+		plabort("Could not allocate memory for concatenating map filename");
+		return;
+	}
+    strncpy( filename, type, filenamelen );
+	filename[ filenamelen ] = '\0';
+    strcat( filename, MAP_FILE );
+
+	//copy the filename to a fixed length array in case it is needed for warning messages
+	if( strlen( filename ) < 899 )
+		strcpy( truncatedfilename, filename );
+	else
+	{
+		memcpy( truncatedfilename, filename, 896 );
+		truncatedfilename[896] = '.';
+		truncatedfilename[897] = '.';
+		truncatedfilename[898] = '.';
+		truncatedfilename[899] = '\0';
+	}
+
+    strcpy( warning, "Could not find " );
+    strcat( warning, filename );
+    strcat( warning, " file." );
+#ifdef HAVE_SHAPELIB
+	//Open the shp and shx file using shapelib
+    if ( ( in = OpenShapeFile( filename ) ) == NULL )
+    {
+        plabort( warning );
+		free(filename);
+        return;
+    }
+    SHPGetInfo( in, &nentries, &shapetype, mins, maxs );
+	//also check for a prj file which will tell us if the data is lat/lon or projected
+	//if it is projected then set ncopies to 1 - i.e. don't wrap round longitudes
+    prjfilename = ( char* )malloc( filenamelen + 5 );
+	if(!prjfilename)
+	{
+		plabort("Could not allocate memory for generating map projection filename");
+		free(filename);
+		return;
+	}
+    strncpy( prjfilename, type, filenamelen );
+	prjfilename[ filenamelen ] = '\0';
+    strcat( prjfilename, ".prj" );
+	prjfile = plLibOpenPdfstrm( prjfilename );
+	if ( prjfile && prjfile->file )
+	{
+		fread( prjtype, 1, 6, prjfile->file );
+		if( strcmp ( prjtype, "PROJCS" ) == 0 )
+			islatlon = 0;
+		pdf_close( prjfile );
+	}
+	free ( prjfilename );
+	prjfilename = NULL;
+#else
+    if ( ( in = plLibOpenPdfstrm( filename ) ) == NULL )
+    {
+        plwarn( warning );
+        return;
+    }
 #endif
+
+    bufx = NULL;
+    bufy = NULL;
+
+    for (;; )
+    {
+#ifdef HAVE_SHAPELIB
+		//each object in the shapefile is split into parts.
+		//If we are need to plot the first part of an object then read in a new object
+		//and check how many parts it has. Otherwise use the object->panPartStart vector
+		//to check the offset of this part and the next part and allocate memory. Copy
+		//the data to this memory converting it to PLFLT and draw it.
+		//finally increment the part number or if we have finished with the object reset the
+		//part numberand increment the object.
+
+        //break condition if we've reached the end of the file
+		if ( ( !plotentries && ( entrynumber == nentries ) ) || ( plotentries && ( entryindex == nplotentries ) ) )
+            break;
+
+        //if partnumber == 0 then we need to load the next object
+        if ( partnumber == 0 )
+        {
+			if( plotentries )
+				object = SHPReadObject( in, plotentries[entryindex] );
+			else
+				object = SHPReadObject( in, entrynumber );
+        }
+		//if the object could not be read, increment the object index to read and
+		//return to the top of the loop to try the next object.
+		if ( object == NULL )
+        {
+            entrynumber++;
+			entryindex++;
+            partnumber = 0;
+			continue;
+        }
+
+        //work out how many points are in the current part
+		if( object->nParts == 0 )
+			nVertices = object->nVertices; //if object->nParts==0, we can still have 1 vertex. A bit odd but it's the way it goes
+        else if ( partnumber == ( object->nParts - 1 ) )
+            nVertices = object->nVertices - object->panPartStart[partnumber];//panPartStart holds the offset for each part
+        else
+            nVertices = object->panPartStart[partnumber + 1] - object->panPartStart[partnumber];//panPartStart holds the offset for each part
+#endif
+        //allocate memory for the data
+        if ( nVertices > bufsize )
+        {
+            bufsize = nVertices;
+            free( bufx );
+            free( bufy );
+			bufx = (PLFLT*)malloc( (size_t) bufsize * sizeof ( PLFLT ) );
+			bufy = (PLFLT*)malloc( (size_t) bufsize * sizeof ( PLFLT ) );
+			if(!bufx || ! bufy)
+			{
+				plabort("Could not allocate memory for map data");
+				free(filename);
+				free (bufx);
+				free (bufy);
+				return;
+			}
+        }
+
+#ifdef HAVE_SHAPELIB
+        //point the plot buffer to the correct starting vertex
+        //and copy it to the PLFLT arrays. If we had object->nParts == 0
+		//then panPartStart will be NULL
+		if(object->nParts>0)
+		{
+			bufxraw = object->padfX + object->panPartStart[partnumber];
+			bufyraw = object->padfY + object->panPartStart[partnumber];
+		}
+		else
+		{
+			bufxraw = object->padfX;
+			bufyraw = object->padfY;
+		}
+
+        for ( i = 0; i < nVertices; i++ )
+        {
+            bufx[i] = (PLFLT) bufxraw[i];
+            bufy[i] = (PLFLT) bufyraw[i];
+        }
+
+        //set the min x/y of the object
+        minsectlon = object->dfXMin;
+        maxsectlon = object->dfXMax;
+        minsectlat = object->dfYMin;
+        maxsectlat = object->dfYMax;
+
+        //increment the partnumber or if we've reached the end of
+        //an entry increment the entrynumber and set partnumber to 0
+        if ( partnumber == object->nParts - 1 || object->nParts == 0 )
+        {
+            entrynumber++;
+			entryindex++;
+            partnumber = 0;
+			SHPDestroyObject( object );
+			object=NULL;
+        }
+        else
+            partnumber++;
+
+		if (nVertices==0)
+			continue;
+#else
+        // read in # points in segment
+        if ( pdf_rdx( n_buff, (long) sizeof ( unsigned char ) * 2, in ) == 0 )
+            break;
+        nVertices = ( n_buff[0] << 8 ) + n_buff[1];
+        if ( nVertices == 0 )
+            break;
+
+        pdf_rdx( buff, (long) sizeof ( unsigned char ) * 4 * nVertices, in );
+        if ( nVertices == 1 )
+            continue;
+
+        for ( j = i = 0; i < nVertices; i++, j += 2 )
+        {
+            t            = ( buff[j] << 8 ) + buff[j + 1];
+            bufx[i] = ( (PLFLT) t - OFFSET ) / SCALE;
+        }
+        for ( i = 0; i < nVertices; i++, j += 2 )
+        {
+            t          = ( buff[j] << 8 ) + buff[j + 1];
+            bufy[i] = ( (PLFLT) t - OFFSET ) / SCALE;
+        }
+        //set the min/max section lat/lon with extreme values
+        //to be overwritten later
+        minsectlon = 1000.;
+        maxsectlon = -1000.;
+        minsectlat = 1000.;
+        maxsectlat = -1000.;
+
+#endif
+
+		if( islatlon )
+		{
+			//two obvious issues exist here with plotting longitudes:
+			//
+			//1) wraparound causing lines which go the wrong way round
+			//   the globe
+			//2) some people plot lon from 0-360 deg, others from -180 - +180
+			//
+			//we can cure these problems by conditionally adding/subtracting
+			//360 degrees to each data point in order to ensure that the
+			//distance between adgacent points is always less than 180
+			//degrees, then plotting up to 2 out of 5 copies of the data
+			//each separated by 360 degrees.
+		
+			//arrays of pointers to the starts of each section of data that
+			//has been split due to longitude wrapping, and an array of ints 
+			//to hold their lengths. Start with splitx and splity having one
+			//element pointing to the beginning of bufx and bufy
+			splitx = ( PLFLT** ) malloc ( sizeof ( PLFLT* ) );
+			splity = ( PLFLT** ) malloc ( sizeof ( PLFLT* ) );
+			//lengths of the split sections
+			splitsectionlengths = ( int* ) malloc ( sizeof ( size_t ) );
+			if(!splitx || ! splity || ! splitsectionlengths)
+			{
+				plabort("Could not allocate memory for longitudinally split map data");
+				free( filename );
+				free ( bufx );
+				free ( bufy );
+				free ( splitx );
+				free ( splity );
+				free ( splitsectionlengths );
+				return;
+			}
+			splitsectionlengths[0]=nVertices;
+			nsplitsections=1;
+			splitx[0]=bufx;
+			splity[0]=bufy;
+
+			//set the min/max lats/lons
+			minsectlon = MIN( minsectlon, bufx[0] );
+			maxsectlon = MAX( minsectlon, bufx[0] );
+			minsectlat = MIN( minsectlat, bufy[0] );
+			maxsectlat = MAX( maxsectlat, bufy[0] );
+			//ensure our lat and lon are on 0-360 grid and split the
+			//data where it wraps.
+			rebaselon( &bufx[0], ( minlong + maxlong ) / 2.0 );
+			for ( i = 1; i < nVertices; i++ )
+			{
+				//put lon into 0-360 degree range
+				rebaselon( &bufx[i], ( minlong + maxlong ) / 2.0 );
+
+				//check if the previous point is more than 180 degrees away
+				if ( bufx[i - 1] - bufx[i] > 180. || bufx[i - 1] - bufx[i] < -180.)
+				{
+					//check if the map transform deals with wrapping itself, e.g. in a polar projection
+					//in this case give one point overlap to the sections so that lines are contiguous
+					if( checkwrap( mapform, bufx[i], bufy[i] ) )
+					{
+						appendresult += appendfltptr( &splitx, nsplitsections, bufx+i );
+						appendresult += appendfltptr( &splity, nsplitsections, bufy+i );
+						appendresult += appendint( &splitsectionlengths, nsplitsections, nVertices - i );
+						splitsectionlengths[nsplitsections-1] -= splitsectionlengths[nsplitsections] - 1;
+						nsplitsections++;
+					}
+					//if the transform doesn't deal with wrapping then allow 2 points overlap to fill in the 
+					//edges
+					else
+					{
+						appendresult += appendfltptr( &splitx, nsplitsections, bufx+i-1 );
+						appendresult += appendfltptr( &splity, nsplitsections, bufy+i-1 );
+						appendresult += appendint( &splitsectionlengths, nsplitsections, nVertices - i + 1 );
+						splitsectionlengths[nsplitsections-1] -= splitsectionlengths[nsplitsections] - 2;
+						nsplitsections++;
+					}
+					if( appendresult > 0 )
+					{
+						plabort("Could not allocate memory for appending to longitudinally split map data");
+						free( filename );
+						free ( bufx );
+						free ( bufy );
+						free ( splitx );
+						free ( splity );
+						free ( splitsectionlengths );
+						return;
+					}
+
+				}
+
+				//update the mins and maxs
+				minsectlon = MIN( minsectlon, bufx[i] );
+				maxsectlon = MAX( minsectlon, bufx[i] );
+				minsectlat = MIN( minsectlat, bufy[i] );
+				maxsectlat = MAX( maxsectlat, bufy[i] );
+			}
+
+			//check if the latitude and longitude range means we need to plot this section
+			if ( ( maxsectlat > minlat ) && ( minsectlat < maxlat ) 
+				&& ( maxsectlon > minlong ) && ( minsectlon < maxlong ))
+			{
+				//plot each split in turn, now is where we deal with the end points to
+				//ensure we draw to the edge of the map
+				for( i = 0; i < nsplitsections; ++i )
+				{
+					//check if the first 2 or last 1 points of the split section need 
+					//wrapping and add or subtract 360 from them. Note that when the next
+					//section is drawn the code below will undo this if needed
+					if( splitsectionlengths[i] > 2 )
+					{
+						if ( splitx[i][1] - splitx[i][2] > 180. )
+							splitx[i][1] -= 360.0;
+						else if ( splitx[i][1] - splitx[i][2] < -180. )
+							splitx[i][1] += 360.0;
+					}
+
+					if ( splitx[i][0] - splitx[i][1] > 180. )
+						splitx[i][0] -= 360.0;
+					else if ( splitx[i][0] - splitx[i][1] < -180. )
+						splitx[i][0] += 360.0;
+				
+					if ( splitx[i][splitsectionlengths[i] - 2] - splitx[i][splitsectionlengths[i] - 1] > 180. )
+						splitx[i][splitsectionlengths[i] - 1] += 360.0;
+					else if ( splitx[i][splitsectionlengths[i] - 2] - splitx[i][splitsectionlengths[i] - 1] < -180. )
+						splitx[i][splitsectionlengths[i] - 1] -= 360.0;
+
+					//save the last 2 points - they will be needed by the next
+					//split section and will be overwritten by the mapform
+					lastsplitpointx = splitx[i][splitsectionlengths[i]-1];
+					lastsplitpointy = splity[i][splitsectionlengths[i]-1];
+					penultimatesplitpointx = splitx[i][splitsectionlengths[i]-2];
+					penultimatesplitpointy = splity[i][splitsectionlengths[i]-2];
+
+					//draw the split section
+					drawmapdata(mapform, shapetype, splitsectionlengths[i], splitx[i], splity[i], dx, dy, just, text );
+
+					for(j=1; j<splitsectionlengths[i]; ++j)
+					{
+						if((splitx[i][j]<200.0 && splitx[i][j-1] > 260.0) || ( splitx[i][j-1]<200.0 && splitx[i][j] > 260.0 ))
+							plwarn("wrapping error");
+					}
+
+					//restore the last 2 points
+					splitx[i][splitsectionlengths[i]-1] = lastsplitpointx;
+					splity[i][splitsectionlengths[i]-1] = lastsplitpointy;
+					splitx[i][splitsectionlengths[i]-2] = penultimatesplitpointx;
+					splity[i][splitsectionlengths[i]-2] = penultimatesplitpointy;
+				}
+			}
+		}
+		else
+		{
+			drawmapdata(mapform, shapetype, nVertices, bufx, bufy, dx, dy, just, text );
+		}
+		
+		free( splitx );
+		free( splity );
+		free( splitsectionlengths );
+
+
+    }
+    // Close map file
+#ifdef HAVE_SHAPELIB
+    SHPClose( in );
+#else
+    pdf_close( in );
+#endif
+
+    //free memory
+    free( bufx );
+    free( bufy );
+    free( filename );
+#else   // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED)
+    plwarn( "Use of the old plplot map file format is deprecated.\nIt is recommended that the shapelib library be used to provide map support.\n" );
+#endif  // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED)
+}
+
+
 
 //--------------------------------------------------------------------------
 // void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
@@ -98,262 +690,93 @@ CustomErrors( const char *message );
 // plotted.
 //--------------------------------------------------------------------------
 
-#ifdef HAVE_SHAPELIB
-#define MAP_FILE    ""
-#define OpenMap     OpenShapeFile
-#define CloseMap    SHPClose
-#else
-#define MAP_FILE    ".map"
-#define OpenMap     plLibOpenPdfstrm
-#define CloseMap    pdf_close
-#define OFFSET      ( 180 * 100 )
-#define SCALE       100.0
-#define W_BUFSIZ    ( 32 * 1024 )
-#endif
-
 void
 plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
-#if defined ( HAVE_SHAPELIB ) || defined ( PL_DEPRECATED )
-    int       i, j;
-    char      *filename;
-    char      *warning;
-    int       n = 200;
-    PLFLT     minsectlon, maxsectlon, minsectlat, maxsectlat;
-    const int ncopies = 5;          //must be odd - original plus copies shifted by multiples of +/- 360
-    const int mid     = ncopies / 2 + 1;
-    PLFLT     **bufx  = NULL, **bufy = NULL;
-    int       bufsize = 0;
+	drawmap( mapform, type, 0.0, 0.0, SHPT_ARC, 0.0, NULL, minlong, maxlong, 
+		minlat, maxlat, NULL, 0 );
+}
 
-#ifdef HAVE_SHAPELIB
-    SHPHandle        in;
-    int              nentries;
-    // Unnecessarily set nparts to quiet -O3 -Wuninitialized warnings.
-    int              nparts      = 0;
-    int              entrynumber = 0;
-    int              partnumber  = 0;
-    int              shapetype;
-    double           mins[4];
-    double           maxs[4];
-    SHPObject        *object = NULL;
-    double           *bufxraw;
-    double           *bufyraw;
-#else
-    register PDFstrm *in;
-    //PLFLT            bufx[ncopies][200], bufy[ncopies][200];
-    unsigned char    n_buff[2], buff[800];
-    long int         t;
-    int              k;
-#endif
+//--------------------------------------------------------------------------
+// void plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+//		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, 
+//		PLFLT maxlat, int* plotentries, int nplotentries);
 
-    //
-    // read map outline
-    //
-    filename = malloc( strlen( type ) + strlen( MAP_FILE ) + 1 );
-    strcpy( filename, type );
-    strcat( filename, MAP_FILE );
+//New version of plmap which allows us to specify which items in a shapefile
+//we want to use. parameters are as above but with the plotentries being an
+//array containing the indices of the elements we wish to draw and 
+//nplotentries being the number of items in plotentries.
+//If shapefile access was not built into plplot then plotentries and 
+//nplotentries are ignored. If plotentries is null than all entries are
+//drawn and nplotentries is ignored.
+//The name distiguishes it from other functions which plot points/text and
+//polygons, but note that the type of element in the shapefile need not 
+//match the type of element drawn - i.e. arc elements from a shapefile could
+//be drawn as points using the plmaptex function.
+//--------------------------------------------------------------------------
+void
+plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
+       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+	   int* plotentries, int nplotentries)
+{
+	drawmap( mapform, type, 0.0, 0.0, SHPT_ARC, 0.0, "", minlong, maxlong, 
+		minlat, maxlat, plotentries, nplotentries );
+}
 
-    warning = malloc( strlen( type ) + strlen( MAP_FILE ) + 50 );
-    strcpy( warning, "Could not find " );
-    strcat( warning, filename );
-    strcat( warning, " file." );
-#ifdef HAVE_SHAPELIB
-    if ( ( in = OpenShapeFile( filename ) ) == NULL )
-    {
-        plwarn( warning );
-        return;
-    }
-    SHPGetInfo( in, &nentries, &shapetype, mins, maxs );
-#else
-    if ( ( in = plLibOpenPdfstrm( filename ) ) == NULL )
-    {
-        plwarn( warning );
-        return;
-    }
-#endif
+//--------------------------------------------------------------------------
+// void plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+//		const char *type, PLFLT just, const char *string,
+//		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+//		int* plotentries, int nplotentries);
+//
+//As per plmapline but plots symbols. The map equivalent of plstring. string 
+//has the same meaning as in plstring.
+//-------------------------------------------------------------------------
+void 
+plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, const char *string,
+		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+		int* plotentries, int nplotentries)
+{
+	drawmap( mapform, type, 1.0, 0.0, SHPT_POINT, 0.5, string, minlong, maxlong,
+		minlat, maxlat, plotentries, nplotentries );
+}
 
-    bufx = malloc( (size_t) ncopies * sizeof ( PLFLT* ) );
-    bufy = malloc( (size_t) ncopies * sizeof ( PLFLT* ) );
-    for ( i = 0; i < ncopies; i++ )
-    {
-        bufx[i] = NULL;
-        bufy[i] = NULL;
-    }
+//--------------------------------------------------------------------------
+// void plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+//		const char *type, PLFLT dx, PLFLT dy PLFLT just, const char *text,
+//		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+//		int* plotentries, int nplotentries);
+//
+//As per plmapline but plots text. The map equivalent of plptex. dx, dy, 
+//just and text have the same meaning as in plptex.
+//-------------------------------------------------------------------------
+void 
+plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, 
+		int plotentry)
+{
+	drawmap( mapform, type, dx, dy, SHPT_POINT, just, text, minlong, maxlong,
+		minlat, maxlat, &plotentry, 1 );
+}
 
-    for (;; )
-    {
-#ifdef HAVE_SHAPELIB
-        //break condition if we've reached the end of the file
-        if ( entrynumber == nentries )
-            break;
-        //if partnumber == 0 then we need to load the next object
-        if ( partnumber == 0 )
-        {
-            object = SHPReadObject( in, entrynumber );
-            nparts = object->nParts;
-        }
-
-        //work out how many points are in the current part
-        if ( partnumber == ( nparts - 1 ) )
-            n = object->nVertices - object->panPartStart[partnumber];
-        else
-            n = object->panPartStart[partnumber + 1] - object->panPartStart[partnumber];
-#endif
-        //allocate memory for the data
-        if ( n > bufsize )
-        {
-            bufsize = n;
-            for ( i = 0; i < ncopies; i++ )
-            {
-                if ( bufx[i] )
-                    free( bufx[i] );
-                if ( bufy[i] )
-                    free( bufy[i] );
-                bufx[i] = malloc( (size_t) bufsize * sizeof ( double ) );
-                bufy[i] = malloc( (size_t) bufsize * sizeof ( double ) );
-            }
-        }
-
-#ifdef HAVE_SHAPELIB
-        //point the plot buffer to the correct starting vertex
-        //and copy it to the PLFLT arrays
-        bufxraw = object->padfX + object->panPartStart[partnumber];
-        bufyraw = object->padfY + object->panPartStart[partnumber];
-        for ( i = 0; i < n; i++ )
-        {
-            bufx[mid][i] = (PLFLT) bufxraw[i];
-            for ( j = 0; j < ncopies; j++ )
-                bufy[j][i] = (PLFLT) bufyraw[i];
-        }
-
-        //set the minlat/lon of the object
-        minsectlon = object->dfXMin;
-        maxsectlon = object->dfXMax;
-        minsectlat = object->dfYMin;
-        maxsectlat = object->dfYMax;
-
-        //increment the partnumber or if we've reached the end of
-        //an entry increment the entrynumber and set partnumber to 0
-        if ( partnumber == nparts - 1 )
-        {
-            entrynumber++;
-            partnumber = 0;
-        }
-        else
-            partnumber++;
-#else
-        // read in # points in segment
-        if ( pdf_rdx( n_buff, (long) sizeof ( unsigned char ) * 2, in ) == 0 )
-            break;
-        n = ( n_buff[0] << 8 ) + n_buff[1];
-        if ( n == 0 )
-            break;
-
-        pdf_rdx( buff, (long) sizeof ( unsigned char ) * 4 * n, in );
-        if ( n == 1 )
-            continue;
-
-        for ( j = i = 0; i < n; i++, j += 2 )
-        {
-            t            = ( buff[j] << 8 ) + buff[j + 1];
-            bufx[mid][i] = ( (PLFLT) t - OFFSET ) / SCALE;
-        }
-        for ( i = 0; i < n; i++, j += 2 )
-        {
-            t          = ( buff[j] << 8 ) + buff[j + 1];
-            bufy[0][i] = ( (PLFLT) t - OFFSET ) / SCALE;
-            for ( k = 1; k < ncopies; k++ )
-                bufy[k][i] = bufy[0][i];
-        }
-        //set the min/max section lat/lon with extreme values
-        //to be overwritten later
-        minsectlon = 1000.;
-        maxsectlon = -1000.;
-        minsectlat = 1000.;
-        maxsectlat = -1000.;
-
-#endif
-        //two obvious issues exist here with plotting longitudes:
-        //
-        //1) wraparound causing lines which go the wrong way round
-        //   the globe
-        //2) some people plot lon from 0-360 deg, others from -180 - +180
-        //
-        //we can cure these problems by conditionally adding/subtracting
-        //360 degrees to each data point in order to ensure that the
-        //distance between adgacent points is always less than 180
-        //degrees, then plotting up to 2 out of 5 copies of the data
-        //each separated by 360 degrees.
-
-        for ( i = 0; i < n - 1; i++ )
-        {
-            if ( bufx[mid][i] - bufx[mid][i + 1] > 180. )
-                bufx[mid][i + 1] += 360.;
-            else if ( bufx[mid][i] - bufx[mid][i + 1] < -180. )
-                bufx[mid][i + 1] -= 360.;
-        }
-        for ( i = 0; i < n; i++ )
-        {
-            for ( j = 0; j < mid; j++ )
-                bufx[j][i] = bufx[mid][i] + 360. * (PLFLT) ( j - mid );
-            for ( j = mid + 1; j < ncopies; j++ )
-                bufx[j][i] = bufx[mid][i] + 360. * (PLFLT) ( j - mid );
-#ifndef HAVE_SHAPELIB
-            minsectlon = MIN( minsectlon, bufx[mid][i] );
-            maxsectlon = MAX( minsectlon, bufx[mid][i] );
-            minsectlat = MIN( minsectlat, bufy[mid][i] );
-            maxsectlat = MAX( minsectlat, bufy[mid][i] );
-#endif
-        }
-
-        //check if the latitude range means we need to plot this section
-        if ( ( maxsectlat > minlat ) && ( minsectlat < maxlat ) )
-        {
-            //check which of the translated maps fall within the
-            //range and transform and plot them - note more than one
-            //map may be needed due to wrapping
-            for ( j = 0; j < ncopies; j++ )
-            {
-                if ( ( minsectlon + 360. * (PLFLT) ( j - mid ) < maxlong )
-                     && ( maxsectlon + 360. * (PLFLT) ( j - mid ) > minlong ) )
-                {
-                    if ( mapform != NULL )
-                        ( *mapform )( n, bufx[j], bufy[j] );
-                    plline( n, bufx[j], bufy[j] );
-                }
-            }
-        }
-
-
-
-#ifdef HAVE_SHAPELIB
-        if ( partnumber == 0 )
-            SHPDestroyObject( object );
-#endif
-    }
-    // Close map file
-#ifdef HAVE_SHAPELIB
-    SHPClose( in );
-#else
-    pdf_close( in );
-#endif
-
-    //free memory
-    for ( i = 0; i < ncopies; i++ )
-    {
-        if ( bufx[i] )
-            free( bufx[i] );
-        if ( bufy[i] )
-            free( bufy[i] );
-    }
-    free( bufx );
-    free( bufy );
-    free( filename );
-    free( warning );
-#else   // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED)
-    plwarn( "Use of the old plplot map file format is deprecated.\nIt is recommended that the shapelib library be used to provide map support.\n" );
-#endif  // defined (HAVE_SHAPELIB) || defined (PL_DEPRECATED)
+//--------------------------------------------------------------------------
+// void plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+//		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, 
+//		PLFLT maxlat, int* plotentries, int nplotentries);
+//
+//As per plmapline but plots a filled polygon. The map equivalent to 
+//plfill. Uses the pattern defined by plsty or plpat.
+//-------------------------------------------------------------------------
+void 
+plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), 
+		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, 
+		PLFLT maxlat, int* plotentries, int nplotentries)
+{
+	drawmap( mapform, type, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minlong, maxlong,
+		minlat, maxlat, plotentries, nplotentries );
 }
 
 //--------------------------------------------------------------------------
