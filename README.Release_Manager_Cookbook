@@ -18,6 +18,7 @@ INDEX
    ++ Install and test a local copy of the PLplot website
    ++ Upload the local website to SourceForge
    ++ Create a final release tarball and check the result for errors
+   ++ Tag the release
    ++ Sign the release with your plplot Release Manager gpg key
    ++ Verify the release tarball signing
    ++ Make a SourceForge file release
@@ -26,7 +27,6 @@ INDEX
 
 INDEX for Appendix
 ** GNU Privacy Guard (gpg)
-** Creating a test tarball from trunk
 ** Correct computer time
 
 N.B. the order of steps below is important because of the dependencies
@@ -39,21 +39,22 @@ _________________________________________________________________________
 
 This step does not depend on other steps.
 
-# This makes the BASE used below correct.
-svn update
+git checkout master
+git log --name-status --reverse <tagname>..HEAD >| ChangeLog.release_preliminary
 
-svn log --revision <LAST_RELEASE_REVISION>:BASE --verbose  >| ChangeLog.release_preliminary
+where <tagname> is the tag name (e.g., v5_10_0) of the last release to
+exclude from the log all commits that are reachable from that tag.
 
-where <LAST_RELEASE_REVISION> stands for the last revision number of
-the previous release which can be determined e.g., by viewing the
-ChangeLog.release file from the previous release.  Note the
-"_preliminary" suffix to distinguish this from the final result below
-which will contain (if all goes well in the steps below) a record of
-all but the last commit (of the ChangeLog itself) for this release.
+Note the "_preliminary" suffix to distinguish this from the final
+result below which will contain (if all goes well in the steps below)
+a record of all but the last commit (of the ChangeLog itself) for this
+release.
 
-Note the order of the --revision components puts this preliminary version
-in chronological order.  But it is traditional for the final version
-to have the result in reverse chronological order (see below).
+Note because of the --reverse option above the order of this log will
+be in chronological order.  But it is traditional for the final
+version of this file to have the result in default reverse
+chronological order so the --reverse option is not used in that case
+(see below).
 
 _________________________________________________________________________
 
@@ -357,86 +358,50 @@ _________________________________________________________________________
 ** Create ChangeLog.release
 
 N.B. commit all local changes to the repository so they will be
-reflected in the ChangeLog, tagged version of the release, and the release
-tarball.  And if there are committed changes after this one
-repeat this step so the ChangeLog.release commit is the last trunk
-commit for this release cycle (with the possible exception of the current
-file, README.Release_Manager_Cookbook).
+reflected in the ChangeLog, tagged version of the release, and the
+release tarball.  And if there are committed changes after this one
+repeat this step so the ChangeLog.release commit is the last commit on
+master for this release cycle (with the possible exception of the
+current file, README.Release_Manager_Cookbook).
 
 Prepare the ChangeLog.release file to keep track of all changes
-made for the release.  Use the following commands:
+made for the release.  Make sure master is up to date using
 
-# This makes the BASE used below correct.
-svn update
+git fetch
+git log -1 origin/master
+git log -1 master
 
-svn log --revision BASE:<LAST_RELEASE_REVISION> --verbose  >| ChangeLog.release
+Create final ChangeLog for this release
 
-(This destroys the ChangeLog.release file
-from the previous release.)  LAST_REVISION should be the same as in
-the generation of the preliminary version of this file above.
+git checkout master
+git checkout -b latest_release
+git log --name-status <tagname>..HEAD >| ChangeLog.release
 
-Check that ChangeLog.release is in the appropriate date range (i.e. only the
-changes that were made since the last release should be included) then
-(IMPORTANT) commit it so it will also be available for the tagged
-release version, the release tarball, etc.  This should be the
-last commit for the trunk version of PLplot (see remarks above
-about when it is necessary to repeat this step).
+where <tagname> is the tag name (e.g., v5_10_0) of the last release to
+exclude from the log all commits that are reachable from that tag.  Note
+this result (unlike the prelimary version above) will be in the traditional
+reverse chronological order.
 
-Note the order of the --revision components which puts this file in
-the traditional reverse chronological order (unlike the preliminary
-version above which is in chronological order). 
+# Commit, fast-forward merge to master, and push
 
-Commit the result which ideally should be the last commit of this release.
+git commit -a
+git checkout master
+get merge --ff-only latest_release_changelog
+git push
+git branch --delete latest_release_changelog
 
-svn commit ChangeLog.release
+The above command destroys the ChangeLog.release file
+from the previous release and the associated commit on
+master (and origin/master) should be the last commit of
+this release.
 _________________________________________________________________________
 
 ** Create the PLplot Release
 
    ++ Preliminaries
 
-Based on suggestions in the svn manual, the PLplot svn archive is configured
-as follows:
-
-/trunk
-/tags/older_plplot_versions
-/branches/??
-
-For the release, you will be using svn to copy the /trunk version to
-/tags/vX_Y_Z (v5_10_0 for example to follow the previous naming
-conventions).
-
-To do this strictly on the server side with no local files involved at all
-use the following commands:
-
-# Check that you have committed everything and there are no other updates you
-# are unaware of.
-svn update
-svn status
-# Complete server side copy using new SourceForge Allura version of repository.
-# This is _much_ faster than copying from the local version.
-svn copy https://svn.code.sf.net/p/plplot/code/trunk https://svn.code.sf.net/p/plplot/code/tags/v5_10_0
-
-# Check out this release tag
-
-svn checkout https://svn.code.sf.net/p/plplot/code/tags/v5_10_0 plplot_tags_5.10.0
-
-In the event that problems are found in the release tarball generated
-from the release tag, then trunk should be fixed, the trunk
-ChangeLog.release
-file recreated and committed (see instructions above).  Then merge the
-trunk version into the tags/vX_Y_Z branch as follows:
-
-cd tags/vX_Y_Z
-svn merge -r A:B /path/to/trunk
-
-Where A and B specify the range of revisions in trunk to be applied
-to tags/vX_Y_Z in the merge process. These can be determined by commit
-messages.
-
-
-# IMPORTANT: use this tagged version to create the website and tarball
-cd plplot_tags_5.10.0
+The preliminaries are very simple with git.  Stay on master and
+change nothing there for the following tests of this release.
 
    ++ Install and test a local copy of the PLplot website
 
@@ -466,13 +431,20 @@ For the above WEBSITE_PREFIX, here is what worked for me from my computer
 with the hostname of raven where that WEBSITE_PREFIX directory was
 created.
 
-rsync -av --delete \
+rsync -av --delete --no-p --no-g --chmod=ugo=rwX \
 /home/irwin/public_html/plplot/htdocs/ \
 airwin,plplot@web.sourceforge.net:htdocs 
 
 Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
 username makes sure you have the right group permissions and default website
-directory location for PLplot.  
+directory location for PLplot.
+
+The --no-p --no-g --chmod=ugo=rwX options were introduced recently and
+are recommended by the rsync man page to preserve SourceForge's file
+and directory attributes.  It is only with those options that I am
+able to get a clean result for a second rsync run.  (Otherwise, each
+directory is mentioned as being changed.)  These options may solve the
+permissions problem mentioned below.
 
 N.B. the trailing slash on the source directory is essential and means rsync
 the contents of this directory with the contents of the destination htdocs
@@ -482,6 +454,14 @@ directory which is not what you want to do.
 
 N.B. the --dry-run option for rsync is a god-send and tells you exactly what
 will happen without actually doing it.
+
+<Fix permission problems, rare or never any more>
+This discussion of dealing with permissions problems may be moot now
+because of the--no-p --no-g --chmod=ugo=rwX options recently
+introduced for the rsync command above.  But we won't know that for a
+fact until we change release managers so I will leave the following
+instructions for dealing with permissions problems in place, "just in
+case".
 
 Note that when changing release managers, the SF permissions are not set
 up correctly to delete files belonging to the old release manager
@@ -512,6 +492,7 @@ directory structure and cd to the correct directory levels to remove
 the files in each directory, ugh.  I did try the sftp chown command,
 but that did not work so the only possibility I could find was the above
 commands to remove htdocs and everything below it in a piece-meal fashion.
+</Fix permission problems>
 
 Once you have a proper upload of the local website to SourceForge, test
 it as before.  Also, click the xhtml and css validate buttons on each of
@@ -524,8 +505,24 @@ Follow the above step entitled
 
 "Create (a preliminary version of) the release tarball and check the result for errors"
 
-but this time for the tagged release to make sure the tarball is exactly
-consistent with the release tag.
+but this time for the current last commit of master (which includes
+the latest ChangeLog.release) to make sure the
+tarball is exactly consistent with the release tag that will be
+created for that commit (if all is well).
+
+
+   ++ Tag the release
+
+Assuming all is well with the release tarball tests, then tag HEAD of master
+and push it.
+
+git checkout master
+git tag plplot-5.11.0
+# Irrevocable step since no pushed tags can ever be deleted.
+git push --tags
+
+(Note we are changing release tag names here from the old scheme
+which would have been v5_11_0 to a more informative scheme for names.)
 
    ++ Sign the release with your plplot Release Manager gpg key
 
@@ -743,63 +740,6 @@ This verified that the bad irwin address was revoked even though
 gpg --search-keys Alan W. Irwin
 
 still shows revoked uid as the #1 uid.
-_________________________________________________________________________
-
-** (Optional) Creating a test tarball from trunk
-
-This step is only required if you have some concerns about how
-recent changes may have affected the generated source tarball, and you want
-to generate that tarball and test it _before_ you create a tag for the
-release.  (The release process for the tag below also generates a tarball
-from the tag directory and tests it which is why this trunk version of the
-same is optional.)
-
-cd /tmp
-/path-to-trunk-source/scripts/make_tarball.sh \
--w https://plplot.svn.sourceforge.net/svnroot/plplot
--c -i /tmp/trunk_install -t trunk 2>&1 | tee build.log
-
-The above exports the current trunk
-and uses 
-
-/tmp/plplot-dist-prep/build_dir
-
-to build the distribution source tarball
-
-and uses
-
-/tmp/plplot-dist-prep/ctest_build_dir
-
-to configure and build PLplot from the unpacked tarball, ctest the build
-tree, and install the built PLplot in /tmp/trunk_install
-
-Here are the *.out files generated by this process which should be checked.
-
-/tmp/plplot-dist-prep/build_dir/cmake.out
-/tmp/plplot-dist-prep/build_dir/make_prebuild_dist.out
-/tmp/plplot-dist-prep/build_dir/make_package_source.out
-/tmp/plplot-dist-prep/ctest_build_dir/cmake.out
-/tmp/plplot-dist-prep/ctest_build_dir/make.out
-/tmp/plplot-dist-prep/ctest_build_dir/ctest.out
-/tmp/plplot-dist-prep/ctest_build_dir/make_install.out
-
-Here is how the install location should be checked:
-
-cd /tmp/trunk_install/share/plplotX.Y.Z/examples
-make >& make_examples.out
-./plplot-test.sh --help  #to see what kinds of tests can be run
-./plplot-test.sh --device=psc
-./plplot-test.sh --device=pscairo
-./plplot-test.sh --device=pngcairo
-./plplot-test.sh --device=png
-
-etc.  Check the results with, e.g.,
-
-display x01c.pngcairo.01
-display x08c.pscairo
-
-where "display" is the general image viewer from the imagemagick suite
-of programmes.
 _________________________________________________________________________
 
 ** Correct computer time
