@@ -455,20 +455,47 @@ directory which is not what you want to do.
 N.B. the --dry-run option for rsync is a god-send and tells you exactly what
 will happen without actually doing it.
 
-<Fix permission problems, rare or never any more>
+<Fix permission problems if that is necessary any more>
 This discussion of dealing with permissions problems may be moot now
 because of the--no-p --no-g --chmod=ugo=rwX options recently
-introduced for the rsync command above.  But we won't know that for a
-fact until we change release managers so I will leave the following
+introduced for the rsync command above or because Allura handles website
+file permissions differently now.  But we won't know that for a
+fact until someone besides the current release manager attempts to
+generate the website and upload it so I will leave the following
 instructions for dealing with permissions problems in place, "just in
 case".
 
-Note that when changing release managers, the SF permissions are not set
+Note that when changing those who upload the website, the SF
+permissions (at least in the pre-Allura version of SF) were not set
 up correctly to delete files belonging to the old release manager
-using rsync.  (Or else we need to learn more about how to change
-ownership using rsync.)
+using rsync.
 
-So you need to use sftp to do that, e.g.,
+If this problem re-occurs, then one thing to try is to attempt to
+mass-delete all website files using
+
+mkdir /tmp/empty
+rsync -av --delete  /tmp/empty/ airwin,plplot@web.sourceforge.net:htdocs
+
+followed by the original rsync command above to upload the website using
+the new ownership of files.  
+
+For more on the extremly non-posix permissions of the SF website files
+see
+<https://sourceforge.net/p/forge/documentation/Project%20Web%20Filesystem%20Permissions/>
+which claims, for example, that any authorized PLplot user can delete
+files regardless of ownership so the above may work fine.  But that document also implies you
+can change permissions from the defaults which (as reported by the
+sftp "ls -l" command) are "drwxrwxr-x" for all directories and
+"-rw-rw-r--" for all files.  This is indeed true using the sftp
+"chmod" command which allows you to change permissions one file at a
+time (ugh).  But any attempt to get rsync to change permissions from
+these defaults (e.g., with the "--no-g
+--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r" set of options with or without
+-no-p and starting from empty or not) failed.
+
+
+"Just in case" the above mass-deletion with rsync fails, this quite
+laborious method worked to delete all files in the past.
 
 sftp airwin,plplot@web.sourceforge.net
 
