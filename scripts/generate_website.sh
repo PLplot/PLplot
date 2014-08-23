@@ -58,9 +58,12 @@ rm -rf /tmp/plplotdoc
 mkdir -p /tmp/plplotdoc/build
 cd /tmp/plplotdoc
 echo ""
-echo "svn export working copy (with local changes) from"
-echo "$SOURCE_TREE to /tmp/plplotdoc/plplot_source"
-svn --quiet export $SOURCE_TREE plplot_source
+echo "Use git checkout-index to copy working directory from staged or committed"
+echo "changes of current branch of $SOURCE_TREE to /tmp/plplotdoc/plplot_source"
+# For checkout-index, trailing slash for prefix directory is important for some
+# reason according to the man page.  Furthermore, it turns out
+# that --prefix must be an absolute directory.
+git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index -a --prefix=/tmp/plplotdoc/plplot_source/
 echo ""
 echo "Configure and build PLplot documentation.  This may take a while depending on your cpu speed...."
 cd /tmp/plplotdoc/build

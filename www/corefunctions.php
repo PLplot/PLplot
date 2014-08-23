@@ -151,8 +151,8 @@ END;
 			<h3>Source Code</h3>
 			<ul class="arrowlist">
 				<li><a href="http://sourceforge.net/projects/plplot/files/plplot/">Download</a></li>
-				<li><a href="http://svn.code.sf.net/p/plplot/code/trunk/">SVN Repository</a></li>
-				<li><a href="http://sourceforge.net/p/plplot/code/HEAD/tree/">Browse SVN</a></li>
+				<li>git repository is git://git.code.sf.net/p/plplot/plplot</li>
+				<li><a href="http://sourceforge.net/p/plplot/plplot/ci/master/tree/">Browse git repository</a></li>
 			</ul>
 
 		</div>

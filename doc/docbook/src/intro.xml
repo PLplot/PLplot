@@ -175,7 +175,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       the PLplot is by electronic transmission over the Internet.  We
       encourage others to make it available to users without Internet
       access.  PLplot is a SourceForge project and may be obtained by
-      the usual SourceForge file release and anonymous svn repository access that is made
+      the usual SourceForge file release and anonymous git repository access that is made
       available from links at
       <ulink url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>.
     </para>

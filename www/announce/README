@@ -44,7 +44,7 @@ make validate_announcements
 make generate_announcements
 
 Once satisfied with the current announcement, add the current announcement
-source (in this case announce-plplot-5.9.1.xml) to our svn repository.
+source (in this case announce-plplot-5.9.1.xml) to our git repository.
 
 Actually installing the complete list of static and generated announcements
 on our website is handled by www/CMakeLists.txt.
