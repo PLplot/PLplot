@@ -18,11 +18,11 @@
 \
 static void set_plplot_parameters( Tcl_Interp *interp )\
 {\
-    Tcl_Eval( interp, "namespace eval ::PLPLOT { \\n\\
+    Tcl_Eval( interp, "namespace eval ::PLPLOT { \\n"
 
 # Append text at the end:
 $ a\
-}" );\
+"}" );\
 }
 # Drop every line that is not a #define
 /^#define/! d
@@ -38,11 +38,10 @@ $ a\
 # Parse what is left while preserving trailing comments.  Watch out
 # for parentheses around value as well.  Use the expr syntax to
 # convert all hexadecimal constants to integers.
-/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?\\n\\\n\3\\n\\\nvariable \1 [expr \2]\\n\\?
+/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?"\3\\n"\n"variable \1 [expr \2]\\n"?
 
 # Append extra constants not #defined in plplotcapi.i after PL_NOTSET
 # is processed.
 /PL_NOTSET/ a\
-\\n\\\
-\\n\\\
-variable PL_PI 3.1415926535897932384\\n\\
+"\\n"\
+"variable PL_PI 3.1415926535897932384\\n"
