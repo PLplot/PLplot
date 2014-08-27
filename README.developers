@@ -1,3 +1,59 @@
+Information about version control
+---------------------------------
+PLplot is using the git work flow described here:
+http://kevinold.com/2013/04/17/my-git-workflow.html
+
+And summarized here:
+1. *ALWAYS* develop on a branch:
+   $ git checkout -b new_branch
+
+2. Updating the master branch:
+   $ git checkout master
+   $ git fetch
+   (optional) review newly downloaded changes 
+   $ git log origin/master
+   $ git merge origin/master
+
+   Make sure that you are on the master branch before doing the
+   merge. Failure to do so will mean having to undo the merge as
+   merging master into your branch is bad and attempts to push
+   your work back to official repo will be rejected.
+
+3. Updating your working branch so that it is a linear
+   continuation of the work on the master branch:
+   $ git checkout new_branch
+   $ git rebase master
+
+   Note that there is some possibility for headaches here. If one 
+   of the files that you are working on is changed in the master 
+   branch you may have to deal with merge conflicts. Unless you
+   really need some new feature in master (and you probably
+   should not if your branch is really a self-contained topic)
+   then it is probably best to do this once just before you want
+   to push your work back to the official repo.
+
+4. Incorporate changes back into master:
+   $ git checkout master 
+   $ git merge new_branch
+
+   At this point you should see a message like "Fast-forward". If
+   instead you see "Merge made by the 'recursive' strategy" this
+   is bad and means that your changes will be rejected when you
+   try to push them to the official repo. You can inspect the
+   history with gitk and possibly collapse the offending commits
+   into a single commit that makes the history linear again.
+
+5. Push changes to the official repo:
+   Check first:
+   $ git push --dry-run origin master
+
+   Push:
+   $ git push origin master
+
+This is a rebase work flow. The linearity of the master branch is 
+enforced by server side hooks.
+
+
 Information for developers on UNIX/Linux
 ----------------------------------------
 
@@ -27,7 +83,6 @@ For gcc / g++ / gfortran the following flags can be used
 CFLAGS='-O3 -std=c99 -pedantic -D_POSIX_C_SOURCE=200112L -Wall  \
 -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs \ 
 -Wconversion -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings' 
-
 CCFLAGS='-O3 -fvisibility=hidden -std=c++98 -pedantic -Wall -Wextra'
 
 FFLAGS='-std=f95 -O3 -fall-intrinsics -fvisibility=hidden -pedantic \
