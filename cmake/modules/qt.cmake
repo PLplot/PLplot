@@ -346,7 +346,7 @@ if(ENABLE_pyqt4)
 endif(ENABLE_pyqt4)
 
 if(ENABLE_smoke)
-  find_package(Smoke)
+  find_package(Smoke QUIET)
   if(NOT SMOKE_GEN_BIN)
     message(STATUS
       "WARNING: smoke not found so setting ENABLE_smoke to OFF."
