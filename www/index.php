@@ -16,25 +16,32 @@
   	<div id="contentwrapper">
 	<div id="leftside">
 	<h3>Introduction</h3>
-        <p>PLplot is a cross-platform software package for creating scientific plots.  To help accomplish that task it is organized as a core C library, language bindings for that library, and device drivers which control how the plots are presented in non-interactive and interactive plotting contexts.</p>
+        <p>PLplot is a <a href="#cross_platform">cross-platform</a> software package for creating scientific plots whose (<a href="http://www.utf-8.com/">UTF-8</a>) plot symbols and text are limited in practice only by what <a href="http://www.unicode.org/">Unicode</a>-aware system fonts are installed on a user's computer.  The PLplot software, which is primarily licensed under <a href="http://www.gnu.org/licenses/lgpl.html">the LGPL</a>, has a clean architecture that is organized as a core C library, <a href="#bindings">separate language bindings for that library</a>, and separate device drivers that are dynamically loaded by the core library which control how the plots are presented in <a href="#files">noninteractive</a> and <a href="#interactive">interactive</a> plotting contexts.</p>
 	<p>The PLplot core library can be used to create standard x-y plots, semi-log plots, log-log plots, contour plots, 3D surface plots, mesh plots, bar charts and pie charts. Multiple graphs (of the same or different sizes) may be placed on a single page, and multiple pages are allowed for those device formats that support them.</p>
-	<p>PLplot has core support for Unicode. This means for our many Unicode-aware devices that plots can be labelled using the enormous selection of Unicode mathematical symbols.  A large subset of our Unicode-aware devices also support complex text layout (CTL) languages such as Arabic, Hebrew, and Indic and Indic-derived CTL scripts such as Devanagari, Thai, Lao, and Tibetan.</p>
-        <p>A number of compiled and interpreted languages have access to PLplot, <a href="#languages">see our list of language bindings</a>.</p>
-        <p>PLplot device drivers support <a href="#files">a number of different file formats</a> for non-interactive plotting and <a href="#interactive">a number of different platforms</a> that are suitable for interactive plotting.  It is easy to add new device drivers to PLplot by writing a small number of device dependent routines.</p>
-<p>PLplot is free software primarily licensed under the
-				 <a href="http://www.gnu.org/licenses/lgpl.html">LGPL</a>.</p>
-
+	<p>PLplot has core library support for plot symbols and text specified by
+the user in the UTF-8 encoding of Unicode. This means for our many
+Unicode-aware devices that plot symbols and text are only limited by
+the collection of glyphs normally available via installed system
+fonts.  Furthermore, a large subset of our Unicode-aware devices also
+support complex text layout (CTL) languages such as Arabic, Hebrew,
+and Indic and Indic-derived CTL scripts such as Devanagari, Thai, Lao,
+and Tibetan.  Thus, for these PLplot devices essentially any language
+that is supported by Unicode and installed system fonts can be used to
+label plots.</p>
 			<h3>Feature Summary</h3>
 			<div class="splitcontentleft">
-				<h4>Cross Platform</h4>
+				<h4><a name="cross_platform">Cross Platform</h4>
 				 <p>PLplot is currently known to work on the following platforms:</p>
 				 <ul class="arrowlist">
 				   <li>Linux, Mac OS X, and other Unices</li>
-				   <li>Windows (2000, XP and Vista)</li>
+				   <li>MSVC IDE on the Microsoft version of Windows (Windows 2000 and later)</li>
+				   <li>Cygwin on the Microsoft version of Windows</li>
+				   <li>MinGW/MSYS on the Microsoft version of Windows</li>
+				   <li>MinGW/MSYS on the Wine (1.6.1 and later) version of Windows</li>
 				 </ul>
 
-				 <p>PLplot is built on the above platforms using our CMake-based build system.</p>
-				<h4><a name="languages">Language Bindings</a></h4>
+				 <p>For each of the above platforms, PLplot can be built from <a href="downloads.php">source</a>, and for the Linux and Mac OS X platforms third-party binary packages for PLplot <a href="downloads.php">are available</a>.</p>
+				<h4><a name="bindings">Language Bindings</a></h4>
 				<p>There are many bindings to the PLplot library</p>
 				<ul class="arrowlist">
 				  <li>Ada</li>
@@ -68,7 +75,6 @@
 				<h4><a name="interactive">Interactive Platforms</a></h4>
 				<p>PLplot device drivers support a number of platforms that are suitable for interactive plotting.</p>
 				<ul class="arrowlist">
-				  <li>GNOME</li>
 				  <li>Gtk+</li>
 				  <li>PyQt</li>
 				  <li>Qt</li>

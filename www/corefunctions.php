@@ -55,7 +55,7 @@ END;
 
 	//
 	// Print menu code with selected element
-	// $item might be: index, download, examples, development, credits
+	// $item might be: index, downloads, examples, development, credits
 	//
 	function pageMenu($item)#
 	{
@@ -66,7 +66,7 @@ END;
 		echo '		<ul>';
 		echo '		  <li><a href="index.php" ' . (($item=='index') ? ('id="selected"') : ('')) .'>Home</a></li>';
 		echo '		  <li><a href="http://sourceforge.net/p/plplot/news" ' . (($item=='news') ? ('id="selected"') : ('')) .'>News</a></li>';
-		echo '		  <li><a href="download.php" ' . (($item=='download') ? ('id="selected"') : ('')) .'>Download</a></li>';
+		echo '		  <li><a href="downloads.php" ' . (($item=='downloads') ? ('id="selected"') : ('')) .'>Downloads</a></li>';
 		echo '		  <li><a href="examples.php" ' . (($item=='examples') ? ('id="selected"') : ('')) .'>Examples</a></li>';
 		echo '		  <li><a href="documentation.php" ' . (($item=='documentation') ? ('id="selected"') : ('')) .'>Documentation</a></li>';
 //		echo '		  <li><a href="development.php" ' . (($item=='development') ? ('id="selected"') : ('')) .'>Development</a></li>';
@@ -150,7 +150,7 @@ END;
 			</ul>
 			<h3>Source Code</h3>
 			<ul class="arrowlist">
-				<li><a href="http://sourceforge.net/projects/plplot/files/plplot/">Download</a></li>
+				<li><a href="http://sourceforge.net/projects/plplot/files/plplot/">Releases</a></li>
 				<li>git repository is git://git.code.sf.net/p/plplot/plplot</li>
 				<li><a href="http://sourceforge.net/p/plplot/plplot/ci/master/tree/">Browse git repository</a></li>
 			</ul>

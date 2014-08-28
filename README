@@ -1,98 +1,151 @@
-This is the distribution for PLplot, a scientific plotting package.  PLplot is
-relatively small, portable, freely distributable, and is rich enough to
-satisfy most users.  It has a wide range of plot types including line (linear,
-log), contour, 3D, fill, and almost 1000 characters (including Greek and
-mathematical) in its extended font set.  The package is designed to make it
-easy to quickly get graphical output; only a handful of function calls is
-typically required.  For more advanced use, virtually all aspects of plotting
-are configurable. 
+INTRODUCTION
 
-The PLplot package is distributable under the terms of the GNU Library General
-Public License (LGPL) with some exceptions -- see the file "Copyright" for
-full information.  The intent here is to ensure that PLplot continues to
-evolve in a positive way, while remaining freely distributable.  Placing the
-library under the LGPL enables software developers to use the PLplot library
-as an integral part of their product, even a commercial product. 
+PLplot <http://plplot.sourceforge.net/> is a cross-platform (see
+PLATFORMS below) software package for creating scientific plots whose
+(UTF-8 <http://www.utf-8.com/>) plot symbols and text are limited in
+practice only by what Unicode<"http://www.unicode.org/>-aware system
+fonts are installed on a user's computer.  The PLplot software, which is
+primarily licensed under the LGPL
+<http://www.gnu.org/licenses/lgpl.html>, has a clean architecture that
+is organized as a core C library, separate language bindings for that
+library (see BINDINGS below), and separate dynamically loaded device
+drivers (see DEVICE DRIVERS below) which control how the plots are
+presented in noninteractive and interactive plotting contexts.
 
-We welcome suggestions on how to improve this code, especially in the form
-of user-contributed additions, enhancements or bug fixes. If PLplot is used
-in any published papers, please include an acknowledgment or citation of our
-work, which will help us to continue improving PLplot. Also, please remember
-that as PLplot is not a commercial product, we cannot be expected to offer
-the kind of support that a commercial product may. There is great interest
-in extending PLplot and fixing bugs, but the principal authors can only
-afford to work on it part time.  Improvements will necessarily focus on
-those which help us get our work done.
+The PLplot core library can be used to create standard x-y plots,
+semi-log plots, log-log plots, contour plots, 3D surface plots, mesh
+plots, bar charts and pie charts. Multiple graphs (of the same or
+different sizes) may be placed on a single page, and multiple pages
+are allowed for those device formats that support them.
 
-The PLplot library is written in C, enabling it to run on many platforms
-practically without modification.  Fortran programs may use it
-transparently; stub routines are provided to handle the C<->Fortran
-interface without any modification of the user program.  C programs are
-required to include the header file "plplot.h"; see the documentation for
-more details.  Programmes written in many other languages can also use the
-PLplot library.  The C++, Tcl, Python, Octave, and Yorick (this
-front end is maintained independently, see yplot.sf.net) front ends to PLplot
-are mature, the Java front end is almost there (most examples work), and
-the Perl front end is still quite incomplete.
+PLplot has core library support for plot symbols and text specified by
+the user in the UTF-8 encoding of Unicode. This means for our many
+Unicode-aware devices that plot symbols and text are only limited by
+the collection of glyphs normally available via installed system
+fonts.  Furthermore, a large subset of our Unicode-aware devices also
+support complex text layout (CTL) languages such as Arabic, Hebrew,
+and Indic and Indic-derived CTL scripts such as Devanagari, Thai, Lao,
+and Tibetan.  Thus, for these PLplot devices essentially any language
+that is supported by Unicode and installed system fonts can be used to
+label plots.
 
-The main documentation for PLplot is available on-line at
-http://plplot.sourceforge.net/docbook-manual/.  This is generated
-from DocBook source within the doc/docbook tree. In some cases the
-documentation lags actual improvements to the code, so consult "NEWS" to see
-a list of recent changes.
+PLATFORMS
 
-At present, PLplot is actively supported on the following systems:
+PLplot is currently known to work on the following platforms:
 
-	Unix:	Most Unix systems including recent good reports on
-		AIX 		(IBM)
-		IRIX		(Silicon Graphics)
-		Linux		(various)
-		OSF/1		(DEC/Compaq)
-		OS X		(Macintosh)
-		SCO		(SCO)
-		SunOS		(Sun)
+Linux, Mac OS X, and other Unices
+MSVC IDE on the Microsoft version of Windows (Windows 2000 and later)
+Cygwin on the Microsoft version of Windows
+MinGW/MSYS on the Microsoft version of Windows
+MinGW/MSYS on the Wine version of Windows
 
-	MS-DOS (DJGPP)
-	Windows (95?, 98, NT, 2000, XP)
+For each of the above platforms, PLplot can be built from source (see
+SOURCE CODE below), and for the Linux and Mac OS X platforms
+third-party binary packages for PLplot (see BINARY PACKAGES below) are available.
 
-Many different output device drivers are available, including postscript,
-PDF, tektronix, HP laserjet, HP pen plotters, XFig, xterm, X-windows, and a
-portable metafile format, among others.  The Tk driver under Unix/X provides
-a full user interface based on the plframe plotting widget (see below).  The
-metafile renderer (plrender) supports all of the standard operations as well
-as seeking operations (backward, forward, or to any specified page) when
-interactively viewing metafile output.
+BINDINGS
 
-Part of the PLplot package is a Tcl-based interpreter (pltcl).  This
-program allows interactive plotting using the Tcl script language with
-plotting extensions.
+PLplot bindings exist for the following compiled and interpreted languages:
 
-Also part of PLplot is a Tk-based plotting widget, called a plframe.  This
-widget is based on the Tk frame widget, and supports a variety of user
-options such as zoom, scrolls, save to a variety of devices, print,
-resize, page layout, orientation change, and palette manipulation.  Direct
-plotting to the widget may be done by calls to the underlying library
-using either C or Fortran bindings, and a large number of operations can
-be interpreted directly (in Tcl) by the widget.
+Ada
+C/C++/D
+Fortran 95
+Java
+Lisp
+Lua
+OCaml
+Octave
+Perl
+Python
+Tcl/Tk
 
-For more information on how to get or use PLplot on your system, see:
- - appendices to the PLplot manual
- - system-specific documentation in the appropriate sys/<system> directory.
+The above list of bindings all are part of the PLplot software package
+with the exception of the Lisp
+<http://common-lisp.net/project/cl-plplot/> and Perl
+<http://search.cpan.org/~dhunt/PDL-Graphics-PLplot/> bindings which
+are independent projects.  The Java, Lua, Octave, and Python bindings
+are all generated by SWIG <http://www.swig.org/>, and a
+straightforward expansion of this effort could be used to generate
+additional bindings for PLplot using the many computer languages
+<http://www.swig.org/compat.html#SupportedLanguages> that are
+supported by SWIG.
 
-SourceForge provides most of the facilities currently used by PLplot.  The
-PLplot homepage can be found at http://plplot.sf.net.  The PLplot project
-page can be found at http://sourceforge.net/projects/plplot where you can
-find source tarballs and rpm's for several Linux distributions and browse
-the CVS tree and the archives of our mailing lists.  These mailing lists
-include plplot-general (announcements and user questions/answers),
-plplot-devel (discussions of PLplot development), and plplot-cvs
-(notification of CVS changes).
+DEVICE DRIVERS
 
+The PLplot device drivers are typically built as shared objects that
+can be dynamically loaded by our core library.  It is straightforward
+to add noninteractive or interactive device drivers to PLplot by
+writing a small number of device-dependent routines.
 
-CREDITS
--------
+Existing noninteractive PLplot device drivers support the following
+file formats:
 
-PLplot is the result of the effort of many people, so it is impractical to
-list all the contributors.  Those currently supporting and otherwise
-responsible for the package in its present form are given in the AUTHORS
-file.
+CGM
+GIF
+JPEG
+LaTeX
+PBM
+PDF
+PNG
+PostScript
+SVG
+Xfig
+
+Existing interactive PLplot device drivers are available for the
+following platforms:
+
+Gtk+
+PyQt
+Qt
+Tcl/Tk
+wxWidgets
+X
+
+SOURCE CODE
+
+All our Windows users and many of our Unix users build PLplot from
+source code using our build system that is implemented with CMake <http:cmake.org>
+following the directions in our wiki
+<http://www.miscdebris.net/plplot_wiki>.  PLplot source code can be
+accessed a number of ways.  You can obtain the latest stable version
+of PLplot from <http://sourceforge.net/projects/plplot/files/plplot/>.
+Alternatively, you can obtain the cutting-edge version of PLplot
+source code (but with no promises about stability) using the command
+
+git clone git://git.code.sf.net/p/plplot/plplot plplot.git
+
+and you can browse our git repository at
+<http://sourceforge.net/p/plplot/plplot/ci/master/tree/>.
+
+BINARY PACKAGES
+
+A number of third-party binary packages for PLplot are available.
+Binary packages for Linux are provided by at least Ubuntu
+<http://packages.ubuntu.com/search?keywords=plplot&searchon=names&suite=all&section=all>,
+Debian
+<https://packages.debian.org/search?searchon=sourcenames&keywords=plplot>,
+Fedora <https://apps.fedoraproject.org/packages/plplot>, and openSUSE
+<http://software.opensuse.org/package/plplot>.  Binary packages for
+Mac OS X are provided by at least Fink
+<http://www.finkproject.org/pdb/browse.php?summary=plplot>, Homebrew
+<http://brew.sh/>, and MacPorts
+<https://www.macports.org/ports.php?by=name&substr=plplot>.  To our
+knowledge no binary packages for PLplot are available at this time for
+Windows platforms so our Windows users are currently required to build
+from source (see SOURCE CODE above).
+
+OTHER WEB RESOURCES
+
+The most up-to-date information about PLplot can be found at our
+principal website <http://plplot.sourceforge.net/>.  There you will
+find the following important PLplot links:
+news <http://sourceforge.net/p/plplot/news/>,
+example code and resulting PLplot screenshots
+<http://plplot.sourceforge.net/examples.php>,
+documentation <http://plplot.sourceforge.net/documentation.php>,
+credits <http://plplot.sourceforge.net/credits.php>,
+wiki <http://www.miscdebris.net/plplot_wiki>,
+SourceForge project page <http://sourceforge.net/projects/plplot>,
+project support page <http://sourceforge.net/projects/plplot/support>,
+mailing lists <http://sourceforge.net/p/plplot/mailman/>,
+and bug tracker <http://sourceforge.net/p/plplot/bugs/>.

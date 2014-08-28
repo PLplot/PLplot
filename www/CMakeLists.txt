@@ -50,7 +50,7 @@ set(toplevel_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/corefunctions.php
   ${CMAKE_CURRENT_SOURCE_DIR}/credits.php
   ${CMAKE_CURRENT_SOURCE_DIR}/development.php
-  ${CMAKE_CURRENT_SOURCE_DIR}/download.php
+  ${CMAKE_CURRENT_SOURCE_DIR}/downloads.php
   ${CMAKE_CURRENT_SOURCE_DIR}/examples.php
   ${CMAKE_CURRENT_SOURCE_DIR}/index.php
   ${CMAKE_CURRENT_SOURCE_DIR}/simplepie.inc

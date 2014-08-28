@@ -8,7 +8,7 @@
 
 <div id="pagewrapper">
 
-	<?php pageMenu("download"); ?>
+	<?php pageMenu("downloads"); ?>
 
 	<div id="contentwrapper">
 		<div id="leftside">
