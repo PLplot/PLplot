@@ -12,7 +12,7 @@ And summarized here:
    $ git fetch
    (optional) review newly downloaded changes 
    $ git log origin/master
-   $ git merge origin/master
+   $ git merge --ff-only origin/master
 
    Make sure that you are on the master branch before doing the
    merge. Failure to do so will mean having to undo the merge as
@@ -34,7 +34,7 @@ And summarized here:
 
 4. Incorporate changes back into master:
    $ git checkout master 
-   $ git merge new_branch
+   $ git merge --ff-only new_branch
 
    At this point you should see a message like "Fast-forward". If
    instead you see "Merge made by the 'recursive' strategy" this
@@ -51,7 +51,16 @@ And summarized here:
    $ git push origin master
 
 This is a rebase work flow. The linearity of the master branch is 
-enforced by server side hooks.
+enforced by server side hooks and by only allowing fast-forward
+merges with the merge flag --ff-only. You can make this the
+default option for your repository using the command:
+   $ git config merge.ff only
+
+This will add these two lines:
+[merge]
+	ff = only
+
+To the .git/config file in the home directory of the PLplot project.
 
 
 Information for developers on UNIX/Linux
