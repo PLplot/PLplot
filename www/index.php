@@ -30,7 +30,7 @@ that is supported by Unicode and installed system fonts can be used to
 label plots.</p>
 			<h3>Feature Summary</h3>
 			<div class="splitcontentleft">
-				<h4><a name="cross_platform">Cross Platform</h4>
+				<h4><a name="cross_platform">Cross Platform</a></h4>
 				 <p>PLplot is currently known to work on the following platforms:</p>
 				 <ul class="arrowlist">
 				   <li>Linux, Mac OS X, and other Unices</li>

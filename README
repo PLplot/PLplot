@@ -104,7 +104,7 @@ X
 SOURCE CODE
 
 All our Windows users and many of our Unix users build PLplot from
-source code using our build system that is implemented with CMake <http:cmake.org>
+source code using our build system that is implemented with CMake <http://cmake.org>
 following the directions in our wiki
 <http://www.miscdebris.net/plplot_wiki>.  PLplot source code can be
 accessed a number of ways.  You can obtain the latest stable version
@@ -128,10 +128,10 @@ Fedora <https://apps.fedoraproject.org/packages/plplot>, and openSUSE
 <http://software.opensuse.org/package/plplot>.  Binary packages for
 Mac OS X are provided by at least Fink
 <http://www.finkproject.org/pdb/browse.php?summary=plplot>, Homebrew
-<http://brew.sh/>, and MacPorts
+<https://github.com/Homebrew/homebrew/blob/master/Library/Formula/plplot.rb>, and MacPorts
 <https://www.macports.org/ports.php?by=name&substr=plplot>.  To our
-knowledge no binary packages for PLplot are available at this time for
-Windows platforms so our Windows users are currently required to build
+knowledge no binary packages for PLplot are currently available for
+Windows platforms so our Windows users must build PLplot
 from source (see SOURCE CODE above).
 
 OTHER WEB RESOURCES
