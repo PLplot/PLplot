@@ -64,7 +64,9 @@ if(DEFAULT_NO_BINDINGS)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_qt "Enable Qt bindings" ON)
   option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
-  option(ENABLE_smoke "Enable smoke Qt bindings" ON)
+  # Still experimental so this should default to OFF, but the user
+  # has the option to turn it ON.
+  option(ENABLE_smoke "Enable smoke Qt bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_qt)
@@ -347,14 +349,14 @@ endif(ENABLE_pyqt4)
 
 if(ENABLE_smoke)
   find_package(Smoke QUIET)
-  if(NOT SMOKE_GEN_BIN)
+  if(SMOKE_GEN_BIN)
+    message(STATUS "smoke installation found")
+    message(STATUS "SMOKE_GEN_BIN = ${SMOKE_GEN_BIN}")
+    message(STATUS "SMOKE_GEN_SHARED = ${SMOKE_GEN_SHARED}")
+  else(SMOKE_GEN_BIN)
     message(STATUS
       "WARNING: smoke not found so setting ENABLE_smoke to OFF."
       )
     set(ENABLE_smoke OFF CACHE BOOL "Enable smoke Qt extension module " FORCE)
-  endif(NOT SMOKE_GEN_BIN)
-
-  # Doesn't work so disable.
-  set(ENABLE_smoke OFF CACHE BOOL "Enable smoke Qt extension module " FORCE)
-  
+  endif(SMOKE_GEN_BIN)
 endif(ENABLE_smoke)
