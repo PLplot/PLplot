@@ -348,11 +348,15 @@ if(ENABLE_pyqt4)
 endif(ENABLE_pyqt4)
 
 if(ENABLE_smoke)
-  find_package(Smoke QUIET)
+  find_package(Smoke QUIET COMPONENTS QtCore QtGui)
   if(SMOKE_GEN_BIN)
     message(STATUS "smoke installation found")
     message(STATUS "SMOKE_GEN_BIN = ${SMOKE_GEN_BIN}")
     message(STATUS "SMOKE_GEN_SHARED = ${SMOKE_GEN_SHARED}")
+    message(STATUS "SMOKE_GENERATOR_SMOKE_LIB = ${SMOKE_GENERATOR_SMOKE_LIB}")
+    message(STATUS "SMOKE_GENERATOR_DUMP_LIB = ${SMOKE_GENERATOR_DUMP_LIB}")
+    message(STATUS "SMOKE_QTCORE_LIBRARY = ${SMOKE_QTCORE_LIBRARY}")
+    message(STATUS "SMOKE_QTGUI_LIBRARY = ${SMOKE_QTGUI_LIBRARY}")
   else(SMOKE_GEN_BIN)
     message(STATUS
       "WARNING: smoke not found so setting ENABLE_smoke to OFF."

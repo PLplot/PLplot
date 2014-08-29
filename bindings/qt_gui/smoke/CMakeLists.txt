@@ -57,6 +57,8 @@ if(ENABLE_smoke)
     smokeplplotqt${LIB_TAG}
     plplotqt${LIB_TAG}
     plplot${LIB_TAG}
+    ${SMOKE_QTCORE_LIBRARY}
+    ${SMOKE_QTGUI_LIBRARY}
     ${QT_LIBRARIES}
     )
 
