@@ -901,10 +901,11 @@ module plplot
 
     interface plsvect
         module procedure plsvect1
+    end interface
 
+    interface plsvect
         subroutine plsvect2
         end subroutine plsvect2
-
     end interface
 
     interface
