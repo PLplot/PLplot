@@ -381,9 +381,9 @@ set(
   "${libplplot${LIB_TAG}_LINK_FLAGS} -lqsastime"
   )
 
-#message(STATUS
-#"libplplot${LIB_TAG}_LINK_LIBRARIES = ${libplplot${LIB_TAG}_LINK_LIBRARIES}"
-#)
+message(STATUS
+"libplplot${LIB_TAG}_LINK_LIBRARIES = ${libplplot${LIB_TAG}_LINK_LIBRARIES}"
+)
 
 target_link_libraries(
   plplot${LIB_TAG}

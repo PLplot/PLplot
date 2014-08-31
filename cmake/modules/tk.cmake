@@ -62,11 +62,12 @@ if(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
 endif(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
 
 # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
-string(REGEX REPLACE ";" " -I" TKLIB_COMPILE_FLAGS "-I${TK_INCLUDE_PATH}")
+string(REGEX REPLACE ";" " -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
+message(STATUS "TKLIB_COMPILE_FLAGS ${TKLIB_COMPILE_FLAGS}")
 	
 if(PLD_tk)
   set(tk_COMPILE_FLAGS 
-  "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
+  "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
   )
   set(tk_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
   set(tk_RPATH ${TCL_TK_RPATH})
@@ -89,30 +90,40 @@ if(PLD_tk)
     ${CMAKE_SOURCE_DIR}/bindings/tcl/matrixInit.c
     )
     if(ENABLE_itcl)
+	  #note tk_compile flags already has its quote marks
       set(tk_COMPILE_FLAGS
-      "${tk_COMPILE_FLAGS} -I${ITCL_INCLUDE_PATH}"
+      "${tk_COMPILE_FLAGS} -I\"${ITCL_INCLUDE_PATH}\""
       )
       set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITCL_LIBRARY})
     endif(ENABLE_itcl)
     if(ENABLE_itk)
       set(tk_COMPILE_FLAGS
-      "${tk_COMPILE_FLAGS} -I${ITK_INCLUDE_PATH}"
+      "${tk_COMPILE_FLAGS} -I\"${ITK_INCLUDE_PATH}\""
       )
       set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITK_LIBRARY})
     endif(ENABLE_itk)
   endif(NOT ENABLE_DYNDRIVERS)
+  message(STATUS "tk_COMPILE_FLAGS ${tk_COMPILE_FLAGS}")
+  message(STATUS "tk_LINK_FLAGS ${tk_LINK_FLAGS}")
+  message(STATUS "tk_RPATH ${tk_RPATH}")
+  #message(STATUS DRIVERS_"LINK_FLAGS ${DRIVERS_LINK_FLAGS}")
 endif(PLD_tk)
 
 if(PLD_ntk)
-  set(ntk_COMPILE_FLAGS "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS}")
+  #note TKLIB_COMPILE_FLAGS already has its quote marks
+  set(ntk_COMPILE_FLAGS "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS}")
   set(ntk_LINK_FLAGS ${TCL_LIBRARY} ${TK_LIBRARY})
   set(ntk_RPATH ${TCL_TK_RPATH})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ntk_LINK_FLAGS})
+  message(STATUS "ntk_COMPILE_FLAGS ${ntk_COMPILE_FLAGS}")
+  message(STATUS "ntk_LINK_FLAGS ${ntk_LINK_FLAGS}")
+  message(STATUS "ntk_RPATH ${ntk_RPATH}")
+  #message(STATUS "DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS}")
 endif(PLD_ntk)
 
 if(PLD_tkwin)
   set(tkwin_COMPILE_FLAGS 
-    "-I${TCL_INCLUDE_PATH} ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk-x-plat -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
+    "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk-x-plat -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
     )
 
   if(USE_TCL_TK_STUBS)
@@ -125,6 +136,10 @@ if(PLD_tkwin)
   endif(USE_TCL_TK_STUBS)
 
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
+  message(STATUS tkwin_COMPILE_FLAGS ${tkwin_COMPILE_FLAGS})
+  message(STATUS tkwin_LINK_FLAGS ${tkwin_LINK_FLAGS})
+  message(STATUS tkwin_RPATH ${tkwin_RPATH})
+  #message(STATUS DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
   set(
   tkwin_SOURCE
   ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/Plplotter_Init.c
