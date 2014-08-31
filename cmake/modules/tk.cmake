@@ -62,7 +62,7 @@ if(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
 endif(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
 
 # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
-string(REGEX REPLACE ";" " -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
+string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
 message(STATUS "TKLIB_COMPILE_FLAGS ${TKLIB_COMPILE_FLAGS}")
 	
 if(PLD_tk)
@@ -106,7 +106,6 @@ if(PLD_tk)
   message(STATUS "tk_COMPILE_FLAGS ${tk_COMPILE_FLAGS}")
   message(STATUS "tk_LINK_FLAGS ${tk_LINK_FLAGS}")
   message(STATUS "tk_RPATH ${tk_RPATH}")
-  #message(STATUS DRIVERS_"LINK_FLAGS ${DRIVERS_LINK_FLAGS}")
 endif(PLD_tk)
 
 if(PLD_ntk)
@@ -118,7 +117,6 @@ if(PLD_ntk)
   message(STATUS "ntk_COMPILE_FLAGS ${ntk_COMPILE_FLAGS}")
   message(STATUS "ntk_LINK_FLAGS ${ntk_LINK_FLAGS}")
   message(STATUS "ntk_RPATH ${ntk_RPATH}")
-  #message(STATUS "DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS}")
 endif(PLD_ntk)
 
 if(PLD_tkwin)
@@ -139,7 +137,6 @@ if(PLD_tkwin)
   message(STATUS tkwin_COMPILE_FLAGS ${tkwin_COMPILE_FLAGS})
   message(STATUS tkwin_LINK_FLAGS ${tkwin_LINK_FLAGS})
   message(STATUS tkwin_RPATH ${tkwin_RPATH})
-  #message(STATUS DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS})
   set(
   tkwin_SOURCE
   ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/Plplotter_Init.c

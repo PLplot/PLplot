@@ -138,15 +138,7 @@ if(BUILD_TEST)
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(CORE_BUILD AND BUILD_SHARED_LIBS)
     add_executable(x${STRING_INDEX}c x${STRING_INDEX}c.c)
-	message(STATUS
-      "libplplot${LIB_TAG}_LINK_LIBRARIES = ${libplplot${LIB_TAG}_LINK_LIBRARIES}"
-      )
-
-    target_link_libraries(
-      x${STRING_INDEX}c
-      ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-      )
-    #target_link_libraries(x${STRING_INDEX}c plplot${LIB_TAG} ${MATH_LIB})
+    target_link_libraries(x${STRING_INDEX}c plplot${LIB_TAG} ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_c x${STRING_INDEX}c)
   endforeach(STRING_INDEX ${c_STRING_INDICES})
   
