@@ -27,7 +27,7 @@ BUILDTOOLS_PREFIX=/z/home/wine/newstart/build_script/install-${WINEVERSION}_buil
 PYTHON_PATH=/z/home/wine/newstart/python/python-2.7.5
 
 # Directory for top of source tree for epa_build
-export EPA_BUILD_SOURCE_PATH=/z/home/software/plplot_svn/HEAD/plplot_allura/cmake/epa_build
+export EPA_BUILD_SOURCE_PATH=/z/home/software/plplot/HEAD/plplot.git/cmake/epa_build
 
 # End of tailored values.
 

@@ -7,7 +7,7 @@ PATH=/home/software/cmake/install/bin:$PATH
 
 export INSTALL_PREFIX=/home/wine/newstart/build_script/install-linux
 
-export EPA_BUILD_SOURCE_PATH=/home/software/plplot_svn/HEAD/plplot_allura/cmake/epa_build
+export EPA_BUILD_SOURCE_PATH=/home/software/plplot/HEAD/plplot.git/cmake/epa_build
 
 # gcc, g++, and gfortran flags you might want to tailor to different values.
 export CFLAGS='-O3 -fvisibility=hidden -Wuninitialized'

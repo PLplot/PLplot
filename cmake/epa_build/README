@@ -200,7 +200,7 @@ nice -19 wineconsole --backend=curses MinGW-4.7.2/msys/1.0/bin/bash.exe
 
 Then from that bash.exe shell execute
 
-bash.exe-3.1$ pushd /z/home/software/plplot_svn/HEAD/plplot_allura/cmake/epa_build/setup;source setup_msys_makefiles;popd
+bash.exe-3.1$ pushd /z/home/software/plplot/HEAD/plplot.git/cmake/epa_build/setup;source setup_msys_makefiles;popd
 
 You need to pushd to the setup directory to run the source command on
 this platform, then popd back to the original directory as above.  The
