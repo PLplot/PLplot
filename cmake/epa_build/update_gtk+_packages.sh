@@ -60,9 +60,9 @@ cmake -DFILENAME:FILEPATH=gtk+_packages.data -P configure_epa.cmake
 # additional changes that cannot be done via a patch to the *.xml file.
 # Typically, these changes are hand edits which are tested then committed.
 # So typically the patch is created by rerunning the above cmake
-# command then using "svn diff" >| configured_gtk+.patch" to generate
+# command then using "git diff" >| configured_gtk+.patch" to generate
 # the reverse form of the patch to change the result created by the
-# above cmake command into the svn committed form which is done with
+# above cmake command into the git-committed form which is done with
 # the following patch command.
 
 patch --reverse --no-backup-if-mismatch -p0 <configured_gtk+.patch
