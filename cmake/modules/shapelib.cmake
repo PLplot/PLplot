@@ -43,7 +43,7 @@ if(HAVE_SHAPELIB)
   endif(SHAPELIB_FOUND)
 endif(HAVE_SHAPELIB)
 
-if(HAVE_SHAPELIB)
+if(HAVE_SHAPELIB AND NOT DEFINED HAVE_SAHOOKS)
   # See if shapelib is a modern version with access to SAHooks type.
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Check_SAHooks.c
     "#include <shapefil.h>
@@ -61,4 +61,4 @@ void main(void){SAHooks sHooks;}
    for specified shapefiles will not be quieted."
       )
   endif(NOT HAVE_SAHOOKS)
-endif(HAVE_SHAPELIB)
+endif(HAVE_SHAPELIB AND NOT DEFINED HAVE_SAHOOKS)
