@@ -3,7 +3,7 @@
 # Note the backslash at the end of the comments - this causes Tcl to
 # ignore the next line. It becomes a valid Tcl script as well as valid
 # shell script \
-exec @pltcl_LOCATION@ "$0" "$@"
+exec "@pltcl_LOCATION@" "$0" "$@"
 source tcldemos.tcl
 plinit
 0
