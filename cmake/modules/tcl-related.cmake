@@ -182,9 +182,9 @@ if(ENABLE_tcl)
       message(STATUS "Looking for itcl.h")
       if(NOT USE_INCRTCL_VERSION_4)
 	# Search first for epa_build install location.
-        find_path(ITCL_INCLUDE_PATH itcl.h HINTS ${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION})
+        find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION}")
       endif(NOT USE_INCRTCL_VERSION_4)
-      find_path(ITCL_INCLUDE_PATH itcl.h HINTS ${TCL_INCLUDE_PATH})
+      find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}")
 
       if(ITCL_INCLUDE_PATH)
         message(STATUS "Looking for itcl.h - found")
@@ -196,8 +196,9 @@ if(ENABLE_tcl)
 	string(REGEX REPLACE "^[0-9]*\\.([0-9]*).*$" "\\1" ITCL_MINOR_VERSION  "${PLPLOT_ITCL_VERSION}")
 	message(STATUS "ITCL_MAJOR_VERSION = ${ITCL_MAJOR_VERSION}")
 	message(STATUS "ITCL_MINOR_VERSION = ${ITCL_MINOR_VERSION}")
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_VERSION.c
-	  "// #define RC_INVOKED to avoid sucking in lots of additional includes for
+	if(NOT DEFINED CONSISTENT_HEADER_ITCL_VERSION)
+	  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_VERSION.c
+	    "// #define RC_INVOKED to avoid sucking in lots of additional includes for
 // efficiency and simplicity.
 #define RC_INVOKED 1
 #include <itcl.h>
@@ -206,11 +207,13 @@ if(ENABLE_tcl)
 #endif
 void main(void){}
 "
-	  )
-	try_compile(CONSISTENT_HEADER_ITCL_VERSION ${CMAKE_BINARY_DIR}
-	  ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_VERSION.c
-	  CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${ITCL_INCLUDE_PATH};${TCL_INCLUDE_PATH}"
-	  )
+	    )
+	  try_compile(CONSISTENT_HEADER_ITCL_VERSION ${CMAKE_BINARY_DIR}
+	    ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_VERSION.c
+	    CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${ITCL_INCLUDE_PATH};${TCL_INCLUDE_PATH}"
+	    )
+	endif(NOT DEFINED CONSISTENT_HEADER_ITCL_VERSION)
+
 	if(CONSISTENT_HEADER_ITCL_VERSION)
 	  message(STATUS "Checking for Itcl header version consistency - true")
 	else(CONSISTENT_HEADER_ITCL_VERSION)
@@ -236,7 +239,7 @@ void main(void){}
 	  get_filename_component(ITCL_LIBRARY_PATH ${ITCL_LIBRARY} PATH)
 	  list(APPEND TCL_TK_ITCL_ITK_RPATH ${ITCL_LIBRARY_PATH})
           set(HAVE_ITCL ON)
-          find_path(HAVE_ITCLDECLS_H itclDecls.h HINTS ${ITCL_INCLUDE_PATH})
+          find_path(HAVE_ITCLDECLS_H itclDecls.h HINTS "${ITCL_INCLUDE_PATH}")
         else(ITCL_LIBRARY)
           message(STATUS "Looking for itcl library - not found")
           message(STATUS "WARNING: Disabling Itcl interface code")
@@ -413,9 +416,9 @@ void main(void){}
       message(STATUS "Looking for itk.h")
       if(NOT USE_INCRTCL_VERSION_4)
 	# Search first for epa_build install location.
-        find_path(ITK_INCLUDE_PATH itk.h HINTS ${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION})
+        find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION}")
       endif(NOT USE_INCRTCL_VERSION_4)
-      find_path(ITK_INCLUDE_PATH itk.h HINTS ${TCL_INCLUDE_PATH})
+      find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}")
 
       if(ITK_INCLUDE_PATH)
         message(STATUS "Looking for itk.h - found")
@@ -427,8 +430,9 @@ void main(void){}
 	string(REGEX REPLACE "^[0-9]*\\.([0-9]*).*$" "\\1" ITK_MINOR_VERSION  "${PLPLOT_ITK_VERSION}")
 	message(STATUS "ITK_MAJOR_VERSION = ${ITK_MAJOR_VERSION}")
 	message(STATUS "ITK_MINOR_VERSION = ${ITK_MINOR_VERSION}")
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_VERSION.c
-	  "// #define RC_INVOKED to avoid sucking in lots of additional includes for
+	if(NOT DEFINED CONSISTENT_HEADER_ITK_VERSION)
+	  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_VERSION.c
+	    "// #define RC_INVOKED to avoid sucking in lots of additional includes for
 // efficiency and simplicity and also to avoid the header file disaster that has long
 // been a problem for version 3.3 of itk.h
 #define RC_INVOKED 1
@@ -438,11 +442,13 @@ void main(void){}
 #endif
 void main(void){}
 "
-	  )
-	try_compile(CONSISTENT_HEADER_ITK_VERSION ${CMAKE_BINARY_DIR}
-	  ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_VERSION.c
-	  CMAKE_FLAGS -DINCLUDE_DIRECTORIES:PATH=${ITK_INCLUDE_PATH}
-	  )
+	    )
+	  try_compile(CONSISTENT_HEADER_ITK_VERSION ${CMAKE_BINARY_DIR}
+	    ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_VERSION.c
+	    CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:PATH=${ITK_INCLUDE_PATH};${TK_INCLUDE_PATH};${TCL_INCLUDE_PATH}"
+	    )
+	endif(NOT DEFINED CONSISTENT_HEADER_ITK_VERSION)
+
 	if(CONSISTENT_HEADER_ITK_VERSION)
 	  message(STATUS "Checking for Itk header version consistency - true")
 	else(CONSISTENT_HEADER_ITK_VERSION)
