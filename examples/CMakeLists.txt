@@ -492,6 +492,7 @@ if(BUILD_TEST)
   set(custom_test_command ${SH_EXECUTABLE} ${custom_test_script})
   set(compare_command ${SH_EXECUTABLE} ${compare_script})
 
+  set(tcl_targets_LIST)
   if(PLD_psc)
     set(compare_file_depends ${custom_test_script})
     if(ENABLE_DYNDRIVERS)
@@ -559,6 +560,11 @@ if(BUILD_TEST)
 	  )
 	list(APPEND diff_targets_LIST test_${language}_psc)
 	list(APPEND diff_files_LIST ${output_list})
+
+	if(language STREQUAL "tcl")
+	  list(APPEND tcl_targets_LIST test_${language}_psc)
+	endif(language STREQUAL "tcl")
+
 	# If the subdirectory used an add_custom_target (as indicated
 	# by both files_examples_${language} and targets_examples_${language}
 	# being true), then for that special case must add a target-level
@@ -712,6 +718,8 @@ if(BUILD_TEST)
     endif(noninteractive_targets_LIST)
 
     set(interactive_targets_LIST)
+    set(tk_targets_LIST)
+
     # INTERACTIVE_DEVICES_LIST is set in
     # cmake/modules/drivers-finish.cmake for all enabled _interactive_
     # devices and is thus available for the core build.  It is also
@@ -772,6 +780,9 @@ if(BUILD_TEST)
       endif(files_examples_c AND targets_examples_c)
       if(NOT device STREQUAL "wxwidgets")
 	list(APPEND interactive_targets_LIST test_c_${device})
+	if(device STREQUAL "tk" OR device STREQUAL "ntk")
+	  list(APPEND tk_targets_LIST test_c_${device})
+	endif(device STREQUAL "tk" OR device STREQUAL "ntk")
       elseif(WIN32_AND_NOT_CYGWIN)
 	list(APPEND interactive_targets_LIST test_c_${device})
       else(NOT device STREQUAL "wxwidgets")
@@ -811,6 +822,9 @@ if(BUILD_TEST)
    work reliably so it is temporarily excluded from being a dependency of other
    more general interactive test targets") 
 	#list(APPEND interactive_targets_LIST test_octave_${device})
+	#if(device STREQUAL "tk" OR device STREQUAL "ntk")
+	#  list(APPEND tk_targets_LIST test_octave_${device})
+	#endif(device STREQUAL "tk" OR device STREQUAL "ntk")
       endif(ENABLE_octave)
     endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
 
@@ -968,6 +982,7 @@ if(BUILD_TEST)
    interactive test targets") 
     else(WIN32_AND_NOT_CYGWIN)
       list(APPEND interactive_targets_LIST test_pltcl_standard_examples)
+      list(APPEND tcl_targets_LIST test_pltcl_standard_examples)
     endif(WIN32_AND_NOT_CYGWIN)
 
     if(BUILD_SHARED_LIBS)
@@ -995,6 +1010,7 @@ if(BUILD_TEST)
    more general interactive test targets")
       else(WIN32_AND_NOT_CYGWIN)
 	list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
+	list(APPEND tcl_targets_LIST test_tclsh_standard_examples)
       endif(WIN32_AND_NOT_CYGWIN)
     endif(BUILD_SHARED_LIBS)
   endif(ENABLE_tcl AND PLD_${generic_interactive_device})
@@ -1193,12 +1209,23 @@ if(BUILD_TEST)
 
   if(targets_examples_tk)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})
+    list(APPEND tk_targets_LIST ${targets_examples_tk})
   endif(targets_examples_tk)
 
   add_custom_target(test_interactive)
   if(interactive_targets_LIST)
     add_dependencies(test_interactive ${interactive_targets_LIST})
   endif(interactive_targets_LIST)
+
+  add_custom_target(test_tcl)
+  if(tcl_targets_LIST)
+    add_dependencies(test_tcl ${tcl_targets_LIST})
+  endif(tcl_targets_LIST)
+
+  add_custom_target(test_tk)
+  if(tk_targets_LIST)
+    add_dependencies(test_tk ${tk_targets_LIST})
+  endif(tk_targets_LIST)
 
   # List of custom targets that test all of qt devices/special examples.
   # Must be maintained.
