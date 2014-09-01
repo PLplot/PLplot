@@ -213,3 +213,21 @@ git clone ssh://hbabcock@git.code.sf.net/p/plplot/plplot plplot_sf_clone.git
 
 time ./diff_git_versus_svn_tree.sh >| diff_git_versus_svn_tree_SF_clone.sh.out
 less diff_git_versus_svn_tree._SF_clonesh.out
+
+* Tag and remove all branches except master
+
+  List branches
+git branch -a
+ 
+  Tag the branch called branch_name
+git tag archive/branch_name origin/branch_name
+
+  Push tags to SF
+git push --tags origin
+
+  Delete branches at SF
+git push :branch-name
+
+  Branch resurrection:
+git branch branch_name archive/branch_name
+
