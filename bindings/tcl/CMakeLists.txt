@@ -1,7 +1,7 @@
 # bindings/tcl/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -39,7 +39,7 @@ if(ENABLE_tcl)
   add_dependencies(check_all check_tcl_parameters)
 
   # tclmatrix
-  set(tclmatrix${LIB_TAG}_LIB_SRCS
+  set(tclmatrix_LIB_SRCS
     tclMatrix.c
     matrixInit.c
     )
@@ -54,31 +54,31 @@ if(ENABLE_tcl)
     )
 
   set(
-    libplplottcltk${LIB_TAG}_COMPILE_FLAGS
-    "-I${TCL_INCLUDE_PATH}"
+    libplplottcltk_COMPILE_FLAGS
+    "-I\"${TCL_INCLUDE_PATH}\""
     )
 
   if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${tclmatrix${LIB_TAG}_LIB_SRCS}
+    set_source_files_properties(${tclmatrix_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
 
-  add_library(tclmatrix${LIB_TAG} ${tclmatrix${LIB_TAG}_LIB_SRCS})
+  add_library(tclmatrix ${tclmatrix_LIB_SRCS})
 
   if(USE_TCL_TK_STUBS)
-    target_link_libraries(tclmatrix${LIB_TAG} ${TCL_STUB_LIBRARY})
+    target_link_libraries(tclmatrix ${TCL_STUB_LIBRARY})
     set_target_properties(
-      tclmatrix${LIB_TAG}
+      tclmatrix
       PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
       )
   else(USE_TCL_TK_STUBS)
-    target_link_libraries(tclmatrix${LIB_TAG} ${TCL_LIBRARY})
+    target_link_libraries(tclmatrix ${TCL_LIBRARY})
   endif(USE_TCL_TK_STUBS)
 
   if(USE_RPATH)
     set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
     filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(tclmatrix${LIB_TAG}
+    set_target_properties(tclmatrix
       PROPERTIES
       SOVERSION ${tclmatrix_SOVERSION}
       VERSION ${tclmatrix_VERSION}
@@ -86,7 +86,7 @@ if(ENABLE_tcl)
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
   else(USE_RPATH)
-    set_target_properties(tclmatrix${LIB_TAG}
+    set_target_properties(tclmatrix
       PROPERTIES
       SOVERSION ${tclmatrix_SOVERSION}
       VERSION ${tclmatrix_VERSION}
@@ -94,19 +94,19 @@ if(ENABLE_tcl)
       )
   endif(USE_RPATH)
 
-  install(TARGETS tclmatrix${LIB_TAG}
+  install(TARGETS tclmatrix
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  set(tclmatrix${LIB_TAG}_INSTALLED_HEADERS
+  set(tclmatrix_INSTALLED_HEADERS
     tclMatrix.h
     )
 
   install(
-    FILES ${tclmatrix${LIB_TAG}_INSTALLED_HEADERS}
+    FILES ${tclmatrix_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}
     )
   # end tclmatrix
@@ -135,56 +135,56 @@ if(ENABLE_tcl)
     PROPERTIES OBJECT_DEPENDS "${tclgenfiles}"
     )
 
-  set(plplottcltk${LIB_TAG}_LIB_SRCS
+  set(plplottcltk_LIB_SRCS
     tclAPI.c
     )
 
-  set(plplottcltk_Main${LIB_TAG}_LIB_SRCS
+  set(plplottcltk_Main_LIB_SRCS
     tclMain.c
     )
 
   if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplottcltk${LIB_TAG}_LIB_SRCS}
+    set_source_files_properties(${plplottcltk_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
       )
-    set_source_files_properties(${plplottcltk_Main${LIB_TAG}_LIB_SRCS}
+    set_source_files_properties(${plplottcltk_Main_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
 
   if(USE_TCL_TK_STUBS)
     set(
-      plplottcltk${LIB_TAG}_link_libraries
-      tclmatrix${LIB_TAG}
-      plplot${LIB_TAG}
+      plplottcltk_link_libraries
+      tclmatrix
+      plplot
       ${TCL_STUB_LIBRARY}
       )
     set(
-      libplplottcltk${LIB_TAG}_LINK_FLAGS
-      -ltclmatrix${LIB_TAG}
+      libplplottcltk_LINK_FLAGS
+      -ltclmatrix
       ${TCL_STUB_LIBRARY}
       )
   else(USE_TCL_TK_STUBS)
     set(
-      plplottcltk${LIB_TAG}_link_libraries
-      tclmatrix${LIB_TAG}
-      plplot${LIB_TAG}
+      plplottcltk_link_libraries
+      tclmatrix
+      plplot
       ${TCL_LIBRARY}
       )
     set(
-      libplplottcltk${LIB_TAG}_LINK_FLAGS
-      -ltclmatrix${LIB_TAG}
+      libplplottcltk_LINK_FLAGS
+      -ltclmatrix
       ${TCL_LIBRARY}
       )
   endif(USE_TCL_TK_STUBS)
 
   set(
-    plplottcltk_Main${LIB_TAG}_link_libraries
-     plplot${LIB_TAG}
+    plplottcltk_Main_link_libraries
+    plplot
     ${TCL_LIBRARY}
     )
   set(
-    libplplottcltk_Main${LIB_TAG}_LINK_FLAGS
+    libplplottcltk_Main_LINK_FLAGS
      ${TCL_LIBRARY}
     )
 
@@ -198,89 +198,89 @@ if(ENABLE_tcl)
     # libplplottcltk any more) are modified below.
 
     set(
-      libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS
-      "${libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS} -I${ITCL_INCLUDE_PATH}"
+      libplplottcltk_Main_COMPILE_FLAGS
+      "${libplplottcltk_Main_COMPILE_FLAGS} -I\"${ITCL_INCLUDE_PATH}\""
       )
-    set(plplottcltk_Main${LIB_TAG}_link_libraries
-      ${plplottcltk_Main${LIB_TAG}_link_libraries}
+    set(plplottcltk_Main_link_libraries
+      ${plplottcltk_Main_link_libraries}
       ${ITCL_LIBRARY}
       )
     set(
-      libplplottcltk_Main${LIB_TAG}_LINK_FLAGS
-      ${libplplottcltk_Main${LIB_TAG}_LINK_FLAGS}
+      libplplottcltk_Main_LINK_FLAGS
+      ${libplplottcltk_Main_LINK_FLAGS}
       ${ITCL_LIBRARY}
       )
   endif(ENABLE_itcl)
-  message(STATUS "Itcl libraries: ${plplottcltk_Main${LIB_TAG}_link_libraries}")
+  message(STATUS "Itcl libraries: ${plplottcltk_Main_link_libraries}")
 
   if(ENABLE_tkX)
-    set(plplottcltk${LIB_TAG}_LIB_SRCS
-      ${plplottcltk${LIB_TAG}_LIB_SRCS}
+    set(plplottcltk_LIB_SRCS
+      ${plplottcltk_LIB_SRCS}
       ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
       ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
       ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
       ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
       )
 
-    set(plplottcltk_Main${LIB_TAG}_LIB_SRCS
-      ${plplottcltk_Main${LIB_TAG}_LIB_SRCS}
+    set(plplottcltk_Main_LIB_SRCS
+      ${plplottcltk_Main_LIB_SRCS}
       ${CMAKE_SOURCE_DIR}/bindings/tk/tkMain.c
       )
 
     include_directories(${TK_INCLUDE_PATH})
     # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
-    string(REGEX REPLACE ";" " -I" TKLIB_COMPILE_FLAGS "-I${TK_INCLUDE_PATH}")
+    string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
     set(
-      libplplottcltk${LIB_TAG}_COMPILE_FLAGS
-      "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
+      libplplottcltk_COMPILE_FLAGS
+      "${libplplottcltk_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
       )
 
     set(
-      libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS
-      "${libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
+      libplplottcltk_Main_COMPILE_FLAGS
+      "${libplplottcltk_Main_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
       )
 
     if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${plplottcltk${LIB_TAG}_LIB_SRCS}
+      set_source_files_properties(${plplottcltk_LIB_SRCS}
 	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
 	)
-      set_source_files_properties(${plplottcltk_Main${LIB_TAG}_LIB_SRCS}
+      set_source_files_properties(${plplottcltk_Main_LIB_SRCS}
 	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
 	)
     endif(BUILD_SHARED_LIBS)
 
     if(USE_TCL_TK_STUBS)
-      set(plplottcltk${LIB_TAG}_link_libraries
-	${plplottcltk${LIB_TAG}_link_libraries}
+      set(plplottcltk_link_libraries
+	${plplottcltk_link_libraries}
 	${TK_STUB_LIBRARY}
 	${X11_X11_LIB}
 	)
       set(
-	libplplottcltk${LIB_TAG}_LINK_FLAGS
-	${libplplottcltk${LIB_TAG}_LINK_FLAGS}
+	libplplottcltk_LINK_FLAGS
+	${libplplottcltk_LINK_FLAGS}
 	${TK_STUB_LIBRARY}
 	)
     else(USE_TCL_TK_STUBS)
-      set(plplottcltk${LIB_TAG}_link_libraries
-	${plplottcltk${LIB_TAG}_link_libraries}
+      set(plplottcltk_link_libraries
+	${plplottcltk_link_libraries}
 	${TK_LIBRARY}
 	${X11_X11_LIB}
 	)
       set(
-	libplplottcltk${LIB_TAG}_LINK_FLAGS
-	${libplplottcltk${LIB_TAG}_LINK_FLAGS}
+	libplplottcltk_LINK_FLAGS
+	${libplplottcltk_LINK_FLAGS}
 	${TK_LIBRARY}
 	)
     endif(USE_TCL_TK_STUBS)
 
-    set(plplottcltk_Main${LIB_TAG}_link_libraries
-      ${plplottcltk_Main${LIB_TAG}_link_libraries}
+    set(plplottcltk_Main_link_libraries
+      ${plplottcltk_Main_link_libraries}
       ${TK_LIBRARY}
       ${X11_X11_LIB}
       )
     set(
-      libplplottcltk_Main${LIB_TAG}_LINK_FLAGS
-      ${libplplottcltk_Main${LIB_TAG}_LINK_FLAGS}
+      libplplottcltk_Main_LINK_FLAGS
+      ${libplplottcltk_Main_LINK_FLAGS}
       ${TK_LIBRARY}
       )
 
@@ -292,45 +292,33 @@ if(ENABLE_tcl)
       # libplplottcltk any more) are modified below.
 
       set(
-	libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS
-	"${libplplottcltk_Main${LIB_TAG}_COMPILE_FLAGS} -I${ITK_INCLUDE_PATH}"
+	libplplottcltk_Main_COMPILE_FLAGS
+	"${libplplottcltk_Main_COMPILE_FLAGS} -I\"${ITK_INCLUDE_PATH}\""
 	)
-      set(plplottcltk_Main${LIB_TAG}_link_libraries
-	${plplottcltk_Main${LIB_TAG}_link_libraries}
+      set(plplottcltk_Main_link_libraries
+	${plplottcltk_Main_link_libraries}
 	${ITK_LIBRARY}
 	)
       set(
-	libplplottcltk_Main${LIB_TAG}_LINK_FLAGS
-	${libplplottcltk_Main${LIB_TAG}_LINK_FLAGS}
+	libplplottcltk_Main_LINK_FLAGS
+	${libplplottcltk_Main_LINK_FLAGS}
 	${ITK_LIBRARY}
 	)
     endif(ENABLE_itkX)
   endif(ENABLE_tkX)
 
-  # Transform "${libplplottcltk${LIB_TAG}_LINK_FLAGS}" string to the
-  # standard pkg-config form.
-  pkg_config_link_flags(
-    libplplottcltk${LIB_TAG}_LINK_FLAGS
-    "${libplplottcltk${LIB_TAG}_LINK_FLAGS}"
-    )
-
-  pkg_config_link_flags(
-    libplplottcltk_Main${LIB_TAG}_LINK_FLAGS
-    "${libplplottcltk_Main${LIB_TAG}_LINK_FLAGS}"
-    )
-
-  add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
-  add_library(plplottcltk_Main${LIB_TAG} ${plplottcltk_Main${LIB_TAG}_LIB_SRCS})
+  add_library(plplottcltk ${plplottcltk_LIB_SRCS})
+  add_library(plplottcltk_Main ${plplottcltk_Main_LIB_SRCS})
 
   if(USE_TCL_TK_STUBS)
     if(ENABLE_tkX)
       set_target_properties(
-	plplottcltk${LIB_TAG}
+	plplottcltk
 	PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
 	)
     else(ENABLE_tkX)
       set_target_properties(
-	plplottcltk${LIB_TAG}
+	plplottcltk
 	PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
 	)
     endif(ENABLE_tkX)
@@ -339,35 +327,30 @@ if(ENABLE_tcl)
   if(NON_TRANSITIVE)
     # empty list ==> non-transitive linking for everything that links to
     # libtclmatrixd and libplplottcltkd in the shared libraries case.
-    target_link_libraries(tclmatrix${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-    target_link_libraries(plplottcltk${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-    target_link_libraries(plplottcltk_Main${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-    # This configures the pkg-config method to use non-transitive linking.
-    set(PC_REQUIRES_TAG "Requires.private")
-  else(NON_TRANSITIVE)
-    # This configures the pkg-config method to use transitive linking
-    set(PC_REQUIRES_TAG "Requires")
+    target_link_libraries(tclmatrix LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplottcltk LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplottcltk_Main LINK_INTERFACE_LIBRARIES)
   endif(NON_TRANSITIVE)
 
   #message(STATUS
-  #"plplottcltk${LIB_TAG}_link_libraries =
-  #${plplottcltk${LIB_TAG}_link_libraries}"
+  #"plplottcltk_link_libraries =
+  #${plplottcltk_link_libraries}"
   #)
   target_link_libraries(
-    plplottcltk${LIB_TAG}
-    ${plplottcltk${LIB_TAG}_link_libraries}
+    plplottcltk
+    ${plplottcltk_link_libraries}
     )
 
   target_link_libraries(
-    plplottcltk_Main${LIB_TAG}
-    ${plplottcltk_Main${LIB_TAG}_link_libraries}
+    plplottcltk_Main
+    ${plplottcltk_Main_link_libraries}
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
     filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(plplottcltk${LIB_TAG}
+    set_target_properties(plplottcltk
       PROPERTIES
       SOVERSION ${plplottcltk_SOVERSION}
       VERSION ${plplottcltk_VERSION}
@@ -378,7 +361,7 @@ if(ENABLE_tcl)
     # This version of LIB_INSTALL_RPATH also used below for pltcl.
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
     filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(plplottcltk_Main${LIB_TAG}
+    set_target_properties(plplottcltk_Main
       PROPERTIES
       SOVERSION ${plplottcltk_Main_SOVERSION}
       VERSION ${plplottcltk_Main_VERSION}
@@ -386,14 +369,14 @@ if(ENABLE_tcl)
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
   else(USE_RPATH)
-    set_target_properties(plplottcltk${LIB_TAG}
+    set_target_properties(plplottcltk
       PROPERTIES
       SOVERSION ${plplottcltk_SOVERSION}
       VERSION ${plplottcltk_VERSION}
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
 
-    set_target_properties(plplottcltk_Main${LIB_TAG}
+    set_target_properties(plplottcltk_Main
       PROPERTIES
       SOVERSION ${plplottcltk_Main_SOVERSION}
       VERSION ${plplottcltk_Main_VERSION}
@@ -402,26 +385,26 @@ if(ENABLE_tcl)
 
   endif(USE_RPATH)
 
-  install(TARGETS plplottcltk${LIB_TAG}
+  install(TARGETS plplottcltk
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  install(TARGETS plplottcltk_Main${LIB_TAG}
+  install(TARGETS plplottcltk_Main
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  set(plplottcltk${LIB_TAG}_INSTALLED_HEADERS
+  set(plplottcltk_INSTALLED_HEADERS
     pltcl.h
     )
 
   install(
-    FILES ${plplottcltk${LIB_TAG}_INSTALLED_HEADERS}
+    FILES ${plplottcltk_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}
     )
 
@@ -463,7 +446,6 @@ if(ENABLE_tcl)
     FILES_tclIndex_tcl ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
     )
 
-
   # I don't think this is necessary, but I am not sure of the file
   # depends of the custom_command associated with tclIndex_tcl and
   # serializing these targets doesn't slow down parallel builds very
@@ -489,7 +471,7 @@ if(ENABLE_tcl)
 
   get_target_property(
     DLNAME_LIBPLPLOTTCLTK
-    plplottcltk${LIB_TAG}
+    plplottcltk
     LOCATION
     )
   get_filename_component(
@@ -512,82 +494,14 @@ if(ENABLE_tcl)
     @ONLY
     )
 
-  # Configure pkg-config *.pc file corresponding to libplplottcltk${LIB_TAG}
-  if(PKG_CONFIG_EXECUTABLE)
-    if(LIB_TAG)
-      set(PC_PRECISION "double")
-    else(LIB_TAG)
-      set(PC_PRECISION "single")
-    endif(LIB_TAG)
-    # Each list element must consist of a colon-separated string with the
-    # following fields which are parsed out in the foreach loop below and
-    # used to configure the corresponding pkg-config *.pc file.
-    # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
-    # 			    binding has been enabled (ON) or not (OFF).
-    #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-    #			    which helps to determine name of configured
-    #			    *.pc file.
-    # PC_SHORT_NAME	  - Used in *.pc NAME: field
-    # PC_LONG_NAME	  - Used in *.pc Description: field
-    # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
-    #                         Also used to determine PC_LINK_FLAGS and
-    #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
-    #			    fields.
-    set(PC_DATA "tcl:Tcl/Tk:Tcl/Tk bindings, :plplottcltk${LIB_TAG}")
-
-    string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-    set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplot${LIB_TAG}")
-    string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-    set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-    if(NON_TRANSITIVE)
-      set(PC_LINK_FLAGS "-lplplot${LIB_TAG} ${PC_LINK_FLAGS}")
-    endif(NON_TRANSITIVE)
-    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
-    set(PC_CONFIGURED_FILE
-      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-      )
-    configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-      ${PC_CONFIGURED_FILE}
-      @ONLY
-      )
-    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-
-    set(PC_DATA "tcl_Main:Tcl_Main/Tk_Main:Tcl_Main/Tk_Main bindings, :plplottcltk_Main${LIB_TAG}")
-
-    string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-    set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplot${LIB_TAG}")
-    string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-    set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-    if(NON_TRANSITIVE)
-      set(PC_LINK_FLAGS "-lplplot${LIB_TAG} ${PC_LINK_FLAGS}")
-    endif(NON_TRANSITIVE)
-    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
-    set(PC_CONFIGURED_FILE
-      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-      )
-    configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-      ${PC_CONFIGURED_FILE}
-      @ONLY
-      )
-    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-  endif(PKG_CONFIG_EXECUTABLE)
+  pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "${libplplottcltk_LINK_FLAGS}")
+  pkg_config_file("tcl_Main" "Tcl_Main/Tk_Main" " Tcl_Main/Tk_Main bindings" "plplottcltk_Main" "${libplplottcltk_Main_COMPILE_FLAGS}" "${libplplottcltk_Main_LINK_FLAGS}")
 
   add_executable(pltcl pltcl.c)
-
   if(ENABLE_itcl)
-    target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${ITCL_LIBRARY} ${TCL_LIBRARY})
+    target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
   else(ENABLE_itcl)
-    target_link_libraries(pltcl plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${TCL_LIBRARY})
+    target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${TCL_LIBRARY})
   endif(ENABLE_itcl)
 
   if(USE_RPATH)

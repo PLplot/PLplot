@@ -216,16 +216,16 @@ if(CORE_BUILD)
   # Sort out RPATH issues for traditional build of installed examples using
   # */Makefiles configured in each * subdirectory from */Makefile.examples.in.
   if(USE_RPATH)
-    get_target_property(_LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(_LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     if(_LIB_INSTALL_RPATH)
       string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
-      set(RPATHCMD "-Wl,-rpath -Wl,${LIB_INSTALL_RPATH}")
+      set(RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}\"")
       if(PLD_extqt)
 	if(ENABLE_DYNDRIVERS)
 	  get_target_property(_qt_INSTALL_RPATH qt INSTALL_RPATH)
 	  if(_qt_INSTALL_RPATH)
 	    string(REGEX REPLACE ";" ":" qt_INSTALL_RPATH "${_qt_INSTALL_RPATH}")
-	    set(qt_RPATHCMD "-Wl,-rpath -Wl,${LIB_INSTALL_RPATH}:${qt_INSTALL_RPATH}:${DRV_DIR}")
+	    set(qt_RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}:${qt_INSTALL_RPATH}:${DRV_DIR}\"")
 	  else(_qt_INSTALL_RPATH)
 	    set(qt_RPATHCMD)
 	  endif(_qt_INSTALL_RPATH)
@@ -234,10 +234,10 @@ if(CORE_BUILD)
 	endif(ENABLE_DYNDRIVERS)
       endif(PLD_extqt)
       if(ENABLE_tcl)
-	get_target_property(_plplottcltk_Main_INSTALL_RPATH plplottcltk_Main${LIB_TAG} INSTALL_RPATH)
+	get_target_property(_plplottcltk_Main_INSTALL_RPATH plplottcltk_Main INSTALL_RPATH)
 	if(_plplottcltk_Main_INSTALL_RPATH)
 	  string(REGEX REPLACE ";" ":" plplottcltk_Main_INSTALL_RPATH "${_plplottcltk_Main_INSTALL_RPATH}")
-	  set(plplottcltk_Main_RPATHCMD "-Wl,-rpath -Wl,${LIB_INSTALL_RPATH}:${plplottcltk_Main_INSTALL_RPATH}")
+	  set(plplottcltk_Main_RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}:${plplottcltk_Main_INSTALL_RPATH}\"")
 	else(_plplottcltk_Main_INSTALL_RPATH)
 	  set(plplottcltk_Main_RPATHCMD)
 	endif(_plplottcltk_Main_INSTALL_RPATH)
@@ -994,7 +994,7 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
       add_dependencies(test_tclsh_standard_examples
-	plplottcltk${LIB_TAG}
+	plplottcltk
 	tcl_examples
 	tclIndex_tcl
 	${generic_interactive_device}
@@ -1098,7 +1098,7 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
       add_dependencies(test_wish_standard_examples
-	plplottcltk${LIB_TAG}
+	plplottcltk
 	tk
 	xwin
 	tcl_examples
@@ -1191,7 +1191,7 @@ if(BUILD_TEST)
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	  )
 	add_dependencies(test_wish_runAllDemos
-	  plplottcltk${LIB_TAG}
+	  plplottcltk
 	  tkwin
 	  tcl_examples
 	  tclIndex_tcl

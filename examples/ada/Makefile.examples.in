@@ -26,7 +26,6 @@ GNAT_EXECUTABLE_BUILDER = @GNAT_EXECUTABLE_BUILDER@ \
 	-aI@ADA_INCLUDE_DIR@ -aL@ADA_LIB_DIR@
 EXEEXT = @EXEEXT@
 
-LIB_TAG = @LIB_TAG@
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 RPATHCMD = @RPATHCMD@
 
@@ -107,6 +106,6 @@ clean:
 # anything after -cargs below.
 .adb$(EXEEXT):
 	$(GNAT_EXECUTABLE_BUILDER) $< \
-	-cargs `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot$(LIB_TAG)-ada` -largs $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot$(LIB_TAG)-ada`
+	-cargs $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot-ada) -largs $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot-ada)
 
 .SUFFIXES: .adb $(EXEEXT)

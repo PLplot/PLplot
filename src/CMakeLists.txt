@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -19,7 +19,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(plplot${LIB_TAG}_LIB_SRCS
+set(plplot_LIB_SRCS
   pdfutils.c
   plaffine.c
   plarc.c
@@ -56,14 +56,14 @@ set(plplot${LIB_TAG}_LIB_SRCS
   pllegend.c
   )
 if(PL_DEPRECATED)
-  set(plplot${LIB_TAG}_LIB_SRCS ${plplot${LIB_TAG}_LIB_SRCS} pldeprecated.c)
+  set(plplot_LIB_SRCS ${plplot_LIB_SRCS} pldeprecated.c)
 endif(PL_DEPRECATED)
 if(LTDL_WIN32)
-  set(plplot${LIB_TAG}_LIB_SRCS ${plplot${LIB_TAG}_LIB_SRCS} ltdl_win32.c)
+  set(plplot_LIB_SRCS ${plplot_LIB_SRCS} ltdl_win32.c)
 endif(LTDL_WIN32)
 
 if(BUILD_SHARED_LIBS)
-  SET_SOURCE_FILES_PROPERTIES(${plplot${LIB_TAG}_LIB_SRCS}
+  SET_SOURCE_FILES_PROPERTIES(${plplot_LIB_SRCS}
     PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
 
@@ -80,6 +80,7 @@ if(NOT HERSHEY_FALLBACK)
     )
 endif(NOT HERSHEY_FALLBACK)
 
+set(libplplot_COMPILE_FLAGS)
 if(ENABLE_DYNDRIVERS)
   get_source_file_property(PLCORE_COMPILE_PROPS plcore.c COMPILE_FLAGS)
   # Deal with NOTFOUND case.
@@ -119,7 +120,7 @@ else(ENABLE_DYNDRIVERS)
   set(DRIVERS_RPATH)
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
-    list(APPEND plplot${LIB_TAG}_LIB_SRCS ${${SOURCE_ROOT_NAME}_SOURCE})
+    list(APPEND plplot_LIB_SRCS ${${SOURCE_ROOT_NAME}_SOURCE})
 
     if(SOURCE_ROOT_NAME STREQUAL "qt")
       if(ANY_QT_DEVICE)
@@ -152,10 +153,7 @@ else(ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_SOURCE}
 	PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
 	)
-      set(libplplot${LIB_TAG}_COMPILE_FLAGS
-	${libplplot${LIB_TAG}_COMPILE_FLAGS}
-	${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
-	)
+      list(APPEND libplplot_COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS})
       if(SOURCE_ROOT_NAME STREQUAL "tk")
         set_source_files_properties(
 	  ${${SOURCE_ROOT_NAME}_SOURCE}
@@ -181,51 +179,43 @@ include_directories(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/include
   )
-add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
-add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built ${qt_dependency})
+add_library(plplot ${plplot_LIB_SRCS})
+add_dependencies(plplot plhershey-unicode.h_built ${qt_dependency})
 
 if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   # According to advice from Steve Kelly on the Cmake list, the Qt5
   # Gui component is a dependency of the Qt5 Svg component so is not
   # needed here, but I will leave it in since it is informative.
-  qt5_use_modules(plplot${LIB_TAG} Svg Gui PrintSupport)
+  qt5_use_modules(plplot Svg Gui PrintSupport)
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 if(NON_TRANSITIVE)
   # empty list ==> non-transitive linking for everything that links to
   # libplplotd in the shared libraries case.
-  target_link_libraries(plplot${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-  # This configures the pkg-config method to use non-transitive linking.
-  set(PC_REQUIRES_TAG "Requires.private")
-else(NON_TRANSITIVE)
-  # This configures the pkg-config method to use transitive linking
-  set(PC_REQUIRES_TAG "Requires")
+  target_link_libraries(plplot LINK_INTERFACE_LIBRARIES)
 endif(NON_TRANSITIVE)
 
 # Deal with external libraries.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
-set(libplplot${LIB_TAG}_LINK_LIBRARIES)
+set(libplplot_LINK_LIBRARIES)
 if(ENABLE_DYNDRIVERS)
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${LTDL_LIBRARIES})
-  #message("libplplot${LIB_TAG}_LINK_LIBRARIES =  ${libplplot${LIB_TAG}_LINK_LIBRARIES}")
-  #message("libplplot${LIB_TAG}_RPATH = ${libplplot${LIB_TAG}_RPATH}")
-  list(APPEND LIB_INSTALL_RPATH ${libplplot${LIB_TAG}_RPATH})
+  list(APPEND libplplot_LINK_LIBRARIES ${LTDL_LIBRARIES})
+  #message("libplplot_LINK_LIBRARIES =  ${libplplot_LINK_LIBRARIES}")
+  #message("libplplot_RPATH = ${libplplot_RPATH}")
+  list(APPEND LIB_INSTALL_RPATH ${libplplot_RPATH})
 else(ENABLE_DYNDRIVERS)
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
+  list(APPEND libplplot_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
   list(APPEND LIB_INSTALL_RPATH ${DRIVERS_RPATH})
   if(ANY_QT_DEVICE AND NOT PLPLOT_USE_QT5)
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-    set_qt_target_properties(plplot${LIB_TAG})
+    set_qt_target_properties(plplot)
   endif(ANY_QT_DEVICE AND NOT PLPLOT_USE_QT5)
 endif(ENABLE_DYNDRIVERS)
 #message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
 if(MATH_LIB)
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${MATH_LIB})
+  list(APPEND libplplot_LINK_LIBRARIES ${MATH_LIB})
 endif(MATH_LIB)
-
-# Transform "${libplplot${LIB_TAG}_LINK_LIBRARIES}" string to the 
-# standard pkg-config form.
 
 if(HAVE_SHAPELIB)
   get_source_file_property(PLMAP_COMPILE_PROPS plmap.c COMPILE_FLAGS)
@@ -244,7 +234,7 @@ if(HAVE_SHAPELIB)
     )
   endif(HAVE_SAHOOKS)
 
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${SHAPELIB_LIBRARIES})
+  list(APPEND libplplot_LINK_LIBRARIES ${SHAPELIB_LIBRARIES})
   list(APPEND LIB_INSTALL_RPATH ${SHAPELIB_RPATH})
 
 endif(HAVE_SHAPELIB)
@@ -256,8 +246,7 @@ if(WITH_FREETYPE)
     set(PLFREETYPE_COMPILE_PROPS)
   endif(NOT PLFREETYPE_COMPILE_PROPS)
   set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "${PLFREETYPE_COMPILE_PROPS} ${FREETYPE_INCLUDE_CFLAGS}")
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES ${FREETYPE_LIBRARIES})
-  
+  list(APPEND libplplot_LINK_LIBRARIES ${FREETYPE_LIBRARIES})
 endif(WITH_FREETYPE)
 
 set(libstdcxx_full_path)
@@ -314,22 +303,17 @@ if(ENABLE_cxx AND NOT BUILD_SHARED_LIBS)
   endif(NOT libstdcxx_full_path)
 endif(ENABLE_cxx AND NOT BUILD_SHARED_LIBS)
 
-# Transform current information in libplplot${LIB_TAG}_LINK_LIBRARIES
-# into pkg-config (libplplot${LIB_TAG}_LINK_FLAGS) form.  Both variables
+# Copy current information in libplplot_LINK_LIBRARIES
+# into libplplot_LINK_FLAGS, which contains the equivalent list information
+# in a combination of library list form and pkg-config form that will
+# eventually be transformted into pure pkg-config form.  Both variables
 # will have data added to them afterward due to the internal PLplot libraries
 # which have a different pkg-config treatment than the external libraries
 # dealt with here.
+set(libplplot_LINK_FLAGS ${libplplot_LINK_LIBRARIES})
 
 if(libstdcxx_full_path)
-  pkg_config_link_flags(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_LIBRARIES};${libstdcxx_full_path}"
-  )
-else(libstdcxx_full_path)
-  pkg_config_link_flags(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_LIBRARIES}"
-  )
+  list(APPEND libplplot_LINK_FLAGS ${libstdcxx_full_path})
 endif(libstdcxx_full_path)
 
 # The above completes dealing with the external libraries.  Now
@@ -337,26 +321,18 @@ endif(libstdcxx_full_path)
 # build system.
 
 if(WITH_CSA)
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES csirocsa)
-  set(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsirocsa"
-    )
+  list(APPEND libplplot_LINK_LIBRARIES csirocsa)
+  list(APPEND libplplot_LINK_FLAGS -lcsirocsa)
 endif(WITH_CSA)
 
 if(PL_HAVE_QHULL)
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES csironn)
+  list(APPEND libplplot_LINK_LIBRARIES csironn)
   if(QHULL_RPATH)
-    set(
-      libplplot${LIB_TAG}_LINK_FLAGS
-      "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -L${QHULL_RPATH} -lqhull"
-      )
+    list(APPEND libplplot_LINK_FLAGS -lcsironn -L${QHULL_RPATH} -lqhull)
   else(QHULL_RPATH)
-    set(
-      libplplot${LIB_TAG}_LINK_FLAGS
-      "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -lqhull"
-      )
+    list(APPEND libplplot_LINK_FLAGS -lcsironn -lqhull)
   endif(QHULL_RPATH)
+
   # Needed by plgridd.c.
   include_directories(
     ${QHULL_INCLUDE_DIRS}
@@ -367,33 +343,25 @@ if(PL_HAVE_QHULL)
 endif(PL_HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
-  list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES nistcd)
-  set(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_FLAGS} -lnistcd"
-    )
+  list(APPEND libplplot_LINK_LIBRARIES nistcd)
+  list(APPEND libplplot_LINK_FLAGS -lnistcd)
   include_directories(${CMAKE_SOURCE_DIR}/lib/nistcd)
 endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 
-list(APPEND libplplot${LIB_TAG}_LINK_LIBRARIES qsastime)
-set(
-  libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_FLAGS} -lqsastime"
-  )
+list(APPEND libplplot_LINK_LIBRARIES qsastime)
+list(APPEND libplplot_LINK_FLAGS -lqsastime)
 
-#message(STATUS
-#"libplplot${LIB_TAG}_LINK_LIBRARIES = ${libplplot${LIB_TAG}_LINK_LIBRARIES}"
-#)
+#message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
 
 target_link_libraries(
-  plplot${LIB_TAG}
-  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+  plplot
+  ${libplplot_LINK_LIBRARIES}
   )
 
 if(USE_RPATH)
   filter_rpath(LIB_INSTALL_RPATH)
   set_target_properties(
-    plplot${LIB_TAG}
+    plplot
     PROPERTIES 
     SOVERSION ${plplot_SOVERSION}
     VERSION ${plplot_VERSION}
@@ -402,7 +370,7 @@ if(USE_RPATH)
     )
 else(USE_RPATH)
   set_target_properties(
-    plplot${LIB_TAG}
+    plplot
     PROPERTIES 
     SOVERSION ${plplot_SOVERSION}
     VERSION ${plplot_VERSION}
@@ -410,7 +378,7 @@ else(USE_RPATH)
     )
 endif(USE_RPATH)
 
-install(TARGETS plplot${LIB_TAG}
+install(TARGETS plplot
   EXPORT export_plplot
   ARCHIVE DESTINATION ${LIB_DIR}
   LIBRARY DESTINATION ${LIB_DIR}
@@ -430,59 +398,16 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   # For this special case QT_LIBRARIES is not populated so must
   # use this alternative method to add Qt(5) libraries to the pkg-config file
   # for the plplot library.
-  set(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_FLAGS} ${Qt5_library_LINK_FLAGS}"
-    )
+  list(APPEND libplplot_LINK_FLAGS ${Qt5_library_LINK_FLAGS})
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
-#message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
+message("libplplot_LINK_FLAGS = ${libplplot_LINK_FLAGS}")
 
 string(REGEX REPLACE ";" " " 
-  libplplot${LIB_TAG}_COMPILE_FLAGS
-  "${libplplot${LIB_TAG}_COMPILE_FLAGS}"
+  libplplot_COMPILE_FLAGS
+  "${libplplot_COMPILE_FLAGS}"
   )
-#message("libplplot${LIB_TAG}_COMPILE_FLAGS = ${libplplot${LIB_TAG}_COMPILE_FLAGS}")
+#message("libplplot_COMPILE_FLAGS = ${libplplot_COMPILE_FLAGS}")
 
-# Configure pkg-config *.pc file corresponding to libplplot${LIB_TAG}
-if(PKG_CONFIG_EXECUTABLE)
-  if(LIB_TAG)
-    set(PC_PRECISION "double")
-  else(LIB_TAG)
-    set(PC_PRECISION "single")
-  endif(LIB_TAG)
-  # Each list element must consist of a colon-separated string with the
-  # following fields which are parsed out in the foreach loop below and
-  # used to configure the corresponding pkg-config *.pc file.
-  # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
-  # 			    binding has been enabled (ON) or not (OFF).
-  #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-  #			    which helps to determine name of configured 
-  #			    *.pc file.
-  # PC_SHORT_NAME	  - Used in *.pc NAME: field
-  # PC_LONG_NAME	  - Used in *.pc Description: field
-  # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
-  #                         Also used to determine PC_LINK_FLAGS and
-  #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
-  #			    fields.
-  set(PC_DATA "c:::plplot${LIB_TAG}")
-
-  string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-  set(PC_FILE_SUFFIX "")
-  set(PC_REQUIRES "")
-  string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-  string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-  string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-  set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-  set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
-  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-  set(PC_CONFIGURED_FILE
-    ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-    )
-  configure_file(
-    ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-    ${PC_CONFIGURED_FILE}
-    @ONLY
-    )
-  install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-endif(PKG_CONFIG_EXECUTABLE)
+# Configure pkg-config *.pc file corresponding to libplplot
+pkg_config_file("c" "" " Core C library" "plplot" "${libplplot_COMPILE_FLAGS}" "${libplplot_LINK_FLAGS}")

@@ -57,24 +57,24 @@ if(ENABLE_f95)
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
   endif(WIN32_OR_CYGWIN)
 
-  set(plplotf95c${LIB_TAG}_LIB_SRCS
+  set(plplotf95c_LIB_SRCS
     sc3d.c
     sccont.c
     scstubs.c
     )
 
   if(BUILD_SHARED_LIBS)
-    SET_SOURCE_FILES_PROPERTIES(${plplotf95c${LIB_TAG}_LIB_SRCS}
+    SET_SOURCE_FILES_PROPERTIES(${plplotf95c_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
 
-  add_library(plplotf95c${LIB_TAG} ${plplotf95c${LIB_TAG}_LIB_SRCS})
+  add_library(plplotf95c ${plplotf95c_LIB_SRCS})
 
-  target_link_libraries(plplotf95c${LIB_TAG}  plplot${LIB_TAG})
+  target_link_libraries(plplotf95c  plplot)
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    set_target_properties(plplotf95c${LIB_TAG}
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    set_target_properties(plplotf95c
       PROPERTIES
       SOVERSION ${plplotf95_SOVERSION}
       VERSION ${plplotf95_VERSION}
@@ -82,7 +82,7 @@ if(ENABLE_f95)
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
   else(USE_RPATH)
-    set_target_properties(plplotf95c${LIB_TAG}
+    set_target_properties(plplotf95c
       PROPERTIES
       SOVERSION ${plplotf95_SOVERSION}
       VERSION ${plplotf95_VERSION}
@@ -90,7 +90,7 @@ if(ENABLE_f95)
       )
   endif(USE_RPATH)
 
-  install(TARGETS plplotf95c${LIB_TAG}
+  install(TARGETS plplotf95c
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
@@ -127,34 +127,29 @@ if(ENABLE_f95)
 
   add_dependencies(check_all check_f95_parameters)
 
-  set(plplotf95${LIB_TAG}_LIB_SRCS
+  set(plplotf95_LIB_SRCS
     strutil.f90
     configurable.f90
     sfstubsf95.f90
     )
 
   if(WIN32_AND_NOT_CYGWIN AND BUILD_SHARED_LIBS AND NOT MINGW)
-    SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95${DEFFILE}.def)
+    SET(plplotf95_LIB_SRCS ${plplotf95_LIB_SRCS} plplotf95${DEFFILE}.def)
   endif(WIN32_AND_NOT_CYGWIN AND BUILD_SHARED_LIBS AND NOT MINGW)
 
-  add_library(plplotf95${LIB_TAG} ${plplotf95${LIB_TAG}_LIB_SRCS})
+  add_library(plplotf95 ${plplotf95_LIB_SRCS})
 
   if(NON_TRANSITIVE)
     # empty list ==> non-transitive linking for everything that links to
     # libplplotf95cd and libplplotf95d in the shared libraries case.
-    target_link_libraries(plplotf95c${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-    target_link_libraries(plplotf95${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-    # This configures the pkg-config method to use non-transitive linking.
-    set(PC_REQUIRES_TAG "Requires.private")
-  else(NON_TRANSITIVE)
-    # This configures the pkg-config method to use transitive linking
-    set(PC_REQUIRES_TAG "Requires")
+    target_link_libraries(plplotf95c LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplotf95 LINK_INTERFACE_LIBRARIES)
   endif(NON_TRANSITIVE)
 
-  target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
+  target_link_libraries(plplotf95  plplotf95c)
 
   if(USE_RPATH)
-    set_target_properties(plplotf95${LIB_TAG}
+    set_target_properties(plplotf95
       PROPERTIES
       SOVERSION ${plplotf95_SOVERSION}
       VERSION ${plplotf95_VERSION}
@@ -162,7 +157,7 @@ if(ENABLE_f95)
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
   else(USE_RPATH)
-    set_target_properties(plplotf95${LIB_TAG}
+    set_target_properties(plplotf95
       PROPERTIES
       SOVERSION ${plplotf95_SOVERSION}
       VERSION ${plplotf95_VERSION}
@@ -180,7 +175,7 @@ if(ENABLE_f95)
     set(VERSION_SUFFIX "")
   endif(CYGWIN)
 
-  install(TARGETS plplotf95${LIB_TAG}
+  install(TARGETS plplotf95
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
@@ -197,49 +192,6 @@ if(ENABLE_f95)
     DESTINATION ${F95_MOD_DIR}
     )
 
-  # Configure pkg-config *.pc file corresponding to libplplotf95${LIB_TAG}
-  if(PKG_CONFIG_EXECUTABLE)
-    if(LIB_TAG)
-      set(PC_PRECISION "double")
-    else(LIB_TAG)
-      set(PC_PRECISION "single")
-    endif(LIB_TAG)
-    # Each list element must consist of a colon-separated string with the
-    # following fields which are parsed out in the foreach loop below and
-    # used to configure the corresponding pkg-config *.pc file.
-    # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
-    # 			    binding has been enabled (ON) or not (OFF).
-    #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-    #			    which helps to determine name of configured
-    #			    *.pc file.
-    # PC_SHORT_NAME	  - Used in *.pc NAME: field
-    # PC_LONG_NAME	  - Used in *.pc Description: field
-    # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
-    #                         Also used to determine PC_LINK_FLAGS and
-    #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
-    #			    fields.
-    set(PC_DATA "f95:F95:F95 bindings, :plplotf95${LIB_TAG}${VERSION_SUFFIX}")
-
-    string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-    set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplot${LIB_TAG}")
-    string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-    set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-    set(PC_LINK_FLAGS
-      "-l${PC_LIBRARY_NAME} -lplplotf95c${LIB_TAG}${VERSION_SUFFIX} ${PC_LINK_FLAGS}"
-      )
-    set(PC_COMPILE_FLAGS "-I${F95_MOD_DIR} ${PC_COMPILE_FLAGS}")
-    set(PC_CONFIGURED_FILE
-      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-      )
-    configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-      ${PC_CONFIGURED_FILE}
-      @ONLY
-      )
-    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-  endif(PKG_CONFIG_EXECUTABLE)
+  # Configure pkg-config *.pc file corresponding to libplplotf95
+  pkg_config_file("f95" "F95" " F95 binding" "plplotf95${VERSION_SUFFIX}" "-I\"${F95_MOD_DIR}\"" "-lplplotf95c${VERSION_SUFFIX}")
 endif(ENABLE_f95)

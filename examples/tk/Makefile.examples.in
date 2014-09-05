@@ -24,7 +24,6 @@ SHELL = @SH_EXECUTABLE@
 CC = @CC@
 EXEEXT = @EXEEXT@
 
-LIB_TAG = @LIB_TAG@
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 plplottcltk_Main_RPATHCMD = @plplottcltk_Main_RPATHCMD@
 
@@ -38,6 +37,6 @@ clean:
 	rm -f $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
 .c$(EXEEXT):
-	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-tcl_Main plplot$(LIB_TAG)-tcl plplot$(LIB_TAG)` -lm
+	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-tcl_Main plplot-tcl plplot) @MATH_LIB@
 
 .SUFFIXES: .c $(EXEEXT)

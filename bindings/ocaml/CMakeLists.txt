@@ -99,11 +99,11 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
     COMMAND ${OCAMLC} -ccopt -I${CAMLIDL_LIB_DIR} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
     COMMAND ${OCAMLC} -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime -ccopt -I${CMAKE_BINARY_DIR} -ccopt -I${CAMLIDL_LIB_DIR} -ccopt -DPLPLOT_HAVE_CONFIG_H -c ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
-    COMMAND ${OCAMLMKLIB} -o plplot_stubs -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o ${ocaml_STATIC_FLAGS}
+    COMMAND ${OCAMLMKLIB} -o plplot_stubs -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o ${ocaml_STATIC_FLAGS}
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
-    plplot${LIB_TAG}
+    plplot
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
   add_custom_target(target_lib_plplot_stubs
@@ -158,7 +158,7 @@ if(ENABLE_ocaml)
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
-    COMMAND ${OCAMLC} -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo -dllib -lplplot_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -dllpath ${CMAKE_BINARY_DIR}/src ${ocaml_STATIC_FLAGS}
+    COMMAND ${OCAMLC} -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo -dllib -lplplot_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot -dllpath ${CMAKE_BINARY_DIR}/src ${ocaml_STATIC_FLAGS}
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
@@ -211,7 +211,7 @@ if(ENABLE_ocaml)
       OUTPUT
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
-      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} ${ocaml_STATIC_FLAGS}
+      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot ${ocaml_STATIC_FLAGS}
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
@@ -292,53 +292,6 @@ if(ENABLE_ocaml)
 
   # Configure the META file
   configure_file(META.in ${CMAKE_CURRENT_BINARY_DIR}/META)
-  # Configure pkg-config *.pc file corresponding to plplot.cma
-  if(PKG_CONFIG_EXECUTABLE)
-    # This configures the pkg-config method to use transitive linking
-    # (since we don't really know how to deal with non-transitive
-    # linking for ocaml).
-    set(PC_REQUIRES_TAG "Requires")
-
-    if(LIB_TAG)
-      set(PC_PRECISION "double")
-    else(LIB_TAG)
-      set(PC_PRECISION "single")
-    endif(LIB_TAG)
-    # Each list element must consist of a colon-separated string with the
-    # following fields which are parsed out in the foreach loop below and
-    # used to configure the corresponding pkg-config *.pc file.
-    # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
-    # 			    binding has been enabled (ON) or not (OFF).
-    #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-    #			    which helps to determine name of configured
-    #			    *.pc file.
-    # PC_SHORT_NAME	  - Used in *.pc NAME: field
-    # PC_LONG_NAME	  - Used in *.pc Description: field
-    # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
-    #                         Also used to determine PC_LINK_FLAGS and
-    #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
-    #			    fields.
-    set(PC_DATA "ocaml:::plplot${LIB_TAG}")
-
-    string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-    set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplot${LIB_TAG}")
-    string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-    set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
-    set(PC_CONFIGURED_FILE
-      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-      )
-    configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-      ${PC_CONFIGURED_FILE}
-      @ONLY
-      )
-    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-  endif(PKG_CONFIG_EXECUTABLE)
 
   set(OCAML_FULL_INSTALL_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
@@ -367,5 +320,8 @@ if(ENABLE_ocaml)
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
     PERMISSIONS ${SO_PERMISSIONS}
     )
+
+  # Configure pkg-config *.pc file corresponding to plplot.cma
+  pkg_config_file("ocaml" "OCaml" " OCaml binding" "plplot" "" "")
 
 endif(ENABLE_ocaml)

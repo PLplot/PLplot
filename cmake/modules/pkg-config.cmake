@@ -1,6 +1,6 @@
 # cmake/modules/pkg-config.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -128,69 +128,69 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
   #message("${_version} = ${${_version}}")
 endmacro(pkg_check_pkgconfig)
 
-macro(pkg_config_link_flags _link_flags_out _link_flags_in)
+function(pkg_config_link_flags link_flags_out link_flags_in)
   # Transform link flags into a form that is suitable to be used for
   # output pkg-config (*.pc) files.
-  # N.B. ${_link_flags_in} must be in quoted "${list_variable}" form
+  # N.B. ${link_flags_in} must be in quoted "${list_variable}" form
   # where list_variable is a CMake list.
 
+  #message("(original link flags) = ${link_flags_in}")
   # First strip out optimized / debug options which are not needed
   # Currently only FindQt4 seems to need this.
   if(CMAKE_BUILD_TYPE MATCHES "Debug")
     # Get rid of the optimized keyword and immediately following library as
     # well as the debug keyword anywhere such patterns occur in the list.
-    string(REGEX REPLACE "(^|;)optimized;[^;]*;" "\\1" ${_link_flags_out} "${_link_flags_in}")
-    string(REGEX REPLACE "(^|;)debug;" "\\1" ${_link_flags_out} "${${_link_flags_out}}")
+    string(REGEX REPLACE "(^|;)optimized;[^;]*;" "\\1" link_flags "${link_flags_in}")
+    string(REGEX REPLACE "(^|;)debug;" "\\1" link_flags "${link_flags}")
   else(CMAKE_BUILD_TYPE MATCHES "Debug")
     # Get rid of the debug keyword and immediately following library as
     # well as the optimized keyword anywhere such patterns occur in the list.
-    string(REGEX REPLACE "(^|;)debug;[^;]*;" "\\1" ${_link_flags_out} "${_link_flags_in}")
-    string(REGEX REPLACE "(^|;)optimized;" "\\1" ${_link_flags_out} "${${_link_flags_out}}")
+    string(REGEX REPLACE "(^|;)debug;[^;]*;" "\\1" link_flags "${link_flags_in}")
+    string(REGEX REPLACE "(^|;)optimized;" "\\1" link_flags "${link_flags}")
   endif(CMAKE_BUILD_TYPE MATCHES "Debug")
 
-  #message("(original link flags) = ${_link_flags_in}")
-  # Convert link flags to a blank-delimited string.
-  string(REGEX REPLACE ";" " " ${_link_flags_out} "${${_link_flags_out}}")
-  #message("(blanks) ${_link_flags_out} = ${${_link_flags_out}}")
+  #message("(stripped link flags) = ${link_flags}")
 
   # Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
   # since it appears pkg-config handles that latter form much better (with
   # regard to keeping the correct order and eliminating duplicates).
 
-  # This logic appears to work fine on Linux, Mac OS X, and MinGW/MSYS
-  # but it may need some generalization on other platforms such as
-  # Cygwin.
+  # These suffix patterns for library pathnames appear to work fine on
+  # Linux, Mac OS X, and MinGW/MSYS but it may need some
+  # generalization on other platforms such as Cygwin.
+
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(suffix_list "\\.so" "\\.a")
+    set(suffix_pattern "(\\.so|\\.a)")
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(suffix_list "\\.so" "\\.a" "\\.dylib")
+    set(suffix_pattern "(\\.so|\\.a|\\.dylib)")
   elseif(WIN32_OR_CYGWIN)
     # Order is important here.
-    set(suffix_list "\\.dll\\.a" "\\.a")
+    set(suffix_pattern "(\\.dll\\.a|\\.a)")
   else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Probably a non-Linux, non-Mac OS X, Unix platform
     # For this case we assume the same as Linux.
-    set(suffix_list "\\.so" "\\.a")
+    set(suffix_pattern "(\\.so|\\.a)")
   endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-  foreach(suffix ${suffix_list})
+  set(_link_flags)
+  foreach(link_flag IN LISTS link_flags)
+    #message(STATUS "link_flag = ${link_flag}")
     if(WIN32_OR_CYGWIN)
       # Look for colon-delimited drive-letter form on these platforms.
-      string(
-	REGEX REPLACE "([a-zA-Z]:/[^ ]*)/lib([^ ]*)${suffix}" "-L\\1 -l\\2"
-	${_link_flags_out}
-	"${${_link_flags_out}}"
-	)
-      #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
+      string(REGEX REPLACE "^([a-zA-Z]:/.*)/lib(.*)${suffix_pattern}$" "-L\"\\1\" -l\\2" link_flag ${link_flag})
     endif(WIN32_OR_CYGWIN)
     # Look for form starting with "/" on all platforms.
-    string(
-      REGEX REPLACE "(/[^ ]*)/lib([^ ]*)${suffix}" "-L\\1 -l\\2"
-      ${_link_flags_out}
-      "${${_link_flags_out}}"
-      )
-    #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
-  endforeach(suffix ${suffix_list})
+    string(REGEX REPLACE "^(/.*)/lib(.*)${suffix_pattern}$" "-L\"\\1\" -l\\2" link_flag ${link_flag})
+    #message(STATUS "(-L form of link_flag = ${link_flag}")
+    list(APPEND _link_flags ${link_flag})
+  endforeach(link_flag IN LISTS link_flags)
+  set(link_flags ${_link_flags})
+  set(_link_flags)
+  #message("(-L form of link_flags) = ${link_flags}")
+
+  # Convert link flags to a blank-delimited string.
+  string(REGEX REPLACE ";" " " link_flags "${link_flags}")
+  #message("(blank-delimited) link_flags = ${link_flags}")
 
   if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     # For Mac OS X transform frameworks information into correct form.
@@ -198,13 +198,15 @@ macro(pkg_config_link_flags _link_flags_out _link_flags_in)
     REGEX REPLACE
     "/System/Library/Frameworks/([^ ]*)\\.framework"
     "-framework \\1"
-    ${_link_flags_out}
-    ${${_link_flags_out}}
+    link_flags
+    ${link_flags}
     )
-    #message("(frameworks) ${_link_flags_out} = ${${_link_flags_out}}")
+    #message("(frameworks) link_flags = ${link_flags}")
   endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
-endmacro(pkg_config_link_flags)
+  set(${link_flags_out} ${link_flags} PARENT_SCOPE)
+
+endfunction(pkg_config_link_flags)
 
 macro(cmake_link_flags _link_flags_out _link_flags_in)
   # Transform link flags delivered by pkg-config into the best form
@@ -299,3 +301,89 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
     endif(NOT _success)
   endif("${_link_flags_in}" STREQUAL "")
 endmacro(cmake_link_flags)
+
+function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_COMPILE_FLAGS PC_LINK_FLAGS)
+  # Configure and install pkg-config *.pc file corresponding to the core PLplot library
+  # or one of the language bindings libraries which depend on that core library.
+  # The arguments are the following:
+  # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
+  # 			    binding has been enabled (ON) or not (OFF).
+  #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
+  #			    which helps to determine name of configured
+  #			    *.pc file.
+  # PC_SHORT_NAME	  - Used in *.pc NAME: field
+  # PC_LONG_NAME	  - Used in *.pc Description: field.  Must have trailing ", "
+  #                         if you want additional precision information appended.
+  # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
+  #                         Also used to determine PC_LINK_FLAGS and
+  #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
+  #			    fields.
+  # PC_COMPILE_FLAGS      - Space-delimited string of compile flags for this library.
+  # PC_LINK_Flags         - List of libraries that this library depends on.
+
+  # An example of a call of this function using these arguments is
+  # pkg_config_file("tcl" "Tcl/Tk" "Tcl/Tk bindings, " "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "${libplplottcltk_LINK_FLAGS}")
+
+  # This function depends on the following non-argument CMake variables being set.
+  # PKG_CONFIG_EXECUTABLE
+  # PL_DOUBLE
+  # NON_TRANSITIVE
+  # PLPLOT_VERSION
+  # SHLIB_DIR
+  # INCLUDE_DIR
+  # LIB_DIR
+  # PKG_CONFIG_DIR
+
+  if(PKG_CONFIG_EXECUTABLE)
+
+    if(PC_LONG_NAME MATCHES "^ ")
+      if(PL_DOUBLE)
+	set(PC_PRECISION "Double precision")
+      else(PL_DOUBLE)
+	set(PC_PRECISION "Single precision")
+      endif(PL_DOUBLE)
+    else(PC_LONG_NAME MATCHES "^ ")
+      set(PC_PRECISION)
+    endif(PC_LONG_NAME MATCHES "^ ")
+
+    # Transform PC_LINK flags from list of libraries to the standard pkg-config form.
+    pkg_config_link_flags(PC_LINK_FLAGS "${PC_LINK_FLAGS}")
+
+    if(BINDING STREQUAL "c")
+      set(PC_FILE_SUFFIX "")
+      set(PC_REQUIRES "")
+    elseif(BINDING STREQUAL "wxwidgets")
+      set(PC_FILE_SUFFIX "-${BINDING}")
+      set(PC_REQUIRES "plplot-c++")
+    else(BINDING STREQUAL "c")
+      set(PC_FILE_SUFFIX "-${BINDING}")
+      set(PC_REQUIRES "plplot")
+    endif(BINDING STREQUAL "c")
+
+    if(NON_TRANSITIVE)
+      if(NOT ${PC_LIBRARY_NAME} STREQUAL "plplot") 
+	set(PC_LINK_FLAGS "-lplplot ${PC_LINK_FLAGS}")
+      endif(NOT ${PC_LIBRARY_NAME} STREQUAL "plplot")
+      if(BINDING STREQUAL "ocaml")
+	# Don't know how to do non-transitive linking for
+        # Ocaml binding of PLplot.
+	set(PC_REQUIRES_TAG "Requires")
+      else(BINDING STREQUAL "ocaml")
+	set(PC_REQUIRES_TAG "Requires.private")
+      endif(BINDING STREQUAL "ocaml")
+    else(NON_TRANSITIVE)
+      set(PC_REQUIRES_TAG "Requires")
+    endif(NON_TRANSITIVE)
+    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
+    set(PC_CONFIGURED_FILE
+      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${PC_FILE_SUFFIX}.pc
+      )
+    configure_file(
+      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
+      ${PC_CONFIGURED_FILE}
+      @ONLY
+      )
+    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
+
+  endif(PKG_CONFIG_EXECUTABLE)
+endfunction(pkg_config_file)

@@ -20,14 +20,14 @@
 
 if(ENABLE_gnome2)
 
-  set(plplotgnome2${LIB_TAG}_LIB_SRCS
+  set(plplotgnome2_LIB_SRCS
     plplotcanvas.c
     gcw-lib.c
     )
 
   if(BUILD_SHARED_LIBS)
     SET_SOURCE_FILES_PROPERTIES(
-      ${plplotgnome2${LIB_TAG}_LIB_SRCS}
+      ${plplotgnome2_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
@@ -38,7 +38,7 @@ if(ENABLE_gnome2)
     set(PLGNOME2_COMPILE_PROPS)
   endif(NOT PLGNOME2_COMPILE_PROPS)
   set_source_files_properties(
-    ${plplotgnome2${LIB_TAG}_LIB_SRCS}
+    ${plplotgnome2_LIB_SRCS}
     PROPERTIES COMPILE_FLAGS "${PLGNOME2_COMPILE_PROPS} ${gcw_COMPILE_FLAGS}"
     )
 
@@ -51,17 +51,17 @@ if(ENABLE_gnome2)
     )
 
   # Create plplotgnome2[d] library
-  add_library(plplotgnome2${LIB_TAG} ${plplotgnome2${LIB_TAG}_LIB_SRCS})
+  add_library(plplotgnome2 ${plplotgnome2_LIB_SRCS})
 
   target_link_libraries(
-    plplotgnome2${LIB_TAG}
-    plplot${LIB_TAG}
+    plplotgnome2
+    plplot
     ${gcw_LINK_FLAGS}
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    set_target_properties(plplotgnome2${LIB_TAG}
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    set_target_properties(plplotgnome2
       PROPERTIES 
       SOVERSION ${plplotgnome2_SOVERSION} 
       VERSION ${plplotgnome2_VERSION}
@@ -69,7 +69,7 @@ if(ENABLE_gnome2)
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
   else(USE_RPATH)
-    set_target_properties(plplotgnome2${LIB_TAG}
+    set_target_properties(plplotgnome2
       PROPERTIES 
       SOVERSION ${plplotgnome2_SOVERSION} 
       VERSION ${plplotgnome2_VERSION}
@@ -77,61 +77,13 @@ if(ENABLE_gnome2)
       )
   endif(USE_RPATH)
 
-  install(TARGETS plplotgnome2${LIB_TAG}
+  install(TARGETS plplotgnome2
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  # Transform "${gcw_LINK_FLAGS}" to the 
-  # standard pkg-config form.
-  pkg_config_link_flags(
-    libplplotgnome2${LIB_TAG}_LINK_FLAGS
-    "${gcw_LINK_FLAGS}"
-    )
-
-  # Configure pkg-config *.pc file corresponding to libplplotgnome2${LIB_TAG}
-  if(PKG_CONFIG_EXECUTABLE)
-    if(LIB_TAG)
-      set(PC_PRECISION "double")
-    else(LIB_TAG)
-      set(PC_PRECISION "single")
-    endif(LIB_TAG)
-    # Each list element must consist of a colon-separated string with the
-    # following fields which are parsed out in the foreach loop below and
-    # used to configure the corresponding pkg-config *.pc file.
-    # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
-    # 			    binding has been enabled (ON) or not (OFF).
-    #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-    #			    which helps to determine name of configured 
-    #			    *.pc file.
-    # PC_SHORT_NAME	  - Used in *.pc NAME: field
-    # PC_LONG_NAME	  - Used in *.pc Description: field
-    # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
-    #                         Also used to determine PC_LINK_FLAGS and
-    #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
-    #			    fields.
-    set(PC_DATA "gnome2:GNOME2:GNOME2/GTK bindings, :plplotgnome2${LIB_TAG}")
-
-    string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-    set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplot${LIB_TAG}")
-    string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-    set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
-    #  set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-    set(PC_COMPILE_FLAGS "${gcw_COMPILE_FLAGS}")
-    set(PC_CONFIGURED_FILE
-      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-      )
-    configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-      ${PC_CONFIGURED_FILE}
-      @ONLY
-      )
-    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-  endif(PKG_CONFIG_EXECUTABLE)
+  # Configure pkg-config *.pc file corresponding to libplplotgnome2
+  pkg_config_file("gnome2" "GNOME2" " GNOME2/GTK binding" "plplotgnome2" "${gcw_COMPILE_FLAGS}" "${gcw_LINK_FLAGS}")
 endif(ENABLE_gnome2)

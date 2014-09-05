@@ -25,7 +25,6 @@ SHELL = @SH_EXECUTABLE@
 CXX = @CXX@
 EXEEXT = @EXEEXT@
 
-LIB_TAG = @LIB_TAG@
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 RPATHCMD = @RPATHCMD@
 @qt_gui_true@QT_MOC_EXECUTABLE = @QT_MOC_EXECUTABLE@
@@ -82,17 +81,17 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 @wxwidgets_true@wxPLplotDemo$(EXEEXT): wxPLplotDemo.cpp
-@wxwidgets_true@	$(CXX) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-wxwidgets`
+@wxwidgets_true@	$(CXX) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-wxwidgets)
 
 # Note, must filter out -p options which confuse $(QT_MOC_EXECUTABLE).  Such
 # options (e.g., -pthread) tend to appear in the static driver case.
 @qt_gui_true@moc_qt_PlotWindow.cpp: qt_PlotWindow.h
-@qt_gui_true@	$(QT_MOC_EXECUTABLE) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags-only-I plplot$(LIB_TAG)-qt` $< -o $@
+@qt_gui_true@	$(QT_MOC_EXECUTABLE) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags-only-I plplot-qt) $< -o $@
 
 @qt_gui_true@qt_example$(EXEEXT): qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp
-@qt_gui_true@	$(CXX) qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-qt` `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot${LIB_TAG}`
+@qt_gui_true@	$(CXX) qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-qt) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot)
 
 .cc$(EXEEXT):
-	$(CXX) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-c++`
+	$(CXX) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-c++)
 
 .SUFFIXES: .cc $(EXEEXT)

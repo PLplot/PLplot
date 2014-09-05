@@ -38,7 +38,7 @@ if(ENABLE_ada)
   # N.B. the absolute location prefix of these files may have to be changed
   # in the future since this is a CMake internal.
   set(ALI_PREFIX 
-    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/plplotada${LIB_TAG}.dir
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/plplotada.dir
     )
   set(ALI_LIST
     ${ALI_PREFIX}/plplot.ali
@@ -63,24 +63,19 @@ if(ENABLE_ada)
       )
   endif(MINGW)
 
-  set(plplotada${LIB_TAG}_LIB_SRCS)
+  set(plplotada_LIB_SRCS)
   foreach(SOURCE_FILE ${SOURCE_LIST})
-    list(APPEND plplotada${LIB_TAG}_LIB_SRCS 
+    list(APPEND plplotada_LIB_SRCS 
       ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
       )
   endforeach(SOURCE_FILE ${SOURCE_LIST})
 
-  add_library(plplotada${LIB_TAG} ${plplotada${LIB_TAG}_LIB_SRCS})
+  add_library(plplotada ${plplotada_LIB_SRCS})
 
   if(NON_TRANSITIVE)
     # empty list ==> non-transitive linking for everything that links to
-    # libplplotada${LIB_TAG} in the shared libraries case.
-    target_link_libraries(plplotada${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-    # This configures the pkg-config method to use non-transitive linking.
-    set(PC_REQUIRES_TAG "Requires.private")
-  else(NON_TRANSITIVE)
-    # This configures the pkg-config method to use transitive linking
-    set(PC_REQUIRES_TAG "Requires")
+    # libplplotada in the shared libraries case.
+    target_link_libraries(plplotada LINK_INTERFACE_LIBRARIES)
   endif(NON_TRANSITIVE)
 
   # Work around an issue in our CMake Ada language
@@ -88,21 +83,21 @@ if(ENABLE_ada)
   # at the Ada language support level and not worked around here.
   if(USE_DLL_SUBDIRECTORY)
     add_custom_command(
-      TARGET plplotada${LIB_TAG} POST_BUILD
+      TARGET plplotada POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-      libplplotada${LIB_TAG}.dll libplplotada${LIB_TAG}.dll.a
+      libplplotada.dll libplplotada.dll.a
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll
       VERBATIM
       )
   endif(USE_DLL_SUBDIRECTORY)
 
-  target_link_libraries(plplotada${LIB_TAG}
-    plplot${LIB_TAG} ${GNAT_LIB}
+  target_link_libraries(plplotada
+    plplot ${GNAT_LIB}
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    set_target_properties(plplotada${LIB_TAG}
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    set_target_properties(plplotada
       PROPERTIES
       SOVERSION ${plplotada_SOVERSION}
       VERSION ${plplotada_VERSION}
@@ -110,7 +105,7 @@ if(ENABLE_ada)
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
   else(USE_RPATH)
-    set_target_properties(plplotada${LIB_TAG}
+    set_target_properties(plplotada
       PROPERTIES
       SOVERSION ${plplotada_SOVERSION}
       VERSION ${plplotada_VERSION}
@@ -118,7 +113,7 @@ if(ENABLE_ada)
       )
   endif(USE_RPATH)
 
-  install(FILES ${plplotada${LIB_TAG}_LIB_SRCS} 
+  install(FILES ${plplotada_LIB_SRCS} 
     DESTINATION ${ADA_INCLUDE_DIR}
     )
   
@@ -129,61 +124,18 @@ if(ENABLE_ada)
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     )
   
-  install(TARGETS plplotada${LIB_TAG}
+  install(TARGETS plplotada
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  # Configure pkg-config *.pc file corresponding to libplplotada${LIB_TAG}
-  if(PKG_CONFIG_EXECUTABLE)
-    if(LIB_TAG)
-      set(PC_PRECISION "double")
-    else(LIB_TAG)
-      set(PC_PRECISION "single")
-    endif(LIB_TAG)
-    # Each list element must consist of a colon-separated string with the
-    # following fields which are parsed out in the foreach loop below and
-    # used to configure the corresponding pkg-config *.pc file.
-    # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
-    # 			    binding has been enabled (ON) or not (OFF).
-    #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-    #			    which helps to determine name of configured 
-    #			    *.pc file.
-    # PC_SHORT_NAME	  - Used in *.pc NAME: field
-    # PC_LONG_NAME	  - Used in *.pc Description: field
-    # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
-    #                         Also used to determine PC_LINK_FLAGS and
-    #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
-    #			    fields.
-    set(PC_DATA "ada:Ada:Ada bindings, :plplotada${LIB_TAG}")
-    
-    string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-    set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplot${LIB_TAG}")
-    string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-    set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-    if(NON_TRANSITIVE)
-      set(PC_LINK_FLAGS "-lplplot${LIB_TAG} ${PC_LINK_FLAGS}")
-    endif(NON_TRANSITIVE)
-    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
-    set(PC_CONFIGURED_FILE
-      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-      )
-    configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-      ${PC_CONFIGURED_FILE}
-      @ONLY
-      )
-    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-  endif(PKG_CONFIG_EXECUTABLE)
-
   # Add generated .ali files to the list of additional files to be
   # removed by make clean
   SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ALI_LIST}")
+
+  # Configure pkg-config *.pc file corresponding to libplplotada
+  pkg_config_file("ada" "Ada" " Ada binding" "plplotada" "" "")
 
 endif(ENABLE_ada)

@@ -25,7 +25,6 @@ SHELL = @SH_EXECUTABLE@
 CC = @CC@
 EXEEXT = @EXEEXT@
 
-LIB_TAG = @LIB_TAG@
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 RPATHCMD = @RPATHCMD@
 
@@ -85,22 +84,22 @@ clean:
 
 @gcw_true@plplotcanvas_demo$(EXEEXT): plplotcanvas_demo.c
 @gcw_true@	$(CC) $< -o $@ $(RPATHCMD) \
-@gcw_true@			`$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-gnome2`
+@gcw_true@			$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-gnome2)
 
 @gcw_true@plplotcanvas_animation$(EXEEXT): plplotcanvas_animation.c
 @gcw_true@	$(CC) $< -o $@ $(RPATHCMD) \
-@gcw_true@			`$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)-gnome2` \
-@gcw_true@			`pkg-config @PC_STATIC_OPTION@ --cflags --libs gthread-2.0`			
+@gcw_true@			$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-gnome2) \
+@gcw_true@			$(shell pkg-config @PC_STATIC_OPTION@ --cflags --libs gthread-2.0)			
 
 @extXdrawable_true@extXdrawable_demo$(EXEEXT): extXdrawable_demo.c
 @extXdrawable_true@	$(CC) $< -o $@ $(RPATHCMD) \
-@extXdrawable_true@	`$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG) gtk+-x11-2.0`
+@extXdrawable_true@	$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot gtk+-x11-2.0)
 
 @extcairo_true@ext-cairo-test$(EXEEXT): ext-cairo-test.c
 @extcairo_true@	$(CC) $< -o $@ $(RPATHCMD) \
-@extcairo_true@	`$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG) cairo`
+@extcairo_true@	$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot cairo)
 
 .c$(EXEEXT):
-	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot$(LIB_TAG)`
+	$(CC) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot)
 
 .SUFFIXES: .c $(EXEEXT)

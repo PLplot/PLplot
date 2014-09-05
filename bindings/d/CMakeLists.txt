@@ -26,23 +26,23 @@ if(ENABLE_d)
   )
 
   # Build d bindings
-  set(plplotdmd${LIB_TAG}_LIB_SRCS
+  set(plplotdmd_LIB_SRCS
     plplot.d
   )
 
   if(plplotdmd_SHARED)
-    add_library(plplotdmd${LIB_TAG} ${plplotdmd${LIB_TAG}_LIB_SRCS})
+    add_library(plplotdmd ${plplotdmd_LIB_SRCS})
 
     if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${plplotdmd${LIB_TAG}_LIB_SRCS}
+      set_source_files_properties(${plplotdmd_LIB_SRCS}
 	PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(BUILD_SHARED_LIBS)
 
-    target_link_libraries(plplotdmd${LIB_TAG} plplot${LIB_TAG})
+    target_link_libraries(plplotdmd plplot)
 
     if(USE_RPATH)
-      get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-      set_target_properties(plplotdmd${LIB_TAG}
+      get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+      set_target_properties(plplotdmd
 	PROPERTIES
 	SOVERSION ${plplotdmd_SOVERSION}
 	VERSION ${plplotdmd_VERSION}
@@ -50,7 +50,7 @@ if(ENABLE_d)
 	INSTALL_NAME_DIR "${LIB_DIR}"
 	)
     else(USE_RPATH)
-      set_target_properties(plplotdmd${LIB_TAG}
+      set_target_properties(plplotdmd
 	PROPERTIES
 	SOVERSION ${plplotdmd_SOVERSION}
 	VERSION ${plplotdmd_VERSION}
@@ -58,71 +58,23 @@ if(ENABLE_d)
 	)
     endif(USE_RPATH)
   else(plplotdmd_SHARED)
-    add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
-    target_link_libraries(plplotdmd${LIB_TAG} plplot${LIB_TAG})
+    add_library(plplotdmd STATIC ${plplotdmd_LIB_SRCS})
+    target_link_libraries(plplotdmd plplot)
   endif(plplotdmd_SHARED)
 
   if(NON_TRANSITIVE)
     # empty list ==> non-transitive linking for everything that links to
     # libplplotdmdd in the shared libraries case.
-    target_link_libraries(plplotdmd${LIB_TAG} LINK_INTERFACE_LIBRARIES)
-    # This configures the pkg-config method to use non-transitive linking.
-    set(PC_REQUIRES_TAG "Requires.private")
-  else(NON_TRANSITIVE)
-    # This configures the pkg-config method to use transitive linking
-    set(PC_REQUIRES_TAG "Requires")
+    target_link_libraries(plplotdmd LINK_INTERFACE_LIBRARIES)
   endif(NON_TRANSITIVE)
 
-  install(TARGETS plplotdmd${LIB_TAG}
+  install(TARGETS plplotdmd
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
   )
 
-  # Configure pkg-config *.pc file corresponding to libplplotdmd${LIB_TAG}
-  if(PKG_CONFIG_EXECUTABLE)
-    if(LIB_TAG)
-      set(PC_PRECISION "double")
-    else(LIB_TAG)
-      set(PC_PRECISION "single")
-    endif(LIB_TAG)
-    # Each list element must consist of a colon-separated string with the
-    # following fields which are parsed out in the foreach loop below and
-    # used to configure the corresponding pkg-config *.pc file.
-    # BINDING 	      	  - ENABLE_${BINDING} keeps track of whether a
-    # 			    binding has been enabled (ON) or not (OFF).
-    #			    Also, ${BINDING} used to determine PC_FILE_SUFFIX
-    #			    which helps to determine name of configured 
-    #			    *.pc file.
-    # PC_SHORT_NAME	  - Used in *.pc NAME: field
-    # PC_LONG_NAME	  - Used in *.pc Description: field
-    # PC_LIBRARY_NAME	  - Used in *.pc Libs: field
-    #                         Also used to determine PC_LINK_FLAGS and
-    #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
-    #			    fields.
-    set(PC_DATA "d:D:D bindings, :plplotdmd${LIB_TAG}")
-
-    string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
-    set(PC_FILE_SUFFIX "-${BINDING}")
-    set(PC_REQUIRES "plplot${LIB_TAG}")
-    string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" PC_SHORT_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" PC_LONG_NAME ${PC_DATA})
-    string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" PC_LIBRARY_NAME ${PC_DATA})
-    set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    if(NON_TRANSITIVE)
-      set(PC_LINK_FLAGS "-lplplot${LIB_TAG} ${PC_LINK_FLAGS}")
-    endif(NON_TRANSITIVE)
-    set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
-    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
-    set(PC_CONFIGURED_FILE
-      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-      )
-    configure_file(
-      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.in
-      ${PC_CONFIGURED_FILE}
-      @ONLY
-      )
-    install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-  endif(PKG_CONFIG_EXECUTABLE)
+  # Configure pkg-config *.pc file corresponding to libplplotdmd
+  pkg_config_file("d" "D" " D binding" "plplotdmd" "" "")
 endif(ENABLE_d)
