@@ -9,20 +9,22 @@ export INSTALL_PREFIX=/z/home/wine/newstart/build_script/install-${WINEVERSION}_
 
 # End of tailored values.
 
+export INSTALL_PREFIX_BUILDTOOLS="${INSTALL_PREFIX}_buildtools"
+
 # Put buildtools that have been built and installed by build_packages on PATH.
-PATH=${INSTALL_PREFIX}_buildtools/bin:$PATH
+PATH=${INSTALL_PREFIX_BUILDTOOLS}/bin:$PATH
 
 # Put install directory on PATH (so that, e.g., the wxwidgets 
 # configuration tool will be found.
 PATH=${INSTALL_PREFIX}/bin:$PATH
 
 # Put appropriate buildtools areas on these.
-CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include:$CMAKE_INCLUDE_PATH
-CMAKE_LIBRARY_PATH=${INSTALL_PREFIX}_buildtools/lib:$CMAKE_LIBRARY_PATH
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX_BUILDTOOLS}/include:$CMAKE_INCLUDE_PATH
+CMAKE_LIBRARY_PATH=${INSTALL_PREFIX_BUILDTOOLS}/lib:$CMAKE_LIBRARY_PATH
 
 # Put version 3 of itcl and friends higher on CMAKE_INCLUDE_PATH then
 # the above default.
-CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}_buildtools/include/itcl3.4:$CMAKE_INCLUDE_PATH
+CMAKE_INCLUDE_PATH=${INSTALL_PREFIX_BUILDTOOLS}/include/itcl3.4:$CMAKE_INCLUDE_PATH
 
 # Put appropriate install areas on these.
 CMAKE_INCLUDE_PATH=${INSTALL_PREFIX}/include:$CMAKE_INCLUDE_PATH
