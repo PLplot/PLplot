@@ -142,7 +142,7 @@ function(list_example_files path device suffix output_list)
   endforeach(example_pages ${examples_pages_LIST})
 
   set(${output_list} ${file_list} PARENT_SCOPE)
-endfunction(list_example_files )
+endfunction(list_example_files)
 
 function(TRANSFORM_VERSION numerical_result version)
   # internal_version ignores everything in version after any character that
