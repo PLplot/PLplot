@@ -63,13 +63,13 @@ endif(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
 
 # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
 string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
-message(STATUS "TKLIB_COMPILE_FLAGS ${TKLIB_COMPILE_FLAGS}")
+message(STATUS "TKLIB_COMPILE_FLAGS = ${TKLIB_COMPILE_FLAGS}")
 	
 if(PLD_tk)
   set(tk_COMPILE_FLAGS 
   "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
   )
-  set(tk_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(tk_LINK_FLAGS plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY})
   set(tk_RPATH ${TCL_TK_RPATH})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
   if(NOT ENABLE_DYNDRIVERS)
@@ -103,9 +103,9 @@ if(PLD_tk)
       set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ITK_LIBRARY})
     endif(ENABLE_itk)
   endif(NOT ENABLE_DYNDRIVERS)
-  message(STATUS "tk_COMPILE_FLAGS ${tk_COMPILE_FLAGS}")
-  message(STATUS "tk_LINK_FLAGS ${tk_LINK_FLAGS}")
-  message(STATUS "tk_RPATH ${tk_RPATH}")
+  message(STATUS "tk_COMPILE_FLAGS = ${tk_COMPILE_FLAGS}")
+  message(STATUS "tk_LINK_FLAGS = ${tk_LINK_FLAGS}")
+  message(STATUS "tk_RPATH = ${tk_RPATH}")
 endif(PLD_tk)
 
 if(PLD_ntk)
@@ -114,9 +114,9 @@ if(PLD_ntk)
   set(ntk_LINK_FLAGS ${TCL_LIBRARY} ${TK_LIBRARY})
   set(ntk_RPATH ${TCL_TK_RPATH})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${ntk_LINK_FLAGS})
-  message(STATUS "ntk_COMPILE_FLAGS ${ntk_COMPILE_FLAGS}")
-  message(STATUS "ntk_LINK_FLAGS ${ntk_LINK_FLAGS}")
-  message(STATUS "ntk_RPATH ${ntk_RPATH}")
+  message(STATUS "ntk_COMPILE_FLAGS = ${ntk_COMPILE_FLAGS}")
+  message(STATUS "ntk_LINK_FLAGS = ${ntk_LINK_FLAGS}")
+  message(STATUS "ntk_RPATH = ${ntk_RPATH}")
 endif(PLD_ntk)
 
 if(PLD_tkwin)
@@ -125,18 +125,18 @@ if(PLD_tkwin)
     )
 
   if(USE_TCL_TK_STUBS)
-    set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_STUB_LIBRARY} ${TK_STUB_LIBRARY} ${X11_LIBRARIES})
+    set(tkwin_LINK_FLAGS plplottcltk ${TCL_STUB_LIBRARY} ${TK_STUB_LIBRARY} ${X11_LIBRARIES})
     # tkwin_RPATH should be undefined for this case since stubs versions
     # of the libraries are static (in my experience so far).
   else(USE_TCL_TK_STUBS)
-    set(tkwin_LINK_FLAGS plplottcltk${LIB_TAG} ${TCL_LIBRARY} ${TK_LIBRARY} ${X11_LIBRARIES})
+    set(tkwin_LINK_FLAGS plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY} ${X11_LIBRARIES})
     set(tkwin_RPATH ${TCL_TK_RPATH})
   endif(USE_TCL_TK_STUBS)
 
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
-  message(STATUS tkwin_COMPILE_FLAGS ${tkwin_COMPILE_FLAGS})
-  message(STATUS tkwin_LINK_FLAGS ${tkwin_LINK_FLAGS})
-  message(STATUS tkwin_RPATH ${tkwin_RPATH})
+  message(STATUS "tkwin_COMPILE_FLAGS = ${tkwin_COMPILE_FLAGS}")
+  message(STATUS "tkwin_LINK_FLAGS = ${tkwin_LINK_FLAGS}")
+  message(STATUS "tkwin_RPATH = ${tkwin_RPATH}")
   set(
   tkwin_SOURCE
   ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/Plplotter_Init.c
