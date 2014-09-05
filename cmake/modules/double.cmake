@@ -24,18 +24,3 @@
 
 option(PL_DOUBLE 
 "Compile the library with double precision floating point" ON)
-
-# Force LIB_TAG to be empty in all cases.  This is completely
-# different from the previous case where "d" was appended to the user
-# setting of this variable if the library was double precision.  As
-# discussed on list we are forcing LIB_TAG to be empty because it is
-# only applied to a subset of our libraries (because the other ones do
-# not have a single-precision or double-precision variant).
-# Furthermore, the recommended and absolutely most reliable way to
-# distinguish between various kinds of PLplot builds is not by
-# appending various confusing library suffixes.  (For example, "d" is
-# often incorrectly assumed to refer to a debugging version of the
-# PLplot library.)  Instead, simply use a different install prefix for
-# each different kind of build.
-set(LIB_TAG "" CACHE STRING "LIB_TAG should _always_ be the empty string" FORCE)
-

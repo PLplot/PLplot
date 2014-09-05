@@ -289,7 +289,7 @@ if(ANY_QT_DEVICE)
   if(ENABLE_DYNDRIVERS)
     if(ENABLE_qt)
       set(qt_SOURCE)
-      set(qt_TARGETS plplotqt${LIB_TAG})
+      set(qt_TARGETS plplotqt)
     else(ENABLE_qt)
       # if qt disabled, then must include full source and forget
       # qt_TARGETS for this dynamic device.

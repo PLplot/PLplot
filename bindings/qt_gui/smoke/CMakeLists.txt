@@ -51,26 +51,26 @@ if(ENABLE_smoke)
     ${CMAKE_BINARY_DIR}/include
     )
 
-  add_library(smokeplplotqt${LIB_TAG} ${plplot_smoke_SRC})
+  add_library(smokeplplotqt ${plplot_smoke_SRC})
 
   target_link_libraries(
-    smokeplplotqt${LIB_TAG}
-    plplotqt${LIB_TAG}
-    plplot${LIB_TAG}
+    smokeplplotqt
+    plplotqt
+    plplot
     ${SMOKE_QTCORE_LIBRARY}
     ${SMOKE_QTGUI_LIBRARY}
     ${QT_LIBRARIES}
     )
 
-  add_dependencies(smokeplplotqt${LIB_TAG} generate_smoke_source)
+  add_dependencies(smokeplplotqt generate_smoke_source)
 
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-  set_qt_target_properties(smokeplplotqt${LIB_TAG})
+  set_qt_target_properties(smokeplplotqt)
 
   if(USE_RPATH)
 
     set_target_properties(
-      smokeplplotqt${LIB_TAG}
+      smokeplplotqt
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       INSTALL_NAME_DIR "${LIB_DIR}"
@@ -78,13 +78,13 @@ if(ENABLE_smoke)
 
   else(USE_RPATH)
     set_target_properties(
-      smokeplplotqt${LIB_TAG}
+      smokeplplotqt
       PROPERTIES
       INSTALL_NAME_DIR "${LIB_DIR}"
       )
   endif(USE_RPATH)
 
-  install(TARGETS smokeplplotqt${LIB_TAG}
+  install(TARGETS smokeplplotqt
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

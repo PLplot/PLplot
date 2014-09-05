@@ -94,10 +94,10 @@ if(BUILD_DOX_DOC)
   # run-time files is regenerated, but source-file regeneration (which
   # would be caused by editing one of the prerequisites of these
   # generated source files) should be a rare case in practice.
-  add_dependencies(build_doxygen plplot${LIB_TAG})
+  add_dependencies(build_doxygen plplot)
   # Generated C code for the Tcl bindings.
   if(ENABLE_tcl)
-    add_dependencies(build_doxygen plplottcltk${LIB_TAG})
+    add_dependencies(build_doxygen plplottcltk)
   endif(ENABLE_tcl)
   # Generated C (and C++ in the Octave case) code for the
   # swig-generated bindings.

@@ -25,7 +25,7 @@ set(LIB_HARDDIR ${LIB_DIR})
 
 get_target_property(
 DLNAME_LIBPLPLOT
-plplot${LIB_TAG}
+plplot
 LOCATION
 )
 get_filename_component(

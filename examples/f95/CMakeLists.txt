@@ -70,12 +70,12 @@ else(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(CORE_BUILD)
-  set(plf95demolib${LIB_TAG}_LIB_SRCS plf95demolib.f90)
+  set(plf95demolib_LIB_SRCS plf95demolib.f90)
 
-  add_library(plf95demolib${LIB_TAG} STATIC ${plf95demolib${LIB_TAG}_LIB_SRCS})
-  target_link_libraries(plf95demolib${LIB_TAG} plplotf95${LIB_TAG})
+  add_library(plf95demolib STATIC ${plf95demolib_LIB_SRCS})
+  target_link_libraries(plf95demolib plplotf95)
 
-  install(TARGETS plf95demolib${LIB_TAG}
+  install(TARGETS plf95demolib
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
@@ -141,7 +141,7 @@ if(BUILD_TEST)
       x${STRING_INDEX}f95 PROPERTIES
       OUTPUT_NAME x${STRING_INDEX}f
       )
-    target_link_libraries(x${STRING_INDEX}f95 plf95demolib${LIB_TAG} plplotf95${LIB_TAG} plplotf95c${LIB_TAG})
+    target_link_libraries(x${STRING_INDEX}f95 plf95demolib plplotf95 plplotf95c)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f95 x${STRING_INDEX}f95)
   endforeach(STRING_INDEX ${f95_STRING_INDICES})
 endif(BUILD_TEST)

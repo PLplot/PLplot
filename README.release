@@ -30,8 +30,8 @@ INDEX
 
 1. OFFICIAL NOTICES FOR USERS
 
-Backwards incompatible change.  We have forced the CMake variable
-LIB_TAG to always be the empty string.  The effect of this change is
+Backwards incompatible change.  We have completely removed the CMake
+variable LIB_TAG from our build system.  The effect of this change is
 the "d" suffix has been dropped from our library names that had this
 suffix before (e.g, libplplotd ==> libplplot), dropped from the plplot
 pkg-config *.pc files used to produce pkg-config results (e.g.,

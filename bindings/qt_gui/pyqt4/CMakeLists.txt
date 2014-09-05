@@ -82,8 +82,8 @@ if(ENABLE_pyqt4)
 
   target_link_libraries(
     plplot_pyqt4
-    plplotqt${LIB_TAG}
-    plplot${LIB_TAG}
+    plplotqt
+    plplot
     ${PYTHON_LIBRARIES}
     ${QT_LIBRARIES}
     )

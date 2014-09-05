@@ -123,14 +123,14 @@ if(ENABLE_pygcw)
 
   target_link_libraries(
     gcwmodule
-    plplot${LIB_TAG}
-    plplotgnome2${LIB_TAG}
+    plplot
+    plplotgnome2
     ${gcw_LINK_FLAGS}
     ${PYGCW_LIBS}
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(
       gcwmodule
       PROPERTIES 
@@ -158,8 +158,8 @@ if(ENABLE_pygcw)
 
   target_link_libraries(
     cplplotcanvasmodule
-    plplot${LIB_TAG}
-    plplotgnome2${LIB_TAG}
+    plplot
+    plplotgnome2
     ${gcw_LINK_FLAGS}
     ${PYGCW_LIBS}
     )

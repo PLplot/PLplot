@@ -138,13 +138,13 @@ if(BUILD_TEST)
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(CORE_BUILD AND BUILD_SHARED_LIBS)
     add_executable(x${STRING_INDEX}c x${STRING_INDEX}c.c)
-    target_link_libraries(x${STRING_INDEX}c plplot${LIB_TAG} ${MATH_LIB})
+    target_link_libraries(x${STRING_INDEX}c plplot ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_c x${STRING_INDEX}c)
   endforeach(STRING_INDEX ${c_STRING_INDICES})
   
   # Build simple test routines which nothing else depends on.
   add_executable(test_plend test_plend.c)
-  target_link_libraries(test_plend plplot${LIB_TAG} ${MATH_LIB})
+  target_link_libraries(test_plend plplot ${MATH_LIB})
   
   if(PKG_CONFIG_EXECUTABLE)
     if(ENABLE_gnome2)
@@ -164,7 +164,7 @@ if(BUILD_TEST)
 	  PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS}"
 	  )
 	add_executable(plplotcanvas_demo plplotcanvas_demo.c)
-	target_link_libraries(plplotcanvas_demo ${GNOMEPRINTUI_LINK_FLAGS} plplotgnome2${LIB_TAG})
+	target_link_libraries(plplotcanvas_demo ${GNOMEPRINTUI_LINK_FLAGS} plplotgnome2)
 
 	# plplotcanvas_animation.c contains a reference to gthread_init and also
 	# contains '#include <glib.h>'.  Analysis shows both these issues are
@@ -180,7 +180,7 @@ if(BUILD_TEST)
 	    PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS} ${GTHREAD_2.0_COMPILE_FLAGS}"
 	    )
 	  add_executable(plplotcanvas_animation plplotcanvas_animation.c)
-	  target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2${LIB_TAG} ${MATH_LIB})
+	  target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2 ${MATH_LIB})
 	else(linkflags2)
 	  message(STATUS "WARNING: gthread-2.0 not found.  plplotcanvas_animation not built")
 	endif(linkflags2)
@@ -201,7 +201,7 @@ if(BUILD_TEST)
 	  PROPERTIES COMPILE_FLAGS "${GTK_X11_COMPILE_FLAGS}"
 	  )
 	add_executable(extXdrawable_demo extXdrawable_demo.c)
-	target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} plplot${LIB_TAG})
+	target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} plplot)
       else(linkflags3)
 	message(STATUS "WARNING: gtk+-x11-2.0 not found.  extXdrawable_demo not built.")
       endif(linkflags3)
@@ -219,7 +219,7 @@ if(BUILD_TEST)
 	  PROPERTIES COMPILE_FLAGS "${CAIRO_COMPILE_FLAGS}"
 	  )
 	add_executable(ext-cairo-test ext-cairo-test.c)
-	target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} plplot${LIB_TAG})
+	target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} plplot)
       else(linkflags4)
 	message(STATUS "WARNING: cairo not found.  ext-cairo-test not built.")
       endif(linkflags4)

@@ -34,7 +34,7 @@
 // cmake didn't set the corresponding macro xxxx_EXPORTS when the
 // corresponding library is built (DLLIMPEXP is set to DLLEXPORT
 // then)
-#if defined ( plplot@LIB_TAG@_EXPORTS )
+#if defined ( plplot_EXPORTS )
   #define PLDLLIMPEXP    PLDLLEXPORT
   #define PLDLLIMPEXP_DATA( type )    PLDLLEXPORT type
 #else
@@ -67,7 +67,7 @@
   #define PLDLLIMPEXP_DRIVER_DATA( type )    PLDLLIMPEXP_DATA( type )
 #endif
 
-#if defined ( plplotcxx@LIB_TAG@_EXPORTS )
+#if defined ( plplotcxx_EXPORTS )
   #define PLDLLIMPEXP_CXX    PLDLLEXPORT
   #define PLDLLIMPEXP_CXX_DATA( type )    PLDLLEXPORT type
 #else
@@ -75,7 +75,7 @@
   #define PLDLLIMPEXP_CXX_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotf95c@LIB_TAG@_EXPORTS )
+#if defined ( plplotf95c_EXPORTS )
   #define PLDLLIMPEXP_F95C    PLDLLEXPORT
   #define PLDLLIMPEXP_F95C_DATA( type )    PLDLLEXPORT type
 #else
@@ -83,7 +83,7 @@
   #define PLDLLIMPEXP_F95C_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotwxwidgets@LIB_TAG@_EXPORTS )
+#if defined ( plplotwxwidgets_EXPORTS )
   #define PLDLLIMPEXP_WX    PLDLLEXPORT
   #define PLDLLIMPEXP_WX_DATA( type )    PLDLLEXPORT type
 #else
@@ -91,7 +91,7 @@
   #define PLDLLIMPEXP_WX_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( tclmatrix@LIB_TAG@_EXPORTS )
+#if defined ( tclmatrix_EXPORTS )
   #define PLDLLIMPEXP_TCLMAT    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLMAT_DATA( type )    PLDLLEXPORT type
 #else
@@ -99,7 +99,7 @@
   #define PLDLLIMPEXP_TCLMAT_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplottcltk_Main@LIB_TAG@_EXPORTS ) | defined ( plplottcltk@LIB_TAG@_EXPORTS )
+#if defined ( plplottcltk_Main_EXPORTS ) | defined ( plplottcltk_EXPORTS )
   #define PLDLLIMPEXP_TCLTK    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLEXPORT type
 #else
@@ -107,7 +107,7 @@
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotgnome2@LIB_TAG@_EXPORTS )
+#if defined ( plplotgnome2_EXPORTS )
   #define PLDLLIMPEXP_GNOME2    PLDLLEXPORT
   #define PLDLLIMPEXP_GNOME2_DATA( type )    PLDLLEXPORT type
 #else
@@ -131,7 +131,7 @@
   #define PLDLLIMPEXP_PLPLOT_MODULE_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotqt@LIB_TAG@_EXPORTS )
+#if defined ( plplotqt_EXPORTS )
   #define PLDLLIMPEXP_QT    PLDLLEXPORT
   #define PLDLLIMPEXP_QT_DATA( type )    PLDLLEXPORT type
 #else

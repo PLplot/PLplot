@@ -75,10 +75,10 @@ if(ENABLE_python)
   # N.B. the python target has an underscore prepended automatically.
   swig_add_module(plplotcmodule python plplotcmodule.i)
 
-  swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+  swig_link_libraries(plplotcmodule plplot ${PYTHON_LIBRARIES})
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(
       _plplotcmodule
       PROPERTIES
@@ -137,13 +137,13 @@ if(ENABLE_python)
 
   if(ENABLE_tkX)
     target_link_libraries( plplot_widgetmodule
-      plplot${LIB_TAG}
-      plplottcltk${LIB_TAG}
+      plplot
+      plplottcltk
       ${PYTHON_LIBRARIES}
       )
   else(ENABLE_tkX)
     target_link_libraries( plplot_widgetmodule
-      plplot${LIB_TAG}
+      plplot
       ${PYTHON_LIBRARIES}
       )
   endif(ENABLE_tkX)

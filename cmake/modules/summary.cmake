@@ -95,7 +95,6 @@ endif(ENABLE_python)
 set(
 _output_results
 "${_output_results}
-LIB_TAG:		${LIB_TAG}
 
 ENABLE_DYNDRIVERS:	${ENABLE_DYNDRIVERS}
 DRIVERS_LIST: ${DRIVERS_LIST}

@@ -94,7 +94,7 @@ if(ENABLE_octave)
   swig_add_module(plplot_octave octave plplot_octave.i)
   swig_link_libraries(
     plplot_octave 
-    plplot${LIB_TAG}
+    plplot
     "${OCTAVE_LIBRARIES}"
     "${OCTINTERP_LIBRARIES}"
     )
@@ -116,7 +116,7 @@ if(ENABLE_octave)
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     # (Reasonable) assumption here is that OCTAVE_LIBRARIES and
     # OCTINTERP_LIBRARIES have the same path.
     get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)

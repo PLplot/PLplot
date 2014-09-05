@@ -128,7 +128,7 @@ if(PLD_gcw)
       set(gcw_SOURCE
       ${CMAKE_SOURCE_DIR}/drivers/plplotcanvas-hacktext.c
       )
-      set(gcw_TARGETS plplotgnome2${LIB_TAG})
+      set(gcw_TARGETS plplotgnome2)
     else(ENABLE_gnome2)
       # if gnome2 disabled, then must include full source and forget
       # gcw_TARGETS for this dynamic device.

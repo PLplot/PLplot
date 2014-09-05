@@ -36,10 +36,10 @@ if(ENABLE_tkX)
   endif(BUILD_SHARED_LIBS)
 
   add_executable(plserver plserver.c)
-  target_link_libraries(plserver plplot${LIB_TAG} plplottcltk_Main${LIB_TAG} plplottcltk${LIB_TAG} ${TK_LIBRARY} ${TCL_LIBRARY})
+  target_link_libraries(plserver plplot plplottcltk_Main plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
     filter_rpath(LIB_INSTALL_RPATH)
     set_target_properties(plserver
@@ -151,7 +151,7 @@ if(ENABLE_tk)
 
   get_target_property(
     DLNAME_LIBPLPLOT
-    plplot${LIB_TAG}
+    plplot
     LOCATION
     )
   get_filename_component(

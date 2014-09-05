@@ -149,7 +149,7 @@ if(BUILD_TEST)
     set_property(GLOBAL PROPERTY TARGETS_examples_tcl
       tcl_examples
       tclIndex_examples_tcl
-      plplottcltk${LIB_TAG}
+      plplottcltk
       pltcl
       plplot.tcl_target
       tclIndex_tcl
@@ -159,7 +159,7 @@ if(BUILD_TEST)
     set_property(GLOBAL PROPERTY FILES_examples_tcl
       ${tclIndex_DEPENDS}
       ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-      plplottcltk${LIB_TAG}
+      plplottcltk
       pltcl
       ${files_plplot.tcl_target}
       ${files_tclIndex_tcl}
@@ -167,11 +167,11 @@ if(BUILD_TEST)
   else(CORE_BUILD)
     set_property(GLOBAL PROPERTY TARGETS_examples_tcl
       tcl_examples
-      plplottcltk${LIB_TAG}
+      plplottcltk
       )
     set_property(GLOBAL PROPERTY FILES_examples_tcl
       ${tclIndex_DEPENDS}
-      plplottcltk${LIB_TAG}
+      plplottcltk
       )
   endif(CORE_BUILD)
 endif(BUILD_TEST)

@@ -44,10 +44,10 @@ if(ENABLE_lua)
 
   # Set up swig + c wrapper.
   swig_add_module(plplotluac lua plplotluac.i)
-  swig_link_libraries(plplotluac plplot${LIB_TAG} ${LUA_LIBRARIES})
+  swig_link_libraries(plplotluac plplot ${LUA_LIBRARIES})
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(
       plplotluac
       PROPERTIES

@@ -44,7 +44,7 @@ if(ENABLE_DYNDRIVERS)
 
     add_executable(test-drv-info test-drv-info.c)
     target_link_libraries(test-drv-info
-      plplot${LIB_TAG}
+      plplot
       ${LTDL_LIBRARIES}
       )
 
@@ -62,7 +62,7 @@ if(ENABLE_DYNDRIVERS)
         ${CMAKE_BINARY_DIR}/lib/csa
         ${CMAKE_BINARY_DIR}/lib/nn
         ${CMAKE_BINARY_DIR}/lib/qsastime
-        ${libplplot${LIB_TAG}_RPATH}
+        ${libplplot_RPATH}
         )
 
       set_target_properties(
@@ -113,7 +113,7 @@ if(ENABLE_DYNDRIVERS)
 	  qt5_use_modules(${SOURCE_ROOT_NAME} Svg Gui PrintSupport)
 	  target_link_libraries(
 	    ${SOURCE_ROOT_NAME}
-	    plplot${LIB_TAG}
+	    plplot
 	    ${MATH_LIB}
 	    ${${SOURCE_ROOT_NAME}_TARGETS}
 	    )
@@ -124,7 +124,7 @@ if(ENABLE_DYNDRIVERS)
 	  
 	  target_link_libraries(
 	    ${SOURCE_ROOT_NAME}
-	    plplot${LIB_TAG}
+	    plplot
 	    ${MATH_LIB}
 	    ${QT_LIBRARIES}
 	    ${${SOURCE_ROOT_NAME}_TARGETS}
@@ -147,7 +147,7 @@ if(ENABLE_DYNDRIVERS)
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
       target_link_libraries(
 	${SOURCE_ROOT_NAME}
-	plplot${LIB_TAG}
+	plplot
 	${MATH_LIB}
 	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	${${SOURCE_ROOT_NAME}_TARGETS}
@@ -163,7 +163,7 @@ if(ENABLE_DYNDRIVERS)
       ${SOURCE_ROOT_NAME}_RPATH
       ${LIB_DIR}
       ${${SOURCE_ROOT_NAME}_RPATH}
-      ${libplplot${LIB_TAG}_RPATH}
+      ${libplplot_RPATH}
       )
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix

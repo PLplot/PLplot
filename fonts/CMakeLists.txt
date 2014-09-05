@@ -34,9 +34,9 @@ if(BUILD_HERSHEY_FONTS)
   add_library(hershey STATIC ${libhershey_SRC})
 
   add_executable(generate_stndfonts stndfont.c)
-  target_link_libraries(generate_stndfonts hershey plplot${LIB_TAG})
+  target_link_libraries(generate_stndfonts hershey plplot)
 
   add_executable(generate_xtndfonts xtndfont.c)
-  target_link_libraries(generate_xtndfonts hershey plplot${LIB_TAG})
+  target_link_libraries(generate_xtndfonts hershey plplot)
 
 endif(BUILD_HERSHEY_FONTS)

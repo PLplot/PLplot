@@ -157,7 +157,7 @@ else(
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
     COMMAND ${PERL_EXECUTABLE}
-    ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
+    ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
     DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
     )
   # For parallel builds to work must have all file dependency chains of
@@ -173,7 +173,7 @@ else(
     )
   # libplplot should be created before plplot-symbols.txt since
   # get-library-symbols.pl depends upon libplplot.
-  add_dependencies(docbook_plplot-symbols_txt plplot${LIB_TAG})
+  add_dependencies(docbook_plplot-symbols_txt plplot)
   file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
     "plplot-symbols.txt\n"
     )

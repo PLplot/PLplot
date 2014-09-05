@@ -157,7 +157,7 @@ if(ENABLE_java)
   # that can be dynamically loaded by java.
   swig_add_module(plplotjavac_wrap java plplotjavac.i)
   # The shared object must be linked against the core PLplot library.
-  swig_link_libraries(plplotjavac_wrap plplot${LIB_TAG})
+  swig_link_libraries(plplotjavac_wrap plplot)
 
   # Create config.java.  Other generated java files created by swig above.
   configure_file(
@@ -166,7 +166,7 @@ if(ENABLE_java)
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(
       plplotjavac_wrap
       PROPERTIES

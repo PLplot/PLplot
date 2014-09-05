@@ -27,7 +27,7 @@ include_directories(
   )
 
 if(USE_RPATH)
-  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
 endif(USE_RPATH)
 
 if(PLD_plmeta)
@@ -39,7 +39,7 @@ if(PLD_plmeta)
       )
   endif(BUILD_SHARED_LIBS)
   
-  target_link_libraries(plrender plplot${LIB_TAG})
+  target_link_libraries(plrender plplot)
 
   if(USE_RPATH)
     set_target_properties(plrender
@@ -58,7 +58,7 @@ if(BUILD_SHARED_LIBS)
     PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
 
-target_link_libraries(pltek plplot${LIB_TAG})
+target_link_libraries(pltek plplot)
 
 if(USE_RPATH)
   set_target_properties(pltek

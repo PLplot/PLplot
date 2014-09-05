@@ -131,7 +131,7 @@ foreach(TK_SRC_FILE ${tk_SRC})
     SET_SOURCE_FILES_PROPERTIES(${TK_SRC_FILE}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(${TK_EXE} plplottcltk${LIB_TAG} tclmatrix${LIB_TAG} plplot${LIB_TAG} ${MATH_LIB})
+  target_link_libraries(${TK_EXE} plplottcltk tclmatrix plplot ${MATH_LIB})
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
 endforeach(TK_SRC_FILE ${tk_SRC})
 
