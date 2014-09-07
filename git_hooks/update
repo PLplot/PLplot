@@ -30,7 +30,7 @@ if [ "$refname" = "refs/heads/master" ] ; then
 	echo -n "Checking: commit $rev on master not a merge commit"
         # Is there a second parent?
         if git rev-parse --verify --quiet $rev^2 > /dev/null ; then
-            echo "\n$rev is a merge commit found on the master branch which is not allowed by the rebase workflow of the PLplot project.  To avoid this reject of your push, please consult the documentation of the PLplot workflow in the file README.git_workflow."
+            echo "\n$rev is a merge commit found on the master branch which is not allowed by the rebase workflow of the PLplot project.  To avoid this reject of your push, please consult the documentation of the PLplot workflow in the file README.developers."
             exit 1
         else
             echo " (ok)"
