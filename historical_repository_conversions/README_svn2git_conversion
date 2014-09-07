@@ -214,20 +214,58 @@ git clone ssh://hbabcock@git.code.sf.net/p/plplot/plplot plplot_sf_clone.git
 time ./diff_git_versus_svn_tree.sh >| diff_git_versus_svn_tree_SF_clone.sh.out
 less diff_git_versus_svn_tree._SF_clonesh.out
 
+* Enforce workflow with update hook
+
+mkdir git_hooks
+cd git_hooks
+# edit README file to explain our update hook and
+# the workflow policy it enforces.
+
+# This needed to give shell access for 240 minutes before your
+# SourceForge shell access disappears again.
+ssh airwin,plplot@shell.sourceforge.net create
+# Backup original SF updates hook
+scp -p airwin,plplot@shell.sourceforge.net:/home/git/p/plplot/plplot.git/hooks/update update_original
+cp -p update_original update
+# Check permissions (which should be -rwxrwxr-x)
+ls -l update
+# Edit update file to enforce policy as discussed in detail on the mailing list.
+# edit update
+.....
+# Upload the new version
+scp -p update airwin,plplot@shell.sourceforge.net:/home/git/p/plplot/plplot.git/hooks
+
+# Check permissions:
+ssh airwin,plplot@shell.sourceforge.net "ls -l /home/git/p/plplot/plplot.git/hooks/update"
+# Fix permissions (if required)
+ssh airwin,plplot@shell.sourceforge.net "chmod a+x /home/git/p/plplot/plplot.git/hooks/update"
+
 * Tag and remove all branches except master
 
-  List branches
+# List branches
 git branch -a
  
-  Tag the branch called branch_name
+# Tag the branch called branch_name
 git tag archive/branch_name origin/branch_name
 
-  Push tags to SF
+# Push tags to SF
 git push --tags origin
 
-  Delete branches at SF
-git push :branch-name
+# Delete branches at SF
+git push origin :branch-name
 
-  Branch resurrection:
+# Branch resurrection:
 git branch branch_name archive/branch_name
 
+# To get a complete list of remote tags:
+
+git ls-remote --tags origin
+
+# For those who want to make tags and branches on their local repo
+# consistent with the remote repo.  (The following command definitely
+# gets rid of the local branches that were deleted at SF, but I am not
+# sure whether this is sufficient to propagate the tag creations as
+# well or whether a subsequent ff-only merge (done as part of the
+# normal workflow) of origin/master to master is also required.
+
+git fetch --prune
