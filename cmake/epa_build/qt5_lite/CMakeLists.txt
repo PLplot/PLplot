@@ -54,15 +54,26 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 
 # Data that is related to downloads.
-set(URL http://download.qt-project.org/official_releases/qt/5.2/5.2.1/single/qt-everywhere-opensource-src-5.2.1.tar.xz)
+# set(URL http://download.qt-project.org/official_releases/qt/5.2/5.2.1/single/qt-everywhere-opensource-src-5.2.1.tar.xz)
+# N.B. tar.gz used because that is the one advertised by the Qt5 download site rather than the tar.xz
+# version that is also available (but unadvertised).  The .gz version is 34 per cent larger which
+# implies the download will typically take ~1 minute longer, but the unpack should be much faster
+# so it is not a clear choice.
+# set(URL http://download.qt-project.org/official_releases/qt/5.3/5.3.1/single/qt-everywhere-opensource-src-5.3.1.tar.gz)
 # Temporary to save download bandwidth/time while debugging this.
 # set(URL /home/software/build_qt5/qt-everywhere-opensource-src-5.2.1.tar.xz)
+set(URL /home/software/build_qt5/qt-everywhere-opensource-src-5.3.1.tar.gz)
 set(DOWNLOAD_HASH_TYPE MD5)
-set(DOWNLOAD_HASH 0c8d2aa45f38be9c3f7c9325eb059d9d)
+# 5.2.1
+#set(DOWNLOAD_HASH 0c8d2aa45f38be9c3f7c9325eb059d9d)
+#set(DOWNLOAD_HASH f9a24a0d5645efa0715b6ff0fa13d60f)
+# 5.3.1 (from http://download.qt-project.org/official_releases/qt/5.3/5.3.1/single/md5sums.txt).
+set(DOWNLOAD_HASH a355749e4f200a6392ecad151d1d0cdc)
 
-# Many of these are recommended by BLFS, but I have tried to use
-# a consistent install prefix and I have also turned off as
-# much as possible for this "lite" version.
+# Many of these are recommended by BLFS
+# <http://www.linuxfromscratch.org/blfs/view/svn/x/qt5.html>, but I
+# have tried to use a consistent install prefix and I have also turned
+# off as much as possible for this "lite" version.
 set(config_arguments
 
   # Configure options:
@@ -71,7 +82,7 @@ set(config_arguments
   -opensource
 
   # Try to get rid of everything to do with sql by eliminating all possible
-  # drivers.
+  # drivers.  5.2.1 list = 5.3.1 list = db2 ibase mysql oci odbc psql sqlite sqlite2 tds
   -no-sql-db2
   -no-sql-ibase
   -no-sql-mysql
@@ -82,7 +93,8 @@ set(config_arguments
   -no-sql-sqlite2
   -no-sql-tds
 
-  -no-javascript-jit
+  # Comment out for 5.3.1 since (-no-)javascript-jit no longer an option
+  # -no-javascript-jit
   -no-qml-debug
   # Third party libraries (drop if possible but if needed by PLplot, use
   # in-house Qt5 versions of these to reduce dependencies):
@@ -92,6 +104,9 @@ set(config_arguments
   -qt-libpng
   -qt-libjpeg
   -qt-freetype
+  # Experimental in-house harfbuzz NG (5.2.1 and 5.3.1)
+  # Comment out for now ==> no harfbuzz NG.
+  #-qt-harfbuzz
   -no-openssl
   -qt-pcre
   -qt-xcb
@@ -99,6 +114,11 @@ set(config_arguments
   -no-xinput2
   -no-xcb-xlib
   -no-glib
+  # These 3 external library options available with 5.3.1 only
+  -no-pulseaudio
+  -no-alsa
+  -no-gtkstyle
+
   # Additional options:
 
   # Drop all components other than libs
@@ -106,7 +126,47 @@ set(config_arguments
   -nomake examples
   -nomake tests
 
-  -optimized-qmake
+  # These skips have so far only been tried for 5.3.1
+  # The list is taken from the top-level subdirectories in
+  # the 5.3.1 source tree that start with "qt".  I also
+  # consulted <http://qt-project.org/doc/qt-5/qtmodules.html>
+  # for explanation of the purpose of these various modules.
+  -skip qtactiveqt
+  -skip qtandroidextras
+  # Don't skip qtbase for obvious reasons.
+  # -skip qtbase
+  -skip qtconnectivity
+  -skip qtdeclarative
+  -skip qtdoc
+  -skip qtenginio
+  -skip qtgraphicaleffects
+  # Don't skip qtimageformats which supports TIFF, MNG, TGA, WBMP.
+  # -skip qtimageformats
+  -skip qtlocation
+  # Don't skip qtmacextras which provides platform-specific APIs for Mac OS X.
+  #-skip qtmacextras
+  -skip qtmultimedia
+  -skip qtquick1
+  -skip qtquickcontrols
+  -skip qtscript
+  -skip qtsensors
+  -skip qtserialport
+  # Don't skip qtsvg module which contains the QSvgGenerator class used to create
+  # SVG file results.
+  # -skip qtsvg
+  -skip qttools
+  -skip qttranslations
+  -skip qtwebkit
+  -skip qtwebkit-examples
+  -skip qtwebsockets
+  -skip qtwinextras
+  # Don't skip qtx11extras which provides platform-specific APIs for X11.
+  # -skip qtx11extras
+  -skip qtxmlpatterns
+
+  # Speed compilation of qmake which presumably does not have to
+  # be that efficient.
+  -no-optimized-qmake
 
   # Need gui which happens by default (there is no -gui option) 
   # if you do not specify -no-gui
@@ -118,6 +178,8 @@ set(config_arguments
   -no-dbus
 
   # Qt/X11 only: (leave everything default)
+
+
   )
 
 # Note, setting the QT5DIR environment variable to the install prefix
@@ -133,7 +195,7 @@ ExternalProject_Add(
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} QT5DIR=${QT5DIR} ${EPA_PARALLEL_MAKE_COMMAND}
   BUILD_IN_SOURCE 0
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} QT5DIR=${QT5DIR} ${EPA_PARALLEL_MAKE_COMMAND} install
-  #STEP_TARGETS update configure build install test
+  STEP_TARGETS update configure build install test
   )
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/install_png.sh
@@ -149,11 +211,12 @@ install -dm755 ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/applications
 add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-install
-  COMMAND ${CMAKE_COMMAND} -E echo "install some addition png files recommended by BLFS."
+  COMMAND ${CMAKE_COMMAND} -E echo "install some additional png files recommended by BLFS."
   COMMAND ${BASH_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/install_png.sh
   APPEND
   )
 
+# 5.2.1 and 5.3.1 version the same
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/install_fixups.sh
 "find ${QT5DIR} -name qt_lib_bootstrap_private.pri -exec sed -i -e \"s:$PWD/qtbase:/${QT5DIR}/lib/:g\" {} \;
 find ${QT5DIR} -name \\*.prl -exec sed -i -e '/^QMAKE_PRL_BUILD_DIR/d' {} \;
