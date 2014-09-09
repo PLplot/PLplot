@@ -59,10 +59,10 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 # version that is also available (but unadvertised).  The .gz version is 34 per cent larger which
 # implies the download will typically take ~1 minute longer, but the unpack should be much faster
 # so it is not a clear choice.
-# set(URL http://download.qt-project.org/official_releases/qt/5.3/5.3.1/single/qt-everywhere-opensource-src-5.3.1.tar.gz)
+set(URL http://download.qt-project.org/official_releases/qt/5.3/5.3.1/single/qt-everywhere-opensource-src-5.3.1.tar.gz)
 # Temporary to save download bandwidth/time while debugging this.
 # set(URL /home/software/build_qt5/qt-everywhere-opensource-src-5.2.1.tar.xz)
-set(URL /home/software/build_qt5/qt-everywhere-opensource-src-5.3.1.tar.gz)
+# set(URL /home/software/build_qt5/qt-everywhere-opensource-src-5.3.1.tar.gz)
 set(DOWNLOAD_HASH_TYPE MD5)
 # 5.2.1
 #set(DOWNLOAD_HASH 0c8d2aa45f38be9c3f7c9325eb059d9d)
