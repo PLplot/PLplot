@@ -113,11 +113,11 @@ if(ENABLE_f95)
   add_custom_target(
     check_f95_parameters
     ${CMAKE_COMMAND} -E echo "Check that bindings/f95/plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i"
-    COMMAND ${CMAKE_COMMAND} -E remove -f 
+    COMMAND ${CMAKE_COMMAND} -E remove -f
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
-    sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed < 
-    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i > 
+    sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed <
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i >
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
     COMMAND
@@ -189,6 +189,9 @@ if(ENABLE_f95)
     ${CMAKE_BINARY_DIR}/bindings/f95/plplot.mod
     ${CMAKE_BINARY_DIR}/bindings/f95/plplotp.mod
     ${CMAKE_BINARY_DIR}/bindings/f95/plplot_flt.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_types.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_str.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_strutils.mod
     DESTINATION ${F95_MOD_DIR}
     )
 
