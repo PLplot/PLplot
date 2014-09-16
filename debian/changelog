@@ -1,4 +1,39 @@
-plplot (5.9.10-2) experimental; urgency=low
+plplot (5.10.0-0.1) unstable; urgency=low
+
+  [Thibaut Paumard <thibaut@debian.org>]
+  NMU to fix remaining issue, based on package proposed for sponsorship by
+  original maintainer:
+  * Bug fix: "plplot FTBFS due to HDF5 transition", thanks to Thibaut
+    Paumard (Closes: #760943) (new patch: dont-check-for-hdf5_h)
+
+  [Andrew Ross <andrewross@users.sourceforge.net>]
+  * New upstream version (closes: #740085, #707268, #713309, #736392, #747053, 
+    #719799) 
+  * debian/patches/: Remove patches now in upstream and update remaining 
+    patches.
+  * debian/patches/octave_3.8_support.diff: Fix some issues with octave 3.8 
+    support (backport from upstream). Also remove obsolete continuation 
+    markers to suppress octave warnings.
+  * debian/rules, debian/control.in: Use xvfb-run to run cmake since 
+    auto-detection of tk components requires an X11 display and may fail for 
+    autobuilders. Add the required build dependencies on xvfb, xauth and 
+    iwidgets4.
+  * debian/get-upstream-version.pl: Update to reflect changes in how the 
+    plplot version is stored in the upstream source. 
+  * debian/rules, debian/control.in: Update arch-indep build dependencies and 
+    remove references to postscript version of documentation to reflect 
+    changes to the way documentation is built.
+  * debian/control.in: Update build dependencies to use wxwidgets-3.0 (closes:
+    #749488) and gnat-4.9 (closes: #728152)
+  * debian/rules: Add -source and -target options to javac command line. Fixes 
+    lintian warning.
+  * debian/control.in: Bump standards version to 3.9.5. Fixes lintian warning.
+  * debian/patches/fix-wxwidgets-linkage.diff: Add new patch to explicitly link
+    libplplotd to libwxwidgetsd. Fixes dpkg-shlibdeps warnings.
+
+ -- Thibaut Paumard <thibaut@debian.org>  Tue, 09 Sep 2014 18:17:43 +0200
+
+plplot (5.9.10-2) UNRELEASED; urgency=low
 
   * debian/changelog: Upload to experimental not unstable.
   * debian/compat, debian/control.in: Update to compatibility version 9 
@@ -25,7 +60,7 @@ plplot (5.9.10-1) UNRELEASED; urgency=low
     installed.
   * debian/control.in, debian/rule: Drop the gd driver support and the 
     plplot11-driver-gd package. No longer supported upstream and superceded 
-    by cairo and qt drivers.
+    by cairo and qt drivers. (Closes: #738242)
   * debian/patches/series, debian/patches/fix-d-examples.diff: Fix from 
     upstream for D example 20 so it compiles with latest gdc.
   * debian/rules: Fix command line options for python-config to prevent an 

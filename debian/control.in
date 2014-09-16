@@ -2,20 +2,22 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Build-Depends: cmake (>= 2.6.3), debhelper (>= 9), 
  tcl8.5-dev, tk8.5-dev, itcl3-dev, libx11-dev, libxext-dev,
- libxi-dev, gfortran, itk3-dev, liboctave-dev,
+ libxi-dev, gfortran, itk3-dev, iwidgets4, liboctave-dev,
  m4, libqhull-dev (>= 2003.1-8), 
  libxml-parser-perl, libxml-dom-perl, libltdl3-dev, pkg-config, 
- slice, python-gtk2-dev, libwxgtk2.8-dev, 
+ slice, python-gtk2-dev, libwxgtk3.0-dev, 
  python-all-dev (>= 2.6.6-3~),
  python-numpy (>= 1:1.4.1-4~), ttf-freefont, default-jdk,
  fastjar, swig, gnat [!sh4], libqt4-dev, python-sip-dev, 
  python-qt4, python-qt4-dev, 
  ocaml-nox, camlidl, ocaml-findlib, libcairo-ocaml-dev,
- liblablgtk2-ocaml-dev, liblua5.1-0-dev, lua5.1, gdc, libshp-dev
-Build-Depends-Indep: xmlto, fop, docbook-xml, docbook-xsl, docbook2x
+ liblablgtk2-ocaml-dev, liblua5.1-0-dev, lua5.1, gdc, libshp-dev,
+ xvfb, xauth
+Build-Depends-Indep: xmlto, fop, docbook-xml, docbook-xsl, docbook2x, 
+ dblatex, texlive-xetex, ghostscript, lmodern
 Build-Conflicts: libplplot5
 X-Python-Version: >=2.4
 Homepage: http://www.plplot.org
@@ -372,7 +374,7 @@ Suggests: plplot-doc
 Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
 Depends: libplplot12 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev, libqsastime-dev, gnat, gnat-4.6, ${misc:Depends}, 
+ libltdl3-dev, libqsastime-dev, gnat, gnat-4.9, ${misc:Depends}, 
  libplplot-ada1 (= ${binary:Version})
 Recommends: libplplot-dev
 Breaks: libplplot-ada (<< 5.9.8-2), libplplot-dev (<< 5.9.8-2)

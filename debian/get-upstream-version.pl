@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 while (<>) {
-  if (/^set\(VERSION ([^,)]+)/) {
+  if (/^set\(PLPLOT_VERSION ([^,)]+)/) {
     print $1;
     last;
   }

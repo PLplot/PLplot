@@ -5,3 +5,5 @@ fix-lua-includes.diff
 add-tcl-multiarch.diff
 #support-javac-options.diff
 octave_3.8_support.diff
+fix-wxwidgets-linkage.diff
+dont-check-for-hdf5_h

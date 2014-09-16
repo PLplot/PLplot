@@ -1,0 +1,41 @@
+Description: don't check for hdf5.h
+ This check fails due to the ongoing HDF5 transition.
+Author: Thibaut Paumard <thibaut@debian.org>
+Origin: vendor
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=760943
+Forwarded: no
+Last-Update: 2014-09-09
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/cmake/modules/octave.cmake
++++ b/cmake/modules/octave.cmake
+@@ -173,29 +173,6 @@
+ 	CACHE INTERNAL ""
+ 	)
+       endif(NOT OCTAVE_INCLUDE_PATH_TRIMMED STREQUAL "${OCTAVE_INCLUDE_PATH}")
+-      # Octave has a huge number of dependencies and therefore an
+-      # impossible-to-untangle set of header #includes that depend on
+-      # other packages headers.  And there is no information from
+-      # mkoctfile or the octave octave_config_info command about where
+-      # those header directories are located.  But from experiments
+-      # with both the Linux and Windows binary versions of octave, it
+-      # appears that hdf5.h is one external header that is necessary,
+-      # and it is never part of the octave-${OCTAVE_VERSION}/octave
+-      # hierarchy so that PATH_SUFFIXES signature is dropped.
+-      find_path(
+-	OCTAVE_INCLUDE_PATH_EXTERNAL
+-	hdf5.h
+-	)
+-      if(OCTAVE_INCLUDE_PATH_EXTERNAL)
+-        set(OCTAVE_INCLUDE_PATH 
+-	${OCTAVE_INCLUDE_PATH_EXTERNAL} ${OCTAVE_INCLUDE_PATH}
+-	CACHE INTERNAL ""
+-	)
+-      else(OCTAVE_INCLUDE_PATH_EXTERNAL)
+-	message(STATUS "WARNING: "
+-	  "Required external octave header, hdf5.h, not found. Disabling octave bindings")
+-	set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+-      endif(OCTAVE_INCLUDE_PATH_EXTERNAL)
+     else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
+       message(STATUS "WARNING: "
+       "octave headers and/or library not found. Disabling octave bindings")
