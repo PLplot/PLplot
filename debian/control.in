@@ -10,7 +10,7 @@ Build-Depends: cmake (>= 2.6.3), debhelper (>= 9),
  libxml-parser-perl, libxml-dom-perl, libltdl3-dev, pkg-config, 
  slice, python-gtk2-dev, libwxgtk3.0-dev, 
  python-all-dev (>= 2.6.6-3~),
- python-numpy (>= 1:1.4.1-4~), ttf-freefont, default-jdk,
+ python-numpy (>= 1:1.4.1-4~), default-jdk,
  fastjar, swig, gnat [!sh4], libqt4-dev, python-sip-dev, 
  python-qt4, python-qt4-dev, 
  ocaml-nox, camlidl, ocaml-findlib, libcairo-ocaml-dev,
@@ -56,7 +56,9 @@ Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
 Depends: libplplot12 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, libqsastime-dev, ${misc:Depends}, 
- libplplot-c++11 (= ${binary:Version}), libplplot-fortran10 (= ${binary:Version})
+ libplplot-c++11 (= ${binary:Version}), libplplot-fortran10 (= ${binary:Version}),
+ plplot12-driver-qt (= ${binary:Version}), 
+ plplot12-driver-wxwidgets (= ${binary:Version})
 Breaks: libplplot-fortran9 (<< 5.9.8-1)
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich

@@ -7,6 +7,11 @@ plplot for Debian
     library.  They were put together by Rafael Laboissiere. The porting
     to the new CMake build system and current maintenance is done by 
     Andrew Ross.
+ 
+    As of version 5.10.0 the original source tarball has been modified
+    to remove the doc/doxygen and www directories. Both these are not
+    needed for the Debian packages and contain non-DFSG auto-generated
+    files.
 
 
 2. PACKAGES

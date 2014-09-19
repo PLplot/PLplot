@@ -257,6 +257,10 @@ binary-arch: build-arch install-arch
 	dh_builddeb -a
 
 binary: binary-arch binary-indep
+
+get-orig-source:
+	uscan --force-download
+
 .PHONY: build clean binary-indep binary-arch binary config \
         control 
 

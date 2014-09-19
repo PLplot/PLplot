@@ -1,0 +1,16 @@
+#! /bin/sh
+set -e
+
+package="plplot"
+excludes="www docs/doxygen"
+version="$2"
+source="$3"
+dest="$(dirname "$source")/${package}_${version}.orig.tar.gz"
+dir="$(mktemp -d)"
+trap "rm -rf -- '$dir'" EXIT
+tar -xzf "$source" -C "$dir"
+cd "$dir"
+for exclude in $excludes; do rm -rf $exclude ; done
+tar -C "$dir" -caf "$dest" .
+rm -rf - "$dir"
+trap - EXIT

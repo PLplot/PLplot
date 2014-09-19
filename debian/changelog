@@ -1,3 +1,27 @@
+plplot (5.10.0+dfsg-1) unstable; urgency=low
+
+  * Repackage upstream source to remove non-DFSG compliant documentation. 
+    This is regenerated automatically anyway. Fixes lintian errors. 
+  * debian/watch: Update watch file to account for mangled version with
+    +dfsg suffix. Avoids lintian warning.
+  * debian/rules, debian/repack: Add target to automatically download
+    and clean up source to remove non-DFSG compliant code.
+  * debian/README.Debian: Document changes to make the package DFSG 
+    compliant.
+  * debian/patches/fix_config_h_clash: New patch from upstream to fix name
+    clash with HAVE_CONFIG_H. (Closes: #761176). 
+  * debian/copyright: Update to use new machine readable format, and to
+    include fuller details of files which have different licensing 
+    conditions to the standard LGPL. (Closes: #761057)
+  * debian/control.in: Include libplplot-dev dependencies on 
+    plplot12-driver-qt and plplot12-driver-wxwidgets to avoid dangling 
+    symlinks. (Closes: #715105). Remove obsolete build dependency on 
+    ttf-freefont.
+  * debian/patches/set_cmake_policy: Set cmake policy CMP0026 to old to 
+    allow compilation with cmake 3. 
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 16 Sep 2014 13:42:23 +0100
+
 plplot (5.10.0-0.1) unstable; urgency=low
 
   [Thibaut Paumard <thibaut@debian.org>]

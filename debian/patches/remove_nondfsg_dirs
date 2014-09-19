@@ -1,0 +1,15 @@
+Description: Remove the www directory from CMakeLists.txt. This directory is not used and is not shipped with the dfsg compliant version of the source in Debian.
+Author: Andrew Ross <andrewross@users.sourceforge.net>
+Last-Update: 2014-09-17
+Origin: upstream
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -199,7 +199,6 @@
+ add_subdirectory(plplot_test)
+ add_subdirectory(scripts)
+ add_subdirectory(doc)
+-add_subdirectory(www)
+ add_subdirectory(pkgcfg)
+ summary()
+ 
