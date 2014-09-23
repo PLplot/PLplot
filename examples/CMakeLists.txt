@@ -403,6 +403,10 @@ else(CORE_BUILD)
     message(STATUS "Explicitly setting policy CMP0023 to OLD")
     cmake_policy(SET CMP0023 OLD)
   endif(POLICY CMP0023)
+  if(POLICY CMP0046)
+    message(STATUS "Explicitly setting policy CMP0023 to OLD")
+    cmake_policy(SET CMP0046 OLD)
+  endif(POLICY CMP0046)
 
   message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
   # Locations where PLplot cmake build system first looks for cmake modules.

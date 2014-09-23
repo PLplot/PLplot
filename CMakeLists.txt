@@ -54,6 +54,10 @@ if(POLICY CMP0023)
   message(STATUS "Explicitly setting policy CMP0023 to OLD")
   cmake_policy(SET CMP0023 OLD)
 endif(POLICY CMP0023)
+if(POLICY CMP0026)
+  message(STATUS "Explicitly setting policy CMP0026 to OLD")
+  cmake_policy(SET CMP0026 OLD)
+endif(POLICY CMP0026)
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
