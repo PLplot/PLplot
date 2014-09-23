@@ -1,7 +1,8 @@
-Index: plplot-5.10.0/examples/octave/x23c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x23c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x23c.m	2014-07-01 12:23:39.952787871 +0100
+Description: Upstream patch to fix octave support for octave 3.8.
+Author: Andrew Ross <andrewross@users.sourceforge.net>
+Last-Update: 2014-09-23
+--- a/examples/octave/x23c.m
++++ b/examples/octave/x23c.m
 @@ -1,5 +1,3 @@
 -## $Id: x23c.m 11680 2011-03-27 17:57:51Z airwin $
 -##
@@ -363,10 +364,8 @@ Index: plplot-5.10.0/examples/octave/x23c.m
  ];
  
  
-Index: plplot-5.10.0/examples/octave/x28c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x28c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x28c.m	2014-07-01 12:23:40.372787859 +0100
+--- a/examples/octave/x28c.m
++++ b/examples/octave/x28c.m
 @@ -1,5 +1,3 @@
 -## $Id: x28c.m 11680 2011-03-27 17:57:51Z airwin $
 -##
@@ -581,10 +580,8 @@ Index: plplot-5.10.0/examples/octave/x28c.m
 -ix28c
 \ No newline at end of file
 +ix28c
-Index: plplot-5.10.0/examples/octave/x33c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x33c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x33c.m	2014-07-01 12:23:40.376787859 +0100
+--- a/examples/octave/x33c.m
++++ b/examples/octave/x33c.m
 @@ -1,6 +1,4 @@
 -## -*- coding: utf-8; -*-
 -## $Id: x33c.m 12353 2013-06-02 20:07:07Z andrewross $
@@ -774,10 +771,8 @@ Index: plplot-5.10.0/examples/octave/x33c.m
        pllegend( opt, position, x, y,
                 0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                 0., text_colors, text',
-Index: plplot-5.10.0/plplot_test/test_octave.sh.in
-===================================================================
---- plplot-5.10.0.orig/plplot_test/test_octave.sh.in	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/plplot_test/test_octave.sh.in	2014-07-01 12:23:40.440787857 +0100
+--- a/plplot_test/test_octave.sh.in
++++ b/plplot_test/test_octave.sh.in
 @@ -35,7 +35,12 @@
  export LD_LIBRARY_PATH="$TOPDIR"/src:"$TOPDIR"/lib/csa:"$TOPDIR"/lib/nn
  
@@ -838,10 +833,8 @@ Index: plplot-5.10.0/plplot_test/test_octave.sh.in
      device="$device";
      plSetOpt("dev", device);
  #o trailer on filename e.g., x01o.ps) to distinguish from other
-Index: plplot-5.10.0/examples/octave/x01c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x01c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x01c.m	2014-07-01 12:23:40.536787854 +0100
+--- a/examples/octave/x01c.m
++++ b/examples/octave/x01c.m
 @@ -85,7 +85,7 @@
      printf("\n\nYou are in Locate mode. Click any mouse button or press any key\n\
  and the current cursor position will be printed.\n\
@@ -851,10 +844,8 @@ Index: plplot-5.10.0/examples/octave/x01c.m
  Finish the plot with the <Enter> or <ESC> key or the 3d mouse button\n");
  
      fflush(stdout);
-Index: plplot-5.10.0/examples/octave/x04c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x04c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x04c.m	2014-07-01 12:53:36.792734781 +0100
+--- a/examples/octave/x04c.m
++++ b/examples/octave/x04c.m
 @@ -155,7 +155,7 @@
  
    plscol0a( 15, 32, 32, 32, 0.70 );
@@ -864,23 +855,19 @@ Index: plplot-5.10.0/examples/octave/x04c.m
        pllegend( bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX), 0, 0.0, 0.0,
                 0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
                 1., text_colors, text, 
-Index: plplot-5.10.0/examples/octave/x07c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x07c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x07c.m	2014-07-01 12:23:40.608787852 +0100
+--- a/examples/octave/x07c.m
++++ b/examples/octave/x07c.m
 @@ -24,7 +24,7 @@
    ## Initialize plplot */
    plinit();
  
 -  base=[0, 100, 0, 100, 200, 500, 600, 700, 800, 900, \
-+  base=[0, 100, 0, 100, 200, 500, 600, 700, 800, 900,
++  base=[0, 100, 0, 100, 200, 500, 600, 700, 800, 900, ...
  	2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900];
    
    plfontld(0);
-Index: plplot-5.10.0/examples/octave/x08c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x08c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x08c.m	2014-07-01 12:23:40.640787851 +0100
+--- a/examples/octave/x08c.m
++++ b/examples/octave/x08c.m
 @@ -101,10 +101,10 @@
  	plmtex("t", 1.0, 0.5, 0.5, title(k,:));
  	plcol0(1);
@@ -894,10 +881,8 @@ Index: plplot-5.10.0/examples/octave/x08c.m
  		alt(k), az(k));
  	endif
  
-Index: plplot-5.10.0/examples/octave/x26c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x26c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x26c.m	2014-07-01 12:54:36.816733007 +0100
+--- a/examples/octave/x26c.m
++++ b/examples/octave/x26c.m
 @@ -244,7 +244,7 @@
  
    plscol0a( 15, 32, 32, 32, 0.70 );
@@ -907,10 +892,8 @@ Index: plplot-5.10.0/examples/octave/x26c.m
        pllegend( bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX), 0, 0.0, 0.0,
                 0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
                 1., text_colors, text, 
-Index: plplot-5.10.0/examples/octave/x29c.m
-===================================================================
---- plplot-5.10.0.orig/examples/octave/x29c.m	2014-07-01 12:23:40.684787850 +0100
-+++ plplot-5.10.0/examples/octave/x29c.m	2014-07-01 12:23:40.680787850 +0100
+--- a/examples/octave/x29c.m
++++ b/examples/octave/x29c.m
 @@ -122,8 +122,8 @@
    i = 0:npts-1;
    x = i*60.0*60.0*24.0;

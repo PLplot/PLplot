@@ -17,7 +17,7 @@ Build-Depends: cmake (>= 2.6.3), debhelper (>= 9),
  liblablgtk2-ocaml-dev, liblua5.1-0-dev, lua5.1, gdc, libshp-dev,
  xvfb, xauth
 Build-Depends-Indep: xmlto, fop, docbook-xml, docbook-xsl, docbook2x, 
- dblatex, texlive-xetex, ghostscript, lmodern
+ dblatex, texlive-xetex, ghostscript, lmodern, fonts-freefont-ttf
 Build-Conflicts: libplplot5
 X-Python-Version: >=2.4
 Homepage: http://www.plplot.org

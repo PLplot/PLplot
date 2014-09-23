@@ -15,10 +15,13 @@ plplot (5.10.0+dfsg-1) unstable; urgency=low
     conditions to the standard LGPL. (Closes: #761057)
   * debian/control.in: Include libplplot-dev dependencies on 
     plplot12-driver-qt and plplot12-driver-wxwidgets to avoid dangling 
-    symlinks. (Closes: #715105). Remove obsolete build dependency on 
-    ttf-freefont.
+    symlinks. (Closes: #715105). Change build dependency on 
+    ttf-freefont transitional package to fonts-freefont-ttf.
   * debian/patches/set_cmake_policy: Set cmake policy CMP0026 to old to 
-    allow compilation with cmake 3. 
+    allow compilation with cmake 3. For installed examples also set cmake
+    policy CMP0046 to old to suppress warnings.
+  * debian/patches/octave_3.8_support.diff: Fix bug introduced in octave
+    example 07.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 16 Sep 2014 13:42:23 +0100
 
