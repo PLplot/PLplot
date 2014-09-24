@@ -131,7 +131,10 @@
   #define PLDLLIMPEXP_PLPLOT_MODULE_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotqt_EXPORTS )
+// Note for the case when ENABLE_DYNDRIVERS is not defined, the
+// libplplot build specifically includes bindings/qt-gui/plqt.cpp (see
+// cmake/modules/qt.cmake).
+#if defined ( plplotqt_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
   #define PLDLLIMPEXP_QT    PLDLLEXPORT
   #define PLDLLIMPEXP_QT_DATA( type )    PLDLLEXPORT type
 #else
