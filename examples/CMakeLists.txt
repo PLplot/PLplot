@@ -404,7 +404,7 @@ else(CORE_BUILD)
     cmake_policy(SET CMP0023 OLD)
   endif(POLICY CMP0023)
   if(POLICY CMP0046)
-    message(STATUS "Explicitly setting policy CMP0023 to OLD")
+    message(STATUS "Explicitly setting policy CMP0046 to OLD")
     cmake_policy(SET CMP0046 OLD)
   endif(POLICY CMP0046)
 
