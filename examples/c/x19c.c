@@ -123,19 +123,19 @@ geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPoint
 int
 main( int argc, const char **argv )
 {
-    PLFLT minx, maxx, miny, maxy;
-    PLFLT x, y;
-	//variables for the shapelib example
-	const PLINT nbeachareas = 2;
-	PLINT beachareas[] = { 23, 24 };
-	const PLINT nwoodlandareas = 94;
-	PLINT woodlandareas[94];
-	const PLINT nshingleareas = 22;
-	PLINT shingleareas[]={ 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
-	const PLINT ncragareas = 2024;
-	PLINT cragareas[2024];
-	PLINT majorroads[]={ 33, 48, 71, 83, 89, 90, 101, 102, 111 };
-	int i;
+    PLFLT       minx, maxx, miny, maxy;
+    PLFLT       x, y;
+    //variables for the shapelib example
+    const PLINT nbeachareas    = 2;
+    PLINT       beachareas[]   = { 23, 24 };
+    const PLINT nwoodlandareas = 94;
+    PLINT       woodlandareas[94];
+    const PLINT nshingleareas  = 22;
+    PLINT       shingleareas[] = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
+    const PLINT ncragareas     = 2024;
+    PLINT       cragareas[2024];
+    PLINT       majorroads[] = { 33, 48, 71, 83, 89, 90, 101, 102, 111 };
+    int         i;
 
 // Parse and process command line arguments
 
@@ -212,111 +212,111 @@ main( int argc, const char **argv )
     // For C, this is how the global transform is cleared
     plstransform( NULL, NULL );
 
-	// An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
-	// These were chosen because they provide shapefiles for small grid boxes which
-	// are easilly manageable for this demo.
-	
+    // An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
+    // These were chosen because they provide shapefiles for small grid boxes which
+    // are easilly manageable for this demo.
+
     pllsty( 1 );
 
-	
-	minx=240570;
-	maxx=621109;
-	miny=87822;
-	maxy=722770;
-	plscol0(0, 255, 255, 255 );
-	plscol0(1, 0, 0, 0 );
-	plscol0(2, 150, 150, 150 );
-	plscol0(3, 0, 50, 200 );
-	plscol0(4, 50, 50, 50 );
-	plscol0(5, 150, 0, 0 );
-	plscol0(6, 100, 100, 255 );
+
+    minx = 240570;
+    maxx = 621109;
+    miny = 87822;
+    maxy = 722770;
+    plscol0( 0, 255, 255, 255 );
+    plscol0( 1, 0, 0, 0 );
+    plscol0( 2, 150, 150, 150 );
+    plscol0( 3, 0, 50, 200 );
+    plscol0( 4, 50, 50, 50 );
+    plscol0( 5, 150, 0, 0 );
+    plscol0( 6, 100, 100, 255 );
 
 
-	minx=265000;
-	maxx=270000;
-	miny=145000;
-	maxy=150000;
-	plscol0( 0, 255, 255, 255 ); //white
-	plscol0( 1, 0, 0, 0 ); //black
-	plscol0( 2, 255, 200, 0 ); //yelow for sand
-	plscol0( 3, 60, 230, 60 ); // green for woodland
-	plscol0( 4, 210, 120, 60 ); //brown for contours
-	plscol0( 5, 150, 0, 0 ); //red for major roads
-	plscol0( 6, 180, 180, 255 ); //pale blue for water
-	plscol0( 7, 100, 100, 100 ); //pale grey for shingle or boulders
-	plscol0( 8, 100, 100, 100 ); //dark grey for custom polygons - generally crags
+    minx = 265000;
+    maxx = 270000;
+    miny = 145000;
+    maxy = 150000;
+    plscol0( 0, 255, 255, 255 ); //white
+    plscol0( 1, 0, 0, 0 );       //black
+    plscol0( 2, 255, 200, 0 );   //yelow for sand
+    plscol0( 3, 60, 230, 60 );   // green for woodland
+    plscol0( 4, 210, 120, 60 );  //brown for contours
+    plscol0( 5, 150, 0, 0 );     //red for major roads
+    plscol0( 6, 180, 180, 255 ); //pale blue for water
+    plscol0( 7, 100, 100, 100 ); //pale grey for shingle or boulders
+    plscol0( 8, 100, 100, 100 ); //dark grey for custom polygons - generally crags
 
-	
-	plcol0(1);
+
+    plcol0( 1 );
     plenv( minx, maxx, miny, maxy, 1, -1 );
-	pllab( "", "", "Martinhoe CP, Exmoor National Park, UK (shapelib only)" );
-	
+    pllab( "", "", "Martinhoe CP, Exmoor National Park, UK (shapelib only)" );
 
-	//Beach
-	plcol0( 2 );
-	plmapfill(NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, beachareas, nbeachareas );
 
-	//woodland
-	plcol0( 3 );
-	for( i=0; i < nwoodlandareas; ++ i )
-		woodlandareas[i] = i + 218;
-	plmapfill(NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas, nwoodlandareas );
+    //Beach
+    plcol0( 2 );
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, beachareas, nbeachareas );
 
-	//shingle or boulders
-	plcol0( 7 );
-	plmapfill(NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas, nshingleareas );
-	
-	//crags
-	plcol0( 8 );
-	for( i=0; i < ncragareas; ++ i )
-		cragareas[i] = i + 325;
-	plmapfill(NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas, ncragareas );
-	
-	//draw contours, we need to separate contours from high/low coastline
-	//draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );
-	plcol0( 4 );
-	plmapline(NULL, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, NULL, 0 ); 
+    //woodland
+    plcol0( 3 );
+    for ( i = 0; i < nwoodlandareas; ++i )
+        woodlandareas[i] = i + 218;
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas, nwoodlandareas );
 
-	//draw the sea and surface water
-	plwidth( 0.0 );
-	plcol0(6);
-	plmapfill(NULL, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, NULL, 0 ); 
-	plwidth( 2.0 );
-	plmapfill(NULL, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, NULL, 0 ); 
+    //shingle or boulders
+    plcol0( 7 );
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas, nshingleareas );
 
-	//draw the roads, first with black and then thinner with colour to give an
-	//an outlined appearance
-	plwidth( 5.0 );
-	plcol0( 1 );
-	plmapline(NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, NULL, 0 ); 
-	plwidth( 3.0 );
-	plcol0( 0 );
-	plmapline(NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, NULL, 0 ); 
-	plcol0( 5 );
-	plmapline(NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads, 9 ); 
+    //crags
+    plcol0( 8 );
+    for ( i = 0; i < ncragareas; ++i )
+        cragareas[i] = i + 325;
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas, ncragareas );
 
-	//draw buildings
-	plwidth( 1.0 );
-	plcol0( 1 );
-	plmapfill(NULL, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy, NULL, 0 ); 
+    //draw contours, we need to separate contours from high/low coastline
+    //draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );
+    plcol0( 4 );
+    plmapline( NULL, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, NULL, 0 );
 
-	//labels
-	plsfci( 0x80000100 );
-	plschr(0, 0.8);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "MARTINHOE CP", minx, maxx, miny, maxy, 202);
-	plschr(0,0.7);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale\nDown", minx, maxx, miny, maxy, 13);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "South\nDown", minx, maxx, miny, maxy, 34);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woody Bay", minx, maxx, miny, maxy, 211);
-	plschr(0, 0.6);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Mill Wood", minx, maxx, miny, maxy, 16);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale Wood", minx, maxx, miny, maxy, 17);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 1.0, "Bodley", minx, maxx, miny, maxy, 31);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.0, "Martinhoe", minx, maxx, miny, maxy, 37);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61);
-	plmaptex(NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62);
+    //draw the sea and surface water
+    plwidth( 0.0 );
+    plcol0( 6 );
+    plmapfill( NULL, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, NULL, 0 );
+    plwidth( 2.0 );
+    plmapfill( NULL, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, NULL, 0 );
+
+    //draw the roads, first with black and then thinner with colour to give an
+    //an outlined appearance
+    plwidth( 5.0 );
+    plcol0( 1 );
+    plmapline( NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, NULL, 0 );
+    plwidth( 3.0 );
+    plcol0( 0 );
+    plmapline( NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, NULL, 0 );
+    plcol0( 5 );
+    plmapline( NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads, 9 );
+
+    //draw buildings
+    plwidth( 1.0 );
+    plcol0( 1 );
+    plmapfill( NULL, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy, NULL, 0 );
+
+    //labels
+    plsfci( 0x80000100 );
+    plschr( 0, 0.8 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "MARTINHOE CP", minx, maxx, miny, maxy, 202 );
+    plschr( 0, 0.7 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale\nDown", minx, maxx, miny, maxy, 13 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "South\nDown", minx, maxx, miny, maxy, 34 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woody Bay", minx, maxx, miny, maxy, 211 );
+    plschr( 0, 0.6 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Mill Wood", minx, maxx, miny, maxy, 16 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale Wood", minx, maxx, miny, maxy, 17 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 1.0, "Bodley", minx, maxx, miny, maxy, 31 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.0, "Martinhoe", minx, maxx, miny, maxy, 37 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 );
+    plmaptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 );
 
     plend();
     exit( 0 );

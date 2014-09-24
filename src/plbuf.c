@@ -569,7 +569,7 @@ rdbuf_state( PLStream *pls )
     switch ( op )
     {
     case PLSTATE_WIDTH: {
-        rd_data( pls, &(pls->width), sizeof ( pls->width ) );
+        rd_data( pls, &( pls->width ), sizeof ( pls->width ) );
         plP_state( PLSTATE_WIDTH );
 
         break;
