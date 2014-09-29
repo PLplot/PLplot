@@ -2,7 +2,21 @@
 # implement a complete CMake-based build system for ndiff.
 
 project(ndiff C)
-cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
+
+message(STATUS "CMake version = ${CMAKE_VERSION}")
+message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
+message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
+message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
+
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+
+# CMake 3.0.2 sets the CMP0026 policy to disallow use of the LOCATION target
+# property.  However, currently the ndiff build system uses that property.
+# So until that issue is cleaned up set CMP0026 to OLD.
+if(POLICY CMP0026)
+  message(STATUS "Explicitly setting policy CMP0026 to OLD")
+  cmake_policy(SET CMP0026 OLD)
+endif(POLICY CMP0026)
 
 # Set paths for installation
 set(

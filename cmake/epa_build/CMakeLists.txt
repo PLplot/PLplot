@@ -3,7 +3,7 @@
 # below this one using ExternalProject_Add commands configured with
 # the appropriate build, test, and dependency information.
 
-# Copyright (C) 2013 Alan W. Irwin
+# Copyright (C) 2013-2014 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
 message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
 message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
-cmake_minimum_required(VERSION 2.8.12.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 set(EPA_BASE ${CMAKE_BINARY_DIR}/epa_build)
 message(STATUS "EPA_BASE = ${EPA_BASE}")

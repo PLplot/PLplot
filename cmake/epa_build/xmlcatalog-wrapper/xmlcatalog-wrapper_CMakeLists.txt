@@ -1,7 +1,7 @@
 # Top-level CMakeLists.txt for the CMake-based build system
 # of the xmlcatalog-wrapper software.
 
-# Copyright (C) 2013 Alan W. Irwin
+# Copyright (C) 2013-2014 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Library General Public License as published
@@ -22,9 +22,11 @@
 project(xmlcatalog-wrapper NONE)
 
 message(STATUS "CMake version = ${CMAKE_VERSION}")
-message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
+message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
+message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
-cmake_minimum_required(VERSION 2.8.10.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 # Do nothing unless WIN32 AND NOT CYGWIN
 # Jury is still out whether this is required for Cygwin, but I

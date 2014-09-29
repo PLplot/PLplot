@@ -1,7 +1,7 @@
 # Top-level CMakeLists.txt for the CMake-based build system
 # of the docbook-xml software.
 
-# Copyright (C) 2013 Alan W. Irwin
+# Copyright (C) 2013-2014 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Library General Public License as published
@@ -19,9 +19,11 @@
 project(docbook-xml NONE)
 
 message(STATUS "CMake version = ${CMAKE_VERSION}")
-message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
+message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
+message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
-cmake_minimum_required(VERSION 2.8.10.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 # CATALOG_CMAKE_INSTALL_PREFIX prepends a "/" to CMAKE_INSTALL_PREFIX if the
 # latter doesn't start with "/", (i.e, the drive letter

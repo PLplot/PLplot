@@ -1,7 +1,7 @@
 # Top-level CMakeLists.txt for the CMake-based build and test system
 # of the shapelib software.
 
-# Copyright (C) 2012-2013 Alan W. Irwin
+# Copyright (C) 2012-2014 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Library General Public License as published
@@ -21,10 +21,19 @@
 project(shapelib C)
 
 message(STATUS "CMake version = ${CMAKE_VERSION}")
-message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
+message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
+message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
-# Version 2.8.5 or above of cmake is currently required for all platforms.
-cmake_minimum_required(VERSION 2.8.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+
+# CMake 3.0.2 sets the CMP0026 policy to disallow use of the LOCATION target
+# property.  However, currently the shapelib build system uses that property.
+# So until that issue is cleaned up set CMP0026 to OLD.
+if(POLICY CMP0026)
+  message(STATUS "Explicitly setting policy CMP0026 to OLD")
+  cmake_policy(SET CMP0026 OLD)
+endif(POLICY CMP0026)
 
 # libraries are all shared by default.
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
