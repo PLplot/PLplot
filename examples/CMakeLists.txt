@@ -403,9 +403,13 @@ else(CORE_BUILD)
     message(STATUS "Explicitly setting policy CMP0023 to OLD")
     cmake_policy(SET CMP0023 OLD)
   endif(POLICY CMP0023)
+  if(POLICY CMP0026)
+    message(STATUS "Explicitly setting policy CMP0026 to OLD")
+    cmake_policy(SET CMP0026 OLD)
+  endif(POLICY CMP0026)
   if(POLICY CMP0046)
-    message(STATUS "Explicitly setting policy CMP0046 to OLD")
-    cmake_policy(SET CMP0046 OLD)
+    message(STATUS "Explicitly setting policy CMP0046 to NEW")
+    cmake_policy(SET CMP0046 NEW)
   endif(POLICY CMP0046)
 
   message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
@@ -456,6 +460,20 @@ foreach(language_info ${language_info_LIST} "tk:tk:nothing")
     get_property(files_examples_${language} GLOBAL PROPERTY FILES_examples_${language})
   endif(ENABLE_${language})
 endforeach(language_info ${language_info_LIST} "tk:tk:nothing")
+
+# Set up TARGET_tclIndex_tcl and TARGET_tclIndex_tk to account for
+# the non-core build where the required files are installed and
+# these actual targets do not exist.
+if(TARGET tclIndex_tcl)
+  set(TARGET_tclIndex_tcl tclIndex_tcl)
+else(TARGET tclIndex_tcl)
+  set(TARGET_tclIndex_tcl)
+endif(TARGET tclIndex_tcl)
+if(TARGET tclIndex_tk)
+  set(TARGET_tclIndex_tk tclIndex_tk)
+else(TARGET tclIndex_tk)
+  set(TARGET_tclIndex_tk)
+endif(TARGET tclIndex_tk)
 
 if(BUILD_TEST)
   # lena.pgm needed in build tree for the examples that are run from there.
@@ -770,13 +788,11 @@ if(BUILD_TEST)
       endif(FILE_DEPENDS_${driver})
       if(device STREQUAL "tk")
 	if(CORE_BUILD)
-	  add_dependencies(test_c_tk tclIndex_tk tclIndex_tcl plserver)
 	  if(FILE_DEPENDS_xwin)
 	    add_dependencies(test_c_${device} test_xwin_dyndriver)
 	  endif(FILE_DEPENDS_xwin)
-	else(CORE_BUILD)
-	  add_dependencies(test_c_tk plserver)
 	endif(CORE_BUILD)
+	add_dependencies(test_c_tk ${TARGET_tclIndex_tk} ${TARGET_tclIndex_tcl} plserver)
       endif(device STREQUAL "tk")
       # Follow what was done above.
       if(files_examples_c AND targets_examples_c)
@@ -814,13 +830,11 @@ if(BUILD_TEST)
 	endif(FILE_DEPENDS_${driver})
 	if(device STREQUAL "tk")
 	  if(CORE_BUILD)
-	    add_dependencies(test_octave_tk tclIndex_tk tclIndex_tcl plserver)
 	    if(FILE_DEPENDS_xwin)
 	      add_dependencies(test_octave_tk test_xwin_dyndriver)
 	    endif(FILE_DEPENDS_xwin)
-	  else(CORE_BUILD)
-	    add_dependencies(test_octave_tk plserver)
 	  endif(CORE_BUILD)
+	  add_dependencies(test_octave_tk ${TARGET_tclIndex_tk} ${TARGET_tclIndex_tcl} plserver)
 	endif(device STREQUAL "tk")
 	message(STATUS "WARNING: The test_octave_${device} target can be run independently but does not
    work reliably so it is temporarily excluded from being a dependency of other
@@ -973,7 +987,7 @@ if(BUILD_TEST)
     add_dependencies(test_pltcl_standard_examples
       pltcl
       tcl_examples
-      tclIndex_tcl
+      ${TARGET_tclIndex_tcl}
       ${generic_interactive_device}
       )
     if(FILE_DEPENDS_${generic_interactive_device})
@@ -1000,7 +1014,7 @@ if(BUILD_TEST)
       add_dependencies(test_tclsh_standard_examples
 	plplottcltk
 	tcl_examples
-	tclIndex_tcl
+	${TARGET_tclIndex_tcl}
 	${generic_interactive_device}
 	)
       if(FILE_DEPENDS_${generic_interactive_device})
@@ -1027,8 +1041,8 @@ if(BUILD_TEST)
       DEPENDS ${xwin_target}
       )
     add_dependencies(test_tk_01
-      tclIndex_tcl
-      tclIndex_tk
+      ${TARGET_tclIndex_tcl}
+      ${TARGET_tclIndex_tk}
       xwin
       )
     if(FILE_DEPENDS_xwin)
@@ -1042,8 +1056,8 @@ if(BUILD_TEST)
       )
     add_dependencies(test_tk_03
       plserver
-      tclIndex_tcl
-      tclIndex_tk
+      ${TARGET_tclIndex_tcl}
+      ${TARGET_tclIndex_tk}
       xwin
       )
     if(FILE_DEPENDS_xwin)
@@ -1067,8 +1081,8 @@ if(BUILD_TEST)
     add_dependencies(test_tk_plgrid
       plserver
       tcl_examples
-      tclIndex_tcl
-      tclIndex_tk
+      ${TARGET_tclIndex_tcl}
+      ${TARGET_tclIndex_tk}
       xwin
       )
     if(FILE_DEPENDS_xwin)
@@ -1084,8 +1098,8 @@ if(BUILD_TEST)
     add_dependencies(test_plserver_standard_examples
       plserver
       tcl_examples
-      tclIndex_tcl
-      tclIndex_tk
+      ${TARGET_tclIndex_tcl}
+      ${TARGET_tclIndex_tk}
       tclIndex_examples_tk
       xwin
       )
@@ -1106,8 +1120,8 @@ if(BUILD_TEST)
 	tk
 	xwin
 	tcl_examples
-	tclIndex_tcl
-	tclIndex_tk
+	${TARGET_tclIndex_tcl}
+	${TARGET_tclIndex_tk}
 	tclIndex_examples_tk
 	)
       if(FILE_DEPENDS_xwin)
@@ -1133,8 +1147,8 @@ if(BUILD_TEST)
 	DEPENDS ${xwin_target}
 	)
       add_dependencies(test_tk_02
-	tclIndex_tcl
-	tclIndex_tk
+	${TARGET_tclIndex_tcl}
+	${TARGET_tclIndex_tk}
 	xwin
 	)
       if(FILE_DEPENDS_xwin)
@@ -1154,8 +1168,8 @@ if(BUILD_TEST)
 	DEPENDS ${xwin_target}
 	)
       add_dependencies(test_tk_04
-	tclIndex_tcl
-	tclIndex_tk
+	${TARGET_tclIndex_tcl}
+	${TARGET_tclIndex_tk}
 	xwin
 	)
       if(FILE_DEPENDS_xwin)
@@ -1176,8 +1190,8 @@ if(BUILD_TEST)
       add_dependencies(test_plserver_runAllDemos
 	plserver
 	tcl_examples
-	tclIndex_tcl
-	tclIndex_tk
+	${TARGET_tclIndex_tcl}
+	${TARGET_tclIndex_tk}
 	tclIndex_examples_tk
 	xwin
 	)
@@ -1198,8 +1212,8 @@ if(BUILD_TEST)
 	  plplottcltk
 	  tkwin
 	  tcl_examples
-	  tclIndex_tcl
-	  tclIndex_tk
+	  ${TARGET_tclIndex_tcl}
+	  ${TARGET_tclIndex_tk}
 	  tclIndex_examples_tk
 	  )
 	message(STATUS "WARNING: The test_wish_runAlldemos target can be run independently but 

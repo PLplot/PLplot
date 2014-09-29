@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2012 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -54,10 +54,24 @@ if(POLICY CMP0023)
   message(STATUS "Explicitly setting policy CMP0023 to OLD")
   cmake_policy(SET CMP0023 OLD)
 endif(POLICY CMP0023)
+
+# CMake 3.0.2 sets the CMP0026 policy to disallow use of the LOCATION target
+# property.  However, currently the PLplot build system uses that property.
+# So until that issue is cleaned up set CMP0026 to OLD.
 if(POLICY CMP0026)
   message(STATUS "Explicitly setting policy CMP0026 to OLD")
   cmake_policy(SET CMP0026 OLD)
 endif(POLICY CMP0026)
+
+# CMake 3.0.2 sets the CMP0046 policy to disallow use of nonexistent
+# targets in add_dependencies commands.  Since such nonexistent
+# targets are normally the sign of a build-system bug, encourage use
+# of this policy by explicitly setting this policy to NEW if this
+# policy exists (i.e., if the user is running CMake-3.0.2)
+if(POLICY CMP0046)
+  message(STATUS "Explicitly setting policy CMP0046 to NEW")
+  cmake_policy(SET CMP0046 NEW)
+endif(POLICY CMP0046)
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
