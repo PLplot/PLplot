@@ -13,6 +13,8 @@ mkdir  $DIR
 
 # Recurse up to 5 levels deep, don't get any html above
 # plplot_wiki, get the files necessary to display all pages,
+# Do not download *.tar.gz files (because these plplot tarballs are
+# huge and dated), 
 # convert links to the locally downloaded version, windows==> escape a long
 # list of characters (including question mark) from file names, 
 # start local hierarchy at $DIR, and keep a log of the transaction in
@@ -20,6 +22,7 @@ mkdir  $DIR
 wget --recursive --level=5 --no-parent \
 --page-requisites --convert-links \
 --restrict-file-names=windows \
+--reject='*.tar.gz' \
 --no-host-directories --cut-dirs=1 \
 --directory-prefix=$DIR \
 -o $DIR/plplot_wiki_backup.log \
