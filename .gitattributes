@@ -1,2 +1,6 @@
-*.sh -text
+*.sh eof=lf
+*.sh.in eof=lf
+*.txt text=auto
+*.cmake text=auto
+
 
