@@ -1,6 +1,35 @@
+# All text files are by default (unless some specific pattern
+# overrides below) treated as LF in repository and native (LF on Unix
+# and CRLF on Windows) in the working directory.
+* text=auto
+
+# All bash shell scripts must uniformly have LF endings.
 *.sh eof=lf
 *.sh.in eof=lf
-*.txt text=auto
-*.cmake text=auto
 
+# git has its own heuristics for detecting text versus binary files
+# but just to make sure it doesn't misclassify a file as text when
+# it is binary, use specific rules below.
 
+# Various formats for Lena images
+*.img -text
+*.pgm -text
+
+# Binary graphical formats in the www subdirectory tree
+*.gif -text
+*.jpg -text
+
+# Binary graphical format in lib/nistcd/*.cgm
+*.cgm -text
+
+# Atari 68xxx CPX file (the original binary format in data/*.map)
+*.map -text
+
+# Shapefile binary formats in the data subdirectory tree
+*.dbf -text
+*.prj -text
+*.shp -text
+*.shx -text
+
+# Hershey binary font files in data subdirectory
+*.fnt -text
