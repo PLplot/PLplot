@@ -238,8 +238,8 @@ fi
 
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
-cdir="$EXAMPLES_DIR"/c
-cxxdir="$EXAMPLES_DIR"/c++
+cdir="$EXAMPLES_DIR"/c$VC_CTEST_DIRECTORY
+cxxdir="$EXAMPLES_DIR"/c++$VC_CTEST_DIRECTORY
 f95dir="$EXAMPLES_DIR"/f95
 pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
 tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl

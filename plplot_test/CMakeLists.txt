@@ -28,10 +28,16 @@ if(SH_EXECUTABLE)
   file(MAKE_DIRECTORY ${CTEST_EXAMPLES_OUTPUT_DIR})
   
   set(SCRIPTS)
+  string(REPLACE " " "\\ " CMAKE_BINARY_DIR_ESCAPED ${CMAKE_BINARY_DIR})
+  string(REPLACE " " "\\ " CMAKE_SOURCE_DIR_ESCAPED ${CMAKE_SOURCE_DIR})
+  string(REPLACE " " "\\ " CTEST_EXAMPLES_OUTPUT_DIR_ESCAPED ${CTEST_EXAMPLES_OUTPUT_DIR})
+  if(MSVC)
+     set (VC_CTEST_DIRECTORY /$<CONFIGURATION>)
+  endif(MSVC)
   set(TEST_ENVIRONMENT
-    "EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples OUTPUT_DIR=${CTEST_EXAMPLES_OUTPUT_DIR}"
+    "EXAMPLES_DIR=${CMAKE_BINARY_DIR_ESCAPED}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR_ESCAPED}/examples OUTPUT_DIR=${CTEST_EXAMPLES_OUTPUT_DIR_ESCAPED} VC_CTEST_DIRECTORY=${VC_CTEST_DIRECTORY}"
     )
-
+  message(STATUS "TEST_ENVIRONMENT = ${TEST_ENVIRONMENT}")
   set(TEST_DEVICE psc CACHE STRING "device used for ctest")
   # There is no PLD_psc or PLD_psttfc and the PLD_ps and PLD_psttf
   # variables must be used instead.  All other PLD_* names correspond
@@ -57,6 +63,7 @@ if(SH_EXECUTABLE)
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
     @ONLY
+	NEWLINE_STYLE UNIX
     )
 
   #Install-tree configuration
@@ -65,6 +72,7 @@ if(SH_EXECUTABLE)
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install
     @ONLY
+	NEWLINE_STYLE UNIX
     )
 
   # Set up optional tests in the configured plplot-test-interactive.sh file
@@ -108,12 +116,14 @@ if(SH_EXECUTABLE)
     plplot-test-interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
     @ONLY
+	NEWLINE_STYLE UNIX
     )
 
   configure_file(
     test_c.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh
     @ONLY
+	NEWLINE_STYLE UNIX
     )
   list(APPEND SCRIPTS test_c.sh)
 
@@ -121,6 +131,7 @@ if(SH_EXECUTABLE)
     test_c_interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/test_c_interactive.sh
     @ONLY
+	NEWLINE_STYLE UNIX
     )
   list(APPEND SCRIPTS test_c_interactive.sh)
 
@@ -139,6 +150,7 @@ if(SH_EXECUTABLE)
       test_cxx.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_cxx.sh)
     if(PLD_TEST_DEVICE)
@@ -155,6 +167,7 @@ if(SH_EXECUTABLE)
       test_f95.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_f95.sh)
     if(PLD_TEST_DEVICE)
@@ -171,6 +184,7 @@ if(SH_EXECUTABLE)
       test_java.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_java.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_java.sh)
     if(PLD_TEST_DEVICE)
@@ -188,6 +202,7 @@ if(SH_EXECUTABLE)
       test_octave_interactive.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_octave_interactive.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_octave_interactive.sh)
 
@@ -195,6 +210,7 @@ if(SH_EXECUTABLE)
       test_octave.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_octave.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_octave.sh)
     if(PLD_TEST_DEVICE)
@@ -211,6 +227,7 @@ if(SH_EXECUTABLE)
       test_python.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_python.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_python.sh)
     if(PLD_TEST_DEVICE)
@@ -224,19 +241,25 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_tcl)
     get_target_property(pltcl_LOC pltcl LOCATION)
+	message( STATUS "pltcl_LOC=${pltcl_LOC}")
     string(REGEX REPLACE "/pltcl.*$" "" PLTCL_DIR ${pltcl_LOC})
+	string (REPLACE "//$(Configuration)/" "$VC_CTEST_DIRECTORY" PLTCL_DIR ${PLTCL_DIR})
+	message( STATUS "PLTCL_DIR=${PLTCL_DIR}")
     # Experience with MSYS bash shows that variables used to set a
     # PATH component must transform the drive-letter form to the
     # leading-slash Unix form of the PATH component.  The case of the
     # drive letter doesn't matter.  For example converting
     # z:/whatever/path ==> /z/whatever/path or /Z/whatever/path works
     # fine for MSYS bash.
-    string(REGEX REPLACE "^(.):/" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+    #string(REGEX REPLACE "^(.):/" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+	#message( STATUS "PLTCL_DIR=${PLTCL_DIR}")
 
-
+	string(REPLACE " " "\\ " PLTCL_DIR_ESCAPED ${PLTCL_DIR})
+	message( STATUS "PLTCL_DIR_ESCAPED=${PLTCL_DIR_ESCAPED}")
     configure_file(test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     if(PLD_TEST_DEVICE)
       add_test(NAME examples_tcl
@@ -252,6 +275,7 @@ if(SH_EXECUTABLE)
     configure_file(test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh_install
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
   endif(ENABLE_tcl)
 
@@ -260,6 +284,7 @@ if(SH_EXECUTABLE)
       test_pdl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_pdl.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_pdl.sh)
     if(PLD_TEST_DEVICE)
@@ -276,6 +301,7 @@ if(SH_EXECUTABLE)
       test_ada.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_ada.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_ada.sh)
     if(PLD_TEST_DEVICE)
@@ -292,6 +318,7 @@ if(SH_EXECUTABLE)
       test_ocaml.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_ocaml.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_ocaml.sh)
     if(PLD_TEST_DEVICE)
@@ -308,6 +335,7 @@ if(SH_EXECUTABLE)
       test_lua.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_lua.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_lua.sh)
     if(PLD_TEST_DEVICE)
@@ -324,6 +352,7 @@ if(SH_EXECUTABLE)
       test_d.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_d.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_d.sh)
     if(PLD_TEST_DEVICE)
@@ -483,6 +512,7 @@ if(SH_EXECUTABLE)
       test_diff.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh
       @ONLY
+	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_diff.sh)
     add_test(NAME examples_compare

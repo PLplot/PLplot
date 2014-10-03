@@ -24,7 +24,14 @@
 # This is called from plplot-test.sh with $tcldir, $device, $dsuffix,
 # $options, and possibly $verbose_test defined.
 # Put pltcl on the PATH.
-PATH=@PLTCL_DIR@:$PATH
+PLTCL_DIR=@PLTCL_DIR_ESCAPED@
+PLUNAME=`uname -o`
+if [ "$PLUNAME" == "Cygwin" ]; then
+  PLTCL_DIR=`cygpath -pu "$PLTCL_DIR"`
+elif [ "$PLUNAME" == "Msys" ]; then
+  PLTCL_DIR=`echo "/$PLTCL_DIR" | sed 's/\\/\//g' | sed 's/://'`
+fi
+PATH=$PLTCL_DIR:$PATH
 lang="t"
 cd "${OUTPUT_DIR}"
 # On Windows systems the sed stanza converts from leading slash form
@@ -34,7 +41,7 @@ results="$(pwd |sed 's?^/\(.\)/?\1:/?')"
 export results
 cd "$tcldir"
 if [ "$verbose_test" ] ; then
-    echo "@PLTCL_DIR@/pltcl demo of plot"
+    echo "$PLTCL_DIR/pltcl demo of plot"
 fi
 pltcl -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
 plinit
