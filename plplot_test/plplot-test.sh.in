@@ -242,6 +242,7 @@ cdir="$EXAMPLES_DIR"/c$VC_CTEST_DIRECTORY
 cxxdir="$EXAMPLES_DIR"/c++$VC_CTEST_DIRECTORY
 f95dir="$EXAMPLES_DIR"/f95
 pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
+tclexamplesdir="$EXAMPLES_DIR"/tcl
 tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl
 perldir="$SRC_EXAMPLES_DIR"/perl
 javadir="$EXAMPLES_DIR"/java

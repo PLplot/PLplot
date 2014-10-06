@@ -515,9 +515,10 @@ if(SH_EXECUTABLE)
 	  NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_diff.sh)
-    add_test(NAME examples_compare
+	string(REPLACE " " "\\ " TEST_DIFF_SH "${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh")
+	add_test(NAME examples_compare
       WORKING_DIRECTORY ${CTEST_EXAMPLES_OUTPUT_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh"
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_DIFF_SH}"
       )
     # There is a bug in 2.8.x with x < 5 where tests are run out of
     # the order in which they are declared by default.  Also, 2.8.x
@@ -606,3 +607,4 @@ if(SH_EXECUTABLE)
     )
 
 endif(SH_EXECUTABLE)
+>>>>>>> Fixed tcl and diff testing for native Windows/Cygwin

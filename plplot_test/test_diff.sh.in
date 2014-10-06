@@ -27,9 +27,8 @@ xsuffix_c=
 # Compare C results with c++, f95, java, octave, python, tcl, perl, 
 # ada, ocaml, lua and d results
 for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d; do
-
   # Check which suffix is used for this binding
-    case $lang in 
+  case $lang in 
 	c++)
 	    xsuffix=
 	    suffix=cxx
@@ -90,47 +89,47 @@ for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d; do
     # Check if any examples exist for this language.
     EXAMPLES_EXIST="no"
     for index in ${INDEX_LIST} ; do
-	if [ -f x${xsuffix}${index}${suffix}.psc ] ; then
+	  if [ -f x${xsuffix}${index}${suffix}.psc ] ; then
 	    EXAMPLES_EXIST="yes"
 	    break
-	fi
+	  fi
     done
-    if [ "$EXAMPLES_EXIST" = "yes" ] ; then
-	for index in ${INDEX_LIST} ; do
+    if [ "$EXAMPLES_EXIST" == "yes" ] ; then
+	  for index in ${INDEX_LIST} ; do
 	    if [ ! -f x${xsuffix_c}${index}c.psc ] ; then
-		echo "C example ${index} is missing"
-	    else
-		if [ ! -f x${xsuffix}${index}${suffix}.psc ] ; then
+		  echo "C example ${index} is missing"
+	      else
+		  if [ ! -f x${xsuffix}${index}${suffix}.psc ] ; then
 		    missing="${missing} ${index}"
-		else
+		  else
 		    if [ "@HAVE_CMP_I@" = "ON" ] ; then
-		    # Skip first 190 bytes of comparison to ignore date stamp.
-			@CMP_EXECUTABLE@ -s -i 190 x${xsuffix_c}${index}c.psc x${xsuffix}${index}${suffix}.psc
-			if [ $? != 0 ] ; then
+		      # Skip first 190 bytes of comparison to ignore date stamp.
+			  @CMP_EXECUTABLE@ -s -i 190 x${xsuffix_c}${index}c.psc x${xsuffix}${index}${suffix}.psc
+			  if [ $? != 0 ] ; then
 			    different="${different} ${index}"
-			fi
+			  fi
 		    else
-		    # Drop first 8 lines from comparison to ignore date stamp.
-			@TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c.psc > test1.psc
-			@TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}.psc > test2.psc
-			@DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
-			if [ $? != 0 ] ; then
+		      # Drop first 8 lines from comparison to ignore date stamp.
+			  @TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c.psc > test1.psc
+			  @TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}.psc > test2.psc
+			  @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
+			  if [ $? != 0 ] ; then
 			    different="${different} ${index}"
-			fi
+			  fi
 		    fi
 		    if [ "$index" != "14a" ] ; then
-			if [ -f x${xsuffix}${index}${suffix}_psc.txt ] ; then
+			  if [ -f x${xsuffix}${index}${suffix}_psc.txt ] ; then
 			    @DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c_psc.txt x${xsuffix}${index}${suffix}_psc.txt 2>&1 > /dev/null
 			    if [ $? != 0 ] ; then
-				diffstdout="${diffstdout} ${index}"
+				  diffstdout="${diffstdout} ${index}"
 			    fi
-			else
+			  else
 			    missingstdout="${missingstdout} ${index}"
-			fi
+			  fi
 		    fi
-		fi
+		  fi
 	    fi
-	done
+	  done
 	echo "${lang}"
 	echo "  Missing examples            : ${missing}"
 	echo "  Differing postscript output : ${different}"
@@ -139,7 +138,7 @@ for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d; do
 	if [ "${different}" != "" -o "${diffstdout}" != "" ] ; then
 	    ret=1
 	fi
-    fi 
+  fi 
 done
 
 if [ "${ret}" != "0" ] ; then

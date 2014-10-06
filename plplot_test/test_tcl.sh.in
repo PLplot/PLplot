@@ -25,6 +25,9 @@
 # $options, and possibly $verbose_test defined.
 # Put pltcl on the PATH.
 PLTCL_DIR=@PLTCL_DIR_ESCAPED@
+PLTCL_DIR_NATIVE=$PLTCL_DIR
+cp test_tcl_caller.bat "$tcldir"
+native_windows=true
 PLUNAME=`uname -o`
 if [ "$PLUNAME" == "Cygwin" ]; then
   PLTCL_DIR=`cygpath -pu "$PLTCL_DIR"`
@@ -33,17 +36,22 @@ elif [ "$PLUNAME" == "Msys" ]; then
 fi
 PATH=$PLTCL_DIR:$PATH
 lang="t"
-cd "${OUTPUT_DIR}"
-# On Windows systems the sed stanza converts from leading slash form
-# to drive-letter form.  This distinction matters for all prompted
-# filenames (e.g., example 14) but does not matter for -o options.
-results="$(pwd |sed 's?^/\(.\)/?\1:/?')"
-export results
-cd "$tcldir"
-if [ "$verbose_test" ] ; then
-    echo "$PLTCL_DIR/pltcl demo of plot"
+
+results=${OUTPUT_DIR}
+# On Windows Systems the output path needs to be in native Windows
+# Format even if we are running under Cygwin or MSys
+if [ "$PLUNAME" == "Cygwin" ]; then
+  results=`echo ${results} | sed 's/^\/cygdrive//'`
+ fi
+if [ "$PLUNAME" == "Cygwin" ] || [ "$PLUNAME" == "Msys" ]; then
+  results=`echo ${results} | sed 's?^/\(.\)/?\1:/?'`
 fi
-pltcl -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
+export results
+cd "$EXAMPLES_DIR/tcl"
+if [ "$verbose_test" ] ; then
+  echo "$PLTCL_DIR/pltcl demo of plot"
+fi
+pltcl -dev $device -o "$results/plot%n.$dsuffix" $options <<EOF 2> "$tcldir/test.error"
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -53,60 +61,62 @@ plot plot.dat
 exit
 EOF
 status_code=$?
-cat test.error
+cat "$tcldir/test.error"
 if [ "$status_code" -ne 0 ] ; then
-    exit $status_code
+  exit $status_code
 fi
 # Look for any PLPLOT ERROR messages from plwarn that do not result in an
 # exit code.
-is_error=`grep -l 'PLPLOT ERROR' test.error`
+is_error=`grep -l 'PLPLOT ERROR' "$tcldir/test.error"`
 if [ -n "$is_error" ] ; then
-    exit 1
+  exit 1
 fi
 if [ "$verbose_test" ] ; then
-    echo "@PLTCL_DIR@/pltcl demo of plgrid"
-fi
-pltcl -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
+  echo "@PLTCL_DIR@/pltcl demo of plgrid"
+fi 
+pltcl -dev $device -o "$results/plgrid%n.$dsuffix" $options <<EOF 2> "$tcldir/test.error"
 plinit
 source plgrid.tcl
 plgrid
 exit
 EOF
 status_code=$?
-cat test.error
+cat "$tcldir/test.error"
 if [ "$status_code" -ne 0 ] ; then
-    exit $status_code
+  exit $status_code
 fi
 # Look for any PLPLOT ERROR messages from plwarn that do not result in an
 # exit code.
-is_error=`grep -l 'PLPLOT ERROR' test.error`
+is_error=`grep -l 'PLPLOT ERROR' "$tcldir/test.error"`
 if [ -n "$is_error" ] ; then
-    exit 1
+  exit 1
 fi
+
+cd "$EXAMPLES_DIR/tcl"
 for index in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 33; do
-    if [ "$verbose_test" ] ; then
-	echo "x${index}"
-    fi
-    if [ "$index" = "14" ] ; then
-	echo "${results}"/x${index}a${lang}%n.$dsuffix | \
-	@SH_EXECUTABLE@ x${index} -dev $device \
-	    -o "$results"/x${index}${lang}%n.$dsuffix \
-	    $options "" 2> test.error >| "${results}"/x${index}${lang}_${dsuffix}.txt
-	status_code=$?
-    else
-	@SH_EXECUTABLE@ x${index} -dev $device \
-	    -o "$results"/x${index}${lang}%n.$dsuffix \
-	    $options "" 2> test.error >| "${results}"/x${index}${lang}_${dsuffix}.txt
-	status_code=$?
-    fi
-    cat test.error
-    if [ "$status_code" -ne 0 ] ; then
-	exit $status_code
-    fi
+  if [ "$verbose_test" ] ; then
+    echo "x${index}"
+  fi
+  if [ "$index" = "14" ] ; then
+    echo "${results}"/x${index}a${lang}%n.$dsuffix | \
+      @SH_EXECUTABLE@ x${index} -dev $device \
+      -o "$results"/x${index}${lang}%n.$dsuffix \
+      $options "" 2> "$tcldir/test.error" >| "${results}"/x${index}${lang}_${dsuffix}.txt
+    status_code=$?
+  else
+    @SH_EXECUTABLE@ x${index} -dev $device \
+	  -o "$results"/x${index}${lang}%n.$dsuffix \
+	  $options "" 2> "$tcldir/test.error" >| "${results}"/x${index}${lang}_${dsuffix}.txt
+    status_code=$?
+  fi
+  cat "$tcldir/test.error"
+  if [ "$status_code" -ne 0 ] ; then
+    exit $status_code
+  fi
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
-    is_error=`grep -l 'PLPLOT ERROR' test.error`
-    if [ -n "$is_error" ] ; then
-	exit 1
-    fi
+  is_error=`grep -l 'PLPLOT ERROR' "$tcldir/test.error"`
+  if [ -n "$is_error" ] ; then
+    exit 1
+  fi
 done
