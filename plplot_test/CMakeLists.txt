@@ -607,4 +607,3 @@ if(SH_EXECUTABLE)
     )
 
 endif(SH_EXECUTABLE)
->>>>>>> Fixed tcl and diff testing for native Windows/Cygwin
