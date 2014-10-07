@@ -57,6 +57,20 @@ if(SH_EXECUTABLE)
 
   set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
 
+  if(CYGWIN)
+    set(PLATFORM CYGWIN)
+  elseif(MSYS)
+    set(PLATFORM MSYS)
+  elseif(UNIX)
+    set(PLATFORM UNIX)
+  elseif(MINGW)
+    set(PLATFORM MINGW)
+  elseif(MSVC)
+    set(PLATFORM MSVC)
+  else(CYGWIN)
+    message(FATAL_ERROR "Internal build-system error; unable to determine platform.")
+  endif(CYGWIN)
+
   #Build-tree configuration
   set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
   configure_file(
@@ -241,21 +255,25 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_tcl)
     get_target_property(pltcl_LOC pltcl LOCATION)
-    message( STATUS "pltcl_LOC=${pltcl_LOC}")
+    message(STATUS "pltcl_LOC=${pltcl_LOC}")
     string(REGEX REPLACE "/pltcl.*$" "" PLTCL_DIR ${pltcl_LOC})
     string (REPLACE "//$(Configuration)/" "$VC_CTEST_DIRECTORY" PLTCL_DIR ${PLTCL_DIR})
-    message( STATUS "PLTCL_DIR=${PLTCL_DIR}")
-    # Experience with MSYS bash shows that variables used to set a
-    # PATH component must transform the drive-letter form to the
-    # leading-slash Unix form of the PATH component.  The case of the
-    # drive letter doesn't matter.  For example converting
-    # z:/whatever/path ==> /z/whatever/path or /Z/whatever/path works
-    # fine for MSYS bash.
-    #string(REGEX REPLACE "^(.):/" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
-    #message( STATUS "PLTCL_DIR=${PLTCL_DIR}")
+    message(STATUS "PLTCL_DIR=${PLTCL_DIR}")
+
+    if(CYGWIN OR MINGW OR MSYS)
+      # Experience primarly with MSYS bash but also Cygwin shows that
+      # variables used to set a PATH component must transform the
+      # drive-letter form to the leading-slash Unix form of the PATH
+      # component.
+      # Note the case of the drive letter doesn't matter.  For example
+      # converting z:/whatever/path ==> /z/whatever/path or
+      # /Z/whatever/path works fine for MSYS bash.
+      string(REGEX REPLACE "^(.):/" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+      message(STATUS "PLTCL_DIR=${PLTCL_DIR}")
+    endif(CYGWIN OR MINGW OR MSYS)
 
     string(REPLACE " " "\\ " PLTCL_DIR_ESCAPED ${PLTCL_DIR})
-    message( STATUS "PLTCL_DIR_ESCAPED=${PLTCL_DIR_ESCAPED}")
+    message(STATUS "PLTCL_DIR_ESCAPED=${PLTCL_DIR_ESCAPED}")
     configure_file(test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh
       @ONLY
