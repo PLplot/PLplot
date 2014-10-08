@@ -1,11 +1,41 @@
 Information about version control
 ---------------------------------
-PLplot is using the git work flow described here:
-http://kevinold.com/2013/04/17/my-git-workflow.html
+
+PLplot uses git for version control.  The fundamental git
+documentation we refer to most often is the freely downloadable
+[Pro Git Book](http://git-scm.com/book).
+
+Installation of git is straightforward as described at
+<http://git-scm.com/book/en/Getting-Started-Installing-Git>
+
+To summarize that page, on Linux platforms git is available from a
+system install; on Mac OS X platforms git is available from the
+git-osx-installer project, MacPorts, and Homebrew; and on Windows
+platforms git is available from the msysGit project.  In all cases, it
+is highly recommended that git is run from the command line rather
+than from a GUI.
+
+PLplot currently uses the rebase git workflow 
+[described here](http://kevinold.com/2013/04/17/my-git-workflow.html).
 
 And summarized here:
 1. *ALWAYS* develop on a branch:
    $ git checkout -b new_branch
+
+   Develop followed by tests of that development followed by
+
+   $ git commit
+   
+   to create commits in new_branch.  If you create a commit and
+   realize before you make additional commits that there is an error
+   in the commit, please use the --amend option to the subsequent
+   commit that fixes the error.  What this option does is squash the
+   two commits together, i.e., it replace the old commit with the
+   error by the combined old commit and fix.  This approach minimizes
+   errors in the commits that will eventually be merged to master (see
+   below), and this cleaner master history will make subsequent use of
+   git-bisect (a killer-app typically used to find which commit first
+   caused a regression) much easier.
 
 2. Updating the master branch:
    $ git checkout master
@@ -78,16 +108,17 @@ on some private branch to evaluate them (unless there are explicit
 file conflicts with the HEAD of master in which case the developer of
 those series of patches would need to bring them up to date with
 master by rebasing his private development branch before regenerating
-the patch series.).
+the patch series).
 
-Information for developers on UNIX/Linux
-----------------------------------------
+Configuring the build system
+----------------------------
 
-The plplot build system now requires CMake. The latest instructions for 
-building PLplot with cmake can be found on the PLplot wiki.
+The PLplot build system now requires CMake to configure the build on
+all build platforms (Linux, Mac OS X, traditional Unix, and
+Windows). The latest instructions for building PLplot with cmake can
+be found on the PLplot wiki.
 
-http://www.miscdebris.net/plplot_wiki
-
+http://sourceforge.net/p/plplot/wiki/
 
 Coding standards for PLplot
 ---------------------------
@@ -133,4 +164,4 @@ Styling of code
 The uncrustify code beautifying program is used to style the source
 code consistently and in a readable manner. Running the 
 scripts/style_source.sh shell script can be used the check the 
-source code, and to apply any styling changes required.
+source code and optionally apply any styling changes required.
