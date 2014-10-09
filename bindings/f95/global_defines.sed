@@ -8,9 +8,9 @@
 !     with the #defines in bindings/swig-support/plplotcapi.i using the\
 !     (Unix) target "check_f95_parameters".  If that target reports an\
 !     inconsistency (via a cmp message) between the generated\
-!     plplot_parameters.h_compare file in the build tree and\
-!     plplot_parameters.h in the source tree, then copy\
-!     plplot_parameters.h_compare on top of plplot_parameters.h and\
+!     plplot_parameters.inc_compare file in the build tree and\
+!     plplot_parameters.inc in the source tree, then copy\
+!     plplot_parameters.inc_compare on top of plplot_parameters.inc and\
 !     check in that result.\
 
 # Drop every line that is not a #define
