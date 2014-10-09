@@ -106,7 +106,7 @@ SOURCE CODE
 All our Windows users and many of our Unix users build PLplot from
 source code using our build system that is implemented with CMake <http://cmake.org>
 following the directions in our wiki
-<http://www.miscdebris.net/plplot_wiki>.  PLplot source code can be
+<https://sourceforge.net/p/plplot/wiki>.  PLplot source code can be
 accessed a number of ways.  You can obtain the latest stable version
 of PLplot from <http://sourceforge.net/projects/plplot/files/plplot/>.
 Alternatively, you can obtain the cutting-edge version of PLplot
@@ -144,7 +144,7 @@ example code and resulting PLplot screenshots
 <http://plplot.sourceforge.net/examples.php>,
 documentation <http://plplot.sourceforge.net/documentation.php>,
 credits <http://plplot.sourceforge.net/credits.php>,
-wiki <http://www.miscdebris.net/plplot_wiki>,
+wiki <https://sourceforge.net/p/plplot/wiki>,
 SourceForge project page <http://sourceforge.net/projects/plplot>,
 project support page <http://sourceforge.net/projects/plplot/support>,
 mailing lists <http://sourceforge.net/p/plplot/mailman/>,

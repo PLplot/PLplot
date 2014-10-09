@@ -16,7 +16,7 @@ export CMAKE_INCLUDE_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.3/include
 (3) The rest is highly automated.  We use a CMake-based build system
 so we run "cmake" to configure the build, "make" to build, and "make
 install" to install.  For more details see our wiki at
-http://www.miscdebris.net/plplot_wiki/index.php?title=Main_Page
+<https://sourceforge.net/p/plplot/wiki>.
 
 For the curious, here are some more details about the 'make' and 'make
 install' steps above.

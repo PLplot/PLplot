@@ -142,7 +142,7 @@ END;
 			<h3>Resources</h3>
 			<ul class="arrowlist">
 				<li><a href="documentation.php">Documentation</a></li>
-				<li><a href="http://www.miscdebris.net/plplot_wiki">Wiki</a></li>
+				<li><a href="http://sourceforge.net/p/plplot/wiki">Wiki</a></li>
 				<li><a href="http://sourceforge.net/projects/plplot">SourceForge Project Page</a></li>
 				<li><a href="http://sourceforge.net/projects/plplot/support">Project Support Page</a></li>
 				<li><a href="http://sourceforge.net/p/plplot/mailman/">Mailing Lists</a></li>

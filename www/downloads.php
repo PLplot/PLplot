@@ -16,7 +16,7 @@
 		  <p>All our Windows users and many of our Unix users build PLplot from
 source code using our build system that is implemented with <a href="http://cmake.org/">CMake</a>
 following the directions in our 
-<a href="http://www.miscdebris.net/plplot_wiki">wiki</a>.  PLplot source code can be
+<a href="http://sourceforge.net/p/plplot/wiki">wiki</a>.  PLplot source code can be
 accessed a number of ways.  You can obtain the latest stable version of PLplot from our
 		     <a href="http://sourceforge.net/projects/plplot/files/plplot/">file
 		     release site</a>. Alternatively, you can obtain the cutting-edge version of

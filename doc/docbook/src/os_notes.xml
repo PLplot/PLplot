@@ -69,7 +69,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
       <para>
 	The longer (CMake) story is currently documented <ulink
-	url="http://www.miscdebris.net/plplot_wiki/index.php?title=Building_PLplot">here</ulink>.
+	url="http://sourceforge.net/p/plplot/wiki/Building_PLplot">here</ulink>.
 	The eventual plan is to incorporate that material in this documentation,
 	but we haven't done it yet so this section NEEDS DOCUMENTATION.
       </para>
@@ -93,7 +93,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <title>Windows Configure and Build</title>
       <para>
 	This (CMake) story is currently documented <ulink
-	url="http://www.miscdebris.net/plplot_wiki/index.php?title=Specifics_for_various_platforms#Windows">here</ulink>.
+	url="http://sourceforge.net/p/plplot/wiki/Specifics_for_various_platforms#Windows">here</ulink>.
 	The eventual plan is to incorporate that material into this documentation,
 	but we haven't done it yet so this section NEEDS DOCUMENTATION.
       </para>
