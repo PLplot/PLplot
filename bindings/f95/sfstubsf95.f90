@@ -156,7 +156,7 @@ module plplot
     !
 
     implicit none
-    include 'plplot_parameters.h'
+    include 'plplot_parameters.inc'
 
     !
     ! To be added: alternative interfaces
