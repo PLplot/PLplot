@@ -120,7 +120,7 @@ module plplotp
     private :: plimagefr_0, plimagefr_1, plimagefr_2, plimagefr_tr
 
 contains
-    include 'sfstubs.f90'
+    include 'sfstubs.inc'
 end module plplotp
 
 module plplot_types

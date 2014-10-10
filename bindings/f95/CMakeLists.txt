@@ -87,14 +87,11 @@ if(ENABLE_f95)
   # Build fortran part of F95 bindings.
   # Notes:
 
-  # configurable.f90 is actually not currently configurable.
-
   # The CMake Fortran dependency scanner finds the Fortran include
-  # file, sfstub.h, and the configured Fortran include file,
-  # ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc, and also deals properly with
-  # the dependencies on those files.  Therefore, there is no need to
-  # include those files in the SRCS list or do anything special with
-  # their dependencies.
+  # files, sfstubs.inc and plplot_parameters.inc and deals properly
+  # with the dependencies on those files.  Therefore, there is no need
+  # to include those files in the SRCS list or do anything special
+  # with their dependencies.
 
   # Check consistency of plplot_parameters.inc.
   add_custom_target(
@@ -130,7 +127,7 @@ if(ENABLE_f95)
   set(plplotf95_LIB_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.f90
     strutil.f90
-    configurable.f90
+    plparseopts.f90
     sfstubsf95.f90
     )
 
