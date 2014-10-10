@@ -51,7 +51,7 @@
 ! string conversion
 !
 module plplot_str
-   use plplot_flt
+   use plplot_types
    integer(kind=plint) :: maxleni
    parameter (maxlen = 320)
    parameter (maxleni = 80)
@@ -64,7 +64,7 @@ module plplot_str
 end module
 
 module plplotp
-    use plplot_flt
+    use plplot_types
     use plplot_str
     use plplot_strutils
     implicit none
@@ -123,8 +123,8 @@ contains
     include 'sfstubs.inc'
 end module plplotp
 
-module plplot_types
-  use plplot_flt
+module plplot_graphics
+  use plplot_types
   type :: PLGraphicsIn
      integer(kind=plint) type          ! of event (CURRENTLY UNUSED)
      integer(kind=plint) state         ! key or button mask
@@ -136,12 +136,12 @@ module plplot_types
      real(kind=plflt) dX, dY    ! relative device coordinates of pointer
      real(kind=plflt) wX, wY    ! world coordinates of pointer
   end type PLGraphicsIn
-end module plplot_types
+end module plplot_graphics
 
 module plplot
-    use plplot_flt
-    use plplotp
     use plplot_types
+    use plplotp
+    use plplot_graphics
     use plplot_strutils
     !
     ! To be added: renaming list
@@ -155,7 +155,7 @@ module plplot
     !
     interface
         subroutine pladv( sub )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: sub
         end subroutine pladv
     end interface
@@ -171,7 +171,7 @@ module plplot
 
     interface
         subroutine plcalc_world( rx, ry, wx, wy, window )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: rx, ry, wx, wy
             integer(kind=plint)          :: window
         end subroutine plcalc_world
@@ -184,14 +184,14 @@ module plplot
 
     interface
         subroutine plcol0( icol )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: icol
         end subroutine plcol0
     end interface
 
     interface
         subroutine plcol1( col )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: col
         end subroutine plcol1
     end interface
@@ -217,7 +217,7 @@ module plplot
 
     interface
         subroutine plenv( xmin, xmax, ymin, ymax, just, axis )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
             integer(kind=plint)          :: just, axis
         end subroutine plenv
@@ -256,42 +256,42 @@ module plplot
 
     interface
         subroutine plfont( font )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: font
         end subroutine plfont
     end interface
 
     interface
         subroutine plfontld( charset )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: charset
         end subroutine plfontld
     end interface
 
     interface
         subroutine plgchr( chrdef, chrht )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: chrdef, chrht
         end subroutine plgchr
     end interface
 
     interface
         subroutine plgcmap1_range( min_color, max_color )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: min_color, max_color
         end subroutine plgcmap1_range
     end interface
 
     interface
         subroutine plgcol0( icol, r, g, b )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: icol, r, g, b
         end subroutine plgcol0
     end interface
 
     interface
         subroutine plgcol0a( icol, r, g, b, a )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: icol, r, g, b
             real(kind=plflt) :: a
         end subroutine plgcol0a
@@ -299,14 +299,14 @@ module plplot
 
     interface
         subroutine plgcolbg( r, g, b )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: r, g, b
         end subroutine plgcolbg
     end interface
 
     interface
         subroutine plgcolbga( r, g, b, a )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: r, g, b
             real(kind=plflt) :: a
         end subroutine plgcolbga
@@ -314,71 +314,71 @@ module plplot
 
     interface
         subroutine plgcompression( compression )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: compression
         end subroutine plgcompression
     end interface
 
     interface
         subroutine plgdidev( mar, aspect, jx, jy )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: mar, aspect, jx, jy
         end subroutine plgdidev
     end interface
 
     interface
         subroutine plgdiori( rot )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: rot
         end subroutine plgdiori
     end interface
 
     interface
         subroutine plgdiplt( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgdiplt
     end interface
 
     interface
         subroutine plgetcursor( gin )
-            use plplot_flt
             use plplot_types
+            use plplot_graphics
             type(PLGraphicsIn) :: gin
         end subroutine plgetcursor
     end interface
 
     interface
         subroutine plgfam( fam, num, bmax )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: fam, num, bmax
         end subroutine plgfam
     end interface
 
     interface
         subroutine plgfci( fci )
-            use plplot_flt
+            use plplot_types
             integer(kind=plunicode) :: fci
         end subroutine plgfci
     end interface
 
     interface
         subroutine plgfont( family, style, weight )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: family, style, weight
         end subroutine plgfont
     end interface
 
     interface
         subroutine plglevel( level )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: level
         end subroutine plglevel
     end interface
 
     interface
         subroutine plgpage( xpmm, ypmm, xwid, ywid, xoff, yoff )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xpmm, ypmm
             integer(kind=plint)          :: xwid, ywid, xoff, yoff
         end subroutine plgpage
@@ -399,49 +399,49 @@ module plplot
 
     interface
         subroutine plgspa( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgspa
     end interface
 
     interface
         subroutine plgstrm( strm )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: strm
         end subroutine plgstrm
     end interface
 
     interface
         subroutine plgvpd( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgvpd
     end interface
 
     interface
         subroutine plgvpw( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgvpw
     end interface
 
     interface
         subroutine plgxax( digmax, digits )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: digmax, digits
         end subroutine plgxax
     end interface
 
     interface
         subroutine plgyax( digmax, digits )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: digmax, digits
         end subroutine plgyax
     end interface
 
     interface
         subroutine plgzax( digmax, digits )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: digmax, digits
         end subroutine plgzax
     end interface
@@ -452,14 +452,14 @@ module plplot
 
     interface
         subroutine plhls( h, l, s )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: h, l, s
         end subroutine plhls
     end interface
 
     interface
         subroutine plhlsrgb( h, l, s, r, g, b )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: h, l, s, r, g, b
         end subroutine plhlsrgb
     end interface
@@ -471,14 +471,14 @@ module plplot
 
     interface
         subroutine pljoin( x1, y1, x2, y2 )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: x1, y1, x2, y2
         end subroutine pljoin
     end interface
 
     interface
         subroutine pllightsource( x, y, z )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: x, y, z
         end subroutine pllightsource
     end interface
@@ -498,7 +498,7 @@ module plplot
 
     interface pllsty
         subroutine pllsty( lin )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: lin
         end subroutine pllsty
     end interface
@@ -521,21 +521,21 @@ module plplot
 
     interface
         subroutine plmkstrm( strm )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: strm
         end subroutine plmkstrm
     end interface
 
     interface
         subroutine plpat( nlin, inc, del )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: nlin, inc, del
         end subroutine plpat
     end interface
 
     interface
         subroutine plpath( n, x1, y1, x2, y2 )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: n
             real(kind=plflt) :: x1, y1, x2, y2
         end subroutine plpath
@@ -563,14 +563,14 @@ module plplot
 
     interface
         subroutine plprec( setp, prec )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: setp, prec
         end subroutine plprec
     end interface
 
     interface
         subroutine plpsty( patt )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: patt
         end subroutine plpsty
     end interface
@@ -585,28 +585,28 @@ module plplot
     !
     interface
         subroutine plrgb( r, g, b )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: r, g, b
         end subroutine plrgb
     end interface
 
     interface
         subroutine plrgb1( r, g, b )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: r, g, b
         end subroutine plrgb1
     end interface
 
     interface
         subroutine plrgbhls( r, g, b, h, l, s )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: r, g, b, h, l, s
         end subroutine plrgbhls
     end interface
 
     interface
         subroutine plschr( chrdef, chrht )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: chrdef, chrht
         end subroutine plschr
     end interface
@@ -621,7 +621,7 @@ module plplot
 
     interface
         subroutine plscmap0n( n )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: n
         end subroutine plscmap0n
     end interface
@@ -646,28 +646,28 @@ module plplot
 
     interface
         subroutine plscmap1n( n )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: n
         end subroutine plscmap1n
     end interface
 
     interface
        subroutine plscmap1_range( min_color, max_color )
-         use plplot_flt
+         use plplot_types
          real(kind=plflt) :: min_color, max_color
        end subroutine plscmap1_range
     end interface
 
     interface
         subroutine plscol0( icol, r, g, b )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: icol, r, g, b
         end subroutine plscol0
     end interface
 
     interface
         subroutine plscol0a( icol, r, g, b, a )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: icol, r, g, b
             real(kind=plflt) :: a
         end subroutine plscol0a
@@ -675,14 +675,14 @@ module plplot
 
     interface
         subroutine plscolbg( r, g, b )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: r, g, b
         end subroutine plscolbg
     end interface
 
     interface
         subroutine plscolbga( r, g, b, a )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: r, g, b
             real(kind=plflt) :: a
         end subroutine plscolbga
@@ -690,56 +690,56 @@ module plplot
 
     interface
         subroutine plscolor( color )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: color
         end subroutine plscolor
     end interface
 
     interface
         subroutine plscompression( compression )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: compression
         end subroutine plscompression
     end interface
 
     interface
         subroutine plsdidev( mar, aspect, jx, jy )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: mar, aspect, jx, jy
         end subroutine plsdidev
     end interface
 
     interface
         subroutine plsdimap( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm
         end subroutine plsdimap
     end interface
 
     interface
         subroutine plsdiori( rot )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: rot
         end subroutine plsdiori
     end interface
 
     interface
         subroutine plsdiplt( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plsdiplt
     end interface
 
     interface
         subroutine plsdiplz( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plsdiplz
     end interface
 
     interface
         subroutine plseed( s )
-            use plplot_flt
+            use plplot_types
            integer(kind=plint) :: s
         end subroutine plseed
     end interface
@@ -747,7 +747,7 @@ module plplot
     ! TODO: character-version
     interface
         subroutine plsesc( esc )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: esc
         end subroutine plsesc
     end interface
@@ -757,10 +757,10 @@ module plplot
     !
     interface plsetmapformc
         subroutine plsetmapformc( mapform )
-            use plplot_flt
+            use plplot_types
             interface
                 subroutine mapform( n, x, y )
-                    use plplot_flt
+                    use plplot_types
                     integer(kind=plint)                        :: n
                     real(kind=plflt), dimension(*) :: x, y
                 end subroutine mapform
@@ -770,21 +770,21 @@ module plplot
 
     interface
         subroutine plsfam( fam, num, bmax )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: fam, num, bmax
         end subroutine plsfam
     end interface
 
     interface
         subroutine plsfci( fci )
-            use plplot_flt
+            use plplot_types
             integer(kind=plunicode) :: fci
         end subroutine plsfci
     end interface
 
     interface
         subroutine plsfont( family, style, weight )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: family, style, weight
         end subroutine plsfont
     end interface
@@ -793,7 +793,7 @@ module plplot
         subroutine plslabelfunc_on( labelfunc )
             interface
                 subroutine labelfunc(axis, value, label, length)
-                    use plplot_flt
+                    use plplot_types
                     implicit none
                     integer(kind=plint) :: axis, length
                     real(kind=plflt) :: value
@@ -803,7 +803,7 @@ module plplot
         end subroutine plslabelfunc_on
 
         subroutine plslabelfunc_off( dummy )
-            use plplot_flt
+            use plplot_types
             implicit none
             integer(kind=plint) :: dummy
         end subroutine plslabelfunc_off
@@ -815,7 +815,7 @@ module plplot
 
     interface
         subroutine plsmaj( def, scale )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: def, scale
         end subroutine plsmaj
     end interface
@@ -825,21 +825,21 @@ module plplot
 
     interface
         subroutine plsmin( def, scale )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: def, scale
         end subroutine plsmin
     end interface
 
     interface
         subroutine plsori( rot )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: rot
         end subroutine plsori
     end interface
 
     interface
         subroutine plspage( xpmm, ypmm, xwid, ywid, xoff, yoff )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xpmm, ypmm
             integer(kind=plint)          :: xwid, ywid, xoff, yoff
         end subroutine plspage
@@ -851,28 +851,28 @@ module plplot
 
     interface
         subroutine plsstrm( strm )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: strm
         end subroutine plsstrm
     end interface
 
     interface
         subroutine plssub( nx, ny )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: nx, ny
         end subroutine plssub
     end interface
 
     interface
         subroutine plssym( def, scale )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: def, scale
         end subroutine plssym
     end interface
 
     interface
         subroutine plstar( nx, ny )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: nx, ny
         end subroutine plstar
     end interface
@@ -881,7 +881,7 @@ module plplot
         subroutine plstransform1( transformfunc )
             interface
                 subroutine transformfunc(x, y, xt, yt)
-                    use plplot_flt
+                    use plplot_types
                     implicit none
                     real(kind=plflt) :: x, y, xt, yt
                 end subroutine transformfunc
@@ -889,7 +889,7 @@ module plplot
         end subroutine plstransform1
 
         subroutine plstransform2( dummy )
-            use plplot_flt
+            use plplot_types
             implicit none
             integer(kind=plint) :: dummy
         end subroutine plstransform2
@@ -901,7 +901,7 @@ module plplot
 
     interface
         subroutine plstripa( id, pen, x, y )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint)          :: id, pen
             real(kind=plflt) :: x, y
         end subroutine plstripa
@@ -909,14 +909,14 @@ module plplot
 
     interface
         subroutine plstripd( id )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: id
         end subroutine plstripd
     end interface
 
     interface
         subroutine plstyl( n, mark, space )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: n, mark, space
         end subroutine plstyl
     end interface
@@ -940,21 +940,21 @@ module plplot
 
     interface
         subroutine plsvpa( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plsvpa
     end interface
 
     interface
         subroutine plsxax( digmax, digits )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: digmax, digits
         end subroutine plsxax
     end interface
 
     interface
         subroutine plsyax( digmax, digits )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: digmax, digits
         end subroutine plsyax
     end interface
@@ -965,7 +965,7 @@ module plplot
 
     interface
         subroutine plszax( digmax, digits )
-            use plplot_flt
+            use plplot_types
             integer(kind=plint) :: digmax, digits
         end subroutine plszax
     end interface
@@ -977,21 +977,21 @@ module plplot
 
     interface
         subroutine plvasp( aspect )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: aspect
         end subroutine plvasp
     end interface
 
     interface
         subroutine plvpas( xmin, xmax, ymin, ymax, aspect )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax, aspect
         end subroutine plvpas
     end interface
 
     interface
         subroutine plvpor( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plvpor
     end interface
@@ -1003,21 +1003,21 @@ module plplot
 
     interface
         subroutine plw3d( basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az
         end subroutine plw3d
     end interface
 
     interface
         subroutine plwidth( width )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: width
         end subroutine plwidth
     end interface
 
     interface
         subroutine plwind( xmin, xmax, ymin, ymax )
-            use plplot_flt
+            use plplot_types
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plwind
     end interface

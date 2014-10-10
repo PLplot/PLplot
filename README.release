@@ -30,16 +30,17 @@ INDEX
 
 1. OFFICIAL NOTICES FOR USERS
 
-Backwards incompatible change.  We have completely removed the CMake
-variable LIB_TAG from our build system.  The effect of this change is
-the "d" suffix has been dropped from our library names that had this
-suffix before (e.g, libplplotd ==> libplplot), dropped from the plplot
-pkg-config *.pc files used to produce pkg-config results (e.g.,
-plplotd.pc ==> plplot.pc), and dropped from the directory name where
-the device driver dll's are installed (i.e.,
-$INSTALL_PREFIX/lib/plplot$PLPLOT_VERSION/driversd ==>
-$INSTALL_PREFIX/lib/plplot$PLPLOT_VERSION/drivers).  This "d" suffix
-was a leftover from the days when we routinely built both
+1.1 Backwards incompatible change.
+
+We have completely removed the CMake variable LIB_TAG from our build
+system.  The effect of this change is the "d" suffix has been dropped
+from our library names that had this suffix before (e.g, libplplotd
+==> libplplot), dropped from the plplot pkg-config *.pc files used to
+produce pkg-config results (e.g., plplotd.pc ==> plplot.pc), and
+dropped from the directory name where the device driver dll's are
+installed (i.e., $INSTALL_PREFIX/lib/plplot$PLPLOT_VERSION/driversd
+==> $INSTALL_PREFIX/lib/plplot$PLPLOT_VERSION/drivers).  This "d"
+suffix was a leftover from the days when we routinely built both
 single-precision and double-precision forms of the PLplot library,
 where the double-precision form was assigned the "d" suffix.  This
 suffix was confusing (many users assumed it meant "debug" rather than
@@ -55,6 +56,26 @@ many different possible build variations is for them to use
 independent build trees and install prefixes for each of the
 variations rather than imposing a variety of easy-to-misinterpret
 library, pkg-config, and driver install location suffixes.
+
+1.2 Backwards-incompatible API change for our f95 bindings
+
+We have renamed the following Fortran modules
+
+plplot_types ==> plplot_graphics
+plplot_flt ==> plplot_types
+
+These name changes make sense since the new plplot_graphics module
+defines just a graphics type and the new plplot_types module defines
+fundamental real and integer types used by the PLplot API.
+
+We highly recommend that users employ only the "use plplot" statement
+in their fortran codes. Future name changes for the plplot module are
+extremely unlikely (to say the least). Also, the plplot module "uses"
+every other Fortran module we define and therefore makes all modules
+for PLplot available to the user regardless of their name.  Thus, this
+recommended "use" strategy should avoid any repercussions from the
+above or future name changes for the modules that are "used" by the
+plplot module.
 
 2. Changes relative to the previous release
 

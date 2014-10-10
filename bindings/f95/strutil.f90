@@ -17,8 +17,7 @@
 ! Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 module plplot_strutils
-    use plplot_flt
-
+    use plplot_types
     implicit none
 
 contains
@@ -48,7 +47,7 @@ end subroutine plstrf2c
 !--------------------------------------------------------------------------
 
 subroutine plstrc2f(string1, string2)
-    use plplot_flt
+    use plplot_types
     character(len=*) :: string1, string2
 
     integer(kind=plint) :: limit

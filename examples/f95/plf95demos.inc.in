@@ -1,6 +1,6 @@
       function myisnan(x)
 
-      use plplot_flt
+      use plplot
       implicit none
       logical :: myisnan
       real (kind=plflt) :: x
