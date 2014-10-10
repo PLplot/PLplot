@@ -19,12 +19,12 @@
       subroutine plparseopts(mode)
       use plplot
       implicit none
-      integer :: mode
-      integer :: maxargs, iargs, numargs, index, maxindex
+      integer(kind=plint) :: mode
+      integer(kind=plint) :: maxargs, iargs, numargs, index, maxindex
       parameter(maxindex = maxlen/4)
       parameter (maxargs=20)
       character (len=maxlen) :: arg
-      integer, dimension(maxindex, maxargs) :: iargsarr
+      integer(kind=plint), dimension(maxindex, maxargs) :: iargsarr
       numargs = command_argument_count()
       if(numargs.lt.0) then
 !       This actually happened historically on a badly linked Cygwin platform.

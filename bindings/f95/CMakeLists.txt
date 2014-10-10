@@ -31,20 +31,6 @@ if(ENABLE_f95)
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-  # Configure the Fortran include file that specifies the kind of
-  # floating-point (single vs double) PLplot supports.
-  if(PL_DOUBLE)
-    set(ONE_IN_DEFAULT_PRECISION "1.0d0")
-  else(PL_DOUBLE)
-    set(ONE_IN_DEFAULT_PRECISION "1.0")
-  endif(PL_DOUBLE)
-
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/plflt.inc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc
-    @ONLY
-    )
-
   ## Build C part of F95 bindings
   if(WIN32_OR_CYGWIN)
     # Set the flags for the C compiler. The C stubs need to have the
@@ -128,7 +114,21 @@ if(ENABLE_f95)
 
   add_dependencies(check_all check_f95_parameters)
 
+  # Configure the Fortran source file that specifies the
+  # types used for PLplot.
+  if(PL_DOUBLE)
+    set(ONE_IN_DEFAULT_PRECISION "1.0d0")
+  else(PL_DOUBLE)
+    set(ONE_IN_DEFAULT_PRECISION "1.0")
+  endif(PL_DOUBLE)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_types.f90.in
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.f90
+    @ONLY
+    )
+
   set(plplotf95_LIB_SRCS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.f90
     strutil.f90
     configurable.f90
     sfstubsf95.f90

@@ -130,7 +130,7 @@
 
       implicit none
       real(kind=plflt) x0, y0, xtick, ytick
-      integer nxsub, nysub
+      integer(kind=plint) nxsub, nysub
       character*(*) xopt,yopt
 
       call plstrf2c(xopt, string1)
@@ -148,7 +148,7 @@
 
       implicit none
       real(kind=plflt) xtick, ytick
-      integer nxsub, nysub
+      integer(kind=plint) nxsub, nysub
       character*(*) xopt,yopt
 
       call plstrf2c(xopt, string1)
@@ -168,7 +168,7 @@
       implicit none
       real(kind=plflt) xtick, ytick, ztick
       character*(*) xopt,xlabel,yopt,ylabel,zopt,zlabel
-      integer nxsub, nysub, nzsub
+      integer(kind=plint) nxsub, nysub, nzsub
 
       call plstrf2c(xopt, string1)
       call plstrf2c(xlabel, string2)
@@ -194,7 +194,7 @@
       subroutine plcontour_0(z,kx,lx,ky,ly,clevel)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), clevel(:)
 
       call plcon07(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel))
@@ -206,7 +206,7 @@
       subroutine plcontour_1(z,kx,lx,ky,ly,clevel,xg,yg)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:), yg(:), clevel(:)
 
       call plcon17(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
@@ -218,7 +218,7 @@
       subroutine plcontour_2(z,kx,lx,ky,ly,clevel,xg,yg)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:,:), yg(:,:), clevel(:)
 
       call plcon27(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
@@ -230,7 +230,7 @@
       subroutine plcontour_tr(z,kx,lx,ky,ly,clevel,tr)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), clevel(:)
       real(kind=plflt) tr(6)
 
@@ -243,7 +243,7 @@
       subroutine plcontour_0_all(z,clevel)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), clevel(:)
 
       kx = 1
@@ -259,7 +259,7 @@
       subroutine plcontour_1_all(z,clevel,xg,yg)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:), yg(:), clevel(:)
 
       kx = 1
@@ -275,7 +275,7 @@
       subroutine plcontour_2_all(z,clevel,xg,yg)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:,:), yg(:,:), clevel(:)
 
       kx = 1
@@ -291,7 +291,7 @@
       subroutine plcontour_tr_all(z,clevel,tr)
 
       implicit none
-      integer kx, lx, ky, ly
+      integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), clevel(:)
       real(kind=plflt) tr(6)
 
@@ -311,7 +311,7 @@
       real(kind=plflt) x(:), y(:)
       character(len=*) string
 
-      integer n
+      integer(kind=plint) n
 
       n = size(x)
 
@@ -329,7 +329,7 @@
       real(kind=plflt) x(:), y(:), z(:)
       character(len=*) string
 
-      integer n
+      integer(kind=plint) n
 
       n = size(x)
 
@@ -395,8 +395,8 @@
 
       implicit none
       character defined*(*)
-      integer sh_cmap
-      integer min_color, max_color
+      integer(kind=plint) sh_cmap
+      integer(kind=plint) min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
@@ -423,8 +423,8 @@
 
       implicit none
       character defined*(*)
-      integer sh_cmap
-      integer min_color, max_color
+      integer(kind=plint) sh_cmap
+      integer(kind=plint) min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:), yg(:)
@@ -452,8 +452,8 @@
 
       implicit none
       character defined*(*)
-      integer sh_cmap
-      integer min_color, max_color
+      integer(kind=plint) sh_cmap
+      integer(kind=plint) min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, xg(:,:), yg(:,:)
@@ -480,8 +480,8 @@
 
       implicit none
       character(len=*) defined
-      integer sh_cmap
-      integer min_color, max_color
+      integer(kind=plint) sh_cmap
+      integer(kind=plint) min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
       real(kind=plflt) shade_min, shade_max, sh_color
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
@@ -505,13 +505,13 @@
 
       implicit none
       character defined*(*)
-      integer cont_color
+      integer(kind=plint) cont_color
       logical, optional :: rectangular
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
 
-      integer rect
+      integer(kind=plint) rect
 
 !	call plstrf2c(dnam, string1)
 
@@ -537,13 +537,13 @@
 
       implicit none
       character defined*(*)
-      integer cont_color
+      integer(kind=plint) cont_color
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
                        xg1(:), yg1(:)
 
-      integer rect
+      integer(kind=plint) rect
 
 !	call plstrf2c(dnam, string1)
 
@@ -566,14 +566,14 @@
 
       implicit none
       character defined*(*)
-      integer cont_color
+      integer(kind=plint) cont_color
       logical rectangular
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
                        xg1(:), yg1(:)
 
-      integer rect
+      integer(kind=plint) rect
 
 !	call plstrf2c(dnam, string1)
 
@@ -596,13 +596,13 @@
 
       implicit none
       character defined*(*)
-      integer cont_color
+      integer(kind=plint) cont_color
       real(kind=plflt)fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
         xg2(:,:), yg2(:,:)
 
-      integer rect
+      integer(kind=plint) rect
 
 !	call plstrf2c(dnam, string1)
 
@@ -625,14 +625,14 @@
 
       implicit none
       character defined*(*)
-      integer cont_color
+      integer(kind=plint) cont_color
       logical rectangular
       real(kind=plflt)fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax, &
         xg2(:,:), yg2(:,:)
 
-      integer rect
+      integer(kind=plint) rect
 
       rect = merge( 1, 0, rectangular )
 
@@ -655,13 +655,13 @@
 
       implicit none
       character defined*(*)
-      integer cont_color
+      integer(kind=plint) cont_color
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
 
-      integer rect
+      integer(kind=plint) rect
 
 !	call plstrf2c(dnam, string1)
 
@@ -684,14 +684,14 @@
 
       implicit none
       character defined*(*)
-      integer cont_color
+      integer(kind=plint) cont_color
       logical rectangular
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) clevel(:)
       real(kind=plflt) z(:,:), xmin, xmax, ymin, ymax
       real(kind=plflt) tr(6)
 
-      integer rect
+      integer(kind=plint) rect
 
 !	call plstrf2c(dnam, string1)
 
@@ -800,7 +800,7 @@
 
       implicit none
       character*(*) filename
-      integer interpolate
+      integer(kind=plint) interpolate
 
       call plstrf2c(filename, string1)
 
@@ -879,7 +879,7 @@
 
       implicit none
       character*(*) devname
-      integer nx, ny
+      integer(kind=plint) nx, ny
 
       call plstrf2c(devname, string1)
 

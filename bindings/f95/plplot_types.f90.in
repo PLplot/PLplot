@@ -1,0 +1,18 @@
+!
+! Parameters for identifying the kind of PLplot's real
+! numbers (a configuration parameter)
+! Use whatever name suits you better.
+!
+module plplot_flt
+  ! Control the kind of floating point number
+  ! used by PLplot (single vs double)
+  ! This file is automatically configured by CMake
+  integer, parameter :: plflt   = kind(@ONE_IN_DEFAULT_PRECISION@)
+  ! The idea here is to match the Fortran 4-byte integer with
+  ! the corresponding C types for PLINT (normally int32_t) and
+  ! PLUNICODE (normally uint32_t).  According to websites I have
+  ! read, Fortran has no unsigned integer types and 
+  ! using 4 here is much safer than anything more complicated.
+  integer, parameter :: plint  = 4
+  integer, parameter :: plunicode  = 4
+end module

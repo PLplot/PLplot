@@ -58,5 +58,7 @@
 
 
 # Comment the following line so that we do not use a special form for BOZ constants.
-#/^#define/ s?^#define *\([^ ]*\)[ (]*\([oz][^ ]*\)[ )]*\(.*\)$?      integer :: \1 \3\n      data \1 / \2 /?
-/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?      integer, parameter :: \1 = \2 \3?
+#/^#define/ s?^#define *\([^ ]*\)[ (]*\([oz][^ ]*\)[ )]*\(.*\)$?      integer(kind=plint) :: \1 \3\n      data \1 / \2 /?
+/^#define/ s?^#define *\([^ ]*\)[ (]*\([^ ]*\)[ )]*\(.*\)$?      integer(kind=plint), parameter :: \1 = \2 \3?
+# Special case where the constant being defined has FCI in the name.
+/^.*kind=plint.*FCI/ s?kind=plint?kind=plunicode?

@@ -17,6 +17,7 @@
 ! Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 module plplot_strutils
+    use plplot_flt
 
     implicit none
 
@@ -29,10 +30,9 @@ contains
 !--------------------------------------------------------------------------
 
 subroutine plstrf2c(string1, string2)
-
     character(len=*) :: string1, string2
 
-    integer :: limit
+    integer(kind=plint) :: limit
 
     string2 = string1
 !    limit = min(len(string2), len(string1))
@@ -48,10 +48,10 @@ end subroutine plstrf2c
 !--------------------------------------------------------------------------
 
 subroutine plstrc2f(string1, string2)
-
+    use plplot_flt
     character(len=*) :: string1, string2
 
-    integer :: limit
+    integer(kind=plint) :: limit
 
     string2 = string1
 

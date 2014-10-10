@@ -47,26 +47,18 @@
 !***********************************************************************
 
 !
-! Parameters for identifying the kind of PLplot's real
-! numbers (a configuration parameter)
-! Use whatever name suits you better.
-!
-module plplot_flt
-   include 'plflt.inc'
-end module
-
-!
 ! Parameters and variables for strings / arrays for
 ! string conversion
 !
 module plplot_str
-   integer :: maxleni
+   use plplot_flt
+   integer(kind=plint) :: maxleni
    parameter (maxlen = 320)
    parameter (maxleni = 80)
    character (len = maxlen) :: string1, string2, string3
    character (len = maxlen) :: string4, string5, string6
    character (len = maxlen) :: string7, string8, string9
-   integer, dimension(maxleni) :: s1, s2, s3, s4, s5, s6, s7, s8, s9
+   integer(kind=plint), dimension(maxleni) :: s1, s2, s3, s4, s5, s6, s7, s8, s9
 
    character(len=1), parameter :: PL_END_OF_STRING = achar(0)
 end module
@@ -134,21 +126,21 @@ end module plplotp
 module plplot_types
   use plplot_flt
   type :: PLGraphicsIn
-     integer type          ! of event (CURRENTLY UNUSED)
-     integer state         ! key or button mask
-     integer keysym        ! key selected
-     integer button        ! mouse button selected
-     integer subwindow     ! subwindow (alias subpage, alias subplot) number
+     integer(kind=plint) type          ! of event (CURRENTLY UNUSED)
+     integer(kind=plint) state         ! key or button mask
+     integer(kind=plint) keysym        ! key selected
+     integer(kind=plint) button        ! mouse button selected
+     integer(kind=plint) subwindow     ! subwindow (alias subpage, alias subplot) number
      character(len=16) string   ! translated string
-     integer pX, pY        ! absolute device coordinates of pointer
+     integer(kind=plint) pX, pY        ! absolute device coordinates of pointer
      real(kind=plflt) dX, dY    ! relative device coordinates of pointer
      real(kind=plflt) wX, wY    ! world coordinates of pointer
   end type PLGraphicsIn
 end module plplot_types
 
 module plplot
-    use plplotp
     use plplot_flt
+    use plplotp
     use plplot_types
     use plplot_strutils
     !
@@ -163,7 +155,8 @@ module plplot
     !
     interface
         subroutine pladv( sub )
-            integer :: sub
+            use plplot_flt
+            integer(kind=plint) :: sub
         end subroutine pladv
     end interface
 
@@ -180,7 +173,7 @@ module plplot
         subroutine plcalc_world( rx, ry, wx, wy, window )
             use plplot_flt
             real(kind=plflt) :: rx, ry, wx, wy
-            integer          :: window
+            integer(kind=plint)          :: window
         end subroutine plcalc_world
     end interface
 
@@ -191,7 +184,8 @@ module plplot
 
     interface
         subroutine plcol0( icol )
-            integer :: icol
+            use plplot_flt
+            integer(kind=plint) :: icol
         end subroutine plcol0
     end interface
 
@@ -225,7 +219,7 @@ module plplot
         subroutine plenv( xmin, xmax, ymin, ymax, just, axis )
             use plplot_flt
             real(kind=plflt) :: xmin, xmax, ymin, ymax
-            integer          :: just, axis
+            integer(kind=plint)          :: just, axis
         end subroutine plenv
     end interface
 
@@ -262,13 +256,15 @@ module plplot
 
     interface
         subroutine plfont( font )
-            integer :: font
+            use plplot_flt
+            integer(kind=plint) :: font
         end subroutine plfont
     end interface
 
     interface
         subroutine plfontld( charset )
-            integer :: charset
+            use plplot_flt
+            integer(kind=plint) :: charset
         end subroutine plfontld
     end interface
 
@@ -288,35 +284,38 @@ module plplot
 
     interface
         subroutine plgcol0( icol, r, g, b )
-            integer :: icol, r, g, b
+            use plplot_flt
+            integer(kind=plint) :: icol, r, g, b
         end subroutine plgcol0
     end interface
 
     interface
         subroutine plgcol0a( icol, r, g, b, a )
             use plplot_flt
-            integer :: icol, r, g, b
+            integer(kind=plint) :: icol, r, g, b
             real(kind=plflt) :: a
         end subroutine plgcol0a
     end interface
 
     interface
         subroutine plgcolbg( r, g, b )
-            integer :: r, g, b
+            use plplot_flt
+            integer(kind=plint) :: r, g, b
         end subroutine plgcolbg
     end interface
 
     interface
         subroutine plgcolbga( r, g, b, a )
             use plplot_flt
-            integer :: r, g, b
+            integer(kind=plint) :: r, g, b
             real(kind=plflt) :: a
         end subroutine plgcolbga
     end interface
 
     interface
         subroutine plgcompression( compression )
-            integer :: compression
+            use plplot_flt
+            integer(kind=plint) :: compression
         end subroutine plgcompression
     end interface
 
@@ -351,7 +350,8 @@ module plplot
 
     interface
         subroutine plgfam( fam, num, bmax )
-            integer :: fam, num, bmax
+            use plplot_flt
+            integer(kind=plint) :: fam, num, bmax
         end subroutine plgfam
     end interface
 
@@ -364,13 +364,15 @@ module plplot
 
     interface
         subroutine plgfont( family, style, weight )
-            integer :: family, style, weight
+            use plplot_flt
+            integer(kind=plint) :: family, style, weight
         end subroutine plgfont
     end interface
 
     interface
         subroutine plglevel( level )
-            integer :: level
+            use plplot_flt
+            integer(kind=plint) :: level
         end subroutine plglevel
     end interface
 
@@ -378,7 +380,7 @@ module plplot
         subroutine plgpage( xpmm, ypmm, xwid, ywid, xoff, yoff )
             use plplot_flt
             real(kind=plflt) :: xpmm, ypmm
-            integer          :: xwid, ywid, xoff, yoff
+            integer(kind=plint)          :: xwid, ywid, xoff, yoff
         end subroutine plgpage
     end interface
 
@@ -404,7 +406,8 @@ module plplot
 
     interface
         subroutine plgstrm( strm )
-            integer :: strm
+            use plplot_flt
+            integer(kind=plint) :: strm
         end subroutine plgstrm
     end interface
 
@@ -424,19 +427,22 @@ module plplot
 
     interface
         subroutine plgxax( digmax, digits )
-            integer :: digmax, digits
+            use plplot_flt
+            integer(kind=plint) :: digmax, digits
         end subroutine plgxax
     end interface
 
     interface
         subroutine plgyax( digmax, digits )
-            integer :: digmax, digits
+            use plplot_flt
+            integer(kind=plint) :: digmax, digits
         end subroutine plgyax
     end interface
 
     interface
         subroutine plgzax( digmax, digits )
-            integer :: digmax, digits
+            use plplot_flt
+            integer(kind=plint) :: digmax, digits
         end subroutine plgzax
     end interface
 
@@ -492,7 +498,8 @@ module plplot
 
     interface pllsty
         subroutine pllsty( lin )
-            integer :: lin
+            use plplot_flt
+            integer(kind=plint) :: lin
         end subroutine pllsty
     end interface
 
@@ -514,20 +521,22 @@ module plplot
 
     interface
         subroutine plmkstrm( strm )
-            integer :: strm
+            use plplot_flt
+            integer(kind=plint) :: strm
         end subroutine plmkstrm
     end interface
 
     interface
         subroutine plpat( nlin, inc, del )
-            integer :: nlin, inc, del
+            use plplot_flt
+            integer(kind=plint) :: nlin, inc, del
         end subroutine plpat
     end interface
 
     interface
         subroutine plpath( n, x1, y1, x2, y2 )
             use plplot_flt
-            integer :: n
+            integer(kind=plint) :: n
             real(kind=plflt) :: x1, y1, x2, y2
         end subroutine plpath
     end interface
@@ -554,13 +563,15 @@ module plplot
 
     interface
         subroutine plprec( setp, prec )
-            integer :: setp, prec
+            use plplot_flt
+            integer(kind=plint) :: setp, prec
         end subroutine plprec
     end interface
 
     interface
         subroutine plpsty( patt )
-            integer :: patt
+            use plplot_flt
+            integer(kind=plint) :: patt
         end subroutine plpsty
     end interface
 
@@ -581,7 +592,8 @@ module plplot
 
     interface
         subroutine plrgb1( r, g, b )
-            integer :: r, g, b
+            use plplot_flt
+            integer(kind=plint) :: r, g, b
         end subroutine plrgb1
     end interface
 
@@ -609,7 +621,8 @@ module plplot
 
     interface
         subroutine plscmap0n( n )
-            integer :: n
+            use plplot_flt
+            integer(kind=plint) :: n
         end subroutine plscmap0n
     end interface
 
@@ -633,7 +646,8 @@ module plplot
 
     interface
         subroutine plscmap1n( n )
-            integer :: n
+            use plplot_flt
+            integer(kind=plint) :: n
         end subroutine plscmap1n
     end interface
 
@@ -646,41 +660,45 @@ module plplot
 
     interface
         subroutine plscol0( icol, r, g, b )
-            integer :: icol, r, g, b
+            use plplot_flt
+            integer(kind=plint) :: icol, r, g, b
         end subroutine plscol0
     end interface
 
     interface
         subroutine plscol0a( icol, r, g, b, a )
             use plplot_flt
-            integer :: icol, r, g, b
+            integer(kind=plint) :: icol, r, g, b
             real(kind=plflt) :: a
         end subroutine plscol0a
     end interface
 
     interface
         subroutine plscolbg( r, g, b )
-            integer :: r, g, b
+            use plplot_flt
+            integer(kind=plint) :: r, g, b
         end subroutine plscolbg
     end interface
 
     interface
         subroutine plscolbga( r, g, b, a )
             use plplot_flt
-            integer :: r, g, b
+            integer(kind=plint) :: r, g, b
             real(kind=plflt) :: a
         end subroutine plscolbga
     end interface
 
     interface
         subroutine plscolor( color )
-            integer :: color
+            use plplot_flt
+            integer(kind=plint) :: color
         end subroutine plscolor
     end interface
 
     interface
         subroutine plscompression( compression )
-            integer :: compression
+            use plplot_flt
+            integer(kind=plint) :: compression
         end subroutine plscompression
     end interface
 
@@ -721,14 +739,16 @@ module plplot
 
     interface
         subroutine plseed( s )
-           integer :: s
+            use plplot_flt
+           integer(kind=plint) :: s
         end subroutine plseed
     end interface
 
     ! TODO: character-version
     interface
         subroutine plsesc( esc )
-            integer :: esc
+            use plplot_flt
+            integer(kind=plint) :: esc
         end subroutine plsesc
     end interface
 
@@ -741,7 +761,7 @@ module plplot
             interface
                 subroutine mapform( n, x, y )
                     use plplot_flt
-                    integer                        :: n
+                    integer(kind=plint)                        :: n
                     real(kind=plflt), dimension(*) :: x, y
                 end subroutine mapform
             end interface
@@ -750,7 +770,8 @@ module plplot
 
     interface
         subroutine plsfam( fam, num, bmax )
-            integer :: fam, num, bmax
+            use plplot_flt
+            integer(kind=plint) :: fam, num, bmax
         end subroutine plsfam
     end interface
 
@@ -763,7 +784,8 @@ module plplot
 
     interface
         subroutine plsfont( family, style, weight )
-            integer :: family, style, weight
+            use plplot_flt
+            integer(kind=plint) :: family, style, weight
         end subroutine plsfont
     end interface
 
@@ -773,7 +795,7 @@ module plplot
                 subroutine labelfunc(axis, value, label, length)
                     use plplot_flt
                     implicit none
-                    integer :: axis, length
+                    integer(kind=plint) :: axis, length
                     real(kind=plflt) :: value
                     character*(length) label
                 end subroutine labelfunc
@@ -781,8 +803,9 @@ module plplot
         end subroutine plslabelfunc_on
 
         subroutine plslabelfunc_off( dummy )
+            use plplot_flt
             implicit none
-            integer :: dummy
+            integer(kind=plint) :: dummy
         end subroutine plslabelfunc_off
 
         subroutine plslabelfunc_none
@@ -809,7 +832,8 @@ module plplot
 
     interface
         subroutine plsori( rot )
-            integer :: rot
+            use plplot_flt
+            integer(kind=plint) :: rot
         end subroutine plsori
     end interface
 
@@ -817,7 +841,7 @@ module plplot
         subroutine plspage( xpmm, ypmm, xwid, ywid, xoff, yoff )
             use plplot_flt
             real(kind=plflt) :: xpmm, ypmm
-            integer          :: xwid, ywid, xoff, yoff
+            integer(kind=plint)          :: xwid, ywid, xoff, yoff
         end subroutine plspage
     end interface
 
@@ -827,13 +851,15 @@ module plplot
 
     interface
         subroutine plsstrm( strm )
-            integer :: strm
+            use plplot_flt
+            integer(kind=plint) :: strm
         end subroutine plsstrm
     end interface
 
     interface
         subroutine plssub( nx, ny )
-            integer :: nx, ny
+            use plplot_flt
+            integer(kind=plint) :: nx, ny
         end subroutine plssub
     end interface
 
@@ -846,7 +872,8 @@ module plplot
 
     interface
         subroutine plstar( nx, ny )
-            integer :: nx, ny
+            use plplot_flt
+            integer(kind=plint) :: nx, ny
         end subroutine plstar
     end interface
 
@@ -862,8 +889,9 @@ module plplot
         end subroutine plstransform1
 
         subroutine plstransform2( dummy )
+            use plplot_flt
             implicit none
-            integer :: dummy
+            integer(kind=plint) :: dummy
         end subroutine plstransform2
 
         subroutine plstransform3
@@ -874,20 +902,22 @@ module plplot
     interface
         subroutine plstripa( id, pen, x, y )
             use plplot_flt
-            integer          :: id, pen
+            integer(kind=plint)          :: id, pen
             real(kind=plflt) :: x, y
         end subroutine plstripa
     end interface
 
     interface
         subroutine plstripd( id )
-            integer :: id
+            use plplot_flt
+            integer(kind=plint) :: id
         end subroutine plstripd
     end interface
 
     interface
         subroutine plstyl( n, mark, space )
-            integer :: n, mark, space
+            use plplot_flt
+            integer(kind=plint) :: n, mark, space
         end subroutine plstyl
     end interface
 
@@ -917,13 +947,15 @@ module plplot
 
     interface
         subroutine plsxax( digmax, digits )
-            integer :: digmax, digits
+            use plplot_flt
+            integer(kind=plint) :: digmax, digits
         end subroutine plsxax
     end interface
 
     interface
         subroutine plsyax( digmax, digits )
-            integer :: digmax, digits
+            use plplot_flt
+            integer(kind=plint) :: digmax, digits
         end subroutine plsyax
     end interface
 
@@ -933,7 +965,8 @@ module plplot
 
     interface
         subroutine plszax( digmax, digits )
-            integer :: digmax, digits
+            use plplot_flt
+            integer(kind=plint) :: digmax, digits
         end subroutine plszax
     end interface
 
@@ -1000,7 +1033,7 @@ module plplot
 ! -------------------------------------------------------------------
 contains
 ! -------------------------------------------------------------------
-    integer function convert_to_int( logvalue )
+    integer(kind=plint) function convert_to_int( logvalue )
        logical :: logvalue
        if ( logvalue ) then
          convert_to_int = 1
@@ -1010,13 +1043,13 @@ contains
     end function convert_to_int
 
     logical function convert_to_log( intvalue )
-       integer :: intvalue
+       integer(kind=plint) :: intvalue
        convert_to_log = intvalue.ne.0
     end function convert_to_log
 
     subroutine plbin( x, y, center )
        real(kind=plflt), dimension(:) :: x, y
-       integer                        :: center
+       integer(kind=plint)                        :: center
 
        call plbinf95( size(x), x, y, center )
     end subroutine plbin
@@ -1031,10 +1064,10 @@ contains
          n_axes, axis_opts, ticks, sub_ticks, &
          n_values, values)
       real (kind=plflt) :: p_colorbar_width, p_colorbar_height
-      integer :: opt, position, bg_color, bb_color, bb_style, cont_color
-      integer :: n_labels, n_axes
+      integer(kind=plint) :: opt, position, bg_color, bb_color, bb_style, cont_color
+      integer(kind=plint) :: n_labels, n_axes
       real (kind=plflt) :: x, y, x_length, y_length, low_cap_color, high_cap_color, cont_width
-      integer, dimension(:) :: label_opts, sub_ticks, n_values
+      integer(kind=plint), dimension(:) :: label_opts, sub_ticks, n_values
       real (kind=plflt), dimension(:) :: ticks
       real (kind=plflt), dimension(:,:) :: values
       character(len=*), dimension(:) :: labels, axis_opts
@@ -1066,14 +1099,14 @@ contains
          label_opts, labels, axis_opts, ticks, sub_ticks, &
          n_values, values)
       real (kind=plflt) :: p_colorbar_width, p_colorbar_height
-      integer :: opt, position, bg_color, bb_color, bb_style, cont_color
+      integer(kind=plint) :: opt, position, bg_color, bb_color, bb_style, cont_color
       real (kind=plflt) :: x, y, x_length, y_length, low_cap_color, high_cap_color, cont_width
-      integer, dimension(:) :: label_opts, sub_ticks, n_values
+      integer(kind=plint), dimension(:) :: label_opts, sub_ticks, n_values
       real (kind=plflt), dimension(:) :: ticks
       real (kind=plflt), dimension(:,:) :: values
       character(len=*), dimension(:) :: labels, axis_opts
 
-      integer :: n_labels, n_axes
+      integer(kind=plint) :: n_labels, n_axes
 
       n_labels = size(label_opts,1)
       n_axes = size(axis_opts,1)
@@ -1096,10 +1129,10 @@ contains
     end subroutine plcolorbar_2
 
     subroutine plcpstrm( iplsr, flags )
-       integer                        :: iplsr
+       integer(kind=plint)                        :: iplsr
        logical                        :: flags
 
-       integer                        :: iflags
+       integer(kind=plint)                        :: iflags
 
        iflags = convert_to_int( flags )
        call plcpstrmf95( iplsr, iflags )
@@ -1140,7 +1173,7 @@ contains
        real(kind=plflt), dimension(:)   :: x, y, z, xg, yg
        real(kind=plflt), dimension(:,:) :: zg
        real(kind=plflt)                 :: data
-       integer                          :: type
+       integer(kind=plint)                          :: type
 
        call plgriddataf95( x, y, z, size(x), xg, size(xg), yg, size(yg), zg, &
           type, data )
@@ -1151,7 +1184,7 @@ contains
     subroutine plhist( data, datmin, datmax, nbin, oldwin )
        real(kind=plflt), dimension(:) :: data
        real(kind=plflt)               :: datmin, datmax
-       integer                        :: nbin, oldwin
+       integer(kind=plint)                        :: nbin, oldwin
 
        call plhistf95( size(data), data, datmin, datmax, nbin, oldwin )
     end subroutine plhist
@@ -1163,7 +1196,7 @@ contains
 !        real(kind=plflt)                 :: dxmin, dxmax, dymin, dymax, &
 !                                            valuemin, valuemax
 !
-!        integer                          :: nx, ny
+!        integer(kind=plint)                          :: nx, ny
 !
 !        nx = size(idata,1)
 !        ny = size(idata,2)
@@ -1177,7 +1210,7 @@ contains
        real(kind=plflt)                 :: xmin,  xmax,  ymin,  ymax,  zmin, zmax
        real(kind=plflt)                 :: dxmin, dxmax, dymin, dymax
 
-       integer                          :: nx, ny
+       integer(kind=plint)                          :: nx, ny
 
        nx = size(idata,1)
        ny = size(idata,2)
@@ -1199,17 +1232,17 @@ contains
 
     real(kind=plflt)               :: legend_width, legend_height, plot_width, x, y
     real(kind=plflt)               :: text_offset, text_scale, text_spacing, text_justification
-    integer                        :: position, opt, bg_color, bb_color, bb_style
-    integer                        :: nrow, ncolumn, nlegend
+    integer(kind=plint)                        :: position, opt, bg_color, bb_color, bb_style
+    integer(kind=plint)                        :: nrow, ncolumn, nlegend
 
     character(len=*), dimension(:) :: text, symbols
 
-    integer, dimension(:)          :: opt_array, text_colors, box_colors
-    integer, dimension(:)          :: box_patterns
+    integer(kind=plint), dimension(:)          :: opt_array, text_colors, box_colors
+    integer(kind=plint), dimension(:)          :: box_patterns
     real(kind=plflt), dimension(:) :: box_line_widths
-    integer, dimension(:)          :: line_colors, line_styles
+    integer(kind=plint), dimension(:)          :: line_colors, line_styles
     real(kind=plflt), dimension(:) :: line_widths
-    integer, dimension(:)          :: symbol_colors, symbol_numbers
+    integer(kind=plint), dimension(:)          :: symbol_colors, symbol_numbers
     real(kind=plflt), dimension(:) :: box_scales, symbol_scales
 
     !
@@ -1247,20 +1280,20 @@ contains
 
     real(kind=plflt)               :: legend_width, legend_height, plot_width, x, y
     real(kind=plflt)               :: text_offset, text_scale, text_spacing, text_justification
-    integer                        :: position, opt, bg_color, bb_color, bb_style
-    integer                        :: nrow, ncolumn
+    integer(kind=plint)                        :: position, opt, bg_color, bb_color, bb_style
+    integer(kind=plint)                        :: nrow, ncolumn
 
     character(len=*), dimension(:) :: text, symbols
 
-    integer, dimension(:)          :: opt_array, text_colors, box_colors
-    integer, dimension(:)          :: box_patterns
+    integer(kind=plint), dimension(:)          :: opt_array, text_colors, box_colors
+    integer(kind=plint), dimension(:)          :: box_patterns
     real(kind=plflt), dimension(:) :: box_line_widths
-    integer, dimension(:)          :: line_colors, line_styles
+    integer(kind=plint), dimension(:)          :: line_colors, line_styles
     real(kind=plflt), dimension(:) :: line_widths
-    integer, dimension(:)          :: symbol_colors, symbol_numbers
+    integer(kind=plint), dimension(:)          :: symbol_colors, symbol_numbers
     real(kind=plflt), dimension(:) :: box_scales, symbol_scales
 
-    integer                        :: nlegend
+    integer(kind=plint)                        :: nlegend
 
     !
     ! Determine number of legend entries
@@ -1294,8 +1327,6 @@ contains
     end subroutine plline3
 
     subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy)
-      use plplot_flt
-      use plplot_str
       implicit none
       real(kind=plflt) minx, maxx, miny, maxy
       character*(*) mapname
@@ -1310,8 +1341,6 @@ contains
     end subroutine plmap1
 
     subroutine plmap2(mapname,minx,maxx,miny,maxy)
-      use plplot_flt
-      use plplot_str
       implicit none
       real(kind=plflt) minx, maxx, miny, maxy
       character*(*) mapname
@@ -1348,7 +1377,7 @@ contains
     end subroutine plmeridians2
 
     subroutine plmesh( x, y, z, opt )
-       integer                          :: opt
+       integer(kind=plint)                          :: opt
        real(kind=plflt), dimension(:)   :: x, y
        real(kind=plflt), dimension(:,:) :: z
 
@@ -1357,7 +1386,7 @@ contains
     end subroutine plmesh
 
     subroutine plmeshc( x, y, z, opt, clevel )
-       integer                          :: opt
+       integer(kind=plint)                          :: opt
        real(kind=plflt), dimension(:)   :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
@@ -1367,11 +1396,11 @@ contains
     end subroutine plmeshc
 
     subroutine plot3d( x, y, z, opt, side )
-       integer                          :: opt
+       integer(kind=plint)                          :: opt
        logical                          :: side
        real(kind=plflt), dimension(:)   :: x, y
        real(kind=plflt), dimension(:,:) :: z
-       integer                          :: iside
+       integer(kind=plint)                          :: iside
 
        iside = convert_to_int(side)
        call plot3df95( x, y, z, size(x), size(y), opt, iside, size(x))
@@ -1379,7 +1408,7 @@ contains
     end subroutine plot3d
 
     subroutine plot3dc( x, y, z, opt, clevel )
-       integer                          :: opt
+       integer(kind=plint)                          :: opt
        real(kind=plflt), dimension(:)   :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
@@ -1391,14 +1420,14 @@ contains
     subroutine plspause( lpause )
        logical                        :: lpause
 
-       integer                        :: ipause
+       integer(kind=plint)                        :: ipause
 
        ipause = convert_to_int( lpause )
        call plspausef95( ipause )
     end subroutine plspause
 
     subroutine plsurf3d( x, y, z, opt, clevel )
-       integer                        :: opt
+       integer(kind=plint)                        :: opt
        real(kind=plflt), dimension(:) :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
@@ -1408,14 +1437,14 @@ contains
     end subroutine plsurf3d
 
     subroutine plpoin( x, y, code )
-       integer                        :: code
+       integer(kind=plint)                        :: code
        real(kind=plflt), dimension(:) :: x, y
 
        call plpoinf95( size(x), x, y, code )
     end subroutine plpoin
 
     subroutine plpoin3( x, y, z, code )
-       integer                        :: code
+       integer(kind=plint)                        :: code
        real(kind=plflt), dimension(:) :: x, y, z
 
        call plpoin3f95( size(x), x, y, z, code )
@@ -1426,9 +1455,9 @@ contains
        logical, dimension(:)          :: draw
        real(kind=plflt), dimension(:) :: x, y, z
 
-       integer, dimension(size(draw))  :: idraw
-       integer                        :: i
-       integer                        :: iifcc
+       integer(kind=plint), dimension(size(draw))  :: idraw
+       integer(kind=plint)                        :: i
+       integer(kind=plint)                        :: iifcc
 
        iifcc = convert_to_int( ifcc )
        do i = 1,size(draw)
@@ -1445,26 +1474,26 @@ contains
     end function plrandd
 
     subroutine plscmap0( r, g, b )
-       integer, dimension(:) :: r, g, b
+       integer(kind=plint), dimension(:) :: r, g, b
 
        call plscmap0f95( r, g, b, size(r) )
     end subroutine plscmap0
 
     subroutine plscmap0a( r, g, b, a )
-       integer, dimension(:) :: r, g, b
+       integer(kind=plint), dimension(:) :: r, g, b
        real(kind=plflt), dimension(:) :: a
 
        call plscmap0af95( r, g, b, a, size(r) )
     end subroutine plscmap0a
 
     subroutine plscmap1( r, g, b )
-       integer, dimension(:) :: r, g, b
+       integer(kind=plint), dimension(:) :: r, g, b
 
        call plscmap1f95( r, g, b, size(r) )
     end subroutine plscmap1
 
     subroutine plscmap1a( r, g, b, a )
-       integer, dimension(:) :: r, g, b
+       integer(kind=plint), dimension(:) :: r, g, b
        real(kind=plflt), dimension(:) :: a
 
        call plscmap1af95( r, g, b, a, size(r) )
@@ -1475,9 +1504,9 @@ contains
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3
           logical, dimension(:)          :: alt_hue_path
 
-          integer, dimension(size(alt_hue_path))  :: ialt_hue_path
-          integer                        :: i
-          integer                        :: type
+          integer(kind=plint), dimension(size(alt_hue_path))  :: ialt_hue_path
+          integer(kind=plint)                        :: i
+          integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
        do i = 1,size(alt_hue_path)
@@ -1490,7 +1519,7 @@ contains
           logical                        :: rgbtype
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3
 
-          integer                        :: type
+          integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
        call plscmap1l2f95( type, size(intensity), intensity, coord1, coord2, coord3)
@@ -1501,9 +1530,9 @@ contains
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3, a
           logical, dimension(:)          :: alt_hue_path
 
-          integer, dimension(size(alt_hue_path))  :: ialt_hue_path
-          integer                        :: i
-          integer                        :: type
+          integer(kind=plint), dimension(size(alt_hue_path))  :: ialt_hue_path
+          integer(kind=plint)                        :: i
+          integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
        do i = 1,size(alt_hue_path)
@@ -1516,7 +1545,7 @@ contains
           logical                        :: rgbtype
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3, a
 
-          integer                        :: type
+          integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
        call plscmap1la2f95( type, size(intensity), intensity, coord1, coord2, coord3, a)
@@ -1527,13 +1556,12 @@ contains
       colbox, collab, colline, styline, legline, &
       labx, laby, labtop)
 
-!    use plplot_str
     implicit none
-    integer id, colbox, collab, colline(4), styline(4)
+    integer(kind=plint) id, colbox, collab, colline(4), styline(4)
     character*(*) xspec, yspec, legline(4), labx, laby, labtop
     real(kind=plflt) xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
     logical y_ascl, acc
-    integer iy_ascl, iacc
+    integer(kind=plint) iy_ascl, iacc
 
 
     call plstrf2c(xspec, string1)
@@ -1569,14 +1597,14 @@ contains
     subroutine plsvect1( arrowx, arrowy, fill )
          logical                        :: fill
          real(kind=plflt), dimension(:) :: arrowx, arrowy
-         integer ifill
+         integer(kind=plint) ifill
          ifill = convert_to_int(fill)
 
        call plsvect1f95( arrowx, arrowy, size(arrowx), ifill )
     end subroutine plsvect1
 
     subroutine plsym( x, y, code )
-       integer                        :: code
+       integer(kind=plint)                        :: code
        real(kind=plflt), dimension(:) :: x, y
 
        call plsymf95( size(x), x, y, code )
@@ -1584,7 +1612,7 @@ contains
 
     subroutine plxormod( mode, status )
        logical :: mode, status
-       integer :: imode, istatus
+       integer(kind=plint) :: imode, istatus
        imode = convert_to_int(mode)
        call plxormodf95( imode, istatus)
        status = convert_to_log(istatus)
