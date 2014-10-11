@@ -52,9 +52,9 @@
 !
 module plplot_str
    use plplot_types
-   integer(kind=plint) :: maxleni
-   parameter (maxlen = 320)
-   parameter (maxleni = 80)
+   implicit none
+   integer(kind=plint), parameter :: maxlen = 320
+   integer(kind=plint), parameter :: maxleni = 80
    character (len = maxlen) :: string1, string2, string3
    character (len = maxlen) :: string4, string5, string6
    character (len = maxlen) :: string7, string8, string9
@@ -125,6 +125,7 @@ end module plplotp
 
 module plplot_graphics
   use plplot_types
+  implicit none
   type :: PLGraphicsIn
      integer(kind=plint) type          ! of event (CURRENTLY UNUSED)
      integer(kind=plint) state         ! key or button mask
@@ -156,6 +157,7 @@ module plplot
     interface
         subroutine pladv( sub )
             use plplot_types
+            implicit none
             integer(kind=plint) :: sub
         end subroutine pladv
     end interface
@@ -172,6 +174,7 @@ module plplot
     interface
         subroutine plcalc_world( rx, ry, wx, wy, window )
             use plplot_types
+            implicit none
             real(kind=plflt) :: rx, ry, wx, wy
             integer(kind=plint)          :: window
         end subroutine plcalc_world
@@ -185,6 +188,7 @@ module plplot
     interface
         subroutine plcol0( icol )
             use plplot_types
+            implicit none
             integer(kind=plint) :: icol
         end subroutine plcol0
     end interface
@@ -192,6 +196,7 @@ module plplot
     interface
         subroutine plcol1( col )
             use plplot_types
+            implicit none
             real(kind=plflt) :: col
         end subroutine plcol1
     end interface
@@ -218,6 +223,7 @@ module plplot
     interface
         subroutine plenv( xmin, xmax, ymin, ymax, just, axis )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
             integer(kind=plint)          :: just, axis
         end subroutine plenv
@@ -257,6 +263,7 @@ module plplot
     interface
         subroutine plfont( font )
             use plplot_types
+            implicit none
             integer(kind=plint) :: font
         end subroutine plfont
     end interface
@@ -264,6 +271,7 @@ module plplot
     interface
         subroutine plfontld( charset )
             use plplot_types
+            implicit none
             integer(kind=plint) :: charset
         end subroutine plfontld
     end interface
@@ -271,6 +279,7 @@ module plplot
     interface
         subroutine plgchr( chrdef, chrht )
             use plplot_types
+            implicit none
             real(kind=plflt) :: chrdef, chrht
         end subroutine plgchr
     end interface
@@ -278,6 +287,7 @@ module plplot
     interface
         subroutine plgcmap1_range( min_color, max_color )
             use plplot_types
+            implicit none
             real(kind=plflt) :: min_color, max_color
         end subroutine plgcmap1_range
     end interface
@@ -285,6 +295,7 @@ module plplot
     interface
         subroutine plgcol0( icol, r, g, b )
             use plplot_types
+            implicit none
             integer(kind=plint) :: icol, r, g, b
         end subroutine plgcol0
     end interface
@@ -292,6 +303,7 @@ module plplot
     interface
         subroutine plgcol0a( icol, r, g, b, a )
             use plplot_types
+            implicit none
             integer(kind=plint) :: icol, r, g, b
             real(kind=plflt) :: a
         end subroutine plgcol0a
@@ -300,6 +312,7 @@ module plplot
     interface
         subroutine plgcolbg( r, g, b )
             use plplot_types
+            implicit none
             integer(kind=plint) :: r, g, b
         end subroutine plgcolbg
     end interface
@@ -307,6 +320,7 @@ module plplot
     interface
         subroutine plgcolbga( r, g, b, a )
             use plplot_types
+            implicit none
             integer(kind=plint) :: r, g, b
             real(kind=plflt) :: a
         end subroutine plgcolbga
@@ -315,6 +329,7 @@ module plplot
     interface
         subroutine plgcompression( compression )
             use plplot_types
+            implicit none
             integer(kind=plint) :: compression
         end subroutine plgcompression
     end interface
@@ -322,6 +337,7 @@ module plplot
     interface
         subroutine plgdidev( mar, aspect, jx, jy )
             use plplot_types
+            implicit none
             real(kind=plflt) :: mar, aspect, jx, jy
         end subroutine plgdidev
     end interface
@@ -329,6 +345,7 @@ module plplot
     interface
         subroutine plgdiori( rot )
             use plplot_types
+            implicit none
             real(kind=plflt) :: rot
         end subroutine plgdiori
     end interface
@@ -336,6 +353,7 @@ module plplot
     interface
         subroutine plgdiplt( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgdiplt
     end interface
@@ -344,6 +362,7 @@ module plplot
         subroutine plgetcursor( gin )
             use plplot_types
             use plplot_graphics
+            implicit none
             type(PLGraphicsIn) :: gin
         end subroutine plgetcursor
     end interface
@@ -351,6 +370,7 @@ module plplot
     interface
         subroutine plgfam( fam, num, bmax )
             use plplot_types
+            implicit none
             integer(kind=plint) :: fam, num, bmax
         end subroutine plgfam
     end interface
@@ -358,6 +378,7 @@ module plplot
     interface
         subroutine plgfci( fci )
             use plplot_types
+            implicit none
             integer(kind=plunicode) :: fci
         end subroutine plgfci
     end interface
@@ -365,6 +386,7 @@ module plplot
     interface
         subroutine plgfont( family, style, weight )
             use plplot_types
+            implicit none
             integer(kind=plint) :: family, style, weight
         end subroutine plgfont
     end interface
@@ -372,6 +394,7 @@ module plplot
     interface
         subroutine plglevel( level )
             use plplot_types
+            implicit none
             integer(kind=plint) :: level
         end subroutine plglevel
     end interface
@@ -379,6 +402,7 @@ module plplot
     interface
         subroutine plgpage( xpmm, ypmm, xwid, ywid, xoff, yoff )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xpmm, ypmm
             integer(kind=plint)          :: xwid, ywid, xoff, yoff
         end subroutine plgpage
@@ -400,6 +424,7 @@ module plplot
     interface
         subroutine plgspa( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgspa
     end interface
@@ -407,6 +432,7 @@ module plplot
     interface
         subroutine plgstrm( strm )
             use plplot_types
+            implicit none
             integer(kind=plint) :: strm
         end subroutine plgstrm
     end interface
@@ -414,6 +440,7 @@ module plplot
     interface
         subroutine plgvpd( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgvpd
     end interface
@@ -421,6 +448,7 @@ module plplot
     interface
         subroutine plgvpw( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plgvpw
     end interface
@@ -428,6 +456,7 @@ module plplot
     interface
         subroutine plgxax( digmax, digits )
             use plplot_types
+            implicit none
             integer(kind=plint) :: digmax, digits
         end subroutine plgxax
     end interface
@@ -435,6 +464,7 @@ module plplot
     interface
         subroutine plgyax( digmax, digits )
             use plplot_types
+            implicit none
             integer(kind=plint) :: digmax, digits
         end subroutine plgyax
     end interface
@@ -442,6 +472,7 @@ module plplot
     interface
         subroutine plgzax( digmax, digits )
             use plplot_types
+            implicit none
             integer(kind=plint) :: digmax, digits
         end subroutine plgzax
     end interface
@@ -453,6 +484,7 @@ module plplot
     interface
         subroutine plhls( h, l, s )
             use plplot_types
+            implicit none
             real(kind=plflt) :: h, l, s
         end subroutine plhls
     end interface
@@ -460,6 +492,7 @@ module plplot
     interface
         subroutine plhlsrgb( h, l, s, r, g, b )
             use plplot_types
+            implicit none
             real(kind=plflt) :: h, l, s, r, g, b
         end subroutine plhlsrgb
     end interface
@@ -472,6 +505,7 @@ module plplot
     interface
         subroutine pljoin( x1, y1, x2, y2 )
             use plplot_types
+            implicit none
             real(kind=plflt) :: x1, y1, x2, y2
         end subroutine pljoin
     end interface
@@ -479,6 +513,7 @@ module plplot
     interface
         subroutine pllightsource( x, y, z )
             use plplot_types
+            implicit none
             real(kind=plflt) :: x, y, z
         end subroutine pllightsource
     end interface
@@ -499,6 +534,7 @@ module plplot
     interface pllsty
         subroutine pllsty( lin )
             use plplot_types
+            implicit none
             integer(kind=plint) :: lin
         end subroutine pllsty
     end interface
@@ -522,6 +558,7 @@ module plplot
     interface
         subroutine plmkstrm( strm )
             use plplot_types
+            implicit none
             integer(kind=plint) :: strm
         end subroutine plmkstrm
     end interface
@@ -529,6 +566,7 @@ module plplot
     interface
         subroutine plpat( nlin, inc, del )
             use plplot_types
+            implicit none
             integer(kind=plint) :: nlin, inc, del
         end subroutine plpat
     end interface
@@ -536,6 +574,7 @@ module plplot
     interface
         subroutine plpath( n, x1, y1, x2, y2 )
             use plplot_types
+            implicit none
             integer(kind=plint) :: n
             real(kind=plflt) :: x1, y1, x2, y2
         end subroutine plpath
@@ -564,6 +603,7 @@ module plplot
     interface
         subroutine plprec( setp, prec )
             use plplot_types
+            implicit none
             integer(kind=plint) :: setp, prec
         end subroutine plprec
     end interface
@@ -571,6 +611,7 @@ module plplot
     interface
         subroutine plpsty( patt )
             use plplot_types
+            implicit none
             integer(kind=plint) :: patt
         end subroutine plpsty
     end interface
@@ -586,6 +627,7 @@ module plplot
     interface
         subroutine plrgb( r, g, b )
             use plplot_types
+            implicit none
             real(kind=plflt) :: r, g, b
         end subroutine plrgb
     end interface
@@ -593,6 +635,7 @@ module plplot
     interface
         subroutine plrgb1( r, g, b )
             use plplot_types
+            implicit none
             integer(kind=plint) :: r, g, b
         end subroutine plrgb1
     end interface
@@ -600,6 +643,7 @@ module plplot
     interface
         subroutine plrgbhls( r, g, b, h, l, s )
             use plplot_types
+            implicit none
             real(kind=plflt) :: r, g, b, h, l, s
         end subroutine plrgbhls
     end interface
@@ -607,6 +651,7 @@ module plplot
     interface
         subroutine plschr( chrdef, chrht )
             use plplot_types
+            implicit none
             real(kind=plflt) :: chrdef, chrht
         end subroutine plschr
     end interface
@@ -622,6 +667,7 @@ module plplot
     interface
         subroutine plscmap0n( n )
             use plplot_types
+            implicit none
             integer(kind=plint) :: n
         end subroutine plscmap0n
     end interface
@@ -647,20 +693,23 @@ module plplot
     interface
         subroutine plscmap1n( n )
             use plplot_types
+            implicit none
             integer(kind=plint) :: n
         end subroutine plscmap1n
     end interface
 
     interface
-       subroutine plscmap1_range( min_color, max_color )
-         use plplot_types
-         real(kind=plflt) :: min_color, max_color
-       end subroutine plscmap1_range
+        subroutine plscmap1_range( min_color, max_color )
+            use plplot_types
+            implicit none
+            real(kind=plflt) :: min_color, max_color
+        end subroutine plscmap1_range
     end interface
 
     interface
         subroutine plscol0( icol, r, g, b )
             use plplot_types
+            implicit none
             integer(kind=plint) :: icol, r, g, b
         end subroutine plscol0
     end interface
@@ -668,6 +717,7 @@ module plplot
     interface
         subroutine plscol0a( icol, r, g, b, a )
             use plplot_types
+            implicit none
             integer(kind=plint) :: icol, r, g, b
             real(kind=plflt) :: a
         end subroutine plscol0a
@@ -676,6 +726,7 @@ module plplot
     interface
         subroutine plscolbg( r, g, b )
             use plplot_types
+            implicit none
             integer(kind=plint) :: r, g, b
         end subroutine plscolbg
     end interface
@@ -683,6 +734,7 @@ module plplot
     interface
         subroutine plscolbga( r, g, b, a )
             use plplot_types
+            implicit none
             integer(kind=plint) :: r, g, b
             real(kind=plflt) :: a
         end subroutine plscolbga
@@ -691,6 +743,7 @@ module plplot
     interface
         subroutine plscolor( color )
             use plplot_types
+            implicit none
             integer(kind=plint) :: color
         end subroutine plscolor
     end interface
@@ -698,6 +751,7 @@ module plplot
     interface
         subroutine plscompression( compression )
             use plplot_types
+            implicit none
             integer(kind=plint) :: compression
         end subroutine plscompression
     end interface
@@ -705,6 +759,7 @@ module plplot
     interface
         subroutine plsdidev( mar, aspect, jx, jy )
             use plplot_types
+            implicit none
             real(kind=plflt) :: mar, aspect, jx, jy
         end subroutine plsdidev
     end interface
@@ -712,6 +767,7 @@ module plplot
     interface
         subroutine plsdimap( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm )
             use plplot_types
+            implicit none
             real(kind=plflt) :: dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm
         end subroutine plsdimap
     end interface
@@ -719,6 +775,7 @@ module plplot
     interface
         subroutine plsdiori( rot )
             use plplot_types
+            implicit none
             real(kind=plflt) :: rot
         end subroutine plsdiori
     end interface
@@ -726,6 +783,7 @@ module plplot
     interface
         subroutine plsdiplt( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plsdiplt
     end interface
@@ -733,6 +791,7 @@ module plplot
     interface
         subroutine plsdiplz( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plsdiplz
     end interface
@@ -740,7 +799,8 @@ module plplot
     interface
         subroutine plseed( s )
             use plplot_types
-           integer(kind=plint) :: s
+            implicit none
+            integer(kind=plint) :: s
         end subroutine plseed
     end interface
 
@@ -748,6 +808,7 @@ module plplot
     interface
         subroutine plsesc( esc )
             use plplot_types
+            implicit none
             integer(kind=plint) :: esc
         end subroutine plsesc
     end interface
@@ -757,10 +818,10 @@ module plplot
     !
     interface plsetmapformc
         subroutine plsetmapformc( mapform )
-            use plplot_types
             interface
                 subroutine mapform( n, x, y )
                     use plplot_types
+                    implicit none
                     integer(kind=plint)                        :: n
                     real(kind=plflt), dimension(*) :: x, y
                 end subroutine mapform
@@ -771,6 +832,7 @@ module plplot
     interface
         subroutine plsfam( fam, num, bmax )
             use plplot_types
+            implicit none
             integer(kind=plint) :: fam, num, bmax
         end subroutine plsfam
     end interface
@@ -778,6 +840,7 @@ module plplot
     interface
         subroutine plsfci( fci )
             use plplot_types
+            implicit none
             integer(kind=plunicode) :: fci
         end subroutine plsfci
     end interface
@@ -785,6 +848,7 @@ module plplot
     interface
         subroutine plsfont( family, style, weight )
             use plplot_types
+            implicit none
             integer(kind=plint) :: family, style, weight
         end subroutine plsfont
     end interface
@@ -816,6 +880,7 @@ module plplot
     interface
         subroutine plsmaj( def, scale )
             use plplot_types
+            implicit none
             real(kind=plflt) :: def, scale
         end subroutine plsmaj
     end interface
@@ -826,6 +891,7 @@ module plplot
     interface
         subroutine plsmin( def, scale )
             use plplot_types
+            implicit none
             real(kind=plflt) :: def, scale
         end subroutine plsmin
     end interface
@@ -833,6 +899,7 @@ module plplot
     interface
         subroutine plsori( rot )
             use plplot_types
+            implicit none
             integer(kind=plint) :: rot
         end subroutine plsori
     end interface
@@ -840,6 +907,7 @@ module plplot
     interface
         subroutine plspage( xpmm, ypmm, xwid, ywid, xoff, yoff )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xpmm, ypmm
             integer(kind=plint)          :: xwid, ywid, xoff, yoff
         end subroutine plspage
@@ -852,6 +920,7 @@ module plplot
     interface
         subroutine plsstrm( strm )
             use plplot_types
+            implicit none
             integer(kind=plint) :: strm
         end subroutine plsstrm
     end interface
@@ -859,6 +928,7 @@ module plplot
     interface
         subroutine plssub( nx, ny )
             use plplot_types
+            implicit none
             integer(kind=plint) :: nx, ny
         end subroutine plssub
     end interface
@@ -866,6 +936,7 @@ module plplot
     interface
         subroutine plssym( def, scale )
             use plplot_types
+            implicit none
             real(kind=plflt) :: def, scale
         end subroutine plssym
     end interface
@@ -873,6 +944,7 @@ module plplot
     interface
         subroutine plstar( nx, ny )
             use plplot_types
+            implicit none
             integer(kind=plint) :: nx, ny
         end subroutine plstar
     end interface
@@ -902,6 +974,7 @@ module plplot
     interface
         subroutine plstripa( id, pen, x, y )
             use plplot_types
+            implicit none
             integer(kind=plint)          :: id, pen
             real(kind=plflt) :: x, y
         end subroutine plstripa
@@ -910,6 +983,7 @@ module plplot
     interface
         subroutine plstripd( id )
             use plplot_types
+            implicit none
             integer(kind=plint) :: id
         end subroutine plstripd
     end interface
@@ -917,6 +991,7 @@ module plplot
     interface
         subroutine plstyl( n, mark, space )
             use plplot_types
+            implicit none
             integer(kind=plint) :: n, mark, space
         end subroutine plstyl
     end interface
@@ -941,6 +1016,7 @@ module plplot
     interface
         subroutine plsvpa( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plsvpa
     end interface
@@ -948,6 +1024,7 @@ module plplot
     interface
         subroutine plsxax( digmax, digits )
             use plplot_types
+            implicit none
             integer(kind=plint) :: digmax, digits
         end subroutine plsxax
     end interface
@@ -955,6 +1032,7 @@ module plplot
     interface
         subroutine plsyax( digmax, digits )
             use plplot_types
+            implicit none
             integer(kind=plint) :: digmax, digits
         end subroutine plsyax
     end interface
@@ -966,6 +1044,7 @@ module plplot
     interface
         subroutine plszax( digmax, digits )
             use plplot_types
+            implicit none
             integer(kind=plint) :: digmax, digits
         end subroutine plszax
     end interface
@@ -978,6 +1057,7 @@ module plplot
     interface
         subroutine plvasp( aspect )
             use plplot_types
+            implicit none
             real(kind=plflt) :: aspect
         end subroutine plvasp
     end interface
@@ -985,6 +1065,7 @@ module plplot
     interface
         subroutine plvpas( xmin, xmax, ymin, ymax, aspect )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax, aspect
         end subroutine plvpas
     end interface
@@ -992,6 +1073,7 @@ module plplot
     interface
         subroutine plvpor( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plvpor
     end interface
@@ -1004,6 +1086,7 @@ module plplot
     interface
         subroutine plw3d( basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az )
             use plplot_types
+            implicit none
             real(kind=plflt) :: basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az
         end subroutine plw3d
     end interface
@@ -1011,6 +1094,7 @@ module plplot
     interface
         subroutine plwidth( width )
             use plplot_types
+            implicit none
             real(kind=plflt) :: width
         end subroutine plwidth
     end interface
@@ -1018,6 +1102,7 @@ module plplot
     interface
         subroutine plwind( xmin, xmax, ymin, ymax )
             use plplot_types
+            implicit none
             real(kind=plflt) :: xmin, xmax, ymin, ymax
         end subroutine plwind
     end interface
@@ -1327,7 +1412,6 @@ contains
     end subroutine plline3
 
     subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy)
-      implicit none
       real(kind=plflt) minx, maxx, miny, maxy
       character*(*) mapname
       external mapform
@@ -1341,7 +1425,6 @@ contains
     end subroutine plmap1
 
     subroutine plmap2(mapname,minx,maxx,miny,maxy)
-      implicit none
       real(kind=plflt) minx, maxx, miny, maxy
       character*(*) mapname
 
@@ -1356,7 +1439,6 @@ contains
     subroutine plmeridians1(mapform,dlong,dlat,minlong,maxlong, &
                            minlat,maxlat)
 
-    implicit none
     real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
     external mapform
 
@@ -1368,7 +1450,6 @@ contains
     subroutine plmeridians2(dlong,dlat,minlong,maxlong, &
                            minlat,maxlat)
 
-    implicit none
     real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
 
     call plclearmapformc
@@ -1556,7 +1637,6 @@ contains
       colbox, collab, colline, styline, legline, &
       labx, laby, labtop)
 
-    implicit none
     integer(kind=plint) id, colbox, collab, colline(4), styline(4)
     character*(*) xspec, yspec, legline(4), labx, laby, labtop
     real(kind=plflt) xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
