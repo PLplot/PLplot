@@ -26,7 +26,7 @@ program x03f95
     character (len=3) :: text
     real(kind=plflt), dimension(0:360) :: x0, y0, x, y
     real(kind=plflt) :: dtr, theta, dx, dy, offset
-    integer :: i
+    integer(kind=plint) :: i
 !    Process command-line arguments
     call plparseopts(PL_PARSE_FULL)
 

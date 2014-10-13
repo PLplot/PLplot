@@ -31,8 +31,8 @@ program x25f
     use plplot
     implicit none
 
-    integer          :: i, j, k
-    integer          :: npts
+    integer(kind=plint)          :: i, j, k
+    integer(kind=plint)          :: npts
     real(kind=plflt) :: xextreme(2,10)
     real(kind=plflt) :: yextreme(2,10)
     real(kind=plflt) :: x0(10)

@@ -21,7 +21,7 @@
 program x06f95
     use plplot
     implicit none
-    integer :: i, j, k, font, kind_font, maxfont
+    integer(kind=plint) :: i, j, k, font, kind_font, maxfont
     real(kind=plflt), dimension(1:1) :: x, y
 
     character (len=3) :: text

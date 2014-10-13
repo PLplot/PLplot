@@ -26,7 +26,7 @@ program x01f95
 
    real(plflt) :: xscale, yscale, xoff, yoff
    character(len=80) :: version
-   integer :: digmax
+   integer(kind=plint) :: digmax
 
 !  Process command-line arguments
    call plparseopts(PL_PARSE_FULL)

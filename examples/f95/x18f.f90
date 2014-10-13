@@ -27,17 +27,17 @@ program x18f95
     use plplot, PI => PL_PI, TWOPI => PL_TWOPI
     implicit none
 
-    integer, parameter :: NPTS = 1000
+    integer(kind=plint), parameter :: NPTS = 1000
 
-    integer            :: i, k
+    integer(kind=plint)            :: i, k
     real(kind=plflt), dimension(NPTS) :: x, y, z, r
     character(len=80)  :: title
 
-    integer            :: opt(4) = (/    1,          0,          1,          0       /)
+    integer(kind=plint)            :: opt(4) = (/    1,          0,          1,          0       /)
     real(kind=plflt)   :: alt(4) = (/ 20.0_plflt, 35.0_plflt, 50.0_plflt, 65.0_plflt /)
     real(kind=plflt)   :: az(4)  = (/ 30.0_plflt, 40.0_plflt, 50.0_plflt, 60.0_plflt /)
 
-    integer, dimension(NPTS) :: ia = (/(i,i=1,NPTS)/)
+    integer(kind=plint), dimension(NPTS) :: ia = (/(i,i=1,NPTS)/)
 
 !   Process command-line arguments
     call plparseopts(PL_PARSE_FULL)
@@ -93,18 +93,18 @@ program x18f95
 contains
 
 subroutine test_poly(k, alt, az)
-    integer          :: k
+    integer(kind=plint)          :: k
     real(kind=plflt) :: alt, az
 
     real(kind=plflt) :: x(5), y(5), z(5)
-    integer          :: i, j
+    integer(kind=plint)          :: i, j
     logical          :: draw(4,4) = &
         reshape( &
             (/  .true., .true., .true., .true., &
                 .true., .false., .true., .false., &
                 .false., .true., .false., .true., &
                 .true., .true., .false., .false. /), (/4,4/) )
-    integer, dimension(0:20)          :: ia = (/(j,j=0,20)/)
+    integer(kind=plint), dimension(0:20)          :: ia = (/(j,j=0,20)/)
     real(kind=plflt), dimension(0:20) :: theta, phi
 
     theta = TWOPI * ia /20._plflt

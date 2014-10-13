@@ -48,7 +48,7 @@
 
       use plplot
       implicit none
-      integer   xdim, ydim, NX, NY, NCONTR
+      integer(kind=plint)   xdim, ydim, NX, NY, NCONTR
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
       parameter (xdim = 99, NX = 35, ydim = 100, NY = 46, NCONTR = 14)
@@ -56,8 +56,8 @@
       real(kind=plflt)    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
       real(kind=plflt)    xmin, xmax, ymin, ymax, zmin, zmax, x, y
       real(kind=plflt)    shade_min, shade_max, sh_color
-      integer   i, j, sh_cmap
-      integer   min_color, max_color
+      integer(kind=plint)   i, j, sh_cmap
+      integer(kind=plint)   min_color, max_color
       real(kind=plflt)    sh_width, min_width, max_width
 
       xmin = -1._plflt
@@ -124,7 +124,7 @@
 
       use plplot, TWOPI => PL_TWOPI
       implicit none
-      integer   xdim, ydim, NX, NY, NCONTR, NBDRY
+      integer(kind=plint)   xdim, ydim, NX, NY, NCONTR, NBDRY
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
       parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
@@ -142,11 +142,11 @@
 
       real(kind=plflt)    shade_min, shade_max, sh_color
       real(kind=plflt)    xtick, ytick
-      integer   nxsub, nysub
-      integer   ncolbox, ncollab
-      integer   i, j, kx, lx, ky, ly
-      integer   sh_cmap
-      integer   min_color, max_color
+      integer(kind=plint)   nxsub, nysub
+      integer(kind=plint)   ncolbox, ncollab
+      integer(kind=plint)   i, j, kx, lx, ky, ly
+      integer(kind=plint)   sh_cmap
+      integer(kind=plint)   min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
       character(len=8) xopt, yopt
 
@@ -302,7 +302,7 @@
       use plplot
       implicit none
 
-      integer   i, j, nx, ny, xdim
+      integer(kind=plint)   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)

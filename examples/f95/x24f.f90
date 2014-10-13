@@ -47,10 +47,10 @@ program x24f
   use plplot      
   implicit none
   
-  integer i, j
-  integer red(7)
-  integer green(7)
-  integer blue(7)
+  integer(kind=plint) i, j
+  integer(kind=plint) red(7)
+  integer(kind=plint) green(7)
+  integer(kind=plint) blue(7)
   
   real(kind=plflt)  px(4)
   real(kind=plflt)  py(4)

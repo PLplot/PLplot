@@ -22,8 +22,8 @@ program x11f95
     use plplot, PI => PL_PI
     use plf95demolib
     implicit none
-    integer, parameter :: xpts=35, ypts=46
-    integer            :: i, j, k, ifshade
+    integer(kind=plint), parameter :: xpts=35, ypts=46
+    integer(kind=plint)            :: i, j, k, ifshade
 
     real(kind=plflt)   :: x(xpts), y(ypts), z(xpts,ypts), xx, yy
 
@@ -33,8 +33,8 @@ program x11f95
     real(kind=plflt)   :: alt(2) = (/ 33.0_plflt,  17.0_plflt/)
     real(kind=plflt)   :: az(2)  = (/ 24.0_plflt, 115.0_plflt/)
 
-    integer            :: opt(2) = (/ 3, 3 /)
-    integer, parameter :: nlevel = 10
+    integer(kind=plint)            :: opt(2) = (/ 3, 3 /)
+    integer(kind=plint), parameter :: nlevel = 10
     real(kind=plflt)   :: zmin, zmax, step, clevel(nlevel)
 
 !    Process command-line arguments
@@ -113,7 +113,7 @@ subroutine cmap1_init(gray)
 !    colour wheel from blue to green to red with constant lightness
 !    and saturation.
 
-    integer gray
+    integer(kind=plint) gray
     real(kind=plflt) i(0:1), h(0:1), l(0:1), s(0:1)
 
 !   left boundary

@@ -28,12 +28,12 @@
 
       real(kind=plflt) xmin, xmax, ymin, ymax, ycharacter_scale, yoffset
       real(kind=plflt) chardef, charht, deltax, deltay, x, y
-      integer i, j, page, length, slice
+      integer(kind=plint) i, j, page, length, slice
       character(len=20) cmdString
       integer(kind=plunicode) fci_old
-      integer ifamily, istyle, iweight
+      integer(kind=plint) ifamily, istyle, iweight
       real(kind=plflt) dy
-      integer family_index, style_index, weight_index
+      integer(kind=plint) family_index, style_index, weight_index
       ! Must be big enough to contain the prefix strings, the font-changing
       ! commands, and the "The quick brown..." string.
       character(len=200) string
@@ -43,17 +43,17 @@
 !
 !  Displays Greek letters and mathematically interesting Unicode ranges
 !
-      integer      fci_combinations
+      integer(kind=plint)      fci_combinations
       parameter(fci_combinations = 30)
 
       character(len=5)  greek(48)
-      integer      type1(166)
+      integer(kind=plint)      type1(166)
       character(len=80) title(11)
-      integer      lo(11)
-      integer      hi(11)
-      integer      nxcells(11)
-      integer      nycells(11)
-      integer      offset(11)
+      integer(kind=plint)      lo(11)
+      integer(kind=plint)      hi(11)
+      integer(kind=plint)      nxcells(11)
+      integer(kind=plint)      nycells(11)
+      integer(kind=plint)      offset(11)
       integer(kind=plunicode) :: fci(fci_combinations)
       character(len=11) family(5)
       character(len=8)  style(3)
@@ -399,9 +399,10 @@
  end program x23f
 
       subroutine lowercase23(string)
+      use plplot
       implicit none
       character*(*) string
-      integer i, len, iascii
+      integer(kind=plint) i, len, iascii
       do i = 1, len(string)
         iascii = iachar(string(i:i))
         if(65.le.iascii.and.iascii.le.90) then

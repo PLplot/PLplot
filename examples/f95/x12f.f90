@@ -23,7 +23,7 @@ program x12f95
     implicit none
 
     character(len=20) :: string
-    integer :: i
+    integer(kind=plint) :: i
     real(kind=plflt) :: y0(10)
     real(kind=plflt) :: pos(5)   = (/0.0_plflt, 0.25_plflt, 0.5_plflt, 0.75_plflt, 1.0_plflt/)
     real(kind=plflt) :: red(5)   = (/0.0_plflt, 0.25_plflt, 0.5_plflt, 1.0_plflt, 1.0_plflt/)

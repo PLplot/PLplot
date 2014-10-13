@@ -21,12 +21,12 @@
 program x00f95
     use plf95demolib
 
-    integer, parameter :: NSIZE = 101
+    integer(kind=plint), parameter :: NSIZE = 101
 
     real(kind=plflt), dimension(NSIZE) :: x, y
 
     real(kind=plflt) :: xmin = 0._plflt, xmax = 1._plflt, ymin = 0._plflt, ymax = 100._plflt
-    ! integer          :: i
+    ! integer(kind=plint)          :: i
 
     ! Prepare data to be plotted.
     x = arange(0, NSIZE) / real(NSIZE-1,plflt)

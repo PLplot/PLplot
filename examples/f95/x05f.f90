@@ -23,7 +23,7 @@ program x04f95
     use plf95demolib
     implicit none
 
-    integer, parameter :: NPTS = 2047
+    integer(kind=plint), parameter :: NPTS = 2047
     real(kind=plflt) :: data(NPTS), delta
 
 !   Process command-line arguments

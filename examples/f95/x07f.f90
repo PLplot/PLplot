@@ -24,8 +24,8 @@ program x07f95
 
     character (len=4) :: text
 
-    integer :: i, j, k, l
-    integer, dimension(20) :: base = &
+    integer(kind=plint) :: i, j, k, l
+    integer(kind=plint), dimension(20) :: base = &
         (/    0,  100,    0,  100,  200,  500,  600,  700,  800,  900, &
            2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900  /)
 

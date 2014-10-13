@@ -70,8 +70,8 @@ program x26f
   use plplot, PI => PL_PI
   implicit none
 
-  integer, parameter :: nolangs = 2
-  integer, parameter :: nlegend = 2
+  integer(kind=plint), parameter :: nolangs = 2
+  integer(kind=plint), parameter :: nlegend = 2
 
   character(len=80) x_label(nolangs)
   character(len=80) y_label(nolangs)
@@ -80,7 +80,7 @@ program x26f
   character(len=80) title_label(nolangs)
   character(len=80) line_label(nolangs)
 
-  integer      i, j
+  integer(kind=plint)      i, j
 
   data (x_label(i) ,i=1,nolangs) / &
        'Frequency', &
@@ -138,25 +138,25 @@ end program x26f
     use plplot, PI => PL_PI
     implicit none
 
-    integer type, nlegend
+    integer(kind=plint) type, nlegend
     character(*) x_label, y_label, alty_label, title_label, line_label
 
-    integer i
+    integer(kind=plint) i
     real(kind=plflt)  freql(101), ampl(101), phase(101)
     real(kind=plflt)  f0, freq
 
     character(*) legend_text(nlegend)
 
-    integer          opt_array(nlegend)
-    integer          text_colors(nlegend)
-    integer          line_colors(nlegend)
-    integer          line_styles(nlegend)
+    integer(kind=plint)          opt_array(nlegend)
+    integer(kind=plint)          text_colors(nlegend)
+    integer(kind=plint)          line_colors(nlegend)
+    integer(kind=plint)          line_styles(nlegend)
     real(kind=plflt) line_widths(nlegend)
-    integer          symbol_numbers(nlegend)
-    integer          symbol_colors(nlegend)
+    integer(kind=plint)          symbol_numbers(nlegend)
+    integer(kind=plint)          symbol_colors(nlegend)
     real(kind=plflt) symbol_scales(nlegend)
     character(len=20) symbols(nlegend)
-    integer          box_colors(0), box_patterns(0)
+    integer(kind=plint)          box_colors(0), box_patterns(0)
     real(kind=plflt) box_scales(0), box_line_widths(0)
     real(kind=plflt) legend_width, legend_height
 

@@ -37,49 +37,49 @@
 
       implicit none
 
-      integer, parameter :: MAX_NLEGEND = 7
+      integer(kind=plint), parameter :: MAX_NLEGEND = 7
 
-      integer            :: i, k
-      integer            :: opt, position
-      integer            :: nlegend, nturn
-      integer            :: opt_array(MAX_NLEGEND)
-      integer            :: text_colors(MAX_NLEGEND)
-      integer            :: box_colors(MAX_NLEGEND)
-      integer            :: box_patterns(MAX_NLEGEND)
+      integer(kind=plint)            :: i, k
+      integer(kind=plint)            :: opt, position
+      integer(kind=plint)            :: nlegend, nturn
+      integer(kind=plint)            :: opt_array(MAX_NLEGEND)
+      integer(kind=plint)            :: text_colors(MAX_NLEGEND)
+      integer(kind=plint)            :: box_colors(MAX_NLEGEND)
+      integer(kind=plint)            :: box_patterns(MAX_NLEGEND)
       real(kind=plflt)   :: box_scales(MAX_NLEGEND)
       real(kind=plflt)   :: box_line_widths(MAX_NLEGEND)
-      integer            :: line_colors(MAX_NLEGEND)
-      integer            :: line_styles(MAX_NLEGEND)
+      integer(kind=plint)            :: line_colors(MAX_NLEGEND)
+      integer(kind=plint)            :: line_styles(MAX_NLEGEND)
       real(kind=plflt)   :: line_widths(MAX_NLEGEND)
-      integer            :: symbol_numbers(MAX_NLEGEND), symbol_colors(MAX_NLEGEND)
+      integer(kind=plint)            :: symbol_numbers(MAX_NLEGEND), symbol_colors(MAX_NLEGEND)
       real(kind=plflt)   :: symbol_scales(MAX_NLEGEND)
       character(len=200) :: text(MAX_NLEGEND)
       character(len=20)  :: symbols(MAX_NLEGEND)
       real(kind=plflt)   :: legend_width, legend_height, x, y, xstart, ystart
       real(kind=plflt)   :: max_height, text_scale
-      integer            :: opt_base, nrow, ncolumn
+      integer(kind=plint)            :: opt_base, nrow, ncolumn
 
-      integer            :: position_options(16)
+      integer(kind=plint)            :: position_options(16)
       character(len=3)   :: special_symbols(5)
 
       real(kind=plflt)   :: values_small(2)
       real(kind=plflt)   :: values_uneven(9)
       real(kind=plflt)   :: values_even(9)
 
-      integer, parameter :: COLORBAR_KINDS = 4
-      integer            :: colorbar_option_kinds(COLORBAR_KINDS)
+      integer(kind=plint), parameter :: COLORBAR_KINDS = 4
+      integer(kind=plint)            :: colorbar_option_kinds(COLORBAR_KINDS)
       character(len=100) :: colorbar_option_kind_labels(COLORBAR_KINDS)
 
-      integer, parameter :: COLORBAR_POSITIONS = 4
-      integer            :: colorbar_position_options(COLORBAR_POSITIONS)
+      integer(kind=plint), parameter :: COLORBAR_POSITIONS = 4
+      integer(kind=plint)            :: colorbar_position_options(COLORBAR_POSITIONS)
       character(len=100) :: colorbar_position_option_labels(COLORBAR_POSITIONS)
 
-      integer, parameter :: COLORBAR_LABELS = 4
-      integer            :: colorbar_label_options(COLORBAR_LABELS)
+      integer(kind=plint), parameter :: COLORBAR_LABELS = 4
+      integer(kind=plint)            :: colorbar_label_options(COLORBAR_LABELS)
       character(len=100) :: colorbar_label_option_labels(COLORBAR_LABELS)
 
-      integer, parameter :: COLORBAR_CAPS = 4
-      integer            :: colorbar_cap_options(COLORBAR_CAPS)
+      integer(kind=plint), parameter :: COLORBAR_CAPS = 4
+      integer(kind=plint)            :: colorbar_cap_options(COLORBAR_CAPS)
       character(len=100) :: colorbar_cap_option_labels(COLORBAR_CAPS)
 
 !     Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
@@ -733,23 +733,23 @@
          
          implicit none
 
-         integer  :: kind_i, label_i, cap_i, cont_color, n_values
+         integer(kind=plint)  :: kind_i, label_i, cap_i, cont_color, n_values
          real(kind=plflt)   :: cont_width
          real(kind=plflt), dimension(:)   :: values
          
          ! Parameters for the colorbars on this page
-         integer            :: position_i, position, opt
+         integer(kind=plint)            :: position_i, position, opt
          real(kind=plflt)   :: x, y, x_length, y_length;
          real(kind=plflt)   :: ticks(1)
-         integer            :: sub_ticks(1)
+         integer(kind=plint)            :: sub_ticks(1)
          real(kind=plflt)   :: low_cap_color, high_cap_color
          logical            :: vertical, ifn
          character(len=20)  :: axis_opts(1)
-         integer            :: label_opts(1)
+         integer(kind=plint)            :: label_opts(1)
          character(len=200) :: labels(1)
          character(len=200) :: title
          real(kind=plflt)   :: colorbar_width, colorbar_height
-         integer            :: n_values_array(1);
+         integer(kind=plint)            :: n_values_array(1);
          real(kind=plflt), allocatable, dimension(:,:) :: values_array
 
          ticks(1) = 0.0_plflt
@@ -848,7 +848,7 @@
        
        subroutine plcolorbar_example( palette, kind_i, cont_color, cont_width, n_values, values )
          character(*) :: palette
-         integer  :: kind_i, label_i, cap_i, cont_color, n_values
+         integer(kind=plint)  :: kind_i, label_i, cap_i, cont_color, n_values
          real(kind=plflt)   :: cont_width
          real(kind=plflt), dimension(:)   :: values
 

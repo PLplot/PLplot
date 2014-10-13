@@ -27,20 +27,20 @@
       use plplot
       implicit none
 
-      integer digmax
+      integer(kind=plint) digmax
 
       character(len=80) :: driver
       character(len=15) :: geometry_master
       character(len=15) :: geometry_slave
 
-      integer :: fam, num, bmax
+      integer(kind=plint) :: fam, num, bmax
 
       real(kind=plflt), dimension(101) ::  x, y
       real(kind=plflt), dimension(6) ::  xs, ys
       real(kind=plflt)  :: xscale, yscale, xoff, yoff
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       real(kind=plflt) :: xp0, yp0
-      integer :: xleng0, yleng0, xoff0, yoff0
+      integer(kind=plint) :: xleng0, yleng0, xoff0, yoff0
       logical :: valid_geometry
 
       geometry_master = '500x410+100+200'
@@ -166,7 +166,7 @@
       real(kind=plflt), dimension(101) :: x, y
       real(kind=plflt), dimension(6) :: xs, ys
       real(kind=plflt) :: xscale, yscale, xoff, yoff, xmin, xmax, ymin, ymax
-      integer :: i
+      integer(kind=plint) :: i
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
       do i = 1, 60
@@ -214,7 +214,7 @@
       real(kind=plflt), dimension(101) :: x, y
       real(kind=plflt), dimension(6) :: xs, ys
       real(kind=plflt) :: xscale, yscale, xoff, yoff
-      integer :: i
+      integer(kind=plint) :: i
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
 !======================================================================
@@ -256,7 +256,7 @@
       real(kind=plflt), dimension(101) ::  x, y
       real(kind=plflt), dimension(6) :: xs, ys
       real(kind=plflt) :: xscale, yscale, xoff, yoff
-      integer :: i
+      integer(kind=plint) :: i
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       call pladv(0)
 
@@ -302,7 +302,7 @@
       character(len=3) :: text
       real(kind=plflt), dimension(0:360) :: x0, y0, x, y
       real(kind=plflt) :: dtr, theta, dx, dy, r
-      integer :: i, j, nsp
+      integer(kind=plint) :: i, j, nsp
 
       dtr = PI/180.0_plflt
       do i=0,360
@@ -366,7 +366,7 @@
 
 !======================================================================
 
-      integer function nsp(text)
+      integer(kind=plint) function nsp(text)
 !      ==================
 
 !      Find first non-space character
@@ -374,7 +374,7 @@
       implicit none
 
       character*(*) text
-      integer l, len
+      integer(kind=plint) l, len
 
       l = len(text)
       nsp = 1
@@ -389,7 +389,7 @@
 
       use plplot, PI => PL_PI
       implicit none
-      integer :: i, j, nptsx, nptsy, xdim, ydim
+      integer(kind=plint) :: i, j, nptsx, nptsy, xdim, ydim
 !      xdim and ydim are the absolute static dimensions.
 !      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
 !      arrays that is actually used.

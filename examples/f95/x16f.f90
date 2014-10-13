@@ -21,7 +21,7 @@
       use plplot, PI => PL_PI
       implicit none
       real(kind=plflt) xx, yy, argx, argy, distort, r, t
-      integer NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
+      integer(kind=plint) NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
       parameter(NLEVEL = 20)
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
@@ -32,20 +32,20 @@
         z(xdim,ydim), w(xdim,ydim), xg1(xdim), yg1(ydim), &
         xg2(xdim,ydim), yg2(xdim,ydim), zmin, zmax, &
         px(PERIMETERPTS), py(PERIMETERPTS)
-      integer cont_color
+      integer(kind=plint) cont_color
       real(kind=plflt) fill_width, cont_width
       real(kind=plflt) colorbar_width, colorbar_height
-      integer NUM_AXES, NUM_LABELS
+      integer(kind=plint) NUM_AXES, NUM_LABELS
       parameter(NUM_AXES=1, NUM_LABELS=1)
       character(len=20) :: axis_opts(NUM_AXES)
-      integer num_values(NUM_AXES)
+      integer(kind=plint) num_values(NUM_AXES)
       real(kind=plflt) values(NUM_AXES,NLEVEL+1)
       real(kind=plflt) axis_ticks(NUM_AXES)
-      integer axis_subticks(NUM_AXES)
+      integer(kind=plint) axis_subticks(NUM_AXES)
       character(len=100) :: labels(NUM_LABELS)
-      integer label_opts(NUM_LABELS)
+      integer(kind=plint) label_opts(NUM_LABELS)
 
-      integer i, j
+      integer(kind=plint) i, j
 !      dummy to fill argument list with something not currently used.
       character(len=1) defined
       real(kind=plflt) tr(6)
@@ -393,7 +393,7 @@
       use plplot
       implicit none
 
-      integer   i, j, nx, ny, xdim
+      integer(kind=plint)   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)

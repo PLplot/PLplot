@@ -25,7 +25,7 @@ program x30f95
 
   implicit none
 
-  integer, dimension(4) ::  red, green, blue
+  integer(kind=plint), dimension(4) ::  red, green, blue
   real(kind=plflt), dimension (4) :: alpha, px, py
   real(kind=plflt), dimension (2) :: pos, rcoord, gcoord, bcoord, acoord
   logical, dimension(2) :: rev
@@ -43,8 +43,8 @@ program x30f95
   data acoord / 0.0_plflt, 1.0_plflt /
   data rev / .false. , .false. /
 
-  integer i, j
-  integer icol, r, g, b
+  integer(kind=plint) i, j
+  integer(kind=plint) icol, r, g, b
   real(kind=plflt) :: a
 
   call plparseopts(PL_PARSE_FULL)

@@ -24,11 +24,11 @@
 
    implicit none
 
-   integer, parameter :: XPTS = 2
-   integer, parameter :: YPTS = 2
-   integer, parameter :: NREVOLUTION = 16
-   integer, parameter :: NROTATION = 8
-   integer, parameter :: NSHEAR = 8
+   integer(kind=plint), parameter :: XPTS = 2
+   integer(kind=plint), parameter :: YPTS = 2
+   integer(kind=plint), parameter :: NREVOLUTION = 16
+   integer(kind=plint), parameter :: NROTATION = 8
+   integer(kind=plint), parameter :: NSHEAR = 8
 
    real(PLFLT), dimension(:), allocatable   :: x, y
    real(PLFLT), dimension(:,:), allocatable :: z
@@ -52,7 +52,7 @@
         x_inclination, y_inclination, z_inclination,       &
         x_shear, y_shear, z_shear,                         &
         omega, sin_omega, cos_omega, domega
-   integer     :: i, j
+   integer(kind=plint)     :: i, j
    real(PLFLT) :: radius, pitch, xpos, ypos, zpos
 
    ! N.B. Need to append PL_END_OF_STRING so spaces get

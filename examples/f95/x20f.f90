@@ -71,18 +71,18 @@
 
       implicit none
 
-      integer, parameter          :: XDIM = 260, YDIM = 220
+      integer(kind=plint), parameter          :: XDIM = 260, YDIM = 220
       real(kind=plflt), parameter :: XDIMR = XDIM, YDIMR = YDIM
 
       real(kind=plflt) ::  x(XDIM), y(YDIM), z(XDIM,YDIM), r(XDIM,YDIM)
       real(kind=plflt) ::  xi, yi, xe, ye
-      integer i, j
+      integer(kind=plint) i, j
       real(kind=plflt)  width_r, height_r
 
 !
 !     Dimensions taken from "lena.pgm"
 !
-      integer width, height, num_col
+      integer(kind=plint) width, height, num_col
       real(kind=plflt), dimension(:,:), pointer :: img_f
       real(kind=plflt), dimension(:,:), pointer :: xg, yg
       real(kind=plflt) :: img_max, img_min
@@ -300,11 +300,11 @@
 !     Determine the unit of length for direct-access files
       subroutine bytes_in_rec( bytes )
       implicit none
-      integer     bytes
+      integer(kind=plint)     bytes
 
       character(len=8) string
-      integer     i
-      integer     ierr
+      integer(kind=plint)     i
+      integer(kind=plint)     ierr
 
       open( 10, file = '_x20f_.bin', access = 'direct', recl = 1 )
       do i = 1,8
@@ -322,23 +322,23 @@
       logical function read_img(fname, img_f, width, height, num_col)
 
       character(*), intent(in)                  :: fname
-      integer, intent(out)                      :: width, height
+      integer(kind=plint), intent(out)                      :: width, height
       real(kind=plflt), dimension(:,:), pointer :: img_f
-      integer      num_col
+      integer(kind=plint)      num_col
 
       character, dimension(8) :: img
       character(len=80), dimension(2) :: ver
-      integer ::  i, j, w, h, b
+      integer(kind=plint) ::  i, j, w, h, b
 
-      integer :: ierr
-      integer ::  count
-      integer ::  record
+      integer(kind=plint) :: ierr
+      integer(kind=plint) ::  count
+      integer(kind=plint) ::  record
 
-      integer ::  bytes = 0
-      integer ::  lastlf = 0
-      integer ::  first
-      integer ::  last
-      integer ::  pixel
+      integer(kind=plint) ::  bytes = 0
+      integer(kind=plint) ::  lastlf = 0
+      integer(kind=plint) ::  first
+      integer(kind=plint) ::  last
+      integer(kind=plint) ::  pixel
 
 !     Naive grayscale binary ppm reading. If you know how to, improve it
 
@@ -459,7 +459,7 @@
 
       character*(*) fname
 
-      integer cur_strm, new_strm
+      integer(kind=plint) cur_strm, new_strm
 
 !     Get current stream
       call plgstrm(cur_strm)
@@ -491,9 +491,9 @@
       logical st, start
       real(kind=plflt) sx(5), sy(5)
 
-      integer PLK_Return
+      integer(kind=plint) PLK_Return
       data PLK_Return / Z'0D' /
-      integer hex100
+      integer(kind=plint) hex100
       data hex100 / Z'100' /
 
       xxi = xi
@@ -591,7 +591,7 @@
 !     Set gray colormap
       subroutine gray_cmap(num_col)
 
-      integer num_col
+      integer(kind=plint) num_col
       real(kind=plflt) r(2), g(2), b(2), pos(2)
       logical rev(2)
 
@@ -622,7 +622,7 @@
       use plplot
       implicit none
 
-      integer   i, j, nx, ny, xdim
+      integer(kind=plint)   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)

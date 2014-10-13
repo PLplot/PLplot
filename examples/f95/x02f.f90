@@ -64,9 +64,9 @@ end subroutine demo1
 !     and HLS -> RGB translation.
 !--------------------------------------------------------------------------
 subroutine demo2
-    integer, parameter :: tablesize = 116
-    integer, dimension(tablesize) :: r, g, b
-    integer :: i
+    integer(kind=plint), parameter :: tablesize = 116
+    integer(kind=plint), dimension(tablesize) :: r, g, b
+    integer(kind=plint) :: i
 
     real(kind=plflt), parameter :: lmin = 0.15_plflt, lmax = 0.85_plflt
     real(kind=plflt) h, l, s, r1, g1, b1
@@ -115,8 +115,8 @@ end subroutine demo2
 !--------------------------------------------------------------------------
 subroutine draw_windows( nw, cmap0_offset )
 
-    integer :: nw, cmap0_offset
-    integer :: i,j
+    integer(kind=plint) :: nw, cmap0_offset
+    integer(kind=plint) :: i,j
     real(kind=plflt) :: vmin, vmax, xj
     character (len=3) :: text
 

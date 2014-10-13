@@ -53,7 +53,7 @@
       real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
       common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
-      integer :: i, npts
+      integer(kind=plint) :: i, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       
       parameter(npts = 73)
@@ -116,7 +116,7 @@
 
       implicit none
       
-      integer ::  j, npts
+      integer(kind=plint) ::  j, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       real(kind=plflt) :: lat, p, d
       real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
@@ -172,14 +172,14 @@
       use plplot, PI => PL_PI
       implicit none
       
-      integer :: i, npts
+      integer(kind=plint) :: i, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
-      integer :: tstart
+      integer(kind=plint) :: tstart
 !      real(kind=plflt) :: toff
       real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
       common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
-!     integer tm(9)
+!     integer(kind=plint) tm(9)
 
       parameter (npts = 62)
 
@@ -238,16 +238,16 @@
   
       real(kind=plflt) :: scale, offset1, offset2
       real(kind=plflt) :: xmin, xmax, ymin, ymax, xlabel_step
-      integer :: k, npts = 0, i
+      integer(kind=plint) :: k, npts = 0, i
       logical :: if_TAI_time_format = .false.
       character(len=10) :: time_format
       character(len=100) :: title_suffix
       character(len=100) :: xtitle
       character(len=100) :: title
       real(kind=plflt) :: x(1001), y(1001)
-      integer :: tai_year, tai_month, tai_day, tai_hour, tai_min
+      integer(kind=plint) :: tai_year, tai_month, tai_day, tai_hour, tai_min
       real(kind=plflt) :: tai_sec, tai
-      integer :: utc_year, utc_month, utc_day, utc_hour, utc_min
+      integer(kind=plint) :: utc_year, utc_month, utc_day, utc_hour, utc_min
       real(kind=plflt) :: utc_sec, utc
       
 !     Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch

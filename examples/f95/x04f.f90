@@ -37,14 +37,14 @@ program x04f95
 contains
 
 subroutine plot1(type)
-    integer           :: type
-    integer           :: nlegend
+    integer(kind=plint)           :: type
+    integer(kind=plint)           :: nlegend
 
     real(kind=plflt)  :: legend_width, legend_height
-    integer           :: opt_array(2), text_colors(2), line_colors(2), &
+    integer(kind=plint)           :: opt_array(2), text_colors(2), line_colors(2), &
                          line_styles(2), symbol_colors(2), symbol_numbers(2)
     real(kind=plflt)  :: line_widths(2), symbol_scales(2), box_scales(0)
-    integer           :: box_colors(0), box_patterns(0)
+    integer(kind=plint)           :: box_colors(0), box_patterns(0)
     real(kind=plflt)  :: box_line_widths(0)
     character(len=20) :: text(2)
     character(len=20)  :: symbols(2)

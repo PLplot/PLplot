@@ -22,7 +22,7 @@ program x13f95
     use plplot, PI => PL_PI
     implicit none
     real(kind=plflt)   :: just, dx, dy, x(500), y(500)
-    integer            ::  i, j, dthet, theta0, theta1, theta
+    integer(kind=plint)            ::  i, j, dthet, theta0, theta1, theta
     character(len=20), dimension(5) :: text = &
          (/ 'Maurice ', 'Geoffrey', 'Alan    ', 'Rafael  ', 'Vince   '/)
     real(kind=plflt)   :: per(5) = &

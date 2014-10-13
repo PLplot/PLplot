@@ -37,17 +37,17 @@ contains
 ! function of the same name)
 !
 function arange_plflt_1( start, stop, step )
-    integer, intent(in) :: start, stop, step
+    integer(kind=plint), intent(in) :: start, stop, step
 
     real(kind=plflt), dimension((stop-start)/step) :: arange_plflt_1
 
-    integer             :: i
+    integer(kind=plint)             :: i
 
     arange_plflt_1 = (/ (real(i, plflt), i = start, stop-step, step) /)
 end function arange_plflt_1
 
 function arange_plflt_2( start, stop )
-    integer, intent(in) :: start, stop
+    integer(kind=plint), intent(in) :: start, stop
 
     real(kind=plflt), dimension((stop-start)) :: arange_plflt_2
 
@@ -55,7 +55,7 @@ function arange_plflt_2( start, stop )
 end function arange_plflt_2
 
 function arange_plflt_3( stop )
-    integer, intent(in) :: stop
+    integer(kind=plint), intent(in) :: stop
 
     real(kind=plflt), dimension(stop-1) :: arange_plflt_3
 

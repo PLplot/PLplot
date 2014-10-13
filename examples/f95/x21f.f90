@@ -26,7 +26,7 @@
       external myisnan
       logical myisnan
 
-      integer pts, xp, yp, nl, knn_order, randn, rosen
+      integer(kind=plint) pts, xp, yp, nl, knn_order, randn, rosen
       real(kind=plflt) threshold, wmin
       parameter (pts = 500)
       parameter (xp = 25)
@@ -43,8 +43,8 @@
       real(kind=plflt) x(pts), y(pts), z(pts), clev(nl)
       real(kind=plflt) xg(xp), yg(yp), zg(xp,yp)
       real(kind=plflt) zmin, zmax, lzmin, lzmax
-      integer i, j, k
-      integer alg
+      integer(kind=plint) i, j, k
+      integer(kind=plint) alg
       character(len=80) title(6)
       data title /'Cubic Spline Approximation', &
                  'Delaunay Linear Interpolation', &
@@ -59,7 +59,7 @@
       real(kind=plflt) xt, yt
 
       real(kind=plflt) r
-      integer ii, jj
+      integer(kind=plint) ii, jj
       real(kind=plflt) dist, d
 
       character(len=1) defined
@@ -278,7 +278,7 @@
         use plplot
         implicit none
 
-        integer   i, j, nx, ny, xdim
+        integer(kind=plint)   i, j, nx, ny, xdim
         real(kind=plflt) f(xdim, ny), fmin, fmax
 
         fmax = f(1, 1)

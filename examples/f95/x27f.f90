@@ -34,7 +34,7 @@ program x27f
   use plplot
   implicit none
 
-  integer i, j, fill
+  integer(kind=plint) i, j, fill
 
   real(kind=plflt) params(4,9)
 
@@ -110,9 +110,10 @@ end program x27f
 ! Calculate greatest common divisor following pseudo-code for the
 ! Euclidian algorithm at http://en.wikipedia.org/wiki/Euclidean_algorithm
 
-integer function gcd (a,  b)
+integer(kind=plint) function gcd (a,  b)
+  use plplot
   implicit none
-  integer a, b, t
+  integer(kind=plint) a, b, t
   a = abs(a)
   b = abs(b)
   do while ( b .ne. 0 )
@@ -139,16 +140,16 @@ subroutine spiro( params, fill )
   implicit none
 
   real(kind=plflt)      params(*)
-  integer     NPNT
+  integer(kind=plint)     NPNT
   parameter ( NPNT = 2000 )
-  integer     n
+  integer(kind=plint)     n
   real(kind=plflt)      xcoord(NPNT+1)
   real(kind=plflt)      ycoord(NPNT+1)
 
-  integer     windings
-  integer     steps
-  integer     i
-  integer     fill
+  integer(kind=plint)     windings
+  integer(kind=plint)     steps
+  integer(kind=plint)     i
+  integer(kind=plint)     fill
   real(kind=plflt)      phi
   real(kind=plflt)      phiw
   real(kind=plflt)      dphi
@@ -158,7 +159,7 @@ subroutine spiro( params, fill )
   real(kind=plflt)      ymin
   real(kind=plflt)      ymax
   real(kind=plflt)      yrange_adjust
-  integer gcd
+  integer(kind=plint) gcd
 
   ! Fill the coordinates
 
@@ -220,9 +221,9 @@ subroutine arcs( )
   use plplot
   implicit none
 
-  integer NSEG
+  integer(kind=plint) NSEG
   parameter ( NSEG = 8 )
-  integer i;
+  integer(kind=plint) i;
   real (kind=plflt) theta, dtheta
   real (kind=plflt) a, b
 

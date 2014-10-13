@@ -5,13 +5,13 @@ program test_plf95demolib
     use plf95demolib
 
     real, dimension(10)   :: value
-    integer               :: i
-    integer, dimension(4) :: start = (/  0,  0,  1,  2 /), &
+    integer(kind=plint)               :: i
+    integer(kind=plint), dimension(4) :: start = (/  0,  0,  1,  2 /), &
                              stop  = (/ 10, 10, 11, 22 /), &
                              step  = (/  1,  2,  1,  2 /), &
                              expected_size = &
                                      (/ 10,  5, 10, 10 /)
-    integer               :: sz
+    integer(kind=plint)               :: sz
 
     ! Function arange:
     ! - Check the length of the returned array

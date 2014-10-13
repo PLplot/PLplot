@@ -24,11 +24,11 @@ program x08f95
 
     implicit none
 
-    integer :: i, j, k, ifshade
+    integer(kind=plint) :: i, j, k, ifshade
 
 !   xdim is the leading dimension of z, xpts <= xdim is the leading
 !   dimension of z that is defined.
-    integer, parameter :: xdim=99, ydim=100, xpts=35, ypts=46
+    integer(kind=plint), parameter :: xdim=99, ydim=100, xpts=35, ypts=46
     real(kind=plflt)   :: x(xdim), y(ydim), z(xdim,ypts), xx, yy, r
 
     character (len=80) :: title(2) = &
@@ -36,8 +36,8 @@ program x08f95
           '#frPLplot Example 8 - Alt=20, Az=60'/)
     real(kind=plflt)   :: alt(2) = (/60.0_plflt, 20.0_plflt/)
     real(kind=plflt)   :: az(2)  = (/30.0_plflt, 60.0_plflt/)
-    integer            :: rosen
-    integer, parameter :: nlevel = 10
+    integer(kind=plint)            :: rosen
+    integer(kind=plint), parameter :: nlevel = 10
     real(kind=plflt)   :: zmin, zmax, step, clevel(nlevel)
 
 !   Process command-line arguments
@@ -142,7 +142,7 @@ contains
 !   colour wheel from blue to green to red with constant lightness
 !   and saturation.
 
-    integer          :: gray
+    integer(kind=plint)          :: gray
     real(kind=plflt) :: i(0:1), h(0:1), l(0:1), s(0:1)
 
 !   left boundary

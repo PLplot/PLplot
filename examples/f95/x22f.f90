@@ -23,7 +23,7 @@
       use plplot
       implicit none
 
-      integer narr
+      integer(kind=plint) narr
       logical fill
       parameter (narr=6)
       real(kind=plflt) arrow_x(narr),arrow_y(narr), &
@@ -70,7 +70,7 @@
       use plplot
       implicit none
 
-      integer i, j, nx, ny
+      integer(kind=plint) i, j, nx, ny
       parameter (nx=20, ny=20)
 
       real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
@@ -112,7 +112,7 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer i, j, nx, ny, astyle
+      integer(kind=plint) i, j, nx, ny, astyle
       parameter (nx=20, ny=20)
 
       character(len=80) :: title
@@ -180,7 +180,7 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer i, j, nx, ny, nc, nseg
+      integer(kind=plint) i, j, nx, ny, nc, nseg
       parameter (nx=20, ny=20, nc=11, nseg=20)
 
       real(kind=plflt) dx, dy, xx, yy
@@ -243,7 +243,7 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer i, j, nr, ntheta, nper, nlevel
+      integer(kind=plint) i, j, nr, ntheta, nper, nlevel
       parameter (nr=20, ntheta=20, nper=100, nlevel=10)
 
       real(kind=plflt) u(nr, ntheta), v(nr, ntheta), z(nr, ntheta)
@@ -336,7 +336,7 @@
       use plplot
       implicit none
 
-      integer   i, j, nx, ny, xdim
+      integer(kind=plint)   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)

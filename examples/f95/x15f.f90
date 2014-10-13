@@ -22,12 +22,12 @@
       use plplot
       implicit none
 
-      integer  xdim, ydim, XPTS, YPTS
+      integer(kind=plint)  xdim, ydim, XPTS, YPTS
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
       parameter( xdim = 99, XPTS = 35, ydim = 100, YPTS = 46 )
 
-      integer i,  j
+      integer(kind=plint) i,  j
       real(kind=plflt)  xx, yy
       real(kind=plflt)  z(xdim, ydim), zmin, zmax
 
@@ -154,13 +154,13 @@
       use plplot
       implicit none
 
-      integer xdim, XPTS, YPTS
+      integer(kind=plint) xdim, XPTS, YPTS
       real(kind=plflt)  z(xdim,YPTS), zmin, zmax
 
       character(len=1) undefined
       real(kind=plflt)  shade_min, shade_max, sh_color
-      integer sh_cmap
-      integer min_color, max_color
+      integer(kind=plint) sh_cmap
+      integer(kind=plint) min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
 
       sh_cmap   = 0
@@ -211,17 +211,17 @@
       use plplot
       implicit none
 
-      integer xdim, XPTS, YPTS
+      integer(kind=plint) xdim, XPTS, YPTS
       real(kind=plflt)  z(xdim,YPTS), zmin, zmax
 
       character(len=1) undefined
       real(kind=plflt)  shade_min, shade_max, sh_color
-      integer sh_cmap
-      integer min_color, max_color
+      integer(kind=plint) sh_cmap
+      integer(kind=plint) min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
-      integer i, j
+      integer(kind=plint) i, j
 
-      integer nlin(10), inc(2,10), del(2,10)
+      integer(kind=plint) nlin(10), inc(2,10), del(2,10)
       data nlin /1, 1, 1, 1, 1, 2, 2, 2, 2, 2/
       data ( (inc(i,j), i=1,2), j=1,10) / &
            450, 0, -450, 0, 0, 0, 900, 0, &
@@ -316,7 +316,7 @@
       use plplot
       implicit none
 
-      integer   i, j, nx, ny, xdim
+      integer(kind=plint)   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)

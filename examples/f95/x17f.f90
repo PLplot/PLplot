@@ -25,12 +25,12 @@ program x17f95
     use plplot, PI => PL_PI
     implicit none
 
-    integer            :: id1, n
-    integer, parameter :: nsteps = 1000
+    integer(kind=plint)            :: id1, n
+    integer(kind=plint), parameter :: nsteps = 1000
     logical            :: autoy, acc
     real(kind=plflt)   :: y1, y2, y3, y4, ymin, ymax, xlab, ylab
     real(kind=plflt)   :: t, tmin, tmax, tjump, dt, noise
-    integer            :: colbox, collab, colline(4), styline(4)
+    integer(kind=plint)            :: colbox, collab, colline(4), styline(4)
     character(len=20)  :: legline(4)
 
     logical            :: pl_errcode

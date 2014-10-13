@@ -24,12 +24,12 @@ program x09f95
     use plplot, PI => PL_PI, TWOPI => PL_TWOPI
     use plf95demolib
     implicit none
-    integer i, j
+    integer(kind=plint) i, j
 
 !   xdim and ydim are the absolute static dimensions.
 !   nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
 !   arrays that is actually used.
-    integer, parameter :: xdim=99, ydim=100, nptsx=35, nptsy=46
+    integer(kind=plint), parameter :: xdim=99, ydim=100, nptsx=35, nptsy=46
 
     real(kind=plflt)   :: z(xdim, ydim), w(xdim, ydim), &
                           xg1(xdim), yg1(ydim), &
@@ -137,15 +137,15 @@ end function coord_function
 !----------------------------------------------------------------------------
 !   polar contour plot example.
 subroutine polar()
-    integer, parameter :: PERIMETERPTS = 100
+    integer(kind=plint), parameter :: PERIMETERPTS = 100
 
 !   xdim and ydim are the absolute static size of the 2D arrays.
 !   RPTS and THETAPTS are associated with the part of the
 !   2D arrays that are defined.
-    integer, parameter :: xdim=99, RPTS = 40
-    integer, parameter :: ydim=100, THETAPTS = 40
-    integer, parameter :: NLEVEL=10
-    integer            :: i,j
+    integer(kind=plint), parameter :: xdim=99, RPTS = 40
+    integer(kind=plint), parameter :: ydim=100, THETAPTS = 40
+    integer(kind=plint), parameter :: NLEVEL=10
+    integer(kind=plint)            :: i,j
     real(kind=plflt)   :: xg(xdim, ydim),  yg(xdim, ydim), &
         z(xdim, ydim), px(PERIMETERPTS), py(PERIMETERPTS), &
         lev(NLEVEL), r, theta, delta
@@ -185,7 +185,7 @@ end subroutine polar
 !    shielded potential contour plot example
 subroutine potential()
 
-    integer          :: i, j, nx, ny, kx, lx, ky, ly, &
+    integer(kind=plint)          :: i, j, nx, ny, kx, lx, ky, ly, &
         nlevel, ilevgt, ilevlt, nlevlt, nlevgt, &
         ncollin, ncolbox, ncollab, &
         nxsub, nysub
@@ -199,7 +199,7 @@ subroutine potential()
 !    xdim and ydim are the absolute static size of the 2D arrays.
 !    NCX and NCY are associated with the part of the
 !    2D arrays that are defined.
-    integer, parameter :: xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100
+    integer(kind=plint), parameter :: xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100
 
     real(kind=plflt)   :: z(xdim, ydim), ztmp(xdim, ydim+1)
     real(kind=plflt)   :: xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)

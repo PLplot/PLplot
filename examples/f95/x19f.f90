@@ -41,11 +41,11 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer n
+      integer(kind=plint) n
       real(kind=plflt)    x(n)
       real(kind=plflt)    y(n)
 
-      integer i
+      integer(kind=plint) i
       real(kind=plflt)    xp, yp, radius
 
       do i = 1,n
@@ -85,7 +85,7 @@
       subroutine geolocation_labeler(axis, value, label, length)
       use plplot
       implicit none
-      integer :: axis, length
+      integer(kind=plint) :: axis, length
       real(kind=plflt) :: value
       character(len=length) label
       character(len=5) direction_label

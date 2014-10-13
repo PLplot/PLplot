@@ -32,21 +32,21 @@ program x31f95
   real(kind=plflt) xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
   real(kind=plflt) xmid, ymid, wx, wy
   real(kind=plflt) mar, aspect, jx, jy, ori
-  integer win, level2, digmax, digits, compression1, compression2
+  integer(kind=plint) win, level2, digmax, digits, compression1, compression2
   real(kind=plflt) xp0, yp0, xp1, yp1, xp2, yp2
-  integer xleng0, yleng0, xoff0, yoff0, xleng1, yleng1, xoff1, yoff1 
-  integer xleng2, yleng2, xoff2, yoff2
-  integer fam0, num0, bmax0, fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
+  integer(kind=plint) xleng0, yleng0, xoff0, yoff0, xleng1, yleng1, xoff1, yoff1 
+  integer(kind=plint) xleng2, yleng2, xoff2, yoff2
+  integer(kind=plint) fam0, num0, bmax0, fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
   real(kind=plflt) a
-  integer r1(2), g1(2), b1(2)
+  integer(kind=plint) r1(2), g1(2), b1(2)
   data r1 /0, 255/
   data g1 /255, 0/
   data b1 /0, 0/
   real(kind=plflt) a1(2)
   data a1 /1.0_plflt, 1.0_plflt/
   character(len=256) fnam
-  integer stderr
-  integer status
+  integer(kind=plint) stderr
+  integer(kind=plint) status
   
   status = 0
   stderr = 0
