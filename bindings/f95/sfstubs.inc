@@ -246,9 +246,9 @@
       integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), clevel(:)
 
-      kx = 1
+      kx = 1_plint
       lx = size(z,1)
-      ky = 1
+      ky = 1_plint
       ly = size(z,2)
       call plcon07(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel))
 
@@ -262,9 +262,9 @@
       integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:), yg(:), clevel(:)
 
-      kx = 1
+      kx = 1_plint
       lx = size(z,1)
-      ky = 1
+      ky = 1_plint
       ly = size(z,2)
       call plcon17(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
 
@@ -278,9 +278,9 @@
       integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:,:), yg(:,:), clevel(:)
 
-      kx = 1
+      kx = 1_plint
       lx = size(z,1)
-      ky = 1
+      ky = 1_plint
       ly = size(z,2)
       call plcon27(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
 
@@ -295,9 +295,9 @@
       real(kind=plflt) z(:,:), clevel(:)
       real(kind=plflt) tr(6)
 
-      kx = 1
+      kx = 1_plint
       lx = size(z,1)
-      ky = 1
+      ky = 1_plint
       ly = size(z,2)
       call plcont7(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),tr)
 
@@ -515,7 +515,7 @@
 
 !	call plstrf2c(dnam, string1)
 
-      rect = 1
+      rect = 1_plint
       if ( present(rectangular) ) then
           rect = merge( 1, 0, rectangular )
       endif
@@ -547,7 +547,7 @@
 
 !	call plstrf2c(dnam, string1)
 
-      rect = 1
+      rect = 1_plint
 
       s1 = transfer( string1, s1 )
       call plshades17(z, size(z,1), size(z,2), s1, &
@@ -606,7 +606,7 @@
 
 !	call plstrf2c(dnam, string1)
 
-      rect = 0
+      rect = 0_plint
 
       s1 = transfer( string1, s1 )
       call plshades27(z, size(z,1), size(z,2), s1, &
@@ -665,7 +665,7 @@
 
 !	call plstrf2c(dnam, string1)
 
-      rect = 0
+      rect = 0_plint
 
       s1 = transfer( string1, s1 )
       call plshades7(z, size(z,1), size(z,2), s1, &

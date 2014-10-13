@@ -1121,15 +1121,15 @@ contains
     integer(kind=plint) function convert_to_int( logvalue )
        logical :: logvalue
        if ( logvalue ) then
-         convert_to_int = 1
+         convert_to_int = 1_plint
        else
-         convert_to_int = 0
+         convert_to_int = 0_plint
        endif
     end function convert_to_int
 
     logical function convert_to_log( intvalue )
        integer(kind=plint) :: intvalue
-       convert_to_log = intvalue.ne.0
+       convert_to_log = intvalue.ne.0_plint
     end function convert_to_log
 
     subroutine plbin( x, y, center )
@@ -1162,8 +1162,8 @@ contains
       ! albeit global location. This way we avoid all manner of complications.
       ! (Though introducing a potentially nasty one: non-threadsafety)
       !
-      call pllegend07_cnv_text( 3, n_labels, labels )
-      call pllegend07_cnv_text( 4, n_axes, axis_opts )
+      call pllegend07_cnv_text( 3_plint, n_labels, labels )
+      call pllegend07_cnv_text( 4_plint, n_axes, axis_opts )
 
       call plcolorbar07(p_colorbar_width, p_colorbar_height, &
            opt, position, x, y, &
@@ -1200,8 +1200,8 @@ contains
       ! albeit global location. This way we avoid all manner of complications.
       ! (Though introducing a potentially nasty one: non-threadsafety)
       !
-      call pllegend07_cnv_text( 3, n_labels, labels )
-      call pllegend07_cnv_text( 4, n_axes, axis_opts )
+      call pllegend07_cnv_text( 3_plint, n_labels, labels )
+      call pllegend07_cnv_text( 4_plint, n_axes, axis_opts )
 
       call plcolorbar07(p_colorbar_width, p_colorbar_height, &
            opt, position, x, y, &
@@ -1335,8 +1335,8 @@ contains
     ! albeit global location. This way we avoid all manner of complications.
     ! (Though introducing a potentially nasty one: non-threadsafety)
     !
-    call pllegend07_cnv_text( 1, nlegend, text )
-    call pllegend07_cnv_text( 2, nlegend, symbols )
+    call pllegend07_cnv_text( 1_plint, nlegend, text )
+    call pllegend07_cnv_text( 2_plint, nlegend, symbols )
 
     call pllegend07( legend_width, legend_height, opt, position, x, y, &
                      plot_width, bg_color, bb_color, bb_style, &
@@ -1541,7 +1541,7 @@ contains
        integer(kind=plint)                        :: iifcc
 
        iifcc = convert_to_int( ifcc )
-       do i = 1,size(draw)
+       do i = 1_plint,size(draw)
           idraw(i) = convert_to_int( draw(i) )
        enddo
        call plpoly3f95( size(x), x, y, z, idraw, iifcc )
@@ -1590,7 +1590,7 @@ contains
           integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
-       do i = 1,size(alt_hue_path)
+       do i = 1_plint,size(alt_hue_path)
           ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
        call plscmap1lf95( type, size(intensity), intensity, coord1, coord2, coord3, ialt_hue_path )
@@ -1616,7 +1616,7 @@ contains
           integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
-       do i = 1,size(alt_hue_path)
+       do i = 1_plint,size(alt_hue_path)
           ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
        call plscmap1laf95( type, size(intensity), intensity, coord1, coord2, coord3, a, ialt_hue_path )
