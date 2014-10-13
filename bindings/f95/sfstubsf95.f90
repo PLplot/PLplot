@@ -1136,7 +1136,7 @@ contains
        real(kind=plflt), dimension(:) :: x, y
        integer(kind=plint)                        :: center
 
-       call plbinf95( size(x), x, y, center )
+       call plbinf95( size(x,kind=plint), x, y, center )
     end subroutine plbin
 
     subroutine plcolorbar_1( p_colorbar_width, p_colorbar_height, &
@@ -1193,8 +1193,8 @@ contains
 
       integer(kind=plint) :: n_labels, n_axes
 
-      n_labels = size(label_opts,1)
-      n_axes = size(axis_opts,1)
+      n_labels = size(label_opts,1,kind=plint)
+      n_axes = size(axis_opts,1,kind=plint)
       !
       ! Convert the text arrays and store the results in a convenient
       ! albeit global location. This way we avoid all manner of complications.
@@ -1226,32 +1226,32 @@ contains
     subroutine plerrx( xmin, xmax, y )
        real(kind=plflt), dimension(:) :: xmin, xmax, y
 
-       call plerrxf95( size(xmin), xmin, xmax, y )
+       call plerrxf95( size(xmin,kind=plint), xmin, xmax, y )
     end subroutine plerrx
 
     subroutine plerry( x, ymin, ymax )
        real(kind=plflt), dimension(:) :: x, ymin, ymax
 
-       call plerryf95( size(x), x, ymin, ymax )
+       call plerryf95( size(x,kind=plint), x, ymin, ymax )
     end subroutine plerry
 
     subroutine plfill( x, y )
        real(kind=plflt), dimension(:) :: x, y
 
-       call plfillf95( size(x), x, y )
+       call plfillf95( size(x,kind=plint), x, y )
     end subroutine plfill
 
     subroutine plfill3( x, y, z )
        real(kind=plflt), dimension(:) :: x, y, z
 
-       call plfill3f95( size(x), x, y, z )
+       call plfill3f95( size(x,kind=plint), x, y, z )
     end subroutine plfill3
 
     subroutine plgradient( x, y, angle )
        real(kind=plflt), dimension(:) :: x, y
        real(kind=plflt)               :: angle
 
-       call plgradientf95( size(x), x, y, angle )
+       call plgradientf95( size(x,kind=plint), x, y, angle )
     end subroutine plgradient
 
     subroutine plgriddata( x, y, z, xg, yg, zg, type, data )
@@ -1260,7 +1260,7 @@ contains
        real(kind=plflt)                 :: data
        integer(kind=plint)                          :: type
 
-       call plgriddataf95( x, y, z, size(x), xg, size(xg), yg, size(yg), zg, &
+       call plgriddataf95( x, y, z, size(x,kind=plint), xg, size(xg,kind=plint), yg, size(yg,kind=plint), zg, &
           type, data )
 
        return
@@ -1271,7 +1271,7 @@ contains
        real(kind=plflt)               :: datmin, datmax
        integer(kind=plint)                        :: nbin, oldwin
 
-       call plhistf95( size(data), data, datmin, datmax, nbin, oldwin )
+       call plhistf95( size(data,kind=plint), data, datmin, datmax, nbin, oldwin )
     end subroutine plhist
 
 !     subroutine plimagefr( idata, xmin, xmax, ymin, ymax, zmin, zmax, &
@@ -1283,8 +1283,8 @@ contains
 !
 !        integer(kind=plint)                          :: nx, ny
 !
-!        nx = size(idata,1)
-!        ny = size(idata,2)
+!        nx = size(idata,1,kind=plint)
+!        ny = size(idata,2,kind=plint)
 !        call plimagefrf95( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
 !                           dxmin, dxmax, dymin, dymax, valuemin, valuemax )
 !     end subroutine plimagefr
@@ -1297,8 +1297,8 @@ contains
 
        integer(kind=plint)                          :: nx, ny
 
-       nx = size(idata,1)
-       ny = size(idata,2)
+       nx = size(idata,1,kind=plint)
+       ny = size(idata,2,kind=plint)
        call plimagef95( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
                         dxmin, dxmax, dymin, dymax )
     end subroutine plimage
@@ -1383,7 +1383,7 @@ contains
     !
     ! Determine number of legend entries
     !
-    nlegend = min( size(opt_array), size(text) )
+    nlegend = min( size(opt_array,kind=plint), size(text,kind=plint) )
 
     call pllegend_1( legend_width, legend_height, &
                      opt, position, x, y, &
@@ -1402,13 +1402,13 @@ contains
     subroutine plline( x, y )
        real(kind=plflt), dimension(:) :: x, y
 
-       call pllinef95( size(x), x, y )
+       call pllinef95( size(x,kind=plint), x, y )
     end subroutine plline
 
     subroutine plline3( x, y, z )
        real(kind=plflt), dimension(:) :: x, y, z
 
-       call plline3f95( size(x), x, y, z )
+       call plline3f95( size(x,kind=plint), x, y, z )
     end subroutine plline3
 
     subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy)
@@ -1462,7 +1462,7 @@ contains
        real(kind=plflt), dimension(:)   :: x, y
        real(kind=plflt), dimension(:,:) :: z
 
-       call plmeshf95( x, y, z, size(x), size(y), opt, size(x))
+       call plmeshf95( x, y, z, size(x,kind=plint), size(y,kind=plint), opt, size(x,kind=plint))
 
     end subroutine plmesh
 
@@ -1471,8 +1471,8 @@ contains
        real(kind=plflt), dimension(:)   :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
-       call plmeshcf95( x, y, z, size(x), size(y), opt, &
-         clevel, size(clevel), size(x))
+       call plmeshcf95( x, y, z, size(x,kind=plint), size(y,kind=plint), opt, &
+         clevel, size(clevel,kind=plint), size(x,kind=plint))
 
     end subroutine plmeshc
 
@@ -1484,7 +1484,7 @@ contains
        integer(kind=plint)                          :: iside
 
        iside = convert_to_int(side)
-       call plot3df95( x, y, z, size(x), size(y), opt, iside, size(x))
+       call plot3df95( x, y, z, size(x,kind=plint), size(y,kind=plint), opt, iside, size(x,kind=plint))
 
     end subroutine plot3d
 
@@ -1493,8 +1493,8 @@ contains
        real(kind=plflt), dimension(:)   :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
-       call plot3dcf95( x, y, z, size(x), size(y), opt, clevel, &
-         size(clevel), size(x))
+       call plot3dcf95( x, y, z, size(x,kind=plint), size(y,kind=plint), opt, clevel, &
+         size(clevel,kind=plint), size(x,kind=plint))
 
     end subroutine plot3dc
 
@@ -1512,8 +1512,8 @@ contains
        real(kind=plflt), dimension(:) :: x, y, clevel
        real(kind=plflt), dimension(:,:) :: z
 
-       call plsurf3df95( x, y, z, size(x), size(y), opt, clevel, &
-         size(clevel), size(x))
+       call plsurf3df95( x, y, z, size(x,kind=plint), size(y,kind=plint), opt, clevel, &
+         size(clevel,kind=plint), size(x,kind=plint))
 
     end subroutine plsurf3d
 
@@ -1521,14 +1521,14 @@ contains
        integer(kind=plint)                        :: code
        real(kind=plflt), dimension(:) :: x, y
 
-       call plpoinf95( size(x), x, y, code )
+       call plpoinf95( size(x,kind=plint), x, y, code )
     end subroutine plpoin
 
     subroutine plpoin3( x, y, z, code )
        integer(kind=plint)                        :: code
        real(kind=plflt), dimension(:) :: x, y, z
 
-       call plpoin3f95( size(x), x, y, z, code )
+       call plpoin3f95( size(x,kind=plint), x, y, z, code )
     end subroutine plpoin3
 
     subroutine plpoly3( x, y, z, draw, ifcc )
@@ -1536,15 +1536,15 @@ contains
        logical, dimension(:)          :: draw
        real(kind=plflt), dimension(:) :: x, y, z
 
-       integer(kind=plint), dimension(size(draw))  :: idraw
+       integer(kind=plint), dimension(size(draw,kind=plint))  :: idraw
        integer(kind=plint)                        :: i
        integer(kind=plint)                        :: iifcc
 
        iifcc = convert_to_int( ifcc )
-       do i = 1_plint,size(draw)
+       do i = 1_plint,size(draw,kind=plint)
           idraw(i) = convert_to_int( draw(i) )
        enddo
-       call plpoly3f95( size(x), x, y, z, idraw, iifcc )
+       call plpoly3f95( size(x,kind=plint), x, y, z, idraw, iifcc )
     end subroutine plpoly3
 
     real (kind=plflt) function plrandd()
@@ -1557,27 +1557,27 @@ contains
     subroutine plscmap0( r, g, b )
        integer(kind=plint), dimension(:) :: r, g, b
 
-       call plscmap0f95( r, g, b, size(r) )
+       call plscmap0f95( r, g, b, size(r,kind=plint) )
     end subroutine plscmap0
 
     subroutine plscmap0a( r, g, b, a )
        integer(kind=plint), dimension(:) :: r, g, b
        real(kind=plflt), dimension(:) :: a
 
-       call plscmap0af95( r, g, b, a, size(r) )
+       call plscmap0af95( r, g, b, a, size(r,kind=plint) )
     end subroutine plscmap0a
 
     subroutine plscmap1( r, g, b )
        integer(kind=plint), dimension(:) :: r, g, b
 
-       call plscmap1f95( r, g, b, size(r) )
+       call plscmap1f95( r, g, b, size(r,kind=plint) )
     end subroutine plscmap1
 
     subroutine plscmap1a( r, g, b, a )
        integer(kind=plint), dimension(:) :: r, g, b
        real(kind=plflt), dimension(:) :: a
 
-       call plscmap1af95( r, g, b, a, size(r) )
+       call plscmap1af95( r, g, b, a, size(r,kind=plint) )
     end subroutine plscmap1a
 
     subroutine plscmap1l( rgbtype, intensity, coord1, coord2, coord3, alt_hue_path)
@@ -1585,15 +1585,15 @@ contains
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3
           logical, dimension(:)          :: alt_hue_path
 
-          integer(kind=plint), dimension(size(alt_hue_path))  :: ialt_hue_path
+          integer(kind=plint), dimension(size(alt_hue_path,kind=plint))  :: ialt_hue_path
           integer(kind=plint)                        :: i
           integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
-       do i = 1_plint,size(alt_hue_path)
+       do i = 1_plint,size(alt_hue_path,kind=plint)
           ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
-       call plscmap1lf95( type, size(intensity), intensity, coord1, coord2, coord3, ialt_hue_path )
+       call plscmap1lf95( type, size(intensity,kind=plint), intensity, coord1, coord2, coord3, ialt_hue_path )
     end subroutine plscmap1l
 
     subroutine plscmap1l2( rgbtype, intensity, coord1, coord2, coord3)
@@ -1603,7 +1603,7 @@ contains
           integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
-       call plscmap1l2f95( type, size(intensity), intensity, coord1, coord2, coord3)
+       call plscmap1l2f95( type, size(intensity,kind=plint), intensity, coord1, coord2, coord3)
     end subroutine plscmap1l2
 
     subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3, a, alt_hue_path)
@@ -1611,15 +1611,15 @@ contains
           real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3, a
           logical, dimension(:)          :: alt_hue_path
 
-          integer(kind=plint), dimension(size(alt_hue_path))  :: ialt_hue_path
+          integer(kind=plint), dimension(size(alt_hue_path,kind=plint))  :: ialt_hue_path
           integer(kind=plint)                        :: i
           integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
-       do i = 1_plint,size(alt_hue_path)
+       do i = 1_plint,size(alt_hue_path,kind=plint)
           ialt_hue_path(i) = convert_to_int( alt_hue_path(i) )
        enddo
-       call plscmap1laf95( type, size(intensity), intensity, coord1, coord2, coord3, a, ialt_hue_path )
+       call plscmap1laf95( type, size(intensity,kind=plint), intensity, coord1, coord2, coord3, a, ialt_hue_path )
     end subroutine plscmap1la
 
     subroutine plscmap1la2( rgbtype, intensity, coord1, coord2, coord3, a)
@@ -1629,7 +1629,7 @@ contains
           integer(kind=plint)                        :: type
 
        type = convert_to_int( rgbtype )
-       call plscmap1la2f95( type, size(intensity), intensity, coord1, coord2, coord3, a)
+       call plscmap1la2f95( type, size(intensity,kind=plint), intensity, coord1, coord2, coord3, a)
     end subroutine plscmap1la2
 
     subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump, &
@@ -1680,14 +1680,14 @@ contains
          integer(kind=plint) ifill
          ifill = convert_to_int(fill)
 
-       call plsvect1f95( arrowx, arrowy, size(arrowx), ifill )
+       call plsvect1f95( arrowx, arrowy, size(arrowx,kind=plint), ifill )
     end subroutine plsvect1
 
     subroutine plsym( x, y, code )
        integer(kind=plint)                        :: code
        real(kind=plflt), dimension(:) :: x, y
 
-       call plsymf95( size(x), x, y, code )
+       call plsymf95( size(x,kind=plint), x, y, code )
     end subroutine plsym
 
     subroutine plxormod( mode, status )

@@ -197,7 +197,7 @@
       integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), clevel(:)
 
-      call plcon07(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel))
+      call plcon07(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint))
 
       end subroutine
 
@@ -209,7 +209,7 @@
       integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:), yg(:), clevel(:)
 
-      call plcon17(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
+      call plcon17(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint),xg,yg)
 
       end subroutine
 
@@ -221,7 +221,7 @@
       integer(kind=plint) kx, lx, ky, ly
       real(kind=plflt) z(:,:), xg(:,:), yg(:,:), clevel(:)
 
-      call plcon27(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
+      call plcon27(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint),xg,yg)
 
       end subroutine
 
@@ -234,7 +234,7 @@
       real(kind=plflt) z(:,:), clevel(:)
       real(kind=plflt) tr(6)
 
-      call plcont7(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),tr)
+      call plcont7(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint),tr)
 
       end subroutine
 
@@ -247,10 +247,10 @@
       real(kind=plflt) z(:,:), clevel(:)
 
       kx = 1_plint
-      lx = size(z,1)
+      lx = size(z,1,kind=plint)
       ky = 1_plint
-      ly = size(z,2)
-      call plcon07(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel))
+      ly = size(z,2,kind=plint)
+      call plcon07(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint))
 
       end subroutine
 
@@ -263,10 +263,10 @@
       real(kind=plflt) z(:,:), xg(:), yg(:), clevel(:)
 
       kx = 1_plint
-      lx = size(z,1)
+      lx = size(z,1,kind=plint)
       ky = 1_plint
-      ly = size(z,2)
-      call plcon17(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
+      ly = size(z,2,kind=plint)
+      call plcon17(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint),xg,yg)
 
       end subroutine
 
@@ -279,10 +279,10 @@
       real(kind=plflt) z(:,:), xg(:,:), yg(:,:), clevel(:)
 
       kx = 1_plint
-      lx = size(z,1)
+      lx = size(z,1,kind=plint)
       ky = 1_plint
-      ly = size(z,2)
-      call plcon27(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),xg,yg)
+      ly = size(z,2,kind=plint)
+      call plcon27(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint),xg,yg)
 
       end subroutine
 
@@ -296,10 +296,10 @@
       real(kind=plflt) tr(6)
 
       kx = 1_plint
-      lx = size(z,1)
+      lx = size(z,1,kind=plint)
       ky = 1_plint
-      ly = size(z,2)
-      call plcont7(z,size(z,1),size(z,2),kx,lx,ky,ly,clevel,size(clevel),tr)
+      ly = size(z,2,kind=plint)
+      call plcont7(z,size(z,1,kind=plint),size(z,2,kind=plint),kx,lx,ky,ly,clevel,size(clevel,kind=plint),tr)
 
       end subroutine
 
@@ -313,7 +313,7 @@
 
       integer(kind=plint) n
 
-      n = size(x)
+      n = size(x,kind=plint)
 
       call plstrf2c(string, string1)
       s1 = transfer( string1, s1 )
@@ -331,7 +331,7 @@
 
       integer(kind=plint) n
 
-      n = size(x)
+      n = size(x,kind=plint)
 
       call plstrf2c(string, string1)
       s1 = transfer( string1, s1 )
@@ -346,7 +346,7 @@
       implicit none
       real(kind=plflt) u(:,:), v(:,:), scale
 
-      call plvec07(u,v,size(u,1),size(u,2),scale)
+      call plvec07(u,v,size(u,1,kind=plint),size(u,2,kind=plint),scale)
 
       end subroutine
 
@@ -357,7 +357,7 @@
       implicit none
       real(kind=plflt) u(:,:), v(:,:), xg(:), yg(:), scale
 
-      call plvec17(u,v,size(u,1),size(u,2),scale,xg,yg)
+      call plvec17(u,v,size(u,1,kind=plint),size(u,2,kind=plint),scale,xg,yg)
 
       end subroutine
 
@@ -369,7 +369,7 @@
       real(kind=plflt) u(:,:), v(:,:), xg(:,:), yg(:,:), &
                        scale
 
-      call plvec27(u,v,size(u,1),size(u,2),scale,xg,yg)
+      call plvec27(u,v,size(u,1,kind=plint),size(u,2,kind=plint),scale,xg,yg)
 
       end subroutine
 
@@ -381,7 +381,7 @@
       real(kind=plflt) u(:,:), v(:,:), scale
       real(kind=plflt) tr(6)
 
-      call plvect7(u,v,size(u,1),size(u,2),scale,tr)
+      call plvect7(u,v,size(u,1,kind=plint),size(u,2,kind=plint),scale,tr)
 
       end subroutine
 
@@ -404,11 +404,11 @@
 !	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
-      call plshade07(z, size(z,1), size(z,2), s1, &
+      call plshade07(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width, size(z,1))
+        min_color, min_width, max_color, max_width, size(z,1,kind=plint))
 
       end subroutine
 
@@ -432,12 +432,12 @@
 !	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
-      call plshade17(z, size(z,1), size(z,2), s1, &
+      call plshade17(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
         min_color, min_width, max_color, max_width, &
-        xg, yg, size(z,1))
+        xg, yg, size(z,1,kind=plint))
 
       end subroutine
 
@@ -461,12 +461,12 @@
 !	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
-      call plshade27(z, size(z,1), size(z,2), s1, &
+      call plshade27(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
         min_color, min_width, max_color, max_width, &
-        xg, yg, size(z,1) )
+        xg, yg, size(z,1,kind=plint) )
 
       end subroutine
 
@@ -488,11 +488,11 @@
       real(kind=plflt) tr(6)
 
       s1 = transfer( string1, s1 )
-      call plshade7(z, size(z,1), size(z,2), s1, &
+      call plshade7(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width, tr, size(z,1))
+        min_color, min_width, max_color, max_width, tr, size(z,1,kind=plint))
 
       end subroutine
 
@@ -521,10 +521,10 @@
       endif
 
       s1 = transfer( string1, s1 )
-      call plshades07(z, size(z,1), size(z,2), s1, &
+      call plshades07(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, size(clevel), fill_width, &
-        cont_color, cont_width, size(z,1), rect)
+        clevel, size(clevel,kind=plint), fill_width, &
+        cont_color, cont_width, size(z,1,kind=plint), rect)
 
       end subroutine
 
@@ -550,10 +550,10 @@
       rect = 1_plint
 
       s1 = transfer( string1, s1 )
-      call plshades17(z, size(z,1), size(z,2), s1, &
+      call plshades17(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, size(clevel), fill_width, &
-        cont_color, cont_width, xg1, yg1, size(z,1), rect)
+        clevel, size(clevel,kind=plint), fill_width, &
+        cont_color, cont_width, xg1, yg1, size(z,1,kind=plint), rect)
 
       end subroutine
 
@@ -580,10 +580,10 @@
       rect = merge( 1, 0, rectangular )
 
       s1 = transfer( string1, s1 )
-      call plshades17(z, size(z,1), size(z,2), s1, &
+      call plshades17(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, size(clevel), fill_width, &
-        cont_color, cont_width, xg1, yg1, size(z,1), rect)
+        clevel, size(clevel,kind=plint), fill_width, &
+        cont_color, cont_width, xg1, yg1, size(z,1,kind=plint), rect)
 
       end subroutine
 
@@ -609,10 +609,10 @@
       rect = 0_plint
 
       s1 = transfer( string1, s1 )
-      call plshades27(z, size(z,1), size(z,2), s1, &
+      call plshades27(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, size(clevel), fill_width, &
-        cont_color, cont_width, xg2, yg2, size(z,1), rect)
+        clevel, size(clevel,kind=plint), fill_width, &
+        cont_color, cont_width, xg2, yg2, size(z,1,kind=plint), rect)
 
       end subroutine
 
@@ -639,10 +639,10 @@
 !	call plstrf2c(dnam, string1)
 
       s1 = transfer( string1, s1 )
-      call plshades27(z, size(z,1), size(z,2), s1, &
+      call plshades27(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, size(clevel), fill_width, &
-        cont_color, cont_width, xg2, yg2, size(z,1))
+        clevel, size(clevel,kind=plint), fill_width, &
+        cont_color, cont_width, xg2, yg2, size(z,1,kind=plint))
 
       end subroutine
 
@@ -668,10 +668,10 @@
       rect = 0_plint
 
       s1 = transfer( string1, s1 )
-      call plshades7(z, size(z,1), size(z,2), s1, &
+      call plshades7(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, size(clevel), fill_width, &
-        cont_color, cont_width, tr, size(z,1), rect)
+        clevel, size(clevel,kind=plint), fill_width, &
+        cont_color, cont_width, tr, size(z,1,kind=plint), rect)
 
       end subroutine
 
@@ -698,10 +698,10 @@
       rect = merge(1, 0, rectangular)
 
       s1 = transfer( string1, s1 )
-      call plshades7(z, size(z,1), size(z,2), s1, &
+      call plshades7(z, size(z,1,kind=plint), size(z,2,kind=plint), s1, &
         xmin, xmax, ymin, ymax, &
-        clevel, size(clevel), fill_width, &
-        cont_color, cont_width, tr, size(z,1), rect)
+        clevel, size(clevel,kind=plint), fill_width, &
+        cont_color, cont_width, tr, size(z,1,kind=plint), rect)
 
       end subroutine
 
@@ -714,8 +714,8 @@
       real(kind=plflt) z(:,:)
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
 
-      call plimagefr07(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
-          valuemin,valuemax,size(z,1))
+      call plimagefr07(z,size(z,1,kind=plint),size(z,2,kind=plint),xmin,xmax,ymin,ymax,zmin,zmax, &
+          valuemin,valuemax,size(z,1,kind=plint))
 
       end subroutine
 
@@ -728,8 +728,8 @@
       real(kind=plflt) z(:,:), xg(:), yg(:)
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
 
-      call plimagefr17(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
-          valuemin,valuemax,xg,yg,size(z,1))
+      call plimagefr17(z,size(z,1,kind=plint),size(z,2,kind=plint),xmin,xmax,ymin,ymax,zmin,zmax, &
+          valuemin,valuemax,xg,yg,size(z,1,kind=plint))
 
       end subroutine
 
@@ -742,8 +742,8 @@
       real(kind=plflt) z(:,:), xg(:,:), yg(:,:)
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
 
-      call plimagefr27(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
-          valuemin,valuemax,xg,yg,size(z,1))
+      call plimagefr27(z,size(z,1,kind=plint),size(z,2,kind=plint),xmin,xmax,ymin,ymax,zmin,zmax, &
+          valuemin,valuemax,xg,yg,size(z,1,kind=plint))
 
       end subroutine
 
@@ -757,8 +757,8 @@
       real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
       real(kind=plflt) tr(6)
 
-      call plimagefr7(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
-           valuemin,valuemax,tr,size(z,1))
+      call plimagefr7(z,size(z,1,kind=plint),size(z,2,kind=plint),xmin,xmax,ymin,ymax,zmin,zmax, &
+           valuemin,valuemax,tr,size(z,1,kind=plint))
 
       end  subroutine
 
