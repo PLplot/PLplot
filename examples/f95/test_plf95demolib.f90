@@ -17,8 +17,8 @@ program test_plf95demolib
     ! - Check the length of the returned array
     ! - Check the values
     !
-    do i = 1_plint,size(start)
-        sz = size( arange( start(i), stop(i), step(i) ) )
+    do i = 1_plint,size(start,kind=plint)
+        sz = size( arange( start(i), stop(i), step(i) ),kind=plint )
         if ( sz /= expected_size(i) ) then
             write(*,*) 'Expected:', expected_size(i), ' - got: ', sz
         else

@@ -78,7 +78,7 @@ subroutine plot1()
    real(plflt), dimension(1:60) :: x, y
    real(plflt) :: xmin, xmax, ymin, ymax
 
-   x = xoff + xscale * arange(1_plint,size(x)+1) / real(size(x),plflt)
+   x = xoff + xscale * arange(1_plint,size(x,kind=plint)+1) / real(size(x,kind=plint),plflt)
    y = yoff + yscale * x ** 2_plint
 
    xmin = minval(x)
@@ -128,7 +128,7 @@ subroutine plot2()
 !   Fill up the arrays
 
 
-   x = ( arange(size(x)) - 19_plint ) / 6.0_plflt
+   x = ( arange(size(x,kind=plint)) - 19_plint ) / 6.0_plflt
    y = merge( sin(x) / x, 1.0_plflt, x /= 0.0_plflt )
 
 !   Draw the line
@@ -173,7 +173,7 @@ end subroutine plot2
    call plcol0(3_plint)
    call pllab( 'Angle (degrees)', 'sine', '#frPLplot Example 1 - Sine function' )
 
-   x = 3.6_plflt * arange(size(x))
+   x = 3.6_plflt * arange(size(x,kind=plint))
    y = sin( x * PI/180.0_plflt )
 
    call plcol0(4_plint)
