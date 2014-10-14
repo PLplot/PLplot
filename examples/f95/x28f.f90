@@ -24,11 +24,11 @@
 
    implicit none
 
-   integer(kind=plint), parameter :: XPTS = 2
-   integer(kind=plint), parameter :: YPTS = 2
-   integer(kind=plint), parameter :: NREVOLUTION = 16
-   integer(kind=plint), parameter :: NROTATION = 8
-   integer(kind=plint), parameter :: NSHEAR = 8
+   integer(kind=plint), parameter :: XPTS = 2_plint
+   integer(kind=plint), parameter :: YPTS = 2_plint
+   integer(kind=plint), parameter :: NREVOLUTION = 16_plint
+   integer(kind=plint), parameter :: NROTATION = 8_plint
+   integer(kind=plint), parameter :: NSHEAR = 8_plint
 
    real(PLFLT), dimension(:), allocatable   :: x, y
    real(PLFLT), dimension(:,:), allocatable :: z
@@ -41,13 +41,13 @@
         ysmin    = ymin + 0.1 * yrange, &
         ysmax    = ymax - 0.1 * yrange, &
         ysrange  = ysmax - ysmin, &
-        dysrot   = ysrange / ( NROTATION - 1 ), &
-        dysshear = ysrange / ( NSHEAR - 1 ), &
+        dysrot   = ysrange / ( NROTATION - 1_plint ), &
+        dysshear = ysrange / ( NSHEAR - 1_plint ), &
         zsmin    = zmin + 0.1 * zrange, &
         zsmax    = zmax - 0.1 * zrange, &
         zsrange  = zsmax - zsmin, &
-        dzsrot   = zsrange / ( NROTATION - 1 ), &
-        dzsshear = zsrange / ( NSHEAR - 1 )
+        dzsrot   = zsrange / ( NROTATION - 1_plint ), &
+        dzsshear = zsrange / ( NSHEAR - 1_plint )
    real(PLFLT) :: ys, zs, &
         x_inclination, y_inclination, z_inclination,       &
         x_shear, y_shear, z_shear,                         &
@@ -66,11 +66,11 @@
    allocate( y(YPTS) )
    allocate( z(XPTS,YPTS) )
 
-   do i = 1,XPTS
+   do i = 1_plint,XPTS
       x(i) = xmin + (i-1) * (xmax-xmin)/(XPTS-1)
    enddo
 
-   do j = 1,YPTS
+   do j = 1_plint,YPTS
       y(j) = ymin + (j-1) * (ymax-ymin)/(YPTS-1)
    enddo
 
@@ -84,19 +84,19 @@
 
    ! Page 1: Demonstrate inclination and shear capability pattern.
 
-   call pladv(0)
+   call pladv(0_plint)
    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, zmin, zmax, 20._plflt, 45._plflt)
 
-   call plcol0(2)
-   call plbox3("b",   "", xmax-xmin, 0, &
-               "b",   "", ymax-ymin, 0, &
-               "bcd", "", zmax-zmin, 0)
+   call plcol0(2_plint)
+   call plbox3("b",   "", xmax-xmin, 0_plint, &
+               "b",   "", ymax-ymin, 0_plint, &
+               "bcd", "", zmax-zmin, 0_plint)
 
    ! z = zmin.
    call plschr(0.0_plflt, 1.0_plflt)
-   do i = 1,NREVOLUTION
+   do i = 1_plint,NREVOLUTION
       omega = 2.*PI*((i-1)/dble(NREVOLUTION))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -115,7 +115,7 @@
 
    ! x = xmax.
    call plschr(0._plflt, 1.0_plflt)
-   do i = 1,NREVOLUTION
+   do i = 1_plint,NREVOLUTION
       omega = 2.*PI*((i-1)/dble(NREVOLUTION))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -134,7 +134,7 @@
 
    ! y = ymax.
    call plschr(0.0_plflt, 1.0_plflt)
-   do i = 1,NREVOLUTION
+   do i = 1_plint,NREVOLUTION
       omega = 2.*PI*(i-1)/dble(NREVOLUTION)
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -155,16 +155,16 @@
    call plmesh(x, y, z, DRAW_LINEXY)
 
    ! Page 2: Demonstrate rotation of string around its axis.
-   call pladv(0)
+   call pladv(0_plint)
    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, &
         zmin, zmax, 20._plflt, 45._plflt)
 
-   call plcol0(2)
-   call plbox3("b",   "", xmax-xmin, 0, &
-               "b",   "", ymax-ymin, 0, &
-               "bcd", "", zmax-zmin, 0)
+   call plcol0(2_plint)
+   call plbox3("b",   "", xmax-xmin, 0_plint, &
+               "b",   "", ymax-ymin, 0_plint, &
+               "bcd", "", zmax-zmin, 0_plint)
 
    ! y = ymax.
    call plschr(0.0_plflt, 1.0_plflt)
@@ -172,7 +172,7 @@
    y_inclination = 0.
    z_inclination = 0.
    x_shear = 0.
-   do i = 1,NROTATION
+   do i = 1_plint,NROTATION
       omega = 2.*PI*(i-1)/dble(NROTATION)
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -192,7 +192,7 @@
    y_inclination = -1.0
    z_inclination = 0.0
    y_shear = 0.0
-   do i = 1,NROTATION
+   do i = 1_plint,NROTATION
       omega = 2.*PI*((i-1)/dble(NROTATION))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -212,7 +212,7 @@
    y_inclination = 0.
    z_inclination = 0.
    x_shear = 0.
-   do i = 1,NROTATION
+   do i = 1_plint,NROTATION
       omega = 2.*PI*((i-1)/dble(NROTATION))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -233,16 +233,16 @@
    ! shear vector too close to axis of string. (N.B. no workaround
    ! would be domega = 0.)
    domega = 0.05
-   call pladv(0)
+   call pladv(0_plint)
    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, &
         zmin, zmax, 20._plflt, 45._plflt)
 
-   call plcol0(2)
-   call plbox3("b",   "", xmax-xmin, 0, &
-               "b",   "", ymax-ymin, 0, &
-               "bcd", "", zmax-zmin, 0)
+   call plcol0(2_plint)
+   call plbox3("b",   "", xmax-xmin, 0_plint, &
+               "b",   "", ymax-ymin, 0_plint, &
+               "bcd", "", zmax-zmin, 0_plint)
 
    ! y = ymax.
    call plschr(0.0_plflt, 1.0_plflt)
@@ -250,7 +250,7 @@
    y_inclination = 0.
    z_inclination = 0.
    y_shear = 0.
-   do i = 1,NSHEAR
+   do i = 1_plint,NSHEAR
       omega = domega + 2.*PI*((i-1)/dble(NSHEAR))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -270,7 +270,7 @@
    y_inclination = -1.
    z_inclination = 0.
    x_shear = 0.
-   do i = 1,NSHEAR
+   do i = 1_plint,NSHEAR
       omega = domega + 2.*PI*((i-1)/dble(NSHEAR))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -290,7 +290,7 @@
    y_inclination = 0.
    z_inclination = 0.
    z_shear = 0.
-   do i = 1,NSHEAR
+   do i = 1_plint,NSHEAR
       omega = domega + 2.*PI*((i-1)/dble(NSHEAR))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
@@ -307,15 +307,15 @@
    call plmesh(x, y, z, DRAW_LINEXY)
 
    ! Page 4: Demonstrate drawing a string on a 3D path.
-   call pladv(0)
+   call pladv(0_plint)
    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, zmin, zmax, 40._plflt, -30._plflt)
 
-   call plcol0(2)
-   call plbox3("b",   "", xmax-xmin, 0, &
-               "b",   "", ymax-ymin, 0, &
-               "bcd", "", zmax-zmin, 0)
+   call plcol0(2_plint)
+   call plbox3("b",   "", xmax-xmin, 0_plint, &
+               "b",   "", ymax-ymin, 0_plint, &
+               "bcd", "", zmax-zmin, 0_plint)
 
    call plschr(0.0_plflt, 1.2_plflt)
    ! domega controls the spacing between the various characters of the
@@ -326,7 +326,7 @@
    ! 3D function is a helix of the given radius and pitch
    radius = 0.5
    pitch = 1./(2.*PI)
-   do i = 1,len_trim(pstring)
+   do i = 1_plint,len_trim(pstring)
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       xpos = xmid + radius*sin_omega
@@ -355,15 +355,15 @@
    call plmesh(x, y, z, DRAW_LINEXY)
 
    ! Page 5: Demonstrate plmtex3 axis labelling capability
-   call pladv(0)
+   call pladv(0_plint)
    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, zmin, zmax, 20._plflt, 45._plflt)
 
-   call plcol0(2)
-   call plbox3("b",   "", xmax-xmin, 0, &
-               "b",   "", ymax-ymin, 0, &
-               "bcd", "", zmax-zmin, 0)
+   call plcol0(2_plint)
+   call plbox3("b",   "", xmax-xmin, 0_plint, &
+               "b",   "", ymax-ymin, 0_plint, &
+               "bcd", "", zmax-zmin, 0_plint)
 
    call plschr(0.0_plflt, 1.0_plflt)
    call plmtex3("xp", 3.0_plflt, 0.5_plflt, 0.5_plflt, "Arbitrarily displaced")

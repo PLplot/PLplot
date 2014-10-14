@@ -6,18 +6,18 @@ program test_plf95demolib
 
     real, dimension(10)   :: value
     integer(kind=plint)               :: i
-    integer(kind=plint), dimension(4) :: start = (/  0,  0,  1,  2 /), &
-                             stop  = (/ 10, 10, 11, 22 /), &
-                             step  = (/  1,  2,  1,  2 /), &
+    integer(kind=plint), dimension(4) :: start = (/  0_plint,  0_plint,  1_plint,  2_plint /), &
+                             stop  = (/ 10_plint, 10_plint, 11_plint, 22_plint /), &
+                             step  = (/  1_plint,  2_plint,  1_plint,  2_plint /), &
                              expected_size = &
-                                     (/ 10,  5, 10, 10 /)
+                                     (/ 10_plint,  5_plint, 10_plint, 10_plint /)
     integer(kind=plint)               :: sz
 
     ! Function arange:
     ! - Check the length of the returned array
     ! - Check the values
     !
-    do i = 1,size(start)
+    do i = 1_plint,size(start)
         sz = size( arange( start(i), stop(i), step(i) ) )
         if ( sz /= expected_size(i) ) then
             write(*,*) 'Expected:', expected_size(i), ' - got: ', sz

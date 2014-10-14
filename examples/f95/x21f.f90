@@ -28,15 +28,15 @@
 
       integer(kind=plint) pts, xp, yp, nl, knn_order, randn, rosen
       real(kind=plflt) threshold, wmin
-      parameter (pts = 500)
-      parameter (xp = 25)
-      parameter (yp = 20)
-      parameter (nl = 16)
-      parameter (knn_order = 20)
+      parameter (pts = 500_plint)
+      parameter (xp = 25_plint)
+      parameter (yp = 20_plint)
+      parameter (nl = 16_plint)
+      parameter (knn_order = 20_plint)
       parameter (threshold = 1.001_plflt)
       parameter (wmin = -1e3_plflt)
-      parameter (randn = 0)
-      parameter (rosen = 0)
+      parameter (randn = 0_plint)
+      parameter (rosen = 0_plint)
 
       real(kind=plflt) xmin, xmax, ymin, ymax
 
@@ -45,7 +45,7 @@
       real(kind=plflt) zmin, zmax, lzmin, lzmax
       integer(kind=plint) i, j, k
       integer(kind=plint) alg
-      character(len=80) title(6)
+      character(len=80) title(6_plint)
       data title /'Cubic Spline Approximation', &
                  'Delaunay Linear Interpolation', &
                  'Natural Neighbors Interpolation', &
@@ -53,7 +53,7 @@
                  '3NN Linear Interpolation', &
                  '4NN Around Inv. Dist. Weighted'/
 
-      real(kind=plflt) opt(6)
+      real(kind=plflt) opt(6_plint)
       data opt /0._plflt, 0._plflt, 0._plflt, 0._plflt, 0._plflt, 0._plflt/
 
       real(kind=plflt) xt, yt
@@ -72,9 +72,9 @@
 !      call plMergeOpts(options, "x21c options", NULL);
       call plparseopts(PL_PARSE_FULL)
 
-      opt(3) = wmin
-      opt(4) = dble(knn_order)
-      opt(5) = threshold
+      opt(3_plint) = wmin
+      opt(4_plint) = dble(knn_order)
+      opt(5_plint) = threshold
 
 ! Initialize plplot
 
@@ -82,7 +82,7 @@
 
       call cmap1_init
 
-      call plseed(5489)
+      call plseed(5489_plint)
 
       do i=1,pts
          xt = (xmax-xmin)*plrandd()
@@ -102,8 +102,8 @@
          endif
       enddo
 
-      zmin = z(1)
-      zmax = z(1)
+      zmin = z(1_plint)
+      zmax = z(1_plint)
       do i=2,pts
          zmax = max(zmax,z(i))
          zmin = min(zmin,z(i))
@@ -116,9 +116,9 @@
          yg(i) = ymin + (ymax-ymin)*(i-1._plflt)/(yp-1._plflt)
       enddo
 
-      call plcol0(1)
-      call plenv(xmin, xmax, ymin, ymax, 2, 0)
-      call plcol0(15)
+      call plcol0(1_plint)
+      call plenv(xmin, xmax, ymin, ymax, 2_plint, 0_plint)
+      call plcol0(15_plint)
       call pllab("X", "Y", "The original data sampling")
       do i=1,pts
          call plcol1( ( z(i) - zmin ) / ( zmax - zmin ) )
@@ -135,12 +135,12 @@
 !     reasonable results for both Hershey and Unicode devices.
         call plstring( x(i:i), y(i:i), '#(727)' );
       enddo
-      call pladv(0)
+      call pladv(0_plint)
 
-      call plssub(3,2)
+      call plssub(3_plint,2_plint)
 
       do k=1,2
-         call pladv(0)
+         call pladv(0_plint)
          do alg=1,6
 
             call plgriddata(x, y, z, xg, yg, zg, alg, opt(alg))
@@ -172,7 +172,7 @@
                            do while ((jj.le.j+1).and.(jj.le.yp))
                               if ((ii.ge.1) .and. (jj.ge.1) .and. &
                                    (.not.myisnan(zg(ii,jj))) ) then
-                                 if (abs(ii-i) + abs(jj-j) .eq. 1) then
+                                 if (abs(ii-i) + abs(jj-j) .eq. 1_plint) then
                                     d = 1._plflt
                                  else
                                     d = 1.4142_plflt
@@ -202,7 +202,7 @@
             lzmin = lzmin - 0.01_plflt
             lzmax = lzmax + 0.01_plflt
 
-            call plcol0(1)
+            call plcol0(1_plint)
             call pladv(alg)
 
             if (k.eq.1) then
@@ -210,15 +210,15 @@
                do i=1,nl
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
                enddo
-               call plenv0(xmin, xmax, ymin, ymax, 2, 0)
-               call plcol0(15)
+               call plenv0(xmin, xmax, ymin, ymax, 2_plint, 0_plint)
+               call plcol0(15_plint)
                call pllab("X", "Y", title(alg))
                call plshades(zg, defined, xmin, xmax, ymin, &
-                    ymax, clev, 1._plflt, 0, 1._plflt)
-               call plcol0(2)
+                    ymax, clev, 1._plflt, 0_plint, 1._plflt)
+               call plcol0(2_plint)
             else
 
-               do i = 1,nl
+               do i = 1_plint,nl
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
                enddo
                call plvpor(0._plflt, 1._plflt, 0._plflt, 0.9_plflt)
@@ -233,10 +233,10 @@
 
                call plw3d(1._plflt, 1._plflt, 1._plflt, xmin, xmax, ymin, ymax,  &
                     lzmin, lzmax, 30._plflt, -40._plflt)
-               call plbox3("bntu", "X", 0._plflt, 0, &
-                   "bntu", "Y", 0._plflt, 0, &
-                   "bcdfntu", "Z", 0.5_plflt, 0)
-               call plcol0(15)
+               call plbox3("bntu", "X", 0._plflt, 0_plint, &
+                   "bntu", "Y", 0._plflt, 0_plint, &
+                   "bcdfntu", "Z", 0.5_plflt, 0_plint)
+               call plcol0(15_plint)
                call pllab("", "", title(alg))
                call plot3dc(xg, yg, zg, ior(ior(DRAW_LINEXY, &
                    MAG_COLOR), BASE_CONT), clev)
@@ -251,21 +251,21 @@
       subroutine cmap1_init
         use plplot
         implicit none
-        real(kind=plflt) i(2), h(2), l(2), s(2)
+        real(kind=plflt) i(2_plint), h(2_plint), l(2_plint), s(2_plint)
 
-        i(1) = 0._plflt
-        i(2) = 1._plflt
+        i(1_plint) = 0._plflt
+        i(2_plint) = 1._plflt
 
-        h(1) = 240._plflt
-        h(2) = 0._plflt
+        h(1_plint) = 240._plflt
+        h(2_plint) = 0._plflt
 
-        l(1) = 0.6_plflt
-        l(2) = 0.6_plflt
+        l(1_plint) = 0.6_plflt
+        l(2_plint) = 0.6_plflt
 
-        s(1) = 0.8_plflt
-        s(2) = 0.8_plflt
+        s(1_plint) = 0.8_plflt
+        s(2_plint) = 0.8_plflt
 
-        call plscmap1n(256)
+        call plscmap1n(256_plint)
         call plscmap1l(.false., i, h, l, s)
       end subroutine cmap1_init
 
@@ -281,10 +281,10 @@
         integer(kind=plint)   i, j, nx, ny, xdim
         real(kind=plflt) f(xdim, ny), fmin, fmax
 
-        fmax = f(1, 1)
+        fmax = f(1_plint, 1_plint)
         fmin = fmax
-        do j = 1, ny
-           do  i = 1, nx
+        do j = 1_plint, ny
+           do  i = 1_plint, nx
               fmax = max(fmax, f(i, j))
               fmin = min(fmin, f(i, j))
            enddo

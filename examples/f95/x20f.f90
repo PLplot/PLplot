@@ -71,7 +71,7 @@
 
       implicit none
 
-      integer(kind=plint), parameter          :: XDIM = 260, YDIM = 220
+      integer(kind=plint), parameter          :: XDIM = 260_plint, YDIM = 220_plint
       real(kind=plflt), parameter :: XDIMR = XDIM, YDIMR = YDIM
 
       real(kind=plflt) ::  x(XDIM), y(YDIM), z(XDIM,YDIM), r(XDIM,YDIM)
@@ -123,21 +123,21 @@
 
 !     View image border pixels
       if (dbg) then
-          call plenv(1._plflt, XDIMR, 1._plflt, YDIMR, 1, 1)
+          call plenv(1._plflt, XDIMR, 1._plflt, YDIMR, 1_plint, 1_plint)
 
           z = 0.0_plflt
 
 !         Build a one pixel square border, for diagnostics
-          do i = 1,XDIM
+          do i = 1_plint,XDIM
 !             Right
               z(i,YDIM) = 1._plflt
 !             Left
-              z(i,1)    = 1._plflt
+              z(i,1_plint)    = 1._plflt
           enddo
 
-          do i = 1,YDIM
+          do i = 1_plint,YDIM
 !             Top
-              z(1,i)    = 1._plflt
+              z(1_plint,i)    = 1._plflt
 !             Bottom
               z(XDIM,i) = 1._plflt
           enddo
@@ -152,8 +152,8 @@
 !     Sombrero-like demo
       if (.not. nosombrero) then
 !         draw a yellow plot box, useful for diagnostics! :(
-          call plcol0(2)
-          call plenv(0._plflt, 2._plflt*M_PI, 0.0_plflt, 3._plflt*M_PI, 1, -1)
+          call plcol0(2_plint)
+          call plenv(0._plflt, 2._plflt*M_PI, 0.0_plflt, 3._plflt*M_PI, 1_plint, -1)
 
           do i=1,XDIM
               x(i) = dble(i-1)*2._plflt*M_PI/dble(XDIM-1)
@@ -201,7 +201,7 @@
 !     Display Lena
       width_r  = dble(width)
       height_r = dble(height)
-      call plenv(1._plflt, width_r, 1._plflt, height_r, 1, -1)
+      call plenv(1._plflt, width_r, 1._plflt, height_r, 1_plint, -1)
 
       if (.not. nointeractive) then
           call pllab('Set and drag Button 1 to (re)set selection, Butto'// &
@@ -241,7 +241,7 @@
 !
 
           call plspause(.false.)
-          call pladv(0)
+          call pladv(0_plint)
 
 !         Display selection only
           call plimage(img_f, 1._plflt, width_r, 1._plflt, &
@@ -250,7 +250,7 @@
           call plspause(.true.)
 
 !         Zoom in selection
-          call plenv(xi, xe, ye, yi, 1, -1)
+          call plenv(xi, xe, ye, yi, 1_plint, -1)
           call plimage(img_f, 1._plflt, width_r, 1._plflt, &
               height_r, 0._plflt, 0._plflt, xi, xe, ye, yi)
       endif
@@ -259,8 +259,8 @@
 
       call a2mnmx(img_f,width,height,img_min,img_max,width)
 
-      call plcol0(2)
-      call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+      call plcol0(2_plint)
+      call plenv(0._plflt, width_r, 0._plflt, height_r, 1_plint, -1)
       call pllab("", "", "Reduced dynamic range image example")
       call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
            height_r, 0._plflt, 0._plflt, img_min + img_max * 0.25_plflt, &
@@ -268,7 +268,7 @@
 
 !     Draw a distorted version of the original image, showing its
 !     full dynamic range.
-      call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+      call plenv(0._plflt, width_r, 0._plflt, height_r, 1_plint, -1)
       call pllab("", "", "Distorted image example")
 
 !     Populate the 2-d grids used for the distortion
@@ -307,9 +307,9 @@
       integer(kind=plint)     ierr
 
       open( 10, file = '_x20f_.bin', access = 'direct', recl = 1 )
-      do i = 1,8
-          write( 10, rec = 1, iostat = ierr ) string(1:i)
-          if ( ierr /= 0 ) exit
+      do i = 1_plint,8_plint
+          write( 10, rec = 1_plint, iostat = ierr ) string(1:i)
+          if ( ierr /= 0_plint ) exit
           bytes = i
       enddo
 
@@ -334,8 +334,8 @@
       integer(kind=plint) ::  count
       integer(kind=plint) ::  record
 
-      integer(kind=plint) ::  bytes = 0
-      integer(kind=plint) ::  lastlf = 0
+      integer(kind=plint) ::  bytes = 0_plint
+      integer(kind=plint) ::  lastlf = 0_plint
       integer(kind=plint) ::  first
       integer(kind=plint) ::  last
       integer(kind=plint) ::  pixel
@@ -344,7 +344,7 @@
 
       open( 10, file = fname, status = 'old', iostat = ierr )
 
-      if (ierr .ne. 0 ) then
+      if (ierr .ne. 0_plint ) then
           read_img = .false.
           return
       endif
@@ -352,34 +352,34 @@
 !
 !     Read the first lines (count them for later re-reading)
 !
-      count = 1
-      read( 10, '(a)', iostat = ierr ) ver(1)
+      count = 1_plint
+      read( 10, '(a)', iostat = ierr ) ver(1_plint)
 
 !     I only understand "P5"!
-      if (ver(1) .ne. 'P5' .or. ierr .ne. 0) then
+      if (ver(1_plint) .ne. 'P5' .or. ierr .ne. 0_plint) then
           read_img = .false.
           return
       endif
 
       do
-          count = count + 1
-          read( 10, '(a)', iostat = ierr ) ver(1)
+          count = count + 1_plint
+          read( 10, '(a)', iostat = ierr ) ver(1_plint)
 
-          if (ierr .ne. 0) then
+          if (ierr .ne. 0_plint) then
               read_img = .false.
               write(*,*) 'Error!'
               return
           endif
 
-          if (ver(1)(1:1) .ne. '#' ) then
+          if (ver(1_plint)(1:1) .ne. '#' ) then
               exit
           endif
       enddo
 
 !     Found the line with the sizes, copy this one and the next
 
-      count = count + 1
-      read( 10, '(a)', iostat = ierr ) ver(2)
+      count = count + 1_plint
+      read( 10, '(a)', iostat = ierr ) ver(2_plint)
 
       read( ver, * ) w, h, num_col
 
@@ -400,22 +400,22 @@
 !
       call bytes_in_rec( bytes )
 
-      open( 10, file = fname, access = 'direct', recl = 1 )
+      open( 10, file = fname, access = 'direct', recl = 1_plint )
 
-      record = 0
-      do while ( count > 0 )
+      record = 0_plint
+      do while ( count > 0_plint )
 !
 !     Look for the end of the line with sizes
 !
-          record = record + 1
-          read( 10, rec = record, iostat = ierr ) (img(i), i = 1,bytes )
-          if ( ierr .ne. 0 ) then
+          record = record + 1_plint
+          read( 10, rec = record, iostat = ierr ) (img(i), i = 1_plint,bytes )
+          if ( ierr .ne. 0_plint ) then
              exit
           endif
 
-          do i = 1,bytes
-              if ( img(i) == char(10) ) then
-                  count  = count - 1
+          do i = 1_plint,bytes
+              if ( img(i) == char(10_plint) ) then
+                  count  = count - 1_plint
                   lastlf = i
               endif
           enddo
@@ -426,23 +426,23 @@
 !     The picture needs to be flipped vertically.
 !     So do that rightaway
 !
-      first = lastlf + 1
+      first = lastlf + 1_plint
       last  = bytes
-      pixel = 0
+      pixel = 0_plint
 
       do
           do b = first, last
-              pixel = pixel + 1
+              pixel = pixel + 1_plint
               if ( pixel <= h*w ) then
-                  i     = 1 + mod(pixel-1,w)
-                  j     = 1 + (pixel-1)/w
+                  i     = 1_plint + mod(pixel-1,w)
+                  j     = 1_plint + (pixel-1)/w
                   img_f(i,h-j+1) = dble(ichar(img(b)))
               endif
           enddo
           if ( pixel < h*w ) then
-              record = record + 1
-              read( 10, rec = record ) (img(b), b = 1,bytes )
-              first  = 1
+              record = record + 1_plint
+              read( 10, rec = record ) (img(b), b = 1_plint,bytes )
+              first  = 1_plint
           else
               exit
           endif
@@ -489,7 +489,7 @@
       type(PLGraphicsIn) :: gin
       real(kind=plflt) :: xxi, yyi, xxe, yye, t
       logical st, start
-      real(kind=plflt) sx(5), sy(5)
+      real(kind=plflt) sx(5_plint), sy(5_plint)
 
       integer(kind=plint) PLK_Return
       data PLK_Return / Z'0D' /
@@ -513,7 +513,7 @@
             call plgetcursor(gin)
             call plxormod(.true., st)
 
-            if (gin%button .eq. 1) then
+            if (gin%button .eq. 1_plint) then
                xxi = gin%wX
                yyi = gin%wY
                if (start) then
@@ -523,10 +523,10 @@
 
                start = .false.
 
-               sx(1) = xxi
-               sy(1) = yyi
-               sx(5) = xxi
-               sy(5) = yyi
+               sx(1_plint) = xxi
+               sy(1_plint) = yyi
+               sx(5_plint) = xxi
+               sy(5_plint) = yyi
             endif
 
             if (iand(gin%state,hex100).ne.0) then
@@ -538,26 +538,25 @@
                endif
                start = .true.
 
-               sx(3) = xxe
-               sy(3) = yye
-               sx(2) = xxe
-               sy(2) = yyi
-               sx(4) = xxi
-               sy(4) = yye
+               sx(3_plint) = xxe
+               sy(3_plint) = yye
+               sx(2_plint) = xxe
+               sy(2_plint) = yyi
+               sx(4_plint) = xxi
+               sy(4_plint) = yye
 !              Draw new rectangle
                call plline(sx, sy)
             endif
 
-            if ((gin%button .eq. 3).or.(gin%keysym .eq. PLK_Return).or.(gin%keysym .eq. ichar('Q'))) then
+            if ((gin%button .eq. 3_plint).or.(gin%keysym .eq. PLK_Return).or.(gin%keysym .eq. ichar('Q'))) then
                if (start) then
 !                 Clear previous rectangle
                   call plline(sx, sy)
-                  goto 110
+                  exit
                endif
             endif
          enddo
 
-  110     continue
 !         Leave xor mode
           call plxormod(.false., st)
 
@@ -592,20 +591,20 @@
       subroutine gray_cmap(num_col)
 
       integer(kind=plint) num_col
-      real(kind=plflt) r(2), g(2), b(2), pos(2)
-      logical rev(2)
+      real(kind=plflt) r(2_plint), g(2_plint), b(2_plint), pos(2_plint)
+      logical rev(2_plint)
 
-      r(1) = 0.0
-      g(1) = 0.0
-      b(1) = 0.0
-      r(2) = 1.0
-      g(2) = 1.0
-      b(2) = 1.0
+      r(1_plint) = 0.0
+      g(1_plint) = 0.0
+      b(1_plint) = 0.0
+      r(2_plint) = 1.0
+      g(2_plint) = 1.0
+      b(2_plint) = 1.0
 
-      pos(1) = 0.0
-      pos(2) = 1.0
-      rev(1) = .false.
-      rev(2) = .false.
+      pos(1_plint) = 0.0
+      pos(2_plint) = 1.0
+      rev(1_plint) = .false.
+      rev(2_plint) = .false.
 
       call plscmap1n(num_col)
       call plscmap1l(.true., pos, r, g, b, rev)
@@ -625,10 +624,10 @@
       integer(kind=plint)   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
-      fmax = f(1, 1)
+      fmax = f(1_plint, 1_plint)
       fmin = fmax
-      do j = 1, ny
-        do  i = 1, nx
+      do j = 1_plint, ny
+        do  i = 1_plint, nx
           fmax = max(fmax, f(i, j))
           fmin = min(fmin, f(i, j))
         enddo

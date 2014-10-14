@@ -30,9 +30,9 @@ program x30f95
   real(kind=plflt), dimension (2) :: pos, rcoord, gcoord, bcoord, acoord
   logical, dimension(2) :: rev
 
-  data red   / 0, 255, 0, 0 /
-  data green / 0, 0, 255, 0 /
-  data blue  / 0, 0, 0, 255 /
+  data red   / 0_plint, 255_plint, 0_plint, 0_plint /
+  data green / 0_plint, 0_plint, 255_plint, 0_plint /
+  data blue  / 0_plint, 0_plint, 0_plint, 255_plint /
   data alpha / 1.0_plflt, 1.0_plflt, 1.0_plflt, 1.0_plflt /
   data px / 0.1_plflt, 0.5_plflt, 0.5_plflt, 0.1_plflt /
   data py / 0.1_plflt, 0.1_plflt, 0.5_plflt, 0.5_plflt /
@@ -51,7 +51,7 @@ program x30f95
 
   call plinit()
 
-  call plscmap0n(4)
+  call plscmap0n(4_plint)
 
   call plscmap0a (red, green, blue, alpha)
 
@@ -63,15 +63,15 @@ program x30f95
   !
 
   ! Set up the window
-  call pladv (0)
+  call pladv (0_plint)
   call plvpor (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
   call plwind (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-  call plcol0 (0)
-  call plbox ("", 1.0_plflt, 0, "", 1.0_plflt, 0)
+  call plcol0 (0_plint)
+  call plbox ("", 1.0_plflt, 0_plint, "", 1.0_plflt, 0_plint)
 
   ! Draw the boxes 
-  do i = 1,9
-     icol = mod(i-1,3) + 1
+  do i = 1_plint,9
+     icol = mod(i-1,3_plint) + 1_plint
 
      ! Get a color, change its transparency and 
      ! set it as the current color.
@@ -83,7 +83,7 @@ program x30f95
      call plfill (px, py)
 
      ! Shift the rectangles coordinates
-     do j = 1,4
+     do j = 1_plint,4
         px(j) = px(j) + 0.5_plflt/9.0_plflt
         py(j) = py(j) + 0.5_plflt/9.0_plflt
      enddo
@@ -98,51 +98,51 @@ program x30f95
   ! 
 
   ! Set up the window
-  call pladv(0)
+  call pladv(0_plint)
   call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
   call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
 
-  ! Draw the boxes. There are 25 of them drawn on a 5 x 5 grid.
-  do i = 1,5
+  ! Draw the boxes. There are 25_plint of them drawn on a 5_plint x 5_plint grid.
+  do i = 1_plint,5
      ! Set box X position
-     px(1) = 0.05_plflt + 0.2_plflt * dble(i-1)
-     px(2) = px(1) + 0.1_plflt
-     px(3) = px(2)
-     px(4) = px(1)
+     px(1_plint) = 0.05_plflt + 0.2_plflt * dble(i-1)
+     px(2_plint) = px(1_plint) + 0.1_plflt
+     px(3_plint) = px(2_plint)
+     px(4_plint) = px(1_plint)
 
      ! We don't want the boxes to be transparent, so since we changed
      ! the colors transparencies in the first example we have to change
      ! the transparencies back to completely opaque.
-     icol = mod(i-1,3) + 1
+     icol = mod(i-1,3_plint) + 1_plint
      call plgcol0a (icol, r, g, b, a)
      call plscol0a (icol, r, g, b, 1.0_plflt)
      call plcol0 (icol)
-     do j = 1, 5
+     do j = 1_plint, 5_plint
         ! Set box y position and draw the box.
-        py(1) = 0.05_plflt + 0.2_plflt * dble(j-1)
-        py(2) = py(1)
-        py(3) = py(1) + 0.1_plflt
-        py(4) = py(3)
+        py(1_plint) = 0.05_plflt + 0.2_plflt * dble(j-1)
+        py(2_plint) = py(1_plint)
+        py(3_plint) = py(1_plint) + 0.1_plflt
+        py(4_plint) = py(3_plint)
         call plfill(px, py)
      enddo
   enddo
 
-  ! Create the color map with 128 colors and call plscmap1la to initialize
+  ! Create the color map with 128_plint colors and call plscmap1la to initialize
   ! the color values with a linearly varying red transparency (or alpha)
-  call plscmap1n(128)
+  call plscmap1n(128_plint)
   call plscmap1la(.true., pos, rcoord, gcoord, bcoord, acoord, rev)
 
   ! Use that cmap1 to create a transparent red gradient for the whole
   ! window.
-  px(1) = 0._plflt
-  px(2) = 1._plflt
-  px(3) = 1._plflt
-  px(4) = 0._plflt
+  px(1_plint) = 0._plflt
+  px(2_plint) = 1._plflt
+  px(3_plint) = 1._plflt
+  px(4_plint) = 0._plflt
 
-  py(1) = 0._plflt
-  py(2) = 0._plflt
-  py(3) = 1._plflt
-  py(4) = 1._plflt
+  py(1_plint) = 0._plflt
+  py(2_plint) = 0._plflt
+  py(3_plint) = 1._plflt
+  py(4_plint) = 1._plflt
 
   call plgradient( px, py, 90._plflt )
   call plend()

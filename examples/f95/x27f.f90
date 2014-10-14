@@ -36,14 +36,14 @@ program x27f
 
   integer(kind=plint) i, j, fill
 
-  real(kind=plflt) params(4,9)
+  real(kind=plflt) params(4_plint,9_plint)
 
   ! R, r, p, N
   ! R and r should be integers to give correct termination of the
   ! angle loop using gcd.
   ! N.B. N is just a place holder since it is no longer used
   ! (because we now have proper termination of the angle loop).
-  data ( ( params(i,j) ,i=1,4) ,j=1,9 ) / &
+  data ( ( params(i,j) ,i=1,4_plint) ,j=1,9_plint ) / &
     21.0_plflt,  7.0_plflt,  7.0_plflt,  3.0_plflt, &
     21.0_plflt,  7.0_plflt, 10.0_plflt,  3.0_plflt, &
     21.0_plflt, -7.0_plflt, 10.0_plflt,  3.0_plflt, &
@@ -71,32 +71,32 @@ program x27f
   !  Loop over the various curves
   !  First an overview, then all curves one by one
 
-  call plssub(3, 3)
+  call plssub(3_plint, 3_plint)
 
-  fill = 0
-  do i = 1,9
-     call pladv(0)
+  fill = 0_plint
+  do i = 1_plint,9
+     call pladv(0_plint)
      call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-     call spiro( params(1,i), fill )
+     call spiro( params(1_plint,i), fill )
   end do
-  call pladv(0)
-  call plssub(1, 1)
+  call pladv(0_plint)
+  call plssub(1_plint, 1_plint)
 
-  do i = 1,9
-     call pladv(0)
+  do i = 1_plint,9
+     call pladv(0_plint)
      call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-     call spiro( params(1,i), fill )
+     call spiro( params(1_plint,i), fill )
   end do
 
   ! fill the curves.
-  fill = 1
-  call pladv(0)
-  call plssub(1, 1)
+  fill = 1_plint
+  call pladv(0_plint)
+  call plssub(1_plint, 1_plint)
 
-  do i = 1,9
-     call pladv(0)
+  do i = 1_plint,9
+     call pladv(0_plint)
      call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-     call spiro( params(1,i), fill )
+     call spiro( params(1_plint,i), fill )
   end do
 
   ! Finally, an example to test out plarc capabilities
@@ -116,7 +116,7 @@ integer(kind=plint) function gcd (a,  b)
   integer(kind=plint) a, b, t
   a = abs(a)
   b = abs(b)
-  do while ( b .ne. 0 )
+  do while ( b .ne. 0_plint )
      t = b
      b = mod (a, b)
      a = t
@@ -141,7 +141,7 @@ subroutine spiro( params, fill )
 
   real(kind=plflt)      params(*)
   integer(kind=plint)     NPNT
-  parameter ( NPNT = 2000 )
+  parameter ( NPNT = 2000_plint )
   integer(kind=plint)     n
   real(kind=plflt)      xcoord(NPNT+1)
   real(kind=plflt)      ycoord(NPNT+1)
@@ -166,7 +166,7 @@ subroutine spiro( params, fill )
   ! Proper termination of the angle loop very near the beginning
   ! point, see
   ! http://mathforum.org/mathimages/index.php/Hypotrochoid.
-  windings = int(abs(params(2))/gcd(int(params(1)), int(params(2))))
+  windings = int(abs(params(2_plint))/gcd(int(params(1_plint)), int(params(2_plint))))
   steps    = NPNT/windings
   dphi     = 2.0_plflt*PL_PI/dble(steps)
 
@@ -178,17 +178,17 @@ subroutine spiro( params, fill )
   ymin = 0.0
   ymax = 0.0
 
-  do i = 1,n
+  do i = 1_plint,n
      phi       = dble(i-1) * dphi
-     phiw      = (params(1)-params(2))/params(2)*phi
-     xcoord(i) = (params(1)-params(2))*cos(phi)+params(3)*cos(phiw)
-     ycoord(i) = (params(1)-params(2))*sin(phi)-params(3)*sin(phiw)
+     phiw      = (params(1_plint)-params(2_plint))/params(2_plint)*phi
+     xcoord(i) = (params(1_plint)-params(2_plint))*cos(phi)+params(3_plint)*cos(phiw)
+     ycoord(i) = (params(1_plint)-params(2_plint))*sin(phi)-params(3_plint)*sin(phiw)
 
      if (i.eq.1) then
-        xmin = xcoord(1)
-        xmax = xcoord(1)
-        ymin = ycoord(1)
-        ymax = ycoord(1)
+        xmin = xcoord(1_plint)
+        xmax = xcoord(1_plint)
+        ymin = ycoord(1_plint)
+        ymax = ycoord(1_plint)
      endif
      if ( xmin > xcoord(i) ) xmin = xcoord(i)
      if ( xmax < xcoord(i) ) xmax = xcoord(i)
@@ -205,7 +205,7 @@ subroutine spiro( params, fill )
 
   call plwind( xmin, xmax, ymin, ymax )
 
-  call plcol0(1)
+  call plcol0(1_plint)
   if ( fill.eq.1) then
      call plfill(xcoord(1:n), ycoord(1:n) )
   else
@@ -222,20 +222,20 @@ subroutine arcs( )
   implicit none
 
   integer(kind=plint) NSEG
-  parameter ( NSEG = 8 )
+  parameter ( NSEG = 8_plint )
   integer(kind=plint) i;
   real (kind=plflt) theta, dtheta
   real (kind=plflt) a, b
 
   theta = 0.0_plflt
   dtheta = 360.0_plflt / dble(NSEG)
-  call plenv( -10.0_plflt, 10.0_plflt, -10.0_plflt, 10.0_plflt, 1, 0 )
+  call plenv( -10.0_plflt, 10.0_plflt, -10.0_plflt, 10.0_plflt, 1_plint, 0_plint )
 
   ! Plot segments of circle in different colors
-  do i = 0, NSEG-1
-     call plcol0( mod(i,2) + 1 )
+  do i = 0_plint, NSEG-1
+     call plcol0( mod(i,2_plint) + 1_plint )
      call plarc(0.0_plflt, 0.0_plflt, 8.0_plflt, 8.0_plflt, theta, &
-          theta + dtheta, 0.0_plflt, 0)
+          theta + dtheta, 0.0_plflt, 0_plint)
      theta = theta + dtheta
   enddo
   
@@ -244,8 +244,8 @@ subroutine arcs( )
   a = 3.0_plflt
   b = a * tan( (dtheta/180.0_plflt*PL_PI)/2.0_plflt )
   theta = dtheta/2.0_plflt
-  do i = 0, NSEG-1 
-     call plcol0( 2 - mod(i,2) )
+  do i = 0_plint, NSEG-1 
+     call plcol0( 2_plint - mod(i,2_plint) )
      call plarc( a*cos(theta/180.0_plflt*PL_PI), &
           a*sin(theta/180.0_plflt*PL_PI), &
           a, b, 0.0_plflt, 360.0_plflt, theta, .true.)

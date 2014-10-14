@@ -23,7 +23,7 @@ program x04f95
     use plf95demolib
     implicit none
 
-    integer(kind=plint), parameter :: NPTS = 2047
+    integer(kind=plint), parameter :: NPTS = 2047_plint
     real(kind=plflt) :: data(NPTS), delta
 
 !   Process command-line arguments
@@ -34,11 +34,11 @@ program x04f95
 
 !   Fill up data points
     delta = 2.0_plflt * PI / dble (NPTS)
-    data = sin(delta*arange(0, NPTS))
+    data = sin(delta*arange(0_plint, NPTS))
 
-    call plcol0(1)
-    call plhist(data, -1.1_plflt, 1.1_plflt, 44, 0)
-    call plcol0(2)
+    call plcol0(1_plint)
+    call plhist(data, -1.1_plflt, 1.1_plflt, 44_plint, 0_plint)
+    call plcol0(2_plint)
     call pllab('#frValue','#frFrequency', &
       '#frPLplot Example 5 - Probability function of Oscillator')
 

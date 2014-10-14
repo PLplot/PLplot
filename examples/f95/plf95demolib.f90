@@ -51,7 +51,7 @@ function arange_plflt_2( start, stop )
 
     real(kind=plflt), dimension((stop-start)) :: arange_plflt_2
 
-    arange_plflt_2 = arange_plflt_1( start, stop, 1 )
+    arange_plflt_2 = arange_plflt_1( start, stop, 1_plint )
 end function arange_plflt_2
 
 function arange_plflt_3( stop )
@@ -59,7 +59,7 @@ function arange_plflt_3( stop )
 
     real(kind=plflt), dimension(stop-1) :: arange_plflt_3
 
-    arange_plflt_3 = arange_plflt_1( 0, stop, 1 )
+    arange_plflt_3 = arange_plflt_1( 0_plint, stop, 1_plint )
 end function arange_plflt_3
 
 end module plf95demolib

@@ -48,25 +48,25 @@ program x24f
   implicit none
   
   integer(kind=plint) i, j
-  integer(kind=plint) red(7)
-  integer(kind=plint) green(7)
-  integer(kind=plint) blue(7)
+  integer(kind=plint) red(7_plint)
+  integer(kind=plint) green(7_plint)
+  integer(kind=plint) blue(7_plint)
   
-  real(kind=plflt)  px(4)
-  real(kind=plflt)  py(4)
-  real(kind=plflt)  sx(12)
-  real(kind=plflt)  sy(12)
+  real(kind=plflt)  px(4_plint)
+  real(kind=plflt)  py(4_plint)
+  real(kind=plflt)  sx(12_plint)
+  real(kind=plflt)  sy(12_plint)
   
-  character(len=30) peace(12)
+  character(len=30) peace(12_plint)
   
-  data (red(i) ,i=1,7)   / 240, 204, 204, 204,   0,  39, 125 /
-  data (green(i) ,i=1,7) / 240,   0, 125, 204, 204,  80,   0 /
-  data (blue(i) ,i=1,7)  / 240,   0,   0,   0,   0, 204, 125 /
+  data (red(i) ,i=1,7_plint)   / 240_plint, 204_plint, 204_plint, 204_plint,   0_plint,  39_plint, 125_plint /
+  data (green(i) ,i=1,7_plint) / 240_plint,   0_plint, 125_plint, 204_plint, 204_plint,  80_plint,   0_plint /
+  data (blue(i) ,i=1,7_plint)  / 240_plint,   0_plint,   0_plint,   0_plint,   0_plint, 204_plint, 125_plint /
   
-  data (px(i) ,i=1,4) / 0.0d0, 0.0d0, 1.0d0, 1.0d0 /
-  data (py(i) ,i=1,4) / 0.0d0, 0.25d0, 0.25d0, 0.0d0 /
+  data (px(i) ,i=1,4_plint) / 0.0d0, 0.0d0, 1.0d0, 1.0d0 /
+  data (py(i) ,i=1,4_plint) / 0.0d0, 0.25d0, 0.25d0, 0.0d0 /
   
-  data (sx(i) ,i=1,12) / &
+  data (sx(i) ,i=1,12_plint) / &
        0.16374, &
        0.15844, &
        0.15255, &
@@ -81,7 +81,7 @@ program x24f
        0.82647/
 
 
-  data (sy(i) ,i=1,12) / &
+  data (sy(i) ,i=1,12_plint) / &
        0.125, &
        0.375, &
        0.625, &
@@ -99,69 +99,69 @@ program x24f
   !  Taken from http://www.columbia.edu/~fdc/pace/
 
   !  Mandarin
-  peace(1) = '#<0x00>和平'
+  peace(1_plint) = '#<0x00>和平'
 
   !  Hindi
-  peace(2) = '#<0x20>शांति'
+  peace(2_plint) = '#<0x20>शांति'
 
   !  English
-  peace(3) = '#<0x10>Peace'
+  peace(3_plint) = '#<0x10>Peace'
 
   !  Hebrew
-  peace(4) = '#<0x10>שלום'
+  peace(4_plint) = '#<0x10>שלום'
 
   !  Russian
-  peace(5) = '#<0x10>Мир'
+  peace(5_plint) = '#<0x10>Мир'
 
   !  German
-  peace(6) = '#<0x10>Friede'
+  peace(6_plint) = '#<0x10>Friede'
 
   !  Korean
-  peace(7) = '#<0x30>평화'
+  peace(7_plint) = '#<0x30>평화'
 
   !  French
-  peace(8) = '#<0x10>Paix'
+  peace(8_plint) = '#<0x10>Paix'
 
   !  Spanish
-  peace(9) = '#<0x10>Paz'
+  peace(9_plint) = '#<0x10>Paz'
 
   !  Arabic
-  peace(10) = '#<0x10>ﺳﻼم'
+  peace(10_plint) = '#<0x10>ﺳﻼم'
 
   !  Turkish
-  peace(11) = '#<0x10>Barış'
+  peace(11_plint) = '#<0x10>Barış'
 
   !  Kurdish
-  peace(12) = '#<0x10>Hasîtî'
+  peace(12_plint) = '#<0x10>Hasîtî'
 
   call plparseopts(PL_PARSE_FULL)
 
   call plinit()
 
-  call pladv(0)
+  call pladv(0_plint)
   call plvpor (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
   call plwind (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-  call plcol0 (0)
-  call plbox ('', 1.0_plflt, 0, '', 1.0_plflt, 0)
+  call plcol0 (0_plint)
+  call plbox ('', 1.0_plflt, 0_plint, '', 1.0_plflt, 0_plint)
 
-  call plscmap0n (7)
+  call plscmap0n (7_plint)
   call plscmap0 (red, green, blue)
 
   call plschr (0.0_plflt, 4.0_plflt)
-  call plfont (1)
+  call plfont (1_plint)
 
-  do i = 1,4
+  do i = 1_plint,4
 
      call plcol0 (i)
      call plfill (px, py)
 
-     do j = 1,4
+     do j = 1_plint,4
         py (j) = py (j) + 1.0_plflt / 4.0_plflt
      enddo
   enddo
 
-  call plcol0 (0)
-  do i = 1,12
+  call plcol0 (0_plint)
+  do i = 1_plint,12
      call plptex (sx (i), sy (i), 1.0_plflt, 0.0_plflt, 0.5_plflt, peace (i))
   enddo
 

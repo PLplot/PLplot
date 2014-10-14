@@ -44,22 +44,22 @@
 !  Displays Greek letters and mathematically interesting Unicode ranges
 !
       integer(kind=plint)      fci_combinations
-      parameter(fci_combinations = 30)
+      parameter(fci_combinations = 30_plint)
 
-      character(len=5)  greek(48)
-      integer(kind=plint)      type1(166)
-      character(len=80) title(11)
-      integer(kind=plint)      lo(11)
-      integer(kind=plint)      hi(11)
-      integer(kind=plint)      nxcells(11)
-      integer(kind=plint)      nycells(11)
-      integer(kind=plint)      offset(11)
+      character(len=5)  greek(48_plint)
+      integer(kind=plint)      type1(166_plint)
+      character(len=80) title(11_plint)
+      integer(kind=plint)      lo(11_plint)
+      integer(kind=plint)      hi(11_plint)
+      integer(kind=plint)      nxcells(11_plint)
+      integer(kind=plint)      nycells(11_plint)
+      integer(kind=plint)      offset(11_plint)
       integer(kind=plunicode) :: fci(fci_combinations)
-      character(len=11) family(5)
-      character(len=8)  style(3)
-      character(len=7)  weight(2)
+      character(len=11) family(5_plint)
+      character(len=8)  style(3_plint)
+      character(len=7)  weight(2_plint)
 
-      data (greek(i) ,i=1,48) / &
+      data (greek(i) ,i=1_plint,48_plint) / &
        '#gA','#gB','#gG','#gD','#gE','#gZ', &
        '#gY','#gH','#gI','#gK','#gL','#gM', &
        '#gN','#gC','#gO','#gP','#gR','#gS', &
@@ -69,7 +69,7 @@
        '#gn','#gc','#go','#gp','#gr','#gs', &
        '#gt','#gu','#gf','#gx','#gq','#gw'  /
 
-      data (type1(i) ,i=1,75) / &
+      data (type1(i) ,i=1_plint,75_plint) / &
        z'0020',z'0021',z'0023',z'0025',z'0026', &
        z'0028',z'0029',z'002b',z'002c',z'002e', &
        z'002f',z'0030',z'0031',z'0032',z'0033', &
@@ -85,7 +85,7 @@
        z'03a5',z'03a6',z'03a7',z'03a8',z'03a9', &
        z'03b1',z'03b2',z'03b3',z'03b4',z'03b5', &
        z'03b6',z'03b7',z'03b8',z'03b9',z'03ba' /
-      data (type1(i) ,i=76,166) / &
+      data (type1(i) ,i=76_plint,166_plint) / &
        z'03bb',z'03bc',z'03bd',z'03be',z'03bf', &
        z'03c0',z'03c1',z'03c2',z'03c3',z'03c4', &
        z'03c5',z'03c6',z'03c7',z'03c8',z'03c9', &
@@ -106,7 +106,7 @@
        z'232a',z'25ca',z'2660',z'2663',z'2665', &
        z'2666' /
 
-      data (title(i) ,i=1,11 )/ &
+      data (title(i) ,i=1_plint,11_plint )/ &
    "#<0x10>PLplot Example 23 - Greek Letters", &
    "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (a)", &
    "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (b)", &
@@ -119,7 +119,7 @@
    "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block (c)", &
    "#<0x10>PLplot Example 23 - Mathematical Operators Unicode Block (d)" /
 
-      data (lo(i) ,i=1,11) / &
+      data (lo(i) ,i=1_plint,11_plint) / &
         z'0', &
         z'0', &
         z'40', &
@@ -132,7 +132,7 @@
         z'2280', &
         z'22c0' /
 
-      data (hi(i) ,i=1,11) / &
+      data (hi(i) ,i=1_plint,11_plint) / &
         z'30', &
         z'40', &
         z'80', &
@@ -145,51 +145,51 @@
         z'22c0', &
         z'2300' /
 
-      data (nxcells(i) ,i=1,11) / &
-      12, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8 /
+      data (nxcells(i) ,i=1_plint,11_plint) / &
+      12_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint /
 
-      data (nycells(i) ,i=1,11) / &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8, &
-      8 /
+      data (nycells(i) ,i=1_plint,11_plint) / &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint, &
+      8_plint /
 
 !  non-zero values Must be consistent with nxcells and nycells. */
-      data (offset(i) ,i=1,11) / &
-      0, &
-      0, &
-      64, &
-      128, &
-      0, &
-      0, &
-      0, &
-      0, &
-      0, &
-      0, &
-      0 /
+      data (offset(i) ,i=1_plint,11_plint) / &
+      0_plint, &
+      0_plint, &
+      64_plint, &
+      128_plint, &
+      0_plint, &
+      0_plint, &
+      0_plint, &
+      0_plint, &
+      0_plint, &
+      0_plint, &
+      0_plint /
 
 !    drop the leading '8' marker for FCI because some compilers (gfortran)
 !    have an implementation error (integer overflow error) for that case, and
 !    the marker is not needed, in any case, for calls to plsfci.
 
-      data (fci(i), i=1,fci_combinations) / &
+      data (fci(i), i=1_plint,fci_combinations) / &
         z'00000000', &
         z'00000001', &
         z'00000002', &
@@ -221,19 +221,19 @@
         z'00000123', &
         z'00000124' /
 
-        data (family(i), i=1,5) / &
+        data (family(i), i=1_plint,5_plint) / &
              "sans-serif", &
              "serif", &
              "monospace", &
              "script", &
              "symbol" /
 
-        data (style(i), i=1,3) / &
+        data (style(i), i=1_plint,3_plint) / &
              "upright", &
              "italic", &
              "oblique" /
 
-        data (weight(i), i=1,2) / &
+        data (weight(i), i=1_plint,2_plint) / &
              "medium", &
              "bold" /
 
@@ -241,8 +241,8 @@
 
       call plinit()
 
-      do page = 1,11
-         call pladv(0)
+      do page = 1_plint,11_plint
+         call pladv(0_plint)
 
 !        Set up viewport and window
 
@@ -259,28 +259,28 @@
 
 !        Draw the grid using plbox
 
-         call plcol0(2)
+         call plcol0(2_plint)
          deltax = 1.0_plflt/nxcells(page)
          deltay = 1.0_plflt/nycells(page)
-         call plbox("bcg", deltax, 0, "bcg", deltay, 0)
-         call plcol0(15)
+         call plbox("bcg", deltax, 0_plint, "bcg", deltay, 0_plint)
+         call plcol0(15_plint)
          length=hi(page)-lo(page)
-         slice = 1
-         do j=nycells(page),0,-1
+         slice = 1_plint
+         do j=nycells(page),0_plint,-1
             y = (j-0.5_plflt)*deltay
             do i=1,nxcells(page)
                x  = (i-0.5_plflt)*deltax
                if (slice .le. length) then
-                  if (page .eq. 1) then
+                  if (page .eq. 1_plint) then
                      write(cmdString, '("#",a)') Greek(slice)
-                  elseif (page .ge. 1 .and. page .le. 4) then
+                  elseif (page .ge. 1_plint .and. page .le. 4_plint) then
                      write(cmdString, '("##[0x",z4.4,"]")') &
                         type1(offset(page)+slice)
 !                     Not required for command which is case insensitive,
 !                     but lowercase the command simply to get same
 !                     lowercase display of command as corresponding C example.
                      call lowercase23(cmdString)
-                  elseif (page .ge. 5) then
+                  elseif (page .ge. 5_plint) then
                      write(cmdString, '("##[0x",z4.4,"]")') &
                         lo(page)+slice-1
 !                     Not required for command which is case insensitive,
@@ -293,7 +293,7 @@
                   call plptex(x,y-yoffset,1._plflt,0._plflt,0.5_plflt, &
                     cmdString)
                endif
-            slice = slice + 1
+            slice = slice + 1_plint
             enddo
          enddo
          call plschr(0._plflt, 1.0_plflt)
@@ -310,37 +310,37 @@
     do page=11,15
        dy = 0.030_plflt
 
-       call pladv(0)
+       call pladv(0_plint)
        call plvpor(0.02_plflt, 0.98_plflt, 0.02_plflt, 0.90_plflt)
        call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
        call plsfci(0_plunicode)
-       if (page == 11) then
+       if (page == 11_plint) then
           call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with plsfci')
-       elseif (page == 12) then
+       elseif (page == 12_plint) then
           call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with plsfont')
-       elseif(page == 13) then
+       elseif(page == 13_plint) then
           call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with ##<0x8nnnnnnn> construct')
-       elseif(page == 14) then
+       elseif(page == 14_plint) then
           call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with ##<0xmn> constructs')
-       elseif(page == 15) then
+       elseif(page == 15_plint) then
           call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
                'Set Font with ##<FCI COMMAND STRING/> constructs')
        endif
        call plschr(0._plflt, 0.75_plflt)
        do i=0,fci_combinations-1
-         family_index = mod(i,5)
-         style_index = mod(i/5,3)
-         weight_index = mod((i/5)/3,2)
-         if(page == 11) then
+         family_index = mod(i,5_plint)
+         style_index = mod(i/5,3_plint)
+         weight_index = mod((i/5)/3,2_plint)
+         if(page == 11_plint) then
             call plsfci(fci(i+1))
             write(string,'(a)') &
                  'Page 12, '// &
@@ -348,7 +348,7 @@
                  trim(style(style_index+1))//', '// &
                  trim(weight(weight_index+1))//':  '// &
                  'The quick brown fox jumps over the lazy dog'
-         elseif(page == 12) then
+         elseif(page == 12_plint) then
             call plsfont(family_index, style_index, weight_index)
             write(string,'(a)') &
                  'Page 13, '// &
@@ -356,7 +356,7 @@
                  trim(style(style_index+1))//', '// &
                  trim(weight(weight_index+1))//':  '// &
                  'The quick brown fox jumps over the lazy dog'
-         elseif(page == 13) then
+         elseif(page == 13_plint) then
 !           Note, must put in missing FCI marker for this particular case.
             write(string,'(a,"#<0x8",z7.7,">",a)') &
                  'Page 14, '//trim(family(family_index+1))//', '// &
@@ -364,7 +364,7 @@
                  trim(weight(weight_index+1))//':  ', &
                  fci(i+1), &
                  'The quick brown fox jumps over the lazy dog'
-         elseif(page == 14) then
+         elseif(page == 14_plint) then
             write(string,'(a,"#<0x",z1,"0>#<0x",z1,"1>#<0x",z1,"2>",a)') &
                  'Page 15, '// &
                  trim(family(family_index+1))//', '// &
@@ -374,7 +374,7 @@
                  style_index, &
                  weight_index, &
                  'The quick brown fox jumps over the lazy dog'
-         elseif(page == 15) then
+         elseif(page == 15_plint) then
             write(string,'(a)') &
                  'Page 16, '// &
                  trim(family(family_index+1))//', '// &
@@ -392,7 +392,7 @@
    enddo
 !     Restore defaults
 
-   call plcol0(1)
+   call plcol0(1_plint)
    
    call plend()
 
@@ -403,7 +403,7 @@
       implicit none
       character*(*) string
       integer(kind=plint) i, len, iascii
-      do i = 1, len(string)
+      do i = 1_plint, len(string)
         iascii = iachar(string(i:i))
         if(65.le.iascii.and.iascii.le.90) then
 !          convert uppercase to lowercase.
