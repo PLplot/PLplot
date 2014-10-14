@@ -1,7 +1,7 @@
 # examples/f95/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2012 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -144,4 +144,10 @@ if(BUILD_TEST)
     target_link_libraries(x${STRING_INDEX}f95 plf95demolib plplotf95 plplotf95c)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f95 x${STRING_INDEX}f95)
   endforeach(STRING_INDEX ${f95_STRING_INDICES})
+
+  if(CORE_BUILD)
+    # Build code that tests auxiliary functions in plf95demolib
+    add_executable(test_plf95demolib test_plf95demolib.f90)
+    target_link_libraries(test_plf95demolib plf95demolib plplotf95 plplotf95c)
+  endif(CORE_BUILD)
 endif(BUILD_TEST)
