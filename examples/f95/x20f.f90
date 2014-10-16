@@ -381,12 +381,12 @@
       count = count + 1_plint
       read( 10, '(a)', iostat = ierr ) ver(2_plint)
 
-      read( ver, * ) w, h, num_col
+      read( ver(1), * ) w, h
+      read( ver(2), * ) num_col
 
       allocate( img_f(w,h) )
 
       close( 10 )
-      close( 11, status = 'delete' )
 
 !
 !     Read the second part - we need to do it the hard way :(
