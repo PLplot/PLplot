@@ -4,7 +4,8 @@
 
 # Tailor these values to be appropriate for your local Windows platform.
 
-CMAKE_VERSION=2.8.12.1
+#CMAKE_VERSION=2.8.12.1
+CMAKE_VERSION=3.0.2
 
 # This is the downloaded version we are testing rather than a bootstrapped
 # version.
