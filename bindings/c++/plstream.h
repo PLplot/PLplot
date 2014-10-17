@@ -477,27 +477,27 @@ public:
 
     void mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
                   PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-                  int* plotentries, int nplotentries );
+                  const PLINT *plotentries, PLINT nplotentries );
 
 // Plot map points
 
     void mapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
                     const char *type, const char *string,
                     PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-                    int* plotentries, int nplotentries );
+                    const PLINT *plotentries, PLINT nplotentries );
 
 // Plot map text
 
     void maptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
                  const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
                  PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-                 int plotentry );
+                 PLINT plotentry );
 
 // Plot map fills
 
     void mapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
                   const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-                  PLFLT maxlat, int* plotentries, int nplotentries );
+                  PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries );
 
 // Plot the latitudes and longitudes on the background.
 

@@ -1084,7 +1084,7 @@ void plstream::map( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 void plstream::mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
                         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-                        int* plotentries, int nplotentries )
+                        const PLINT *plotentries, PLINT nplotentries )
 {
     set_stream();
 
@@ -1096,7 +1096,7 @@ void plstream::mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char
 void plstream::mapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
                           const char *type, const char *string,
                           PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-                          int* plotentries, int nplotentries )
+                          const PLINT *plotentries, PLINT nplotentries )
 {
     set_stream();
 
@@ -1108,7 +1108,7 @@ void plstream::mapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 void plstream::maptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
                        const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
                        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-                       int plotentry )
+                       PLINT plotentry )
 {
     set_stream();
 
@@ -1119,7 +1119,7 @@ void plstream::maptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 void plstream::mapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
                         const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-                        PLFLT maxlat, int* plotentries, int nplotentries )
+                        PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries )
 {
     set_stream();
 

@@ -293,7 +293,7 @@ x19::x19( int argc, const char ** argv )
     //Beach
     pls->col0( 2 );
     const PLINT nbeachareas  = 2;
-    PLINT       beachareas[] = { 23, 24 };
+    const PLINT beachareas[] = { 23, 24 };
     pls->mapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, beachareas, nbeachareas );
 
     //woodland
@@ -302,12 +302,12 @@ x19::x19( int argc, const char ** argv )
     PLINT       woodlandareas[nwoodlandareas];
     for ( i = 0; i < nwoodlandareas; ++i )
         woodlandareas[i] = i + 218;
-    pls->mapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas, nwoodlandareas );
+    pls->mapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (const PLINT *) woodlandareas, nwoodlandareas );
 
     //shingle or boulders
     pls->col0( 7 );
     const PLINT nshingleareas  = 22;
-    PLINT       shingleareas[] = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
+    const PLINT shingleareas[] = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
     pls->mapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas, nshingleareas );
 
     //crags
@@ -316,7 +316,7 @@ x19::x19( int argc, const char ** argv )
     PLINT       cragareas[ncragareas];
     for ( i = 0; i < ncragareas; ++i )
         cragareas[i] = i + 325;
-    pls->mapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas, ncragareas );
+    pls->mapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (const PLINT *) cragareas, ncragareas );
 
     //draw contours, we need to separate contours from high/low coastline
     //draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );
@@ -338,7 +338,7 @@ x19::x19( int argc, const char ** argv )
     pls->width( 3.0 );
     pls->col0( 0 );
     pls->mapline( NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, NULL, 0 );
-    PLINT majorroads[] = { 33, 48, 71, 83, 89, 90, 101, 102, 111 };
+    const PLINT majorroads[] = { 33, 48, 71, 83, 89, 90, 101, 102, 111 };
     pls->col0( 5 );
     pls->mapline( NULL, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads, 9 );
 
