@@ -72,7 +72,7 @@ void lt_dlexit( void )
 //!
 lt_dlhandle lt_dlopenext( char* dllname )
 {
-    lt_dlhandle dlhandle = ( lt_dlhandle )malloc( sizeof ( struct __dlhandle ) );
+    lt_dlhandle dlhandle = (lt_dlhandle) malloc( sizeof ( struct __dlhandle ) );
     memset( dlhandle, '\0', sizeof ( struct __dlhandle ) );
 
     dlhandle->hinstLib = LoadLibraryA( dllname );

@@ -159,17 +159,17 @@ x08::x08( int argc, const char **argv )
 
     int       ifshade;
 
-    PLINT    indexxmin = 0;
-    PLINT    indexxmax = XPTS;
-    PLINT    *indexymin = new PLINT[ XPTS ];
-    PLINT    *indexymax = new PLINT[ XPTS ];
-    PLFLT    **zlimited;
+    PLINT     indexxmin  = 0;
+    PLINT     indexxmax  = XPTS;
+    PLINT     *indexymin = new PLINT[ XPTS ];
+    PLINT     *indexymax = new PLINT[ XPTS ];
+    PLFLT     **zlimited;
     // parameters of ellipse that limits the data.
-    PLFLT    x0 = 0.5 * (PLFLT) ( XPTS - 1 );
-    PLFLT    a  = x0;
-    PLFLT    y0 = 0.5 * (PLFLT) ( YPTS - 1 );
-    PLFLT    b  = y0;
-    PLFLT    square_root;
+    PLFLT     x0 = 0.5 * (PLFLT) ( XPTS - 1 );
+    PLFLT     a  = x0;
+    PLFLT     y0 = 0.5 * (PLFLT) ( YPTS - 1 );
+    PLFLT     b  = y0;
+    PLFLT     square_root;
 
 
     pls = new plstream();
@@ -286,25 +286,25 @@ x08::x08( int argc, const char **argv )
 
             pls->col0( 2 );
 
-	    switch ( ifshade )
-	    {
-	    case 0: // diffuse light surface plot
+            switch ( ifshade )
+            {
+            case 0: // diffuse light surface plot
                 cmap1_init( 1 );
                 pls->surf3d( x, y, z, XPTS, YPTS, 0, NULL, 0 );
-		break;
-	    case 1: // magnitude colored plot
+                break;
+            case 1: // magnitude colored plot
                 cmap1_init( 0 );
                 pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
-		break;
-	    case 2: //  magnitude colored plot with faceted squares
+                break;
+            case 2: //  magnitude colored plot with faceted squares
                 cmap1_init( 0 );
                 pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
-		break;
-	    case 3: // magnitude colored plot with contours
+                break;
+            case 3: // magnitude colored plot with contours
                 cmap1_init( 0 );
                 pls->surf3d( x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS );
-		break;
-	    case 4:  // magnitude colored plot with contours and index limits.
+                break;
+            case 4:  // magnitude colored plot with contours and index limits.
                 cmap1_init( 0 );
                 pls->surf3dl( x, y, (const PLFLT * const *) zlimited, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS, indexxmin, indexxmax, indexymin, indexymax );
             }
