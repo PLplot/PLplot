@@ -368,7 +368,7 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //               intensity of the reflected light in the surface from a light
 //               source whose position is set using c_pllightsource()
 //
-// or any bitwise combination, e.g. "MAG_COLOR | SURF_CONT | SURF_BASE"
+// or any bitwise combination, e.g. "MAG_COLOR | SURF_CONT | BASE_CONT"
 //
 // indexymin and indexymax are arrays which specify the y index range
 // (following the convention that the upper range limit is one more than
