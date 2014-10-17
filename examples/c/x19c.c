@@ -127,14 +127,14 @@ main( int argc, const char **argv )
     PLFLT       x, y;
     //variables for the shapelib example
     const PLINT nbeachareas    = 2;
-    PLINT       beachareas[]   = { 23, 24 };
-    const PLINT nwoodlandareas = 94;
+    const PLINT beachareas[]   = { 23, 24 };
+    const       nwoodlandareas = 94;
     PLINT       woodlandareas[94];
     const PLINT nshingleareas  = 22;
-    PLINT       shingleareas[] = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
+    const PLINT shingleareas[] = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
     const PLINT ncragareas     = 2024;
     PLINT       cragareas[2024];
-    PLINT       majorroads[] = { 33, 48, 71, 83, 89, 90, 101, 102, 111 };
+    const PLINT majorroads[] = { 33, 48, 71, 83, 89, 90, 101, 102, 111 };
     int         i;
 
 // Parse and process command line arguments
@@ -260,7 +260,7 @@ main( int argc, const char **argv )
     plcol0( 3 );
     for ( i = 0; i < nwoodlandareas; ++i )
         woodlandareas[i] = i + 218;
-    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas, nwoodlandareas );
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (const PLINT *) woodlandareas, nwoodlandareas );
 
     //shingle or boulders
     plcol0( 7 );
@@ -270,7 +270,7 @@ main( int argc, const char **argv )
     plcol0( 8 );
     for ( i = 0; i < ncragareas; ++i )
         cragareas[i] = i + 325;
-    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas, ncragareas );
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (const PLINT *) cragareas, ncragareas );
 
     //draw contours, we need to separate contours from high/low coastline
     //draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );
