@@ -213,7 +213,7 @@ drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT 
 void
 drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
          PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
-         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, int* plotentries, int nplotentries )
+         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries )
 {
 #if defined ( HAVE_SHAPELIB ) || defined ( PL_DEPRECATED )
     int   i, j;
@@ -697,7 +697,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 //--------------------------------------------------------------------------
 // void plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-//		PLFLT maxlat, int* plotentries, int nplotentries);
+//		PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries);
 
 //New version of plmap which allows us to specify which items in a shapefile
 //we want to use. parameters are as above but with the plotentries being an
@@ -714,7 +714,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 void
 plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
            PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-           int* plotentries, int nplotentries )
+           const PLINT *plotentries, PLINT nplotentries )
 {
     drawmap( mapform, type, 0.0, 0.0, SHPT_ARC, 0.0, "", minlong, maxlong,
         minlat, maxlat, plotentries, nplotentries );
@@ -724,7 +724,7 @@ plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 // void plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //		const char *type, PLFLT just, const char *string,
 //		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-//		int* plotentries, int nplotentries);
+//		const PLINT *plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots symbols. The map equivalent of plstring. string
 //has the same meaning as in plstring.
@@ -733,7 +733,7 @@ void
 plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
              const char *type, const char *string,
              PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-             int* plotentries, int nplotentries )
+             const PLINT *plotentries, PLINT nplotentries )
 {
     drawmap( mapform, type, 1.0, 0.0, SHPT_POINT, 0.5, string, minlong, maxlong,
         minlat, maxlat, plotentries, nplotentries );
@@ -743,7 +743,7 @@ plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 // void plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //		const char *type, PLFLT dx, PLFLT dy PLFLT just, const char *text,
 //		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-//		int* plotentries, int nplotentries);
+//		PLINT plotentry);
 //
 //As per plmapline but plots text. The map equivalent of plptex. dx, dy,
 //just and text have the same meaning as in plptex.
@@ -752,7 +752,7 @@ void
 plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
           const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
           PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-          int plotentry )
+          PLINT plotentry )
 {
     drawmap( mapform, type, dx, dy, SHPT_POINT, just, text, minlong, maxlong,
         minlat, maxlat, &plotentry, 1 );
@@ -761,7 +761,7 @@ plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //--------------------------------------------------------------------------
 // void plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-//		PLFLT maxlat, int* plotentries, int nplotentries);
+//		PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots a filled polygon. The map equivalent to
 //plfill. Uses the pattern defined by plsty or plpat.
@@ -769,7 +769,7 @@ plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 void
 plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
            const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-           PLFLT maxlat, int* plotentries, int nplotentries )
+           PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries )
 {
     drawmap( mapform, type, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minlong, maxlong,
         minlat, maxlat, plotentries, nplotentries );

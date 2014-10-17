@@ -1302,7 +1302,7 @@ c_plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 PLDLLIMPEXP void
 c_plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
              PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-             int* plotentries, int nplotentries );
+             const PLINT *plotentries, PLINT nplotentries );
 
 // Plot map points
 
@@ -1310,7 +1310,7 @@ PLDLLIMPEXP void
 c_plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
                const char *type, const char *string,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-               int* plotentries, int nplotentries );
+               const PLINT *plotentries, PLINT nplotentries );
 
 // Plot map text
 
@@ -1318,14 +1318,14 @@ PLDLLIMPEXP void
 c_plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
             const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
-            int plotentry );
+            PLINT plotentry );
 
 // Plot map fills
 
 PLDLLIMPEXP void
 c_plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
              const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-             PLFLT maxlat, int* plotentries, int nplotentries );
+             PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries );
 
 // Plot the latitudes and longitudes on the background.
 
