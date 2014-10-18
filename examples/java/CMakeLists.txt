@@ -112,7 +112,12 @@ if(CORE_BUILD)
   endforeach(STRING_INDEX ${java_STRING_INDICES})
 
   add_custom_target(plplot_examples DEPENDS ${java_CLASSES})
-  add_dependencies(plplot_examples plplot_core)
+  get_property(targets_examples_java GLOBAL PROPERTY TARGETS_examples_java)
+  #message(STATUS "targets_examples_java = ${targets_examples_java}")
+  # The ${targets_examples_java} dependency is required to avoid a
+  # race condition for creating the files in ${java_CLASSES} for
+  # parallel builds.
+  add_dependencies(plplot_examples plplot_core ${targets_examples_java})
 
   # This information is duplicated from bindings/java/CMakeLists.txt.
   # It is required here to get the dependencies right for 
@@ -135,13 +140,11 @@ if(CORE_BUILD)
 
   add_custom_target(plplot_jar ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar)
 
-  # The plplot_examples dependency is required to
-  # work around CMake 2-level make recursion issue where independent
-  # file dependency chains that refer to the same files must have
-  # target dependencies between them in order to work for parallel
-  # builds (and possibly some visual studio builds).
+  # The plplot_examples and ${targets_examples_java} dependency is
+  # required to avoid a race condition for creating the files in
+  # ${java_CLASSES} for parallel builds.
 
-  add_dependencies(plplot_jar plplot_examples plplot_core)
+  add_dependencies(plplot_jar plplot_examples ${targets_examples_java} plplot_core)
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_java plplot_jar)
   set_property(GLOBAL APPEND PROPERTY FILES_examples_java ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar)
 
