@@ -299,18 +299,18 @@ class x19 {
         pls.mapline( nullCallback, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, null );
 
         //draw the sea and surface water
-        pls.width( 0 );
+        pls.width( 0.0 );
         pls.col0( 6 );
         pls.mapfill( nullCallback, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, null );
-        pls.width( 2 );
+        pls.width( 2.0 );
         pls.mapfill( nullCallback, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, null );
 
         //draw the roads, first with black and then thinner with colour to give an
         //an outlined appearance
-        pls.width( 5 );
+        pls.width( 5.0 );
         pls.col0( 1 );
         pls.mapline( nullCallback, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, null );
-        pls.width( 3 );
+        pls.width( 3.0 );
         pls.col0( 0 );
         pls.mapline( nullCallback, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, null );
         pls.col0( 5 );
@@ -318,7 +318,7 @@ class x19 {
         pls.mapline( nullCallback, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads );
 
         //draw buildings
-        pls.width( 1 );
+        pls.width( 1.0 );
         pls.col0( 1 );
         pls.mapfill( nullCallback, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy, null );
 

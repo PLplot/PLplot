@@ -1218,6 +1218,13 @@ public class PLStream implements plplotjavacConstants {
             zmin0, zmax0, alt, az );
     }
 
+    public void width( double width )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plwidth( width );
+    }
+
+    // Overloaded version with integer width.
     public void width( int width )
     {
         if ( set_stream() == -1 ) return;
