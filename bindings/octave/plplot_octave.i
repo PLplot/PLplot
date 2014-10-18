@@ -364,7 +364,7 @@ typedef PLINT          PLBOOL;
 }
 
 // With trailing count and NULL array option.
-%typemap( in ) (const PLINT * ArrayNull, PLINT n )( Matrix temp )
+%typemap( in ) ( const PLINT * ArrayNull, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -372,14 +372,14 @@ typedef PLINT          PLBOOL;
     }
     if ( !$input.is_empty() )
     {
-        $2 = (PLINT) ( _dim( $input, 0 ) );
-	temp = $input.matrix_value();
-	$1   = new PLINT[$2];
-	_cvt_double_to( $1, &temp( 0, 0 ), $2 );
+        $2   = (PLINT) ( _dim( $input, 0 ) );
+        temp = $input.matrix_value();
+        $1   = new PLINT[$2];
+        _cvt_double_to( $1, &temp( 0, 0 ), $2 );
     }
     else
     {
-        $1   = NULL;
+        $1 = NULL;
         $2 = 0;
     }
 }

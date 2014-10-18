@@ -271,16 +271,19 @@ typedef PLINT          PLBOOL;
         tmp = (PyArrayObject *) myIntArray_ContiguousFromObject( $input, NPY_PLINT, 1, 1 );
         if ( tmp == NULL )
             return NULL;
-        $1   = (PLINT *) PyArray_DATA( tmp );
+        $1 = (PLINT *) PyArray_DATA( tmp );
         $2 = PyArray_DIMS( tmp )[0];
     }
     else
     {
-        $1   = NULL;
+        $1 = NULL;
         $2 = 0;
     }
 }
-%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n ) { Py_CLEAR( tmp$argnum );}
+%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n )
+{
+    Py_CLEAR( tmp$argnum );
+}
 
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
