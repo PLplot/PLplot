@@ -1,5 +1,5 @@
 //
-//Copyright (C) 2010  Alan W. Irwin
+//Copyright (C) 2010-2014  Alan W. Irwin
 //This file is part of PLplot.
 //
 //PLplot is free software; you can redistribute it and/or modify
@@ -359,6 +359,31 @@ typedef PLINT          PLBOOL;
             Ylen = $1[i];
 }
 %typemap( freearg ) ( const PLINT * ArrayN )
+{
+    delete [] $1;
+}
+
+// With trailing count and NULL array option.
+%typemap( in ) (const PLINT * ArrayNull, PLINT n )( Matrix temp )
+{
+    if ( _n_dims( $input ) > 1 )
+    {
+        error( "argument must be a scalar or vector" ); SWIG_fail;
+    }
+    if ( !$input.is_empty() )
+    {
+        $2 = (PLINT) ( _dim( $input, 0 ) );
+	temp = $input.matrix_value();
+	$1   = new PLINT[$2];
+	_cvt_double_to( $1, &temp( 0, 0 ), $2 );
+    }
+    else
+    {
+        $1   = NULL;
+        $2 = 0;
+    }
+}
+%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n )
 {
     delete [] $1;
 }

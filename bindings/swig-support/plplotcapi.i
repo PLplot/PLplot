@@ -865,7 +865,7 @@ void
 plmap( mapform_func mapform, const char *type,
        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
-#if defined( SWIG_LUA ) || defined( SWIG_PYTHON )
+#if defined( SWIG_LUA ) || defined( SWIG_PYTHON ) || defined( SWIG_OCTAVE )
 // Plot map outlines
 
 void
