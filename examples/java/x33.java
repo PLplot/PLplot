@@ -98,11 +98,9 @@ class x33 {
         int[] sub_ticks = { 0 };
         double  low_cap_color, high_cap_color;
         boolean vertical, ifn;
-        int     n_axes = 1;
         String[] axis_opts = new String[1];
-        int     n_labels = 1;
-        int[] label_opts = { 0 };
-        String[] label   = new String[1];
+        int[] label_opts   = { 0 };
+        String[] label     = new String[1];
         String title;
         double[] colorbar_width  = new double[1];
         double[] colorbar_height = new double[1];

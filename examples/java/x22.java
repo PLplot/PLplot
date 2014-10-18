@@ -151,7 +151,7 @@ class x22 {
         int       i, j;
         double    dx, dy, x, y;
         double    xmin, xmax, ymin, ymax;
-        double    Q, b, dbdx;
+        double    Q, b;
         double[] clev = new double[nc];
         Transform transform = new Transform();
 

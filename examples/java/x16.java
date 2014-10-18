@@ -91,15 +91,12 @@ class x16 {
         double[] colorbar_width  = new double[1];
         double[] colorbar_height = new double[1];
 
-        int n_axis_opts = NUM_AXES;
         int[] num_values  = new int[NUM_AXES];
         double[][] values = new double[NUM_AXES][NSHADES + 1];
         String axis_opts[]     = { "bcvtm" };
         double axis_ticks[]    = { 0.0 };
         int    axis_subticks[] = { 0 };
-        double filler_values[] = { 0.0, 1.0 };
 
-        int    n_labels     = NUM_LABELS;
         int    label_opts[] = { PL_COLORBAR_LABEL_BOTTOM };
         String labels[]     = { "Magnitude" };
 
