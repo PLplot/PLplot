@@ -234,12 +234,12 @@ for i=1,nwoodlandareas do
    woodlandareas[i] = i + 217
 end
 
-pl.mapfill( nill, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas )
+pl.mapfill( nil, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas )
 
 --shingle or boulders
 pl.col0( 7 )
 shingleareas = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 }
-pl.mapfill( nill, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas )
+pl.mapfill( nil, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas )
 
 --crags
 pl.col0( 8 )
@@ -248,53 +248,53 @@ cragareas = {}
 for i=1,ncragareas do
    cragareas[i] = i + 324
 end
-pl.mapfill( nill, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas )
+pl.mapfill( nil, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas )
 
 --draw contours, we need to separate contours from high/low coastline
 --draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy )
 pl.col0( 4 )
-pl.mapline( nill, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, nill )
+pl.mapline( nil, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, nil )
 
 --draw the sea and surface water
 pl.width( 0.0 )
 pl.col0( 6 )
-pl.mapfill( nill, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, nill )
+pl.mapfill( nil, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, nil )
 pl.width( 2.0 )
-pl.mapfill( nill, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, nill )
+pl.mapfill( nil, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, nil )
 
 --draw the roads, first with black and then thinner with colour to give an
 --an outlined appearance
 pl.width( 5.0 )
 pl.col0( 1 )
-pl.mapline( nill, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, nill )
+pl.mapline( nil, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, nil )
 pl.width( 3.0 )
 pl.col0( 0 )
-pl.mapline( nill, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, nill )
+pl.mapline( nil, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, nil )
 pl.col0( 5 )
 majorroads = { 33, 48, 71, 83, 89, 90, 101, 102, 111 }
-pl.mapline( nill, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads )
+pl.mapline( nil, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads )
 
 --draw buildings
 pl.width( 1.0 )
 pl.col0( 1 )
-pl.mapfill( nill, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy, nill )
+pl.mapfill( nil, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy, nil )
 
 --labels
 pl.sfci( 0x80000100 )
 pl.schr( 0, 0.8 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
 pl.schr( 0, 0.7 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale\nDown", minx, maxx, miny, maxy, 13 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "South\nDown", minx, maxx, miny, maxy, 34 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woody Bay", minx, maxx, miny, maxy, 211 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale\nDown", minx, maxx, miny, maxy, 13 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "South\nDown", minx, maxx, miny, maxy, 34 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woody Bay", minx, maxx, miny, maxy, 211 )
 pl.schr( 0, 0.6 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Mill Wood", minx, maxx, miny, maxy, 16 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale Wood", minx, maxx, miny, maxy, 17 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 1.0, "Bodley", minx, maxx, miny, maxy, 31 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.0, "Martinhoe", minx, maxx, miny, maxy, 37 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 )
-pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Mill Wood", minx, maxx, miny, maxy, 16 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale Wood", minx, maxx, miny, maxy, 17 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 1.0, "Bodley", minx, maxx, miny, maxy, 31 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.0, "Martinhoe", minx, maxx, miny, maxy, 37 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 )
+pl.maptex( nil, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 )
 
 pl.plend()
