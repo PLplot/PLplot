@@ -151,6 +151,7 @@ class x19 {
 
         double[] x = new double[1];
         double[] y = new double[1];
+        int i;
 
         // Parse and process command line arguments.
         pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );
@@ -229,6 +230,115 @@ class x19 {
 
         // For Java, this is how the global transform is cleared
         pls.stransform( nullCTCallback, null );
+
+        // An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
+        // These were chosen because they provide shapefiles for small grid boxes which
+        // are easilly manageable for this demo.
+
+        pls.lsty( 1 );
+
+        minx = 240570;
+        maxx = 621109;
+        miny = 87822;
+        maxy = 722770;
+        pls.scol0( 0, 255, 255, 255 );
+        pls.scol0( 1, 0, 0, 0 );
+        pls.scol0( 2, 150, 150, 150 );
+        pls.scol0( 3, 0, 50, 200 );
+        pls.scol0( 4, 50, 50, 50 );
+        pls.scol0( 5, 150, 0, 0 );
+        pls.scol0( 6, 100, 100, 255 );
+
+        minx = 265000;
+        maxx = 270000;
+        miny = 145000;
+        maxy = 150000;
+        pls.scol0( 0, 255, 255, 255 ); //white
+        pls.scol0( 1, 0, 0, 0 );       //black
+        pls.scol0( 2, 255, 200, 0 );   //yellow for sand
+        pls.scol0( 3, 60, 230, 60 );   //green for woodland
+        pls.scol0( 4, 210, 120, 60 );  //brown for contours
+        pls.scol0( 5, 150, 0, 0 );     //red for major roads
+        pls.scol0( 6, 180, 180, 255 ); //pale blue for water
+        pls.scol0( 7, 100, 100, 100 ); //pale grey for shingle or boulders
+        pls.scol0( 8, 100, 100, 100 ); //dark grey for custom polygons - generally crags
+
+        pls.col0( 1 );
+        pls.env( minx, maxx, miny, maxy, 1, -1 );
+        pls.lab( "", "", "Martinhoe CP, Exmoor National Park, UK (shapelib only)" );
+
+        //Beach
+        pls.col0( 2 );
+        int beachareas[] = { 23, 24 };
+        pls.mapfill( nullCallback, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, beachareas );
+
+        //woodland
+        pls.col0( 3 );
+        int nwoodlandareas = 94;
+        int[] woodlandareas = new int[nwoodlandareas];
+        for ( i = 0; i < nwoodlandareas; ++i )
+            woodlandareas[i] = i + 218;
+        pls.mapfill( nullCallback, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas );
+
+        //shingle or boulders
+        pls.col0( 7 );
+        int shingleareas[] = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
+        pls.mapfill( nullCallback, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas );
+
+        //crags
+        pls.col0( 8 );
+        int ncragareas = 2024;
+        int [] cragareas = new int[ncragareas];
+        for ( i = 0; i < ncragareas; ++i )
+            cragareas[i] = i + 325;
+        pls.mapfill( nullCallback, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas );
+
+        //draw contours, we need to separate contours from high/low coastline
+        //draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );
+        pls.col0( 4 );
+        pls.mapline( nullCallback, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, null );
+
+        //draw the sea and surface water
+        pls.width( 0 );
+        pls.col0( 6 );
+        pls.mapfill( nullCallback, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, null );
+        pls.width( 2 );
+        pls.mapfill( nullCallback, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, null );
+
+        //draw the roads, first with black and then thinner with colour to give an
+        //an outlined appearance
+        pls.width( 5 );
+        pls.col0( 1 );
+        pls.mapline( nullCallback, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, null );
+        pls.width( 3 );
+        pls.col0( 0 );
+        pls.mapline( nullCallback, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, null );
+        pls.col0( 5 );
+        int majorroads[] = { 33, 48, 71, 83, 89, 90, 101, 102, 111 };
+        pls.mapline( nullCallback, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads );
+
+        //draw buildings
+        pls.width( 1 );
+        pls.col0( 1 );
+        pls.mapfill( nullCallback, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy, null );
+
+        //labels
+        pls.sfci( 0x80000100 );
+        pls.schr( 0, 0.8 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "MARTINHOE CP", minx, maxx, miny, maxy, 202 );
+        pls.schr( 0, 0.7 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale\nDown", minx, maxx, miny, maxy, 13 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "South\nDown", minx, maxx, miny, maxy, 34 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woody Bay", minx, maxx, miny, maxy, 211 );
+        pls.schr( 0, 0.6 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Mill Wood", minx, maxx, miny, maxy, 16 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale Wood", minx, maxx, miny, maxy, 17 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 1.0, "Bodley", minx, maxx, miny, maxy, 31 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.0, "Martinhoe", minx, maxx, miny, maxy, 37 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 );
+        pls.maptex( nullCallback, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 );
 
         pls.end();
     }

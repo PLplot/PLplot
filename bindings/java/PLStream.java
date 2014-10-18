@@ -609,6 +609,30 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.plmap( mapform, type, minlong, maxlong, minlat, maxlat );
     }
 
+    public void mapline( PLCallbackMapform mapform, String type, double minlong, double maxlong, double minlat, double maxlat, int[] plotentries )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plmapline( mapform, type, minlong, maxlong, minlat, maxlat, plotentries );
+    }
+
+    public void mapstring( PLCallbackMapform mapform, String type, String string, double minlong, double maxlong, double minlat, double maxlat, int[] plotentries )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plmapstring( mapform, type, string, minlong, maxlong, minlat, maxlat, plotentries );
+    }
+
+    public void maptex( PLCallbackMapform mapform, String type, double dx, double dy, double just, String text, double minlong, double maxlong, double minlat, double maxlat, int plotentry )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plmaptex( mapform, type, dx, dy, just, text, minlong, maxlong, minlat, maxlat, plotentry );
+    }
+
+    public void mapfill( PLCallbackMapform mapform, String type, double minlong, double maxlong, double minlat, double maxlat, int[] plotentries )
+    {
+        if ( set_stream() == -1 ) return;
+        plplotjavac.plmapfill( mapform, type, minlong, maxlong, minlat, maxlat, plotentries );
+    }
+
     public void meridians( PLCallbackMapform mapform, double dlong, double dlat, double minlong, double maxlong, double minlat, double maxlat )
     {
         if ( set_stream() == -1 ) return;

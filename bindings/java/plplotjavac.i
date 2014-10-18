@@ -608,6 +608,35 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     return $jnicall;
 }
 
+// With trailing count and NULL array option.
+%typemap( in ) ( const PLINT * ArrayNull, PLINT n )
+{
+    if ( $input != NULL )
+    {
+        jint *jydata = ( *jenv )->GetIntArrayElements( jenv, $input, 0 );
+        $2 = ( *jenv )->GetArrayLength( jenv, $input );
+        setup_array_1d_i( &$1, jydata, $2 );
+        ( *jenv )->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
+    }
+    else
+    {
+        $1 = NULL;
+        $2 = 0;
+    }
+}
+%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n )
+{
+    free( $1 );
+}
+%typemap( jni ) ( const PLINT * ArrayNull, PLINT n ) "jintArray"
+%typemap( jtype ) ( const PLINT * ArrayNull, PLINT n ) "int[]"
+%typemap( jstype ) ( const PLINT * ArrayNull, PLINT n ) "int[]"
+%typemap( javain ) ( const PLINT * ArrayNull, PLINT n ) "$javainput"
+%typemap( javaout ) ( const PLINT * ArrayNull, PLINT n )
+{
+    return $jnicall;
+}
+
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
 //--------------------------------------------------------------------------

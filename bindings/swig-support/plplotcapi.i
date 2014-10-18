@@ -865,7 +865,6 @@ void
 plmap( mapform_func mapform, const char *type,
        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
-#if defined( SWIG_LUA ) || defined( SWIG_PYTHON ) || defined( SWIG_OCTAVE )
 // Plot map outlines
 
 void
@@ -895,7 +894,6 @@ plmapfill( mapform_func mapform, const char *type,
            PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
            const PLINT *ArrayNull, PLINT n );
 
-#endif //SWIG_LUA || SWIG_PYTHON
 // Plot the latitudes and longitudes on the background.
 
 void
