@@ -52,7 +52,7 @@ end
 -- -180.0 and 180.0
 function normalize_longitude(lon)
 	if lon>=-180 and lon<=180 then
-		return lon;
+		return lon
 	else
 			times = math.floor((math.abs(lon)+180)/360)
 			if lon<0 then
@@ -78,7 +78,7 @@ function geolocation_labeler(axis, value)
 		end
 	else
 		if axis==pl.PL_X_AXIS then
-			label_val = normalize_longitude(value);
+			label_val = normalize_longitude(value)
 			if label_val>0 then
 				direction_label = " E"
 			else
@@ -128,7 +128,7 @@ minx = -170
 maxx = minx+360
 
 -- Setup a custom latitude and longitude-based scaling function.
-pl.slabelfunc("geolocation_labeler");
+pl.slabelfunc("geolocation_labeler")
 
 pl.col0(1)
 pl.env(minx, maxx, miny, maxy, 1, 70)
@@ -144,7 +144,7 @@ pl.env(minx, maxx, miny, maxy, 1, 70)
 pl.map(nil, "usaglobe", minx, maxx, miny, maxy)
 
 -- Clear the labeling function
-pl.slabelfunc(nil);
+pl.slabelfunc(nil)
 
 -- Polar, Northern hemisphere 
 
@@ -170,7 +170,7 @@ pl.env( -75., 75., -75., 75., 1, -1 )
 -- used.
 pl.map( nil, "globe", minx, maxx, miny, maxy )
 
-pl.lsty( 2 );
+pl.lsty( 2 )
 pl.meridians( nil, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 )
 
 -- Show Baltimore, MD on the map
@@ -183,6 +183,118 @@ pl.ssym( 0.0, 1.0 )
 pl.ptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" )
 
 -- For C, this is how the global transform is cleared
-pl.stransform( );
+pl.stransform( )
+
+-- An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
+-- These were chosen because they provide shapefiles for small grid boxes which
+-- are easilly manageable for this demo.
+
+pl.lsty( 1 )
+
+minx = 240570
+maxx = 621109
+miny = 87822
+maxy = 722770
+pl.scol0( 0, 255, 255, 255 )
+pl.scol0( 1, 0, 0, 0 )
+pl.scol0( 2, 150, 150, 150 )
+pl.scol0( 3, 0, 50, 200 )
+pl.scol0( 4, 50, 50, 50 )
+pl.scol0( 5, 150, 0, 0 )
+pl.scol0( 6, 100, 100, 255 )
+
+minx = 265000
+maxx = 270000
+miny = 145000
+maxy = 150000
+pl.scol0( 0, 255, 255, 255 )  --white
+pl.scol0( 1, 0, 0, 0 )        --black
+pl.scol0( 2, 255, 200, 0 )    --yelow for sand
+pl.scol0( 3, 60, 230, 60 )    -- green for woodland
+pl.scol0( 4, 210, 120, 60 )   --brown for contours
+pl.scol0( 5, 150, 0, 0 )      --red for major roads
+pl.scol0( 6, 180, 180, 255 )  --pale blue for water
+pl.scol0( 7, 100, 100, 100 )  --pale grey for shingle or boulders
+pl.scol0( 8, 100, 100, 100 )  --dark grey for custom polygons - generally crags
+
+pl.col0( 1 )
+pl.env( minx, maxx, miny, maxy, 1, -1 )
+pl.lab( "", "", "Martinhoe CP, Exmoor National Park, UK (shapelib only)" )
+
+--Beach
+pl.col0( 2 )
+beachareas = { 23, 24 }
+pl.mapfill( nil, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, beachareas)
+
+--woodland
+pl.col0( 3 )
+nwoodlandareas = 94
+woodlandareas = {}
+for i=1,nwoodlandareas do
+   woodlandareas[i] = i + 217
+end
+
+pl.mapfill( nill, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas )
+
+--shingle or boulders
+pl.col0( 7 )
+shingleareas = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 }
+pl.mapfill( nill, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas )
+
+--crags
+pl.col0( 8 )
+ncragareas = 2024
+cragareas = {}
+for i=1,ncragareas do
+   cragareas[i] = i + 324
+end
+pl.mapfill( nill, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas )
+
+--draw contours, we need to separate contours from high/low coastline
+--draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy )
+pl.col0( 4 )
+pl.mapline( nill, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, nill )
+
+--draw the sea and surface water
+pl.width( 0.0 )
+pl.col0( 6 )
+pl.mapfill( nill, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, nill )
+pl.width( 2.0 )
+pl.mapfill( nill, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, nill )
+
+--draw the roads, first with black and then thinner with colour to give an
+--an outlined appearance
+pl.width( 5.0 )
+pl.col0( 1 )
+pl.mapline( nill, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, nill )
+pl.width( 3.0 )
+pl.col0( 0 )
+pl.mapline( nill, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, nill )
+pl.col0( 5 )
+majorroads = { 33, 48, 71, 83, 89, 90, 101, 102, 111 }
+pl.mapline( nill, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads )
+
+--draw buildings
+pl.width( 1.0 )
+pl.col0( 1 )
+pl.mapfill( nill, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy, nill )
+
+--labels
+pl.sfci( 0x80000100 )
+pl.schr( 0, 0.8 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
+pl.schr( 0, 0.7 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale\nDown", minx, maxx, miny, maxy, 13 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "South\nDown", minx, maxx, miny, maxy, 34 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woody Bay", minx, maxx, miny, maxy, 211 )
+pl.schr( 0, 0.6 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Mill Wood", minx, maxx, miny, maxy, 16 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale Wood", minx, maxx, miny, maxy, 17 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 1.0, "Bodley", minx, maxx, miny, maxy, 31 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.0, "Martinhoe", minx, maxx, miny, maxy, 37 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 )
+pl.maptex( nill, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 )
 
 pl.plend()

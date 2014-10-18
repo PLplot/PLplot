@@ -5,7 +5,7 @@
 //
 //
 //Copyright (C) 2002  Gary Bishop
-//Copyright (C) 2002-2010  Alan W. Irwin
+//Copyright (C) 2002-2014  Alan W. Irwin
 //Copyright (C) 2004  Rafael Laboissiere
 //Copyright (C) 2004  Andrew Ross
 //
@@ -865,6 +865,37 @@ void
 plmap( mapform_func mapform, const char *type,
        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
+#ifdef SWIG_LUA
+// Plot map outlines
+
+void
+plmapline( mapform_func mapform, const char *type,
+           PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+           const PLINT *ArrayNull, PLINT n );
+
+// Plot map points
+
+void
+plmapstring( mapform_func mapform, const char *type, const char *string,
+             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+             const PLINT *ArrayNull, PLINT n );
+
+// Plot map text
+
+void
+plmaptex( mapform_func mapform, const char *type,
+          PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+          PLINT plotentry );
+
+// Plot map fills
+
+void
+plmapfill( mapform_func mapform, const char *type,
+           PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+           const PLINT *ArrayNull, PLINT n );
+
+#endif //SWIG_LUA
 // Plot the latitudes and longitudes on the background.
 
 void

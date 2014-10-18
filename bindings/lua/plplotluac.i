@@ -269,6 +269,26 @@ typedef PLINT          PLBOOL;
     LUA_FREE_ARRAY( $1 );
 }
 
+// With trailing count and NULL array option.
+%typemap( in ) ( const PLINT * ArrayNull, PLINT n ) ( int temp )
+{
+    if ( lua_isnil( L, $input ) )
+    {
+        $1 = NULL;
+        $2 = 0;
+    }
+    else
+    {
+        $1 = (PLINT *) LUA_get_int_num_array_var( L, $input, &temp );
+        if ( !$1 )
+            SWIG_fail;
+        $2 = temp;
+    }
+}
+%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n )
+{
+    LUA_FREE_ARRAY( $1 );
+}
 
 //--------------------------------------------------------------------------
 //                                 PLFLT Arrays
@@ -411,7 +431,6 @@ typedef PLINT          PLBOOL;
 {
     LUA_FREE_ARRAY( $1 );
 }
-
 
 // with trailing count
 %typemap( in ) ( const PLFLT * Array, PLINT n )
@@ -1509,6 +1528,10 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %rename( line3 ) plline3;
 %rename( lsty ) pllsty;
 %rename( map ) plmap;
+%rename( mapline ) plmapline;
+%rename( mapstring ) plmapstring;
+%rename( maptex ) plmaptex;
+%rename( mapfill ) plmapfill;
 %rename( meridians ) plmeridians;
 %rename( mesh ) plmesh;
 %rename( meshc ) plmeshc;
