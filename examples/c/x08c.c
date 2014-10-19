@@ -28,17 +28,21 @@
 PLDLLIMPEXP void
 plexit( const char *errormsg );
 
+// These values must be odd, for the middle
+// of the index range to be an integer, and thus
+// to correspond to the exact floating point centre
+// of the sombrero.
 #define XPTS    35              // Data points in x
-#define YPTS    46              // Data points in y
+#define YPTS    45              // Data points in y
 
-static PLFLT alt[] = { 60.0, 20.0 };
-static PLFLT az[] = { 30.0, 60.0 };
+static PLFLT alt[] = { 60.0, 40.0 };
+static PLFLT az[] = { 30.0, -30.0 };
 static void cmap1_init( int );
 
 static const char *title[] =
 {
     "#frPLplot Example 8 - Alt=60, Az=30",
-    "#frPLplot Example 8 - Alt=20, Az=60",
+    "#frPLplot Example 8 - Alt=40, Az=-30",
 };
 
 //--------------------------------------------------------------------------
@@ -94,17 +98,17 @@ cmap1_init( int gray )
 //--------------------------------------------------------------------------
 
 
-static int           sombrero;
+static int           rosen;
 
 static PLOptionTable options[] = {
     {
-        "sombrero",             // Turns on use of Sombrero function
+        "rosen",             // Turns on use of Rosenbrock function
         NULL,
         NULL,
-        &sombrero,
+        &rosen,
         PL_OPT_BOOL,
-        "-sombrero",
-        "Use the \"sombrero\" function."
+        "-rosen",
+        "Use the log_e of the \"Rosenbrock\" function"
     },
     {
         NULL,                   // option
@@ -124,31 +128,32 @@ main( int argc, const char *argv[] )
 {
     int      i, j, k;
     PLFLT    *x, *y, **z, *z_row_major, *z_col_major;
+    PLFLT    dx = 2. / (PLFLT) ( XPTS - 1 );
+    PLFLT    dy = 2. / (PLFLT) ( YPTS - 1 );
     PLfGrid2 grid_c, grid_row_major, grid_col_major;
     PLFLT    xx, yy, r;
     PLINT    ifshade;
     PLFLT    zmin, zmax, step;
     PLFLT    clevel[LEVELS];
     PLINT    nlevel = LEVELS;
-    int      rosen  = 1;
 
     PLINT    indexxmin = 0;
     PLINT    indexxmax = XPTS;
     PLINT    *indexymin;
     PLINT    *indexymax;
     PLFLT    **zlimited;
-    // parameters of ellipse that limits the data.
-    PLFLT    x0 = 0.5 * (PLFLT) ( XPTS - 1 );
-    PLFLT    a  = x0;
-    PLFLT    y0 = 0.5 * (PLFLT) ( YPTS - 1 );
-    PLFLT    b  = y0;
-    PLFLT    square_root;
+    // parameters of ellipse (in x, y index coordinates) that limits the data.
+    // x0, y0 correspond to the exact floating point centre of the index
+    // range.
+    PLFLT x0 = 0.5 * (PLFLT) ( XPTS - 1 );
+    PLFLT a  = 0.9 * x0;
+    PLFLT y0 = 0.5 * (PLFLT) ( YPTS - 1 );
+    PLFLT b  = 0.7 * y0;
+    PLFLT square_root;
 
     // Parse and process command line arguments
     plMergeOpts( options, "x08c options", NULL );
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
-    if ( sombrero )
-        rosen = 0;
 
     // Initialize plplot
 
@@ -173,16 +178,16 @@ main( int argc, const char *argv[] )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = ( (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 ) );
+        x[i] = -1. + (PLFLT) i * dx;
         if ( rosen )
             x[i] *= 1.5;
     }
 
-    for ( i = 0; i < YPTS; i++ )
+    for ( j = 0; j < YPTS; j++ )
     {
-        y[i] = (double) ( i - ( YPTS / 2 ) ) / (double) ( YPTS / 2 );
+        y[j] = -1. + (PLFLT) j * dy;
         if ( rosen )
-            y[i] += 0.5;
+            y[j] += 0.5;
     }
 
     for ( i = 0; i < XPTS; i++ )
@@ -195,7 +200,7 @@ main( int argc, const char *argv[] )
             {
                 z[i][j] = pow( 1. - xx, 2. ) + 100. * pow( yy - pow( xx, 2. ), 2. );
 
-                // The log argument may be zero for just the right grid.
+                // The log argument might be zero for just the right grid.
                 if ( z[i][j] > 0. )
                     z[i][j] = log( z[i][j] );
                 else
@@ -212,24 +217,71 @@ main( int argc, const char *argv[] )
         }
     }
 
-    //  Allocate and alculate y index ranges and corresponding zlimited.
+    // Allocate and calculate y index ranges and corresponding zlimited.
     plAlloc2dGrid( &zlimited, XPTS, YPTS );
     indexymin = (PLINT *) malloc( XPTS * sizeof ( PLINT ) );
     indexymax = (PLINT *) malloc( XPTS * sizeof ( PLINT ) );
     if ( !indexymin || !indexymax )
         plexit( "Memory allocation error" );
 
+    //printf("XPTS = %d\n", XPTS);
+    //printf("x0 = %f\n", x0);
+    //printf("a = %f\n", a);
+    //printf("YPTS = %d\n", YPTS);
+    //printf("y0 = %f\n", y0);
+    //printf("b = %f\n", b);
+
+    // These values should all be ignored because of the i index range.
+#if 0
+    for ( i = 0; i < indexxmin; i++ )
+    {
+        indexymin[i] = 0;
+        indexymax[i] = YPTS;
+        for ( j = indexymin[i]; j < indexymax[i]; j++ )
+            // Mark with large value to check this is ignored.
+            zlimited[i][j] = 1.e300;
+    }
+#endif
     for ( i = indexxmin; i < indexxmax; i++ )
     {
-        square_root  = sqrt( 1. - MIN( 1., pow( ( (PLFLT) i - x0 ) / a, 2. ) ) );
-        indexymin[i] = MAX( 0, (PLINT) ( y0 - b * square_root ) );
-        indexymax[i] = MIN( YPTS, (PLINT) ( y0 + b * square_root ) );
+        square_root = sqrt( 1. - MIN( 1., pow( ( (PLFLT) i - x0 ) / a, 2. ) ) );
+        // Add 0.5 to find nearest integer and therefore preserve symmetry
+        // with regard to lower and upper bound of y range.
+        indexymin[i] = MAX( 0, (PLINT) ( 0.5 + y0 - b * square_root ) );
+        // indexymax calculated with the convention that it is 1
+        // greater than highest valid index.
+        indexymax[i] = MIN( YPTS, 1 + (PLINT) ( 0.5 + y0 + b * square_root ) );
+        //printf("i, b*square_root, indexymin[i], YPTS - indexymax[i] = %d, %e, %d, %d\n", i, b*square_root, indexymin[i], YPTS - indexymax[i]);
+
+#if 0
+        // These values should all be ignored because of the j index range.
+        for ( j = 0; j < indexymin[i]; j++ )
+            // Mark with large value to check this is ignored.
+            zlimited[i][j] = 1.e300;
+#endif
+
         for ( j = indexymin[i]; j < indexymax[i]; j++ )
-        {
             zlimited[i][j] = z[i][j];
-        }
+
+#if 0
+        // These values should all be ignored because of the j index range.
+        for ( j = indexymax[i]; j < YPTS; j++ )
+            // Mark with large value to check this is ignored.
+            zlimited[i][j] = 1.e300;
+#endif
     }
 
+#if 0
+    // These values should all be ignored because of the i index range.
+    for ( i = indexxmax; i < XPTS; i++ )
+    {
+        indexymin[i] = 0;
+        indexymax[i] = YPTS;
+        for ( j = indexymin[i]; j < indexymax[i]; j++ )
+            // Mark with large value to check this is ignored.
+            zlimited[i][j] = 1.e300;
+    }
+#endif
 
     plMinMax2dGrid( (const PLFLT * const *) z, XPTS, YPTS, &zmax, &zmin );
     step = ( zmax - zmin ) / ( nlevel + 1 );

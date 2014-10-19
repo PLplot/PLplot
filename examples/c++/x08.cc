@@ -1,6 +1,6 @@
 //--------------------------------------------------------------------------
 // Copyright (C) 2004  Andrew Ross
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2014  Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -42,7 +42,7 @@ private:
     static PLFLT         az[];
     static const char    *title[];
 
-    static int           sombrero;
+    static PLBOOL        rosen;
 
     static PLOptionTable options[];
 
@@ -51,25 +51,29 @@ private:
 };
 
 
+// These values must be odd, for the middle
+// of the index range to be an integer, and thus
+// to correspond to the exact floating point centre
+// of the sombrero.
 const int     x08::    XPTS      = 35;
-const int     x08::    YPTS      = 46;
-PLFLT         x08::        alt[] = { 60.0, 20.0 };
-PLFLT         x08::        az[] = { 30.0, 60.0 };
+const int     x08::    YPTS      = 45;
+PLFLT         x08::        alt[] = { 60.0, 40.0 };
+PLFLT         x08::        az[] = { 30.0, -30.0 };
 
 const char    *x08::  title[] = {
     "#frPLplot Example 8 - Alt=60, Az=30",
-    "#frPLplot Example 8 - Alt=20, Az=60",
+    "#frPLplot Example 8 - Alt=40, Az=-30",
 };
 
 PLOptionTable x08::options[] = {
     {
-        "sombrero",             // Turns on use of Sombrero function
+        "rosen",             // Turns on use of Rosenbrock function
         NULL,
         NULL,
-        &x08::sombrero,
+        &x08::rosen,
         PL_OPT_BOOL,
-        "-sombrero",
-        "Use the \"sombrero\" function."
+        "-rosen",
+        "Use the log_e of the \"Rosenbrock\" function"
     },
     {
         NULL,                     // option
@@ -83,7 +87,7 @@ PLOptionTable x08::options[] = {
 };
 
 
-int x08::sombrero = 0;
+PLBOOL x08::rosen = 0;
 
 // cmap1_init1
 
@@ -152,7 +156,8 @@ x08::x08( int argc, const char **argv )
     PLFLT     *y = new PLFLT[ YPTS ];
     PLFLT     **z;
     PLFLT     *clevel = new PLFLT[LEVELS];
-    bool      rosen   = true;
+    PLFLT     dx      = 2. / (PLFLT) ( XPTS - 1 );
+    PLFLT     dy      = 2. / (PLFLT) ( YPTS - 1 );
 
     PLFLT     xx, yy, r;
     PLFLT     zmin = 0.0, zmax = 0.0;
@@ -164,50 +169,38 @@ x08::x08( int argc, const char **argv )
     PLINT     *indexymin = new PLINT[ XPTS ];
     PLINT     *indexymax = new PLINT[ XPTS ];
     PLFLT     **zlimited;
-    // parameters of ellipse that limits the data.
-    PLFLT     x0 = 0.5 * (PLFLT) ( XPTS - 1 );
-    PLFLT     a  = x0;
-    PLFLT     y0 = 0.5 * (PLFLT) ( YPTS - 1 );
-    PLFLT     b  = y0;
-    PLFLT     square_root;
 
+    // parameters of ellipse (in x, y index coordinates) that limits the data.
+    // x0, y0 correspond to the exact floating point centre of the index
+    // range.
+    PLFLT x0 = 0.5 * (PLFLT) ( XPTS - 1 );
+    PLFLT a  = 0.9 * x0;
+    PLFLT y0 = 0.5 * (PLFLT) ( YPTS - 1 );
+    PLFLT b  = 0.7 * y0;
+    PLFLT square_root;
 
     pls = new plstream();
 
     // Parse and process command line arguments.
     pls->MergeOpts( options, "x08c options", NULL );
     pls->parseopts( &argc, argv, PL_PARSE_FULL );
-    if ( sombrero )
-    {
-        rosen = false;
-    }
 
     // Initialize plplot.
 
     pls->init();
 
     pls->Alloc2dGrid( &z, XPTS, YPTS );
-    //z = new PLFLT*[XPTS];
-
-    //
-    // for (i = 0; i < XPTS; i++) {
-    // z[i] = new PLFLT [YPTS];
-    // x[i] = ((double) (i - (XPTS / 2)) / (double) (XPTS / 2));
-    // if (rosen)
-    //  x[i] *=  1.5;
-    // }
-    //
 
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
+        x[i] = -1. + (PLFLT) i * dx;
         if ( rosen )
             x[i] *= 1.5;
     }
 
     for ( j = 0; j < YPTS; j++ )
     {
-        y[j] = (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 );
+        y[j] = -1. + (PLFLT) j * dy;
         if ( rosen )
             y[j] += 0.5;
     }
@@ -221,7 +214,7 @@ x08::x08( int argc, const char **argv )
             if ( rosen )
             {
                 z[i][j] = pow( (double) ( 1. - xx ), 2. ) + 100 * pow( (double) ( yy - pow( (double) xx, 2. ) ), 2. );
-                // The log argument may be zero for just the right grid.
+                // The log argument might be zero for just the right grid.
                 if ( z[i][j] > 0. )
                     z[i][j] = log( z[i][j] );
                 else
@@ -244,20 +237,21 @@ x08::x08( int argc, const char **argv )
         }
     }
 
-    //  Allocate and alculate y index ranges and corresponding zlimited.
+    //  Allocate and calculate y index ranges and corresponding zlimited.
     pls->Alloc2dGrid( &zlimited, XPTS, YPTS );
 
     for ( i = indexxmin; i < indexxmax; i++ )
     {
-        square_root  = sqrt( 1. - MIN( 1., pow( ( (PLFLT) i - x0 ) / a, 2. ) ) );
-        indexymin[i] = MAX( 0, (PLINT) ( y0 - b * square_root ) );
-        indexymax[i] = MIN( YPTS, (PLINT) ( y0 + b * square_root ) );
+        square_root = sqrt( 1. - MIN( 1., pow( ( (PLFLT) i - x0 ) / a, 2. ) ) );
+        // Add 0.5 to find nearest integer and therefore preserve symmetry
+        // with regard to lower and upper bound of y range.
+        indexymin[i] = MAX( 0, (PLINT) ( 0.5 + y0 - b * square_root ) );
+        // indexymax calculated with the convention that it is 1
+        // greater than highest valid index.
+        indexymax[i] = MIN( YPTS, 1 + (PLINT) ( 0.5 + y0 + b * square_root ) );
         for ( j = indexymin[i]; j < indexymax[i]; j++ )
-        {
             zlimited[i][j] = z[i][j];
-        }
     }
-
 
     PLFLT step = ( zmax - zmin ) / ( LEVELS + 1 );
     for ( i = 0; i < LEVELS; i++ )
