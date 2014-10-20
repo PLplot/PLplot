@@ -279,7 +279,7 @@ public:
 
 // Pattern fills the 3d polygon bounded by the input points.
 
-    static void fill3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z );
+    void fill3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z );
 
 // Flushes the output stream.  Use sparingly, if at all.
 
@@ -360,7 +360,7 @@ public:
 
 // Draw gradient in polygon.
 
-    static void gradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle );
+    void gradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle );
 
 // grid irregularly sampled data
 

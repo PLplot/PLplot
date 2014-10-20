@@ -660,7 +660,7 @@ void plstream::fill( PLINT n, const PLFLT *x, const PLFLT *y )
 
 void plstream::fill3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z )
 {
-    //set_stream();
+    set_stream();
 
     plfill3( n, x, y, z );
 }
@@ -842,7 +842,7 @@ void plstream::gra()
 
 void plstream::gradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
 {
-    //set_stream();
+    set_stream();
 
     plgradient( n, x, y, angle );
 }
