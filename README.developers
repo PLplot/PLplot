@@ -62,6 +62,18 @@ And summarized here:
    then it is probably best to do this once just before you want
    to push your work back to the official repo.
 
+   Also, git rebase is not suitable if you are right in the
+   middle of work on a topic with a dirty tree with uncommitted
+   changes.  For this case use 
+
+   $ git checkout new_branch # (checkout the dirty tree with uncommitted changes)
+   $ git stash save # (save that dirty tree to make new_branch clean
+                    # i.e., all uncommitted changes disappear).
+   $ git rebase master # (update that clean branch)
+   $ git stash pop # (restore your uncommitted changes)
+   # ... keep working.... until you are ready to commit (and ultimately
+   # merge back to master and push).
+   
 4. Incorporate changes back into master:
    $ git checkout master 
    $ git merge --ff-only new_branch
@@ -71,7 +83,8 @@ And summarized here:
    is bad and means that your changes will be rejected when you
    try to push them to the official repo. You can inspect the
    history with gitk and possibly collapse the offending commits
-   into a single commit that makes the history linear again.
+   into a single commit (using git rebase --interactive) that makes
+   the history linear again.
 
 5. Push changes to the official repo:
    Check first:
