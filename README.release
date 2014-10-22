@@ -117,6 +117,10 @@ were not documented at all in api.xml.  That number of inconsistencies
 has now been reduced to zero which constitutes a substantial upgrade
 in the quality of our API documentation.
 
+2.6 Minor change to the C++ fill API and use of shade and its variants.
+
+plstream:fill had been usable as a callback when using plstream::shade. plstream::fill is no longer static (required for a bug fix) so users must use the C plfill function as a callback instead.
+
 3. Tests made for the current release.
 
 The "comprehensive tests" below refers to running
