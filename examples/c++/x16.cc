@@ -259,7 +259,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plstream::fill, true, NULL, NULL );
+        plfill, true, NULL, NULL );
 
     if ( colorbar )
     {
@@ -306,7 +306,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plstream::fill, true, plstream::tr1, (void *) &cgrid1 );
+        plfill, true, plstream::tr1, (void *) &cgrid1 );
 
     if ( colorbar )
     {
@@ -354,7 +354,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
+        plfill, false, plstream::tr2, (void *) &cgrid2 );
 
     if ( colorbar )
     {
@@ -403,7 +403,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         2, 3.0,
-        plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
+        plfill, false, plstream::tr2, (void *) &cgrid2 );
 
     if ( colorbar )
     {
@@ -454,7 +454,7 @@ x16::x16( int argc, const char ** argv )
         pls->shades( z, nx, ny, zdefined, -1., 1., -1., 1.,
             shedge, ns + 1, fill_width,
             cont_color, cont_width,
-            plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
+            plfill, false, plstream::tr2, (void *) &cgrid2 );
 
         pls->col0( 1 );
         pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -498,7 +498,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plstream::fill, false, plstream::tr2, (void *) &cgrid2 );
+        plfill, false, plstream::tr2, (void *) &cgrid2 );
 
     if ( colorbar )
     {

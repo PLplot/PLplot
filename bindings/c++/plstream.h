@@ -275,7 +275,7 @@ public:
 
 // Pattern fills the polygon bounded by the input points.
 
-    static void fill( PLINT n, const PLFLT *x, const PLFLT *y );
+    void fill( PLINT n, const PLFLT *x, const PLFLT *y );
 
 // Pattern fills the 3d polygon bounded by the input points.
 

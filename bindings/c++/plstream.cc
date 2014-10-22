@@ -651,7 +651,7 @@ void plstream::famadv()
 
 void plstream::fill( PLINT n, const PLFLT *x, const PLFLT *y )
 {
-    //set_stream();
+    set_stream();
 
     plfill( n, x, y );
 }

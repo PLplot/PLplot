@@ -312,7 +312,7 @@ x21::x21( int argc, const char ** argv )
                 pls->col0( 15 );
                 pls->lab( "X", "Y", title[alg - 1] );
                 pls->shades( zg, xp, yp, NULL, xm, xM, ym, yM,
-                    clev, nl, 1.0, 0, 1.0, pls->fill, true, NULL, NULL );
+                    clev, nl, 1.0, 0, 1.0, plfill, true, NULL, NULL );
                 pls->col0( 2 );
             }
             else
