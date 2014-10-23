@@ -712,34 +712,39 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
                 for ( j = 0; j < 4; j += 3 )
                 {
                     shade_triangle( px[j], py[j], pz[j], xm, ym, zm, px[i], py[i], pz[i] );
+                }
+            }
 
-                    // after shading, see if the triangle crosses	one contour plane
-
+            // After shading completed for a quad, render surface contours.
+            if ( clevel != NULL && ( opt & SURF_CONT ) )
+            {
+                for ( i = 1; i < 3; i++ )
+                {
+                    for ( j = 0; j < 4; j += 3 )
 #define min3( a, b, c )    ( MIN( ( MIN( a, b ) ), c ) )
 #define max3( a, b, c )    ( MAX( ( MAX( a, b ) ), c ) )
 
-                    if ( clevel != NULL && ( opt & SURF_CONT ) )
                     {
                         for ( k = 0; k < nlevel; k++ )
                         {
                             if ( clevel[k] >= min3( pz[i], zm, pz[j] ) && clevel[k] < max3( pz[i], zm, pz[j] ) )
                             {
                                 ct = 0;
-                                if ( clevel[k] >= MIN( pz[i], zm ) && clevel[k] < MAX( pz[i], zm ) ) // p0-pm
+                                if ( clevel[k] >= MIN( pz[i], zm ) && clevel[k] < MAX( pz[i], zm ) )     // p0-pm
                                 {
                                     xx[ct] = ( ( clevel[k] - pz[i] ) * ( xm - px[i] ) ) / ( zm - pz[i] ) + px[i];
                                     yy[ct] = ( ( clevel[k] - pz[i] ) * ( ym - py[i] ) ) / ( zm - pz[i] ) + py[i];
                                     ct++;
                                 }
 
-                                if ( clevel[k] >= MIN( pz[i], pz[j] ) && clevel[k] < MAX( pz[i], pz[j] ) ) // p0-p1
+                                if ( clevel[k] >= MIN( pz[i], pz[j] ) && clevel[k] < MAX( pz[i], pz[j] ) )     // p0-p1
                                 {
                                     xx[ct] = ( ( clevel[k] - pz[i] ) * ( px[j] - px[i] ) ) / ( pz[j] - pz[i] ) + px[i];
                                     yy[ct] = ( ( clevel[k] - pz[i] ) * ( py[j] - py[i] ) ) / ( pz[j] - pz[i] ) + py[i];
                                     ct++;
                                 }
 
-                                if ( clevel[k] >= MIN( pz[j], zm ) && clevel[k] < MAX( pz[j], zm ) ) // p1-pm
+                                if ( clevel[k] >= MIN( pz[j], zm ) && clevel[k] < MAX( pz[j], zm ) )     // p1-pm
                                 {
                                     xx[ct] = ( ( clevel[k] - pz[j] ) * ( xm - px[j] ) ) / ( zm - pz[j] ) + px[j];
                                     yy[ct] = ( ( clevel[k] - pz[j] ) * ( ym - py[j] ) ) / ( zm - pz[j] ) + py[j];
@@ -752,13 +757,10 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
                                     // the contour line -- draw a straight line betweeen the points
                                     // -- at the end this will make up the contour line
 
-                                    if ( opt & SURF_CONT )
-                                    {
-                                        // surface contour with color set by user
-                                        plcol0( color );
-                                        zz[0] = zz[1] = clevel[k];
-                                        plline3( 2, xx, yy, zz );
-                                    }
+                                    // surface contour with color set by user
+                                    plcol0( color );
+                                    zz[0] = zz[1] = clevel[k];
+                                    plline3( 2, xx, yy, zz );
 
                                     // don't break; one triangle can span various contour levels
                                 }
