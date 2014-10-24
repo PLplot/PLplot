@@ -3,7 +3,7 @@
 //
 //  Copyright (C) 1992, 2001  Geoffrey Furnish
 //  Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
-//  Copyright (C) 2000-2011 Alan W. Irwin
+//  Copyright (C) 2000-2014 Alan W. Irwin
 //  Copyright (C) 2001, 2002  Joao Cardoso
 //  Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
 //  Copyright (C) 2004, 2005  Thomas J. Duck
@@ -682,6 +682,9 @@ plD_state_psttf( PLStream *pls, PLINT op )
         if ( !pls->color )
         {
             doc->osBody() << " S\n" << ( pls->icol0 ? 0.0 : 1.0 ) << " G";
+            // Reinitialize current point location.
+            if ( dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED )
+                doc->osBody() << " " << (int) dev->xold << " " << (int) dev->yold << " M \n";
             break;
         }
     // else fallthrough
@@ -699,14 +702,10 @@ plD_state_psttf( PLStream *pls, PLINT op )
             PLFLT r = ( (PLFLT) pls->curcolor.r ) / 255.0;
             doc->osBody() << " S\n" << 1.0 - r << " G";
         }
+        // Reinitialize current point location.
+        if ( dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED )
+            doc->osBody() << " " << (int) dev->xold << " " << (int) dev->yold << " M \n";
         break;
-    }
-
-// Reinitialize current point location.
-
-    if ( dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED )
-    {
-        doc->osBody() << " " << (int) dev->xold << " " << (int) dev->yold << " M \n";
     }
 }
 

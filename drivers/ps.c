@@ -606,6 +606,9 @@ plD_state_ps( PLStream *pls, PLINT op )
         if ( !pls->color )
         {
             fprintf( OF, " S\n%.4f G", ( pls->icol0 ? 0.0 : 1.0 ) );
+            // Reinitialize current point location.
+            if ( dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED )
+                fprintf( OF, " %d %d M \n", (int) dev->xold, (int) dev->yold );
             break;
         }
     // else fallthrough
@@ -623,14 +626,10 @@ plD_state_ps( PLStream *pls, PLINT op )
             PLFLT r = ( (PLFLT) pls->curcolor.r ) / 255.0;
             fprintf( OF, " S\n%.4f G", 1.0 - r );
         }
+        // Reinitialize current point location.
+        if ( dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED )
+            fprintf( OF, " %d %d M \n", (int) dev->xold, (int) dev->yold );
         break;
-    }
-
-// Reinitialize current point location.
-
-    if ( dev->xold != PL_UNDEFINED && dev->yold != PL_UNDEFINED )
-    {
-        fprintf( OF, " %d %d M \n", (int) dev->xold, (int) dev->yold );
     }
 }
 
