@@ -1,6 +1,6 @@
 # xw08.py PLplot demo for Python
 #
-# Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004-2014  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -20,15 +20,20 @@
 
 from plplot_py_demos import *
 
+# These values must be odd, for the middle
+# of the index range to be an integer, and thus
+# to correspond to the exact floating point centre
+# of the sombrero.
+
 XPTS = 35		# Data points in x
-YPTS = 46		# Data points in y
+YPTS = 45		# Data points in y
 
-alt = [60.0, 20.0]
+alt = [60.0, 40.0]
 
-az = [30.0, 60.0]
+az = [30.0, -30.0]
 
 title = ["#frPLplot Example 8 - Alt=60, Az=30",
-	 "#frPLplot Example 8 - Alt=20, Az=60"]
+	 "#frPLplot Example 8 - Alt=40, Az=-30"]
 
 # Routine for restoring colour map1 to default.
 # See static void plcmap1_def(void) in plctrl.c for reference.
@@ -86,9 +91,12 @@ def cmap1_init(gray):
 
 def main():
 
-    rosen = 1
-    x = (arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
-    y = (arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
+    rosen = 0
+    dx = 2. / float( XPTS - 1 )
+    dy = 2. / float( YPTS - 1 )
+
+    x = -1. + dx*arange(XPTS)
+    y = -1. + dy*arange(YPTS)
     if rosen == 1:
 	x = 1.5*x
 	y = 0.5 + y
@@ -96,7 +104,7 @@ def main():
     r2 = (x*x) + (y*y)
     if rosen == 1:
 	z = (1. - x)*(1. - x) + 100 * (x*x - y)*(x*x - y)
-	# The log argument may be zero for just the right grid.  */
+	# The log argument might be zero for just the right grid.
 	z = log(choose(greater(z,0.), (exp(-5.), z)))
     else:
 	z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
@@ -107,9 +115,33 @@ def main():
     nlevel = 10
     step = (zmax-zmin)/(nlevel+1)
     clevel = zmin + step + arange(nlevel)*step
+
+    # Set up data and arrays for plsurf3dl call below.
+    indexxmin = 0
+    indexxmax = XPTS
+    # Must be same shape as z, and a row of z.
+    zlimited = empty(z.shape)
+    indexymin = empty(z.shape[0], dtype=int)
+    indexymax = empty(z.shape[0], dtype=int)
+    # Parameters of ellipse that limits the data.
+    x0 = 0.5*(XPTS - 1)
+    a = 0.9*x0
+    y0 = 0.5*(YPTS - 1)
+    b = 0.7*y0
+    for i in range(indexxmin, indexxmax):
+         square_root = sqrt(1. - min(1., ((double(i) - x0)/a)**2))
+         # Add 0.5 to find nearest integer and therefore preserve symmetry
+         # with regard to lower and upper bound of y range.
+         indexymin[i] = max(0, int(0.5 + y0 - b*square_root))
+         # indexymax calculated with the convention that it is 1
+         # greater than highest valid index.
+         indexymax[i] = min(YPTS, 1 + int(0.5 + y0 + b*square_root))
+         zlimited[i][indexymin[i]:indexymax[i]] = z[i][indexymin[i]:indexymax[i]]
+
     pllightsource(1., 1., 1.)
+
     for k in range(2):
-	for ifshade in range(4):
+	for ifshade in range(5):
 	    pladv(0)
 	    plvpor(0.0, 1.0, 0.0, 0.9)
 	    plwind(-1.0, 1.0, -0.9, 1.1)
@@ -144,6 +176,10 @@ def main():
 		# magnitude colored plot with contours
 		cmap1_init(0)
 		plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel)
+	    elif ifshade == 4:
+		# magnitude colored plot with contoursmagnitude colored plot and index limits
+		cmap1_init(0)
+		plsurf3dl(x, y, zlimited, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, indexxmin, indexymin, indexymax)
 
     # Restore defaults
     #plcol0(1)
