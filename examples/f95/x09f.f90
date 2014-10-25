@@ -24,21 +24,21 @@ program x09f95
     use plplot, PI => PL_PI, TWOPI => PL_TWOPI
     use plf95demolib
     implicit none
-    integer(kind=plint) i, j
+    integer i, j
 
 !   xdim and ydim are the absolute static dimensions.
 !   nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
 !   arrays that is actually used.
-    integer(kind=plint), parameter :: xdim=99, ydim=100, nptsx=35, nptsy=46
+    integer, parameter :: xdim=99, ydim=100, nptsx=35, nptsy=46
 
     real(kind=plflt)   :: z(xdim, ydim), w(xdim, ydim), &
                           xg1(xdim), yg1(ydim), &
                           xg2(xdim, ydim), yg2(xdim, ydim)
     real(kind=plflt)   :: xc(nptsx), yc(nptsy)
     real(kind=plflt)   :: xx, yy, argx, argy, distort
-    real(kind=plflt)   :: tr(6_plint)
+    real(kind=plflt)   :: tr(6)
 
-    real(kind=plflt)   :: clevel(11_plint) = &
+    real(kind=plflt)   :: clevel(11) = &
         (/ -1._plflt, -0.8_plflt, -0.6_plflt, -0.4_plflt, -0.2_plflt, &
             0._plflt,  0.2_plflt,  0.4_plflt,  0.6_plflt,  0.8_plflt, 1._plflt /)
 
@@ -49,8 +49,8 @@ program x09f95
             0.0_plflt, 2._plflt/dble(nptsy-1), -1.0_plflt /)
 
 !   Calculate the data matrices.
-    xc = (arange(0_plint,nptsx) - (nptsx/2)) / dble(nptsx/2)
-    yc = (arange(0_plint,nptsy) - (nptsy/2)) / dble(nptsy/2) - 1.0_plflt
+    xc = (arange(0,nptsx) - (nptsx/2)) / dble(nptsx/2)
+    yc = (arange(0,nptsy) - (nptsy/2)) / dble(nptsy/2) - 1.0_plflt
 
     do i=1,nptsx
         do j=1,nptsy
@@ -62,8 +62,8 @@ program x09f95
 !   Build the 1-d coord arrays.
     distort = 0.4_plflt
 
-    xg1(1:nptsx) = coord_function( arange(0_plint,nptsx) / dble(nptsx-1),  distort )
-    yg1(1:nptsy) = coord_function( arange(0_plint,nptsy) / dble(nptsy-1), -distort )
+    xg1(1:nptsx) = coord_function( arange(0,nptsx) / dble(nptsx-1),  distort )
+    yg1(1:nptsy) = coord_function( arange(0,nptsy) / dble(nptsy-1), -distort )
 
 !   Build the 2-d coord arrays.
     do i=1,nptsx
@@ -80,39 +80,39 @@ program x09f95
     call plinit
 
 !   Plot using identity transform
-    call pl_setcontlabelformat(4_plint, 3_plint)
-    call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 1_plint)
-    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0_plint, 0_plint)
-    call plcol0(2_plint)
-    call plcont(z(1:nptsx,1:nptsy), 1_plint, nptsx, 1_plint, nptsy, clevel, tr)
-    call plstyl(1_plint, 1500_plint, 1500_plint)
-    call plcol0(3_plint)
-    call plcont(w(1:nptsx,1:nptsy), 1_plint, nptsx, 1_plint, nptsy, clevel, tr)
-    call plstyl(0_plint, 1500_plint, 1500_plint)
-    call plcol0(1_plint)
+    call pl_setcontlabelformat(4, 3)
+    call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 1)
+    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
+    call plcol0(2)
+    call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, tr)
+    call plstyl(1, 1500, 1500)
+    call plcol0(3)
+    call plcont(w(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, tr)
+    call plstyl(0, 1500, 1500)
+    call plcol0(1)
     call pllab('X Coordinate', 'Y Coordinate', 'Streamlines of flow')
-    call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 0_plint)
+    call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 0)
 
 !   Plot using 1d coordinate transform
-    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0_plint, 0_plint)
-    call plcol0(2_plint)
-    call plcont(z(1:nptsx,1:nptsy), 1_plint, nptsx, 1_plint, nptsy, clevel, xg1(1:nptsx), yg1(1:nptsy))
-    call plstyl(1_plint, 1500_plint, 1500_plint)
-    call plcol0(3_plint)
-    call plcont(w(1:nptsx,1:nptsy), 1_plint, nptsx, 1_plint, nptsy, clevel, xg1(1:nptsx), yg1(1:nptsy))
-    call plstyl(0_plint, 1500_plint, 1500_plint)
-    call plcol0(1_plint)
+    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
+    call plcol0(2)
+    call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, xg1(1:nptsx), yg1(1:nptsy))
+    call plstyl(1, 1500, 1500)
+    call plcol0(3)
+    call plcont(w(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, xg1(1:nptsx), yg1(1:nptsy))
+    call plstyl(0, 1500, 1500)
+    call plcol0(1)
     call pllab('X Coordinate', 'Y Coordinate', 'Streamlines of flow')
 
 !   Plot using 2d coordinate transform
-    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0_plint, 0_plint)
-    call plcol0(2_plint)
-    call plcont(z(1:nptsx,1:nptsy), 1_plint, nptsx, 1_plint, nptsy, clevel, xg2(1:nptsx,1:nptsy), yg2(1:nptsx,1:nptsy))
-    call plstyl(1_plint, 1500_plint, 1500_plint)
-    call plcol0(3_plint)
-    call plcont(w(1:nptsx,1:nptsy), 1_plint, nptsx, 1_plint, nptsy, clevel, xg2(1:nptsx,1:nptsy), yg2(1:nptsx,1:nptsy))
-    call plstyl(0_plint, 1500_plint, 1500_plint)
-    call plcol0(1_plint)
+    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
+    call plcol0(2)
+    call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, xg2(1:nptsx,1:nptsy), yg2(1:nptsx,1:nptsy))
+    call plstyl(1, 1500, 1500)
+    call plcol0(3)
+    call plcont(w(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, xg2(1:nptsx,1:nptsy), yg2(1:nptsx,1:nptsy))
+    call plstyl(0, 1500, 1500)
+    call plcol0(1)
     call pllab('X Coordinate', 'Y Coordinate', 'Streamlines of flow')
 
     call polar()
@@ -137,33 +137,33 @@ end function coord_function
 !----------------------------------------------------------------------------
 !   polar contour plot example.
 subroutine polar()
-    integer(kind=plint), parameter :: PERIMETERPTS = 100_plint
+    integer, parameter :: PERIMETERPTS = 100
 
 !   xdim and ydim are the absolute static size of the 2D arrays.
 !   RPTS and THETAPTS are associated with the part of the
 !   2D arrays that are defined.
-    integer(kind=plint), parameter :: xdim=99, RPTS = 40_plint
-    integer(kind=plint), parameter :: ydim=100, THETAPTS = 40_plint
-    integer(kind=plint), parameter :: NLEVEL=10
-    integer(kind=plint)            :: i,j
+    integer, parameter :: xdim=99, RPTS = 40
+    integer, parameter :: ydim=100, THETAPTS = 40
+    integer, parameter :: NLEVEL=10
+    integer            :: i,j
     real(kind=plflt)   :: xg(xdim, ydim),  yg(xdim, ydim), &
         z(xdim, ydim), px(PERIMETERPTS), py(PERIMETERPTS), &
         lev(NLEVEL), r, theta, delta
 
-    call plenv(-1._plflt, 1._plflt, -1._plflt, 1._plflt, 0_plint, -2)
-    call plcol0(1_plint)
+    call plenv(-1._plflt, 1._plflt, -1._plflt, 1._plflt, 0, -2)
+    call plcol0(1)
 
 !   perimeter.
     delta = 2._plflt*PI/(PERIMETERPTS-1)
-    px = cos(delta*arange(0_plint, PERIMETERPTS))
-    py = sin(delta*arange(0_plint, PERIMETERPTS))
+    px = cos(delta*arange(0, PERIMETERPTS))
+    py = sin(delta*arange(0, PERIMETERPTS))
 
     call plline(px, py)
 
 !   create data to be contoured.
-    do j = 1_plint, THETAPTS
+    do j = 1, THETAPTS
         theta = (2._plflt*PI/dble(THETAPTS-1))*dble(j-1)
-        do i = 1_plint, RPTS
+        do i = 1, RPTS
             r = (i-1)/dble(RPTS-1)
             xg(i,j) = r*cos(theta)
             yg(i,j) = r*sin(theta)
@@ -172,12 +172,12 @@ subroutine polar()
     enddo
 
 !   create contour values.
-    lev = 0.05_plflt + 0.10_plflt * arange(0_plint,nlevel)
+    lev = 0.05_plflt + 0.10_plflt * arange(0,nlevel)
 
 !   plot the (polar) contours.
-    call plcol0(2_plint)
-    call plcont(z, 1_plint, RPTS, 1_plint, THETAPTS, lev, xg, yg)
-    call plcol0(1_plint)
+    call plcol0(2)
+    call plcont(z, 1, RPTS, 1, THETAPTS, lev, xg, yg)
+    call plcol0(1)
     call pllab('', '', 'Polar Contour Plot')
 end subroutine polar
 
@@ -185,7 +185,7 @@ end subroutine polar
 !    shielded potential contour plot example
 subroutine potential()
 
-    integer(kind=plint)          :: i, j, nx, ny, kx, lx, ky, ly, &
+    integer          :: i, j, nx, ny, kx, lx, ky, ly, &
         nlevel, ilevgt, ilevlt, nlevlt, nlevgt, &
         ncollin, ncolbox, ncollab, &
         nxsub, nysub
@@ -199,34 +199,34 @@ subroutine potential()
 !    xdim and ydim are the absolute static size of the 2D arrays.
 !    NCX and NCY are associated with the part of the
 !    2D arrays that are defined.
-    integer(kind=plint), parameter :: xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100
+    integer, parameter :: xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100
 
     real(kind=plflt)   :: z(xdim, ydim), ztmp(xdim, ydim+1)
     real(kind=plflt)   :: xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)
 
-    real(kind=plflt)   :: clevel(20_plint)
+    real(kind=plflt)   :: clevel(20)
     character(len=8)   :: xopt, yopt
 
     nx = NCX
     ny = NCY
 
-    kx = 1_plint
+    kx = 1
     lx = nx
-    ky = 1_plint
+    ky = 1
     ly = ny
 
 !    Set up r-theta grids
 !    Tack on extra cell in theta to handle periodicity.
 
-    do i = 1_plint, nx
+    do i = 1, nx
         r = i - 0.5_plflt
-        do j = 1_plint, ny
+        do j = 1, ny
             theta = TWOPI/dble(ny-1) * (j-0.5_plflt)
             xg(i,j) = r * cos(theta)
             yg(i,j) = r * sin(theta)
         enddo
-        xg(i, ny+1) = xg(i, 1_plint)
-        yg(i, ny+1) = yg(i, 1_plint)
+        xg(i, ny+1) = xg(i, 1)
+        yg(i, ny+1) = yg(i, 1)
     enddo
 
     xmax = maxval( xg(1:nx,1:ny) )
@@ -257,8 +257,8 @@ subroutine potential()
     q2i = - q2*r/d2
     d2i = r**2/d2
 
-    do i = 1_plint, nx
-        do j = 1_plint, ny
+    do i = 1, nx
+        do j = 1, ny
             div1  = sqrt((xg(i,j)-d1)**2  + (yg(i,j)-d1)**2  + eps**2)
             div1i = sqrt((xg(i,j)-d1i)**2 + (yg(i,j)-d1i)**2 + eps**2)
 
@@ -279,9 +279,9 @@ subroutine potential()
 
 !   Set up contour levels.
 
-    nlevel = 20_plint
+    nlevel = 20
     dz = abs(zmax - zmin)/dble (nlevel)
-    clevel(1:nlevel) = zmin + (arange(1_plint,nlevel+1) - 0.5_plflt) * dz
+    clevel(1:nlevel) = zmin + (arange(1,nlevel+1) - 0.5_plflt) * dz
 
 !   Split contours into two parts, z > 0, and z < 0.
 !   Dashed contours will be at levels 'ilevlt' through 'ilevlt+nlevlt'.
@@ -291,18 +291,18 @@ subroutine potential()
 !   where the values become positive by counting the non-positive
 !   elements
 
-    ilevlt = 1_plint
+    ilevlt = 1
     nlevlt = count( clevel(1:nlevel) <= 0.0_plflt )
     ilevgt = ilevlt + nlevlt
     nlevgt = nlevel - nlevlt
 
 !   Advance graphics frame and get ready to plot.
 
-    ncollin = 11_plint
-    ncolbox = 1_plint
-    ncollab = 2_plint
+    ncollin = 11
+    ncolbox = 1
+    ncollab = 2
 
-    call pladv(0_plint)
+    call pladv(0)
     call plcol0(ncolbox)
 
 !   Scale window to user coordinates.
@@ -320,22 +320,22 @@ subroutine potential()
     xopt = ' '
     yopt = ' '
     xtick = 0._plflt
-    nxsub = 0_plint
+    nxsub = 0
     ytick = 0._plflt
-    nysub = 0_plint
+    nysub = 0
 
     call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 
 !   Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
     call plcol0(ncollin)
-    if (nlevlt > 0_plint) then
-        call pllsty(2_plint)
+    if (nlevlt > 0) then
+        call pllsty(2)
         call plcont(ztmp, kx, lx, ky, ly+1, &
                  clevel(ilevlt:nlevlt), xg, yg)
     endif
-    if (nlevgt > 0_plint) then
-        call pllsty(1_plint)
+    if (nlevgt > 0) then
+        call pllsty(1)
         call plcont(ztmp, kx, lx, ky, ly+1, &
                  clevel(ilevgt:ilevgt-1+nlevgt), xg, yg)
     endif
@@ -343,8 +343,8 @@ subroutine potential()
 !   Draw boundary.
 
     delta = TWOPI/(NPLT-1)
-    xtm = x0 + rmax * cos(delta*arange(0_plint,NPLT))
-    ytm = y0 + rmax * sin(delta*arange(0_plint,NPLT))
+    xtm = x0 + rmax * cos(delta*arange(0,NPLT))
+    ytm = y0 + rmax * sin(delta*arange(0,NPLT))
 
     call plcol0(ncolbox)
     call plline(xtm, ytm)

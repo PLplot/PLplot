@@ -21,7 +21,7 @@
 program x06f95
     use plplot
     implicit none
-    integer(kind=plint) :: i, j, k, font, kind_font, maxfont
+    integer :: i, j, k, font, kind_font, maxfont
     real(kind=plflt), dimension(1:1) :: x, y
 
     character (len=3) :: text
@@ -32,16 +32,16 @@ program x06f95
 !   Full sized page for display
     call plinit()
 
-    do kind_font = 1_plint,2
+    do kind_font = 1,2
         call plfontld(kind_font-1)
-        maxfont = merge( 1_plint, 4_plint, kind_font==1 )
+        maxfont = merge( 1, 4, kind_font==1 )
 
         do font=1,maxfont
             call plfont(font)
 
-            call pladv(0_plint)
+            call pladv(0)
 
-            call plcol0(2_plint)
+            call plcol0(2)
 
 !           Set up viewport and window
 
@@ -50,8 +50,8 @@ program x06f95
 
 !           Draw the grid using plbox
 
-            call plbox('bcg', 0.1_plflt, 0_plint, 'bcg', 0.1_plflt, 0_plint)
-            call plcol0(15_plint)
+            call plbox('bcg', 0.1_plflt, 0, 'bcg', 0.1_plflt, 0)
+            call plcol0(15)
 
 !           Write the digits below the frame
 
@@ -75,7 +75,7 @@ program x06f95
                     y=1.25_plflt-0.1_plflt*i
 
 !                   Display the symbols
-                    if (k < 128_plint) call plpoin(x,y,k)
+                    if (k < 128) call plpoin(x,y,k)
 
                     k=k+1
 

@@ -28,14 +28,14 @@ program x10f95
 
     call plinit()
 
-    call pladv(0_plint)
+    call pladv(0)
     call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
     call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    call plbox('bc', 0.0_plflt, 0_plint, 'bc', 0.0_plflt, 0_plint )
+    call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0 )
 
     call plsvpa(50.0_plflt, 150.0_plflt, 50.0_plflt, 100.0_plflt )
     call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    call plbox('bc', 0.0_plflt, 0_plint, 'bc', 0.0_plflt, 0_plint )
+    call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0 )
     call plptex(0.5_plflt, 0.5_plflt, 1.0_plflt, 0.0_plflt, &
              0.5_plflt, 'BOX at (50,150,50,100)' )
 

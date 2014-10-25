@@ -21,20 +21,20 @@
 program x00f95
     use plf95demolib
 
-    integer(kind=plint), parameter :: NSIZE = 101_plint
+    integer, parameter :: NSIZE = 101
 
     real(kind=plflt), dimension(NSIZE) :: x, y
 
     real(kind=plflt) :: xmin = 0._plflt, xmax = 1._plflt, ymin = 0._plflt, ymax = 100._plflt
-    ! integer(kind=plint)          :: i
+    ! integer          :: i
 
     ! Prepare data to be plotted.
-    x = arange(0_plint, NSIZE) / real(NSIZE-1,plflt)
+    x = arange(0, NSIZE) / real(NSIZE-1,plflt)
     y = ymax * x**2
 
     ! Or alternatively, using a DO-loop
-    !do i = 1_plint,NSIZE
-    !    x(i) = real( i - 1_plint, plflt ) / real( NSIZE - 1_plint, plflt )
+    !do i = 1,NSIZE
+    !    x(i) = real( i - 1, plflt ) / real( NSIZE - 1, plflt )
     !    y(i) = ymax * x(i)**2
     !enddo
 
@@ -45,7 +45,7 @@ program x00f95
     call plinit
 
     ! Create a labelled box to hold the plot.
-    call plenv( xmin, xmax, ymin, ymax, 0_plint, 0_plint )
+    call plenv( xmin, xmax, ymin, ymax, 0, 0 )
     call pllab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" )
 
     ! Plot the data that was prepared above.

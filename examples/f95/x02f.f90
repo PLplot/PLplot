@@ -48,9 +48,9 @@ subroutine demo1
     call plbop
 
 !   Divide screen into 16 regions
-    call plssub(4_plint,4_plint)
+    call plssub(4,4)
 
-    call draw_windows(16_plint, 0_plint)
+    call draw_windows(16, 0)
 
     call pleop
 
@@ -64,9 +64,9 @@ end subroutine demo1
 !     and HLS -> RGB translation.
 !--------------------------------------------------------------------------
 subroutine demo2
-    integer(kind=plint), parameter :: tablesize = 116_plint
-    integer(kind=plint), dimension(tablesize) :: r, g, b
-    integer(kind=plint) :: i
+    integer, parameter :: tablesize = 116
+    integer, dimension(tablesize) :: r, g, b
+    integer :: i
 
     real(kind=plflt), parameter :: lmin = 0.15_plflt, lmax = 0.85_plflt
     real(kind=plflt) h, l, s, r1, g1, b1
@@ -74,7 +74,7 @@ subroutine demo2
     call plbop
 
 !   Divide screen into 100 regions
-    call plssub(10_plint,10_plint)
+    call plssub(10,10)
 
     do i=0,99
 !   Bounds on HLS, from plhlsrgb() commentary --
@@ -83,9 +83,9 @@ subroutine demo2
 !   saturation	[0., 1.]	magnitude
 
 !   Vary hue uniformly from left to right
-        h = (360._plflt/10._plflt)*mod(i,10_plint)
+        h = (360._plflt/10._plflt)*mod(i,10)
 !   Vary lightness uniformly from top to bottom, between min and max
-        l = lmin + (lmax - lmin) * (i / 10_plint) / 9._plflt
+        l = lmin + (lmax - lmin) * (i / 10) / 9._plflt
 !   Use_ max saturation
         s = 1._plflt
 
@@ -102,7 +102,7 @@ subroutine demo2
 
     call plscmap0(r, g, b)
 
-    call draw_windows(100_plint, 16_plint)
+    call draw_windows(100, 16)
 
     call pleop
 
@@ -115,19 +115,19 @@ end subroutine demo2
 !--------------------------------------------------------------------------
 subroutine draw_windows( nw, cmap0_offset )
 
-    integer(kind=plint) :: nw, cmap0_offset
-    integer(kind=plint) :: i,j
+    integer :: nw, cmap0_offset
+    integer :: i,j
     real(kind=plflt) :: vmin, vmax, xj
     character (len=3) :: text
 
     call plschr(0.0_plflt, 3.5_plflt)
-    call plfont(4_plint)
+    call plfont(4)
 
     do i=0,nw-1
         call plcol0(i+cmap0_offset)
         write (text,'(i0)') i
 
-        call pladv(0_plint)
+        call pladv(0)
         vmin = 0.1_plflt
         vmax = 0.9_plflt
         do j=1,3
@@ -135,7 +135,7 @@ subroutine draw_windows( nw, cmap0_offset )
             call plwidth(xj)
             call plvpor(vmin,vmax,vmin,vmax)
             call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-            call plbox('bc', 0.0_plflt, 0_plint, 'bc', 0.0_plflt, 0_plint)
+            call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0)
             vmin = vmin + 0.1_plflt
             vmax = vmax - 0.1_plflt
         enddo

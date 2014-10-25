@@ -25,7 +25,7 @@
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
-      call plscmap0n(3_plint)
+      call plscmap0n(3)
 
 !      Initialize plplot
 
@@ -48,16 +48,16 @@
 
       use plplot
       implicit none
-      integer(kind=plint)   xdim, ydim, NX, NY, NCONTR
+      integer   xdim, ydim, NX, NY, NCONTR
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
-      parameter (xdim = 99_plint, NX = 35_plint, ydim = 100_plint, NY = 46_plint, NCONTR = 14_plint)
+      parameter (xdim = 99, NX = 35, ydim = 100, NY = 46, NCONTR = 14)
 
       real(kind=plflt)    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
       real(kind=plflt)    xmin, xmax, ymin, ymax, zmin, zmax, x, y
       real(kind=plflt)    shade_min, shade_max, sh_color
-      integer(kind=plint)   i, j, sh_cmap
-      integer(kind=plint)   min_color, max_color
+      integer   i, j, sh_cmap
+      integer   min_color, max_color
       real(kind=plflt)    sh_width, min_width, max_width
 
       xmin = -1._plflt
@@ -67,43 +67,43 @@
 
 !      Set up for plshade call
 
-      sh_cmap   = 1_plint
-      min_color = 1_plint
-      min_width = 0_plint
-      max_color = 0_plint
-      max_width = 0_plint
+      sh_cmap   = 1
+      min_color = 1
+      min_width = 0
+      max_color = 0
+      max_width = 0
 
 !      Set up data arrays
 
-      do i = 1_plint, NX
-        x = (i - 1_plint - (NX/2)) / dble (NX/2)
-        do j = 1_plint, NY
-          y = (j - 1_plint - (NY/2)) / dble (NY/2) - 1.0_plflt
+      do i = 1, NX
+        x = (i - 1 - (NX/2)) / dble (NX/2)
+        do j = 1, NY
+          y = (j - 1 - (NY/2)) / dble (NY/2) - 1.0_plflt
           z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1_plflt)
           w(i,j) = 2*x*y
         enddo
       enddo
 
       call a2mnmx(z, NX, NY, zmin, zmax, xdim)
-      do  i = 1_plint, NCONTR
+      do  i = 1, NCONTR
         clevel(i) = zmin + (zmax - zmin) * (i + 0.5_plflt) / &
           dble (NCONTR)
       enddo
 
 !      Plot using identity transform
 
-      call pladv(0_plint)
+      call pladv(0)
       call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
       call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
 
-      do i = 1_plint, NCONTR
-        shade_min = zmin + (zmax - zmin) * dble (i - 1_plint) / &
+      do i = 1, NCONTR
+        shade_min = zmin + (zmax - zmin) * dble (i - 1) / &
           dble (NCONTR)
         shade_max = zmin + (zmax - zmin) * dble (i)     / &
           dble (NCONTR)
-        sh_color = dble (i - 1_plint) / dble (NCONTR - 1_plint)
-        sh_width = 2_plint
-        call plpsty(0_plint)
+        sh_color = dble (i - 1) / dble (NCONTR - 1)
+        sh_width = 2
+        call plpsty(0)
         call plshade(z(:NX,:NY), ' ', &
           -1._plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
           shade_min, shade_max, &
@@ -111,9 +111,9 @@
           min_color, min_width, max_color, max_width )
       enddo
 
-      call plcol0(1_plint)
-      call plbox('bcnst', 0.0_plflt, 0_plint, 'bcnstv', 0.0_plflt, 0_plint)
-      call plcol0(2_plint)
+      call plcol0(1)
+      call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+      call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
       end
@@ -124,11 +124,11 @@
 
       use plplot, TWOPI => PL_TWOPI
       implicit none
-      integer(kind=plint)   xdim, ydim, NX, NY, NCONTR, NBDRY
+      integer   xdim, ydim, NX, NY, NCONTR, NBDRY
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
-      parameter (xdim = 99_plint, NX = 40_plint, ydim = 100_plint, NY = 64_plint)
-      parameter (NCONTR = 14_plint, NBDRY=200)
+      parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
+      parameter (NCONTR = 14, NBDRY=200)
 
       real(kind=plflt)    z(xdim, ydim), ztmp(xdim, ydim+1)
       real(kind=plflt)    xg(xdim, ydim+1), yg(xdim, ydim+1), &
@@ -142,39 +142,39 @@
 
       real(kind=plflt)    shade_min, shade_max, sh_color
       real(kind=plflt)    xtick, ytick
-      integer(kind=plint)   nxsub, nysub
-      integer(kind=plint)   ncolbox, ncollab
-      integer(kind=plint)   i, j, kx, lx, ky, ly
-      integer(kind=plint)   sh_cmap
-      integer(kind=plint)   min_color, max_color
+      integer   nxsub, nysub
+      integer   ncolbox, ncollab
+      integer   i, j, kx, lx, ky, ly
+      integer   sh_cmap
+      integer   min_color, max_color
       real(kind=plflt) sh_width, min_width, max_width
       character(len=8) xopt, yopt
 
 !      Set up for plshade call
 
-      sh_cmap = 1_plint
-      min_color = 1_plint
-      min_width = 0_plint
-      max_color = 0_plint
-      max_width = 0_plint
+      sh_cmap = 1
+      min_color = 1
+      min_width = 0
+      max_color = 0
+      max_width = 0
 
-      kx = 1_plint
+      kx = 1
       lx = NX
-      ky = 1_plint
+      ky = 1
       ly = NY
 
 !      Set up r-theta grids
 !      Tack on extra cell in theta to handle periodicity.
 
-      do i = 1_plint, NX
+      do i = 1, NX
         r = i - 0.5_plflt
-        do j = 1_plint, NY
+        do j = 1, NY
           theta = TWOPI/dble(NY) * (j-0.5_plflt)
           xg(i,j) = r * cos(theta)
           yg(i,j) = r * sin(theta)
         enddo
-        xg(i, NY+1) = xg(i, 1_plint)
-        yg(i, NY+1) = yg(i, 1_plint)
+        xg(i, NY+1) = xg(i, 1)
+        yg(i, NY+1) = yg(i, 1)
       enddo
       call a2mnmx(xg, NX, NY, xmin, xmax, xdim)
       call a2mnmx(yg, NX, NY, ymin, ymax, xdim)
@@ -202,8 +202,8 @@
       q2i = - q2*r/d2
       d2i = r**2/d2
 
-      do i = 1_plint, NX
-        do j = 1_plint, NY
+      do i = 1, NX
+        do j = 1, NY
           div1 = sqrt((xg(i,j)-d1)**2 + (yg(i,j)-d1)**2 + eps**2)
           div1i = sqrt((xg(i,j)-d1i)**2 + (yg(i,j)-d1i)**2 + eps**2)
 
@@ -216,26 +216,26 @@
 
 !      Tack on extra cell in theta to handle periodicity.
 
-      do i = 1_plint, NX
-        do j = 1_plint, NY
+      do i = 1, NX
+        do j = 1, NY
           ztmp(i,j) = z(i,j)
         enddo
-        ztmp(i, NY+1) = z(i, 1_plint)
+        ztmp(i, NY+1) = z(i, 1)
       enddo
       call a2mnmx(z, NX, NY, zmin, zmax, xdim)
 
 !      Set up contour levels.
 
-      do i = 1_plint, NCONTR
+      do i = 1, NCONTR
         clevel(i) = zmin + (i-0.5_plflt)*abs(zmax - zmin)/dble(NCONTR)
       enddo
 
 !      Advance graphics frame and get ready to plot.
 
-      ncolbox = 1_plint
-      ncollab = 2_plint
+      ncolbox = 1
+      ncollab = 2
 
-      call pladv(0_plint)
+      call pladv(0)
       call plcol0(ncolbox)
 
 !      Scale window to user coordinates.
@@ -253,22 +253,22 @@
       xopt = ' '
       yopt = ' '
       xtick = 0._plflt
-      nxsub = 0_plint
+      nxsub = 0
       ytick = 0._plflt
-      nysub = 0_plint
+      nysub = 0
 
       call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 
 !      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
-      do i = 1_plint, NCONTR
-        shade_min = zmin + (zmax - zmin) * dble (i - 1_plint) / &
+      do i = 1, NCONTR
+        shade_min = zmin + (zmax - zmin) * dble (i - 1) / &
           dble (NCONTR)
         shade_max = zmin + (zmax - zmin) * dble (i)     / &
           dble (NCONTR)
-        sh_color = dble (i - 1_plint) / dble (NCONTR - 1_plint)
-        sh_width = 2_plint
-        call plpsty(0_plint)
+        sh_color = dble (i - 1) / dble (NCONTR - 1)
+        sh_width = 2
+        call plpsty(0)
 
         call plshade(z(:NX,:NY), ' ', &
           -1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
@@ -280,7 +280,7 @@
 
 !      Draw boundary.
 
-      do i = 1_plint, NBDRY
+      do i = 1, NBDRY
         theta = (TWOPI)/(NBDRY-1) * dble(i-1)
         xtm(i) = x0 + rmax * cos(theta)
         ytm(i) = y0 + rmax * sin(theta)
@@ -302,13 +302,13 @@
       use plplot
       implicit none
 
-      integer(kind=plint)   i, j, nx, ny, xdim
+      integer   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
-      fmax = f(1_plint, 1_plint)
+      fmax = f(1, 1)
       fmin = fmax
-      do j = 1_plint, ny
-        do  i = 1_plint, nx
+      do j = 1, ny
+        do  i = 1, nx
           fmax = max(fmax, f(i, j))
           fmin = min(fmin, f(i, j))
         enddo

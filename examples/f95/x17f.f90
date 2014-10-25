@@ -25,13 +25,13 @@ program x17f95
     use plplot, PI => PL_PI
     implicit none
 
-    integer(kind=plint)            :: id1, n
-    integer(kind=plint), parameter :: nsteps = 1000_plint
+    integer            :: id1, n
+    integer, parameter :: nsteps = 1000
     logical            :: autoy, acc
     real(kind=plflt)   :: y1, y2, y3, y4, ymin, ymax, xlab, ylab
     real(kind=plflt)   :: t, tmin, tmax, tjump, dt, noise
-    integer(kind=plint)            :: colbox, collab, colline(4_plint), styline(4_plint)
-    character(len=20)  :: legline(4_plint)
+    integer            :: colbox, collab, colline(4), styline(4)
+    character(len=20)  :: legline(4)
 
     logical            :: pl_errcode
     character(len=80)  :: errmsg
@@ -71,11 +71,11 @@ program x17f95
 !   Only automatic tick generation and label placement allowed
 !   Eventually I'll make this fancier
 
-    colbox = 1_plint
-    collab = 3_plint
+    colbox = 1
+    collab = 3
 !   pens color and line style
-    styline = (/ 2_plint, 3_plint, 4_plint, 5_plint /)
-    colline = (/ 2_plint, 3_plint, 4_plint, 5_plint /)
+    styline = (/ 2, 3, 4, 5 /)
+    colline = (/ 2, 3, 4, 5 /)
 
 !   pens legend
     legline = (/ 'sum    ', 'sin    ', 'sin*noi', 'sin+noi' /)
@@ -93,7 +93,7 @@ program x17f95
 
     call plinit()
 
-    call pladv(0_plint)
+    call pladv(0)
     call plvsta()
 
 !   Register our error variables with PLplot
@@ -133,7 +133,7 @@ program x17f95
     y4 = 0.0_plflt
     dt = 0.1_plflt
 
-    do n = 0_plint,nsteps-1
+    do n = 0,nsteps-1
 !       wait a little (10 ms) to simulate time elapsing.  gfortran
 !       sleep has resolution of 1 sec so the call below is commented
 !       out because it is like watching paint dry.  In any case, I
@@ -151,17 +151,17 @@ program x17f95
 !       There is no need for all pens to have the same number of
 !       points or beeing equally time spaced.
 
-        if ( mod(n,2_plint) .ne. 0_plint ) then
-            call plstripa(id1, 0_plint, t, y1)
+        if ( mod(n,2) .ne. 0 ) then
+            call plstripa(id1, 0, t, y1)
         endif
-        if ( mod(n,3_plint) .ne. 0_plint ) then
-            call plstripa(id1, 1_plint, t, y2)
+        if ( mod(n,3) .ne. 0 ) then
+            call plstripa(id1, 1, t, y2)
         endif
-        if ( mod(n,4_plint) .ne. 0_plint ) then
-            call plstripa(id1, 2_plint, t, y3)
+        if ( mod(n,4) .ne. 0 ) then
+            call plstripa(id1, 2, t, y3)
         endif
-        if ( mod(n,5_plint) .ne. 0_plint ) then
-            call plstripa(id1, 3_plint, t, y4)
+        if ( mod(n,5) .ne. 0 ) then
+            call plstripa(id1, 3, t, y4)
         endif
 !       use_ double buffer (-db on command line)
 !       call pleop()

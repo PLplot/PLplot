@@ -41,14 +41,14 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer(kind=plint) n
+      integer n
       real(kind=plflt)    x(n)
       real(kind=plflt)    y(n)
 
-      integer(kind=plint) i
+      integer i
       real(kind=plflt)    xp, yp, radius
 
-      do i = 1_plint,n
+      do i = 1,n
          radius = 90.0_plflt - y(i)
          xp = radius * cos(x(i) * PI / 180.0_plflt)
          yp = radius * sin(x(i) * PI / 180.0_plflt)
@@ -85,14 +85,14 @@
       subroutine geolocation_labeler(axis, value, label, length)
       use plplot
       implicit none
-      integer(kind=plint) :: axis, length
+      integer :: axis, length
       real(kind=plflt) :: value
       character(len=length) label
       character(len=5) direction_label
       real(kind=plflt) :: label_val = 0.0_plflt
       real(kind=plflt) :: normalize_longitude
 
-      if (axis .eq. 2_plint) then
+      if (axis .eq. 2) then
          label_val = value
          if (label_val .gt. 0.0_plflt) then
             direction_label = ' N'
@@ -101,7 +101,7 @@
          else
             direction_label = 'Eq'
          endif
-      else if (axis .eq. 1_plint) then
+      else if (axis .eq. 1) then
          label_val = normalize_longitude(value)
          if (label_val .gt. 0.0_plflt) then
             direction_label = ' E'
@@ -111,7 +111,7 @@
             direction_label = ''
          endif
       endif    
-      if (axis .eq. 2_plint .and. value .eq. 0.0_plflt) then
+      if (axis .eq. 2 .and. value .eq. 0.0_plflt) then
 !     A special case for the equator
          label = direction_label    
       else if (abs(label_val) .lt. 10.0_plflt) then
@@ -157,8 +157,8 @@
 ! Setup a custom latitude and longitude-based scaling function.
       call plslabelfunc(geolocation_labeler)
 
-      call plcol0(1_plint)
-      call plenv(minx, maxx, miny, maxy, 1_plint, 70_plint)
+      call plcol0(1)
+      call plenv(minx, maxx, miny, maxy, 1, 70)
       call plmap('usaglobe', minx, maxx, miny, maxy)
 
 ! The Americas
@@ -166,12 +166,12 @@
       minx = 190._plflt
       maxx = 340._plflt
 
-      call plcol0(1_plint)
-      call plenv(minx, maxx, miny, maxy, 1_plint, 70_plint)
+      call plcol0(1)
+      call plenv(minx, maxx, miny, maxy, 1, 70)
       call plmap('usaglobe', minx, maxx, miny, maxy)
 
 ! Clear the labeling function
-      call plslabelfunc(0_plint)
+      call plslabelfunc(0)
 
 ! Polar, Northern hemisphere
 
@@ -179,10 +179,10 @@
       maxx = 360._plflt
 
       call plenv(-75._plflt, 75._plflt, -75._plflt, &
-              75._plflt, 1_plint, -1)
+              75._plflt, 1, -1)
       call plmap(mapform19,'globe', minx, maxx, miny, maxy)
 
-      call pllsty(2_plint)
+      call pllsty(2)
       call plmeridians(mapform19,10.0_plflt, 10.0_plflt, &
               0.0_plflt, 360.0_plflt, -10.0_plflt, &
               80.0_plflt)
@@ -194,30 +194,30 @@
       
       call plstransform( map_transform )
 
-      call pllsty( 1_plint )
+      call pllsty( 1 )
       call plenv( -75._plflt, 75._plflt, -75._plflt, &
-           75._plflt, 1_plint, -1 )
+           75._plflt, 1, -1 )
       ! No need to set the map transform here as the global 
       ! transform will be used.
       call plmap('globe', minx, maxx, miny, maxy )
       
-      call pllsty( 2_plint )
+      call pllsty( 2 )
       call plmeridians(10.0_plflt, 10.0_plflt, &
            0.0_plflt, 360.0_plflt, -10.0_plflt, &
            80.0_plflt )
       
       ! Show Baltimore, MD on the map
-      call plcol0( 2_plint )
+      call plcol0( 2 )
       call plssym( 0.0_plflt, 2.0_plflt )
       x=-76.6125_plflt
       y=39.2902778_plflt
-      call plpoin( x, y, 18_plint )
+      call plpoin( x, y, 18 )
       call plssym( 0.0_plflt, 1.0_plflt )
       call plptex( -76.6125_plflt, 43.0_plflt, 0.0_plflt, &
            0.0_plflt, 0.0_plflt, 'Baltimore, MD' )
       
       ! For f95, this is how the global transform is cleared
-      call plstransform( 0_plint )
+      call plstransform( 0 )
 
       call plend()
       end program x19f

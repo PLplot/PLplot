@@ -5,20 +5,20 @@ program test_plf95demolib
     use plf95demolib
 
     real, dimension(10)   :: value
-    integer(kind=plint)               :: i
-    integer(kind=plint), dimension(4) :: start = (/  0_plint,  0_plint,  1_plint,  2_plint /), &
-                             stop  = (/ 10_plint, 10_plint, 11_plint, 22_plint /), &
-                             step  = (/  1_plint,  2_plint,  1_plint,  2_plint /), &
+    integer               :: i
+    integer, dimension(4) :: start = (/  0,  0,  1,  2 /), &
+                             stop  = (/ 10, 10, 11, 22 /), &
+                             step  = (/  1,  2,  1,  2 /), &
                              expected_size = &
-                                     (/ 10_plint,  5_plint, 10_plint, 10_plint /)
-    integer(kind=plint)               :: sz
+                                     (/ 10,  5, 10, 10 /)
+    integer               :: sz
 
     ! Function arange:
     ! - Check the length of the returned array
     ! - Check the values
     !
-    do i = 1_plint,size(start,kind=plint)
-        sz = size( arange( start(i), stop(i), step(i) ),kind=plint )
+    do i = 1,size(start)
+        sz = size( arange( start(i), stop(i), step(i) ) )
         if ( sz /= expected_size(i) ) then
             write(*,*) 'Expected:', expected_size(i), ' - got: ', sz
         else

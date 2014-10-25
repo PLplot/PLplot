@@ -24,12 +24,12 @@ program x07f95
 
     character (len=4) :: text
 
-    integer(kind=plint) :: i, j, k, l
-    integer(kind=plint), dimension(20) :: base = &
-        (/    0_plint,  100_plint,    0_plint,  100_plint,  200_plint,  &
-        500_plint,  600_plint,  700_plint,  800_plint,  900_plint, &
-        2000_plint, 2100_plint, 2200_plint, 2300_plint, 2400_plint, &
-        2500_plint, 2600_plint, 2700_plint, 2800_plint, 2900_plint  /)
+    integer :: i, j, k, l
+    integer, dimension(20) :: base = &
+        (/    0,  100,    0,  100,  200,  &
+        500,  600,  700,  800,  900, &
+        2000, 2100, 2200, 2300, 2400, &
+        2500, 2600, 2700, 2800, 2900  /)
 
     real(kind=plflt), dimension(1:1) ::  x, y
 
@@ -40,13 +40,13 @@ program x07f95
 !   Full sized page for display
 
     call plinit()
-    call plfontld(0_plint)
+    call plfontld(0)
     do l=1,20
-        if (l==3) call plfontld(1_plint)
+        if (l==3) call plfontld(1)
 
-        call pladv(0_plint)
+        call pladv(0)
 
-        call plcol0(2_plint)
+        call plcol0(2)
 
         ! Set up viewport and window
 
@@ -55,8 +55,8 @@ program x07f95
 
         ! Draw the grid using plbox
 
-        call plbox('bcg', 0.1_plflt, 0_plint,'bcg', 0.1_plflt, 0_plint)
-        call plcol0(15_plint)
+        call plbox('bcg', 0.1_plflt, 0,'bcg', 0.1_plflt, 0)
+        call plcol0(15)
 
         ! Write the digits below the frame
 

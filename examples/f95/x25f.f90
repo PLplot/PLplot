@@ -31,14 +31,14 @@ program x25f
     use plplot
     implicit none
 
-    integer(kind=plint)          :: i, j, k
-    integer(kind=plint)          :: npts
-    real(kind=plflt) :: xextreme(2_plint,10_plint)
-    real(kind=plflt) :: yextreme(2_plint,10_plint)
-    real(kind=plflt) :: x0(10_plint)
-    real(kind=plflt) :: y0(10_plint)
+    integer          :: i, j, k
+    integer          :: npts
+    real(kind=plflt) :: xextreme(2,10)
+    real(kind=plflt) :: yextreme(2,10)
+    real(kind=plflt) :: x0(10)
+    real(kind=plflt) :: y0(10)
 
-    data ( xextreme(1_plint,i), xextreme(2_plint,i), yextreme(1_plint,i), yextreme(2_plint,i), i=1,9_plint) / &
+    data ( xextreme(1,i), xextreme(2,i), yextreme(1,i), yextreme(2,i), i=1,9) / &
          -120.0_plflt,      120.0_plflt,     -120.0_plflt,      120.0_plflt, &
          -120.0_plflt,      120.0_plflt,       20.0_plflt,      120.0_plflt, &
          -120.0_plflt,      120.0_plflt,      -20.0_plflt,      120.0_plflt, &
@@ -49,7 +49,7 @@ program x25f
          -80.0_plflt,       80.0_plflt,      -80.0_plflt,       80.0_plflt, &
          20.0_plflt,      120.0_plflt,     -120.0_plflt,      120.0_plflt/
 
-    npts = 0_plint
+    npts = 0
 
     !  Parse and process command line arguments
 
@@ -57,101 +57,101 @@ program x25f
 
     !  Initialize plplot
 
-    call plssub(3_plint,3_plint)
+    call plssub(3,3)
     call plinit()
 
-    do k = 1_plint,2
-        do j = 1_plint,4
+    do k = 1,2
+        do j = 1,4
 
             select case ( j )
-                 case ( 1_plint ) !  Polygon 1: a diamond
-                     x0(1_plint) =    0.0_plflt
-                     y0(1_plint) = -100.0_plflt
-                     x0(2_plint) = -100.0_plflt
-                     y0(2_plint) =    0.0_plflt
-                     x0(3_plint) =    0.0_plflt
-                     y0(3_plint) =  100.0_plflt
-                     x0(4_plint) =  100.0_plflt
-                     y0(4_plint) =    0.0_plflt
-                     npts = 4_plint
+                 case ( 1 ) !  Polygon 1: a diamond
+                     x0(1) =    0.0_plflt
+                     y0(1) = -100.0_plflt
+                     x0(2) = -100.0_plflt
+                     y0(2) =    0.0_plflt
+                     x0(3) =    0.0_plflt
+                     y0(3) =  100.0_plflt
+                     x0(4) =  100.0_plflt
+                     y0(4) =    0.0_plflt
+                     npts = 4
 
-                  case( 2_plint )
+                  case( 2 )
                      !  Polygon 1: a diamond - reverse direction
-                     x0(4_plint) =    0.0_plflt
-                     y0(4_plint) = -100.0_plflt
-                     x0(3_plint) = -100.0_plflt
-                     y0(3_plint) =    0.0_plflt
-                     x0(2_plint) =    0.0_plflt
-                     y0(2_plint) =  100.0_plflt
-                     x0(1_plint) =  100.0_plflt
-                     y0(1_plint) =    0.0_plflt
-                     npts = 4_plint
+                     x0(4) =    0.0_plflt
+                     y0(4) = -100.0_plflt
+                     x0(3) = -100.0_plflt
+                     y0(3) =    0.0_plflt
+                     x0(2) =    0.0_plflt
+                     y0(2) =  100.0_plflt
+                     x0(1) =  100.0_plflt
+                     y0(1) =    0.0_plflt
+                     npts = 4
 
-                  case( 3_plint )
+                  case( 3 )
                      !  Polygon 2: a square with punctures
-                     x0(1_plint)  = -100.0_plflt
-                     y0(1_plint)  = -100.0_plflt
-                     x0(2_plint)  = -100.0_plflt
-                     y0(2_plint)  =  -80.0_plflt
-                     x0(3_plint)  =   80.0_plflt
-                     y0(3_plint)  =    0.0_plflt
-                     x0(4_plint)  = -100.0_plflt
-                     y0(4_plint)  =   80.0_plflt
-                     x0(5_plint)  = -100.0_plflt
-                     y0(5_plint)  =  100.0_plflt
-                     x0(6_plint)  =  -80.0_plflt
-                     y0(6_plint)  =  100.0_plflt
-                     x0(7_plint)  =    0.0_plflt
-                     y0(7_plint)  =   80.0_plflt
-                     x0(8_plint)  =   80.0_plflt
-                     y0(8_plint)  =  100.0_plflt
-                     x0(9_plint)  =  100.0_plflt
-                     y0(9_plint)  =  100.0_plflt
-                     x0(10_plint) =  100.0_plflt
-                     y0(10_plint) = -100.0_plflt
-                     npts = 10_plint
+                     x0(1)  = -100.0_plflt
+                     y0(1)  = -100.0_plflt
+                     x0(2)  = -100.0_plflt
+                     y0(2)  =  -80.0_plflt
+                     x0(3)  =   80.0_plflt
+                     y0(3)  =    0.0_plflt
+                     x0(4)  = -100.0_plflt
+                     y0(4)  =   80.0_plflt
+                     x0(5)  = -100.0_plflt
+                     y0(5)  =  100.0_plflt
+                     x0(6)  =  -80.0_plflt
+                     y0(6)  =  100.0_plflt
+                     x0(7)  =    0.0_plflt
+                     y0(7)  =   80.0_plflt
+                     x0(8)  =   80.0_plflt
+                     y0(8)  =  100.0_plflt
+                     x0(9)  =  100.0_plflt
+                     y0(9)  =  100.0_plflt
+                     x0(10) =  100.0_plflt
+                     y0(10) = -100.0_plflt
+                     npts = 10
 
-                 case( 4_plint )
+                 case( 4 )
                      !  Polygon 2: a square with punctures - reversed direction
-                     x0(10_plint) = -100.0_plflt
-                     y0(10_plint) = -100.0_plflt
-                     x0(9_plint)  = -100.0_plflt
-                     y0(9_plint)  =  -80.0_plflt
-                     x0(8_plint)  =   80.0_plflt
-                     y0(8_plint)  =    0.0_plflt
-                     x0(7_plint)  = -100.0_plflt
-                     y0(7_plint)  =   80.0_plflt
-                     x0(6_plint)  = -100.0_plflt
-                     y0(6_plint)  =  100.0_plflt
-                     x0(5_plint)  =  -80.0_plflt
-                     y0(5_plint)  =  100.0_plflt
-                     x0(4_plint)  =    0.0_plflt
-                     y0(4_plint)  =   80.0_plflt
-                     x0(3_plint)  =   80.0_plflt
-                     y0(3_plint)  =  100.0_plflt
-                     x0(2_plint)  =  100.0_plflt
-                     y0(2_plint)  =  100.0_plflt
-                     x0(1_plint)  =  100.0_plflt
-                     y0(1_plint)  = -100.0_plflt
-                     npts = 10_plint
+                     x0(10) = -100.0_plflt
+                     y0(10) = -100.0_plflt
+                     x0(9)  = -100.0_plflt
+                     y0(9)  =  -80.0_plflt
+                     x0(8)  =   80.0_plflt
+                     y0(8)  =    0.0_plflt
+                     x0(7)  = -100.0_plflt
+                     y0(7)  =   80.0_plflt
+                     x0(6)  = -100.0_plflt
+                     y0(6)  =  100.0_plflt
+                     x0(5)  =  -80.0_plflt
+                     y0(5)  =  100.0_plflt
+                     x0(4)  =    0.0_plflt
+                     y0(4)  =   80.0_plflt
+                     x0(3)  =   80.0_plflt
+                     y0(3)  =  100.0_plflt
+                     x0(2)  =  100.0_plflt
+                     y0(2)  =  100.0_plflt
+                     x0(1)  =  100.0_plflt
+                     y0(1)  = -100.0_plflt
+                     npts = 10
             end select
 
-            do i = 1_plint,9
-               call pladv(0_plint)
+            do i = 1,9
+               call pladv(0)
                call plvsta()
-               call plwind(xextreme(1_plint,i), xextreme(2_plint,i), yextreme(1_plint,i), yextreme(2_plint,i))
+               call plwind(xextreme(1,i), xextreme(2,i), yextreme(1,i), yextreme(2,i))
 
-               call plcol0(2_plint)
-               call plbox('bc', 1.0d0, 0_plint, 'bcnv', 10.0d0, 0_plint)
-               call plcol0(1_plint)
-               call plpsty(0_plint)
+               call plcol0(2)
+               call plbox('bc', 1.0d0, 0, 'bcnv', 10.0d0, 0)
+               call plcol0(1)
+               call plpsty(0)
                if(k.eq.1) then
                   call plfill(x0(1:npts),y0(1:npts))
                else
                   call plgradient(x0(1:npts),y0(1:npts),45.d0)
                endif
-               call plcol0(2_plint)
-               call pllsty(1_plint)
+               call plcol0(2)
+               call pllsty(1)
                call plline(x0(1:npts),y0(1:npts))
             end do
         end do

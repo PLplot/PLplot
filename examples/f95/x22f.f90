@@ -23,7 +23,7 @@
       use plplot
       implicit none
 
-      integer(kind=plint) narr
+      integer narr
       logical fill
       parameter (narr=6)
       real(kind=plflt) arrow_x(narr),arrow_y(narr), &
@@ -47,13 +47,13 @@
 !     Set arrow style using arrow_x and arrow_y the
 !     plot using these arrows
       call plsvect(arrow_x, arrow_y, fill)
-      call constriction( 1_plint )
+      call constriction( 1 )
 
 !     Set arrow style using arrow_x and arrow_y the
 !     plot using these arrows
       fill = .true.
       call plsvect(arrow2_x, arrow2_y, fill)
-      call constriction( 2_plint )
+      call constriction( 2 )
 
       call constriction2
 
@@ -70,7 +70,7 @@
       use plplot
       implicit none
 
-      integer(kind=plint) i, j, nx, ny
+      integer i, j, nx, ny
       parameter (nx=20, ny=20)
 
       real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
@@ -97,13 +97,13 @@
         enddo
       enddo
 
-      call plenv(xmin, xmax, ymin, ymax, 0_plint, 0_plint)
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
       call pllab('(x)', '(y)',  &
        '#frPLplot Example 22 - circulation')
-      call plcol0(2_plint)
+      call plcol0(2)
       scaling = 0.0_plflt
       call plvect(u,v,scaling,xg,yg)
-      call plcol0(1_plint)
+      call plcol0(1)
 
       end
 
@@ -112,7 +112,7 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer(kind=plint) i, j, nx, ny, astyle
+      integer i, j, nx, ny, astyle
       parameter (nx=20, ny=20)
 
       character(len=80) :: title
@@ -149,13 +149,13 @@
         enddo
       enddo
 
-      call plenv(xmin, xmax, ymin, ymax, 0_plint, 0_plint)
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
       write(title,'(A,I0,A)') '#frPLplot Example 22 - constriction (arrow style ', astyle,')'
       call pllab('(x)', '(y)', title)
-      call plcol0(2_plint)
+      call plcol0(2)
       scaling = -1.0_plflt
       call plvect(u,v,scaling,xg,yg)
-      call plcol0(1_plint)
+      call plcol0(1)
 
       end
 
@@ -180,7 +180,7 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer(kind=plint) i, j, nx, ny, nc, nseg
+      integer i, j, nx, ny, nc, nseg
       parameter (nx=20, ny=20, nc=11, nseg=20)
 
       real(kind=plflt) dx, dy, xx, yy
@@ -221,19 +221,19 @@
          clev(i) = Q + dble(i-1) * Q / ( dble(nc) - 1.0_plflt )
       enddo
 
-      call plenv(xmin, xmax, ymin, ymax, 0_plint, 0_plint)
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
       call pllab('(x)', '(y)', &
            '#frPLplot Example 22 - constriction with plstransform')
-      call plcol0(2_plint)
+      call plcol0(2)
       call plshades(u, defined, xmin + dx / 2.0_plflt, &
            xmax - dx / 2.0_plflt, &
            ymin + dy / 2.0_plflt, ymax - dy / 2.0_plflt, &
-           clev, 0.0_plflt, 1_plint, 1.0_plflt, .false. )
+           clev, 0.0_plflt, 1, 1.0_plflt, .false. )
       scaling = -1.0_plflt
       call plvect(u,v,scaling,xg,yg)
       call plpath(nseg, xmin, ymax, xmax, ymax)
       call plpath(nseg, xmin, ymin, xmax, ymin)
-      call plcol0(1_plint)
+      call plcol0(1)
 
       call plstransform
 
@@ -243,7 +243,7 @@
       use plplot, PI => PL_PI
       implicit none
 
-      integer(kind=plint) i, j, nr, ntheta, nper, nlevel
+      integer i, j, nr, ntheta, nper, nlevel
       parameter (nr=20, ntheta=20, nper=100, nlevel=10)
 
       real(kind=plflt) u(nr, ntheta), v(nr, ntheta), z(nr, ntheta)
@@ -272,9 +272,9 @@
       q2i = - q2*rmax/d2
       d2i = rmax**2.0_plflt/d2
 
-      do i = 1_plint, nr
+      do i = 1, nr
          r = 0.5 + dble(i-1)
-        do j = 1_plint, ntheta
+        do j = 1, ntheta
           theta = 2.*PI/dble(ntheta-1)*(dble(j)-0.5)
           xx = r*cos(theta)
           yy = r*sin(theta)
@@ -298,25 +298,25 @@
       call a2mnmx(yg, nr, ntheta, ymin, ymax, nr)
       call a2mnmx(z, nr, ntheta, zmin, zmax, nr)
 
-      call plenv(xmin, xmax, ymin, ymax, 0_plint, 0_plint)
+      call plenv(xmin, xmax, ymin, ymax, 0, 0)
       call pllab('(x)', '(y)',  &
         '#frPLplot Example 22 - potential gradient vector plot')
 
 !     plot contours of the potential
       dz = abs(zmax - zmin)/dble (nlevel)
-      do i = 1_plint, nlevel
+      do i = 1, nlevel
          clevel(i) = zmin + (i-0.5_plflt)*dz
       enddo
-      call plcol0(3_plint)
-      call pllsty(2_plint)
-      call plcont(z,1_plint,nr,1_plint,ntheta,clevel,xg,yg)
-      call pllsty(1_plint)
-      call plcol0(1_plint)
+      call plcol0(3)
+      call pllsty(2)
+      call plcont(z,1,nr,1,ntheta,clevel,xg,yg)
+      call pllsty(1)
+      call plcol0(1)
 
-      call plcol0(2_plint)
+      call plcol0(2)
       scaling = 25.0_plflt
       call plvect(u,v,scaling,xg,yg)
-      call plcol0(1_plint)
+      call plcol0(1)
 
       do i=1,nper
          theta = 2.0_plflt*PI/dble(nper-1)*dble(i)
@@ -336,13 +336,13 @@
       use plplot
       implicit none
 
-      integer(kind=plint)   i, j, nx, ny, xdim
+      integer   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax
 
-      fmax = f(1_plint, 1_plint)
+      fmax = f(1, 1)
       fmin = fmax
-      do j = 1_plint, ny
-        do  i = 1_plint, nx
+      do j = 1, ny
+        do  i = 1, nx
           fmax = max(fmax, f(i, j))
           fmin = min(fmin, f(i, j))
         enddo

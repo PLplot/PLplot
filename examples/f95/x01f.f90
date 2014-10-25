@@ -26,7 +26,7 @@ program x01f95
 
    real(plflt) :: xscale, yscale, xoff, yoff
    character(len=80) :: version
-   integer(kind=plint) :: digmax
+   integer :: digmax
 
 !  Process command-line arguments
    call plparseopts(PL_PARSE_FULL)
@@ -37,7 +37,7 @@ program x01f95
 
 !  Initialize plplot
 !  Divide page into 2x2 plots
-   call plstar(2_plint,2_plint)
+   call plstar(2,2)
 
 !  Set up the data
 !  Original case
@@ -59,8 +59,8 @@ program x01f95
 
 !  Do a plot
 
-   digmax = 5_plint
-   call plsyax(digmax,  0_plint)
+   digmax = 5
+   call plsyax(digmax,  0)
    call plot1()
 
    call plot2()
@@ -78,8 +78,8 @@ subroutine plot1()
    real(plflt), dimension(1:60) :: x, y
    real(plflt) :: xmin, xmax, ymin, ymax
 
-   x = xoff + xscale * arange(1_plint,size(x,kind=plint)+1) / real(size(x,kind=plint),plflt)
-   y = yoff + yscale * x ** 2_plint
+   x = xoff + xscale * arange(1,size(x)+1) / real(size(x),plflt)
+   y = yoff + yscale * x ** 2
 
    xmin = minval(x)
    xmax = maxval(x)
@@ -91,20 +91,20 @@ subroutine plot1()
 !   scaled separately (just = 0), and we just draw a labelled
 !   box (axis = 0).
 
-   call plcol0(1_plint)
-   call plenv( xmin, xmax, ymin, ymax, 0_plint, 0_plint )
-   call plcol0(2_plint)
+   call plcol0(1)
+   call plenv( xmin, xmax, ymin, ymax, 0, 0 )
+   call plcol0(2)
    call pllab( '(x)', '(y)', '#frPLplot Example 1 - y=x#u2' )
 
 !   Plot the data points
 !   Only plot every tenth!
 
-   call plcol0(4_plint)
-   call plpoin( x(4::10), y(4::10), 9_plint )
+   call plcol0(4)
+   call plpoin( x(4::10), y(4::10), 9 )
 
 !   Draw the line through the data
 
-   call plcol0(3_plint)
+   call plcol0(3)
    call plline( x, y )
 
 end subroutine plot1
@@ -120,20 +120,20 @@ subroutine plot2()
 !   scaled separately (just = 0), and we draw a box with axes
 !   (axis = 1).
 
-   call plcol0(1_plint)
-   call plenv(-2.0_plflt, 10.0_plflt, -0.4_plflt, 1.2_plflt, 0_plint, 1_plint )
-   call plcol0(2_plint)
+   call plcol0(1)
+   call plenv(-2.0_plflt, 10.0_plflt, -0.4_plflt, 1.2_plflt, 0, 1 )
+   call plcol0(2)
    call pllab( '(x)', 'sin(x)/x', '#frPLplot Example 1 - Sinc Function' )
 
 !   Fill up the arrays
 
 
-   x = ( arange(size(x,kind=plint)) - 19_plint ) / 6.0_plflt
+   x = ( arange(size(x)) - 19 ) / 6.0_plflt
    y = merge( sin(x) / x, 1.0_plflt, x /= 0.0_plflt )
 
 !   Draw the line
 
-   call plcol0(3_plint)
+   call plcol0(3)
    call plwidth(2._plflt)
    call plline( x, y )
    call plwidth(1._plflt)
@@ -149,7 +149,7 @@ end subroutine plot2
 
    real(plflt), dimension(1:101) :: x, y
 
-   call pladv(0_plint)
+   call pladv(0)
 
 !   Use_ standard viewport, and define X range from 0 to 360 degrees,
 !   Y range from -1.2 to 1.2.
@@ -159,24 +159,24 @@ end subroutine plot2
 
 !   Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-   call plcol0(1_plint)
-   call plbox( 'bcnst', 60.0_plflt, 2_plint, 'bcnstv', 0.2_plflt, 2_plint )
+   call plcol0(1)
+   call plbox( 'bcnst', 60.0_plflt, 2, 'bcnstv', 0.2_plflt, 2 )
 
 !   Superimpose a dashed line grid, with 1.5 mm marks and spaces. With
 !   only a single mark and space element, we do not need arrays
 
-   call plstyl( 1_plint, 1500_plint, 1500_plint )
-   call plcol0(2_plint)
-   call plbox( 'g', 30.0_plflt, 0_plint, 'g', 0.2_plflt, 0_plint )
-   call plstyl( 0_plint, 0_plint, 0_plint )
+   call plstyl( 1, 1500, 1500 )
+   call plcol0(2)
+   call plbox( 'g', 30.0_plflt, 0, 'g', 0.2_plflt, 0 )
+   call plstyl( 0, 0, 0 )
 
-   call plcol0(3_plint)
+   call plcol0(3)
    call pllab( 'Angle (degrees)', 'sine', '#frPLplot Example 1 - Sine function' )
 
-   x = 3.6_plflt * arange(size(x,kind=plint))
+   x = 3.6_plflt * arange(size(x))
    y = sin( x * PI/180.0_plflt )
 
-   call plcol0(4_plint)
+   call plcol0(4)
    call plline( x, y )
 
 end subroutine plot3

@@ -26,17 +26,17 @@ program x03f95
     character (len=3) :: text
     real(kind=plflt), dimension(0:360) :: x0, y0, x, y
     real(kind=plflt) :: dtr, theta, dx, dy, offset
-    integer(kind=plint) :: i
+    integer :: i
 !    Process command-line arguments
     call plparseopts(PL_PARSE_FULL)
 
 !   Set orientation to portrait - note not all device drivers
 !   support this, in particular most interactive drivers do not.
-    call plsori(1_plint)
+    call plsori(1)
 
     dtr = PI/180.0_plflt
-    x0 = cos(dtr * arange(0_plint,361_plint))
-    y0 = sin(dtr * arange(0_plint,361_plint))
+    x0 = cos(dtr * arange(0,361))
+    y0 = sin(dtr * arange(0,361))
 
 !    Initialize PLplot
 
@@ -44,14 +44,14 @@ program x03f95
 
 !    Set up viewport and window, but do not draw box
 
-    call plenv(-1.3_plflt, 1.3_plflt, -1.3_plflt, 1.3_plflt, 1_plint, -2)
+    call plenv(-1.3_plflt, 1.3_plflt, -1.3_plflt, 1.3_plflt, 1, -2)
 !   Draw circles for polar grid
-    do i = 1_plint,10
+    do i = 1,10
       call plarc(0.0_plflt, 0.0_plflt, 0.1_plflt*i, 0.1_plflt*i, &
-           0.0_plflt, 360.0_plflt, 0.0_plflt, 0_plint)
+           0.0_plflt, 360.0_plflt, 0.0_plflt, 0)
     enddo
-    call plcol0(2_plint)
-    do i = 0_plint,11
+    call plcol0(2)
+    do i = 0,11
       theta = 30.0_plflt*i
       dx = cos(dtr*theta)
       dy = sin(dtr*theta)
@@ -82,13 +82,13 @@ program x03f95
     enddo
 !    Draw the graph
 
-    x = x0 * sin(5.0_plflt * dtr * arange(0_plint,361_plint))
-    y = y0 * sin(5.0_plflt * dtr * arange(0_plint,361_plint))
+    x = x0 * sin(5.0_plflt * dtr * arange(0,361))
+    y = y0 * sin(5.0_plflt * dtr * arange(0,361))
 
-    call plcol0(3_plint)
+    call plcol0(3)
     call plline(x,y)
 
-    call plcol0(4_plint)
+    call plcol0(4)
     call plmtex('t', 2.0_plflt, 0.5_plflt, 0.5_plflt, &
       '#frPLplot Example 3 - r(#gh)=sin 5#gh')
 
