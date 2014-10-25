@@ -37,15 +37,21 @@ endfunction
   function ix08c
 
     global MAG_COLOR BASE_CONT SURF_CONT FACETED
+
+
+    # These values must be odd, for the middle
+    # of the index range to be an integer, and thus
+    # to correspond to the exact floating point centre
+    # of the sombrero.
+
     XPTS=35;		## Data points in x
-    YPTS=46;		## Datat points in y
+    YPTS=45;		## Datat points in y
 
+    alt=[60.0, 40.0];
+    az =[30.0, -30.0];
 
-    alt=[60.0, 20.0];
-    az =[30.0, 60.0];
-
-    title=["#frPLplot Example 8 - Alt=60, Az=30",
-	   "#frPLplot Example 8 - Alt=20, Az=60"];
+    title=["#frPLplot Example 8 - Alt=60, Az=30";
+	   "#frPLplot Example 8 - Alt=40, Az=-30"];
 
     ## Parse and process command line arguments
 
@@ -54,10 +60,12 @@ endfunction
     ## Initialize plplot
     plinit();
 
-    rosen = 1;
+    rosen = 0;
 
-    x = ((0:XPTS-1) - fix(XPTS / 2)) / fix(XPTS / 2);
-    y = ((0:YPTS-1) - fix(YPTS / 2)) / fix(YPTS / 2);
+    dx = 2. / ( XPTS - 1 );
+    dy = 2. / ( YPTS - 1 );
+    x = -1. + dx*(0:XPTS-1);
+    y = -1. + dy*(0:YPTS-1);
     if (rosen)
       x = x * 1.5;
       y = y + 0.5;
@@ -67,23 +75,48 @@ endfunction
     if (rosen)
       z = (1 - xx) .^ 2 + 100 .* (yy - xx .^ 2) .^ 2;
       if exist ("do_fortran_indexing")
-      of = do_fortran_indexing;
-      do_fortran_indexing = 1;
+        of = do_fortran_indexing;
+        do_fortran_indexing = 1;
       endif
       z(z <= 0) = exp(-5); # make sure the minimum after applying log() is -5
       if exist ("do_fortran_indexing")      
-      do_fortran_indexing = of;
+        do_fortran_indexing = of;
       endif
       z = log(z);
     else
       r = sqrt(xx .* xx + yy .* yy);
-      z = exp(-r .* r) .* cos(2.0 * 3.141592654 .* r);
+      z = exp(-r .* r) .* cos(2.0 * pi .* r);
     endif
 
     pllightsource(1.,1.,1.);
 
     n_col = 100;
     plscmap1n(n_col);
+
+    # Set up data and arrays for plsurf3dl call below.
+    indexxmin = 0;
+    indexxmax = XPTS;
+    # Must be same shape as z, and a row of z.
+    # Parameters of ellipse that limits the data.
+    x0 = 0.5*(XPTS - 1);
+    a = 0.9*x0;
+    y0 = 0.5*(YPTS - 1);
+    b = 0.7*y0;
+
+    for i=indexxmin+1: indexxmax
+      square_root = sqrt(1. - min(1., (((i-1) - x0)/a)^2));
+      # Add 0.5 to find nearest integer and therefore preserve symmetry
+      # with regard to lower and upper bound of y range.
+      indexymin(i) = max(0, floor(0.5 + y0 - b*square_root));
+      # indexymax calculated with the convention that it is 1
+      # greater than highest valid index.
+      indexymax(i) = min(YPTS, 1 + floor(0.5 + y0 + b*square_root));
+      zlimited(indexymin(i)+1:indexymax(i),i) = z(indexymin(i)+1:indexymax(i),i);
+    endfor
+    # Force zlimited to be the correct size so that the plsurf3dl call below passes
+    # all dimension consistency checks.  This index is outside the elliptical
+    # limits above so should be ignored at the C level.
+    zlimited(YPTS, XPTS) = 1.e300;
     
     nlevel = 10;
     zmax = max(max(z));
@@ -92,13 +125,13 @@ endfunction
     clevel = linspace(zmin+step, zmax-step, nlevel)';
 
     for k=1:2
-      for ifshade=0:3
+      for ifshade=0:4
 
 	pladv(0);
 	plvpor(0.0, 1.0, 0.0, 0.9);
 	plwind(-1.0, 1.0, -0.9, 1.1);
 	plcol0(3);
-	plmtex("t", 1.0, 0.5, 0.5, title(k,:));
+	plmtex("t", 1.0, 0.5, 0.5, deblank(title(k,:)));
 	plcol0(1);
 	if (rosen)
           plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax, alt(k), az(k));
@@ -120,8 +153,10 @@ endfunction
 	    plsurf3d(x', y', z', MAG_COLOR, 0);
 	  case 2
 	    plsurf3d(x', y', z', MAG_COLOR + FACETED, 0);
-	  otherwise
+	  case 3
 	    plsurf3d(x', y', z', MAG_COLOR + SURF_CONT + BASE_CONT, clevel);
+	  case 4
+	    plsurf3dl(x', y', z', MAG_COLOR + SURF_CONT + BASE_CONT, clevel, indexxmin, indexymin', indexymax');
 	endswitch
       endfor
     endfor
