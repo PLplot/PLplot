@@ -253,7 +253,7 @@ function plot3()
 
   for i = 0:100
     x(i+1) = 3.6 * i;
-    y(i+1) = sin(x(i+1) * 3.141592654 / 180.0);
+    y(i+1) = sin(x(i+1) * pi / 180.0);
   endfor
 
   plcol0(4);

@@ -48,7 +48,7 @@ function plot1(type)
   freql = -2.0 + i / 20.0;
   freq = 10.0 .^ freql;
   ampl = 20.0 * log10(1.0 ./ sqrt(1.0 + (freq ./ f0).^ 2.));
-  phase = -(180.0 / 3.141592654) * atan(freq ./ f0);
+  phase = -(180.0 / pi) * atan(freq ./ f0);
 
   plvpor(0.15, 0.85, 0.1, 0.9);
   plwind(-2.0, 3.0, -80.0, 0.0);
