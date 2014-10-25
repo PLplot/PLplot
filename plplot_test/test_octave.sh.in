@@ -74,12 +74,11 @@ for i=[1:6 8 9 13 15 21] ;
     feval(sprintf("p%d",i))
     closefig
 endfor
-#plot equivalent of x??c examples.  These only required octave-2.0.x
-#Example 19 is not yet implemented
+#plot equivalent of x??c examples.
 # Example 32 not implemented because there has been no call for propagation
 # and it exercises no new API.
 failed = [] ;
-for i=[0:18 19 20:31 33] ;
+for i=[0:31 33] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
     cmd = sprintf("x%.2dc",i);
