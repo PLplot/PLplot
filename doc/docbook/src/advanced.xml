@@ -2350,7 +2350,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	gucharmap to source code being edited by a unicode-aware editor such
 	as emacs.  Such input methods may be conveniently used, for example,
 	to specify the very wide range of mathematical symbols that are
-	typically desired for scentific plots.
+	typically desired for scientific plots.
       </para>
 
     </sect2>

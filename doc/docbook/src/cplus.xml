@@ -253,7 +253,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         methods require callbacks for fill and pltr, mirroring the requirements
         for <literal>plshades</literal>. The user may specify their own callbacks or
         may use the callbacks provided by Plplot. If using Plplot callbacks the user
-        has two options. They may use the apropriate C functions as described in the
+        has two options. They may use the appropriate C functions as described in the
         C API, however this will require direct linkage of the user's executable to 
         the C library as well as the C++ library, which would otherwise not be 
         necessary when using shared libraries. To avoid linking of the C library
@@ -261,7 +261,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </literal> namespace. The <literal>plcallback</literal> namespace provides 
         <literal>fill</literal>, <literal>tr0</literal>, <literal>tr1</literal>, 
         <literal>tr2</literal>, and <literal>tr2p</literal> callbacks which mirror 
-        the functionality of the apropriate C functions.
+        the functionality of the appropriate C functions.
       </para>
     </sect2>
 

@@ -1685,7 +1685,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Continous time from which the broken-down time is calculated.
+	    Continuous time from which the broken-down time is calculated.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3074,7 +3074,7 @@ time is specified by the following parameters:
 	</term>
 	<listitem>
 	  <para>
-	    Continous time calculated from the broken-down time
+	    Continuous time calculated from the broken-down time
             specified by the previous parameters.
 	  </para>
 	</listitem>

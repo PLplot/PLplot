@@ -248,7 +248,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <literal>plplot_traditional.adb</literal>,
       <literal>plplothin.ads</literal>, and <literal>plplotthin.adb</literal>.
       There are two additional files, <literal>plplot_auxiliary.ads</literal>
-      and <literal>plplot_auxililary.adb</literal> which will be discussed
+      and <literal>plplot_auxiliary.adb</literal> which will be discussed
       later, in Section 9.</para>
     </sect2>
   </sect1>
