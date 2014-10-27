@@ -115,8 +115,7 @@ if(BUILD_TEST)
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
     endif(CORE_BUILD AND BUILD_SHARED_LIBS)
     add_executable(x${STRING_INDEX} x${STRING_INDEX}.cc)
-    # plplot needed here because of C callbacks.
-    target_link_libraries(x${STRING_INDEX} plplotcxx plplot ${MATH_LIB})
+    target_link_libraries(x${STRING_INDEX} plplotcxx ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_cxx x${STRING_INDEX})
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
