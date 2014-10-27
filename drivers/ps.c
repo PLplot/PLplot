@@ -377,7 +377,7 @@ ps_init( PLStream *pls )
     fprintf( OF, "/R {rotate} def\n" );
     fprintf( OF, "/SW {stringwidth 2 index mul exch 2 index mul exch rmoveto pop} bind def\n" );
     fprintf( OF, "/B {Z %d %d M %d %d D %d %d D %d %d D %d %d closepath} def\n",
-        XMIN, YMIN, XMIN, YMAX, XMAX, YMAX, XMAX, YMIN, XMIN, YMIN );
+        0, 0, 0, PSY, PSX, PSY, PSX, 0, 0, 0 );
     fprintf( OF, "/CL {newpath M D D D closepath clip} def\n" );
 
 // End of dictionary definition
@@ -549,10 +549,10 @@ plD_tidy_ps( PLStream *pls )
     dev->lly /= ENLARGE;
     dev->urx /= ENLARGE;
     dev->ury /= ENLARGE;
-    dev->llx += XOFFSET;
-    dev->lly += YOFFSET;
-    dev->urx += XOFFSET;
-    dev->ury += YOFFSET;
+    dev->llx += YOFFSET;
+    dev->lly += XOFFSET;
+    dev->urx += YOFFSET;
+    dev->ury += XOFFSET;
 
 // changed for correct Bounding boundaries Jan Thorbecke  okt 1993
 // occurs from the integer truncation -- postscript uses fp arithmetic

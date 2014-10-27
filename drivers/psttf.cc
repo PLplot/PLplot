@@ -438,7 +438,7 @@ writeHeader( PLStream *pls )
     doc->osHeader() << "/G {setgray} def\n";
     doc->osHeader() << "/W {setlinewidth} def\n";
     doc->osHeader() << "/R {rotate} def\n";
-    doc->osHeader() << "/B {Z " << XMIN << " " << YMIN << " M " << XMIN << " " << YMAX << " D " << XMAX << " " << YMAX << " D " << XMAX << " " << YMIN << " D " << XMIN << " " << YMIN << " closepath} def\n";
+    doc->osHeader() << "/B {Z " << 0 << " " << 0 << " M " << 0 << " " << PSY << " D " << PSX << " " << PSY << " D " << PSX << " " << 0 << " D " << 0 << " " << 0 << " closepath} def\n";
     doc->osHeader() << "/CL {newpath M D D D closepath clip} def\n";
 
 // End of dictionary definition
@@ -612,10 +612,10 @@ plD_tidy_psttf( PLStream *pls )
     dev->lly /= ENLARGE;
     dev->urx /= ENLARGE;
     dev->ury /= ENLARGE;
-    dev->llx += XOFFSET;
-    dev->lly += YOFFSET;
-    dev->urx += XOFFSET;
-    dev->ury += YOFFSET;
+    dev->llx += YOFFSET;
+    dev->lly += XOFFSET;
+    dev->urx += YOFFSET;
+    dev->ury += XOFFSET;
 
 // changed for correct Bounding boundaries Jan Thorbecke  okt 1993
 // occurs from the integer truncation -- postscript uses fp arithmetic
