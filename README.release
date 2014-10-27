@@ -77,6 +77,10 @@ recommended "use" strategy should avoid any repercussions from the
 above or future name changes for the modules that are "used" by the
 plplot module.
 
+1.3 Backwards Incompatible change to C++ API
+
+The plstream methods fill, tr0, tr1, tr2, and tr2p have been changed, fixing a bug where the correct stream was not selected. This means these functions are no longer static and can no longer be used as callbacks in the shades method and its variants, the cont method, the imagefr method, and the vect method. Instead a plcallback namespace has been created which includes these methods as C-style functions. Code which previously used the plstream methods above will need to be recompiled and rebuilt using the plcallback versions. Please see the documentation for a full description.
+
 2. Changes relative to the previous release
 
 2.1 Update the parts of the build system that find Tcl-related software.
@@ -116,10 +120,6 @@ and our public API including several functions in our public API that
 were not documented at all in api.xml.  That number of inconsistencies
 has now been reduced to zero which constitutes a substantial upgrade
 in the quality of our API documentation.
-
-2.6 Minor change to the C++ fill API and use of shade and its variants.
-
-plstream:fill had been usable as a callback when using plstream::shade. plstream::fill is no longer static (required for a bug fix) so users must use the C plfill function as a callback instead.
 
 3. Tests made for the current release.
 
