@@ -236,10 +236,6 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
 //Callbacks
 
 // Callback for plfill. This will just call the C plfill function
-void fill_callback( PLINT n, const PLFLT *x, const PLFLT *y )
-{
-    plfill( n, x, y );
-}
 
 void plcallback::fill( PLINT n, const PLFLT *x, const PLFLT *y )
 {
