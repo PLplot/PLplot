@@ -79,6 +79,36 @@ public:
 };
 
 //--------------------------------------------------------------------------
+//Callback functions for passing into various API methods. We provide these
+//wrappers to avoid a requirement for linking to the C shared library.
+//--------------------------------------------------------------------------
+
+namespace plcallback
+{
+// Callback for plfill. This will just call the C plfill function
+
+	PLDLLIMPEXP_CXX void fill( PLINT n, const PLFLT *x, const PLFLT *y ); 
+
+// Identity transformation.
+
+	PLDLLIMPEXP_CXX void tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+
+// Does linear interpolation from singly dimensioned coord arrays.
+
+	PLDLLIMPEXP_CXX void tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+
+// Does linear interpolation from doubly dimensioned coord arrays
+// (column dominant, as per normal C 2d arrays).
+
+	PLDLLIMPEXP_CXX void tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+
+// Just like pltr2() but uses pointer arithmetic to get coordinates from
+// 2d grid tables.
+
+	PLDLLIMPEXP_CXX void tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+}
+
+//--------------------------------------------------------------------------
 // class plstream - C++ class for encapsulating PLplot streams
 
 // Cool stuff.
@@ -1045,21 +1075,21 @@ public:
 
 // Identity transformation.
 
-    static void tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+    //static void tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
 // Does linear interpolation from singly dimensioned coord arrays.
 
-    static void tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+    //static void tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
 // Does linear interpolation from doubly dimensioned coord arrays
 // (column dominant, as per normal C 2d arrays).
 
-    static void tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+    //static void tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
 // Just like pltr2() but uses pointer arithmetic to get coordinates from
 // 2d grid tables.
 
-    static void tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+    //static void tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
 // We obviously won't be using this object from Fortran...
 

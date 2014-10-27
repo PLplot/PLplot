@@ -331,7 +331,7 @@ x20::x20( int argc, const char ** argv )
         }
     }
 
-    pls->imagefr( img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pls->tr2, &cgrid2 );
+    pls->imagefr( img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, plcallback::tr2, &cgrid2 );
 
     pls->Free2dGrid( cgrid2.xg, width + 1, height + 1 );
     pls->Free2dGrid( cgrid2.yg, width + 1, height + 1 );

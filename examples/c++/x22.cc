@@ -105,7 +105,7 @@ x22::circulation()
     pls->env( xmin, xmax, ymin, ymax, 0, 0 );
     pls->lab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
     pls->col0( 2 );
-    pls->vect( u, v, nx, ny, 0.0, plstream::tr2, (void *) &cgrid2 );
+    pls->vect( u, v, nx, ny, 0.0, plcallback::tr2, (void *) &cgrid2 );
     pls->col0( 1 );
 }
 
@@ -156,7 +156,7 @@ x22::constriction( int astyle )
     sprintf( title, "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
     pls->lab( "(x)", "(y)", title );
     pls->col0( 2 );
-    pls->vect( u, v, nx, ny, -1.0, plstream::tr2, (void *) &cgrid2 );
+    pls->vect( u, v, nx, ny, -1.0, plcallback::tr2, (void *) &cgrid2 );
     pls->col0( 1 );
 }
 
@@ -210,9 +210,9 @@ x22::constriction2( void )
     pls->col0( 2 );
     pls->shades( (const PLFLT * const *) u, nx, ny, NULL,
         xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
-        clev, nc, 0, 1, 1.0, plfill, 0, NULL, NULL );
+		clev, nc, 0, 1, 1.0, plcallback::fill, 0, NULL, NULL );
     pls->vect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
-        -1.0, plstream::tr2, (void *) &cgrid2 );
+        -1.0, plcallback::tr2, (void *) &cgrid2 );
     // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
     pls->path( nseg, xmin, ymax, xmax, ymax );
     pls->path( nseg, xmin, ymin, xmax, ymin );
@@ -298,13 +298,13 @@ x22::potential()
     }
     pls->col0( 3 );
     pls->lsty( 2 );
-    pls->cont( z, nr, ntheta, 1, nr, 1, ntheta, clevel, nlevel, plstream::tr2, (void *) &cgrid2 );
+    pls->cont( z, nr, ntheta, 1, nr, 1, ntheta, clevel, nlevel, plcallback::tr2, (void *) &cgrid2 );
     pls->lsty( 1 );
     pls->col0( 1 );
 
     // Plot the vectors of the gradient of the potential
     pls->col0( 2 );
-    pls->vect( u, v, nr, ntheta, 25.0, plstream::tr2, (void *) &cgrid2 );
+    pls->vect( u, v, nr, ntheta, 25.0, plcallback::tr2, (void *) &cgrid2 );
     pls->col0( 1 );
 
     // Plot the perimeter of the cylinder

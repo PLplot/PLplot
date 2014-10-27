@@ -259,7 +259,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plfill, true, NULL, NULL );
+        plcallback::fill, true, NULL, NULL );
 
     if ( colorbar )
     {
@@ -306,7 +306,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plfill, true, plstream::tr1, (void *) &cgrid1 );
+        plcallback::fill, true, plcallback::tr1, (void *) &cgrid1 );
 
     if ( colorbar )
     {
@@ -354,7 +354,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plfill, false, plstream::tr2, (void *) &cgrid2 );
+        plcallback::fill, false, plcallback::tr2, (void *) &cgrid2 );
 
     if ( colorbar )
     {
@@ -384,7 +384,7 @@ x16::x16( int argc, const char ** argv )
     pls->col0( 1 );
     pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
     pls->col0( 2 );
-    pls->cont( w, nx, ny, 1, nx, 1, ny, clevel, ns, plstream::tr2, (void *) &cgrid2 );
+    pls->cont( w, nx, ny, 1, nx, 1, ny, clevel, ns, plcallback::tr2, (void *) &cgrid2 );
 
     pls->lab( "distance", "altitude", "Bogon density, with streamlines" );
 
@@ -403,7 +403,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         2, 3.0,
-        plfill, false, plstream::tr2, (void *) &cgrid2 );
+        plcallback::fill, false, plcallback::tr2, (void *) &cgrid2 );
 
     if ( colorbar )
     {
@@ -454,7 +454,7 @@ x16::x16( int argc, const char ** argv )
         pls->shades( z, nx, ny, zdefined, -1., 1., -1., 1.,
             shedge, ns + 1, fill_width,
             cont_color, cont_width,
-            plfill, false, plstream::tr2, (void *) &cgrid2 );
+            plcallback::fill, false, plcallback::tr2, (void *) &cgrid2 );
 
         pls->col0( 1 );
         pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
@@ -498,7 +498,7 @@ x16::x16( int argc, const char ** argv )
     pls->shades( z, nx, ny, NULL, -1., 1., -1., 1.,
         shedge, ns + 1, fill_width,
         cont_color, cont_width,
-        plfill, false, plstream::tr2, (void *) &cgrid2 );
+        plcallback::fill, false, plcallback::tr2, (void *) &cgrid2 );
 
     if ( colorbar )
     {

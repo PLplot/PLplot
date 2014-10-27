@@ -233,6 +233,55 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
     }
 }
 
+//Callbacks
+
+// Callback for plfill. This will just call the C plfill function
+void fill_callback( PLINT n, const PLFLT *x, const PLFLT *y )
+{
+    plfill( n, x, y );
+}
+
+void plcallback::fill( PLINT n, const PLFLT *x, const PLFLT *y )
+{
+    plfill( n, x, y );
+}
+
+// Transformation routines
+
+// Identity transformation.
+
+void plcallback::tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+                    PLPointer pltr_data )
+{
+    pltr0( x, y, tx, ty, pltr_data );
+}
+
+// Does linear interpolation from singly dimensioned coord arrays.
+
+void plcallback::tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+                    PLPointer pltr_data )
+{
+    pltr1( x, y, tx, ty, pltr_data );
+}
+
+// Does linear interpolation from doubly dimensioned coord arrays
+// (column dominant, as per normal C 2d arrays).
+
+void plcallback::tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+                    PLPointer pltr_data )
+{
+    pltr2( x, y, tx, ty, pltr_data );
+}
+
+// Just like pltr2() but uses pointer arithmetic to get coordinates from
+// 2d grid tables.
+
+void plcallback::tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
+                     PLPointer pltr_data )
+{
+    pltr2p( x, y, tx, ty, pltr_data );
+}
+
 PLINT plstream::active_streams = 0;
 
 plstream::plstream()
@@ -1861,7 +1910,7 @@ plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
             xmin, xmax, ymin, ymax, shade_min, shade_max,
             sh_cmap, sh_color, sh_width,
             min_color, min_width, max_color, max_width,
-            ::plfill, rectangular,
+            plcallback::fill, rectangular,
             Coord_Xform_evaluator, pcxf );
     else
         ::plfshade( Contourable_Data_evaluator, &d,
@@ -1870,7 +1919,7 @@ plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
             xmin, xmax, ymin, ymax, shade_min, shade_max,
             sh_cmap, sh_color, sh_width,
             min_color, min_width, max_color, max_width,
-            ::plfill, rectangular,
+            plcallback::fill, rectangular,
             NULL, NULL );
 }
 
@@ -1895,7 +1944,7 @@ plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
         xmin, xmax, ymin, ymax, shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
-        ::plfill, rectangular != 0,
+        plcallback::fill, rectangular != 0,
         Coord_Xform_evaluator, pcxf );
 }
 
@@ -2489,42 +2538,6 @@ void plstream::sexit( int ( *handler )( const char * ) )
     set_stream();
 
     plsexit( handler );
-}
-
-// Transformation routines
-
-// Identity transformation.
-
-void plstream::tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                    PLPointer pltr_data )
-{
-    pltr0( x, y, tx, ty, pltr_data );
-}
-
-// Does linear interpolation from singly dimensioned coord arrays.
-
-void plstream::tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                    PLPointer pltr_data )
-{
-    pltr1( x, y, tx, ty, pltr_data );
-}
-
-// Does linear interpolation from doubly dimensioned coord arrays
-// (column dominant, as per normal C 2d arrays).
-
-void plstream::tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                    PLPointer pltr_data )
-{
-    pltr2( x, y, tx, ty, pltr_data );
-}
-
-// Just like pltr2() but uses pointer arithmetic to get coordinates from
-// 2d grid tables.
-
-void plstream::tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                     PLPointer pltr_data )
-{
-    pltr2p( x, y, tx, ty, pltr_data );
 }
 
 // We obviously won't be using this object from Fortran...
