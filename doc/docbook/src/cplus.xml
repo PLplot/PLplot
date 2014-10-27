@@ -245,24 +245,44 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
     </sect2>
 
+    <sect2 id="cpluscplus-callbacks">
+      <title>Callbacks and Shades</title>
+
+      <para>
+        The <literal>plstream::plshades</literal> method and the other similar
+        methods require callbacks for fill and pltr, mirroring the requirements
+        for <literal>plshades</literal>. The user may specify their own callbacks or
+        may use the callbacks provided by Plplot. If using Plplot callbacks the user
+        has two options. They may use the apropriate C functions as described in the
+        C API, however this will require direct linkage of the user's executable to 
+        the C library as well as the C++ library, which would otherwise not be 
+        necessary when using shared libraries. To avoid linking of the C library
+        the user may instead utilise the functions within the <literal>plcallback
+        </literal> namespace. The <literal>plcallback</literal> namespace provides 
+        <literal>fill</literal>, <literal>tr0</literal>, <literal>tr1</literal>, 
+        <literal>tr2</literal>, and <literal>tr2p</literal> callbacks which mirror 
+        the functionality of the apropriate C functions.
+      </para>
+    </sect2>
+
     <sect2 id="cpluscplus-collapsing">
       <title>Collapsing the API</title>
 
       <para>
-	Use of abstraction as in C) above will allow a single method in
-	<literal>plstream</literal> to perform the services of multiple functions in the C API.
-	In those cases where multiple functions were provided with different
-	data layout specifications, but similar functionality, these can all
-	be collapsed into one, through the use of the abstract interface
-	technique described above.
+        Use of abstraction as in C) above will allow a single method in
+        <literal>plstream</literal> to perform the services of multiple functions in the C API.
+        In those cases where multiple functions were provided with different
+        data layout specifications, but similar functionality, these can all
+        be collapsed into one, through the use of the abstract interface
+        technique described above.
 
-	Moreover, function name overloading can be used to simplify the
-	namespace for those cases where multiple functions were used to get
-	variations on a basic capability.  For example, a single name such as
-	contour or shade can be used for multiple methods taking different
-	argument sets, so that for example, one can make simple plots of
-	rectangular data sets, or more complex generalized coordinate
-	mappings.
+        Moreover, function name overloading can be used to simplify the
+        namespace for those cases where multiple functions were used to get
+        variations on a basic capability.  For example, a single name such as
+        contour or shade can be used for multiple methods taking different
+        argument sets, so that for example, one can make simple plots of
+        rectangular data sets, or more complex generalized coordinate
+        mappings.
       </para>
     </sect2>
 
