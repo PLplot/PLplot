@@ -90,8 +90,26 @@ contrast to the SGML/DSSL tools used for that job for plplot-5.9.9 and
 previous, and the XML/XSL "xmlto --with-fop" method used with
 PLplot-5.9.10 to do that job.
 
-5. Generation of dvi and PostScript forms of our documentation is
-no longer available.
+5. Generation of dvi and PostScript forms of our documentation is no longer available.
+
+Cygwin Specific
+===============
+
+Installing the following packages on Cygwin will allow you
+to build the documentation (note this may include more
+packages than strictly required, but this list definitely
+works):
+openjade, OpenSP, texlive-collection-htmlxml, 
+texlive-collection-genericrecommended, 
+texlive-collection-latexrecommended, 
+texlive-collection-fontsextra, docbook-dsssl, lynx,
+ImageMagick, libxml2.
+
+Then download the gnu FreeFont fonts (they can currently be
+found at http://www.fontspace.com/gnu-freefont) and add them
+to the /usr/share/fonts/OTF directory. 
+
+With these in place the documentation should build with the apropriate CMake flag set.
 
 Validation
 ==========
