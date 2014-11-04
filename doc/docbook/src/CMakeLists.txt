@@ -3,7 +3,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -154,11 +154,19 @@ else(
   # used to help build the documentation.  Of course, these files are
   # required for validation as well.
   # N.B. if PERL_FOUND is false, then BUILD_DOC is false.
+
+  # N.B. the DEPENDS below for plplot creates both a file
+  # dependency (assuring the custom command is re-run whenever
+  # libplplot is updated) and also a target dependency for
+  # the corresponding docbook_plplot-symbols_txt custom target
+  # that depends on the OUTPUT of this custom command.
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
     COMMAND ${PERL_EXECUTABLE}
     ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
-    DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
+    DEPENDS
+    ${CMAKE_SOURCE_DIR}/include/plplot.h
+    plplot
     )
   # For parallel builds to work must have all file dependency chains of
   # targets independent of each other.  Thus, since several targets
@@ -171,9 +179,6 @@ else(
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
     )
-  # libplplot should be created before plplot-symbols.txt since
-  # get-library-symbols.pl depends upon libplplot.
-  add_dependencies(docbook_plplot-symbols_txt plplot)
   file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
     "plplot-symbols.txt\n"
     )
