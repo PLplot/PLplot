@@ -88,17 +88,39 @@ Installing the following packages on Cygwin will allow you
 to build the documentation (note this may include more
 packages than strictly required, but this list definitely
 works):
-openjade, OpenSP, texlive-collection-htmlxml, 
-texlive-collection-genericrecommended, 
-texlive-collection-latexrecommended, 
+openjade, OpenSP, texlive-collection-htmlxml,
+texlive-collection-genericrecommended,
+texlive-collection-latexrecommended,
 texlive-collection-fontsextra, docbook-dsssl, lynx,
 ImageMagick, libxml2.
 
-Then download the gnu FreeFont fonts (they can currently be
-found at http://www.fontspace.com/gnu-freefont) and add them
-to the /usr/share/fonts/OTF directory. 
+You must then download and install the gnu FreeFont fonts (they can
+currently be found at http://www.fontspace.com/gnu-freefont). To
+install them you have a number of options:
+1) Copy them to the /usr/share/fonts/OTF directory.
+2) <Depreciated> Copy them to ~/.fonts
+3) Create a file /etc/fonts/local.conf which should contain the
+   following
+     <?xml version="1.0"?>
+     <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
 
-With these in place the documentation should build with the appropriate CMake flag set.
+     <fontconfig>
+
+     <!-- Font directory list -->
+
+             <dir>/dir/containing/fonts</dir>
+
+     </fontconfig>
+   Where you can set the value within <dir></dir> to any directory
+   you require, e.g. /usr/local/share/fonts, ~/.fonts or even
+   /cygdrive/c/Windows/Fonts.
+Once the fonts are in an appropriate folder run fc-cache to update
+the fontconfig cache. Note that if you add the Windows Fonts folder
+you will add all Windows fonts but after installing any new font a
+call to fc-cache may be required.
+
+With these in place the documentation should build with the apropriate CMake flag set.
+
 
 The DocBook Back-end Tool Chains
 ================================
@@ -148,6 +170,7 @@ previous, and the XML/XSL "xmlto --with-fop" method used with
 PLplot-5.9.10 to do that job.
 
 5. Generation of dvi and PostScript forms of our documentation is no longer available.
+
 
 Validation
 ==========

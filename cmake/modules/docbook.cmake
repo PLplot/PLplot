@@ -21,12 +21,15 @@
 # Configuration for the building of DocBook documentation 
 
 option(BUILD_DOC "Enable build of DocBook documentation" OFF)
-if(NOT (PERL_FOUND AND CMAKE_SYSTEM_NAME STREQUAL "Linux"))
+
+# documentation can now build on Cygwin - remove the linux requirement
+#if(NOT (PERL_FOUND AND CMAKE_SYSTEM_NAME STREQUAL "Linux"))
+if(NOT PERL_FOUND)
   set(
   BUILD_DOC OFF CACHE INTERNAL 
   "Enable build of DocBook documentation"
   )
-endif(NOT (PERL_FOUND AND CMAKE_SYSTEM_NAME STREQUAL "Linux"))
+endif(NOT (PERL_FOUND AND (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")))
 
 option(PREBUILT_DOC "Assume documentation is already built and present in doc/docbooks/src, ready to be installed. This option is useful for package maintainers" OFF)
 
