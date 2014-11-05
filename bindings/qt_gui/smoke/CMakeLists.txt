@@ -31,18 +31,7 @@ if(ENABLE_smoke)
     COMPILE_FLAGS "-DUSINGDLL"
     )
 
-  add_custom_command(
-    OUTPUT ${plplot_smoke_SRC}
-    COMMAND ${SMOKE_GEN_BIN} 
-    -config "${SMOKE_GEN_SHARED}/qt-config.xml" -smokeconfig "${CMAKE_CURRENT_SOURCE_DIR}/smokeconfig.xml" -I "${CMAKE_CURRENT_SOURCE_DIR}" -I "${CMAKE_SOURCE_DIR}/include" -I "${CMAKE_SOURCE_DIR}/lib/qsastime" -I "${CMAKE_SOURCE_DIR}/lib/nistcd" -I "${CMAKE_SOURCE_DIR}/drivers" -I "${CMAKE_BINARY_DIR}" -I "${CMAKE_BINARY_DIR}/include" -- ${CMAKE_CURRENT_SOURCE_DIR}/plplotqt.h
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/smokeconfig.xml ${CMAKE_CURRENT_SOURCE_DIR}/plplotqt.h
-    VERBATIM
-    )
-  add_custom_target(generate_smoke_source
-    DEPENDS ${plplot_smoke_SRC}
-    )
-
-  include_directories(
+  set(include_directories_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/lib/qsastime
@@ -50,6 +39,24 @@ if(ENABLE_smoke)
     ${CMAKE_SOURCE_DIR}/drivers
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    )
+
+  include_directories(${include_directories_LIST})
+
+  set(smokegen_I_options)
+  foreach(directory ${include_directories_LIST})
+    list(APPEND smokegen_I_options -I "${directory}")
+  endforeach(directory ${include_directories_LIST}) 
+
+  add_custom_command(
+    OUTPUT ${plplot_smoke_SRC}
+    COMMAND ${SMOKE_GEN_BIN} 
+    -config "${SMOKE_GEN_SHARED}/qt-config.xml" -smokeconfig "${CMAKE_CURRENT_SOURCE_DIR}/smokeconfig.xml" ${smokegen_I_options} -- ${CMAKE_CURRENT_SOURCE_DIR}/plplotqt.h
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/smokeconfig.xml ${CMAKE_CURRENT_SOURCE_DIR}/plplotqt.h
+    VERBATIM
+    )
+  add_custom_target(generate_smoke_source
+    DEPENDS ${plplot_smoke_SRC}
     )
 
   add_library(smokeplplotqt ${plplot_smoke_SRC})
