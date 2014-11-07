@@ -4,7 +4,6 @@ QT += svg
 HEADERS += plplotqt_smoke.h
 SOURCES += smokedata.cpp
 SOURCES += x_1.cpp
-INCLUDEPATH = /usr/local/include/plplot/ 
 LIBS += -lsmokeqtcore -lsmokeqtgui -lplplotqt
 VERSION = 0.0.1
 TARGET = smokeplplotqt
