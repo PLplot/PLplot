@@ -20,6 +20,11 @@
 
 if(ENABLE_smoke)
 
+  configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplotqt.pro.in
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotqt.pro
+  )
+
   set(plplot_smoke_SRC
     ${CMAKE_CURRENT_BINARY_DIR}/smokedata.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/x_1.cpp
