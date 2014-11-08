@@ -94,13 +94,9 @@ texlive-collection-latexrecommended,
 texlive-collection-fontsextra, docbook-dsssl, lynx,
 ImageMagick, libxml2.
 
-You must then download and install the gnu FreeFont fonts (they can
-currently be found at http://www.fontspace.com/gnu-freefont). To
-install them you have a number of options:
-1) Copy them to the /usr/share/fonts/OTF directory.
-2) <Depreciated> Copy them to ~/.fonts
-3) Create a file /etc/fonts/local.conf which should contain the
-   following
+You must then make the gnu FreeFonts available to fontconfig. You can do
+this by creating a file /etc/fonts/local.conf which should contain the
+following:
      <?xml version="1.0"?>
      <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
 
@@ -108,18 +104,16 @@ install them you have a number of options:
 
      <!-- Font directory list -->
 
-             <dir>/dir/containing/fonts</dir>
+             <dir>/usr/share/texmf-dist/fonts</dir>
 
      </fontconfig>
-   Where you can set the value within <dir></dir> to any directory
-   you require, e.g. /usr/local/share/fonts, ~/.fonts or even
-   /cygdrive/c/Windows/Fonts.
-Once the fonts are in an appropriate folder run fc-cache to update
-the fontconfig cache. Note that if you add the Windows Fonts folder
-you will add all Windows fonts but after installing any new font a
-call to fc-cache may be required.
-
-With these in place the documentation should build with the apropriate CMake flag set.
+Note also that if you wish you could copy the FreeFonts from the opentype
+subdirectory of the folder listed above to anywhere else (e.g. ~/.fonts or
+your Windows fonts directory) and add this to the local.conf file or you can
+copy them to /usr/share/fonts/OTF in which case a local.conf file is not
+needed.
+Finally run fc-cache to update the fontconfig cache. Now the documentation
+should build with the apropriate CMake flag set.
 
 
 The DocBook Back-end Tool Chains
