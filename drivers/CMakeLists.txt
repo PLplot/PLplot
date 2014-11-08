@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2014 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -240,6 +240,17 @@ if(ENABLE_DYNDRIVERS)
       DESTINATION ${DRV_DIR}
       )
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
+
+  # The tk device driver depends internally on the xwin device driver.
+  # Therefore make target tk depend on target xwin so
+  # xwin will always be built first.
+  if(TARGET tk)
+    if(TARGET xwin)
+      add_dependencies(tk xwin)
+    else(TARGET xwin)
+      message(FATAL_ERROR "Internal build system inconsistency where the tk target but not the xwin target are configured.")
+    endif(TARGET xwin)
+  endif(TARGET tk)
 
   if(PLD_tkwin AND USE_TCL_TK_STUBS)
     set_target_properties(
