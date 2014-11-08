@@ -40,7 +40,7 @@ install in order to build the documentation.
 N.B. As far as we know, the complete set of required tools is only
 available on Linux and Cygwin so you will need access to one of those
 platforms to do a documentation build.  For more information on
-those platforms see "Linux Specific" and "Cygwin Specfic" below.
+those platforms see "Linux Specific" and "Cygwin Specific" below.
 
 Linux Specific
 ==============
