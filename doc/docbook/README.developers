@@ -104,7 +104,10 @@ following:
 
      <!-- Font directory list -->
 
-             <dir>/usr/share/texmf-dist/fonts</dir>
+             <dir>/usr/share/texmf-dist/fonts/opentype</dir>
+             <dir>/usr/share/texmf-dist/fonts/truetype</dir>
+             <dir>/usr/share/texmf-dist/fonts/type1</dir>
+
 
      </fontconfig>
 Note also that if you wish you could copy the FreeFonts from the opentype
@@ -113,7 +116,9 @@ your Windows fonts directory) and add this to the local.conf file or you can
 copy them to /usr/share/fonts/OTF in which case a local.conf file is not
 needed.
 Finally run fc-cache to update the fontconfig cache. Now the documentation
-should build with the apropriate CMake flag set.
+should build with the apropriate CMake flag set. However, one last problem 
+appears to be a build order issue. If you see an error related to nm then build 
+a second time and you should get a clean build.
 
 
 The DocBook Back-end Tool Chains
