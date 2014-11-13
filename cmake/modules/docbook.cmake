@@ -1,7 +1,7 @@
 # cmake/modules/docbook.cmake
 #
 # Copyright (C) 2006  Andrew Ross
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -22,9 +22,8 @@
 
 option(BUILD_DOC "Enable build of DocBook documentation" OFF)
 
-# documentation can now build on Cygwin - remove the linux requirement
-#if(NOT (PERL_FOUND AND CMAKE_SYSTEM_NAME STREQUAL "Linux"))
-if(NOT PERL_FOUND)
+# documentation can now build on both Linux and Cygwin.
+if(NOT (PERL_FOUND AND (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")))
   set(
   BUILD_DOC OFF CACHE INTERNAL 
   "Enable build of DocBook documentation"
