@@ -3,7 +3,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2014 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -163,7 +163,7 @@ else(
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
     COMMAND ${PERL_EXECUTABLE}
-    ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
+    ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt $<TARGET_LINKER_FILE:plplot> ${CMAKE_SOURCE_DIR}/include/plplot.h 3
     DEPENDS
     ${CMAKE_SOURCE_DIR}/include/plplot.h
     plplot
