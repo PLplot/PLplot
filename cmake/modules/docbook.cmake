@@ -22,8 +22,7 @@
 
 option(BUILD_DOC "Enable build of DocBook documentation" OFF)
 
-# documentation can now build on both Linux and Cygwin.
-if(NOT (PERL_FOUND AND (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")))
+if(NOT (PERL_FOUND))
   set(
   BUILD_DOC OFF CACHE INTERNAL 
   "Enable build of DocBook documentation"
