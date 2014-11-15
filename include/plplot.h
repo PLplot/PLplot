@@ -1294,38 +1294,38 @@ c_pllsty( PLINT lin );
 // Plot continental outline in world coordinates
 
 PLDLLIMPEXP void
-c_plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+c_plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy );
 
 // Plot map outlines
 
 PLDLLIMPEXP void
-c_plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+c_plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+             PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
              const PLINT *plotentries, PLINT nplotentries );
 
 // Plot map points
 
 PLDLLIMPEXP void
 c_plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-               const char *type, const char *string,
-               PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+               const char *name, const char *string,
+               PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                const PLINT *plotentries, PLINT nplotentries );
 
 // Plot map text
 
 PLDLLIMPEXP void
 c_plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-            const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
-            PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+            const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
             PLINT plotentry );
 
 // Plot map fills
 
 PLDLLIMPEXP void
 c_plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-             const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-             PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries );
+             const char *name, PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+             const PLINT *plotentries, PLINT nplotentries );
 
 // Plot the latitudes and longitudes on the background.
 

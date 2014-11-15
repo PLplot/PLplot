@@ -1117,58 +1117,58 @@ void plstream::lsty( PLINT lin )
 // Plot continental outline in world coordinates
 
 void plstream::map( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-                    const char *type, PLFLT minlong, PLFLT maxlong,
-                    PLFLT minlat, PLFLT maxlat )
+                    const char *name, PLFLT minx, PLFLT maxx,
+                    PLFLT miny, PLFLT maxy )
 {
     set_stream();
 
-    plmap( mapform, type, minlong, maxlong, minlat, maxlat );
+    plmap( mapform, name, minx, maxx, miny, maxy );
 }
 
 // Plot map lines
 
-void plstream::mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-                        PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+void plstream::mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+                        PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                         const PLINT *plotentries, PLINT nplotentries )
 {
     set_stream();
 
-    plmapline( mapform, type, minlong, maxlong, minlat, maxlat, plotentries, nplotentries );
+    plmapline( mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries );
 }
 
 // Plot map points
 
 void plstream::mapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-                          const char *type, const char *string,
-                          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+                          const char *name, const char *string,
+                          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                           const PLINT *plotentries, PLINT nplotentries )
 {
     set_stream();
 
-    plmapstring( mapform, type, string, minlong, maxlong, minlat, maxlat, plotentries, nplotentries );
+    plmapstring( mapform, name, string, minx, maxx, miny, maxy, plotentries, nplotentries );
 }
 
 // Plot map text
 
 void plstream::maptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-                       const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
-                       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+                       const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+                       PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                        PLINT plotentry )
 {
     set_stream();
 
-    plmaptex( mapform, type, dx, dy, just, text, minlong, maxlong, minlat, maxlat, plotentry );
+    plmaptex( mapform, name, dx, dy, just, text, minx, maxx, miny, maxy, plotentry );
 }
 
 // Plot map fills
 
 void plstream::mapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-                        const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-                        PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries )
+                        const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
+                        PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
     set_stream();
 
-    plmapfill( mapform, type, minlong, maxlong, minlat, maxlat, plotentries, nplotentries );
+    plmapfill( mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries );
 }
 
 // Plot the latitudes and longitudes on the background.

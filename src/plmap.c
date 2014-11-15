@@ -188,7 +188,7 @@ drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT 
 //parameters are:
 //mapform: The transform used to convert the data in raw coordinates to x, y positions
 //on the plot
-//type: either one of the plplot provided lat/lon maps or the path/file name of a
+//name: either one of the plplot provided lat/lon maps or the path/file name of a
 //shapefile
 //dx/dy: the gradient of text/symbols drawn if text is non-null
 //shapetype: one of ARC, SHPT_ARCZ, SHPT_ARCM, SHPT_POLYGON, SHPT_POLYGONZ,
@@ -198,9 +198,9 @@ drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT 
 //SHPT will only be defined if HAVE_SHAPELIB is true
 //text: The text (which can be actual text or a unicode symbol) to be drawn at
 //each point
-//minlong/maxlong: The min/max longitude when using a plplot provided map or x value if
+//minx/maxx: The min/max longitude when using a plplot provided map or x value if
 //using a shapefile
-//minlat/maxlat: The min/max latitude when using a plplot provided map or y value if
+//miny/maxy: The min/max latitude when using a plplot provided map or y value if
 //using a shapefile
 //plotentries: used only for shapefiles, as one shapefile contains multiple vectors
 //each representing a different item (e.g. multiple boundaries, multiple height
@@ -211,9 +211,9 @@ drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT 
 //with shapefile support or if plotentries is null
 //--------------------------------------------------------------------------
 void
-drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
+drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
          PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
-         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries )
+         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
 #if defined ( HAVE_SHAPELIB ) || defined ( PL_DEPRECATED )
     int   i, j;
@@ -266,17 +266,17 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 
     //strip the .shp extension if a shapefile has been provided and add
     //the needed map file extension if we are not using shapefile
-    if ( strstr( type, ".shp" ) )
-        filenamelen = (int) ( type - strstr( type, ".shp" ) );
+    if ( strstr( name, ".shp" ) )
+        filenamelen = (int) ( name - strstr( name, ".shp" ) );
     else
-        filenamelen = (int) strlen( type );
+        filenamelen = (int) strlen( name );
     filename = (char *) malloc( filenamelen + strlen( MAP_FILE ) + 1 );
     if ( !filename )
     {
         plabort( "Could not allocate memory for concatenating map filename" );
         return;
     }
-    strncpy( filename, type, filenamelen );
+    strncpy( filename, name, filenamelen );
     filename[ filenamelen ] = '\0';
     strcat( filename, MAP_FILE );
 
@@ -309,11 +309,11 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
     prjfilename = (char *) malloc( filenamelen + 5 );
     if ( !prjfilename )
     {
-        plabort( "Could not allocate memory for generating map projection filename" );
         free( filename );
+        plabort( "Could not allocate memory for generating map projection filename" );
         return;
     }
-    strncpy( prjfilename, type, filenamelen );
+    strncpy( prjfilename, name, filenamelen );
     prjfilename[ filenamelen ] = '\0';
     strcat( prjfilename, ".prj" );
     prjfile = plLibOpenPdfstrm( prjfilename );
@@ -514,11 +514,11 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
             maxsectlat = MAX( maxsectlat, bufy[0] );
             //ensure our lat and lon are on 0-360 grid and split the
             //data where it wraps.
-            rebaselon( &bufx[0], ( minlong + maxlong ) / 2.0 );
+            rebaselon( &bufx[0], ( minx + maxx ) / 2.0 );
             for ( i = 1; i < nVertices; i++ )
             {
                 //put lon into 0-360 degree range
-                rebaselon( &bufx[i], ( minlong + maxlong ) / 2.0 );
+                rebaselon( &bufx[i], ( minx + maxx ) / 2.0 );
 
                 //check if the previous point is more than 180 degrees away
                 if ( bufx[i - 1] - bufx[i] > 180. || bufx[i - 1] - bufx[i] < -180. )
@@ -564,8 +564,8 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
             }
 
             //check if the latitude and longitude range means we need to plot this section
-            if ( ( maxsectlat > minlat ) && ( minsectlat < maxlat )
-                 && ( maxsectlon > minlong ) && ( minsectlon < maxlong ) )
+            if ( ( maxsectlat > miny ) && ( minsectlat < maxy )
+                 && ( maxsectlon > minx ) && ( minsectlon < maxx ) )
             {
                 //plot each split in turn, now is where we deal with the end points to
                 //ensure we draw to the edge of the map
@@ -644,8 +644,8 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 
 
 //--------------------------------------------------------------------------
-// void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
-//            PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+// void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *name,
+//            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy);
 //
 // plot continental outline in world coordinates
 //
@@ -662,8 +662,8 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 // by the corresponding plot coordinates.  If no transform is desired,
 // mapform can be replaced by NULL.
 //
-// type is a character string. The value of this parameter determines the
-// type of background. The possible values are,
+// name is a character string. The value of this parameter determines the
+// name of background. The possible values are,
 //
 //      "globe"		continental outlines
 //      "usa"		USA and state boundaries
@@ -674,30 +674,27 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 // file can be passed or the filename including the .shp or .shx suffix.
 // Only the .shp and .shx files are used.
 //
-// minlong, maxlong are the values of the longitude on the left and right
-// side of the plot, respectively. The value of minlong must be less than
-// the values of maxlong, and the values of maxlong-minlong must be less
-// or equal to 360.
+// minx, maxx are the minimum and maximum untransformed x values to be
+// plotted. For the built in plots these are longitudes. For other
+//shapefiles these are in the units of the shapefile. The value of minx 
+//must be less than the values of maxx.
 //
-// minlat, maxlat are the minimum and maximum latitudes to be plotted on
-// the background.  One can always use -90.0 and 90.0 as the boundary
-// outside the plot window will be automatically eliminated.  However, the
-// program will be faster if one can reduce the size of the background
-// plotted.
+// miny, maxy are as per minx and maxx except for the built in plots 
+//the units are latitude.
 //--------------------------------------------------------------------------
 
 void
-plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
+plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+       PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy )
 {
-    drawmap( mapform, type, 0.0, 0.0, SHPT_ARC, 0.0, NULL, minlong, maxlong,
-        minlat, maxlat, NULL, 0 );
+    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, NULL, minx, maxx,
+        miny, maxy, NULL, 0 );
 }
 
 //--------------------------------------------------------------------------
 // void plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-//		PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries);
+//		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
+//		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
 
 //New version of plmap which allows us to specify which items in a shapefile
 //we want to use. parameters are as above but with the plotentries being an
@@ -712,18 +709,18 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 //be drawn as points using the plmaptex function.
 //--------------------------------------------------------------------------
 void
-plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-           PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
            const PLINT *plotentries, PLINT nplotentries )
 {
-    drawmap( mapform, type, 0.0, 0.0, SHPT_ARC, 0.0, "", minlong, maxlong,
-        minlat, maxlat, plotentries, nplotentries );
+    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, "", minx, maxx,
+        miny, maxy, plotentries, nplotentries );
 }
 
 //--------------------------------------------------------------------------
 // void plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *type, PLFLT just, const char *string,
-//		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+//		const char *name, PLFLT just, const char *string,
+//		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
 //		const PLINT *plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots symbols. The map equivalent of plstring. string
@@ -731,18 +728,18 @@ plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 //--------------------------------------------------------------------------
 void
 plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-             const char *type, const char *string,
-             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+             const char *name, const char *string,
+             PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
              const PLINT *plotentries, PLINT nplotentries )
 {
-    drawmap( mapform, type, 1.0, 0.0, SHPT_POINT, 0.5, string, minlong, maxlong,
-        minlat, maxlat, plotentries, nplotentries );
+    drawmap( mapform, name, 1.0, 0.0, SHPT_POINT, 0.5, string, minx, maxx,
+        miny, maxy, plotentries, nplotentries );
 }
 
 //--------------------------------------------------------------------------
 // void plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *type, PLFLT dx, PLFLT dy PLFLT just, const char *text,
-//		PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+//		const char *name, PLFLT dx, PLFLT dy PLFLT just, const char *text,
+//		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
 //		PLINT plotentry);
 //
 //As per plmapline but plots text. The map equivalent of plptex. dx, dy,
@@ -750,35 +747,35 @@ plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //--------------------------------------------------------------------------
 void
 plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-          const char *type, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
-          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+          const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
           PLINT plotentry )
 {
-    drawmap( mapform, type, dx, dy, SHPT_POINT, just, text, minlong, maxlong,
-        minlat, maxlat, &plotentry, 1 );
+    drawmap( mapform, name, dx, dy, SHPT_POINT, just, text, minx, maxx,
+        miny, maxy, &plotentry, 1 );
 }
 
 //--------------------------------------------------------------------------
 // void plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-//		PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries);
+//		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
+//		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots a filled polygon. The map equivalent to
 //plfill. Uses the pattern defined by plsty or plpat.
 //--------------------------------------------------------------------------
 void
 plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-           const char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat,
-           PLFLT maxlat, const PLINT *plotentries, PLINT nplotentries )
+           const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
+           PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
-    drawmap( mapform, type, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minlong, maxlong,
-        minlat, maxlat, plotentries, nplotentries );
+    drawmap( mapform, name, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minx, maxx,
+        miny, maxy, plotentries, nplotentries );
 }
 
 //--------------------------------------------------------------------------
 // void plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *),
-//		    PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong,
-//		    PLFLT minlat, PLFLT maxlat);
+//		    PLFLT dlong, PLFLT dlat, PLFLT minx, PLFLT maxx,
+//		    PLFLT miny, PLFLT maxy);
 //
 // Plot the latitudes and longitudes on the background.  The lines
 // are plotted in the current color and line style.
@@ -795,12 +792,12 @@ plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 // dlat, dlong are the interval in degrees that the latitude and longitude
 // lines are to be plotted.
 //
-// minlong, maxlong are the values of the longitude on the left and right
-// side of the plot, respectively. The value of minlong must be less than
-// the values of maxlong, and the values of maxlong-minlong must be less
+// minx, maxx are the values of the longitude on the left and right
+// side of the plot, respectively. The value of minx must be less than
+// the values of maxx, and the values of maxx-minx must be less
 // or equal to 360.
 //
-// minlat, maxlat are the minimum and maximum latitudes to be plotted on
+// miny, maxy are the minimum and maximum latitudes to be plotted on
 // the background.  One can always use -90.0 and 90.0 as the boundary
 // outside the plot window will be automatically eliminated.  However, the
 // program will be faster if one can reduce the size of the background
