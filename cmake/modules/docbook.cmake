@@ -22,12 +22,12 @@
 
 option(BUILD_DOC "Enable build of DocBook documentation" OFF)
 
-if(NOT (PERL_FOUND))
+if(NOT PERL_FOUND)
   set(
   BUILD_DOC OFF CACHE INTERNAL 
   "Enable build of DocBook documentation"
   )
-endif(NOT (PERL_FOUND AND (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")))
+endif(NOT PERL_FOUND)
 
 option(PREBUILT_DOC "Assume documentation is already built and present in doc/docbooks/src, ready to be installed. This option is useful for package maintainers" OFF)
 
