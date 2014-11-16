@@ -863,20 +863,20 @@ plfcont( f2eval_func f2eval,
 
 void
 plmap( mapform_func mapform, const char *type,
-       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+       PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy );
 
 // Plot map outlines
 
 void
 plmapline( mapform_func mapform, const char *type,
-           PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
            const PLINT *ArrayNull, PLINT n );
 
 // Plot map points
 
 void
 plmapstring( mapform_func mapform, const char *type, const char *string,
-             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+             PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
              const PLINT *ArrayNull, PLINT n );
 
 // Plot map text
@@ -884,14 +884,14 @@ plmapstring( mapform_func mapform, const char *type, const char *string,
 void
 plmaptex( mapform_func mapform, const char *type,
           PLFLT dx, PLFLT dy, PLFLT just, const char *text,
-          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
           PLINT plotentry );
 
 // Plot map fills
 
 void
 plmapfill( mapform_func mapform, const char *type,
-           PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat,
+           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
            const PLINT *ArrayNull, PLINT n );
 
 // Plot the latitudes and longitudes on the background.
