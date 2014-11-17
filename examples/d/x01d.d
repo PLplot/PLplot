@@ -188,7 +188,7 @@ class plot {
         for ( int i = 0; i < 60; i++ )
         {
             x[i] = xoff + xscale * ( i + 1 ) / 60.0;
-            y[i] = yoff + yscale*pow( x[i], 2. );
+            y[i] = yoff + yscale * pow( x[i], 2. );
         }
 
         PLFLT xmin = x[0];

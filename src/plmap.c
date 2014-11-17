@@ -676,10 +676,10 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 //
 // minx, maxx are the minimum and maximum untransformed x values to be
 // plotted. For the built in plots these are longitudes. For other
-//shapefiles these are in the units of the shapefile. The value of minx 
+//shapefiles these are in the units of the shapefile. The value of minx
 //must be less than the values of maxx.
 //
-// miny, maxy are as per minx and maxx except for the built in plots 
+// miny, maxy are as per minx and maxx except for the built in plots
 //the units are latitude.
 //--------------------------------------------------------------------------
 

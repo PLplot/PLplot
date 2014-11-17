@@ -250,8 +250,8 @@ void potential()
     for ( int i = 0; i < PERIMETERPTS; i++ )
     {
         t     = ( 2. * PI / ( PERIMETERPTS - 1 ) ) * i;
-        px[i] = x0 + rmax*cos( t );
-        py[i] = y0 + rmax*sin( t );
+        px[i] = x0 + rmax * cos( t );
+        py[i] = y0 + rmax * sin( t );
     }
 
     plcol0( ncolbox );

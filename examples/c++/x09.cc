@@ -155,8 +155,8 @@ x09::x09( int argc, const char **argv )
             argy    = yy * M_PI / 2;
             distort = 0.4;
 
-            cgrid1.xg[i] = xx + distort    * cos( argx );
-            cgrid1.yg[j] = yy - distort    * cos( argy );
+            cgrid1.xg[i] = xx + distort * cos( argx );
+            cgrid1.yg[j] = yy - distort * cos( argy );
 
             cgrid2.xg[i][j] = xx + distort * cos( argx ) * cos( argy );
             cgrid2.yg[i][j] = yy - distort * cos( argx ) * cos( argy );
@@ -470,8 +470,8 @@ void x09::potential()
     for ( i = 0; i < PPERIMETERPTS; i++ )
     {
         t     = ( 2. * M_PI / ( PPERIMETERPTS - 1 ) ) * (PLFLT) i;
-        px[i] = x0 + rmax*cos( t );
-        py[i] = y0 + rmax*sin( t );
+        px[i] = x0 + rmax * cos( t );
+        py[i] = y0 + rmax * sin( t );
     }
 
     pls->col0( ncolbox );

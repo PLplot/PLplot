@@ -86,7 +86,7 @@ x31::x31( int argc, const char *argv[] )
     // Retrieve the same values?
     pls->gfam( fam2, num2, bmax2 );
     cout << "family parameters: fam, num, bmax = " << fam2 << " " <<
-    num2 << " " << bmax2 << endl;
+        num2 << " " << bmax2 << endl;
     if ( fam2 != fam1 || num2 != num1 || bmax2 != bmax1 )
     {
         cerr << "plgfam test failed" << endl;
@@ -109,8 +109,8 @@ x31::x31( int argc, const char *argv[] )
     // Retrieve the same values?
     pls->gpage( xp2, yp2, xleng2, yleng2, xoff2, yoff2 );
     cout << "page parameters: xp, yp, xleng, yleng, xoff, yoff = " << xp2 <<
-    " " << yp2 << " " << xleng2 << " " << yleng2 << " " << xoff2 << " " <<
-    yoff2 << endl;
+        " " << yp2 << " " << xleng2 << " " << yleng2 << " " << xoff2 << " " <<
+        yoff2 << endl;
     if ( xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 ||
          xoff2 != xoff1 || yoff2 != yoff1 )
     {

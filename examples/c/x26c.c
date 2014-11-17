@@ -80,7 +80,7 @@ static const char *alty_labels[] = {
 
 // Short rearranged versions of y_label and alty_label.
 static const char *legend_texts[][2] = {
-    { "Amplitude",          "Phase shift"               },
+    { "Amplitude", "Phase shift"   },
     { "Амплитуда", "Фазовый сдвиг" }
 };
 

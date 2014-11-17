@@ -10,7 +10,7 @@
 # and/or apply them.  This script must be run from the top-level
 # directory of the PLplot source tree.
 
-# Copyright (C) 2009-2010 Alan W. Irwin
+# Copyright (C) 2009-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -175,7 +175,7 @@ while test $# -gt 0; do
     shift
 done
 
-allowed_version=0.58
+allowed_version=0.60
 version=$(uncrustify --version)
 if [ "$version" != "uncrustify $allowed_version" ] ; then
     echo "

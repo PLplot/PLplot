@@ -161,7 +161,7 @@ plP_subpInit( void )
         rat   = ( ( plsc->phyxma - plsc->phyxmi ) / plsc->xpmm ) /
                 ( ( plsc->phyyma - plsc->phyymi ) / plsc->ypmm );
         rat    = MAX( rat, 1.0 / rat );
-        rat    = fabs( cos( theta ) ) + rat*fabs( sin( theta ) );
+        rat    = fabs( cos( theta ) ) + rat * fabs( sin( theta ) );
         scale /= rat;
     }
 

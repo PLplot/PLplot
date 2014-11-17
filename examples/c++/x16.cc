@@ -240,8 +240,8 @@ x16::x16( int argc, const char ** argv )
             argy    = y * M_PI / 2;
             distort = 0.4;
 
-            cgrid1.xg[i] = x + distort    * cos( argx );
-            cgrid1.yg[j] = y - distort    * cos( argy );
+            cgrid1.xg[i] = x + distort * cos( argx );
+            cgrid1.yg[j] = y - distort * cos( argy );
 
             cgrid2.xg[i][j] = x + distort * cos( argx ) * cos( argy );
             cgrid2.yg[i][j] = y - distort * cos( argx ) * cos( argy );

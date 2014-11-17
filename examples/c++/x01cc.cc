@@ -307,10 +307,10 @@ void x01cc::plot2()
             PLFLT theta = twopi * j / 64.;
 
             xg( i, j ) = X1 * r * cos( theta ) +
-                         X2 * r*r * cos( 2 * theta );
+                         X2 * r * r * cos( 2 * theta );
 
             yg( i, j ) = Y1 * r * sin( theta ) +
-                         Y2 * r*r * sin( 2 * theta );
+                         Y2 * r * r * sin( 2 * theta );
         }
     }
 

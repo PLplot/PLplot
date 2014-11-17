@@ -87,25 +87,25 @@ namespace plcallback
 {
 // Callback for plfill. This will just call the C plfill function
 
-	PLDLLIMPEXP_CXX void fill( PLINT n, const PLFLT *x, const PLFLT *y ); 
+PLDLLIMPEXP_CXX void fill( PLINT n, const PLFLT *x, const PLFLT *y );
 
 // Identity transformation.
 
-	PLDLLIMPEXP_CXX void tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+PLDLLIMPEXP_CXX void tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
 // Does linear interpolation from singly dimensioned coord arrays.
 
-	PLDLLIMPEXP_CXX void tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+PLDLLIMPEXP_CXX void tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
 // Does linear interpolation from doubly dimensioned coord arrays
 // (column dominant, as per normal C 2d arrays).
 
-	PLDLLIMPEXP_CXX void tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+PLDLLIMPEXP_CXX void tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
 // Just like pltr2() but uses pointer arithmetic to get coordinates from
 // 2d grid tables.
 
-	PLDLLIMPEXP_CXX void tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+PLDLLIMPEXP_CXX void tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 }
 
 //--------------------------------------------------------------------------
@@ -115,7 +115,7 @@ namespace plcallback
 //--------------------------------------------------------------------------
 
 class PLDLLIMPEXP_CXX plstream {
-    PLINT stream;
+    PLINT        stream;
 
     static PLINT active_streams;
 

@@ -247,7 +247,7 @@ void plcallback::fill( PLINT n, const PLFLT *x, const PLFLT *y )
 // Identity transformation.
 
 void plcallback::tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                    PLPointer pltr_data )
+                      PLPointer pltr_data )
 {
     pltr0( x, y, tx, ty, pltr_data );
 }
@@ -255,7 +255,7 @@ void plcallback::tr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 // Does linear interpolation from singly dimensioned coord arrays.
 
 void plcallback::tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                    PLPointer pltr_data )
+                      PLPointer pltr_data )
 {
     pltr1( x, y, tx, ty, pltr_data );
 }
@@ -264,7 +264,7 @@ void plcallback::tr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 // (column dominant, as per normal C 2d arrays).
 
 void plcallback::tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                    PLPointer pltr_data )
+                      PLPointer pltr_data )
 {
     pltr2( x, y, tx, ty, pltr_data );
 }
@@ -273,7 +273,7 @@ void plcallback::tr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 // 2d grid tables.
 
 void plcallback::tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
-                     PLPointer pltr_data )
+                       PLPointer pltr_data )
 {
     pltr2p( x, y, tx, ty, pltr_data );
 }
@@ -515,7 +515,7 @@ void plstream::col( PLFLT c )
     set_stream();
 
     cerr <<
-    "plstream::col(PLFLT c) : function deprecated. Use plstream::col1(PLFLT c) instead"
+        "plstream::col(PLFLT c) : function deprecated. Use plstream::col1(PLFLT c) instead"
          << endl;
 
     plcol1( c );

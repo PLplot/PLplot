@@ -87,7 +87,7 @@ class x26 {
 
     // Short rearranged versions of y_label and alty_label.
     static String[][] legend_text = {
-        { "Amplitude",          "Phase shift"               },
+        { "Amplitude", "Phase shift"   },
         { "Амплитуда", "Фазовый сдвиг" }
     };
 

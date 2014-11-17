@@ -263,8 +263,8 @@ static void potential( void )
     for ( i = 0; i < PPERIMETERPTS; i++ )
     {
         t     = ( 2. * M_PI / ( PPERIMETERPTS - 1 ) ) * (double) i;
-        px[i] = x0 + rmax*cos( t );
-        py[i] = y0 + rmax*sin( t );
+        px[i] = x0 + rmax * cos( t );
+        py[i] = y0 + rmax * sin( t );
     }
 
     plcol0( ncolbox );

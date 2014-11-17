@@ -126,7 +126,7 @@ x14::x14( int argc, const char ** argv )
     pls1->gfam( fam, num, bmax );
 
     cout << "Demo of multiple output streams via the " <<
-    driver << " driver." << endl;
+        driver << " driver." << endl;
     cout << "Running with the second stream as slave to the first.\n" << endl;
 
     pls2 = new plstream();

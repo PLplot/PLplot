@@ -1000,8 +1000,8 @@ proc_str( PLStream *pls, EscText *args )
         plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
             &clipx[3], &clipy[3] );
         doc->osBody() << " gsave " << clipx[0] << " " << clipy[0] << " " <<
-        clipx[1] << " " << clipy[1] << " " << clipx[2] << " " <<
-        clipy[2] << " " << clipx[3] << " " << clipy[3] << " CL\n";
+            clipx[1] << " " << clipy[1] << " " << clipx[2] << " " <<
+            clipy[2] << " " << clipx[3] << " " << clipy[3] << " CL\n";
 
         // move to string reference point
         doc->osBody() << " " << args->x << " " << args->y << " M\n";
@@ -1118,7 +1118,7 @@ proc_str( PLStream *pls, EscText *args )
 
         // Move relative to position to account for justification
         doc->osBody() << " gsave " << TRMFLT( xmin * tt[0] ) << " " <<
-        TRMFLT( xmin * tt[2] ) << " rmoveto\n";
+            TRMFLT( xmin * tt[2] ) << " rmoveto\n";
 
         // Parse string for PLplot escape sequences and print everything out
 

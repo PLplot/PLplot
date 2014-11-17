@@ -204,7 +204,7 @@ typedef PLINT          PLBOOL;
 //--------------------------------------------------------------------------
 
 // With preceding count and remember size to check others
-%typemap( in ) ( PLINT n, const PLINT * Array ) ( Matrix temp )
+%typemap ( in ) ( PLINT n, const PLINT * Array ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -215,13 +215,13 @@ typedef PLINT          PLBOOL;
     temp = $input.matrix_value();
     _cvt_double_to( $2, &temp( 0, 0 ), Alen );
 }
-%typemap( freearg ) ( PLINT n, const PLINT * Array )
+%typemap ( freearg ) ( PLINT n, const PLINT * Array )
 {
     delete [] $2;
 }
 
 // With trailing count and check consistency with previous
-%typemap( in ) ( const PLINT * ArrayCk, PLINT n ) ( Matrix temp )
+%typemap ( in ) ( const PLINT * ArrayCk, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -236,7 +236,7 @@ typedef PLINT          PLBOOL;
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
     $2 = Alen;
 }
-%typemap( freearg ) ( const PLINT * ArrayCk, PLINT n )
+%typemap ( freearg ) ( const PLINT * ArrayCk, PLINT n )
 {
     delete [] $1;
 }
@@ -296,7 +296,7 @@ typedef PLINT          PLBOOL;
     $1   = new PLINT[Alen];
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
 }
-%typemap( freearg ) ( const PLINT * Array )
+%typemap ( freearg ) ( const PLINT * Array )
 {
     delete [] $1;
 }
@@ -358,13 +358,13 @@ typedef PLINT          PLBOOL;
         if ( $1[i] > Ylen )
             Ylen = $1[i];
 }
-%typemap( freearg ) ( const PLINT * ArrayN )
+%typemap ( freearg ) ( const PLINT * ArrayN )
 {
     delete [] $1;
 }
 
 // With trailing count and NULL array option.
-%typemap( in ) ( const PLINT * ArrayNull, PLINT n ) ( Matrix temp )
+%typemap ( in ) ( const PLINT * ArrayNull, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -383,7 +383,7 @@ typedef PLINT          PLBOOL;
         $2 = 0;
     }
 }
-%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n )
+%typemap ( freearg ) ( const PLINT * ArrayNull, PLINT n )
 {
     delete [] $1;
 }
@@ -393,7 +393,7 @@ typedef PLINT          PLBOOL;
 //--------------------------------------------------------------------------
 
 // With preceding count and remember size to check others
-%typemap( in ) ( PLINT n, const PLFLT * Array ) ( Matrix temp )
+%typemap ( in ) ( PLINT n, const PLFLT * Array ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -403,12 +403,12 @@ typedef PLINT          PLBOOL;
     temp = $input.matrix_value();
     $2   = &temp( 0, 0 );
 }
-%typemap( freearg ) ( PLINT n, const PLFLT * Array )
+%typemap ( freearg ) ( PLINT n, const PLFLT * Array )
 {
 }
 
 // With trailing count and check consistency with previous
-%typemap( in ) ( const PLFLT * ArrayCk, PLINT n ) ( Matrix temp )
+%typemap ( in ) ( const PLFLT * ArrayCk, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -422,12 +422,12 @@ typedef PLINT          PLBOOL;
     $1   = &temp( 0, 0 );
     $2   = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap( freearg ) ( const PLFLT * ArrayCk, PLINT n )
+%typemap ( freearg ) ( const PLFLT * ArrayCk, PLINT n )
 {
 }
 
 // With trailing count and check consistency with previous
-%typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n ) ( Matrix temp )
+%typemap ( in ) ( const PLFLT * ArrayCkNull, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -449,7 +449,7 @@ typedef PLINT          PLBOOL;
         $2 = 0;
     }
 }
-%typemap( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
+%typemap ( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
 {
 }
 
@@ -520,7 +520,7 @@ typedef PLINT          PLBOOL;
     temp = $input.matrix_value();
     $1   = &temp( 0, 0 );
 }
-%typemap( freearg ) ( const PLFLT * Array )
+%typemap ( freearg ) ( const PLFLT * Array )
 {
 }
 
@@ -543,12 +543,12 @@ typedef PLINT          PLBOOL;
         Alen = 0;
     }
 }
-%typemap( freearg ) ( const PLFLT * ArrayNull )
+%typemap ( freearg ) ( const PLFLT * ArrayNull )
 {
 }
 
 // With trailing count but remember size to check others
-%typemap( in ) ( const PLFLT * Array, PLINT n ) ( Matrix temp )
+%typemap ( in ) ( const PLFLT * Array, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -558,7 +558,7 @@ typedef PLINT          PLBOOL;
     $1   = &temp( 0, 0 );
     $2   = Alen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap( freearg ) ( const PLFLT * Array, PLINT n )
+%typemap ( freearg ) ( const PLFLT * Array, PLINT n )
 {
 }
 
@@ -600,7 +600,7 @@ typedef PLINT          PLBOOL;
 %typemap( freearg ) const PLFLT * ArrayCkY {}
 
 // With trailing X count but remember X size to check others
-%typemap( in ) ( const PLFLT * ArrayX, PLINT nx ) ( Matrix temp )
+%typemap ( in ) ( const PLFLT * ArrayX, PLINT nx ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -610,7 +610,7 @@ typedef PLINT          PLBOOL;
     $1   = &temp( 0, 0 );
     $2   = Xlen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap( freearg ) ( const PLFLT * ArrayX, PLINT nx )
+%typemap ( freearg ) ( const PLFLT * ArrayX, PLINT nx )
 {
 }
 
@@ -628,7 +628,7 @@ typedef PLINT          PLBOOL;
 %typemap( freearg ) const PLFLT * ArrayX {}
 
 // With trailing Y count but remember Y size to check others
-%typemap( in ) ( const PLFLT * ArrayY, PLINT ny ) ( Matrix temp )
+%typemap ( in ) ( const PLFLT * ArrayY, PLINT ny ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -638,7 +638,7 @@ typedef PLINT          PLBOOL;
     $1   = &temp( 0, 0 );
     $2   = Ylen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny )
+%typemap ( freearg ) ( const PLFLT * ArrayY, PLINT ny )
 {
 }
 
@@ -653,12 +653,12 @@ typedef PLINT          PLBOOL;
     $1   = &temp( 0, 0 );
     Ylen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap( freearg ) ( const PLFLT * ArrayY )
+%typemap ( freearg ) ( const PLFLT * ArrayY )
 {
 }
 
 // 2D array with trailing dimensions, check consistency with previous
-%typemap( in ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny ) ( Matrix temp )
+%typemap ( in ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 2 )
     {
@@ -677,12 +677,12 @@ typedef PLINT          PLBOOL;
     $2   = (PLINT) ( _dim( $input, 0 ) );
     $3   = (PLINT) ( _dim( $input, 1 ) );
 }
-%typemap( freearg ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny )
+%typemap ( freearg ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny )
 {
 }
 
 // 2D array with trailing dimensions but set the X, Y size for later checking
-%typemap( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( Matrix temp )
+%typemap ( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 2 )
     {
@@ -693,7 +693,7 @@ typedef PLINT          PLBOOL;
     $2   = Xlen = (PLINT) ( _dim( $input, 0 ) );
     $3   = Ylen = (PLINT) ( _dim( $input, 1 ) );
 }
-%typemap( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
+%typemap ( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
 {
 }
 
@@ -736,7 +736,7 @@ typedef PLINT          PLBOOL;
 
 // Set Y length for later consistency checking, with trailing count
 // and 2D array, check for consistency input / output version
-%typemap( in ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk ) ( Matrix temp, octave_value_list retval )
+%typemap ( in ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk ) ( Matrix temp, octave_value_list retval )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -748,11 +748,11 @@ typedef PLINT          PLBOOL;
     retval( 0 ) = octave_value( Matrix( Xlen, Ylen ) );
     $3          = (PLFLT *) retval( 0 ).matrix_value().data();
 }
-%typemap( argout ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
+%typemap ( argout ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
 {
     $result = SWIG_Octave_AppendOutput( $result, retval$argnum( 0 ) );
 }
-%typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
+%typemap ( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
 {
 }
 
@@ -1100,7 +1100,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 }
 
 // No count but check consistency with previous
-%typemap( in ) ( PLINT n, const char **Array )
+%typemap ( in ) ( PLINT n, const char **Array )
 {
     charMatrix  temp_matrix;
     Cell        temp_cell;
@@ -1194,7 +1194,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         $2 = NULL;
     }
 }
-%typemap( freearg ) ( PLINT n, const char **Array )
+%typemap ( freearg ) ( PLINT n, const char **Array )
 {
     int i;
     if ( $2 != NULL )

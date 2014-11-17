@@ -433,8 +433,8 @@ class x09 {
         for ( i = 0; i < PPERIMETERPTS; i++ )
         {
             t     = ( 2. * Math.PI / ( PPERIMETERPTS - 1 ) ) * i;
-            px[i] = x0 + rmax*Math.cos( t );
-            py[i] = y0 + rmax*Math.sin( t );
+            px[i] = x0 + rmax * Math.cos( t );
+            py[i] = y0 + rmax * Math.sin( t );
         }
 
         pls.col0( ncolbox );

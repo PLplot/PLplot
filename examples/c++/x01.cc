@@ -206,12 +206,12 @@ x01::x01( int argc, const char ** argv )
             pls->text();
             if ( gin.keysym < 0xFF && isprint( gin.keysym ) )
                 cout << "wx = " << gin.wX << ", wy = " << gin.wY <<
-                ", dx = " << gin.dX << ",  dy = " << gin.dY <<
-                ",  c = '" << gin.keysym << "'" << endl;
+                    ", dx = " << gin.dX << ",  dy = " << gin.dY <<
+                    ",  c = '" << gin.keysym << "'" << endl;
             else
                 cout << "wx = " << gin.wX << ", wy = " << gin.wY <<
-                ", dx = " << gin.dX << ",  dy = " << gin.dY <<
-                ",  c = '" << gin.keysym << "'" << endl;
+                    ", dx = " << gin.dX << ",  dy = " << gin.dY <<
+                    ",  c = '" << gin.keysym << "'" << endl;
             //	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
             //                              gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
 

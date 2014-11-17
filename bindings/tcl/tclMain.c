@@ -74,7 +74,7 @@
 // on some systems, so it's better just to leave it out.
 //
 
-extern int isatty _ANSI_ARGS_( (int fd) );
+extern int isatty _ANSI_ARGS_( ( int fd ) );
 extern char *           strcpy _ANSI_ARGS_( ( char *dst, CONST char *src ) );
 
 static const char *tclStartupScriptFileName = NULL;
