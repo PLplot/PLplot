@@ -426,7 +426,41 @@ void plmap( mapform_func mapform, string type, PLFLT minlong, PLFLT maxlong,
     c_plmap( mapform, toStringz( type ), minlong, maxlong, minlat, maxlat );
 }
 
-// Plots a mesh representation of the function z[x][y].
+
+// Plot map outlines
+
+void plmapline( mapform_func mapform, string name, PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+             const PLINT[] plotentries )
+{
+    PLINT n = cast(PLINT) plotentries.length;
+    c_plmapline( mapform, toStringz(name), minx, maxx, miny, maxy, plotentries.ptr, n );
+}
+
+// Plot map points
+
+void plmapstring( mapform_func mapform, string name, string string,
+               PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, const PLINT[] plotentries )
+{
+    PLINT n = cast(PLINT) plotentries.length;
+    c_plmapstring( mapform, toStringz(name), toStringz(string), minx, maxx, miny, maxy, plotentries.ptr, n);
+}
+
+// Plot map text
+
+void plmaptex( mapform_func mapform, string name, PLFLT dx, PLFLT dy, PLFLT just, string text,
+            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, PLINT plotentry )
+{
+    c_plmaptex( mapform, toStringz(name), dx, dy, just, toStringz(text), minx, maxx, miny, maxy, plotentry );
+}
+
+// Plot map fills
+void plmapfill( mapform_func mapform, string name, PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+             const PLINT[] plotentries )// Plots a mesh representation of the function z[x][y].
+{
+    PLINT n = cast(PLINT) plotentries.length;
+    c_plmapfill( mapform, toStringz(name), minx, maxx, miny, maxy, plotentries.ptr, n );
+}
+
 void plmesh( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt )
 {
     PLINT nx = cast(PLINT) z.length;
@@ -1878,6 +1912,28 @@ void c_pllsty( PLINT lin );
 // plot continental outline in world coordinates
 void c_plmap( void function( PLINT, PLFLT *, PLFLT* ) mapform, const char *type, PLFLT minlong,
               PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+
+// Plot map outlines
+void c_plmapline( void function( PLINT, PLFLT *, PLFLT * ) mapform, const char *name,
+             PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+             const PLINT *plotentries, PLINT nplotentries );
+
+// Plot map points
+void c_plmapstring( void function( PLINT, PLFLT *, PLFLT * ) mapform,
+               const char *name, const char *string,
+               PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+               const PLINT *plotentries, PLINT nplotentries );
+
+// Plot map text
+void c_plmaptex( void function( PLINT, PLFLT *, PLFLT * ) mapform,
+            const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+            PLINT plotentry );
+
+// Plot map fills
+void c_plmapfill( void function( PLINT, PLFLT *, PLFLT * ) mapform,
+             const char *name, PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+             const PLINT *plotentries, PLINT nplotentries );
 
 // Plot the latitudes and longitudes on the background.
 void c_plmeridians( void function( PLINT, PLFLT *, PLFLT* ) mapform, PLFLT dlong, PLFLT dlat,

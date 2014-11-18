@@ -26,8 +26,6 @@ import std.string;
 import std.math;
 import std.c.stdlib;
 
-int sombrero = 0;
-
 //--------------------------------------------------------------------------
 // cmap1_init1
 //
@@ -72,22 +70,33 @@ int main( char[][] args )
 {
     const   nlevel = 10;
     const   XPTS   = 35;        // Data points in x
-    const   YPTS   = 46;        // Data points in y
+    const   YPTS   = 45;        // Data points in y
 
     PLFLT   xx, yy, r;
-    bool    rosen = true;
+    bool    rosen = false;
 
-    PLFLT[] alt = [ 60.0, 20.0 ];
-    PLFLT[] az  = [ 30.0, 60.0 ];
+    const PLFLT dx = 2. / cast (PLFLT) ( XPTS - 1 );
+    const PLFLT dy = 2. / cast (PLFLT) ( YPTS - 1 );
+
+    const indexxmin = 0;
+    const indexxmax = XPTS;
+    // parameters of ellipse (in x, y index coordinates) that limits the data.
+    // x0, y0 correspond to the exact floating point centre of the index
+    // range.
+    const PLFLT x0 = 0.5 * cast(PLFLT) ( XPTS - 1 );
+    const PLFLT a  = 0.9 * x0;
+    const PLFLT y0 = 0.5 * cast(PLFLT) ( YPTS - 1 );
+    const PLFLT b  = 0.7 * y0;
+    PLFLT square_root;
+
+    PLFLT[] alt = [ 60.0, 40.0 ];
+    PLFLT[] az  = [ 30.0, -30.0 ];
 
     string title[] = [ "#frPLplot Example 8 - Alt=60, Az=30",
-                       "#frPLplot Example 8 - Alt=20, Az=60" ];
+                       "#frPLplot Example 8 - Alt=40, Az=-30" ];
 
     // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
-
-    if ( sombrero )
-        rosen = false;
 
     // Initialize plplot
     plinit();
@@ -95,21 +104,26 @@ int main( char[][] args )
     // Allocate data structures
     PLFLT[XPTS] x;
     PLFLT[YPTS] y;
+    PLINT[XPTS] indexymin;
+    PLINT[XPTS] indexymax;
 
     PLFLT[][] z = new PLFLT[][XPTS];
-    for ( int i = 0; i < XPTS; i++ )
+    PLFLT[][] zlimited = new PLFLT[][XPTS];
+    for ( int i = 0; i < XPTS; i++ ) {
         z[i] = new PLFLT[YPTS];
+        zlimited[i] = new PLFLT[YPTS];
+    }
 
     for ( int i = 0; i < XPTS; i++ )
     {
-        x[i] = ( cast(PLFLT) ( i - ( XPTS / 2 ) ) / cast(PLFLT) ( XPTS / 2 ) );
+      x[i] = -1. + cast (PLFLT) i * dx;
         if ( rosen )
             x[i] *= 1.5;
     }
 
     for ( int i = 0; i < YPTS; i++ )
     {
-        y[i] = cast(PLFLT) ( i - ( YPTS / 2 ) ) / cast(PLFLT) ( YPTS / 2 );
+        y[i] = -1. + cast (PLFLT) i * dy;
         if ( rosen )
             y[i] += 0.5;
     }
@@ -137,6 +151,20 @@ int main( char[][] args )
         }
     }
 
+    for ( size_t i = indexxmin; i < indexxmax; i++ )
+    {
+        square_root = sqrt( 1. - fmin( 1., pow( ( cast (PLFLT) i - x0 ) / a, 2. ) ) );
+        // Add 0.5 to find nearest integer and therefore preserve symmetry
+        // with regard to lower and upper bound of y range.
+        indexymin[i] = cast (PLINT) fmax( 0, cast (PLINT) ( 0.5 + y0 - b * square_root ) );
+        // indexymax calculated with the convention that it is 1
+        // greater than highest valid index.
+        indexymax[i] = cast (PLINT) fmin( YPTS, 1 + cast (PLINT) ( 0.5 + y0 + b * square_root ) );
+
+        for ( size_t j = indexymin[i]; j < indexymax[i]; j++ )
+            zlimited[i][j] = z[i][j];
+    }
+
     PLFLT zmin, zmax;
     f2mnmx( z, zmin, zmax );
 
@@ -149,7 +177,7 @@ int main( char[][] args )
 
     for ( size_t k = 0; k < 2; k++ )
     {
-        for ( size_t ifshade = 0; ifshade < 4; ifshade++ )
+        for ( size_t ifshade = 0; ifshade < 5; ifshade++ )
         {
             pladv( 0 );
             plvpor( 0.0, 1.0, 0.0, 0.9 );
@@ -184,10 +212,15 @@ int main( char[][] args )
                 cmap1_init( 0 );
                 plsurf3d( x, y, z, MAG_COLOR | FACETED );
                 break;
-            default:
+            case 3:
                 // magnitude colored plot with contours
                 cmap1_init( 0 );
                 plsurf3d( x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel );
+                break;
+            default:
+                // magnitude colored plot with contours and index limits.
+	        cmap1_init( 0 );
+                plsurf3dl( x, y, zlimited, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, indexxmin, indexxmax, indexymin, indexymax );
                 break;
             }
         }
