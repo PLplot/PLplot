@@ -3,7 +3,7 @@
     api.xml: "The Common API for PLplot" chapter
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999-2013  Alan W. Irwin
+Copyright (C) 1999-2015 Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 Copyright (C) 2004, 2007  Andrew Ross
@@ -8627,7 +8627,7 @@ device support!)
 
   </sect1>
 
-  <sect1 id="plmapstring" renderas="sect3">
+  <sect1 id="plmapfill" renderas="sect3">
     <title>
       <function>plmapfill</function>: Plot all or a subset of
       Shapefile data, filling the polygons
