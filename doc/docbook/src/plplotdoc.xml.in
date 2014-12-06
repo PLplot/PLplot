@@ -154,6 +154,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plline3 '<link linkend="plline3"><function>plline3</function></link>'>
 <!ENTITY pllsty '<link linkend="pllsty"><function>pllsty</function></link>'>
 <!ENTITY plmap '<link linkend="plmap"><function>plmap</function></link>'>
+<!ENTITY plmapline '<link linkend="plmapline"><function>plmapline</function></link>'>
+<!ENTITY plmapfill '<link linkend="plmapfill"><function>plmapfill</function></link>'>
+<!ENTITY plmapstring '<link linkend="plmapstring"><function>plmapstring</function></link>'>
+<!ENTITY plmaptex '<link linkend="plmaptex"><function>plmaptex</function></link>'>
 <!ENTITY plmeridians '<link linkend="plmeridians"><function>plmeridians</function></link>'>
 <!ENTITY plMergeOpts '<link linkend="plMergeOpts"><function>plMergeOpts</function></link>'>
 <!ENTITY plmesh '<link linkend="plmesh"><function>plmesh</function></link>'>
