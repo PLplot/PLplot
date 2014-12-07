@@ -1,6 +1,6 @@
 # cmake/modules/pkg-config.cmake
 #
-# Copyright (C) 2006-2014 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -94,7 +94,12 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
     set(_xprefix ${_prefix})
   endif(FORCE_EXTERNAL_STATIC)
   
-  _pkg_check_modules_internal(0 0 ${_prefix} "${_package}")
+  if(CMAKE_VERSION VERSION_LESS "3.1")
+    _pkg_check_modules_internal(0 0 ${_prefix} "${_package}")
+  else(CMAKE_VERSION VERSION_LESS "3.1")
+    _pkg_check_modules_internal(0 0 0 0 ${_prefix} "${_package}")
+  endif(CMAKE_VERSION VERSION_LESS "3.1")
+    
   if(${_prefix}_FOUND)
     cmake_link_flags(${_link_FLAGS} "${${_xprefix}_LDFLAGS}")
     # If libraries cannot be not found, then that is equivalent to whole
