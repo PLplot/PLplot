@@ -8433,6 +8433,192 @@ device support!)
 
   </sect1>
 
+  <sect1 id="plmapfill" renderas="sect3">
+    <title>
+      <function>plmapfill</function>: Plot all or a subset of
+      Shapefile data, filling the polygons
+    </title>
+
+    <para>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>
+            <function>plmapfill</function>
+          </funcdef>
+          <paramdef>
+            <parameter>mapform</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>name</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>minx</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>maxx</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>miny</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>maxy</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>plotentries</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>nplotentries</parameter>
+          </paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      As per &plmapline;, however the items are filled in the same way as
+      &plfill;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+        <term>
+          <parameter>mapform</parameter>
+          (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            A user supplied function to transform the coordinates
+            given in the shapefile into a plot coordinate system.
+            By using this transform, we can change from a longitude,
+            latitude coordinate to a polar stereographic project, for
+            example.  Initially, x[0]..[n-1] are the longitudes and y[0]..y[n-1]
+            are the corresponding latitudes.  After the call to mapform(), x[]
+            and y[] should be replaced by the corresponding plot coordinates.
+            If no transform is desired, mapform can be replaced by NULL.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>name</parameter>
+          (<literal>const char *</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            The file name of a set of Shapefile files without the file
+            extension.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>minx</parameter>
+          (<literal>PLFLT</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            The minimum x value to be plotted. This must be in the same
+            units as used by the Shapefile. You could use a very large
+            negative number to plot everything, but you can improve
+            performance by limiting the area drawn. The units must match
+            those of the Shapefile projection, which may be for example
+            longitude or distance. The value of minx must be less than
+            the value of maxx.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>maxx</parameter>
+          (<literal>PLFLT</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            The maximum x value to be plotted. You could use a very large
+            number to plot everything, but you can improve
+            performance by limiting the area drawn.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>miny</parameter>
+          (<literal>PLFLT</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            The minimum y value to be plotted. This must be in the same
+            units as used by the Shapefile. You could use a very large
+            negative number to plot everything, but you can improve
+            performance by limiting the area drawn. The units must match
+            those of the Shapefile projection, which may be for example
+            latitude or distance. The value of miny must be less than
+            the value of maxy.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>maxy</parameter>
+          (<literal>PLFLT</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            The maximum y value to be plotted. You could use a very large
+            number to plot everything, but you can improve
+            performance by limiting the area drawn.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>plotentries</parameter>
+          (<literal>PLINT *</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            An array of integers indicating the elements of the
+            Shapefile (zero indexed) which will be drawn. Setting
+            plotentries to NULL will plot all elements of the Shapefile.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>nplotentries</parameter>
+          (<literal>PLINT</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            The number of items in plotentries. Ignored if
+            plotentries is NULL.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+
+    <para>
+      Redacted form:
+      <itemizedlist>
+        <listitem>
+          <para>
+            General: <function>plmapfill(mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries)</function>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Implemented only for C and C++
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 19.
+    </para>
+
+  </sect1>
+
   <sect1 id="plmapline" renderas="sect3">
     <title>
       <function>plmapline</function>: Plot all or a subset of
@@ -8611,192 +8797,6 @@ device support!)
         <listitem>
           <para>
             General: <function>plmapline(mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Implemented only for C and C++
-          </para>
-        </listitem>
-      </itemizedlist>
-    </para>
-
-    <para>
-      This function is used in example 19.
-    </para>
-
-  </sect1>
-
-  <sect1 id="plmapfill" renderas="sect3">
-    <title>
-      <function>plmapfill</function>: Plot all or a subset of
-      Shapefile data, filling the polygons
-    </title>
-
-    <para>
-      <funcsynopsis>
-        <funcprototype>
-          <funcdef>
-            <function>plmapfill</function>
-          </funcdef>
-          <paramdef>
-            <parameter>mapform</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>name</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>minx</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>maxx</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>miny</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>maxy</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>plotentries</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>nplotentries</parameter>
-          </paramdef>
-        </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      As per &plmapline;, however the items are filled in the same way as
-      &plfill;.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-        <term>
-          <parameter>mapform</parameter>
-          (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            A user supplied function to transform the coordinates
-            given in the shapefile into a plot coordinate system.
-            By using this transform, we can change from a longitude,
-            latitude coordinate to a polar stereographic project, for
-            example.  Initially, x[0]..[n-1] are the longitudes and y[0]..y[n-1]
-            are the corresponding latitudes.  After the call to mapform(), x[]
-            and y[] should be replaced by the corresponding plot coordinates.
-            If no transform is desired, mapform can be replaced by NULL.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>name</parameter>
-          (<literal>const char *</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            The file name of a set of Shapefile files without the file
-            extension.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>minx</parameter>
-          (<literal>PLFLT</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            The minimum x value to be plotted. This must be in the same
-            units as used by the Shapefile. You could use a very large
-            negative number to plot everything, but you can improve
-            performance by limiting the area drawn. The units must match
-            those of the Shapefile projection, which may be for example
-            longitude or distance. The value of minx must be less than
-            the value of maxx.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>maxx</parameter>
-          (<literal>PLFLT</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            The maximum x value to be plotted. You could use a very large
-            number to plot everything, but you can improve
-            performance by limiting the area drawn.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>miny</parameter>
-          (<literal>PLFLT</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            The minimum y value to be plotted. This must be in the same
-            units as used by the Shapefile. You could use a very large
-            negative number to plot everything, but you can improve
-            performance by limiting the area drawn. The units must match
-            those of the Shapefile projection, which may be for example
-            latitude or distance. The value of miny must be less than
-            the value of maxy.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>maxy</parameter>
-          (<literal>PLFLT</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            The maximum y value to be plotted. You could use a very large
-            number to plot everything, but you can improve
-            performance by limiting the area drawn.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>plotentries</parameter>
-          (<literal>PLINT *</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            An array of integers indicating the elements of the
-            Shapefile (zero indexed) which will be drawn. Setting
-            plotentries to NULL will plot all elements of the Shapefile.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>nplotentries</parameter>
-          (<literal>PLINT</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            The number of items in plotentries. Ignored if
-            plotentries is NULL.
-          </para>
-        </listitem>
-      </varlistentry>
-    </variablelist>
-
-
-    <para>
-      Redacted form:
-      <itemizedlist>
-        <listitem>
-          <para>
-            General: <function>plmapfill(mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries)</function>
           </para>
         </listitem>
         <listitem>
