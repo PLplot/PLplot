@@ -160,6 +160,7 @@ set(DRIVERS_DEVICE_LIST
   # gd related devices are not maintained.
   "gif:gd:OFF:F:ON"
   "jpeg:gd:OFF:F:ON"
+  "opengl:opengl:ON:I:OFF"
   "png:gd:OFF:F:ON" 
   "mem:mem:ON:M:OFF"
   "ntk:ntk:ON:I:OFF"

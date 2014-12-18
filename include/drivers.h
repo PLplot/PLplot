@@ -82,6 +82,7 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxpng( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_xfig( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_xw( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_opengl( PLDispatchTable *pdt );
 
 // Prototypes for plot buffer calls.
 

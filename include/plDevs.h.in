@@ -83,5 +83,6 @@
 #cmakedefine PLD_wxwidgets
 #cmakedefine PLD_xfig
 #cmakedefine PLD_xwin
+#cmakedefine PLD_opengl
 
 #endif  // __PLDEVS_H__

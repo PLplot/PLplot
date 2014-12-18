@@ -196,6 +196,7 @@ set(INTERACTIVE_DEVICES_LIST @INTERACTIVE_DEVICES_LIST@)
 
 set(PLD_aqt @PLD_aqt@)
 set(PLD_ntk @PLD_ntk@)
+set(PLD_opengl @PLD_opengl@)
 set(PLD_qtwidget @PLD_qtwidget@)
 set(PLD_tk @PLD_tk@)
 set(PLD_wincairo @PLD_wincairo@)
