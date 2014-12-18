@@ -45,7 +45,7 @@
 
 // local variables
 
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_opengl = "opengl:OpenGL Driver:1:opengl:80:opengl";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_opengl = "opengl:OpenGL Driver:1:opengl:80:opengl\n";
 
 // Note:
 // All plot specific variables should go in this structure.
