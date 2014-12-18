@@ -35,10 +35,13 @@
 
 # Look for gd libraries
 if(PLD_opengl)
-  find_package(OPENGL)
+  find_package(OpenGL REQUIRED)
   if (NOT OPENGL_FOUND)
+    message(STATUS
+      "WARNING: OpenGL not found. Setting opengl driver to OFF."
+      )
     set(PLD_opengl OFF CACHE BOOL "Enable opengl device" FORCE)
-  else (NOT OPENGL_FOUND)
+  endif (NOT OPENGL_FOUND)
 endif(PLD_opengl)
 
 if(PLD_opengl)
