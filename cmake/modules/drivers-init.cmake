@@ -160,11 +160,15 @@ set(DRIVERS_DEVICE_LIST
   # gd related devices are not maintained.
   "gif:gd:OFF:F:ON"
   "jpeg:gd:OFF:F:ON"
-  "opengl:opengl:ON:I:OFF"
   "png:gd:OFF:F:ON" 
   "mem:mem:ON:M:OFF"
   "ntk:ntk:ON:I:OFF"
   "null:null:ON:N:OFF"
+  "opengl:opengl:ON:I:OFF"
+  # The pbm device is primitive (e.g., Hershey fonts, software fills,
+  # no alpha transparency) and poorly maintained (the double free for
+  # example 2 has not been fixed).  Therefore retire this device.
+  # "pbm:pbm:OFF:F:OFF"
   "pdf:pdf:ON:F:OFF"
   # (2007-09-01) As discussed on list, don't enable plmeta until we sort
   # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
