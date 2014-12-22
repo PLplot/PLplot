@@ -60,6 +60,9 @@ in that script so be careful where you put the above change.
 plplot/examples/plplot_configure.cmake_installed_examples.in:
 set(PLD_<device> @PLD_<device>@)
 
+8. For dynamic drivers (the most likely situation), add <driver>_EXPORTS
+to the #ifdef ENABLE_DYNDRIVERS statement of plplot/include/pldll.h.in
+
 If the driver requires additional additional files or external libraries for
 compiling and linking then you should add a file called <driver>.cmake to
 plplot/cmake/modules and add a call to this file in the file 
