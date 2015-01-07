@@ -239,9 +239,9 @@ void wxPLDevDC::SetWidth( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevDC::SetColor0( PLStream *pls )
 {
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a ),
+    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
                          pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
-    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a ) ) );
+    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) ) );
 }
 
 
@@ -252,9 +252,9 @@ void wxPLDevDC::SetColor0( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevDC::SetColor1( PLStream *pls )
 {
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a ),
+    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
                          pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
-    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a ) ) );
+    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) ) );
 }
 
 
