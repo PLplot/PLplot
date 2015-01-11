@@ -338,16 +338,11 @@ wxPLDevBase* common_init( PLStream *pls )
     static PLINT hrshsym     = 0;
 
     // default backend uses wxGraphicsContext, if not available
-    // the agg library will be used, if not available the basic
-    // backend will be used.
+	// the basic backend will be used.
     static PLINT backend = wxBACKEND_DC;
   #if wxUSE_GRAPHICS_CONTEXT
     backend = wxBACKEND_GC;
-        #else
-                #ifdef HAVE_AGG
-    backend = wxBACKEND_AGG;
-                #endif
-        #endif
+  #endif
 
     DrvOpt wx_options[] = {
 #ifdef PL_HAVE_FREETYPE
@@ -355,7 +350,7 @@ wxPLDevBase* common_init( PLStream *pls )
         { "smooth",   DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"                                            },
 #endif
         { "hrshsym",  DRV_INT, &hrshsym,     "Use Hershey symbol set (hrshsym=0|1)"                                             },
-        { "backend",  DRV_INT, &backend,     "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext" },
+        { "backend",  DRV_INT, &backend,     "Choose backend: (0) standard, (2) using wxGraphicsContext" },
         { "text",     DRV_INT, &text,        "Use own text routines (text=0|1)"                                                 },
         { NULL,       DRV_INT, NULL,         NULL                                                                               }
     };
@@ -367,8 +362,8 @@ wxPLDevBase* common_init( PLStream *pls )
     switch ( backend )
     {
     case wxBACKEND_GC:
-        // in case wxGraphicsContext isn't available, the next backend (agg
-        // if available) in this list will be used
+        // in case wxGraphicsContext isn't available, the dc backend
+		// will be used
 #if wxUSE_GRAPHICS_CONTEXT
         dev = new wxPLDevGC;
         // by default the own text routines are used for wxGC
@@ -377,17 +372,12 @@ wxPLDevBase* common_init( PLStream *pls )
         freetype = 0; // this backend is vector oriented and doesn't know pixels
         break;
 #endif
-    case wxBACKEND_AGG:
-        // in case the agg library isn't available, the standard backend
-        // will be used
-#ifdef HAVE_AGG
-        dev = new wxPLDevAGG;
-        // by default the freetype text routines are used for wxAGG
-        text = 0; // text processing doesn't work yet for the AGG backend
-        if ( freetype == -1 )
-            freetype = 1;
-        break;
-#endif
+	case wxBACKEND_AGG:
+		//In this case we abort - this backend no longer exists, however we cannot
+		//simply use the wxDC as for the AGG case for a wxWidgets app a wxImage
+		//is passed in nor a wxBitmap
+		plabort("The wxWidgets AGG backend has been selected - this backend has been\
+				removed, please select option 0 (wxDC) or option 2 (wxGraphicsContext).");
     default:
         dev = new wxPLDevDC;
         // by default the own text routines are used for wxDC
@@ -1311,9 +1301,6 @@ static void install_buffer( PLStream *pls )
         break;
     case wxBACKEND_GC:
         title += wxT( " - wxWidgets (wxGC)" );
-        break;
-    case wxBACKEND_AGG:
-        title += wxT( " - wxWidgets (AGG)" );
         break;
     default:
         break;

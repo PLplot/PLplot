@@ -67,8 +67,6 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     int backend;
     if ( m_style & wxPLPLOT_BACKEND_GC )
         backend = 2;
-    else if ( m_style & wxPLPLOT_BACKEND_AGG )
-        backend = 1;
     else
         backend = 0;
 
@@ -85,13 +83,7 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     cmd( PLESC_GETBACKEND, &m_backend );
     m_backend = 1 << ( m_backend + 2 );
 
-    if ( m_backend == wxPLPLOT_BACKEND_AGG )
-    {
-        m_image = new wxImage( m_width, m_height );
-        cmd( PLESC_DEVINIT, (void *) m_image );
-    }
-    else
-        cmd( PLESC_DEVINIT, (void *) m_dc );
+    cmd( PLESC_DEVINIT, (void *) m_dc );
 }
 
 
