@@ -22,11 +22,7 @@
 
 // some special wxWidgets headers
 #include <wx/spinctrl.h>
-
-// freetype headers and macros
-#ifdef PL_HAVE_FREETYPE
-  #include "plfreetype.h"
-#endif
+#define PL_HAVE_FREETYPE //just here to make sure I catch freetype code during the freetype purge
 
 #ifndef max_number_of_grey_levels_used_in_text_smoothing
   #define max_number_of_grey_levels_used_in_text_smoothing    64
@@ -98,11 +94,6 @@ public: // methods
     virtual void SetColor0( PLStream *pls )        = 0;
     virtual void SetColor1( PLStream *pls )        = 0;
     virtual void SetExternalBuffer( void* buffer ) = 0;
-#ifdef PL_HAVE_FREETYPE
-    virtual void PutPixel( short x, short y, PLINT color ) = 0;
-    virtual void PutPixel( short x, short y )  = 0;
-    virtual PLINT GetPixel( short x, short y ) = 0;
-#endif // PL_HAVE_FREETYPE
     virtual void ProcessString( PLStream* pls, EscText* args ) = 0;
     virtual void PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );
     virtual void PSDrawTextToDC( char* utf8_string, bool drawText ) = 0;
@@ -191,11 +182,6 @@ public: // methods
     void SetColor0( PLStream *pls );
     void SetColor1( PLStream *pls );
     void SetExternalBuffer( void* buffer );
-#ifdef PL_HAVE_FREETYPE
-    void PutPixel( short x, short y, PLINT color );
-    void PutPixel( short x, short y );
-    PLINT GetPixel( short x, short y );
-#endif // PL_HAVE_FREETYPE
     void ProcessString( PLStream* pls, EscText* args );
     void PSDrawTextToDC( char* utf8_string, bool drawText );
     void PSSetFont( PLUNICODE fci );
@@ -225,11 +211,6 @@ public: // methods
     void SetColor0( PLStream *pls );
     void SetColor1( PLStream *pls );
     void SetExternalBuffer( void* buffer );
-#ifdef PL_HAVE_FREETYPE
-    void PutPixel( short x, short y, PLINT color );
-    void PutPixel( short x, short y );
-    PLINT GetPixel( short x, short y );
-#endif // PL_HAVE_FREETYPE
     void ProcessString( PLStream* pls, EscText* args );
     void PSDrawTextToDC( char* utf8_string, bool drawText );
     void PSSetFont( PLUNICODE fci );

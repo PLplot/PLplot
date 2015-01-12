@@ -272,60 +272,6 @@ void wxPLDevDC::SetExternalBuffer( void* dc )
 }
 
 
-#ifdef PL_HAVE_FREETYPE
-
-//--------------------------------------------------------------------------
-//  void wxPLDevDC::PutPixel( short x, short y, PLINT color )
-//
-//  Draw a pixel in color color @ (x,y).
-//--------------------------------------------------------------------------
-void wxPLDevDC::PutPixel( short x, short y, PLINT color )
-{
-    const wxPen oldpen = m_dc->GetPen();
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( GetRValue( color ), GetGValue( color ), GetBValue( color ) ),
-                         1, wxSOLID ) ) );
-    m_dc->DrawPoint( x, y );
-    AddtoClipRegion( x, y, x, y );
-    m_dc->SetPen( oldpen );
-}
-
-
-//--------------------------------------------------------------------------
-//  void wxPLDevDC::PutPixel( short x, short y )
-//
-//  Draw a pixel in current color @ (x,y).
-//--------------------------------------------------------------------------
-void wxPLDevDC::PutPixel( short x, short y )
-{
-    m_dc->DrawPoint( x, y );
-    AddtoClipRegion( x, y, x, y );
-}
-
-
-//--------------------------------------------------------------------------
-//  PLINT wxPLDevDC::GetPixel( short x, short y )
-//
-//  Get color information from pixel @ (x,y).
-//--------------------------------------------------------------------------
-PLINT wxPLDevDC::GetPixel( short x, short y )
-{
-#ifdef __WXGTK__
-    // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
-    // always to the background color, since this is the case anyway 99% of the time.
-    PLINT bgr, bgg, bgb;           // red, green, blue
-    (void) x;  (void) y;           // Cast to void to silence compiler warnings about unused parameters
-    plgcolbg( &bgr, &bgg, &bgb );  // get background color information
-    return RGB( bgr, bgg, bgb );
-#else
-    wxColour col;
-    m_dc->GetPixel( x, y, &col );
-    return RGB( col.Red(), col.Green(), col.Blue() );
-#endif
-}
-
-#endif // PL_HAVE_FREETYPE
-
-
 //--------------------------------------------------------------------------
 //  void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
 //

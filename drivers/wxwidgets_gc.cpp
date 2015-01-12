@@ -319,51 +319,6 @@ void wxPLDevGC::SetExternalBuffer( void* dc )
 }
 
 
-#ifdef PL_HAVE_FREETYPE
-
-void wxPLDevGC::PutPixel( short x, short y, PLINT color )
-{
-    // Log_Verbose( "%s", __FUNCTION__ );
-
-    const wxPen oldpen = m_dc->GetPen();
-    m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( GetRValue( color ), GetGValue( color ), GetBValue( color ) ),
-                              1, wxSOLID ) ) );
-    //m_context->DrawPoint( x, y );
-    AddtoClipRegion( x, y, x, y );
-    m_context->SetPen( oldpen );
-}
-
-void wxPLDevGC::PutPixel( short x, short y )
-{
-    // Log_Verbose( "%s", __FUNCTION__ );
-
-    //m_dc->DrawPoint( x, y );
-    AddtoClipRegion( x, y, x, y );
-}
-
-PLINT wxPLDevGC::GetPixel( short x, short y )
-{
-    // Log_Verbose( "%s", __FUNCTION__ );
-
-  #ifdef __WXGTK__
-    // Cast function parameters to (void) to silence compiler warnings about unused parameters
-    (void) x;
-    (void) y;
-    // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
-    // always to the background color, since this is the case anyway 99% of the time.
-    PLINT bgr, bgg, bgb;           // red, green, blue
-    plgcolbg( &bgr, &bgg, &bgb );  // get background color information
-    return RGB( bgr, bgg, bgb );
-#else
-    wxColour col;
-    m_dc->GetPixel( x, y, &col );
-    return RGB( col.Red(), col.Green(), col.Blue() );
-#endif
-}
-
-#endif // PL_HAVE_FREETYPE
-
-
 void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
 {
     // Log_Verbose( "%s", __FUNCTION__ );
