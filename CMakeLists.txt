@@ -125,7 +125,6 @@ include(plplot_version)
 # parameters to control overall cmake behaviour.
 
 # Configure PLplot component variables....
-
 include(plplot)
 
 # Use configured variables to process configurable top-level files.

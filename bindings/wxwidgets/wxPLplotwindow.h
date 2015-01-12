@@ -142,7 +142,7 @@ void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
     }
     else
     {
-        m_stream->Update();
+        //m_stream->Update();
         Refresh( false );
     }
 }

@@ -21,7 +21,6 @@
 if(ENABLE_wxwidgets AND ENABLE_cxx)
   set(plplotwxwidgets_LIB_SRCS
     wxPLplotstream.cpp
-    wxPLplotwindow.cpp
     )
 
   # configure header file - we need to make sure, that the user of the bindings

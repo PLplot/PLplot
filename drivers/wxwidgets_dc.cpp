@@ -43,9 +43,15 @@
 //  Constructor of the standard wxWidgets device based on the wxPLDevBase
 //  class. Only some initialisations are done.
 //--------------------------------------------------------------------------
-wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase( wxBACKEND_DC )
+wxPLDevDC::wxPLDevDC( bool usegc ) : wxPLDevBase( wxBACKEND_DC )
 {
     m_dc       = NULL;
+	m_memorydc = NULL;
+	m_usegc    = false;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	m_gcdc     = NULL;
+	m_usegc    = usegc;
+#endif
     m_bitmap   = NULL;
     m_font     = NULL;
     underlined = false;
@@ -61,11 +67,15 @@ wxPLDevDC::~wxPLDevDC()
 {
     if ( ownGUI )
     {
-        if ( m_dc )
-        {
-            ( (wxMemoryDC *) m_dc )->SelectObject( wxNullBitmap );
-            delete m_dc;
-        }
+#ifdef wxUSE_GRAPHICS_CONTEXT
+		if( m_gcdc )
+			delete m_gcdc;
+#endif
+		if( m_memorydc )
+		{
+			m_memorydc->SelectObject( wxNullBitmap );
+			delete m_dc;
+		}
         if ( m_bitmap )
             delete m_bitmap;
     }
@@ -208,14 +218,22 @@ void wxPLDevDC::CreateCanvas()
 {
     if ( ownGUI )
     {
-        if ( !m_dc )
-            m_dc = new wxMemoryDC();
+        if ( !m_memorydc )
+			m_memorydc= new wxMemoryDC();
 
-        ( (wxMemoryDC *) m_dc )->SelectObject( wxNullBitmap ); // deselect bitmap
+        ( m_memorydc )->SelectObject( wxNullBitmap ); // deselect bitmap
         if ( m_bitmap )
             delete m_bitmap;
         m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
-        ( (wxMemoryDC *) m_dc )->SelectObject( *m_bitmap ); // select new bitmap
+        ( m_memorydc )->SelectObject( *m_bitmap ); // select new bitmap
+		m_dc=m_memorydc;
+
+#ifdef wxUSE_GRAPHICS_CONTEXT
+		if( !m_gcdc )
+			m_gcdc=new wxGCDC(m_memorydc);
+		if( m_usegc )
+			m_dc=m_gcdc;
+#endif
     }
 }
 

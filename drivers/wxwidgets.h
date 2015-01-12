@@ -22,10 +22,8 @@
 
 // some special wxWidgets headers
 #include <wx/spinctrl.h>
-#define PL_HAVE_FREETYPE //just here to make sure I catch freetype code during the freetype purge
-
-#ifndef max_number_of_grey_levels_used_in_text_smoothing
-  #define max_number_of_grey_levels_used_in_text_smoothing    64
+#ifdef wxUSE_GRAPHICS_CONTEXT
+#include <wx/dcgraph.h>
 #endif
 
 #define NDEV                                                  100 // Max number of output device types in menu
@@ -169,7 +167,7 @@ public: // variables
 class wxPLDevDC : public wxPLDevBase
 {
 public: // methods
-    wxPLDevDC( void );
+    wxPLDevDC( bool usegc );
     ~wxPLDevDC( void );
 
     void DrawLine( short x1a, short y1a, short x2a, short y2a );
@@ -187,51 +185,14 @@ public: // methods
     void PSSetFont( PLUNICODE fci );
 
 private: // variables
-    wxBitmap* m_bitmap;
-    wxDC    * m_dc;
-};
-
-
-#if wxUSE_GRAPHICS_CONTEXT
-#include <wx/graphics.h>
-
-class wxPLDevGC : public wxPLDevBase
-{
-public: // methods
-    wxPLDevGC( void );
-    ~wxPLDevGC( void );
-
-    void DrawLine( short x1a, short y1a, short x2a, short y2a );
-    void DrawPolyline( short *xa, short *ya, PLINT npts );
-    void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1 = -1, PLINT y1 = -1, PLINT x2 = -1, PLINT y2 = -1 );
-    void FillPolygon( PLStream *pls );
-    void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH );
-    void CreateCanvas();
-    void SetWidth( PLStream *pls );
-    void SetColor0( PLStream *pls );
-    void SetColor1( PLStream *pls );
-    void SetExternalBuffer( void* buffer );
-    void ProcessString( PLStream* pls, EscText* args );
-    void PSDrawTextToDC( char* utf8_string, bool drawText );
-    void PSSetFont( PLUNICODE fci );
-
-private: // variables
-    wxBitmap         * m_bitmap;
-    wxDC             * m_dc;
-    wxGraphicsContext* m_context;
-
-    // text colors
-    unsigned char textRed, textGreen, textBlue;
-
-    unsigned char mStrokeOpacity;
-    unsigned char mColorRedStroke;
-    unsigned char mColorGreenStroke;
-    unsigned char mColorBlueStroke;
-    unsigned char mColorRedFill;
-    unsigned char mColorGreenFill;
-    unsigned char mColorBlueFill;
-};
+    wxBitmap   *m_bitmap;
+    wxDC       *m_dc;
+	wxMemoryDC *m_memorydc;
+	bool        m_usegc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	wxGCDC     *m_gcdc;
 #endif
+};
 
 
 struct dev_entry

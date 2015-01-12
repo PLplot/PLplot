@@ -49,7 +49,6 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     m_width  = width;
     m_height = height;
     m_style  = style;
-    m_image  = NULL;
 
     sdev( "wxwidgets" );
     spage( 0.0, 0.0, m_width, m_height, 0, 0 );
@@ -83,8 +82,6 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 
 wxPLplotstream::~wxPLplotstream()
 {
-    if ( m_image )
-        delete m_image;
 }
 
 
@@ -103,34 +100,8 @@ void wxPLplotstream::set_stream()
 //
 void wxPLplotstream::SetSize( int width, int height )
 {
-    // For the AGG backend it is important to set first the new image buffer
-    //       and tell the driver the new size if the buffer size increases and
-    //       the other way round if the buffer size decreases. There is no impact
-    //       for the other backends. This is kind of hacky, but I have no better
-    //       idea in the moment
-    if ( width * height > m_width * m_height )
-    {
-        if ( m_image )
-        {
-            delete m_image;
-            m_image = new wxImage( width, height );
-            cmd( PLESC_DEVINIT, (void *) m_image );
-        }
-        wxSize size( width, height );
-        cmd( PLESC_RESIZE, (void *) &size );
-    }
-    else
-    {
-        wxSize size( width, height );
-        cmd( PLESC_RESIZE, (void *) &size );
-        if ( m_image )
-        {
-            delete m_image;
-            m_image = new wxImage( width, height );
-            cmd( PLESC_DEVINIT, (void *) m_image );
-        }
-    }
-
+    wxSize size( width, height );
+    cmd( PLESC_RESIZE, (void *) &size );
     m_width  = width;
     m_height = height;
 }
@@ -141,21 +112,4 @@ void wxPLplotstream::SetSize( int width, int height )
 void wxPLplotstream::RenewPlot()
 {
     replot();
-    Update();
-}
-
-
-// After calling plot commands it is not sure, that the dc
-// gets updated properly, therefore you need to call this function.
-//
-void wxPLplotstream::Update()
-{
-    if ( m_image )
-    {
-        wxMemoryDC MemoryDC;
-        wxBitmap   bitmap( *m_image, -1 );
-        MemoryDC.SelectObject( bitmap );
-        m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
-        MemoryDC.SelectObject( wxNullBitmap );
-    }
 }

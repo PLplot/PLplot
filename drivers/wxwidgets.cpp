@@ -329,8 +329,6 @@ wxPLDevBase* common_init( PLStream *pls )
     static PLINT text        = -1;
     static PLINT hrshsym     = 0;
 
-    // default backend uses wxGraphicsContext, if not available
-	// the basic backend will be used.
     static PLINT backend = wxBACKEND_DC;
   #if wxUSE_GRAPHICS_CONTEXT
     backend = wxBACKEND_GC;
@@ -347,39 +345,10 @@ wxPLDevBase* common_init( PLStream *pls )
     plParseDrvOpts( wx_options );
 
     // allocate memory for the device storage
-    switch ( backend )
-    {
-    case wxBACKEND_GC:
-        // in case wxGraphicsContext isn't available, the dc backend
-		// will be used
-#if wxUSE_GRAPHICS_CONTEXT
-        dev = new wxPLDevGC;
-        // by default the own text routines are used for wxGC
-        if ( text == -1 )
-            text = 1;
-        freetype = 0; // this backend is vector oriented and doesn't know pixels
-        break;
-#endif
-	case wxBACKEND_AGG:
-		//In this case we abort - this backend no longer exists, however we cannot
-		//simply use the wxDC as for the AGG case for a wxWidgets app a wxImage
-		//is passed in nor a wxBitmap
-		plabort("The wxWidgets AGG backend has been selected - this backend has been\
-				removed, please select option 0 (wxDC) or option 2 (wxGraphicsContext).");
-    default:
-        dev = new wxPLDevDC;
-        // by default the own text routines are used for wxDC
-        if ( text == -1 )
-        {
-            if ( freetype != 1 )
-                text = 1;
-            else
-                text = 0;
-        }
-        if ( freetype == -1 )
-            freetype = 0;
-        break;
-    }
+	dev = new wxPLDevDC ( backend == wxBACKEND_GC );
+    // by default the own text routines are used for wxDC
+    if ( text == -1 )
+        text = 0;
     if ( dev == NULL )
     {
         plexit( "Insufficient memory" );
@@ -730,7 +699,6 @@ void plD_tidy_wxwidgets( PLStream *pls )
     // Log_Verbose( "plD_tidy_wxwidgets()" );
 
     wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
 
     if ( dev->ownGUI )
     {

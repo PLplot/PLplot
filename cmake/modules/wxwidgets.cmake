@@ -92,31 +92,31 @@ if(PLD_wxwidgets OR PLD_wxpng)
     message(STATUS "wxwidgets_RPATH = ${wxwidgets_RPATH}")
   endif(wxwidgets_RPATH)
 
-  if(WITH_FREETYPE)
-    include(agg)
-    if(HAVE_AGG)
-      set(
-	wxwidgets_COMPILE_FLAGS
-	"${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
-	)
-      set(
-	wxwidgets_LINK_FLAGS
-	${wxwidgets_LINK_FLAGS}
-	${AGG_LIBRARIES}
-	)
-    else(HAVE_AGG)
-      message(STATUS "WARNING: wxwidgets driver and bindings components depending on AGG library have been dropped.")
-    endif(HAVE_AGG)
-    set(
-      wxwidgets_COMPILE_FLAGS
-      "${wxwidgets_COMPILE_FLAGS} ${FREETYPE_INCLUDE_CFLAGS}"
-      )
-    set(
-      wxwidgets_LINK_FLAGS
-      ${wxwidgets_LINK_FLAGS}
-      ${FREETYPE_LIBRARIES}
-      )
-  endif(WITH_FREETYPE)
+  #if(WITH_FREETYPE)
+  #  include(agg)
+  #  if(HAVE_AGG)
+  #    set(
+#	wxwidgets_COMPILE_FLAGS
+#	"${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
+#	)
+ #     set(
+#	wxwidgets_LINK_FLAGS
+#	${wxwidgets_LINK_FLAGS}
+#	${AGG_LIBRARIES}
+#	)
+#    else(HAVE_AGG)
+#      message(STATUS "WARNING: wxwidgets driver and bindings components depending on AGG library have been dropped.")
+#    endif(HAVE_AGG)
+#    set(
+#      wxwidgets_COMPILE_FLAGS
+#      "${wxwidgets_COMPILE_FLAGS} ${FREETYPE_INCLUDE_CFLAGS}"
+#      )
+#    set(
+#      wxwidgets_LINK_FLAGS
+#      ${wxwidgets_LINK_FLAGS}
+#      ${FREETYPE_LIBRARIES}
+#      )
+#  endif(WITH_FREETYPE)
   set(DRIVERS_LINK_FLAGS
     ${DRIVERS_LINK_FLAGS} 
     ${wxwidgets_LINK_FLAGS}
