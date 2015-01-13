@@ -45,7 +45,6 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 {
     const size_t bufferSize = 256;
 
-    m_dc     = dc;
     m_width  = width;
     m_height = height;
     m_style  = style;
@@ -76,7 +75,13 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     cmd( PLESC_GETBACKEND, &m_backend );
     m_backend = 1 << ( m_backend + 2 );
 
-    cmd( PLESC_DEVINIT, (void *) m_dc );
+    cmd( PLESC_DEVINIT, (void *) dc );
+}
+
+void wxPLplotstream::SetDC( wxDC *dc )
+{
+	set_stream();
+	cmd( PLESC_DEVINIT, (void *) dc );
 }
 
 

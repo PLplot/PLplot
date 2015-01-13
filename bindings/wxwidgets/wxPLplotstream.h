@@ -37,7 +37,6 @@ enum
 {
     wxPLPLOT_NONE                    = 0,
     wxPLPLOT_BACKEND_DC          = 1 << 2,
-    wxPLPLOT_BACKEND_AGG         = 1 << 3,
     wxPLPLOT_BACKEND_GC          = 1 << 4,
     wxPLPLOT_DRAW_TEXT           = 1 << 5,
     wxPLPLOT_USE_HERSHEY_SYMBOLS = 1 << 6
@@ -57,13 +56,13 @@ public:
     //wxPLplotstream( wxImage *buffer, int width, int height, int style );
     void set_stream();                           //!< Calls some code before every PLplot command.
     void SetSize( int width, int height );       //!< Set new size of plot area.
-    void RenewPlot();                            //!< Redo plot and update memory dc
+    void RenewPlot();                            //!< Redo plot and update dc
+	void SetDC( wxDC *dc );                      //!< Set a new dc to write to
 
 private:
     void InitStream();
 
 private:
-    wxDC   * m_dc;      //!< Pointer to wxDC to plot into.
     int    m_width;     //!< Width of dc/plot area.
     int    m_height;    //!< Height of dc/plot area.
     int    m_style;     //!< style of this plot
