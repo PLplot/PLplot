@@ -689,6 +689,7 @@ rdbuf_state( PLStream *pls )
 
         // Now read the colormap from the buffer
         rd_data( pls, &( pls->cmap0[0] ), size );
+		pls->ncol0 = ncol;
 
         plP_state( PLSTATE_CMAP0 );
         break;
@@ -728,6 +729,7 @@ rdbuf_state( PLStream *pls )
 
         // Now read the colormap from the buffer
         rd_data( pls, &(pls->cmap1[0]), size );
+		pls->ncol1 = ncol;
 
         plP_state( PLSTATE_CMAP1 );
         break;
