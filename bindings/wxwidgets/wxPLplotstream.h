@@ -50,8 +50,10 @@ class PLDLLIMPEXP_WX wxPLplotstream : public plstream
 {
 public:
     wxPLplotstream();                                                              //!< Constructor.
-    wxPLplotstream( wxDC * dc, int width, int height, int style = wxPLPLOT_NONE ); //!< Constructor.
-    void Create( wxDC *dc, int width, int height, int style );
+    wxPLplotstream( wxDC * dc, int width, int height, int style = wxPLPLOT_NONE,
+		wxString mapfile = "", PLINT mapfileSize = 0 ); //!< Constructor.
+    void Create( wxDC *dc, int width, int height, int style,
+		wxString mapfile = "", PLINT mapfileSize = 0 );
     ~wxPLplotstream();
     //wxPLplotstream( wxImage *buffer, int width, int height, int style );
     void set_stream();                           //!< Calls some code before every PLplot command.
@@ -66,7 +68,6 @@ private:
     int    m_width;     //!< Width of dc/plot area.
     int    m_height;    //!< Height of dc/plot area.
     int    m_style;     //!< style of this plot
-    int    m_backend;   //!< driver backend used
 };
 
 

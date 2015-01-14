@@ -41,17 +41,13 @@
 
 
 // private functions needed by the wxwidgets Driver
-static void install_buffer( PLStream *pls );
-static void wxRunApp( PLStream *pls, bool runonce = false );
-static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
-static void fill_polygon( PLStream *pls );
+//static void fill_polygon( PLStream *pls );
 
 #ifdef __WXMAC__
         #include <Carbon/Carbon.h>
 extern "C" { void CPSEnableForegroundOperation( ProcessSerialNumber* psn ); }
 #endif
 
-DECLARE_PLAPP( wxPLplotApp )
 
 //--------------------------------------------------------------------------
 //  void Log_Verbose( const char *fmt, ... )
@@ -118,314 +114,42 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets =
 }
 #endif
 
-
-//--------------------------------------------------------------------------
-//  wxPLDevBase::wxPLDevBase( void )
-//
-//  Contructor of base class of wxPLDev classes.
-//--------------------------------------------------------------------------
-wxPLDevBase::wxPLDevBase( int bcknd ) : backend( bcknd )
+PLMemoryMap::PLMemoryMap()
 {
-    // Log_Verbose( "wxPLDevBase::wxPLDevBase()" );
-
-    ready    = false;
-    ownGUI   = false;
-    waiting  = false;
-    resizing = false;
-    exit     = false;
-
-    comcount = 0;
-
-    m_frame = NULL;
-    xpos    = 0;
-    ypos    = 0;
-    // width, height are set in plD_init_wxwidgets
-    // bm_width, bm_height are set in install_buffer
-
-    // xmin, xmax, ymin, ymax are set in plD_init_wxwidgets
-    // scalex, scaley are set in plD_init_wxwidgets
-
-    plstate_width  = false;
-    plstate_color0 = false;
-    plstate_color1 = false;
-
-    locate_mode = 0;
-    draw_xhair  = false;
-
-    newclipregion = true;
-    clipminx      = 1024;
-    clipmaxx      = 0;
-    clipminy      = 800;
-    clipmaxy      = 0;
-
-    freetype    = 0;
-    smooth_text = 0;
-
-    devName = (const char **) malloc( NDEV * sizeof ( char** ) );
-    memset( devName, '\0', NDEV * sizeof ( char** ) );
-    devDesc = (const char **) malloc( NDEV * sizeof ( char** ) );
-    memset( devDesc, '\0', NDEV * sizeof ( char** ) );
-    ndev = NDEV;
-
-    lineSpacing = 1.0;
+	m_buffer=NULL;
+	m_mapFile=NULL;
 }
-
-
-wxPLDevBase::~wxPLDevBase( void )
+PLMemoryMap::PLMemoryMap( char *name, PLINT size, bool onlyIfExists )
 {
-    if ( devDesc )
-        free( devDesc );
-    if ( devName )
-        free( devName );
+	m_buffer=NULL;
+	m_mapFile=NULL;
+	create( name, size, onlyIfExists );
 }
-
-
-void wxPLDevBase::AddtoClipRegion( int x1, int y1, int x2, int y2 )
+void PLMemoryMap::create( char *name, PLINT size, bool onlyIfExists )
 {
-    newclipregion = false;
-    if ( x1 < x2 )
-    {
-        if ( x1 < clipminx )
-            clipminx = x1;
-        if ( x2 > clipmaxx )
-            clipmaxx = x2;
-    }
-    else
-    {
-        if ( x2 < clipminx )
-            clipminx = x2;
-        if ( x1 > clipmaxx )
-            clipmaxx = x1;
-    }
-    if ( y1 < y2 )
-    {
-        if ( y1 < clipminy )
-            clipminy = y1;
-        if ( y2 > clipmaxy )
-            clipmaxy = y2;
-    }
-    else
-    {
-        if ( y2 < clipminy )
-            clipminy = y2;
-        if ( y1 > clipmaxy )
-            clipmaxy = y1;
-    }
-}
+	close();
 
+#ifdef WIN32
+	if( onlyIfExists )
+		m_mapFile = OpenFileMappingA( FILE_MAP_ALL_ACCESS, FALSE, name);
+	else
+		m_mapFile = CreateFileMappingA( INVALID_HANDLE_VALUE, NULL,
+			PAGE_READWRITE, 0, size, name );
 
-void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
-{
-    int  i = 0;
-
-    char utf8_string[max_string_length];
-    char utf8[5];
-    memset( utf8_string, '\0', max_string_length );
-
-    // Get PLplot escape character
-    char plplotEsc;
-    plgesc( &plplotEsc );
-
-    //Reset the size metrics
-    textWidth         = 0;
-    textHeight        = 0;
-    superscriptHeight = 0;
-    subscriptDepth    = 0;
-
-    while ( i < ucs4Len )
-    {
-        if ( ucs4[i] < PL_FCI_MARK )                // not a font change
-        {
-            if ( ucs4[i] != (PLUNICODE) plplotEsc ) // a character to display
-            {
-                ucs4_to_utf8( ucs4[i], utf8 );
-                strncat( utf8_string, utf8,
-                    sizeof ( utf8_string ) - strlen( utf8_string ) - 1 );
-                i++;
-                continue;
-            }
-            i++;
-            if ( ucs4[i] == (PLUNICODE) plplotEsc ) // a escape character to display
-            {
-                ucs4_to_utf8( ucs4[i], utf8 );
-                strncat( utf8_string, utf8,
-                    sizeof ( utf8_string ) - strlen( utf8_string ) - 1 );
-                i++;
-                continue;
-            }
-            else
-            {
-                if ( ucs4[i] == (PLUNICODE) 'u' ) // Superscript
-                {                                 // draw string so far
-                    PSDrawTextToDC( utf8_string, drawText );
-
-                    // change font scale
-                    if ( yOffset < -0.0001 )
-                        fontScale *= 1.25; // Subscript scaling parameter
-                    else
-                        fontScale *= 0.8;  // Subscript scaling parameter
-                    PSSetFont( fci );
-
-                    yOffset += scaley * fontSize * fontScale / 2.;
-                }
-                if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
-                {                                 // draw string so far
-                    PSDrawTextToDC( utf8_string, drawText );
-
-                    // change font scale
-                    double old_fontScale = fontScale;
-                    if ( yOffset > 0.0001 )
-                        fontScale *= 1.25; // Subscript scaling parameter
-                    else
-                        fontScale *= 0.8;  // Subscript scaling parameter
-                    PSSetFont( fci );
-
-                    yOffset -= scaley * fontSize * old_fontScale / 2.;
-                }
-                if ( ucs4[i] == (PLUNICODE) '-' ) // underline
-                {                                 // draw string so far
-                    PSDrawTextToDC( utf8_string, drawText );
-
-                    underlined = !underlined;
-                    PSSetFont( fci );
-                }
-                if ( ucs4[i] == (PLUNICODE) '+' ) // overline
-                {                                 // not implemented yet
-                }
-                i++;
-            }
-        }
-        else // a font change
-        {
-            // draw string so far
-            PSDrawTextToDC( utf8_string, drawText );
-
-            // get new font
-            fci = ucs4[i];
-            PSSetFont( fci );
-            i++;
-        }
-    }
-
-    PSDrawTextToDC( utf8_string, drawText );
-}
-
-
-//--------------------------------------------------------------------------
-//  void common_init(  PLStream *pls )
-//
-//  Basic initialization for all devices.
-//--------------------------------------------------------------------------
-wxPLDevBase* common_init( PLStream *pls )
-{
-    // Log_Verbose( "common_init()" );
-
-    wxPLDevBase* dev;
-    PLFLT      downscale, downscale2;
-
-    // default options
-    static PLINT freetype    = -1;
-    static PLINT smooth_text = 1;
-    static PLINT text        = -1;
-    static PLINT hrshsym     = 0;
-
-    static PLINT backend = wxBACKEND_DC;
-  #if wxUSE_GRAPHICS_CONTEXT
-    backend = wxBACKEND_GC;
-  #endif
-
-    DrvOpt wx_options[] = {
-        { "hrshsym",  DRV_INT, &hrshsym,     "Use Hershey symbol set (hrshsym=0|1)"                                             },
-        { "backend",  DRV_INT, &backend,     "Choose backend: (0) standard, (2) using wxGraphicsContext" },
-        { "text",     DRV_INT, &text,        "Use own text routines (text=0|1)"                                                 },
-        { NULL,       DRV_INT, NULL,         NULL                                                                               }
-    };
-
-    // Check for and set up driver options
-    plParseDrvOpts( wx_options );
-
-    // allocate memory for the device storage
-	dev = new wxPLDevDC ( backend == wxBACKEND_GC );
-    // by default the own text routines are used for wxDC
-    if ( text == -1 )
-        text = 0;
-    if ( dev == NULL )
-    {
-        plexit( "Insufficient memory" );
-    }
-    pls->dev = (void *) dev;
-
-// be verbose and write out debug messages
-#ifdef _DEBUG
-    pls->verbose = 1;
-    pls->debug   = 1;
+	if( m_mapFile )
+		m_buffer = MapViewOfFile( m_mapFile, FILE_MAP_ALL_ACCESS, 0, 0, size );
 #endif
-
-    pls->color     = 1;             // Is a color device
-    pls->dev_flush = 1;             // Handles flushes
-    pls->dev_fill0 = 1;             // Can handle solid fills
-    pls->dev_fill1 = 0;             // Can't handle pattern fills
-    pls->dev_dash  = 0;
-    pls->dev_clear = 1;             // driver supports clear
-
-    if ( text )
-    {
-        pls->dev_text    = 1; // want to draw text
-        pls->dev_unicode = 1; // want unicode
-        if ( hrshsym )
-            pls->dev_hrshsym = 1;
-    }
-
-    // initialize frame size and position
-    if ( pls->xlength <= 0 || pls->ylength <= 0 )
-        plspage( 0.0, 0.0, (PLINT) ( CANVAS_WIDTH * DEVICE_PIXELS_PER_IN ),
-            (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN ), 0, 0 );
-
-    dev->width    = pls->xlength;
-    dev->height   = pls->ylength;
-    dev->clipminx = pls->xlength;
-    dev->clipminy = pls->ylength;
-
-    if ( pls->xoffset != 0 || pls->yoffset != 0 )
-    {
-        dev->xpos = (int) ( pls->xoffset );
-        dev->ypos = (int) ( pls->yoffset );
-    }
-
-
-    // If portrait mode, apply a rotation and set freeaspect
-    if ( pls->portrait )
-    {
-        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
-        pls->freeaspect = 1;
-    }
-
-    // Set the number of pixels per mm
-    plP_setpxl( (PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
-
-    // Set up physical limits of plotting device (in drawing units)
-    downscale  = (double) dev->width / (double) ( PIXELS_X - 1 );
-    downscale2 = (double) dev->height / (double) PIXELS_Y;
-    if ( downscale < downscale2 )
-        downscale = downscale2;
-    plP_setphy( (PLINT) 0, (PLINT) ( dev->width / downscale ),
-        (PLINT) 0, (PLINT) ( dev->height / downscale ) );
-
-    // get physical device limits coordinates
-    plP_gphy( &dev->xmin, &dev->xmax, &dev->ymin, &dev->ymax );
-
-    // setting scale factors
-    dev->scalex = (PLFLT) ( dev->xmax - dev->xmin ) / ( dev->width );
-    dev->scaley = (PLFLT) ( dev->ymax - dev->ymin ) / ( dev->height );
-
-    // set dpi
-    plspage( VIRTUAL_PIXELS_PER_IN / dev->scalex, VIRTUAL_PIXELS_PER_IN / dev->scaley, 0, 0, 0, 0 );
-
-
-    // find out what file drivers are available
-    plgFileDevs( &dev->devDesc, &dev->devName, &dev->ndev );
-
-    return dev;
+}
+void PLMemoryMap::close()
+{
+	if( m_buffer )
+		UnmapViewOfFile( m_buffer );
+	if( m_mapFile )
+		CloseHandle( m_mapFile );
+}
+PLMemoryMap::~PLMemoryMap()
+{
+	close();
 }
 
 
@@ -463,15 +187,51 @@ void plD_init_wxwidgets( PLStream* pls )
 {
     // Log_Verbose( "plD_init_wxwidgets()" );
 
-    wxPLDevBase* dev;
-    dev = common_init( pls );
+    // default options
+    static PLINT text        = -1;
+    static PLINT hrshsym     = 0;
+	static char  *mfo        = NULL;
+	static char  *mfi        = NULL;
+	static PLINT mfisize     = 0;
 
-    pls->plbuf_write = 1;             // use the plot buffer!
-    pls->termin      = 1;             // interactive device
-    pls->graphx      = GRAPHICS_MODE; //  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination)
+    DrvOpt wx_options[] = {
+        { "hrshsym",  DRV_INT, &hrshsym,     "Use Hershey symbol set (hrshsym=0|1)"                      },
+        { "text",     DRV_INT, &text,        "Use own text routines (text=0|1)"                          },
+		{ "mfo",      DRV_STR, &mfo,          "output metafile"                                          },
+		{ "mfi",      DRV_STR, &mfi,          "input metafile"                                           },
+		{ "mfisize",  DRV_INT, &mfisize,     "input metafile size"                                       },
+        { NULL,       DRV_INT, NULL,         NULL                                                        }
+    };
 
-    dev->showGUI    = true;
-    dev->bitmapType = (wxBitmapType) 0;
+    // Check for and set up driver options
+    plParseDrvOpts( wx_options );
+
+    // by default the own text routines are used for wxDC
+    if ( text == -1 )
+        text = 0;
+
+    // allocate memory for the device storage
+	wxPLDevice* dev = new wxPLDevice ( pls, mfo, mfi, mfisize, text, hrshsym );
+    if ( dev == NULL )
+    {
+        plexit( "Insufficient memory" );
+    }
+
+    // initialize frame size and position
+    if ( pls->xlength <= 0 || pls->ylength <= 0 )
+        plspage( 0.0, 0.0, (PLINT) ( CANVAS_WIDTH * DEVICE_PIXELS_PER_IN ),
+            (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN ), 0, 0 );
+
+
+    // If portrait mode, apply a rotation and set freeaspect
+    if ( pls->portrait )
+    {
+        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
+        pls->freeaspect = 1;
+    }
+
+    // Set the number of pixels per mm
+    plP_setpxl( (PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
 }
 
 #endif  // PLD_wxwidgets
@@ -543,22 +303,9 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 {
     // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
 
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    if ( !( dev->ready ) )
-        install_buffer( pls );
+    wxPLDevice* dev = (wxPLDevice *) pls->dev;
 
     dev->DrawLine( x1a, y1a, x2a, y2a );
-
-    if ( !( dev->resizing ) && dev->ownGUI )
-    {
-        dev->comcount++;
-        if ( dev->comcount > MAX_COMCOUNT )
-        {
-            wxRunApp( pls, true );
-            dev->comcount = 0;
-        }
-    }
 }
 
 
@@ -573,22 +320,9 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
     // Log_Verbose( "plD_polyline_wxwidgets()" );
 
     // should be changed to use the wxDC::DrawLines function?
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    if ( !( dev->ready ) )
-        install_buffer( pls );
+    wxPLDevice* dev = (wxPLDevice *) pls->dev;
 
     dev->DrawPolyline( xa, ya, npts );
-
-    if ( !( dev->resizing ) && dev->ownGUI )
-    {
-        dev->comcount++;
-        if ( dev->comcount > MAX_COMCOUNT )
-        {
-            wxRunApp( pls, true );
-            dev->comcount = 0;
-        }
-    }
 }
 
 
@@ -604,29 +338,8 @@ void plD_eop_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_eop_wxwidgets()" );
 
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    if ( dev->bitmapType )
-    {
-        wxMemoryDC memDC;
-        wxBitmap   bitmap( dev->width, dev->height, -1 );
-        memDC.SelectObject( bitmap );
-
-        dev->BlitRectangle( &memDC, 0, 0, dev->width, dev->height );
-        wxImage             buffer = bitmap.ConvertToImage();
-        wxFFileOutputStream fstream( pls->OutFile );
-        if ( !( buffer.SaveFile( fstream, dev->bitmapType ) ) )
-            puts( "Troubles saving file!" );
-        memDC.SelectObject( wxNullBitmap );
-    }
-
-    if ( dev->ownGUI )
-    {
-        if ( pls->nopause || !dev->showGUI )
-            wxRunApp( pls, true );
-        else
-            wxRunApp( pls );
-    }
+    wxPLDevice* dev = (wxPLDevice *) pls->dev;
+	dev->EndPage( pls );
 }
 
 
@@ -643,49 +356,8 @@ void plD_bop_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_bop_wxwidgets()" );
 
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    if ( dev->ready )
-    {
-        //if( pls->termin==0 ) {
-        // plGetFam( pls );
-        // force new file if pls->family set for all subsequent calls to plGetFam
-        // n.b. putting this after plGetFam call is important since plinit calls
-        // bop, and you don't want the familying sequence started until after
-        // that first call to bop.
-
-        // n.b. pls->dev can change because of an indirect call to plD_init_png
-        // from plGetFam if familying is enabled.  Thus, wait to define dev until
-        // now.
-        //dev = (wxPLDevBase*)pls->dev;
-        //
-        // pls->famadv = 1;
-        // pls->page++;
-        // }
-
-        // clear background
-        PLINT bgr, bgg, bgb;                  // red, green, blue
-        plgcolbg( &bgr, &bgg, &bgb );         // get background color information
-        dev->ClearBackground( bgr, bgg, bgb );
-
-        // Replay escape calls that come in before PLESC_DEVINIT.  All of them
-        // required a DC that didn't exist yet.
-        //
-        if ( dev->plstate_width )
-            plD_state_wxwidgets( pls, PLSTATE_WIDTH );
-        dev->plstate_width = false;
-
-        if ( dev->plstate_color0 )
-            plD_state_wxwidgets( pls, PLSTATE_COLOR0 );
-        dev->plstate_color0 = false;
-
-        if ( dev->plstate_color1 )
-            plD_state_wxwidgets( pls, PLSTATE_COLOR1 );
-        dev->plstate_color1 = false;
-
-        // why this? xwin driver has this
-        // pls->page++;
-    }
+    wxPLDevice* dev = (wxPLDevice *) pls->dev;
+	dev->BeginPage( pls );
 }
 
 
@@ -698,14 +370,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_tidy_wxwidgets()" );
 
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    if ( dev->ownGUI )
-    {
-        wxPLGetApp().RemoveFrame( dev->m_frame );
-        if ( !wxPLGetApp().FrameCount() )
-            wxUninitialize();
-    }
+    wxPLDevice* dev = (wxPLDevice *) pls->dev;
 
     delete dev;
     pls->dev = NULL; // since in plcore.c pls->dev is free_mem'd
@@ -722,34 +387,21 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 {
     // Log_Verbose( "plD_state_wxwidgets(op=%d)", op );
 
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
+    wxPLDevice* dev = (wxPLDevice *) pls->dev;
 
     switch ( op )
     {
     case PLSTATE_WIDTH: // 1
-        if ( dev->ready )
-            dev->SetWidth( pls );
-        else
-            dev->plstate_width = true;
+        dev->SetWidth( pls );
         break;
 
     case PLSTATE_COLOR0: // 2
-        if ( dev->ready )
-            dev->SetColor0( pls );
-        else
-            dev->plstate_color0 = true;
+        dev->SetColor( pls );
         break;
 
     case PLSTATE_COLOR1: // 3
-        if ( dev->ready )
-            dev->SetColor1( pls );
-        else
-            dev->plstate_color1 = true;
+        dev->SetColor( pls );
         break;
-
-    default:
-        if ( !( dev->ready ) )
-            install_buffer( pls );
     }
 }
 
@@ -765,12 +417,12 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 {
     // Log_Verbose( "plD_esc_wxwidgets(op=%d, ptr=%x)", op, ptr );
 
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
+    wxPLDevice* dev = (wxPLDevice *) pls->dev;
 
     switch ( op )
     {
     case PLESC_FILL:
-        fill_polygon( pls );
+		dev->FillPolygon( pls );
         break;
 
     case PLESC_XORMOD:
@@ -784,54 +436,32 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_DEVINIT:
-        dev->SetExternalBuffer( ptr );
-
-        // replay begin of page call and state settings
-        plD_bop_wxwidgets( pls );
+        dev->SetExternalBuffer( pls, ptr );
         break;
 
     case PLESC_HAS_TEXT:
-        if ( !( dev->ready ) )
-            install_buffer( pls );
         dev->ProcessString( pls, (EscText *) ptr );
         break;
 
     case PLESC_RESIZE:
     {
         wxSize* size = (wxSize *) ptr;
-        wx_set_size( pls, size->GetWidth(), size->GetHeight() );
+        dev->SetSize( pls, size->GetWidth(), size->GetHeight() );
     }
     break;
 
     case PLESC_CLEAR:
-        if ( !( dev->ready ) )
-            install_buffer( pls );
-        // Since the plot is updated only every MAX_COMCOUNT commands (usually 5000)
-        //       before we clear the screen we need to show the plot at least once :)
-        if ( !( dev->resizing ) && dev->ownGUI )
-        {
-            wxRunApp( pls, true );
-            dev->comcount = 0;
-        }
         dev->ClearBackground( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b,
             pls->sppxmi, pls->sppymi, pls->sppxma, pls->sppyma );
         break;
 
     case PLESC_FLUSH:        // forced update of the window
-        if ( !( dev->resizing ) && dev->ownGUI )
-        {
-            wxRunApp( pls, true );
-            dev->comcount = 0;
-        }
+		//currently does nothing
         break;
 
     case PLESC_GETC:
-        if ( dev->ownGUI )
-            GetCursorCmd( pls, (PLGraphicsIn *) ptr );
-        break;
-
-    case PLESC_GETBACKEND:
-        *( (int *) ptr ) = dev->backend;
+        //if ( dev->ownGUI )
+            //GetCursorCmd( pls, (PLGraphicsIn *) ptr );
         break;
 
     default:
@@ -841,109 +471,11 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 
 
 //--------------------------------------------------------------------------
-//  static void fill_polygon( PLStream *pls )
-//
-//  Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-//--------------------------------------------------------------------------
-static void fill_polygon( PLStream *pls )
-{
-    // Log_Verbose( "fill_polygon(), npts=%d, x[0]=%d, y[0]=%d", pls->dev_npts, pls->dev_y[0], pls->dev_y[0] );
-
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    if ( !( dev->ready ) )
-        install_buffer( pls );
-
-    dev->FillPolygon( pls );
-
-    if ( !( dev->resizing ) && dev->ownGUI )
-    {
-        dev->comcount += 10;
-        if ( dev->comcount > MAX_COMCOUNT )
-        {
-            wxRunApp( pls, true );
-            dev->comcount = 0;
-        }
-    }
-}
-
-
-//--------------------------------------------------------------------------
-//  void wx_set_size( PLStream* pls, int width, int height )
-//
-//  Adds a dc to the stream. The associated device is attached to the canvas
-//  as the property "dev".
-//--------------------------------------------------------------------------
-void wx_set_size( PLStream* pls, int width, int height )
-{
-    // TODO: buffer must be resized here or in wxplotstream
-    // Log_Verbose( "wx_set_size()" );
-
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    // set new size and scale parameters
-    dev->width  = width;
-    dev->height = height;
-    dev->scalex = (PLFLT) ( dev->xmax - dev->xmin ) / dev->width;
-    dev->scaley = (PLFLT) ( dev->ymax - dev->ymin ) / dev->height;
-
-    // recalculate the dpi used in calculation of fontsize
-    pls->xdpi = VIRTUAL_PIXELS_PER_IN / dev->scalex;
-    pls->ydpi = VIRTUAL_PIXELS_PER_IN / dev->scaley;
-
-    // clear background if we have a dc, since it's invalid (TODO: why, since in bop
-    // it must be cleared anyway?)
-    if ( dev->ready )
-    {
-        PLINT bgr, bgg, bgb;                  // red, green, blue
-        plgcolbg( &bgr, &bgg, &bgb );         // get background color information
-
-        dev->CreateCanvas();
-        dev->ClearBackground( bgr, bgg, bgb );
-    }
-}
-
-
-//--------------------------------------------------------------------------
-//  int plD_errorexithandler_wxwidgets( const char *errormessage )
-//
-//  If an PLplot error occurs, this function shows a dialog regarding
-//  this error and than exits.
-//--------------------------------------------------------------------------
-int plD_errorexithandler_wxwidgets( const char *errormessage )
-{
-    if ( errormessage[0] )
-    {
-        wxMessageDialog dialog( 0, wxString( errormessage, *wxConvCurrent ), wxString( "wxWidgets PLplot App error", *wxConvCurrent ), wxOK | wxICON_ERROR );
-        dialog.ShowModal();
-    }
-
-    return 0;
-}
-
-
-//--------------------------------------------------------------------------
-//  void plD_erroraborthandler_wxwidgets( const char *errormessage )
-//
-//  If PLplot aborts, this function shows a dialog regarding
-//  this error.
-//--------------------------------------------------------------------------
-void plD_erroraborthandler_wxwidgets( const char *errormessage )
-{
-    if ( errormessage[0] )
-    {
-        wxMessageDialog dialog( 0, ( wxString( errormessage, *wxConvCurrent ) + wxString( " aborting operation...", *wxConvCurrent ) ), wxString( "wxWidgets PLplot App abort", *wxConvCurrent ), wxOK | wxICON_ERROR );
-        dialog.ShowModal();
-    }
-}
-
-
-//--------------------------------------------------------------------------
 // GetCursorCmd()
 //
 // Waits for a graphics input event and returns coordinates.
 //--------------------------------------------------------------------------
-static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr )
+/*static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr )
 {
     // Log_Verbose( "GetCursorCmd" );
 
@@ -964,98 +496,8 @@ static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr )
         dev->locate_mode = 0;
         dev->draw_xhair  = false;
     }
-}
+}*/
 
-
-
-
-//--------------------------------------------------------------------------
-//  This part includes wxWidgets specific functions, which allow to
-//  open a window from the command line, if needed.
-//--------------------------------------------------------------------------
-
-
-//--------------------------------------------------------------------------
-//  void install_buffer( PLStream *pls )
-//
-//  If this driver is called from a command line executable (and not
-//  from within a wxWidgets program), this function prepares a DC and a
-//  bitmap to plot into.
-//--------------------------------------------------------------------------
-static void install_buffer( PLStream *pls )
-{
-    // Log_Verbose( "install_buffer" );
-
-    wxPLDevBase * dev   = (wxPLDevBase *) pls->dev;
-    static bool initApp = false;
-
-    if ( !initApp )
-    {
-        // this hack enables to have a GUI on Mac OSX even if the
-        // program was called from the command line (and isn't a bundle)
-#ifdef __WXMAC__
-        ProcessSerialNumber psn;
-
-        GetCurrentProcess( &psn );
-        CPSEnableForegroundOperation( &psn );
-        SetFrontProcess( &psn );
-#endif
-
-        // initialize wxWidgets
-        wxInitialize();
-        wxLog::GetActiveTarget();
-        wxTRY {
-            wxPLGetApp().CallOnInit();
-        }
-        wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); plexit( "Can't init wxWidgets!" ); )
-        initApp = true;
-    }
-
-
-    wxString title( pls->plwindow, *wxConvCurrent );
-    switch ( dev->backend )
-    {
-    case wxBACKEND_DC:
-        title += wxT( " - wxWidgets (basic)" );
-        break;
-    case wxBACKEND_GC:
-        title += wxT( " - wxWidgets (wxGC)" );
-        break;
-    default:
-        break;
-    }
-    dev->m_frame = new wxPLplotFrame( title, pls );
-    wxPLGetApp().AddFrame( dev->m_frame );
-
-    // set size and position of window
-    dev->m_frame->SetClientSize( dev->width, dev->height );
-    if ( dev->xpos != 0 || dev->ypos != 0 )
-        dev->m_frame->SetSize( dev->xpos, dev->ypos,
-            wxDefaultCoord, wxDefaultCoord,
-            wxSIZE_USE_EXISTING );
-
-    if ( dev->showGUI )
-    {
-        dev->m_frame->Show( true );
-        dev->m_frame->Raise();
-    }
-    else
-        dev->m_frame->Show( false );
-
-    // get a DC and a bitmap or an imagebuffer
-    dev->ownGUI    = true;
-    dev->bm_width  = dev->width;
-    dev->bm_height = dev->height;
-    dev->CreateCanvas();
-    dev->ready = true;
-
-    // Set wx error handler for various errors in plplot
-    plsexit( plD_errorexithandler_wxwidgets );
-    plsabort( plD_erroraborthandler_wxwidgets );
-
-    // replay command we may have missed
-    plD_bop_wxwidgets( pls );
-}
 
 
 //--------------------------------------------------------------------------
@@ -1064,7 +506,7 @@ static void install_buffer( PLStream *pls )
 //  This is a hacked wxEntry-function, so that wxUninitialize is not
 //  called twice. Here we actually start the wxApplication.
 //--------------------------------------------------------------------------
-static void wxRunApp( PLStream *pls, bool runonce )
+/*static void wxRunApp( PLStream *pls, bool runonce )
 {
     // Log_Verbose( "wxRunApp" );
 
@@ -1101,4 +543,4 @@ public:
     }
 
     dev->waiting = false;
-}
+}*/

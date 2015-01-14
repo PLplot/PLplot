@@ -23,6 +23,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include <wx/dcgraph.h>
+#include <wx/dcbuffer.h>
 
 class wxPLplotstream;
 
@@ -33,32 +34,23 @@ template <class WXWINDOW>
 class wxPLplotwindow : public WXWINDOW
 {
 public:
-    wxPLplotwindow( bool useGraphicsContext = true );                              //!< Constructor.
+    wxPLplotwindow( bool useGraphicsContext = true,
+		wxString mapFile = "", PLINT mapFileSize = 0 );                     //!< Constructor.
     ~wxPLplotwindow( void );                                                //!< Destructor.
 
     void RenewPlot( void );                                                 //!< Redo plot.
     bool SavePlot( const wxString& driver, const wxString& filename );      //!< Save plot using a different driver.
     wxPLplotstream* GetStream()  { return m_stream; }                       //!< Get pointer to wxPLplotstream of this widget.
     int getBackend()  { return m_backend; }
-	void loadFile( wxString fileName );
 	void setUseGraphicsContext( bool useGraphicsContext );
 
 protected:
     virtual void OnPaint( wxPaintEvent& event );                //!< Paint event
-    virtual void OnErase( wxEraseEvent & WXUNUSED( event ) );   //!< Erase event
     virtual void OnSize( wxSizeEvent & WXUNUSED( event ) );     //!< Size event
-    wxPLplotstream* m_stream;           //!< Pointer to the wxPLplotstream which belongs to this plot widget
+    wxPLplotstream m_stream;           //!< Pointer to the wxPLplotstream which belongs to this plot widget
 
 private:
-    // variables regarding double buffering
-    wxMemoryDC m_memoryDC;        //!< wxMemoryDC, used for double buffering
-    wxGCDC     m_GCDC;			   //!< Graphics context DC
-	wxDC      *m_DC;               //!< Pointer to the DC actually being used
-    int        m_width;            //!< Saved width of plot, to find out if size changed.
-    int        m_height;           //!< Saved height of plot, to find out if size changed.
-    int        m_bitmapWidth;      //!< Width of bitmap, only changed if plot gets bigger
-    int        m_bitmapHeight;     //!< Height of bitmap, only changed if plot gets bigger
-    wxBitmap  *m_memPlotDCBitmap;  //!< Pointer to bitmap, used for double buffering.
+    bool       m_useGraphicsContext; //!< Flag to indicate whether we should use a wxGCDC
 };
 
 
@@ -66,19 +58,14 @@ private:
 // will initialise these. It also sets up the event handling.
 //
 template<class WXWINDOW>
-wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
-	:m_GCDC(&m_memoryDC)
+wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
+		wxString mapFile, PLINT mapFileSize )
 {
-	m_stream = NULL;
-	m_memPlotDCBitmap = NULL;
-	m_width = 0;
-	m_height = 0;
-	m_bitmapWidth = 0;
-	m_bitmapHeight = 0;
+	m_stream.Create( NULL, 0, 0, wxPLPLOT_BACKEND_DC, mapFile, mapFileSize );
 
 	setUseGraphicsContext( useGraphicsContext );
 
-	SetBackgroundStyle( wxBG_STYLE_CUSTOM );
+	SetBackgroundStyle( wxBG_STYLE_PAINT );
 
 	Bind( wxEVT_SIZE, &wxPLplotwindow<WXWINDOW>::OnSize, this );
 	Bind( wxEVT_PAINT, &wxPLplotwindow<WXWINDOW>::OnPaint, this );
@@ -90,13 +77,6 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
 {
-	m_memoryDC.SelectObject( wxNullBitmap );
-
-    if ( m_memPlotDCBitmap )
-        delete m_memPlotDCBitmap;
-
-    if ( m_stream )
-        delete m_stream;
 }
 
 
@@ -107,53 +87,25 @@ wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 {
-    wxPaintDC dc( this );
+	wxAutoBufferedPaintDC dc( this );
+	int width = GetClientRect().GetSize().GetWidth();
+	int height = GetClientRect().GetSize().GetHeight();
 
-    dc.Blit( 0, 0, m_width, m_height, &m_memoryDC, 0, 0 );
+	wxGCDC gcdc( dc );
+
+	m_stream.SetSize( GetClientRect().GetSize().GetWidth(), GetClientRect().GetSize().GetHeight() );
+	m_stream.SetDC( &gcdc ); // This causes a redraw.
+	m_stream.SetDC( NULL ); //Reset to NULL to avaoid writing to the wxGCDC after it has been destroyed
+
 }
 
 
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
 {
-    int width, height;
-    GetClientSize( &width, &height );
-
-    // Check if the window was resized
-    if ( ( m_width != width ) || ( m_height != height ) )
-    {
-        if ( ( width > m_bitmapWidth ) || ( height > m_bitmapHeight ) )
-        {
-            m_bitmapWidth  = m_bitmapWidth > width ? m_bitmapWidth : width;
-            m_bitmapHeight = m_bitmapHeight > height ? m_bitmapHeight : height;
-
-            m_memoryDC.SelectObject( wxNullBitmap );
-            if ( m_memPlotDCBitmap )
-                delete m_memPlotDCBitmap;
-            m_memPlotDCBitmap = new wxBitmap( m_bitmapWidth, m_bitmapHeight, -1 );
-            m_memoryDC.SelectObject( *m_memPlotDCBitmap );
-        }
-
-        m_stream->SetSize( width, height );
-        m_stream->RenewPlot();
-
-        m_width  = width;
-        m_height = height;
-    }
-    else
-    {
-        //m_stream->Update();
-        Refresh( false );
-    }
-}
-
-
-//! Together with "SetBackgroundStyle( wxBG_STYLE_CUSTOM );" in the constructor this method
-//  is responsible that the background is not erased in order to prevent flickering.
-//
-template<class WXWINDOW>
-void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent &WXUNUSED( event ) )
-{
+	//Invalidate the whole window so it is all redrawn, otherwise only
+	//newly exposed parts of the window get redrawn
+	RenewPlot();
 }
 
 
@@ -162,11 +114,7 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent &WXUNUSED( event ) )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::RenewPlot( void )
 {
-    if ( m_stream )
-    {
-        m_stream->RenewPlot();
-        Refresh( false );
-    }
+	Refresh();
 }
 
 
@@ -204,21 +152,13 @@ bool wxPLplotwindow<WXWINDOW>::SavePlot( const wxString& devname, const wxString
 }
 
 template<class WXWINDOW>
-void wxPLplotwindow<WXWINDOW>::loadFile( wxString fileName )
-{
-
-}
-
-template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::setUseGraphicsContext( bool useGraphicsContext )
 {
-	m_DC = useGraphicsContext ? (wxDC*)&m_GCDC : (wxDC*)&m_memoryDC;
-	if (m_stream)
+	if( useGraphicsContext != m_useGraphicsContext )
 	{
-		delete m_stream;
-		m_stream = NULL;
+		m_useGraphicsContext = useGraphicsContext;
+		RenewPlot();
 	}
-	m_stream = new wxPLplotstream( m_DC, m_width, m_height, wxPLPLOT_BACKEND_DC );
 }
 
 #endif // !defined( WXPLPLOTWINDOW_H__INCLUDED_ )

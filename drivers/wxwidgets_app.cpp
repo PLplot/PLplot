@@ -20,7 +20,7 @@
 // TODO:
 // - Add dialog to get width and height from user for plot size to save.
 //
-
+/*
 // wxwidgets headers
 #include "wx/wx.h"
 
@@ -343,7 +343,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 //
 //  Event method, which is called if user
 //--------------------------------------------------------------------------
-void wxPLplotFrame::OnClose( wxCloseEvent& /* event */ )
+void wxPLplotFrame::OnClose( wxCloseEvent&  )
 {
     // Log_Verbose( "wxPLplotFrame::OnClose" );
 
@@ -919,3 +919,4 @@ wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, wxWindowID id, const wxStrin
 }
 
 #endif                          // PLD_wxwidgets
+*/

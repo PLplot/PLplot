@@ -62,136 +62,103 @@
 #define PLOT_WIDTH                   ( 800 )
 #define PLOT_HEIGHT                  ( 600 )
 
-// These need to be distinguished since the handling is slightly different.
-#define LOCATE_INVOKED_VIA_API       1
-#define LOCATE_INVOKED_VIA_DRIVER    2
-
-// Available backends
-#define wxBACKEND_DC                 0
-#define wxBACKEND_AGG                1
-#define wxBACKEND_GC                 2
 
 class wxPLplotFrame;
 
-// base device class
-class wxPLDevBase
+class PLMemoryMap
 {
-public: // methods
-    wxPLDevBase( int bcknd );
-    virtual ~wxPLDevBase( void );
-
-    // virtual functions which need to implemented
-    virtual void DrawLine( short x1a, short y1a, short x2a, short y2a ) = 0;
-    virtual void DrawPolyline( short *xa, short *ya, PLINT npts )       = 0;
-    virtual void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1 = -1, PLINT y1 = -1, PLINT x2 = -1, PLINT y2 = -1 ) = 0;
-    virtual void FillPolygon( PLStream *pls ) = 0;
-    virtual void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH ) = 0;
-    void AddtoClipRegion( int x1, int y1, int x2, int y2 );
-    virtual void CreateCanvas()                    = 0;
-    virtual void SetWidth( PLStream *pls )         = 0;
-    virtual void SetColor0( PLStream *pls )        = 0;
-    virtual void SetColor1( PLStream *pls )        = 0;
-    virtual void SetExternalBuffer( void* buffer ) = 0;
-    virtual void ProcessString( PLStream* pls, EscText* args ) = 0;
-    virtual void PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );
-    virtual void PSDrawTextToDC( char* utf8_string, bool drawText ) = 0;
-    virtual void PSSetFont( PLUNICODE fci ) = 0;
-
-public: // variables
-    const int    backend;
-    bool         ready;
-    bool         ownGUI;
-    bool         showGUI;
-    bool         waiting;
-    bool         resizing;
-    bool         exit;
-    int          comcount;
-
-    wxPLplotFrame* m_frame;
-    PLINT        xpos;
-    PLINT        ypos;
-    PLINT        width;
-    PLINT        height;
-    PLINT        bm_width;
-    PLINT        bm_height;
-
-    PLINT        xmin;
-    PLINT        xmax;
-    PLINT        ymin;
-    PLINT        ymax;
-
-    PLFLT        scalex;
-    PLFLT        scaley;
-
-    bool         plstate_width;         // Flags indicating change of state before
-    bool         plstate_color0;        // device is fully initialized
-    bool         plstate_color1;        // taken from gcw driver
-
-    PLGraphicsIn gin;                   // Graphics input structure
-    int          locate_mode;           // Set while in locate mode
-    bool         draw_xhair;            // Set during xhair draws
-
-    // clipping region
-    int  clipminx, clipmaxx;
-    int  clipminy, clipmaxy;
-    bool newclipregion;
-
-    // variables for antializing
-    int          freetype;
-    int          smooth_text;
-
-    const char   ** devDesc;    // Descriptive names for file-oriented devices.  Malloc'ed.
-    const char   ** devName;    // Keyword names of file-oriented devices. Malloc'ed.
-    int          ndev;
-    wxBitmapType bitmapType;
-
-    // font variables
-    static const int max_string_length = 500;
-    wxFont           * m_font;
-    bool             underlined;
-    double           fontSize;
-    double           fontScale;
-    wxCoord          textWidth, textHeight, textDescent, textLeading;
-    PLUNICODE        fci;
-    //the distance between the superscript top and subscript base from the baseline
-    wxCoord          superscriptHeight, subscriptDepth;
-    double           lineSpacing;
-    double           yOffset;
-    PLINT            posX, posY;
-    PLFLT            rotation, cos_rot, sin_rot;
-    PLFLT            shear, cos_shear, sin_shear;
-    PLFLT            stride;
+public:
+	PLMemoryMap();
+	PLMemoryMap( char *name, PLINT size, bool onlyIfExists );
+	void create( char *name, PLINT size, bool onlyIfExists );
+	void close();
+	~PLMemoryMap();
+	char *getBuffer() { return (char*)m_buffer; }
+	bool isValid() {return m_buffer != NULL; }
+private:
+	HANDLE m_mapFile;
+	void *m_buffer;
 };
 
-
-class wxPLDevDC : public wxPLDevBase
+// base device class
+class wxPLDevice
 {
-public: // methods
-    wxPLDevDC( bool usegc );
-    ~wxPLDevDC( void );
+public:
+    wxPLDevice( PLStream *pls, char * mf0, char * mfi, PLINT mfiSize, PLINT text, PLINT hrshsym );
+    virtual ~wxPLDevice( void );
 
     void DrawLine( short x1a, short y1a, short x2a, short y2a );
     void DrawPolyline( short *xa, short *ya, PLINT npts );
     void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1 = -1, PLINT y1 = -1, PLINT x2 = -1, PLINT y2 = -1 );
     void FillPolygon( PLStream *pls );
-    void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH );
-    void CreateCanvas();
     void SetWidth( PLStream *pls );
-    void SetColor0( PLStream *pls );
-    void SetColor1( PLStream *pls );
-    void SetExternalBuffer( void* buffer );
+    void SetColor( PLStream *pls );
+    void SetExternalBuffer( PLStream *pls, void* buffer );
+    void SetFont( PLUNICODE fci );
+	void EndPage( PLStream* pls );
+	void BeginPage( PLStream* pls );
+	void SetSize( PLStream* pls, int width, int height );
     void ProcessString( PLStream* pls, EscText* args );
-    void PSDrawTextToDC( char* utf8_string, bool drawText );
-    void PSSetFont( PLUNICODE fci );
 
-private: // variables
-    wxBitmap   *m_bitmap;
+protected:
+    void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;
+    void DrawTextSection( char* utf8_string, bool drawText );
+
+	//The DC we will draw on if given by the user
     wxDC       *m_dc;
-	wxMemoryDC *m_memorydc;
-	bool        m_usegc;
-#ifdef wxUSE_GRAPHICS_CONTEXT
-	wxGCDC     *m_gcdc;
-#endif
+
+	//Locations of the corners of the page
+    PLINT        m_xmin;
+    PLINT        m_xmax;
+    PLINT        m_ymin;
+    PLINT        m_ymax;
+
+	//Size and Scale
+    PLINT        m_width;
+    PLINT        m_height;
+    PLFLT        m_scalex;
+    PLFLT        m_scaley;
+
+	// Flags indicating change of state before we have a DC.
+    bool         m_plstate_width;
+    bool         m_plstate_color;
+
+	//these are not being used at the current time
+    //PLGraphicsIn gin;                   // Graphics input structure
+    //int          locate_mode;           // Set while in locate mode
+    //bool         draw_xhair;            // Set during xhair draws
+
+    // font variables
+    static const int m_max_string_length = 500;
+    wxFont          *m_font;
+    bool             m_underlined;
+    PLFLT            m_fontSize;
+    PLFLT            m_fontScale;
+    wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
+    PLUNICODE        m_fci;
+
+    //Text positioning related variables
+    wxCoord          m_superscriptHeight; //distance between superscript top and baseline
+	wxCoord          m_subscriptDepth; //distance between subscript base and baseline
+    PLFLT            m_lineSpacing;
+    PLFLT            m_yOffset;
+    PLINT            m_posX;
+	PLINT            m_posY;
+    PLFLT            m_rotation;
+	PLFLT            m_cos_rot;
+	PLFLT            m_sin_rot;
+    PLFLT            m_shear;
+	PLFLT            m_cos_shear;
+	PLFLT            m_sin_shear;
+    PLFLT            m_stride;
+
+	//variables for dealing with sending/receiving commands
+	//via a memory map
+	char           m_mfo[256];
+	char           m_mfi[256];
+	PLMemoryMap    m_inputMemoryMap;
+	PLMemoryMap    m_outputMemoryMap;
+	PLINT          m_inputSize;
 };
 
 
@@ -210,6 +177,7 @@ struct dev_entry
 #define MAX_COMCOUNT    10000
 
 // wxwidgets application definition (if needed)
+/*
 WX_DEFINE_ARRAY( wxPLplotFrame *, wxArrayOfwxPLplotFrame );
 class wxPLplotApp : public wxApp
 {
@@ -333,7 +301,7 @@ static inline void Use( void * )
 {
 }
 #define WX_SUPPRESS_UNUSED_WARN( x )    Use( &x )
-
+*/
 
 //--------------------------------------------------------------------------
 //  Declarations for the device.
@@ -351,9 +319,6 @@ void plD_esc_wxwidgets( PLStream *, PLINT, void * );
 
 void wx_set_dc( PLStream* pls, wxDC* dc );
 void wx_set_buffer( PLStream* pls, wxImage* buffer );
-void wx_set_size( PLStream* pls, int width, int height );
-int plD_errorexithandler_wxwidgets( char *errormessage );
-void plD_erroraborthandler_wxwidgets( char *errormessage );
 
 //--------------------------------------------------------------------------
 //  Debug functions

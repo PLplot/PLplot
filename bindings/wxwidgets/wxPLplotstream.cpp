@@ -30,9 +30,9 @@
 //  plot to and the size of the canvas. We also check and set several
 //  device style options.
 //
-wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) : plstream()
+wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style,  wxString mapfile, PLINT mapfileSize ) : plstream()
 {
-    Create( dc, width, height, style );
+    Create( dc, width, height, style, mapfile, mapfileSize );
 }
 
 
@@ -41,7 +41,7 @@ wxPLplotstream::wxPLplotstream() : plstream()
 }
 
 
-void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
+void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxString mapfile, PLINT mapfileSize )
 {
     const size_t bufferSize = 256;
 
@@ -62,18 +62,20 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     else
         backend = 0;
 
-    sprintf( buffer, "hrshsym=%d,text=%d,backend=%d",
+    sprintf( buffer, "hrshsym=%d,text=%d,mfisize=%d",
         m_style & wxPLPLOT_USE_HERSHEY_SYMBOLS ? 1 : 0,
         m_style & wxPLPLOT_DRAW_TEXT ? 1 : 0,
-        backend );
+		mapfileSize);
     strncat( drvopt, buffer, bufferSize - strlen( drvopt ) );
+	if( mapfile != wxEmptyString && mapfileSize > 0 )
+	{
+		strncat( drvopt, ",mfi=", bufferSize - strlen( drvopt ) );
+		strncat( drvopt, mapfile, bufferSize - strlen( drvopt ) );
+	}
 
     setopt( "-drvopt", drvopt );
 
     init();
-
-    cmd( PLESC_GETBACKEND, &m_backend );
-    m_backend = 1 << ( m_backend + 2 );
 
     cmd( PLESC_DEVINIT, (void *) dc );
 }
