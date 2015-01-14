@@ -28,8 +28,6 @@ class wxDC;
 
 //! Style options for wxPLplotstream:
 //  wxPLPLOT_NONE: no option
-//  wxPLPLOT_BACKEND_DC: use the standard wxDC backend (always available)
-//  wxPLPLOT_BACKEND_GC: use the wxGraphicsContext backend (if available)
 //  wxPLPLOT_DRAWTEXT: use wxWidgets routines to draw text
 //  wxPLPLOT_USE_HERSHEY_SYMBOLS: use hershey symbols to draw symbols instead of font symbols
 //
