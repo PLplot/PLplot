@@ -36,8 +36,6 @@ class wxDC;
 enum
 {
     wxPLPLOT_NONE                    = 0,
-    wxPLPLOT_BACKEND_DC          = 1 << 2,
-    wxPLPLOT_BACKEND_GC          = 1 << 4,
     wxPLPLOT_DRAW_TEXT           = 1 << 5,
     wxPLPLOT_USE_HERSHEY_SYMBOLS = 1 << 6
 };

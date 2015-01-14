@@ -188,7 +188,7 @@ void plD_init_wxwidgets( PLStream* pls )
     // Log_Verbose( "plD_init_wxwidgets()" );
 
     // default options
-    static PLINT text        = -1;
+    static PLINT text        = 1;
     static PLINT hrshsym     = 0;
 	static char  *mfo        = NULL;
 	static char  *mfi        = NULL;

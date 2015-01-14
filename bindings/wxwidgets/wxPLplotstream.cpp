@@ -56,12 +56,6 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxStri
     char drvopt[bufferSize], buffer[bufferSize];
     drvopt[0] = '\0';
 
-    int backend;
-    if ( m_style & wxPLPLOT_BACKEND_GC )
-        backend = 2;
-    else
-        backend = 0;
-
     sprintf( buffer, "hrshsym=%d,text=%d,mfisize=%d",
         m_style & wxPLPLOT_USE_HERSHEY_SYMBOLS ? 1 : 0,
         m_style & wxPLPLOT_DRAW_TEXT ? 1 : 0,
