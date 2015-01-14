@@ -234,6 +234,20 @@ plbuf_state( PLStream *pls, PLINT op )
     case PLSTATE_FILL:
         wr_data( pls, &( pls->patt ), sizeof ( pls->patt ) );
         break;
+
+    case PLSTATE_CMAP0:
+        // Save the number of colors in the palatte
+        wr_data( pls, & ( pls->ncol0 ), sizeof ( pls->ncol0 ) );
+        // Save the color palatte
+        wr_data( pls, &( pls->cmap0[0] ), sizeof ( PLColor ) * pls->ncol0 );
+        break;
+
+    case PLSTATE_CMAP1:
+        // Save the number of colors in the palatte
+        wr_data( pls, & ( pls->ncol1 ), sizeof ( pls->ncol1 ) );
+	// Save the color palatte
+        wr_data( pls, &( pls->cmap1[0] ), sizeof ( PLColor ) * pls->ncol1 );
+        break;
     }
 }
 
@@ -265,7 +279,9 @@ plbuf_image( PLStream *pls, IMG_DT *img_dt )
 
     wr_data( pls, pls->dev_ix, sizeof ( short ) * (size_t) npts );
     wr_data( pls, pls->dev_iy, sizeof ( short ) * (size_t) npts );
-    wr_data( pls, pls->dev_z, sizeof ( unsigned short ) * (size_t) ( ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ) ) );
+    wr_data( pls, pls->dev_z,
+	     sizeof ( unsigned short )
+	     * (size_t) ( ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ) ) );
 }
 
 //--------------------------------------------------------------------------
@@ -593,7 +609,9 @@ rdbuf_state( PLStream *pls )
             if ( (int) icol0 >= pls->ncol0 )
             {
                 char buffer[256];
-                snprintf( buffer, 256, "rdbuf_state: Invalid color map entry: %d", (int) icol0 );
+                snprintf( buffer, 256,
+			        "rdbuf_state: Invalid color map entry: %d",
+			        (int) icol0 );
                 plabort( buffer );
                 return;
             }
@@ -636,6 +654,85 @@ rdbuf_state( PLStream *pls )
         plP_state( PLSTATE_FILL );
         break;
     }
+
+    case PLSTATE_CMAP0: {
+        PLINT ncol;
+        size_t size;
+
+        rd_data( pls, &ncol, sizeof ( ncol ) );
+
+	// Calculate the memory size for this color palatte
+        size = (size_t) ncol * sizeof ( PLColor );
+
+        if ( pls->ncol0 == 0 )
+	     {
+	         // The current palatte is empty, thus we need to allocate
+	         if ( ( pls->cmap0 = ( PLColor * )malloc( size ) ) == NULL )
+            {
+	             plexit( "Insufficient memory for colormap 0" );
+            }
+        }
+        else if ( pls->ncol0 != ncol )
+	     {
+	         // The current palatte is not big enough, thus we need to
+	         // discard the current palatte and allocate a new one
+	         // We do not use realloc() because we are going to read
+	         // the colormap from the buffer
+	        if(pls->cmap0 != NULL)
+               free(pls->cmap0);
+
+	        if ( ( pls->cmap0 = ( PLColor * )malloc( size ) ) == NULL )
+           {
+	             plexit( "Insufficient memory for colormap 0" );
+           }
+        }
+
+        // Now read the colormap from the buffer
+        rd_data( pls, &( pls->cmap0[0] ), size );
+
+        plP_state( PLSTATE_CMAP0 );
+        break;
+    }
+
+    case PLSTATE_CMAP1: {
+        PLINT ncol;
+        size_t size;
+
+        rd_data( pls, &ncol, sizeof ( ncol ) );
+
+	     // Calculate the memory size for this color palatte
+        size = (size_t) ncol * sizeof ( PLColor );
+
+        if( pls->ncol1 == 0 )
+	     {
+	         // The current palatte is empty, thus we need to allocate
+	         if ( ( pls->cmap1 = ( PLColor * )malloc( size ) ) == NULL )
+            {
+	             plexit( "Insufficient memory for colormap 1" );
+            }
+        }
+        else if ( pls->ncol1!= ncol )
+	     {
+	         // The current palatte is not big enough, thus we need to
+	         // discard the current palatte and allocate a new one
+	         // We do not use realloc() because we are going to read
+	         // the colormap from the buffer
+	         if(pls->cmap1 != NULL)
+                free(pls->cmap1);
+
+	         if ( ( pls->cmap1 = ( PLColor * )malloc( size ) ) == NULL )
+            {
+	             plexit( "Insufficient memory for colormap 1" );
+            }
+        }
+
+        // Now read the colormap from the buffer
+        rd_data( pls, &(pls->cmap1[0]), size );
+
+        plP_state( PLSTATE_CMAP1 );
+        break;
+    }
+
     }
 }
 
@@ -1090,10 +1187,11 @@ rd_data( PLStream *pls, void *buf, size_t buf_size )
 #ifdef BUFFERED_FILE
     plio_fread( buf, buf_size, 1, pls->plbufFile );
 #else
-// If U_CHAR is not the same size as what memcpy() expects (typically 1 byte)
-// then this code will have problems.  A better approach might be to use
-// uint8_t from <stdint.h> but I do not know how portable that approach is
-//
+    // If U_CHAR is not the same size as what memcpy() expects (typically
+    // 1 byte) then this code will have problems.  A better approach might be
+    // to use uint8_t from <stdint.h> but I do not know how portable that
+    // approach is
+    //
     memcpy( buf, (U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos, buf_size );
     pls->plbuf_readpos += buf_size;
 #endif
@@ -1153,10 +1251,11 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
             plexit( "plbuf wr_data:  Plot buffer grow failed" );
     }
 
-// If U_CHAR is not the same size as what memcpy() expects (typically 1 byte)
-// then this code will have problems.  A better approach might be to use
-// uint8_t from <stdint.h> but I do not know how portable that approach is
-//
+    // If U_CHAR is not the same size as what memcpy() expects (typically 1
+    // byte) then this code will have problems.  A better approach might be
+    // to use uint8_t from <stdint.h> but I do not know how portable that
+    // approach is
+    //
     memcpy( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
     pls->plbuf_top += buf_size;
 #endif
@@ -1229,13 +1328,14 @@ void * plbuf_save( PLStream *pls, void *state )
         // If a buffer exists, determine if we need to resize it
         if ( state != NULL )
         {
-            // We have a save buffer, is it smaller than the current size requirement?
+            // We have a save buffer, is it smaller than the current size
+	    // requirement?
             if ( plot_state->size < save_size )
             {
                 // Yes, reallocate a larger one
                 if ( ( plot_state = (struct _state *) realloc( state, save_size ) ) == NULL )
                 {
-                    // NOTE: If realloc fails, then plot_state ill be NULL.
+                    // NOTE: If realloc fails, then plot_state will be NULL.
                     // This will leave the original buffer untouched, thus we
                     // mark it as invalid and return it back to the caller.
                     //
@@ -1259,7 +1359,8 @@ void * plbuf_save( PLStream *pls, void *state )
             plot_state->size = save_size;
 
 #ifdef BUFFERED_FILE
-            // Make sure the FILE pointer is NULL in order to preven bad things from happening...
+            // Make sure the FILE pointer is NULL in order to prevent bad
+            // things from happening...
             plot_state->plbufFile = NULL;
 #endif
         }
@@ -1311,17 +1412,19 @@ void * plbuf_save( PLStream *pls, void *state )
             }
         }
 #else
-        // Again, note, that we only copy the portion of the plot buffer that is being used
+        // Again, note, that we only copy the portion of the plot buffer that
+	     // is being used
         plot_state->plbuf_buffer_size = pls->plbuf_top;
         plot_state->plbuf_top         = pls->plbuf_top;
         plot_state->plbuf_readpos     = 0;
 
-        // Create a pointer that points in the space we allocated after struct _state
+        // Create a pointer that points in the space we allocated after
+        // struct _state
         plot_state->plbuf_buffer = (void *) buf;
         buf += pls->plbuf_top;
 
-        // Copy the plot buffer to our new buffer.  Again, I must stress, that we only
-        // are copying the portion of the plot buffer that is being used
+        // Copy the plot buffer to our new buffer.  Again, I must stress, that
+        // we only are copying the portion of the plot buffer that is being used
         //
         if ( memcpy( plot_state->plbuf_buffer, pls->plbuf_buffer, pls->plbuf_top ) == NULL )
         {
@@ -1334,8 +1437,8 @@ void * plbuf_save( PLStream *pls, void *state )
         pls->plbuf_write = TRUE;
         pls->plbuf_read  = FALSE;
 
-        // Save the colormaps.  First create a pointer that points in the space we allocated
-        // after the plot buffer
+        // Save the colormaps.  First create a pointer that points in the
+        // space we allocated after the plot buffer
         plot_state->color_map = (struct _color_map *) buf;
         buf += sizeof ( struct _color_map ) * 2;
 
