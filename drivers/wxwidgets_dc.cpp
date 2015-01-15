@@ -667,9 +667,9 @@ void wxPLDevice::EndPage( PLStream* pls )
 		memcpy( m_outputMemoryMap.getBuffer(), pls->plbuf_buffer, pls->plbuf_top );
 		//Run the wxPlViewer with command line parameters telling it the location and size of the buffer
 		//the console will hang until wxPlViewer exits
-		wxString sizeString;
-		sizeString << pls->plbuf_top;
-		system( wxString("wxPlViewer ") + m_mfo + " " + sizeString );
+		wxString command;
+		command << wxT( "wxPlViewer " ) << wxString( m_mfo, wxConvUTF8 ) << wxT( " " ) << pls->plbuf_top;
+		system( command.mb_str() );
 	}
 }
 

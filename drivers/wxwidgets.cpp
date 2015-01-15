@@ -116,13 +116,17 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets =
 
 PLMemoryMap::PLMemoryMap()
 {
-	m_buffer=NULL;
+#ifdef WIN32
 	m_mapFile=NULL;
+#endif
+	m_buffer=NULL;
 }
 PLMemoryMap::PLMemoryMap( char *name, PLINT size, bool onlyIfExists )
 {
-	m_buffer=NULL;
+#ifdef WIN32
 	m_mapFile=NULL;
+#endif
+	m_buffer=NULL;
 	create( name, size, onlyIfExists );
 }
 void PLMemoryMap::create( char *name, PLINT size, bool onlyIfExists )
@@ -142,10 +146,12 @@ void PLMemoryMap::create( char *name, PLINT size, bool onlyIfExists )
 }
 void PLMemoryMap::close()
 {
+#ifdef WIN32
 	if( m_buffer )
 		UnmapViewOfFile( m_buffer );
 	if( m_mapFile )
 		CloseHandle( m_mapFile );
+#endif
 }
 PLMemoryMap::~PLMemoryMap()
 {

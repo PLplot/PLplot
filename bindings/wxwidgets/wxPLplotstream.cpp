@@ -64,7 +64,7 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxStri
 	if( mapfile != wxEmptyString && mapfileSize > 0 )
 	{
 		strncat( drvopt, ",mfi=", bufferSize - strlen( drvopt ) );
-		strncat( drvopt, mapfile, bufferSize - strlen( drvopt ) );
+		strncat( drvopt, mapfile.mb_str(), bufferSize - strlen( drvopt ) );
 	}
 
     setopt( "-drvopt", drvopt );

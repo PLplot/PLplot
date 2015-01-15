@@ -76,7 +76,9 @@ public:
 	char *getBuffer() { return (char*)m_buffer; }
 	bool isValid() {return m_buffer != NULL; }
 private:
+#ifdef WIN32
 	HANDLE m_mapFile;
+#endif
 	void *m_buffer;
 };
 
