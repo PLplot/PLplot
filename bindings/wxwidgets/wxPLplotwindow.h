@@ -20,12 +20,13 @@
 #if !defined ( WXPLPLOTWINDOW_H__INCLUDED_ )
 #define WXPLPLOTWINDOW_H__INCLUDED_
 
+#include "plplot.h"
+#include "wxPLplotstream.h"
+#include <wx/window.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcbuffer.h>
-
-class wxPLplotstream;
 
 // A plplot wxWindow template. To create an actual plplot wxWindow use
 // the type of wxWindow you wish to inherit from at the template parameter
@@ -35,7 +36,7 @@ class wxPLplotwindow : public WXWINDOW
 {
 public:
     wxPLplotwindow( bool useGraphicsContext = true,
-		wxString mapFile = "", PLINT mapFileSize = 0 );                     //!< Constructor.
+		wxString mapFile = wxT(""), PLINT mapFileSize = 0 );                //!< Constructor.
     ~wxPLplotwindow( void );                                                //!< Destructor.
 
     void RenewPlot( void );                                                 //!< Redo plot.
@@ -46,7 +47,8 @@ public:
 
 protected:
     virtual void OnPaint( wxPaintEvent& event );                //!< Paint event
-    virtual void OnSize( wxSizeEvent & WXUNUSED( event ) );     //!< Size event
+    virtual void OnSize( wxSizeEvent & event );     //!< Size event
+	virtual void OnErase( wxEraseEvent &event );                //!< Background erase event
     wxPLplotstream m_stream;           //!< Pointer to the wxPLplotstream which belongs to this plot widget
 
 private:
@@ -65,10 +67,15 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 
 	setUseGraphicsContext( useGraphicsContext );
 
-	SetBackgroundStyle( wxBG_STYLE_PAINT );
+	//SetBackgroundStyle( wxBG_STYLE_PAINT );
 
-	Bind( wxEVT_SIZE, &wxPLplotwindow<WXWINDOW>::OnSize, this );
-	Bind( wxEVT_PAINT, &wxPLplotwindow<WXWINDOW>::OnPaint, this );
+	//We use connect instead of Bind for compatiblity with wxWidgets 2.8
+	//but should move to bind in the future.
+	WXWINDOW::Connect( wxEVT_SIZE, wxSizeEventHandler(wxPLplotwindow<WXWINDOW>::OnSize) );
+	WXWINDOW::Connect( wxEVT_PAINT, wxPaintEventHandler(wxPLplotwindow<WXWINDOW>::OnPaint) );
+	WXWINDOW::Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(wxPLplotwindow<WXWINDOW>::OnErase) );
+	//Bind( wxEVT_SIZE, &wxPLplotwindow<WXWINDOW>::OnSize, this );
+	//Bind( wxEVT_PAINT, &wxPLplotwindow<WXWINDOW>::OnPaint, this );
 }
 
 
@@ -88,12 +95,12 @@ template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 {
 	wxAutoBufferedPaintDC dc( this );
-	int width = GetClientRect().GetSize().GetWidth();
-	int height = GetClientRect().GetSize().GetHeight();
+	int width = WXWINDOW::GetClientSize().GetWidth();
+	int height = WXWINDOW::GetClientSize().GetHeight();
 
 	wxGCDC gcdc( dc );
 
-	m_stream.SetSize( GetClientRect().GetSize().GetWidth(), GetClientRect().GetSize().GetHeight() );
+	m_stream.SetSize( WXWINDOW::GetClientSize().GetWidth(), WXWINDOW::GetClientSize().GetHeight() );
 	m_stream.SetDC( &gcdc ); // This causes a redraw.
 	m_stream.SetDC( NULL ); //Reset to NULL to avaoid writing to the wxGCDC after it has been destroyed
 
@@ -109,12 +116,19 @@ void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
 }
 
 
+template<class WXWINDOW>
+void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
+{
+	//Do nothing. This stops screen flicker.
+}
+
+
 //! Redo the whole plot.
 //
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::RenewPlot( void )
 {
-	Refresh();
+	WXWINDOW::Refresh();
 }
 
 

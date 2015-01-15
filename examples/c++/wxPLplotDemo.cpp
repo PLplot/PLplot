@@ -68,16 +68,84 @@ static const char *graph[] = {
     "UX. . . . . . . . . . . . . . UX"
 };
 
-//--------------------------------------------------------------------------
-// private classes
-//--------------------------------------------------------------------------
+
+
 class MyApp : public wxApp
 {
 public:
     virtual bool OnInit();
 };
 
+IMPLEMENT_APP( MyApp )
 
+//! This method is called right at the beginning and opens a frame for us.
+//
+bool MyApp::OnInit()
+{
+#ifdef __WXMAC__
+    // this hack enables to have a GUI on Mac OSX even if the
+    // program was called from the command line (and isn't a bundle)
+    ProcessSerialNumber psn;
+
+    GetCurrentProcess( &psn );
+    CPSEnableForegroundOperation( &psn );
+    SetFrontProcess( &psn );
+#endif
+
+	wxPLplotwindow<wxFrame> *frame = new wxPLplotwindow<wxFrame>( );
+	frame->Create( NULL, wxID_ANY, wxT("wxPLplotDemo") );
+	frame->SetIcon( wxIcon( graph ) );
+	frame->Show();
+
+    return true;
+}
+
+template< class WXWINDOW >
+void Plot( wxPLplotwindow<WXWINDOW> *plotwindow )
+{
+    wxPLplotstream* pls = plotwindow->GetStream();
+
+    const size_t  np = 500;
+    PLFLT         x[np], y[np];
+    PLFLT         xmin, xmax;
+    PLFLT         ymin = 1e30, ymax = 1e-30;
+
+    xmin = -2.0;
+    xmax = 10.0;
+    for ( size_t i = 0; i < np; i++ )
+    {
+        x[i] = ( xmax - xmin ) * i / np + xmin;
+        y[i] = 1.0;
+        if ( x[i] != 0.0 )
+            y[i] = sin( x[i] ) / x[i];
+        ymin = MIN( ymin, y[i] );
+        ymax = MAX( ymax, y[i] );
+    }
+
+    pls->adv( 0 );
+    if ( bgcolor )
+    {
+        pls->scol0( 0, 255, 255, 255 );
+        pls->scol0( 15, 0, 0, 0 );
+    }
+    else
+    {
+        pls->scol0( 15, 255, 255, 255 );
+        pls->scol0( 0, 0, 0, 0 );
+    }
+    pls->col0( 1 );
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->col0( 2 );
+    pls->lab( "x", "y", "sin(x)/x" );
+
+    pls->col0( 3 );
+    pls->width( 2 );
+    pls->line( np, x, y );
+
+    plotwindow->RenewPlot();
+}
+
+/*
 class MyPlotwindow : public wxPLplotwindow
 {
 public:
@@ -128,31 +196,11 @@ EVT_MENU( wxPLplotDemo_About, MyFrame::OnAbout )
 EVT_MENU( wxPLplotDemo_BGColor, MyFrame::OnBackgroundColor )
 END_EVENT_TABLE()
 
-IMPLEMENT_APP( MyApp )
 
 //--------------------------------------------------------------------------
 // implementation
 //--------------------------------------------------------------------------
 
-//! This method is called right at the beginning and opens a frame for us.
-//
-bool MyApp::OnInit()
-{
-#ifdef __WXMAC__
-    // this hack enables to have a GUI on Mac OSX even if the
-    // program was called from the command line (and isn't a bundle)
-    ProcessSerialNumber psn;
-
-    GetCurrentProcess( &psn );
-    CPSEnableForegroundOperation( &psn );
-    SetFrontProcess( &psn );
-#endif
-
-    MyFrame *frame = new MyFrame( _T( "wxPLplot demo" ) );
-    frame->Show( true );
-
-    return true;
-}
 
 
 MyPlotwindow::MyPlotwindow( wxFrame* frame, wxWindow* parent, wxWindowID id, const wxPoint& pos,
@@ -296,4 +344,4 @@ void MyFrame::OnAbout( wxCommandEvent& WXUNUSED( event ) )
 {
     wxMessageBox( _T( "This is the About dialog of the wxPLplot demo.\n" ), _T( "About wxPLplot" ),
         wxOK | wxICON_INFORMATION, this );
-}
+}*/
