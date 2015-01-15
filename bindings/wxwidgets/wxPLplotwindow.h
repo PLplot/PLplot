@@ -100,9 +100,9 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 
 	wxDC *pldc = &dc;
 #ifdef wxUSE_GRAPHICS_CONTEXT
+	wxGCDC gcdc( dc );
 	if ( m_useGraphicsContext )
 	{
-		wxGCDC gcdc( dc );
 		pldc = &gcdc;
 	}
 #endif
