@@ -118,18 +118,24 @@ PLMemoryMap::PLMemoryMap()
 {
 #ifdef WIN32
 	m_mapFile=NULL;
+#else
+	m_mapFile = 0;
+	m_name = NULL;
 #endif
 	m_buffer=NULL;
 }
-PLMemoryMap::PLMemoryMap( char *name, PLINT size, bool onlyIfExists )
+PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool onlyIfExists )
 {
 #ifdef WIN32
-	m_mapFile=NULL;
+	m_mapFile = NULL;
+#else
+	m_mapFile = 0;
+	m_name = NULL;
 #endif
 	m_buffer=NULL;
 	create( name, size, onlyIfExists );
 }
-void PLMemoryMap::create( char *name, PLINT size, bool onlyIfExists )
+void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
 {
 	close();
 
@@ -142,6 +148,18 @@ void PLMemoryMap::create( char *name, PLINT size, bool onlyIfExists )
 
 	if( m_mapFile )
 		m_buffer = MapViewOfFile( m_mapFile, FILE_MAP_ALL_ACCESS, 0, 0, size );
+#else
+	if( onlyIfExists )
+		m_mapFile = shm_open( name, O_RDWR, 0 );
+	else
+		m_mapFile = shm_open( name, O_RDWR|O_CREAT, S_IRWXU ); //S_IRWXU gives user wrx permissions
+	if( m_mapFile)
+	{
+		m_buffer = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, m_mapFile, 0 );
+		m_size = size;
+		m_name = new char[strlen( name ) + 1];
+		strcpy( m_name, name );
+	}
 #endif
 }
 void PLMemoryMap::close()
@@ -151,7 +169,18 @@ void PLMemoryMap::close()
 		UnmapViewOfFile( m_buffer );
 	if( m_mapFile )
 		CloseHandle( m_mapFile );
+	m_mapfile = NULL;
+#else
+	if( m_buffer )
+		munmap( m_buffer, m_size );
+	if( m_mapFile )
+		shm_unlink( m_name );
+	if( m_name )
+		delete m_name;
+	m_mapFile = 0;
+	m_name = NULL;
 #endif
+	m_buffer = NULL;
 }
 PLMemoryMap::~PLMemoryMap()
 {

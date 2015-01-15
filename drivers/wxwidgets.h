@@ -24,6 +24,12 @@
 #include <wx/spinctrl.h>
 #ifdef wxUSE_GRAPHICS_CONTEXT
 #include <wx/dcgraph.h>
+
+#endif
+#ifndef WIN32
+#include<sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #endif
 
 #define NDEV                                                  100 // Max number of output device types in menu
@@ -69,8 +75,8 @@ class PLMemoryMap
 {
 public:
 	PLMemoryMap();
-	PLMemoryMap( char *name, PLINT size, bool onlyIfExists );
-	void create( char *name, PLINT size, bool onlyIfExists );
+	PLMemoryMap( const char *name, PLINT size, bool onlyIfExists );
+	void create( const char *name, PLINT size, bool onlyIfExists );
 	void close();
 	~PLMemoryMap();
 	char *getBuffer() { return (char*)m_buffer; }
@@ -78,6 +84,10 @@ public:
 private:
 #ifdef WIN32
 	HANDLE m_mapFile;
+#else
+	int m_mapFile;
+	PLINT m_size;
+	char * m_name;
 #endif
 	void *m_buffer;
 };
