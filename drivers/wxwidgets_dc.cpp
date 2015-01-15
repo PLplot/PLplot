@@ -26,6 +26,7 @@
 
 // wxwidgets headers
 #include <wx/wx.h>
+#include<wx/dir.h>
 
 #include "plDevs.h"
 
@@ -665,10 +666,34 @@ void wxPLDevice::EndPage( PLStream* pls )
 		}
 		//copy the page's buffer to the map
 		memcpy( m_outputMemoryMap.getBuffer(), pls->plbuf_buffer, pls->plbuf_top );
+
+		//try to find the wxPLViewer executable, in the first instance just assume it
+		//is in the path.
+		wxString exeName = wxT( "wxPLViewer" );
+		if ( plInBuildTree() )
+		{
+			//if we are in the build tree check for the needed exe in there
+			wxArrayString files;
+			wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName, wxDIR_FILES|wxDIR_DIRS );
+			if ( files.size() == 0 )
+				wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES|wxDIR_DIRS );
+			if ( files.size() > 0 )
+				exeName = files[0];
+		}
+		else
+		{
+			//check the plplot bin install directory
+			wxArrayString files;
+			wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName, wxDIR_FILES|wxDIR_DIRS );
+			if ( files.size() == 0 )
+				wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES|wxDIR_DIRS );
+			if ( files.size() > 0 )
+				exeName = files[0];
+		}
 		//Run the wxPlViewer with command line parameters telling it the location and size of the buffer
 		//the console will hang until wxPlViewer exits
 		wxString command;
-		command << wxT( "wxPlViewer " ) << wxString( m_mfo, wxConvUTF8 ) << wxT( " " ) << pls->plbuf_top;
+			command << wxT("\"") << exeName << wxT( "\" " ) << wxString( m_mfo, wxConvUTF8 ) << wxT( " " ) << pls->plbuf_top;
 		system( command.mb_str() );
 	}
 }
