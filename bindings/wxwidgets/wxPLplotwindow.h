@@ -67,7 +67,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 
 	setUseGraphicsContext( useGraphicsContext );
 
-	//SetBackgroundStyle( wxBG_STYLE_PAINT );
+	WXWINDOW::SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 
 	//We use connect instead of Bind for compatiblity with wxWidgets 2.8
 	//but should move to bind in the future.
@@ -98,10 +98,17 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 	int width = WXWINDOW::GetClientSize().GetWidth();
 	int height = WXWINDOW::GetClientSize().GetHeight();
 
-	wxGCDC gcdc( dc );
+	wxDC *pldc = &dc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	if ( m_useGraphicsContext )
+	{
+		wxGCDC gcdc( dc );
+		pldc = &gcdc;
+	}
+#endif
 
 	m_stream.SetSize( WXWINDOW::GetClientSize().GetWidth(), WXWINDOW::GetClientSize().GetHeight() );
-	m_stream.SetDC( &gcdc ); // This causes a redraw.
+	m_stream.SetDC( pldc ); // This causes a redraw.
 	m_stream.SetDC( NULL ); //Reset to NULL to avaoid writing to the wxGCDC after it has been destroyed
 
 }
