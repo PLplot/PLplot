@@ -72,3 +72,23 @@ install(TARGETS pltek DESTINATION ${BIN_DIR})
 # Build simple executable to check parity bits of all characters read
 # by stdin.
 add_executable(parity_bit_check parity_bit_check.c)
+
+if(ENABLE_wxwidgets)
+# Build wxwidgets applications with same wxwidgets compile and link flags
+# as used with the PLplot wxwidgets device driver.
+  set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp)
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(${wxPLViewer_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
+  else(BUILD_SHARED_LIBS)
+    set_source_files_properties(${wxPLViewer_SRCS}
+      PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
+  endif(BUILD_SHARED_LIBS)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/bindings/wxwidgets
+	${CMAKE_SOURCE_DIR}/bindings/c++
+    )
+  add_executable(wxPLViewer WIN32 ${wxPLViewer_SRCS})
+  target_link_libraries(wxPLViewer plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
+  install(TARGETS wxPLViewer DESTINATION ${BIN_DIR})
+endif(ENABLE_wxwidgets)
