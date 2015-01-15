@@ -169,7 +169,7 @@ void PLMemoryMap::close()
 		UnmapViewOfFile( m_buffer );
 	if( m_mapFile )
 		CloseHandle( m_mapFile );
-	m_mapfile = NULL;
+	m_mapFile = NULL;
 #else
 	if( m_buffer )
 		munmap( m_buffer, m_size );
