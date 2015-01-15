@@ -271,8 +271,8 @@ void main(void){}
       message(STATUS "Looking for wish - found")
       message(STATUS "TK_WISH = ${TK_WISH}")
       if(NOT PLPLOT_TK_VERSION)
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckTK_VERSION.tcl "puts -nonewline [package require Tk]; exit")
-	# Find Tk version via wish or fail.
+	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckTK_VERSION.tcl "puts -nonewline [package provide Tk]; exit")
+	# Find Tk version via wish or fail. Use "provide" rather than "require" - wish hangs on Linux if there is no display, and so does CMake
 	execute_process(
 	  COMMAND ${TK_WISH} ${CMAKE_CURRENT_BINARY_DIR}/CheckTK_VERSION.tcl
 	  RESULT_VARIABLE TK_RC
@@ -349,7 +349,7 @@ void main(void){}
 	      set(ENABLE_tk OFF CACHE BOOL "Enable Tk bindings" FORCE)
 	    endif(NOT TCL_RC AND _plplot_tcl_version STREQUAL PLPLOT_TCL_VERSION)
 	  else(PLPLOT_TCL_VERSION STREQUAL PLPLOT_TK_VERSION)
-	    message(STATUS "Tk version = ${PLPLOT_TK_VERSION} found by wish is not consistent with 
+	    message(STATUS "Tk version = ${PLPLOT_TK_VERSION} found by wish is not consistent with
    Tcl version = ${PLPLOT_TCL_VERSION} found by tclsh"
 	      )
 	    message(STATUS "WARNING: setting ENABLE_tk to OFF")
