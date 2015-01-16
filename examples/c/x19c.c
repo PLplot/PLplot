@@ -128,7 +128,7 @@ main( int argc, const char **argv )
     //variables for the shapelib example
     const PLINT nbeachareas    = 2;
     const PLINT beachareas[]   = { 23, 24 };
-    const       nwoodlandareas = 94;
+    const PLINT nwoodlandareas = 94;
     PLINT       woodlandareas[94];
     const PLINT nshingleareas  = 22;
     const PLINT shingleareas[] = { 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 };
