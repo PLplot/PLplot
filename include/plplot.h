@@ -166,7 +166,8 @@ typedef float    PLFLT;
 typedef uint32_t       PLUINT;
 typedef int32_t        PLINT;
 typedef int64_t        PLINT64;
-#define PLINT_MIN    INT32_MIN
+#define PLINT_MIN      INT32_MIN
+#define PLINT_MAX      INT32_MAX
 #else
 // A reasonable back-up in case stdint.h does not exist on the platform.
 typedef unsigned int   PLUINT;

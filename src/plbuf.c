@@ -248,6 +248,16 @@ plbuf_state( PLStream *pls, PLINT op )
 	// Save the color palatte
         wr_data( pls, &( pls->cmap1[0] ), sizeof ( PLColor ) * pls->ncol1 );
         break;
+	case PLSTATE_CHR:
+		//save the chrdef and chrht parameters
+		wr_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
+		wr_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
+		break;
+	case PLSTATE_SYM:
+		//save the symdef and symht parameters
+		wr_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
+		wr_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
+		break;
     }
 }
 
@@ -734,6 +744,18 @@ rdbuf_state( PLStream *pls )
         plP_state( PLSTATE_CMAP1 );
         break;
     }
+						
+	case PLSTATE_CHR: {
+		//read the chrdef and chrht parameters
+		rd_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
+		rd_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
+	}
+						
+	case PLSTATE_SYM: {
+		//read the symdef and symht parameters
+		rd_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
+		rd_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
+	}
 
     }
 }
