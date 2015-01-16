@@ -245,18 +245,12 @@ void plD_init_wxwidgets( PLStream* pls )
     if ( text == -1 )
         text = 0;
 
-    // allocate memory for the device storage
+    // create the new device
 	wxPLDevice* dev = new wxPLDevice ( pls, mfo, mfi, mfisize, text, hrshsym );
     if ( dev == NULL )
     {
         plexit( "Insufficient memory" );
     }
-
-    // initialize frame size and position
-    if ( pls->xlength <= 0 || pls->ylength <= 0 )
-        plspage( 0.0, 0.0, (PLINT) ( CANVAS_WIDTH * DEVICE_PIXELS_PER_IN ),
-            (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN ), 0, 0 );
-
 
     // If portrait mode, apply a rotation and set freeaspect
     if ( pls->portrait )
@@ -265,8 +259,6 @@ void plD_init_wxwidgets( PLStream* pls )
         pls->freeaspect = 1;
     }
 
-    // Set the number of pixels per mm
-    plP_setpxl( (PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
 }
 
 #endif  // PLD_wxwidgets

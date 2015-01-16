@@ -46,27 +46,27 @@
 // side, but report/receive everything in virtual coordinates to/from the
 // PLplot core.
 //
-#define VSCALE                   ( 40. )
+//#define VSCALE                   ( 40. )
 
 // pixels per inch
-#define DEVICE_PIXELS_PER_IN     ( 80. )
-#define VIRTUAL_PIXELS_PER_IN    ( DEVICE_PIXELS_PER_IN * VSCALE )
+//#define DEVICE_PIXELS_PER_IN     ( 80. )
+//#define VIRTUAL_PIXELS_PER_IN    ( DEVICE_PIXELS_PER_IN * VSCALE )
 
 
 // mm per inch
-#define MM_PER_IN                    ( 25.4 )
+//#define MM_PER_IN                    ( 25.4 )
 
 // pixels per mm
-#define DEVICE_PIXELS_PER_MM         ( DEVICE_PIXELS_PER_IN / MM_PER_IN )
-#define VIRTUAL_PIXELS_PER_MM        ( VIRTUAL_PIXELS_PER_IN / MM_PER_IN )
+//#define DEVICE_PIXELS_PER_MM         ( DEVICE_PIXELS_PER_IN / MM_PER_IN )
+//#define VIRTUAL_PIXELS_PER_MM        ( VIRTUAL_PIXELS_PER_IN / MM_PER_IN )
 
 // Default dimensions of the canvas (in inches)
-#define CANVAS_WIDTH                 ( 10.0 )
-#define CANVAS_HEIGHT                ( 7.5 )
+//#define CANVAS_WIDTH                 ( 10.0 )
+//#define CANVAS_HEIGHT                ( 7.5 )
 
 // size of plot in pixels on screen if not given
-#define PLOT_WIDTH                   ( 800 )
-#define PLOT_HEIGHT                  ( 600 )
+//#define PLOT_WIDTH                   ( 800 )
+//#define PLOT_HEIGHT                  ( 600 )
 
 
 class wxPLplotFrame;
@@ -119,17 +119,15 @@ protected:
 	//The DC we will draw on if given by the user
     wxDC       *m_dc;
 
-	//Locations of the corners of the page
-    PLINT        m_xmin;
-    PLINT        m_xmax;
-    PLINT        m_ymin;
-    PLINT        m_ymax;
-
 	//Size and Scale
-    PLINT        m_width;
-    PLINT        m_height;
-    PLFLT        m_scalex;
-    PLFLT        m_scaley;
+	//As far as plplot is concerned the size of the window is SHRT_MAX by
+	//SHRT_MAX which gives us the best resolution.
+	const PLFLT  m_plplotEdgeLength;
+    PLFLT        m_width; //native width
+    PLFLT        m_height; //native height
+    PLFLT        m_scalex; //conversion from native width to plplotEdgeLength
+    PLFLT        m_scaley; //conversion from native height to plplotEdgeLength
+	//PLFLT        m_ppi; //pixels per inch (actually conversion from native size to inches)
 
 	// Flags indicating change of state before we have a DC.
     bool         m_plstate_width;

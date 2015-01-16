@@ -63,7 +63,8 @@ template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 		wxString mapFile, PLINT mapFileSize )
 {
-	m_stream.Create( NULL, 0, 0, wxPLPLOT_DRAW_TEXT, mapFile, mapFileSize );
+	m_stream.Create( NULL, WXWINDOW::GetClientSize().GetWidth(), WXWINDOW::GetClientSize().GetHeight(),
+		wxPLPLOT_DRAW_TEXT, mapFile, mapFileSize );
 
 	setUseGraphicsContext( useGraphicsContext );
 

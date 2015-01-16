@@ -20,7 +20,8 @@ bool wxPlViewerApp::OnInit()
 		file = argv[1];
 		wxString(argv[2]).ToLong( &fileSize );
 	}
-	wxPlFrame* frame = new wxPlFrame( NULL, wxID_ANY, wxT("wxPlViewer"), file, PLINT(fileSize) );
+	wxPlFrame* frame = new wxPlFrame( NULL, wxID_ANY, wxT("wxPlViewer"), file,
+		PLINT(fileSize), wxDefaultPosition, wxSize( 500, 500 ) );
 	frame->Show();
 	return true;
 }

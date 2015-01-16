@@ -1251,6 +1251,9 @@ check_buffer_size( PLStream *pls, size_t data_size )
 
     if ( required_size >= pls->plbuf_buffer_size )
     {
+		if( pls->plbuf_buffer_grow == 0 )
+			pls->plbuf_buffer_grow = 128 * 1024;
+
         // Not enough space, need to grow the buffer before memcpy
         // Must make sure the increase is enough for this data, so
         // Determine the amount of space required and grow in multiples
@@ -1301,7 +1304,6 @@ static void
 wr_data( PLStream *pls, void *buf, size_t buf_size )
 {
     check_buffer_size(pls, buf_size);
-
     memcpy( (uint8_t *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
 
     // Advance position but maintain alignment

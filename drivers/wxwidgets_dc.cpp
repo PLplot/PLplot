@@ -45,6 +45,7 @@
 //  class. Only some initialisations are done.
 //--------------------------------------------------------------------------
 wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PLINT text, PLINT hrshsym )
+	:m_plplotEdgeLength( PLFLT( SHRT_MAX ) )
 {
 
     m_plstate_width  = false;
@@ -97,18 +98,47 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
     pls->dev = (void *) this;
 
 
-    // Set up physical limits of plotting device (in drawing units)
-    PLFLT downscale  = (double) m_width / (double) ( PIXELS_X - 1 );
-    PLFLT downscale2 = (double) m_height / (double) PIXELS_Y;
-    if ( downscale < downscale2 )
-        downscale = downscale2;
-    plP_setphy( (PLINT) 0, (PLINT) ( m_width / downscale ),
-        (PLINT) 0, (PLINT) ( m_height / downscale ) );
+    // Set up physical limits of plotting device in plplot internal units
+	// we just tell plplot we are the maximum plint in both dimensions
+	//which gives us the best resolution
+    //PLFLT downscale  = (double) m_width / (double) ( PIXELS_X - 1 );
+    //PLFLT downscale2 = (double) m_height / (double) PIXELS_Y;
+    //if ( downscale < downscale2 )
+    //    downscale = downscale2;
+    plP_setphy( (PLINT) 0, (PLINT) SHRT_MAX,
+        (PLINT) 0, (PLINT) SHRT_MAX );
 
-    // get physical device limits coordinates
-    plP_gphy( &m_xmin, &m_xmax, &m_ymin, &m_ymax );
+    // set dpi and page size defaults
+	// the user might have already set this with plspage
+	// so only override zeros
+	if( pls->xdpi == 0 && pls->ydpi == 0 )
+	{
+		pls->xdpi = 72;
+		pls->ydpi = 72;
+	}
+	else if( pls->xdpi == 0 )
+		pls->xdpi = pls->ydpi;
+	else if( pls->ydpi ==0 )
+		pls->ydpi = pls->xdpi;
 
-	SetSize( pls, m_width, m_height );
+	if( pls->xlength == 0 && pls->ylength == 0 )
+	{
+		pls->xlength = 600;
+		pls->ylength = 600;
+	}
+	else if( pls->xlength == 0 )
+		pls->xlength = pls->ylength;
+	else if( pls->ylength ==0 )
+		pls->ylength = pls->xlength;
+
+
+    // initialize frame size and position
+    //if ( pls->xlength <= 0 || pls->ylength <= 0 )
+    //    plspage( 0.0, 0.0, (PLINT) ( CANVAS_WIDTH * DEVICE_PIXELS_PER_IN ),
+    //        (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN ), 0, 0 );
+	SetSize( pls, pls->xlength, pls->ylength );
+
+
 
 	if( strlen(m_mfi)>0 )
 	{
@@ -520,6 +550,7 @@ void wxPLDevice::SetFont( PLUNICODE fci )
     if ( m_font )
         delete m_font;
 
+	//create the font based on point size ( with 1 point = 1/72 inch )
     m_font = wxFont::New( (int) ( m_fontSize * m_fontScale < 4 ? 4 : m_fontSize * m_fontScale ),
         fontFamilyLookup[fontFamily],
         fontStyleLookup[fontStyle] | fontWeightLookup[fontWeight] );
@@ -554,8 +585,9 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         return;
     }
 
-    // Calculate the font size (in pixels)
-    m_fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM / m_scaley * 1.3;
+    // Calculate the font size (in pt)
+	// Plplot saves it in mm (bizarre units!)
+    m_fontSize = pls->chrht * 72.0 / 25.4;
 
     // Use PLplot core routine to get the corners of the clipping rectangle
     PLINT rcx[4], rcy[4];
@@ -730,13 +762,20 @@ void wxPLDevice::BeginPage( PLStream* pls )
 void wxPLDevice::SetSize( PLStream* pls, int width, int height )
 {
 	// set new size and scale parameters
-    m_width  = width;
-    m_height = height;
-    m_scalex = (PLFLT) ( m_xmax - m_xmin ) / width;
-    m_scaley = (PLFLT) ( m_ymax - m_ymin ) / height;
+    m_width  = pls->xlength = width;
+    m_height = pls->ylength = height;
 
-    // set dpi
-    plspage( VIRTUAL_PIXELS_PER_IN / m_scalex, VIRTUAL_PIXELS_PER_IN / m_scaley, 0, 0, 0, 0 );
+    // get boundary coordinates in plplot units
+	PLINT xmin;
+	PLINT xmax;
+	PLINT ymin;
+	PLINT ymax;
+    plP_gphy( &xmin, &xmax, &ymin, &ymax );
+    m_scalex = m_width > 0 ? (PLFLT) ( xmax - xmin ) / (PLFLT) width : 0.0;
+    m_scaley = m_height > 0 ? (PLFLT) ( ymax - ymin ) / (PLFLT) height : 0.0;
+
+    // Set the number of plplot pixels per mm
+	plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );
 
 	//redraw the plot if we have somewhere to draw it to
 	if( m_dc )
