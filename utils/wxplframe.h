@@ -1,7 +1,7 @@
 #ifndef WXPLFRAME_H
 #define WXPLFRAME_H
 
-#include <wx\frame.h>
+#include <wx/frame.h>
 #include "wxPLplotstream.h"
 #include "wxPLplotwindow.h"
 
