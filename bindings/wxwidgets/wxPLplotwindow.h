@@ -42,8 +42,7 @@ public:
     void RenewPlot( void );                                                 //!< Redo plot.
     bool SavePlot( const wxString& driver, const wxString& filename );      //!< Save plot using a different driver.
     wxPLplotstream* GetStream()  { return m_stream; }                       //!< Get pointer to wxPLplotstream of this widget.
-    int getBackend()  { return m_backend; }
-	void setUseGraphicsContext( bool useGraphicsContext );
+   void setUseGraphicsContext( bool useGraphicsContext );
 
 protected:
     virtual void OnPaint( wxPaintEvent& event );                //!< Paint event
