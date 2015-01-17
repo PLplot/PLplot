@@ -68,7 +68,8 @@ static const char *graph[] = {
     "UX. . . . . . . . . . . . . . UX"
 };
 
-
+template< class WXWINDOW >
+void Plot( wxPLplotwindow<WXWINDOW> *plotwindow );
 
 class MyApp : public wxApp
 {
@@ -96,6 +97,7 @@ bool MyApp::OnInit()
 	frame->Create( NULL, wxID_ANY, wxT("wxPLplotDemo") );
 	frame->SetIcon( wxIcon( graph ) );
 	frame->Show();
+	Plot( frame );
 
     return true;
 }
@@ -123,16 +125,6 @@ void Plot( wxPLplotwindow<WXWINDOW> *plotwindow )
     }
 
     pls->adv( 0 );
-    if ( bgcolor )
-    {
-        pls->scol0( 0, 255, 255, 255 );
-        pls->scol0( 15, 0, 0, 0 );
-    }
-    else
-    {
-        pls->scol0( 15, 255, 255, 255 );
-        pls->scol0( 0, 0, 0, 0 );
-    }
     pls->col0( 1 );
     pls->env( xmin, xmax, ymin, ymax, 0, 0 );
     pls->col0( 2 );
