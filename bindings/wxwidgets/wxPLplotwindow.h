@@ -45,9 +45,11 @@ public:
    void setUseGraphicsContext( bool useGraphicsContext );
 
 protected:
-    virtual void OnPaint( wxPaintEvent& event );                //!< Paint event
-    virtual void OnSize( wxSizeEvent & event );     //!< Size event
-	virtual void OnErase( wxEraseEvent &event );                //!< Background erase event
+    virtual void OnPaint( wxPaintEvent& event );          //!< Paint event
+    virtual void OnSize( wxSizeEvent & event );           //!< Size event
+	virtual void OnErase( wxEraseEvent &event );          //!< Background erase event
+	virtual void OnCreate( wxWindowCreateEvent &event );  //!< Window created event
+	bool       m_created;              //!< Flag to indicate the window has been Created, must be above m_stream so it gets initialised first
     wxPLplotstream m_stream;           //!< Pointer to the wxPLplotstream which belongs to this plot widget
 
 private:
@@ -61,6 +63,7 @@ private:
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 		wxString mapFile, PLINT mapFileSize )
+		:m_created(false)
 {
 	//slightly annoyingly, at this point we haven't created the window
 	//so we haven't got a size to pass to create to use for default
@@ -77,6 +80,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 	WXWINDOW::Connect( wxEVT_SIZE, wxSizeEventHandler(wxPLplotwindow<WXWINDOW>::OnSize) );
 	WXWINDOW::Connect( wxEVT_PAINT, wxPaintEventHandler(wxPLplotwindow<WXWINDOW>::OnPaint) );
 	WXWINDOW::Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(wxPLplotwindow<WXWINDOW>::OnErase) );
+	WXWINDOW::Connect( wxEVT_CREATE, wxWindowCreateEventHandler(wxPLplotwindow<WXWINDOW>::OnCreate) );
 	//Bind( wxEVT_SIZE, &wxPLplotwindow<WXWINDOW>::OnSize, this );
 	//Bind( wxEVT_PAINT, &wxPLplotwindow<WXWINDOW>::OnPaint, this );
 }
@@ -132,13 +136,20 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 	//Do nothing. This stops screen flicker.
 }
 
+template<class WXWINDOW>
+void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
+{
+	m_created = true;
+}
+
 
 //! Redo the whole plot.
 //
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::RenewPlot( void )
 {
-	WXWINDOW::Refresh();
+	if ( m_created )
+		WXWINDOW::Refresh();
 }
 
 
