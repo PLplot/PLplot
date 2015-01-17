@@ -119,7 +119,7 @@ PLMemoryMap::PLMemoryMap()
 #ifdef WIN32
 	m_mapFile=NULL;
 #else
-	m_mapFile = 0;
+	m_mapFile = -1;
 	m_name = NULL;
 #endif
 	m_buffer=NULL;
@@ -129,7 +129,7 @@ PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool onlyIfExists )
 #ifdef WIN32
 	m_mapFile = NULL;
 #else
-	m_mapFile = 0;
+	m_mapFile = -1;
 	m_name = NULL;
 #endif
 	m_buffer=NULL;
@@ -153,10 +153,13 @@ void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
 		m_mapFile = shm_open( name, O_RDWR, 0 );
 	else
 		m_mapFile = shm_open( name, O_RDWR|O_CREAT, S_IRWXU ); //S_IRWXU gives user wrx permissions
-	if( m_mapFile)
+	if( m_mapFile != -1 )
 	{
-		m_buffer = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, m_mapFile, 0 );
-		m_size = size;
+		if ( ftruncate( m_mapFile, size ) != -1 )
+		{
+			m_buffer = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, m_mapFile, 0 );
+			m_size = size;
+		}
 		m_name = new char[strlen( name ) + 1];
 		strcpy( m_name, name );
 	}
@@ -173,12 +176,13 @@ void PLMemoryMap::close()
 #else
 	if( m_buffer )
 		munmap( m_buffer, m_size );
-	if( m_mapFile )
+	if( m_mapFile != -1 )
 		shm_unlink( m_name );
 	if( m_name )
 		delete m_name;
-	m_mapFile = 0;
+	m_mapFile = -1;
 	m_name = NULL;
+	m_size = 0;
 #endif
 	m_buffer = NULL;
 }
