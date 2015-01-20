@@ -1,6 +1,6 @@
 # cmake/modules/tcl-related.cmake
 #
-# Copyright (C) 2006-2013  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -271,8 +271,8 @@ void main(void){}
       message(STATUS "Looking for wish - found")
       message(STATUS "TK_WISH = ${TK_WISH}")
       if(NOT PLPLOT_TK_VERSION)
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckTK_VERSION.tcl "puts -nonewline [package provide Tk]; exit")
-	# Find Tk version via wish or fail. Use "provide" rather than "require" - wish hangs on Linux if there is no display, and so does CMake
+	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckTK_VERSION.tcl "puts -nonewline [package require Tk]; exit")
+	# Find Tk version via wish or fail.
 	execute_process(
 	  COMMAND ${TK_WISH} ${CMAKE_CURRENT_BINARY_DIR}/CheckTK_VERSION.tcl
 	  RESULT_VARIABLE TK_RC
