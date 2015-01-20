@@ -152,14 +152,15 @@ void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
 	if( onlyIfExists )
 		m_mapFile = shm_open( name, O_RDWR, 0 );
 	else
+	{
 		m_mapFile = shm_open( name, O_RDWR|O_CREAT, S_IRWXU ); //S_IRWXU gives user wrx permissions
+		if( ftruncate( m_mapFile, size ) == -1 )
+			close( );
+	}
 	if( m_mapFile != -1 )
 	{
-		if ( ftruncate( m_mapFile, size ) != -1 )
-		{
-			m_buffer = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, m_mapFile, 0 );
-			m_size = size;
-		}
+		m_buffer = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, m_mapFile, 0 );
+		m_size = size;
 		m_name = new char[strlen( name ) + 1];
 		strcpy( m_name, name );
 	}
