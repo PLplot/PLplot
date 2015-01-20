@@ -73,8 +73,6 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 
 	setUseGraphicsContext( useGraphicsContext );
 
-	WXWINDOW::SetBackgroundStyle( wxBG_STYLE_CUSTOM );
-
 	//We use connect instead of Bind for compatiblity with wxWidgets 2.8
 	//but should move to bind in the future.
 	WXWINDOW::Connect( wxEVT_SIZE, wxSizeEventHandler(wxPLplotwindow<WXWINDOW>::OnSize) );
@@ -101,6 +99,12 @@ wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 {
+	//Really this should be in the constructor, but it caused a segfault
+	//on at least one system (CentOS with intel compiler and wxWidgets 2.8.12).
+	//Moving it here after WXWINDOW::Create has benn called stops this and
+	//the call does nothing if the style is the same as previous calls.
+	WXWINDOW::SetBackgroundStyle( wxBG_STYLE_CUSTOM );
+
 	wxAutoBufferedPaintDC dc( this );
 	int width = WXWINDOW::GetClientSize().GetWidth();
 	int height = WXWINDOW::GetClientSize().GetHeight();
