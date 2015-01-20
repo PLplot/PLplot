@@ -37,6 +37,30 @@
 #include <cmath>
 #include "wxwidgets.h"
 
+//--------------------------------------------------------------------------
+// ScaleChanger class
+// This class changes the logical scale of a dc on construction and resets
+// it to its original value on destruction. It is ideal for making temporary
+// changes to the scale and guarenteeing that the scale gets set back.
+//--------------------------------------------------------------------------
+class Scaler
+{
+public:
+	Scaler( wxDC * dc, double xScale, double yScale )
+	{
+		m_dc = dc;
+		dc->GetLogicalScale(  &m_xScaleOld, &m_yScaleOld );
+		dc->SetLogicalScale( xScale, yScale );
+	}
+	~Scaler( )
+	{
+		m_dc->SetLogicalScale( m_xScaleOld, m_yScaleOld );
+	}
+private:
+	wxDC *m_dc;
+	double m_xScaleOld;
+	double m_yScaleOld;
+};
 
 //--------------------------------------------------------------------------
 //  wxPLDevice::wxPLDevice( void )
@@ -184,10 +208,7 @@ void wxPLDevice::DrawLine( short x1a, short y1a, short x2a, short y2a )
 	if( !m_dc )
 		return;
 
-    x1a = (short) ( x1a / m_scalex ); y1a = (short) ( m_height - y1a / m_scaley );
-    x2a = (short) ( x2a / m_scalex );        y2a = (short) ( m_height - y2a / m_scaley );
-
-    m_dc->DrawLine( (wxCoord) x1a, (wxCoord) y1a, (wxCoord) x2a, (wxCoord) y2a );
+    m_dc->DrawLine( (wxCoord) x1a, (wxCoord) ( m_plplotEdgeLength - y1a ), (wxCoord) x2a, (wxCoord) ( m_plplotEdgeLength - y2a ) );
 }
 
 
@@ -201,18 +222,8 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 	if( !m_dc )
 		return;
 
-    wxCoord x1a, y1a, x2a, y2a;
-
-    x2a = (wxCoord) ( xa[0] / m_scalex );
-    y2a = (wxCoord) ( m_height - ya[0] / m_scaley );
     for ( PLINT i = 1; i < npts; i++ )
-    {
-        x1a = x2a; y1a = y2a;
-        x2a = (wxCoord) ( xa[i] / m_scalex );
-        y2a = (wxCoord) ( m_height - ya[i] / m_scaley );
-
-        m_dc->DrawLine( x1a, y1a, x2a, y2a );
-    }
+        m_dc->DrawLine( xa[i-1], m_plplotEdgeLength - ya[i-1], xa[i], m_plplotEdgeLength - ya[i] );
 }
 
 
@@ -228,29 +239,23 @@ void wxPLDevice::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
 	if( !m_dc )
 		return;
 
-    if ( x1 < 0 )
-        x1 = 0;
-    else
-        x1 = (PLINT) ( x1 / m_scalex );
-    if ( y1 < 0 )
-        y1 = 0;
-    else
-        y1 = (PLINT) ( m_height - y1 / m_scaley );
-    if ( x2 < 0 )
-        x2 = m_width;
-    else
-        x2 = (PLINT) ( x2 / m_scalex );
-    if ( y2 < 0 )
-        y2 = m_height;
-    else
-        y2 = (PLINT) ( m_height - y2 / m_scaley );
+	x1 = x1 < 0 ? 0 : x1;
+	x2 = x2 < 0 ? m_plplotEdgeLength : x2;
+	y1 = y1 < 0 ? 0 : y1;
+	y2 = y2 < 0 ? m_plplotEdgeLength : y2;
+
+	PLINT x = MIN( x1, x2 );
+	PLINT y = MIN( y1, y2 );
+	PLINT width = abs( x1 - x2 );
+	PLINT height = abs( y1 - y2 );
 
     const wxPen   oldPen   = m_dc->GetPen();
     const wxBrush oldBrush = m_dc->GetBrush();
 
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( bgr, bgg, bgb ), 1, wxSOLID ) ) );
-    m_dc->SetBrush( wxBrush( wxColour( bgr, bgg, bgb ) ) );
-    m_dc->DrawRectangle( x1, y1, x2 - x1, y2 - y1 );
+	m_dc->SetPen( wxNullPen );
+
+	m_dc->SetBrush( wxBrush( wxColour( bgr, bgg, bgb ) ) );
+	m_dc->DrawRectangle( x, y, width, height );
 
     m_dc->SetPen( oldPen );
     m_dc->SetBrush( oldBrush );
@@ -339,10 +344,11 @@ void wxPLDevice::SetColor( PLStream *pls )
 void wxPLDevice::SetExternalBuffer( PLStream *pls, void* dc )
 {
     m_dc   = (wxDC *) dc; // Add the dc to the device
-	strcpy( m_mfo, "" );
-	BeginPage( pls );
-	if( strlen( m_mfi ) > 0 )
-		plreplot();
+	//if( m_dc )
+	{
+		strcpy( m_mfo, "" );
+		SetSize( pls, m_width, m_height ); //call with our current size to set the scaling
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -571,6 +577,11 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 	if( !m_dc )
 		return;
 
+	//for text work in native coordinates, partly to avoid rewriting existing code
+	//but also because we should get better text hinting for screen display I think.
+	//The scaler object sets the scale to the new value until it is destroyed
+	//when this function exits.
+	Scaler scaler( m_dc, 1.0, 1.0 );
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
     {
@@ -777,8 +788,13 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     // Set the number of plplot pixels per mm
 	plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );
 
-	//redraw the plot if we have somewhere to draw it to
+	// set the dc scale and redraw the plot if we have a dc
 	if( m_dc )
+	{
+		//we use the dc to do the scaling as it then gives us subpixel accuracy
+		m_dc->SetLogicalScale( (PLFLT)m_width / m_plplotEdgeLength, (PLFLT)m_height / m_plplotEdgeLength );
+		BeginPage( pls );
 		plreplot();
+	}
 }
 
