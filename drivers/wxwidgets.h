@@ -127,6 +127,9 @@ protected:
     PLFLT        m_height; //native height
     PLFLT        m_scalex; //conversion from native width to plplotEdgeLength
     PLFLT        m_scaley; //conversion from native height to plplotEdgeLength
+	PLFLT        m_xAspect; //values which when multiplied by m_plplotEdgeLength give an aspect
+	PLFLT        m_yAspect; //ratio equal to the native aspect ratio, the biggest of which is 1.0
+	PLFLT        m_scale;  //MAX(m_scalex, m_scaley)
 	//PLFLT        m_ppi; //pixels per inch (actually conversion from native size to inches)
 
 	// Flags indicating change of state before we have a DC.

@@ -204,7 +204,8 @@ void wxPLDevice::DrawLine( short x1a, short y1a, short x2a, short y2a )
 	if( !m_dc )
 		return;
 
-    m_dc->DrawLine( (wxCoord) x1a, (wxCoord) ( m_plplotEdgeLength - y1a ), (wxCoord) x2a, (wxCoord) ( m_plplotEdgeLength - y2a ) );
+    m_dc->DrawLine( (wxCoord) ( m_xAspect * x1a), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y1a ) ),
+		(wxCoord) ( m_xAspect * x2a), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y2a ) ) );
 }
 
 
@@ -219,7 +220,8 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 		return;
 
     for ( PLINT i = 1; i < npts; i++ )
-        m_dc->DrawLine( xa[i-1], m_plplotEdgeLength - ya[i-1], xa[i], m_plplotEdgeLength - ya[i] );
+        m_dc->DrawLine( m_xAspect * xa[i-1], m_yAspect * ( m_plplotEdgeLength - ya[i-1] ),
+			m_xAspect * xa[i], m_yAspect * ( m_plplotEdgeLength - ya[i] ) );
 }
 
 
@@ -304,9 +306,9 @@ void wxPLDevice::SetWidth( PLStream *pls )
 		m_plstate_width = true;
 		return;
 	}
-
+	PLFLT width = pls->width * m_scale;
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+                         width > 0 ? width : 1, wxSOLID ) ) );
 }
 
 
@@ -781,6 +783,16 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     m_scalex = m_width > 0 ? (PLFLT) ( xmax - xmin ) / (PLFLT) width : 0.0;
     m_scaley = m_height > 0 ? (PLFLT) ( ymax - ymin ) / (PLFLT) height : 0.0;
 
+	//split the scaling into an overall scale, the same in both dimensions
+	//and an aspect part which differs in both directions.
+	//We will apply the aspect ratio part, and let the DC do the overall
+	//scaling. This gives us subpixel accuray, but ensures line thickness
+	//remains consistent in both directions
+	m_scale = MIN( m_scalex, m_scaley );
+	m_xAspect = m_scale / m_scalex;
+	m_yAspect = m_scale / m_scaley;
+
+
     // Set the number of plplot pixels per mm
 	plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );
 
@@ -788,7 +800,7 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
 	if( m_dc )
 	{
 		//we use the dc to do the scaling as it then gives us subpixel accuracy
-		m_dc->SetLogicalScale( (PLFLT)m_width / m_plplotEdgeLength, (PLFLT)m_height / m_plplotEdgeLength );
+		m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
 		BeginPage( pls );
 		plreplot();
 	}
