@@ -1,3 +1,4 @@
+// Copyright (C) 2015  Phil Rosenberg
 // Copyright (C) 2005  Werner Smekal
 //
 // This file is part of PLplot.
@@ -40,7 +41,9 @@ wxPLplotstream::wxPLplotstream() : plstream()
 {
 }
 
-
+//! Called from the constructor or can be called by the user if the default constructor is used
+//  We set the driver to be wxwidgets, set the page size, set the driver options and initialize
+//  the plot.
 void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxString mapfile, PLINT mapfileSize )
 {
     const size_t bufferSize = 256;
@@ -52,7 +55,6 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxStri
     sdev( "wxwidgets" );
     spage( 0.0, 0.0, m_width, m_height, 0, 0 );
 
-    // use freetype, antialized canvas?
     char drvopt[bufferSize], buffer[bufferSize];
     drvopt[0] = '\0';
 
@@ -74,13 +76,15 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxStri
     cmd( PLESC_DEVINIT, (void *) dc );
 }
 
+//! Set the DC to be used by the stream. This will initiate a replot, unless
+//  the device is NULL
 void wxPLplotstream::SetDC( wxDC *dc )
 {
 	set_stream();
 	cmd( PLESC_DEVINIT, (void *) dc );
 }
 
-
+//! Destructor, although we have no resources to free
 wxPLplotstream::~wxPLplotstream()
 {
 }

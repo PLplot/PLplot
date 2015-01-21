@@ -233,7 +233,7 @@ typedef void*    PLPointer;
 #define PLESC_DEV2PLCOL          24     // convert device color to PLColor
 #define PLESC_SETBGFG            25     // set BG, FG colors
 #define PLESC_DEVINIT            26     // alternate device initialization
-#define PLESC_GETBACKEND         27     // get used backend of (wxWidgets) driver
+#define PLESC_GETBACKEND         27     // get used backend of (wxWidgets) driver - no longer used
 #define PLESC_BEGIN_TEXT         28     // get ready to draw a line of text
 #define PLESC_TEXT_CHAR          29     // render a character of text
 #define PLESC_CONTROL_CHAR       30     // handle a text control character (super/subscript, etc.)

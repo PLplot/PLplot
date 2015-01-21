@@ -1,3 +1,4 @@
+// Copyright (C) 2015  Phil ROsenberg
 // Copyright (C) 2005  Werner Smekal, Sjaak Verdoold
 // Copyright (C) 2005  Germain Carrera Corraleche
 // Copyright (C) 1999  Frank Huebner
@@ -17,11 +18,6 @@
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-//
-
-// TODO:
-// - text clipping
-// - implement AddToClipRegion for text correctly
 //
 
 // wxwidgets headers

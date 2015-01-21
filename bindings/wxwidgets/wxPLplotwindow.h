@@ -1,3 +1,4 @@
+// Copyright (C) 2015  Phil Rosenberg
 // Copyright (C) 2005  Werner Smekal
 //
 // This file is part of PLplot.
@@ -30,7 +31,8 @@
 
 // A plplot wxWindow template. To create an actual plplot wxWindow use
 // the type of wxWindow you wish to inherit from at the template parameter
-// For example to create a plplot wxFrame create a wxPLplotwindow<wxFrame>.
+// For example to create a plplot wxFrame create a wxPLplotwindow<wxFrame>
+// then call the base wxWindow's Create method to initialise.
 template <class WXWINDOW>
 class wxPLplotwindow : public WXWINDOW
 {
@@ -57,16 +59,16 @@ private:
 };
 
 
-//! Constructor initialises all pointers to NULL and sets sizes to zero, the first resize
-// will initialise these. It also sets up the event handling.
+//! Constructor initialises variables, creates the wxStream and connects
+// methods with events. The WXWINDOW default constructor is used.
 //
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 		wxString mapFile, PLINT mapFileSize )
 		:m_created(false)
 {
-	//slightly annoyingly, at this point we haven't created the window
-	//so we haven't got a size to pass to create to use for default
+	//Slightly annoyingly, at this point we haven't created the window
+	//so we haven't got a size to pass to Create to use for default
 	//scaling. Use 500 pixels square until we find a good workaround.
 	m_stream.Create( NULL, 500, 500,
 		wxPLPLOT_DRAW_TEXT, mapFile, mapFileSize );
@@ -84,7 +86,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
 }
 
 
-//! Deconstructor takes care that all is deleted in the correct order.
+//! Destructor - currently we have nothing to clean up.
 //
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
@@ -101,8 +103,9 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 {
 	//Really this should be in the constructor, but it caused a segfault
 	//on at least one system (CentOS with intel compiler and wxWidgets 2.8.12).
-	//Moving it here after WXWINDOW::Create has benn called stops this and
-	//the call does nothing if the style is the same as previous calls.
+	//Moving it here after WXWINDOW::Create has been called stops this and
+	//the call does nothing if the style is the same as previous calls so
+	//should be safe to call here.
 	WXWINDOW::SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 
 	wxAutoBufferedPaintDC dc( this );
@@ -124,7 +127,8 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 
 }
 
-
+//! This is called when the plot is resized
+//
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
 {
@@ -133,13 +137,17 @@ void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
 	RenewPlot();
 }
 
-
+//! This is called before each paint event
+//
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 {
 	//Do nothing. This stops screen flicker.
 }
 
+//! This is called when the widow is created i.e. after WXWINDOW::Create
+//  has been called. We note that this has been called to avoid attempting
+//  to redraw a plot on a window that hasn't been created yet.
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
@@ -147,7 +155,7 @@ void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 }
 
 
-//! Redo the whole plot.
+//! Redo the whole plot, only if the window has been Created
 //
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::RenewPlot( void )
@@ -190,6 +198,7 @@ bool wxPLplotwindow<WXWINDOW>::SavePlot( const wxString& devname, const wxString
     return true;
 }
 
+//! Set whether we wish to use wxGCDC instead of a wxDC
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::setUseGraphicsContext( bool useGraphicsContext )
 {

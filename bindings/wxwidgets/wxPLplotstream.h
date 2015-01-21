@@ -1,3 +1,4 @@
+// Copyright (C) 2015  Phil Rosenberg
 // Copyright (C) 2005  Werner Smekal
 //
 // This file is part of PLplot.

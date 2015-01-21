@@ -1,3 +1,4 @@
+// Copyright (C) 2015  Phil Rosenberg
 // Copyright (C) 2005  Werner Smekal, Sjaak Verdoold
 // Copyright (C) 2005  Germain Carrera Corraleche
 // Copyright (C) 1999  Frank Huebner
@@ -38,10 +39,6 @@
 #include <cstdio>
 
 #include "wxwidgets.h"
-
-
-// private functions needed by the wxwidgets Driver
-//static void fill_polygon( PLStream *pls );
 
 #ifdef __WXMAC__
         #include <Carbon/Carbon.h>
@@ -92,28 +89,9 @@ void Log_Debug( const char *fmt, ... )
 
 
 //--------------------------------------------------------------------------
-//  In the following you'll find the driver functions which are
-//  are needed by the plplot core.
+//  Constructor, creates the object but does not actually create or link to
+//  any shared memory.
 //--------------------------------------------------------------------------
-
-// Device info
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets =
-#ifdef PLD_wxwidgets
-    "wxwidgets:wxWidgets Driver:1:wxwidgets:51:wxwidgets\n"
-#endif
-#ifdef PLD_wxpng
-    "wxpng:wxWidgets PNG Driver:0:wxwidgets:52:wxpng\n"
-#endif
-;
-
-#ifdef __cplusplus
-}
-#endif
-
 PLMemoryMap::PLMemoryMap()
 {
 #ifdef WIN32
@@ -124,6 +102,12 @@ PLMemoryMap::PLMemoryMap()
 #endif
 	m_buffer=NULL;
 }
+
+//--------------------------------------------------------------------------
+//  Constructor, creates the shared memory area. If onlyIfExists is true
+//  then we will try to access an existing shared memory area rather than
+//  creating a new one.
+//--------------------------------------------------------------------------
 PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool onlyIfExists )
 {
 #ifdef WIN32
@@ -135,6 +119,15 @@ PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool onlyIfExists )
 	m_buffer=NULL;
 	create( name, size, onlyIfExists );
 }
+
+//--------------------------------------------------------------------------
+//  create does most of the work in trying to create the memory map it is
+//  called by the constructor or by the user. If the object already has a
+//  shared memory area then that is closed before a new area of memory is
+//  created or connected to. As per the constructor if onlyIfExists is true
+//  then we will try to access an existing shared memory area rather than
+//  creating a new one.
+//--------------------------------------------------------------------------
 void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
 {
 	close();
@@ -166,6 +159,11 @@ void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
 	}
 #endif
 }
+
+//--------------------------------------------------------------------------
+//  Close an area of mapped memory. When all processes have closed their
+//  connections the area will be removed by the OS.
+//--------------------------------------------------------------------------
 void PLMemoryMap::close()
 {
 #ifdef WIN32
@@ -187,10 +185,38 @@ void PLMemoryMap::close()
 #endif
 	m_buffer = NULL;
 }
+
+//--------------------------------------------------------------------------
+//  Destructor, closes the connection to the mapped memory.
+//--------------------------------------------------------------------------
 PLMemoryMap::~PLMemoryMap()
 {
 	close();
 }
+
+
+//--------------------------------------------------------------------------
+//  In the following you'll find the driver functions which are
+//  needed by the plplot core.
+//--------------------------------------------------------------------------
+
+// Device info
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets =
+#ifdef PLD_wxwidgets
+    "wxwidgets:wxWidgets Driver:1:wxwidgets:51:wxwidgets\n"
+#endif
+#ifdef PLD_wxpng
+    "wxpng:wxWidgets PNG Driver:0:wxwidgets:52:wxpng\n"
+#endif
+;
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #ifdef PLD_wxwidgets
@@ -336,7 +362,6 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
     // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
 
     wxPLDevice* dev = (wxPLDevice *) pls->dev;
-
     dev->DrawLine( x1a, y1a, x2a, y2a );
 }
 
@@ -351,9 +376,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     // Log_Verbose( "plD_polyline_wxwidgets()" );
 
-    // should be changed to use the wxDC::DrawLines function?
     wxPLDevice* dev = (wxPLDevice *) pls->dev;
-
     dev->DrawPolyline( xa, ya, npts );
 }
 
