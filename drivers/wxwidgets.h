@@ -101,7 +101,7 @@ public:
 
     void DrawLine( short x1a, short y1a, short x2a, short y2a );
     void DrawPolyline( short *xa, short *ya, PLINT npts );
-    void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1 = -1, PLINT y1 = -1, PLINT x2 = -1, PLINT y2 = -1 );
+    void ClearBackground( PLStream* pls, PLINT x1 = -1, PLINT y1 = -1, PLINT x2 = -1, PLINT y2 = -1 );
     void FillPolygon( PLStream *pls );
     void SetWidth( PLStream *pls );
     void SetColor( PLStream *pls );
@@ -111,6 +111,7 @@ public:
 	void BeginPage( PLStream* pls );
 	void SetSize( PLStream* pls, int width, int height );
     void ProcessString( PLStream* pls, EscText* args );
+	void FixAspectRatio( bool fix );
 
 protected:
     void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;
@@ -125,12 +126,12 @@ protected:
 	const PLFLT  m_plplotEdgeLength;
     PLFLT        m_width; //native width
     PLFLT        m_height; //native height
-    PLFLT        m_scalex; //conversion from native width to plplotEdgeLength
-    PLFLT        m_scaley; //conversion from native height to plplotEdgeLength
+    PLFLT        m_xScale; //conversion from native width to plplotEdgeLength
+    PLFLT        m_yScale; //conversion from native height to plplotEdgeLength
 	PLFLT        m_xAspect; //values which when multiplied by m_plplotEdgeLength give an aspect
 	PLFLT        m_yAspect; //ratio equal to the native aspect ratio, the biggest of which is 1.0
 	PLFLT        m_scale;  //MAX(m_scalex, m_scaley)
-	//PLFLT        m_ppi; //pixels per inch (actually conversion from native size to inches)
+	bool         m_fixedAspect;
 
 	// Flags indicating change of state before we have a DC.
     bool         m_plstate_width;

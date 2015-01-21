@@ -34,7 +34,7 @@
 #include "wxwidgets.h"
 
 //--------------------------------------------------------------------------
-// ScaleChanger class
+// Scaler class
 // This class changes the logical scale of a dc on construction and resets
 // it to its original value on destruction. It is ideal for making temporary
 // changes to the scale and guarenteeing that the scale gets set back.
@@ -59,6 +59,31 @@ private:
 };
 
 //--------------------------------------------------------------------------
+// OriginChanger class
+// This class changes the logical origin of a dc on construction and resets
+// it to its original value on destruction. It is ideal for making temporary
+// changes to the origin and guarenteeing that the scale gets set back.
+//--------------------------------------------------------------------------
+class OriginChanger
+{
+public:
+	OriginChanger( wxDC * dc, long xOrigin, long yOrigin )
+	{
+		m_dc = dc;
+		dc->GetLogicalOrigin(  &m_xOriginOld, &m_yOriginOld );
+		dc->SetLogicalOrigin( xOrigin, yOrigin );
+	}
+	~OriginChanger( )
+	{
+		m_dc->SetLogicalOrigin( m_xOriginOld, m_yOriginOld );
+	}
+private:
+	wxDC *m_dc;
+	long m_xOriginOld;
+	long m_yOriginOld;
+};
+
+//--------------------------------------------------------------------------
 //  wxPLDevice::wxPLDevice( void )
 //
 //  Constructor of the standard wxWidgets device based on the wxPLDevBase
@@ -71,6 +96,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
     m_plstate_width  = false;
     m_plstate_color = false;
 
+	m_fixedAspect = false;
     //locate_mode = 0;
     //draw_xhair  = false;
 
@@ -226,16 +252,18 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 
 
 //--------------------------------------------------------------------------
-//  void wxPLDevice::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
+//  void wxPLDevice::ClearBackground( PLStream* pls, PLINT bgr, PLINT bgg, PLINT bgb,
 //                                   PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 //
 //  Clear parts ((x1,y1) to (x2,y2)) of the background in color (bgr,bgg,bgb).
 //--------------------------------------------------------------------------
-void wxPLDevice::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
-                                 PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
+void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
 	if( !m_dc )
 		return;
+
+    PLINT bgr, bgg, bgb;                  // red, green, blue
+    plgcolbg( &bgr, &bgg, &bgb );         // get background color information
 
 	x1 = x1 < 0 ? 0 : x1;
 	x2 = x2 < 0 ? m_plplotEdgeLength : x2;
@@ -276,8 +304,8 @@ void wxPLDevice::FillPolygon( PLStream *pls )
 
     for ( int i = 0; i < pls->dev_npts; i++ )
     {
-        points[i].x = (int) ( pls->dev_x[i] / m_scalex );
-        points[i].y = (int) ( m_height - pls->dev_y[i] / m_scaley );
+        points[i].x = (int) ( pls->dev_x[i] / m_xScale );
+        points[i].y = (int) ( m_height - pls->dev_y[i] / m_yScale );
     }
 
     if ( pls->dev_eofill )
@@ -412,7 +440,7 @@ void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
                         m_fontScale *= 0.8;  // Subscript scaling parameter
                     SetFont( m_fci );
 
-                    m_yOffset += m_scaley * m_fontSize * m_fontScale / 2.;
+                    m_yOffset += m_yScale * m_fontSize * m_fontScale / 2.;
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {                                 // draw string so far
@@ -426,7 +454,7 @@ void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
                         m_fontScale *= 0.8;  // Subscript scaling parameter
                     SetFont( m_fci );
 
-                    m_yOffset -= m_scaley * m_fontSize * old_fontScale / 2.;
+                    m_yOffset -= m_yScale * m_fontSize * old_fontScale / 2.;
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
                 {                                 // draw string so far
@@ -477,8 +505,8 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
 
     if ( drawText )
     {
-        m_dc->DrawRotatedText( str, (wxCoord) ( m_posX - m_yOffset / m_scaley * m_sin_rot ),
-            (wxCoord) ( m_height - (wxCoord) ( m_posY + m_yOffset * m_cos_rot / m_scaley ) ),
+        m_dc->DrawRotatedText( str, (wxCoord) ( m_posX - m_yOffset / m_yScale * m_sin_rot ),
+            (wxCoord) ( m_height - (wxCoord) ( m_posY + m_yOffset * m_cos_rot / m_yScale ) ),
             m_rotation * 180.0 / M_PI );
         m_posX += (PLINT) ( w * m_cos_rot );
         m_posY += (PLINT) ( w * m_sin_rot );
@@ -495,16 +523,16 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
         double currentHeight = h;
         while ( currentOffset > 0.0001 )
         {
-            currentOffset -= m_scaley * m_fontSize * m_fontScale / 2.;
+            currentOffset -= m_yScale * m_fontSize * m_fontScale / 2.;
             currentHeight *= 1.25;
         }
         m_textHeight = (wxCoord) m_textHeight > ( currentHeight )
                      ? m_textHeight
                      : currentHeight;
         //work out the height including superscript
-        m_superscriptHeight = m_superscriptHeight > ( currentHeight + m_yOffset / m_scaley )
+        m_superscriptHeight = m_superscriptHeight > ( currentHeight + m_yOffset / m_yScale )
                             ? m_superscriptHeight
-                            : static_cast<int>( ( currentHeight + m_yOffset / m_scaley ) );
+                            : static_cast<int>( ( currentHeight + m_yOffset / m_yScale ) );
     }
     else if ( m_yOffset < -0.0001 )
     {
@@ -514,7 +542,7 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
         double currentDepth  = d;
         while ( currentOffset < -0.0001 )
         {
-            currentOffset += m_scaley * m_fontSize * m_fontScale * 1.25 / 2.;
+            currentOffset += m_yScale * m_fontSize * m_fontScale * 1.25 / 2.;
             currentHeight *= 1.25;
             currentDepth  *= 1.25;
         }
@@ -523,9 +551,9 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
         //that the font size of (non-superscript and non-subscript) text is the same
         //along a line. Currently there is no escape to change font size mid string
         //so this should be fine
-        m_subscriptDepth = (wxCoord) m_subscriptDepth > ( ( -m_yOffset / m_scaley + h + d ) - ( currentDepth + m_textHeight ) )
+        m_subscriptDepth = (wxCoord) m_subscriptDepth > ( ( -m_yOffset / m_yScale + h + d ) - ( currentDepth + m_textHeight ) )
                          ? m_subscriptDepth
-                         : ( ( -m_yOffset / m_scaley + h + d ) - ( currentDepth + m_textHeight ) );
+                         : ( ( -m_yOffset / m_yScale + h + d ) - ( currentDepth + m_textHeight ) );
         m_subscriptDepth = m_subscriptDepth > 0 ? m_subscriptDepth : 0;
     }
     else
@@ -575,11 +603,15 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 	if( !m_dc )
 		return;
 
-	//for text work in native coordinates, partly to avoid rewriting existing code
+	//for text, work in native coordinates, partly to avoid rewriting existing code
 	//but also because we should get better text hinting for screen display I think.
 	//The scaler object sets the scale to the new value until it is destroyed
 	//when this function exits.
 	Scaler scaler( m_dc, 1.0, 1.0 );
+
+	//Also move the origin so the text region buts up to the dc top, not the bottom
+	OriginChanger originChanger( m_dc, 0, m_height - m_plplotEdgeLength / m_yScale );
+
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
     {
@@ -605,8 +637,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     wxPoint cpoints[4];
     for ( int i = 0; i < 4; i++ )
     {
-        cpoints[i].x = rcx[i] / m_scalex;
-        cpoints[i].y = m_height - rcy[i] / m_scaley;
+        cpoints[i].x = rcx[i] / m_xScale;
+        cpoints[i].y = m_height - rcy[i] / m_yScale;
     }
     wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
 
@@ -651,8 +683,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         PLUNICODE startingFci       = m_fci;
 
         // determine extent of text
-        m_posX = args->x / m_scalex;
-        m_posY = args->y / m_scaley;
+        m_posX = args->x / m_xScale;
+        m_posY = args->y / m_yScale;
 
         DrawText( lineStart, lineLen, false );
 
@@ -664,8 +696,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         m_yOffset   = startingYOffset;
         m_fci       = startingFci;
         SetFont( m_fci );
-        m_posX = (PLINT) ( args->x / m_scalex - ( args->just * m_textWidth ) * m_cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * m_sin_rot ); //move to set alignment
-        m_posY = (PLINT) ( args->y / m_scaley - ( args->just * m_textWidth ) * m_sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * m_cos_rot );
+        m_posX = (PLINT) ( args->x / m_xScale - ( args->just * m_textWidth ) * m_cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * m_sin_rot ); //move to set alignment
+        m_posY = (PLINT) ( args->y / m_yScale - ( args->just * m_textWidth ) * m_sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * m_cos_rot );
         DrawText( lineStart, lineLen, true );  //draw text
 
         lineStart += lineLen;
@@ -747,10 +779,8 @@ void wxPLDevice::BeginPage( PLStream* pls )
 {
 	if( !m_dc )
 		return;
-    // clear background
-    PLINT bgr, bgg, bgb;                  // red, green, blue
-    plgcolbg( &bgr, &bgg, &bgb );         // get background color information
-    ClearBackground( bgr, bgg, bgb );
+
+    ClearBackground( pls );
 
     // Replay escape calls that come in before PLESC_DEVINIT.  All of them
     // required a DC that didn't exist yet.
@@ -780,29 +810,49 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
 	PLINT ymin;
 	PLINT ymax;
     plP_gphy( &xmin, &xmax, &ymin, &ymax );
-    m_scalex = m_width > 0 ? (PLFLT) ( xmax - xmin ) / (PLFLT) width : 0.0;
-    m_scaley = m_height > 0 ? (PLFLT) ( ymax - ymin ) / (PLFLT) height : 0.0;
+    m_xScale = m_width > 0 ? (PLFLT) ( xmax - xmin ) / (PLFLT) width : 0.0;
+    m_yScale = m_height > 0 ? (PLFLT) ( ymax - ymin ) / (PLFLT) height : 0.0;
 
 	//split the scaling into an overall scale, the same in both dimensions
 	//and an aspect part which differs in both directions.
 	//We will apply the aspect ratio part, and let the DC do the overall
 	//scaling. This gives us subpixel accuray, but ensures line thickness
 	//remains consistent in both directions
-	m_scale = MIN( m_scalex, m_scaley );
-	m_xAspect = m_scale / m_scalex;
-	m_yAspect = m_scale / m_scaley;
-
+	m_scale = MIN( m_xScale, m_yScale );
+	m_xAspect = m_scale / m_xScale;
+	m_yAspect = m_scale / m_yScale;
 
     // Set the number of plplot pixels per mm
 	plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );
 
-	// set the dc scale and redraw the plot if we have a dc
+	//we call BeginPage, before we fiddle with fixed aspect so that the
+	//whole background gets filled
 	if( m_dc )
 	{
 		//we use the dc to do the scaling as it then gives us subpixel accuracy
 		m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
 		BeginPage( pls );
-		plreplot();
 	}
+
+	if ( m_fixedAspect )
+	{
+		m_scale = MAX( m_xScale, m_yScale );
+		m_xScale = m_scale;
+		m_yScale = m_scale;
+		m_xAspect = 1.0;
+		m_yAspect = 1.0;
+		if( m_dc )
+			m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
+	}
+
+	// redraw the plot
+	if( m_dc )
+		plreplot();
+}
+
+
+void wxPLDevice::FixAspectRatio( bool fix )
+{
+	m_fixedAspect = fix;
 }
 

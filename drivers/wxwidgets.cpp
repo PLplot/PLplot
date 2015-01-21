@@ -506,8 +506,8 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     break;
 
     case PLESC_CLEAR:
-        dev->ClearBackground( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b,
-            pls->sppxmi, pls->sppymi, pls->sppxma, pls->sppyma );
+        dev->ClearBackground( pls, pls->sppxmi, pls->sppymi,
+			pls->sppxma, pls->sppyma );
         break;
 
     case PLESC_FLUSH:        // forced update of the window
@@ -515,6 +515,12 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_GETC:
+        //if ( dev->ownGUI )
+            //GetCursorCmd( pls, (PLGraphicsIn *) ptr );
+        break;
+
+    case PLESC_FIXASPECT:
+		dev->FixAspectRatio( *((bool *)ptr) );
         //if ( dev->ownGUI )
             //GetCursorCmd( pls, (PLGraphicsIn *) ptr );
         break;
