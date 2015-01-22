@@ -178,7 +178,7 @@ void PLMemoryMap::close()
 	if( m_mapFile != -1 )
 		shm_unlink( m_name );
 	if( m_name )
-		delete m_name;
+		delete[] m_name;
 	m_mapFile = -1;
 	m_name = NULL;
 	m_size = 0;
