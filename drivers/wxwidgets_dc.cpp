@@ -334,9 +334,9 @@ void wxPLDevice::SetWidth( PLStream *pls )
 		m_plstate_width = true;
 		return;
 	}
-	PLFLT width = pls->width * m_scale;
+	PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
-                         width > 0 ? width : 1, wxSOLID ) ) );
+                         width, wxSOLID ) ) );
 }
 
 
