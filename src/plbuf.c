@@ -248,16 +248,16 @@ plbuf_state( PLStream *pls, PLINT op )
 	// Save the color palatte
         wr_data( pls, &( pls->cmap1[0] ), sizeof ( PLColor ) * pls->ncol1 );
         break;
-	case PLSTATE_CHR:
-		//save the chrdef and chrht parameters
-		wr_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
-		wr_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
-		break;
-	case PLSTATE_SYM:
-		//save the symdef and symht parameters
-		wr_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
-		wr_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
-		break;
+    case PLSTATE_CHR:
+        //save the chrdef and chrht parameters
+        wr_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
+	wr_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
+	break;
+    case PLSTATE_SYM:
+        //save the symdef and symht parameters
+        wr_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
+	wr_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
+	break;
     }
 }
 
@@ -1301,13 +1301,6 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
 // with one free() call.
 //
 //
-struct _color_map
-{
-    PLColor *cmap;
-    PLINT   icol;
-    PLINT   ncol;
-};
-
 struct _state
 {
     size_t            size;  // Size of the save buffer
@@ -1320,7 +1313,6 @@ struct _state
     size_t            plbuf_top;
     size_t            plbuf_readpos;
 #endif
-    struct _color_map *color_map;
 };
 
 void * plbuf_save( PLStream *pls, void *state )
@@ -1335,14 +1327,8 @@ void * plbuf_save( PLStream *pls, void *state )
         pls->plbuf_write = FALSE;
         pls->plbuf_read  = TRUE;
 
-        // Determine the size of the buffer required to save everything. We
-        // assume that there are only two colormaps, but have written the code
-        // that more than two can be handled with minimal changes.
-        //
-        save_size = sizeof ( struct _state )
-                    + 2 * sizeof ( struct _color_map )
-                    + (size_t) ( pls->ncol0 ) * sizeof ( PLColor )
-                    + (size_t) ( pls->ncol1 ) * sizeof ( PLColor );
+        // Determine the size of the buffer required to save everything.
+        save_size = sizeof ( struct _state );
 
 #ifndef BUFFERED_FILE
         // Only copy as much of the plot buffer that is being used
@@ -1437,7 +1423,7 @@ void * plbuf_save( PLStream *pls, void *state )
         }
 #else
         // Again, note, that we only copy the portion of the plot buffer that
-	     // is being used
+	// is being used
         plot_state->plbuf_buffer_size = pls->plbuf_top;
         plot_state->plbuf_top         = pls->plbuf_top;
         plot_state->plbuf_readpos     = 0;
@@ -1460,33 +1446,6 @@ void * plbuf_save( PLStream *pls, void *state )
 
         pls->plbuf_write = TRUE;
         pls->plbuf_read  = FALSE;
-
-        // Save the colormaps.  First create a pointer that points in the
-        // space we allocated after the plot buffer
-        plot_state->color_map = (struct _color_map *) buf;
-        buf += sizeof ( struct _color_map ) * 2;
-
-        // Then we need to make space for the colormaps themselves
-        plot_state->color_map[0].cmap = (PLColor *) buf;
-        buf += sizeof ( PLColor ) * (size_t) ( pls->ncol0 );
-        plot_state->color_map[1].cmap = (PLColor *) buf;
-        buf += sizeof ( PLColor ) * (size_t) ( pls->ncol1 );
-
-        // Save cmap 0
-        plot_state->color_map[0].icol = pls->icol0;
-        plot_state->color_map[0].ncol = pls->ncol0;
-        for ( i = 0; i < pls->ncol0; i++ )
-        {
-            pl_cpcolor( &( plot_state->color_map[0].cmap[i] ), &pls->cmap0[i] );
-        }
-
-        // Save cmap 1
-        plot_state->color_map[1].icol = pls->icol1;
-        plot_state->color_map[1].ncol = pls->ncol1;
-        for ( i = 0; i < pls->ncol1; i++ )
-        {
-            pl_cpcolor( &( plot_state->color_map[1].cmap[i] ), &pls->cmap1[i] );
-        }
 
         plot_state->valid = 1;
         return (void *) plot_state;
@@ -1511,14 +1470,6 @@ void plbuf_restore( PLStream *pls, void *state )
     pls->plbuf_top         = new_state->plbuf_top;
     pls->plbuf_readpos     = new_state->plbuf_readpos;
 #endif
-    // cmap 0
-    pls->cmap0 = new_state->color_map[0].cmap;
-    pls->icol0 = new_state->color_map[0].icol;
-    pls->ncol0 = new_state->color_map[0].ncol;
-    // cmap 1
-    pls->cmap1 = new_state->color_map[1].cmap;
-    pls->icol1 = new_state->color_map[1].icol;
-    pls->ncol1 = new_state->color_map[1].ncol;
 }
 
 // plbuf_switch(PLStream *, state)
@@ -1551,8 +1502,7 @@ void * plbuf_switch( PLStream *pls, void *state )
         return NULL;
     }
 
-    save_size = sizeof ( struct _state )
-                + 2 * sizeof ( struct _color_map );
+    save_size = sizeof ( struct _state );
 
     if ( ( prev_state = (struct _state *) malloc( save_size ) ) == NULL )
     {
@@ -1573,15 +1523,6 @@ void * plbuf_switch( PLStream *pls, void *state )
     prev_state->plbuf_top         = pls->plbuf_top;
     prev_state->plbuf_readpos     = pls->plbuf_readpos;
 #endif
-    // cmap 0
-    prev_state->color_map[0].cmap = pls->cmap0;
-    prev_state->color_map[0].icol = pls->icol0;
-    prev_state->color_map[0].ncol = pls->ncol0;
-    // cmap 1
-    prev_state->color_map[1].cmap = pls->cmap1;
-    prev_state->color_map[1].icol = pls->icol1;
-    prev_state->color_map[1].ncol = pls->ncol1;
-
     plbuf_restore( pls, new_state );
 
     return (void *) prev_state;
