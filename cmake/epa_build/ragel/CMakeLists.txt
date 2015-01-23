@@ -59,7 +59,7 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 
 # Data that is related to downloads.
-set(URL http://www.complang.org/ragel/ragel-6.8.tar.gz)
+set(URL http://www.colm.net/files/ragel/ragel-6.8.tar.gz)
 set(DOWNLOAD_HASH_TYPE SHA256)
 set(DOWNLOAD_HASH dd7f7d22f3a58147379bda61334d341c2caa0caf9f71897e3e4ec05c8f398764)
 
