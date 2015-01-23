@@ -91,4 +91,8 @@ if(ENABLE_wxwidgets)
   add_executable(wxPLViewer WIN32 ${wxPLViewer_SRCS})
   target_link_libraries(wxPLViewer plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   install(TARGETS wxPLViewer DESTINATION ${BIN_DIR})
+  if(TARGET wxwidgets)
+    add_dependencies(wxwidgets wxPLViewer)
+  endif(TARGET wxwidgets)
+
 endif(ENABLE_wxwidgets)
