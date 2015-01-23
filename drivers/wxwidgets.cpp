@@ -146,7 +146,7 @@ void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
 		m_mapFile = shm_open( name, O_RDWR, 0 );
 	else
 	{
-		m_mapFile = shm_open( name, O_RDWR|O_CREAT, S_IRWXU ); //S_IRWXU gives user wrx permissions
+		m_mapFile = shm_open( name, O_RDWR|O_CREAT|O_EXCL, S_IRWXU ); //S_IRWXU gives user wrx permissions
 		if( ftruncate( m_mapFile, size ) == -1 )
 			close( );
 	}
