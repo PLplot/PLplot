@@ -387,8 +387,8 @@ plbuf_text_unicode( PLStream *pls, EscText *text )
 //
 //	PLESC_FILL	    Fill polygon
 //	PLESC_SWIN	    Set plot window parameters
-//  PLESC_IMAGE     Draw image
-//  PLESC_HAS_TEXT  Draw PostScript text
+//      PLESC_IMAGE         Draw image
+//      PLESC_HAS_TEXT      Draw PostScript text
 //	PLESC_CLEAR	    Clear Background
 //	PLESC_START_RASTERIZE
 //	PLESC_END_RASTERIZE Start and stop rasterization
@@ -674,32 +674,25 @@ rdbuf_state( PLStream *pls )
 	// Calculate the memory size for this color palatte
         size = (size_t) ncol * sizeof ( PLColor );
 
-        if ( pls->ncol0 == 0 )
-	     {
-	         // The current palatte is empty, thus we need to allocate
-	         if ( ( pls->cmap0 = ( PLColor * )malloc( size ) ) == NULL )
-            {
-	             plexit( "Insufficient memory for colormap 0" );
-            }
-        }
-        else if ( pls->ncol0 != ncol )
-	     {
-	         // The current palatte is not big enough, thus we need to
-	         // discard the current palatte and allocate a new one
-	         // We do not use realloc() because we are going to read
-	         // the colormap from the buffer
-	        if(pls->cmap0 != NULL)
-               free(pls->cmap0);
+        if ( pls->ncol0 == 0 || pls->ncol0 != ncol )
+        {
+            // The current palatte is empty or the current palatte is not
+            // big enough, thus we need allocate a new one
 
-	        if ( ( pls->cmap0 = ( PLColor * )malloc( size ) ) == NULL )
-           {
-	             plexit( "Insufficient memory for colormap 0" );
-           }
+            // If we have a colormap, discard it because we do not use
+            // realloc().  We are going to read the colormap from the buffer
+            if(pls->cmap0 != NULL)
+                free(pls->cmap0);
+
+            if ( ( pls->cmap0 = ( PLColor * )malloc( size ) ) == NULL )
+            {
+                plexit( "Insufficient memory for colormap 0" );
+            }
         }
 
         // Now read the colormap from the buffer
         rd_data( pls, &( pls->cmap0[0] ), size );
-		pls->ncol0 = ncol;
+	pls->ncol0 = ncol;
 
         plP_state( PLSTATE_CMAP0 );
         break;
@@ -711,51 +704,44 @@ rdbuf_state( PLStream *pls )
 
         rd_data( pls, &ncol, sizeof ( ncol ) );
 
-	     // Calculate the memory size for this color palatte
+        // Calculate the memory size for this color palatte
         size = (size_t) ncol * sizeof ( PLColor );
 
-        if( pls->ncol1 == 0 )
-	     {
-	         // The current palatte is empty, thus we need to allocate
-	         if ( ( pls->cmap1 = ( PLColor * )malloc( size ) ) == NULL )
-            {
-	             plexit( "Insufficient memory for colormap 1" );
-            }
-        }
-        else if ( pls->ncol1!= ncol )
-	     {
-	         // The current palatte is not big enough, thus we need to
-	         // discard the current palatte and allocate a new one
-	         // We do not use realloc() because we are going to read
-	         // the colormap from the buffer
-	         if(pls->cmap1 != NULL)
+        if ( pls->ncol1 == 0 || pls->ncol1 != ncol )
+        {
+            // The current palatte is empty or the current palatte is not
+            // big enough, thus we need allocate a new one
+
+            // If we have a colormap, discard it because we do not use
+            // realloc().  We are going to read the colormap from the buffer
+            if(pls->cmap1 != NULL)
                 free(pls->cmap1);
 
-	         if ( ( pls->cmap1 = ( PLColor * )malloc( size ) ) == NULL )
+            if ( ( pls->cmap1 = ( PLColor * )malloc( size ) ) == NULL )
             {
-	             plexit( "Insufficient memory for colormap 1" );
+                plexit( "Insufficient memory for colormap 1" );
             }
         }
 
         // Now read the colormap from the buffer
         rd_data( pls, &(pls->cmap1[0]), size );
-		pls->ncol1 = ncol;
+        pls->ncol1 = ncol;
 
         plP_state( PLSTATE_CMAP1 );
         break;
     }
+
+    case PLSTATE_CHR: {
+        //read the chrdef and chrht parameters
+        rd_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
+        rd_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
+    }
 						
-	case PLSTATE_CHR: {
-		//read the chrdef and chrht parameters
-		rd_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
-		rd_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
-	}
-						
-	case PLSTATE_SYM: {
-		//read the symdef and symht parameters
-		rd_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
-		rd_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
-	}
+    case PLSTATE_SYM: {
+        //read the symdef and symht parameters
+        rd_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
+        rd_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
+    }
 
     }
 }
@@ -776,8 +762,8 @@ rdbuf_state( PLStream *pls )
 //	PLESC_SWIN	    Set plot window parameters
 //      PLESC_IMAGE         Draw image
 //      PLESC_HAS_TEXT      Draw PostScript text
-//      PLESC_BEGIN_TEXT    Commands for the alternative unicode text handling path
-//      PLESC_TEXT_CHAR
+//      PLESC_BEGIN_TEXT    Commands for the alternative unicode text
+//      PLESC_TEXT_CHAR     handling path
 //      PLESC_CONTROL_CHAR
 //      PLESC_END_TEXT
 //	PLESC_CLEAR	    Clear Background
@@ -979,9 +965,7 @@ rdbuf_text( PLStream *pls )
 
     text.xform = xform;
 
-
     // Read in the data
-
     rd_data( pls, &fci, sizeof ( PLUNICODE ) );
 
     rd_data( pls, &pls->chrht, sizeof ( PLFLT ) );
@@ -1000,6 +984,9 @@ rdbuf_text( PLStream *pls )
     rd_data( pls, &text.refy, sizeof ( PLINT ) );
 
     rd_data( pls, &text.unicode_array_len, sizeof ( PLINT ) );
+
+    // Initialize to NULL so we don't accidentally try to free the memory
+    text.unicode_array = NULL;
     if ( text.unicode_array_len )
     {
         if ( ( unicode = (PLUNICODE *) malloc( text.unicode_array_len * sizeof ( PLUNICODE ) ) )
@@ -1166,7 +1153,8 @@ plbuf_control( PLStream *pls, U_CHAR c )
         break;
 
     default:
-        pldebug( "plbuf_control", "Unrecognized command %d, previous %d\n", c, c_old );
+        pldebug( "plbuf_control", "Unrecognized command %d, previous %d\n",
+                 c, c_old );
     }
     c_old = c;
 }
@@ -1187,7 +1175,7 @@ rd_command( PLStream *pls, U_CHAR *p_c )
 #else
     if ( pls->plbuf_readpos < pls->plbuf_top )
     {
-        *p_c = *(U_CHAR *) ( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos );
+        *p_c = *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos);
         pls->plbuf_readpos += sizeof ( U_CHAR );
         count = sizeof ( U_CHAR );
     }
@@ -1239,7 +1227,8 @@ wr_command( PLStream *pls, U_CHAR c )
         pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
 
         if ( pls->verbose )
-            printf( "Growing buffer to %d KB\n", (int) ( pls->plbuf_buffer_size / 1024 ) );
+            printf( "Growing buffer to %d KB\n",
+                    (int) ( pls->plbuf_buffer_size / 1024 ) );
         if ( ( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size ) ) == NULL )
             plexit( "plbuf wr_data:  Plot buffer grow failed" );
     }
@@ -1263,13 +1252,17 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
 #else
     if ( ( pls->plbuf_top + buf_size ) >= pls->plbuf_buffer_size )
     {
-        // Not enough space, need to grow the buffer
+        // Not enough space, need to grow the buffer before memcpy
         // Must make sure the increase is enough for this data
         pls->plbuf_buffer_size += pls->plbuf_buffer_grow *
-                                  ( ( pls->plbuf_top + buf_size - pls->plbuf_buffer_size ) /
+                                  ( ( pls->plbuf_top + buf_size
+                                      - pls->plbuf_buffer_size ) /
                                     pls->plbuf_buffer_grow + 1 );
+
+        // The following code should be completely unnecessary and
+        // should be removed.
         while ( pls->plbuf_top + buf_size >= pls->plbuf_buffer_size )
-            ;
+            pls->plbuf_buffer_size + pls->plbuf_buffer_grow;
 
         if ( ( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size ) ) == NULL )
             plexit( "plbuf wr_data:  Plot buffer grow failed" );
