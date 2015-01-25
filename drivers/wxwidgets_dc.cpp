@@ -201,7 +201,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
 				pls->plbuf_top = m_inputSize;
 				pls->plbuf_buffer_size = m_inputSize;
 				memcpy( pls->plbuf_buffer, m_inputMemoryMap.getBuffer(), m_inputSize );
-				plreplot();
 			}
 		}
 		else
