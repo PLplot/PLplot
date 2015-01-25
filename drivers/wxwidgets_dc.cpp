@@ -204,6 +204,10 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
 				plreplot();
 			}
 		}
+		else
+		{
+			plwarn("Error creating memory map for wxWidget instruction receipt. The page will not be displayed");
+		}
 	}
 }
 
@@ -354,9 +358,9 @@ void wxPLDevice::SetColor( PLStream *pls )
 		m_plstate_color = true;
 		return;
 	}
-
+	PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+                         width, wxSOLID ) ) );
     m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) ) );
 }
 
@@ -734,7 +738,7 @@ void wxPLDevice::EndPage( PLStream* pls )
 		//check the memory map is valid
 		if( !m_outputMemoryMap.isValid() )
 		{
-			plwarn( "Error creating memory map for wxWidget instruction transport. The page will not be displayed" );
+			plwarn( "Error creating memory map for wxWidget instruction transmission. The page will not be displayed" );
 			return;
 		}
 		//copy the page's buffer to the map
