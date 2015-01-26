@@ -21,6 +21,7 @@
 
 set(plplot_LIB_SRCS
   pdfutils.c
+  plmem.c
   plaffine.c
   plarc.c
   plargs.c
