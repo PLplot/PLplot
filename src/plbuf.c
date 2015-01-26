@@ -23,6 +23,7 @@
 //
 
 #define NEED_PLDEBUG
+#define DEBUG_ENTER
 #include "plplotP.h"
 #include "drivers.h"
 #include "metadefs.h"
@@ -66,8 +67,23 @@ plbuf_init( PLStream *pls )
 
     pls->plbuf_read = FALSE;
 
-    if ( pls->plbuf_buffer != NULL )
-        pls->plbuf_write = FALSE;
+    if ( pls->plbuf_buffer == NULL )
+    {
+        // We have not allocated a buffer, so do it now
+        pls->plbuf_buffer_grow = 128 * 1024;
+
+        if ( ( pls->plbuf_buffer = malloc( pls->plbuf_buffer_grow ) ) == NULL )
+            plexit( "plbuf_bop: Error allocating plot buffer." );
+
+        pls->plbuf_buffer_size = pls->plbuf_buffer_grow;
+        pls->plbuf_top         = 0;
+        pls->plbuf_readpos     = 0;
+    }
+    else
+    {
+        // Buffer is allocated, move the top to the beginning
+        pls->plbuf_top = 0;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -130,8 +146,8 @@ plbuf_eop( PLStream * PL_UNUSED( pls ) )
 //
 // Set up for the next page.
 // To avoid problems redisplaying partially filled pages, on each BOP the
-// old file is thrown away and a new one is obtained.  This way we can just
-// read up to EOF to get everything on the current page.
+// old data in the buffer is ignored by setting the top back to the
+// beginning of the buffer.
 //
 // Also write state information to ensure the next page is correct.
 //--------------------------------------------------------------------------
@@ -143,26 +159,17 @@ plbuf_bop( PLStream *pls )
 
     plbuf_tidy( pls );
 
-    // Need a better place to initialize this value
-    pls->plbuf_buffer_grow = 128 * 1024;
-
-    if ( pls->plbuf_buffer == NULL )
-    {
-        // We have not allocated a buffer, so do it now
-        if ( ( pls->plbuf_buffer = malloc( pls->plbuf_buffer_grow ) ) == NULL )
-            plexit( "plbuf_bop: Error allocating plot buffer." );
-
-        pls->plbuf_buffer_size = pls->plbuf_buffer_grow;
-        pls->plbuf_top         = 0;
-        pls->plbuf_readpos     = 0;
-    }
-    else
-    {
-        // Buffer is allocated, move the top to the beginning
-        pls->plbuf_top = 0;
-    }
+    // Move the top to the beginning
+    pls->plbuf_top = 0;
 
     wr_command( pls, (U_CHAR) BOP );
+
+    // Save default configurations (e.g. colormap) to allow plRemakePlot
+    // to work correctly.
+    plbuf_state(pls, PLSTATE_CMAP0);
+    plbuf_state(pls, PLSTATE_CMAP1);
+
+    // Initialize to a known state
     plbuf_state( pls, PLSTATE_COLOR0 );
     plbuf_state( pls, PLSTATE_WIDTH );
 }
@@ -230,11 +237,13 @@ plbuf_state( PLStream *pls, PLINT op )
 	// Save the color palatte
         wr_data( pls, &( pls->cmap1[0] ), sizeof ( PLColor ) * pls->ncol1 );
         break;
+
     case PLSTATE_CHR:
         //save the chrdef and chrht parameters
         wr_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
 	wr_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
 	break;
+
     case PLSTATE_SYM:
         //save the symdef and symht parameters
         wr_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
@@ -440,6 +449,8 @@ plbuf_fill( PLStream *pls )
 static void
 plbuf_swin( PLStream *pls, PLWindow *plwin )
 {
+    dbug_enter( "plbuf_swin" );
+
     wr_data( pls, &plwin->dxmi, sizeof ( PLFLT ) );
     wr_data( pls, &plwin->dxma, sizeof ( PLFLT ) );
     wr_data( pls, &plwin->dymi, sizeof ( PLFLT ) );
@@ -617,6 +628,7 @@ rdbuf_state( PLStream *pls )
         pls->curcolor.g = g;
         pls->curcolor.b = b;
         pls->curcolor.a = a;
+        pls->curcmap = 0;
 
         plP_state( PLSTATE_COLOR0 );
         break;
@@ -632,6 +644,7 @@ rdbuf_state( PLStream *pls )
         pls->curcolor.g = pls->cmap1[icol1].g;
         pls->curcolor.b = pls->cmap1[icol1].b;
         pls->curcolor.a = pls->cmap1[icol1].a;
+        pls->curcmap = 1;
 
         plP_state( PLSTATE_COLOR1 );
         break;
@@ -918,6 +931,8 @@ rdbuf_swin( PLStream *pls )
 {
     PLWindow plwin;
 
+    dbug_enter( "rdbuf_swin" );
+
     rd_data( pls, &plwin.dxmi, sizeof ( PLFLT ) );
     rd_data( pls, &plwin.dxma, sizeof ( PLFLT ) );
     rd_data( pls, &plwin.dymi, sizeof ( PLFLT ) );
@@ -944,6 +959,8 @@ rdbuf_text( PLStream *pls )
     EscText  text;
     PLFLT    xform[4];
     PLUNICODE* unicode;
+
+    dbug_enter( "rdbuf_text" );
 
     text.xform = xform;
 
@@ -1002,6 +1019,8 @@ rdbuf_text_unicode( PLINT op, PLStream *pls )
     EscText text;
     PLFLT   xform[4];
 
+    dbug_enter( "rdbuf_text_unicode" );
+
     text.xform = xform;
 
 
@@ -1049,7 +1068,6 @@ plRemakePlot( PLStream *pls )
 {
     U_CHAR   c;
     int      plbuf_status;
-    PLStream *save_pls;
 
     dbug_enter( "plRemakePlot" );
 
@@ -1065,22 +1083,33 @@ plRemakePlot( PLStream *pls )
 
     if ( pls->plbuf_buffer )
     {
+        // State saving variables
+        PLStream *save_current_pls;
+
         pls->plbuf_readpos = 0;
-        // Need to change where plsc points to before processing the commands.
-        // If we have multiple plot streams, this will prevent the commands
-        // from going to the wrong plot stream.
+
+        // Save state
+
+        // Need to change where plsc (current plot stream) points to before
+        // processing the commands.  If we have multiple plot streams, this
+        // will prevent the commands from going to the wrong plot stream.
         //
-        save_pls = plsc;
+        save_current_pls = plsc;
+
+        // Make the current plot stream the one passed by the caller
         plsc     = pls;
 
+        // Replay the plot command buffer
         while ( rd_command( pls, &c ) )
         {
             plbuf_control( pls, c );
         }
 
-        plsc = save_pls;
+        // Restore the original current plot stream
+        plsc = save_current_pls;
     }
 
+    // Restore the state of the passed plot stream
     pls->plbuf_read  = FALSE;
     pls->plbuf_write = plbuf_status;
 }
@@ -1272,6 +1301,8 @@ void * plbuf_save( PLStream *pls, void *state )
     PLINT         i;
     U_CHAR        *buf; // Assume that this is byte-sized
 
+    dbug_enter( "plbuf_save" );
+
     if ( pls->plbuf_write )
     {
         pls->plbuf_write = FALSE;
@@ -1367,6 +1398,8 @@ void plbuf_restore( PLStream *pls, void *state )
 {
     struct _state *new_state = (struct _state *) state;
 
+    dbug_enter( "plbuf_restore" );
+
     pls->plbuf_buffer      = new_state->plbuf_buffer;
     pls->plbuf_buffer_size = new_state->plbuf_buffer_size;
     pls->plbuf_top         = new_state->plbuf_top;
@@ -1390,6 +1423,8 @@ void * plbuf_switch( PLStream *pls, void *state )
     struct _state *new_state = (struct _state *) state;
     struct _state *prev_state;
     size_t        save_size;
+
+    dbug_enter( "plbuf_switch" );
 
     // No saved state was passed, return a NULL--we hope the caller
     // is smart enough to notice
@@ -1425,5 +1460,3 @@ void * plbuf_switch( PLStream *pls, void *state )
 
     return (void *) prev_state;
 }
-
-
