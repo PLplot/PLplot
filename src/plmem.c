@@ -1,6 +1,6 @@
-// xId: pdfutils.c 11966 2011-10-14 07:10:05Z andrewross $
+// xId: plmem.c 11966 2011-10-14 07:10:05Z andrewross $
 //
-//  pdf_utils.c
+//  plmem.c
 //
 //  Copyright (C) 1992, 1993, 1994, 1995
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
