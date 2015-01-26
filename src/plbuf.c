@@ -65,13 +65,9 @@ plbuf_init( PLStream *pls )
     dbug_enter( "plbuf_init" );
 
     pls->plbuf_read = FALSE;
-#ifdef BUFFERED_FILE
-    if ( pls->plbufFile != NULL )
-        pls->plbuf_write = FALSE;
-#else
+
     if ( pls->plbuf_buffer != NULL )
         pls->plbuf_write = FALSE;
-#endif
 }
 
 //--------------------------------------------------------------------------
@@ -147,11 +143,6 @@ plbuf_bop( PLStream *pls )
 
     plbuf_tidy( pls );
 
-#ifdef BUFFERED_FILE
-    pls->plbufFile = pl_create_tempfile( NULL );
-    if ( pls->plbufFile == NULL )
-        plexit( "plbuf_bop: Error opening plot data storage file." );
-#else
     // Need a better place to initialize this value
     pls->plbuf_buffer_grow = 128 * 1024;
 
@@ -170,7 +161,6 @@ plbuf_bop( PLStream *pls )
         // Buffer is allocated, move the top to the beginning
         pls->plbuf_top = 0;
     }
-#endif
 
     wr_command( pls, (U_CHAR) BOP );
     plbuf_state( pls, PLSTATE_COLOR0 );
@@ -187,14 +177,6 @@ void
 plbuf_tidy( PLStream * PL_UNUSED( pls ) )
 {
     dbug_enter( "plbuf_tidy" );
-
-#ifdef BUFFERED_FILE
-    if ( pls->plbufFile == NULL )
-        return;
-
-    fclose( pls->plbufFile )
-    pls->plbufFile = NULL;
-#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1081,18 +1063,12 @@ plRemakePlot( PLStream *pls )
     pls->plbuf_write = FALSE;
     pls->plbuf_read  = TRUE;
 
-#ifdef BUFFERED_FILE
-    if ( pls->plbufFile )
-    {
-        rewind( pls->plbufFile );
-#else
     if ( pls->plbuf_buffer )
     {
         pls->plbuf_readpos = 0;
-#endif
         // Need to change where plsc points to before processing the commands.
-        // If we have multiple plot streams, this will prevent the commands from
-        // going to the wrong plot stream.
+        // If we have multiple plot streams, this will prevent the commands
+        // from going to the wrong plot stream.
         //
         save_pls = plsc;
         plsc     = pls;
@@ -1170,9 +1146,6 @@ rd_command( PLStream *pls, U_CHAR *p_c )
 {
     int count;
 
-#ifdef BUFFERED_FILE
-    count = fread( p_c, sizeof ( U_CHAR ), 1, pls->plbufFile );
-#else
     if ( pls->plbuf_readpos < pls->plbuf_top )
     {
         *p_c = *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos);
@@ -1183,7 +1156,7 @@ rd_command( PLStream *pls, U_CHAR *p_c )
     {
         count = 0;
     }
-#endif
+
     return ( count );
 }
 
@@ -1196,9 +1169,6 @@ rd_command( PLStream *pls, U_CHAR *p_c )
 static void
 rd_data( PLStream *pls, void *buf, size_t buf_size )
 {
-#ifdef BUFFERED_FILE
-    plio_fread( buf, buf_size, 1, pls->plbufFile );
-#else
     // If U_CHAR is not the same size as what memcpy() expects (typically
     // 1 byte) then this code will have problems.  A better approach might be
     // to use uint8_t from <stdint.h> but I do not know how portable that
@@ -1206,7 +1176,6 @@ rd_data( PLStream *pls, void *buf, size_t buf_size )
     //
     memcpy( buf, (U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos, buf_size );
     pls->plbuf_readpos += buf_size;
-#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1218,9 +1187,6 @@ rd_data( PLStream *pls, void *buf, size_t buf_size )
 static void
 wr_command( PLStream *pls, U_CHAR c )
 {
-#ifdef BUFFERED_FILE
-    plio_fwrite( &c1, sizeof ( U_CHAR ), 1, pls->plbufFile );
-#else
     if ( ( pls->plbuf_top + sizeof ( U_CHAR ) ) >= pls->plbuf_buffer_size )
     {
         // Not enough space, need to grow the buffer
@@ -1235,7 +1201,6 @@ wr_command( PLStream *pls, U_CHAR c )
 
     *(U_CHAR *) ( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_top ) = c;
     pls->plbuf_top += sizeof ( U_CHAR );
-#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1247,9 +1212,6 @@ wr_command( PLStream *pls, U_CHAR c )
 static void
 wr_data( PLStream *pls, void *buf, size_t buf_size )
 {
-#ifdef BUFFERED_FILE
-    plio_fwrite( buf, buf_size, 1, pls->plbufFile );
-#else
     if ( ( pls->plbuf_top + buf_size ) >= pls->plbuf_buffer_size )
     {
         // Not enough space, need to grow the buffer before memcpy
@@ -1275,7 +1237,6 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
     //
     memcpy( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
     pls->plbuf_top += buf_size;
-#endif
 }
 
 // plbuf_save(state)
@@ -1298,14 +1259,10 @@ struct _state
 {
     size_t            size;  // Size of the save buffer
     int               valid; // Flag to indicate a valid save state
-#ifdef BUFFERED_FILE
-    FILE              *plbufFile;
-#else
     void              *plbuf_buffer;
     size_t            plbuf_buffer_size;
     size_t            plbuf_top;
     size_t            plbuf_readpos;
-#endif
 };
 
 void * plbuf_save( PLStream *pls, void *state )
@@ -1323,10 +1280,8 @@ void * plbuf_save( PLStream *pls, void *state )
         // Determine the size of the buffer required to save everything.
         save_size = sizeof ( struct _state );
 
-#ifndef BUFFERED_FILE
         // Only copy as much of the plot buffer that is being used
         save_size += pls->plbuf_top;
-#endif
 
         // If a buffer exists, determine if we need to resize it
         if ( state != NULL )
@@ -1360,12 +1315,6 @@ void * plbuf_save( PLStream *pls, void *state )
                 return NULL;
             }
             plot_state->size = save_size;
-
-#ifdef BUFFERED_FILE
-            // Make sure the FILE pointer is NULL in order to prevent bad
-            // things from happening...
-            plot_state->plbufFile = NULL;
-#endif
         }
 
         // At this point we have an appropriately sized save buffer.
@@ -1379,42 +1328,6 @@ void * plbuf_save( PLStream *pls, void *state )
         // Point buf to the space after the struct _state
         buf = (U_CHAR *) ( plot_state + 1 );
 
-#ifdef BUFFERED_FILE
-        // Remove the old tempfile, if it exists
-        if ( plot_state->plbufFile != NULL )
-        {
-            fclose( plot_state->plbufFile );
-        }
-
-        // Copy the plot buffer to a tempfile
-        if ( ( plot_state->plbufFile = pl_create_tempfile( NULL ) ) == NULL )
-        {
-            // Throw a warning since this might be a permissions problem
-            // and we may not want to force an exit
-            //
-            plwarn( "plbuf: Unable to open temporary file to save state" );
-            return (void *) plot_state;
-        }
-        else
-        {
-            U_CHAR tmp;
-
-            rewind( pls->plbufFile );
-            while ( count = fread( &tmp, sizeof ( U_CHAR ), 1, pls->plbufFile ) )
-            {
-                if ( fwrite( &tmp, sizeof ( U_CHAR ), 1, plot_state->plbufFile ) != count )
-                {
-                    // Throw a warning since this might be a permissions problem
-                    // and we may not want to force an exit
-                    //
-                    plwarn( "plbuf: Unable to write to temporary file" );
-                    fclose( plot_state->plbufFile );
-                    plot_state->plbufFile = NULL;
-                    return (void *) plot_state;
-                }
-            }
-        }
-#else
         // Again, note, that we only copy the portion of the plot buffer that
 	// is being used
         plot_state->plbuf_buffer_size = pls->plbuf_top;
@@ -1435,7 +1348,6 @@ void * plbuf_save( PLStream *pls, void *state )
             plwarn( "plbuf: Got a NULL in memcpy!" );
             return (void *) plot_state;
         }
-#endif
 
         pls->plbuf_write = TRUE;
         pls->plbuf_read  = FALSE;
@@ -1455,14 +1367,10 @@ void plbuf_restore( PLStream *pls, void *state )
 {
     struct _state *new_state = (struct _state *) state;
 
-#ifdef BUFFERED_FILE
-    pls->plbufFile = new_state->save_file;
-#else
     pls->plbuf_buffer      = new_state->plbuf_buffer;
     pls->plbuf_buffer_size = new_state->plbuf_buffer_size;
     pls->plbuf_top         = new_state->plbuf_top;
     pls->plbuf_readpos     = new_state->plbuf_readpos;
-#endif
 }
 
 // plbuf_switch(PLStream *, state)
@@ -1508,14 +1416,11 @@ void * plbuf_switch( PLStream *pls, void *state )
     prev_state->valid = 1;
 
     // Preserve the existing state
-#ifdef BUFFERED_FILE
-    prev_state->plbufFile = pls->plbufFile;
-#else
     prev_state->plbuf_buffer      = pls->plbuf_buffer;
     prev_state->plbuf_buffer_size = pls->plbuf_buffer_size;
     prev_state->plbuf_top         = pls->plbuf_top;
     prev_state->plbuf_readpos     = pls->plbuf_readpos;
-#endif
+
     plbuf_restore( pls, new_state );
 
     return (void *) prev_state;

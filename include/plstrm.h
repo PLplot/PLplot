@@ -291,15 +291,12 @@ typedef struct
 //
 // Variables for use by the plot buffer
 //
-// For BUFFERED_FILE
-// plbufFile	FILE	Plot buffer file pointer
-//
 // For Memory Buffer (default)
-// plbuf_buffer_grow	size_t		Memory buffer growth step
-// plbuf_buffer_size	size_t		Current size of memory buffer
-// plbuf_buffer			void *		Pointer to memory buffer
-// plbuf_top			size_t		Offset to the top of used area/start of free area
-// plbuf_readpos		size_t		Offset to current position being read
+// plbuf_buffer_grow  size_t  Memory buffer growth step
+// plbuf_buffer_size  size_t  Current size of memory buffer
+// plbuf_buffer	      void *  Pointer to memory buffer
+// plbuf_top	      size_t  Offset to the top of used area/start of free area
+// plbuf_readpos      size_t  Offset to current position being read
 //
 // plbufOwner	int	Typically set; only zero if current stream is cloned.
 //
@@ -645,15 +642,11 @@ typedef struct
 
 // Plot buffer settings
 
-#ifdef BUFFERED_FILE
-    FILE   *plbufFile;
-#else
     size_t plbuf_buffer_grow;
     size_t plbuf_buffer_size;
     void   *plbuf_buffer;
     size_t plbuf_top;
     size_t plbuf_readpos;
-#endif
     int    plbufOwner;
 
 // Driver interface (DI)

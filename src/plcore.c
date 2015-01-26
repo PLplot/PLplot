@@ -2461,9 +2461,8 @@ c_plend1( void )
     free_mem( plsc->geometry );
     free_mem( plsc->dev );
     free_mem( plsc->BaseName );
-#ifndef BUFFERED_FILE
     free_mem( plsc->plbuf_buffer );
-#endif
+
     if ( plsc->program )
         free_mem( plsc->program );
     if ( plsc->server_name )
@@ -2670,12 +2669,8 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
 
     plsc->debug = plsr->debug;
 
-// Plot buffer -- need to copy file pointer so that plreplot() works
+// Plot buffer -- need to copy buffer pointer so that plreplot() works
 // This also prevents inadvertent writes into the plot buffer
-
-#ifdef BUFFERED_FILE
-    plsc->plbufFile = plsr->plbufFile;
-#else
     plsc->plbuf_buffer_grow = plsr->plbuf_buffer_grow;
     plsc->plbuf_buffer_size = plsr->plbuf_buffer_size;
     plsc->plbuf_top         = plsr->plbuf_top;
@@ -2683,7 +2678,6 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
     if ( ( plsc->plbuf_buffer = malloc( plsc->plbuf_buffer_size ) ) == NULL )
         plexit( "plcpstrm: Error allocating plot buffer." );
     memcpy( plsc->plbuf_buffer, plsr->plbuf_buffer, plsr->plbuf_top );
-#endif
 
 // Driver interface
 // Transformation must be recalculated in current driver coordinates
@@ -3388,13 +3382,8 @@ c_plfontld( PLINT ifont )
 void
 c_plreplot( void )
 {
-#ifdef BUFFERED_FILE
-    if ( plsc->plbufFile != NULL )
-    {
-#else
     if ( plsc->plbuf_buffer != NULL )
     {
-#endif
         plRemakePlot( plsc );
     }
     else
