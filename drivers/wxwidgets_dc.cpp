@@ -373,8 +373,32 @@ void wxPLDevice::SetColor( PLStream *pls )
 void wxPLDevice::SetExternalBuffer( PLStream *pls, void* dc )
 {
     m_dc   = (wxDC *) dc; // Add the dc to the device
-	//if( m_dc )
+	m_useDcTransform = false;
+	m_gc = NULL;
+	if( m_dc )
 	{
+#if wxVERSION_NUMBER >= 2902
+		m_useDcTransform = m_dc->CanUseTransformMatrix();
+#endif
+		//If we don't have wxDC tranforms we can use the
+		//underlying wxGCDC if this is a wxGCDC
+		if( !m_useDcTransform )
+		{
+			//check to see if m_dc is a wxGCDC by using RTTI
+			wxGCDC *gcdc = NULL;
+			try
+			{
+				//put this in a try block as I'm not sure if it will throw if
+				//RTTI is switched off
+				gcdc = dynamic_cast< wxGCDC* >( m_dc );
+			}
+			catch ( ... )
+			{
+			}
+			if( gcdc )
+				m_gc = gcdc->GetGraphicsContext();
+		}
+
 		strcpy( m_mfo, "" );
 		SetSize( pls, m_width, m_height ); //call with our current size to set the scaling
 	}
@@ -508,11 +532,28 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
 
     if ( drawText )
     {
-        m_dc->DrawRotatedText( str, (wxCoord) ( m_posX - m_yOffset / m_yScale * m_sin_rot ),
-            (wxCoord) ( m_height - (wxCoord) ( m_posY + m_yOffset * m_cos_rot / m_yScale ) ),
-            m_rotation * 180.0 / M_PI );
-        m_posX += (PLINT) ( w * m_cos_rot );
-        m_posY += (PLINT) ( w * m_sin_rot );
+		//if we are using wxDC transforms or the wxGC, then the transformations
+		//have already been applied
+		if( m_gc )
+			m_gc->DrawText( str, m_textWidth, 0.0 );
+		else if ( m_useDcTransform )
+			m_dc->DrawText( str, m_textWidth, 0 );
+		else
+		{
+			//If we are stuck with a wxDC that has no transformation abilities then
+			// all we can really do is rotate the text - this is a bit of a poor state
+			// really, but to be honest it is better than defaulting to hershey for all
+			// text
+			if( m_rotation == 0 )
+				m_dc->DrawRotatedText( str, (wxCoord) ( m_posX + m_textWidth ),
+					(wxCoord) ( m_height - (wxCoord) ( m_posY + m_yOffset / m_yScale ) ),
+					m_rotation * 180.0 / M_PI );
+			else
+				m_dc->DrawRotatedText( str,
+					(wxCoord) ( m_posX - m_yOffset / m_yScale * sin( m_rotation ) + m_textWidth * cos( m_rotation ) ),
+					(wxCoord) ( m_height - (wxCoord) ( m_posY + m_yOffset * cos( m_rotation ) / m_yScale ) - m_textWidth * sin( m_rotation )),
+					m_rotation * 180.0 / M_PI );
+		}
     }
 
     m_textWidth += w;
@@ -645,12 +686,6 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     }
     wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
 
-    // calculate rotation of text
-    plRotationShear( args->xform, &m_rotation, &m_shear, &m_stride );
-    m_rotation -= pls->diorot * M_PI / 2.0;
-    m_cos_rot   = cos( m_rotation );
-    m_sin_rot   = sin( m_rotation );
-
     // Set font color
     m_dc->SetTextForeground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
     m_dc->SetTextBackground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
@@ -688,7 +723,6 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         // determine extent of text
         m_posX = args->x / m_xScale;
         m_posY = args->y / m_yScale;
-
         DrawText( lineStart, lineLen, false );
 
         if ( lineFeed && m_superscriptHeight > m_textHeight )
@@ -699,22 +733,68 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         m_yOffset   = startingYOffset;
         m_fci       = startingFci;
         SetFont( m_fci );
-        m_posX = (PLINT) ( args->x / m_xScale - ( args->just * m_textWidth ) * m_cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * m_sin_rot ); //move to set alignment
-        m_posY = (PLINT) ( args->y / m_yScale - ( args->just * m_textWidth ) * m_sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * m_cos_rot );
-        DrawText( lineStart, lineLen, true );  //draw text
+
+
+		// calculate rotation of text
+		PLFLT shear;
+		PLFLT stride;
+		plRotationShear( args->xform, &m_rotation, &shear, &stride );
+		m_rotation -= pls->diorot * M_PI / 2.0;
+		PLFLT cos_rot   = cos( m_rotation );
+		PLFLT sin_rot   = sin( m_rotation );
+		PLFLT cos_shear = cos( shear );
+		PLFLT sin_shear = sin( shear );
+
+		//Set the transform if possible and draw the text
+		if( m_gc )
+		{
+			wxGraphicsMatrix originalMatrix = m_gc->GetTransform();
+
+			m_gc->Translate( args->x / m_xScale, m_height - args->y / m_yScale ); //move to text starting position
+			wxGraphicsMatrix matrix = m_gc->CreateMatrix(
+				cos_rot * stride, -sin_rot * stride,
+				cos_rot * sin_shear + sin_rot * cos_shear,
+				-sin_rot * sin_shear + cos_rot * cos_shear,
+				0.0, 0.0 );                                     //create rotation transformation matrix
+			m_gc->ConcatTransform( matrix );                    //rotate
+			m_gc->Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing ); //move to set alignment
+
+			DrawText( lineStart, lineLen, true );
+			m_gc->SetTransform( originalMatrix );
+		}
+#if wxVERSION_NUMBER >= 2902
+		else if( m_useDcTransform )
+		{
+			wxAffineMatrix2D originalMatrix = m_dc->GetTransformMatrix();
+
+			wxAffineMatrix2D newMatrix = originalMatrix;
+			newMatrix.Translate( args->x / m_xScale, m_height - args->y / m_yScale );
+			wxAffineMatrix2D textMatrix;
+			textMatrix.Set( wxMatrix2D( cos_rot * stride, -sin_rot * stride,
+				cos_rot * sin_shear + sin_rot * cos_shear,
+				-sin_rot * sin_shear + cos_rot * cos_shear),
+				wxPoint2DDouble( 0.0, 0.0 ) );
+			newMatrix.Concat( textMatrix );
+			newMatrix.Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing );
+
+			m_dc->SetTransformMatrix( newMatrix );
+			DrawText( lineStart, lineLen, true );
+			m_dc->SetTransformMatrix( originalMatrix );
+		}
+#endif
+		else
+		{
+			m_posX = (PLINT) ( args->x / m_xScale - ( args->just * m_textWidth ) * cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * sin_rot ); //move to set alignment
+			m_posY = (PLINT) ( args->y / m_yScale - ( args->just * m_textWidth ) * sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * cos_rot );
+			DrawText( lineStart, lineLen, true );
+		}
+
 
         lineStart += lineLen;
         if ( carriageReturn )
             lineStart++;
         lineLen = 0;
     }
-    //posX = args->x;
-    //posY = args->y;
-    //PSDrawText( args->unicode_array, args->unicode_array_len, false );
-
-    //posX = (PLINT) ( args->x - ( ( args->just * textWidth ) * cos_rot + ( 0.5 * textHeight ) * sin_rot ) * scalex );
-    //posY = (PLINT) ( args->y - ( ( args->just * textWidth ) * sin_rot - ( 0.5 * textHeight ) * cos_rot ) * scaley );
-    //PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
 }
 

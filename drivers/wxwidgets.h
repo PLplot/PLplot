@@ -113,12 +113,16 @@ public:
     void ProcessString( PLStream* pls, EscText* args );
 	void FixAspectRatio( bool fix );
 
-protected:
+private:
     void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;
     void DrawTextSection( char* utf8_string, bool drawText );
 
 	//The DC we will draw on if given by the user
     wxDC       *m_dc;
+	bool        m_useDcTransform;
+	//for the gcdc case we may need to store the graphics context for use
+	// with text transformations
+	wxGraphicsContext *m_gc;
 
 	//Size and Scale
 	//As far as plplot is concerned the size of the window is SHRT_MAX by
@@ -142,6 +146,7 @@ protected:
     //int          locate_mode;           // Set while in locate mode
     //bool         draw_xhair;            // Set during xhair draws
 
+
     // font variables
     static const int m_max_string_length = 500;
     wxFont          *m_font;
@@ -159,12 +164,12 @@ protected:
     PLINT            m_posX;
 	PLINT            m_posY;
     PLFLT            m_rotation;
-	PLFLT            m_cos_rot;
-	PLFLT            m_sin_rot;
-    PLFLT            m_shear;
-	PLFLT            m_cos_shear;
-	PLFLT            m_sin_shear;
-    PLFLT            m_stride;
+	//PLFLT            m_cos_rot;
+	//PLFLT            m_sin_rot;
+    //PLFLT            m_shear;
+	//PLFLT            m_cos_shear;
+	//PLFLT            m_sin_shear;
+    //PLFLT            m_stride;
 
 	//variables for dealing with sending/receiving commands
 	//via a memory map
