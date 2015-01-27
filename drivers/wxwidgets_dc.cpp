@@ -849,7 +849,8 @@ void wxPLDevice::EndPage( PLStream* pls )
 		//Run the wxPlViewer with command line parameters telling it the location and size of the buffer
 		//the console will hang until wxPlViewer exits
 		wxString command;
-			command << wxT("\"") << exeName << wxT( "\" " ) << wxString( m_mfo, wxConvUTF8 ) << wxT( " " ) << pls->plbuf_top;
+		command << wxT("\"") << exeName << wxT( "\" " ) << wxString( m_mfo, wxConvUTF8 ) << wxT( " " ) <<
+			pls->plbuf_top << wxT( " " ) << pls->xlength << ( " " ) << pls->ylength;
 		system( command.mb_str() );
 	}
 }

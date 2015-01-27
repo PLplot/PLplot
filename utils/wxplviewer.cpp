@@ -15,10 +15,17 @@ bool wxPlViewerApp::OnInit()
 	wxInitAllImageHandlers();
 	wxString file;
 	long fileSize = 0;
-	if (argc==3)
+	long width = wxDefaultCoord;
+	long height = wxDefaultCoord;
+	if ( argc>=3 )
 	{
 		file = argv[1];
 		wxString(argv[2]).ToLong( &fileSize );
+	}
+	if ( argc == 5 )
+	{
+		wxString(argv[3]).ToLong( &width );
+		wxString(argv[4]).ToLong( &height );
 	}
 #ifdef __WXGTK__
 	//This is to deal with the bug described at
@@ -32,7 +39,8 @@ bool wxPlViewerApp::OnInit()
 	wxMilliSleep( 100 );
 #endif
 	wxPlFrame* frame = new wxPlFrame( NULL, wxID_ANY, wxT("wxPlViewer"), file,
-		PLINT(fileSize), wxDefaultPosition, wxSize( 500, 500 ) );
+		PLINT(fileSize), wxDefaultPosition, wxDefaultSize );
+	frame->SetClientSize( width, height );
 	frame->Show();
 	return true;
 }
