@@ -108,7 +108,7 @@ PLMemoryMap::PLMemoryMap()
 //  then we will try to access an existing shared memory area rather than
 //  creating a new one.
 //--------------------------------------------------------------------------
-PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool onlyIfExists )
+PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mustNotExist )
 {
 #ifdef WIN32
 	m_mapFile = NULL;
@@ -117,7 +117,7 @@ PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool onlyIfExists )
 	m_name = NULL;
 #endif
 	m_buffer=NULL;
-	create( name, size, onlyIfExists );
+	create( name, size, mustExist, mustNotExist );
 }
 
 //--------------------------------------------------------------------------
@@ -128,13 +128,22 @@ PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool onlyIfExists )
 //  then we will try to access an existing shared memory area rather than
 //  creating a new one.
 //--------------------------------------------------------------------------
-void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
+void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mustNotExist )
 {
 	close();
-
+	assert( ! (mustExist && mustNotExist ) );
+	if( mustExist && mustNotExist )
+		return;
 #ifdef WIN32
-	if( onlyIfExists )
+	if( mustExist )
 		m_mapFile = OpenFileMappingA( FILE_MAP_ALL_ACCESS, FALSE, name);
+	else if( mustNotExist )
+	{
+		m_mapFile = CreateFileMappingA( INVALID_HANDLE_VALUE, NULL,
+			PAGE_READWRITE, 0, size, name );
+		if( GetLastError() == ERROR_ALREADY_EXISTS )
+			close();
+	}
 	else
 		m_mapFile = CreateFileMappingA( INVALID_HANDLE_VALUE, NULL,
 			PAGE_READWRITE, 0, size, name );
@@ -142,11 +151,17 @@ void PLMemoryMap::create( const char *name, PLINT size, bool onlyIfExists )
 	if( m_mapFile )
 		m_buffer = MapViewOfFile( m_mapFile, FILE_MAP_ALL_ACCESS, 0, 0, size );
 #else
-	if( onlyIfExists )
+	if( mustExist )
 		m_mapFile = shm_open( name, O_RDWR, 0 );
-	else
+	else if( mustNotExist )
 	{
 		m_mapFile = shm_open( name, O_RDWR|O_CREAT|O_EXCL, S_IRWXU ); //S_IRWXU gives user wrx permissions
+		if( ftruncate( m_mapFile, size ) == -1 )
+			close( );
+	}
+	else
+	{
+		m_mapFile = shm_open( name, O_RDWR|O_CREAT, S_IRWXU ); //S_IRWXU gives user wrx permissions
 		if( ftruncate( m_mapFile, size ) == -1 )
 			close( );
 	}

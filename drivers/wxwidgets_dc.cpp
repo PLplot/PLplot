@@ -32,6 +32,7 @@
 // std and driver headers
 #include <cmath>
 #include "wxwidgets.h"
+#include <random>
 
 //--------------------------------------------------------------------------
 // Scaler class
@@ -111,7 +112,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
 	else
 		//assume we will be outputting to the default
 		//memory map until we are given a dc to draw to
-		strcpy(m_mfo, "plplotMemoryMap");
+		strcpy(m_mfo, "plplotMemoryMap??????????");
 	if( mfi )
 		strcpy(m_mfi, mfi);
 	else
@@ -188,7 +189,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
 
 	if( strlen(m_mfi)>0 )
 	{
-		m_inputMemoryMap.create( mfi, m_inputSize, true );
+		m_inputMemoryMap.create( mfi, m_inputSize, true, false );
 		if( m_inputMemoryMap.isValid())
 		{
 			if( pls->plbuf_buffer )
@@ -812,16 +813,35 @@ void wxPLDevice::EndPage( PLStream* pls )
 		//Note that the buffer is cleared at the beginnign of each page so
 		//we are transferring and displaying one page at a time.
 
-		//create a memory map to hold the data, note that creating a new map automatically destroys the previous one
-		m_outputMemoryMap.create( m_mfo, pls->plbuf_top, false );
+		//create a memory map to hold the data and add it to the array of maps
+		std::default_random_engine generator (clock());
+		std::uniform_int_distribution<char> distribution('A','Z');
+		int nTries=0;
+		char mapName[256];
+		while( nTries < 10 )
+		{
+			for( int i=0; i< 256; ++i )
+			{
+				if( m_mfo[i] == '?' )
+					mapName[i] = char( distribution( generator ) );
+				else
+					mapName[i] = m_mfo[i];
+			}
+			m_outputMemoryMaps.push_back( std::unique_ptr<PLMemoryMap>( new PLMemoryMap( mapName, pls->plbuf_top, false, true ) ) );
+			if( m_outputMemoryMaps.back()->isValid() )
+				break;
+			++nTries;
+			m_outputMemoryMaps.pop_back();
+		}
+		//m_outputMemoryMap.create( m_mfo, pls->plbuf_top, false, true );
 		//check the memory map is valid
-		if( !m_outputMemoryMap.isValid() )
+		if( !m_outputMemoryMaps.back()->isValid() )
 		{
 			plwarn( "Error creating memory map for wxWidget instruction transmission. The page will not be displayed" );
 			return;
 		}
 		//copy the page's buffer to the map
-		memcpy( m_outputMemoryMap.getBuffer(), pls->plbuf_buffer, pls->plbuf_top );
+		memcpy( m_outputMemoryMaps.back()->getBuffer(), pls->plbuf_buffer, pls->plbuf_top );
 
 		//try to find the wxPLViewer executable, in the first instance just assume it
 		//is in the path.
@@ -849,9 +869,23 @@ void wxPLDevice::EndPage( PLStream* pls )
 		//Run the wxPlViewer with command line parameters telling it the location and size of the buffer
 		//the console will hang until wxPlViewer exits
 		wxString command;
-		command << wxT("\"") << exeName << wxT( "\" " ) << wxString( m_mfo, wxConvUTF8 ) << wxT( " " ) <<
+		command << wxT("\"") << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
 			pls->plbuf_top << wxT( " " ) << pls->xlength << ( " " ) << pls->ylength;
+		if ( pls->nopause )
+		{
+#ifdef _WIN32
+			command = wxT("start ") + command;
+#else
+			command << wxT(" &");
+#endif
+		}
 		system( command.mb_str() );
+		if( ! pls->nopause )
+		{
+			//to do: At the moment if nopause is used the memory map won't be
+			//freed until plplot cleanup is performed
+			m_outputMemoryMaps.pop_back();
+		}
 	}
 }
 

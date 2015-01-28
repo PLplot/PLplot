@@ -20,6 +20,9 @@
 #ifndef __WXWIDGETS_H__
 #define __WXWIDGETS_H__
 
+#include<vector>
+#include<memory>
+
 // some special wxWidgets headers
 #include <wx/spinctrl.h>
 #ifdef wxUSE_GRAPHICS_CONTEXT
@@ -75,8 +78,8 @@ class PLMemoryMap
 {
 public:
 	PLMemoryMap();
-	PLMemoryMap( const char *name, PLINT size, bool onlyIfExists );
-	void create( const char *name, PLINT size, bool onlyIfExists );
+	PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mustNotExist );
+	void create( const char *name, PLINT size, bool mustExist, bool mustNotExist );
 	void close();
 	~PLMemoryMap();
 	char *getBuffer() { return (char*)m_buffer; }
@@ -176,7 +179,7 @@ private:
 	char           m_mfo[256];
 	char           m_mfi[256];
 	PLMemoryMap    m_inputMemoryMap;
-	PLMemoryMap    m_outputMemoryMap;
+	std::vector<std::unique_ptr<PLMemoryMap>> m_outputMemoryMaps;
 	PLINT          m_inputSize;
 };
 
