@@ -23,7 +23,6 @@
 //
 
 #define NEED_PLDEBUG
-#define DEBUG_ENTER
 #include "plplotP.h"
 #include "drivers.h"
 #include "metadefs.h"
@@ -35,9 +34,11 @@ void * plbuf_save( PLStream *pls, void *state );
 
 static int      rd_command( PLStream *pls, U_CHAR *p_c );
 static void     rd_data( PLStream *pls, void *buf, size_t buf_size );
+static void     rd_data_no_copy( PLStream *pls, void **buf, size_t buf_size);
 static void     wr_command( PLStream *pls, U_CHAR c );
 static void     wr_data( PLStream *pls, void *buf, size_t buf_size );
 static void     plbuf_control( PLStream *pls, U_CHAR c );
+static void     check_buffer_size( PLStream *pls, size_t data_size );
 
 static void     rdbuf_init( PLStream *pls );
 static void     rdbuf_line( PLStream *pls );
@@ -51,6 +52,10 @@ static void     plbuf_fill( PLStream *pls );
 static void     rdbuf_fill( PLStream *pls );
 static void     plbuf_swin( PLStream *pls, PLWindow *plwin );
 static void     rdbuf_swin( PLStream *pls );
+
+//--------------------------------------------------------------------------
+// Plplot internal interface to the plot buffer
+//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 // plbuf_init()
@@ -73,7 +78,7 @@ plbuf_init( PLStream *pls )
         pls->plbuf_buffer_grow = 128 * 1024;
 
         if ( ( pls->plbuf_buffer = malloc( pls->plbuf_buffer_grow ) ) == NULL )
-            plexit( "plbuf_bop: Error allocating plot buffer." );
+            plexit( "plbuf_init: Error allocating plot buffer." );
 
         pls->plbuf_buffer_size = pls->plbuf_buffer_grow;
         pls->plbuf_top         = 0;
@@ -164,8 +169,8 @@ plbuf_bop( PLStream *pls )
 
     wr_command( pls, (U_CHAR) BOP );
 
-    // Save default configurations (e.g. colormap) to allow plRemakePlot
-    // to work correctly.
+    // Save the current configuration (e.g. colormap) to allow plRemakePlot
+    // to correctly regenerate the plot
     plbuf_state(pls, PLSTATE_CMAP0);
     plbuf_state(pls, PLSTATE_CMAP1);
 
@@ -322,7 +327,9 @@ plbuf_text( PLStream *pls, EscText *text )
 
     wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ) );
     if ( text->unicode_array_len )
-        wr_data( pls, text->unicode_array, sizeof ( PLUNICODE ) * text->unicode_array_len );
+        wr_data( pls,
+                 text->unicode_array,
+                 sizeof ( PLUNICODE ) * text->unicode_array_len );
 }
 
 //--------------------------------------------------------------------------
@@ -451,15 +458,15 @@ plbuf_swin( PLStream *pls, PLWindow *plwin )
 {
     dbug_enter( "plbuf_swin" );
 
-    wr_data( pls, &plwin->dxmi, sizeof ( PLFLT ) );
-    wr_data( pls, &plwin->dxma, sizeof ( PLFLT ) );
-    wr_data( pls, &plwin->dymi, sizeof ( PLFLT ) );
-    wr_data( pls, &plwin->dyma, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->dxmi, sizeof ( plwin->dxmi ) );
+    wr_data( pls, &plwin->dxma, sizeof ( plwin->dxma ) );
+    wr_data( pls, &plwin->dymi, sizeof ( plwin->dymi ) );
+    wr_data( pls, &plwin->dyma, sizeof ( plwin->dyma ) );
 
-    wr_data( pls, &plwin->wxmi, sizeof ( PLFLT ) );
-    wr_data( pls, &plwin->wxma, sizeof ( PLFLT ) );
-    wr_data( pls, &plwin->wymi, sizeof ( PLFLT ) );
-    wr_data( pls, &plwin->wyma, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->wxmi, sizeof ( plwin->wxmi ) );
+    wr_data( pls, &plwin->wxma, sizeof ( plwin->wxma ) );
+    wr_data( pls, &plwin->wymi, sizeof ( plwin->wymi ) );
+    wr_data( pls, &plwin->wyma, sizeof ( plwin->wyma ) );
 }
 
 //--------------------------------------------------------------------------
@@ -487,13 +494,15 @@ rdbuf_init( PLStream * PL_UNUSED( pls ) )
 static void
 rdbuf_line( PLStream *pls )
 {
-    short xpl[2], ypl[2];
+    short *xpl, *ypl;
     PLINT npts = 2;
 
     dbug_enter( "rdbuf_line" );
 
-    rd_data( pls, xpl, sizeof ( short ) * (size_t) npts );
-    rd_data( pls, ypl, sizeof ( short ) * (size_t) npts );
+    // Use the "no copy" version because the endpoint data array does
+    // not need to persist outside of this function
+    rd_data_no_copy( pls, (void **)&xpl, sizeof ( short ) * (size_t) npts );
+    rd_data_no_copy( pls, (void **)&ypl, sizeof ( short ) * (size_t) npts );
 
     plP_line( xpl, ypl );
 }
@@ -507,7 +516,6 @@ rdbuf_line( PLStream *pls )
 static void
 rdbuf_polyline( PLStream *pls )
 {
-    short _xpl[PL_MAXPOLY], _ypl[PL_MAXPOLY];
     short *xpl, *ypl;
     PLINT npts;
 
@@ -515,33 +523,12 @@ rdbuf_polyline( PLStream *pls )
 
     rd_data( pls, &npts, sizeof ( PLINT ) );
 
-    if ( npts > PL_MAXPOLY )
-    {
-        xpl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
-        ypl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
-
-        if ( ( xpl == NULL ) || ( ypl == NULL ) )
-        {
-            plexit( "rdbuf_polyline: Insufficient memory for large polyline" );
-        }
-    }
-    else
-    {
-        xpl = _xpl;
-        ypl = _ypl;
-    }
-
-
-    rd_data( pls, xpl, sizeof ( short ) * (size_t) npts );
-    rd_data( pls, ypl, sizeof ( short ) * (size_t) npts );
+    // Use the "no copy" version because the node data array does
+    // not need to persist outside of ths function
+    rd_data_no_copy( pls, (void **) &xpl, sizeof ( short ) * (size_t) npts);
+    rd_data_no_copy( pls, (void **) &ypl, sizeof ( short ) * (size_t) npts);
 
     plP_polyline( xpl, ypl, npts );
-
-    if ( npts > PL_MAXPOLY )
-    {
-        free( xpl );
-        free( ypl );
-    }
 }
 
 //--------------------------------------------------------------------------
@@ -595,12 +582,11 @@ rdbuf_state( PLStream *pls )
     }
 
     case PLSTATE_COLOR0: {
-        short  icol0;
         U_CHAR r, g, b;
         PLFLT  a;
 
-        rd_data( pls, &icol0, sizeof ( short ) );
-        if ( icol0 == PL_RGB_COLOR )
+        rd_data( pls, &(pls->icol0), sizeof ( pls->icol0 ) );
+        if ( pls->icol0 == PL_RGB_COLOR )
         {
             rd_data( pls, &r, sizeof ( U_CHAR ) );
             rd_data( pls, &g, sizeof ( U_CHAR ) );
@@ -609,21 +595,20 @@ rdbuf_state( PLStream *pls )
         }
         else
         {
-            if ( (int) icol0 >= pls->ncol0 )
+            if ( pls->icol0 >= pls->ncol0 )
             {
                 char buffer[256];
                 snprintf( buffer, 256,
-			        "rdbuf_state: Invalid color map entry: %d",
-			        (int) icol0 );
+                          "rdbuf_state: Invalid color map entry: %d",
+                          pls->icol0 );
                 plabort( buffer );
                 return;
             }
-            r = pls->cmap0[icol0].r;
-            g = pls->cmap0[icol0].g;
-            b = pls->cmap0[icol0].b;
-            a = pls->cmap0[icol0].a;
+            r = pls->cmap0[pls->icol0].r;
+            g = pls->cmap0[pls->icol0].g;
+            b = pls->cmap0[pls->icol0].b;
+            a = pls->cmap0[pls->icol0].a;
         }
-        pls->icol0      = icol0;
         pls->curcolor.r = r;
         pls->curcolor.g = g;
         pls->curcolor.b = b;
@@ -635,15 +620,12 @@ rdbuf_state( PLStream *pls )
     }
 
     case PLSTATE_COLOR1: {
-        short icol1;
+        rd_data( pls, &(pls->icol1), sizeof ( pls->icol1 ) );
 
-        rd_data( pls, &icol1, sizeof ( short ) );
-
-        pls->icol1      = icol1;
-        pls->curcolor.r = pls->cmap1[icol1].r;
-        pls->curcolor.g = pls->cmap1[icol1].g;
-        pls->curcolor.b = pls->cmap1[icol1].b;
-        pls->curcolor.a = pls->cmap1[icol1].a;
+        pls->curcolor.r = pls->cmap1[pls->icol1].r;
+        pls->curcolor.g = pls->cmap1[pls->icol1].g;
+        pls->curcolor.b = pls->cmap1[pls->icol1].b;
+        pls->curcolor.a = pls->cmap1[pls->icol1].a;
         pls->curcmap = 1;
 
         plP_state( PLSTATE_COLOR1 );
@@ -651,11 +633,8 @@ rdbuf_state( PLStream *pls )
     }
 
     case PLSTATE_FILL: {
-        signed char patt;
+        rd_data( pls, &(pls->patt), sizeof ( pls->patt ) );
 
-        rd_data( pls, &patt, sizeof ( signed char ) );
-
-        pls->patt = patt;
         plP_state( PLSTATE_FILL );
         break;
     }
@@ -730,12 +709,14 @@ rdbuf_state( PLStream *pls )
         //read the chrdef and chrht parameters
         rd_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
         rd_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
+        break;
     }
-						
+
     case PLSTATE_SYM: {
         //read the symdef and symht parameters
         rd_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
         rd_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
+        break;
     }
 
     }
@@ -823,7 +804,6 @@ rdbuf_esc( PLStream *pls )
 static void
 rdbuf_fill( PLStream *pls )
 {
-    short _xpl[PL_MAXPOLY], _ypl[PL_MAXPOLY];
     short *xpl, *ypl;
     PLINT npts;
 
@@ -831,32 +811,10 @@ rdbuf_fill( PLStream *pls )
 
     rd_data( pls, &npts, sizeof ( PLINT ) );
 
-    if ( npts > PL_MAXPOLY )
-    {
-        xpl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
-        ypl = (short *) malloc( (size_t) ( npts + 1 ) * sizeof ( short ) );
-
-        if ( ( xpl == NULL ) || ( ypl == NULL ) )
-        {
-            plexit( "rdbuf_polyline: Insufficient memory for large polyline" );
-        }
-    }
-    else
-    {
-        xpl = _xpl;
-        ypl = _ypl;
-    }
-
-    rd_data( pls, xpl, sizeof ( short ) * (size_t) npts );
-    rd_data( pls, ypl, sizeof ( short ) * (size_t) npts );
+    rd_data_no_copy( pls, (void **) &xpl, sizeof ( short ) * (size_t) npts );
+    rd_data_no_copy( pls, (void **) &ypl, sizeof ( short ) * (size_t) npts );
 
     plP_fill( xpl, ypl, npts );
-
-    if ( npts > PL_MAXPOLY )
-    {
-        free( xpl );
-        free( ypl );
-    }
 }
 
 //--------------------------------------------------------------------------
@@ -904,7 +862,9 @@ rdbuf_image( PLStream *pls )
 
     rd_data( pls, dev_ix, sizeof ( short ) * (size_t) npts );
     rd_data( pls, dev_iy, sizeof ( short ) * (size_t) npts );
-    rd_data( pls, dev_z, sizeof ( unsigned short ) * (size_t) ( ( nptsX - 1 ) * ( nptsY - 1 ) ) );
+    rd_data( pls, dev_z,
+             sizeof ( unsigned short )
+             * (size_t) ( ( nptsX - 1 ) * ( nptsY - 1 ) ) );
 
     //
     // COMMENTED OUT by Hezekiah Carty
@@ -933,15 +893,15 @@ rdbuf_swin( PLStream *pls )
 
     dbug_enter( "rdbuf_swin" );
 
-    rd_data( pls, &plwin.dxmi, sizeof ( PLFLT ) );
-    rd_data( pls, &plwin.dxma, sizeof ( PLFLT ) );
-    rd_data( pls, &plwin.dymi, sizeof ( PLFLT ) );
-    rd_data( pls, &plwin.dyma, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.dxmi, sizeof ( plwin.dxmi ) );
+    rd_data( pls, &plwin.dxma, sizeof ( plwin.dxma ) );
+    rd_data( pls, &plwin.dymi, sizeof ( plwin.dymi ) );
+    rd_data( pls, &plwin.dyma, sizeof ( plwin.dyma ) );
 
-    rd_data( pls, &plwin.wxmi, sizeof ( PLFLT ) );
-    rd_data( pls, &plwin.wxma, sizeof ( PLFLT ) );
-    rd_data( pls, &plwin.wymi, sizeof ( PLFLT ) );
-    rd_data( pls, &plwin.wyma, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.wxmi, sizeof ( plwin.wxmi ) );
+    rd_data( pls, &plwin.wxma, sizeof ( plwin.wxma ) );
+    rd_data( pls, &plwin.wymi, sizeof ( plwin.wymi ) );
+    rd_data( pls, &plwin.wyma, sizeof ( plwin.wyma ) );
 
     plP_swin( &plwin );
 }
@@ -1022,7 +982,6 @@ rdbuf_text_unicode( PLINT op, PLStream *pls )
     dbug_enter( "rdbuf_text_unicode" );
 
     text.xform = xform;
-
 
     // Read in the data
 
@@ -1127,6 +1086,10 @@ plbuf_control( PLStream *pls, U_CHAR c )
 
     dbug_enter( "plbuf_control" );
 
+    //#define CLOSE              2
+    //#define LINETO             10
+    //#define END_OF_FIELD       255
+
     switch ( (int) c )
     {
     case INITIALIZE:
@@ -1137,6 +1100,7 @@ plbuf_control( PLStream *pls, U_CHAR c )
         rdbuf_eop( pls );
         break;
 
+    case BOP0:
     case BOP:
         rdbuf_bop( pls );
         break;
@@ -1157,9 +1121,21 @@ plbuf_control( PLStream *pls, U_CHAR c )
         rdbuf_esc( pls );
         break;
 
+    // Obsolete commands, left here to maintain compatibility with previous
+    // version of plot metafiles
+    case SWITCH_TO_TEXT:    // Obsolete, replaced by ESCAPE
+    case SWITCH_TO_GRAPH:   // Obsolete, replaced by ESCAPE
+    case NEW_COLOR:         // Obsolete, replaced by CHANGE_STATE
+    case NEW_COLOR1:
+    case NEW_WIDTH:         // Obsolete, replaced by CHANGE_STATE
+    case ADVANCE:           // Obsolete, BOP/EOP used instead
+        pldebug( "plbuf_control", "Obsolete command %d, ignoring\n", c );
+        break;
+
     default:
         pldebug( "plbuf_control", "Unrecognized command %d, previous %d\n",
                  c, c_old );
+        plexit("Unrecognized command");
     }
     c_old = c;
 }
@@ -1178,7 +1154,10 @@ rd_command( PLStream *pls, U_CHAR *p_c )
     if ( pls->plbuf_readpos < pls->plbuf_top )
     {
         *p_c = *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos);
-        pls->plbuf_readpos += sizeof ( U_CHAR );
+
+        // Advance the buffer position to maintain two-byte alignment
+        pls->plbuf_readpos += sizeof ( short );
+
         count = sizeof ( U_CHAR );
     }
     else
@@ -1204,7 +1183,64 @@ rd_data( PLStream *pls, void *buf, size_t buf_size )
     // approach is
     //
     memcpy( buf, (U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos, buf_size );
-    pls->plbuf_readpos += buf_size;
+
+    // Advance position but maintain alignment
+    pls->plbuf_readpos += (buf_size + (buf_size % sizeof(short)));
+}
+
+//--------------------------------------------------------------------------
+// rd_data_no_copy()
+//
+// Read the data associated with the command by setting a pointer to the
+// position in the plot buffer.  This avoids having to allocate space
+// and doing a memcpy.  Useful for commands that do not need the data
+// to persist (like LINE and POLYLINE).  Do not use for commands that
+// has data that needs to persist or are freed elsewhere (like COLORMAPS).
+//--------------------------------------------------------------------------
+
+static void
+rd_data_no_copy( PLStream *pls, void **buf, size_t buf_size)
+{
+    (*buf) = (U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos;
+
+    // Advance position but maintain alignment
+    pls->plbuf_readpos += (buf_size + (buf_size % sizeof(short)));
+}
+
+//--------------------------------------------------------------------------
+// check_buffer_size()
+//
+// Checks that the buffer has space to store the desired amount of data.
+// If not, the buffer is resized to accomodate the request
+//--------------------------------------------------------------------------
+static void
+check_buffer_size( PLStream *pls, size_t data_size )
+{
+    size_t required_size;
+
+    required_size = pls->plbuf_top + data_size;
+
+    if ( required_size >= pls->plbuf_buffer_size )
+    {
+        // Not enough space, need to grow the buffer before memcpy
+        // Must make sure the increase is enough for this data, so
+        // Determine the amount of space required and grow in multiples
+        // of plbuf_buffer_grow
+        pls->plbuf_buffer_size += pls->plbuf_buffer_grow *
+                                  ( ( required_size
+                                      - pls->plbuf_buffer_size )
+                                    / pls->plbuf_buffer_grow
+                                    + 1 );
+
+        if ( pls->verbose )
+            printf( "Growing buffer to %d KB\n",
+                    (int) ( pls->plbuf_buffer_size / 1024 ) );
+
+        if ( ( pls->plbuf_buffer
+               = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size )
+               ) == NULL )
+            plexit( "plbuf buffer grow:  Plot buffer grow failed" );
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -1216,20 +1252,14 @@ rd_data( PLStream *pls, void *buf, size_t buf_size )
 static void
 wr_command( PLStream *pls, U_CHAR c )
 {
-    if ( ( pls->plbuf_top + sizeof ( U_CHAR ) ) >= pls->plbuf_buffer_size )
-    {
-        // Not enough space, need to grow the buffer
-        pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
-
-        if ( pls->verbose )
-            printf( "Growing buffer to %d KB\n",
-                    (int) ( pls->plbuf_buffer_size / 1024 ) );
-        if ( ( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size ) ) == NULL )
-            plexit( "plbuf wr_data:  Plot buffer grow failed" );
-    }
+    check_buffer_size(pls, sizeof( U_CHAR ));
 
     *(U_CHAR *) ( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_top ) = c;
-    pls->plbuf_top += sizeof ( U_CHAR );
+
+    // Advance buffer position to maintain two-byte alignment.  This
+    // will waste a little bit of space, but it prevents memory
+    // alignment problems
+    pls->plbuf_top += sizeof ( short );
 }
 
 //--------------------------------------------------------------------------
@@ -1241,23 +1271,7 @@ wr_command( PLStream *pls, U_CHAR c )
 static void
 wr_data( PLStream *pls, void *buf, size_t buf_size )
 {
-    if ( ( pls->plbuf_top + buf_size ) >= pls->plbuf_buffer_size )
-    {
-        // Not enough space, need to grow the buffer before memcpy
-        // Must make sure the increase is enough for this data
-        pls->plbuf_buffer_size += pls->plbuf_buffer_grow *
-                                  ( ( pls->plbuf_top + buf_size
-                                      - pls->plbuf_buffer_size ) /
-                                    pls->plbuf_buffer_grow + 1 );
-
-        // The following code should be completely unnecessary and
-        // should be removed.
-        while ( pls->plbuf_top + buf_size >= pls->plbuf_buffer_size )
-            pls->plbuf_buffer_size + pls->plbuf_buffer_grow;
-
-        if ( ( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size ) ) == NULL )
-            plexit( "plbuf wr_data:  Plot buffer grow failed" );
-    }
+    check_buffer_size(pls, buf_size);
 
     // If U_CHAR is not the same size as what memcpy() expects (typically 1
     // byte) then this code will have problems.  A better approach might be
@@ -1265,8 +1279,15 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
     // approach is
     //
     memcpy( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
-    pls->plbuf_top += buf_size;
+
+    // Advance position but maintain alignment
+    pls->plbuf_top += (buf_size + (buf_size % sizeof(short)));
 }
+
+
+//--------------------------------------------------------------------------
+// Plot buffer state saving
+//--------------------------------------------------------------------------
 
 // plbuf_save(state)
 //
