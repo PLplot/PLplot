@@ -541,11 +541,27 @@ module plplot
 
     interface plmap
         module procedure plmap1, plmap2
-    end interface plmap
+    end interface
+
+    interface plmapline
+        module procedure plmapline1, plmapline2
+    end interface
+
+    interface plmapfill
+        module procedure plmapfill1, plmapfill2
+    end interface
+
+    interface plmapstring
+        module procedure plmapstring1, plmapstring2
+    end interface
+
+    interface plmaptex
+        module procedure plmaptex1, plmaptex2
+    end interface
 
     interface plmeridians
         module procedure plmeridians1, plmeridians2
-    end interface plmeridians
+    end interface
 
     interface plmesh
         module procedure plmesh
@@ -1435,6 +1451,154 @@ contains
       call plmap7(s1,minx,maxx,miny,maxy)
 
     end subroutine plmap2
+
+    subroutine plmapfill1(mapform,mapname,minx,maxx,miny,maxy,plotentries)
+      real(kind=plflt) minx, maxx, miny, maxy
+      integer(kind=plint), dimension(:), optional :: plotentries
+      character*(*) mapname
+      external mapform
+      integer(kind=plint), dimension(1) :: dummy
+
+      call plstrf2c(mapname, string1)
+
+      call plsetmapformc(mapform)
+      s1 = transfer( string1, s1 )
+      if ( present(plotentries) ) then
+        call plmapfill7(s1,minx,maxx,miny,maxy,plotentries,size(plotentries,kind=plint))
+      else
+        call plmapfill7(s1,minx,maxx,miny,maxy,dummy,0_plint)
+      endif
+
+    end subroutine plmapfill1
+
+    subroutine plmapfill2(mapname,minx,maxx,miny,maxy,plotentries)
+      real(kind=plflt) minx, maxx, miny, maxy
+      integer(kind=plint), dimension(:), optional :: plotentries
+      character*(*) mapname
+      integer(kind=plint), dimension(1) :: dummy
+
+      call plstrf2c(mapname, string1)
+
+      call plclearmapformc()
+      s1 = transfer( string1, s1 )
+      if ( present(plotentries) ) then
+        call plmapfill7(s1,minx,maxx,miny,maxy,plotentries,size(plotentries,kind=plint))
+      else
+        call plmapfill7(s1,minx,maxx,miny,maxy,dummy,0_plint)
+      endif
+
+    end subroutine plmapfill2
+
+    subroutine plmapline1(mapform,mapname,minx,maxx,miny,maxy,plotentries)
+      real(kind=plflt) minx, maxx, miny, maxy
+      integer(kind=plint), dimension(:), optional :: plotentries
+      character*(*) mapname
+      external mapform
+      integer(kind=plint), dimension(1) :: dummy
+
+      call plstrf2c(mapname, string1)
+
+      call plsetmapformc(mapform)
+      s1 = transfer( string1, s1 )
+      if ( present(plotentries) ) then
+        call plmapline7(s1,minx,maxx,miny,maxy,plotentries,size(plotentries,kind=plint))
+      else
+        call plmapline7(s1,minx,maxx,miny,maxy,dummy,0_plint)
+      endif
+
+    end subroutine plmapline1
+
+    subroutine plmapline2(mapname,minx,maxx,miny,maxy,plotentries)
+      real(kind=plflt) minx, maxx, miny, maxy
+      integer(kind=plint), dimension(:), optional :: plotentries
+      character*(*) mapname
+      integer(kind=plint), dimension(1) :: dummy
+
+      call plstrf2c(mapname, string1)
+
+      call plclearmapformc()
+      s1 = transfer( string1, s1 )
+      if ( present(plotentries) ) then
+        call plmapline7(s1,minx,maxx,miny,maxy,plotentries,size(plotentries,kind=plint))
+      else
+        call plmapline7(s1,minx,maxx,miny,maxy,dummy,0_plint)
+      endif
+
+    end subroutine plmapline2
+
+    subroutine plmapstring1(mapform,mapname,string,minx,maxx,miny,maxy,plotentries)
+      real(kind=plflt) minx, maxx, miny, maxy
+      integer(kind=plint), dimension(:), optional :: plotentries
+      character*(*) mapname, string
+      external mapform
+      integer(kind=plint), dimension(1) :: dummy
+
+      call plstrf2c(mapname, string1)
+      call plstrf2c(string, string2)
+
+      call plsetmapformc(mapform)
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
+      if ( present(plotentries) ) then
+        call plmapstring7(s1,s2,minx,maxx,miny,maxy,plotentries,size(plotentries,kind=plint))
+      else
+        call plmapstring7(s1,s2,minx,maxx,miny,maxy,dummy,0_plint)
+      endif
+
+    end subroutine plmapstring1
+
+    subroutine plmapstring2(mapname,string,minx,maxx,miny,maxy,plotentries)
+      real(kind=plflt) minx, maxx, miny, maxy
+      integer(kind=plint), dimension(:), optional :: plotentries
+      character*(*) mapname, string
+      integer(kind=plint), dimension(1) :: dummy
+
+      call plstrf2c(mapname, string1)
+      call plstrf2c(string, string2)
+
+      call plclearmapformc()
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
+      if ( present(plotentries) ) then
+        call plmapstring7(s1,s2,minx,maxx,miny,maxy,plotentries,size(plotentries,kind=plint))
+      else
+        call plmapstring7(s1,s2,minx,maxx,miny,maxy,dummy,0_plint)
+      endif
+
+    end subroutine plmapstring2
+
+    subroutine plmaptex1(mapform,mapname,dx,dy,just,text,minx,maxx,miny,maxy,plotentry)
+      real(kind=plflt) dx, dy, just, minx, maxx, miny, maxy
+      integer(kind=plint) :: plotentry
+      character*(*) mapname, text
+      external mapform
+      integer(kind=plint) :: dummy
+
+      call plstrf2c(mapname, string1)
+      call plstrf2c_esc(text, string2)
+
+      call plsetmapformc(mapform)
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
+      call plmaptex7(s1,dx,dy,just,s2,minx,maxx,miny,maxy,plotentry)
+
+    end subroutine plmaptex1
+
+    subroutine plmaptex2(mapname,dx,dy,just,text,minx,maxx,miny,maxy,plotentry)
+      real(kind=plflt) dx, dy, just, minx, maxx, miny, maxy
+      integer(kind=plint) :: plotentry
+      character*(*) mapname, text
+      integer(kind=plint) :: dummy
+
+      call plstrf2c(mapname, string1)
+      call plstrf2c_esc(text, string2)
+
+      call plclearmapformc()
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
+      call plmaptex7(s1,dx,dy,just,s2,minx,maxx,miny,maxy,plotentry)
+
+    end subroutine plmaptex2
 
     subroutine plmeridians1(mapform,dlong,dlat,minlong,maxlong, &
                            minlat,maxlat)

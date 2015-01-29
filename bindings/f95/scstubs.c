@@ -160,6 +160,14 @@ void PLLINE3( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z );
 void PLLSTY( PLINT *lin );
 void PLMAP7( const char *type,
              PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat );
+void PLMAPFILL7( const char *type,
+             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
+void PLMAPLINE7( const char *type,
+             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
+void PLMAPSTRING7( const char *type, const char *string,
+             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
+void PLMAPTEX7( const char *type, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text,
+             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentry );
 void PLMERIDIANS7( PLFLT *dlong, PLFLT *dlat,
                    PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat );
 void PLMKSTRM( PLINT *p_strm );
@@ -963,6 +971,58 @@ PLMAP7( const char *type,
         c_plmap( NULL, type, *minlong, *maxlong, *minlat, *maxlat );
 }
 
+void
+PLMAPFILL7( const char *type,
+        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
+
+{
+    PLINT *pplotentries = plotentries;
+    if ( *nplotentries == 0 )
+        pplotentries = NULL;
+    if ( plmapform )
+        c_plmapfill( plmapf2c, type, *minlong, *maxlong, *minlat, *maxlat, pplotentries, *nplotentries );
+    else
+        c_plmapfill( NULL, type, *minlong, *maxlong, *minlat, *maxlat, pplotentries, *nplotentries );
+}
+
+void
+PLMAPLINE7( const char *type,
+        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
+
+{
+    PLINT *pplotentries = plotentries;
+    if ( *nplotentries == 0 )
+        pplotentries = NULL;
+    if ( plmapform )
+        c_plmapline( plmapf2c, type, *minlong, *maxlong, *minlat, *maxlat, pplotentries, *nplotentries );
+    else
+        c_plmapline( NULL, type, *minlong, *maxlong, *minlat, *maxlat, pplotentries, *nplotentries );
+}
+
+void
+PLMAPSTRING7( const char *type, const char *string,
+        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
+
+{
+    PLINT *pplotentries = plotentries;
+    if ( *nplotentries == 0 )
+        pplotentries = NULL;
+    if ( plmapform )
+        c_plmapstring( plmapf2c, type, string, *minlong, *maxlong, *minlat, *maxlat, pplotentries, *nplotentries );
+    else
+        c_plmapstring( NULL, type, string, *minlong, *maxlong, *minlat, *maxlat, pplotentries, *nplotentries );
+}
+
+void
+PLMAPTEX7( const char *type, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text,
+        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentry )
+
+{
+    if ( plmapform )
+        c_plmaptex( plmapf2c, type, *dx, *dy, *just, text, *minlong, *maxlong, *minlat, *maxlat, *plotentry );
+    else
+        c_plmaptex( NULL, type, *dx, *dy, *just, text, *minlong, *maxlong, *minlat, *maxlat, *plotentry );
+}
 
 void
 PLMERIDIANS7( PLFLT *dlong, PLFLT *dlat,

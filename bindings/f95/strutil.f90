@@ -39,6 +39,33 @@ subroutine plstrf2c(string1, string2)
     string2(limit+1:limit+1) = char(0)
 end subroutine plstrf2c
 
+!--------------------------------------------------------------------------
+! plstrf2c_esc()
+!
+! Converts Fortran string to C format, substituting a carriage return for \n
+!--------------------------------------------------------------------------
+
+subroutine plstrf2c_esc(string1, string2)
+    character(len=*) :: string1, string2
+
+    integer(kind=plint) :: limit
+    integer             :: k
+
+    string2 = string1
+!    limit = min(len(string2), len(string1))
+    limit = len_trim(string2)
+    string2(limit+1:limit+1) = char(0)
+
+    do
+        k = index( string2, '\n' )
+        if ( k > 0 ) then
+            string2 = string2(1:k-1) // char(13) // string2(k+2:)
+        else
+            exit
+        endif
+    enddo
+end subroutine plstrf2c_esc
+
 
 !--------------------------------------------------------------------------
 ! plstrc2f()
