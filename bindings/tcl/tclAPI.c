@@ -60,6 +60,10 @@ static int plsetoptCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plshadeCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plshadesCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmapCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plmapfillCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plmaplineCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plmapstringCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plmaptexCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmeridiansCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plstransformCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plsvectCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -104,6 +108,10 @@ static CmdInfo Cmds[] = {
     { "plcont",       plcontCmd       },
     { "pllegend",     pllegendCmd     },
     { "plmap",        plmapCmd        },
+    { "plmapfill",    plmapfillCmd    },
+    { "plmapline",    plmaplineCmd    },
+    { "plmapstring",  plmapstringCmd  },
+    { "plmaptex",     plmaptexCmd     },
     { "plmeridians",  plmeridiansCmd  },
     { "plstransform", plstransformCmd },
     { "plmesh",       plmeshCmd       },
@@ -3433,7 +3441,7 @@ plmapCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         transform_name = argv[1];
         if ( strlen( transform_name ) == 0 )
         {
-            idxname = 1;
+            transform = 0;
         }
     }
 
@@ -3445,6 +3453,514 @@ plmapCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     {
         // No transformation given
         plmap( NULL, argv[idxname], minlong, maxlong, minlat, maxlat );
+    }
+
+    plflush();
+    return return_code;
+}
+
+//--------------------------------------------------------------------------
+// GetEntries
+//
+// Return the list of plot entries (either from a list of from a matrix)
+//--------------------------------------------------------------------------
+
+static int *
+GetEntries( Tcl_Interp *interp, const char *string, int *n )
+{
+    tclMatrix *mati;
+    int       argc;
+    int       *entries;
+    char      **argv;
+    int       i;
+
+    mati = Tcl_GetMatrixPtr( interp, string );
+    if ( mati == NULL )
+    {
+        if ( Tcl_SplitList( interp, string, n, (const char ***) &argv ) == TCL_OK )
+        {
+            entries = (int *) malloc( (*n) * sizeof(int) );
+            for ( i = 0; i < *n; i ++ )
+            {
+                entries[i] = atoi( argv[i] );
+            }
+            Tcl_Free( (char *) argv );
+        }
+    }
+    else
+    {
+        *n = mati->n[0];
+        entries = (int *) malloc( (*n) * sizeof(int) );
+        for ( i = 0; i < *n; i ++ )
+        {
+            entries[i] = mati->idata[i];
+        }
+    }
+
+    return entries;
+}
+
+//--------------------------------------------------------------------------
+// plmapfillCmd
+//
+// Processes plmapfill Tcl command.
+// C version takes:
+//    transform_proc, string, minlong, maxlong, minlat, maxlat, entries, nentries
+//
+//  e.g. .p cmd plmapfill globe 0 360 -90 90
+//--------------------------------------------------------------------------
+
+static int
+plmapfillCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
+              int argc, const char *argv[] )
+{
+    PLFLT     minlong, maxlong, minlat, maxlat;
+    PLINT     transform;
+    PLINT     idxname;
+    PLINT     *entries;
+    PLINT     nentries;
+
+    return_code = TCL_OK;
+    if ( argc < 6 || argc > 8 )
+    {
+        Tcl_AppendResult( interp, "bogus syntax for plmapfill, see doc.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    nentries = 0;
+    entries  = NULL;
+
+    switch ( argc )
+    {
+        case 6: // No transform, no plotentries
+            transform      = 0;
+            idxname        = 1;
+            transform_name = NULL;
+            minlong        = atof( argv[2] );
+            maxlong        = atof( argv[3] );
+            minlat         = atof( argv[4] );
+            maxlat         = atof( argv[5] );
+            break;
+
+        case 7: // Transform OR plotentries, not both - ambiguity
+                // Heuristic: transformation name is either a name or empty. Therefore, if
+                // the first argument is a number, a list of plotentries is given (not a matrix)
+
+            transform = 1;
+            idxname   = 2;
+            minlong   = atof( argv[3] );
+            maxlong   = atof( argv[4] );
+            minlat    = atof( argv[5] );
+            maxlat    = atof( argv[6] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+            else
+            {
+                if ( Tcl_GetDouble( interp, argv[2], &minlong ) == TCL_OK )
+                {
+                    transform = 0;
+                    minlong   = atof( argv[2] );
+                    maxlong   = atof( argv[3] );
+                    minlat    = atof( argv[4] );
+                    maxlat    = atof( argv[5] );
+                    idxname   = 1;
+                    entries   = GetEntries( interp, argv[6], &nentries );
+                }
+            }
+            break;
+
+        case 8: // Transform, plotentries
+            transform = 1;
+            entries   = GetEntries( interp, argv[7], &nentries );
+            idxname   = 2;
+            minlong   = atof( argv[3] );
+            maxlong   = atof( argv[4] );
+            minlat    = atof( argv[5] );
+            maxlat    = atof( argv[6] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+    }
+
+    if ( transform && idxname == 2 )
+    {
+        plmapfill( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
+    }
+    else
+    {
+        // No transformation given
+        plmapfill( NULL, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries  );
+    }
+
+    if ( entries != NULL )
+    {
+        free( entries );
+    }
+
+    plflush();
+    return return_code;
+}
+
+//--------------------------------------------------------------------------
+// plmaplineCmd
+//
+// Processes plmapline Tcl command.
+// C version takes:
+//    transform_proc, string, minlong, maxlong, minlat, maxlat, entries, nentries
+//
+//  e.g. .p cmd plmapline globe 0 360 -90 90
+//--------------------------------------------------------------------------
+
+static int
+plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
+              int argc, const char *argv[] )
+{
+    PLFLT     minlong, maxlong, minlat, maxlat;
+    PLINT     transform;
+    PLINT     idxname;
+    PLINT     *entries;
+    PLINT     nentries;
+
+    return_code = TCL_OK;
+    if ( argc < 6 || argc > 8 )
+    {
+        Tcl_AppendResult( interp, "bogus syntax for plmapline, see doc.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    nentries = 0;
+    entries  = NULL;
+
+    switch ( argc )
+    {
+        case 6: // No transform, no plotentries
+            transform      = 0;
+            idxname        = 1;
+            transform_name = NULL;
+            minlong        = atof( argv[2] );
+            maxlong        = atof( argv[3] );
+            minlat         = atof( argv[4] );
+            maxlat         = atof( argv[5] );
+            break;
+
+        case 7: // Transform OR plotentries, not both - ambiguity
+                // Heuristic: transformation name is either a name or empty. Therefore, if
+                // the first argument is a number, a list of plotentries is given (not a matrix)
+
+            transform = 1;
+            idxname   = 2;
+            minlong   = atof( argv[3] );
+            maxlong   = atof( argv[4] );
+            minlat    = atof( argv[5] );
+            maxlat    = atof( argv[6] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+            else
+            {
+                if ( Tcl_GetDouble( interp, argv[2], &minlong ) == TCL_OK )
+                {
+                    transform = 0;
+                    minlong   = atof( argv[2] );
+                    maxlong   = atof( argv[3] );
+                    minlat    = atof( argv[4] );
+                    maxlat    = atof( argv[5] );
+                    idxname   = 1;
+                    entries   = GetEntries( interp, argv[6], &nentries );
+                }
+            }
+            break;
+
+        case 8: // Transform, plotentries
+            transform = 1;
+            entries   = GetEntries( interp, argv[7], &nentries );
+            idxname   = 2;
+            minlong   = atof( argv[3] );
+            maxlong   = atof( argv[4] );
+            minlat    = atof( argv[5] );
+            maxlat    = atof( argv[6] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+    }
+
+    if ( transform && idxname == 2 )
+    {
+        plmapline( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
+    }
+    else
+    {
+        // No transformation given
+        plmapline( NULL, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries  );
+    }
+
+    if ( entries != NULL )
+    {
+        free( entries );
+    }
+
+    plflush();
+    return return_code;
+}
+
+//--------------------------------------------------------------------------
+// plmapstringCmd
+//
+// Processes plmapstring Tcl command.
+// C version takes:
+//    transform_proc, string, minlong, maxlong, minlat, maxlat, entries, nentries
+//
+//  e.g. .p cmd plmapstring globe "Town" 0 360 -90 90
+//--------------------------------------------------------------------------
+
+static int
+plmapstringCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
+              int argc, const char *argv[] )
+{
+    PLFLT      minlong, maxlong, minlat, maxlat;
+    PLINT      transform;
+    PLINT      idxname;
+    PLINT      *entries;
+    PLINT      nentries;
+    const char *string;
+
+    return_code = TCL_OK;
+    if ( argc < 7 || argc > 9 )
+    {
+        Tcl_AppendResult( interp, "bogus syntax for plmapstring, see doc.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    nentries = 0;
+    entries  = NULL;
+
+    switch ( argc )
+    {
+        case 7: // No transform, no plotentries
+            transform      = 0;
+            idxname        = 1;
+            transform_name = NULL;
+            string         = argv[2];
+            minlong        = atof( argv[3] );
+            maxlong        = atof( argv[4] );
+            minlat         = atof( argv[5] );
+            maxlat         = atof( argv[6] );
+            break;
+
+        case 8: // Transform OR plotentries, not both - ambiguity
+                // Heuristic: transformation name is either a name or empty. Therefore, if
+                // the first argument is a number, a list of plotentries is given (not a matrix)
+
+            transform = 1;
+            idxname   = 2;
+            string    = argv[3];
+            minlong   = atof( argv[4] );
+            maxlong   = atof( argv[5] );
+            minlat    = atof( argv[6] );
+            maxlat    = atof( argv[7] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+            else
+            {
+                if ( Tcl_GetDouble( interp, argv[3], &minlong ) == TCL_OK )
+                {
+                    transform = 0;
+                    idxname   = 1;
+                    string    = argv[2];
+                    minlong   = atof( argv[3] );
+                    maxlong   = atof( argv[4] );
+                    minlat    = atof( argv[5] );
+                    maxlat    = atof( argv[6] );
+                    entries   = GetEntries( interp, argv[7], &nentries );
+                }
+            }
+            break;
+
+        case 9: // Transform, plotentries
+            transform = 1;
+            entries   = GetEntries( interp, argv[8], &nentries );
+            idxname   = 2;
+            string    = argv[3];
+            minlong   = atof( argv[4] );
+            maxlong   = atof( argv[5] );
+            minlat    = atof( argv[6] );
+            maxlat    = atof( argv[7] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+    }
+
+    if ( transform && idxname == 2 )
+    {
+        plmapstring( &mapform, argv[idxname], string, minlong, maxlong, minlat, maxlat, entries, nentries );
+    }
+    else
+    {
+        // No transformation given
+        plmapstring( NULL, argv[idxname], string, minlong, maxlong, minlat, maxlat, entries, nentries  );
+    }
+
+    if ( entries != NULL )
+    {
+        free( entries );
+    }
+
+    plflush();
+    return return_code;
+}
+
+//--------------------------------------------------------------------------
+// plmaptexCmd
+//
+// Processes plmaptex Tcl command.
+// C version takes:
+//    transform_proc, string, minlong, maxlong, minlat, maxlat, entries, nentries
+//
+//  e.g. .p cmd plmaptex globe "Town" 0 360 -90 90
+//--------------------------------------------------------------------------
+
+static int
+plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
+              int argc, const char *argv[] )
+{
+    PLFLT      minlong, maxlong, minlat, maxlat;
+    PLFLT      dx, dy, just;
+    PLINT      transform;
+    PLINT      idxname;
+    PLINT      *entries;
+    PLINT      nentries;
+    const char *text;
+
+    return_code = TCL_OK;
+    if ( argc < 10 || argc > 12 )
+    {
+        Tcl_AppendResult( interp, "bogus syntax for plmaptex, see doc.",
+            (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    nentries = 0;
+    entries  = NULL;
+
+    switch ( argc )
+    {
+        case 10: // No transform, no plotentries
+            transform      = 0;
+            idxname        = 1;
+            transform_name = NULL;
+            dx             = atof( argv[2] );
+            dy             = atof( argv[3] );
+            just           = atof( argv[4] );
+            text           = argv[5];
+            minlong        = atof( argv[6] );
+            maxlong        = atof( argv[7] );
+            minlat         = atof( argv[8] );
+            maxlat         = atof( argv[9] );
+            break;
+
+        case 11: // Transform OR plotentries, not both - ambiguity
+                 // Heuristic: transformation name is either a name or empty. Therefore, if
+                 // the first argument is a number, a list of plotentries is given (not a matrix)
+
+            transform = 1;
+            idxname   = 2;
+            dx        = atof( argv[3] );
+            dy        = atof( argv[4] );
+            just      = atof( argv[5] );
+            text      = argv[6];
+            minlong   = atof( argv[7] );
+            maxlong   = atof( argv[8] );
+            minlat    = atof( argv[9] );
+            maxlat    = atof( argv[10] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+            else
+            {
+                if ( Tcl_GetDouble( interp, argv[2], &minlong ) == TCL_OK )
+                {
+                    transform = 0;
+                    idxname   = 1;
+                    dx        = atof( argv[2] );
+                    dy        = atof( argv[3] );
+                    just      = atof( argv[4] );
+                    text      = argv[5];
+                    minlong   = atof( argv[6] );
+                    maxlong   = atof( argv[7] );
+                    minlat    = atof( argv[8] );
+                    maxlat    = atof( argv[9] );
+                    entries   = GetEntries( interp, argv[10], &nentries );
+                }
+            }
+            break;
+
+        case 12: // Transform, plotentries
+            transform = 1;
+            entries   = GetEntries( interp, argv[11], &nentries );
+            idxname   = 2;
+            dx        = atof( argv[3] );
+            dy        = atof( argv[4] );
+            just      = atof( argv[5] );
+            text      = argv[6];
+            minlong   = atof( argv[7] );
+            maxlong   = atof( argv[8] );
+            minlat    = atof( argv[9] );
+            maxlat    = atof( argv[10] );
+
+            tcl_interp     = interp;
+            transform_name = argv[1];
+            if ( strlen( transform_name ) == 0 )
+            {
+                transform = 0;
+            }
+    }
+
+    if ( transform && idxname == 2 )
+    {
+        plmaptex( &mapform, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
+    }
+    else
+    {
+        // No transformation given
+        plmaptex( NULL, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
+    }
+
+    if ( entries != NULL )
+    {
+        free( entries );
     }
 
     plflush();
