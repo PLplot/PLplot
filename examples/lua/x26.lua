@@ -103,7 +103,7 @@ function plot1(type, x_label, y_label, alty_label, title_label, line_label, lege
   for i = 1, 101 do
     freql[i] = -2 + (i-1)/20
     freq = 10^freql[i]
-    ampl[i] = 20 * math.log10(1/math.sqrt(1+(freq/f0)^2))
+    ampl[i] = 20 * math.log(1/math.sqrt(1+(freq/f0)^2),10)
     phase[i] = -180/math.pi*math.atan(freq/f0)
   end
 
