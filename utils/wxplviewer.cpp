@@ -1,5 +1,8 @@
 #include "wxplframe.h"
 #include<wx/wx.h>
+#include<vector>
+
+
 
 
 class wxPlViewerApp : public wxApp

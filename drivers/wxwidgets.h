@@ -23,7 +23,11 @@
 #include<vector>
 #include<memory>
 
+// plplot headers
+#include "plplotP.h"
+
 // some special wxWidgets headers
+#include <wx/wx.h>
 #include <wx/spinctrl.h>
 #ifdef wxUSE_GRAPHICS_CONTEXT
 #include <wx/dcgraph.h>
@@ -72,7 +76,11 @@
 //#define PLOT_HEIGHT                  ( 600 )
 
 
+
+
 class wxPLplotFrame;
+
+const PLINT    plMemoryMapReservedSpace = 2*sizeof( size_t );
 
 class PLMemoryMap
 {
@@ -84,22 +92,65 @@ public:
 	~PLMemoryMap();
 	char *getBuffer() { return (char*)m_buffer; }
 	bool isValid() {return m_buffer != NULL; }
+	size_t getSize() {return m_size; }
 private:
 #ifdef WIN32
 	HANDLE m_mapFile;
 #else
 	int m_mapFile;
-	PLINT m_size;
 	char * m_name;
 #endif
+	size_t m_size;
 	void *m_buffer;
 };
+
+//check if we have access to platform specific named mutexes
+//POSIX_HAS_SEMAPHORES should be set by CMake -work out how
+//check http://embedded-control-library.googlecode.com/svn-history/r1304/trunk/ecl_tools/ecl_build/cmake/modules/ecl_platform_detection.cmake
+#if defined( WIN32 ) || defined ( POSIX_HAS_SEMAPHORES )
+#define HAVE_NAMED_MUTEX
+#endif
+
+#ifdef HAVE_NAMED_MUTEX
+class PLNamedMutex
+{
+public:
+	PLNamedMutex();
+	PLNamedMutex( const char *name, bool aquireOnCreate = false );
+	~PLNamedMutex();
+	void create(const char *name, bool aquireOnCreate = false );
+	void clear();
+	void aquire();
+	bool aquire( unsigned long millisecs );
+	bool aquireNoWait();
+	void release();
+	bool isValid();
+private:
+#ifdef WIN32
+	HANDLE m_mutex;
+#else
+#endif
+};
+
+class PLNamedMutexLocker
+{
+public:
+	PLNamedMutexLocker( PLNamedMutex *mutex );
+	~PLNamedMutexLocker();
+private:
+	 PLNamedMutex *m_mutex;
+	 //remove default constructors
+	 PLNamedMutexLocker();
+	 PLNamedMutexLocker( const PLNamedMutexLocker & );
+	 PLNamedMutexLocker & operator = ( const PLNamedMutex & );
+};
+#endif
 
 // base device class
 class wxPLDevice
 {
 public:
-    wxPLDevice( PLStream *pls, char * mf0, char * mfi, PLINT mfiSize, PLINT text, PLINT hrshsym );
+    wxPLDevice( PLStream *pls, char * mf0, PLINT mfiSize, PLINT text, PLINT hrshsym );
     virtual ~wxPLDevice( void );
 
     void DrawLine( short x1a, short y1a, short x2a, short y2a );
@@ -119,6 +170,8 @@ public:
 private:
     void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;
     void DrawTextSection( char* utf8_string, bool drawText );
+	void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
+	void wxPLDevice::ReceiveBuffer( PLStream* pls );
 
 	//The DC we will draw on if given by the user
     wxDC       *m_dc;
@@ -167,19 +220,18 @@ private:
     PLINT            m_posX;
 	PLINT            m_posY;
     PLFLT            m_rotation;
-	//PLFLT            m_cos_rot;
-	//PLFLT            m_sin_rot;
-    //PLFLT            m_shear;
-	//PLFLT            m_cos_shear;
-	//PLFLT            m_sin_shear;
-    //PLFLT            m_stride;
 
 	//variables for dealing with sending/receiving commands
 	//via a memory map
-	char           m_mfo[256];
-	char           m_mfi[256];
-	PLMemoryMap    m_inputMemoryMap;
-	std::vector<std::unique_ptr<PLMemoryMap>> m_outputMemoryMaps;
+	char           m_mfo[MAX_PATH];
+#ifdef HAVE_NAMED_MUTEX
+	static const bool     m_haveNamedMutex = true;
+	PLNamedMutex          m_mutex;
+	size_t                m_localBufferPosition;
+#else
+	const bool     m_haveNamedMutex = false;
+#endif
+	PLMemoryMap    m_outputMemoryMap;
 	PLINT          m_inputSize;
 };
 

@@ -37,13 +37,12 @@ template <class WXWINDOW>
 class wxPLplotwindow : public WXWINDOW
 {
 public:
-    wxPLplotwindow( bool useGraphicsContext = true,
-		wxString mapFile = wxT(""), PLINT mapFileSize = 0 );                //!< Constructor.
+    wxPLplotwindow( bool useGraphicsContext = true );                       //!< Constructor.
     ~wxPLplotwindow( void );                                                //!< Destructor.
 
     void RenewPlot( void );                                                 //!< Redo plot.
     bool SavePlot( const wxString& driver, const wxString& filename );      //!< Save plot using a different driver.
-    wxPLplotstream* GetStream()  { return &m_stream; }                       //!< Get pointer to wxPLplotstream of this widget.
+    wxPLplotstream* GetStream()  { return &m_stream; }                      //!< Get pointer to wxPLplotstream of this widget.
    void setUseGraphicsContext( bool useGraphicsContext );
 
 protected:
@@ -63,15 +62,13 @@ private:
 // methods with events. The WXWINDOW default constructor is used.
 //
 template<class WXWINDOW>
-wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext,
-		wxString mapFile, PLINT mapFileSize )
+wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
 		:m_created(false)
 {
 	//Slightly annoyingly, at this point we haven't created the window
 	//so we haven't got a size to pass to Create to use for default
 	//scaling. Use 500 pixels square until we find a good workaround.
-	m_stream.Create( NULL, 500, 500,
-		wxPLPLOT_DRAW_TEXT, mapFile, mapFileSize );
+	m_stream.Create( NULL, 500, 500, wxPLPLOT_DRAW_TEXT );
 
 	setUseGraphicsContext( useGraphicsContext );
 

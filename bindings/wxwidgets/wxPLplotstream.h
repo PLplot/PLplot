@@ -47,16 +47,15 @@ class PLDLLIMPEXP_WX wxPLplotstream : public plstream
 {
 public:
     wxPLplotstream();                                                              //!< Constructor.
-    wxPLplotstream( wxDC * dc, int width, int height, int style = wxPLPLOT_NONE,
-		wxString mapfile = wxT(""), PLINT mapfileSize = 0 ); //!< Constructor.
-    void Create( wxDC *dc, int width, int height, int style,
-		wxString mapfile = wxT(""), PLINT mapfileSize = 0 );
+    wxPLplotstream( wxDC * dc, int width, int height, int style = wxPLPLOT_NONE ); //!< Constructor.
+    void Create( wxDC *dc, int width, int height, int style );
     ~wxPLplotstream();
     //wxPLplotstream( wxImage *buffer, int width, int height, int style );
-    void set_stream();                           //!< Calls some code before every PLplot command.
-    void SetSize( int width, int height );       //!< Set new size of plot area.
-    void RenewPlot();                            //!< Redo plot and update dc
-	void SetDC( wxDC *dc );                      //!< Set a new dc to write to
+    void set_stream();                              //!< Calls some code before every PLplot command.
+    void SetSize( int width, int height );          //!< Set new size of plot area.
+    void RenewPlot();                               //!< Redo plot and update dc
+	void SetDC( wxDC *dc );                         //!< Set a new dc to write to
+	void ImportBuffer ( void *buffer, size_t size); //!< Import a buffer of plplot commands
 
 private:
     void InitStream();

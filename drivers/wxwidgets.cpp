@@ -101,6 +101,7 @@ PLMemoryMap::PLMemoryMap()
 	m_name = NULL;
 #endif
 	m_buffer=NULL;
+	m_size = 0;
 }
 
 //--------------------------------------------------------------------------
@@ -117,6 +118,7 @@ PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mus
 	m_name = NULL;
 #endif
 	m_buffer=NULL;
+	m_size = 0;
 	create( name, size, mustExist, mustNotExist );
 }
 
@@ -168,11 +170,12 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
 	if( m_mapFile != -1 )
 	{
 		m_buffer = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, m_mapFile, 0 );
-		m_size = size;
 		m_name = new char[strlen( name ) + 1];
 		strcpy( m_name, name );
 	}
 #endif
+	if( isValid() )
+		m_size = size;
 }
 
 //--------------------------------------------------------------------------
@@ -196,9 +199,9 @@ void PLMemoryMap::close()
 		delete[] m_name;
 	m_mapFile = -1;
 	m_name = NULL;
-	m_size = 0;
 #endif
 	m_buffer = NULL;
+	m_size = 0;
 }
 
 //--------------------------------------------------------------------------
@@ -209,6 +212,95 @@ PLMemoryMap::~PLMemoryMap()
 	close();
 }
 
+
+#ifdef HAVE_NAMED_MUTEX
+PLNamedMutex::PLNamedMutex()
+{
+#ifdef WIN32
+	m_mutex = NULL;
+#else
+#endif
+}
+
+PLNamedMutex::PLNamedMutex( const char *name, bool aquireOnCreate )
+{
+#ifdef WIN32
+	m_mutex = NULL;
+#else
+#endif
+	create( name, aquireOnCreate );
+}
+
+void PLNamedMutex::create( const char *name, bool aquireOnCreate )
+{
+#ifdef WIN32
+	m_mutex = CreateMutexA( NULL, aquireOnCreate ? TRUE : FALSE, name );
+#else
+#endif
+}
+
+void PLNamedMutex::aquire()
+{
+#ifdef WIN32
+	DWORD result = WaitForSingleObject( m_mutex, INFINITE );
+	if( result != WAIT_OBJECT_0 && result != WAIT_ABANDONED )
+		throw( result );
+#else
+#endif
+}
+
+bool PLNamedMutex::aquire( unsigned long millisecs)
+{
+#ifdef WIN32
+	DWORD result = WaitForSingleObject( m_mutex, millisecs );
+	return result == WAIT_OBJECT_0 || result == WAIT_ABANDONED;
+#else
+#endif
+}
+
+bool PLNamedMutex::aquireNoWait()
+{
+#ifdef WIN32
+	return WAIT_OBJECT_0 == WaitForSingleObject( m_mutex, 0 );
+#else
+#endif
+}
+
+void PLNamedMutex::release()
+{
+	if( m_mutex )
+		ReleaseMutex( m_mutex );
+}
+
+void PLNamedMutex::clear()
+{
+	release();
+	CloseHandle( m_mutex );
+}
+
+PLNamedMutex::~PLNamedMutex()
+{
+	clear();
+}
+
+PLNamedMutexLocker::PLNamedMutexLocker( PLNamedMutex *mutex )
+{
+	m_mutex = mutex;
+	m_mutex->aquire();
+}
+
+bool PLNamedMutex::isValid()
+{
+	return m_mutex != NULL;
+}
+
+PLNamedMutexLocker::~PLNamedMutexLocker( )
+{
+	m_mutex ->release();
+	m_mutex = NULL;
+}
+
+#endif
 
 //--------------------------------------------------------------------------
 //  In the following you'll find the driver functions which are
@@ -272,14 +364,12 @@ void plD_init_wxwidgets( PLStream* pls )
     static PLINT text        = 1;
     static PLINT hrshsym     = 0;
 	static char  *mfo        = NULL;
-	static char  *mfi        = NULL;
 	static PLINT mfisize     = 0;
 
     DrvOpt wx_options[] = {
         { "hrshsym",  DRV_INT, &hrshsym,     "Use Hershey symbol set (hrshsym=0|1)"                      },
         { "text",     DRV_INT, &text,        "Use own text routines (text=0|1)"                          },
-		{ "mfo",      DRV_STR, &mfo,          "output metafile"                                          },
-		{ "mfi",      DRV_STR, &mfi,          "input metafile"                                           },
+		{ "mfo",      DRV_STR, &mfo,         "output metafile"                                           },
 		{ "mfisize",  DRV_INT, &mfisize,     "input metafile size"                                       },
         { NULL,       DRV_INT, NULL,         NULL                                                        }
     };
@@ -292,7 +382,7 @@ void plD_init_wxwidgets( PLStream* pls )
         text = 0;
 
     // create the new device
-	wxPLDevice* dev = new wxPLDevice ( pls, mfo, mfi, mfisize, text, hrshsym );
+	wxPLDevice* dev = new wxPLDevice ( pls, mfo, mfisize, text, hrshsym );
     if ( dev == NULL )
     {
         plexit( "Insufficient memory" );

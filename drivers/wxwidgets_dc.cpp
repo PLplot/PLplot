@@ -21,18 +21,25 @@
 //
 
 // wxwidgets headers
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include<wx/dir.h>
 
 #include "plDevs.h"
 
-// plplot headers
-#include "plplotP.h"
 
 // std and driver headers
 #include <cmath>
 #include "wxwidgets.h"
 #include <random>
+
+//data transmission codes
+const unsigned char transmissionRegular = 0;
+const unsigned char transmissionSkipFileEnd = 1;
+const unsigned char transmissionEndOfPage = 2;
+const unsigned char transmissionBeginPage = 3;
+const unsigned char transmissionLocate = 4;
+const unsigned char transmissionPartial = 5;
+const unsigned char transmissionComplete = 6;
 
 //--------------------------------------------------------------------------
 // Scaler class
@@ -90,7 +97,7 @@ private:
 //  Constructor of the standard wxWidgets device based on the wxPLDevBase
 //  class. Only some initialisations are done.
 //--------------------------------------------------------------------------
-wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PLINT text, PLINT hrshsym )
+wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT mfiSize, PLINT text, PLINT hrshsym )
 	:m_plplotEdgeLength( PLFLT( SHRT_MAX ) )
 {
 
@@ -112,11 +119,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
 	else
 		//assume we will be outputting to the default
 		//memory map until we are given a dc to draw to
-		strcpy(m_mfo, "plplotMemoryMap??????????");
-	if( mfi )
-		strcpy(m_mfi, mfi);
-	else
-		strcpy(m_mfi, "");
+		strcpy(m_mfo, "plplotMemoryMap");
 	m_inputSize = mfiSize;
 
 	// be verbose and write out debug messages
@@ -185,30 +188,8 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, char * mfi, PLINT mfiSize, PL
     //        (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_IN ), 0, 0 );
 	SetSize( pls, pls->xlength, pls->ylength );
 
+	m_localBufferPosition = 0;
 
-
-	if( strlen(m_mfi)>0 )
-	{
-		m_inputMemoryMap.create( mfi, m_inputSize, true, false );
-		if( m_inputMemoryMap.isValid())
-		{
-			if( pls->plbuf_buffer )
-				free( pls->plbuf_buffer );
-			pls->plbuf_top = 0;
-			pls->plbuf_buffer_size = 0;
-			pls->plbuf_buffer = malloc( m_inputSize );
-			if( pls->plbuf_buffer )
-			{
-				pls->plbuf_top = m_inputSize;
-				pls->plbuf_buffer_size = m_inputSize;
-				memcpy( pls->plbuf_buffer, m_inputMemoryMap.getBuffer(), m_inputSize );
-			}
-		}
-		else
-		{
-			plwarn("Error creating memory map for wxWidget instruction receipt. The page will not be displayed");
-		}
-	}
 }
 
 
@@ -806,87 +787,89 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 //--------------------------------------------------------------------------
 void wxPLDevice::EndPage( PLStream* pls )
 {
+	static bool firstPage = true;
 	if( strlen( m_mfo ) > 0 )
 	{
 		//This bit of code copies the pls->plbuf_buffer to a memeory map and
 		//runs wxPlViewer which reads the buffer in and displays the plot.
 		//Note that the buffer is cleared at the beginnign of each page so
 		//we are transferring and displaying one page at a time.
-
-		//create a memory map to hold the data and add it to the array of maps
-		std::default_random_engine generator (clock());
-		std::uniform_int_distribution<char> distribution('A','Z');
-		int nTries=0;
-		char mapName[256];
-		while( nTries < 10 )
+		if( firstPage )
 		{
-			for( int i=0; i< 256; ++i )
+			//create a memory map to hold the data and add it to the array of maps
+			std::default_random_engine generator (clock());
+			std::uniform_int_distribution<char> distribution('A','Z');
+			int nTries=0;
+			char mapName[MAX_PATH];
+			char mutexName[MAX_PATH];
+			while( nTries < 10 )
 			{
-				if( m_mfo[i] == '?' )
-					mapName[i] = char( distribution( generator ) );
-				else
-					mapName[i] = m_mfo[i];
+				for( int i=0; i< MAX_PATH; ++i )
+				{
+					if( m_mfo[i] == '?' )
+						mapName[i] = char( distribution( generator ) );
+					else
+						mapName[i] = m_mfo[i];
+				}
+				mapName[MAX_PATH - 4] = '\0';
+				strcpy( mutexName, mapName);
+				strcat( mutexName, "mut" );
+				m_outputMemoryMap.create( mapName, pls->plbuf_top, false, true );
+				if( m_outputMemoryMap.isValid() )
+					m_mutex.create( mutexName );
+				if( !m_mutex.isValid() )
+					m_outputMemoryMap.close();
+				if( m_outputMemoryMap.isValid() )
+					break;
+				++nTries;
 			}
-			m_outputMemoryMaps.push_back( std::unique_ptr<PLMemoryMap>( new PLMemoryMap( mapName, pls->plbuf_top, false, true ) ) );
-			if( m_outputMemoryMaps.back()->isValid() )
-				break;
-			++nTries;
-			m_outputMemoryMaps.pop_back();
-		}
-		//m_outputMemoryMap.create( m_mfo, pls->plbuf_top, false, true );
-		//check the memory map is valid
-		if( !m_outputMemoryMaps.back()->isValid() )
-		{
-			plwarn( "Error creating memory map for wxWidget instruction transmission. The page will not be displayed" );
-			return;
-		}
-		//copy the page's buffer to the map
-		memcpy( m_outputMemoryMaps.back()->getBuffer(), pls->plbuf_buffer, pls->plbuf_top );
+			//m_outputMemoryMap.create( m_mfo, pls->plbuf_top, false, true );
+			//check the memory map is valid
+			if( !m_outputMemoryMap.isValid() )
+			{
+				plwarn( "Error creating memory map for wxWidget instruction transmission. The plots will not be displayed" );
+				return;
+			}
 
-		//try to find the wxPLViewer executable, in the first instance just assume it
-		//is in the path.
-		wxString exeName = wxT( "wxPLViewer" );
-		if ( plInBuildTree() )
-		{
-			//if we are in the build tree check for the needed exe in there
-			wxArrayString files;
-			wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName, wxDIR_FILES|wxDIR_DIRS );
-			if ( files.size() == 0 )
-				wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES|wxDIR_DIRS );
-			if ( files.size() > 0 )
-				exeName = files[0];
+			//zero out the reserved area
+			*( (size_t*)( m_outputMemoryMap.getBuffer() ) ) = plMemoryMapReservedSpace;
+			*( (size_t*)( m_outputMemoryMap.getBuffer() ) + 1 ) = plMemoryMapReservedSpace;
+
+			//try to find the wxPLViewer executable, in the first instance just assume it
+			//is in the path.
+			wxString exeName = wxT( "wxPLViewer" );
+			if ( plInBuildTree() )
+			{
+				//if we are in the build tree check for the needed exe in there
+				wxArrayString files;
+				wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName, wxDIR_FILES|wxDIR_DIRS );
+				if ( files.size() == 0 )
+					wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES|wxDIR_DIRS );
+				if ( files.size() > 0 )
+					exeName = files[0];
+			}
+			else
+			{
+				//check the plplot bin install directory
+				wxArrayString files;
+				wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName, wxDIR_FILES|wxDIR_DIRS );
+				if ( files.size() == 0 )
+					wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES|wxDIR_DIRS );
+				if ( files.size() > 0 )
+					exeName = files[0];
+			}
+			//Run the wxPlViewer with command line parameters telling it the location and size of the buffer
+			//the console will hang until wxPlViewer exits
+			wxString command;
+			command << wxT("\"") << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
+				pls->plbuf_top << wxT( " " ) << pls->xlength << ( " " ) << pls->ylength;
+			wxExecute( command, wxEXEC_ASYNC );
 		}
-		else
-		{
-			//check the plplot bin install directory
-			wxArrayString files;
-			wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName, wxDIR_FILES|wxDIR_DIRS );
-			if ( files.size() == 0 )
-				wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES|wxDIR_DIRS );
-			if ( files.size() > 0 )
-				exeName = files[0];
-		}
-		//Run the wxPlViewer with command line parameters telling it the location and size of the buffer
-		//the console will hang until wxPlViewer exits
-		wxString command;
-		command << wxT("\"") << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
-			pls->plbuf_top << wxT( " " ) << pls->xlength << ( " " ) << pls->ylength;
-		if ( pls->nopause )
-		{
-#ifdef _WIN32
-			command = wxT("start ") + command;
-#else
-			command << wxT(" &");
-#endif
-		}
-		system( command.mb_str() );
-		if( ! pls->nopause )
-		{
-			//to do: At the moment if nopause is used the memory map won't be
-			//freed until plplot cleanup is performed
-			m_outputMemoryMaps.pop_back();
-		}
+
+		TransmitBuffer( pls, transmissionBeginPage );
+		TransmitBuffer( pls, transmissionEndOfPage );
 	}
+	firstPage = false;
 }
 
 //--------------------------------------------------------------------------
@@ -895,6 +878,7 @@ void wxPLDevice::EndPage( PLStream* pls )
 //--------------------------------------------------------------------------
 void wxPLDevice::BeginPage( PLStream* pls )
 {
+	m_localBufferPosition = 0;
 	if( !m_dc )
 		return;
 
@@ -910,6 +894,7 @@ void wxPLDevice::BeginPage( PLStream* pls )
 
     m_plstate_width = false;
     m_plstate_color = false;
+
 }
 
 //--------------------------------------------------------------------------
@@ -974,3 +959,242 @@ void wxPLDevice::FixAspectRatio( bool fix )
 	m_fixedAspect = fix;
 }
 
+//This function transmits the remaining buffer to the gui program via a memory map
+//If the buffer is too big for the memory map then it will loop round waiting for
+//the gui to catch up each time
+void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
+{
+	if( ! m_outputMemoryMap.isValid() )
+		return;
+	size_t amountToCopy = pls->plbuf_top - m_localBufferPosition;
+	bool first = true;
+	size_t counter = 0;
+	const size_t counterLimit = 10000;
+	const size_t headerSize = sizeof( transmissionType ) + sizeof ( size_t );
+	bool completed = false;
+	while( !completed && counter < counterLimit )
+	{
+		//if we are doing multiple loops then pause briefly before we
+		//lock to give the reading application a chance to spot the
+		//change.
+		if( ! first )
+			wxMilliSleep( 10 );
+		first = false;
+
+
+		size_t copyAmount = 0;
+		size_t freeSpace = 0;
+		//lock the mutex so reading and writing don't overlap
+		try
+		{
+			PLNamedMutexLocker lock( &m_mutex );
+
+
+			//check how much free space we have before the end of the buffer
+			//or if we have looped round how much free space we have before
+			//we reach the read point
+			size_t &readLocation = *((size_t*)(m_outputMemoryMap.getBuffer()));
+			size_t &writeLocation = *((size_t*)(m_outputMemoryMap.getBuffer())+1);
+			freeSpace = m_outputMemoryMap.getSize() - writeLocation;
+			// if readLocation is at the beginning then don't quite fill up the buffer
+			if( readLocation == plMemoryMapReservedSpace )
+				--freeSpace;
+
+			//if the free space left in the file is less than that needed for the header then
+			//just tell the GUI to skip the rest of the file so it can start again at the
+			//beginning of the file.
+			if( freeSpace <= headerSize )
+			{
+				if( readLocation > writeLocation ) //don't overtake the read buffer
+					freeSpace = 0;
+				else if( readLocation == plMemoryMapReservedSpace ) // don't catch up exactly with the read buffer
+					freeSpace = 0;
+				else
+				{
+					//send a skip end of file command and move back to the beginning of the file
+					memcpy( m_outputMemoryMap.getBuffer() + writeLocation,
+						(void*)( &transmissionSkipFileEnd ), sizeof( transmissionSkipFileEnd ) );
+					writeLocation = plMemoryMapReservedSpace;
+					counter = 0;
+					continue;
+				}
+			}
+
+			//if this is a beginning of page  then send a beginning of page flag first
+			if( transmissionType == transmissionBeginPage )
+			{
+				memcpy( m_outputMemoryMap.getBuffer() + writeLocation,
+					(void*)( &transmissionBeginPage ), sizeof( transmissionBeginPage ) );
+				writeLocation += sizeof( transmissionBeginPage );
+				if( writeLocation == m_outputMemoryMap.getSize() )
+					writeLocation = plMemoryMapReservedSpace;
+				counter = 0;
+				if( amountToCopy == 0 )
+					completed = true;
+				transmissionType = transmissionRegular;
+				continue;
+			}
+
+			//if this is a end of page and we have completed
+			//the buffer then send a end of page flag first
+			if( transmissionType == transmissionEndOfPage && amountToCopy == 0 )
+			{
+				memcpy( m_outputMemoryMap.getBuffer() + writeLocation,
+					(void*)( &transmissionEndOfPage ), sizeof( transmissionEndOfPage ) );
+				writeLocation += sizeof( transmissionEndOfPage );
+				if( writeLocation == m_outputMemoryMap.getSize() )
+					writeLocation = plMemoryMapReservedSpace;
+				counter = 0;
+				completed = true;
+				continue;
+			}
+
+			//if we have looped round stay 1 character behind the read buffer - it makes it
+			//easier to test whether the reading has caught up with the writing or vica versa
+			if( writeLocation < readLocation && readLocation > 0 )
+				freeSpace = readLocation - writeLocation -1;
+
+			if ( freeSpace > headerSize )
+			{
+				//decide exactly how much to copy
+				copyAmount = MIN( amountToCopy, freeSpace - headerSize  );
+
+				//copy the header and the amount we can to the buffer
+				if( copyAmount != amountToCopy )
+					memcpy( m_outputMemoryMap.getBuffer() + writeLocation,
+						( char* )( &transmissionPartial ), sizeof( copyAmount ) );
+				else
+					memcpy( m_outputMemoryMap.getBuffer() + writeLocation,
+					( char* )( &transmissionComplete ), sizeof( copyAmount ) );
+				memcpy( m_outputMemoryMap.getBuffer() + writeLocation + sizeof( transmissionType ),
+					( char* )( &copyAmount ), sizeof( copyAmount ) );
+				memcpy( m_outputMemoryMap.getBuffer() + writeLocation + headerSize,
+					( char * )pls->plbuf_buffer + m_localBufferPosition, copyAmount );
+				m_localBufferPosition += copyAmount;
+				writeLocation += copyAmount + headerSize;
+				if( writeLocation == m_outputMemoryMap.getSize() )
+					writeLocation = plMemoryMapReservedSpace;
+				amountToCopy -= copyAmount;
+				counter = 0;
+				if( amountToCopy == 0 && transmissionType != transmissionEndOfPage )
+					completed = true;
+			}
+			else
+			{
+				++counter;
+			}
+		}
+#ifdef WIN32
+		catch( DWORD )
+		{
+			plwarn( "Locking mutex failed when trying to communicate with wxPLViewer.");
+			break;
+		}
+#endif
+		catch( ... )
+		{
+			plwarn( "Unknown error when trying to communicate with wxPLViewer.");
+			break;
+		}
+	}
+	if( counter == counterLimit )
+	{
+		plwarn( "Communication timeout with wxPLViewer - disconnecting" );
+		m_outputMemoryMap.close();
+	}
+}
+
+//to do: This code is copied from plbuf.c grow_buffer, really we should set up
+//a way to use the same code, but this will be coordinated with file output in
+//the future.
+PLBOOL
+grow_buffer( PLStream *pls, size_t size )
+{
+	if ( size > pls->plbuf_buffer_size )
+    {
+        // Not enough space, need to grow the buffer, this can get called before
+		// pls->plbuf_buffer_grow has been set (it is initially 0), so make sure
+		// we at least make enough space for the command
+		void *newBuffer;
+		size_t newSize;
+
+		if ( pls->plbuf_buffer_grow == 0 )
+			pls->plbuf_buffer_grow = 128 * 1024;
+
+        newSize = pls->plbuf_buffer_size + ( size / pls->plbuf_buffer_grow + 1 ) * pls->plbuf_buffer_grow;
+
+        if ( pls->verbose )
+            printf( "Growing buffer to %d KB\n", (int) ( newSize / 1024 ) );
+		//realloc to a temporary variable so we don't lose the original buffer on failure
+		newBuffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size );
+		if( newBuffer || pls->plbuf_buffer_size == 0 )
+		{
+			pls->plbuf_buffer = newBuffer;
+			pls->plbuf_buffer_size = newSize;
+		}
+		else
+		{
+            plwarn( "plbuf wr_command:  Plot buffer grow failed" );
+			return 0;
+		}
+    }
+	return 1;
+}
+
+/*void wxPLDevice::ReceiveBuffer( PLStream* pls )
+{
+	if( m_inputMemoryMap.isValid())
+	{
+		size_t amountToRead;
+		//lock the mutex for the duration of this scope
+		PLNamedMutexLocker locker( &m_mutex );
+		size_t &readLocation = *((size_t*)(m_inputMemoryMap.getBuffer()));
+		size_t &writeLocation = *((size_t*)(m_inputMemoryMap.getBuffer())+1);
+		//Check if there is anyhting to read
+		if( readLocation == writeLocation )
+			return;
+
+
+		unsigned char transmissionType;
+		transmissionType = *( ( unsigned char* )( m_inputMemoryMap.getBuffer() + readLocation ) );
+		size_t nRead = sizeof( unsigned char );
+
+		if( transmissionType == transmissionSkipFileEnd )
+		{
+			readLocation = m_memoryMapReservedSpace;
+			return;
+		}
+		else if( transmissionType == transmissionBeginPage )
+		{
+			BeginPage( pls );
+			return;
+		}
+		else if( transmissionType == transmissionEndOfPage )
+		{
+		}
+		else if( transmissionType == transmissionPartial || transmissionType == transmissionComplete )
+		{
+			size_t dataSize;
+			dataSize = *( ( unsigned char* )( m_inputMemoryMap.getBuffer() + readLocation +
+				sizeof( transmissionType ) ) );
+			m_holdingBuffer[m_writingPage].insert( m_holdingBuffer[m_writingPage].end(),
+				m_inputMemoryMap.getBuffer() + readLocation + sizeof( transmissionType ) + sizeof (dataSize),
+				m_inputMemoryMap.getBuffer() + readLocation + sizeof( transmissionType ) + sizeof (dataSize) + dataSize );
+			nRead += sizeof (dataSize) + dataSize;
+		}
+
+		readLocation =
+
+		if( writeLocation < readLocation )
+			amountToRead = m_inputMemoryMap.getSize() - readLocation;
+		else
+			amountToRead = writeLocation - readLocation;
+
+		if (grow_buffer( pls, pls->plbuf_top + amountToRead ) )
+		{
+			memcpy( (char*)pls->plbuf_buffer + pls->plbuf_top , m_inputMemoryMap.getBuffer() + readLocation,
+				amountToRead );
+			pls->plbuf_top += amountToRead;
+		}
+	}
+}*/

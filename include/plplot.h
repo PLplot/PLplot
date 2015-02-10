@@ -245,6 +245,7 @@ typedef void*    PLPointer;
 #define PLESC_MODESET            36     // set drawing mode
 #define PLESC_MODEGET            37     // get drawing mode
 #define PLESC_FIXASPECT          38     // toggle fixing the aspect ratio of the plot
+#define PLESC_IMPORT_BUFFER      39     // set the contents of the buffer to a specified byte string
 
 // Alternative unicode text handling control characters
 #define PLTEXT_FONTCHANGE        0      // font change in the text stream
@@ -527,6 +528,15 @@ typedef struct
 //
 
 typedef plf2ops_t * PLF2OPS;
+
+//
+// A struct to pass a buffer around
+//
+typedef struct
+{
+	size_t size;
+	void * buffer;
+} plbuffer;
 
 //--------------------------------------------------------------------------
 //		BRAINDEAD-ness

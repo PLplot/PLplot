@@ -416,6 +416,7 @@ plbuf_text_unicode( PLStream *pls, EscText *text )
 void
 plbuf_esc( PLStream *pls, PLINT op, void *ptr )
 {
+	plbuffer *buffer;
     dbug_enter( "plbuf_esc" );
 
     wr_command( pls, (U_CHAR) ESCAPE );
@@ -442,6 +443,18 @@ plbuf_esc( PLStream *pls, PLINT op, void *ptr )
     case PLESC_END_TEXT:
         plbuf_text_unicode( pls, (EscText *) ptr );
         break;
+	case PLESC_IMPORT_BUFFER:
+		buffer = ( plbuffer* ) ptr;
+		if ( buffer->size > pls->plbuf_buffer_size )
+		{
+			pls->plbuf_buffer = realloc( pls->plbuf_buffer, buffer->size );
+			pls->plbuf_buffer_size = buffer->size;
+		}
+		if( !pls->plbuf_buffer )
+			plexit( "plbuf_esc: Failed to reallocate buffer during PLESC_SET_BUFFER case" );
+		memcpy( pls->plbuf_buffer, buffer->buffer, buffer->size );
+		pls->plbuf_top = buffer->size;
+
 #if 0
     // These are a no-op.  They just need an entry in the buffer.
     case PLESC_CLEAR:

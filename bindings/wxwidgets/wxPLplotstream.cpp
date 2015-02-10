@@ -31,9 +31,9 @@
 //  plot to and the size of the canvas. We also check and set several
 //  device style options.
 //
-wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style,  wxString mapfile, PLINT mapfileSize ) : plstream()
+wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) : plstream()
 {
-    Create( dc, width, height, style, mapfile, mapfileSize );
+    Create( dc, width, height, style );
 }
 
 
@@ -44,7 +44,7 @@ wxPLplotstream::wxPLplotstream() : plstream()
 //! Called from the constructor or can be called by the user if the default constructor is used
 //  We set the driver to be wxwidgets, set the page size, set the driver options and initialize
 //  the plot.
-void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxString mapfile, PLINT mapfileSize )
+void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 {
     const size_t bufferSize = 256;
 
@@ -58,16 +58,10 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style,  wxStri
     char drvopt[bufferSize], buffer[bufferSize];
     drvopt[0] = '\0';
 
-    sprintf( buffer, "hrshsym=%d,text=%d,mfisize=%d",
+    sprintf( buffer, "hrshsym=%d,text=%d",
         m_style & wxPLPLOT_USE_HERSHEY_SYMBOLS ? 1 : 0,
-        m_style & wxPLPLOT_DRAW_TEXT ? 1 : 0,
-		mapfileSize);
+        m_style & wxPLPLOT_DRAW_TEXT ? 1 : 0 );
     strncat( drvopt, buffer, bufferSize - strlen( drvopt ) );
-	if( mapfile != wxEmptyString && mapfileSize > 0 )
-	{
-		strncat( drvopt, ",mfi=", bufferSize - strlen( drvopt ) );
-		strncat( drvopt, mapfile.mb_str(), bufferSize - strlen( drvopt ) );
-	}
 
     setopt( "-drvopt", drvopt );
 
@@ -117,4 +111,13 @@ void wxPLplotstream::SetSize( int width, int height )
 void wxPLplotstream::RenewPlot()
 {
     replot();
+}
+
+void wxPLplotstream::ImportBuffer ( void *buffer, size_t size)
+{
+	plbuffer buf;
+	buf.buffer = buffer;
+	buf.size = size;
+	cmd( PLESC_IMPORT_BUFFER, &buf );
+	RenewPlot();
 }
