@@ -1016,6 +1016,10 @@ module plplot
         module procedure plsurf3d
     end interface
 
+    interface plsurf3dl
+        module procedure plsurf3dl
+    end interface
+
     interface plstripc
         module procedure plstripc
     end interface
@@ -1680,6 +1684,23 @@ contains
          size(clevel,kind=plint), size(x,kind=plint))
 
     end subroutine plsurf3d
+
+    subroutine plsurf3dl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin, indexymax )
+       integer(kind=plint)                        :: opt
+       real(kind=plflt), dimension(:) :: x, y, clevel
+       real(kind=plflt), dimension(:,:) :: z
+       integer(kind=plint)                        :: indexxmin, indexxmax
+       integer(kind=plint), dimension(:)          :: indexymin, indexymax
+
+       integer(kind=plint), dimension(size(x))    :: indexyminm1, indexymaxm1
+
+       indexyminm1 = indexymin - 1
+       indexymaxm1 = indexymax - 1
+
+       call plsurf3dlf95( x, y, z, size(x,kind=plint), size(y,kind=plint), opt, clevel, &
+         size(clevel,kind=plint), size(x,kind=plint), indexxmin-1, indexxmax-1, indexyminm1, indexymaxm1 )
+
+    end subroutine plsurf3dl
 
     subroutine plpoin( x, y, code )
        integer(kind=plint)                        :: code

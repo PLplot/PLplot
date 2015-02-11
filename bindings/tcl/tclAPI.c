@@ -56,6 +56,7 @@ static int plmeshcCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plot3dCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plot3dcCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plsurf3dCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plsurf3dlCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plsetoptCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plshadeCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plshadesCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -119,6 +120,7 @@ static CmdInfo Cmds[] = {
     { "plot3d",       plot3dCmd       },
     { "plot3dc",      plot3dcCmd      },
     { "plsurf3d",     plsurf3dCmd     },
+    { "plsurf3dl",    plsurf3dlCmd    },
     { "plsetopt",     plsetoptCmd     },
     { "plshade",      plshadeCmd      },
     { "plshades",     plshadesCmd     },
@@ -2610,6 +2612,313 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         free( z );
     }
     else if ( argc == 5 )
+    {
+        free( z );
+    }
+    else                        // argc == 3
+    {
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+//--------------------------------------------------------------------------
+// plsurf3dlCmd
+//
+// Processes plsurf3d Tcl command.
+//
+// We support 5 different invocation forms:
+// 1)	plsurf3dl x y z nx ny opt clevel nlevel indexxmin indexxmax indexymin indexymax
+// 2)	plsurf3dl x y z nx ny opt clevel indexxmin indexxmax indexymin indexymax
+// 3)	plsurf3dl x y z nx ny opt indexxmin indexxmax indexymin indexymax
+// 4)	plsurf3dl x y z opt indexxmin indexxmax indexymin indexymax
+// 5)	plsurf3dl z opt indexxmin indexxmax indexymin indexymax
+//
+// Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
+// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
+// ny from the input data, and in form 5 we infer nx and ny, and also take
+// the x and y arrays to just be integral spacing.
+//--------------------------------------------------------------------------
+
+static int
+plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
+             int argc, const char *argv[] )
+{
+    PLINT     nx, ny, opt, nlev = 10;
+    PLFLT     *x, *y, **z;
+    PLFLT     *clev;
+    PLINT     indexxmin, indexxmax;
+
+    tclMatrix *matx, *maty, *matz, *matPtr, *matlev;
+    tclMatrix *indexymin, *indexymax;
+    PLINT     *idxymin, *idxymax;
+
+    int       i;
+
+    if ( argc == 13 )
+    {
+        nlev = atoi( argv[8] );
+        nx   = atoi( argv[4] );
+        ny   = atoi( argv[5] );
+        opt  = atoi( argv[6] );
+
+        indexxmin = atoi( argv[9] );
+        indexxmax = atoi( argv[10] );
+        indexymin = Tcl_GetMatrixPtr( interp, argv[11] );
+        indexymax = Tcl_GetMatrixPtr( interp, argv[12] );
+        if ( indexymin == NULL || indexymin == NULL )
+            return TCL_ERROR;
+        if ( indexymin->type != TYPE_INT ||
+             indexymax->type != TYPE_INT )
+        {
+            Tcl_SetResult( interp, "indexymin and indexymax must be integer matrices", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        matx = Tcl_GetMatrixPtr( interp, argv[1] );
+        if ( matx == NULL )
+            return TCL_ERROR;
+        maty = Tcl_GetMatrixPtr( interp, argv[2] );
+        if ( maty == NULL )
+            return TCL_ERROR;
+        matz = Tcl_GetMatrixPtr( interp, argv[3] );
+        if ( matz == NULL )
+            return TCL_ERROR;
+        matPtr = matz;          // For dumb indexer macro, grrrr.
+
+        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
+        if ( matlev == NULL )
+            return TCL_ERROR;
+
+        if ( matx->type != TYPE_FLOAT ||
+             maty->type != TYPE_FLOAT ||
+             matz->type != TYPE_FLOAT ||
+             matlev->type != TYPE_FLOAT )
+        {
+            Tcl_SetResult( interp, "x y z and clevel must all be float matrices", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        if ( matx->dim != 1 || matx->n[0] != nx ||
+             maty->dim != 1 || maty->n[0] != ny ||
+             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
+             matlev->dim != 1 || matlev->n[0] != nlev )
+        {
+            Tcl_SetResult( interp, "popo Inconsistent dimensions", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        x    = matx->fdata;
+        y    = maty->fdata;
+        clev = matlev->fdata;
+
+        idxymin = indexymin->idata;
+        idxymax = indexymax->idata;
+
+        z = (PLFLT **) malloc( (size_t) nx * sizeof ( PLFLT * ) );
+        for ( i = 0; i < nx; i++ )
+            z[i] = &matz->fdata[ I2D( i, 0 ) ];
+    }
+
+    else if ( argc == 12 )
+    {
+        nx  = atoi( argv[4] );
+        ny  = atoi( argv[5] );
+        opt = atoi( argv[6] );
+
+        indexxmin = atoi( argv[8] );
+        indexxmax = atoi( argv[9] );
+        indexymin = Tcl_GetMatrixPtr( interp, argv[10] );
+        indexymax = Tcl_GetMatrixPtr( interp, argv[11] );
+        if ( indexymin == NULL || indexymin == NULL )
+            return TCL_ERROR;
+        if ( indexymin->type != TYPE_INT ||
+             indexymax->type != TYPE_INT )
+        {
+            Tcl_SetResult( interp, "indexymin and indexymax must be integer matrices", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        matx = Tcl_GetMatrixPtr( interp, argv[1] );
+        if ( matx == NULL )
+            return TCL_ERROR;
+        maty = Tcl_GetMatrixPtr( interp, argv[2] );
+        if ( maty == NULL )
+            return TCL_ERROR;
+        matz = Tcl_GetMatrixPtr( interp, argv[3] );
+        if ( matz == NULL )
+            return TCL_ERROR;
+        matPtr = matz;          // For dumb indexer macro, grrrr.
+        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
+        if ( matlev == NULL )
+            return TCL_ERROR;
+
+        if ( matx->type != TYPE_FLOAT ||
+             maty->type != TYPE_FLOAT ||
+             matz->type != TYPE_FLOAT ||
+             matlev->type != TYPE_FLOAT )
+        {
+            Tcl_SetResult( interp, "x y z and clevel must all be float matrices", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        if ( matx->dim != 1 || matx->n[0] != nx ||
+             maty->dim != 1 || maty->n[0] != ny ||
+             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
+             matlev->dim != 1 || matlev->n[0] != nlev )
+        {
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        x    = matx->fdata;
+        y    = maty->fdata;
+        clev = matlev->fdata;
+        nlev = matlev->n[0];
+
+        idxymin = indexymin->idata;
+        idxymax = indexymax->idata;
+
+        z = (PLFLT **) malloc( (size_t) nx * sizeof ( PLFLT * ) );
+        for ( i = 0; i < nx; i++ )
+            z[i] = &matz->fdata[ I2D( i, 0 ) ];
+    }
+
+    else if ( argc == 11 )
+    {
+        nx   = atoi( argv[4] );
+        ny   = atoi( argv[5] );
+        opt  = atoi( argv[6] );
+        clev = NULL;
+
+        indexxmin = atoi( argv[7] );
+        indexxmax = atoi( argv[8] );
+        indexymin = Tcl_GetMatrixPtr( interp, argv[9] );
+        indexymax = Tcl_GetMatrixPtr( interp, argv[10] );
+        if ( indexymin == NULL || indexymin == NULL )
+            return TCL_ERROR;
+        if ( indexymin->type != TYPE_INT ||
+             indexymax->type != TYPE_INT )
+        {
+            Tcl_SetResult( interp, "indexymin and indexymax must be integer matrices", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        matx = Tcl_GetMatrixPtr( interp, argv[1] );
+        if ( matx == NULL )
+            return TCL_ERROR;
+        maty = Tcl_GetMatrixPtr( interp, argv[2] );
+        if ( maty == NULL )
+            return TCL_ERROR;
+        matz = Tcl_GetMatrixPtr( interp, argv[3] );
+        if ( matz == NULL )
+            return TCL_ERROR;
+        matPtr = matz;          // For dumb indexer macro, grrrr.
+
+        if ( matx->type != TYPE_FLOAT ||
+             maty->type != TYPE_FLOAT ||
+             matz->type != TYPE_FLOAT )
+        {
+            Tcl_SetResult( interp, "x y and z must all be float matrices", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        if ( matx->dim != 1 || matx->n[0] != nx ||
+             maty->dim != 1 || maty->n[0] != ny ||
+             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
+        {
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        x = matx->fdata;
+        y = maty->fdata;
+
+        idxymin = indexymin->idata;
+        idxymax = indexymax->idata;
+
+        z = (PLFLT **) malloc( (size_t) nx * sizeof ( PLFLT * ) );
+        for ( i = 0; i < nx; i++ )
+            z[i] = &matz->fdata[ I2D( i, 0 ) ];
+    }
+    else if ( argc == 9 )
+    {
+        opt  = atoi( argv[4] );
+        clev = NULL;
+
+        indexxmin = atoi( argv[5] );
+        indexxmax = atoi( argv[6] );
+        indexymin = Tcl_GetMatrixPtr( interp, argv[7] );
+        indexymax = Tcl_GetMatrixPtr( interp, argv[8] );
+        if ( indexymin == NULL || indexymin == NULL )
+            return TCL_ERROR;
+        if ( indexymin->type != TYPE_INT ||
+             indexymax->type != TYPE_INT )
+        {
+            Tcl_SetResult( interp, "indexymin and indexymax must be integer matrices", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        matx = Tcl_GetMatrixPtr( interp, argv[1] );
+        if ( matx == NULL )
+            return TCL_ERROR;
+        maty = Tcl_GetMatrixPtr( interp, argv[2] );
+        if ( maty == NULL )
+            return TCL_ERROR;
+        matz = Tcl_GetMatrixPtr( interp, argv[3] );
+        if ( matz == NULL )
+            return TCL_ERROR;
+        matPtr = matz;          // For dumb indexer macro, grrrr.
+
+        if ( matx->type != TYPE_FLOAT ||
+             maty->type != TYPE_FLOAT ||
+             matz->type != TYPE_FLOAT )
+        {
+            Tcl_SetResult( interp, "x y and z must all be float", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        nx = matx->n[0]; ny = maty->n[0];
+
+        if ( matx->dim != 1 || matx->n[0] != nx ||
+             maty->dim != 1 || maty->n[0] != ny ||
+             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
+        {
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
+            return TCL_ERROR;
+        }
+
+        x = matx->fdata;
+        y = maty->fdata;
+
+        idxymin = indexymin->idata;
+        idxymax = indexymax->idata;
+
+        z = (PLFLT **) malloc( (size_t) nx * sizeof ( PLFLT * ) );
+        for ( i = 0; i < nx; i++ )
+            z[i] = &matz->fdata[ I2D( i, 0 ) ];
+    }
+    else if ( argc == 3 )
+    {
+        Tcl_SetResult( interp, "unimplemented", TCL_STATIC );
+        return TCL_ERROR;
+    }
+    else
+    {
+        Tcl_AppendResult( interp, "wrong # args: should be \"plsurf3d ",
+            "x y z nx ny opt clevel nlevel\", or a valid contraction ",
+            "thereof.", (char *) NULL );
+        return TCL_ERROR;
+    }
+
+    plsurf3dl( x, y, (const PLFLT * const *) z, nx, ny, opt, clev, nlev, indexxmin, indexxmax, idxymin, idxymax );
+
+    if ( argc == 13 )
+    {
+        free( z );
+    }
+    else if ( argc == 9 )
     {
         free( z );
     }

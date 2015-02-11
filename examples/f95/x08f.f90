@@ -28,25 +28,53 @@ program x08f95
 
 !   xdim is the leading dimension of z, xpts <= xdim is the leading
 !   dimension of z that is defined.
-    integer, parameter :: xdim=99, ydim=100, xpts=35, ypts=46
+    integer, parameter :: xdim=99, ydim=100, xpts=35, ypts=45
     real(kind=plflt)   :: x(xdim), y(ydim), z(xdim,ypts), xx, yy, r
+    real(kind=plflt)   :: zlimited(xdim,ypts)
+    integer, parameter :: indexxmin = 1
+    integer, parameter :: indexxmax = xpts
+    integer            :: indexymin(xpts), indexymax(xpts)
+
+    ! parameters of ellipse (in x, y index coordinates) that limits the data.
+    ! x0, y0 correspond to the exact floating point centre of the index
+    ! range.
+    ! Note: using the Fortran convention of starting indices at 1
+    real(kind=plflt), parameter :: x0 = 0.5_plflt * ( xpts + 1 )
+    real(kind=plflt), parameter :: a  = 0.9_plflt * ( x0 - 1.0_plflt )
+    real(kind=plflt), parameter :: y0 = 0.5_plflt * ( ypts + 1 )
+    real(kind=plflt), parameter :: b  = 0.7_plflt * ( y0 - 1.0_plflt )
+    real(kind=plflt)            :: square_root
 
     character (len=80) :: title(2) = &
-        (/'#frPLplot Example 8 - Alt=60, Az=30', &
-          '#frPLplot Example 8 - Alt=20, Az=60'/)
-    real(kind=plflt)   :: alt(2) = (/60.0_plflt, 20.0_plflt/)
-    real(kind=plflt)   :: az(2)  = (/30.0_plflt, 60.0_plflt/)
+        (/'#frPLplot Example 8 - Alt=60, Az=30 ', &
+          '#frPLplot Example 8 - Alt=40, Az=-30'/)
+    real(kind=plflt)   :: alt(2) = (/60.0_plflt, 40.0_plflt/)
+    real(kind=plflt)   :: az(2)  = (/30.0_plflt,-30.0_plflt/)
     integer            :: rosen
     integer, parameter :: nlevel = 10
     real(kind=plflt)   :: zmin, zmax, step, clevel(nlevel)
+
+    real(kind=plflt)   :: dx, dy
 
 !   Process command-line arguments
     call plparseopts(PL_PARSE_FULL)
 
     rosen = 1
 
-    x = (arange(0,xpts) - xpts/2) / dble(xpts/2)
-    y = (arange(0,ypts) - ypts/2) / dble(ypts/2)
+!   x(1:xpts) = (arange(0,xpts) - (xpts-1)/2.0_plflt) / ((xpts-1)/2.0_plflt)
+!   y(1:ypts) = (arange(0,ypts) - (ypts-1)/2.0_plflt) / ((ypts-1)/2.0_plflt)
+!
+
+    dx = 2.0_plflt / (xpts - 1)
+    dy = 2.0_plflt / (ypts - 1)
+
+    do i = 1,xpts
+        x(i) = -1.0_plflt + (i-1) * dx
+    enddo
+
+    do j = 1,ypts
+        y(j) = -1.0_plflt + (j-1) * dy
+    enddo
 
     if ( rosen == 1 ) then
         x = 1.5_plflt * x
@@ -74,6 +102,21 @@ program x08f95
         enddo
     enddo
 
+    zlimited = huge(1.0_plflt)
+    do i = indexxmin, indexxmax
+        square_root = sqrt( 1. - min( 1., (( i - x0 ) / a) ** 2 ) )
+        ! Add 0.5 to find nearest integer and therefore preserve symmetry
+        ! with regard to lower and upper bound of y range.
+        indexymin(i) = max( 1, int( 0.5_plflt + y0 - b * square_root ) )
+        ! indexymax calculated with the convention that it is 1
+        ! greater than highest valid index.
+        indexymax(i) = min( ypts, 1 + int( 0.5_plflt + y0 + b * square_root ) )
+
+        do j = indexymin(i),indexymax(i)
+            zlimited(i,j) = z(i,j)
+        enddo
+    enddo
+
     zmin = minval( z(1:xpts,:) )
     zmax = maxval( z(1:xpts,:) )
 
@@ -83,7 +126,7 @@ program x08f95
     call plinit()
     call pllightsource(1._plflt, 1._plflt, 1._plflt)
     do k=1,2
-        do ifshade = 0, 3
+        do ifshade = 0, 4
             call pladv(0)
             call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt )
             call plwind(-1.0_plflt, 1.0_plflt, -0.9_plflt, 1.1_plflt )
@@ -126,6 +169,13 @@ program x08f95
                     call cmap1_init(0)
                     call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
                              ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)), clevel)
+
+                case( 4 )
+                    ! magnitude colored plot with contours and index limits
+                    call cmap1_init(0)
+                    call plsurf3dl(x(:xpts), y(:ypts), zlimited(:xpts,:ypts), &
+                             ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)), clevel, &
+                             indexxmin, indexxmax, indexymin, indexymax )
                 case default
                     stop 'x08f: bad logic'
             end select

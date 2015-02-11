@@ -89,11 +89,11 @@ proc x08 {{w loopback}} {
     # these should be defined elsewhere.
     set rosen 1
 
-    matrix alt f 2 = {60.0, 20.0}
-    matrix az  f 2 = {30.0, 60.0}
+    matrix alt f 2 = {60.0, 40.0}
+    matrix az  f 2 = {30.0, -30.0}
 
     set xpts 35
-    set ypts 46
+    set ypts 45
     set n_col 256
     set two_pi [expr {2.0 * $::PLPLOT::PL_PI} ]
 
@@ -101,15 +101,17 @@ proc x08 {{w loopback}} {
     matrix y f $ypts
     matrix z f $xpts $ypts
 
+    set dx [expr {2.0/($xpts-1)}]
+    set dy [expr {2.0/($ypts-1)}]
     for {set i 0} {$i < $xpts} {incr i} {
-	x $i = [expr {($i - ($xpts/2)) / double($xpts/2)} ]
+	x $i = [expr {-1.0 + $i * $dx}]
 	if {$rosen == 1} {
 	   x $i = [expr {1.5* [x $i]}]
 	}
     }
 
     for {set i 0} {$i < $ypts} {incr i} {
-	y $i = [expr {($i - ($ypts/2)) / double($ypts/2)} ]
+	y $i = [expr {-1.0 + $i *$dy}]
 	if {$rosen == 1} {
 	   y $i = [expr {0.5 + [y $i]}]
 	}
@@ -136,6 +138,42 @@ proc x08 {{w loopback}} {
 	}
     }
 
+    # parameters of ellipse (in x, y index coordinates) that limits the data.
+    # x0, y0 correspond to the exact floating point centre of the index
+    # range.
+    set x0 [expr {0.5 * ( $xpts - 1 )}]
+    set a  [expr {0.9 * $x0}]
+    set y0 [expr {0.5 * ( $ypts - 1 )}]
+    set b  [expr {0.7 * $y0}]
+
+    matrix zlimited  f $xpts $ypts
+    matrix indexymin i $xpts
+    matrix indexymax i $xpts
+
+    set indexxmin 0
+    set indexxmax $xpts
+    for {set i $indexxmin} {$i < $indexxmax} {incr i} {
+        indexymin $i = 0
+        indexymax $i = $ypts
+        for {set j $indexymin} {$j < $indexymax} {incr j} {
+            zlimited $i $j = [expr {1.0e300}]
+        }
+    }
+
+    for {set i $indexxmin} {$i < $indexxmax} {incr i} {
+        set square_root [expr {sqrt(1. - min( 1., pow( ( $i - $x0 ) / $a, 2. ) ) )}]
+        # Add 0.5 to find nearest integer and therefore preserve symmetry
+        # with regard to lower and upper bound of y range.
+        indexymin $i = [expr {max( 0, int( 0.5 + $y0 - $b * $square_root ) )}]
+        # indexymax calculated with the convention that it is 1
+        # greater than highest valid index.
+        indexymax $i = [expr {min( $ypts, 1 + int( 0.5 + $y0 + $b * $square_root ) )}]
+
+        for { set j [indexymin $i]} {$j < [indexymax $i]} {incr j} {
+            zlimited $i $j = [z $i $j]
+        }
+    }
+
     set zmin [z min [ expr $xpts * $ypts]]
     set zmax [z max [ expr $xpts * $ypts]]
 
@@ -148,7 +186,7 @@ proc x08 {{w loopback}} {
 
     $w cmd pllightsource 1. 1. 1.
     for {set k 0} {$k < 2} {incr k} {
-	for {set ifshade 0} {$ifshade < 4} {incr ifshade} {
+	for {set ifshade 0} {$ifshade < 5} {incr ifshade} {
 	    $w cmd pladv 0
 	    $w cmd plvpor 0.0 1.0 0.0 0.9
 	    $w cmd plwind -1.0 1.0 -0.9 1.1
@@ -182,10 +220,15 @@ proc x08 {{w loopback}} {
 	       cmap1_init_8 $w 0
 	       $w cmd plsurf3d x y z [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::FACETED}]
 	    # magnitude colored plot with contours.
-	    } else {
+	    } elseif {$ifshade == 3}  {
 	       cmap1_init_8 $w 0
 	       $w cmd plsurf3d x y z $xpts $ypts \
 		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev $nlev
+	    } else {
+	       cmap1_init_8 $w 0
+	       $w cmd plsurf3dl x y z $xpts $ypts \
+		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev $nlev \
+		 $indexxmin $indexxmax indexymin indexymax
 	    }
         }
     }
