@@ -54,7 +54,7 @@ private:
 	void OnMouse( wxMouseEvent &event );
 	void OnKey( wxKeyEvent &event );
 	void SetPageAndUpdate( size_t page = size_t(-1) );
-	std::vector< std::vector<char> > m_pageBuffers;
+	std::vector<std::vector<char> > m_pageBuffers;
 	std::vector<bool> m_bufferValidFlags;
 	size_t m_viewingPage;
 	size_t m_writingPage;

@@ -52,7 +52,7 @@ struct MemoryMapHeader
 
 const PLINT plMemoryMapReservedSpace = sizeof( MemoryMapHeader );
 
-class PLDLLEXPORT PLMemoryMap
+class PLDLLIMPEXP_CXX PLMemoryMap
 {
 public:
 	PLMemoryMap();
@@ -74,7 +74,7 @@ private:
 	void *m_buffer;
 };
 
-class PLDLLEXPORT PLNamedMutex
+class PLDLLIMPEXP_CXX PLNamedMutex
 {
 public:
 	PLNamedMutex();
@@ -96,7 +96,7 @@ private:
 #endif
 };
 
-class PLDLLEXPORT PLNamedMutexLocker
+class PLDLLIMPEXP_CXX PLNamedMutexLocker
 {
 public:
 	PLNamedMutexLocker( PLNamedMutex *mutex );
