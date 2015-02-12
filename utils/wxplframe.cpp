@@ -53,11 +53,11 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
 
 	if( file.length() > 0 )
 	{
-		m_memoryMap.create( file.c_str(), m_fileSize, true, false );
+		m_memoryMap.create( file.mb_str(), m_fileSize, true, false );
 		if( m_memoryMap.isValid())
 		{
 			wxString mutexName = file + wxT("mut");
-			m_mutex.create( mutexName.c_str() );
+			m_mutex.create( mutexName.mb_str() );
 			if( !m_mutex.isValid() )
 				m_memoryMap.close();
 		}

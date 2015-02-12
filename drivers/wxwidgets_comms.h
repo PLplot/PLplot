@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <semaphore.h>
+#include <errno.h>
 #endif
 
 //data transmission codes
@@ -51,7 +52,7 @@ struct MemoryMapHeader
 
 const PLINT plMemoryMapReservedSpace = sizeof( MemoryMapHeader );
 
-class PLMemoryMap
+class PLDLLEXPORT PLMemoryMap
 {
 public:
 	PLMemoryMap();
@@ -73,7 +74,7 @@ private:
 	void *m_buffer;
 };
 
-class PLNamedMutex
+class PLDLLEXPORT PLNamedMutex
 {
 public:
 	PLNamedMutex();
@@ -95,7 +96,7 @@ private:
 #endif
 };
 
-class PLNamedMutexLocker
+class PLDLLEXPORT PLNamedMutexLocker
 {
 public:
 	PLNamedMutexLocker( PLNamedMutex *mutex );

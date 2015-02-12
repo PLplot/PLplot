@@ -31,7 +31,6 @@
 
 // std and driver headers
 #include <cmath>
-#include <random>
 
 
 //--------------------------------------------------------------------------
@@ -1076,17 +1075,16 @@ void wxPLDevice::SetupMemoryMap()
 	{
 		const size_t mapSize = 1024 * 1024;
 		//create a memory map to hold the data and add it to the array of maps
-		std::default_random_engine generator (clock());
-		std::uniform_int_distribution<char> distribution('A','Z');
 		int nTries=0;
-		char mapName[MAX_PATH];
-		char mutexName[MAX_PATH];
+		char mapName[PLPLOT_MAX_PATH];
+		char mutexName[PLPLOT_MAX_PATH];
 		while( nTries < 10 )
 		{
 			for( int i=0; i< MAX_PATH; ++i )
 			{
-				if( m_mfo[i] == '?' )
-					mapName[i] = char( distribution( generator ) );
+				if( m_mfo[i] == '?' )                //this is reall a poor imitation of a random number generator.
+					mapName[i] = 'A' + clock()%26;   //Using C++11 generators would be better, but are not supported
+				                                     //on some enterpise linux systems at the moment
 				else
 					mapName[i] = m_mfo[i];
 			}
