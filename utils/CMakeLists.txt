@@ -76,6 +76,9 @@ add_executable(parity_bit_check parity_bit_check.c)
 if(ENABLE_wxwidgets)
 # Build wxwidgets applications with same wxwidgets compile and link flags
 # as used with the PLplot wxwidgets device driver.
+  if(UNIX)
+    set(RT_LIB rt)
+  endif(UNIX)
   set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp ${CMAKE_SOURCE_DIR}/drivers/wxwidgets_comms.cpp)
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(${wxPLViewer_SRCS}
@@ -89,7 +92,7 @@ if(ENABLE_wxwidgets)
 	${CMAKE_SOURCE_DIR}/bindings/c++
     )
   add_executable(wxPLViewer WIN32 ${wxPLViewer_SRCS})
-  target_link_libraries(wxPLViewer plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
+  target_link_libraries(wxPLViewer plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
   install(TARGETS wxPLViewer DESTINATION ${BIN_DIR})
   if(TARGET wxwidgets)
     add_dependencies(wxwidgets wxPLViewer)

@@ -112,7 +112,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 		//assume we will be outputting to the default
 		//memory map until we are given a dc to draw to
 		//strcpy(m_mfo, "plplotMemoryMap");
-		strcpy(m_mfo, "plplotMemoryMap");
+		strcpy(m_mfo, "plplotMemoryMap??????????");
 
 	// be verbose and write out debug messages
 #ifdef _DEBUG
@@ -1141,9 +1141,14 @@ void wxPLDevice::SetupMemoryMap()
 		wxString command;
 		command << wxT("\"") << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
 			mapSize << wxT( " " ) << m_width << wxT( " " ) << m_height;
+#ifdef WIN32
 		if( wxExecute( command, wxEXEC_ASYNC ) == 0)
 			plwarn( "Failed to run wxPLViewer - no plots will be shown" );
-
+#else
+		//Linux doesn't like using wxExecute without a wxApp, so use system instead
+		command << wxT( " &" );
+		system( command.mb_str() );
+#endif
 		//wait until the viewer signals it has opened the map file
 		size_t counter = 0;
 		size_t &viewerSignal = *( (size_t*)m_outputMemoryMap.getBuffer()+2 );
