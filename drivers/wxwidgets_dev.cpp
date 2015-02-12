@@ -1080,7 +1080,7 @@ void wxPLDevice::SetupMemoryMap()
 		char mutexName[PLPLOT_MAX_PATH];
 		while( nTries < 10 )
 		{
-			for( int i=0; i< MAX_PATH; ++i )
+			for( int i=0; i< PLPLOT_MAX_PATH; ++i )
 			{
 				if( m_mfo[i] == '?' )                //this is reall a poor imitation of a random number generator.
 					mapName[i] = 'A' + clock()%26;   //Using C++11 generators would be better, but are not supported
@@ -1088,7 +1088,7 @@ void wxPLDevice::SetupMemoryMap()
 				else
 					mapName[i] = m_mfo[i];
 			}
-			mapName[MAX_PATH - 4] = '\0';
+			mapName[PLPLOT_MAX_PATH - 4] = '\0';
 			strcpy( mutexName, mapName);
 			strcat( mutexName, "mut" );
 			m_outputMemoryMap.create( mapName, mapSize, false, true );
@@ -1140,7 +1140,7 @@ void wxPLDevice::SetupMemoryMap()
 		//Run the wxPlViewer with command line parameters telling it the location and size of the buffer
 		wxString command;
 		command << wxT("\"") << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
-			mapSize << wxT( " " ) << m_width << ( " " ) << m_height;
+			mapSize << wxT( " " ) << m_width << wxT( " " ) << m_height;
 		if( wxExecute( command, wxEXEC_ASYNC ) == 0)
 			plwarn( "Failed to run wxPLViewer - no plots will be shown" );
 
