@@ -86,8 +86,8 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
       if(DRIVER STREQUAL "wxwidgets")
         set(${DRIVER}_SOURCE 
           ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
-	      ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_app.cpp
-          ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_dc.cpp
+	      ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_comms.cpp
+          ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_dev.cpp
           ${${DRIVER}_SOURCE}
 	      )
       elseif(DRIVER STREQUAL "psttf")
