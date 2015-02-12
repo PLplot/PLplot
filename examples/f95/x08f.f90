@@ -1,6 +1,6 @@
 !   3-d plot demo
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2015  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -59,7 +59,7 @@ program x08f95
 !   Process command-line arguments
     call plparseopts(PL_PARSE_FULL)
 
-    rosen = 1
+    rosen = 0
 
 !   x(1:xpts) = (arange(0,xpts) - (xpts-1)/2.0_plflt) / ((xpts-1)/2.0_plflt)
 !   y(1:ypts) = (arange(0,ypts) - (ypts-1)/2.0_plflt) / ((ypts-1)/2.0_plflt)

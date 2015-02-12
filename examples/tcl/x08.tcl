@@ -87,7 +87,7 @@ proc cmap1_init_8 {w gray} {
 proc x08 {{w loopback}} {
 
     # these should be defined elsewhere.
-    set rosen 1
+    set rosen 0
 
     matrix alt f 2 = {60.0, 40.0}
     matrix az  f 2 = {30.0, -30.0}
