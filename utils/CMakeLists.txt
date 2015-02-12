@@ -76,7 +76,7 @@ add_executable(parity_bit_check parity_bit_check.c)
 if(ENABLE_wxwidgets)
 # Build wxwidgets applications with same wxwidgets compile and link flags
 # as used with the PLplot wxwidgets device driver.
-  set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp)
+  set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp ${CMAKE_SOURCE_DIR}/drivers/wxwidgets_comms.cpp)
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(${wxPLViewer_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
