@@ -91,7 +91,7 @@ private:
 	bool m_haveLock;
 #ifdef WIN32
 	HANDLE m_mutex;
-#else if POSIX_HAS_SEMAPHORES
+#else
 	sem_t * m_mutex;
 #endif
 };
