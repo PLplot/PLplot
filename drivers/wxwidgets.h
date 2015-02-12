@@ -25,132 +25,22 @@
 
 // plplot headers
 #include "plplotP.h"
+#include "wxwidgets_comms.h"
 
 // some special wxWidgets headers
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
 #ifdef wxUSE_GRAPHICS_CONTEXT
 #include <wx/dcgraph.h>
-
 #endif
-#ifndef WIN32
-#include<sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#endif
-
-#define NDEV                                                  100 // Max number of output device types in menu
-
-//--------------------------------------------------------------------------
-// Physical dimension constants used by the driver
-
-// Virtual coordinate scaling parameter, used to do calculations at
-// higher resolution.  Chosen so that maximum plP_setphy coordinate
-// is 32000 which is close to but still less than the maximum possible
-// which is 32767.
-//
-// The trick here is to do everything in device coordinates on the driver
-// side, but report/receive everything in virtual coordinates to/from the
-// PLplot core.
-//
-//#define VSCALE                   ( 40. )
-
-// pixels per inch
-//#define DEVICE_PIXELS_PER_IN     ( 80. )
-//#define VIRTUAL_PIXELS_PER_IN    ( DEVICE_PIXELS_PER_IN * VSCALE )
-
-
-// mm per inch
-//#define MM_PER_IN                    ( 25.4 )
-
-// pixels per mm
-//#define DEVICE_PIXELS_PER_MM         ( DEVICE_PIXELS_PER_IN / MM_PER_IN )
-//#define VIRTUAL_PIXELS_PER_MM        ( VIRTUAL_PIXELS_PER_IN / MM_PER_IN )
-
-// Default dimensions of the canvas (in inches)
-//#define CANVAS_WIDTH                 ( 10.0 )
-//#define CANVAS_HEIGHT                ( 7.5 )
-
-// size of plot in pixels on screen if not given
-//#define PLOT_WIDTH                   ( 800 )
-//#define PLOT_HEIGHT                  ( 600 )
-
-
-
 
 class wxPLplotFrame;
-
-const PLINT    plMemoryMapReservedSpace = 2*sizeof( size_t );
-
-class PLMemoryMap
-{
-public:
-	PLMemoryMap();
-	PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mustNotExist );
-	void create( const char *name, PLINT size, bool mustExist, bool mustNotExist );
-	void close();
-	~PLMemoryMap();
-	char *getBuffer() { return (char*)m_buffer; }
-	bool isValid() {return m_buffer != NULL; }
-	size_t getSize() {return m_size; }
-private:
-#ifdef WIN32
-	HANDLE m_mapFile;
-#else
-	int m_mapFile;
-	char * m_name;
-#endif
-	size_t m_size;
-	void *m_buffer;
-};
-
-//check if we have access to platform specific named mutexes
-//POSIX_HAS_SEMAPHORES should be set by CMake -work out how
-//check http://embedded-control-library.googlecode.com/svn-history/r1304/trunk/ecl_tools/ecl_build/cmake/modules/ecl_platform_detection.cmake
-#if defined( WIN32 ) || defined ( POSIX_HAS_SEMAPHORES )
-#define HAVE_NAMED_MUTEX
-#endif
-
-#ifdef HAVE_NAMED_MUTEX
-class PLNamedMutex
-{
-public:
-	PLNamedMutex();
-	PLNamedMutex( const char *name, bool aquireOnCreate = false );
-	~PLNamedMutex();
-	void create(const char *name, bool aquireOnCreate = false );
-	void clear();
-	void aquire();
-	bool aquire( unsigned long millisecs );
-	bool aquireNoWait();
-	void release();
-	bool isValid();
-private:
-#ifdef WIN32
-	HANDLE m_mutex;
-#else
-#endif
-};
-
-class PLNamedMutexLocker
-{
-public:
-	PLNamedMutexLocker( PLNamedMutex *mutex );
-	~PLNamedMutexLocker();
-private:
-	 PLNamedMutex *m_mutex;
-	 //remove default constructors
-	 PLNamedMutexLocker();
-	 PLNamedMutexLocker( const PLNamedMutexLocker & );
-	 PLNamedMutexLocker & operator = ( const PLNamedMutex & );
-};
-#endif
 
 // base device class
 class wxPLDevice
 {
 public:
-    wxPLDevice( PLStream *pls, char * mf0, PLINT mfiSize, PLINT text, PLINT hrshsym );
+    wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym );
     virtual ~wxPLDevice( void );
 
     void DrawLine( short x1a, short y1a, short x2a, short y2a );
@@ -166,12 +56,13 @@ public:
 	void SetSize( PLStream* pls, int width, int height );
     void ProcessString( PLStream* pls, EscText* args );
 	void FixAspectRatio( bool fix );
+	void Locate( PLStream* pls, PLGraphicsIn *graphicsIn );
 
 private:
     void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;
     void DrawTextSection( char* utf8_string, bool drawText );
 	void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
-	void wxPLDevice::ReceiveBuffer( PLStream* pls );
+	void SetupMemoryMap();
 
 	//The DC we will draw on if given by the user
     wxDC       *m_dc;
@@ -223,16 +114,11 @@ private:
 
 	//variables for dealing with sending/receiving commands
 	//via a memory map
-	char           m_mfo[MAX_PATH];
-#ifdef HAVE_NAMED_MUTEX
-	static const bool     m_haveNamedMutex = true;
-	PLNamedMutex          m_mutex;
-	size_t                m_localBufferPosition;
-#else
-	const bool     m_haveNamedMutex = false;
-#endif
-	PLMemoryMap    m_outputMemoryMap;
-	PLINT          m_inputSize;
+	char             m_mfo[MAX_PATH];
+	PLNamedMutex     m_mutex;
+	size_t           m_localBufferPosition;
+	PLMemoryMap      m_outputMemoryMap;
+	bool             m_begunRendering;
 };
 
 
@@ -244,138 +130,6 @@ struct dev_entry
     wxString dev_file_app;
     bool     pixelDevice;
 };
-
-
-
-// after how many commands the window should be refreshed
-#define MAX_COMCOUNT    10000
-
-// wxwidgets application definition (if needed)
-/*
-WX_DEFINE_ARRAY( wxPLplotFrame *, wxArrayOfwxPLplotFrame );
-class wxPLplotApp : public wxApp
-{
-public:
-    virtual bool OnInit();
-    // virtual int OnExit();
-    void SetExitFlag( bool flag = true ) { exit = flag; };
-    bool GetExitFlag( void ) { return exit; };
-    void SetAdvanceFlag( bool flag = true ) { advance = flag; };
-    bool GetAdvanceFlag( void ) { return advance; };
-    void SetRefreshFlag( bool flag = true );
-    void AddFrame( wxPLplotFrame* frame ) { FrameArray.Add( frame ); };
-    void RemoveFrame( wxPLplotFrame* frame ) { FrameArray.Remove( frame ); };
-    size_t FrameCount( void ) { return FrameArray.GetCount(); }
-    void OnIdle( wxIdleEvent& event );
-
-private:
-    bool exit;
-    bool advance;
-    wxArrayOfwxPLplotFrame FrameArray;
-
-    DECLARE_EVENT_TABLE()
-};
-
-// definition of the actual window/frame shown
-class wxPLplotWindow : public wxWindow
-{
-public:
-    wxPLplotWindow( wxWindow* parent, PLStream *pls );
-
-    void SetRefreshFlag( bool flag = true ) { refresh = flag; };
-    bool GetRefreshFlag( void ) { return refresh; };
-    void SetOrientation( int rot );
-
-private:
-    void OnPaint( wxPaintEvent& event );
-    void OnChar( wxKeyEvent& event );
-    void OnIdle( wxIdleEvent& event );
-    void OnErase( wxEraseEvent & WXUNUSED( event ) );
-    void OnSize( wxSizeEvent & WXUNUSED( event ) );
-    void OnMaximize( wxMaximizeEvent & WXUNUSED( event ) );
-    void OnMouse( wxMouseEvent& event );
-    void Locate( void );
-    void DrawCrosshair();
-
-    PLStream   * m_pls;
-    wxPLDevBase* m_dev; // windows needs to know this structure
-    bool       refresh;
-    bool       xhair_drawn;
-    int        mouse_x, mouse_y, old_mouse_x, old_mouse_y;
-
-    DECLARE_EVENT_TABLE()
-};
-
-
-// declaration of the actual window/frame shown
-class wxPLplotFrame : public wxFrame
-{
-public:
-    wxPLplotFrame( const wxString& title, PLStream* pls );
-    void OnMenu( wxCommandEvent& event );
-    void OnClose( wxCloseEvent& event );
-    bool SavePlot( const char* filename, const char* devname, int width, int height );
-    void SetRefreshFlag( bool flag = true ) { m_window->SetRefreshFlag( flag ); };
-    bool GetRefreshFlag( void ) { return m_window->GetRefreshFlag(); };
-
-private:
-    wxPanel       * m_panel;
-    wxPLplotWindow* m_window;
-    wxPLDevBase   * m_dev; // frame needs to know this structure
-
-    DECLARE_EVENT_TABLE()
-};
-
-// menu ids
-enum { wxPL_Save = 10000, wxPL_Next = 10100, wxPL_Locate, wxPL_Orientation_0, wxPL_Orientation_90,
-       wxPL_Orientation_180, wxPL_Orientation_270 };
-
-
-// Pixel size dialog
-class wxGetSizeDialog : public wxDialog
-{
-public:
-    // constructors and destructors
-    wxGetSizeDialog( wxWindow *parent, wxWindowID id, const wxString &title,
-                     const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxDefaultSize,
-                     long style = wxDEFAULT_DIALOG_STYLE,
-                     int width = 800, int height = 600 );
-
-    int getWidth()  { return spinControlWidth->GetValue(); }
-    int getHeight()  { return spinControlHeight->GetValue(); }
-
-private:
-    wxSpinCtrl* spinControlWidth;
-    wxSpinCtrl* spinControlHeight;
-
-private:
-    DECLARE_EVENT_TABLE()
-};
-
-
-// Use this macro if you want to define your own main() or WinMain() function
-// and call wxEntry() from there.
-#define IMPLEMENT_PLAPP_NO_MAIN( appname )                                                                                                        \
-    wxAppConsole * wxPLCreateApp()                                                                                                                \
-    {                                                                                                                                             \
-        wxAppConsole::CheckBuildOptions( WX_BUILD_OPTIONS_SIGNATURE,                                                                              \
-            "your program" );                                                                                                                     \
-        return new appname;                                                                                                                       \
-    }                                                                                                                                             \
-    wxAppInitializer                                                                                                                              \
-    wxAppInitializer( (wxAppInitializerFunction) ( wxApp::GetInitializerFunction() == NULL ? wxPLCreateApp : wxApp::GetInitializerFunction() ) ); \
-    DECLARE_PLAPP( appname )                                                                                                                      \
-    appname & wxPLGetApp() { return *wx_static_cast( appname *, wxApp::GetInstance() ); }
-
-#define DECLARE_PLAPP( appname )    extern appname &wxPLGetApp();
-
-// workaround against warnings for unused variables
-static inline void Use( void * )
-{
-}
-#define WX_SUPPRESS_UNUSED_WARN( x )    Use( &x )
-*/
 
 //--------------------------------------------------------------------------
 //  Declarations for the device.

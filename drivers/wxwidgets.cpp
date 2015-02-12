@@ -87,221 +87,6 @@ void Log_Debug( const char *fmt, ... )
 #endif
 }
 
-
-//--------------------------------------------------------------------------
-//  Constructor, creates the object but does not actually create or link to
-//  any shared memory.
-//--------------------------------------------------------------------------
-PLMemoryMap::PLMemoryMap()
-{
-#ifdef WIN32
-	m_mapFile=NULL;
-#else
-	m_mapFile = -1;
-	m_name = NULL;
-#endif
-	m_buffer=NULL;
-	m_size = 0;
-}
-
-//--------------------------------------------------------------------------
-//  Constructor, creates the shared memory area. If onlyIfExists is true
-//  then we will try to access an existing shared memory area rather than
-//  creating a new one.
-//--------------------------------------------------------------------------
-PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mustNotExist )
-{
-#ifdef WIN32
-	m_mapFile = NULL;
-#else
-	m_mapFile = -1;
-	m_name = NULL;
-#endif
-	m_buffer=NULL;
-	m_size = 0;
-	create( name, size, mustExist, mustNotExist );
-}
-
-//--------------------------------------------------------------------------
-//  create does most of the work in trying to create the memory map it is
-//  called by the constructor or by the user. If the object already has a
-//  shared memory area then that is closed before a new area of memory is
-//  created or connected to. As per the constructor if onlyIfExists is true
-//  then we will try to access an existing shared memory area rather than
-//  creating a new one.
-//--------------------------------------------------------------------------
-void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mustNotExist )
-{
-	close();
-	assert( ! (mustExist && mustNotExist ) );
-	if( mustExist && mustNotExist )
-		return;
-#ifdef WIN32
-	if( mustExist )
-		m_mapFile = OpenFileMappingA( FILE_MAP_ALL_ACCESS, FALSE, name);
-	else if( mustNotExist )
-	{
-		m_mapFile = CreateFileMappingA( INVALID_HANDLE_VALUE, NULL,
-			PAGE_READWRITE, 0, size, name );
-		if( GetLastError() == ERROR_ALREADY_EXISTS )
-			close();
-	}
-	else
-		m_mapFile = CreateFileMappingA( INVALID_HANDLE_VALUE, NULL,
-			PAGE_READWRITE, 0, size, name );
-
-	if( m_mapFile )
-		m_buffer = MapViewOfFile( m_mapFile, FILE_MAP_ALL_ACCESS, 0, 0, size );
-#else
-	if( mustExist )
-		m_mapFile = shm_open( name, O_RDWR, 0 );
-	else if( mustNotExist )
-	{
-		m_mapFile = shm_open( name, O_RDWR|O_CREAT|O_EXCL, S_IRWXU ); //S_IRWXU gives user wrx permissions
-		if( ftruncate( m_mapFile, size ) == -1 )
-			close( );
-	}
-	else
-	{
-		m_mapFile = shm_open( name, O_RDWR|O_CREAT, S_IRWXU ); //S_IRWXU gives user wrx permissions
-		if( ftruncate( m_mapFile, size ) == -1 )
-			close( );
-	}
-	if( m_mapFile != -1 )
-	{
-		m_buffer = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, m_mapFile, 0 );
-		m_name = new char[strlen( name ) + 1];
-		strcpy( m_name, name );
-	}
-#endif
-	if( isValid() )
-		m_size = size;
-}
-
-//--------------------------------------------------------------------------
-//  Close an area of mapped memory. When all processes have closed their
-//  connections the area will be removed by the OS.
-//--------------------------------------------------------------------------
-void PLMemoryMap::close()
-{
-#ifdef WIN32
-	if( m_buffer )
-		UnmapViewOfFile( m_buffer );
-	if( m_mapFile )
-		CloseHandle( m_mapFile );
-	m_mapFile = NULL;
-#else
-	if( m_buffer )
-		munmap( m_buffer, m_size );
-	if( m_mapFile != -1 )
-		shm_unlink( m_name );
-	if( m_name )
-		delete[] m_name;
-	m_mapFile = -1;
-	m_name = NULL;
-#endif
-	m_buffer = NULL;
-	m_size = 0;
-}
-
-//--------------------------------------------------------------------------
-//  Destructor, closes the connection to the mapped memory.
-//--------------------------------------------------------------------------
-PLMemoryMap::~PLMemoryMap()
-{
-	close();
-}
-
-
-#ifdef HAVE_NAMED_MUTEX
-PLNamedMutex::PLNamedMutex()
-{
-#ifdef WIN32
-	m_mutex = NULL;
-#else
-#endif
-}
-
-PLNamedMutex::PLNamedMutex( const char *name, bool aquireOnCreate )
-{
-#ifdef WIN32
-	m_mutex = NULL;
-#else
-#endif
-	create( name, aquireOnCreate );
-}
-
-void PLNamedMutex::create( const char *name, bool aquireOnCreate )
-{
-#ifdef WIN32
-	m_mutex = CreateMutexA( NULL, aquireOnCreate ? TRUE : FALSE, name );
-#else
-#endif
-}
-
-void PLNamedMutex::aquire()
-{
-#ifdef WIN32
-	DWORD result = WaitForSingleObject( m_mutex, INFINITE );
-	if( result != WAIT_OBJECT_0 && result != WAIT_ABANDONED )
-		throw( result );
-#else
-#endif
-}
-
-bool PLNamedMutex::aquire( unsigned long millisecs)
-{
-#ifdef WIN32
-	DWORD result = WaitForSingleObject( m_mutex, millisecs );
-	return result == WAIT_OBJECT_0 || result == WAIT_ABANDONED;
-#else
-#endif
-}
-
-bool PLNamedMutex::aquireNoWait()
-{
-#ifdef WIN32
-	return WAIT_OBJECT_0 == WaitForSingleObject( m_mutex, 0 );
-#else
-#endif
-}
-
-void PLNamedMutex::release()
-{
-	if( m_mutex )
-		ReleaseMutex( m_mutex );
-}
-
-void PLNamedMutex::clear()
-{
-	release();
-	CloseHandle( m_mutex );
-}
-
-PLNamedMutex::~PLNamedMutex()
-{
-	clear();
-}
-
-PLNamedMutexLocker::PLNamedMutexLocker( PLNamedMutex *mutex )
-{
-	m_mutex = mutex;
-	m_mutex->aquire();
-}
-
-bool PLNamedMutex::isValid()
-{
-	return m_mutex != NULL;
-}
-
-PLNamedMutexLocker::~PLNamedMutexLocker( )
-{
-	m_mutex ->release();
-	m_mutex = NULL;
-}
-
-#endif
-
 //--------------------------------------------------------------------------
 //  In the following you'll find the driver functions which are
 //  needed by the plplot core.
@@ -364,13 +149,11 @@ void plD_init_wxwidgets( PLStream* pls )
     static PLINT text        = 1;
     static PLINT hrshsym     = 0;
 	static char  *mfo        = NULL;
-	static PLINT mfisize     = 0;
 
     DrvOpt wx_options[] = {
         { "hrshsym",  DRV_INT, &hrshsym,     "Use Hershey symbol set (hrshsym=0|1)"                      },
         { "text",     DRV_INT, &text,        "Use own text routines (text=0|1)"                          },
 		{ "mfo",      DRV_STR, &mfo,         "output metafile"                                           },
-		{ "mfisize",  DRV_INT, &mfisize,     "input metafile size"                                       },
         { NULL,       DRV_INT, NULL,         NULL                                                        }
     };
 
@@ -382,7 +165,7 @@ void plD_init_wxwidgets( PLStream* pls )
         text = 0;
 
     // create the new device
-	wxPLDevice* dev = new wxPLDevice ( pls, mfo, mfisize, text, hrshsym );
+	wxPLDevice* dev = new wxPLDevice ( pls, mfo, text, hrshsym );
     if ( dev == NULL )
     {
         plexit( "Insufficient memory" );
@@ -620,14 +403,11 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_GETC:
-        //if ( dev->ownGUI )
-            //GetCursorCmd( pls, (PLGraphicsIn *) ptr );
+		dev->Locate( pls, (PLGraphicsIn *) ptr );
         break;
 
     case PLESC_FIXASPECT:
 		dev->FixAspectRatio( *((bool *)ptr) );
-        //if ( dev->ownGUI )
-            //GetCursorCmd( pls, (PLGraphicsIn *) ptr );
         break;
 
     default:
