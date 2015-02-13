@@ -28,7 +28,7 @@
 #include <fcntl.h>
 #endif
 
-// This is needed for mode flags for mkfifo as well sa for MSDOS / WIN32
+// This is needed for mode flags for mkfifo as well as for MSDOS / WIN32
 #include <sys/stat.h>
 
 // For Visual C++ 2005 and later mktemp() and open() are deprecated (see
@@ -43,6 +43,7 @@
 #define open      _open
 #define fdopen    _fdopen
 #endif
+
 //
 // plio_write()
 //
@@ -199,7 +200,8 @@ pl_create_tempfile( char **fname )
 #endif
     }
 
-    // N.B. Malloc ensures template is long enough so strcpy and strcat are safe here
+    // N.B. Malloc ensures template is long enough so strcpy and strcat
+    // are safe here
     template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ) );
     strcpy( template, tmpdir );
 #if defined ( MSDOS ) || defined ( WIN32 )
@@ -302,7 +304,8 @@ pl_create_tempfifo( const char **p_fifoname, const char **p_dirname )
 #endif
     }
 
-    // N.B. Malloc ensures template is long enough so strcpy and strcat are safe here
+    // N.B. Malloc ensures template is long enough so strcpy and strcat
+    // are safe here
     dirname = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ) );
     strcpy( dirname, tmpdir );
 #if defined ( MSDOS ) || defined ( WIN32 )
