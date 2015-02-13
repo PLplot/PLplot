@@ -39,6 +39,7 @@ set(plplot_LIB_SRCS
   plimage.c
   plline.c
   plmap.c
+  plmetafile.c
   plot3d.c
   plpage.c
   plsdef.c

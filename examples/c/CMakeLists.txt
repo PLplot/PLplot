@@ -67,6 +67,7 @@ if(CORE_BUILD)
     plcdemos.h
     tutor.c
     test_plend.c
+    test_plbuf.c
     )
   foreach(STRING_INDEX ${c_STRING_INDICES})
     set(c_SRCS ${c_SRCS} x${STRING_INDEX}c.c)
@@ -146,6 +147,10 @@ if(BUILD_TEST)
   add_executable(test_plend test_plend.c)
   target_link_libraries(test_plend plplot ${MATH_LIB})
   
+  # Build test routines that test the plot buffer functionality
+  add_executable(test_plbuf test_plbuf.c)
+  target_link_libraries(test_plbuf plplot ${MATH_LIB})
+
   if(PKG_CONFIG_EXECUTABLE)
     if(ENABLE_gnome2)
       # plplotcanvas_demo.c and plplotcanvas_animation.c both
