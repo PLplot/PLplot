@@ -47,7 +47,7 @@ Usage: plplot-test.sh [OPTIONS]
 
 Options:
    [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
-   [--front-end=FE]  (FE = one of c, cxx, f95 java, octave, python, tcl, pdl, ada, ocaml, lua or d)
+   [--front-end=FE]  (FE = one of c, cxx, f95 java, octave, python, tcl, pdl, ada, ocaml, lua, d or plrender)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
@@ -125,6 +125,7 @@ while test $# -gt 0; do
              -o $i = "ocaml"    \
              -o $i = "lua"    \
              -o $i = "d"    \
+             -o $i = "plrender"    \
            ] \
            || usage 0 1>&2
          done
@@ -384,6 +385,7 @@ if [ -z "$FRONT_END" ] ; then
    test "@ENABLE_ocaml@" = "ON"  && FRONT_END="$FRONT_END ocaml"
    test "@ENABLE_lua@" = "ON"  && FRONT_END="$FRONT_END lua"
    test "@ENABLE_d@" = "ON"  && FRONT_END="$FRONT_END d"
+   test "@ENABLE_plrender@" = "ON" && FRONT_END="$FRONT END plrender"
 fi
 
 # Call the front-end scripts

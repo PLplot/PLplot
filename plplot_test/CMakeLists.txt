@@ -382,6 +382,31 @@ if(SH_EXECUTABLE)
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_d)
 
+  if(PLD_plmeta)
+    set(PLRENDER_DIR ${CMAKE_BINARY_DIR}/utils)
+    configure_file(
+      test_plrender.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_plrender.sh
+      @ONLY
+      NEWLINE_STYLE UNIX
+      )
+    list(APPEND SCRIPTS test_plrender.sh)
+    set(PLRENDER_DIR ${BIN_DIR})
+    configure_file(
+      test_plrender.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_plrender.sh_install
+      @ONLY
+      NEWLINE_STYLE UNIX
+      )
+    if(PLD_TEST_DEVICE)
+      add_test(NAME examples_plrender
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=plrender"
+	)
+      list(APPEND examples_compare_DEPENDS examples_plrender)
+    endif(PLD_TEST_DEVICE)
+  endif(PLD_plmeta)
+
   # Run C examples with different drivers
   if(PLD_ps)
     if (NOT TEST_DEVICE STREQUAL "psc")
@@ -623,5 +648,13 @@ if(SH_EXECUTABLE)
     DESTINATION ${DATA_DIR}/examples
     PERMISSIONS ${PERM_SCRIPTS}
     )
+  if(PLD_plmeta)
+    install(
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/test_plrender.sh_install
+      DESTINATION ${DATA_DIR}/examples
+      PERMISSIONS ${PERM_SCRIPTS}
+      RENAME test_plrender.sh
+      )
+  endif(PLD_plmeta)
 
 endif(SH_EXECUTABLE)

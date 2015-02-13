@@ -303,6 +303,7 @@ if(CORE_BUILD)
     pdl:perl:pdl
     python:python:p
     tcl:tcl:t
+    plrender:c:plm
     )
 
   configure_file(
@@ -455,7 +456,9 @@ foreach(language_info ${language_info_LIST} "tk:tk:nothing")
   string(REGEX REPLACE "^.*:(.*):.*$" "\\1" subdir ${language_info})
   #message(STATUS "DEBUG: language, subdir = ${language},${subdir}")
   if(ENABLE_${language})
-    add_subdirectory(${subdir})
+    if(NOT ${language} STREQUAL "plrender")
+      add_subdirectory(${subdir})
+    endif(NOT ${language} STREQUAL "plrender")
     get_property(targets_examples_${language} GLOBAL PROPERTY TARGETS_examples_${language})
     get_property(files_examples_${language} GLOBAL PROPERTY FILES_examples_${language})
   endif(ENABLE_${language})
