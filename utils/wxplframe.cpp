@@ -249,6 +249,9 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
 		*( ( ( size_t * ) m_memoryMap.getBuffer() ) + 3 ) = 0;
 		m_locateMode = false;
 	}
+
+	//pass the event on so that other items (e.g. menu shortcuts) can use the key press
+	event.Skip();
 }
 
 void wxPlFrame::SetPageAndUpdate( size_t page )
@@ -257,7 +260,7 @@ void wxPlFrame::SetPageAndUpdate( size_t page )
 	//otherwise switch to the given page
 	if( page != size_t(-1) )
 	{
-		if( page > m_pageBuffers.size() )
+		if( page >= m_pageBuffers.size() )
 			return;
 		if( page != m_viewingPage )
 		{
