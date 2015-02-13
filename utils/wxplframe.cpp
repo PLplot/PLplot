@@ -250,8 +250,20 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
 		m_locateMode = false;
 	}
 
-	//pass the event on so that other items (e.g. menu shortcuts) can use the key press
-	event.Skip();
+	//Using arrow keyboard shortcuts on wxWidgets 2.8 doesn't work in GTK so deal with
+	//them manually.
+#if defined __WXGTK__ && wxMAJOR_VERSION == 2 && wxMINOR_VERSION <= 8
+	if( event.GetKeyCode() == WXK_LEFT )
+	{
+		wxMenuEvent fakeEvent;
+		OnPrevPage( fakeEvent );
+	}
+	else if ( event.GetKeyCode() == WXK_RIGHT )
+	{
+		wxMenuEvent fakeEvent;
+		OnNextPage( fakeEvent );
+	}
+#endif
 }
 
 void wxPlFrame::SetPageAndUpdate( size_t page )
