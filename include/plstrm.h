@@ -794,6 +794,12 @@ typedef struct
     // (inverted tick marks and numerical tick labels if either is
     // present).
     PLFLT boxbb_xmin, boxbb_xmax, boxbb_ymin, boxbb_ymax;
+
+// Plot metafile variables
+//
+    char *mf_infile;
+    char *mf_outfile;
+
 } PLStream;
 
 //--------------------------------------------------------------------------

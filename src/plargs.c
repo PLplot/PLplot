@@ -164,6 +164,9 @@ static int opt_cmap1( const char *, const char *, void * );
 static int opt_locale( const char *, const char *, void * );
 static int opt_eofill( const char *, const char *, void * );
 
+static int opt_mfo( const char *, const char *, void * );
+static int opt_mfi( const char *, const char *, void * );
+
 // Global variables
 
 static const char *program = NULL;
@@ -648,6 +651,24 @@ static PLOptionTable ploption_table[] = {
         PL_OPT_ARG | PL_OPT_FUNC,
         "-drvopt option[=value][,option[=value]]*",
         "Driver specific options"
+    },
+    {
+        "mfo",                  // Metafile output option
+	opt_mfo,
+	NULL,
+	NULL,
+	PL_OPT_ARG | PL_OPT_FUNC,
+	"-mfo PLplot metafile name",
+	"Write the plot to the specfied PLplot metafile"
+    },
+    {
+        "mfi",                  // Metafile output option
+	opt_mfi,
+	NULL,
+	NULL,
+	PL_OPT_ARG | PL_OPT_FUNC,
+	"-mfi PLplot metafile name",
+	"Read the specfied PLplot metafile"
     },
     {
         NULL,                   // option
@@ -2810,5 +2831,55 @@ static int
 opt_eofill( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->dev_eofill = 1;
+    return 0;
+}
+
+//--------------------------------------------------------------------------
+// opt_mfo()
+//
+//! Sets the filename of the PLplot metafile that will be written.
+//!
+//! @param PL_UNUSED( opt ) Not used.
+//! @param opt_arg  Output PLplot metafile.
+//! @param PL_UNUSED( client_data ) Not used.
+//!
+//! returns 0.
+//!
+//--------------------------------------------------------------------------
+
+static int
+opt_mfo( const char * PL_UNUSED( opt ), const char * opt_arg, void * PL_UNUSED( client_data ) )
+{
+    if ( ( plsc->mf_outfile = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
+    {
+        plexit( "opt_mfo: Insufficient memory" );
+    }
+
+    strcpy( plsc->mf_outfile, opt_arg );
+    return 0;
+}
+
+//--------------------------------------------------------------------------
+// opt_mfi()
+//
+//! Sets the filename of the PLplot metafile that will be read.
+//!
+//! @param PL_UNUSED( opt ) Not used.
+//! @param opt_arg Input PLplot metafile.
+//! @param PL_UNUSED( client_data ) Not used.
+//!
+//! returns 0.
+//!
+//--------------------------------------------------------------------------
+
+static int
+opt_mfi( const char * PL_UNUSED( opt ), const char * opt_arg, void * PL_UNUSED( client_data ) )
+{
+    if ( ( plsc->mf_infile = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
+    {
+        plexit( "opt_mfi: Insufficient memory" );
+    }
+
+    strcpy( plsc->mf_infile, opt_arg );
     return 0;
 }

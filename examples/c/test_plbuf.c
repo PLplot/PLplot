@@ -81,7 +81,7 @@ main( int argc, const char *argv[] )
     plsc->plbuf_write = 1;
 
     plinit();
-    plreadmetafile();
+    plreadmetafile(NULL);
     plreplot();
 
     exit(0);

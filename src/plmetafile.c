@@ -819,15 +819,29 @@ enum _plm_status read_plot_commands( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 //
 //! Reads a PLplot metafile and uses the current plot stream to display
 //! the contents.
+//!
+//! @param infile  Input PLplot metafile name.
+//!
+//! Pass NULL for infile to use the filename passed from the command line
+//! option -mfi.
+//!
+//! Returns void
 //--------------------------------------------------------------------------
-void plreadmetafile( void )
+void plreadmetafile( char *infile )
 {
     PDFstrm *plm;
     PLmDev dev;
     PLmIndex index;
     enum _plm_status rc;
 
-    if((plm = pdf_fopen("foo0.plm", "rb")) == NULL) {
+    if(plsc->mf_infile == NULL && infile == NULL ) {
+        plexit( "No PLplot metafile set for input" );
+    } else if(infile != NULL ) {
+        plm = pdf_fopen(infile, "rb");
+    } else {
+        plm = pdf_fopen(plsc->mf_infile, "rb");
+    }
+    if(plm == NULL) {
         plexit( "Unable to open PLplot metafile for input" );
     }
 
