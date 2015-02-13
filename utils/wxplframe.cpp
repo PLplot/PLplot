@@ -84,8 +84,8 @@ void wxPlFrame::setupMenus()
 	mbar->Append( fileMenu, wxT("&File") );
 
 	wxMenu* pageMenu = new wxMenu( wxT("") );
-	pageMenu->Append( ID_PAGE_NEXT, wxT( "Next\tRIGHT" ), wxT( "Move to the next page" ) );
-	pageMenu->Append( ID_PAGE_PREV, wxT( "Previous\tLEFT" ), wxT( "Move to the previous page" ) );
+	pageMenu->Append( ID_PAGE_NEXT, wxT( "Next\tpgdn" ), wxT( "Move to the next page" ) );
+	pageMenu->Append( ID_PAGE_PREV, wxT( "Previous\tpgup" ), wxT( "Move to the previous page" ) );
 	mbar->Append( pageMenu, wxT("&Page") );
 
 	wxMenu* helpMenu = new wxMenu( wxT("") );
@@ -225,45 +225,30 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
 
 void wxPlFrame::OnKey( wxKeyEvent &event )
 {
-	if ( m_locateMode )
-	{
-		PLNamedMutexLocker locker( &m_mutex );
-		PLGraphicsIn &graphicsIn = *(PLGraphicsIn*)( ( ( size_t * ) m_memoryMap.getBuffer() ) + 4 ) ;
+    //This only works on Windows, unfortunately on wxGTK, wxFrames cannot catch key presses
+    if ( m_locateMode )
+    {
+	PLNamedMutexLocker locker( &m_mutex );
+	PLGraphicsIn &graphicsIn = *(PLGraphicsIn*)( ( ( size_t * ) m_memoryMap.getBuffer() ) + 4 ) ;
 
-		wxSize clientSize = GetClientSize();
+	wxSize clientSize = GetClientSize();
 
-		graphicsIn.pX = m_cursorPosition.x;
-		graphicsIn.pY = m_cursorPosition.y;
-		graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
-		graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
+	graphicsIn.pX = m_cursorPosition.x;
+	graphicsIn.pY = m_cursorPosition.y;
+	graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
+	graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
+	// gin->state = keyEvent->state;
 
-		// gin->state = keyEvent->state;
+	int keycode = event.GetKeyCode();
+	graphicsIn.string[0] = (char) keycode;
+	graphicsIn.string[1] = '\0';
 
-		int keycode = event.GetKeyCode();
-		graphicsIn.string[0] = (char) keycode;
-		graphicsIn.string[1] = '\0';
+	// ESCAPE, RETURN, etc. are already in ASCII equivalent
+	graphicsIn.keysym = keycode;
 
-		// ESCAPE, RETURN, etc. are already in ASCII equivalent
-		graphicsIn.keysym = keycode;
-
-		*( ( ( size_t * ) m_memoryMap.getBuffer() ) + 3 ) = 0;
-		m_locateMode = false;
-	}
-
-	//Using arrow keyboard shortcuts on wxWidgets 2.8 doesn't work in GTK so deal with
-	//them manually.
-#if defined __WXGTK__ && wxMAJOR_VERSION == 2 && wxMINOR_VERSION <= 8
-	if( event.GetKeyCode() == WXK_LEFT )
-	{
-		wxMenuEvent fakeEvent;
-		OnPrevPage( fakeEvent );
-	}
-	else if ( event.GetKeyCode() == WXK_RIGHT )
-	{
-		wxMenuEvent fakeEvent;
-		OnNextPage( fakeEvent );
-	}
-#endif
+	*( ( ( size_t * ) m_memoryMap.getBuffer() ) + 3 ) = 0;
+	m_locateMode = false;
+    }
 }
 
 void wxPlFrame::SetPageAndUpdate( size_t page )
