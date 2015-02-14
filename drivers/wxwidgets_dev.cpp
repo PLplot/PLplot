@@ -296,11 +296,11 @@ void wxPLDevice::FillPolygon( PLStream *pls )
     wxPoint *points = new wxPoint[pls->dev_npts];
     wxCoord xoffset = 0;
     wxCoord yoffset = 0;
-
+	
     for ( int i = 0; i < pls->dev_npts; i++ )
     {
-        points[i].x = (int) ( pls->dev_x[i] / m_xScale );
-        points[i].y = (int) ( m_height - pls->dev_y[i] / m_yScale );
+        points[i].x = (int) ( m_xAspect * pls->dev_x[i] );
+        points[i].y = (int) ( m_yAspect * ( m_plplotEdgeLength - pls->dev_y[i] ) );
     }
 
     if ( pls->dev_eofill )
