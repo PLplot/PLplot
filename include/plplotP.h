@@ -1232,6 +1232,10 @@ pl_create_tempfile( char **fname );
 PLDLLIMPEXP char *
 pl_create_tempfifo( const char **p_fifoname, const char **p_dirname );
 
+// Read a meta file
+PLDLLIMPEXP void
+plreadmetafile( char *infile );
+
 #ifdef __cplusplus
 }
 #endif
