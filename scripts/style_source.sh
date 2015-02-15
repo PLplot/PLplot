@@ -225,13 +225,16 @@ cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 cppsource_LIST="$cppsource_LIST include/qt.h"
 
 # C++ part of drivers.
-cppsource_LIST="$cppsource_LIST drivers/wxwidgets.h drivers/*.cpp drivers/*.cc" 
+cppsource_LIST="$cppsource_LIST drivers/wx*.h drivers/*.cpp drivers/*.cc" 
 
 # C++ part of examples.
 cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h"
 
 # C++ source in bindings.
-cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wxPLplotstream.cpp bindings/wxwidgets/wxPLplotwindow.cpp bindings/wxwidgets/wxPLplotwindow.h bindings/wxwidgets/wxPLplotstream.h.in"
+cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wx*.h bindings/wxwidgets/wx*.cpp"
+
+# C++ source in utils
+cppsource_LIST="$cppsource_LIST utils/wx*.h utils/wx*.cpp"
 
 export javasource_LIST
 
