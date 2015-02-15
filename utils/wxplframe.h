@@ -34,42 +34,42 @@
 class wxPlFrame : public wxPLplotwindow<wxFrame>
 {
 public:
-	static const int ID_FILE_EXIT;
-	static const int ID_HELP_ABOUT;
-	static const int ID_PAGE_NEXT;
-	static const int ID_PAGE_PREV;
-	static const int ID_CHECK_TIMER;
+    static const int ID_FILE_EXIT;
+    static const int ID_HELP_ABOUT;
+    static const int ID_PAGE_NEXT;
+    static const int ID_PAGE_PREV;
+    static const int ID_CHECK_TIMER;
 
-	wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wxString file, long fileSize,
-		const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxDEFAULT_FRAME_STYLE,
-		const wxString &name=wxFrameNameStr );
-	~wxPlFrame();
+    wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wxString file, long fileSize,
+               const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE,
+               const wxString &name = wxFrameNameStr );
+    ~wxPlFrame();
 private:
-	void setupMenus();
-	void OnExit( wxCommandEvent& event );
-	void OnAbout( wxCommandEvent& event );
-	void OnNextPage( wxCommandEvent& event );
-	void OnPrevPage( wxCommandEvent& event );
-	void OnCheckTimer( wxTimerEvent &event );
-	void OnMouse( wxMouseEvent &event );
-	void OnKey( wxKeyEvent &event );
-	void SetPageAndUpdate( size_t page = size_t(-1) );
-	std::vector<std::vector<char> > m_pageBuffers;
-	std::vector<bool> m_bufferValidFlags;
-	size_t m_viewingPage;
-	size_t m_writingPage;
-	char * m_transferBuffer;
-	wxString m_file;
-	size_t m_fileSize;
+    void setupMenus();
+    void OnExit( wxCommandEvent& event );
+    void OnAbout( wxCommandEvent& event );
+    void OnNextPage( wxCommandEvent& event );
+    void OnPrevPage( wxCommandEvent& event );
+    void OnCheckTimer( wxTimerEvent &event );
+    void OnMouse( wxMouseEvent &event );
+    void OnKey( wxKeyEvent &event );
+    void SetPageAndUpdate( size_t page = size_t(-1) );
+    std::vector<std::vector<char> > m_pageBuffers;
+    std::vector<bool> m_bufferValidFlags;
+    size_t            m_viewingPage;
+    size_t            m_writingPage;
+    char              * m_transferBuffer;
+    wxString          m_file;
+    size_t            m_fileSize;
 
-	PLMemoryMap m_memoryMap;
-	PLNamedMutex m_mutex;
-	wxTimer m_checkTimer;
+    PLMemoryMap       m_memoryMap;
+    PLNamedMutex      m_mutex;
+    wxTimer           m_checkTimer;
 
-	wxPoint m_cursorPosition;
-	bool m_locateMode;
-	size_t m_plottedBufferAmount;
+    wxPoint           m_cursorPosition;
+    bool              m_locateMode;
+    size_t            m_plottedBufferAmount;
 
-	DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE();
 };
 #endif // APEX_MAINFRAME_H

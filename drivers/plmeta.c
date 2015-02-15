@@ -335,7 +335,7 @@ plD_tidy_plm( PLStream *pls )
 void
 plD_state_plm( PLStream *pls, PLINT op )
 {
-    int    i;
+    int i;
 
     dbug_enter( "plD_state_plm" );
 
@@ -466,16 +466,16 @@ plm_swin( PLStream *pls )
 // Provide a consistent method for handling a failed fsetpos.
 //--------------------------------------------------------------------------
 static void
-handle_setpos_failed(const char *where , const char *which, FPOS_T position)
+handle_setpos_failed( const char *where, const char *which, FPOS_T position )
 {
     char buffer[BUFFER_LEN];
 
     // Format a standard message detailing the failure location
-    snprintf(buffer, BUFFER_LEN,
-             "%s: fsetpos to %s (%lu) failed",
-             where,
-             which,
-             (unsigned long) position);
+    snprintf( buffer, BUFFER_LEN,
+        "%s: fsetpos to %s (%lu) failed",
+        where,
+        which,
+        (unsigned long) position );
 
     plexit( buffer );
 }
@@ -642,8 +642,8 @@ UpdatePrevPagehdr( PLStream *pls )
         fwbyte_offset = dev->lp_offset + 7;
         if ( pl_fsetpos( file, &fwbyte_offset ) )
         {
-	    handle_fsetpos_failed("UpdatePrevPagehdr",
-				  "fwbyte_offset", fwbyte_offset);
+            handle_fsetpos_failed( "UpdatePrevPagehdr",
+                "fwbyte_offset", fwbyte_offset );
         }
 
         // DEBUG: verify current location
@@ -667,8 +667,8 @@ UpdatePrevPagehdr( PLStream *pls )
 #ifdef DEBUG
         if ( pl_fsetpos( file, &fwbyte_offset ) )
         {
-	    handle_fsetpos_failed("UpdatePrevPagehdr",
-				  "fwbyte_offset", fwbyte_offset);
+            handle_fsetpos_failed( "UpdatePrevPagehdr",
+                "fwbyte_offset", fwbyte_offset );
         }
         {
             U_LONG read_offset;
@@ -682,8 +682,8 @@ UpdatePrevPagehdr( PLStream *pls )
 
         if ( pl_fsetpos( file, &cp_offset ) )
         {
-	    handle_fsetpos_failed("UpdatePrevPagehdr",
-				  "cp_offset", cp_offset);
+            handle_fsetpos_failed( "UpdatePrevPagehdr",
+                "cp_offset", cp_offset );
         }
     }
 }
@@ -711,8 +711,8 @@ UpdateIndex( PLStream *pls, FPOS_T cp_offset )
 
         if ( pl_fsetpos( file, &dev->index_offset ) )
         {
-	    handle_fsetpos_failed("UpdateIndex",
-				  "index_offset", dev->index_offset);
+            handle_fsetpos_failed( "UpdateIndex",
+                "index_offset", dev->index_offset );
         }
         plm_wr( pdf_wr_header( pls->pdfs, "pages" ) );
         plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->page ) );
@@ -723,9 +723,8 @@ UpdateIndex( PLStream *pls, FPOS_T cp_offset )
 
         if ( pl_fsetpos( file, &cp_offset ) )
         {
-	    handle_fsetpos_failed("UpdateIndex",
-				  "cp_offset", cp_offset);
-
+            handle_fsetpos_failed( "UpdateIndex",
+                "cp_offset", cp_offset );
         }
     }
 }

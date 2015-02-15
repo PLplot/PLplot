@@ -324,13 +324,13 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 
 // Switches for state function call.
 
-#define PLSTATE_WIDTH     1             // pen width
-#define PLSTATE_COLOR0    2             // change to color in cmap 0
-#define PLSTATE_COLOR1    3             // change to color in cmap 1
-#define PLSTATE_FILL      4             // set area fill to a standard pattern
-#define PLSTATE_CMAP0     5             // change to cmap 0
-#define PLSTATE_CMAP1     6             // change to cmap 1
-#define PLSTATE_CHR       7             // change character height
+#define PLSTATE_WIDTH     1            // pen width
+#define PLSTATE_COLOR0    2            // change to color in cmap 0
+#define PLSTATE_COLOR1    3            // change to color in cmap 1
+#define PLSTATE_FILL      4            // set area fill to a standard pattern
+#define PLSTATE_CMAP0     5            // change to cmap 0
+#define PLSTATE_CMAP1     6            // change to cmap 1
+#define PLSTATE_CHR       7            // change character height
 #define PLSTATE_SYM       8            // change symbol size
 
 

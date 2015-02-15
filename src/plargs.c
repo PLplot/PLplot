@@ -654,21 +654,21 @@ static PLOptionTable ploption_table[] = {
     },
     {
         "mfo",                  // Metafile output option
-	opt_mfo,
-	NULL,
-	NULL,
-	PL_OPT_ARG | PL_OPT_FUNC,
-	"-mfo PLplot metafile name",
-	"Write the plot to the specfied PLplot metafile"
+        opt_mfo,
+        NULL,
+        NULL,
+        PL_OPT_ARG | PL_OPT_FUNC,
+        "-mfo PLplot metafile name",
+        "Write the plot to the specfied PLplot metafile"
     },
     {
         "mfi",                  // Metafile output option
-	opt_mfi,
-	NULL,
-	NULL,
-	PL_OPT_ARG | PL_OPT_FUNC,
-	"-mfi PLplot metafile name",
-	"Read the specfied PLplot metafile"
+        opt_mfi,
+        NULL,
+        NULL,
+        PL_OPT_ARG | PL_OPT_FUNC,
+        "-mfi PLplot metafile name",
+        "Read the specfied PLplot metafile"
     },
     {
         NULL,                   // option

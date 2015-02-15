@@ -68,18 +68,18 @@ void cmap1_init( bool gray )
 //--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    const   nlevel = 10;
-    const   XPTS   = 35;        // Data points in x
-    const   YPTS   = 45;        // Data points in y
+    const       nlevel = 10;
+    const       XPTS   = 35;    // Data points in x
+    const       YPTS   = 45;    // Data points in y
 
-    PLFLT   xx, yy, r;
-    bool    rosen = false;
+    PLFLT       xx, yy, r;
+    bool        rosen = false;
 
-    const PLFLT dx = 2. / cast (PLFLT) ( XPTS - 1 );
-    const PLFLT dy = 2. / cast (PLFLT) ( YPTS - 1 );
+    const PLFLT dx = 2. / cast(PLFLT) ( XPTS - 1 );
+    const PLFLT dy = 2. / cast(PLFLT) ( YPTS - 1 );
 
-    const indexxmin = 0;
-    const indexxmax = XPTS;
+    const       indexxmin = 0;
+    const       indexxmax = XPTS;
     // parameters of ellipse (in x, y index coordinates) that limits the data.
     // x0, y0 correspond to the exact floating point centre of the index
     // range.
@@ -87,10 +87,10 @@ int main( char[][] args )
     const PLFLT a  = 0.9 * x0;
     const PLFLT y0 = 0.5 * cast(PLFLT) ( YPTS - 1 );
     const PLFLT b  = 0.7 * y0;
-    PLFLT square_root;
+    PLFLT       square_root;
 
-    PLFLT[] alt = [ 60.0, 40.0 ];
-    PLFLT[] az  = [ 30.0, -30.0 ];
+    PLFLT[]     alt = [ 60.0, 40.0 ];
+    PLFLT[]     az  = [ 30.0, -30.0 ];
 
     string title[] = [ "#frPLplot Example 8 - Alt=60, Az=30",
                        "#frPLplot Example 8 - Alt=40, Az=-30" ];
@@ -107,23 +107,24 @@ int main( char[][] args )
     PLINT[XPTS] indexymin;
     PLINT[XPTS] indexymax;
 
-    PLFLT[][] z = new PLFLT[][XPTS];
+    PLFLT[][] z        = new PLFLT[][XPTS];
     PLFLT[][] zlimited = new PLFLT[][XPTS];
-    for ( int i = 0; i < XPTS; i++ ) {
-        z[i] = new PLFLT[YPTS];
+    for ( int i = 0; i < XPTS; i++ )
+    {
+        z[i]        = new PLFLT[YPTS];
         zlimited[i] = new PLFLT[YPTS];
     }
 
     for ( int i = 0; i < XPTS; i++ )
     {
-      x[i] = -1. + cast (PLFLT) i * dx;
+        x[i] = -1. + cast(PLFLT) i * dx;
         if ( rosen )
             x[i] *= 1.5;
     }
 
     for ( int i = 0; i < YPTS; i++ )
     {
-        y[i] = -1. + cast (PLFLT) i * dy;
+        y[i] = -1. + cast(PLFLT) i * dy;
         if ( rosen )
             y[i] += 0.5;
     }
@@ -153,13 +154,13 @@ int main( char[][] args )
 
     for ( size_t i = indexxmin; i < indexxmax; i++ )
     {
-        square_root = sqrt( 1. - fmin( 1., pow( ( cast (PLFLT) i - x0 ) / a, 2. ) ) );
+        square_root = sqrt( 1. - fmin( 1., pow( ( cast(PLFLT) i - x0 ) / a, 2. ) ) );
         // Add 0.5 to find nearest integer and therefore preserve symmetry
         // with regard to lower and upper bound of y range.
-        indexymin[i] = cast (PLINT) fmax( 0, cast (PLINT) ( 0.5 + y0 - b * square_root ) );
+        indexymin[i] = cast(PLINT) fmax( 0, cast(PLINT) ( 0.5 + y0 - b * square_root ) );
         // indexymax calculated with the convention that it is 1
         // greater than highest valid index.
-        indexymax[i] = cast (PLINT) fmin( YPTS, 1 + cast (PLINT) ( 0.5 + y0 + b * square_root ) );
+        indexymax[i] = cast(PLINT) fmin( YPTS, 1 + cast(PLINT) ( 0.5 + y0 + b * square_root ) );
 
         for ( size_t j = indexymin[i]; j < indexymax[i]; j++ )
             zlimited[i][j] = z[i][j];
@@ -219,7 +220,7 @@ int main( char[][] args )
                 break;
             default:
                 // magnitude colored plot with contours and index limits.
-	        cmap1_init( 0 );
+                cmap1_init( 0 );
                 plsurf3dl( x, y, zlimited, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, indexxmin, indexxmax, indexymin, indexymax );
                 break;
             }

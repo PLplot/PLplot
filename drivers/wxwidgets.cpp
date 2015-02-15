@@ -146,15 +146,15 @@ void plD_init_wxwidgets( PLStream* pls )
     // Log_Verbose( "plD_init_wxwidgets()" );
 
     // default options
-    static PLINT text        = 1;
-    static PLINT hrshsym     = 0;
-	static char  *mfo        = NULL;
+    static PLINT text    = 1;
+    static PLINT hrshsym = 0;
+    static char  *mfo    = NULL;
 
-    DrvOpt wx_options[] = {
-        { "hrshsym",  DRV_INT, &hrshsym,     "Use Hershey symbol set (hrshsym=0|1)"                      },
-        { "text",     DRV_INT, &text,        "Use own text routines (text=0|1)"                          },
-		{ "mfo",      DRV_STR, &mfo,         "output metafile"                                           },
-        { NULL,       DRV_INT, NULL,         NULL                                                        }
+    DrvOpt       wx_options[] = {
+        { "hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)" },
+        { "text",    DRV_INT, &text,    "Use own text routines (text=0|1)"     },
+        { "mfo",     DRV_STR, &mfo,     "output metafile"                      },
+        { NULL,      DRV_INT, NULL,     NULL                                   }
     };
 
     // Check for and set up driver options
@@ -165,7 +165,7 @@ void plD_init_wxwidgets( PLStream* pls )
         text = 0;
 
     // create the new device
-	wxPLDevice* dev = new wxPLDevice ( pls, mfo, text, hrshsym );
+    wxPLDevice* dev = new wxPLDevice( pls, mfo, text, hrshsym );
     if ( dev == NULL )
     {
         plexit( "Insufficient memory" );
@@ -177,7 +177,6 @@ void plD_init_wxwidgets( PLStream* pls )
         plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
-
 }
 
 #endif  // PLD_wxwidgets
@@ -282,7 +281,7 @@ void plD_eop_wxwidgets( PLStream *pls )
     // Log_Verbose( "plD_eop_wxwidgets()" );
 
     wxPLDevice* dev = (wxPLDevice *) pls->dev;
-	dev->EndPage( pls );
+    dev->EndPage( pls );
 }
 
 
@@ -300,7 +299,7 @@ void plD_bop_wxwidgets( PLStream *pls )
     // Log_Verbose( "plD_bop_wxwidgets()" );
 
     wxPLDevice* dev = (wxPLDevice *) pls->dev;
-	dev->BeginPage( pls );
+    dev->BeginPage( pls );
 }
 
 
@@ -365,7 +364,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_FILL:
-		dev->FillPolygon( pls );
+        dev->FillPolygon( pls );
         break;
 
     case PLESC_XORMOD:
@@ -395,19 +394,19 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 
     case PLESC_CLEAR:
         dev->ClearBackground( pls, pls->sppxmi, pls->sppymi,
-			pls->sppxma, pls->sppyma );
+            pls->sppxma, pls->sppyma );
         break;
 
     case PLESC_FLUSH:        // forced update of the window
-		//currently does nothing
+        //currently does nothing
         break;
 
     case PLESC_GETC:
-		dev->Locate( pls, (PLGraphicsIn *) ptr );
+        dev->Locate( pls, (PLGraphicsIn *) ptr );
         break;
 
     case PLESC_FIXASPECT:
-		dev->FixAspectRatio( *((bool *)ptr) );
+        dev->FixAspectRatio( *( (bool *) ptr ) );
         break;
 
     default:
@@ -421,28 +420,28 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 //
 // Waits for a graphics input event and returns coordinates.
 //--------------------------------------------------------------------------
-/*static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr )
-{
-    // Log_Verbose( "GetCursorCmd" );
-
-    wxPLDevBase  *dev = (wxPLDevBase *) pls->dev;
-    PLGraphicsIn *gin = &( dev->gin );
-
-    // Initialize
-    plGinInit( gin );
-    dev->locate_mode = LOCATE_INVOKED_VIA_API;
-    dev->draw_xhair  = true;
-
-    // Run event loop until a point is selected
-    wxRunApp( pls, false );
-
-    *ptr = *gin;
-    if ( dev->locate_mode )
-    {
-        dev->locate_mode = 0;
-        dev->draw_xhair  = false;
-    }
-}*/
+//static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr )
+//{
+//    // Log_Verbose( "GetCursorCmd" );
+//
+//    wxPLDevBase  *dev = (wxPLDevBase *) pls->dev;
+//    PLGraphicsIn *gin = &( dev->gin );
+//
+//    // Initialize
+//    plGinInit( gin );
+//    dev->locate_mode = LOCATE_INVOKED_VIA_API;
+//    dev->draw_xhair  = true;
+//
+//    // Run event loop until a point is selected
+//    wxRunApp( pls, false );
+//
+//ptr = *gin;
+//    if ( dev->locate_mode )
+//    {
+//        dev->locate_mode = 0;
+//        dev->draw_xhair  = false;
+//    }
+//}
 
 
 
@@ -452,41 +451,41 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 //  This is a hacked wxEntry-function, so that wxUninitialize is not
 //  called twice. Here we actually start the wxApplication.
 //--------------------------------------------------------------------------
-/*static void wxRunApp( PLStream *pls, bool runonce )
-{
-    // Log_Verbose( "wxRunApp" );
-
-    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-
-    dev->waiting = true;
-    wxTRY
-    {
-        class CallOnExit
-        {
-public:
-            // only call OnExit if exit is true (i.e. due an exception)
-            ~CallOnExit() { if ( exit ) wxPLGetApp().OnExit();}
-            bool exit;
-        } callOnExit;
-
-        callOnExit.exit = true;
-        wxPLGetApp().SetAdvanceFlag( runonce );
-        wxPLGetApp().SetRefreshFlag();
-
-        // add an idle event is necessary for Linux (wxGTK2)
-        // but not for Windows, but it doesn't harm
-        wxIdleEvent event;
-        wxPLGetApp().AddPendingEvent( event );
-        wxPLGetApp().OnRun();           // start wxWidgets application
-        callOnExit.exit = false;
-    }
-    wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); plexit( "Problem running wxWidgets!" ); )
-
-    if ( dev->exit )
-    {
-        wxPLGetApp().OnExit();
-        plexit( "" );
-    }
-
-    dev->waiting = false;
-}*/
+//static void wxRunApp( PLStream *pls, bool runonce )
+//{
+//    // Log_Verbose( "wxRunApp" );
+//
+//    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
+//
+//    dev->waiting = true;
+//    wxTRY
+//    {
+//        class CallOnExit
+//        {
+//public:
+//            // only call OnExit if exit is true (i.e. due an exception)
+//            ~CallOnExit() { if ( exit ) wxPLGetApp().OnExit();}
+//            bool exit;
+//        } callOnExit;
+//
+//        callOnExit.exit = true;
+//        wxPLGetApp().SetAdvanceFlag( runonce );
+//        wxPLGetApp().SetRefreshFlag();
+//
+//        // add an idle event is necessary for Linux (wxGTK2)
+//        // but not for Windows, but it doesn't harm
+//        wxIdleEvent event;
+//        wxPLGetApp().AddPendingEvent( event );
+//        wxPLGetApp().OnRun();           // start wxWidgets application
+//        callOnExit.exit = false;
+//    }
+//    wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); plexit( "Problem running wxWidgets!" ); )
+//
+//    if ( dev->exit )
+//    {
+//        wxPLGetApp().OnExit();
+//        plexit( "" );
+//    }
+//
+//    dev->waiting = false;
+//}

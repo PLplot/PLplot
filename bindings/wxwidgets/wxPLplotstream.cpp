@@ -74,8 +74,8 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 //  the device is NULL
 void wxPLplotstream::SetDC( wxDC *dc )
 {
-	set_stream();
-	cmd( PLESC_DEVINIT, (void *) dc );
+    set_stream();
+    cmd( PLESC_DEVINIT, (void *) dc );
 }
 
 //! Destructor, although we have no resources to free
@@ -113,11 +113,11 @@ void wxPLplotstream::RenewPlot()
     replot();
 }
 
-void wxPLplotstream::ImportBuffer ( void *buffer, size_t size)
+void wxPLplotstream::ImportBuffer( void *buffer, size_t size )
 {
-	plbuffer buf;
-	buf.buffer = buffer;
-	buf.size = size;
-	cmd( PLESC_IMPORT_BUFFER, &buf );
-	RenewPlot();
+    plbuffer buf;
+    buf.buffer = buffer;
+    buf.size   = size;
+    cmd( PLESC_IMPORT_BUFFER, &buf );
+    RenewPlot();
 }

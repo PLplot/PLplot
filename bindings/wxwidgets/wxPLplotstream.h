@@ -34,9 +34,9 @@ class wxDC;
 //
 enum
 {
-    wxPLPLOT_NONE                    = 0,
-    wxPLPLOT_DRAW_TEXT           = 1 << 5,
-    wxPLPLOT_USE_HERSHEY_SYMBOLS = 1 << 6
+    wxPLPLOT_NONE      = 0,
+    wxPLPLOT_DRAW_TEXT = 1 << 5,
+        wxPLPLOT_USE_HERSHEY_SYMBOLS = 1 << 6
 };
 
 //! wxPLplotstream is inherited from plstream, which is the C++ interface
@@ -54,16 +54,16 @@ public:
     void set_stream();                              //!< Calls some code before every PLplot command.
     void SetSize( int width, int height );          //!< Set new size of plot area.
     void RenewPlot();                               //!< Redo plot and update dc
-	void SetDC( wxDC *dc );                         //!< Set a new dc to write to
-	void ImportBuffer ( void *buffer, size_t size); //!< Import a buffer of plplot commands
+    void SetDC( wxDC *dc );                         //!< Set a new dc to write to
+    void ImportBuffer( void *buffer, size_t size ); //!< Import a buffer of plplot commands
 
 private:
     void InitStream();
 
 private:
-    int    m_width;     //!< Width of dc/plot area.
-    int    m_height;    //!< Height of dc/plot area.
-    int    m_style;     //!< style of this plot
+    int m_width;        //!< Width of dc/plot area.
+    int m_height;       //!< Height of dc/plot area.
+    int m_style;        //!< style of this plot
 };
 
 

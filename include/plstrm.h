@@ -799,7 +799,6 @@ typedef struct
 //
     char *mf_infile;
     char *mf_outfile;
-
 } PLStream;
 
 //--------------------------------------------------------------------------

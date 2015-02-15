@@ -31,7 +31,7 @@
 
 //! @file
 //!  These functions provide allocation and deallocation of two-dimensional
-//!  arrays.  
+//!  arrays.
 //!
 
 #include "plplotP.h"

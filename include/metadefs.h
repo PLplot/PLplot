@@ -81,18 +81,18 @@ typedef struct
 // it can be shared between the input/output modules.
 typedef struct
 {
-    PLFLT  pxlx, pxly;
-    PLINT  xold, yold;
+    PLFLT   pxlx, pxly;
+    PLINT   xold, yold;
 
-    PLINT  xmin, xmax, xlen;
-    PLINT  ymin, ymax, ylen;
+    PLINT   xmin, xmax, xlen;
+    PLINT   ymin, ymax, ylen;
 
-    FPOS_T index_offset;  // Position of the metafile index
-    FPOS_T lp_offset;     // Position of the previous page
+    FPOS_T  index_offset; // Position of the metafile index
+    FPOS_T  lp_offset;    // Position of the previous page
 
 
-    int    notfirst;
+    int     notfirst;
 
-    PLINT  version;     // Metafile version number
+    PLINT   version;    // Metafile version number
     U_SHORT page;       // Current page
 } PLmDev;

@@ -205,7 +205,7 @@ c_plschr( PLFLT def, PLFLT scale )
 
     plsc->chrht = scale * plsc->chrdef;
 
-	plP_state( PLSTATE_CHR );
+    plP_state( PLSTATE_CHR );
 }
 
 //--------------------------------------------------------------------------
@@ -252,7 +252,7 @@ c_plssym( PLFLT def, PLFLT scale )
 
     plsc->symht = scale * plsc->symdef;
 
-	plP_state( PLSTATE_SYM );
+    plP_state( PLSTATE_SYM );
 }
 
 //--------------------------------------------------------------------------

@@ -41,7 +41,7 @@ static void     check_buffer_size( PLStream *pls, size_t data_size );
 
 static int      rd_command( PLStream *pls, U_CHAR *p_c );
 static void     rd_data( PLStream *pls, void *buf, size_t buf_size );
-static void     rd_data_no_copy( PLStream *pls, void **buf, size_t buf_size);
+static void     rd_data_no_copy( PLStream *pls, void **buf, size_t buf_size );
 
 static void     wr_command( PLStream *pls, U_CHAR c );
 static void     wr_data( PLStream *pls, void *buf, size_t buf_size );
@@ -143,13 +143,13 @@ plbuf_bop( PLStream *pls )
     // during initialization and this would result in an extraneous
     // color command being sent.  The goal is to preserve the current
     // color state
-    wr_data(pls, &(pls->icol0), sizeof(pls->icol0));
-    wr_data(pls, &(pls->icol1), sizeof(pls->icol1));
-    wr_data(pls, &(pls->curcolor), sizeof(pls->curcolor));
+    wr_data( pls, &( pls->icol0 ), sizeof ( pls->icol0 ) );
+    wr_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
+    wr_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
 
     // Save the colormaps
-    plbuf_state(pls, PLSTATE_CMAP0);
-    plbuf_state(pls, PLSTATE_CMAP1);
+    plbuf_state( pls, PLSTATE_CMAP0 );
+    plbuf_state( pls, PLSTATE_CMAP1 );
 
     // Initialize to a known state
     //plbuf_state( pls, PLSTATE_COLOR0 );
@@ -252,29 +252,29 @@ plbuf_state( PLStream *pls, PLINT op )
 
     case PLSTATE_CMAP0:
         // Save the number of colors in the palatte
-        wr_data( pls, & ( pls->ncol0 ), sizeof ( pls->ncol0 ) );
+        wr_data( pls, &( pls->ncol0 ), sizeof ( pls->ncol0 ) );
         // Save the color palatte
         wr_data( pls, &( pls->cmap0[0] ), sizeof ( PLColor ) * pls->ncol0 );
         break;
 
     case PLSTATE_CMAP1:
         // Save the number of colors in the palatte
-        wr_data( pls, & ( pls->ncol1 ), sizeof ( pls->ncol1 ) );
-	// Save the color palatte
+        wr_data( pls, &( pls->ncol1 ), sizeof ( pls->ncol1 ) );
+        // Save the color palatte
         wr_data( pls, &( pls->cmap1[0] ), sizeof ( PLColor ) * pls->ncol1 );
         break;
 
     case PLSTATE_CHR:
         //save the chrdef and chrht parameters
-        wr_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
-	wr_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
-	break;
+        wr_data( pls, &( pls->chrdef ), sizeof ( pls->chrdef ) );
+        wr_data( pls, &( pls->chrht ), sizeof ( pls->chrht ) );
+        break;
 
     case PLSTATE_SYM:
         //save the symdef and symht parameters
-        wr_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
-	wr_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
-	break;
+        wr_data( pls, &( pls->symdef ), sizeof ( pls->symdef ) );
+        wr_data( pls, &( pls->symht ), sizeof ( pls->symht ) );
+        break;
     }
 }
 
@@ -307,8 +307,8 @@ plbuf_image( PLStream *pls, IMG_DT *img_dt )
     wr_data( pls, pls->dev_ix, sizeof ( short ) * (size_t) npts );
     wr_data( pls, pls->dev_iy, sizeof ( short ) * (size_t) npts );
     wr_data( pls, pls->dev_z,
-	     sizeof ( unsigned short )
-	     * (size_t) ( ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ) ) );
+        sizeof ( unsigned short )
+        * (size_t) ( ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ) ) );
 }
 
 //--------------------------------------------------------------------------
@@ -349,8 +349,8 @@ plbuf_text( PLStream *pls, EscText *text )
     wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ) );
     if ( text->unicode_array_len )
         wr_data( pls,
-                 text->unicode_array,
-                 sizeof ( PLUNICODE ) * text->unicode_array_len );
+            text->unicode_array,
+            sizeof ( PLUNICODE ) * text->unicode_array_len );
 }
 
 //--------------------------------------------------------------------------
@@ -416,7 +416,7 @@ plbuf_text_unicode( PLStream *pls, EscText *text )
 void
 plbuf_esc( PLStream *pls, PLINT op, void *ptr )
 {
-	plbuffer *buffer;
+    plbuffer *buffer;
     dbug_enter( "plbuf_esc" );
 
     wr_command( pls, (U_CHAR) ESCAPE );
@@ -443,17 +443,17 @@ plbuf_esc( PLStream *pls, PLINT op, void *ptr )
     case PLESC_END_TEXT:
         plbuf_text_unicode( pls, (EscText *) ptr );
         break;
-	case PLESC_IMPORT_BUFFER:
-		buffer = ( plbuffer* ) ptr;
-		if ( buffer->size > pls->plbuf_buffer_size )
-		{
-			pls->plbuf_buffer = realloc( pls->plbuf_buffer, buffer->size );
-			pls->plbuf_buffer_size = buffer->size;
-		}
-		if( !pls->plbuf_buffer )
-			plexit( "plbuf_esc: Failed to reallocate buffer during PLESC_SET_BUFFER case" );
-		memcpy( pls->plbuf_buffer, buffer->buffer, buffer->size );
-		pls->plbuf_top = buffer->size;
+    case PLESC_IMPORT_BUFFER:
+        buffer = (plbuffer *) ptr;
+        if ( buffer->size > pls->plbuf_buffer_size )
+        {
+            pls->plbuf_buffer      = realloc( pls->plbuf_buffer, buffer->size );
+            pls->plbuf_buffer_size = buffer->size;
+        }
+        if ( !pls->plbuf_buffer )
+            plexit( "plbuf_esc: Failed to reallocate buffer during PLESC_SET_BUFFER case" );
+        memcpy( pls->plbuf_buffer, buffer->buffer, buffer->size );
+        pls->plbuf_top = buffer->size;
 
 #if 0
     // These are a no-op.  They just need an entry in the buffer.
@@ -516,7 +516,7 @@ plbuf_swin( PLStream *pls, PLWindow *plwin )
 //--------------------------------------------------------------------------
 void plbuf_write( PLStream *pls, void *data, size_t bytes )
 {
-    wr_data( pls, data, bytes);
+    wr_data( pls, data, bytes );
 }
 
 //--------------------------------------------------------------------------
@@ -557,9 +557,9 @@ rdbuf_bop( PLStream *pls )
     pls->nplwin = 0;
 
     // Read the current color state from the plot buffer
-    rd_data(pls, &(pls->icol0), sizeof(pls->icol0));
-    rd_data(pls, &(pls->icol1), sizeof(pls->icol1));
-    rd_data(pls, &(pls->curcolor), sizeof(pls->curcolor));
+    rd_data( pls, &( pls->icol0 ), sizeof ( pls->icol0 ) );
+    rd_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
+    rd_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
 
     // No need to handle the colormaps because the PLSTATE_* command
     // was used to save the colormaps, thus reading the buffer will
@@ -582,8 +582,8 @@ rdbuf_line( PLStream *pls )
 
     // Use the "no copy" version because the endpoint data array does
     // not need to persist outside of this function
-    rd_data_no_copy( pls, (void **)&xpl, sizeof ( short ) * (size_t) npts );
-    rd_data_no_copy( pls, (void **)&ypl, sizeof ( short ) * (size_t) npts );
+    rd_data_no_copy( pls, (void **) &xpl, sizeof ( short ) * (size_t) npts );
+    rd_data_no_copy( pls, (void **) &ypl, sizeof ( short ) * (size_t) npts );
 
     plP_line( xpl, ypl );
 }
@@ -606,8 +606,8 @@ rdbuf_polyline( PLStream *pls )
 
     // Use the "no copy" version because the node data array does
     // not need to persist outside of ths function
-    rd_data_no_copy( pls, (void **) &xpl, sizeof ( short ) * (size_t) npts);
-    rd_data_no_copy( pls, (void **) &ypl, sizeof ( short ) * (size_t) npts);
+    rd_data_no_copy( pls, (void **) &xpl, sizeof ( short ) * (size_t) npts );
+    rd_data_no_copy( pls, (void **) &ypl, sizeof ( short ) * (size_t) npts );
 
     plP_polyline( xpl, ypl, npts );
 }
@@ -640,13 +640,13 @@ rdbuf_state( PLStream *pls )
         U_CHAR r, g, b;
         PLFLT  a;
 
-        rd_data( pls, &(pls->icol0), sizeof ( pls->icol0 ) );
+        rd_data( pls, &( pls->icol0 ), sizeof ( pls->icol0 ) );
         if ( pls->icol0 == PL_RGB_COLOR )
         {
             rd_data( pls, &r, sizeof ( U_CHAR ) );
             rd_data( pls, &g, sizeof ( U_CHAR ) );
             rd_data( pls, &b, sizeof ( U_CHAR ) );
-	    rd_data( pls, &a, sizeof ( U_CHAR ) );
+            rd_data( pls, &a, sizeof ( U_CHAR ) );
         }
         else
         {
@@ -654,8 +654,8 @@ rdbuf_state( PLStream *pls )
             {
                 char buffer[256];
                 snprintf( buffer, 256,
-                          "rdbuf_state: Invalid color map entry: %d",
-                          pls->icol0 );
+                    "rdbuf_state: Invalid color map entry: %d",
+                    pls->icol0 );
                 plabort( buffer );
                 return;
             }
@@ -668,39 +668,39 @@ rdbuf_state( PLStream *pls )
         pls->curcolor.g = g;
         pls->curcolor.b = b;
         pls->curcolor.a = a;
-        pls->curcmap = 0;
+        pls->curcmap    = 0;
 
         plP_state( PLSTATE_COLOR0 );
         break;
     }
 
     case PLSTATE_COLOR1: {
-        rd_data( pls, &(pls->icol1), sizeof ( pls->icol1 ) );
+        rd_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
 
         pls->curcolor.r = pls->cmap1[pls->icol1].r;
         pls->curcolor.g = pls->cmap1[pls->icol1].g;
         pls->curcolor.b = pls->cmap1[pls->icol1].b;
         pls->curcolor.a = pls->cmap1[pls->icol1].a;
-        pls->curcmap = 1;
+        pls->curcmap    = 1;
 
         plP_state( PLSTATE_COLOR1 );
         break;
     }
 
     case PLSTATE_FILL: {
-        rd_data( pls, &(pls->patt), sizeof ( pls->patt ) );
+        rd_data( pls, &( pls->patt ), sizeof ( pls->patt ) );
 
         plP_state( PLSTATE_FILL );
         break;
     }
 
     case PLSTATE_CMAP0: {
-        PLINT ncol;
+        PLINT  ncol;
         size_t size;
 
         rd_data( pls, &ncol, sizeof ( ncol ) );
 
-	// Calculate the memory size for this color palatte
+        // Calculate the memory size for this color palatte
         size = (size_t) ncol * sizeof ( PLColor );
 
         if ( pls->ncol0 == 0 || pls->ncol0 != ncol )
@@ -710,10 +710,10 @@ rdbuf_state( PLStream *pls )
 
             // If we have a colormap, discard it because we do not use
             // realloc().  We are going to read the colormap from the buffer
-            if(pls->cmap0 != NULL)
-                free(pls->cmap0);
+            if ( pls->cmap0 != NULL )
+                free( pls->cmap0 );
 
-            if ( ( pls->cmap0 = ( PLColor * )malloc( size ) ) == NULL )
+            if ( ( pls->cmap0 = (PLColor *) malloc( size ) ) == NULL )
             {
                 plexit( "Insufficient memory for colormap 0" );
             }
@@ -721,14 +721,14 @@ rdbuf_state( PLStream *pls )
 
         // Now read the colormap from the buffer
         rd_data( pls, &( pls->cmap0[0] ), size );
-	pls->ncol0 = ncol;
+        pls->ncol0 = ncol;
 
         plP_state( PLSTATE_CMAP0 );
         break;
     }
 
     case PLSTATE_CMAP1: {
-        PLINT ncol;
+        PLINT  ncol;
         size_t size;
 
         rd_data( pls, &ncol, sizeof ( ncol ) );
@@ -743,17 +743,17 @@ rdbuf_state( PLStream *pls )
 
             // If we have a colormap, discard it because we do not use
             // realloc().  We are going to read the colormap from the buffer
-            if(pls->cmap1 != NULL)
-                free(pls->cmap1);
+            if ( pls->cmap1 != NULL )
+                free( pls->cmap1 );
 
-            if ( ( pls->cmap1 = ( PLColor * )malloc( size ) ) == NULL )
+            if ( ( pls->cmap1 = (PLColor *) malloc( size ) ) == NULL )
             {
                 plexit( "Insufficient memory for colormap 1" );
             }
         }
 
         // Now read the colormap from the buffer
-        rd_data( pls, &(pls->cmap1[0]), size );
+        rd_data( pls, &( pls->cmap1[0] ), size );
         pls->ncol1 = ncol;
 
         plP_state( PLSTATE_CMAP1 );
@@ -762,18 +762,17 @@ rdbuf_state( PLStream *pls )
 
     case PLSTATE_CHR: {
         //read the chrdef and chrht parameters
-        rd_data( pls, & ( pls->chrdef ), sizeof ( pls->chrdef ) );
-        rd_data( pls, & ( pls->chrht ), sizeof ( pls->chrht ) );
+        rd_data( pls, &( pls->chrdef ), sizeof ( pls->chrdef ) );
+        rd_data( pls, &( pls->chrht ), sizeof ( pls->chrht ) );
         break;
     }
 
     case PLSTATE_SYM: {
         //read the symdef and symht parameters
-        rd_data( pls, & ( pls->symdef ), sizeof ( pls->symdef ) );
-        rd_data( pls, & ( pls->symht ), sizeof ( pls->symht ) );
+        rd_data( pls, &( pls->symdef ), sizeof ( pls->symdef ) );
+        rd_data( pls, &( pls->symht ), sizeof ( pls->symht ) );
         break;
     }
-
     }
 }
 
@@ -909,8 +908,8 @@ rdbuf_image( PLStream *pls )
     rd_data( pls, dev_ix, sizeof ( short ) * (size_t) npts );
     rd_data( pls, dev_iy, sizeof ( short ) * (size_t) npts );
     rd_data( pls, dev_z,
-             sizeof ( unsigned short )
-             * (size_t) ( ( nptsX - 1 ) * ( nptsY - 1 ) ) );
+        sizeof ( unsigned short )
+        * (size_t) ( ( nptsX - 1 ) * ( nptsY - 1 ) ) );
 
     //
     // COMMENTED OUT by Hezekiah Carty
@@ -1071,8 +1070,8 @@ rdbuf_text_unicode( PLINT op, PLStream *pls )
 void
 plRemakePlot( PLStream *pls )
 {
-    U_CHAR   c;
-    int      plbuf_status;
+    U_CHAR c;
+    int    plbuf_status;
 
     dbug_enter( "plRemakePlot" );
 
@@ -1102,9 +1101,9 @@ plRemakePlot( PLStream *pls )
         save_current_pls = plsc;
 
         // Make the current plot stream the one passed by the caller
-        plsc     = pls;
+        plsc = pls;
 
-	// Restore the
+        // Restore the
         // Replay the plot command buffer
         while ( rd_command( pls, &c ) )
         {
@@ -1181,8 +1180,8 @@ plbuf_control( PLStream *pls, U_CHAR c )
 
     default:
         pldebug( "plbuf_control", "Unrecognized command %d, previous %d\n",
-                 c, c_old );
-        plexit("Unrecognized command");
+            c, c_old );
+        plexit( "Unrecognized command" );
     }
     c_old = c;
 }
@@ -1200,7 +1199,7 @@ rd_command( PLStream *pls, U_CHAR *p_c )
 
     if ( pls->plbuf_readpos < pls->plbuf_top )
     {
-        *p_c = *(U_CHAR *) ((uint8_t *) pls->plbuf_buffer + pls->plbuf_readpos);
+        *p_c = *(U_CHAR *) ( (uint8_t *) pls->plbuf_buffer + pls->plbuf_readpos );
 
         // Advance the buffer position to maintain two-byte alignment
         pls->plbuf_readpos += sizeof ( uint16_t );
@@ -1227,7 +1226,7 @@ rd_data( PLStream *pls, void *buf, size_t buf_size )
     memcpy( buf, (uint8_t *) pls->plbuf_buffer + pls->plbuf_readpos, buf_size );
 
     // Advance position but maintain alignment
-    pls->plbuf_readpos += (buf_size + (buf_size % sizeof(uint16_t)));
+    pls->plbuf_readpos += ( buf_size + ( buf_size % sizeof ( uint16_t ) ) );
 }
 
 //--------------------------------------------------------------------------
@@ -1241,12 +1240,12 @@ rd_data( PLStream *pls, void *buf, size_t buf_size )
 //--------------------------------------------------------------------------
 
 static void
-rd_data_no_copy( PLStream *pls, void **buf, size_t buf_size)
+rd_data_no_copy( PLStream *pls, void **buf, size_t buf_size )
 {
-    (*buf) = (uint8_t *) pls->plbuf_buffer + pls->plbuf_readpos;
+    ( *buf ) = (uint8_t *) pls->plbuf_buffer + pls->plbuf_readpos;
 
     // Advance position but maintain alignment
-    pls->plbuf_readpos += (buf_size + (buf_size % sizeof(uint16_t)));
+    pls->plbuf_readpos += ( buf_size + ( buf_size % sizeof ( uint16_t ) ) );
 }
 
 //--------------------------------------------------------------------------
@@ -1264,8 +1263,8 @@ check_buffer_size( PLStream *pls, size_t data_size )
 
     if ( required_size >= pls->plbuf_buffer_size )
     {
-		if( pls->plbuf_buffer_grow == 0 )
-			pls->plbuf_buffer_grow = 128 * 1024;
+        if ( pls->plbuf_buffer_grow == 0 )
+            pls->plbuf_buffer_grow = 128 * 1024;
 
         // Not enough space, need to grow the buffer before memcpy
         // Must make sure the increase is enough for this data, so
@@ -1279,11 +1278,11 @@ check_buffer_size( PLStream *pls, size_t data_size )
 
         if ( pls->verbose )
             printf( "Growing buffer to %d KB\n",
-                    (int) ( pls->plbuf_buffer_size / 1024 ) );
+                (int) ( pls->plbuf_buffer_size / 1024 ) );
 
         if ( ( pls->plbuf_buffer
-               = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size )
-               ) == NULL )
+                   = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size )
+                   ) == NULL )
             plexit( "plbuf buffer grow:  Plot buffer grow failed" );
     }
 }
@@ -1297,7 +1296,7 @@ check_buffer_size( PLStream *pls, size_t data_size )
 static void
 wr_command( PLStream *pls, U_CHAR c )
 {
-    check_buffer_size(pls, sizeof( U_CHAR ));
+    check_buffer_size( pls, sizeof ( U_CHAR ) );
 
     *(U_CHAR *) ( (uint8_t *) pls->plbuf_buffer + pls->plbuf_top ) = c;
 
@@ -1316,11 +1315,11 @@ wr_command( PLStream *pls, U_CHAR c )
 static void
 wr_data( PLStream *pls, void *buf, size_t buf_size )
 {
-    check_buffer_size(pls, buf_size);
+    check_buffer_size( pls, buf_size );
     memcpy( (uint8_t *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
 
     // Advance position but maintain alignment
-    pls->plbuf_top += (buf_size + (buf_size % sizeof(uint16_t)));
+    pls->plbuf_top += ( buf_size + ( buf_size % sizeof ( uint16_t ) ) );
 }
 
 
@@ -1346,12 +1345,12 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
 //
 struct _state
 {
-    size_t            size;  // Size of the save buffer
-    int               valid; // Flag to indicate a valid save state
-    void              *plbuf_buffer;
-    size_t            plbuf_buffer_size;
-    size_t            plbuf_top;
-    size_t            plbuf_readpos;
+    size_t size;             // Size of the save buffer
+    int    valid;            // Flag to indicate a valid save state
+    void   *plbuf_buffer;
+    size_t plbuf_buffer_size;
+    size_t plbuf_top;
+    size_t plbuf_readpos;
 };
 
 void * plbuf_save( PLStream *pls, void *state )
@@ -1364,7 +1363,8 @@ void * plbuf_save( PLStream *pls, void *state )
     dbug_enter( "plbuf_save" );
 
     // If the plot buffer is not being used, there is no state to save
-    if ( ! pls->plbuf_write ) return NULL;
+    if ( !pls->plbuf_write )
+        return NULL;
 
     pls->plbuf_write = FALSE;
     pls->plbuf_read  = TRUE;
@@ -1381,32 +1381,32 @@ void * plbuf_save( PLStream *pls, void *state )
         // We have a save buffer, is it smaller than the current size
         // requirement?
         if ( plot_state->size < save_size )
-	{
-	    // Yes, reallocate a larger one
-	    if ( ( plot_state = (struct _state *) realloc( state, save_size ) ) == NULL )
-	    {
-	        // NOTE: If realloc fails, then plot_state will be NULL.
-	        // This will leave the original buffer untouched, thus we
-	        // mark it as invalid and return it back to the caller.
-	        //
-	        plwarn( "plbuf: Unable to reallocate sufficient memory to save state" );
-		plot_state->valid = 0;
+        {
+            // Yes, reallocate a larger one
+            if ( ( plot_state = (struct _state *) realloc( state, save_size ) ) == NULL )
+            {
+                // NOTE: If realloc fails, then plot_state will be NULL.
+                // This will leave the original buffer untouched, thus we
+                // mark it as invalid and return it back to the caller.
+                //
+                plwarn( "plbuf: Unable to reallocate sufficient memory to save state" );
+                plot_state->valid = 0;
 
-		return state;
+                return state;
             }
-	    plot_state->size = save_size;
+            plot_state->size = save_size;
         }
     }
     else
     {
         // A buffer does not exist, so we need to allocate one
         if ( ( plot_state = (struct _state *) malloc( save_size ) ) == NULL )
-	{
-	    plwarn( "plbuf: Unable to allocate sufficient memory to save state" );
+        {
+            plwarn( "plbuf: Unable to allocate sufficient memory to save state" );
 
-	    return NULL;
+            return NULL;
         }
-	plot_state->size = save_size;
+        plot_state->size = save_size;
     }
 
     // At this point we have an appropriately sized save buffer.
@@ -1438,7 +1438,7 @@ void * plbuf_save( PLStream *pls, void *state )
     {
         // This should never be NULL
         plwarn( "plbuf: Got a NULL in memcpy!" );
-	return (void *) plot_state;
+        return (void *) plot_state;
     }
 
     pls->plbuf_write = TRUE;

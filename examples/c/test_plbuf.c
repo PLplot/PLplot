@@ -81,10 +81,10 @@ main( int argc, const char *argv[] )
     plsc->plbuf_write = 1;
 
     plinit();
-    plreadmetafile(NULL);
+    plreadmetafile( NULL );
     plreplot();
 
-    exit(0);
+    exit( 0 );
     // Initialize plplot
     // Divide page into 2x2 plots
     // Note: calling plstar replaces separate calls to plssub and plinit

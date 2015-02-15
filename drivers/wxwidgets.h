@@ -20,8 +20,8 @@
 #ifndef __WXWIDGETS_H__
 #define __WXWIDGETS_H__
 
-#include<vector>
-#include<memory>
+#include <vector>
+#include <memory>
 
 // plplot headers
 #include "plplotP.h"
@@ -51,44 +51,44 @@ public:
     void SetColor( PLStream *pls );
     void SetExternalBuffer( PLStream *pls, void* buffer );
     void SetFont( PLUNICODE fci );
-	void EndPage( PLStream* pls );
-	void BeginPage( PLStream* pls );
-	void SetSize( PLStream* pls, int width, int height );
+    void EndPage( PLStream* pls );
+    void BeginPage( PLStream* pls );
+    void SetSize( PLStream* pls, int width, int height );
     void ProcessString( PLStream* pls, EscText* args );
-	void FixAspectRatio( bool fix );
-	void Locate( PLStream* pls, PLGraphicsIn *graphicsIn );
+    void FixAspectRatio( bool fix );
+    void Locate( PLStream* pls, PLGraphicsIn *graphicsIn );
 
 private:
     void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;
     void DrawTextSection( char* utf8_string, bool drawText );
-	void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
-	void SetupMemoryMap();
+    void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
+    void SetupMemoryMap();
 
-	//The DC we will draw on if given by the user
-    wxDC       *m_dc;
-	bool        m_useDcTransform;
-	//for the gcdc case we may need to store the graphics context for use
-	// with text transformations
-	wxGraphicsContext *m_gc;
+    //The DC we will draw on if given by the user
+    wxDC *m_dc;
+    bool m_useDcTransform;
+    //for the gcdc case we may need to store the graphics context for use
+    // with text transformations
+    wxGraphicsContext *m_gc;
 
-	//Size and Scale
-	//As far as plplot is concerned the size of the window is SHRT_MAX by
-	//SHRT_MAX which gives us the best resolution.
-	const PLFLT  m_plplotEdgeLength;
-    PLFLT        m_width; //native width
-    PLFLT        m_height; //native height
-    PLFLT        m_xScale; //conversion from native width to plplotEdgeLength
-    PLFLT        m_yScale; //conversion from native height to plplotEdgeLength
-	PLFLT        m_xAspect; //values which when multiplied by m_plplotEdgeLength give an aspect
-	PLFLT        m_yAspect; //ratio equal to the native aspect ratio, the biggest of which is 1.0
-	PLFLT        m_scale;  //MAX(m_scalex, m_scaley)
-	bool         m_fixedAspect;
+    //Size and Scale
+    //As far as plplot is concerned the size of the window is SHRT_MAX by
+    //SHRT_MAX which gives us the best resolution.
+    const PLFLT m_plplotEdgeLength;
+    PLFLT       m_width;   //native width
+    PLFLT       m_height;  //native height
+    PLFLT       m_xScale;  //conversion from native width to plplotEdgeLength
+    PLFLT       m_yScale;  //conversion from native height to plplotEdgeLength
+    PLFLT       m_xAspect; //values which when multiplied by m_plplotEdgeLength give an aspect
+    PLFLT       m_yAspect; //ratio equal to the native aspect ratio, the biggest of which is 1.0
+    PLFLT       m_scale;   //MAX(m_scalex, m_scaley)
+    bool        m_fixedAspect;
 
-	// Flags indicating change of state before we have a DC.
-    bool         m_plstate_width;
-    bool         m_plstate_color;
+    // Flags indicating change of state before we have a DC.
+    bool m_plstate_width;
+    bool m_plstate_color;
 
-	//these are not being used at the current time
+    //these are not being used at the current time
     //PLGraphicsIn gin;                   // Graphics input structure
     //int          locate_mode;           // Set while in locate mode
     //bool         draw_xhair;            // Set during xhair draws
@@ -96,7 +96,7 @@ private:
 
     // font variables
     static const int m_max_string_length = 500;
-    wxFont          *m_font;
+    wxFont           *m_font;
     bool             m_underlined;
     PLFLT            m_fontSize;
     PLFLT            m_fontScale;
@@ -104,21 +104,21 @@ private:
     PLUNICODE        m_fci;
 
     //Text positioning related variables
-    wxCoord          m_superscriptHeight; //distance between superscript top and baseline
-	wxCoord          m_subscriptDepth; //distance between subscript base and baseline
-    PLFLT            m_lineSpacing;
-    PLFLT            m_yOffset;
-    PLINT            m_posX;
-	PLINT            m_posY;
-    PLFLT            m_rotation;
+    wxCoord m_superscriptHeight;          //distance between superscript top and baseline
+    wxCoord m_subscriptDepth;             //distance between subscript base and baseline
+    PLFLT   m_lineSpacing;
+    PLFLT   m_yOffset;
+    PLINT   m_posX;
+    PLINT   m_posY;
+    PLFLT   m_rotation;
 
-	//variables for dealing with sending/receiving commands
-	//via a memory map
-	char             m_mfo[PLPLOT_MAX_PATH];
-	PLNamedMutex     m_mutex;
-	size_t           m_localBufferPosition;
-	PLMemoryMap      m_outputMemoryMap;
-	bool             m_begunRendering;
+    //variables for dealing with sending/receiving commands
+    //via a memory map
+    char         m_mfo[PLPLOT_MAX_PATH];
+    PLNamedMutex m_mutex;
+    size_t       m_localBufferPosition;
+    PLMemoryMap  m_outputMemoryMap;
+    bool         m_begunRendering;
 };
 
 

@@ -161,13 +161,13 @@ void PLLSTY( PLINT *lin );
 void PLMAP7( const char *type,
              PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat );
 void PLMAPFILL7( const char *type,
-             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
+                 PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
 void PLMAPLINE7( const char *type,
-             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
+                 PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
 void PLMAPSTRING7( const char *type, const char *string,
-             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
+                   PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries );
 void PLMAPTEX7( const char *type, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text,
-             PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentry );
+                PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentry );
 void PLMERIDIANS7( PLFLT *dlong, PLFLT *dlat,
                    PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat );
 void PLMKSTRM( PLINT *p_strm );
@@ -973,7 +973,7 @@ PLMAP7( const char *type,
 
 void
 PLMAPFILL7( const char *type,
-        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
+            PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
 
 {
     PLINT *pplotentries = plotentries;
@@ -987,7 +987,7 @@ PLMAPFILL7( const char *type,
 
 void
 PLMAPLINE7( const char *type,
-        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
+            PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
 
 {
     PLINT *pplotentries = plotentries;
@@ -1001,7 +1001,7 @@ PLMAPLINE7( const char *type,
 
 void
 PLMAPSTRING7( const char *type, const char *string,
-        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
+              PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentries, PLINT *nplotentries )
 
 {
     PLINT *pplotentries = plotentries;
@@ -1015,7 +1015,7 @@ PLMAPSTRING7( const char *type, const char *string,
 
 void
 PLMAPTEX7( const char *type, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text,
-        PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentry )
+           PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat, PLINT *plotentry )
 
 {
     if ( plmapform )

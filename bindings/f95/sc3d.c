@@ -33,9 +33,9 @@ void PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
                PLINT *nx, PLINT *ny, PLINT *opt,
                PLFLT *clevel, PLINT *nlevel, PLINT *lx );
 void PLSURF3DL( PLFLT *x, PLFLT *y, PLFLT *z,
-               PLINT *nx, PLINT *ny, PLINT *opt,
-               PLFLT *clevel, PLINT *nlevel, PLINT *lx,
-               PLINT *indexxmin, PLINT *indexxmax, PLINT *indexymin, PLINT *indexymax );
+                PLINT *nx, PLINT *ny, PLINT *opt,
+                PLFLT *clevel, PLINT *nlevel, PLINT *lx,
+                PLINT *indexxmin, PLINT *indexxmax, PLINT *indexymin, PLINT *indexymax );
 void PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
              PLINT *nx, PLINT *ny, PLINT *opt, PLINT *lx );
 void PLMESHC( PLFLT *x, PLFLT *y, PLFLT *z,
@@ -123,9 +123,9 @@ PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
 
 void
 PLSURF3DL( PLFLT *x, PLFLT *y, PLFLT *z,
-          PLINT *nx, PLINT *ny, PLINT *opt,
-          PLFLT *clevel, PLINT *nlevel, PLINT *lx,
-          PLINT *indexxmin, PLINT *indexxmax, PLINT *indexymin, PLINT *indexymax )
+           PLINT *nx, PLINT *ny, PLINT *opt,
+           PLFLT *clevel, PLINT *nlevel, PLINT *lx,
+           PLINT *indexxmin, PLINT *indexxmax, PLINT *indexymin, PLINT *indexymax )
 {
     int   i, j;
     PLFLT **temp;
@@ -160,7 +160,7 @@ PLSURF3DL( PLFLT *x, PLFLT *y, PLFLT *z,
             temp[i][j] = *( z + j * *lx + i );
 
     c_plsurf3dl( x, y, (const PLFLT * const *) temp, *nx, *ny, *opt, clevel, *nlevel,
-                 *indexxmin, *indexxmax, indexymin, indexymax );
+        *indexxmin, *indexxmax, indexymin, indexymax );
 
     for ( i = 0; i < *nx; i++ )
         free( (void *) temp[i] );
