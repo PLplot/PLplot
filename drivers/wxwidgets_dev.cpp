@@ -865,6 +865,11 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     //We will apply the aspect ratio part, and let the DC do the overall
     //scaling. This gives us subpixel accuray, but ensures line thickness
     //remains consistent in both directions
+
+    //Initially assume we have not got fixed aspect, until after we call clear.
+    //This ensures the whole plot gets cleared. But save the original aspect
+    PLFLT xAspectOriginal = m_xAspect;
+    PLFLT yAspectOriginal = m_yAspect;
     m_scale   = MIN( m_xScale, m_yScale );
     m_xAspect = m_scale / m_xScale;
     m_yAspect = m_scale / m_yScale;
@@ -876,18 +881,27 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     //whole background gets filled
     if ( m_dc )
     {
-        //we use the dc to do the scaling as it then gives us subpixel accuracy
+        //we use the dc to do the basic scaling as it then gives us subpixel accuracy
         m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
         BeginPage( pls );
     }
 
+    //now sort out the fixed aspect and reset the logical scale if needed
+
     if ( m_fixedAspect )
     {
-        m_scale   = MAX( m_xScale, m_yScale );
-        m_xScale  = m_scale;
-        m_yScale  = m_scale;
-        m_xAspect = 1.0;
-        m_yAspect = 1.0;
+        m_xAspect = xAspectOriginal;
+        m_yAspect = yAspectOriginal;
+        if ( PLFLT( m_height ) / PLFLT( m_width ) > m_yAspect / m_xAspect )
+        {
+            m_scale  = m_xScale * m_xAspect;
+            m_yScale = m_scale / m_yAspect;
+        }
+        else
+        {
+            m_scale  = m_yScale * m_yAspect;
+            m_xScale = m_scale / m_xAspect;
+        }
         if ( m_dc )
             m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
     }

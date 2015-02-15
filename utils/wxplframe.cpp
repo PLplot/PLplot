@@ -21,16 +21,18 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 
-const int wxPlFrame::ID_FILE_EXIT   = ::wxNewId();
-const int wxPlFrame::ID_HELP_ABOUT  = ::wxNewId();
-const int wxPlFrame::ID_PAGE_NEXT   = ::wxNewId();
-const int wxPlFrame::ID_PAGE_PREV   = ::wxNewId();
-const int wxPlFrame::ID_CHECK_TIMER = ::wxNewId();
+const int wxPlFrame::ID_FILE_EXIT      = ::wxNewId();
+const int wxPlFrame::ID_HELP_ABOUT     = ::wxNewId();
+const int wxPlFrame::ID_PAGE_NEXT      = ::wxNewId();
+const int wxPlFrame::ID_PAGE_PREV      = ::wxNewId();
+const int wxPlFrame::ID_PAGE_FIXASPECT = ::wxNewId();
+const int wxPlFrame::ID_CHECK_TIMER    = ::wxNewId();
 
 
 BEGIN_EVENT_TABLE( wxPlFrame, wxPLplotwindow<wxFrame> )
 EVT_MENU( ID_FILE_EXIT, wxPlFrame::OnExit )
 EVT_MENU( ID_HELP_ABOUT, wxPlFrame::OnAbout )
+EVT_MENU( ID_PAGE_FIXASPECT, wxPlFrame::OnToggleFixAspect )
 EVT_MENU( ID_PAGE_NEXT, wxPlFrame::OnNextPage )
 EVT_MENU( ID_PAGE_PREV, wxPlFrame::OnPrevPage )
 EVT_TIMER( ID_CHECK_TIMER, wxPlFrame::OnCheckTimer )
@@ -83,9 +85,14 @@ void wxPlFrame::setupMenus()
     fileMenu->Append( ID_FILE_EXIT, wxT( "E&xit\tAlt+F4" ), wxT( "Exit the application" ) );
     mbar->Append( fileMenu, wxT( "&File" ) );
 
-    wxMenu* pageMenu = new wxMenu( wxT( "" ) );
-    pageMenu->Append( ID_PAGE_NEXT, wxT( "Next\tpgdn" ), wxT( "Move to the next page" ) );
-    pageMenu->Append( ID_PAGE_PREV, wxT( "Previous\tpgup" ), wxT( "Move to the previous page" ) );
+
+    wxMenu     * pageMenu      = new wxMenu( wxT( "" ) );
+    wxMenuItem *aspectMenuItem = new wxMenuItem( pageMenu, ID_PAGE_FIXASPECT, wxT( "Fix Aspect" ),
+        wxT( "Fix the aspect ratio of the plot" ), wxITEM_CHECK );
+    pageMenu->Append( aspectMenuItem );
+    aspectMenuItem->Check( true );
+    pageMenu->Append( ID_PAGE_PREV, wxT( "Previous\tPgUp" ), wxT( "Move to the previous page" ) );
+    pageMenu->Append( ID_PAGE_NEXT, wxT( "Next\tEnter" ), wxT( "Move to the next page" ) );
     mbar->Append( pageMenu, wxT( "&Page" ) );
 
     wxMenu* helpMenu = new wxMenu( wxT( "" ) );
@@ -93,6 +100,8 @@ void wxPlFrame::setupMenus()
     mbar->Append( helpMenu, wxT( "&Help" ) );
 
     SetMenuBar( mbar );
+
+    m_stream.SetFixedAspectRatio( aspectMenuItem->IsChecked() );
 }
 
 void wxPlFrame::OnExit( wxCommandEvent& event )
@@ -173,7 +182,12 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             readLocation = plMemoryMapReservedSpace;
     }
 }
-
+void wxPlFrame::OnToggleFixAspect( wxCommandEvent &event )
+{
+    m_stream.SetFixedAspectRatio( event.IsChecked() );
+    if ( !event.IsChecked() )
+        this->Refresh();
+}
 void wxPlFrame::OnNextPage( wxCommandEvent& event )
 {
     SetPageAndUpdate( m_viewingPage + 1 );
@@ -258,7 +272,10 @@ void wxPlFrame::SetPageAndUpdate( size_t page )
     if ( page != size_t( -1 ) )
     {
         if ( page >= m_pageBuffers.size() )
+        {
+            Close();
             return;
+        }
         if ( page != m_viewingPage )
         {
             m_viewingPage         = page;

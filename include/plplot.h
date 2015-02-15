@@ -244,7 +244,7 @@ typedef void*    PLPointer;
 #define PLESC_GRADIENT           35     // render a gradient
 #define PLESC_MODESET            36     // set drawing mode
 #define PLESC_MODEGET            37     // get drawing mode
-#define PLESC_FIXASPECT          38     // toggle fixing the aspect ratio of the plot
+#define PLESC_FIXASPECT          38     // set or unset fixing the aspect ratio of the plot
 #define PLESC_IMPORT_BUFFER      39     // set the contents of the buffer to a specified byte string
 
 // Alternative unicode text handling control characters

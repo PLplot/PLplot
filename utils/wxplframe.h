@@ -38,6 +38,7 @@ public:
     static const int ID_HELP_ABOUT;
     static const int ID_PAGE_NEXT;
     static const int ID_PAGE_PREV;
+    static const int ID_PAGE_FIXASPECT;
     static const int ID_CHECK_TIMER;
 
     wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wxString file, long fileSize,
@@ -48,6 +49,7 @@ private:
     void setupMenus();
     void OnExit( wxCommandEvent& event );
     void OnAbout( wxCommandEvent& event );
+    void OnToggleFixAspect( wxCommandEvent& event );
     void OnNextPage( wxCommandEvent& event );
     void OnPrevPage( wxCommandEvent& event );
     void OnCheckTimer( wxTimerEvent &event );
