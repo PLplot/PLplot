@@ -150,8 +150,8 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     // so only override zeros
     if ( pls->xdpi == 0 && pls->ydpi == 0 )
     {
-        pls->xdpi = 72;
-        pls->ydpi = 72;
+        pls->xdpi = 90;
+        pls->ydpi = 90;
     }
     else if ( pls->xdpi == 0 )
         pls->xdpi = pls->ydpi;
@@ -162,8 +162,8 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     PLINT height = pls->ylength;
     if ( width == 0 && height == 0 )
     {
-        width  = 600;
-        height = 600;
+        width  = 900;
+        height = 675;
     }
     else if ( width == 0 )
         width = height;
