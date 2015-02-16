@@ -413,6 +413,7 @@ else(BUILD_THE_BUILDTOOLS)
   # care of any ordering issues.
   set(subdirectories_LIST
     ndiff
+    uncrustify
     plplot
     plplot_lite
     gtk+
