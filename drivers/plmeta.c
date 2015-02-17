@@ -402,9 +402,7 @@ plD_state_plm( PLStream *pls, PLINT op )
         //plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symdef ) );
         //plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symht ) );
         break;
-
     }
-
 }
 
 //--------------------------------------------------------------------------

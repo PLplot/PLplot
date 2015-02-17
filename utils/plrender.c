@@ -1093,7 +1093,6 @@ plr_state( U_CHAR op )
         //plm_rd( pdf_rd_ieeef( pdfs, &plsc->symht ) );
         break;
     }
-
     }
 
     DEBUG_PRINT_LOCATION( "end of plr_state" );

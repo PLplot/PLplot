@@ -33,7 +33,7 @@
 
 // Which test device to use.  The svg device is the best choice, however,
 // I (jrd) find it easier to debug with psc.  YMMV.
-#define TEST_DEVICE "psc"
+#define TEST_DEVICE    "psc"
 
 // Reach into the guts of PLPlot to get access to the current stream.
 // Not recommended behavior for user program.  Only needed for testing.
@@ -102,18 +102,18 @@ main( int argc, const char *argv[] )
     plot3();
 
     // Replay the plot buffer
-    plgstrm( &cur_strm );    // get current stream
-    plmkstrm( &new_strm );   // create a new one
+    plgstrm( &cur_strm );          // get current stream
+    plmkstrm( &new_strm );         // create a new one
 
-    plsfnam( "test_plbuf_1.out" );    // file name
-    plsdev( TEST_DEVICE );            // device type
+    plsfnam( "test_plbuf_1.out" ); // file name
+    plsdev( TEST_DEVICE );         // device type
 
-    plcpstrm( cur_strm, 0 ); // copy old stream parameters to new stream
-    plreplot();              // do the save by replaying the plot buffer
-    plend1();                // finish the device
+    plcpstrm( cur_strm, 0 );       // copy old stream parameters to new stream
+    plreplot();                    // do the save by replaying the plot buffer
+    plend1();                      // finish the device
 
-    plsstrm( cur_strm );     // return to previous stream
-    plend1();                // and end the first plot stream
+    plsstrm( cur_strm );           // return to previous stream
+    plend1();                      // and end the first plot stream
 
     // Start fresh and use the plmeta driver
     plsfnam( "test_plbuf_0.plm" );
@@ -124,7 +124,7 @@ main( int argc, const char *argv[] )
     // Generate the plot for the first subwindow
     plot1( 6.0, 1.0, 0.0, 0.0 );
 
-    // Set the y-axis to 5 digits maximum and generate the plot for 
+    // Set the y-axis to 5 digits maximum and generate the plot for
     // the second subwindow
     plsyax( 5, 0 );
     plot1( 1.0, 0.0014, 0.0, 0.0185 );
@@ -156,8 +156,8 @@ plot1( PLFLT xscale, PLFLT yscale, PLFLT xoff, PLFLT yoff )
 {
     static PLFLT x[101], y[101];
     static PLFLT xs[6], ys[6];
-    int   i;
-    PLFLT xmin, xmax, ymin, ymax;
+    int          i;
+    PLFLT        xmin, xmax, ymin, ymax;
 
     for ( i = 0; i < 60; i++ )
     {
@@ -204,7 +204,7 @@ plot2( void )
 {
     static PLFLT x[101], y[101];
     static PLFLT xs[6], ys[6];
-    int i;
+    int          i;
 
 // Set up the viewport and window using PLENV. The range in X is -2.0 to
 // 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
@@ -240,8 +240,8 @@ plot3( void )
 {
     static PLFLT x[101], y[101];
     static PLFLT xs[6], ys[6];
-    PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
-    int   i;
+    PLINT        space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
+    int          i;
 
 // For the final graph we wish to override the default tick intervals, and
 // so do not use plenv().

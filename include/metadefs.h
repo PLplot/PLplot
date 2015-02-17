@@ -96,6 +96,6 @@ typedef struct
     U_SHORT page;       // Current page
 
     // Viewport configuration. Used to render a metafile
-    PLFLT vpxmin, vpymin;
-    PLFLT vpxmax, vpymax;
+    PLFLT   vpxmin, vpymin;
+    PLFLT   vpxmax, vpymax;
 } PLmDev;

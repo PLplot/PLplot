@@ -825,7 +825,7 @@ rdbuf_esc( PLStream *pls )
         rdbuf_text_unicode( op, pls );
         break;
     case PLESC_IMPORT_BUFFER:
-        // Place holder until an appropriate action is determined.  
+        // Place holder until an appropriate action is determined.
         // Should this even be an ESC operation?
         break;
     case PLESC_CLEAR:

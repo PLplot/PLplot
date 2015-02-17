@@ -487,11 +487,13 @@ enum _plm_status read_polyline( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         return rc;
 
     // Not optimal to alloc/dealloc memory, but it works for now
-    if( ( x_list = malloc( npts * sizeof(PLFLT) ) ) == NULL ) {
-        plexit("read_polyline: Unable to allocate memory\n");
+    if ( ( x_list = malloc( npts * sizeof ( PLFLT ) ) ) == NULL )
+    {
+        plexit( "read_polyline: Unable to allocate memory\n" );
     }
-    if( ( y_list = malloc( npts * sizeof(PLFLT) ) ) == NULL ) {
-        plexit("read_polyline: Unable to allocate memory\n");
+    if ( ( y_list = malloc( npts * sizeof ( PLFLT ) ) ) == NULL )
+    {
+        plexit( "read_polyline: Unable to allocate memory\n" );
     }
 
     // Read the points and insert into the plot buffer
@@ -517,8 +519,8 @@ enum _plm_status read_polyline( PDFstrm *plm, PLmDev *dev, PLStream *pls )
     dev->xold = (short) x_list[npts - 1];
     dev->yold = (short) y_list[npts - 1];
 
-    free(x_list);
-    free(y_list);
+    free( x_list );
+    free( y_list );
 
     return PLM_SUCCESS;
 }
@@ -543,20 +545,22 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
     case PLESC_FILL:
     {
         PLINT i, npts;
-	PLFLT *x_list, *y_list;
+        PLFLT *x_list, *y_list;
 
         // Get the number of control points for the fill
         rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &npts );
         if ( rc != PLM_SUCCESS )
             return rc;
 
-	// Not optimal to alloc/dealloc memory, but it works for now
-	if( ( x_list = malloc( npts * sizeof(PLFLT) ) ) == NULL ) {
-	    plexit("read_escape: Unable to allocate memory\n");
-	}
-	if( ( y_list = malloc( npts * sizeof(PLFLT) ) ) == NULL ) {
-	    plexit("read_escape: Unable to allocate memory\n");
-	}
+        // Not optimal to alloc/dealloc memory, but it works for now
+        if ( ( x_list = malloc( npts * sizeof ( PLFLT ) ) ) == NULL )
+        {
+            plexit( "read_escape: Unable to allocate memory\n" );
+        }
+        if ( ( y_list = malloc( npts * sizeof ( PLFLT ) ) ) == NULL )
+        {
+            plexit( "read_escape: Unable to allocate memory\n" );
+        }
 
         for ( i = 0; i < npts; i++ )
         {
@@ -569,11 +573,10 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
                 return rc;
         }
 
-	plfill( npts, x_list, y_list );
-	
-	free(x_list);
-	free(y_list);
+        plfill( npts, x_list, y_list );
 
+        free( x_list );
+        free( y_list );
     }
     break;
 
@@ -615,7 +618,7 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-	    plwidth ( width );
+            plwidth( width );
         }
         break;
 
@@ -632,7 +635,7 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
             if ( icol == PL_RGB_COLOR )
             {
- 	        // Set pen 0 to the specified RGB value
+                // Set pen 0 to the specified RGB value
                 PLColor color;
 
                 rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &color.r );
@@ -650,20 +653,20 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
                 color.a    = 1.0;
                 color.name = NULL;
 
-		plscol0( icol, color.r, color.g, color.b );
-            } 
-	    else 
-	    {
-  	        // Set color for pen 0
-  	        plcol0( icol );
-	    }
-	}
-	break;
+                plscol0( icol, color.r, color.g, color.b );
+            }
+            else
+            {
+                // Set color for pen 0
+                plcol0( icol );
+            }
+        }
+        break;
 
     case PLSTATE_COLOR1:
         pldebug( "state: COLOR1" );
 
-	{
+        {
             PLINT icol;
 
             // Read the color index number
@@ -671,23 +674,23 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-	    plcol1( icol );
+            plcol1( icol );
         }
         break;
 
     case PLSTATE_FILL:
         pldebug( "state: FILL" );
 
-	{
-	    U_CHAR pattern;
+        {
+            U_CHAR pattern;
 
             // Read the color index number
             rc = read_entry( plm, PDF_USHORT, PLP_UCHAR, &pattern );
             if ( rc != PLM_SUCCESS )
                 return rc;
-	    
-	    plpsty( pattern );
-	}
+
+            plpsty( pattern );
+        }
         break;
 
     case PLSTATE_CMAP0:
@@ -702,8 +705,8 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-	    // Set the number of colors in the colormap
-	    plscmap0n( ncol );
+            // Set the number of colors in the colormap
+            plscmap0n( ncol );
 
             // Read the colormap
             for ( i = 0; i < ncol; i++ )
@@ -722,17 +725,17 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
                 color.a    = 1.0;
                 color.name = NULL;
-		
-		// Save the color for this entry
-		plsc->cmap0[i].r = color.r;
-		plsc->cmap0[i].g = color.g;
-		plsc->cmap0[i].b = color.b;
-		plsc->cmap0[i].a = color.a;
-		plsc->cmap0[i].name = color.name;
+
+                // Save the color for this entry
+                plsc->cmap0[i].r    = color.r;
+                plsc->cmap0[i].g    = color.g;
+                plsc->cmap0[i].b    = color.b;
+                plsc->cmap0[i].a    = color.a;
+                plsc->cmap0[i].name = color.name;
             }
 
-	    if( plsc->level > 0 )
-	      plP_state( PLSTATE_CMAP0 );
+            if ( plsc->level > 0 )
+                plP_state( PLSTATE_CMAP0 );
         }
         break;
 
@@ -748,8 +751,8 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-	    // Set the number of colors in the colormap
-	    plscmap1n( ncol );
+            // Set the number of colors in the colormap
+            plscmap1n( ncol );
 
             // Read the colormap
             for ( i = 0; i < ncol; i++ )
@@ -768,67 +771,64 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
                 color.a    = 1.0;
                 color.name = NULL;
-		
-		// Save the color for this entry
-		plsc->cmap1[i].r = color.r;
-		plsc->cmap1[i].g = color.g;
-		plsc->cmap1[i].b = color.b;
-		plsc->cmap1[i].a = color.a;
-		plsc->cmap1[i].name = color.name;
+
+                // Save the color for this entry
+                plsc->cmap1[i].r    = color.r;
+                plsc->cmap1[i].g    = color.g;
+                plsc->cmap1[i].b    = color.b;
+                plsc->cmap1[i].a    = color.a;
+                plsc->cmap1[i].name = color.name;
             }
 
-	    if( plsc->level > 0 )
-	      plP_state( PLSTATE_CMAP1 );
+            if ( plsc->level > 0 )
+                plP_state( PLSTATE_CMAP1 );
         }
         break;
 
     case PLSTATE_CHR:
         pldebug( "state: CHR" );
 
-	// Note: The operation is not put into the buffer because
-	// this operation is not supported in the 2005 format.
-	// This code is a placeholder until a new version is made
-	// Put the command into the plot buffer
+        // Note: The operation is not put into the buffer because
+        // this operation is not supported in the 2005 format.
+        // This code is a placeholder until a new version is made
+        // Put the command into the plot buffer
 
-	if(0) 
-	{
-  	    PLFLT chrdef;
-  	    PLFLT chrht;
+        if ( 0 )
+        {
+            PLFLT chrdef;
+            PLFLT chrht;
 
-	    rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &chrdef );
-	    if(rc != PLM_SUCCESS) 
-	        return rc;
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &chrdef );
+            if ( rc != PLM_SUCCESS )
+                return rc;
 
-	    rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &chrht );
-	    if(rc != PLM_SUCCESS) 
-	        return rc;
-	    
-	}
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &chrht );
+            if ( rc != PLM_SUCCESS )
+                return rc;
+        }
         break;
 
     case PLSTATE_SYM:
         pldebug( "state: SYM" );
 
-	// Note: The operation is not put into the buffer because
-	// this operation is not supported in the 2005 format.
-	// This code is a placeholder until a new version is made
-	// Put the command into the plot buffer
+        // Note: The operation is not put into the buffer because
+        // this operation is not supported in the 2005 format.
+        // This code is a placeholder until a new version is made
+        // Put the command into the plot buffer
 
-	if(0) 
-	{
-  	    PLFLT symdef;
-  	    PLFLT symht;
+        if ( 0 )
+        {
+            PLFLT symdef;
+            PLFLT symht;
 
-	    rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &symdef );
-	    if(rc != PLM_SUCCESS) 
-	        return rc;
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &symdef );
+            if ( rc != PLM_SUCCESS )
+                return rc;
 
-	    rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &symht );
-	    if(rc != PLM_SUCCESS) 
-	        return rc;
-	    
-
-	}
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &symht );
+            if ( rc != PLM_SUCCESS )
+                return rc;
+        }
         break;
 
     default:
@@ -861,7 +861,7 @@ enum _plm_status read_plot_commands( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         {
         case INITIALIZE:
             pldebug( "cmd: INITIALIZE" );
-	    // No action needed
+            // No action needed
             break;
 
         case CLOSE:
@@ -901,16 +901,16 @@ enum _plm_status read_plot_commands( PDFstrm *plm, PLmDev *dev, PLStream *pls )
                 break;
 
 
-	    // Setup the subwindows
-	    //plP_ssub( pls->nsubx, pls->nsuby, pls->cursub );
-	    plP_setsub();
-	    
-	    plvpor( 
-	        dev->vpxmin, dev->vpxmax, 
-		dev->vpymin, dev->vpymax );
-	    plwind( 
-	        ( PLFLT) dev->xmin, (PLFLT) dev->xmax, 
-		( PLFLT) dev->ymin, (PLFLT) dev->ymax );
+            // Setup the subwindows
+            //plP_ssub( pls->nsubx, pls->nsuby, pls->cursub );
+            plP_setsub();
+
+            plvpor(
+                dev->vpxmin, dev->vpxmax,
+                dev->vpymin, dev->vpymax );
+            plwind(
+                (PLFLT) dev->xmin, (PLFLT) dev->xmax,
+                (PLFLT) dev->ymin, (PLFLT) dev->ymax );
 
             break;
 
@@ -946,8 +946,8 @@ enum _plm_status read_plot_commands( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
         case END_OF_FIELD:
             pldebug( "cmd: EOF" );
-	    
-	    // No action needed
+
+            // No action needed
 
             break;
 
@@ -985,31 +985,32 @@ void setup_page( PLmDev *dev )
     PLFLT ratio;
     PLFLT vpxlen, vpylen;
     PLINT nsubx, nsuby, cursub;
-    
+
     // Determine the current subpage
     plP_gsub( &nsubx, &nsuby, &cursub );
 
     // Are we on a valid subpage?
-    if( cursub == 0 || cursub > nsubx * nsuby ) {
+    if ( cursub == 0 || cursub > nsubx * nsuby )
+    {
         // No, it appears that the current subpage is unintialized or the
         // subpage is not valid for the current supbage configuration
         cursub = 1;
 
-	// Set the subpage information
-	plP_ssub( nsubx, nsuby, cursub );
-	plP_setsub();
+        // Set the subpage information
+        plP_ssub( nsubx, nsuby, cursub );
+        plP_setsub();
     }
 
     // Set aspect ratio to the natural ratio of the metafile coordinate system.
-    
+
     // For older versions of plplot, the length is not set.  Do it here
     // just in case.
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
     // Aspect ration of the plot metafile
-    aspect = ( ( ( PLFLT ) dev->ylen) / dev->pxly ) 
-        / ( ( ( PLFLT ) dev->xlen ) / dev->pxlx );
+    aspect = ( ( (PLFLT) dev->ylen ) / dev->pxly )
+             / ( ( (PLFLT) dev->xlen ) / dev->pxlx );
 
     // Aspect ratio of the current output device
     plP_gphy( &dev_xmin, &dev_xmax, &dev_ymin, &dev_ymax );
@@ -1018,8 +1019,8 @@ void setup_page( PLmDev *dev )
     dev_xlen = dev_xmax - dev_xmin;
     dev_ylen = dev_ymax - dev_ymin;
 
-    dev_aspect = ( ( ( PLFLT ) dev_ylen ) / dev_ypmm ) 
-        / ( ( ( PLFLT ) dev_xlen ) / dev_xpmm );
+    dev_aspect = ( ( (PLFLT) dev_ylen ) / dev_ypmm )
+                 / ( ( (PLFLT) dev_xlen ) / dev_xpmm );
 
     if ( dev_aspect <= 0. )
         fprintf( stderr, "Aspect ratio error: dev_aspect = %f\n", dev_aspect );
@@ -1027,17 +1028,17 @@ void setup_page( PLmDev *dev )
     ratio = aspect / dev_aspect;
 
     // Default relative coordinate space
-    vpxlen = 1.0;
-    vpylen = 1.0;
+    vpxlen      = 1.0;
+    vpylen      = 1.0;
     dev->vpxmin = 0.5 - vpxlen / 2.;
     dev->vpymin = 0.5 - vpylen / 2.;
     dev->vpxmax = dev->vpxmin + vpxlen;
     dev->vpymax = dev->vpymin + vpylen;
 
     //
-    // Construct viewport that preserves the aspect ratio of the original 
-    // device (plmeta output file).  Thus you automatically get all physical 
-    // coordinate plots to come out correctly.  Note: this could also be done 
+    // Construct viewport that preserves the aspect ratio of the original
+    // device (plmeta output file).  Thus you automatically get all physical
+    // coordinate plots to come out correctly.  Note: this could also be done
     // using the driver interface function plsdimap.
     //
 
@@ -1060,9 +1061,9 @@ void setup_page( PLmDev *dev )
 //
 //! Reads a PLplot metafile and uses the current plot stream to display
 //! the contents.  If the plot stream has not been initialized, this
-//! routine will attempt to intialize the plot stream via a plinit() 
-//! call.  For an initialized plot stream, the metafile will start at the 
-//! current page/subpage.  
+//! routine will attempt to intialize the plot stream via a plinit()
+//! call.  For an initialized plot stream, the metafile will start at the
+//! current page/subpage.
 //!
 //! @param infile  Input PLplot metafile name.
 //!
@@ -1128,7 +1129,7 @@ void plreadmetafile( char *infile )
 
     // Read the plot header into a local version of a plot stream.
     // We do this because some of the parameters from the metafile may
-    // be invalid or inappropriate for the current plot device 
+    // be invalid or inappropriate for the current plot device
     // (e.g. xlength = 0).  The plspage() call should be smart enough
     // to setup the page correctly.
     rc = read_header( plm,
@@ -1143,12 +1144,13 @@ void plreadmetafile( char *infile )
 
     // Set the physical characterisics of the output device if the current
     // stream has not been initialized
-    if( plsc->level == 0 ) {
+    if ( plsc->level == 0 )
+    {
         plspage( mf_pls.xdpi, mf_pls.ydpi,
-	    mf_pls.xlength, mf_pls.ylength,
-	    mf_pls.xoffset, mf_pls.yoffset );
+            mf_pls.xlength, mf_pls.ylength,
+            mf_pls.xoffset, mf_pls.yoffset );
 
-	plinit();
+        plinit();
     }
 
     // Configure the plot match the configuration used when the plot
