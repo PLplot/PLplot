@@ -386,7 +386,25 @@ plD_state_plm( PLStream *pls, PLINT op )
             plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].b ) );
         }
         break;
+
+    case PLSTATE_CHR:
+        // Disabled for now because the 2005 version does not
+        // support this command
+        //save the chrdef and chrht parameters
+        //plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->chrdef ) );
+        //plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->chrht ) );
+        break;
+
+    case PLSTATE_SYM:
+        // Disabled for now because the 2005 version does not
+        // support this command
+        //save the symdef and symht parameters
+        //plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symdef ) );
+        //plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symht ) );
+        break;
+
     }
+
 }
 
 //--------------------------------------------------------------------------
