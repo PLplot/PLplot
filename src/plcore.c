@@ -2491,6 +2491,12 @@ c_plend1( void )
 
     closeqsas( &( plsc->qsasconfig ) );
 
+    // Free memory used by the plot metafiles
+    if ( plsc->mf_infile )
+        free_mem( plsc->mf_infile );
+    if ( plsc->mf_outfile )
+        free_mem( plsc->mf_outfile );
+
 // Free malloc'ed stream if not in initial stream, else clear it out
 
     if ( ipls > 0 )
