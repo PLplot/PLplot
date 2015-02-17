@@ -31,24 +31,21 @@
 #endif
 #include "plstrm.h"
 
+// Which test device to use.  The svg device is the best choice, however,
+// I (jrd) find it easier to debug with psc.  YMMV.
+#define TEST_DEVICE "psc"
+
 // Reach into the guts of PLPlot to get access to the current stream.
 // Not recommended behavior for user program.  Only needed for testing.
 extern PLDLLIMPEXP_DATA( PLStream * ) plsc;
 
 // Variables and data arrays used by plot generators
 
-static PLFLT        x[101], y[101];
-static PLFLT        xscale, yscale, xoff, yoff, xs[6], ys[6];
 static PLGraphicsIn gin;
-
-static int          locate_mode;
-static int          test_xor;
-static int          fontset = 1;
-static char         *f_name = NULL;
 
 // Function prototypes
 
-void plot1( int );
+void plot1( PLFLT xscale, PLFLT yscale, PLFLT xoff, PLFLT yoff );
 void plot2( void );
 void plot3( void );
 
@@ -67,66 +64,85 @@ void plot3( void );
 int
 main( int argc, const char *argv[] )
 {
-    PLINT digmax, cur_strm, new_strm;
+    PLINT cur_strm, new_strm;
     char  ver[80];
 
     // plplot initialization
+
+    // Set the output filename
+    plsfnam( "test_plbuf_0.out" );
 
     // Parse and process command line arguments
 
     plparseopts( &argc, argv, PL_PARSE_FULL );
 
-    // For the plot buffer on.  Typically the plot buffer is only used
-    // by interactive drivers and the plmeta driver
+    // Force the plot buffer on.  Typically the plot buffer is only used
+    // by interactive drivers and the plmeta driver.  Must do this before
+    // plot initialization occurs otherwise commands will be missed
+    // by the interactive drivers and the plmeta driver
     plsc->plbuf_write = 1;
 
-    plinit();
-    plreadmetafile( NULL );
-    plreplot();
-
-    exit( 0 );
     // Initialize plplot
     // Divide page into 2x2 plots
-    // Note: calling plstar replaces separate calls to plssub and plinit
-    plstar( 2, 2 );
+    // Note: calling plstart replaces separate calls to plssub and plinit
+    plstart( TEST_DEVICE, 2, 2 );
 
-    // Set up the data
-    // Original case
-    xscale = 6.;
-    yscale = 1.;
-    xoff   = 0.;
-    yoff   = 0.;
+    // Generate the plot for the first subwindow
+    plot1( 6.0, 1.0, 0.0, 0.0 );
 
-    // Do a plot
-    plot1( 0 );
+    // Set the y-axis to 5 digits maximum and generate the plot for
+    // the second subwindow
+    plsyax( 5, 0 );
+    plot1( 1.0, 0.0014, 0.0, 0.0185 );
 
-    // Set up the data
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff   = 0.0185;
-
-    // Do a plot
-    digmax = 5;
-    plsyax( digmax, 0 );
-
-    plot1( 1 );
-
+    // Generate a plot for the third subwindow
     plot2();
 
+    // Generate a plot for the fourth subwindow
     plot3();
 
     // Replay the plot buffer
     plgstrm( &cur_strm );    // get current stream
     plmkstrm( &new_strm );   // create a new one
 
-    plsfnam( "foo1.ps" );    // file name
-    plsdev( "svg" );         // device type
+    plsfnam( "test_plbuf_1.out" );    // file name
+    plsdev( TEST_DEVICE );            // device type
 
     plcpstrm( cur_strm, 0 ); // copy old stream parameters to new stream
     plreplot();              // do the save by replaying the plot buffer
     plend1();                // finish the device
 
     plsstrm( cur_strm );     // return to previous stream
+    plend1();                // and end the first plot stream
+
+    // Start fresh and use the plmeta driver
+    plsfnam( "test_plbuf_0.plm" );
+    plstart( "plmeta", 2, 2 );
+
+    // Generate the same plots as before
+
+    // Generate the plot for the first subwindow
+    plot1( 6.0, 1.0, 0.0, 0.0 );
+
+    // Set the y-axis to 5 digits maximum and generate the plot for 
+    // the second subwindow
+    plsyax( 5, 0 );
+    plot1( 1.0, 0.0014, 0.0, 0.0185 );
+
+    // Generate the plot for the third subwindow
+    plot2();
+
+    // Generate the plot for the fourth subwindow
+    plot3();
+
+    // Finish this stream
+    plend1();
+
+    // Test reading of PLplot metafiles
+    plsfnam( "test_plbuf_2.out" );
+    plsdev( TEST_DEVICE );
+    //plstart( TEST_DEVICE, 2, 2 );
+    plreadmetafile( "test_plbuf_0.plm" );
 
     // Don't forget to call plend() to finish off!
     plend();
@@ -136,8 +152,10 @@ main( int argc, const char *argv[] )
 //--------------------------------------------------------------------------
 
 void
-plot1( int do_test )
+plot1( PLFLT xscale, PLFLT yscale, PLFLT xoff, PLFLT yoff )
 {
+    static PLFLT x[101], y[101];
+    static PLFLT xs[6], ys[6];
     int   i;
     PLFLT xmin, xmax, ymin, ymax;
 
@@ -177,34 +195,6 @@ plot1( int do_test )
 
     plcol0( 3 );
     plline( 60, x, y );
-
-// xor mode enable erasing a line/point/text by replotting it again
-// it does not work in double buffering mode, however
-
-    if ( do_test && test_xor )
-    {
-#ifdef PL_HAVE_NANOSLEEP
-        PLINT           st;
-        struct timespec ts;
-        ts.tv_sec  = 0;
-        ts.tv_nsec = 50000000;
-        plxormod( 1, &st ); // enter xor mode
-        if ( st )
-        {
-            for ( i = 0; i < 60; i++ )
-            {
-                plpoin( 1, x + i, y + i, 9 );   // draw a point
-                nanosleep( &ts, NULL );         // wait a little
-                plflush();                      // force an update of the tk driver
-                plpoin( 1, x + i, y + i, 9 );   // erase point
-            }
-            plxormod( 0, &st );                 // leave xor mode
-        }
-#else
-        printf( "The -xor command line option can only be exercised if your "
-            "system\nhas nanosleep(), which does not seem to happen.\n" );
-#endif
-    }
 }
 
 //--------------------------------------------------------------------------
@@ -212,6 +202,8 @@ plot1( int do_test )
 void
 plot2( void )
 {
+    static PLFLT x[101], y[101];
+    static PLFLT xs[6], ys[6];
     int i;
 
 // Set up the viewport and window using PLENV. The range in X is -2.0 to
@@ -246,6 +238,8 @@ plot2( void )
 void
 plot3( void )
 {
+    static PLFLT x[101], y[101];
+    static PLFLT xs[6], ys[6];
     PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
     int   i;
 
