@@ -1077,6 +1077,23 @@ plr_state( U_CHAR op )
 
         break;
     }
+
+    case PLSTATE_CHR: {
+        // Disabled for now because the 2005 version does not
+        // support this command
+        //plm_rd( pdf_rd_ieeef( pdfs, &plsc->chrdef ) );
+        //plm_rd( pdf_rd_ieeef( pdfs, &plsc->chrht ) );
+        break;
+    }
+
+    case PLSTATE_SYM: {
+        // Disabled for now because the 2005 version does not
+        // support this command
+        //plm_rd( pdf_rd_ieeef( pdfs, &plsc->symdef ) );
+        //plm_rd( pdf_rd_ieeef( pdfs, &plsc->symht ) );
+        break;
+    }
+
     }
 
     DEBUG_PRINT_LOCATION( "end of plr_state" );
