@@ -702,7 +702,7 @@ rdbuf_state( PLStream *pls )
         if ( pls->ncol0 == 0 || pls->ncol0 != ncol )
         {
             // The current palatte is empty or the current palatte is not
-            // big enough, thus we need allocate a new one
+            // correctly sized, thus we need allocate a new one
 
             // If we have a colormap, discard it because we do not use
             // realloc().  We are going to read the colormap from the buffer
@@ -735,7 +735,7 @@ rdbuf_state( PLStream *pls )
         if ( pls->ncol1 == 0 || pls->ncol1 != ncol )
         {
             // The current palatte is empty or the current palatte is not
-            // big enough, thus we need allocate a new one
+            // correctly sized, thus we need allocate a new one
 
             // If we have a colormap, discard it because we do not use
             // realloc().  We are going to read the colormap from the buffer
@@ -823,6 +823,10 @@ rdbuf_esc( PLStream *pls )
     case PLESC_CONTROL_CHAR:
     case PLESC_END_TEXT:
         rdbuf_text_unicode( op, pls );
+        break;
+    case PLESC_IMPORT_BUFFER:
+        // Place holder until an appropriate action is determined.  
+        // Should this even be an ESC operation?
         break;
     case PLESC_CLEAR:
         plP_esc( PLESC_CLEAR, NULL );
