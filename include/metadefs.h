@@ -90,9 +90,12 @@ typedef struct
     FPOS_T  index_offset; // Position of the metafile index
     FPOS_T  lp_offset;    // Position of the previous page
 
-
     int     notfirst;
 
     PLINT   version;    // Metafile version number
     U_SHORT page;       // Current page
+
+    // Viewport configuration. Used to render a metafile
+    PLFLT vpxmin, vpymin;
+    PLFLT vpxmax, vpymax;
 } PLmDev;
