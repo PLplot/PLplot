@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Complete tests of PLplot for the three generic build types which
-# consist of shared+dynamic, shared+nondynanic, and
+# consist of shared+dynamic, shared+nondynamic, and
 # static+nondynamic.  These complete tests that are run for each build
 # type are (I) ctest, test_noninteractive, and test_interactive in
 # build tree; (II) traditional [Makefile+pkg-config]
@@ -544,6 +544,13 @@ done
 
 if [ $usage_reported -eq 1 ]; then
     exit 1
+fi
+
+hash pkg-config
+hash_rc=$?
+if [ "$hash_rc" -ne 0 ] ; then
+    echo "WARNING: pkg-config not on PATH so setting do_test_traditional_install_tree=no"
+    do_test_traditional_install_tree=no
 fi
 
 # The question of what to use for the traditional build command is a
