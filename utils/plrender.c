@@ -3,7 +3,7 @@
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 2004-2014 Alan W. Irwin
+//  Copyright (C) 2004-2015 Alan W. Irwin
 //  Copyright (C) 2004  Maurice LeBrun
 //  Copyright (C) 2004  Andrew Ross
 //
@@ -436,7 +436,7 @@ ProcessFile( int argc, char **argv )
     plgdev( devname );
     if ( strncmp( devname, "tk", 2 ) == 0 )
     {
-        plSetOpt( "-drvopt", "tcl_cmd=set plw_create_proc plr_create" );
+        plsetopt( "-drvopt", "tcl_cmd=set plw_create_proc plr_create" );
     }
 
 //
