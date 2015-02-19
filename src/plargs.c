@@ -1,8 +1,9 @@
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 1993-2004  Maurice LeBrun
-//  Copyright (C) 2004  Andrew Ross
+//  Copyright (C) 1993-2004 Maurice LeBrun
+//  Copyright (C) 2004 Andrew Ross
+//  Copyright (C) 2015 Alan W. Irwin
 //
 //  This file is part of PLplot.
 //
@@ -111,10 +112,6 @@ static int  ProcessOpt( const char *, PLOptionTable *, int *, const char ***, in
 static int  GetOptarg( const char **, int *, const char ***, int * );
 static void Help( void );
 static void Syntax( void );
-
-#ifndef PL_DEPRECATED
-int plSetOpt( const char * opt, const char *opt_arg );
-#endif
 
 // Option handlers
 
@@ -739,6 +736,7 @@ static DrvOptCmd drv_opt = { NULL, NULL, NULL };
 
 static int       tables = 1;
 
+#ifdef PL_DEPRECATED
 //--------------------------------------------------------------------------
 // plSetOpt()
 //
@@ -757,6 +755,7 @@ plSetOpt( const char * opt, const char *opt_arg )
 {
     return ( c_plsetopt( opt, opt_arg ) );
 }
+#endif //#ifdef PL_DEPRECATED
 
 int
 c_plsetopt( const char * opt, const char *opt_arg )

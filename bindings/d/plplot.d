@@ -978,8 +978,6 @@ void pltimefmt( string fmt )
 //void  plSetUsage(char *program_string, char *usage_string);
 
 // Process input strings, treating them as an option and argument pair.
-// The first is for the external API, the second the work routine declared
-// here for backward compatibilty.
 int plsetopt( string opt, string optarg )
 {
     return c_plsetopt( toStringz( opt ), toStringz( optarg ) );
@@ -2398,11 +2396,7 @@ int  plMergeOpts( PLOptionTable *options, const char *name, const char **notes )
 void  plSetUsage( const char *program_string, const char *usage_string );
 
 // Process input strings, treating them as an option and argument pair.
-// The first is for the external API, the second the work routine declared
-// here for backward compatibilty.
 int c_plsetopt( const char *opt, const char *optarg );
-
-int plSetOpt( const char *opt, const char *optarg );
 
 // Process options list using current options info.
 int c_plparseopts( int *p_argc, const char **argv, PLINT mode );
