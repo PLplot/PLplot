@@ -830,7 +830,7 @@ plr_line( U_CHAR c )
     if ( code ) { fprintf( stderr,          \
                       "Unable to read in %s at line %d, bytecount %d\n\
 Bytes requested: %d\n", __FILE__, __LINE__, \
-                      (int) pdfs->bp, (int) 2 * n ); return ; }
+                      (int) pdfs->bp, (int) 2 * n ); return; }
 
 static void
 get_ncoords( PLFLT *x, PLFLT *y, PLINT n )
