@@ -20,6 +20,9 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
 
+#define DEBUG
+#define NEED_PLDEBUG
+
 //plplot headers
 #include "plDevs.h"
 #include "wxwidgets.h" // includes wx/wx.h
@@ -1097,12 +1100,14 @@ void wxPLDevice::SetupMemoryMap()
                 else
                     mapName[i] = m_mfo[i];
             }
-			mapName[strlen( m_mfo )] = '\0';
-			//truncate it earlier if needed
-			if( strlen( m_mfo ) > PLPLOT_MAX_PATH - 4 )
-				mapName[PLPLOT_MAX_PATH - 4] = '\0';
+            mapName[strlen( m_mfo )] = '\0';
+            //truncate it earlier if needed
+            if ( strlen( m_mfo ) > PLPLOT_MAX_PATH - 4 )
+                mapName[PLPLOT_MAX_PATH - 4] = '\0';
+            pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mapName = %s\n", nTries, mapName );
             strcpy( mutexName, mapName );
             strcat( mutexName, "mut" );
+            pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mutexName = %s\n", nTries, mutexName );
             m_outputMemoryMap.create( mapName, mapSize, false, true );
             if ( m_outputMemoryMap.isValid() )
                 m_mutex.create( mutexName );
