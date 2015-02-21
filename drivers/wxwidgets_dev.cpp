@@ -1089,7 +1089,7 @@ void wxPLDevice::SetupMemoryMap()
         char         mutexName[PLPLOT_MAX_PATH];
         while ( nTries < 10 )
         {
-            for ( int i = 0; i < PLPLOT_MAX_PATH; ++i )
+            for ( int i = 0; i < strlen( m_mfo ); ++i )
             {
                 if ( m_mfo[i] == '?' )                               //this is reall a poor imitation of a random number generator.
                     mapName[i] = 'A' + clock() % 26;                 //Using C++11 generators would be better, but are not supported
@@ -1097,7 +1097,10 @@ void wxPLDevice::SetupMemoryMap()
                 else
                     mapName[i] = m_mfo[i];
             }
-            mapName[PLPLOT_MAX_PATH - 4] = '\0';
+			mapName[strlen( m_mfo )] = '\0';
+			//truncate it earlier if needed
+			if( strlen( m_mfo ) > PLPLOT_MAX_PATH - 4 )
+				mapName[PLPLOT_MAX_PATH - 4] = '\0';
             strcpy( mutexName, mapName );
             strcat( mutexName, "mut" );
             m_outputMemoryMap.create( mapName, mapSize, false, true );
