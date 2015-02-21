@@ -401,7 +401,7 @@ if [ -z "$FRONT_END" ] ; then
    test "@ENABLE_ocaml@" = "ON"  && FRONT_END="$FRONT_END ocaml"
    test "@ENABLE_lua@" = "ON"  && FRONT_END="$FRONT_END lua"
    test "@ENABLE_d@" = "ON"  && FRONT_END="$FRONT_END d"
-   test "@ENABLE_plrender@" = "ON" && FRONT_END="$FRONT END plrender"
+   test "@ENABLE_plrender@" = "ON" && FRONT_END="$FRONT_END plrender"
 fi
 
 # Call the front-end scripts
