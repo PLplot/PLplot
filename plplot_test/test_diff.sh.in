@@ -20,9 +20,67 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
+# Default device is psc. Will also work with svg.
+device=${DEVICE:-psc}
+
+usage()
+{
+echo '
+Usage: test_diff.sh [OPTIONS]
+
+Options:
+   [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
+   [--help]
+
+Environment variables:
+   DEVICE can be used to specify the device. This environment variable is
+   overwritten by the --device option.
+'
+   exit $1
+}
+
+# Figure out what script options were specified by the user.
+
+while test $# -gt 0; do
+   if [ "@HAVE_BASH@" = "ON" ] ; then
+      case "$1" in
+      -*=*) optarg=${1#*=} ;;
+      *) optarg= ;;
+      esac
+   else
+      case "$1" in
+      -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+      *) optarg= ;;
+      esac
+   fi
+   case $1 in
+      --device=*)
+         device=$optarg
+         ;;
+      --help)
+         usage 0 1>&2
+         ;;
+      *)
+         usage 1 1>&2
+         ;;
+   esac
+   shift
+done
+
+
 ret=0
 # Comparison C results have no xsuffix.
 xsuffix_c=
+
+echo -e "\nComparison test using ${device} device\n"
+
+if [ "${device}" = "svg" ] ; then
+    usefam="yes"
+    firstpage="01"
+else
+    usefam="no"
+    firstpage=""
+fi
 
 # Compare C results with c++, f95, java, octave, python, tcl, perl, 
 # ada, ocaml, lua and d results
@@ -93,34 +151,62 @@ for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d plrende
     # Check if any examples exist for this language.
     EXAMPLES_EXIST="no"
     for index in ${INDEX_LIST} ; do
-	  if [ -f x${xsuffix}${index}${suffix}.psc ] ; then
+	  if [ -f x${xsuffix}${index}${suffix}${firstpage}.${device} ] ; then
 	    EXAMPLES_EXIST="yes"
 	    break
 	  fi
     done
     if [ "$EXAMPLES_EXIST" == "yes" ] ; then
 	  for index in ${INDEX_LIST} ; do
-	    if [ ! -f x${xsuffix_c}${index}c.psc ] ; then
-		  echo "C example ${index} is missing"
+	    if [ ! -f x${xsuffix_c}${index}c${firstpage}.${device} ] ; then
+                 echo "C example ${index} is missing"
 	      else
-		  if [ ! -f x${xsuffix}${index}${suffix}.psc ] ; then
+		  if [ ! -f x${xsuffix}${index}${suffix}${firstpage}.${device} ] ; then
 		    missing="${missing} ${index}"
 		  else
-		    if [ "@HAVE_CMP_I@" = "ON" ] ; then
-		      # Skip first 190 bytes of comparison to ignore date stamp.
-			  @CMP_EXECUTABLE@ -s -i 190 x${xsuffix_c}${index}c.psc x${xsuffix}${index}${suffix}.psc
-			  if [ $? != 0 ] ; then
+                      if [ "${usefam}" = "yes" ] ; then
+                          let i=1
+                          p="01"
+                          pages=""
+                          while [ -f "x${xsuffix_c}${index}c${p}.${device}" ] ; do
+                              pages="${pages} ${p}"
+                              let i=i+1
+                              printf -v p "%02d" $i
+                          done
+                      else
+                          pages="xxx"
+                      fi
+                      isdiff="no"
+                      for p in $pages ; do
+                      if [ ${p} = "xxx" ] ; then
+                          p=""
+                      fi
+		      if [ "@HAVE_CMP_I@" = "ON" ] ; then
+                          if [ "${device}" = "psc" ] || [ "${device}" = "ps" ] ; then
+		              # Skip first 190 bytes of comparison to ignore date stamp.
+			      @CMP_EXECUTABLE@ -s -i 190 x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device}
+                          else
+			      @CMP_EXECUTABLE@ -s x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device}
+                          fi
+			  if [ $? != 0 ] && [ ! "${isdiff}" = "yes" ] ; then
 			    different="${different} ${index}"
+                            isdiff="yes"
 			  fi
 		    else
-		      # Drop first 8 lines from comparison to ignore date stamp.
-			  @TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c.psc > test1.psc
-			  @TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}.psc > test2.psc
-			  @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
-			  if [ $? != 0 ] ; then
+                          if [ "${device}" = "psc" ] || [ "${device}" = "ps" ] ; then
+		              # Drop first 8 lines from comparison to ignore date stamp.
+			      @TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c${p}.${device} > test1.${device}
+			      @TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}${p}.${device} > test2.${device}
+			      @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
+                          else
+			      @DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device} 2>&1 > /dev/null
+                          fi
+			  if [ $? != 0 ] && [ ! "${isdiff}" = "yes" ] ; then
 			    different="${different} ${index}"
+                            isdiff="yes"
 			  fi
 		    fi
+                    done
 		    if [ "$index" != "14a" ] ; then
 			  if [ -f x${xsuffix}${index}${suffix}_psc.txt ] ; then
 			    @DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c_psc.txt x${xsuffix}${index}${suffix}_psc.txt 2>&1 > /dev/null
@@ -136,7 +222,7 @@ for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d plrende
 	  done
 	echo "${lang}"
 	echo "  Missing examples            : ${missing}"
-	echo "  Differing postscript output : ${different}"
+	echo "  Differing graphical output  : ${different}"
 	echo "  Missing stdout              : ${missingstdout}"
 	echo "  Differing stdout            : ${diffstdout}"
 	if [ "${different}" != "" -o "${diffstdout}" != "" ] ; then
@@ -146,5 +232,5 @@ for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d plrende
 done
 
 if [ "${ret}" != "0" ] ; then
-    echo "WARNING: Some PostScript or stdout results were different"
+    echo "WARNING: Some graphical or stdout results were different"
 fi
