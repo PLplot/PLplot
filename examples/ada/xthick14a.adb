@@ -328,7 +328,7 @@ begin
     -- Turn off pause to make this a slave (must follow master)
     Set_Pause(False);
     Set_Device_Name(To_String(driver));
-    Get_File_Family_Parameters(fam, num, bmax);
+    Set_File_Family_Parameters(fam, num, bmax);
     Set_Command_Line_Option("fflen","2");
     Initialize_PLplot;
 

@@ -327,7 +327,7 @@ begin
 
     -- Turn off pause to make this a slave (must follow master)
     plspause(False);
-    plgfam(fam, num, bmax);
+    plsfam(fam, num, bmax);
     plsetopt("fflen","2");
     plsdev(To_String(driver));
     plinit;
