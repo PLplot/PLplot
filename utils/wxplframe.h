@@ -45,6 +45,12 @@ public:
                const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE,
                const wxString &name = wxFrameNameStr );
     ~wxPlFrame();
+	void fixAspect( bool fix );
+	//overloads of SetClientSize that ensure the wxStream size is changed
+	//immediately
+	void SetClientSize ( int width, int height );
+	void SetClientSize ( const wxSize &size );
+	void SetClientSize ( const wxRect &rect );
 private:
     void setupMenus();
     void OnExit( wxCommandEvent& event );

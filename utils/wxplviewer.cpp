@@ -59,7 +59,9 @@ bool wxPlViewerApp::OnInit()
 #endif
     wxPlFrame* frame = new wxPlFrame( NULL, wxID_ANY, wxT( "wxPlViewer" ), file,
         PLINT( fileSize ), wxDefaultPosition, wxDefaultSize );
+	frame->fixAspect( false );
     frame->SetClientSize( width, height );
+	frame->fixAspect( true );
     frame->Show();
     return true;
 }

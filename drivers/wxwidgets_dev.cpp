@@ -113,8 +113,8 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     else
         //assume we will be outputting to the default
         //memory map until we are given a dc to draw to
-        //strcpy(m_mfo, "plplotMemoryMap");
-        strcpy( m_mfo, "plplotMemoryMap??????????" );
+        strcpy(m_mfo, "plplotMemoryMap");
+        //strcpy( m_mfo, "plplotMemoryMap??????????" );
 
     // be verbose and write out debug messages
 #ifdef _DEBUG

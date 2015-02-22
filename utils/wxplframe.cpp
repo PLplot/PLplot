@@ -184,10 +184,31 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 }
 void wxPlFrame::OnToggleFixAspect( wxCommandEvent &event )
 {
-    m_stream.SetFixedAspectRatio( event.IsChecked() );
-    if ( !event.IsChecked() )
+	fixAspect( event.IsChecked() );
+}
+
+void wxPlFrame::fixAspect( bool fix )
+{
+	m_stream.SetFixedAspectRatio( fix );
+    if ( !fix )
         this->Refresh();
 }
+void wxPlFrame::SetClientSize ( int width, int height )
+{
+	wxFrame::SetClientSize( width, height );
+	m_stream.SetSize( width, height );
+}
+
+void wxPlFrame::SetClientSize ( const wxSize &size )
+{
+	SetClientSize( size.GetWidth(), size.GetHeight() );
+}
+
+void wxPlFrame::SetClientSize ( const wxRect &rect )
+{
+	SetClientSize( rect.GetWidth(), rect.GetHeight() );
+}
+
 void wxPlFrame::OnNextPage( wxCommandEvent& event )
 {
     SetPageAndUpdate( m_viewingPage + 1 );
