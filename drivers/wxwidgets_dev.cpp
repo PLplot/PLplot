@@ -1095,7 +1095,7 @@ void wxPLDevice::SetupMemoryMap()
             for ( int i = 0; i < strlen( m_mfo ); ++i )
             {
                 if ( m_mfo[i] == '?' )                               //this is reall a poor imitation of a random number generator.
-                    mapName[i] = 'A' + clock() % 26;                 //Using C++11 generators would be better, but are not supported
+                    mapName[i] = 'A' + (int) ( 26. * plrandd() );    //Using C++11 generators would be better, but are not supported
                 //on some enterpise linux systems at the moment
                 else
                     mapName[i] = m_mfo[i];
