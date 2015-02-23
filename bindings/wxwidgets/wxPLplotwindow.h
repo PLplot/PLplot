@@ -118,12 +118,12 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
     }
 #endif
 
-	PLINT r;
-	PLINT g;
-	PLINT b;
-	m_stream.gcolbg( r, g, b );
-	pldc->SetBackground( wxBrush( wxColour( r, g, b ) ) );
-	pldc->Clear();
+    PLINT r;
+    PLINT g;
+    PLINT b;
+    m_stream.gcolbg( r, g, b );
+    pldc->SetBackground( wxBrush( wxColour( r, g, b ) ) );
+    pldc->Clear();
     m_stream.SetSize( WXWINDOW::GetClientSize().GetWidth(), WXWINDOW::GetClientSize().GetHeight() );
     m_stream.SetDC( pldc );     // This causes a redraw.
     m_stream.SetDC( NULL );     //Reset to NULL to avaoid writing to the wxGCDC after it has been destroyed

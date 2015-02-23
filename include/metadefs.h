@@ -50,25 +50,25 @@
 // NOT delete !!!
 //
 
-#define INITIALIZE         1
-#define CLOSE              2
-#define SWITCH_TO_TEXT     3    // Obsolete, replaced by ESCAPE
-#define SWITCH_TO_GRAPH    4    // Obsolete, replaced by ESCAPE
-#define EOP                5
-#define BOP                6
-#define NEW_COLOR          7    // Obsolete, replaced by CHANGE_STATE
-#define NEW_WIDTH          8    // Obsolete, replaced by CHANGE_STATE
-#define LINE               9
-#define LINETO             10
-#define ESCAPE             11
-#define ADVANCE            12   // Obsolete, BOP/EOP used instead
-#define POLYLINE           13
-#define NEW_COLOR0         NEW_COLOR
-#define NEW_COLOR1         14
-#define CHANGE_STATE       15
-#define BOP0               16   // First BOP in a file
-#define DRIVER_INTERFACE   17
-#define END_OF_FIELD       255
+#define INITIALIZE          1
+#define CLOSE               2
+#define SWITCH_TO_TEXT      3   // Obsolete, replaced by ESCAPE
+#define SWITCH_TO_GRAPH     4   // Obsolete, replaced by ESCAPE
+#define EOP                 5
+#define BOP                 6
+#define NEW_COLOR           7   // Obsolete, replaced by CHANGE_STATE
+#define NEW_WIDTH           8   // Obsolete, replaced by CHANGE_STATE
+#define LINE                9
+#define LINETO              10
+#define ESCAPE              11
+#define ADVANCE             12  // Obsolete, BOP/EOP used instead
+#define POLYLINE            13
+#define NEW_COLOR0          NEW_COLOR
+#define NEW_COLOR1          14
+#define CHANGE_STATE        15
+#define BOP0                16  // First BOP in a file
+#define DRIVER_INTERFACE    17
+#define END_OF_FIELD        255
 
 // Data structures
 

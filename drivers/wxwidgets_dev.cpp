@@ -832,7 +832,6 @@ void wxPLDevice::BeginPage( PLStream* pls )
 //--------------------------------------------------------------------------
 void wxPLDevice::SetSize( PLStream* pls, int width, int height )
 {
-	
     //we call BeginPage, before we fiddle with fixed aspect so that the
     //whole background gets filled
     // get boundary coordinates in plplot units
@@ -852,42 +851,42 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
 
     if ( !m_fixedAspect )
     {
-		m_xAspect = m_scale / m_xScale;
-		m_yAspect = m_scale / m_yScale;
-	}
-	else
-	{
-		//now sort out the fixed aspect and reset the logical scale if needed
-		if ( PLFLT( height ) / PLFLT( width ) > m_yAspect / m_xAspect )
-		{
-			m_scale  = m_xScale * m_xAspect;
-			m_yScale = m_scale / m_yAspect;
-		}
-		else
-		{
-			m_scale  = m_yScale * m_yAspect;
-			m_xScale = m_scale / m_xAspect;
-		}
-	}
-	if ( m_dc )
-		m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
+        m_xAspect = m_scale / m_xScale;
+        m_yAspect = m_scale / m_yScale;
+    }
+    else
+    {
+        //now sort out the fixed aspect and reset the logical scale if needed
+        if ( PLFLT( height ) / PLFLT( width ) > m_yAspect / m_xAspect )
+        {
+            m_scale  = m_xScale * m_xAspect;
+            m_yScale = m_scale / m_yAspect;
+        }
+        else
+        {
+            m_scale  = m_yScale * m_yAspect;
+            m_xScale = m_scale / m_xAspect;
+        }
+    }
+    if ( m_dc )
+        m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
 
-	m_width = (xmax - xmin) / m_xScale;
-	pls->xlength = PLINT( m_width + 0.5 );
-	m_height = (ymax - ymin) / m_yScale;
-	pls->ylength = PLINT( m_height + 0.5 );
+    m_width      = ( xmax - xmin ) / m_xScale;
+    pls->xlength = PLINT( m_width + 0.5 );
+    m_height     = ( ymax - ymin ) / m_yScale;
+    pls->ylength = PLINT( m_height + 0.5 );
 
     // Set the number of plplot pixels per mm
-    plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );		
+    plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );
 
-	pls->aspect = m_yAspect/m_xAspect;
+    pls->aspect = m_yAspect / m_xAspect;
 
     // redraw the plot
     if ( m_dc )
-	{
-		BeginPage( pls );
+    {
+        BeginPage( pls );
         plreplot();
-	}
+    }
 }
 
 

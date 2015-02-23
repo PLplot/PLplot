@@ -469,29 +469,29 @@ plbuf_esc( PLStream *pls, PLINT op, void *ptr )
 //--------------------------------------------------------------------------
 // plbuf_di()
 //
-// Driver interface function. Saves all info needed for a call to pldi_ini() 
+// Driver interface function. Saves all info needed for a call to pldi_ini()
 // e.g.orientation etc.
 //--------------------------------------------------------------------------
 void plbuf_di( PLStream *pls )
 {
-	wr_command( pls, DRIVER_INTERFACE );
+    wr_command( pls, DRIVER_INTERFACE );
 
-	wr_data( pls, &pls->difilt, sizeof( pls->difilt ) );
-	wr_data( pls, &pls->dipxmin, sizeof( pls->dipxmin ) );
-	wr_data( pls, &pls->dipymin, sizeof( pls->dipymin ) );
-	wr_data( pls, &pls->dipxmax, sizeof( pls->dipxmax ) );
-	wr_data( pls, &pls->dipymax, sizeof( pls->dipymax ) );
-	wr_data( pls, &pls->aspect, sizeof( pls->aspect ) );
-	wr_data( pls, &pls->mar, sizeof( pls->mar ) );
-	wr_data( pls, &pls->jx, sizeof( pls->jx ) );
-	wr_data( pls, &pls->jy, sizeof( pls->jy ) );
-	wr_data( pls, &pls->diorot, sizeof( pls->diorot ) );
-	wr_data( pls, &pls->dimxmin, sizeof( pls->dimxmin ) );
-	wr_data( pls, &pls->dimymin, sizeof( pls->dimymin ) );
-	wr_data( pls, &pls->dimxmax, sizeof( pls->dimxmax ) );
-	wr_data( pls, &pls->dimymax, sizeof( pls->dimymax ) );
-	wr_data( pls, &pls->dimxpmm, sizeof( pls->dimxpmm ) );
-	wr_data( pls, &pls->dimypmm, sizeof( pls->dimypmm ) );
+    wr_data( pls, &pls->difilt, sizeof ( pls->difilt ) );
+    wr_data( pls, &pls->dipxmin, sizeof ( pls->dipxmin ) );
+    wr_data( pls, &pls->dipymin, sizeof ( pls->dipymin ) );
+    wr_data( pls, &pls->dipxmax, sizeof ( pls->dipxmax ) );
+    wr_data( pls, &pls->dipymax, sizeof ( pls->dipymax ) );
+    wr_data( pls, &pls->aspect, sizeof ( pls->aspect ) );
+    wr_data( pls, &pls->mar, sizeof ( pls->mar ) );
+    wr_data( pls, &pls->jx, sizeof ( pls->jx ) );
+    wr_data( pls, &pls->jy, sizeof ( pls->jy ) );
+    wr_data( pls, &pls->diorot, sizeof ( pls->diorot ) );
+    wr_data( pls, &pls->dimxmin, sizeof ( pls->dimxmin ) );
+    wr_data( pls, &pls->dimymin, sizeof ( pls->dimymin ) );
+    wr_data( pls, &pls->dimxmax, sizeof ( pls->dimxmax ) );
+    wr_data( pls, &pls->dimymax, sizeof ( pls->dimymax ) );
+    wr_data( pls, &pls->dimxpmm, sizeof ( pls->dimxpmm ) );
+    wr_data( pls, &pls->dimypmm, sizeof ( pls->dimypmm ) );
 }
 
 //--------------------------------------------------------------------------
@@ -993,35 +993,35 @@ rdbuf_swin( PLStream *pls )
 static void
 rdbuf_di( PLStream *pls )
 {
-	PLINT difilt;
-	PLFLT rot;
-	PLFLT dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm;
-	PLFLT dipxmin, dipymin, dipxmax, dipymax;
-	PLFLT aspect, mar, jx, jy;
-	rd_data( pls, &difilt, sizeof( difilt ) );
-	rd_data( pls, &dipxmin, sizeof( dipxmin ) );
-	rd_data( pls, &dipymin, sizeof( dipymin ) );
-	rd_data( pls, &dipxmax, sizeof( dipxmax ) );
-	rd_data( pls, &dipymax, sizeof( dipymax ) );
-	rd_data( pls, &aspect, sizeof( aspect ) );
-	rd_data( pls, &mar, sizeof( mar ) );
-	rd_data( pls, &jx, sizeof( jx ) );
-	rd_data( pls, &jy, sizeof( jy ) );
-	rd_data( pls, &rot, sizeof( rot ) );
-	rd_data( pls, &dimxmin, sizeof( dimxmin ) );
-	rd_data( pls, &dimymin, sizeof( dimymin ) );
-	rd_data( pls, &dimxmax, sizeof( dimxmax ) );
-	rd_data( pls, &dimymax, sizeof( dimymax ) );
-	rd_data( pls, &dimxpmm, sizeof( dimxpmm ) );
-	rd_data( pls, &dimypmm, sizeof( dimypmm ) );
-	if( difilt & PLDI_MAP )
-		c_plsdimap( dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm );
-	if ( difilt & PLDI_ORI )
-		c_plsdiori( rot );
-	if ( plsc->difilt & PLDI_PLT )
-		c_plsdiplt( dipxmin, dipymin, dipxmax, dipymax );
-	if ( plsc->difilt & PLDI_DEV )
-		c_plsdidev( mar, aspect, jx, jy );
+    PLINT difilt;
+    PLFLT rot;
+    PLFLT dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm;
+    PLFLT dipxmin, dipymin, dipxmax, dipymax;
+    PLFLT aspect, mar, jx, jy;
+    rd_data( pls, &difilt, sizeof ( difilt ) );
+    rd_data( pls, &dipxmin, sizeof ( dipxmin ) );
+    rd_data( pls, &dipymin, sizeof ( dipymin ) );
+    rd_data( pls, &dipxmax, sizeof ( dipxmax ) );
+    rd_data( pls, &dipymax, sizeof ( dipymax ) );
+    rd_data( pls, &aspect, sizeof ( aspect ) );
+    rd_data( pls, &mar, sizeof ( mar ) );
+    rd_data( pls, &jx, sizeof ( jx ) );
+    rd_data( pls, &jy, sizeof ( jy ) );
+    rd_data( pls, &rot, sizeof ( rot ) );
+    rd_data( pls, &dimxmin, sizeof ( dimxmin ) );
+    rd_data( pls, &dimymin, sizeof ( dimymin ) );
+    rd_data( pls, &dimxmax, sizeof ( dimxmax ) );
+    rd_data( pls, &dimymax, sizeof ( dimymax ) );
+    rd_data( pls, &dimxpmm, sizeof ( dimxpmm ) );
+    rd_data( pls, &dimypmm, sizeof ( dimypmm ) );
+    if ( difilt & PLDI_MAP )
+        c_plsdimap( dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm );
+    if ( difilt & PLDI_ORI )
+        c_plsdiori( rot );
+    if ( plsc->difilt & PLDI_PLT )
+        c_plsdiplt( dipxmin, dipymin, dipxmax, dipymax );
+    if ( plsc->difilt & PLDI_DEV )
+        c_plsdidev( mar, aspect, jx, jy );
 }
 
 //--------------------------------------------------------------------------
@@ -1240,9 +1240,9 @@ plbuf_control( PLStream *pls, U_CHAR c )
         rdbuf_esc( pls );
         break;
 
-	case DRIVER_INTERFACE:
-		rdbuf_di( pls );
-		break;
+    case DRIVER_INTERFACE:
+        rdbuf_di( pls );
+        break;
 
     // Obsolete commands, left here to maintain compatibility with previous
     // version of plot metafiles
