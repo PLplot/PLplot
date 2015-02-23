@@ -42,7 +42,7 @@ end subroutine plstrf2c
 !--------------------------------------------------------------------------
 ! plstrf2c_esc()
 !
-! Converts Fortran string to C format, substituting a carriage return for \n
+! Converts Fortran string to C format, substituting a line feed for \n
 !--------------------------------------------------------------------------
 
 subroutine plstrf2c_esc(string1, string2)
@@ -59,7 +59,7 @@ subroutine plstrf2c_esc(string1, string2)
     do
         k = index( string2, '\n' )
         if ( k > 0 ) then
-            string2 = string2(1:k-1) // char(13) // string2(k+2:)
+            string2 = string2(1:k-1) // char(10) // string2(k+2:)
         else
             exit
         endif
