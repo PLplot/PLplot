@@ -23,6 +23,16 @@
 #define DEBUG
 #define NEED_PLDEBUG
 
+//headers needed for Rand
+#ifdef WIN32
+//this include must occur before any other include of stdlib.h
+//due to the #define _CRT_RAND_S
+#define _CRT_RAND_S
+#include <stdlib.h>
+#else
+#include <fstream>
+#endif
+
 //plplot headers
 #include "plDevs.h"
 #include "wxwidgets.h" // includes wx/wx.h
@@ -84,6 +94,59 @@ private:
     wxDC *m_dc;
     long m_xOriginOld;
     long m_yOriginOld;
+};
+
+//--------------------------------------------------------------------------
+// class Rand
+// This is a simple random number generator class, created soley so that
+// random numbers can be generated in this file without "contaminating" the
+// global series of random numbers with a new seed.
+// It uses an algorithm that apparently used to be used in gcc rand()
+// provided under GNU LGPL v2.1.
+//---------------------------------------------------------------------------
+class Rand
+{
+public:
+	Rand()
+	{
+#ifdef WIN32
+		rand_s( &m_seed );
+#else
+		std::fstream fin( "/dev/random", std::ios::in );
+		fin.read( (char*)(&m_seed), sizeof( m_seed);
+		fin.close();
+#endif
+	}
+	Rand( unsigned int seed )
+	{
+		m_seed = seed;
+	}
+	unsigned int operator()()
+	{
+		unsigned int next = m_seed;
+		int result;
+
+		next *= 1103515245;
+		next += 12345;
+		result = (unsigned int) (next / max) % 2048;
+
+		next *= 1103515245;
+		next += 12345;
+		result <<= 10;
+		result ^= (unsigned int) (next / max) % 1024;
+
+		next *= 1103515245;
+		next += 12345;
+		result <<= 10;
+		result ^= (unsigned int) (next / max) % 1024;
+
+		m_seed = next;
+
+		return result;
+	}
+	static const unsigned int max = 65536;
+private:
+	unsigned int m_seed;
 };
 
 //--------------------------------------------------------------------------
@@ -1065,13 +1128,13 @@ void wxPLDevice::SetupMemoryMap()
         int          nTries = 0;
         char         mapName[PLPLOT_MAX_PATH];
         char         mutexName[PLPLOT_MAX_PATH];
+		static Rand  randomGenerator; // make this static so that rapid repeat calls don't use the same seed
         while ( nTries < 10 )
         {
             for ( int i = 0; i < strlen( m_mfo ); ++i )
             {
-                if ( m_mfo[i] == '?' )                               //this is reall a poor imitation of a random number generator.
-                    mapName[i] = 'A' + (int) ( 26. * plrandd() );    //Using C++11 generators would be better, but are not supported
-                //on some enterpise linux systems at the moment
+                if ( m_mfo[i] == '?' )
+					mapName[i] = 'A' + (char) ( randomGenerator() % 26 );
                 else
                     mapName[i] = m_mfo[i];
             }
