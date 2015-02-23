@@ -1158,7 +1158,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 
     // From here on must use x_modified and y_modified rather than
     // x and y.
-    if ( ( opt & BASE_CONT ) || ( opt & TOP_CONT ) || ( opt && MAG_COLOR ) )
+    if ( ( opt & BASE_CONT ) || ( opt & TOP_CONT ) || ( opt & MAG_COLOR ) )
     {
         //
         // Don't use the data z value to scale the color, use the z axis

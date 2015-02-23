@@ -155,7 +155,7 @@ plP_subpInit( void )
               ( plsc->phyyma - plsc->phyymi ) / plsc->ypmm ) / 200.0;
 
     // Take account of scaling caused by change of orientation
-    if ( plsc->difilt && PLDI_ORI )
+    if ( plsc->difilt & PLDI_ORI )
     {
         theta = 0.5 * M_PI * plsc->diorot;
         rat   = ( ( plsc->phyxma - plsc->phyxmi ) / plsc->xpmm ) /
