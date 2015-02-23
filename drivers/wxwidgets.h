@@ -84,16 +84,6 @@ private:
     PLFLT       m_scale;   //MAX(m_scalex, m_scaley)
     bool        m_fixedAspect;
 
-    // Flags indicating change of state before we have a DC.
-    bool m_plstate_width;
-    bool m_plstate_color;
-
-    //these are not being used at the current time
-    //PLGraphicsIn gin;                   // Graphics input structure
-    //int          locate_mode;           // Set while in locate mode
-    //bool         draw_xhair;            // Set during xhair draws
-
-
     // font variables
     static const int m_max_string_length = 500;
     wxFont           *m_font;

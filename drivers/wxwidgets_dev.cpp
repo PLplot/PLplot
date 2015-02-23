@@ -95,12 +95,7 @@ private:
 wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     : m_plplotEdgeLength( PLFLT( SHRT_MAX ) )
 {
-    m_plstate_width = false;
-    m_plstate_color = false;
-
     m_fixedAspect = false;
-    //locate_mode = 0;
-    //draw_xhair  = false;
 
     m_font        = NULL;
     m_lineSpacing = 1.0;
@@ -326,10 +321,7 @@ void wxPLDevice::SetWidth( PLStream *pls )
     //Note that calls to this function before we have a DC should be honoured
     //Save a flag to grab the value from the PLStream after creation.
     if ( !m_dc )
-    {
-        m_plstate_width = true;
         return;
-    }
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
                          width, wxSOLID ) ) );
@@ -337,19 +329,16 @@ void wxPLDevice::SetWidth( PLStream *pls )
 
 
 //--------------------------------------------------------------------------
-//  void wxPLDevice::SetColor0( PLStream *pls )
+//  void wxPLDevice::SetColor( PLStream *pls )
 //
-//  Set color from colormap 0.
+//  Set color from PLStream.
 //--------------------------------------------------------------------------
 void wxPLDevice::SetColor( PLStream *pls )
 {
     //Note that calls to this function before we have a DC should be honoured
     //Save a flag to grab the value from the PLStream after creation.
     if ( !m_dc )
-    {
-        m_plstate_color = true;
         return;
-    }
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
                          width, wxSOLID ) ) );
@@ -832,16 +821,9 @@ void wxPLDevice::BeginPage( PLStream* pls )
 
     ClearBackground( pls );
 
-    // Replay escape calls that come in before PLESC_DEVINIT.  All of them
-    // required a DC that didn't exist yet.
-    //
-    if ( m_plstate_width )
-        SetWidth( pls );
-    if ( m_plstate_color )
-        SetColor( pls );
-
-    m_plstate_width = false;
-    m_plstate_color = false;
+    // Get the starting colour and width from the stream
+    SetWidth( pls );
+    SetColor( pls );
 }
 
 //--------------------------------------------------------------------------
