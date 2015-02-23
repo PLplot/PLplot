@@ -1556,6 +1556,8 @@ pldi_ini( void )
 {
     if ( plsc->level >= 1 )
     {
+		if ( plsc->plbuf_write )
+			plbuf_di( plsc );
         if ( plsc->difilt & PLDI_MAP )  // Coordinate mapping
             calc_dimap();
 

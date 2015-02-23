@@ -113,8 +113,8 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     else
         //assume we will be outputting to the default
         //memory map until we are given a dc to draw to
-        strcpy(m_mfo, "plplotMemoryMap");
-        //strcpy( m_mfo, "plplotMemoryMap??????????" );
+        //strcpy(m_mfo, "plplotMemoryMap");
+        strcpy( m_mfo, "plplotMemoryMap??????????" );
 
     // be verbose and write out debug messages
 #ifdef _DEBUG
@@ -850,68 +850,62 @@ void wxPLDevice::BeginPage( PLStream* pls )
 //--------------------------------------------------------------------------
 void wxPLDevice::SetSize( PLStream* pls, int width, int height )
 {
-    // set new size and scale parameters
-    m_width  = pls->xlength = width;
-    m_height = pls->ylength = height;
-
+	
+    //we call BeginPage, before we fiddle with fixed aspect so that the
+    //whole background gets filled
     // get boundary coordinates in plplot units
     PLINT xmin;
     PLINT xmax;
     PLINT ymin;
     PLINT ymax;
     plP_gphy( &xmin, &xmax, &ymin, &ymax );
-    m_xScale = m_width > 0 ? (PLFLT) ( xmax - xmin ) / (PLFLT) width : 0.0;
-    m_yScale = m_height > 0 ? (PLFLT) ( ymax - ymin ) / (PLFLT) height : 0.0;
-
     //split the scaling into an overall scale, the same in both dimensions
     //and an aspect part which differs in both directions.
     //We will apply the aspect ratio part, and let the DC do the overall
     //scaling. This gives us subpixel accuray, but ensures line thickness
     //remains consistent in both directions
+    m_xScale = width > 0 ? (PLFLT) ( xmax - xmin ) / (PLFLT) width : 0.0;
+    m_yScale = height > 0 ? (PLFLT) ( ymax - ymin ) / (PLFLT) height : 0.0;
+    m_scale  = MIN( m_xScale, m_yScale );
 
-    //Initially assume we have not got fixed aspect, until after we call clear.
-    //This ensures the whole plot gets cleared. But save the original aspect
-    PLFLT xAspectOriginal = m_xAspect;
-    PLFLT yAspectOriginal = m_yAspect;
-    m_scale   = MIN( m_xScale, m_yScale );
-    m_xAspect = m_scale / m_xScale;
-    m_yAspect = m_scale / m_yScale;
+    if ( !m_fixedAspect )
+    {
+		m_xAspect = m_scale / m_xScale;
+		m_yAspect = m_scale / m_yScale;
+	}
+	else
+	{
+		//now sort out the fixed aspect and reset the logical scale if needed
+		if ( PLFLT( height ) / PLFLT( width ) > m_yAspect / m_xAspect )
+		{
+			m_scale  = m_xScale * m_xAspect;
+			m_yScale = m_scale / m_yAspect;
+		}
+		else
+		{
+			m_scale  = m_yScale * m_yAspect;
+			m_xScale = m_scale / m_xAspect;
+		}
+	}
+	if ( m_dc )
+		m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
+
+	m_width = (xmax - xmin) / m_xScale;
+	pls->xlength = PLINT( m_width + 0.5 );
+	m_height = (ymax - ymin) / m_yScale;
+	pls->ylength = PLINT( m_height + 0.5 );
 
     // Set the number of plplot pixels per mm
-    plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );
+    plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );		
 
-    //we call BeginPage, before we fiddle with fixed aspect so that the
-    //whole background gets filled
-    if ( m_dc )
-    {
-        //we use the dc to do the basic scaling as it then gives us subpixel accuracy
-        m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
-        BeginPage( pls );
-    }
-
-    //now sort out the fixed aspect and reset the logical scale if needed
-
-    if ( m_fixedAspect )
-    {
-        m_xAspect = xAspectOriginal;
-        m_yAspect = yAspectOriginal;
-        if ( PLFLT( m_height ) / PLFLT( m_width ) > m_yAspect / m_xAspect )
-        {
-            m_scale  = m_xScale * m_xAspect;
-            m_yScale = m_scale / m_yAspect;
-        }
-        else
-        {
-            m_scale  = m_yScale * m_yAspect;
-            m_xScale = m_scale / m_xAspect;
-        }
-        if ( m_dc )
-            m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
-    }
+	pls->aspect = m_yAspect/m_xAspect;
 
     // redraw the plot
     if ( m_dc )
+	{
+		BeginPage( pls );
         plreplot();
+	}
 }
 
 

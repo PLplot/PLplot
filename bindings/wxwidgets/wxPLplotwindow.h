@@ -51,7 +51,7 @@ protected:
     virtual void OnErase( wxEraseEvent &event );         //!< Background erase event
     virtual void OnCreate( wxWindowCreateEvent &event ); //!< Window created event
     bool           m_created;                            //!< Flag to indicate the window has been Created, must be above m_stream so it gets initialised first
-    wxPLplotstream m_stream;                             //!< Pointer to the wxPLplotstream which belongs to this plot widget
+    wxPLplotstream m_stream;                             //!< The wxPLplotstream which belongs to this plot widget
 
 private:
     bool m_useGraphicsContext;       //!< Flag to indicate whether we should use a wxGCDC
@@ -118,6 +118,12 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
     }
 #endif
 
+	PLINT r;
+	PLINT g;
+	PLINT b;
+	m_stream.gcolbg( r, g, b );
+	pldc->SetBackground( wxBrush( wxColour( r, g, b ) ) );
+	pldc->Clear();
     m_stream.SetSize( WXWINDOW::GetClientSize().GetWidth(), WXWINDOW::GetClientSize().GetHeight() );
     m_stream.SetDC( pldc );     // This causes a redraw.
     m_stream.SetDC( NULL );     //Reset to NULL to avaoid writing to the wxGCDC after it has been destroyed
