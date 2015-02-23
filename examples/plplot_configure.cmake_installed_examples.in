@@ -19,6 +19,7 @@ include(plplot_functions)
 include(pkg-config)
 
 set(INCLUDE_DIR "@INCLUDE_DIR@")
+set(CMAKE_PREFIX_PATH "@CMAKE_INSTALL_PREFIX@")
 set(MATH_LIB @MATH_LIB@)
 set(SH_EXECUTABLE @SH_EXECUTABLE@)
 
