@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2014 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -286,9 +286,22 @@ if(SH_EXECUTABLE)
 	)
       list(APPEND examples_compare_DEPENDS examples_tcl)
     endif(PLD_TEST_DEVICE)
+
     set(PLTCL_DIR ${BIN_DIR})
-    # Transform drive-letter form to leading-slash form, see comment above.
-    string(REGEX REPLACE "^(.):" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+    if(CYGWIN OR MINGW OR MSYS)
+      # Experience primarly with MSYS bash but also Cygwin shows that
+      # variables used to set a PATH component must transform the
+      # drive-letter form to the leading-slash Unix form of the PATH
+      # component.
+      # Note the case of the drive letter doesn't matter.  For example
+      # converting z:/whatever/path ==> /z/whatever/path or
+      # /Z/whatever/path works fine for MSYS bash.
+      string(REGEX REPLACE "^(.):/" "/\\1/" PLTCL_DIR ${PLTCL_DIR})
+      message(STATUS "PLTCL_DIR=${PLTCL_DIR}")
+    endif(CYGWIN OR MINGW OR MSYS)
+
+    string(REPLACE " " "\\ " PLTCL_DIR_ESCAPED ${PLTCL_DIR})
+    message(STATUS "PLTCL_DIR_ESCAPED=${PLTCL_DIR_ESCAPED}")
 
     configure_file(test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh_install
