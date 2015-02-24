@@ -452,10 +452,12 @@ if(SH_EXECUTABLE)
   endif(PLD_png)
 
   if(PLD_svg)
+    if (NOT TEST_DEVICE STREQUAL "svg")
     add_test(NAME examples_svg
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
       )
+    endif (NOT TEST_DEVICE STREQUAL "svg")
   endif(PLD_svg)
 
   if(PLD_plmeta)
@@ -574,7 +576,7 @@ if(SH_EXECUTABLE)
     string(REPLACE " " "\\ " TEST_DIFF_SH "${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh")
     add_test(NAME examples_compare
       WORKING_DIRECTORY ${CTEST_EXAMPLES_OUTPUT_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_DIFF_SH}"
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_DIFF_SH} --device=${TEST_DEVICE}"
       )
     # There is a bug in 2.8.x with x < 5 where tests are run out of
     # the order in which they are declared by default.  Also, 2.8.x
