@@ -76,9 +76,21 @@ add_executable(parity_bit_check parity_bit_check.c)
 if(ENABLE_wxwidgets)
 # Build wxwidgets applications with same wxwidgets compile and link flags
 # as used with the PLplot wxwidgets device driver.
-  if(UNIX)
-    set(RT_LIB rt)
-  endif(UNIX)
+
+# Do not mention the rt library on Mac OS X because it causes linking issues
+# there.  Also, there may be no need to explicitly mention rt on other Unix
+# systems.  It is definitely not required on Debian stable, and it is not
+# mentioned at all for the wxwidgets linking.  Therefore comment out
+# any mention for now, but restore if it turns out some Unix system other
+# than Mac OS X actually needs rt explicitly mentioned just for this
+# wxPLViewer case but not for the wxwidgets case.
+  if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#    set(RT_LIB rt)
+    set(RT_LIB)
+  else(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(RT_LIB)
+  endif(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+
   set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp ${CMAKE_SOURCE_DIR}/drivers/wxwidgets_comms.cpp)
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(${wxPLViewer_SRCS}
