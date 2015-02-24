@@ -74,7 +74,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     m_plottedBufferAmount = 0;
     //signal that we have opened the file
     *( (size_t *) m_memoryMap.getBuffer() + 2 ) = 1;
-    m_checkTimer.Start( 100 );
+	m_checkTimer.Start( m_idleTimerInterval );
 }
 
 void wxPlFrame::setupMenus()
@@ -129,8 +129,20 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
         size_t &           readLocation  = *( (size_t *) ( m_memoryMap.getBuffer() ) );
         size_t &           writeLocation = *( (size_t *) ( m_memoryMap.getBuffer() ) + 1 );
         //Check if there is anything to read
-        if ( readLocation == writeLocation )
+		if ( readLocation == writeLocation )
+		{
+			if( m_currentTimerInterval != m_idleTimerInterval )
+			{
+				m_checkTimer.Stop();
+				m_checkTimer.Start( m_idleTimerInterval );
+			}
             return;
+		}
+		else if( m_currentTimerInterval != m_busyTimerInterval )
+		{
+			m_checkTimer.Stop();
+			m_checkTimer.Start( m_busyTimerInterval );
+		}
 
         unsigned char transmissionType;
         transmissionType = *( (unsigned char *) ( m_memoryMap.getBuffer() + readLocation ) );
@@ -172,9 +184,10 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             else
                 m_bufferValidFlags[m_writingPage] = false;
 
-            //if we have a lot of buffer unplotted then plot it so we don't look like we are doing nothing
+            //if we have new buffer unplotted then it is due to either a flush, or we have so much
+			// data we have wrapped the buffer or we have had a flush so plot the buffer
             if ( m_writingPage == m_viewingPage &&
-                 ( m_plottedBufferAmount + 1024 * 1024 ) < m_pageBuffers[ m_writingPage ].size() )
+                 ( m_plottedBufferAmount + 1024 ) < m_pageBuffers[ m_writingPage ].size() )
                 SetPageAndUpdate();
         }
         readLocation += nRead;

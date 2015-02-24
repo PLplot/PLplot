@@ -398,7 +398,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_FLUSH:        // forced update of the window
-        //currently does nothing
+		dev->Flush( pls );
         break;
 
     case PLESC_GETC:

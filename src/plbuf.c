@@ -593,6 +593,8 @@ rdbuf_bop( PLStream *pls )
     // No need to handle the colormaps because the PLSTATE_* command
     // was used to save the colormaps, thus reading the buffer will
     // execute the command
+
+	plP_bop(); 
 }
 
 //--------------------------------------------------------------------------

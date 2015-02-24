@@ -305,12 +305,12 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 //--------------------------------------------------------------------------
 void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-    if ( !m_dc )
-        return;
-
-    PLINT bgr, bgg, bgb;                  // red, green, blue
-    plgcolbg( &bgr, &bgg, &bgb );         // get background color information
-
+	//do a draw rectangle instead of actually clearing the background here
+	//and do it via plplot functions.
+	//This ensures that this command gets saved to the buffer with the correct 
+	//dimensions. Otherwise a clear command has no subpage dimensions and we 
+	//have no idea what to do with it.
+	
     x1 = x1 < 0 ? 0 : x1;
     x2 = x2 < 0 ? m_plplotEdgeLength : x2;
     y1 = y1 < 0 ? 0 : y1;
@@ -321,16 +321,28 @@ void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, P
     PLINT         width  = abs( x1 - x2 );
     PLINT         height = abs( y1 - y2 );
 
-    const wxPen   oldPen   = m_dc->GetPen();
-    const wxBrush oldBrush = m_dc->GetBrush();
-
-    m_dc->SetPen( wxNullPen );
-
-    m_dc->SetBrush( wxBrush( wxColour( bgr, bgg, bgb ) ) );
-    m_dc->DrawRectangle( x, y, width, height );
-
-    m_dc->SetPen( oldPen );
-    m_dc->SetBrush( oldBrush );
+	short xs[5];
+	short ys[5];
+	xs[0] = x;
+	ys[0] = y;
+	xs[1] = x + width;
+	ys[1] = y;
+	xs[2] = x + width;
+	ys[2] = y + height;
+	xs[3] = x;
+	ys[3] = y + height;
+	xs[4] = x;
+	ys[4] = y;
+	if( width > 0 && height > 0 )
+	{
+		PLINT oldColor = pls->icol0;
+		PLINT oldPatt  = pls->patt;
+		plcol0( 0 );
+		plpsty( 0 );
+		plP_fill( xs, ys, 4 );
+		plcol0( oldColor );
+		plpsty( oldPatt );
+	}
 }
 
 
@@ -946,16 +958,19 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
 
     // redraw the plot
     if ( m_dc )
-    {
-        BeginPage( pls );
         plreplot();
-    }
 }
 
 
 void wxPLDevice::FixAspectRatio( bool fix )
 {
     m_fixedAspect = fix;
+}
+
+void wxPLDevice::Flush( PLStream *pls )
+{
+	if( !m_dc )
+		TransmitBuffer( pls, transmissionComplete );
 }
 
 //This function transmits the remaining buffer to the gui program via a memory map
@@ -1076,11 +1091,11 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                 //copy the header and the amount we can to the buffer
                 if ( copyAmount != amountToCopy )
                     memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
-                        (char *) ( &transmissionPartial ), sizeof ( copyAmount ) );
+                        (char *) ( &transmissionPartial ), sizeof ( transmissionPartial ) );
                 else
                     memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
-                        (char *) ( &transmissionComplete ), sizeof ( copyAmount ) );
-                memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation + sizeof ( transmissionType ),
+                        (char *) ( &transmissionComplete ), sizeof ( transmissionComplete ) );
+                memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation + sizeof ( transmissionComplete ),
                     (char *) ( &copyAmount ), sizeof ( copyAmount ) );
                 memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation + headerSize,
                     (char *) pls->plbuf_buffer + m_localBufferPosition, copyAmount );
