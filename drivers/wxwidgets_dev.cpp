@@ -113,7 +113,7 @@ public:
 		rand_s( &m_seed );
 #else
 		std::fstream fin( "/dev/random", std::ios::in );
-		fin.read( (char*)(&m_seed), sizeof( m_seed);
+		fin.read( (char*)(&m_seed), sizeof( m_seed) );
 		fin.close();
 #endif
 	}
