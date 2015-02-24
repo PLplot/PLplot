@@ -2,6 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2007 Werner Smekal
+# Copyright (C) 2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -70,7 +71,8 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
 
   target_link_libraries(
     plplotwxwidgets
-    plplotcxx 
+    plplot
+    plplotcxx
     ${wxwidgets_LINK_FLAGS}
     )
 
