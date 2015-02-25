@@ -71,9 +71,11 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     }
 
     m_locateMode          = false;
+	m_transferComplete = false;
     m_plottedBufferAmount = 0;
     //signal that we have opened the file
-    *( (size_t *) m_memoryMap.getBuffer() + 2 ) = 1;
+	MemoryMapHeader *header = (MemoryMapHeader*)(m_memoryMap.getBuffer());
+	header->viewerOpenFlag = 1;
 	m_checkTimer.Start( m_idleTimerInterval );
 }
 
@@ -126,31 +128,46 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
     {
         //lock the mutex for the duration of this scope
         PLNamedMutexLocker locker( &m_mutex );
-        size_t &           readLocation  = *( (size_t *) ( m_memoryMap.getBuffer() ) );
-        size_t &           writeLocation = *( (size_t *) ( m_memoryMap.getBuffer() ) + 1 );
+		MemoryMapHeader *header = (MemoryMapHeader*)(m_memoryMap.getBuffer());
         //Check if there is anything to read
-		if ( readLocation == writeLocation )
+		if ( header->readLocation == header->writeLocation )
 		{
-			if( m_currentTimerInterval != m_idleTimerInterval )
+			if( header->completeFlag != 0 )
 			{
+				//if there is nothing to read and the complete flag is set then
+				// stop looking
+				m_transferComplete = true;
+				m_checkTimer.Stop();
+			}
+			else if( m_currentTimerInterval != m_idleTimerInterval )
+			{
+				//if there is nothing to read but we might have more to come
+				//then check less frequently
 				m_checkTimer.Stop();
 				m_checkTimer.Start( m_idleTimerInterval );
+				m_currentTimerInterval = m_idleTimerInterval;
 			}
+
+			//nothing to do so return
             return;
 		}
-		else if( m_currentTimerInterval != m_busyTimerInterval )
+
+		if( m_currentTimerInterval != m_busyTimerInterval )
 		{
+			//If we have something to read then make sure
+			//we keep checking regularly for more
 			m_checkTimer.Stop();
 			m_checkTimer.Start( m_busyTimerInterval );
+			m_currentTimerInterval = m_busyTimerInterval;
 		}
 
         unsigned char transmissionType;
-        transmissionType = *( (unsigned char *) ( m_memoryMap.getBuffer() + readLocation ) );
+        transmissionType = *( (unsigned char *) ( m_memoryMap.getBuffer() + header->readLocation ) );
         size_t        nRead = sizeof ( unsigned char );
 
         if ( transmissionType == transmissionSkipFileEnd )
         {
-            readLocation = plMemoryMapReservedSpace;
+            header->readLocation = plMemoryMapReservedSpace;
             return;
         }
         else if ( transmissionType == transmissionBeginPage )
@@ -173,11 +190,11 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
         else if ( transmissionType == transmissionPartial || transmissionType == transmissionComplete )
         {
             size_t dataSize;
-            dataSize = *(size_t *) ( (unsigned char *) ( m_memoryMap.getBuffer() + readLocation +
+            dataSize = *(size_t *) ( (unsigned char *) ( m_memoryMap.getBuffer() + header->readLocation +
                                                          sizeof ( transmissionType ) ) );
             m_pageBuffers[m_writingPage].insert( m_pageBuffers[m_writingPage].end(),
-                m_memoryMap.getBuffer() + readLocation + sizeof ( transmissionType ) + sizeof ( dataSize ),
-                m_memoryMap.getBuffer() + readLocation + sizeof ( transmissionType ) + sizeof ( dataSize ) + dataSize );
+                m_memoryMap.getBuffer() + header->readLocation + sizeof ( transmissionType ) + sizeof ( dataSize ),
+                m_memoryMap.getBuffer() + header->readLocation + sizeof ( transmissionType ) + sizeof ( dataSize ) + dataSize );
             nRead += sizeof ( dataSize ) + dataSize;
             if ( transmissionType == transmissionComplete )
                 m_bufferValidFlags[m_writingPage] = true;
@@ -190,9 +207,9 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
                  ( m_plottedBufferAmount + 1024 ) < m_pageBuffers[ m_writingPage ].size() )
                 SetPageAndUpdate();
         }
-        readLocation += nRead;
-        if ( readLocation == m_memoryMap.getSize() )
-            readLocation = plMemoryMapReservedSpace;
+        header->readLocation += nRead;
+        if ( header->readLocation == m_memoryMap.getSize() )
+            header->readLocation = plMemoryMapReservedSpace;
     }
 }
 void wxPlFrame::OnToggleFixAspect( wxCommandEvent &event )
@@ -241,32 +258,33 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
     if ( m_locateMode && event.ButtonDown() )
     {
         PLNamedMutexLocker locker( &m_mutex );
+		MemoryMapHeader *header = (MemoryMapHeader*)m_memoryMap.getBuffer();
         wxSize             clientSize = GetClientSize();
-        PLGraphicsIn &     graphicsIn = *(PLGraphicsIn *) ( ( (size_t *) m_memoryMap.getBuffer() ) + 4 );
-        graphicsIn.pX = m_cursorPosition.x;
-        graphicsIn.pY = m_cursorPosition.y;
-        graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
-        graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
+		//PLGraphicsIn &     graphicsIn = header->graphicsIn;
+        header->graphicsIn.pX = m_cursorPosition.x;
+        header->graphicsIn.pY = m_cursorPosition.y;
+        header->graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
+        header->graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
 
         if ( event.LeftDown() )
         {
-            graphicsIn.button = 1;      // X11/X.h: #define Button1	1
-            graphicsIn.state  = 1 << 8; // X11/X.h: #define Button1Mask	(1<<8)
+            header->graphicsIn.button = 1;      // X11/X.h: #define Button1	1
+            header->graphicsIn.state  = 1 << 8; // X11/X.h: #define Button1Mask	(1<<8)
         }
         else if ( event.MiddleDown() )
         {
-            graphicsIn.button = 2;      // X11/X.h: #define Button2	2
-            graphicsIn.state  = 1 << 9; // X11/X.h: #define Button2Mask	(1<<9)
+            header->graphicsIn.button = 2;      // X11/X.h: #define Button2	2
+            header->graphicsIn.state  = 1 << 9; // X11/X.h: #define Button2Mask	(1<<9)
         }
         else if ( event.RightDown() )
         {
-            graphicsIn.button = 3;       // X11/X.h: #define Button3	3
-            graphicsIn.state  = 1 << 10; // X11/X.h: #define Button3Mask	(1<<10)
+            header->graphicsIn.button = 3;       // X11/X.h: #define Button3	3
+            header->graphicsIn.state  = 1 << 10; // X11/X.h: #define Button3Mask	(1<<10)
         }
 
-        graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
+        header->graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
-        *( ( (size_t *) m_memoryMap.getBuffer() ) + 3 ) = 0;
+		header->locateModeFlag = 0;
         m_locateMode = false;
     }
 }
@@ -277,24 +295,24 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
     if ( m_locateMode )
     {
         PLNamedMutexLocker locker( &m_mutex );
-        PLGraphicsIn &     graphicsIn = *(PLGraphicsIn *) ( ( (size_t *) m_memoryMap.getBuffer() ) + 4 );
+		MemoryMapHeader *header = (MemoryMapHeader*)m_memoryMap.getBuffer();
 
         wxSize             clientSize = GetClientSize();
 
-        graphicsIn.pX = m_cursorPosition.x;
-        graphicsIn.pY = m_cursorPosition.y;
-        graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
-        graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
+        header->graphicsIn.pX = m_cursorPosition.x;
+        header->graphicsIn.pY = m_cursorPosition.y;
+        header->graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
+        header->graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
         // gin->state = keyEvent->state;
 
         int keycode = event.GetKeyCode();
-        graphicsIn.string[0] = (char) keycode;
-        graphicsIn.string[1] = '\0';
+        header->graphicsIn.string[0] = (char) keycode;
+        header->graphicsIn.string[1] = '\0';
 
         // ESCAPE, RETURN, etc. are already in ASCII equivalent
-        graphicsIn.keysym = keycode;
-
-        *( ( (size_t *) m_memoryMap.getBuffer() ) + 3 ) = 0;
+        header->graphicsIn.keysym = keycode;
+		
+		header->locateModeFlag = 0;
         m_locateMode = false;
     }
 }
@@ -307,7 +325,8 @@ void wxPlFrame::SetPageAndUpdate( size_t page )
     {
         if ( page >= m_pageBuffers.size() )
         {
-            Close();
+			if ( m_transferComplete )
+				Close();
             return;
         }
         if ( page != m_viewingPage )

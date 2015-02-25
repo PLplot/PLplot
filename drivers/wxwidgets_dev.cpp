@@ -247,6 +247,12 @@ wxPLDevice::~wxPLDevice()
 {
     if ( m_font )
         delete m_font;
+
+	if( m_outputMemoryMap.isValid() )
+	{
+		MemoryMapHeader *header = (MemoryMapHeader*)(m_outputMemoryMap.getBuffer());
+		header->completeFlag = 1;
+	}
 }
 
 
@@ -1009,8 +1015,6 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
             //check how much free space we have before the end of the buffer
             //or if we have looped round how much free space we have before
             //we reach the read point
-            //size_t &readLocation = *((size_t*)(m_outputMemoryMap.getBuffer()));
-            //size_t &writeLocation = *((size_t*)(m_outputMemoryMap.getBuffer())+1);
             freeSpace = m_outputMemoryMap.getSize() - mapHeader.writeLocation;
             // if readLocation is at the beginning then don't quite fill up the buffer
             if ( mapHeader.readLocation == plMemoryMapReservedSpace )
@@ -1072,7 +1076,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                 mapHeader.writeLocation += sizeof ( transmissionEndOfPage );
                 if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
                     mapHeader.writeLocation = plMemoryMapReservedSpace;
-                *( (size_t *) ( m_outputMemoryMap.getBuffer() ) + 3 ) = 1;
+				mapHeader.locateModeFlag = 1;
                 counter   = 0;
                 completed = true;
                 continue;
@@ -1179,10 +1183,12 @@ void wxPLDevice::SetupMemoryMap()
         }
 
         //zero out the reserved area
-        *( (size_t *) ( m_outputMemoryMap.getBuffer() ) )     = plMemoryMapReservedSpace;
-        *( (size_t *) ( m_outputMemoryMap.getBuffer() ) + 1 ) = plMemoryMapReservedSpace;
-        *( (size_t *) ( m_outputMemoryMap.getBuffer() ) + 2 ) = 0;
-        *( (size_t *) ( m_outputMemoryMap.getBuffer() ) + 3 ) = 0;
+		MemoryMapHeader *header = (MemoryMapHeader*)(m_outputMemoryMap.getBuffer());
+		header->readLocation = plMemoryMapReservedSpace;
+		header->writeLocation = plMemoryMapReservedSpace;
+		header->viewerOpenFlag = 0;
+		header->locateModeFlag = 0;
+		header->completeFlag = 0;
 
         //try to find the wxPLViewer executable, in the first instance just assume it
         //is in the path.
@@ -1212,7 +1218,8 @@ void wxPLDevice::SetupMemoryMap()
         command << wxT( "\"" ) << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
             mapSize << wxT( " " ) << m_width << wxT( " " ) << m_height;
 #ifdef WIN32
-        if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
+
+		if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
             plwarn( "Failed to run wxPLViewer - no plots will be shown" );
 #else
         //Linux doesn't like using wxExecute without a wxApp, so use system instead
@@ -1221,7 +1228,7 @@ void wxPLDevice::SetupMemoryMap()
 #endif
         //wait until the viewer signals it has opened the map file
         size_t  counter      = 0;
-        size_t &viewerSignal = *( (size_t *) m_outputMemoryMap.getBuffer() + 2 );
+        size_t &viewerSignal = header->viewerOpenFlag;
         while ( counter < 1000 && viewerSignal == 0 )
         {
             wxMilliSleep( 10 );
@@ -1240,17 +1247,18 @@ void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )
 {
     if ( !m_dc && m_begunRendering && m_outputMemoryMap.isValid() )
     {
+		MemoryMapHeader *header = (MemoryMapHeader*)(m_outputMemoryMap.getBuffer());
         TransmitBuffer( pls, transmissionLocate );
         bool gotResponse = false;
         while ( !gotResponse )
         {
             wxMilliSleep( 100 );
             PLNamedMutexLocker lock( &m_mutex );
-            gotResponse = *( (size_t *) ( m_outputMemoryMap.getBuffer() ) + 3 ) == 0;
+            gotResponse = header->locateModeFlag == 0;
         }
 
         PLNamedMutexLocker lock( &m_mutex );
-        *graphicsIn = *(PLGraphicsIn *) ( ( (size_t *) m_outputMemoryMap.getBuffer() ) + 4 );
+		*graphicsIn = header->graphicsIn;
     }
     else
     {
