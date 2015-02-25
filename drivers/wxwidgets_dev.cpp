@@ -103,50 +103,50 @@ private:
 // global series of random numbers with a new seed.
 // It uses an algorithm that apparently used to be used in gcc rand()
 // provided under GNU LGPL v2.1.
-//---------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 class Rand
 {
 public:
-	Rand()
-	{
+    Rand()
+    {
 #ifdef WIN32
-		rand_s( &m_seed );
+        rand_s( &m_seed );
 #else
-		std::fstream fin( "/dev/random", std::ios::in );
-		fin.read( (char*)(&m_seed), sizeof( m_seed) );
-		fin.close();
+        std::fstream fin( "/dev/random", std::ios::in );
+        fin.read( (char *) ( &m_seed ), sizeof ( m_seed ) );
+        fin.close();
 #endif
-	}
-	Rand( unsigned int seed )
-	{
-		m_seed = seed;
-	}
-	unsigned int operator()()
-	{
-		unsigned int next = m_seed;
-		int result;
+    }
+    Rand( unsigned int seed )
+    {
+        m_seed = seed;
+    }
+    unsigned int operator()()
+    {
+        unsigned int next = m_seed;
+        int          result;
 
-		next *= 1103515245;
-		next += 12345;
-		result = (unsigned int) (next / max) % 2048;
+        next  *= 1103515245;
+        next  += 12345;
+        result = (unsigned int) ( next / max ) % 2048;
 
-		next *= 1103515245;
-		next += 12345;
-		result <<= 10;
-		result ^= (unsigned int) (next / max) % 1024;
+        next    *= 1103515245;
+        next    += 12345;
+        result <<= 10;
+        result  ^= (unsigned int) ( next / max ) % 1024;
 
-		next *= 1103515245;
-		next += 12345;
-		result <<= 10;
-		result ^= (unsigned int) (next / max) % 1024;
+        next    *= 1103515245;
+        next    += 12345;
+        result <<= 10;
+        result  ^= (unsigned int) ( next / max ) % 1024;
 
-		m_seed = next;
+        m_seed = next;
 
-		return result;
-	}
-	static const unsigned int max = 65536;
+        return result;
+    }
+    static const unsigned int max = 65536;
 private:
-	unsigned int m_seed;
+    unsigned int m_seed;
 };
 
 //--------------------------------------------------------------------------
@@ -248,11 +248,11 @@ wxPLDevice::~wxPLDevice()
     if ( m_font )
         delete m_font;
 
-	if( m_outputMemoryMap.isValid() )
-	{
-		MemoryMapHeader *header = (MemoryMapHeader*)(m_outputMemoryMap.getBuffer());
-		header->completeFlag = 1;
-	}
+    if ( m_outputMemoryMap.isValid() )
+    {
+        MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
+        header->completeFlag = 1;
+    }
 }
 
 
@@ -311,44 +311,44 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 //--------------------------------------------------------------------------
 void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-	//do a draw rectangle instead of actually clearing the background here
-	//and do it via plplot functions.
-	//This ensures that this command gets saved to the buffer with the correct 
-	//dimensions. Otherwise a clear command has no subpage dimensions and we 
-	//have no idea what to do with it.
-	
+    //do a draw rectangle instead of actually clearing the background here
+    //and do it via plplot functions.
+    //This ensures that this command gets saved to the buffer with the correct
+    //dimensions. Otherwise a clear command has no subpage dimensions and we
+    //have no idea what to do with it.
+
     x1 = x1 < 0 ? 0 : x1;
     x2 = x2 < 0 ? m_plplotEdgeLength : x2;
     y1 = y1 < 0 ? 0 : y1;
     y2 = y2 < 0 ? m_plplotEdgeLength : y2;
 
-    PLINT         x      = MIN( x1, x2 );
-    PLINT         y      = MIN( y1, y2 );
-    PLINT         width  = abs( x1 - x2 );
-    PLINT         height = abs( y1 - y2 );
+    PLINT x      = MIN( x1, x2 );
+    PLINT y      = MIN( y1, y2 );
+    PLINT width  = abs( x1 - x2 );
+    PLINT height = abs( y1 - y2 );
 
-	short xs[5];
-	short ys[5];
-	xs[0] = x;
-	ys[0] = y;
-	xs[1] = x + width;
-	ys[1] = y;
-	xs[2] = x + width;
-	ys[2] = y + height;
-	xs[3] = x;
-	ys[3] = y + height;
-	xs[4] = x;
-	ys[4] = y;
-	if( width > 0 && height > 0 )
-	{
-		PLINT oldColor = pls->icol0;
-		PLINT oldPatt  = pls->patt;
-		plcol0( 0 );
-		plpsty( 0 );
-		plP_fill( xs, ys, 4 );
-		plcol0( oldColor );
-		plpsty( oldPatt );
-	}
+    short xs[5];
+    short ys[5];
+    xs[0] = x;
+    ys[0] = y;
+    xs[1] = x + width;
+    ys[1] = y;
+    xs[2] = x + width;
+    ys[2] = y + height;
+    xs[3] = x;
+    ys[3] = y + height;
+    xs[4] = x;
+    ys[4] = y;
+    if ( width > 0 && height > 0 )
+    {
+        PLINT oldColor = pls->icol0;
+        PLINT oldPatt  = pls->patt;
+        plcol0( 0 );
+        plpsty( 0 );
+        plP_fill( xs, ys, 4 );
+        plcol0( oldColor );
+        plpsty( oldPatt );
+    }
 }
 
 
@@ -975,8 +975,8 @@ void wxPLDevice::FixAspectRatio( bool fix )
 
 void wxPLDevice::Flush( PLStream *pls )
 {
-	if( !m_dc )
-		TransmitBuffer( pls, transmissionComplete );
+    if ( !m_dc )
+        TransmitBuffer( pls, transmissionComplete );
 }
 
 //This function transmits the remaining buffer to the gui program via a memory map
@@ -1076,7 +1076,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                 mapHeader.writeLocation += sizeof ( transmissionEndOfPage );
                 if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
                     mapHeader.writeLocation = plMemoryMapReservedSpace;
-				mapHeader.locateModeFlag = 1;
+                mapHeader.locateModeFlag = 1;
                 counter   = 0;
                 completed = true;
                 continue;
@@ -1147,13 +1147,13 @@ void wxPLDevice::SetupMemoryMap()
         int          nTries = 0;
         char         mapName[PLPLOT_MAX_PATH];
         char         mutexName[PLPLOT_MAX_PATH];
-		static Rand  randomGenerator; // make this static so that rapid repeat calls don't use the same seed
+        static Rand  randomGenerator;         // make this static so that rapid repeat calls don't use the same seed
         while ( nTries < 10 )
         {
             for ( int i = 0; i < strlen( m_mfo ); ++i )
             {
                 if ( m_mfo[i] == '?' )
-					mapName[i] = 'A' + (char) ( randomGenerator() % 26 );
+                    mapName[i] = 'A' + (char) ( randomGenerator() % 26 );
                 else
                     mapName[i] = m_mfo[i];
             }
@@ -1183,12 +1183,12 @@ void wxPLDevice::SetupMemoryMap()
         }
 
         //zero out the reserved area
-		MemoryMapHeader *header = (MemoryMapHeader*)(m_outputMemoryMap.getBuffer());
-		header->readLocation = plMemoryMapReservedSpace;
-		header->writeLocation = plMemoryMapReservedSpace;
-		header->viewerOpenFlag = 0;
-		header->locateModeFlag = 0;
-		header->completeFlag = 0;
+        MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
+        header->readLocation   = plMemoryMapReservedSpace;
+        header->writeLocation  = plMemoryMapReservedSpace;
+        header->viewerOpenFlag = 0;
+        header->locateModeFlag = 0;
+        header->completeFlag   = 0;
 
         //try to find the wxPLViewer executable, in the first instance just assume it
         //is in the path.
@@ -1219,7 +1219,7 @@ void wxPLDevice::SetupMemoryMap()
             mapSize << wxT( " " ) << m_width << wxT( " " ) << m_height;
 #ifdef WIN32
 
-		if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
+        if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
             plwarn( "Failed to run wxPLViewer - no plots will be shown" );
 #else
         //Linux doesn't like using wxExecute without a wxApp, so use system instead
@@ -1247,9 +1247,9 @@ void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )
 {
     if ( !m_dc && m_begunRendering && m_outputMemoryMap.isValid() )
     {
-		MemoryMapHeader *header = (MemoryMapHeader*)(m_outputMemoryMap.getBuffer());
+        MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
         TransmitBuffer( pls, transmissionLocate );
-        bool gotResponse = false;
+        bool            gotResponse = false;
         while ( !gotResponse )
         {
             wxMilliSleep( 100 );
@@ -1258,7 +1258,7 @@ void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )
         }
 
         PLNamedMutexLocker lock( &m_mutex );
-		*graphicsIn = header->graphicsIn;
+        *graphicsIn = header->graphicsIn;
     }
     else
     {

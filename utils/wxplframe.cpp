@@ -71,12 +71,12 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     }
 
     m_locateMode          = false;
-	m_transferComplete = false;
+    m_transferComplete    = false;
     m_plottedBufferAmount = 0;
     //signal that we have opened the file
-	MemoryMapHeader *header = (MemoryMapHeader*)(m_memoryMap.getBuffer());
-	header->viewerOpenFlag = 1;
-	m_checkTimer.Start( m_idleTimerInterval );
+    MemoryMapHeader *header = (MemoryMapHeader *) ( m_memoryMap.getBuffer() );
+    header->viewerOpenFlag = 1;
+    m_checkTimer.Start( m_idleTimerInterval );
 }
 
 void wxPlFrame::setupMenus()
@@ -128,38 +128,38 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
     {
         //lock the mutex for the duration of this scope
         PLNamedMutexLocker locker( &m_mutex );
-		MemoryMapHeader *header = (MemoryMapHeader*)(m_memoryMap.getBuffer());
+        MemoryMapHeader    *header = (MemoryMapHeader *) ( m_memoryMap.getBuffer() );
         //Check if there is anything to read
-		if ( header->readLocation == header->writeLocation )
-		{
-			if( header->completeFlag != 0 )
-			{
-				//if there is nothing to read and the complete flag is set then
-				// stop looking
-				m_transferComplete = true;
-				m_checkTimer.Stop();
-			}
-			else if( m_currentTimerInterval != m_idleTimerInterval )
-			{
-				//if there is nothing to read but we might have more to come
-				//then check less frequently
-				m_checkTimer.Stop();
-				m_checkTimer.Start( m_idleTimerInterval );
-				m_currentTimerInterval = m_idleTimerInterval;
-			}
+        if ( header->readLocation == header->writeLocation )
+        {
+            if ( header->completeFlag != 0 )
+            {
+                //if there is nothing to read and the complete flag is set then
+                // stop looking
+                m_transferComplete = true;
+                m_checkTimer.Stop();
+            }
+            else if ( m_currentTimerInterval != m_idleTimerInterval )
+            {
+                //if there is nothing to read but we might have more to come
+                //then check less frequently
+                m_checkTimer.Stop();
+                m_checkTimer.Start( m_idleTimerInterval );
+                m_currentTimerInterval = m_idleTimerInterval;
+            }
 
-			//nothing to do so return
+            //nothing to do so return
             return;
-		}
+        }
 
-		if( m_currentTimerInterval != m_busyTimerInterval )
-		{
-			//If we have something to read then make sure
-			//we keep checking regularly for more
-			m_checkTimer.Stop();
-			m_checkTimer.Start( m_busyTimerInterval );
-			m_currentTimerInterval = m_busyTimerInterval;
-		}
+        if ( m_currentTimerInterval != m_busyTimerInterval )
+        {
+            //If we have something to read then make sure
+            //we keep checking regularly for more
+            m_checkTimer.Stop();
+            m_checkTimer.Start( m_busyTimerInterval );
+            m_currentTimerInterval = m_busyTimerInterval;
+        }
 
         unsigned char transmissionType;
         transmissionType = *( (unsigned char *) ( m_memoryMap.getBuffer() + header->readLocation ) );
@@ -202,7 +202,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
                 m_bufferValidFlags[m_writingPage] = false;
 
             //if we have new buffer unplotted then it is due to either a flush, or we have so much
-			// data we have wrapped the buffer or we have had a flush so plot the buffer
+            // data we have wrapped the buffer or we have had a flush so plot the buffer
             if ( m_writingPage == m_viewingPage &&
                  ( m_plottedBufferAmount + 1024 ) < m_pageBuffers[ m_writingPage ].size() )
                 SetPageAndUpdate();
@@ -258,9 +258,9 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
     if ( m_locateMode && event.ButtonDown() )
     {
         PLNamedMutexLocker locker( &m_mutex );
-		MemoryMapHeader *header = (MemoryMapHeader*)m_memoryMap.getBuffer();
+        MemoryMapHeader    *header    = (MemoryMapHeader *) m_memoryMap.getBuffer();
         wxSize             clientSize = GetClientSize();
-		//PLGraphicsIn &     graphicsIn = header->graphicsIn;
+        //PLGraphicsIn &     graphicsIn = header->graphicsIn;
         header->graphicsIn.pX = m_cursorPosition.x;
         header->graphicsIn.pY = m_cursorPosition.y;
         header->graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
@@ -284,8 +284,8 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
 
         header->graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
-		header->locateModeFlag = 0;
-        m_locateMode = false;
+        header->locateModeFlag = 0;
+        m_locateMode           = false;
     }
 }
 
@@ -295,7 +295,7 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
     if ( m_locateMode )
     {
         PLNamedMutexLocker locker( &m_mutex );
-		MemoryMapHeader *header = (MemoryMapHeader*)m_memoryMap.getBuffer();
+        MemoryMapHeader    *header = (MemoryMapHeader *) m_memoryMap.getBuffer();
 
         wxSize             clientSize = GetClientSize();
 
@@ -311,9 +311,9 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
 
         // ESCAPE, RETURN, etc. are already in ASCII equivalent
         header->graphicsIn.keysym = keycode;
-		
-		header->locateModeFlag = 0;
-        m_locateMode = false;
+
+        header->locateModeFlag = 0;
+        m_locateMode           = false;
     }
 }
 
@@ -325,8 +325,8 @@ void wxPlFrame::SetPageAndUpdate( size_t page )
     {
         if ( page >= m_pageBuffers.size() )
         {
-			if ( m_transferComplete )
-				Close();
+            if ( m_transferComplete )
+                Close();
             return;
         }
         if ( page != m_viewingPage )

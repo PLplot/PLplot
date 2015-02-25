@@ -173,10 +173,10 @@ plP_subpInit( void )
     size_maj = 3.0;
     size_min = 1.5;
 
-    plschr( size_chr*scale, 1.0);
-    plssym( size_sym*scale, 1.0 );
-    plsmaj( size_maj*scale, 1.0 );
-    plsmin( size_min*scale, 1.0 );
+    plschr( size_chr * scale, 1.0 );
+    plssym( size_sym * scale, 1.0 );
+    plsmaj( size_maj * scale, 1.0 );
+    plsmin( size_min * scale, 1.0 );
 }
 
 //--------------------------------------------------------------------------

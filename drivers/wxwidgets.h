@@ -57,7 +57,7 @@ public:
     void ProcessString( PLStream* pls, EscText* args );
     void FixAspectRatio( bool fix );
     void Locate( PLStream* pls, PLGraphicsIn *graphicsIn );
-	void Flush( PLStream* pls );
+    void Flush( PLStream* pls );
 
 private:
     void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;

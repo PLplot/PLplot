@@ -47,7 +47,7 @@ struct MemoryMapHeader
     size_t       writeLocation;
     size_t       viewerOpenFlag;
     size_t       locateModeFlag;
-	size_t       completeFlag;
+    size_t       completeFlag;
     PLGraphicsIn graphicsIn;
 };
 

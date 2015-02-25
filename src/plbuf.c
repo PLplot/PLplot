@@ -594,7 +594,7 @@ rdbuf_bop( PLStream *pls )
     // was used to save the colormaps, thus reading the buffer will
     // execute the command
 
-	plP_bop(); 
+    plP_bop();
 }
 
 //--------------------------------------------------------------------------
