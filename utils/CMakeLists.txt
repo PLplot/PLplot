@@ -77,24 +77,6 @@ if(ENABLE_wxwidgets)
 # Build wxwidgets applications with same wxwidgets compile and link flags
 # as used with the PLplot wxwidgets device driver.
 
-# Note that (unlike wxwidgets) wxPLViewer contains calls to shm_open
-# and shm_unlink which on most Unix systems requires an explicit link
-# with the rt library.  However, Mac OS X is a Unix system that does
-# not have the rt library and provides those functions instead as part
-# of the ordinary C libraries that do not require explicit linking.
-# So only define RT_LIB for the Unix but not Mac case.
-  if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    find_library(RT_LIB rt)
-    if(RT_LIB)
-      message(STATUS "RT_LIB = ${RT_LIB}")
-    else(RT_LIB)
-      message(STATUS "WARNING: rt library could not be found so that wxPLViewer may not link correctly")
-      set(RT_LIB)
-    endif(RT_LIB)
-  else(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(RT_LIB)
-  endif(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-
   set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp ${CMAKE_SOURCE_DIR}/drivers/wxwidgets_comms.cpp)
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(${wxPLViewer_SRCS}

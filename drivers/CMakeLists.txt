@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2014 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -143,6 +143,16 @@ if(ENABLE_DYNDRIVERS)
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)
+    elseif(SOURCE_ROOT_NAME STREQUAL "wxwidgets")
+      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+      target_link_libraries(
+	${SOURCE_ROOT_NAME}
+	plplot
+	${MATH_LIB}
+	${RT_LIB}
+	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
+	${${SOURCE_ROOT_NAME}_TARGETS}
+	)
     else(SOURCE_ROOT_NAME STREQUAL "qt")
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
       target_link_libraries(

@@ -353,6 +353,10 @@ endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 list(APPEND libplplot_LINK_LIBRARIES qsastime)
 list(APPEND libplplot_LINK_FLAGS -lqsastime)
 
+if(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets)
+  list(APPEND libplplot_LINK_LIBRARIES ${RT_LIB})
+endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets)
+
 #message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
 
 target_link_libraries(

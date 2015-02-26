@@ -1,6 +1,7 @@
 # cmake/modules/wxwidgets.cmake
 #
 # Copyright (C) 2006  Werner Smekal
+# Copyright (C) 2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -92,35 +93,29 @@ if(PLD_wxwidgets OR PLD_wxpng)
     message(STATUS "wxwidgets_RPATH = ${wxwidgets_RPATH}")
   endif(wxwidgets_RPATH)
 
-  #if(WITH_FREETYPE)
-  #  include(agg)
-  #  if(HAVE_AGG)
-  #    set(
-#	wxwidgets_COMPILE_FLAGS
-#	"${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
-#	)
- #     set(
-#	wxwidgets_LINK_FLAGS
-#	${wxwidgets_LINK_FLAGS}
-#	${AGG_LIBRARIES}
-#	)
-#    else(HAVE_AGG)
-#      message(STATUS "WARNING: wxwidgets driver and bindings components depending on AGG library have been dropped.")
-#    endif(HAVE_AGG)
-#    set(
-#      wxwidgets_COMPILE_FLAGS
-#      "${wxwidgets_COMPILE_FLAGS} ${FREETYPE_INCLUDE_CFLAGS}"
-#      )
-#    set(
-#      wxwidgets_LINK_FLAGS
-#      ${wxwidgets_LINK_FLAGS}
-#      ${FREETYPE_LIBRARIES}
-#      )
-#  endif(WITH_FREETYPE)
   set(DRIVERS_LINK_FLAGS
     ${DRIVERS_LINK_FLAGS} 
     ${wxwidgets_LINK_FLAGS}
     )
+
+# Note that both wxwidgets and wxPLViewer contains calls to shm_open
+# and shm_unlink which on most Unix systems requires an explicit link
+# with the rt library.  However, Mac OS X is a Unix system that does
+# not have the rt library and provides those functions instead as part
+# of the ordinary C libraries that do not require explicit linking.
+# So only define RT_LIB for the Unix but not Mac case.
+  if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    find_library(RT_LIB rt)
+    if(RT_LIB)
+      message(STATUS "RT_LIB = ${RT_LIB}")
+    else(RT_LIB)
+      message(STATUS "WARNING: rt library could not be found so that wxwidgets and wxPLViewer may not link correctly")
+      set(RT_LIB)
+    endif(RT_LIB)
+  else(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(RT_LIB)
+  endif(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(DEFAULT_NO_BINDINGS)
