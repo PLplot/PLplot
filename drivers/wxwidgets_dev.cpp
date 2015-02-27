@@ -691,8 +691,12 @@ void wxPLDevice::SetFont( PLUNICODE fci )
     //create the font based on point size ( with 1 point = 1/72 inch )
     m_font = wxFont::New( (int) ( m_fontSize * m_fontScale < 4 ? 4 : m_fontSize * m_fontScale ),
         fontFamilyLookup[fontFamily],
-        fontStyleLookup[fontStyle] | fontWeightLookup[fontWeight] );
-    m_font->SetUnderlined( m_underlined );
+        fontStyleLookup[fontStyle],
+        fontWeightLookup[fontWeight],
+        m_underlined,
+        wxEmptyString,
+        wxFONTENCODING_UTF8
+        );
     m_dc->SetFont( *m_font );
 }
 

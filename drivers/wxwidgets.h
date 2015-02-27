@@ -162,14 +162,14 @@ const wxFontFamily fontFamilyLookup[5] = {
 };
 
 const int          fontStyleLookup[3] = {
-    wxFONTFLAG_DEFAULT,      // upright
-    wxFONTFLAG_ITALIC,       // italic
-    wxFONTFLAG_SLANT         // oblique
+    wxFONTSTYLE_NORMAL,      // upright
+    wxFONTSTYLE_ITALIC,      // italic
+    wxFONTSTYLE_SLANT        // oblique
 };
 
 const int          fontWeightLookup[2] = {
-    wxFONTFLAG_DEFAULT,     // medium
-    wxFONTFLAG_BOLD         // bold
+    wxFONTWEIGHT_NORMAL,     // medium
+    wxFONTWEIGHT_BOLD        // bold
 };
 
 #endif // __WXWIDGETS_H__
