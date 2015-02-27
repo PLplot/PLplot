@@ -1017,7 +1017,7 @@ plP_polyline( short *x, short *y, PLINT npts );
 
 // Fill polygon
 
-void
+PLDLLIMPEXP void
 plP_fill( short *x, short *y, PLINT npts );
 
 // Render gradient
