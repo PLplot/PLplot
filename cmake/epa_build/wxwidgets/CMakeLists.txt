@@ -74,8 +74,10 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 # ---with-gtk=3 option below).
 #set(URL http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.8.12.tar.gz)
 #set(URL_HASH MD5=2fa39da14bc06ea86fe902579fedc5b1)
-set(URL http://prdownloads.sourceforge.net/wxwindows/3.0.0/wxWidgets-3.0.0.tar.bz2)
-set(URL_HASH SHA1=756a9c54d1f411e262f03bacb78ccef085a9880a)
+#set(URL http://prdownloads.sourceforge.net/wxwindows/3.0.0/wxWidgets-3.0.0.tar.bz2)
+#set(URL_HASH SHA1=756a9c54d1f411e262f03bacb78ccef085a9880a)
+set(URL http://prdownloads.sourceforge.net/wxwindows/3.0.2/wxWidgets-3.0.2.tar.bz2)
+set(URL_HASH SHA1=6461eab4428c0a8b9e41781b8787510484dea800)
 
 ExternalProject_Add(
   build_${PACKAGE}
