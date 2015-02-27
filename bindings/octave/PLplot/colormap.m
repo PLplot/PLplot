@@ -55,6 +55,13 @@ function ccmap = colormap(map)
     endif
   endif
 
+  if (nargin == 2 && ischar(map) && strcmp(map, 'register'))
+    # Silently ignore register option to avoid error messages from core 
+    # octave colormaps if this version of colormap is on the path at 
+    # octave startup, e.g. the test_octave_interactive.sh script.
+    return
+  endif
+
   [r, c] = size(map);
   if( c != 3)
     help colormap

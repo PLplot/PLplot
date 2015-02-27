@@ -48,7 +48,9 @@ for i=1:rows(t)
   tt = deblank (t(i,:)); len = length(tt);
   ix = index(tt," ");
   if (ix == 0); ix = len; len = 0; endif
-  plsetopt(tt(1:ix), tt(ix+1:len));
+  if (ix > 0)
+    plsetopt(tt(1:ix), tt(ix+1:len));
+  end
 endfor
 
 # -dev wxwidgets will work on one at a time, but segfaults
