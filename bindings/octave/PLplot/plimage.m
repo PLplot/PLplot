@@ -33,7 +33,7 @@ function plimage(img, x1, x2, y1, y2)
   
   [nr, nc] = size(img);
   if (nargin == 1)
-    xi = yi = 1;
+    xi = yi = 1.0
     xf = nc;
     yf = nr;
   elseif (nargin == 5)
@@ -55,8 +55,8 @@ function plimage(img, x1, x2, y1, y2)
   __pl_plenv(xi, xf, yi, yf, 1, -1);
 
   pplimage (fliplr(img'),
-	    1, nc, 1, nr,
-	    0, 0,
+	    1.0, nc, 1.0, nr,
+	    0.0, 0.0,
 	    xi, xf, yi, yf);
 
   pllab(tdeblank(__pl.xlabel(strm,:)),

@@ -52,7 +52,7 @@ function shade(x, y, z, levels, cont )
     levels = 2;
   endif
 
-  if (rows(x) > 1 & columns(x) > 1 & rows(y) > 1 & columns(y) > 1)
+  if (rows(x) > 1 && columns(x) > 1 && rows(y) > 1 && columns(y) > 1)
     xymat = 1;
   else
     xymat = 0;
@@ -122,10 +122,10 @@ function shade(x, y, z, levels, cont )
   endif
 
   maxx = max(max(x)); maxy = max(max(y)); minx = min(min(x)); miny = min(min(y));
-  if (columns(x)>1 & rows(x) == 1)
+  if (columns(x)>1 && rows(x) == 1)
     x = x';
   endif
-  if (columns(y)>1 & rows(y) == 1)
+  if (columns(y)>1 && rows(y) == 1)
     y = y';
   endif
     
@@ -154,7 +154,7 @@ function shade(x, y, z, levels, cont )
 	      cont_color, cont_width, max_color, max_width, 1, x, y);
     endfor
   else
-    if (columns(x) == 1 & columns(y) == 1)
+    if (columns(x) == 1 && columns(y) == 1)
       plshades1(z', minx, maxx, miny, maxy, 
 	     clevel', 1, cont_color, cont_width, 1, x, y);
     else

@@ -46,13 +46,13 @@ function [x, y, but] = ginput(n)
 
   while (i != n && keysym != 13) 
     [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plGetCursor;
-    if (status == 0)
+    if (button == 0 && string(1) == 0)
       continue;
     else
       i++;
       x(i) = wX;
       y(i) = wY;
-      str = toascii(string);
+      str = toascii(string(1));
       if (button == 0)
 	but(i) = str;
       else

@@ -81,7 +81,7 @@ function set_view (alt, az, varargin)
     feval(cmd, arg1, varargin{:});
   endif
   
-  odx = ody = 0;
+  ox = oy = 0;
   c_alt = c_az = 0;
   
   while (1)
