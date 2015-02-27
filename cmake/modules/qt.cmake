@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009-2014 Alan W. Irwin
+# Copyright (C) 2009-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -142,10 +142,23 @@ if(ENABLE_qt)
 
     set(Qt5_library_fullpath_list)
     foreach(Qt5_library_name ${Qt5_library_name_list})
-      list(APPEND Qt5_library_fullpath_list ${Qt5${Qt5_library_name}_LIBRARIES})
+      set(Qt5_library_fullpath ${Qt5${Qt5_library_name}_LIBRARIES})
+      if(Qt5_library_fullpath MATCHES "^Qt5::")
+	# This is the Qt5 convention for imported library names, and
+        # according to <http://doc.qt.io/qt-5/cmake-manual.html> the
+        # corresponding locations can be found as follows:
+	get_target_property(Qt5_library_fullpath ${Qt5_library_fullpath} LOCATION)
+	if(Qt5_library_fullpath)
+	  list(APPEND Qt5_library_fullpath_list ${Qt5_library_fullpath})
+	endif(Qt5_library_fullpath)
+      else(Qt5_library_fullpath MATCHES "^Qt5::")
+	list(APPEND Qt5_library_fullpath_list ${Qt5_library_fullpath})
+      endif(Qt5_library_fullpath MATCHES "^Qt5::")
     endforeach(Qt5_library_name ${Qt5_library_name_list})
 
+    message(STATUS "Qt5_library_fullpath_list = ${Qt5_library_fullpath_list}")
     pkg_config_link_flags(Qt5_library_LINK_FLAGS "${Qt5_library_fullpath_list}")
+    message(STATUS "Qt5_library_LINK_FLAGS = ${Qt5_library_LINK_FLAGS}")
   endif(PLPLOT_USE_QT5)
 endif(ENABLE_qt)
 
@@ -164,7 +177,7 @@ endif(ANY_QT_DEVICE)
 
 # ENABLE_qt depends on PLD_extqt
 if(NOT ANY_QT_DEVICE)
-    set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+  set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
 endif(NOT ANY_QT_DEVICE)
 
 if(ENABLE_qt AND NOT PLD_extqt)
@@ -235,17 +248,17 @@ if(NOT ENABLE_qt)
 endif(NOT ENABLE_qt)
 
 if(NOT ANY_QT_DEVICE)
-    set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
-    set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
-    set(PLD_pngqt OFF CACHE BOOL "Enable Qt png device" FORCE)
-    set(PLD_ppmqt OFF CACHE BOOL "Enable Qt ppm device" FORCE)
-    set(PLD_tiffqt OFF CACHE BOOL "Enable Qt tiff device" FORCE)
-    set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
-    set(PLD_pdfqt OFF CACHE BOOL "Enable Qt PDF device" FORCE)
-    set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
-    set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
-    set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
-    set(PLD_memqt OFF CACHE BOOL "Enable Qt mem device" FORCE)
+  set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
+  set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
+  set(PLD_pngqt OFF CACHE BOOL "Enable Qt png device" FORCE)
+  set(PLD_ppmqt OFF CACHE BOOL "Enable Qt ppm device" FORCE)
+  set(PLD_tiffqt OFF CACHE BOOL "Enable Qt tiff device" FORCE)
+  set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
+  set(PLD_pdfqt OFF CACHE BOOL "Enable Qt PDF device" FORCE)
+  set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
+  set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
+  set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+  set(PLD_memqt OFF CACHE BOOL "Enable Qt mem device" FORCE)
 endif(NOT ANY_QT_DEVICE)
 
 if(ENABLE_pyqt4 AND NOT ENABLE_python)

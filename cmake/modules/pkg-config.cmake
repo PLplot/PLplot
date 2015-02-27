@@ -165,16 +165,16 @@ function(pkg_config_link_flags link_flags_out link_flags_in)
   # generalization on other platforms such as Cygwin.
 
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(suffix_pattern "(\\.so|\\.a)")
+    set(suffix_pattern "(\\.so.*|\\.a)")
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(suffix_pattern "(\\.so|\\.a|\\.dylib)")
+    set(suffix_pattern "(\\.so.*|\\.a|\\.dylib)")
   elseif(WIN32_OR_CYGWIN)
     # Order is important here.
     set(suffix_pattern "(\\.dll\\.a|\\.a)")
   else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Probably a non-Linux, non-Mac OS X, Unix platform
     # For this case we assume the same as Linux.
-    set(suffix_pattern "(\\.so|\\.a)")
+    set(suffix_pattern "(\\.so.*|\\.a)")
   endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
   set(_link_flags)
