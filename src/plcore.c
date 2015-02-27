@@ -3716,6 +3716,14 @@ c_plsfnam( const char *fnam )
     plP_sfnam( plsc, fnam );
 }
 
+// Set the pointer to the data used in driver initialisation
+
+void
+c_plsdevdata( void *data )
+{
+	plsc->dev_data = data;
+}
+
 // Set the pause (on end-of-page) status
 
 void

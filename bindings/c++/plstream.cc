@@ -1796,6 +1796,15 @@ void plstream::sfnam( const char *fnam )
     plsfnam( fnam );
 }
 
+// Set the pointer to the data used in driver initialisation
+
+void plstream::sdevdata( void *data )
+{
+	set_stream();
+
+    plsdevdata( data );
+}
+
 // Set the current font family, style and weight
 
 void plstream::sfont( PLINT family, PLINT style, PLINT weight )

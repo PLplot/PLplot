@@ -730,6 +730,7 @@ typedef struct
 #define    plsfam                   c_plsfam
 #define    plsfci                   c_plsfci
 #define    plsfnam                  c_plsfnam
+#define    plsdevdata               c_plsdevdata
 #define    plsfont                  c_plsfont
 #define    plshade                  c_plshade
 #define    plshade1                 c_plshade1
@@ -1664,6 +1665,11 @@ c_plsfci( PLUNICODE fci );
 
 PLDLLIMPEXP void
 c_plsfnam( const char *fnam );
+
+// Set the pointer to the data used in driver initialisation
+
+PLDLLIMPEXP void
+c_plsdevdata( void *data );
 
 // Set the current font family, style and weight
 
