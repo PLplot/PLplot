@@ -33,7 +33,7 @@ function plimage(img, x1, x2, y1, y2)
   
   [nr, nc] = size(img);
   if (nargin == 1)
-    xi = yi = 1.0
+    xi = yi = 1.0;
     xf = nc;
     yf = nr;
   elseif (nargin == 5)
