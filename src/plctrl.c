@@ -2107,7 +2107,8 @@ c_pltext( void )
 void
 pl_cmd( PLINT op, void *ptr )
 {
-    plP_esc( op, ptr );
+	if ( plsc->level > 0 )
+		plP_esc( op, ptr );
 }
 
 //--------------------------------------------------------------------------
