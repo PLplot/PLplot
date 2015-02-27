@@ -1020,9 +1020,9 @@ rdbuf_di( PLStream *pls )
         c_plsdimap( dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm );
     if ( difilt & PLDI_ORI )
         c_plsdiori( rot );
-    if ( plsc->difilt & PLDI_PLT )
+    if ( difilt & PLDI_PLT )
         c_plsdiplt( dipxmin, dipymin, dipxmax, dipymax );
-    if ( plsc->difilt & PLDI_DEV )
+    if ( difilt & PLDI_DEV )
         c_plsdidev( mar, aspect, jx, jy );
 }
 
@@ -1146,7 +1146,8 @@ void
 plRemakePlot( PLStream *pls )
 {
     U_CHAR c;
-    int    plbuf_status;
+    PLINT  plbuf_write;
+	PLINT  cursub;
 
     dbug_enter( "plRemakePlot" );
 
@@ -1156,7 +1157,8 @@ plRemakePlot( PLStream *pls )
     // the same plot stream (e.g. one thread is drawing the plot and another
     // thread is processing window manager messages).
     //
-    plbuf_status     = pls->plbuf_write;
+    plbuf_write     = pls->plbuf_write;
+	cursub          = pls->cursub;
     pls->plbuf_write = FALSE;
     pls->plbuf_read  = TRUE;
 
@@ -1178,6 +1180,13 @@ plRemakePlot( PLStream *pls )
         // Make the current plot stream the one passed by the caller
         plsc = pls;
 
+		//end any current page on the destination stream.
+		//This will do nothing if we are already at the end
+		//of a page.
+		//Doing this ensures that the first bop command in the
+		//buffer actually does something
+		plP_eop();
+
         // Restore the
         // Replay the plot command buffer
         while ( rd_command( pls, &c ) )
@@ -1191,7 +1200,8 @@ plRemakePlot( PLStream *pls )
 
     // Restore the state of the passed plot stream
     pls->plbuf_read  = FALSE;
-    pls->plbuf_write = plbuf_status;
+    pls->plbuf_write = plbuf_write;
+	pls->cursub = cursub;
 }
 
 //--------------------------------------------------------------------------
