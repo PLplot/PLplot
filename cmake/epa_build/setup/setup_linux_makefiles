@@ -27,6 +27,11 @@ CMAKE_LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.6/:$CMAKE_LIBRARY_PATH
 
 # End of tailored values.
 
+# Workaround for gtk+ issue on Linux where it is assumed it is part of an
+# integrated desktop with dbus connecting everything together rather
+# than an isolated library as in the epa_build case.
+export NO_AT_BRIDGE=1
+
 export INSTALL_PREFIX_BUILDTOOLS="${INSTALL_PREFIX}_buildtools"
 
 # Put buildtools that have been built and installed by build_packages on PATH.
