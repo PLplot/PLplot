@@ -21,6 +21,7 @@
 //
 //
 
+#include "plplotP.h"
 #include "plcdemos.h"
 #include "plevent.h"
 #ifdef PL_HAVE_NANOSLEEP
