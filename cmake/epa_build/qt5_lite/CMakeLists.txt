@@ -2,7 +2,7 @@
 
 # Configure the build of qt5_lite.
 
-# Copyright (C) 2014 Alan W. Irwin
+# Copyright (C) 2014-2015 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -59,7 +59,13 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 # version that is also available (but unadvertised).  The .gz version is 34 per cent larger which
 # implies the download will typically take ~1 minute longer, but the unpack should be much faster
 # so it is not a clear choice.
-set(URL http://download.qt-project.org/official_releases/qt/5.3/5.3.1/single/qt-everywhere-opensource-src-5.3.1.tar.gz)
+#set(URL http://download.qt-project.org/official_releases/qt/5.3/5.3.1/single/qt-everywhere-opensource-src-5.3.1.tar.gz)
+set(URL http://download.qt-project.org/official_releases/qt/5.3/5.3.2/single/qt-everywhere-opensource-src-5.3.2.tar.gz)
+# 5.4.1 would not build with error: operator '||' has no right operand and many subsequent
+# error: <component> "is not a template" errors.  The configuration used was
+# identical to to 5.3.x, and changing that may allow dropping components of
+# the build with such build issues.
+#set(URL http://download.qt-project.org/official_releases/qt/5.4/5.4.1/single/qt-everywhere-opensource-src-5.4.1.tar.gz)
 # Temporary to save download bandwidth/time while debugging this.
 # set(URL /home/software/build_qt5/qt-everywhere-opensource-src-5.2.1.tar.xz)
 # set(URL /home/software/build_qt5/qt-everywhere-opensource-src-5.3.1.tar.gz)
@@ -68,7 +74,11 @@ set(DOWNLOAD_HASH_TYPE MD5)
 #set(DOWNLOAD_HASH 0c8d2aa45f38be9c3f7c9325eb059d9d)
 #set(DOWNLOAD_HASH f9a24a0d5645efa0715b6ff0fa13d60f)
 # 5.3.1 (from http://download.qt-project.org/official_releases/qt/5.3/5.3.1/single/md5sums.txt).
-set(DOWNLOAD_HASH a355749e4f200a6392ecad151d1d0cdc)
+# set(DOWNLOAD_HASH a355749e4f200a6392ecad151d1d0cdc)
+# 5.3.2 (from http://download.qt-project.org/official_releases/qt/5.3/5.3.2/single/md5sums.txt).
+set(DOWNLOAD_HASH febb001129927a70174467ecb508a682)
+# 5.4.1 (from http://download.qt-project.org/official_releases/qt/5.4/5.4.1/single/md5sums.txt).
+#set(DOWNLOAD_HASH 90f3fbce38ed16e5dc2cd0909ae86ca4)
 
 # Many of these are recommended by BLFS
 # <http://www.linuxfromscratch.org/blfs/view/svn/x/qt5.html>, but I
