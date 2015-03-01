@@ -787,7 +787,7 @@ public:
 
 // Set the pointer to the data used in driver initialisation
 
-	void plstream::sdevdata( void *data );
+	void sdevdata( void *data );
 
 // Set the current font family, style and weight
 

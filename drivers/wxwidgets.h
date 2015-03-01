@@ -49,7 +49,7 @@ public:
     void FillPolygon( PLStream *pls );
     void SetWidth( PLStream *pls );
     void SetColor( PLStream *pls );
-    void SetExternalBuffer( PLStream *pls, void* buffer );
+    void SetDC( PLStream *pls, wxDC* dc );
     void SetFont( PLUNICODE fci );
     void EndPage( PLStream* pls );
     void BeginPage( PLStream* pls );
@@ -67,10 +67,12 @@ private:
 
     //The DC we will draw on if given by the user
     wxDC *m_dc;
-    bool m_useDcTransform;
+    bool m_useDcTextTransform;
     //for the gcdc case we may need to store the graphics context for use
     // with text transformations
     wxGraphicsContext *m_gc;
+	wxPen m_pen;
+	wxBrush m_brush;
 
     //Size and Scale
     //As far as plplot is concerned the size of the window is SHRT_MAX by
@@ -109,7 +111,6 @@ private:
     PLNamedMutex m_mutex;
     size_t       m_localBufferPosition;
     PLMemoryMap  m_outputMemoryMap;
-    bool         m_begunRendering;
 };
 
 

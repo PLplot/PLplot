@@ -53,7 +53,7 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
     m_style  = style;
 
     sdev( "wxwidgets" );
-    spage( 0.0, 0.0, m_width, m_height, 0, 0 );
+    spage( 90.0, 90.0, m_width, m_height, 0, 0 );
 
     char drvopt[bufferSize], buffer[bufferSize];
     drvopt[0] = '\0';
@@ -65,9 +65,10 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 
     setopt( "-drvopt", drvopt );
 
+	sdevdata( ( void * ) dc );
+
     init();
 
-    cmd( PLESC_DEVINIT, (void *) dc );
 }
 
 //! Set the DC to be used by the stream. This will initiate a replot, unless

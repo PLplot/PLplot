@@ -97,6 +97,34 @@ private:
 };
 
 //--------------------------------------------------------------------------
+// DrawingObjectsChanger class
+// This class changes the pen and brush of a dc on construction and resets
+// them to their original values on destruction. It is ideal for making temporary
+// changes to the pen and brush and guarenteeing that they get set back.
+//--------------------------------------------------------------------------
+class DrawingObjectsChanger
+{
+public:
+	DrawingObjectsChanger( wxDC *dc, const wxPen &pen, const wxBrush &brush )
+	{
+		m_dc = dc;
+		m_pen = dc->GetPen();
+		m_brush = dc->GetBrush();
+		dc->SetPen( pen );
+		dc->SetBrush( brush );
+	}
+	~DrawingObjectsChanger()
+	{
+		m_dc->SetPen( m_pen );
+		m_dc->SetBrush( m_brush );
+	}
+private:
+	wxDC *m_dc;
+	wxPen m_pen;
+	wxBrush m_brush;
+};
+
+//--------------------------------------------------------------------------
 // class Rand
 // This is a simple random number generator class, created soley so that
 // random numbers can be generated in this file without "contaminating" the
@@ -171,8 +199,8 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     else
         //assume we will be outputting to the default
         //memory map until we are given a dc to draw to
-        //strcpy(m_mfo, "plplotMemoryMap");
-        strcpy( m_mfo, "plplotMemoryMap??????????" );
+        strcpy(m_mfo, "plplotMemoryMap");
+        //strcpy( m_mfo, "plplotMemoryMap??????????" );
 
     // be verbose and write out debug messages
 #ifdef _DEBUG
@@ -208,33 +236,24 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 
     // set dpi and page size defaults
     // the user might have already set this with plspage
-    // so only override zeros
-    if ( pls->xdpi == 0 && pls->ydpi == 0 )
-    {
-        pls->xdpi = 90;
-        pls->ydpi = 90;
-    }
-    else if ( pls->xdpi == 0 )
-        pls->xdpi = pls->ydpi;
-    else if ( pls->ydpi == 0 )
-        pls->ydpi = pls->xdpi;
+    // so check first
+	if( ! plsc->pageset )
+		c_plspage( 90, 90, 900, 675, 0, 0 );
 
-    PLINT width  = pls->xlength;
-    PLINT height = pls->ylength;
-    if ( width == 0 && height == 0 )
-    {
-        width  = 900;
-        height = 675;
-    }
-    else if ( width == 0 )
-        width = height;
-    else if ( height == 0 )
-        height = width;
-
-    SetSize( pls, width, height );
+	//check dpi is non-zero otherwise we get infinities in some calcualtions
+	//and ridiculous numbers in others
+	if( pls->xdpi == 0.0 || pls->ydpi == 0 )
+		throw( "wxPLDevice::wxPLDevice, plspage has been used to setup the page \
+		but the dpi has been left as zero. This will cause serious rending issues" );
 
     m_localBufferPosition = 0;
-    m_begunRendering      = false;
+
+	SetSize( pls, plsc->xlength, plsc->ylength );
+
+	if( pls->dev_data )
+		SetDC( pls, ( wxDC * )pls->dev_data );
+	else
+		SetupMemoryMap();
 }
 
 
@@ -264,16 +283,10 @@ wxPLDevice::~wxPLDevice()
 void wxPLDevice::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
     if ( !m_dc )
-    {
-        if ( !m_begunRendering )
-        {
-            //create the memory map for external communication
-            SetupMemoryMap();
-            m_begunRendering = true;
-        }
         return;
-    }
 
+	Scaler scaler( m_dc, 1.0/m_scale, 1.0/m_scale );
+	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
     m_dc->DrawLine( (wxCoord) ( m_xAspect * x1a ), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y1a ) ),
         (wxCoord) ( m_xAspect * x2a ), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y2a ) ) );
 }
@@ -287,16 +300,10 @@ void wxPLDevice::DrawLine( short x1a, short y1a, short x2a, short y2a )
 void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
     if ( !m_dc )
-    {
-        if ( !m_begunRendering )
-        {
-            //create the memory map for external communication
-            SetupMemoryMap();
-            m_begunRendering = true;
-        }
         return;
-    }
-
+	
+	Scaler scaler( m_dc, 1.0/m_scale, 1.0/m_scale );
+	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
     for ( PLINT i = 1; i < npts; i++ )
         m_dc->DrawLine( m_xAspect * xa[i - 1], m_yAspect * ( m_plplotEdgeLength - ya[i - 1] ),
             m_xAspect * xa[i], m_yAspect * ( m_plplotEdgeLength - ya[i] ) );
@@ -311,44 +318,28 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 //--------------------------------------------------------------------------
 void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-    //do a draw rectangle instead of actually clearing the background here
-    //and do it via plplot functions.
-    //This ensures that this command gets saved to the buffer with the correct
-    //dimensions. Otherwise a clear command has no subpage dimensions and we
-    //have no idea what to do with it.
-
+	if ( !m_dc )
+        return;
+	
     x1 = x1 < 0 ? 0 : x1;
     x2 = x2 < 0 ? m_plplotEdgeLength : x2;
     y1 = y1 < 0 ? 0 : y1;
     y2 = y2 < 0 ? m_plplotEdgeLength : y2;
 
-    PLINT x      = MIN( x1, x2 );
-    PLINT y      = MIN( y1, y2 );
-    PLINT width  = abs( x1 - x2 );
-    PLINT height = abs( y1 - y2 );
+    PLINT         x      = MIN( x1, x2 );
+    PLINT         y      = MIN( y1, y2 );
+    PLINT         width  = abs( x1 - x2 );
+    PLINT         height = abs( y1 - y2 );
 
-    short xs[5];
-    short ys[5];
-    xs[0] = x;
-    ys[0] = y;
-    xs[1] = x + width;
-    ys[1] = y;
-    xs[2] = x + width;
-    ys[2] = y + height;
-    xs[3] = x;
-    ys[3] = y + height;
-    xs[4] = x;
-    ys[4] = y;
-    if ( width > 0 && height > 0 )
-    {
-        PLINT oldColor = pls->icol0;
-        PLINT oldPatt  = pls->patt;
-        plcol0( 0 );
-        plpsty( 0 );
-        plP_fill( xs, ys, 4 );
-        plcol0( oldColor );
-        plpsty( oldPatt );
-    }
+	if( width > 0 && height > 0 )
+	{
+		PLINT r, g, b;
+		PLFLT a;
+		plgcolbga( &r, &g, &b, &a );
+		wxColour bgColour( r, g, b, a * 255 );
+		DrawingObjectsChanger changer(m_dc, wxPen( bgColour, 0 ), wxBrush( bgColour ) );
+		m_dc->DrawRectangle( x, y, width, height );
+	}
 }
 
 
@@ -360,16 +351,9 @@ void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, P
 void wxPLDevice::FillPolygon( PLStream *pls )
 {
     if ( !m_dc )
-    {
-        if ( !m_begunRendering )
-        {
-            //create the memory map for external communication
-            SetupMemoryMap();
-            m_begunRendering = true;
-        }
         return;
-    }
-
+	
+	Scaler scaler( m_dc, 1.0/m_scale, 1.0/m_scale );
     wxPoint *points = new wxPoint[pls->dev_npts];
     wxCoord xoffset = 0;
     wxCoord yoffset = 0;
@@ -399,13 +383,9 @@ void wxPLDevice::FillPolygon( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevice::SetWidth( PLStream *pls )
 {
-    //Note that calls to this function before we have a DC should be honoured
-    //Save a flag to grab the value from the PLStream after creation.
-    if ( !m_dc )
-        return;
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
-                         width, wxSOLID ) ) );
+	m_pen = wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, 
+		pls->curcolor.a * 255 ), width, wxSOLID ) ;
 }
 
 
@@ -416,36 +396,35 @@ void wxPLDevice::SetWidth( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevice::SetColor( PLStream *pls )
 {
-    //Note that calls to this function before we have a DC should be honoured
-    //Save a flag to grab the value from the PLStream after creation.
-    if ( !m_dc )
-        return;
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
-                         width, wxSOLID ) ) );
-    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) ) );
+	m_pen =  wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
+		pls->curcolor.a * 255 ), width, wxSOLID );
+    m_brush = wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
+		pls->curcolor.a * 255 ) );
 }
 
 
 //--------------------------------------------------------------------------
-//  void wxPLDevice::SetExternalBuffer( void* dc )
+//  void wxPLDevice::SetDC( PLStream *pls, void* dc )
 //
 //  Adds a dc to the device. In that case, the drivers doesn't provide
 //  a GUI.
 //--------------------------------------------------------------------------
-void wxPLDevice::SetExternalBuffer( PLStream *pls, void* dc )
+void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
 {
-    m_dc             = (wxDC *) dc; // Add the dc to the device
-    m_useDcTransform = false;
-    m_gc             = NULL;
+	if( m_outputMemoryMap.isValid() )
+		throw( "wxPLDevice::SetDC The DC must be set before initialisation. The device is outputting to a separate viewer" );
+    m_dc                 = dc; // Add the dc to the device
+    m_useDcTextTransform = false;
+    m_gc                 = NULL;
     if ( m_dc )
     {
 #if wxVERSION_NUMBER >= 2902
-        m_useDcTransform = m_dc->CanUseTransformMatrix();
+        m_useDcTextTransform = m_dc->CanUseTransformMatrix();
 #endif
         //If we don't have wxDC tranforms we can use the
         //underlying wxGCDC if this is a wxGCDC
-        if ( !m_useDcTransform )
+        if ( !m_useDcTextTransform )
         {
             //check to see if m_dc is a wxGCDC by using RTTI
             wxGCDC *gcdc = NULL;
@@ -461,7 +440,7 @@ void wxPLDevice::SetExternalBuffer( PLStream *pls, void* dc )
             if ( gcdc )
                 m_gc = gcdc->GetGraphicsContext();
         }
-
+		
         strcpy( m_mfo, "" );
         SetSize( pls, m_width, m_height );         //call with our current size to set the scaling
     }
@@ -598,7 +577,7 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
         //have already been applied
         if ( m_gc )
             m_gc->DrawText( str, m_textWidth, 0.0 );
-        else if ( m_useDcTransform )
+        else if ( m_useDcTextTransform )
             m_dc->DrawText( str, m_textWidth, 0 );
         else
         {
@@ -711,21 +690,14 @@ void wxPLDevice::SetFont( PLUNICODE fci )
 void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 {
     if ( !m_dc )
-    {
-        if ( !m_begunRendering )
-        {
-            //create the memory map for external communication
-            SetupMemoryMap();
-            m_begunRendering = true;
-        }
-        return;
-    }
+		return;
 
     //for text, work in native coordinates, partly to avoid rewriting existing code
     //but also because we should get better text hinting for screen display I think.
     //The scaler object sets the scale to the new value until it is destroyed
     //when this function exits.
     Scaler scaler( m_dc, 1.0, 1.0 );
+	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
 
     //Also move the origin so the text region buts up to the dc top, not the bottom
     OriginChanger originChanger( m_dc, 0, m_height - m_plplotEdgeLength / m_yScale );
@@ -837,7 +809,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             m_gc->SetTransform( originalMatrix );
         }
 #if wxVERSION_NUMBER >= 2902
-        else if ( m_useDcTransform )
+        else if ( m_useDcTextTransform )
         {
             wxAffineMatrix2D originalMatrix = m_dc->GetTransformMatrix();
 
@@ -880,12 +852,6 @@ void wxPLDevice::EndPage( PLStream* pls )
 {
     if ( !m_dc )
     {
-        if ( !m_begunRendering )
-        {
-            //create the memory map for external communication
-            SetupMemoryMap();
-            m_begunRendering = true;
-        }
         TransmitBuffer( pls, transmissionEndOfPage );
         return;
     }
@@ -893,7 +859,7 @@ void wxPLDevice::EndPage( PLStream* pls )
 
 //--------------------------------------------------------------------------
 //  void wxPLDevice::BeginPage( PLStream* pls )
-//  Clears the page and applys any state changes waiting to be applied
+//  Sets up for transfer in case it is needed and sets the current state
 //--------------------------------------------------------------------------
 void wxPLDevice::BeginPage( PLStream* pls )
 {
@@ -901,14 +867,14 @@ void wxPLDevice::BeginPage( PLStream* pls )
     {
         m_localBufferPosition = 0;
         TransmitBuffer( NULL, transmissionBeginPage );
-        return;
     }
-
-    ClearBackground( pls );
 
     // Get the starting colour and width from the stream
     SetWidth( pls );
     SetColor( pls );
+
+	//clear the page
+	ClearBackground( pls );
 }
 
 //--------------------------------------------------------------------------
@@ -953,8 +919,6 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
             m_xScale = m_scale / m_xAspect;
         }
     }
-    if ( m_dc )
-        m_dc->SetLogicalScale( 1.0 / m_scale, 1.0 / m_scale );
 
     m_width      = ( xmax - xmin ) / m_xScale;
     pls->xlength = PLINT( m_width + 0.5 );
@@ -962,7 +926,7 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     pls->ylength = PLINT( m_height + 0.5 );
 
     // Set the number of plplot pixels per mm
-    plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->xdpi / 25.4 );
+    plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->ydpi / 25.4 );
 
     pls->aspect = m_yAspect / m_xAspect;
 
@@ -1239,17 +1203,12 @@ void wxPLDevice::SetupMemoryMap()
         }
         if ( viewerSignal == 0 )
             plwarn( "wxPLViewer failed to signal it has found the shared memory." );
-
-
-
-        //begin the first page
-        TransmitBuffer( NULL, transmissionBeginPage );
     }
 }
 
 void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )
 {
-    if ( !m_dc && m_begunRendering && m_outputMemoryMap.isValid() )
+    if ( !m_dc && m_outputMemoryMap.isValid() )
     {
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
         TransmitBuffer( pls, transmissionLocate );

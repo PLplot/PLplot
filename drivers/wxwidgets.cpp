@@ -145,38 +145,49 @@ void plD_init_wxwidgets( PLStream* pls )
 {
     // Log_Verbose( "plD_init_wxwidgets()" );
 
-    // default options
-    static PLINT text    = 1;
-    static PLINT hrshsym = 0;
-    static char  *mfo    = NULL;
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( device )
+			throw( "plD_init_wxwidgets called when a initialization has already occurred." );
+	
+		// default options
+		static PLINT text    = 1;
+		static PLINT hrshsym = 0;
+		static char  *mfo    = NULL;
 
-    DrvOpt       wx_options[] = {
-        { "hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)" },
-        { "text",    DRV_INT, &text,    "Use own text routines (text=0|1)"     },
-        { "mfo",     DRV_STR, &mfo,     "output metafile"                      },
-        { NULL,      DRV_INT, NULL,     NULL                                   }
-    };
+		DrvOpt       wx_options[] = {
+			{ "hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)" },
+			{ "text",    DRV_INT, &text,    "Use own text routines (text=0|1)"     },
+			{ "mfo",     DRV_STR, &mfo,     "output metafile"                      },
+			{ NULL,      DRV_INT, NULL,     NULL                                   }
+		};
 
-    // Check for and set up driver options
-    plParseDrvOpts( wx_options );
+		// Check for and set up driver options
+		plParseDrvOpts( wx_options );
 
-    // by default the own text routines are used for wxDC
-    if ( text == -1 )
-        text = 0;
+		// by default the own text routines are used for wxDC
+		if ( text == -1 )
+			text = 0;
 
-    // create the new device
-    wxPLDevice* dev = new wxPLDevice( pls, mfo, text, hrshsym );
-    if ( dev == NULL )
-    {
-        plexit( "Insufficient memory" );
-    }
+		// create the new device
+		device = new wxPLDevice( pls, mfo, text, hrshsym );
 
-    // If portrait mode, apply a rotation and set freeaspect
-    if ( pls->portrait )
-    {
-        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
-        pls->freeaspect = 1;
-    }
+		// If portrait mode, apply a rotation and set freeaspect
+		if ( pls->portrait )
+		{
+			plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
+			pls->freeaspect = 1;
+		}
+	}
+	catch( char *message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_init_wxwidgets." );
+	}
 }
 
 #endif  // PLD_wxwidgets
@@ -247,9 +258,21 @@ void plD_init_wxpng( PLStream *pls )
 void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
     // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
-
-    wxPLDevice* dev = (wxPLDevice *) pls->dev;
-    dev->DrawLine( x1a, y1a, x2a, y2a );
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( !device )
+			throw( "plD_line_wxwidgets called before initialization." );
+		device->DrawLine( x1a, y1a, x2a, y2a );
+	}
+	catch( char* message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_line_wxwidgets." );
+	}
 }
 
 
@@ -262,9 +285,21 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     // Log_Verbose( "plD_polyline_wxwidgets()" );
-
-    wxPLDevice* dev = (wxPLDevice *) pls->dev;
-    dev->DrawPolyline( xa, ya, npts );
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( !device )
+			throw( "plD_polyline_wxwidgets called before initialization." );
+		device->DrawPolyline( xa, ya, npts );
+	}
+	catch( char* message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_polyline_wxwidgets." );
+	}
 }
 
 
@@ -279,9 +314,21 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_eop_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_eop_wxwidgets()" );
-
-    wxPLDevice* dev = (wxPLDevice *) pls->dev;
-    dev->EndPage( pls );
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( !device )
+			throw( "plD_eop_wxwidgets called before initialization." );
+		device->EndPage( pls );
+	}
+	catch( char* message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_eop_wxwidgets." );
+	}
 }
 
 
@@ -297,9 +344,21 @@ void plD_eop_wxwidgets( PLStream *pls )
 void plD_bop_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_bop_wxwidgets()" );
-
-    wxPLDevice* dev = (wxPLDevice *) pls->dev;
-    dev->BeginPage( pls );
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( !device )
+			throw( "plD_bop_wxwidgets called before initialization." );
+		device->BeginPage( pls );
+	}
+	catch( char* message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_bop_wxwidgets." );
+	}
 }
 
 
@@ -311,11 +370,23 @@ void plD_bop_wxwidgets( PLStream *pls )
 void plD_tidy_wxwidgets( PLStream *pls )
 {
     // Log_Verbose( "plD_tidy_wxwidgets()" );
-
-    wxPLDevice* dev = (wxPLDevice *) pls->dev;
-
-    delete dev;
-    pls->dev = NULL; // since in plcore.c pls->dev is free_mem'd
+	if( ! pls->dev )
+		return;
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( device )
+			delete device;
+		pls->dev = NULL; //so it doesn't get freed elswhere
+	}
+	catch( char* message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_tidy_wxwidgets." );
+	}
 }
 
 
@@ -328,23 +399,36 @@ void plD_tidy_wxwidgets( PLStream *pls )
 void plD_state_wxwidgets( PLStream *pls, PLINT op )
 {
     // Log_Verbose( "plD_state_wxwidgets(op=%d)", op );
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( !device )
+			return; //we can call state functions befor initialization so just return
+		switch ( op )
+		{
+		case PLSTATE_WIDTH: // 1
+			device->SetWidth( pls );
+			break;
 
-    wxPLDevice* dev = (wxPLDevice *) pls->dev;
+		case PLSTATE_COLOR0: // 2
+			device->SetColor( pls );
+			break;
 
-    switch ( op )
-    {
-    case PLSTATE_WIDTH: // 1
-        dev->SetWidth( pls );
-        break;
+		case PLSTATE_COLOR1: // 3
+			device->SetColor( pls );
+			break;
+		}
+	}
+	catch( char* message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_state_wxwidgets." );
+	}
 
-    case PLSTATE_COLOR0: // 2
-        dev->SetColor( pls );
-        break;
-
-    case PLSTATE_COLOR1: // 3
-        dev->SetColor( pls );
-        break;
-    }
+    
 }
 
 
@@ -359,133 +443,72 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 {
     // Log_Verbose( "plD_esc_wxwidgets(op=%d, ptr=%x)", op, ptr );
 
-    wxPLDevice* dev = (wxPLDevice *) pls->dev;
+	if( ! pls->dev )
+		return;
 
-    switch ( op )
-    {
-    case PLESC_FILL:
-        dev->FillPolygon( pls );
-        break;
+	try
+	{
+		wxPLDevice *device = (wxPLDevice *)pls->dev;
+		if( !device )
+			throw( "plD_esc_wxwidgets called before initialization." );
+		switch ( op )
+		{
+		case PLESC_FILL:
+			device->FillPolygon( pls );
+			break;
 
-    case PLESC_XORMOD:
-        // switch between wxXOR and wxCOPY
-        // if( dev->ready ) {
-        //                  if( dev->m_dc->GetLogicalFunction() == wxCOPY )
-        //                          dev->m_dc->SetLogicalFunction( wxXOR );
-        //                  else if( dev->m_dc->GetLogicalFunction() == wxXOR )
-        //                          dev->m_dc->SetLogicalFunction( wxCOPY );
-        //          }
-        break;
+		case PLESC_XORMOD:
+			// switch between wxXOR and wxCOPY
+			// if( dev->ready ) {
+			//                  if( dev->m_dc->GetLogicalFunction() == wxCOPY )
+			//                          dev->m_dc->SetLogicalFunction( wxXOR );
+			//                  else if( dev->m_dc->GetLogicalFunction() == wxXOR )
+			//                          dev->m_dc->SetLogicalFunction( wxCOPY );
+			//          }
+			break;
 
-    case PLESC_DEVINIT:
-        dev->SetExternalBuffer( pls, ptr );
-        break;
+		case PLESC_DEVINIT:
+			device->SetDC( pls, (wxDC *)ptr );
+			break;
 
-    case PLESC_HAS_TEXT:
-        dev->ProcessString( pls, (EscText *) ptr );
-        break;
+		case PLESC_HAS_TEXT:
+			device->ProcessString( pls, (EscText *) ptr );
+			break;
 
-    case PLESC_RESIZE:
-    {
-        wxSize* size = (wxSize *) ptr;
-        dev->SetSize( pls, size->GetWidth(), size->GetHeight() );
-    }
-    break;
+		case PLESC_RESIZE:
+		{
+			wxSize* size = (wxSize *) ptr;
+			device->SetSize( pls, size->GetWidth(), size->GetHeight() );
+		}
+		break;
 
-    case PLESC_CLEAR:
-        dev->ClearBackground( pls, pls->sppxmi, pls->sppymi,
-            pls->sppxma, pls->sppyma );
-        break;
+		case PLESC_CLEAR:
+			device->ClearBackground( pls, pls->sppxmi, pls->sppymi,
+				pls->sppxma, pls->sppyma );
+			break;
 
-    case PLESC_FLUSH:        // forced update of the window
-        dev->Flush( pls );
-        break;
+		case PLESC_FLUSH:        // forced update of the window
+			device->Flush( pls );
+			break;
 
-    case PLESC_GETC:
-        dev->Locate( pls, (PLGraphicsIn *) ptr );
-        break;
+		case PLESC_GETC:
+			device->Locate( pls, (PLGraphicsIn *) ptr );
+			break;
 
-    case PLESC_FIXASPECT:
-        dev->FixAspectRatio( *( (bool *) ptr ) );
-        break;
+		case PLESC_FIXASPECT:
+			device->FixAspectRatio( *( (bool *) ptr ) );
+			break;
 
-    default:
-        break;
-    }
+		default:
+			break;
+		}
+	}
+	catch( char* message )
+	{
+		plabort( message );
+	}
+	catch( ... )
+	{
+		plabort( "Unkown error in plD_tidy_wxwidgets." );
+	}    
 }
-
-
-//--------------------------------------------------------------------------
-// GetCursorCmd()
-//
-// Waits for a graphics input event and returns coordinates.
-//--------------------------------------------------------------------------
-//static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr )
-//{
-//    // Log_Verbose( "GetCursorCmd" );
-//
-//    wxPLDevBase  *dev = (wxPLDevBase *) pls->dev;
-//    PLGraphicsIn *gin = &( dev->gin );
-//
-//    // Initialize
-//    plGinInit( gin );
-//    dev->locate_mode = LOCATE_INVOKED_VIA_API;
-//    dev->draw_xhair  = true;
-//
-//    // Run event loop until a point is selected
-//    wxRunApp( pls, false );
-//
-//ptr = *gin;
-//    if ( dev->locate_mode )
-//    {
-//        dev->locate_mode = 0;
-//        dev->draw_xhair  = false;
-//    }
-//}
-
-
-
-//--------------------------------------------------------------------------
-//  void wxRunApp( PLStream *pls, bool runonce )
-//
-//  This is a hacked wxEntry-function, so that wxUninitialize is not
-//  called twice. Here we actually start the wxApplication.
-//--------------------------------------------------------------------------
-//static void wxRunApp( PLStream *pls, bool runonce )
-//{
-//    // Log_Verbose( "wxRunApp" );
-//
-//    wxPLDevBase* dev = (wxPLDevBase *) pls->dev;
-//
-//    dev->waiting = true;
-//    wxTRY
-//    {
-//        class CallOnExit
-//        {
-//public:
-//            // only call OnExit if exit is true (i.e. due an exception)
-//            ~CallOnExit() { if ( exit ) wxPLGetApp().OnExit();}
-//            bool exit;
-//        } callOnExit;
-//
-//        callOnExit.exit = true;
-//        wxPLGetApp().SetAdvanceFlag( runonce );
-//        wxPLGetApp().SetRefreshFlag();
-//
-//        // add an idle event is necessary for Linux (wxGTK2)
-//        // but not for Windows, but it doesn't harm
-//        wxIdleEvent event;
-//        wxPLGetApp().AddPendingEvent( event );
-//        wxPLGetApp().OnRun();           // start wxWidgets application
-//        callOnExit.exit = false;
-//    }
-//    wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); plexit( "Problem running wxWidgets!" ); )
-//
-//    if ( dev->exit )
-//    {
-//        wxPLGetApp().OnExit();
-//        plexit( "" );
-//    }
-//
-//    dev->waiting = false;
-//}

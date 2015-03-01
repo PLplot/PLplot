@@ -42,19 +42,30 @@ public:
 
     void RenewPlot( void );                                                 //!< Redo plot.
     bool SavePlot( const wxString& driver, const wxString& filename );      //!< Save plot using a different driver.
-    wxPLplotstream* GetStream()  { return &m_stream; }                      //!< Get pointer to wxPLplotstream of this widget.
+    wxPLplotstream* GetStream()  { return m_created ? &m_stream : NULL; }   //!< Get pointer to wxPLplotstream of this widget.
     void setUseGraphicsContext( bool useGraphicsContext );
+	void setCanvasColour( const wxColour &colour );
 
 protected:
     virtual void OnPaint( wxPaintEvent& event );         //!< Paint event
     virtual void OnSize( wxSizeEvent & event );          //!< Size event
     virtual void OnErase( wxEraseEvent &event );         //!< Background erase event
     virtual void OnCreate( wxWindowCreateEvent &event ); //!< Window created event
-    bool           m_created;                            //!< Flag to indicate the window has been Created, must be above m_stream so it gets initialised first
     wxPLplotstream m_stream;                             //!< The wxPLplotstream which belongs to this plot widget
+    bool         m_created;                              //!< Flag to indicate the window has been Created, must be above m_stream so it gets initialised first
 
 private:
-    bool m_useGraphicsContext;       //!< Flag to indicate whether we should use a wxGCDC
+    bool m_useGraphicsContext;                           //!< Flag to indicate whether we should use a wxGCDC
+	wxBitmap m_bitmap;
+	// The memory dc and wrapping gc dc for drawing. Note we
+	//use pointers and reallocate them whenever the bitmap is
+	//resized because reusing either of these causes problems
+	//for rendering on a wxGCDC - at least on Windows.
+	wxMemoryDC *m_memoryDc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	wxGCDC *m_gcDc;
+#endif
+	wxColour m_canvasColour;
 };
 
 
@@ -64,13 +75,14 @@ private:
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
     : m_created( false )
-{
-    //Slightly annoyingly, at this point we haven't created the window
-    //so we haven't got a size to pass to Create to use for default
-    //scaling. Use 500 pixels square until we find a good workaround.
-    m_stream.Create( NULL, 500, 500, wxPLPLOT_DRAW_TEXT );
 
+{
+	m_memoryDc = NULL;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	m_gcDc = NULL;
+#endif
     setUseGraphicsContext( useGraphicsContext );
+	m_canvasColour = *wxBLACK;
 
     //We use connect instead of Bind for compatiblity with wxWidgets 2.8
     //but should move to bind in the future.
@@ -103,30 +115,41 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
     //Moving it here after WXWINDOW::Create has been called stops this and
     //the call does nothing if the style is the same as previous calls so
     //should be safe to call here.
-    WXWINDOW::SetBackgroundStyle( wxBG_STYLE_CUSTOM );
+    //WXWINDOW::SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 
-    wxAutoBufferedPaintDC dc( this );
+
+    //wxAutoBufferedPaintDC dc( (WXWINDOW*)this );
     int    width  = WXWINDOW::GetClientSize().GetWidth();
     int    height = WXWINDOW::GetClientSize().GetHeight();
 
-    wxDC   *pldc = &dc;
+	wxPaintDC paintDc( this );
+	
+	//resize the plot if needed
+	bool needResize = width != m_bitmap.GetWidth() || height != m_bitmap.GetHeight();
+	if( needResize )
+	{
+		m_bitmap.Create( width, height, 32 );
+		if ( m_memoryDc )
+			delete m_memoryDc;
+		m_memoryDc = new wxMemoryDC;
+		m_memoryDc->SelectObject( m_bitmap );
+		wxDC   *drawDc = m_memoryDc;
 #ifdef wxUSE_GRAPHICS_CONTEXT
-    wxGCDC gcdc( dc );
-    if ( m_useGraphicsContext )
-    {
-        pldc = &gcdc;
-    }
+		if ( m_useGraphicsContext )
+		{
+			if ( m_gcDc )
+				delete m_gcDc;
+			m_gcDc = new wxGCDC( *m_memoryDc );
+			drawDc = m_gcDc;
+		}
 #endif
+		m_stream.SetDC( drawDc );
+		drawDc->SetBackground( wxBrush( m_canvasColour ) );
+		drawDc->Clear();
+		m_stream.SetSize( width, height );
+	}
 
-    PLINT r;
-    PLINT g;
-    PLINT b;
-    m_stream.gcolbg( r, g, b );
-    pldc->SetBackground( wxBrush( wxColour( r, g, b ) ) );
-    pldc->Clear();
-    m_stream.SetSize( WXWINDOW::GetClientSize().GetWidth(), WXWINDOW::GetClientSize().GetHeight() );
-    m_stream.SetDC( pldc );     // This causes a redraw.
-    m_stream.SetDC( NULL );     //Reset to NULL to avaoid writing to the wxGCDC after it has been destroyed
+	paintDc.Blit( 0, 0, width, height, m_memoryDc, 0, 0 );
 }
 
 //! This is called when the plot is resized
@@ -153,7 +176,30 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
+	//create the stream
+    int    width  = WXWINDOW::GetClientSize().GetWidth();
+    int    height = WXWINDOW::GetClientSize().GetHeight();
+	m_bitmap.Create( width, height );
+	if( m_memoryDc )
+		delete m_memoryDc;
+	m_memoryDc = new wxMemoryDC;
+	m_memoryDc->SelectObject( m_bitmap );
+	wxDC * drawDc = m_memoryDc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	if ( m_useGraphicsContext )
+	{
+		if ( m_gcDc )
+			delete m_gcDc;
+		m_gcDc = new wxGCDC( *m_memoryDc );
+		drawDc = m_gcDc;
+	}
+#endif
+	m_stream.Create( drawDc, width, height, wxPLPLOT_DRAW_TEXT );
+	drawDc->SetBackground( wxBrush( m_canvasColour ) );
+	drawDc->Clear();
+
     m_created = true;
+	RenewPlot();
 }
 
 
@@ -163,7 +209,9 @@ template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::RenewPlot( void )
 {
     if ( m_created )
+	{
         WXWINDOW::Refresh();
+	}
 }
 
 
@@ -204,11 +252,29 @@ bool wxPLplotwindow<WXWINDOW>::SavePlot( const wxString& devname, const wxString
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::setUseGraphicsContext( bool useGraphicsContext )
 {
-    if ( useGraphicsContext != m_useGraphicsContext )
+	wxDC *drawDc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	if ( useGraphicsContext != m_useGraphicsContext )
     {
         m_useGraphicsContext = useGraphicsContext;
-        RenewPlot();
+		drawDc = m_useGraphicsContext ? ( wxDC * )m_gcDc : ( wxDC * )m_memoryDc;
     }
+#else
+	drawDc = &m_memoryDc;
+	m_useGraphicsContext = false;
+#endif
+	if( m_created )
+	{
+		m_stream.SetDC( drawDc );
+		RenewPlot();
+	}
+}
+
+template<class WXWINDOW>
+void wxPLplotwindow<WXWINDOW>::setCanvasColour( const wxColour &colour )
+{
+	m_canvasColour = colour;
+	RenewPlot();
 }
 
 #endif // !defined( WXPLPLOTWINDOW_H__INCLUDED_ )

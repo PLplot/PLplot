@@ -93,7 +93,7 @@ bool MyApp::OnInit()
     SetFrontProcess( &psn );
 #endif
 
-    wxPLplotwindow<wxFrame> *frame = new wxPLplotwindow<wxFrame>( );
+    wxPLplotwindow<wxFrame> *frame = new wxPLplotwindow<wxFrame>();
     frame->Create( NULL, wxID_ANY, wxT( "wxPLplotDemo" ) );
     frame->SetIcon( wxIcon( graph ) );
     frame->Show();
