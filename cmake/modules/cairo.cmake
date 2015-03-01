@@ -50,6 +50,7 @@
 
 # Turn off PLD_xcairo if gtk+2 dependencies need to be dropped.
 if(DROP_GTK_PLUS_2_BUILDS)
+  message(STATUS "DROP_GTK_PLUS_2_BUILDS = ${DROP_GTK_PLUS_2_BUILDS} means must disable PLD_xcairo")
   set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
 endif(DROP_GTK_PLUS_2_BUILDS)
 
@@ -122,6 +123,7 @@ if(
     endif(NUMERICAL_PANGOCAIRO_VERSION LESS "${NUMERICAL_PANGOCAIRO_MINIMUM_VERSION}")
     set(cairo_RPATH ${linkdir})
     filter_rpath(cairo_RPATH)
+
     if(PLD_xcairo AND X11_COMPILE_FLAGS)
       # Blank-delimited required.
       string(REGEX REPLACE ";" " "
@@ -129,11 +131,13 @@ if(
         )
       set(cairo_LINK_FLAGS ${linkflags} ${X11_LIBRARIES})
     else(PLD_xcairo AND X11_COMPILE_FLAGS)
-      message(STATUS
-        "WARNING: X windows not found. Setting xcairo driver to OFF."
-        )
-      # Blank-delimited required.
-      set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
+      if(PLD_xcairo)
+	message(STATUS
+          "WARNING: X windows not found. Setting xcairo driver to OFF."
+          )
+	# Blank-delimited required.
+	set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
+      endif(PLD_xcairo)
       # now deal with remaining cairo devices.
       string(REGEX REPLACE ";" " " cairo_COMPILE_FLAGS "${cflags}")
       set(cairo_LINK_FLAGS ${linkflags})
