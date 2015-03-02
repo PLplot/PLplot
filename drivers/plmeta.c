@@ -61,6 +61,7 @@ static void WritePageInfo( PLStream *pls, FPOS_T pp_offset );
 static void UpdateIndex( PLStream *pls, FPOS_T cp_offset );
 static void plm_fill( PLStream *pls );
 static void plm_swin( PLStream *pls );
+static void plm_text( PLStream *pls, EscText *args );
 
 // A little function to help with debugging
 
@@ -120,6 +121,17 @@ plD_init_plm( PLStream *pls )
     pls->color     = 1;         // Is a color device
     pls->dev_fill0 = 1;         // Handle solid fills
     pls->dev_fill1 = 1;         // Driver handles pattern fills
+
+    // NOTE:  This breaks compatibility with the 2005 version of
+    // the plot metafile format
+#define NEW_METAFILE
+#ifdef NEW_METAFILE
+    pls->dev_text    = 1;       // Enable text handling by the driver
+    pls->dev_unicode = 1;       // Enable unicode support
+#else
+    pls->dev_text    = 0;       // Disable text handling by the driver
+    pls->dev_unicode = 0;       // Disable unicode support
+#endif
 
 // Initialize family file info
 
@@ -435,6 +447,22 @@ plD_esc_plm( PLStream *pls, PLINT op, void *ptr )
     case PLESC_SWIN:
         plm_swin( pls );
         break;
+
+    // Unicode and non-Unicode text handling
+    case PLESC_HAS_TEXT:
+        plm_text( pls, (EscText *) ptr );
+        break;
+
+    // Alternate unicode text handling
+    case PLESC_BEGIN_TEXT:
+    case PLESC_TEXT_CHAR:
+    case PLESC_CONTROL_CHAR:
+    case PLESC_END_TEXT:
+        // NOP these for now until a decision is made
+        // which method should be implemented for metafiles
+        plwarn("plmeta: Alternate Unicode text handling is not implemented");
+        break;
+
     }
 }
 
@@ -476,6 +504,102 @@ static void
 plm_swin( PLStream *pls )
 {
     dbug_enter( "plm_swin" );
+}
+
+//--------------------------------------------------------------------------
+// plm_text()
+//
+// Stores the text into the metafile.
+//--------------------------------------------------------------------------
+
+static void
+plm_text( PLStream *pls, EscText *args )
+{
+    PLmDev *dev = (PLmDev *) pls->dev;
+
+    /*
+    PLINT base;   // ref point at base(1) or center(0) of text. Currently plplot only use 0
+    PLFLT just;   // continuos justification, 0 left, 0.5 center, 1 right
+    PLFLT *xform; // transformation (rotation) matrix
+    PLINT x;      // raw reference point--after any transformation
+    PLINT y;
+    PLINT refx;   // processed ref. point--after justification, displacement, etc, processing
+    PLINT refy;
+    char  font_face; // font face OPTIONALLY used for rendering hershey codes
+    // The following 3 fields are used by the alternative text handling pathway.
+    // See drivers/cairo.h for details about how this works.
+    PLUNICODE n_fci;          // font storage for unicode font handling
+    PLUNICODE n_char;         // character storage for unicode font handling
+    PLINT     n_ctrl_char;    // control character code storage for unicode font handling
+    PLUNICODE unicode_char;   // an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls
+    PLUNICODE *unicode_array; // a pointer to an array of ints holding either a Hershey, ASC-II, or Unicode value for cached plsym
+    unsigned short unicode_array_len;
+    const char *string;       // text to draw
+    */
+
+    // Write state information needed to render the text
+
+    plm_wr( pdf_wr_ieeef( pls->pdfs, pls->chrht ) );
+    plm_wr( pdf_wr_ieeef( pls->pdfs, pls->diorot ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, pls->clpxmi ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, pls->clpxma ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, pls->clpymi ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, pls->clpyma ) );
+
+    //  Write the text layout information
+
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->base ) );
+    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->just ) );
+  
+    // Do we have a rotation shear that needs to be saved
+    if( args->xform != NULL ) {
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[0] ) );
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[1] ) );
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[2] ) );
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[3] ) );
+    } else {
+        plwarn("plmeta: transformation matrix undefined, using a guess");
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 1.0 ) );
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 0.0 ) );
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 1.0 ) );
+        plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 1.0 ) );
+    }
+
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->x ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->y ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->refx ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->refy ) );
+    plm_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) args->font_face ) );
+
+    // Are we in Unicode mode?
+    if( pls->dev_unicode ) {
+        PLINT i;
+	PLUNICODE fci;
+  
+	// Get the font characterization integer and write it
+	plgfci( &fci );
+	plm_wr( pdf_wr_4bytes( pls->pdfs, fci ) );
+
+	// Store the text
+	plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->unicode_array_len ) );
+
+	// PLplot uses a UTF-32 representation of Unicode characters,
+	// so we need to write 4 bytes for each character
+	for( i = 0; i < args->unicode_array_len; i++ ) {
+	  plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) args->unicode_array[i] ) );
+	}
+    } else {
+        PLINT len;
+
+	len = strlen( args->string );
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) len ) );
+	if ( len > 0 )
+	    plm_wr( pdf_wr_string( pls->pdfs, args->string ) );
+    }
+
+    // Clear the last known position
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 }
 
 //--------------------------------------------------------------------------

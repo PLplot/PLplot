@@ -96,7 +96,8 @@ typedef struct
     PLINT   version;    // Metafile version number
     U_SHORT page;       // Current page
 
-    // Viewport configuration. Used to render a metafile
-    PLFLT   vpxmin, vpymin;
-    PLFLT   vpxmax, vpymax;
+    // Metafile coordinates to physical (virtual pixels) coordinates 
+    // transformation
+    PLFLT   mfpcxa, mfpcxb;    // x = mfpcxa * x + mfpcxb
+    PLFLT   mfpcya, mfpcyb;    // y = mfpcya * y + mfpcyb
 } PLmDev;

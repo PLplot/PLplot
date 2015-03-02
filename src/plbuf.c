@@ -324,37 +324,51 @@ plbuf_image( PLStream *pls, IMG_DT *img_dt )
 static void
 plbuf_text( PLStream *pls, EscText *text )
 {
-    PLUNICODE fci;
-
     dbug_enter( "plbuf_text" );
 
-    // Retrieve the font characterization integer
-    plgfci( &fci );
+    // Store the state information needed to render the text
 
-    // Write the text information
+    wr_data( pls, &pls->chrht, sizeof ( pls->chrht ) );
+    wr_data( pls, &pls->diorot, sizeof ( pls->diorot ) );
+    wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    wr_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    wr_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 
-    wr_data( pls, &fci, sizeof ( PLUNICODE ) );
+    // Store the text layout information
+    
+    wr_data( pls, &text->base, sizeof ( text->base ) );
+    wr_data( pls, &text->just, sizeof ( text->just ) );
+    wr_data( pls, text->xform, sizeof ( text->xform[0] ) * 4 );
+    wr_data( pls, &text->x, sizeof ( text->x ) );
+    wr_data( pls, &text->y, sizeof ( text->y ) );
+    wr_data( pls, &text->refx, sizeof ( text->refx ) );
+    wr_data( pls, &text->refy, sizeof ( text->refy ) );
+    wr_data( pls, &text->font_face, sizeof ( text->font_face ) );
 
-    wr_data( pls, &pls->chrht, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->diorot, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
+    // Store the text
 
-    wr_data( pls, &text->base, sizeof ( PLINT ) );
-    wr_data( pls, &text->just, sizeof ( PLFLT ) );
-    wr_data( pls, text->xform, sizeof ( PLFLT ) * 4 );
-    wr_data( pls, &text->x, sizeof ( PLINT ) );
-    wr_data( pls, &text->y, sizeof ( PLINT ) );
-    wr_data( pls, &text->refx, sizeof ( PLINT ) );
-    wr_data( pls, &text->refy, sizeof ( PLINT ) );
+    if( pls->dev_unicode ) {
+        PLUNICODE fci;
+  
+        // Retrieve and store the font characterization integer
+	plgfci( &fci );
 
-    wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ) );
-    if ( text->unicode_array_len )
-        wr_data( pls,
-            text->unicode_array,
-            sizeof ( PLUNICODE ) * text->unicode_array_len );
+	wr_data( pls, &fci, sizeof ( fci ) );
+
+	wr_data( pls, &text->unicode_array_len, sizeof ( U_SHORT ) );
+	if ( text->unicode_array_len )
+	    wr_data( pls,
+		     text->unicode_array,
+		     sizeof ( PLUNICODE ) * text->unicode_array_len );
+    } else {
+        U_SHORT len;
+  
+	len = strlen( text->string );
+	wr_data( pls, &len, sizeof ( len ) );
+	if( len > 0 )
+	  wr_data( pls, (void *) text->string, sizeof( char ) * len );
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -368,35 +382,7 @@ plbuf_text_unicode( PLStream *pls, EscText *text )
 {
     PLUNICODE fci;
 
-    dbug_enter( "plbuf_text" );
-
-    // Retrieve the font characterization integer
-    plgfci( &fci );
-
-    // Write the text information
-
-    wr_data( pls, &fci, sizeof ( PLUNICODE ) );
-
-    wr_data( pls, &pls->chrht, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->diorot, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
-    wr_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
-
-    wr_data( pls, &text->base, sizeof ( PLINT ) );
-    wr_data( pls, &text->just, sizeof ( PLFLT ) );
-    wr_data( pls, text->xform, sizeof ( PLFLT ) * 4 );
-    wr_data( pls, &text->x, sizeof ( PLINT ) );
-    wr_data( pls, &text->y, sizeof ( PLINT ) );
-    wr_data( pls, &text->refx, sizeof ( PLINT ) );
-    wr_data( pls, &text->refy, sizeof ( PLINT ) );
-
-    wr_data( pls, &text->n_fci, sizeof ( PLUNICODE ) );
-    wr_data( pls, &text->n_char, sizeof ( PLUNICODE ) );
-    wr_data( pls, &text->n_ctrl_char, sizeof ( PLINT ) );
-
-    wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ) );
+    dbug_enter( "plbuf_text_unicode" );
 }
 
 
@@ -431,22 +417,33 @@ plbuf_esc( PLStream *pls, PLINT op, void *ptr )
     case PLESC_FILL:
         plbuf_fill( pls );
         break;
+
     case PLESC_SWIN:
         plbuf_swin( pls, (PLWindow *) ptr );
         break;
+
     case PLESC_IMAGE:
         plbuf_image( pls, (IMG_DT *) ptr );
         break;
+
+    // Unicode and non-Unicode text handling
     case PLESC_HAS_TEXT:
         if ( ptr != NULL ) // Check required by GCW driver, please don't remove
             plbuf_text( pls, (EscText *) ptr );
         break;
+
+    // Alternate Unicode text handling
     case PLESC_BEGIN_TEXT:
     case PLESC_TEXT_CHAR:
     case PLESC_CONTROL_CHAR:
     case PLESC_END_TEXT:
-        plbuf_text_unicode( pls, (EscText *) ptr );
+        // The alternative unicode processing is not correctly implemented
+        // and is currently only used by Cairo, which handles its own
+        // redraws.  Skip further processing for now
+
+        //plbuf_text_unicode( pls, (EscText *) ptr );
         break;
+
     case PLESC_IMPORT_BUFFER:
         buffer = (plbuffer *) ptr;
         if ( buffer->size > pls->plbuf_buffer_size )
@@ -865,7 +862,10 @@ rdbuf_esc( PLStream *pls )
     case PLESC_TEXT_CHAR:
     case PLESC_CONTROL_CHAR:
     case PLESC_END_TEXT:
-        rdbuf_text_unicode( op, pls );
+        // Disable for now because alternative unicode processing is
+        // not correctly implemented
+
+        //rdbuf_text_unicode( op, pls );
         break;
     case PLESC_IMPORT_BUFFER:
         // Place holder until an appropriate action is determined.
@@ -1037,61 +1037,82 @@ rdbuf_di( PLStream *pls )
 //--------------------------------------------------------------------------
 // rdbuf_text()
 //
-// Draw PostScript text.
+// Render text through the driver.
 //--------------------------------------------------------------------------
 
 static void
 rdbuf_text( PLStream *pls )
 {
-    PLUNICODE( fci );
     EscText  text;
     PLFLT    xform[4];
-    PLUNICODE* unicode;
 
     dbug_enter( "rdbuf_text" );
 
     text.xform = xform;
 
-    // Read in the data
-    rd_data( pls, &fci, sizeof ( PLUNICODE ) );
+    // Read the state information
 
-    rd_data( pls, &pls->chrht, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->diorot, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->chrht, sizeof ( pls->chrht ) );
+    rd_data( pls, &pls->diorot, sizeof ( pls->diorot ) );
+    rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    rd_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    rd_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 
-    rd_data( pls, &text.base, sizeof ( PLINT ) );
-    rd_data( pls, &text.just, sizeof ( PLFLT ) );
-    rd_data( pls, text.xform, sizeof ( PLFLT ) * 4 );
-    rd_data( pls, &text.x, sizeof ( PLINT ) );
-    rd_data( pls, &text.y, sizeof ( PLINT ) );
-    rd_data( pls, &text.refx, sizeof ( PLINT ) );
-    rd_data( pls, &text.refy, sizeof ( PLINT ) );
+    // Read the text layout information
 
-    rd_data( pls, &text.unicode_array_len, sizeof ( PLINT ) );
+    rd_data( pls, &text.base, sizeof ( text.base ) );
+    rd_data( pls, &text.just, sizeof ( text.just ) );
+    rd_data( pls, text.xform, sizeof ( text.xform[0] ) * 4 );
+    rd_data( pls, &text.x, sizeof ( text.x ) );
+    rd_data( pls, &text.y, sizeof ( text.y ) );
+    rd_data( pls, &text.refx, sizeof ( text.refx ) );
+    rd_data( pls, &text.refy, sizeof ( text.refy ) );
+    rd_data( pls, &text.font_face, sizeof ( text.font_face ) );
 
-    // Initialize to NULL so we don't accidentally try to free the memory
-    text.unicode_array = NULL;
-    if ( text.unicode_array_len )
-    {
-        if ( ( unicode = (PLUNICODE *) malloc( text.unicode_array_len * sizeof ( PLUNICODE ) ) )
-             == NULL )
-            plexit( "rdbuf_text: Insufficient memory" );
+    // Read in the text
+    if( pls->dev_unicode ) {
+	PLUNICODE  fci ;
 
-        rd_data( pls, unicode, sizeof ( PLUNICODE ) * text.unicode_array_len );
-        text.unicode_array = unicode;
-    }
-    else
-        text.unicode_array = NULL;
-
-    // Make the call for unicode devices
-    if ( pls->dev_unicode )
-    {
+	rd_data( pls, &fci, sizeof ( fci ) );
         plsfci( fci );
-        plP_esc( PLESC_HAS_TEXT, &text );
+
+	rd_data( pls, &text.unicode_array_len, sizeof ( U_SHORT ) );
+	if ( text.unicode_array_len )
+	{
+	    // Set the pointer to the unicode data in the buffer.  This avoids
+            // allocating and freeing memory
+	    rd_data_no_copy( 
+		pls,
+	        (void **) ( &text.unicode_array ), 
+		sizeof ( PLUNICODE ) * text.unicode_array_len );
+	}
+	else
+	{
+	    text.unicode_array = NULL;
+	}
     }
+    else 
+    {
+        U_SHORT len;
+	
+	rd_data( pls, &len, sizeof ( len ) );
+	if( len > 0 )
+	{
+	    // Set the pointer to the string data in the buffer.  This avoids
+            // allocating and freeing memory
+	    rd_data_no_copy( 
+		pls,
+	        (void **) ( &text.string ), 
+		sizeof ( char ) * len );
+	}
+	else
+	{
+	    text.string = NULL;
+	}
+    }
+
+    plP_esc( PLESC_HAS_TEXT, &text );
 }
 
 //--------------------------------------------------------------------------
@@ -1103,44 +1124,8 @@ rdbuf_text( PLStream *pls )
 static void
 rdbuf_text_unicode( PLINT op, PLStream *pls )
 {
-    PLUNICODE( fci );
-    EscText text;
-    PLFLT   xform[4];
-
     dbug_enter( "rdbuf_text_unicode" );
 
-    text.xform = xform;
-
-    // Read in the data
-
-    rd_data( pls, &fci, sizeof ( PLUNICODE ) );
-
-    rd_data( pls, &pls->chrht, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->diorot, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
-    rd_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
-
-    rd_data( pls, &text.base, sizeof ( PLINT ) );
-    rd_data( pls, &text.just, sizeof ( PLFLT ) );
-    rd_data( pls, text.xform, sizeof ( PLFLT ) * 4 );
-    rd_data( pls, &text.x, sizeof ( PLINT ) );
-    rd_data( pls, &text.y, sizeof ( PLINT ) );
-    rd_data( pls, &text.refx, sizeof ( PLINT ) );
-    rd_data( pls, &text.refy, sizeof ( PLINT ) );
-
-    rd_data( pls, &text.n_fci, sizeof ( PLUNICODE ) );
-    rd_data( pls, &text.n_char, sizeof ( PLUNICODE ) );
-    rd_data( pls, &text.n_ctrl_char, sizeof ( PLINT ) );
-
-    rd_data( pls, &text.unicode_array_len, sizeof ( PLINT ) );
-
-    if ( pls->dev_unicode )
-    {
-        plsfci( fci );
-        plP_esc( op, &text );
-    }
 }
 
 //--------------------------------------------------------------------------
