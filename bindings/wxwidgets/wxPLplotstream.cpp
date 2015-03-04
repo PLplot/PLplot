@@ -33,12 +33,14 @@
 //
 wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) : plstream()
 {
-    Create( dc, width, height, style );
+    m_created = false;
+	Create( dc, width, height, style );
 }
 
 
 wxPLplotstream::wxPLplotstream() : plstream()
 {
+	m_created = false;
 }
 
 //! Called from the constructor or can be called by the user if the default constructor is used
@@ -46,7 +48,12 @@ wxPLplotstream::wxPLplotstream() : plstream()
 //  the plot.
 void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 {
-    const size_t bufferSize = 256;
+    if( m_created )
+	{
+		plabort( "wxPLplotstream::Create - Stream already created" );
+		return;
+	}
+	const size_t bufferSize = 256;
 
     m_width  = width;
     m_height = height;
@@ -127,4 +134,9 @@ void wxPLplotstream::SetFixedAspectRatio( bool fixed )
 {
     PLBOOL f = fixed ? 1 : 0;
     cmd( PLESC_FIXASPECT, &f );
+}
+
+bool wxPLplotstream::IsValid()
+{
+	return m_created;
 }

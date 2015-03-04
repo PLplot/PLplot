@@ -931,7 +931,7 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     pls->aspect = m_yAspect / m_xAspect;
 
     // redraw the plot
-    if ( m_dc )
+	if ( m_dc && pls->plbuf_buffer )
         plreplot();
 }
 

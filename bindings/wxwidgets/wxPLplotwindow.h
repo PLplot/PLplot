@@ -52,7 +52,7 @@ protected:
     virtual void OnErase( wxEraseEvent &event );         //!< Background erase event
     virtual void OnCreate( wxWindowCreateEvent &event ); //!< Window created event
     wxPLplotstream m_stream;                             //!< The wxPLplotstream which belongs to this plot widget
-    bool         m_created;                              //!< Flag to indicate the window has been Created, must be above m_stream so it gets initialised first
+    bool         m_created;                              //!< Flag to indicate the window has been Created
 
 private:
     bool m_useGraphicsContext;                           //!< Flag to indicate whether we should use a wxGCDC
@@ -176,30 +176,36 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
-	//create the stream
-    int    width  = WXWINDOW::GetClientSize().GetWidth();
-    int    height = WXWINDOW::GetClientSize().GetHeight();
-	m_bitmap.Create( width, height );
-	if( m_memoryDc )
-		delete m_memoryDc;
-	m_memoryDc = new wxMemoryDC;
-	m_memoryDc->SelectObject( m_bitmap );
-	wxDC * drawDc = m_memoryDc;
-#ifdef wxUSE_GRAPHICS_CONTEXT
-	if ( m_useGraphicsContext )
+	if( !m_created )
 	{
-		if ( m_gcDc )
-			delete m_gcDc;
-		m_gcDc = new wxGCDC( *m_memoryDc );
-		drawDc = m_gcDc;
-	}
+		//create the stream
+		int    width  = WXWINDOW::GetClientSize().GetWidth();
+		int    height = WXWINDOW::GetClientSize().GetHeight();
+		m_bitmap.Create( width, height );
+		if( m_memoryDc )
+			delete m_memoryDc;
+		m_memoryDc = new wxMemoryDC;
+		m_memoryDc->SelectObject( m_bitmap );
+		wxDC * drawDc = m_memoryDc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+		if ( m_useGraphicsContext )
+		{
+			if ( m_gcDc )
+				delete m_gcDc;
+			m_gcDc = new wxGCDC( *m_memoryDc );
+			drawDc = m_gcDc;
+		}
 #endif
-	m_stream.Create( drawDc, width, height, wxPLPLOT_DRAW_TEXT );
-	drawDc->SetBackground( wxBrush( m_canvasColour ) );
-	drawDc->Clear();
+		if( !m_stream.IsValid() )
+			m_stream.Create( drawDc, width, height, wxPLPLOT_DRAW_TEXT );
+		else
+			m_stream.SetDC( drawDc );
+		drawDc->SetBackground( wxBrush( m_canvasColour ) );
+		drawDc->Clear();
 
-    m_created = true;
-	RenewPlot();
+		m_created = true;
+		RenewPlot();
+	}
 }
 
 
