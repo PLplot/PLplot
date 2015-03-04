@@ -52,6 +52,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     m_writingPage = 0;
     m_file        = file;
     m_fileSize    = fileSize;
+	m_inCheckTimerFunction = false;
 
     if ( file.length() > 0 )
     {
@@ -122,6 +123,11 @@ wxPlFrame::~wxPlFrame()
 
 void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 {
+	//avoid reentrant behaviour if some function yields allowing the
+	//timer to call this function again
+	if ( m_inCheckTimerFunction )
+		return;
+	m_inCheckTimerFunction = true;
     //basically we check to see if we have any more data in the buffer
     //if so we add it to the apropriate plotBuffer
     if ( m_memoryMap.isValid() )
@@ -149,6 +155,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             }
 
             //nothing to do so return
+			m_inCheckTimerFunction = false;
             return;
         }
 
@@ -168,6 +175,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
         if ( transmissionType == transmissionSkipFileEnd )
         {
             header->readLocation = plMemoryMapReservedSpace;
+			m_inCheckTimerFunction = false;
             return;
         }
         else if ( transmissionType == transmissionBeginPage )
@@ -211,6 +219,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
         if ( header->readLocation == m_memoryMap.getSize() )
             header->readLocation = plMemoryMapReservedSpace;
     }
+	m_inCheckTimerFunction = false;
 }
 void wxPlFrame::OnToggleFixAspect( wxCommandEvent &event )
 {
