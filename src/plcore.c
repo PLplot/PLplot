@@ -2225,7 +2225,6 @@ void
 c_plinit( void )
 {
     PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new;
-    PLINT inc = 0, del = 2000;
 
     pllib_init();
 
@@ -2346,7 +2345,7 @@ c_plinit( void )
     plcol0( 1 );
 
     pllsty( 1 );
-    plpat( 1, &inc, &del );
+    plpsty( 0 );
 
     // Set up default arrow style;
     plsvect( NULL, NULL, 6, 0 );
