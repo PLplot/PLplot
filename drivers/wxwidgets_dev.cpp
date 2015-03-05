@@ -131,6 +131,38 @@ private:
 };
 
 //--------------------------------------------------------------------------
+// TextObjectsChanger class
+// This class changes the font and text colours of a dc on construction and resets
+// them to their original values on destruction. It is ideal for making temporary
+// changes to the text and guarenteeing that they get set back.
+//--------------------------------------------------------------------------
+class TextObjectsChanger
+{
+public:
+	TextObjectsChanger( wxDC *dc, const wxFont &font, const wxColour &textForeground, const wxColour &textBackground )
+	{
+		m_dc = dc;
+		m_font = dc->GetFont();
+		m_textForeground = dc->GetTextForeground();
+		m_textBackground = dc->GetTextBackground();
+		dc->SetTextForeground( textForeground );
+		dc->SetTextBackground( textBackground );
+		dc->SetFont( font );
+	}
+	~TextObjectsChanger()
+	{
+		m_dc->SetTextForeground( m_textForeground );
+		m_dc->SetTextBackground( m_textBackground );
+		m_dc->SetFont( m_font );
+	}
+private:
+	wxDC *m_dc;
+	wxFont m_font;
+	wxColour m_textForeground;
+	wxColour m_textBackground;
+};
+
+//--------------------------------------------------------------------------
 // class Rand
 // This is a simple random number generator class, created soley so that
 // random numbers can be generated in this file without "contaminating" the
@@ -194,7 +226,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 {
     m_fixedAspect = false;
 
-    m_font        = NULL;
     m_lineSpacing = 1.0;
     m_underlined  = false;
 
@@ -273,8 +304,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 //--------------------------------------------------------------------------
 wxPLDevice::~wxPLDevice()
 {
-    if ( m_font )
-        delete m_font;
 
     if ( m_outputMemoryMap.isValid() )
     {
@@ -675,11 +704,8 @@ void wxPLDevice::SetFont( PLUNICODE fci )
     plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
 
-    if ( m_font )
-        delete m_font;
-
     //create the font based on point size ( with 1 point = 1/72 inch )
-    m_font = wxFont::New( (int) ( m_fontSize * m_fontScale < 4 ? 4 : m_fontSize * m_fontScale ),
+    m_font = wxFont( (int) ( m_fontSize * m_fontScale < 4 ? 4 : m_fontSize * m_fontScale ),
         fontFamilyLookup[fontFamily],
         fontStyleLookup[fontStyle],
         fontWeightLookup[fontWeight],
@@ -687,7 +713,6 @@ void wxPLDevice::SetFont( PLUNICODE fci )
         wxEmptyString,
 		wxFONTENCODING_DEFAULT
         );
-    m_dc->SetFont( *m_font );
 }
 
 
@@ -712,6 +737,11 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 
     //Also move the origin so the text region buts up to the dc top, not the bottom
     OriginChanger originChanger( m_dc, 0, m_height - m_plplotEdgeLength / m_yScale );
+
+	//set the font up
+	TextObjectsChanger textObjectsChanger( m_dc, m_font, 
+		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ),
+		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ) );
 
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
@@ -880,9 +910,10 @@ void wxPLDevice::BeginPage( PLStream* pls )
         TransmitBuffer( NULL, transmissionBeginPage );
     }
 
-    // Get the starting colour and width from the stream
+    // Get the starting colour, width and font from the stream
     SetWidth( pls );
     SetColor( pls );
+	SetFont ( pls->fci );
 
 	//clear the page
 	ClearBackground( pls );

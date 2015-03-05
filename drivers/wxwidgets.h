@@ -89,7 +89,7 @@ private:
 
     // font variables
     static const int m_max_string_length = 500;
-    wxFont           *m_font;
+    wxFont           m_font;
     bool             m_underlined;
     PLFLT            m_fontSize;
     PLFLT            m_fontScale;
