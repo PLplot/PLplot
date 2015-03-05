@@ -329,7 +329,7 @@ c_plpsty( PLINT patt )
         plabort( "plpsty: Please call plinit first" );
         return;
     }
-    if ( patt > 8 || patt < 0 )
+    if ( patt > NPATTERNS || patt < 0 )
     {
         plabort( "plpsty: Invalid pattern" );
         return;

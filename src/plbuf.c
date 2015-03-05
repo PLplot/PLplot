@@ -727,8 +727,8 @@ rdbuf_state( PLStream *pls )
         rd_data( pls, &nps, sizeof ( nps ) );
         rd_data( pls, &inclin[0], sizeof ( inclin ) );
         rd_data( pls, &delta[0], sizeof ( delta ) );
-		pls->patt = patt;
 		c_plpat( nps, inclin, delta );
+		pls->patt = patt; //this must be second as c_plpat sets pls->patt to an nvalid value
         break;
     }
 
