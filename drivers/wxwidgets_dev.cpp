@@ -577,7 +577,8 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
 
     wxCoord  w, h, d, l;
 
-    wxString str( wxConvUTF8.cMB2WC( utf8_string ), *wxConvCurrent );
+	wxString str = wxString::FromUTF8( utf8_string );
+    //wxString str( wxConvUTF8.cMB2WC( utf8_string ), *wxConvCurrent );
 
     m_dc->GetTextExtent( str, &w, &h, &d, &l );
 
@@ -685,7 +686,6 @@ void wxPLDevice::SetFont( PLUNICODE fci )
         m_underlined,
         wxEmptyString,
 		wxFONTENCODING_DEFAULT
-//        wxFONTENCODING_UTF8
         );
     m_dc->SetFont( *m_font );
 }
