@@ -684,7 +684,8 @@ void wxPLDevice::SetFont( PLUNICODE fci )
         fontWeightLookup[fontWeight],
         m_underlined,
         wxEmptyString,
-        wxFONTENCODING_UTF8
+		wxFONTENCODING_DEFAULT
+//        wxFONTENCODING_UTF8
         );
     m_dc->SetFont( *m_font );
 }
