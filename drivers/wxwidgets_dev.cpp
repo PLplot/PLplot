@@ -23,6 +23,12 @@
 #define DEBUG
 #define NEED_PLDEBUG
 
+//set this to help when debugging wxPLViewer issues
+//it uses a memory map name without random characters
+//and does not execute the viewer, allowing the user to do
+//it in a debugger
+//#define WXPLVIEWER_DEBUG
+
 //headers needed for Rand
 #ifdef WIN32
 //this include must occur before any other include of stdlib.h
@@ -199,8 +205,11 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     else
         //assume we will be outputting to the default
         //memory map until we are given a dc to draw to
+#ifdef WXPLVIEWER_DEBUG
         strcpy(m_mfo, "plplotMemoryMap");
-        //strcpy( m_mfo, "plplotMemoryMap??????????" );
+#else
+        strcpy( m_mfo, "plplotMemoryMap??????????" );
+#endif
 
     // be verbose and write out debug messages
 #ifdef _DEBUG
@@ -1186,19 +1195,25 @@ void wxPLDevice::SetupMemoryMap()
         wxString command;
         command << wxT( "\"" ) << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
             mapSize << wxT( " " ) << m_width << wxT( " " ) << m_height;
+#ifndef WXPLVIEWER_DEBUG
 #ifdef WIN32
 
         if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
             plwarn( "Failed to run wxPLViewer - no plots will be shown" );
-#else
+#else //WIN32
         //Linux doesn't like using wxExecute without a wxApp, so use system instead
         command << wxT( " &" );
         system( command.mb_str() );
-#endif
+#endif //WIN32
+		size_t maxTries = 1000;
+#else //WXPLVIEWER_DEBUG
+		fprintf( stdout, "Begin Running wxPLViewer in the debugger now to continue." );
+		size_t maxTries = 100000;
+#endif //WXPLVIEWER_DEBUG
         //wait until the viewer signals it has opened the map file
         size_t  counter      = 0;
         size_t &viewerSignal = header->viewerOpenFlag;
-        while ( counter < 1000 && viewerSignal == 0 )
+        while ( counter < maxTries && viewerSignal == 0 )
         {
             wxMilliSleep( 10 );
         }
