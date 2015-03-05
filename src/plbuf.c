@@ -249,6 +249,9 @@ plbuf_state( PLStream *pls, PLINT op )
 
     case PLSTATE_FILL:
         wr_data( pls, &( pls->patt ), sizeof ( pls->patt ) );
+        wr_data( pls, &( pls->nps ), sizeof ( pls->nps ) );
+        wr_data( pls, &( pls->inclin[0] ), sizeof ( pls->inclin ) );
+        wr_data( pls, &( pls->delta[0] ), sizeof ( pls->delta ) );
         break;
 
     case PLSTATE_CMAP0:
@@ -719,9 +722,13 @@ rdbuf_state( PLStream *pls )
     }
 
     case PLSTATE_FILL: {
-        rd_data( pls, &( pls->patt ), sizeof ( pls->patt ) );
-
-        plP_state( PLSTATE_FILL );
+		PLINT patt, nps, inclin[2], delta[2];
+        rd_data( pls, &patt, sizeof ( patt ) );
+        rd_data( pls, &nps, sizeof ( nps ) );
+        rd_data( pls, &inclin[0], sizeof ( inclin ) );
+        rd_data( pls, &delta[0], sizeof ( delta ) );
+		pls->patt = patt;
+		c_plpat( nps, inclin, delta );
         break;
     }
 

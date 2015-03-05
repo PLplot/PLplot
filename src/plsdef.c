@@ -106,6 +106,7 @@ static struct line
 
 // Fill pattern defaults
 
+#define NPATTERNS 8
 static struct pattern
 {
     PLINT nlines;               // Number of lines in pattern (1 or 2)
@@ -309,6 +310,7 @@ c_plpat( PLINT nlin, const PLINT *inc, const PLINT *del )
             return;
         }
     }
+	plsc->patt = NPATTERNS;
     spat( inc, del, nlin );
 }
 
@@ -327,7 +329,7 @@ c_plpsty( PLINT patt )
         plabort( "plpsty: Please call plinit first" );
         return;
     }
-    if ( patt > 8 )
+    if ( patt > 8 || patt < 0 )
     {
         plabort( "plpsty: Invalid pattern" );
         return;
@@ -335,17 +337,13 @@ c_plpsty( PLINT patt )
     if ( patt != plsc->patt )
     {
         plsc->patt = patt;
-
-        if ( plsc->level > 0 )
-        {
-            plP_state( PLSTATE_FILL );
-        }
     }
     if ( patt > 0 )
     {
         spat( &pattern[patt - 1].inc[0], &pattern[patt - 1].del[0],
             pattern[patt - 1].nlines );
     }
+	else spat( NULL, NULL, 0 );
 }
 
 //--------------------------------------------------------------------------
@@ -365,4 +363,6 @@ spat( const PLINT inc[], const PLINT del[], PLINT nlin )
         plsc->inclin[i] = inc[i];
         plsc->delta[i]  = del[i];
     }
+
+    plP_state( PLSTATE_FILL );
 }
