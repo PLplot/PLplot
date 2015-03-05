@@ -149,7 +149,14 @@ public:
 		dc->SetTextBackground( textBackground );
 		dc->SetFont( font );
 	}
-	~TextObjectsChanger()
+	TextObjectsChanger( wxDC *dc, const wxFont &font )
+	{
+		m_dc = dc;
+		m_font = dc->GetFont();
+		m_textForeground = dc->GetTextForeground();
+		m_textBackground = dc->GetTextBackground();
+		dc->SetFont( font );
+	}	~TextObjectsChanger()
 	{
 		m_dc->SetTextForeground( m_textForeground );
 		m_dc->SetTextBackground( m_textBackground );
@@ -485,6 +492,20 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
     }
 }
 
+PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
+{
+	if( superscriptLevel == 0 ) 
+		return 0;
+	else
+	{
+		PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+		if ( superscriptLevel > 0 )
+			return getTextOffset( superscriptLevel - 1, baseFontSize ) + baseFontSize * fontScale / 2.;
+		else
+			return getTextOffset( superscriptLevel + 1, baseFontSize ) - baseFontSize * fontScale * 0.8 / 2.;
+	}
+}
+
 //--------------------------------------------------------------------------
 //  void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
 //
@@ -493,7 +514,7 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
 //  just get text metrics. This function will process the string for inline
 //  style change escapes and newlines.
 //--------------------------------------------------------------------------
-void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
+void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel )
 {
     if ( !m_dc )
         return;
@@ -538,37 +559,30 @@ void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
             {
                 if ( ucs4[i] == (PLUNICODE) 'u' ) // Superscript
                 {                                 // draw string so far
-                    DrawTextSection( utf8_string, drawText );
+					PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+					DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
-                    // change font scale
-                    if ( m_yOffset < -0.0001 )
-                        m_fontScale *= 1.25; // Subscript scaling parameter
-                    else
-                        m_fontScale *= 0.8;  // Subscript scaling parameter
-                    SetFont( m_fci );
-
-                    m_yOffset += m_yScale * m_fontSize * m_fontScale / 2.;
+					++superscriptLevel;
+					m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {                                 // draw string so far
-                    DrawTextSection( utf8_string, drawText );
+					PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+                    DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
-                    // change font scale
-                    double old_fontScale = m_fontScale;
-                    if ( m_yOffset > 0.0001 )
-                        m_fontScale *= 1.25; // Subscript scaling parameter
-                    else
-                        m_fontScale *= 0.8;  // Subscript scaling parameter
-                    SetFont( m_fci );
-
-                    m_yOffset -= m_yScale * m_fontSize * old_fontScale / 2.;
+					--superscriptLevel;
+                    m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
                 {                                 // draw string so far
-                    DrawTextSection( utf8_string, drawText );
+					PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+					DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
                     m_underlined = !m_underlined;
-                    SetFont( m_fci );
+                    m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) '+' ) // overline
                 {                                 // not implemented yet
@@ -579,16 +593,21 @@ void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
         else // a font change
         {
             // draw string so far
-            DrawTextSection( utf8_string, drawText );
+			PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+			DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
             // get new font
             m_fci = ucs4[i];
-            SetFont( m_fci );
+            m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
             i++;
         }
     }
-
-    DrawTextSection( utf8_string, drawText );
+	
+	//we have reached the end of the string. Draw the remainder.
+	PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+	PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+	DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 }
 
 
@@ -599,7 +618,7 @@ void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
 //  split into sections so that the text passed in has no style changes or
 //  newines.
 //--------------------------------------------------------------------------
-void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
+void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT yOffset, bool drawText )
 {
     if ( !m_dc )
         return;
@@ -627,12 +646,12 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
             // text
             if ( m_rotation == 0 )
                 m_dc->DrawRotatedText( str, (wxCoord) ( m_posX + m_textWidth ),
-                    (wxCoord) ( m_height - (wxCoord) ( m_posY + m_yOffset / m_yScale ) ),
+                    (wxCoord) ( m_height - (wxCoord) ( m_posY + yOffset / m_yScale ) ),
                     m_rotation * 180.0 / M_PI );
             else
                 m_dc->DrawRotatedText( str,
-                    (wxCoord) ( m_posX - m_yOffset / m_yScale * sin( m_rotation ) + m_textWidth * cos( m_rotation ) ),
-                    (wxCoord) ( m_height - (wxCoord) ( m_posY + m_yOffset * cos( m_rotation ) / m_yScale ) - m_textWidth * sin( m_rotation ) ),
+                    (wxCoord) ( m_posX - yOffset / m_yScale * sin( m_rotation ) + m_textWidth * cos( m_rotation ) ),
+                    (wxCoord) ( m_height - (wxCoord) ( m_posY + yOffset * cos( m_rotation ) / m_yScale ) - m_textWidth * sin( m_rotation ) ),
                     m_rotation * 180.0 / M_PI );
         }
     }
@@ -641,33 +660,33 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
 
     //keep track of the height of superscript text, the depth of subscript
     //text and the height of regular text
-    if ( m_yOffset > 0.0001 )
+    if ( yOffset > 0.0001 )
     {
         //determine the height the text would have if it were full size
-        double currentOffset = m_yOffset;
+        double currentOffset = yOffset;
         double currentHeight = h;
         while ( currentOffset > 0.0001 )
         {
-            currentOffset -= m_yScale * m_fontSize * m_fontScale / 2.;
+            currentOffset -= m_yScale * scaledFontSize / 2.;
             currentHeight *= 1.25;
         }
         m_textHeight = (wxCoord) m_textHeight > ( currentHeight )
                        ? m_textHeight
                        : currentHeight;
         //work out the height including superscript
-        m_superscriptHeight = m_superscriptHeight > ( currentHeight + m_yOffset / m_yScale )
+        m_superscriptHeight = m_superscriptHeight > ( currentHeight + yOffset / m_yScale )
                               ? m_superscriptHeight
-                              : static_cast<int>( ( currentHeight + m_yOffset / m_yScale ) );
+                              : static_cast<int>( ( currentHeight + yOffset / m_yScale ) );
     }
-    else if ( m_yOffset < -0.0001 )
+    else if ( yOffset < -0.0001 )
     {
         //determine the height the text would have if it were full size
-        double currentOffset = m_yOffset;
+        double currentOffset = yOffset;
         double currentHeight = h;
         double currentDepth  = d;
         while ( currentOffset < -0.0001 )
         {
-            currentOffset += m_yScale * m_fontSize * m_fontScale * 1.25 / 2.;
+            currentOffset += m_yScale * scaledFontSize * 1.25 / 2.;
             currentHeight *= 1.25;
             currentDepth  *= 1.25;
         }
@@ -676,9 +695,9 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
         //that the font size of (non-superscript and non-subscript) text is the same
         //along a line. Currently there is no escape to change font size mid string
         //so this should be fine
-        m_subscriptDepth = (wxCoord) m_subscriptDepth > ( ( -m_yOffset / m_yScale + h + d ) - ( currentDepth + m_textHeight ) )
+        m_subscriptDepth = (wxCoord) m_subscriptDepth > ( ( -yOffset / m_yScale + h + d ) - ( currentDepth + m_textHeight ) )
                            ? m_subscriptDepth
-                           : ( ( -m_yOffset / m_yScale + h + d ) - ( currentDepth + m_textHeight ) );
+                           : ( ( -yOffset / m_yScale + h + d ) - ( currentDepth + m_textHeight ) );
         m_subscriptDepth = m_subscriptDepth > 0 ? m_subscriptDepth : 0;
     }
     else
@@ -693,11 +712,8 @@ void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
 //
 //  Set font defined by fci.
 //--------------------------------------------------------------------------
-void wxPLDevice::SetFont( PLUNICODE fci )
+wxFont wxPLDevice::GetFont( PLUNICODE fci, PLFLT scaledFontSize )
 {
-    if ( !m_dc )
-        return;
-
     unsigned char fontFamily, fontStyle, fontWeight;
 
     plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
@@ -705,7 +721,7 @@ void wxPLDevice::SetFont( PLUNICODE fci )
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
 
     //create the font based on point size ( with 1 point = 1/72 inch )
-    m_font = wxFont( (int) ( m_fontSize * m_fontScale < 4 ? 4 : m_fontSize * m_fontScale ),
+    return wxFont( (int) ( scaledFontSize < 4 ? 4 : scaledFontSize ),
         fontFamilyLookup[fontFamily],
         fontStyleLookup[fontStyle],
         fontWeightLookup[fontWeight],
@@ -738,11 +754,6 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     //Also move the origin so the text region buts up to the dc top, not the bottom
     OriginChanger originChanger( m_dc, 0, m_height - m_plplotEdgeLength / m_yScale );
 
-	//set the font up
-	TextObjectsChanger textObjectsChanger( m_dc, m_font, 
-		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ),
-		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ) );
-
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
     {
@@ -759,7 +770,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 
     // Calculate the font size (in pt)
     // Plplot saves it in mm (bizarre units!)
-    m_fontSize = pls->chrht * 72.0 / 25.4;
+    PLFLT baseFontSize = pls->chrht * 72.0 / 25.4;
 
     // Use PLplot core routine to get the corners of the clipping rectangle
     PLINT rcx[4], rcy[4];
@@ -773,20 +784,22 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     }
     wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
 
-    // Set font color
-    m_dc->SetTextForeground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
-    m_dc->SetTextBackground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
-
     PLUNICODE *lineStart     = args->unicode_array;
     int       lineLen        = 0;
     bool      lineFeed       = false;
     bool      carriageReturn = false;
     wxCoord   paraHeight     = 0;
     // Get the curent font
-    m_fontScale = 1.0;
-    m_yOffset   = 0.0;
+	PLINT superscriptLevel = 0;
     plgfci( &m_fci );
-    SetFont( m_fci );
+	//set the font up, we use a textObjectChanger here so that the font returns
+	//to its original value on exit
+	TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ), 
+		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ),
+		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ) );
+
+
+	//draw each line of text individually
     while ( lineStart != args->unicode_array + args->unicode_array_len )
     {
         while ( lineStart + lineLen != args->unicode_array + args->unicode_array_len
@@ -803,23 +816,21 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             paraHeight += m_textHeight + m_subscriptDepth;
 
         //remember the text parameters so they can be restored
-        double    startingFontScale = m_fontScale;
-        double    startingYOffset   = m_yOffset;
-        PLUNICODE startingFci       = m_fci;
+        double    lineStartSuperscriptLevel = superscriptLevel;
+        PLUNICODE lineStartFci       = m_fci;
 
         // determine extent of text
         m_posX = args->x / m_xScale;
         m_posY = args->y / m_yScale;
-        DrawText( lineStart, lineLen, false );
+		DrawText( lineStart, lineLen, baseFontSize, false, superscriptLevel );
 
         if ( lineFeed && m_superscriptHeight > m_textHeight )
             paraHeight += m_superscriptHeight - m_textHeight;
 
         // actually draw text, resetting the font first
-        m_fontScale = startingFontScale;
-        m_yOffset   = startingYOffset;
-        m_fci       = startingFci;
-        SetFont( m_fci );
+		superscriptLevel = lineStartSuperscriptLevel;
+        m_fci            = lineStartFci;
+		m_dc->SetFont( GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize ) );
 
 
         // calculate rotation of text
@@ -846,7 +857,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             m_gc->ConcatTransform( matrix );                                                                //rotate
             m_gc->Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing ); //move to set alignment
 
-            DrawText( lineStart, lineLen, true );
+			DrawText( lineStart, lineLen, baseFontSize, true, superscriptLevel );
             m_gc->SetTransform( originalMatrix );
         }
 #if wxVERSION_NUMBER >= 2902
@@ -865,7 +876,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             newMatrix.Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing );
 
             m_dc->SetTransformMatrix( newMatrix );
-            DrawText( lineStart, lineLen, true );
+            DrawText( lineStart, lineLen, baseFontSize, true, superscriptLevel );
             m_dc->SetTransformMatrix( originalMatrix );
         }
 #endif
@@ -873,7 +884,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         {
             m_posX = (PLINT) ( args->x / m_xScale - ( args->just * m_textWidth ) * cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * sin_rot );             //move to set alignment
             m_posY = (PLINT) ( args->y / m_yScale - ( args->just * m_textWidth ) * sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * cos_rot );
-            DrawText( lineStart, lineLen, true );
+            DrawText( lineStart, lineLen, baseFontSize, true, superscriptLevel );
         }
 
 
@@ -913,7 +924,6 @@ void wxPLDevice::BeginPage( PLStream* pls )
     // Get the starting colour, width and font from the stream
     SetWidth( pls );
     SetColor( pls );
-	SetFont ( pls->fci );
 
 	//clear the page
 	ClearBackground( pls );

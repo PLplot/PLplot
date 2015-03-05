@@ -50,7 +50,6 @@ public:
     void SetWidth( PLStream *pls );
     void SetColor( PLStream *pls );
     void SetDC( PLStream *pls, wxDC* dc );
-    void SetFont( PLUNICODE fci );
     void EndPage( PLStream* pls );
     void BeginPage( PLStream* pls );
     void SetSize( PLStream* pls, int width, int height );
@@ -60,10 +59,11 @@ public:
     void Flush( PLStream* pls );
 
 private:
-    void DrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );;
-    void DrawTextSection( char* utf8_string, bool drawText );
+    void DrawText( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel );
+    void DrawTextSection( char* utf8_string, PLFLT baseFontSize, PLFLT yOffset, bool drawText );
     void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
     void SetupMemoryMap();
+    wxFont GetFont( PLUNICODE fci, PLFLT scaledFontSize );
 
     //The DC we will draw on if given by the user
     wxDC *m_dc;
@@ -91,8 +91,8 @@ private:
     static const int m_max_string_length = 500;
     wxFont           m_font;
     bool             m_underlined;
-    PLFLT            m_fontSize;
-    PLFLT            m_fontScale;
+    //PLFLT            m_fontSize;
+    //PLFLT            m_fontScale;
     wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
     PLUNICODE        m_fci;
 
@@ -100,7 +100,7 @@ private:
     wxCoord m_superscriptHeight;          //distance between superscript top and baseline
     wxCoord m_subscriptDepth;             //distance between subscript base and baseline
     PLFLT   m_lineSpacing;
-    PLFLT   m_yOffset;
+    //PLFLT   m_yOffset;
     PLINT   m_posX;
     PLINT   m_posY;
     PLFLT   m_rotation;
