@@ -514,7 +514,7 @@ PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
 //  just get text metrics. This function will process the string for inline
 //  style change escapes and newlines.
 //--------------------------------------------------------------------------
-void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel )
+void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel )
 {
     if ( !m_dc )
         return;
@@ -564,6 +564,7 @@ void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, boo
 					DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
 					++superscriptLevel;
+					fontScale = pow( 0.8, abs( superscriptLevel ) );
 					m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
@@ -573,6 +574,7 @@ void wxPLDevice::DrawText( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, boo
                     DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
 					--superscriptLevel;
+					fontScale = pow( 0.8, abs( superscriptLevel ) );
                     m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
@@ -635,9 +637,9 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
         //if we are using wxDC transforms or the wxGC, then the transformations
         //have already been applied
         if ( m_gc )
-            m_gc->DrawText( str, m_textWidth, 0.0 );
+			m_gc->DrawText( str, m_textWidth, -yOffset / m_yScale );
         else if ( m_useDcTextTransform )
-            m_dc->DrawText( str, m_textWidth, 0 );
+            m_dc->DrawText( str, m_textWidth, -yOffset / m_yScale );
         else
         {
             //If we are stuck with a wxDC that has no transformation abilities then
@@ -749,7 +751,6 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     //The scaler object sets the scale to the new value until it is destroyed
     //when this function exits.
     Scaler scaler( m_dc, 1.0, 1.0 );
-	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
 
     //Also move the origin so the text region buts up to the dc top, not the bottom
     OriginChanger originChanger( m_dc, 0, m_height - m_plplotEdgeLength / m_yScale );
@@ -802,11 +803,13 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 	//draw each line of text individually
     while ( lineStart != args->unicode_array + args->unicode_array_len )
     {
+		//get the length of the line
         while ( lineStart + lineLen != args->unicode_array + args->unicode_array_len
                 && *( lineStart + lineLen ) != (PLUNICODE) '\n' )
         {
             lineLen++;
         }
+
         //set line feed for the beginning of this line and
         //carriage return for the end
         lineFeed       = carriageReturn;
@@ -822,7 +825,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         // determine extent of text
         m_posX = args->x / m_xScale;
         m_posY = args->y / m_yScale;
-		DrawText( lineStart, lineLen, baseFontSize, false, superscriptLevel );
+		DrawTextLine( lineStart, lineLen, baseFontSize, false, superscriptLevel );
 
         if ( lineFeed && m_superscriptHeight > m_textHeight )
             paraHeight += m_superscriptHeight - m_textHeight;
@@ -857,7 +860,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             m_gc->ConcatTransform( matrix );                                                                //rotate
             m_gc->Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing ); //move to set alignment
 
-			DrawText( lineStart, lineLen, baseFontSize, true, superscriptLevel );
+			DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
             m_gc->SetTransform( originalMatrix );
         }
 #if wxVERSION_NUMBER >= 2902
@@ -876,7 +879,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             newMatrix.Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing );
 
             m_dc->SetTransformMatrix( newMatrix );
-            DrawText( lineStart, lineLen, baseFontSize, true, superscriptLevel );
+            DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
             m_dc->SetTransformMatrix( originalMatrix );
         }
 #endif
@@ -884,7 +887,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         {
             m_posX = (PLINT) ( args->x / m_xScale - ( args->just * m_textWidth ) * cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * sin_rot );             //move to set alignment
             m_posY = (PLINT) ( args->y / m_yScale - ( args->just * m_textWidth ) * sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * cos_rot );
-            DrawText( lineStart, lineLen, baseFontSize, true, superscriptLevel );
+            DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
         }
 
 

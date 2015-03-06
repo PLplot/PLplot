@@ -59,7 +59,7 @@ public:
     void Flush( PLStream* pls );
 
 private:
-    void DrawText( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel );
+    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel );
     void DrawTextSection( char* utf8_string, PLFLT baseFontSize, PLFLT yOffset, bool drawText );
     void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
     void SetupMemoryMap();
