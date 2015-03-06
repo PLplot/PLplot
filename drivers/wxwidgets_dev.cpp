@@ -470,8 +470,9 @@ void wxPLDevice::DrawLine( short x1a, short y1a, short x2a, short y2a )
     if ( !m_dc )
         return;
 
-    Scaler scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
-    DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
+	Clipper clipper( m_dc, GetClipRegion().GetBox() );
+	Scaler scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
+	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
     m_dc->DrawLine( (wxCoord) ( m_xAspect * x1a ), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y1a ) ),
         (wxCoord) ( m_xAspect * x2a ), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y2a ) ) );
 }
@@ -486,9 +487,9 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
     if ( !m_dc )
         return;
-
-    Scaler scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
-    DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
+	Clipper clipper( m_dc, GetClipRegion().GetBox() );
+	Scaler scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
+	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
     for ( PLINT i = 1; i < npts; i++ )
         m_dc->DrawLine( m_xAspect * xa[i - 1], m_yAspect * ( m_plplotEdgeLength - ya[i - 1] ),
             m_xAspect * xa[i], m_yAspect * ( m_plplotEdgeLength - ya[i] ) );
@@ -1501,4 +1502,23 @@ void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )
         graphicsIn->pX = -1;
         graphicsIn->pY = -1;
     }
+}
+
+//--------------------------------------------------------------------------
+// wxRegion wxPLDevice::GetClipRegion()
+// Gets the current clip region from plplot as a wxRegion
+//--------------------------------------------------------------------------
+
+wxRegion wxPLDevice::GetClipRegion()
+{
+	PLINT rcx[4], rcy[4];
+    difilt_clip( rcx, rcy );
+
+    wxPoint cpoints[4];
+    for ( int i = 0; i < 4; i++ )
+    {
+        cpoints[i].x = rcx[i] / m_xScale;
+        cpoints[i].y = m_height - rcy[i] / m_yScale;
+    }
+	return wxRegion( 4, cpoints );
 }

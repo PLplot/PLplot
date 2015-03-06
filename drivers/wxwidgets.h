@@ -77,6 +77,7 @@ private:
     void DrawTextSection( char* utf8_string, PLFLT baseFontSize, PLFLT yOffset, bool underlined, bool drawText );
     void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
     void SetupMemoryMap();
+	wxRegion GetClipRegion();
 
     //The DC we will draw on if given by the user
     wxDC *m_dc;
