@@ -980,7 +980,7 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     // Set the number of plplot pixels per mm
     plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->ydpi / 25.4 );
 
-    pls->aspect = m_yAspect / m_xAspect;
+    pls->aspect = m_xAspect/m_yAspect;
 
     // redraw the plot
 	if ( m_dc && pls->plbuf_buffer )
