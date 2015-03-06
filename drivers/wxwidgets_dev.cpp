@@ -795,8 +795,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 	//set the font up, we use a textObjectChanger here so that the font returns
 	//to its original value on exit
 	TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ), 
-		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ),
-		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.r * 255 ) );
+		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
+		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) );
 
 
 	//draw each line of text individually
