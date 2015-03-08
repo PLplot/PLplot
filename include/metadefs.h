@@ -100,4 +100,8 @@ typedef struct
     // transformation
     PLFLT   mfpcxa, mfpcxb;    // x = mfpcxa * x + mfpcxb
     PLFLT   mfpcya, mfpcyb;    // y = mfpcya * y + mfpcyb
+
+    // Temporary storage used for metafile processing.
+    void * buffer;
+    size_t buffer_size;
 } PLmDev;
