@@ -613,22 +613,542 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
     return ( 0 );
 }
 
-static PLUNICODE unicode_buffer[1024];
+static
+void alternate_unicode_processing(const char * string, EscText * args)
+{
+    size_t        i, len;
+    char          esc;
+    unsigned char hexdigit, hexpower;
+    PLUNICODE     fci;
+    PLUNICODE     orig_fci;
+    PLINT         ig;
+    int           skip;
+    PLUNICODE     code;
+    int           idx = -1;
+
+    // Initialize to an empty string
+    args->unicode_array_len = 0;
+
+    len = strlen(string);
+
+    // If the string is empty, return now
+    if(len == 0) return;
+
+    // Get the current escape character
+    plgesc( &esc );
+
+    // Obtain FCI (font characterization integer) for start of string.
+    plgfci( &fci );
+    orig_fci = fci;
+
+    // Signal the begin of text processing to the driver
+    args->n_fci = fci;
+    plP_esc( PLESC_BEGIN_TEXT, args );
+
+    for ( i = 0; i < len; i++ )
+    {
+        skip = 0;
+	
+	if ( string[i] == esc )
+	{
+	    switch ( string[i + 1] )
+	    {
+	    case '(': // hershey code
+	        i          += 2 + text2num( &string[i + 2], ')', &code );
+		idx         = plhershey2unicode( (int) code );
+		args->n_char = 
+		    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+		plP_esc( PLESC_TEXT_CHAR, args );
+
+		skip = 1;
+		break;
+
+	    case '[': // unicode
+	        i          += 2 + text2num( &string[i + 2], ']', &code );
+		args->n_char = code;
+		plP_esc( PLESC_TEXT_CHAR, args );
+		skip = 1;
+		break;
+
+	    case '<': // change font
+	        if ( '0' <= string[i + 2] && string[i + 2] <= '9' )
+		{
+		    i += 2 + text2num( &string[i + 2], '>', &code );
+		    if ( code & PL_FCI_MARK )
+		    {
+		        // code is a complete FCI (font characterization
+		        // integer): change FCI to this value.
+		        //
+		        fci  = code;
+			skip = 1;
+
+			args->n_fci       = fci;
+			args->n_ctrl_char = PLTEXT_FONTCHANGE;
+			plP_esc( PLESC_CONTROL_CHAR, args );
+		    }
+		    else
+		    {
+		        // code is not complete FCI. Change
+		        // FCI with hex power in rightmost hex
+		        // digit and hex digit value in second rightmost
+		        // hex digit.
+		        //
+		        hexdigit = ( code >> 4 ) & PL_FCI_HEXDIGIT_MASK;
+			hexpower = code & PL_FCI_HEXPOWER_MASK;
+			plP_hex2fci( hexdigit, hexpower, &fci );
+			skip = 1;
+
+			args->n_fci       = fci;
+			args->n_ctrl_char = PLTEXT_FONTCHANGE;
+			plP_esc( PLESC_CONTROL_CHAR, args );
+		    }
+		}
+		else
+		{
+		    i += text2fci( &string[i + 1], &hexdigit, &hexpower );
+		    if ( hexpower < 7 )
+		    {
+		        plP_hex2fci( hexdigit, hexpower, &fci );
+			skip = 1;
+
+			args->n_fci       = fci;
+			args->n_ctrl_char = PLTEXT_FONTCHANGE;
+			plP_esc( PLESC_CONTROL_CHAR, args );
+		    }
+		}
+		break;
+
+	    case 'f': // Deprecated Hershey-style font change
+	    case 'F': // Deprecated Hershey-style font change
+	        // We implement an approximate response here so that
+	        // reasonable results are obtained for unicode fonts,
+	        // but this method is deprecated and the #<nnn> or
+	        // #<command string> methods should be used instead
+	        // to change unicode fonts in mid-string.
+	        //
+	        fci = PL_FCI_MARK;
+		if ( string[i + 2] == 'n' )
+		{
+		    // medium, upright, sans-serif
+		    plP_hex2fci( PL_FCI_SANS, PL_FCI_FAMILY, &fci );
+		}
+		else if ( string[i + 2] == 'r' )
+		{
+		    // medium, upright, serif
+		    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
+		}
+		else if ( string[i + 2] == 'i' )
+		{
+		    // medium, italic, serif
+		    plP_hex2fci( PL_FCI_ITALIC, PL_FCI_STYLE, &fci );
+		    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
+		}
+		else if ( string[i + 2] == 's' )
+		{
+		    // medium, upright, script
+		    plP_hex2fci( PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci );
+		}
+		else
+		    fci = PL_FCI_IMPOSSIBLE;
+		    
+		if ( fci != PL_FCI_IMPOSSIBLE )
+		{
+		    i   += 2;
+		    skip = 1;
+
+		    args->n_fci       = fci;
+		    args->n_ctrl_char = PLTEXT_FONTCHANGE;
+		    plP_esc( PLESC_CONTROL_CHAR, args );
+		}
+		break;
+
+	    case 'g': // Greek font
+	    case 'G': // Greek font
+	        // Get the index in the lookup table
+	        // 527 = upper case alpha displacement in Hershey Table
+	        // 627 = lower case alpha displacement in Hershey Table
+	        //
+	        ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
+		if ( ig >= 0 )
+		{
+		    if ( ig >= 24 )
+		        ig = ig + 100 - 24;
+		    ig = ig + 527;
+		    // Follow pldeco in plsym.c which for
+		    // lower case epsilon, theta, and phi
+		    // substitutes (684, 685, and 686) for
+		    // (631, 634, and 647)
+		    if ( ig == 631 )
+		        ig = 684;
+		    else if ( ig == 634 )
+		        ig = 685;
+		    else if ( ig == 647 )
+		        ig = 686;
+		    idx  = plhershey2unicode( ig );
+		    i   += 2;
+		    skip = 1; // skip is set if we have copied something
+		              // into the unicode table
+
+		    args->n_char =
+		      (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+		    plP_esc( PLESC_TEXT_CHAR, args );
+		}
+		else
+		{
+		    // Use "unknown" unicode character if string[i+2]
+		    // is not in the Greek array.
+		    i   += 2;
+		    skip = 1;    // skip is set if we have copied something
+		                 // into the unicode table
+
+		    args->n_char =
+		      (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+		    plP_esc( PLESC_TEXT_CHAR, args );
+		}
+		break;
+		    
+	    case 'u':
+	        args->n_ctrl_char = PLTEXT_SUPERSCRIPT;
+		plP_esc( PLESC_CONTROL_CHAR, args );
+		i   += 1;
+		skip = 1;
+		break;
+		
+	    case 'd':
+	        args->n_ctrl_char = PLTEXT_SUBSCRIPT;
+		plP_esc( PLESC_CONTROL_CHAR, args );
+		i   += 1;
+		skip = 1;
+		break;
+	    case 'b':
+	        args->n_ctrl_char = PLTEXT_BACKCHAR;
+		plP_esc( PLESC_CONTROL_CHAR, args );
+		i   += 1;
+		skip = 1;
+		break;
+	    case '+':
+	        args->n_ctrl_char = PLTEXT_OVERLINE;
+		plP_esc( PLESC_CONTROL_CHAR, args );
+		i   += 1;
+		skip = 1;
+		break;
+	    case '-':
+	        args->n_ctrl_char = PLTEXT_UNDERLINE;
+		plP_esc( PLESC_CONTROL_CHAR, args );
+		i   += 1;
+		skip = 1;
+		break;
+	    }
+	}
+	
+	if ( skip == 0 )
+	{
+	    PLUNICODE  unichar = 0;
+#ifdef HAVE_LIBUNICODE
+	    const char * ptr = unicode_get_utf8( string + i, &unichar );
+#else
+	    const char * ptr = utf8_to_ucs4( string + i, &unichar );
+#endif
+	    if ( ptr == NULL )
+	    {
+	        char buf[BUFFER_SIZE];
+		char tmpstring[31];
+		strncpy( tmpstring, string, 30 );
+		tmpstring[30] = '\0';
+		snprintf( buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
+			  tmpstring, strlen( string ) > 30 ? "[...]" : "" );
+		plabort( buf );
+		return;
+	    }
+	    i += (int) ( ptr - ( string + i ) - 1 );
+	    
+	    // Search for escesc (an unescaped escape) in the input
+	    // string and adjust unicode_buffer accordingly).
+	    //
+	    if ( string[i] == esc && string[i + 1] == esc )
+	    {
+	        i++;
+		args->n_char = (PLUNICODE) esc;
+	    }
+	    else
+	    {
+	        args->n_char = unichar;
+	    }
+	    plP_esc( PLESC_TEXT_CHAR, args );
+	}
+    }
+
+    // Signal the end of text string processing to the driver
+    plP_esc( PLESC_END_TEXT, args );
+}
+
+static
+void encode_unicode(const char * string, EscText *args)
+{
+    char          esc;
+    PLINT         ig;
+    PLUNICODE     fci;
+    PLUNICODE     orig_fci;
+    unsigned char hexdigit, hexpower;
+    size_t        i, j, len;
+    int           skip;
+    PLUNICODE     code;
+    int           idx = -1;
+
+    // Initialize to an empty string
+    args->unicode_array_len = 0;
+
+    // this length is only used in the loop
+    // counter, we will work out the length of
+    // the unicode string as we go
+    len = strlen( string ); 
+
+    // If the string is empty, return now
+    if(len == 0) return;
+
+    // Get the current escape character
+    plgesc( &esc );
+
+    // At this stage we will do some translations into unicode, like
+    // conversion to Greek , and will save other translations such as
+    // superscript for the driver to do later on. As we move through
+    // the string and do the translations, we will get
+    // rid of the esc character sequence, just replacing it with
+    // unicode.
+    //
+
+    // Obtain FCI (font characterization integer) for start of string.
+    plgfci( &fci );
+    orig_fci = fci;
+
+    // Walk through the string, and convert some stuff to unicode on the fly
+    for ( j = i = 0; i < len; i++ )
+    {
+	skip = 0;
+
+	if ( string[i] == esc )
+	{
+  	    // We have an escape character, so we need to look at the
+	    // next character to determine what action needs to be taken
+	    switch ( string[i + 1] )
+	    {
+	    case '(': // hershey code
+	        i  += ( 2 + text2num( &string[i + 2], ')', &code ) );
+		idx = plhershey2unicode( (int) code );
+		args->unicode_array[j++] = 
+		    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+
+		// if unicode_buffer[j-1] corresponds to the escape
+		// character must unescape it by appending one more.
+		// This will probably always be necessary since it is
+		// likely unicode_buffer will always have to contain
+		// escape characters that are interpreted by the device
+		// driver.
+		//
+		if ( args->unicode_array[j - 1] == (PLUNICODE) esc )
+		    args->unicode_array[j++] = (PLUNICODE) esc;
+		j--;
+		skip = 1;
+		break;
+
+	    case '[': // unicode
+	        i += ( 2 + text2num( &string[i + 2], ']', &code ) );
+		args->unicode_array[j++] = code;
+
+		// if unicode_buffer[j-1] corresponds to the escape
+		// character must unescape it by appending one more.
+		// This will probably always be necessary since it is
+		// likely unicode_buffer will always have to contain
+		// escape characters that are interpreted by the device
+		// driver.
+		//
+		if ( args->unicode_array[j - 1] == (PLUNICODE) esc )
+		    args->unicode_array[j++] = (PLUNICODE) esc;
+		j--;
+		skip = 1;
+		break;
+
+	    case '<': // change font
+	        if ( '0' <= string[i + 2] && string[i + 2] <= '9' )
+		{
+		    i += 2 + text2num( &string[i + 2], '>', &code );
+		    if ( code & PL_FCI_MARK )
+		    {
+		        // code is a complete FCI (font characterization
+		        // integer): change FCI to this value.
+		        //
+		        fci = code;
+			args->unicode_array[j] = fci;
+			skip = 1;
+		    }
+		    else
+		    {
+		        // code is not complete FCI. Change
+		        // FCI with hex power in rightmost hex
+		        // digit and hex digit value in second rightmost
+		        // hex digit.
+		        //
+		        hexdigit = ( code >> 4 ) & PL_FCI_HEXDIGIT_MASK;
+			hexpower = code & PL_FCI_HEXPOWER_MASK;
+			plP_hex2fci( hexdigit, hexpower, &fci );
+			args->unicode_array[j] = fci;
+			skip = 1;
+		    }
+		}
+		else
+		{
+		    i += text2fci( &string[i + 1], &hexdigit, &hexpower );
+		    if ( hexpower < 7 )
+		    {
+		        plP_hex2fci( hexdigit, hexpower, &fci );
+			args->unicode_array[j] = fci;
+			skip = 1;
+		    }
+		}
+		break;
+
+	    case 'f': // Deprecated Hershey-style font change
+	    case 'F': // Deprecated Hershey-style font change
+	        // We implement an approximate response here so that
+	        // reasonable results are obtained for unicode fonts,
+	        // but this method is deprecated and the #<nnn> or
+	        // #<command string> methods should be used instead
+	        // to change unicode fonts in mid-string.
+	        //
+	        fci = PL_FCI_MARK;
+		if ( string[i + 2] == 'n' )
+		{
+		    // medium, upright, sans-serif
+		    plP_hex2fci( PL_FCI_SANS, PL_FCI_FAMILY, &fci );
+		}
+		else if ( string[i + 2] == 'r' )
+		{
+		    // medium, upright, serif
+		    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
+		}
+		else if ( string[i + 2] == 'i' )
+		{
+		    // medium, italic, serif
+  		    plP_hex2fci( PL_FCI_ITALIC, PL_FCI_STYLE, &fci );
+		    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
+		}
+		else if ( string[i + 2] == 's' )
+		{
+		    // medium, upright, script
+		    plP_hex2fci( PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci );
+		}
+		else
+		    fci = PL_FCI_IMPOSSIBLE;
+
+		if ( fci != PL_FCI_IMPOSSIBLE )
+		{
+		    i += 2;
+		    args->unicode_array[j] = fci;
+		    skip = 1;
+		}
+		break;
+
+	    case 'g': // Greek font
+	    case 'G': // Greek font
+	        // Get the index in the lookup table
+	        // 527 = upper case alpha displacement in Hershey Table
+	        // 627 = lower case alpha displacement in Hershey Table
+	        //
+
+	        ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
+		if ( ig >= 0 )
+		{
+		    if ( ig >= 24 )
+		        ig = ig + 100 - 24;
+		    ig = ig + 527;
+		    // Follow pldeco in plsym.c which for
+		    // lower case epsilon, theta, and phi
+		    // substitutes (684, 685, and 686) for
+		    // (631, 634, and 647)
+		    if ( ig == 631 )
+		        ig = 684;
+		    else if ( ig == 634 )
+		        ig = 685;
+		    else if ( ig == 647 )
+		        ig = 686;
+		    idx = (int) plhershey2unicode( ig );
+		    args->unicode_array[j++] = 
+		        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+		    i   += 2;
+		    skip = 1; // skip is set if we have copied something
+		              // into the unicode table
+		}
+		else
+		{
+		    // Use "unknown" unicode character if string[i+2]
+		    // is not in the Greek array.
+		    args->unicode_array[j++] = (PLUNICODE) 0x00;
+		    i   += 2;
+		    skip = 1;   // skip is set if we have copied something
+		                // into  the unicode table
+		}
+		j--;
+		break;
+	    }
+	}
+
+	if ( skip == 0 )
+	{
+	    PLUNICODE  unichar = 0;
+#ifdef HAVE_LIBUNICODE
+	    const char * ptr = unicode_get_utf8( string + i, &unichar );
+#else
+	    const char * ptr = utf8_to_ucs4( string + i, &unichar );
+#endif
+	    if ( ptr == NULL )
+	    {
+	        char buf[BUFFER_SIZE];
+		char tmpstring[31];
+		strncpy( tmpstring, string, 30 );
+		tmpstring[30] = '\0';
+		snprintf( buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
+			  tmpstring, strlen( string ) > 30 ? "[...]" : "" );
+		plabort( buf );
+		return;
+	    }
+	    args->unicode_array[j] = unichar;
+	    i += (int) ( ptr - ( string + i ) - 1 );
+
+	    // Search for escesc (an unescaped escape) in the input
+	    // string and adjust unicode_buffer accordingly).
+	    //
+	    if ( args->unicode_array[j] == (PLUNICODE) esc 
+		 && string[i + 1] == esc )
+	    {
+	        i++;
+		args->unicode_array[++j] = (PLUNICODE) esc;
+	    }
+	}
+	j++;
+    }
+
+    // Much easier to set the length than
+    // work it out later :-)
+    args->unicode_array_len = (short unsigned int) j; 
+}
+
+static PLUNICODE unicode_buffer_static[1024];
 
 void
 plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
           PLINT refx, PLINT refy, const char *string )
 {
+    size_t len;
+
+    // First, check if the caller passed an empty string.  If it is,
+    // then we can return now
+    if(string == NULL) return;
+
     if ( plsc->dev_text ) // Does the device render it's own text ?
     {
         EscText   args;
-        short     len = 0;
-        char      skip;
-        int       i, j;
-        PLUNICODE code;
-        char      esc;
-        int       idx = -1;
 
+	args.text_type = _PL_STRING_TEXT;
         args.base   = base;
         args.just   = just;
         args.xform  = xform;
@@ -636,515 +1156,47 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
         args.y      = y;
         args.refx   = refx;
         args.refy   = refy;
-        args.string = string;
 
-        if ( plsc->dev_unicode ) // Does the device also understand unicode?
-        {
-            PLINT         ig;
-            PLUNICODE     fci;
-            PLUNICODE     orig_fci;
-            unsigned char hexdigit, hexpower;
-
-            // Now process the text string
-
-            if ( string != NULL )   // If the string isn't blank, then we will
-                                    // continue
-                                    //
-
-            {
-                len = (short) strlen( string ); // this length is only used in the loop
-                // counter, we will work out the length of
-                // the unicode string as we go
-                plgesc( &esc );
-
-                // At this stage we will do some translations into unicode, like
-                // conversion to Greek , and will save other translations such as
-                // superscript for the driver to do later on. As we move through
-                // the string and do the translations, we will get
-                // rid of the esc character sequence, just replacing it with
-                // unicode.
-                //
-
-                // Obtain FCI (font characterization integer) for start of
-                // string.
-                plgfci( &fci );
-                orig_fci = fci;
-
-                // Walk through the string, and convert
-                // some stuff to unicode on the fly
-                for ( j = i = 0; i < len; i++ )
-                {
-                    skip = 0;
-
-                    if ( string[i] == esc )
-                    {
-                        switch ( string[i + 1] )
-                        {
-                        case '(': // hershey code
-                            i  += ( 2 + text2num( &string[i + 2], ')', &code ) );
-                            idx = plhershey2unicode( (int) code );
-                            unicode_buffer[j++] = \
-                                (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-
-
-                            // if unicode_buffer[j-1] corresponds to the escape
-                            // character must unescape it by appending one more.
-                            // This will probably always be necessary since it is
-                            // likely unicode_buffer will always have to contain
-                            // escape characters that are interpreted by the device
-                            // driver.
-                            //
-                            if ( unicode_buffer[j - 1] == (PLUNICODE) esc )
-                                unicode_buffer[j++] = (PLUNICODE) esc;
-                            j--;
-                            skip = 1;
-                            break;
-
-                        case '[': // unicode
-                            i += ( 2 + text2num( &string[i + 2], ']', &code ) );
-                            unicode_buffer[j++] = code;
-
-
-                            // if unicode_buffer[j-1] corresponds to the escape
-                            // character must unescape it by appending one more.
-                            // This will probably always be necessary since it is
-                            // likely unicode_buffer will always have to contain
-                            // escape characters that are interpreted by the device
-                            // driver.
-                            //
-                            if ( unicode_buffer[j - 1] == (PLUNICODE) esc )
-                                unicode_buffer[j++] = (PLUNICODE) esc;
-                            j--;
-                            skip = 1;
-                            break;
-
-                        case '<': // change font
-                            if ( '0' <= string[i + 2] && string[i + 2] <= '9' )
-                            {
-                                i += 2 + text2num( &string[i + 2], '>', &code );
-                                if ( code & PL_FCI_MARK )
-                                {
-                                    // code is a complete FCI (font characterization
-                                    // integer): change FCI to this value.
-                                    //
-                                    fci = code;
-                                    unicode_buffer[j] = fci;
-                                    skip = 1;
-                                }
-                                else
-                                {
-                                    // code is not complete FCI. Change
-                                    // FCI with hex power in rightmost hex
-                                    // digit and hex digit value in second rightmost
-                                    // hex digit.
-                                    //
-                                    hexdigit = ( code >> 4 ) & PL_FCI_HEXDIGIT_MASK;
-                                    hexpower = code & PL_FCI_HEXPOWER_MASK;
-                                    plP_hex2fci( hexdigit, hexpower, &fci );
-                                    unicode_buffer[j] = fci;
-                                    skip = 1;
-                                }
-                            }
-                            else
-                            {
-                                i += text2fci( &string[i + 1], &hexdigit, &hexpower );
-                                if ( hexpower < 7 )
-                                {
-                                    plP_hex2fci( hexdigit, hexpower, &fci );
-                                    unicode_buffer[j] = fci;
-                                    skip = 1;
-                                }
-                            }
-                            break;
-
-                        case 'f': // Deprecated Hershey-style font change
-                        case 'F': // Deprecated Hershey-style font change
-                            // We implement an approximate response here so that
-                            // reasonable results are obtained for unicode fonts,
-                            // but this method is deprecated and the #<nnn> or
-                            // #<command string> methods should be used instead
-                            // to change unicode fonts in mid-string.
-                            //
-                            fci = PL_FCI_MARK;
-                            if ( string[i + 2] == 'n' )
-                            {
-                                // medium, upright, sans-serif
-                                plP_hex2fci( PL_FCI_SANS, PL_FCI_FAMILY, &fci );
-                            }
-                            else if ( string[i + 2] == 'r' )
-                            {
-                                // medium, upright, serif
-                                plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
-                            }
-                            else if ( string[i + 2] == 'i' )
-                            {
-                                // medium, italic, serif
-                                plP_hex2fci( PL_FCI_ITALIC, PL_FCI_STYLE, &fci );
-                                plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
-                            }
-                            else if ( string[i + 2] == 's' )
-                            {
-                                // medium, upright, script
-                                plP_hex2fci( PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci );
-                            }
-                            else
-                                fci = PL_FCI_IMPOSSIBLE;
-
-                            if ( fci != PL_FCI_IMPOSSIBLE )
-                            {
-                                i += 2;
-                                unicode_buffer[j] = fci;
-                                skip = 1;
-                            }
-                            break;
-
-                        case 'g': // Greek font
-                        case 'G': // Greek font
-                            // Get the index in the lookup table
-                            // 527 = upper case alpha displacement in Hershey Table
-                            // 627 = lower case alpha displacement in Hershey Table
-                            //
-
-                            ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
-                            if ( ig >= 0 )
-                            {
-                                if ( ig >= 24 )
-                                    ig = ig + 100 - 24;
-                                ig = ig + 527;
-                                // Follow pldeco in plsym.c which for
-                                // lower case epsilon, theta, and phi
-                                // substitutes (684, 685, and 686) for
-                                // (631, 634, and 647)
-                                if ( ig == 631 )
-                                    ig = 684;
-                                else if ( ig == 634 )
-                                    ig = 685;
-                                else if ( ig == 647 )
-                                    ig = 686;
-                                idx = (int) plhershey2unicode( ig );
-                                unicode_buffer[j++] = \
-                                    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-                                i   += 2;
-                                skip = 1; // skip is set if we have copied something
-                                          // into the unicode table
-                            }
-                            else
-                            {
-                                // Use "unknown" unicode character if string[i+2]
-                                // is not in the Greek array.
-                                unicode_buffer[j++] = (PLUNICODE) 0x00;
-                                i   += 2;
-                                skip = 1;                // skip is set if we have copied something
-                                                         // into  the unicode table
-                            }
-                            j--;
-                            break;
-                        }
-                    }
-
-                    if ( skip == 0 )
-                    {
-                        PLUNICODE  unichar = 0;
-#ifdef HAVE_LIBUNICODE
-                        const char * ptr = unicode_get_utf8( string + i, &unichar );
-#else
-                        const char * ptr = utf8_to_ucs4( string + i, &unichar );
-#endif
-                        if ( ptr == NULL )
-                        {
-                            char buf[BUFFER_SIZE];
-                            char tmpstring[31];
-                            strncpy( tmpstring, string, 30 );
-                            tmpstring[30] = '\0';
-                            snprintf( buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
-                                tmpstring, strlen( string ) > 30 ? "[...]" : "" );
-                            plabort( buf );
-                            return;
-                        }
-                        unicode_buffer [j] = unichar;
-                        i += (int) ( ptr - ( string + i ) - 1 );
-
-                        // Search for escesc (an unescaped escape) in the input
-                        // string and adjust unicode_buffer accordingly).
-                        //
-                        if ( unicode_buffer[j] == (PLUNICODE) esc && string[i + 1] == esc )
-                        {
-                            i++;
-                            unicode_buffer[++j] = (PLUNICODE) esc;
-                        }
-                    }
-                    j++;
-                }
-                if ( j > 0 )
-                {
-                    args.unicode_array_len = (short unsigned int) j; // Much easier to set the length than
-                    // work it out later :-)
-                    args.unicode_array = &unicode_buffer[0];         // Get address of the
-                                                                     // unicode buffer (even
-                                                                     // though it is
-                                                                     // currently  static)
-                }
-
-
-                // The alternate unicode text handling loop.
-
-                if ( plsc->alt_unicode )
-                {
-                    args.n_fci = orig_fci;
-                    plP_esc( PLESC_BEGIN_TEXT, &args );
-
-                    for ( i = 0; i < len; i++ )
-                    {
-                        skip = 0;
-
-                        if ( string[i] == esc )
-                        {
-                            switch ( string[i + 1] )
-                            {
-                            case '(': // hershey code
-                                i          += 2 + text2num( &string[i + 2], ')', &code );
-                                idx         = plhershey2unicode( (int) code );
-                                args.n_char = \
-                                    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-                                plP_esc( PLESC_TEXT_CHAR, &args );
-
-                                skip = 1;
-                                break;
-
-                            case '[': // unicode
-                                i          += 2 + text2num( &string[i + 2], ']', &code );
-                                args.n_char = code;
-                                plP_esc( PLESC_TEXT_CHAR, &args );
-                                skip = 1;
-                                break;
-
-                            case '<': // change font
-                                if ( '0' <= string[i + 2] && string[i + 2] <= '9' )
-                                {
-                                    i += 2 + text2num( &string[i + 2], '>', &code );
-                                    if ( code & PL_FCI_MARK )
-                                    {
-                                        // code is a complete FCI (font characterization
-                                        // integer): change FCI to this value.
-                                        //
-                                        fci  = code;
-                                        skip = 1;
-
-                                        args.n_fci       = fci;
-                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                        plP_esc( PLESC_CONTROL_CHAR, &args );
-                                    }
-                                    else
-                                    {
-                                        // code is not complete FCI. Change
-                                        // FCI with hex power in rightmost hex
-                                        // digit and hex digit value in second rightmost
-                                        // hex digit.
-                                        //
-                                        hexdigit = ( code >> 4 ) & PL_FCI_HEXDIGIT_MASK;
-                                        hexpower = code & PL_FCI_HEXPOWER_MASK;
-                                        plP_hex2fci( hexdigit, hexpower, &fci );
-                                        skip = 1;
-
-                                        args.n_fci       = fci;
-                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                        plP_esc( PLESC_CONTROL_CHAR, &args );
-                                    }
-                                }
-                                else
-                                {
-                                    i += text2fci( &string[i + 1], &hexdigit, &hexpower );
-                                    if ( hexpower < 7 )
-                                    {
-                                        plP_hex2fci( hexdigit, hexpower, &fci );
-                                        skip = 1;
-
-                                        args.n_fci       = fci;
-                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                        plP_esc( PLESC_CONTROL_CHAR, &args );
-                                    }
-                                }
-                                break;
-
-                            case 'f': // Deprecated Hershey-style font change
-                            case 'F': // Deprecated Hershey-style font change
-                                // We implement an approximate response here so that
-                                // reasonable results are obtained for unicode fonts,
-                                // but this method is deprecated and the #<nnn> or
-                                // #<command string> methods should be used instead
-                                // to change unicode fonts in mid-string.
-                                //
-                                fci = PL_FCI_MARK;
-                                if ( string[i + 2] == 'n' )
-                                {
-                                    // medium, upright, sans-serif
-                                    plP_hex2fci( PL_FCI_SANS, PL_FCI_FAMILY, &fci );
-                                }
-                                else if ( string[i + 2] == 'r' )
-                                {
-                                    // medium, upright, serif
-                                    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
-                                }
-                                else if ( string[i + 2] == 'i' )
-                                {
-                                    // medium, italic, serif
-                                    plP_hex2fci( PL_FCI_ITALIC, PL_FCI_STYLE, &fci );
-                                    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
-                                }
-                                else if ( string[i + 2] == 's' )
-                                {
-                                    // medium, upright, script
-                                    plP_hex2fci( PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci );
-                                }
-                                else
-                                    fci = PL_FCI_IMPOSSIBLE;
-
-                                if ( fci != PL_FCI_IMPOSSIBLE )
-                                {
-                                    i   += 2;
-                                    skip = 1;
-
-                                    args.n_fci       = fci;
-                                    args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                    plP_esc( PLESC_CONTROL_CHAR, &args );
-                                }
-                                break;
-
-                            case 'g': // Greek font
-                            case 'G': // Greek font
-                                // Get the index in the lookup table
-                                // 527 = upper case alpha displacement in Hershey Table
-                                // 627 = lower case alpha displacement in Hershey Table
-                                //
-                                ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
-                                if ( ig >= 0 )
-                                {
-                                    if ( ig >= 24 )
-                                        ig = ig + 100 - 24;
-                                    ig = ig + 527;
-                                    // Follow pldeco in plsym.c which for
-                                    // lower case epsilon, theta, and phi
-                                    // substitutes (684, 685, and 686) for
-                                    // (631, 634, and 647)
-                                    if ( ig == 631 )
-                                        ig = 684;
-                                    else if ( ig == 634 )
-                                        ig = 685;
-                                    else if ( ig == 647 )
-                                        ig = 686;
-                                    idx  = plhershey2unicode( ig );
-                                    i   += 2;
-                                    skip = 1; // skip is set if we have copied something
-                                              // into the unicode table
-
-                                    args.n_char = \
-                                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-                                    plP_esc( PLESC_TEXT_CHAR, &args );
-                                }
-                                else
-                                {
-                                    // Use "unknown" unicode character if string[i+2]
-                                    // is not in the Greek array.
-                                    i   += 2;
-                                    skip = 1;            // skip is set if we have copied something
-                                                         // into  the unicode table
-
-                                    args.n_char = \
-                                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-                                    plP_esc( PLESC_TEXT_CHAR, &args );
-                                }
-                                break;
-
-                            case 'u':
-                                args.n_ctrl_char = PLTEXT_SUPERSCRIPT;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                                i   += 1;
-                                skip = 1;
-                                break;
-
-                            case 'd':
-                                args.n_ctrl_char = PLTEXT_SUBSCRIPT;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                                i   += 1;
-                                skip = 1;
-                                break;
-                            case 'b':
-                                args.n_ctrl_char = PLTEXT_BACKCHAR;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                                i   += 1;
-                                skip = 1;
-                                break;
-                            case '+':
-                                args.n_ctrl_char = PLTEXT_OVERLINE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                                i   += 1;
-                                skip = 1;
-                                break;
-                            case '-':
-                                args.n_ctrl_char = PLTEXT_UNDERLINE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                                i   += 1;
-                                skip = 1;
-                                break;
-                            }
-                        }
-
-                        if ( skip == 0 )
-                        {
-                            PLUNICODE  unichar = 0;
-#ifdef HAVE_LIBUNICODE
-                            const char * ptr = unicode_get_utf8( string + i, &unichar );
-#else
-                            const char * ptr = utf8_to_ucs4( string + i, &unichar );
-#endif
-                            if ( ptr == NULL )
-                            {
-                                char buf[BUFFER_SIZE];
-                                char tmpstring[31];
-                                strncpy( tmpstring, string, 30 );
-                                tmpstring[30] = '\0';
-                                snprintf( buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
-                                    tmpstring, strlen( string ) > 30 ? "[...]" : "" );
-                                plabort( buf );
-                                return;
-                            }
-                            i += (int) ( ptr - ( string + i ) - 1 );
-
-                            // Search for escesc (an unescaped escape) in the input
-                            // string and adjust unicode_buffer accordingly).
-                            //
-                            if ( string[i] == esc && string[i + 1] == esc )
-                            {
-                                i++;
-                                args.n_char = (PLUNICODE) esc;
-                            }
-                            else
-                            {
-                                args.n_char = unichar;
-                            }
-                            plP_esc( PLESC_TEXT_CHAR, &args );
-                        }
-                    }
-                    plP_esc( PLESC_END_TEXT, &args );
-                }
-
-                // No text to display
-
-                if ( j == 0 )
-                    return;
-            }
-        }
-
+	// Always store the string passed by the caller, even for unicode
+	// enabled drivers.  The plmeta driver will use this field to store 
+	// the string data in the metafile.
+	args.string = string;
+  
+	// Does the device also understand unicode?
         if ( plsc->dev_unicode )
         {
-            args.string = NULL; // We are using unicode
+	  
+	    if( plsc->alt_unicode ) 
+	    {
+	        // We are using the alternate unicode processing
+	        alternate_unicode_processing(string, &args);
+
+		// All text processing is done, so we can exit
+		return;
+	    }
+	    else
+	    {
+	        // Setup storage for the unicode array and
+	        // process the string to generate the unicode
+	        // representation of it.
+		args.unicode_array = unicode_buffer_static;
+		encode_unicode(string, &args);
+		
+		len = ( size_t ) args.unicode_array_len;
+	    }
         }
         else
         {
-            args.string = string;
+	    //  We are using the char array, NULL out the unicode part
+  	    args.unicode_array = NULL;
+	    args.unicode_array_len = 0;
+
+	    len = strlen(string);
         }
 
-        plP_esc( PLESC_HAS_TEXT, &args );
+	// If the string is not empty, ask the driver to display it
+	if(len > 0) 
+  	    plP_esc( PLESC_HAS_TEXT, &args );
 
 #ifndef DEBUG_TEXT
     }
