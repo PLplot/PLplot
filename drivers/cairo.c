@@ -644,7 +644,6 @@ void get_mode( PLStream *pls, PLINT *mode )
 
 void text_begin_cairo( PLStream *pls, EscText *args )
 {
-    int     i;
     PLCairo *aStream;
 
     aStream                    = (PLCairo *) pls->dev;
@@ -654,10 +653,10 @@ void text_begin_cairo( PLStream *pls, EscText *args )
     aStream->pangoMarkupString = (char *) malloc( sizeof ( char ) * MAX_MARKUP_LEN );
     // Calculate the font size (in points since DPI = 72).
     aStream->fontSize = (float) ( pls->chrht * DPI / 25.4 );
-    for ( i = 0; i < MAX_MARKUP_LEN; i++ )
-    {
-        aStream->pangoMarkupString[i] = 0;
-    }
+
+    // Initialize the markup string array
+    memset( aStream->pangoMarkupString, 0, MAX_MARKUP_LEN );
+
     open_span_tag( aStream->pangoMarkupString, args->n_fci, aStream->fontSize, 0 );
 }
 
@@ -1147,6 +1146,18 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
     plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
+
+    // Check for unreasonable values and raise a warning
+    if(fontStyle >= 3) 
+    {
+        plwarn("cairo: Unknown font style specified, forcing normal\n");
+	fontStyle = 0;
+    }
+    if(fontWeight >= 2) 
+    {
+        plwarn("cairo: Unknown font weight specified, forcing normal\n");
+	fontWeight = 0;
+    }
 
     // From http://library.gnome.org/devel/pango/unstable/PangoMarkupFormat.html
     // size = font size in 1024ths of a point.
@@ -1885,22 +1896,37 @@ static signed int xcairo_init_cairo( PLStream *pls )
 
     // Create an cairo surface & context that are associated with the X window.
     defaultVisual = DefaultVisual( aStream->XDisplay, 0 );
+
     // Dimension units are pixels from cairo documentation.
     // This is the X window Cairo surface.
-    aStream->cairoSurface_X = cairo_xlib_surface_create( aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength );
+    aStream->cairoSurface_X = cairo_xlib_surface_create( 
+        aStream->XDisplay, 
+	aStream->XWindow, 
+	defaultVisual, 
+	pls->xlength, 
+	pls->ylength );
+
     aStream->cairoContext_X = cairo_create( aStream->cairoSurface_X );
+
     // This is the Cairo surface PLplot will actually plot to.
     if ( aStream->image_buffering == 0 )
     {
-        aStream->cairoSurface = cairo_surface_create_similar( aStream->cairoSurface_X, CAIRO_CONTENT_COLOR_ALPHA, pls->xlength, pls->ylength );
+        aStream->cairoSurface = cairo_surface_create_similar( 
+	    aStream->cairoSurface_X, 
+	    CAIRO_CONTENT_COLOR_ALPHA, 
+	    pls->xlength, 
+	    pls->ylength );
+
         aStream->cairoContext = cairo_create( aStream->cairoSurface );
     }
     else
     {
         // Plot to an off-screen image
         aStream->cairoSurface =
-            cairo_image_surface_create( CAIRO_FORMAT_ARGB32,
-                pls->xlength, pls->ylength );
+            cairo_image_surface_create( 
+		CAIRO_FORMAT_ARGB32,
+                pls->xlength, 
+		pls->ylength );
         aStream->cairoContext = cairo_create( aStream->cairoSurface );
     }
 
@@ -1969,8 +1995,15 @@ void plD_init_xcairo( PLStream *pls )
         XScreen    = DefaultScreen( aStream->XDisplay );
         rootWindow = RootWindow( aStream->XDisplay, XScreen );
 
-        aStream->XWindow = XCreateSimpleWindow( aStream->XDisplay, rootWindow, 0, 0, (unsigned int) pls->xlength, (unsigned int) pls->ylength,
-            1, BlackPixel( aStream->XDisplay, XScreen ), BlackPixel( aStream->XDisplay, XScreen ) );
+        aStream->XWindow = XCreateSimpleWindow( 
+	    aStream->XDisplay, 
+	    rootWindow, 0, 0, 
+	    (unsigned int) pls->xlength, 
+	    (unsigned int) pls->ylength,
+	    1, 
+	    BlackPixel( aStream->XDisplay, XScreen ), 
+	    BlackPixel( aStream->XDisplay, XScreen ) );
+
         XStoreName( aStream->XDisplay, aStream->XWindow, pls->plwindow );
         XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
         XMapWindow( aStream->XDisplay, aStream->XWindow );
