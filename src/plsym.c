@@ -74,7 +74,8 @@ plchar( signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
 static PLINT
 plcvec( PLINT ch, signed char **xygr );
 
-static void
+// Need to expose this function so that plmetafile.c can use it.
+void
 plhrsh( PLINT ch, PLINT x, PLINT y );
 
 static void
@@ -330,7 +331,7 @@ c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char
 }
 
 //--------------------------------------------------------------------------
-// static void plhrsh(PLINT ch, PLINT x, PLINT y)
+// void plhrsh(PLINT ch, PLINT x, PLINT y)
 //    PLINT ch - hershey code to plot
 //    PLINT x - device-world x coordinate of hershey character
 //    PLINT y - device-world y coordinate of hershey character
@@ -348,7 +349,7 @@ c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char
 //  defined.
 //--------------------------------------------------------------------------
 
-static void
+void
 plhrsh( PLINT ch, PLINT x, PLINT y )
 {
     EscText   args;
@@ -360,13 +361,14 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
     //
     if ( ( plsc->dev_text ) && ( plsc->dev_unicode ) && ( !plsc->dev_hrshsym ) )
     {
-        idx          = plhershey2unicode( ch ); // Get the index in the lookup table
+        // Get the index in the lookup table and the unicode character
+        idx          = plhershey2unicode( ch ); 
         unicode_char = hershey_to_unicode_lookup_table[idx].Unicode;
 
         //
-        //  Test to see if there is a defined unicode glyph for this hershey code;
-        //  if there isn't, then we pass the glyph to plhersh, and have it
-        //  rendered the old fashioned way.
+        //  Test to see if there is a defined unicode glyph for this hershey 
+	//  code; if there isn't, then we pass the glyph to plhersh, and have 
+	//  it rendered the old fashioned way.
         //  Otherwise, we let the driver render it as unicode
         //
 
@@ -381,19 +383,27 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             PLUNICODE plhrsh_unicode_buffer[3], fci;
             PLFLT     xform[] = { 1.0, 0.0, 0.0, 1.0 };
             char      esc;
+
+	    // Get the current escape character
+            plgesc( &esc );
+
+	    // Setup to render a unicode character
+	    args.text_type    = _PL_STRING_SYMBOL;
             args.unicode_char = unicode_char;
             args.font_face    = hershey_to_unicode_lookup_table[idx].Font;
             // Comment out to fix problem with ps, psttf drivers
             //args.base = 1;
             args.base   = 0;
-            args.just   = .5;
-            args.xform  = 0;
+            args.just   = 0.5;
+            args.xform  = xform;
             args.x      = x;
             args.y      = y;
-            args.string = NULL; // Since we are using unicode, we want this to be NULL
-            // "array method"
-            plgesc( &esc );
-            args.xform               = xform;
+            args.string = NULL; 
+	    args.symbol = ch;
+
+	    // Get address of the unicode buffer (even though it is 
+	    // currently static)
+            args.unicode_array = &plhrsh_unicode_buffer[0]; 
             args.unicode_array_len   = 1;
             plhrsh_unicode_buffer[0] = unicode_char;
             // watch out for escape character and unescape it by appending
@@ -405,8 +415,10 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             }
 
             // No need to change font back since only one character.
-            args.unicode_array = &plhrsh_unicode_buffer[0]; // Get address of the unicode buffer (even though it is currently static)
 
+	    // Swap the sym and chr information so that the text 
+	    // rendering (which uses chrht and chrdef) will 
+	    // render the symbol correctly
             plsc->original_chrht  = plsc->chrht;
             plsc->original_chrdef = plsc->chrdef;
             plsc->chrht           = plsc->symht;
@@ -414,15 +426,18 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
 
             if ( plsc->alt_unicode )
             {
+	        // Character at a time method 
                 plgfci( &fci );
                 args.n_fci  = fci;
                 args.n_char = unicode_char;
+
                 plP_esc( PLESC_BEGIN_TEXT, &args );
                 plP_esc( PLESC_TEXT_CHAR, &args );
                 plP_esc( PLESC_END_TEXT, &args );
             }
             else
             {
+	        // "array method"
                 plP_esc( PLESC_HAS_TEXT, &args );
             }
 
