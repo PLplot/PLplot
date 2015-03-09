@@ -187,7 +187,7 @@ void plD_init_wxwidgets( PLStream* pls )
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_init_wxwidgets." );
+		plabort( "unknown error in plD_init_wxwidgets." );
 	}
 }
 
@@ -272,7 +272,7 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_line_wxwidgets." );
+		plabort( "unknown error in plD_line_wxwidgets." );
 	}
 }
 
@@ -299,7 +299,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_polyline_wxwidgets." );
+		plabort( "unknown error in plD_polyline_wxwidgets." );
 	}
 }
 
@@ -328,7 +328,7 @@ void plD_eop_wxwidgets( PLStream *pls )
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_eop_wxwidgets." );
+		plabort( "unknown error in plD_eop_wxwidgets." );
 	}
 }
 
@@ -358,7 +358,7 @@ void plD_bop_wxwidgets( PLStream *pls )
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_bop_wxwidgets." );
+		plabort( "unknown error in plD_bop_wxwidgets." );
 	}
 }
 
@@ -386,7 +386,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_tidy_wxwidgets." );
+		plabort( "unknown error in plD_tidy_wxwidgets." );
 	}
 }
 
@@ -426,7 +426,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_state_wxwidgets." );
+		plabort( "unknown error in plD_state_wxwidgets." );
 	}
 
     
@@ -510,6 +510,6 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 	}
 	catch( ... )
 	{
-		plabort( "Unkown error in plD_tidy_wxwidgets." );
+		plabort( "unknown error in plD_tidy_wxwidgets." );
 	}    
 }
