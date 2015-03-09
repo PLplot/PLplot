@@ -183,6 +183,7 @@ void plD_init_wxwidgets( PLStream* pls )
 	catch( char *message )
 	{
 		plabort( message );
+		pls->device = NULL;
 	}
 	catch( ... )
 	{

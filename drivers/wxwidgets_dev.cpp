@@ -272,7 +272,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
         if ( hrshsym )
             pls->dev_hrshsym = 1;
     }
-    pls->dev = (void *) this;
 
 
     // Set up physical limits of plotting device in plplot internal units
@@ -289,9 +288,17 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 
 	//check dpi is non-zero otherwise we get infinities in some calcualtions
 	//and ridiculous numbers in others
-	if( pls->xdpi == 0.0 || pls->ydpi == 0 )
-		throw( "wxPLDevice::wxPLDevice, plspage has been used to setup the page \
-		but the dpi has been left as zero. This will cause serious rending issues" );
+	if ( pls->xdpi == 0.0 || pls->ydpi == 0 )
+	{
+		if ( pls->xdpi == 0.0 && pls->ydpi == 0 )
+			c_plspage( 90, 90, 0, 0, 0, 0 );
+		else
+		{
+			PLFLT dpi = MAX( pls->xdpi, pls->ydpi );
+			pls->xdpi = dpi;
+			pls->ydpi = dpi;
+		}
+	}
 
     m_localBufferPosition = 0;
 
@@ -301,6 +308,10 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 		SetDC( pls, ( wxDC * )pls->dev_data );
 	else
 		SetupMemoryMap();
+
+	//this must be the absolute last thing that is done
+	//so that if an exception is thrown pls->dev remains as NULL
+    pls->dev = (void *) this;
 }
 
 
