@@ -411,7 +411,7 @@ void wxPLDevice::FillPolygon( PLStream *pls )
 	
 	//edge the polygon with a 0.5 pixel line to avoid seams. This is a
 	//bit of a bodge really but this is a difficult problem
-	wxPen edgePen( m_brush.GetColour(), m_scale, wxPENSTYLE_SOLID );
+	wxPen edgePen( m_brush.GetColour(), m_scale, wxSOLID );
 	DrawingObjectsChanger changer(m_dc, edgePen, m_brush );
 	//DrawingObjectsChanger changer(m_dc, wxNullPen, m_brush );
 	Scaler scaler( m_dc, 1.0/m_scale, 1.0/m_scale );
