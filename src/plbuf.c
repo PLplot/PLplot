@@ -143,10 +143,13 @@ plbuf_bop( PLStream *pls )
     // because the color might have already been set by the driver
     // during initialization and this would result in an extraneous
     // color command being sent.  The goal is to preserve the current
-    // color state
+    // color state so that rdbuf_bop can restore it.  This needs
+    // to occur immediately after the BOP command so that it can be
+    // read by rdbuf_bop.
     wr_data( pls, &( pls->icol0 ), sizeof ( pls->icol0 ) );
     wr_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
     wr_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
+    wr_data( pls, &( pls->curcmap ), sizeof ( pls->curcmap ) );
 
     // Save the colormaps
     plbuf_state( pls, PLSTATE_CMAP0 );
@@ -326,6 +329,9 @@ plbuf_text( PLStream *pls, EscText *text )
 {
     dbug_enter( "plbuf_text" );
 
+    // Check for missing data.  The gcw driver needs this
+    if(text == NULL) return;
+
     // Store the state information needed to render the text
 
     wr_data( pls, &pls->chrht, sizeof ( pls->chrht ) );
@@ -428,8 +434,7 @@ plbuf_esc( PLStream *pls, PLINT op, void *ptr )
 
     // Unicode and non-Unicode text handling
     case PLESC_HAS_TEXT:
-        if ( ptr != NULL ) // Check required by GCW driver, please don't remove
-            plbuf_text( pls, (EscText *) ptr );
+        plbuf_text( pls, (EscText *) ptr );
         break;
 
     // Alternate Unicode text handling
@@ -581,6 +586,8 @@ rdbuf_eop( PLStream * PL_UNUSED( pls ) )
 static void
 rdbuf_bop( PLStream *pls )
 {
+    U_CHAR cmd;
+
     dbug_enter( "rdbuf_bop" );
 
     pls->nplwin = 0;
@@ -590,9 +597,28 @@ rdbuf_bop( PLStream *pls )
     rd_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
     rd_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
 
-    // No need to handle the colormaps because the PLSTATE_* command
-    // was used to save the colormaps, thus reading the buffer will
-    // execute the command
+    
+    rd_data( pls, &( pls->curcmap ), sizeof ( pls->curcmap ) );
+
+    // We need to read the colormaps that were stored by plbuf_bop
+    // now because when plP_state is used to set the color, a wrong
+    // colormap will be used if it was changed.
+    // Read the command (should CHANGE_STATE PLSTATE_CMAP0)
+    rd_command( pls, &cmd );
+    plbuf_control( pls, cmd );
+    // Read the command (should CHANGE_STATE PLSTATE_CMAP1)
+    rd_command( pls, &cmd );
+    plbuf_control( pls, cmd );
+
+    // and now we can set the color
+    if( pls->curcmap == 0 ) 
+    {
+        plP_state( PLSTATE_COLOR0 );
+    } 
+    else 
+    {
+        plP_state( PLSTATE_COLOR1 );
+    }
 
     plP_bop();
 }
