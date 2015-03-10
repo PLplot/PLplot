@@ -596,8 +596,6 @@ rdbuf_bop( PLStream *pls )
     rd_data( pls, &( pls->icol0 ), sizeof ( pls->icol0 ) );
     rd_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
     rd_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
-
-    
     rd_data( pls, &( pls->curcmap ), sizeof ( pls->curcmap ) );
 
     // We need to read the colormaps that were stored by plbuf_bop
@@ -1145,6 +1143,7 @@ rdbuf_text( PLStream *pls )
 // rdbuf_text_unicode()
 //
 // Draw text for the new unicode handling pathway.
+// This currently does nothing but is here as a placehlder for the future
 //--------------------------------------------------------------------------
 
 static void
