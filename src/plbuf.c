@@ -151,13 +151,13 @@ plbuf_bop( PLStream *pls )
     wr_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
     wr_data( pls, &( pls->curcmap ), sizeof ( pls->curcmap ) );
 
-    // Save the colormaps
+    // Save all the other state parameters via the plbuf_state function
     plbuf_state( pls, PLSTATE_CMAP0 );
     plbuf_state( pls, PLSTATE_CMAP1 );
-
-    // Initialize to a known state
-    //plbuf_state( pls, PLSTATE_COLOR0 );
-    //plbuf_state( pls, PLSTATE_WIDTH );
+	plbuf_state( pls, PLSTATE_WIDTH );
+	plbuf_state( pls, PLSTATE_FILL );
+	plbuf_state( pls, PLSTATE_CHR );
+	plbuf_state( pls, PLSTATE_SYM );
 }
 
 //--------------------------------------------------------------------------
@@ -601,10 +601,22 @@ rdbuf_bop( PLStream *pls )
     // We need to read the colormaps that were stored by plbuf_bop
     // now because when plP_state is used to set the color, a wrong
     // colormap will be used if it was changed.
-    // Read the command (should CHANGE_STATE PLSTATE_CMAP0)
+    // Read the command (should be CHANGE_STATE PLSTATE_CMAP0)
     rd_command( pls, &cmd );
     plbuf_control( pls, cmd );
-    // Read the command (should CHANGE_STATE PLSTATE_CMAP1)
+    // Read the command (should be CHANGE_STATE PLSTATE_CMAP1)
+    rd_command( pls, &cmd );
+    plbuf_control( pls, cmd );
+    // Read the command (should be CHANGE_STATE PLSTATE_WIDTH)
+    rd_command( pls, &cmd );
+    plbuf_control( pls, cmd );
+    // Read the command (should be CHANGE_STATE PLSTATE_FILL)
+    rd_command( pls, &cmd );
+    plbuf_control( pls, cmd );
+    // Read the command (should be CHANGE_STATE PLSTATE_CHR)
+    rd_command( pls, &cmd );
+    plbuf_control( pls, cmd );
+    // Read the command (should be CHANGE_STATE PLSTATE_SYM)
     rd_command( pls, &cmd );
     plbuf_control( pls, cmd );
 
