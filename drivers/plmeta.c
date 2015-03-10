@@ -587,7 +587,7 @@ plm_text( PLStream *pls, EscText *args )
 // Provide a consistent method for handling a failed fsetpos.
 //--------------------------------------------------------------------------
 static void
-handle_setpos_failed( const char *where, const char *which, FPOS_T position )
+handle_fsetpos_failed( const char *where, const char *which, FPOS_T position )
 {
     char buffer[BUFFER_LEN];
 
