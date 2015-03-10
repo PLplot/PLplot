@@ -708,7 +708,7 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 	text.refx = (short)lround( dev->mfpcxa * refx + dev->mfpcxb );
 	text.refy = (short)lround( dev->mfpcya * refy + dev->mfpcyb );
 
-	if( text.text_type == _PL_STRING_TEXT ) {
+	if( text.text_type == PL_STRING_TEXT ) {
 	    // Retrieve the text string
 	    rc = read_entry( plm, PDF_USHORT, PLP_ULONG, &len );
 

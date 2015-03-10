@@ -564,7 +564,7 @@ plm_text( PLStream *pls, EscText *args )
     plm_wr( pdf_wr_4bytes( pls->pdfs, (int) args->text_type ) );
 
     // Was a text string passed or a plot symbol?  
-    if( args->text_type == _PL_STRING_TEXT ) 
+    if( args->text_type == PL_STRING_TEXT ) 
     {
         // Text string 
         len = strlen( args->string );

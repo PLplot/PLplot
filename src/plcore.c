@@ -1148,7 +1148,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
     {
         EscText   args;
 
-	args.text_type = _PL_STRING_TEXT;
+        args.text_type = PL_STRING_TEXT;
         args.base   = base;
         args.just   = just;
         args.xform  = xform;

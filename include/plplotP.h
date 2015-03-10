@@ -658,7 +658,7 @@ typedef struct
     // Indicates the type of text stored in the structure.  This flag
     // is used by the plot metafiles to correctly store and then render
     // the contents.
-    enum { _PL_STRING_TEXT, _PL_STRING_SYMBOL } text_type;
+    enum { PL_STRING_TEXT, PL_STRING_SYMBOL } text_type;
 
     // Positioning settings
     PLINT          base;           // ref point at base(1) or center(0) of text. Currently plplot only use 0

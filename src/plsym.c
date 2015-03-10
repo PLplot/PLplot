@@ -74,8 +74,8 @@ plchar( signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
 static PLINT
 plcvec( PLINT ch, signed char **xygr );
 
-// Need to expose this function so that plmetafile.c can use it.
-void
+
+static void
 plhrsh( PLINT ch, PLINT x, PLINT y );
 
 static void
@@ -331,7 +331,7 @@ c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char
 }
 
 //--------------------------------------------------------------------------
-// void plhrsh(PLINT ch, PLINT x, PLINT y)
+// static void plhrsh(PLINT ch, PLINT x, PLINT y)
 //    PLINT ch - hershey code to plot
 //    PLINT x - device-world x coordinate of hershey character
 //    PLINT y - device-world y coordinate of hershey character
@@ -349,7 +349,7 @@ c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char
 //  defined.
 //--------------------------------------------------------------------------
 
-void
+static void
 plhrsh( PLINT ch, PLINT x, PLINT y )
 {
     EscText   args;
@@ -388,7 +388,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             plgesc( &esc );
 
 	    // Setup to render a unicode character
-	    args.text_type    = _PL_STRING_SYMBOL;
+	    args.text_type    = PL_STRING_SYMBOL;
             args.unicode_char = unicode_char;
             args.font_face    = hershey_to_unicode_lookup_table[idx].Font;
             // Comment out to fix problem with ps, psttf drivers
