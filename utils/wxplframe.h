@@ -77,7 +77,7 @@ private:
     static const int  m_idleTimerInterval = 100;
     static const int  m_busyTimerInterval = 0;
     bool              m_transferComplete;
-	bool              m_inCheckTimerFunction;
+    bool              m_inCheckTimerFunction;
 
     wxPoint           m_cursorPosition;
     bool              m_locateMode;

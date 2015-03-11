@@ -111,23 +111,23 @@ private:
 class DrawingObjectsChanger
 {
 public:
-	DrawingObjectsChanger( wxDC *dc, const wxPen &pen, const wxBrush &brush )
-	{
-		m_dc = dc;
-		m_pen = dc->GetPen();
-		m_brush = dc->GetBrush();
-		dc->SetPen( pen );
-		dc->SetBrush( brush );
-	}
-	~DrawingObjectsChanger()
-	{
-		m_dc->SetPen( m_pen );
-		m_dc->SetBrush( m_brush );
-	}
+    DrawingObjectsChanger( wxDC *dc, const wxPen &pen, const wxBrush &brush )
+    {
+        m_dc    = dc;
+        m_pen   = dc->GetPen();
+        m_brush = dc->GetBrush();
+        dc->SetPen( pen );
+        dc->SetBrush( brush );
+    }
+    ~DrawingObjectsChanger()
+    {
+        m_dc->SetPen( m_pen );
+        m_dc->SetBrush( m_brush );
+    }
 private:
-	wxDC *m_dc;
-	wxPen m_pen;
-	wxBrush m_brush;
+    wxDC    *m_dc;
+    wxPen   m_pen;
+    wxBrush m_brush;
 };
 
 //--------------------------------------------------------------------------
@@ -139,34 +139,35 @@ private:
 class TextObjectsChanger
 {
 public:
-	TextObjectsChanger( wxDC *dc, const wxFont &font, const wxColour &textForeground, const wxColour &textBackground )
-	{
-		m_dc = dc;
-		m_font = dc->GetFont();
-		m_textForeground = dc->GetTextForeground();
-		m_textBackground = dc->GetTextBackground();
-		dc->SetTextForeground( textForeground );
-		dc->SetTextBackground( textBackground );
-		dc->SetFont( font );
-	}
-	TextObjectsChanger( wxDC *dc, const wxFont &font )
-	{
-		m_dc = dc;
-		m_font = dc->GetFont();
-		m_textForeground = dc->GetTextForeground();
-		m_textBackground = dc->GetTextBackground();
-		dc->SetFont( font );
-	}	~TextObjectsChanger()
-	{
-		m_dc->SetTextForeground( m_textForeground );
-		m_dc->SetTextBackground( m_textBackground );
-		m_dc->SetFont( m_font );
-	}
+    TextObjectsChanger( wxDC *dc, const wxFont &font, const wxColour &textForeground, const wxColour &textBackground )
+    {
+        m_dc             = dc;
+        m_font           = dc->GetFont();
+        m_textForeground = dc->GetTextForeground();
+        m_textBackground = dc->GetTextBackground();
+        dc->SetTextForeground( textForeground );
+        dc->SetTextBackground( textBackground );
+        dc->SetFont( font );
+    }
+    TextObjectsChanger( wxDC *dc, const wxFont &font )
+    {
+        m_dc             = dc;
+        m_font           = dc->GetFont();
+        m_textForeground = dc->GetTextForeground();
+        m_textBackground = dc->GetTextBackground();
+        dc->SetFont( font );
+    }
+    ~TextObjectsChanger()
+    {
+        m_dc->SetTextForeground( m_textForeground );
+        m_dc->SetTextBackground( m_textBackground );
+        m_dc->SetFont( m_font );
+    }
 private:
-	wxDC *m_dc;
-	wxFont m_font;
-	wxColour m_textForeground;
-	wxColour m_textBackground;
+    wxDC     *m_dc;
+    wxFont   m_font;
+    wxColour m_textForeground;
+    wxColour m_textBackground;
 };
 
 //--------------------------------------------------------------------------
@@ -241,10 +242,10 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     if ( mfo )
         strcpy( m_mfo, mfo );
     else
-        //assume we will be outputting to the default
-        //memory map until we are given a dc to draw to
+    //assume we will be outputting to the default
+    //memory map until we are given a dc to draw to
 #ifdef WXPLVIEWER_DEBUG
-        strcpy(m_mfo, "plplotMemoryMap");
+        strcpy( m_mfo, "plplotMemoryMap" );
 #else
         strcpy( m_mfo, "plplotMemoryMap??????????" );
 #endif
@@ -283,34 +284,34 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     // set dpi and page size defaults
     // the user might have already set this with plspage
     // so check first
-	if( ! plsc->pageset )
-		c_plspage( 90, 90, 900, 675, 0, 0 );
+    if ( !plsc->pageset )
+        c_plspage( 90, 90, 900, 675, 0, 0 );
 
-	//check dpi is non-zero otherwise we get infinities in some calcualtions
-	//and ridiculous numbers in others
-	if ( pls->xdpi == 0.0 || pls->ydpi == 0 )
-	{
-		if ( pls->xdpi == 0.0 && pls->ydpi == 0 )
-			c_plspage( 90, 90, 0, 0, 0, 0 );
-		else
-		{
-			PLFLT dpi = MAX( pls->xdpi, pls->ydpi );
-			pls->xdpi = dpi;
-			pls->ydpi = dpi;
-		}
-	}
+    //check dpi is non-zero otherwise we get infinities in some calcualtions
+    //and ridiculous numbers in others
+    if ( pls->xdpi == 0.0 || pls->ydpi == 0 )
+    {
+        if ( pls->xdpi == 0.0 && pls->ydpi == 0 )
+            c_plspage( 90, 90, 0, 0, 0, 0 );
+        else
+        {
+            PLFLT dpi = MAX( pls->xdpi, pls->ydpi );
+            pls->xdpi = dpi;
+            pls->ydpi = dpi;
+        }
+    }
 
     m_localBufferPosition = 0;
 
-	SetSize( pls, plsc->xlength, plsc->ylength );
+    SetSize( pls, plsc->xlength, plsc->ylength );
 
-	if( pls->dev_data )
-		SetDC( pls, ( wxDC * )pls->dev_data );
-	else
-		SetupMemoryMap();
+    if ( pls->dev_data )
+        SetDC( pls, (wxDC *) pls->dev_data );
+    else
+        SetupMemoryMap();
 
-	//this must be the absolute last thing that is done
-	//so that if an exception is thrown pls->dev remains as NULL
+    //this must be the absolute last thing that is done
+    //so that if an exception is thrown pls->dev remains as NULL
     pls->dev = (void *) this;
 }
 
@@ -322,7 +323,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 //--------------------------------------------------------------------------
 wxPLDevice::~wxPLDevice()
 {
-
     if ( m_outputMemoryMap.isValid() )
     {
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
@@ -341,8 +341,8 @@ void wxPLDevice::DrawLine( short x1a, short y1a, short x2a, short y2a )
     if ( !m_dc )
         return;
 
-	Scaler scaler( m_dc, 1.0/m_scale, 1.0/m_scale );
-	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
+    Scaler scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
+    DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
     m_dc->DrawLine( (wxCoord) ( m_xAspect * x1a ), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y1a ) ),
         (wxCoord) ( m_xAspect * x2a ), (wxCoord) ( m_yAspect * ( m_plplotEdgeLength - y2a ) ) );
 }
@@ -357,9 +357,9 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
     if ( !m_dc )
         return;
-	
-	Scaler scaler( m_dc, 1.0/m_scale, 1.0/m_scale );
-	DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
+
+    Scaler scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
+    DrawingObjectsChanger drawingObjectsChanger( m_dc, m_pen, m_brush );
     for ( PLINT i = 1; i < npts; i++ )
         m_dc->DrawLine( m_xAspect * xa[i - 1], m_yAspect * ( m_plplotEdgeLength - ya[i - 1] ),
             m_xAspect * xa[i], m_yAspect * ( m_plplotEdgeLength - ya[i] ) );
@@ -374,28 +374,28 @@ void wxPLDevice::DrawPolyline( short *xa, short *ya, PLINT npts )
 //--------------------------------------------------------------------------
 void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-	if ( !m_dc )
+    if ( !m_dc )
         return;
-	
+
     x1 = x1 < 0 ? 0 : x1;
     x2 = x2 < 0 ? m_plplotEdgeLength : x2;
     y1 = y1 < 0 ? 0 : y1;
     y2 = y2 < 0 ? m_plplotEdgeLength : y2;
 
-    PLINT         x      = MIN( x1, x2 );
-    PLINT         y      = MIN( y1, y2 );
-    PLINT         width  = abs( x1 - x2 );
-    PLINT         height = abs( y1 - y2 );
+    PLINT x      = MIN( x1, x2 );
+    PLINT y      = MIN( y1, y2 );
+    PLINT width  = abs( x1 - x2 );
+    PLINT height = abs( y1 - y2 );
 
-	if( width > 0 && height > 0 )
-	{
-		PLINT r, g, b;
-		PLFLT a;
-		plgcolbga( &r, &g, &b, &a );
-		wxColour bgColour( r, g, b, a * 255 );
-		DrawingObjectsChanger changer(m_dc, wxPen( bgColour, 0 ), wxBrush( bgColour ) );
-		m_dc->DrawRectangle( x, y, width, height );
-	}
+    if ( width > 0 && height > 0 )
+    {
+        PLINT    r, g, b;
+        PLFLT    a;
+        plgcolbga( &r, &g, &b, &a );
+        wxColour bgColour( r, g, b, a * 255 );
+        DrawingObjectsChanger changer( m_dc, wxPen( bgColour, 0 ), wxBrush( bgColour ) );
+        m_dc->DrawRectangle( x, y, width, height );
+    }
 }
 
 
@@ -408,13 +408,13 @@ void wxPLDevice::FillPolygon( PLStream *pls )
 {
     if ( !m_dc )
         return;
-	
-	//edge the polygon with a 0.5 pixel line to avoid seams. This is a
-	//bit of a bodge really but this is a difficult problem
-	wxPen edgePen( m_brush.GetColour(), m_scale, wxSOLID );
-	DrawingObjectsChanger changer(m_dc, edgePen, m_brush );
-	//DrawingObjectsChanger changer(m_dc, wxNullPen, m_brush );
-	Scaler scaler( m_dc, 1.0/m_scale, 1.0/m_scale );
+
+    //edge the polygon with a 0.5 pixel line to avoid seams. This is a
+    //bit of a bodge really but this is a difficult problem
+    wxPen edgePen( m_brush.GetColour(), m_scale, wxSOLID );
+    DrawingObjectsChanger changer( m_dc, edgePen, m_brush );
+    //DrawingObjectsChanger changer(m_dc, wxNullPen, m_brush );
+    Scaler  scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
     wxPoint *points = new wxPoint[pls->dev_npts];
     wxCoord xoffset = 0;
     wxCoord yoffset = 0;
@@ -445,8 +445,8 @@ void wxPLDevice::FillPolygon( PLStream *pls )
 void wxPLDevice::SetWidth( PLStream *pls )
 {
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
-	m_pen = wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, 
-		pls->curcolor.a * 255 ), width, wxSOLID ) ;
+    m_pen = wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
+            pls->curcolor.a * 255 ), width, wxSOLID );
 }
 
 
@@ -458,10 +458,10 @@ void wxPLDevice::SetWidth( PLStream *pls )
 void wxPLDevice::SetColor( PLStream *pls )
 {
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
-	m_pen =  wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
-		pls->curcolor.a * 255 ), width, wxSOLID );
+    m_pen = wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
+            pls->curcolor.a * 255 ), width, wxSOLID );
     m_brush = wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
-		pls->curcolor.a * 255 ) );
+            pls->curcolor.a * 255 ) );
 }
 
 
@@ -473,11 +473,11 @@ void wxPLDevice::SetColor( PLStream *pls )
 //--------------------------------------------------------------------------
 void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
 {
-	if( m_outputMemoryMap.isValid() )
-		throw( "wxPLDevice::SetDC The DC must be set before initialisation. The device is outputting to a separate viewer" );
-    m_dc                 = dc; // Add the dc to the device
+    if ( m_outputMemoryMap.isValid() )
+        throw( "wxPLDevice::SetDC The DC must be set before initialisation. The device is outputting to a separate viewer" );
+    m_dc = dc;                 // Add the dc to the device
     m_useDcTextTransform = false;
-    m_gc                 = NULL;
+    m_gc = NULL;
     if ( m_dc )
     {
 #if wxVERSION_NUMBER >= 2902
@@ -501,7 +501,7 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
             if ( gcdc )
                 m_gc = gcdc->GetGraphicsContext();
         }
-		
+
         strcpy( m_mfo, "" );
         SetSize( pls, m_width, m_height );         //call with our current size to set the scaling
     }
@@ -509,16 +509,16 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
 
 PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
 {
-	if( superscriptLevel == 0 ) 
-		return 0;
-	else
-	{
-		PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
-		if ( superscriptLevel > 0 )
-			return getTextOffset( superscriptLevel - 1, baseFontSize ) + baseFontSize * fontScale / 2.;
-		else
-			return getTextOffset( superscriptLevel + 1, baseFontSize ) - baseFontSize * fontScale * 0.8 / 2.;
-	}
+    if ( superscriptLevel == 0 )
+        return 0;
+    else
+    {
+        PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+        if ( superscriptLevel > 0 )
+            return getTextOffset( superscriptLevel - 1, baseFontSize ) + baseFontSize * fontScale / 2.;
+        else
+            return getTextOffset( superscriptLevel + 1, baseFontSize ) - baseFontSize * fontScale * 0.8 / 2.;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -574,29 +574,29 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
             {
                 if ( ucs4[i] == (PLUNICODE) 'u' ) // Superscript
                 {                                 // draw string so far
-					PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
-					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
-					DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
+                    PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+                    PLFLT yOffset   = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+                    DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
-					++superscriptLevel;
-					fontScale = pow( 0.8, abs( superscriptLevel ) );
-					m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
+                    ++superscriptLevel;
+                    fontScale = pow( 0.8, abs( superscriptLevel ) );
+                    m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {                                 // draw string so far
-					PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
-					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+                    PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+                    PLFLT yOffset   = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
                     DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
-					--superscriptLevel;
-					fontScale = pow( 0.8, abs( superscriptLevel ) );
+                    --superscriptLevel;
+                    fontScale = pow( 0.8, abs( superscriptLevel ) );
                     m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
                 {                                 // draw string so far
-					PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
-					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
-					DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
+                    PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+                    PLFLT yOffset   = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+                    DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
                     m_underlined = !m_underlined;
                     m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
@@ -610,9 +610,9 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
         else // a font change
         {
             // draw string so far
-			PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
-					PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
-			DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
+            PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+            PLFLT yOffset   = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+            DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
             // get new font
             m_fci = ucs4[i];
@@ -620,11 +620,11 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
             i++;
         }
     }
-	
-	//we have reached the end of the string. Draw the remainder.
-	PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
-	PLFLT yOffset = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
-	DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
+
+    //we have reached the end of the string. Draw the remainder.
+    PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
+    PLFLT yOffset   = getTextOffset( superscriptLevel, baseFontSize ) * m_yScale;
+    DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 }
 
 
@@ -642,7 +642,7 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
 
     wxCoord  w, h, d, l;
 
-	wxString str = wxString::FromUTF8( utf8_string );
+    wxString str = wxString::FromUTF8( utf8_string );
     //wxString str( wxConvUTF8.cMB2WC( utf8_string ), *wxConvCurrent );
 
     m_dc->GetTextExtent( str, &w, &h, &d, &l );
@@ -652,7 +652,7 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
         //if we are using wxDC transforms or the wxGC, then the transformations
         //have already been applied
         if ( m_gc )
-			m_gc->DrawText( str, m_textWidth, -yOffset / m_yScale );
+            m_gc->DrawText( str, m_textWidth, -yOffset / m_yScale );
         else if ( m_useDcTextTransform )
             m_dc->DrawText( str, m_textWidth, -yOffset / m_yScale );
         else
@@ -744,7 +744,7 @@ wxFont wxPLDevice::GetFont( PLUNICODE fci, PLFLT scaledFontSize )
         fontWeightLookup[fontWeight],
         m_underlined,
         wxEmptyString,
-		wxFONTENCODING_DEFAULT
+        wxFONTENCODING_DEFAULT
         );
 }
 
@@ -759,7 +759,7 @@ wxFont wxPLDevice::GetFont( PLUNICODE fci, PLFLT scaledFontSize )
 void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 {
     if ( !m_dc )
-		return;
+        return;
 
     //for text, work in native coordinates, partly to avoid rewriting existing code
     //but also because we should get better text hinting for screen display I think.
@@ -800,25 +800,25 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     }
     wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
 
-    PLUNICODE *lineStart     = args->unicode_array;
-    int       lineLen        = 0;
-    bool      lineFeed       = false;
-    bool      carriageReturn = false;
-    wxCoord   paraHeight     = 0;
+    PLUNICODE   *lineStart     = args->unicode_array;
+    int         lineLen        = 0;
+    bool        lineFeed       = false;
+    bool        carriageReturn = false;
+    wxCoord     paraHeight     = 0;
     // Get the curent font
-	PLINT superscriptLevel = 0;
+    PLINT       superscriptLevel = 0;
     plgfci( &m_fci );
-	//set the font up, we use a textObjectChanger here so that the font returns
-	//to its original value on exit
-	TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ), 
-		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
-		wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) );
+    //set the font up, we use a textObjectChanger here so that the font returns
+    //to its original value on exit
+    TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ),
+                                           wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
+                                           wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) );
 
 
-	//draw each line of text individually
+    //draw each line of text individually
     while ( lineStart != args->unicode_array + args->unicode_array_len )
     {
-		//get the length of the line
+        //get the length of the line
         while ( lineStart + lineLen != args->unicode_array + args->unicode_array_len
                 && *( lineStart + lineLen ) != (PLUNICODE) '\n' )
         {
@@ -835,20 +835,20 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 
         //remember the text parameters so they can be restored
         double    lineStartSuperscriptLevel = superscriptLevel;
-        PLUNICODE lineStartFci       = m_fci;
+        PLUNICODE lineStartFci = m_fci;
 
         // determine extent of text
         m_posX = args->x / m_xScale;
         m_posY = args->y / m_yScale;
-		DrawTextLine( lineStart, lineLen, baseFontSize, false, superscriptLevel );
+        DrawTextLine( lineStart, lineLen, baseFontSize, false, superscriptLevel );
 
         if ( lineFeed && m_superscriptHeight > m_textHeight )
             paraHeight += m_superscriptHeight - m_textHeight;
 
         // actually draw text, resetting the font first
-		superscriptLevel = lineStartSuperscriptLevel;
+        superscriptLevel = lineStartSuperscriptLevel;
         m_fci            = lineStartFci;
-		m_dc->SetFont( GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize ) );
+        m_dc->SetFont( GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize ) );
 
 
         // calculate rotation of text
@@ -875,7 +875,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             m_gc->ConcatTransform( matrix );                                                                //rotate
             m_gc->Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing ); //move to set alignment
 
-			DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
+            DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
             m_gc->SetTransform( originalMatrix );
         }
 #if wxVERSION_NUMBER >= 2902
@@ -943,8 +943,8 @@ void wxPLDevice::BeginPage( PLStream* pls )
     SetWidth( pls );
     SetColor( pls );
 
-	//clear the page
-	ClearBackground( pls );
+    //clear the page
+    ClearBackground( pls );
 }
 
 //--------------------------------------------------------------------------
@@ -998,10 +998,10 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     // Set the number of plplot pixels per mm
     plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->ydpi / 25.4 );
 
-    pls->aspect = m_xAspect/m_yAspect;
+    pls->aspect = m_xAspect / m_yAspect;
 
     // redraw the plot
-	if ( m_dc && pls->plbuf_buffer )
+    if ( m_dc && pls->plbuf_buffer )
         plreplot();
 }
 
@@ -1260,17 +1260,17 @@ void wxPLDevice::SetupMemoryMap()
 
         if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
             plwarn( "Failed to run wxPLViewer - no plots will be shown" );
-#else //WIN32
-        //Linux doesn't like using wxExecute without a wxApp, so use system instead
+#else   //WIN32
+      //Linux doesn't like using wxExecute without a wxApp, so use system instead
         command << wxT( " &" );
         system( command.mb_str() );
-#endif //WIN32
-		size_t maxTries = 1000;
+#endif  //WIN32
+        size_t maxTries = 1000;
 #else //WXPLVIEWER_DEBUG
-		fprintf( stdout, "Begin Running wxPLViewer in the debugger now to continue." );
-		size_t maxTries = 100000;
-#endif //WXPLVIEWER_DEBUG
-        //wait until the viewer signals it has opened the map file
+        fprintf( stdout, "Begin Running wxPLViewer in the debugger now to continue." );
+        size_t maxTries = 100000;
+#endif  //WXPLVIEWER_DEBUG
+       //wait until the viewer signals it has opened the map file
         size_t  counter      = 0;
         size_t &viewerSignal = header->viewerOpenFlag;
         while ( counter < maxTries && viewerSignal == 0 )

@@ -36,7 +36,7 @@ enum
 {
     wxPLPLOT_NONE      = 0,
     wxPLPLOT_DRAW_TEXT = 1 << 5,
-    wxPLPLOT_USE_HERSHEY_SYMBOLS = 1 << 6
+        wxPLPLOT_USE_HERSHEY_SYMBOLS = 1 << 6
 };
 
 //! wxPLplotstream is inherited from plstream, which is the C++ interface
@@ -57,16 +57,16 @@ public:
     void SetDC( wxDC *dc );                         //!< Set a new dc to write to
     void ImportBuffer( void *buffer, size_t size ); //!< Import a buffer of plplot commands
     void SetFixedAspectRatio( bool fixed );         //!< Set Fixed aspect ratio of the plot
-	bool IsValid();
+    bool IsValid();
 
 private:
     void InitStream();
 
 private:
-    int m_width;        //!< Width of dc/plot area.
-    int m_height;       //!< Height of dc/plot area.
-    int m_style;        //!< style of this plot
-	bool m_created;
+    int  m_width;       //!< Width of dc/plot area.
+    int  m_height;      //!< Height of dc/plot area.
+    int  m_style;       //!< style of this plot
+    bool m_created;
 };
 
 

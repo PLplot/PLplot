@@ -362,13 +362,13 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
     if ( ( plsc->dev_text ) && ( plsc->dev_unicode ) && ( !plsc->dev_hrshsym ) )
     {
         // Get the index in the lookup table and the unicode character
-        idx          = plhershey2unicode( ch ); 
+        idx          = plhershey2unicode( ch );
         unicode_char = hershey_to_unicode_lookup_table[idx].Unicode;
 
         //
-        //  Test to see if there is a defined unicode glyph for this hershey 
-	//  code; if there isn't, then we pass the glyph to plhersh, and have 
-	//  it rendered the old fashioned way.
+        //  Test to see if there is a defined unicode glyph for this hershey
+        //  code; if there isn't, then we pass the glyph to plhersh, and have
+        //  it rendered the old fashioned way.
         //  Otherwise, we let the driver render it as unicode
         //
 
@@ -384,11 +384,11 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             PLFLT     xform[] = { 1.0, 0.0, 0.0, 1.0 };
             char      esc;
 
-	    // Get the current escape character
+            // Get the current escape character
             plgesc( &esc );
 
-	    // Setup to render a unicode character
-	    args.text_type    = PL_STRING_SYMBOL;
+            // Setup to render a unicode character
+            args.text_type    = PL_STRING_SYMBOL;
             args.unicode_char = unicode_char;
             args.font_face    = hershey_to_unicode_lookup_table[idx].Font;
             // Comment out to fix problem with ps, psttf drivers
@@ -398,12 +398,12 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             args.xform  = xform;
             args.x      = x;
             args.y      = y;
-            args.string = NULL; 
-	    args.symbol = ch;
+            args.string = NULL;
+            args.symbol = ch;
 
-	    // Get address of the unicode buffer (even though it is 
-	    // currently static)
-            args.unicode_array = &plhrsh_unicode_buffer[0]; 
+            // Get address of the unicode buffer (even though it is
+            // currently static)
+            args.unicode_array       = &plhrsh_unicode_buffer[0];
             args.unicode_array_len   = 1;
             plhrsh_unicode_buffer[0] = unicode_char;
             // watch out for escape character and unescape it by appending
@@ -416,9 +416,9 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
 
             // No need to change font back since only one character.
 
-	    // Swap the sym and chr information so that the text 
-	    // rendering (which uses chrht and chrdef) will 
-	    // render the symbol correctly
+            // Swap the sym and chr information so that the text
+            // rendering (which uses chrht and chrdef) will
+            // render the symbol correctly
             plsc->original_chrht  = plsc->chrht;
             plsc->original_chrdef = plsc->chrdef;
             plsc->chrht           = plsc->symht;
@@ -426,7 +426,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
 
             if ( plsc->alt_unicode )
             {
-	        // Character at a time method 
+                // Character at a time method
                 plgfci( &fci );
                 args.n_fci  = fci;
                 args.n_char = unicode_char;
@@ -437,7 +437,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             }
             else
             {
-	        // "array method"
+                // "array method"
                 plP_esc( PLESC_HAS_TEXT, &args );
             }
 

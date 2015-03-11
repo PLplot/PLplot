@@ -593,7 +593,7 @@ typedef struct
 
     void *dev;
 
-	void *dev_data;
+    void *dev_data;
 
     void ( *KeyEH )( PLGraphicsIn *gin, void *KeyEH_data,
                      int *exit_eventloop );

@@ -154,10 +154,10 @@ plbuf_bop( PLStream *pls )
     // Save all the other state parameters via the plbuf_state function
     plbuf_state( pls, PLSTATE_CMAP0 );
     plbuf_state( pls, PLSTATE_CMAP1 );
-	plbuf_state( pls, PLSTATE_WIDTH );
-	plbuf_state( pls, PLSTATE_FILL );
-	plbuf_state( pls, PLSTATE_CHR );
-	plbuf_state( pls, PLSTATE_SYM );
+    plbuf_state( pls, PLSTATE_WIDTH );
+    plbuf_state( pls, PLSTATE_FILL );
+    plbuf_state( pls, PLSTATE_CHR );
+    plbuf_state( pls, PLSTATE_SYM );
 }
 
 //--------------------------------------------------------------------------
@@ -330,7 +330,8 @@ plbuf_text( PLStream *pls, EscText *text )
     dbug_enter( "plbuf_text" );
 
     // Check for missing data.  The gcw driver needs this
-    if(text == NULL) return;
+    if ( text == NULL )
+        return;
 
     // Store the state information needed to render the text
 
@@ -342,7 +343,7 @@ plbuf_text( PLStream *pls, EscText *text )
     wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 
     // Store the text layout information
-    
+
     wr_data( pls, &text->base, sizeof ( text->base ) );
     wr_data( pls, &text->just, sizeof ( text->just ) );
     wr_data( pls, text->xform, sizeof ( text->xform[0] ) * 4 );
@@ -354,26 +355,29 @@ plbuf_text( PLStream *pls, EscText *text )
 
     // Store the text
 
-    if( pls->dev_unicode ) {
+    if ( pls->dev_unicode )
+    {
         PLUNICODE fci;
-  
+
         // Retrieve and store the font characterization integer
-	plgfci( &fci );
+        plgfci( &fci );
 
-	wr_data( pls, &fci, sizeof ( fci ) );
+        wr_data( pls, &fci, sizeof ( fci ) );
 
-	wr_data( pls, &text->unicode_array_len, sizeof ( U_SHORT ) );
-	if ( text->unicode_array_len )
-	    wr_data( pls,
-		     text->unicode_array,
-		     sizeof ( PLUNICODE ) * text->unicode_array_len );
-    } else {
+        wr_data( pls, &text->unicode_array_len, sizeof ( U_SHORT ) );
+        if ( text->unicode_array_len )
+            wr_data( pls,
+                text->unicode_array,
+                sizeof ( PLUNICODE ) * text->unicode_array_len );
+    }
+    else
+    {
         U_SHORT len;
-  
-	len = strlen( text->string );
-	wr_data( pls, &len, sizeof ( len ) );
-	if( len > 0 )
-	  wr_data( pls, (void *) text->string, sizeof( char ) * len );
+
+        len = strlen( text->string );
+        wr_data( pls, &len, sizeof ( len ) );
+        if ( len > 0 )
+            wr_data( pls, (void *) text->string, sizeof ( char ) * len );
     }
 }
 
@@ -621,11 +625,11 @@ rdbuf_bop( PLStream *pls )
     plbuf_control( pls, cmd );
 
     // and now we can set the color
-    if( pls->curcmap == 0 ) 
+    if ( pls->curcmap == 0 )
     {
         plP_state( PLSTATE_COLOR0 );
-    } 
-    else 
+    }
+    else
     {
         plP_state( PLSTATE_COLOR1 );
     }
@@ -755,14 +759,14 @@ rdbuf_state( PLStream *pls )
     }
 
     case PLSTATE_FILL: {
-		PLINT patt, nps, inclin[2], delta[2];
+        PLINT patt, nps, inclin[2], delta[2];
         rd_data( pls, &patt, sizeof ( patt ) );
         rd_data( pls, &nps, sizeof ( nps ) );
         rd_data( pls, &inclin[0], sizeof ( inclin ) );
         rd_data( pls, &delta[0], sizeof ( delta ) );
-		if( nps != 0 )
-			c_plpat( nps, inclin, delta );
-		pls->patt = patt; //this must be second as c_plpat sets pls->patt to an nvalid value
+        if ( nps != 0 )
+            c_plpat( nps, inclin, delta );
+        pls->patt = patt;         //this must be second as c_plpat sets pls->patt to an nvalid value
         break;
     }
 
@@ -1079,8 +1083,8 @@ rdbuf_di( PLStream *pls )
 static void
 rdbuf_text( PLStream *pls )
 {
-    EscText  text;
-    PLFLT    xform[4];
+    EscText text;
+    PLFLT   xform[4];
 
     dbug_enter( "rdbuf_text" );
 
@@ -1107,45 +1111,46 @@ rdbuf_text( PLStream *pls )
     rd_data( pls, &text.font_face, sizeof ( text.font_face ) );
 
     // Read in the text
-    if( pls->dev_unicode ) {
-	PLUNICODE  fci ;
+    if ( pls->dev_unicode )
+    {
+        PLUNICODE fci;
 
-	rd_data( pls, &fci, sizeof ( fci ) );
+        rd_data( pls, &fci, sizeof ( fci ) );
         plsfci( fci );
 
-	rd_data( pls, &text.unicode_array_len, sizeof ( U_SHORT ) );
-	if ( text.unicode_array_len )
-	{
-	    // Set the pointer to the unicode data in the buffer.  This avoids
+        rd_data( pls, &text.unicode_array_len, sizeof ( U_SHORT ) );
+        if ( text.unicode_array_len )
+        {
+            // Set the pointer to the unicode data in the buffer.  This avoids
             // allocating and freeing memory
-	    rd_data_no_copy( 
-		pls,
-	        (void **) ( &text.unicode_array ), 
-		sizeof ( PLUNICODE ) * text.unicode_array_len );
-	}
-	else
-	{
-	    text.unicode_array = NULL;
-	}
+            rd_data_no_copy(
+                pls,
+                (void **) ( &text.unicode_array ),
+                sizeof ( PLUNICODE ) * text.unicode_array_len );
+        }
+        else
+        {
+            text.unicode_array = NULL;
+        }
     }
-    else 
+    else
     {
         U_SHORT len;
-	
-	rd_data( pls, &len, sizeof ( len ) );
-	if( len > 0 )
-	{
-	    // Set the pointer to the string data in the buffer.  This avoids
+
+        rd_data( pls, &len, sizeof ( len ) );
+        if ( len > 0 )
+        {
+            // Set the pointer to the string data in the buffer.  This avoids
             // allocating and freeing memory
-	    rd_data_no_copy( 
-		pls,
-	        (void **) ( &text.string ), 
-		sizeof ( char ) * len );
-	}
-	else
-	{
-	    text.string = NULL;
-	}
+            rd_data_no_copy(
+                pls,
+                (void **) ( &text.string ),
+                sizeof ( char ) * len );
+        }
+        else
+        {
+            text.string = NULL;
+        }
     }
 
     plP_esc( PLESC_HAS_TEXT, &text );
@@ -1162,7 +1167,6 @@ static void
 rdbuf_text_unicode( PLINT op, PLStream *pls )
 {
     dbug_enter( "rdbuf_text_unicode" );
-
 }
 
 //--------------------------------------------------------------------------
@@ -1177,7 +1181,7 @@ plRemakePlot( PLStream *pls )
 {
     U_CHAR c;
     PLINT  plbuf_write;
-	PLINT  cursub;
+    PLINT  cursub;
 
     dbug_enter( "plRemakePlot" );
 
@@ -1187,8 +1191,8 @@ plRemakePlot( PLStream *pls )
     // the same plot stream (e.g. one thread is drawing the plot and another
     // thread is processing window manager messages).
     //
-    plbuf_write     = pls->plbuf_write;
-	cursub          = pls->cursub;
+    plbuf_write      = pls->plbuf_write;
+    cursub           = pls->cursub;
     pls->plbuf_write = FALSE;
     pls->plbuf_read  = TRUE;
 
@@ -1210,12 +1214,12 @@ plRemakePlot( PLStream *pls )
         // Make the current plot stream the one passed by the caller
         plsc = pls;
 
-		//end any current page on the destination stream.
-		//This will do nothing if we are already at the end
-		//of a page.
-		//Doing this ensures that the first bop command in the
-		//buffer actually does something
-		plP_eop();
+        //end any current page on the destination stream.
+        //This will do nothing if we are already at the end
+        //of a page.
+        //Doing this ensures that the first bop command in the
+        //buffer actually does something
+        plP_eop();
 
         // Restore the
         // Replay the plot command buffer
@@ -1231,7 +1235,7 @@ plRemakePlot( PLStream *pls )
     // Restore the state of the passed plot stream
     pls->plbuf_read  = FALSE;
     pls->plbuf_write = plbuf_write;
-	pls->cursub = cursub;
+    pls->cursub      = cursub;
 }
 
 //--------------------------------------------------------------------------

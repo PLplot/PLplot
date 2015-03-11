@@ -106,7 +106,7 @@ static struct line
 
 // Fill pattern defaults
 
-#define NPATTERNS 8
+#define NPATTERNS    8
 static struct pattern
 {
     PLINT nlines;               // Number of lines in pattern (1 or 2)
@@ -310,7 +310,7 @@ c_plpat( PLINT nlin, const PLINT *inc, const PLINT *del )
             return;
         }
     }
-	plsc->patt = NPATTERNS;
+    plsc->patt = NPATTERNS;
     spat( inc, del, nlin );
 }
 
@@ -343,7 +343,8 @@ c_plpsty( PLINT patt )
         spat( &pattern[patt - 1].inc[0], &pattern[patt - 1].del[0],
             pattern[patt - 1].nlines );
     }
-	else spat( NULL, NULL, 0 );
+    else
+        spat( NULL, NULL, 0 );
 }
 
 //--------------------------------------------------------------------------

@@ -1800,7 +1800,7 @@ void plstream::sfnam( const char *fnam )
 
 void plstream::sdevdata( void *data )
 {
-	set_stream();
+    set_stream();
 
     plsdevdata( data );
 }

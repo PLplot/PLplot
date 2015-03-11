@@ -122,13 +122,13 @@ plD_init_plm( PLStream *pls )
     pls->dev_fill0 = 1;         // Handle solid fills
     pls->dev_fill1 = 1;         // Driver handles pattern fills
 
-    if( strncmp( PLMETA_VERSION, "2005", 4 ) == 0 ) 
+    if ( strncmp( PLMETA_VERSION, "2005", 4 ) == 0 )
     {
         pls->dev_text    = 0;       // Disable text handling by the driver
-	pls->dev_unicode = 0;       // Disable unicode support
-	pls->dev_hrshsym = 0; 
-    } 
-    else 
+        pls->dev_unicode = 0;       // Disable unicode support
+        pls->dev_hrshsym = 0;
+    }
+    else
     {
         // NOTE:  This breaks compatibility with the 2005 version of
         // the plot metafile format
@@ -137,8 +137,8 @@ plD_init_plm( PLStream *pls )
         // However, we turn it on to force unicode representation of the
         // plot symbols in plsym.c rather than vectorization.
         pls->dev_text    = 1;       // Enable text handling by the driver
-	pls->dev_unicode = 1;       // Enable unicode support
-	pls->dev_hrshsym = 0;       // Disable vectorizaton of Hershey symbols
+        pls->dev_unicode = 1;       // Enable unicode support
+        pls->dev_hrshsym = 0;       // Disable vectorizaton of Hershey symbols
     }
 
 // Initialize family file info
@@ -409,20 +409,20 @@ plD_state_plm( PLStream *pls, PLINT op )
 
     case PLSTATE_CHR:
         // save the chrdef and chrht parameters
-        if( strncmp( PLMETA_VERSION, "2005", 4 ) != 0 ) 
-	{
-	    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->chrdef ) );
-	    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->chrht ) );
-	}
+        if ( strncmp( PLMETA_VERSION, "2005", 4 ) != 0 )
+        {
+            plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->chrdef ) );
+            plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->chrht ) );
+        }
         break;
 
     case PLSTATE_SYM:
         // save the symdef and symht parameters
-        if( strncmp( PLMETA_VERSION, "2005", 4 ) != 0 ) 
-	{
-	    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symdef ) );
-	    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symht ) );
-	}
+        if ( strncmp( PLMETA_VERSION, "2005", 4 ) != 0 )
+        {
+            plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symdef ) );
+            plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->symht ) );
+        }
         break;
     }
 }
@@ -470,9 +470,8 @@ plD_esc_plm( PLStream *pls, PLINT op, void *ptr )
     case PLESC_END_TEXT:
         // NOP these for now until a decision is made
         // which method should be implemented for metafiles
-        plwarn("plmeta: Alternate Unicode text handling is not implemented");
+        plwarn( "plmeta: Alternate Unicode text handling is not implemented" );
         break;
-
     }
 }
 
@@ -541,15 +540,18 @@ plm_text( PLStream *pls, EscText *args )
 
     plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->base ) );
     plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->just ) );
-  
+
     // Do we have a rotation shear that needs to be saved
-    if( args->xform != NULL ) {
+    if ( args->xform != NULL )
+    {
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[0] ) );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[1] ) );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[2] ) );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) args->xform[3] ) );
-    } else {
-        plwarn("plmeta: transformation matrix undefined, using a guess");
+    }
+    else
+    {
+        plwarn( "plmeta: transformation matrix undefined, using a guess" );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 1.0 ) );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 0.0 ) );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 0.0 ) );
@@ -563,18 +565,18 @@ plm_text( PLStream *pls, EscText *args )
     plm_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) args->font_face ) );
     plm_wr( pdf_wr_4bytes( pls->pdfs, (int) args->text_type ) );
 
-    // Was a text string passed or a plot symbol?  
-    if( args->text_type == PL_STRING_TEXT ) 
+    // Was a text string passed or a plot symbol?
+    if ( args->text_type == PL_STRING_TEXT )
     {
-        // Text string 
+        // Text string
         len = strlen( args->string );
-	plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) len ) );
-	if ( len > 0 )
-	    plm_wr( pdf_wr_string( pls->pdfs, args->string ) );
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) len ) );
+        if ( len > 0 )
+            plm_wr( pdf_wr_string( pls->pdfs, args->string ) );
     }
     else
     {
-        // Plot symbol 
+        // Plot symbol
         plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) args->symbol ) );
     }
 

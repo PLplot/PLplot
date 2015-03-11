@@ -160,7 +160,7 @@ enum _plm_status set_ubyte_plp_value( uint8_t x,
         break;
     case PLP_ULONG:
         *(U_LONG *) dest = x;
-	break;
+        break;
     default:
         plwarn( "Unhandled datatype conversion in set_plp_value." );
         rc = PLM_UNKNOWN_DATATYPE;
@@ -200,7 +200,7 @@ enum _plm_status set_ushort_plp_value( U_SHORT x,
         break;
     case PLP_ULONG:
         *(U_LONG *) dest = x;
-	break;
+        break;
     default:
         plwarn( "Unhandled datatype conversion in set_plp_value." );
         rc = PLM_UNKNOWN_DATATYPE;
@@ -240,7 +240,7 @@ enum _plm_status set_ulong_plp_value( unsigned long x,
         break;
     case PLP_ULONG:
         *(U_LONG *) dest = x;
-	break;
+        break;
     default:
         plwarn( "Unhandled datatype conversion in set_plp_value." );
         rc = PLM_UNKNOWN_DATATYPE;
@@ -280,7 +280,7 @@ enum _plm_status set_ieeef_plp_value( float x,
         break;
     case PLP_ULONG:
         *(U_LONG *) dest = x;
-	break;
+        break;
     default:
         plwarn( "Unhandled datatype conversion in set_plp_value." );
         rc = PLM_UNKNOWN_DATATYPE;
@@ -301,32 +301,32 @@ enum _plm_status read_entry( PDFstrm *plm,
     U_SHORT          x;
     float            f;
     enum _plm_status rc;
-    int              pdf_rc;
+    int pdf_rc;
 
     switch ( from_type )
     {
     case PLP_NULL:
         pdf_rc = 0;
-        rc = PLM_SUCCESS;
+        rc     = PLM_SUCCESS;
         break;
 
     case PDF_UBYTE:     // Unsigned one-byte integer
-        if((pdf_rc = pdf_rd_1byte( plm, &b )) == 0)
+        if ( ( pdf_rc = pdf_rd_1byte( plm, &b ) ) == 0 )
             rc = set_ubyte_plp_value( b, dest, to_type );
         break;
 
     case PDF_USHORT:      // Unsigned two-byte integer
-        if((pdf_rc = pdf_rd_2bytes( plm, &x )) == 0) 
+        if ( ( pdf_rc = pdf_rd_2bytes( plm, &x ) ) == 0 )
             rc = set_ushort_plp_value( x, dest, to_type );
         break;
 
     case PDF_ULONG:      // Unsigned four-byte integer
-        if((pdf_rc = pdf_rd_4bytes( plm, &l )) == 0)
+        if ( ( pdf_rc = pdf_rd_4bytes( plm, &l ) ) == 0 )
             rc = set_ulong_plp_value( l, dest, to_type );
         break;
 
     case PDF_IEEEF:      // IEEE 32 bit float
-        if((pdf_rc = pdf_rd_ieeef( plm, &f )) == 0)
+        if ( ( pdf_rc = pdf_rd_ieeef( plm, &f ) ) == 0 )
             rc = set_ieeef_plp_value( f, dest, to_type );
         break;
 
@@ -336,7 +336,7 @@ enum _plm_status read_entry( PDFstrm *plm,
         break;
     }
 
-    if(pdf_rc == 0)
+    if ( pdf_rc == 0 )
         return rc;
     else
         return PLM_READ_ERROR;
@@ -344,14 +344,14 @@ enum _plm_status read_entry( PDFstrm *plm,
 
 static
 enum _plm_status read_string( PDFstrm *plm,
-			      size_t bytes,
-			      char *dest)
+                              size_t bytes,
+                              char *dest )
 {
     int rc;
 
     rc = pdf_rd_string( plm, dest, bytes );
 
-    if(rc == 0)
+    if ( rc == 0 )
         return PLM_SUCCESS;
     else
         return PLM_READ_ERROR;
@@ -398,16 +398,19 @@ enum _plm_status read_metafile_header( PDFstrm *plm, PLmDev *dev )
 static
 void check_buffer_size( PLmDev *dev, size_t need_size )
 {
-    // Do we have enough space? 
-    if(need_size > dev->buffer_size) {
+    // Do we have enough space?
+    if ( need_size > dev->buffer_size )
+    {
         // Nope, free the current buffer if it is allocated
-        if(dev->buffer != NULL) free(dev->buffer);
+        if ( dev->buffer != NULL )
+            free( dev->buffer );
 
-	dev->buffer = malloc(need_size);
-	if(dev->buffer == NULL) {
-	    plexit("plmetafie: Insufficient memory for temporary storage");
-	}
-	dev->buffer_size = need_size;
+        dev->buffer = malloc( need_size );
+        if ( dev->buffer == NULL )
+        {
+            plexit( "plmetafie: Insufficient memory for temporary storage" );
+        }
+        dev->buffer_size = need_size;
     }
 }
 
@@ -481,10 +484,10 @@ enum _plm_status read_line( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
     // Transform the coordinates from the meta device to the current
     // device coordinate system
-    x[0] = (short)lround( dev->mfpcxa * x1 + dev->mfpcxb );
-    y[0] = (short)lround( dev->mfpcya * y1 + dev->mfpcyb );
-    x[1] = (short)lround( dev->mfpcxa * x2 + dev->mfpcxb );
-    y[1] = (short)lround( dev->mfpcya * y2 + dev->mfpcyb );
+    x[0] = (short) lround( dev->mfpcxa * x1 + dev->mfpcxb );
+    y[0] = (short) lround( dev->mfpcya * y1 + dev->mfpcyb );
+    x[1] = (short) lround( dev->mfpcxa * x2 + dev->mfpcxb );
+    y[1] = (short) lround( dev->mfpcya * y2 + dev->mfpcyb );
 
     // Draw the line
     plP_line( x, y );
@@ -523,9 +526,9 @@ enum _plm_status read_lineto( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
     // Transform the coordinates from the meta device to the current
     // device coordinate system
-    x[1] = (short)lround( dev->mfpcxa * x2 + dev->mfpcxb );
-    y[1] = (short)lround( dev->mfpcya * y2 + dev->mfpcyb );
-    
+    x[1] = (short) lround( dev->mfpcxa * x2 + dev->mfpcxb );
+    y[1] = (short) lround( dev->mfpcya * y2 + dev->mfpcyb );
+
     // Draw the line
     plP_line( x, y );
 
@@ -555,10 +558,10 @@ enum _plm_status read_polyline( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         return rc;
 
     // Setup temporary storage.  We need 2 * npts to store the X,Y pairs
-    check_buffer_size( dev, sizeof(short) * npts * 2 );
+    check_buffer_size( dev, sizeof ( short ) * npts * 2 );
     // Setup storage for the x values and y values
-    xd = (short *)(dev->buffer);
-    yd = ((short *)(dev->buffer)) + npts;
+    xd = (short *) ( dev->buffer );
+    yd = ( (short *) ( dev->buffer ) ) + npts;
 
     // Read the points and insert into the plot buffer
     // The x values
@@ -568,12 +571,12 @@ enum _plm_status read_polyline( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         if ( rc != PLM_SUCCESS )
             return rc;
 
-	// Transform the coordinates from the meta device to the current
-	// device coordinate system
-	xd[i] = (short)lround( dev->mfpcxa * x + dev->mfpcxb );
+        // Transform the coordinates from the meta device to the current
+        // device coordinate system
+        xd[i] = (short) lround( dev->mfpcxa * x + dev->mfpcxb );
     }
     // Preserve the last X value for the LINETO command
-    dev->xold = xd[npts-1];
+    dev->xold = xd[npts - 1];
 
     // The y values
     for ( i = 0; i < npts; i++ )
@@ -582,16 +585,16 @@ enum _plm_status read_polyline( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         if ( rc != PLM_SUCCESS )
             return rc;
 
-	// Transform the coordinates from the meta device to the current
-	// device coordinate system
-	yd[i] = (short)lround( dev->mfpcya * y + dev->mfpcyb );
+        // Transform the coordinates from the meta device to the current
+        // device coordinate system
+        yd[i] = (short) lround( dev->mfpcya * y + dev->mfpcyb );
     }
     // Preserve the last Y value for the LINETO command
-    dev->yold = yd[npts-1];
+    dev->yold = yd[npts - 1];
 
     // Draw the line
     plP_polyline( xd, yd, npts );
-	  
+
     return PLM_SUCCESS;
 }
 
@@ -615,19 +618,19 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
     case PLESC_FILL:
     {
         PLINT i, npts;
-	PLFLT x, y;
-	short *xd, *yd;
+        PLFLT x, y;
+        short *xd, *yd;
 
         // Get the number of control points for the fill
         rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &npts );
         if ( rc != PLM_SUCCESS )
             return rc;
 
-	// Setup temporary storage.  We need 2 * npts to store the X,Y pairs
-	check_buffer_size( dev, sizeof(short) * npts * 2 );
-	// Setup storage for the x values and y values
-	xd = (short *)(dev->buffer);
-	yd = ((short *)(dev->buffer)) + npts;
+        // Setup temporary storage.  We need 2 * npts to store the X,Y pairs
+        check_buffer_size( dev, sizeof ( short ) * npts * 2 );
+        // Setup storage for the x values and y values
+        xd = (short *) ( dev->buffer );
+        yd = ( (short *) ( dev->buffer ) ) + npts;
 
         for ( i = 0; i < npts; i++ )
         {
@@ -639,13 +642,13 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-	    // Transform the coordinates from the meta device to the current
-	    // device coordinate system
-	    xd[i] = (short)lround( dev->mfpcxa * x + dev->mfpcxb );
-	    yd[i] = (short)lround( dev->mfpcya * y + dev->mfpcyb );
+            // Transform the coordinates from the meta device to the current
+            // device coordinate system
+            xd[i] = (short) lround( dev->mfpcxa * x + dev->mfpcxb );
+            yd[i] = (short) lround( dev->mfpcya * y + dev->mfpcyb );
         }
 
-	plP_fill( xd, yd, npts );
+        plP_fill( xd, yd, npts );
     }
     break;
 
@@ -655,90 +658,92 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
 
     // Text handling.  The metafile contains unprocessed string
-    // data 
+    // data
     case PLESC_HAS_TEXT:
     {
         EscText   text;
-	PLFLT     xform[4];
+        PLFLT     xform[4];
         PLUNICODE fci, ch;
-	PLINT     i;
-	PLFLT     xmin, xmax, ymin, ymax;
-	PLFLT     x, y, refx, refy;
-	size_t    len;
+        PLINT     i;
+        PLFLT     xmin, xmax, ymin, ymax;
+        PLFLT     x, y, refx, refy;
+        size_t    len;
 
-	// Setup storage for the transformation matrix
-	text.xform = xform;
+        // Setup storage for the transformation matrix
+        text.xform = xform;
 
-	// Read the information from the metafile
-	rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &pls->chrht );
-	rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &pls->diorot );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &xmin );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &xmax );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &ymin );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &ymax );
+        // Read the information from the metafile
+        rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &pls->chrht );
+        rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &pls->diorot );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &xmin );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &xmax );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &ymin );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &ymax );
 
-	rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &text.base );
-	rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.just );
-	rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[0] );
-	rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[1] );
-	rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[2] );
-	rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[3] );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &x );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &y );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &refx );
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &refy );
-	rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &text.font_face );
-	
-	// Check for a size mismatch that indicates a problem in the
-	// library that the developers need to fix
-	if( sizeof(text.text_type) != sizeof(U_LONG) ) {
-	    plwarn("plmetafile:  Serious library error! text_type != U_LONG");
-	    return PLM_FORMAT_ERROR;
-	}	    
-	rc = read_entry( plm, PDF_ULONG, PLP_ULONG, &text.text_type );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &text.base );
+        rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.just );
+        rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[0] );
+        rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[1] );
+        rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[2] );
+        rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &text.xform[3] );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &x );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &y );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &refx );
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &refy );
+        rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &text.font_face );
 
-	// Translate coordinates to the device coordinate system
-	pls->clpxmi = (short)lround( dev->mfpcxa * xmin + dev->mfpcxb );
-	pls->clpxma = (short)lround( dev->mfpcxa * xmax + dev->mfpcxb );
-	pls->clpymi = (short)lround( dev->mfpcxa * ymin + dev->mfpcxb );
-	pls->clpyma = (short)lround( dev->mfpcxa * ymax + dev->mfpcxb );
+        // Check for a size mismatch that indicates a problem in the
+        // library that the developers need to fix
+        if ( sizeof ( text.text_type ) != sizeof ( U_LONG ) )
+        {
+            plwarn( "plmetafile:  Serious library error! text_type != U_LONG" );
+            return PLM_FORMAT_ERROR;
+        }
+        rc = read_entry( plm, PDF_ULONG, PLP_ULONG, &text.text_type );
 
-	text.x = (short)lround( dev->mfpcxa * x + dev->mfpcxb );
-	text.y = (short)lround( dev->mfpcya * y + dev->mfpcyb );
-	text.refx = (short)lround( dev->mfpcxa * refx + dev->mfpcxb );
-	text.refy = (short)lround( dev->mfpcya * refy + dev->mfpcyb );
+        // Translate coordinates to the device coordinate system
+        pls->clpxmi = (short) lround( dev->mfpcxa * xmin + dev->mfpcxb );
+        pls->clpxma = (short) lround( dev->mfpcxa * xmax + dev->mfpcxb );
+        pls->clpymi = (short) lround( dev->mfpcxa * ymin + dev->mfpcxb );
+        pls->clpyma = (short) lround( dev->mfpcxa * ymax + dev->mfpcxb );
 
-	if( text.text_type == PL_STRING_TEXT ) {
-	    // Retrieve the text string
-	    rc = read_entry( plm, PDF_USHORT, PLP_ULONG, &len );
+        text.x    = (short) lround( dev->mfpcxa * x + dev->mfpcxb );
+        text.y    = (short) lround( dev->mfpcya * y + dev->mfpcyb );
+        text.refx = (short) lround( dev->mfpcxa * refx + dev->mfpcxb );
+        text.refy = (short) lround( dev->mfpcya * refy + dev->mfpcyb );
 
-	    // Add one to the length for the NUL character.  The metafile
-	    // format stores the NUL, so we must read it.
-	    len++;
+        if ( text.text_type == PL_STRING_TEXT )
+        {
+            // Retrieve the text string
+            rc = read_entry( plm, PDF_USHORT, PLP_ULONG, &len );
 
-	    // Check that we have enough storage for the string
-	    check_buffer_size(dev, len * sizeof(char));
+            // Add one to the length for the NUL character.  The metafile
+            // format stores the NUL, so we must read it.
+            len++;
 
-	    // Read the string from the metafile
-	    rc = read_string( plm, len, dev->buffer );
+            // Check that we have enough storage for the string
+            check_buffer_size( dev, len * sizeof ( char ) );
 
-	    text.string = (char *) dev->buffer;
+            // Read the string from the metafile
+            rc = read_string( plm, len, dev->buffer );
 
-	    // Call the text rendering routine
-	    plP_text(
-		     text.base, text.just, text.xform,
-		     text.x, text.y,
-		     text.refx, text.refy,
-		     text.string);
-	}
-	else 
-	{
-	    rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &text.symbol );
-	    plhrsh( text.symbol, text.x, text.y );
-	}
+            text.string = (char *) dev->buffer;
+
+            // Call the text rendering routine
+            plP_text(
+                text.base, text.just, text.xform,
+                text.x, text.y,
+                text.refx, text.refy,
+                text.string );
+        }
+        else
+        {
+            rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &text.symbol );
+            plhrsh( text.symbol, text.x, text.y );
+        }
     }
-    rc = PLM_SUCCESS;
-    break;
+        rc = PLM_SUCCESS;
+        break;
 
     // Alternate unicode text handling
     case PLESC_BEGIN_TEXT:
@@ -747,8 +752,8 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
     case PLESC_END_TEXT:
         // NOP these for now until a decision is made
         // which method should be implemented for metafiles
-        plwarn("plmetafile: Alternate Unicode text handling is not implemented");
-	rc = PLM_INVALID_CMD;
+        plwarn( "plmetafile: Alternate Unicode text handling is not implemented" );
+        rc = PLM_INVALID_CMD;
         break;
 
     default:
@@ -778,74 +783,74 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
     case PLSTATE_WIDTH:
         pldebug( "state: WIDTH" );
 
-	rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &(pls->width) );
-	if ( rc != PLM_SUCCESS )
-	    return rc;
-	
+        rc = read_entry( plm, PDF_USHORT, PLP_PLFLT, &( pls->width ) );
+        if ( rc != PLM_SUCCESS )
+            return rc;
+
         break;
 
     case PLSTATE_COLOR0:
     case PLSTATE_COLOR1:
         pldebug( "state: COLOR0/COLOR1" );
 
-	{
-	    PLINT icol;
+        {
+            PLINT icol;
 
-	    // Read the color index number
-	    rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &icol );
-	    if ( rc != PLM_SUCCESS )
-	        return rc;
+            // Read the color index number
+            rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &icol );
+            if ( rc != PLM_SUCCESS )
+                return rc;
 
-	    // Was pen 0 set to an RGB value rather than color index?
-	    if ( op == PLSTATE_COLOR0 && icol != PL_RGB_COLOR )
-	    {
-	        pls->icol0 = icol;
-		pls->curcolor.r = pls->cmap0[icol].r;
-		pls->curcolor.g = pls->cmap0[icol].g;
-		pls->curcolor.b = pls->cmap0[icol].b;
-		pls->curcolor.a = pls->cmap0[icol].a;
-	    }
-	    else if( op == PLSTATE_COLOR1 ) 
-	    {
-	        pls->icol1 = icol;
-		pls->curcolor.r = pls->cmap1[icol].r;
-		pls->curcolor.g = pls->cmap1[icol].g;
-		pls->curcolor.b = pls->cmap1[icol].b;
-		pls->curcolor.a = pls->cmap1[icol].a;
-	    }
-	    else
-	    {
-	        // Get the RGB value and copy to the plot buffer
-	        PLColor color;
+            // Was pen 0 set to an RGB value rather than color index?
+            if ( op == PLSTATE_COLOR0 && icol != PL_RGB_COLOR )
+            {
+                pls->icol0      = icol;
+                pls->curcolor.r = pls->cmap0[icol].r;
+                pls->curcolor.g = pls->cmap0[icol].g;
+                pls->curcolor.b = pls->cmap0[icol].b;
+                pls->curcolor.a = pls->cmap0[icol].a;
+            }
+            else if ( op == PLSTATE_COLOR1 )
+            {
+                pls->icol1      = icol;
+                pls->curcolor.r = pls->cmap1[icol].r;
+                pls->curcolor.g = pls->cmap1[icol].g;
+                pls->curcolor.b = pls->cmap1[icol].b;
+                pls->curcolor.a = pls->cmap1[icol].a;
+            }
+            else
+            {
+                // Get the RGB value and copy to the plot buffer
+                PLColor color;
 
-		rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &color.r );
-		if ( rc != PLM_SUCCESS )
-		    return rc;
-		
-		rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &color.g );
-		if ( rc != PLM_SUCCESS )
-		    return rc;
-	    
-		rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &color.b );
-		if ( rc != PLM_SUCCESS )
-		    return rc;
+                rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &color.r );
+                if ( rc != PLM_SUCCESS )
+                    return rc;
 
-		pls->icol0 = icol;
-		pls->curcolor.r = color.r;
-		pls->curcolor.g = color.g;
-		pls->curcolor.b = color.b;
-		pls->curcolor.a = 1.0;
-	    }
-	}
+                rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &color.g );
+                if ( rc != PLM_SUCCESS )
+                    return rc;
+
+                rc = read_entry( plm, PDF_UBYTE, PLP_UCHAR, &color.b );
+                if ( rc != PLM_SUCCESS )
+                    return rc;
+
+                pls->icol0      = icol;
+                pls->curcolor.r = color.r;
+                pls->curcolor.g = color.g;
+                pls->curcolor.b = color.b;
+                pls->curcolor.a = 1.0;
+            }
+        }
         break;
 
     case PLSTATE_FILL:
         pldebug( "state: FILL" );
 
-	// Read the pattern and put into the plot buffer
-	rc = read_entry( plm, PDF_USHORT, PLP_UCHAR, &(pls->patt) );
-	if ( rc != PLM_SUCCESS )
-	    return rc;
+        // Read the pattern and put into the plot buffer
+        rc = read_entry( plm, PDF_USHORT, PLP_UCHAR, &( pls->patt ) );
+        if ( rc != PLM_SUCCESS )
+            return rc;
 
         break;
 
@@ -854,72 +859,72 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         pldebug( "state: CMAP0/CMAP1" );
 
         {
-            PLINT   i, ncol;
-	    PLINT   *r, *g, *b;
-	    PLFLT   *alpha;
-	    void    *ptr;
+            PLINT i, ncol;
+            PLINT *r, *g, *b;
+            PLFLT *alpha;
+            void  *ptr;
 
             // Read the number of colors
             rc = read_entry( plm, PDF_USHORT, PLP_PLINT, &ncol );
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-	    // Check that temporary storage is sized correctly
-	    check_buffer_size( 
-	        dev, 
-		sizeof(PLINT) * ncol * 3  // R, G, B values
-		+ sizeof(PLFLT) * ncol);  // alpha channel values
-	    ptr = dev->buffer;
-	    r = (PLINT *)ptr;
-	    ptr = ((PLINT *)ptr) + ncol;
-	    g = (PLINT *)ptr;
-	    ptr = ((PLINT *)ptr) + ncol;
-	    b = (PLINT *)ptr;
-	    ptr = ((PLINT *)ptr) + ncol;
-	    alpha = (PLFLT *)ptr;
+            // Check that temporary storage is sized correctly
+            check_buffer_size(
+                dev,
+                sizeof ( PLINT ) * ncol * 3  // R, G, B values
+                + sizeof ( PLFLT ) * ncol ); // alpha channel values
+            ptr   = dev->buffer;
+            r     = (PLINT *) ptr;
+            ptr   = ( (PLINT *) ptr ) + ncol;
+            g     = (PLINT *) ptr;
+            ptr   = ( (PLINT *) ptr ) + ncol;
+            b     = (PLINT *) ptr;
+            ptr   = ( (PLINT *) ptr ) + ncol;
+            alpha = (PLFLT *) ptr;
 
             // Read the colormap
             for ( i = 0; i < ncol; i++ )
             {
-	      rc = read_entry( plm, PDF_UBYTE, PLP_PLINT, &(r[i]) );
+                rc = read_entry( plm, PDF_UBYTE, PLP_PLINT, &( r[i] ) );
                 if ( rc != PLM_SUCCESS )
                     return rc;
 
-                rc = read_entry( plm, PDF_UBYTE, PLP_PLINT, &(g[i]) );
+                rc = read_entry( plm, PDF_UBYTE, PLP_PLINT, &( g[i] ) );
                 if ( rc != PLM_SUCCESS )
                     return rc;
 
-                rc = read_entry( plm, PDF_UBYTE, PLP_PLINT, &(b[i]) );
+                rc = read_entry( plm, PDF_UBYTE, PLP_PLINT, &( b[i] ) );
                 if ( rc != PLM_SUCCESS )
                     return rc;
 
-                alpha[i]   = 1.0;
+                alpha[i] = 1.0;
             }
 
-	    // Call the colormap API so that memory is correctly allocated
-	    // instead of plP_state( PLSTATE_CMAP0 );
-	    if( op == PLSTATE_CMAP0 ) 
-	        plscmap0a( r, g, b, alpha, ncol );
-	    else
-	        plscmap1a( r, g, b, alpha, ncol );
+            // Call the colormap API so that memory is correctly allocated
+            // instead of plP_state( PLSTATE_CMAP0 );
+            if ( op == PLSTATE_CMAP0 )
+                plscmap0a( r, g, b, alpha, ncol );
+            else
+                plscmap1a( r, g, b, alpha, ncol );
 
-	    // Return here because plscmap0a and plscmap1a call 
-	    // plP_state( PLSTATE_CMAP0 or PLSTATE_CMAP1 )
-	    return PLM_SUCCESS;
+            // Return here because plscmap0a and plscmap1a call
+            // plP_state( PLSTATE_CMAP0 or PLSTATE_CMAP1 )
+            return PLM_SUCCESS;
         }
         break;
 
     case PLSTATE_CHR:
         pldebug( "state: CHR" );
 
-	// The 2005 version and earlier do not support this operation
+        // The 2005 version and earlier do not support this operation
         if ( 1 )
         {
-	    rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &(pls->chrdef) );
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &( pls->chrdef ) );
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &(pls->chrht) );
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &( pls->chrht ) );
             if ( rc != PLM_SUCCESS )
                 return rc;
         }
@@ -928,17 +933,17 @@ enum _plm_status read_state( PDFstrm *plm, PLmDev *dev, PLStream *pls )
     case PLSTATE_SYM:
         pldebug( "state: SYM" );
 
-	// The 2005 version and earlier do not support this operation
+        // The 2005 version and earlier do not support this operation
         if ( 1 )
         {
-	    rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &(pls->symdef) );
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &( pls->symdef ) );
             if ( rc != PLM_SUCCESS )
                 return rc;
 
-            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &(pls->symht) );
+            rc = read_entry( plm, PDF_IEEEF, PLP_PLFLT, &( pls->symht ) );
             if ( rc != PLM_SUCCESS )
                 return rc;
-	}
+        }
         break;
 
     default:
@@ -973,7 +978,7 @@ enum _plm_status read_plot_commands( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         {
         case INITIALIZE:
             pldebug( "cmd: INITIALIZE" );
-	    // No action needed
+            // No action needed
             break;
 
         case CLOSE:
@@ -984,7 +989,7 @@ enum _plm_status read_plot_commands( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         case EOP:
             pldebug( "cmd: EOP" );
 
-	    plP_eop();
+            plP_eop();
             break;
 
         case BOP:
@@ -1013,7 +1018,7 @@ enum _plm_status read_plot_commands( PDFstrm *plm, PLmDev *dev, PLStream *pls )
             if ( rc != PLM_SUCCESS )
                 break;
 
-	    plP_bop();
+            plP_bop();
 
             break;
 
@@ -1081,11 +1086,11 @@ void setup_page( PLmDev *mf_dev, PLStream *pls )
 {
     PLmDev *dev = pls->dev;
 
-    mf_dev->mfpcxa = (PLFLT) dev->xlen 
-        / (PLFLT)( mf_dev->xmax - mf_dev->xmin );
+    mf_dev->mfpcxa = (PLFLT) dev->xlen
+                     / (PLFLT) ( mf_dev->xmax - mf_dev->xmin );
     mf_dev->mfpcxb = (PLFLT) dev->xmin;
-    mf_dev->mfpcya = (PLFLT) dev->ylen 
-        / (PLFLT)( mf_dev->ymax - mf_dev->ymin );
+    mf_dev->mfpcya = (PLFLT) dev->ylen
+                     / (PLFLT) ( mf_dev->ymax - mf_dev->ymin );
     mf_dev->mfpcyb = (PLFLT) dev->ymin;
 }
 
@@ -1131,7 +1136,7 @@ void plreadmetafile( char *infile )
     }
 
     // Intialize the metafile device
-    mf_dev.buffer = NULL;
+    mf_dev.buffer      = NULL;
     mf_dev.buffer_size = 0;
 
     // Read the file header
@@ -1180,12 +1185,13 @@ void plreadmetafile( char *infile )
     }
 
     // Is the plot stream initialized?
-    if( plsc->level == 0 ) {
+    if ( plsc->level == 0 )
+    {
         // No, we must intialize it in order to get the
         // device configuation set
         plinit();
     }
-    setup_page( &mf_dev, plsc);
+    setup_page( &mf_dev, plsc );
 
     // At this point we should be in the plot commands
     rc = read_plot_commands( plm, &mf_dev, plsc );
@@ -1199,5 +1205,6 @@ void plreadmetafile( char *infile )
     pdf_close( plm );
 
     // Free the temporary storage
-    if(mf_dev.buffer != NULL) free(mf_dev.buffer);
+    if ( mf_dev.buffer != NULL )
+        free( mf_dev.buffer );
 }

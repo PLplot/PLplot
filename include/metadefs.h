@@ -96,12 +96,12 @@ typedef struct
     PLINT   version;    // Metafile version number
     U_SHORT page;       // Current page
 
-    // Metafile coordinates to physical (virtual pixels) coordinates 
+    // Metafile coordinates to physical (virtual pixels) coordinates
     // transformation
-    PLFLT   mfpcxa, mfpcxb;    // x = mfpcxa * x + mfpcxb
-    PLFLT   mfpcya, mfpcyb;    // y = mfpcya * y + mfpcyb
+    PLFLT  mfpcxa, mfpcxb;     // x = mfpcxa * x + mfpcxb
+    PLFLT  mfpcya, mfpcyb;     // y = mfpcya * y + mfpcyb
 
     // Temporary storage used for metafile processing.
-    void * buffer;
+    void   * buffer;
     size_t buffer_size;
 } PLmDev;

@@ -661,33 +661,33 @@ typedef struct
     enum { PL_STRING_TEXT, PL_STRING_SYMBOL } text_type;
 
     // Positioning settings
-    PLINT          base;           // ref point at base(1) or center(0) of text. Currently plplot only use 0
-    PLFLT          just;           // continuos justification, 0 left, 0.5 center, 1 right
-    PLFLT          *xform;         // transformation (rotation) matrix
+    PLINT base;                    // ref point at base(1) or center(0) of text. Currently plplot only use 0
+    PLFLT just;                    // continuos justification, 0 left, 0.5 center, 1 right
+    PLFLT *xform;                  // transformation (rotation) matrix
 
     // raw reference point--after any transformation
-    PLINT          x;
-    PLINT          y;
+    PLINT x;
+    PLINT y;
 
     // processed ref. point--after justification, displacement, etc, processing
-    PLINT          refx;
-    PLINT          refy;
+    PLINT refx;
+    PLINT refy;
 
     // font face OPTIONALLY used for rendering hershey codes
-    char           font_face;
-  
+    char  font_face;
+
     // The following 3 fields are used by the alternative text handling pathway.
     // The alternative text handling pathway allows the driver to process
     // each character individually for unicode font handling
     // See drivers/cairo.h for details about how this works.
-    PLUNICODE      n_fci;          // font storage
-    PLUNICODE      n_char;         // character storage
-    PLINT          n_ctrl_char;    // control character
+    PLUNICODE n_fci;               // font storage
+    PLUNICODE n_char;              // character storage
+    PLINT     n_ctrl_char;         // control character
 
     // Used by plsym to store a unicode character for use by plfreetype
-    PLUNICODE      unicode_char;   // an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls
+    PLUNICODE unicode_char;        // an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls
 
-    // Used to store a processed unicode string.  Used by plsym and 
+    // Used to store a processed unicode string.  Used by plsym and
     // text rendering by the driver
     PLUNICODE      *unicode_array; // a pointer to an array of ints holding either a Hershey, ASC-II, or Unicode value for cached plsym
     unsigned short unicode_array_len;
@@ -698,7 +698,7 @@ typedef struct
 }EscText;
 
 //
-// structure that contains driver specific information, to be used by 
+// structure that contains driver specific information, to be used by
 // plargs.c and anydriver.c, related to plParseDrvOpts() and plHelpDrvOpts()
 //
 

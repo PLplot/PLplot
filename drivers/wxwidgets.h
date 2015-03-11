@@ -71,8 +71,8 @@ private:
     //for the gcdc case we may need to store the graphics context for use
     // with text transformations
     wxGraphicsContext *m_gc;
-	wxPen m_pen;
-	wxBrush m_brush;
+    wxPen             m_pen;
+    wxBrush           m_brush;
 
     //Size and Scale
     //As far as plplot is concerned the size of the window is SHRT_MAX by
@@ -93,8 +93,8 @@ private:
     bool             m_underlined;
     //PLFLT            m_fontSize;
     //PLFLT            m_fontScale;
-    wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
-    PLUNICODE        m_fci;
+    wxCoord   m_textWidth, m_textHeight, m_textDescent, m_textLeading;
+    PLUNICODE m_fci;
 
     //Text positioning related variables
     wxCoord m_superscriptHeight;          //distance between superscript top and baseline
