@@ -819,13 +819,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
                                            wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
                                            wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) );
 
-
-<<<<<<< HEAD
-    //draw each line of text individually
-=======
-	//draw each line of text individually and record the width of the paragraph
-	wxCoord paragraphWidth = 0;
->>>>>>> Added getting text size to wxWidgets driver
+    //draw each line of text individually and record the width of the paragraph
+    wxCoord paragraphWidth = 0;
     while ( lineStart != args->unicode_array + args->unicode_array_len )
     {
         //get the length of the line
@@ -850,86 +845,47 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         // determine extent of text
         m_posX = args->x / m_xScale;
         m_posY = args->y / m_yScale;
-<<<<<<< HEAD
         DrawTextLine( lineStart, lineLen, baseFontSize, false, superscriptLevel );
-=======
-		DrawTextLine( lineStart, lineLen, baseFontSize, false, superscriptLevel );
-		paragraphWidth = MAX( paragraphWidth, m_textWidth );
->>>>>>> Added getting text size to wxWidgets driver
+        paragraphWidth = MAX( paragraphWidth, m_textWidth );
 
         if ( lineFeed && m_superscriptHeight > m_textHeight )
             paraHeight += m_superscriptHeight - m_textHeight;
 
         // actually draw text, resetting the font first
-<<<<<<< HEAD
-        superscriptLevel = lineStartSuperscriptLevel;
-        m_fci            = lineStartFci;
-        m_dc->SetFont( GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize ) );
-
-
-        // calculate rotation of text
-        PLFLT shear;
-        PLFLT stride;
-        plRotationShear( args->xform, &m_rotation, &shear, &stride );
-        m_rotation -= pls->diorot * M_PI / 2.0;
-        PLFLT cos_rot   = cos( m_rotation );
-        PLFLT sin_rot   = sin( m_rotation );
-        PLFLT cos_shear = cos( shear );
-        PLFLT sin_shear = sin( shear );
-
-        //Set the transform if possible and draw the text
-        if ( m_gc )
+        if( !pls->get_string_length )
         {
-            wxGraphicsMatrix originalMatrix = m_gc->GetTransform();
-
-            m_gc->Translate( args->x / m_xScale, m_height - args->y / m_yScale );             //move to text starting position
-            wxGraphicsMatrix matrix = m_gc->CreateMatrix(
-                cos_rot * stride, -sin_rot * stride,
-                cos_rot * sin_shear + sin_rot * cos_shear,
-                -sin_rot * sin_shear + cos_rot * cos_shear,
-                0.0, 0.0 );                                                                                 //create rotation transformation matrix
-            m_gc->ConcatTransform( matrix );                                                                //rotate
-            m_gc->Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing ); //move to set alignment
-
-            DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
-            m_gc->SetTransform( originalMatrix );
-        }
-=======
-		if( !pls->get_string_length )
-		{
-			superscriptLevel = lineStartSuperscriptLevel;
-			m_fci            = lineStartFci;
-			m_dc->SetFont( GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize ) );
+            superscriptLevel = lineStartSuperscriptLevel;
+            m_fci            = lineStartFci;
+            m_dc->SetFont( GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize ) );
 
 
-			// calculate rotation of text
-			PLFLT shear;
-			PLFLT stride;
-			plRotationShear( args->xform, &m_rotation, &shear, &stride );
-			m_rotation -= pls->diorot * M_PI / 2.0;
-			PLFLT cos_rot   = cos( m_rotation );
-			PLFLT sin_rot   = sin( m_rotation );
-			PLFLT cos_shear = cos( shear );
-			PLFLT sin_shear = sin( shear );
+            // calculate rotation of text
+            PLFLT shear;
+            PLFLT stride;
+            plRotationShear( args->xform, &m_rotation, &shear, &stride );
+            m_rotation -= pls->diorot * M_PI / 2.0;
+            PLFLT cos_rot   = cos( m_rotation );
+            PLFLT sin_rot   = sin( m_rotation );
+            PLFLT cos_shear = cos( shear );
+            PLFLT sin_shear = sin( shear );
 
-			//Set the transform if possible and draw the text
-			if ( m_gc )
-			{
-				wxGraphicsMatrix originalMatrix = m_gc->GetTransform();
+            //Set the transform if possible and draw the text
+            if ( m_gc )
+            {
+                wxGraphicsMatrix originalMatrix = m_gc->GetTransform();
 
-				m_gc->Translate( args->x / m_xScale, m_height - args->y / m_yScale );             //move to text starting position
-				wxGraphicsMatrix matrix = m_gc->CreateMatrix(
-					cos_rot * stride, -sin_rot * stride,
-					cos_rot * sin_shear + sin_rot * cos_shear,
-					-sin_rot * sin_shear + cos_rot * cos_shear,
-					0.0, 0.0 );                                                                                 //create rotation transformation matrix
-				m_gc->ConcatTransform( matrix );                                                                //rotate
-				m_gc->Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing ); //move to set alignment
+                m_gc->Translate( args->x / m_xScale, m_height - args->y / m_yScale );             //move to text starting position
+                wxGraphicsMatrix matrix = m_gc->CreateMatrix(
+                    cos_rot * stride, -sin_rot * stride,
+                    cos_rot * sin_shear + sin_rot * cos_shear,
+                    -sin_rot * sin_shear + cos_rot * cos_shear,
+                    0.0, 0.0 );                                                                                 //create rotation transformation matrix
+                m_gc->ConcatTransform( matrix );                                                                //rotate
+                m_gc->Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing ); //move to set alignment
 
-				DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
-				m_gc->SetTransform( originalMatrix );
-			}
->>>>>>> Added getting text size to wxWidgets driver
+                DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
+                m_gc->SetTransform( originalMatrix );
+            }
 #if wxVERSION_NUMBER >= 2902
 			else if ( m_useDcTextTransform )
 			{
