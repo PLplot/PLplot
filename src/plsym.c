@@ -970,6 +970,8 @@ plstrl( const char *string )
     // it do so by setting get_string_length flag. When this is set
     // the driver will set the string_length variable instead of
     // actually rendering the string.
+	// Note we must make sure that this text command does not end up
+	// in the buffer.
     //
     // TODO:
     //   Is plmtex the best string diplay routine to use?
@@ -977,9 +979,12 @@ plstrl( const char *string )
 
     if ( plsc->has_string_length )
     {
+		PLINT plbuf_write = plsc->plbuf_write;
+		plsc->plbuf_write = FALSE;
         plsc->get_string_length = 1;
         c_plmtex( "t", 0.0, 0.0, 0.0, string );
         plsc->get_string_length = 0;
+		plsc->plbuf_write = plbuf_write;
         return (PLFLT) plsc->string_length;
     }
 

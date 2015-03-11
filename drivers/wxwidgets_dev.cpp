@@ -270,7 +270,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     {
         pls->dev_text    = 1; // want to draw text
         pls->dev_unicode = 1; // want unicode
-		pls->has_string_length = 1; // Driver supports string length calculations
         if ( hrshsym )
             pls->dev_hrshsym = 1;
     }
@@ -505,7 +504,12 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
 
         strcpy( m_mfo, "" );
         SetSize( pls, m_width, m_height );         //call with our current size to set the scaling
+		pls->has_string_length = 1; // Driver supports string length calculations, if we have a dc to draw on
     }
+	else
+	{
+		pls->has_string_length = 0; //if we have no device to draw on we cannot check string size
+	}
 }
 
 PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
