@@ -92,87 +92,92 @@ set(config_arguments
   -opensource
 
   # Try to get rid of everything to do with sql by eliminating all possible
-  # drivers.  5.2.1 list = 5.3.1 list = db2 ibase mysql oci odbc psql sqlite sqlite2 tds
-  -no-sql-db2
-  -no-sql-ibase
-  -no-sql-mysql
-  -no-sql-oci
-  -no-sql-odbc
-  -no-sql-psql
-  -no-sql-sqlite
-  -no-sql-sqlite2
-  -no-sql-tds
+  # drivers.  5.2.1 list = 5.3.1 list = 5.3.2 list =
+  # db2 ibase mysql oci odbc psql sqlite sqlite2 tds
+  #mm2-no-sql-db2
+  #mm2-no-sql-ibase
+  #mm2-no-sql-mysql
+  #mm2-no-sql-oci
+  #mm2-no-sql-odbc
+  #mm2-no-sql-psql
+  #mm2-no-sql-sqlite
+  #mm2-no-sql-sqlite2
+  #mm2-no-sql-tds
 
-  # Comment out for 5.3.1 since (-no-)javascript-jit no longer an option
+  # Comment out for 5.3.1 and 5.3.2 since (-no-)javascript-jit no longer an option
   # -no-javascript-jit
-  -no-qml-debug
+  #mm2-no-qml-debug
   # Third party libraries (drop if possible but if needed by PLplot, use
   # in-house Qt5 versions of these to reduce dependencies):
-  -qt-zlib
-  -no-mtdev
-  -no-gif
-  -qt-libpng
-  -qt-libjpeg
-  -qt-freetype
+  #mm2-qt-zlib
+  #mm2-no-mtdev
+  #mm2-no-gif
+  #mm2-qt-libpng
+  #mm2-qt-libjpeg
+  #mm2-qt-freetype
   # Experimental in-house harfbuzz NG (5.2.1 and 5.3.1)
   # Comment out for now ==> no harfbuzz NG.
   #-qt-harfbuzz
-  -no-openssl
-  -qt-pcre
-  -qt-xcb
-  -qt-xkbcommon
-  -no-xinput2
-  -no-xcb-xlib
-  -no-glib
+  #mm2-no-openssl
+  #mm2-qt-pcre
+  #mm2-qt-xcb
+  #mm2-qt-xkbcommon
+  #mm2-no-xinput2
+  #mm2-no-xcb-xlib
+  #mm2-no-glib
   # These 3 external library options available with 5.3.1 only
-  -no-pulseaudio
-  -no-alsa
-  -no-gtkstyle
+  #mm2-no-pulseaudio
+  #mm2-no-alsa
+  #mm2-no-gtkstyle
 
   # Additional options:
 
-  # Drop all components other than libs
-  -nomake tools
+  # Drop all components other than libs and tools
+  #mm2-nomake tools
   -nomake examples
   -nomake tests
 
   # These skips have so far only been tried for 5.3.1
   # The list is taken from the top-level subdirectories in
   # the 5.3.1 source tree that start with "qt".  I also
-  # consulted <http://qt-project.org/doc/qt-5/qtmodules.html>
+  # consulted <http://doc.qt.io/qt-5/qtmodules.html>
   # for explanation of the purpose of these various modules.
-  -skip qtactiveqt
-  -skip qtandroidextras
+
+  # Comment out all previously active skips using #memory_management
+  # in effort to get rid of memory management issues for epa_built
+  # 5.3.x that do not occur for binary versions of 5.3.x.
+  #memory_management-skip qtactiveqt
+  #memory_management-skip qtandroidextras
   # Don't skip qtbase for obvious reasons.
   # -skip qtbase
-  -skip qtconnectivity
-  -skip qtdeclarative
-  -skip qtdoc
-  -skip qtenginio
-  -skip qtgraphicaleffects
+  #memory_management-skip qtconnectivity
+  #memory_management-skip qtdeclarative
+  #memory_management-skip qtdoc
+  #memory_management-skip qtenginio
+  #memory_management-skip qtgraphicaleffects
   # Don't skip qtimageformats which supports TIFF, MNG, TGA, WBMP.
   # -skip qtimageformats
-  -skip qtlocation
+  #memory_management-skip qtlocation
   # Don't skip qtmacextras which provides platform-specific APIs for Mac OS X.
   #-skip qtmacextras
-  -skip qtmultimedia
-  -skip qtquick1
-  -skip qtquickcontrols
-  -skip qtscript
-  -skip qtsensors
-  -skip qtserialport
+  #memory_management-skip qtmultimedia
+  #memory_management-skip qtquick1
+  #memory_management-skip qtquickcontrols
+  #memory_management-skip qtscript
+  #memory_management-skip qtsensors
+  #memory_management-skip qtserialport
   # Don't skip qtsvg module which contains the QSvgGenerator class used to create
   # SVG file results.
   # -skip qtsvg
-  -skip qttools
-  -skip qttranslations
-  -skip qtwebkit
-  -skip qtwebkit-examples
-  -skip qtwebsockets
-  -skip qtwinextras
+  #memory_management-skip qttools
+  #memory_management-skip qttranslations
+  #memory_management-skip qtwebkit
+  #memory_management-skip qtwebkit-examples
+  #memory_management-skip qtwebsockets
+  #memory_management-skip qtwinextras
   # Don't skip qtx11extras which provides platform-specific APIs for X11.
   # -skip qtx11extras
-  -skip qtxmlpatterns
+  #memory_management-skip qtxmlpatterns
 
   # Speed compilation of qmake which presumably does not have to
   # be that efficient.
@@ -181,15 +186,49 @@ set(config_arguments
   # Need gui which happens by default (there is no -gui option) 
   # if you do not specify -no-gui
 
-  -no-nis
-  -no-cups
-  -no-iconv
-  -no-icu
-  -no-dbus
+  # More attempts to get rid of memory management error by removing all
+  # non-default configuration.  For this case use #memory_management1
+
+  #memory_management1-no-nis
+  #memory_management1-no-cups
+  #memory_management1-no-iconv
+  #memory_management1-no-icu
+  #memory_management1-no-dbus
 
   # Qt/X11 only: (leave everything default)
 
-
+  # Debian build options for Qt5.3.2
+  -plugin-sql-mysql
+  -plugin-sql-odbc
+  -plugin-sql-psql
+  -plugin-sql-sqlite
+  -no-sql-sqlite2
+  -plugin-sql-tds
+  -system-sqlite
+  # There is no system harfbuzz for Debian stable so disable
+  #-system-harfbuzz
+  -system-zlib
+  -system-libpng
+  -system-libjpeg
+  -openssl
+  -verbose
+  #set differently above 
+  #-optimized-qmake
+  -dbus-linked
+  -reduce-relocations
+  -no-strip
+  -no-separate-debug-info
+  -qpa xcb
+  -xcb
+  -glib
+  -icu
+  -accessibility
+  #conflicts with above 
+  #-compile-examples
+  -no-directfb
+  # Use the -no form if that is a possibility with extra_configure_opts
+  -no-sql-ibase
+  -no-pch
   )
 
 # Note, setting the QT5DIR environment variable to the install prefix
