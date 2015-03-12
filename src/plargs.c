@@ -656,7 +656,7 @@ static PLOptionTable ploption_table[] = {
         NULL,
         PL_OPT_ARG | PL_OPT_FUNC,
         "-mfo PLplot metafile name",
-        "Write the plot to the specfied PLplot metafile"
+        "Write the plot to the specified PLplot metafile"
     },
     {
         "mfi",                  // Metafile output option
@@ -665,7 +665,7 @@ static PLOptionTable ploption_table[] = {
         NULL,
         PL_OPT_ARG | PL_OPT_FUNC,
         "-mfi PLplot metafile name",
-        "Read the specfied PLplot metafile"
+        "Read the specified PLplot metafile"
     },
     {
         NULL,                   // option
@@ -1838,7 +1838,7 @@ opt_freeaspect( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg )
 //! Performs appropriate action for option "portrait":
 //! Set portrait mode.  If plsc->portrait = 1, then the orientation for certain
 //! drivers is changed by 90 deg to portrait orientation from the default
-//! landscape orientation used by PLplot while the  aspect ratio allowed to
+//! landscape orientation used by PLplot while the aspect ratio allowed to
 //! adjust using freeaspect.
 //! N.B. the driver list where this flag is honored is currently limited
 //! to ljii, ljiip, psc, ps, and pstex.  A 90 deg rotation is just not
