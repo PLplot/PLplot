@@ -503,13 +503,13 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
         }
 
         strcpy( m_mfo, "" );
-        SetSize( pls, m_width, m_height );         //call with our current size to set the scaling
-		pls->has_string_length = 1; // Driver supports string length calculations, if we have a dc to draw on
+        SetSize( pls, m_width, m_height );  //call with our current size to set the scaling
+        pls->has_string_length = 1;         // Driver supports string length calculations, if we have a dc to draw on
     }
-	else
-	{
-		pls->has_string_length = 0; //if we have no device to draw on we cannot check string size
-	}
+    else
+    {
+        pls->has_string_length = 0;         //if we have no device to draw on we cannot check string size
+    }
 }
 
 PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
@@ -852,7 +852,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             paraHeight += m_superscriptHeight - m_textHeight;
 
         // actually draw text, resetting the font first
-        if( !pls->get_string_length )
+        if ( !pls->get_string_length )
         {
             superscriptLevel = lineStartSuperscriptLevel;
             m_fci            = lineStartFci;
@@ -887,32 +887,32 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
                 m_gc->SetTransform( originalMatrix );
             }
 #if wxVERSION_NUMBER >= 2902
-			else if ( m_useDcTextTransform )
-			{
-				wxAffineMatrix2D originalMatrix = m_dc->GetTransformMatrix();
+            else if ( m_useDcTextTransform )
+            {
+                wxAffineMatrix2D originalMatrix = m_dc->GetTransformMatrix();
 
-				wxAffineMatrix2D newMatrix = originalMatrix;
-				newMatrix.Translate( args->x / m_xScale, m_height - args->y / m_yScale );
-				wxAffineMatrix2D textMatrix;
-				textMatrix.Set( wxMatrix2D( cos_rot * stride, -sin_rot * stride,
-						cos_rot * sin_shear + sin_rot * cos_shear,
-						-sin_rot * sin_shear + cos_rot * cos_shear ),
-					wxPoint2DDouble( 0.0, 0.0 ) );
-				newMatrix.Concat( textMatrix );
-				newMatrix.Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing );
+                wxAffineMatrix2D newMatrix = originalMatrix;
+                newMatrix.Translate( args->x / m_xScale, m_height - args->y / m_yScale );
+                wxAffineMatrix2D textMatrix;
+                textMatrix.Set( wxMatrix2D( cos_rot * stride, -sin_rot * stride,
+                        cos_rot * sin_shear + sin_rot * cos_shear,
+                        -sin_rot * sin_shear + cos_rot * cos_shear ),
+                    wxPoint2DDouble( 0.0, 0.0 ) );
+                newMatrix.Concat( textMatrix );
+                newMatrix.Translate( -args->just * m_textWidth, -0.5 * m_textHeight + paraHeight * m_lineSpacing );
 
-				m_dc->SetTransformMatrix( newMatrix );
-				DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
-				m_dc->SetTransformMatrix( originalMatrix );
-			}
+                m_dc->SetTransformMatrix( newMatrix );
+                DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
+                m_dc->SetTransformMatrix( originalMatrix );
+            }
 #endif
-			else
-			{
-				m_posX = (PLINT) ( args->x / m_xScale - ( args->just * m_textWidth ) * cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * sin_rot );             //move to set alignment
-				m_posY = (PLINT) ( args->y / m_yScale - ( args->just * m_textWidth ) * sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * cos_rot );
-				DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
-			}
-		}
+            else
+            {
+                m_posX = (PLINT) ( args->x / m_xScale - ( args->just * m_textWidth ) * cos_rot - ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * sin_rot );                             //move to set alignment
+                m_posY = (PLINT) ( args->y / m_yScale - ( args->just * m_textWidth ) * sin_rot + ( 0.5 * m_textHeight - paraHeight * m_lineSpacing ) * cos_rot );
+                DrawTextLine( lineStart, lineLen, baseFontSize, true, superscriptLevel );
+            }
+        }
 
         lineStart += lineLen;
         if ( carriageReturn )
@@ -920,9 +920,9 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         lineLen = 0;
     }
 
-	//set the size of the string in mm
-	if( pls->get_string_length )
-		pls->string_length = paragraphWidth * m_xScale / pls->xpmm;
+    //set the size of the string in mm
+    if ( pls->get_string_length )
+        pls->string_length = paragraphWidth * m_xScale / pls->xpmm;
 }
 
 //--------------------------------------------------------------------------
@@ -1273,7 +1273,7 @@ void wxPLDevice::SetupMemoryMap()
         if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
             plwarn( "Failed to run wxPLViewer - no plots will be shown" );
 #else   //WIN32
-      //Linux doesn't like using wxExecute without a wxApp, so use system instead
+        //Linux doesn't like using wxExecute without a wxApp, so use system instead
         command << wxT( " &" );
         system( command.mb_str() );
 #endif  //WIN32
@@ -1282,7 +1282,7 @@ void wxPLDevice::SetupMemoryMap()
         fprintf( stdout, "Begin Running wxPLViewer in the debugger now to continue." );
         size_t maxTries = 100000;
 #endif  //WXPLVIEWER_DEBUG
-       //wait until the viewer signals it has opened the map file
+        //wait until the viewer signals it has opened the map file
         size_t  counter      = 0;
         size_t &viewerSignal = header->viewerOpenFlag;
         while ( counter < maxTries && viewerSignal == 0 )

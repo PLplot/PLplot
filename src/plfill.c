@@ -310,7 +310,7 @@ plfill_soft( short *x, short *y, PLINT n )
     PLINT  xp1, yp1, xp2, yp2, xp3, yp3;
     PLINT  k, dinc;
     PLFLT  ci, si;
-	PLINT plbuf_write;
+    PLINT  plbuf_write;
     double temp;
 
     buffersize = 2 * BINC;
@@ -323,7 +323,7 @@ plfill_soft( short *x, short *y, PLINT n )
 
     //do not write the hatching lines to the buffer as we have already
     //written the fill to the buffer
-    plbuf_write = plsc->plbuf_write;
+    plbuf_write       = plsc->plbuf_write;
     plsc->plbuf_write = FALSE;
 // Loop over sets of lines in pattern
 
