@@ -3,7 +3,7 @@
 # below this one using ExternalProject_Add commands configured with
 # the appropriate build, test, and dependency information.
 
-# Copyright (C) 2013-2014 Alan W. Irwin
+# Copyright (C) 2013-2015 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -417,6 +417,7 @@ else(BUILD_THE_BUILDTOOLS)
     plplot
     plplot_lite
     gtk+
+    libLASi
     wxwidgets
     # qt4_lite install interferes with qt5_lite build and vice versa.
     # Therefore, we have commented out the build configuration of
@@ -425,7 +426,6 @@ else(BUILD_THE_BUILDTOOLS)
     # qt4_lite
     qt5_lite
     freetype
-    libLASi
     )
 endif(BUILD_THE_BUILDTOOLS)
 

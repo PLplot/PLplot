@@ -3,7 +3,7 @@
 # Configure the build of a "lite" version of PLplot (with fewer dependencies
 # but with fewer features as well).
 
-# Copyright (C) 2013-2014 Alan W. Irwin
+# Copyright (C) 2013-2015 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -43,14 +43,20 @@ epa_boilerplate(
 
 set(CXXFLAGS "$ENV{CXXFLAGS}")
 
-# temporary until a libLASi release is made
-set(URL /home/software/lasi_svn/HEAD/lasi_allura)
+# Data that is related to downloads.
+
+# Convert download URL you get by mouse clicking on link =
+# http://sourceforge.net/projects/lasi/files/lasi/1.1.2%20Source/libLASi-1.1.2.tar.gz/download
+# using the usual Sourceforge transformation.
+set(URL http://downloads.sourceforge.net/project/lasi/lasi/1.1.2%20Source/libLASi-1.1.2.tar.gz)
+set(DOWNLOAD_HASH_TYPE MD5)
+set(DOWNLOAD_HASH 29de80a4878aa71d497c7ae637c5d9a8)
 
 ExternalProject_Add(
   build_${PACKAGE}
   DEPENDS "${dependencies_targets}"
   URL ${URL}
-  #URL_MD5 ${URL_MD5}
+  URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CXXFLAGS=${CXXFLAGS}" ${EPA_CMAKE_COMMAND} ${EPA_BASE}/Source/build_${PACKAGE}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_BUILD_COMMAND} install

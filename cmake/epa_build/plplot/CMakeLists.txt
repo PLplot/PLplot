@@ -2,7 +2,7 @@
 
 # Configure the build of PLplot.
 
-# Copyright (C) 2013-2014 Alan W. Irwin
+# Copyright (C) 2013-2015 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@ if(NOT MSYS_PLATFORM)
   list(APPEND dependencies_LIST
     pango
     qt5_lite
+    libLASi
     )
 endif(NOT MSYS_PLATFORM)
 
