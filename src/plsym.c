@@ -75,7 +75,7 @@ static PLINT
 plcvec( PLINT ch, signed char **xygr );
 
 
-static void
+void
 plhrsh( PLINT ch, PLINT x, PLINT y );
 
 static void
@@ -349,7 +349,7 @@ c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char
 //  defined.
 //--------------------------------------------------------------------------
 
-static void
+void
 plhrsh( PLINT ch, PLINT x, PLINT y )
 {
     EscText   args;
