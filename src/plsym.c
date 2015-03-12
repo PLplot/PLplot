@@ -74,10 +74,6 @@ plchar( signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
 static PLINT
 plcvec( PLINT ch, signed char **xygr );
 
-
-void
-plhrsh( PLINT ch, PLINT x, PLINT y );
-
 static void
 plhrsh2( PLINT ch, PLINT x, PLINT y );
 
@@ -331,7 +327,7 @@ c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char
 }
 
 //--------------------------------------------------------------------------
-// static void plhrsh(PLINT ch, PLINT x, PLINT y)
+// void plhrsh(PLINT ch, PLINT x, PLINT y)
 //    PLINT ch - hershey code to plot
 //    PLINT x - device-world x coordinate of hershey character
 //    PLINT y - device-world y coordinate of hershey character

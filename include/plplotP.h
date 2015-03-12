@@ -649,6 +649,10 @@ plsave_set_locale( void );
 PLDLLIMPEXP void
 plrestore_locale( char * save_lc_numeric_locale );
 
+// Writes the Hershey symbol "ch" centred at the physical coordinate (x,y).
+void
+plhrsh( PLINT ch, PLINT x, PLINT y );
+
 // where should structure definitions that must be seen by drivers and core source files, be?
 
 // structure to be used by plcore.c and anydriver.c, related to plP_text()

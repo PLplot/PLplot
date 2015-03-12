@@ -32,9 +32,6 @@
 
 #define MAX_BUFFER    256 // Character buffer size for reading records
 
-// Reach into plsym.c so that symbols can be rendered correctly
-void plhrsh( PLINT ch, PLINT x, PLINT y );
-
 // Status codes
 enum _plm_status
 {
