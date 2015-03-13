@@ -540,7 +540,7 @@ diff -Naur libharu-2.2.1_pristine/demo/CMakeLists.txt libharu-2.2.1/demo/CMakeLi
 diff -Naur libharu-2.2.1_pristine/include/CMakeLists.txt libharu-2.2.1/include/CMakeLists.txt
 --- libharu-2.2.1_pristine/include/CMakeLists.txt	1969-12-31 16:00:00.000000000 -0800
 +++ libharu-2.2.1/include/CMakeLists.txt	2013-10-22 15:55:30.213030083 -0700
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,65 @@
 +# include/CMakeLists.txt for libharu.
 +###
 +### Process this file with cmake to produce Makefile
@@ -592,10 +592,12 @@ diff -Naur libharu-2.2.1_pristine/include/CMakeLists.txt libharu-2.2.1/include/C
 +  hpdf_info.h
 +  hpdf_list.h
 +  hpdf_mmgr.h
++  hpdf_namedict.h
 +  hpdf_objects.h
 +  hpdf_outline.h
 +  hpdf_page_label.h
 +  hpdf_pages.h
++  hpdf_pdfa.h
 +  hpdf_streams.h
 +  hpdf_types.h
 +  hpdf_u3d.h
