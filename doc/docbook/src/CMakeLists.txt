@@ -225,7 +225,7 @@ else(
 
   # N.B. if PERL_FOUND is false, then BUILD_DOC is false.
   if(BUILD_DOC)
-
+    set(docbook_targets_LIST)
     if(BUILD_INFO)
       # Custom commands for building info version of documentation
       add_custom_command(
@@ -280,6 +280,8 @@ else(
 	info ALL 
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
 	)
+      list(APPEND docbook_targets_LIST info)
+
       # These files used for more than one target.  Therefore must
       # use target dependencies rather than file dependencies to build
       # them.  Otherwise, parallel builds won't work.
@@ -315,6 +317,7 @@ else(
 	man ALL 
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
 	)
+      list(APPEND docbook_targets_LIST man)
     else(BUILD_MAN)
       add_custom_target(
 	man ALL
@@ -365,6 +368,7 @@ else(
 	  DEPENDS 
 	  ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
 	  )
+	list(APPEND docbook_targets_LIST html)
 	# These files used for more than one target.  Therefore must
 	# use target dependencies rather than file dependencies to build
 	# them.  Otherwise, parallel builds won't work.
@@ -410,6 +414,7 @@ else(
 	    DEPENDS 
 	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
 	    )
+
 	  # These files used for more than one target.  Therefore must
 	  # use target dependencies rather than file dependencies to build
 	  # them.  Otherwise, parallel builds won't work.
@@ -453,6 +458,7 @@ else(
 	  add_custom_target(
 	    print ALL 
 	    )
+	  list(APPEND docbook_targets_LIST print)
 	  add_dependencies(print pdf_target)
 
 	  # Disable this because the result is big (50 (!) times larger
@@ -540,6 +546,7 @@ else(
 	  add_custom_target(
 	    print ALL 
 	    )
+	  list(APPEND docbook_targets_LIST print)
 	  add_dependencies(print ps_target pdf_target)
 	endif(DOCBOOK_DBLATEX_BACKEND)
 
@@ -578,6 +585,7 @@ else(
 	  html ALL
 	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
 	  )
+	list(APPEND docbook_targets_LIST html)
 	# These files used for more than one target.  Therefore must
 	# use target dependencies rather than file dependencies to build
 	# them.  Otherwise, parallel builds won't work.
@@ -759,10 +767,16 @@ else(
 	add_custom_target(
 	  print ALL 
 	  )
+	list(APPEND docbook_targets_LIST print)
 	add_dependencies(print dvi_target ps_target pdf_target)
 
       endif(BUILD_PRINT)
     endif(DOCBOOK_XML_BACKEND)
+
+    if(docbook_targets_LIST)
+      add_custom_target(build_docbook_documentation ALL)
+      add_dependencies(build_docbook_documentation ${docbook_targets_LIST})
+    endif(docbook_targets_LIST)
   endif(BUILD_DOC)
 endif(
   PREBUILT_DOC
