@@ -2,7 +2,7 @@
 #
 # Finalize driver initializations
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -84,12 +84,28 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
       # drivers.cmake before this module (drivers-finish.cmake) is
       # included by drivers.cmake.
       if(DRIVER STREQUAL "wxwidgets")
-        set(${DRIVER}_SOURCE 
-          ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
-	      ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_comms.cpp
-          ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_dev.cpp
-          ${${DRIVER}_SOURCE}
-	      )
+	if(OLD_WXWIDGETS)
+          set(${DRIVER}_SOURCE 
+            ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}.cpp
+            ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}_app.cpp
+            ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}_dc.cpp
+            ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}_gc.cpp
+            ${${DRIVER}_SOURCE}
+	    )
+          if(HAVE_AGG)
+            set(${DRIVER}_SOURCE 
+              ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}_agg.cpp
+              ${${DRIVER}_SOURCE}
+              )
+          endif(HAVE_AGG)
+	else(OLD_WXWIDGETS)
+          set(${DRIVER}_SOURCE 
+            ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
+	    ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_comms.cpp
+            ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_dev.cpp
+            ${${DRIVER}_SOURCE}
+	    )
+	endif(OLD_WXWIDGETS)
       elseif(DRIVER STREQUAL "psttf")
         set(${DRIVER}_SOURCE
 	        ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cc

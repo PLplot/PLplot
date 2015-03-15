@@ -30,7 +30,6 @@
 #                           wxwidgets libraries.
 # DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
 # 			    when ENABLE_DYNDRIVERS OFF.
-
 # Find wxWidgets needed for driver and bindings
 
 if(PLD_wxwidgets OR PLD_wxpng)
@@ -93,28 +92,58 @@ if(PLD_wxwidgets OR PLD_wxpng)
     message(STATUS "wxwidgets_RPATH = ${wxwidgets_RPATH}")
   endif(wxwidgets_RPATH)
 
+  option(OLD_WXWIDGETS "Use old version of wxwidgets device driver, binding, and example" OFF)
+
+  if(OLD_WXWIDGETS)
+    if(WITH_FREETYPE)
+      include(agg)
+      if(HAVE_AGG)
+	set(
+	  wxwidgets_COMPILE_FLAGS
+	  "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
+	  )
+	set(
+	  wxwidgets_LINK_FLAGS
+	  ${wxwidgets_LINK_FLAGS}
+	  ${AGG_LIBRARIES}
+	  )
+      else(HAVE_AGG)
+	message(STATUS "WARNING: old wxwidgets driver and bindings components depending on AGG library have been dropped.")
+      endif(HAVE_AGG)
+      set(
+	wxwidgets_COMPILE_FLAGS
+	"${wxwidgets_COMPILE_FLAGS} ${FREETYPE_INCLUDE_CFLAGS}"
+	)
+      set(
+	wxwidgets_LINK_FLAGS
+	${wxwidgets_LINK_FLAGS}
+	${FREETYPE_LIBRARIES}
+	)
+    endif(WITH_FREETYPE)
+  else(OLD_WXWIDGETS)
+    # Note that both wxwidgets and wxPLViewer contains calls to shm_open
+    # and shm_unlink which on most Unix systems requires an explicit link
+    # with the rt library.  However, Mac OS X is a Unix system that does
+    # not have the rt library and provides those functions instead as part
+    # of the ordinary C libraries that do not require explicit linking.
+    # So only define RT_LIB for the Unix but not Mac case.
+    if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+      find_library(RT_LIB rt)
+      if(RT_LIB)
+	message(STATUS "RT_LIB = ${RT_LIB}")
+      else(RT_LIB)
+	message(STATUS "WARNING: rt library could not be found so that wxwidgets and wxPLViewer may not link correctly")
+	set(RT_LIB)
+      endif(RT_LIB)
+    else(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+      set(RT_LIB)
+    endif(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  endif(OLD_WXWIDGETS)
+
   set(DRIVERS_LINK_FLAGS
     ${DRIVERS_LINK_FLAGS} 
     ${wxwidgets_LINK_FLAGS}
     )
-
-# Note that both wxwidgets and wxPLViewer contains calls to shm_open
-# and shm_unlink which on most Unix systems requires an explicit link
-# with the rt library.  However, Mac OS X is a Unix system that does
-# not have the rt library and provides those functions instead as part
-# of the ordinary C libraries that do not require explicit linking.
-# So only define RT_LIB for the Unix but not Mac case.
-  if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    find_library(RT_LIB rt)
-    if(RT_LIB)
-      message(STATUS "RT_LIB = ${RT_LIB}")
-    else(RT_LIB)
-      message(STATUS "WARNING: rt library could not be found so that wxwidgets and wxPLViewer may not link correctly")
-      set(RT_LIB)
-    endif(RT_LIB)
-  else(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(RT_LIB)
-  endif(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
 endif(PLD_wxwidgets OR PLD_wxpng)
 

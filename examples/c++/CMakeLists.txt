@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2014 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -69,7 +69,11 @@ if(CORE_BUILD)
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
   if(ENABLE_wxwidgets)
-    set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
+    if(OLD_WXWIDGETS)
+      set(wxPLplotDemo_SRCS deprecated_wxPLplotDemo.cpp)
+    else(OLD_WXWIDGETS)
+      set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
+    endif(OLD_WXWIDGETS)
   endif(ENABLE_wxwidgets)
 
   if(PLD_extqt)
@@ -124,10 +128,10 @@ if(BUILD_TEST)
     # as used with the PLplot wxwidgets device driver.
     if(CORE_BUILD)
       if(BUILD_SHARED_LIBS)
-	set_source_files_properties(wxPLplotDemo.cpp
+	set_source_files_properties(${wxPLplotDemo_SRCS}
           PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
       else(BUILD_SHARED_LIBS)
-	set_source_files_properties(wxPLplotDemo.cpp
+	set_source_files_properties(${wxPLplotDemo_SRCS}
           PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
       endif(BUILD_SHARED_LIBS)
       include_directories(
@@ -135,10 +139,10 @@ if(BUILD_TEST)
 	${CMAKE_BINARY_DIR}/bindings/wxwidgets
 	)
     else(CORE_BUILD)
-      set_source_files_properties(wxPLplotDemo.cpp
+      set_source_files_properties(${wxPLplotDemo_SRCS}
         PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
     endif(CORE_BUILD)
-    add_executable(wxPLplotDemo WIN32 wxPLplotDemo.cpp)
+    add_executable(wxPLplotDemo WIN32 ${wxPLplotDemo_SRCS})
     target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   endif(ENABLE_wxwidgets)
 

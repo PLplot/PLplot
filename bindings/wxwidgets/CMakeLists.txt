@@ -20,15 +20,29 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 if(ENABLE_wxwidgets AND ENABLE_cxx)
-  set(plplotwxwidgets_LIB_SRCS
-    wxPLplotstream.cpp
-    )
-
-  set(plplotwxwidgets_INSTALLED_HEADERS
-    wxPLplotstream.h
-    wxPLplotwindow.h
-    )
-
+  if(OLD_WXWIDGETS)
+    set(plplotwxwidgets_LIB_SRCS
+      deprecated_wxPLplotstream.cpp
+      deprecated_wxPLplotwindow.cpp)
+    # configure header file - we need to make sure, that the user of the bindings
+    # can't set the wrong options (use freetype/agg)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/deprecated_wxPLplotstream.h.in
+      ${CMAKE_CURRENT_BINARY_DIR}/deprecated_wxPLplotstream.h
+      )
+    set(plplotwxwidgets_INSTALLED_HEADERS
+      ${CMAKE_CURRENT_BINARY_DIR}/deprecated_wxPLplotstream.h
+      deprecated_wxPLplotwindow.h
+      )
+  else(OLD_WXWIDGETS)
+    set(plplotwxwidgets_LIB_SRCS
+      wxPLplotstream.cpp
+      )
+    set(plplotwxwidgets_INSTALLED_HEADERS
+      wxPLplotstream.h
+      wxPLplotwindow.h
+      )
+  endif(OLD_WXWIDGETS)
   # Set the include path
   include_directories(
     ${CMAKE_SOURCE_DIR}/include

@@ -73,7 +73,7 @@ install(TARGETS pltek DESTINATION ${BIN_DIR})
 # by stdin.
 add_executable(parity_bit_check parity_bit_check.c)
 
-if(ENABLE_wxwidgets)
+if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
 # Build wxwidgets applications with same wxwidgets compile and link flags
 # as used with the PLplot wxwidgets device driver.
 
@@ -96,4 +96,4 @@ if(ENABLE_wxwidgets)
     add_dependencies(wxwidgets wxPLViewer)
   endif(TARGET wxwidgets)
 
-endif(ENABLE_wxwidgets)
+endif(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
