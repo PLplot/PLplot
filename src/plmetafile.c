@@ -32,6 +32,11 @@
 
 #define MAX_BUFFER    256 // Character buffer size for reading records
 
+// Not all platforms support the lround() function and the coordinate system
+// representation is going to be redone, thus this is just a placeholder until
+// everything is sorted out.
+#define PLFLT2COORD( a )    ( (short) ceil( a ) )
+
 // Status codes
 enum _plm_status
 {
@@ -481,10 +486,10 @@ enum _plm_status read_line( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
     // Transform the coordinates from the meta device to the current
     // device coordinate system
-    x[0] = (short) lround( dev->mfpcxa * x1 + dev->mfpcxb );
-    y[0] = (short) lround( dev->mfpcya * y1 + dev->mfpcyb );
-    x[1] = (short) lround( dev->mfpcxa * x2 + dev->mfpcxb );
-    y[1] = (short) lround( dev->mfpcya * y2 + dev->mfpcyb );
+    x[0] = PLFLT2COORD( dev->mfpcxa * x1 + dev->mfpcxb );
+    y[0] = PLFLT2COORD( dev->mfpcya * y1 + dev->mfpcyb );
+    x[1] = PLFLT2COORD( dev->mfpcxa * x2 + dev->mfpcxb );
+    y[1] = PLFLT2COORD( dev->mfpcya * y2 + dev->mfpcyb );
 
     // Draw the line
     plP_line( x, y );
@@ -523,8 +528,8 @@ enum _plm_status read_lineto( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
     // Transform the coordinates from the meta device to the current
     // device coordinate system
-    x[1] = (short) lround( dev->mfpcxa * x2 + dev->mfpcxb );
-    y[1] = (short) lround( dev->mfpcya * y2 + dev->mfpcyb );
+    x[1] = PLFLT2COORD( dev->mfpcxa * x2 + dev->mfpcxb );
+    y[1] = PLFLT2COORD( dev->mfpcya * y2 + dev->mfpcyb );
 
     // Draw the line
     plP_line( x, y );
@@ -570,7 +575,7 @@ enum _plm_status read_polyline( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
         // Transform the coordinates from the meta device to the current
         // device coordinate system
-        xd[i] = (short) lround( dev->mfpcxa * x + dev->mfpcxb );
+        xd[i] = PLFLT2COORD( dev->mfpcxa * x + dev->mfpcxb );
     }
     // Preserve the last X value for the LINETO command
     dev->xold = xd[npts - 1];
@@ -584,7 +589,7 @@ enum _plm_status read_polyline( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
         // Transform the coordinates from the meta device to the current
         // device coordinate system
-        yd[i] = (short) lround( dev->mfpcya * y + dev->mfpcyb );
+        yd[i] = PLFLT2COORD( dev->mfpcya * y + dev->mfpcyb );
     }
     // Preserve the last Y value for the LINETO command
     dev->yold = yd[npts - 1];
@@ -641,8 +646,8 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
 
             // Transform the coordinates from the meta device to the current
             // device coordinate system
-            xd[i] = (short) lround( dev->mfpcxa * x + dev->mfpcxb );
-            yd[i] = (short) lround( dev->mfpcya * y + dev->mfpcyb );
+            xd[i] = PLFLT2COORD( dev->mfpcxa * x + dev->mfpcxb );
+            yd[i] = PLFLT2COORD( dev->mfpcya * y + dev->mfpcyb );
         }
 
         plP_fill( xd, yd, npts );
@@ -699,15 +704,15 @@ enum _plm_status read_escape( PDFstrm *plm, PLmDev *dev, PLStream *pls )
         rc = read_entry( plm, PDF_ULONG, PLP_ULONG, &text.text_type );
 
         // Translate coordinates to the device coordinate system
-        pls->clpxmi = (short) lround( dev->mfpcxa * xmin + dev->mfpcxb );
-        pls->clpxma = (short) lround( dev->mfpcxa * xmax + dev->mfpcxb );
-        pls->clpymi = (short) lround( dev->mfpcxa * ymin + dev->mfpcxb );
-        pls->clpyma = (short) lround( dev->mfpcxa * ymax + dev->mfpcxb );
+        pls->clpxmi = PLFLT2COORD( dev->mfpcxa * xmin + dev->mfpcxb );
+        pls->clpxma = PLFLT2COORD( dev->mfpcxa * xmax + dev->mfpcxb );
+        pls->clpymi = PLFLT2COORD( dev->mfpcxa * ymin + dev->mfpcxb );
+        pls->clpyma = PLFLT2COORD( dev->mfpcxa * ymax + dev->mfpcxb );
 
-        text.x    = (short) lround( dev->mfpcxa * x + dev->mfpcxb );
-        text.y    = (short) lround( dev->mfpcya * y + dev->mfpcyb );
-        text.refx = (short) lround( dev->mfpcxa * refx + dev->mfpcxb );
-        text.refy = (short) lround( dev->mfpcya * refy + dev->mfpcyb );
+        text.x    = PLFLT2COORD( dev->mfpcxa * x + dev->mfpcxb );
+        text.y    = PLFLT2COORD( dev->mfpcya * y + dev->mfpcyb );
+        text.refx = PLFLT2COORD( dev->mfpcxa * refx + dev->mfpcxb );
+        text.refy = PLFLT2COORD( dev->mfpcya * refy + dev->mfpcyb );
 
         if ( text.text_type == PL_STRING_TEXT )
         {
