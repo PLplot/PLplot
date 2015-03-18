@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -91,6 +91,15 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
     )
   add_executable(wxPLViewer WIN32 ${wxPLViewer_SRCS})
   target_link_libraries(wxPLViewer plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
+
+  if(USE_RPATH)
+    # Assume that plplotwxwidgets and plplotcxx have the same install location as plplot
+    set_target_properties(wxPLViewer
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
+  endif(USE_RPATH)
+
   install(TARGETS wxPLViewer DESTINATION ${BIN_DIR})
   if(TARGET wxwidgets)
     add_dependencies(wxwidgets wxPLViewer)
