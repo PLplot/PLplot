@@ -62,19 +62,19 @@ set(cxx_STRING_INDICES
   "33"
   )
 
+if(ENABLE_wxwidgets)
+  if(OLD_WXWIDGETS)
+    set(wxPLplotDemo_SRCS deprecated_wxPLplotDemo.cpp)
+  else(OLD_WXWIDGETS)
+    set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
+  endif(OLD_WXWIDGETS)
+endif(ENABLE_wxwidgets)
+
 if(CORE_BUILD)
   set(cxx_SRCS plc++demos.h)
   foreach(STRING_INDEX ${cxx_STRING_INDICES})
     set(cxx_SRCS ${cxx_SRCS} x${STRING_INDEX}.cc)
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
-
-  if(ENABLE_wxwidgets)
-    if(OLD_WXWIDGETS)
-      set(wxPLplotDemo_SRCS deprecated_wxPLplotDemo.cpp)
-    else(OLD_WXWIDGETS)
-      set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
-    endif(OLD_WXWIDGETS)
-  endif(ENABLE_wxwidgets)
 
   if(PLD_extqt)
     set(qt_INSTALLED_FILES qt_PlotWindow.cpp qt_PlotWindow.h qt_example.cpp README.qt_example)
