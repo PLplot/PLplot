@@ -1,7 +1,7 @@
 # examples/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2013 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -687,37 +687,58 @@ if(BUILD_TEST)
       # not handled by the foreach loop over interactive devices.  Therefore,
       # this list of variables does not need to be complete over all
       # interactive devices.
-      get_property(FILE_DEPENDS_cairo 
-	GLOBAL PROPERTY FILE_DEPENDS_cairo_dyndriver
-	)
-      set(cairo_target ${FILE_DEPENDS_cairo} cairo)
+      if(TARGET cairo)
+	get_property(FILE_DEPENDS_cairo 
+	  GLOBAL PROPERTY FILE_DEPENDS_cairo_dyndriver
+	  )
+	set(cairo_file_and_target ${FILE_DEPENDS_cairo} cairo)
+      endif(TARGET cairo)
 
-      get_property(FILE_DEPENDS_gcw 
-	GLOBAL PROPERTY FILE_DEPENDS_gcw_dyndriver
-	)
-      set(gcw_target ${FILE_DEPENDS_gcw} gcw)
+      if(TARGET gcw)
+	get_property(FILE_DEPENDS_gcw 
+	  GLOBAL PROPERTY FILE_DEPENDS_gcw_dyndriver
+	  )
+	set(gcw_file_and_target ${FILE_DEPENDS_gcw} gcw)
+      endif(TARGET gcw)
 
-      get_property(FILE_DEPENDS_qt
-	GLOBAL PROPERTY FILE_DEPENDS_qt_dyndriver
-	)
-      set(qt_target ${FILE_DEPENDS_qt} qt)
+      if(TARGET qt)
+	get_property(FILE_DEPENDS_qt
+	  GLOBAL PROPERTY FILE_DEPENDS_qt_dyndriver
+	  )
+	set(qt_target qt)
+	set(qt_file_and_target ${FILE_DEPENDS_qt} qt)
+      endif(TARGET qt)
 
-      get_property(FILE_DEPENDS_wxwidgets 
-	GLOBAL PROPERTY FILE_DEPENDS_wxwidgets_dyndriver
-	)
-      set(wxwidgets_target ${FILE_DEPENDS_wxwidgets} wxwidgets)
+      if(TARGET wxwidgets)
+	get_property(FILE_DEPENDS_wxwidgets 
+	  GLOBAL PROPERTY FILE_DEPENDS_wxwidgets_dyndriver
+	  )
+	set(wxwidgets_file_and_target ${FILE_DEPENDS_wxwidgets} wxwidgets)
+      endif(TARGET wxwidgets)
 
-      get_property(FILE_DEPENDS_xwin
-	GLOBAL PROPERTY FILE_DEPENDS_xwin_dyndriver
-	)
-      set(xwin_target ${FILE_DEPENDS_xwin} xwin)
+      if(TARGET xwin)
+	get_property(FILE_DEPENDS_xwin
+	  GLOBAL PROPERTY FILE_DEPENDS_xwin_dyndriver
+	  )
+	set(xwin_target xwin)
+	set(xwin_file_and_target ${FILE_DEPENDS_xwin} xwin)
+      endif(TARGET xwin)
 
-      if(generic_interactive_device)
+      if(TARGET tk)
+	set(tk_target tk)
+      endif(TARGET tk)
+
+      if(TARGET tkwin)
+	set(tkwin_target tkwin)
+      endif(TARGET tkwin)
+
+      if(TARGET ${generic_interactive_device})
 	get_property(FILE_DEPENDS_${generic_interactive_device}
 	  GLOBAL PROPERTY FILE_DEPENDS_${generic_interactive_device}_dyndriver
 	  )
-	set(${generic_interactive_device}_target ${FILE_DEPENDS_${generic_interactive_device}} ${generic_interactive_device})
-      endif(generic_interactive_device)
+	set(${generic_interactive_device}_target ${generic_interactive_device})
+	set(${generic_interactive_device}_file_and_target ${FILE_DEPENDS_${generic_interactive_device}} ${generic_interactive_device})
+      endif(TARGET ${generic_interactive_device})
 
     endif(ENABLE_DYNDRIVERS)
     if(PLD_extcairo)
@@ -726,7 +747,7 @@ if(BUILD_TEST)
 	COMMAND ext-cairo-test -drvopt set_background=1
 	DEPENDS 
 	ext-cairo-test
-	${cairo_target}
+	${cairo_file_and_target}
 	)
       add_custom_target(test_extcairo
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
@@ -744,6 +765,7 @@ if(BUILD_TEST)
 
     set(interactive_targets_LIST)
     set(tk_targets_LIST)
+    set(qt_targets_LIST)
 
     # INTERACTIVE_DEVICES_LIST is set in
     # cmake/modules/drivers-finish.cmake for all enabled _interactive_
@@ -801,20 +823,20 @@ if(BUILD_TEST)
       if(files_examples_c AND targets_examples_c)
 	add_dependencies(test_c_${device} ${targets_examples_c})
       endif(files_examples_c AND targets_examples_c)
-      if(NOT device STREQUAL "wxwidgets")
+      if(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
+	message(STATUS "WARNING: The test_c_qtwidget target can be run independently
+   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
+   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
+   temporarily exclude this target from being a dependency of other more general interactive
+   test targets")
+      else(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
 	list(APPEND interactive_targets_LIST test_c_${device})
 	if(device STREQUAL "tk" OR device STREQUAL "ntk")
 	  list(APPEND tk_targets_LIST test_c_${device})
+	elseif(device STREQUAL "qtwidget")
+	  list(APPEND qt_targets_LIST test_c_${device})
 	endif(device STREQUAL "tk" OR device STREQUAL "ntk")
-      elseif(WIN32_AND_NOT_CYGWIN)
-	list(APPEND interactive_targets_LIST test_c_${device})
-      else(NOT device STREQUAL "wxwidgets")
-	message(STATUS "WARNING: The test_c_wxwidgets target can be run independently on 
-   the Unix platform, but it generates \"forced mousing\" screen
-   refreshes for the wxwidgets-3.0.0 case so it is temporarily
-   excluded from being a dependency of other more general interactive
-   test targets")
-      endif(NOT device STREQUAL "wxwidgets")
+      endif(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
 
       if(ENABLE_octave)
 	get_property(targets_examples_octave GLOBAL PROPERTY TARGETS_examples_octave)
@@ -854,7 +876,7 @@ if(BUILD_TEST)
 	COMMAND extXdrawable_demo
 	DEPENDS 
 	extXdrawable_demo
-	${cairo_target}
+	${cairo_file_and_target}
 	)
       if(FILE_DEPENDS_cairo)
 	add_dependencies(test_extXdrawable test_cairo_dyndriver)
@@ -869,7 +891,7 @@ if(BUILD_TEST)
 	DEPENDS 
 	plplotcanvas_demo
 	plplotcanvas_animation
-	${gcw_target}
+	${gcw_file_and_target}
 	)
       if(FILE_DEPENDS_gcw)
 	add_dependencies(test_plplotcanvas test_gcw_dyndriver)
@@ -885,20 +907,12 @@ if(BUILD_TEST)
 	COMMAND wxPLplotDemo
 	DEPENDS 
 	wxPLplotDemo
-	${wxwidgets_target}
+	${wxwidgets_file_and_target}
 	)
       if(FILE_DEPENDS_wxwidgets)
 	add_dependencies(test_wxPLplotDemo test_wxwidgets_dyndriver)
       endif(FILE_DEPENDS_wxwidgets)
-      if(WIN32_AND_NOT_CYGWIN)
-	list(APPEND interactive_targets_LIST test_wxPLplotDemo)
-      else(WIN32_AND_NOT_CYGWIN)
-	message(STATUS "WARNING: The test_wxPLplotDemo target can be run independently on 
-   the Unix platform, but it generates \"forced mousing\" screen
-   refreshes for the wxwidgets-3.0.0 case so it is temporarily
-   excluded from being a dependency of other more general interactive
-   test targets")
-      endif(WIN32_AND_NOT_CYGWIN)
+      list(APPEND interactive_targets_LIST test_wxPLplotDemo)
     endif(ENABLE_wxwidgets)
 
     if(PLD_extqt AND TARGET qt_example)
@@ -906,12 +920,21 @@ if(BUILD_TEST)
 	COMMAND qt_example
 	DEPENDS 
 	qt_example
-	${qt_target}
+	${qt_file_and_target}
 	)
       if(FILE_DEPENDS_qt)
 	add_dependencies(test_qt_example test_qt_dyndriver)
       endif(FILE_DEPENDS_qt)
-      list(APPEND interactive_targets_LIST test_qt_example)
+      if(PLPLOT_USE_QT5)
+	message(STATUS "WARNING: The test_qt_example target can be run independently
+   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
+   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
+   temporarily exclude this target from being a dependency of other more general interactive
+   test targets")
+      else(PLPLOT_USE_QT5)
+	list(APPEND qt_targets_LIST test_qt_example)
+	list(APPEND interactive_targets_LIST test_qt_example)
+      endif(PLPLOT_USE_QT5)
     endif(PLD_extqt AND TARGET qt_example)
 
   endif(ENABLE_cxx)
@@ -926,7 +949,7 @@ if(BUILD_TEST)
 	plplot_pyqt4
 	python_examples
 	_plplotcmodule_fixed
-	qt
+	${qt_target}
 	)
       if(FILE_DEPENDS_qt)
 	add_dependencies(test_pyqt4_example test_qt_dyndriver)
@@ -939,7 +962,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt4_example
 	plplot_pyqt4
 	_plplotcmodule
-	qt
+	${qt_target}
 	)
     endif(CORE_BUILD)
     
@@ -954,7 +977,7 @@ if(BUILD_TEST)
 	DEPENDS
 	gcwmodule
 	cplplotcanvasmodule
-	${gcw_target}
+	${gcw_file_and_target}
 	_plplotcmodule_fixed
 	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_demo.py
 	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_animation.py
@@ -972,7 +995,7 @@ if(BUILD_TEST)
 	DEPENDS
 	gcwmodule
 	cplplotcanvasmodule
-	${gcw_target}
+	${gcw_file_and_target}
 	_plplotcmodule
 	WORKING_DIRECTORY
 	${CMAKE_CURRENT_SOURCE_DIR}/python
@@ -984,14 +1007,14 @@ if(BUILD_TEST)
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
     add_custom_target(test_pltcl_standard_examples
       COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev ${generic_interactive_device} -np
-      DEPENDS ${${generic_interactive_device}_target}
+      DEPENDS ${${generic_interactive_device}_file_and_target}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
       )
     add_dependencies(test_pltcl_standard_examples
       pltcl
       tcl_examples
       ${TARGET_tclIndex_tcl}
-      ${generic_interactive_device}
+      ${${generic_interactive_device}_target}
       )
     if(FILE_DEPENDS_${generic_interactive_device})
       add_dependencies(test_pltcl_standard_examples test_${generic_interactive_device}_dyndriver)
@@ -1011,14 +1034,14 @@ if(BUILD_TEST)
       # BUILD_SHARED_LIBS is true.
       add_custom_target(test_tclsh_standard_examples
 	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
-	DEPENDS ${${generic_interactive_device}_target}
+	DEPENDS ${${generic_interactive_device}_file_and_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
       add_dependencies(test_tclsh_standard_examples
 	plplottcltk
 	tcl_examples
 	${TARGET_tclIndex_tcl}
-	${generic_interactive_device}
+	${${generic_interactive_device}_target}
 	)
       if(FILE_DEPENDS_${generic_interactive_device})
 	add_dependencies(test_tclsh_standard_examples test_${generic_interactive_device}_dyndriver)
@@ -1041,12 +1064,12 @@ if(BUILD_TEST)
 
     add_custom_target(test_tk_01
       COMMAND xtk01 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk01
-      DEPENDS ${xwin_target}
+      DEPENDS ${xwin_file_and_target}
       )
     add_dependencies(test_tk_01
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
-      xwin
+      ${xwin_target}
       )
     if(FILE_DEPENDS_xwin)
       add_dependencies(test_tk_01 test_xwin_dyndriver)
@@ -1055,13 +1078,13 @@ if(BUILD_TEST)
     
     add_custom_target(test_tk_03
       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/tk03
-      DEPENDS ${xwin_target}
+      DEPENDS ${xwin_file_and_target}
       )
     add_dependencies(test_tk_03
       plserver
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
-      xwin
+      ${xwin_target}
       )
     if(FILE_DEPENDS_xwin)
       add_dependencies(test_tk_03 test_xwin_dyndriver)
@@ -1071,13 +1094,13 @@ if(BUILD_TEST)
     if(CORE_BUILD)
       add_custom_target(test_tk_plgrid
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
-	DEPENDS ${xwin_target}
+	DEPENDS ${xwin_file_and_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
     else(CORE_BUILD)
       add_custom_target(test_tk_plgrid
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
-	DEPENDS ${xwin_target}
+	DEPENDS ${xwin_file_and_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tcl
 	)
     endif(CORE_BUILD)
@@ -1086,7 +1109,7 @@ if(BUILD_TEST)
       tcl_examples
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
-      xwin
+      ${xwin_target}
       )
     if(FILE_DEPENDS_xwin)
       add_dependencies(test_tk_plgrid test_xwin_dyndriver)
@@ -1095,7 +1118,7 @@ if(BUILD_TEST)
 
     add_custom_target(test_plserver_standard_examples
       COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_standard_examples
-      DEPENDS ${xwin_target}
+      DEPENDS ${xwin_file_and_target}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
       )
     add_dependencies(test_plserver_standard_examples
@@ -1104,7 +1127,7 @@ if(BUILD_TEST)
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
       tclIndex_examples_tk
-      xwin
+      ${xwin_target}
       )
     if(FILE_DEPENDS_xwin)
       add_dependencies(test_plserver_standard_examples test_xwin_dyndriver)
@@ -1120,8 +1143,8 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_wish_standard_examples
 	plplottcltk
-	tk
-	xwin
+	${tk_target}
+	${xwin_target}
 	tcl_examples
 	${TARGET_tclIndex_tcl}
 	${TARGET_tclIndex_tk}
@@ -1147,12 +1170,12 @@ if(BUILD_TEST)
     if(ENABLE_itkX)
       add_custom_target(test_tk_02
 	COMMAND xtk02 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk02
-	DEPENDS ${xwin_target}
+	DEPENDS ${xwin_file_and_target}
 	)
       add_dependencies(test_tk_02
 	${TARGET_tclIndex_tcl}
 	${TARGET_tclIndex_tk}
-	xwin
+	${xwin_target}
 	)
       if(FILE_DEPENDS_xwin)
 	add_dependencies(test_tk_02 test_xwin_dyndriver)
@@ -1168,12 +1191,12 @@ if(BUILD_TEST)
 
       add_custom_target(test_tk_04
 	COMMAND xtk04 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk04
-	DEPENDS ${xwin_target}
+	DEPENDS ${xwin_file_and_target}
 	)
       add_dependencies(test_tk_04
 	${TARGET_tclIndex_tcl}
 	${TARGET_tclIndex_tk}
-	xwin
+	${xwin_target}
 	)
       if(FILE_DEPENDS_xwin)
 	add_dependencies(test_tk_04 test_xwin_dyndriver)
@@ -1196,7 +1219,7 @@ if(BUILD_TEST)
 	${TARGET_tclIndex_tcl}
 	${TARGET_tclIndex_tk}
 	tclIndex_examples_tk
-	xwin
+	${xwin_target}
 	)
 
       message(STATUS "WARNING: The test_plserver_runAlldemos target can be run independently but 
@@ -1213,7 +1236,7 @@ if(BUILD_TEST)
 	  )
 	add_dependencies(test_wish_runAllDemos
 	  plplottcltk
-	  tkwin
+	  ${tkwin_target}
 	  tcl_examples
 	  ${TARGET_tclIndex_tcl}
 	  ${TARGET_tclIndex_tk}
