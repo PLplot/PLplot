@@ -114,10 +114,10 @@ endif(BUILD_TEST)
 if(BUILD_TEST)
   set_property(GLOBAL PROPERTY TARGETS_examples_cxx)
   foreach(STRING_INDEX ${cxx_STRING_INDICES})
-    if(CORE_BUILD AND BUILD_SHARED_LIBS)
-      SET_SOURCE_FILES_PROPERTIES(x${STRING_INDEX}.cc
+    if(BUILD_SHARED_LIBS)
+      set_source_files_properties(x${STRING_INDEX}.cc
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
-    endif(CORE_BUILD AND BUILD_SHARED_LIBS)
+    endif(BUILD_SHARED_LIBS)
     add_executable(x${STRING_INDEX} x${STRING_INDEX}.cc)
     target_link_libraries(x${STRING_INDEX} plplotcxx ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_cxx x${STRING_INDEX})
@@ -127,21 +127,18 @@ if(BUILD_TEST)
     # Build wxwidgets applications with same wxwidgets compile and link flags
     # as used with the PLplot wxwidgets device driver.
     if(CORE_BUILD)
-      if(BUILD_SHARED_LIBS)
-	set_source_files_properties(${wxPLplotDemo_SRCS}
-          PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
-      else(BUILD_SHARED_LIBS)
-	set_source_files_properties(${wxPLplotDemo_SRCS}
-          PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
-      endif(BUILD_SHARED_LIBS)
       include_directories(
 	${CMAKE_SOURCE_DIR}/bindings/wxwidgets
 	${CMAKE_BINARY_DIR}/bindings/wxwidgets
 	)
-    else(CORE_BUILD)
+    endif(CORE_BUILD)
+    if(BUILD_SHARED_LIBS)
+      set_source_files_properties(${wxPLplotDemo_SRCS}
+        PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
+    else(BUILD_SHARED_LIBS)
       set_source_files_properties(${wxPLplotDemo_SRCS}
         PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
-    endif(CORE_BUILD)
+    endif(BUILD_SHARED_LIBS)
     add_executable(wxPLplotDemo WIN32 ${wxPLplotDemo_SRCS})
     target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   endif(ENABLE_wxwidgets)
@@ -186,6 +183,10 @@ if(BUILD_TEST)
 	  ${QT_MOC_OUTFILES}
 	  PROPERTIES GENERATED "ON"
 	  )
+	if(BUILD_SHARED_LIBS)
+	  set_source_files_properties(qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES}
+            PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
+	endif(BUILD_SHARED_LIBS)
 	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
 	qt5_use_modules(qt_example Svg Gui PrintSupport)
 	target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot ${qt_example_TARGETS})
@@ -199,6 +200,10 @@ if(BUILD_TEST)
 	  ${QT_MOC_OUTFILES}
 	  PROPERTIES GENERATED "ON"
 	  )
+	if(BUILD_SHARED_LIBS)
+	  set_source_files_properties(qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES}
+            PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
+	endif(BUILD_SHARED_LIBS)
 	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
 	target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot)
 	# Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES

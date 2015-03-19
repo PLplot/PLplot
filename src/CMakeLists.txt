@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2014 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -65,7 +65,7 @@ if(LTDL_WIN32)
 endif(LTDL_WIN32)
 
 if(BUILD_SHARED_LIBS)
-  SET_SOURCE_FILES_PROPERTIES(${plplot_LIB_SRCS}
+  set_source_files_properties(${plplot_LIB_SRCS}
     PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
 

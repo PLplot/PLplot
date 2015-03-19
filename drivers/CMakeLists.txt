@@ -41,7 +41,6 @@ if(ENABLE_DYNDRIVERS)
       test-drv-info.c
       PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR} -DUSINGDLL"
       )
-
     add_executable(test-drv-info test-drv-info.c)
     target_link_libraries(test-drv-info
       plplot

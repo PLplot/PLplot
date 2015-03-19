@@ -63,11 +63,11 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
   endif(NON_TRANSITIVE)
 
   if(BUILD_SHARED_LIBS)
-    SET_SOURCE_FILES_PROPERTIES(${plplotwxwidgets_LIB_SRCS}
+    set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS} -DUSINGDLL"
       )
   else(BUILD_SHARED_LIBS)
-    SET_SOURCE_FILES_PROPERTIES(${plplotwxwidgets_LIB_SRCS}
+    set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
       )
   endif(BUILD_SHARED_LIBS)

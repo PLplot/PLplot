@@ -39,7 +39,7 @@ if(ENABLE_cxx)
   add_library(plplotcxx ${plplotcxx_LIB_SRCS})
 
   if(BUILD_SHARED_LIBS)
-    SET_SOURCE_FILES_PROPERTIES(${plplotcxx_LIB_SRCS}
+    set_source_files_properties(${plplotcxx_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
 

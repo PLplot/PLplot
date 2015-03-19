@@ -33,9 +33,17 @@ if(BUILD_HERSHEY_FONTS)
     )
   add_library(hershey STATIC ${libhershey_SRC})
 
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(stndfont.c
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+  endif(BUILD_SHARED_LIBS)
   add_executable(generate_stndfonts stndfont.c)
   target_link_libraries(generate_stndfonts hershey plplot)
 
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(xstndfont.c
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+  endif(BUILD_SHARED_LIBS)
   add_executable(generate_xtndfonts xtndfont.c)
   target_link_libraries(generate_xtndfonts hershey plplot)
 

@@ -31,13 +31,12 @@ if(USE_RPATH)
 endif(USE_RPATH)
 
 if(PLD_plmeta)
-  add_executable(plrender plrender.c)
-
   if(BUILD_SHARED_LIBS)
-    SET_SOURCE_FILES_PROPERTIES(plrender.c
+    set_source_files_properties(plrender.c
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
+  add_executable(plrender plrender.c)
   
   target_link_libraries(plrender plplot)
 
@@ -51,12 +50,11 @@ if(PLD_plmeta)
   install(TARGETS plrender DESTINATION ${BIN_DIR})
 endif(PLD_plmeta)
 
-add_executable(pltek pltek.c)
-
 if(BUILD_SHARED_LIBS)
-  SET_SOURCE_FILES_PROPERTIES(pltek.c
+  set_source_files_properties(pltek.c
     PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
+add_executable(pltek pltek.c)
 
 target_link_libraries(pltek plplot)
 

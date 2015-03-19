@@ -1,7 +1,7 @@
 # bindings/tk/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -32,9 +32,8 @@ if(ENABLE_tkX)
 
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(plserver.c
-      PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
-
   add_executable(plserver plserver.c)
   target_link_libraries(plserver plplot plplottcltk_Main plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
 

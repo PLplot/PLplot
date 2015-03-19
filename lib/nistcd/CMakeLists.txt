@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -41,6 +41,10 @@ if(PLD_cgm)
     set_source_files_properties( ${cd_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${cd_ADD_DEFINES}"
       )
+  else(BUILD_SHARED_LIBS)
+    set_source_files_properties( ${cd_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
+      )
   endif(BUILD_SHARED_LIBS)
 
   add_library( nistcd ${cd_LIB_SRCS} )
@@ -57,10 +61,16 @@ if(PLD_cgm)
     # build applications to test libnistcd.
     set( cd_EXE cdexpert cdmulti cdsimple cdtest cdtext color16 )
     foreach(EXE ${cd_EXE})
-      add_executable( ${EXE} ${EXE}.c )
+      if(BUILD_SHARED_LIBS)
+      set_source_files_properties( ${EXE}.c
+        PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${cd_ADD_DEFINES}"
+        )
+      else(BUILD_SHARED_LIBS)
       set_source_files_properties( ${EXE}.c
         PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
         )
+      endif(BUILD_SHARED_LIBS)
+      add_executable( ${EXE} ${EXE}.c )
       target_link_libraries( ${EXE} nistcd )
       get_target_property(${EXE}_LOC ${EXE} LOCATION)
     endforeach(EXE ${cd_EXE})

@@ -1,7 +1,7 @@
 # bindings/tcl/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2014 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -497,6 +497,10 @@ if(ENABLE_tcl)
   pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "${libplplottcltk_LINK_FLAGS}")
   pkg_config_file("tcl_Main" "Tcl_Main/Tk_Main" " Tcl_Main/Tk_Main bindings" "plplottcltk_Main" "${libplplottcltk_Main_COMPILE_FLAGS}" "${libplplottcltk_Main_LINK_FLAGS}")
 
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(pltcl.c
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
+  endif(BUILD_SHARED_LIBS)
   add_executable(pltcl pltcl.c)
   if(ENABLE_itcl)
     target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})

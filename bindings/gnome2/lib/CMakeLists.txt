@@ -1,7 +1,7 @@
 # bindings/gnome2/lib/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -26,7 +26,7 @@ if(ENABLE_gnome2)
     )
 
   if(BUILD_SHARED_LIBS)
-    SET_SOURCE_FILES_PROPERTIES(
+    set_source_files_properties(
       ${plplotgnome2_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
       )

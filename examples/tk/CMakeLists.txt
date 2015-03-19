@@ -1,7 +1,7 @@
 # examples/tk/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006, 2007, 2008, 2009, 2010 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -185,11 +185,11 @@ if(BUILD_TEST)
   set_property(GLOBAL PROPERTY TARGETS_examples_tk)
   foreach(TK_SRC_FILE ${tk_SRC})
     string(REGEX REPLACE ".c$" "" TK_EXE ${TK_SRC_FILE})
-    add_executable(${TK_EXE} ${TK_SRC_FILE})
-    if(BUILD_SHARED_LIBS AND CORE_BUILD)
+    if(BUILD_SHARED_LIBS)
       set_source_files_properties(${TK_SRC_FILE}
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-    endif(BUILD_SHARED_LIBS AND CORE_BUILD)
+    endif(BUILD_SHARED_LIBS)
+    add_executable(${TK_EXE} ${TK_SRC_FILE})
     target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
   endforeach(TK_SRC_FILE ${tk_SRC})
