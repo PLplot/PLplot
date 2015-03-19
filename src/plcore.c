@@ -231,10 +231,7 @@ plP_tidy( void )
     }
 
     save_locale = plsave_set_locale();
-    if ( !plsc->stream_closed )
-    {
-        ( *plsc->dispatch_table->pl_tidy )( (struct PLStream_struct *) plsc );
-    }
+    ( *plsc->dispatch_table->pl_tidy )( (struct PLStream_struct *) plsc );
     plrestore_locale( save_locale );
 
     if ( plsc->plbuf_write )
