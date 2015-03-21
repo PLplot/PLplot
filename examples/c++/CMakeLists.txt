@@ -189,7 +189,14 @@ if(BUILD_TEST)
 	endif(BUILD_SHARED_LIBS)
 	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
 	qt5_use_modules(qt_example Svg Gui PrintSupport)
-	target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot ${qt_example_TARGETS})
+	if(ENABLE_DYNDRIVERS)
+	  target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot ${qt_example_TARGETS})
+	else(ENABLE_DYNDRIVERS)
+	  # In this case plplot contains all the code in plplotqt so there is no
+          # need to link to plplotqt at all, and in fact for some reason it
+          # causes memory management issues to link to both plplot and plplotqt in this case.
+	  target_link_libraries(qt_example ${QT_LIBRARIES} plplot ${qt_example_TARGETS})
+	endif(ENABLE_DYNDRIVERS)
       else(PLPLOT_USE_QT5)
 	qt4_wrap_cpp(
 	  QT_MOC_OUTFILES
@@ -205,7 +212,14 @@ if(BUILD_TEST)
             PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
 	endif(BUILD_SHARED_LIBS)
 	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
-	target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot)
+	if(ENABLE_DYNDRIVERS)
+	  target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot)
+	else(ENABLE_DYNDRIVERS)
+	  # In this case plplot contains all the code in plplotqt so there is no
+          # need to link to plplotqt at all, and in fact for some reason it
+          # causes memory management issues to link to both plplot and plplotqt in this case.
+	  target_link_libraries(qt_example ${QT_LIBRARIES} plplot)
+	endif(ENABLE_DYNDRIVERS)
 	# Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
 	set_qt_target_properties(qt_example)
       endif(PLPLOT_USE_QT5)
