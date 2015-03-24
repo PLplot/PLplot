@@ -2,7 +2,7 @@
 #
 # Start driver initializations
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -67,6 +67,15 @@ if(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
       "Enable dynamic loading of device drivers" FORCE)
   endif(LTDL_FOUND)
 endif(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
+
+# Needed to configure traditional build system for installed examples.
+if(ENABLE_DYNDRIVERS)
+  set(enable_dyndrivers_true "")
+  set(enable_dyndrivers_false "#")
+else(ENABLE_DYNDRIVERS)
+  set(enable_dyndrivers_true "#")
+  set(enable_dyndrivers_false "")
+endif(ENABLE_DYNDRIVERS)
 
 # Decide whether to enable each device or not and find special resources
 # when required.
