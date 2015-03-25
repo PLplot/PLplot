@@ -699,7 +699,7 @@ void plD_eop_wxwidgets( PLStream *pls )
         memDC.SelectObject( wxNullBitmap );
     }
 
-	if ( dev->ownGUI && ! dev->resizing )
+    if ( dev->ownGUI && !dev->resizing )
     {
         if ( pls->nopause || !dev->showGUI )
             wxRunApp( pls, true );
@@ -834,16 +834,16 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
         else
             dev->plstate_color1 = true;
         break;
-		
+
     //For all these state changes we don't need to do anything
     //and if they occur before/during initialization we don't
     //want to call install_buffer
-	case PLSTATE_FILL:
-	case PLSTATE_CMAP0:
-	case PLSTATE_CMAP1:
-	case PLSTATE_CHR:
-	case PLSTATE_SYM:
-		break;
+    case PLSTATE_FILL:
+    case PLSTATE_CMAP0:
+    case PLSTATE_CMAP1:
+    case PLSTATE_CHR:
+    case PLSTATE_SYM:
+        break;
 
     default:
         if ( !( dev->ready ) )
