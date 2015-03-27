@@ -705,8 +705,8 @@ if(BUILD_TEST)
 	get_property(FILE_DEPENDS_qt
 	  GLOBAL PROPERTY FILE_DEPENDS_qt_dyndriver
 	  )
-	set(qt_target qt)
 	set(qt_file_and_target ${FILE_DEPENDS_qt} qt)
+	set(qt_target qt)
       endif(TARGET qt)
 
       if(TARGET wxwidgets)
@@ -720,8 +720,8 @@ if(BUILD_TEST)
 	get_property(FILE_DEPENDS_xwin
 	  GLOBAL PROPERTY FILE_DEPENDS_xwin_dyndriver
 	  )
-	set(xwin_target xwin)
 	set(xwin_file_and_target ${FILE_DEPENDS_xwin} xwin)
+	set(xwin_target xwin)
       endif(TARGET xwin)
 
       if(TARGET tk)
@@ -736,10 +736,28 @@ if(BUILD_TEST)
 	get_property(FILE_DEPENDS_${generic_interactive_device}
 	  GLOBAL PROPERTY FILE_DEPENDS_${generic_interactive_device}_dyndriver
 	  )
-	set(${generic_interactive_device}_target ${generic_interactive_device})
 	set(${generic_interactive_device}_file_and_target ${FILE_DEPENDS_${generic_interactive_device}} ${generic_interactive_device})
+	set(${generic_interactive_device}_target ${generic_interactive_device})
       endif(TARGET ${generic_interactive_device})
 
+    else(ENABLE_DYNDRIVERS)
+      # These required for some of the following special targets that are
+      # not handled by the foreach loop over interactive devices.  Therefore,
+      # this list of variables does not need to be complete over all
+      # interactive devices.
+      # MAINTENANCE: the variables set here must be the same as
+      # in the above if block statements
+      set(cairo_file_and_target plplot)
+      set(gcw_file_and_target plplot)
+      set(qt_target plplot)
+      set(qt_file_and_target plplot)
+      set(wxwidgets_file_and_target plplot)
+      set(xwin_target plplot)
+      set(xwin_file_and_target plplot)
+      set(tk_target plplot)
+      set(tkwin_target plplot)
+      set(${generic_interactive_device}_file_and_target plplot)
+      set(${generic_interactive_device}_target plplot)
     endif(ENABLE_DYNDRIVERS)
     if(PLD_extcairo)
       add_custom_command(
