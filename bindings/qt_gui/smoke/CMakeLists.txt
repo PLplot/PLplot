@@ -29,12 +29,20 @@ if(ENABLE_smoke)
     ${CMAKE_CURRENT_BINARY_DIR}/smokedata.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/x_1.cpp
     )
+
   set_source_files_properties(
     ${plplot_smoke_SRC}
     PROPERTIES
     GENERATED ON
-    COMPILE_FLAGS "-DUSINGDLL"
     )
+
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(
+      ${plplot_smoke_SRC}
+      PROPERTIES
+      COMPILE_FLAGS "-DUSINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
 
   set(include_directories_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}

@@ -1,7 +1,7 @@
 # bindings/qt_gui/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2013 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -30,10 +30,13 @@ if(ENABLE_qt)
     ${CMAKE_BINARY_DIR}/include
     )
 
-  set_source_files_properties(
-    ${qt_SOURCE}
-    PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-    )
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(
+      ${qt_SOURCE}
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
+
   if(ANY_QT_DEVICE)
     add_library(plplotqt ${qt_SOURCE})
     add_dependencies(plplotqt moc_outfile_generated)
