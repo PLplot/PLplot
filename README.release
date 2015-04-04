@@ -1,34 +1,83 @@
 PLplot Release 5.11.0
-~~~~~~~~~~~~~~~~~~~~
-This is a release of the PLplot plotting package. It represents the
-ongoing best efforts of the PLplot community to improve this
-package, and it is the only version of PLplot that we attempt
-to support.  Releases in the 5.x.0 series should be available several
-times per year.
 
-If you encounter a problem that is not already documented in the
-PROBLEMS file or on our bug tracker, then please send bug reports to
-PLplot developers via the mailing lists at
+This is a release of the PLplot plotting package. It represents the
+ongoing best efforts of the PLplot community to improve this package,
+and it is the only version of PLplot that we attempt to support.
+Releases in the 5.x.0 series should be available several times per
+year.
+
+Comprehensive tests of this release are documented in
+<http://sourceforge.net/p/plplot/wiki/Testing_PLplot#Testing%20Reports>.
+In addition, developers and users who have used the git master tip
+version during this release cycle have provided additional important
+testing of this release of PLplot.
+
+If you encounter a problem with this release that is not already
+documented on our bug tracker, then please send bug reports to PLplot
+developers via the mailing lists at
 <http://sourceforge.net/p/plplot/mailman/> (preferred for initial
-discussion of issues) and, if no quick resolution is possible, then the
-issue should be placed on our
-bug tracker at <http://sourceforge.net/p/plplot/bugs/>.
+discussion of issues) and, if no quick resolution is possible, then
+the issue should be placed on our bug tracker at
+<http://sourceforge.net/p/plplot/bugs/>.
 
 Please see the license under which this software is distributed
 (LGPL), and the disclaimer of all warranties, given in the COPYING.LIB
 file.
+________________________________________________________________
 
-INDEX
-
-1. OFFICIAL NOTICES FOR USERS
-
-2. Changes relative to the previous release
-
-3. Tests made for the current release
+CONTENTS
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Backwards incompatible change.
+1.1 Backwards-incompatible change to the suffix for our library names
+
+1.2 Backwards-incompatible API change for our f95 bindings
+
+1.3 Backwards-incompatible change to our C++ API
+
+1.4 Backwards-incompatible change to our CMake packaging
+
+
+2. Improvements relative to the previous release
+
+2.1 Update the parts of the build system that find Tcl-related software
+
+2.2 Update epa_build configurations
+
+2.3 Update the PLplot build system so that the Tcl/Tk/Itcl/Itk/Iwidgets
+
+2.4 Make many minor build-system fixes so that comprehensive tests
+finally work almost completely on MinGW/MSYS
+
+2.5 Update api.xml to be consistent with our public API defined by plplot.h
+
+2.6 Many plbuf improvements
+
+2.7 plmeta/plrender now under active development
+
+2.8 Add version macros
+
+2.9 Implement experimental Qt5 support
+
+2.10 Implement interactive capability for the wingcc device
+
+2.11 Improve CMake packaging of PLplot
+
+2.12 Add smoke binding for the qtwidget and extqt drivers
+
+2.13 Add new mapping functionality for shapefiles
+
+2.14 Removed a substantial number of "space in pathname" issues
+
+2.15 Move from svn to git version control
+
+2.16 Rewrite of wxwidgets
+________________________________________________________________
+
+1. OFFICIAL NOTICES FOR USERS
+
+
+1.1 Backwards-incompatible change to the suffix for our library names
 
 We have completely removed the CMake variable LIB_TAG from our build
 system.  The effect of this change is the "d" suffix has been dropped
@@ -75,7 +124,7 @@ recommended "use" strategy should avoid any repercussions from the
 above or future name changes for the modules that are "used" by the
 plplot module.
 
-1.3 Backwards Incompatible change to C++ API
+1.3 Backwards-incompatible change to our C++ API
 
 The plstream methods fill, tr0, tr1, tr2, and tr2p have been changed,
 fixing a bug where the correct stream was not selected. This means
@@ -89,30 +138,46 @@ replace all plstream::fill callback use by plcallback::fill and
 similarly for tr0, tr1, tr2, and tr2p).  Please see the documentation
 for a full description.
 
-2. Changes relative to the previous release
+1.4 Backwards-incompatible change to our CMake packaging
 
-2.1 Update the parts of the build system that find Tcl-related software.
+The "find_package(plplot)" command (as opposed to the previous
+"include(export_plplot)") must now be used in CMake-based
+build systems that need access to exported PLplot CMake packaging
+information.  For additional information see 2.11 below.
+________________________________________________________________
+
+2. Improvements relative to the previous release
+
+
+2.1 Update the parts of the build system that find Tcl-related software
 
 The build system now checks extensively for the consistency of the
 Tcl/Tk/Itcl/Itk/Iwidgets components that are found.
 
-2.2 Update the Tcl-related epa_build configurations.
+2.2 Update epa_build configurations
 
 The epa_build subproject of PLplot design goal is to make it easy to
-build PLplot dependencies on all platforms.
+build PLplot dependencies on all platforms.  There has been a large
+number of improvements in epa_build during this release cycle.  Those
+include the following:
 
-Previously version 8.6 of Tcl/Tk and version 3 of Itcl/Itk, version 4
-of Itcl/Itk, and versions 4.0 and 4.1 of Iwidgets could be epa_built
-on Linux, but now the epa_build configuration files have been updated
-so these builds also succeed on MinGW/MSYS.
+Get the wxwidgets (wxGTK) build to work properly on Linux including
+its dependency on gtk+
+
+Implement a libLASi build on Linux.
+
+Update version 8.6 of Tcl/Tk, version 3 of Itcl/Itk, version 4
+of Itcl/Itk, and versions 4.0 and 4.1 of Iwidgets so those
+builds (which used to succeed only on Linux) now succeed for
+both Linux and MinGW/MSYS.
 
 2.3 Update the PLplot build system so that the Tcl/Tk/Itcl/Itk/Iwidgets
-bindings and examples work on MinGW/MSYS.
+bindings and examples work on MinGW/MSYS
 
 2.4 Make many minor build-system fixes so that comprehensive tests
-finally work almost completely on MinGW/MSYS.
+finally work almost completely on MinGW/MSYS
 
-2.5 Update api.xml to be consistent with our public API defined by plplot.h.
+2.5 Update api.xml to be consistent with our public API defined by plplot.h
 
 This substantial improvement to our DocBook documentation for our
 public API has been made possible by the "check" application written
@@ -173,7 +238,153 @@ disabled the new features for this release in order to prevent
 breaking compatibility with the existing format, but that should
 change as development continues.
 
-3. Tests made for the current release.
+Implemented (using a new front end for plplot-test.sh) a
+plmeta/plrender test to the test suite.  This is ignored when
+-DPLD_plmeta=OFF (the default case).  When -DPLD_plmeta=ON the test
+suite fails to work, but it is anticipated it will work once the new
+plmeta/plrender features are enabled.
 
-The most recent test results for PLplot are publicly available at
-<http://sourceforge.net/p/plplot/wiki/Testing_PLplot#Testing%20Reports>
+2.8 Add version macros
+
+These macros are called PLPLOT_VERSION_MAJOR, PLPLOT_VERSION_MINOR,
+and PLPLOT_VERSION_PATCH, and they should allow pure preprocessor
+logic (as opposed to the running of a test programme that was required
+previously) to distinguish between various PLplot versions from now
+on.
+
+2.9 Implement experimental Qt5 support
+
+This can be chosen by the user by specifying the cmake option,
+-DPLPLOT_USE_QT5=ON.  However, from our experience Qt5 is still (as of
+version 5.3.2) too immature to be completely reliable consistent with
+our historical experiences with Qt4.x.y where x < 6.  For example,
+Qt5.x has long-standing character vertical alignment issues compared
+to Qt4.8.x which we have semiempirically compensated in PLplot for the
+PLPLOT_USE_QT5=ON case.  The resulting character alignment from this
+workaround is OK (although not quite as good as for Qt4.8.x), but
+nevertheless this workaround should not be required.  We have user
+reports of bad rendering of PLplot qt device results for Qt-5.2.0, and
+Qt5.3.0, and we have not even been able to epa_build Qt5.4.0 so
+clearly those using -DPLPLOT_USE_QT5=ON have to be quite careful about what
+Qt5 version they choose to try.  Finally, we have discovered (via
+segfaults) that there are plend severe memory management issues
+(invalid reads according to valgrind) for any version of Qt5 that is
+epa_built on Debian stable including 5.3.2 regardless of what build
+configuration was used including using a build configuration that is
+virtually identical to that used for Debian packaging. These issues do
+not appear for the Debian unstable binary package for Qt5.3.2.  One
+hypothesis that explains these results is there is some incompatibility
+between Qt5.3.2 and the Debian stable system libraries that epa_built
+Qt5.3.2 depends on, but investigation continues.
+
+2.10 Implement interactive capability for the wingcc device
+
+Run
+
+examples/c/x01c -dev wingcc -locate
+
+to demonstrate what is possible.
+
+2.11 Improve CMake packaging of PLplot
+
+The fundamental improvement here is we use the standards documented in
+<http://www.cmake.org/cmake/help/git-next/manual/cmake-packages.7.html>
+to package PLplot as opposed to the non-standard way we packaged PLplot
+before.  This change has allowed -DPLPLOT_USE_QT5=ON to work properly
+when using exported PLplot CMake packaging information.
+
+Also, we specifically have changed the install location of the
+exported PLplot packages from
+
+${DATA_DIR}/examples/cmake/modules
+==>
+${LIB_DIR}/cmake/plplot
+
+which means (this is backwards incompatibility mentioned in 1.4 above)
+CMake-based build systems (including the CMake-based build system for
+the installed examples) must use "find_package(plplot)" as opposed to
+"include(export_plplot)" to access the exported PLplot CMake packaging
+information.
+
+If $PREFIX (the install prefix set by the user) is not a standard
+system location than one method to allow "find_package(plplot)" to
+find the above location is to include $PREFIX/bin (which is probably
+needed in any case) in the PATH.  Another possibility is to set the
+CMAKE_PREFIX_PATH environment variable appropriately.  For a full list
+of such possibilities, please consult the cmake documentation of
+find_package.
+
+2.12 Add smoke binding for the qtwidget and extqt drivers
+
+From <https://techbase.kde.org/Development/Languages/Smoke> smoke can
+be used as the basis for a number of language bindings, but this
+particular smoke binding is only currently used by the external
+cl-plplot software package
+<https://common-lisp.net/project/cl-plplot/> which creates a Lisp
+binding for PLplot.
+
+2.13 Add new mapping functionality for shapefiles
+
+This exciting new functionality gives PLplot users convenient access
+to shapefile contour maps (e.g., of Exmoor National Park, U.K. as
+demonstrated by example 19.05.)
+
+2.14 Removed a substantial number of "space in pathname" issues
+
+Since PLplot was originally developed on Unix where spaces in
+pathnames are normally not used, there existed a lot of different
+PLplot issues with blanks in pathnames that are typically used on
+Windows.  A number of the most obvious of such issues have now been
+fixed using a Windows test platform.  However, use of blanks is
+pathnames is still probably not completely debugged, so if Windows
+users run into any difficulties, the first thing they should try is to
+use source-tree, build-tree, and install-tree prefixes without blanks.
+And they should also try installing packages that PLplot depends on
+with prefixes that do not include blanks.  If any of those changes
+works (i.e., works around a blank-in-pathname bug for PLplot), please
+inform us of that PLplot bug following the bug-report procedure stated
+at the top of these release notes.
+
+2.15 Move from svn to git version control
+
+During this release cycle we have moved from svn to git for version
+control.  A fairly large number of source-tree changes have been made
+to support this change such as git control of file line endings (via
+.gitattributes) and files that are outside git control (via
+.gitignore), replacing svn commands with git commands in scripts/*.sh,
+updating README.developers to document our new git workflow, creating
+the historical_repository_conversions directory to document our
+version control system updates (historically from cvs to svn and for
+this current release cycle from svn to git), updating the website to
+refer to git, etc.
+
+2.16 Rewrite of wxwidgets
+
+During this release cycle the wxwidgets device and binding have been
+completely rewritten.  This new version is based on wxGCDC which
+provides access to wxGraphicsContext but via a wxDC interface.  There
+is only one backend (as opposed to the three backends of the old
+wxwidgets) so the new approach is much easier to maintain.  PLplot
+needs a substantial redesign to become thread safe.  Therefore the new
+wxwidgets device driver uses a client-server model to communicate with
+a wxPLViewer application to avoid thread-safety issues that occur when
+wxwidgets viewing applications are integrated with the wxwidgets
+device.  This whole design for new wxwidgets depends heavily on the
+core plbuf capability.
+
+Our substantial tests for the new wxwidgets device on Linux, Mac OS X,
+and Windows show no build issues or substantial (e.g., segfaults) 
+run-time issues.  However, at run time there are still a number of
+rendering issues (see <https://sourceforge.net/p/plplot/bugs/151/> for
+a full list of the remaining rendering issues) so in case these or any
+other issue with new wxwidgets turn out to be a showstopper for any user
+we have implemented the CMake option -DOLD_WXWIDGETS=ON to provide
+essentially the same old wxwidgets capability that was available for
+PLplot-5.10.0.  But once all the issues in bug 151 are addressed we
+plan to first deprecate -DOLD_WXWIDGETS=ON, and eventually remove it
+completely.  So please try the new wxwidgets first and report any
+issues you find in it beyond those already mentioned in bug 151
+following the bug-report procedure stated at the top of these release
+notes.
+
+________________________________________________________________
