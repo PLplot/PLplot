@@ -54,6 +54,11 @@ if(NOT DEFINED HTML_EXT)
 endif(NOT DEFINED HTML_EXT)
 set(MANVOL "3plplot")
 
+# For now, must set this by hand before each release.  This value affects
+# only the documentation build so we set it here rather than in some more
+# central place.
+set(RELEASE_DATE "2015-04-12")
+
 foreach(suffix info html print)
   if(suffix STREQUAL "print" AND DOCBOOK_XML_BACKEND)
     set(inline_entities ${CMAKE_CURRENT_SOURCE_DIR}/inline-${suffix}_xsl.ent)
