@@ -8375,7 +8375,7 @@ device support!)
       </varlistentry>
       <varlistentry>
         <term>
-          <parameter>maxlong</parameter>
+          <parameter>maxx</parameter>
           (<literal>PLFLT</literal>, input)
         </term>
         <listitem>
@@ -8404,27 +8404,14 @@ device support!)
         </term>
         <listitem>
           <para>
-            The minimum y value of map elements to be drawn.
+            The maximum y value of map elements to be drawn.
           </para>
         </listitem>
       </varlistentry>
     </variablelist>
 
-
     <para>
-      Redacted form:
-      <itemizedlist>
-        <listitem>
-          <para>
-            General: <function>plmap(mapform, name, minx, maxx, miny, maxy)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            F95, Java, Perl/PDL, Python: Not implemented?
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plmap(mapform, name, minx, maxx, miny, maxy)</function>
     </para>
 
     <para>
@@ -8572,7 +8559,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>plotentries</parameter>
-          (<literal>PLINT *</literal>, input)
+          (<literal>const PLINT *</literal>, input)
         </term>
         <listitem>
           <para>
@@ -8596,21 +8583,8 @@ device support!)
       </varlistentry>
     </variablelist>
 
-
     <para>
-      Redacted form:
-      <itemizedlist>
-        <listitem>
-          <para>
-            General: <function>plmapfill(mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Implemented only for C and C++
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plmapfill(mapform, name, minx, maxx, miny, maxy, plotentries)</function>
     </para>
 
     <para>
@@ -8766,7 +8740,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>plotentries</parameter>
-          (<literal>PLINT *</literal>, input)
+          (<literal>const PLINT *</literal>, input)
         </term>
         <listitem>
           <para>
@@ -8790,21 +8764,8 @@ device support!)
       </varlistentry>
     </variablelist>
 
-
     <para>
-      Redacted form:
-      <itemizedlist>
-        <listitem>
-          <para>
-            General: <function>plmapline(mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Implemented only for C and C++
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plmapline(mapform, name, minx, maxx, miny, maxy, plotentries)</function>
     </para>
 
     <para>
@@ -8966,7 +8927,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>plotentries</parameter>
-          (<literal>PLINT *</literal>, input)
+          (<literal>const PLINT *</literal>, input)
         </term>
         <listitem>
           <para>
@@ -8990,21 +8951,8 @@ device support!)
       </varlistentry>
     </variablelist>
 
-
     <para>
-      Redacted form:
-      <itemizedlist>
-        <listitem>
-          <para>
-            General: <function>plmapstring(mapform, name, string, minx, maxx, miny, maxy, plotentries, nplotentries)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Implemented only for C and C++
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plmapstring(mapform, name, string, minx, maxx, miny, maxy, plotentries)</function>
     </para>
 
     <para>
@@ -9041,7 +8989,7 @@ device support!)
             <parameter>just</parameter>
           </paramdef>
           <paramdef>
-            <parameter>string</parameter>
+            <parameter>text</parameter>
           </paramdef>
           <paramdef>
             <parameter>minx</parameter>
@@ -9056,10 +9004,7 @@ device support!)
             <parameter>maxy</parameter>
           </paramdef>
           <paramdef>
-            <parameter>plotentries</parameter>
-          </paramdef>
-          <paramdef>
-            <parameter>nplotentries</parameter>
+            <parameter>plotentry</parameter>
           </paramdef>
         </funcprototype>
       </funcsynopsis>
@@ -9139,12 +9084,12 @@ device support!)
       </varlistentry>
       <varlistentry>
         <term>
-          <parameter>string</parameter>
+          <parameter>text</parameter>
           (<literal>const char *</literal>, input)
         </term>
         <listitem>
           <para>
-            A NULL terminated string of characters to be drawn.
+            A NULL-terminated string of characters to be drawn.
           </para>
         </listitem>
       </varlistentry>
@@ -9210,46 +9155,20 @@ device support!)
       </varlistentry>
       <varlistentry>
         <term>
-          <parameter>plotentries</parameter>
-          (<literal>PLINT *</literal>, input)
-        </term>
-        <listitem>
-          <para>
-            An array of integers indicating the elements of the
-            Shapefile (zero indexed) which will be drawn. Setting
-            plotentries to NULL will plot all elements of the Shapefile.
-          </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <parameter>nplotentries</parameter>
+          <parameter>plotentry</parameter>
           (<literal>PLINT</literal>, input)
         </term>
         <listitem>
           <para>
-            The number of items in plotentries. Ignored if
-            plotentries is NULL.
+            An integer indicating which text string of the
+            Shapefile (zero indexed) will be drawn.
           </para>
         </listitem>
       </varlistentry>
     </variablelist>
 
-
     <para>
-      Redacted form:
-      <itemizedlist>
-        <listitem>
-          <para>
-            General: <function>plmaptex(mapform, name, dx, dy, just, text, minx, maxx, miny, maxy, plotentries, nplotentries)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Implemented only for C and C++
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plmaptex(mapform, name, dx, dy, just, text, minx, maxx, miny, maxy, plotentry)</function>
     </para>
 
     <para>
@@ -9393,20 +9312,8 @@ device support!)
       </varlistentry>
     </variablelist>
 
-    <para>
-      Redacted form:
-      <itemizedlist>
-        <listitem>
-          <para>
-            General: <function>plmeridians(mapform, dlong, dlat, minlong, maxlong, minlat, maxlat)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            F95, Java, Perl/PDL, Python: Not implemented?
-          </para>
-        </listitem>
-      </itemizedlist>
+   <para>
+      Redacted form: <function>plmeridians(mapform, dlong, dlat, minlong, maxlong, minlat, maxlat)</function>
     </para>
 
     <para>
