@@ -3167,9 +3167,7 @@ DESCRIPTION:
     filename, but different extensions.  The .shp and .shx files are
     required for plotting Shapefile data with Plplot. 
 
-    Redacted form: General: plmap(mapform, name, minx, maxx, miny, maxy)
-	    F95, Java, Perl/PDL, Python: Not implemented? 
-
+    Redacted form: plmap(mapform, name, minx, maxx, miny, maxy)
 
     This function is used in example 19. 
 
@@ -3212,7 +3210,7 @@ ARGUMENTS:
     these limits provides a useful optimization for complex or
     detailed maps. 
 
-    maxlong (PLFLT, input) :    The maximum x value of map elements to be
+    maxx (PLFLT, input) :    The maximum x value of map elements to be
     drawn 
 
     miny (PLFLT, input) :    The minimum y value of map elements to be
@@ -3220,7 +3218,7 @@ ARGUMENTS:
     Shapefiles the units must match the projection. The value of miny
     must be less than the value of maxy. 
 
-    maxy (PLFLT, input) :    The minimum y value of map elements to be
+    maxy (PLFLT, input) :    The maximum y value of map elements to be
     drawn. 
 ")
 plmap;
@@ -3232,10 +3230,8 @@ DESCRIPTION:
     As per plmapline, however the items are filled in the same way as
     plfill. 
 
-    Redacted form: General: plmapfill(mapform, name, minx, maxx, miny,
-    maxy, plotentries, nplotentries)
-	    Implemented only for C and C++ 
-
+    Redacted form: plmapfill(mapform, name, minx, maxx, miny, maxy,
+    plotentries)
 
     This function is used in example 19. 
 
@@ -3282,10 +3278,10 @@ ARGUMENTS:
     use a very large number to plot everything, but you can improve
     performance by limiting the area drawn. 
 
-    plotentries (PLINT *, input) :    An array of integers indicating the
-    elements of the Shapefile (zero indexed) which will be drawn.
-    Setting plotentries to NULL will plot all elements of the
-    Shapefile. 
+    plotentries (const PLINT *, input) :    An array of integers
+    indicating the elements of the Shapefile (zero indexed) which will
+    be drawn. Setting plotentries to NULL will plot all elements of
+    the Shapefile. 
 
     nplotentries (PLINT, input) :    The number of items in plotentries.
     Ignored if plotentries is NULL. 
@@ -3306,10 +3302,8 @@ DESCRIPTION:
     This file can be opened by most popular spreadsheet programs and can
     be used to decide which indices to pass to this function. 
 
-    Redacted form: General: plmapline(mapform, name, minx, maxx, miny,
-    maxy, plotentries, nplotentries)
-	    Implemented only for C and C++ 
-
+    Redacted form: plmapline(mapform, name, minx, maxx, miny, maxy,
+    plotentries)
 
     This function is used in example 19. 
 
@@ -3356,10 +3350,10 @@ ARGUMENTS:
     use a very large number to plot everything, but you can improve
     performance by limiting the area drawn. 
 
-    plotentries (PLINT *, input) :    An array of integers indicating the
-    elements of the Shapefile (zero indexed) which will be drawn.
-    Setting plotentries to NULL will plot all elements of the
-    Shapefile. 
+    plotentries (const PLINT *, input) :    An array of integers
+    indicating the elements of the Shapefile (zero indexed) which will
+    be drawn. Setting plotentries to NULL will plot all elements of
+    the Shapefile. 
 
     nplotentries (PLINT, input) :    The number of items in plotentries.
     Ignored if plotentries is NULL. 
@@ -3373,10 +3367,8 @@ DESCRIPTION:
     As per plmapline, however the items are plotted as strings or points
     in the same way as plstring. 
 
-    Redacted form: General: plmapstring(mapform, name, string, minx, maxx,
-    miny, maxy, plotentries, nplotentries)
-	    Implemented only for C and C++ 
-
+    Redacted form: plmapstring(mapform, name, string, minx, maxx, miny,
+    maxy, plotentries)
 
     This function is used in example 19. 
 
@@ -3426,10 +3418,10 @@ ARGUMENTS:
     use a very large number to plot everything, but you can improve
     performance by limiting the area drawn. 
 
-    plotentries (PLINT *, input) :    An array of integers indicating the
-    elements of the Shapefile (zero indexed) which will be drawn.
-    Setting plotentries to NULL will plot all elements of the
-    Shapefile. 
+    plotentries (const PLINT *, input) :    An array of integers
+    indicating the elements of the Shapefile (zero indexed) which will
+    be drawn. Setting plotentries to NULL will plot all elements of
+    the Shapefile. 
 
     nplotentries (PLINT, input) :    The number of items in plotentries.
     Ignored if plotentries is NULL. 
@@ -3443,10 +3435,8 @@ DESCRIPTION:
     As per plmapline, however the items are plotted as text in the same
     way as plptex. 
 
-    Redacted form: General: plmaptex(mapform, name, dx, dy, just, text,
-    minx, maxx, miny, maxy, plotentries, nplotentries)
-	    Implemented only for C and C++ 
-
+    Redacted form: plmaptex(mapform, name, dx, dy, just, text, minx, maxx,
+    miny, maxy, plotentry)
 
     This function is used in example 19. 
 
@@ -3454,7 +3444,7 @@ DESCRIPTION:
 
 SYNOPSIS:
 
-plmaptex(mapform, name, dx, dy, just, string, minx, maxx, miny, maxy, plotentries, nplotentries)
+plmaptex(mapform, name, dx, dy, just, text, minx, maxx, miny, maxy, plotentry)
 
 ARGUMENTS:
 
@@ -3482,8 +3472,8 @@ ARGUMENTS:
     sits at the given point. 0.0 gives left aligned text, 0.5 gives
     centralized text and 1.0 gives right aligned text. 
 
-    string (const char *, input) :    A NULL terminated string of
-    characters to be drawn. 
+    text (const char *, input) :    A NULL-terminated string of characters
+    to be drawn. 
 
     minx (PLFLT, input) :    The minimum x value to be plotted. This must
     be in the same units as used by the Shapefile. You could use a
@@ -3507,13 +3497,8 @@ ARGUMENTS:
     use a very large number to plot everything, but you can improve
     performance by limiting the area drawn. 
 
-    plotentries (PLINT *, input) :    An array of integers indicating the
-    elements of the Shapefile (zero indexed) which will be drawn.
-    Setting plotentries to NULL will plot all elements of the
-    Shapefile. 
-
-    nplotentries (PLINT, input) :    The number of items in plotentries.
-    Ignored if plotentries is NULL. 
+    plotentry (PLINT, input) :      An integer indicating which text string
+    of the Shapefile (zero indexed) will be drawn. 
 ")
 plmaptex;
 
@@ -3524,10 +3509,8 @@ DESCRIPTION:
     Displays latitude and longitude on the current plot.  The lines are
     plotted in the current color and line style. 
 
-    Redacted form: General: plmeridians(mapform, dlong, dlat, minlong,
-    maxlong, minlat, maxlat)
-	    F95, Java, Perl/PDL, Python: Not implemented? 
-
+    Redacted form: plmeridians(mapform, dlong, dlat, minlong, maxlong,
+    minlat, maxlat)
 
     This function is used in example 19. 
 
