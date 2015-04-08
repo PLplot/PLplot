@@ -33,7 +33,7 @@
       integer(kind=plint), parameter :: PLESC_DEV2PLCOL = 24 ! convert device color to PLColor
       integer(kind=plint), parameter :: PLESC_SETBGFG = 25 ! set BG, FG colors
       integer(kind=plint), parameter :: PLESC_DEVINIT = 26 ! alternate device initialization
-      integer(kind=plint), parameter :: PLESC_GETBACKEND = 27 ! get used backend of (wxWidgets) driver
+      integer(kind=plint), parameter :: PLESC_GETBACKEND = 27 ! get used backend of (wxWidgets) driver - no longer used
       integer(kind=plint), parameter :: PLESC_BEGIN_TEXT = 28 ! get ready to draw a line of text
       integer(kind=plint), parameter :: PLESC_TEXT_CHAR = 29 ! render a character of text
       integer(kind=plint), parameter :: PLESC_CONTROL_CHAR = 30 ! handle a text control character (super/subscript, etc.)
@@ -44,6 +44,8 @@
       integer(kind=plint), parameter :: PLESC_GRADIENT = 35 ! render a gradient
       integer(kind=plint), parameter :: PLESC_MODESET = 36 ! set drawing mode
       integer(kind=plint), parameter :: PLESC_MODEGET = 37 ! get drawing mode
+      integer(kind=plint), parameter :: PLESC_FIXASPECT = 38 ! set or unset fixing the aspect ratio of the plot
+      integer(kind=plint), parameter :: PLESC_IMPORT_BUFFER = 39 ! set the contents of the buffer to a specified byte string
       integer(kind=plint), parameter :: PLTEXT_FONTCHANGE = 0 ! font change in the text stream
       integer(kind=plint), parameter :: PLTEXT_SUPERSCRIPT = 1 ! superscript in the text stream
       integer(kind=plint), parameter :: PLTEXT_SUBSCRIPT = 2 ! subscript in the text stream
