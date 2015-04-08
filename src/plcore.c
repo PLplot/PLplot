@@ -9,7 +9,7 @@
 // Copyright (C) 2004, 2005  Rafael Laboissiere
 // Copyright (C) 2004, 2006  Andrew Ross
 // Copyright (C) 2004  Andrew Roach
-// Copyright (C) 2005-2014 Alan W. Irwin
+// Copyright (C) 2005-2015 Alan W. Irwin
 // Copyright (C) 2005  Thomas J. Duck
 //
 // This file is part of PLplot.
@@ -3771,8 +3771,14 @@ c_plsfnam( const char *fnam )
 
 // Set the pointer to the data used in driver initialisation
 
+// N.B. Currently used only by the wxwidgets device driver and
+// associated binding.  This function might be used for other device drivers
+// later on whether written in c++ or c.  But this function is not part of the
+// common API and should not be propagated to any binding other than
+// c++.
+
 void
-c_plsdevdata( void *data )
+plsdevdata( void *data )
 {
     plsc->dev_data = data;
 }

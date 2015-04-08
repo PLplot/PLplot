@@ -7,7 +7,7 @@
 //  affect any user programs in C as long as this file is included.
 //
 //  Copyright (C) 1992  Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-//  Copyright (C) 2004-2010  Alan W. Irwin
+//  Copyright (C) 2004-2015  Alan W. Irwin
 //  Copyright (C) 2004  Rafael Laboissiere
 //  Copyright (C) 2004  Andrew Ross
 //
@@ -730,7 +730,6 @@ typedef struct
 #define    plsfam                   c_plsfam
 #define    plsfci                   c_plsfci
 #define    plsfnam                  c_plsfnam
-#define    plsdevdata               c_plsdevdata
 #define    plsfont                  c_plsfont
 #define    plshade                  c_plshade
 #define    plshade1                 c_plshade1
@@ -1666,11 +1665,6 @@ c_plsfci( PLUNICODE fci );
 PLDLLIMPEXP void
 c_plsfnam( const char *fnam );
 
-// Set the pointer to the data used in driver initialisation
-
-PLDLLIMPEXP void
-c_plsdevdata( void *data );
-
 // Set the current font family, style and weight
 
 PLDLLIMPEXP void
@@ -2354,6 +2348,17 @@ plGetCursor( PLGraphicsIn *gin );
 
 PLDLLIMPEXP int
 plTranslateCursor( PLGraphicsIn *gin );
+
+// Set the pointer to the data used in driver initialisation
+
+// N.B. Currently used only by the wxwidgets device driver and
+// associated binding.  This function might be used for other device drivers
+// later on whether written in c++ or c.  But this function is not part of the
+// common API and should not be propagated to any binding other than
+// c++.
+
+PLDLLIMPEXP void
+plsdevdata( void *data );
 
 #ifdef PL_DEPRECATED
 
