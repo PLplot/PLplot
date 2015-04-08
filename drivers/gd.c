@@ -921,7 +921,7 @@ plD_state_png( PLStream *pls, PLINT op )
     case PLSTATE_COLOR0:
 #if GD2_VERS >= 2
 
-        if ( ( pls->icol0 == PL_RGB_COLOR ) ||         //  Should never happen since PL_RGB_COLOR is depreciated, but here for backwards compatibility
+        if ( ( pls->icol0 == PL_RGB_COLOR ) ||         //  Should never happen since PL_RGB_COLOR is deprecated, but here for backwards compatibility
              ( gdImageTrueColor( dev->im_out ) ) )     //  We will do this if we are in "TrueColour" mode
         {
             if ( ( dev->totcol < NCOLOURS ) ||         // See if there are slots left, if so we will allocate a new colour

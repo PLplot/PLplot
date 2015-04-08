@@ -163,7 +163,7 @@ typedef struct FT_Data
     FT_GlyphSlot slot;                  // pointer to a glyph slot
     FT_Glyph     image;                 // bitmap or outline image of font
 
-    short        colour;                // depreciated ?? must check code
+    short        colour;                // deprecated ?? must check code
 
     PLINT        shade, col_idx;        // Used for antialiasing
 

@@ -7,7 +7,7 @@ With octave 2.1 or earlier you can use LOADPATH, e.g.
 
 LOADPATH = [ ":<install-directory>/share/plplot_octave//", LOADPATH ]
 
-With octave 2.9 and later, LOADPATH has been depreciated and you need to
+With octave 2.9 and later, LOADPATH has been deprecated and you need to
 use addpath instead. You also need to explicitly add in any 
 subdirectories you wish to search, e.g.
 

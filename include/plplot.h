@@ -2362,7 +2362,7 @@ plsdevdata( void *data );
 
 #ifdef PL_DEPRECATED
 
-// These functions are depreciated and only retained for backwards
+// These functions are deprecated and only retained for backwards
 // compatibility - do not use in new code.
 
 // Set current color (map 0) by hue, lightness, and saturation.
