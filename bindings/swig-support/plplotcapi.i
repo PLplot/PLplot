@@ -5,7 +5,7 @@
 //
 //
 //Copyright (C) 2002  Gary Bishop
-//Copyright (C) 2002-2014  Alan W. Irwin
+//Copyright (C) 2002-2015  Alan W. Irwin
 //Copyright (C) 2004  Rafael Laboissiere
 //Copyright (C) 2004  Andrew Ross
 //
@@ -71,7 +71,7 @@ typedef void*  PLPointer;
 #define PLESC_DEV2PLCOL                  24 // convert device color to PLColor
 #define PLESC_SETBGFG                    25 // set BG, FG colors
 #define PLESC_DEVINIT                    26 // alternate device initialization
-#define PLESC_GETBACKEND                 27 // get used backend of (wxWidgets) driver
+#define PLESC_GETBACKEND                 27 // get used backend of (wxWidgets) driver - no longer used
 #define PLESC_BEGIN_TEXT                 28 // get ready to draw a line of text
 #define PLESC_TEXT_CHAR                  29 // render a character of text
 #define PLESC_CONTROL_CHAR               30 // handle a text control character (super/subscript, etc.)
@@ -82,6 +82,8 @@ typedef void*  PLPointer;
 #define PLESC_GRADIENT                   35 // render a gradient
 #define PLESC_MODESET                    36 // set drawing mode
 #define PLESC_MODEGET                    37 // get drawing mode
+#define PLESC_FIXASPECT                  38 // set or unset fixing the aspect ratio of the plot
+#define PLESC_IMPORT_BUFFER              39 // set the contents of the buffer to a specified byte string
 #define PLTEXT_FONTCHANGE                0  // font change in the text stream
 #define PLTEXT_SUPERSCRIPT               1  // superscript in the text stream
 #define PLTEXT_SUBSCRIPT                 2  // subscript in the text stream
