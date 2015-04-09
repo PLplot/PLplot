@@ -1,4 +1,5 @@
 INDEX
+** Update versions
 ** Prepare a (preliminary) version of the ChangeLog file for this release
 ** Prepare the README.release file and/or press those who have made
    changes in this release cycle to update that file
@@ -6,7 +7,6 @@ INDEX
 ** Check and potentially fix internal consistency
 ** Update website-related files
 ** Install and test a (preliminary) local copy of the PLplot website
-** Update Release date and versions
 ** Update this file (README.Release_Manager_CookBook)
 ** Create (a preliminary version of) the release tarball and check the
    result for errors
@@ -28,6 +28,8 @@ INDEX
 INDEX for Appendix
 ** GNU Privacy Guard (gpg)
 ** Correct computer time
+** System prerequisites for viewing local website
+
 
 N.B. the order of steps below is important because of the dependencies
 between the steps which are noted (except for the generation of the
@@ -35,12 +37,20 @@ final release tarball and ChangeLog which depend on virtually all
 prior steps).
 _________________________________________________________________________
 
+** Update versions
+
+This step depends on no others.
+
+Update PLplot version in www/examples.php.  Also follow the
+instructions in cmake/modules/plplot_version.cmake to update all
+version information.
+_________________________________________________________________________
+
 ** Prepare a (preliminary) version of the ChangeLog file for this release
 
 This step does not depend on other steps.
 
-git checkout master
-git log --name-status --reverse <tagname>..HEAD >| ChangeLog.release_preliminary
+git log --name-status --reverse <tagname>..master >| ChangeLog.release_preliminary
 
 where <tagname> is the tag name (e.g., v5_10_0) of the last release to
 exclude from the log all commits that are reachable from that tag.
@@ -72,15 +82,7 @@ _________________________________________________________________________
 
 ** Prepare and test the documentation
 
-This step does not depend on other steps.
-
-The steps below entitled 
-
-"Check and potentially fix internal consistency" and
-"Install and test a (preliminary) local copy of the PLplot website"
-"Install and test a local copy of the PLplot website"
-
-depend on this step.
+This step depends on the "Update versions" step above.
 
 Update the doxygen documentation (in our source code) and DocBook
 documentation (in doc/docbook/src) to reflect any changes (new drivers
@@ -88,6 +90,9 @@ or new PLplot functionality) in the current release cycle.  Or
 alternatively, press those who made the changes to update the
 documentation.  Generate and test our doxygen form of documentation
 following the instructions in doc/README.doxygen.
+
+Update doc/docbook/src/CMakeLists.txt to reflect the best estimate
+of the release date that will be used in the documentation build.
 
 Update, generate and test our Docbook documentation following the
 instructions in doc/docbook/README.developers.
@@ -99,40 +104,39 @@ This step depends on the step above entitled
 
 "Prepare and test the documentation".
 
-This step potentially affects the swig-generated bindings and
-the f95, tcl, and ocaml bindings.  Thus, the step below entitled
-
-"Comprehensive test of PLplot"
-
-may depend on this step.
-
 Some of the files in the source tree are generated from other files
 in the source tree using build-system targets.  All targets that
-have "check" in the name prefix are these kind of targets.  So to get
-a complete list of such targets, execute
+have "check" in the name prefix are these kind of targets.  Also,
+some of the checks require special setup or take too long for the
+general case, and these will be configured only for the
+-DADD_SPECIAL_CONSISTENCY_CHECKING=ON case.
 
-make help |grep '... check'
+So use the above cmake option, and then for a complete list of
+checks run
 
-in the build tree.  The current such list of targets is
+make help |grep '... check' |sort
 
+in the build tree.  The current result of that command should be
+
+... check_all
+... check_api_xml_consistency
+... check_f95_parameters
+... check_plplot_h.inc
 ... check_plplotcapi_defines
 ... check_swig_documentation
-... check_f95_parameters
 ... check_tcl_parameters
-... check_plplot_h.inc
 
-Note, one of these targets (check_plplot_h.inc) only exists if the
--DGENERATE_PLPLOT_H_INC=ON cmake option is used which in turn requires
+Note, one of these targets (check_plplot_h.inc) only exists 
+because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
+-DGENERATE_PLPLOT_H_INC=ON by default which in turn requires
 that at least the OCaml version of the Perl regular expression library
-be installed.  (On debian the associated package name is
+be installed.  (On Debian the associated package name is
 libpcre-ocaml-dev.)  Normally, GENERATE_PLPLOT_H_INC is OFF by default
-to reduce build dependencies, but to make the complete list of such
-targets available you should run the cmake command with the
--DGENERATE_PLPLOT_H_INC=ON option and make sure there are no
-OCaml-related warnings in the results.
+to reduce build dependencies.
 
 To actually do the internal consistency checks, run each of the above
-targets which typically generate a file in the build tree which is
+targets by running the check_all target.  Each individual check target
+typically generates a file in the build tree which is
 then compared (using the Unix cmp command) with the file that is being
 checked in the source tree.  If the two files are inconsistent (which
 can be caused by documentation updates, for example), the cmp command
@@ -143,29 +147,27 @@ and committing the source-tree version.  When this process is completed,
 all the above targets should run with no cmp or other errors/warnings
 at all, e.g.,
 
-software@raven> make check_swig_documentation check_f95_parameters check_tcl_parameters check_plplot_h.inc
-Check that swig_documentation.i is consistent with doc/docbook/src/api.xml
+software@raven> make check_all
+Check that doc/docbook/src/api.xml is consistent with include/plplot.h
+Built target check_api_xml_consistency
+Check that bindings/swig-support/swig_documentation.i is consistent with doc/docbook/src/api.xml
 Built target check_swig_documentation
-Check that plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i
+Check that numerical #defines in bindings/swig-support/plplotcapi.i are consistent with the numerical #defines in include/plplot.h
+An error for this target implies the numerical #defines section of bindings/swig-support/plplotcapi.i needs updating following the directions in that file
+Built target check_plplotcapi_defines
+Check that bindings/f95/plplot_parameters.inc is consistent with the #defines in bindings/swig-support/plplotcapi.i
 Built target check_f95_parameters
-Check that plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i
+Check that bindings/tcl/plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i
 Built target check_tcl_parameters
-Check that plplot_h.inc is consistent with touchup.ml and plplot_h
+Check that bindings/ocaml/plplot_h.inc is consistent with bindings/ocaml/touchup.ml and bindings/ocaml/plplot_h
 Built target check_plplot_h.inc
+Built target check_all
+
 _________________________________________________________________________
 
 ** Update website-related files
 
 This step does not depend on other steps.
-
-The steps below entitled
-
-"Install and test a (preliminary) local copy of the PLplot website"
-"Install and test a local copy of the PLplot website"
-"Create (a preliminary version of) the release tarball and check the result"
-"Create the release tarball and check the result"
-
-depends on this step.
 
 If necessary, update the examples list in
 scripts/htdocs-gen_plot-examples.sh. That list is used to generate the
@@ -195,7 +197,12 @@ This step depends on the steps above entitled
 "Prepare and test the documentation" and
 "Update website-related files"
 
-but does not depend on any steps below.
+N.B. The git checkout-index command exports everything from the
+working directory that is in the index or committed, but it will
+ignore local changes in the working directory that haven't been
+"added".  So use "git add" or "git commit" judiciously before running
+this script to get all local changes relevant to website generation
+tested by this script.
 
 To build the local form of the website (including both the doxygen and
 DocBook forms of our documentation) run (on a Linux host that is
@@ -210,7 +217,11 @@ throwaway copy of the PLplot source code, building the doxygen and DocBook docum
 generating the announcements that are part of the base website, uploading
 the base website, uploading the documentation, building the examples,
 running the examples, uploading the example source code and example results)
-automatically.  I (AWI) tested this script using the four answers
+automatically.  I (AWI) ran this script as follows:
+
+echo irwin$'\n'irwin$'\n'raven$'\n'/home/irwin/public_html/plplot$'\n'yes |scripts/generate_website.sh
+
+==>
 
 Summary:
 USERNAME = irwin
@@ -219,33 +230,14 @@ HOSTNAME = raven
 WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
 (raven is my local computer name, and /home/irwin/public_html is a location
-where I can put various websites).  You can check for errors (e.g., due
+where I can store various websites).  The above command took ~2 minutes to run
+on my computer.  You can check for errors (e.g., due
 to missing commands that need to be installed) by running
 
 find /tmp/plplotdoc -name '*.out' |xargs grep -i error
 
-You should install both apache and PHP on your computer.  For Debian stable
-(a.k.a. wheezy) that is done (as root) by installing libapache2-mod-php5
-and enabling user directories using the command
-
-a2enmod userdir
-
-and editing /etc/apache2/mods-available/php5.conf as indicated in that
-file to allow user directories for php.  I am not sure, but I believe
-from some google results I found that editing of that file is also
-necessary on modern versions of Ubuntu in order to allow php-based websites
-like that of PLplot to work when installed in local user directories.
-
-After the above changes, you must restart the apache server.  On
-Debian this is done with
-
-service apache2 restart
-
-(When user directories are enabled this way, for the above case
-/home/irwin/public_html/plplot/htdocs, browses as
-http://raven/~irwin/plplot/htdocs/.)
-
-I test http://raven/~irwin/plplot/htdocs/ by clicking on most links,
+The above location translates to the following URL
+<http://raven/~irwin/plplot/htdocs>, and I test that URL by clicking on most links,
 checking the documentation looks good, checking the examples are
 complete and look good and the source code for each language for
 examples is accessible, etc.  Some iterations with the
@@ -256,39 +248,18 @@ steps above entitled
 
 will likely be required.
 
-N.B. scripts/generate_website.sh uses the local source tree where that
-script resides (including all local changes) as the source tree for
-generating the local website.  So there is no need to commit every
-documentation, example, and version change until you are completely satisfied
-with the local website.  But after you _are_ satisfied with the
-local website you should commit all your changes so they are available
-for generating the tarball and ChangeLog (see below) for this release.
+N.B. As explained above scripts/generate_website.sh uses the index of
+the git working directory (but ignores local changes which have not
+yet been added to the index) as the source tree for generating the
+local website.  So there is no need to commit every documentation,
+example, and version change until you are completely satisfied with
+the local website.  But after you _are_ satisfied with the local
+website you should commit all your changes so they are available for
+generating the tarball and ChangeLog (see below) for this release.
 
 N.B. The iterated result should be identical to the final result (see
-below) except that the release date (configured as RELEASE_DATE) and
-the PLplot version in www/example.php will be wrong.  Those
-issues are addressed in "Update release date and versions" below.
-_________________________________________________________________________
-
-** Update Release date and versions
-
-This step depends on no others.
-
-The following steps entitled
-
-"Create (a preliminary version of) the release tarball and check the result
-for errors."
-"Install and test a local copy of the PLplot website"
-"Comprehensive test of PLplot"
-
-depend on this step.
-
-Update PLplot version in www/examples.php.  In addition,
-update cmake/modules/plplot_version.cmake to reflect the current
-RELEASE_DATE (which affects the documentation build) and
-version. Also, follow the instructions in that file for updating the
-SOVERSION, the minor number and the patch number for each versioned
-library created by the PLplot build.
+below) except that the documentation release date (configured as RELEASE_DATE
+in doc/docbook/src/CMakeLists.txt) might be incorrect.
 _________________________________________________________________________
 
 ** Update this file (README.Release_Manager_CookBook)
@@ -298,6 +269,7 @@ also to update the many version numbers in it to the latest version
 value.
 
 _________________________________________________________________________
+
 ** Create (a preliminary version of) the release tarball and check the
    result for errors
 
@@ -321,8 +293,8 @@ Browse the following install locations that were generated from the
 tarball:
 
 /tmp/plplot_install/share/doc/plplot/html/index.html
-/tmp/plplot_install/share/doc/plplot/plplot-5.10.0.pdf
-/tmp/plplot-dist-prep/plplot-5.10.0.tar.gz
+/tmp/plplot_install/share/doc/plplot/plplot-5.11.0.pdf
+/tmp/plplot-dist-prep/plplot-5.11.0.tar.gz
 
 In the latter, look carefully for any files that should not be part
 of the source tarball.
@@ -420,7 +392,7 @@ depends on this one.
 Follow the exact steps given above in "Install and test a
 (preliminary) local copy of the PLplot website" but this time with the
 correct RELEASE_DATE and VERSION and also do this
-using the files from the tagged release directory, e.g., plplot_tags_5.10.0
+using the files from the tagged release directory, e.g., plplot_tags_5.11.0
 
    ++ Upload the local website to SourceForge
 
@@ -567,17 +539,17 @@ cd /tmp/plplot-dist-prep/
 
 sftp airwin,plplot@frs.sourceforge.net
 cd /home/frs/project/p/pl/plplot/plplot
-mkdir 5.10.0\ Source
-cd 5.10.0\ Source
-put plplot-5.10.0.tar.gz.asc
-put plplot-5.10.0.tar.gz
+mkdir 5.11.0\ Source
+cd 5.11.0\ Source
+put plplot-5.11.0.tar.gz.asc
+put plplot-5.11.0.tar.gz
 exit
 
-Make, e.g., plplot-5.10.0.tar.gz, the "latest" version.
+Make, e.g., plplot-5.11.0.tar.gz, the "latest" version.
 
 login to SF website
-files ==> plplot ==> 5.10.0 Source ==> view details (the "i" icon) for
-plplot-5.10.0.tar.gz ==> select "all" for the default
+files ==> plplot ==> 5.11.0 Source ==> view details (the "i" icon) for
+plplot-5.11.0.tar.gz ==> select "all" for the default
 
 The above used to spin indefinitely with iceweasel.  Now it finishes
 with a "properties updated" message, but it doesn't appear to "take"
@@ -586,12 +558,12 @@ immediately so check it later.
 # Save a local copy of the release tarball for future reference and
 # also check it.
 cd /home/software/plplot_svn/HEAD/export #(or wherever)
-cp -a /tmp/plplot-dist-prep/plplot-5.10.0.tar.gz* .
-gpg --verify plplot-5.10.0.tar.gz.asc
+cp -a /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz* .
+gpg --verify plplot-5.11.0.tar.gz.asc
 
 Prepare concatanated release notes + Changelog.
 
-cd plplot_tags_5.10.0
+cd plplot_tags_5.11.0
 echo "
 
 DETAILED CHANGELOG FOR THIS RELEASE
@@ -600,7 +572,7 @@ DETAILED CHANGELOG FOR THIS RELEASE
 
 cd /tmp
 sftp airwin,plplot@frs.sourceforge.net
-cd /home/frs/project/p/pl/plplot/plplot/5.10.0\ Source
+cd /home/frs/project/p/pl/plplot/plplot/5.11.0\ Source
 put /tmp/README.release
 exit
 
@@ -611,7 +583,7 @@ Point your browser to http://sf.net/projects/plplot and login.  A
 news item will then be available on the menu bar.  Click that, then
 "new post".
 
-Enter the title (e.g., PLplot Release 5.10.0) and the text.  Surround
+Enter the title (e.g., PLplot Release 5.11.0) and the text.  Surround
 the URL's in the text with angle brackets, e.g.
 <http://sourceforge.net/projects/plplot/files/plplot>.
 
@@ -628,7 +600,7 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
   a. Preserve the historical record of the
      significant changes between versions of PLplot in one file by
-     prepending README.release for 5.10.0 to OLD-README.release
+     prepending README.release for 5.11.0 to OLD-README.release
 
 cat README.release OLD-README.release > OLD-README.release_new
 mv OLD-README.release_new OLD-README.release
@@ -811,3 +783,37 @@ The jitter column is the "exponentially-weighted rms average" for the
 indicated server.  I assume it is in ms so the above jitters of 0.000
 show a very small rms for those servers, i.e., a clock of extremely
 high quality.
+_________________________________________________________________________
+
+** System prerequisites for viewing local website
+
+You should install both apache and PHP on your computer.  For Debian stable
+(a.k.a. wheezy) that is done (as root) by installing libapache2-mod-php5
+and enabling user directories using the command
+
+a2enmod userdir
+
+and editing /etc/apache2/mods-available/php5.conf as indicated in that
+file to allow user directories for php.  I am not sure, but I believe
+from some google results I found that editing of that file is also
+necessary on modern versions of Ubuntu in order to allow php-based websites
+like that of PLplot to work when installed in local user directories.
+
+After the above changes, you must restart the apache server.  On
+Debian this is done with
+
+service apache2 restart
+
+(When user directories are enabled this way, for the above case
+where
+
+Summary:
+USERNAME = irwin
+GROUPNAME = irwin
+HOSTNAME = raven
+WEBSITE_PREFIX = /home/irwin/public_html/plplot
+
+that directory location browses as
+http://raven/~irwin/plplot/htdocs/.)
+
+

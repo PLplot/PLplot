@@ -97,6 +97,8 @@ label plots.</p>
 				<img src="examples-data/demo09/x09.01.png" width="172" height="129" border="1" alt="Contouring plot"/></a>
 			<a href="examples-data/demo16/x16.01.png" rel="lightbox[plplot]" title="False colour plot">
 				<img src="examples-data/demo16/x16.01.png" width="172" height="129" border="1" alt="False colour plot"/></a>
+			<a href="examples-data/demo19/x19.05.png" rel="lightbox[plplot]" title="Map plot">
+				<img src="examples-data/demo19/x19.05.png" width="172" height="129" border="1" alt="False colour plot"/></a>
 			<a href="examples-data/demo24/x24.01.png" rel="lightbox[plplot]" title="Unicode example">
 				<img src="examples-data/demo24/x24.01.png" width="172" height="129" border="1" alt="Unicode example"/></a>
 			<a href="examples-data/demo30/x30.01.png" rel="lightbox[plplot]" title="Alpha color support">

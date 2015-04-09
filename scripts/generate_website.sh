@@ -63,7 +63,7 @@ echo "changes of current branch of $SOURCE_TREE to /tmp/plplotdoc/plplot_source"
 # For checkout-index, trailing slash for prefix directory is important for some
 # reason according to the man page.  Furthermore, it turns out
 # that --prefix must be an absolute directory.
-git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index -a --prefix=/tmp/plplotdoc/plplot_source/
+git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index --all --prefix=/tmp/plplotdoc/plplot_source/
 echo ""
 echo "Configure and build PLplot documentation.  This may take a while depending on your cpu speed...."
 cd /tmp/plplotdoc/build

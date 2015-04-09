@@ -62,9 +62,9 @@
 	  array(18,  8, 1, "
 	<p>3-d line and point plot demo.</p>
 	\n", array_fill( 0, 8, 1)),
-	  array(19,  4, 1, "
-	<p>Demo of backdrop plotting of world, US maps.</p>
-	\n", array_fill( 0, 4, 1)),
+	  array(19,  5, 5, "
+	<p>Demo of map functions.</p>
+	\n", array_fill( 0, 5, 1)),
 	  array(20,  6, 3, "
 	<p>Demo of gray-scale image manipulation (plimage).</p>
 	\n", array_fill( 0, 6, 1)),
