@@ -1,12 +1,17 @@
 #!/bin/bash
 
-# This will prepare a distribution tarball directly from the svn sources of
-# the PLplot project.
+# This script prepares a distribution tarball directly from a local working directory
+# of a git repository for the PLplot project.
+
+# CAVEAT: The tarball will only include files in the working directory that
+# are in the index or committed.  So use "git add" appropriately to test local
+# changes before committing them.
+
 # CAVEAT: this script silently and completely deletes a directory called
 # /tmp/plplot-dist-prep
 
 # Copyright (C) 2003, 2004  Rafael Laboissiere
-# Copyright (C) 2006, 2013 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -25,47 +30,47 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 usage () {
-  local prog=`basename $0`
-  echo "Usage: $prog [-n] \\"
-  echo "          [-c [-i prefix] [-o cmake options]] \\"
-  echo "       $prog -d"
-  echo "       $prog -h"
-  echo
-  echo "Option -n prevents pre-building anything including the DocBook manual."
-  echo "When option -c is given, the generated tarball is"
-  echo "  unpacked, configured with cmake and built with make, and"
-  echo "  the ctest (build-tree tests) is run afterward."
-  echo "  If the -i prefix option is specified in addition to -c,"
-  echo "  the configuration is done with the specified install prefix"
-  echo "  and make install is run after ctest."
-  echo "  WARNING: the prefix directory is completely removed before the"
-  echo "  install so be careful what you specify for the -i option."
-  echo "  If the -o cmake options option is specified in addition to -c,"
-  echo "  those options are used for the configuration of the unpacked"
-  echo "  tarball."
-  echo "Option -d prints the default values."
-  echo "Option -h prints this usage information."
-  exit $1
+    local prog=$(basename $0)
+    echo "Usage: $prog [-n] \\"
+    echo "          [-c [-i prefix] [-o cmake options]] \\"
+    echo "       $prog -d"
+    echo "       $prog -h"
+    echo
+    echo "Option -n prevents pre-building anything including the DocBook manual."
+    echo "When option -c is given, the generated tarball is"
+    echo "  unpacked, configured with cmake and built with make, and"
+    echo "  the ctest (build-tree tests) is run afterward."
+    echo "  If the -i prefix option is specified in addition to -c,"
+    echo "  the configuration is done with the specified install prefix"
+    echo "  and make install is run after ctest."
+    echo "  WARNING: the prefix directory is completely removed before the"
+    echo "  install so be careful what you specify for the -i option."
+    echo "  If the -o cmake options option is specified in addition to -c,"
+    echo "  those options are used for the configuration of the unpacked"
+    echo "  tarball."
+    echo "Option -d prints the default values."
+    echo "Option -h prints this usage information."
+    exit $1
 }
 
 DOC_ARG=${DOC_ARG:--DBUILD_DOC=ON}
 # Just easier to always keep this temporary directory in the same location
-SVNTMPDIR=/tmp/plplot-dist-prep
+GITTMPDIR=/tmp/plplot-dist-prep
 
 # Put here extra cmake options that should always be used when
 # generating a tarball
 config_opt=""
 
 # Put here extra make options
-# Parallel builds for extra speed on multiprocessing boxes
-make_opt="-j3"
+# Parallel builds and ctests for extra speed on multiprocessing boxes
+parallel_opt="-j4"
 
 print_defaults () {
-  local v
-  for v in DOC_ARG SVN_URL ; do
-    eval "echo $v=\\\"\$$v\\\""
-  done
-  exit 0
+    local v
+    for v in DOC_ARG GIT_URL ; do
+	eval "echo $v=\\\"\$$v\\\""
+    done
+    exit 0
 }
 
 do_check=no
@@ -76,19 +81,19 @@ do_prebuild_dist=yes
 
 while getopts "cdhi:no:u:" option
 do
-  case $option in
-    c) do_check=yes ;;
-    d) print_defaults ;;
-    h) usage 0 ;;
-    i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
-    n) DOC_ARG=;PREBUILD_ARG=;PREBUILT_DOC_ARG=;do_prebuild_dist=no ;;
-    o) config_opt="$config_opt $OPTARG" ;;
-    *) usage 1 ;;
-  esac
+    case $option in
+	c) do_check=yes ;;
+	d) print_defaults ;;
+	h) usage 0 ;;
+	i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
+	n) DOC_ARG=;PREBUILD_ARG=;PREBUILT_DOC_ARG=;do_prebuild_dist=no ;;
+	o) config_opt="$config_opt $OPTARG" ;;
+	*) usage 1 ;;
+    esac
 done
 
 cleanup ( ) {
-    rm -rf $SVNTMPDIR
+    rm -rf $GITTMPDIR
 }
 
 # Find absolute PATH of script without using readlink (since readlink is
@@ -105,34 +110,39 @@ cd "${ORIGINAL_PATH}"
 SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
 
 cleanup
-mkdir $SVNTMPDIR
-cd $SVNTMPDIR
-svn export $SOURCE_TREE plplot \
-  && mkdir build_dir \
-  && cd build_dir \
-  && cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
-     ${PREBUILD_ARG} ${DOC_ARG} -DBUILD_DOX_DOC=ON \
-     ../plplot >& cmake.out \
-  && echo "Making distribution." \
-  && (if [ "$do_prebuild_dist" = "yes" ] ; then
-        make ${make_opt} prebuild_dist >& make_prebuild_dist.out
-      fi) \
-  && make ${make_opt} package_source >& make_package_source.out \
-  && TARBALL=`ls plplot-*.tar.gz` \
-  && DISTDIR=`echo $TARBALL | sed s/.tar.gz//` \
-  && mv $TARBALL .. \
-  && cd .. \
-  && echo "distribution tarball: $TARBALL" \
-  && test "$do_check" = "yes" \
-  && tar xfz $TARBALL \
-  && mkdir ctest_build_dir \
-  && ( cd ctest_build_dir \
-       && cmake ${config_opt} -DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
-          -DCMAKE_VERBOSE_MAKEFILE=ON ${PREBUILT_DOC_ARG} -DBUILD_DOX_DOC=ON \
-	  -DBUILD_TEST=ON \
-	  ../plplot >& cmake.out \
-       && make ${make_opt} >& make.out \
-       && ctest >& ctest.out \
-       && test -n "$prefix" \
-       && rm -rf ${prefix} \
-       && make ${make_opt} install >& make_install.out )
+mkdir $GITTMPDIR
+cd $GITTMPDIR
+
+# For checkout-index, trailing slash for prefix directory is important for some
+# reason according to the man page.  Furthermore, it turns out
+# that --prefix must be an absolute directory.
+git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index --all --prefix=$GITTMPDIR/plplot_source/ \
+    && mkdir build_dir \
+    && cd build_dir \
+    && cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+    ${PREBUILD_ARG} ${DOC_ARG} -DBUILD_DOX_DOC=ON \
+    ../plplot_source >& cmake.out \
+    && echo "Making distribution tarball.  This may take a while...." \
+    && (if [ "$do_prebuild_dist" = "yes" ] ; then
+    make ${parallel_opt} prebuild_dist >& make_prebuild_dist.out
+    fi) \
+	&& make ${parallel_opt} package_source >& make_package_source.out \
+	&& TARBALL=$(ls plplot-*.tar.gz) \
+	&& UNPACKED_TARBALL_DIR=${TARBALL%%.tar.gz} \
+	&& mv $TARBALL .. \
+	&& cd .. \
+	&& echo "Finished creating distribution tarball: $TARBALL" \
+	&& test "$do_check" = "yes" \
+	&& echo "Checking distribution tarball.  This may take a while...." \
+	&& tar xfz $TARBALL \
+	&& mkdir ctest_build_dir \
+	&& ( cd ctest_build_dir \
+	&& cmake ${config_opt} -DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
+        -DCMAKE_VERBOSE_MAKEFILE=ON ${PREBUILT_DOC_ARG} -DBUILD_DOX_DOC=ON \
+	-DBUILD_TEST=ON \
+	../${UNPACKED_TARBALL_DIR} >& cmake.out \
+	&& make ${parallel_opt} >& make.out \
+	&& ctest ${parallel_opt} >& ctest.out \
+	&& test -n "$prefix" \
+	&& rm -rf ${prefix} \
+	&& make ${parallel_opt} install >& make_install.out )

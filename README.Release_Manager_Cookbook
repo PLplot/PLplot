@@ -280,9 +280,15 @@ This step depends on the steps above entitled
 
 The -c option runs ctest on the directory tree unpacked from the
 release tarball, and the -i option installs a build from that
-directory tree
+directory tree.  N.B. be careful what you specify for the
+-i option since that directory will be completely removed
+initially.
 
 scripts/make_tarball.sh -c -i /tmp/plplot_install
+
+This script takes roughly 8 minutes to complete on my computer.
+
+Check for errors....
 
 find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error
 
@@ -294,14 +300,16 @@ tarball:
 
 /tmp/plplot_install/share/doc/plplot/html/index.html
 /tmp/plplot_install/share/doc/plplot/plplot-5.11.0.pdf
-/tmp/plplot-dist-prep/plplot-5.11.0.tar.gz
 
-In the latter, look carefully for any files that should not be part
-of the source tarball.
+Look at tarball contents to make sure included filenames are
+what is intended.
+
+less /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz
 
 Look at a few man pages that were generated from the tarball, e.g.,
 
-nroff -man /tmp/plplot_install/share/man/man3/pllegend.3plplot |less
+man -M/tmp/plplot_install/share/man pllegend
+man -M/tmp/plplot_install/share/man plsurf3dl
 
 Look at the info pages that were generated from the tarball using
 
